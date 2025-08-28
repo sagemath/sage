@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Chessboard graphs
 
@@ -60,10 +59,10 @@ def ChessboardGraphGenerator(dim_list, rook=True, rook_radius=None,
     - ``knight`` -- boolean (default: ``True``); indicating whether the chess
       piece is able to move like a knight
 
-    - ``knight_x`` -- integer (default: ``1``); indicates the number on steps
+    - ``knight_x`` -- integer (default: `1`); indicates the number on steps
       the chess piece moves in one dimension when moving like a knight
 
-    - ``knight_y`` -- integer (default: ``2``); indicates the number on steps
+    - ``knight_y`` -- integer (default: `2`); indicates the number on steps
       the chess piece moves in the second dimension when moving like a knight
 
     - ``relabel`` -- boolean (default: ``False``); indicates whether the
@@ -273,7 +272,7 @@ def QueenGraph(dim_list, radius=None, relabel=False):
         sage: G.is_isomorphic(H)
         True
 
-    Also True in higher dimensions::
+    Also ``True`` in higher dimensions::
 
         sage: G = graphs.QueenGraph([3, 4, 5], radius=1)
         sage: H = graphs.KingGraph([5, 3, 4])
@@ -290,7 +289,6 @@ def QueenGraph(dim_list, radius=None, relabel=False):
         ....:         H.add_edges(B.edges(sort=False))
         ....:         if not G.is_isomorphic(H):
         ....:             print("that's not good!")
-
     """
     G, dimstr = ChessboardGraphGenerator(dim_list,
                                          rook=True, rook_radius=radius,
@@ -347,7 +345,7 @@ def KingGraph(dim_list, radius=None, relabel=False):
         sage: G.is_isomorphic( H )
         True
 
-    Also True in higher dimensions::
+    Also ``True`` in higher dimensions::
 
         sage: G = graphs.KingGraph( [2, 5, 4], radius=5 )
         sage: H = graphs.QueenGraph( [4, 5, 2] )
@@ -387,10 +385,10 @@ def KnightGraph(dim_list, one=1, two=2, relabel=False):
     - ``dim_list`` -- iterable (list, set, dict); provides the dimensions
       `n_1, n_2, \ldots, n_d`, with `n_i \geq 1`, of the chessboard
 
-    - ``one`` -- integer (default: ``1``); indicates the number of steps in the
+    - ``one`` -- integer (default: `1`); indicates the number of steps in the
       first dimension
 
-    - ``two`` -- integer (default: ``2``); indicates the number of steps in the
+    - ``two`` -- integer (default: `2`); indicates the number of steps in the
       second dimension
 
     - ``relabel`` -- boolean (default: ``False``); indicates whether the
@@ -527,7 +525,6 @@ def BishopGraph(dim_list, radius=None, relabel=False):
         ....:         H.add_edges( graphs.KnightGraph([d,d],one=r,two=r).edges(sort=False) )
         ....:         if not B.is_isomorphic(H):
         ....:            print("that's not good!")
-
     """
     G, dimstr = ChessboardGraphGenerator(dim_list,
                                          rook=False, knight=False,

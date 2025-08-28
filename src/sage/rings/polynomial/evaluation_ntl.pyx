@@ -38,7 +38,7 @@ from sage.libs.ntl.ZZ cimport *
 from sage.libs.ntl.ZZX cimport *
 
 
-cdef ZZX_evaluation_mpfr(mpfr_t res, ZZX_c poly, const mpfr_t a) noexcept:
+cdef ZZX_evaluation_mpfr(mpfr_t res, ZZX_c poly, const mpfr_t a):
     cdef mpz_t c
     cdef long i
 
@@ -53,7 +53,7 @@ cdef ZZX_evaluation_mpfr(mpfr_t res, ZZX_c poly, const mpfr_t a) noexcept:
 
     mpz_clear(c)
 
-cdef ZZX_evaluation_mpfi(mpfi_t res, ZZX_c poly, const mpfi_t a) noexcept:
+cdef ZZX_evaluation_mpfi(mpfi_t res, ZZX_c poly, const mpfi_t a):
     cdef mpz_t c
     cdef long i
 

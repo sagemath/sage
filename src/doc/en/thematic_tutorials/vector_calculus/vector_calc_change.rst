@@ -1,4 +1,4 @@
-.. -*- coding: utf-8 -*-
+.. .. sage-doctest: needs sage.plot sage.symbolic
 
 .. linkall
 
@@ -138,6 +138,7 @@ the above call ``E.spherical_coordinates()``::
 These formulas are automatically used if we ask to plot the grid of spherical
 coordinates in terms of Cartesian coordinates::
 
+    sage: # long time
     sage: spherical.plot(cartesian, color={r:'red', th:'green', ph:'orange'})
     Graphics3d Object
 

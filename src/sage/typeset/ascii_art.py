@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-categories
 r"""
 ASCII Art
 
 This file contains:
 
-- :class:`AsciiArt` an simple implementation of an ASCII art object,
+- :class:`AsciiArt` a simple implementation of an ASCII art object,
 - :func:`ascii_art` a function to get the ASCII art representation of any
   object in Sage,
 
@@ -44,11 +44,12 @@ manager activated by the magic function: ``%display ascii_art``::
     sage: shell.run_cell('%display ascii_art')
     sage: shell.run_cell("i = var('i')")                                                # needs sage.symbolic
     sage: shell.run_cell('sum(factorial(i)*x^i, i, 0, 10)')                             # needs sage.symbolic
-             10           9          8         7        6        5       4      3
-    3628800*x   + 362880*x  + 40320*x  + 5040*x  + 720*x  + 120*x  + 24*x  + 6*x
+             10           9          8         7        6        5       4      3...
+    3628800*x   + 362880*x  + 40320*x  + 5040*x  + 720*x  + 120*x  + 24*x  + 6*x...
     <BLANKLINE>
-         2
-    + 2*x  + x + 1
+    ...2
+    ...+ 2*x  + x + 1
+
     sage: shell.run_cell('3/(7*x)')                                                     # needs sage.symbolic
      3
     ---
@@ -196,14 +197,14 @@ empty_ascii_art = _ascii_art_factory.build_empty()
 
 def ascii_art(*obj, **kwds):
     r"""
-    Return an ASCII art representation
+    Return an ASCII art representation.
 
     INPUT:
 
     - ``*obj`` -- any number of positional arguments, of arbitrary
       type. The objects whose ascii art representation we want.
 
-    - ``sep`` -- optional ``'sep=...'`` keyword argument (or ``'separator'``).
+    - ``sep`` -- (optional) ``'sep=...'`` keyword argument (or ``'separator'``).
       Anything that can be converted to ascii art (default: empty ascii
       art). The separator in-between a list of objects. Only used if
       more than one object given.
@@ -212,9 +213,7 @@ def ascii_art(*obj, **kwds):
 
     - ``sep_baseline`` -- (default: 0) the baseline for the separator
 
-    OUTPUT:
-
-    :class:`AsciiArt` instance.
+    OUTPUT: :class:`AsciiArt` instance
 
     EXAMPLES::
 

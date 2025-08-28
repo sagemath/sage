@@ -1,9 +1,12 @@
+# sage_setup: distribution = sagemath-repl
+# sage.doctest: needs sage.libs.flint sage.modular
 """
 This file contains a bunch of tests extracted from the published book
 'Modular Forms: a Computational Approach' by William Stein, AMS 2007.
 
 TESTS::
 
+    sage: # needs sage.libs.gap
     sage: G = SL(2,ZZ); G
     Special Linear Group of degree 2 over Integer Ring
     sage: S, T = G.gens()
@@ -13,6 +16,7 @@ TESTS::
     sage: T
     [1 1]
     [0 1]
+
     sage: delta_qexp(6)
     q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)
     sage: bernoulli(12)
@@ -30,11 +34,9 @@ TESTS::
     sage: E6^4
     1/64524128256 - 1/32006016*q + 241/10668672*q^2 + O(q^3)
     sage: victor_miller_basis(28,5)
-    [
-    1 + 15590400*q^3 + 36957286800*q^4 + O(q^5),
-    q + 151740*q^3 + 61032448*q^4 + O(q^5),
-    q^2 + 192*q^3 - 8280*q^4 + O(q^5)
-    ]
+    [1 + 15590400*q^3 + 36957286800*q^4 + O(q^5),
+     q + 151740*q^3 + 61032448*q^4 + O(q^5),
+     q^2 + 192*q^3 - 8280*q^4 + O(q^5)]
     sage: R.<q> = QQ[['q']]
     sage: F4 =  240 * eisenstein_series_qexp(4,3)
     sage: F6 = -504 * eisenstein_series_qexp(6,3)
@@ -46,12 +48,10 @@ TESTS::
     1 + 196560*q^2 + O(q^3)
     sage: M = ModularForms(1,36, prec=6).echelon_form()
     sage: M.basis()
-    [
-    1 + 6218175600*q^4 + 15281788354560*q^5 + O(q^6),
-    q + 57093088*q^4 + 37927345230*q^5 + O(q^6),
-    q^2 + 194184*q^4 + 7442432*q^5 + O(q^6),
-    q^3 - 72*q^4 + 2484*q^5 + O(q^6)
-    ]
+    [1 + 6218175600*q^4 + 15281788354560*q^5 + O(q^6),
+     q + 57093088*q^4 + 37927345230*q^5 + O(q^6),
+     q^2 + 194184*q^4 + 7442432*q^5 + O(q^6),
+     q^3 - 72*q^4 + 2484*q^5 + O(q^6)]
     sage: T2 = M.hecke_matrix(2); T2
     [     34359738369                0       6218175600 9026867482214400]
     [               0                0      34416831456    5681332472832]
@@ -192,11 +192,9 @@ TESTS::
     (x - 2)^2 * (x - 6)^3 * (x^2 - 8)^2
     sage: M = ModularSymbols(39, 2)
     sage: M.T(2).decomposition()
-    [
-    Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 9 for Gamma_0(39) of weight 2 with sign 0 over Rational Field,
-    Modular Symbols subspace of dimension 3 of Modular Symbols space of dimension 9 for Gamma_0(39) of weight 2 with sign 0 over Rational Field,
-    Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 9 for Gamma_0(39) of weight 2 with sign 0 over Rational Field
-    ]
+    [Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 9 for Gamma_0(39) of weight 2 with sign 0 over Rational Field,
+     Modular Symbols subspace of dimension 3 of Modular Symbols space of dimension 9 for Gamma_0(39) of weight 2 with sign 0 over Rational Field,
+     Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 9 for Gamma_0(39) of weight 2 with sign 0 over Rational Field]
     sage: M = ModularSymbols(2, 2)
     sage: M.boundary_map()
     Hecke module morphism boundary map defined by the matrix
@@ -286,10 +284,7 @@ TESTS::
     sage: f(1,0)
     -1/3*q^2 + 2/3*q^3 + 1/3*q^4 - 2/3*q^5 + O(q^6)
     sage: S.q_expansion_basis(6)
-    [
-    q - q^3 - q^4 + O(q^6),
-    q^2 - 2*q^3 - q^4 + 2*q^5 + O(q^6)
-    ]
+    [q - q^3 - q^4 + O(q^6), q^2 - 2*q^3 - q^4 + 2*q^5 + O(q^6)]
     sage: R = Integers(49)
     sage: R
     Ring of integers modulo 49
@@ -338,16 +333,14 @@ TESTS::
     1
     sage: G = DirichletGroup(20)
     sage: G.galois_orbits()
-    [
-    [Dirichlet character modulo 20 of conductor 20 mapping 11 |--> -1, 17 |--> -1],
-    [Dirichlet character modulo 20 of conductor 20 mapping 11 |--> -1, 17 |--> -zeta4,
-     Dirichlet character modulo 20 of conductor 20 mapping 11 |--> -1, 17 |--> zeta4],
-    [Dirichlet character modulo 20 of conductor 4 mapping 11 |--> -1, 17 |--> 1],
-    [Dirichlet character modulo 20 of conductor 5 mapping 11 |--> 1, 17 |--> -1],
-    [Dirichlet character modulo 20 of conductor 5 mapping 11 |--> 1, 17 |--> -zeta4,
-     Dirichlet character modulo 20 of conductor 5 mapping 11 |--> 1, 17 |--> zeta4],
-    [Dirichlet character modulo 20 of conductor 1 mapping 11 |--> 1, 17 |--> 1]
-    ]
+    [[Dirichlet character modulo 20 of conductor 20 mapping 11 |--> -1, 17 |--> -1],
+     [Dirichlet character modulo 20 of conductor 20 mapping 11 |--> -1, 17 |--> -zeta4,
+      Dirichlet character modulo 20 of conductor 20 mapping 11 |--> -1, 17 |--> zeta4],
+     [Dirichlet character modulo 20 of conductor 4 mapping 11 |--> -1, 17 |--> 1],
+     [Dirichlet character modulo 20 of conductor 5 mapping 11 |--> 1, 17 |--> -1],
+     [Dirichlet character modulo 20 of conductor 5 mapping 11 |--> 1, 17 |--> -zeta4,
+      Dirichlet character modulo 20 of conductor 5 mapping 11 |--> 1, 17 |--> zeta4],
+     [Dirichlet character modulo 20 of conductor 1 mapping 11 |--> 1, 17 |--> 1]]
     sage: G = DirichletGroup(11, QQ); G
     Group of Dirichlet characters modulo 11 with values in Rational Field
     sage: list(G)
@@ -419,19 +412,17 @@ TESTS::
     -108846/5*zeta4 - 176868/5
     sage: E = EisensteinForms(Gamma1(13),2)
     sage: E.eisenstein_series()
-    [
-    1/2 + q + 3*q^2 + 4*q^3 + 7*q^4 + 6*q^5 + O(q^6),
-    -7/13*zeta6 - 11/13 + q + (2*zeta6 + 1)*q^2 + (-3*zeta6 + 1)*q^3 + (6*zeta6 - 3)*q^4 - 4*q^5 + O(q^6),
-    q + (zeta6 + 2)*q^2 + (-zeta6 + 3)*q^3 + (3*zeta6 + 3)*q^4 + 4*q^5 + O(q^6),
-    -zeta6 + q + (2*zeta6 - 1)*q^2 + (3*zeta6 - 2)*q^3 + (-2*zeta6 - 1)*q^4 + 6*q^5 + O(q^6),
-    q + (zeta6 + 1)*q^2 + (zeta6 + 2)*q^3 + (zeta6 + 2)*q^4 + 6*q^5 + O(q^6),
-    -1 + q - q^2 + 4*q^3 + 3*q^4 - 4*q^5 + O(q^6),
-    q + q^2 + 4*q^3 + 3*q^4 + 4*q^5 + O(q^6),
-    zeta6 - 1 + q + (-2*zeta6 + 1)*q^2 + (-3*zeta6 + 1)*q^3 + (2*zeta6 - 3)*q^4 + 6*q^5 + O(q^6),
-    q + (-zeta6 + 2)*q^2 + (-zeta6 + 3)*q^3 + (-zeta6 + 3)*q^4 + 6*q^5 + O(q^6),
-    7/13*zeta6 - 18/13 + q + (-2*zeta6 + 3)*q^2 + (3*zeta6 - 2)*q^3 + (-6*zeta6 + 3)*q^4 - 4*q^5 + O(q^6),
-    q + (-zeta6 + 3)*q^2 + (zeta6 + 2)*q^3 + (-3*zeta6 + 6)*q^4 + 4*q^5 + O(q^6)
-    ]
+    [1/2 + q + 3*q^2 + 4*q^3 + 7*q^4 + 6*q^5 + O(q^6),
+     -7/13*zeta6 - 11/13 + q + (2*zeta6 + 1)*q^2 + (-3*zeta6 + 1)*q^3 + (6*zeta6 - 3)*q^4 - 4*q^5 + O(q^6),
+     q + (zeta6 + 2)*q^2 + (-zeta6 + 3)*q^3 + (3*zeta6 + 3)*q^4 + 4*q^5 + O(q^6),
+     -zeta6 + q + (2*zeta6 - 1)*q^2 + (3*zeta6 - 2)*q^3 + (-2*zeta6 - 1)*q^4 + 6*q^5 + O(q^6),
+     q + (zeta6 + 1)*q^2 + (zeta6 + 2)*q^3 + (zeta6 + 2)*q^4 + 6*q^5 + O(q^6),
+     -1 + q - q^2 + 4*q^3 + 3*q^4 - 4*q^5 + O(q^6),
+     q + q^2 + 4*q^3 + 3*q^4 + 4*q^5 + O(q^6),
+     zeta6 - 1 + q + (-2*zeta6 + 1)*q^2 + (-3*zeta6 + 1)*q^3 + (2*zeta6 - 3)*q^4 + 6*q^5 + O(q^6),
+     q + (-zeta6 + 2)*q^2 + (-zeta6 + 3)*q^3 + (-zeta6 + 3)*q^4 + 6*q^5 + O(q^6),
+     7/13*zeta6 - 18/13 + q + (-2*zeta6 + 3)*q^2 + (3*zeta6 - 2)*q^3 + (-6*zeta6 + 3)*q^4 - 4*q^5 + O(q^6),
+     q + (-zeta6 + 3)*q^2 + (zeta6 + 2)*q^3 + (-3*zeta6 + 6)*q^4 + 4*q^5 + O(q^6)]
     sage: e = E.eisenstein_series()
     sage: for e in E.eisenstein_series():
     ....:     print(e.parameters())
@@ -534,21 +525,15 @@ TESTS::
     of dimension 10 for Congruence Subgroup Gamma0(45) of
     weight 2 over Rational Field
     sage: S.basis()
-    [
-    q - q^4 - q^10 - 2*q^13 + O(q^14),
-    q^2 - q^5 - 3*q^8 + 4*q^11 + O(q^14),
-    q^3 - q^6 - q^9 - q^12 + O(q^14)
-    ]
+    [q - q^4 - q^10 - 2*q^13 + O(q^14),
+     q^2 - q^5 - 3*q^8 + 4*q^11 + O(q^14),
+     q^3 - q^6 - q^9 - q^12 + O(q^14)]
     sage: S.new_subspace().basis()
-    [
-    q + q^2 - q^4 - q^5 - 3*q^8 - q^10 + 4*q^11 - 2*q^13 + O(q^14)
-    ]
+    [q + q^2 - q^4 - q^5 - 3*q^8 - q^10 + 4*q^11 - 2*q^13 + O(q^14)]
     sage: CuspForms(Gamma0(9),2)
     Cuspidal subspace of dimension 0 of Modular Forms space
     of dimension 3 for Congruence Subgroup Gamma0(9) of
     weight 2 over Rational Field
     sage: CuspForms(Gamma0(15),2, prec=10).basis()
-    [
-    q - q^2 - q^3 - q^4 + q^5 + q^6 + 3*q^8 + q^9 + O(q^10)
-    ]
+    [q - q^2 - q^3 - q^4 + q^5 + q^6 + 3*q^8 + q^9 + O(q^10)]
 """

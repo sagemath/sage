@@ -21,6 +21,8 @@ ntl_configure()
 
     cd "$SRC"
 
+    cp "$SAGE_ROOT"/config/config.* src/libtool-origin/
+
     # Run the configure script, setting CC, CXX, CFLAGS etc as needed.
     # This ensures that they get written by DoConfig into 'makefile'.
     CFLAGS="-O2 -g $CFLAGS"
@@ -30,9 +32,6 @@ ntl_configure()
       Darwin)
         echo "Setting SHAREDFLAGS to '-fno-common'"
         SHAREDFLAGS="-fno-common"
-        ;;
-      CYGWIN)
-        LIBTOOL_LINK_FLAGS="-no-undefined"
         ;;
     esac
 
@@ -115,11 +114,6 @@ ntl_build()
 
 ntl_install()
 {
-    echo
-    echo "Removing old NTL files."
-    rm -rf "$SAGE_LOCAL"/lib/libntl*
-    rm -rf "$SAGE_LOCAL"/include/NTL
-
     echo
     echo "Installing NTL."
 

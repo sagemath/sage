@@ -29,7 +29,7 @@ class OrthogonalMatrixGroup_gap(OrthogonalMatrixGroup_generic, NamedMatrixGroup_
 
     TESTS:
 
-    Check that :trac:`20867` is fixed::
+    Check that :issue:`20867` is fixed::
 
         sage: from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
         sage: G = GO(3,3)

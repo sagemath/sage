@@ -1,1 +1,2 @@
-libfplll libfplll-devel
+libfplll
+libfplll-devel

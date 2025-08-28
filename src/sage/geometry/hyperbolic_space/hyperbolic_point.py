@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Hyperbolic Points
 
@@ -65,7 +64,7 @@ from sage.structure.element import Element
 from sage.structure.richcmp import richcmp, op_NE
 from sage.symbolic.constants import I
 from sage.misc.latex import latex
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.rings.infinity import infinity
@@ -74,6 +73,7 @@ from sage.rings.real_mpfr import RR
 from sage.functions.other import real, imag
 
 from sage.geometry.hyperbolic_space.hyperbolic_isometry import HyperbolicIsometry
+
 
 class HyperbolicPoint(Element):
     r"""
@@ -86,7 +86,7 @@ class HyperbolicPoint(Element):
     - ``coordinates`` -- the coordinates of a hyperbolic point in the
       appropriate model
     - ``is_boundary`` -- whether the point is a boundary point
-    - ``check`` -- (default: ``True``) if ``True``, then check to make sure
+    - ``check`` -- boolean (default: ``True``); if ``True``, then check to make sure
       the coordinates give a valid point in the model
 
     EXAMPLES:
@@ -271,7 +271,7 @@ class HyperbolicPoint(Element):
 
     def _richcmp_(self, other, op):
         r"""
-        Comparison of self and other.
+        Comparison of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -319,13 +319,13 @@ class HyperbolicPoint(Element):
         We also lift matrices into isometries::
 
             sage: B = diagonal_matrix([-1, -1, 1])
-            sage: B = HyperbolicPlane().HM().get_isometry(B)
+            sage: B = HyperbolicPlane().HM().get_isometry(B)                            # needs scipy
             sage: B * HyperbolicPlane().HM().get_point((0, 1, sqrt(2)))
             Point in HM (0, -1, sqrt(2))
         """
         if isinstance(other, HyperbolicIsometry):
             return other(self)
-        elif is_Matrix(other):
+        elif isinstance(other, Matrix):
             # TODO: Currently the __mul__ from the matrices gets called first
             #    and returns an error instead of calling this method
             A = self.parent().get_isometry(other)
@@ -444,7 +444,7 @@ class HyperbolicPoint(Element):
 
         EXAMPLES::
 
-            sage: p = HyperbolicPlane().UHP().get_point(2 + I, color="red")
+            sage: p = HyperbolicPlane().UHP().get_point(2 + I, color='red')
             sage: p.graphics_options()
             {'color': 'red'}
         """
@@ -492,7 +492,7 @@ class HyperbolicPoint(Element):
             sage: A.preserves_orientation()
             True
 
-            sage: A*A == HyperbolicPlane().UHP().get_isometry(identity_matrix(2))
+            sage: A*A == HyperbolicPlane().UHP().get_isometry(identity_matrix(2))       # needs scipy
             True
         """
         R = self.parent().realization_of().a_realization()
@@ -509,11 +509,11 @@ class HyperbolicPoint(Element):
 
         EXAMPLES::
 
-            sage: HyperbolicPlane().PD().get_point(0).show()
+            sage: HyperbolicPlane().PD().get_point(0).show()                            # needs sage.plot
             Graphics object consisting of 2 graphics primitives
-            sage: HyperbolicPlane().KM().get_point((0,0)).show()
+            sage: HyperbolicPlane().KM().get_point((0,0)).show()                        # needs sage.plot
             Graphics object consisting of 2 graphics primitives
-            sage: HyperbolicPlane().HM().get_point((0,0,1)).show()
+            sage: HyperbolicPlane().HM().get_point((0,0,1)).show()                      # needs sage.plot
             Graphics3d Object
         """
         p = self.coordinates()
@@ -588,7 +588,7 @@ class HyperbolicPointUHP(HyperbolicPoint):
 
             sage: HyperbolicPlane().UHP().get_point(I).show()
             Graphics object consisting of 2 graphics primitives
-            sage: HyperbolicPlane().UHP().get_point(0).show()
+            sage: HyperbolicPlane().UHP().get_point(0).show()                           # needs sage.plot
             Graphics object consisting of 2 graphics primitives
             sage: HyperbolicPlane().UHP().get_point(infinity).show()
             Traceback (most recent call last):

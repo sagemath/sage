@@ -1,1 +1,1 @@
-"pkgconfig(bdw-gc)"
+pkgconfig(bdw-gc)

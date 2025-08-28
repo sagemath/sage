@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.groups
 r"""
 Finite Coxeter Groups
@@ -27,7 +28,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
         sage: CoxeterGroups.Finite()
         Category of finite Coxeter groups
         sage: FiniteCoxeterGroups().super_categories()
-        [Category of finite generalized coxeter groups,
+        [Category of finite generalized Coxeter groups,
          Category of Coxeter groups]
 
         sage: G = CoxeterGroups().Finite().example()
@@ -54,7 +55,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
         EXAMPLES::
 
             sage: CoxeterGroups().Finite().super_categories()
-            [Category of finite generalized coxeter groups,
+            [Category of finite generalized Coxeter groups,
              Category of Coxeter groups]
         """
         from sage.categories.complex_reflection_groups import ComplexReflectionGroups
@@ -66,7 +67,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
         is preferable to that of :class:`FiniteGroups`. The same holds
         for ``__iter__``, although a breadth first search would be more
         natural; at least this maintains backward compatibility after
-        :trac:`13589`.
+        :issue:`13589`.
 
         TESTS::
 
@@ -112,8 +113,8 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             - ``index_set`` -- a subset (as a list or iterable) of the
               nodes of the Dynkin diagram; (default: all of them)
 
-            - ``as_word`` -- boolean (default ``False``). If ``True``, then
-              return instead a reduced decomposition of the longest element.
+            - ``as_word`` -- boolean (default: ``False``); if ``True``, then
+              return instead a reduced decomposition of the longest element
 
             Should this method be called maximal_element? longest_element?
 
@@ -273,7 +274,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             was defined in [BHZ2005]_.
 
             This partial order is not a lattice, as there is no unique
-            maximal element. It can be succintly defined as follows.
+            maximal element. It can be succinctly defined as follows.
 
             Let `u` and `v` be two elements of the Coxeter group `W`. Let
             `S(u)` be the support of `u`. Then `u \leq v` if and only
@@ -393,12 +394,12 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             return tuple(d - 2 for d in self.degrees())
 
         @cached_method
-        def weak_poset(self, side="right", facade=False):
+        def weak_poset(self, side='right', facade=False):
             """
             INPUT:
 
-            - ``side`` -- "left", "right", or "twosided" (default: "right")
-            - ``facade`` -- a boolean (default: ``False``)
+            - ``side`` -- "left", "right", or "twosided" (default: ``'right'``)
+            - ``facade`` -- boolean (default: ``False``)
 
             Returns the left (resp. right) poset for weak order.  In
             this poset, `u` is smaller than `v` if some reduced word
@@ -478,7 +479,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             from sage.combinat.posets.posets import Poset
             from sage.combinat.posets.lattices import LatticePoset
             if side == "twosided":
-                covers = tuple([u, v] for u in self for v in u.upper_covers(side="left") + u.upper_covers(side="right"))
+                covers = tuple([u, v] for u in self for v in u.upper_covers(side='left') + u.upper_covers(side='right'))
                 return Poset((self, covers), cover_relations=True,
                              facade=facade)
             covers = tuple([u, v] for u in self for v in u.upper_covers(side=side))
@@ -498,7 +499,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             INPUT:
 
             - ``word`` -- a word in the indices of the simple
-              generators of ``self``.
+              generators of ``self``
 
             EXAMPLES::
 
@@ -510,7 +511,6 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
 
                 sage: [t.reduced_word() for t in CoxeterGroup(["A",3]).inversion_sequence([2,1,3,2,1,3])]
                 [[2], [1, 2, 1], [2, 3, 2], [1, 2, 3, 2, 1], [3], [1]]
-
             """
             return [self.from_reduced_word(word[:i+1]+list(reversed(word[:i])))
                     for i in range(len(word))]
@@ -551,12 +551,12 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
 
             INPUT:
 
-            - `c` -- a Coxeter element of ``self`` (as a tuple, or
+            - ``c`` -- a Coxeter element of ``self`` (as a tuple, or
               as an element of ``self``)
 
-            - `m` -- a positive integer (optional, default 1)
+            - ``m`` -- positive integer (default: 1)
 
-            - ``on_roots`` (optional, default ``False``) -- if
+            - ``on_roots`` -- boolean (default: ``False``); if
               ``on_roots`` is ``True``, the lattice is realized on
               roots rather than on reflections. In order for this to
               work, the ElementMethod ``reflection_to_root`` must be
@@ -596,7 +596,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             covers = []
 
             bottom_elt = frozenset((s, 0) for s in S)
-            new = set([bottom_elt])
+            new = {bottom_elt}
             while new:
                 new_element = new.pop()
                 elements.add(new_element)
@@ -636,14 +636,14 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             See :arxiv:`1503.00710` and :arxiv:`math/0611106`.
 
             Delta sequences are certain 2-colored minimal factorizations
-            of ``c`` into reflections.
+            of `c` into reflections.
 
             INPUT:
 
             - ``c`` -- a standard Coxeter element in ``self``
               (as a tuple, or as an element of ``self``)
 
-            - ``on_roots`` (optional, default ``False``) -- if
+            - ``on_roots`` -- boolean (default: ``False``); if
               ``on_roots`` is ``True``, the lattice is realized on
               roots rather than on reflections. In order for this to
               work, the ElementMethod ``reflection_to_root`` must be
@@ -677,7 +677,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
 
         def permutahedron(self, point=None, base_ring=None):
             r"""
-            Return the permutahedron of ``self``,
+            Return the permutahedron of ``self``.
 
             This is the convex hull of the point ``point`` in the weight
             basis under the action of ``self`` on the underlying vector
@@ -689,9 +689,9 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
 
             INPUT:
 
-            - ``point`` -- optional, a point given by its coordinates in
-              the weight basis (default is `(1, 1, 1, \ldots)`)
-            - ``base_ring`` -- optional, the base ring of the polytope
+            - ``point`` -- (optional) a point given by its coordinates in
+              the weight basis (default: `(1, 1, 1, \ldots)`)
+            - ``base_ring`` -- (optional) the base ring of the polytope
 
             .. NOTE::
 
@@ -740,7 +740,6 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 W = CoxeterGroup(['I',7])
                 p = W.permutahedron()
                 sphinx_plot(p)
-
             """
             n = self.one().canonical_matrix().rank()
             weights = self.fundamental_weights()
@@ -800,7 +799,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 3
 
                 sage: # optional - gap3
-                sage: W = CoxeterGroup(['H', 3], implementation="permutation")
+                sage: W = CoxeterGroup(['H', 3], implementation='permutation')
                 sage: P = W.coxeter_poset()
                 sage: P
                 Finite meet-semilattice containing 363 elements
@@ -809,7 +808,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             """
             I = self.index_set()
             data = {}
-            next_level = set((g, ()) for g in self)
+            next_level = {(g, ()) for g in self}
             while next_level:
                 cur = next_level
                 next_level = set()
@@ -873,7 +872,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 {0: 0, 1: 0, 2: Z}
 
                 sage: # optional - gap3
-                sage: W = CoxeterGroup(['H', 3], implementation="permutation")
+                sage: W = CoxeterGroup(['H', 3], implementation='permutation')
                 sage: C = W.coxeter_complex()
                 sage: C
                 Simplicial complex with 62 vertices and 120 facets
@@ -907,10 +906,42 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
 
     class ElementMethods:
 
+        def absolute_length(self):
+            """
+            Return the absolute length of ``self``.
+
+            The absolute length is the length of the shortest expression
+            of the element as a product of reflections. For finite Coxeter
+            groups, the absolute length is the codimension of the
+            1-eigenspace of the element (Lemmas 1-3 in [Car1972a]_).
+
+            For permutations in the symmetric groups, the absolute
+            length is the size minus the number of its disjoint
+            cycles.
+
+            .. SEEALSO::
+
+                :meth:`~sage.categories.coxeter_groups.absolute_le`
+
+            EXAMPLES::
+
+                sage: W = WeylGroup(["A", 3])                                           # needs sage.combinat sage.groups
+                sage: s = W.simple_reflections()                                        # needs sage.combinat sage.groups
+                sage: (s[1]*s[2]*s[3]).absolute_length()                                # needs sage.combinat sage.groups
+                3
+
+                sage: W = SymmetricGroup(4)                                             # needs sage.groups
+                sage: s = W.simple_reflections()                                        # needs sage.groups
+                sage: (s[3]*s[2]*s[1]).absolute_length()                                # needs sage.combinat sage.groups
+                3
+            """
+            M = self.canonical_matrix()
+            return (M - 1).image().dimension()
+
         @cached_in_parent_method
         def bruhat_upper_covers(self):
             r"""
-            Returns all the elements that cover ``self`` in Bruhat order.
+            Return all the elements that cover ``self`` in Bruhat order.
 
             EXAMPLES::
 
@@ -988,7 +1019,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 raise NotImplementedError("this has only been implemented in finite type A so far")
             d = []
             for i in range(2, len(w)):
-                v = [j for j in w]
+                v = list(w)
                 if w[i-2] == w[i]:
                     if w[i] == w[i-1] - 1:
                         v[i-2] = w[i-1]

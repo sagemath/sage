@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 With Realizations Covariant Functorial Construction
 
@@ -90,7 +91,7 @@ def WithRealizations(self):
     to `B'` is implemented by a canonical coercion between `P_B` and
     `P_{B'}`::
 
-        sage: # needs sage.combinat sage.modules
+        sage: # needs sage.modules
         sage: F = A.F(); In = A.In(); Out = A.Out()
         sage: i = In.an_element(); i
         In[{}] + 2*In[{1}] + 3*In[{2}] + In[{1, 2}]
@@ -103,7 +104,7 @@ def WithRealizations(self):
 
     allowing for mixed arithmetic::
 
-        sage: (1 + Out.from_set(1)) * In.from_set(2,3)                                  # needs sage.combinat sage.modules
+        sage: (1 + Out.from_set(1)) * In.from_set(2,3)                                  # needs sage.modules
         Out[{}] + 2*Out[{1}] + 2*Out[{2}] + 2*Out[{3}] + 2*Out[{1, 2}]
         + 2*Out[{1, 3}] + 4*Out[{2, 3}] + 4*Out[{1, 2, 3}]
 
@@ -117,7 +118,7 @@ def WithRealizations(self):
     Instead of manually defining the shorthands ``F``, ``In``, and
     ``Out``, as above one can just do::
 
-        sage: A.inject_shorthands()                                                     # needs sage.combinat sage.modules
+        sage: A.inject_shorthands()                                                     # needs sage.modules
         Defining F as shorthand for
          The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis
         Defining In as shorthand for
@@ -159,9 +160,9 @@ def WithRealizations(self):
     However we can create a polynomial with mixed coefficients, and
     compute with it::
 
-        sage: p = P([1, In[{1}], Out[{2}] ]); p                                         # needs sage.combinat sage.modules
+        sage: p = P([1, In[{1}], Out[{2}] ]); p                                         # needs sage.modules
         Out[{2}]*x^2 + In[{1}]*x + F[{}]
-        sage: p^2                                                                       # needs sage.combinat sage.modules
+        sage: p^2                                                                       # needs sage.modules
         Out[{2}]*x^4
         + (-8*In[{}] + 4*In[{1}] + 8*In[{2}] + 4*In[{3}]
            - 4*In[{1, 2}] - 2*In[{1, 3}] - 4*In[{2, 3}] + 2*In[{1, 2, 3}])*x^3
@@ -176,7 +177,7 @@ def WithRealizations(self):
 
     One can easily coerce all coefficient to a given basis with::
 
-        sage: p.map_coefficients(In)                                                    # needs sage.combinat sage.modules
+        sage: p.map_coefficients(In)                                                    # needs sage.modules
         (-4*In[{}] + 2*In[{1}] + 4*In[{2}] + 2*In[{3}]
          - 2*In[{1, 2}] - In[{1, 3}] - 2*In[{2, 3}] + In[{1, 2, 3}])*x^2
         + In[{1}]*x + In[{}]
@@ -184,7 +185,7 @@ def WithRealizations(self):
     Alas, the natural notation for constructing such polynomials does
     not yet work::
 
-        sage: In[{1}] * x                                                               # needs sage.combinat sage.modules
+        sage: In[{1}] * x                                                               # needs sage.modules
         Traceback (most recent call last):
         ...
         TypeError: unsupported operand parent(s) for *:
@@ -271,9 +272,9 @@ def WithRealizations(self):
         sage: Semigroups().WithRealizations()
         Join of Category of semigroups and Category of sets with realizations
         sage: C = GradedHopfAlgebrasWithBasis(QQ).WithRealizations(); C
-        Category of graded hopf algebras with basis over Rational Field with realizations
+        Category of graded Hopf algebras with basis over Rational Field with realizations
         sage: C.super_categories()
-        [Join of Category of hopf algebras over Rational Field
+        [Join of Category of Hopf algebras over Rational Field
              and Category of graded algebras over Rational Field
              and Category of graded coalgebras over Rational Field]
         sage: TestSuite(Semigroups().WithRealizations()).run()
@@ -282,6 +283,7 @@ def WithRealizations(self):
 
 
 Category.WithRealizations = WithRealizations
+
 
 class WithRealizationsCategory(RegressiveCovariantConstructionCategory):
     """
@@ -302,8 +304,8 @@ class WithRealizationsCategory(RegressiveCovariantConstructionCategory):
 
         EXAMPLES::
 
-            sage: C = GradedHopfAlgebrasWithBasis(QQ).WithRealizations(); C #indirect doctest
-            Category of graded hopf algebras with basis over Rational Field with realizations
+            sage: C = GradedHopfAlgebrasWithBasis(QQ).WithRealizations(); C  # indirect doctest
+            Category of graded Hopf algebras with basis over Rational Field with realizations
         """
         s = repr(self.base_category())
-        return s+" with realizations"
+        return s + " with realizations"

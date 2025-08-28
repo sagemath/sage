@@ -4,6 +4,7 @@
 # is installed by the "sage_brial" spkg.
 #
 cd src
+cp "$SAGE_ROOT"/config/config.* .
 sdh_configure \
     --enable-shared --disable-static \
     --with-boost-unit-test-framework=no

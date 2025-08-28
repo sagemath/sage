@@ -4,7 +4,7 @@ from sage.rings.morphism cimport RingMap
 from sage.rings.ring_extension_element cimport RingExtensionElement
 
 
-cdef are_equal_morphisms(f, g) noexcept
+cdef are_equal_morphisms(f, g)
 
 
 cdef class RingExtensionHomomorphism(RingMap):
@@ -31,4 +31,4 @@ cdef class MapRelativeRingToFreeModule(Map):
     cdef Map _jL
     cdef _matrix
 
-    cdef list backend_coefficients(self, RingExtensionElement x) noexcept
+    cdef list backend_coefficients(self, RingExtensionElement x)

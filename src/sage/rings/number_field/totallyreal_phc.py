@@ -1,9 +1,9 @@
 """
-Enumeration of Totally Real Fields: PHC interface
+Enumeration of totally real fields: PHC interface
 
 AUTHORS:
 
-- John Voight (2007-10-10): Zeroth attempt.
+- John Voight (2007-09-19): initial version
 """
 
 # ****************************************************************************
@@ -28,20 +28,14 @@ def coefficients_to_power_sums(n, m, a):
 
     INPUT:
 
-    - ``n`` -- integer, the degree
-    - ``a`` -- list of integers, the coefficients
+    - ``n`` -- integer; the degree
+    - ``a`` -- list of integers; the coefficients
 
-    OUTPUT:
-
-    list of integers.
+    OUTPUT: list of integers
 
     .. NOTE::
 
         This uses Newton's relations, which are classical.
-
-    AUTHORS:
-
-    - John Voight (2007-09-19)
 
     EXAMPLES::
 
@@ -68,21 +62,15 @@ def __lagrange_bounds_phc(n, m, a, tmpfile=None):
 
     INPUT:
 
-    - k -- integer, the index of the next coefficient
-    - a -- list of integers, the coefficients
+    - ``k`` -- integer; the index of the next coefficient
+    - ``a`` -- list of integers; the coefficients
 
-    OUTPUT:
-
-    the lower and upper bounds as real numbers.
+    OUTPUT: the lower and upper bounds as real numbers
 
     .. NOTE::
 
         See Cohen [Coh2000]_ for the general idea and unpublished work of the
         author for more detail.
-
-    AUTHORS:
-
-    - John Voight (2007-09-19)
 
     EXAMPLES::
 
@@ -136,7 +124,7 @@ def __lagrange_bounds_phc(n, m, a, tmpfile=None):
 
         os.remove(tmpfile + '.phc')
         os.popen('phc -b ' + tmpfile + ' ' + tmpfile + '.phc')
-        f = open(tmpfile + '.phc', 'r')
+        f = open(tmpfile + '.phc')
         f_str = f.read()
         pos = f_str.find('= real ')
         crits = []

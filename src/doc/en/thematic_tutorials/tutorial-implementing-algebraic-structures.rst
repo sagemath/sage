@@ -199,6 +199,7 @@ Ok, let's run the tests::
       Running the test suite of self.an_element()
       running ._test_category() . . . pass
       running ._test_eq() . . . pass
+      running ._test_monomial_coefficients() . . . pass
       running ._test_new() . . . pass
       running ._test_nonzero_equal() . . . pass
       running ._test_not_implemented_methods() . . . pass
@@ -432,7 +433,7 @@ Coercions
 Once we have defined a morphism from `X \to Y`, we can register it as
 a coercion.  This will allow Sage to apply the morphism automatically
 whenever we combine elements of `X` and `Y` together. See
-http://sagemath.com/doc/reference/coercion.html for more
+https://doc.sagemath.org/html/en/reference/coercion/index.html for more
 information. As a training step, let us first define a morphism `X` to
 `Y`, and register it as a coercion::
 

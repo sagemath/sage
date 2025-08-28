@@ -17,4 +17,4 @@ cdef struct cache_entry:
 cdef cache_entry * _OA_cache
 cdef int _OA_cache_size
 
-cpdef _OA_cache_get(int k, int n) noexcept
+cpdef _OA_cache_get(int k, int n)

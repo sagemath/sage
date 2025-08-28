@@ -6,4 +6,4 @@ cdef inline unsigned int hamming_weight(unsigned int x) noexcept:
     x *= 0x01010101UL
     return x>>24
 
-cdef walsh_hadamard(long *f, int ldn) noexcept
+cdef walsh_hadamard(long *f, int ldn)

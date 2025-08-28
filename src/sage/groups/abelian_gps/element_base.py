@@ -30,7 +30,7 @@ from sage.structure.richcmp import richcmp
 
 class AbelianGroupElementBase(MultiplicativeGroupElement):
     """
-    Base class for abelian group elements
+    Base class for abelian group elements.
 
     The group element is defined by a tuple whose ``i``-th entry is an
     integer in the range from 0 (inclusively) to ``G.gen(i).order()``
@@ -39,16 +39,16 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
 
     INPUT:
 
-    - ``exponents`` -- ``1`` or a list/tuple/iterable of integers. The
+    - ``exponents`` -- ``1`` or a list/tuple/iterable of integers; the
       exponent vector (with respect to the parent generators) defining
-      the group element.
+      the group element
 
-    - ``parent`` -- Abelian group. The parent of the group element.
+    - ``parent`` -- abelian group; the parent of the group element
 
     EXAMPLES::
 
         sage: F = AbelianGroup(3,[7,8,9])
-        sage: Fd = F.dual_group(names="ABC")                                            # needs sage.rings.number_field
+        sage: Fd = F.dual_group(names='ABC')                                            # needs sage.rings.number_field
         sage: A,B,C = Fd.gens()                                                         # needs sage.rings.number_field
         sage: A*B^-1 in Fd                                                              # needs sage.rings.number_field
         True
@@ -61,7 +61,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         EXAMPLES::
 
             sage: F = AbelianGroup(3,[7,8,9])
-            sage: Fd = F.dual_group(names="ABC")                                        # needs sage.rings.number_field
+            sage: Fd = F.dual_group(names='ABC')                                        # needs sage.rings.number_field
             sage: A,B,C = Fd.gens()                                                     # needs sage.rings.number_field
             sage: A*B^-1 in Fd                                                          # needs sage.rings.number_field
             True
@@ -148,9 +148,9 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         EXAMPLES::
 
             sage: # needs sage.rings.number_field
-            sage: F = AbelianGroup(5,[2, 3, 5, 7, 8], names="abcde")
+            sage: F = AbelianGroup(5,[2, 3, 5, 7, 8], names='abcde')
             sage: a,b,c,d,e = F.gens()
-            sage: Ad = F.dual_group(names="ABCDE")
+            sage: Ad = F.dual_group(names='ABCDE')
             sage: A,B,C,D,E = Ad.gens()
             sage: (A*B*C^2*D^20*E^65).exponents()
             (1, 1, 2, 6, 1)
@@ -164,10 +164,6 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
     def _repr_(self):
         """
         Return a string representation of ``self``.
-
-        OUTPUT:
-
-        String.
 
         EXAMPLES::
 
@@ -199,9 +195,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
 
         The comparison is based on the exponents.
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -220,9 +214,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         """
         Return the order of this element.
 
-        OUTPUT:
-
-        An integer or ``infinity``.
+        OUTPUT: integer or ``infinity``
 
         EXAMPLES::
 
@@ -256,7 +248,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
 
     def _div_(left, right):
         """
-        Divide ``left`` and ``right``
+        Divide ``left`` and ``right``.
 
         TESTS::
 
@@ -274,7 +266,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
 
     def _mul_(left, right):
         """
-        Multiply ``left`` and ``right``
+        Multiply ``left`` and ``right``.
 
         TESTS::
 
@@ -292,7 +284,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
 
     def __pow__(self, n):
         """
-        Exponentiate ``self``
+        Exponentiate ``self``.
 
         TESTS::
 
@@ -335,9 +327,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         """
         Test whether ``self`` is the trivial group element ``1``.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

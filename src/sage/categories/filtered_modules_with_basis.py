@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Filtered Modules With Basis
 
@@ -32,6 +33,8 @@ from sage.categories.filtered_modules import FilteredModulesCategory
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.categories.subobjects import SubobjectsCategory
+from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
+
 
 class FilteredModulesWithBasis(FilteredModulesCategory):
     r"""
@@ -123,7 +126,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
             INPUT:
 
-            - ``d`` -- (optional, default ``None``) nonnegative integer
+            - ``d`` -- (default: ``None``) nonnegative integer
               or ``None``
 
             OUTPUT:
@@ -156,7 +159,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
                  over Integer Ring(i))_{i in Partitions}
 
             Checking this method on a filtered algebra. Note that this
-            will typically raise a ``NotImplementedError`` when this
+            will typically raise a :exc:`NotImplementedError` when this
             feature is not implemented. ::
 
                 sage: A = AlgebrasWithBasis(ZZ).Filtered().example()
@@ -245,6 +248,52 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
                                already_echelonized=True)
             M.rename("Degree {} homogeneous component of {}".format(d, self))
             return M
+
+        def hilbert_series(self, prec=None):
+            r"""
+            Return the Hilbert series of ``self``.
+
+            Let `R` be a commutative ring (with unit). Let
+            `M = \bigcup_{n=0}^{\infty} M_n` be a filtered `R`-module.
+            The *Hilbert series* of `M` is the formal power series
+
+            .. MATH::
+
+                H(t) = \sum_{n=0}^{\infty} \ell(M_n / M_{n-1}) t^n,
+
+            where `\ell(N)` is the *length* of `N`, which is the
+            longest chain of submodules (over `R`), and by convention
+            `M_{-1} = \{0\}`. By the assumptions of the category,
+            `M_n / M_{n-1}` is a free `R`-module, and so `\ell(M_n / M_{n-1})`
+            is equal to the rank of `M_n / M_{n-1}`.
+
+            INPUT:
+
+            - ``prec`` -- (default: `\infty`) the precision
+
+            OUTPUT:
+
+            If the precision is finite, then this returns an element in the
+            :class:`PowerSeriesRing` over ``ZZ``. Otherwise it returns an
+            element in the :class:`LazyPowerSeriesRing` over ``ZZ``.
+
+            EXAMPLES::
+
+                sage: A = GradedModulesWithBasis(ZZ).example()
+                sage: A.hilbert_series()
+                1 + t + 2*t^2 + 3*t^3 + 5*t^4 + 7*t^5 + 11*t^6 + O(t^7)
+                sage: A.hilbert_series(10)
+                1 + t + 2*t^2 + 3*t^3 + 5*t^4 + 7*t^5 + 11*t^6 + 15*t^7 + 22*t^8 + 30*t^9 + O(t^10)
+            """
+            from sage.rings.integer_ring import ZZ
+            if prec is None:
+                from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+                R = LazyPowerSeriesRing(ZZ, 't')
+                return R(lambda n: self.homogeneous_component_basis(n).cardinality())
+            from sage.rings.power_series_ring import PowerSeriesRing
+            R = PowerSeriesRing(ZZ, 't')
+            elt = R([self.homogeneous_component_basis(n).cardinality() for n in range(prec)])
+            return elt.O(prec)
 
         def graded_algebra(self):
             r"""
@@ -432,9 +481,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             - ``f`` -- a filtration-preserving linear map from ``self``
               to ``other`` (can be given as a morphism or as a function)
 
-            OUTPUT:
-
-            The graded linear map `\operatorname{gr} f`.
+            OUTPUT: the graded linear map `\operatorname{gr} f`
 
             EXAMPLES:
 
@@ -805,7 +852,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
                 raise ValueError("the zero element does not have a well-defined degree")
             if not self.is_homogeneous():
                 raise ValueError("element is not homogeneous")
-            return self.parent().degree_on_basis(self.leading_support())
+            return self.parent().degree_on_basis(next(iter(self.support())))
 
         # default choice for degree; will be overridden as necessary
         degree = homogeneous_degree
@@ -1112,3 +1159,46 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
                     2
                 """
                 return self.lift().maximal_degree()
+
+    class FiniteDimensional(CategoryWithAxiom_over_base_ring):
+        class ParentMethods:
+            def hilbert_series(self, prec=None):
+                r"""
+                Return the Hilbert series of ``self`` as a polynomial.
+
+                Let `R` be a commutative ring (with unit). Let
+                `M = \bigcup_{n=0}^{\infty} M_n` be a filtered `R`-module.
+                The *Hilbert series* of `M` is the formal power series
+
+                .. MATH::
+
+                    H(t) = \sum_{n=0}^{\infty} \ell(M_n / M_{n-1}) t^n,
+
+                where `\ell(N)` is the *length* of `N`, which is the
+                longest chain of submodules (over `R`), and by convention
+                `M_{-1} = \{0\}`. By the assumptions of the category,
+                `M_n / M_{n-1}` is a free `R`-module, and so
+                `\ell(M_n / M_{n-1})` is equal to the rank of `M_n / M_{n-1}`.
+
+                EXAMPLES::
+
+                    sage: OS = hyperplane_arrangements.braid(3).orlik_solomon_algebra(QQ)
+                    sage: OS.hilbert_series()
+                    2*t^2 + 3*t + 1
+
+                    sage: OS = matroids.Uniform(5, 3).orlik_solomon_algebra(ZZ)
+                    sage: OS.hilbert_series()
+                    t^3 + 3*t^2 + 3*t + 1
+
+                    sage: OS = matroids.PG(2, 3).orlik_solomon_algebra(ZZ['x','y'])
+                    sage: OS.hilbert_series()
+                    27*t^3 + 39*t^2 + 13*t + 1
+                """
+                from collections import defaultdict
+                from sage.rings.integer_ring import ZZ
+                from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                PR = PolynomialRing(ZZ, 't')
+                dims = defaultdict(ZZ)
+                for b in self.basis():
+                    dims[b.homogeneous_degree()] += 1
+                return PR(dims)

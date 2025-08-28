@@ -20,14 +20,20 @@ from sage_docbuild.conf import *  # NOQA
 # contains common paths.
 html_static_path = [] + html_common_static_path
 
+# Add small view/edit buttons.
+html_theme_options.update({
+  'source_view_link': os.path.join(source_repository, 'blob/develop/src/doc/ru/tutorial', '{filename}'),
+  'source_edit_link': os.path.join(source_repository, 'edit/develop/src/doc/ru/tutorial', '{filename}'),
+})
+
 # General information about the project.
 project = "Sage Tutorial in Russian"
 name = 'tutorial-ru'
 language = "ru"
 
-# The name for this set of Sphinx documents.  If None, it defaults to
-# "<project> v<release> documentation".
-html_title = project + " v" + release
+# The name for this set of Sphinx documents. Do not include release info.
+html_title = project
+html_short_title = project
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = name
@@ -38,6 +44,3 @@ latex_documents = [
   ('index', 'SageTutorial_ru.tex', 'Sage Tutorial in Russian',
    'The Sage Development Team', 'manual'),
 ]
-
-# Additional LaTeX stuff if necessary:
-#latex_elements['preamble'] += '\\DeclareUnicodeCharacter{00A0}{\\nobreakspace}\n'

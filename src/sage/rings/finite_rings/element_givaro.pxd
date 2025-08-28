@@ -21,7 +21,7 @@ cdef extern from "givaro/givrandom.h":
 
 cdef extern from "givaro/gfq.h":
     cdef cppclass GivaroGfq "Givaro::GFqDom<int>":
-        #attributes
+        # attributes
         unsigned int one
         unsigned int zero
 
@@ -62,10 +62,10 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
     cdef int element
     cdef Cache_givaro _cache
     cdef object _multiplicative_order
-    cdef FiniteField_givaroElement _new_c(self, int value) noexcept
+    cdef FiniteField_givaroElement _new_c(self, int value)
 
 cdef class Cache_givaro(Cache_base):
-    cdef GivaroGfq *objectptr # C++ object
+    cdef GivaroGfq *objectptr  # C++ object
     cdef public object _array
     cdef FiniteField_givaroElement _zero_element
     cdef FiniteField_givaroElement _one_element
@@ -73,13 +73,13 @@ cdef class Cache_givaro(Cache_base):
     cdef bint _has_array
     cdef bint _is_conway
     cdef Parent parent
-    cdef gen_array(self) noexcept
+    cdef gen_array(self)
     cpdef int exponent(self) noexcept
     cpdef int order_c(self) noexcept
     cpdef int characteristic(self) noexcept
-    cpdef FiniteField_givaroElement gen(self) noexcept
-    cpdef FiniteField_givaroElement element_from_data(self, e) noexcept
-    cdef FiniteField_givaroElement _new_c(self, int value) noexcept
+    cpdef FiniteField_givaroElement gen(self)
+    cpdef FiniteField_givaroElement element_from_data(self, e)
+    cdef FiniteField_givaroElement _new_c(self, int value)
     cpdef int int_to_log(self, int i) except -1
     cpdef int log_to_int(self, int i) except -1
 
@@ -87,4 +87,4 @@ cdef class FiniteField_givaro_iterator:
     cdef int iterator
     cdef Cache_givaro _cache
 
-cdef FiniteField_givaroElement make_FiniteField_givaroElement(Cache_givaro cache, int x) noexcept
+cdef FiniteField_givaroElement make_FiniteField_givaroElement(Cache_givaro cache, int x)

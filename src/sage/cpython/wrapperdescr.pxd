@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 from cpython.object cimport PyObject, PyTypeObject
 
 cdef extern from *:
@@ -24,7 +25,7 @@ cdef extern from *:
     PyDescr_NewWrapper(PyTypeObject* cls, wrapperbase* wrapper, void* wrapped)
 
 
-cdef wrapperdescr_fastcall(wrapper_descriptor slotwrapper, self, args, kwds) noexcept
+cdef wrapperdescr_fastcall(wrapper_descriptor slotwrapper, self, args, kwds)
 
 
 cdef inline wrapperbase* get_slotdef(wrapper_descriptor slotwrapper) except NULL:

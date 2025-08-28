@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Associative algebras
 """
@@ -22,7 +23,7 @@ class AssociativeAlgebras(CategoryWithAxiom_over_base_ring):
 
     .. WARNING::
 
-        Until :trac:`15043` is implemented, :class:`Algebras` is the
+        Until :issue:`15043` is implemented, :class:`Algebras` is the
         category of associative unital algebras; thus, unlike the name
         suggests, :class:`AssociativeAlgebras` is not a subcategory of
         :class:`Algebras` but of

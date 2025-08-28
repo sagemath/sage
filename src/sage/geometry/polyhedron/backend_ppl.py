@@ -16,19 +16,19 @@ from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
 lazy_import('ppl', ['C_Polyhedron', 'Generator_System', 'Constraint_System',
                     'Linear_Expression', 'line', 'ray', 'point'],
-                    feature=PythonModule("ppl", spkg="pplpy", type="standard"))
+                    feature=PythonModule("ppl", spkg='pplpy', type='standard'))
 
 
 #########################################################################
 class Polyhedron_ppl(Polyhedron_mutable):
     """
-    Polyhedra with ppl
+    Polyhedra with ppl.
 
     INPUT:
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``.
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``
 
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``.
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``
 
     EXAMPLES::
 
@@ -41,7 +41,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
 
     def __init__(self, parent, Vrep, Hrep, ppl_polyhedron=None, mutable=False, **kwds):
         """
-        Initializes the polyhedron.
+        Initialize the polyhedron.
 
         See :class:`Polyhedron_ppl` for a description of the input
         data.
@@ -76,8 +76,8 @@ class Polyhedron_ppl(Polyhedron_mutable):
         INPUT:
 
         - ``vertices`` -- list of point. Each point can be specified
-           as any iterable container of
-           :meth:`~sage.geometry.polyhedron.base.base_ring` elements.
+          as any iterable container of
+          :meth:`~sage.geometry.polyhedron.base.base_ring` elements.
 
         - ``rays`` -- list of rays. Each ray can be specified as any
           iterable container of
@@ -87,8 +87,8 @@ class Polyhedron_ppl(Polyhedron_mutable):
           any iterable container of
           :meth:`~sage.geometry.polyhedron.base.base_ring` elements.
 
-        - ``verbose`` -- boolean (default: ``False``). Whether to print
-          verbose output for debugging purposes.
+        - ``verbose`` -- boolean (default: ``False``); whether to print
+          verbose output for debugging purposes
 
         EXAMPLES::
 
@@ -117,8 +117,8 @@ class Polyhedron_ppl(Polyhedron_mutable):
           as any iterable container of
           :meth:`~sage.geometry.polyhedron.base.base_ring` elements.
 
-        - ``verbose`` -- boolean (default: ``False``). Whether to print
-          verbose output for debugging purposes.
+        - ``verbose`` -- boolean (default: ``False``); whether to print
+          verbose output for debugging purposes
 
         EXAMPLES::
 
@@ -162,7 +162,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
 
         TESTS:
 
-        Check that :trac:`33666` is fixed::
+        Check that :issue:`33666` is fixed::
 
             sage: cube = polytopes.cube()
             sage: parent = cube.parent()
@@ -234,7 +234,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
 
         TESTS:
 
-        Check that :trac:`33666` is fixed::
+        Check that :issue:`33666` is fixed::
 
             sage: cube = polytopes.cube()
             sage: parent = cube.parent()
@@ -391,7 +391,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
 
     def _init_empty_polyhedron(self):
         """
-        Initializes an empty polyhedron.
+        Initialize an empty polyhedron.
 
         TESTS::
 
@@ -415,9 +415,10 @@ class Polyhedron_ppl(Polyhedron_mutable):
 
         INPUT:
 
-        - ``v`` -- a vertex, ray, or line.
+        - ``v`` -- a vertex, ray, or line
 
-        - ``typ`` -- integer according to `:sage:`~sage.geometry.polyhedron.representation.LINE` etc.
+        - ``typ`` -- integer according to
+          `:sage:`~sage.geometry.polyhedron.representation.LINE` etc.
 
         EXAMPLES::
 
@@ -488,9 +489,10 @@ class Polyhedron_ppl(Polyhedron_mutable):
 
         INPUT:
 
-        - ``c`` -- an inequality or equation.
+        - ``c`` -- an inequality or equation
 
-        - ``typ`` -- integer according to `:sage:`~sage.geometry.polyhedron.representation.INEQUALITY` etc.
+        - ``typ`` -- integer according to
+          `:sage:`~sage.geometry.polyhedron.representation.INEQUALITY` etc.
 
         EXAMPLES::
 
@@ -542,13 +544,13 @@ class Polyhedron_ppl(Polyhedron_mutable):
 #########################################################################
 class Polyhedron_QQ_ppl(Polyhedron_ppl, Polyhedron_QQ):
     r"""
-    Polyhedra over `\QQ` with ppl
+    Polyhedra over `\QQ` with ppl.
 
     INPUT:
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``.
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``
 
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``.
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``
 
     EXAMPLES::
 
@@ -562,13 +564,13 @@ class Polyhedron_QQ_ppl(Polyhedron_ppl, Polyhedron_QQ):
 #########################################################################
 class Polyhedron_ZZ_ppl(Polyhedron_ppl, Polyhedron_ZZ):
     r"""
-    Polyhedra over `\ZZ` with ppl
+    Polyhedra over `\ZZ` with ppl.
 
     INPUT:
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``.
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``
 
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``.
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``
 
     EXAMPLES::
 

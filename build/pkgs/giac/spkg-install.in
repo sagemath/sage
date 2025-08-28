@@ -51,10 +51,6 @@ if [ "$UNAME" = "Darwin" ]; then
     echo "OS X Building without Native Language Support"
     DISABLENLS="--disable-nls"
 fi
-if [ "$UNAME" = "CYGWIN" ]; then
-    export ac_cv_lib_nauty_main=no
-    export ac_cv_header_nauty_naututil_h=no
-fi
 
 sdh_configure --disable-gui --disable-ao "$DISABLENLS" --enable-png=no --disable-samplerate --disable-static --disable-micropy --disable-quickjs
 
@@ -63,24 +59,6 @@ sdh_configure --disable-gui --disable-ao "$DISABLENLS" --enable-png=no --disable
 #############################################################
 
 sdh_make
-
-#############################################################
-#   Clean old install
-#############################################################
-echo "Cleaning giac..."
-rm -f ${SAGE_LOCAL}/lib/libgiac*
-rm -f ${SAGE_LOCAL}/bin/icas
-rm -f ${SAGE_LOCAL}/bin/xcas
-rm -f ${SAGE_LOCAL}/bin/cas_help
-rm -f ${SAGE_LOCAL}/bin/pgiac
-rm -f ${SAGE_LOCAL}/bin/en_cas_help
-rm -f ${SAGE_LOCAL}/bin/es_cas_help
-rm -f ${SAGE_LOCAL}/bin/fr_cas_help
-rm -f ${SAGE_LOCAL}/bin/giac
-rm -f ${SAGE_LOCAL}/bin/xcasnew
-rm -rf ${SAGE_LOCAL}/share/giac
-rm -rf ${SAGE_LOCAL}/share/doc/giac
-rm -rf ${SAGE_LOCAL}/include/giac
 
 #############################################################
 #   Install

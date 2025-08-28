@@ -1,8 +1,8 @@
 r"""
 Structure maps for number fields
 
-Provides isomorphisms between relative and absolute presentations, to and from
-vector spaces, name changing maps, etc.
+This module provides isomorphisms between relative and absolute presentations,
+to and from vector spaces, name changing maps, etc.
 
 EXAMPLES::
 
@@ -45,12 +45,10 @@ from sage.categories.morphism import IdentityMorphism
 
 import sage.rings.rational_field as rational_field
 
-from sage.libs.pari.all import pari
-
-
 QQ = rational_field.RationalField()
 
 IdentityMap = IdentityMorphism
+
 
 class NumberFieldIsomorphism(Map):
     r"""
@@ -100,6 +98,7 @@ class NumberFieldIsomorphism(Map):
             True
         """
         return True
+
 
 class MapVectorSpaceToNumberField(NumberFieldIsomorphism):
     r"""
@@ -191,6 +190,7 @@ class MapVectorSpaceToNumberField(NumberFieldIsomorphism):
         f = K.polynomial_ring()(v.list())
         return K._element_class(K, f)
 
+
 class MapNumberFieldToVectorSpace(Map):
     r"""
     A class for the isomorphism from an absolute number field to its underlying
@@ -249,6 +249,7 @@ class MapNumberFieldToVectorSpace(Map):
             v = v + [QQ.zero()] * k
         return self.codomain()(v)
 
+
 class MapRelativeVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
     r"""
     EXAMPLES::
@@ -303,6 +304,8 @@ class MapRelativeVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
             sage: fr(to(a0 + 2*b0)), fr(V([0, 1])), fr(V([b0, 2*b0])) # indirect doctest
             (a + 2*b0, a, 2*b0*a + b0)
         """
+        from sage.libs.pari import pari
+
         K = self.codomain()
         B = K.base_field().absolute_field('a')
         # Convert v to a PARI polynomial in x with coefficients that
@@ -313,6 +316,7 @@ class MapRelativeVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
         # the relative number field.
         g = K._pari_rnfeq()._eltreltoabs(h)
         return K._element_class(K, g)
+
 
 class MapRelativeNumberFieldToRelativeVectorSpace(NumberFieldIsomorphism):
     r"""
@@ -456,6 +460,7 @@ class NameChangeMap(NumberFieldIsomorphism):
         y = x._copy_for_parent(self.codomain())
         return y
 
+
 class MapRelativeToAbsoluteNumberField(NumberFieldIsomorphism):
     r"""
     EXAMPLES::
@@ -533,6 +538,7 @@ class MapRelativeToAbsoluteNumberField(NumberFieldIsomorphism):
         f = x.polynomial()
         return A._element_class(A, f)
 
+
 class MapAbsoluteToRelativeNumberField(NumberFieldIsomorphism):
     r"""
     See :class:`~MapRelativeToAbsoluteNumberField` for examples.
@@ -564,6 +570,7 @@ class MapAbsoluteToRelativeNumberField(NumberFieldIsomorphism):
         R = self.codomain()  # relative field
         f = x.polynomial()
         return R._element_class(R, f)
+
 
 class MapVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
     r"""
@@ -608,6 +615,7 @@ class MapVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
             (a, b)
         """
         return self._from_K(self._from_V(x))
+
 
 class MapRelativeNumberFieldToVectorSpace(NumberFieldIsomorphism):
     r"""

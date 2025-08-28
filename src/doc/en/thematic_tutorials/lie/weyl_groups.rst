@@ -122,7 +122,7 @@ and whose values are the roots, you may use the inverse family::
 
 .. NOTE::
 
-    The behaviour of this function was changed in :trac:`20027`.
+    The behaviour of this function was changed in :issue:`20027`.
 
 The Weyl group is implemented as a GAP matrix group. You therefore can
 display its character table as follows::

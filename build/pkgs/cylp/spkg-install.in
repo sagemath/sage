@@ -1,5 +1,6 @@
 cd src
 # use pkg-config to discover coin installation
 unset COIN_INSTALL_DIR
-# --no-build-isolation to ignore the numpy version pin in pyproject.toml
-sdh_pip_install --no-build-isolation .
+# Remove the Cython version bound and numpy version pin in pyproject.toml
+sed -i.bak -e "/^ *'Cython/s/Cython[^']*/Cython/;/^ *'.*numpy/s/oldest-supported-numpy/numpy/;" pyproject.toml
+sdh_pip_install .

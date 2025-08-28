@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 r"""
 Univariate skew polynomials
 
@@ -63,7 +64,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
     Generic implementation of dense skew polynomial supporting any valid base
     ring and twisting morphism.
     """
-    cpdef left_power_mod(self, exp, modulus) noexcept:
+    cpdef left_power_mod(self, exp, modulus):
         r"""
         Return the remainder of ``self**exp`` in the left euclidean division
         by ``modulus``.
@@ -90,6 +91,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -125,14 +127,14 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
             _, r = r._left_quo_rem(modulus)
         return r
 
-    cpdef right_power_mod(self, exp, modulus) noexcept:
+    cpdef right_power_mod(self, exp, modulus):
         r"""
         Return the remainder of ``self**exp`` in the right euclidean division
         by ``modulus``.
 
         INPUT:
 
-        - ``exp`` -- an integer
+        - ``exp`` -- integer
 
         - ``modulus`` -- a skew polynomial in the same ring as ``self``
 
@@ -152,6 +154,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -161,18 +164,17 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
             x^5 + (2*t^2 + 4)*x^4 + (t^2 + 2)*x^3 + 2*x^2 + (4*t^2 + 2)*x + 2*t^2 + 4*t + 4
             sage: b == a * a * a * a * a
             True
-
             sage: modulus = x^3 + t*x^2 + (t+3)*x - 2
             sage: br = a.right_power_mod(5, modulus); br
             (t + 1)*x^2 + (2*t^2 + t + 1)*x + 2*t^2 + 4*t + 2
             sage: br == b % modulus
             True
-
             sage: a.right_power_mod(100, modulus)
             (2*t^2 + 3)*x^2 + (t^2 + 4*t + 2)*x + t^2 + 2*t + 1
 
         Negative exponents are supported:
 
+            sage: # needs sage.rings.finite_rings
             sage: a^(-5)
             (x^5 + (2*t^2 + 4)*x^4 + (t^2 + 2)*x^3 + 2*x^2 + (4*t^2 + 2)*x + 2*t^2 + 4*t + 4)^(-1)
             sage: b * a^(-5)
@@ -180,7 +182,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         However, they cannot be combined with modulus::
 
-            sage: a.right_power_mod(-10, modulus)
+            sage: a.right_power_mod(-10, modulus)                                       # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: modulus cannot be combined with negative exponent
@@ -245,6 +247,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -273,9 +276,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         - ``eval_pt`` -- element of the base ring of ``self``
 
-        OUTPUT:
-
-        The operator evaluation of ``self`` at ``eval_pt``.
+        OUTPUT: the operator evaluation of ``self`` at ``eval_pt``
 
         .. TODO::
 
@@ -317,6 +318,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: T.<x> = k['x',Frob]
@@ -326,7 +328,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
         """
         return self.operator_eval(eval_pt)
 
-    cpdef operator_eval(self, eval_pt) noexcept:
+    cpdef operator_eval(self, eval_pt):
         r"""
         Evaluate ``self`` at ``eval_pt`` by the operator evaluation
         method.
@@ -335,12 +337,11 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         - ``eval_pt`` -- element of the base ring of ``self``
 
-        OUTPUT:
-
-        The value of the polynomial at the point specified by the argument.
+        OUTPUT: the value of the polynomial at the point specified by the argument
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: T.<x> = k['x',Frob]
@@ -383,7 +384,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         INPUT:
 
-        - `n` -- an integer, the power of conjugation
+        - ``n`` -- integer; the power of conjugation
 
         EXAMPLES::
 
@@ -403,10 +404,12 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
             sage: b = a.conjugate(-1)
             Traceback (most recent call last):
             ...
-            NotImplementedError: inverse not implemented for morphisms of Fraction Field of Univariate Polynomial Ring in t over Rational Field
+            NotImplementedError: inverse not implemented for morphisms of
+            Fraction Field of Univariate Polynomial Ring in t over Rational Field
 
         Here is a working example::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: T.<y> = k['y',Frob]
@@ -427,9 +430,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         - ``eval_pts`` -- list of points at which ``self`` is to be evaluated
 
-        OUTPUT:
-
-        List of values of ``self`` at the ``eval_pts``.
+        OUTPUT: list of values of ``self`` at the ``eval_pts``
 
         .. TODO::
 
@@ -441,6 +442,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -453,7 +455,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
         """
         return [ self(e) for e in eval_pts ]
 
-    cpdef ModuleElement _lmul_(self, Element right) noexcept:
+    cpdef ModuleElement _lmul_(self, Element right):
         r"""
         Return the product ``self * right``.
 
@@ -482,7 +484,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
                         self._parent, 0)
         return r
 
-    cpdef ModuleElement _rmul_(self, Element left) noexcept:
+    cpdef ModuleElement _rmul_(self, Element left):
         r"""
         Return the product ``left * self``.
 
@@ -509,7 +511,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
         r = self._new_c([ left*x[i] for i from 0 <= i < len(x) ], self._parent, 0)
         return r
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         r"""
         Return the product ``self * right``.
 
@@ -566,6 +568,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -602,6 +605,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -621,7 +625,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
                 self._inplace_rmul(selfpow)
             n = n >> 1
 
-    cdef _left_quo_rem(self, OrePolynomial other) noexcept:
+    cdef _left_quo_rem(self, OrePolynomial other):
         r"""
         Return the quotient and remainder of the left euclidean
         division of ``self`` by ``other`` (C implementation).
@@ -650,7 +654,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
         q.reverse()
         return (self._new_c(q, parent), self._new_c(a[:db], parent, 1))
 
-    cdef _right_quo_rem(self, OrePolynomial other) noexcept:
+    cdef _right_quo_rem(self, OrePolynomial other):
         r"""
         Return the quotient and remainder of the right euclidean
         division of ``self`` by ``other`` (C implementation).

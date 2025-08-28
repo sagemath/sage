@@ -1,1 +1,1 @@
-"pkgconfig(libffi)"
+pkgconfig(libffi)

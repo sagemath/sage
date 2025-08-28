@@ -30,7 +30,6 @@ cdef extern from "gsl/gsl_chebyshev.h":
   int gsl_cheb_eval_mode_e( gsl_cheb_series * cs,  double x, gsl_mode_t mode, double * result, double * abserr)
 
 
-
   int gsl_cheb_calc_deriv(gsl_cheb_series * deriv,  gsl_cheb_series * cs)
 
   int gsl_cheb_calc_integ(gsl_cheb_series * integ,  gsl_cheb_series * cs)

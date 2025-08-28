@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Compute invariants of quintics and sextics via 'Ueberschiebung'
 
@@ -11,7 +10,6 @@ Compute invariants of quintics and sextics via 'Ueberschiebung'
 AUTHOR:
 
 - Nick Alexander
-
 """
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -20,7 +18,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 def diffxy(f, x, xtimes, y, ytimes):
     r"""
     Differentiate a polynomial ``f``, ``xtimes`` with respect to ``x``, and
-    ```ytimes`` with respect to ``y``.
+    ``ytimes`` with respect to ``y``.
 
     EXAMPLES::
 
@@ -323,6 +321,7 @@ def igusa_clebsch_invariants(f):
         sage: igusa_clebsch_invariants(x^5 + a*x^4 + b*x^3 + c*x^2 + d*x + e)[0]
         6*b^2 - 16*a*c + 40*d
 
+        sage: from sage.schemes.hyperelliptic_curves.invariants import absolute_igusa_invariants_wamelen
         sage: absolute_igusa_invariants_wamelen(GF(5)['x'](x^6 - 2*x))
         Traceback (most recent call last):
         ...

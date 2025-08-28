@@ -68,7 +68,7 @@ cdef extern from "wrap.cpp":
     long two_descent_get_selmer_rank(two_descent* t)
     void two_descent_saturate(two_descent* t, long sat_bd, long sat_low_bd)
 
-cdef object string_sigoff(char* s) noexcept:
+cdef object string_sigoff(char* s):
     sig_off()
     # Makes a python string and deletes what is pointed to by s.
     t = char_to_str(s)
@@ -79,14 +79,13 @@ cdef object string_sigoff(char* s) noexcept:
 # set the default bit precision
 mwrank_set_precision(150)
 
+
 def get_precision():
     """
     Return the working floating point bit precision of mwrank, which is
     equal to the global NTL real number precision.
 
-    OUTPUT:
-
-    (int) The current precision in bits.
+    OUTPUT: integer; the current precision in bits
 
     See also :meth:`set_precision`.
 
@@ -100,7 +99,7 @@ def get_precision():
 
 def set_precision(n):
     """
-    Sets the working floating point bit precision of mwrank, which is
+    Set the working floating point bit precision of mwrank, which is
     equal to the global NTL real number precision.
 
     NTL real number bit precision.  This has a massive effect on the
@@ -110,7 +109,7 @@ def set_precision(n):
 
     INPUT:
 
-    - ``n`` -- a positive integer: the number of bits of precision.
+    - ``n`` -- positive integer; the number of bits of precision
 
     .. warning::
 
@@ -145,15 +144,15 @@ def initprimes(filename, verb=False):
 
     INPUT:
 
-    - ``filename`` (string) -- the name of a file of primes.
+    - ``filename`` -- string; the name of a file of primes
 
-    - ``verb`` (bool: default ``False``) -- verbose or not?
+    - ``verb`` -- boolean (default: ``False``); verbose or not
 
     EXAMPLES::
 
         sage: import tempfile
         sage: with tempfile.NamedTemporaryFile(mode='w+t') as f:
-        ....:     data = ' '.join([str(p) for p in prime_range(10^7,10^7+20)])
+        ....:     data = ' '.join(str(p) for p in prime_range(10^7, 10^7 + 20))
         ....:     _ = f.write(data)
         ....:     f.flush()
         ....:     mwrank_initprimes(f.name, verb=True)
@@ -173,6 +172,7 @@ def initprimes(filename, verb=False):
     filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
     mwrank_initprimes(filename, verb)
 
+
 ############# bigint ###########################################
 #
 # In mwrank (and eclib) bigint is synonymous with NTL's ZZ class.
@@ -185,7 +185,7 @@ cdef class _bigint:
     """
     cdef bigint* x
 
-    def __init__(self, x="0"):
+    def __init__(self, x='0'):
         """
         Constructor for bigint class.
 
@@ -208,7 +208,7 @@ cdef class _bigint:
         if s.isdigit() or s[0] == "-" and s[1:].isdigit():
             self.x = str_to_bigint(str_to_bytes(s))
         else:
-            raise ValueError("invalid _bigint: %r"%x)
+            raise ValueError("invalid _bigint: %r" % x)
 
     def __dealloc__(self):
         """
@@ -238,7 +238,7 @@ cdef class _bigint:
         return string_sigoff(bigint_to_str(self.x))
 
 
-cdef make_bigint(bigint* x) noexcept:
+cdef make_bigint(bigint* x):
     cdef _bigint y
     sig_off()
     y = _bigint.__new__(_bigint)
@@ -250,18 +250,16 @@ cdef make_bigint(bigint* x) noexcept:
 cdef class _Curvedata:   # cython class wrapping eclib's Curvedata class
     cdef Curvedata* x
 
-    def __init__(self, a1, a2, a3,
-                 a4, a6, min_on_init=0):
+    def __init__(self, a1, a2, a3, a4, a6, min_on_init=0):
         """
         Constructor for Curvedata class.
 
         INPUT:
 
-        - ``a1``, ``a2``, ``a3``, ``a4``, ``a6`` (int) -- integer
-          coefficients of a Weierstrass equation (must be
-          nonsingular).
+        - ``a1``, ``a2``, ``a3``, ``a4``, ``a6`` -- integer coefficients of a
+          Weierstrass equation (must be nonsingular)
 
-        - ``min_on_init`` (int, default 0) -- flag controlling whether
+        - ``min_on_init`` -- integer (default: 0); flag controlling whether
           the constructed curve is replaced by a global minimal model.
           If nonzero then this minimisation does take place.
 
@@ -310,11 +308,7 @@ cdef class _Curvedata:   # cython class wrapping eclib's Curvedata class
 
     def __repr__(self):
         r"""
-        String representation of Curvedata
-
-        OUTPUT:
-
-        (string) the Curvedata as a string
+        String representation of Curvedata.
 
         EXAMPLES::
 
@@ -338,7 +332,7 @@ cdef class _Curvedata:   # cython class wrapping eclib's Curvedata class
 
         OUTPUT:
 
-        (float) A non-negative real number `B` such that for every
+        (float) A nonnegative real number `B` such that for every
         rational point on this elliptic curve `E`, `h(P)\le\hat{h}(P)
         + B`, where `h(P)` is the naive height and `\hat{h}(P)` the
         canonical height.
@@ -367,7 +361,7 @@ cdef class _Curvedata:   # cython class wrapping eclib's Curvedata class
 
         OUTPUT:
 
-        (float) A non-negative real number `B` such that for every
+        (float) A nonnegative real number `B` such that for every
         rational point on this elliptic curve `E`, `h(P)\le\hat{h}(P)
         + B`, where `h(P)` is the naive height and `\hat{h}(P)` the
         canonical height.
@@ -401,7 +395,7 @@ cdef class _Curvedata:   # cython class wrapping eclib's Curvedata class
 
         OUTPUT:
 
-        (float) A non-negative real number `B` such that for every
+        (float) A nonnegative real number `B` such that for every
         rational point on this elliptic curve `E`, `h(P)\le\hat{h}(P)
         + B`, where `h(P)` is the naive height and `\hat{h}(P)` the
         canonical height.  This is the minimum of the Silverman and
@@ -490,7 +484,6 @@ cdef class _Curvedata:   # cython class wrapping eclib's Curvedata class
             14
             sage: E.isogeny_class()
             ([[1, 0, 1, 4, -6], [1, 0, 1, -36, -70], [1, 0, 1, -1, 0], [1, 0, 1, -171, -874], [1, 0, 1, -11, 12], [1, 0, 1, -2731, -55146]], [[0, 2, 3, 3, 0, 0], [2, 0, 0, 0, 3, 3], [3, 0, 0, 0, 2, 0], [3, 0, 0, 0, 0, 2], [0, 3, 2, 0, 0, 0], [0, 3, 0, 2, 0, 0]])
-
         """
         sig_on()
         s = string_sigoff(Curvedata_isogeny_class(self.x, verbose))
@@ -505,12 +498,11 @@ def parse_point_list(s):
 
     INPUT:
 
-    - ``s`` (string) -- string representation of a list of points, for
-      example '[]', '[[1:2:3]]', or '[[1:2:3],[4:5:6]]'.
+    - ``s`` -- string representation of a list of points; for
+      example '[]', '[[1:2:3]]', or '[[1:2:3],[4:5:6]]'
 
-    OUTPUT:
-
-    (list)  a list of triples of integers, for example [], [[1,2,3]], [[1,2,3],[4,5,6]].
+    OUTPUT: list of triples of integers, for example [], [[1,2,3]],
+    [[1,2,3],[4,5,6]]
 
     EXAMPLES::
 
@@ -521,13 +513,13 @@ def parse_point_list(s):
         [[1, 2, 3]]
         sage: parse_point_list('[[1:2:3],[4:5:6]]')
         [[1, 2, 3], [4, 5, 6]]
-
     """
     s = s.replace(":", ",").replace(" ", "")
     if s == '[]':
         return []
     pts = s[2:-2].split('],[')
     return [[Integer(x) for x in pt.split(",")] for pt in pts]
+
 
 cdef class _mw:
     """
@@ -543,21 +535,20 @@ cdef class _mw:
 
         INPUT:
 
-        - ``curve`` (_Curvedata) -- an elliptic curve
+        - ``curve`` -- _Curvedata; an elliptic curve
 
-        - ``verb`` (bool, default ``False``) -- verbosity flag (controls
+        - ``verb`` -- boolean (default: ``False``); verbosity flag (controls
           amount of output produced in point searches)
 
-        - ``pp`` (int, default 1) -- process points flag (if nonzero,
+        - ``pp`` -- integer (default: 1); process points flag (if nonzero,
           the points found are processed, so that at all times only a
           `\ZZ`-basis for the subgroup generated by the points found
-          so far is stored; if zero, no processing is done and all
+          so far is stored. If zero, no processing is done and all
           points found are stored).
 
-        - ``maxr`` (int, default 999) -- maximum rank (quit point
+        - ``maxr`` -- integer (default: 999); maximum rank (quit point
           searching once the points found generate a subgroup of this
-          rank; useful if an upper bound for the rank is already
-          known).
+          rank. Useful if an upper bound for the rank is already known).
 
         EXAMPLES::
 
@@ -589,7 +580,7 @@ cdef class _mw:
             P1 = [-3:0:1]         is generator number 1
             saturating up to 20...Saturation index bound (for points of good reduction)  = 3
             Reducing saturation bound from given value 20 to computed index bound 3
-            Tamagawa index primes are [ 2 ]
+            Tamagawa index primes are [ 2 ]...
             Checking saturation at [ 2 3 ]
             Checking 2-saturation
             Points were proved 2-saturated (max q used = 7)
@@ -599,7 +590,7 @@ cdef class _mw:
             P2 = [-2:3:1]         is generator number 2
             saturating up to 20...Saturation index bound (for points of good reduction)  = 4
             Reducing saturation bound from given value 20 to computed index bound 4
-            Tamagawa index primes are [ 2 ]
+            Tamagawa index primes are [ 2 ]...
             Checking saturation at [ 2 3 ]
             Checking 2-saturation
             possible kernel vector = [1,1]
@@ -614,7 +605,7 @@ cdef class _mw:
             P3 = [-14:25:8]       is generator number 3
             saturating up to 20...Saturation index bound (for points of good reduction)  = 3
             Reducing saturation bound from given value 20 to computed index bound 3
-            Tamagawa index primes are [ 2 ]
+            Tamagawa index primes are [ 2 ]...
             Checking saturation at [ 2 3 ]
             Checking 2-saturation
             Points were proved 2-saturated (max q used = 11)
@@ -646,7 +637,6 @@ cdef class _mw:
             sage: EQ = _mw(E, pp=0)
             sage: EQ.search(1); EQ
             [[-3:0:1], [-2:3:1], [-14:25:8], [-1:3:1], [0:2:1], [2:13:8], [1:0:1], [2:0:1], [18:7:8], [3:3:1], [4:6:1], [36:69:64], [68:-25:64], [12:35:27]]
-
         """
         self.curve = curve.x
         self.x = new mw(curve.x, verb, pp, maxr)
@@ -687,16 +677,15 @@ cdef class _mw:
 
         INPUT:
 
-        - ``point`` (tuple or list) -- tuple or list of 3 integers.
-          An ``ArithmeticError`` is raised if the point is not on the
-          curve.
+        - ``point`` -- tuple or list of 3 integers; an :exc:`ArithmeticError` is
+          raised if the point is not on the curve
 
-        - ``saturation_bound`` (int, default 0) --saturate at primes up to ``saturation_bound``.
-          No saturation is done if ``saturation_bound=0``.  If ``saturation_bound=-1`` then
+        - ``saturation_bound`` -- integer (default: 0); saturate at primes up
+          to ``saturation_bound``. No saturation is done if
+          ``saturation_bound=0``.  If ``saturation_bound=-1`` then
           saturation is done at all primes, by computing a bound on
           the saturation index.  Note that it is more efficient to add
-          several points at once and then saturate just once at the
-          end.
+          several points at once and then saturate just once at the end.
 
         .. NOTE::
 
@@ -735,7 +724,6 @@ cdef class _mw:
             sage: EQ.process([4,8,1])
             sage: EQ
             [[-1:1:1], [0:-1:1]]
-
         """
         if not isinstance(point, (tuple, list)) and len(point) == 3:
             raise TypeError("point must be a list or tuple of length 3.")
@@ -835,14 +823,14 @@ cdef class _mw:
 
         INPUT:
 
-        - ``sat_bnd`` (int, default -1) -- upper bound on primes at
+        - ``sat_bnd`` -- integer (default: -1); upper bound on primes at
           which to saturate.  If -1 (default), compute a bound for the
           primes which may not be saturated, and use that.  Otherwise,
           the bound used is the minimum of the value of ``sat_bnd``
           and the computed bound.
 
-        - ``sat_low_bd`` (int, default 2) -- only do saturation at
-          prime not less than this.  For exampe, if the points have
+        - ``sat_low_bd`` -- integer (default: 2); only do saturation at
+          prime not less than this.  For example, if the points have
           been found via 2-descent they should already be 2-saturated,
           and ``sat_low_bd=3`` is appropriate.
 
@@ -893,7 +881,6 @@ cdef class _mw:
             (1, 1, '[ ]')
             sage: EQ
             [[494:-5720:6859]]
-
         """
         cdef long index
         cdef char* s
@@ -909,13 +896,13 @@ cdef class _mw:
 
         INPUT:
 
-        - ``h_lim`` (int) -- bound on logarithmic naive height of points
+        - ``h_lim`` -- integer; bound on logarithmic naive height of points
 
-        - ``moduli_option`` (int, default 0) -- option for sieving
+        - ``moduli_option`` -- integer (default: 0); option for sieving
           strategy.  The default (0) uses an adapted version of
           Stoll's ratpoints code and is recommended.
 
-        - ``verb`` (int, default 0) -- level of verbosity.  If 0, no
+        - ``verb`` -- integer (default: 0); level of verbosity.  If 0, no
           output.  If positive, the points are output as found and
           some details of the processing, finding linear relations,
           and partial saturation are output.
@@ -929,9 +916,7 @@ cdef class _mw:
             will always contain a `\ZZ`-span of the saturation of the
             points found, modulo torsion.
 
-        OUTPUT:
-
-        None. The effect of the search is to update the list of generators.
+        OUTPUT: none; the effect of the search is to update the list of generators
 
         EXAMPLES::
 
@@ -998,42 +983,22 @@ cdef class _two_descent:
 
         INPUT:
 
-        - ``curvedata`` (_Curvedata) -- the curve on which to do descent.
+        - ``curvedata`` -- _Curvedata; the curve on which to do descent
 
-        - ``verb`` (int, default 1) -- verbosity level.
+        - ``verb`` -- integer (default: 1); verbosity level
 
-        - ``sel`` (int, default 0) -- Selmer-only flag.  If 1, only
+        - ``sel`` -- integer (default: 0); Selmer-only flag.  If 1, only
           the 2-Selmer group will be computed, with no rational
           points.  Useful as a faster way of getting an upper bound on
           the rank.
 
-        - ``firstlim`` (int, default 20) -- naive height bound on
-          first point search on quartic homogeneous spaces (before
-          testing local solubility; very simple search with no
-          overheads).
+        - ``firstlim``, ``secondlim``, ``n_aux``, ``second_descent`` --
+          see ``first_limit``, ``second_limit``, ``n_aux``, ``second_descent``
+          respectively in :meth:`~sage.libs.eclib.interface.mwrank_EllipticCurve.two_descent`
+          (although ``second_descent`` here is ``1`` or ``0`` instead of ``True`` or ``False``
+          respectively)
 
-        - ``secondlim`` (int, default 8) -- naive height bound on
-          second point search on quartic homogeneous spaces (after
-          testing local solubility; sieve-assisted search)
-
-        - ``n_aux`` (int, default -1) -- If positive, the number of
-          auxiliary primes used in sieve-assisted search for quartics.
-          If -1 (the default) use a default value (set in the eclib
-          code in ``src/qrank/mrank1.cc`` in DEFAULT_NAUX: currently 8).
-          Only relevant for curves with no 2-torsion, where full
-          2-descent is carried out.  Worth increasing for curves
-          expected to be of rank > 6 to one or two more than the
-          expected rank.
-
-        - ``second_descent`` (int, default 1) -- flag specifying
-          whether or not a second descent will be carried out (yes if
-          1, the default; no if 0).  Only relevant for curves with
-          2-torsion.  Recommended left as the default except for
-          experts interested in details of Selmer groups.
-
-        OUTPUT:
-
-        None
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -1164,9 +1129,7 @@ cdef class _two_descent:
         """
         Return the success flag (after doing a 2-descent).
 
-        OUTPUT:
-
-        (bool) Flag indicating whether or not 2-descent was successful.
+        OUTPUT: boolean flag indicating whether or not 2-descent was successful
 
         EXAMPLES::
 
@@ -1193,9 +1156,7 @@ cdef class _two_descent:
         """
         Return the certainty flag (after doing a 2-descent).
 
-        OUTPUT:
-
-        (bool) ``True`` if the rank upper and lower bounds are equal.
+        OUTPUT: boolean; ``True`` if the rank upper and lower bounds are equal
 
         EXAMPLES::
 
@@ -1224,18 +1185,16 @@ cdef class _two_descent:
 
         INPUT:
 
-        - ``saturation_bound`` (int) -- an upper bound on the primes
+        - ``saturation_bound`` -- integer; an upper bound on the primes
           `p` at which `p`-saturation will be carried out, or -1, in
           which case ``eclib`` will compute an upper bound on the
           saturation index.
 
-        - ``lower`` (int, default 3) -- do no `p`-saturation for `p`
+        - ``lower`` -- integer (default: 3); do no `p`-saturation for `p`
           less than this.  The default is 3 since the points found
           during 2-descent will be 2-saturated.
 
-        OUTPUT:
-
-        None.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -1277,7 +1236,7 @@ cdef class _two_descent:
 
         .. NOTE::
 
-            You must call ``saturate()`` first, or a ``RunTimeError``
+            You must call ``saturate()`` first, or a :exc:`RunTimeError`
             will be raised.
 
         OUTPUT:

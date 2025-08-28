@@ -230,9 +230,6 @@ public:
 	ex to_rational(lst & repl_lst) const;
 	ex to_polynomial(exmap & repl) const;
 	ex to_polynomial(lst & repl_lst) const;
-#ifdef PYNAC_HAVE_LIBGIAC
-        const giac::polynome to_polynome(ex_int_map& map, exvector& revmap) const;
-#endif
         const CanonicalForm to_canonical(ex_int_umap& map,
                         power_ocvector_map& pomap, exvector& revmap) const;
         void collect_powers(power_ocvector_map& pomap) const;

@@ -17,27 +17,27 @@ cdef class InnerGroup:
     cdef inline int get_rep(self, int pos) noexcept
     cdef inline int join_rows(self, int rep1, int rep2) noexcept
 
-    cdef InnerGroup _new_c(self) noexcept
+    cdef InnerGroup _new_c(self)
     cdef void copy_from(self, InnerGroup other) noexcept
     cdef bint has_semilinear_action(self) noexcept
-    cdef minimize_by_row_mult(self, FreeModuleElement v) noexcept
+    cdef minimize_by_row_mult(self, FreeModuleElement v)
     cdef minimize_matrix_col(self, object m, int pos, list fixed_minimized_cols,
-                             bint *group_changed) noexcept
+                             bint *group_changed)
     cdef void gaussian_elimination(self, object m, int pos, int pivot, list nz_pos) noexcept
     cdef void minimize_by_frobenius(self, object v, int *applied_frob, int *stab_pow) noexcept
 
-    cdef SemimonomialTransformation get_transporter(self) noexcept
+    cdef SemimonomialTransformation get_transporter(self)
 
     cdef bint has_semilinear_action(self) noexcept
     cpdef int get_frob_pow(self) noexcept
-    cpdef column_blocks(self, mat) noexcept
+    cpdef column_blocks(self, mat)
 
 cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
     cdef int _k, _q
     cdef long *_hyp_refine_vals_scratch
     cdef object _inner_group_stabilizer_order
-    cdef bitset_t *_hyp2points # hyperplanes to points
-    cdef bitset_t *_points2hyp # points to hyperplanes, transpose of _hyp2points
+    cdef bitset_t *_hyp2points  # hyperplanes to points
+    cdef bitset_t *_points2hyp  # points to hyperplanes, transpose of _hyp2points
     cdef PartitionStack *_hyp_part
     cdef object _matrix, _root_matrix
     cdef InnerGroup _inner_group
@@ -58,5 +58,5 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
     cdef bint _hyp_refine(self, bint *changed_partition) noexcept
 
     # some additional methods
-    cdef _compute_group_element(self, SemimonomialTransformation trans, str algorithm_type) noexcept
-    cdef _init_point_hyperplane_incidence(self) noexcept
+    cdef _compute_group_element(self, SemimonomialTransformation trans, str algorithm_type)
+    cdef _init_point_hyperplane_incidence(self)

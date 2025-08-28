@@ -1,1 +1,1 @@
-python-ipykernel
+python3-ipykernel

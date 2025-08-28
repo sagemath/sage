@@ -1,4 +1,4 @@
- | flit_core pip $(PYTHON)
+ | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

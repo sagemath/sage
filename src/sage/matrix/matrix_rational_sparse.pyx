@@ -76,14 +76,14 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
         INPUT:
 
-        - ``parent`` -- a matrix space over ``QQ``
+        - ``parent`` -- a matrix space over `\QQ`
 
         - ``entries`` -- see :func:`matrix`
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
-          entries are of type :class:`Rational`.
+        - ``coerce`` -- if ``False``, assume without checking that the
+          entries are of type :class:`Rational`
         """
         ma = MatrixArgs_init(parent, entries)
         cdef Rational z
@@ -93,14 +93,57 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             if z:
                 mpq_vector_set_entry(&self._matrix[se.i], se.j, z.value)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x) noexcept:
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x):
         mpq_vector_set_entry(&self._matrix[i], j, (<Rational> x).value)
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         cdef Rational x
         x = Rational()
         mpq_vector_get_entry(x.value, &self._matrix[i], j)
         return x
+
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_rational_sparse
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: M = matrix(QQ,3,4,[i + 1/(i+1) if is_prime(i) else 0 for i in range(12)],sparse=True)
+            sage: M
+            [     0      0    7/3   13/4]
+            [     0   31/6      0   57/8]
+            [     0      0      0 133/12]
+            sage: M.transpose()
+            [     0      0      0]
+            [     0   31/6      0]
+            [   7/3      0      0]
+            [  13/4   57/8 133/12]
+            sage: M.matrix_from_rows([0,2])
+            [     0      0    7/3   13/4]
+            [     0      0      0 133/12]
+            sage: M.matrix_from_columns([1,3])
+            [     0   13/4]
+            [  31/6   57/8]
+            [     0 133/12]
+            sage: M.matrix_from_rows_and_columns([1,2],[0,3])
+            [     0   57/8]
+            [     0 133/12]
+        """
+        cdef Rational x
+        x = Rational()
+        cdef Matrix_rational_sparse _src = <Matrix_rational_sparse> src
+        mpq_vector_get_entry(x.value, &_src._matrix[iSrc], jSrc)
+        mpq_vector_set_entry(&self._matrix[iDst], jDst, x.value)
 
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
@@ -151,7 +194,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         mpq_vector_set_entry(&self._matrix[i], j, z)
         mpq_clear(z)
 
-
     ########################################################################
     # LEVEL 2 functionality
     #   * def _pickle
@@ -168,7 +210,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
     #   * _list -- list of underlying elements (need not be a copy)
     #   * x _dict -- sparse dictionary of underlying elements (need not be a copy)
 
-    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix _right) noexcept:
+    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix _right):
         cdef Matrix_rational_sparse right, ans
         right = _right
 
@@ -237,7 +279,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         cdef mpq_vector* v
 
         # Build a table that gives the nonzero positions in each column of right
-        nonzero_positions_in_columns = [set([]) for _ in range(right._ncols)]
+        nonzero_positions_in_columns = [set() for _ in range(right._ncols)]
         cdef Py_ssize_t i, j, k
         for i in range(right._nrows):
             v = &(right._matrix[i])
@@ -357,9 +399,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         multiple of all numerators and denominators of elements of
         this matrix.
 
-        OUTPUT:
-
-            -- Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -377,7 +417,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         cdef mpz_t x, h
         mpz_init(x)
         mpz_init_set_si(h, 0)
-        cdef int i, j
+        cdef Py_ssize_t i, j
         sig_on()
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self._matrix[i].num_nonzero:
@@ -410,9 +450,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         """
         Return the denominator of this matrix.
 
-        OUTPUT:
-
-        - Sage Integer
+        OUTPUT: Sage Integer
 
         EXAMPLES::
 
@@ -428,13 +466,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
     def _clear_denom(self):
         """
-        INPUT:
-
-        self -- a matrix
-
-        OUTPUT:
-
-        D*self, D
+        OUTPUT: ``d*self, D``
 
         The product D*self is a matrix over ZZ
 
@@ -484,8 +516,8 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
         INPUT:
 
-        ``height_guess``, ``proof``, ``**kwds`` -- all passed to the multimodular
-        algorithm; ignored by the p-adic algorithm.
+        - ``height_guess``, ``proof``, ``**kwds`` -- all passed to the multimodular
+          algorithm; ignored by the `p`-adic algorithm
 
         OUTPUT:
 
@@ -507,7 +539,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [      0       0       1 238/157]
             [      0       0       0       0]
 
-        :trac:`10319` has been fixed::
+        :issue:`10319` has been fixed::
 
             sage: m = Matrix(QQ, [1], sparse=True); m.echelonize()
             sage: m = Matrix(QQ, [1], sparse=True); m.echelonize(); m
@@ -531,12 +563,10 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         """
         INPUT:
 
-        ``height_guess``, ``proof``, ``**kwds`` -- all passed to the multimodular
-        algorithm; ignored by the p-adic algorithm.
+        - ``height_guess``, ``proof``, ``**kwds`` -- all passed to the multimodular
+          algorithm; ignored by the `p`-adic algorithm
 
-        OUTPUT:
-
-            self is no in reduced row echelon form.
+        OUTPUT: ``self`` is no in reduced row echelon form
 
         EXAMPLES::
 
@@ -551,7 +581,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [      0       0       1 238/157]
             [      0       0       0       0]
         """
-        label = 'echelon_form_%s'%algorithm
+        label = 'echelon_form_%s' % algorithm
         x = self.fetch(label)
         if x is not None:
             return x
@@ -575,13 +605,13 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
     def _echelon_form_multimodular(self, height_guess=None, proof=True):
         """
-        Returns reduced row-echelon form using a multi-modular
-        algorithm.  Does not change self.
+        Return reduced row-echelon form using a multi-modular
+        algorithm.  Does not change ``self``.
 
         INPUT:
 
-        - height_guess -- integer or None
-        - proof -- boolean (default: True)
+        - ``height_guess`` -- integer or ``None``
+        - ``proof`` -- boolean (default: ``True``)
         """
         from sage.matrix.misc import matrix_rational_echelon_form_multimodular
         cdef Matrix E
@@ -589,7 +619,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
                                  height_guess=height_guess, proof=proof)
         E._parent = self._parent
         return E, pivots
-
 
     def set_row_to_multiple_of_row(self, i, j, s):
         """
@@ -663,17 +692,17 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
                                                                  Py_ssize_t r, cols,
                                                                  cols_index=None):
         """
-        Set row i of self to -(row r of A), but where we only take the
+        Set row i of ``self`` to -(row r of A), but where we only take the
         given column positions in that row of A.  Note that we *DO*
-        zero out the other entries of self's row i.
+        zero out the other entries of ``self``'s row i.
 
         INPUT:
 
-        - i -- integer, index into the rows of self
-        - A -- a sparse matrix
-        - r -- integer, index into rows of A
-        - cols -- a *sorted* list of integers.
-        - cols_index -- (optional).  But set it to this to vastly speed up
+        - ``i`` -- integer, index into the rows of self
+        - ``A`` -- a sparse matrix
+        - ``r`` -- integer, index into rows of A
+        - ``cols`` -- a *sorted* list of integers
+        - ``cols_index`` -- (optional) set it to this to vastly speed up
           calls to this function::
 
                 dict([(cols[i], i) for i in range(len(cols))])
@@ -712,7 +741,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         v = &self._matrix[i]
         w = &_A._matrix[r]
 
-
         if cols_index is None:
             cols_index = dict([(cols[i], i) for i in range(len(cols))])
 
@@ -725,19 +753,18 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         v.num_nonzero = n
         v.degree = self._ncols
 
-
         for l from 0 <= l < n:
             v.positions[l] = cols_index[w.positions[pos[l]]]
             mpq_mul(v.entries[l], w.entries[pos[l]], minus_one)
 
     def _right_kernel_matrix(self, **kwds):
         r"""
-        Returns a pair that includes a matrix of basis vectors
+        Return a pair that includes a matrix of basis vectors
         for the right kernel of ``self``.
 
         INPUT:
 
-        - ``kwds`` - these are provided for consistency with other versions
+        - ``kwds`` -- these are provided for consistency with other versions
           of this method.  Here they are ignored as there is no optional
           behavior available.
 

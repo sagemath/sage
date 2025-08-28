@@ -1,7 +1,7 @@
 """
-Empty Species
+Empty species
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Florent Hivert <Florent.Hivert@univ-rouen,fr>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,19 +14,22 @@ Empty Species
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 from .species import GenericCombinatorialSpecies
 from sage.structure.unique_representation import UniqueRepresentation
 
 
 class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
     """
-    Returns the empty species. This species has no structure at all.
+    Return the empty species. This species has no structure at all.
     It is the zero of the semi-ring of species.
 
     EXAMPLES::
 
         sage: X = species.EmptySpecies(); X
+        doctest:warning...
+        DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+        See https://github.com/sagemath/sage/issues/38544 for details.
         Empty species
         sage: X.structures([]).list()
         []
@@ -38,7 +41,7 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         [0, 0, 0, 0]
         sage: X.isotype_generating_series()[0:4]
         [0, 0, 0, 0]
-        sage: X.cycle_index_series()[0:4]
+        sage: X.cycle_index_series()[0:4]                                               # needs sage.modules
         [0, 0, 0, 0]
 
     The empty species is the zero of the semi-ring of species.
@@ -55,7 +58,7 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         sage: (X.isotype_generating_series()[0:4] ==
         ....:  S.isotype_generating_series()[0:4])
         True
-        sage: (X.cycle_index_series()[0:4] ==
+        sage: (X.cycle_index_series()[0:4] ==                                           # needs sage.modules
         ....:  S.cycle_index_series()[0:4])
         True
 
@@ -69,7 +72,7 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         [0, 0, 0, 0]
         sage: Y.isotype_generating_series()[0:4]
         [0, 0, 0, 0]
-        sage: Y.cycle_index_series()[0:4]
+        sage: Y.cycle_index_series()[0:4]                                               # needs sage.modules
         [0, 0, 0, 0]
 
     TESTS::
@@ -98,7 +101,7 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def _gs(self, series_ring, base_ring):
         """
-        Return the generating series for self.
+        Return the generating series for ``self``.
 
         EXAMPLES::
 
@@ -135,7 +138,7 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def _equation(self, var_mapping):
         """
-        Returns the right hand side of an algebraic equation satisfied by
+        Return the right hand side of an algebraic equation satisfied by
         this species. This is a utility function called by the
         algebraic_equation_system method.
 

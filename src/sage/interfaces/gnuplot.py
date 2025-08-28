@@ -2,7 +2,7 @@ r"""
 Interface to the Gnuplot interpreter
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,12 +14,13 @@ Interface to the Gnuplot interpreter
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import time
 from sage.structure.sage_object import SageObject
+
 
 class Gnuplot(SageObject):
     """
@@ -62,29 +63,25 @@ class Gnuplot(SageObject):
 
         INPUT:
 
+        - ``cmd`` -- string
 
-        -  ``cmd`` - string
+        - ``file`` -- string (default: ``None``); if specified save
+          plot to given file, which may be either an eps (default) or png file
 
-        -  ``file`` - string (default: None), if specified save
-           plot to given file, which may be either an eps (default) or png
-           file.
+        - ``verbose`` -- print some info
 
-        -  ``verbose`` - print some info
-
-        -  ``reset`` - True: reset gnuplot before making
-           graph
-
+        - ``reset`` -- true; reset gnuplot before making graph
 
         OUTPUT: displays graph
 
-        .. note::
+        .. NOTE::
 
            Note that ``^`` s  are replaced by ``**`` s before being passed to gnuplot.
         """
         if reset:
             self('reset')
         self('set terminal x11')
-        cmd = cmd.replace('^','**')
+        cmd = cmd.replace('^', '**')
         self(cmd)
         if file is not None:
             if file[-4:] == '.png':
@@ -93,7 +90,7 @@ class Gnuplot(SageObject):
                 if file[-4:] != '.eps':
                     file += '.eps'
                 self('set terminal postscript eps enhanced')
-            #self("set output '%s'"%file)
+            # self("set output '%s'"%file)
             tmp = 'gnuplot_tmp%s' % file[-4:]
             self("set output '%s'" % tmp)
             print("Saving plot to %s" % file)
@@ -109,7 +106,7 @@ class Gnuplot(SageObject):
                interact=True):
         if title is None:
             title = str(f)
-        f = f.replace('^','**')
+        f = f.replace('^', '**')
         cmd = """
         set xlabel "%s"
         set ylabel "%s"
@@ -126,7 +123,7 @@ class Gnuplot(SageObject):
         #show palette
         splot %s
         """ % (xlabel, ylabel,
-             xmin, xmax, ymin, ymax, #zmin, zmax,
+             xmin, xmax, ymin, ymax,  # zmin, zmax,
              samples, isosamples,
              title, f)
         if interact:
@@ -143,19 +140,18 @@ class Gnuplot(SageObject):
 
         INPUT:
 
-        -  ``f`` - (string) a function of two variables, e.g.,
-           'cos(u)\*(3 + v\*cos(u/2)), sin(u)\*(3 + v\*cos(u/2)),
-           v\*sin(u/2)'
+        - ``f`` -- string; a function of two variables, e.g.,
+          ``'cos(u)\*(3 + v\*cos(u/2)), sin(u)\*(3 + v\*cos(u/2)), v\*sin(u/2)'``
 
-        -  ``range1`` - (string) range of values for one
-           variable, e.g., '[u=-pi:pi]'
+        - ``range1`` -- string; range of values for one
+          variable, e.g., ``'[u=-pi:pi]'``
 
-        -  ``range2`` - (string) range of values for another
-           variable, e.g., '[v=-0.2:0.2]'
+        - ``range2`` -- string; range of values for another
+          variable, e.g., ``'[v=-0.2:0.2]'``
 
-        -  ``samples`` - (int) number of sample points to use
+        - ``samples`` -- integer; number of sample points to use
 
-        -  ``title`` - (string) title of the graph.
+        - ``title`` -- string; title of the graph
 
         EXAMPLES::
 
@@ -172,7 +168,7 @@ class Gnuplot(SageObject):
         set pm3d; set palette; set parametric
         splot %s %s %s
         """ % (samples, title, range1, range2, f)
-        cmd = cmd.replace('^','**')
+        cmd = cmd.replace('^', '**')
         if interact:
             self.interact(cmd)
         else:
@@ -180,7 +176,7 @@ class Gnuplot(SageObject):
 
     def interact(self, cmd):
         import tempfile
-        with tempfile.NamedTemporaryFile(mode="w+t") as f:
+        with tempfile.NamedTemporaryFile(mode='w+t') as f:
             f.write(cmd + '\n pause -1 "Press return to continue (no further rotation possible)"')
             os.system(f'gnuplot -persist {f.name}')
 

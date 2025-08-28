@@ -12,14 +12,14 @@ expression of the differential equation.
 
 ::
 
-    ##########################################################################
+    # ************************************************************************
     #  Copyright (C) 2014 Miguel Marco <mmarco@unizar.es>, Marcos Rodriguez
     #   <marcos@uunizar.es>
     #
     #  Distributed under the terms of the GNU General Public License (GPL):
     #
-    #                  http://www.gnu.org/licenses/
-    ##########################################################################
+    #                  https://www.gnu.org/licenses/
+    # ************************************************************************
 
 AUTHORS:
 
@@ -37,8 +37,10 @@ REFERENCES:
 
 - [TIDES]_
 """
+
 from sage.rings.real_mpfr import RealField
-from sage.calculus.all import symbolic_expression
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.calculus.all", "symbolic_expression")
 from sage.misc.flatten import flatten
 from sage.ext.fast_callable import fast_callable
 from sage.rings.semirings.non_negative_integer_semiring import NN
@@ -54,11 +56,11 @@ def subexpressions_list(f, pars=None):
 
     INPUT:
 
-    - ``f`` -- a symbolic function of several components.
+    - ``f`` -- a symbolic function of several components
 
-    - ``pars`` -- a list of the parameters that appear in the function
+    - ``pars`` -- list of the parameters that appear in the function
       this should be the symbolic constants that appear in f but are not
-      arguments.
+      arguments
 
     OUTPUT:
 
@@ -71,7 +73,6 @@ def subexpressions_list(f, pars=None):
 
     For the trigonometric functions, some extra expressions will be added.
     These extra expressions will be used later to compute their derivatives.
-
 
     EXAMPLES::
 
@@ -143,8 +144,6 @@ def subexpressions_list(f, pars=None):
         ('cos', y),
         ('add', sin(y), x^2),
         ('exp', x^2 + sin(y))])
-
-
     """
     from sage.functions.trig import sin, cos, arcsin, arctan, arccos
     variables = f[0].arguments()
@@ -330,8 +329,6 @@ def remove_repeated(l1, l2):
         ('add', 1, -a^2),
         ('pow', -a^2 + 1, 0.5),
         ('asin', a)])
-
-
     """
     for i in range(len(l1)-1):
         j = i+1
@@ -343,7 +340,7 @@ def remove_repeated(l1, l2):
                 j += 1
 
 
-def remove_constants(l1,l2):
+def remove_constants(l1, l2):
     """
     Given two lists, remove the entries in the first that are real constants,
     and also the corresponding elements in the second one.
@@ -359,7 +356,6 @@ def remove_constants(l1,l2):
         sage: remove_constants(l1,l2)
         sage: l1, l2
         ([a*cos(7), a*cos(7) + 1], [('mul', cos(7), a), ('add', 1, a*cos(7))])
-
     """
     i = 0
     while i < len(l1):
@@ -377,25 +373,25 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
 
     INPUT:
 
-    - ``integrator`` -- the name of the integrator file.
+    - ``integrator`` -- the name of the integrator file
 
-    - ``driver`` -- the name of the driver file.
+    - ``driver`` -- the name of the driver file
 
-    - ``f`` -- the function that determines the differential equation.
+    - ``f`` -- the function that determines the differential equation
 
-    - ``ics`` -- a list or tuple with the initial conditions.
+    - ``ics`` -- list or tuple with the initial conditions
 
-    - ``initial`` -- the initial time for the integration.
+    - ``initial`` -- the initial time for the integration
 
-    - ``final`` -- the final time for the integration.
+    - ``final`` -- the final time for the integration
 
-    - ``delta`` -- the step of the output.
+    - ``delta`` -- the step of the output
 
-    - ``tolrel`` -- the relative tolerance.
+    - ``tolrel`` -- the relative tolerance
 
-    - ``tolabs`` -- the absolute tolerance.
+    - ``tolabs`` -- the absolute tolerance
 
-    -  ``output`` -- the name of the file that the compiled integrator will write to
+    - ``output`` -- the name of the file that the compiled integrator will write to
 
     This function creates two files, integrator and driver, that can be used
     later with the min_tides library [TIDES]_.
@@ -436,7 +432,7 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
         '\ttolrel = 9.9999999999999998e-17 ;\n'
         sage: shutil.rmtree(tempdir)
 
-    Check that issue :trac:`17179` is fixed (handle expressions like `\\pi`)::
+    Check that issue :issue:`17179` is fixed (handle expressions like `\\pi`)::
 
         sage: from sage.interfaces.tides import genfiles_mintides
         sage: import os
@@ -460,8 +456,6 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
         sage: l[18]
         '    \tv[0] = 3.1415926535897931 ; \n'
         sage: shutil.rmtree(tempdir)
-
-
     """
     RR = RealField()
 
@@ -470,7 +464,7 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
     remove_repeated(l1, l2)
     remove_constants(l1, l2)
     l0 = [str(l) for l in l1]
-    #generate the corresponding c lines
+    # generate the corresponding c lines
 
     l3 = []
     var = f[0].arguments()
@@ -637,33 +631,33 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
 
     INPUT:
 
-    - ``integrator`` -- the name of the integrator file.
+    - ``integrator`` -- the name of the integrator file
 
-    - ``driver`` -- the name of the driver file.
+    - ``driver`` -- the name of the driver file
 
-    - ``f`` -- the function that determines the differential equation.
+    - ``f`` -- the function that determines the differential equation
 
-    - ``ics`` -- a list or tuple with the initial conditions.
+    - ``ics`` -- list or tuple with the initial conditions
 
-    - ``initial`` -- the initial time for the integration.
+    - ``initial`` -- the initial time for the integration
 
-    - ``final`` -- the final time for the integration.
+    - ``final`` -- the final time for the integration
 
-    - ``delta`` -- the step of the output.
+    - ``delta`` -- the step of the output
 
     - ``parameters`` -- the variables inside the function that should be treated
-       as parameters.
+      as parameters
 
     - ``parameter_values`` -- the values of the parameters for the particular
-       initial value problem.
+      initial value problem
 
     - ``dig`` -- the number of digits of precision that will be used in the integration
 
-    - ``tolrel`` -- the relative tolerance.
+    - ``tolrel`` -- the relative tolerance
 
-    - ``tolabs`` -- the absolute tolerance.
+    - ``tolabs`` -- the absolute tolerance
 
-    -  ``output`` -- the name of the file that the compiled integrator will write to
+    - ``output`` -- the name of the file that the compiled integrator will write to
 
     This function creates two files, integrator and driver, that can be used
     later with the tides library ([TIDES]_).
@@ -717,7 +711,7 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
         '\tmp_tides_delta(function_iteration, NULL, nvar, npar, nfun, v, p, tini, dt, nipt, tolrel, tolabs, NULL, fd);\n'
         sage: shutil.rmtree(tempdir)
 
-    Check that issue :trac:`17179` is fixed (handle expressions like `\\pi`)::
+    Check that issue :issue:`17179` is fixed (handle expressions like `\\pi`)::
 
         sage: from sage.interfaces.tides import genfiles_mpfr
         sage: import os
@@ -741,7 +735,6 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
         sage: l[24]
         '\tmpfr_set_str(v[0], "3.141592653589793238462643383279502884197169399375101", 10, TIDES_RND);\n'
         sage: shutil.rmtree(tempdir)
-
     """
     if parameters is None:
         parameters = []

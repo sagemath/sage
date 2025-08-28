@@ -1,8 +1,9 @@
+# sage.doctest: needs sage.all
 r"""
 TESTS:
 
 Check that all non deprecated lazy imports resolve correctly. We avoid libgiac
-on purpose because it does print stuff, see :trac:`31655`.::
+on purpose because it does print stuff, see :issue:`31655`.::
 
     sage: from sage.misc.lazy_import import LazyImport
     sage: G = globals()

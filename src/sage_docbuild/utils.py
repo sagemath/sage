@@ -4,6 +4,7 @@ Utilities
 
 import errno
 import os
+import platform
 import traceback
 from typing import Optional
 
@@ -107,14 +108,11 @@ def build_many(target, args, processes=None):
     also require significant cleanup.
 
     It also avoids starting new processes from a pthread, which results in at
-    least two known issues:
-
-    * On versions of Cygwin prior to 3.0.0 there were bugs in mmap handling
-      on threads (see :trac:`27214#comment:25`).
+    least one known issue:
 
     * When PARI is built with multi-threading support, forking a Sage
       process from a thread leaves the main Pari interface instance broken
-      (see :trac:`26608#comment:38`).
+      (see :issue:`26608#comment:38`).
 
     In the future this may be replaced by a generalized version of the more
     robust parallel processing implementation from ``sage.doctest.forker``.
@@ -136,8 +134,7 @@ def build_many(target, args, processes=None):
         Processed task ...
         Processed task ...
 
-    Unlike the first version of ``build_many`` which was only intended to get
-    around the Cygwin bug, this version can also return a result, and thus can
+    This version can also return a result, and thus can
     be used as a replacement for ``multiprocessing.Pool.map`` (i.e. it still
     blocks until the result is ready)::
 
@@ -197,7 +194,7 @@ def build_many(target, args, processes=None):
     # With OS X, Python 3.8 defaults to use 'spawn' instead of 'fork'
     # in multiprocessing, and Sage docbuilding doesn't work with
     # 'spawn'. See trac #27754.
-    if os.uname().sysname == "Darwin":
+    if platform.system() == "Darwin":
         set_start_method("fork", force=True)
     from queue import Empty
 

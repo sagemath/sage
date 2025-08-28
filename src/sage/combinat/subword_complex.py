@@ -11,8 +11,8 @@ expression for `w`.
 A subword complex is a shellable sphere if and only if the Demazure
 product of `Q` equals `w`, otherwise it is a shellable ball.
 
-The code is optimized to be used with ReflectionGroup, it works as well
-with CoxeterGroup, but many methods fail for WeylGroup.
+The code is optimized to be used with :class:`ReflectionGroup`, it works as well
+with :class:`CoxeterGroup`, but many methods fail for :class:`WeylGroup`.
 
 EXAMPLES::
 
@@ -115,13 +115,15 @@ REFERENCES:
 from itertools import repeat
 from copy import copy
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.structure.element import Element
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.topology.simplicial_complex import SimplicialComplex, Simplex
 from sage.categories.simplicial_complexes import SimplicialComplexes
-from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.geometry.cone import Cone
 from sage.combinat.subword_complex_c import _flip_c, _construct_facets_c
+
+lazy_import('sage.geometry.polyhedron.constructor', 'Polyhedron')
+lazy_import('sage.geometry.cone', 'Cone')
 
 
 class SubwordComplexFacet(Simplex, Element):
@@ -156,7 +158,7 @@ class SubwordComplexFacet(Simplex, Element):
 
     def __init__(self, parent, positions, facet_test=True):
         r"""
-        Initializes a facet of the subword complex ``parent``.
+        Initialize a facet of the subword complex ``parent``.
 
         EXAMPLES::
 
@@ -398,7 +400,7 @@ class SubwordComplexFacet(Simplex, Element):
         N = len(W.long_element(as_word=True))
         root_conf = self._root_configuration_indices()
         return [~w for w in W
-                if all(w.action_on_root_indices(i, side="left") < N
+                if all(w.action_on_root_indices(i, side='left') < N
                        for i in root_conf)]
 
     def is_vertex(self):
@@ -523,7 +525,7 @@ class SubwordComplexFacet(Simplex, Element):
 
         INPUT:
 
-        - coefficients -- (optional) a list of coefficients used to
+        - ``coefficients`` -- (optional) a list of coefficients used to
           scale the fundamental weights
 
         .. SEEALSO::
@@ -652,7 +654,7 @@ class SubwordComplexFacet(Simplex, Element):
 
         INPUT:
 
-        - coefficients -- (optional) a list of coefficients used to
+        - ``coefficients`` -- (optional) a list of coefficients used to
           scale the fundamental weights
 
         .. SEEALSO::
@@ -693,9 +695,9 @@ class SubwordComplexFacet(Simplex, Element):
 
         INPUT:
 
-        - ``i`` -- position in the word `Q` (integer).
-        - ``return_position`` -- boolean (default: ``False``) tells
-          whether the new position should be returned as well.
+        - ``i`` -- integer; position in the word `Q`
+        - ``return_position`` -- boolean (default: ``False``); tells
+          whether the new position should be returned as well
 
         OUTPUT:
 
@@ -749,20 +751,20 @@ class SubwordComplexFacet(Simplex, Element):
 
         INPUT:
 
-        - ``list_colors`` -- list (default: ``[]``) to change the colors
-          of the pseudolines.
-        - ``labels`` -- list (default: ``[]``) to change the labels
-          of the pseudolines.
-        - ``thickness`` -- integer (default: ``3``) for the thickness
-          of the pseudolines.
-        - ``fontsize`` -- integer (default: ``14``) for the size
-          of the font used for labels.
+        - ``list_colors`` -- list (default: ``[]``); to change the colors
+          of the pseudolines
+        - ``labels`` -- list (default: ``[]``); to change the labels
+          of the pseudolines
+        - ``thickness`` -- integer (default: 3); for the thickness
+          of the pseudolines
+        - ``fontsize`` -- integer (default: 14); for the size
+          of the font used for labels
         - ``shift`` -- couple of coordinates (default: ``(0,0)``)
-          to change the origin.
-        - ``compact`` -- boolean (default: ``False``) to require
-          a more compact representation.
-        - ``roots`` -- boolean (default: ``True``) to print
-          the extended root configuration.
+          to change the origin
+        - ``compact`` -- boolean (default: ``False``); to require
+          a more compact representation
+        - ``roots`` -- boolean (default: ``True``); whether to print
+          the extended root configuration
 
         EXAMPLES::
 
@@ -954,11 +956,11 @@ class SubwordComplexFacet(Simplex, Element):
             if type in ['B', 'C']:
                 L += line(pseudolines_type_B[pseudoline],
                           color=list_colors[pseudoline],
-                          thickness=thickness, linestyle="--")
+                          thickness=thickness, linestyle='--')
         for root_label in root_labels:
             L += text(root_label[0], root_label[1], rgbcolor=[0, 0, 0],
-                      fontsize=fontsize, vertical_alignment="center",
-                      horizontal_alignment="right")
+                      fontsize=fontsize, vertical_alignment='center',
+                      horizontal_alignment='right')
         if len(labels) < last + 1:
             labels = list(range(1, last + 2))
         for pseudoline_label in pseudoline_labels:
@@ -966,15 +968,15 @@ class SubwordComplexFacet(Simplex, Element):
                       color=list_colors[pseudoline_label[0]],
                       fontsize=fontsize,
                       vertical_alignment=pseudoline_label[2],
-                      horizontal_alignment="right")
+                      horizontal_alignment='right')
         if labels is not False:
             for pseudoline in range(last):
                 L += text(labels[pseudoline],
                           (shift[0] + x_max + .1,
                            shift[1] + permutation.inverse()(pseudoline + 1) - 1),
                           color=list_colors[pseudoline], fontsize=fontsize,
-                          vertical_alignment="center",
-                          horizontal_alignment="left")
+                          vertical_alignment='center',
+                          horizontal_alignment='left')
         L.axes(False)
         return L
 
@@ -1061,7 +1063,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
     # standard functions
 
     @staticmethod
-    def __classcall__(cls, Q, w, algorithm="inductive"):
+    def __classcall__(cls, Q, w, algorithm='inductive'):
         r"""
         Making the input hashable.
 
@@ -1083,17 +1085,17 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         Q = tuple(Q)
         return super().__classcall__(cls, Q, w, algorithm=algorithm)
 
-    def __init__(self, Q, w, algorithm="inductive"):
+    def __init__(self, Q, w, algorithm='inductive'):
         r"""
         Initialize the subword complex `\mathcal{SC}(Q,w)`.
 
         INPUT:
 
-        - ``Q`` -- word on the simple generators of the Coxeter group.
-        - ``w`` -- element of the Coxeter group.
-        - ``algorithm`` -- (default: ``"inductive"``) choice of the
+        - ``Q`` -- word on the simple generators of the Coxeter group
+        - ``w`` -- element of the Coxeter group
+        - ``algorithm`` -- (default: ``'inductive'``) choice of the
           algorithm to generate the subword complex. Options are
-          ``"inductive"`` or ``"greedy"``. The second option is
+          ``'inductive'`` or ``'greedy'``. The second option is
           recommended when `|Q|` is closed to `\ell(w) + \mathrm{rank}(W)`.
 
         EXAMPLES::
@@ -1199,13 +1201,11 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         INPUT:
 
-        - ``F`` -- an iterable of positions.
-        - ``facet_test`` -- boolean (default: ``True``) tells whether or
-          not the facet ``F`` should be tested before creation.
+        - ``F`` -- an iterable of positions
+        - ``facet_test`` -- boolean (default: ``True``); whether or
+          not the facet ``F`` should be tested before creation
 
-        OUTPUT:
-
-        the facet of ``self`` at positions given by ``F``.
+        OUTPUT: the facet of ``self`` at positions given by ``F``
 
         EXAMPLES::
 
@@ -1227,7 +1227,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
     def __contains__(self, F):
         r"""
-        Tests if ``self`` contains a given iterable ``F``.
+        Test if ``self`` contains a given iterable ``F``.
 
         EXAMPLES::
 
@@ -1415,7 +1415,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         return iter(self.facets())
 
-    def greedy_facet(self, side="positive"):
+    def greedy_facet(self, side='positive'):
         r"""
         Return the negative (or positive) greedy facet of ``self``.
 
@@ -1427,17 +1427,17 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             sage: W = ReflectionGroup(['A',2])
             sage: w = W.from_reduced_word([1,2,1])
             sage: SC = SubwordComplex([1,2,1,2,1], w)
-            sage: SC.greedy_facet(side="positive")
+            sage: SC.greedy_facet(side='positive')
             (0, 1)
-            sage: SC.greedy_facet(side="negative")
+            sage: SC.greedy_facet(side='negative')
             (3, 4)
 
             sage: W = CoxeterGroup(['A',2])
             sage: w = W.from_reduced_word([1,2,1])
             sage: SC = SubwordComplex([1,2,1,2,1], w)
-            sage: SC.greedy_facet(side="positive")
+            sage: SC.greedy_facet(side='positive')
             (0, 1)
-            sage: SC.greedy_facet(side="negative")
+            sage: SC.greedy_facet(side='negative')
             (3, 4)
         """
         return self.element_class(self, _greedy_facet(self.word(),
@@ -1565,7 +1565,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             True
         """
         from sage.matrix.constructor import matrix
-        M = matrix(self.greedy_facet(side="negative").root_configuration())
+        M = matrix(self.greedy_facet(side='negative').root_configuration())
         return M.rank() == max(M.ncols(), M.nrows())
 
     @cached_method
@@ -1681,7 +1681,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         INPUT:
 
-        - coefficients -- (optional) a list of coefficients used to
+        - ``coefficients`` -- (optional) a list of coefficients used to
           scale the fundamental weights
 
         .. SEEALSO::
@@ -1713,7 +1713,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         INPUT:
 
-        `i` -- an integer defining a position in the word `Q`
+        - ``i`` -- an integer defining a position in the word `Q`
 
         EXAMPLES::
 
@@ -1746,7 +1746,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         INPUT:
 
-        - coefficients -- (optional) a list of coefficients used to
+        - ``coefficients`` -- (optional) a list of coefficients used to
           scale the fundamental weights
 
         .. SEEALSO::
@@ -1825,12 +1825,10 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         INPUT:
 
-        - label -- boolean (default ``False``) whether or not to label
+        - ``label`` -- boolean (default: ``False``); whether or not to label
           the cover relations by the position of flip
 
-        OUTPUT:
-
-        a list of pairs of facets
+        OUTPUT: list of pairs of facets
 
         EXAMPLES::
 
@@ -1853,9 +1851,9 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
              ((2, 3), (3, 4))]
         """
         N = len(self.group().long_element(as_word=True))
-        F = self.greedy_facet(side="positive")
-        Fs = set([F])
-        seen = set([F])
+        F = self.greedy_facet(side='positive')
+        Fs = {F}
+        seen = {F}
         covers = []
         while Fs:
             F = Fs.pop()
@@ -1876,9 +1874,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         Return the increasing flip graph of the subword complex.
 
-        OUTPUT:
-
-        a directed graph
+        OUTPUT: a directed graph
 
         EXAMPLES::
 
@@ -1895,7 +1891,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         from sage.graphs.digraph import DiGraph
         return DiGraph(self.cover_relations(label=label))
 
-    def interval(self, I, J):
+    def interval(self, I, J) -> set:
         """
         Return the interval [I,J] in the increasing flip graph subword complex.
 
@@ -1903,9 +1899,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         - I, J -- two facets
 
-        OUTPUT:
-
-        a set of facets
+        OUTPUT: a set of facets
 
         EXAMPLES::
 
@@ -1924,15 +1918,13 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         G = self.increasing_flip_graph()
         paths = G.all_paths(I, J)
-        return set(K for path in paths for K in path)
+        return {K for path in paths for K in path}
 
     def increasing_flip_poset(self):
         """
         Return the increasing flip poset of the subword complex.
 
-        OUTPUT:
-
-        a poset
+        OUTPUT: a poset
 
         EXAMPLES::
 
@@ -1954,7 +1946,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         return Poset(((), cov), facade=True)
 
 
-def _greedy_facet(Q, w, side="negative", n=None, pos=0, l=None, elems=[]):
+def _greedy_facet(Q, w, side='negative', n=None, pos=0, l=None, elems=[]):
     r"""
     Return the (positive or negative) *greedy facet* of the subword
     complex `SC(Q, w)`.
@@ -1963,15 +1955,13 @@ def _greedy_facet(Q, w, side="negative", n=None, pos=0, l=None, elems=[]):
 
     - ``Q`` -- a word
     - ``w`` -- an element in the Coxeter group
-    - ``side`` -- optional, either ``'negative'`` (default) or ``'positive'``
-    - ``n`` -- an integer (optional, defaults to the length of `Q`)
-    - ``pos`` -- an integer (optional, default 0)
-    - ``l`` -- an integer (optional, defaults to the length of `w`)
-    - ``elems`` -- a list (optional)
+    - ``side`` -- string; either ``'negative'`` (default) or ``'positive'``
+    - ``n`` -- integer (default: the length of `Q`)
+    - ``pos`` -- integer (default: 0)
+    - ``l`` -- integer (default: the length of `w`)
+    - ``elems`` -- list (optional)
 
-    OUTPUT:
-
-    - a set
+    OUTPUT: a set
 
     EXAMPLES::
 
@@ -2036,9 +2026,7 @@ def _extended_root_configuration_indices(W, Q, F):
     - ``Q`` -- a word representing an element of `W`
     - ``F`` -- a facet of the subword complex
 
-    OUTPUT:
-
-    a list of root indices
+    OUTPUT: list of root indices
 
     EXAMPLES::
 
@@ -2065,7 +2053,7 @@ def _extended_root_configuration_indices(W, Q, F):
     pi = W.one()
     for i, wi in enumerate(Q):
         V_roots.append(pi.action_on_root_indices(W.simple_root_index(wi),
-                                                 side="left"))
+                                                 side='left'))
         if i not in F:
             pi = pi.apply_simple_reflection_right(wi)
     return V_roots
@@ -2078,9 +2066,7 @@ def _greedy_flip_algorithm(Q, w):
     - ``Q`` -- a word in a Coxeter group `W`
     - ``w`` -- an element of `W`
 
-    OUTPUT:
-
-    a pair: the list of facets and the list of extended root conf. indices
+    OUTPUT: a pair: the list of facets and the list of extended root conf. indices
 
     EXAMPLES::
 
@@ -2110,7 +2096,7 @@ def _greedy_flip_algorithm(Q, w):
           [0, 2, 1, 0, 5]])
     """
     W = w.parent()
-    F = _greedy_facet(Q, w, side="positive")
+    F = _greedy_facet(Q, w, side='positive')
     R = _extended_root_configuration_indices(W, Q, F)
     facet_list = [F]
     extended_root_conf_indices_list = [R]
@@ -2120,16 +2106,16 @@ def _greedy_flip_algorithm(Q, w):
         has_new_child = False
         for i in sorted(F):
             if (not has_new_child) and (i >= next_index):
-                j = _flip_c(W, F, R, i, side="positive")
+                j = _flip_c(W, F, R, i, side='positive')
                 if j != i:
                     flip_to_ancestors.append(j)
                     next_index = i + 1
                     has_new_child = True
-                    facet_list.append([x for x in F])
-                    extended_root_conf_indices_list.append([x for x in R])
+                    facet_list.append(list(F))
+                    extended_root_conf_indices_list.append(list(R))
         if not has_new_child:
             i = flip_to_ancestors.pop()
             if i != -1:
-                j = _flip_c(W, F, R, i, side="negative")
+                j = _flip_c(W, F, R, i, side='negative')
                 next_index = j + 1
     return facet_list, extended_root_conf_indices_list

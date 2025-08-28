@@ -90,7 +90,7 @@ cdef class FastDigraph:
 
     def print_adjacency_matrix(self):
         r"""
-        Displays the adjacency matrix of ``self``.
+        Display the adjacency matrix of ``self``.
 
         EXAMPLES::
 
@@ -117,7 +117,7 @@ cdef inline int compute_out_neighborhood_cardinality(FastDigraph g, int S) noexc
 
     - ``g`` -- a FastDigraph
 
-    - ``S`` -- an integer describing the set
+    - ``S`` -- integer describing the set
 
     EXAMPLES::
 

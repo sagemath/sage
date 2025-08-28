@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Elements with labels.
 
@@ -15,7 +14,7 @@ with vertex labels.
 from sage.misc.latex import latex
 
 
-class ElementWithLabel():
+class ElementWithLabel:
     """
     Auxiliary class for showing/viewing :class:`Poset`s with
     non-injective labelings.
@@ -170,4 +169,4 @@ class ElementWithLabel():
             sage: a != x
             False
         """
-        return not(self == other)
+        return not (self == other)

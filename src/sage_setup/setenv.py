@@ -1,8 +1,9 @@
 # Set some environment variables in the running process
 
 import os
-import sage.env
+import platform
 from pathlib import Path
+
 
 def _environ_prepend(var, value, separator=':'):
     if value:
@@ -11,8 +12,9 @@ def _environ_prepend(var, value, separator=':'):
         else:
             os.environ[var] = value
 
+
 def setenv():
-    from sage.env import UNAME, SAGE_LOCAL, SAGE_VENV, SAGE_ARCHFLAGS, SAGE_PKG_CONFIG_PATH
+    from sage.env import SAGE_LOCAL, SAGE_VENV, SAGE_ARCHFLAGS, SAGE_PKG_CONFIG_PATH
 
     ##
     ## from sage-env:
@@ -32,7 +34,7 @@ def setenv():
         _environ_prepend('CPATH',        f'{SAGE_LOCAL}/include')
         _environ_prepend('LDFLAGS',      f'-L{SAGE_LOCAL}/lib -Wl,-rpath,{SAGE_LOCAL}/lib',
                          separator=' ')
-        if UNAME == 'Linux':
+        if platform.system() == 'Linux':
             _environ_prepend('LDFLAGS',      f'-Wl,-rpath-link,{SAGE_LOCAL}/lib',
                              separator=' ')
         if Path(SAGE_VENV).resolve() != Path(SAGE_LOCAL).resolve():
@@ -45,5 +47,4 @@ def setenv():
     # not done: PATH prepend of SAGE_SRC/bin, SAGE_ROOT/build/bin
     # not done: MACOSX_DEPLOYMENT_TARGET
     # not done: PATH prepend for ccache & CCACHE_BASEDIR
-    # not done: Cygwin LD_LIBRARY_PATH
     # not done: OPENBLAS_NUM_THREADS

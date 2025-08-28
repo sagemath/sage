@@ -13,7 +13,7 @@ Helper code for ternary quadratic forms
 # ****************************************************************************
 
 from sage.arith.misc import gcd, inverse_mod, xgcd
-from sage.matrix.constructor import matrix, identity_matrix, diagonal_matrix
+from sage.matrix.constructor import matrix
 from sage.misc.prandom import randint
 from sage.rings.finite_rings.integer_mod import mod
 from sage.rings.integer_ring import ZZ
@@ -27,7 +27,7 @@ def red_mfact(a, b):
 
     - ``a``, ``b`` -- integers
 
-    OUTPUT: Integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -305,7 +305,7 @@ def _reduced_ternary_form_eisenstein_with_matrix(a1, a2, a3, a23, a13, a12):
         [a13, a23] = [a23, a13]
 
     return (a1, a2, a3, a23, a13, a12), \
-            matrix(ZZ, 3, (m11, m12, m13, m21, m22, m23, m31, m32, m33))
+        matrix(ZZ, 3, (m11, m12, m13, m21, m22, m23, m31, m32, m33))
 
 
 def _reduced_ternary_form_eisenstein_without_matrix(a1, a2, a3, a23, a13, a12):
@@ -594,7 +594,6 @@ def _find_zeros_mod_p_odd(long long a, long long b, long long c, long long r, lo
         (0, 32, 1)
         sage: Q((0, 32, 1))
         2018
-
     """
 
     cdef long long a_i
@@ -955,7 +954,26 @@ def extend(v):
         [ 30   0  -7]
         sage: M.det()
         2
+
+    TESTS::
+
+        sage: M = matrix(3, extend( (0, 0, 1) ))
+        sage: M.det()
+        1
+        sage: M.column(0)
+        (0, 0, 1)
+        sage: M = matrix(3, extend( (0, 0, -2) ))
+        sage: M.det()
+        2
+        sage: M.column(0)
+        (0, 0, -2)
     """
+    if v[0] == v[1] == 0:
+        if v[2] < 0:
+            return v[0], 0, 1, v[1], 1, 0, v[2], 0, 0
+        else:
+            return v[0], 1, 0, v[1], 0, 1, v[2], 0, 0
+
     b1 = xgcd(v[0], v[1])
     b2 = xgcd(b1[1], b1[2])
     b3 = xgcd(b1[0], v[2])

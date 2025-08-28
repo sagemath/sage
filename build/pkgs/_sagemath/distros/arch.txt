@@ -1,1 +1,2 @@
-sagemath sagemath-doc
+sagemath
+sagemath-doc

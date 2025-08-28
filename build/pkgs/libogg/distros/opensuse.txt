@@ -1,1 +1,1 @@
-"pkgconfig(ogg)"
+pkgconfig(ogg)

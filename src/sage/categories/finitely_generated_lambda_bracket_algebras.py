@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Finitely Generated Lambda bracket Algebras
 
@@ -19,6 +20,7 @@ AUTHORS:
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.graded_modules import GradedModulesCategory
 from sage.categories.lambda_bracket_algebras import LambdaBracketAlgebras
+
 
 class FinitelyGeneratedLambdaBracketAlgebras(CategoryWithAxiom_over_base_ring):
     """
@@ -49,7 +51,7 @@ class FinitelyGeneratedLambdaBracketAlgebras(CategoryWithAxiom_over_base_ring):
             """
             return len(self.gens())
 
-        def gen(self,i):
+        def gen(self, i):
             r"""
             The ``i``-th generator of this Lie conformal algebra.
 
@@ -95,7 +97,7 @@ class FinitelyGeneratedLambdaBracketAlgebras(CategoryWithAxiom_over_base_ring):
         EXAMPLES::
 
             sage: LieConformalAlgebras(QQbar).FinitelyGenerated().Graded()              # needs sage.rings.number_field
-            Category of H-graded finitely generated lie conformal algebras
+            Category of H-graded finitely generated Lie conformal algebras
              over Algebraic Field
         """
         def _repr_object_names(self):

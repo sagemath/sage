@@ -20,14 +20,20 @@ from sage_docbuild.conf import *  # NOQA
 # contains common paths.
 html_static_path = [] + html_common_static_path
 
+# Add small view/edit buttons.
+html_theme_options.update({
+  'source_view_link': os.path.join(source_repository, 'blob/develop/src/doc/fr/tutorial', '{filename}'),
+  'source_edit_link': os.path.join(source_repository, 'edit/develop/src/doc/fr/tutorial', '{filename}'),
+})
+
 # General information about the project.
 project = "Tutoriel Sage"
 name = 'tutorial-fr'
 language = "fr"
 
-# The name for this set of Sphinx documents.  If None, it defaults to
-# "<project> v<release> documentation".
-html_title = project + " v" + release
+# The name for this set of Sphinx documents. Do not include release info.
+html_title = project
+html_short_title = project
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = name
@@ -38,10 +44,3 @@ latex_documents = [
   ('index', name + '.tex', project,
    'The Sage Group', 'manual'),
 ]
-
-# Additional LaTeX stuff for the French version
-#latex_elements['preamble'] += '\\DeclareUnicodeCharacter{00A0}{\\nobreakspace}\n'
-
-# the definition of \\at in the standard preamble of the sphinx doc
-# conflicts with that in babel/french[b]
-latex_elements['preamble'] += '\\let\\at\\undefined'

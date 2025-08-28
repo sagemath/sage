@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of the SageMath interfaces to ``gap`` and of GAP packages
 """
@@ -15,9 +16,13 @@ from . import Feature, FeatureTestResult, PythonModule
 from .join_feature import JoinFeature
 from .sagemath import sage__libs__gap
 
+
 class GapPackage(Feature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of a GAP package.
+
+    A GAP package is "present" if it *can be* loaded, not if it *has
+    been* loaded.
 
     .. SEEALSO::
 
@@ -26,7 +31,7 @@ class GapPackage(Feature):
     EXAMPLES::
 
         sage: from sage.features.gap import GapPackage
-        sage: GapPackage("grape", spkg="gap_packages")
+        sage: GapPackage("grape", spkg='gap_packages')
         Feature('gap_package_grape')
     """
     def __init__(self, package, **kwds):
@@ -34,7 +39,7 @@ class GapPackage(Feature):
         TESTS::
 
             sage: from sage.features.gap import GapPackage
-            sage: isinstance(GapPackage("grape", spkg="gap_packages"), GapPackage)
+            sage: isinstance(GapPackage("grape", spkg='gap_packages'), GapPackage)
             True
         """
         Feature.__init__(self, f"gap_package_{package}", **kwds)
@@ -42,14 +47,15 @@ class GapPackage(Feature):
 
     def _is_present(self):
         r"""
-        Return whether the package is available in GAP.
+        Return whether or not the GAP package is present.
 
-        This does not check whether this package is functional.
+        If the package is installed but not yet loaded, it is loaded
+        first. This does *not* check that the package is functional.
 
         EXAMPLES::
 
             sage: from sage.features.gap import GapPackage
-            sage: GapPackage("grape", spkg="gap_packages")._is_present()  # optional - gap_packages
+            sage: GapPackage("grape", spkg='gap_packages')._is_present()  # optional - gap_package_grape
             FeatureTestResult('gap_package_grape', True)
         """
         try:
@@ -57,8 +63,11 @@ class GapPackage(Feature):
         except ImportError:
             return FeatureTestResult(self, False,
                                      reason="sage.libs.gap is not available")
-        command = 'TestPackageAvailability("{package}")'.format(package=self.package)
+
+        # This returns "true" even if the package is already loaded.
+        command = 'LoadPackage("{package}")'.format(package=self.package)
         presence = libgap.eval(command)
+
         if presence:
             return FeatureTestResult(self, True,
                     reason="`{command}` evaluated to `{presence}` in GAP.".format(command=command, presence=presence))
@@ -68,11 +77,12 @@ class GapPackage(Feature):
 
 
 def all_features():
-    return [GapPackage("atlasrep", spkg="gap_packages"),
-            GapPackage("design", spkg="gap_packages"),
-            GapPackage("grape", spkg="gap_packages"),
-            GapPackage("guava", spkg="gap_packages"),
-            GapPackage("hap", spkg="gap_packages"),
-            GapPackage("polycyclic", spkg="gap_packages"),
-            GapPackage("qpa", spkg="gap_packages"),
-            GapPackage("quagroup", spkg="gap_packages")]
+    return [GapPackage("atlasrep", spkg='gap_packages'),
+            GapPackage("design", spkg='gap_packages'),
+            GapPackage("grape", spkg='gap_packages'),
+            GapPackage("guava", spkg='gap_packages'),
+            GapPackage("hap", spkg='gap_packages'),
+            GapPackage("polenta", spkg='gap_packages'),
+            GapPackage("polycyclic", spkg='gap_packages'),
+            GapPackage("qpa", spkg='gap_packages'),
+            GapPackage("quagroup", spkg='gap_packages')]

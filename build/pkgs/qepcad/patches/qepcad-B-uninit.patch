@@ -1,15 +1,30 @@
---- a/cad2d/src/TICAD.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/cad2d/src/TICAD.c	2018-08-29 20:05:52.862359504 -0600
-@@ -43,6 +43,8 @@ Step2: /* Choose. */
- 	 if (L == 0) { /* Init for 1D Sectors */
- 	   L = LELTI(D,CHILD);
- 	   d = 1; }
-+	 else
-+	   d = 0;
+Description: Fix use of uninitialized variables.
+Origin: https://src.fedoraproject.org/rpms/qepcad-B/blob/60ceecd/f/qepcad-B-uninit.patch
+Forwarded: https://github.com/chriswestbrown/qepcad/pull/2
+Last-Update: 2021-06-23
+
+--- a/cad2d/src/CAD2D.c
++++ b/cad2d/src/CAD2D.c
+@@ -23,6 +23,8 @@
+        Word A,D,F,F_e,F_n,F_s,Fh,J,P,Q,Ths,f,i,r,t;
+        Word L;
+ Step1: /* Normalize. */
++       t = -1;
++       F_e = F_n = F_s = NIL;
+        FIRST4(Fs,&r,&f,&Q,&Fh);
+        F = NORMQFF(Fh);
+        GVNQFF = F;
+--- a/cad2d/src/TICAD.c
++++ b/cad2d/src/TICAD.c
+@@ -30,6 +30,7 @@
+ Step1: /* Initialize. */
+        D = INITPCAD();
+        L = 0;
++       d = 0;
  
- 	 if (d == 1 && L != NIL) { /* Choose next 1D sectors */
- 	   c = FIRST(L);
-@@ -51,6 +53,7 @@ Step2: /* Choose. */
+ Step2: /* Choose. */
+        GVPC = D;
+@@ -51,6 +52,7 @@
  	   else
  	     L = RED2(L); }
  	 else if (d == 1 && L == NIL) { /* Init for 1D sections */
@@ -17,9 +32,9 @@
  	   d = 0;
  	   L = RED(LELTI(D,CHILD));
  	 }
---- a/extensions/adj2d/oldadj/ACMADJ2D.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/adj2d/oldadj/ACMADJ2D.c	2018-08-29 20:05:52.864359502 -0600
-@@ -29,6 +29,7 @@ Step1: /* Get (A,I) defining c. */
+--- a/extensions/adj2d/oldadj/ACMADJ2D.c
++++ b/extensions/adj2d/oldadj/ACMADJ2D.c
+@@ -29,6 +29,7 @@
    FIRST2(Ip,&ip1,&ip2);
    i1 = RNLBRN(ip1);
    i2 = RNLBRN(ip2);
@@ -27,9 +42,9 @@
  
  Step2: /* Get sample points for c_l and c_r. */
    i_l = RNLBRN(SPRLC(c_l));
---- a/extensions/lift2D/modHIPRRID.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/lift2D/modHIPRRID.c	2018-08-29 20:05:52.864359502 -0600
-@@ -28,6 +28,7 @@ Step1: /* Compute a bound for the positi
+--- a/extensions/lift2D/modHIPRRID.c
++++ b/extensions/lift2D/modHIPRRID.c
+@@ -28,6 +28,7 @@
  	k = HIPPRB(n,A);
  
  Step2: /* Isolate the positive roots. */
@@ -37,9 +52,9 @@
  	if (k == NIL) {
  	   L1 = NIL;
  	   goto Step3; }
---- a/extensions/lift2D/modIBPRRIOAPSF.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/lift2D/modIBPRRIOAPSF.c	2018-08-29 20:05:52.863359503 -0600
-@@ -77,6 +77,7 @@ Step4: /*  Isolate the real roots of eac
+--- a/extensions/lift2D/modIBPRRIOAPSF.c
++++ b/extensions/lift2D/modIBPRRIOAPSF.c
+@@ -77,6 +77,7 @@
  Step5: /* Refine roots? */
  	if (k == NIL)
  	  goto Return;
@@ -47,9 +62,9 @@
  	Ls = NIL;
  	for(Lp = L; Lp != NIL; Lp = RED(Lp))
          { 
---- a/extensions/rend/WRITE_PS_INTERACTIVE.cc.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/rend/WRITE_PS_INTERACTIVE.cc	2018-08-29 20:05:52.863359503 -0600
-@@ -262,6 +262,8 @@ void WRITE_PS_INTERACTIVE(Rend_Cell &M,
+--- a/extensions/rend/WRITE_PS_INTERACTIVE.cc
++++ b/extensions/rend/WRITE_PS_INTERACTIVE.cc
+@@ -262,6 +262,8 @@
        if (t == 'p') {
  	  SWRITE("Enter projetion factor by (level,index): ");
  	  p = LREAD(); }
@@ -58,9 +73,9 @@
  
        switch(c) {
        case 'x': // 1D Sectors
---- a/extensions/sfext/addpol/MINPFSETNSC.c.orig	2018-08-29 20:03:25.110519357 -0600
-+++ b/extensions/sfext/addpol/MINPFSETNSC.c	2018-08-29 20:05:52.865359501 -0600
-@@ -42,7 +42,7 @@ Word MINPFSETNSC(Word P,Word S,Word D,Wo
+--- a/extensions/sfext/addpol/MINPFSETNSC.c
++++ b/extensions/sfext/addpol/MINPFSETNSC.c
+@@ -42,7 +42,7 @@
        Word x_s,js,Ls,O,Q,Q_i,Sp,Pp,i,Cp,*V,*Vp,**A,a,N,k,S_r,I,j,p;
  
  Step1: /* Initialization. */
@@ -69,9 +84,9 @@
  
  Step2: /* Loop over each level in D. */
        for(r = 1; r <= N; r++) {
---- a/extensions/sfext/espcad/PCAD2ESPCAD.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/espcad/PCAD2ESPCAD.c	2018-08-29 20:05:52.866359500 -0600
-@@ -44,6 +44,8 @@ Step2: /* Generate correct i-level signi
+--- a/extensions/sfext/espcad/PCAD2ESPCAD.c
++++ b/extensions/sfext/espcad/PCAD2ESPCAD.c
+@@ -44,6 +44,8 @@
             P_i = RED(P_i);
             s = RED(s); }
           s = INV(ss); }
@@ -80,9 +95,9 @@
  
  Step3: /* Construct extended Sub-CAD cell structure. */
         EDs = LIST8(C,A,LELTI(Ds,SC_INX),NIL,s,NIL,UNDET,UNDET);
---- a/extensions/sfext/extlang/SCAD2ESCAD.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/extlang/SCAD2ESCAD.c	2018-08-29 20:05:52.864359502 -0600
-@@ -27,6 +27,8 @@ Step2: /* Generate correct i-level signi
+--- a/extensions/sfext/extlang/SCAD2ESCAD.c
++++ b/extensions/sfext/extlang/SCAD2ESCAD.c
+@@ -27,6 +27,8 @@
  	   P_i = RED(P_i);
  	   s = RED(s); }
  	 s = INV(ss); }
@@ -91,9 +106,9 @@
  
  Step3: /* Construct extended Sub-CAD cell structure. */
         EDs = LIST7(C,A,LELTI(Ds,SC_INX),NIL,s,NIL,UNDET);
---- a/extensions/sfext/formula/FMAATOMREAD.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/formula/FMAATOMREAD.c	2018-08-29 20:05:52.865359501 -0600
-@@ -18,7 +18,7 @@ void FMAATOMREAD(Word Q, Word V, Word *F
+--- a/extensions/sfext/formula/FMAATOMREAD.c
++++ b/extensions/sfext/formula/FMAATOMREAD.c
+@@ -18,7 +18,7 @@
         /* hide r,s,t; */
  
  Step1: /* Read the left polynomial. */
@@ -102,7 +117,7 @@
          IPEXPREAD(r,V,&P1,&t); if (t == 0) goto Return;
  
  Step2: /* Read the relational operator. */
-@@ -71,6 +71,7 @@ Word POLYINDEX(Word P, Word p, Word r, W
+@@ -71,6 +71,7 @@
      p = SECOND(p);
  
    /* Is p already in P? */
@@ -110,9 +125,9 @@
    P_r = LELTI(P,r); *t = 0;
    for(Pp = P_r; Pp != NIL; Pp = RED(Pp)) {
      pp = FIRST(Pp);
---- a/extensions/sfext/formula/FMASMOOTH.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/formula/FMASMOOTH.c	2018-08-29 20:05:52.865359501 -0600
-@@ -16,6 +16,7 @@ Step1: /* Atoms and Constants. */
+--- a/extensions/sfext/formula/FMASMOOTH.c
++++ b/extensions/sfext/formula/FMASMOOTH.c
+@@ -16,6 +16,7 @@
    if (ISLIST(F1) || F1 == TRUE || F1 == FALSE) {
      G = F;
      goto Return; }
@@ -120,9 +135,9 @@
  
  Step2: /* AND's */
    if (F1 == ANDOP) {
---- a/extensions/sfext/sfcons/SFC3.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/sfcons/SFC3.c	2018-08-29 20:05:52.865359501 -0600
-@@ -90,7 +90,7 @@ Step3: /* The normal language. */
+--- a/extensions/sfext/sfcons/SFC3.c
++++ b/extensions/sfext/sfcons/SFC3.c
+@@ -90,7 +90,7 @@
  	switch(m) {
  	case (0) : SF = NECCONDS(Lt,Lf,LA,Pp); break;
  	case (1) : SF = NAIVESF(Lt,Lf,LA,Pp); break; 
@@ -131,9 +146,9 @@
  
  Step4: /* Massage the formula. */
        pflag = 1;
---- a/extensions/sfext/sfcons/SFC3f.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/sfcons/SFC3f.c	2018-08-29 20:05:52.865359501 -0600
-@@ -88,7 +88,7 @@ Step3: /* The normal language. */
+--- a/extensions/sfext/sfcons/SFC3f.c
++++ b/extensions/sfext/sfcons/SFC3f.c
+@@ -88,7 +88,7 @@
  	switch(m) {
  	case (0) : SF = NECCONDS(Lt,Lf,LA,Pp); break;
  	case (1) : SF = NAIVESF(Lt,Lf,LA,Pp); break; 
@@ -142,9 +157,9 @@
  
  Step4: /* Massage the formula. */
        pflag = 1;
---- a/extensions/sfext/sfcons/SFC4.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/sfcons/SFC4.c	2018-08-29 20:05:52.865359501 -0600
-@@ -31,6 +31,7 @@ void QepcadCls::SFC4(Word D, Word P, Wor
+--- a/extensions/sfext/sfcons/SFC4.c
++++ b/extensions/sfext/sfcons/SFC4.c
+@@ -31,6 +31,7 @@
  {
        Word t,SF,Dp,Pp,Lt,Lf,LA,Q,D1,P1,D0,P0,J0,i,Lp,pflag;
        char e,s,m,c;
@@ -152,9 +167,9 @@
        T1 = T2 = T3 = T4 = 0;
        F1 = 0;
  
---- a/extensions/sfext/sfcons/SFCFULLDf.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/sfcons/SFCFULLDf.c	2018-08-29 20:05:52.865359501 -0600
-@@ -52,6 +52,7 @@ Step2: /* Extended language. */
+--- a/extensions/sfext/sfcons/SFCFULLDf.c
++++ b/extensions/sfext/sfcons/SFCFULLDf.c
+@@ -52,6 +52,7 @@
  
        if (Lt == NIL && Lf == NIL) {
  	SWRITE("No cells have truth values!\n");
@@ -162,9 +177,9 @@
  	goto Return; }
        t = ESPCADDOPFSUFF(Pp,LIST1(Dp));
        LA = LISTOETAmod(Pp,n,t==NIL);
---- a/source/io/ATOMFRDR.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/io/ATOMFRDR.c	2018-08-29 20:05:52.866359500 -0600
-@@ -76,7 +76,7 @@ void ETFATOMRDR(Word V, Word P1, BDigit
+--- a/source/io/ATOMFRDR.c
++++ b/source/io/ATOMFRDR.c
+@@ -76,7 +76,7 @@
          Word t, F, r, j, P2, P2p, r1, r2, a, P, s;
  
  Step1: /* Prepare */
@@ -173,9 +188,9 @@
  
  
  Step2: /* Read "_root_" */
---- a/source/io/CATTRNRDR.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/io/CATTRNRDR.c	2018-08-29 20:05:52.866359500 -0600
-@@ -39,7 +39,7 @@ Step2: /* Get the internal representatio
+--- a/source/io/CATTRNRDR.c
++++ b/source/io/CATTRNRDR.c
+@@ -39,7 +39,7 @@
         goto Return;
  
  Step3: /* Error exit. */
@@ -184,9 +199,9 @@
  
  Return: /* Prepare for return. */
         *V_ = V;
---- a/source/io/DESIREDRDR.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/io/DESIREDRDR.c	2018-08-29 20:05:52.867359499 -0600
-@@ -15,6 +15,7 @@ void DESIREDRDR(Word *F_, Word *t_)
+--- a/source/io/DESIREDRDR.c
++++ b/source/io/DESIREDRDR.c
+@@ -15,6 +15,7 @@
         /* hide C,C1,R,V1,V2,t; */
  
  Step1: /* Atomic condition. */
@@ -194,9 +209,9 @@
         t = 1;
         C = CREADB(); if (C == '[') goto Step2;
         BKSP(); 
---- a/source/io/FREADR.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/io/FREADR.c	2018-08-29 20:05:52.866359500 -0600
-@@ -23,7 +23,7 @@ void FREADR(Word V, Word f, Word *Fs_, W
+--- a/source/io/FREADR.c
++++ b/source/io/FREADR.c
+@@ -23,7 +23,7 @@
         /* hide C,i,q,r,t; */
  
  Step1: /* Read quantifier list. */
@@ -205,9 +220,9 @@
         for (i = f + 1; i <= r; i++)
           {
           C = CREADB();
---- a/source/io/GREADR.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/io/GREADR.c	2018-08-29 20:05:52.867359499 -0600
-@@ -33,7 +33,7 @@ Step2: /* Read digits and convert. */
+--- a/source/io/GREADR.c
++++ b/source/io/GREADR.c
+@@ -33,7 +33,7 @@
         BKSP(); a = S * a; goto Return;
  
  Step3: /* Error. */
@@ -216,9 +231,9 @@
  
  Return: /* Prepare for return. */
         *a_ = a;
---- a/source/io/LGOPRDR.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/io/LGOPRDR.c	2018-08-29 20:05:52.866359500 -0600
-@@ -50,7 +50,7 @@ Step1: /* Read in. */
+--- a/source/io/LGOPRDR.c
++++ b/source/io/LGOPRDR.c
+@@ -50,7 +50,7 @@
           { SWRITE("Error LGOPRDR: Logic operator was expected.\n"); goto Step2; }
  
  Step2: /* Error exit. */
@@ -227,9 +242,9 @@
  
  Return: /* Prepare for return. */
         *p_ = p;
---- a/source/io/QFRDR.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/io/QFRDR.c	2018-08-29 20:05:52.867359499 -0600
-@@ -39,7 +39,7 @@ Step1: /* Read in. */
+--- a/source/io/QFRDR.c
++++ b/source/io/QFRDR.c
+@@ -39,7 +39,7 @@
         goto Return;
  
  Step2: /* Error exit. */
@@ -238,9 +253,9 @@
  
  Return: /* Prepare for return. */
         *q_ = q;
---- a/source/io/RLOPRDR.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/io/RLOPRDR.c	2018-08-29 20:05:52.866359500 -0600
-@@ -31,7 +31,7 @@ Step1: /* Read in. */
+--- a/source/io/RLOPRDR.c
++++ b/source/io/RLOPRDR.c
+@@ -31,7 +31,7 @@
         goto Return;
  
  Step2: /* Error exit. */
@@ -249,31 +264,31 @@
  
  Return: /* Prepare for return. */
         *p_ = p;
---- a/source/main/QEPCADauto.c.orig	2018-03-16 14:22:00.000000000 -0600
-+++ b/source/main/QEPCADauto.c	2018-08-29 20:05:52.867359499 -0600
-@@ -27,6 +27,8 @@ void QepcadCls::QEPCADauto(Word Fs, Word
+--- a/source/main/QEPCADauto.c
++++ b/source/main/QEPCADauto.c
+@@ -27,6 +27,8 @@
         char c1,c2; /* Chris variables. */
  
  Step1: /* Normalize. */
-+       t = 0;
++       t = -1;
 +       F_e = F_n = F_s = NIL;
         FIRST4(Fs,&r,&f,&Q,&Fh);
         F = NORMQFF(Fh);
         if (GVUA != NIL) GVNA = NORMQFF(GVUA);
---- a/source/main/QEPCAD.c.orig	2018-03-16 14:22:00.000000000 -0600
-+++ b/source/main/QEPCAD.c	2018-08-29 20:05:52.867359499 -0600
-@@ -26,6 +26,8 @@ void QepcadCls::QEPCAD(Word Fs, Word *t_
+--- a/source/main/QEPCAD.c
++++ b/source/main/QEPCAD.c
+@@ -26,6 +26,8 @@
         Word Cs,Ps,Qs,Pps,Cps,Qps,SF; /* Chris variables. */
         char c1,c2; /* Chris variables. */
  Step1: /* Normalize. */
-+       t = 0;
++       t = -1;
 +       F_e = F_n = F_s = NIL;
         FIRST4(Fs,&r,&f,&Q,&Fh);
                 /*Int*/ PCNSTEP = 1;
                 /*Int*/ if (INTERACT()) USERINT(LFS("Before Normalization"),'a');
---- a/source/ticad/AFUPMPR.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/ticad/AFUPMPR.c	2018-08-29 20:05:52.867359499 -0600
-@@ -27,6 +27,7 @@ void AFUPMPR(Word M, Word I, Word B, Wor
+--- a/source/ticad/AFUPMPR.c
++++ b/source/ticad/AFUPMPR.c
+@@ -27,6 +27,7 @@
         /* hide L1,Lp,j,jp,s,t,v,vp; */
  
  Step1: /* Initialize. */
@@ -281,9 +296,9 @@
         FIRST2(J,&a,&b);
         t = AFUPSR(M,I,B,b);
         if (t == 0)
---- a/source/ticad/SUBST.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/ticad/SUBST.c	2018-08-29 20:05:52.867359499 -0600
-@@ -24,6 +24,7 @@ Word QepcadCls::SUBST(Word c, Word k, Wo
+--- a/source/ticad/SUBST.c
++++ b/source/ticad/SUBST.c
+@@ -24,6 +24,7 @@
         Word P,L,Sp,T1,T2,G,Q,f,i;
  
  Step1: /* Substitute. */
@@ -291,9 +306,9 @@
          L = NIL;
          S = NIL;
          Bp = B;
---- a/source/ticad/SUBSTR.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/ticad/SUBSTR.c	2018-08-29 20:05:52.868359497 -0600
-@@ -24,6 +24,7 @@ Word QepcadCls::SUBSTR(Word c, Word k, W
+--- a/source/ticad/SUBSTR.c
++++ b/source/ticad/SUBSTR.c
+@@ -24,6 +24,7 @@
         Word P,L,Q,T1,T2,Sp,G,f,i;
  
  Step1: /* Do it. */
@@ -301,9 +316,9 @@
         L = NIL;
         S = NIL;
         Bp = B;
---- a/source/userint/PREQNCONSTL.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/userint/PREQNCONSTL.c	2018-08-29 20:05:52.868359497 -0600
-@@ -73,7 +73,7 @@ Return: /* Prepare for return. */
+--- a/source/userint/PREQNCONSTL.c
++++ b/source/userint/PREQNCONSTL.c
+@@ -73,7 +73,7 @@
  
  Word POLYLABEL(Word P, Word p, Word r, Word *t)
  {

@@ -27,7 +27,7 @@ def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer
     INPUT:
 
     - ``A`` -- matrix
-    - ``N`` -- an integer
+    - ``N`` -- integer
 
     EXAMPLES::
 
@@ -40,7 +40,7 @@ def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer
 
     TESTS:
 
-    Check that :trac:`9345` is fixed::
+    Check that :issue:`9345` is fixed::
 
         sage: A = random_matrix(ZZ, 3)
         sage: matrix_integer_dense_rational_reconstruction(A, 0)

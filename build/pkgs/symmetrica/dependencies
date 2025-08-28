@@ -1,4 +1,4 @@
-xz
+| xz
 
 xz is needed for unpacking the tarball when sage-bootstrap-python is ancient
 

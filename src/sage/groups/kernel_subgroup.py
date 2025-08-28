@@ -21,6 +21,7 @@ from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
+
 class KernelSubgroup(UniqueRepresentation, Parent):
     r"""
     The kernel (normal) subgroup.
@@ -69,7 +70,7 @@ class KernelSubgroup(UniqueRepresentation, Parent):
         """
         return "Kernel subgroup defined by {}".format(self._morphism)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self``.
 

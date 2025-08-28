@@ -3,9 +3,9 @@ Random quadratic forms
 
 This file contains a set of routines to create a random quadratic form.
 """
+from sage.categories.rings import Rings
 from sage.quadratic_forms.quadratic_form import QuadraticForm
 from sage.quadratic_forms.ternary_qf import TernaryQF
-from sage.rings.ring import is_Ring
 from sage.rings.integer_ring import ZZ
 
 
@@ -13,7 +13,7 @@ from sage.rings.integer_ring import ZZ
 # Routines to create a random quadratic form ##
 ################################################
 
-def random_quadraticform(R, n, rand_arg_list=[]):
+def random_quadraticform(R, n, rand_arg_list=None):
     r"""
     Create a random quadratic form in `n` variables defined over the ring `R`.
 
@@ -24,11 +24,11 @@ def random_quadraticform(R, n, rand_arg_list=[]):
     INPUT:
 
     - ``R`` -- a ring
-    - ``n`` -- an integer `\ge 0`
-    - ``rand_arg_list`` -- a list of at most 3 arguments which can be taken by
-      ``R.random_element()``.
+    - ``n`` -- integer `\ge 0`
+    - ``rand_arg_list`` -- list of at most 3 arguments which can be taken by
+      ``R.random_element()``
 
-    OUTPUT: A quadratic form over the ring `R`.
+    OUTPUT: a quadratic form over the ring `R`
 
     EXAMPLES::
 
@@ -57,10 +57,12 @@ def random_quadraticform(R, n, rand_arg_list=[]):
         ...
         TypeError: the list of randomness arguments can have at most 3 elements
     """
+    if rand_arg_list is None:
+        rand_arg_list = []
     if len(rand_arg_list) > 3:
         raise TypeError("the list of randomness arguments can have "
                         "at most 3 elements")
-    if not is_Ring(R):
+    if R not in Rings():
         raise TypeError("the first argument must be a ring")
     # Create a list of upper-triangular entries for the quadratic form
     n2 = (n * (n + 1)) // 2
@@ -72,7 +74,7 @@ def random_quadraticform(R, n, rand_arg_list=[]):
 
 
 def random_quadraticform_with_conditions(R, n, condition_list=[],
-                                         rand_arg_list=[]):
+                                         rand_arg_list=None):
     """
     Create a random quadratic form in `n` variables defined over the ring `R`
     satisfying a list of boolean (i.e. True/False) conditions.
@@ -95,6 +97,9 @@ def random_quadraticform_with_conditions(R, n, condition_list=[],
         [ * 2 2 ]
         [ * * 3 ]
     """
+    if rand_arg_list is None:
+        rand_arg_list = []
+
     Q = random_quadraticform(R, n, rand_arg_list)
     done_flag = True
 
@@ -119,7 +124,7 @@ def random_quadraticform_with_conditions(R, n, condition_list=[],
     return Q
 
 
-def random_ternaryqf(rand_arg_list=[]):
+def random_ternaryqf(rand_arg_list=None):
     """
     Create a random ternary quadratic form.
 
@@ -129,10 +134,10 @@ def random_ternaryqf(rand_arg_list=[]):
 
     INPUT:
 
-    - ``rand_arg_list`` -- a list of at most 3 arguments which can be taken by
-      ``R.random_element()``.
+    - ``rand_arg_list`` -- list of at most 3 arguments which can be taken by
+      ``R.random_element()``
 
-    OUTPUT: A ternary quadratic form.
+    OUTPUT: a ternary quadratic form
 
     EXAMPLES::
 
@@ -149,15 +154,16 @@ def random_ternaryqf(rand_arg_list=[]):
         [7 -8 2]
         [0 3 -6]
     """
-    R = ZZ
+    if rand_arg_list is None:
+        rand_arg_list = []
     if not rand_arg_list:
-        rand_list = [R.random_element() for _ in range(6)]
+        rand_list = [ZZ.random_element() for _ in range(6)]
     else:
-        rand_list = [R.random_element(*rand_arg_list) for _ in range(6)]
+        rand_list = [ZZ.random_element(*rand_arg_list) for _ in range(6)]
     return TernaryQF(rand_list)
 
 
-def random_ternaryqf_with_conditions(condition_list=[], rand_arg_list=[]):
+def random_ternaryqf_with_conditions(condition_list=[], rand_arg_list=None):
     """
     Create a random ternary quadratic form satisfying a list of boolean
     (i.e. True/False) conditions.
@@ -179,6 +185,8 @@ def random_ternaryqf_with_conditions(condition_list=[], rand_arg_list=[]):
         [3 4 2]
         [2 -2 -1]
     """
+    if rand_arg_list is None:
+        rand_arg_list = []
     Q = random_ternaryqf(rand_arg_list)
     done_flag = True
 

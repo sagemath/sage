@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Generic implementation of powering
 
@@ -17,10 +18,10 @@ square-and-multiply algorithm.
 
 from cysignals.signals cimport sig_check
 
-from .long cimport integer_check_long
+from sage.arith.long cimport integer_check_long
 
 
-cpdef generic_power(a, n) noexcept:
+cpdef generic_power(a, n):
     """
     Return `a^n`.
 
@@ -88,7 +89,7 @@ cpdef generic_power(a, n) noexcept:
     return generic_power_pos(a, n)
 
 
-cdef generic_power_long(a, long n) noexcept:
+cdef generic_power_long(a, long n):
     """
     As ``generic_power`` but where ``n`` is a C long.
     """
@@ -102,7 +103,7 @@ cdef generic_power_long(a, long n) noexcept:
     return generic_power_pos(a, u)
 
 
-cdef generic_power_pos(a, ulong_or_object n) noexcept:
+cdef generic_power_pos(a, ulong_or_object n):
     """
     Return `a^n` where `n > 0`.
     """

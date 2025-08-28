@@ -1,1 +1,1 @@
-python-trove-classifiers
+python3-trove-classifiers

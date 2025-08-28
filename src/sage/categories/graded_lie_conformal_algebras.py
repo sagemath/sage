@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Graded Lie Conformal Algebras
 
@@ -18,6 +19,7 @@ AUTHORS:
 
 from sage.categories.graded_modules import GradedModulesCategory
 from sage.misc.cachefunc import cached_method
+
 
 class GradedLieConformalAlgebrasCategory(GradedModulesCategory):
     @cached_method
@@ -54,6 +56,7 @@ class GradedLieConformalAlgebrasCategory(GradedModulesCategory):
             Category of H-graded finitely generated Lie conformal algebras with basis over Algebraic Field
         """
         return "H-graded {}".format(self.base_category()._repr_object_names())
+
 
 class GradedLieConformalAlgebras(GradedLieConformalAlgebrasCategory):
     """

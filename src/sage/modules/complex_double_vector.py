@@ -19,6 +19,6 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 ###############################################################################
 
-from .vector_complex_double_dense import Vector_complex_double_dense
+from sage.modules.vector_complex_double_dense import Vector_complex_double_dense
 
 ComplexDoubleVectorSpaceElement = Vector_complex_double_dense

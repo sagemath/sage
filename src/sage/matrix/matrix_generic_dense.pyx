@@ -61,12 +61,12 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
+        - ``coerce`` -- if ``False``, assume without checking that the
           entries lie in the base ring
 
         TESTS:
 
-        We check that the problem related to :trac:`9049` is not an issue any
+        We check that the problem related to :issue:`9049` is not an issue any
         more::
 
             sage: # needs sage.rings.number_field
@@ -81,7 +81,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         ma = MatrixArgs_init(parent, entries)
         self._entries = ma.list(coerce)
 
-    cdef Matrix_generic_dense _new(self, Py_ssize_t nrows, Py_ssize_t ncols) noexcept:
+    cdef Matrix_generic_dense _new(self, Py_ssize_t nrows, Py_ssize_t ncols):
         r"""
         Return a new dense matrix with no entries set.
         """
@@ -93,12 +93,52 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         cdef type t = <type>type(self)
         return <Matrix_generic_dense>t.__new__(t, MS)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value) noexcept:
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
         self._entries[i*self._ncols + j] = value
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         return self._entries[i*self._ncols + j]
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_generic_dense
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: K.<z> = GF(9)
+            sage: m = matrix(K,3,4,[((i%9)//3)*z + i%3 for i in range(12)])
+            sage: m
+            [      0       1       2       z]
+            [  z + 1   z + 2     2*z 2*z + 1]
+            [2*z + 2       0       1       2]
+            sage: m.transpose()
+            [      0   z + 1 2*z + 2]
+            [      1   z + 2       0]
+            [      2     2*z       1]
+            [      z 2*z + 1       2]
+            sage: m.matrix_from_rows([0,2])
+            [      0       1       2       z]
+            [2*z + 2       0       1       2]
+            sage: m.matrix_from_columns([1,3])
+            [      1       z]
+            [  z + 2 2*z + 1]
+            [      0       2]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [  z + 1 2*z + 1]
+            [2*z + 2       2]
+        """
+        cdef Matrix_generic_dense _src = <Matrix_generic_dense>src
+        self._entries[iDst*self._ncols + jDst] = _src._entries[iSrc*_src._ncols + jSrc]
 
     def _reverse_unsafe(self):
         r"""
@@ -152,8 +192,8 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     def __copy__(self):
         """
-        Creates a copy of self, which may be changed without altering
-        self.
+        Create a copy of self, which may be changed without altering
+        ``self``.
 
         EXAMPLES::
 
@@ -209,7 +249,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Add two generic dense matrices with the same parent.
 
@@ -233,7 +273,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Subtract two generic dense matrices with the same parent.
 
@@ -331,7 +371,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     def _list(self):
         """
-        Return reference to list of entries of self.  For internal use
+        Return reference to list of entries of ``self``.  For internal use
         only, since this circumvents immutability.
 
         EXAMPLES::

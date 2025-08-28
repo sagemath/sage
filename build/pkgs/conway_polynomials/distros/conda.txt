@@ -1,1 +1,1 @@
-sagemath-db-conway-polynomials
+conway-polynomials

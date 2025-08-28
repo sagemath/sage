@@ -17,7 +17,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 
-class QuadraticFormLocalRepresentationConditions():
+class QuadraticFormLocalRepresentationConditions:
     """
     A class for dealing with the local conditions of a
     quadratic form, and checking local representability of numbers.
@@ -96,7 +96,7 @@ class QuadraticFormLocalRepresentationConditions():
     """
     def __init__(self, Q):
         r"""
-        Takes a :class:`QuadraticForm` and computes its local conditions (if
+        Take a :class:`QuadraticForm` and computes its local conditions (if
         they do not already exist).  The ``recompute_flag`` overrides the
         previously computed conditions if they exist, and stores the
         new conditions.
@@ -105,9 +105,7 @@ class QuadraticFormLocalRepresentationConditions():
 
         - ``Q`` -- Quadratic form over `\ZZ`
 
-        OUTPUT:
-
-        a :class:`QuadraticFormLocalRepresentationConditions` object
+        OUTPUT: a :class:`QuadraticFormLocalRepresentationConditions` object
 
         EXAMPLES::
 
@@ -124,7 +122,7 @@ class QuadraticFormLocalRepresentationConditions():
 
         # Basic structure initialization
         self.local_repn_array = []    # List of all local conditions
-        self.dim = Q.dim()       # We allow this to be any non-negative integer.
+        self.dim = Q.dim()       # We allow this to be any nonnegative integer.
         self.exceptional_primes = [infinity]
 
         # Deal with the special cases of 0 and 1-dimensional forms
@@ -293,7 +291,7 @@ class QuadraticFormLocalRepresentationConditions():
 
         - ``p`` -- a positive prime number or "infinity"
 
-        OUTPUT: a list of integers
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -318,7 +316,7 @@ class QuadraticFormLocalRepresentationConditions():
 
         - ``p`` -- a positive prime number.  (Is 'infinity' allowed here?)
 
-        OUTPUT: a list of integers
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -362,7 +360,7 @@ class QuadraticFormLocalRepresentationConditions():
                 return [2, infinity, infinity, infinity, infinity, infinity, infinity, infinity, infinity]
             return [p, infinity, infinity, infinity, infinity, None, None, None, None]
 
-        raise RuntimeError("the stored dimension should be a non-negative integer")
+        raise RuntimeError("the stored dimension should be a nonnegative integer")
 
     def is_universal_at_prime(self, p) -> bool:
         r"""
@@ -487,7 +485,7 @@ class QuadraticFormLocalRepresentationConditions():
 
         INPUT:
 
-        - ``m`` -- an integer
+        - ``m`` -- integer
 
         - ``p`` -- a positive prime number or "infinity"
 
@@ -556,7 +554,7 @@ class QuadraticFormLocalRepresentationConditions():
 
         INPUT:
 
-        - ``m`` -- an integer
+        - ``m`` -- integer
 
         OUTPUT: boolean
 
@@ -823,7 +821,7 @@ def is_locally_represented_number_at_place(self, m, p) -> bool:
 
     INPUT:
 
-    - ``m`` -- an integer
+    - ``m`` -- integer
 
     - ``p`` -- a prime number > 0 or 'infinity'
 
@@ -868,7 +866,7 @@ def is_locally_represented_number(self, m) -> bool:
 
     INPUT:
 
-    - ``m`` -- an integer
+    - ``m`` -- integer
 
     OUTPUT: boolean
 

@@ -75,7 +75,7 @@ Find the full syntax parse tree of a boolean formula from a list of tokens::
     sage: logicparser.tree_parse(r, polish = True)
     ['|', ['~', ['~', 'a']], 'b']
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Chris Gorecki <chris.k.gorecki@gmail.com>
 #       Copyright (C) 2013 Paul Scurek <scurek86@gmail.com>
 #
@@ -83,7 +83,7 @@ Find the full syntax parse tree of a boolean formula from a list of tokens::
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 import string
 
@@ -98,7 +98,7 @@ def parse(s):
 
     INPUT:
 
-    - ``s`` -- a string containing a boolean formula
+    - ``s`` -- string containing a boolean formula
 
     OUTPUT:
 
@@ -133,11 +133,9 @@ def polish_parse(s):
 
     INPUT:
 
-    - ``s`` -- a string containing a boolean expression
+    - ``s`` -- string containing a boolean expression
 
-    OUTPUT:
-
-    The full syntax parse tree as a nested list.
+    OUTPUT: the full syntax parse tree as a nested list
 
     EXAMPLES:
 
@@ -164,6 +162,7 @@ def polish_parse(s):
         return vars_order
     return tree
 
+
 def get_trees(*statements):
     r"""
     Return the full syntax parse trees of the statements.
@@ -172,9 +171,7 @@ def get_trees(*statements):
 
     - ``*statements`` -- strings or :class:`BooleanFormula` instances
 
-    OUTPUT:
-
-    The parse trees in a list.
+    OUTPUT: the parse trees in a list
 
     EXAMPLES:
 
@@ -228,12 +225,10 @@ def recover_formula(prefix_tree):
 
     INPUT:
 
-    - ``prefix_tree`` -- a list; this is a full syntax parse
+    - ``prefix_tree`` -- list; this is a full syntax parse
       tree in prefix form
 
-    OUTPUT:
-
-    The formula as a string.
+    OUTPUT: the formula as a string
 
     EXAMPLES:
 
@@ -276,18 +271,17 @@ def recover_formula(prefix_tree):
         return formula
     return formula[1:-1]
 
+
 def recover_formula_internal(prefix_tree):
     r"""
     Recover the formula from a parse tree in prefix form.
 
     INPUT:
 
-    - ``prefix_tree`` -- a list; this is a simple tree
+    - ``prefix_tree`` -- list; this is a simple tree
       with at most one operator in prefix form
 
-    OUTPUT:
-
-    The formula as a string.
+    OUTPUT: the formula as a string
 
     EXAMPLES:
 
@@ -348,12 +342,10 @@ def prefix_to_infix(prefix_tree):
 
     INPUT:
 
-    - ``prefix_tree`` -- a list; this is a full syntax parse
+    - ``prefix_tree`` -- list; this is a full syntax parse
       tree in prefix form
 
-    OUTPUT:
-
-    A list containing the tree in infix form.
+    OUTPUT: list containing the tree in infix form
 
     EXAMPLES:
 
@@ -385,18 +377,17 @@ def prefix_to_infix(prefix_tree):
         raise TypeError("the input must be a parse tree as a list")
     return apply_func(prefix_tree, to_infix_internal)
 
+
 def to_infix_internal(prefix_tree):
     r"""
     Convert a simple parse tree from prefix form to infix form.
 
     INPUT:
 
-    - ``prefix_tree`` -- a list; this is a simple parse tree
+    - ``prefix_tree`` -- list; this is a simple parse tree
       in prefix form with at most one operator
 
-    OUTPUT:
-
-    The tree in infix form as a list.
+    OUTPUT: the tree in infix form as a list
 
     EXAMPLES:
 
@@ -434,6 +425,7 @@ def to_infix_internal(prefix_tree):
         return [prefix_tree[1], prefix_tree[0], prefix_tree[2]]
     return prefix_tree
 
+
 def tokenize(s):
     r"""
     Return the tokens and the distinct variables appearing in a boolean
@@ -441,7 +433,7 @@ def tokenize(s):
 
     INPUT:
 
-    - ``s`` -- a string representation of a boolean formula
+    - ``s`` -- string representation of a boolean formula
 
     OUTPUT:
 
@@ -516,15 +508,16 @@ def tokenize(s):
     toks.append(')')
     return toks, vars_order
 
+
 def tree_parse(toks, polish=False):
     r"""
     Return a parse tree from the tokens in ``toks``.
 
     INPUT:
 
-    - ``toks`` -- a list of tokens from a boolean formula
+    - ``toks`` -- list of tokens from a boolean formula
 
-    - ``polish`` -- (default: ``False``) a boolean; when ``True``,
+    - ``polish`` -- boolean (default: ``False``); when ``True``,
       :func:`~sage.logic.logicparser.tree_parse()` will return
       the full syntax parse tree
 
@@ -572,24 +565,23 @@ def tree_parse(toks, polish=False):
             stack.append(branch)
     return stack[0]
 
+
 def parse_ltor(toks, n=0, polish=False):
     r"""
     Return a parse tree from ``toks``, where each token in ``toks`` is atomic.
 
     INPUT:
 
-    - ``toks`` -- a list of tokens. Each token is atomic.
+    - ``toks`` -- list of tokens; each token is atomic
 
-    - ``n`` -- (default: 0) an integer representing which order of
+    - ``n`` -- integer (default: 0) representing which order of
       operations are occurring
 
-    - ``polish`` -- (default: ``False``) a boolean; when ``True``, double
+    - ``polish`` -- boolean (default: ``False``); when ``True``, double
       negations are not cancelled and negated statements are turned into
-      list of length two.
+      list of length two
 
-    OUTPUT:
-
-    The parse tree as a nested list that depends on ``polish`` as follows:
+    OUTPUT: the parse tree as a nested list that depends on ``polish`` as follows:
 
     - If ``False``, then return a simplified parse tree.
 
@@ -657,6 +649,7 @@ def parse_ltor(toks, n=0, polish=False):
         raise SyntaxError
     return toks[0]
 
+
 def apply_func(tree, func):
     r"""
     Apply ``func`` to each node of ``tree``, and return a new parse tree.
@@ -668,9 +661,7 @@ def apply_func(tree, func):
     - ``func`` -- a function to be applied to each node of tree; this may
       be a function that comes from elsewhere in the logic module
 
-    OUTPUT:
-
-    The new parse tree in the form of a nested list.
+    OUTPUT: the new parse tree in the form of a nested list
 
     EXAMPLES:
 

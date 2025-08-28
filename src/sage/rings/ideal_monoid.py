@@ -8,10 +8,10 @@ WARNING: This is used by some rings that are not commutative! ::
     <class 'sage.rings.ideal_monoid.IdealMonoid_c_with_category'>
 """
 
-from sage.structure.parent import Parent
 import sage.rings.integer_ring
-from . import ideal
 from sage.categories.monoids import Monoids
+from sage.rings import ideal
+from sage.structure.parent import Parent
 
 
 def IdealMonoid(R):

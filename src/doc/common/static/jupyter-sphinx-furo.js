@@ -45,7 +45,7 @@ function handlePrefersColorSchemeChange(e) {
 prefersDarkMode.addEventListener('change', handlePrefersColorSchemeChange);
 
 
-// Change the editor theme of a new CodeMirror cell.
+// Change the editor theme of a new CodeMirror cell
 const callback = function(mutationsList, observer) {
   for(const mutation of mutationsList) {
     if (mutation.type === 'childList') {
@@ -56,6 +56,71 @@ const callback = function(mutationsList, observer) {
         }}}}};
 const observer2 = new MutationObserver(callback);
 observer2.observe(document.getElementsByClassName("content")[0], { childList: true, subtree: true });
+
+
+//
+// Version selector
+//
+
+function fetchVersions() {
+    try {
+        let menu = document.getElementById('versions-menu');
+
+        // For the origin of the this site, see .github/workflows/doc-publish.yml
+        fetch('https://doc-release--sagemath.netlify.app/html/en/versions.txt')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.text();
+            })
+            .then(text => {
+                const lines = text.split('\n');
+                lines.forEach(line => {
+                    if (!line.startsWith('#')) { // Ignore the comment line
+                        let [ver, url] = line.split(' ');
+                        if (ver && url) {
+                            if (!url.startsWith('https://')) {
+                                url = 'https://' + url;
+                            }
+                            let option = document.createElement('option');
+                            option.value = url;
+                            option.text = ver;
+                            menu.add(option);
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.log('Failed to fetch versions.txt file.');
+            });
+    } catch (error) {
+        console.log('Failed to fetch versions.txt file.');
+    }
+}
+
+fetchVersions()
+
+// Function to change the version based on versions menu selection
+function changeVersion() {
+    let select_element = document.getElementById("versions-menu");
+    let selected_ver = select_element.options[select_element.selectedIndex].text;
+    let selected_url = select_element.value;
+    if (selected_url) {
+        if (window.location.protocol == 'file:') {
+            let pathname = window.location.pathname;
+            let cutoff_point = pathname.indexOf('/html');
+            if (cutoff_point !== -1) {
+                pathname = pathname.substring(cutoff_point);
+                window.location.href = selected_url + pathname;
+            } else {
+                window.location.href = selected_url + '/index.html';
+            }
+        } else {
+            window.location.href = selected_url + window.location.pathname;
+        }
+    }
+}
 
 
 // Listen to the kernel status changes
@@ -111,4 +176,18 @@ thebelab.on("status", function (evt, data) {
     const kernel = data.kernel;
     kernel.requestExecute({code: "%display latex"});
   }
+});
+
+
+// Activate Thebe when "Sage Live" tab is clicked
+document.querySelectorAll('input[class="tab-input"]').forEach((elem) => {
+    elem.addEventListener("click", function(event) {
+        if (elem.nextElementSibling) {
+            if (elem.nextElementSibling.nextElementSibling) {
+                if (elem.nextElementSibling.nextElementSibling.querySelector('div[class="thebelab-code"]')) {
+                    initThebelab();
+                }
+            }
+        }
+    });
 });

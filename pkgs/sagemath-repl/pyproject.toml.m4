@@ -2,7 +2,7 @@ include(`sage_spkg_versions_toml.m4')dnl' -*- conf-toml -*-
 [build-system]
 # Minimum requirements for the build system to execute.
 requires = [
-    SPKG_INSTALL_REQUIRES_setuptools_wheel
+    SPKG_INSTALL_REQUIRES_setuptools
     SPKG_INSTALL_REQUIRES_wheel
 ]
 build-backend = "setuptools.build_meta"
@@ -13,11 +13,19 @@ description = "Sage: Open Source Mathematics Software: IPython kernel, Sage prep
 dependencies = [
     SPKG_INSTALL_REQUIRES_sagemath_objects
     SPKG_INSTALL_REQUIRES_sagemath_environment
+    SPKG_INSTALL_REQUIRES_ipykernel
     SPKG_INSTALL_REQUIRES_ipython
     SPKG_INSTALL_REQUIRES_ipywidgets
+    SPKG_INSTALL_REQUIRES_jupyter_client
 ]
 dynamic = ["version"]
 include(`pyproject_toml_metadata.m4')dnl'
+
+[project.optional-dependencies]
+# Improved formatting of docstrings in the help system
+sphinx = [
+    SPKG_INSTALL_REQUIRES_sphinx
+]
 
 [project.readme]
 file = "README.rst"
@@ -34,6 +42,7 @@ py-modules = [
 ]
 packages = [
     "sage.doctest",
+    "sage.interfaces",
     "sage.repl",
     "sage.repl.display",
     "sage.repl.ipython_kernel",

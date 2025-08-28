@@ -23,15 +23,14 @@ def CyclicCover(r, f, names=None, check_smooth=True):
 
     INPUT:
 
-    - ``r`` - the order of the cover
+    - ``r`` -- the order of the cover
 
-    - ``f`` - univariate polynomial if not given, then it defaults to 0.
+    - ``f`` -- univariate polynomial if not given, then it defaults to 0
 
-    - ``names``  (default: ``["x","y"]``) - names for the
-      coordinate functions
+    - ``names`` -- (default: ``["x","y"]``) names for the coordinate functions
 
-    - ``check_squarefree`` (default: ``True``) - test if
-      the input defines a unramified cover of the projective line.
+    - ``check_squarefree`` -- boolean (default: ``True``); test if
+      the input defines a unramified cover of the projective line
 
     .. WARNING::
 
@@ -97,14 +96,12 @@ def CyclicCover(r, f, names=None, check_smooth=True):
 
     Input with integer coefficients creates objects with the integers
     as base ring, but only checks smoothness over `\QQ`, not over Spec(`\ZZ`).
-    In other words, it is checked that the discriminant is non-zero, but it is
+    In other words, it is checked that the discriminant is nonzero, but it is
     not checked whether the discriminant is a unit in `\ZZ^*`::
 
         sage: R.<x> = ZZ[]
         sage: CyclicCover(5, (x^3-x+2)*(x^6-1))
         Cyclic Cover of P^1 over Integer Ring defined by y^5 = x^9 - x^7 + 2*x^6 - x^3 + x - 2
-
-
     """
     if not isinstance(f, Polynomial):
         raise TypeError("Arguments f (= %s) must be a polynomial" % (f,))

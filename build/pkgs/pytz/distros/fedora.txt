@@ -1,1 +1,1 @@
-python-pytz
+python3-pytz

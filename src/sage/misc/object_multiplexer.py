@@ -21,7 +21,7 @@ AUTHORS:
 # ****************************************************************************
 
 
-class MultiplexFunction():
+class MultiplexFunction:
     """
     A simple wrapper object for functions that are called on a list of
     objects.
@@ -49,15 +49,14 @@ class MultiplexFunction():
             sage: f()
             ('1', '1/2')
         """
-        l = []
-        for child in self.multiplexer.children:
-            l.append(getattr(child, self.name)(*args, **kwds))
+        l = [getattr(child, self.name)(*args, **kwds)
+             for child in self.multiplexer.children]
         if all(e is None for e in l):
             return None
         return tuple(l)
 
 
-class Multiplex():
+class Multiplex:
     """
     Object for a list of children such that function calls on this
     new object implies that the same function is called on all

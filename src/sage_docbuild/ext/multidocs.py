@@ -17,7 +17,6 @@ More precisely this extension ensures the correct merging of
 - the list of python modules
 - the javascript index
 - the citations
-
 """
 import os
 import pickle
@@ -115,7 +114,7 @@ def get_env(app, curdoc):
         app.env.doctreedir, curdoc, ENV_PICKLE_FILENAME)
     try:
         f = open(filename, 'rb')
-    except IOError:
+    except OSError:
         logger.debug(f"Unable to load pickled environment '{filename}'", exc_info=True)
         return None
     docenv = pickle.load(f)
@@ -181,7 +180,7 @@ def get_js_index(app, curdoc):
     indexfile = os.path.join(app.outdir, curdoc, 'searchindex.js')
     try:
         f = open(indexfile, 'r')
-    except IOError:
+    except OSError:
         logger.info("")
         logger.warning("Unable to fetch %s " % indexfile)
         return None

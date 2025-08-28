@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Root system data for type E
 """
@@ -41,7 +40,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
             sage: e = RootSystem(['E',8]).ambient_space()
             sage: [e.weyl_dimension(v) for v in e.fundamental_weights()]
             [3875, 147250, 6696000, 6899079264, 146325270, 2450240, 30380, 248]
-           """
+        """
         v = ZZ(1)/ZZ(2)
         self.rank = root_system.cartan_type().rank()
         ambient_space.AmbientSpace.__init__(self, root_system, baseRing)
@@ -375,7 +374,6 @@ class AmbientSpace(ambient_space.AmbientSpace):
              (1/2, 1/2, 1/2, 1/2, 1/2, 1/2, -1/2, -1/2)]
             sage: e.rho()
             (0, 1, 2, 3, 4, 5, 6, 23)
-
         """
         v = ZZ(1)/ZZ(2)
         # Note that
@@ -526,7 +524,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
 
     def dynkin_diagram(self):
         """
-        Returns a Dynkin diagram for type E.
+        Return a Dynkin diagram for type E.
 
         EXAMPLES::
 
@@ -563,7 +561,6 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
             [(1, 3, 1), (2, 4, 1), (3, 1, 1), (3, 4, 1), (4, 2, 1),
              (4, 3, 1), (4, 5, 1), (5, 4, 1), (5, 6, 1), (6, 5, 1),
              (6, 7, 1), (7, 6, 1), (7, 8, 1), (8, 7, 1)]
-
         """
         from .dynkin_diagram import DynkinDiagram_class
         g = DynkinDiagram_class(self)
@@ -639,4 +636,5 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.root_system.type_E', 'ambient_space',  AmbientSpace)
+register_unpickle_override('sage.combinat.root_system.type_E',
+                           'ambient_space', AmbientSpace)

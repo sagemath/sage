@@ -12,15 +12,9 @@ Installing Git
 
 Depending on your platform, use the following to install Git:
 
-Debian / Ubuntu
-    Run ``sudo apt-get install git-core``
-
-Fedora
-    Run ``sudo yum install git-core``
-
-Windows (Cygwin)
-    Install the Cygwin package Git. Do not attempt to use native
-    Windows installations of Git.
+Linux
+    See :ref:`spkg_git` for the installation command on your
+    Linux distribution.
 
 Windows (WSL)
     We strongly recommend to install the package using the Linux

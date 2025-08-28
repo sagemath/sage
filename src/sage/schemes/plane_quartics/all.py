@@ -1,1 +1,1 @@
-from .quartic_constructor import QuarticCurve
+from sage.schemes.plane_quartics.quartic_constructor import QuarticCurve

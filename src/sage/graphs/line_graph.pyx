@@ -22,7 +22,7 @@ Author:
 
 - David Coudert (10-2018), use maximal cliques iterator in :meth:`root_graph`,
   and use :meth:`root_graph` instead of forbidden subgraph search in
-  :meth:`is_line_graph` (:trac:`26444`).
+  :meth:`is_line_graph` (:issue:`26444`).
 
 Definition
 -----------
@@ -127,6 +127,8 @@ Functions
 ---------
 """
 
+from sage.structure.element cimport parent
+
 
 def is_line_graph(g, certificate=False):
     r"""
@@ -134,7 +136,7 @@ def is_line_graph(g, certificate=False):
 
     INPUT:
 
-    - ``certificate`` (boolean) -- whether to return a certificate along with
+    - ``certificate`` -- boolean; whether to return a certificate along with
       the boolean result. Here is what happens when ``certificate = True``:
 
       - If the graph is not a line graph, the method returns a pair ``(b,
@@ -206,7 +208,7 @@ def is_line_graph(g, certificate=False):
         sage: g.line_graph().is_isomorphic(gl)                                          # needs sage.modules
         True
 
-    Verify that :trac:`29740` is fixed::
+    Verify that :issue:`29740` is fixed::
 
         sage: g = Graph('O{e[{}^~z`MDZBZBkXzE^')
         sage: g.is_line_graph()
@@ -263,20 +265,35 @@ def is_line_graph(g, certificate=False):
     return True
 
 
-def line_graph(g, labels=True):
+def line_graph(g, labels=True, return_labels=False, immutable=None):
     """
-    Return the line graph of the (di)graph ``g``.
+    Return the line graph of the (di)graph ``g`` (multiedges and loops allowed).
 
     INPUT:
 
     - ``labels`` -- boolean (default: ``True``); whether edge labels should be
       taken in consideration. If ``labels=True``, the vertices of the line graph
-      will be triples ``(u,v,label)``, and pairs of vertices otherwise.
+      will be triples ``(u,v,label)``, and pairs of vertices otherwise.  In case
+      of multiple edges, the vertices of the line graph will be triples
+      ``(u,v,an integer)``.
 
-    The line graph of an undirected graph G is an undirected graph H such that
-    the vertices of H are the edges of G and two vertices e and f of H are
+    - ``return_labels`` -- boolean (default: ``False``); whether edge labels should
+      be stored or not. If g has multiple edges and if ``return_labels=True``, the
+      method returns a list the first element of which is the line-graph of g
+      and the second element is a dictionary {vertex of the line-graph: former
+      corresponding edge with its original label}. If ``return_labels=False``,
+      the method returns only the line-graph.
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable (di)graph. ``immutable=None`` (default) means that the
+      (di)graph and its line (di)graph will behave the same way.
+
+    The line graph of an undirected graph G is an undirected simple graph H such
+    that the vertices of H are the edges of G and two vertices e and f of H are
     adjacent if e and f share a common vertex in G. In other words, an edge in H
     represents a path of length 2 in G.
+
+    Loops are not adjacent to themselves.
 
     The line graph of a directed graph G is a directed graph H such that the
     vertices of H are the edges of G and two vertices e and f of H are adjacent
@@ -293,12 +310,12 @@ def line_graph(g, labels=True):
 
     .. SEEALSO::
 
-        - The :mod:`line_graph <sage.graphs.line_graph>` module.
+        - The :mod:`line_graph <sage.graphs.line_graph>` module
 
         - :meth:`~sage.graphs.graph_generators.GraphGenerators.line_graph_forbidden_subgraphs`
-          -- the forbidden subgraphs of a line graph.
+          -- the forbidden subgraphs of a line graph
 
-        - :meth:`~Graph.is_line_graph` -- tests whether a graph is a line graph.
+        - :meth:`~Graph.is_line_graph` -- tests whether a graph is a line graph
 
     EXAMPLES::
 
@@ -311,7 +328,7 @@ def line_graph(g, labels=True):
          (1, 2, None),
          (1, 3, None),
          (2, 3, None)]
-        sage: h.am()                                                                    # needs sage.modules
+        sage: h.am()                                                                # needs sage.modules
         [0 1 1 1 1 0]
         [1 0 1 1 0 1]
         [1 1 0 0 1 1]
@@ -321,7 +338,7 @@ def line_graph(g, labels=True):
         sage: h2 = g.line_graph(labels=False)
         sage: h2.vertices(sort=True)
         [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
-        sage: h2.am() == h.am()                                                         # needs sage.modules
+        sage: h2.am() == h.am()                                                     # needs sage.modules
         True
         sage: g = DiGraph([[1..4], lambda i,j: i < j])
         sage: h = g.line_graph()
@@ -338,9 +355,43 @@ def line_graph(g, labels=True):
          ((1, 3, None), (3, 4, None), None),
          ((2, 3, None), (3, 4, None), None)]
 
+    Examples with multiple edges::
+
+        sage: L = Graph([(0,1),(0,1),(1,2)],multiedges=True).line_graph()
+        sage: L.edges()
+        [((0, 1, 0), (0, 1, 1), None), ((0, 1, 1), (1, 2, 2), None),
+        ((0, 1, 0), (1, 2, 2), None)]
+        sage: G = Graph([(0,1),(0,1,'a'),(0,1,'b'),(0,2),(1,2,'c')],
+        ....: multiedges=True)
+        sage: L = G.line_graph(False,True)
+        sage: L[0].edges()
+        [((0, 1, 1), (0, 1, 2), None), ((0, 1, 0), (0, 1, 2), None),
+        ((0, 1, 2), (0, 2, 3), None), ((0, 1, 2), (1, 2, 4), None), ((0, 1, 0),
+        (0, 1, 1), None), ((0, 1, 1), (0, 2, 3), None), ((0, 1, 1),
+        (1, 2, 4), None), ((0, 1, 0), (0, 2, 3), None), ((0, 1, 0),
+        (1, 2, 4), None), ((0, 2, 3), (1, 2, 4), None)]
+        sage: L[1]
+        {(0, 1, 0): (0, 1, None),
+        (0, 1, 1): (0, 1, 'b'),
+        (0, 1, 2): (0, 1, 'a'),
+        (0, 2, 3): (0, 2, None),
+        (1, 2, 4): (1, 2, 'c')}
+        sage: g = DiGraph([(0,1),(0,1),(1,2)],multiedges=True)
+        sage: g.line_graph().edges()
+        [((0, 1, 1), (1, 2, 2), None), ((0, 1, 0), (1, 2, 2), None)]
+
+    An example with a loop::
+
+        sage: g = Graph([(0,0),(0,1),(0,2),(1,2)],multiedges=True,loops=True)
+        sage: L = g.line_graph()
+        sage: L.edges()
+        [((0, 0, None), (0, 1, None), None), ((0, 0, None), (0, 2, None), None),
+        ((0, 1, None), (0, 2, None), None), ((0, 1, None), (1, 2, None), None),
+        ((0, 2, None), (1, 2, None), None)]
+
     TESTS:
 
-    :trac:`13787`::
+    :issue:`13787`::
 
         sage: g = graphs.KneserGraph(7,1)
         sage: C = graphs.CompleteGraph(7)
@@ -348,23 +399,63 @@ def line_graph(g, labels=True):
         True
         sage: C.line_graph().is_isomorphic(g.line_graph())
         True
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: G = Graph([(0, 1), (1, 2)])
+        sage: G.line_graph().is_immutable()
+        False
+        sage: G.line_graph(immutable=True).is_immutable()
+        True
+        sage: G = Graph([(0, 1), (1, 2)], immutable=True)
+        sage: G.line_graph().is_immutable()
+        True
+        sage: G.line_graph(immutable=False).is_immutable()
+        False
+        sage: G = Graph([(0, 1), (0, 1), (1, 2)], multiedges=True)
+        sage: G.line_graph().is_immutable()
+        False
+        sage: G.line_graph(immutable=True).is_immutable()
+        True
+        sage: G = Graph([(0, 1), (0, 1), (1, 2)], multiedges=True, immutable=True)
+        sage: G.line_graph().is_immutable()
+        True
+        sage: G.line_graph(immutable=False).is_immutable()
+        False
+        sage: G = DiGraph([(0, 1), (1, 2)])
+        sage: G.line_graph().is_immutable()
+        False
+        sage: G.line_graph(immutable=True).is_immutable()
+        True
     """
     cdef dict conflicts = {}
-    cdef list elist = []
+    cdef dict origlabels_dic = {}  # stores original labels of edges in case of multiple edges
 
-    g._scream_if_not_simple()
+    multiple = g.has_multiple_edges()
+
+    if immutable is None:
+        immutable = g.is_immutable()
+
+    if multiple:
+        # As the edges of g are the vertices of its line graph, we need to distinguish between the multiple edges of g.
+        # To this aim, we assign to each edge of g an integer label (between 0 and g.size() - 1) and set labels to True
+        # in order to keep these labels during the construction of the line graph.
+        labels = True
+        origlabels_dic = {(u, v, id): (u, v, label)
+                          for id, (u, v, label) in enumerate(g.edge_iterator())}
+        g = parent(g)([g, origlabels_dic.keys()], format='vertices_and_edges', multiedges=True)
+
     if g._directed:
         from sage.graphs.digraph import DiGraph
-        G = DiGraph()
-        G.add_vertices(g.edge_iterator(labels=labels))
-        for v in g:
-            # Connect appropriate incident edges of the vertex v
-            G.add_edges((e, f) for e in g.incoming_edge_iterator(v, labels=labels)
-                        for f in g.outgoing_edge_iterator(v, labels=labels))
+        # Connect appropriate incident edges of each vertex v
+        arcs = ((e, f) for v in g
+                for e in g.incoming_edge_iterator(v, labels=labels)
+                for f in g.outgoing_edge_iterator(v, labels=labels))
+        G = DiGraph([g.edge_iterator(labels=labels), arcs],
+                    format='vertices_and_edges', immutable=immutable)
+        if return_labels and multiple:
+            return [G, origlabels_dic]
         return G
-
-    from sage.graphs.graph import Graph
-    G = Graph()
 
     # We must sort the edges' endpoints so that (1,2,None) is seen as the
     # same edge as (2,1,None).
@@ -375,25 +466,27 @@ def line_graph(g, labels=True):
     # pair in the dictionary of conflicts
 
     # 1) List of vertices in the line graph
+    cdef list vertices = []
     for e in g.edge_iterator(labels=labels):
         if hash(e[0]) < hash(e[1]):
-            elist.append(e)
+            vertices.append(e)
         elif hash(e[0]) > hash(e[1]):
-            elist.append((e[1], e[0]) + e[2:])
+            vertices.append((e[1], e[0]) + e[2:])
         else:
             # Settle the conflict arbitrarily
             conflicts[e] = e
             conflicts[(e[1], e[0]) + e[2:]] = e
-            elist.append(e)
-
-    G.add_vertices(elist)
+            vertices.append(e)
 
     # 2) adjacencies in the line graph
+    cdef list edges = []
+    cdef list elist
+    from itertools import combinations
     for v in g:
         elist = []
 
         # Add the edge to the list, according to hashes, as previously
-        for e in g.edge_iterator(v, labels=labels):
+        for e in g.edge_iterator(v, labels=labels):  # iterates over the edges incident to v
             if hash(e[0]) < hash(e[1]):
                 elist.append(e)
             elif hash(e[0]) > hash(e[1]):
@@ -402,15 +495,19 @@ def line_graph(g, labels=True):
                 elist.append(conflicts[e])
 
         # All pairs of elements in elist are edges of the line graph
-        while elist:
-            x = elist.pop()
-            for y in elist:
-                G.add_edge(x, y)
+        # if g has multiple edges, some pairs appear more than once but as G is defined as simple,
+        # the corresponding edges are not added as multiedges (as it should be).
+        edges.extend(combinations(elist, 2))
 
+    from sage.graphs.graph import Graph
+    G = Graph([vertices, edges], format='vertices_and_edges',
+              immutable=immutable)
+    if return_labels and multiple:
+        return [G, origlabels_dic]
     return G
 
 
-def root_graph(g, verbose=False):
+def root_graph(g, verbose=False, immutable=None):
     r"""
     Return the root graph corresponding to the given graph ``g``.
 
@@ -421,7 +518,11 @@ def root_graph(g, verbose=False):
     - ``g`` -- a graph
 
     - ``verbose`` -- boolean (default: ``False``); display some information
-      about what is happening inside of the algorithm.
+      about what is happening inside of the algorithm
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable (di)graph. ``immutable=None`` (default) means that the
+      (di)graph and its root (di)graph will behave the same way.
 
     .. WARNING::
 
@@ -465,6 +566,19 @@ def root_graph(g, verbose=False):
         Graph on 4 vertices
         sage: G, D = root_graph(graphs.WheelGraph(5)); G
         Diamond Graph: Graph on 4 vertices
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: G = graphs.CycleGraph(4)
+        sage: root_graph(G)[0].is_immutable()
+        False
+        sage: root_graph(G, immutable=True)[0].is_immutable()
+        True
+        sage: G = graphs.CycleGraph(4, immutable=True)
+        sage: root_graph(G)[0].is_immutable()
+        True
+        sage: root_graph(G, immutable=True)[0].is_immutable()
+        True
     """
     from sage.graphs.digraph import DiGraph
 
@@ -477,23 +591,26 @@ def root_graph(g, verbose=False):
     # is_line_graph expects a particular error message when g is not a line graph
     not_line_graph = "this graph is not a line graph !"
 
+    if immutable is None:
+        immutable = g.is_immutable()
+
     # Complete Graph ?
     if g.is_clique():
         from sage.graphs.generators.basic import CompleteBipartiteGraph
-        return (CompleteBipartiteGraph(1, g.order()),
+        return (CompleteBipartiteGraph(1, g.order(), immutable=immutable),
                 {v: (0, 1 + i) for i, v in enumerate(g)})
 
     # Diamond Graph ?
     elif g.order() == 4 and g.size() == 5:
         from sage.graphs.graph import Graph
-        root = Graph([(0, 1), (1, 2), (2, 0), (0, 3)])
+        root = Graph([(0, 1), (1, 2), (2, 0), (0, 3)], immutable=immutable)
         return (root,
                 g.is_isomorphic(root.line_graph(labels=False), certificate=True)[1])
 
     # Wheel on 5 vertices ?
     elif g.order() == 5 and g.size() == 8 and min(g.degree()) == 3:
         from sage.graphs.generators.basic import DiamondGraph
-        root = DiamondGraph()
+        root = DiamondGraph(immutable=immutable)
         return (root,
                 g.is_isomorphic(root.line_graph(labels=False), certificate=True)[1])
 
@@ -502,7 +619,7 @@ def root_graph(g, verbose=False):
         from sage.graphs.generators.platonic_solids import OctahedralGraph
         if g.is_isomorphic(OctahedralGraph()):
             from sage.graphs.generators.basic import CompleteGraph
-            root = CompleteGraph(4)
+            root = CompleteGraph(4, immutable=immutable)
             return (root,
                     g.is_isomorphic(root.line_graph(labels=False), certificate=True)[1])
 
@@ -591,8 +708,6 @@ def root_graph(g, verbose=False):
 
     # We now have all our cliques. Let's build the root graph to check that it
     # all fits !
-    from sage.graphs.graph import Graph
-    R = Graph()
 
     # Associates an integer to each clique
     cdef dict relabel = {}
@@ -616,7 +731,8 @@ def root_graph(g, verbose=False):
             print(v, L)
 
     # We now build R
-    R.add_edges(vertex_to_map.values())
+    from sage.graphs.graph import Graph
+    R = Graph(vertex_to_map.values(), format='list_of_edges', immutable=immutable)
 
     # If g is a line graph, then it is isomorphic to the line graph of the graph
     # R that we have constructed, so we return R (and the isomorphism).

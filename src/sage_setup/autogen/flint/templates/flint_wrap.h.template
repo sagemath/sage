@@ -1,0 +1,62 @@
+/* WARNING: src/sage/libs/flint/flint_wrap.h is generated from
+ * src/sage_setup/autogen/flint/templates/flint_wrap.h.template
+ * please make sure that you are modifying the correct file! */
+
+#ifndef SAGE_FLINT_WRAP_H
+#define SAGE_FLINT_WRAP_H
+/* Using flint headers together in the same module as headers from
+ * some other libraries (pari, possibly others) as it defines the
+ * macros ulong and slong all over the place.
+ *
+ * What's worse is they are defined to types from GMP (mp_limb_t and
+ * mp_limb_signed_t respectively) which themselves can have system-dependent
+ * typedefs, so there is no guarantee that all these 'ulong' definitions from
+ * different libraries' headers will be compatible.
+ *
+ * When including flint headers in Sage it should be done through this wrapper
+ * to prevent confusion.  We rename flint's ulong and slong to fulong and
+ * fslong.  This is consistent with flint's other f-prefixed typedefs.
+ */
+
+#include <gmp.h>
+#include <mpfr.h>
+
+/* Save previous definition of ulong if any, as pari also uses it */
+/* Should work on GCC, clang, MSVC */
+#pragma push_macro("ulong")
+#undef ulong
+
+/* Reserved in C99, needed for FLINT without https://github.com/flintlib/flint/pull/2027 */
+#pragma push_macro("I")
+#define I Iv
+
+/* flint 3.2 will rename flint_rand_s to flint_rand_struct
+ * the following line can be removed when flint 3.1 is gone */
+#define flint_rand_s flint_rand_struct
+
+#include <flint/flint.h>
+
+/* If flint was already previously included via another header (e.g.
+ * arb_wrap.h) then it may be necessary to redefine ulong and slong again */
+
+#ifndef ulong
+#define ulong mp_limb_t
+#define slong mp_limb_signed_t
+#endif
+
+{HEADER_LIST}
+
+#undef ulong
+#undef slong
+#undef mp_bitcnt_t
+
+#pragma pop_macro("ulong")
+#pragma pop_macro("I")
+
+/* CPU_SIZE_1 and SIZE_RED_FAILURE_THRESH are defined as macros in flint/fmpz_lll.h
+ * and as variables in fplll/defs.h, which breaks build if linbox is compiled with fplll */
+
+#undef CPU_SIZE_1
+#undef SIZE_RED_FAILURE_THRESH
+
+#endif

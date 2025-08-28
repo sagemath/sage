@@ -14,7 +14,7 @@ cdef class ntl_ZZ_pContext_class():
 
 cdef class ntl_ZZ_pContext_factory():
     cdef object context_dict
-    cdef ntl_ZZ_pContext_class make_c(self, ntl_ZZ v) noexcept
+    cdef ntl_ZZ_pContext_class make_c(self, ntl_ZZ v)
 
 
 cdef extern from "ntlwrap.h":

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Feature for testing the presence of ``palp``
 """
@@ -21,9 +22,9 @@ class PalpExecutable(Executable):
 
     INPUT:
 
-    - ``palpprog`` -- string, one of ``"poly"``, ``"class"``, ``"nef"``, ``"cws"``.
+    - ``palpprog`` -- string, one of ``'poly'``, ``'class'``, ``'nef'``, ``'cws'``
 
-    - ``suff`` -- string or ``None``.
+    - ``suff`` -- string or ``None``
     """
     def __init__(self, palpprog, suff=None):
         r"""
@@ -36,11 +37,12 @@ class PalpExecutable(Executable):
         if suff:
             Executable.__init__(self, f"palp_{palpprog}_{suff}d",
                                 executable=f"{palpprog}-{suff}d.x",
-                                spkg="palp", type="standard")
+                                spkg='palp', type='standard')
         else:
             Executable.__init__(self, f"palp_{palpprog}",
                                 executable=f"{palpprog}.x",
-                                spkg="palp", type="standard")
+                                spkg='palp', type='standard')
+
 
 class Palp(JoinFeature):
     r"""
@@ -58,7 +60,8 @@ class Palp(JoinFeature):
                              [PalpExecutable(palpprog, suff)
                               for palpprog in ("poly", "class", "nef", "cws")
                               for suff in (None, 4, 5, 6, 11)],
-                             description="PALP")
+                             description='PALP')
+
 
 def all_features():
     return [Palp()]

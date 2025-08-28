@@ -1,4 +1,4 @@
- jupyter_core | $(PYTHON_TOOLCHAIN) pyzmq dateutil nest_asyncio tornado traitlets entrypoints hatchling $(PYTHON)
+ jupyter_core pyzmq dateutil tornado traitlets importlib_metadata | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

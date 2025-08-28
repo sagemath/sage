@@ -48,10 +48,6 @@ mpfr_configure()
     # currently causes problems on a few systems:
     SAGE_CONF_OPTS="--disable-thread-safe"
 
-    if [ "$UNAME" = CYGWIN ]; then
-        SAGE_CONF_OPTS="$SAGE_CONF_OPTS --disable-static --enable-shared"
-    fi
-
     ###########################################################################
     # Pre-configure MPFR with CC and CFLAGS unset:
     ###########################################################################
@@ -149,14 +145,6 @@ mpfr_build()
 {
     mpfr_configure
     sdh_make
-
-    echo
-    echo "Building MPFR succeeded.  Now deleting old headers..."
-    rm -f "$SAGE_LOCAL"/include/*mpfr*
-    # Do not delete old libraries as this causes gcc to break during
-    # parallel builds.
-    # rm -f "$SAGE_LOCAL"/lib/libmpfr.*
-
     sdh_make_install
 }
 

@@ -254,7 +254,6 @@ consider the cubic equation
   x^3 + \sqrt{2} x + 5 = 0.
 
 
-
 In Sage, we can create this equation, and find an exact symbolic
 solution.
 
@@ -310,7 +309,7 @@ root is :math:`x^6 + 10x^3 - 2x^2 + 25`.
 
 .. warning::
 
-   The following tests are currently broken until :trac:`5338` is
+   The following tests are currently broken until :issue:`5338` is
    fixed.
 
 .. skip

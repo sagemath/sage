@@ -7,9 +7,9 @@ cdef class ConvexityProperties:
     cdef dict _dict_vertices_to_integers
     cdef binary_matrix_t _cache_hull_pairs
 
-    cdef list _vertices_to_integers(self, vertices) noexcept
-    cdef list _integers_to_vertices(self, list integers) noexcept
-    cdef _bitset_convex_hull(self, bitset_t hull) noexcept
-    cpdef hull(self, list vertices) noexcept
-    cdef _greedy_increase(self, bitset_t bs) noexcept
-    cpdef hull_number(self, value_only = *, verbose = *) noexcept
+    cdef list _vertices_to_integers(self, vertices)
+    cdef list _integers_to_vertices(self, list integers)
+    cdef _bitset_convex_hull(self, bitset_t hull)
+    cpdef hull(self, list vertices)
+    cdef _greedy_increase(self, bitset_t bs)
+    cpdef hull_number(self, value_only=*, verbose=*)

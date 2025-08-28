@@ -1,15 +1,14 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-`\mathcal{B}(\infty)` Crystals of Tableaux in Nonexceptional Types and `G_2`
+`\mathcal{B}(\infty)` crystals of tableaux in nonexceptional types and `G_2`
 
 A tableau model for `\mathcal{B}(\infty)`. For more information, see
 :class:`~sage.combinat.crystals.infinity_crystals.InfinityCrystalOfTableaux`.
 
 AUTHORS:
 
-- Ben Salisbury: Initial version
-
-- Travis Scrimshaw: Initial version
+- Ben Salisbury: initial version
+- Travis Scrimshaw: initial version
 """
 
 #*****************************************************************************
@@ -130,7 +129,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
 
     INPUT:
 
-    - ``cartan_type`` -- One of ``['A',n]``, ``['B',n]``, ``['C',n]``,
+    - ``cartan_type`` -- one of ``['A',n]``, ``['B',n]``, ``['C',n]``,
       ``['D',n]``, or ``['G',2]``, where ``n`` is a positive integer
 
     EXAMPLES::
@@ -250,7 +249,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
             [[1, 1, 1], [2, 2], [3]]
         """
         n = self._cartan_type.rank()
-        p = Partition([x for x in reversed(range(1, n+1))])
+        p = Partition(list(reversed(range(1, n + 1))))
         # The column canonical tableau, read by columns
         module_generator = flatten([[p[j]-i for i in range(p[j])] for j in range(n)])
         return self(list=[self.letters(x) for x in module_generator])
@@ -296,7 +295,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
         Elements in `\mathcal{B}(\infty)` crystal of tableaux.
         """
 
-        def phi(self,i):
+        def phi(self, i):
             r"""
             Return `\varphi_i` of ``self``.
 
@@ -307,7 +306,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 
@@ -448,7 +447,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
 
         def seg(self):
             r"""
-            Returns the statistic `\mathrm{seg}` of ``self.``
+            Return the statistic `\mathrm{seg}` of ``self``.
 
             More precisely, following [LS2012]_, define a `k`-segment of a
             tableau `T` in `\mathcal{B}(\infty)` to be a maximal string
@@ -624,7 +623,7 @@ class InfinityCrystalOfTableauxTypeD(InfinityCrystalOfTableaux):
             [[1, 1, 1], [2, 2], [3]]
         """
         n = self._cartan_type.rank()
-        p = Partition([x for x in reversed(range(1, n))])
+        p = Partition(list(reversed(range(1, n))))
         # The column canonical tableau, read by columns
         module_generator = flatten([[p[j]-i for i in range(p[j])] for j in range(n-1)])
         return self(list=[self.letters(x) for x in module_generator])

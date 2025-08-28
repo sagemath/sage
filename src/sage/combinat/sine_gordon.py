@@ -66,7 +66,7 @@ lazy_import("sage.plot.line", "line")
 
 class SineGordonYsystem(SageObject):
     r"""
-    A class to model a (reduced) sine-Gordon Y-system
+    A class to model a (reduced) sine-Gordon Y-system.
 
     Note that the generations, together with all integer tuples, in this
     implementation are numbered from 0 while in [NS]_ they are numbered from 1
@@ -318,7 +318,7 @@ class SineGordonYsystem(SageObject):
         triangulation = []
         intervals = self.intervals()
         for a in range(self.F()):
-            for (first, last, typ) in intervals[a]:
+            for first, last, typ in intervals[a]:
                 if first - last in [vert(1), vert(-1)]:
                     continue
                 if typ == "L":
@@ -394,7 +394,7 @@ class SineGordonYsystem(SageObject):
         for a in range(self.F()):
             new_intervals = []
             if na[a] % 2 == 0:
-                for (first, last, typ) in intervals[a]:
+                for first, last, typ in intervals[a]:
                     if typ == "NR":
                         new_intervals.append((first, last, "R"))
                     elif typ == "NL":
@@ -415,7 +415,7 @@ class SineGordonYsystem(SageObject):
                             new_intervals.append((vert(x), vert(x + rk[a + 1]), "R"))
                             x = vert(x + rk[a + 1])
             else:
-                for (first, last, typ) in intervals[a]:
+                for first, last, typ in intervals[a]:
                     if typ == "NR":
                         new_intervals.append((first, last, "R"))
                     elif typ == "NL":
@@ -447,17 +447,17 @@ class SineGordonYsystem(SageObject):
 
         INPUT:
 
-        - ``radius`` - the radius of the disk; by default the length of
+        - ``radius`` -- the radius of the disk; by default the length of
           the circle is the number of vertices
-        - ``points_color`` - the color of the vertices; default 'black'
-        - ``points_size`` - the size of the vertices; default 7
-        - ``triangulation_color`` - the color of the arcs; default 'black'
-        - ``triangulation_thickness`` - the thickness of the arcs; default 0.5
-        - ``shading_color`` - the color of the shading used on neuter
+        - ``points_color`` -- the color of the vertices; default 'black'
+        - ``points_size`` -- the size of the vertices; default 7
+        - ``triangulation_color`` -- the color of the arcs; default 'black'
+        - ``triangulation_thickness`` -- the thickness of the arcs; default 0.5
+        - ``shading_color`` -- the color of the shading used on neuter
           intervals; default 'lightgray'
-        - ``reflections_color`` - the color of the reflection axes; default
+        - ``reflections_color`` -- the color of the reflection axes; default
           'blue'
-        - ``reflections_thickness`` - the thickness of the reflection axes;
+        - ``reflections_thickness`` -- the thickness of the reflection axes;
           default 1
 
         EXAMPLES::
@@ -573,7 +573,7 @@ class SineGordonYsystem(SageObject):
                                                max_level=1)
                             if x[2] in ["NR", "NL"]]
         shaded_triangles = map(triangle, neuter_intervals)
-        for (p, q, r) in shaded_triangles:
+        for p, q, r in shaded_triangles:
             points = list(plot_arc(radius, p, q)[0])
             points += list(plot_arc(radius, q, r)[0])
             points += list(reversed(plot_arc(radius, p, r)[0]))
@@ -581,7 +581,7 @@ class SineGordonYsystem(SageObject):
         # Disk boundary
         P += circle((0, 0), radius, **triangulation_opts)
         # Triangulation
-        for (p, q) in self.triangulation():
+        for p, q in self.triangulation():
             P += plot_arc(radius, p, q, **triangulation_opts)
         if self.type() == 'D':
             s = radius / 50.0
@@ -598,11 +598,11 @@ class SineGordonYsystem(SageObject):
                              **triangulation_opts)
             P += point((0, 0), zorder=len(P), **points_opts)
         # Vertices
-        v_points = {x: (radius * cos(vertex_to_angle(x)),
-                        radius * sin(vertex_to_angle(x)))
-                    for x in self.vertices()}
-        for v in v_points:
-            P += point(v_points[v], zorder=len(P), **points_opts)
+        v_points = [(radius * cos(vertex_to_angle(x)),
+                     radius * sin(vertex_to_angle(x)))
+                    for x in self.vertices()]
+        for coords in v_points:
+            P += point(coords, zorder=len(P), **points_opts)
         # Reflection axes
         P += line([(0, 1.1 * radius), (0, -1.1 * radius)],
                   zorder=len(P), **reflections_opts)

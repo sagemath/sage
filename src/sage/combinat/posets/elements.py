@@ -23,7 +23,7 @@ from sage.structure.element import have_same_parent
 
 class PosetElement(Element):
 
-    def __init__(self, poset, element, vertex):
+    def __init__(self, poset, element, vertex) -> None:
         r"""
         Establish the parent-child relationship between ``poset``
         and ``element``, where ``element`` is associated to the
@@ -53,7 +53,7 @@ class PosetElement(Element):
             self.element = element
         self.vertex = vertex
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         TESTS::
 
@@ -64,7 +64,7 @@ class PosetElement(Element):
         """
         return hash(self.element)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -73,7 +73,7 @@ class PosetElement(Element):
         """
         return "%s" % str(self.element)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the latex code of the poset element.
 
@@ -118,7 +118,7 @@ class PosetElement(Element):
             sage: PosetElement(P,1,"c") == PosetElement(P,0,"c")
             True
 
-        Test that :trac:`12351` is fixed::
+        Test that :issue:`12351` is fixed::
 
             sage: P(0) == int(0)
             False
@@ -162,15 +162,12 @@ class PosetElement(Element):
             sage: P(0)._cmp(P(0))
             0
             sage: P(1)._cmp(P(2))
-
         """
         return self.parent().compare_elements(self, other)
 
     def __lt__(self, other):
         """
-        TESTS
-
-        ::
+        TESTS::
 
             sage: dag = DiGraph({0:[2,3], 1:[3,4], 2:[5], 3:[5], 4:[5]})
             sage: P = Poset(dag, facade = False)
@@ -185,9 +182,7 @@ class PosetElement(Element):
 
     def __le__(self, other):
         """
-        TESTS
-
-        ::
+        TESTS::
 
             sage: dag = DiGraph({0:[2,3], 1:[3,4], 2:[5], 3:[5], 4:[5]})
             sage: P = Poset(dag, facade = False)
@@ -204,9 +199,7 @@ class PosetElement(Element):
 
     def __gt__(self, other):
         """
-        TESTS
-
-        ::
+        TESTS::
 
             sage: dag = DiGraph({0:[2,3], 1:[3,4], 2:[5], 3:[5], 4:[5]})
             sage: P = Poset(dag)
@@ -221,9 +214,7 @@ class PosetElement(Element):
 
     def __ge__(self, other):
         """
-        TESTS
-
-        ::
+        TESTS::
 
             sage: dag = DiGraph({0:[2,3], 1:[3,4], 2:[5], 3:[5], 4:[5]})
             sage: P = Poset(dag)

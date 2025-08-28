@@ -5,14 +5,38 @@
 #
 #  Assumes SAGE_ROOT is set
 PKG_BASE=$1
-PKG_SCRIPTS="$SAGE_ROOT/build/pkgs/$PKG_BASE"
-for ext in rst txt; do
-    SPKG_FILE="$PKG_SCRIPTS/SPKG.$ext"
-    if [ -f "$SPKG_FILE" ]; then
-        sed "1,3s/^ *Sage: Open Source Mathematics Software:/$PKG_BASE:/" "$SPKG_FILE"
-        break
-    fi
-done
+if [ -n "$OUTPUT_DIR" ]; then
+    exec > "$OUTPUT_DIR"/$PKG_BASE.rst
+fi
+if [ -n "$OUTPUT_RST" ]; then
+    echo ".. _spkg_$PKG_BASE:"
+    echo
+    ref ()   { echo ":ref:\`$1\`"; }
+    spkg ()  { ref spkg_$1; }
+    issue () { echo ":issue:\`$1\`"; }
+    code ()  { echo "\`\`$*\`\`"; }
+    tab ()   { echo ".. tab:: $1"; }
+    FORMAT=rst
+else
+    ref ()   { echo "$1"; }
+    spkg ()  { echo "$1"; }
+    issue () { echo "https://github.com/sagemath/sage/issues/$1"; }
+    code ()  { echo "$1"; }
+    tab ()   { echo "$1:"; }
+    FORMAT=plain
+fi
+if ! props=$(sage-package properties --format=shell $PKG_BASE 2> /dev/null); then
+    echo >&2 "sage-spkg-info: unknown package $PKG_BASE"
+    exit 1
+fi
+eval "$props"
+eval PKG_SCRIPTS=\$path_$PKG_BASE
+SPKG_FILE="$PKG_SCRIPTS/SPKG.rst"
+if [ -f "$SPKG_FILE" ]; then
+    # for sphinx 4.4 we need to replace all direct links by some "extlink" (issue 33272)
+    sed -e "1,3s/^ *Sage: Open Source Mathematics Software:/$PKG_BASE:/" -e "s|https://github.com/sagemath/sage/issues/\([0-9]*\)|:issue:\`\1\`|g" -e "s|https://arxiv.org/abs/cs/\([0-9]*\)|:arxiv:\`cs/\1\`|g" "$SPKG_FILE"
+    break
+fi
 if [ -r "$PKG_SCRIPTS/type" ] ; then
     echo
     echo "Type"
@@ -25,42 +49,12 @@ echo
 echo "Dependencies"
 echo "------------"
 echo
-dep=
-for dep_file in dependencies dependencies_order_only; do
-    if [ -r "$PKG_SCRIPTS/$dep_file" ] ; then
-        for dep in $(sed 's/^ *//; s/ *#.*//; q' "$PKG_SCRIPTS/$dep_file"); do
-            case "$dep" in
-                # Do not use order-only syntax, too much information
-                \|)         ;;
-                # Suppress dependencies on source file of the form $(SAGE_ROOT)/..., $(SAGE_SRC)/...
-                \$\(SAGE_*) ;;
-                # Suppress FORCE
-                FORCE)      ;;
-                # Dependencies like $(BLAS)
-                \$\(*)      echo "- $dep";;
-                # Looks like a package
-                *)          if [ -n "$OUTPUT_RST" -a -r "$SAGE_ROOT/build/pkgs/$dep/SPKG.rst" ]; then
-                                # This RST label is set in src/doc/bootstrap
-                                echo "- :ref:\`spkg_$dep\`"
-                            else
-                                echo "- $dep"
-                            fi;;
-            esac
-        done
-    fi
-done
+sage-package dependencies --format=$FORMAT $PKG_BASE
 echo
 echo "Version Information"
 echo "-------------------"
 echo
-for a in package-version.txt requirements.txt install-requires.txt; do
-    if [ -f "$PKG_SCRIPTS"/"$a" ]; then
-        echo "$a::"
-        echo
-        sed 's/^/    /' "$PKG_SCRIPTS/$a"
-        echo
-    fi
-done
+sage-get-system-packages versions $PKG_BASE
 echo
 echo "Equivalent System Packages"
 echo "--------------------------"
@@ -81,31 +75,46 @@ for system_package_file in "$PKG_DISTROS"/*.txt; do
         esac
     fi
 done
-if [ $have_repology = yes ]; then
-    systems="$systems repology"
-fi
 system=
+# Show using inline tabs
+export RST_INDENT="   "
 for system in $systems; do
         system_package_file="$PKG_DISTROS"/$system.txt
         system_packages="$(echo $(sed 's/#.*//;' $system_package_file))"
         case $system in
-            debian)
-                # Generic
-                echo "Debian/Ubuntu:"
-                ;;
-            fedora)
-                # Generic
-                echo "Fedora/Redhat/CentOS:"
-                ;;
-            repology)
-                ;;
-            *)
-                echo "$system:"
-                ;;
+            alpine)     tab "Alpine";;
+            arch)       tab "Arch Linux";;
+            conda)      tab "conda-forge";;
+            debian)     tab "Debian/Ubuntu";;
+            fedora)     tab "Fedora/Redhat/CentOS";;
+            freebsd)    tab "FreeBSD";;
+            gentoo)     tab "Gentoo Linux";;
+            homebrew)   tab "Homebrew";;
+            macports)   tab "MacPorts";;
+            nix)        tab "Nixpkgs";;
+            openbsd)    tab "OpenBSD";;
+            opensuse)   tab "openSUSE";;
+            slackware)  tab "Slackware";;
+            void)       tab "Void Linux";;
+            repology)   ;;
+            *)          tab "$system";;
         esac
-        sage-print-system-package-command $system --prompt='    $ ' --sudo install $system_packages
+        if [ -n "$system_packages" ]; then
+            sage-print-system-package-command $system --wrap --prompt="$RST_INDENT"'    $ ' --continuation="$RST_INDENT"'          ' --sudo install $system_packages
+        else
+            echo
+            echo "${RST_INDENT}No package needed."
+        fi
         echo
 done
+unset RST_INDENT
+if [ $have_repology = yes ]; then
+    # Show below the inline tabs
+    system=repology
+    system_package_file="$PKG_DISTROS"/$system.txt
+    system_packages="$(echo $(sed 's/#.*//;' $system_package_file))"
+    sage-print-system-package-command $system --wrap --prompt='    $ ' --continuation='          ' --sudo install $system_packages
+fi
 if [ -z "$system" ]; then
     echo "(none known)"
 else
@@ -114,15 +123,23 @@ else
     if [ -f "${SPKG_CONFIGURE}" ]; then
         if grep -q SAGE_PYTHON_PACKAGE_CHECK "${SPKG_CONFIGURE}"; then
             echo "If the system package is installed and if the (experimental) option"
-            echo "--enable-system-site-packages is passed to ./configure, then ./configure"
+            echo "$(code --enable-system-site-packages) is passed to $(code ./configure), then $(code ./configure)"
             echo "will check if the system package can be used."
         else
-            echo "If the system package is installed, ./configure will check if it can be used."
+            echo "If the system package is installed, $(code ./configure) will check if it can be used."
         fi
     else
-        echo "However, these system packages will not be used for building Sage"
-        echo "because spkg-configure.m4 has not been written for this package;"
-        echo "see https://github.com/sagemath/sage/issues/27330"
+        case $PKG_BASE in
+            _*)
+                # Suppress the message, as it makes no sense for these special packages
+                # (_bootstrap, _sagemath)
+                ;;
+            *)
+                echo "However, these system packages will not be used for building Sage"
+                echo "because $(code spkg-configure.m4) has not been written for this package;"
+                echo "see $(issue 27330) for more information."
+                ;;
+        esac
     fi
 fi
 echo

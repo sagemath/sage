@@ -1,4 +1,2 @@
 TARGET="${SAGE_SHARE}/mathjax"
-# Cleanup installed version
-rm -rf "${TARGET}"
 sdh_install src/* "${TARGET}"

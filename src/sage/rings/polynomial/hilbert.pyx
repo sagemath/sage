@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 r"""
 Compute Hilbert series of monomial ideals
 
-This implementation was provided at :trac:`26243` and is supposed to be a way
+This implementation was provided at :issue:`26243` and is supposed to be a way
 out when Singular fails with an int overflow, which will regularly be the case
 in any example with more than 34 variables.
 """
@@ -84,7 +83,7 @@ cdef inline bint indivisible_in_list(ETuple m, list L, size_t i) noexcept:
             return False
     return True
 
-cdef inline list interred(list L) noexcept:
+cdef inline list interred(list L):
     """
     Return interreduction of a list of monomials.
 
@@ -94,7 +93,7 @@ cdef inline list interred(list L) noexcept:
 
     INPUT:
 
-    - ``L`` -- a list of :class:`~sage.rings.polynomial.polydict.ETuple`
+    - ``L`` -- list of :class:`~sage.rings.polynomial.polydict.ETuple`
 
     OUTPUT:
 
@@ -106,7 +105,7 @@ cdef inline list interred(list L) noexcept:
     # that appears later in L.
     if not L:
         return []
-    L.sort(key=ETuple.unweighted_degree)
+    L.sort(key=ETuple._unweighted_degree)
     cdef size_t i
     cdef ETuple m
     cdef list result = [<ETuple> PyList_GET_ITEM(L, 0)]
@@ -116,7 +115,7 @@ cdef inline list interred(list L) noexcept:
             result.append(m)
     return result
 
-cdef list quotient(list L, ETuple m) noexcept:
+cdef list quotient(list L, ETuple m):
     """
     Return the quotient of the ideal represented by ``L`` and the
     monomial represented by ``m``.
@@ -127,12 +126,11 @@ cdef list quotient(list L, ETuple m) noexcept:
         result.append((<ETuple>PyList_GET_ITEM(L,i)).divide_by_gcd(m))
     return interred(result)
 
-cdef list quotient_by_var(list L, size_t index) noexcept:
+cdef list quotient_by_var(list L, size_t index):
     """
     Return the quotient of the ideal represented by ``L`` and the
     variable number ``index``.
     """
-    cdef ETuple m_j
     cdef list result = L[:len(L)] # creates a copy
     cdef size_t i
     for i in range(len(L)):
@@ -140,7 +138,7 @@ cdef list quotient_by_var(list L, size_t index) noexcept:
             result.append((<ETuple> PyList_GET_ITEM(L, i)).divide_by_var(index))
     return interred(result)
 
-cdef ETuple sum_from_list(list L, size_t s, size_t l) noexcept:
+cdef ETuple sum_from_list(list L, size_t s, size_t l):
     """
     Compute the vector sum of the ETuples in ``L[s:s+l]`` in a balanced way.
     """
@@ -167,7 +165,6 @@ cdef bint HilbertBaseCase(Polynomial_integer_dense_flint fhs, Node D, tuple w) n
     Otherwiese, ``False`` is returned.
     """
     cdef size_t i, j, exp
-    cdef int e
     # First, the easiest cases:
     if not D.Id: # The zero ideal
         fmpz_poly_set_coeff_si(fhs._poly, 0, 1) # = PR(1)
@@ -228,7 +225,6 @@ cdef bint HilbertBaseCase(Polynomial_integer_dense_flint fhs, Node D, tuple w) n
 
     easy = True
     cdef ETuple m2
-    cdef list v
     for j in range(i+1, len(D.Id)):
         if (<ETuple>PyList_GET_ITEM(D.Id,j))._nonzero > 1:
             # i.e., another generator contains more than a single var
@@ -286,7 +282,7 @@ cdef bint HilbertBaseCase(Polynomial_integer_dense_flint fhs, Node D, tuple w) n
     # We are in a truly difficult case and give up for now...
     return False
 
-cdef make_children(Node D, tuple w) noexcept:
+cdef make_children(Node D, tuple w):
     """
     Create child nodes in ``D`` that allow to compute the first Hilbert
     series of ``D.Id``.
@@ -297,7 +293,7 @@ cdef make_children(Node D, tuple w) noexcept:
     if ``D.Right`` is not ``None``.
     """
     cdef size_t j, m
-    cdef int i, ii
+    cdef int i
     # Determine the variable that appears most often in the monomials.
     # If "most often" means "only once", then instead we choose a variable that is
     # guaranteed to appear in a composed monomial.
@@ -422,6 +418,7 @@ cdef make_children(Node D, tuple w) noexcept:
      #    It may be a good idea to form the product of some of the most
      #    frequent variables. But this isn't implemented yet. TODO?
 
+
 def first_hilbert_series(I, grading=None, return_grading=False):
     """
     Return the first Hilbert series of the given monomial ideal.
@@ -431,7 +428,8 @@ def first_hilbert_series(I, grading=None, return_grading=False):
     - ``I`` -- a monomial ideal (possibly defined in singular)
     - ``grading`` -- (optional) a list or tuple of integers used as
       degree weights
-    - ``return_grading`` -- (default: ``False``) whether to return the grading
+    - ``return_grading`` -- boolean (default: ``False``); whether to return the
+      grading
 
     OUTPUT:
 
@@ -489,9 +487,9 @@ def first_hilbert_series(I, grading=None, return_grading=False):
         br = S('basering')
         if S.eval('isQuotientRing(basering)')=='1':
             L = S('ringlist(basering)')
-            R = S('ring(list(%s[1..3],ideal(0)))'%L.name())
+            R = S('ring(list(%s[1..3],ideal(0)))' % L.name())
             R.set_ring()
-            I = S('fetch(%s,%s)+ideal(%s)'%(br.name(),I.name(),br.name()))
+            I = S('fetch(%s,%s)+ideal(%s)' % (br.name(), I.name(), br.name()))
 
         I = [ETuple([int(x) for x in S.eval('string(leadexp({}[{}]))'.format(I.name(), i)).split(',')])
               for i in range(1,int(S.eval('size({})'.format(I.name())))+1)]
@@ -551,6 +549,7 @@ def first_hilbert_series(I, grading=None, return_grading=False):
                 fmpz_poly_add(fhs._poly, AN.LMult, AN.RMult)
                 got_result = True
 
+
 def hilbert_poincare_series(I, grading=None):
     r"""
     Return the Hilbert Poincaré series of the given monomial ideal.
@@ -572,7 +571,7 @@ def hilbert_poincare_series(I, grading=None):
         sage: hilbert_poincare_series((R * R.gens())^2, grading=range(1,10))
         t^9 + t^8 + t^7 + t^6 + t^5 + t^4 + t^3 + t^2 + t + 1
 
-    The following example is taken from :trac:`20145`::
+    The following example is taken from :issue:`20145`::
 
         sage: # needs sage.libs.singular
         sage: n=4; m=11; P = PolynomialRing(QQ, n*m, "x"); x = P.gens(); M = Matrix(n, x)

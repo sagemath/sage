@@ -34,7 +34,6 @@ Its elements, the cohomology classes, are represented by
 AUTHORS:
 
 - Michael Jung (2021) : initial version
-
 """
 
 #******************************************************************************
@@ -46,13 +45,16 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.misc.cachefunc import cached_method
-from sage.structure.parent import Parent
-from sage.structure.element import AlgebraElement
 from sage.categories.algebras import Algebras
-from .characteristic_cohomology_class import (CharacteristicCohomologyClassRing,
-                                              CharacteristicCohomologyClassRingElement)
+from sage.manifolds.differentiable.characteristic_cohomology_class import (
+    CharacteristicCohomologyClassRing,
+    CharacteristicCohomologyClassRingElement,
+)
+from sage.misc.cachefunc import cached_method
+from sage.structure.element import AlgebraElement
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+
 
 class DeRhamCohomologyClass(AlgebraElement):
     r"""
@@ -96,7 +98,6 @@ class DeRhamCohomologyClass(AlgebraElement):
         Traceback (most recent call last):
         ...
         NotImplementedError: comparison via exact forms is currently not supported
-
     """
     def __init__(self, parent, representative):
         r"""
@@ -111,7 +112,6 @@ class DeRhamCohomologyClass(AlgebraElement):
             sage: omega = M.diff_form(1, [1,1], name='omega', latex_name=r'\omega')
             sage: u = H(omega)
             sage: TestSuite(u).run(skip=['_test_eq', '_test_nonzero_equal'])  # equality not fully supported yet
-
         """
         super().__init__(parent=parent)
         self._representative = representative
@@ -129,7 +129,6 @@ class DeRhamCohomologyClass(AlgebraElement):
             [one]
             sage: H.an_element()._repr_()
             '[one]'
-
         """
         name = self._representative._name
         if name is None:
@@ -152,7 +151,6 @@ class DeRhamCohomologyClass(AlgebraElement):
             \left[\omega\right]
             sage: u._latex_()
             '\\left[\\omega\\right]'
-
         """
         latex_name = self._representative._latex_name
         if latex_name is None:
@@ -179,7 +177,6 @@ class DeRhamCohomologyClass(AlgebraElement):
             sage: u.representative()
             Mixed differential form omega on the 2-dimensional differentiable
              manifold M
-
         """
         return self._representative
 
@@ -199,7 +196,6 @@ class DeRhamCohomologyClass(AlgebraElement):
             sage: eta = M.diff_form(1, [1,-1], name='eta')
             sage: H(omega) + H(eta)
             [omega+eta]
-
         """
         return self.parent()(self.representative() + other.representative())
 
@@ -209,7 +205,7 @@ class DeRhamCohomologyClass(AlgebraElement):
 
         INPUT:
 
-        - ``other``-- another cohomology class in the de Rham cohomology
+        - ``other`` -- another cohomology class in the de Rham cohomology
 
         EXAMPLES::
 
@@ -221,7 +217,6 @@ class DeRhamCohomologyClass(AlgebraElement):
             sage: eta = M.diff_form(1, [1,-1], name='eta')
             sage: H(omega).cup(H(eta))
             [omega∧eta]
-
         """
         return self * other
 
@@ -239,7 +234,6 @@ class DeRhamCohomologyClass(AlgebraElement):
             sage: eta = M.diff_form(1, [1,-1], name='eta')
             sage: H(omega) * H(eta)
             [omega∧eta]
-
         """
         return self.parent()(self.representative().wedge(other.representative()))
 
@@ -256,7 +250,6 @@ class DeRhamCohomologyClass(AlgebraElement):
             sage: omega = M.diff_form(1, [1,1], name='omega')
             sage: 1/2*H(omega)
             [1/2∧omega]
-
         """
         return self.parent(scalar * self.representative())
 
@@ -274,7 +267,6 @@ class DeRhamCohomologyClass(AlgebraElement):
             sage: eta = M.diff_form(1, [1,-1], name='eta')
             sage: H(omega) - H(eta)
             [omega-eta]
-
         """
         return self.parent()(self.representative() - other.representative())
 
@@ -301,7 +293,6 @@ class DeRhamCohomologyClass(AlgebraElement):
             Traceback (most recent call last):
             ...
             NotImplementedError: comparison via exact forms is currently not supported
-
         """
         if self is other:
             return True
@@ -309,6 +300,7 @@ class DeRhamCohomologyClass(AlgebraElement):
             if self.representative() == other.representative():
                 return True
         raise NotImplementedError('comparison via exact forms is currently not supported')
+
 
 class DeRhamCohomologyRing(Parent, UniqueRepresentation):
     r"""
@@ -361,7 +353,6 @@ class DeRhamCohomologyRing(Parent, UniqueRepresentation):
         [zero]
         sage: H.one()
         [one]
-
     """
     def __init__(self, de_rham_complex):
         r"""
@@ -379,7 +370,6 @@ class DeRhamCohomologyRing(Parent, UniqueRepresentation):
             ....:                        '_test_elements_eq_symmetric',
             ....:                       '_test_elements_eq_transitive',
             ....:                       '_test_elements_neq'])  # equality not fully supported yet
-
         """
         base_field = de_rham_complex.base_ring()
         Parent.__init__(self, base=base_field, category=Algebras(base_field))
@@ -412,7 +402,6 @@ class DeRhamCohomologyRing(Parent, UniqueRepresentation):
             ...
             ValueError: Mixed differential form omega on the 2-dimensional
              differentiable manifold M must be a closed form
-
         """
         if isinstance(x, CharacteristicCohomologyClassRingElement):
             x = x.representative()
@@ -446,7 +435,6 @@ class DeRhamCohomologyRing(Parent, UniqueRepresentation):
              TM over the 4-dimensional differentiable manifold M
             sage: H.has_coerce_map_from(C)
             True
-
         """
         if isinstance(other, CharacteristicCohomologyClassRing):
             # TODO: we need to be careful if manifolds have boundary!
@@ -464,7 +452,6 @@ class DeRhamCohomologyRing(Parent, UniqueRepresentation):
             sage: H = C.cohomology(); H
             De Rham cohomology ring on the 2-dimensional differentiable
              manifold M
-
         """
         desc = "De Rham cohomology ring "
         if self._module._dest_map is self._manifold.identity_map():
@@ -492,7 +479,6 @@ class DeRhamCohomologyRing(Parent, UniqueRepresentation):
             'H^*_{\\mathrm{dR}}\\left(\\mathcal{M}\\right)'
             sage: latex(H)  # indirect doctest
             H^*_{\mathrm{dR}}\left(\mathcal{M}\right)
-
         """
         latex_name = r"H^*_{\mathrm{dR}}\left(" + self._manifold._latex_name
         if self._module._dest_map is not self._manifold.identity_map():
@@ -514,7 +500,6 @@ class DeRhamCohomologyRing(Parent, UniqueRepresentation):
             sage: H = C.cohomology()
             sage: H.an_element()
             [one]
-
         """
         return self.one()
 
@@ -533,7 +518,6 @@ class DeRhamCohomologyRing(Parent, UniqueRepresentation):
             sage: H.zero().representative()
             Mixed differential form zero on the 2-dimensional differentiable
              manifold M
-
         """
         return self.element_class(self, self._module.zero())
 
@@ -552,6 +536,5 @@ class DeRhamCohomologyRing(Parent, UniqueRepresentation):
             sage: H.one().representative()
             Mixed differential form one on the 2-dimensional differentiable
              manifold M
-
         """
         return self.element_class(self, self._module.one())

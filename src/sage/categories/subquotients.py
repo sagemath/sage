@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Subquotient Functorial Construction
 
@@ -13,6 +14,7 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
+
 
 class SubquotientsCategory(RegressiveCovariantConstructionCategory):
 

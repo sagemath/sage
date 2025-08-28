@@ -10,7 +10,6 @@ saturated with respect to the ideal `(x_1 \cdots x_n)`.
 AUTHORS:
 
 - Kiran S. Kedlaya (2020): initial implementation
-
 """
 # ****************************************************************************
 #       Copyright (C) 2020 Kiran S. Kedlaya <kedlaya@ucsd.edu>
@@ -23,7 +22,10 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.rings.ideal import Ideal_generic
+from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing_univariate
 from sage.structure.richcmp import op_EQ, op_NE, op_LT, op_LE, op_GT, op_GE
+from sage.arith.misc import GCD
+
 
 class LaurentPolynomialIdeal( Ideal_generic ):
     def __init__(self, ring, gens, coerce=True, hint=None):
@@ -47,7 +49,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         INPUT:
 
         - ``ring`` -- the ring the ideal is defined in
-        - ``gens`` -- a list of generators for the ideal
+        - ``gens`` -- list of generators for the ideal
         - ``coerce`` -- whether or not to coerce elements into ``ring``
         - ``hint`` -- an ideal in the associated polynomial ring (optional; see above)
 
@@ -91,7 +93,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         """
         Ideal_generic.__init__(self, ring, gens, coerce=coerce)
         self._poly_ring = ring.polynomial_ring()
-        self._poly_ideal = None # Create only as needed
+        self._poly_ideal = None  # Create only as needed
         self._saturated = False
         if hint is None:
             self._hint = self._poly_ring.zero_ideal()
@@ -192,12 +194,37 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             sage: I = P.ideal([x^2*y + 3*x*y^2])
             sage: x + 3*y in I
             True
+
+        This also works in the univariate case::
+
+            sage: P.<x> = LaurentPolynomialRing(QQ)
+            sage: I = P.ideal([x^2 + 3*x])
+            sage: 1 + 3*x^-1 in I
+            True
         """
         if not f or f in self.gens():
             return True
         f = self.ring()(f)
-        g = f.__reduce__()[1][0]
+        if isinstance(self.ring(), LaurentPolynomialRing_univariate):
+            g = f.__reduce__()[1][1]
+        else:
+            g = f.__reduce__()[1][0]
         return (g in self.polynomial_ideal())
+
+    def gens_reduced(self) -> tuple:
+        """
+        Return a reduced system of generators.
+
+        EXAMPLES::
+
+            sage: P.<x,y> = LaurentPolynomialRing(QQ)
+            sage: J = P.ideal([x^2 - y^-2, x * y^3 + 2 * y^2+ y])
+            sage: J.gens_reduced()
+            (x + 6*y + 5, 3*y^2 + 4*y + 1)
+        """
+        R = self.ring()
+        J = self.polynomial_ideal()
+        return tuple([R(p) for p in J.gens()])
 
     # Operations on ideals
 
@@ -323,7 +350,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         """
         if forward_hint:
             R = self.ring()
-            apply_to_hint = lambda x, M=M, R=R: R(x).toric_coordinate_change(M).__reduce__()[1][0]
+            apply_to_hint = lambda x, M=M, R=R: R(x).toric_coordinate_change(M).monomial_reduction()[0]
         else:
             apply_to_hint = None
         return self.apply_map(lambda x, M=M: x.toric_coordinate_change(M),
@@ -396,20 +423,34 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             sage: P.<x,y> = LaurentPolynomialRing(QQ, 2)
             sage: I = P.ideal([x^2*y + 3*x*y^2])
             sage: I.polynomial_ideal()
-            Ideal (x + 3*y) of Multivariate Polynomial Ring in x, y
-             over Rational Field
+            Ideal (x + 3*y) of Multivariate Polynomial Ring in x, y over Rational Field
+            sage: P.<t> = LaurentPolynomialRing(QQ)
+            sage: J = P.ideal(t^2 - t^-1)
+            sage: J.polynomial_ideal()
+            Principal ideal (t^3 - 1) of Univariate Polynomial Ring in t over Rational Field
+            sage: J = P.ideal([t^2 - t^-1, t + t^-1])
+            sage: J.polynomial_ideal()
+            Principal ideal (1) of Univariate Polynomial Ring in t over Rational Field
+            sage: J = P.ideal([t^2 - t^-1, t - t^-1])
+            sage: J.polynomial_ideal()
+            Principal ideal (t - 1) of Univariate Polynomial Ring in t over Rational Field
         """
-        if self._poly_ideal is not None and (self._saturated or not saturate):
-            return self._poly_ideal
         P = self.ring()
         Q = self._poly_ring
+        if isinstance(self.ring(), LaurentPolynomialRing_univariate):
+            a = [Q(p.polynomial_construction()[0]) for p in self.gens()]
+            if P.base_ring().is_field():
+                a = GCD(a)
+            return Q.ideal(a)
+        if self._poly_ideal is not None and (self._saturated or not saturate):
+            return self._poly_ideal
         gens = self.gens()
         if len(gens) == 0:
-            I = Q.ideal([])
-            self._poly_ideal = I
-            self._hint = I
+            id = Q.ideal([])
+            self._poly_ideal = id
+            self._hint = id
             self._saturated = True
-            return I
+            return id
         l2 = [f.__reduce__()[1][0] for f in gens]
         hint = self._hint
         l2 += list(hint.groebner_basis())

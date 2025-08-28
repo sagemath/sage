@@ -58,7 +58,7 @@ cdef class ntl_GF2EX():
         if modulus is None:
             raise ValueError("You must specify a modulus when creating a GF2E.")
 
-        str_x = str(x)  # can cause modulus to change  trac #25790
+        str_x = str(x)  # can cause modulus to change; Issue #25790
         self.c.restore_c()
         ccreadstr(self.x, str_x)
 
@@ -85,14 +85,14 @@ cdef class ntl_GF2EX():
             self.c = <ntl_GF2EContext_class>ntl_GF2EContext(modulus)
             self.c.restore_c()
 
-    cdef ntl_GF2E _new_element(self) noexcept:
+    cdef ntl_GF2E _new_element(self):
         cdef ntl_GF2E r
         self.c.restore_c()
         r = ntl_GF2E.__new__(ntl_GF2E)
         r.c = self.c
         return r
 
-    cdef ntl_GF2EX _new(self) noexcept:
+    cdef ntl_GF2EX _new(self):
         cdef ntl_GF2EX r
         self.c.restore_c()
         r = ntl_GF2EX.__new__(ntl_GF2EX)
@@ -119,7 +119,7 @@ cdef class ntl_GF2EX():
 
     def __richcmp__(ntl_GF2EX self, other, int op):
         """
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -148,7 +148,7 @@ cdef class ntl_GF2EX():
 
     def __repr__(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 

@@ -117,7 +117,9 @@ par ailleurs les catégories en tant que telles :
     sage: Rings()
     Category of rings
     sage: ZZ.category()
-    Join of Category of euclidean domains
+    Join of Category of Dedekind domains
+        and Category of euclidean domains
+        and Category of noetherian rings
         and Category of infinite enumerated sets
         and Category of metric spaces
     sage: ZZ.category().is_subcategory(Rings())
@@ -277,6 +279,8 @@ des variables. Nous avons donc :
     x
     sage: R2(y)
     y
+    sage: R2.coerce(y)
+    y
 
 En l'absence d'un morphisme d'anneau qui préserve les noms de variable, la
 coercition entre anneaux de polynômes multivariés n'est pas définie. Il peut
@@ -294,6 +298,12 @@ celle de l'autre en fonction de leur position dans la liste des générateurs :
     z
     sage: R3(y)
     x
+    sage: R3.coerce(y)
+    Traceback (most recent call last):
+    ...
+    TypeError: no canonical coercion
+    from Multivariate Polynomial Ring in x, y over Integer Ring
+    to Multivariate Polynomial Ring in z, x over Integer Ring
 
 Mais une telle conversion ne répond pas aux critères pour être une coercition :
 en effet, en composant l'application de ``ZZ['x','y']`` dans ``ZZ['y','x']``

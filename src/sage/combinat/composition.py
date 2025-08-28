@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Integer compositions
 
@@ -46,10 +45,13 @@ from sage.rings.integer import Integer
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.misc.persist import register_unpickle_override
 
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.combinat.partition", "Partition")
+
 
 class Composition(CombinatorialElement):
     r"""
-    Integer compositions
+    Integer compositions.
 
     A composition of a nonnegative integer `n` is a list
     `(i_1, \ldots, i_k)` of positive integers with total sum `n`.
@@ -153,10 +155,25 @@ class Composition(CombinatorialElement):
             [1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0]
             sage: Composition(code=_)
             [4, 1, 2, 3, 5]
+
+        TESTS:
+
+        Let us check that :issue:`14862` is solved::
+
+            sage: C = Compositions()
+            sage: C([3,-1,1])
+            Traceback (most recent call last):
+            ...
+            ValueError: not a composition
+            sage: C("strawberry")
+            Traceback (most recent call last):
+            ...
+            ValueError: not a composition
         """
         if descents is not None:
             if isinstance(descents, tuple):
-                return Compositions().from_descents(descents[0], nps=descents[1])
+                return Compositions().from_descents(descents[0],
+                                                    nps=descents[1])
             else:
                 return Compositions().from_descents(descents)
         elif code is not None:
@@ -165,8 +182,22 @@ class Composition(CombinatorialElement):
             return Compositions().from_subset(*from_subset)
         elif isinstance(co, Composition):
             return co
-        else:
-            return Compositions()(list(co))
+
+        return Compositions()(co)
+
+    def __init__(self, parent, lst):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: C = Composition([3,1,2])
+            sage: TestSuite(C).run()
+        """
+        lst = [Integer(u) for u in lst]
+        if not all(u >= 0 for u in lst):
+            raise ValueError("elements must be nonnegative integers")
+        CombinatorialElement.__init__(self, parent, lst)
 
     def _ascii_art_(self):
         """
@@ -178,7 +209,7 @@ class Composition(CombinatorialElement):
             [ *  **   *        *                 ]
             [ *  *   **  ***   *   **    *       ]
             [ *, * , * , *  , **, ** , ***, **** ]
-            sage: Partitions.options(diagram_str='#', convention="French")
+            sage: Partitions.options(diagram_str='#', convention='French')
             sage: ascii_art(Compositions(4).list())
             [ #                                  ]
             [ #  #   #        ##                 ]
@@ -200,7 +231,7 @@ class Composition(CombinatorialElement):
             ⎢ ├┤  ├┼┘  ┌┼┤  ┌┬┬┐   ├┤   ┌┬┐    ┌┐        ⎥
             ⎢ ├┤  ├┤   ├┼┘  ├┼┴┘  ┌┼┤  ┌┼┼┘  ┌┬┼┤  ┌┬┬┬┐ ⎥
             ⎣ └┘, └┘ , └┘ , └┘  , └┴┘, └┴┘ , └┴┴┘, └┴┴┴┘ ⎦
-            sage: Partitions.options(diagram_str='#', convention="French")
+            sage: Partitions.options(diagram_str='#', convention='French')
             sage: unicode_art(Compositions(4).list())
             ⎡ ┌┐                                         ⎤
             ⎢ ├┤  ┌┐   ┌┐         ┌┬┐                    ⎥
@@ -361,7 +392,7 @@ class Composition(CombinatorialElement):
 
         INPUT:
 
-        - ``compositions`` -- a list (or iterable) of compositions
+        - ``compositions`` -- list (or iterable) of compositions
 
         EXAMPLES::
 
@@ -442,8 +473,8 @@ class Composition(CombinatorialElement):
 
         - ``other`` -- composition of same size as ``self``
 
-        - ``check`` -- (default: ``True``) a Boolean determining whether
-          to check the input compositions for having the same size
+        - ``check`` -- boolean (default: ``True``); whether to check the input
+          compositions for having the same size
 
         OUTPUT:
 
@@ -554,12 +585,10 @@ class Composition(CombinatorialElement):
 
         - ``other`` -- composition of same size as ``self``
 
-        - ``check`` -- (default: ``True``) a Boolean determining whether
-          to check the input compositions for having the same size
+        - ``check`` -- boolean (default: ``True``); whether to check the input
+          compositions for having the same size
 
-        OUTPUT:
-
-        - the join of the compositions ``self`` and ``other``
+        OUTPUT: the join of the compositions ``self`` and ``other``
 
         EXAMPLES::
 
@@ -679,12 +708,10 @@ class Composition(CombinatorialElement):
 
         - ``other`` -- composition of same size as ``self``
 
-        - ``check`` -- (default: ``True``) a Boolean determining whether
-          to check the input compositions for having the same size
+        - ``check`` -- boolean (default: ``True``); whether to check the input
+          compositions for having the same size
 
-        OUTPUT:
-
-        - the meet of the compositions ``self`` and ``other``
+        OUTPUT: the meet of the compositions ``self`` and ``other``
 
         EXAMPLES::
 
@@ -921,7 +948,7 @@ class Composition(CombinatorialElement):
 
         INPUT:
 
-        - ``J`` -- A composition such that ``self`` is finer than ``J``
+        - ``J`` -- a composition such that ``self`` is finer than ``J``
 
         OUTPUT:
 
@@ -1049,8 +1076,8 @@ class Composition(CombinatorialElement):
 
         INPUT:
 
-        - ``final`` -- (default: ``True``) whether or not to include the final
-          partial sum, which is always the size of the composition.
+        - ``final`` -- boolean (default: ``True``); whether or not to include
+          the final partial sum, which is always the size of the composition
 
         .. SEEALSO::
 
@@ -1085,8 +1112,8 @@ class Composition(CombinatorialElement):
 
         INPUT:
 
-        - ``final`` -- (default: ``False``) whether or not to include the final
-          partial sum, which is always the size of the composition.
+        - ``final`` -- boolean (default: ``False``); whether or not to include
+          the final partial sum, which is always the size of the composition
 
         .. SEEALSO::
 
@@ -1138,7 +1165,7 @@ class Composition(CombinatorialElement):
 
         INPUT:
 
-        - ``final_descent`` -- (Default: ``False``) a boolean integer
+        - ``final_descent`` -- boolean (default: ``False``)
 
         OUTPUT:
 
@@ -1187,7 +1214,6 @@ class Composition(CombinatorialElement):
             sage: Composition([]).to_partition()                                        # needs sage.combinat
             []
         """
-        from sage.combinat.partition import Partition
         return Partition(sorted(self, reverse=True))
 
     def to_skew_partition(self, overlap=1):
@@ -1252,10 +1278,10 @@ class Composition(CombinatorialElement):
 
         INPUT:
 
-        -  ``other`` -- composition
+        - ``other`` -- composition
 
-        -  ``overlap`` -- boolean (default: ``False``); if ``True``, the
-           overlapping shuffle product is returned.
+        - ``overlap`` -- boolean (default: ``False``); if ``True``, the
+          overlapping shuffle product is returned
 
         OUTPUT:
 
@@ -1416,10 +1442,7 @@ class Composition(CombinatorialElement):
             from sage.rings.rational_field import QQ
             base_ring = QQ
         R = SymmetricGroupAlgebra(base_ring, sum(self))
-        cells = []
-        for i, row in enumerate(self):
-            for j in range(row):
-                cells.append((i, j))
+        cells = [(i, j) for i, row in enumerate(self) for j in range(row)]
         return SpechtModule(R, cells)
 
     def specht_module_dimension(self, base_ring=None):
@@ -1483,10 +1506,10 @@ class Compositions(UniqueRepresentation, Parent):
         [1, 2, 1]
 
     If `n` is not specified, this returns the combinatorial class of
-    all (non-negative) integer compositions::
+    all (nonnegative) integer compositions::
 
         sage: Compositions()
-        Compositions of non-negative integers
+        Compositions of nonnegative integers
         sage: [] in Compositions()
         True
         sage: [2,3,1] in Compositions()
@@ -1754,9 +1777,13 @@ class Compositions(UniqueRepresentation, Parent):
             sage: P = Compositions()
             sage: P([3,3,1]) # indirect doctest
             [3, 3, 1]
+            sage: P(Partition([5,2,1]))
+            [5, 2, 1]
         """
-        if isinstance(lst, Composition):
-            lst = list(lst)
+        # input can be an iterator, and one has to use it twice
+        lst = list(lst)
+        if any(not isinstance(x, (int, Integer)) or x < 0 for x in lst):
+            raise ValueError('not a composition')
         elt = self.element_class(self, lst)
         if elt not in self:
             raise ValueError("%s not in %s" % (elt, self))
@@ -1775,7 +1802,7 @@ class Compositions(UniqueRepresentation, Parent):
             sage: [0,0] in Compositions()
             True
         """
-        if isinstance(x, Composition):
+        if isinstance(x, (Composition, Partition)):
             return True
         elif isinstance(x, list):
             for i in x:
@@ -1795,7 +1822,7 @@ class Compositions(UniqueRepresentation, Parent):
 
         - ``descents`` -- an iterable
 
-        - ``nps`` -- (default: ``None``) an integer or ``None``
+        - ``nps`` -- integer or ``None`` (default: ``None``)
 
         OUTPUT:
 
@@ -1830,7 +1857,7 @@ class Compositions(UniqueRepresentation, Parent):
 
         - ``S`` -- an iterable, a subset of `\{1, 2, \ldots, n-1\}`
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -1860,13 +1887,13 @@ class Compositions(UniqueRepresentation, Parent):
                 return self.element_class(self, [n])
 
         if n <= d[-1]:
-            raise ValueError("S (=%s) is not a subset of {1, ..., %s}" % (d, n - 1))
+            raise ValueError("S (=%s) is not a subset of {1, ..., %s}"
+                             % (d, n - 1))
         else:
             d.append(n)
 
         co = [d[0]]
-        for i in range(len(d) - 1):
-            co.append(d[i + 1] - d[i])
+        co.extend(d[i + 1] - d[i] for i in range(len(d) - 1))
 
         return self.element_class(self, co)
 
@@ -1945,9 +1972,9 @@ class Compositions_all(Compositions):
         TESTS::
 
             sage: repr(Compositions())
-            'Compositions of non-negative integers'
+            'Compositions of nonnegative integers'
         """
-        return "Compositions of non-negative integers"
+        return "Compositions of nonnegative integers"
 
     def subset(self, size=None):
         """
@@ -2130,7 +2157,7 @@ class Compositions_n(Compositions):
 
 def composition_iterator_fast(n):
     """
-    Iterator over compositions of ``n`` yielded as lists.
+    Iterator over compositions of `n` yielded as lists.
 
     TESTS::
 

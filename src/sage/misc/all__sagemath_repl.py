@@ -1,3 +1,4 @@
-from .sage_eval import sage_eval, sageobj
+# sage_setup: distribution = sagemath-repl
+from sage.misc.sage_eval import sage_eval, sageobj
 
-from .sage_input import sage_input
+from sage.misc.sage_input import sage_input

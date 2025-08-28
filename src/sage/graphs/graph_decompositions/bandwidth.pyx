@@ -6,7 +6,7 @@ Definition
 ----------
 
 The bandwidth `bw(M)` of a matrix `M` is the smallest integer `k` such that all
-non-zero entries of `M` are at distance `k` from the diagonal. The bandwidth
+nonzero entries of `M` are at distance `k` from the diagonal. The bandwidth
 `bw(G)` of an undirected graph `G` is the minimum bandwidth of the adjacency
 matrix of `G`, over all possible relabellings of its vertices.
 
@@ -209,7 +209,6 @@ def bandwidth(G, k=None):
         Traceback (most recent call last):
         ...
         ValueError: this method only works on unweighted graphs
-
     """
     if G.is_directed():
         raise ValueError("this method only works on undirected graphs")

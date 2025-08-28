@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # ****************************************************************************
 #       Copyright (C) 2017 Erik M. Bray <erik.bray@lri.fr>
 #
@@ -13,7 +14,7 @@ cdef extern from "string_impl.h":
     bytes _str_to_bytes(s, encoding, errors)
 
 
-cdef inline str char_to_str(const char* c, encoding=None, errors=None) noexcept:
+cdef inline str char_to_str(const char* c, encoding=None, errors=None):
     r"""
     Convert a C string to a Python ``str``.
     """
@@ -23,7 +24,7 @@ cdef inline str char_to_str(const char* c, encoding=None, errors=None) noexcept:
     return _cstr_to_str(c, encoding, errors)
 
 
-cpdef inline str bytes_to_str(b, encoding=None, errors=None) noexcept:
+cpdef inline str bytes_to_str(b, encoding=None, errors=None):
     r"""
     Convert ``bytes`` to ``str``.
 
@@ -49,7 +50,7 @@ cpdef inline str bytes_to_str(b, encoding=None, errors=None) noexcept:
     return _cstr_to_str(<bytes>b, encoding, errors)
 
 
-cpdef inline bytes str_to_bytes(s, encoding=None, errors=None) noexcept:
+cpdef inline bytes str_to_bytes(s, encoding=None, errors=None):
     r"""
     Convert ``str`` or ``unicode`` to ``bytes``.
 
