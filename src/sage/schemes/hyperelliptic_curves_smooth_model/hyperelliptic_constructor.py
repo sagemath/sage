@@ -51,7 +51,8 @@ TODO:
 """
 
 
-def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
+def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True,
+                                  distinguished_point=None):
     r"""
     Constructor function for creating a hyperelliptic curve with
     smooth model with polynomials `f`, `h`.
@@ -145,6 +146,12 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
         Traceback (most recent call last):
         ...
         ValueError: singularity in the provided affine patch
+
+    The constructor accepts a distinguished point as an argument::
+
+        sage: C = HyperellipticCurveSmoothModel(x^5 + x + 2, distinguished_point=(1, -2))
+        sage: C.distinguished_point()
+        (1 : -2 : 1)
 
     """
 
@@ -259,4 +266,7 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
     else:
         cls = HyperellipticCurveSmoothModel_generic
 
-    return cls(defining_polynomial, f, h, genus)
+    H = cls(defining_polynomial, f, h, genus)
+    if distinguished_point:
+        H.set_distinguished_point(H(distinguished_point))
+    return H
