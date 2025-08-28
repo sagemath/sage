@@ -27,13 +27,13 @@ cdef class Matrix_cartesian_product(Matrix_generic_dense):
         EXAMPLES::
 
             sage: R = cartesian_product([ZZ, ZZ])
-            sage: matrix.identity(R, 2)
+            sage: matrix.identity(R, 2)                                                 # needs sage.modules
             [(1, 1) (0, 0)]
             [(0, 0) (1, 1)]
-            sage: type(matrix.identity(R, 2))
+            sage: type(matrix.identity(R, 2))                                           # needs sage.modules
             <class 'sage.matrix.matrix_cartesian_product.Matrix_cartesian_product'>
-            sage: matrix.random(R, 100) * matrix.random(R, 100)  # should finish quickly
-            100 x 100 dense matrix over The Cartesian product of (Integer Ring, Integer Ring) (use...)
+            sage: matrix.random(R, 100) * matrix.random(R, 100)  # should finish quickly            # needs sage.modules
+            100 x 100 dense matrix over The Cartesian product of 2 copies of Integer Ring (use...)
         """
         return self._from_cartesian_product_of_matrices(self._to_cartesian_product_of_matrices() *
                                                         right._to_cartesian_product_of_matrices())
@@ -43,7 +43,7 @@ cdef class Matrix_cartesian_product(Matrix_generic_dense):
         EXAMPLES::
 
             sage: R = cartesian_product([GF(next_prime(2^80)), GF(next_prime(2^81))])  # P[singular matrix] is negligible
-            sage: ~matrix.random(R, 100)  # should finish in <2s
+            sage: ~matrix.random(R, 100)  # should finish in <2s                        # needs sage.modules
             100 x 100 dense matrix over The Cartesian product of (Finite Field of..., Finite Field of...) (use...)
         """
         return self._from_cartesian_product_of_matrices(~self._to_cartesian_product_of_matrices())
