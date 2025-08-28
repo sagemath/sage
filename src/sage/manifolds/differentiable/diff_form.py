@@ -939,8 +939,9 @@ class DiffForm(TensorField):
                     self_r._restrictions[dom].interior_product(
                                                     qvect_r._restrictions[dom])
         if resu_degree == 0:
-            if not resu._express:  # only the restrictions to subdomains have
-                                   # been initialized
+            if not resu._express:
+                # only the restrictions to subdomains have
+                # been initialized
                 for chart in dom_resu.top_charts():
                     resu._express[chart] = \
                             resu.restrict(chart.domain()).coord_function(chart)
@@ -1470,8 +1471,9 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
                     break
             if not coord_frames:
                 for chart in dom._atlas:
-                    if chart != dom._def_chart: # the case def_chart is
-                                                # treated above
+                    if chart != dom._def_chart:
+                        # the case def_chart is
+                        # treated above
                         coordf = chart._frame
                         for frame in self._components:
                             if (frame, coordf) in dom._frame_changes:
@@ -1485,9 +1487,9 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
             chart = frame._chart
             sc = self._components[frame]
             dc = CompFullyAntiSym(fmodule._ring, frame,
-                                  self._tensor_rank+1,
+                                  self._tensor_rank + 1,
                                   start_index=fmodule._sindex,
-                                output_formatter=fmodule._output_formatter)
+                                  output_formatter=fmodule._output_formatter)
             for ind, val in sc._comp.items():
                 for i in fmodule.irange():
                     ind_d = (i,) + ind
