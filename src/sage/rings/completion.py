@@ -1,5 +1,21 @@
+r"""
+Completion of polynomial rings and their fraction fields
+"""
+
+# ***************************************************************************
+#    Copyright (C) 2024 Xavier Caruso <xavier.caruso@normalesup.org>
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 2 of the License, or
+#    (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
+
+
 from sage.misc.cachefunc import cached_method
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.element import Element
 
 from sage.categories.fields import Fields
 
@@ -16,15 +32,81 @@ from sage.rings.ring_extension_element import RingExtensionElement
 
 
 class CompletionToPowerSeries(RingHomomorphism):
-    def __init__(self, parent):
-        super().__init__(parent)
+    r"""
+    Conversion morphism from a completion to the
+    underlying power series ring.
 
+    TESTS::
+
+        sage: A.<x> = QQ[]
+        sage: Ap = A.completion(x - 1)
+        sage: S.<u> = Ap.power_series_ring()
+        sage: f = S.convert_map_from(Ap)
+        sage: type(f)
+        <class 'sage.rings.completion.CompletionToPowerSeries'>
+
+        sage: # TestSuite(f).run()
+    """
     def _call_(self, x):
+        r"""
+        Return the image of ``x`` by this morphism.
+
+        TESTS::
+
+            sage: A.<x> = QQ[]
+            sage: Ap = A.completion(x - 1)
+            sage: S.<u> = Ap.power_series_ring()
+            sage: S(Ap(x))  # indirect doctest
+            1 + u
+        """
         return self.codomain()(x.backend(force=True))
 
 
 class CompletionPolynomial(RingExtensionElement):
+    r"""
+    An element in the completion of a polynomial ring
+    or a field of rational functions.
+
+    TESTS::
+
+        sage: A.<x> = QQ[]
+        sage: Ap = A.completion(x - 1)
+        sage: u = Ap.random_element()
+        sage: type(u)
+        <class 'sage.rings.completion.CompletionPolynomialRing_with_category.element_class'>
+    """
+    def __init__(self, parent, f):
+        if isinstance(f, Element):
+            R = f.parent()
+            ring = parent._ring
+            integer_ring = parent._integer_ring
+            if ring.has_coerce_map_from(R):
+                f = ring(f)
+                f = f(parent._gen)
+            #elif integer_ring.has_coerce_map_from(R):
+            #    f = integer_ring(f).backend(force=True)
+        return super().__init__(parent, f)
+
     def _repr_(self):
+        r"""
+        Return a string representation of this element.
+
+        TESTS::
+
+            sage: A.<x> = QQ[]
+            sage: Ap = A.completion(x - 1)
+            sage: y = Ap(x)  # indirect doctest
+            sage: y
+            1 + (x - 1)
+            sage: y.add_bigoh(5)  # indirect doctest
+            1 + (x - 1) + O((x - 1)^5)
+
+        ::
+
+            sage: Ainf = A.completion(infinity)
+            sage: Ainf.uniformizer()  # indirect doctest
+            x^-1
+        """
         # Uniformizer
         S = self.parent()
         u = S._p
@@ -91,15 +173,84 @@ class CompletionPolynomial(RingExtensionElement):
         return s[1:]
 
     def expansion(self, include_final_zeroes=True):
-        # TODO: improve performance
+        r"""
+        Return a generator producing the list of coefficients
+        of this element, when written as a series in `p`.
+
+        If the parent of this element does not contain elements
+        of negative valuation, the expansion starts at `0`;
+        otherwise, it starts at the valuation of the elment.
+
+        INPUT:
+
+        - ``include_final_zeroes`` (default: ``True``) : a boolean;
+          if ``False``, stop the iterator as soon as all the next
+          coefficients are all known to be zero
+
+        EXAMPLES::
+
+            sage: A.<x> = QQ[]
+            sage: Ap = A.completion(x - 1)
+            sage: y = Ap(x)  # indirect doctest
+            sage: y
+            1 + (x - 1)
+            sage: E = y.expansion()
+            sage: next(E)
+            1
+            sage: next(E)
+            1
+            sage: next(E)
+            0
+
+        Using ``include_final_zeroes=False`` stops the iterator after
+        the two first `1`::
+
+            sage: E = y.expansion(include_final_zeroes=False)
+            sage: next(E)
+            1
+            sage: next(E)
+            1
+            sage: next(E)
+            Traceback (most recent call last):
+            ...
+            StopIteration
+
+        We underline that, for a nonexact element the iterator always
+        stops at the precision::
+
+            sage: z = y.add_bigoh(3)
+            sage: z
+            1 + (x - 1) + O((x - 1)^3)
+            sage: E = z.expansion(include_final_zeroes=False)
+            sage: next(E)
+            1
+            sage: next(E)
+            1
+            sage: next(E)
+            0
+            sage: next(E)
+            Traceback (most recent call last):
+            ...
+            StopIteration
+
+        Over the completion of a field of rational functions, the
+        iterator always starts at the first nonzero coefficient
+        (correspoding to the valuation of the element)::
+
+            sage: Kp = Ap.fraction_field()
+            sage: u = Kp.uniformizer()
+            sage: u
+            (x - 1)
+            sage: E = u.expansion()
+            sage: next(E)
+            1
+        """
         S = self.parent()
         A = S._base
-        incl = S._incl
-        u = self.parent()._p
-        elt = self.backend(force=True)
+        p = S._p
         prec = self.precision_absolute()
-        n = 0
-        if u is Infinity:
+        if p is Infinity:
+            elt = self.backend(force=True)
             n = elt.valuation()
             while n < prec:
                 if (not include_final_zeroes
@@ -110,41 +261,118 @@ class CompletionPolynomial(RingExtensionElement):
                 elt -= elt.parent()(coeff) << n
                 n += 1
         else:
-            if S._integer_ring is not S:
-                val = elt.valuation()
-                if val is Infinity:
-                    return
-                if val < 0:
-                    elt *= incl(u) ** (-val)
-                else:
-                    n = val
-            v = S._p.derivative()(S._xbar).inverse()
-            vv = v**n
-            uu = u**n
+            if S._integer_ring is S:
+                n = 0
+            else:
+                n = self.valuation()
+                if n < 0:
+                    self *= p ** (-n)
+                    prec -= n
+                    n = 0
+                self = S._integer_ring(self)
+            try:
+                f = self.polynomial()
+                current_prec = prec
+            except ValueError:
+                current_prec = n + 20
+                f = self.add_bigoh(current_prec).polynomial()
+            if current_prec is not Infinity:
+                include_final_zeroes = True
+            f //= p ** n
             while n < prec:
-                if (not include_final_zeroes
-                and elt.precision_absolute() is Infinity and elt.is_zero()):
+                if n >= current_prec:
+                    current_prec *= 2
+                    f = self.add_bigoh(current_prec).polynomial()
+                    f //= p ** n
+                if not include_final_zeroes and f.is_zero():
                      break
-                coeff = (vv * elt[n]).lift()
+                f, coeff = f.quo_rem(p)
                 yield coeff
-                elt -= incl(uu * coeff)
-                uu *= u
-                vv *= v
                 n += 1
 
-    def teichmuller(self):
+    def teichmuller_lift(self):
+        r"""
+        Return the Teichmüller representative of this element.
+
+        EXAMPLES::
+
+            sage: A.<x> = GF(5)[]
+            sage: Ap = A.completion(x^2 + x + 1, prec=5)
+            sage: a = Ap(x).teichmuller_lift()
+            sage: a
+            x + (4*x + 2)*(x^2 + x + 1) + (4*x + 2)*(x^2 + x + 1)^2 + ...
+            sage: a^2 + a + 1
+            0
+        """
         elt = self.backend(force=True)
         lift = elt.parent()(elt[0])
         return self.parent()(lift)
 
     def valuation(self):
+        r"""
+        Return the valuation of this element.
+
+        EXAMPLES::
+
+            sage: A.<x> = GF(5)[]
+            sage: Ap = A.completion(x^2 + x + 1)
+            sage: Ap(x).valuation()
+            0
+            sage: u = Ap(x^2 + x + 1)
+            sage: u.valuation()
+            1
+            sage: (1/u).valuation()
+            -1
+        """
         return self.backend(force=True).valuation()
+
+    def lift_to_precision(self, prec):
+        elt = self.backend(force=True)
+        elt = elt.lift_to_precision(prec)
+        return self.parent()(elt)
+
+    def polynomial(self):
+        S = self.parent()
+        A = S._ring
+        p = S._p
+        d = p.degree()
+        k = S.residue_field()
+        f = self.backend(force=True).polynomial().change_ring(k)
+        g = f(f.parent().gen() - k.gen())
+        gs = [A([c[i] for c in g.list()]) for i in range(d)]
+        prec = self.precision_absolute()
+        if prec is Infinity:
+            for i in range(1, d):
+                if gs[i]:
+                    raise ValueError("exact element which is not in the polynomial ring")
+            return gs[0]
+        xbar = S._xbar(prec)
+        modulus = p ** prec
+        res = gs[0]
+        xbari = A.one()
+        for i in range(1, d):
+            xbari = (xbari * xbar) % modulus
+            res += xbari * gs[i]
+        return res % modulus
 
     def shift(self, n):
         raise NotImplementedError
 
 
 class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
+    r"""
+    A class for completions of polynomial rings and their fraction fields.
+
+    TESTS::
+
+        sage: A.<x> = QQ[]
+        sage: Ap = A.completion(x - 1)
+        sage: type(Ap)
+        <class 'sage.rings.completion.CompletionPolynomialRing_with_category'>
+
+        sage: TestSuite(Ap).run()
+
+    """
     Element = CompletionPolynomial
 
     def __classcall_private__(cls, ring, p, default_prec=20, sparse=False):
@@ -178,6 +406,7 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
         A = self._ring = ring
         if not isinstance(A, PolynomialRing_generic):
             A = A.ring()
+        self._A = A
         base = A.base_ring()
         self._p = p
         self._default_prec = default_prec
@@ -191,7 +420,9 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
             x = backend.gen().inverse()
         else:
             self._residue_ring = k = A.quotient(p)
-            self._xbar = xbar = k(A.gen())
+            self._xbar_approx = A.gen()
+            self._xbar_modulus = p
+            self._xbar_prec = 1
             if isinstance(ring, PolynomialRing_generic):
                 self._integer_ring = self
                 name = "u_%s" % id(self)
@@ -200,13 +431,14 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
                 self._integer_ring = CompletionPolynomialRing(A, p, default_prec, sparse)
                 name = "u_%s" % id(self._integer_ring)
                 backend = LaurentSeriesRing(k, name, default_prec=default_prec, sparse=sparse)
-            x = backend.gen() + xbar
+            x = backend.gen() + k(A.gen())
         super().__init__(backend.coerce_map_from(k) * k.coerce_map_from(base), category=backend.category())
         # Set generator
         self._gen = self(x)
         # Set coercions
-        self._incl = ring.hom([x])
-        self.register_coercion(A.Hom(self)(self._incl))
+        self.register_coercion(ring)
+        if A is not ring:
+            self.register_coercion(A)
         if self._integer_ring is not None:
             self.register_coercion(self._integer_ring)
 
@@ -234,21 +466,41 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
     def gen(self):
         return self._gen
 
+    def _xbar(self, prec):
+        if self._p is Infinity:
+            return
+        # We solve the equation p(xbar) = 0 in A_p
+        p = self._p
+        pp = p.derivative()
+        while self._xbar_prec < prec:
+            self._xbar_modulus *= self._xbar_modulus
+            self._xbar_prec *= 2
+            u = p(self._xbar_approx)
+            _, v, _ = pp(self._xbar_approx).xgcd(self._xbar_modulus)
+            self._xbar_approx -= u * v
+            self._xbar_approx %= self._xbar_modulus
+        return self._xbar_approx
+
     def residue_ring(self):
         return self._residue_ring
 
     residue_field = residue_ring
 
-    def power_series(self, names=None, sparse=None):
+    def power_series_ring(self, names=None, sparse=None):
         if isinstance(names, (list, tuple)):
             names = names[0]
         if sparse is None:
             sparse = self.is_sparse()
-        base = self._base.base_ring()
-        if self._integer_ring is self:
-            S = PowerSeriesRing(self._residue_ring, names, default_prec=self._default_prec, sparse=sparse)
-        else:
-            S = LaurentSeriesRing(self._residue_ring, names, default_prec=self._default_prec, sparse=sparse)
+        S = PowerSeriesRing(self._residue_ring, names, default_prec=self._default_prec, sparse=sparse)
+        S.register_conversion(CompletionToPowerSeries(self.Hom(S)))
+        return S
+
+    def laurent_series_ring(self, names=None, sparse=None):
+        if isinstance(names, (list, tuple)):
+            names = names[0]
+        if sparse is None:
+            sparse = self.is_sparse()
+        S = LaurentSeriesRing(self._residue_ring, names, default_prec=self._default_prec, sparse=sparse)
         S.register_conversion(CompletionToPowerSeries(self.Hom(S)))
         return S
 
