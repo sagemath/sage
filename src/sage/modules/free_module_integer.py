@@ -852,40 +852,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         if not self._reduced_basis.is_LLL_reduced(delta=delta):
             self.LLL(*args, delta=delta, **kwargs)
 
-        B = self._reduced_basis
-        t = vector(t)
-
-        if algorithm == 'embedding':
-            L = matrix(QQ, B.nrows()+1, B.ncols()+1)
-            L.set_block(0, 0, B)
-            L.set_block(B.nrows(), 0, matrix(t))
-            weight = (B[-1]*B[-1]).isqrt()+1  # Norm of the largest vector
-            L[-1, -1] = weight
-
-            # The vector should be the last row but we iterate just in case
-            for v in reversed(L.LLL(delta=delta, *args, **kwargs).rows()):
-                if abs(v[-1]) == weight:
-                    return t - v[:-1]*v[-1].sign()
-            raise ValueError('No suitable vector found in basis.'
-                             'This is a bug, please report it.')
-
-        elif algorithm == 'nearest_plane':
-            G = B.gram_schmidt()[0]
-
-            b = t
-            for i in reversed(range(G.nrows())):
-                b -= B[i] * ((b * G[i]) / (G[i] * G[i])).round("even")
-            return (t - b).change_ring(ZZ)
-
-        elif algorithm == 'rounding_off':
-            # t = x*B might not have a solution over QQ so we instead solve
-            # the system x*B*B^T = t*B^T which will be the "closest" solution
-            # if it does not exist, same effect as using the psuedo-inverse
-            sol = (B*B.T).solve_left(t*B.T)
-            return vector(ZZ, [QQ(x).round('even') for x in sol])*B
-
-        else:
-            raise ValueError("algorithm must be one of 'embedding', 'nearest_plane' or 'rounding_off'")
+        return self._reduced_basis._approximate_closest_vector_after_LLL(t, delta=delta, algorithm=algorithm, *args, **kwargs)
 
     def babai(self, *args, **kwargs):
         """
