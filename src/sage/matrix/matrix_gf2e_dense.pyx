@@ -88,6 +88,7 @@ from sage.structure.element cimport Matrix
 from sage.structure.element cimport Element
 from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.finite_rings.element_base cimport Cache_base
+from sage.rings.finite_rings.element_givaro cimport FiniteField_givaroElement
 
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.misc.randstate cimport randstate, current_randstate
@@ -126,7 +127,20 @@ cdef class M4RIE_finite_field:
         if self.ff:
             gf2e_free(self.ff)
 
-cdef m4ri_word poly_to_word(f) noexcept:
+cdef m4ri_word poly_to_word(FiniteField_givaroElement f) except? -1:
+    """
+    Internal function to convert a finite field element to ``m4ri_word``.
+
+    TESTS:
+
+    If the user interrupts some long computation in the middle of the execution of
+    :func:`poly_to_word`, it will raise ``KeyboardInterrupt``. Make sure it is correctly
+    propagated::
+
+        sage: from sage.doctest.util import ensure_interruptible_after
+        sage: with ensure_interruptible_after(0.5):
+        ....:     MatrixSpace(GF(2^8), 2^9).random_element().LU()
+    """
     return f.to_integer()
 
 
