@@ -36,7 +36,7 @@ class GHlist(SageObject):
         sage: loads(dumps(L)) == L
         True
     """
-    def __init__(self, group):
+    def __init__(self, group) -> None:
         """
         EXAMPLES::
 
@@ -48,7 +48,8 @@ class GHlist(SageObject):
         v = group._coset_reduction_data()[0]
         N = group.level()
         coset_reps = {a for a, b, _ in v if b == 1}
-        w = [group._reduce_coset(x*u, x*v) for x in coset_reps for u,v in p1list.P1List(N).list()]
+        w = [group._reduce_coset(x * u, x * v)
+             for x in coset_reps for u, v in p1list.P1List(N).list()]
         w = sorted(set(w))
         self.__list = w
 
@@ -132,7 +133,7 @@ class GHlist(SageObject):
             sage: sage.modular.modsym.ghlist.GHlist(GammaH(24, [5, 23])).normalize(17, 6)
             (7, 18)
         """
-        return self.__group._reduce_coset(u,v)
+        return self.__group._reduce_coset(u, v)
 
 
 class _GHlist_old_pickle(GHlist):
@@ -143,7 +144,7 @@ class _GHlist_old_pickle(GHlist):
     no input to the class on the initial ``__init__`` call, and the
     new class pickles, we need to have ``__setstate__`` handle it.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         For unpickling old pickles.
 

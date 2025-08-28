@@ -849,8 +849,9 @@ class FreeModuleAltForm(FreeModuleTensor):
                 olname = r'\left(' + olname + r'\right)'
             res_latex_name = r'\iota_{' + slname + '} ' + olname
         if res_name:
-            try:  # there is no guarantee that the result has set_name
-                  # and is mutable
+            try:
+                # there is no guarantee that the result has set_name
+                # and is mutable
                 res.set_name(res_name, latex_name=res_latex_name)
             except (AttributeError, TypeError, ValueError):
                 pass

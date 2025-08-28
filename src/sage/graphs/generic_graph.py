@@ -8680,11 +8680,9 @@ class GenericGraph(GenericGraph_pyx):
           This parameter can only be used when ``algorithm`` is ``'MILP'``.
 
         - ``algorithm`` -- string (default: ``'MILP'``); the algorithm to use
-          among ``'MILP'``, ``'backtrack'`` and ``'heuristic'``:
+          among ``'MILP'`` and ``'heuristic'``:
 
           * ``'MILP'`` returns an exact answer.
-
-          * ``'backtrack'`` is renamed ``'heuristic'`` (:issue:`36574`).
 
           * ``'heuristic'`` is a randomized heuristic for finding a long path in
             an unweighted (di)graph. This heuristic does not take into account
@@ -8760,13 +8758,13 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS:
 
-        The argument ``algorithm`` must be either ``'backtrack'``,
-        ``'heuristic'`` or ``'MILP'``::
+        The argument ``algorithm`` must be either ``'heuristic'``
+        or ``'MILP'``::
 
             sage: graphs.PetersenGraph().longest_path(algorithm='abc')
             Traceback (most recent call last):
             ...
-            ValueError: algorithm must be either 'backtrack', 'heuristic' or 'MILP'
+            ValueError: algorithm must be either 'heuristic' or 'MILP'
 
         Disconnected graphs not weighted::
 
@@ -8843,10 +8841,6 @@ class GenericGraph(GenericGraph_pyx):
         :issue:`36574`::
 
             sage: G = graphs.PathGraph(3)
-            sage: P = G.longest_path(algorithm='backtrack')
-            doctest:...: DeprecationWarning: algorithm 'backtrack' is deprecated.
-             Use algorithm 'heuristic' instead.
-            See https://github.com/sagemath/sage/issues/36574 for details.
             sage: G.longest_path(algorithm='heuristic', s=0)
             Traceback (most recent call last):
             ...
@@ -8883,13 +8877,8 @@ class GenericGraph(GenericGraph_pyx):
         """
         self._scream_if_not_simple()
 
-        if algorithm not in ("backtrack", "heuristic", "MILP"):
-            raise ValueError("algorithm must be either 'backtrack', 'heuristic' or 'MILP'")
-        if algorithm == "backtrack":
-            from sage.misc.superseded import deprecation
-            deprecation(36574, "algorithm 'backtrack' is deprecated. "
-                               "Use algorithm 'heuristic' instead.")
-            algorithm = 'heuristic'
+        if algorithm not in ("heuristic", "MILP"):
+            raise ValueError("algorithm must be either 'heuristic' or 'MILP'")
         if algorithm == 'heuristic':
             if s is not None or t is not None or use_edge_labels:
                 raise ValueError("parameters s, t, and use_edge_labels can not "
@@ -26037,6 +26026,7 @@ class GenericGraph(GenericGraph_pyx):
     from sage.graphs.traversals import lex_BFS, lex_DFS, lex_DOWN, lex_UP
     is_geodetic = LazyImport('sage.graphs.convexity_properties', 'is_geodetic')
     from sage.graphs.cycle_enumeration import (
+        _all_cycles_iterator_vertex,
         _all_simple_cycles_iterator_edge,
         all_cycles_iterator,
         all_simple_cycles,
