@@ -519,9 +519,10 @@ def cm_orders(h, proof=None):
 
     if h in hDf_dict:
         return hDf_dict[h]
-    else: # Get all discriminants for all class numbers up to h (which will
-          # be stored in hDf_dict), and return just those with class number h.
-        return discriminants_with_bounded_class_number(h, proof=proof)[h]
+
+    # Get all discriminants for all class numbers up to h (which will
+    # be stored in hDf_dict), and return just those with class number h.
+    return discriminants_with_bounded_class_number(h, proof=proof)[h]
 
 # Table from Mark Watkins paper "Class numbers of imaginary quadratic fields".
 
