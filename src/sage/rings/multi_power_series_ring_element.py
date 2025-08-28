@@ -607,7 +607,7 @@ class MPowerSeries(PowerSeries):
             return "%s" % self._value()
         return "%(val)s + O(%(gens)s)^%(prec)s" \
                % {'val':self._value(),
-                 'gens':', '.join(str(g) for g in self.parent().gens()),
+                 'gens':', '.join(self.parent().variable_names()),
                  'prec':self._prec}
 
     def _latex_(self):
