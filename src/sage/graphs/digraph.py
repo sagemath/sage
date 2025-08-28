@@ -3979,7 +3979,3 @@ class DiGraph(GenericGraph):
     from sage.graphs.connectivity import strongly_connected_components_subgraphs
     from sage.graphs.connectivity import strongly_connected_component_containing_vertex
     from sage.graphs.connectivity import strong_articulation_points
-    from sage.graphs.cycle_enumeration import all_cycles_iterator
-    from sage.graphs.cycle_enumeration import all_simple_cycles
-    from sage.graphs.cycle_enumeration import _all_cycles_iterator_vertex
-    from sage.graphs.cycle_enumeration import _all_simple_cycles_iterator_edge
