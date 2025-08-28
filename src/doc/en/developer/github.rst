@@ -521,10 +521,13 @@ Finally, on every release, the full documentation including PDF docs and
 featured with live (runnable) Examples (but no TESTS blocks) is built and
 published to `<https://doc-release--sagemath.netlify.app>`_, a link to which is
 in the `Documentation section of the GitHub Wiki
-<https://github.com/sagemath/sage/wiki#documentation-for-last-release>`_. The
-`run of the PDF build workflow
-<https://github.com/sagemath/sage/actions/workflows/doc-build-pdf.yml>`_
-contains the ``livedoc`` artifact used to publish the full documentation.
+<https://github.com/sagemath/sage/wiki#documentation-for-last-release>`_.
+
+The `livedoc build workflow
+<https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-build-livedoc.yml>`_
+creates the ``livedoc`` artifact used by the `livedoc publish workflow
+<https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-publish-livedoc.yml>`_
+to publish the full documentation.
 
 Final notes
 ===========
