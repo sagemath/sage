@@ -10,6 +10,7 @@ Algebras With Basis
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+import sage
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.tensor import TensorProductsCategory, tensor
@@ -281,6 +282,10 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             # would be easy to implement, but without a special
             # version of module morphism, this would not take
             # advantage of the block structure
+
+        class ElementMethods:
+            # needed otherwise __invert__ from AlgebrasWithBasis will override this
+            __invert__ = sage.categories.magmas.Magmas.Unital.CartesianProducts.ElementMethods.__invert__
 
     class TensorProducts(TensorProductsCategory):
         """

@@ -153,8 +153,8 @@ class Algebras(CategoryWithAxiom_over_base_ring):
                 sage: # needs sage.modules
                 sage: ZZ.characteristic()
                 0
-                sage: A = GF(7^3, 'a')                                                      # needs sage.rings.finite_rings
-                sage: A.characteristic()                                                    # needs sage.rings.finite_rings
+                sage: A = GF(7^3, 'a')                                                  # needs sage.rings.finite_rings
+                sage: A.characteristic()                                                # needs sage.rings.finite_rings
                 7
             """
             return self.base_ring().characteristic()
@@ -175,9 +175,9 @@ class Algebras(CategoryWithAxiom_over_base_ring):
                 sage: B.has_standard_involution()
                 True
                 sage: R.<x> = PolynomialRing(QQ)
-                sage: K.<u> = NumberField(x**2 - 2)                                         # needs sage.rings.number_field
-                sage: A = QuaternionAlgebra(K, -2, 5)                                       # needs sage.rings.number_field
-                sage: A.has_standard_involution()                                           # needs sage.rings.number_field
+                sage: K.<u> = NumberField(x**2 - 2)                                     # needs sage.rings.number_field
+                sage: A = QuaternionAlgebra(K, -2, 5)                                   # needs sage.rings.number_field
+                sage: A.has_standard_involution()                                       # needs sage.rings.number_field
                 True
                 sage: L.<a,b> = FreeAlgebra(QQ, 2)
                 sage: L.has_standard_involution()
@@ -292,7 +292,7 @@ class Algebras(CategoryWithAxiom_over_base_ring):
                 sage: C.extra_super_categories()
                 [Category of algebras over Rational Field]
                 sage: sorted(C.super_categories(), key=str)
-                [Category of Cartesian products of monoids,
+                [Category of Cartesian products of rings,
                  Category of Cartesian products of unital algebras over Rational Field,
                  Category of algebras over Rational Field]
             """
