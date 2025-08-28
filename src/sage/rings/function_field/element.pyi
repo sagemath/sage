@@ -1,0 +1,79 @@
+from typing import Any, List
+from sage.structure.element import FieldElement
+
+
+class FunctionFieldElement(FieldElement):
+    _x: Any
+    _matrix: Any
+
+    def __reduce__(self) -> Any:
+        ...
+
+    def _new_c(self) -> 'FunctionFieldElement':
+        ...
+
+    def __pari__(self) -> Any:
+        ...
+
+    def _latex_(self) -> str:
+        ...
+
+    def subs(self, in_dict: dict = None, **kwds: Any) -> 'FunctionFieldElement':
+        ...
+
+    def matrix(self, base: Any = None) -> Any:
+        ...
+
+    def trace(self) -> Any:
+        ...
+
+    def norm(self) -> Any:
+        ...
+
+    def degree(self) -> int:
+        ...
+
+    def characteristic_polynomial(self, *args: Any, **kwds: Any) -> Any:
+        ...
+
+    def minimal_polynomial(self, *args: Any, **kwds: Any) -> Any:
+        ...
+
+    def is_integral(self) -> bool:
+        ...
+
+    def differential(self) -> Any:
+        ...
+
+    def derivative(self) -> Any:
+        ...
+
+    def higher_derivative(self, i: int, separating_element: Any = None) -> Any:
+        ...
+
+    def divisor(self) -> Any:
+        ...
+
+    def divisor_of_zeros(self) -> Any:
+        ...
+
+    def divisor_of_poles(self) -> Any:
+        ...
+
+    def zeros(self) -> List[Any]:
+        ...
+
+    def poles(self) -> List[Any]:
+        ...
+
+    def valuation(self, place: Any) -> int:
+        ...
+
+    def evaluate(self, place: Any) -> Any:
+        ...
+
+    def is_nth_power(self, n: int) -> bool:
+        ...
+
+    def nth_root(self, n: int) -> 'FunctionFieldElement':
+        ...

@@ -1,0 +1,106 @@
+from typing import Any, Callable, Dict, Tuple, Union
+
+def dict_key(o: Any) -> Any:
+    ...
+
+def cache_key(o: Any) -> Any:
+    ...
+
+class CachedFunction:
+    def __init__(self, f: Callable, classmethod: bool = False, name: str = None, key: Callable = None, do_pickle: bool = None) -> None:
+        ...
+
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        ...
+
+    def cached(self, *args: Any, **kwds: Any) -> Any:
+        ...
+
+    def is_in_cache(self, *args: Any, **kwds: Any) -> bool:
+        ...
+
+    def set_cache(self, value: Any, *args: Any, **kwds: Any) -> None:
+        ...
+
+    def get_key(self, *args: Any, **kwds: Any) -> Any:
+        ...
+
+    def __repr__(self) -> str:
+        ...
+
+    def clear_cache(self) -> None:
+        ...
+
+    def precompute(self, arglist: Any, num_processes: int = 1) -> None:
+        ...
+
+class CachedMethod:
+    def __init__(self, f: Callable, name: str = None, key: Callable = None, do_pickle: bool = None) -> None:
+        ...
+
+    def __call__(self, inst: Any, *args: Any, **kwds: Any) -> Any:
+        ...
+
+    def _get_instance_cache(self, inst: Any) -> Dict:
+        ...
+
+    def __get__(self, inst: Any, cls: Any) -> Any:
+        ...
+
+class CacheDict(dict):
+    pass
+
+class CachedInParentMethod(CachedMethod):
+    def __init__(self, f: Callable, name: str = None, key: Callable = None, do_pickle: bool = None) -> None:
+        ...
+
+    def _get_instance_cache(self, inst: Any) -> Dict:
+        ...
+
+    def __get__(self, inst: Any, cls: Any) -> Any:
+        ...
+
+class CachedMethodCaller(CachedFunction):
+    def __init__(self, cachedmethod: CachedMethod, inst: Any, cache: Dict = None, name: str = None, key: Callable = None, do_pickle: bool = None) -> None:
+        ...
+
+    def _instance_call(self, *args: Any, **kwds: Any) -> Any:
+        ...
+
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        ...
+
+    def cached(self, *args: Any, **kwds: Any) -> Any:
+        ...
+
+    def __get__(self, inst: Any, cls: Any) -> Any:
+        ...
+
+    def precompute(self, arglist: Any, num_processes: int = 1) -> None:
+        ...
+
+class CachedMethodCallerNoArgs(CachedFunction):
+    def __init__(self, inst: Any, f: Callable, cache: Any = None, name: str = None, do_pickle: bool = None) -> None:
+        ...
+
+    def _instance_call(self) -> Any:
+        ...
+
+    def __call__(self) -> Any:
+        ...
+
+    def set_cache(self, value: Any) -> None:
+        ...
+
+    def clear_cache(self) -> None:
+        ...
+
+    def is_in_cache(self) -> bool:
+        ...
+
+    def __get__(self, inst: Any, cls: Any) -> Any:
+        ...
+
+class GloballyCachedMethodCaller(CachedMethodCaller):
+    def get_key_args_kwds(self, args: Tuple, kwds: Dict) -> Any:
+        ...

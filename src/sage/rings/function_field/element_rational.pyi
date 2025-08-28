@@ -1,0 +1,69 @@
+from typing import Any, List
+from sage.structure.richcmp import richcmp, richcmp_not_equal
+from sage.structure.element import FieldElement
+from sage.rings.function_field.element import FunctionFieldElement
+
+
+class FunctionFieldElement_rational(FunctionFieldElement):
+    def __init__(self, parent: Any, x: Any, reduce: bool = True) -> None:
+        ...
+
+    def __pari__(self) -> Any:
+        ...
+
+    def element(self) -> Any:
+        ...
+
+    def list(self) -> List:
+        ...
+
+    def _repr_(self) -> str:
+        ...
+
+    def __bool__(self) -> bool:
+        ...
+
+    def __hash__(self) -> int:
+        ...
+
+    def _richcmp_(self, other: Any, op: int) -> Any:
+        ...
+
+    def _add_(self, right: Any) -> Any:
+        ...
+
+    def _sub_(self, right: Any) -> Any:
+        ...
+
+    def _mul_(self, right: Any) -> Any:
+        ...
+
+    def _div_(self, right: Any) -> Any:
+        ...
+
+    def numerator(self) -> Any:
+        ...
+
+    def denominator(self) -> Any:
+        ...
+
+    def valuation(self, place: Any) -> int:
+        ...
+
+    def is_square(self) -> bool:
+        ...
+
+    def sqrt(self, all: bool = False) -> Any:
+        ...
+
+    def is_nth_power(self, n: int) -> bool:
+        ...
+
+    def nth_root(self, n: int) -> FunctionFieldElement:
+        ...
+
+    def factor(self) -> Any:
+        ...
+
+    def inverse_mod(self, I: Any) -> Any:
+        ...
