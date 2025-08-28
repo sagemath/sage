@@ -2560,7 +2560,7 @@ def trial_division(n, bound=None):
         return ZZ(n).trial_division(bound)
 
 
-def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
+def factor(n, proof=None, int_=False, algorithm=None, verbose=0, **kwds):
     """
     Return the factorization of ``n``.  The result depends on the
     type of ``n``.
@@ -2734,6 +2734,11 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
         sage: len(factor(2^2203-1,proof=false))
         1
+
+    Test ``limit``::
+
+        sage: factor(2990, limit=10)
+        2 * 5 * 299
     """
     try:
         m = n.factor
