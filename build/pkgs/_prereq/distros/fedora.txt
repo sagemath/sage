@@ -35,3 +35,4 @@ perl-IPC-Cmd
 flex
 patch
 pkg-config
+zlib-devel

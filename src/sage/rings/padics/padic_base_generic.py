@@ -443,7 +443,7 @@ class pAdicBaseGeneric(pAdicGeneric):
             args['pointsize'] = 1
         from sage.misc.mrange import cartesian_product_iterator
         from sage.rings.real_double import RDF
-        from sage.plot.all import points
+        from sage.plot.point import point as points
         p = self.prime()
         phi = 2*RDF.pi()/p
         V = RDF**2
