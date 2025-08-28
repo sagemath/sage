@@ -5256,6 +5256,9 @@ REFERENCES:
              PhD Thesis, Carl von Ossietzky Universität Oldenburg
              http://oops.uni-oldenburg.de/3607.
 
+.. [New1972] \M. Newman, Integral Matrices, Academic Press, 
+             New York and London (1972).
+
 .. [New2003] Newman, M.E.J. *The Structure and function of complex
              networks*, SIAM Review vol. 45, no. 2 (2003), pp. 167-256.
              :doi:`10.1137/S003614450342480`.
