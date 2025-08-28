@@ -19125,7 +19125,7 @@ cdef class Matrix(Matrix1):
     def _krylov_row_coordinates(self, shifts, degrees, row_pairs=None):
         r"""
         Helper function for :meth:`krylov_matrix` and :meth:`krylov_basis`.
-        Returns a sorted set of triplets corresponding to row coordinates, for
+        Return a sorted set of triplets corresponding to row coordinates, for
         a given set of shifts and degrees.
 
         INPUT:
@@ -19293,43 +19293,9 @@ cdef class Matrix(Matrix1):
             [ 0  0  0]
             [ 0  0  0]
 
-        Row ordering for the zero shift::
-
-            sage: degrees = 3  # default in above constructions
-            sage: rows = [(i,j,i+j*E.nrows()) for j in range(degrees+1)
-            ....:                             for i in range(E.nrows())]
-            sage: rows
-            [(0, 0, 0),
-             (1, 0, 1),
-             (2, 0, 2),
-             (0, 1, 3),
-             (1, 1, 4),
-             (2, 1, 5),
-             (0, 2, 6),
-             (1, 2, 7),
-             (2, 2, 8),
-             (0, 3, 9),
-             (1, 3, 10),
-             (2, 3, 11)]
-
         Trying the other above-mentioned classical shift::
 
             sage: shifts = [0,3,6]
-            sage: rows.sort(key=lambda x: (x[1] + shifts[x[0]], x[0]))
-            sage: rows
-            [(0, 0, 0),
-             (0, 1, 3),
-             (0, 2, 6),
-             (0, 3, 9),
-             (1, 0, 1),
-             (1, 1, 4),
-             (1, 2, 7),
-             (1, 3, 10),
-             (2, 0, 2),
-             (2, 1, 5),
-             (2, 2, 8),
-             (2, 3, 11)]
-
             sage: E.krylov_matrix(M, shifts)
             [27 49 29]
             [ 0 27 49]
@@ -19344,25 +19310,9 @@ cdef class Matrix(Matrix1):
             [ 0  0 77]
             [ 0  0  0]
 
-
         With another shift::
 
             sage: shifts = [3,0,2]
-            sage: rows.sort(key=lambda x: (x[1] + shifts[x[0]], x[0]))
-            sage: rows
-            [(1, 0, 1),
-             (1, 1, 4),
-             (1, 2, 7),
-             (2, 0, 2),
-             (0, 0, 0),
-             (1, 3, 10),
-             (2, 1, 5),
-             (0, 1, 3),
-             (2, 2, 8),
-             (0, 2, 6),
-             (2, 3, 11),
-             (0, 3, 9)]
-
             sage: E.krylov_matrix(M, shifts)
             [50 58  0]
             [ 0 50 58]
@@ -19503,8 +19453,6 @@ cdef class Matrix(Matrix1):
         r"""
         See :meth:`krylov_basis` for the description of this method. However,
         unlike :meth:`krylov_basis`, this method performs no input validation.
-
-        EXAMPLES::
 
         TESTS::
 
@@ -19655,10 +19603,6 @@ cdef class Matrix(Matrix1):
         degree of the minimal polynomial of `M`. By default, the implementation
         takes ``degrees`` as `[n, \ldots, n]`.
 
-        This method incidentally computes the column rank profile (as returned
-        by :meth:`pivots`) of its output matrix, and so, it is cached in the
-        output for faster future access.
-
         By default, the method also returns information that relate the
         computed basis rows to the corresponding rows in the Krylov matrix `K`
         as if built with :meth:`krylov_matrix` with the same parameters.
@@ -19685,8 +19629,9 @@ cdef class Matrix(Matrix1):
           ``self.ncols()`` for all rows. Giving a single integer for
           ``degrees`` is equivalent to giving a list with this integer repeated
           ``self.nrows()`` times.
-        - ``output_rows`` -- determines whether information relating the output
-          rows to their position in the Krylov matrix is also provided.
+        - ``output_rows`` -- boolean, optional, defaults to True. Determines
+          whether information relating the output rows to their position in the
+          Krylov matrix is also provided.
         - ``algorithm`` -- either 'naive', 'elimination', or None (let
           Sage choose).
 
