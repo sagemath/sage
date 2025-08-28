@@ -128,8 +128,12 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             True
             sage: J(GF(7^2)).order() == (7+1)^6
             True
+            sage: J(QQ).order()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
         """
-        if not isinstance(self.base_ring(), FiniteField_generic):
+        if isinstance(self.base_ring(), FiniteField_generic):
             return sum(self.extended_curve().frobenius_polynomial())
 
         raise NotImplementedError
@@ -327,6 +331,21 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: _ == J(x + 4, 0) == J(x + 4, R(0))
             True
 
+        Ensure that element constructor is user-friendly::
+
+            sage: R.<x> = QQ[]
+            sage: f = (x^4 - 2*x^2 - 8*x + 1) * (x^3 + x + 1)
+            sage: H = HyperellipticCurveSmoothModel(f)
+            sage: J = H.jacobian()
+            sage: D = J(H(0, 1))
+            sage: D.base_ring()
+            Rational Field
+            sage: J.change_ring(GF(13))(D).parent().base_ring()
+            Finite Field of size 13
+            sage: R.<y> = QQ[]
+            sage: J(y^3 + y + 1, 0)
+            (x^3 + x + 1, 0)
+
         TODO:
 
         - Allow sending a field element corresponding to the x-coordinate of a point?
@@ -351,7 +370,11 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             if P1 == 0:
                 return self.zero(check=check)
             elif isinstance(P1, self._morphism_element):
-                return P1
+                if parent(P1) is self:
+                    return P1
+                # may have to change polynomial ring etc.
+                # this case will now be handled below.
+                args = P1.uv()
             elif isinstance(P1, SchemeMorphism_point_weighted_projective_ring):
                 args = args + (
                     self.extended_curve().distinguished_point(),
@@ -371,14 +394,15 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
                 P2_inv = self.extended_curve().hyperelliptic_involution(P2)
                 u2, v2 = self.point_to_mumford_coordinates(P2_inv)
                 u, v = self.cantor_composition(u1, v1, u2, v2)
-            # This checks whether P1 and P2 can be interpreted as polynomials
-            elif R.coerce_map_from(parent(P1)) and R.coerce_map_from(parent(P2)):
-                u = R(P1)
-                v = R(P2)
             else:
-                raise ValueError(
-                    "the input must consist of one or two points, or Mumford coordinates"
-                )
+                # We try to coerce input Mumford coordinates to polynomials
+                try:
+                    u = R(P1)
+                    v = R(P2)
+                except ValueError:
+                    raise ValueError(
+                        "the input must consist of one or two points, or Mumford coordinates"
+                    )
 
         if len(args) > 2:
             raise ValueError("at most two arguments are allowed as input")
