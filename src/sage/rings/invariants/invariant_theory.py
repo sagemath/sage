@@ -118,7 +118,7 @@ import sage.rings.invariants.reconstruction as reconstruction
 
 
 ######################################################################
-def _guess_variables(polynomial, *args):
+def _guess_variables(polynomial, *args) -> tuple:
     """
     Return the polynomial variables.
 
@@ -275,18 +275,18 @@ def transvectant(f, g, h=1, scale='default'):
         from sage.functions.other import binomial, factorial
         if scale == 'default':
             scalar = factorial(f._d-h) * factorial(g._d-h) \
-                        * R(factorial(f._d)*factorial(g._d))**(-1)
+                * R(factorial(f._d)*factorial(g._d))**(-1)
         elif scale == 'none':
             scalar = 1
         else:
             raise ValueError('unknown scale type: %s' % scale)
 
         def diff(j):
-            df = f.form().derivative(x,j).derivative(y,h-j)
-            dg = g.form().derivative(x,h-j).derivative(y,j)
-            return (-1)**j * binomial(h,j) * df * dg
+            df = f.form().derivative(x, j).derivative(y, h-j)
+            dg = g.form().derivative(x, h-j).derivative(y, j)
+            return (-1)**j * binomial(h, j) * df * dg
         tv = scalar * sum([diff(j) for j in range(h+1)])
-        if not tv.parent() is R:
+        if tv.parent() is not R:
             S = tv.parent()
             x = S(x)
             y = S(y)
@@ -367,7 +367,7 @@ class FormsBase(SageObject):
                 dp_dz = d*p - sum(x*dp_dx for x, dp_dx in zip(variables, grad))
                 grad.append(dp_dz)
                 return grad
-        jac = [diff(p,d) for p,d in args]
+        jac = [diff(p, d) for p, d in args]
         return matrix(self._ring, jac).det()
 
     def ring(self):
@@ -607,7 +607,7 @@ class AlgebraicForm(FormsBase):
             g = random_matrix(F, self._n, algorithm='unimodular')
         v = vector(self.variables())
         g_v = g * v
-        transform = dict( (v[i], g_v[i]) for i in range(self._n) )
+        transform = {v[i]: g_v[i] for i in range(self._n)}
         # The covariant of the transformed polynomial
         g_self = self.__class__(self._n, self._d, self.form().subs(transform), self.variables())
         cov_g = getattr(g_self, method_name)()
@@ -916,7 +916,7 @@ class AlgebraicForm(FormsBase):
             from sage.modules.free_module_element import vector
             v = vector(self._ring, self._variables)
             g_v = vector(self._ring, g*v)
-            transform = dict( (v[i], g_v[i]) for i in range(self._n) )
+            transform = {v[i]: g_v[i] for i in range(self._n)}
         # The covariant of the transformed polynomial
         return self.__class__(self._n, self._d,
                               self.form().subs(transform), self.variables())
@@ -1123,12 +1123,12 @@ class QuadraticForm(AlgebraicForm):
         coeff = self.scaled_coeffs()
         A = matrix(self._ring, self._n)
         for i in range(self._n):
-            A[i,i] = coeff[i]
+            A[i, i] = coeff[i]
         ij = self._n
         for i in range(self._n):
             for j in range(i+1, self._n):
-                A[i,j] = coeff[ij]
-                A[j,i] = coeff[ij]
+                A[i, j] = coeff[ij]
+                A[j, i] = coeff[ij]
                 ij += 1
         return A
 
@@ -1259,7 +1259,7 @@ class QuadraticForm(AlgebraicForm):
         else:
             var = self._variables[0:-1] + (1, )
         n = self._n
-        p = sum([ sum([ Aadj[i,j]*var[i]*var[j] for i in range(n) ]) for j in range(n)])
+        p = sum(Aadj[i, j] * var[i] * var[j] for i in range(n) for j in range(n))
         return invariant_theory.quadratic_form(p, self.variables())
 
     def as_QuadraticForm(self):
@@ -2539,7 +2539,7 @@ class TernaryQuadratic(QuadraticForm):
             (x^2, y^2, z^2, x*y, x*z, y*z)
         """
         R = self._ring
-        x,y,z = self._x, self._y, self._z
+        x, y, z = self._x, self._y, self._z
         if self._homogeneous:
             return (x**2, y**2, z**2, x*y, x*z, y*z)
         else:
@@ -2714,7 +2714,7 @@ class TernaryCubic(AlgebraicForm):
             (x^3, y^3, z^3, x^2*y, x^2*z, x*y^2, y^2*z, x*z^2, y*z^2, x*y*z)
         """
         R = self._ring
-        x,y,z = self._x, self._y, self._z
+        x, y, z = self._x, self._y, self._z
         if self._homogeneous:
             return (x**3, y**3, z**3, x**2*y, x**2*z, x*y**2,
                     y**2*z, x*z**2, y*z**2, x*y*z)
@@ -2804,14 +2804,14 @@ class TernaryCubic(AlgebraicForm):
             sage: cubic.S_invariant()
             -1/1296
         """
-        a,b,c,a2,a3,b1,b3,c1,c2,m = self.scaled_coeffs()
-        S = ( a*b*c*m-(b*c*a2*a3+c*a*b1*b3+a*b*c1*c2)
-              - m*(a*b3*c2+b*c1*a3+c*a2*b1)
-              + (a*b1*c2**2+a*c1*b3**2+b*a2*c1**2+b*c2*a3**2+c*b3*a2**2+c*a3*b1**2)
-              - m**4+2*m**2*(b1*c1+c2*a2+a3*b3)
-              - 3*m*(a2*b3*c1+a3*b1*c2)
-              - (b1**2*c1**2+c2**2*a2**2+a3**2*b3**2)
-              + (c2*a2*a3*b3+a3*b3*b1*c1+b1*c1*c2*a2) )
+        a, b, c, a2, a3, b1, b3, c1, c2, m = self.scaled_coeffs()
+        S = (a*b*c*m-(b*c*a2*a3+c*a*b1*b3+a*b*c1*c2)
+             - m*(a*b3*c2+b*c1*a3+c*a2*b1)
+             + (a*b1*c2**2+a*c1*b3**2+b*a2*c1**2+b*c2*a3**2+c*b3*a2**2+c*a3*b1**2)
+             - m**4+2*m**2*(b1*c1+c2*a2+a3*b3)
+             - 3*m*(a2*b3*c1+a3*b1*c2)
+             - (b1**2*c1**2+c2**2*a2**2+a3**2*b3**2)
+             + (c2*a2*a3*b3+a3*b3*b1*c1+b1*c1*c2*a2))
         return S
 
     def T_invariant(self):
@@ -2830,38 +2830,38 @@ class TernaryCubic(AlgebraicForm):
             sage: cubic.T_invariant()
             -t^6 - t^3 + 1
         """
-        a,b,c,a2,a3,b1,b3,c1,c2,m = self.scaled_coeffs()
-        T = ( a**2*b**2*c**2-6*a*b*c*(a*b3*c2+b*c1*a3+c*a2*b1)
-              - 20*a*b*c*m**3+12*a*b*c*m*(b1*c1+c2*a2+a3*b3)
-              + 6*a*b*c*(a2*b3*c1+a3*b1*c2) +
-              4*(a**2*b*c2**3+a**2*c*b3**3+b**2*c*a3**3 +
-                 b**2*a*c1**3+c**2*a*b1**3+c**2*b*a2**3)
-              + 36*m**2*(b*c*a2*a3+c*a*b1*b3+a*b*c1*c2)
-              - 24*m*(b*c*b1*a3**2+b*c*c1*a2**2+c*a*c2*b1**2+c*a*a2*b3**2+a*b*a3*c2**2 +
+        a, b, c, a2, a3, b1, b3, c1, c2, m = self.scaled_coeffs()
+        T = (a**2*b**2*c**2-6*a*b*c*(a*b3*c2+b*c1*a3+c*a2*b1)
+             - 20*a*b*c*m**3+12*a*b*c*m*(b1*c1+c2*a2+a3*b3)
+             + 6*a*b*c*(a2*b3*c1+a3*b1*c2) +
+             4*(a**2*b*c2**3+a**2*c*b3**3+b**2*c*a3**3 +
+                b**2*a*c1**3+c**2*a*b1**3+c**2*b*a2**3)
+             + 36*m**2*(b*c*a2*a3+c*a*b1*b3+a*b*c1*c2)
+             - 24*m*(b*c*b1*a3**2+b*c*c1*a2**2+c*a*c2*b1**2+c*a*a2*b3**2+a*b*a3*c2**2 +
                      a*b*b3*c1**2)
-              - 3*(a**2*b3**2*c2**2+b**2*c1**2*a3**2+c**2*a2**2*b1**2) +
-              18*(b*c*b1*c1*a2*a3+c*a*c2*a2*b3*b1+a*b*a3*b3*c1*c2)
-              - 12*(b*c*c2*a3*a2**2+b*c*b3*a2*a3**2+c*a*c1*b3*b1**2 +
+             - 3*(a**2*b3**2*c2**2+b**2*c1**2*a3**2+c**2*a2**2*b1**2) +
+             18*(b*c*b1*c1*a2*a3+c*a*c2*a2*b3*b1+a*b*a3*b3*c1*c2)
+             - 12*(b*c*c2*a3*a2**2+b*c*b3*a2*a3**2+c*a*c1*b3*b1**2 +
                    c*a*a3*b1*b3**2+a*b*a2*c1*c2**2+a*b*b1*c2*c1**2)
-              - 12*m**3*(a*b3*c2+b*c1*a3+c*a2*b1)
-              + 12*m**2*(a*b1*c2**2+a*c1*b3**2+b*a2*c1**2 +
+             - 12*m**3*(a*b3*c2+b*c1*a3+c*a2*b1)
+             + 12*m**2*(a*b1*c2**2+a*c1*b3**2+b*a2*c1**2 +
                         b*c2*a3**2+c*b3*a2**2+c*a3*b1**2)
-              - 60*m*(a*b1*b3*c1*c2+b*c1*c2*a2*a3+c*a2*a3*b1*b3)
-              + 12*m*(a*a2*b3*c2**2+a*a3*c2*b3**2+b*b3*c1*a3**2 +
+             - 60*m*(a*b1*b3*c1*c2+b*c1*c2*a2*a3+c*a2*a3*b1*b3)
+             + 12*m*(a*a2*b3*c2**2+a*a3*c2*b3**2+b*b3*c1*a3**2 +
                      b*b1*a3*c1**2+c*c1*a2*b1**2+c*c2*b1*a2**2)
-              + 6*(a*b3*c2+b*c1*a3+c*a2*b1)*(a2*b3*c1+a3*b1*c2)
-              + 24*(a*b1*b3**2*c1**2+a*c1*c2**2*b1**2+b*c2*c1**2*a2**2
+             + 6*(a*b3*c2+b*c1*a3+c*a2*b1)*(a2*b3*c1+a3*b1*c2)
+             + 24*(a*b1*b3**2*c1**2+a*c1*c2**2*b1**2+b*c2*c1**2*a2**2
                    + b*a2*a3**2*c2**2+c*a3*a2**2*b3**2+c*b3*b1**2*a3**2)
-              - 12*(a*a2*b1*c2**3+a*a3*c1*b3**3+b*b3*c2*a3**3+b*b1*a2*c1**3
+             - 12*(a*a2*b1*c2**3+a*a3*c1*b3**3+b*b3*c2*a3**3+b*b1*a2*c1**3
                    + c*c1*a3*b1**3+c*c2*b3*a2**3)
-              - 8*m**6+24*m**4*(b1*c1+c2*a2+a3*b3)-36*m**3*(a2*b3*c1+a3*b1*c2)
-              - 12*m**2*(b1*c1*c2*a2+c2*a2*a3*b3+a3*b3*b1*c1)
-              - 24*m**2*(b1**2*c1**2+c2**2*a2**2+a3**2*b3**2)
-              + 36*m*(a2*b3*c1+a3*b1*c2)*(b1*c1+c2*a2+a3*b3)
-              + 8*(b1**3*c1**3+c2**3*a2**3+a3**3*b3**3)
-              - 27*(a2**2*b3**2*c1**2+a3**2*b1**2*c2**2)-6*b1*c1*c2*a2*a3*b3
-              - 12*(b1**2*c1**2*c2*a2+b1**2*c1**2*a3*b3+c2**2*a2**2*a3*b3 +
-                   c2**2*a2**2*b1*c1+a3**2*b3**2*b1*c1+a3**2*b3**2*c2*a2) )
+             - 8*m**6+24*m**4*(b1*c1+c2*a2+a3*b3)-36*m**3*(a2*b3*c1+a3*b1*c2)
+             - 12*m**2*(b1*c1*c2*a2+c2*a2*a3*b3+a3*b3*b1*c1)
+             - 24*m**2*(b1**2*c1**2+c2**2*a2**2+a3**2*b3**2)
+             + 36*m*(a2*b3*c1+a3*b1*c2)*(b1*c1+c2*a2+a3*b3)
+             + 8*(b1**3*c1**3+c2**3*a2**3+a3**3*b3**3)
+             - 27*(a2**2*b3**2*c1**2+a3**2*b1**2*c2**2)-6*b1*c1*c2*a2*a3*b3
+             - 12*(b1**2*c1**2*c2*a2+b1**2*c1**2*a3*b3+c2**2*a2**2*a3*b3 +
+                   c2**2*a2**2*b1*c1+a3**2*b3**2*b1*c1+a3**2*b3**2*c2*a2))
         return T
 
     @cached_method
@@ -2896,9 +2896,9 @@ class TernaryCubic(AlgebraicForm):
         """
         a30, a03, a00, a21, a20, a12, a02, a10, a01, a11 = self.coeffs()
         if self._homogeneous:
-            x,y,z = self.variables()
+            x, y, z = self.variables()
         else:
-            x,y,z = (self._x, self._y, 1)
+            x, y, z = (self._x, self._y, 1)
         F = self._ring.base_ring()
         A00 = 3*x*a30 + y*a21 + z*a20
         A11 = x*a12 + 3*y*a03 + z*a02
@@ -2906,8 +2906,7 @@ class TernaryCubic(AlgebraicForm):
         A01 = x*a21 + y*a12 + 1/F(2)*z*a11
         A02 = x*a20 + 1/F(2)*y*a11 + z*a10
         A12 = 1/F(2)*x*a11 + y*a02 + z*a01
-        polar = matrix(self._ring, [[A00, A01, A02],[A01, A11, A12],[A02, A12, A22]])
-        return polar
+        return matrix(self._ring, [[A00, A01, A02], [A01, A11, A12], [A02, A12, A22]])
 
     @cached_method
     def Hessian(self):
@@ -2942,7 +2941,9 @@ class TernaryCubic(AlgebraicForm):
         Uyy = 2*x*a12 + 6*y*a03 + 2*z*a02
         Uyz = x*a11 + 2*y*a02 + 2*z*a01
         Uzz = 2*x*a10 + 2*y*a01 + 6*z*a00
-        H = matrix(self._ring, [[Uxx, Uxy, Uxz],[Uxy, Uyy, Uyz],[Uxz, Uyz, Uzz]])
+        H = matrix(self._ring, [[Uxx, Uxy, Uxz],
+                                [Uxy, Uyy, Uyz],
+                                [Uxz, Uyz, Uzz]])
         F = self._ring.base_ring()
         return 1/F(216) * H.det()
 
@@ -2970,11 +2971,11 @@ class TernaryCubic(AlgebraicForm):
             6952
         """
         U_conic = self.polar_conic().adjugate()
-        U_coeffs = ( U_conic[0,0], U_conic[1,1], U_conic[2,2],
-                     U_conic[0,1], U_conic[0,2], U_conic[1,2] )
+        U_coeffs = (U_conic[0, 0], U_conic[1, 1], U_conic[2, 2],
+                    U_conic[0, 1], U_conic[0, 2], U_conic[1, 2])
         H_conic = TernaryCubic(3, 3, self.Hessian(), self.variables()).polar_conic().adjugate()
-        H_coeffs = ( H_conic[0,0], H_conic[1,1], H_conic[2,2],
-                     H_conic[0,1], H_conic[0,2], H_conic[1,2] )
+        H_coeffs = (H_conic[0, 0], H_conic[1, 1], H_conic[2, 2],
+                    H_conic[0, 1], H_conic[0, 2], H_conic[1, 2])
         quadratic = TernaryQuadratic(3, 2, self._ring.zero(), self.variables())
         F = self._ring.base_ring()
         return 1/F(9) * _covariant_conic(U_coeffs, H_coeffs, quadratic.monomials())
@@ -3257,7 +3258,7 @@ class SeveralAlgebraicForms(FormsBase):
             g = random_matrix(F, self._n, algorithm='unimodular')
         v = vector(self.variables())
         g_v = g*v
-        transform = dict( (v[i], g_v[i]) for i in range(self._n) )
+        transform = {v[i]: g_v[i] for i in range(self._n)}
         # The covariant of the transformed form
         transformed = [f.transformed(transform) for f in self._forms]
         g_self = self.__class__(transformed)
@@ -3498,7 +3499,7 @@ class TwoTernaryQuadratics(TwoAlgebraicForms):
 
             sage: R.<x,y,z> = QQ[]
             sage: monomials = [x^2, x*y, y^2, x*z, y*z, z^2]
-            sage: def q_rnd():  return sum(randint(-1000,1000)*m for m in monomials)
+            sage: def q_rnd():  return sum(randint(-1000, 1000)*m for m in monomials)
             sage: biquadratic = invariant_theory.ternary_biquadratic(q_rnd(), q_rnd(), [x,y,z])
             sage: Delta = biquadratic.Delta_invariant()
             sage: Theta = biquadratic.Theta_invariant()
@@ -3850,8 +3851,8 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
             sage: p2 = A0*x^2 + A1*y^2 + A2*z^2 + A3*w^2
             sage: q = invariant_theory.quaternary_biquadratic(p1, p2, [w, x, y, z])
             sage: q.J_covariant().factor()
-            z * y * x * w * (a3*A2 - a2*A3) * (a3*A1 - a1*A3) * (-a2*A1 + a1*A2)
-            * (a3*A0 - a0*A3) * (-a2*A0 + a0*A2) * (-a1*A0 + a0*A1)
+            z * y * x * w * (-a1*A0 + a0*A1) * (-a2*A0 + a0*A2) * (-a2*A1 + a1*A2)
+            * (a3*A2 - a2*A3) * (a3*A1 - a1*A3) * (a3*A0 - a0*A3)
         """
         F = self._ring.base_ring()
         return 1/F(16) * self._jacobian_determinant(
@@ -3880,7 +3881,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
 
             sage: R.<w,x,y,z> = QQ[]
             sage: monomials = [x^2, x*y, y^2, x*z, y*z, z^2, x*w, y*w, z*w, w^2]
-            sage: def q_rnd():  return sum(randint(-1000,1000)*m for m in monomials)
+            sage: def q_rnd():  return sum(randint(-1000, 1000)*m for m in monomials)
             sage: biquadratic = invariant_theory.quaternary_biquadratic(q_rnd(), q_rnd())
             sage: Delta = biquadratic.Delta_invariant()
             sage: Theta = biquadratic.Theta_invariant()
@@ -3959,7 +3960,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
 
 ######################################################################
 
-class InvariantTheoryFactory():
+class InvariantTheoryFactory:
     """
     Factory object for invariants of multilinear forms.
 
@@ -4357,9 +4358,9 @@ class InvariantTheoryFactory():
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             K = FractionField(Sequence(list(invariants)).universe())
             if variables is None:
-                x,z = PolynomialRing(K, 'x,z').gens()
+                x, z = PolynomialRing(K, 'x,z').gens()
             elif len(variables) == 2:
-                x,z = variables
+                x, z = variables
             else:
                 raise ValueError('incorrect number of variables provided, '
                                  'exactly two variables should be provided')

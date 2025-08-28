@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.graphs sage.modules
 r"""
-Free Pre-Lie Algebras
+Free pre-Lie algebras
 
 AUTHORS:
 
@@ -375,8 +375,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
         """
         return t.node_number()
 
-    @cached_method
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an element of ``self``.
 
@@ -1023,14 +1022,12 @@ class PreLieFunctor(ConstructionFunctor):
                 return self
             ret = list(self.vars)
             cur_vars = set(ret)
-            for v in other.vars:
-                if v not in cur_vars:
-                    ret.append(v)
+            ret.extend(v for v in other.vars if v not in cur_vars)
             return PreLieFunctor(Alphabet(ret))
-        else:
-            return None
 
-    def _repr_(self):
+        return None
+
+    def _repr_(self) -> str:
         """
         TESTS::
 

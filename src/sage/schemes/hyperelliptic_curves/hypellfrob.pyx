@@ -42,7 +42,8 @@ from cysignals.signals cimport sig_on, sig_off
 from libcpp.vector cimport vector
 
 from sage.libs.ntl.ntl_ZZ_pContext import ZZ_pContext_factory
-from sage.libs.ntl.all import ZZ, ZZX
+from sage.libs.ntl.ntl_ZZ import ntl_ZZ as ZZ
+from sage.libs.ntl.ntl_ZZX import ntl_ZZX as ZZX
 from sage.matrix.constructor import Matrix
 from sage.rings.padics.factory import Qp
 from sage.rings.big_oh import O as big_oh
@@ -127,8 +128,10 @@ def interval_products(M0, M1, target):
     cdef long dim = M0.nrows()
     sig_on()
     c.restore_c()
+    sig_off()
     set_ntl_matrix_modn_dense(mm0, c, M0)
     set_ntl_matrix_modn_dense(mm1, c, M1)
+    sig_on()
     for t in target:
         targ.push_back(ntl_ZZ(t).x)
     numintervals = len(target)/2

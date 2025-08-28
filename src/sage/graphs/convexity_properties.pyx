@@ -40,6 +40,8 @@ from sage.graphs.distances_all_pairs cimport c_distances_all_pairs
 from cysignals.memory cimport sig_free
 from memory_allocator cimport MemoryAllocator
 from libc.stdint cimport uint32_t
+from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
+from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
 from sage.graphs.base.static_sparse_graph cimport (short_digraph,
                                                    init_short_digraph,
                                                    free_short_digraph,
@@ -506,11 +508,9 @@ def geodetic_closure(G, S):
     each vertex `u \in S`, the algorithm first performs a breadth first search
     from `u` to get distances, and then identifies the vertices of `G` lying on
     a shortest path from `u` to any `v\in S` using a reversal traversal from
-    vertices in `S`.  This algorithm has time complexity in
-    `O(|S|(n + m) + (n + m\log{m}))` for ``SparseGraph``,
-    `O(|S|(n + m) + n^2\log{m})` for ``DenseGraph`` and space complexity in
-    `O(n + m)` (the extra `\log` factor is due to ``init_short_digraph`` being
-    called with ``sort_neighbors=True``).
+    vertices in `S`.  This algorithm has time complexity in `O(|S|(n + m))` for
+    ``SparseGraph``, `O(|S|(n + m) + n^2)` for ``DenseGraph`` and
+    space complexity in `O(n + m)`.
 
     INPUT:
 
@@ -574,6 +574,17 @@ def geodetic_closure(G, S):
         Traceback (most recent call last):
         ...
         NotImplementedError: the geodetic closure of digraphs has not been implemented yet
+
+    The method is valid for immutable graphs::
+
+        sage: G = graphs.RandomGNP(10, .7)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: geodetic_closure(G, [0, 3]) == geodetic_closure(H, [0, 3])
+        True
     """
     if G.is_directed():
         raise NotImplementedError("the geodetic closure of digraphs has not been implemented yet")
@@ -593,13 +604,23 @@ def geodetic_closure(G, S):
 
     cdef int n = G.order()
     cdef int nS = len(S)
-    cdef list int_to_vertex = list(G)
-    cdef dict vertex_to_int = {u: i for i, u in enumerate(int_to_vertex)}
-    cdef list S_int = [vertex_to_int[u] for u in S]
+    cdef list int_to_vertex
+    cdef dict vertex_to_int
 
     # Copy the graph as a short digraph
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        sd = <short_digraph> cg.g
+        int_to_vertex = cg._vertex_to_labels
+        vertex_to_int = cg._vertex_to_int
+    else:
+        int_to_vertex = list(G)
+        vertex_to_int = {u: i for i, u in enumerate(int_to_vertex)}
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+
+    cdef list S_int = [vertex_to_int[u] for u in S]
 
     # Allocate some data structures
     cdef MemoryAllocator mem = MemoryAllocator()
@@ -670,7 +691,8 @@ def geodetic_closure(G, S):
     bitset_free(seen)
     bitset_free(visited)
     bitset_free(closure)
-    free_short_digraph(sd)
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(sd)
 
     return ret
 
@@ -747,6 +769,17 @@ def is_geodetic(G):
         sage: G.add_edge(G.random_edge())
         sage: G.is_geodetic()
         False
+
+    The method is valid for immutable graphs::
+
+        sage: G = graphs.RandomGNP(10, .7)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: G.is_geodetic() == H.is_geodetic()
+        True
     """
     if G.has_multiple_edges():
         return False
@@ -756,15 +789,21 @@ def is_geodetic(G):
 
     # Copy the graph as a short digraph
     cdef int n = G.order()
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G), sort_neighbors=False)
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        sd = <short_digraph> cg.g
+    else:
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G))
 
     # Allocate some data structures
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef uint32_t * distances = <uint32_t *> mem.malloc(n * sizeof(uint32_t))
     cdef uint32_t * waiting_list = <uint32_t *> mem.malloc(n * sizeof(uint32_t))
     if not distances or not waiting_list:
-        free_short_digraph(sd)
+        if not isinstance(G, StaticSparseBackend):
+            free_short_digraph(sd)
         raise MemoryError()
     cdef bitset_t seen
     bitset_init(seen, n)
@@ -813,7 +852,8 @@ def is_geodetic(G):
                 elif distances[u] == distances[v] + 1:
                     # G is not geodetic
                     bitset_free(seen)
-                    free_short_digraph(sd)
+                    if not isinstance(G, StaticSparseBackend):
+                        free_short_digraph(sd)
                     return False
 
                 p_tmp += 1
@@ -822,7 +862,8 @@ def is_geodetic(G):
             waiting_beginning += 1
 
     bitset_free(seen)
-    free_short_digraph(sd)
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(sd)
 
     # The graph is geodetic
     return True

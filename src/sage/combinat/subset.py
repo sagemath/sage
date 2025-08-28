@@ -321,8 +321,10 @@ class Subsets_s(Parent):
             True
             sage: 2 in S
             False
+            sage: {1, 2} in S
+            True
         """
-        if value not in Sets():
+        if value not in Sets() and not isinstance(value, (set, frozenset)):
             return False
         return all(v in self._s for v in value)
 
@@ -504,7 +506,7 @@ class Subsets_s(Parent):
         else:
             return Parent.__call__(self, el)
 
-    def _element_constructor_(self,X):
+    def _element_constructor_(self, X):
         """
         TESTS::
 
@@ -853,7 +855,7 @@ class Subsets_sk(Subsets_s):
         else:
             return self.element_class([lset[i] for i in combination.from_rank(r, n, self._k)])
 
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an example of subset.
 
@@ -1146,7 +1148,7 @@ class SubMultiset_s(Parent):
         else:
             return Parent.__call__(self, el)
 
-    def _element_constructor_(self,X):
+    def _element_constructor_(self, X):
         """
         TESTS::
 

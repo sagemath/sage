@@ -37,6 +37,8 @@ Methods
 
 from memory_allocator cimport MemoryAllocator
 from sage.data_structures.bitset_base cimport *
+from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
+from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
 from sage.graphs.base.static_sparse_graph cimport short_digraph
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph
@@ -199,6 +201,17 @@ def is_long_hole_free(g, certificate=False):
 
         sage: graphs.EmptyGraph().is_long_hole_free()
         True
+
+    Immutable graphs::
+
+        sage: G = graphs.RandomGNP(10, .7)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: G.is_long_hole_free() == H.is_long_hole_free()
+        True
     """
     g._scream_if_not_simple()
 
@@ -211,10 +224,16 @@ def is_long_hole_free(g, certificate=False):
     # documented in the module sage.graphs.base.static_sparse_graph.
     # Vertices are relabeled in 0..n-1
     cdef int n = g.order()
-    cdef list id_label = list(g)
+    cdef list id_label
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd
-    init_short_digraph(sd, g, edge_labelled=False, vertex_list=id_label,
-                       sort_neighbors=False)
+    if isinstance(g, StaticSparseBackend):
+        cg = <StaticSparseCGraph> g._cg
+        sd = <short_digraph> cg.g
+        id_label = cg._vertex_to_labels
+    else:
+        id_label = list(g)
+        init_short_digraph(sd, g, edge_labelled=False, vertex_list=id_label)
 
     # Make a dense copy of the graph for quick adjacency tests
     cdef bitset_t dense_graph
@@ -258,7 +277,8 @@ def is_long_hole_free(g, certificate=False):
 
                     if not res:
                         # We release memory before returning the result
-                        free_short_digraph(sd)
+                        if not isinstance(g, StaticSparseBackend):
+                            free_short_digraph(sd)
                         bitset_free(dense_graph)
 
                         if certificate:
@@ -269,7 +289,8 @@ def is_long_hole_free(g, certificate=False):
         InPath[u] = -1
 
     # Release memory
-    free_short_digraph(sd)
+    if not isinstance(g, StaticSparseBackend):
+        free_short_digraph(sd)
     bitset_free(dense_graph)
 
     if certificate:
@@ -428,6 +449,17 @@ def is_long_antihole_free(g, certificate=False):
 
         sage: graphs.EmptyGraph().is_long_hole_free()
         True
+
+    Immutable graphs::
+
+        sage: G = graphs.RandomGNP(10, .7)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: G.is_long_antihole_free() == H.is_long_antihole_free()
+        True
     """
     g._scream_if_not_simple()
 
@@ -440,9 +472,16 @@ def is_long_antihole_free(g, certificate=False):
     # documented in the module sage.graphs.base.static_sparse_graph.
     # Vertices are relabeled in 0..n-1
     cdef int n = g.order()
-    cdef list id_label = list(g)
+    cdef list id_label
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd
-    init_short_digraph(sd, g, edge_labelled=False, vertex_list=id_label)
+    if isinstance(g, StaticSparseBackend):
+        cg = <StaticSparseCGraph> g._cg
+        sd = <short_digraph> cg.g
+        id_label = cg._vertex_to_labels
+    else:
+        id_label = list(g)
+        init_short_digraph(sd, g, edge_labelled=False, vertex_list=id_label)
 
     # Make a dense copy of the graph for quick adjacency tests
     cdef bitset_t dense_graph
@@ -487,7 +526,8 @@ def is_long_antihole_free(g, certificate=False):
 
                     if not res:
                         # We release memory before returning the result
-                        free_short_digraph(sd)
+                        if not isinstance(g, StaticSparseBackend):
+                            free_short_digraph(sd)
                         bitset_free(dense_graph)
 
                         if certificate:
@@ -498,7 +538,8 @@ def is_long_antihole_free(g, certificate=False):
         InPath[u] = -1
 
     # Release memory
-    free_short_digraph(sd)
+    if not isinstance(g, StaticSparseBackend):
+        free_short_digraph(sd)
     bitset_free(dense_graph)
 
     if certificate:
@@ -528,9 +569,9 @@ def is_weakly_chordal(g, certificate=False):
     contain an induced cycle of length at least 5.
 
     Using is_long_hole_free() and is_long_antihole_free() yields a run time
-    of `O(n+m^2)` for ``SparseGraph`` and `O(n^2\log{m} + m^2)` for
-    ``DenseGraph`` (where `n` is the number of vertices and `m` is the number of
-    edges of the graph).
+    of `O(n+m^2)` for ``SparseGraph`` and `O(n^2 + m^2)` for ``DenseGraph``
+    (where `n` is the number of vertices and `m` is the number of edges of the
+    graph).
 
     EXAMPLES:
 

@@ -1060,7 +1060,7 @@ cdef class ntl_ZZ_pEX():
             [8 1]
         """
         self.c.restore_c()
-        cdef ntl_ZZ_pE r = ntl_ZZ_pE(modulus = self.c)
+        cdef ntl_ZZ_pE r = ntl_ZZ_pE(modulus=self.c)
         sig_on()
         ZZ_pEX_TraceMod(r.x, self.x, modulus.x)
         sig_off()
@@ -1115,7 +1115,7 @@ cdef class ntl_ZZ_pEX():
             []
         """
         self.c.restore_c()
-        cdef ntl_ZZ_pE r = ntl_ZZ_pE(modulus = self.c)
+        cdef ntl_ZZ_pE r = ntl_ZZ_pE(modulus=self.c)
         sig_on()
         ZZ_pEX_resultant(r.x, self.x, other.x)
         sig_off()
@@ -1138,7 +1138,7 @@ cdef class ntl_ZZ_pEX():
             [9 2]
         """
         self.c.restore_c()
-        cdef ntl_ZZ_pE r = ntl_ZZ_pE(modulus = self.c)
+        cdef ntl_ZZ_pE r = ntl_ZZ_pE(modulus=self.c)
         sig_on()
         ZZ_pEX_NormMod(r.x, self.x, modulus.x)
         sig_off()

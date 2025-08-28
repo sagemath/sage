@@ -20,6 +20,53 @@ from sage.libs.flint.fmpz_mat cimport *
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.integer_ring import ZZ
+from sage.libs.flint.fmpz_poly_sage cimport Fmpz_poly
+
+
+cpdef Fmpz_poly chain_poly(list positions):
+    r"""
+    Return the chain polynomial of a poset.
+
+    INPUT:
+
+    - ``positions`` -- a list of sets of integers describing the poset, as
+      given by the lazy attribute ``_leq_storage`` of Hasse diagrams
+
+    OUTPUT: a Flint polynomial in one variable over `\ZZ`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.posets.hasse_cython_flint import chain_poly
+        sage: D = [{0, 1}, {1}]
+        sage: chain_poly(D)
+        3  1 2 1
+        sage: P = posets.TamariLattice(5)
+        sage: H = P._hasse_diagram
+        sage: D = H._leq_storage
+        sage: chain_poly(D)
+        12  1 42 357 1385 3133 4635 4758 3468 1778 612 127 12
+    """
+    cdef Py_ssize_t n = len(positions)
+    cdef Py_ssize_t i, j
+
+    q = Fmpz_poly([0, 1])
+    zero = Fmpz_poly(0)
+    one = Fmpz_poly(1)
+
+    cdef list chain_polys = [zero] * n
+
+    # chain_polys[i] will be the generating function for the
+    # chains with lowest vertex i (in the labelling of the
+    # Hasse diagram).
+    for i in range(n - 1, -1, -1):
+        cpi = q
+        for j in positions[i]:
+            cpi += q * chain_polys[j]
+        chain_polys[i] = cpi
+    total = one
+    for i in range(n):
+        total += chain_polys[i]
+    return total
 
 
 cpdef Matrix_integer_dense moebius_matrix_fast(list positions):

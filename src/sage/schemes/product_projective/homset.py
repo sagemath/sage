@@ -27,6 +27,7 @@ from sage.rings.rational_field import RationalField
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 from sage.schemes.generic.homset import SchemeHomset_points
 
+
 class SchemeHomset_points_product_projective_spaces_ring(SchemeHomset_points):
     r"""
     Set of rational points of a product of projective spaces.
@@ -62,6 +63,7 @@ class SchemeHomset_points_product_projective_spaces_ring(SchemeHomset_points):
             (4 : 2 , 2 : 0)
         """
         return self.codomain()._point(self, v, **kwds)
+
 
 class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_product_projective_spaces_ring):
     def points(self, **kwds):
@@ -193,7 +195,7 @@ class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_pr
                 points = set()
                 # find points from all possible affine patches
                 for I in xmrange([n + 1 for n in X.ambient_space().dimension_relative_components()]):
-                    [Y,phi] = X.affine_patch(I, True)
+                    Y, phi = X.affine_patch(I, True)
                     aff_points = Y.rational_points()
                     for PP in aff_points:
                         points.add(phi(PP))

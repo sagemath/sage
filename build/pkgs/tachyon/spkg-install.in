@@ -52,7 +52,8 @@ if [ -z "$TARGET" ]; then
     sdh_die "Error: Sorry, your platform isn't supported by Tachyon and/or Sage. Exiting..."
 fi
 
-sdh_make "$TARGET"
+# The Makefile ignores LDFLAGS; we include it here so that rpath is set on Linux
+sdh_make "$TARGET" USEPNG=-DUSEPNG PNGLIB="$LDFLAGS -lpng -lz"
 
 echo "Installing the Tachyon binary..."
 cd "$CUR"

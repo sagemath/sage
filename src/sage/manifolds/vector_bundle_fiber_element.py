@@ -20,6 +20,7 @@ AUTHORS:
 
 from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
 
+
 class VectorBundleFiberElement(FiniteRankFreeModuleElement):
     r"""
     Vector in a fiber of a vector bundle at the given point.

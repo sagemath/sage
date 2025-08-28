@@ -161,7 +161,7 @@ class EllipticCurveFactory(UniqueFactory):
 
         sage: R.<x,y> = GF(5)[]
         sage: EllipticCurve(x^3 + x^2 + 2 - y^2 - y*x)
-        Elliptic Curve defined by y^2 + x*y  = x^3 + x^2 + 2 over Finite Field of size 5
+        Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 2 over Finite Field of size 5
 
     We can also create elliptic curves by giving a smooth plane cubic with a rational point::
 
@@ -438,6 +438,9 @@ class EllipticCurveFactory(UniqueFactory):
             # Interpret x as a Cremona or LMFDB label.
             from sage.databases.cremona import CremonaDatabase
             x, data = CremonaDatabase().coefficients_and_data(x)
+            # data is only valid for elliptic curves over QQ.
+            if R not in (None, QQ):
+                data = {}
             # User-provided keywords may override database entries.
             data.update(kwds)
             kwds = data
@@ -457,7 +460,7 @@ class EllipticCurveFactory(UniqueFactory):
 
         return (R, tuple(R(a) for a in x)), kwds
 
-    def create_object(self, version, key, **kwds):
+    def create_object(self, version, key, *, names=None, **kwds):
         r"""
         Create an object from a ``UniqueFactory`` key.
 
@@ -467,18 +470,46 @@ class EllipticCurveFactory(UniqueFactory):
             sage: type(E)
             <class 'sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field_with_category'>
 
+        ``names`` is ignored at the moment, however it is used to support a convenient way to get a generator::
+
+            sage: E.<P> = EllipticCurve(QQ, [1, 3])
+            sage: P
+            (-1 : 1 : 1)
+            sage: E.<P> = EllipticCurve(GF(5), [1, 3])
+            sage: P
+            (4 : 1 : 1)
+
         .. NOTE::
 
             Keyword arguments are currently only passed to the
             constructor for elliptic curves over `\QQ`; elliptic
             curves over other fields do not support them.
+
+        TESTS::
+
+            sage: E = EllipticCurve.create_object(0, (QQ, (1, 2, 0, 1, 2)), rank=2)
+            sage: E = EllipticCurve.create_object(0, (GF(3), (1, 2, 0, 1, 2)), rank=2)
+            Traceback (most recent call last):
+            ...
+            TypeError: unexpected keyword arguments: {'rank': 2}
+
+        Coverage tests::
+
+            sage: E = EllipticCurve(QQ, [2, 5], modular_degree=944, regulator=1)
+            sage: E.modular_degree()
+            944
+            sage: E.regulator()
+            1.00000000000000
         """
         R, x = key
 
         if R is QQ:
             from .ell_rational_field import EllipticCurve_rational_field
             return EllipticCurve_rational_field(x, **kwds)
-        elif isinstance(R, NumberField):
+        elif kwds:
+            raise TypeError(f"unexpected keyword arguments: {kwds}")
+
+        if isinstance(R, NumberField):
             from .ell_number_field import EllipticCurve_number_field
             return EllipticCurve_number_field(R, x)
         elif isinstance(R, sage.rings.abc.pAdicField):
@@ -536,6 +567,7 @@ def EllipticCurve_from_Weierstrass_polynomial(f):
     """
     return EllipticCurve(coefficients_from_Weierstrass_polynomial(f))
 
+
 def coefficients_from_Weierstrass_polynomial(f):
     r"""
     Return the coefficients `[a_1, a_2, a_3, a_4, a_6]` of a cubic in
@@ -547,41 +579,19 @@ def coefficients_from_Weierstrass_polynomial(f):
         sage: R.<w,z> = QQ[]
         sage: coefficients_from_Weierstrass_polynomial(-w^2 + z^3 + 1)
         [0, 0, 0, 0, 1]
+        sage: R.<u,v> = GF(13)[]
+        sage: EllipticCurve(u^2 + 2*v*u + 3*u - (v^3 + 4*v^2 + 5*v + 6))  # indirect doctest
+        Elliptic Curve defined by y^2 + 2*x*y + 3*y = x^3 + 4*x^2 + 5*x + 6 over Finite Field of size 13
     """
-    R = f.parent()
-    cubic_variables = [ x for x in R.gens() if f.degree(x) == 3 ]
-    quadratic_variables = [ y for y in R.gens() if f.degree(y) == 2 ]
-    try:
-        x = cubic_variables[0]
-        y = quadratic_variables[0]
-    except IndexError:
+    from sage.schemes.hyperelliptic_curves.constructor import _parse_multivariate_defining_equation
+    f, h = _parse_multivariate_defining_equation(f)
+    # OUTPUT: tuple (f, h), each of them given as a list of coefficients.
+    if len(f) != 4 or len(h) > 2:
         raise ValueError('polynomial is not in long Weierstrass form')
-
-    a1 = a2 = a3 = a4 = a6 = 0
-    x3 = y2 = None
-    for coeff, mon in f:
-        if mon == x**3:
-            x3 = coeff
-        elif mon == x**2:
-            a2 = coeff
-        elif mon == x:
-            a4 = coeff
-        elif mon == 1:
-            a6 = coeff
-        elif mon == y**2:
-            y2 = -coeff
-        elif mon == x*y:
-            a1 = -coeff
-        elif mon == y:
-            a3 = -coeff
-        else:
-            raise ValueError('polynomial is not in long Weierstrass form')
-
-    if x3 != y2:
+    if not f[3].is_one():
         raise ValueError('the coefficient of x^3 and -y^2 must be the same')
-    elif x3 != 1:
-        a1, a2, a3, a4, a6 = a1/x3, a2/x3, a3/x3, a4/x3, a6/x3
-    return [a1, a2, a3, a4, a6]
+    h += [0] * (2 - len(h))
+    return [h[1], f[2], h[0], f[1], f[0]]
 
 
 def EllipticCurve_from_c4c6(c4, c6):
@@ -593,7 +603,7 @@ def EllipticCurve_from_c4c6(c4, c6):
 
         sage: E = EllipticCurve_from_c4c6(17, -2005)
         sage: E
-        Elliptic Curve defined by y^2  = x^3 - 17/48*x + 2005/864 over Rational Field
+        Elliptic Curve defined by y^2 = x^3 - 17/48*x + 2005/864 over Rational Field
         sage: E.c_invariants()
         (17, -2005)
     """
@@ -1239,7 +1249,7 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
         C, E, fwd_defining_poly, fwd_post, inv_defining_poly, inv_post)
 
 
-def tangent_at_smooth_point(C,P):
+def tangent_at_smooth_point(C, P):
     r"""Return the tangent at the smooth point `P` of projective curve `C`.
 
     INPUT:
@@ -1276,6 +1286,7 @@ def tangent_at_smooth_point(C,P):
         return C.tangents(P)[0]
     except NotImplementedError:
         return C.tangents(P,factor=False)[0]
+
 
 def chord_and_tangent(F, P):
     r"""Return the third point of intersection of a cubic with the tangent at one point.

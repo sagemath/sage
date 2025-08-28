@@ -139,12 +139,12 @@ def jacobian(functions, variables):
         [             0            e^x]
     """
     if isinstance(functions, Matrix) and (functions.nrows() == 1
-                                 or functions.ncols() == 1):
+                                          or functions.ncols() == 1):
         functions = functions.list()
-    elif not (isinstance(functions, (tuple, list)) or isinstance(functions, Vector)):
+    elif not isinstance(functions, (tuple, list, Vector)):
         functions = [functions]
 
-    if not isinstance(variables, (tuple, list)) and not isinstance(variables, Vector):
+    if not isinstance(variables, (tuple, list, Vector)):
         variables = [variables]
 
     return matrix([[diff(f, v) for v in variables] for f in functions])

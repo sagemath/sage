@@ -923,7 +923,7 @@ class Crystals(Category_singleton):
             Export a file, suitable for pdflatex, to ``filename``.
 
             This requires
-            a proper installation of ``dot2tex`` in sage-python. For more
+            a proper installation of ``dot2tex``. For more
             information see the documentation for ``self.latex()``.
 
             EXAMPLES::
@@ -1177,7 +1177,7 @@ class Crystals(Category_singleton):
                 sage: print(C.plot())
                 Graphics object consisting of 17 graphics primitives
             """
-            return self.digraph().plot(edge_labels=True,vertex_size=0,**options)
+            return self.digraph().plot(edge_labels=True, vertex_size=0, **options)
 
         def plot3d(self, **options):
             """

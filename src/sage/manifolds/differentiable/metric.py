@@ -784,8 +784,9 @@ class PseudoRiemannianMetric(TensorField):
             sage: Dig == 0
             True
         """
-        from sage.manifolds.differentiable.levi_civita_connection import \
-                                                           LeviCivitaConnection
+        from sage.manifolds.differentiable.levi_civita_connection import (
+            LeviCivitaConnection,
+        )
         if self._connection is None:
             if latex_name is None:
                 if name is None:
@@ -1800,7 +1801,7 @@ class PseudoRiemannianMetric(TensorField):
         `n`-form associated with `g` (see :meth:`volume_form`) and the indices
         `k_1,\ldots, k_p` are raised with `g`.
 
-        Notice that the hodge star dual requires an orientable manifold
+        Notice that the Hodge star dual requires an orientable manifold
         with a preferred orientation, see
         :meth:`~sage.manifolds.differentiable.manifold.DifferentiableManifold.orientation`
         for details.
@@ -2598,7 +2599,7 @@ class DegenerateMetric(TensorField):
             m
             sage: Int = M.open_subset('Int')
             sage: X.<t,r,th,ph>=Int.chart(r"t r:(0,2*m) th:(0,pi):\theta ph:(0,2*pi):\phi")
-            sage: XM = M.vector_field_module(); e= X.frame()
+            sage: XM = M.vector_field_module(); e = X.frame()
             sage: from sage.manifolds.differentiable.metric import \
             ....:                                        DegenerateMetric
             sage: g = DegenerateMetric(XM, 'g', signature=(2,1,1)); g

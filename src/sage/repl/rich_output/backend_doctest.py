@@ -13,14 +13,14 @@ EXAMPLES::
     The Sage display manager using the doctest backend
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sys
 
@@ -295,7 +295,7 @@ class BackendDoctest(BackendBase):
             assert data.startswith(b'\0\0\0')
             # See http://www.ftyps.com/
             ftyps = [data[i:i+4] for i in range(8, data[3], 4)]
-            del ftyps[1] # version number, not an ftyp
+            del ftyps[1]  # version number, not an ftyp
             expected = [b'avc1', b'iso2', b'mp41', b'mp42']
             assert any(i in ftyps for i in expected)
         elif isinstance(rich_output, OutputVideoFlash):

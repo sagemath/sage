@@ -83,7 +83,7 @@ def frobenius_unram(self, arithmetic=True):
 
 
 @cython.binding(True)
-def norm_unram(self, base = None):
+def norm_unram(self, base=None):
     r"""
     Return the absolute or relative norm of this element.
 
@@ -170,7 +170,7 @@ def norm_unram(self, base = None):
 
 
 @cython.binding(True)
-def trace_unram(self, base = None):
+def trace_unram(self, base=None):
     r"""
     Return the absolute or relative trace of this element.
 

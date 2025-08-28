@@ -37,7 +37,7 @@ MAX_WIDTH = None
 
 class CharacterArt(SageObject):
 
-    def __init__(self, lines=[], breakpoints=[], baseline=None):
+    def __init__(self, lines=[], breakpoints=[], baseline=None) -> None:
         r"""
         Abstract base class for character art.
 
@@ -135,7 +135,7 @@ class CharacterArt(SageObject):
         """
         yield from self._matrix
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -203,38 +203,7 @@ class CharacterArt(SageObject):
         """
         return self._baseline
 
-    def get_breakpoints(self):
-        r"""
-        Return an iterator of breakpoints where the object can be split.
-
-        This method is deprecated, as its output is an implementation detail.
-        The mere breakpoints of a character art element do not reflect the best
-        way to split it if nested structures are involved. For details, see
-        :issue:`29204`.
-
-        For example the expression::
-
-               5    4
-            14x + 5x
-
-        can be split on position 4 (on the ``+``).
-
-        EXAMPLES::
-
-            sage: from sage.typeset.ascii_art import AsciiArt
-            sage: p3 = AsciiArt([" * ", "***"])
-            sage: p5 = AsciiArt(["  *  ", " * * ", "*****"])
-            sage: aa = ascii_art([p3, p5])
-            sage: aa.get_breakpoints()
-            doctest:...: DeprecationWarning: get_breakpoints() is deprecated
-            See https://github.com/sagemath/sage/issues/29204 for details.
-            [6]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(29204, "get_breakpoints() is deprecated")
-        return self._breakpoints
-
-    def _isatty(self):
+    def _isatty(self) -> bool:
         """
         Test whether ``stdout`` is a TTY.
 
@@ -274,7 +243,7 @@ class CharacterArt(SageObject):
         import fcntl
         import termios
         import struct
-        rc = fcntl.ioctl(int(0), termios.TIOCGWINSZ,
+        rc = fcntl.ioctl(0, termios.TIOCGWINSZ,
                          struct.pack('HHHH', sys.stdout.fileno(), 0, 0, 0))
         h, w, hp, wp = struct.unpack('HHHH', rc)
         return w
@@ -301,7 +270,7 @@ class CharacterArt(SageObject):
         # We implement a custom iterator instead of repeatedly using
         # itertools.chain to prepend elements in order to avoid quadratic time
         # complexity
-        class PrependIterator():
+        class PrependIterator:
             """
             Iterator with support for prepending of elements.
             """
@@ -357,7 +326,7 @@ class CharacterArt(SageObject):
         if bp is not None:
             yield bp
 
-    def _split_repr_(self, size):
+    def _split_repr_(self, size) -> str:
         r"""
         Split the representation into chunks of length at most ``size``.
 
@@ -684,9 +653,9 @@ class CharacterArt(SageObject):
         new_baseline = self.__class__._compute_new_baseline(self, Nelt)
 
         if self._baseline is not None and Nelt._baseline is not None:
-            # left treatement
-            for line in self._matrix:
-                new_matrix.append(line + " " * (self._l - len(line)))
+            # left treatment
+            new_matrix.extend(line + " " * (self._l - len(line))
+                              for line in self._matrix)
 
             if new_h > self._h:
                 # |                 new_h > self._h
@@ -695,8 +664,9 @@ class CharacterArt(SageObject):
                 #  | }               :: Nelt._baseline - self._baseline
                 #  | }
                 if new_baseline > self._baseline:
-                    for k in range(new_baseline - self._baseline):
-                        new_matrix.append(" " * self._l)
+                    l_space = " " * self._l
+                    new_matrix.extend(l_space
+                                      for k in range(new_baseline - self._baseline))
                 #  | }              new_h > self._h
                 #  | }              new_h - new_baseline > self._h - self._baseline
                 # ||<-- baseline    number of white lines at the top
@@ -708,7 +678,7 @@ class CharacterArt(SageObject):
                     for _ in range((new_h - new_baseline) - (self._h - self._baseline)):
                         new_matrix.insert(0, " " * self._l)
 
-            # right treatement
+            # right treatment
             i = 0
             if new_h > Nelt._h:
                 # |  }              new_h > Nelt._h
@@ -722,8 +692,8 @@ class CharacterArt(SageObject):
             for j in range(Nelt._h):
                 new_matrix[i + j] += Nelt._matrix[j]
         else:
-            for line in self._matrix:
-                new_matrix.append(line + " " * (self._l - len(line)))
+            new_matrix.extend(line + " " * (self._l - len(line))
+                              for line in self._matrix)
             for i, line_i in enumerate(Nelt._matrix):
                 if i == len(new_matrix):
                     new_matrix.append(" " * self._l + line_i)

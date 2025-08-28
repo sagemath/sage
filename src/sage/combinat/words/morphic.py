@@ -344,8 +344,7 @@ class WordDatatype_morphic(WordDatatype_callable):
             try:
                 for a in self._morphism.image(next(w)):
                     yield self._coding[a]
-                else:
-                    next_w = next(w)
-                    w = chain([next_w], w, self._morphism.image(next_w))
+                next_w = next(w)
+                w = chain([next_w], w, self._morphism.image(next_w))
             except StopIteration:
                 return

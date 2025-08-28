@@ -42,7 +42,7 @@ Functions and methods
 ---------------------
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Peter Dobcsanyi <peter@designtheory.org>
 #       Copyright (C) 2007 David Joyner <wdjoyner@gmail.com>
 #
@@ -51,7 +51,7 @@ Functions and methods
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 from sage.arith.misc import binomial, integer_floor, is_prime_power
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.lazy_import import lazy_import
@@ -69,7 +69,8 @@ lazy_import('sage.rings.finite_rings.finite_field_constructor', 'FiniteField')
 
 BlockDesign = IncidenceStructure
 
-###  utility functions  -------------------------------------------------------
+#  utility functions  -----------------------------------------------------
+
 
 def tdesign_params(t, v, k, L):
     """
@@ -90,6 +91,7 @@ def tdesign_params(t, v, k, L):
     y = binomial(k-1, t-1)
     r = integer_floor(L * x/y)
     return (t, v, b, r, k, L)
+
 
 def are_hyperplanes_in_projective_geometry_parameters(v, k, lmbda, return_parameters=False):
     r"""
@@ -146,7 +148,7 @@ def are_hyperplanes_in_projective_geometry_parameters(v, k, lmbda, return_parame
         ....:         assert are_hyperplanes_in_projective_geometry_parameters(v,k,l+1) is False
         ....:         assert are_hyperplanes_in_projective_geometry_parameters(v,k,l-1) is False
     """
-    import sage.arith.all as arith
+    from sage.arith.misc import gcd
 
     q1 = Integer(v - k)
     q2 = Integer(k - lmbda)
@@ -159,13 +161,14 @@ def are_hyperplanes_in_projective_geometry_parameters(v, k, lmbda, return_parame
     p1,e1 = q1.factor()[0]
     p2,e2 = q2.factor()[0]
 
-    k = arith.gcd(e1,e2)
+    k = gcd(e1,e2)
     d = e1//k
     q = p1**k
     if e2//k != d-1 or lmbda != (q**(d-1)-1)//(q-1):
         return (False,(None,None)) if return_parameters else False
 
     return (True, (q,d)) if return_parameters else True
+
 
 def ProjectiveGeometryDesign(n, d, F, algorithm=None, point_coordinates=True, check=True):
     r"""
@@ -335,9 +338,10 @@ def DesarguesianProjectivePlaneDesign(n, point_coordinates=True, check=True):
     """
     K = FiniteField(n, 'a')
     n2 = n**2
-    relabel = {x:i for i,x in enumerate(K)}
-    Kiter = relabel  # it is much faster to iterate through a dict than through
-                     # the finite field K
+    relabel = {x: i for i, x in enumerate(K)}
+    Kiter = relabel
+    # it is much faster to iterate through a dict than through
+    # the finite field K
 
     # we decompose the (equivalence class) of points [x:y:z] of the projective
     # plane into an affine plane, an affine line and a point. At the same time,
@@ -392,6 +396,7 @@ def DesarguesianProjectivePlaneDesign(n, point_coordinates=True, check=True):
 
     return B
 
+
 def q3_minus_one_matrix(K):
     r"""
     Return a companion matrix in `GL(3, K)` whose multiplicative order is `q^3 - 1`.
@@ -438,6 +443,7 @@ def q3_minus_one_matrix(K):
         if m.multiplicative_order() == q**3 - 1:
             return m
 
+
 def normalize_hughes_plane_point(p, q):
     r"""
     Return the normalized form of point ``p`` as a 3-tuple.
@@ -480,6 +486,7 @@ def normalize_hughes_plane_point(p, q):
                 return (p[0] * k,p[1] * k,p[2] * k)
             else:
                 return ((p[0] * k)**q,(p[1]*k)**q,(p[2]*k)**q)
+
 
 def HughesPlane(q2, check=True):
     r"""
@@ -619,6 +626,7 @@ def HughesPlane(q2, check=True):
                 blcks.append([relabel[normalize_hughes_plane_point(p,q)] for p in l])
     from .bibd import BalancedIncompleteBlockDesign
     return BalancedIncompleteBlockDesign(q2**2+q2+1, blcks, check=check)
+
 
 def projective_plane_to_OA(pplane, pt=None, check=True):
     r"""
@@ -774,6 +782,7 @@ def projective_plane(n, check=True, existence=False):
         return True
     else:
         return DesarguesianProjectivePlaneDesign(n, point_coordinates=False, check=check)
+
 
 def AffineGeometryDesign(n, d, F, point_coordinates=True, check=True):
     r"""
@@ -988,14 +997,14 @@ def HadamardDesign(n):
     """
     from sage.combinat.matrices.hadamard_matrix import hadamard_matrix
     from sage.matrix.constructor import matrix
-    H = hadamard_matrix(n+1) #assumed to be normalised.
+    H = hadamard_matrix(n + 1)  # assumed to be normalised.
     H1 = H.matrix_from_columns(range(1,n+1))
     H2 = H1.matrix_from_rows(range(1,n+1))
     J = matrix(ZZ,n,n,[1]*n*n)
     MS = J.parent()
-    A = MS((H2+J)/2) # convert -1's to 0's; coerce entries to ZZ
+    A = MS((H2+J)/2)  # convert -1's to 0's; coerce entries to ZZ
     # A is the incidence matrix of the block design
-    return IncidenceStructure(incidence_matrix=A,name='HadamardDesign')
+    return IncidenceStructure(incidence_matrix=A, name='HadamardDesign')
 
 
 def Hadamard3Design(n):
@@ -1052,10 +1061,10 @@ def Hadamard3Design(n):
         raise ValueError("The Hadamard design with n = %s does not extend to a three design." % n)
     from sage.combinat.matrices.hadamard_matrix import hadamard_matrix
     from sage.matrix.constructor import matrix, block_matrix
-    H = hadamard_matrix(n) #assumed to be normalised.
+    H = hadamard_matrix(n)  # assumed to be normalised.
     H1 = H.matrix_from_columns(range(1, n))
     J = matrix(ZZ, n, n-1, [1]*(n-1)*n)
-    A1 = (H1+J)/2
-    A2 = (J-H1)/2
-    A = block_matrix(1, 2, [A1, A2]) #the incidence matrix of the design.
+    A1 = (H1 + J) / 2
+    A2 = (J - H1) / 2
+    A = block_matrix(1, 2, [A1, A2])  # the incidence matrix of the design.
     return IncidenceStructure(incidence_matrix=A, name='HadamardThreeDesign')

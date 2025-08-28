@@ -24,7 +24,7 @@ cdef extern from "flint_wrap.h":
     void qsieve_init_poly_next(qs_t qs_inf, slong i) noexcept
     void qsieve_compute_C(fmpz_t C, qs_t qs_inf, qs_poly_t poly) noexcept
     void qsieve_do_sieving(qs_t qs_inf, unsigned char * sieve, qs_poly_t poly) noexcept
-    void qsieve_do_sieving2(qs_t qs_inf, unsigned char * seive, qs_poly_t poly) noexcept
+    void qsieve_do_sieving2(qs_t qs_inf, unsigned char * sieve, qs_poly_t poly) noexcept
     slong qsieve_evaluate_candidate(qs_t qs_inf, ulong i, unsigned char * sieve, qs_poly_t poly) noexcept
     slong qsieve_evaluate_sieve(qs_t qs_inf, unsigned char * sieve, qs_poly_t poly) noexcept
     slong qsieve_collect_relations(qs_t qs_inf, unsigned char * sieve) noexcept

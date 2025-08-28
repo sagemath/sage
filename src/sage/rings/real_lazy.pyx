@@ -174,7 +174,7 @@ cdef class LazyField(Field):
             True
         """
         if isinstance(R, type):
-            if R in [int, long]:
+            if R is int:
                 from sage.sets.pythonclass import Set_PythonType
                 return LazyWrapperMorphism(Set_PythonType(R), self)
         elif R.is_exact():

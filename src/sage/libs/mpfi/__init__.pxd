@@ -26,7 +26,7 @@ cdef extern from "mpfi.h":
     int mpfi_set_z(mpfi_ptr, mpz_t)
     int mpfi_set_q(mpfi_ptr, mpq_t)
     int mpfi_set_fr(mpfi_ptr, mpfr_srcptr)
-    int mpfi_set_str(mpfi_ptr, char *, int)
+    int mpfi_set_str(mpfi_ptr, const char *, int)
 
     # combined initialization and assignment functions
     int mpfi_init_set(mpfi_ptr, mpfi_srcptr)
@@ -36,7 +36,7 @@ cdef extern from "mpfi.h":
     int mpfi_init_set_z(mpfi_ptr, mpz_srcptr)
     int mpfi_init_set_q(mpfi_ptr, mpq_srcptr)
     int mpfi_init_set_fr(mpfi_ptr, mpfr_srcptr)
-    int mpfi_init_set_str(mpfi_ptr, char *, int)
+    int mpfi_init_set_str(mpfi_ptr, const char *, int)
 
     # swapping two intervals
     void mpfi_swap(mpfi_ptr, mpfi_ptr)

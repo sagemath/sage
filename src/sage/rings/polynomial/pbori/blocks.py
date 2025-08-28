@@ -1,8 +1,13 @@
 import sys
 from itertools import chain, islice
 
-from .pbori import VariableBlock
-from .PyPolyBoRi import (Ring, Polynomial, VariableFactory, Variable)
+from sage.rings.polynomial.pbori.pbori import (
+    Polynomial,
+    Variable,
+    VariableBlock,
+    VariableFactory,
+)
+from sage.rings.polynomial.pbori.PyPolyBoRi import Ring
 
 
 class Block:

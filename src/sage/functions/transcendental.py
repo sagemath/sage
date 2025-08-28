@@ -16,7 +16,6 @@ Number-theoretic functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import math
-import sys
 
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc import increase_recursion_limit
@@ -391,7 +390,7 @@ class Function_zetaderiv(GinacFunction):
         """
         return _mpmath_utils_call(_mpmath_zeta, x, 1, n, parent=parent)
 
-    def _method_arguments(self, k, x, **args):
+    def _method_arguments(self, k, x):
         r"""
         TESTS::
 
@@ -449,7 +448,7 @@ def zeta_symmetric(s):
     - I copied the definition of xi from
       http://web.viu.ca/pughg/RiemannZeta/RiemannZetaLong.html
     """
-    if not (isinstance(s, ComplexNumber) or isinstance(s, RealNumber)):
+    if not isinstance(s, (ComplexNumber, RealNumber)):
         s = ComplexField()(s)
 
     R = s.parent()

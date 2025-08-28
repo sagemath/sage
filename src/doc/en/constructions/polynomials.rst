@@ -42,23 +42,24 @@ Another approach to this:
     sage: a = S.gen()
     sage: a^20062006
     80*a
-    sage: print(gap.eval("R:= PolynomialRing( GF(97))"))
+    sage: libgap.eval("R:= PolynomialRing( GF(97))")
     GF(97)[x_1]
-    sage: print(gap.eval("i:= IndeterminatesOfPolynomialRing(R)"))
+    sage: libgap.eval("i:= IndeterminatesOfPolynomialRing(R)")
     [ x_1 ]
-    sage: gap.eval("x:= i[1];; f:= x;;")
-    ''
-    sage: print(gap.eval("PowerMod( R, x, 20062006, x^3+7 );"))
+    sage: libgap.eval("x:= i[1]"); libgap.eval("f:= x;")
+    x_1
+    x_1
+    sage: libgap.eval("PowerMod( R, x, 20062006, x^3+7 );")
     Z(97)^41*x_1
-    sage: print(gap.eval("PowerMod( R, x, 20062006, x^3+7 );"))
+    sage: libgap.eval("PowerMod( R, x, 20062006, x^3+7 );")
     Z(97)^41*x_1
-    sage: print(gap.eval("PowerMod( R, x, 2006200620062006, x^3+7 );"))
+    sage: libgap.eval("PowerMod( R, x, 2006200620062006, x^3+7 );")
     Z(97)^4*x_1^2
     sage: a^2006200620062006
     43*a^2
-    sage: print(gap.eval("PowerMod( R, x, 2006200620062006, x^3+7 );"))
+    sage: libgap.eval("PowerMod( R, x, 2006200620062006, x^3+7 );")
     Z(97)^4*x_1^2
-    sage: print(gap.eval("Int(Z(97)^4)"))
+    sage: libgap.eval("Int(Z(97)^4)")
     43
 
 .. index::
@@ -136,11 +137,11 @@ interface.
 
 ::
 
-    sage: R = gap.PolynomialRing(gap.GF(2)); R
-    PolynomialRing( GF(2), ["x_1"] )
+    sage: R = libgap.PolynomialRing(GF(2)); R
+    GF(2)[x_1]
     sage: i = R.IndeterminatesOfPolynomialRing(); i
     [ x_1 ]
-    sage: x_1 = i[1]
+    sage: x_1 = i[0]
     sage: f = (x_1^3 - x_1 + 1)*(x_1 + x_1^2); f
     x_1^5+x_1^4+x_1^3+x_1
     sage: g = (x_1^3 - x_1 + 1)*(x_1 + 1); g

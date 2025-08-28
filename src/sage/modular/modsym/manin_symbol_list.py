@@ -37,6 +37,7 @@ import sage.modular.modsym.ghlist as ghlist
 from sage.rings.integer import Integer
 from sage.structure.parent import Parent
 from sage.misc.persist import register_unpickle_override
+from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 
@@ -283,6 +284,7 @@ class ManinSymbolList(Parent):
         except KeyError:
             return -1
 
+    @cached_method
     def manin_symbol_list(self):
         """
         Return all the Manin symbols in ``self`` as a list.
@@ -312,13 +314,7 @@ class ManinSymbolList(Parent):
             [X^2,(3,1)],
             [X^2,(3,2)]]
         """
-        import copy
-        try:
-            return copy.copy(self.__manin_symbol_list)
-        except AttributeError:
-            self.__manin_symbol_list = [self.manin_symbol(i)
-                                        for i in range(len(self))]
-        return copy.copy(self.__manin_symbol_list)
+        return [self.manin_symbol(i) for i in range(len(self))]
 
     list = manin_symbol_list
 

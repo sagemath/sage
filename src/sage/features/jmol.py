@@ -36,7 +36,7 @@ class JmolDataJar(StaticFile):
             filename='JmolData.jar',
             search_path=jmol_search_path,
             spkg='jmol',
-            type='standard',
+            type='optional',
             description="Java viewer for chemical structures in 3D")
 
 

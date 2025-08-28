@@ -114,37 +114,39 @@ class FreeBosonsLieConformalAlgebra(GradedLieConformalAlgebra):
             if ngens is None:
                 ngens = gram_matrix.dimensions()[0]
             try:
-                assert (gram_matrix in MatrixSpace(R,ngens,ngens))
+                assert (gram_matrix in MatrixSpace(R, ngens, ngens))
             except AssertionError:
                 raise ValueError("the gram_matrix should be a symmetric " +
-                    "{0} x {0} matrix, got {1}".format(ngens,gram_matrix))
+                    "{0} x {0} matrix, got {1}".format(ngens, gram_matrix))
             if not gram_matrix.is_symmetric():
                 raise ValueError("the gram_matrix should be a symmetric " +
-                    "{0} x {0} matrix, got {1}".format(ngens,gram_matrix))
+                    "{0} x {0} matrix, got {1}".format(ngens, gram_matrix))
         else:
             if ngens is None:
                 ngens = 1
             gram_matrix = identity_matrix(R, ngens, ngens)
 
         latex_names = None
-        if (names is None) and (index_set is None):
+        if names is None and index_set is None:
             names = 'alpha'
             latex_names = tuple(r'\alpha_{%d}' % i
                                 for i in range(ngens)) + ('K',)
-        names,index_set = standardize_names_index_set(names=names,
-                                                      index_set=index_set,
-                                                      ngens=ngens)
-        bosondict = { (i,j): {1: {('K',0): gram_matrix[index_set.rank(i),
-                    index_set.rank(j)]}} for i in index_set for j in index_set}
+        names, index_set = standardize_names_index_set(names=names,
+                                                       index_set=index_set,
+                                                       ngens=ngens)
+        bosondict = {(i, j): {1: {('K', 0): gram_matrix[index_set.rank(i),
+                                                        index_set.rank(j)]}}
+                     for i in index_set for j in index_set}
 
-        GradedLieConformalAlgebra.__init__(self,R,bosondict,names=names,
+        GradedLieConformalAlgebra.__init__(self, R, bosondict,
+                                           names=names,
                                            latex_names=latex_names,
                                            index_set=index_set,
                                            central_elements=('K',))
 
         self._gram_matrix = gram_matrix
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation.
 
@@ -154,7 +156,7 @@ class FreeBosonsLieConformalAlgebra(GradedLieConformalAlgebra):
             The free Bosons Lie conformal algebra with generators (alpha, K) over Algebraic Real Field
         """
         return "The free Bosons Lie conformal algebra with generators {}"\
-                " over {}".format(self.gens(),self.base_ring())
+            " over {}".format(self.gens(), self.base_ring())
 
     def gram_matrix(self):
         r"""

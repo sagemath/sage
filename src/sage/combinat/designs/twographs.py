@@ -70,7 +70,7 @@ class TwoGraph(IncidenceStructure):
     :mod:`~sage.combinat.designs.twographs` module.
     """
     def __init__(self, points=None, blocks=None, incidence_matrix=None,
-            name=None, check=False, copy=True):
+                 name=None, check=False, copy=True):
         r"""
         Constructor of the class.
 
@@ -243,13 +243,13 @@ def is_twograph(T) -> bool:
         for x in B:
             v_to_blocks[x].add(B)
 
-    def has_triple(x_y_z):
+    def has_triple(x_y_z) -> bool:
         x, y, z = x_y_z
         return bool(v_to_blocks[x] & v_to_blocks[y] & v_to_blocks[z])
 
     # Check that every quadruple contains an even number of triples
     for quad in combinations(range(T.num_points()), 4):
-        if sum(map(has_triple, combinations(quad, 3))) % 2 == 1:
+        if sum(map(has_triple, combinations(quad, 3))) % 2:
             return False
 
     return True

@@ -213,10 +213,12 @@ class Polyhedron_QQ(Polyhedron_base):
 
     @cached_method(do_pickle=True)
     def ehrhart_polynomial(self, engine=None, variable='t', verbose=False,
-            dual=None, irrational_primal=None, irrational_all_primal=None,
-            maxdet=None, no_decomposition=None, compute_vertex_cones=None,
-            smith_form=None, dualization=None, triangulation=None,
-            triangulation_max_height=None, **kwds):
+                           dual=None, irrational_primal=None,
+                           irrational_all_primal=None, maxdet=None,
+                           no_decomposition=None, compute_vertex_cones=None,
+                           smith_form=None, dualization=None,
+                           triangulation=None,
+                           triangulation_max_height=None, **kwds):
         r"""
         Return the Ehrhart polynomial of this polyhedron.
 
@@ -348,12 +350,17 @@ class Polyhedron_QQ(Polyhedron_base):
             sage: Q = loads(dumps(P))
             sage: Q.ehrhart_polynomial.is_in_cache()
             True
+
+            sage: L = Polyhedron(vertices=[[QQ(0)]])
+            sage: L.ehrhart_polynomial()
+            1
         """
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        from sage.rings.rational_field import QQ
+        R = PolynomialRing(QQ, variable)
+
         # check if ``self`` is compact and has vertices in ZZ
         if self.is_empty():
-            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            from sage.rings.rational_field import QQ
-            R = PolynomialRing(QQ, variable)
             return R.zero()
 
         if not self.is_compact():
@@ -361,10 +368,15 @@ class Polyhedron_QQ(Polyhedron_base):
 
         if any(not v.is_integral() for v in self.vertex_generator()):
             raise TypeError("the polytope has nonintegral vertices, use ehrhart_quasipolynomial with backend 'normaliz'")
+
+        if self.dimension() == 0:
+            return R.one()
+
         # Passes to specific latte or normaliz subfunction depending on engine
         if engine is None:
             # set default engine to latte
             engine = 'latte'
+
         if engine == 'latte':
             poly = self._ehrhart_polynomial_latte(verbose, dual,
             irrational_primal, irrational_all_primal, maxdet,

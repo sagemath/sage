@@ -753,8 +753,6 @@ cdef class RealField_class(sage.rings.abc.RealField):
             return QQtoRR(QQ, self)
         elif (S is RDF or S is float) and self._prec <= 53:
             return double_toRR(S, self)
-        elif S is long:
-            return int_toRR(long, self)
         elif S is int:
             return int_toRR(int, self)
         elif isinstance(S, RealField_class) and S.prec() >= self._prec:
@@ -909,16 +907,16 @@ cdef class RealField_class(sage.rings.abc.RealField):
         """
         return 1
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
-        Return a list of generators.
+        Return a tuple of generators.
 
         EXAMPLES::
 
             sage: RR.gens()
-            [1.00000000000000]
+            (1.00000000000000,)
         """
-        return [self.gen()]
+        return (self.gen(),)
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
@@ -1437,6 +1435,33 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
             sage: RealNumber('1_3.1e-32_45')
             1.31000000000000e-3244
+
+        Test conversion from base different from `10`::
+
+            sage: RR('0xabc')
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert '0xabc' to a real number
+            sage: RR("0x123.e1", base=0)  # rel tol 1e-12
+            291.878906250000
+            sage: RR("0x123.@1", base=0)  # rel tol 1e-12
+            4656.00000000000
+            sage: RR("1Xx", base=36)  # rel tol 1e-12
+            2517.00000000000
+            sage: RR("-1Xx@-10", base=62)  # rel tol 1e-12
+            -7.08805492048139e-15
+            sage: RR("1", base=1)
+            Traceback (most recent call last):
+            ...
+            ValueError: base (=1) must be 0 or between 2 and 62
+            sage: RR("1", base=-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: base (=-1) must be 0 or between 2 and 62
+            sage: RR("1", base=63)
+            Traceback (most recent call last):
+            ...
+            ValueError: base (=63) must be 0 or between 2 and 62
         """
         if x is not None:
             self._set(x, base)
@@ -1485,6 +1510,8 @@ cdef class RealNumber(sage.structure.element.RingElement):
         # Real Numbers are supposed to be immutable.
         cdef RealField_class parent
         parent = self._parent
+        if base != 0 and (base < 2 or base > 62):
+            raise ValueError(f"base (={base}) must be 0 or between 2 and 62")
         if isinstance(x, RealNumber):
             if isinstance(x, RealLiteral):
                 s = (<RealLiteral>x).literal
@@ -2630,7 +2657,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         return x
 
     # Bit shifting
-    def _lshift_(RealNumber self, n):
+    def _lshift_(RealNumber self, Integer n):
         """
         Return ``self * (2^n)`` for an integer ``n``.
 
@@ -2641,6 +2668,8 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(1.5)._lshift_(2)
             6.00000000000000
         """
+        if n < 0:
+            return self._rshift_(-n)
         cdef RealNumber x
         if n > sys.maxsize:
             raise OverflowError("n (=%s) must be <= %s" % (n, sys.maxsize))
@@ -2660,6 +2689,15 @@ cdef class RealNumber(sage.structure.element.RingElement):
             Traceback (most recent call last):
             ...
             TypeError: unsupported operands for <<
+
+        TESTS::
+
+            sage: 32r << 2.5
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operands for <<
+            sage: 1.5 << -2
+            0.375000000000000
         """
         if not isinstance(x, RealNumber):
             raise TypeError("unsupported operands for <<")
@@ -2668,7 +2706,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         except TypeError:
             raise TypeError("unsupported operands for <<")
 
-    def _rshift_(RealNumber self, n):
+    def _rshift_(RealNumber self, Integer n):
         """
         Return ``self / (2^n)`` for an integer ``n``.
 
@@ -2679,6 +2717,8 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(1.5)._rshift_(2)
             0.375000000000000
         """
+        if n < 0:
+            return self._lshift_(-n)
         if n > sys.maxsize:
             raise OverflowError("n (=%s) must be <= %s" % (n, sys.maxsize))
         cdef RealNumber x = self._new()
@@ -2697,6 +2737,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
             Traceback (most recent call last):
             ...
             TypeError: unsupported operands for >>
+
+        TESTS::
+
+            sage: 1.5 >> -2
+            6.00000000000000
         """
         if not isinstance(x, RealNumber):
             raise TypeError("unsupported operands for >>")
@@ -5370,7 +5415,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: r.algebraic_dependency(5)
             x^2 - 2
         """
-        return sage.arith.misc.algdep(self, n)
+        return sage.arith.misc.algebraic_dependency(self, n)
 
     algdep = algebraic_dependency
 

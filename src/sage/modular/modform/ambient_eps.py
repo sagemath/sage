@@ -83,7 +83,7 @@ TESTS::
 
 from sage.rings.integer import Integer
 
-import sage.modular.arithgroup.all as arithgroup
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_constructor
 import sage.modular.dirichlet as dirichlet
 import sage.modular.modsym.modsym as modsym
 from sage.misc.cachefunc import cached_method
@@ -93,6 +93,7 @@ from .ambient import ModularFormsAmbient
 from . import ambient_R
 from . import cuspidal_submodule
 from . import eisenstein_submodule
+
 
 class ModularFormsAmbient_eps(ModularFormsAmbient):
     """
@@ -132,7 +133,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             character = character.change_ring(base_ring)
         if base_ring.characteristic() != 0:
             raise ValueError("the base ring must have characteristic 0.")
-        group = arithgroup.Gamma1(character.modulus())
+        group = Gamma1_constructor(character.modulus())
         base_ring = character.base_ring()
         ModularFormsAmbient.__init__(self, group, weight, base_ring, character, eis_only)
 
@@ -287,3 +288,18 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             return constructor.ModularForms(self.character().restrict(N), self.weight(), self.base_ring(), prec=self.prec())
         else:
             raise ValueError("N (=%s) must be a divisor or a multiple of the level of self (=%s)" % (N, self.level()))
+
+    def _pari_init_(self):
+        """
+        Conversion to Pari.
+
+        EXAMPLES::
+
+            sage: m = ModularForms(DirichletGroup(17).0^2, 2)
+            sage: pari.mfdim(m)
+            3
+            sage: pari.mfparams(m)
+            [17, 2, Mod(9, 17), 4, t^4 + 1]
+        """
+        from sage.libs.pari import pari
+        return pari.mfinit([self.level(), self.weight(), self.character()], 4)

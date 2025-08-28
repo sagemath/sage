@@ -90,6 +90,7 @@ def interval_roots(p, rts, prec):
 
     return irts
 
+
 def intervals_disjoint(intvs):
     """
     Given a list of complex intervals, check whether they are pairwise
@@ -137,9 +138,7 @@ def intervals_disjoint(intvs):
                 row = []
             prev_imag = y_imag
             row.append(y)
-        if not row_disjoint():
-            return False
-        return True
+        return row_disjoint()
 
     for x in intvs:
         x_real = x.real()
@@ -150,9 +149,7 @@ def intervals_disjoint(intvs):
         prev_real = x_real
         column.append((x.imag(), x))
 
-    if not column_disjoint():
-        return False
-    return True
+    return column_disjoint()
 
 
 def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):

@@ -469,11 +469,9 @@ class CharacterArtFactory(SageObject):
         top = separator._h - bot
         for obj in iterable:
             bot1 = obj.get_baseline()
-            if bot1 > bot:
-                bot = bot1
+            bot = max(bot1, bot)
             top1 = obj._h - bot1
-            if top1 > top:
-                top = top1
+            top = max(top1, top)
         # bot + top is the new height
 
         def padded_line(obj, i):

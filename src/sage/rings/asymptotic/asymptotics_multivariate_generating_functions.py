@@ -343,9 +343,8 @@ class FractionWithFactoredDenominator(RingElement):
 
         from sage.rings.semirings.non_negative_integer_semiring import NN
         self._numerator = parent._numerator_ring(numerator)
-        self._denominator_factored = list(
-            (parent._denominator_ring(d), NN(n))
-            for d, n in denominator_factored)
+        self._denominator_factored = [(parent._denominator_ring(d), NN(n))
+                                      for d, n in denominator_factored]
 
         R = self.denominator_ring
         if numerator in R and reduce:
@@ -353,7 +352,7 @@ class FractionWithFactoredDenominator(RingElement):
             numer = R(self._numerator)
             df = self._denominator_factored
             new_df = []
-            for (q, e) in df:
+            for q, e in df:
                 ee = e
                 quo, rem = numer.quo_rem(q)
                 while rem == 0 and ee > 0:
@@ -502,10 +501,10 @@ class FractionWithFactoredDenominator(RingElement):
             sage: F.dimension()
             2
         """
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
         from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
         R = self.denominator_ring
-        if isinstance(R, PolynomialRing_general) or isinstance(R, MPolynomialRing_base):
+        if isinstance(R, (PolynomialRing_generic, MPolynomialRing_base)):
             return R.ngens()
         raise NotImplementedError('only polynomial rings are supported as base')
 
@@ -1922,7 +1921,7 @@ class FractionWithFactoredDenominator(RingElement):
                 for k in range(N):
                     L.append(sum([(-1) ** l * gamma((2 * k + v * l + 1) / v) /
                                   (factorial(l) * factorial(2 * k + v * l)) *
-                                  DD[(k, l)] for l in range(0, 2 * k + 1)]))
+                                  DD[(k, l)] for l in range(2 * k + 1)]))
                 chunk = (a ** (-1 / v) / (pi * v) *
                          sum([alpha[d - 1] ** (-(2 * k + 1) / v) *
                               L[k] * asy_var ** (-(2 * k + 1) / v)
@@ -1935,7 +1934,7 @@ class FractionWithFactoredDenominator(RingElement):
                                   (zeta ** (k + v * l + 1) +
                                    (-1) ** (k + v * l) *
                                    zeta ** (-(k + v * l + 1))) *
-                                  DD[(k, l)] for l in range(0, k + 1)]))
+                                  DD[(k, l)] for l in range(k + 1)]))
                 chunk = (abs(a) ** (-1 / v) / (2 * pi * v) *
                          sum([alpha[d - 1] ** (-(k + 1) / v) *
                               L[k] * asy_var ** (-(k + 1) / v)
@@ -1981,7 +1980,7 @@ class FractionWithFactoredDenominator(RingElement):
             for k in range(N):
                 L.append(sum([DD[(0, k, l)] / ((-1) ** k * 2 ** (l + k) *
                                                factorial(l) * factorial(l + k))
-                              for l in range(0, 2 * k + 1)]))
+                              for l in range(2 * k + 1)]))
             chunk = sum([(2 * pi) ** ((1 - d) / Integer(2)) *
                          a.determinant() ** (-ZZ.one() / Integer(2)) *
                          alpha[d - 1] ** ((ZZ.one() - d) / Integer(2) - k) *
@@ -3165,9 +3164,9 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
             p = numerator
             q = R(denominator)
 
-            from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+            from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
             from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
-            if isinstance(R, PolynomialRing_general) or isinstance(R, MPolynomialRing_base):
+            if isinstance(R, (PolynomialRing_generic, MPolynomialRing_base)):
                 if not R(q).is_unit():
                     # Factor denominator
                     try:
@@ -3233,11 +3232,10 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
         from sage.rings.fraction_field import FractionField_generic
         if isinstance(P, FractionField_generic):
             B = P.base()
-            from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+            from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
             from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
-            if isinstance(B, PolynomialRing_general) or isinstance(B, MPolynomialRing_base):
-                if self.base().has_coerce_map_from(B):
-                    return True
+            if isinstance(B, (PolynomialRing_generic, MPolynomialRing_base)) and self.base().has_coerce_map_from(B):
+                return True
 
         if self.base().has_coerce_map_from(P):
             return True
@@ -3501,7 +3499,7 @@ class FractionWithFactoredDenominatorSum(list):
 
         # Compute the sum's numerator and denominator.
         R = self.denominator_ring
-        summy = sum((f.quotient() for f in self))
+        summy = sum(f.quotient() for f in self)
         numer = summy.numerator()
         denom = R(summy.denominator())
 
@@ -4032,7 +4030,7 @@ def diff_op_simple(A, B, AB_derivs, x, v, a, N):
     various natural numbers `e, k, l` that depend on `v` and `N`.
 
     Here `DD` is a specific linear differential operator that depends
-    on `a` and `v` , `A` and `B` are symbolic functions, and `AB_derivs`
+    on `a` and `v` , `A` and `B` are symbolic functions, and ``AB_derivs``
     contains all the derivatives of `A` and `B` evaluated at `p` that are
     necessary for the computation.
 

@@ -674,7 +674,7 @@ cdef class ntl_GF2X():
         d.x = GF2X_diff(self.x)
         return d
 
-    def reverse(self, int hi = -2):
+    def reverse(self, int hi=-2):
         """
         Return reverse of a[0]..a[hi] (hi >= -1)
         hi defaults to deg(a)

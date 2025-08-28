@@ -114,7 +114,7 @@ The initial version of this code was developed alongside [BSZ2019]_.
 
 from scipy.spatial import Voronoi
 from sage.arith.functions import lcm
-from sage.arith.misc import GCD, algdep
+from sage.arith.misc import GCD, algebraic_dependency
 from sage.ext.fast_callable import fast_callable
 from sage.graphs.graph import Graph
 from sage.groups.matrix_gps.finitely_generated import MatrixGroup
@@ -358,7 +358,7 @@ def differential_basis_baker(f):
             return None
     from sage.geometry.polyhedron.constructor import Polyhedron
 
-    D = {(k[0], k[1]): v for k, v in f.dict().items()}
+    D = {(k[0], k[1]): v for k, v in f.monomial_coefficients().items()}
     P = Polyhedron(D)
     kT = k["t"]
     # here we check the additional genericity conditions: that the polynomials
@@ -617,7 +617,7 @@ class RiemannSurface:
         sage: f = Y^2+X*Y+phi*Y-(X^3-X^2-2*phi*X+phi)
         sage: S = RiemannSurface(f,prec=prec, differentials=[1])
         sage: tau = S.riemann_matrix()[0, 0]
-        sage: tau.algdep(6).degree() == 2
+        sage: tau.algebraic_dependency(6).degree() == 2
         True
     """
 
@@ -1010,7 +1010,7 @@ class RiemannSurface:
         INPUT:
 
         - ``edge`` -- tuple ``(z_start, z_end)`` indicating the straight line
-          over which to perform the homotopy continutation
+          over which to perform the homotopy continuation
 
         OUTPUT:
 
@@ -2292,7 +2292,7 @@ class RiemannSurface:
             sage: m = S.matrix_of_integral_values(B)
             sage: parent(m)
             Full MatrixSpace of 1 by 2 dense matrices over Complex Field with 53 bits of precision
-            sage: (m[0,0]/m[0,1]).algdep(3).degree() # curve is CM, so the period is quadratic
+            sage: (m[0,0]/m[0,1]).algebraic_dependency(3).degree() # curve is CM, so the period is quadratic
             2
 
         .. NOTE::
@@ -2412,7 +2412,7 @@ class RiemannSurface:
 
             sage: x = polygen(QQ)
             sage: K.<a> = NumberField(x^2 - x + 2)
-            sage: all(len(m.algdep(6).roots(K)) > 0 for m in M.list())
+            sage: all(len(m.algebraic_dependency(6).roots(K)) > 0 for m in M.list())
             True
         """
         PeriodMatrix = self.period_matrix()
@@ -2689,7 +2689,7 @@ class RiemannSurface:
             d = 1
             while True:
                 d += 1
-                dep = algdep(alpha, d, height_bound=10**d)
+                dep = algebraic_dependency(alpha, d, height_bound=10**d)
                 if dep and dep(alpha) < epscomp:
                     return dep
 
@@ -2972,7 +2972,7 @@ class RiemannSurface:
         mp_list = [reparameterize_differential_minpoly(mp, z_start) for mp in mp_list]
 
         # Depending on whether we have reparameterized about infinity or not,
-        # we initialise some values we will need in the calculation, inclduing
+        # we initialise some values we will need in the calculation, including
         # the function `initalize', which at a given value of zbar, calculates
         # the starting value for the i-th differential so it can be iterated
         # from via homotopy continuation.
@@ -3013,7 +3013,7 @@ class RiemannSurface:
                 return newg
 
         # As multiple calls of the minimal polynomial and it's derivative will
-        # be required for the homotopy continuaiton, we create fast-callable
+        # be required for the homotopy continuation, we create fast-callable
         # versions of these.
         fc_mp_list = [fast_callable(mp, domain=self._CC) for mp in mp_list]
         fc_dmp_list = [
@@ -3024,7 +3024,7 @@ class RiemannSurface:
             prec = self._prec
         # tau here is playing the role of the desired error.
         tau = self._RR(2)**(-prec + 3)
-        one = self._RR(1)
+        one = self._RR.one()
         la = self._RR.pi() / 2
 
         # Cutoffs are used to allow us to not have to integrate as close into
@@ -3044,7 +3044,7 @@ class RiemannSurface:
             A = PolynomialRing(self._CC, "xyz")
             aes = []
             for mp in mp_list:
-                d = mp.dict()
+                d = mp.monomial_coefficients()
                 mp = sum(
                     [
                         d[k] * CCzg.gen(0)**k[0] * CCzg.gen(1)**k[1]
@@ -3869,8 +3869,8 @@ class RiemannSurface:
                 ys = []
                 for gi in gis:
                     # This test is a bit clunky, it surely can be made more efficient.
-                    if len(ys):
-                        ers = min([gi(y, r).abs() for y in ys])
+                    if ys:
+                        ers = min(gi(y, r).abs() for y in ys)
                     else:
                         ers = 1
 

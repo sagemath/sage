@@ -316,8 +316,9 @@ help it look nicer in the browser?
     - 1/10*(sqrt(5) - 3)*log(2*x^2 + x*(sqrt(5) - 1) + 2)/(sqrt(5) - 1)
     + 1/5*log(x + 1)
 
-Some integrals are a little tricky, of course. Sage tries hard to integrate using Maxima, Giac and Sympy::
+Some integrals are a little tricky, of course. Sage tries hard to integrate using Maxima, Sympy, and (optionally, if installed) Giac. The following can only be integrated by Giac::
 
+    sage: # needs sage.libs.giac
     sage: integral(1/(1+x^10),x)
     ...1/20*(sqrt(5) + 1)*arctan((4*x + sqrt(-2*sqrt(5) + 10))/(sqrt(5) + 1))
     + 1/20*(sqrt(5) + 1)*arctan((4*x - sqrt(-2*sqrt(5) + 10))/(sqrt(5) + 1))

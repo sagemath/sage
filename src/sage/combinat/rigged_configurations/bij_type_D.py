@@ -238,8 +238,7 @@ class KRTToRCBijectionTypeD(KRTToRCBijectionTypeA):
         if tableau_height <= n - 2:
             max_width2 = self.ret_rig_con[n - 2].insert_cell(max_width)
             max_width = self.ret_rig_con[n - 1].insert_cell(max_width)
-            if max_width2 < max_width:
-                max_width = max_width2
+            max_width = min(max_width2, max_width)
         elif pos_val <= self.cur_dims[0][0]:
             # Special case when the height will become n
             max_width = self.ret_rig_con[self.cur_dims[0][0] - 1].insert_cell(max_width)
@@ -603,8 +602,7 @@ class RCToKRTBijectionTypeD(RCToKRTBijectionTypeA):
                 temp_size = self.cur_partitions[n - 2][ell[n - 2]]
                 if ell[n - 1] is not None:
                     last_size = self.cur_partitions[n - 1][ell[n - 1]]
-                    if temp_size > last_size:
-                        last_size = temp_size
+                    last_size = max(temp_size, last_size)
                 else:
                     b = n
             else:

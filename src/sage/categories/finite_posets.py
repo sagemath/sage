@@ -1479,8 +1479,7 @@ class FinitePosets(CategoryWithAxiom):
             max_orbit_size = 0
             for orb in self.rowmotion_orbits():
                 orb_plots = []
-                if len(orb) > max_orbit_size:
-                    max_orbit_size = len(orb)
+                max_orbit_size = max(len(orb), max_orbit_size)
                 for oi in orb:
                     oiplot = self.order_ideal_plot(oi)
                     orb_plots.append(oiplot)
@@ -1565,8 +1564,7 @@ class FinitePosets(CategoryWithAxiom):
             max_orbit_size = 0
             for orb in self.toggling_orbits(vs):
                 orb_plots = []
-                if len(orb) > max_orbit_size:
-                    max_orbit_size = len(orb)
+                max_orbit_size = max(len(orb), max_orbit_size)
                 for oi in orb:
                     oiplot = self.order_ideal_plot(oi)
                     orb_plots.append(oiplot)
@@ -1932,26 +1930,33 @@ class FinitePosets(CategoryWithAxiom):
                 False
             """
             from sage.combinat.posets.lattices import LatticePoset
+            from sage.categories.finite_lattice_posets import FiniteLatticePosets
             if facade is None:
                 facade = self._is_facade
+
             if as_ideals:
                 from sage.misc.call import attrcall
                 from sage.sets.set import Set
                 ideals = [Set(self.order_ideal(antichain))
                           for antichain in self.antichains()]
-                return LatticePoset((ideals, attrcall("issubset")),
-                                    facade=facade)
-            else:
-                from sage.misc.cachefunc import cached_function
-                antichains = [tuple(a) for a in self.antichains()]
+                T = LatticePoset((ideals, attrcall("issubset")),
+                                 facade=facade,
+                                 category=FiniteLatticePosets().Distributive())
+                return T
 
-                @cached_function
-                def is_above(a, xb):
-                    return any(self.is_lequal(xa, xb) for xa in a)
+            from sage.misc.cachefunc import cached_function
+            antichains = [tuple(a) for a in self.antichains()]
 
-                def compare(a, b):
-                    return all(is_above(a, xb) for xb in b)
-                return LatticePoset((antichains, compare), facade=facade)
+            @cached_function
+            def is_above(a, xb):
+                return any(self.is_lequal(xa, xb) for xa in a)
+
+            def compare(a, b):
+                return all(is_above(a, xb) for xb in b)
+
+            T = LatticePoset((antichains, compare), facade=facade,
+                             category=FiniteLatticePosets().Distributive())
+            return T
 
         @abstract_method(optional=True)
         def antichains(self):

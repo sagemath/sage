@@ -54,9 +54,9 @@
 # export CPUTHREADS=8                                                          #
 # export RAMTHREADS=8                                                          #
 # export RAMTHREADS_DOCBUILD=8                                                 #
-# . .ci/update-env.sh                                                          #
-# . .ci/setup-make-parallelity.sh                                              #
-# .ci/build-docker.sh                                                          #
+# . docker/update-env.sh                                                          #
+# . docker/setup-make-parallelity.sh                                              #
+# docker/build-docker.sh                                                          #
 #                                                                              #
 # Now you can push the relevant images to the Docker Hub:                      #
 #                                                                              #
@@ -90,7 +90,7 @@ RUN ln -s /usr/bin/sage /usr/bin/sagemath
 # We need gcc/g++ and libstdc++-10-dev to allow compilation of cython at run-time from the notebook.
 # We also install sudo for the sage user, see below.
 RUN apt-get -qq update \
-    && apt-get -qq install -y --no-install-recommends gfortran gcc g++ libstdc++-10-dev sudo openssl \
+    && apt-get -qq install -y --no-install-recommends gfortran gcc g++ libstdc++-10-dev sudo openssl bzip2 libbz2-dev pkg-config\
     && apt-get -qq clean \
     && rm -r /var/lib/apt/lists/*
 # Sage refuses to build as root, so we add a "sage" user that can sudo without a password.

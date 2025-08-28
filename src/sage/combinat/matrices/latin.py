@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.groups sage.modules
 r"""
-Latin Squares
+Latin squares
 
 A *latin square* of order `n` is an `n \times n` array such that
 each symbol `s \in \{ 0, 1, \dots, n-1\}` appears precisely once in each
@@ -728,10 +728,7 @@ class LatinSquare:
             return False
 
         # By necessity self must be a partial latin square:
-        if not self.is_partial_latin_square():
-            return False
-
-        return True
+        return self.is_partial_latin_square()
 
     def permissable_values(self, r, c):
         """
@@ -1212,8 +1209,8 @@ class LatinSquare:
 
                     dlx_rows.append([c_OFFSET, r_OFFSET, xy_OFFSET])
 
-                    if max_column_nr < max(c_OFFSET, r_OFFSET, xy_OFFSET):
-                        max_column_nr = max(c_OFFSET, r_OFFSET, xy_OFFSET)
+                    max_column_nr = max(max_column_nr, c_OFFSET,
+                                        r_OFFSET, xy_OFFSET)
 
         # We will have missed some columns. We
         # have to add 'dummy' rows so that the C++ DLX solver will find
@@ -2444,7 +2441,7 @@ def p3_group_bitrade_generators(p):
     EXAMPLES::
 
         sage: from sage.combinat.matrices.latin import *
-        sage: p3_group_bitrade_generators(3)
+        sage: p3_group_bitrade_generators(3)  # random output
         ((2,6,7)(3,8,9),
          (1,2,3)(4,7,8)(5,6,9),
          (1,9,2)(3,7,4)(5,8,6),

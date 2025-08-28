@@ -20,9 +20,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.manifolds.local_frame import TrivializationFrame
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.manifolds.local_frame import TrivializationFrame
+
 
 class Trivialization(UniqueRepresentation, SageObject):
     r"""
@@ -301,6 +302,7 @@ class Trivialization(UniqueRepresentation, SageObject):
         return self._frame._coframe
 
 # *****************************************************************************
+
 
 class TransitionMap(SageObject):
     r"""

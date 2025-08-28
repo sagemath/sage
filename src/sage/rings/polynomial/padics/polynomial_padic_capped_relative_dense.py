@@ -21,11 +21,10 @@ import sage.rings.padics.precision_error as precision_error
 from sage.rings.fraction_field_element import FractionFieldElement
 import copy
 
-from sage.libs.pari.all import pari, pari_gen
+from sage.libs.pari import pari
+from cypari2.gen import Gen as pari_gen
 from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity
-
-lazy_import('sage.libs.ntl.all', 'ZZX')
 
 min = misc.min
 ZZ = sage.rings.integer_ring.ZZ
@@ -51,7 +50,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
         Check that :issue:`13620` has been fixed::
 
             sage: f = R.zero()
-            sage: R(f.dict())
+            sage: R(f.monomial_coefficients())
             0
 
         Check that :issue:`29829` has been fixed::
@@ -78,6 +77,8 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             self._normalized = True
             self._list = None
             return
+
+        from sage.libs.ntl.ntl_ZZX import ntl_ZZX as ZZX
 
         # First we list the types that are turned into Polynomials
         if isinstance(x, ZZX):
@@ -1257,9 +1258,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             else:
                 if valaddeds[i] < compval:
                     return False
-        if valaddeds[deg] != -self._valbase:
-            return False
-        return True
+        return valaddeds[deg] == -self._valbase
 
     def newton_slopes(self, repetition=True):
         """

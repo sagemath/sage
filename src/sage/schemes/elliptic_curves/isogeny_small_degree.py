@@ -45,6 +45,7 @@ from sage.misc.cachefunc import cached_function
 # only finitely many `j`-invariants each. are also implemented.
 ##########################################################################
 
+
 @cached_function
 def Fricke_polynomial(l):
     r"""
@@ -813,6 +814,7 @@ def isogenies_3(E, minimal_models=True):
 
 # 6 special cases: `l` = 5, 7, 13 and `j` = 0, 1728.
 
+
 def isogenies_5_0(E, minimal_models=True):
     r"""
     Return a list of all the 5-isogenies with domain ``E`` when the
@@ -884,15 +886,15 @@ def isogenies_5_0(E, minimal_models=True):
           from Elliptic Curve defined by y^2 + y = x^3
                over Number Field in a with defining polynomial x^6 - 320*x^3 - 320
             to Elliptic Curve defined by
-               y^2 + y = x^3 + (241565/32*a^5-362149/48*a^4+180281/24*a^3-9693307/4*a^2+14524871/6*a-7254985/3)*x
-                          + (1660391123/192*a^5-829315373/96*a^4+77680504/9*a^3-66622345345/24*a^2+33276655441/12*a-24931615912/9)
+               y^2 + y = x^3 + (643/8*a^5-15779/48*a^4-32939/24*a^3-71989/2*a^2+214321/6*a-112115/3)*x
+                          + (2901961/96*a^5+4045805/48*a^4+12594215/18*a^3-30029635/6*a^2+15341626/3*a-38944312/9)
                over Number Field in a with defining polynomial x^6 - 320*x^3 - 320,
          Isogeny of degree 5
           from Elliptic Curve defined by y^2 + y = x^3
                over Number Field in a with defining polynomial x^6 - 320*x^3 - 320
             to Elliptic Curve defined by
-               y^2 + y = x^3 + (47519/32*a^5-72103/48*a^4+32939/24*a^3-1909753/4*a^2+2861549/6*a-1429675/3)*x
-                          + (-131678717/192*a^5+65520419/96*a^4-12594215/18*a^3+5280985135/24*a^2-2637787519/12*a+1976130088/9)
+               y^2 + y = x^3 + (-1109/8*a^5-53873/48*a^4-180281/24*a^3-14491/2*a^2+35899/6*a-43745/3)*x
+                          + (-17790679/96*a^5-60439571/48*a^4-77680504/9*a^3+1286245/6*a^2-4961854/3*a-73854632/9)
                over Number Field in a with defining polynomial x^6 - 320*x^3 - 320]
     """
     F = E.base_field()
@@ -915,6 +917,7 @@ def isogenies_5_0(E, minimal_models=True):
     iso = E.isomorphism_to(Ew)
     isogs = [isog * iso for isog in isogs]
     return isogs
+
 
 def isogenies_5_1728(E, minimal_models=True):
     r"""
@@ -1050,6 +1053,7 @@ def isogenies_5_1728(E, minimal_models=True):
         isogs += [Ew.isogeny(x**2+beta*x+gamma, model=model) for beta,gamma in zip(betas,gammas)]
     isogs = [isog * iso for isog in isogs]
     return isogs
+
 
 def isogenies_7_0(E, minimal_models=True):
     r"""
@@ -1191,6 +1195,7 @@ def isogenies_7_0(E, minimal_models=True):
     isogs = [isog * iso for isog in isogs]
     return isogs
 
+
 def isogenies_7_1728(E, minimal_models=True):
     r"""
     Return list of all 7-isogenies from E when the j-invariant is 1728.
@@ -1289,6 +1294,7 @@ def isogenies_7_1728(E, minimal_models=True):
         isogs += [Ew.isogeny(k.monic(), model=model) for k in kers]
     isogs = [isog * iso for isog in isogs]
     return isogs
+
 
 def isogenies_13_0(E, minimal_models=True):
     """
@@ -1599,6 +1605,7 @@ def isogenies_13_1728(E, minimal_models=True):
 
 hyperelliptic_primes = [11, 17, 19, 23, 29, 31, 41, 47, 59, 71]
 
+
 @cached_function
 def _hyperelliptic_isogeny_data(l):
     r"""
@@ -1809,7 +1816,7 @@ def Psi2(l):
 
     R = PolynomialRing(QQ, ('x', 'u', 'v'))
     x = R.gen(0)
-    return sum((-1)**i * x**(d-i) * R(s[i].lift()) for i in range(0,d+1))
+    return sum((-1)**i * x**(d-i) * R(s[i].lift()) for i in range(d+1))
 
 
 def isogenies_prime_degree_genus_plus_0(E, l=None, minimal_models=True):

@@ -172,16 +172,44 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             Hyperelliptic Curve over Rational Field defined by y^2 = 4*x^5 - 30*x^3 + 45*x - 22
             sage: C = HyperellipticCurve(f,names='u,v'); C
             Hyperelliptic Curve over Rational Field defined by v^2 = 4*u^5 - 30*u^3 + 45*u - 22
+            sage: C = HyperellipticCurve(x^5 + 1, x^3 + 2); C
+            Hyperelliptic Curve over Rational Field defined by y^2 + (x^3 + 2)*y = x^5 + 1
         """
 
         f, h = self._hyperelliptic_polynomials
         R = self.base_ring()
         y = self._printing_ring.gen()
         x = self._printing_ring.base_ring().gen()
-        if h == 0:
+        if h.is_zero():
             return "Hyperelliptic Curve over %s defined by %s = %s" % (R, y**2, f(x))
-        else:
-            return "Hyperelliptic Curve over %s defined by %s + %s = %s" % (R, y**2, h(x)*y, f(x))
+        return "Hyperelliptic Curve over %s defined by %s + %s = %s" % (R, y**2, h(x)*y, f(x))
+
+    def _latex_(self):
+        r"""
+        LaTeX representation of hyperelliptic curves.
+
+        EXAMPLES::
+
+            sage: P.<x> = QQ[]
+            sage: f = 4*x^5 - 30*x^3 + 45*x - 22
+            sage: C = HyperellipticCurve(f); latex(C)
+            \text{Hyperelliptic Curve over $\Bold{Q}$ defined by $y^{2} = 4 x^{5} - 30 x^{3} + 45 x - 22$}
+            sage: C = HyperellipticCurve(f,names='u,v'); latex(C)
+            \text{Hyperelliptic Curve over $\Bold{Q}$ defined by $v^{2} = 4 u^{5} - 30 u^{3} + 45 u - 22$}
+            sage: C = HyperellipticCurve(x^5 + 1, x^2 + 3); latex(C)
+            \text{Hyperelliptic Curve over $\Bold{Q}$ defined by $y^{2} + \left(x^{2} + 3\right) y = x^{5} + 1$}
+        """
+
+        f, h = self._hyperelliptic_polynomials
+        R = self.base_ring()
+        y = self._printing_ring.gen()
+        x = self._printing_ring.base_ring().gen()
+        if h.is_zero():
+            return (fr'\text{{Hyperelliptic Curve over ${R._latex_()}$ '
+                    f'defined by ${(y**2)._latex_()} = {(f(x))._latex_()}$}}')
+        return (fr'\text{{Hyperelliptic Curve over ${R._latex_()}$ '
+                f'defined by ${(y**2)._latex_()} + {(h(x)*y)._latex_()} = '
+                f'{(f(x))._latex_()}$}}')
 
     def hyperelliptic_polynomials(self, K=None, var='x'):
         """
@@ -602,7 +630,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         from .constructor import HyperellipticCurve
         return HyperellipticCurve(fnew, 0, names=self._names, PP=self._PP)
 
-    def has_odd_degree_model(self):
+    def has_odd_degree_model(self) -> bool:
         r"""
         Return ``True`` if an odd degree model of ``self`` exists over the
         field of definition; ``False`` otherwise.
@@ -641,7 +669,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             Hyperelliptic Curve over Finite Field in a of size 3^2
             defined by y^2 + x^10*y = x^3 + x + 2
             sage: D = magma(C); D                                                       # needs sage.rings.finite_rings
-            Hyperelliptic Curve defined by y^2 + (x^10)*y = x^3 + x + 2 over GF(3^2)
+            Hyperelliptic Curve defined by y^2 + x^10*y = x^3 + x + 2 over GF(3^2)
             sage: D.sage()                                                              # needs sage.rings.finite_rings
             Hyperelliptic Curve over Finite Field in a of size 3^2
             defined by y^2 + x^10*y = x^3 + x + 2

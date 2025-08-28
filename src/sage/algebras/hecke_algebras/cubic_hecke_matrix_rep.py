@@ -491,7 +491,7 @@ class CubicHeckeMatrixRep(Matrix_generic_dense):
         - ``item`` -- an :class:`AbsIrreducibeRep` specifying an
           absolute irreducible representation of the cubic Hecke algebra;
           alternatively, it can be specified by list index
-          (see :meth:`internal_index` repectively :meth:`gap_index`)
+          (see :meth:`internal_index` respectively :meth:`gap_index`)
 
         OUTPUT:
 
@@ -708,7 +708,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
             sage: MS = c1.matrix().parent()
             sage: MS._test_category()   # indirect doctest
         """
-        return None
+        return
 
     def __reduce__(self):
         r"""
@@ -732,7 +732,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
           :class:`~sage.algebras.hecke_algebras.cubic_hecke_algebra.CubicHeckeAlgebra`
           or an element whose parent is a :class:`MatrixSpace`
 
-        EXAMLPES::
+        EXAMPlES::
 
             sage: import sage.algebras.hecke_algebras.cubic_hecke_matrix_rep as chmr
             sage: CHA3.<c1, c2> = algebras.CubicHecke(3)
@@ -786,7 +786,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
         This method needs to be overloaded here since
         :class:`MatrixSpace` has an own implementation of it.
 
-        EXAMLPES::
+        EXAMPLES::
 
             sage: import sage.algebras.hecke_algebras.cubic_hecke_matrix_rep as chmr
             sage: CHA2.<c1> = algebras.CubicHecke(2)
@@ -894,8 +894,8 @@ class CubicHeckeMatrixSpace(MatrixSpace):
             matri += cf2 * matr
             matri += cf3 * matr**2
             d1, d2 = matr.dimensions()
-            matrI = matrix(original_base_ring, d1, d2, lambda i, j: original_base_ring(matri[i, j]))
-            return matrI
+            return matrix(original_base_ring, d1, d2,
+                          lambda i, j: original_base_ring(matri[i, j]))
 
         if n == 2:
             if representation_type.is_split():

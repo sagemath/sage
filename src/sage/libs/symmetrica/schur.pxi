@@ -28,7 +28,6 @@ cdef extern from 'symmetrica/def.h':
     INT t_HOMSYM_MONOMIAL(OP a, OP b)
     INT t_HOMSYM_ELMSYM(OP a, OP b)
 
-
     INT t_POWSYM_SCHUR(OP a, OP b)
     INT t_SCHUR_POWSYM(OP a, OP b)
     INT t_POWSYM_HOMSYM(OP a, OP b)

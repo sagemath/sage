@@ -31,6 +31,7 @@ from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from copy import copy
 
+
 class ExtendedCode(AbstractLinearCode):
     r"""
     Representation of an extended code.
@@ -133,8 +134,8 @@ class ExtendedCode(AbstractLinearCode):
         EXAMPLES::
 
             sage: C = LinearCode(matrix(GF(2),[[1,0,0,1,1],\
-                                               [0,1,0,1,0],\
-                                               [0,0,1,1,1]]))
+            ....:                              [0,1,0,1,0],\
+            ....:                              [0,0,1,1,1]]))
             sage: C.parity_check_matrix()
             [1 0 1 0 1]
             [0 1 0 1 1]
@@ -258,8 +259,8 @@ class ExtendedCodeExtendedMatrixEncoder(Encoder):
         EXAMPLES::
 
             sage: C = LinearCode(matrix(GF(2),[[1,0,0,1,1],\
-                                               [0,1,0,1,0],\
-                                               [0,0,1,1,1]]))
+            ....:                              [0,1,0,1,0],\
+            ....:                              [0,0,1,1,1]]))
             sage: Ce = codes.ExtendedCode(C)
             sage: E = codes.encoders.ExtendedCodeExtendedMatrixEncoder(Ce)
             sage: E.generator_matrix()

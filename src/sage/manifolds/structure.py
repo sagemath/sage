@@ -23,18 +23,18 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.fast_methods import Singleton
 from sage.manifolds.chart import Chart, RealChart
-from sage.manifolds.scalarfield_algebra import ScalarFieldAlgebra
-from sage.manifolds.manifold_homset import TopologicalManifoldHomset
 from sage.manifolds.differentiable.chart import DiffChart, RealDiffChart
-from sage.manifolds.differentiable.scalarfield_algebra import \
-                                                         DiffScalarFieldAlgebra
-from sage.manifolds.differentiable.manifold_homset import \
-                                                   DifferentiableManifoldHomset
+from sage.manifolds.differentiable.manifold_homset import DifferentiableManifoldHomset
+from sage.manifolds.differentiable.scalarfield_algebra import DiffScalarFieldAlgebra
+from sage.manifolds.manifold_homset import TopologicalManifoldHomset
+from sage.manifolds.scalarfield_algebra import ScalarFieldAlgebra
+from sage.misc.fast_methods import Singleton
 
 # This is a slight abuse by making this a Singleton, but there is no
 #    need to have different copies of this object.
+
+
 class TopologicalStructure(Singleton):
     """
     The structure of a topological manifold over a general topological field.
@@ -81,6 +81,7 @@ class RealTopologicalStructure(Singleton):
             Category of manifolds over Real Field with 53 bits of precision
         """
         return cat
+
 
 class DifferentialStructure(Singleton):
     """
@@ -130,6 +131,7 @@ class RealDifferentialStructure(Singleton):
         """
         return cat
 
+
 class PseudoRiemannianStructure(Singleton):
     """
     The structure of a pseudo-Riemannian manifold.
@@ -152,6 +154,7 @@ class PseudoRiemannianStructure(Singleton):
             Category of manifolds over Real Field with 53 bits of precision
         """
         return cat
+
 
 class RiemannianStructure(Singleton):
     """
@@ -176,6 +179,7 @@ class RiemannianStructure(Singleton):
         """
         return cat
 
+
 class LorentzianStructure(Singleton):
     """
     The structure of a Lorentzian manifold.
@@ -198,6 +202,7 @@ class LorentzianStructure(Singleton):
             Category of manifolds over Real Field with 53 bits of precision
         """
         return cat
+
 
 class DegenerateStructure(Singleton):
     """

@@ -275,7 +275,7 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 
 # -------------------------------------------------
 # Partition tuple - element class
@@ -942,9 +942,9 @@ class PartitionTuple(CombinatorialElement):
             sage: PartitionTuple([[2,1],[1],[1,1,1]]).cells()
             [(0, 0, 0), (0, 0, 1), (0, 1, 0), (1, 0, 0), (2, 0, 0), (2, 1, 0), (2, 2, 0)]
         """
-        return [(c,a,b) for c in range(len(self)) for (a,b) in self[c].cells()]
+        return [(c, a, b) for c in range(len(self)) for a, b in self[c].cells()]
 
-    def content(self, k,r,c, multicharge):
+    def content(self, k, r, c, multicharge):
         r"""
         Return the content of the cell.
 
@@ -977,7 +977,7 @@ class PartitionTuple(CombinatorialElement):
         """
         return multicharge[k]-r+c
 
-    def content_tableau(self,multicharge):
+    def content_tableau(self, multicharge):
         """
         Return the tableau which has (k,r,c)th entry equal to the content
         ``multicharge[k]-r+c`` of this cell.
@@ -1191,7 +1191,7 @@ class PartitionTuple(CombinatorialElement):
         g._garnir_cell = (comp,row,col)
         return g
 
-    def top_garnir_tableau(self,e,cell):
+    def top_garnir_tableau(self, e, cell):
         r"""
         Return the most dominant *standard* tableau which dominates the
         corresponding Garnir tableau and has the same residue that has shape
@@ -1268,7 +1268,7 @@ class PartitionTuple(CombinatorialElement):
         from .tableau_tuple import StandardTableauTuple
         return StandardTableauTuple(t)
 
-    def arm_length(self, k,r,c):
+    def arm_length(self, k, r, c):
         """
         Return the length of the arm of cell ``(k, r, c)`` in ``self``.
 
@@ -1298,7 +1298,7 @@ class PartitionTuple(CombinatorialElement):
         except IndexError:
             raise ValueError("The cell %s is not in the diagram" % ((k,r,c),))
 
-    def leg_length(self, k,r,c):
+    def leg_length(self, k, r, c):
         """
         Return the length of the leg of cell ``(k, r, c)`` in ``self``.
 
@@ -1343,7 +1343,7 @@ class PartitionTuple(CombinatorialElement):
         """
         return mu.level() <= self.level() and all(self[c].contains(mu[c]) for c in range(len(mu)))
 
-    def hook_length(self, k,r,c):
+    def hook_length(self, k, r, c):
         r"""
         Return the length of the hook of cell ``(k, r, c)`` in the partition.
 
@@ -1392,7 +1392,8 @@ class PartitionTuple(CombinatorialElement):
             sage: PartitionTuple([[1,1],[4,3],[2,1,1]]).removable_cells()
             [(0, 1, 0), (1, 0, 3), (1, 1, 2), (2, 0, 1), (2, 2, 0)]
         """
-        return [(k,r,c) for k in range(len(self)) for (r,c) in self[k].removable_cells()]
+        return [(k, r, c) for k in range(len(self))
+                for r, c in self[k].removable_cells()]
 
     corners = removable_cells  # for compatibility with partitions
 
@@ -1410,7 +1411,8 @@ class PartitionTuple(CombinatorialElement):
             sage: PartitionTuple([[1,1],[4,3],[2,1,1]]).addable_cells()
             [(0, 0, 1), (0, 2, 0), (1, 0, 4), (1, 1, 3), (1, 2, 0), (2, 0, 2), (2, 1, 1), (2, 3, 0)]
         """
-        return [(k,r,c) for k in range(len(self)) for (r,c) in self[k].addable_cells()]
+        return [(k, r, c) for k in range(len(self))
+                for r, c in self[k].addable_cells()]
 
     outside_corners = addable_cells  # for compatibility with partitions
 
@@ -1485,7 +1487,7 @@ class PartitionTuple(CombinatorialElement):
         m = 0
         for comp in self:
             for row in comp:
-                gens.extend([(c, c+1) for c in range(m+1, m+row)])
+                gens.extend((c, c + 1) for c in range(m + 1, m + row))
                 m += row
         gens.append(list(range(1, self.size()+1)))  # to ensure we get a subgroup of Sym_n
         return PermutationGroup(gens)
@@ -1504,12 +1506,12 @@ class PartitionTuple(CombinatorialElement):
         m = 0
         for comp in self:
             for row in comp:
-                gens.extend(list(range(m + 1, m + row)))
+                gens.extend(range(m + 1, m + row))
                 m += row
         return gens
 
     @cached_method
-    def _initial_degree(self,e,multicharge):
+    def _initial_degree(self, e, multicharge):
         r"""
         Return the Brundan-Kleshchev-Wang degree of the initial tableau
         of shape ``self``.
@@ -1536,9 +1538,9 @@ class PartitionTuple(CombinatorialElement):
             deg = sum(mu._initial_degree(e) for mu in self)
         I = IntegerModRing(e)
         multires = [I(k) for k in multicharge]
-        for (k,r,c) in self.cells():
-            res = I(multicharge[k]-r+c)
-            for l in range(k+1, self.level()):
+        for k, r, c in self.cells():
+            res = I(multicharge[k] - r + c)
+            for l in range(k + 1, self.level()):
                 if res == multires[l]:
                     deg += 1
         return deg
@@ -1695,7 +1697,7 @@ class PartitionTuple(CombinatorialElement):
         """
         block = {}
         Ie = IntegerModRing(e)
-        for (k,r,c) in self.cells():
+        for k, r, c in self.cells():
             i = Ie(multicharge[k] + c - r)
             block[i] = block.get(i, 0) + 1
         return block

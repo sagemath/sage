@@ -1,5 +1,5 @@
 """
-Coxeter Groups
+Coxeter groups
 """
 # ***************************************************************************
 #       Copyright (C) 2010 Nicolas Thiery <nthiery at users.sf.net>
@@ -157,4 +157,4 @@ def CoxeterGroup(data, implementation='reflection', base_ring=None, index_set=No
 
 
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.root_system.coxeter_group', 'CoxeterGroupAsPermutationGroup',  ReflectionGroup)
+register_unpickle_override('sage.combinat.root_system.coxeter_group', 'CoxeterGroupAsPermutationGroup', ReflectionGroup)

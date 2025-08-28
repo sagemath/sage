@@ -834,7 +834,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
             True
         """
         from sage.rings.infinity import infinity
-        scalarproducts_to_order = {0: 2,  1: 3,  2: 4,  3: 6}
+        scalarproducts_to_order = {0: 2, 1: 3, 2: 4, 3: 6}
         from sage.graphs.graph import Graph
         coxeter_diagram = Graph(multiedges=False)
         I = self.index_set()

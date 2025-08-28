@@ -199,8 +199,6 @@ functionalities are made possible through FOSS projects such as
 * `OpenBLAS <https://www.openblas.net/>`_  --- an optimized BLAS library.
 * `Pari/GP <https://pari.math.u-bordeaux.fr>`_ --- a computer algebra
   system for fast computations in number theory.
-* `Pynac <http://pynac.sagemath.org>`_ --- a modified version of GiNaC
-  that replaces the dependency on CLN by Python.
 * `R <http://www.r-project.org>`_ --- a language and environment for
   statistical computing and graphics.
 * And many more too numerous to list here.

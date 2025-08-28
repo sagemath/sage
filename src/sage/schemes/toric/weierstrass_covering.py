@@ -255,9 +255,9 @@ def WeierstrassMap(polynomial, variables=None):
         result = vector(ZZ, result)
         result.set_immutable()
         return result
-    X_dict = {homogenize(e, 2): v for e, v in X.dict().items()}
-    Y_dict = {homogenize(e, 3): v for e, v in Y.dict().items()}
-    Z_dict = {homogenize(e, 1): v for e, v in Z.dict().items()}
+    X_dict = {homogenize(e, 2): v for e, v in X.monomial_coefficients().items()}
+    Y_dict = {homogenize(e, 3): v for e, v in Y.monomial_coefficients().items()}
+    Z_dict = {homogenize(e, 1): v for e, v in Z.monomial_coefficients().items()}
     # shift to nonnegative exponents if necessary
     min_deg = [0] * R.ngens()
     for var in variables:

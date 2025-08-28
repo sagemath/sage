@@ -278,7 +278,7 @@ cdef class WeakValueDictionary(dict):
     the dictionary values. However, the actual deletion is postponed till
     after the iteration over the dictionary has finished. Hence, when the
     callbacks are executed, the values which the callback belongs to has
-    already been overridded by a new value. Therefore, the callback does not
+    already been overridden by a new value. Therefore, the callback does not
     delete the item::
 
         sage: for k in D:    # indirect doctest
@@ -404,7 +404,7 @@ cdef class WeakValueDictionary(dict):
             True
         """
         out = WeakValueDictionary()
-        for k,v in self.items():
+        for k, v in self.items():
             out[deepcopy(k, memo)] = v
         return out
 
@@ -624,7 +624,7 @@ cdef class WeakValueDictionary(dict):
             ...
             KeyError: 'popitem(): weak value dictionary is empty'
         """
-        for k,v in self.items():
+        for k, v in self.items():
             del self[k]
             return k, v
         raise KeyError('popitem(): weak value dictionary is empty')

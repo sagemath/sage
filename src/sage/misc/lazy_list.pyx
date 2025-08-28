@@ -117,7 +117,7 @@ empty_lazy_list.cache = []
 
 
 def lazy_list(data=None, initial_values=None, start=None, stop=None, step=None,
-        update_function=None):
+              update_function=None):
     r"""
     Return a lazy list.
 
@@ -224,7 +224,7 @@ def lazy_list(data=None, initial_values=None, start=None, stop=None, step=None,
         assert callable(update_function)
         return lazy_list_from_update_function(update_function, cache)
 
-    if isinstance(data, (tuple,list)):
+    if isinstance(data, (tuple, list)):
         data = cache + list(data)
         l = lazy_list_generic(data, start=0, stop=len(data), step=1)
     elif isinstance(data, lazy_list_generic):
@@ -823,8 +823,8 @@ cdef class lazy_list_generic():
             stop = self.start + stop * self.step
         if stop > self.stop:
             stop = self.stop
-        if stop != PY_SSIZE_T_MAX and stop%step != start%step:
-            stop = stop - (stop-start)%step + step
+        if stop != PY_SSIZE_T_MAX and stop % step != start % step:
+            stop = stop - (stop - start) % step + step
 
         if stop <= start:
             return empty_lazy_list
@@ -1087,7 +1087,7 @@ cdef class lazy_list_from_update_function(lazy_list_generic):
           The update function should take as input a list and make it longer
           (using either the methods ``append`` or ``extend``). If after a call
           to the update function the list of values is shorter a
-          :exc:`RuntimeError` will occurr. If no value is added then the lazy list
+          :exc:`RuntimeError` will occur. If no value is added then the lazy list
           is considered finite.
 
         - ``cache`` -- an optional list to be used as the cache. Be careful that
@@ -1137,7 +1137,7 @@ cdef class lazy_list_from_update_function(lazy_list_generic):
             stop         2147483647             # 32-bit
             step         1
         """
-        cdef Py_ssize_t l,ll
+        cdef Py_ssize_t l, ll
         l = len(self.cache)
         while l <= i:
             self.update_function(self.cache)

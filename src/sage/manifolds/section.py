@@ -19,11 +19,12 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.structure.element import ModuleElementWithMutability
 from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
 from sage.tensor.modules.tensor_with_indices import TensorWithIndices
-from sage.rings.integer import Integer
-from sage.rings.integer_ring import ZZ
+
 
 class Section(ModuleElementWithMutability):
     r"""
@@ -2212,8 +2213,10 @@ class Section(ModuleElementWithMutability):
             return self.copy()
         ###
         # General case:
-        from sage.tensor.modules.format_utilities import (format_mul_txt,
-                                                          format_mul_latex)
+        from sage.tensor.modules.format_utilities import (
+            format_mul_latex,
+            format_mul_txt,
+        )
         resu = self._new_instance()
         for dom, rst in self._restrictions.items():
             resu._restrictions[dom] = scalar.restrict(dom) * rst
@@ -2249,6 +2252,7 @@ class Section(ModuleElementWithMutability):
         super().set_immutable()
 
 #******************************************************************************
+
 
 class TrivialSection(FiniteRankFreeModuleElement, Section):
     r"""
@@ -3043,12 +3047,12 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
             s^2 = 1/4*u^2 - 1/4*v^2
         """
         if frame is None:
-                frame = self._smodule.default_basis()
+            frame = self._smodule.default_basis()
         if chart is None:
             chart = self._domain.default_chart()
         return FiniteRankFreeModuleElement.display_comp(self, basis=frame,
-                                                      format_spec=chart,
-                                                      only_nonzero=only_nonzero)
+                                                        format_spec=chart,
+                                                        only_nonzero=only_nonzero)
 
     def at(self, point):
         r"""

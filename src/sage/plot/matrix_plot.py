@@ -234,7 +234,7 @@ class MatrixPlot(GraphicPrimitive):
             if options.get('colorbar', False):
                 colorbar_options = options['colorbar_options']
                 from matplotlib import colorbar
-                cax,kwds = colorbar.make_axes_gridspec(subplot,**colorbar_options)
+                cax,kwds = colorbar.make_axes_gridspec(subplot, **colorbar_options)
                 colorbar.Colorbar(cax, image, **kwds)
 
         if flip_y:
@@ -552,23 +552,10 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
         sage: P = matrix_plot(random_matrix(RDF, 5))
         sage: P.aspect_ratio()
         1
-
-    The origin keyword is deprecated::
-
-        sage: matrix_plot(identity_matrix(100), origin='lower')
-        doctest:...: DeprecationWarning: the option 'origin' is replaced by 'flip_y'
-        See https://github.com/sagemath/sage/issues/27891 for details.
-        Graphics object consisting of 1 graphics primitive
     """
-    if 'origin' in options:
-        from sage.misc.superseded import deprecation
-        deprecation(27891, "the option 'origin' is replaced by 'flip_y'")
-        options['flip_y'] = (options['origin'] != 'lower')
-        del options['origin']
-
     import numpy as np
     import scipy.sparse as scipysparse
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     from sage.structure.element import Matrix
     from sage.rings.real_double import RDF
     orig_mat = mat

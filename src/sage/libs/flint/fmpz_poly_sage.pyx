@@ -51,7 +51,6 @@ cdef class Fmpz_poly(SageObject):
             3  3 5 7
         """
         cdef Py_ssize_t i
-        cdef long c
         cdef Integer w
         if isinstance(v, str):
             if not fmpz_poly_set_str(self.poly, str_to_bytes(v)):
@@ -87,9 +86,9 @@ cdef class Fmpz_poly(SageObject):
             sage: f[2] == 10**100000
             True
         """
-        if isinstance(value, Integer) :
+        if isinstance(value, Integer):
             fmpz_poly_set_coeff_mpz(self.poly, i, (<Integer>value).value)
-        else :
+        else:
             fmpz_poly_set_coeff_si(self.poly, i, value)
 
     def __getitem__(self, i):
@@ -336,7 +335,7 @@ cdef class Fmpz_poly(SageObject):
         fmpz_poly_divrem(Q.poly, R.poly, self.poly, other.poly)
         return Q, R
 
-    def left_shift(self, unsigned long n) :
+    def left_shift(self, unsigned long n):
         """
         Left shift ``self`` by `n`.
 
@@ -353,7 +352,7 @@ cdef class Fmpz_poly(SageObject):
 
         return res
 
-    def right_shift(self, unsigned long n) :
+    def right_shift(self, unsigned long n):
         """
         Right shift ``self`` by `n`.
 
@@ -383,7 +382,7 @@ cdef class Fmpz_poly(SageObject):
         fmpz_poly_pseudo_divrem(Q.poly, R.poly, &d, self.poly, other.poly)
         return Q, R, d
 
-    def derivative(self) :
+    def derivative(self):
         """
         Return the derivative of ``self``.
 

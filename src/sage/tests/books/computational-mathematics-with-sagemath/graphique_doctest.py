@@ -153,7 +153,7 @@ Sage example in ./graphique.tex, line 1266::
 
   sage: n = 11;  L = srange(6, 18, 12 / n); R = srange(3, 9, 6 / n)
   sage: CI = list(zip(L, R))           # list of initial conditions
-  sage: def g(x,y):
+  sage: def g(x, y):
   ....:     v = vector(dX_dt([x, y]))  # for a nicer graph, we
   ....:     return v/v.norm()          # normalise the vector field
   sage: x, y = var('x, y')

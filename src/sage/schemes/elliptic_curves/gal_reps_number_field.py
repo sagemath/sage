@@ -132,7 +132,7 @@ class GaloisRepresentation(SageObject):
         else:
             return "Compatible family of Galois representations associated to the " + repr(self.E)
 
-    def __eq__(self,other):
+    def __eq__(self, other):
         r"""
         Compare two Galois representations.
 
@@ -421,6 +421,7 @@ class GaloisRepresentation(SageObject):
             return [0]
 
         return [l for l in self.isogeny_bound() if self.E.isogenies_prime_degree(l)]
+
 
 def _non_surjective(E, patience=100):
     r"""
@@ -775,6 +776,7 @@ def _over_numberfield(E):
         K = K.absolute_field('a')
     return E.change_ring(K)
 
+
 def deg_one_primes_iter(K, principal_only=False):
     r"""
     Return an iterator over degree 1 primes of ``K``.
@@ -798,17 +800,17 @@ def deg_one_primes_iter(K, principal_only=False):
         [Fractional ideal (2, a + 1),
          Fractional ideal (3, a + 1),
          Fractional ideal (3, a + 2),
-         Fractional ideal (a),
+         Fractional ideal (-a),
          Fractional ideal (7, a + 3),
          Fractional ideal (7, a + 4)]
         sage: it = deg_one_primes_iter(K, True)
         sage: [next(it) for _ in range(6)]
-        [Fractional ideal (a),
-         Fractional ideal (-2*a + 3),
-         Fractional ideal (2*a + 3),
+        [Fractional ideal (-a),
+         Fractional ideal (2*a - 3),
+         Fractional ideal (-2*a - 3),
          Fractional ideal (a + 6),
          Fractional ideal (a - 6),
-         Fractional ideal (-3*a + 4)]
+         Fractional ideal (3*a - 4)]
     """
     # imaginary quadratic fields have no principal primes of norm < disc / 4
     start = K.discriminant().abs() // 4 if principal_only and K.signature() == (0,1) else 2
@@ -822,6 +824,7 @@ def deg_one_primes_iter(K, principal_only=False):
             for P in K.primes_above(p, degree=1):
                 if not principal_only or P.is_principal():
                     yield P
+
 
 def _semistable_reducible_primes(E, verbose=False):
     r"""Find a list containing all semistable primes l unramified in K/QQ
@@ -1151,6 +1154,7 @@ def _possible_normalizers(E, SA):
 # elliptiques", Nicolas Billerey, https://arxiv.org/abs/0908.1084
 #
 
+
 def Billerey_P_l(E, l):
     r"""
     Return Billerey's `P_l^*` as defined in [Bil2011]_, equation (9).
@@ -1186,7 +1190,8 @@ def Billerey_P_l(E, l):
         P = P.composed_op(E.reduction(q).frobenius_polynomial().adams_operator_on_roots(12*e), mul, monic=True)
     return P
 
-def Billerey_B_l(E,l,B=0):
+
+def Billerey_B_l(E, l, B=0):
     r"""
     Return Billerey's `B_l`, adapted from the definition in [Bil2011]_, after (9).
 

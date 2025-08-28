@@ -210,7 +210,8 @@ def cantor_reduction(a, b, f, h, genus):
         return cantor_reduction(a, b, f, h, genus)
     return (a, b)
 
-def cantor_composition_simple(D1,D2,f,genus):
+
+def cantor_composition_simple(D1, D2, f, genus):
     r"""
     Given `D_1` and `D_2` two reduced Mumford
     divisors on the Jacobian of the curve `y^2 = f(x)`,
@@ -268,7 +269,8 @@ def cantor_composition_simple(D1,D2,f,genus):
     a = a.monic()
     return (a, b)
 
-def cantor_composition(D1,D2,f,h,genus):
+
+def cantor_composition(D1, D2, f, h, genus):
     r"""
     EXAMPLES::
 
@@ -401,7 +403,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             genus = C.genus()
             if a.degree() > genus:
                 polys = cantor_reduction(a, b, f, h, genus)
-        self.__polys = polys
+        self.__polys = tuple(polys)
 
     def _printing_polys(self):
         r"""
@@ -631,7 +633,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             sage: tuple(P)  # indirect doctest                                          # needs sage.rings.number_field
             (x - 1, -a)
         """
-        return tuple(self.__polys)
+        return self.__polys
 
     def __getitem__(self, n):
         r"""
@@ -660,9 +662,9 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             sage: P[-1] # indirect doctest
             -a
             sage: P[:1] # indirect doctest
-            [x - 1]
+            (x - 1,)
         """
-        return list(self.__polys)[n]
+        return self.__polys[n]
 
     def _richcmp_(self, other, op):
         r"""
@@ -721,6 +723,9 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
         # since divisors are internally represented as Mumford divisors,
         # comparing polynomials is well-defined
         return richcmp(self.__polys, other.__polys, op)
+
+    def __hash__(self):
+        return hash(self.__polys)
 
     def __bool__(self):
         r"""
@@ -806,7 +811,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             D = (polys[0],-polys[1]-(h+polys[0]) % (polys[0]))
         return JacobianMorphism_divisor_class_field(X, D, check=False)
 
-    def _add_(self,other):
+    def _add_(self, other):
         r"""
         Return a Mumford representative of the divisor ``self + other``.
 

@@ -32,7 +32,7 @@ AUTHORS:
 #   Distributed under the terms of the GNU General Public License (GPL)
 #   as published by the Free Software Foundation; either version 2 of
 #   the License, or (at your option) any later version.
-#                   http://www.gnu.org/licenses/
+#                   https://www.gnu.org/licenses/
 # *****************************************************************************
 
 from sage.categories.homset import HomsetWithBase
@@ -41,14 +41,13 @@ from sage.structure.factory import UniqueFactory
 from sage.structure.parent import Set_generic
 
 from sage.rings.integer_ring import ZZ
-from sage.rings.ring import CommutativeRing
 from sage.categories.commutative_rings import CommutativeRings
 
-from sage.schemes.generic.scheme import AffineScheme, is_AffineScheme
+from sage.schemes.generic.scheme import AffineScheme
 from sage.schemes.generic.morphism import (
     SchemeMorphism,
     SchemeMorphism_structure_map,
-    SchemeMorphism_spec )
+    SchemeMorphism_spec)
 
 lazy_import('sage.schemes.affine.affine_space', 'AffineSpace_generic', as_='AffineSpace')
 lazy_import('sage.schemes.generic.algebraic_scheme', 'AlgebraicScheme_subscheme')
@@ -181,7 +180,7 @@ class SchemeHomsetFactory(UniqueFactory):
             from sage.categories.schemes import Schemes
             category = Schemes(base_spec)
         key = (id(X), id(Y), category, as_point_homset)
-        extra = {'X':X, 'Y':Y, 'base_ring':base_ring, 'check':check}
+        extra = {'X': X, 'Y': Y, 'base_ring': base_ring, 'check': check}
         return key, extra
 
     def create_object(self, version, key, **extra_args):
@@ -574,7 +573,7 @@ class SchemeHomset_points(SchemeHomset_generic):
         target = self.codomain()
         # ring elements can be coerced to a space if we're affine dimension 1
         # and the base rings are coercible
-        if isinstance(other, CommutativeRing):
+        if other in CommutativeRings:
             try:
                 if (isinstance(target.ambient_space(), AffineSpace)
                         and target.ambient_space().dimension_relative() == 1):
@@ -584,10 +583,10 @@ class SchemeHomset_points(SchemeHomset_generic):
             except AttributeError:  # no .ambient_space
                 return False
         elif isinstance(other, SchemeHomset_points):
-        #we are converting between scheme points
+            # we are converting between scheme points
             source = other.codomain()
             if isinstance(target, AlgebraicScheme_subscheme):
-                #subscheme coerce when there is containment
+                # subscheme coerce when there is containment
                 if not isinstance(source, AlgebraicScheme_subscheme):
                     return False
                 if target.ambient_space() == source.ambient_space():
@@ -595,24 +594,24 @@ class SchemeHomset_points(SchemeHomset_generic):
                            for g in target.defining_polynomials()):
                         return self.domain().coordinate_ring().has_coerce_map_from(other.domain().coordinate_ring())
             else:
-                #if the target is an ambient space, we can coerce if the base rings coerce
-                #and they are the same type: affine, projective, etc and have the same
-                #variable names
+                # if the target is an ambient space, we can coerce if the base rings coerce
+                # and they are the same type: affine, projective, etc and have the same
+                # variable names
                 try:
                     ta = target.ambient_space()
                     sa = source.ambient_space()
-                except AttributeError: #no .ambient_space
+                except AttributeError:  # no .ambient_space
                     return False
-                #for projective and affine varieties, we check dimension
-                #and matching variable names
+                # for projective and affine varieties, we check dimension
+                # and matching variable names
                 if ((isinstance(ta, ProjectiveSpace) and isinstance(sa, ProjectiveSpace))
                         or (isinstance(ta, AffineSpace) and isinstance(sa, AffineSpace))):
                     if (ta.variable_names() == sa.variable_names()):
                         return self.domain().coordinate_ring().has_coerce_map_from(other.domain().coordinate_ring())
                     else:
                         return False
-                #for products of projective spaces, we check dimension of
-                #components and matching variable names
+                # for products of projective spaces, we check dimension of
+                # components and matching variable names
                 elif isinstance(ta, ProductProjectiveSpaces) and isinstance(sa, ProductProjectiveSpaces):
                     if (ta.dimension_relative_components() == sa.dimension_relative_components()) \
                       and (ta.variable_names() == sa.variable_names()):
@@ -657,6 +656,56 @@ class SchemeHomset_points(SchemeHomset_generic):
         if len(v) == 1:
             v = v[0]
         return self.extended_codomain()._point(self, v, **kwds)
+
+    def __iter__(self):
+        r"""
+        Return an iterator for the set of rational points on this scheme.
+
+        By default, this calls the :meth:`points` method, which is implemented
+        when the base ring is a field
+
+        - for affine homsets at :meth:`sage.schemes.affine.affine_homset.SchemeHomset_points_affine.points`;
+        - for projective homsets at :meth:`sage.schemes.projective.projective_homset.SchemeHomset_points_projective_field.points`;
+        - and toric homsets at :meth:`sage.schemes.toric.homset.SchemeHomset_points_toric_field._enumerator`.
+
+        OUTPUT: iterator over points
+
+        TESTS::
+
+            sage: E = EllipticCurve(GF(19), [1, 0])
+            sage: list(E.point_homset())
+            [(0 : 1 : 0), (0 : 0 : 1), (3 : 7 : 1), (3 : 12 : 1), (4 : 7 : 1),
+             (4 : 12 : 1), (5 : 4 : 1), (5 : 15 : 1), (8 : 8 : 1), (8 : 11 : 1),
+             (9 : 4 : 1), (9 : 15 : 1), (12 : 7 : 1), (12 : 12 : 1), (13 : 5 : 1),
+             (13 : 14 : 1), (17 : 3 : 1), (17 : 16 : 1), (18 : 6 : 1), (18 : 13 : 1)]
+            sage: _ == list(E)
+            True
+            sage: E.point_homset().cardinality()
+            20
+
+        ::
+
+            sage: A.<x, y> = AffineSpace(2, GF(5))
+            sage: list(A.point_homset())
+            [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4),
+             (1, 0), (1, 1), (1, 2), (1, 3), (1, 4),
+             (2, 0), (2, 1), (2, 2), (2, 3), (2, 4),
+             (3, 0), (3, 1), (3, 2), (3, 3), (3, 4),
+             (4, 0), (4, 1), (4, 2), (4, 3), (4, 4)]
+            sage: _ == list(A)
+            True
+            sage: A.point_homset().cardinality()
+            25
+
+        ::
+
+            sage: P1 = toric_varieties.P1(base_ring=GF(3))
+            sage: list(P1.point_homset())
+            [[0 : 1], [1 : 0], [1 : 1], [1 : 2]]
+            sage: P1.point_homset().cardinality()
+            4
+        """
+        yield from self.points()
 
     def extended_codomain(self):
         r"""
@@ -711,7 +760,7 @@ class SchemeHomset_points(SchemeHomset_generic):
             sage: P2(QQ)._repr_()
             'Set of rational points of Projective Space of dimension 2 over Rational Field'
         """
-        return 'Set of rational points of '+str(self.extended_codomain())
+        return 'Set of rational points of ' + str(self.extended_codomain())
 
     def value_ring(self):
         r"""

@@ -14,7 +14,7 @@ AUTHORS:
 - David Lucas, ported the original implementation in Sage
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 David Lucas <david.lucas@inria.fr>
 #                     2015 Johan S. R. Nielsen <jsrn@jsrn.dk>
 #
@@ -22,10 +22,9 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.arith.misc import integer_floor as floor
 from sage.coding.grs_code import GeneralizedReedSolomonCode
 from sage.rings.integer_ring import ZZ
 from sage.coding.decoder import Decoder
@@ -35,6 +34,7 @@ from sage.coding.guruswami_sudan.utils import (johnson_radius,
                                                solve_degree2_to_integer_range)
 from sage.functions.other import floor
 from sage.misc.functional import sqrt
+
 
 def n_k_params(C, n_k):
     r"""
@@ -85,6 +85,7 @@ def n_k_params(C, n_k):
     elif n_k is not None:
         return n_k
 
+
 def roth_ruckenstein_root_finder(p, maxd=None, precision=None):
     """
     Wrapper for Roth-Ruckenstein algorithm to compute the roots of a polynomial
@@ -104,6 +105,7 @@ def roth_ruckenstein_root_finder(p, maxd=None, precision=None):
         p = p.polynomial(gens[1])
     return p.roots(multiplicities=False, degree_bound=maxd, algorithm='Roth-Ruckenstein')
 
+
 def alekhnovich_root_finder(p, maxd=None, precision=None):
     """
     Wrapper for Alekhnovich's algorithm to compute the roots of a polynomial
@@ -122,6 +124,7 @@ def alekhnovich_root_finder(p, maxd=None, precision=None):
     if len(gens) == 2:
         p = p.polynomial(gens[1])
     return p.roots(multiplicities=False, degree_bound=maxd, algorithm='Alekhnovich')
+
 
 class GRSGuruswamiSudanDecoder(Decoder):
     r"""
@@ -371,7 +374,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         """
         n,k = n_k_params(C, n_k)
 
-        def get_tau(s,l):
+        def get_tau(s, l):
             "Return the decoding radius given this s and l"
             if s <= 0 or l <= 0:
                 return -1
@@ -385,7 +388,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         # Either s or l is set, but not both. First a shared local function
         def find_integral_max(real_max, f):
             """Given a real (local) maximum of a function `f`, return that of
-            the integers around `real_max` which gives the (local) integral
+            the integers around ``real_max`` which gives the (local) integral
             maximum, and the value of at that point."""
             if real_max in ZZ:
                 int_max = ZZ(real_max)
@@ -845,15 +848,15 @@ class GRSGuruswamiSudanDecoder(Decoder):
         s = self.multiplicity()
         l = self.list_size()
         tau = self.decoding_radius()
-        ## SETUP INTERPOLATION PROBLEM
+        # SETUP INTERPOLATION PROBLEM
         wy = k-1
-        points = [(alphas[i], r[i]/colmults[i]) for i in range(0,len(alphas))]
-        ## SOLVE INTERPOLATION
+        points = [(alphas[i], r[i]/colmults[i]) for i in range(len(alphas))]
+        # SOLVE INTERPOLATION
         try:
             Q = self.interpolation_algorithm()(points, tau, (s,l), wy)
         except TypeError:
             raise ValueError("The provided interpolation algorithm has a wrong signature. See the documentation of `codes.decoders.GRSGuruswamiSudanDecoder.interpolation_algorithm()` for details")
-        ## EXAMINE THE FACTORS AND CONVERT TO CODEWORDS
+        # EXAMINE THE FACTORS AND CONVERT TO CODEWORDS
         try:
             polynomials = self.rootfinding_algorithm()(Q, maxd=wy)
         except TypeError:

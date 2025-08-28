@@ -145,7 +145,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
                 Q = P(0)
                 X = P.gen()
                 while R.degree() >= B.degree():
-                    S = P((R.leading_coefficient()/B.leading_coefficient())) * X**(R.degree()-B.degree())
+                    S = P(R.leading_coefficient()/B.leading_coefficient()) * X**(R.degree()-B.degree())
                     Q = Q + S
                     R = R - S*B
                 polynomial = R
@@ -386,10 +386,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         """
         Return the inverse of this element.
 
-        .. WARNING::
-
-            Only implemented when the base ring is a field.
-
         EXAMPLES::
 
             sage: R.<x> = QQ[]
@@ -402,47 +398,38 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             sage: (y+1)^(-1)
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: element y + 1 of quotient polynomial ring not invertible
+            ArithmeticError: element is non-invertible
 
         TESTS:
 
         An element is not invertible if the base ring is not a field
-        (see :issue:`13303`)::
+        (see :issue:`13303`) (the test no longer makes sense when inversion is
+        implemented for this particular base ring, need better test)::
 
             sage: Z16x.<x> = Integers(16)[]
             sage: S.<y> =  Z16x.quotient(x^2 + x + 1)
             sage: (2*y)^(-1)
             Traceback (most recent call last):
             ...
-            NotImplementedError: The base ring (=Ring of integers modulo 16) is not a field
+            ArithmeticError: element is non-invertible
+            sage: (2*y+1)^(-1)  # this cannot raise ValueError because...
+            10*y + 5
+            sage: (2*y+1) * (10*y+5)  # the element is in fact invertible
+            1
 
         Check that :issue:`29469` is fixed::
 
             sage: ~S(3)
             11
         """
-        if self._polynomial.is_zero():
-            raise ZeroDivisionError("element %s of quotient polynomial ring not invertible" % self)
-        if self._polynomial.is_one():
-            return self
-
-        parent = self.parent()
-
+        P = self.parent()
         try:
-            if self._polynomial.is_unit():
-                inv_pol = self._polynomial.inverse_of_unit()
-                return parent(inv_pol)
-        except (TypeError, NotImplementedError):
-            pass
-
-        base = parent.base_ring()
-        if not base.is_field():
-            raise NotImplementedError("The base ring (=%s) is not a field" % base)
-        g, _, a = parent.modulus().xgcd(self._polynomial)
-        if g.degree() != 0:
-            raise ZeroDivisionError("element %s of quotient polynomial ring not invertible" % self)
-        c = g[0]
-        return self.__class__(self.parent(), (~c)*a, check=False)
+            return type(self)(P, self._polynomial.inverse_mod(P.modulus()), check=False)
+        except ValueError as e:
+            if e.args[0] == "Impossible inverse modulo":
+                raise ZeroDivisionError(f"element {self} of quotient polynomial ring not invertible")
+            else:
+                raise NotImplementedError
 
     def field_extension(self, names):
         r"""

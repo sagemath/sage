@@ -241,7 +241,7 @@ class FunctionAiryAiSimple(BuiltinFunction):
             from sage.rings.real_mpfr import RR
             from sage.rings.cc import CC
             from sage.functions.other import real, imag
-            from scipy.special import airy as airy
+            from scipy.special import airy
             if x in RR:
                 y = airy(real(x))[0]
                 if parent is None:
@@ -341,7 +341,7 @@ class FunctionAiryAiPrime(BuiltinFunction):
             from sage.rings.real_mpfr import RR
             from sage.rings.cc import CC
             from sage.functions.other import real, imag
-            from scipy.special import airy as airy
+            from scipy.special import airy
             if x in RR:
                 y = airy(real(x))[1]
                 if parent is None:
@@ -680,7 +680,7 @@ class FunctionAiryBiSimple(BuiltinFunction):
             from sage.rings.real_mpfr import RR
             from sage.rings.cc import CC
             from sage.functions.other import real, imag
-            from scipy.special import airy as airy
+            from scipy.special import airy
             if x in RR:
                 y = airy(real(x))[2]
                 if parent is None:
@@ -782,7 +782,7 @@ class FunctionAiryBiPrime(BuiltinFunction):
             from sage.rings.real_mpfr import RR
             from sage.rings.cc import CC
             from sage.functions.other import real, imag
-            from scipy.special import airy as airy
+            from scipy.special import airy
             if x in RR:
                 y = airy(real(x))[3]
                 if parent is None:

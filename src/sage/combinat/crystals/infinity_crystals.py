@@ -1,15 +1,14 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-`\mathcal{B}(\infty)` Crystals of Tableaux in Nonexceptional Types and `G_2`
+`\mathcal{B}(\infty)` crystals of tableaux in nonexceptional types and `G_2`
 
 A tableau model for `\mathcal{B}(\infty)`. For more information, see
 :class:`~sage.combinat.crystals.infinity_crystals.InfinityCrystalOfTableaux`.
 
 AUTHORS:
 
-- Ben Salisbury: Initial version
-
-- Travis Scrimshaw: Initial version
+- Ben Salisbury: initial version
+- Travis Scrimshaw: initial version
 """
 
 #*****************************************************************************
@@ -296,7 +295,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
         Elements in `\mathcal{B}(\infty)` crystal of tableaux.
         """
 
-        def phi(self,i):
+        def phi(self, i):
             r"""
             Return `\varphi_i` of ``self``.
 

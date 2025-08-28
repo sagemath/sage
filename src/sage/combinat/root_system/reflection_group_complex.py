@@ -196,26 +196,25 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method, cached_function
-from sage.misc.misc_c import prod
 from sage.categories.category import Category
-from sage.categories.permutation_groups import PermutationGroups
 from sage.categories.complex_reflection_groups import ComplexReflectionGroups
 from sage.categories.coxeter_groups import CoxeterGroups
+from sage.categories.permutation_groups import PermutationGroups
+from sage.combinat.root_system.cartan_matrix import CartanMatrix
 from sage.combinat.root_system.reflection_group_element import ComplexReflectionGroupElement, _gap_return
-from sage.sets.family import Family
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.groups.perm_gps.permgroup import PermutationGroup_generic
-from sage.combinat.permutation import Permutation
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
+from sage.interfaces.gap3 import gap3
 from sage.matrix.constructor import matrix
 from sage.matrix.special import identity_matrix
-from sage.structure.element import Matrix
-from sage.interfaces.gap3 import gap3
-from sage.modules.free_module_element import vector
-from sage.combinat.root_system.cartan_matrix import CartanMatrix
+from sage.misc.cachefunc import cached_method, cached_function
+from sage.misc.misc_c import prod
 from sage.misc.sage_eval import sage_eval
+from sage.modules.free_module_element import vector
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.sets.family import Family
+from sage.structure.element import Matrix
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
@@ -323,7 +322,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
                 raise ValueError("the given reflection index set (= %s) does not have the right size" % self._index_set.values())
         self._reflection_index_set_inverse = {i: ii for ii,i in enumerate(self._reflection_index_set)}
 
-    def _irrcomp_repr_(self,W_type):
+    def _irrcomp_repr_(self, W_type):
         r"""
         Return the string representation of an irreducible component
         of ``self``.
@@ -703,7 +702,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         return Family(self._reflection_index_set,
                       lambda i: T[self._reflection_index_set_inverse[i]])
 
-    def reflection(self,i):
+    def reflection(self, i):
         r"""
         Return the ``i``-th reflection of ``self``.
 
@@ -1725,7 +1724,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
                 return beta * w.to_matrix()
 
         @cached_function
-        def invariant_value(i,j):
+        def invariant_value(i, j):
             if i > j:
                 return invariant_value(j,i).conjugate()
             val = sum(action_on_root(w, Delta[i]) * action_on_root(w, Delta[j]).conjugate()
@@ -1782,7 +1781,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         """
         return self.invariant_form().principal_square_root()
 
-    def set_reflection_representation(self,refl_repr=None):
+    def set_reflection_representation(self, refl_repr=None):
         r"""
         Set the reflection representation of ``self``.
 

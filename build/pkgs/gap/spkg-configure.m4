@@ -2,10 +2,10 @@ SAGE_SPKG_CONFIGURE([gap], [
   # Default to installing the SPKG, if the check is run at all.
   sage_spkg_install_gap=yes
 
-  m4_pushdef([GAP_MINVER],["4.12.2"])
-  m4_pushdef([GAP_LTVER],["4.13.0"])
+  m4_pushdef([GAP_MINVER],["4.13.0"])
+  m4_pushdef([GAP_LTVER],["5.0.0"])
 
-  SAGE_SPKG_DEPCHECK([ncurses readline zlib], [
+  SAGE_SPKG_DEPCHECK([ncurses readline], [
     AC_PATH_PROG(GAP, gap)
     AS_IF([test -n "${GAP}"], [
       AC_MSG_CHECKING([for gap version >= GAP_MINVER, < GAP_LTVER])
@@ -54,10 +54,8 @@ SAGE_SPKG_CONFIGURE([gap], [
                   AC_LANG_PROGRAM(
                     [[#include <gap/libgap-api.h>]],
                     [[
-                      int main(int argc, char** argv) {
-                        GAP_Initialize(0, 0, 0, 0, 0);
-                        return 0;
-                      }
+                      GAP_Initialize(0, 0, 0, 0, 0);
+                      return 0;
                     ]])
                 ],[
                   AC_MSG_RESULT([yes])

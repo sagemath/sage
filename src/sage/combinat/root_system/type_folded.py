@@ -292,9 +292,9 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
                 return root.leading_coefficient() / coroot.leading_coefficient()
             index_set = self._cartan_type.index_set()
             min_f = min(f(j) for j in index_set)
-            return Family(dict( (i, int(f(i) / min_f)) for i in index_set ))
+            return Family({i: int(f(i) / min_f) for i in index_set})
         elif self._cartan_type.is_affine():
             c = self._cartan_type.translation_factors()
             cmax = max(c)
-            return Family(dict( (i, int(cmax / c[i]))
-                                for i in self._cartan_type.index_set() ))
+            return Family({i: int(cmax / c[i])
+                           for i in self._cartan_type.index_set()})

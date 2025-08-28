@@ -1,10 +1,10 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Free Dendriform Algebras
+Free dendriform algebras
 
 AUTHORS:
 
-Frédéric Chapoton (2017)
+- Frédéric Chapoton (2017)
 """
 # ****************************************************************************
 #       Copyright (C) 2010-2015 Frédéric Chapoton <chapoton@unistra.fr>,
@@ -315,8 +315,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
         """
         return t.node_number()
 
-    @cached_method
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an element of ``self``.
 
@@ -939,14 +938,12 @@ class DendriformFunctor(ConstructionFunctor):
                 return self
             ret = list(self.vars)
             cur_vars = set(ret)
-            for v in other.vars:
-                if v not in cur_vars:
-                    ret.append(v)
+            ret.extend(v for v in other.vars if v not in cur_vars)
             return DendriformFunctor(Alphabet(ret))
-        else:
-            return None
 
-    def _repr_(self):
+        return None
+
+    def _repr_(self) -> str:
         """
         TESTS::
 

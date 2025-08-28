@@ -1,14 +1,6 @@
 # sage.doctest: needs sage.graphs sage.groups sage.modules
 """
-Weyl Groups
-
-AUTHORS:
-
-- Daniel Bump (2008): initial version
-- Mike Hansen (2008): initial version
-- Anne Schilling (2008): initial version
-- Nicolas Thiéry (2008): initial version
-- Volker Braun (2013): LibGAP-based matrix groups
+Weyl groups
 
 EXAMPLES:
 
@@ -29,6 +21,14 @@ The Cayley graph of the Weyl Group of type ['D', 4]::
 .. TODO::
 
     More examples on Weyl Groups should be added here.
+
+AUTHORS:
+
+- Daniel Bump (2008): initial version
+- Mike Hansen (2008): initial version
+- Anne Schilling (2008): initial version
+- Nicolas Thiéry (2008): initial version
+- Volker Braun (2013): LibGAP-based matrix groups
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Daniel Bump <bump at match.stanford.edu>,
@@ -926,7 +926,7 @@ class WeylGroupElement(MatrixGroupElement_gap):
 
         return s is positive
 
-    def has_left_descent(self, i):
+    def has_left_descent(self, i) -> bool:
         """
         Test if ``self`` has a left descent at position ``i``.
 
@@ -947,7 +947,7 @@ class WeylGroupElement(MatrixGroupElement_gap):
         """
         return self.has_descent(i, side='left')
 
-    def has_right_descent(self, i):
+    def has_right_descent(self, i) -> bool:
         """
         Test if ``self`` has a right descent at position ``i``.
 
@@ -1090,8 +1090,18 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
             (1,7,5,3)(2,4,6,8)
             (2,8)(3,7)(4,6)
             (1,5)(2,6)(3,7)(4,8)
+
+        TESTS::
+
+            sage: W = WeylGroup(["A",0], implementation='permutation')
+            sage: list(W)
+            [()]
+            sage: W[0]
+            ()
         """
         from sage.combinat.root_system.reflection_group_c import Iterator
+        if self.rank() == 0:
+            return iter([self.one()])
         return iter(Iterator(self, N=self.number_of_reflections(),
                              algorithm=algorithm, tracking_words=tracking_words))
 

@@ -191,7 +191,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         super().__init__(length, default_encoder_name, default_decoder_name, metric)
         cat = Modules(base_field).FiniteDimensional().WithBasis().Finite()
         facade_for = VectorSpace(base_field, self._length)
-        self.Element = type(facade_for.an_element())  # for when we made this a non-facade parent
+        self.Element = facade_for.Element
         Parent.__init__(self, base=base_field, facade=facade_for, category=cat)
 
     def base_field(self):
@@ -374,18 +374,18 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         return self.dimension() / self.length()
 
     @cached_method
-    def gens(self) -> list:
+    def gens(self) -> tuple:
         r"""
-        Return the generators of this code as a list of vectors.
+        Return the generators of this code as a tuple of vectors.
 
         EXAMPLES::
 
             sage: C = codes.HammingCode(GF(2), 3)
             sage: C.gens()
-             [(1, 0, 0, 0, 0, 1, 1), (0, 1, 0, 0, 1, 0, 1),
-              (0, 0, 1, 0, 1, 1, 0), (0, 0, 0, 1, 1, 1, 1)]
+             ((1, 0, 0, 0, 0, 1, 1), (0, 1, 0, 0, 1, 0, 1),
+              (0, 0, 1, 0, 1, 1, 0), (0, 0, 0, 1, 1, 1, 1))
         """
-        return self.generator_matrix().rows()
+        return tuple(self.generator_matrix().rows())
 
     def basis(self):
         r"""
@@ -397,12 +397,10 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
             sage: C = codes.HammingCode(GF(2), 3)
             sage: C.basis()
-            [
-            (1, 0, 0, 0, 0, 1, 1),
-            (0, 1, 0, 0, 1, 0, 1),
-            (0, 0, 1, 0, 1, 1, 0),
-            (0, 0, 0, 1, 1, 1, 1)
-            ]
+            [(1, 0, 0, 0, 0, 1, 1),
+             (0, 1, 0, 0, 1, 0, 1),
+             (0, 0, 1, 0, 1, 1, 0),
+             (0, 0, 0, 1, 1, 1, 1)]
             sage: C.basis().universe()
             Vector space of dimension 7 over Finite Field of size 2
         """
@@ -527,7 +525,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         EXAMPLES::
 
             sage: G = matrix(GF(3), [[ 1, 2, 1, 0],\
-                                     [ 2, 1, 1, 1]])
+            ....:                    [ 2, 1, 1, 1]])
             sage: C = LinearCode(G)
             sage: C.generator_matrix()
             [1 2 1 0]
@@ -579,8 +577,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             sage: Cs is C
             True
             sage: C = LinearCode(matrix(GF(2), [[1,0,0,0,1,1,0],\
-                                                [0,1,0,1,0,1,0],\
-                                                [0,0,0,0,0,0,1]]))
+            ....:                               [0,1,0,1,0,1,0],\
+            ....:                               [0,0,0,0,0,0,1]]))
             sage: Cs, p = C.standard_form()
             sage: p
             [1, 2, 7, 3, 4, 5, 6]
@@ -629,7 +627,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
              [1 1 0]
              [1 1 1]
             sage: C = LinearCode(matrix(GF(3),2,[1,2,0,\
-                                                 2,1,1]))
+            ....:                                2,1,1]))
             sage: C.systematic_generator_matrix()
             [1 2 0]
             [0 0 1]
@@ -849,7 +847,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         G = self.generator_matrix()
         return hash((Str, G)) ^ hash(Str) ^ hash(G)
 
-    def is_subcode(self, other):
+    def is_subcode(self, other) -> bool:
         """
         Return ``True`` if ``self`` is a subcode of ``other``.
 
@@ -882,7 +880,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         G = self.generator_matrix()
         return all(r in other for r in G.rows())
 
-    def is_permutation_automorphism(self, g):
+    def is_permutation_automorphism(self, g) -> bool:
         r"""
         Return `1` if `g` is an element of `S_n` (`n` = length of ``self``) and
         if `g` is an automorphism of ``self``.
@@ -909,11 +907,9 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         basis = self.generator_matrix().rows()
         H = self.parity_check_matrix()
         V = H.column_space()
-        HGm = H*g.matrix()
-        for c in basis:
-            if HGm*c != V(0):
-                return False
-        return True
+        HGm = H * g.matrix()
+        V0 = V.zero()
+        return all(HGm * c == V0 for c in basis)
 
     def permuted_code(self, p):
         r"""
@@ -1055,9 +1051,9 @@ class LinearCodeSystematicEncoder(Encoder):
 
         sage: LCSE = codes.encoders.LinearCodeSystematicEncoder
         sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0,0],\
-                                 [1,0,0,1,1,0,0,0],\
-                                 [0,1,0,1,0,1,0,0],\
-                                 [1,1,0,1,0,0,1,1]])
+        ....:                    [1,0,0,1,1,0,0,0],\
+        ....:                    [0,1,0,1,0,1,0,0],\
+        ....:                    [1,1,0,1,0,0,1,1]])
         sage: C = LinearCode(G)
         sage: E = LCSE(C)
         sage: E.generator_matrix()
@@ -1209,9 +1205,9 @@ class LinearCodeSystematicEncoder(Encoder):
 
             sage: LCSE = codes.encoders.LinearCodeSystematicEncoder
             sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],\
-                                     [1,0,0,1,1,0,0],\
-                                     [0,1,0,1,0,1,0],\
-                                     [1,1,0,1,0,0,1]])
+            ....:                    [1,0,0,1,1,0,0],\
+            ....:                    [0,1,0,1,0,1,0],\
+            ....:                    [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: E = LCSE(C)
             sage: E.generator_matrix()
@@ -1232,9 +1228,9 @@ class LinearCodeSystematicEncoder(Encoder):
         Another example where there is no generator matrix of the form `[I \vert H]`::
 
             sage: G = Matrix(GF(2), [[1,1,0,0,1,0,1],\
-                                     [1,1,0,0,1,0,0],\
-                                     [0,0,1,0,0,1,0],\
-                                     [0,0,1,0,1,0,1]])
+            ....:                    [1,1,0,0,1,0,0],\
+            ....:                    [0,0,1,0,0,1,0],\
+            ....:                    [0,0,1,0,1,0,1]])
             sage: C = LinearCode(G)
             sage: E = LCSE(C)
             sage: E.generator_matrix()
@@ -1279,8 +1275,8 @@ class LinearCodeSystematicEncoder(Encoder):
         EXAMPLES::
 
             sage: C = LinearCode(matrix(GF(2), [[1,0,0,0,1,1,0],\
-                                                [0,1,0,1,0,1,0],\
-                                                [0,0,0,0,0,0,1]]))
+            ....:                               [0,1,0,1,0,1,0],\
+            ....:                               [0,0,0,0,0,0,1]]))
             sage: E = codes.encoders.LinearCodeSystematicEncoder(C)
             sage: E.systematic_positions()
             (0, 1, 6)
@@ -1311,9 +1307,9 @@ class LinearCodeSystematicEncoder(Encoder):
 
             sage: LCSE = codes.encoders.LinearCodeSystematicEncoder
             sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],\
-                                     [1,0,0,1,1,0,0],\
-                                     [0,1,0,1,0,1,0],\
-                                     [1,1,0,1,0,0,1]])
+            ....:                    [1,0,0,1,1,0,0],\
+            ....:                    [0,1,0,1,0,1,0],\
+            ....:                    [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: E = LCSE(C)
             sage: E.systematic_positions()
@@ -1322,9 +1318,9 @@ class LinearCodeSystematicEncoder(Encoder):
         We take another matrix with a less nice shape::
 
             sage: G = Matrix(GF(2), [[1,1,0,0,1,0,1],\
-                                     [1,1,0,0,1,0,0],\
-                                     [0,0,1,0,0,1,0],\
-                                     [0,0,1,0,1,0,1]])
+            ....:                    [1,1,0,0,1,0,0],\
+            ....:                    [0,0,1,0,0,1,0],\
+            ....:                    [0,0,1,0,1,0,1]])
             sage: C = LinearCode(G)
             sage: E = LCSE(C)
             sage: E.systematic_positions()
@@ -1345,8 +1341,8 @@ class LinearCodeSystematicEncoder(Encoder):
         positions (even if another choice might also be systematic)::
 
             sage: G = Matrix(GF(2), [[1,0,0,0],\
-                                     [0,1,0,0],\
-                                     [0,0,1,1]])
+            ....:                    [0,1,0,0],\
+            ....:                    [0,0,1,1]])
             sage: C = LinearCode(G)
             sage: E = LCSE(C, systematic_positions=[0,1,3])
             sage: E.systematic_positions()

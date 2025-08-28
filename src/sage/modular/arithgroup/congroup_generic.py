@@ -180,16 +180,15 @@ class CongruenceSubgroupBase(ArithmeticSubgroup):
         N = self.level()
         return self([1-N, -N, N, 1+N])
 
-    def is_congruence(self):
+    def is_congruence(self) -> bool:
         r"""
-        Return True, since this is a congruence subgroup.
+        Return ``True``, since this is a congruence subgroup.
 
         EXAMPLES::
 
             sage: Gamma0(7).is_congruence()
             True
         """
-
         return True
 
     def level(self):
@@ -332,7 +331,7 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
         """
         return CongruenceSubgroup_constructor, (self.image_mod_n(),)
 
-    def _contains_sl2(self, a,b,c,d):
+    def _contains_sl2(self, a, b, c, d):
         r"""
         Test whether ``[a,b;c,d]`` is an element of ``self``.
 
@@ -432,6 +431,7 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
         """
         return self.__G
 
+
 class CongruenceSubgroup(CongruenceSubgroupFromGroup):
     r"""
     One of the "standard" congruence subgroups `\Gamma_0(N)`, `\Gamma_1(N)`,
@@ -454,7 +454,7 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
         """
         raise NotImplementedError
 
-    def __init__(self,*args, **kwds):
+    def __init__(self, *args, **kwds):
         r"""
         Bypass the init function of the CongruenceSubgroupFromGroup class.
 
@@ -463,7 +463,7 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
             sage: sage.modular.arithgroup.congroup_generic.CongruenceSubgroup(5) # indirect doctest
             Generic congruence subgroup of level 5
         """
-        return CongruenceSubgroupBase.__init__(self, *args, **kwds)
+        CongruenceSubgroupBase.__init__(self, *args, **kwds)
 
     def _repr_(self):
         """
@@ -568,6 +568,7 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
                 return GammaH(level, [ h % level for h in H ])
         else:
             raise NotImplementedError
+
 
 def _minimize_level(G):
     r"""

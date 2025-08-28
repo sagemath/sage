@@ -1,5 +1,5 @@
 r"""
-Parking Functions
+Parking functions
 
 INFORMALLY (reference [Beck]_):
 
@@ -63,7 +63,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
@@ -1398,9 +1398,7 @@ class ParkingFunctions_all(ParkingFunctions):
             sage: x == y
             True
         """
-        if isinstance(S, ParkingFunctions_n):
-            return True
-        return False
+        return isinstance(S, ParkingFunctions_n)
 
 
 class ParkingFunctions_n(ParkingFunctions):

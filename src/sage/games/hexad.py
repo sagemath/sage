@@ -466,15 +466,15 @@ class Minimog:
         L = set(pts)
         H = {x0, x1}
         for i in range(18):
-            if (not (MINIMOG[0][2] in H) and L <= picture_set(self.picture21, self.square[i])):
+            if (MINIMOG[0][2] not in H and L <= picture_set(self.picture21, self.square[i])):
                 WHAT = ["square " + str(i), "picture " + str(MINIMOG[0][2])]
                 H = H | picture_set(self.picture21, self.square[i])
                 return list(H), WHAT
-            if (not (MINIMOG[2][1] in H) and L <= picture_set(self.picture02, self.square[i])):
+            if (MINIMOG[2][1] not in H and L <= picture_set(self.picture02, self.square[i])):
                 WHAT = ["square " + str(i), "picture " + str(MINIMOG[2][1])]
                 H = H | picture_set(self.picture02, self.square[i])
                 return list(H), WHAT
-            if (not (MINIMOG[0][0] in H) and L <= picture_set(self.picture00, self.square[i])):
+            if (MINIMOG[0][0] not in H and L <= picture_set(self.picture00, self.square[i])):
                 WHAT = ["square " + str(i), "picture " + str(MINIMOG[0][0])]
                 H = H | picture_set(self.picture00, self.square[i])
                 return list(H), WHAT

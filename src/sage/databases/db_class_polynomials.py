@@ -30,8 +30,8 @@ AUTHORS:
 
 from .db_modular_polynomials import _dbz_to_integers
 
-disc_format = "%07d"  #  disc_length = 7
-level_format = "%03d" #  level_length = 3
+disc_format = "%07d"   # disc_length = 7
+level_format = "%03d"  # level_length = 3
 
 
 class ClassPolynomialDatabase:
@@ -52,7 +52,7 @@ class ClassPolynomialDatabase:
         if level != 1:
             raise NotImplementedError("Level (= %s) > 1 not yet implemented" % level)
         n1 = 5000*((abs(disc)-1)//5000)
-        s1 = disc_format % (n1+1) #_pad_int(n1+1, disc_length)
+        s1 = disc_format % (n1+1)  # _pad_int(n1+1, disc_length)
         s2 = disc_format % (n1+5000)
         subdir = "%s-%s" % (s1, s2)
         discstr = disc_format % abs(disc)
@@ -105,6 +105,7 @@ class HilbertClassPolynomialDatabase(ClassPolynomialDatabase):
 ######################################################
 # None of the following are implemented yet.
 ######################################################
+
 
 class AtkinClassPolynomialDatabase(ClassPolynomialDatabase):
     """

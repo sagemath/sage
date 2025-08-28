@@ -87,10 +87,11 @@ for the comparison::
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.structure.element import Element
 from sage.misc.decorators import options
-from sage.symbolic.expression import Expression
 from sage.rings.integer_ring import ZZ
+from sage.structure.element import Element
+from sage.symbolic.expression import Expression
+
 
 class ManifoldPoint(Element):
     r"""
@@ -689,7 +690,7 @@ class ManifoldPoint(Element):
             diff = xs - xo
             period = periods[ind]
             if period is not None:
-                if not (diff/period in ZZ):
+                if diff/period not in ZZ:
                     return False
             else:
                 if isinstance(diff, Expression) and not diff.is_trivial_zero():
@@ -934,11 +935,11 @@ class ManifoldPoint(Element):
             gX = X.plot(X, ambient_coords=(y,z))
             sphinx_plot(g+gX)
         """
-        from sage.plot.point import point2d
-        from sage.plot.text import text
+        from sage.manifolds.chart import Chart
         from sage.plot.graphics import Graphics
         from sage.plot.plot3d.shapes2 import point3d, text3d
-        from sage.manifolds.chart import Chart
+        from sage.plot.point import point2d
+        from sage.plot.text import text
         if self._manifold.base_field_type() != 'real':
             raise NotImplementedError('plot of points on manifolds over fields different'
                                       ' from the real field is not implemented')

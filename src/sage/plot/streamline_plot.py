@@ -72,7 +72,7 @@ class StreamlinePlot(GraphicPrimitive):
             sage: x, y = var('x y')
             sage: import numpy  # to ensure numpy 2.0 compatibility
             sage: if int(numpy.version.short_version[0]) > 1:
-            ....:     numpy.set_printoptions(legacy="1.25")
+            ....:     _ = numpy.set_printoptions(legacy="1.25")
             sage: d = streamline_plot((.01*x, x+y), (x,10,20), (y,10,20))[0].get_minmax_data()
             sage: d['xmin']
             10.0
@@ -285,7 +285,7 @@ def streamline_plot(f_g, xrange, yrange, **options):
             f = 1 / sqrt(f_g**2 + 1)
             g = f_g * f
 
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
     z, ranges = setup_for_eval_on_grid([f,g], [xrange,yrange], options['plot_points'])
     f, g = z
@@ -296,9 +296,8 @@ def streamline_plot(f_g, xrange, yrange, **options):
     else:
         options['density'] = float(options['density'])
 
-    xpos_array, ypos_array, xvec_array, yvec_array = [], [], [], []
-    for x in xsrange(*ranges[0], include_endpoint=True):
-        xpos_array.append(x)
+    ypos_array, xvec_array, yvec_array = [], [], []
+    xpos_array = list(xsrange(*ranges[0], include_endpoint=True))
     for y in xsrange(*ranges[1], include_endpoint=True):
         ypos_array.append(y)
         xvec_row, yvec_row = [], []
