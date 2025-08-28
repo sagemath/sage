@@ -2760,6 +2760,21 @@ class MPolynomialIdeal_singular_repr(
             sage: I = Ideal([ x*y - 1, (x-2)^2 + (y-1)^2 - 1])
             sage: len(I.variety())
             4
+
+        We can compute the variety of an Ideal over a Multivariate Polynomial Ring over a finite field with characteristic `> 2^{29}`, which Singular doesn't support. ::
+
+            sage: p = 626526183415513590854084217045148362725470879166437124330209
+            sage: F = GF(p)
+            sage: R.<x,y,z> = F[]
+            sage: I = Ideal([x^2 - 5*y + z, x*21 + y - z, 20*x + 20*y - 15*z + 20])
+            sage: I.variety()
+            verbose 0 (2708: multi_polynomial_ideal.py, variety) Warning: falling back to very slow toy implementation.
+            [{z: 475236874226935968499387140880743357810239093941490264140142,
+            y: 303497730986201757454241700121162099180641015844366285478588,
+            x: 366193016391757014347340764061969600539773744194969974791622},
+            {z: 151289309188577622354697076164405004915231785224946860207259,
+            y: 323028452429311833399842516923986263544829863322070838864298,
+            x: 260333167023756576506743452983178762185697134971467149538802}]
         """
 
         def _variety(T, V, v=None):
@@ -2802,10 +2817,14 @@ class MPolynomialIdeal_singular_repr(
         P = self.ring()
         if ring is not None:
             P = P.change_ring(ring)
-        try:
-            TI = self.triangular_decomposition('singular:triangLfak')
-            T = [list(each.gens()) for each in TI]
-        except TypeError:  # conversion to Singular not supported
+        T = None
+        if P.characteristic() < 2**29:
+            try:
+                TI = self.triangular_decomposition('singular:triangLfak')
+                T = [list(each.gens()) for each in TI]
+            except TypeError:  # conversion to Singular not supported
+                pass
+        if T is None:
             if self.ring().term_order().is_global():
                 verbose("Warning: falling back to very slow toy implementation.", level=0, caller_name='variety')
                 T = toy_variety.triangular_factorization(self.groebner_basis())
