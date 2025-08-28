@@ -55,6 +55,7 @@ extension_data = {
   'finite_submodule_iter' : files('finite_submodule_iter.pyx'),
   'free_module_element' : files('free_module_element.pyx'),
   'module' : files('module.pyx'),
+  'vector_cartesian_product': files('vector_cartesian_product.pyx'),
   'vector_complex_double_dense' : files('vector_complex_double_dense.pyx'),
   'vector_double_dense' : files('vector_double_dense.pyx'),
   'vector_integer_dense' : files('vector_integer_dense.pyx'),
