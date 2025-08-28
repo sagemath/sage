@@ -220,10 +220,10 @@ def _all_cycles_iterator_vertex(self, vertex, starting_vertices=None, simple=Fal
                     report = False
                 L = len(path)
                 for i in range(1, L // 2):
-                    if path[i] > path[L - i - 1]:
+                    if vertex_to_int[path[i]] > vertex_to_int[path[L - i - 1]]:
                         report = False
                         break
-                    if path[i] < path[L - i - 1]:
+                    if vertex_to_int[path[i]] < vertex_to_int[path[L - i - 1]]:
                         break
             if report:
                 if report_weight:
