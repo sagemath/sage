@@ -9,6 +9,26 @@ if [ "$SYSTEM" = "fedora" ]; then
     # Mitigate upstream packaging bug: https://bugzilla.redhat.com/show_bug.cgi?id=2332429
     # by swapping the incorrectly installed OpenCL-ICD-Loader for the expected ocl-icd
     dnf5 -y swap --repo='fedora' OpenCL-ICD-Loader ocl-icd
+elif [ "$SYSTEM" = "gentoo" ]; then
+    # Configure Portage
+    mkdir -p /etc/portage/package.accept_keywords /etc/portage/package.use
+    cat > /etc/portage/package.accept_keywords/sage <<'EOF'
+media-gfx/tachyon ~amd64
+media-libs/qhull ~amd64
+sci-libs/m4ri ~amd64
+sci-libs/m4rie ~amd64
+EOF
+    cat > /etc/portage/package.use/sage <<'EOF'
+sci-libs/cddlib tools
+sci-mathematics/eclib flint
+sci-mathematics/flint ntl
+sci-mathematics/lcalc pari
+sci-libs/brial png
+sci-libs/m4ri png
+sci-mathematics/maxima ecl
+media-libs/qhull tools
+media-libs/libglvnd X
+EOF
 fi
 
 eval $(build/bin/sage-print-system-package-command $SYSTEM "$@" update)
