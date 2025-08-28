@@ -44,6 +44,14 @@ class GluedScheme(Scheme):
           X: Spectrum of Univariate Polynomial Ring in x over Rational Field
           Y: Spectrum of Univariate Polynomial Ring in y over Rational Field
           U: Spectrum of Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x*y - 1)
+
+    TESTS::
+
+        sage: S = Sx.glue_along_domains(Sy)
+        sage: S.base_ring()
+        Integer Ring
+        sage: S.category()
+        Category of schemes
     """
     def __init__(self, f, g, check=True):
         if check:
@@ -55,6 +63,12 @@ class GluedScheme(Scheme):
                 raise ValueError("f (=%s) and g (=%s) must have the same domain" % (f,g))
         self.__f = f
         self.__g = g
+        category = f.codomain().category()._meet_(g.codomain().category())
+        from sage.structure.element import get_coercion_model
+        base_ring = get_coercion_model().common_parent(
+                f.codomain().base_ring(), g.codomain().base_ring())
+        Scheme.__init__(self, None, category)
+        self._base_ring = base_ring
 
     def gluing_maps(self):
         r"""
