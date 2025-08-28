@@ -16,7 +16,7 @@ env:
   PYTHON_VERSION: 3.11
 
 jobs:
-  doc-pdf:
+  livedoc:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
