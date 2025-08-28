@@ -314,6 +314,7 @@ Comprehensive module list
     sage/combinat/posets/poset_examples
     sage/combinat/posets/d_complete
     sage/combinat/posets/elements
+    sage/combinat/independence_posets
     sage/combinat/posets/linear_extension_iterator
     sage/combinat/posets/lattices
     sage/combinat/posets/posets
