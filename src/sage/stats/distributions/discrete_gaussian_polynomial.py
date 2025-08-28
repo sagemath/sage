@@ -3,7 +3,7 @@ Discrete Gaussian Samplers for `\ZZ[x]`
 
 This class realizes oracles which returns polynomials in `\ZZ[x]`
 where each coefficient is sampled independently with a probability
-proportional to `\exp(-(x-c)²/(2σ²))`.
+proportional to `\exp(-(x-c)^2/(2σ^2))`.
 
 AUTHORS:
 
@@ -89,7 +89,7 @@ class DiscreteGaussianDistributionPolynomialSampler(SageObject):
         - ``P`` -- a univariate polynomial ring over the Integers
         - ``n`` -- number of coefficients to be sampled
         - ``sigma`` -- coefficients `x` are accepted with probability
-          proportional to `\exp(-x²/(2σ²))`. If an object of type
+          proportional to `\exp(-x^2/(2σ^2))`. If an object of type
           :class:`sage.stats.distributions.discrete_gaussian_integer.DiscreteGaussianDistributionIntegerSampler`
           is passed, then this sampler is used to sample coefficients.
 
