@@ -385,9 +385,8 @@ class VertexOperator(AbstractVertexOperator):
 
         EXAMPLES::
 
-            sage: from sage.algebras.vertex_operators import *
-            sage: B = BosonicFockSpace()
-            sage: V = CreationOperator(B)
+            sage: B = vertex_operators.BosonicFockSpace()
+            sage: V = vertex_operators.CreationOperator(B)
             sage: V._d_to_par({1:3, 4:1})
             [4, 1, 1, 1]
 
@@ -408,14 +407,13 @@ class ProductOfVertexOperators(AbstractVertexOperator):
 
     EXAMPLES::
 
-        sage: from sage.algebras.vertex_operators import *
-        sage: B = BosonicFockSpace()
-        sage: Cre = CreationOperator(B)
-        sage: Ann = AnnihilationOperator(B)
-        sage: P1 = ProductOfVertexOperators([Cre, Cre])
+        sage: B = vertex_operators.BosonicFockSpace()
+        sage: Cre = vertex_operators.CreationOperator(B)
+        sage: Ann = vertex_operators.AnnihilationOperator(B)
+        sage: P1 = Cre*Cre
         sage: P1.act_on([4,3], B.one())
         s[3, 3]*w^2
-        sage: P2 = ProductOfVertexOperators([Ann, Cre])
+        sage: P2 = Ann*Cre
         sage: P2.act_on([-3,3], B.one())
         s[]
 
@@ -425,8 +423,7 @@ class ProductOfVertexOperators(AbstractVertexOperator):
         r"""
         Initialize ``self``.
         """
-
-        self.vertex_ops = flatten(vertex_ops)
+        self.vertex_ops = flatten([x if isinstance(x, VertexOperator) else x.vertex_ops for x in vertex_ops])
         assert all(op.fockspace is vertex_ops[0].fockspace for op in self.vertex_ops)
         self._num_ops = len(vertex_ops)
         super().__init__(self.vertex_ops[0].fockspace)
@@ -445,16 +442,15 @@ class ProductOfVertexOperators(AbstractVertexOperator):
 
         EXAMPLES::
 
-            sage: from sage.algebras.vertex_operators import *
-            sage: B = BosonicFockSpace()
-            sage: Cre = CreationOperator(B)
-            sage: P = ProductOfVertexOperators([Cre, Cre, Cre])
+            sage: B = vertex_operators.BosonicFockSpace()
+            sage: Cre = vertex_operators.CreationOperator(B)
+            sage: P = Cre*Cre*Cre
             sage: P.act_on([3, 2, 1],B.one())
             s[1, 1, 1]*w^3
             sage: P.act_on([3, 1, 2],B.one())
             -s[1, 1, 1]*w^3
-            sage: Ann = AnnihilationOperator(B)
-            sage: P = ProductOfVertexOperators([Ann]*3)
+            sage: Ann = vertex_operators.AnnihilationOperator(B)
+            sage: P = Ann*Ann*Ann
             sage: P.act_on([4, 3, 2],B.one())
             -s[3]*w^-3
             sage: P.act_on([4, 2, 3],B.one())
@@ -481,10 +477,9 @@ class ProductOfVertexOperators(AbstractVertexOperator):
 
         EXAMPLES::
 
-            sage: from sage.algebras.vertex_operators import *
-            sage: B = BosonicFockSpace()
-            sage: V = CreationOperator(B)
-            sage: P = ProductOfVertexOperators([V,V])
+            sage: B = vertex_operators.BosonicFockSpace()
+            sage: V = vertex_operators.CreationOperator(B)
+            sage: P = V*V
             sage: f = P.full_action(B.one())
             sage: f[2,1]
             s[1, 1]*w^2
@@ -504,11 +499,9 @@ class ProductOfVertexOperators(AbstractVertexOperator):
 
         EXAMPLES::
 
-            sage: from sage.algebras.vertex_operators import *
-            sage: B = BosonicFockSpace()
-            sage: Cre = CreationOperator(B)
-            sage: Ann = AnnihilationOperator(B)
-            sage: P = ProductOfVertexOperators([Cre, Cre])
+            sage: B = vertex_operators.BosonicFockSpace()
+            sage: Cre = vertex_operators.CreationOperator(B)
+            sage: P = Cre*Cre
             sage: P.matrix_coefficient(([],3), ([],1), cutoff=3)  # example of eq 2.21 in [AZ13]
             {(1, 2): -1, (2, 1): 1}
         """
@@ -546,14 +539,13 @@ class ProductOfVertexOperators(AbstractVertexOperator):
 
         EXAMPLES::
 
-            sage: from sage.algebras.vertex_operators import *
-            sage: B = BosonicFockSpace()
-            sage: Cre = CreationOperator(B)
-            sage: Ann = AnnihilationOperator(B)
-            sage: P = ProductOfVertexOperators([Ann, Cre])
+            sage: B = vertex_operators.BosonicFockSpace()
+            sage: Cre = vertex_operators.CreationOperator(B)
+            sage: Ann = vertex_operators.AnnihilationOperator(B)
+            sage: P = Ann*Cre
             sage: P.vacuum_expectation(cutoff=4)
             {(-4, 4): 1, (-3, 3): 1, (-2, 2): 1, (-1, 1): 1, (0, 0): 1}
-            sage: P = ProductOfVertexOperators([Cre, Ann])
+            sage: P = Cre*Ann
             sage: P.vacuum_expectation(cutoff=4)
             {(-4, 4): 1, (-3, 3): 1, (-2, 2): 1, (-1, 1): 1}
 
@@ -579,9 +571,8 @@ class CreationOperator(VertexOperator):
 
     EXAMPLES::
 
-        sage: from sage.algebras.vertex_operators import *
-        sage: B.<w> = LaurentPolynomialRing(SymmetricFunctions(QQ).s())
-        sage: Cre = CreationOperator(B)
+        sage: B = vertex_operators.BosonicFockSpace(); w = B.gen()
+        sage: Cre = vertex_operators.CreationOperator(B)
         sage: Cre.act_on(-1, B.one())
         0
         sage: Cre.act_on(0, B.one())
@@ -603,9 +594,8 @@ class CreationOperator(VertexOperator):
 
         EXAMPLES::
 
-            sage: from sage.algebras.vertex_operators import *
-            sage: B = BosonicFockSpace()
-            sage: V = CreationOperator(B)
+            sage: B = vertex_operators.BosonicFockSpace()
+            sage: V = vertex_operators.CreationOperator(B)
             sage: TestSuite(V).run(skip='_test_pickling')
         """
         self._weyl_algebra = DifferentialWeylAlgebra(QQ, names=('x'), n=PlusInfinity())
@@ -675,8 +665,8 @@ class CreationOperator(VertexOperator):
 
         EXAMPLES::
 
-            sage: from sage.algebras.vertex_operators import *
-            sage: V = CreationOperator(BosonicFockSpace()); V
+            sage: B = vertex_operators.BosonicFockSpace()
+            sage: V = vertex_operators.CreationOperator(B); V
             Creation Vertex Operator acting on Univariate Laurent
             Polynomial Ring in w over Symmetric Functions over Rational Field
             in the Schur basis
@@ -702,9 +692,8 @@ class AnnihilationOperator(VertexOperator):
 
     EXAMPLES::
 
-        sage: from sage.algebras.vertex_operators import *
-        sage: B.<w> = LaurentPolynomialRing(SymmetricFunctions(QQ).s())
-        sage: Ann = AnnihilationOperator(B)
+        sage: B = vertex_operators.BosonicFockSpace(); w = B.gen()
+        sage: Ann = vertex_operators.AnnihilationOperator(B)
         sage: Ann.act_on(0, B.one())
         0
         sage: Ann.act_on(1, B.one())
@@ -724,9 +713,8 @@ class AnnihilationOperator(VertexOperator):
 
         EXAMPLES::
 
-            sage: from sage.algebras.vertex_operators import *
-            sage: B = BosonicFockSpace()
-            sage: V = AnnihilationOperator(B)
+            sage: B = vertex_operators.BosonicFockSpace()
+            sage: V = vertex_operators.AnnihilationOperator(B)
             sage: TestSuite(V).run(skip='_test_pickling')
         """
 
@@ -771,8 +759,8 @@ class AnnihilationOperator(VertexOperator):
 
         EXAMPLES::
 
-            sage: from sage.algebras.vertex_operators import *
-            sage: V = AnnihilationOperator(BosonicFockSpace()); V
+            sage: B = vertex_operators.BosonicFockSpace()
+            sage: V = vertex_operators.AnnihilationOperator(B); V
             Annihilation Vertex Operator acting on Univariate Laurent
             Polynomial Ring in w over Symmetric Functions over Rational Field
             in the Schur basis
