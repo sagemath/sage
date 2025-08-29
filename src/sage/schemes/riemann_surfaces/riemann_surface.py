@@ -112,9 +112,10 @@ The initial version of this code was developed alongside [BSZ2019]_.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from itertools import combinations
 from scipy.spatial import Voronoi
 from sage.arith.functions import lcm
-from sage.arith.misc import GCD, algebraic_dependency
+from sage.arith.misc import GCD, algebraic_dependency, xgcd
 from sage.ext.fast_callable import fast_callable
 from sage.graphs.graph import Graph
 from sage.groups.matrix_gps.finitely_generated import MatrixGroup
@@ -140,7 +141,7 @@ from sage.rings.real_mpfr import RealField
 from sage.schemes.curves.constructor import Curve
 import sage.libs.mpmath.all as mpall
 
-lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
+lazy_import("sage.rings.qqbar", "number_field_elements_from_algebraics")
 
 
 def voronoi_ghost(cpoints, n=6, CC=CDF):
@@ -205,7 +206,10 @@ def bisect(L, t):
 
     - ``t`` -- real number between `t_0` and `t_n`
 
-    OUTPUT: integer i, giving the position in L where t would be in
+    OUTPUT:
+
+    Integer; the index ``i`` such that ``L[i][0] <= t < L[i+1][0]``. If ``t``
+    equals ``L[i][0]`` exactly, then ``i`` is returned.
 
     EXAMPLES:
 
@@ -297,6 +301,7 @@ class ConvergenceError(ValueError):
         sage: isinstance(ConvergenceError(),ValueError)
         True
     """
+
     pass
 
 
@@ -369,7 +374,7 @@ def differential_basis_baker(f):
             return None
     x, y = f.parent().gens()
     return [
-        x**(a[0] - 1) * y**(a[1] - 1)
+        x ** (a[0] - 1) * y ** (a[1] - 1)
         for a in P.integral_points()
         if P.interior_contains(a)
     ]
@@ -408,10 +413,10 @@ def reparameterize_differential_minpoly(minpoly, z0):
     r"""
     Rewrites a minimal polynomial to write is around `z_0`.
 
-    Given a minimal polynomial `m(z,g)`, where `g` corresponds to a differential
-    on the surface (that is, it is represented as a rational function, and
-    implicitly carries a factor `dz`), we rewrite the minpoly in terms of
-    variables `\bar{z}, \bar{g}` s.t now `\bar{z}=0 \Leftrightarrow z=z_0`.
+    Given a minimal polynomial `m(z,g)` for a differential `g dz`,
+    we compute the minimal polynomial for the same differential expressed
+    in local coordinates around the point `z_0`. The transformation uses
+    `\bar{z} = z - z_0` for finite `z_0`, or `\bar{z} = z^{-1}` when `z_0 = \infty`.
 
     INPUT:
 
@@ -420,7 +425,10 @@ def reparameterize_differential_minpoly(minpoly, z0):
     - ``z0`` -- complex number or infinity; the point about which to
       reparameterize
 
-    OUTPUT: a polynomial in two variables giving the reparameterize minimal polynomial
+    OUTPUT:
+
+    Polynomial in two variables (with names ending in "bar") giving
+    the reparameterized minimal polynomial
 
     EXAMPLES:
 
@@ -467,7 +475,7 @@ def reparameterize_differential_minpoly(minpoly, z0):
 
     if Inf:
         F = F.fraction_field()
-        mt = F(minpoly(F.gen(0)**(-1), -F.gen(0)**2 * F.gen(1)))
+        mt = F(minpoly(F.gen(0) ** (-1), -F.gen(0) ** 2 * F.gen(1)))
         mt.reduce()
         mt = mt.numerator()
     else:
@@ -627,7 +635,7 @@ class RiemannSurface:
         prec=53,
         certification=True,
         differentials=None,
-        integration_method="rigorous"
+        integration_method="rigorous",
     ):
         r"""
         TESTS::
@@ -645,9 +653,9 @@ class RiemannSurface:
         self._integration_method = integration_method
         self._R = f.parent()
         if len(self._R.gens()) != 2:
-            raise ValueError('only bivariate polynomials supported')
+            raise ValueError("only bivariate polynomials supported")
         if f.degree() <= 1:
-            raise ValueError('equation must be of degree at least 2')
+            raise ValueError("equation must be of degree at least 2")
         z, w = self._R.gen(0), self._R.gen(1)
         self._CC = ComplexField(self._prec)
         self._RR = RealField(self._prec)
@@ -774,7 +782,10 @@ class RiemannSurface:
 
         OUTPUT:
 
-        A set of complex numbers corresponding to solutions of `f(z_0,w) = 0`.
+        A list of complex numbers, representing the distinct solutions ``w`` to
+        ``f(z0, w) = 0``. The length of the list is typically ``self.degree``
+        (the degree of `f` in `w`). At ramification points, the list will contain
+        fewer than ``self.degree`` distinct values.
 
         EXAMPLES::
 
@@ -948,8 +959,8 @@ class RiemannSurface:
             0.152628501142363
 
         If the Riemann surface does not have certified homotopy continuation,
-        then the delta will just be the minimum distance away from a branch
-        point::
+        then the delta will just be the minimum distance between branch
+        points::
 
             sage: T = RiemannSurface(f, certification=False)
             sage: z1 = T._vertices[0]
@@ -972,7 +983,7 @@ class RiemannSurface:
 
             # compute M
             upperbounds = [
-                sum(ak[k] * (abs(z1) + rho)**k for k in range(ak.degree()))
+                sum(ak[k] * (abs(z1) + rho) ** k for k in range(ak.degree()))
                 for ak in self._aks
             ]
             upperbounds.reverse()
@@ -992,7 +1003,7 @@ class RiemannSurface:
             return (
                 rho
                 * (
-                    ((rho * Y - epsilon)**2 + 4 * epsilon * M).sqrt()
+                    ((rho * Y - epsilon) ** 2 + 4 * epsilon * M).sqrt()
                     - (rho * Y + epsilon)
                 )
                 / (2 * M - 2 * rho * Y)
@@ -1409,7 +1420,7 @@ class RiemannSurface:
         """
         D = {e: self._edge_permutation(e) for e in self.downstairs_edges()}
         for (a, b), p in list(D.items()):
-            D[(b, a)] = p**(-1)
+            D[(b, a)] = p ** (-1)
         return D
 
     @cached_method
@@ -1874,7 +1885,7 @@ class RiemannSurface:
             base = self.f.base_ring()
             # It's important we use a degree ordering; see below.
             R = self._R
-            k = PolynomialRing(base, names='Z,W,U', order='degrevlex')
+            k = PolynomialRing(base, names="Z,W,U", order="degrevlex")
             dehom = k.Hom(R)([R.gen(0), R.gen(1), R.one()])
             fnew = self.f(k.gen(0) / k.gen(2), k.gen(1) / k.gen(2)).numerator()
 
@@ -1898,7 +1909,7 @@ class RiemannSurface:
             # lowest degree generators are a basis of the relevant subspace.
             d = fnew.total_degree()
             J2 = k.ideal(J).intersection(
-                k.ideal([k.gen(0), k.gen(1), k.gen(2)])**(d - 3)
+                k.ideal([k.gen(0), k.gen(1), k.gen(2)]) ** (d - 3)
             )
             generators = [dehom(c) for c in J2.gens() if c.degree() == d - 3]
             if len(generators) != self.genus:
@@ -2145,7 +2156,7 @@ class RiemannSurface:
         alpha = self._RR(912 / 1000)
         # alpha set manually for scaling purposes. Basic benchmarking shows
         # that ~0.9 is a sensible value.
-        E_global = self._RR(2)**(-self._prec + 3)
+        E_global = self._RR(2) ** (-self._prec + 3)
 
         # Output will iteratively store the output of the integral.
         V = VectorSpace(self._CC, len(differentials))
@@ -2187,11 +2198,11 @@ class RiemannSurface:
             # z1_minus_z0.abs(), so we shall compute this factor without those
             # multiplications as a function of rho_t / rt which should thus be
             # more resistance to floating-point errors.
-            pf2 = (alpha + (1 - alpha) * (rt / rho_t))**2 / (
-                  (1 - alpha) * (1 - rt / rho_t)
+            pf2 = (alpha + (1 - alpha) * (rt / rho_t)) ** 2 / (
+                (1 - alpha) * (1 - rt / rho_t)
             )
             expr = (
-                rho_t / rt + ((rho_t / rt)**2 - 1).sqrt()
+                rho_t / rt + ((rho_t / rt) ** 2 - 1).sqrt()
             )  # Note this is really exp(arcosh(rho_t/rt))
             Ni = 3
             cw = zwt(ct)[1]
@@ -2206,17 +2217,16 @@ class RiemannSurface:
                 m = [a(rho_z) / z_1 for a in ai_pos]
                 l = len(m)
                 M_tilde = 2 * max(
-                    (m[i].abs())**(1 / self._RR(l - i)) for i in range(l)
+                    (m[i].abs()) ** (1 / self._RR(l - i)) for i in range(l)
                 )
                 cg = g(cz, cw)
                 cdgdz = dgdz(cz, cg)
                 M = delta_z * cdgdz.abs() + pf2 * M_tilde
                 N_required = (
-                    (M * (self._RR.pi() + 64 / (15 * (expr**2 - 1))) / E_global).log()
-                    / (2 * expr.log())
-                )
+                    M * (self._RR.pi() + 64 / (15 * (expr**2 - 1))) / E_global
+                ).log() / (2 * expr.log())
                 if N_required.is_positive_infinity():
-                    return 2**max(60, self._prec)
+                    return 2 ** max(60, self._prec)
                 Ni = max(Ni, N_required.ceil())
             return Ni
 
@@ -2260,7 +2270,7 @@ class RiemannSurface:
 
         return output * z1_minus_z0
 
-    def matrix_of_integral_values(self, differentials, integration_method='heuristic'):
+    def matrix_of_integral_values(self, differentials, integration_method="heuristic"):
         r"""
         Compute the path integrals of the given differentials along the homology
         basis.
@@ -2358,7 +2368,10 @@ class RiemannSurface:
         r"""
         Compute the period matrix of the surface.
 
-        OUTPUT: a matrix of complex values
+        OUTPUT:
+
+        A ``Matrix`` over a complex field, representing the period matrix
+        of the combined surface.
 
         EXAMPLES::
 
@@ -2397,7 +2410,10 @@ class RiemannSurface:
         r"""
         Compute the Riemann matrix.
 
-        OUTPUT: a matrix of complex values
+        OUTPUT:
+
+        A ``Matrix`` over a complex field, representing the Riemann matrix
+        of the combined surface.
 
         EXAMPLES::
 
@@ -2457,7 +2473,7 @@ class RiemannSurface:
 
             T = self._L[e]
             P += [path(t[0]) for t in T]
-        return point2d(P, size=1) + point2d(self.branch_locus, color='red')
+        return point2d(P, size=1) + point2d(self.branch_locus, color="red")
 
     def plot_paths3d(self, thickness=0.01):
         r"""
@@ -2507,7 +2523,7 @@ class RiemannSurface:
                 for w in ws:
                     P += point3d(
                         [z.real_part(), z.imag_part(), w.imag_part()],
-                        color='purple',
+                        color="purple",
                         size=20,
                     )
         return P
@@ -2682,7 +2698,7 @@ class RiemannSurface:
             True
         """
         if not epscomp:
-            epscomp = 2**(-self._prec + 30)
+            epscomp = 2 ** (-self._prec + 30)
         QQalg = QQ.algebraic_closure()
 
         def polynomialize_element(alpha):
@@ -2980,13 +2996,13 @@ class RiemannSurface:
             CCzg = PolynomialRing(self._CC, ["zbar", "gbar"])
             mp_list = [CCzg(mp) for mp in mp_list]
             J = 1 / z_end
-            endscale = -(z_end**(-2))
+            endscale = -(z_end ** (-2))
 
             def initialise(z, i):
                 DF = ComplexField(2 * self._prec)
                 DFw = PolynomialRing(DF, "wbar")
                 z = DF(z)
-                R = DF(z**(-1))
+                R = DF(z ** (-1))
                 wR = DFw(self.f(R, DFw.gen(0))).roots(multiplicities=False)[w_start]
                 newg = -(R**2) * self.cohomology_basis()[i](R, wR) / self._dfdw(R, wR)
                 err = mp_list[i](z, newg).abs()
@@ -3023,7 +3039,7 @@ class RiemannSurface:
         if prec is None:
             prec = self._prec
         # tau here is playing the role of the desired error.
-        tau = self._RR(2)**(-prec + 3)
+        tau = self._RR(2) ** (-prec + 3)
         one = self._RR.one()
         la = self._RR.pi() / 2
 
@@ -3047,7 +3063,7 @@ class RiemannSurface:
                 d = mp.monomial_coefficients()
                 mp = sum(
                     [
-                        d[k] * CCzg.gen(0)**k[0] * CCzg.gen(1)**k[1]
+                        d[k] * CCzg.gen(0) ** k[0] * CCzg.gen(1) ** k[1]
                         for k in d.keys()
                         if d[k].abs() > tau
                     ]
@@ -3056,13 +3072,13 @@ class RiemannSurface:
                 a = QQ(max([(cst - iz) / ig for (iz, ig) in d.keys() if ig > 0]))
                 sum_coeffs = sum(
                     [
-                        d[k] * A.gen(0)**k[1]
+                        d[k] * A.gen(0) ** k[1]
                         for k in d.keys()
                         if ((k[1] == 0 and k[0] == cst) or k[1] * a + k[0] - cst == 0)
                     ]
                 )
                 G = max([r.abs() for r in sum_coeffs.roots(multiplicities=False)])
-                cutoffs.append(((a + 1) * tau / G)**(1 / self._CC(a + 1)) / J.abs())
+                cutoffs.append(((a + 1) * tau / G) ** (1 / self._CC(a + 1)) / J.abs())
                 aes.append(a)
             cutoff_individually = bool(
                 not all(ai <= 0 for ai in aes) and cutoff_individually
@@ -3133,12 +3149,14 @@ class RiemannSurface:
                             newg -= delta
                         else:
                             if raise_errors:
-                                raise ConvergenceError("Newton iteration fails to converge")
+                                raise ConvergenceError(
+                                    "Newton iteration fails to converge"
+                                )
                             else:
                                 outg.append(newg)
                 fj = V(outg)
                 u1 = la * hj.cosh()
-                w = u1 / (2 * u2.cosh()**2)
+                w = u1 / (2 * u2.cosh() ** 2)
                 return (fj, valid), w * fj
 
             f0, v0 = fv(h0, (self.genus * [0], self.genus * [False]))
@@ -3177,7 +3195,7 @@ class RiemannSurface:
                             outg.append(newg)
                 fj = V(outg)
                 u1 = la * hj.cosh()
-                w = u1 / (2 * u2.cosh()**2)
+                w = u1 / (2 * u2.cosh() ** 2)
                 return fj, w * fj
 
             u1, u2 = (la * h0.cosh(), la * h0.sinh())
@@ -3220,7 +3238,7 @@ class RiemannSurface:
                     D = min(
                         one,
                         max(
-                            D1**(D1.log() / D2.log()),
+                            D1 ** (D1.log() / D2.log()),
                             D2**2,
                             tau * D3_over_tau,
                             D4,
@@ -3349,7 +3367,7 @@ class RiemannSurface:
                 # We choose the first vertex we want to go to.
                 # If the closest vertex is closer than the nearest branch point, just take that vertex
                 # otherwise we need something smarter.
-                delta = self._RR(2)**(-self._prec + 1)
+                delta = self._RR(2) ** (-self._prec + 1)
                 if not (
                     (zP - self._vertices[V_index]).abs() < (zP - b).abs()
                     or (zP - b).abs() <= delta
@@ -3402,7 +3420,7 @@ class RiemannSurface:
                     ]
                     ts = [
                         ((c - zP) * (zV - zP).conjugate()).real()
-                        / (zP - zV).norm()**2
+                        / (zP - zV).norm() ** 2
                         for c in fl
                     ]
                     ds = [
@@ -3415,7 +3433,7 @@ class RiemannSurface:
                         zV = self._vertices[V_index]
                         ts = [
                             ((c - zP) * (zV - zP).conjugate()).real()
-                            / (zP - zV).norm()**2
+                            / (zP - zV).norm() ** 2
                             for c in fl
                         ]
                         ds = [
@@ -3522,7 +3540,7 @@ class RiemannSurface:
         return ans
 
     def reduce_over_period_lattice(
-        self, vector, method='ip', b=None, r=None, normalised=False
+        self, vector, method="ip", b=None, r=None, normalised=False
     ):
         r"""
         Reduce a vector over the period lattice.
@@ -3611,7 +3629,7 @@ class RiemannSurface:
             if r is None:
                 r = b // 4
             S = 2**b
-            if H * S > 2**(self._prec - 4):
+            if H * S > 2 ** (self._prec - 4):
                 raise ValueError("insufficient precision for b=%s" % b)
 
             def C2Z(v):
@@ -3842,7 +3860,7 @@ class RiemannSurface:
         # If this error bound is too restrictive, this method might fail and
         # not return. One might want to change the way this error is handled.
         if not eps:
-            eps = self._RR(2)**(-self._prec + 3)
+            eps = self._RR(2) ** (-self._prec + 3)
         dl = []
 
         PZ = PolynomialRing(self._R.base(), "z").fraction_field()
@@ -3858,7 +3876,7 @@ class RiemannSurface:
 
             g0 = self._R(gs[0])
             gis = [
-                sum([PZ(gi.list()[i]) * RF.gen()**i for i in range(len(gi.list()))])
+                sum([PZ(gi.list()[i]) * RF.gen() ** i for i in range(len(gi.list()))])
                 for gi in gs[1:]
             ]
 
@@ -3954,7 +3972,7 @@ def integer_matrix_relations(M1, M2, b=None, r=None):
     if r is None:
         r = b // 4
     S = 2**b
-    if H * S > 2**(prec - 4):
+    if H * S > 2 ** (prec - 4):
         raise ValueError("insufficient precision for b=%s" % b)
     g1 = M1.ncols()
     g2 = M2.ncols()
@@ -3972,10 +3990,15 @@ def integer_matrix_relations(M1, M2, b=None, r=None):
     D = Matrix(R, g1, g2, vars[3 * g1 * g2 : 4 * g1 * g2])
     W = ((M1 * A + B) - (M1 * C + D) * M2).list()
     vars = R.gens()
-    mt = Matrix(ZZ, [[1 if i == j else 0 for j in range(4 * g1 * g2)] +
-      [(S * w.monomial_coefficient(vi).real_part()).round() for w in W] +
-      [(S * w.monomial_coefficient(vi).imag_part()).round() for w in W]
-                     for i, vi in enumerate(vars)])
+    mt = Matrix(
+        ZZ,
+        [
+            [1 if i == j else 0 for j in range(4 * g1 * g2)]
+            + [(S * w.monomial_coefficient(vi).real_part()).round() for w in W]
+            + [(S * w.monomial_coefficient(vi).imag_part()).round() for w in W]
+            for i, vi in enumerate(vars)
+        ],
+    )
     # we compute an LLL-reduced basis of this lattice:
     mtL = mt.LLL()
 
@@ -3988,6 +4011,806 @@ def integer_matrix_relations(M1, M2, b=None, r=None):
 
     c = 2**r
     return [vectomat(v) for v in mtL if all(a.abs() <= c for a in v[g1 * g2 :])]
+
+
+def skew_form(M, transformation=False):
+    r"""
+    Compute the skew Smith normal form of a square integer matrix as defined
+    in Theorem IV.1 in [New1972]_.
+
+    Given an integer skew-symmetric matrix `M`, compute a unimodular matrix `S`
+    such that `S^T M S` is block diagonal with `2x2` blocks `(0, d_i; -d_i, 0)`
+    where `d_i` are positive integers with `d_i | d_{i+1}`. If ``transformation``
+    is True, also return ``S``.
+
+    INPUT:
+
+    - ``M`` -- matrix with integer entries and of square dimension
+    - ``transformation`` -- boolean (default: ``False``); if ``True``,
+    return transformation matrix ``S``
+
+    OUTPUT:
+
+    - ``M'`` -- integer n x n matrix in skew Smith normal form
+    - ``S``  -- integer n x n unimodular matrix with `S^T M S = M'` (if ``transformation`` is True)
+
+    EXAMPLES::
+
+        sage: from sage.schemes.riemann_surfaces.riemann_surface import skew_form
+        sage: M = Matrix(ZZ, [
+        ....:             [ 0,  2,  0,  0,  0,  0, -2],
+        ....:             [-2,  0, -2,  0,  0,  0,  0],
+        ....:             [ 0,  2,  0,  6,  0,  0,  4],
+        ....:             [ 0,  0, -6,  0,  0,  0,  0],
+        ....:             [ 0,  0,  0,  0,  0,  0,  0],
+        ....:             [ 0,  0,  0,  0,  0,  0,  0],
+        ....:             [ 2,  0, -4,  0,  0,  0,  0],
+        ....:         ])
+        sage: M_prime, S = skew_form(M, transformation=True)
+        sage: M_prime
+        [ 0  2  0  0  0  0  0]
+        [-2  0  0  0  0  0  0]
+        [ 0  0  0  6  0  0  0]
+        [ 0  0 -6  0  0  0  0]
+        [ 0  0  0  0  0  0  0]
+        [ 0  0  0  0  0  0  0]
+        [ 0  0  0  0  0  0  0]
+        sage: bool(S.transpose() * M * S == M_prime)
+        True
+    """
+
+    nrows, ncols = M.nrows(), M.ncols()
+    if nrows != ncols:
+        raise ValueError("M must be a square matrix.")
+    if M.transpose() != -M:
+        raise ValueError("M must be skew-symmetric.")
+
+    # Trivial zero case
+    if all(M[i, j] == 0 for i in range(nrows) for j in range(ncols)):
+        if transformation:
+            return Matrix(M), Matrix.identity(ZZ, nrows)
+        return Matrix(M)
+
+    total_size = nrows
+    pair_count = total_size // 2
+
+    S = Matrix.identity(ZZ, total_size)
+    M_curr = Matrix(M)
+    t = 0
+
+    # create alternating blocks along the diagonal
+    while t < total_size:
+        # choose a nonzero off-diagonal entry as pivot
+        pivot = None
+        for i in range(t, total_size):
+            for j in range(i + 1, total_size):
+                if M_curr[i, j] != 0:
+                    pivot = (i, j)
+                    break
+            if pivot:
+                break
+        else:
+            break
+
+        i, j = pivot
+
+        # Move pivot to (t, t+1)
+        if i != t:
+            P = Matrix.identity(ZZ, total_size)
+            P.swap_columns(i, t)
+            M_curr = P.transpose() * M_curr * P
+            S = S * P
+
+        if j != t + 1:
+            P = Matrix.identity(ZZ, total_size)
+            P.swap_columns(j, t + 1)
+            M_curr = P.transpose() * M_curr * P
+            S = S * P
+
+        # ensure pivot entry is positive
+        if M_curr[t, t + 1] < 0:
+            P = Matrix.identity(ZZ, total_size)
+            P[t + 1, t + 1] = -1
+            M_curr = P.transpose() * M_curr * P
+            S = S * P
+
+        # clear other entries in rows/cols t and t+1
+        for r in range(total_size):
+            if r in (t, t + 1):
+                continue
+
+            # zero M[t, r] using the pair (a, d) with d = M[t, t+1]
+            a = ZZ(M_curr[t, r])
+            d = ZZ(M_curr[t, t + 1])
+            if a != 0 or d != 0:
+                if a == 0 and d == 0:
+                    pass
+                else:
+                    g1, u, v = xgcd(ZZ(a), ZZ(d))
+                    p = ZZ(d) // g1
+                    r_coeff = -ZZ(a) // g1
+                    q = ZZ(u)
+                    s = ZZ(v)
+                    U1 = Matrix(ZZ, [[p, q], [r_coeff, s]])
+
+                    E1 = Matrix.identity(ZZ, total_size)
+                    # place U1 into rows/cols (r, t+1)
+                    E1[r, r] = U1[0, 0]
+                    E1[r, t + 1] = U1[0, 1]
+                    E1[t + 1, r] = U1[1, 0]
+                    E1[t + 1, t + 1] = U1[1, 1]
+
+                    M_curr = E1.transpose() * M_curr * E1
+                    S = S * E1
+
+            # zero M[t+1, r] using the pair (b, -d)
+            b = ZZ(M_curr[t + 1, r])
+            d = ZZ(M_curr[t, t + 1])
+            if b != 0 or d != 0:
+                if b == 0 and (-d) == 0:
+                    pass
+                else:
+                    g2, u, v = xgcd(ZZ(b), ZZ(-d))
+                    p = ZZ(-d) // g2
+                    r_coeff = -ZZ(b) // g2
+                    q = ZZ(u)
+                    s = ZZ(v)
+                    U2 = Matrix(ZZ, [[p, q], [r_coeff, s]])
+
+                    E2 = Matrix.identity(ZZ, total_size)
+                    E2[r, r] = U2[0, 0]
+                    E2[r, t] = U2[0, 1]
+                    E2[t, r] = U2[1, 0]
+                    E2[t, t] = U2[1, 1]
+
+                    M_curr = E2.transpose() * M_curr * E2
+                    S = S * E2
+
+        # ensure positivity of the 2x2 pivot
+        if M_curr[t, t + 1] < 0:
+            P = Matrix.identity(ZZ, total_size)
+            P[t + 1, t + 1] = -1
+            M_curr = P.transpose() * M_curr * P
+            S = S * P
+
+        t += 2
+
+    # enforce divisibility of adjacent blocks
+    if pair_count >= 2:
+        changed = True
+        while changed:
+            changed = False
+            for i in range(pair_count - 1):
+                a = ZZ(M_curr[2 * i, 2 * i + 1])
+                b = ZZ(M_curr[2 * i + 2, 2 * i + 3])
+                if a == 0 or b == 0:
+                    continue
+                # already locally in chain?
+                if (a % b == 0) or (b % a == 0):
+                    continue
+
+                g, u, v = xgcd(a, b)
+                alpha = a // g
+                beta = b // g
+
+                # apply gcd
+                T2 = Matrix(ZZ, [[u, v], [-beta, alpha]])
+                I2 = Matrix.identity(ZZ, 2)
+                T4 = Matrix.block(
+                    [
+                        [T2[0, 0] * I2, T2[0, 1] * I2],
+                        [T2[1, 0] * I2, T2[1, 1] * I2],
+                    ]
+                )
+
+                # embed
+                idx = [2 * i, 2 * i + 1, 2 * i + 2, 2 * i + 3]
+                P = Matrix.identity(ZZ, total_size)
+                for r in idx:
+                    for c in idx:
+                        P[r, c] = 0
+                for r in range(4):
+                    for c in range(4):
+                        P[idx[r], idx[c]] = T4[r, c]
+
+                M_curr = P.transpose() * M_curr * P
+                S = S * P
+
+                # first ensure the two "pivot positions" are positive.
+                for base in (idx[0], idx[2]):  # starts of the two 2x2 blocks
+                    t0, t1 = base, base + 1
+                    if M_curr[t0, t1] < 0:
+                        D = Matrix.identity(ZZ, total_size)
+                        D[t1, t1] = -1
+                        M_curr = D.transpose() * M_curr * D
+                        S = S * D
+
+                # clear cross entries between the two 2x2 blocks
+                for base, other in ((idx[0], idx[2]), (idx[2], idx[0])):
+                    t0, t1 = base, base + 1
+                    for r in (other, other + 1):
+                        # zero M[t0, r] with pair (a, d)
+                        a_ = ZZ(M_curr[t0, r])
+                        d_ = ZZ(M_curr[t0, t1])
+                        if a_ != 0 or d_ != 0:
+                            g1, u1, v1 = xgcd(a_, d_)
+                            p = d_ // g1
+                            rcoeff = -a_ // g1
+                            q = ZZ(u1)
+                            s = ZZ(v1)
+                            E = Matrix.identity(ZZ, total_size)
+                            E[r, r] = p
+                            E[r, t1] = q
+                            E[t1, r] = rcoeff
+                            E[t1, t1] = s
+                            M_curr = E.transpose() * M_curr * E
+                            S = S * E
+
+                        # zero M[t1, r] with pair (b, -d)
+                        b_ = ZZ(M_curr[t1, r])
+                        d_ = ZZ(M_curr[t0, t1])
+                        if b_ != 0 or d_ != 0:
+                            g2, u2, v2 = xgcd(b_, -d_)
+                            p = (-d_) // g2
+                            rcoeff = -b_ // g2
+                            q = ZZ(u2)
+                            s = ZZ(v2)
+                            E = Matrix.identity(ZZ, total_size)
+                            E[r, r] = p
+                            E[r, t0] = q
+                            E[t0, r] = rcoeff
+                            E[t0, t0] = s
+                            M_curr = E.transpose() * M_curr * E
+                            S = S * E
+
+                    # ensure positivity again for this 2x2 after clearing
+                    if M_curr[t0, t1] < 0:
+                        D = Matrix.identity(ZZ, total_size)
+                        D[t1, t1] = -1
+                        M_curr = D.transpose() * M_curr * D
+                        S = S * D
+
+                changed = True
+
+    # reorder 2x2 blocks into a nondecreasing chain (zeros at the end)
+    pairs = [(ZZ(M_curr[2 * i, 2 * i + 1]), i) for i in range(pair_count)]
+
+    # sort by: nonzero first (ascending), then zeros
+    pairs.sort(key=lambda t: (t[0] == 0, t[0]))
+    order = []
+    for _, i in pairs:
+        order += [2 * i, 2 * i + 1]
+
+    if len(order) == total_size:
+        P = Matrix.zero(ZZ, total_size, total_size)
+        for new_idx, old_idx in enumerate(order):
+            P[old_idx, new_idx] = 1
+        M_curr = P.transpose() * M_curr * P
+        S = S * P
+
+    # Final positivity pass
+    for i in range(pair_count):
+        if M_curr[2 * i, 2 * i + 1] < 0:
+            D = Matrix.identity(ZZ, total_size)
+            D[2 * i + 1, 2 * i + 1] = -1
+            M_curr = D.transpose() * M_curr * D
+            S = S * D
+
+    if transformation:
+        return M_curr, S
+    return M_curr
+
+
+def poincare_form(M, transformation=False):
+    r"""
+    Compute the Poincare normal form of a matrix.
+
+    We follow the method described by Martens in [Mar1992]_. Given a matrix M,
+    we first check the GCD of the subdeterminants of M. If it is 1, we can use the
+    we proceed otherwise we factor out a matrix on the left to make the GCD 1.
+    We then proceed with the reduction algorithm.
+
+    If ``transformation`` is True, we also return the transformation matrices
+    ``S`` and ``T`` such that ``S * N * T`` is equal to ``M``.
+
+    INPUT:
+
+    - ``M`` -- matrix with integer entries of size 2m * 2g, (m < g)
+    - ``transformation`` -- boolean (default: ``False``); if ``True``,
+    return transformation matrix ``S`` and ``T``
+
+    OUTPUT:
+
+    - ``N`` -- the Poincare normal form of M
+    - ``S`` -- the transformation matrix such that S * N * T = M (if ``transformation`` is True)
+    - ``T`` -- the transformation matrix such that S * N * T = M (if ``transformation`` is True)
+
+    EXAMPLES::
+
+        sage: from sage.schemes.riemann_surfaces.riemann_surface import poincare_form
+        sage: M = Matrix(ZZ, [
+        ....:     [1, 0, 0, 0, 0, -1, 0, -1],
+        ....:     [0, 1, 0, 0, -1, -1, -1, 0],
+        ....:     [0, 0, 1, 0, 0, 1, 0, 0],
+        ....:     [0, 0, 0, 1, 1, 0, 0, 0]])
+        sage: N, S, T = poincare_form(M, transformation=True)
+        sage: N
+        [1 0 0 0 0 0 0 0]
+        [0 1 0 0 0 0 0 0]
+        [0 0 1 0 2 0 0 0]
+        [0 0 0 1 0 2 0 0]
+        sage: bool(S * N * T == M)
+        True
+    """
+
+    M = M.change_ring(ZZ)
+    n_r, n_c = M.nrows(), M.ncols()
+    m = n_r // 2
+    g = n_c // 2
+
+    if M.nrows() % 2 != 0 or M.ncols() % 2 != 0:
+        raise ValueError("Matrix dimensions must be even")
+
+    if M.rank() != M.nrows():
+        raise ValueError("Matrix is not full rank")
+
+    I_g = Matrix.identity(ZZ, g)
+    zero_g = Matrix.zero(ZZ, g, g)
+    J = Matrix.block([[zero_g, I_g], [-I_g, zero_g]])
+
+    if (M * J * M.transpose()).det() == 0:
+        raise ValueError("MJM^T is singular")
+
+    def symplectic_matrix(type, A, g):
+        I = Matrix.identity(ZZ, g)
+        Z = Matrix.zero(ZZ, g, g)
+        if type == "1":
+            return block_matrix([[I, A], [Z, I]])
+        elif type == "2":
+            return block_matrix([[I, Z], [A, I]])
+        elif type == "3":
+            return block_matrix([[A, Z], [Z, A.transpose().inverse()]])
+        else:
+            raise ValueError(f"Invalid symplectic type: {type}")
+
+    def partner(col):
+        return col + g if col < g else col - g
+
+    S = Matrix.identity(ZZ, n_r)
+    T = Matrix.identity(ZZ, n_c)
+
+    # Step 1: Fix/check subdeterminants
+    gcd_subdets = GCD(
+        [
+            block_matrix([M[:, ci] for ci in com], ncols=2 * m).det()
+            for com in combinations(range(n_c), n_r)
+        ]
+    )
+
+    if gcd_subdets > 1:
+        D, U, V = M.smith_form()
+        D_sq = D[:n_r, :n_r]
+        L_full = U.inverse() * D_sq * U
+        H, Q = (L_full.transpose()).hermite_form(transformation=True)
+        L_triag = H.transpose()
+        M_curr = L_triag.inverse() * M
+        S = L_triag * S
+    else:
+        M_curr = M
+
+    # Step 2: Frobenius alternating form
+    MJMT = M_curr * J * M_curr.transpose()
+
+    _, S_trans = skew_form(MJMT, transformation=True)
+
+    # permute to (0 D; -D 0)
+    idx = [2 * i for i in range(m)] + [2 * i + 1 for i in range(m)]
+    P_group = Matrix.identity(ZZ, 2 * m)[:, idx]
+    S_trans = S_trans * P_group
+    MJMT = S_trans.transpose() * MJMT * S_trans
+
+    # read the diagonal of D
+    d_block = MJMT[:m, m : 2 * m]
+    d_values = [abs(int(d_block[i, i])) for i in range(m)]
+
+    # order for descending divisibility chain (larger first)
+    order = sorted(range(m), key=lambda i: d_values[i], reverse=True)
+    P_sigma = Matrix.identity(ZZ, m)[:, order]
+    Q = Matrix.block(
+        [[P_sigma, Matrix.zero(ZZ, m, m)], [Matrix.zero(ZZ, m, m), P_sigma]]
+    )
+
+    # apply Q by congruence and accumulate it
+    MJMT = Q.transpose() * MJMT * Q
+    S_trans = S_trans * Q
+
+    # update M_curr
+    M_curr = S_trans.transpose() * M_curr
+    S = S_trans.transpose() * S
+
+    # Step 3: Normalize first m column-pairs to top-left block [I_m | 0]
+    for j in range(m):
+        # Step 3a: Insert +/-1 at (j,j)
+        pivot_col = None
+        for c in range(j, 2 * g):
+            if abs(M_curr[j, c]) == 1:
+                pivot_col = c
+                break
+
+        # Swap column‑pairs if unit is not already in column j
+        if pivot_col is not None and pivot_col != j:
+
+            P = Matrix.identity(ZZ, 2 * g)
+            P.swap_columns(j, pivot_col)
+            P.swap_columns(partner(j), partner(pivot_col))
+
+            M_curr *= P
+            T *= P
+
+        # Make sure (j,j) is non-zero
+        if M_curr[j, j] == 0:
+            c_nz = next((c for c in range(j, 2 * g) if M_curr[j, c] != 0), None)
+            if c_nz is None:
+                raise ValueError(
+                    f"Row {j} is zero from column {j} onward; cannot pivot."
+                )
+            P = Matrix.identity(ZZ, 2 * g)
+            P.swap_columns(j, c_nz)
+            P.swap_columns(partner(j), partner(c_nz))  # keep it symplectic
+            M_curr *= P
+            T *= P
+
+        # Euclidean algorithm if no unit now present
+        if abs(M_curr[j, j]) != 1:
+            if GCD([int(M_curr[j, c]) for c in range(j, 2 * g)]) != 1:
+                raise ValueError(f"Row {j} not primitive - cannot create a pivot.")
+
+            for c in range(j + 1, 2 * g):
+                while M_curr[j, c] != 0:
+                    # Ensure the divisor (pivot) is not smaller than the target; if it is, swap pairs
+                    if abs(M_curr[j, c]) < abs(M_curr[j, j]):
+                        P = Matrix.identity(ZZ, 2 * g)
+                        P.swap_columns(j, c)
+                        P.swap_columns(partner(j), partner(c))
+                        M_curr *= P
+                        T *= P
+                        continue
+
+                    # Now |M[j,c]| >= |M[j,j]|, so q != 0 in normal Euclid
+                    num = ZZ(M_curr[j, c])
+                    den = ZZ(M_curr[j, j])
+                    q = int(num // den)
+                    if q == 0:
+                        q = 1 if num > 0 else -1  # belt-and-braces
+
+                    if c < g:
+                        # Left-half elimination: type-3 (X -> X*A)
+                        A = Matrix.identity(ZZ, g)
+                        A[j, c] -= q  # col_c <- col_c - q * col_j
+                        K = symplectic_matrix("3", A, g)
+                    else:
+                        # Right-half elimination: type-1 (Y -> X*A + Y), A symmetric
+                        A = Matrix.zero(ZZ, g, g)
+                        idx = c - g
+                        if idx == j:
+                            # Partner column: hit the diagonal ONCE
+                            A[j, j] -= q
+                        else:
+                            A[j, idx] -= q
+                            A[idx, j] -= q
+                        K = symplectic_matrix("1", A, g)
+
+                    M_curr *= K
+                    T *= K
+
+        # make the pivot +1
+        if M_curr[j, j] == -1:
+            A = Matrix.identity(ZZ, g)
+            A[j, j] = -1
+            K = symplectic_matrix("3", A, g)
+            M_curr *= K
+            T *= K
+
+        # Step 3b: Clear all off-diagonal entries in row j
+        while True:
+            changed = False
+            for c in range(g):
+                if c == j:
+                    continue
+                val = int(M_curr[j, c])
+                if val != 0:
+                    A = Matrix.identity(ZZ, g)
+                    A[j, c] = -val
+                    K = symplectic_matrix("3", A, g)
+                    M_curr *= K
+                    T *= K
+                    changed = True
+            if not changed:
+                break
+
+        # Step 3c: Zero the right-block entries (j, g, ..., 2g-1)
+        for c in range(g):
+            val = int(M_curr[j, g + c])
+            if val != 0:
+                A = Matrix.zero(ZZ, g, g)
+                A[j, c] = -val
+                A[c, j] = -val
+                K = symplectic_matrix("1", A, g)
+                M_curr *= K
+                T *= K
+
+        # Step 3d: Clear (m+i, j) for i > j using row shears (type-2)
+        for i in range(j + 1, m):
+            val = int(M_curr[m + i, j])
+            if val != 0:
+                A = Matrix.zero(ZZ, m, m)
+                A[i, j] = -val
+                A[j, i] = -val
+                K = symplectic_matrix("2", A, m)
+                M_curr = K * M_curr
+                S = K * S
+
+    # Step 4: Operations on last g-m blocks of each row
+    n_tail = g - m
+    MJMT = M_curr * J * M_curr.transpose()
+    delta = MJMT[0:m, m : 2 * m]
+    for j in range(m):
+        r = m + j
+        if int(delta[j, j]) == 1:
+
+            # clear entire right tail
+            for tau in range(m, g):
+                if tau == j:
+                    continue
+                val = int(M_curr[r, g + tau])
+                if val == 0:
+                    continue
+                A = Matrix.zero(ZZ, g, g)
+                A[j, tau] = -val
+                A[tau, j] = -val
+                K = symplectic_matrix("1", A, g)
+                M_curr *= K
+                T *= K
+
+            # clear entire left tail
+            for k in range(m, g):
+                val = int(M_curr[r, k])
+                if val == 0:
+                    continue
+                A = Matrix.zero(ZZ, g, g)
+                A[j, k] = -val
+                A[k, j] = -val
+                K = symplectic_matrix("2", A, g)
+                M_curr *= K
+                T *= K
+
+        if j >= n_tail:
+            continue
+
+        # Look for a unit in row r
+        pivot_col = None
+        for c in range(m + j, g):
+            if abs(M_curr[r, c]) == 1:
+                pivot_col = c
+                break
+
+        # If found, move it to column m + j via pair-swap within the tail block
+        if pivot_col is not None and pivot_col != m + j:
+            P = Matrix.identity(ZZ, 2 * g)
+            P.swap_columns(m + j, pivot_col)
+            P.swap_columns(partner(m + j), partner(pivot_col))
+            M_curr *= P
+            T *= P
+
+        # Ensure (r, m + j) is nonzero if any nonzero exists in the tail
+        if M_curr[r, m + j] == 0:
+            c_nz = next((c for c in range(m + j, g) if M_curr[r, c] != 0), None)
+            if c_nz is not None and c_nz != m + j:
+                P = Matrix.identity(ZZ, 2 * g)
+                P.swap_columns(m + j, c_nz)
+                P.swap_columns(partner(m + j), partner(c_nz))
+                M_curr *= P
+                T *= P
+            elif c_nz is None:
+                # If no unit, select unit from right, coprime to delta[j,j] and move to m+j
+                d_jj = int(delta[j, j])
+                pivot_col = None
+                for c in range(g + m, 2 * g):
+                    val = int(M_curr[r, c])
+                    # look for an entry coprime to delta[j,j]
+                    if val != 0 and GCD(val, d_jj) == 1:
+                        pivot_col = c
+                        break
+
+                if pivot_col is not None:
+                    idx = pivot_col - g
+                    A = Matrix.zero(ZZ, g, g)
+                    if idx == m + j:
+                        # partner case: write the diagonal once
+                        A[idx, idx] += 1
+                    else:
+                        # normal case: make S symmetric
+                        A[idx, m + j] += 1
+                        A[m + j, idx] += 1
+                    K = symplectic_matrix("2", A, g)
+                    M_curr *= K
+                    T *= K
+
+                else:
+                    raise ValueError(
+                        f"No unit in row {r} coprime to delta[{j},{j}] = {d_jj}"
+                    )
+
+        # If no unit yet, perform a Euclidean reduction confined to the tail block using type-3 ops
+        if abs(M_curr[r, m + j]) != 1:
+            for c in range(m + j + 1, g):
+                while M_curr[r, c] != 0:
+                    if abs(M_curr[r, c]) < abs(M_curr[r, m + j]):
+                        P = Matrix.identity(ZZ, 2 * g)
+                        P.swap_columns(m + j, c)
+                        P.swap_columns(partner(m + j), partner(c))
+                        M_curr *= P
+                        T *= P
+                        continue
+
+                    num = ZZ(M_curr[r, c])
+                    den = ZZ(M_curr[r, m + j])
+                    q = int(num // den)
+                    if q == 0:
+                        q = 1 if num > 0 else -1
+
+                    A = Matrix.identity(ZZ, g)
+                    A[m + j, c] -= q
+                    K = symplectic_matrix("3", A, g)
+                    M_curr *= K
+                    T *= K
+
+        # Make the pivot positive
+        if M_curr[r, m + j] == -1:
+            A = Matrix.identity(ZZ, g)
+            A[m + j, m + j] = -1
+            K = symplectic_matrix("3", A, g)
+            M_curr *= K
+            T *= K
+
+        # Now we have pivot, we clear
+        p_left = m + j
+        s_left = int(M_curr[r, p_left])
+
+        # pivot in left tail
+        if abs(s_left) == 1:
+            # (i) clear entries to the right inside the left tail
+            for k in range(m + j + 1, g):
+                val = int(M_curr[r, k])
+                if val == 0:
+                    continue
+                A = Matrix.identity(ZZ, g)
+                A[p_left, k] -= val
+                K = symplectic_matrix("3", A, g)
+                M_curr *= K
+                T *= K
+
+            # clear entire right tail
+            for t in range(g + m, 2 * g):
+                val = int(M_curr[r, t])
+                if val == 0:
+                    continue
+                tau = t - g
+                Sg = Matrix.zero(ZZ, g, g)
+                sign = 1 if s_left == 1 else -1
+                Sg[p_left, tau] = -val * sign
+                Sg[tau, p_left] = -val * sign
+                K = symplectic_matrix("1", Sg, g)
+                M_curr *= K
+                T *= K
+
+            # clear g+m+j
+            for s in range(m, 2 * m):
+                val = int(M_curr[s, g + m + j])
+                if val == 0:
+                    continue
+
+                d_s = int(delta[s - m, s - m])
+                if val % d_s != 0:
+                    raise ValueError(
+                        f"Divisibility failed at row {s}: {val} not divisible by {d_s}."
+                    )
+
+                q = val // d_s
+                U = Matrix.identity(ZZ, g)
+                U[m + j, s - m] += q
+                K = symplectic_matrix("3", U, g)
+                M_curr *= K
+                T *= K
+
+            # clear left half of tail inside the left tail
+            for k in range(m, m + j):
+                val = int(M_curr[r, k])
+                if val == 0:
+                    continue
+                if k == p_left:
+                    continue
+                A = Matrix.identity(ZZ, g)
+                A[p_left, k] -= val
+                K = symplectic_matrix("3", A, g)
+                M_curr *= K
+                T *= K
+
+    # Step 5: Clear the lower left m * m block Y
+
+    # Y is unimodular?
+    Y = M_curr[m : 2 * m, 0:m]
+    if not Y.is_zero():
+        # Create the clearing matrix as a block matrix
+        E = Matrix.identity(ZZ, m)
+        zero = Matrix.zero(ZZ, m, m)
+        clear_matrix = block_matrix([[E, zero], [-Y, E]])
+
+        # Apply
+        M_curr = clear_matrix * M_curr
+        S = clear_matrix * S
+
+    N = M_curr
+
+    if transformation:
+        return N, S.inverse(), T.inverse()
+
+    return N
+
+
+def reduce_riemann_matrix(M, Z):
+    r"""
+    Reduce the Riemann matrix `Z` of the Riemann surface to `Z'` using a
+    reduction matrix `M` following Martens' algorithm in [Mar1992]_.
+
+    The matrix `M` is a reduction matrix associated with the Riemann surface,
+    often derived from an idempotent `e` of its endomorphism algebra. The
+    row space of `e` defines `M`, which in turn encodes a specific reduction
+    of the Riemann surface.
+
+    The resulting matrix `Z'` is the Riemann matrix of a factor in the
+    isogeny decomposition of the Jacobian associated with `Z`. More precisely,
+    `Z'` represents the effect of a symplectic change of homology basis, often
+    defined by a matrix `T` (e.g., from `poincare_form(M)`) which transforms
+    the homology basis such that the reduction encoded by `M` corresponds to
+    a projection onto the first 2m basis elements of the new lattice, where
+    2m is the dimension of the reduced Jacobian factor.
+
+    INPUT:
+
+    - ``M`` -- the reduction matrix associated to the Riemann surface
+    - ``Z`` -- the Riemann matrix of the Riemann surface
+
+    OUTPUT:
+
+    - ``Z'`` -- the reduced Riemann matrix
+
+    EXAMPLES::
+
+        sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface, reduce_riemann_matrix
+        sage: R.<x,y> = QQ[]
+        sage: f = y^2 - x^6 - 1
+        sage: S = RiemannSurface(f, prec=50, integration_method='rigorous')
+        sage: M = Matrix(ZZ, [[1, 1, 0, 0], [0, 0, 1, 1]])
+        sage: Z = S.riemann_matrix()
+        sage: Z_prime = reduce_riemann_matrix(M, Z)
+        sage: Z_prime # abs tol 1e-10
+        [   -0.37500000000000 + 0.21650635094611*I -0.50000000000000 - 4.4408920985006e-16*I]
+        [-0.50000000000000 - 3.0730409244296e-16*I      1.5000000000000 + 0.86602540378444*I]
+    """
+    _, _, T = poincare_form(M, transformation=True)
+    n = M.ncols() // 2
+    J = Matrix.block(
+        [
+            [Matrix.zero(ZZ, n, n), Matrix.identity(ZZ, n)],
+            [-Matrix.identity(ZZ, n), Matrix.zero(ZZ, n, n)],
+        ]
+    )
+    E = Matrix.identity(ZZ, n)
+    EZ = block_matrix([E, Z], nrows=1)
+    GZp = EZ * (J * T).inverse()
+
+    return numerical_inverse(GZp[:, :n]) * GZp[:, n:]
 
 
 class RiemannSurfaceSum(RiemannSurface):
