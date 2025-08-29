@@ -572,7 +572,7 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
         [0, 1, 2, 0]
         [2, 3, 4, 5, 2]
 
-    The algorithm ``'B'`` is available only when `simple=True`::
+    The algorithm ``'B'`` is available only when ``simple=True``::
 
         sage: g = DiGraph()
         sage: g.add_edges([('a', 'b', 1), ('b', 'a', 1)])
