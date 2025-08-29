@@ -43,16 +43,16 @@ Right division of isogenies::
     sage: E = EllipticCurve(GF(419), [1, 0])
     sage: ker = E(125, 70)
     sage: phi = E.isogeny(ker); phi
-    Isogeny of degree 35
-      from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
-      to Elliptic Curve defined by y^2 = x^3 + 289*x + 323 over Finite Field of size 419
+    Composite morphism of degree 35 = 5*7:
+      From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+      To:   Elliptic Curve defined by y^2 = x^3 + 289*x + 323 over Finite Field of size 419
     sage: psi = E.isogeny(5*ker); psi
     Isogeny of degree 7
       from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
       to Elliptic Curve defined by y^2 = x^3 + 285*x + 87 over Finite Field of size 419
     sage: chi = phi.divide_right(psi); chi
     Fractional elliptic-curve morphism of degree 5:
-      Numerator:   Composite morphism of degree 245 = 7*35:
+      Numerator:   Composite morphism of degree 245 = 7*5*7:
       From: Elliptic Curve defined by y^2 = x^3 + 285*x + 87 over Finite Field of size 419
       To:   Elliptic Curve defined by y^2 = x^3 + 289*x + 323 over Finite Field of size 419
       Denominator: 7
@@ -64,9 +64,9 @@ Left division of isogenies::
     sage: E = EllipticCurve(GF(419), [1, 0])
     sage: ker = E(125, 70)
     sage: phi = E.isogeny(ker); phi
-    Isogeny of degree 35
-      from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
-      to Elliptic Curve defined by y^2 = x^3 + 289*x + 323 over Finite Field of size 419
+    Composite morphism of degree 35 = 5*7:
+      From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+      To:   Elliptic Curve defined by y^2 = x^3 + 289*x + 323 over Finite Field of size 419
     sage: tmp = E.isogeny(7*ker)
     sage: psi = tmp.codomain().isogeny(tmp(ker)); psi
     Isogeny of degree 7
@@ -74,7 +74,7 @@ Left division of isogenies::
       to Elliptic Curve defined by y^2 = x^3 + 289*x + 323 over Finite Field of size 419
     sage: chi = phi.divide_left(psi); chi
     Fractional elliptic-curve morphism of degree 5:
-      Numerator:   Composite morphism of degree 245 = 35*7:
+      Numerator:   Composite morphism of degree 245 = 5*7^2:
       From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
       To:   Elliptic Curve defined by y^2 = x^3 + 269*x + 82 over Finite Field of size 419
       Denominator: 7
