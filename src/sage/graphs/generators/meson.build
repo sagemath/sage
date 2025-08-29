@@ -10,11 +10,15 @@ py.install_sources(
   'platonic_solids.py',
   'random.py',
   'smallgraphs.py',
+  'trees.pxd',
   'world_map.py',
   subdir: 'sage/graphs/generators',
 )
 
-extension_data = {'distance_regular' : files('distance_regular.pyx')}
+extension_data = {
+  'distance_regular' : files('distance_regular.pyx'),
+  'trees' : files('trees.pyx'),
+}
 
 foreach name, pyx : extension_data
   py.extension_module(
@@ -22,7 +26,7 @@ foreach name, pyx : extension_data
     sources: pyx,
     subdir: 'sage/graphs/generators',
     install: true,
-    include_directories: [],
+    include_directories: [inc_cpython, inc_data_structures],
     dependencies: [py_dep, cysignals, gmp],
   )
 endforeach

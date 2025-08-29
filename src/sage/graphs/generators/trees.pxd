@@ -1,6 +1,6 @@
 
 cdef class TreeIterator:
-    cdef int vertices
+    cdef int n
     cdef int first_time
     cdef int p
     cdef int q
