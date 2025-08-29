@@ -186,5 +186,5 @@ the result using ``perf report``:
 
 .. code-block:: console
 
-  $ perf record -p PID
-  $ perf report --vmlinux vmlinux
+    $ perf record -p PID
+    $ perf report --vmlinux vmlinux

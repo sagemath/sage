@@ -171,7 +171,7 @@ file).
 
 .. code-block:: console
 
-    was@form:~$ sage
+    $ sage
     ┌────────────────────────────────────────────────────────────────────┐
     │ SageMath version 9.7, Release Date: 2022-01-10                     │
     │ Using Python 3.10.4. Type "help()" for help.                       │

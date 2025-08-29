@@ -649,15 +649,15 @@ You will need to do this from the command line.  Just run a command like this.
 
   .. code-block:: console
 
-    $ env BROWSER=opera /usr/bin/sage --notebook
+      $ env BROWSER=opera /usr/bin/sage --notebook
 
 * Mac (assuming you are in the directory of your downloaded Sage).
   With the Jupyter notebook:
 
   .. code-block:: console
 
-    $ BROWSER='open -a Firefox %s' ./sage --notebook jupyter
-    $ BROWSER='open -a Google\ Chrome %s' ./sage --notebook jupyter
+      $ BROWSER='open -a Firefox %s' ./sage --notebook jupyter
+      $ BROWSER='open -a Google\ Chrome %s' ./sage --notebook jupyter
 
 
 Where is the source code for ``<function>``?

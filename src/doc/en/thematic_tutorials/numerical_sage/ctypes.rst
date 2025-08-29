@@ -162,8 +162,8 @@ We can compile it by running at the command line
 
 .. code-block:: console
 
-     $ gcc -c laplace.c
-     $ gcc -shared -o laplace.so laplace.o
+    $ gcc -c laplace.c
+    $ gcc -shared -o laplace.so laplace.o
 
 Now in sage (notebook or command line) execute
 
