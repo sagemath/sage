@@ -19799,7 +19799,7 @@ cdef class Matrix(Matrix1):
         ``(self, M)`` with rows ordered according to ``shifts``. In other terms,
         the rows of the returned matrix form a basis of the kernel of the
         `\Bold{K}[x]`-linear map `\Bold{K}[x]^n \to K^n` given by the matrix
-        `E`, where the action of `x` on `K^n` is given by `M`.
+        ``self``, where the action of `x` on `K^n` is given by `M`.
 
         Write `E` for ``self``, of dimensions `m \times n`. Consider the Krylov
         basis `B` as computed by :meth:`krylov_basis` with the same parameters
