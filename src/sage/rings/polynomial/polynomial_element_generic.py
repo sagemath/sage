@@ -176,10 +176,9 @@ class Polynomial_generic_sparse(Polynomial):
         """
         if sparse:
             return [self.__coeffs[e] for e in self.exponents()]
-        else:
-            zero = self.parent().base_ring().zero()
-            return [self.__coeffs[i] if i in self.__coeffs else zero
-                    for i in range(self.degree() + 1)]
+
+        zero = self.parent().base_ring().zero()
+        return [self.__coeffs.get(i, zero) for i in range(self.degree() + 1)]
 
     def exponents(self):
         """

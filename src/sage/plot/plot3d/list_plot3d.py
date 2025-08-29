@@ -618,8 +618,8 @@ def list_plot3d_tuples(v, interpolation_type, **kwds):
         return G
 
     if interpolation_type == 'spline':
-        kx = kwds['kx'] if 'kx' in kwds else 3
-        ky = kwds['ky'] if 'ky' in kwds else 3
+        kx = kwds.get('kx', 3)
+        ky = kwds.get('ky', 3)
         if 'degree' in kwds:
             kx = kwds['degree']
             ky = kwds['degree']
