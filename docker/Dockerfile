@@ -90,7 +90,7 @@ RUN ln -s /usr/bin/sage /usr/bin/sagemath
 # We need gcc/g++ and libstdc++-10-dev to allow compilation of cython at run-time from the notebook.
 # We also install sudo for the sage user, see below.
 RUN apt-get -qq update \
-    && apt-get -qq install -y --no-install-recommends gfortran gcc g++ libstdc++-10-dev sudo openssl $(echo $(build/bin/sage-get-system-packages debian _bootstrap _prereq))\
+    && apt-get -qq install -y --no-install-recommends gfortran gcc g++ libstdc++-10-dev sudo openssl pkg-config patch libz-dev libbz2-dev bzip2 ca-certificates perl \
     && apt-get -qq clean \
     && rm -r /var/lib/apt/lists/*
 # Sage refuses to build as root, so we add a "sage" user that can sudo without a password.
@@ -111,7 +111,7 @@ WORKDIR $HOME
 FROM run-time-dependencies AS build-time-dependencies
 # Install the build time dependencies & git & rdfind
 RUN sudo apt-get -qq update \
-    && sudo apt-get -qq install -y wget build-essential automake m4 dpkg-dev python3 libssl-dev git rdfind \
+    && sudo apt-get -qq install -y wget build-essential automake m4 dpkg-dev python3 libssl-dev git rdfind autoconf automake libtool bc binutils \
     && sudo apt-get -qq clean \
     && sudo rm -r /var/lib/apt/lists/*
 
