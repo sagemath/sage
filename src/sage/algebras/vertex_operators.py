@@ -14,7 +14,7 @@ from sage.combinat.sf.sf import SymmetricFunctions
 from sage.data_structures.stream import Stream_function, Stream_cauchy_compose
 from sage.functions.other import factorial
 from sage.misc.abstract_method import abstract_method
-from sage.misc.cachefunc import cached_function, cached_method
+from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
 from sage.misc.misc_c import prod
 from sage.rings.infinity import PlusInfinity
@@ -41,27 +41,112 @@ class FermionicFockSpace(CombinatorialFreeModule):
         sage: F = FermionicFockSpace(QQ)
         sage: F.an_element()
         |[], 0> + 4*|[], 1> + 2*|[1], 0>
-        sage: TestSuite(F).run()
     """
-    def __init__(self, R):
+    def __init__(self, R=QQ):
         r"""
         Initialize ``self``.
+
+        INPUT:
+
+        - ``R`` -- a ring (default: ``QQ``)
+
+        TESTS::
+
+            sage: from sage.algebras.vertex_operators import FermionicFockSpace
+            sage: F = FermionicFockSpace(QQ)
+            sage: TestSuite(F).run()
         """
         index_set = cartesian_product((Partitions(), ZZ))
         CombinatorialFreeModule.__init__(self, R, index_set, prefix='', bracket='')
 
     def _repr_term(self, m):
+        r"""
+        String representation of a basis element ``m`` of ``self``
+
+        EXAMPLES::
+
+            sage: from sage.algebras.vertex_operators import FermionicFockSpace
+            sage: F = FermionicFockSpace()
+            sage: m = F(([3,2,1], -4)); m
+            |[3, 2, 1], -4>
+        """
         return '|' + str(m[0]) + ', ' + str(m[1]) + '>'
 
 
-def BosonicFockSpace(R=SymmetricFunctions(QQ).s(), names=('w',)):
-    return LaurentPolynomialRing(R, names=names)
+def BosonicFockSpace(R=QQ, sym_basis='s', name='w'):
+    r"""
+    Bosonic Fock space.
+
+    INPUT:
+
+    - ``R`` -- (default: ``QQ``) a ring
+    - ``sym_basis`` -- (default: ``'s'``) string or realization of ``SymmetricFunctions(R)``
+    - ``name`` -- (default ``'w'``) string indicating the name of the Laurent variable.
+
+    OUTPUT:
+
+    The Laurent polynomial ring over the ring of symmertic functions over ``R`` in
+    the specified basis.
+
+    EXAMPLES::
+
+        sage: from sage.algebras.vertex_operators import BosonicFockSpace
+        sage: B = BosonicFockSpace(); B
+        Univariate Laurent Polynomial Ring in w over Symmetric Functions
+        over Rational Field in the Schur basis
+        sage: B.an_element()
+        s[]*w
+        sage: Sym = SymmetricFunctions(QQ); Sym.inject_shorthands(verbose=False)
+        sage: BosonicFockSpace(QQ, s)
+        Univariate Laurent Polynomial Ring in w over
+        Symmetric Functions over Rational Field in the Schur basis
+        sage: BosonicFockSpace(FractionField(QQ['q','t']), 'p')
+        Univariate Laurent Polynomial Ring in w over Symmetric Functions
+        over Fraction Field of Multivariate Polynomial Ring in q, t over
+        Rational Field in the powersum basis
+
+    """
+    Sym = SymmetricFunctions(R)
+    if isinstance(sym_basis, str):
+        b = getattr(Sym, sym_basis, None)
+        if b is None or b() not in Sym.realizations():
+            raise ValueError("Unknown symmetric function basis")
+        return LaurentPolynomialRing(b(), names=(name,))
+    if sym_basis.base_ring() is not R:
+        raise ValueError("")
+    return LaurentPolynomialRing(sym_basis, names=(name,))
 
 
-class HalfVertexOperator():
+class HalfVertexOperator(SageObject):
+    r"""
+    A half vertex operator.
+
+    INPUT:
+
+    - ``f`` -- A function from the positive integers to an infinite weyl algebra
+
+    OUTPUT:
+
+    A stream where the `i`'th value is the coefficient of `z^i` in `\exp \left(\sum_{j \geq 1} f(j) z^j\right)`
+
+    EXAMPLES::
+
+        sage: from sage.algebras.vertex_operators import HalfVertexOperator
+        sage: W.<x> = DifferentialWeylAlgebra(QQ, n=oo)
+        sage: H = HalfVertexOperator(lambda n: x[n])
+        sage: H[3]
+        1/6*x[1]^3 + x[1]*x[2] + x[3]
+    """
     def __init__(self, f):
         r"""
         Initialize ``self``.
+
+        TESTS::
+
+            sage: from sage.algebras.vertex_operators import HalfVertexOperator
+            sage: W.<x> = DifferentialWeylAlgebra(QQ, n=oo)
+            sage: H = HalfVertexOperator(lambda n: x[n])
+            sage: TestSuite(H).run(skip='_test_pickling')
         """
         self._stream = Stream_cauchy_compose(
             Stream_function(lambda n: ZZ(1)/factorial(n), False, 0),
@@ -70,6 +155,19 @@ class HalfVertexOperator():
         )
 
     def __getitem__(self, i):
+        r"""
+        Get the i'th value of ``self``
+
+        sage: from sage.algebras.vertex_operators import HalfVertexOperator
+        sage: W.<x> = DifferentialWeylAlgebra(QQ, n=oo); dx = W.differentials()
+        sage: H = HalfVertexOperator(lambda n: x[n] + dx[n])
+        sage: H[2]
+        1/2*dx[1]^2 + x[1]*dx[1] + dx[2] + 1/2*x[1]^2 + x[2] + 1/2
+        sage: H[-1]
+        Traceback (most recent call last):
+        ...
+        ValueError: Invalid input
+        """
         if i in NonNegativeIntegers():
             return self._stream[i]
         raise ValueError("Invalid input")
@@ -81,7 +179,7 @@ class AbstractVertexOperator(SageObject):
     """
     def __init__(self, fockspace):
         r"""
-        Initialize ``self``.
+        Initialize ``self``
         """
         self.fockspace = fockspace  # TODO: Check input validity
         super().__init__()
@@ -126,14 +224,11 @@ class VertexOperator(AbstractVertexOperator):
         self.pos = HalfVertexOperator(pos)
         self.neg = HalfVertexOperator(neg)
         if fockspace is None:
-            fockspace = LaurentPolynomialRing(SymmetricFunctions(QQ).s(), names=('w'))
+            fockspace = BosonicFockSpace()
 
-        # self.spectral = LazyLaurentSeriesRing(self.fockspace, names = ('z',))
         self.cutoff = cutoff
         self.dcharge = dcharge
         super().__init__(fockspace)
-    # def act_on_fock_space_element(self, x):
-    #     return self.spectral(lambda n: self.act_by_mode(n,x), valuation = -1)
 
     def act_on(self, i, x):
         r"""
@@ -183,7 +278,6 @@ class VertexOperator(AbstractVertexOperator):
             if c != 0:
                 res[i] = c
         return res
-    # act = act_by_mode
 
     def _act_on_sym(self, i, x, c):
         r"""
@@ -264,6 +358,12 @@ class ProductOfVertexOperators(AbstractVertexOperator):
     def __init__(self, vertex_ops):
         r"""
         Initialize ``self``.
+
+        TESTS::
+
+            sage: V = vertex_operators.CreationOperator()
+            sage: P = V*V
+            sage: TestSuite(P).run(skip='_test_pickling')
         """
         self.vertex_ops = flatten([x if isinstance(x, VertexOperator) else x.vertex_ops for x in vertex_ops])
         assert all(op.fockspace is vertex_ops[0].fockspace for op in self.vertex_ops)
@@ -430,7 +530,7 @@ class CreationOperator(VertexOperator):
         sage: t + Cre.act_on(-1, Cre.act_on(1, w^-2))
         0
     """
-    def __init__(self, fockspace):
+    def __init__(self, fockspace=None):
         r"""
         Initialize ``self``.
 
@@ -440,6 +540,8 @@ class CreationOperator(VertexOperator):
             sage: V = vertex_operators.CreationOperator(B)
             sage: TestSuite(V).run(skip='_test_pickling')
         """
+        if fockspace is None:
+            fockspace = BosonicFockSpace()
         self._weyl_algebra = DifferentialWeylAlgebra(QQ, names=('x'), n=PlusInfinity())
         self._x, self._dx = self._weyl_algebra.gens()
         self._spectral = LazyLaurentSeriesRing(fockspace, names=('z',))
@@ -549,17 +651,17 @@ class AnnihilationOperator(VertexOperator):
         sage: Ann.act_on(2, Ann.act_on(0, w^2)) + Ann.act_on(0, Ann.act_on(2, w^2))
         0
     """
-    def __init__(self, fockspace):
+    def __init__(self, fockspace=None):
         r"""
         Initialize ``self``.
 
         EXAMPLES::
 
-            sage: B = vertex_operators.BosonicFockSpace()
-            sage: V = vertex_operators.AnnihilationOperator(B)
+            sage: V = vertex_operators.AnnihilationOperator()
             sage: TestSuite(V).run(skip='_test_pickling')
         """
-
+        if fockspace is None:
+            fockspace = BosonicFockSpace()
         self._weyl_algebra = DifferentialWeylAlgebra(QQ, names=('x'), n=PlusInfinity())
         self._x, self._dx = self._weyl_algebra.gens()
         super().__init__(lambda n: -self._x[n], lambda n: self._dx[n]/n, dcharge=-1, fockspace=fockspace)
