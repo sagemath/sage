@@ -492,7 +492,7 @@ def trees(n):
     The number of trees on the first few vertex counts.
     This is sequence A000055 in Sloane's OEIS::
 
-        sage: [len(list(graphs.trees(i))) for i in range(0, 15)]
+        sage: [len(list(graphs.trees(i))) for i in range(15)]
         [1, 1, 1, 1, 2, 3, 6, 11, 23, 47, 106, 235, 551, 1301, 3159]
     """
     from sage.graphs.generators.trees import TreeIterator
