@@ -3,4 +3,4 @@ export CXX=$(echo "$CXX" | sed 's/-std=[a-z0-9+]*//g')
 
 cd src
 # --no-build-isolation because it has build dep on 'meson', which we don't have as a Python package
-sdh_pip_install --no-build-isolation .
+sdh_pip_install .

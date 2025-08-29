@@ -1187,8 +1187,8 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             [0.4596976941318602825990633926 +/- ...e-29]
 
             sage: from sage.doctest.util import ensure_interruptible_after
-            sage: with ensure_interruptible_after(0.1):
-            ....:     C = ComplexBallField(1000000)
+            sage: C = ComplexBallField(1000000)
+            sage: with ensure_interruptible_after(0.1, max_wait_after_interrupt=5):
             ....:     C.integral(lambda x, _: x.cos() * x.sin(), 0, 1)
         """
         cdef IntegrationContext ctx = IntegrationContext()

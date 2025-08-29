@@ -760,7 +760,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
           its order. Setting this option to ``True`` makes it unlikely to
           have two neighboring links with the same color.
 
-        - ``loop_fill`` -- (boolean, optional) whether to fill the interior of the loops
+        - ``loop_fill`` -- boolean (default: ``False``); whether to fill the interior of the loops
 
         EXAMPLES:
 

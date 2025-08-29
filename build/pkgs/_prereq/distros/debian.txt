@@ -31,3 +31,4 @@ g++
 ca-certificates
 patch
 pkg-config
+libz-dev

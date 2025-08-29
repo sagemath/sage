@@ -752,9 +752,9 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         if basis is None:
             basis = self._fmodule._def_basis
         elif isinstance(basis, Chart):
-             # a coordinate chart has been passed instead of a vector frame;
-             # the frame is then assumed to be the coordinate frame
-             # associated to the chart:
+            # a coordinate chart has been passed instead of a vector frame;
+            # the frame is then assumed to be the coordinate frame
+            # associated to the chart:
             if format_spec is None:
                 format_spec = basis
             basis = basis.frame()

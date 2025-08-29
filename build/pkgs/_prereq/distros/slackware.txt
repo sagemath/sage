@@ -32,3 +32,4 @@ patch
 bzip2
 patch
 pkg-config
+zlib

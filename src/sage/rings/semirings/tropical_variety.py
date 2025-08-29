@@ -589,7 +589,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             sage: T = TropicalSemiring(QQ)
             sage: R.<a,b,c,d> = PolynomialRing(T)
             sage: f = R.random_element()
-            sage: vec = f.tropical_variety().weight_vectors()[2].values()
+            sage: vec = f.tropical_variety().weight_vectors()[2].values()  # long time (:issue:`39569`)
             sage: all(a == vector([0,0,0,0]) for a in [sum(lst) for lst in vec])  # not tested (:issue:`39663`)
             True
         """

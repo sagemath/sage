@@ -55,7 +55,7 @@ class LambdaBracketAlgebras(Category_over_base_ring):
         """
         if check:
             if R not in _CommutativeRings:
-                    raise ValueError("base must be a commutative ring got {}".format(R))
+                raise ValueError(f"base must be a commutative ring got {R}")
         return super().__classcall__(cls, R)
 
     @cached_method

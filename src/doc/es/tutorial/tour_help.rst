@@ -280,7 +280,7 @@ El indexado de una lista comienza en el cero, como en muchos lenguajes de progra
 
 La función ``len(v)`` devuelve la longitud de ``v``. Utiliza ``v.append(obj)`` para
 añadir un nuevo objeto al final de ``v``, y utiliza ``del v[i]`` para borrar
-el :math:`i-ésimo` elemento de ``v``:
+el :math:`i`-ésimo elemento de ``v``:
 
 .. link
 

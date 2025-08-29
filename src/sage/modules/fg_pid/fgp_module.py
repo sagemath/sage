@@ -214,7 +214,7 @@ from itertools import product
 
 from sage.modules.module import Module
 from sage.modules.free_module import FreeModule_generic
-from sage.structure.all import parent
+from sage.structure.element import parent
 from sage.structure.sequence import Sequence
 from .fgp_element import DEBUG, FGP_Element
 from .fgp_morphism import FGP_Morphism, FGP_Homset

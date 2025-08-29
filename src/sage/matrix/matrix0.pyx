@@ -6306,39 +6306,3 @@ def unpickle(cls, parent, immutability, cache, data, version):
     else:
         A._unpickle_generic(data, version)
     return A
-
-
-def set_max_rows(n):
-    """
-    Set the global variable ``max_rows`` (which is used in deciding how to
-    output a matrix).
-
-    EXAMPLES::
-
-        sage: from sage.matrix.matrix0 import set_max_rows
-        sage: set_max_rows(20)
-        doctest:...: DeprecationWarning: 'set_max_rows' is replaced by 'matrix.options.max_rows'
-        See https://github.com/sagemath/sage/issues/30552 for details.
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(30552, "'set_max_rows' is replaced by 'matrix.options.max_rows'")
-    from sage.matrix.constructor import options
-    options.max_rows = n-1
-
-
-def set_max_cols(n):
-    """
-    Set the global variable ``max_cols`` (which is used in deciding how to
-    output a matrix).
-
-    EXAMPLES::
-
-        sage: from sage.matrix.matrix0 import set_max_cols
-        sage: set_max_cols(50)
-        doctest:...: DeprecationWarning: 'set_max_cols' is replaced by 'matrix.options.max_cols'
-        See https://github.com/sagemath/sage/issues/30552 for details.
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(30552, "'set_max_cols' is replaced by 'matrix.options.max_cols'")
-    from sage.matrix.constructor import options
-    options.max_cols = n-1

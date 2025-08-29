@@ -1299,7 +1299,7 @@ def check_all():
 
     def test_issue_4023():
         from sage.symbolic.ring import SR
-        from sage.functions.all import log
+        from sage.misc.functional import log
         from sympy import integrate, simplify
         a, x = SR.var("a x")
         i = integrate(log(x) / a, (x, a, a + 1))

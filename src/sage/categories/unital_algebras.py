@@ -138,18 +138,18 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
             Check that :issue:`19225` is solved::
 
                 sage: A = cartesian_product((QQ['z'],)); A
-                The Cartesian product of (Univariate Polynomial Ring in z over Rational Field,)
+                The Cartesian product of 1 copy of Univariate Polynomial Ring in z over Rational Field
                 sage: A.coerce_map_from(ZZ)
                 Composite map:
                   From: Integer Ring
-                  To:   The Cartesian product of (Univariate Polynomial Ring in z over Rational Field,)
+                  To:   The Cartesian product of 1 copy of Univariate Polynomial Ring in z over Rational Field
                   Defn:   Natural morphism:
                           From: Integer Ring
                           To:   Rational Field
                         then
                           Generic morphism:
                           From: Rational Field
-                          To:   The Cartesian product of (Univariate Polynomial Ring in z over Rational Field,)
+                          To:   The Cartesian product of 1 copy of Univariate Polynomial Ring in z over Rational Field
                 sage: A(1)
                 (1,)
             """
@@ -165,13 +165,13 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
             TESTS::
 
                 sage: A = cartesian_product((QQ['z'],)); A
-                The Cartesian product of (Univariate Polynomial Ring in z over Rational Field,)
+                The Cartesian product of 1 copy of Univariate Polynomial Ring in z over Rational Field
                 sage: A.base_ring()
                 Rational Field
                 sage: A._coerce_map_from_base_ring()
                 Generic morphism:
-                From: Rational Field
-                To:   The Cartesian product of (Univariate Polynomial Ring in z over Rational Field,)
+                  From: Rational Field
+                  To:   The Cartesian product of 1 copy of Univariate Polynomial Ring in z over Rational Field
 
             Check that :issue:`29312` is fixed::
 

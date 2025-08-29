@@ -303,7 +303,7 @@ cdef class ParentWithGens(ParentWithBase):
         if isinstance(im_gens, parent.Parent):
             return self.Hom(im_gens).natural_map()
         if codomain is None:
-            from sage.structure.all import Sequence
+            from sage.structure.sequence import Sequence
             im_gens = Sequence(im_gens)
             codomain = im_gens.universe()
         kwds = {}

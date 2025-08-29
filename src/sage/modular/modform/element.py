@@ -2760,6 +2760,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
         Testing modular forms of nontrivial character::
 
+            sage: # long time (:issue:`39569`)
             sage: F = ModularForms(DirichletGroup(17).0^2, 2).2
             sage: F3 = F^3; F3
             q^3 + (-3*zeta8^2 + 6)*q^4 + (-12*zeta8^2 + 3*zeta8 + 18)*q^5 + O(q^6)

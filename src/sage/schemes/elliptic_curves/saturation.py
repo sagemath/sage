@@ -556,8 +556,9 @@ class EllipticCurveSaturator(SageObject):
                                         print("-- points were not {}-saturated, gaining index {}".format(p,p))
                                     j = next(i for i,x in enumerate(v) if x)
                                     return (j, pt)
-                                else: # R is not a p-multiple so the
-                                      # points were p-saturated
+                                else:
+                                    # R is not a p-multiple so the
+                                    # points were p-saturated
                                     return False
 
                             # Else we call the non-sieve version with

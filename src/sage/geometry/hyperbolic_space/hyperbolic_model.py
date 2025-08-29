@@ -82,7 +82,7 @@ from sage.misc.bindable_class import BindableClass
 from sage.misc.lazy_import import lazy_import
 from sage.functions.other import imag, real
 from sage.misc.functional import sqrt
-from sage.functions.all import arccosh
+from sage.functions.hyperbolic import acosh as arccosh
 from sage.rings.cc import CC
 from sage.rings.real_double import RDF
 from sage.rings.real_mpfr import RR

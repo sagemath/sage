@@ -10,6 +10,6 @@ sdh_configure --without-jpeg --without-xpm --without-x --without-fontconfig \
               --without-avif --without-freetype --without-raqm --without-liq \
               --without-tiff --without-webp --without-heif \
               --disable-gd-formats \
-              --with-zlib="$SAGE_LOCAL" $LIBGD_CONFIGURE
+              $LIBGD_CONFIGURE
 sdh_make
 sdh_make_install
