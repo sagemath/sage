@@ -1251,7 +1251,7 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
 
         R = hnf.base_ring()
 
-        basis = [sum([c1 * c2 for c1, c2 in zip(row, O.basis())])
+        basis = [sum(c1 * c2 for c1, c2 in zip(row, O.basis()))
                  for row in hnf]
 
         n = len(basis)
