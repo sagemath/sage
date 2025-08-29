@@ -417,7 +417,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         """
         return self._matrix.bilinear_form(self.base_ring().fraction_field())
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return ``True`` if this group is finite.
 
@@ -448,7 +448,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         # the category of ``self``.
         return "Finite" in self.category().axioms()
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         Return whether ``self`` is commutative.
 
