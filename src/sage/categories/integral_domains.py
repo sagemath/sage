@@ -30,7 +30,7 @@ Note that this raises a :exc:`NotImplementedError` if the answer is not known.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-
+from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.categories.category_with_axiom import CategoryWithAxiom
@@ -174,6 +174,22 @@ class IntegralDomains(CategoryWithAxiom):
             from sage.rings.localization import Localization
             return Localization(self, additional_units, names=names, normalize=normalize, category=category)
 
+        @cached_method
+        def fraction_field(self):
+            """
+            Return the fraction field of ``self``.
+
+            EXAMPLES::
+
+                sage: R = GF(61)['x,y']
+                sage: Frac(R)
+                Fraction Field of Multivariate Polynomial Ring in x, y over Finite Field of size 61
+                sage: R.fraction_field()
+                Fraction Field of Multivariate Polynomial Ring in x, y over Finite Field of size 61
+            """
+            import sage.rings.fraction_field
+            return sage.rings.fraction_field.FractionField_generic(self)
+
         def _test_fraction_field(self, **options):
             r"""
             Test that the fraction field, if it is implemented, works
@@ -184,14 +200,7 @@ class IntegralDomains(CategoryWithAxiom):
                 sage: ZZ._test_fraction_field()
             """
             tester = self._tester(**options)
-            try:
-                fraction_field = self.fraction_field()
-            except (AttributeError, ImportError):
-                # some integral domains do not implement fraction_field() yet
-                if self in Fields():
-                    raise
-                return
-
+            fraction_field = self.fraction_field()
             for x in tester.some_elements():
                 # check that we can coerce into the fraction field
                 fraction_field.coerce(x)

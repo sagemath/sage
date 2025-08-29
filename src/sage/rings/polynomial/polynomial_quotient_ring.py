@@ -527,9 +527,9 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         """
         if not isinstance(x, str):
             try:
-                return self.element_class(self, self.__ring(x) , check=True)
-            except TypeError:
-                xlift = getattr(x,'lift',None)
+                return self.element_class(self, self.__ring(x), check=True)
+            except (TypeError, ValueError):
+                xlift = getattr(x, 'lift', None)
                 if xlift is not None: # duck typing for quotient ring elements
                     return self.element_class(self, self.__ring(x.lift()), check=False)
         # The problem with the string representation is that it could in principle
@@ -1253,6 +1253,27 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         return self.__ring
 
     cover_ring = polynomial_ring
+
+    def fraction_field(self):
+        """
+        Return the fraction field of ``self``.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: S = R.quo(x^2 + 1)
+            sage: S.fraction_field()
+            Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x^2 + 1
+        """
+        from sage.categories.fields import Fields
+        from sage.categories.integral_domains import IntegralDomains
+        if self in Fields():
+            return self
+        if self not in IntegralDomains():
+            raise TypeError("self must be an integral domain")
+
+        frac = self.base_ring().fraction_field()
+        return self.base().change_ring(frac).quo(self.modulus())
 
     def random_element(self, degree=None, *args, **kwds):
         """

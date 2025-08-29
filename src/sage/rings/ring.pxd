@@ -9,7 +9,7 @@ cdef class Ring(ParentWithGens):
 
 
 cdef class CommutativeRing(Ring):
-    cdef public object __fraction_field
+    pass
 
 cdef class IntegralDomain(CommutativeRing):
     pass
