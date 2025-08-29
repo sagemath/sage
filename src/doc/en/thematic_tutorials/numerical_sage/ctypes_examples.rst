@@ -146,7 +146,7 @@ following C code.
 
 Put it in a file called linked_list_sparse.c and compile it using
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ gcc -c linked_list_sparse.c
     $ gcc -shared -o linked_list_sparse.so linked_list_sparse.o
