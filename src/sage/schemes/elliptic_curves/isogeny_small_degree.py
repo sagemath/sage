@@ -327,8 +327,9 @@ def isogenies_prime_degree_genus_0(E, l=None, minimal_models=True):
         from sage.misc.misc_c import prod
         psi = Psi(l)
         X = t
-        f = R(prod( [p for p,e in jt.factor() if e == 3]
-                 + [p for p,e in kt.factor() if e == 2]))
+        f = R(PolynomialRing(ZZ, 't')(
+            prod( [p for p,e in jt.factor() if e == 3]
+                 + [p for p,e in kt.factor() if e == 2])))
         kernels = [R(psi(X*T*(j-1728)*t0/f(t0),t0)) for t0 in t_list]
         kernels = [ker.monic() for ker in kernels]
         E1 = EllipticCurve([-27*c4,-54*c6])
