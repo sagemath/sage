@@ -34,7 +34,7 @@ Division by an integer::
     sage: phi.degree()
     105
     sage: phi.to_isogeny_chain()
-    Composite morphism of degree 105 = 1*3*5*7:
+    Composite morphism of degree 105 = 3*5*7:
       From: Elliptic Curve defined by y^2 = x^3 + 418*x over Finite Field of size 419
       To:   Elliptic Curve defined by y^2 = x^3 + 418*x over Finite Field of size 419
 
@@ -290,7 +290,7 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
             sage: endo.degree()
             105
             sage: endo.to_isogeny_chain()
-            Composite morphism of degree 105 = 1*3*5*7:
+            Composite morphism of degree 105 = 3*5*7:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 419^2
               To:   Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 419^2
             sage: endo.to_isogeny_chain() == endo
