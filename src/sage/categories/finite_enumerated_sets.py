@@ -530,6 +530,9 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                 # the cardinality is too large
                 return
             N = min(max(3 * n, 300), 3000)
+            # workaround bug in current_randstate.set_seed_gap and set_seed_libgap:
+            # calling random_element once seems to set the seed correctly
+            self.random_element()
             with seed(random_seed):
                 elements = [self.random_element() for _ in range(N)]
             # check that setting the seed actually worked
