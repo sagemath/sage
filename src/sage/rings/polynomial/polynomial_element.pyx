@@ -2492,6 +2492,27 @@ cdef class Polynomial(CommutativePolynomial):
         raise AssertionError(f"no irreducible factor was computed for {self}. Bug.")
 
     def perfect_power(self):
+        r"""
+        Return ``(P, n)``, where this polynomial is `P^n` and `n` is maximal.
+
+        EXAMPLES::
+
+            sage: A.<x> = QQ[]
+            sage: f = x^2 - 2*x + 1
+            sage: f.perfect_power()
+            (-x + 1, 2)
+
+        ::
+
+            sage: P = (x + 1)^100
+            sage: Q = (x + 2)^50
+            sage: P.perfect_power()
+            (x + 1, 100)
+            sage: Q.perfect_power()
+            (x + 2, 50)
+            sage: (P*Q).perfect_power()            
+            (x^3 + 4*x^2 + 5*x + 2, 50)
+        """
         f = self
         n = Integer(1)
         for e, m in self.degree().factor():

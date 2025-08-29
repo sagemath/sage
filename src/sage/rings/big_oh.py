@@ -200,8 +200,6 @@ def O(*x, **kwds):
             C = A.completion(p)
         return C.zero().add_bigoh(n)
 
-
-
     if isinstance(x, (int, Integer, Rational)):
         # p-adic number
         if x <= 0:

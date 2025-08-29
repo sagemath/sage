@@ -275,7 +275,7 @@ class CompletionPolynomial(RingExtensionElement):
                 current_prec = prec
             except ValueError:
                 current_prec = n + 20
-                f = self.add_bigoh(current_prec).polynomial()
+                f = self.polynomial(current_prec)
             if current_prec is not Infinity:
                 include_final_zeroes = True
             f //= p ** n
@@ -327,24 +327,94 @@ class CompletionPolynomial(RingExtensionElement):
         return self.backend(force=True).valuation()
 
     def lift_to_precision(self, prec):
+        r"""
+        Return this element lifted to precision ``prec``.
+
+        INPUT:
+
+        - ``prec`` -- an integer
+
+        EXAMPLES::
+
+            sage: A.<x> = GF(5)[]
+            sage: Ap = A.completion(x^2 + x + 1)
+            sage: y = Ap(x).add_bigoh(10)
+            sage: y
+            x + O((x^2 + x + 1)^10)
+            sage: y.lift_to_precision(20)
+            x + O((x^2 + x + 1)^20)
+
+        When ``prec`` is less than the absolute precision of
+        the element, the same element is returned without any
+        change on the precision::
+
+            sage: y.lift_to_precision(5)
+            x + O((x^2 + x + 1)^10)
+        """
         elt = self.backend(force=True)
         elt = elt.lift_to_precision(prec)
         return self.parent()(elt)
 
-    def polynomial(self):
+    def polynomial(self, prec=None):
+        r"""
+        Return a polynomial (in the underlying polynomial ring)
+        which is indistinguishable from ``self`` at precision ``prec``.
+
+        INPUT:
+
+        - ``prec`` (optional) -- an integer; if not given, defaults
+          to the absolute precision of this element
+
+        EXAMPLES::
+
+            sage: A.<x> = GF(5)[]
+            sage: Ap = A.completion(x - 2, prec=5)
+            sage: y = 1 / Ap(1 - x)
+            sage: y
+            4 + (x + 3) + 4*(x + 3)^2 + (x + 3)^3 + 4*(x + 3)^4 + O((x + 3)^5)
+            sage: y.polynomial()
+            4*x^4 + 4*x^3 + 4*x^2 + 4*x + 4
+
+        When called with a nonintegral element, this method raises an error::
+
+            sage: z = 1 / Ap(2 - x)
+            sage: z.polynomial()
+            Traceback (most recent call last):
+            ...
+            ValueError: this element of negative valuation cannot be approximated by a polynomial
+
+        TESTS::
+
+            sage: Kq = A.completion(infinity)
+            sage: Kq(1/x).polynomial()
+            Traceback (most recent call last):
+            ...
+            ValueError: approximation by a polynomial does not make sense for a completion at infinity
+        """
         S = self.parent()
-        A = S._ring
+        A = S._A
         p = S._p
+        if p is Infinity:
+            raise ValueError("approximation by a polynomial does not make sense for a completion at infinity")
+        backend = self.backend(force=True)
+        if backend.valuation() < 0:
+            raise ValueError("this element of negative valuation cannot be approximated by a polynomial")
+        try:
+            backend = backend.power_series()
+        except AttributeError:
+            pass
         d = p.degree()
         k = S.residue_field()
-        f = self.backend(force=True).polynomial().change_ring(k)
+        if prec is not None:
+            backend = backend.add_bigoh(prec)
+        prec = backend.precision_absolute()
+        f = backend.polynomial().change_ring(k)
         g = f(f.parent().gen() - k.gen())
         gs = [A([c[i] for c in g.list()]) for i in range(d)]
-        prec = self.precision_absolute()
         if prec is Infinity:
             for i in range(1, d):
                 if gs[i]:
-                    raise ValueError("exact element which is not in the polynomial ring")
+                    raise ValueError("this element is exact and does not lie in the polynomial ring")
             return gs[0]
         xbar = S._xbar(prec)
         modulus = p ** prec
@@ -362,20 +432,51 @@ class CompletionPolynomial(RingExtensionElement):
 class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
     r"""
     A class for completions of polynomial rings and their fraction fields.
-
-    TESTS::
-
-        sage: A.<x> = QQ[]
-        sage: Ap = A.completion(x - 1)
-        sage: type(Ap)
-        <class 'sage.rings.completion.CompletionPolynomialRing_with_category'>
-
-        sage: TestSuite(Ap).run()
-
     """
     Element = CompletionPolynomial
 
     def __classcall_private__(cls, ring, p, default_prec=20, sparse=False):
+        r"""
+        Normalize the parameters and call the appropriate constructor.
+
+        INPUT:
+
+        - ``ring`` -- the underlying polynomial ring or field
+
+        - ``p`` -- a generator of the ideal at which the completion is
+          done; it could also be ``Infinity``
+
+        - ``default_pres`` (default: ``20``) -- the default precision
+          of the completion
+
+        - ``sparse`` (default: ``False``) -- a boolean
+
+        TESTS::
+
+            sage: A.<x> = ZZ[]
+            sage: A.completion(x^2 + x + 1)
+            Completion of Univariate Polynomial Ring in x over Integer Ring at x^2 + x + 1
+            sage: A.completion(2*x - 1)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: the leading coefficient of p must be invertible
+
+        ::
+
+            sage: B.<y> = QQ[]
+            sage: B.completion(x^2 + x^3)
+            Traceback (most recent call last):
+            ...
+            ValueError: p must be a squarefree polynomial
+
+        When passing a variable name, a standard ring of power series is
+        constructed::
+
+            sage: A.completion('x')
+            Power Series Ring in x over Integer Ring
+            sage: A.completion(x)
+            Completion of Univariate Polynomial Ring in x over Integer Ring at x
+        """
         if isinstance(ring, PolynomialRing_generic):
             if isinstance(p, str):
                 return PowerSeriesRing(ring.base_ring(),
@@ -389,8 +490,10 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
                                          names=p, sparse=sparse)
             A = ring.ring()
         else:
-            raise ValueError("not a polynomial ring or a rational function field")
-        if p is not Infinity:
+            raise NotImplementedError("not a polynomial ring or a rational function field")
+        if p is Infinity:
+            ring = ring.fraction_field()
+        else:
             p = A(p)
             if not p.leading_coefficient().is_unit():
                 raise NotImplementedError("the leading coefficient of p must be invertible")
@@ -403,6 +506,36 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
         return cls.__classcall__(cls, ring, p, default_prec, sparse)
 
     def __init__(self, ring, p, default_prec, sparse):
+        r"""
+        Initialize this ring.
+
+        INPUT:
+
+        - ``ring`` -- the underlying polynomial ring or field
+
+        - ``p`` -- a generator of the ideal at which the completion is
+          done; it could also be ``Infinity``
+
+        - ``default_pres`` -- the default precision of the completion
+
+        - ``sparse`` -- a boolean
+
+        TESTS::
+
+            sage: A.<x> = QQ[]
+            sage: Ap = A.completion(x - 1)
+            sage: type(Ap)
+            <class 'sage.rings.completion.CompletionPolynomialRing_with_category'>
+            sage: TestSuite(Ap).run()
+
+        ::
+
+            sage: K = Frac(A)
+            sage: Kp = K.completion(x - 1)
+            sage: type(Kp)
+            <class 'sage.rings.completion.CompletionPolynomialRing_with_category'>
+            sage: TestSuite(Kp).run()
+        """
         A = self._ring = ring
         if not isinstance(A, PolynomialRing_generic):
             A = A.ring()
@@ -412,7 +545,6 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
         self._default_prec = default_prec
         # Construct backend
         if p is Infinity:
-            self._ring = ring.fraction_field()
             self._residue_ring = k = base
             self._integer_ring = None
             name = "u_%s" % id(self)
@@ -441,14 +573,60 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
             self.register_coercion(A)
         if self._integer_ring is not None:
             self.register_coercion(self._integer_ring)
+        if p is not Infinity and p.is_gen():
+            S = PowerSeriesRing(base, A.variable_name(), default_prec=default_prec, sparse=sparse)
+            self.register_coercion(S)
+            if self._integer_ring is not self:
+                S = LaurentSeriesRing(base, A.variable_name(), default_prec=default_prec, sparse=sparse)
+                self.register_coercion(S)
 
     def _repr_(self):
+        r"""
+        Return a string representation of this ring.
+
+        EXAMPLES::
+
+            sage: A.<x> = GF(7)[]
+            sage: A.completion(x)  # indirect doctest
+            Completion of Univariate Polynomial Ring in x over Finite Field of size 7 at x
+            sage: A.completion(infinity)  # indirect doctest
+            Completion of Fraction Field of Univariate Polynomial Ring in x over Finite Field of size 7 at infinity
+
+        ::
+
+            sage: K = Frac(A)
+            sage: K.completion(x^2 + 2*x + 2)  # indirect doctest
+            Completion of Fraction Field of Univariate Polynomial Ring in x over Finite Field of size 7 at x^2 + 2*x + 2
+        """
         if self._p is Infinity:
             return "Completion of %s at infinity" % self._ring
         else:
             return "Completion of %s at %s" % (self._ring, self._p)
 
     def construction(self):
+        r"""
+        Return the functorial construction of this ring.
+
+        EXAMPLES::
+
+            sage: A.<x> = QQ[]
+            sage: Ap = A.completion(x^2 - 1)
+            sage: F, X = Ap.construction()
+            sage: F
+            Completion[x^2 - 1, prec=20]
+            sage: X
+            Univariate Polynomial Ring in x over Rational Field
+            sage: F(X) is Ap
+            True
+
+        TESTS::
+
+            sage: R = PolynomialRing(QQ, 'y', sparse=True)
+            sage: Kinf = R.completion(infinity)
+            sage: F, X = Kinf.construction()
+            sage: F(X) is Kinf
+            True
+        """
         from sage.categories.pushout import CompletionFunctor
         extras = {
             'names': [str(x) for x in self._defining_names()],
@@ -458,15 +636,55 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
 
     @cached_method
     def uniformizer(self):
+        r"""
+        Return a uniformizer of this ring.
+
+        EXAMPLES::
+
+            sage: A.<x> = QQ[]
+            sage: Ap = A.completion(x^2 - 1)
+            sage: Ap.uniformizer()
+            (x^2 - 1)
+        """
         if self._p is Infinity:
             return self._gen.inverse()
         else:
             return self(self._p)
 
     def gen(self):
+        r"""
+        Return the generator of this ring.
+
+        EXAMPLES::
+
+            sage: A.<x> = QQ[]
+            sage: Ap = A.completion(x^2 - 1)
+            sage: Ap.gen()
+            x
+        """
         return self._gen
 
     def _xbar(self, prec):
+        r"""
+        Return an approximation at precision ``prec`` of the
+        Teichmüller representative of `x`, the generator of
+        this ring.
+
+        This method is only for internal use.
+
+        EXAMPLES::
+
+            sage: A.<x> = GF(7)[]
+            sage: Ap = A.completion(x^2 + 2*x + 2)
+            sage: Ap._xbar(5)
+            4*x^15 + 4*x^14 + x^8 + x + 6
+
+        The method returns nothing in case of a completion
+        at infinity::
+
+            sage: Ap = A.completion(infinity)
+            sage: Ap._xbar(5)
+        """
         if self._p is Infinity:
             return
         # We solve the equation p(xbar) = 0 in A_p
@@ -482,11 +700,59 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
         return self._xbar_approx
 
     def residue_ring(self):
+        r"""
+        Return the residue ring of this completion.
+
+        EXAMPLES::
+
+            sage: A.<x> = GF(7)[]
+            sage: Ap = A.completion(x^2 + 2*x + 2)
+            sage: Ap.residue_ring()
+            Univariate Quotient Polynomial Ring in xbar over Finite Field of size 7 with modulus x^2 + 2*x + 2
+        """
         return self._residue_ring
 
     residue_field = residue_ring
 
     def power_series_ring(self, names=None, sparse=None):
+        r"""
+        Return a power series ring, which is isomorphic to
+        the integer ring of this completion.
+
+        INPUT:
+
+        - ``names`` -- a string, the variable name
+
+        - ``sparse`` (optional) -- a boolean; if not given,
+          use the sparcity of this ring
+
+        EXAMPLES::
+
+            sage: A.<x> = GF(7)[]
+            sage: Ap = A.completion(x^2 + 2*x + 2)
+            sage: S.<u> = Ap.power_series_ring()
+            sage: S
+            Power Series Ring in u over Univariate Quotient Polynomial Ring in xbar over Finite Field of size 7 with modulus x^2 + 2*x + 2
+
+        A conversion from ``Ap`` to ``S`` is set::
+
+            sage: xp = Ap.gen()
+            sage: S(xp)
+            xbar + u
+
+        ::
+
+            sage: Kp = Frac(Ap)
+            sage: T.<u> = Kp.power_series_ring()
+            sage: T
+            Power Series Ring in u over Univariate Quotient Polynomial Ring in xbar over Finite Field of size 7 with modulus x^2 + 2*x + 2
+            sage: T is S
+            True
+
+        .. SEEALSO::
+
+            :meth:`laurent_series_ring`
+        """
         if isinstance(names, (list, tuple)):
             names = names[0]
         if sparse is None:
@@ -496,6 +762,29 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
         return S
 
     def laurent_series_ring(self, names=None, sparse=None):
+        r"""
+        Return a Laurent series ring, which is isomorphic to
+        the fraction field of this completion.
+
+        INPUT:
+
+        - ``names`` -- a string, the variable name
+
+        - ``sparse`` (optional) -- a boolean; if not given,
+          use the sparcity of this ring
+
+        EXAMPLES::
+
+            sage: A.<x> = GF(7)[]
+            sage: Ap = A.completion(x^2 + 2*x + 2)
+            sage: S.<u> = Ap.laurent_series_ring()
+            sage: S
+            Laurent Series Ring in u over Univariate Quotient Polynomial Ring in xbar over Finite Field of size 7 with modulus x^2 + 2*x + 2
+
+        .. SEEALSO::
+
+            :meth:`power_series_ring`
+        """
         if isinstance(names, (list, tuple)):
             names = names[0]
         if sparse is None:
@@ -505,11 +794,61 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
         return S
 
     def integer_ring(self):
+        r"""
+        Return the integer ring of this completion.
+
+        EXAMPLES::
+
+            sage: A.<x> = GF(7)[]
+            sage: K = Frac(A)
+            sage: Kp = K.completion(x^2 + 2*x + 2)
+            sage: Kp
+            Completion of Fraction Field of Univariate Polynomial Ring in x over Finite Field of size 7 at x^2 + 2*x + 2
+            sage: Kp.integer_ring()
+            Completion of Univariate Polynomial Ring in x over Finite Field of size 7 at x^2 + 2*x + 2
+        """
         if self._p is Infinity:
             raise NotImplementedError
         return self._integer_ring
 
-    def fraction_field(self):
+    def is_integral_domain(self):
+        return self._residue_ring.is_integral_domain()
+
+    def fraction_field(self, permissive=False):
+        r"""
+        Return the fraction field of this completion.
+
+        - ``permissive`` (default: ``False``) -- a boolean;
+          if ``True`` and this ring is a domain, return
+          instead the completion at the same place of the
+          fraction field of the underlying polynomial ring
+
+        EXAMPLES::
+
+            sage: A.<x> = GF(7)[]
+            sage: Ap = A.completion(x^2 + 2*x + 2)
+            sage: Ap
+            Completion of Univariate Polynomial Ring in x over Finite Field of size 7 at x^2 + 2*x + 2
+            sage: Ap.fraction_field()
+            Completion of Fraction Field of Univariate Polynomial Ring in x over Finite Field of size 7 at x^2 + 2*x + 2
+
+        Trying to apply this method with a completion at a nonprime ideal
+        produces an error::
+
+            sage: Aq = A.completion(x^2 + x + 1)
+            sage: Aq.fraction_field()
+            Traceback (most recent call last):
+            ...
+            ValueError: this ring is not an integral domain
+
+        Nonetheless, if the flag ``permissive`` is set to ``True``,
+        the localization at all nonzero divisors is returned::
+
+            sage: Aq.fraction_field(permissive=True)
+            Completion of Fraction Field of Univariate Polynomial Ring in x over Finite Field of size 7 at x^2 + x + 1
+        """
+        if not (permissive or self.is_integral_domain()):
+            raise ValueError("this ring is not an integral domain")
         field = self._ring.fraction_field()
         if field is self._ring:
             return self

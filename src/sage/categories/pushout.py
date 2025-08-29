@@ -2484,7 +2484,7 @@ class CompletionFunctor(ConstructionFunctor):
         (1 + O(5^20))*a + 3 + 2*5 + 2*5^2 + 2*5^3 + 2*5^4 + 2*5^5 + 2*5^6 + 2*5^7 + 2*5^8 + 2*5^9 + 2*5^10 + 2*5^11 + 2*5^12 + 2*5^13 + 2*5^14 + 2*5^15 + 2*5^16 + 2*5^17 + 2*5^18 + 2*5^19 + O(5^20)
     """
     rank = 4
-    _real_types = ['Interval', 'Ball', 'MPFR', 'RDF', 'RLF', 'RR']
+    _real_types = [None, 'Interval', 'Ball', 'MPFR', 'RDF', 'RLF', 'RR']
     _dvr_types = [None, 'fixed-mod', 'floating-point', 'capped-abs', 'capped-rel', 'lattice-cap', 'lattice-float', 'relaxed']
 
     def __init__(self, p, prec, extras=None):
@@ -2541,7 +2541,7 @@ class CompletionFunctor(ConstructionFunctor):
             from sage.rings.infinity import Infinity
             if self.p == Infinity:
                 if self.type not in self._real_types:
-                    raise ValueError("completion type must be one of %s" % (", ".join(self._real_types)))
+                    raise ValueError("completion type must be one of %s" % (", ".join(self._real_types[1:])))
             elif self.type not in self._dvr_types:
                 raise ValueError("completion type must be one of %s" % (", ".join(self._dvr_types[1:])))
 
@@ -2777,9 +2777,9 @@ class CompletionFunctor(ConstructionFunctor):
         functors in opposite order works. It does::
 
             sage: P.<x> = ZZ[]
-            sage: C = P.completion(x).construction()[0]
+            sage: C = P.completion('x').construction()[0]
             sage: R = FractionField(P)
-            sage: hasattr(R,'completion')
+            sage: hasattr(R, 'completion')
             False
             sage: C(R) is Frac(C(P))
             True
