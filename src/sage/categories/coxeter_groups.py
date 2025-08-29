@@ -9,9 +9,11 @@ Coxeter Groups
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-# With contributions from Dan Bump, Steve Pon, Qiang Wang, Anne Schilling, Christian Stump, Mark Shimozono
+# With contributions from Dan Bump, Steve Pon, Qiang Wang, Anne
+# Schilling, Christian Stump, Mark Shimozono
 from copy import copy
 from collections import deque
+from itertools import combinations
 
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.enumerated_sets import EnumeratedSets
@@ -458,8 +460,8 @@ class CoxeterGroups(Category_singleton):
                 True
             """
             M = self.coxeter_matrix()
-            n = M.nrows()
-            return all(M[i, j] == 2 for j in range(1, n) for i in range(j))
+            Idx = M.index_set()
+            return all(M[i, j] == 2 for i, j in combinations(Idx, 2))
 
         def weak_order_ideal(self, predicate, side='right', category=None):
             """
