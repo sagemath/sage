@@ -156,7 +156,8 @@ def _all_cycles_iterator_vertex(self, vertex, starting_vertices=None, simple=Fal
         ...
         ValueError: negative weight is not allowed
 
-    The function works for an undirected graph::
+    The function works for an undirected graph. Specifically, each cycle is
+    enumerated exactly once, meaning a cycle and its reverse are not listed separately::
 
         sage: g = Graph({0: [1, 2], 1: [0, 2], 2: [0, 1]})
         sage: it = g._all_cycles_iterator_vertex(0, simple=False)
@@ -581,7 +582,8 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
         ...
         ValueError: The algorithm 'B' is available only when simple=True.
 
-    The algorithm ``'A'`` works for undirected graphs as well::
+    The algorithm ``'A'`` works for undirected graphs as well. Specifically, each cycle is
+    enumerated exactly once, meaning a cycle and its reverse are not listed separately::
 
         sage: g = Graph({0: [1, 2], 1: [0, 2], 2: [0, 1]})
         sage: for cycle in g.all_cycles_iterator(algorithm='A', simple=True):
@@ -883,7 +885,8 @@ def all_simple_cycles(self, starting_vertices=None, rooted=False,
         sage: cycles.sort() == cycles_B.sort()
         True
 
-    The algorithm ``'A'`` is available for undirected graphs::
+    The algorithm ``'A'`` is available for undirected graphs. Specifically, each cycle is
+    enumerated exactly once, meaning a cycle and its reverse are not listed separately::
 
         sage: g = Graph({0: [1, 2], 1: [0, 2], 2: [0, 1]})
         sage: g.all_simple_cycles(algorithm='A')
