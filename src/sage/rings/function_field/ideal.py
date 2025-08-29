@@ -273,11 +273,11 @@ class FunctionFieldIdeal(Element):
         gens = self.gens()
         if len(gens) == 1:
             return gens
-        candidate_gensets = []
-        for genset in powerset(gens):
-            if self.parent()(genset) == self:
-                candidate_gensets.append(genset)
-        candidate_gensets.sort(key=lambda item: (len(item), len(repr(item)), item))
+        candidate_gensets = [genset for genset in powerset(gens)
+                             if self.parent()(genset) == self]
+        candidate_gensets.sort(key=lambda item: (len(item),
+                                                 len(repr(item)),
+                                                 item))
         return candidate_gensets[0]
 
     def ring(self):

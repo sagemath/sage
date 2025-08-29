@@ -715,8 +715,7 @@ class WittVector_finotti(WittVector):
         G = []
         for n in range(self._prec):
             G_n = [self[n], other[n]]
-            for i in range(n):
-                G_n.append(P._eta_bar(G[i], n - i))
+            G_n.extend(P._eta_bar(G[i], n - i) for i in range(n))
             G.append(G_n)
         sum_vec = tuple(sum(G[i]) for i in range(self._prec))
 
@@ -753,8 +752,7 @@ class WittVector_finotti(WittVector):
             G_n.extend(fast_char_p_power(self[i], p**(n - i))
                        * fast_char_p_power(other[n - i], p**i)
                        for i in range(1, n))
-            for i in range(n):
-                G_n.append(P._eta_bar(G[i], n - i))
+            G_n.extend(P._eta_bar(G[i], n - i) for i in range(n))
             G.append(G_n)
         prod_vec = tuple(sum(G[i]) for i in range(self._prec))
 
