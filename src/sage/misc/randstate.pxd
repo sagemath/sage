@@ -13,6 +13,7 @@ cdef class randstate:
     cdef object _python_random
 
     cdef object _gap_saved_seed
+    cdef object _libgap_saved_seed
     cdef object _pari_saved_seed
 
     cdef object _gp_saved_seeds

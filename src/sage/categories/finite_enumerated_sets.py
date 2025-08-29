@@ -473,8 +473,6 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                 sage: n = C._random_element_from_unrank()
                 sage: n in C
                 True
-
-            TODO: implement _test_random which checks uniformity
             """
             from sage.misc.prandom import randint
             c = self.cardinality()
@@ -482,6 +480,105 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
             return self.unrank(r)
         # Set the default implementation of random_element
         random_element = _random_element_from_unrank
+
+        def _test_random(self, random_seed=123332938836894739865, **options):
+            r"""
+            Check that :meth:`random_element` draws uniformly at
+            random.
+
+            We apply a chi-squared test.  If :meth:`random_element`
+            of :meth:`cardinality` are generic implementations,
+            :meth:`an_element` produces a non-hashable element, or
+            the cardinality is very large, we return immediately.
+
+            EXAMPLES::
+
+                sage: R = GF(9)
+                sage: C = cartesian_product([R])
+                sage: C._test_random()
+
+                sage: C = cartesian_product([R, R])
+                sage: C._test_random()
+
+                sage: C = cartesian_product([list(range(5)) for _ in range(5)])
+                sage: C._test_random()
+            """
+            if (self.random_element == self._random_element_from_unrank or
+                self.cardinality == self._cardinality_from_iterator):
+                return
+            from sage.misc.randstate import seed
+            from sage.probability.probability_distribution import RealDistribution
+            from sage.rings.infinity import Infinity
+            from collections import Counter
+            tester = self._tester(**options)
+            n = self.cardinality()
+            if not n:
+                return
+            elt = self.an_element()
+            try:
+                hash(elt)
+            except TypeError:
+                return
+            if n == 1:
+                for _ in range(10):
+                    tester.assertEqual(self.an_element(), self.random_element())
+                return
+
+            T = RealDistribution('chisquared', n-1)
+            critical = T.cum_distribution_function_inv(0.99)
+            if critical.is_NaN():
+                # the cardinality is too large
+                return
+            N = min(max(3 * n, 300), 3000)
+            # workaround bug in current_randstate.set_seed_gap and set_seed_libgap:
+            # calling random_element once seems to set the seed correctly
+            self.random_element()
+            with seed(random_seed):
+                elements = [self.random_element() for _ in range(N)]
+            # check that setting the seed actually worked
+            with seed(random_seed):
+                tester.assertEqual(elements[:10],
+                                   [self.random_element()
+                                    for _ in range(10)],
+                                   f"random_element of {self} produced different elements with the same seed {random_seed}")
+            E = float(N) / float(n)
+            chi_2 = sum(float(o) ** 2
+                        for o in Counter(elements).values()) / E - float(N)
+            tester.assertLessEqual(chi_2, critical, f"assuming random_element of {self} follows a uniform distribution, this outcome would only occur with probability {1-T.cum_distribution_function(chi_2)}")
+
+        def _test_rank(self, **options):
+            r"""
+            Check that :meth:`rank` and :meth:`unrank` are
+            consistent.
+
+            If :meth:`rank` is the generic implementation, we return
+            immediately.
+
+            EXAMPLES::
+
+                sage: Permutations([1,1,1,2,3])._test_rank()
+            """
+            from sage.categories.complex_reflection_groups import ComplexReflectionGroups
+            from sage.categories.finite_posets import FinitePosets
+            from sage.categories.modules_with_basis import ModulesWithBasis
+            if (self in ComplexReflectionGroups()
+                or self in FinitePosets()
+                or (self.base_ring() is not None
+                    and self in ModulesWithBasis(self.base_ring()))):
+                # the meaning of rank is different in these categories
+                return
+            if self.rank == self._rank_from_iterator:
+                return
+            from sage.misc.prandom import sample
+            tester = self._tester(**options)
+            n = self.cardinality()
+            if not n:
+                return
+            for r in sample(range(n), min(n, 10)):
+                tester.assertEqual(r, self.rank(self.unrank(r)))
+            for _ in range(10):
+                e = self.random_element()
+                tester.assertEqual(e, self.unrank(self.rank(e)))
 
         @cached_method
         def _last_from_iterator(self):

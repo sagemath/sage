@@ -6925,7 +6925,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
                     # cone strictly convex. Whether or not those
                     # coordinates become positive/negative is chosen
                     # randomly.
-                    from random import choice
+                    from sage.misc.prandom import choice
                     pm = choice([-1,1])
 
                     # rays has immutable elements
