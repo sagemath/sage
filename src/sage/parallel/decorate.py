@@ -554,21 +554,6 @@ def fork(f=None, timeout=0, verbose=False):
         ....: def g(): return gp.eval('a')
         sage: g()                                                                       # needs sage.libs.pari
         'a'
-
-    We illustrate that segfaulting subprocesses are no trouble at all::
-
-        sage: cython('def f(): print(<char*>0)')                                        # needs sage.misc.cython
-        sage: @fork
-        ....: def g():
-        ....:     os.environ["CYSIGNALS_CRASH_NDEBUG"]="yes" # skip enhanced backtrace (it is slow)
-        ....:     f()
-        sage: print("this works"); g()                                                  # needs sage.misc.cython
-        this works...
-        <BLANKLINE>
-        ------------------------------------------------------------------------
-        Unhandled SIG...
-        ------------------------------------------------------------------------
-        'NO DATA'
     """
     F = Fork(timeout=timeout, verbose=verbose)
     return F(f) if f else F

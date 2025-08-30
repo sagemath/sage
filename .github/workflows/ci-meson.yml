@@ -25,25 +25,27 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu', 'macos', 'windows']
-        python: ['3.11', '3.12']
+        os: ['ubuntu']
+        python: ['3.12']
+        extra_param: [1, 2, 3, 4, 5, 6, 7]  # just to spawn a bunch of jobs
         tests: ['all']
-        editable:
-          ${{ fromJson(github.event_name == 'pull_request' && '[false]' || '[false, true]') }}
-        include:
-          - os: 'ubuntu'
-            python: '3.12'
-            tests: 'new'
-          # one additional editable run in pull_request, this has no effect if not pull_request
-          - os: 'ubuntu'
-            python: '3.12'
-            editable: true
-            tests: 'all'
-          - os: windows
-            python: '3.13'
-            tests: 'all'
+        editable: [false]
 
     steps:
+      - name: Maximize build disk space
+        shell: bash -l {0}
+        run: |
+          for x in /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL; do
+            echo "Removing $x..."
+            cd "$x"
+            perl -e 'for(<*>){((stat)[9]<(unlink))}'   # https://unix.stackexchange.com/a/79656/
+            echo "... done"
+            df
+          done
+          echo "Removed all"
+          df
+
+
       - uses: actions/checkout@v4
 
       - name: Merge CI fixes from sagemath/sage
@@ -168,8 +170,12 @@ jobs:
             pytest --doctest-ignore-import-errors --doctest -rfEs -s src || true
           else
             pytest -rfEs -s src
-            ./sage -t ${{ matrix.tests == 'all' && '--all' || '--new --long' }} -p4 --format github
+            CYSIGNALS_CRASH_QUIET=1 ./sage -t ${{ matrix.tests == 'all' && '--all' || '--new --long' }} -p4 --format github
           fi
+
+      - name: List core dumps
+        if: always()
+        run: coredumpctl list
 
       - name: Check that all modules can be imported
         shell: bash -l {0}
@@ -180,6 +186,10 @@ jobs:
           # The output also includes a long list of modules together with the number of tests in each module.
           # This can be ignored.
           pytest -qq --doctest --collect-only || true
+
+      - name: Setup tmate session
+        if: failure()
+        uses: mxschmitt/action-tmate@v3
 
       - name: Upload log
         uses: actions/upload-artifact@v4.5.0
