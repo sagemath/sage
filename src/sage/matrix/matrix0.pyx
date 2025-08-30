@@ -3042,7 +3042,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         return self.with_permuted_rows(row_permutation).with_permuted_columns(column_permutation)
 
     def add_multiple_of_row(self, Py_ssize_t i, Py_ssize_t j, s,
-                            Py_ssize_t start_col=0, end_col=None):
+                            Py_ssize_t start_col=0, Py_ssize_t end_col=-1):
         """
         Add s times row j to row i.
 
@@ -3085,12 +3085,12 @@ cdef class Matrix(sage.structure.element.Matrix):
             [  8   9  10  11]
         """
         self.check_row_bounds_and_mutability(i, j)
+        nc = self._ncols
+        if start_col < 0: start_col += nc
+        if end_col < 0: end_col += nc
         try:
             s = self._coerce_element(s)
-            if end_col is None:
-                self.add_multiple_of_row_c(i, j, s, start_col)
-            else:
-                self.add_multiple_of_row_c_end(i, j, s, start_col, end_col)
+            self.add_multiple_of_row_c_end(i, j, s, start_col, end_col)
         except TypeError:
             raise TypeError('Multiplying row by %s element cannot be done over %s, use change_ring or with_added_multiple_of_row instead.' % (s.parent(), self.base_ring()))
 
