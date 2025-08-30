@@ -62,6 +62,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     cdef add_multiple_of_row_c(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_col)
     cdef add_multiple_of_row_c_end(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_col, Py_ssize_t end_col)
     cdef add_multiple_of_column_c(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_row)
+    cdef add_multiple_of_column_c_end(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_row, Py_ssize_t end_row)
     cdef rescale_row_c(self, Py_ssize_t i, s, Py_ssize_t start_col)
     cdef rescale_col_c(self, Py_ssize_t i, s, Py_ssize_t start_row)
 

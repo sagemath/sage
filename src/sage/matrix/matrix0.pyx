@@ -3073,7 +3073,8 @@ cdef class Matrix(sage.structure.element.Matrix):
             TypeError: Multiplying row by Symbolic Ring element cannot be done over
             Rational Field, use change_ring or with_added_multiple_of_row instead.
 
-        We can have lower or upper column bounds::
+        This operates on columns ``c`` such that ``start_col <= c <= end_col``,
+        where ``start_col`` and ``end_col`` may be negative indices::
 
             sage: m = matrix(3, 4, range(12)); m
             [ 0  1  2  3]
@@ -3105,7 +3106,8 @@ cdef class Matrix(sage.structure.element.Matrix):
         for c from start_col <= c <= end_col:
             self.set_unsafe(i, c, self.get_unsafe(i, c) + s*self.get_unsafe(j, c))
 
-    def with_added_multiple_of_row(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_col=0):
+    def with_added_multiple_of_row(self, Py_ssize_t i, Py_ssize_t j, s,
+                                   Py_ssize_t start_col=0, Py_ssize_t end_col=-1):
         """
         Add s times row j to row i, returning new matrix.
 
@@ -3134,20 +3136,24 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         cdef Matrix temp
         self.check_row_bounds_and_mutability(i, j)
+        nc = self._ncols
+        if start_col < 0: start_col += nc
+        if end_col < 0: end_col += nc
         try:
             s = self._coerce_element(s)
             temp = self.__copy__()
-            temp.add_multiple_of_row_c(i, j, s, start_col)
+            temp.add_multiple_of_row_c_end(i, j, s, start_col, end_col)
             return temp
         # If scaling factor cannot be coerced, change the base ring to
         # one acceptable to both the original base ring and the scaling factor.
         except TypeError:
             temp = self.change_ring(Sequence([s,self.base_ring()(0)]).universe())
             s = temp._coerce_element(s)
-            temp.add_multiple_of_row_c(i, j, s, start_col)
+            temp.add_multiple_of_row_c_end(i, j, s, start_col, end_col)
             return temp
 
-    def add_multiple_of_column(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_row=0):
+    def add_multiple_of_column(self, Py_ssize_t i, Py_ssize_t j, s,
+                               Py_ssize_t start_row=0, Py_ssize_t end_row=-1):
         """
         Add s times column j to column i.
 
@@ -3177,11 +3183,28 @@ cdef class Matrix(sage.structure.element.Matrix):
             ...
             TypeError: Multiplying column by Symbolic Ring element cannot be done over
             Rational Field, use change_ring or with_added_multiple_of_column instead.
+
+        This operates on rows ``r`` such that ``start_row <= r <= end_row``,
+        where ``start_row`` and ``end_row`` may be negative indices::
+
+            sage: m = matrix(4, 3, range(12)); m
+            [ 0  1  2]
+            [ 3  4  5]
+            [ 6  7  8]
+            [ 9 10 11]
+            sage: m.add_multiple_of_column(0, 1, -2, start_row=1, end_row=2); m
+            [ 0  1  2]
+            [-5  4  5]
+            [-8  7  8]
+            [ 9 10 11]
         """
         self.check_column_bounds_and_mutability(i, j)
+        nr = self._nrows
+        if start_row < 0: start_row += nr
+        if end_row < 0: end_row += nr
         try:
             s = self._coerce_element(s)
-            self.add_multiple_of_column_c(i, j, s, start_row)
+            self.add_multiple_of_column_c_end(i, j, s, start_row, end_row)
         except TypeError:
             raise TypeError('Multiplying column by %s element cannot be done over %s, use change_ring or with_added_multiple_of_column instead.' % (s.parent(), self.base_ring()))
 
@@ -3190,7 +3213,14 @@ cdef class Matrix(sage.structure.element.Matrix):
         for r from start_row <= r < self._nrows:
             self.set_unsafe(r, i, self.get_unsafe(r, i) + s*self.get_unsafe(r, j))
 
-    def with_added_multiple_of_column(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_row=0):
+    cdef add_multiple_of_column_c_end(self, Py_ssize_t i, Py_ssize_t j, s,
+                                      Py_ssize_t start_row, Py_ssize_t end_row):
+        cdef Py_ssize_t r
+        for r from start_row <= r <= end_row:
+            self.set_unsafe(r, i, self.get_unsafe(r, i) + s*self.get_unsafe(r, j))
+
+    def with_added_multiple_of_column(self, Py_ssize_t i, Py_ssize_t j, s,
+                                      Py_ssize_t start_row=0, Py_ssize_t end_row=-1):
         """
         Add s times column j to column i, returning new matrix.
 
@@ -3219,17 +3249,20 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         cdef Matrix temp
         self.check_column_bounds_and_mutability(i, j)
+        nr = self._nrows
+        if start_row < 0: start_row += nr
+        if end_row < 0: end_row += nr
         try:
             s = self._coerce_element(s)
             temp = self.__copy__()
-            temp.add_multiple_of_column_c(i, j, s, start_row)
+            temp.add_multiple_of_column_c_end(i, j, s, start_row, end_row)
             return temp
         # If scaling factor cannot be coerced, change the base ring to
         # one acceptable to both the original base ring and the scaling factor.
         except TypeError:
             temp = self.change_ring(Sequence([s,self.base_ring()(0)]).universe())
             s = temp._coerce_element(s)
-            temp.add_multiple_of_column_c(i, j, s, start_row)
+            temp.add_multiple_of_column_c_end(i, j, s, start_row, end_row)
             return temp
 
     def rescale_row(self, Py_ssize_t i, s, Py_ssize_t start_col=0):
