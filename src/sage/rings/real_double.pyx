@@ -60,6 +60,7 @@ from sage.rings.integer_ring import ZZ
 from sage.categories.morphism cimport Morphism
 from sage.structure.coerce cimport is_numpy_type
 from sage.misc.randstate cimport randstate, current_randstate
+from sage.misc.sage_input import SageInputBuilder, SageInputExpression
 from sage.structure.richcmp cimport rich_to_bool
 from sage.arith.constants cimport *
 
@@ -172,7 +173,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         """
         return "\\Bold{R}"
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 
@@ -981,7 +982,7 @@ cdef class RealDoubleElement(FieldElement):
         from sage.rings.real_mpfr import RR
         return RR(self._value)._mathematica_init_()
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 

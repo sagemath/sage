@@ -64,6 +64,7 @@ from sage.libs.flint.fmpz cimport *
 from sage.libs.mpfr cimport MPFR_RNDU
 from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
 
+from sage.misc.sage_input import SageInputBuilder, SageInputExpression
 from sage.structure.element cimport FieldElement
 from sage.structure.parent cimport Parent
 from sage.rings.complex_mpfr cimport ComplexNumber
@@ -1002,7 +1003,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         """
         raise TypeError
 
-    def _sage_input_(self, sib, coerce):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 
