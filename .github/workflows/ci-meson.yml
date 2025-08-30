@@ -33,17 +33,18 @@ jobs:
 
     steps:
       - name: Maximize build disk space
+        shell: bash -l {0}
         run: |
-          echo "Removing dotnet..."
-          sudo rm -rf /usr/share/dotnet
-          echo "Removing android..."
-          sudo rm -rf /usr/local/lib/android
-          echo "Removing ghc..."
-          sudo rm -rf /opt/ghc
-          echo "Removing codeql..."
-          sudo rm -rf /opt/hostedtoolcache/CodeQL
-          echo "... done"
+          for x in /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL; do
+            echo "Removing $x..."
+            cd "$x"
+            perl -e 'for(<*>){((stat)[9]<(unlink))}'   # https://unix.stackexchange.com/a/79656/
+            echo "... done"
+            df
+          done
+          echo "Removed all"
           df
+
 
       - uses: actions/checkout@v4
 
