@@ -25,23 +25,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu', 'macos', 'windows']
+        os: ['ubuntu']
         python: ['3.11', '3.12']
+        extra_param: [1, 2, 3, 4, 5]  # just to spawn a bunch of jobs
         tests: ['all']
-        editable:
-          ${{ fromJson(github.event_name == 'pull_request' && '[false]' || '[false, true]') }}
-        include:
-          - os: 'ubuntu'
-            python: '3.12'
-            tests: 'new'
-          # one additional editable run in pull_request, this has no effect if not pull_request
-          - os: 'ubuntu'
-            python: '3.12'
-            editable: true
-            tests: 'all'
-          - os: windows
-            python: '3.13'
-            tests: 'all'
+        editable: [false, true]
 
     steps:
       - uses: actions/checkout@v4
@@ -180,6 +168,10 @@ jobs:
           # The output also includes a long list of modules together with the number of tests in each module.
           # This can be ignored.
           pytest -qq --doctest --collect-only || true
+
+      - name: Setup tmate session
+        if: failure()
+        uses: mxschmitt/action-tmate@v3
 
       - name: Upload log
         uses: actions/upload-artifact@v4.5.0
