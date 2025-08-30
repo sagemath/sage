@@ -43,6 +43,7 @@ jobs:
           echo "Removing codeql..."
           sudo rm -rf /opt/hostedtoolcache/CodeQL
           echo "... done"
+          df
 
       - uses: actions/checkout@v4
 
