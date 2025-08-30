@@ -1982,14 +1982,15 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: Integer(10^100) * int(4)
             40000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
         """
-        cdef Integer x = <Integer>PY_NEW(Integer)
+        cdef mpz_t x
+        mpz_init(x)
         if mpz_size(self.value) > 100000:
             sig_on()
-            mpz_mul_si(x.value, self.value, n)
+            mpz_mul_si(x, self.value, n)
             sig_off()
         else:
-            mpz_mul_si(x.value, self.value, n)
-        return x
+            mpz_mul_si(x, self.value, n)
+        return move_integer_from_mpz(x)
 
     def __mul__(left, right):
         r"""
@@ -2031,16 +2032,17 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             True
         """
         # self and right are guaranteed to be Integers
-        cdef Integer x = <Integer>PY_NEW(Integer)
+        cdef mpz_t x
+        mpz_init(x)
         if mpz_size(self.value) + mpz_size((<Integer>right).value) > 100000:
             # We only use the signal handler (to enable ctrl-c out) when the
             # product might take a while to compute
             sig_on()
-            mpz_mul(x.value, self.value, (<Integer>right).value)
+            mpz_mul(x, self.value, (<Integer>right).value)
             sig_off()
         else:
-            mpz_mul(x.value, self.value, (<Integer>right).value)
-        return x
+            mpz_mul(x, self.value, (<Integer>right).value)
+        return move_integer_from_mpz(x)
 
     def __truediv__(left, right):
         r"""
@@ -2147,14 +2149,15 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         if not mpz_sgn((<Integer>right).value):
             raise ZeroDivisionError("Integer division by zero")
 
-        cdef Integer z = <Integer>PY_NEW(Integer)
+        cdef mpz_t z
+        mpz_init(z)
         if mpz_size(self.value) > 1000:
             sig_on()
-            mpz_fdiv_q(z.value, self.value, (<Integer>right).value)
+            mpz_fdiv_q(z, self.value, (<Integer>right).value)
             sig_off()
         else:
-            mpz_fdiv_q(z.value, self.value, (<Integer>right).value)
-        return z
+            mpz_fdiv_q(z, self.value, (<Integer>right).value)
+        return move_integer_from_mpz(z)
 
     def __pow__(left, right, modulus):
         r"""
@@ -2472,18 +2475,19 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             raise ValueError("n (=%s) must be positive" % n)
         if (mpz_sgn(self.value) < 0) and not (n & 1):
             raise ValueError("cannot take even root of negative number")
-        cdef Integer x
+        cdef mpz_t x
         cdef bint is_exact
-        x = PY_NEW(Integer)
+        mpz_init(x)
         sig_on()
-        is_exact = mpz_root(x.value, self.value, n)
+        is_exact = mpz_root(x, self.value, n)
         sig_off()
+        x_int = move_integer_from_mpz(x)
 
         if truncate_mode:
-            return x, is_exact
+            return x_int, is_exact
         else:
             if is_exact:
-                return x
+                return x_int
             else:
                 raise ValueError("%s is not a %s power" % (self,
                                                            integer_ring.ZZ(n).ordinal_str()))
@@ -3001,22 +3005,25 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             ...
             ArithmeticError: self must be nonzero
         """
-        cdef Integer mm = Integer(m)
-
         if not self:
             raise ArithmeticError("self must be nonzero")
-        if not mm:
+        if not isinstance(m, Integer):
+            m = Integer(m)
+        if not m:
             return one
 
-        cdef Integer n = Integer(self)  # need a copy as it is modified below
-
+        cdef mpz_t mm, n
+        mpz_init(mm)
+        mpz_init(n)
+        mpz_set(n, self.value)
+        mpz_set(mm, (<Integer>m).value)
         sig_on()
-        while mpz_cmp_ui(mm.value, 1):
-            mpz_gcd(mm.value, n.value, mm.value)
-            mpz_divexact(n.value, n.value, mm.value)
+        while mpz_cmp_ui(mm, 1):
+            mpz_gcd(mm, n, mm)
+            mpz_divexact(n, n, mm)
         sig_off()
-
-        return n
+        mpz_clear(mm)
+        return move_integer_from_mpz(n)
 
     def prime_divisors(self, *args, **kwds):
         """
@@ -3419,18 +3426,20 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         cdef Integer z
 
+        cdef mpz_t zz
+
         # First case: Integer % Integer
         if type(x) is type(y):
             if not mpz_sgn((<Integer>y).value):
                 raise ZeroDivisionError("Integer modulo by zero")
-            z = <Integer>PY_NEW(Integer)
+            mpz_init(zz)
             if mpz_size((<Integer>x).value) > 100000:
                 sig_on()
-                mpz_fdiv_r(z.value, (<Integer>x).value, (<Integer>y).value)
+                mpz_fdiv_r(zz, (<Integer>x).value, (<Integer>y).value)
                 sig_off()
             else:
-                mpz_fdiv_r(z.value, (<Integer>x).value, (<Integer>y).value)
-            return z
+                mpz_fdiv_r(zz, (<Integer>x).value, (<Integer>y).value)
+            return move_integer_from_mpz(zz)
 
         # Next: Integer % C long
         cdef long yy = 0
@@ -3516,38 +3525,41 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: len(str(root))
             301
         """
-        cdef Integer q = PY_NEW(Integer)
-        cdef Integer r = PY_NEW(Integer)
         cdef long d, res
+        cdef mpz_t q, r
 
         if is_small_python_int(other):
             d = PyLong_AsLong(other)
+            mpz_init(q)
+            mpz_init(r)
             if d > 0:
-                mpz_fdiv_qr_ui(q.value, r.value, self.value, d)
+                mpz_fdiv_qr_ui(q, r, self.value, d)
             elif d == 0:
                 raise ZeroDivisionError("Integer division by zero")
             else:
-                res = mpz_fdiv_qr_ui(q.value, r.value, self.value, -d)
-                mpz_neg(q.value, q.value)
+                res = mpz_fdiv_qr_ui(q, r, self.value, -d)
+                mpz_neg(q, q)
                 if res:
-                    mpz_sub_ui(q.value, q.value, 1)
-                    mpz_sub_ui(r.value, r.value, -d)
+                    mpz_sub_ui(q, q, 1)
+                    mpz_sub_ui(r, r, -d)
+            return move_integer_from_mpz(q), move_integer_from_mpz(r)
 
         elif type(other) is Integer:
             if mpz_sgn((<Integer>other).value) == 0:
                 raise ZeroDivisionError("Integer division by zero")
+            mpz_init(q)
+            mpz_init(r)
             if mpz_size(self.value) > 100000:
                 sig_on()
-                mpz_fdiv_qr(q.value, r.value, self.value, (<Integer>other).value)
+                mpz_fdiv_qr(q, r, self.value, (<Integer>other).value)
                 sig_off()
             else:
-                mpz_fdiv_qr(q.value, r.value, self.value, (<Integer>other).value)
+                mpz_fdiv_qr(q, r, self.value, (<Integer>other).value)
+            return move_integer_from_mpz(q), move_integer_from_mpz(r)
 
         else:
             left, right = coercion_model.canonical_coercion(self, other)
             return left.quo_rem(right)
-
-        return q, r
 
     def powermod(self, exp, mod):
         r"""
@@ -3576,13 +3588,14 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         if mpz_cmp_si(_mod.value,0) == 0:
             raise ZeroDivisionError("cannot raise to a power modulo 0")
 
-        x = PY_NEW(Integer)
+        cdef mpz_t res
+        mpz_init(res)
 
         sig_on()
-        mpz_powm(x.value, self.value, _exp.value, _mod.value)
+        mpz_powm(res, self.value, _exp.value, _mod.value)
         sig_off()
 
-        return x
+        return move_integer_from_mpz(res)
 
     def rational_reconstruction(self, Integer m):
         r"""
@@ -4498,11 +4511,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: n._lcm(150)
             300
         """
-        cdef Integer z = PY_NEW(Integer)
+        cdef mpz_t z
+        mpz_init(z)
         sig_on()
-        mpz_lcm(z.value, self.value, n.value)
+        mpz_lcm(z, self.value, n.value)
         sig_off()
-        return z
+        return move_integer_from_mpz(z)
 
     def _gcd(self, Integer n):
         """
@@ -4521,11 +4535,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: 21._gcd(2^6)
             1
         """
-        cdef Integer z = PY_NEW(Integer)
+        cdef mpz_t z
+        mpz_init(z)
         sig_on()
-        mpz_gcd(z.value, self.value, n.value)
+        mpz_gcd(z, self.value, n.value)
         sig_off()
-        return z
+        return move_integer_from_mpz(z)
 
     def denominator(self):
         """
@@ -4613,13 +4628,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         if not mpz_fits_ulong_p(self.value):
             raise OverflowError("argument too large for factorial")
 
-        cdef Integer z = PY_NEW(Integer)
-
+        cdef mpz_t tmp
+        mpz_init(tmp)
         sig_on()
-        mpz_fac_ui(z.value, mpz_get_ui(self.value))
+        mpz_fac_ui(tmp, mpz_get_ui(self.value))
         sig_off()
-
-        return z
+        return move_integer_from_mpz(tmp)
 
     def multifactorial(self, long k):
         r"""
@@ -6449,13 +6463,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         if mpz_sgn(self.value) < 0:
             raise ValueError("square root of negative integer not defined")
 
-        cdef Integer x = PY_NEW(Integer)
-
+        cdef mpz_t x
+        mpz_init(x)
         sig_on()
-        mpz_sqrt(x.value, self.value)
+        mpz_sqrt(x, self.value)
         sig_off()
-
-        return x
+        return move_integer_from_mpz(x)
 
     def sqrt(self, prec=None, extend=True, all=False):
         """
@@ -6534,17 +6547,22 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return [self] if all else self
 
         cdef bint is_square
+        cdef mpz_t sqrt_val, rem
         cdef Integer z
-        cdef mpz_t tmp
+
         if mpz_sgn(self.value) < 0:
             is_square = False
         else:
             sig_on()
-            mpz_init(tmp)
-            z = PY_NEW(Integer)
-            mpz_sqrtrem(z.value, tmp, self.value)
-            is_square = (mpz_sgn(tmp) == 0)
-            mpz_clear(tmp)
+            mpz_init(sqrt_val)
+            mpz_init(rem)
+            mpz_sqrtrem(sqrt_val, rem, self.value)
+            is_square = (mpz_sgn(rem) == 0)
+            if is_square:
+                z = move_integer_from_mpz(sqrt_val)
+            else:
+                mpz_clear(sqrt_val)
+            mpz_clear(rem)
             sig_off()
 
         if not is_square:
@@ -6677,13 +6695,16 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         - David Harvey (2007-12-26): added minimality option
         """
-        cdef Integer g = PY_NEW(Integer)
-        cdef Integer s = PY_NEW(Integer)
-        cdef Integer t = PY_NEW(Integer)
-
+        cdef mpz_t g_tmp, s_tmp, t_tmp
+        mpz_init(g_tmp)
+        mpz_init(s_tmp)
+        mpz_init(t_tmp)
         sig_on()
-        mpz_gcdext(g.value, s.value, t.value, self.value, n.value)
+        mpz_gcdext(g_tmp, s_tmp, t_tmp, self.value, n.value)
         sig_off()
+        cdef Integer g = move_integer_from_mpz(g_tmp)
+        cdef Integer s = move_integer_from_mpz(s_tmp)
+        cdef Integer t = move_integer_from_mpz(t_tmp)
 
         # Note: the GMP documentation for mpz_gcdext (or mpn_gcdext for that
         # matter) makes absolutely no claims about any minimality conditions
@@ -7457,7 +7478,6 @@ def GCD_list(v):
         0
     """
     cdef int i, n = len(v)
-    cdef Integer z = <Integer>PY_NEW(Integer)
 
     for i in range(n):
         if not isinstance(v[i], Integer):
@@ -7470,15 +7490,16 @@ def GCD_list(v):
     elif n == 1:
         return v[0].abs()
 
+    cdef mpz_t tmp
+    mpz_init(tmp)
     sig_on()
-    mpz_gcd(z.value, (<Integer>v[0]).value, (<Integer>v[1]).value)
+    mpz_gcd(tmp, (<Integer>v[0]).value, (<Integer>v[1]).value)
     for i in range(2, n):
-        if mpz_cmp_ui(z.value, 1) == 0:
+        if mpz_cmp_ui(tmp, 1) == 0:
             break
-        mpz_gcd(z.value, z.value, (<Integer>v[i]).value)
+        mpz_gcd(tmp, tmp, (<Integer>v[i]).value)
     sig_off()
-
-    return z
+    return move_integer_from_mpz(tmp)
 
 
 @cython.binding(True)
