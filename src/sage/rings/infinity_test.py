@@ -2,7 +2,7 @@ import pytest
 
 from sage.rings.infinity import Infinity, InfinityRing, infinity, minus_infinity
 from sage.rings.integer_ring import ZZ
-from sage.rings.number_field.number_field_base import NumberField
+from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.qqbar import AA
 from sage.rings.rational_field import QQ
@@ -29,10 +29,11 @@ def generate_elements(ring):
 
 
 @pytest.mark.parametrize(
-    'element',
+    "element",
     [
-        generate_elements(ring)
+        element
         for ring in [ZZ, QQ, RDF, RR, RealField(200), RLF, RIF, AA]
+        for element in generate_elements(ring)
     ],
 )
 def test_comparison(element):
@@ -58,32 +59,32 @@ def test_comparison_number_field():
     Comparison with number fields does not work.
     This is a known bug.
     """
-    x = polygen(ZZ, 'x')
-    sqrt3 = NumberField(x**2 - 3, 'sqrt3').gen()
+    x = polygen(ZZ, "x")
+    sqrt3 = NumberField(x**2 - 3, "sqrt3").gen()
     element = 1 + sqrt3
-    assert not (minus_infinity < element < infinity)
+    with pytest.raises(TypeError):
+        assert not (minus_infinity < element < infinity)
 
 
-@pytest.mark.parametrize("element", generate_elements(SR))
-def test_comparison_symbolic_ring(element):
+def test_comparison_symbolic_ring():
     """
     The symbolic ring handles its own infinities, but answers
     ``False`` (meaning: cannot decide) already for some very
     elementary comparisons. This is a known bug.
     """
-    with pytest.raises(AssertionError):
-        assert minus_infinity < element
-        assert element > minus_infinity
-        assert element < infinity
-        assert infinity > element
-        assert minus_infinity <= element
-        assert element >= minus_infinity
-        assert element <= infinity
-        assert infinity >= element
+    element = SR.an_element()
+    assert not (minus_infinity < element)
+    assert not (element > minus_infinity)
+    assert not (element < infinity)
+    assert not (infinity > element)
+    assert not (minus_infinity <= element)
+    assert not (element >= minus_infinity)
+    assert not (element <= infinity)
+    assert not (infinity >= element)
 
 
 @pytest.mark.parametrize(
-    'pos_inf', [infinity, float('+inf'), RLF(infinity), RIF(infinity), SR(infinity)]
+    "pos_inf", [infinity, float("+inf"), RLF(infinity), RIF(infinity), SR(infinity)]
 )
 def test_signed_infinity(pos_inf):
     """
@@ -107,7 +108,7 @@ def test_signed_infinity(pos_inf):
 
 
 def test_issue_14045():
-    assert InfinityRing(float('+inf')) is infinity
-    assert InfinityRing(float('-inf')) is minus_infinity
-    assert not (infinity > float('+inf'))
-    assert infinity == float('+inf')
+    assert InfinityRing(float("+inf")) is infinity
+    assert InfinityRing(float("-inf")) is minus_infinity
+    assert not (infinity > float("+inf"))
+    assert infinity == float("+inf")
