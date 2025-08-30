@@ -1593,7 +1593,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return (True, chain) if certificate else True
         return (False, None) if certificate else False
 
-    def is_left_modular(self, H=None, certificate=False) -> bool | list:
+    def is_left_modular(self, H=None, certificate=False) -> bool | tuple:
         r"""
         Return whether ``self`` is a left-modular lattice.
 
@@ -1602,26 +1602,29 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         - ``H`` -- subset of elements; full ``self`` if no ``H`` is given
 
         - ``certificate`` --  boolean (default: ``False``); whether to return
-          a list of failures
+          a failure
 
         OUTPUT:
 
-        if ``certificate == True``, this outputs a list of tuples
-        `(y, x, z)` which fail left-modularity.
+        if ``certificate == True``, this returns either ``(True, None)``
+        or ``(False, (y, x, z))`` where the tuple `(y, x, z)`
+        fails left-modularity.
 
-        if ``certificate == False``, this outputs ``False``
-        if any `x \in H` fails to be left-modular and ``True`` otherwise.
+        if ``certificate == False``, this returns ``False`` if any
+        `x \in H` fails to be left-modular and ``True`` otherwise.
 
         ALGORITHM:
 
         Given a lattice `L` and a subset of elements `H`,
         an element `x \in H` is left-modular
         if for every `y,z \in L, y \leq z`
-        the equality `(y \vee x) \wedge z = y \vee (x \wedge z)`.
+        we have `(y \vee x) \wedge z = y \vee (x \wedge z)`.
 
         .. SEEALSO::
 
             - Stronger properties: :meth:`is_trim`
+
+            - :meth:`is_left_modular_element`
 
         EXAMPLES:
 
@@ -1638,19 +1641,23 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             ....:     [[1,2],[1,3],[3,4],[4,5],[2,5],[2,6],[6,5],[2,4]]))
             sage: L.is_left_modular()
             True
+
+        TESTS::
+
+            sage: L = LatticePoset(([1,2,3,4,5],
+            ....:     [[1,2],[1,3],[3,4],[4,5],[2,5]]))
+            sage: L.is_left_modular(certificate=True)
+            (False, (3, 2, 4))
         """
         if H is None:
             H = self
-        out = []
         for x in H:
             for z in self:
                 mxz = self.meet(x, z)
                 for y in self.lower_covers_iterator(z):
                     if self.join(y, mxz) != self.meet(self.join(y, x), z):
-                        if not certificate:
-                            return False
-                        out.append((y, x, z))
-        return out if certificate else True
+                        return False if not certificate else (False, (y, x, z))
+        return (True, None) if certificate else True
 
     def is_complemented(self, certificate=False) -> bool | tuple:
         r"""
@@ -2791,6 +2798,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         .. SEEALSO::
 
             - Stronger properties: :meth:`is_modular_element`
+
+            - :meth:`is_left_modular`
         """
         return all(self.meet(self.join(y, x), z) ==
                    self.join(y, self.meet(x, z))
