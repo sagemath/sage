@@ -85,7 +85,7 @@ class CompletionPolynomial(RingExtensionElement):
                 f = f(parent._gen)
             #elif integer_ring.has_coerce_map_from(R):
             #    f = integer_ring(f).backend(force=True)
-        return super().__init__(parent, f)
+        super().__init__(parent, f)
 
     def _repr_(self):
         r"""
@@ -255,7 +255,7 @@ class CompletionPolynomial(RingExtensionElement):
             while n < prec:
                 if (not include_final_zeroes
                 and elt.precision_absolute() is Infinity and elt.is_zero()):
-                     break
+                    break
                 coeff = elt[n]
                 yield coeff
                 elt -= elt.parent()(coeff) << n
@@ -285,7 +285,7 @@ class CompletionPolynomial(RingExtensionElement):
                     f = self.add_bigoh(current_prec).polynomial()
                     f //= p ** n
                 if not include_final_zeroes and f.is_zero():
-                     break
+                    break
                 f, coeff = f.quo_rem(p)
                 yield coeff
                 n += 1
@@ -854,5 +854,5 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
             return self
         else:
             return CompletionPolynomialRing(field, self._p,
-                       default_prec = self._default_prec,
-                       sparse = self.is_sparse())
+                       default_prec=self._default_prec,
+                       sparse=self.is_sparse())

@@ -1843,8 +1843,6 @@ class PolynomialRing_commutative(PolynomialRing_generic):
 
         When the precision is infinity, a lazy series ring is returned::
 
-        TESTS::
-
             sage: # needs sage.combinat
             sage: PP = P.completion(x, prec=oo)
             sage: PP.backend(force=True)
@@ -1854,7 +1852,7 @@ class PolynomialRing_commutative(PolynomialRing_generic):
             sage: 1 / g == f
             True
 
-        ::
+        TESTS::
 
             sage: P.completion('x')
             Power Series Ring in x over Rational Field

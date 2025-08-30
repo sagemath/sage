@@ -2510,7 +2510,7 @@ cdef class Polynomial(CommutativePolynomial):
             (x + 1, 100)
             sage: Q.perfect_power()
             (x + 2, 50)
-            sage: (P*Q).perfect_power()            
+            sage: (P*Q).perfect_power()
             (x^3 + 4*x^2 + 5*x + 2, 50)
         """
         f = self
