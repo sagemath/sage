@@ -217,15 +217,16 @@ def _all_cycles_iterator_vertex(self, vertex, starting_vertices=None, simple=Fal
         if len(path) > 1 and path[0] == path[-1]:
             report = True
             if not self.is_directed():
-                if simple and len(path) <= 3:
-                    report = False
-                L = len(path)
-                for i in range(1, L // 2):
-                    if vertex_to_int[path[i]] > vertex_to_int[path[L - i - 1]]:
-                        report = False
-                        break
-                    if vertex_to_int[path[i]] < vertex_to_int[path[L - i - 1]]:
-                        break
+                if simple:
+                    report = len(path) > 3 and vertex_to_int[path[1]] < vertex_to_int[path[-2]]
+                else:
+                    L = len(path)
+                    for i in range(1, L // 2):
+                        if vertex_to_int[path[i]] > vertex_to_int[path[L - i - 1]]:
+                            report = False
+                            break
+                        if vertex_to_int[path[i]] < vertex_to_int[path[L - i - 1]]:
+                            break
             if report:
                 if report_weight:
                     yield (length, path)
