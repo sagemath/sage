@@ -3044,7 +3044,12 @@ cdef class Matrix(sage.structure.element.Matrix):
     def add_multiple_of_row(self, Py_ssize_t i, Py_ssize_t j, s,
                             Py_ssize_t start_col=0, Py_ssize_t end_col=-1):
         """
-        Add s times row j to row i.
+        Add ``s`` times row ``j`` to row ``i``.
+
+        This operates on columns ``c`` such that ``start_col <= c <= end_col``.
+
+        The parameters ``start_col`` and ``end_col`` may be negative,
+        representing indices from the end of the row::
 
         EXAMPLES: We add -3 times the first row to the second row of an
         integer matrix, remembering to start numbering rows at zero::
@@ -3073,8 +3078,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             TypeError: Multiplying row by Symbolic Ring element cannot be done over
             Rational Field, use change_ring or with_added_multiple_of_row instead.
 
-        This operates on columns ``c`` such that ``start_col <= c <= end_col``,
-        where ``start_col`` and ``end_col`` may be negative indices::
+        Using the optional parameters::
 
             sage: m = matrix(3, 4, range(12)); m
             [ 0  1  2  3]
@@ -3155,7 +3159,12 @@ cdef class Matrix(sage.structure.element.Matrix):
     def add_multiple_of_column(self, Py_ssize_t i, Py_ssize_t j, s,
                                Py_ssize_t start_row=0, Py_ssize_t end_row=-1):
         """
-        Add s times column j to column i.
+        Add ``s`` times column ``j`` to column ``i``.
+
+        This operates on rows ``r`` such that ``start_row <= r <= end_row``.
+
+        The parameters ``start_row`` and ``end_row`` may be negative,
+        representing indices from the end of the column::
 
         EXAMPLES: We add -1 times the third column to the second column of
         an integer matrix, remembering to start numbering cols at zero::
@@ -3184,8 +3193,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             TypeError: Multiplying column by Symbolic Ring element cannot be done over
             Rational Field, use change_ring or with_added_multiple_of_column instead.
 
-        This operates on rows ``r`` such that ``start_row <= r <= end_row``,
-        where ``start_row`` and ``end_row`` may be negative indices::
+        Using the optional parameters::
 
             sage: m = matrix(4, 3, range(12)); m
             [ 0  1  2]
