@@ -766,5 +766,6 @@ class CommutativeRings(CategoryWithAxiom):
 
                     sage: R = cartesian_product([ZZ, Zmod(5)])
                     sage: R._pseudo_fraction_field()
+                    The Cartesian product of (Rational Field, Ring of integers modulo 5)
                 """
                 return cartesian_product([c._pseudo_fraction_field() for c in self.cartesian_factors()])
