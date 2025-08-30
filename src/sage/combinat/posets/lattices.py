@@ -1645,7 +1645,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         for x in H:
             for z in self:
                 mxz = self.meet(x, z)
-                for y in self.principal_lower_set(z):
+                for y in self.lower_covers_iterator(z):
                     if self.join(y, mxz) != self.meet(self.join(y, x), z):
                         if not certificate:
                             return False
