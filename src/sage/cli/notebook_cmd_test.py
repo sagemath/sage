@@ -26,11 +26,12 @@ def test_jupyterlab_explicitly():
     assert args.notebook == "jupyterlab"
 
 
-def test_invalid_notebook_choice():
+def test_invalid_notebook_choice(capsys):
     parser = argparse.ArgumentParser()
     JupyterNotebookCmd.extend_parser(parser)
     with pytest.raises(SystemExit):
         parser.parse_args(["--notebook", "invalid"])
+    assert "argument -n/--notebook: invalid choice: 'invalid'" in capsys.readouterr()[1]
 
 
 def test_help():
