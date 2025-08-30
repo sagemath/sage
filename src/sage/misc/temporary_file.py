@@ -35,7 +35,6 @@ from typing import IO
 # Note that `TemporaryDirectory()` will cleanup on program exit;
 # we keep the atexit hook to be redundant, in case that fails.
 TMP_DIR_FILENAME_BASE = tempfile.mkdtemp(prefix='sage_')
-#atexit.register(lambda: TMP_DIR_FILENAME_BASE.cleanup())
 
 
 #################################################################
@@ -76,7 +75,7 @@ def tmp_dir(name='dir_', ext='') -> str:
     """
     tmp = tempfile.mkdtemp(prefix=name,
                            suffix=ext,
-                           dir=TMP_DIR_FILENAME_BASE.name)
+                           dir=TMP_DIR_FILENAME_BASE)
     name = os.path.abspath(tmp)
     return name + os.sep
 
@@ -125,7 +124,7 @@ def tmp_filename(name='tmp_', ext='') -> str:
     """
     handle, tmp = tempfile.mkstemp(prefix=name,
                                    suffix=ext,
-                                   dir=TMP_DIR_FILENAME_BASE.name)
+                                   dir=TMP_DIR_FILENAME_BASE)
     os.close(handle)
     name = os.path.abspath(tmp)
     return name
