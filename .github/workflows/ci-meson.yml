@@ -33,12 +33,16 @@ jobs:
 
     steps:
       - name: Maximize build disk space
-        uses: easimon/maximize-build-space@v10
-        with:
-          remove-dotnet:        true
-          remove-android:       true
-          remove-haskell:       true
-          remove-codeql:        true
+        run: |
+          echo "Removing dotnet..."
+          sudo rm -rf /usr/share/dotnet
+          echo "Removing android..."
+          sudo rm -rf /usr/local/lib/android
+          echo "Removing ghc..."
+          sudo rm -rf /opt/ghc
+          echo "Removing codeql..."
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          echo "... done"
 
       - uses: actions/checkout@v4
 
@@ -64,7 +68,7 @@ jobs:
         with:
           path: ~/conda_pkgs_dir
           key:
-            ${{ runner.os }}-conda-${{ hashFiles('environment-3.11-linux.yml') }}
+            ${{ runner.os }}-conda-${{ hashFiles('environment-3.11-linux.yml) }}
       
       - name: Setup MSVC environment
         if: runner.os == 'windows'
