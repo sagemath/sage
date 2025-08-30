@@ -43,7 +43,7 @@ class CompletionToPowerSeries(RingHomomorphism):
         sage: S.<u> = Ap.power_series_ring()
         sage: f = S.convert_map_from(Ap)
         sage: type(f)
-        <class 'sage.rings.completion.CompletionToPowerSeries'>
+        <class 'sage.rings.completion_polynomial_ring.CompletionToPowerSeries'>
 
         sage: # TestSuite(f).run()
     """
@@ -73,7 +73,7 @@ class CompletionPolynomial(RingExtensionElement):
         sage: Ap = A.completion(x - 1)
         sage: u = Ap.random_element()
         sage: type(u)
-        <class 'sage.rings.completion.CompletionPolynomialRing_with_category.element_class'>
+        <class 'sage.rings.completion_polynomial_ring.CompletionPolynomialRing_with_category.element_class'>
     """
     def __init__(self, parent, f):
         if isinstance(f, Element):
@@ -525,7 +525,7 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
             sage: A.<x> = QQ[]
             sage: Ap = A.completion(x - 1)
             sage: type(Ap)
-            <class 'sage.rings.completion.CompletionPolynomialRing_with_category'>
+            <class 'sage.rings.completion_polynomial_ring.CompletionPolynomialRing_with_category'>
             sage: TestSuite(Ap).run()
 
         ::
@@ -533,7 +533,7 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
             sage: K = Frac(A)
             sage: Kp = K.completion(x - 1)
             sage: type(Kp)
-            <class 'sage.rings.completion.CompletionPolynomialRing_with_category'>
+            <class 'sage.rings.completion_polynomial_ring.CompletionPolynomialRing_with_category'>
             sage: TestSuite(Kp).run()
         """
         A = self._ring = ring

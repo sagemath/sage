@@ -1863,7 +1863,7 @@ class PolynomialRing_commutative(PolynomialRing_generic):
         """
         if p is None:
             p = self.variable_name()
-        from sage.rings.completion import CompletionPolynomialRing
+        from sage.rings.completion_polynomial_ring import CompletionPolynomialRing
         return CompletionPolynomialRing(self, p, default_prec=prec, sparse=self.is_sparse())
 
     def quotient_by_principal_ideal(self, f, names=None, **kwds):

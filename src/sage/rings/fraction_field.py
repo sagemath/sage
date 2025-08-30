@@ -1255,7 +1255,7 @@ class FractionField_1poly_field(FractionField_generic):
         """
         if p is None:
             p = self.variable_name()
-        from sage.rings.completion import CompletionPolynomialRing
+        from sage.rings.completion_polynomial_ring import CompletionPolynomialRing
         return CompletionPolynomialRing(self, p, default_prec=prec, sparse=self.ring().is_sparse())
 
 class FractionFieldEmbedding(DefaultConvertMap_unique):
