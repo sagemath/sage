@@ -9,6 +9,7 @@ py.install_sources(
   'cfinite_sequence.py',
   'cif.py',
   'commutative_algebra.py',
+  'completion_polynomial_ring.py',
   'complex_arb.pxd',
   'complex_conversion.pxd',
   'complex_double.pxd',

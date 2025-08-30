@@ -221,12 +221,14 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
             'q'
         """
         from .power_series_ring import PowerSeriesRing
-
+        if 'default_prec' in kwds and kwds['default_prec'] is infinity:
+            from sage.rings.lazy_series_ring import LazyLaurentSeriesRing
+            del kwds['default_prec']
+            return LazyLaurentSeriesRing(*args, **kwds)
         if not kwds and len(args) == 1 and isinstance(args[0], (PowerSeriesRing_generic, LazyPowerSeriesRing)):
             power_series = args[0]
         else:
             power_series = PowerSeriesRing(*args, **kwds)
-
         return UniqueRepresentation.__classcall__(cls, power_series)
 
     def __init__(self, power_series):

@@ -392,14 +392,13 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
 
     # the following is the original, univariate-only code
 
-    if isinstance(name, (int, integer.Integer)):
+    if isinstance(name, (int, integer.Integer)) or name is infinity:
         default_prec = name
     if names is not None:
         name = names
-    name = normalize_names(1, name)
-
     if name is None:
-        raise TypeError("You must specify the name of the indeterminate of the Power series ring.")
+        raise TypeError("you must specify the name of the indeterminate of the power series ring")
+    name = normalize_names(1, name)
 
     key = (base_ring, name, default_prec, sparse, implementation)
     if PowerSeriesRing_generic.__classcall__.is_in_cache(key):
@@ -412,17 +411,21 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
     if not (name is None or isinstance(name, str)):
         raise TypeError("variable name must be a string or None")
 
-    if base_ring in _Fields:
+    if base_ring not in _CommutativeRings:
+        raise TypeError("base_ring must be a commutative ring")
+
+    if default_prec is infinity:
+        from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+        R = LazyPowerSeriesRing(base_ring, name, sparse)
+    elif base_ring in _Fields:
         R = PowerSeriesRing_over_field(base_ring, name, default_prec,
                                        sparse=sparse, implementation=implementation)
     elif base_ring in _IntegralDomains:
         R = PowerSeriesRing_domain(base_ring, name, default_prec,
                                    sparse=sparse, implementation=implementation)
-    elif base_ring in _CommutativeRings:
+    else:
         R = PowerSeriesRing_generic(base_ring, name, default_prec,
                                     sparse=sparse, implementation=implementation)
-    else:
-        raise TypeError("base_ring must be a commutative ring")
     return R
 
 
@@ -614,7 +617,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
             ('y', 'z')
         """
         if depth is None:
-            from sage.rings.infinity import infinity
             depth = infinity
 
         if depth <= 0:
