@@ -239,10 +239,11 @@ class MaxSymbolic(MinMax_base):
         We can usually integrate these expressions, but can't
         guarantee a symbolic answer in closed form::
 
-            sage: f = max_symbolic(sin(x), cos(x))                                      # needs sage.symbolic
-            sage: r = integral(f, x, 0, 1)                                              # needs sage.symbolic
+            sage: # long time, needs sage.symbolic
+            sage: f = max_symbolic(sin(x), cos(x))
+            sage: r = integral(f, x, 0, 1)
             ...
-            sage: r.n()  # abs tol 1e-8                                                 # needs sage.symbolic
+            sage: r.n()  # abs tol 1e-8
             0.873911256504955
         """
         return max_symbolic(args)
