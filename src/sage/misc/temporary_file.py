@@ -34,8 +34,8 @@ from typing import IO
 # using an atexit hook
 # Note that `TemporaryDirectory()` will cleanup on program exit;
 # we keep the atexit hook to be redundant, in case that fails.
-TMP_DIR_FILENAME_BASE = tempfile.TemporaryDirectory(prefix='sage_')
-atexit.register(lambda: TMP_DIR_FILENAME_BASE.cleanup())
+TMP_DIR_FILENAME_BASE = tempfile.mkdtemp(prefix='sage_')
+#atexit.register(lambda: TMP_DIR_FILENAME_BASE.cleanup())
 
 
 #################################################################

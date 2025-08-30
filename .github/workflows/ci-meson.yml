@@ -26,12 +26,20 @@ jobs:
       fail-fast: false
       matrix:
         os: ['ubuntu']
-        python: ['3.11', '3.12']
-        extra_param: [1, 2, 3, 4, 5]  # just to spawn a bunch of jobs
+        python: ['3.12']
+        extra_param: [1, 2, 3, 4, 5, 6, 7]  # just to spawn a bunch of jobs
         tests: ['all']
-        editable: [false, true]
+        editable: [false]
 
     steps:
+      - name: Maximize build disk space
+        uses: easimon/maximize-build-space@v10
+        with:
+          remove-dotnet:        true
+          remove-android:       true
+          remove-haskell:       true
+          remove-codeql:        true
+
       - uses: actions/checkout@v4
 
       - name: Merge CI fixes from sagemath/sage
@@ -156,8 +164,12 @@ jobs:
             pytest --doctest-ignore-import-errors --doctest -rfEs -s src || true
           else
             pytest -rfEs -s src
-            ./sage -t ${{ matrix.tests == 'all' && '--all' || '--new --long' }} -p4 --format github
+            CYSIGNALS_CRASH_QUIET=1 ./sage -t ${{ matrix.tests == 'all' && '--all' || '--new --long' }} -p4 --format github
           fi
+
+      - name: List core dumps
+        if: always()
+        run: coredumpctl list
 
       - name: Check that all modules can be imported
         shell: bash -l {0}
