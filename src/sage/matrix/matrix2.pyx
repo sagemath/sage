@@ -19583,7 +19583,7 @@ cdef class Matrix(Matrix1):
         if not output_rows:
             return R
 
-        # convert c,d to actual position in striped Krylov matrix
+        # convert c,d to actual position in Krylov matrix
         phi = lambda c,d : sum(min(max(shifts[c] - shifts[i] + d + (i < c and shifts[i] <= shifts[c] + d), 0), degrees[i] + 1) for i in range(m))
         row_profile = tuple([(*row, phi(*row)) for row in row_profile_self])
 
@@ -19816,11 +19816,12 @@ cdef class Matrix(Matrix1):
         has not. (These integers are also easily deduced from the output
         triplets of :meth:`krylov_basis`.)
 
-        The returned matrix `K` is a basis, in reduced row echelon form, of the
-        left nullspace of the Krylov matrix `A` built from `E` and `M` with
-        ``shifts`` and ``degrees`` equal to `[\delta_0,\ldots,\delta_{m-1}]`.
-        Recall from :meth:`krylov_matrix` that this matrix `A` is, up to a row
-        permutation deduced from ``shifts``, equal to
+        The returned matrix `K` is a basis, in reduced row echelon form (upper
+        echelon, and up to row permutation), of the left kernel of the Krylov
+        matrix `A` built from `E` and `M` with ``shifts`` and ``degrees`` equal
+        to `[\delta_0,\ldots,\delta_{m-1}]`. Recall from :meth:`krylov_matrix`
+        that this matrix `A` is, up to a row permutation deduced from
+        ``shifts``, equal to
 
         .. MATH::
 
@@ -19880,9 +19881,8 @@ cdef class Matrix(Matrix1):
         - ``var`` -- (optional) Defaults to ``None``, which means returning a
           constant matrix. If not ``None``, the polynomial matrix
           representation is used, and ``var`` must be either the generator of
-          a univariate polynomial ring over the base ring of ``self``, or a
-          string which will be used as variable name for building such a
-          polynomial ring.
+          a polynomial ring over the base ring of ``self``, or a string which
+          will be used as variable name for building such a polynomial ring.
 
         OUTPUT:
 
@@ -19917,6 +19917,8 @@ cdef class Matrix(Matrix1):
             [x^2 + 40*x + 82              76               0]
             [       3*x + 13          x + 57               0]
             [             96              96               1]
+            sage: P.is_popov()
+            True
             sage: x = P.base_ring().gen()
             sage: F = E * matrix([[1], [x], [x**2]])
             sage: F
@@ -19930,7 +19932,8 @@ cdef class Matrix(Matrix1):
         constant matrix representing the same kernel elements::
 
             sage: K, row_profile_bis = E.krylov_kernel_basis(M)
-            sage: row_profile == row_profile_bis 
+            sage: row_profile == row_profile_bis
+            True
             sage: K, row_profile
             (
             [82 76  0 40  0  1]
@@ -19939,8 +19942,25 @@ cdef class Matrix(Matrix1):
             ((0, 0, 0), (1, 0, 1), (2, 0, 2), (0, 1, 3), (1, 1, 4), (0, 2, 6))
             )
 
-        Observe that the output Krylov matrix row profile also allows one to
-        switch between the polynomial representation and the constant one::
+        The computed matrix is a basis of the left kernel of the Krylov matrix
+        built with the appropriate degrees; note that the sum of these degrees
+        has to be `r = 3` and the Krylov matrix has `m+r = 6` rows::
+
+            sage: degrees = [max(rp[1] for rp in row_profile if rp[0] == j) 
+            ....:                             for j in range(E.nrows())]
+            sage: degrees
+            [2, 1, 0]
+            sage: A = E.krylov_matrix(M, degrees=degrees)
+            sage: A.left_kernel_matrix(basis="pivot")
+            [96 96  1  0  0  0]
+            [13 57  0  3  1  0]
+            [82 76  0 40  0  1]
+
+        The latter matrix and `K` coincide only up to row permutation, because
+        the order of the rows of `K` is inferred from the shifts, and makes it
+        echelon only up to row permutation. The row profile information also
+        allows one to directly relate the polynomial representation and the
+        constant one::
 
             sage: all(P[:,j] == sum(K[:,k] * x**(row_profile[k][1])
             ....:                   for k in range(K.ncols())
@@ -19948,85 +19968,102 @@ cdef class Matrix(Matrix1):
             ....:     for j in range(P.ncols()))
             True
 
-        Other shifts will lead to different kernel bases::
+        Since the shifts impact how the Krylov matrix is constructed, changing
+        shifts will lead to different kernel bases, yet representing the same
+        `\Bold{K}[x]`-module. The next shift yields a triangular polynomial
+        basis (the one in Hermite normal form)::
 
             sage: shifts = [0,3,6]
-            sage: E.krylov_kernel_basis(M, shifts=shifts, output_rows=False, var='x')
+            sage: H = E.krylov_kernel_basis(M, shifts=shifts,
+            ....:                           output_rows=False, var=x)
+            sage: H
             [               x^3                  0                  0]
             [60*x^2 + 72*x + 70                  1                  0]
             [60*x^2 + 72*x + 69                  0                  1]
-            sage: E.krylov_kernel_basis(M, shifts=shifts, output_rows=False)
+            sage: H.is_popov(shifts=shifts) and H.is_hermite(lower_echelon=True)
+            True
+            sage: P.popov_form(shifts=shifts) == H  # same K[x]-module
+            True
+
+        We again check the kernel basis property::
+
+            sage: K, row_profile = E.krylov_kernel_basis(M, shifts=shifts)
+            sage: K
             [ 0  0  0  1  0  0]
             [70 72 60  0  1  0]
             [69 72 60  0  0  1]
+            sage: degrees = [max(rp[1] for rp in row_profile if rp[0] == j) 
+            ....:                             for j in range(E.nrows())]
+            sage: degrees
+            [3, 0, 0]
+            sage: A = E.krylov_matrix(M, shifts=shifts, degrees=degrees)
+            sage: K == A.left_kernel_matrix(basis="pivot")
+            True
 
+        Here is another shift. Notice that the variable is allowed to be from a
+        multivariate ring::
+
+            sage: bivring.<X,Y> = R[]
             sage: shifts = [3,0,2]
-            sage: E.krylov_kernel_basis(M, shifts=shifts, var='x')
-            (
-            [                 1 26*x^2 + 49*x + 79                  0]
-            [                 0                x^3                  0]
-            [                 0 26*x^2 + 49*x + 78                  1]
-            ((1, 0, 0), (1, 1, 1), (1, 2, 2), (2, 0, 3), (0, 0, 4), (1, 3, 5))
-            )
-            sage: E.krylov_kernel_basis(M, shifts=shifts)
-            (
+            sage: Q, row_profile = E.krylov_kernel_basis(M, shifts=shifts, var=Y)
+            sage: Q
+            [                 1 26*Y^2 + 49*Y + 79                  0]
+            [                 0                Y^3                  0]
+            [                 0 26*Y^2 + 49*Y + 78                  1]
+            sage: Q.base_ring()
+            Univariate Polynomial Ring in Y over Finite Field of size 97
+            sage: Q.is_popov(shifts=shifts)
+            True
+            sage: P.popov_form(shifts=shifts) == Q(x)  # same module
+            True
+
+        If we have a priori degree knowledge, we can use it to compute `K`::
+
+            sage: K, row_profile_bis = E.krylov_kernel_basis(M, shifts=shifts,
+            ....:                          degrees=[0, 3, 0], output_rows=True)
+            sage: K
             [79 49 26  0  1  0]
             [ 0  0  0  0  0  1]
-            [78 49 26  1  0  0],
+            [78 49 26  1  0  0]
+            sage: row_profile == row_profile_bis
+            True
+
+            sage: row_profile
             ((1, 0, 0), (1, 1, 1), (1, 2, 2), (2, 0, 3), (0, 0, 4), (1, 3, 5))
-            )
+            sage: degrees = [max(rp[1] for rp in row_profile if rp[0] == j) 
+            ....:                             for j in range(E.nrows())]
+            sage: degrees
+            [0, 3, 0]
+            sage: A = E.krylov_matrix(M, shifts=shifts, degrees=degrees)
+            sage: A.left_kernel_matrix(basis="pivot")
+            [78 49 26  1  0  0]
+            [79 49 26  0  1  0]
+            [ 0  0  0  0  0  1]
 
-        TESTS::
+        If one (or more) of the degree bounds it too low, the output matrix is
+        likely to be incorrect. In the next example, the bounds `3` are large
+        enough (since the minimal polynomial of `M` has degree at most `3`).
+        However we see from the above computation that `1` is strictly smaller
+        than the actual degree (which is 3) for the second row of `E`, when
+        using the given shifts. As a result, we get a different output, with a
+        sum of degrees which is less than `r=3` and therefore only `5` rows in
+        the associated Krylov matrix (which should have `m+r=6` rows), and with
+        a matrix which is not left-equivalent to the correct basis `K` above::
 
-            sage: R = GF(97)
-            sage: E = matrix(R, [[27,49,29], [50,58,0], [77,10,29]])
-            sage: M = matrix(R, [[0,1,0], [0,0,1], [0,0,0]])
-            sage: basis, row_profile = E.krylov_kernel_basis(M, var='x')
-            sage: basis_coeff, row_profile_coeff = E.krylov_kernel_basis(M)
-            sage: basis_extended = matrix.block([[basis.coefficient_matrix(i) for i in range(basis.degree()+1)]],subdivide=False)
-            sage: basis_extended.matrix_from_columns([i for i in range(basis_extended.ncols()) if basis_extended[:,i] != 0]) == basis_coeff[0]
-            True
-            sage: krylov_matrix = E.krylov_matrix(M,degrees=[basis[i,i].degree() for i in range(E.nrows())])
-            sage: basis.is_popov()
-            True
-            sage: basis.degree() <= E.ncols()
-            True
-            sage: basis_coeff[0] * krylov_matrix == 0
-            True
-            sage: len(E.krylov_basis(M)[1]) == sum(basis[i,i].degree() for i in range(E.nrows()))
-            True
-            sage: shifts = [0,3,6]
-            sage: basis = E.krylov_kernel_basis(M, shifts=shifts, output_rows=False, var='x')
-            sage: perm = Permutation([x[2] + 1 for x in E._krylov_row_coordinates(shifts=shifts, degrees=[basis.degree()]*E.nrows())])
-            sage: basis_coeff = E.krylov_kernel_basis(M, output_rows=False, shifts=shifts)
-            sage: basis_extended = matrix.block([[basis.coefficient_matrix(i) for i in range(basis.degree()+1)]],subdivide=False).with_permuted_columns(perm)
-            sage: basis_extended.matrix_from_columns([i for i in range(basis_extended.ncols()) if basis_extended[:,i] != 0]) == basis_coeff[0]
-            True
-            sage: krylov_matrix = E.krylov_matrix(M,shifts=shifts,degrees=[basis[i,i].degree() for i in range(E.nrows())])
-            sage: basis.is_popov(shifts=shifts)
-            True
-            sage: basis.degree() <= E.ncols()
-            True
-            sage: basis_coeff[0] * krylov_matrix == 0
-            True
-            sage: len(E.krylov_basis(M, shifts=shifts)[1]) == sum(basis[i,i].degree() for i in range(E.nrows()))
-            True
-            sage: shifts = [3,0,2]
-            sage: basis = E.krylov_kernel_basis(M, output_rows=False, shifts=shifts, var='x')
-            sage: perm = Permutation([x[2] + 1 for x in E._krylov_row_coordinates(shifts=shifts, degrees=[basis.degree()]*E.nrows())])
-            sage: basis_coeff = E.krylov_kernel_basis(M, output_rows=False, shifts=shifts)
-            sage: basis_extended = matrix.block([[basis.coefficient_matrix(i) for i in range(basis.degree()+1)]],subdivide=False).with_permuted_columns(perm)
-            sage: basis_extended.matrix_from_columns([i for i in range(basis_extended.ncols()) if basis_extended[:,i] != 0]) == basis_coeff[0]
-            True
-            sage: krylov_matrix = E.krylov_matrix(M,shifts=shifts,degrees=[basis[i,i].degree() for i in range(E.nrows())])
-            sage: basis.is_popov(shifts=shifts)
-            True
-            sage: basis.degree() <= E.ncols()
-            True
-            sage: basis_coeff[0] * krylov_matrix == 0
-            True
-            sage: len(E.krylov_basis(M, shifts=shifts)[1]) == sum(basis[i,i].degree() for i in range(E.nrows()))
-            True
+            sage: K2, row_profile2 = E.krylov_kernel_basis(M, shifts=shifts,
+            ....:                                         degrees=[3, 1, 3])
+            sage: K2
+            [ 1  0 96  1  0  0]
+            [ 3 28 56  0  1  0]
+            [47 64 69  0  0  1]
+            sage: 0 == K2 * E.krylov_matrix(M, shifts=shifts, degrees=[0, 3, 0])
+            False
+            sage: degrees = [max(rp[1] for rp in row_profile2 if rp[0] == j) 
+            ....:                             for j in range(E.nrows())]
+            sage: degrees
+            [0, 1, 1]
+            sage: E.krylov_matrix(M, shifts=shifts, degrees=degrees).nrows()
+            5
         """
         from sage.combinat.permutation import Permutation
         from sage.matrix.constructor import matrix
@@ -20053,7 +20090,7 @@ cdef class Matrix(Matrix1):
             except AttributeError:
                 pass
             if not generator:
-                raise TypeError('polynomial variable must be a string or univariate polynomial ring generator, not {0}'.format(var))
+                raise TypeError('polynomial variable must be a string or polynomial ring generator, not {0}'.format(var))
             elif var.base_ring() != E.base_ring():
                 raise TypeError('polynomial generator must be over the same ring as the matrix entries')
 
@@ -20076,27 +20113,35 @@ cdef class Matrix(Matrix1):
         m = E.nrows()
         sigma = E.ncols()
         base_ring = E.base_ring()
-        if var is None:
-            # convert c,d to actual position in striped Krylov matrix
-            phi = lambda row,deg : sum(min(max(shifts[row] - shifts[i] + deg + (i < row and shifts[i] <= shifts[row] + deg), 0), degrees[i] + 1) for i in range(m))
 
-        # calculate krylov profile
+        # calculate krylov basis and rank profiles
         krylov_basis, row_profile = E.krylov_basis(M, shifts, degrees)
         col_profile = krylov_basis.pivots()
 
-        if len(row_profile) == 0:
-            if var is None:
-                coefficients = matrix.identity(base_ring, m)
+        # method to convert c,d to actual position in Krylov matrix
+        phi = lambda row,deg : sum(min(max(shifts[row] - shifts[i] + deg + (i < row and shifts[i] <= shifts[row] + deg), 0), degrees[i] + 1) for i in range(m))
 
-                row_coords_coeff = E._krylov_row_coordinates(shifts, degrees, [(i, 0) for i in range(m)])
+        # deal with easy case: Krylov rank is zero
+        # -> polynomial kernel basis is the m x m identity
+        # -> constant kernel basis is the m x m identity column-permuted
+        #    according to shifts
+        if len(row_profile) == 0:
+            row_coords_coeff = E._krylov_row_coordinates(shifts, degrees, [(i, 0) for i in range(m)])
+            row_coords_krylov = tuple([(*x[:2], phi(*x[:2])) for x in row_coords_coeff])
+
+            if var is None:
+                kkbasis = matrix.identity(base_ring, m)
                 permutation = Permutation([x[2]+1 for x in row_coords_coeff])
-                coefficients.permute_columns(permutation)
-            
-                row_coords_krylov = tuple([(*x[:2], phi(*x[:2])) for x in row_coords_coeff])
-                
-                return coefficients, row_coords_krylov
+                kkbasis.permute_columns(permutation)
+
             else:
-                return matrix.identity(PolynomialRing(base_ring, var), m)
+                poly_ring = PolynomialRing(base_ring, var)
+                kkbasis = matrix.identity(poly_ring, m)
+
+            if output_rows:
+                return kkbasis, row_coords_krylov
+            else:
+                return kkbasis
 
         c, d, _ = zip(*(row for row in row_profile))
 
@@ -20137,11 +20182,6 @@ cdef class Matrix(Matrix1):
             kkbasis.permute_columns(permutation)
 
         else:
-            if isinstance(var, str):
-                poly_ring = PolynomialRing(base_ring, var)
-            else:
-                poly_ring = var.parent()
-
             # construct coefficient map
             coeffs_map = [[{} for _ in range(m)] for _ in range(m)]
             # add identity part of kernel basis
@@ -20154,6 +20194,7 @@ cdef class Matrix(Matrix1):
 
             # convert to matrix
             # TODO slow for extension fields (2025-08-30), see Issue 40667
+            poly_ring = PolynomialRing(base_ring, var)
             kkbasis = matrix(poly_ring, m, m, coeffs_map)
 
         if output_rows:
