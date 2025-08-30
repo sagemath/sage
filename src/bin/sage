@@ -274,7 +274,8 @@ fi
 if [ -f "${SELF}-src-env-config.in" ]; then
     # The sage script is being run out of SAGE_ROOT/src/bin.
     # In this case, put this directory in the front of the PATH.
-    export PATH="$SAGE_SRC/bin:$PATH"
+    SELF_DIR=$(dirname "$SELF")
+    export PATH="${SELF_DIR}:$SAGE_SRC/bin:$PATH"
 fi
 
 if [ -z "$DOT_SAGE" ]; then
@@ -288,18 +289,6 @@ fi
 
 # Prepare for running Sage, either interactively or non-interactively.
 sage_setup() {
-    # Check that we're not in a source tarball which hasn't been built yet (#13561).
-    if [ "$SAGE_SRC_ENV_CONFIG" = 1 ] && [ ! -z "$SAGE_VENV" ] && [ ! -x "$SAGE_VENV/bin/sage" ]; then
-        echo >&2 '************************************************************************'
-        echo >&2 'It seems that you are attempting to run Sage from an unpacked source'
-        echo >&2 'tarball, but you have not compiled it yet (or maybe the build has not'
-        echo >&2 'finished). You should run `make` in the SAGE_ROOT directory first.'
-        echo >&2 'If you did not intend to build Sage from source, you should download'
-        echo >&2 'a binary tarball instead. Read README.txt for more information.'
-        echo >&2 '************************************************************************'
-        exit 1
-    fi
-
     if [ ! -d "$IPYTHONDIR" ]; then
         # make sure that $DOT_SAGE exists so that ipython will happily
         # create its config directories there.  If DOT_SAGE doesn't
