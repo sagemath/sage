@@ -1801,9 +1801,7 @@ def lib(name):
         si_opt_2 &= ~Sy_bit(V_REDEFINE)
 
     cdef char* cname = omStrDup(str_to_bytes(name))
-    sig_on()
     cdef bint failure = iiLibCmd(cname, 1, 1, 1)
-    sig_off()
     si_opt_2 = vv
 
     if failure:
