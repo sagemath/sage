@@ -36,3 +36,4 @@ flex
 patch
 pkg-config
 zlib-devel
+boost-devel
