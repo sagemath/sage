@@ -62,6 +62,7 @@ List of (semi)lattice methods
     :meth:`~FiniteLatticePoset.is_planar` | Return ``True`` if the lattice has an upward planar drawing.
     :meth:`~FiniteLatticePoset.is_dismantlable` | Return ``True`` if the lattice is dismantlable.
     :meth:`~FiniteLatticePoset.is_interval_dismantlable` | Return ``True`` if the lattice is interval dismantlable.
+    :meth:`~FiniteLatticePoset.is_left_modular` | Return ``True`` if the lattice is left_modular.
     :meth:`~FiniteLatticePoset.is_sublattice_dismantlable` | Return ``True`` if the lattice is sublattice dismantlable.
     :meth:`~FiniteLatticePoset.is_stone` | Return ``True`` if the lattice is a Stone lattice.
     :meth:`~FiniteLatticePoset.is_trim` | Return ``True`` if the lattice is a trim lattice.
@@ -1557,9 +1558,24 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: LatticePoset({1:[]}).is_trim(True)
             (True, [1])
 
+        Testing a trim lattice ::
+
+            sage: L = LatticePoset(([1,2,3,4,5,6],
+            ....:     [[1,2],[1,3],[3,4],[4,5],[2,5],[2,6],[6,5],[2,4]]))
+            sage: L.is_trim(True)
+            (True, [1, 2, 6, 5])
+
+        Testing a lattice which is not trim ::
+
+            sage: L = LatticePoset(([1,2,3,4,5,6],
+            ....:     [[1,2],[1,3],[3,4],[4,5],[2,5],[2,6],[6,5]]))
+            sage: L.is_trim(True)
+            (False, None)
+
         .. SEEALSO::
 
             - Weaker properties: :meth:`is_extremal`
+            - Weaker properties: :meth:`is_left_modular`
             - Stronger properties: :meth:`is_distributive`
 
         REFERENCES:
@@ -1576,6 +1592,72 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         if all(self.is_left_modular_element(e) for e in chain):
             return (True, chain) if certificate else True
         return (False, None) if certificate else False
+
+    def is_left_modular(self, H=None, certificate=False) -> bool | tuple:
+        r"""
+        Return whether ``self`` is a left-modular lattice.
+
+        INPUT:
+
+        - ``H`` -- subset of elements; full ``self`` if no ``H`` is given
+
+        - ``certificate`` --  boolean (default: ``False``); whether to return
+          a failure
+
+        OUTPUT:
+
+        if ``certificate == True``, this returns either ``(True, None)``
+        or ``(False, (y, x, z))`` where the tuple `(y, x, z)`
+        fails left-modularity.
+
+        if ``certificate == False``, this returns ``False`` if any
+        `x \in H` fails to be left-modular and ``True`` otherwise.
+
+        ALGORITHM:
+
+        Given a lattice `L` and a subset of elements `H`,
+        an element `x \in H` is left-modular
+        if for every `y,z \in L, y \leq z`
+        we have `(y \vee x) \wedge z = y \vee (x \wedge z)`.
+
+        .. SEEALSO::
+
+            - Stronger properties: :meth:`is_trim`
+
+            - :meth:`is_left_modular_element`
+
+        EXAMPLES:
+
+        A lattice that is not left-modular::
+
+            sage: L = LatticePoset(([1,2,3,4,5],
+            ....:     [[1,2],[1,3],[3,4],[4,5],[2,5]]))
+            sage: L.is_left_modular()
+            False
+
+        A left-modular lattice::
+
+            sage: L = LatticePoset(([1,2,3,4,5,6],
+            ....:     [[1,2],[1,3],[3,4],[4,5],[2,5],[2,6],[6,5],[2,4]]))
+            sage: L.is_left_modular()
+            True
+
+        TESTS::
+
+            sage: L = LatticePoset(([1,2,3,4,5],
+            ....:     [[1,2],[1,3],[3,4],[4,5],[2,5]]))
+            sage: L.is_left_modular(certificate=True)
+            (False, (3, 2, 4))
+        """
+        if H is None:
+            H = self
+        for x in H:
+            for z in self:
+                mxz = self.meet(x, z)
+                for y in self.lower_covers_iterator(z):
+                    if self.join(y, mxz) != self.meet(self.join(y, x), z):
+                        return False if not certificate else (False, (y, x, z))
+        return (True, None) if certificate else True
 
     def is_complemented(self, certificate=False) -> bool | tuple:
         r"""
@@ -2716,6 +2798,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         .. SEEALSO::
 
             - Stronger properties: :meth:`is_modular_element`
+
+            - :meth:`is_left_modular`
         """
         return all(self.meet(self.join(y, x), z) ==
                    self.join(y, self.meet(x, z))
