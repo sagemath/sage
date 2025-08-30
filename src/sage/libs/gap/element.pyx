@@ -45,21 +45,25 @@ cdef Obj make_gap_list(sage_list) except NULL:
     - ``a`` -- list of :class:`GapElement`
 
     OUTPUT: list of the elements in ``a`` as a Gap ``Obj``
+
+    TESTS::
+
+        sage: from sage.doctest.util import ensure_interruptible_after
+        sage: for i in range(10):
+        ....:     with ensure_interruptible_after(0.1):
+        ....:         ignore = libgap([1000]*10000)
+        ....:     with ensure_interruptible_after(0.3):
+        ....:         ignore = libgap([1000]*100000)
     """
     cdef Obj l
-    cdef GapElement elem
-    cdef int i
+    cdef tuple gap_elements = tuple(x if isinstance(x, GapElement) else libgap(x) for x in sage_list)
+    cdef Py_ssize_t n = len(gap_elements), i
+
     try:
         GAP_Enter()
-        l = GAP_NewPlist(0)
-
-        for i, x in enumerate(sage_list):
-            if not isinstance(x, GapElement):
-                elem = <GapElement>libgap(x)
-            else:
-                elem = <GapElement>x
-
-            GAP_AssList(l, i + 1, elem.value)
+        l = GAP_NewPlist(n)
+        for i in range(n):
+            GAP_AssList(l, i + 1, (<GapElement> gap_elements[i]).value)
         return l
     finally:
         GAP_Leave()
