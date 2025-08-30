@@ -149,7 +149,7 @@ from libc.string cimport memcpy
 from libc.limits cimport LONG_MAX
 
 from cysignals.memory cimport check_allocarray, check_malloc, sig_free
-from cysignals.signals cimport sig_on, sig_off, sig_check, sig_occurred
+from cysignals.signals cimport sig_on, sig_off, sig_check
 
 import operator
 
@@ -7687,26 +7687,22 @@ cdef void fast_tp_dealloc(PyObject* o) noexcept:
 
     cdef mpz_ptr o_mpz = <mpz_ptr>((<Integer>o).value)
 
-    # If we are recovering from an interrupt, throw the mpz_t away
-    # without recycling or freeing it because it might be in an
-    # inconsistent state (see Issue #24986).
-    if sig_occurred() is NULL:
-        if integer_pool_count < integer_pool_size:
-            # Here we free any extra memory used by the mpz_t by
-            # setting it to a single limb.
-            if o_mpz._mp_alloc > 10:
-                _mpz_realloc(o_mpz, 1)
+    if integer_pool_count < integer_pool_size:
+        # Here we free any extra memory used by the mpz_t by
+        # setting it to a single limb.
+        if o_mpz._mp_alloc > 10:
+            _mpz_realloc(o_mpz, 1)
 
-            # It's cheap to zero out an integer, so do it here.
-            o_mpz._mp_size = 0
+        # It's cheap to zero out an integer, so do it here.
+        o_mpz._mp_size = 0
 
-            # And add it to the pool.
-            integer_pool[integer_pool_count] = o
-            integer_pool_count += 1
-            return
+        # And add it to the pool.
+        integer_pool[integer_pool_count] = o
+        integer_pool_count += 1
+        return
 
-        # No space in the pool, so just free the mpz_t.
-        mpz_clear(o_mpz)
+    # No space in the pool, so just free the mpz_t.
+    mpz_clear(o_mpz)
 
     # Free the object. This assumes that Py_TPFLAGS_HAVE_GC is not
     # set. If it was set another free function would need to be
