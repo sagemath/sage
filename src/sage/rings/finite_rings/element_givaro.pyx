@@ -1429,7 +1429,9 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         INPUT:
 
         - ``base`` -- non-zero field element
-        - ``order`` -- integer (optional), multiple of order of ``base``
+        - ``order`` -- integer (optional), multiple of order of ``base``.
+          This is only for backwards compatibility, it is not used in the
+          current implementation.
         - ``check`` -- boolean (default: ``False``): If set,
           test whether the given ``order`` is correct.
 
@@ -1451,7 +1453,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         if self.element % gcd_b != 0:
             raise ValueError('no logarithm exists')
         cdef int b_order = multiplicative_group_order / gcd_b
-        return self.element / gcd_b * <long long> ai.c_inverse_mod_int(b.element / gcd_b, b_order) % b_order
+        return Integer(self.element / gcd_b * <long long> ai.c_inverse_mod_int(b.element / gcd_b, b_order) % b_order)
 
     def _int_repr(FiniteField_givaroElement self):
         r"""
