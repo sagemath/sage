@@ -58,6 +58,7 @@ COMMANDS_CACHE = '%s/maxima_commandlist_cache.sobj' % DOT_SAGE
 
 from sage.cpython.string import bytes_to_str
 
+from sage.misc.cachefunc import cached_method
 from sage.misc.multireplace import multiple_replace
 from sage.structure.richcmp import richcmp, rich_to_bool
 
@@ -291,36 +292,63 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         cmd_list = [x for x in cmd_list[1:-1].split(',') if x[0] != '?' and not x.endswith('-impl')]
         return [x for x in cmd_list if x.find(s) == 0]
 
+    @cached_method
     def _commands(self, verbose=True):
         """
         Return list of all commands defined in Maxima.
 
         INPUT:
 
-        - ``verbose`` -- boolean (default: ``True``)
+        - ``verbose`` -- boolean; ignored (obsolete)
 
-        OUTPUT: array of strings
+        OUTPUT:
 
-        EXAMPLES::
+        A list of strings.
 
-            # The output is kind of random
-            sage: sorted(maxima._commands(verbose=False))  # long time (:issue:`39569`)
-            [...
-             'display',
-             ...
-             'gcd',
-             ...
-             'verbose',
-             ...]
+        EXAMPLES:
+
+        The list changes from time to time (with new versions of
+        Maxima), so we look only for a few reliable commands::
+
+            sage: # long time
+            sage: cs = maxima._commands()
+            sage: "display" in cs
+            True
+            sage: "gcd" in cs
+            True
+            sage: "verbose" in cs
+            True
+
         """
-        try:
-            return self.__commands
-        except AttributeError:
-            self.__commands = sum(
-                [self.completions(chr(65+n), verbose=verbose) +
-                 self.completions(chr(97+n), verbose=verbose)
-                 for n in range(26)], [])
-        return self.__commands
+        # Passing the empty string to apropos() gets ALL names.
+        all_names = self._eval_line('apropos("")', error_check=False).split(",")
+        a_to_Z = tuple( chr(i+j)
+                        for i in range(ord('A'),ord('Z')+1)
+                        for j in (0, 32) )  # 'a' = 'A' + 32
+
+        # Whack-a-mole to kill junk entries:
+        #
+        #  * 'erf_%iargs',
+        #  * 'exp\\-form'
+        #  * 'is\\-boole\\-eval'
+        #  * 'is\\-boole\\-verify'
+        #  * 'maybe\\-boole\\-verify'
+        #  * 'time\\/\\/call'
+        #  * 'unknown\\?'
+        #
+        # None of these are documented, and the minus sign / question
+        # mark / percent symbol probably aren't going to do what you
+        # think they're going to do if you try to type them in an
+        # ipython shell. We have to trim spaces too because some names
+        # show up with a random leading spaces: ' tminverse',
+        # ' toeplitz', etc.
+        #
+        bad_chars = ( "-", "/", "?", "%" )
+        return [ c.strip()
+                 for c in all_names
+                 if c
+                 and (c[0] in a_to_Z or c[0] == " ")
+                 and not any( bad in c for bad in bad_chars ) ]
 
     def _tab_completion(self, verbose=True, use_disk_cache=True):
         r"""
