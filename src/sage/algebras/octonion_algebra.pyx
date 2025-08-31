@@ -57,7 +57,7 @@ cdef class Octonion_generic(AlgebraElement):
         self.vec = v
         super().__init__(parent)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -72,7 +72,7 @@ cdef class Octonion_generic(AlgebraElement):
         data = [p for p in enumerate(self.vec) if p[1]]
         return repr_from_monomials(data, self._parent._repr_term)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a `\LaTeX` representation of ``self``.
 
@@ -826,7 +826,7 @@ class OctonionAlgebra(UniqueRepresentation, Parent):
         for x, y in some_tuples(S, 2, tester._max_runs):
             tester.assertEqual((x * y).quadratic_form(), x.quadratic_form() * y.quadratic_form())
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         r"""
         Return a string representation of the term indexed by ``m``.
 
@@ -839,7 +839,7 @@ class OctonionAlgebra(UniqueRepresentation, Parent):
         data = ['1', 'i', 'j', 'k', 'l', 'li', 'lj', 'lk']
         return data[m]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -856,7 +856,7 @@ class OctonionAlgebra(UniqueRepresentation, Parent):
             ret += f" with parameters ({a}, {b}, {c})"
         return ret
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

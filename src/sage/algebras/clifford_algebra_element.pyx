@@ -36,7 +36,7 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
         sage: elt = ((x^3-z)*x + y)^2
         sage: TestSuite(elt).run()
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -51,7 +51,7 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
         """
         return repr_from_monomials(self.list(), self._parent._repr_term)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a `\LaTeX` representation of ``self``.
 

@@ -283,7 +283,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         return sum([self._vector[0, i] * A.left_table()[i] for
                     i in range(A.degree())])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -320,7 +320,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             return "0"
         return s[1:]
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the LaTeX representation of ``self``.
 
