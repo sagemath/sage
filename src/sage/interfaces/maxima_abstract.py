@@ -307,7 +307,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         Maxima), so we look only for a few reliable commands::
 
             sage: # long time
-            sage: cs = maxima._commands()
+            sage: cs = maxima_calculus._commands()
             sage: "display" in cs
             True
             sage: "gcd" in cs
