@@ -500,11 +500,11 @@ The run of the build workflow provides the ``doc`` artifact containing the html
 files.
 
 The documentation preview for a PR is accompanied by a "changes" log, which is
-generated from diffs of the htmls in the ``doc`` artifact and the
-``doc-develop`` artifact that contains the htmls of the latest release. To
-facilitate this, on every release, the build workflow creates the
-``doc-develop`` artifact and the publish workflow publishes the html
-documentation to `<https://doc-develop--sagemath.netlify.app>`_.
+generated from diffs of the htmls in the ``doc`` artifact and the htmls for the
+latest release in the ``doc-develop`` artifact. To facilitate this, on every
+release, the build workflow creates the ``doc-develop`` artifact and the
+publish workflow publishes the html documentation to
+`<https://doc-develop--sagemath.netlify.app>`_.
 
 PDF docs are also built for a PR by the `PDF build workflow
 <https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-build-pdf.yml>`_.
@@ -521,9 +521,8 @@ Finally, on every release, the full documentation including PDF docs and
 featured with live (runnable) Examples (but no TESTS blocks) is built and
 published to `<https://doc-release--sagemath.netlify.app>`_, a link to which is
 in the `Documentation section of the GitHub Wiki
-<https://github.com/sagemath/sage/wiki#documentation-for-last-release>`_.
-
-The `livedoc build workflow
+<https://github.com/sagemath/sage/wiki#documentation-for-last-release>`_. The
+`livedoc build workflow
 <https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-build-livedoc.yml>`_
 creates the ``livedoc`` artifact used by the `livedoc publish workflow
 <https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-publish-livedoc.yml>`_
