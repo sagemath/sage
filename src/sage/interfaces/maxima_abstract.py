@@ -319,9 +319,12 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         # Passing the empty string to apropos() gets ALL names.
         all_names = self._eval_line('apropos("")',
                                     error_check=False).split(",")
-        a_to_Z = tuple(chr(i+j)
-                       for i in range(ord('A'),ord('Z')+1)
-                       for j in (0, 32))  # 'a' = 'A' + 32
+
+        # At the time of writing, searching a string for a specific
+        # character was much much faster than searching a list/tuple.
+        a_to_Z = "".join(chr(i+j)
+                         for i in range(ord('A'),ord('Z')+1)
+                         for j in (0, 32))  # 'a' = 'A' + 32
 
         # Whack-a-mole to kill junk entries:
         #
