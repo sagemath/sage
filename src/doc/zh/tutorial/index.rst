@@ -2,9 +2,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-========================
+==================
 欢迎来到 Sage 教程
-========================
+==================
 
 Sage 是一个免费的开源数学软件，支持代数、几何、数论、密码学、数值计算及相关领域的研究和教学。
 Sage 的开发模式和技术特点极其强调开放性、社区性、合作性和协作性：我们是在造车，而不是在重新发明轮子。
@@ -34,7 +34,7 @@ __ http://creativecommons.org/licenses/by-sa/3.0/
    bibliography
 
 索引与表格
-==================
+==========
 
 * :ref:`genindex`
 * :ref:`search`
