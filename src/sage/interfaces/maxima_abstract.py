@@ -317,10 +317,11 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         """
         # Passing the empty string to apropos() gets ALL names.
-        all_names = self._eval_line('apropos("")', error_check=False).split(",")
-        a_to_Z = tuple( chr(i+j)
-                        for i in range(ord('A'),ord('Z')+1)
-                        for j in (0, 32) )  # 'a' = 'A' + 32
+        all_names = self._eval_line('apropos("")',
+                                    error_check=False).split(",")
+        a_to_Z = tuple(chr(i+j)
+                       for i in range(ord('A'),ord('Z')+1)
+                       for j in (0, 32))  # 'a' = 'A' + 32
 
         # Whack-a-mole to kill junk entries:
         #
@@ -339,12 +340,12 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         # show up with a random leading spaces: ' tminverse',
         # ' toeplitz', etc.
         #
-        bad_chars = ( "-", "/", "?", "%" )
-        return [ c.strip()
-                 for c in all_names
-                 if c
-                 and (c[0] in a_to_Z or c[0] == " ")
-                 and not any( bad in c for bad in bad_chars ) ]
+        bad_chars = ("-", "/", "?", "%")
+        return [c.strip()
+                for c in all_names
+                if c
+                and (c[0] in a_to_Z or c[0] == " ")
+                and not any(bad in c for bad in bad_chars)]
 
     def _tab_completion(self, verbose=True, use_disk_cache=True):
         r"""
