@@ -3136,14 +3136,11 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         (the ``divisors`` call below allocates about 800 MB every time,
         so a memory leak will not go unnoticed)::
 
+            sage: from sage.doctest.util import ensure_interruptible_after
             sage: n = prod(primes_first_n(25))                                          # needs sage.libs.pari
             sage: for i in range(20):           # long time                             # needs sage.libs.pari
-            ....:     try:
-            ....:         alarm(RDF.random_element(1e-3, 0.5))
+            ....:     with ensure_interruptible_after(RDF.random_element(1e-3, 0.5)):
             ....:         _ = n.divisors()
-            ....:         cancel_alarm()  # we never get here
-            ....:     except AlarmInterrupt:
-            ....:         pass
 
         Test a strange method::
 
@@ -3165,7 +3162,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         if mpz_cmp_ui(self.value, 0) == 0:
             raise ValueError("n must be nonzero")
 
-        if (method is None or method == 'pari') and mpz_fits_slong_p(self.value):
+        value_fits_slong = mpz_fits_slong_p(self.value)
+        if method is None:
+            method = 'pari' if value_fits_slong else 'sage'
+        if method == 'pari':
+            if not value_fits_slong:
+                raise ValueError("method `pari` requested, but integer value is too large")
             global pari_divisors_small
             if pari_divisors_small is None:
                 try:
@@ -3238,8 +3240,6 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                 # The two cases below are essentially the same algorithm, one
                 # operating on Integers in Python lists, the other on unsigned long's.
                 if fits_c:
-                    sig_on()
-
                     pn_c = p_c = p
 
                     swap_tmp = sorted_c
@@ -3251,6 +3251,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                     tip = 0
                     prev_c[prev_len] = prev_c[prev_len-1] * pn_c
                     for i in range(prev_len):
+                        if (i & 0x1f) == 0: sig_check()
                         apn_c = prev_c[i] * pn_c
                         while prev_c[tip] < apn_c:
                             sorted_c[sorted_len] = prev_c[tip]
@@ -3271,6 +3272,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                         tip = 0
                         all_c[all_len] = prev_c[prev_len-1] * pn_c
                         for i in range(prev_len):
+                            if (i & 0x1f) == 0: sig_check()
                             apn_c = prev_c[i] * pn_c
                             while all_c[tip] < apn_c:
                                 sorted_c[sorted_len] = all_c[tip]
@@ -3278,8 +3280,6 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                                 tip += 1
                             sorted_c[sorted_len] = apn_c
                             sorted_len += 1
-
-                    sig_off()
 
                 else:
                     # fits_c is False: use mpz integers
@@ -3292,7 +3292,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                         tip = 0
                         top = len(all)
                         mpz_mul(pn.value, pn.value, p.value)  # pn *= p
-                        for a in prev:
+                        for i, a in enumerate(prev):
+                            if (i & 0x1f) == 0: sig_check()
                             # apn = a*pn
                             apn = <Integer>PY_NEW(Integer)
                             mpz_mul(apn.value, (<Integer>a).value, pn.value)
