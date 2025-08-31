@@ -67,7 +67,7 @@ class FermionicFockSpace(CombinatorialFreeModule):
 
             sage: from sage.algebras.vertex_operators import FermionicFockSpace
             sage: F = FermionicFockSpace()
-            sage: m = F(([3,2,1], -4)); m
+            sage: print(F._repr_term(([3,2,1], -4)))
             |[3, 2, 1], -4>
         """
         return '|' + str(m[0]) + ', ' + str(m[1]) + '>'
@@ -104,7 +104,6 @@ def BosonicFockSpace(R=QQ, sym_basis='s', name='w'):
         Univariate Laurent Polynomial Ring in w over Symmetric Functions
         over Fraction Field of Multivariate Polynomial Ring in q, t over
         Rational Field in the powersum basis
-
     """
     Sym = SymmetricFunctions(R)
     if isinstance(sym_basis, str):
@@ -180,21 +179,65 @@ class AbstractVertexOperator(SageObject):
     def __init__(self, fockspace):
         r"""
         Initialize ``self``
+
+        TESTS::
+
+            sage: from sage.algebras.vertex_operators import AbstractVertexOperator
+            sage: A = AbstractVertexOperator(vertex_operators.BosonicFockSpace())
+            sage: TestSuite(A).run(skip='_test_pickling')
         """
         self.fockspace = fockspace  # TODO: Check input validity
         super().__init__()
         # super().__init__(VertexOperatorMonoid(fockspace))
 
-    @abstract_method
-    def act_on(self, m, f): pass
+    @abstract_method(optional=True)
+    def act_on(self, m, f):
+        r"""
+        Act on an element of the Fock space by a mode of ``self``.
 
-    @abstract_method
-    def full_action(self, f): pass
+        EXAMPLES::
 
-    @abstract_method
-    def matrix_coefficient(self, bra, ket): pass
+            sage: V = vertex_operators.CreationOperator()
+            sage: V.act_on(3, vertex_operators.BosonicFockSpace().one())
+            s[3]*w
+        """
+
+    @abstract_method(optional=True)
+    def full_action(self, f):
+        r"""
+        Act on an element of the Fock space by the full vertex operator.
+
+        EXAMPLES::
+
+            sage: V = vertex_operators.CreationOperator()
+            sage: V.full_action(vertex_operators.BosonicFockSpace().one())
+            Lazy family (<lambda>(i))_{i in Integer Ring}
+        """
+
+    @abstract_method(optional=True)
+    def matrix_coefficient(self, bra, ket):
+        r"""
+        Calculate the matrix coefficient of ``self`` for vector ``ket`` and
+        dual vector ``bra``.
+
+        EXAMPLES::
+
+            sage: V = vertex_operators.CreationOperator()
+            sage: mc = V.matrix_coefficient(([],1), ([],0))
+            sage: mc[0]
+            1
+        """
 
     def __mul__(self, V):
+        r"""
+        Construct the product of ``self`` with ``V``
+
+        EXAMPLES::
+
+            sage: V = vertex_operators.CreationOperator()
+            sage: (V*V).act_on([2,1], vertex_operators.BosonicFockSpace().one())
+            s[1, 1]*w^2
+        """
         return ProductOfVertexOperators([self, V])
 
 
@@ -216,10 +259,36 @@ class VertexOperator(AbstractVertexOperator):
       should change the charge of an element
     - ``fockspace``-- the space that the vertex operators are acting on
 
+
+    EXAMPLES::
+
+        sage: V = vertex_operators.CreationOperator()
+        sage: B = V.fockspace; s = B.base_ring()
+        sage: V.full_action(B(s[1])*B.gen()^3, cutoff=5)
+        {2: -s[]*w^4, 4: s[1, 1]*w^4, 5: s[2, 1]*w^4}
     """
     def __init__(self, pos, neg, cutoff=lambda x: max(x.degree(), 1), dcharge=1, fockspace=None):
         r"""
         Initialize ``self``.
+
+        INPUT:
+
+        - ``pos`` -- function taking in nonnegative integers indexing the positive
+        half of the vertex operator
+        - ``neg`` -- function taking in nonnegative integers indexing the negative
+        half of the vertex operator
+        - ``cutoff`` -- function taking in symmetric functions which determines how
+        far to expand the vertex operator (default: ``lambda x: max(x.degree(), 1)``)
+        - ``dcharge`` -- integer (default: ``1``) indicating how this vertex operator
+        should change the charge of an element
+        - ``fockspace``-- the space that the vertex operators are acting on
+
+        EXAMPLES::
+
+            sage: from sage.algebras.vertex_operators import VertexOperator
+            sage: W.<x> = DifferentialWeylAlgebra(QQ, n=oo)
+            sage: V = VertexOperator(lambda n: x[n], lambda n: x[n])
+            sage: TestSuite(V).run(skip="_test_pickling")
         """
         self.pos = HalfVertexOperator(pos)
         self.neg = HalfVertexOperator(neg)
@@ -230,27 +299,55 @@ class VertexOperator(AbstractVertexOperator):
         self.dcharge = dcharge
         super().__init__(fockspace)
 
-    def act_on(self, i, x):
+    def act_on(self, i, f):
         r"""
-        Action of the ``i``'th Fourier mode of ``self`` on element ``x`` of
+        Action of the ``i``'th Fourier mode of ``self`` on element ``f`` of
         ``self.fockspace``.
+
+        INPUT:
+
+        - ``i`` -- integer
+        - ``f`` -- element of ``self.fockspace``.
+
+        EXAMPLES::
+
+            sage: V = vertex_operators.AnnihilationOperator()
+            sage: B = V.fockspace; s = B.base_ring()
+            sage: V.act_on(4, B(s[2,1]))
+            -s[3, 2, 1]*w^-1
         """
         res = self.fockspace.zero()
         # for each component of constant charge, compute the action
-        for (charge, fn) in x.monomial_coefficients().items():
+        for (charge, fn) in f.monomial_coefficients().items():
             res += self.fockspace.gen()**(charge+self.dcharge)*self._act_on_sym(i, fn, charge)
 
         return res
 
-    def full_action(self, x, cutoff=None):
+    def full_action(self, f, cutoff=None):
         r"""
         The full action of ``self`` on a Fock space element ``x``.
 
+        If the ``cutoff`` parameter is ``None``, we return a family that
+        indexes the action of each mode. Otherwise, returns a dictionary with
+        key, value pairs corresponding to the action of modes of magnitude at
+        most ``cutoff`` with nonzero value.
+
         INPUT:
 
-        - ``x`` -- element of ``self.fockspace``
+        - ``f`` -- element of ``self.fockspace``
+        - ``cutoff`` -- ``None`` or positive integer (default: ``None``)
+
+        EXAMPLES::
+
+            sage: V = vertex_operators.AnnihilationOperator()
+            sage: B = V.fockspace
+            sage: V.full_action(B.one())
+            Lazy family (<lambda>(i))_{i in Integer Ring}
+            sage: V.full_action(B.one(), cutoff=5)
+            {1: s[]*w^-1, 2: -s[1]*w^-1, 3: s[1, 1]*w^-1,
+            4: -s[1, 1, 1]*w^-1, 5: s[1, 1, 1, 1]*w^-1}
         """
-        F = Family(ZZ, lambda i: self.act_on(i, x))
+        F = Family(ZZ, lambda i: self.act_on(i, f))
         return F if cutoff is None else self._approximate(F, cutoff)
 
     def matrix_coefficient(self, bra, ket, cutoff=None):
@@ -258,10 +355,25 @@ class VertexOperator(AbstractVertexOperator):
         Compute the matrix coefficient of ``self`` with vector ``ket``
         and dual vector ``bra``.
 
+        If the ``cutoff`` parameter is ``None``, we return a family that
+        indexes the value of the matrix coefficient for `z^i`. Otherwise,
+        returns a dictionary with key, value pairs corresponding to the nonzero
+        values with key magnitude at most ``cutoff``.
+
         INPUT:
 
         - ``bra``, ``ket`` -- An ordered pair (`\lambda`, ``c``)
           where `lambda` is an integer partition and ``c`` is an integer.
+        - ``cutoff`` -- ``None`` or positive integer (default: ``None``)
+
+        EXAMPLES::
+
+            sage: V = vertex_operators.AnnihilationOperator()
+            sage: B = V.fockspace
+            sage: V.matrix_coefficient(([],-1), ([],0))
+            Lazy family (<lambda>(i))_{i in Integer Ring}
+            sage: V.matrix_coefficient(([],-1), ([],0), cutoff=5)
+            {1: 1}
         """
         w = self.fockspace.gen()
         R = self.fockspace.base_ring()
@@ -272,6 +384,22 @@ class VertexOperator(AbstractVertexOperator):
         return F if cutoff is None else self._approximate(F, cutoff)
 
     def _approximate(self, family, cutoff):
+        r"""
+        Approximates the nonzero values of a ``ZZ`` indexed family
+
+        INPUT:
+
+        - ``family`` -- a family
+        - ``cutoff`` -- a nonnegative integer
+
+        EXAMPLES::
+
+            sage: V = vertex_operators.CreationOperator()
+            sage: B = V.fockspace
+            sage: F = V.full_action(B.gen()^2)
+            sage: V._approximate(F, 5)
+            {2: s[]*w^3, 3: s[1]*w^3, 4: s[2]*w^3, 5: s[3]*w^3}
+        """
         res = {}
         for i in range(-cutoff, cutoff + 1):
             c = family[i]
@@ -279,20 +407,37 @@ class VertexOperator(AbstractVertexOperator):
                 res[i] = c
         return res
 
-    def _act_on_sym(self, i, x, c):
+    def _act_on_sym(self, i, f, c):
         r"""
         Action of the ``i``'th Fourier mode of ``self`` on a homoegeneous element
         of ``self.fockspace``.
+
+        INPUT:
+
+        - ``i`` -- an integer indexing the Fourier mode
+        - ``f`` -- a ``SymmetricFunction``
+        - ``c`` -- an integer indexing the charge of ``f``.
+
+        EXAMPLES::
+
+            sage: V = vertex_operators.CreationOperator()
+            sage: s = V.fockspace.base_ring()
+            sage: V._act_on_sym(1, s[2] + s[1, 1], 0)
+            s[1, 1, 1]
+            sage: V._act_on_sym(1, s[2] + s[1, 1], -1)
+            s[2, 1, 1] + s[2, 2]
+            sage: V._act_on_sym(1, s[2] + s[1, 1], 2)
+            -s[1]
         """
         R = self.fockspace.base_ring()
-        op = self._get_operator(i, self.cutoff(x), c)
+        op = self._get_operator(i, self.cutoff(f), c)
 
         # op is a scalar
         if op in R.base_ring():
-            return op*x
+            return op*f
 
         res = R.zero()
-        for (m, c) in x.monomial_coefficients().items():
+        for (m, c) in f.monomial_coefficients().items():
             res += c*self._act_on_basis(op, m)
         return res
 
@@ -300,6 +445,14 @@ class VertexOperator(AbstractVertexOperator):
     def _act_on_basis(self, op, x):
         """
         Action of a differential operator ``op`` on a basis element of the fock space.
+
+        EXAMPLES::
+
+            sage: V = vertex_operators.CreationOperator()
+            sage: s = V.fockspace.base_ring()
+            sage: op = V._get_operator(1,5,0)
+            sage: V._act_on_basis(op, s[4])
+            -s[3, 2]
         """
         R = self.fockspace.base_ring()
         p = R.symmetric_function_ring().p()
@@ -311,8 +464,26 @@ class VertexOperator(AbstractVertexOperator):
             res += c*R(x).skew_by(p(par2)) * p(par1) / prod(par1)
         return res
 
-    @abstract_method
-    def _get_operator(self, i, x, c): pass
+    @abstract_method(optional=True)
+    def _get_operator(self, i, cutoff, c):
+        """
+        Compute the Weyl algebra element necessary to find the action of a mode of
+        ``self``.
+
+        Since the method for computing this operator varies wildly, we leave it to
+        the specific subclass to determine how to implement it.
+
+        EXAMPLES::
+
+            sage: V = vertex_operators.AnnihilationOperator()
+            sage: s = V.fockspace.base_ring()
+            sage: V._get_operator(1, 1, 1)
+            1/2*x[1]^2*dx[1] - x[2]*dx[1] - x[1]
+            sage: V._get_operator(1, 2, 1)
+            -1/12*x[1]^3*dx[1]^2 + 1/2*x[1]*x[2]*dx[1]^2 - 1/2*x[3]*dx[1]^2 +
+            1/2*x[1]^2*dx[1] - x[2]*dx[1] - 1/12*x[1]^3*dx[2] +
+            1/2*x[1]*x[2]*dx[2] - 1/2*x[3]*dx[2] - x[1]
+        """
 
     def _d_to_par(self, m):
         """
@@ -325,7 +496,6 @@ class VertexOperator(AbstractVertexOperator):
             sage: V = vertex_operators.CreationOperator(B)
             sage: V._d_to_par({1:3, 4:1})
             [4, 1, 1, 1]
-
         """
         res = []
         for i in m:
@@ -352,7 +522,6 @@ class ProductOfVertexOperators(AbstractVertexOperator):
         sage: P2 = Ann*Cre
         sage: P2.act_on([-3,3], B.one())
         s[]
-
     """
 
     def __init__(self, vertex_ops):
@@ -466,6 +635,16 @@ class ProductOfVertexOperators(AbstractVertexOperator):
 
         - ``F`` -- Family
         - ``cutoff`` -- (default: 3) Nonnegative integer
+
+        EXAMPLES::
+
+            sage: V = vertex_operators.CreationOperator()
+            sage: P = V*V
+            sage: F = P.full_action(P.fockspace.one())
+            sage: P._approximate(F, cutoff=2)
+            {(0, 1): -s[]*w^2, (0, 2): -s[1]*w^2, (1, 0): s[]*w^2,
+            (1, 2): -s[1, 1]*w^2, (2, 0): s[1]*w^2, (2, 1): s[1, 1]*w^2}
+
         """
         from itertools import product
         res = {}
@@ -498,6 +677,19 @@ class ProductOfVertexOperators(AbstractVertexOperator):
 
     # TODO: think of a better way to meaningfully represent the product without way too much text.
     def _repr_(self):
+        r"""
+        Return a string representation of ``self``
+
+        EXAMPLES::
+
+            sage: V = vertex_operators.CreationOperator()
+            sage: V*V
+            Product of Creation Vertex Operator acting on Univariate Laurent
+            Polynomial Ring in w over Symmetric Functions over Rational Field
+            in the Schur basis, Creation Vertex Operator acting on Univariate
+            Laurent Polynomial Ring in w over Symmetric Functions over Rational
+            Field in the Schur basis
+        """
         return "Product of " + str(self.vertex_ops)[1:-1]
 
 
@@ -563,6 +755,12 @@ class CreationOperator(VertexOperator):
         - ``i`` -- (integer)
         - ``cutoff`` -- (integer) how far to expand the product
         - ``c`` -- (integer)
+
+        EXAMPLES::
+
+            sage: V = vertex_operators.CreationOperator()
+            sage: V._get_operator(2,1,1)
+            -1/2*x[1]^2*dx[1] - x[2]*dx[1] + x[1]
         """
         op = 0
         for j in range(cutoff+1):
@@ -571,41 +769,22 @@ class CreationOperator(VertexOperator):
             op += self.pos[i + j - c]*self.neg[j]
         return op
 
-    # def full_action(self, x):
-
-    #     return self._spectral(lambda i: self.act_on(i, x), valuation=-max(y.degree() for (_, y) in x.monomial_coefficients().items()))
-
-    # def matrix_coefficient(self, bra, ket):
-    #     r"""
-    #     Compute the matrix coefficient of ``self`` with vector ``ket``
-    #     and dual vector ``bra``.
-
-    #     INPUT:
-
-    #     - ``bra``, ``ket`` -- An ordered pair (`\lambda`, ``c``)
-    #       where `lambda` is an integer partition and ``c`` is an integer.
-
-    #     EXAMPLES::
-
-    #         sage: from sage.algebras.vertex_operators import *
-    #         sage: B = BosonicFockSpace()
-    #         sage: V = CreationOperator(B)
-    #         sage: V.matrix_coefficient(([1],1),([2,1],0))
-    #         s[]*z^-2 + O(s[]*z^3)
-    #     """
-    #     w = self.fockspace.gen()
-    #     R = self.fockspace.base_ring()
-    #     f = (w**(ket[1]))*R(ket[0])
-    #     zero = self.fockspace.zero()
-    #     return self._spectral(lambda i: self.act_on(i, f).monomial_coefficients().get(
-    #             bra[1], zero).monomial_coefficients().get(Partition(bra[0]), zero), valuation=-Partition(ket[0]).size()-1)
-
     def act_by_clifford_gen(self, i, x):
+        r"""
+        Act by the Clifford algebra generator `\psi_i` on ``x``.
+
+        EXAMPLES::
+
+            sage: V = vertex_operators.CreationOperator()
+            sage: B = V.fockspace
+            sage: V.act_by_clifford_gen(6, B.one())
+            s[6]*w
+        """
         return self.act_on(i, x)
 
     def _repr_(self):
         """
-        Return a string representation of ``self``.
+        Return a string representation of ``self``
 
         EXAMPLES::
 
@@ -682,6 +861,12 @@ class AnnihilationOperator(VertexOperator):
         - ``i`` -- (integer)
         - ``cutoff`` -- (integer) how far to expand the product
         - ``c`` -- (integer)
+
+        EXAMPLES::
+
+            sage: V = vertex_operators.AnnihilationOperator()
+            sage: V._get_operator(2,1,1)
+            -1/6*x[1]^3*dx[1] + x[1]*x[2]*dx[1] - x[3]*dx[1] + 1/2*x[1]^2 - x[2]
         """
         op = 0
         for j in range(cutoff+1):
@@ -694,6 +879,13 @@ class AnnihilationOperator(VertexOperator):
     def act_by_clifford_gen(self, i, x):
         """
         Action of the coefficient of `z^{-i}` on Fock space element ``x``.
+
+        EXAMPLES::
+
+            sage: V = vertex_operators.AnnihilationOperator()
+            sage: B = V.fockspace
+            sage: V.act_by_clifford_gen(-6, B.one())
+            -s[1, 1, 1, 1, 1]*w^-1
         """
         return self.act_on(-i, x)
 
@@ -711,16 +903,3 @@ class AnnihilationOperator(VertexOperator):
 
         """
         return f"Annihilation Vertex Operator acting on {self.fockspace}"
-
-
-# class VertexOperatorMonoid(Parent, UniqueRepresentation):
-#     def __init__(self, fockspace):
-#         from sage.categories.monoids import Monoids
-#         self.fockspace = fockspace
-#         super().__init__(category=Monoids())
-
-#     def _element_constructor_(self, x):
-#         if isinstance(x, AbstractVertexOperator):
-#             return self.element_class(self, x)
-
-#     Element = AbstractVertexOperator
