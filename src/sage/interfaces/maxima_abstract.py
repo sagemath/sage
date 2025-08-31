@@ -332,15 +332,15 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         #  * 'maybe\\-boole\\-verify'
         #  * 'time\\/\\/call'
         #  * 'unknown\\?'
+        #  * 'SPLITS\\ IN\\ Q'
         #
-        # None of these are documented, and the minus sign / question
+        # None of these are documented, and the backslash / question
         # mark / percent symbol probably aren't going to do what you
-        # think they're going to do if you try to type them in an
-        # ipython shell. We have to trim spaces too because some names
-        # show up with a random leading spaces: ' tminverse',
-        # ' toeplitz', etc.
+        # think they're going to do if you type them in an ipython
+        # shell. We have to trim spaces too because some names show up
+        # with random leading spaces: ' tminverse', ' toeplitz', etc.
         #
-        bad_chars = ("-", "/", "?", "%")
+        bad_chars = ("\\", "/", "?", "%")
         return [c.strip()
                 for c in all_names
                 if c
