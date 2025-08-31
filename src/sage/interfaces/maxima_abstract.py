@@ -344,10 +344,10 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         # with random leading spaces: ' tminverse', ' toeplitz', etc.
         #
         bad_chars = ("\\", "/", "?", "%")
-        return [c.strip()
-                for c in all_names
-                if c
-                and (c[0] in a_to_Z or c[0] == " ")
+        return [c
+                for n in all_names
+                if (c := n.strip())
+                and c[0] in a_to_Z
                 and not any(bad in c for bad in bad_chars)]
 
     def _tab_completion(self, verbose=True, use_disk_cache=True):
