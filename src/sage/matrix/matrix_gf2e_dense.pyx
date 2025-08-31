@@ -284,6 +284,47 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef Cache_base cache = <Cache_base> self._base_ring._cache
         return cache.fetch_int(r)
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_gf2e_dense with
+                    the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: K.<z> = GF(512)
+            sage: m = matrix(K,3,4,[sum([(i//(2^j))%2 * z^j for j in range(4)]) for i in range(12)])
+            sage: m
+            [          0           1           z       z + 1]
+            [        z^2     z^2 + 1     z^2 + z z^2 + z + 1]
+            [        z^3     z^3 + 1     z^3 + z z^3 + z + 1]
+            sage: m.transpose()
+            [          0         z^2         z^3]
+            [          1     z^2 + 1     z^3 + 1]
+            [          z     z^2 + z     z^3 + z]
+            [      z + 1 z^2 + z + 1 z^3 + z + 1]
+            sage: m.matrix_from_rows([0,2])
+            [          0           1           z       z + 1]
+            [        z^3     z^3 + 1     z^3 + z z^3 + z + 1]
+            sage: m.matrix_from_columns([1,3])
+            [          1       z + 1]
+            [    z^2 + 1 z^2 + z + 1]
+            [    z^3 + 1 z^3 + z + 1]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [        z^2 z^2 + z + 1]
+            [        z^3 z^3 + z + 1]
+        """
+        cdef Matrix_gf2e_dense _src = <Matrix_gf2e_dense>src
+        mzed_write_elem(self._entries, iDst, jDst, mzed_read_elem(_src._entries, iSrc, jSrc))
+
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         r"""
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.

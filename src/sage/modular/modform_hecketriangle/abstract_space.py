@@ -319,24 +319,23 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: subspace3.has_coerce_map_from(subspace2)
             True
         """
-
         from .space import ZeroForm
         from .subspace import SubSpaceForms
         if isinstance(S, ZeroForm):
             return True
         if (isinstance(S, SubSpaceForms)
-            and isinstance(self, SubSpaceForms)):
-                if (self.ambient_space().has_coerce_map_from(S.ambient_space())):
-                    S2 = S.change_ambient_space(self.ambient_space())
-                    return self.module().has_coerce_map_from(S2.module())
-                else:
-                    return False
-        elif (  isinstance(S, FormsSpace_abstract)
-            and self.graded_ring().has_coerce_map_from(S.graded_ring())
-            and S.weight() == self._weight
-            and S.ep() == self._ep
-            and not isinstance(self, SubSpaceForms)):
-                return True
+                and isinstance(self, SubSpaceForms)):
+            if (self.ambient_space().has_coerce_map_from(S.ambient_space())):
+                S2 = S.change_ambient_space(self.ambient_space())
+                return self.module().has_coerce_map_from(S2.module())
+            else:
+                return False
+        elif (isinstance(S, FormsSpace_abstract)
+              and self.graded_ring().has_coerce_map_from(S.graded_ring())
+              and S.weight() == self._weight
+              and S.ep() == self._ep
+              and not isinstance(self, SubSpaceForms)):
+            return True
         else:
             return self.contains_coeff_ring() \
                 and self.coeff_ring().has_coerce_map_from(S)
@@ -2027,7 +2026,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
             b = vector(self.coeff_ring(), [laurent_series[m] for m in range(min_exp, min_exp + len(basis))])
 
-            el = self(sum([b[k]*basis[k] for k in range(0, len(basis))]))
+            el = self(sum([b[k]*basis[k] for k in range(len(basis))]))
         else:
             A = self._quasi_form_matrix(min_exp=min_exp, order_1=order_1)
             row_size = A.dimensions()[0]
@@ -2049,7 +2048,7 @@ class FormsSpace_abstract(FormsRing_abstract):
             max_exp = order_inf + 1
             basis = self.quasi_part_gens(min_exp=min_exp, max_exp=max_exp, order_1=order_1)
 
-            el = self(sum([coord_vector[k]*basis[k] for k in range(0, len(coord_vector))]))
+            el = self(sum([coord_vector[k]*basis[k] for k in range(len(coord_vector))]))
 
         if (check):
             if (el.q_expansion(prec=prec) != laurent_series):
@@ -2129,8 +2128,8 @@ class FormsSpace_abstract(FormsRing_abstract):
 
                 column_len = A.dimensions()[1]
                 q_basis = []
-                for k in range(0, column_len):
-                    el = self(sum([B[l][k] * basis[l] for l in range(0, column_len)]))
+                for k in range(column_len):
+                    el = self(sum([B[l][k] * basis[l] for l in range(column_len)]))
                     q_basis += [el]
 
                 return q_basis

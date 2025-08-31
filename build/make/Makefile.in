@@ -132,7 +132,6 @@ SCRIPT_PACKAGES = @SAGE_SCRIPT_PACKAGES@
 
 # Packages for which we build platform-independent wheels for PyPI
 PYPI_NOARCH_WHEEL_PACKAGES =			\
-	sage_sws2rst				\
 	sage_setup				\
 	sagemath_environment			\
 
@@ -314,7 +313,7 @@ toolchain: $(foreach pkgname,$(TOOLCHAIN),$(inst_$(pkgname))) $(PCFILES)
 # See #14168 and #14232.
 #
 # Note: This list consists of only the *runtime* dependencies of the toolchain.
-TOOLCHAIN_DEPS = zlib $(MP_LIBRARY) mpfr mpc
+TOOLCHAIN_DEPS = $(MP_LIBRARY) mpfr mpc
 TOOLCHAIN_DEP_INSTS = \
 	$(foreach pkgname,$(TOOLCHAIN_DEPS),$(inst_$(pkgname)))
 
@@ -570,7 +569,7 @@ pkg_deps = \
 #
 # For example, for python3 this will expand to:
 #
-# $(INST)/python3-3.7.3: $(inst_zlib) $(inst_readline) $(inst_sqlite) $(inst_libpng) $(inst_xz) $(inst_libffi)
+# $(INST)/python3-3.7.3: $(inst_readline) $(inst_sqlite) $(inst_libpng) $(inst_xz) $(inst_libffi)
 #     +$(AM_V_at)sage-logger -p '$(SAGE_SPKG) python3-3.7.3' '$(SAGE_LOGS)/python3-3.7.3.log'
 #
 # python3: $(INST)/python3-3.7.3

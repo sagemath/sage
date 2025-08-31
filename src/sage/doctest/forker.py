@@ -583,6 +583,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
         Since it needs to be able to read stdout, it should be called
         while spoofing using :class:`SageSpoofInOut`.
 
+        INPUT: see :meth:`run`.
+
         EXAMPLES::
 
             sage: from sage.doctest.parsing import SageOutputChecker
@@ -628,6 +630,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         check = self._checker.check_output
 
         # Process each example.
+        example: doctest.Example
         for examplenum, example in enumerate(test.examples):
             if failures:
                 # If exitfirst is set, abort immediately after a
@@ -1185,7 +1188,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             example.total_state = self.running_global_digest.hexdigest()
             example.doctest_state = self.running_doctest_digest.hexdigest()
 
-    def _failure_header(self, test, example, message='Failed example:'):
+    def _failure_header(self, test, example, message='Failed example:', extra=None):
         """
         We strip out ``sage:`` prompts, so we override
         :meth:`doctest.DocTestRunner._failure_header` for better
@@ -1196,6 +1199,14 @@ class SageDocTestRunner(doctest.DocTestRunner):
         - ``test`` -- a :class:`doctest.DocTest` instance
 
         - ``example`` -- a :class:`doctest.Example` instance in ``test``
+
+        - ``message`` -- a message to be shown. Must not have a newline
+
+        - ``extra`` -- an extra message to be shown in GitHub annotation
+
+        Note that ``message`` and ``extra`` are not accepted by
+        :meth:`doctest.DocTestRunner._failure_header`, as such by Liskov
+        substitution principle this method must be callable without passing those.
 
         OUTPUT: string used for reporting that the given example failed
 
@@ -1260,6 +1271,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
                     message += ' [failed in baseline]'
                 else:
                     command = f'::error title={message}'
+                if extra:
+                    message += f': {extra}'
                 if extra := getattr(example, 'extra', None):
                     message += f': {extra}'
                 if test.filename:
@@ -1561,12 +1574,12 @@ class SageDocTestRunner(doctest.DocTestRunner):
             Test ran for 1.23s cpu, 2.50s wall
             Check ran for 2.34s cpu, 3.12s wall
         """
-        out(self._failure_header(test, example, 'Warning: slow doctest:') +
-            ('Test ran for %.2fs cpu, %.2fs wall\nCheck ran for %.2fs cpu, %.2fs wall\n'
-             % (example.cputime,
-                example.walltime,
-                check_timer.cputime,
-                check_timer.walltime)))
+        time_info = ('Test ran for %.2fs cpu, %.2fs wall\nCheck ran for %.2fs cpu, %.2fs wall\n'
+                     % (example.cputime,
+                        example.walltime,
+                        check_timer.cputime,
+                        check_timer.walltime))
+        out(self._failure_header(test, example, 'Warning: slow doctest:', time_info) + time_info)
 
     def report_unexpected_exception(self, out, test, example, exc_info):
         r"""
@@ -1768,9 +1781,9 @@ class DocTestDispatcher(SageObject):
             sage: DC.dispatcher = DD
             sage: DC.timer = Timer().start()
             sage: DD.serial_dispatch()
-            sage -t .../rings/homset.py
+            .../rings/homset.py
                 [... tests, ...s wall]
-            sage -t .../rings/ideal.py
+            .../rings/ideal.py
                 [... tests, ...s wall]
         """
         for source in self.controller.sources:
@@ -1814,9 +1827,9 @@ class DocTestDispatcher(SageObject):
             sage: DC.dispatcher = DD
             sage: DC.timer = Timer().start()
             sage: DD.parallel_dispatch()
-            sage -t .../databases/cremona.py
+            .../databases/cremona.py
                 [... tests, ...s wall]
-            sage -t .../rings/big_oh.py
+            .../rings/big_oh.py
                 [... tests, ...s wall]
 
         If the ``exitfirst=True`` option is given, the results for a failing
@@ -1840,7 +1853,7 @@ class DocTestDispatcher(SageObject):
             ....:     DC.dispatcher = DD
             ....:     DC.timer = Timer().start()
             ....:     DD.parallel_dispatch()
-            sage -t ...
+            ...
             **********************************************************************
             File "...", line 2, in ...
             Failed example:
@@ -2145,9 +2158,9 @@ class DocTestDispatcher(SageObject):
             sage: DC.dispatcher = DD
             sage: DC.timer = Timer().start()
             sage: DD.dispatch()
-            sage -t .../sage/modules/free_module_homspace.py
+            .../sage/modules/free_module_homspace.py
                 [... tests, ...s wall]
-            sage -t .../sage/rings/big_oh.py
+            .../sage/rings/big_oh.py
                 [... tests, ...s wall]
         """
         if self.controller.options.serial:
@@ -2184,6 +2197,7 @@ class DocTestWorker(multiprocessing.Process):
 
     EXAMPLES::
 
+        sage: # long time
         sage: from sage.doctest.forker import DocTestWorker, DocTestTask
         sage: from sage.doctest.sources import FileDocTestSource
         sage: from sage.doctest.reporting import DocTestReporter
@@ -2209,7 +2223,7 @@ class DocTestWorker(multiprocessing.Process):
             sage: run_doctests(sage.rings.big_oh) # indirect doctest
             Running doctests with ID ...
             Doctesting 1 file.
-            sage -t .../sage/rings/big_oh.py
+            .../sage/rings/big_oh.py
                 [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -2256,7 +2270,7 @@ class DocTestWorker(multiprocessing.Process):
             sage: run_doctests(sage.symbolic.units)  # indirect doctest                 # needs sage.symbolic
             Running doctests with ID ...
             Doctesting 1 file.
-            sage -t .../sage/symbolic/units.py
+            .../sage/symbolic/units.py
                 [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -2308,6 +2322,7 @@ class DocTestWorker(multiprocessing.Process):
 
         TESTS::
 
+            sage: # long time
             sage: from sage.doctest.forker import DocTestWorker, DocTestTask
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.reporting import DocTestReporter
@@ -2347,6 +2362,7 @@ class DocTestWorker(multiprocessing.Process):
 
         EXAMPLES::
 
+            sage: # long time
             sage: from sage.doctest.forker import DocTestWorker, DocTestTask
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.reporting import DocTestReporter
@@ -2381,6 +2397,7 @@ class DocTestWorker(multiprocessing.Process):
 
         EXAMPLES::
 
+            sage: # long time
             sage: from sage.doctest.forker import DocTestWorker, DocTestTask
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.reporting import DocTestReporter

@@ -1,5 +1,5 @@
 """
-Binary Trees
+Binary trees
 
 This module deals with binary trees as mathematical (in particular immutable)
 objects.

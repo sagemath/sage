@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Alternating Sign Matrices
+Alternating sign matrices
 
 AUTHORS:
 

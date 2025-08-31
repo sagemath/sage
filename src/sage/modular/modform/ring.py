@@ -29,7 +29,8 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.misc.superseded import deprecated_function_alias
 from sage.misc.verbose import verbose
-from sage.modular.arithgroup.all import Gamma0, CongruenceSubgroupBase
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
+from sage.modular.arithgroup.congroup_generic import CongruenceSubgroupBase
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial import MPolynomial
@@ -410,7 +411,7 @@ class ModularFormsRing(Parent):
             raise ValueError('the number of variables (%s) must be equal to'
                              ' the number of generators of the modular forms'
                              ' ring (%s)' % (nb_var, self.ngens()))
-        return {poly_parent.gen(i): self(gens[i]) for i in range(0, nb_var)}
+        return {poly_parent.gen(i): self(gens[i]) for i in range(nb_var)}
 
     def from_polynomial(self, polynomial, gens=None):
         r"""
@@ -1084,7 +1085,7 @@ class ModularFormsRing(Parent):
             # we may need to increase the precision of the cached cusp
             # generators
             G = []
-            for j,f,F in self.__cached_cusp_gens:
+            for j, f, F in self.__cached_cusp_gens:
                 if f.prec() >= working_prec:
                     f = F.qexp(working_prec).change_ring(self.base_ring())
                 G.append((j, f, F))
@@ -1099,7 +1100,7 @@ class ModularFormsRing(Parent):
 
             flist = []
 
-            for (j, f, F) in G:
+            for j, f, F in G:
                 for g in self.q_expansion_basis(k - j, prec=kprec):
                     flist.append(g*f)
             A = self.base_ring() ** kprec
@@ -1107,10 +1108,10 @@ class ModularFormsRing(Parent):
 
             S = self.modular_forms_of_weight(k).cuspidal_submodule()
             if (W.rank() == S.dimension()
-                and (self.base_ring().is_field() or W.index_in_saturation() == 1)):
-                    verbose("Nothing new in weight %s" % k, t)
-                    k += 1
-                    continue
+                    and (self.base_ring().is_field() or W.index_in_saturation() == 1)):
+                verbose("Nothing new in weight %s" % k, t)
+                k += 1
+                continue
 
             t = verbose("Known cusp generators span a submodule of dimension %s of space of dimension %s" % (W.rank(), S.dimension()), t)
 
@@ -1138,7 +1139,7 @@ class ModularFormsRing(Parent):
         if prec is None:
             return G
         elif prec <= working_prec:
-            return [(k, f.truncate_powerseries(prec), F) for k,f,F in G]
+            return [(k, f.truncate_powerseries(prec), F) for k, f, F in G]
         else:
             # user wants increased precision, so we may as well cache that
             Gnew = [(k, F.qexp(prec).change_ring(self.base_ring()), F) for k, f, F in G]
@@ -1194,7 +1195,7 @@ class ModularFormsRing(Parent):
             G = self.cuspidal_ideal_generators(maxweight=gen_weight, prec=working_prec)
 
             flist = []
-            for (j, f, F) in G:
+            for j, f, F in G:
                 for g in self.q_expansion_basis(weight - j, prec=working_prec):
                     flist.append(g*f)
 
