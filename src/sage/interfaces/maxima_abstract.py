@@ -293,13 +293,9 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         return [x for x in cmd_list if x.find(s) == 0]
 
     @cached_method
-    def _commands(self, verbose=True):
+    def _commands(self):
         """
         Return list of all commands defined in Maxima.
-
-        INPUT:
-
-        - ``verbose`` -- boolean; ignored (obsolete)
 
         OUTPUT:
 
@@ -385,7 +381,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
                 print("\nBuilding Maxima command completion list (this takes")
                 print("a few seconds only the first time you do it).")
                 print("To force rebuild later, delete %s." % COMMANDS_CACHE)
-            v = self._commands(verbose=verbose)
+            v = self._commands()
             if verbose:
                 print("\nDone!")
             self.__tab_completion = v
