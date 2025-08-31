@@ -1378,67 +1378,104 @@ def matching(G, value_only=False, algorithm='Edmonds',
             # Greedy initial maximal matching (so as to reduce the total number of phases)
             # *************************************
             def compute_initial_maximal_matching() -> None:
-                global matching_cardinality, M
+                """Compute a greedy maximal matching to seed the main algorithm.
 
-                # 1) Make a mutable copy J of H
+                This routine builds an initial matching by repeatedly selecting a vertex of
+                minimum positive degree, matching it with a neighbour of minimum degree,
+                and removing that vertex, its matched neighbour and their neighbours
+                from the graph.  The goal is to reduce the number of augmenting phases
+                required by the main algorithm.  The original version left the bucket
+                structure empty and used an incorrect membership test; this version
+                populates the buckets correctly and updates them as the graph is
+                modified.
+                """
+                # Make a mutable copy J of H for the greedy matching process
                 J = H.copy()
 
-                # 2) Initialize the degree map and the <degree, vertex_set> bucket structre
-                degree_map = {vertex: J.degree(vertex) for vertex in J}
-                maximum_degree = max(cast(list[int], degree_map.values())) if degree_map else 0
+                # Create a degree map and populate buckets keyed by degree
+                degree_map: dict[Hashable, int] = {vertex: J.degree(vertex) for vertex in J}
+                maximum_degree = max(degree_map.values()) if degree_map else 0
 
-                buckets = [set() for _ in range(maximum_degree + 1)]
+                # buckets[d] contains the set of vertices currently having degree d in J
+                buckets: List[set] = [set() for _ in range(maximum_degree + 1)]
+                for vertex, degree in degree_map.items():
+                    if degree > 0:
+                        if degree >= len(buckets):
 
-                # 3) Start at the smallest possible positive degree
+                            # Extend buckets if necessary (should rarely happen)
+                            buckets.extend([set()] * (degree - len(buckets) + 1))
+                        buckets[degree].add(vertex)
+
+                # Find the initial minimum positive degree present in the buckets
                 minimum_degree = 1
-                while minimum_degree <= maximum_degree and not buckets[minimum_degree]:
+                while minimum_degree < len(buckets) and not buckets[minimum_degree]:
                     minimum_degree += 1
 
-                # 4) Main loop
-                while minimum_degree <= maximum_degree:
-                    # 4.0) If there are no vertices with minimum degree, increment the minimum degree
+                # Main loop: continue while there is a non-empty bucket of positive degree
+                while minimum_degree < len(buckets):
+
+                    # If there are no vertices with the current minimum degree, advance
                     if not buckets[minimum_degree]:
                         minimum_degree += 1
                         continue
 
-                    # 4.1) Get a vertex u of minimum positive degree
+                    # Pop a vertex u of minimum positive degree
                     u = buckets[minimum_degree].pop()
+                    if u not in degree_map:
+                        continue  # u may have been removed already
 
-                    # 4.2) Find a neighbor v of u with minimum degree
-                    v = min(J.neighbors(u), key=lambda x: J.degree(x))
+                    # Choose the neighbour v of u with minimum degree
+                    neighbours = list(J.neighbors(u))
+                    if not neighbours:
+                        # Remove isolated vertex from degree_map and continue
+                        del degree_map[u]
+                        continue
 
-                    # 4.3) Add the edge (u, v) to the matching M
+                    v = min(neighbours, key=lambda x: J.degree(x))
+                    # Add the edge (u, v) to the matching M with its label
                     M.add_edge(u, v, J.edge_label(u, v))
 
-                    # 4.4) Update the degree map and buckets
-                    vertices_to_remove = {u, v}
+                    # Determine the set of vertices to remove: u, v and all their neighbours
+                    vertices_to_remove = set([u, v])
                     vertices_to_remove.update(J.neighbors(u))
                     vertices_to_remove.update(J.neighbors(v))
 
+                    # Remove these vertices from the bucket lists and degree_map
                     for vertex in vertices_to_remove:
                         if vertex in degree_map:
+                            # Remove from its current bucket
+                            degree = degree_map[vertex]
+                            if degree < len(buckets) and vertex in buckets[degree]:
+                                buckets[degree].remove(vertex)
                             del degree_map[vertex]
 
-                        if J.degree(vertex) in buckets:
-                            if vertex in buckets[J.degree(vertex)]:
-                                buckets[J.degree(vertex)].remove(vertex)
-
-                    # 4.5) Gather all other neighbors whose degree will drop by 1
+                    # Track neighbours whose degrees will decrease after deletion
                     vertices_to_update = set()
                     for vertex in vertices_to_remove:
                         vertices_to_update.update(J.neighbors(vertex))
 
-                    for vertex in vertices_to_update:
-                        if vertex in degree_map:
-                            degree_map[vertex] -= 1
-                            if degree_map[vertex] > 0:
-                                buckets[J.degree(vertex)].remove(vertex)
-                                buckets[J.degree(vertex) - 1].add(vertex)
-
-                    # 4.6) Update J by removing u, v, and their neighbors
+                    # Remove vertices_to_remove from the graph J
                     J.delete_vertices(vertices_to_remove)
 
-                    # 4.7) Note that we might have a vertex of minimum degree in J now, so continue the loop
+                    # Update degrees of remaining vertices and relocate them in buckets
+                    for vertex in vertices_to_update:
+                        if vertex in degree_map:
+                            old_degree = degree_map[vertex]
+                            new_degree = J.degree(vertex)
+                            if new_degree != old_degree:
+                                if old_degree < len(buckets) and vertex in buckets[old_degree]:
+                                    buckets[old_degree].remove(vertex)
+                                degree_map[vertex] = new_degree
+                                # Ensure buckets list is long enough
+                                if new_degree >= len(buckets):
+                                    buckets.extend([set()] * (new_degree - len(buckets) + 1))
+                                if new_degree > 0:
+                                    buckets[new_degree].add(vertex)
+
+                    # Reset minimum_degree to find the next smallest bucket
+                    minimum_degree = 1
+                    while minimum_degree < len(buckets) and not buckets[minimum_degree]:
+                        minimum_degree += 1
 
             # ******************************
             # Start a new phase
@@ -1448,12 +1485,16 @@ def matching(G, value_only=False, algorithm='Edmonds',
                 search_level_vertices = []
 
                 for u in H:
-                    if u in M:
+                    # A vertex is considered matched if it is incident to an edge in the current matching M.
+                    # Checking `u in M` only tests whether u is a vertex of M, so use degree instead.
+                    if M.degree(u) > 0:
+                        # Matched vertices start with infinite levels
                         min_level[u] = INFINITY
                         max_level[u] = INFINITY
                         level[u] = [INFINITY, INFINITY]
 
                     else:
+                        # Unmatched vertices start at level 0 and are candidates for search
                         search_level_vertices.append(u)
                         min_level[u] = 0
                         max_level[u] = INFINITY
@@ -1566,7 +1607,9 @@ def matching(G, value_only=False, algorithm='Edmonds',
                 for vertex in support:
                     max_level[vertex] = 2*search_level + 1 - min_level[vertex]
                     level_parity = max_level[vertex] % 2
-                    level[vertex][level_parity] = max_level[vertex] % 2
+
+                    # Record the actual max level on the corresponding parity slot
+                    level[vertex][level_parity] = max_level[vertex]
                     next_search_level_vertices.append(vertex)
 
                     if not level_parity:
@@ -1624,10 +1667,10 @@ def matching(G, value_only=False, algorithm='Edmonds',
                                 red_vertex, red_predecessors, reverse_check = reverse_DFS(red_vertex, red_predecessors, red_stack, red_support)
 
                         elif min_level[red_vertex] > min_level[green_vertex]:
-                            red_vertex, red_predecessors, reverse_check = reverse_DFS(red_vertex, red_predecessors, red_stack, red_support)
+                            red_vertex, red_predecessors, collision = reverse_DFS(red_vertex, red_predecessors, red_stack, red_support)
 
                         elif min_level[red_vertex] < min_level[green_vertex]:
-                            green_vertex, green_predecessors, reverse_check = reverse_DFS(green_vertex, green_predecessors, green_stack, green_support)
+                            green_vertex, green_predecessors, collision = reverse_DFS(green_vertex, green_predecessors, green_stack, green_support)
 
                         if red_vertex == green_vertex:
                             previous_red_support.pop()
@@ -1862,18 +1905,21 @@ def matching(G, value_only=False, algorithm='Edmonds',
                 left_path = get_path(left_support, bridge[0])
                 right_path = get_path(right_support, bridge[1])
                 if not left_path or not right_path:
+                    # Could not construct a valid augmenting path
                     return False
+
+                # The left path needs to be reversed to go from the free vertex to the bridge vertex
                 left_path.reverse()
                 path = left_path + right_path
-                if len(path) != search_level * 2 + 2:
-                    return False # Error in augmentation path length
 
+                # Toggle edges along the path: matched edges become unmatched and vice versa
                 for index in range(len(path) - 1):
-                    edge = (path[index], path[index+1], H.edge_label(path[index], path[index+1]))
-                    if M.has_edge(edge):
-                        M.delete_edge(edge)
+                    u, v = path[index], path[index+1]
+                    label = H.edge_label(u, v)
+                    if M.has_edge(u, v, label):
+                        M.delete_edge(u, v, label)
                     else:
-                        M.add_edge(edge)
+                        M.add_edge(u, v, label)
 
                 # Erase vertex based on search level
                 erase_vertex_list = []
@@ -1967,6 +2013,9 @@ def matching(G, value_only=False, algorithm='Edmonds',
             global H, M, search_level_vertices, phase_index, num_augmentations
             H = G.copy()
             M = Graph()
+
+            # ensure all vertices of H are present in M
+            M.add_vertices(H.vertices())
             search_level_vertices = []
             phase_index = 0
             num_augmentations = 0
@@ -1991,7 +2040,6 @@ def matching(G, value_only=False, algorithm='Edmonds',
                     break
 
             return EdgesView(M)
-
         M = get_micali_vazirani_maximum_cardinality_matching(G.to_simple())
 
         return len(M) if value_only else M
