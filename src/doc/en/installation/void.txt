@@ -1,0 +1,18 @@
+$ sudo xbps-install bash bc binutils boost-devel brial-devel bzip2-devel \
+      cddlib-devel cliquer-devel cmake curl diffutils ecl eclib-devel \
+      ecm-devel fflas-ffpack flintlib-devel fplll-devel freetype-devel \
+      gap-devel gcc gcc-fortran gc-devel gd-devel gengetopt gf2x-devel gfan \
+      givaro-devel glpk-devel gmp-devel gmpxx-devel gsl-devel gzip iml-devel \
+      lcalc-devel libatomic_ops-devel libbraiding-devel libcurl-devel \
+      libffi-devel libgomp-devel libhomfly-devel liblzma-devel libmpc-devel \
+      libpng-devel libqhull-devel libxcrypt-devel linbox-devel lrcalc-devel \
+      m4 m4ri-devel m4rie-devel make mathjax maxima-ecl mpfi-devel \
+      mpfr-devel nauty ncurses-devel ninja ntl-devel openblas-devel \
+      openssl-devel palp pari pari-devel pari-elldata-small pari-galdata \
+      pari-galpol-small pari-seadata patch patchelf perl pkgconf \
+      planarity-devel ppl-devel primecount-devel primesieve-devel python3 \
+      python3-appdirs python3-devel python3-distlib python3-filelock \
+      python3-setuptools python3-virtualenv qhull rankwidth-devel \
+      readline-devel singular sqlite-devel SuiteSparse-devel \
+      symmetrica-devel sympow tachyon tar texinfo tox which xz zeromq-devel \
+      zlib-devel

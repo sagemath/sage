@@ -136,7 +136,7 @@ Depending on your distribution, install the following packages:
     At least Fedora 41 is required.
 
    .. literalinclude:: fedora.txt
-      :language: bash
+      :language: console
 
 .. tab:: Arch Linux
 
@@ -163,10 +163,10 @@ We also recommend to install the Python package manager
 
 To compile and install Sage in editable install, then just use:
 
-.. code-block:: bash
+.. code-block:: console
 
-    uv venv
-    uv pip install \
+    $ uv venv
+    $ uv pip install \
         meson-python \
         "cypari2 >=2.2.1" \
         "cython >=3.0, != 3.0.3, != 3.1.0" \
@@ -176,7 +176,7 @@ To compile and install Sage in editable install, then just use:
         "numpy >=1.25" \
         jinja2 \
         setuptools
-    uv sync --frozen --inexact --no-build-isolation
+    $ uv sync --frozen --inexact --no-build-isolation
 
 You can then start Sage from the command line with ``./sage``
 or run the tests with ``./sage -t``.
@@ -220,9 +220,12 @@ Remarks
 .. note::
 
   You can update the conda lock files by running ``tools/update-conda.py``.
-  In order to update the conda environment afterwards use::
+  In order to update the conda environment afterwards use:
 
-    $ mamba env update --file environment-3.12-linux.yml --name sage-dev
+    .. code-block:: console
+
+
+        $ mamba env update --file environment-3.12-linux.yml --name sage-dev
 
 
 Background information

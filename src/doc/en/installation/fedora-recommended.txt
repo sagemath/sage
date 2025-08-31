@@ -1,0 +1,9 @@
+$ sudo dnf install ffmpeg-free ffmpeg-free-devel gnu-free-mono-fonts \
+      gnu-free-sans-fonts gnu-free-serif-fonts ImageMagick latexmk \
+      libjpeg-turbo-devel pandoc texlive texlive-collection-langcjk \
+      texlive-collection-langcyrillic texlive-collection-langeuropean \
+      texlive-collection-langfrench texlive-collection-langgerman \
+      texlive-collection-langitalian texlive-collection-langjapanese \
+      texlive-collection-langpolish texlive-collection-langportuguese \
+      texlive-collection-langspanish texlive-collection-latexextra \
+      texlive-gnu-freefont texlive-luatex texlive-xindy

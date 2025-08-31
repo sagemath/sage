@@ -1,0 +1,3 @@
+$ sudo pacman -S ffmpeg gnu-free-fonts imagemagick libjpeg-turbo pandoc \
+      texlive-core texlive-langchinese texlive-langcyrillic \
+      texlive-langjapanese texlive-latexextra texlive-luatex

@@ -1,0 +1,20 @@
+$ sudo zypper install bc binutils boost-devel brial-devel bzip2 \
+      ca-certificates cddlib-tools cliquer cliquer-devel cmake curl \
+      diffutils edge-addition-planarity-suite \
+      edge-addition-planarity-suite-devel findutils flint-devel fplll \
+      fplll-devel gawk gcc gcc-c++ gcc-fortran gd gfan glibc-locale-base \
+      glpk glpk-devel gmp-devel gzip iml-devel libbraiding-devel \
+      libhomfly-devel libopenssl-3-devel libprimecount-devel m4 make mathjax \
+      maxima-exec-clisp meson mpc-devel mpfi-devel nauty nauty-devel ninja \
+      ntl-devel openblas-devel pari-devel pari-galdata pari-gp patch \
+      patchelf perl pkgconf pkgconfig\(atomic_ops\) pkgconfig\(bdw-gc\) \
+      pkgconfig\(bzip2\) pkgconfig\(cddlib\) pkgconfig\(fflas-ffpack\) \
+      pkgconfig\(fplll\) pkgconfig\(freetype2\) pkgconfig\(gdlib\) \
+      pkgconfig\(gf2x\) pkgconfig\(givaro\) pkgconfig\(gsl\) \
+      pkgconfig\(libcurl\) pkgconfig\(libffi\) pkgconfig\(liblzma\) \
+      pkgconfig\(libpng16\) pkgconfig\(libzmq\) pkgconfig\(linbox\) \
+      pkgconfig\(m4ri\) pkgconfig\(m4rie\) pkgconfig\(mpfr\) \
+      pkgconfig\(ncurses\) pkgconfig\(ncursesw\) pkgconfig\(readline\) \
+      pkgconfig\(sqlite3\) pkgconfig\(zlib\) ppl-devel primecount primesieve \
+      python3 python3-devel python3-setuptools qhull-devel readline-devel \
+      suitesparse-devel sympow tachyon tar texinfo which xz

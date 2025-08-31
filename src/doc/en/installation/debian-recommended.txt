@@ -1,0 +1,7 @@
+$ sudo apt-get install default-jdk dvipng ffmpeg fonts-freefont-otf \
+      imagemagick latexmk libavdevice-dev libjpeg-dev pandoc tex-gyre \
+      texlive-fonts-recommended texlive-lang-chinese texlive-lang-cyrillic \
+      texlive-lang-english texlive-lang-european texlive-lang-french \
+      texlive-lang-german texlive-lang-italian texlive-lang-japanese \
+      texlive-lang-polish texlive-lang-portuguese texlive-lang-spanish \
+      texlive-latex-extra texlive-luatex texlive-xetex xindy

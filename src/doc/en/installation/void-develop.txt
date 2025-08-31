@@ -1,0 +1,2 @@
+$ sudo xbps-install autoconf automake git github-cli gnupg2 libtool \
+      mk-configure openssh xtools

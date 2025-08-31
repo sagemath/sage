@@ -1,0 +1,3 @@
+$ sudo pacman -S 4ti2 bliss clang coin-or-cbc coxeter giac graphviz igraph \
+      intel-oneapi-tbb libxml2 lrs pari-elldata pari-galpol pari-seadata \
+      pdf2svg perl-term-readline-gnu polymake sbcl symengine

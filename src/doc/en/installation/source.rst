@@ -98,22 +98,28 @@ We recommend that you install the following packages, depending on your distribu
 .. tab:: Debian/Ubuntu
 
    .. literalinclude:: debian.txt
+      :language: console
+
 
 .. tab:: Fedora/Redhat/CentOS
 
    .. literalinclude:: fedora.txt
+      :language: console
 
 .. tab:: Arch Linux
 
    .. literalinclude:: arch.txt
+      :language: console
 
 .. tab:: OpenSUSE
 
    .. literalinclude:: opensuse.txt
+      :language: console
 
 .. tab:: Void Linux
 
    .. literalinclude:: void.txt
+      :language: console
 
 If you wish to do Sage development, we recommend that you additionally
 install the following:
@@ -121,22 +127,27 @@ install the following:
 .. tab:: Debian/Ubuntu
 
    .. literalinclude:: debian-develop.txt
+      :language: console
 
 .. tab:: Fedora/Redhat/CentOS
 
    .. literalinclude:: fedora-develop.txt
+      :language: console
 
 .. tab:: Arch Linux
 
    .. literalinclude:: arch-develop.txt
+      :language: console
 
 .. tab:: OpenSUSE
 
    .. literalinclude:: opensuse-develop.txt
+      :language: console
 
 .. tab:: Void Linux
 
    .. literalinclude:: void-develop.txt
+      :language: console
 
 For all users, we recommend that you install the following system
 packages, which provide additional functionality and cannot be
@@ -152,22 +163,27 @@ animations, Sage needs to use one of the packages :ref:`FFmpeg
 .. tab:: Debian/Ubuntu
 
    .. literalinclude:: debian-recommended.txt
+      :language: console
 
 .. tab:: Fedora/Redhat/CentOS
 
    .. literalinclude:: fedora-recommended.txt
+      :language: console
 
 .. tab:: Arch Linux
 
    .. literalinclude:: arch-recommended.txt
+      :language: console
 
 .. tab:: OpenSUSE
 
    .. literalinclude:: opensuse-recommended.txt
+      :language: console
 
 .. tab:: Void Linux
 
    .. literalinclude:: void-recommended.txt
+      :language: console
 
 In addition to these, if you don't want Sage to build optional packages that might
 be available from your OS, cf. the growing list of such packages on :issue:`27330`,
@@ -176,22 +192,27 @@ install:
 .. tab:: Debian/Ubuntu
 
    .. literalinclude:: debian-optional.txt
+      :language: console
 
 .. tab:: Fedora/Redhat/CentOS
 
    .. literalinclude:: fedora-optional.txt
+      :language: console
 
 .. tab:: Arch Linux
 
    .. literalinclude:: arch-optional.txt
+      :language: console
 
 .. tab:: OpenSUSE
 
    .. literalinclude:: opensuse-optional.txt
+      :language: console
 
 .. tab:: Void Linux
 
    .. literalinclude:: void-optional.txt
+      :language: console
 
 
 .. _section_macprereqs:
@@ -233,10 +254,13 @@ If you use the `Homebrew package manager
 <https://brew.sh>`_, you can install the following:
 
 .. literalinclude:: homebrew.txt
+   :language: console
 
 Some Homebrew packages are installed "keg-only," meaning that they are
 not available in standard paths. To make them accessible when building
-Sage, run ::
+Sage, run
+
+.. code-block:: console
 
     $ source SAGE_ROOT/.homebrew-build-env
 
@@ -248,15 +272,18 @@ If you wish to do Sage development, we recommend that you additionally
 install the following:
 
 .. literalinclude:: homebrew-develop.txt
+   :language: console
 
 For all users, we recommend that you install the following system packages,
 which provide additional functionality and cannot be installed by Sage:
 
 .. literalinclude:: homebrew-recommended.txt
+   :language: console
 
 Some additional optional packages are taken care of by:
 
 .. literalinclude:: homebrew-optional.txt
+   :language: console
 
 WSL prerequisites
 ^^^^^^^^^^^^^^^^^
@@ -302,16 +329,20 @@ Notes on using conda
 
 If you don't want conda to be used by sage, deactivate conda (for the current shell session).
 
-- Type::
+- Type
 
-    $ conda deactivate
+  .. code-block:: console
 
-- Repeat the command until ``conda info`` shows::
+      $ conda deactivate
 
-    $ conda info
+- Repeat the command until ``conda info`` shows
 
-    active environment : None
-    ...
+  .. code-block:: console
+
+      $ conda info
+
+        active environment : None
+        ...
 
 Then SageMath will be built either using the compilers provided by the
 operating system, or its own compilers.
@@ -324,7 +355,9 @@ If you want to use `Tcl/Tk <https://www.tcl.tk/>`_ libraries in Sage, and you
 are going to use your OS's Python3 as Sage's Python, you merely need to install
 its **Tkinter** module.  On Linux systems, it is usually provided by the
 **python3-tk** or a similarly named (e.g. **python3-tkinter**) package,
-which can be installed using::
+which can be installed using
+
+.. code-block:: console
 
     $ sudo apt-get install python3-tk
 
@@ -337,7 +370,9 @@ If you want to use `Tcl/Tk <https://www.tcl.tk/>`_ libraries in Sage,
 and you are going to build Sage's Python from source, you need to install
 these, and the corresponding headers.
 On Linux systems, these are usually provided by the **tk** and **tk-dev**
-(or **tk-devel**) packages which can be installed using::
+(or **tk-devel**) packages which can be installed using
+
+.. code-block:: console
 
     $ sudo apt-get install tk tk-dev
 
@@ -346,7 +381,9 @@ or similar commands.
 
 Sage's Python will then automatically recognize your system's install of Tcl/Tk.
 If you installed Sage first, all is not lost. You just need to rebuild
-Sage's Python and any part of Sage relying on it::
+Sage's Python and any part of Sage relying on it
+
+.. code-block:: console
 
     $ sage -f python3  # rebuild Python3
     $ make             # rebuild components of Sage depending on Python
@@ -357,7 +394,7 @@ If
 
 .. skip
 
-.. CODE-BLOCK:: ipycon
+.. code-block:: ipycon
 
    sage: import _tkinter
    sage: import Tkinter
@@ -395,14 +432,18 @@ Installation steps
      ``upstream``.
 
      After downloading the source tarball ``sage-x.y.tar.gz`` into
-     a directory ``~/sage/``::
+     a directory ``~/sage/``
 
-       $ cd ~/sage/
-       $ tar xf sage-x.y.tar.gz  # adapt x.y; takes a while
+     .. code-block:: console
 
-     This creates the subdirectory ``sage-x.y``. Now change into it::
+         $ cd ~/sage/
+         $ tar xf sage-x.y.tar.gz  # adapt x.y; takes a while
 
-       $ cd sage-x.y/  # adapt x.y
+     This creates the subdirectory ``sage-x.y``. Now change into it
+
+     .. code-block:: console
+
+         $ cd sage-x.y/  # adapt x.y
 
      .. note::
 
@@ -453,11 +494,15 @@ Installation steps
    :ref:`section_envvar` for additional information on useful environment
    variables used by Sage.
 
-#. To start Sage, you can now simply type from Sage's home directory::
+#. To start Sage, you can now simply type from Sage's home directory
+
+   .. code-block:: console
 
        $ ./sage
 
-   You should see the Sage prompt, which will look something like this::
+   You should see the Sage prompt, which will look something like this
+
+   .. code-block:: console
 
        $ sage
        ┌────────────────────────────────────────────────────────────────────┐
@@ -480,14 +525,14 @@ Installation steps
 
    After Sage has started, try a simple command:
 
-   .. CODE-BLOCK:: ipycon
+   .. code-block:: ipycon
 
        sage: 2 + 2
        4
 
    Or something slightly more complicated:
 
-   .. CODE-BLOCK:: ipycon
+   .. code-block:: ipycon
 
        sage: factor(2005)
        5 * 401
@@ -524,7 +569,7 @@ Installation steps
    script should pass along all of its arguments.
    For example, a ``maple`` script might look like:
 
-   .. CODE-BLOCK:: bash
+   .. code-block:: bash
 
        #!/bin/sh
 
@@ -534,9 +579,11 @@ Installation steps
    There are different possibilities to make using Sage a little easier:
 
    - Make a symbolic link from :file:`/usr/local/bin/sage` (or another
-     directory in your :envvar:`PATH`) to :sage_root:`sage`::
+     directory in your :envvar:`PATH`) to :sage_root:`sage`
 
-         $ ln -s /path/to/sage_root/sage /usr/local/bin/sage
+     .. code-block:: console
+
+          $ ln -s /path/to/sage_root/sage /usr/local/bin/sage
 
      Now simply typing ``sage`` from any directory should be sufficient to run
      Sage.
@@ -544,14 +591,14 @@ Installation steps
    - Copy :sage_root:`sage` to a location in your :envvar:`PATH`.
      If you do this, make sure you edit the line:
 
-     .. CODE-BLOCK:: bash
+     .. code-block:: bash
 
          #SAGE_ROOT=/path/to/sage-version
 
      at the beginning of the copied ``sage`` script according to the direction
      given there to something like:
 
-     .. CODE-BLOCK:: bash
+     .. code-block:: bash
 
          SAGE_ROOT=<SAGE_ROOT>
 
@@ -562,7 +609,7 @@ Installation steps
      ``sage`` containing the lines
      (note that you have to change ``<SAGE_ROOT>`` below!):
 
-     .. CODE-BLOCK:: bash
+     .. code-block:: bash
 
          #!/usr/bin/env bash
 
@@ -583,7 +630,7 @@ Installation steps
      For example, put something similar to the following line in your
      :file:`.bashrc` file:
 
-     .. CODE-BLOCK:: bash
+     .. code-block:: bash
 
          alias sage=<SAGE_ROOT>/sage
 
@@ -710,9 +757,11 @@ Here are some of the more commonly used variables affecting the build process:
   If set to ``0``, silence the build.  Instead of showing a detailed
   compilation log, only one line of output is shown at the beginning
   and at the end of the installation of each Sage package.  To see
-  even less output, use::
+  even less output, use
 
-    $ make -s V=0
+  .. code-block:: console
+
+      $ make -s V=0
 
   (Note that the above uses the syntax of setting a Makefile variable.)
 
@@ -1161,11 +1210,15 @@ a single copy of Sage in a multi-user computer network.
 #. Using ``sudo``, create the installation directory, for example,
    ``/opt/sage/sage-x.y``. We refer to it as ``SAGE_LOCAL`` in the
    instructions below. Do not try to install into a directory that
-   already contains other software, such as ``/usr/local``::
+   already contains other software, such as ``/usr/local``
+
+   .. code-block:: console
 
        $ sudo mkdir -p SAGE_LOCAL
 
-#. Make the directory writable for you and readable by everyone::
+#. Make the directory writable for you and readable by everyone
+
+   .. code-block:: console
 
        $ sudo chown $(id -un) SAGE_LOCAL
        $ sudo chmod 755 SAGE_LOCAL
@@ -1179,12 +1232,16 @@ a single copy of Sage in a multi-user computer network.
 
 #. Optionally, create a symbolic link to the installed ``sage`` script
    in a directory that is in the users' :envvar:`PATH`, for example
-   ``/usr/local/bin``::
+   ``/usr/local/bin``
+
+   .. code-block:: console
 
        $ sudo ln -s SAGE_LOCAL/bin/sage /usr/local/bin/sage
 
 #. Optionally, change permissions to prevent accidental changes to
-   the installation by yourself::
+   the installation by yourself
+
+   .. code-block:: console
 
        $ sudo chown -R root SAGE_LOCAL
 
@@ -1203,33 +1260,39 @@ The system's package manager does not keep track of the applications that
 make use of the shared libraries.  Therefore indiscriminate upgrades of
 system packages can break a Sage installation.
 
-This can always be fixed by a full rebuild::
+This can always be fixed by a full rebuild
 
-  $ make distclean && make build
+.. code-block:: console
+
+    $ make distclean && make build
 
 But this time-consuming step can often be avoided by just reinstalling a
 few packages. The command ``make -j list-broken-packages`` assists with
-this::
+this
 
-  $ make -j list-broken-packages
-  make --no-print-directory auditwheel_or_delocate-no-deps
-  ...
-  # Checking .../local/var/lib/sage/installed/bliss-0.73+debian-1+sage-2016-08-02.p0
-  ...
-  Checking shared library file '.../local/lib/libumfpack.dylib'
-  Checking shared library file '.../local/var/tmp/sage/build/suitesparse-5.10.1/src/lib/libsliplu.1.0.2.dylib'
-  Error during installcheck of 'suitesparse': .../local/var/tmp/sage/build/suitesparse-5.10.1/src/lib/libsliplu.1.0.2.dylib
-  ...
-  Uninstall broken packages by typing:
+.. code-block:: console
 
-      make lcalc-SAGE_LOCAL-uninstall;
-      make ratpoints-SAGE_LOCAL-uninstall;
-      make r-SAGE_LOCAL-uninstall;
-      make suitesparse-SAGE_LOCAL-uninstall;
+    $ make -j list-broken-packages
+    make --no-print-directory auditwheel_or_delocate-no-deps
+    ...
+    # Checking .../local/var/lib/sage/installed/bliss-0.73+debian-1+sage-2016-08-02.p0
+    ...
+    Checking shared library file '.../local/lib/libumfpack.dylib'
+    Checking shared library file '.../local/var/tmp/sage/build/suitesparse-5.10.1/src/lib/libsliplu.1.0.2.dylib'
+    Error during installcheck of 'suitesparse': .../local/var/tmp/sage/build/suitesparse-5.10.1/src/lib/libsliplu.1.0.2.dylib
+    ...
+    Uninstall broken packages by typing:
 
-After running the suggested commands, run::
+        make lcalc-SAGE_LOCAL-uninstall;
+        make ratpoints-SAGE_LOCAL-uninstall;
+        make r-SAGE_LOCAL-uninstall;
+        make suitesparse-SAGE_LOCAL-uninstall;
 
-  $ make build
+After running the suggested commands, run
+
+.. code-block:: console
+
+    $ make build
 
 
 Upgrading Sage using a separate git worktree
@@ -1243,17 +1306,21 @@ can keep using your existing installation when something goes wrong.
 Start from the directory created when you used ``git clone``, perhaps
 ``~/sage/sage/``. Let's verify that this is indeed a git repository by
 looking at the hidden ``.git`` subdirectory. It will looks like this,
-but the exact contents can vary::
+but the exact contents can vary
 
-  [alice@localhost sage]$ ls .git
-  COMMIT_EDITMSG HEAD           branches       description    gitk.cache
-  index          logs           packed-refs    FETCH_HEAD     ORIG_HEAD
-  config         hooks          info           objects        refs
+.. code-block:: console
 
-Good. Now let's see what worktrees already exist::
+    $ ls .git
+    COMMIT_EDITMSG HEAD           branches       description    gitk.cache
+    index          logs           packed-refs    FETCH_HEAD     ORIG_HEAD
+    config         hooks          info           objects        refs
 
-  [alice@localhost sage]$ git worktree list
-  /home/alice/sage/sage                     c0ffeefe10 [master]
+Good. Now let's see what worktrees already exist
+
+.. code-block:: console
+
+    $ git worktree list
+    /home/alice/sage/sage                     c0ffeefe10 [master]
 
 We see just one line, the directory created when you used ``git clone``.
 We will call this the "main worktree" from now on. Next to the directory,
@@ -1261,46 +1328,56 @@ you can see the abbreviated commit sha and the name of the branch that
 we're on (``master``).
 
 To try out a new version of Sage, let's fetch it first from the main
-repository::
+repository
 
-  [alice@localhost sage]$ git fetch upstream 10.3.beta8
-  From https://github.com/sagemath/sage
-   * tag                     10.3.beta8 -> FETCH_HEAD
+.. code-block:: console
+
+    $ git fetch upstream 10.3.beta8
+    From https://github.com/sagemath/sage
+    * tag                     10.3.beta8 -> FETCH_HEAD
 
 Now let's create a new worktree. We need a name for it; it should
 start with ``worktree-`` but can be anything after that. Experience
 shows that worktrees are often repurposed later, and because a
 directory containing a Sage installation cannot be moved without
 breaking the installation in it, it may be a good idea to choose
-a memorable name without much meaning::
+a memorable name without much meaning
 
-  [alice@localhost sage]$ git worktree add worktree-purple FETCH_HEAD
-  Preparing worktree (detached HEAD 30b3d78fac)
-  Updating files: 100% (11191/11191), done.
-  HEAD is now at 30b3d78fac Updated SageMath version to 10.3.beta8
+.. code-block:: console
+
+    $ git worktree add worktree-purple FETCH_HEAD
+    Preparing worktree (detached HEAD 30b3d78fac)
+    Updating files: 100% (11191/11191), done.
+    HEAD is now at 30b3d78fac Updated SageMath version to 10.3.beta8
 
 We now have a subdirectory ``worktree-purple``. This is a
-"linked worktree"::
+"linked worktree"
 
-  [alice@localhost sage]$ git worktree list
-  /home/alice/sage/sage                     c0ffeefe10 [master]
-  /home/alice/sage/sage/worktree-purple     30b3d78fac (detached HEAD)
-  [alice@localhost sage]$ cd worktree-purple
-  [alice@localhost worktree-purple]$ cat VERSION.txt
-  SageMath version 10.3.beta8, Release Date: 2024-02-13
+.. code-block:: console
+
+    $ git worktree list
+    /home/alice/sage/sage                     c0ffeefe10 [master]
+    /home/alice/sage/sage/worktree-purple     30b3d78fac (detached HEAD)
+    $ cd worktree-purple
+    $ cat VERSION.txt
+    SageMath version 10.3.beta8, Release Date: 2024-02-13
 
 All worktrees created in this way share the same repository,
-so they have access to all branches::
+so they have access to all branches
 
-  [alice@localhost worktree-purple]$ git --no-pager branch -v
-  * (no branch) 30b3d78fac Updated SageMath version to 10.3.beta8
-  + master      2a9a4267f9 Updated SageMath version to 10.2
+.. code-block:: console
+
+    $ git --no-pager branch -v
+    * (no branch) 30b3d78fac Updated SageMath version to 10.3.beta8
+    + master      2a9a4267f9 Updated SageMath version to 10.2
 
 In fact, ``.git`` here is not a directory, just a hidden
-file::
+file
 
-  [alice@localhost worktree-purple]$ ls -l .git
-  -rw-r--r--  1 alice  staff  59 Feb 20 18:16 .git
+.. code-block:: console
+
+    $ ls -l .git
+    -rw-r--r--  1 alice  staff  59 Feb 20 18:16 .git
 
 In the new worktree, we now build Sage from scratch. This
 is completely independent of and will not disrupt your
@@ -1317,13 +1394,17 @@ worry is the directory ``upstream``, where Sage caches
 downloaded archives of packages. To have the new worktree
 share it with the main worktree, let's create a symbolic
 link. This is an optional step that will avoid
-re-downloading files that you already have::
+re-downloading files that you already have
 
-  [alice@localhost worktree-purple]$ ln -s ../upstream/ .
+.. code-block:: console
 
-Now let's build Sage, starting with the step::
+    $ ln -s ../upstream/ .
 
-  [alice@localhost worktree-purple]$ make configure
+Now let's build Sage, starting with the step
+
+.. code-block:: console
+
+    $ make configure
 
 Refer to the file `README.md <https://github.com/sagemath/sage/#readme>`_
 for the following steps.

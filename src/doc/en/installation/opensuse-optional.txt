@@ -1,0 +1,5 @@
+$ sudo zypper install 4ti2 4ti2-devel bliss bliss-devel coxeter fricas \
+      giac-devel gp2c graphviz libxml2 llvm lrslib lrslib-devel pari-elldata \
+      pari-galpol pari-nftables pari-seadata pdf2svg \
+      perl\(Term::ReadLine::Gnu\) pkgconfig\(isl\) \
+      pkgconfig\(libsemigroups\) polymake sbcl symengine tbb

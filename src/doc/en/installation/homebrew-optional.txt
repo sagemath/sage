@@ -1,0 +1,2 @@
+$ brew install apaffenholz/polymake/polymake cbc fricas graphviz igraph isl \
+      libxml2 llvm nauty pdf2svg sbcl symengine tbb

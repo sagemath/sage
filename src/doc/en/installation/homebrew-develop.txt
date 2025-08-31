@@ -1,0 +1,1 @@
+$ brew install autoconf automake gh git gnupg libtool

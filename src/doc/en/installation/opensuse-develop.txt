@@ -1,0 +1,1 @@
+$ sudo zypper install autoconf automake gh git gpg2 libtool openssh

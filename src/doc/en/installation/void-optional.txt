@@ -1,0 +1,6 @@
+$ sudo xbps-install clang CoinMP-devel giac-devel gp2c graphviz \
+      graphviz-devel igraph-devel isl-devel libxml2-devel nauty-devel \
+      pari-elldata-small pari-galpol-small pari-nftables pari-seadata \
+      perl-File-Slurp perl-JSON perl-SVG perl-Term-ReadKey \
+      perl-Term-ReadLine-Gnu perl-XML-LibXML perl-XML-LibXSLT \
+      perl-XML-Writer sbcl tbb-devel
