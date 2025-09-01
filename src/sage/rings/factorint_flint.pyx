@@ -24,7 +24,7 @@ from sage.libs.flint.fmpz_factor_sage cimport *
 from sage.rings.integer cimport Integer
 
 
-def factor_using_flint(Integer n, unsigned bits = 0):
+def factor_using_flint(Integer n, unsigned bits=0):
     r"""
     Factor the nonzero integer ``n`` using FLINT.
 
