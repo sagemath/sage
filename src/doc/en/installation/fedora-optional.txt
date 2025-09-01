@@ -1,8 +1,8 @@
-$ sudo dnf install 4ti2 4ti2-devel bliss bliss-devel clang coin-or-Cbc \
-      coin-or-Cbc-devel coxeter coxeter-devel coxeter-tools giac giac-devel \
-      gp2c graphviz graphviz-devel igraph igraph-devel isl isl-devel \
-      libnauty libnauty-devel libsemigroups libsemigroups-devel \
-      libxml2-devel lrslib lrslib-devel pari-galpol pari-seadata pdf2svg \
-      perl-ExtUtils-Embed perl-File-Slurp perl-JSON perl-MongoDB perl-SVG \
-      perl-TermReadKey perl-Term-ReadLine-Gnu perl-XML-LibXML \
-      perl-XML-LibXSLT perl-XML-Writer polymake sbcl tbb tbb-devel
+  $ sudo dnf install 4ti2 4ti2-devel bliss bliss-devel clang coin-or-Cbc \
+        coin-or-Cbc-devel coxeter coxeter-devel coxeter-tools giac giac-devel \
+        gp2c graphviz graphviz-devel igraph igraph-devel isl isl-devel \
+        libnauty libnauty-devel libsemigroups libsemigroups-devel \
+        libxml2-devel lrslib lrslib-devel pari-galpol pari-seadata pdf2svg \
+        perl-ExtUtils-Embed perl-File-Slurp perl-JSON perl-MongoDB perl-SVG \
+        perl-TermReadKey perl-Term-ReadLine-Gnu perl-XML-LibXML \
+        perl-XML-LibXSLT perl-XML-Writer polymake sbcl tbb tbb-devel

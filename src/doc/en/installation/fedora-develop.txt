@@ -1,1 +1,1 @@
-$ sudo dnf install autoconf automake gh git gnupg2 libtool openssh
+  $ sudo dnf install autoconf automake gh git gnupg2 libtool openssh
