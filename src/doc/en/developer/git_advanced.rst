@@ -253,8 +253,7 @@ top of that, deleted a file and committed that
     $ git commit -m "I shot myself into my foot"
 
 Now we cannot just checkout the repository from before the reset,
-because it is no longer in the history. However, here is the reflog::
-
+because it is no longer in the history. However, here is the reflog
 
 .. code-block:: console
 

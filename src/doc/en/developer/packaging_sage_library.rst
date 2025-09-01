@@ -143,17 +143,17 @@ The source directory of a distribution package, such as
   source files.  Sage provides a tool ``sage --fixdistributions``
   that assists with this task. For example
 
-.. code-block:: console
+  .. code-block:: console
 
-    $ ./sage --fixdistributions --set sagemath-polyhedra \
-         src/sage/geometry/polyhedron/base*.py
+      $ ./sage --fixdistributions --set sagemath-polyhedra \
+          src/sage/geometry/polyhedron/base*.py
 
   adds or updates the directives in the specified files; and
 
-.. code-block:: console
+  .. code-block:: console
 
-    $ ./sage --fixdistributions --add sagemath-polyhedra \
-         src/sage/geometry/polyhedron
+      $ ./sage --fixdistributions --add sagemath-polyhedra \
+          src/sage/geometry/polyhedron
 
   adds the directive to all files in the given directory that do not
   include a directive yet.

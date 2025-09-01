@@ -5,10 +5,6 @@ Packaging SageMath Downstream
 This document is intended for downstream maintainers (e.g., Linux distribution
 package maintainers) who wish to create redistributable builds of Sage.
 
-.. contents::
-   :local:
-   :depth: 2
-
 Dependencies
 ============
 
@@ -44,7 +40,7 @@ Build Procedure
         $ git clone https://github.com/sagemath/sage.git
 
     Alternatively, download the sdist tarball from the
-    `SageMath PyPI project<https://pypi.org/project/sagemath/>`_ or from the
+    `SageMath PyPI project <https://pypi.org/project/sagemath/>`_ or from the
     `GitHub releases <https://github.com/sagemath/sage/releases>`_.
 
 2. **Prepare the Build Environment**:
@@ -52,7 +48,6 @@ Build Procedure
     required system libraries and Python packages.
 
 3. **Build**:
-
     Create a wheel using the ``build`` module:
 
     .. code-block:: console
@@ -60,13 +55,12 @@ Build Procedure
         $ python -m build --wheel --no-isolation
 
     If you are sure that all dependencies are available, you may also add the
-    `--skip-dependency-check` option.
+    ``--skip-dependency-check`` option.
     Moreover, if you care about reproducible builds, it is recommended to
-    use `-Cbuild-dir=build` to specify a build directory, see this
+    use ``-Cbuild-dir=build`` to specify a build directory, see this
     `Meson-Python issue <https://github.com/mesonbuild/meson-python/issues/671>`_.
 
 4. **Install**:
-
     The resulting wheel can be installed using
 
     .. code-block:: console
@@ -77,7 +71,6 @@ Build Procedure
     (usually a temporary directory for packaging).
 
 4. **Test the Build**:
-
     Run the Sage tests to ensure functionality:
 
     .. code-block:: console

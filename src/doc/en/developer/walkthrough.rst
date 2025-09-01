@@ -38,7 +38,7 @@ If you are in a hurry, you can skip the details and just follow these steps:
        $ conda env create --file environment-3.12-linux.yml --name sage-dev
        $ conda activate sage-dev
 
-    Replace ``environment-3.12-linux.yml`` with the appropriate file for your system.
+   Replace ``environment-3.12-linux.yml`` with the appropriate file for your system.
 
 5. Build and install Sage
 
