@@ -3703,6 +3703,8 @@ class Graph(GenericGraph):
         correspond to the monomial symmetric function `m_{\lambda}`
         (scaled by a constant)::
 
+            sage: m = SymmetricFunctions(ZZ).m()
+            sage: K5 = graphs.CompleteGraph(5)
             sage: m(K5.chromatic_symmetric_function())
             120*m[1, 1, 1, 1, 1]
             sage: m(K5.chromatic_symmetric_function(weights=enumerate([5,2,2,2,1])))
