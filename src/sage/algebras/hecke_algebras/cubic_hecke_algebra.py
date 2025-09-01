@@ -1122,7 +1122,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
     # overloaded inherited methods
     # --------------------------------------------------------------------------
     ############################################################################
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation.
 

@@ -420,7 +420,7 @@ cdef class FreeAlgebra_letterplace(Parent):
         return self._degrees
 
     # Some basic properties of this ring
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
         Tell whether this free algebra is a field.
 
@@ -437,7 +437,7 @@ cdef class FreeAlgebra_letterplace(Parent):
         """
         return (not (self._ngens - self._nb_slackvars)) and self._base.is_field(proof=proof)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -453,7 +453,7 @@ cdef class FreeAlgebra_letterplace(Parent):
         """
         return "Free Associative Unital Algebra on %d generators %s over %s" % (self._ngens - self._nb_slackvars, self.gens(), self._base)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Representation of this free algebra in LaTeX.
 

@@ -167,7 +167,7 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
 
     __len__ = cardinality
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -197,7 +197,7 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             return "Subsets of {0,1}" + extra
         return f"Subsets of {{0,1,...,{self._nbits-1}}}" + extra
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -552,7 +552,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
                                          sorting_key=tuple)
         self._assign_names(names)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -568,7 +568,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         """
         return "The Clifford algebra of the {}".format(self._quadratic_form)
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         """
         Return a string representation of the basis element indexed by ``m``.
 
@@ -594,7 +594,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
             term += self.variable_names()[i]
         return term
 
-    def _latex_term(self, m):
+    def _latex_term(self, m) -> str:
         r"""
         Return a `\LaTeX` representation of the basis element indexed
         by ``m``.
@@ -1480,7 +1480,7 @@ class ExteriorAlgebra(CliffordAlgebra):
         cat = HopfAlgebrasWithBasis(R).FiniteDimensional().Supercommutative().Supercocommutative()
         CliffordAlgebra.__init__(self, QuadraticForm(R, len(names)), names, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1491,7 +1491,7 @@ class ExteriorAlgebra(CliffordAlgebra):
         """
         return "The exterior algebra of rank {} over {}".format(self.ngens(), self.base_ring())
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         """
         Return a string representation of the basis element indexed by
         ``m``.
@@ -1547,7 +1547,7 @@ class ExteriorAlgebra(CliffordAlgebra):
         wedge = unicodedata.lookup('LOGICAL AND')
         return unicode_art(*[self.variable_names()[i] for i in m], sep=wedge)
 
-    def _latex_term(self, m):
+    def _latex_term(self, m) -> str:
         r"""
         Return a `\LaTeX` representation of the basis element indexed
         by ``m``.
@@ -2295,7 +2295,7 @@ class ExteriorAlgebraBoundary(ExteriorAlgebraDifferential):
 
     - :wikipedia:`Exterior_algebra#Lie_algebra_homology`
     """
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         TESTS::
 
@@ -2566,7 +2566,7 @@ class ExteriorAlgebraCoboundary(ExteriorAlgebraDifferential):
                 self._cos_coeff[m] = self._cos_coeff.get(m, zero) + c * k
         ExteriorAlgebraDifferential.__init__(self, E, s_coeff)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         TESTS::
 

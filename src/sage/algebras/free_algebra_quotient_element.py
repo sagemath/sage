@@ -126,7 +126,7 @@ class FreeAlgebraQuotientElement(AlgebraElement):
         else:
             raise TypeError("argument x (= %s) is of the wrong type" % x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -141,7 +141,7 @@ class FreeAlgebraQuotientElement(AlgebraElement):
             mons = Q.monomial_basis()
             return repr_lincomb(zip(mons, cffs), strip_one=True)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 

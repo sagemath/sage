@@ -268,7 +268,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
 
         Parent.__init__(self, base=R, names=names, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -395,7 +395,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
             self._x = x
             AlgebraElement.__init__(self, parent)
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Return a string representation of ``self``.
 
@@ -409,7 +409,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
             """
             return repr(self._x)
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             """
             Return a latex representation of ``self``.
 
@@ -619,7 +619,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
         cat = MagmaticAlgebras(R).Commutative().Unital().FiniteDimensional().WithBasis()
         Parent.__init__(self, base=R, names=names, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -822,7 +822,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
             self._v = v
             AlgebraElement.__init__(self, parent)
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Return a string representation of ``self``.
 
@@ -835,7 +835,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
             """
             return "{} + {}".format(self._s, self._v)
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             r"""
             Return a latex representation of ``self``.
 
@@ -1190,7 +1190,7 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
         cat = MagmaticAlgebras(R).Unital().FiniteDimensional().WithBasis()
         Parent.__init__(self, base=R, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1503,7 +1503,7 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
                         for i in range(3))
             return matrix(PR, [[data[0], data[3], data[4]], [data[6], data[1], data[5]], [data[7], data[8], data[2]]])
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             r"""
             Return a string representation of ``self``.
 
@@ -1518,7 +1518,7 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
             """
             return repr(self._to_print_matrix())
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             r"""
             Return a latex representation of ``self``.
 
