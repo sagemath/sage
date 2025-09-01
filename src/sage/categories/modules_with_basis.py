@@ -1463,7 +1463,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: list(islice(iter(R), 10))  # when this is implemented add Enumerated() to category(R)
                 Traceback (most recent call last):
                 ...
-                NotImplementedError: iteration over infinite base ring not yet implemented
+                NotImplementedError: iteration over infinite base rings not yet implemented
                 sage: R.<x> = LaurentPolynomialRing(Zmod(4))
                 sage: list(islice(iter(R), 20))
                 [0, 1, 2, 3, x, 1 + x, 2 + x, 3 + x, 2*x, 1 + 2*x, 2 + 2*x, 3 + 2*x,
