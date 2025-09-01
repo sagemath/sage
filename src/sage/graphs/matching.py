@@ -1414,13 +1414,8 @@ def matching(G, value_only=False, algorithm='Edmonds',
                     # Add the edge (u, v) to the matching M with its label
                     M.add_edge(u, v, J.edge_label(u, v))
 
-                    # Determine the set of vertices to remove: u, v and all their neighbours
-                    vertices_to_remove = set([u, v])
-                    vertices_to_remove.update(J.neighbors(u))
-                    vertices_to_remove.update(J.neighbors(v))
-
                     # Remove these vertices from the bucket lists and degree_map
-                    for vertex in vertices_to_remove:
+                    for vertex in (u, v):
                         if vertex in degree_map:
                             # Remove from its current bucket
                             degree = degree_map[vertex]
@@ -1430,11 +1425,13 @@ def matching(G, value_only=False, algorithm='Edmonds',
 
                     # Track neighbours whose degrees will decrease after deletion
                     vertices_to_update = set()
-                    for vertex in vertices_to_remove:
-                        vertices_to_update.update(J.neighbors(vertex))
+                    for vertex in (u, v):
+                        for w in J.neighbors(vertex):
+                            if w not in [u, v]:
+                                vertices_to_update.add(w)
 
                     # Remove vertices_to_remove from the graph J
-                    J.delete_vertices(vertices_to_remove)
+                    J.delete_vertices([u, v])
 
                     # Update degrees of remaining vertices and relocate them in buckets
                     for vertex in vertices_to_update:
