@@ -19,8 +19,8 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.rational_field import QQ
 from sage.categories.algebras import Algebras
 from sage.categories.rings import Rings
@@ -57,7 +57,8 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
             q = YokonumaHeckeAlgebra._default_q_param
         if R is None:
             R = q.parent()
-        q = R(q)
+        else:
+            q = R(q)
         if R not in Rings().Commutative():
             raise TypeError("base ring must be a commutative ring")
         if n not in ZZ:
@@ -66,7 +67,19 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
             return YokonumaHeckeAlgebraWeyl(d, n, q, R)
         return YokonumaHeckeAlgebraGL(d, n, q, R)
 
-    _default_q_param = LaurentPolynomialRing(QQ, 'q').gen()
+    @lazy_class_attribute
+    def _default_q_param(cls):
+        """
+        The default ``q`` parameter to ``YokonumaHecke`` constructor if none is provided.
+        Only computed on first usage.
+
+        TESTS::
+
+            sage: algebras.YokonumaHecke(5, 3).q() is algebras.YokonumaHecke._default_q_param
+            True
+        """
+        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+        return LaurentPolynomialRing(QQ, 'q').gen()
 
     def _sage_input_(self, sib, coerced):
         """
