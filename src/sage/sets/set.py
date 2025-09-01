@@ -1552,6 +1552,24 @@ class Set_object_union(Set_object_binary):
         """
         return bool(self._X) or bool(self._Y)
 
+    def an_element(self):
+        """
+        Return an element of ``self``, as per :meth:`Sets.ParentMethods.an_element`.
+
+        TESTS::
+
+            sage: Set(RR).union(Set(CC)).an_element()  # abs tol 1e-14
+            1.00000000000000
+            sage: Set([]).union(Set(CC)).an_element()  # abs tol 1e-14
+            1.00000000000000*I
+        """
+        from sage.categories.sets_cat import EmptySetError
+        try:
+            return self._X.an_element()
+        except (EmptySetError, NotImplementedError):
+            pass
+        return self._Y.an_element()
+
 
 class Set_object_intersection(Set_object_binary):
     """

@@ -674,9 +674,20 @@ class YokonumaHeckeAlgebraWeyl(YokonumaHeckeAlgebra):
         EXAMPLES::
 
             sage: Y = algebras.YokonumaHecke(2, ['F',4])
-            sage: TestSuite(Y).run()
+
+        TESTS:
+
+        Run test suites. Note that ``simple_element`` is used instead of just
+        ``Y.an_element()`` because after :issue:`39399`, ``Y.an_element()``
+        returns a complex object which makes the test suite very slow.
+        We can change ``simple_element`` back to ``Y.an_element()`` if
+        the implementation becomes faster.
+
+            sage: simple_element = Y.monomial(Y.basis().keys().an_element())
+            sage: TestSuite(Y).run(elements=[simple_element])
             sage: Y = algebras.YokonumaHecke(3, ['G',2])
-            sage: elts = list(Y.gens()) + [Y.an_element()] + [sum(Y.gens())]
+            sage: simple_element = Y.monomial(Y.basis().keys().an_element())
+            sage: elts = list(Y.gens()) + [simple_element] + [sum(Y.gens())]
             sage: TestSuite(Y).run(elements=elts)  # long time
         """
         from sage.categories.sets_cat import cartesian_product
