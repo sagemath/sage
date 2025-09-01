@@ -72,7 +72,7 @@ cdef class Octonion_generic(AlgebraElement):
         data = [p for p in enumerate(self.vec) if p[1]]
         return repr_from_monomials(data, self._parent._repr_term)
 
-    def _latex_(self) -> str:
+    def _latex_(self):
         r"""
         Return a `\LaTeX` representation of ``self``.
 
@@ -856,7 +856,7 @@ class OctonionAlgebra(UniqueRepresentation, Parent):
             ret += f" with parameters ({a}, {b}, {c})"
         return ret
 
-    def _latex_(self) -> str:
+    def _latex_(self):
         r"""
         Return a latex representation of ``self``.
 

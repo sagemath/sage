@@ -320,7 +320,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             return "0"
         return s[1:]
 
-    def _latex_(self) -> str:
+    def _latex_(self):
         r"""
         Return the LaTeX representation of ``self``.
 

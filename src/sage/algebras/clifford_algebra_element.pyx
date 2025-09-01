@@ -51,7 +51,7 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
         """
         return repr_from_monomials(self.list(), self._parent._repr_term)
 
-    def _latex_(self) -> str:
+    def _latex_(self):
         r"""
         Return a `\LaTeX` representation of ``self``.
 
