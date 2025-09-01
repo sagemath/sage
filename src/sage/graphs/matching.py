@@ -1218,7 +1218,8 @@ def matching(G, value_only=False, algorithm='Edmonds',
         sage: g = graphs.PetersenGraph()
         sage: m = g.matching(algorithm='Micali-Vazirani'); h = Graph(m)
         sage: # h is a 1-regular spanning subgraph of g
-        sage: all(h.degree(v) == 1 for v in g) and set(h) == set(g) and h.size() == g.order() / 2 and h.is_subgraph(g)
+        sage: all(h.degree(v) == 1 for v in g) and set(h) == set(g) and \
+        ....: h.size() == g.order() / 2 and h.is_subgraph(g, induced=False, up_to_isomorphism=False)
         True
         sage: g = graphs.CycleGraph(5)
         sage: g.matching(algorithm='Micali-Vazirani', value_only=True)
