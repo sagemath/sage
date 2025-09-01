@@ -1225,8 +1225,9 @@ def matching(G, value_only=False, algorithm='Edmonds',
         sage: g.matching(algorithm='Micali-Vazirani', value_only=True)
         2
         sage: g = graphs.SylvesterGraph()
-        sage: m = g.matching(algorithm='Micali-Vazirani'); h = Graph(m)
-        sage: n = g.matching(algorithm='Edmonds'); k = Graph(n)               # needs sage.networkx
+        sage: m = g.matching(algorithm='Micali-Vazirani')
+        sage: n = g.matching(algorithm='Edmonds')                                   # needs sage.networkx
+        sage: h, k = Graph(m), Graph(n)
         sage: h.is_isomorphic(k)
         True
 
