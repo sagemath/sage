@@ -12,7 +12,7 @@ plane. For general one parameter families of polynomials, the mandelbrot set
 is the parameter values for which the orbits of all critical points remains
 bounded.
 
-The Julia set for a given parameter `c` is the set of complex numbers for which
+The filled Julia set for a given parameter `c` is the set of complex numbers for which
 the function `f_c(z)` is bounded under iteration.
 
 AUTHORS:
@@ -93,8 +93,13 @@ def mandelbrot_plot(f=None, **kwds):
     - ``pixel_count`` -- long (default: ``500``); side length of
       image in number of pixels
 
-    - ``base_color`` -- RGB color (default: ``[40, 40, 40]``); color
-      used to determine the coloring of set
+    - ``base_color`` -- RGB color (default: ``[40, 40, 40]``); list of colors
+      used to determine the coloring of everything outside the Mandelbrot set.
+      The first colour in the list colors the points further away from the
+      Mandelbrot set. The last colour in the list colors the points right next
+      to the Mandelbrot set. If only one colour is provided a list of that
+      colour and the colour ``'white'`` will be created. Can also be specified
+      as a colormap
 
     - ``level_sep`` -- long (default: 1); number of iterations
       between each color level
@@ -104,6 +109,9 @@ def mandelbrot_plot(f=None, **kwds):
 
     - ``interact`` -- boolean (default: ``False``); controls whether
       plot will have interactive functionality
+
+    - ``set_color`` -- RGB color (default: ``'black'``); color used for the
+      points inside the Mandelbrot set
 
     OUTPUT: 24-bit RGB image of the Mandelbrot set in the complex plane
 
@@ -136,7 +144,8 @@ def mandelbrot_plot(f=None, **kwds):
         IntSlider(value=500, description='Pixels', max=1000, min=10),
         IntSlider(value=1, description='Color sep', max=20, min=1),
         IntSlider(value=30, description='# Colors', min=1),
-        ColorPicker(value='#ff6347', description='Base color'), Output()),
+        ColorPicker(value='#ff6347', description='Base color'),
+        ColorPicker(value='#000000', description='Set color'), Output()),
         _dom_classes=('widget-interact',))
 
     ::
@@ -150,7 +159,8 @@ def mandelbrot_plot(f=None, **kwds):
         IntSlider(value=500, description='Pixels', max=1000, min=10),
         IntSlider(value=1, description='Color sep', max=20, min=1),
         IntSlider(value=75, description='# Colors', min=1),
-        ColorPicker(value='#ff6347', description='Base color'), Output()),
+        ColorPicker(value='#ff6347', description='Base color'),
+        ColorPicker(value='#000000', description='Set color'), Output()),
         _dom_classes=('widget-interact',))
 
     Polynomial maps can be defined over a multivariate polynomial ring or a
@@ -185,6 +195,27 @@ def mandelbrot_plot(f=None, **kwds):
         Traceback (most recent call last):
         ...
         NotImplementedError: interact only implemented for z^2 + c
+
+    The colors of the Mandelbrot set can be changed ::
+
+        sage: mandelbrot_plot(base_color='red', set_color='blue')
+        500x500px 24-bit RGB image
+        sage: mandelbrot_plot(base_color=['red', 'yellow'], set_color='blue')
+        500x500px 24-bit RGB image
+        sage: mandelbrot_plot(base_color=['red', 'yellow', 'green'], set_color='blue')
+        500x500px 24-bit RGB image
+        sage: mandelbrot_plot(base_color=[[255, 0, 0], [0, 255, 0], [0, 0, 255]], set_color='white')
+        500x500px 24-bit RGB image
+        sage: mandelbrot_plot(base_color=[(255, 0, 0), (0, 255, 0), (0, 0, 255)], set_color='white')
+        500x500px 24-bit RGB image
+        sage: mandelbrot_plot(base_color=((255, 0, 0), (0, 255, 0), (0, 0, 255)), set_color='brown')
+        500x500px 24-bit RGB image
+        sage: mandelbrot_plot(base_color=[[1, 0, 0], [0, 1, 0], [0, 0, 1]], set_color='grey')
+        500x500px 24-bit RGB image
+        sage: import matplotlib as mpl
+        sage: cmap = mpl.colormaps['plasma']
+        sage: mandelbrot_plot(base_color=cmap, set_color='black')
+        500x500px 24-bit RGB image
     """
     parameter = kwds.pop("parameter", None)
     x_center = kwds.pop("x_center", 0.0)
@@ -196,6 +227,17 @@ def mandelbrot_plot(f=None, **kwds):
     number_of_colors = kwds.pop("number_of_colors", 30)
     interacts = kwds.pop("interact", False)
     base_color = kwds.pop("base_color", Color('tomato'))
+    set_color = kwds.pop("set_color", 'black')
+
+    try:
+        base_color = Color(base_color)
+    except (ValueError, TypeError):
+        from matplotlib.colors import Colormap
+        if not isinstance(base_color, list) and not isinstance(base_color, Colormap) and not isinstance(base_color, tuple):
+            raise ValueError("base_color must be a str, Color, list, or Colormap")
+    if interacts and not isinstance(base_color, Color):
+        base_color = Color('steelblue')
+
     # Check if user specified maximum number of iterations
     given_iterations = True
     if max_iteration is None:
@@ -203,25 +245,35 @@ def mandelbrot_plot(f=None, **kwds):
         max_iteration = 500
         given_iterations = False
 
-    from ipywidgets.widgets import FloatSlider, IntSlider, ColorPicker, interact
-    widgets = dict(
-                   x_center=FloatSlider(min=-1.0, max=1.0, step=EPS,
-                                          value=x_center, description="Real center"),
-                   y_center=FloatSlider(min=-1.0, max=1.0, step=EPS,
-                                          value=y_center, description="Imag center"),
-                   image_width=FloatSlider(min=EPS, max=4.0, step=EPS,
-                                             value=image_width, description='Width'),
-                   max_iteration=IntSlider(min=0, max=1000,
-                                             value=max_iteration, description='Iterations'),
-                   pixel_count=IntSlider(min=10, max=1000,
-                                           value=pixel_count, description='Pixels'),
-                   level_sep=IntSlider(min=1, max=20,
-                                         value=level_sep, description="Color sep"),
-                   color_num=IntSlider(min=1, max=100,
-                                         value=number_of_colors, description="# Colors"),
-                   base_color=ColorPicker(value=Color(base_color).html_color(),
-                                            description="Base color"),
-                   )
+    if interacts:
+        from ipywidgets.widgets import FloatSlider, IntSlider, ColorPicker, interact
+        widgets = dict(
+                       x_center=FloatSlider(min=-1.0, max=1.0, step=EPS,
+                                            value=x_center,
+                                            description="Real center"),
+                       y_center=FloatSlider(min=-1.0, max=1.0, step=EPS,
+                                            value=y_center,
+                                            description="Imag center"),
+                       image_width=FloatSlider(min=EPS, max=4.0, step=EPS,
+                                               value=image_width,
+                                               description='Width'),
+                       max_iteration=IntSlider(min=0, max=1000,
+                                               value=max_iteration,
+                                               description='Iterations'),
+                       pixel_count=IntSlider(min=10, max=1000,
+                                             value=pixel_count,
+                                             description='Pixels'),
+                       level_sep=IntSlider(min=1, max=20,
+                                           value=level_sep,
+                                           description="Color sep"),
+                       color_num=IntSlider(min=1, max=100,
+                                           value=number_of_colors,
+                                           description="# Colors"),
+                       base_color=ColorPicker(value=Color(base_color).html_color(),
+                                              description="Base color"),
+                       set_color=ColorPicker(value=Color(set_color).html_color(),
+                                             description="Set color"),
+                       )
 
     if f is None:
         # Quadratic map f = z^2 + c
@@ -232,7 +284,7 @@ def mandelbrot_plot(f=None, **kwds):
         else:
             return fast_mandelbrot_plot(x_center, y_center, image_width,
              max_iteration, pixel_count, level_sep, number_of_colors,
-             base_color)
+             base_color, set_color)
 
     else:
         if parameter is None:
@@ -271,7 +323,7 @@ def mandelbrot_plot(f=None, **kwds):
             else:
                 return fast_mandelbrot_plot(x_center, y_center, image_width,
                  max_iteration, pixel_count, level_sep, number_of_colors,
-                 base_color)
+                 base_color, set_color)
         else:
             if interacts:
                 raise NotImplementedError("interact only implemented for z^2 + c")
@@ -284,7 +336,7 @@ def mandelbrot_plot(f=None, **kwds):
                 # Mandelbrot of General Polynomial Map
                 return polynomial_mandelbrot(f, parameter, x_center, y_center,
                  image_width, max_iteration, pixel_count, level_sep,
-                 number_of_colors, base_color)
+                 number_of_colors, base_color, set_color)
 
 
 def external_ray(theta, **kwds):
@@ -502,14 +554,14 @@ def kneading_sequence(theta):
 
 def julia_plot(f=None, **kwds):
     r"""
-    Plots the Julia set of a given polynomial ``f``. Users can specify whether
-    they would like to display the Mandelbrot side by side with the Julia set
-    with the ``mandelbrot`` argument. If ``f`` is not specified, this method
-    defaults to `f(z) = z^2-1`.
+    Plots the filled Julia set of a given polynomial ``f``. Users can specify
+    whether they would like to display the Mandelbrot side by side with the
+    filled Julia set with the ``mandelbrot`` argument. If ``f`` is not specified,
+    this method defaults to `f(z) = z^2-1`.
 
-    The Julia set of a polynomial ``f`` is the set of complex numbers `z` for
-    which the function `f(z)` is bounded under iteration. The Julia set can
-    be visualized by plotting each point in the set in the complex plane.
+    The filled Julia set of a polynomial ``f`` is the set of complex numbers `z`
+    for which the function `f(z)` is bounded under iteration. The filled Julia
+    set can be visualized by plotting each point in the set in the complex plane.
     Julia sets are examples of fractals when plotted in the complex plane.
 
     ALGORITHM:
@@ -522,18 +574,18 @@ def julia_plot(f=None, **kwds):
     any `k < N`, `|f^{k}(p)| > R_c`, we stop the iteration and assign a color
     to the point `p` based on how quickly `p` escaped to infinity under
     iteration of `f`. If `|f^{i}(p)| \leq R_c` for all `i \leq N`, we assume
-    `p` is in the Julia set and assign the point `p` the color black.
+    `p` is in the filled Julia set and assign the point `p` the color black.
 
     INPUT:
 
     - ``f`` -- input polynomial (default: ``z^2 - 1``)
 
-    - ``period`` -- list (default: ``None``); returns the Julia set
+    - ``period`` -- list (default: ``None``); returns the filled Julia set
       for a random `c` value with the given (formal) cycle structure
 
     - ``mandelbrot`` -- boolean (default: ``True``); when set to
       ``True``, an image of the Mandelbrot set is appended to the right of the
-      Julia set
+      filled Julia set
 
     - ``point_color`` -- RGB color (default: ``'tomato'``);
       color of the point `c` in the Mandelbrot set (any valid input for Color)
@@ -553,8 +605,13 @@ def julia_plot(f=None, **kwds):
     - ``pixel_count`` -- long (default: ``500``); side length of
       image in number of pixels
 
-    - ``base_color`` -- hex color (default: ``'steelblue'``); color
-      used to determine the coloring of set (any valid input for Color)
+    - ``base_color`` -- RGB color (default: ``'steelblue'``); list of colors
+      used to determine the coloring of everything outside the filled Julia set.
+      The first colour in the list colors the points further away from the
+      filled Julia set. The last colour in the list colors the points right next
+      to the filled Julia set. If only one colour is provided a list of that
+      colour and the colour ``'white'`` will be created. Can also be specified
+      as a colormap
 
     - ``level_sep`` -- long (default: 1); number of iterations
       between each color level
@@ -565,7 +622,10 @@ def julia_plot(f=None, **kwds):
     - ``interact`` -- boolean (default: ``False``); controls whether
       plot will have interactive functionality
 
-    OUTPUT: 24-bit RGB image of the Julia set in the complex plane
+    - ``set_color`` -- RGB color (default: ``'black'``); color used for the
+      points inside the filled Julia set
+
+    OUTPUT: 24-bit RGB image of the filled Julia set in the complex plane
 
     .. TODO::
 
@@ -579,7 +639,7 @@ def julia_plot(f=None, **kwds):
         sage: julia_plot()
         1001x500px 24-bit RGB image
 
-    To display only the Julia set, set ``mandelbrot`` to ``False``::
+    To display only the filled Julia set, set ``mandelbrot`` to ``False``::
 
         sage: julia_plot(mandelbrot=False)
         500x500px 24-bit RGB image
@@ -591,7 +651,7 @@ def julia_plot(f=None, **kwds):
         sage: julia_plot(f)  # long time
         500x500px 24-bit RGB image
 
-    To display an interactive plot of the Julia set in the Notebook,
+    To display an interactive plot of the filled Julia set in the Notebook,
     set ``interact`` to ``True``. (This is only implemented for polynomials of
     the form ``f = z^2 + c``)::
 
@@ -605,8 +665,8 @@ def julia_plot(f=None, **kwds):
         sage: julia_plot(f,interact=True)
         ...interactive(children=(FloatSlider(value=0.5, description='Real c'...
 
-    To return the Julia set of a random `c` value with (formal) cycle structure
-    `(2,3)`, set ``period = [2,3]``::
+    To return the filled Julia set of a random `c` value with (formal) cycle
+    structure `(2,3)`, set ``period = [2,3]``::
 
         sage: julia_plot(period=[2,3])
         1001x500px 24-bit RGB image
@@ -648,6 +708,27 @@ def julia_plot(f=None, **kwds):
         Traceback (most recent call last):
         ...
         NotImplementedError: The interactive plot is only implemented for ...
+
+    The colors of the filled Julia set can be changed ::
+
+        sage: julia_plot(base_color='red', set_color='blue')
+        1001x500px 24-bit RGB image
+        sage: julia_plot(base_color=['red', 'yellow'], set_color='blue')
+        1001x500px 24-bit RGB image
+        sage: julia_plot(base_color=['red', 'yellow', 'green'], set_color='blue')
+        1001x500px 24-bit RGB image
+        sage: julia_plot(base_color=[[255, 0, 0], [0, 255, 0], [0, 0, 255]], set_color='white')
+        1001x500px 24-bit RGB image
+        sage: julia_plot(base_color=[(255, 0, 0), (0, 255, 0), (0, 0, 255)], set_color='white')
+        1001x500px 24-bit RGB image
+        sage: julia_plot(base_color=((255, 0, 0), (0, 255, 0), (0, 0, 255)), set_color='brown')
+        1001x500px 24-bit RGB image
+        sage: julia_plot(base_color=[[1, 0, 0], [0, 1, 0], [0, 0, 1]], set_color='grey')
+        1001x500px 24-bit RGB image
+        sage: import matplotlib as mpl
+        sage: cmap = mpl.colormaps['plasma']
+        sage: julia_plot(base_color=cmap, set_color='black')
+        1001x500px 24-bit RGB image
     """
 
     # extract keyword arguments
@@ -663,6 +744,7 @@ def julia_plot(f=None, **kwds):
     level_sep = kwds.pop("level_sep", 1)
     number_of_colors = kwds.pop("number_of_colors", 30)
     interacts = kwds.pop("interact", False)
+    set_color = kwds.pop("set_color", 'black')
 
     f_is_default_after_all = None
 
@@ -674,7 +756,14 @@ def julia_plot(f=None, **kwds):
         L = F.dynatomic_polynomial(period).subs({x: 0, y: 1}).roots(ring=CC)
         c = L[randint(0, len(L) - 1)][0]
 
-    base_color = Color(base_color)
+    try:
+        base_color = Color(base_color)
+    except (ValueError, TypeError):
+        from matplotlib.colors import Colormap
+        if not isinstance(base_color, list) and not isinstance(base_color, Colormap) and not isinstance(base_color, tuple):
+            raise ValueError("base_color must be a str, Color, list, or Colormap")
+    if interacts and not isinstance(base_color, Color):
+        base_color = Color('steelblue')
     point_color = Color(point_color)
 
     EPS = 0.00001
@@ -707,7 +796,8 @@ def julia_plot(f=None, **kwds):
                 return general_julia(f_poly, x_center, y_center,
                                     image_width, max_iteration,
                                     pixel_count, level_sep,
-                                    number_of_colors, base_color)
+                                    number_of_colors, base_color,
+                                    set_color)
 
     # otherwise we can use fast_julia_plot for z^2 + c
     if f_is_default_after_all or f is None or period is not None:
@@ -742,8 +832,10 @@ def julia_plot(f=None, **kwds):
                                   value=level_sep, description="Color sep"),
                 color_num=IntSlider(min=1, max=100,
                                   value=number_of_colors, description="# Colors"),
-                base_color=ColorPicker(value=base_color.html_color(),
+                base_color=ColorPicker(value=Color(base_color).html_color(),
                                          description="Base color"),
+                set_color=ColorPicker(value=Color(set_color).html_color(),
+                                      description="Set color"),
             )
             if mandelbrot:
                 widgets["point_color"] = ColorPicker(value=point_color.html_color(),
@@ -755,8 +847,9 @@ def julia_plot(f=None, **kwds):
             return julia_helper(c_real, c_imag, x_center, y_center,
                                 image_width, max_iteration, pixel_count,
                                 level_sep, number_of_colors, base_color,
-                                point_color)
+                                point_color, set_color)
         else:  # non-interactive without mandelbrot
             return fast_julia_plot(c_real, c_imag, x_center, y_center,
                                    image_width, max_iteration, pixel_count,
-                                   level_sep, number_of_colors, base_color)
+                                   level_sep, number_of_colors, base_color,
+                                   set_color)
