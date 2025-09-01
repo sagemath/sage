@@ -1486,7 +1486,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
 
                 for (u, v, _) in H.edge_iterator():
                     edge_index = edge_to_index(u, v)
-                    is_prop.discard(edge_index)
+                    prop_edges.discard(edge_index)
                     edge_scanned[edge_index] = -1
 
                 for index in range(1, int(2*H.order()+2)):
@@ -1523,7 +1523,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
                                 next_search_level_vertices.append(v)
                                 predecessor[v].append(u)
                                 successor[u].append(v)
-                                is_prop.add(edge_index)
+                                prop_edges.add(edge_index)
 
                             else:
                                 tenacity = level[u][parity] + level[v][parity] + 1
@@ -1536,7 +1536,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
 
                                 # The case where tenacity is not yet known (possibly due to the even/ odd level of the blossom not yet labeled
                                 else:
-                                    is_prop.discard(edge_index)
+                                    prop_edges.discard(edge_index)
 
                 search_level_vertices = next_search_level_vertices
                 return False
@@ -1599,7 +1599,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
                             edge_index = edge_to_index(vertex, neighbor)
 
                             # In the case were the tenacity of a tenacity_bridges_map was not yet found
-                            if edge_index not in is_prop:
+                            if edge_index not in prop_edges:
                                 tenacity_bridges_map[max_level[vertex] + level[neighbor][0] + 1].append(edge_index)
 
                 search_level_vertices += next_search_level_vertices
@@ -1999,11 +1999,15 @@ def matching(G, value_only=False, algorithm='Edmonds',
             # indexing the edges
             def edge_to_index(i, j):
                 global N
-                if i > j: i, j = j, i
+                if i > j:
+                    i, j = j, i
+
                 # A[i] = (i * (2*N - i - 1)) // 2
                 return (i * (2*N - i - 1)) // 2 + (j - i - 1)
 
             def index_to_edge(k):
+                global N
+
                 # Solve i^2 - (2n-1)i + 2k <= 0 for i, take floor of the smaller root
                 import math
                 i = int(((2*N - 1) - math.sqrt((2*N - 1)**2 - 8*k)) // 2)
@@ -2024,7 +2028,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
             color = [None] * N                                     # type: List[int]
             search_level_vertices = list(range(N))                 # type: List[int]
             edge_scanned = {edge_to_index(u, v): -1 for (u, v, _) in H.edge_iterator()} # type: Dict[int, int]
-            is_prop = set()                                        # type: Set[int]
+            prop_edges = set()                                     # type: Set[int]
 
             M = Graph()
 
