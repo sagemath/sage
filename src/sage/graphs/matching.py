@@ -1216,11 +1216,18 @@ def matching(G, value_only=False, algorithm='Edmonds',
     Setting Algorithm to 'Micali-Vazirani'::
 
         sage: g = graphs.PetersenGraph()
-        sage: g.matching(algorithm='Micali-Vazirani')
-        [(0, 1, None), (2, 3, None), (4, 9, None), (5, 7, None), (6, 8, None)]
-        sage: h = graphs.CycleGraph(5)
-        sage: h.matching(algorithm='Micali-Vazirani', value_only=True)
+        sage: m = g.matching(algorithm='Micali-Vazirani'); h = graph(m)
+        sage: # h is a 1-regular spanning subgraph of g
+        sage: all(h.degree(v) == 1 for v in g) and set(h) == set(g) and h.size() == g.order() / 2 and h.is_subgraph(g)
+        True
+        sage: g = graphs.CycleGraph(5)
+        sage: g.matching(algorithm='Micali-Vazirani', value_only=True)
         2
+        sage: g = graphs.SylvesterGraph()
+        sage: m = g.matching(algorithm='Micali-Vazirani'); h = graph(m)
+        sage: n = g.matching(algorithm='Edmonds'); k = graph(n)               # needs sage.networkx
+        sage: h.is_isomorphic(k)
+        True
 
     TESTS:
 
