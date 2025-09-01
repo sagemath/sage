@@ -5731,8 +5731,7 @@ cdef class RealLiteral(RealNumber):
         """
         if self.literal[0] == '-':
             return RealLiteral(self._parent, self.literal[1:], self.base)
-        else:
-            return RealLiteral(self._parent, '-'+self.literal, self.base)
+        return RealLiteral(self._parent, '-' + self.literal, self.base)
 
     def __float__(self):
         """
