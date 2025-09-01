@@ -1089,9 +1089,9 @@ Environment variables controlling the documentation build
     ``SAGE_JUPYTER_SERVER=http://localhost:8889``, run a local Jupyter server
     by
 
-    .. code-block:: bash
+    .. code-block:: console
 
-        ./sage --notebook=jupyterlab \
+        $ ./sage --notebook=jupyterlab \
                --ServerApp.token='secret' \
                --ServerApp.allow_origin='null' \
                --ServerApp.disable_check_xsrf=true \
