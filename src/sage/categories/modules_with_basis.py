@@ -1472,7 +1472,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             from sage.rings.infinity import Infinity
             R = self.base_ring()
             if R.cardinality() == Infinity:
-                raise NotImplementedError("iteration over infinite base ring not yet implemented")
+                raise NotImplementedError("iteration over infinite base rings not yet implemented")
             iters = []
             zero = R.zero()
             v = []
