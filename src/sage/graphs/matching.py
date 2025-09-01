@@ -1216,7 +1216,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
     Setting Algorithm to 'Micali-Vazirani'::
 
         sage: g = graphs.PetersenGraph()
-        sage: m = g.matching(algorithm='Micali-Vazirani'); h = graph(m)
+        sage: m = g.matching(algorithm='Micali-Vazirani'); h = Graph(m)
         sage: # h is a 1-regular spanning subgraph of g
         sage: all(h.degree(v) == 1 for v in g) and set(h) == set(g) and h.size() == g.order() / 2 and h.is_subgraph(g)
         True
@@ -1224,8 +1224,8 @@ def matching(G, value_only=False, algorithm='Edmonds',
         sage: g.matching(algorithm='Micali-Vazirani', value_only=True)
         2
         sage: g = graphs.SylvesterGraph()
-        sage: m = g.matching(algorithm='Micali-Vazirani'); h = graph(m)
-        sage: n = g.matching(algorithm='Edmonds'); k = graph(n)               # needs sage.networkx
+        sage: m = g.matching(algorithm='Micali-Vazirani'); h = Graph(m)
+        sage: n = g.matching(algorithm='Edmonds'); k = Graph(n)               # needs sage.networkx
         sage: h.is_isomorphic(k)
         True
 
