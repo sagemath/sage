@@ -1219,7 +1219,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
         sage: m = g.matching(algorithm='Micali-Vazirani'); h = Graph(m)
         sage: # h is a 1-regular spanning subgraph of g
         sage: all(h.degree(v) == 1 for v in g) and set(h) == set(g) and \
-        ....: h.size() == g.order() / 2 and h.is_subgraph(g, induced=False, up_to_isomorphism=False)
+        ....: h.size() == g.order() // 2 and h.is_subgraph(g, induced=False, up_to_isomorphism=False)
         True
         sage: g = graphs.CycleGraph(5)
         sage: g.matching(algorithm='Micali-Vazirani', value_only=True)
@@ -1325,7 +1325,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
 
         from sage.graphs.graph import Graph
         from dataclasses import dataclass
-        from typing import cast, Any, List, Tuple, Hashable
+        from typing import Any, List, Tuple, Hashable, Set, Dict
 
         Edge = Tuple[Hashable, Hashable, Any]
 
@@ -1346,42 +1346,12 @@ def matching(G, value_only=False, algorithm='Edmonds',
             if not G.size():
                 return EdgesView(Graph())
 
-            # Global constants
-            INFINITY = float('inf')
 
             @dataclass
             class Petal:
                 base: Hashable
                 peaks: Tuple[Hashable, Hashable]
 
-            # ******************************
-            # Initialization of data structures
-            # ******************************
-            def initialize() -> None:
-                global search_level_vertices, H, M
-                for vertex in H:
-                    if not H.degree(vertex):
-                        H.delete_vertex(vertex)
-                        continue
-
-                    deletion_phase[vertex] = -1
-                    vertex_petal_map[vertex] = None
-                    vertex_bud_map[vertex] = vertex
-                    level[vertex] = [0, INFINITY] # (even_level, odd_level)
-                    min_level[vertex] = 0
-                    max_level[vertex] = INFINITY
-                    predecessor[vertex] = []
-                    successor[vertex] = []
-                    color[vertex] = None
-                    visit_mark[vertex] = None
-                    search_level_vertices.append(vertex)
-
-                for (u, v, l) in H.edge_iterator():
-                    edge_scanned[(u, v, l)], edge_scanned[(v, u, l)] = -1, -1
-                    is_prop[(u, v, l)], is_prop[(v, u, l)] = None, None
-
-                for index in range(1, int(2*H.order()+2)):
-                    tenacity_bridges_map[index] = []
 
             # *************************************
             # Greedy initial maximal matching (so as to reduce the total number of phases)
@@ -1475,6 +1445,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
                                 if old_degree < len(buckets) and vertex in buckets[old_degree]:
                                     buckets[old_degree].remove(vertex)
                                 degree_map[vertex] = new_degree
+
                                 # Ensure buckets list is long enough
                                 if new_degree >= len(buckets):
                                     buckets.extend([set()] * (new_degree - len(buckets) + 1))
@@ -1490,7 +1461,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
             # Start a new phase
             # ******************************
             def start_new_phase() -> None:
-                global search_level_vertices, H, M
+                global search_level_vertices, H, M, INFINITY
                 search_level_vertices = []
 
                 for u in H:
@@ -1516,9 +1487,10 @@ def matching(G, value_only=False, algorithm='Edmonds',
                     color[u] = None
                     visit_mark[u] = None
 
-                for (u, v, l) in H.edge_iterator():
-                    is_prop[(u, v, l)], is_prop[(v, u, l)] = None, None
-                    edge_scanned[(u, v, l)], edge_scanned[(v, u, l)] = -1, -1
+                for (u, v, _) in H.edge_iterator():
+                    edge_index = edge_to_index(u, v)
+                    is_prop.discard(edge_index)
+                    edge_scanned[edge_index] = -1
 
                 for index in range(1, int(2*H.order()+2)):
                     tenacity_bridges_map[index] = []
@@ -1527,7 +1499,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
             # Primary Subroutine: Find min_level of vertices
             # ******************************
             def MIN(search_level: int) -> bool:
-                global search_level_vertices, phase_index, H, M
+                global search_level_vertices, phase_index, H, M, INFINITY
                 next_search_level_vertices = []
                 parity = search_level % 2
 
@@ -1543,10 +1515,10 @@ def matching(G, value_only=False, algorithm='Edmonds',
                         continue
 
                     for v in H.neighbor_iterator(u):
+                        edge_index = edge_to_index(u, v)
                         l = H.edge_label(u, v)
-
-                        if edge_scanned[(u, v, l)] != phase_index and M.has_edge(u, v, l) == parity and deletion_phase[v] != phase_index:
-                            edge_scanned[(u, v, l)], edge_scanned[(v, u, l)] = phase_index, phase_index
+                        if edge_scanned[edge_index] != phase_index and M.has_edge(u, v, l) == parity and deletion_phase[v] != phase_index:
+                            edge_scanned[edge_index] = phase_index
 
                             if min_level[v] > search_level:
                                 min_level[v] = search_level + 1
@@ -1554,18 +1526,20 @@ def matching(G, value_only=False, algorithm='Edmonds',
                                 next_search_level_vertices.append(v)
                                 predecessor[v].append(u)
                                 successor[u].append(v)
-                                is_prop[(u, v, l)], is_prop[(v, u, l)] = True, True
+                                is_prop.add(edge_index)
 
                             else:
-                                tenacity = level[u][parity]+level[v][parity]+1
+                                tenacity = level[u][parity] + level[v][parity] + 1
 
                                 # In the case where tenacity is defined and thus we know which level the bridge will be processed
                                 if tenacity < INFINITY:
-                                    tenacity_bridges_map[tenacity].append((u, v, l))
+                                    if tenacity >= len(tenacity_bridges_map):
+                                        tenacity_bridges_map.extend([] for _ in range(tenacity - len(tenacity_bridges_map) + 1))
+                                    tenacity_bridges_map[tenacity].append(edge_index)
 
                                 # The case where tenacity is not yet known (possibly due to the even/ odd level of the blossom not yet labeled
                                 else:
-                                    is_prop[(u, v, l)], is_prop[(v, u, l)] = False, False
+                                    is_prop.discard(edge_index)
 
                 search_level_vertices = next_search_level_vertices
                 return False
@@ -1577,7 +1551,9 @@ def matching(G, value_only=False, algorithm='Edmonds',
                 global H, M, phase_index, num_augmentations, previous_search_level
                 is_augmented = False
 
-                for (u, v, l) in tenacity_bridges_map[2*search_level + 1]:
+                for edge_index in tenacity_bridges_map[2 * search_level + 1]:
+                    u, v = index_to_edge(edge_index)
+                    l = H.edge_label(u, v)
                     if deletion_phase[u] == phase_index or deletion_phase[v] == phase_index:
                         continue
 
@@ -1589,7 +1565,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
                             augmentation_success = augment(left_support, right_support, (u, v, l), search_level)
                             if augmentation_success:
                                 is_augmented = True
-                                if M.size() == H.order() / 2:
+                                if M.size() == H.order() // 2:
                                     return is_augmented
 
                     else:
@@ -1612,9 +1588,9 @@ def matching(G, value_only=False, algorithm='Edmonds',
             def label_max(support: List[Hashable], search_level: int) -> None:
                 global search_level_vertices, H
 
-                next_search_level_vertices = []
+                next_search_level_vertices: List[int] = []
                 for vertex in support:
-                    max_level[vertex] = 2*search_level + 1 - min_level[vertex]
+                    max_level[vertex] = 2 * search_level + 1 - min_level[vertex]
                     level_parity = max_level[vertex] % 2
 
                     # Record the actual max level on the corresponding parity slot
@@ -1623,11 +1599,12 @@ def matching(G, value_only=False, algorithm='Edmonds',
 
                     if not level_parity:
                         for neighbor in H.neighbor_iterator(vertex):
-                            edge = (vertex, neighbor, H.edge_label(vertex, neighbor))
+                            edge_index = edge_to_index(vertex, neighbor)
 
                             # In the case were the tenacity of a tenacity_bridges_map was not yet found
-                            if not is_prop[edge]:
-                                tenacity_bridges_map[max_level[vertex] + level[neighbor][0] + 1].append(edge)
+                            if edge_index not in is_prop:
+                                tenacity_bridges_map[max_level[vertex] + level[neighbor][0] + 1].append(edge_index)
+
                 search_level_vertices += next_search_level_vertices
 
             # ******************************
@@ -2005,22 +1982,53 @@ def matching(G, value_only=False, algorithm='Edmonds',
             # ******************************
             # Set up global state containers
             # ******************************
-            tenacity_bridges_map = {}
-            deletion_phase = {}
-            visit_mark = {}
-            vertex_petal_map = {}
-            vertex_bud_map = {}
-            level = {}
-            min_level = {}
-            max_level = {}
-            predecessor = {}
-            successor = {}
-            color = {}
-            edge_scanned = {}
-            is_prop = {}
+            global H, M, N, search_level_vertices, phase_index, num_augmentations, INFINITY
+            INFINITY = float('inf')
 
-            global H, M, search_level_vertices, phase_index, num_augmentations
+            # relabel vertices of G to 0..n‑1
             H = G.copy()
+            N = H.order()
+
+            for vertex in H:
+                if not H.degree(vertex):
+                    H.delete_vertex(vertex)
+                    continue
+
+            vertex_to_index_map = H.relabel(inplace=True, return_map=True)
+            index_to_vertex_map = [None] * N
+            for vertex, index in vertex_to_index_map.items():
+                index_to_vertex_map[index] = vertex
+
+            # indexing the edges
+            def edge_to_index(i, j):
+                global N
+                if i > j: i, j = j, i
+                # A[i] = (i * (2*N - i - 1)) // 2
+                return (i * (2*N - i - 1)) // 2 + (j - i - 1)
+
+            def index_to_edge(k):
+                # Solve i^2 - (2n-1)i + 2k <= 0 for i, take floor of the smaller root
+                import math
+                i = int(((2*N - 1) - math.sqrt((2*N - 1)**2 - 8*k)) // 2)
+                a_i = i * (2*N - i - 1) // 2
+                j = k - a_i + i + 1
+                return (i, j)
+
+            tenacity_bridges_map = [[] for _ in range(2 * N + 2)]  # type: List[List[int]]
+            deletion_phase = [-1] * N                              # type: List[int]
+            visit_mark = [None] * N                                # type: List[Any]
+            vertex_petal_map = [None] * N                          # type: List[Any]
+            vertex_bud_map = list(range(N))                        # type: List[int]
+            level = [[0, INFINITY] for _ in range(N)]              # type: List[List[Any]]
+            min_level = [0] * N                                    # type: List[int]
+            max_level = [INFINITY] * N                             # type: List[Any]
+            predecessor = [[] for _ in range(N)]                   # type: List[List[int]]
+            successor = [[] for _ in range(N)]                     # type: List[List[int]]
+            color = [None] * N                                     # type: List[int]
+            search_level_vertices = list(range(N))                 # type: List[int]
+            edge_scanned = {edge_to_index(u, v): -1 for (u, v, _) in H.edge_iterator()} # type: Dict[int, int]
+            is_prop = set()                                        # type: Set[int]
+
             M = Graph()
 
             # ensure all vertices of H are present in M
@@ -2034,7 +2042,6 @@ def matching(G, value_only=False, algorithm='Edmonds',
             # ******************************
 
             there_exists_a_phase = True
-            initialize()
             compute_initial_maximal_matching()
 
             start_new_phase()
@@ -2045,10 +2052,14 @@ def matching(G, value_only=False, algorithm='Edmonds',
                 start_new_phase()
 
                 # Stop early if perfect matching found
-                if M.size() == H.order() / 2:
+                if M.size() == N // 2:
                     break
 
+            # map the numeric vertex labels back to the original labels
+            M.relabel(index_to_vertex_map, inplace=True)
             return EdgesView(M)
+
+
         M = get_micali_vazirani_maximum_cardinality_matching(G.to_simple())
 
         return len(M) if value_only else M
