@@ -1,2 +1,0 @@
-  $ sudo zypper install ffmpeg gnu-free-fonts ImageMagick libjpeg-devel pandoc \
-        texlive texlive-luatex xindy

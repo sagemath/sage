@@ -37,9 +37,9 @@ Build Procedure
 ===============
 
 1. **Obtain the Source**:
-   Clone the SageMath repository:
+    Clone the SageMath repository:
 
-   .. code-block:: console
+    .. code-block:: console
 
         $ git clone https://github.com/sagemath/sage.git
 
@@ -47,15 +47,15 @@ Build Procedure
     `SageMath PyPI project<https://pypi.org/project/sagemath/>`_ or from the
     `GitHub releases <https://github.com/sagemath/sage/releases>`_.
 
-1. **Prepare the Build Environment**:
-   Ensure a clean and consistent build environment with access to all
-   required system libraries and Python packages.
+2. **Prepare the Build Environment**:
+    Ensure a clean and consistent build environment with access to all
+    required system libraries and Python packages.
 
-2. **Build**:
+3. **Build**:
 
     Create a wheel using the ``build`` module:
 
-   .. code-block:: console
+    .. code-block:: console
 
         $ python -m build --wheel --no-isolation
 
@@ -65,24 +65,24 @@ Build Procedure
     use `-Cbuild-dir=build` to specify a build directory, see this
     `Meson-Python issue <https://github.com/mesonbuild/meson-python/issues/671>`_.
 
-3. **Install**:
+4. **Install**:
 
     The resulting wheel can be installed using
 
-   .. code-block:: console
+    .. code-block:: console
 
         $ python -m installer --destdir="<pkgdir>" dist/sagemath-*.whl
 
-   where ``<pkgdir>`` is the directory where you want to install the package
-   (usually a temporary directory for packaging).
+    where ``<pkgdir>`` is the directory where you want to install the package
+    (usually a temporary directory for packaging).
 
 4. **Test the Build**:
 
-   Run the Sage tests to ensure functionality:
+    Run the Sage tests to ensure functionality:
 
     .. code-block:: console
 
-         $ python -m sage.doctest --all
+        $ python -m sage.doctest --all
 
     However, some tests are known to fail, see :issue:`39872`.
 

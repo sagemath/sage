@@ -1,6 +1,0 @@
-  $ brew install bdw-gc boost cddlib cmake curl ecl flint fplll freetype gcc \
-        gd gengetopt gfortran glpk gmp gsl libatomic_ops libffi libiconv \
-        libmpc libpng maxima meson mpfi mpfr nauty ncurses ninja ntl openblas \
-        openssl pari pari-elldata pari-galdata pari-galpol pari-seadata \
-        patchelf pkgconf ppl primecount primesieve python3 python-setuptools \
-        qhull readline singular sqlite suite-sparse texinfo tox xz zeromq zlib

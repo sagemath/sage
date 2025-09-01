@@ -1,6 +1,0 @@
-  $ sudo apt-get install 4ti2 clang coinor-cbc coinor-libcbc-dev fricas \
-        graphviz libfile-slurp-perl libgiac-dev libgraphviz-dev libigraph-dev \
-        libisl-dev libjson-perl libmongodb-perl libnauty-dev libperl-dev \
-        libpolymake-dev libsvg-perl libtbb-dev libterm-readkey-perl \
-        libterm-readline-gnu-perl libxml2-dev libxml-libxslt-perl \
-        libxml-writer-perl lrslib pari-gp2c pdf2svg polymake sbcl xcas

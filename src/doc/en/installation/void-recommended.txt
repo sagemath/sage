@@ -1,2 +1,0 @@
-  $ sudo xbps-install ffmpeg freefont-ttf ImageMagick libjpeg-turbo-devel \
-        pandoc texlive

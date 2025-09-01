@@ -1,2 +1,0 @@
-  $ sudo apt-get install autoconf automake gh git gpgconf libtool \
-        openssh-client

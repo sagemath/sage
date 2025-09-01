@@ -1,1 +1,0 @@
-  $ brew install ffmpeg imagemagick jpeg-turbo pandoc texinfo

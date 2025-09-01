@@ -1,8 +1,0 @@
-  $ sudo pacman -S bc binutils boost brial bzip2 cblas cddlib cliquer cmake \
-        ecl eclib fflas-ffpack fplll gap gc gcc gcc-fortran gd gf2x gfan glpk \
-        gmp-ecm gsl iml lapack lcalc libatomic_ops libbraiding libhomfly \
-        linbox lrcalc m4 m4ri m4rie make maxima-fas meson mpfi nauty ninja \
-        openblas openssl palp pari pari-elldata pari-galdata pari-galpol \
-        pari-seadata patch perl pkgconf planarity ppl primecount primesieve \
-        python python-tox qhull rankwidth readline singular sqlite3 \
-        suitesparse symmetrica sympow tachyon tar which zeromq zlib
