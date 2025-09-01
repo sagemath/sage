@@ -4352,7 +4352,7 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
     if Sigma == 'random':
         for x in range(m):
             for line in L_i[x]:
-                [i, j] = line
+                i, j = line
                 temp = phi[(j, line)][:]
                 for hyp in phi[(i, line)]:
                     rand = randrange(0, len(temp))
@@ -4362,7 +4362,7 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
     elif Sigma == 'fixed':
         for x in range(m):
             for line in L_i[x]:
-                [i, j] = line
+                i, j = line
                 temp = phi[(j, line)][:]
                 for hyp in phi[(i, line)]:
                     val = temp.pop()
