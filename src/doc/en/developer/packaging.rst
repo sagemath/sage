@@ -12,9 +12,11 @@ consider incorporating that library into Sage. The current list of
 available packages are the subdirectories of :sage_root:`build/pkgs/`.
 The installation of packages is done through a bash script located in
 :sage_root:`build/bin/sage-spkg`. This script is typically invoked by
-giving the command::
+giving the command
 
-    [alice@localhost sage]$ ./sage -i <options> <package name>...
+.. code-block:: console
+
+    $ ./sage -i <options> <package name>...
 
 options can be:
 
@@ -181,7 +183,7 @@ automatically placed in :file:`SAGE_ROOT/upstream` during the installation
 process). To package it in Sage, we create a subdirectory containing as
 a minimum the following files:
 
-.. CODE-BLOCK:: text
+.. code-block:: text
 
     SAGE_ROOT/build/pkgs/foo
     |-- checksums.ini
@@ -193,7 +195,7 @@ a minimum the following files:
 
 The following are some additional files which can be added:
 
-.. CODE-BLOCK:: text
+.. code-block:: text
 
     SAGE_ROOT/build/pkgs/foo
     |-- distros
@@ -256,7 +258,7 @@ In the best case, the upstream project can simply be installed by the
 usual configure / make / make install steps. In that case, the
 ``spkg-build.in`` script template would simply consist of:
 
-.. CODE-BLOCK:: bash
+.. code-block:: bash
 
     cd src
     sdh_configure
@@ -267,7 +269,7 @@ See :ref:`section-sdh-helpers` for more on the helper functions
 
 The ``spkg-install.in`` script template would consist of:
 
-.. CODE-BLOCK:: bash
+.. code-block:: bash
 
     cd src
     sdh_make_install
@@ -280,7 +282,7 @@ If there is any meaningful documentation included but not installed by
 ``sdh_make_install`` (which calls ``make install``), then you can add
 something like the following to install it:
 
-.. CODE-BLOCK:: bash
+.. code-block:: bash
 
     if [ "$SAGE_SPKG_INSTALL_DOCS" = yes ] ; then
         sdh_make doc
@@ -295,7 +297,7 @@ and whether building
 
 Slightly modified versions are available:
 
-.. CODE-BLOCK:: bash
+.. code-block:: bash
 
     # No ``-march=native``.
     export CFLAGS=$CFLAGS_NON_NATIVE
@@ -323,13 +325,13 @@ Likewise for :envvar:`CXXFLAGS`, :envvar:`FCFLAGS`, and :envvar:`F77FLAGS`.
     code should go in a separate file (e.g. ``spkg-install.py``), and can
     then be executed from the real ``spkg-install.in`` like:
 
-    .. CODE-BLOCK:: text
+    .. code-block:: text
 
         exec sage-bootstrap-python spkg-install.py
 
     or
 
-    .. CODE-BLOCK:: text
+    .. code-block:: text
 
         exec python3 spkg-install.py
 
@@ -399,7 +401,7 @@ begin with ``sdh_``, which stands for "Sage-distribution helper".
   the last command if it was non-zero, or with 1 otherwise, and print
   an error message. This is typically used like:
 
-  .. CODE-BLOCK:: bash
+  .. code-block:: bash
 
        command || sdh_die "Command failed"
 
@@ -407,7 +409,7 @@ begin with ``sdh_``, which stands for "Sage-distribution helper".
   from stdin. In particular this is useful in conjunction with a heredoc to
   write multi-line error messages:
 
-  .. CODE-BLOCK:: bash
+  .. code-block:: bash
 
       command || sdh_die << _EOF_
       Command failed.
@@ -573,7 +575,7 @@ has some sort of test suite that can be run with the standard ``make
 check`` target. In that case, the ``spkg-check.in`` script template
 would simply contain:
 
-.. CODE-BLOCK:: bash
+.. code-block:: bash
 
     cd src
     $MAKE check
@@ -592,7 +594,7 @@ as ``pip`` and ``setuptools`` are available at the time of building the package.
 The best way to install a ``normal`` Python-based package is to use ``pip``, in which
 case the ``spkg-install.in`` script template might just consist of
 
-.. CODE-BLOCK:: bash
+.. code-block:: bash
 
     cd src && sdh_pip_install .
 
@@ -605,7 +607,7 @@ than just ``python``.  The paths are set by the Sage build system
 so that this runs the correct version of Python.
 For example, the ``scipy`` ``spkg-check.in`` file contains the line
 
-.. CODE-BLOCK:: bash
+.. code-block:: bash
 
     exec python3 spkg-check.py
 
@@ -645,7 +647,7 @@ warranted or why we wish to include or reject certain versions.
 
 For example:
 
-.. CODE-BLOCK:: bash
+.. code-block:: console
 
     $ cat build/pkgs/sphinx/package-version.txt
     3.1.2.p0
@@ -655,7 +657,7 @@ For example:
 
 The comments may include links to GitHub Issues/PRs, as in the following example:
 
-.. CODE-BLOCK:: bash
+.. code-block:: console
 
     $ cat build/pkgs/packaging/version_requirements.txt
     packaging >=18.0
@@ -758,7 +760,7 @@ The SPKG.rst file
 
 The ``SPKG.rst`` file should follow this pattern:
 
-.. CODE-BLOCK:: text
+.. code-block:: text
 
      PACKAGE_NAME: One line description
      ==================================
@@ -809,7 +811,7 @@ Many packages depend on other packages. Consider for example the
 PARI, NTL and FLINT. So the following is the ``dependencies`` file
 for ``eclib``:
 
-.. CODE-BLOCK:: text
+.. code-block:: text
 
     pari ntl flint
 
@@ -821,7 +823,7 @@ For Python packages, common dependencies include ``pip``,
 these, use ``$(PYTHON_TOOLCHAIN)`` instead. For example, here is the
 ``dependencies`` file for ``configparser``:
 
-.. CODE-BLOCK:: text
+.. code-block:: text
 
     $(PYTHON) | $(PYTHON_TOOLCHAIN)
 
@@ -829,7 +831,7 @@ these, use ``$(PYTHON_TOOLCHAIN)`` instead. For example, here is the
 
 If there are no dependencies, you can use
 
-.. CODE-BLOCK:: text
+.. code-block:: text
 
     # no dependencies
 
@@ -840,7 +842,7 @@ There are actually two kinds of dependencies: there are normal
 dependencies and order-only dependencies, which are weaker. The syntax
 for the ``dependencies`` file is
 
-.. CODE-BLOCK:: text
+.. code-block:: text
 
     normal dependencies | order-only dependencies
 
@@ -870,9 +872,11 @@ a dependency if they are configured to be installed. These dependencies
 should be declared in a separate file ``dependencies_optional``.
 
 In order to check that the dependencies of your package are likely
-correct, the following command should work without errors::
+correct, the following command should work without errors
 
-    [alice@localhost sage]$ make distclean && make PACKAGE_NAME
+.. code-block:: console
+
+    $ make distclean && make PACKAGE_NAME
 
 Finally, note that standard packages should only depend on standard
 packages and optional packages should only depend on standard or
@@ -976,7 +980,7 @@ upstream tarball (without the actual version) and its checksums. So if
 upstream is ``$SAGE_ROOT/upstream/FoO-1.3.tar.gz``, create a new file
 ``$SAGE_ROOT/build/pkgs/foo/checksums.ini`` containing only:
 
-.. CODE-BLOCK:: bash
+.. code-block:: bash
 
     tarball=FoO-VERSION.tar.gz
 
@@ -1007,7 +1011,7 @@ to refer to the dot-separated components of a version by ``VERSION_MAJOR``,
 For Python packages available from PyPI, you should use an
 ``upstream_url`` from ``files.pythonhosted.org``, which follows the format
 
-.. CODE-BLOCK:: bash
+.. code-block:: bash
 
     upstream_url=https://files.pythonhosted.org/packages/source/m/matplotlib/matplotlib-VERSION.tar.gz
 
@@ -1032,12 +1036,14 @@ Creating packages
 -----------------
 
 Assuming that you have downloaded
-``$SAGE_ROOT/upstream/FoO-1.3.tar.gz``, you can use::
+``$SAGE_ROOT/upstream/FoO-1.3.tar.gz``, you can use
 
-    [alice@localhost sage]$ ./sage --package create foo                     \
-                                               --version 1.3                \
-                                               --tarball FoO-VERSION.tar.gz \
-                                               --type experimental
+.. code-block:: console
+
+    $ ./sage --package create foo                     \
+                        --version 1.3                \
+                        --tarball FoO-VERSION.tar.gz \
+                        --type experimental
 
 to create ``$SAGE_ROOT/build/pkgs/foo/package-version.txt``,
 ``checksums.ini``, and ``type`` in one step.
@@ -1047,15 +1053,19 @@ the additional argument ``--upstream-url``.  This command will also
 set the ``upstream_url`` field in ``checksums.ini`` described above.
 
 For Python packages available from PyPI, use a PURL (Package URL,
-see `PEP 725 <https://peps.python.org/pep-0725/#concrete-package-specification-through-purl>`_)::
+see `PEP 725 <https://peps.python.org/pep-0725/#concrete-package-specification-through-purl>`_)
 
-    [alice@localhost sage]$ ./sage --package create pkg:pypi/scikit-spatial \
-                                               --type optional
+.. code-block:: console
 
-An equivalent command uses the SPKG name of the new package::
+    $ ./sage --package create pkg:pypi/scikit-spatial \
+                          --type optional
 
-    [alice@localhost sage]$ ./sage --package create scikit_spatial --pypi   \
-                                               --type optional
+An equivalent command uses the SPKG name of the new package
+
+.. code-block:: console
+
+    $ ./sage --package create scikit_spatial --pypi   \
+                          --type optional
 
 Either of these two commands automatically downloads the most recent version
 from PyPI and also obtains most of the necessary information by querying PyPI.
@@ -1076,17 +1086,21 @@ in the file ``version_requirements.txt``. (Make sure that the version in
 ``package-version.txt`` falls within this acceptable version range!)
 
 To create a ``normal`` package instead of a ``wheel`` package (for example, when the
-package requires patching), you can use::
+package requires patching), you can use
 
-    [alice@localhost sage]$ ./sage --package create pkg:pypi/scikit-spatial \
-                                               --source normal              \
-                                               --type optional
+.. code-block:: console
 
-To create a ``pip`` package rather than a ``normal`` or ``wheel`` package, you can use::
+    $ ./sage --package create pkg:pypi/scikit-spatial \
+                          --source normal              \
+                          --type optional
 
-    [alice@localhost sage]$ ./sage --package create pkg:pypi/scikit-spatial \
-                                               --source pip                 \
-                                               --type optional
+To create a ``pip`` package rather than a ``normal`` or ``wheel`` package, you can use
+
+.. code-block:: console
+
+    $ ./sage --package create pkg:pypi/scikit-spatial \
+                          --source pip                 \
+                          --type optional
 
 When the package already exists, ``sage --package create`` overwrites it.
 
@@ -1095,16 +1109,20 @@ Updating packages to a new version
 ----------------------------------
 
 A package that has the ``upstream_url`` information can be updated by
-simply typing::
+simply typing
 
-    [alice@localhost sage]$ ./sage --package update openblas 0.3.79
+.. code-block:: console
+
+    $ ./sage --package update openblas 0.3.79
 
 which will automatically download the archive and update the
 information in ``build/pkgs/openblas/``.
 
-For Python packages available from PyPI, there is another shortcut::
+For Python packages available from PyPI, there is another shortcut
 
-    [alice@localhost sage]$ ./sage --package update-latest pkg:pypi/matplotlib
+.. code-block:: console
+
+    $ ./sage --package update-latest pkg:pypi/matplotlib
     Updating matplotlib: 3.3.0 -> 3.3.1
     Downloading tarball to ...matplotlib-3.3.1.tar.bz2
     [...............................................................]
@@ -1119,9 +1137,11 @@ If you pass the switch ``--commit``, the script will run ``git commit``
 for you.
 
 If you prefer to update a package ``foo`` by making manual
-changes to the files in ``build/pkgs/foo``, you will need to run::
+changes to the files in ``build/pkgs/foo``, you will need to run
 
-    [alice@localhost sage]$ ./sage --package fix-checksum foo
+.. code-block:: console
+
+    $ ./sage --package fix-checksum foo
 
 which will modify the ``checksums.ini`` file with the correct
 checksums.
@@ -1132,9 +1152,11 @@ Obtaining package metrics
 
 The command ``sage --package metrics`` computes machine-readable
 aggregated metrics for all packages in the Sage distribution or a
-given list of packages::
+given list of packages
 
-    [alice@localhost sage]$ ./sage --package metrics
+.. code-block:: console
+
+    $ ./sage --package metrics
     has_file_distros_arch_txt=181
     has_file_distros_conda_txt=289
     has_file_distros_debian_txt=172
@@ -1206,22 +1228,30 @@ At this stage you have a new tarball that is not yet distributed with
 Sage (``FoO-1.3.tar.gz`` in the example of section
 :ref:`section-directory-structure`).
 
-Now you can install the package using::
+Now you can install the package using
 
-    [alice@localhost sage]$ ./sage -i package_name
+.. code-block:: console
 
-or::
+    $ ./sage -i package_name
 
-    [alice@localhost sage]$ ./sage -f package_name
+or
+
+.. code-block:: console
+
+    $ ./sage -f package_name
 
 to force a reinstallation. If your package contains a ``spkg-check``
-script (see :ref:`section-spkg-check`) it can be run with::
+script (see :ref:`section-spkg-check`) it can be run with
 
-    [alice@localhost sage]$ ./sage -i -c package_name
+.. code-block:: console
 
-or::
+    $ ./sage -i -c package_name
 
-    [alice@localhost sage]$ ./sage -f -c package_name
+or
+
+.. code-block:: console
+
+    $ ./sage -f -c package_name
 
 If all went fine, open a PR with the code under
 :sage_root:`build/pkgs`.
@@ -1259,7 +1289,7 @@ When to patch, when to repackage, when to autoconfiscate
 - Sometimes it may seem as if you need to patch a (hand-written)
   ``Makefile`` because it "hard-codes" some paths or compiler flags:
 
-  .. CODE-BLOCK:: diff
+  .. code-block:: diff
 
       --- a/Makefile
       +++ b/Makefile
@@ -1276,7 +1306,7 @@ When to patch, when to repackage, when to autoconfiscate
   Don't use patching for that.  Makefile variables can be overridden
   from the command-line.  Just use the following in ``spkg-install``:
 
-  .. CODE-BLOCK:: bash
+  .. code-block:: console
 
       $(MAKE) DESTDIR="$SAGE_ROOT/local"
 
@@ -1343,7 +1373,7 @@ must have only one "prefix" level in the paths (that is, only one path level
 above the root of the upstream sources being patched).  So a typical patch file
 should look like this:
 
-.. CODE-BLOCK:: diff
+.. code-block:: diff
 
     Add autodoc_builtin_argspec config option
 
@@ -1371,7 +1401,7 @@ a specifically platform), you can place those patches in a subdirectory of
 ``patches/`` and apply them manually using the ``sage-apply-patches`` script.
 For example, considering the layout:
 
-.. CODE-BLOCK:: text
+.. code-block:: text
 
     SAGE_ROOT/build/pkgs/foo
     |-- patches
@@ -1385,7 +1415,7 @@ upstream sources in ``src/`` before running ``spkg-install``.  To conditionally
 apply the patch for Solaris the ``spkg-install`` should contain a section like
 this:
 
-.. CODE-BLOCK:: bash
+.. code-block:: bash
 
     if [ $UNAME == "SunOS" ]; then
         sage-apply-patches -d solaris
@@ -1417,7 +1447,7 @@ We recommend the following workflow for maintaining a set of patches.
 
 - Generate the patches against the ``upstream`` branch:
 
-  .. CODE-BLOCK:: bash
+  .. code-block:: bash
 
       rm -Rf SAGE_ROOT/build/pkgs/PACKAGE/patches
       mkdir SAGE_ROOT/build/pkgs/PACKAGE/patches
@@ -1431,7 +1461,7 @@ We recommend the following workflow for maintaining a set of patches.
   into ``upstream``, then create a new branch and rebase it on top of
   the updated upstream:
 
-  .. CODE-BLOCK:: bash
+  .. code-block:: bash
 
       git checkout sage_package_OLDVERSION
       git checkout -b sage_package_NEWVERSION

@@ -368,6 +368,7 @@ multidocs_is_master = True
 
 # https://sphinx-copybutton.readthedocs.io/en/latest/use.html
 copybutton_prompt_text = r"sage: |[.][.][.][.]: |>>> |[.][.][.] |\$ "
+copybutton_line_continuation_character = "\\"
 copybutton_prompt_is_regexp = True
 copybutton_exclude = '.linenos, .c1'  # exclude single comments (in particular, # optional!)
 copybutton_only_copy_prompt_lines = True

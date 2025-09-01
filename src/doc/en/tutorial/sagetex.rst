@@ -140,7 +140,7 @@ ways to accomplish this.
 - The second way is to use the ``TEXMFLOCAL`` environment variable. If
   you are using the bash shell, you can do
 
-  .. CODE-BLOCK:: shell-session
+  .. code-block:: console
 
       $ export TEXMFLOCAL=SAGE_ROOT/venv/share/texmf
       $ mktexlsr       # update kpathsea ls-R databases
@@ -163,7 +163,7 @@ ways to accomplish this.
   automatically searched for packages. To find out exactly what this
   directory is, do the following on the command line:
 
-  .. CODE-BLOCK:: shell-session
+  .. code-block:: console
 
       $ kpsewhich -var-value=TEXMFHOME
 
@@ -172,7 +172,7 @@ ways to accomplish this.
   :file:`SAGE_ROOT/venv/share/texmf/` into your home ``texmf`` directory
   with a command like
 
-  .. CODE-BLOCK:: shell-session
+  .. code-block:: console
 
       $ cp -R SAGE_ROOT/venv/share/texmf/tex TEXMFHOME
 
@@ -191,7 +191,7 @@ ways to accomplish this.
   TeX directory. Instead of the directory ``TEXMFHOME``, probably the
   best choice is to use the result of
 
-  .. CODE-BLOCK:: shell-session
+  .. code-block:: console
 
       $ kpsewhich -var-value=TEXMFLOCAL
 
@@ -200,7 +200,7 @@ ways to accomplish this.
   directory. Now you need to update TeX's database of packages, which
   you can do simply by running
 
-  .. CODE-BLOCK:: shell-session
+  .. code-block:: console
 
       $ texhash TEXMFLOCAL
 
