@@ -5694,18 +5694,20 @@ cdef class RealLiteral(RealNumber):
     casting into higher precision rings.
     """
 
-    cdef readonly literal
+    cdef readonly str literal
     cdef readonly int base
 
-    def __init__(self, RealField_class parent, x=0, int base=10):
+    def __init__(self, RealField_class parent, str x, int base=10):
         """
         Initialize ``self``.
+
+        Note that the constructor parameters are first passed to :meth:`RealNumber.__cinit__`.
 
         EXAMPLES::
 
             sage: RealField(200)(float(1.3))
             1.3000000000000000444089209850062616169452667236328125000000
-            sage: RealField(200)(1.3)
+            sage: RealField(200)(1.3)  # implicit doctest
             1.3000000000000000000000000000000000000000000000000000000000
             sage: 1.3 + 1.2
             2.50000000000000
@@ -5727,7 +5729,7 @@ cdef class RealLiteral(RealNumber):
             sage: RealField(300)(-(-1.2))
             1.20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
         """
-        if self.literal is not None and self.literal[0] == '-':
+        if self.literal[0] == '-':
             return RealLiteral(self._parent, self.literal[1:], self.base)
         else:
             return RealLiteral(self._parent, '-'+self.literal, self.base)
