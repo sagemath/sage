@@ -1055,6 +1055,12 @@ class PolynomialRing_generic(Ring):
         Strictly speaking this is not necessary because it is already provided by the category
         framework, but before :issue:`39399` this returns the generator, we keep the behavior
         because it is more convenient.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: R.an_element()  # indirect doctest
+            x
         """
         return self.gen()
 
