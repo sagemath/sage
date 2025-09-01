@@ -1346,12 +1346,10 @@ def matching(G, value_only=False, algorithm='Edmonds',
             if not G.size():
                 return EdgesView(Graph())
 
-
             @dataclass
             class Petal:
                 base: Hashable
                 peaks: Tuple[Hashable, Hashable]
-
 
             # *************************************
             # Greedy initial maximal matching (so as to reduce the total number of phases)
@@ -2059,7 +2057,6 @@ def matching(G, value_only=False, algorithm='Edmonds',
             # map the numeric vertex labels back to the original labels
             M.relabel(index_to_vertex_map, inplace=True)
             return EdgesView(M)
-
 
         M = get_micali_vazirani_maximum_cardinality_matching(G.to_simple())
 
