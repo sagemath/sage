@@ -611,19 +611,23 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             generators = self.gens()
 
             if len(generators) == 2:
-                (P,Q) = generators
+                (P, Q) = generators
+                if P.order() % order != 0 or Q.order() % order != 0:
+                    raise ValueError(f'the curve does not have any {order} torsion points defined over the base field')
+                # Multiply P, Q by an appropriate cofactor s.t. both have the correct order
+                P = (P.order() // order) * P
+                Q = (Q.order() // order) * Q
+
             elif len(generators) == 1:
                 P = generators[0]
                 Q = self.zero()
+                if self.order() % order != 0:
+                    raise ValueError(f'the curve does not have any {order} torsion points defined over the base field')
+                # Multiply P, Q by an appropriate cofactor s.t. both have the correct order
+                P = (P.order() // order) * P
+
             else:
-                raise ValueError(f'the curve does not have any generators defined over the base field')
-
-            # Multiply P, Q by an appropriate cofactor s.t. both have the correct order
-            if P.order() % order != 0 or Q.order() % order != 0:
-                raise ValueError(f'the curve does not have any {order} torsion points defined over the base field')
-
-            P = (P.order() // order) * P
-            Q = (Q.order() // order) * Q
+                raise ValueError('the curve does not have any generators defined over the base field')
 
             s = order
             t = order
