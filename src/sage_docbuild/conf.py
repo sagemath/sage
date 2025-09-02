@@ -1078,6 +1078,7 @@ def setup(app):
     app.connect('autodoc-process-docstring', process_docstring_module_title)
     app.connect('autodoc-process-docstring', process_dollars)
     app.connect('autodoc-process-docstring', process_inherited)
+    app.connect('autodoc-process-docstring', process_docstring_aliases)
     if os.environ.get('SAGE_SKIP_TESTS_BLOCKS', False):
         app.connect('autodoc-process-docstring', skip_TESTS_block)
     app.connect('autodoc-skip-member', skip_member)
