@@ -1817,7 +1817,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
             sage: R.<x> = Zmod(6)[]
             sage: (3*x).roots(multiplicities=False)
-            [0, 4, 2]
+            [0, 2, 4]
 
         Test polynomial with many roots:
 
@@ -1920,6 +1920,24 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: f = R.random_element(degree=5000)
             sage: f.roots(multiplicities=False)
             [107295314027801680550847462044796892009, 75545907600948005385964943744536832524]
+
+        Roots of 0 or 1 degree polynomials should be computable without factoring the order:
+            sage: p = random_prime(2^512)
+            sage: q = random_prime(2^512)
+            sage: R.<x> = Zmod(p*q)[]
+            sage: R(1).roots(multiplicities=False)
+            []
+            sage: R(x + 1).roots(multiplicities=False)
+            [20932782399867035867701073235059387032661707299288447557574121838579618476359634211081552977493131969052529752351633191492379453300900478503324525818607507392784556671676101684510085325278750507049307403510107189893569479818927534232271877140880692729275960696100923454176962401202024613799751530640160736972]
+            sage: R(p*x + 1).roots(multiplicities=False)
+            []
+
+        Even when leading coefficient of linear polynomial is not invertible:
+            sage: p = random_prime(2^10)
+            sage: q = random_prime(2^512)
+            sage: R.<x> = Zmod((p**2)*q)[]
+            sage: len(R(p*x + p*q).roots(multiplicities=False))
+            823
         """
 
         # This function only supports roots in an IntegerModRing
@@ -1937,10 +1955,32 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             # Roots of non-zero polynomial over finite fields by factorization
             return f.change_ring(f.base_ring().field()).roots(multiplicities=multiplicities)
 
-        # Zero polynomial is a base case
+        # Constant and linear polynomials are base cases
         if deg < 0:
             # All residue classes are roots of the zero polynomial
             return [*map(self, range(self.cardinality()))]
+        elif deg == 0:
+            return []
+        elif deg == 1:
+            # assume form a*x + b
+            b, a = f.list()
+            if a.is_unit():
+                return [-b * (~a)]
+            else:
+                al, bl = a.lift(), b.lift()
+                # a is not unit => a divides modulus
+                if bl % al != 0:
+                    return [] # No solution
+                else:
+                    c = - ( self(bl / al) )
+
+                    inc = self(self.order() / al)
+
+                    s = set()
+                    while c not in s:
+                        s.add(c)
+                        c += inc
+                    return list(s)
 
         # Finite fields are a base case
         if self.is_field():
