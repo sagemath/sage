@@ -3,12 +3,13 @@ Sphinx configuration shared by sage.misc.sphinxify and sage_docbuild
 
 AUTHORS:
 
-- Matthias Koeppe (2022): initial version
+- Matthias Koeppe, Kwankyu Lee (2022): initial version
 - Vincent Macri (2025-09-01): process_docstring_aliases
 """
 
 # ****************************************************************************
 #       Copyright (C) 2022 Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+#                     2022 Kwankyu Lee <ekwankyu@gmail.com>
 #                     2025 Vincent Macri <vincent.macri@ucalgary.ca>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -61,7 +62,7 @@ def process_docstring_aliases(app, what, name, obj, options, docstringlines):
         docstringlines[:] = [f'alias of :meth:`{original_name}`.']
         return
 
-    # elif what == 'function'
+    # We now have `what == 'function'`
 
     if original_name != '<lambda>':
         docstringlines[:] = [f'alias of :func:`{original_name}`.']
@@ -70,6 +71,7 @@ def process_docstring_aliases(app, what, name, obj, options, docstringlines):
     # If original_name == '<lambda>' then the function is
     # a lambda expression, hence not an alias of something
     # with its own docstring.
+    return
 
 
 def process_directives(app, what, name, obj, options, docstringlines):
