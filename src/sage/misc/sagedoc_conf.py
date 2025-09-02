@@ -27,7 +27,9 @@ default_role = 'math'
 
 
 def process_docstring_aliases(app, what, name, obj, options, docstringlines):
-    """Change the docstrings for aliases to point to the original object."""
+    """
+    Change the docstrings for aliases to point to the original object.
+    """
 
     if what not in ('function', 'method'):
         # Alias detection doesn't make sense for modules.
