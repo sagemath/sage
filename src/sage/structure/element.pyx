@@ -312,6 +312,10 @@ from sage.arith.power cimport generic_power as arith_generic_power
 from sage.arith.numerical_approx cimport digits_to_bits
 from sage.misc.decorators import sage_wraps
 from sage.misc.superseded import deprecation
+from sage.sets.cartesian_product import CartesianProduct
+
+from sage.categories.rings import Rings
+_Rings = Rings()
 
 
 def make_element(_class, _dict, parent):
@@ -3711,9 +3715,9 @@ cdef class Vector(ModuleElementWithMutability):
     cpdef _pairwise_product_(Vector left, Vector right):
         raise TypeError("unsupported operation for '%s' and '%s'" % (parent(left), parent(right)))
 
-    def __truediv__(self, right):
+    def __truediv__(left, right):
         """
-        Divide this vector by a scalar, vector or matrix.
+        Division of the vector ``left`` by the scalar, vector or matrix ``right``.
 
         TESTS::
 
@@ -3729,21 +3733,28 @@ cdef class Vector(ModuleElementWithMutability):
             True
         """
         right = py_scalar_to_element(right)
-        if isinstance(right, RingElement):
-            # Let __mul__ do the job
-            return self * ~right
         if isinstance(right, Vector):
             try:
                 W = (<Vector>right)._parent.submodule([right])
-                return W.coordinates(self)[0] / W.coordinates(right)[0]
+                return W.coordinates(left)[0] / W.coordinates(right)[0]
             except ArithmeticError:
                 if right.is_zero():
                     raise ZeroDivisionError("division by zero vector")
                 else:
                     raise ArithmeticError("vector is not in free module")
+            except AttributeError:
+                raise NotImplementedError("not implemented yet")
         if isinstance(right, Matrix):
-            return right.solve_left(self)
-        raise bin_op_exception('/', self, right)
+            try:
+                return right.solve_left(left)
+            except (NotImplementedError, TypeError):
+                # May not be solvable for some rings eg cartesian product ring
+                # TODO : solve_left should be made possible for cartesian product rings
+                pass
+        if right.parent() in _Rings:
+            # Let __mul__ do the job
+            return left * ~right
+        raise bin_op_exception('/', left, right)
 
     def _magma_init_(self, magma):
         """
@@ -4170,9 +4181,28 @@ cdef class Matrix(ModuleElement):
             sage: a = matrix(ZZ, [[1, 2], [0, 3], [1, 5]])
             sage: (b / a) * a == b
             True
+
+        Test if :issue:`40626` is fixed::
+
+            sage: R = cartesian_product([QQ, QQ])
+            sage: A = matrix(1, 1, [R(2)])
+            sage: A / R(4) # matrix-by-scalar
+            [(1/2, 1/2)]
+            sage: B = matrix(1, 1, [R(3)])
+            sage: A / B # matrix-by-matrix
+            [(2/3, 2/3)]
         """
+        right = py_scalar_to_element(right)
         if isinstance(right, Matrix):
-            return right.solve_left(left)
+            try:
+                return right.solve_left(left)
+            except (NotImplementedError, TypeError):
+                # May not be solvable for some rings eg cartesian product ring
+                # TODO : solve_left should be made possible for cartesian product rings
+                pass
+        if right.parent() in _Rings:
+            # Let __mul__ do the job
+            return left * ~right
         return coercion_model.bin_op(left, right, truediv)
 
     cdef _vector_times_matrix_(matrix_right, Vector vector_left):
