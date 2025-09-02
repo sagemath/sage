@@ -791,6 +791,8 @@ def zero_vector(arg0, arg1=None):
 
 def random_vector(ring, degree=None, *args, **kwds):
     r"""
+    This function is available as ``random_vector(…)`` and ``vector.random(…)``.
+
     Return a vector (or module element) with random entries.
 
     INPUT:
@@ -931,6 +933,11 @@ def random_vector(ring, degree=None, *args, **kwds):
         Traceback (most recent call last):
         ...
         ValueError: degree of a random vector must be nonnegative, not -9
+    
+    We may also use vector.random(...) in place of random_vector(...). ::
+
+        sage: vector.random(10).parent()
+        Ambient free module of rank 10 over the principal ideal domain Integer Ring
     """
     if isinstance(ring, (Integer, int)):
         if degree is not None:
@@ -950,6 +957,9 @@ def random_vector(ring, degree=None, *args, **kwds):
     sparse = kwds.pop('sparse', False)
     entries = [ring.random_element(*args, **kwds) for _ in range(degree)]
     return vector(ring, degree, entries, sparse)
+
+
+vector.random = random_vector
 
 
 cdef class FreeModuleElement(Vector):   # abstract base class
@@ -3619,9 +3629,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             ...
             ArithmeticError: degrees (1 and 2) must be the same
         """
-        return (self.conjugate()).dot_product(right)
+        return self.conjugate().dot_product(right)
 
-    def is_dense(self):
+    def is_dense(self) -> bool:
         """
         Return ``True`` if this is a dense vector, which is just a
         statement about the data structure, not the number of nonzero
@@ -3639,7 +3649,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
     cdef bint is_dense_c(self) noexcept:
         return self.parent().is_dense()
 
-    def is_sparse(self):
+    def is_sparse(self) -> bool:
         """
         Return ``True`` if this is a sparse vector, which is just a
         statement about the data structure, not the number of nonzero
@@ -3657,7 +3667,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
     cdef bint is_sparse_c(self) noexcept:
         return self.parent().is_sparse()
 
-    def is_vector(self):
+    def is_vector(self) -> bool:
         """
         Return ``True``, since this is a vector.
 
@@ -4084,7 +4094,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         if var is None:
             if isinstance(self.coordinate_ring(), sage.rings.abc.CallableSymbolicExpressionRing):
-                from sage.calculus.all import jacobian
+                from sage.calculus.functions import jacobian
                 return jacobian(self, self.coordinate_ring().arguments())
             else:
                 raise ValueError("No differentiation variable specified.")
@@ -4270,6 +4280,50 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         if ring is not None:
             return vector(ring, coeffs)
         return vector(coeffs)
+
+    def compositional_inverse(self, allow_multivalued_inverse=True, **kwargs):
+        """
+        Find the compositional inverse of this symbolic function.
+
+        INPUT: see :meth:`sage.symbolic.expression.Expression.compositional_inverse`
+
+        .. SEEALSO::
+
+            :meth:`sage.symbolic.expression.Expression.compositional_inverse`
+
+        EXAMPLES::
+
+            sage: f(x, y, z) = (y, z, x)
+            sage: f.compositional_inverse()
+            (x, y, z) |--> (z, x, y)
+
+        TESTS::
+
+            sage: f.change_ring(SR)
+            (y, z, x)
+            sage: f.change_ring(SR).compositional_inverse()
+            Traceback (most recent call last):
+            ...
+            ValueError: base ring must be a symbolic expression ring
+        """
+        from sage.rings.abc import CallableSymbolicExpressionRing
+        if not isinstance(self.base_ring(), CallableSymbolicExpressionRing):
+            raise ValueError("base ring must be a symbolic expression ring")
+        from sage.symbolic.ring import SR
+        tmp_vars = [SR.symbol() for _ in range(self.parent().dimension())]
+        input_vars = self.base_ring().args()
+        from sage.symbolic.relation import solve
+        l = solve([a == b for a, b in zip(self.change_ring(SR), tmp_vars)], input_vars, solution_dict=True, **kwargs)
+        if not l:
+            raise ValueError("cannot find an inverse")
+        if len(l) > 1 and not allow_multivalued_inverse:
+            raise ValueError("inverse is multivalued, pass allow_multivalued_inverse=True to bypass")
+        d = l[0]
+        subs_dict = dict(zip(tmp_vars, input_vars))
+        for x in input_vars:
+            if set(d[x].variables()) & set(input_vars):
+                raise ValueError("cannot find an inverse")
+        return self.parent()([d[x].subs(subs_dict) for x in input_vars])
 
 
 # ############################################
@@ -4539,8 +4593,17 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             sage: V = ZZ['x']^5
             sage: 5 * V.0
             (5, 0, 0, 0, 0)
+
+        TESTS:
+
+        Check :issue:`40282` is fixed::
+
+            sage: R.<x> = QQ[]
+            sage: M = span([[x, x^2+1], [1/x, x^3]], R)
+            sage: x * M.basis()[0]
+            (1, x^4)
         """
-        if left._parent is self._parent._base:
+        if left._parent is self._parent.coordinate_ring():
             v = [left._mul_(<RingElement>x) for x in self._entries]
         else:
             v = [left * x for x in self._entries]
@@ -4555,8 +4618,17 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             (-2/3, 0, 2, 2/3*pi)
             sage: v * (2/3)                                                             # needs sage.symbolic
             (-2/3, 0, 2, 2/3*pi)
+
+        TESTS:
+
+        Check :issue:`40282` is fixed::
+
+            sage: R.<x> = QQ[]
+            sage: M = span([[x, x^2+1], [1/x, x^3]], R)
+            sage: M.basis()[0] * x
+            (1, x^4)
         """
-        if right._parent is self._parent._base:
+        if right._parent is self._parent.coordinate_ring():
             v = [(<RingElement>x)._mul_(right) for x in self._entries]
         else:
             v = [x * right for x in self._entries]

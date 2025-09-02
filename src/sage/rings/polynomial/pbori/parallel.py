@@ -5,12 +5,22 @@ PolyBoRi
 Created by Michael Brickenstein on 2008-10-31.
 Copyright 2008 The PolyBoRi Team
 """
-from zlib import compress, decompress
 import copyreg
+from zlib import compress, decompress
 
-from .pbori import if_then_else, BooleSet, CCuddNavigator
-from .PyPolyBoRi import (Polynomial, Ring, WeakRingRef, Monomial, Variable)
-from .gbcore import groebner_basis
+from sage.rings.polynomial.pbori.gbcore import groebner_basis
+from sage.rings.polynomial.pbori.pbori import (
+    BooleSet,
+    CCuddNavigator,
+    Monomial,
+    Polynomial,
+    Variable,
+    if_then_else,
+)
+from sage.rings.polynomial.pbori.PyPolyBoRi import (
+    Ring,
+    WeakRingRef,
+)
 
 
 def to_fast_pickable(l):

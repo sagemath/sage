@@ -1383,7 +1383,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         else:
             _vars = str(self.gens())
 
-        order = self.term_order().singular_str()%dict(ngens=self.ngens())
+        order = self.term_order().singular_str() % dict(ngens=self.ngens())
 
         self.__singular, self.__minpoly = \
                 sage.rings.polynomial.polynomial_singular_interface._do_singular_init_(
@@ -4555,14 +4555,14 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             (x - y) * (x + y) * (x^2 + y^2) * (x^4 + y^4) * (x^8 + y^8) * (x^16 + y^16) * (x^32 + y^32) * (x^64 + y^64) * (x^128 + y^128) * (x^256 + y^256) * (x^512 + y^512) * (x^1024 + y^1024)
         """
         cdef ring *_ring = self._parent_ring
-        cdef poly *ptemp
         cdef intvec *iv
         cdef int *ivv
         cdef ideal *I = NULL
         cdef MPolynomialRing_libsingular parent = self._parent
         cdef int i
 
-        if _ring!=currRing: rChangeCurrRing(_ring)
+        if _ring != currRing:
+            rChangeCurrRing(_ring)
 
         if p_IsConstant(self._poly, _ring):
             return self.constant_coefficient().factor()
@@ -4575,7 +4575,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                 U = self._parent._base(F.unit()).factor()
                 return Factorization(list(U) + FF, unit=U.unit())
             except Exception:
-                raise NotImplementedError("Factorization of multivariate polynomials over %s is not implemented."%self._parent._base)
+                raise NotImplementedError("Factorization of multivariate polynomials over %s is not implemented." % self._parent._base)
 
         iv = NULL
         if _ring != currRing:
@@ -4609,6 +4609,10 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         find ``s_1,...,s_r`` such that ``g = s_1 f_1 + ... + s_r f_r``.
 
         A :exc:`ValueError` exception is raised if ``g (== self)`` does not belong to ``I``.
+
+        INPUT:
+
+        - ``I`` -- an ideal in ``self.parent()`` or tuple of generators of that ideal
 
         EXAMPLES::
 
@@ -4687,14 +4691,13 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         cdef ideal *_I
         cdef MPolynomialRing_libsingular parent = self._parent
         cdef int i = 0
-        cdef int j
         cdef ring *r = self._parent_ring
         cdef ideal *res = NULL
 
         if isinstance(I, MPolynomialIdeal):
             I = I.gens()
 
-        _I = idInit(len(I),1)
+        _I = idInit(len(I), 1)
 
         for f in I:
             if not (isinstance(f,MPolynomial_libsingular)

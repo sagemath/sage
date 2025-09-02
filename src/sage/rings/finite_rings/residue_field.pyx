@@ -710,7 +710,7 @@ class ResidueField_generic(Field):
             OK = OK.ring_of_integers()
         return self.base_ring().has_coerce_map_from(R) or OK.has_coerce_map_from(R)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string describing this residue field.
 
@@ -733,8 +733,8 @@ class ResidueField_generic(Field):
              Univariate Polynomial Ring in t over Finite Field of size 17
         """
         if self.p.ring() is ZZ:
-            return "Residue field of Integers modulo %s"%self.p.gen()
-        return "Residue field %sof %s"%('in %s '%self.gen() if self.degree() > 1 else '', self.p)
+            return "Residue field of Integers modulo %s" % self.p.gen()
+        return "Residue field %sof %s" % ('in %s ' % self.gen() if self.degree() > 1 else '', self.p)
 
     def lift(self, x):
         """

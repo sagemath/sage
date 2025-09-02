@@ -1,9 +1,5 @@
 r"""
-Gelfand-Tsetlin Patterns
-
-AUTHORS:
-
-- Travis Scrimshaw (2013-15-03): Initial version
+Gelfand-Tsetlin patterns
 
 REFERENCES:
 
@@ -19,6 +15,10 @@ REFERENCES:
    A Generating Function of Strict Gelfand Patterns and Some Formulas on
    Characters of General Linear Groups.
    J. Math. Soc. Japan **40** (4), pp. 671--685, 1988.
+
+AUTHORS:
+
+- Travis Scrimshaw (2013-15-03): initial version
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim@ucdavis.edu>
@@ -704,10 +704,9 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
                    for i in range(1, len(gt)) for j in range(len(gt[i]))):
             return False
         # Check if it is strict if applicable
-        if self._strict and any(gt[i][j] == gt[i][j-1] for i in range(len(gt))
-                                for j in range(1, len(gt[i]))):
-            return False
-        return True
+        return not (self._strict and any(gt[i][j] == gt[i][j - 1]
+                                         for i in range(len(gt))
+                                         for j in range(1, len(gt[i]))))
 
     def _repr_(self):
         """

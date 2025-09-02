@@ -15,11 +15,6 @@ from sage.env import SAGE_DOC_SRC, SAGE_DOC
 from sage_docbuild.conf import release, latex_elements, exclude_patterns
 from sage_docbuild.conf import *
 
-
-for tag in feature_tags():
-    tags.add(tag)
-
-
 # Add any paths that contain custom static files (such as style sheets),
 # relative to this directory to html_static_path. They are copied after the
 # builtin static files, so a file named "default.css" will overwrite the
@@ -39,7 +34,7 @@ html_theme_options.update({
 # General information about the project.
 project = "Reference Manual"
 
-# The name for this set of Sphinx documents.
+# The name for this set of Sphinx documents. Do not include release info.
 html_title = project
 html_short_title = project
 

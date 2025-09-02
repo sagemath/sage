@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Diagram and Partition Algebras
+Diagram and partition algebras
 
 AUTHORS:
 
@@ -3543,9 +3543,9 @@ class OrbitBasis(DiagramAlgebra):
         """
         # According to Corollary 4.12 in [BH2017]_, product is zero unless the
         # stacked diagrams "exactly match" in the middle.
-        pi_1 = [frozenset([-i for i in part if i < 0]) for part in d1]
-        pi_2 = [frozenset([i for i in part if i > 0]) for part in d2]
-        if set([part for part in pi_1 if part]) != set([part for part in pi_2 if part]):
+        pi_1 = (frozenset([-i for i in part if i < 0]) for part in d1)
+        pi_2 = (frozenset([i for i in part if i > 0]) for part in d2)
+        if {part for part in pi_1 if part} != {part for part in pi_2 if part}:
             return self.zero()
 
         q = self._q
@@ -3562,10 +3562,10 @@ class OrbitBasis(DiagramAlgebra):
                             yield [x.union(y) for x, y in zip(X, sigma)] + restA + restB
 
         D, removed = d1.compose(d2, check=False)
-        only_top = set([frozenset(part) for part in d1
-                        if all(i > 0 for i in part)])
-        only_bottom = set([frozenset(part) for part in d2
-                           if all(i < 0 for i in part)])
+        only_top = {frozenset(part) for part in d1
+                    if all(i > 0 for i in part)}
+        only_bottom = {frozenset(part) for part in d2
+                       if all(i < 0 for i in part)}
         only_both = only_top.union(only_bottom)
         restD = [P for P in D if frozenset(P) not in only_both]
         term_dict = {PDs(restD + X):

@@ -150,7 +150,7 @@ EOF
             mv configure real_configure
             cp configure_wrapper configure;;
 
-        179|16|63|127)  # no m4 for pkg-config|autotools not installed|or version too old
+        179|16|17|63|127)  # no m4 for pkg-config|autotools not installed|or version too old
             if [ $DOWNLOAD = yes ]; then
                 echo >&2 "Bootstrap failed, downloading required files instead."
                 bootstrap_download || exit $?
@@ -159,6 +159,8 @@ EOF
                     verb="install"
                 elif [ $st -eq 16 ]; then
                     verb="install pkg-config m4 macros for"
+                elif [ $st -eq 17 ]; then
+                    verb="install pkg-config, a.k.a. as pkgconf"
                 else
                     verb="upgrade"
                 fi

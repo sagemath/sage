@@ -1,3 +1,6 @@
+"""
+Union of matroids
+"""
 from sage.matroids.matroid cimport Matroid
 
 cdef class MatroidUnion(Matroid):

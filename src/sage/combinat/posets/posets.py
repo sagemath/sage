@@ -749,9 +749,9 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
     # and is transitively reduced.
     if D.has_loops():
         raise ValueError("Hasse diagram contains loops")
-    elif D.has_multiple_edges():
+    if D.has_multiple_edges():
         raise ValueError("Hasse diagram contains multiple edges")
-    elif cover_relations and not D.is_transitively_reduced():
+    if cover_relations and not D.is_transitively_reduced():
         raise ValueError("Hasse diagram is not transitively reduced")
 
     if element_labels is not None:
@@ -1106,9 +1106,9 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         if self._is_facade:
             return self._elements
-        else:
-            return tuple(self.element_class(self, element, vertex)
-                         for vertex, element in enumerate(self._elements))
+
+        return tuple(self.element_class(self, element, vertex)
+                     for vertex, element in enumerate(self._elements))
 
     # This defines the type (class) of elements of poset.
     Element = PosetElement
@@ -1154,11 +1154,11 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         if isinstance(element, self.element_class) and element.parent() is self:
             return element.vertex
-        else:
-            try:
-                return self._element_to_vertex_dict[element]
-            except KeyError:
-                raise ValueError("element (=%s) not in poset" % element)
+
+        try:
+            return self._element_to_vertex_dict[element]
+        except KeyError:
+            raise ValueError(f"element (={element}) not in poset")
 
     def _vertex_to_element(self, vertex):
         """
@@ -1224,8 +1224,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         if self._is_facade:
             return element
-        else:
-            return element.element
+        return element.element
 
     def __bool__(self) -> bool:
         r"""
@@ -1335,7 +1334,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             return element
         return super().__call__(element)
 
-    def hasse_diagram(self):
+    def hasse_diagram(self) -> DiGraph:
         r"""
         Return the Hasse diagram of the poset as a Sage :class:`DiGraph`.
 
@@ -1378,7 +1377,7 @@ class FinitePoset(UniqueRepresentation, Parent):
                                 rankdir='up',)
         return G
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex method for the poset.
 
@@ -1396,7 +1395,77 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         return self.hasse_diagram()._latex_()
 
-    def _repr_(self):
+    def tikz(self, format=None, edge_labels=False, color_by_label=False,
+            prog='dot', rankdir='up', standalone_config=None,
+            usepackage=None, usetikzlibrary=None, macros=None,
+            use_sage_preamble=None, **kwds):
+        r"""
+        Return a TikzPicture illustrating the poset.
+
+        If ``graphviz`` and ``dot2tex`` are available, it uses these packages for
+        placements of vertices and edges.
+
+        INPUT:
+
+        - ``format`` -- string (default: ``None``), ``'dot2tex'`` or
+          ``'tkz_graph'``. If ``None``, it is set to ``'dot2tex'`` if
+          dot2tex is present, otherwise it is set to ``'tkz_graph'``.
+        - ``edge_labels`` -- bool (default: ``False``)
+        - ``color_by_label`` -- boolean or dictionary or function (default:
+          ``False``); whether to color each edge with a different color
+          according to its label; the colors are chosen along a rainbow, unless
+          they are specified by a function or dictionary mapping labels to
+          colors;
+
+        When using format ``'dot2tex'``, the following inputs are considered:
+
+        - ``prog`` -- string (default: ``'dot'``) the program used for the
+          layout corresponding to one of the software of the graphviz
+          suite: 'dot', 'neato', 'twopi', 'circo' or 'fdp'.
+        - ``rankdir`` -- string (default: ``'up'``), direction of graph layout
+          when prog is ``'dot'``, possible values are  ``'down'``,
+          ``'up'``, ``'right'`` and ``'left'``.
+
+        Additional keywords arguments are forwarded to
+        :meth:`sage.graphs.graph_latex.GraphLatex.set_option`.
+
+        The following inputs define the preamble of the latex standalone
+        document class file containing the tikzpicture:
+
+        - ``standalone_config`` -- list of strings (default: ``["border=4mm"]``);
+          latex document class standalone configuration options
+        - ``usepackage`` -- list of strings (default: ``[]``); latex
+          packages
+        - ``usetikzlibrary`` -- list of strings (default: ``[]``); tikz
+          libraries to use
+        - ``macros`` -- list of strings (default: ``[]``); list of
+          newcommands needed for the picture
+        - ``use_sage_preamble`` -- bool (default: ``None``), if ``None``
+          it is set to ``True`` if and only if format is ``'tkz_graph'``
+
+        OUTPUT:
+
+        An instance of :mod:`sage.misc.latex_standalone.TikzPicture`.
+
+        .. NOTE::
+
+            Prerequisite: dot2tex optional Sage package and graphviz must be
+            installed when using format ``'dot2tex'``.
+
+        EXAMPLES::
+
+            sage: P = Poset(([1,2], [[1,2]]), cover_relations=True)
+            sage: tikz = P.tikz()                   # optional - dot2tex graphviz        # long time
+            sage: _ = tikz.pdf(view=False)          # optional - dot2tex graphviz latex  # long time
+        """
+        G = self.hasse_diagram()
+        return G.tikz(format=format, edge_labels=edge_labels,
+            color_by_label=color_by_label, prog=prog, rankdir=rankdir,
+            standalone_config=standalone_config, usepackage=usepackage,
+            usetikzlibrary=usetikzlibrary, macros=macros,
+            use_sage_preamble=use_sage_preamble, **kwds)
+
+    def _repr_(self) -> str:
         r"""
         Return a string representation of the poset.
 
@@ -2702,27 +2771,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         if not self.cardinality():
             return []
-        H = self._hasse_diagram
-        stock = [(x, x, x) for x in H]
-        poly = [len(stock)]
-        exposant = 0
-        while True:
-            exposant += 1
-            next_stock = []
-            short_stock = [(ch[0], ch[2]) for ch in stock]
-            for xmin, cov_xmin, xmax in stock:
-                for y in H.neighbor_out_iterator(xmax):
-                    if exposant == 1:
-                        next_stock.append((xmin, y, y))
-                    elif (cov_xmin, y) in short_stock:
-                        if H.is_linear_interval(xmin, y):
-                            next_stock.append((xmin, cov_xmin, y))
-            if next_stock:
-                poly.append(len(next_stock))
-                stock = next_stock
-            else:
-                break
-        return poly
+        return list(self._hasse_diagram.linear_intervals_count())
 
     def is_linear_interval(self, x, y) -> bool:
         """
@@ -3053,7 +3102,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             return None
         return self._vertex_to_element(hasse_bot)
 
-    def has_bottom(self):
+    def has_bottom(self) -> bool:
         """
         Return ``True`` if the poset has a unique minimal element, and
         ``False`` otherwise.
@@ -3108,7 +3157,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             return None
         return self._vertex_to_element(hasse_top)
 
-    def has_top(self):
+    def has_top(self) -> bool:
         """
         Return ``True`` if the poset has a unique maximal element, and
         ``False`` otherwise.
@@ -3334,7 +3383,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         sorted_o = sorted(elms, key=self._element_to_vertex)
         return all(self.le(a, b) for a, b in zip(sorted_o, sorted_o[1:]))
 
-    def is_antichain_of_poset(self, elms):
+    def is_antichain_of_poset(self, elms) -> bool:
         """
         Return ``True`` if ``elms`` is an antichain of the poset
         and ``False`` otherwise.
@@ -3442,7 +3491,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             return False
         return all(part.is_series_parallel() for part in parts)
 
-    def is_EL_labelling(self, f, return_raising_chains=False):
+    def is_EL_labelling(self, f, return_raising_chains=False) -> bool | dict:
         r"""
         Return ``True`` if ``f`` is an EL labelling of ``self``.
 
@@ -3851,7 +3900,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             return (nonlocals[0], nonlocals[1])
         return nonlocals[0]
 
-    def is_jump_critical(self, certificate=False):
+    def is_jump_critical(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the poset is jump-critical, and ``False`` otherwise.
 
@@ -3958,8 +4007,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         hasse_rf = self._hasse_diagram.rank_function()
         if hasse_rf is None:
             return None
-        else:
-            return lambda z: hasse_rf(self._element_to_vertex(z))
+        return lambda z: hasse_rf(self._element_to_vertex(z))
 
     def rank(self, element=None):
         r"""
@@ -3988,10 +4036,9 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         if element is None:
             return len(self.level_sets()) - 1
-        elif self.is_ranked():
+        if self.is_ranked():
             return self.rank_function()(element)
-        else:
-            raise ValueError("the poset is not ranked")
+        raise ValueError("the poset is not ranked")
 
     def is_ranked(self) -> bool:
         r"""
@@ -4075,7 +4122,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         rank = rf(maxes[0])
         return all(rf(i) == rank for i in maxes)
 
-    def covers(self, x, y):
+    def covers(self, x, y) -> bool:
         """
         Return ``True`` if ``y`` covers ``x`` and ``False`` otherwise.
 
@@ -4107,7 +4154,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         for e in self._hasse_diagram.neighbor_out_iterator(self._element_to_vertex(x)):
             yield self._vertex_to_element(e)
 
-    def upper_covers(self, x):
+    def upper_covers(self, x) -> list:
         """
         Return the list of upper covers of the element ``x``.
 
@@ -4140,7 +4187,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         for e in self._hasse_diagram.neighbor_in_iterator(self._element_to_vertex(x)):
             yield self._vertex_to_element(e)
 
-    def lower_covers(self, x):
+    def lower_covers(self, x) -> list:
         """
         Return the list of lower covers of the element ``x``.
 
@@ -4159,7 +4206,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         return list(self.lower_covers_iterator(x))
 
-    def cardinality(self):
+    def cardinality(self) -> Integer:
         """
         Return the number of elements in the poset.
 
@@ -4371,7 +4418,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             return dense_matrix.CharacteristicPolynomial().sage()
         return cox_matrix.charpoly()
 
-    def coxeter_smith_form(self, algorithm='singular'):
+    def coxeter_smith_form(self, algorithm='singular') -> list:
         """
         Return the Smith normal form of `x` minus the Coxeter transformation
         matrix.
@@ -4395,29 +4442,33 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-           sage: P = posets.PentagonPoset()
-           sage: P.coxeter_smith_form()                                                 # needs sage.libs.singular
-           [1, 1, 1, 1, x^5 + x^4 + x + 1]
+            sage: P = posets.PentagonPoset()
+            sage: P.coxeter_smith_form()                                                 # needs sage.libs.singular
+            [1, 1, 1, 1, x^5 + x^4 + x + 1]
 
-           sage: P = posets.DiamondPoset(7)
-           sage: prod(P.coxeter_smith_form()) == P.coxeter_polynomial()                 # needs sage.libs.singular
-           True
+            sage: P = posets.DiamondPoset(7)
+            sage: prod(P.coxeter_smith_form()) == P.coxeter_polynomial()                 # needs sage.libs.singular
+            True
 
         TESTS::
 
-           sage: P = posets.PentagonPoset()
-           sage: P.coxeter_smith_form(algorithm='sage')                                 # needs sage.libs.flint
-           [1, 1, 1, 1, x^5 + x^4 + x + 1]
-           sage: P.coxeter_smith_form(algorithm='gap')                                  # needs sage.libs.gap
-           [1, 1, 1, 1, x^5 + x^4 + x + 1]
-           sage: P.coxeter_smith_form(algorithm='pari')                                 # needs sage.libs.pari
-           [1, 1, 1, 1, x^5 + x^4 + x + 1]
-           sage: P.coxeter_smith_form(algorithm='fricas')       # optional - fricas
-           [1, 1, 1, 1, x^5 + x^4 + x + 1]
-           sage: P.coxeter_smith_form(algorithm='maple')        # optional - maple
-           [1, 1, 1, 1, x^5 + x^4 + x + 1]
-           sage: P.coxeter_smith_form(algorithm='magma')        # optional - magma
-           [1, 1, 1, 1, x^5 + x^4 + x + 1]
+            sage: P = posets.PentagonPoset()
+            sage: P.coxeter_smith_form(algorithm='sage')                                 # needs sage.libs.flint
+            [1, 1, 1, 1, x^5 + x^4 + x + 1]
+            sage: P.coxeter_smith_form(algorithm='gap')                                  # needs sage.libs.gap
+            [1, 1, 1, 1, x^5 + x^4 + x + 1]
+            sage: P.coxeter_smith_form(algorithm='pari')                                 # needs sage.libs.pari
+            [1, 1, 1, 1, x^5 + x^4 + x + 1]
+            sage: P.coxeter_smith_form(algorithm='fricas')       # optional - fricas
+            [1, 1, 1, 1, x^5 + x^4 + x + 1]
+            sage: P.coxeter_smith_form(algorithm='maple')        # optional - maple
+            [1, 1, 1, 1, x^5 + x^4 + x + 1]
+            sage: P.coxeter_smith_form(algorithm='magma')        # optional - magma
+            [1, 1, 1, 1, x^5 + x^4 + x + 1]
+            sage: P.coxeter_smith_form(algorithm='nasa')
+            Traceback (most recent call last):
+            ...
+            ValueError: unknown algorithm
 
         .. SEEALSO::
 
@@ -4470,7 +4521,9 @@ class FinitePoset(UniqueRepresentation, Parent):
             fm = fricas(x - c0)
             return list(fricas(fm.name() + "::Matrix(UP(x, FRAC INT))").smith().diagonal().sage())
 
-    def is_meet_semilattice(self, certificate=False):
+        raise ValueError("unknown algorithm")
+
+    def is_meet_semilattice(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the poset has a meet operation, and
         ``False`` otherwise.
@@ -4543,7 +4596,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             return (True, None)
         return True
 
-    def is_join_semilattice(self, certificate=False):
+    def is_join_semilattice(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the poset has a join operation, and ``False``
         otherwise.
@@ -4615,7 +4668,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             return (True, None)
         return True
 
-    def is_isomorphic(self, other, **kwds):
+    def is_isomorphic(self, other, **kwds) -> bool | tuple:
         """
         Return ``True`` if both posets are isomorphic.
 
@@ -4679,7 +4732,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             raise TypeError("'other' is not a finite poset")
         return (self.subposet([self._list[i] for i in x]) for x in self._hasse_diagram.transitive_closure().subgraph_search_iterator(other.hasse_diagram().transitive_closure(), induced=True, return_graphs=False))
 
-    def isomorphic_subposets(self, other):
+    def isomorphic_subposets(self, other) -> list:
         """
         Return a list of subposets of ``self`` isomorphic to ``other``.
 
@@ -4715,7 +4768,8 @@ class FinitePoset(UniqueRepresentation, Parent):
         L = self._hasse_diagram.transitive_closure().subgraph_search_iterator(other._hasse_diagram.transitive_closure(), induced=True, return_graphs=False)
         # Since subgraph_search_iterator returns labelled copies, we
         # remove duplicates.
-        return [self.subposet([self._list[i] for i in x]) for x in sorted({frozenset(y) for y in L})]
+        return [self.subposet([self._list[i] for i in x])
+                for x in sorted({frozenset(y) for y in L})]
 
     # Caveat: list is overridden by the method list above!!!
     def antichains(self, element_constructor=None):
@@ -4808,7 +4862,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         for antichain in self._hasse_diagram.antichains_iterator():
             yield [vertex_to_element(_) for _ in antichain]
 
-    def width(self, certificate=False):
+    def width(self, certificate=False) -> Integer | tuple:
         r"""
         Return the width of the poset (the size of its longest antichain).
 
@@ -4986,7 +5040,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         result.rename("Set of chains of %s" % self)
         return result
 
-    def connected_components(self):
+    def connected_components(self) -> list:
         """
         Return the connected components of the poset as subposets.
 
@@ -5033,7 +5087,7 @@ class FinitePoset(UniqueRepresentation, Parent):
                                     facade=False))
         return result
 
-    def ordinal_summands(self):
+    def ordinal_summands(self) -> list:
         r"""
         Return the ordinal summands of the poset as subposets.
 
@@ -5244,7 +5298,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         return Poset((rees_set, covers), cover_relations=True)
 
-    def factor(self):
+    def factor(self) -> list:
         """
         Factor the poset as a Cartesian product of smaller posets.
 
@@ -6112,7 +6166,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         Relabeling using a dictionary::
 
             sage: P = Poset((divisors(12), attrcall("divides")), linear_extension=True, facade=False)
-            sage: relabeling = {c.element:i for (i,c) in enumerate(P)}
+            sage: relabeling = {c.element: i for i, c in enumerate(P)}
             sage: relabeling
             {1: 0, 2: 1, 3: 2, 4: 3, 6: 4, 12: 5}
             sage: Q = P.relabel(relabeling)
@@ -8003,12 +8057,9 @@ class FinitePoset(UniqueRepresentation, Parent):
             raise ValueError("the poset is not graded")
         levels = self._hasse_diagram.level_sets()
         h = len(levels)
-        for i in range(h // 2):
-            if len(levels[i]) != len(levels[h - 1 - i]):
-                return False
-        return True
+        return all(len(levels[i]) == len(levels[h - 1 - i]) for i in range(h // 2))
 
-    def is_slender(self, certificate=False):
+    def is_slender(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the poset is slender, and ``False`` otherwise.
 
@@ -8085,7 +8136,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             return (True, None)
         return True
 
-    def is_sperner(self):
+    def is_sperner(self) -> bool:
         """
         Return ``True`` if the poset is Sperner, and ``False`` otherwise.
 
@@ -8127,7 +8178,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         N = max(len(level) for level in self._hasse_diagram.level_sets())
         return W <= N
 
-    def is_eulerian(self, k=None, certificate=False):
+    def is_eulerian(self, k=None, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the poset is Eulerian, and ``False`` otherwise.
 
@@ -8245,7 +8296,7 @@ class FinitePoset(UniqueRepresentation, Parent):
                             return False
         return (True, None) if certificate else True
 
-    def is_greedy(self, certificate=False):
+    def is_greedy(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the poset is greedy, and ``False`` otherwise.
 
@@ -8872,7 +8923,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         poly = self._kl_poly(x, y, canonical_labels)
         return poly(q=q)
 
-    def is_induced_subposet(self, other):
+    def is_induced_subposet(self, other) -> bool:
         r"""
         Return ``True`` if the poset is an induced subposet of ``other``, and
         ``False`` otherwise.
@@ -8949,8 +9000,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         from sage.libs.gap.libgap import libgap
         libgap.LoadPackage("QPA")
         L = list(self)
-        g = libgap.Poset(L, [self.principal_order_filter(x) for x in L])
-        return g
+        return libgap.Poset(L, [self.principal_order_filter(x) for x in L])
 
     def _macaulay2_init_(self, macaulay2=None):
         """
@@ -9016,7 +9066,7 @@ class FinitePosets_n(UniqueRepresentation, Parent):
         Parent.__init__(self, category=FiniteEnumeratedSets())
         self._n = n
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -9024,7 +9074,7 @@ class FinitePosets_n(UniqueRepresentation, Parent):
             sage: P._repr_()
             'Posets containing 3 elements'
         """
-        return "Posets containing %s elements" % self._n
+        return f"Posets containing {self._n} elements"
 
     def __contains__(self, P) -> bool:
         """
@@ -9109,7 +9159,7 @@ Posets_all = Posets
 # ------- Miscellaneous functions -------
 
 
-def is_poset(dig):
+def is_poset(dig) -> bool:
     r"""
     Return ``True`` if a directed graph is acyclic and transitively
     reduced, and ``False`` otherwise.

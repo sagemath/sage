@@ -4,7 +4,6 @@ py.install_sources(
   'all.py',
   'all__sagemath_polyhedra.py',
   'axiom.py',
-  'cleaner.py',
   'ecm.py',
   'expect.py',
   'four_ti_2.py',
@@ -22,6 +21,7 @@ py.install_sources(
   'jmoldata.py',
   'kash.py',
   'kenzo.py',
+  'khoca.py',
   'latte.py',
   'lie.py',
   'lisp.py',
@@ -68,6 +68,11 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  if is_windows
+    # Uses posix API
+    continue
+  endif
+
   py.extension_module(
     name,
     sources: pyx,

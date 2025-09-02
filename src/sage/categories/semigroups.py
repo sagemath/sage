@@ -434,19 +434,6 @@ class Semigroups(CategoryWithAxiom):
             TESTS::
 
                 sage: TestSuite(M).run()                                                # needs sage.combinat
-                Failure in _test_inverse:
-                Traceback (most recent call last):
-                ...
-                The following tests failed: _test_inverse
-
-            .. TODO::
-
-                - Fix the failure in TESTS by providing a default
-                  implementation of ``__invert__`` for finite groups
-                  (or even finite monoids).
-                - Provide a default implementation of ``one`` for a
-                  finite monoid, so that we would not need to specify
-                  it explicitly?
             """
             from sage.monoids.automatic_semigroup import AutomaticSemigroup
             return AutomaticSemigroup(generators, ambient=self, one=one,

@@ -1110,7 +1110,8 @@ def OA_10_205():
 
     B = [0, 1, 22, 33, 83, 122, 135, 141, 145, 159, 175, 200, 226, 229, 231, 238, 246]
     pplane = [[(xx+i) % pplane_size for xx in B] for i in range(pplane_size)]
-    baer_subplane = set([i*pplane_size/baer_subplane_size for i in range(baer_subplane_size)])
+    baer_subplane = {i * pplane_size / baer_subplane_size
+                     for i in range(baer_subplane_size)}
 
     p = list(baer_subplane)[0]
 
@@ -1529,8 +1530,8 @@ def OA_17_560():
     # We remove all elements except those from F_{p^alpha} in the last three
     # columns
 
-    elements_of_subgroup = set([x for x in G_set if x.polynomial().degree() < beta])
-    relabel = {G_to_int[v]:i for i,v in enumerate(elements_of_subgroup)}
+    elements_of_subgroup = {x for x in G_set if x.polynomial().degree() < beta}
+    relabel = {G_to_int[v]: i for i, v in enumerate(elements_of_subgroup)}
     for x in range(p**alpha):
         if x not in relabel:
             relabel[x] = None
@@ -2375,11 +2376,11 @@ def QDM_35_7_1_1_7():
     M = [
         [None,None,None,None,None,None,None],
         [   0,   0,   0,   0,   0,   0,   0],
-        [  18, -18,  11, -11,   5,  -5,   4],
+        [  18, -18,  11, -11,   5, -5,   4],
         [  26, -26,  10, -10,  30, -30,  23],
-        [  20, -20,   3,  -3,  33, -33,  23],
-        [   5,  -5,  25, -25,  24, -24,   4],
-        [  17, -17,   4,  -4,  22, -22,   0]
+        [  20, -20,   3, -3,  33, -33,  23],
+        [   5, -5,  25, -25,  24, -24,   4],
+        [  17, -17,   4, -4,  22, -22,   0]
         ]
 
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
@@ -2416,10 +2417,10 @@ def QDM_45_7_1_1_9():
     M = [
         [None,None,None,None,None,None,None,None,None],
         [   0,   0,   0,   0,   0,   0,   0,   0,   0],
-        [   1,  27,  16,   7,  -1, -27, -16,  -7,   3],
-        [  24,  40,   1,  35, -24, -40,  -1, -35,   7],
+        [   1,  27,  16,   7, -1, -27, -16, -7,   3],
+        [  24,  40,   1,  35, -24, -40, -1, -35,   7],
         [  10,  30,  22,  44, -10, -30, -22, -44,   7],
-        [   5,  18,  14,  33,  -5, -18, -14, -33,   3],
+        [   5,  18,  14,  33, -5, -18, -14, -33,   3],
         [  30,  16,  33,  27, -30, -16, -33, -27,   0],
         ]
 

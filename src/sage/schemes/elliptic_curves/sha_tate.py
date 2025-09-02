@@ -329,7 +329,7 @@ class Sha(SageObject):
             Traceback (most recent call last):
             ...
             RuntimeError: Unable to compute the rank, hence generators, with certainty
-            (lower bound=0, generators found=[]).  This could be because Sha(E/Q)[2] is
+            (lower bound=0, generators found=()).  This could be because Sha(E/Q)[2] is
             nontrivial. Try increasing descent_second_limit then trying this command again.
 
         You can increase the ``descent_second_limit`` (in the above example,

@@ -225,8 +225,7 @@ class CenterIndices(IndexedFreeAbelianMonoid):
         ret = set(gens)
         ret.update([self.prod(gens), gens[1] * gens[3]**4, gens[1]**4 * gens[2]**3])
         # Sort the output for uniqueness
-        ret = sorted(ret, key=lambda m: (self.degree(m), m.to_word_list()))
-        return ret
+        return sorted(ret, key=lambda m: (self.degree(m), m.to_word_list()))
 
     def degree(self, m):
         r"""

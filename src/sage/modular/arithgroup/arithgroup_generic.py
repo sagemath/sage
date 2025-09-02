@@ -463,7 +463,8 @@ class ArithmeticSubgroup(Group):
         # Cheap trick: if self is a subgroup of something with no elliptic points,
         # then self has no elliptic points either.
 
-        from .all import Gamma0, CongruenceSubgroupBase
+        from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
+        from sage.modular.arithgroup.congroup_generic import CongruenceSubgroupBase
         if isinstance(self, CongruenceSubgroupBase):
             if self.is_subgroup(Gamma0(self.level())) and Gamma0(self.level()).nu2() == 0:
                 return 0

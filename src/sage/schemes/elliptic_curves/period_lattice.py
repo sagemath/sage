@@ -112,7 +112,7 @@ from sage.categories.morphism import IdentityMorphism
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.modules.free_module import FreeModule_generic_pid
-from sage.rings.complex_mpfr import ComplexField, ComplexNumber, ComplexField_class
+from sage.rings.complex_mpfr import ComplexField, ComplexNumber
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.qqbar import AA, QQbar

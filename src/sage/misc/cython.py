@@ -22,15 +22,14 @@ AUTHORS:
 import builtins
 import os
 import re
-import sys
 import shutil
+import sys
 import webbrowser
 from pathlib import Path
 
-from sage.env import (SAGE_LOCAL, cython_aliases,
-                      sage_include_directories)
+from sage.env import SAGE_LOCAL, cython_aliases, sage_include_directories
 from sage.misc.cachefunc import cached_function
-from sage.misc.sage_ostools import restore_cwd, redirection
+from sage.misc.sage_ostools import redirection, restore_cwd
 from sage.misc.temporary_file import spyx_tmp, tmp_filename
 from sage.repl.user_globals import get_globals
 
@@ -355,20 +354,13 @@ def cython(filename, verbose=0, compile_message=False,
     includes = [os.getcwd()] + standard_includes
 
     # Now do the actual build, directly calling Cython and distutils
+    from distutils.log import set_verbosity
+
+    import Cython.Compiler.Options
     from Cython.Build import cythonize
     from Cython.Compiler.Errors import CompileError
-    import Cython.Compiler.Options
-
-    try:
-        from setuptools.dist import Distribution
-        from setuptools.extension import Extension
-    except ImportError:
-        # Fall back to distutils (stdlib); note that it is deprecated
-        # in Python 3.10, 3.11; https://www.python.org/dev/peps/pep-0632/
-        from distutils.dist import Distribution
-        from distutils.core import Extension
-
-    from distutils.log import set_verbosity
+    from setuptools.dist import Distribution
+    from setuptools.extension import Extension
     set_verbosity(verbose)
 
     Cython.Compiler.Options.annotate = annotate

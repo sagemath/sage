@@ -965,12 +965,12 @@ def RandomProperIntervalGraph(n, seed=None):
         for k in range(2 * np):
             # Choose symbol x_{k+1}
             if random() < ((hx[k] + 2) * (r - hx[k] + 1)) / (2 * (r + 1) * (hx[k] + 1)):
-                # We have choosen symbol [, so we start an interval
+                # We have chosen symbol [, so we start an interval
                 hx.append(hx[k] + 1)
                 intervals[L][0] = k + 1
                 L += 1
             else:
-                # We have choosen symbol ], so we end an interval
+                # We have chosen symbol ], so we end an interval
                 hx.append(hx[k] - 1)
                 intervals[R][1] = k + 1
                 R += 1

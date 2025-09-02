@@ -1670,7 +1670,7 @@ class AssociativeFunctor(ConstructionFunctor):
                 o_degs = [1] * len(other.vars)
             else:
                 o_degs = list(other.degs)
-            self_table = {w: d for w, d in zip(self.vars, deg)}
+            self_table = dict(zip(self.vars, deg))
             for v, d in zip(other.vars, o_degs):
                 if v not in self_vars:
                     deg.append(d)
