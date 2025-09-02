@@ -408,7 +408,6 @@ def find_closest_element(item, lst):
     dists = [(item - l).abs() for l in lst]
     return dists.index(min(dists))
 
-
 def reparameterize_differential_minpoly(minpoly, z0):
     r"""
     Rewrites a minimal polynomial to write is around `z_0`.
@@ -4209,6 +4208,7 @@ def skew_form(M, transformation=False):
                 for r in idx:
                     for c in idx:
                         P[r, c] = 0
+                
                 for r in range(4):
                     for c in range(4):
                         P[idx[r], idx[c]] = T4[r, c]
@@ -4274,7 +4274,6 @@ def skew_form(M, transformation=False):
 
     # reorder 2x2 blocks into a nondecreasing chain (zeros at the end)
     pairs = [(ZZ(M_curr[2 * i, 2 * i + 1]), i) for i in range(pair_count)]
-
     # sort by: nonzero first (ascending), then zeros
     pairs.sort(key=lambda t: (t[0] == 0, t[0]))
     order = []
@@ -4306,7 +4305,7 @@ def poincare_form(M, transformation=False):
     Compute the Poincare normal form of a matrix.
 
     We follow the method described by Martens in [Mar1992]_. Given a matrix M,
-    we first check the GCD of the subdeterminants of M. If it is 1, we can use the
+    we first check the GCD of the subdeterminants of ``M``. If it is 1, we can use the
     we proceed otherwise we factor out a matrix on the left to make the GCD 1.
     We then proceed with the reduction algorithm.
 
@@ -4322,8 +4321,8 @@ def poincare_form(M, transformation=False):
     OUTPUT:
 
     - ``N`` -- the Poincare normal form of M
-    - ``S`` -- the transformation matrix such that S * N * T = M (if ``transformation`` is True)
-    - ``T`` -- the transformation matrix such that S * N * T = M (if ``transformation`` is True)
+    - ``S`` -- the transformation matrix such that ``S * N * T == M`` (if ``transformation`` is True)
+    - ``T`` -- the transformation matrix such that ``S * N * T == M`` (if ``transformation`` is True)
 
     EXAMPLES::
 
@@ -4381,10 +4380,7 @@ def poincare_form(M, transformation=False):
 
     # Step 1: Fix/check subdeterminants
     gcd_subdets = GCD(
-        [
-            block_matrix([M[:, ci] for ci in com], ncols=2 * m).det()
-            for com in combinations(range(n_c), n_r)
-        ]
+        [M[:, com].det() for com in combinations(range(n_c), n_r)]
     )
 
     if gcd_subdets > 1:
@@ -4511,52 +4507,48 @@ def poincare_form(M, transformation=False):
             M_curr *= K
             T *= K
 
-        # Step 3b: Clear all off-diagonal entries in row j
-        while True:
-            changed = False
-            for c in range(g):
-                if c == j:
-                    continue
-                val = int(M_curr[j, c])
-                if val != 0:
-                    A = Matrix.identity(ZZ, g)
-                    A[j, c] = -val
-                    K = symplectic_matrix("3", A, g)
-                    M_curr *= K
-                    T *= K
-                    changed = True
-            if not changed:
-                break
+        # Step 3b: Clear row j right of pivot
+        s_left = int(M_curr[j, j])
 
-        # Step 3c: Zero the right-block entries (j, g, ..., 2g-1)
-        for c in range(g):
-            val = int(M_curr[j, g + c])
-            if val != 0:
-                A = Matrix.zero(ZZ, g, g)
-                A[j, c] = -val
-                A[c, j] = -val
-                K = symplectic_matrix("1", A, g)
-                M_curr *= K
-                T *= K
+        # Clear left-half entries to the right of the pivot (k = j+1..g-1)
+        for k in range(j + 1, g):
+            val = int(M_curr[j, k])
+            if val == 0:
+                continue
+            A = Matrix.identity(ZZ, g)
+            A[j, k] -= val
+            K = symplectic_matrix("3", A, g)
+            M_curr *= K
+            T *= K
 
-        # Step 3d: Clear (m+i, j) for i > j using row shears (type-2)
-        for i in range(j + 1, m):
-            val = int(M_curr[m + i, j])
-            if val != 0:
-                A = Matrix.zero(ZZ, m, m)
-                A[i, j] = -val
-                A[j, i] = -val
-                K = symplectic_matrix("2", A, m)
-                M_curr = K * M_curr
-                S = K * S
+        # Clear entire right half (t = g..2g-1)
+        for t in range(g, 2 * g):
+            val = int(M_curr[j, t])
+            if val == 0:
+                continue
+            tau = t - g
+            Sg = Matrix.zero(ZZ, g, g)
+            sign = 1 if s_left == 1 else -1
+            Sg[j, tau] = -val * sign
+            Sg[tau, j] = -val * sign
+            K = symplectic_matrix("1", Sg, g)
+            M_curr *= K
+            T *= K
+
+    # Step 3c: Clear left-of-pivot entries in the left half using a single type-3 op
+    m_block = M_curr[:m, :m]
+    A = Matrix.identity(ZZ, g)
+    A[:m, :m] = Matrix(ZZ, m_block.inverse())
+    K = symplectic_matrix("3", A, g)
+    M_curr *= K
+    T *= K
 
     # Step 4: Operations on last g-m blocks of each row
     n_tail = g - m
     MJMT = M_curr * J * M_curr.transpose()
-    delta = MJMT[0:m, m : 2 * m]
     for j in range(m):
         r = m + j
-        if int(delta[j, j]) == 1:
+        if int(d_block[j, j]) == 1:
 
             # clear entire right tail
             for tau in range(m, g):
@@ -4613,7 +4605,7 @@ def poincare_form(M, transformation=False):
                 T *= P
             elif c_nz is None:
                 # If no unit, select unit from right, coprime to delta[j,j] and move to m+j
-                d_jj = int(delta[j, j])
+                d_jj = int(d_block[j, j])
                 pivot_col = None
                 for c in range(g + m, 2 * g):
                     val = int(M_curr[r, c])
@@ -4637,7 +4629,7 @@ def poincare_form(M, transformation=False):
                     T *= K
 
                 else:
-                    raise ValueError(
+                    raise ArithmeticError(
                         f"No unit in row {r} coprime to delta[{j},{j}] = {d_jj}"
                     )
 
@@ -4710,10 +4702,10 @@ def poincare_form(M, transformation=False):
                 if val == 0:
                     continue
 
-                d_s = int(delta[s - m, s - m])
+                d_s = int(d_block[s - m, s - m])
                 if val % d_s != 0:
-                    raise ValueError(
-                        f"Divisibility failed at row {s}: {val} not divisible by {d_s}."
+                    raise ArithmeticError(
+                        f"Divisibility failed at row {s}: {val} not divisible by {d_s} (delta entry {s-m})."
                     )
 
                 q = val // d_s
@@ -4742,20 +4734,17 @@ def poincare_form(M, transformation=False):
     Y = M_curr[m : 2 * m, 0:m]
     if not Y.is_zero():
         # Create the clearing matrix as a block matrix
-        E = Matrix.identity(ZZ, m)
-        zero = Matrix.zero(ZZ, m, m)
-        clear_matrix = block_matrix([[E, zero], [-Y, E]])
+        clear_matrix = symplectic_matrix("2", -Y, m)
 
         # Apply
         M_curr = clear_matrix * M_curr
         S = clear_matrix * S
 
-    N = M_curr
-
+    # M_curr is now in Poincaré normal form (it's N)
     if transformation:
-        return N, S.inverse(), T.inverse()
+        return M_curr, S.inverse(), T.inverse()
 
-    return N
+    return M_curr
 
 
 def reduce_riemann_matrix(M, Z):
