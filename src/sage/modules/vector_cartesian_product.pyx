@@ -67,6 +67,7 @@ cdef class Vector_cartesian_product(FreeModuleElement_generic_dense):
 
         # vector-by-scalar division
         if isinstance(other.parent(), CartesianProduct):
+            # __invert__ method does not allow inverting eg 2 in ZZ
             inverted = cartesian_product([~x for x in other.cartesian_factors()])
 
             return self * inverted
