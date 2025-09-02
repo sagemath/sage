@@ -1922,23 +1922,26 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             [107295314027801680550847462044796892009, 75545907600948005385964943744536832524]
 
         Roots of 0 or 1 degree polynomials should be computable without factoring the order:
+            sage: set_random_seed(31337)
             sage: p = random_prime(2^512)
             sage: q = random_prime(2^512)
             sage: R.<x> = Zmod(p*q)[]
             sage: R(1).roots(multiplicities=False)
             []
             sage: R(x + 1).roots(multiplicities=False)
-            [20932782399867035867701073235059387032661707299288447557574121838579618476359634211081552977493131969052529752351633191492379453300900478503324525818607507392784556671676101684510085325278750507049307403510107189893569479818927534232271877140880692729275960696100923454176962401202024613799751530640160736972]
+            [3370329767268559825901742050737977765362112301264016666995728641595783763682895579491491312949884527233896437825100351818777861111199083287936712213803662588205628332090619063390145822822539640664875016851649375480771418576780687530310519702682544247717838214152013112397973300661385457793537189792695633500]
             sage: R(p*x + 1).roots(multiplicities=False)
             []
 
         Even when leading coefficient of linear polynomial is not invertible:
+            sage: set_random_seed(31337)
             sage: p = random_prime(2^10)
             sage: q = random_prime(2^512)
             sage: R.<x> = Zmod((p**2)*q)[]
             sage: len(R(p*x + p*q).roots(multiplicities=False))
-            823
+            857
 
+        Test all linear polynomials modulo 10:
             sage: N = 10 # maybe make a for loop
             sage: R = Zmod(N)
             sage: for f in R["x"].polynomials(1):
@@ -1977,7 +1980,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
                 from sage.arith.misc import gcd, inverse_mod
 
                 al, bl = a.lift(), b.lift()
-                
+
                 N = self.order()
                 g = gcd(al, N)
 
@@ -1992,7 +1995,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
                     _root = self(f.roots(_R, multiplicities=False)[0])
                     inc = self(N/g)
                     return [_root + k*inc for k in range(g)]
-                    
+
 
         # Finite fields are a base case
         if self.is_field():
