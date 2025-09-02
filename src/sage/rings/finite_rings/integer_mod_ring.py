@@ -1938,6 +1938,13 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: R.<x> = Zmod((p**2)*q)[]
             sage: len(R(p*x + p*q).roots(multiplicities=False))
             823
+
+            sage: N = 10 # maybe make a for loop
+            sage: R = Zmod(N)
+            sage: for f in R["x"].polynomials(1):
+            ....:     s1 = set(f.roots(multiplicities=False))
+            ....:     s2 = set(d for d in R if f(d) == 0)
+            ....:     assert s1 == s2, f"{f}: {s1} != {s2}"
         """
 
         # This function only supports roots in an IntegerModRing
@@ -1967,20 +1974,25 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             if a.is_unit():
                 return [-b * (~a)]
             else:
+                from sage.arith.misc import gcd, inverse_mod
+
                 al, bl = a.lift(), b.lift()
-                # a is not unit => a divides modulus
-                if bl % al != 0:
+                
+                N = self.order()
+                g = gcd(al, N)
+
+                if bl % g != 0:
                     return [] # No solution
                 else:
-                    c = - ( self(bl / al) )
+                    # whole eqn divided by g
+                    _R = Zmod(N/g)
+                    assert _R(al / g).is_unit()
 
-                    inc = self(self.order() / al)
-
-                    s = set()
-                    while c not in s:
-                        s.add(c)
-                        c += inc
-                    return list(s)
+                    # single root
+                    _root = self(f.roots(_R, multiplicities=False)[0])
+                    inc = self(N/g)
+                    return [_root + k*inc for k in range(g)]
+                    
 
         # Finite fields are a base case
         if self.is_field():
