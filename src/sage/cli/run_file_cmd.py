@@ -45,6 +45,5 @@ class RunFileCmd:
             else:
                 eval(compile(open(input_file, 'rb').read(), input_file, 'exec'), sage_globals())
         except Exception as e:
-            print(f"An error occurred while executing the file: {e}")
-            return 1
+            raise RuntimeError(f"An error occurred while executing the file: {e}") from e
         return 0
