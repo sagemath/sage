@@ -782,7 +782,8 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         V = self.gens()
         if len(V) > 1:
             return prod(V[j][i]**e for (j, i), e in m)
-        return prod(V[0][i]**e for i, e in m)
+        v = V[0]
+        return prod(v[i]**e for i, e in m)
 
     def __repr__(self):
         """
