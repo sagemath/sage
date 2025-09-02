@@ -1,9 +1,15 @@
 r"""
 Sphinx configuration shared by sage.misc.sphinxify and sage_docbuild
+
+AUTHORS:
+
+- Matthias Koeppe (2022): initial version
+- Vincent Macri (2025-09-01): process_docstring_aliases
 """
 
 # ****************************************************************************
 #       Copyright (C) 2022 Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+#                     2025 Vincent Macri <vincent.macri@ucalgary.ca>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,12 +27,47 @@ default_role = 'math'
 
 
 def process_docstring_aliases(app, what, name, obj, options, docstringlines):
-    """
-    Change the docstrings for aliases to point to the original object.
-    """
-    basename = name.rpartition('.')[2]
-    if hasattr(obj, '__name__') and obj.__name__ != basename:
-        docstringlines[:] = ['See :obj:`%s`.' % name]
+    """Change the docstrings for aliases to point to the original object."""
+
+    if what not in ('function', 'method'):
+        # Alias detection doesn't make sense for modules.
+        # Alias handling is implemented for classes in:
+        # src/sage_docbuild/ext/sage_autodoc.py
+
+        # Since sage_autodoc is supposed to be replaced (issue #30893)
+        # we implement function/method alias handling here rather than
+        # where class alias handling is implemented.
+        return
+
+    if not hasattr(obj, '__name__'):
+        # obj has no __name__
+        # This usually happens with factory functions, which should have their
+        # own docstring anyway.
+        return  # Skip alias detection if __name__ is not present
+
+    obj_name = name.rpartition('.')[2]  # Unqualified name
+    original_name = obj.__name__
+
+    if obj_name == original_name or original_name.startswith('_'):
+        # If obj_name == original_name this is not an alias.
+
+        # If original_name starts with '_' then this is a public alias
+        # of a private function/method and so we keep the docstring.
+        return None
+
+    if what == 'method':
+        docstringlines[:] = [f'alias of :meth:`{original_name}`.']
+        return
+
+    # elif what == 'function'
+
+    if original_name != '<lambda>':
+        docstringlines[:] = [f'alias of :func:`{original_name}`.']
+        return
+
+    # If original_name == '<lambda>' then the function is
+    # a lambda expression, hence not an alias of something
+    # with its own docstring.
 
 
 def process_directives(app, what, name, obj, options, docstringlines):
@@ -164,4 +205,5 @@ def setup(app):
     app.connect('autodoc-process-docstring', process_dollars)
     app.connect('autodoc-process-docstring', process_inherited)
     app.connect('autodoc-process-docstring', skip_TESTS_block)
+
     app.add_transform(SagemathTransform)
