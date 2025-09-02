@@ -3095,7 +3095,10 @@ cdef class Matrix(sage.structure.element.Matrix):
         if end_col < 0: end_col += nc
         try:
             s = self._coerce_element(s)
-            self.add_multiple_of_row_c_end(i, j, s, start_col, end_col)
+            if end_col == nc - 1:
+                self.add_multiple_of_row_c(i, j, s, start_col)
+            else:
+                self.add_multiple_of_row_c_end(i, j, s, start_col, end_col)
         except TypeError:
             raise TypeError('Multiplying row by %s element cannot be done over %s, use change_ring or with_added_multiple_of_row instead.' % (s.parent(), self.base_ring()))
 
@@ -3212,7 +3215,10 @@ cdef class Matrix(sage.structure.element.Matrix):
         if end_row < 0: end_row += nr
         try:
             s = self._coerce_element(s)
-            self.add_multiple_of_column_c_end(i, j, s, start_row, end_row)
+            if end_row == nr - 1:
+                self.add_multiple_of_column_c(i, j, s, start_row)
+            else:
+                self.add_multiple_of_column_c_end(i, j, s, start_row, end_row)
         except TypeError:
             raise TypeError('Multiplying column by %s element cannot be done over %s, use change_ring or with_added_multiple_of_column instead.' % (s.parent(), self.base_ring()))
 
