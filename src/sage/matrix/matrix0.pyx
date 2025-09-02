@@ -3167,7 +3167,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         This operates on rows ``r`` such that ``start_row <= r <= end_row``.
 
         The parameters ``start_row`` and ``end_row`` may be negative,
-        representing indices from the end of the column::
+        representing indices from the end of the column.
 
         EXAMPLES: We add -1 times the third column to the second column of
         an integer matrix, remembering to start numbering cols at zero::
