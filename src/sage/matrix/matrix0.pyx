@@ -3049,7 +3049,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         This operates on columns ``c`` such that ``start_col <= c <= end_col``.
 
         The parameters ``start_col`` and ``end_col`` may be negative,
-        representing indices from the end of the row::
+        representing indices from the end of the row.
 
         EXAMPLES: We add -3 times the first row to the second row of an
         integer matrix, remembering to start numbering rows at zero::
