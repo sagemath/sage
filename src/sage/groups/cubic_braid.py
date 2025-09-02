@@ -802,7 +802,7 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
         self._centralizing_matrix = None   # for Assion groups: element in classical base group commuting with self
         self._centralizing_element = None   # image under nat. map of the former one in the proj. classical group
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation.
 
@@ -815,8 +815,8 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
         """
         if self._cbg_type == CubicBraidGroup.type.Coxeter:
             return "Cubic Braid group on %s strands" % (self.strands())
-        else:
-            return "Assion group on %s strands of type %s" % (self.strands() ,self._cbg_type.value)
+        return "Assion group on %s strands of type %s" % (self.strands(),
+                                                          self._cbg_type.value)
 
     def index_set(self):
         r"""

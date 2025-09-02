@@ -47,12 +47,12 @@ TESTS::
     sage: TestSuite(C).run()
 """
 
-#****************************************************************************
+# **************************************************************************
 #       Copyright (C) 2011 Javier López Peña <jlopez@ende.cc>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# **************************************************************************
 
 from sage.structure.parent import Parent
 from sage.misc.cachefunc import cached_method
