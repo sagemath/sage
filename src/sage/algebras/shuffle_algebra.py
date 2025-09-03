@@ -186,7 +186,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
         """
         return self._alphabet
 
-    def _repr_term(self, t):
+    def _repr_term(self, t) -> str:
         """
         Return a string representation of the basis element indexed by ``t``.
 
@@ -198,7 +198,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
         """
         return "{!s}[{!s}]".format(self._print_options['prefix'], repr(t)[6:])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Text representation of this shuffle algebra.
 
@@ -687,7 +687,7 @@ class DualPBWBasis(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, R, Words(names), prefix='S',
                                          category=cat)
 
-    def _repr_term(self, t):
+    def _repr_term(self, t) -> str:
         """
         Return a string representation of the basis element indexed by ``t``.
 
@@ -699,7 +699,7 @@ class DualPBWBasis(CombinatorialFreeModule):
         """
         return "{!s}[{!s}]".format(self._print_options['prefix'], repr(t)[6:])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
