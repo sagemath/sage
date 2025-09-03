@@ -1802,6 +1802,10 @@ class PolynomialRing_commutative(PolynomialRing_generic):
         - ``extras`` (default: ``None``) -- ignored; for compatibility
           with the construction mecanism
 
+        .. SEEALSO::
+
+            :mod:`sage.rings.completion_polynomial_ring`
+
         EXAMPLES::
 
             sage: P.<x> = PolynomialRing(QQ)
