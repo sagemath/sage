@@ -4296,9 +4296,11 @@ cdef class Matrix(Matrix1):
           - ``'generic'`` -- naive algorithm usable for matrices over any field
           - ``'flint'`` -- FLINT library code for matrices over the rationals
             or the integers
+          - ``'linbox'`` -- LinBox library code for sparse matrices over the
+            rationals
           - ``'pari'`` -- PARI library code for matrices over number fields
             or the integers
-          - ``'padic'`` -- padic algorithm from IML library for matrices
+          - ``'padic'`` -- `p`-adic algorithm from the IML library for matrices
             over the rationals and integers
           - ``'pluq'`` -- PLUQ matrix factorization for matrices mod 2
 
@@ -4348,12 +4350,17 @@ cdef class Matrix(Matrix1):
 
         Over the Rational Numbers:
 
-        Kernels are computed by the IML library in
-        :meth:`~sage.matrix.matrix_rational_dense.Matrix_rational_dense._right_kernel_matrix`.
-        Setting the `algorithm` keyword to 'default', 'padic' or unspecified
-        will yield the same result, as there is no optional behavior.
-        The 'computed' format of the basis vectors are exactly the negatives
-        of the vectors in the 'pivot' format. ::
+        The ``algorithm`` keyword can be set to ``'default'`` or ``'padic'`` to
+        use the `p`-adic algorithm from the IML library (for dense or sparse
+        matrices), or to ``'linbox'`` to use the LinBox library (only for
+        sparse matrices).
+        Kernels are computed by the IML library for dense matrices in
+        :meth:`~sage.matrix.matrix_rational_dense.Matrix_rational_dense._right_kernel_matrix`,
+        and sparse matrices are first converted to dense matrices.
+        Kernels are computed by the LinBox library for sparse matrices in
+        :meth:`~sage.matrix.matrix_rational_sparse.Matrix_rational_sparse._right_kernel_matrix_linbox`.
+        The 'computed' format of the basis vectors returned by IML are exactly
+        the negatives of the vectors in the 'pivot' format. ::
 
             sage: A = matrix(QQ, [[1, 0, 1, -3, 1],
             ....:                 [-5, 1, 0, 7, -3],
@@ -4417,6 +4424,11 @@ cdef class Matrix(Matrix1):
             [   0    1 -1/2 -1/4 -1/4]
             sage: set_verbose(0)
             sage: D == S
+            True
+            sage: K = B.right_kernel_matrix(algorithm='linbox', basis='computed'); K
+            [ 1 -2  2  1  0]
+            [-1 -2  0  0  1]
+            sage: B*K.transpose() == zero_matrix(QQ, 4, 2, sparse=True)
             True
 
         Over Number Fields:
@@ -4839,7 +4851,7 @@ cdef class Matrix(Matrix1):
         algorithm = kwds.pop('algorithm', None)
         if algorithm is None:
             algorithm = 'default'
-        elif algorithm not in ['default', 'generic', 'flint', 'pari', 'padic', 'pluq']:
+        elif algorithm not in ['default', 'generic', 'flint', 'linbox', 'pari', 'padic', 'pluq']:
             raise ValueError("matrix kernel algorithm '%s' not recognized" % algorithm)
         elif algorithm == 'padic' and not isinstance(R, (IntegerRing_class,
                                                          RationalField)):
@@ -4847,6 +4859,11 @@ cdef class Matrix(Matrix1):
         elif algorithm == 'flint' and not isinstance(R, (IntegerRing_class,
                                                          RationalField)):
             raise ValueError("'flint' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
+        elif algorithm == 'linbox' and not isinstance(self, sage.matrix.matrix_rational_sparse.Matrix_rational_sparse):
+            if isinstance(R, RationalField):
+                raise ValueError("'linbox' matrix kernel algorithm only available for sparse matrices over the rationals")
+            else:
+                raise ValueError("'linbox' matrix kernel algorithm only available over the rationals, not over %s" % R)
         elif algorithm == 'pari' and not (isinstance(R, (IntegerRing_class, NumberField)) and not isinstance(R, RationalField)):
             raise ValueError("'pari' matrix kernel algorithm only available over non-trivial number fields and the integers, not over %s" % R)
         elif algorithm == 'generic' and R not in _Fields:
@@ -4996,9 +5013,11 @@ cdef class Matrix(Matrix1):
           - ``'generic'`` -- naive algorithm usable for matrices over any field
           - ``'flint'`` -- FLINT library code for matrices over the rationals
             or the integers
+          - ``'linbox'`` -- LinBox library code for sparse matrices over the
+            rationals
           - ``'pari'`` -- PARI library code for matrices over number fields
             or the integers
-          - ``'padic'`` -- padic algorithm from IML library for matrices
+          - ``'padic'`` -- `p`-adic algorithm from the IML library for matrices
             over the rationals and integers
           - ``'pluq'`` -- PLUQ matrix factorization for matrices mod 2
 
@@ -5233,7 +5252,7 @@ cdef class Matrix(Matrix1):
             Quaternion Algebra (-1, -1) with base ring Rational Field
 
         Sparse matrices, over the rationals and the integers,
-        use the same routines as the dense versions. ::
+        use the same routines as the dense versions by default. ::
 
             sage: A = matrix(ZZ, [[0, -1, 1, 1, 2],
             ....:                 [1, -2, 0, 1, 3],
@@ -5365,9 +5384,11 @@ cdef class Matrix(Matrix1):
           - ``'generic'`` -- naive algorithm usable for matrices over any field
           - ``'flint'`` -- FLINT library code for matrices over the rationals
             or the integers
+          - ``'linbox'`` -- LinBox library code for sparse matrices over the
+            rationals
           - ``'pari'`` -- PARI library code for matrices over number fields
             or the integers
-          - ``'padic'`` -- padic algorithm from IML library for matrices
+          - ``'padic'`` -- `p`-adic algorithm from the IML library for matrices
             over the rationals and integers
           - ``'pluq'`` -- PLUQ matrix factorization for matrices mod 2
 
