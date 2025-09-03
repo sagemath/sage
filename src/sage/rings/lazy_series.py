@@ -951,6 +951,8 @@ class LazyModuleElement(Element):
         """
         return infinity
 
+    precision_absolute = prec
+
     def lift_to_precision(self, absprec=None):
         """
         Return another element of the same parent with absolute
