@@ -444,17 +444,6 @@ cdef Obj gap_eval(str gap_string) except? NULL:
 ############################################################################
 
 
-cdef object keyboard_interrupt_exc = KeyboardInterrupt(), alarm_interrupt_exc = KeyboardInterrupt("alarm interrupt")
-
-
-try:
-    from cysignals.signals import AlarmInterrupt
-except ImportError:
-    pass
-else:
-    alarm_interrupt_exc = AlarmInterrupt()
-
-
 class GAPError(ValueError):  # ValueError for historical reasons
     """
     Exceptions raised by the GAP library
@@ -534,11 +523,14 @@ cdef void error_handler() noexcept with gil:
         # Note that we manually need to deal with refcounts here.
         if last_signum:
             if last_signum == SIGINT:
-                exc_type = <PyObject*>Py_TYPE(keyboard_interrupt_exc)
-                exc_val = <PyObject*>keyboard_interrupt_exc
+                exc_type = <PyObject*>KeyboardInterrupt
+                exc_val_python = KeyboardInterrupt()
+                exc_val = <PyObject*>exc_val_python
             elif last_signum == SIGALRM:
-                exc_type = <PyObject*>Py_TYPE(alarm_interrupt_exc)
-                exc_val = <PyObject*>alarm_interrupt_exc
+                from cysignals.signals import AlarmInterrupt
+                exc_type = <PyObject*>AlarmInterrupt
+                exc_val_python = AlarmInterrupt()
+                exc_val = <PyObject*>exc_val_python
             else:
                 msg = f'{msg}\nunexpected signal value {last_signum} handled, this cannot happen'
                 exc_type = <PyObject*>GAPError
