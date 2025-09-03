@@ -1977,12 +1977,10 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             if a.is_unit():
                 return [-b * (~a)]
             else:
-                from sage.arith.misc import gcd, inverse_mod
-
                 al, bl = a.lift(), b.lift()
 
                 N = self.order()
-                g = gcd(al, N)
+                g = N.gcd(al)
 
                 if bl % g != 0:
                     return [] # No solution
