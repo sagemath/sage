@@ -10034,6 +10034,16 @@ cdef class Polynomial(CommutativePolynomial):
             -3
             sage: P(0).valuation()
             +Infinity
+
+        When `p` is not a prime, the resulting function is not necessarily
+        a valuation::
+
+            sage: a = b = x^3
+            sage: p = x^2
+            sage: a.valuation(p) + b.valuation(p)
+            2
+            sage: (a*b).valuation(p)
+            3
         """
         cdef int k
         cdef Polynomial _p
