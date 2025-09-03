@@ -1224,6 +1224,10 @@ class FractionField_1poly_field(FractionField_generic):
         - ``names`` (default: ``None``) -- a tuple of strings with the
           previous variable names
 
+        .. SEEALSO::
+
+            :mod:`sage.rings.completion_polynomial_ring`
+
         EXAMPLES::
 
             sage: A.<x> = PolynomialRing(QQ)

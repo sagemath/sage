@@ -1,9 +1,13 @@
 r"""
 Completion of polynomial rings and their fraction fields
+
+AUTHORS:
+
+- Xavier Caruso (2025-09): Initial implementation
 """
 
 # ***************************************************************************
-#    Copyright (C) 2024 Xavier Caruso <xavier.caruso@normalesup.org>
+#    Copyright (C) 2025 Xavier Caruso <xavier.caruso@normalesup.org>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -66,16 +70,19 @@ class CompletionPolynomial(RingExtensionElement):
     r"""
     An element in the completion of a polynomial ring
     or a field of rational functions.
-
-    TESTS::
-
-        sage: A.<x> = QQ[]
-        sage: Ap = A.completion(x - 1)
-        sage: u = Ap.random_element()
-        sage: type(u)
-        <class 'sage.rings.completion_polynomial_ring.CompletionPolynomialRing_with_category.element_class'>
     """
     def __init__(self, parent, f):
+        r"""
+        Initialize this element.
+
+        TESTS::
+
+            sage: A.<x> = QQ[]
+            sage: Ap = A.completion(x - 1)
+            sage: u = Ap.random_element()
+            sage: type(u)
+            <class 'sage.rings.completion_polynomial_ring.CompletionPolynomialRing_with_category.element_class'>
+        """
         if isinstance(f, Element):
             R = f.parent()
             ring = parent._ring
@@ -812,6 +819,23 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
         return self._integer_ring
 
     def is_integral_domain(self):
+        r"""
+        Return ``True`` is this ring is an integral domain;
+        ``False`` otherwise.
+
+        EXAMPLES::
+
+            sage: A.<x> = GF(7)[]
+            sage: Ap = A.completion(x^2 + 2*x + 2)
+            sage: Ap.is_integral_domain()
+            True
+
+        ::
+
+            sage: Aq = A.completion(x^2 + x + 1)
+            sage: Aq.is_integral_domain()
+            False
+        """
         return self._residue_ring.is_integral_domain()
 
     def fraction_field(self, permissive=False):
