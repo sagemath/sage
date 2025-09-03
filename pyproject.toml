@@ -69,7 +69,7 @@ dependencies = [
   'ptyprocess > 0.5',
   'requests >=2.13.0',
   'scipy >=1.11',
-  'sphinx >=5.2, <9',
+  'sphinx >=6.2, <9',
   'sympy >=1.6, <2.0',
   # According to https://github.com/python/typing_extensions/blob/main/CHANGELOG.md,
   # version 4.4.0 adds another Python 3.11 typing backport
