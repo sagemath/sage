@@ -901,7 +901,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         r"""
         Computes the normalized Hadamard ratio of the given basis.
 
-        The normalized Hadamard ratio of the basis `B = \left{ v_1, v_2, \dots, v_n \right}` is defined as
+        The normalized Hadamard ratio of the basis `B = \left\{ v_1, v_2, \dots, v_n \right\}` is defined as
 
         .. MATH::
 
