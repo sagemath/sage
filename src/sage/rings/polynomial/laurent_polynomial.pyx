@@ -8,6 +8,8 @@ Elements of Laurent polynomial rings
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+cimport cython
+
 from sage.categories.map cimport Map
 from sage.structure.element import coerce_binop, parent
 from sage.structure.factorization import Factorization
@@ -1641,6 +1643,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         return richcmp(x, y, op)
 
+    @cython.cdivision(False)
     def valuation(self, p=None):
         """
         Return the valuation of ``self``.
@@ -1673,6 +1676,8 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
             sage: (x^10).valuation(x^3)
             3
+            sage: (x^-10).valuation(x^3)
+            -4
             sage: ((x + 1)^9 * (x + 2)).valuation((x + 1)^2)
             4
         """
