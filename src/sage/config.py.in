@@ -127,6 +127,9 @@ def get_include_dirs() -> list[Path]:
     Return a list of directories to be used as include directories
     when compiling Cython extensions that depend on Sage.
 
+    Headers should be included with the prefix "sage/", e.g.,
+    ``#include <sage/cpython/cython_metaclass.h>``.
+
     This includes the path to the Numpy headers as well to make it
     easier to compile Cython extensions that (indirectly) depend on Numpy.
 
@@ -136,16 +139,17 @@ def get_include_dirs() -> list[Path]:
         sage: dirs = get_include_dirs()
         sage: dirs # random
         [
+            WindowsPath('<python>/site-packages'),
             WindowsPath('<path_to_sage>/src'),
             WindowsPath('<path_to_sage>/build/cp312/src'),
             WindowsPath('<python>/site-packages/numpy/core/include')
         ]
     """
-    dirs: list[Path] = [Path(dir) for dir in sage.__path__]
+    dirs: list[Path] = [Path(dir).parent for dir in sage.__path__]
     editable_root = get_editable_root()
     if editable_root is not None:
         # We return both the source and build directory,
         # because some headers are generated in the build directory.
         dirs.extend([root / "src" for root in editable_root])
     dirs.append(Path(numpy.get_include()))
-    return dirs
+    return [dir for dir in dirs if dir.is_dir()]
