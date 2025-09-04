@@ -5399,10 +5399,10 @@ class LazyPowerSeries(LazyCauchyProductSeries):
                     and any(hcs[i] for i in range(hcs._approximate_order, 1))):
                     raise ValueError("can only compose with a positive valuation series")
                 hcs._approximate_order = 1
-            elif isinstance(h, LazyDirichletSeries):
-                if hcs._approximate_order <= 1:
-                    if (not hcs.is_uninitialized()
-                        and any(hcs[i] for i in range(hcs._approxmate_order, 2))):
+
+            if isinstance(h, LazyDirichletSeries):
+                if hcs._approximate_order == 1:
+                    if not hcs.is_uninitialized() and hcs[1]:
                         raise ValueError("can only compose with a positive valuation series")
                     h._coeff_stream._approximate_order = 2
 
