@@ -648,7 +648,6 @@ class InfinitePolynomial(CommutativePolynomial,
 
             sage: d.parent()
             Infinite polynomial ring in x over Rational Field
-
         """
         P = self.parent()
         return InfinitePolynomial(P, self._p.denominator())
