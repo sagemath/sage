@@ -1922,6 +1922,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             [107295314027801680550847462044796892009, 75545907600948005385964943744536832524]
 
         Roots of 0 or 1 degree polynomials should be computable without factoring the order:
+
             sage: set_random_seed(31337)
             sage: p = random_prime(2^512)
             sage: q = random_prime(2^512)
@@ -1934,6 +1935,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             []
 
         Even when leading coefficient of linear polynomial is not invertible:
+
             sage: set_random_seed(31337)
             sage: p = random_prime(2^10)
             sage: q = random_prime(2^512)
@@ -1942,6 +1944,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             857
 
         Test all linear polynomials modulo 10:
+
             sage: N = 10 # maybe make a for loop
             sage: R = Zmod(N)
             sage: for f in R["x"].polynomials(1):
@@ -1986,12 +1989,14 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
                     return [] # No solution
                 else:
                     # whole eqn divided by g
-                    _R = Zmod(N/g)
-                    assert _R(al / g).is_unit()
+                    N_by_g = N.divide_knowing_divisible_by(g)
+                    a_by_g = al.divide_knowing_divisible_by(g)
+                    _R = Zmod(N_by_g)
+                    assert _R(a_by_g).is_unit()
 
                     # single root
                     _root = self(f.roots(_R, multiplicities=False)[0])
-                    inc = self(N/g)
+                    inc = self(N_by_g)
                     return [_root + k*inc for k in range(g)]
 
 
