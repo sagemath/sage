@@ -1762,6 +1762,51 @@ cdef class Matrix_integer_dense(Matrix_dense):
         import sage.matrix.symplectic_basis
         return sage.matrix.symplectic_basis.symplectic_basis_over_ZZ(self)
 
+    def skew_form(self, transformation=False):
+        r"""
+        Compute the skew Smith normal form of this square integer matrix as defined
+        in Theorem IV.1 in [New1972]_.
+
+        Given an integer skew-symmetric matrix `M`, compute a unimodular matrix `S`
+        such that `S^T M S` is block diagonal with `2x2` blocks `(0, d_i; -d_i, 0)`
+        where `d_i` are positive integers with `d_i | d_{i+1}`. If ``transformation``
+        is True, also return ``S``.
+
+        INPUT:
+
+        - ``transformation`` -- boolean (default: ``False``); if ``True``,
+          return transformation matrix ``S``
+
+        OUTPUT:
+
+        - ``M'`` -- integer n x n matrix in skew Smith normal form
+        - ``S``  -- integer n x n unimodular matrix with `S^T M S = M'`
+          (if ``transformation`` is True)
+
+        EXAMPLES::
+
+            sage: M = matrix(ZZ, [
+            ....:     [   0,    8,    0,   -4,   -2,   12 ],
+            ....:     [  -8,    0,   12,    0,    0,    0 ],
+            ....:     [   0,  -12,    0,    6,    0,  -18 ],
+            ....:     [   4,    0,   -6,    0,    0,    0 ],
+            ....:     [   2,    0,    0,    0,    0,    0 ],
+            ....:     [ -12,    0,   18,    0,    0,    0 ]
+            ....: ])
+            sage: M_prime, S = M.skew_form(transformation=True)
+            sage: M_prime
+            [ 0  2  0  0  0  0]
+            [-2  0  0  0  0  0]
+            [ 0  0  0  6  0  0]
+            [ 0  0 -6  0  0  0]
+            [ 0  0  0  0  0  0]
+            [ 0  0  0  0  0  0]
+            sage: bool(S.transpose() * M * S == M_prime)
+            True
+        """
+        from sage.matrix.matrix_integer_dense_skew import skew_form
+        return skew_form(self, transformation=transformation)
+
     hermite_form = echelon_form
 
     def echelon_form(self, algorithm='default', proof=None, include_zero_rows=True,

@@ -4012,294 +4012,6 @@ def integer_matrix_relations(M1, M2, b=None, r=None):
     return [vectomat(v) for v in mtL if all(a.abs() <= c for a in v[g1 * g2 :])]
 
 
-def skew_form(M, transformation=False):
-    r"""
-    Compute the skew Smith normal form of a square integer matrix as defined
-    in Theorem IV.1 in [New1972]_.
-
-    Given an integer skew-symmetric matrix `M`, compute a unimodular matrix `S`
-    such that `S^T M S` is block diagonal with `2x2` blocks `(0, d_i; -d_i, 0)`
-    where `d_i` are positive integers with `d_i | d_{i+1}`. If ``transformation``
-    is True, also return ``S``.
-
-    INPUT:
-
-    - ``M`` -- matrix with integer entries and of square dimension
-    - ``transformation`` -- boolean (default: ``False``); if ``True``,
-    return transformation matrix ``S``
-
-    OUTPUT:
-
-    - ``M'`` -- integer n x n matrix in skew Smith normal form
-    - ``S``  -- integer n x n unimodular matrix with `S^T M S = M'` (if ``transformation`` is True)
-
-    EXAMPLES::
-
-        sage: from sage.schemes.riemann_surfaces.riemann_surface import skew_form
-        sage: M = Matrix(ZZ, [
-        ....:             [ 0,  2,  0,  0,  0,  0, -2],
-        ....:             [-2,  0, -2,  0,  0,  0,  0],
-        ....:             [ 0,  2,  0,  6,  0,  0,  4],
-        ....:             [ 0,  0, -6,  0,  0,  0,  0],
-        ....:             [ 0,  0,  0,  0,  0,  0,  0],
-        ....:             [ 0,  0,  0,  0,  0,  0,  0],
-        ....:             [ 2,  0, -4,  0,  0,  0,  0],
-        ....:         ])
-        sage: M_prime, S = skew_form(M, transformation=True)
-        sage: M_prime
-        [ 0  2  0  0  0  0  0]
-        [-2  0  0  0  0  0  0]
-        [ 0  0  0  6  0  0  0]
-        [ 0  0 -6  0  0  0  0]
-        [ 0  0  0  0  0  0  0]
-        [ 0  0  0  0  0  0  0]
-        [ 0  0  0  0  0  0  0]
-        sage: bool(S.transpose() * M * S == M_prime)
-        True
-    """
-
-    nrows, ncols = M.nrows(), M.ncols()
-    if nrows != ncols:
-        raise ValueError("M must be a square matrix.")
-    if M.transpose() != -M:
-        raise ValueError("M must be skew-symmetric.")
-
-    # Trivial zero case
-    if all(M[i, j] == 0 for i in range(nrows) for j in range(ncols)):
-        if transformation:
-            return Matrix(M), Matrix.identity(ZZ, nrows)
-        return Matrix(M)
-
-    total_size = nrows
-    pair_count = total_size // 2
-
-    S = Matrix.identity(ZZ, total_size)
-    M_curr = Matrix(M)
-    t = 0
-
-    # create alternating blocks along the diagonal
-    while t < total_size:
-        # choose a nonzero off-diagonal entry as pivot
-        pivot = None
-        for i in range(t, total_size):
-            for j in range(i + 1, total_size):
-                if M_curr[i, j] != 0:
-                    pivot = (i, j)
-                    break
-            if pivot:
-                break
-        else:
-            break
-
-        i, j = pivot
-
-        # Move pivot to (t, t+1)
-        if i != t:
-            P = Matrix.identity(ZZ, total_size)
-            P.swap_columns(i, t)
-            M_curr = P.transpose() * M_curr * P
-            S = S * P
-
-        if j != t + 1:
-            P = Matrix.identity(ZZ, total_size)
-            P.swap_columns(j, t + 1)
-            M_curr = P.transpose() * M_curr * P
-            S = S * P
-
-        # ensure pivot entry is positive
-        if M_curr[t, t + 1] < 0:
-            P = Matrix.identity(ZZ, total_size)
-            P[t + 1, t + 1] = -1
-            M_curr = P.transpose() * M_curr * P
-            S = S * P
-
-        # clear other entries in rows/cols t and t+1
-        for r in range(total_size):
-            if r in (t, t + 1):
-                continue
-
-            # zero M[t, r] using the pair (a, d) with d = M[t, t+1]
-            a = ZZ(M_curr[t, r])
-            d = ZZ(M_curr[t, t + 1])
-            if a != 0 or d != 0:
-                if a == 0 and d == 0:
-                    pass
-                else:
-                    g1, u, v = xgcd(ZZ(a), ZZ(d))
-                    p = ZZ(d) // g1
-                    r_coeff = -ZZ(a) // g1
-                    q = ZZ(u)
-                    s = ZZ(v)
-                    U1 = Matrix(ZZ, [[p, q], [r_coeff, s]])
-
-                    E1 = Matrix.identity(ZZ, total_size)
-                    # place U1 into rows/cols (r, t+1)
-                    E1[r, r] = U1[0, 0]
-                    E1[r, t + 1] = U1[0, 1]
-                    E1[t + 1, r] = U1[1, 0]
-                    E1[t + 1, t + 1] = U1[1, 1]
-
-                    M_curr = E1.transpose() * M_curr * E1
-                    S = S * E1
-
-            # zero M[t+1, r] using the pair (b, -d)
-            b = ZZ(M_curr[t + 1, r])
-            d = ZZ(M_curr[t, t + 1])
-            if b != 0 or d != 0:
-                if b == 0 and (-d) == 0:
-                    pass
-                else:
-                    g2, u, v = xgcd(ZZ(b), ZZ(-d))
-                    p = ZZ(-d) // g2
-                    r_coeff = -ZZ(b) // g2
-                    q = ZZ(u)
-                    s = ZZ(v)
-                    U2 = Matrix(ZZ, [[p, q], [r_coeff, s]])
-
-                    E2 = Matrix.identity(ZZ, total_size)
-                    E2[r, r] = U2[0, 0]
-                    E2[r, t] = U2[0, 1]
-                    E2[t, r] = U2[1, 0]
-                    E2[t, t] = U2[1, 1]
-
-                    M_curr = E2.transpose() * M_curr * E2
-                    S = S * E2
-
-        # ensure positivity of the 2x2 pivot
-        if M_curr[t, t + 1] < 0:
-            P = Matrix.identity(ZZ, total_size)
-            P[t + 1, t + 1] = -1
-            M_curr = P.transpose() * M_curr * P
-            S = S * P
-
-        t += 2
-
-    # enforce divisibility of adjacent blocks
-    if pair_count >= 2:
-        changed = True
-        while changed:
-            changed = False
-            for i in range(pair_count - 1):
-                a = ZZ(M_curr[2 * i, 2 * i + 1])
-                b = ZZ(M_curr[2 * i + 2, 2 * i + 3])
-                if a == 0 or b == 0:
-                    continue
-                # already locally in chain?
-                if (a % b == 0) or (b % a == 0):
-                    continue
-
-                g, u, v = xgcd(a, b)
-                alpha = a // g
-                beta = b // g
-
-                # apply gcd
-                T2 = Matrix(ZZ, [[u, v], [-beta, alpha]])
-                I2 = Matrix.identity(ZZ, 2)
-                T4 = Matrix.block(
-                    [
-                        [T2[0, 0] * I2, T2[0, 1] * I2],
-                        [T2[1, 0] * I2, T2[1, 1] * I2],
-                    ]
-                )
-
-                # embed
-                idx = [2 * i, 2 * i + 1, 2 * i + 2, 2 * i + 3]
-                P = Matrix.identity(ZZ, total_size)
-                for r in idx:
-                    for c in idx:
-                        P[r, c] = 0
-                
-                for r in range(4):
-                    for c in range(4):
-                        P[idx[r], idx[c]] = T4[r, c]
-
-                M_curr = P.transpose() * M_curr * P
-                S = S * P
-
-                # first ensure the two "pivot positions" are positive.
-                for base in (idx[0], idx[2]):  # starts of the two 2x2 blocks
-                    t0, t1 = base, base + 1
-                    if M_curr[t0, t1] < 0:
-                        D = Matrix.identity(ZZ, total_size)
-                        D[t1, t1] = -1
-                        M_curr = D.transpose() * M_curr * D
-                        S = S * D
-
-                # clear cross entries between the two 2x2 blocks
-                for base, other in ((idx[0], idx[2]), (idx[2], idx[0])):
-                    t0, t1 = base, base + 1
-                    for r in (other, other + 1):
-                        # zero M[t0, r] with pair (a, d)
-                        a_ = ZZ(M_curr[t0, r])
-                        d_ = ZZ(M_curr[t0, t1])
-                        if a_ != 0 or d_ != 0:
-                            g1, u1, v1 = xgcd(a_, d_)
-                            p = d_ // g1
-                            rcoeff = -a_ // g1
-                            q = ZZ(u1)
-                            s = ZZ(v1)
-                            E = Matrix.identity(ZZ, total_size)
-                            E[r, r] = p
-                            E[r, t1] = q
-                            E[t1, r] = rcoeff
-                            E[t1, t1] = s
-                            M_curr = E.transpose() * M_curr * E
-                            S = S * E
-
-                        # zero M[t1, r] with pair (b, -d)
-                        b_ = ZZ(M_curr[t1, r])
-                        d_ = ZZ(M_curr[t0, t1])
-                        if b_ != 0 or d_ != 0:
-                            g2, u2, v2 = xgcd(b_, -d_)
-                            p = (-d_) // g2
-                            rcoeff = -b_ // g2
-                            q = ZZ(u2)
-                            s = ZZ(v2)
-                            E = Matrix.identity(ZZ, total_size)
-                            E[r, r] = p
-                            E[r, t0] = q
-                            E[t0, r] = rcoeff
-                            E[t0, t0] = s
-                            M_curr = E.transpose() * M_curr * E
-                            S = S * E
-
-                    # ensure positivity again for this 2x2 after clearing
-                    if M_curr[t0, t1] < 0:
-                        D = Matrix.identity(ZZ, total_size)
-                        D[t1, t1] = -1
-                        M_curr = D.transpose() * M_curr * D
-                        S = S * D
-
-                changed = True
-
-    # reorder 2x2 blocks into a nondecreasing chain (zeros at the end)
-    pairs = [(ZZ(M_curr[2 * i, 2 * i + 1]), i) for i in range(pair_count)]
-    # sort by: nonzero first (ascending), then zeros
-    pairs.sort(key=lambda t: (t[0] == 0, t[0]))
-    order = []
-    for _, i in pairs:
-        order += [2 * i, 2 * i + 1]
-
-    if len(order) == total_size:
-        P = Matrix.zero(ZZ, total_size, total_size)
-        for new_idx, old_idx in enumerate(order):
-            P[old_idx, new_idx] = 1
-        M_curr = P.transpose() * M_curr * P
-        S = S * P
-
-    # Final positivity pass
-    for i in range(pair_count):
-        if M_curr[2 * i, 2 * i + 1] < 0:
-            D = Matrix.identity(ZZ, total_size)
-            D[2 * i + 1, 2 * i + 1] = -1
-            M_curr = D.transpose() * M_curr * D
-            S = S * D
-
-    if transformation:
-        return M_curr, S
-    return M_curr
-
-
 def poincare_form(M, transformation=False):
     r"""
     Compute the Poincare normal form of a matrix.
@@ -4379,9 +4091,7 @@ def poincare_form(M, transformation=False):
     T = Matrix.identity(ZZ, n_c)
 
     # Step 1: Fix/check subdeterminants
-    gcd_subdets = GCD(
-        [M[:, com].det() for com in combinations(range(n_c), n_r)]
-    )
+    gcd_subdets = GCD([M[:, com].det() for com in combinations(range(n_c), n_r)])
 
     if gcd_subdets > 1:
         D, U, V = M.smith_form()
@@ -4395,9 +4105,9 @@ def poincare_form(M, transformation=False):
         M_curr = M
 
     # Step 2: Frobenius alternating form
-    MJMT = M_curr * J * M_curr.transpose()
+    MJMT = (M_curr * J * M_curr.transpose()).change_ring(ZZ)
 
-    _, S_trans = skew_form(MJMT, transformation=True)
+    _, S_trans = MJMT.skew_form(transformation=True)
 
     # permute to (0 D; -D 0)
     idx = [2 * i for i in range(m)] + [2 * i + 1 for i in range(m)]
@@ -4419,6 +4129,9 @@ def poincare_form(M, transformation=False):
     # apply Q by congruence and accumulate it
     MJMT = Q.transpose() * MJMT * Q
     S_trans = S_trans * Q
+
+    d_block = MJMT[:m, m : 2 * m]
+    d_values = [abs(int(d_block[i, i])) for i in range(m)]
 
     # update M_curr
     M_curr = S_trans.transpose() * M_curr
@@ -4457,47 +4170,123 @@ def poincare_form(M, transformation=False):
             T *= P
 
         # Euclidean algorithm if no unit now present
-        if abs(M_curr[j, j]) != 1:
-            if GCD([int(M_curr[j, c]) for c in range(j, 2 * g)]) != 1:
-                raise ValueError(f"Row {j} not primitive - cannot create a pivot.")
+        if abs(int(M_curr[j, j])) != 1:
+            # Stage 1: Look for unit and move to (j, j)
+            left_unit_idx = None
+            for c in range(j, g):
+                if abs(int(M_curr[j, c])) == 1:
+                    left_unit_idx = c
+                    break
 
-            for c in range(j + 1, 2 * g):
-                while M_curr[j, c] != 0:
-                    # Ensure the divisor (pivot) is not smaller than the target; if it is, swap pairs
-                    if abs(M_curr[j, c]) < abs(M_curr[j, j]):
+            if left_unit_idx is not None and left_unit_idx != j:
+                # swap pair indices (j) and (left_unit_idx)
+                P = Matrix.identity(ZZ, 2 * g)
+                P.swap_columns(j, left_unit_idx)
+                P.swap_columns(partner(j), partner(left_unit_idx))
+                M_curr *= P
+                T *= P
+
+            if abs(int(M_curr[j, j])) != 1:
+                # Look for unit in the right half among pairs with index >= j
+                right_unit_idx = None
+                for t in range(g + j, 2 * g):
+                    if abs(int(M_curr[j, t])) == 1:
+                        right_unit_idx = t
+                        break
+
+                if right_unit_idx is not None:
+                    tau = partner(right_unit_idx)
+                    if tau != j:
+                        # swap pair indices (j) and (right_unit_idx)
                         P = Matrix.identity(ZZ, 2 * g)
-                        P.swap_columns(j, c)
-                        P.swap_columns(partner(j), partner(c))
+                        P.swap_columns(j, tau)
+                        P.swap_columns(partner(j), partner(tau))
                         M_curr *= P
                         T *= P
-                        continue
 
-                    # Now |M[j,c]| >= |M[j,j]|, so q != 0 in normal Euclid
-                    num = ZZ(M_curr[j, c])
-                    den = ZZ(M_curr[j, j])
-                    q = int(num // den)
-                    if q == 0:
-                        q = 1 if num > 0 else -1  # belt-and-braces
-
-                    if c < g:
-                        # Left-half elimination: type-3 (X -> X*A)
-                        A = Matrix.identity(ZZ, g)
-                        A[j, c] -= q  # col_c <- col_c - q * col_j
-                        K = symplectic_matrix("3", A, g)
-                    else:
-                        # Right-half elimination: type-1 (Y -> X*A + Y), A symmetric
-                        A = Matrix.zero(ZZ, g, g)
-                        idx = c - g
-                        if idx == j:
-                            # Partner column: hit the diagonal ONCE
-                            A[j, j] -= q
-                        else:
-                            A[j, idx] -= q
-                            A[idx, j] -= q
-                        K = symplectic_matrix("1", A, g)
-
+                    # symplectic swap (cool trick)
+                    Sg = Matrix.zero(ZZ, g, g)
+                    Sg[j, j] = 1
+                    K = symplectic_matrix("1", Sg, g)
                     M_curr *= K
                     T *= K
+
+                    Ag = Matrix.zero(ZZ, g, g)
+                    Ag[j, j] = -1
+                    K = symplectic_matrix("2", Ag, g)
+                    M_curr *= K
+                    T *= K
+
+                    Sg = Matrix.zero(ZZ, g, g)
+                    Sg[j, j] = 1
+                    K = symplectic_matrix("1", Sg, g)
+                    M_curr *= K
+                    T *= K
+
+            # Stage 2: if still no unit, use extended Euclid
+            if abs(int(M_curr[j, j])) != 1:
+                for k in range(j + 1, g):
+                    b = int(M_curr[j, k])
+                    if b == 0:
+                        continue
+                    a = int(M_curr[j, j])
+                    g_ab, u, v = ZZ(a).xgcd(ZZ(b))
+                    alpha = a // g_ab
+                    beta = b // g_ab
+                    A = Matrix.identity(ZZ, g)
+                    A[j, j] = int(u)
+                    A[j, k] = int(v)
+                    A[k, j] = -int(beta)
+                    A[k, k] = int(alpha)
+                    K = symplectic_matrix("3", A, g)
+                    M_curr *= K
+                    T *= K
+
+            # Stage 3: if necessary, bring right entries via symplectic swap
+            if abs(int(M_curr[j, j])) != 1:
+                for tau in range(j, g):
+                    r = int(M_curr[j, g + tau])
+                    if r == 0:
+                        continue
+
+                    # symplectic swap
+                    Sg = Matrix.zero(ZZ, g, g)
+                    Sg[tau, tau] = 1
+                    K = symplectic_matrix("1", Sg, g)
+                    M_curr *= K
+                    T *= K
+
+                    Ag = Matrix.zero(ZZ, g, g)
+                    Ag[tau, tau] = -1
+                    K = symplectic_matrix("2", Ag, g)
+                    M_curr *= K
+                    T *= K
+
+                    Sg = Matrix.zero(ZZ, g, g)
+                    Sg[tau, tau] = 1
+                    K = symplectic_matrix("1", Sg, g)
+                    M_curr *= K
+                    T *= K
+
+                    # Extended Euclid on columns (j, tau) in the left half
+                    a = int(M_curr[j, j])
+                    b = int(M_curr[j, tau])
+                    if b == 0:
+                        continue
+                    g_ab, u, v = ZZ(a).xgcd(ZZ(b))
+                    alpha = a // g_ab
+                    beta = b // g_ab
+                    A = Matrix.identity(ZZ, g)
+                    A[j, j] = int(u)
+                    A[j, tau] = int(v)
+                    A[tau, j] = -int(beta)
+                    A[tau, tau] = int(alpha)
+                    K = symplectic_matrix("3", A, g)
+                    M_curr *= K
+                    T *= K
+
+                    if abs(int(M_curr[j, j])) == 1:
+                        break
 
         # make the pivot +1
         if M_curr[j, j] == -1:
@@ -4545,11 +4334,9 @@ def poincare_form(M, transformation=False):
 
     # Step 4: Operations on last g-m blocks of each row
     n_tail = g - m
-    MJMT = M_curr * J * M_curr.transpose()
     for j in range(m):
         r = m + j
         if int(d_block[j, j]) == 1:
-
             # clear entire right tail
             for tau in range(m, g):
                 if tau == j:
@@ -4579,7 +4366,7 @@ def poincare_form(M, transformation=False):
         if j >= n_tail:
             continue
 
-        # Look for a unit in row r
+        # Look for a unit in left half
         pivot_col = None
         for c in range(m + j, g):
             if abs(M_curr[r, c]) == 1:
@@ -4594,6 +4381,41 @@ def poincare_form(M, transformation=False):
             M_curr *= P
             T *= P
 
+        # Look for a unit in the right tail and bring it over
+        if pivot_col is None:
+            pivot_col_rt = None
+            for c in range(g + m + j, 2 * g):
+                if abs(int(M_curr[r, c])) == 1:
+                    pivot_col_rt = c
+                    break
+
+            if pivot_col_rt is not None:
+                tau = pivot_col_rt - g  # pair index in [m + j .. g-1]
+                if tau != m + j:
+                    # pair-swap strictly inside the tail
+                    P = Matrix.identity(ZZ, 2 * g)
+                    P.swap_columns(m + j, tau)
+                    P.swap_columns(partner(m + j), partner(tau))
+                    M_curr *= P
+                    T *= P
+
+                # Flip pair (m + j) so the unit moves from right to left
+                Sg = Matrix.zero(ZZ, g, g)
+                Sg[m + j, m + j] = 1
+                K = symplectic_matrix("1", Sg, g)
+                M_curr *= K
+                T *= K
+                Ag = Matrix.zero(ZZ, g, g)
+                Ag[m + j, m + j] = -1
+                K = symplectic_matrix("2", Ag, g)
+                M_curr *= K
+                T *= K
+                Sg = Matrix.zero(ZZ, g, g)
+                Sg[m + j, m + j] = 1
+                K = symplectic_matrix("1", Sg, g)
+                M_curr *= K
+                T *= K
+
         # Ensure (r, m + j) is nonzero if any nonzero exists in the tail
         if M_curr[r, m + j] == 0:
             c_nz = next((c for c in range(m + j, g) if M_curr[r, c] != 0), None)
@@ -4603,6 +4425,7 @@ def poincare_form(M, transformation=False):
                 P.swap_columns(partner(m + j), partner(c_nz))
                 M_curr *= P
                 T *= P
+
             elif c_nz is None:
                 # If no unit, select unit from right, coprime to delta[j,j] and move to m+j
                 d_jj = int(d_block[j, j])
