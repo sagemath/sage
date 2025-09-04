@@ -5323,6 +5323,14 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: g.define((z - (f - z)(g)))
             sage: g
             z - z^2 + 2*z^3 - 6*z^4 + 20*z^5 - 70*z^6 + 256*z^7 + O(z^8)
+
+        Check that issue :issue:`40750` is fixed::
+
+            sage: L.<t>=LazyPowerSeriesRing(GF(2))
+            sage: f = L(lambda n: 1 if is_power_of_two(n) else 0)
+            sage: g = f(t^3)/t^2
+            sage: g(g)
+            t + O(t^8)
         """
         fP = parent(self)
         if len(g) != fP._arity:
@@ -5385,14 +5393,16 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         R = P._internal_poly_ring.base_ring()
 
         for h in g:
-            if h._coeff_stream._approximate_order == 0:
-                if not h._coeff_stream.is_uninitialized() and h[0]:
+            hcs = h._coeff_stream
+            if hcs._approximate_order <= 0:
+                if (not hcs.is_uninitialized()
+                    and any(hcs[i] for i in range(hcs._approximate_order, 1))):
                     raise ValueError("can only compose with a positive valuation series")
-                h._coeff_stream._approximate_order = 1
-
-            if isinstance(h, LazyDirichletSeries):
-                if h._coeff_stream._approximate_order == 1:
-                    if not h._coeff_stream.is_uninitialized() and h._coeff_stream[1] != 0:
+                hcs._approximate_order = 1
+            elif isinstance(h, LazyDirichletSeries):
+                if hcs._approximate_order <= 1:
+                    if (not hcs.is_uninitialized()
+                        and any(hcs[i] for i in range(hcs._approxmate_order, 2))):
                         raise ValueError("can only compose with a positive valuation series")
                     h._coeff_stream._approximate_order = 2
 
