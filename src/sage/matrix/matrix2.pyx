@@ -19420,6 +19420,7 @@ cdef class Matrix(Matrix1):
 
         If shifts is a list, it must have the correct number of elements::
 
+            sage: M = matrix(R, [[0, 1, 0], [0, 0, 1], [0, 0, 0]])
             sage: E.krylov_matrix(M, shifts=[2, 3])
             Traceback (most recent call last):
             ...
@@ -19446,7 +19447,7 @@ cdef class Matrix(Matrix1):
         The degree bounds must be non-negative::
 
             sage: E.krylov_matrix(M, degrees=[2, 3, -1])
-            Traceback (most recent call last)
+            Traceback (most recent call last):
             ...
             ValueError: degrees must not contain a negative bound.
         """
@@ -19855,9 +19856,9 @@ cdef class Matrix(Matrix1):
 
             sage: E = matrix(RR, [[1.5, 1.2, 1.0], [5.6, 7.9, 2.3]])
             sage: E.krylov_basis(E)
-            Traceback (most recent call last)
+            Traceback (most recent call last):
             ...
-            NotImplementedError: self.base_ring() must be an exact field
+            NotImplementedError: self.base_ring() must be an exact field.
 
         The input `M` must be a matrix::
 
@@ -19915,6 +19916,7 @@ cdef class Matrix(Matrix1):
 
         If shifts is a list, it must have the correct number of elements::
 
+            sage: M = matrix(GF(97), [[0, 1, 0], [0, 0, 1], [0, 0, 0]])
             sage: E.krylov_basis(M, shifts=[2, 3])
             Traceback (most recent call last):
             ...
@@ -19941,7 +19943,7 @@ cdef class Matrix(Matrix1):
         The degree bounds must be non-negative::
 
             sage: E.krylov_basis(M, degrees=[2, 3, -1])
-            Traceback (most recent call last)
+            Traceback (most recent call last):
             ...
             ValueError: degrees must not contain a negative bound.
 
@@ -20282,9 +20284,9 @@ cdef class Matrix(Matrix1):
 
             sage: E = matrix(RR, [[1.5, 1.2, 1.0], [5.6, 7.9, 2.3]])
             sage: E.krylov_kernel_basis(E)
-            Traceback (most recent call last)
+            Traceback (most recent call last):
             ...
-            NotImplementedError: self.base_ring() must be an exact field
+            NotImplementedError: self.base_ring() must be an exact field.
 
         The input `M` must be a matrix::
 
@@ -20314,7 +20316,6 @@ cdef class Matrix(Matrix1):
             [ 0  0  0  1  0]
             [ 0  0  0  0  1]
             [96 96  1  0  0],
-
             ((0, 0, 0), (1, 0, 1), (2, 0, 2), (0, 1, 3), (1, 1, 4))
             )
 
@@ -20327,7 +20328,6 @@ cdef class Matrix(Matrix1):
             [19*z + 21 46*z + 10         0 13*z + 24         0         1]
             [60*z + 66 84*z + 73         0 15*z + 83         1         0]
             [       96        96         1         0         0         0],
-
             ((0, 0, 0), (1, 0, 1), (2, 0, 2), (0, 1, 3), (1, 1, 4), (0, 2, 6))
             )
             sage: M.krylov_kernel_basis(E)
@@ -20335,7 +20335,6 @@ cdef class Matrix(Matrix1):
             [       86 50*z + 34         0        12         0         1]
             [18*z + 59        68         0 29*z + 25         1         0]
             [        0         0         1         0         0         0],
-
             ((0, 0, 0), (1, 0, 1), (2, 0, 2), (0, 1, 3), (1, 1, 4), (0, 2, 6))
             )
 
@@ -20349,6 +20348,7 @@ cdef class Matrix(Matrix1):
 
         If shifts is a list, it must have the correct number of elements::
 
+            sage: M = matrix(GF(97), [[0, 1, 0], [0, 0, 1], [0, 0, 0]])
             sage: E.krylov_kernel_basis(M, shifts=[2, 3])
             Traceback (most recent call last):
             ...
@@ -20375,14 +20375,14 @@ cdef class Matrix(Matrix1):
         The degree bounds must be non-negative::
 
             sage: E.krylov_kernel_basis(M, degrees=[2, 3, -1])
-            Traceback (most recent call last)
+            Traceback (most recent call last):
             ...
             ValueError: degrees must not contain a negative bound.
 
         The algorithm must be valid::
 
             sage: E = matrix(R, [[27, 49, 29], [50, 58, 0], [77, 10, 29]])
-            sage: E.krylov_kernel_basis(M, base_algorithm="non-existent")
+            sage: E.krylov_kernel_basis(M, basis_algorithm="non-existent")
             Traceback (most recent call last):
             ...
             ValueError: algorithm must be one of None, "naive" or "elimination".
