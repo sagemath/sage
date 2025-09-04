@@ -19137,7 +19137,7 @@ cdef class Matrix(Matrix1):
           the priority given to rows.
         - ``degrees`` -- an integer vector of length ``self.nrows()`` defining
           the maximum degree for rows.
-        - ``row_pairs`` -- the list of pairs of row indices and associated
+        - ``row_pairs`` (default: ``None``) -- the list of pairs of row indices and associated
           degrees to be sorted. If ``None``, the default is taken as
           `[(i, j), 0 \le i < m, 0 \le j \le d_i]` where `m` is
           ``self.nrows()`` and `d_i` is ``degrees[i]``.
@@ -19248,9 +19248,9 @@ cdef class Matrix(Matrix1):
 
         - ``M`` -- a square matrix of size equal to the number of columns of
           ``self``.
-        - ``shifts`` -- list of ``self.nrows()`` integers (optional), row
+        - ``shifts`` (default: ``None``) -- list of ``self.nrows()`` integers (optional), row
           priority shifts.  If ``None``, defaults to all zeroes.
-        - ``degrees`` -- an integer or a list of ``self.nrows()`` integers
+        - ``degrees`` (default: ``None``) -- an integer or a list of ``self.nrows()`` integers
           (optional). The entry ``degrees[i]`` indicates the number of Krylov
           iterates to appear in the output (that is, ``self[i, :] * M**j`` will
           appear for `j` up to ``degrees[i]``, included). If ``None``, defaults
@@ -19732,19 +19732,19 @@ cdef class Matrix(Matrix1):
 
         - ``M`` -- a square matrix of size equal to the number of columns of
           ``self``.
-        - ``shifts`` -- list of ``self.nrows()`` integers (optional): row
+        - ``shifts`` (default: ``None``) -- list of ``self.nrows()`` integers (optional): row
           priority shifts. If ``None``, defaults to all zeroes.
-        - ``degrees`` -- an integer or a list of ``self.nrows()`` integers
+        - ``degrees`` (default: ``None``) -- an integer or a list of ``self.nrows()`` integers
           (optional). The entry ``degrees[i]`` indicates that ``self[i, :] *
           M**degrees[i]`` is known to be dependent on rows before it in the
           ``shifts``-ordered Krylov matrix. If ``None``, defaults to
           ``self.ncols()`` for all rows. Giving a single integer for
           ``degrees`` is equivalent to giving a list with this integer repeated
           ``self.nrows()`` times.
-        - ``output_rows`` -- boolean, optional, defaults to True. Determines
+        - ``output_rows`` (default: ``True``) -- boolean, optional. Determines
           whether information relating the output rows to their position in the
           Krylov matrix is also provided.
-        - ``algorithm`` -- either 'naive', 'elimination', or None (let
+        - ``algorithm`` (default: ``None``) -- either ``'naive'``, ``'elimination'``, or ``None`` (let
           Sage choose).
 
         OUTPUT:
@@ -19987,12 +19987,12 @@ cdef class Matrix(Matrix1):
             raise ValueError(f"degrees must not contain a negative bound.")
 
         if algorithm is None:
-            if E.base_ring().order() == 2:
+            if E.base_ring().cardinality() == 2:
                 if E.nrows() <= 12:
                     algorithm = 'naive'
                 else:
                     algorithm = 'elimination'
-            elif E.base_ring().degree() == 1:
+            elif E.base_ring().is_prime_field():
                 if E.nrows() <= 4:
                     algorithm = 'naive'
                 else:
@@ -20014,8 +20014,8 @@ cdef class Matrix(Matrix1):
         Return a basis in canonical form for the kernel of the Krylov matrix of
         ``(self, M)`` with rows ordered according to ``shifts``. In other terms,
         the rows of the returned matrix form a basis of the kernel of the
-        `\Bold{K}[x]`-linear map `\Bold{K}[x]^n \to K^n` given by the matrix
-        ``self``, where the action of `x` on `K^n` is given by `M`.
+        `\Bold{K}[x]`-linear map `\Bold{K}[x]^n \to \Bold{K}^n` given by the matrix
+        ``self``, where the action of `x` on `\Bold{K}^n` is given by `M`.
 
         Write `E` for ``self``, of dimensions `m \times n`. Consider the Krylov
         basis `B` as computed by :meth:`krylov_basis` with the same parameters
@@ -20077,24 +20077,24 @@ cdef class Matrix(Matrix1):
 
         - ``M`` -- a square matrix of size equal to the number of columns of
           ``self``.
-        - ``shifts`` -- list of ``self.nrows()`` integers (optional): row
+        - ``shifts`` (default: ``None``) -- list of ``self.nrows()`` integers (optional): row
           priority shifts. If ``None``, defaults to all zeroes.
-        - ``degrees`` -- an integer or a list of ``self.nrows()`` integers
+        - ``degrees``  (default: ``None``) -- an integer or a list of ``self.nrows()`` integers
           (optional). The entry ``degrees[i]`` indicates that ``self[i, :] *
           M**degrees[i]`` is known to be dependent on rows before it in the
           ``shifts``-ordered Krylov matrix. If ``None``, defaults to
           ``self.ncols()`` for all rows. Giving a single integer for
           ``degrees`` is equivalent to giving a list with this integer repeated
           ``self.nrows()`` times.
-        - ``output_rows`` -- boolean, optional, defaults to True. Determines
+        - ``output_rows`` (default: ``True``) -- boolean, optional. Determines
           whether information relating the output columns to the rows of the
           corresponding Krylov matrix is also provided.
-        - ``var`` -- (optional) Defaults to ``None``, which means returning a
+        - ``var`` (default: ``None``) -- (optional) If ``None``, this method returns a
           constant matrix. If not ``None``, the polynomial matrix
           representation is used, and ``var`` must be either the generator of
           a polynomial ring over the base ring of ``self``, or a string which
           will be used as variable name for building such a polynomial ring.
-        - ``algorithm`` -- either 'naive', 'elimination', or None (let
+        - ``algorithm`` (default: ``None``) -- either ``'naive'``, ``'elimination'``, or ``None`` (let
           Sage choose).
 
         OUTPUT:
@@ -20253,7 +20253,7 @@ cdef class Matrix(Matrix1):
             [79 49 26  0  1  0]
             [ 0  0  0  0  0  1]
 
-        If one (or more) of the degree bounds it too low, the output matrix is
+        If one (or more) of the degree bounds is too low, the output matrix is
         likely to be incorrect. In the next example, the bounds `3` are large
         enough (since the minimal polynomial of `M` has degree at most `3`).
         However we see from the above computation that `1` is strictly smaller
