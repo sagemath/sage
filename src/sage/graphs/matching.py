@@ -75,6 +75,8 @@ def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
         each vertex `v`, require that the sum of the values of the edges
         incident to `v` is 1.
 
+      - ``'Micali-Vazirani'`` uses the Micali-Vazirani algorithm
+
     - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
       Linear Programming (MILP) solver to be used. If set to ``None``, the
       default one is used. For more information on MILP solvers and which
@@ -113,29 +115,35 @@ def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
         True
         sage: graphs.WheelGraph(5).has_perfect_matching(algorithm='LP_matching')
         False
+        sage: graphs.PetersenGraph().has_perfect_matching(algorithm='Micali-Vazirani')  # needs sage.graphs.micali_vazirani_matching
+        True
+        sage: graphs.WheelGraph(6).has_perfect_matching(algorithm='Micali-Vazirani')    # needs sage.graphs.micali_vazirani_matching
+        True
+        sage: graphs.WheelGraph(5).has_perfect_matching(algorithm='Micali-Vazirani')
+        False
 
     TESTS::
 
         sage: G = graphs.EmptyGraph()
-        sage: all(G.has_perfect_matching(algorithm=algo)                            # needs networkx
-        ....:     for algo in ['Edmonds', 'LP_matching', 'LP'])
+        sage: all(G.has_perfect_matching(algorithm=algo)                            # needs networkx, sage.numerical.mip, sage.graphs.micali_vazirani_matching
+        ....:     for algo in ['Edmonds', 'LP_matching', 'LP', 'Micali-Vazirani'])
         True
 
     Be careful with isolated vertices::
 
         sage: G = graphs.PetersenGraph()
         sage: G.add_vertex(11)
-        sage: any(G.has_perfect_matching(algorithm=algo)                            # needs networkx
-        ....:     for algo in ['Edmonds', 'LP_matching', 'LP'])
+        sage: any(G.has_perfect_matching(algorithm=algo)                            # needs networkx, sage.numerical.mip, sage.graphs.micali_vazirani_matching
+        ....:     for algo in ['Edmonds', 'LP_matching', 'LP', 'Micali-Vazirani'])
         False
     """
     if G.order() % 2:
         return False
 
-    if algorithm == "Edmonds":
+    if algorithm in ["Edmonds", "Micali-Vazirani"]:
         return len(G) == 2*G.matching(value_only=True,
                                       use_edge_labels=False,
-                                      algorithm='Edmonds')
+                                      algorithm=algorithm)
     elif algorithm == "LP_matching":
         return len(G) == 2*G.matching(value_only=True,
                                       use_edge_labels=False,
@@ -157,7 +165,8 @@ def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
             return True
         except MIPSolverException:
             return False
-    raise ValueError('algorithm must be set to "Edmonds", "LP_matching" or "LP"')
+    raise ValueError('algorithm must be set to "Edmonds", "LP_matching", "LP"'
+                     'or "Micali-Vazirani"')
 
 
 def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
@@ -198,6 +207,8 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
       - ``'Edmonds'`` selects Edmonds' algorithm as implemented in NetworkX,
 
       - ``'LP'`` uses a Linear Program formulation of the matching problem.
+
+      - ``'Micali-Vazirani'`` uses the Micali-Vazirani algorithm.
 
     - ``coNP_certificate`` -- boolean (default: ``False``); if set to
       ``True`` a set of pair of vertices (say `u` and `v`) is returned such
@@ -519,6 +530,8 @@ def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbo
 
       - ``'LP'`` uses a Linear Program formulation of the matching problem
 
+      - ``'Micali-Vazirani'`` uses the Micali-Vazirani algorithm
+
     - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
       Linear Programming (MILP) solver to be used. If set to ``None``, the
       default one is used. For more information on MILP solvers and which
@@ -740,6 +753,8 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
       - ``'Edmonds'`` selects Edmonds' algorithm as implemented in NetworkX,
 
       - ``'LP'`` uses a Linear Program formulation of the matching problem.
+
+      - ``'Micali-Vazirani'`` uses the Micali-Vazirani algorithm.
 
     - ``coNP_certificate`` -- boolean (default: ``False``); if set to
       ``True`` an edge of the graph, that does not participate in any
@@ -1107,6 +1122,8 @@ def matching(G, value_only=False, algorithm='Edmonds',
 
       - ``'LP'`` uses a Linear Program formulation of the matching problem
 
+      - ``'Micali-Vazirani'`` uses the Micali-Vazirani algorithm
+
     - ``use_edge_labels`` -- boolean (default: ``False``)
 
       - when set to ``True``, computes a weighted matching where each edge
@@ -1143,7 +1160,8 @@ def matching(G, value_only=False, algorithm='Edmonds',
     ALGORITHM:
 
     The problem is solved using Edmond's algorithm implemented in NetworkX,
-    or using Linear Programming depending on the value of ``algorithm``.
+    or using Linear Programming or using the Micali-Vazirani algorithm
+    depending on the value of ``algorithm``.
 
     EXAMPLES:
 
@@ -1195,16 +1213,44 @@ def matching(G, value_only=False, algorithm='Edmonds',
         sage: sorted(m)                                                             # needs sage.networkx
         [(0, 3, 3), (1, 2, 6)]
 
+    Setting Algorithm to 'Micali-Vazirani'::
+
+        sage: g = graphs.PetersenGraph()
+        sage: m = g.matching(algorithm='Micali-Vazirani'); h = Graph(m)
+        sage: # h is a 1-regular spanning subgraph of g
+        sage: all(h.degree(v) == 1 for v in g) and set(h) == set(g) and \
+        ....: h.size() == g.order() // 2 and h.is_subgraph(g, induced=False, up_to_isomorphism=False)
+        True
+        sage: g = graphs.CycleGraph(5)
+        sage: g.matching(algorithm='Micali-Vazirani', value_only=True)
+        2
+        sage: g = graphs.SylvesterGraph()
+        sage: m = g.matching(algorithm='Micali-Vazirani')
+        sage: n = g.matching(algorithm='Edmonds')                                   # needs networkx
+        sage: h, k = Graph(m), Graph(n)
+        sage: h.is_isomorphic(k)
+        True
+
     TESTS:
 
-    If ``algorithm`` is set to anything different from ``'Edmonds'`` or
-    ``'LP'``, an exception is raised::
+    If ``algorithm`` is set to anything different from ``'Edmonds'``, ``'LP'``,
+    or ``Micali-Vazirani`` an exception is raised::
 
         sage: g = graphs.PappusGraph()
         sage: g.matching(algorithm='somethingdifferent')
         Traceback (most recent call last):
         ...
-        ValueError: algorithm must be set to either "Edmonds" or "LP"
+        ValueError: algorithm must be set to one of the following: 'Edmonds,'
+        'LP,' or 'Micali-Vazirani'
+
+    Micali-Vazirani algorithm computes a maximum cardinality matching; the
+    parameter ``use_edge_labels`` must be set to ``False``::
+
+        sage: g = graphs.PappusGraph()
+        sage: g.matching(algorithm='Micali-Vazirani', use_edge_labels=True)
+        Traceback (most recent call last):
+        ...
+        ValueError: Micali-Vazirani algorithm does not support edge labels or weights
     """
     from sage.rings.real_mpfr import RR
 
@@ -1273,7 +1319,752 @@ def matching(G, value_only=False, algorithm='Edmonds',
                                 for u, v in L if b[frozenset((u, v))]],
                                format='list_of_edges'))
 
-    raise ValueError('algorithm must be set to either "Edmonds" or "LP"')
+    elif algorithm == "Micali-Vazirani":
+        if use_edge_labels:
+            raise ValueError("Micali-Vazirani algorithm does not support edge labels or weights")
+
+        from sage.graphs.graph import Graph
+        from dataclasses import dataclass
+        from typing import Any, List, Tuple, Hashable, Set, Dict
+
+        Edge = Tuple[Hashable, Hashable, Any]
+
+        def get_micali_vazirani_maximum_cardinality_matching(G: Graph) -> EdgesView:
+            r"""
+            Compute a maximum cardinality matching in a simple undirected graph using the Micali-Vazirani algorithm.
+
+            INPUT:
+            - ``G`` -- a simple undirected graph
+
+            OUTPUT:
+            - An `EdgesView` of the maximum cardinality matching in `G`
+            """
+            if G.has_loops() or G.has_multiple_edges():
+                raise ValueError("Micali-Vazirani algorithm is only applicable to simple undirected graphs")
+
+            # Return Empty EdgesView if G has no edges
+            if not G.size():
+                return EdgesView(Graph())
+
+            @dataclass
+            class Petal:
+                base: Hashable
+                peaks: Tuple[Hashable, Hashable]
+
+            # *************************************
+            # Greedy initial maximal matching (so as to reduce the total number of phases)
+            # *************************************
+            def compute_initial_maximal_matching() -> None:
+                """Compute a greedy maximal matching to seed the main algorithm.
+
+                This routine builds an initial matching by repeatedly selecting a vertex of
+                minimum positive degree, matching it with a neighbour of minimum degree,
+                and removing that vertex, its matched neighbour and their neighbours
+                from the graph.  The goal is to reduce the number of augmenting phases
+                required by the main algorithm.  The original version left the bucket
+                structure empty and used an incorrect membership test; this version
+                populates the buckets correctly and updates them as the graph is
+                modified.
+                """
+                # Make a mutable copy J of H for the greedy matching process
+                J = H.copy()
+
+                # Create a degree map and populate buckets keyed by degree
+                degree_map: dict[Hashable, int] = {vertex: J.degree(vertex) for vertex in J}
+                maximum_degree = max(degree_map.values()) if degree_map else 0
+
+                # buckets[d] contains the set of vertices currently having degree d in J
+                buckets: List[set] = [set() for _ in range(maximum_degree + 1)]
+                for vertex, degree in degree_map.items():
+                    if degree > 0:
+                        if degree >= len(buckets):
+
+                            # Extend buckets if necessary (should rarely happen)
+                            buckets.extend([set()] * (degree - len(buckets) + 1))
+                        buckets[degree].add(vertex)
+
+                # Find the initial minimum positive degree present in the buckets
+                minimum_degree = 1
+                while minimum_degree < len(buckets) and not buckets[minimum_degree]:
+                    minimum_degree += 1
+
+                # Main loop: continue while there is a non-empty bucket of positive degree
+                while minimum_degree < len(buckets):
+
+                    # If there are no vertices with the current minimum degree, advance
+                    if not buckets[minimum_degree]:
+                        minimum_degree += 1
+                        continue
+
+                    # Pop a vertex u of minimum positive degree
+                    u = buckets[minimum_degree].pop()
+                    if u not in degree_map:
+                        continue  # u may have been removed already
+
+                    # Choose the neighbour v of u with minimum degree
+                    neighbours = list(J.neighbors(u))
+                    if not neighbours:
+                        # Remove isolated vertex from degree_map and continue
+                        del degree_map[u]
+                        continue
+
+                    v = min(neighbours, key=lambda x: J.degree(x))
+                    # Add the edge (u, v) to the matching M with its label
+                    M.add_edge(u, v, J.edge_label(u, v))
+
+                    # Remove these vertices from the bucket lists and degree_map
+                    for vertex in (u, v):
+                        if vertex in degree_map:
+                            # Remove from its current bucket
+                            degree = degree_map[vertex]
+                            if degree < len(buckets) and vertex in buckets[degree]:
+                                buckets[degree].remove(vertex)
+                            del degree_map[vertex]
+
+                    # Track neighbours whose degrees will decrease after deletion
+                    vertices_to_update = set()
+                    for vertex in (u, v):
+                        for w in J.neighbors(vertex):
+                            if w not in [u, v]:
+                                vertices_to_update.add(w)
+
+                    # Remove vertices_to_remove from the graph J
+                    J.delete_vertices([u, v])
+
+                    # Update degrees of remaining vertices and relocate them in buckets
+                    for vertex in vertices_to_update:
+                        if vertex in degree_map:
+                            old_degree = degree_map[vertex]
+                            new_degree = J.degree(vertex)
+                            if new_degree != old_degree:
+                                if old_degree < len(buckets) and vertex in buckets[old_degree]:
+                                    buckets[old_degree].remove(vertex)
+                                degree_map[vertex] = new_degree
+
+                                # Ensure buckets list is long enough
+                                if new_degree >= len(buckets):
+                                    buckets.extend([set()] * (new_degree - len(buckets) + 1))
+                                if new_degree > 0:
+                                    buckets[new_degree].add(vertex)
+
+                    # Reset minimum_degree to find the next smallest bucket
+                    minimum_degree = 1
+                    while minimum_degree < len(buckets) and not buckets[minimum_degree]:
+                        minimum_degree += 1
+
+            # ******************************
+            # Start a new phase
+            # ******************************
+            def start_new_phase() -> None:
+                global search_level_vertices, H, M, INFINITY
+                search_level_vertices = []
+
+                for u in H:
+                    # A vertex is considered matched if it is incident to an edge in the current matching M.
+                    # Checking `u in M` only tests whether u is a vertex of M, so use degree instead.
+                    if M.degree(u) > 0:
+                        # Matched vertices start with infinite levels
+                        min_level[u] = INFINITY
+                        max_level[u] = INFINITY
+                        level[u] = [INFINITY, INFINITY]
+
+                    else:
+                        # Unmatched vertices start at level 0 and are candidates for search
+                        search_level_vertices.append(u)
+                        min_level[u] = 0
+                        max_level[u] = INFINITY
+                        level[u] = [0, INFINITY]
+
+                    predecessor[u] = []
+                    successor[u] = []
+                    vertex_petal_map[u] = None
+                    vertex_bud_map[u] = u
+                    color[u] = None
+                    visit_mark[u] = None
+
+                for (u, v, _) in H.edge_iterator():
+                    edge_index = edge_to_index(u, v)
+                    prop_edges.discard(edge_index)
+                    edge_scanned[edge_index] = -1
+
+                for index in range(1, int(2*H.order()+2)):
+                    tenacity_bridges_map[index] = []
+
+            # ******************************
+            # Primary Subroutine: Find min_level of vertices
+            # ******************************
+            def MIN(search_level: int) -> bool:
+                global search_level_vertices, phase_index, H, M, INFINITY
+                next_search_level_vertices = []
+                parity = search_level % 2
+
+                if not search_level_vertices or search_level > H.order():
+                    return True
+
+                for u in search_level_vertices:
+                    if level[u][parity] != search_level and level[u][parity] < INFINITY:
+                        next_search_level_vertices.append(u)
+                        continue
+
+                    if deletion_phase[u] == phase_index:
+                        continue
+
+                    for v in H.neighbor_iterator(u):
+                        edge_index = edge_to_index(u, v)
+                        l = H.edge_label(u, v)
+                        if edge_scanned[edge_index] != phase_index and M.has_edge(u, v, l) == parity and deletion_phase[v] != phase_index:
+                            edge_scanned[edge_index] = phase_index
+
+                            if min_level[v] > search_level:
+                                min_level[v] = search_level + 1
+                                level[v][1 - parity] = search_level + 1
+                                next_search_level_vertices.append(v)
+                                predecessor[v].append(u)
+                                successor[u].append(v)
+                                prop_edges.add(edge_index)
+
+                            else:
+                                tenacity = level[u][parity] + level[v][parity] + 1
+
+                                # In the case where tenacity is defined and thus we know which level the bridge will be processed
+                                if tenacity < INFINITY:
+                                    if tenacity >= len(tenacity_bridges_map):
+                                        tenacity_bridges_map.extend([] for _ in range(tenacity - len(tenacity_bridges_map) + 1))
+                                    tenacity_bridges_map[tenacity].append(edge_index)
+
+                                # The case where tenacity is not yet known (possibly due to the even/ odd level of the blossom not yet labeled
+                                else:
+                                    prop_edges.discard(edge_index)
+
+                search_level_vertices = next_search_level_vertices
+                return False
+
+            # ******************************
+            # Primary Subroutine: Find max_level of vertices
+            # ******************************
+            def MAX(search_level: int) -> bool:
+                global H, M, phase_index, num_augmentations, previous_search_level
+                is_augmented = False
+
+                for edge_index in tenacity_bridges_map[2 * search_level + 1]:
+                    u, v = index_to_edge(edge_index)
+                    l = H.edge_label(u, v)
+                    if deletion_phase[u] == phase_index or deletion_phase[v] == phase_index:
+                        continue
+
+                    left_support, right_support, bottleneck, encountered_deleted_vertex = DDFS(u, v)
+
+                    # if the bridge has been augmented
+                    if bottleneck is None:
+                        if not encountered_deleted_vertex:
+                            augmentation_success = augment(left_support, right_support, (u, v, l), search_level)
+                            if augmentation_success:
+                                is_augmented = True
+                                if M.size() == H.order() // 2:
+                                    return is_augmented
+
+                    else:
+                        if not encountered_deleted_vertex:
+                            form_blossom(left_support, right_support, bottleneck, (u, v, l))
+                            label_max(left_support, search_level)
+                            label_max(right_support, search_level)
+
+                if is_augmented:
+                    previous_search_level = search_level
+                    num_augmentations += 1
+                    is_augmented = False
+                return is_augmented
+
+            # After identifying support, we assign the vertex its max level label.
+            # Note: This step is skipped during augmentation, as max levels are reset regardless.
+            # ******************************
+            # Label vertices after forming a blossom
+            # ******************************
+            def label_max(support: List[Hashable], search_level: int) -> None:
+                global search_level_vertices, H
+
+                next_search_level_vertices: List[int] = []
+                for vertex in support:
+                    max_level[vertex] = 2 * search_level + 1 - min_level[vertex]
+                    level_parity = max_level[vertex] % 2
+
+                    # Record the actual max level on the corresponding parity slot
+                    level[vertex][level_parity] = max_level[vertex]
+                    next_search_level_vertices.append(vertex)
+
+                    if not level_parity:
+                        for neighbor in H.neighbor_iterator(vertex):
+                            edge_index = edge_to_index(vertex, neighbor)
+
+                            # In the case were the tenacity of a tenacity_bridges_map was not yet found
+                            if edge_index not in prop_edges:
+                                tenacity_bridges_map[max_level[vertex] + level[neighbor][0] + 1].append(edge_index)
+
+                search_level_vertices += next_search_level_vertices
+
+            # ******************************
+            # Double DFS to locate augmenting paths
+            # ******************************
+            def DDFS(source_red_vertex: Hashable, source_green_vertex: Hashable) -> Tuple[List[Hashable], List[Hashable], Hashable, bool]:
+                global phase_index
+                encountered_deleted_vertex = False
+
+                # Set the starting point for each of red and green DFS's
+                red_stack, green_stack = [], []  # Stack saves previously traversed vertices
+                red_vertex, green_vertex = get_bud(source_red_vertex), get_bud(source_green_vertex)  # Set the initial point for both DFS's
+
+                red_predecessors, green_predecessors = \
+                    predecessor[red_vertex][:], predecessor[green_vertex][:]  # Copy predecessor list over for the current vertex
+                red_support, green_support = [red_vertex], [green_vertex]  # the lists holding the support of the current bridge
+
+                # Following is used to save the data for DFS's for when they backtrack in the case a bottleneck is reached
+                previous_red_support, previous_green_support = [red_vertex], [green_vertex]
+
+                # Boolean variables are initiated
+                no_augmentation_found = False if not min_level[red_vertex] and not min_level[green_vertex] else True
+                collision = True if red_vertex == green_vertex else False
+
+                # Returns nothing if there is no support for the petal
+                if collision and not no_augmentation_found:
+                    return [], [], red_vertex, encountered_deleted_vertex
+
+                # Label is used to track if vertices have been visit_mark in the current DDFS
+                label = (source_red_vertex, source_green_vertex)
+                visit_mark[red_vertex], visit_mark[green_vertex] = label, label
+
+                # DDFS continues to run while an augmenting path still isn't found
+                while no_augmentation_found:
+
+                    # Checks for when the two DFS's land on the same vertex
+                    if collision:
+
+                        # The the levels of the vertices are the same, we reverse the green DFS
+                        if min_level[red_vertex] == min_level[green_vertex]:
+                            previous_green_support = green_support[:]
+                            green_vertex, green_predecessors, reverse_check = reverse_DFS(green_vertex, green_predecessors, green_stack, green_support)
+
+                            if reverse_check:
+                                previous_red_support, red_bottleneck = red_support[:], red_vertex
+                                red_vertex, red_predecessors, reverse_check = reverse_DFS(red_vertex, red_predecessors, red_stack, red_support)
+
+                        elif min_level[red_vertex] > min_level[green_vertex]:
+                            red_vertex, red_predecessors, collision = reverse_DFS(red_vertex, red_predecessors, red_stack, red_support)
+
+                        elif min_level[red_vertex] < min_level[green_vertex]:
+                            green_vertex, green_predecessors, collision = reverse_DFS(green_vertex, green_predecessors, green_stack, green_support)
+
+                        if red_vertex == green_vertex:
+                            previous_red_support.pop()
+                            green_support.pop()
+                            return previous_red_support, green_support, red_vertex, encountered_deleted_vertex
+
+                        collision = False
+
+                    # Case where red DFS advances in search
+                    elif min_level[red_vertex] >= min_level[green_vertex]:
+
+                        # Advance the red DFS, will reverse if no vertices to travel to
+                        red_vertex, red_predecessors, collision = advance_DFS(red_vertex, red_predecessors, red_stack, red_support, label)
+
+                        # If stack is cleared and no vertices left to explore, bottleneck is found
+                        if not red_stack and not red_predecessors:
+                            previous_red_support.pop()
+                            green_support.pop()
+                            return previous_red_support, green_support, green_vertex, encountered_deleted_vertex
+
+                    # Case where green DFS advances in search
+                    else:
+
+                        # Advance the green DFS, will reverse if no vertices to travel to
+                        green_vertex, green_predecessors, collision = advance_DFS(green_vertex, green_predecessors, green_stack, green_support, label)
+
+                        # If stack is clearned and no vertices left to explore, reverse red DFS
+                        if not green_stack and not green_predecessors:
+                            green_support = previous_green_support
+                            previous_green_support, green_vertex, green_predecessors = [green_vertex], red_vertex, red_predecessors[:]
+                            previous_red_support, red_bottleneck = red_support[:], red_vertex
+                            red_vertex, red_predecessors, reverse_check = reverse_DFS(red_vertex, red_predecessors, red_stack, red_support)
+
+                            if reverse_check:
+                                previous_red_support.pop()
+                                green_support.pop()
+                                return previous_red_support, green_support, red_bottleneck, encountered_deleted_vertex
+
+                    # Checks if vertex was removed in previous augmentation during current search_level
+                    if deletion_phase[red_vertex] == phase_index or deletion_phase[green_vertex] == phase_index:
+                        encountered_deleted_vertex = True
+
+                    # Checks if augmenting path has been found
+                    if not min_level[red_vertex] and not min_level[green_vertex] and red_vertex != green_vertex:
+                        no_augmentation_found = False
+
+                return red_support, green_support, None, encountered_deleted_vertex
+
+            # ******************************
+            # Auxiliary Subroutine: advance DFS along predecessors
+            # ******************************
+            def advance_DFS(vertex: Hashable, predecessor_list: List[Hashable], stack: List[Tuple[Hashable, List[Hashable]]], support: List[Hashable], label: Tuple[Hashable, Hashable]) -> Tuple[Hashable, List[Hashable], bool]:
+                reverse_check = False
+                if predecessor_list:
+
+                    next_vertex = get_bud(predecessor_list.pop())
+                    # Save the previous vertex with it's predecessor list to the stack
+                    stack.append((vertex, predecessor_list))
+                    # Add next vertex to support
+                    support.append(next_vertex)
+                    predecessor_list = predecessor[next_vertex][:]
+
+                    if visit_mark[next_vertex] == label:
+                        return next_vertex, predecessor_list, True
+                    visit_mark[next_vertex] = label
+                # If next vertex not found reverse path
+                else:
+                    next_vertex, predecessor_list, reverse_check = reverse_DFS(vertex, predecessor_list, stack, support)
+                return next_vertex, predecessor_list, reverse_check
+
+            # ******************************
+            # Auxiliary Subroutine: backtrack in DFS stack
+            # ******************************
+            def reverse_DFS(vertex: Hashable, predecessor_list: List[Hashable], stack: List[Tuple[Hashable, List[Hashable]]], support: List[Hashable]) -> Tuple[Hashable, List[Hashable], bool]:
+                failure = False
+                if stack:
+                    previous_vertex = stack.pop()
+                    vertex = previous_vertex[0]
+                    predecessor_list = previous_vertex[1]
+                    support.pop()
+                else:
+                    failure = True
+                return vertex, predecessor_list, failure
+
+            # Each vertex can only belong to one petal
+            # The bud cannot be part of the petal
+            # Each vertex in the petal points to the bud
+
+            # ******************************
+            # Contract a blossom (petal)
+            # ******************************
+            def form_blossom(left_support: List[Hashable], right_support: List[Hashable], bud: Hashable, bridge: Edge):
+                """
+                Create a new blossom centered at 'bud' with supports from both sides.
+                """
+                global phase_index
+                petal_ = Petal(base=bud, peaks=(bridge[0], bridge[1]))
+                form_petal(left_support, bud, petal_, 0)
+                form_petal(right_support, bud, petal_, 1)
+
+            def form_petal(support: List[Hashable], bud: Hashable, petal: Petal, direction: int):
+                """
+                Assign each vertex in support to the given petal and direction.
+                """
+                for vertex in support:
+                    vertex_bud_map[vertex] = get_bud(bud)
+                    vertex_petal_map[vertex] = petal
+                    color[vertex] = direction
+
+            # ******************************
+            # Path compression: find the bud of a vertex
+            # ******************************
+            def get_bud(vertex: Hashable) -> Hashable:
+                if vertex != vertex_bud_map[vertex]:
+                    vertex_bud_map[vertex] = get_bud(vertex_bud_map[vertex])
+                return vertex_bud_map[vertex]
+
+            # ******************************
+            # Unfold a blossom (petal)
+            # ******************************
+            # unfolds a petal to get the path from the vertex that is part of the petal to the bud
+            def unfold_petal(vertex: Hashable, target: Hashable) -> List[Hashable]:
+                path = list()
+                petal = vertex_petal_map[vertex]
+                bud = petal.base
+                if max_level[vertex] % 2:
+                    path = unfold_path_in_petal(vertex, bud, petal)
+                else:
+                    red_vertex = petal.peaks[0]
+                    green_vertex = petal.peaks[1]
+                    if not color[vertex]:
+                        left_path = unfold_path_in_petal(red_vertex, vertex, petal)
+                        right_path = unfold_path_in_petal(green_vertex, bud, petal)
+                        if left_path and right_path:
+                            left_path.reverse()
+                            path = left_path + right_path
+                        else:
+                            return []
+                    elif color[vertex]:
+                        left_path = unfold_path_in_petal(red_vertex, bud, petal)
+                        right_path = unfold_path_in_petal(green_vertex, vertex, petal)
+                        if left_path and right_path:
+                            right_path.reverse()
+                            path = right_path + left_path
+                        else:
+                            return []
+                if bud == target:
+                    return path
+                else:
+                    path.pop()
+                    petal_path = unfold_petal(bud, target)
+                    return path + petal_path
+
+            def unfold_path_in_petal(start_vertex: Hashable, end_vertex: Hashable, petal: Petal) -> List[Hashable]:
+                global M
+                if start_vertex == end_vertex:
+                    return [start_vertex]
+                if vertex_petal_map[start_vertex] != petal:
+                    new_target = vertex_petal_map[start_vertex].base
+                    path = unfold_petal(start_vertex, new_target)
+                    current_vertex = new_target
+                else:
+                    path = [start_vertex]
+                    current_vertex = start_vertex
+                while current_vertex != end_vertex:
+                    previous_vertex = current_vertex
+                    predecessor_list = predecessor[current_vertex][:]
+                    new_petal = None
+                    next_petal_vertex = None
+                    wrong_petal_vertex = None
+                    for vertex in predecessor_list:
+                        if vertex_petal_map[vertex] is not None:
+                            if vertex == end_vertex:
+                                current_vertex = vertex
+                                path.append(end_vertex)
+                                break
+                            elif vertex_petal_map[vertex] == petal and color[current_vertex] == color[vertex]:
+                                next_petal_vertex = vertex
+                            elif vertex_petal_map[vertex] == petal and color[current_vertex] != color[vertex]:
+                                wrong_petal_vertex = vertex
+                            else:
+                                new_petal = vertex
+                        else:
+                            if vertex == petal.base:
+                                current_vertex = vertex
+                                path.append(end_vertex)
+                                break
+                    if previous_vertex == current_vertex:
+                        if next_petal_vertex is not None:
+                            current_vertex = next_petal_vertex
+                            path.append(current_vertex)
+                        elif wrong_petal_vertex is not None:
+                            current_vertex = vertex
+                            if vertex_petal_map[vertex] != petal and vertex_petal_map[vertex] is not None:
+                                petal_path = unfold_petal(current_vertex, vertex_petal_map[vertex].base)
+                                path += petal_path
+                                current_vertex = path[-1]
+                            else:
+                                path.append(current_vertex)
+                        elif new_petal is None:
+                            return []
+                        else:
+                            if not M.has_edge(current_vertex, new_petal, H.edge_label(current_vertex, new_petal)):
+                                path_addition = unfold_petal(new_petal, vertex_petal_map[new_petal].base)
+                                if not path_addition:
+                                    return []
+                                path += path_addition
+                                current_vertex = vertex_petal_map[new_petal].base
+                                while vertex_petal_map[current_vertex] != petal and current_vertex != end_vertex:
+                                    # digging deeper into the petal
+                                    path.pop()
+                                    if vertex_petal_map[current_vertex]:
+                                        path += unfold_petal(current_vertex, vertex_petal_map[current_vertex].base)
+                                        current_vertex = vertex_petal_map[current_vertex].base
+                                    else:
+                                        # bud failure
+                                        return []
+                            else:
+                                path += unfold_path_in_petal(new_petal, vertex_petal_map[new_petal].base, vertex_petal_map[new_petal])
+                                current_vertex = vertex_petal_map[new_petal].base
+
+                return path
+
+            # ******************************
+            # Augment along a found path
+            # ******************************
+            def augment(left_support: List[Hashable], right_support: List[Hashable], bridge: Edge, search_level: int) -> bool:
+                """
+                Augment the matching M with the agumenting path found.
+                """
+                global M, phase_index
+                left_path = get_path(left_support, bridge[0])
+                right_path = get_path(right_support, bridge[1])
+                if not left_path or not right_path:
+                    # Could not construct a valid augmenting path
+                    return False
+
+                # The left path needs to be reversed to go from the free vertex to the bridge vertex
+                left_path.reverse()
+                path = left_path + right_path
+
+                # Toggle edges along the path: matched edges become unmatched and vice versa
+                for index in range(len(path) - 1):
+                    u, v = path[index], path[index+1]
+                    label = H.edge_label(u, v)
+                    if M.has_edge(u, v, label):
+                        M.delete_edge(u, v, label)
+                    else:
+                        M.add_edge(u, v, label)
+
+                # Erase vertex based on search level
+                erase_vertex_list = []
+                for vertex in path:
+                    deletion_phase[vertex] = phase_index
+                    erase_vertex_list.append(vertex)
+
+                while erase_vertex_list:
+                    current_vertex = erase_vertex_list.pop()
+                    successors = successor[current_vertex][:]
+                    for vertex in successors:
+                        if deletion_phase[vertex] != phase_index:
+                            predecessor[vertex].remove(current_vertex)
+                            successor[current_vertex].remove(vertex)
+                            if not predecessor[vertex]:
+                                erase_vertex_list.append(vertex)
+                                deletion_phase[vertex] = phase_index
+                return True
+
+            # Procedure to find path after discovering an augmenting path via DDFS
+            def get_path(support: List[Hashable], peak: Hashable) -> List[Hashable]:
+                """
+                Build the vertex sequence of an augmenting path.
+                """
+                path = []
+                current_vertex = peak
+                predecessor_list = predecessor[current_vertex][:]
+
+                # Follow the support given to get the path
+                for vertex in support:
+
+                    # Do a search following the trail given by the support
+                    while get_bud(current_vertex) != vertex:
+                        # If it is not the correct vertex pop the next vertex in the predecessor list
+                        current_vertex = predecessor_list.pop()
+
+                    predecessor_list = predecessor[current_vertex][:]
+                    # If the vertex is not part of a petal, add it to the path
+                    # Otherwise unfold the petal
+                    if vertex_petal_map[current_vertex] is None:
+                        path.append(current_vertex)
+                    else:
+                        petal_path = unfold_petal(current_vertex, get_bud(current_vertex))
+                        if not petal_path:
+                            return []
+                        path += petal_path
+                        current_vertex = get_bud(current_vertex)
+                        predecessor_list = predecessor[current_vertex][:]
+                return path
+
+            # ******************************
+            # Main: search phases
+            # This is the main loop that finds and aguments phases (a maximal set of minimum length disjoin augmenting paths) and erase those vertices judiciously.
+            # ******************************
+            def search() -> bool:
+                """
+                Perform one complete search phase to find and augment any disjoint augmenting paths.
+                Returns True if any augmentation was found.
+                """
+                global search_level, previous_search_level, num_augmentations
+                search_level = 0
+                previous_search_level = 0
+                augmentation_found = False
+                search_complete = False
+                while not augmentation_found and not search_complete:
+                    search_complete = MIN(search_level)
+                    augmentation_found = MAX(search_level)
+                    if search_complete and not num_augmentations:
+                        return False
+
+                    search_level += 1
+                return True
+
+            # ******************************
+            # Set up global state containers
+            # ******************************
+            global H, M, N, search_level_vertices, phase_index, num_augmentations, INFINITY
+            INFINITY = float('inf')
+
+            # relabel vertices of G to 0..n‑1
+            H = G.copy()
+            N = H.order()
+
+            for vertex in H:
+                if not H.degree(vertex):
+                    H.delete_vertex(vertex)
+                    continue
+
+            vertex_to_index_map = H.relabel(inplace=True, return_map=True)
+            index_to_vertex_map = [None] * N
+            for vertex, index in vertex_to_index_map.items():
+                index_to_vertex_map[index] = vertex
+
+            # indexing the edges
+            def edge_to_index(i, j):
+                global N
+                if i > j:
+                    i, j = j, i
+
+                # A[i] = (i * (2*N - i - 1)) // 2
+                return (i * (2*N - i - 1)) // 2 + (j - i - 1)
+
+            def index_to_edge(k):
+                global N
+
+                # Solve i^2 - (2n-1)i + 2k <= 0 for i, take floor of the smaller root
+                import math
+                i = int(((2*N - 1) - math.sqrt((2*N - 1)**2 - 8*k)) // 2)
+                a_i = i * (2*N - i - 1) // 2
+                j = k - a_i + i + 1
+                return (i, j)
+
+            tenacity_bridges_map = [[] for _ in range(2 * N + 2)]  # type: List[List[int]]
+            deletion_phase = [-1] * N                              # type: List[int]
+            visit_mark = [None] * N                                # type: List[Any]
+            vertex_petal_map = [None] * N                          # type: List[Any]
+            vertex_bud_map = list(range(N))                        # type: List[int]
+            level = [[0, INFINITY] for _ in range(N)]              # type: List[List[Any]]
+            min_level = [0] * N                                    # type: List[int]
+            max_level = [INFINITY] * N                             # type: List[Any]
+            predecessor = [[] for _ in range(N)]                   # type: List[List[int]]
+            successor = [[] for _ in range(N)]                     # type: List[List[int]]
+            color = [None] * N                                     # type: List[int]
+            search_level_vertices = list(range(N))                 # type: List[int]
+            edge_scanned = {edge_to_index(u, v): -1 for (u, v, _) in H.edge_iterator()} # type: Dict[int, int]
+            prop_edges = set()                                     # type: Set[int]
+
+            M = Graph()
+
+            # ensure all vertices of H are present in M
+            M.add_vertices(H.vertices())
+            search_level_vertices = []
+            phase_index = 0
+            num_augmentations = 0
+
+            # ******************************
+            # Algorithm execution flow
+            # ******************************
+
+            there_exists_a_phase = True
+            compute_initial_maximal_matching()
+
+            start_new_phase()
+            while there_exists_a_phase:
+                num_augmentations = 0
+                there_exists_a_phase = search()
+                phase_index += 1
+                start_new_phase()
+
+                # Stop early if perfect matching found
+                if M.size() == N // 2:
+                    break
+
+            # map the numeric vertex labels back to the original labels
+            M.relabel(index_to_vertex_map, inplace=True)
+            return EdgesView(M)
+
+        M = get_micali_vazirani_maximum_cardinality_matching(G.to_simple())
+
+        return len(M) if value_only else M
+
+    else:
+        raise ValueError('algorithm must be set to one of the following: '
+                     '\'Edmonds,\' \'LP,\' or \'Micali-Vazirani\'')
 
 
 def perfect_matchings(G, labels=False):
