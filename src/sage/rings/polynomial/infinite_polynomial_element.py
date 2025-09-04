@@ -518,10 +518,10 @@ class InfinitePolynomial(CommutativePolynomial,
 
     def is_monomial(self):
         """
-        Return ``True`` if ``self`` is a monomial, which we define to be a
-        product of generators with coefficient 1.
+        Return whether ``self`` is a monomial.
 
-        Use :meth:`is_term` to allow the coefficient to not be 1.
+        A monomial is a product of generators with coefficient 1.
+        Use :meth:`is_term` to allow an arbitrary coefficient.
 
         EXAMPLES::
 
@@ -536,11 +536,11 @@ class InfinitePolynomial(CommutativePolynomial,
 
     def is_term(self):
         """
-        Return ``True`` if ``self`` is a term, which we define to be a
-        product of generators times some coefficient, which need
-        not be 1.
+        Return whether ``self`` is a term.
 
-        Use :meth:`is_monomial` to require that the coefficient be 1.
+        A term is a product of generators times a non-zero element of
+        the base ring.  Use :meth:`is_monomial` to check whether the
+        element is a term with coefficient 1.
 
         EXAMPLES::
 
@@ -561,11 +561,11 @@ class InfinitePolynomial(CommutativePolynomial,
         INPUT:
 
         - ``x`` -- a generator of the parent of ``self``. If ``x`` is
-          not specified (or is None), return the total degree, which
-          is the maximum degree of any monomial. Note that a weighted
-          term ordering alters the grading of the generators of the
-          ring; see the tests below.  To avoid this behavior, set the
-          optional argument ``std_grading=True``.
+          not specified (or is ``None``), return the total degree,
+          which is the maximum degree of any monomial. Note that a
+          weighted term ordering alters the grading of the generators
+          of the ring; see the tests below.  To avoid this behavior,
+          set the optional argument ``std_grading=True``.
 
         OUTPUT: integer
 
@@ -579,6 +579,7 @@ class InfinitePolynomial(CommutativePolynomial,
             3
             sage: p.degree(y[3])
             0
+
         """
         if x is not None:
             x = x._p
@@ -624,10 +625,10 @@ class InfinitePolynomial(CommutativePolynomial,
         Return a denominator of ``self``.
 
         First, the lcm of the denominators of the entries of ``self``
-        is computed and returned. If this computation fails, the
-        unit of the parent of ``self`` is returned.
+        is computed and returned. If this computation fails, the unit
+        of the parent of ``self`` is returned.
 
-        Note that some subclasses may implement its own denominator
+        Note that some subclasses may implement their own denominator
         function.
 
         .. WARNING::
@@ -647,6 +648,7 @@ class InfinitePolynomial(CommutativePolynomial,
 
             sage: d.parent()
             Infinite polynomial ring in x over Rational Field
+
         """
         P = self.parent()
         return InfinitePolynomial(P, self._p.denominator())
