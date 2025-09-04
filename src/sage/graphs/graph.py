@@ -1718,6 +1718,13 @@ class Graph(GenericGraph):
             sage: Graph('Fli@?').is_cactus()
             False
 
+            sage: Graph('BG').is_cactus()
+            False
+            sage: (Graph(0).is_cactus(), Graph(1).is_cactus())
+            (True, True)
+            sage: (Graph(2).is_cactus(), Graph(3).is_cactus())
+            (False, False)
+
         Test a graph that is not outerplanar, see :issue:`24480`::
 
             sage: graphs.Balaban10Cage().is_cactus()                                    # needs networkx
@@ -1725,8 +1732,15 @@ class Graph(GenericGraph):
         """
         self._scream_if_not_simple()
 
+        if not self.is_connected():
+            return False
+
         # Special cases
         if self.order() < 4:
+            return True
+
+        # trees are cacti
+        if self.order() == self.size() + 1:
             return True
 
         if self.size() > 3 * (self.order() - 1) / 2:
@@ -1734,9 +1748,6 @@ class Graph(GenericGraph):
 
         # Every cactus graph is outerplanar
         if not self.is_circular_planar():
-            return False
-
-        if not self.is_connected():
             return False
 
         # the number of faces is 1 plus the number of blocks of order > 2
