@@ -205,7 +205,7 @@ def test_word_perms(t_limit=5.0):
         raise MemoryError("Error allocating memory.")
     from sage.misc.prandom import randint
     from sage.combinat.permutation import Permutations
-    S = Permutations(list(range(n)))
+    S = Permutations(range(n))
     t = cputime()
     while cputime(t) < t_limit:
         word = [randint(0, 1) for _ in range(n)]
@@ -284,6 +284,10 @@ cdef WordPermutation *create_word_perm(object list_perm) noexcept:
     r"""
     Create a word permutation from a Python list permutation L, i.e. such that
     `i \mapsto L[i]`.
+
+    INPUT:
+
+    - ``list_perm`` -- an iterable containing a permutation of `0` to `n`
     """
     cdef int i, j, parity, comb, words_per_chunk, num_chunks = 1
     cdef codeword *images_i
@@ -291,8 +295,8 @@ cdef WordPermutation *create_word_perm(object list_perm) noexcept:
     cdef WordPermutation *word_perm = <WordPermutation *> sig_malloc(sizeof(WordPermutation))
     if word_perm is NULL:
         raise RuntimeError("Error allocating memory.")
+    list_perm = list(list_perm)
     word_perm.degree = len(list_perm)
-    list_perm = copy(list_perm)
     while num_chunks*chunk_size < word_perm.degree:
         num_chunks += 1
     word_perm.images = <codeword **> sig_malloc(num_chunks * sizeof(codeword *))

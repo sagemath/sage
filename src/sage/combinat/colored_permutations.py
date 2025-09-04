@@ -7,7 +7,7 @@ Colored permutations
     generalized to `G \wr S_n`
 """
 import itertools
-from random import choice
+from sage.misc.prandom import choice
 
 from sage.structure.element import MultiplicativeGroupElement, parent
 from sage.structure.parent import Parent

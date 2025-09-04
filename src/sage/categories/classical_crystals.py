@@ -65,6 +65,8 @@ class ClassicalCrystals(Category_singleton):
         running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
+        running ._test_random() . . . pass
+        running ._test_rank() . . . pass
         running ._test_some_elements() . . . pass
         running ._test_stembridge_local_axioms() . . . pass
     """
@@ -288,6 +290,8 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_new() . . . pass
                 running ._test_not_implemented_methods() . . . pass
                 running ._test_pickling() . . . pass
+                running ._test_random() . . . pass
+                running ._test_rank() . . . pass
                 running ._test_some_elements() . . . pass
                 running ._test_stembridge_local_axioms() . . . pass
 
@@ -317,6 +321,8 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_new() . . . pass
                 running ._test_not_implemented_methods() . . . pass
                 running ._test_pickling() . . . pass
+                running ._test_random() . . . pass
+                running ._test_rank() . . . pass
                 running ._test_some_elements() . . . pass
                 running ._test_stembridge_local_axioms() . . . pass
 
@@ -371,6 +377,8 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_new() . . . pass
                 running ._test_not_implemented_methods() . . . pass
                 running ._test_pickling() . . . pass
+                running ._test_random() . . . pass
+                running ._test_rank() . . . pass
                 running ._test_some_elements() . . . pass
                 running ._test_stembridge_local_axioms() . . . pass
 

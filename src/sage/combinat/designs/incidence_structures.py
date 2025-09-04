@@ -1327,12 +1327,15 @@ class IncidenceStructure:
 
         - ``perm`` -- can be one of
 
-            - a dictionary -- then each point ``p`` (which should be a key of
-              ``d``) is relabeled to ``d[p]``
+            - a dictionary -- then each point ``p`` (which should be a key
+              of ``perm``) is relabeled to ``perm[p]``
 
-            - a list or a tuple of length ``n`` -- the first point returned by
-              :meth:`ground_set` is relabeled to ``l[0]``, the second to
-              ``l[1]``, ...
+            - an iterable of length ``n`` -- the first point returned by
+              :meth:`ground_set` is relabeled to ``perm[0]``, the second to
+              ``perm[1]``, ...
+
+            - a callable -- then each point ``p`` is relabeled to
+              ``perm(p)``
 
             - ``None`` -- the incidence structure is relabeled to be on
               `\{0,1,...,n-1\}` in the ordering given by :meth:`ground_set`
@@ -1375,6 +1378,7 @@ class IncidenceStructure:
 
             sage: I.automorphism_group()                                                # needs sage.groups
             Permutation Group with generators [(2,4)]
+
         """
         if not inplace:
             from copy import copy
@@ -1387,11 +1391,18 @@ class IncidenceStructure:
             self._point_to_index = None
             return
 
-        if isinstance(perm, (list, tuple)):
-            perm = dict(zip(self._points, perm))
-
         if not isinstance(perm, dict):
-            raise ValueError("perm argument must be None, a list or a dictionary")
+            # Check for generic iterable/callable
+            try:
+                it = iter(perm)
+            except TypeError:
+                if not callable(perm):
+                    raise
+                # callable
+                perm = {v: perm(v) for v in self._points}
+            else:
+                # iterable
+                perm = dict(zip(self._points, it))
 
         if len(set(perm.values())) != len(perm):
             raise ValueError("two points are getting relabelled with the same name")

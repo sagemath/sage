@@ -2032,6 +2032,8 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
               running ._test_new() . . . pass
               running ._test_not_implemented_methods() . . . pass
               running ._test_pickling() . . . pass
+              running ._test_random() . . . pass
+              running ._test_rank() . . . pass
               running ._test_some_elements() . . . pass
         """
         from sage.misc.sage_unittest import TestSuite
