@@ -308,6 +308,9 @@ def sage_include_directories(use_sources=False):
 
         sage: import sage.env
         sage: sage.env.sage_include_directories()
+        doctest:warning...
+        DeprecationWarning: use sage.config.get_include_dirs() instead
+        ...
         ['...',
          '.../numpy/...core/include',
          '.../include/python...']
@@ -328,6 +331,9 @@ def sage_include_directories(use_sources=False):
         sage: any(os.path.isfile(os.path.join(d, file)) for d in dirs)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(40765, 'use sage.config.get_include_dirs() instead')
+
     if use_sources:
         dirs = [SAGE_SRC]
     else:
