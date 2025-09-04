@@ -19153,8 +19153,8 @@ cdef class Matrix(Matrix1):
 
             sage: R = GF(97)
             sage: E = matrix.zero(R, 3)
-            sage: shifts = vector(ZZ,[0, 0, 0])
-            sage: degrees = vector(ZZ,[3, 3, 3])
+            sage: shifts = vector(ZZ, [0, 0, 0])
+            sage: degrees = vector(ZZ, [3, 3, 3])
             sage: E._krylov_row_coordinates(shifts, degrees)
             [(0, 0, 0),
              (1, 0, 1),
@@ -19180,7 +19180,7 @@ cdef class Matrix(Matrix1):
              (2, 1, 5),
              (0, 1, 3),
              (2, 2, 7)]
-            sage: E._krylov_row_coordinates(shifts,degrees, [(2, 2), (1, 4), (1, 2), (1, 1), (0, 2)])
+            sage: E._krylov_row_coordinates(shifts, degrees, [(2, 2), (1, 4), (1, 2), (1, 1), (0, 2)])
             [(1, 1, 2), (1, 2, 1), (2, 2, 0)]
         """
         # (construct and) filter rows
@@ -19947,7 +19947,7 @@ cdef class Matrix(Matrix1):
 
         The algorithm must be valid::
 
-            sage: E = matrix(R, [[27,49,29], [50,58,0], [77,10,29]])
+            sage: E = matrix(R, [[27, 49, 29], [50, 58, 0], [77, 10, 29]])
             sage: E.krylov_basis(M, algorithm="non-existent")
             Traceback (most recent call last):
             ...
@@ -20381,7 +20381,7 @@ cdef class Matrix(Matrix1):
 
         The algorithm must be valid::
 
-            sage: E = matrix(R, [[27,49,29], [50,58,0], [77,10,29]])
+            sage: E = matrix(R, [[27, 49, 29], [50, 58, 0], [77, 10, 29]])
             sage: E.krylov_kernel_basis(M, base_algorithm="non-existent")
             Traceback (most recent call last):
             ...
