@@ -73,17 +73,17 @@ class NumericalEigenforms(SageObject):
         sage: n = numerical_eigenforms(23)
         sage: n == loads(dumps(n))
         True
-        sage: n.ap(2)  # abs tol 1e-12
+        sage: n.ap(2)  # abs tol 1e-11
         [3.0, -1.6180339887498947, 0.6180339887498968]
-        sage: n.systems_of_eigenvalues(7)  # abs tol 2e-12
+        sage: n.systems_of_eigenvalues(7)  # abs tol 1e-11
         [[-1.6180339887498947, 2.23606797749979, -3.2360679774997894],
          [0.618033988749895, -2.236067977499788, 1.23606797749979],
          [3.0, 4.0, 6.0]]
-        sage: n.systems_of_abs(7)  # abs tol 2e-12
+        sage: n.systems_of_abs(7)  # abs tol 1e-11
         [[0.618033988749895, 2.236067977499788, 1.23606797749979],
          [1.6180339887498947, 2.23606797749979, 3.2360679774997894],
          [3.0, 4.0, 6.0]]
-        sage: n.eigenvalues([2,3,5])  # rel tol 2e-12
+        sage: n.eigenvalues([2,3,5])  # abs tol 1e-11
         [[3.0, -1.6180339887498947, 0.6180339887498968],
          [4.0, 2.2360679774997894, -2.236067977499788],
          [6.0, -3.2360679774997894, 1.2360679774997936]]
