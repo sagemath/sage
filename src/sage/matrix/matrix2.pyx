@@ -19644,7 +19644,7 @@ cdef class Matrix(Matrix1):
                 M_L = M_L * M_L
 
             rows = [i for i, x in enumerate(row_profile_self) if x[1] + L <= degrees[x[0]]]
-            S = R.matrix_from_rows(rows)*M_L
+            S = R.matrix_from_rows(rows) * M_L
             R = matrix.block([[exhausted], [R], [S]], subdivide=False)
 
             # sort rows of R, find profile, translate to k (indices of full krylov matrix)
