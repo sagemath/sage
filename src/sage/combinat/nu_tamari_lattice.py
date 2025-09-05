@@ -112,7 +112,7 @@ def NuTamariLattice(nu):
             new_ndw = ndw.mutate(i)
             if new_ndw is not None:
                 covers.append([ndw, new_ndw])
-    cat = FiniteLatticePosets().Trim()
+    cat = FiniteLatticePosets().Trim().CongruenceUniform()
     return LatticePoset([elements, covers], cover_relations=True, category=cat)
 
 
