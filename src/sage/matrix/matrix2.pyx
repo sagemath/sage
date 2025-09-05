@@ -19137,9 +19137,9 @@ cdef class Matrix(Matrix1):
           the priority given to rows.
         - ``degrees`` -- an integer vector of length ``self.nrows()`` defining
           the maximum degree for rows.
-        - ``row_pairs`` (default: ``None``) -- the list of pairs of row indices and associated
-          degrees to be sorted. If ``None``, the default is taken as
-          `[(i, j), 0 \le i < m, 0 \le j \le d_i]` where `m` is
+        - ``row_pairs`` (default: ``None``) -- the list of pairs of row indices
+          and associated degrees to be sorted. If ``None``, the default is
+          taken as `[(i, j), 0 \le i < m, 0 \le j \le d_i]` where `m` is
           ``self.nrows()`` and `d_i` is ``degrees[i]``.
 
         OUTPUT:
@@ -19248,14 +19248,15 @@ cdef class Matrix(Matrix1):
 
         - ``M`` -- a square matrix of size equal to the number of columns of
           ``self``.
-        - ``shifts`` (default: ``None``) -- list of ``self.nrows()`` integers, row
-          priority shifts.  If ``None``, defaults to all zeroes.
-        - ``degrees`` (default: ``None``) -- an integer or a list of ``self.nrows()`` integers. The entry ``degrees[i]`` indicates the number of Krylov
-          iterates to appear in the output (that is, ``self[i, :] * M**j`` will
-          appear for `j` up to ``degrees[i]``, included). If ``None``, defaults
-          to ``self.ncols()`` for all rows. Giving a single integer for
-          ``degrees`` is equivalent to giving a list with this integer repeated
-          ``self.nrows()`` times.
+        - ``shifts`` (default: ``None``) -- list of ``self.nrows()`` integers,
+          row priority shifts.  If ``None``, defaults to all zeroes.
+        - ``degrees`` (default: ``None``) -- an integer or a list of
+          ``self.nrows()`` integers. The entry ``degrees[i]`` indicates the
+          number of Krylov iterates to appear in the output (that is,
+          ``self[i, :] * M**j`` will appear for `j` up to ``degrees[i]``,
+          included). If ``None``, defaults to ``self.ncols()`` for all rows.
+          Giving a single integer for ``degrees`` is equivalent to giving a
+          list with this integer repeated ``self.nrows()`` times.
 
         OUTPUT:
 
@@ -19731,19 +19732,20 @@ cdef class Matrix(Matrix1):
 
         - ``M`` -- a square matrix of size equal to the number of columns of
           ``self``.
-        - ``shifts`` (default: ``None``) -- list of ``self.nrows()`` integers: row
-          priority shifts. If ``None``, defaults to all zeroes.
-        - ``degrees`` (default: ``None``) -- an integer or a list of ``self.nrows()`` integers. The entry ``degrees[i]`` indicates that ``self[i, :] *
-          M**degrees[i]`` is known to be dependent on rows before it in the
-          ``shifts``-ordered Krylov matrix. If ``None``, defaults to
-          ``self.ncols()`` for all rows. Giving a single integer for
-          ``degrees`` is equivalent to giving a list with this integer repeated
-          ``self.nrows()`` times.
+        - ``shifts`` (default: ``None``) -- list of ``self.nrows()`` integers:
+          row priority shifts. If ``None``, defaults to all zeroes.
+        - ``degrees`` (default: ``None``) -- an integer or a list of
+          ``self.nrows()`` integers. The entry ``degrees[i]`` indicates that
+          ``self[i, :] * M**degrees[i]`` is known to be dependent on rows
+          before it in the ``shifts``-ordered Krylov matrix. If ``None``,
+          defaults to ``self.ncols()`` for all rows. Giving a single integer
+          for ``degrees`` is equivalent to giving a list with this integer
+          repeated ``self.nrows()`` times.
         - ``output_rows`` (default: ``True``) -- boolean. Determines
           whether information relating the output rows to their position in the
           Krylov matrix is also provided.
-        - ``algorithm`` (default: ``None``) -- either ``'naive'``, ``'elimination'``, or ``None`` (let
-          Sage choose).
+        - ``algorithm`` (default: ``None``) -- either ``'naive'``,
+          ``'elimination'``, or ``None`` (let Sage choose).
 
         OUTPUT:
 
@@ -20012,8 +20014,9 @@ cdef class Matrix(Matrix1):
         Return a basis in canonical form for the kernel of the Krylov matrix of
         ``(self, M)`` with rows ordered according to ``shifts``. In other terms,
         the rows of the returned matrix form a basis of the kernel of the
-        `\Bold{K}[x]`-linear map `\Bold{K}[x]^n \to \Bold{K}^n` given by the matrix
-        ``self``, where the action of `x` on `\Bold{K}^n` is given by `M`.
+        `\Bold{K}[x]`-linear map `\Bold{K}[x]^n \to \Bold{K}^n` given by the
+        matrix ``self``, where the action of `x` on `\Bold{K}^n` is given by
+        `M`.
 
         Write `E` for ``self``, of dimensions `m \times n`. Consider the Krylov
         basis `B` as computed by :meth:`krylov_basis` with the same parameters
