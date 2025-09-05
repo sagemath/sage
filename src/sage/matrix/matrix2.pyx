@@ -19741,9 +19741,9 @@ cdef class Matrix(Matrix1):
           defaults to ``self.ncols()`` for all rows. Giving a single integer
           for ``degrees`` is equivalent to giving a list with this integer
           repeated ``self.nrows()`` times.
-        - ``output_rows`` (default: ``True``) -- boolean. Determines
-          whether information relating the output rows to their position in the
-          Krylov matrix is also provided.
+        - ``output_rows`` (default: ``True``) -- boolean. Determines whether
+          information relating the output rows to their position in the Krylov
+          matrix is also provided.
         - ``algorithm`` (default: ``None``) -- either ``'naive'``,
           ``'elimination'``, or ``None`` (let Sage choose).
 
@@ -20096,7 +20096,7 @@ cdef class Matrix(Matrix1):
           a polynomial ring over the base ring of ``self``, or a string which
           will be used as variable name for building such a polynomial ring.
         - ``algorithm`` (default: ``None``) -- either ``'naive'``,
-        ``'elimination'``, or ``None`` (let Sage choose).
+          ``'elimination'``, or ``None`` (let Sage choose).
 
         OUTPUT:
 
