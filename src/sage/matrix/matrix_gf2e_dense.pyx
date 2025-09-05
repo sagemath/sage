@@ -1630,6 +1630,10 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         if m == 0:
             return self._one
 
+        x = self.fetch('det')
+        if x is not None:
+            return x
+
         cdef mzed_t * A = mzed_copy(NULL, self._entries)
         cdef mzp_t * P = mzp_init(m)
         cdef mzp_t * Q = mzp_init(m)
@@ -1641,6 +1645,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         self.cache('rank', r)
 
         if r < m:
+            self.cache('det', self._zero)
             return self._zero
 
         cdef Cache_base cache = <Cache_base> self._base_ring._cache
@@ -1648,7 +1653,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         # characteristic 2, so det(P) == det(Q) == 1
         cdef Py_ssize_t i
         cdef int elt
-        det = self._one  # cdef?
+        cdef det = self._one
         for i from 0 <= i < m:
             elt = mzed_read_elem(A, i, i)
             det = det * cache.fetch_int(elt)
@@ -1657,6 +1662,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         mzp_free(Q)
         mzed_free(A)
 
+        self.cache('det', det)
         return det
 
 
