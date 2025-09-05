@@ -924,6 +924,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             {(t + 1 : 39*t^2 + 14*t + 12 : 1)}
         """
         K = self.base_ring()
+        if isinstance(x, int):
+            x = Integer(x)
         L = x.parent()
         E = self
 
