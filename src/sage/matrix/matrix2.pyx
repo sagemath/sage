@@ -19874,15 +19874,15 @@ cdef class Matrix(Matrix1):
             sage: E.krylov_basis(matrix.zero(R, 3, 4))
             Traceback (most recent call last):
             ...
-            ValueError: M does not have correct dimensions.
+            ValueError: M does not have correct dimensions
             sage: E.krylov_basis(matrix.zero(R, 4, 3))
             Traceback (most recent call last):
             ...
-            ValueError: M does not have correct dimensions.
+            ValueError: M does not have correct dimensions
             sage: E.krylov_basis(matrix.zero(R, 4, 4))
             Traceback (most recent call last):
             ...
-            ValueError: M does not have correct dimensions.
+            ValueError: M does not have correct dimensions
             sage: E.krylov_basis(matrix.zero(R, 3, 3))
             (
             [27 49 29]
@@ -20400,7 +20400,7 @@ cdef class Matrix(Matrix1):
             raise NotImplementedError("computing kernels of Krylov matrices is currently only implemented over exact fields")
 
         if not isinstance(M, Matrix):
-            raise TypeError("M must be a matrix.")
+            raise TypeError("M must be a matrix")
         if M.nrows() != E.ncols() or M.ncols() != E.ncols():
             raise ValueError("M does not have correct dimensions")
         if M.base_ring() != E.base_ring():
