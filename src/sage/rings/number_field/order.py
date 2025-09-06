@@ -1734,18 +1734,27 @@ class Order_absolute(Order):
             sage: L.discriminant() / O.discriminant() == L.index_in(O)^2
             True
 
+
         TESTS::
 
             sage: type(K.order(5*a).discriminant())
             <class 'sage.rings.integer.Integer'>
+
+        This should be fast (:issue:`40770`)::
+
+            sage: x = polygen(ZZ, 'x')
+            sage: f = -10200*x^5 + 3394506606*x^4 + 1499062700037543*x^3 - 399446093061413660294*x^2 - 54234952557577515347321243*x + 2514415152433747751031436303788
+            sage: K.<a> = NumberField(f)
+            sage: easy = [2,3,5,7,11,83,5443,3548737,108743131120471]
+            sage: OK = K.maximal_order(v=easy, assume_maximal=True)
+            sage: OK.discriminant()
+            -2233837184359702514053503341104978970680899423438448397157179110318387386336251895416563127827690136506493208269682596127007739109465589455
+
         """
         try:
             return self.__discriminant
         except AttributeError:
-            if self._is_maximal():
-                D = self._K.discriminant()
-            else:
-                D = ZZ(self._K.discriminant(self.basis()))
+            D = ZZ(self._K.discriminant(self.basis()))
             self.__discriminant = D
             return D
 
