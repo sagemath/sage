@@ -1645,6 +1645,9 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         self.cache('rank', r)
 
         if r < m:
+            mzp_free(P)
+            mzp_free(Q)
+            mzed_free(A)
             self.cache('det', self._zero)
             return self._zero
 
