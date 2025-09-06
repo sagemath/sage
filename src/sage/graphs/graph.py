@@ -3700,7 +3700,7 @@ class Graph(GenericGraph):
             True
 
         We give examples that a complete graph with weights `\lambda`
-        correspond to the monomial symmetric function `m_{\lambda}`
+        produces/yields the monomial symmetric function `m_{\lambda}`
         (scaled by a constant)::
 
             sage: m = SymmetricFunctions(ZZ).m()
