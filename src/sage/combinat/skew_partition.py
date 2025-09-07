@@ -1850,7 +1850,7 @@ class SkewPartitions_n(SkewPartitions):
             False
         """
         SP = SkewPartitions()
-        if not x in SP:
+        if x not in SP:
             return False
         x = SP(x)
         return (sum(x[0]) - sum(x[1]) == self.n
