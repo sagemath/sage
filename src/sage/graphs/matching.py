@@ -47,8 +47,8 @@ Methods
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-import itertools
 from __future__ import annotations
+import itertools
 from sage.rings.integer import Integer
 from sage.graphs.views import EdgesView
 
@@ -1684,6 +1684,7 @@ def M_alternating_even_mark(G, vertex, matching):
                 rank[z] = rank[y] + 1
 
     return even
+
 
 class MicaliVaziraniMatching:
     r"""
