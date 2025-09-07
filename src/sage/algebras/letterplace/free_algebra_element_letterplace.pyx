@@ -141,7 +141,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         cdef dict d = self._poly.monomial_coefficients()
         yield from d.items()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -222,7 +222,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             return ' '.join(L)
         return '0'
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         TESTS::
 

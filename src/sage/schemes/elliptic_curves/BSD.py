@@ -593,10 +593,12 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                 if p >= 5 and D_K % p and len(K.factor(p)) == 1:
                     # p is inert in K
                     BSD.primes.append(p)
-            for p in heegner_primes:
-                if p >= 5 and D_E % p and D_K % p and len(K.factor(p)) == 1:
-                    # p is good for E and inert in K
-                    kolyvagin_primes.append(p)
+
+            kolyvagin_primes.extend(p for p in heegner_primes
+                                    # p is good for E and inert in K
+                                    if p >= 5 and D_E % p and D_K % p
+                                    and len(K.factor(p)) == 1)
+
             for p in prime_divisors(BSD.sha_an):
                 if p >= 5 and D_K % p and len(K.factor(p)) == 1:
                     if BSD.curve.is_good(p):

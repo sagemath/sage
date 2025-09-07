@@ -1448,7 +1448,7 @@ def sage_getargspec(obj):
                     annotations={})
         sage: sage_getargspec(factor)
         FullArgSpec(args=['n', 'proof', 'int_', 'algorithm', 'verbose'],
-                    varargs=None, varkw='kwds', defaults=(None, False, 'pari', 0),
+                    varargs=None, varkw='kwds', defaults=(None, False, None, 0),
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     In the case of a class or a class instance, the :class:`FullArgSpec` of the
@@ -1808,7 +1808,7 @@ def sage_signature(obj):
         sage: sage_signature(identity_matrix)                                          # needs sage.modules
         <Signature (ring, n=0, sparse=False)>
         sage: sage_signature(factor)
-        <Signature (n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds)>
+        <Signature (n, proof=None, int_=False, algorithm=None, verbose=0, **kwds)>
 
     In the case of a class or a class instance, the :class:`Signature` of the
     ``__new__``, ``__init__`` or ``__call__`` method is returned::
@@ -2671,8 +2671,8 @@ def __internal_tests():
 
     A cython function with default arguments (one of which is a string)::
 
-        sage: sage_getdef(sage.rings.integer.Integer.factor, obj_name='factor')
-        "factor(algorithm='pari', proof=None, limit=None, int_=False, verbose=0)"
+        sage: sage_getdef(sage.rings.integer.Integer.binomial, obj_name='binomial')
+        "binomial(m, algorithm='gmp')"
 
     This used to be problematic, but was fixed in :issue:`10094`::
 
