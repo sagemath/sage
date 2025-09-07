@@ -1775,16 +1775,15 @@ class MicaliVaziraniMatching:
 
         # Get the degree sequence of J
         degree_sequence = J.degree_sequence()
-        maximum_degree = max(degree_sequence)
-        minimum_degree = min(degree_sequence)
+        maximum_degree, minimum_degree = degree_sequence[0], degree_sequence[-1]
 
         # Create a list of buckets, where bucket[i] contains the set of vertices of degree i
         degree: List[int] = [J.degree(v) for v in range(self.N)]
 
         # buckets[d] contains the set of vertices currently having degree d in J
         buckets: List[set] = [set() for _ in range(maximum_degree + 1)]
-        for v in J:
-            buckets[degree[v]].add(v)
+        for v, d in enumerate(degree):
+            buckets[d].add(v)
 
         # Main loop: continue while there is a non-empty bucket of degrees
         while minimum_degree < len(buckets):
@@ -1834,9 +1833,8 @@ class MicaliVaziraniMatching:
             J.delete_vertices([u, v])
 
             # Remove these vertices from the bucket lists and update the degree in degree list
-            for vertex in [u, v]:
-                buckets[degree[vertex]].discard(vertex)
-                degree[vertex] = -1
+            buckets[degree[v]].discard(v)
+            degree[u], degree[v] = -1, -1
 
             # Reset minimum_degree to find the next smallest bucket
             minimum_degree = 0
