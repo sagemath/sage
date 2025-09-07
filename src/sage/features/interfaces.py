@@ -108,6 +108,40 @@ class Mathics(InterfaceFeature):
         return InterfaceFeature.__classcall__(cls, 'mathics', 'sage.interfaces.mathics')
 
 
+class Regina(InterfaceFeature):
+    r"""
+    A :class:`~sage.features.Feature` describing whether :class:`sage.interfaces.regina.Regina`
+    is present and functional.
+
+    EXAMPLES::
+
+        sage: from sage.features.interfaces import Regina
+        sage: Regina().is_present()  # not tested
+        FeatureTestResult('regina', False)
+    """
+
+    @staticmethod
+    def __classcall__(cls):
+        r"""
+        TESTS::
+
+            sage: from sage.features.interfaces import Regina
+            sage: F = Regina()
+            sage: F.module.hide()
+            sage: regina(~7)
+            Traceback (most recent call last):
+            ...
+            FeatureNotPresentError: sage.interfaces.regina is not available.
+            Feature `sage.interfaces.regina` is hidden.
+            Use method `unhide` to make it available again.
+            sage: F.module.unhide()
+        """
+        from sage.features.join_feature import JoinFeature
+        interface = 'sage.interfaces.regina'
+        mod = JoinFeature(interface, (PythonModule('regina'), PythonModule(interface)))
+        return InterfaceFeature.__classcall__(cls, 'regina', mod)
+
+
 # The following are provided by external software only (no SPKG)
 
 class Magma(InterfaceFeature):
@@ -244,6 +278,7 @@ def all_features():
          Feature('maple'),
          Feature('macaulay2'),
          Feature('octave'),
+         Feature('regina'),
          Feature('scilab')]
     """
     return [Magma(),
@@ -253,4 +288,5 @@ def all_features():
             Maple(),
             Macaulay2(),
             Octave(),
+            Regina(),
             Scilab()]
