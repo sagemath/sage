@@ -115,9 +115,9 @@ def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
         True
         sage: graphs.WheelGraph(5).has_perfect_matching(algorithm='LP_matching')
         False
-        sage: graphs.PetersenGraph().has_perfect_matching(algorithm='Micali-Vazirani')  # needs sage.graphs.micali_vazirani_matching
+        sage: graphs.PetersenGraph().has_perfect_matching(algorithm='Micali-Vazirani')
         True
-        sage: graphs.WheelGraph(6).has_perfect_matching(algorithm='Micali-Vazirani')    # needs sage.graphs.micali_vazirani_matching
+        sage: graphs.WheelGraph(6).has_perfect_matching(algorithm='Micali-Vazirani')
         True
         sage: graphs.WheelGraph(5).has_perfect_matching(algorithm='Micali-Vazirani')
         False
@@ -1227,8 +1227,8 @@ def matching(G, value_only=False, algorithm='Edmonds',
         sage: g = graphs.SylvesterGraph()
         sage: m = g.matching(algorithm='Micali-Vazirani')
         sage: n = g.matching(algorithm='Edmonds')                                   # needs networkx
-        sage: h, k = Graph(m), Graph(n)
-        sage: h.is_isomorphic(k)
+        sage: h, k = Graph(m), Graph(n)                                             # needs networkx
+        sage: h.is_isomorphic(k)                                                    # needs networkx
         True
 
     TESTS:
@@ -1366,91 +1366,79 @@ def matching(G, value_only=False, algorithm='Edmonds',
                 populates the buckets correctly and updates them as the graph is
                 modified.
                 """
-                # Make a mutable copy J of H for the greedy matching process
-                J = H.copy()
+                # Make a copy J of H for the greedy matching process
+                J = H.copy(immutable=False)
 
-                # Create a degree map and populate buckets keyed by degree
-                degree_map: dict[Hashable, int] = {vertex: J.degree(vertex) for vertex in J}
-                maximum_degree = max(degree_map.values()) if degree_map else 0
+                # Get the current maximum degree in J
+                initial_degree_sequence = J.degree_sequence()
+                maximum_degree = max(initial_degree_sequence)
+
+                # Find the initial minimum degree present in the buckets
+                # Note that there is no vertex of degree 0 in J
+                minimum_degree = min(initial_degree_sequence)
+
+                # The degree list of vertices in J
+                degree: List[int] = [J.degree(v) for v in range(J.order())]
 
                 # buckets[d] contains the set of vertices currently having degree d in J
                 buckets: List[set] = [set() for _ in range(maximum_degree + 1)]
-                for vertex, degree in degree_map.items():
-                    if degree > 0:
-                        if degree >= len(buckets):
+                for v in J:
+                    buckets[degree[v]].add(v)
 
-                            # Extend buckets if necessary (should rarely happen)
-                            buckets.extend([set()] * (degree - len(buckets) + 1))
-                        buckets[degree].add(vertex)
-
-                # Find the initial minimum positive degree present in the buckets
-                minimum_degree = 1
-                while minimum_degree < len(buckets) and not buckets[minimum_degree]:
-                    minimum_degree += 1
-
-                # Main loop: continue while there is a non-empty bucket of positive degree
+                # Main loop: continue while there is a non-empty bucket of degrees
                 while minimum_degree < len(buckets):
+
+                    # If J has at most one vertex, exit the loop
+                    if J.order() <= 1:
+                        break
 
                     # If there are no vertices with the current minimum degree, advance
                     if not buckets[minimum_degree]:
                         minimum_degree += 1
                         continue
 
-                    # Pop a vertex u of minimum positive degree
+                    # Pop a vertex u of minimum degree
                     u = buckets[minimum_degree].pop()
-                    if u not in degree_map:
-                        continue  # u may have been removed already
 
                     # Choose the neighbour v of u with minimum degree
                     neighbours = list(J.neighbors(u))
+
                     if not neighbours:
-                        # Remove isolated vertex from degree_map and continue
-                        del degree_map[u]
+                        degree[u] -= 1
+
+                        # Remove isolated vertex and continue
+                        J.delete_vertex(u)
                         continue
 
-                    v = min(neighbours, key=lambda x: J.degree(x))
+                    # choose neighbour v with minimum degree (ties broken by smallest index)
+                    v = min(neighbours, key=lambda x: degree[x])
+
                     # Add the edge (u, v) to the matching M with its label
                     M.add_edge(u, v, J.edge_label(u, v))
 
-                    # Remove these vertices from the bucket lists and degree_map
-                    for vertex in (u, v):
-                        if vertex in degree_map:
-                            # Remove from its current bucket
-                            degree = degree_map[vertex]
-                            if degree < len(buckets) and vertex in buckets[degree]:
-                                buckets[degree].remove(vertex)
-                            del degree_map[vertex]
+                    # Update the degree of neighbours and relocate them to new buckets
+                    # the degrees will decrease by at most 2 after deletion
+                    # since J is free of multiple edges
 
-                    # Track neighbours whose degrees will decrease after deletion
-                    vertices_to_update = set()
-                    for vertex in (u, v):
-                        for w in J.neighbors(vertex):
-                            if w not in [u, v]:
-                                vertices_to_update.add(w)
+                    for x in (u, v):
+                        for w in J.neighbors(x):
+                            if w in (u, v):
+                                continue
 
-                    # Remove vertices_to_remove from the graph J
+                            buckets[degree[w]].discard(w)
+                            degree[w] -= 1
+                            buckets[degree[w]].add(w)
+
+                    # Remove u and v from the graph J
                     J.delete_vertices([u, v])
 
-                    # Update degrees of remaining vertices and relocate them in buckets
-                    for vertex in vertices_to_update:
-                        if vertex in degree_map:
-                            old_degree = degree_map[vertex]
-                            new_degree = J.degree(vertex)
-                            if new_degree != old_degree:
-                                if old_degree < len(buckets) and vertex in buckets[old_degree]:
-                                    buckets[old_degree].remove(vertex)
-                                degree_map[vertex] = new_degree
-
-                                # Ensure buckets list is long enough
-                                if new_degree >= len(buckets):
-                                    buckets.extend([set()] * (new_degree - len(buckets) + 1))
-                                if new_degree > 0:
-                                    buckets[new_degree].add(vertex)
+                    # Remove these vertices from the bucket lists and update the degree in degree list
+                    for vertex in (u, v):
+                        buckets[degree[vertex]].discard(vertex)
+                        degree[vertex] = -1
 
                     # Reset minimum_degree to find the next smallest bucket
-                    minimum_degree = 1
-                    while minimum_degree < len(buckets) and not buckets[minimum_degree]:
-                        minimum_degree += 1
+                    minimum_degree = 0
 
             # ******************************
             # Start a new phase
@@ -1482,7 +1470,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
                     color[u] = None
                     visit_mark[u] = None
 
-                for (u, v, _) in H.edge_iterator():
+                for u, v in H.edge_iterator(labels=False):
                     edge_index = edge_to_index(u, v)
                     prop_edges.discard(edge_index)
                     edge_scanned[edge_index] = -1
