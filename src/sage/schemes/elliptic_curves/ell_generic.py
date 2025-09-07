@@ -3207,16 +3207,15 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         R = self.base_ring()
         P = PolynomialRing(R, 'v')
 
-        sols = []
-        for r in P([b, a, 0, 1]).roots(multiplicities=False):
-            for s in P([3 * r**2 + a, 0, -1]).roots(multiplicities=False):
-                sols.append((r,s))
+        sols = [(r, s)
+                for r in P([b, a, 0, 1]).roots(multiplicities=False)
+                for s in P([3 * r**2 + a, 0, -1]).roots(multiplicities=False)]
 
         if not sols:
             raise ValueError(f'{self} has no Montgomery model')
 
         # square s allows us to take B=1
-        r,s = max(sols, key=lambda t: t[1].is_square())
+        r, s = max(sols, key=lambda t: t[1].is_square())
 
         A = 3 * r / s
         B = R.one() if s.is_square() else ~s

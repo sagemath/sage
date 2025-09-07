@@ -743,10 +743,10 @@ def thwart_lemma_3_5(k, n, m, a, b, c, d=0, complement=False, explain_constructi
     last_sets_dict = [{v:i for i,v in enumerate(s)} for s in last_sets]
 
     # Truncating the OA
-    for i,D in enumerate(last_sets_dict):
+    for i, D in enumerate(last_sets_dict):
         kk = len(OA[0])-3+i
         for R in OA:
-            R[kk] = D[R[kk]] if R[kk] in D else None
+            R[kk] = D.get(R[kk], None)
 
     if d:
         for R in OA:
