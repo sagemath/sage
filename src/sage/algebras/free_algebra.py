@@ -1244,7 +1244,7 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
                                          category=category)
         self._assign_names(alg.variable_names())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1255,7 +1255,7 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
         """
         return "The Poincare-Birkhoff-Witt basis of {}".format(self._alg)
 
-    def _repr_term(self, w):
+    def _repr_term(self, w) -> str:
         """
         Return a representation of term indexed by ``w``.
 
