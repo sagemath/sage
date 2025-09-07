@@ -1517,14 +1517,22 @@ class SkewPartitions(UniqueRepresentation, Parent):
             sage: S([[3,1], [1]])
             [3, 1] / [1]
 
+            sage: S = SkewPartitions(2)
+            sage: S([[3,1], [2]])
+            [3, 1] / [2]
+
         TESTS::
 
             sage: S = SkewPartitions()
             sage: S(Partition([3,2]))
             [3, 2] / []
+
+            sage: S = SkewPartitions(5)
+            sage: S(Partition([3,2]))
+            [3, 2] / []
         """
         if skp in _Partitions:
-            skp = SkewPartition(skp)
+            skp = [_Partitions(skp), _Partitions([])]
         return self.element_class(self, skp)
 
     def __contains__(self, x):
@@ -1841,11 +1849,12 @@ class SkewPartitions_n(SkewPartitions):
             sage: Partition([2, 1]) in SkewPartitions(4)
             False
         """
-        if not x in SkewPartitions():
+        SP = SkewPartitions()
+        if not x in SP:
             return False
-        x = SkewPartition(x)
-        return sum(x[0])-sum(x[1]) == self.n \
-            and self.overlap <= SkewPartition(x).overlap()
+        x = SP(x)
+        return (sum(x[0]) - sum(x[1]) == self.n
+                and self.overlap <= x.overlap())
 
     def _repr_(self):
         """
@@ -2021,10 +2030,11 @@ class SkewPartitions_rowlengths(SkewPartitions):
             sage: Partition([2, 1]) in SkewPartitions(row_lengths=[2,2])
             False
         """
-        if x in SkewPartitions():
-            x = SkewPartition(x)
+        SP = SkewPartitions()
+        if x in SP:
+            x = SP(x)
             o = x[0]
-            i = x[1]+[0]*(len(x[0])-len(x[1]))
+            i = x[1] + [0]*(len(x[0])-len(x[1]))
             return [u[0]-u[1] for u in zip(o,i)] == self.co
         return False
 
