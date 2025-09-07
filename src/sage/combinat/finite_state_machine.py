@@ -11258,7 +11258,7 @@ class Automaton(FiniteStateMachine):
             False
         """
         A = self.minimization().relabeled()
-        [initial] = A.initial_states()
+        initial, = A.initial_states()
         address = {initial: ()}
         for v in A.digraph().breadth_first_search(initial.label()):
             state = A.state(v)

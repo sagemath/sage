@@ -1486,10 +1486,7 @@ class ChainComplex_class(Parent):
                     temp_diff[i] = mod_p_betti.get(i, 0) - torsion_free[i]
                 for i in temp_diff:
                     if temp_diff[i] > 0:
-                        if i+D in diff_dict:
-                            lower = diff_dict[i+D]
-                        else:
-                            lower = 0
+                        lower = diff_dict.get(i + D, 0)
                         current = temp_diff[i]
                         if current > lower:
                             diff_dict[i] = current - lower

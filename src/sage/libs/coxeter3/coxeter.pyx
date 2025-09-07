@@ -16,7 +16,6 @@ Low level part of the interface to Fokko Ducloux's Coxeter 3 library
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 from sage.libs.coxeter3.decl cimport *
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 from sage.cpython.string cimport str_to_bytes, bytes_to_str
@@ -533,7 +532,7 @@ cdef class CoxGroup(SageObject):
         EXAMPLES::
 
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
-            sage: W = CoxGroup(['A', 5])
+            sage: W = CoxGroup(['A', 3])
             sage: W.is_finite()
             True
             sage: W = CoxGroup(['A', 3, 1])

@@ -262,14 +262,12 @@ class GradedFiniteFreeResolution(FiniteFreeResolution):
         else:
             degrees = [a]
 
-        betti = {}
-        for s in degrees:
-            betti[s] = len([d for d in shifts if d == s])
+        betti = {s: len([d for d in shifts if d == s]) for s in degrees}
 
         if a is None:
             return betti
         else:
-            return betti[a] if a in betti else 0
+            return betti.get(a, 0)
 
     def K_polynomial(self, names=None):
         r"""

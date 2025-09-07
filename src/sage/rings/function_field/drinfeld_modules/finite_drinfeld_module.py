@@ -633,10 +633,9 @@ class DrinfeldModule_finite(DrinfeldModule):
         # The system is solved over K, but the coefficients should all
         # be in Fq We project back into Fq here.
         sol_Fq = [K(x).vector()[0] for x in sol]
-        char_poly = []
-        for i in range(r):
-            char_poly.append([sol_Fq[block_shifts[i] + j]
-                              for j in range(shifts[i])])
+        char_poly = [[sol_Fq[block_shifts[i] + j]
+                      for j in range(shifts[i])]
+                     for i in range(r)]
         return PolynomialRing(A, name='X')(char_poly + [1])
 
     def _frobenius_charpoly_motive(self):
@@ -651,8 +650,9 @@ class DrinfeldModule_finite(DrinfeldModule):
         Instead, use :meth:`frobenius_charpoly` with the option
         `algorithm='motive'`.
 
-        OUTPUT: a univariate polynomial with coefficients in the
-                function ring
+        OUTPUT:
+
+        a univariate polynomial with coefficients in the function ring
 
         EXAMPLES::
 

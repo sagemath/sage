@@ -10,21 +10,35 @@ if not sphinx_check.found()
   subdir_done()
 endif
 
-
-doc_src = []
-subdir('en/reference/repl')
 # TODO: Migrate this completely to meson
-doc_src += custom_target(
-  'doc-src',
+doc_bootstrap = custom_target(
+  'bootstrap',
   output: ['autogen'],
-  command: [files('bootstrap')],
+  command: [files('bootstrap'), meson.current_build_dir()],
   env: {'SAGE_ROOT': root},
 )
+doc_src = []
+subdir('el')
+subdir('ca')
+subdir('zh')
+subdir('it')
+subdir('common')
+subdir('hu')
+subdir('de')
+subdir('en')
+subdir('pt')
+subdir('ru')
+subdir('tr')
+subdir('es')
+subdir('fr')
+subdir('ja')
+
 
 references = run_command(
   py,
   [
     src / 'build-docs.py',
+    '--no-prune-empty-dirs',
     '--all-documents',
     'reference',
     '--source',
@@ -45,7 +59,10 @@ foreach type : ['inventory', 'html', 'pdf']
       short_ref = ref
     endif
     deps = []
-    deps += doc_src
+    deps += doc_bootstrap
+    if short_ref == 'repl'
+      deps += doc_src_repl
+    endif
     if type == 'html' or type == 'pdf'
       deps += reference_inventory
     endif
@@ -62,17 +79,19 @@ foreach type : ['inventory', 'html', 'pdf']
     endif
     target = custom_target(
       'doc-' + type + '-reference-' + short_ref,
+      #input: doc_src,
       output: [type + short_ref],
       command: [
         py,
         src / 'build-docs.py',
+        '--no-prune-empty-dirs',
         '--no-pdf-links',
         ref,
         type,
         '-o',
         '@OUTDIR@',
         '--source',
-        meson.current_source_dir(),
+        meson.current_build_dir(),
       ],
       depends: deps,
     )
@@ -93,6 +112,7 @@ other_documents = run_command(
   py,
   [
     src / 'build-docs.py',
+    '--no-prune-empty-dirs',
     '--all-documents',
     'all',
     '--source',
@@ -111,13 +131,14 @@ foreach type : ['html', 'pdf']
       command: [
         py,
         src / 'build-docs.py',
+        '--no-prune-empty-dirs',
         '--no-pdf-links',
         doc,
         type,
         '-o',
         '@OUTDIR@',
         '--source',
-        meson.current_source_dir(),
+        meson.current_build_dir(),
       ],
       depends: reference_inventory,
     )

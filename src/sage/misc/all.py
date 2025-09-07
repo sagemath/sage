@@ -5,12 +5,10 @@ from sage.misc.all__sagemath_objects import *
 from sage.misc.all__sagemath_environment import *
 from sage.misc.all__sagemath_repl import *
 
-from sage.misc.misc import (BackslashOperator,
-                  exists, forall, is_iterator,
-                  random_sublist,
-                  pad_zeros,
-                  newton_method_sizes, compose,
-                  nest)
+from sage.misc.misc import (
+    exists, forall, is_iterator, random_sublist, pad_zeros,
+    newton_method_sizes, compose, nest
+)
 
 from sage.misc.banner import version
 

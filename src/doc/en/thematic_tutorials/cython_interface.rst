@@ -138,10 +138,10 @@ We also need a ``~/my_dir/hello.h`` header file:
 
 We can now **compile it** as a library:
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
-   [user@localhost ~/my_dir/] gcc -c -Wall -Werror -fpic hello.c
-   [user@localhost ~/my_dir/] gcc -shared -o libhello.so hello.o
+   $ gcc -c -Wall -Werror -fpic hello.c
+   $ gcc -shared -o libhello.so hello.o
 
 The only files that we need now are ``hello.h`` and ``libhello.so`` (you can
 remove the others if you like). We must now indicate the location of the ``.so``
