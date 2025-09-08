@@ -10,11 +10,10 @@ py.install_sources(
   'gap_globals.py',
   'gap_includes.pxd',
   'libgap.pyx',
+  'gap_test.py',
   'operations.py',
   'sage.gaprc',
   'saved_workspace.py',
-  'test.py',
-  'test_long.py',
   'util.pxd',
   'util.pyx',
   subdir: 'sage/libs/gap',
@@ -36,7 +35,7 @@ foreach name, pyx : extension_data
     subdir: 'sage/libs/gap',
     install: true,
     include_directories: [inc_cpython, inc_rings],
-    dependencies: [py_dep, cysignals, gap, gmp],
+    dependencies: [py_dep, gap, gmp],
   )
 endforeach
 
