@@ -2454,12 +2454,19 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         if pari.ellmul(E, P, n) != [0]:
             raise ValueError("The point P must be n-torsion")
 
-        # NOTE: Pari returns the non-reduced Tate pairing, so we
-        # must perform the exponentiation ourselves using the supplied
-        # k value
-        ePQ = pari.elltatepairing(E, P, Q, n)
+        # NOTE: Pari `elltatepairing` only works with curves with
+        # `ell_get_type()` equal to `t_ELL_Fp` or `t_ELL_Fq`, which
+        # correspond to `EllipticCurve_finite_field`.
+        #
+        # The value returned by `elltatepairing` is the raw Miller loop
+        # output, so we still need to do the final exponentiation.
+        if isinstance(E, sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field):
+            ePQ = K(pari.elltatepairing(E, P, Q, n)) # Cast the PARI type back to the base ring
+        else:
+            ePQ = P._miller_(Q, n)
+
         exp = Integer((q**k - 1)/n)
-        return K(ePQ**exp)  # Cast the PARI type back to the base ring
+        return ePQ**exp
 
     def ate_pairing(self, Q, n, k, t, q=None):
         r"""
