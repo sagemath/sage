@@ -3,6 +3,7 @@
 
 import argparse
 import subprocess
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import toml as tomllib
@@ -89,10 +90,7 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
         print(f"pyproject.toml not found in {pyproject_toml}")
         return
 
-    for platform_key, platform_value in platforms.items():
-        if systems and platform_key not in systems:
-            continue
-
+    def process_platform_python(platform_key, platform_value, python):
         for python in pythons:
             dependencies = get_dependencies(pyproject_toml, python, platform_key)
             for tag in tags:
@@ -138,6 +136,15 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
                     f.seek(0, 0)
                     f.write(f"name: sage{tag or '-dev'}\n{content}")
 
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        futures = [
+            executor.submit(process_platform_python, platform_key, platform_value, python)
+            for platform_key, platform_value in platforms.items()
+            for python in pythons
+            if not (systems and platform_key not in systems)
+        ]
+        for future in futures:
+            future.result()
 
 def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[str]:
     grayskull_config = Configuration("sagemath")
