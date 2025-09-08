@@ -2457,13 +2457,20 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         # NOTE: Pari `elltatepairing` only works with curves with
         # `ell_get_type()` equal to `t_ELL_Fp` or `t_ELL_Fq`, which
         # correspond to `EllipticCurve_finite_field`.
-        #
-        # The value returned by `elltatepairing` is the raw Miller loop
-        # output, so we still need to do the final exponentiation.
         if isinstance(E, sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field):
+            # The value returned by `elltatepairing` is the raw Miller loop
+            # output, so we still need to do the final exponentiation.
             ePQ = K(pari.elltatepairing(E, P, Q, n)) # Cast the PARI type back to the base ring
         else:
-            ePQ = P._miller_(Q, n)
+            # In small cases, or in the case of pairing an element with
+            # itself, Q could be on one of the lines in the Miller
+            # algorithm. If this happens we try again, with an offset of a
+            # random point.
+            try:
+                ePQ = P._miller_(Q, n)
+            except (ZeroDivisionError, ValueError):
+                R = E.random_point()
+                return self.tate_pairing(Q + R, n, k) / self.tate_pairing(R, n, k)
 
         exp = Integer((q**k - 1)/n)
         return ePQ**exp
