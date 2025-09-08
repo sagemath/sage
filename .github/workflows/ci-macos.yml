@@ -69,4 +69,3 @@ jobs:
         run: |
           source ./.homebrew-build-env # Needed so that runtime cython can find the dependencies
           ./sage -t --all -p4
-    
