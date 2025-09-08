@@ -125,7 +125,7 @@ def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
     TESTS::
 
         sage: G = graphs.EmptyGraph()
-        sage: all(G.has_perfect_matching(algorithm=algo)                            # needs networkx, sage.numerical.mip, sage.graphs.micali_vazirani_matching
+        sage: all(G.has_perfect_matching(algorithm=algo)                            # needs networkx, sage.numerical.mip
         ....:     for algo in ['Edmonds', 'LP_matching', 'LP', 'Micali-Vazirani'])
         True
 
@@ -133,7 +133,7 @@ def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
 
         sage: G = graphs.PetersenGraph()
         sage: G.add_vertex(11)
-        sage: any(G.has_perfect_matching(algorithm=algo)                            # needs networkx, sage.numerical.mip, sage.graphs.micali_vazirani_matching
+        sage: any(G.has_perfect_matching(algorithm=algo)                            # needs networkx, sage.numerical.mip
         ....:     for algo in ['Edmonds', 'LP_matching', 'LP', 'Micali-Vazirani'])
         False
     """
@@ -1321,7 +1321,8 @@ def matching(G, value_only=False, algorithm='Edmonds',
 
     elif algorithm == "Micali-Vazirani":
         if use_edge_labels:
-            raise ValueError("Micali-Vazirani algorithm does not support edge labels or weights")
+            raise ValueError("Micali-Vazirani algorithm does not '" \
+                "support edge labels or weights")
 
         micali_vazirani_matching = MicaliVaziraniMatching(G.to_simple())
         M = micali_vazirani_matching.get_matching()
@@ -1708,7 +1709,8 @@ class MicaliVaziraniMatching:
             raise ValueError("The input must be a graph")
 
         if G.has_loops() or G.has_multiple_edges():
-            raise ValueError("Micali-Vazirani algorithm is only applicable to simple undirected graphs")
+            raise ValueError("Micali-Vazirani algorithm is only applicable '" \
+                "to simple undirected graphs")
 
         # ******************************
         # Set up global state containers
@@ -1722,10 +1724,10 @@ class MicaliVaziraniMatching:
                 self.G.delete_vertex(vertex)
 
         # indexing the vertices
+        self.index_to_vertex = list(G)
+        self.vertex_to_index = {u: i for i, u in enumerate(self.index_to_vertex)}
         self.vertex_to_index = self.G.relabel(inplace=True, return_map=True)
-        self.index_to_vertex = [None] * self.N
-        for vertex, index in self.vertex_to_index.items():
-            self.index_to_vertex[index] = vertex
+        self.G.relabel(perm=self.vertex_to_index, inplace=True)
 
         self.tenacity_bridges_map: List[List[int]] = [[] for _ in range(2 * self.N + 2)]
         self.deletion_phase: List[int] = [-1] * self.N
@@ -1739,7 +1741,8 @@ class MicaliVaziraniMatching:
         self.successor: List[List[int]] = [[] for _ in range(self.N)]
         self.color: List[int] = [None] * self.N
         self.search_level_vertices: List[int] = list(range(self.N))
-        self.edge_scanned: Dict[int, int] = {self.edge_to_index(u, v): -1 for (u, v, _) in self.G.edge_iterator()}
+        self.edge_scanned: Dict[int, int] = {self.edge_to_index(u, v): -1 \
+                for (u, v) in self.G.edge_iterator(labels=False)}
         self.prop_edges: Set[int] = set()
 
         self.M = Graph()
@@ -1748,20 +1751,14 @@ class MicaliVaziraniMatching:
         self.num_augmentations = 0
         self.INFINITY = float('inf')
 
+        self.index_to_edge = list(self.G.edges(labels=False, sort_vertices=True))
+        self._edge_to_index = {e: i for i, e in enumerate(self.index_to_edge)}
+
     # indexing the edges
     def edge_to_index(self, i: int, j: int) -> int:
         if i > j:
             i, j = j, i
-
-        # A[i] = (i * (2*N - i - 1)) // 2
-        return (i * (2*self.N - i - 1)) // 2 + (j - i - 1)
-
-    def index_to_edge(self, k: int) -> Edge:
-        import math
-        i = int(((2*self.N - 1) - math.sqrt((2*self.N - 1)**2 - 8*k)) // 2)
-        a_i = i * (2*self.N - i - 1) // 2
-        j = k - a_i + i + 1
-        return (i, j)
+        return self._edge_to_index[(i, j)]
 
     # *************************************
     # Greedy initial maximal matching (so as to reduce the total number of phases)
@@ -1780,14 +1777,11 @@ class MicaliVaziraniMatching:
         # Make a copy J of G for the greedy matching process
         J: Graph = self.G.copy(immutable=False)
 
-        # Get the degree sequence of J
-        degree_sequence = J.degree_sequence()
-        maximum_degree, minimum_degree = degree_sequence[0], degree_sequence[-1]
+        # Create the degree list
+        degree: List[int] = [J.degree(v) for v in range(self.N)]
+        minimum_degree, maximum_degree = min(degree), max(degree)
 
         # Create a list of buckets, where bucket[i] contains the set of vertices of degree i
-        degree: List[int] = [J.degree(v) for v in range(self.N)]
-
-        # buckets[d] contains the set of vertices currently having degree d in J
         buckets: List[set] = [set() for _ in range(maximum_degree + 1)]
         for v, d in enumerate(degree):
             buckets[d].add(v)
@@ -1905,7 +1899,9 @@ class MicaliVaziraniMatching:
                 edge_index = self.edge_to_index(u, v)
                 l = self.G.edge_label(u, v)
 
-                if self.edge_scanned[edge_index] != self.phase_index and self.M.has_edge(u, v, l) == parity and self.deletion_phase[v] != self.phase_index:
+                if self.edge_scanned[edge_index] != self.phase_index and \
+                   self.M.has_edge(u, v, l) == parity and \
+                   self.deletion_phase[v] != self.phase_index:
                     self.edge_scanned[edge_index] = self.phase_index
 
                     if self.min_level[v] > search_level:
@@ -1919,13 +1915,16 @@ class MicaliVaziraniMatching:
                     else:
                         tenacity = self.level[u][parity] + self.level[v][parity] + 1
 
-                        # In the case where tenacity is defined and thus we know which level the bridge will be processed
+                        # In the case where tenacity is defined and,
+                        # thus we know which level the bridge will be processed
                         if tenacity < self.INFINITY:
                             if tenacity >= len(self.tenacity_bridges_map):
-                                self.tenacity_bridges_map.extend([] for _ in range(tenacity - len(self.tenacity_bridges_map) + 1))
+                                self.tenacity_bridges_map.extend([] \
+                                    for _ in range(tenacity - len(self.tenacity_bridges_map) + 1))
                             self.tenacity_bridges_map[tenacity].append(edge_index)
 
-                        # The case where tenacity is not yet known (possibly due to the even/ odd level of the blossom not yet labeled
+                        # The case where tenacity is not yet known
+                        # (possibly due to the even/ odd level of the blossom not yet labeled
                         else:
                             self.prop_edges.discard(edge_index)
 
@@ -1939,9 +1938,10 @@ class MicaliVaziraniMatching:
         is_augmented = False
 
         for edge_index in self.tenacity_bridges_map[2 * search_level + 1]:
-            u, v = self.index_to_edge(edge_index)
+            u, v = self.index_to_edge[edge_index]
             l = self.G.edge_label(u, v)
-            if self.deletion_phase[u] == self.phase_index or self.deletion_phase[v] == self.phase_index:
+            if self.deletion_phase[u] == self.phase_index or \
+               self.deletion_phase[v] == self.phase_index:
                 continue
 
             left_support, right_support, bottleneck, encountered_deleted_vertex = self.DDFS(u, v)
@@ -1955,11 +1955,10 @@ class MicaliVaziraniMatching:
                         if self.M.size() == self.G.order() // 2:
                             return is_augmented
 
-            else:
-                if not encountered_deleted_vertex:
-                    self.form_blossom(left_support, right_support, bottleneck, (u, v, l))
-                    self.label_max(left_support, search_level)
-                    self.label_max(right_support, search_level)
+            elif not encountered_deleted_vertex:
+                self.form_blossom(left_support, right_support, bottleneck, (u, v, l))
+                self.label_max(left_support, search_level)
+                self.label_max(right_support, search_level)
 
         if is_augmented:
             self.num_augmentations += 1
@@ -2011,7 +2010,7 @@ class MicaliVaziraniMatching:
 
         # Boolean variables are initiated
         no_augmentation_found = False if not self.min_level[red_vertex] and not self.min_level[green_vertex] else True
-        collision = True if red_vertex == green_vertex else False
+        collision = red_vertex == green_vertex
 
         # Returns nothing if there is no support for the petal
         if collision and not no_augmentation_found:
@@ -2388,5 +2387,5 @@ class MicaliVaziraniMatching:
                 break
 
         # map the numeric vertex labels back to the original labels
-        self.M.relabel(self.index_to_vertex, inplace=True)
+        self.M.relabel(perm=self.index_to_vertex, inplace=True)
         return EdgesView(self.M)
