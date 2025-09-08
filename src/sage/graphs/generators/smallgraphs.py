@@ -2093,7 +2093,7 @@ def DesarguesGraph():
     """
     Return the Desargues graph.
 
-    PLOTTING: The layout chosen is the same as on the cover of [Har1994]_.
+    PLOTTING: The layout chosen is the same as on the cover of [Har1969]_.
 
     EXAMPLES::
 
@@ -5473,8 +5473,9 @@ def JankoKharaghaniTonchevGraph():
             301, 304, 308, 309, 310, 312, 313, 314, 316, 317, 318)
     Gamma = Graph(multiedges=False, name='Janko-Kharaghani-Tonchev')
     for i, b in ((1, B1), (163, B163)):
-        for j in (x[0] for x in st.OrbitsDomain(b)):
-            Gamma.add_edges(map(tuple, G.Orbit(libgap.Set([i, j]), libgap.OnSets)))
+        for x in st.OrbitsDomain(b):
+            Gamma.add_edges(map(tuple, G.Orbit(libgap.Set([i, x[0]]),
+                                               libgap.OnSets)))
     Gamma.relabel(range(Gamma.order()))
     return Gamma
 

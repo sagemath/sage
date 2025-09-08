@@ -146,8 +146,6 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: MeromorphicModularFormsRing(n=3)(x) == MeromorphicModularFormsRing(n=4)(x)
             False
             sage: MeromorphicModularFormsRing()(-1/x) is MeromorphicModularFormsRing()(1/(-x))
-            False
-            sage: MeromorphicModularFormsRing()(-1/x) == MeromorphicModularFormsRing()(1/(-x))
             True
             sage: MeromorphicModularFormsRing(base_ring=CC)(-1/x) == MeromorphicModularFormsRing()(1/(-x))
             True
@@ -349,7 +347,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         d = self.parent().get_d(fix_d=True)
         return self.parent()(self._rat.subs(d=d))
 
-    def is_homogeneous(self):
+    def is_homogeneous(self) -> bool:
         r"""
         Return whether ``self`` is homogeneous.
 
@@ -367,7 +365,6 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: QuasiModularFormsRing(n=infinity)(x*(x-y^2)+y^4).is_homogeneous()     # needs sage.symbolic
             True
         """
-
         return self._weight is not None
 
     def weight(self):
@@ -451,10 +448,11 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         """
         return not (self.AT("quasi") <= self._analytic_type)
 
-    def is_weakly_holomorphic(self):
+    def is_weakly_holomorphic(self) -> bool:
         r"""
-        Return whether ``self`` is weakly holomorphic
-        in the sense that: ``self`` has at most a power of ``f_inf``
+        Return whether ``self`` is weakly holomorphic.
+
+        This means that ``self`` has at most a power of ``f_inf``
         in its denominator.
 
         EXAMPLES::
@@ -477,7 +475,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         return self.AT("weak", "quasi") >= self._analytic_type
 
-    def is_holomorphic(self):
+    def is_holomorphic(self) -> bool:
         r"""
         Return whether ``self`` is holomorphic
         in the sense that the denominator of ``self``
@@ -502,10 +500,11 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         return self.AT("holo", "quasi") >= self._analytic_type
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         r"""
-        Return whether ``self`` is cuspidal
-        in the sense that ``self`` is holomorphic and ``f_inf``
+        Return whether ``self`` is cuspidal.
+
+        This means that ``self`` is holomorphic and ``f_inf``
         divides the numerator.
 
         EXAMPLES::
@@ -528,7 +527,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         """
         return self.AT("cusp", "quasi") >= self._analytic_type
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return whether ``self`` is the zero function.
 

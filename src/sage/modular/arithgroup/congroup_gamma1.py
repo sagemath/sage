@@ -27,7 +27,7 @@ def is_Gamma1(x):
 
     EXAMPLES::
 
-        sage: from sage.modular.arithgroup.all import is_Gamma1
+        sage: from sage.modular.arithgroup.congroup_gamma1 import is_Gamma1
         sage: is_Gamma1(SL2Z)
         doctest:warning...
         DeprecationWarning: The function is_Gamma1 is deprecated; use 'isinstance(..., Gamma1_class)' instead.
@@ -136,7 +136,7 @@ class Gamma1_class(GammaH_class):
         """
         return Gamma1_constructor, (self.level(),)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the \LaTeX representation of ``self``.
 
@@ -149,7 +149,7 @@ class Gamma1_class(GammaH_class):
         """
         return "\\Gamma_1(%s)" % self.level()
 
-    def is_even(self):
+    def is_even(self) -> bool:
         """
         Return ``True`` precisely if this subgroup contains the matrix -1.
 
@@ -162,9 +162,9 @@ class Gamma1_class(GammaH_class):
             sage: Gamma1(15).is_even()
             False
         """
-        return self.level() in [1,2]
+        return self.level() in [1, 2]
 
-    def is_subgroup(self, right):
+    def is_subgroup(self, right) -> bool:
         """
         Return ``True`` if ``self`` is a subgroup of ``right``.
 

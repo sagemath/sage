@@ -82,7 +82,7 @@ from sage.misc.bindable_class import BindableClass
 from sage.misc.lazy_import import lazy_import
 from sage.functions.other import imag, real
 from sage.misc.functional import sqrt
-from sage.functions.all import arccosh
+from sage.functions.hyperbolic import acosh as arccosh
 from sage.rings.cc import CC
 from sage.rings.real_double import RDF
 from sage.rings.real_mpfr import RR
@@ -1091,9 +1091,9 @@ class HyperbolicModelUHP(HyperbolicModel):
             sage: B.preserves_orientation()                                             # needs scipy
             False
         """
-        [a, b, c, d] = [RR.random_element() for k in range(4)]
+        a, b, c, d = [RR.random_element() for k in range(4)]
         while abs(a*d - b*c) < EPSILON:
-            [a, b, c, d] = [RR.random_element() for k in range(4)]
+            a, b, c, d = [RR.random_element() for k in range(4)]
         M = matrix(RDF, 2, [a, b, c, d])
         M = M / (M.det()).abs().sqrt()
         if M.det() > 0:

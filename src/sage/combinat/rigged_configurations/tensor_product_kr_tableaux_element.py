@@ -1,13 +1,13 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Tensor Product of Kirillov-Reshetikhin Tableaux Elements
+Tensor product of Kirillov-Reshetikhin tableaux elements
 
 A tensor product of
 :class:`~sage.combinat.rigged_configurations.kr_tableaux.KirillovReshetikhinTableauxElement`.
 
 AUTHORS:
 
-- Travis Scrimshaw (2010-09-26): Initial version
+- Travis Scrimshaw (2010-09-26): initial version
 """
 
 # ****************************************************************************

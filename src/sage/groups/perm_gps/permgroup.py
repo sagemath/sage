@@ -1793,16 +1793,16 @@ class PermutationGroup_generic(FiniteGroup):
         from sage.sets.set import Set
 
         actions = {
-            "OnPoints"           : [],
-            "OnSets"             : [Set],
-            "OnPairs"            : [tuple],
-            "OnTuples"           : [tuple],
-            "OnSetsSets"         : [Set, Set],
-            "OnSetsDisjointSets" : [Set, Set],
-            "OnSetsTuples"       : [Set, tuple],
-            "OnTuplesSets"       : [tuple, Set],
-            "OnTuplesTuples"     : [tuple, tuple],
-            }
+            "OnPoints": [],
+            "OnSets": [Set],
+            "OnPairs": [tuple],
+            "OnTuples": [tuple],
+            "OnSetsSets": [Set, Set],
+            "OnSetsDisjointSets": [Set, Set],
+            "OnSetsTuples": [Set, tuple],
+            "OnTuplesSets": [tuple, Set],
+            "OnTuplesTuples": [tuple, tuple],
+        }
 
         def input_for_gap(x, depth, container):
             if depth == len(container):
@@ -2782,13 +2782,13 @@ class PermutationGroup_generic(FiniteGroup):
         D = PermutationGroup(gap_group=G)
         if not maps:
             return D
-        else:
-            from sage.groups.perm_gps.permgroup_morphism import PermutationGroupMorphism_from_gap
-            iota1 = PermutationGroupMorphism_from_gap(self,  D, G.Embedding(1))
-            iota2 = PermutationGroupMorphism_from_gap(other, D, G.Embedding(2))
-            pr1 = PermutationGroupMorphism_from_gap(D, self, G.Projection(1))
-            pr2 = PermutationGroupMorphism_from_gap(D, other, G.Projection(2))
-            return D, iota1, iota2, pr1, pr2
+
+        from sage.groups.perm_gps.permgroup_morphism import PermutationGroupMorphism_from_gap
+        iota1 = PermutationGroupMorphism_from_gap(self, D, G.Embedding(1))
+        iota2 = PermutationGroupMorphism_from_gap(other, D, G.Embedding(2))
+        pr1 = PermutationGroupMorphism_from_gap(D, self, G.Projection(1))
+        pr2 = PermutationGroupMorphism_from_gap(D, other, G.Projection(2))
+        return D, iota1, iota2, pr1, pr2
 
     def semidirect_product(self, N, mapping, check=True):
         r"""
@@ -3131,15 +3131,11 @@ class PermutationGroup_generic(FiniteGroup):
 
             sage: PermutationGroup([]).as_finitely_presented_group()
             Finitely presented group < a | a >
-            sage: S = SymmetricGroup(6)
+            sage: S = SymmetricGroup(4)
             sage: perm_ls = [S.random_element() for i in range(3)]
             sage: G = PermutationGroup(perm_ls)
-            sage: while True:
-            ....:     try:
-            ....:         assert G.as_finitely_presented_group().as_permutation_group().is_isomorphic(G)  # sometimes results in GAP error (see :issue:`32141`)
-            ....:         break
-            ....:     except ValueError:
-            ....:         pass
+            sage: G.as_finitely_presented_group().as_permutation_group().is_isomorphic(G)
+            True
 
         `D_9` is the only non-Abelian group of order 18
         with an automorphism group of order 54 [TW1980]_::

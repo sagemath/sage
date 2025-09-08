@@ -1,11 +1,13 @@
 py.install_sources(
   '__init__.py',
   'all.py',
+  'bubble_shuffle.py',
   'cartesian_product.py',
   'd_complete.py',
   'elements.py',
   'forest.py',
   'hasse_diagram.py',
+  'hochschild_lattice.py',
   'incidence_algebras.py',
   'lattices.py',
   'linear_extensions.py',

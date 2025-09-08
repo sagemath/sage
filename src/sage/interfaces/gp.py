@@ -140,7 +140,6 @@ AUTHORS:
 import os
 
 import sage.interfaces.abc
-
 from sage.env import DOT_SAGE
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.libs.pari import pari
@@ -210,6 +209,7 @@ class Gp(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.gp import gp
             sage: gp == loads(dumps(gp))
             True
         """

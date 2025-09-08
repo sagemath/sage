@@ -906,7 +906,7 @@ cdef class OrePolynomial(AlgebraElement):
             raise TypeError("the base ring must be a field")
         cdef OrePolynomial G = self
         cdef OrePolynomial U = self._parent.one()
-        cdef OrePolynomial V, V1, V2, Q, R, T
+        cdef OrePolynomial V, V1, Q, R, T
         cdef Morphism m
         if not other:
             V = self._parent.zero()
@@ -2568,7 +2568,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             sage: a + a == 2*a
             True
         """
-        cdef Py_ssize_t i, min
+        cdef Py_ssize_t i
         cdef list x = (<OrePolynomial_generic_dense>self)._coeffs
         cdef list y = (<OrePolynomial_generic_dense>right)._coeffs
         cdef Py_ssize_t dx = len(x), dy = len(y)
@@ -2599,7 +2599,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             sage: c - c == 0
             True
         """
-        cdef Py_ssize_t i, min
+        cdef Py_ssize_t i
         cdef list x = (<OrePolynomial_generic_dense>self)._coeffs
         cdef list y = (<OrePolynomial_generic_dense>right)._coeffs
         cdef Py_ssize_t dx = len(x), dy = len(y)
@@ -2867,7 +2867,6 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             sage: a.coefficients(sparse=False)
             [t^2 + 1, 0, t + 1, 0, 1]
         """
-        zero = self.parent().base_ring().zero()
         if sparse:
             return [c for c in self._coeffs if not c.is_zero()]
         else:
@@ -2875,8 +2874,9 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
 
     def hilbert_shift(self, s, var=None):
         r"""
-        Return this Ore polynomial with variable shifted by `s`,
-        i.e. if this Ore polynomial is `P(x)`, return `P(x+s)`.
+        Return this Ore polynomial with variable shifted by `s`.
+
+        If this Ore polynomial is `P(x)`, this returns `P(x+s)`.
 
         INPUT:
 

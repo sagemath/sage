@@ -56,6 +56,7 @@ from sage.rings.integer cimport smallInteger
 
 from sage.rings.integer_ring import ZZ
 
+from collections.abc import Iterable
 
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
@@ -952,7 +953,7 @@ cdef class CGraph:
         self.check_vertex(u)
         self.check_vertex(v)
         if unlikely(self.in_degrees is NULL or self.out_degrees is NULL):
-            raise ValueError("`self.in_degree` or `self.out_degree` not allocated")
+            raise ValueError("`self.in_degrees` or `self.out_degrees` not allocated")
         if self.in_degrees[v] < self.out_degrees[u]:
             size = self.in_degrees[v]
         else:
@@ -3627,6 +3628,134 @@ cdef class CGraphBackend(GenericGraphBackend):
             from sage.rings.infinity import Infinity
             return Infinity
         return []
+
+    def shortest_path_to_set(self, source, targets, by_weight=False, edge_weight=None,
+                             exclude_vertices=None, report_weight=False,):
+        r"""
+        Return the shortest path from ``source`` to any vertex in ``targets``.
+
+        INPUT:
+
+        - ``source`` -- the starting vertex.
+
+        - ``targets`` -- iterable container; the set of end vertices.
+
+        - ``edge_weight`` -- dictionary (default: ``None``); a dictionary
+          that takes as input an edge ``(u, v)`` and outputs its weight.
+          If not ``None``, ``by_weight`` is automatically set to ``True``.
+          If ``None`` and ``by_weight`` is ``True``, we use the edge
+          label ``l`` as a weight.
+
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, the edges
+          in the graph are weighted, otherwise all edges have weight 1.
+
+        - ``exclude_vertices`` -- iterable container (default: ``None``);
+          iterable of vertices to exclude from the graph while calculating the
+          shortest path from ``source`` to any vertex in ``targets``.
+
+        - ``report_weight`` -- boolean (default: ``False``); if ``False``, just
+          a path is returned. Otherwise a tuple of path length and path is
+          returned.
+
+        OUTPUT:
+
+        - A list of vertices in the shortest path from ``source`` to any vertex
+          in ``targets`` or  a tuple of path lengh and path is returned
+          depending upon the value of parameter ``report_weight``.
+
+        EXAMPLES::
+
+            sage: g = Graph([(1, 2, 10), (1, 3, 20), (1, 4, 30)])
+            sage: g._backend.shortest_path_to_set(1, {3, 4}, by_weight=True)
+            [1, 3]
+            sage: g = Graph([(1, 2, 10), (2, 3, 10), (1, 4, 20), (4, 5, 20), (1, 6, 30), (6, 7, 30)])
+            sage: g._backend.shortest_path_to_set(1, {5, 7}, by_weight=True, exclude_vertices=[4], report_weight=True)
+            (60.0, [1, 6, 7])
+
+        TESTS::
+
+            sage: g = Graph([(1, 2, 10), (1, 3, 20), (1, 4, 30)])
+            sage: g._backend.shortest_path_to_set(1, {3, 4}, exclude_vertices=[3], by_weight=True)
+            [1, 4]
+            sage: g._backend.shortest_path_to_set(1, {1, 3, 4}, by_weight=True)
+            [1]
+
+        ``source`` must not be in ``exclude_vertices``::
+
+            sage: g._backend.shortest_path_to_set(1, {3, 4}, exclude_vertices=[1])
+            Traceback (most recent call last):
+            ...
+            ValueError: source must not be in exclude_vertices.
+
+        When no path exists from ``source`` to ``targets``, raise an error.
+
+            sage: g._backend.shortest_path_to_set(1, {3, 4}, exclude_vertices=[3, 4])
+            Traceback (most recent call last):
+            ...
+            ValueError: no path found from source to targets.
+
+        ``exclude_vertices`` must be iterable::
+
+            sage: g._backend.shortest_path_to_set(1, {1, 3, 4}, exclude_vertices=100)
+            Traceback (most recent call last):
+            ...
+            TypeError: exclude_vertices (100) are not iterable.
+        """
+        if not exclude_vertices:
+            exclude_vertices = set()
+        elif not isinstance(exclude_vertices, Iterable):
+            raise TypeError(f"exclude_vertices ({exclude_vertices}) are not iterable.")
+        elif not isinstance(exclude_vertices, set):
+            exclude_vertices = set(exclude_vertices)
+        if source in exclude_vertices:
+            raise ValueError(f"source must not be in exclude_vertices.")
+        cdef PairingHeap[int, double] pq = PairingHeap[int, double]()
+        cdef dict dist = {}
+        cdef dict pred = {}
+        cdef int x_int = self.get_vertex(source)
+        pq.push(x_int, 0)
+        dist[x_int] = 0
+
+        while not pq.empty():
+            v_int, d = pq.top()
+            pq.pop()
+            v = self.vertex_label(v_int)
+
+            if v in targets:
+                # found a vertex in targets
+                path = []
+                while v_int in pred:
+                    path.append(self.vertex_label(v_int))
+                    v_int = pred[v_int]
+                path.append(source)
+                path.reverse()
+                return (d, path) if report_weight else path
+
+            if d > dist.get(v_int, float('inf')):
+                continue  # already found a better path
+
+            for _, u, label in self.iterator_out_edges([v], labels=True):
+                if u in exclude_vertices:
+                    continue
+                if edge_weight:
+                    e_weight = edge_weight[(v, u)]
+                elif by_weight:
+                    e_weight = label
+                else:
+                    e_weight = 1
+                new_dist = d + e_weight
+                u_int = self.get_vertex(u)
+                if new_dist < dist.get(u_int, float('inf')):
+                    dist[u_int] = new_dist
+                    pred[u_int] = v_int
+                    if pq.contains(u_int):
+                        if pq.value(u_int) > new_dist:
+                            pq.decrease(u_int, new_dist)
+                    else:
+                        pq.push(u_int, new_dist)
+
+        # no path found
+        raise ValueError(f"no path found from source to targets.")
 
     def bidirectional_dijkstra_special(self, x, y, weight_function=None,
                                        exclude_vertices=None, exclude_edges=None,

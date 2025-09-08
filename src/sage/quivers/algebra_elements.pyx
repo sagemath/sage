@@ -369,9 +369,9 @@ cdef class PathAlgebraElement(RingElement):
             return -1
         return deg
 
-    def is_homogeneous(self):
+    def is_homogeneous(self) -> bool:
         """
-        Tells whether this element is homogeneous.
+        Tell whether this element is homogeneous.
 
         EXAMPLES::
 

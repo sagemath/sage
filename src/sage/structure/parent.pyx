@@ -124,7 +124,7 @@ from sage.structure.category_object import CategoryObject
 from sage.structure.coerce cimport coercion_model
 from sage.structure.coerce cimport parent_is_integers
 from sage.structure.coerce_exceptions import CoercionException
-from sage.structure.coerce_maps cimport (NamedConvertMap, DefaultConvertMap,
+from sage.structure.coerce_maps cimport (NamedConvertMap,
                            DefaultConvertMap_unique, CallableConvertMap)
 from sage.structure.element cimport parent
 
@@ -1656,6 +1656,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         assert not (self._coercions_used and D in self._coerce_from_hash and
                     self._coerce_from_hash.get(D) is not None), "coercion from {} to {} already registered or discovered".format(D, self)
+        assert not (self._coercions_used and D in self._convert_from_hash), "conversion from %s to %s already registered or discovered" % (D, self)
+
         mor._is_coercion = True
         self._coerce_from_list.append(mor)
         self._registered_domains.append(D)
@@ -1937,8 +1939,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         If a ``convert_method_name`` is provided, it creates a
         ``NamedConvertMap``, otherwise it creates a
-        ``DefaultConvertMap`` or ``DefaultConvertMap_unique``
-        depending on whether or not init_no_parent is set.
+        ``DefaultConvertMap_unique``.
 
         EXAMPLES::
 
@@ -1967,11 +1968,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             f = self.convert_method_map(S, m)
             if f is not None:
                 return f
-        if self._element_init_pass_parent:
-            # deprecation(26879)
-            return DefaultConvertMap(S, self, category=category)
-        else:
-            return DefaultConvertMap_unique(S, self, category=category)
+        return DefaultConvertMap_unique(S, self, category=category)
 
     def _convert_method_map(self, S, method_name=None):
         """
@@ -2272,7 +2269,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         2. If ``self._coerce_map_from_(S)`` is not exactly one of
 
-           - DefaultConvertMap
            - DefaultConvertMap_unique
            - NamedConvertMap
 
@@ -2385,7 +2381,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             best_mor = None
         elif user_provided_mor is True:
             best_mor = self._generic_coerce_map(S)
-            if not isinstance(best_mor, DefaultConvertMap):
+            if not isinstance(best_mor, DefaultConvertMap_unique):
                 return best_mor
             # Continue searching for better maps.  If there is something
             # better in the list, return that instead.  This is so, for

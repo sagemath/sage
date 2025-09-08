@@ -104,6 +104,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 import sage.misc.misc
 import sage.arith.all as arith
 import sage.misc.latex
+from sage.structure.element import parent
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 
@@ -1135,11 +1136,34 @@ cdef class PowerSeries(AlgebraElement):
             x + x^3
             sage: O(x^4)^(1/2)
             O(x^2)
+
+            sage: R.<x,t> = QQ[[]]
+            sage: f = (1+x)^(1+t)
+            sage: f.O(5)
+            1 + x + x*t + 1/2*x^2*t - 1/6*x^3*t + 1/2*x^2*t^2 + O(x, t)^5
+
+            sage: R.<x> = QQ[[]]
+            sage: (e^(e^x - 1)).O(5)
+            1 + x + x^2 + 5/6*x^3 + 5/8*x^4 + O(x^5)
+            sage: e^e^x
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: constant term of power series does not support exponentiation
+
+            sage: R.<x> = QQ[[]]
+            sage: S.<t> = QQ[] # a polynomial ring
+            sage: (1+x)^(1+t)
+            Traceback (most recent call last):
+            ...
+            ValueError: exponent must be a rational number or power series
         """
         try:
             right = QQ.coerce(r)
-        except TypeError:
-            raise ValueError("exponent must be a rational number")
+        except (TypeError, ValueError):
+            if r.parent() is self.parent():
+                return (r * self.log()).exp()
+            else:
+                raise ValueError("exponent must be a rational number or power series")
 
         if right.denominator() == 1:
             right = right.numerator()
@@ -1973,7 +1997,7 @@ cdef class PowerSeries(AlgebraElement):
                              'series with zero constant term')
         x = self
         val = x.valuation()
-        assert(val >= 1)
+        assert val >= 1
 
         prec = min(prec, self.prec())
         if isinstance(prec, InfinityElement):
@@ -2055,7 +2079,7 @@ cdef class PowerSeries(AlgebraElement):
             raise ValueError('can only apply sin to formal power '
                              'series with zero constant term')
         val = self.valuation()
-        assert(val >= 1)
+        assert val >= 1
 
         x = self
 
@@ -2135,7 +2159,7 @@ cdef class PowerSeries(AlgebraElement):
         if not self[0].is_zero():
             raise ValueError('can only apply tan to formal power '
                              'series with zero constant term')
-        assert(self.valuation() >= 1)
+        assert self.valuation() >= 1
         return self.sin(prec) / self.cos(prec)
 
     def sinh(self, prec=infinity):
@@ -2203,7 +2227,7 @@ cdef class PowerSeries(AlgebraElement):
             raise ValueError('can only apply sinh to formal power '
                              'series with zero constant term')
         val = self.valuation()
-        assert(val >= 1)
+        assert val >= 1
 
         x = self
 
@@ -2290,7 +2314,7 @@ cdef class PowerSeries(AlgebraElement):
                              'series with zero constant term')
         x = self
         val = x.valuation()
-        assert(val >= 1)
+        assert val >= 1
 
         prec = min(prec, self.prec())
         if isinstance(prec, InfinityElement):
@@ -2370,7 +2394,7 @@ cdef class PowerSeries(AlgebraElement):
         if not self[0].is_zero():
             raise ValueError('can only apply tanh to formal power '
                              'series with zero constant term')
-        assert(self.valuation() >= 1)
+        assert self.valuation() >= 1
         return self.sinh(prec) / self.cosh(prec)
 
     def O(self, prec):

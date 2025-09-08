@@ -28,8 +28,8 @@ REFERENCES:
 .. SEEALSO::
 
     There are also tables of link and knot invariants at web-pages
-    `KnotInfo <https://knotinfo.math.indiana.edu/>`__ and
-    `LinkInfo <https://linkinfo.sitehost.iu.edu>`__. These can be
+    `KnotInfo <https://knotinfo.org/>`__ and
+    `LinkInfo <https://link-info-repo.onrender.com>`__. These can be
     used inside Sage after installing the optional package
     ``database_knotinfo`` (type ``sage -i database_knotinfo`` in a command shell,
     see :mod:`~sage.knots.knotinfo`).
@@ -341,6 +341,12 @@ class Link(SageObject):
             sage: K = Knot(code); K.alexander_polynomial()
             t^-1 - 1 + t
         """
+        self._pd_code = None
+        self._oriented_gauss_code = None
+        self._braid = None
+        self._mirror = None  # set on invocation of :meth:`mirror_image`
+        self._reverse = None  # set on invocation of :meth:`reverse`
+
         if isinstance(data, list):
             # either oriented Gauss or PD code
             if len(data) != 2 or not all(isinstance(i, list) for i in data[0]):
@@ -353,8 +359,6 @@ class Link(SageObject):
                 if any(flat.count(i) != 2 for i in set(flat)):
                     raise ValueError("invalid PD code: each segment must appear twice")
                 self._pd_code = [list(vertex) for vertex in data]
-                self._oriented_gauss_code = None
-                self._braid = None
             else:
                 # oriented Gauss code
                 flat = flatten(data[0])
@@ -363,30 +367,54 @@ class Link(SageObject):
                     if 2 * len(data[1]) != len(flat) or set(range(b, a + 1)) - set([0]) != set(flat):
                         raise ValueError("invalid input: data is not a valid oriented Gauss code")
                 self._oriented_gauss_code = data
-                self._pd_code = None
-                self._braid = None
+
+        elif isinstance(data, Braid):
+            # Remove all unused strands
+            support = sorted(set().union(*((abs(x), abs(x) + 1) for x in data.Tietze())))
+            d = {}
+            for i, s in enumerate(support):
+                d[s] = i + 1
+                d[-s] = -i - 1
+            if not support:
+                B = BraidGroup(2)
+            else:
+                B = BraidGroup(len(support))
+            self._braid = B([d[x] for x in data.Tietze()])
 
         else:
-            if isinstance(data, Braid):
-                # Remove all unused strands
-                support = sorted(set().union(*((abs(x), abs(x) + 1) for x in data.Tietze())))
-                d = {}
-                for i, s in enumerate(support):
-                    d[s] = i + 1
-                    d[-s] = -i - 1
-                if not support:
-                    B = BraidGroup(2)
-                else:
-                    B = BraidGroup(len(support))
-                self._braid = B([d[x] for x in data.Tietze()])
-                self._oriented_gauss_code = None
-                self._pd_code = None
+            # construct from instances of external packages
+            from_external = False
+            from sage.interfaces.interface import InterfaceElement
+            if isinstance(data, InterfaceElement):
+                L = data.sage()
+                if isinstance(L, Link):
+                    self._pd_code = L._pd_code
+                    from_external = True
 
-            else:
+            if not from_external:
                 raise ValueError("invalid input: data must be either a list or a braid")
 
-        self._mirror = None  # set on invocation of :meth:`mirror_image`
-        self._reverse = None  # set on invocation of :meth:`reverse`
+    @cached_method
+    def _regina_(self, regina):
+        r"""
+        Return ``self`` as in instance of the Regina link class.
+        This method requires the optional package Regina to be present.
+
+        EXAMPLES::
+
+            sage: K = Knot([[[1,-2,3,-1,2,-3]],[1,1,1]])
+            sage: Krp = regina(K); Krp.pdData()       # optional regina
+            [[2, 6, 3, 5], [4, 2, 5, 1], [6, 4, 1, 3]]
+            sage: K.is_isotopic(Link(Krp))            # optional regina
+            True
+        """
+        # reduce arc numbers
+        L = regina.Link()  # empty Link
+        pd = self.pd_code()
+        segments = list(set(flatten(pd)))
+        red = {i: segments.index(i) + 1 for i in segments}
+        pd_red = [[red[i] for i in cr] for cr in pd]
+        return L.fromPD(pd_red)
 
     def arcs(self, presentation='pd'):
         r"""
@@ -461,7 +489,7 @@ class Link(SageObject):
                     res = res + rescom
             return res
 
-    def fundamental_group(self, presentation='wirtinger'):
+    def fundamental_group(self, presentation='wirtinger', algorithm=None):
         r"""
         Return the fundamental group of the complement of ``self``.
 
@@ -473,6 +501,17 @@ class Link(SageObject):
             (see :wikipedia:`Link_group`)
           * ``'braid'`` -- the presentation is given by the braid action
             on the free group (see chapter 2 of [Bir1975]_)
+
+        - ``algorithm`` -- (default: ``None``) per default native calculation
+          is used; this can be changed to use algorithms of Regina (if the
+          according optional package is installed):
+
+          * ``regina.ALG_WIRTINGER`` -- the Wirtinger presentation via Regina
+
+          * ``regina.ALG_SIMPLIFY`` -- a simplified presentation from Regina
+
+          * ``regina.ALG_USE_EXTERIOR`` -- use Regina's implementation for the
+            exterior of ``self``
 
         OUTPUT: a finitely presented group
 
@@ -503,7 +542,33 @@ class Link(SageObject):
             sage: GB.simplified()
             Finitely presented group
              < x0, x2 | x2^-1*x0*x2^-1*x0^-1*x2*x0*x2^-1*x0*x2*x0^-1 >
+
+        Using algorithms of Regina::
+
+            sage: # optional regina
+            sage: K8.fundamental_group(algorithm=regina.ALG_WIRTINGER)
+            Finitely presented group < x0, x1, x2, x3 |
+             x0*x3*x0^-1*x2^-1, x2*x1*x2^-1*x0^-1,
+             x3*x1*x3^-1*x2^-1, x1*x3*x1^-1*x0^-1 >
+            sage: K8.fundamental_group(algorithm=regina.ALG_SIMPLIFY)
+            Finitely presented group < x0, x1 | x0*x1^-1*x0^-1*x1*x0^2*x1*x0^-1*x1^-1 >
+            sage: K8.fundamental_group(algorithm=regina.ALG_USE_EXTERIOR)
+            Finitely presented group < x0, x1 | x0^2*x1^-1*x0^-1*x1*x0*x1*x0^-1*x1^-1 >
         """
+        if algorithm:
+            from sage.interfaces.regina import regina
+            if isinstance(algorithm, regina._object_class()):
+                if not isinstance(algorithm._inst, regina.AlgorithmExt._name):
+                    raise TypeError('algorithm must be of type %s' % regina.AlgorithmExt._name)
+                Lr = regina(self)
+                if algorithm == regina.ALG_WIRTINGER:
+                    return Lr.group(simplify=False).sage()
+                elif algorithm == regina.ALG_SIMPLIFY:
+                    return Lr.group().sage()
+                elif algorithm == regina.ALG_USE_EXTERIOR:
+                    return Lr.complement().group().sage()
+                else:
+                    raise ValueError('algorithm %s is not supported' % algorithm)
         from sage.groups.free_group import FreeGroup
         if presentation == 'braid':
             b = self.braid()
@@ -1141,14 +1206,22 @@ class Link(SageObject):
         return tuple(states)
 
     @cached_method
-    def _khovanov_homology_cached(self, height, ring=ZZ):
+    def _khovanov_homology_cached(self, height, implementation, ring=ZZ, **kwds):
         r"""
         Return the Khovanov homology of the link.
 
         INPUT:
 
         - ``height`` -- the height of the homology to compute
+        - ``implementation=`` -- can be one of the
+          following:
+
+          * ``'native'`` -- uses the original Sage implementation
+          * ``'Khoca'`` -- uses the implementation of the optional package
+            ``khoca`` package is present
+
         - ``ring`` -- (default: ``ZZ``) the coefficient ring
+        - ``kwds`` -- dictionary of options to be passes to ``Khoca``
 
         OUTPUT:
 
@@ -1163,16 +1236,39 @@ class Link(SageObject):
         EXAMPLES::
 
             sage: K = Link([[[1, -2, 3, -1, 2, -3]],[-1, -1, -1]])
-            sage: K._khovanov_homology_cached(-5)                                       # needs sage.modules
+            sage: K._khovanov_homology_cached(-5, 'native')                             # needs sage.modules
             ((-3, 0), (-2, Z), (-1, 0), (0, 0))
 
         The figure eight knot::
 
             sage: L = Link([[1, 6, 2, 7], [5, 2, 6, 3], [3, 1, 4, 8], [7, 5, 8, 4]])
-            sage: L._khovanov_homology_cached(-1)                                       # needs sage.modules
+            sage: L._khovanov_homology_cached(-1, 'native')                             # needs sage.modules
             ((-2, 0), (-1, Z), (0, Z), (1, 0), (2, 0))
         """
         crossings = self.pd_code()
+
+        if implementation == 'Khoca':
+            from sage.interfaces.khoca import khoca_raw_data
+            raw_data = khoca_raw_data(self, ring, **kwds)
+            data = {(d, t): raw_data[(h, d, t)] for (h, d, t) in raw_data if h == height}
+
+            from sage.homology.homology_group import HomologyGroup
+            if not data:
+                return [(0, HomologyGroup(0, ring))]
+
+            torsion = set([k[1] for k in data])
+            invfac = {}
+            for d in [k[0] for k in data]:
+                invfac[d] = []
+                for t in torsion:
+                    if (d, t) in data:
+                        invfac[d] += [t]*data[(d, t)]
+            res = []
+            for d in invfac:
+                ifac = sorted(invfac[d])
+                res += [(d, HomologyGroup(len(ifac), ring, ifac))]
+            return tuple(sorted(res))
+
         ncross = len(crossings)
         states = [(_0, set(_1), set(_2), _3, _4)
                   for (_0, _1, _2, _3, _4) in self._enhanced_states()]
@@ -1206,7 +1302,7 @@ class Link(SageObject):
         homologies = ChainComplex(complexes).homology()
         return tuple(sorted(homologies.items()))
 
-    def khovanov_homology(self, ring=ZZ, height=None, degree=None):
+    def khovanov_homology(self, ring=ZZ, height=None, degree=None, implementation='native', **kwds):
         r"""
         Return the Khovanov homology of the link.
 
@@ -1219,6 +1315,31 @@ class Link(SageObject):
 
         - ``degree`` -- the degree of the homology to compute,
           if not specified, all the degrees are computed
+
+        - ``implementation=`` -- string (default 'native') can be one of the
+          following:
+
+          * ``'native'`` -- uses the original Sage implementation
+
+          * ``'Khoca'`` -- uses the implementation of the optional package
+            ``khoca``
+
+        - ``kwds`` -- dictionary of options to be passed to ``Khoca``
+
+          * ``reduced`` -- boolean (default ``False``); if
+            ``True``, then returns the reduced homology
+
+          * ``equivariant`` -- positive integer (default ``2``); if this is
+            `n`, then it returns the  Khovanov-Rozansky `sl(n)`-homology
+            with `n > 2` of bipartite knots
+
+          * ``frobenius_algebra`` -- tuple of integers (default ``(0, 0)``); the
+            elements of the tuple are interpreted as modulus coefficients of
+            the underlying Frobenius algebra
+
+          * ``root`` -- integer specifying a root of the modulus of the
+            Frobenius algeba
+
 
         OUTPUT:
 
@@ -1235,6 +1356,8 @@ class Link(SageObject):
              -5: {-3: 0, -2: Z, -1: 0, 0: 0},
              -3: {-3: 0, -2: 0, -1: 0, 0: Z},
              -1: {0: Z}}
+            sage: K.khovanov_homology(implementation='Khoca')                           # optional khoca, needs sage.modules
+            {-9: {-3: Z}, -7: {-3: 0, -2: C2}, -5: {-3: 0, -2: Z}, -3: {0: Z}, -1: {0: Z}}
 
         The figure eight knot::
 
@@ -1250,6 +1373,15 @@ class Link(SageObject):
             sage: K = Link(b)
             sage: K.khovanov_homology(degree=2)
             {2: {2: 0}, 4: {2: Z}, 6: {2: Z}}
+            sage: K.khovanov_homology(degree=2, implementation='Khoca')                 # optional - khoca
+            {4: {2: Z}, 6: {2: Z}}
+
+        Caution::
+
+            sage: K.khovanov_homology(base_ring=QQ)
+            Traceback (most recent call last):
+            ...
+            ValueError: invalid keyword(s): ['base_ring']
 
         TESTS:
 
@@ -1275,6 +1407,16 @@ class Link(SageObject):
             sage: L.khovanov_homology(degree=1, height=1)
             {}
         """
+        khoca = False
+        if implementation == 'Khoca':
+            khoca = True
+            from sage.interfaces.khoca import check_kwds
+            check_kwds(**kwds)
+        elif implementation != 'native':
+            raise ValueError('%s is not a recognized implementation')
+        elif kwds:
+            raise ValueError(f"invalid keyword(s): {list(kwds)}")
+
         if not self.pd_code():  # special case for the unknot with no crossings
             from sage.homology.homology_group import HomologyGroup
             homs = {-1: {0: HomologyGroup(1, ring, [0])},
@@ -1291,11 +1433,15 @@ class Link(SageObject):
             heights = [height]
         else:
             heights = sorted(set(state[-1] for state in self._enhanced_states()))
+            if khoca:
+                from sage.interfaces.khoca import khoca_raw_data
+                raw_data = khoca_raw_data(self, ring, **kwds)
+                heights = sorted(set(k[0] for k in raw_data))
         if degree is not None:
-            homs = {j: dict(self._khovanov_homology_cached(j, ring)) for j in heights}
+            homs = {j: dict(self._khovanov_homology_cached(j, implementation, ring, **kwds)) for j in heights}
             homologies = {j: {degree: homs[j][degree]} for j in homs if degree in homs[j]}
         else:
-            homologies = {j: dict(self._khovanov_homology_cached(j, ring)) for j in heights}
+            homologies = {j: dict(self._khovanov_homology_cached(j, implementation, ring, **kwds)) for j in heights}
         return homologies
 
     def oriented_gauss_code(self):
@@ -1777,7 +1923,7 @@ class Link(SageObject):
             G.add_edge(c[3], c[1])
         return G.connected_components_number()
 
-    def is_knot(self):
+    def is_knot(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a knot.
 
@@ -2050,7 +2196,8 @@ class Link(SageObject):
             conway += coeff * t_poly**M
         return conway
 
-    def khovanov_polynomial(self, var1='q', var2='t', base_ring=ZZ):
+    def khovanov_polynomial(self, var1='q', var2='t', torsion='T', ring=ZZ,
+                            base_ring=None, implementation='native', **kwds):
         r"""
         Return the Khovanov polynomial of ``self``.
 
@@ -2059,32 +2206,61 @@ class Link(SageObject):
         INPUT:
 
         - ``var1`` -- (default: ``'q'``) the first variable. Its exponents
-          give the (torsion free) rank of the height of Khovanov homology
+          correspond to the height of Khovanov homology
         - ``var2`` -- (default: ``'t'``) the second variable. Its exponents
-          give the (torsion free) rank of the degree of Khovanov homology
-        - ``base_ring`` -- (default: ``ZZ``) the ring of the polynomial's
-          coefficients
+          correspond to the degree of Khovanov homology
+        - ``torsion`` -- (default: ``'T'``) additional variable to indicate
+          the torsion of the integral homology group corresponding to the
+          monomial; monomials without it correspond to torsion free ``ring``
+          modules; if it appears its exponents stands for the modulus of
+          the torsion
+        - ``ring`` -- (default: ``ZZ``) the ring of the homology. This will
+          be transferred to :meth:`khovanov_homology`
+        - ``implementation=`` -- string (default 'native') can be one of the
+          following:
+
+          * ``'native'`` -- uses the original Sage implementation
+
+          * ``'Khoca'`` -- uses the implementation of the optional package
+            ``khoca``
+
+        - ``kwds`` -- dictionary of options to be passes to ``Khoca``
+          for details see :meth:`khovanov_homology`
+
+        Here we follow the conventions used in
+        `KnotInfo <https://knotinfo.org/descriptions/khovanov_unreduced_integral_polynomial.html>`__
 
         OUTPUT:
 
-        A two variate Laurent Polynomial over the ``base_ring``, more precisely an
-        instance of :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial`.
+        A two or three (for integral homology) variate Laurent polynomial over
+        ``ZZ``, more precisely an instance of
+        :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair`.
 
         EXAMPLES::
 
             sage: K = Link([[[1, -2, 3, -1, 2, -3]],[-1, -1, -1]])
             sage: K.khovanov_polynomial()                                               # needs sage.modules
-            q^-1 + q^-3 + q^-5*t^-2 + q^-9*t^-3
-            sage: K.khovanov_polynomial(base_ring=GF(2))                                # needs sage.modules
-            q^-1 + q^-3 + q^-5*t^-2 + q^-7*t^-2 + q^-9*t^-3
+            q^-1 + q^-3 + q^-5*t^-2 + q^-7*t^-2*T^2 + q^-9*t^-3
+            sage: K.khovanov_polynomial(implementation='Khoca') == _                    # optional khoca, needs sage.modules
+            True
+            sage: K.khovanov_polynomial(ring=GF(2))                                     # needs sage.modules
+            q^-1 + q^-3 + q^-5*t^-2 + q^-7*t^-2 + q^-7*t^-3 + q^-9*t^-3
+            sage: K.khovanov_polynomial(ring=GF(2), implementation='Khoca') == _        # optional khoca, needs sage.modules
+            True
 
         The figure eight knot::
 
+            sage: # needs sage.modules
             sage: L = Link([[1, 6, 2, 7], [5, 2, 6, 3], [3, 1, 4, 8], [7, 5, 8, 4]])
             sage: L.khovanov_polynomial(var1='p')                                       # needs sage.modules
-            p^5*t^2 + p*t + p + p^-1 + p^-1*t^-1 + p^-5*t^-2
-            sage: L.khovanov_polynomial(var1='p', var2='s', base_ring=GF(4))            # needs sage.modules sage.rings.finite_rings
-            p^5*s^2 + p^3*s^2 + p*s + p + p^-1 + p^-1*s^-1 + p^-3*s^-1 + p^-5*s^-2
+            p^5*t^2 + p^3*t^2*T^2 + p*t + p + p^-1 + p^-1*t^-1
+              + p^-3*t^-1*T^2 + p^-5*t^-2
+            sage: L.khovanov_polynomial(var1='p', var2='s', ring=GF(4))                 # needs sage.modules sage.rings.finite_rings
+            p^5*s^2 + p^3*s^2 + p^3*s + p*s + p + p^-1 + p^-1*s^-1
+              + p^-3*s^-1 + p^-3*s^-2 + p^-5*s^-2
+            sage: L.khovanov_polynomial(var1='p', var2='s', ring=GF(4),                 # optional khoca, sage.rings.finite_rings
+            ....:                       implementation='Khoca') == _                    # optional khoca, sage.rings.finite_rings
+            True
 
         The Hopf link::
 
@@ -2093,21 +2269,44 @@ class Link(SageObject):
             sage: K = Link(b)
             sage: K.khovanov_polynomial()                                               # needs sage.modules
             q^6*t^2 + q^4*t^2 + q^2 + 1
+            sage: K.khovanov_polynomial(implementation='Khoca') == _                    # optional khoca, needs sage.modules
+            True
 
         .. SEEALSO:: :meth:`khovanov_homology`
         """
-        L = LaurentPolynomialRing(base_ring, [var1, var2])
-        ch = base_ring.characteristic()
+        if base_ring:
+            ring = base_ring
+            from sage.misc.superseded import deprecation
+            deprecation(40149, "base_ring is deprecated, use argument ring instead.")
+
+        ch = ring.characteristic()
+        integral = False
+        if ch == 0 and not ring.is_field():
+            integral = True
+            L = LaurentPolynomialRing(ZZ, [var1, var2, torsion])
+        else:
+            L = LaurentPolynomialRing(ZZ, [var1, var2])
         coeff = {}
-        kh = self.khovanov_homology()
+        kh = self.khovanov_homology(ring=ring, implementation=implementation, **kwds)
         from sage.rings.infinity import infinity
         for h in kh:
             for d in kh[h]:
                 H = kh[h][d]
-                gens = [g for g in H.gens() if g.order() == infinity or ch.divides(g.order())]
-                l = len(gens)
-                if l:
-                    coeff[(h, d)] = l
+                gens = {g: g.order() for g in H.gens()}
+                if integral:
+                    tor_count = {}
+                    for g, tor in gens.items():
+                        if tor in tor_count:
+                            tor_count[tor] += 1
+                        else:
+                            tor_count[tor] = 1
+                    for tor, ell in tor_count.items():
+                        if tor is infinity:
+                            coeff[(h, d, 0)] = ell
+                        else:
+                            coeff[(h, d, tor)] = ell
+                else:
+                    coeff[(h, d)] = len(gens)
         return L(coeff)
 
     def determinant(self):
@@ -2147,7 +2346,7 @@ class Link(SageObject):
         m = V + V.transpose()
         return Integer(abs(m.det()))
 
-    def is_alternating(self):
+    def is_alternating(self) -> bool:
         r"""
         Return whether the given knot diagram is alternating.
 
@@ -2461,9 +2660,9 @@ class Link(SageObject):
         if not new_pd:
             # trivial knot
             return type(self)([])
-        new_edges = flatten(new_pd)
+        new_edges = {elt for cr in new_pd for elt in cr}
         for cr in loop_crossings:
-            rem = set([e for e in cr if e in new_edges])
+            rem = {e for e in cr if e in new_edges}
             if len(rem) == 2:
                 # put remaining edges together
                 a, b = sorted(rem)
@@ -2868,8 +3067,8 @@ class Link(SageObject):
 
         cross = pd_code[0]
         rest = [list(vertex) for vertex in pd_code[1:]]
-        [a, b, c, d] = cross
-        if a == d and c == b and len(rest) > 0:
+        a, b, c, d = cross
+        if a == d and c == b and rest:
             return (~t + t**(-5)) * Link(rest)._bracket()
         elif a == b and c == d and len(rest) > 0:
             return (t + t**5) * Link(rest)._bracket()
@@ -2933,8 +3132,8 @@ class Link(SageObject):
         return [[list(i) for i in j]
                 for j in G.connected_components(sort=False)]
 
-    @cached_method
-    def homfly_polynomial(self, var1=None, var2=None, normalization='lm'):
+    @cached_method(key=lambda s, v1, v2, n, a: (s, v1, v2, n))
+    def homfly_polynomial(self, var1=None, var2=None, normalization='lm', algorithm=None):
         r"""
         Return the HOMFLY polynomial of ``self``.
 
@@ -2964,6 +3163,20 @@ class Link(SageObject):
           polynomials of three links that vary only in one crossing;
           that is the positive, negative, or smoothed links respectively
 
+        - ``algorithm`` -- (default: ``None``) per default libhomfly is
+          used for the calculation; this can be changed to use the algorithms
+
+          * ``regina.ALG_DEFAULT`` -- the default algorithm from Regina
+
+          * ``regina.ALG_BACKTRACK`` -- optimised backtracking algorithm from Regina
+
+          * ``regina.ALG_TREWIDTH`` -- treewidth-based algorithm from Regina
+
+          * ``regina.ALG_NAIV`` -- naive algorithm from Regina (only for experimental use)
+
+          from Regina (this only applies if the optional package Regina is present);
+          for more information see `Regina Algorithm <https://regina-normal.github.io/engine-docs/group__engine.html#gae6548c6577d3db2adb39ccea0c57dce1>`__
+
         OUTPUT: a Laurent polynomial over the integers
 
         .. NOTE::
@@ -2972,7 +3185,7 @@ class Link(SageObject):
             in [KnotAtlas]_
 
             Use the ``'vz'`` normalization to agree with the data
-            `KnotInfo <http://www.indiana.edu/~knotinfo/>`__.
+            `KnotInfo <https://knotinfo.org/>`__.
 
         EXAMPLES:
 
@@ -3036,6 +3249,26 @@ class Link(SageObject):
             -a^10*z^4 + a^8*z^6 - 3*a^10*z^2 + 4*a^8*z^4 + a^6*z^6 - a^10
              + 3*a^8*z^2 + 5*a^6*z^4 - a^8 + 7*a^6*z^2 + 3*a^6
 
+        Using the algorithms of Regina::
+
+            sage: # optional regina
+            sage: K = Knots().from_table(8, 21)
+            sage: HRlm = K.homfly_polynomial(algorithm=regina.ALG_DEFAULT); HRlm
+            L^6*M^2 - L^4*M^4 - L^6 + 3*L^4*M^2 - 3*L^4 + 2*L^2*M^2 - 3*L^2
+            sage: K.homfly_polynomial.clear_cache()  # since cache does not distinguish algorithms
+            sage: HRlm == K.homfly_polynomial()
+            True
+            sage: HRaz = K.homfly_polynomial(normalization='az', algorithm=regina.ALG_BACKTRACK); HRaz
+            a^6*z^2 - a^4*z^4 + a^6 - 3*a^4*z^2 - 3*a^4 + 2*a^2*z^2 + 3*a^2
+            sage: K.homfly_polynomial.clear_cache()
+            sage: HRaz == K.homfly_polynomial(normalization='az')
+            True
+            sage: HRvz = K.homfly_polynomial(normalization='vz', algorithm=regina.ALG_TREEWIDTH); HRvz
+            2*v^-2*z^2 - v^-4*z^4 + 3*v^-2 - 3*v^-4*z^2 - 3*v^-4 + v^-6*z^2 + v^-6
+            sage: K.homfly_polynomial.clear_cache()
+            sage: HRvz == K.homfly_polynomial(normalization='vz')
+            True
+
         TESTS:
 
         This works with isolated components::
@@ -3080,7 +3313,27 @@ class Link(SageObject):
             else:
                 var2 = 'z'
 
+        if normalization == 'vz':
+            h_az = self.homfly_polynomial(var1=var1, var2=var2, normalization='az', algorithm=algorithm)
+            a, z = h_az.parent().gens()
+            v = ~a
+            return h_az.subs({a: v})
+
         L = LaurentPolynomialRing(ZZ, [var1, var2])
+
+        if algorithm:
+            from sage.interfaces.regina import regina
+            if isinstance(algorithm, regina._object_class()):
+                if not isinstance(algorithm._inst, regina.Algorithm._name):
+                    raise TypeError('algorithm must be of type %s' % regina.Algorithm._name)
+                Lr = regina(self)
+                if normalization == 'az':
+                    Hr = Lr.homflyAZ(algorithm)
+                else:
+                    Hr = Lr.homflyLM(algorithm)
+                Hr._sage_parent = L
+                return Hr.sage()
+
         if len(self._isolated_components()) > 1:
             if normalization == 'lm':
                 fact = L({(1, -1): -1, (-1, -1): -1})
@@ -3119,11 +3372,6 @@ class Link(SageObject):
                 return L(auxdic)
             else:
                 return -L(auxdic)
-        elif normalization == 'vz':
-            h_az = self.homfly_polynomial(var1=var1, var2=var2, normalization='az')
-            a, z = h_az.parent().gens()
-            v = ~a
-            return h_az.subs({a: v})
         else:
             raise ValueError('normalization must be either `lm`, `az` or `vz`')
 
@@ -3156,7 +3404,7 @@ class Link(SageObject):
 
         INPUT:
 
-        - ``n`` -- the number of colors to consider (if ommitted the
+        - ``n`` -- the number of colors to consider (if omitted the
           value of the determinant of ``self`` will be taken)
 
         OUTPUT: a matrix over the residue class ring of integers modulo ``n``
@@ -3200,7 +3448,7 @@ class Link(SageObject):
                     M[i, j] -= 1
         return M
 
-    def is_colorable(self, n=None):
+    def is_colorable(self, n=None) -> bool:
         r"""
         Return whether the link is ``n``-colorable.
 
@@ -3211,7 +3459,7 @@ class Link(SageObject):
 
         INPUT:
 
-        - ``n`` -- the number of colors to consider (if ommitted the
+        - ``n`` -- the number of colors to consider (if omitted the
           value of the determinant of ``self`` will be taken)
 
         EXAMPLES:
@@ -3264,7 +3512,7 @@ class Link(SageObject):
 
         INPUT:
 
-        - ``n`` -- the number of colors to consider (if ommitted the value
+        - ``n`` -- the number of colors to consider (if omitted the value
           of the determinant of ``self`` will be taken). Note that there
           are no colorings if n is coprime to the determinant of ``self``
 
@@ -3324,13 +3572,14 @@ class Link(SageObject):
 
     def coloring_maps(self, n=None, finitely_presented=False):
         r"""
-        Return the `n`-coloring maps of ``self``. These are group
-        homomorphisms from the fundamental group of ``self`` to the
-        `n`-th dihedral group.
+        Return the `n`-coloring maps of ``self``.
+
+        These are group homomorphisms from the fundamental group of
+        ``self`` to the `n`-th dihedral group.
 
         INPUT:
 
-        - ``n`` -- the number of colors to consider (if ommitted the value
+        - ``n`` -- the number of colors to consider (if omitted the value
           of the determinant of ``self`` will be taken). Note that there
           are no coloring maps if n is coprime to the determinant of ``self``
 
@@ -3949,7 +4198,7 @@ class Link(SageObject):
             return sb.is_conjugated(ob)
 
         if sb_ind > ob_ind:
-            # if the braid of self has more strands we have to perfom
+            # if the braid of self has more strands we have to perform
             # Markov II moves
             B = sb.parent()
             g = B.gen(ob_ind-1)
@@ -4038,6 +4287,11 @@ class Link(SageObject):
         br = self.braid()
         br_ind = br.strands()
 
+        def cmp_braid(b):
+            if (b.strands() <= br_ind):
+                return self._markov_move_cmp(b)
+            return False
+
         res = []
         for L in l:
             if L.pd_notation() == pd_code:
@@ -4045,10 +4299,10 @@ class Link(SageObject):
                 res.append(L)
                 continue
 
-            Lbraid = L.braid()
-            if Lbraid.strands() <= br_ind:
-                if self._markov_move_cmp(Lbraid):
-                    res.append(L)
+            if cmp_braid(L.braid()):
+                res.append(L)
+            elif cmp_braid(L.link().braid()):
+                res.append(L)
 
         if res:
             if len(res) > 1 or res[0].is_unique():
@@ -4481,7 +4735,7 @@ class Link(SageObject):
                 if proves[k]:
                     l += match_lists[k]
         else:
-            # for multi-component links there could regularily be more than one
+            # for multi-component links there could regularly be more than one
             # matching entry
             for k in match_lists.keys():
                 l += match_lists[k]
@@ -4517,7 +4771,7 @@ class Link(SageObject):
 
         return answer_list(l)
 
-    def is_isotopic(self, other):
+    def is_isotopic(self, other) -> bool:
         r"""
         Check whether ``self`` is isotopic to ``other``.
 
@@ -4637,7 +4891,7 @@ class Link(SageObject):
                         verbose('identified by KnotInfo uniquely (%s, %s)' % (sl[0], k))
                         return True
                     elif not self.is_knot():
-                        if len(set([l.series(oriented=True) for l in sl])) == 1:
+                        if len({l.series(oriented=True) for l in sl}) == 1:
                             # all matches are orientation mutants of each other
                             verbose('identified by KnotInfoSeries (%s, %s)' % (sl, k))
                             return True
@@ -4672,3 +4926,59 @@ class Link(SageObject):
                 return True
 
         raise NotImplementedError('comparison not possible!')
+
+    def simplify(self, exhaustive=True, height=1, threads=1):
+        r"""
+        Return an isotopic Link with less crossings or ``None`` if the
+        calculation was not successful.
+
+        .. NOTE::
+
+            This method is taken from the Regina methods ``simplifyExhaustive``
+            (for knots) and ``intelligentSimplify`` (for multi-component links
+            or if the option ``exhaustive=False`` is set) and therefore needs
+            the optional package ``regina``. More information on the usage of
+            the method can be found
+            `here <https://regina-normal.github.io/engine-docs/classregina_1_1Link.html#a60fe044c436e5e1a8861de2ccb106e1c>`__.
+
+        INPUT:
+
+        - ``exhaustive`` -- boolean (default ``True``) if set to
+          ``False`` a faster but less successful algorithm is
+          used; this does not apply to multicomponent links (here
+          ``exhaustive=False`` is automatically set)
+        - ``height`` -- integer (default ``1``) the maximum number
+          of additional crossings to allow beyond the number of
+          crossings originally present in this diagram, or a
+          negative number if this should not be bounded; this
+          does not apply if `exhaustive=False``
+          argument is not applied if ``exhaustive=False``
+        - ``threads`` -- integer (default ``1``) the number of
+          threads to use. If this is 1 or smaller then the
+          routine will run single-threaded; this
+          does not apply if `exhaustive=False``
+
+        OUTPUT: an instance of class :class:`Link` or ``None``
+
+        EXAMMPLES::
+
+            sage: B = BraidGroup(4)
+            sage: U = Link(B((-1, 2, 3, -2, 1, 3))); U
+            Link with 2 components represented by 6 crossings
+            sage: U.simplify()                       # optional regina
+            Link with 1 component represented by 0 crossings
+            sage: K = Knots().from_table(10, 24)
+            sage: K2 = Knot(K.braid()); K2
+            Knot represented by 12 crossings
+            sage: K2.simplify()                      # optional regina
+            Knot represented by 11 crossings
+        """
+        from sage.interfaces.regina import regina
+        rL = regina(self)
+        if self.is_knot() and exhaustive:
+            res = rL.simplifyExhaustive(height=height, threads=threads)
+        else:
+            res = rL.intelligentSimplify()
+        if res:
+            return self.__class__(rL)
+        return None

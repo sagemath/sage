@@ -1240,7 +1240,7 @@ bool mul::expair_needs_further_processing(epp it)
 	return false;
 }       
 
-numeric mul::default_overall_coeff() const
+const numeric& mul::default_overall_coeff() const
 {
 	return *_num1_p;
 }

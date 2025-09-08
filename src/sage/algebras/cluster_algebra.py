@@ -1763,7 +1763,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
             This method implements the piecewise-linear map `\\nu_c` introduced in Section 9.1 of [ReSt2020]_.
 
-        .. WARNING:
+        .. WARNING::
 
             This implementation works only when the initial exchange matrix is acyclic.
 
@@ -1789,7 +1789,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
             This method implements the inverse of the piecewise-linear map `\\nu_c` introduced in Section 9.1 of [ReSt2020]_.
 
-        .. WARNING:
+        .. WARNING::
 
             This implementation works only when the initial exchange matrix is acyclic.
 
@@ -1988,8 +1988,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
                 msg += "you can compute it by mutating from the initial seed along the sequence "
                 msg += str(self._path_dict[g_vector])
                 raise KeyError(msg)
-            else:
-                raise KeyError("the g-vector %s has not been found yet" % str(g_vector))
+            raise KeyError("the g-vector {} has not been found yet".format(g_vector))
 
     def find_g_vector(self, g_vector, depth=infinity):
         r"""

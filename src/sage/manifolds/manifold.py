@@ -1776,7 +1776,7 @@ class TopologicalManifold(ManifoldSubset):
                             break
         return list(self._orientation)
 
-    def has_orientation(self):
+    def has_orientation(self) -> bool:
         r"""
         Check whether ``self`` admits an obvious or by user set orientation.
 
@@ -3052,13 +3052,13 @@ def Manifold(
             ambient = extra_kwds['ambient']
             if structure == 'degenerate_metric':
                 return DegenerateSubmanifold(dim, name, ambient=ambient,
-                                               metric_name=metric_name,
-                                               signature=signature,
-                                               diff_degree=diff_degree,
-                                               latex_name=latex_name,
-                                               metric_latex_name=metric_latex_name,
-                                               start_index=start_index,
-                                               unique_tag=unique_tag())
+                                             metric_name=metric_name,
+                                             signature=signature,
+                                             diff_degree=diff_degree,
+                                             latex_name=latex_name,
+                                             metric_latex_name=metric_latex_name,
+                                             start_index=start_index,
+                                             unique_tag=unique_tag())
             return PseudoRiemannianSubmanifold(dim, name, ambient=ambient,
                                                metric_name=metric_name,
                                                signature=signature,
@@ -3068,13 +3068,13 @@ def Manifold(
                                                start_index=start_index,
                                                unique_tag=unique_tag())
         if structure == 'degenerate_metric':
-                return DegenerateManifold(dim, name, metric_name=metric_name,
-                                               signature=signature,
-                                               diff_degree=diff_degree,
-                                               latex_name=latex_name,
-                                               metric_latex_name=metric_latex_name,
-                                               start_index=start_index,
-                                               unique_tag=unique_tag())
+            return DegenerateManifold(dim, name, metric_name=metric_name,
+                                      signature=signature,
+                                      diff_degree=diff_degree,
+                                      latex_name=latex_name,
+                                      metric_latex_name=metric_latex_name,
+                                      start_index=start_index,
+                                      unique_tag=unique_tag())
         return PseudoRiemannianManifold(dim, name, metric_name=metric_name,
                                         signature=signature,
                                         diff_degree=diff_degree,
@@ -3082,7 +3082,7 @@ def Manifold(
                                         metric_latex_name=metric_latex_name,
                                         start_index=start_index,
                                         unique_tag=unique_tag())
-    raise NotImplementedError("manifolds of type {} are ".format(structure) +
+    raise NotImplementedError(f"manifolds of type {structure} are " +
                               "not implemented")
 
 

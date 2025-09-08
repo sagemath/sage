@@ -135,5 +135,6 @@ Misc
    sage/modules/tensor_operations
    sage/modules/finite_submodule_iter
    sage/modules/misc
+   sage/modules/numpy_util
 
 .. include:: ../footer.txt

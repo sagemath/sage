@@ -890,9 +890,9 @@ class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
         A = homspace._matrix_space(side)(A)
         free_module_morphism.FreeModuleMorphism.__init__(self, homspace, A, side)
 
-    def is_invertible(self):
+    def is_invertible(self) -> bool:
         r"""
-        Determines if the vector space morphism has an inverse.
+        Determine if the vector space morphism has an inverse.
 
         OUTPUT:
 
