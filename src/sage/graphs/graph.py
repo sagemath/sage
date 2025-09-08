@@ -2670,7 +2670,7 @@ class Graph(GenericGraph):
             sage: Graph(':Ab').is_perfect()                                             # needs sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: This method is only defined for simple graphs, and yours is not one of them !
+            ValueError: This method is not known to work on graphs with multiedges/loops...
             sage: g = Graph()
             sage: g.allow_loops(True)
             sage: g.add_edge(0,0)
@@ -2679,17 +2679,20 @@ class Graph(GenericGraph):
             sage: g.is_perfect()                                                        # needs sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: This method is only defined for simple graphs, and yours is not one of them !
+            ValueError: This method is not known to work on graphs with loops. ...
+
+        TESTS:
+
+        Check that immutable graphs are supported::
+
+            sage: g = graphs.HouseGraph(immutable=True)
+            sage: g.is_perfect()                                                        # needs sage.modules
+            True
         """
-        if self.has_multiple_edges() or self.has_loops():
-            raise ValueError("This method is only defined for simple graphs,"
-                             " and yours is not one of them !")
+        self_complement = self.complement(immutable=False)
+
         if self.is_bipartite():
             return True if not certificate else None
-
-        self_complement = self.complement()
-        self_complement.remove_loops()
-        self_complement.remove_multiple_edges()
 
         if self_complement.is_bipartite():
             return True if not certificate else None

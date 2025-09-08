@@ -802,8 +802,7 @@ def one_radical_difference_family(K, k):
     # instead of the complicated multiplicative group K^*/(±C) we use the
     # discrete logarithm to convert everything into the additive group Z/cZ
     c = m * (q-1) // e  # cardinal of ±C
-    from sage.groups.generic import discrete_log
-    logA = [discrete_log(a,x) % c for a in A]
+    logA = [a.log(x) % c for a in A]
 
     # if two elements of A are equal modulo c then no tiling is possible
     if len(set(logA)) != m:

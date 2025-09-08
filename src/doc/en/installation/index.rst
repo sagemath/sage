@@ -105,7 +105,7 @@ obtaining the source code and building SageMath.
     and you may need to hit :kbd:`Enter` to confirm or type ``yes``
     and then hit :kbd:`Enter`.
 
-    .. code-block:: shell
+    .. code-block:: console
 
       $ curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
       $ bash Miniforge3-$(uname)-$(uname -m).sh
@@ -117,7 +117,7 @@ obtaining the source code and building SageMath.
 
     You can now start SageMath as follows:
 
-    .. code-block:: shell
+    .. code-block:: console
 
       $ conda activate sage
       $ sage
