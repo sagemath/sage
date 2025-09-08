@@ -1404,10 +1404,7 @@ class Components(SageObject):
         # any zero value
         # In other words, the full method should be
         #   return self.comp == {}
-        for val in self._comp.values():
-            if not (val == 0):
-                return False
-        return True
+        return all(val == 0 for val in self._comp.values())
 
     def __eq__(self, other):
         r"""

@@ -18,7 +18,7 @@ from sage.matrix.constructor import matrix
 from sage.misc.verbose import verbose
 from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import randint
-from sage.modular.arithgroup.all import Gamma0
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
 from sage.modular.modsym.all import ModularSymbols
 from sage.modules.free_module_element import free_module_element as vector
 from sage.rings.complex_double import CDF
@@ -89,7 +89,7 @@ class NumericalEigenforms(SageObject):
          [6.0, -3.2360679774997894, 1.2360679774997936]]
     """
     def __init__(self, group, weight=2, eps=1e-20,
-                 delta=1e-2, tp=[2,3,5]):
+                 delta=1e-2, tp=[2, 3, 5]):
         """
         Create a new space of numerical eigenforms.
 
@@ -222,7 +222,7 @@ class NumericalEigenforms(SageObject):
         p = tp[0]
         t = M.T(p).matrix()
         for p in tp[1:]:
-            t += randint(-50,50)*M.T(p).matrix()
+            t += randint(-50, 50) * M.T(p).matrix()
 
         self._hecke_matrix = t
 
@@ -230,7 +230,7 @@ class NumericalEigenforms(SageObject):
         if scipy is None:
             import scipy
         import scipy.linalg
-        evals,eig = scipy.linalg.eig(self._hecke_matrix.numpy(), right=True, left=False)
+        evals, eig = scipy.linalg.eig(self._hecke_matrix.numpy(), right=True, left=False)
         B = matrix(eig)
         v = [CDF(evals[i]) for i in range(len(evals))]
 

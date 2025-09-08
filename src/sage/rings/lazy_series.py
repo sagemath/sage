@@ -657,6 +657,66 @@ class LazyModuleElement(Element):
             return P.zero()
         return P.element_class(P, Stream_exact(initial_coefficients, order=v))
 
+    def restrict(self, min_degree=None, max_degree=None):
+        r"""
+        Return the series obtained by keeping only terms of
+        degree between ``min_degree`` and ``max_degree``.
+
+        INPUT:
+
+        - ``min_degree``, ``max_degree`` -- (optional) integers
+          indicating which degrees to keep
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyLaurentSeriesRing(ZZ)
+            sage: alpha = z + 2*z^2 + 3*z^3 + z^4/(1-z)
+            sage: alpha
+            z + 2*z^2 + 3*z^3 + z^4 + z^5 + z^6 + O(z^7)
+            sage: alpha.restrict(2)
+            2*z^2 + 3*z^3 + z^4 + z^5 + z^6 + O(z^7)
+            sage: alpha.restrict(3)
+            3*z^3 + z^4 + z^5 + z^6 + O(z^7)
+            sage: alpha.restrict(3, 6)
+            3*z^3 + z^4 + z^5 + z^6
+            sage: alpha.restrict(max_degree=6)
+            z + 2*z^2 + 3*z^3 + z^4 + z^5 + z^6
+
+            sage: L.<z> = LazyLaurentSeriesRing(QQ)
+            sage: exp(z).restrict(3)
+            1/6*z^3 + 1/24*z^4 + 1/120*z^5 + 1/720*z^6 + 1/5040*z^7 + 1/40320*z^8 + 1/362880*z^9 + O(z^10)
+        """
+        P = self.parent()
+        if max_degree is None and min_degree is None:
+            return self
+        elif max_degree is None:
+            v = max(self._coeff_stream._approximate_order, min_degree)
+            if isinstance(self._coeff_stream, Stream_exact):
+                degree = self._coeff_stream._degree
+                if degree <= min_degree:
+                    coeff_stream = Stream_exact([],
+                                                order=v,
+                                                constant=self._coeff_stream._constant)
+                else:
+                    initial_coefficients = self._coeff_stream._initial_coefficients[min_degree-degree:]
+                    coeff_stream = Stream_exact(initial_coefficients,
+                                                order=v,
+                                                constant=self._coeff_stream._constant)
+            else:
+                coeff_stream = Stream_truncated(self._coeff_stream, 0, v)
+        else:
+            if min_degree is None:
+                v = self._coeff_stream._approximate_order
+            else:
+                v = max(self._coeff_stream._approximate_order, min_degree)
+            initial_coefficients = [self._coeff_stream[i]
+                                    for i in range(v, max_degree + 1)]
+            if not any(initial_coefficients):
+                coeff_stream = Stream_zero()
+            else:
+                coeff_stream = Stream_exact(initial_coefficients, order=v)
+        return P.element_class(P, coeff_stream)
+
     def shift(self, n):
         r"""
         Return ``self`` with the indices shifted by ``n``.

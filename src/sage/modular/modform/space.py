@@ -777,9 +777,9 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         gens = [f.padded_list(prec) for f in B]
         C = A.span(gens)
         D = C.saturation()
-        S = [R(f.list(),prec) for f in D.basis()]
+        S = [R(f.list(), prec) for f in D.basis()]
         for _ in range(self.dimension() - len(S)):
-            S.append(R(0,prec))
+            S.append(R(0, prec))
         S = Sequence(S, immutable=True, cr=True)
         self.__q_integral_basis = (prec, S)
         return S
@@ -1432,9 +1432,11 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             raise NotImplementedError
         if self.__sturm_bound is None:
             G = self.group()
-            from sage.modular.arithgroup.all import Gamma1_class
+            from sage.modular.arithgroup.congroup_gamma1 import Gamma1_class
             if isinstance(G, Gamma1_class) and self.character() is not None:
-                from sage.modular.arithgroup.all import Gamma0
+                from sage.modular.arithgroup.congroup_gamma0 import (
+                    Gamma0_constructor as Gamma0,
+                )
                 G = Gamma0(self.level())
             # the +1 below is because O(q^prec) has precision prec.
             self.__sturm_bound = G.sturm_bound(self.weight())+1
@@ -1853,7 +1855,4 @@ def contains_each(V, B):
         sage: contains_each( range(20), range(30) )
         False
     """
-    for b in B:
-        if b not in V:
-            return False
-    return True
+    return all(b in V for b in B)

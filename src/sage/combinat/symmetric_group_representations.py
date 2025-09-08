@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules sage.groups
 r"""
-Representations of the Symmetric Group
+Representations of the symmetric group
 
 .. TODO::
 
@@ -680,7 +680,7 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
         M = matrix(self._ring, digraph.num_verts())
         for g in digraph.connected_components_subgraphs():
             if g.num_verts() == 1:
-                [v] = g.vertices(sort=True)
+                v, = g.vertices(sort=True)
                 w = self._word_dict[v]
                 trivial = None
                 for j, a in enumerate(w):
@@ -693,7 +693,7 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
                 j = index_lookup[v]
                 M[j, j] = 1 if trivial is True else -1
             else:
-                [(u, v, (j, beta))] = g.edges(sort=True)
+                (u, v, (j, beta)), = g.edges(sort=True)
                 iu = index_lookup[u]
                 iv = index_lookup[v]
                 M[iu, iu], M[iu, iv], M[iv, iu], M[iv, iv] = \

@@ -811,9 +811,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
                     if not (a in diag or b in diag):
                         if u % 8 != up % 8:
                             return False
-        if self.brown_invariant() != signature:
-            return False
-        return True
+        return self.brown_invariant() == signature
 
     def orthogonal_group(self, gens=None, check=False):
         r"""

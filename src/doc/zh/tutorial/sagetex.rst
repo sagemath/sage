@@ -1,14 +1,14 @@
 .. _sec-sagetex:
 
-*************
+************
 使用 SageTeX
-*************
+************
 
 SageTeX 包允许你将 Sage 计算结果嵌入到 LaTeX 文档中。
 要使用它，需要先“安装”它（请参阅 :ref:`sec-sagetex_install`）。
 
 示例
-----------
+----
 
 以下是一个非常简短的 SageTeX 使用示例。
 完整文档可以在 :file:`SAGE_ROOT/venv/share/doc/sagetex` 中找到，
@@ -94,7 +94,7 @@ SageTeX 还有很多内容，由于 Sage 和 LaTeX 都是复杂且强大的工�
 .. _sec-sagetex_install:
 
 让 TeX 识别 SageTeX
--------------------------
+-------------------
 
 Sage 基本上是自包含的，但某些部分需要进行一些干预才能正常工作。SageTeX 就是其中之一。
 
@@ -115,7 +115,7 @@ Sage 中默认安装了 SageTeX，但要在 LaTeX 文档中使用 SageTeX，你�
 
 - 第二种方法是使用 ``TEXMFLOCAL`` 环境变量。如果你使用的是 bash shell，可以这样做：
 
-  .. CODE-BLOCK:: shell-session
+  .. code-block:: console
 
       $ export TEXMFLOCAL=SAGE_ROOT/venv/share/texmf
       $ mktexlsr       # update kpathsea ls-R databases
@@ -133,14 +133,14 @@ Sage 中默认安装了 SageTeX，但要在 LaTeX 文档中使用 SageTeX，你�
   大多数 TeX 发行版会自动搜索主目录中的 ``texmf`` 目录以寻找包。
   要确切了解这个目录的位置，请在命令行种执行以下操作：
 
-  .. CODE-BLOCK:: shell-session
+  .. code-block:: console
 
       $ kpsewhich -var-value=TEXMFHOME
 
   这将打印出一个目录，例如 ``/home/drake/texmf`` 或 ``/Users/drake/Library/texmf``。
   使用如下命令将 :file:`SAGE_ROOT/venv/share/texmf/` 中的 ``tex/`` 目录复制到主目录的 ``texmf`` 目录：
 
-  .. CODE-BLOCK:: shell-session
+  .. code-block:: console
 
       $ cp -R SAGE_ROOT/venv/share/texmf/tex TEXMFHOME
 
@@ -154,7 +154,7 @@ Sage 中默认安装了 SageTeX，但要在 LaTeX 文档中使用 SageTeX，你�
 - 对于多用户系统上的安装，只需适当修改上述指令，将 ``sagetex.sty`` 复制到系统范围的 TeX 目录中。
   最好的选择可能是使用以下结果，而不是 ``TEXMFHOME`` 目录：
 
-  .. CODE-BLOCK:: shell-session
+  .. code-block:: console
 
       $ kpsewhich -var-value=TEXMFLOCAL
 
@@ -162,7 +162,7 @@ Sage 中默认安装了 SageTeX，但要在 LaTeX 文档中使用 SageTeX，你�
   按照上述方式将 ``tex`` 目录复制到 ``TEXMFLOCAL`` 目录中。
   现在需要通过运行以下命令更新 TeX 的包数据库：
 
-  .. CODE-BLOCK:: shell-session
+  .. code-block:: console
 
       $ texhash TEXMFLOCAL
 
@@ -178,7 +178,7 @@ Sage 中默认安装了 SageTeX，但要在 LaTeX 文档中使用 SageTeX，你�
   这样，升级 Sage 时，仅需做一件事（复制目录）即可确保 SageTeX 正常工作。
 
 SageTeX 文档
----------------------
+------------
 
 虽然这不严格属于安装的一部分，但值得在此提及的是，
 SageTeX 的文档维护在 :file:`SAGE_ROOT/venv/share/doc/sagetex/sagetex.pdf`。
@@ -187,7 +187,7 @@ SageTeX 的文档维护在 :file:`SAGE_ROOT/venv/share/doc/sagetex/sagetex.pdf`�
 你也可以从 `SageTeX 页面 <https://github.com/sagemath/sagetex>`_ 获取这些文件。
 
 SageTeX 与 TeXLive
--------------------
+------------------
 
 一个潜在的令人困惑的问题是流行的 TeX 发行版 `TeXLive <http://www.tug.org/texlive/>`_ 包含 SageTeX。
 虽然看起来很方便，但对于 SageTeX 而言，确保 Sage 部分和 LaTeX 部分同步是非常重要的 -- 在这种情况下，

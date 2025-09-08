@@ -178,9 +178,7 @@ class IntegerMatrices(UniqueRepresentation, Parent):
                 col_sums[j] += x_ij
             if row_sums[i] != self._row_sums[i]:
                 return False
-        if col_sums != self._col_sums:
-            return False
-        return True
+        return col_sums == self._col_sums
 
     def cardinality(self):
         r"""
