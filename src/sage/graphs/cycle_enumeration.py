@@ -47,7 +47,8 @@ def _all_cycles_iterator_vertex(self, vertex, starting_vertices=None, simple=Fal
 
     - ``simple`` -- boolean (default: ``False``); if set to ``True``, then
       only simple cycles are considered. A cycle is simple if the only
-      vertex occurring twice in it is the starting and ending one.
+      vertex occurring twice in it is the starting and ending one and no edge
+      occurs twice.
 
     - ``rooted`` -- boolean (default: ``False``); if set to False, then
       cycles differing only by their starting vertex are considered the same
@@ -62,8 +63,8 @@ def _all_cycles_iterator_vertex(self, vertex, starting_vertices=None, simple=Fal
       the empty paths are also enumerated
 
     - ``remove_acyclic_edges`` -- boolean (default: ``True``); whether
-      acyclic edges must be removed from the graph.  Used to avoid
-      recomputing it for each vertex
+      acyclic edges must be removed from the graph if ``self`` is directed.
+      Used to avoid recomputing it for each vertex
 
     - ``weight_function`` -- function (default: ``None``); a function that
       takes as input an edge ``(u, v, l)`` and outputs its weight. If not
@@ -154,6 +155,23 @@ def _all_cycles_iterator_vertex(self, vertex, starting_vertices=None, simple=Fal
         Traceback (most recent call last):
         ...
         ValueError: negative weight is not allowed
+
+    The function works for an undirected graph. Specifically, each cycle is
+    enumerated exactly once, meaning a cycle and its reverse are not listed separately::
+
+        sage: g = Graph({0: [1, 2], 1: [0, 2], 2: [0, 1]})
+        sage: it = g._all_cycles_iterator_vertex(0, simple=False)
+        sage: for i in range(7): print(next(it))
+        [0, 1, 0]
+        [0, 2, 0]
+        [0, 1, 2, 0]
+        [0, 1, 0, 1, 0]
+        [0, 1, 0, 2, 0]
+        [0, 1, 2, 1, 0]
+        [0, 2, 0, 2, 0]
+        sage: for cycle in g._all_cycles_iterator_vertex(0, simple=True):
+        ....:     print(cycle)
+        [0, 1, 2, 0]
     """
     if starting_vertices is None:
         starting_vertices = [vertex]
@@ -164,7 +182,7 @@ def _all_cycles_iterator_vertex(self, vertex, starting_vertices=None, simple=Fal
         else:
             yield [vertex]
     # First we remove vertices and edges that are not part of any cycle
-    if remove_acyclic_edges:
+    if self.is_directed() and remove_acyclic_edges:
         sccs = self.strongly_connected_components()
         if len(sccs) == 1:
             h = self
@@ -177,6 +195,8 @@ def _all_cycles_iterator_vertex(self, vertex, starting_vertices=None, simple=Fal
             h.delete_edges((u, v) for u, v in h.edge_iterator(labels=False) if d[u] != d[v])
     else:
         h = self
+        int_to_vertex = list(h)
+        vertex_to_int = {v: i for i, v in enumerate(int_to_vertex)}
 
     by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
                                                            weight_function=weight_function,
@@ -195,15 +215,28 @@ def _all_cycles_iterator_vertex(self, vertex, starting_vertices=None, simple=Fal
         length, path = heappop(heap_queue)
         # Checks if a cycle has been found
         if len(path) > 1 and path[0] == path[-1]:
-            if report_weight:
-                yield (length, path)
-            else:
-                yield path
+            report = True
+            if not self.is_directed():
+                if simple:
+                    report = len(path) > 3 and vertex_to_int[path[1]] < vertex_to_int[path[-2]]
+                else:
+                    L = len(path)
+                    for i in range(1, L // 2):
+                        if vertex_to_int[path[i]] > vertex_to_int[path[L - i - 1]]:
+                            report = False
+                            break
+                        if vertex_to_int[path[i]] < vertex_to_int[path[L - i - 1]]:
+                            break
+            if report:
+                if report_weight:
+                    yield (length, path)
+                else:
+                    yield path
         # If simple is set to True, only simple cycles are
         # allowed, Then it discards the current path
         if (not simple or path.count(path[-1]) == 1):
-            for e in h.outgoing_edge_iterator(path[-1]):
-                neighbor = e[1]
+            for e in h.edge_iterator(vertices=[path[-1]]):
+                neighbor = e[1] if e[0] == path[-1] else e[0]
                 # Makes sure that the current cycle is not too long.
                 # If cycles are not rooted, makes sure to keep only the
                 # minimum cycle according to the lexicographic order
@@ -374,7 +407,11 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
     Return an iterator over all the cycles of ``self`` starting with one of
     the given vertices. Each edge must have a positive weight.
 
-    The cycles are enumerated in increasing length order.
+    The cycles are enumerated in increasing length order. Here, a cycle
+    means a closed walk `v_0e_0v_1e_1 \ldots v_{k-1}e_{k-1}v_0` where
+    `v_i` are vertices and `e_i` are edges. `v_i` and `e_i`
+    (`0 \leq i < k`) may not be distinct. If ``simple=True``, then cycles
+    with distinct `v_i` and `e_i` (`0 \leq i < k`) are enumerated.
 
     INPUT:
 
@@ -385,7 +422,8 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
 
     - ``simple`` -- boolean (default: ``False``); if set to ``True``, then
       only simple cycles are considered. A cycle is simple if the only
-      vertex occurring twice in it is the starting and ending one.
+      vertex occurring twice in it is the starting and ending one and no edge
+      occurs twice.
 
     - ``rooted`` -- boolean (default: ``False``); if set to False, then
       cycles differing only by their starting vertex are considered the same
@@ -535,7 +573,7 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
         [0, 1, 2, 0]
         [2, 3, 4, 5, 2]
 
-    The algorithm ``'B'`` is available only when `simple=True`::
+    The algorithm ``'B'`` is available only when ``simple=True``::
 
         sage: g = DiGraph()
         sage: g.add_edges([('a', 'b', 1), ('b', 'a', 1)])
@@ -545,19 +583,17 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
         ...
         ValueError: The algorithm 'B' is available only when simple=True.
 
-    The algorithm ``'A'`` is available only for directed graphs::
+    The algorithm ``'A'`` works for undirected graphs as well. Specifically, each cycle is
+    enumerated exactly once, meaning a cycle and its reverse are not listed separately::
 
         sage: g = Graph({0: [1, 2], 1: [0, 2], 2: [0, 1]})
-        sage: next(g.all_cycles_iterator(algorithm='A', simple=True))
-        Traceback (most recent call last):
-        ...
-        ValueError: The algorithm 'A' is available only for directed graphs.
+        sage: for cycle in g.all_cycles_iterator(algorithm='A', simple=True):
+        ....:     print(cycle)
+        [0, 1, 2, 0]
     """
     if starting_vertices is None:
         starting_vertices = self
 
-    if algorithm == 'A' and not self.is_directed():
-        raise ValueError("The algorithm 'A' is available only for directed graphs.")
     if algorithm == 'B' and not simple:
         raise ValueError("The algorithm 'B' is available only when simple=True.")
 
@@ -850,13 +886,12 @@ def all_simple_cycles(self, starting_vertices=None, rooted=False,
         sage: cycles.sort() == cycles_B.sort()
         True
 
-    The algorithm ``'A'`` is available only for directed graphs::
+    The algorithm ``'A'`` is available for undirected graphs. Specifically, each cycle is
+    enumerated exactly once, meaning a cycle and its reverse are not listed separately::
 
         sage: g = Graph({0: [1, 2], 1: [0, 2], 2: [0, 1]})
         sage: g.all_simple_cycles(algorithm='A')
-        Traceback (most recent call last):
-        ...
-        ValueError: The algorithm 'A' is available only for directed graphs.
+        [[0, 1, 2, 0]]
     """
     return list(self.all_cycles_iterator(starting_vertices=starting_vertices,
                                          simple=True, rooted=rooted,
