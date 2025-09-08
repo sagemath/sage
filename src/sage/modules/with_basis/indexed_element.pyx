@@ -298,13 +298,14 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         v = list(self._monomial_coefficients.items())
         try:
             v.sort(key=lambda monomial_coeff:
-                        print_options['sorting_key'](monomial_coeff[0]),
+                   print_options['sorting_key'](monomial_coeff[0]),
                    reverse=print_options['sorting_reverse'])
-        except Exception: # Sorting the output is a plus, but if we can't, no big deal
+        except Exception:
+            # Sorting the output is a plus, but if we cannot, no big deal
             pass
         return v
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -576,7 +577,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             3 B_{ba} + 2 B_{cb} + B_{ac}
         """
         return repr_lincomb(self._sorted_items_for_printing(),
-                            scalar_mult       = self._parent._print_options['scalar_mult'],
+                            scalar_mult = self._parent._print_options['scalar_mult'],
                             latex_scalar_mult = self._parent._print_options['latex_scalar_mult'],
                             repr_monomial = self._parent._latex_term,
                             is_latex=True, strip_one=True)
@@ -937,7 +938,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         if isinstance(scalar, Element) and parent(scalar) is not self.base_ring():
             # Temporary needed by coercion (see Polynomial/FractionField tests).
             if self.base_ring().has_coerce_map_from(parent(scalar)):
-                scalar = self.base_ring()( scalar )
+                scalar = self.base_ring()(scalar)
             else:
                 return None
 
