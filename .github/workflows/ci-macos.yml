@@ -59,6 +59,7 @@ jobs:
       - name: Build
         run: |
           source ./.homebrew-build-env
+          export CXXFLAGS="-DNTL_THREADS=0 -fno-threadsafe-statics $CXXFLAGS"
           ./bootstrap
           ./configure --enable-download-from-upstream-url
           make build V=0
