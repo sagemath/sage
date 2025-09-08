@@ -1692,7 +1692,6 @@ class MicaliVaziraniMatching:
     unweighted graph using the Micali-Vazirani algorithm.
     """
     from dataclasses import dataclass
-    from sage.graphs.graph import Graph
     from typing import Any, List, Tuple, Set, Dict, Optional
 
     Edge = Tuple[int, int, Any]
@@ -1702,7 +1701,12 @@ class MicaliVaziraniMatching:
         base: int
         peaks: Tuple[int, int]
 
-    def __init__(self, G: Graph) -> None:
+    def __init__(self, G) -> None:
+        from sage.graphs.graph import Graph
+
+        if not isinstance(G, Graph):
+            raise ValueError("The input must be a graph")
+
         if G.has_loops() or G.has_multiple_edges():
             raise ValueError("Micali-Vazirani algorithm is only applicable to simple undirected graphs")
 
@@ -1771,6 +1775,8 @@ class MicaliVaziraniMatching:
         and removing that vertex, its matched neighbour from the graph.  The goal
         is to reduce the number of augmenting phases required by the main algorithm.
         """
+        from sage.graphs.graph import Graph
+
         # Make a copy J of G for the greedy matching process
         J: Graph = self.G.copy(immutable=False)
 
