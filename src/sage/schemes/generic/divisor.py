@@ -89,8 +89,7 @@ def CurvePointToIdeal(C, P):
                 polys.append(x[i])
             else:
                 polys.append(x[i]-ai)
-    for i in range(m+1,n):
-        polys.append(x[i])
+    polys.extend(x[i] for i in range(m + 1, n))
     return R.ideal(polys)
 
 
