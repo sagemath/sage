@@ -2868,7 +2868,7 @@ class GraphGenerators:
 ###########################################################################
 # Trees
 ###########################################################################
-    from .generators import trees as gen_trees
+    from sage.graphs.generators import trees as gen_trees
     BalancedTree = staticmethod(gen_trees.BalancedTree)
     FibonacciTree = staticmethod(gen_trees.FibonacciTree)
     nauty_gentreeg = staticmethod(gen_trees.nauty_gentreeg)
