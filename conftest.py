@@ -375,3 +375,21 @@ def add_imports(doctest_namespace: dict[str, Any]):
     sage_namespace["__name__"] = "__main__"
 
     doctest_namespace.update(**sage_namespace)
+
+
+@pytest.fixture
+def tmpfile():
+    r"""
+    Temporary file fixture that can be reopened/closed and still
+    clean itself up afterwards.
+
+    Similar to the built-in ``tmpdir`` fixture, but safer for now:
+
+    * https://github.com/pytest-dev/pytest/issues/13669
+
+    """
+    from tempfile import NamedTemporaryFile
+    from os import unlink
+    t = NamedTemporaryFile(delete=False)
+    yield t
+    unlink(t.name)
