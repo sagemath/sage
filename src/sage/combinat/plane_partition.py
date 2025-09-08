@@ -1098,8 +1098,8 @@ class PlanePartition(ClonableArray,
             [(0, 0, 0), (0, 0, 1), (0, 1, 0), (1, 0, 0), (2, 0, 0)]
         """
         from sage.combinat.posets.poset_examples import posets
-        a, b, c = (self._max_x, self._max_y, self._max_z)
-        Q = posets.ProductOfChains([a, b, c])
+        abc = [self._max_x, self._max_y, self._max_z]
+        Q = posets.ProductOfChains(abc)
         generate = []
         for i, row in enumerate(self):
             for j, val in enumerate(row):
