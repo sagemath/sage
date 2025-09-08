@@ -12,6 +12,7 @@ py.install_sources(
   'random.py',
   'smallgraphs.py',
   'trees.pxd',
+  'trees.pyx',
   'world_map.py',
   subdir: 'sage/graphs/generators',
 )
