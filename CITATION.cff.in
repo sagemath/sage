@@ -1,11 +1,9 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
-title: SageMath
-abstract: SageMath is a free open-source mathematics software system.
+title: SageMath with flag algebras
+abstract: SageMath is a free open-source mathematics software system, this fork in addition contains the implementation of flag algbras.
 authors:
 - name: "The SageMath Developers"
+- name: "Levente Bodnar"
 version: ${SAGE_VERSION}
-doi: 10.5281/zenodo.8042260
-date-released: ${SAGE_RELEASE_DATE}
-repository-code: "https://github.com/sagemath/sage"
-url: "https://www.sagemath.org/"
+repository-code: "https://github.com/bodnalev/sage"
