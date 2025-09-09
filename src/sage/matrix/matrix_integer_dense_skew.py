@@ -1,5 +1,5 @@
 """
-Skew Smith normal form over ZZ
+Skew normal form over ZZ
 """
 
 from sage.matrix.constructor import Matrix
@@ -9,13 +9,15 @@ from sage.arith.misc import xgcd
 
 def skew_form(M, transformation=False):
     r"""
-    Compute the skew Smith normal form of this square integer matrix as defined
-    in Theorem IV.1 in [New1972]_.
+    Computes the skew normal form of a square integer matrix. 
+    
+    This is defined as in Theorem IV.1 in [New1972]_. This is 
+    equivalent (up to permutation) to the alternating Frobenius form.
 
-    Given an integer skew-symmetric matrix `M`, compute a unimodular matrix `S`
-    such that `S^T M S` is block diagonal with `2x2` blocks `(0, d_i; -d_i, 0)`
-    where `d_i` are positive integers with `d_i | d_{i+1}`. If ``transformation``
-    is True, also return ``S``.
+    Given an integer skew-symmetric matrix `M`, compute a unimodular 
+    matrix `S` such that `S^T M S` is block diagonal with `2x2` blocks 
+    `(0, d_i; -d_i, 0)` where `d_i` are positive integers with 
+    `d_i | d_{i+1}`. If ``transformation`` is True, also return ``S``.
 
     INPUT:
     
@@ -29,6 +31,20 @@ def skew_form(M, transformation=False):
     - ``M'`` -- integer n x n matrix in skew Smith normal form
     - ``S``  -- integer n x n unimodular matrix with `S^T M S = M'`
       (if ``transformation`` is True)
+
+    ALGORITHM:
+
+    This is based on the algorithm in [New1972]_. 
+    Given a skew-symmetric matrix over a principal ideal ring with 
+    characteristic != 2. We use congruence operations only: apply a 
+    row move with the matching column move (conjugation by a unimodular 
+    matrix). Permute so that there is a nonzero off-diagonal in the first 
+    row; combine columns so that entry equals the row greatest common 
+    divisor; then zero the remaining first row and column to obtain a 
+    tridiagonal matrix. If this leading entry does not divide all entries 
+    we replace it by the row gcd (which strictly decreases) and repeat 
+    until it does; then split a two-by-two block; recurse, yielding blocks 
+    with nondecreasing divisors.
 
     EXAMPLES::
 
@@ -61,6 +77,7 @@ def skew_form(M, transformation=False):
     S = Matrix.identity(ZZ, n) if transformation else None
 
     k = 0
+    # At most n / 2 iterations of this while loop
     while k < n - 1:
         # We work on the submatrix A[k:, k:]
         m = n - k
@@ -94,21 +111,21 @@ def skew_form(M, transformation=False):
             if transformation:
                 S = S * E
 
-        # GCD descent loop
+        # GCD descent loop (gcd strictly decreases)
         while True:
             # Step 1: Clear the first row of the submatrix (row k)
             for j in range(2, m):
-                g, h = A[k, k + 1], A[k, k + j]
-                if h == 0:
+                pivot, target = A[k, k + 1], A[k, k + j]
+                if target == 0:
                     continue
-                d, x, y = xgcd(g, h)
-                g_inv, h_inv = g // d, h // d
+                d, x, y = xgcd(pivot, target)
+                pivot_inv, target_inv = pivot // d, target // d
 
                 # Create the elementary matrix for the GCD step
                 E = Matrix.identity(ZZ, n)
                 i1, i2 = k + 1, k + j
                 E[i1, i1], E[i2, i1] = x, y
-                E[i1, i2], E[i2, i2] = -h_inv, g_inv
+                E[i1, i2], E[i2, i2] = -target_inv, pivot_inv
 
                 # Apply the congruence transformation
                 A = E.transpose() * A * E
@@ -116,14 +133,14 @@ def skew_form(M, transformation=False):
                     S = S * E
 
             # Step 2: Check for divisibility
-            h = A[k, k + 1]
-            if h == 0:
+            pivot = A[k, k + 1]
+            if pivot == 0:
                 break
 
             bad_entry_row = None
             for r in range(1, m):
                 for c in range(r, m):
-                    if A[k + r, k + c] % h != 0:
+                    if A[k + r, k + c] % pivot != 0:
                         bad_entry_row = r
                         break
                 if bad_entry_row is not None:
@@ -142,8 +159,8 @@ def skew_form(M, transformation=False):
             if transformation:
                 S = S * E
 
-        h = A[k, k + 1]
-        if h == 0:
+        pivot = A[k, k + 1]
+        if pivot == 0:
             continue
 
         # Step 3: Extract the 2x2 block by zeroing out the rest of rows/cols k, k+1
@@ -151,7 +168,7 @@ def skew_form(M, transformation=False):
             val = A[k + 1, k + j]
             if val == 0:
                 continue
-            q = val // h
+            q = val // pivot
 
             E = Matrix.identity(ZZ, n)
             E[k, k + j] = q

@@ -1764,13 +1764,15 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
     def skew_form(self, transformation=False):
         r"""
-        Compute the skew Smith normal form of this square integer matrix as defined
-        in Theorem IV.1 in [New1972]_.
+        Computes the skew normal form of a square integer matrix. 
+        
+        This is defined as in Theorem IV.1 in [New1972]_. This is 
+        equivalent (up to permutation) to the alternating Frobenius form.
 
-        Given an integer skew-symmetric matrix `M`, compute a unimodular matrix `S`
-        such that `S^T M S` is block diagonal with `2x2` blocks `(0, d_i; -d_i, 0)`
-        where `d_i` are positive integers with `d_i | d_{i+1}`. If ``transformation``
-        is True, also return ``S``.
+        Given an integer skew-symmetric matrix `M`, compute a unimodular 
+        matrix `S` such that `S^T M S` is block diagonal with `2x2` blocks 
+        `(0, d_i; -d_i, 0)` where `d_i` are positive integers with 
+        `d_i | d_{i+1}`. If ``transformation`` is True, also return ``S``.
 
         INPUT:
 
@@ -1782,6 +1784,20 @@ cdef class Matrix_integer_dense(Matrix_dense):
         - ``M'`` -- integer n x n matrix in skew Smith normal form
         - ``S``  -- integer n x n unimodular matrix with `S^T M S = M'`
           (if ``transformation`` is True)
+
+        ALGORITHM:
+
+        This is based on the algorithm in [New1972]_. 
+        Given a skew-symmetric matrix over a principal ideal ring with 
+        characteristic != 2. We use congruence operations only: apply a 
+        row move with the matching column move (conjugation by a unimodular 
+        matrix). Permute so that there is a nonzero off-diagonal in the first 
+        row; combine columns so that entry equals the row greatest common 
+        divisor; then zero the remaining first row and column to obtain a 
+        tridiagonal matrix. If this leading entry does not divide all entries 
+        we replace it by the row gcd (which strictly decreases) and repeat 
+        until it does; then split a two-by-two block; recurse, yielding blocks 
+        with nondecreasing divisors.
 
         EXAMPLES::
 
