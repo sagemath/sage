@@ -271,8 +271,7 @@ from sage.structure.element import Element, get_coercion_model
 from sage.structure.unique_representation import UniqueRepresentation
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
-    from collections.abc import Iterator
+    from collections.abc import Iterable, Iterator
 
 lazy_import('sage.combinat.rsk', ['RSK', 'RSK_inverse'])
 lazy_import('sage.combinat.tableau', 'Tableau')
