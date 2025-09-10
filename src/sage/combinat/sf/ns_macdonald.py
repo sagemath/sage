@@ -480,19 +480,25 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
         return res
 
     def _inv_aux(self):
-        """
+        r"""
         EXAMPLES::
 
             sage: a = AugmentedLatticeDiagramFilling([[1,6],[2],[3,4,2],[],[],[5,5]])
             sage: a._inv_aux()
             7
+
+            sage: data = [[1,6],[],[3,4,2],[5,5]]
+            sage: [AugmentedLatticeDiagramFilling(data, pi=pi)._inv_aux()
+            ....:  for pi in Permutations(4)]
+            [4, 4, 3, 3, 2, 2, 4, 4, 2, 2, 1, 1,
+             3, 3, 2, 2, 0, 0, 2, 2, 1, 1, 0, 0]
         """
         res = 0
         shape = self.shape()
         for i in range(1, len(self) + 1):
-            for j in range(i + 1, len(self) + 1):
-                if shape[i] <= shape[j]:
-                    res += 1
+            a = self._list[i-1][0]
+            res += sum(1 for j in range(i + 1, len(self) + 1)
+                       if shape[i] <= shape[j] and a < self._list[j-1][0])
         return res
 
     def inv(self):
@@ -681,27 +687,6 @@ class NonattackingFillings_shape(Parent, UniqueRepresentation):
 
         for z in NonattackingBacktracker(self._shape, self.pi):
             yield AugmentedLatticeDiagramFilling(z, self.pi)
-
-    def coinv_correction(self, pi):
-        r"""
-        Return the correction to the coinv statistic for the permuted
-        basements given by ``pi``.
-
-        For a permutation `\pi`, this is the negative of the number
-        of inversions `i < j` in `\pi` (i.e., `\pi(i) > \pi(j)`) such
-        that `\mu_i \leq \mu_j`.
-
-        EXAMPLES::
-
-            sage: N = NonattackingFillings([1, 0, 2, 2])
-            sage: [N.coinv_correction(pi) for pi in Permutations(4)]
-            [0, -1, -1, -2, -2, -3, 0, -1, -2, -3, -3, -4, -1,
-             -2, -2, -3, -4, -5, -2, -3, -3, -4, -4, -5]
-        """
-        mu = self._shape
-        n = len(pi)
-        return -sum(1 for i in range(n-1) for j in range(i+1,n)
-                    if pi[i] > pi[j] and mu[i+1] <= mu[j+1])
 
 
 class NonattackingBacktracker(GenericBacktracker):
@@ -912,13 +897,9 @@ def E(mu, q=None, t=None, pi=None):
     """
     P, q, t, n, R, x = _check_muqt(mu, q, t, pi)
     res = R.zero()
-    if pi is not None:
-        corr = n.coinv_correction(pi)
-    else:
-        corr = 0
     for a in n:
         weight = a.weight()
-        res += q**a.maj() * t**(a.coinv()+corr) * a.coeff(q, t) * prod(x[i]**weight[i] for i in range(len(weight)))
+        res += q**a.maj() * t**a.coinv() * a.coeff(q, t) * prod(x[i]**weight[i] for i in range(len(weight)))
     return res
 
 
@@ -975,13 +956,9 @@ def E_integral(mu, q=None, t=None, pi=None):
     """
     P, q, t, n, R, x = _check_muqt(mu, q, t, pi)
     res = R.zero()
-    if pi is not None:
-        corr = n.coinv_correction(pi)
-    else:
-        corr = 0
     for a in n:
         weight = a.weight()
-        res += q**a.maj() * t**(a.coinv()+corr) * a.coeff_integral(q, t) * prod(x[i]**weight[i] for i in range(len(weight)))
+        res += q**a.maj() * t**a.coinv() * a.coeff_integral(q, t) * prod(x[i]**weight[i] for i in range(len(weight)))
     return res
 
 
