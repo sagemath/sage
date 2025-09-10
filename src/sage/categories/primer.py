@@ -825,10 +825,10 @@ element of the parent?)::
       running ._test_not_implemented_methods() . . . pass
       running ._test_pickling() . . . pass
       pass
-        running ._test_elements_eq_reflexive() . . . pass
-        running ._test_elements_eq_symmetric() . . . pass
-        running ._test_elements_eq_transitive() . . . pass
-        running ._test_elements_neq() . . . pass
+    running ._test_elements_eq_reflexive() . . . pass
+    running ._test_elements_eq_symmetric() . . . pass
+    running ._test_elements_eq_transitive() . . . pass
+    running ._test_elements_neq() . . . pass
     running ._test_enumerated_set_contains() . . . pass
     running ._test_enumerated_set_iter_cardinality() . . . pass
     running ._test_enumerated_set_iter_list() . . . pass
@@ -836,6 +836,8 @@ element of the parent?)::
     running ._test_new() . . . pass
     running ._test_not_implemented_methods() . . . pass
     running ._test_pickling() . . . pass
+    running ._test_random() . . . pass
+    running ._test_rank() . . . pass
     running ._test_some_elements() . . . pass
 
 Tests can be run individually::
