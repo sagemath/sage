@@ -41,8 +41,6 @@ from libcpp.vector cimport vector
 from sage.data_structures.pairing_heap cimport PairingHeap
 from sage.rings.integer_ring import ZZ
 
-import copy
-
 
 def all_paths(G, start, end, use_multiedges=False, report_edges=False, labels=False):
     """
