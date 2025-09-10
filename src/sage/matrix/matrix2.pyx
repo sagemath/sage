@@ -105,7 +105,7 @@ from sage.matrix.matrix_misc import permanental_minor_polynomial
 from sage.misc.misc_c import prod
 
 # used to deprecate only adjoint method
-from sage.misc.superseded import deprecation, deprecated_function_alias
+from sage.misc.superseded import deprecated_function_alias
 
 
 # temporary hack to silence the warnings from #34806
@@ -140,35 +140,6 @@ cdef class Matrix(Matrix1):
         [x], [0]
         )
     """
-    def _backslash_(self, B):
-        r"""
-        Used to compute `A \backslash B`, i.e., the backslash solver
-        operator.
-
-        DEPRECATED
-
-        EXAMPLES::
-
-            sage: A = matrix(QQ, 3, [1,2,4,2,3,1,0,1,2])
-            sage: B = matrix(QQ, 3, 2, [1,7,5, 2,1,3])
-            sage: C = A._backslash_(B); C
-            doctest:...: DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
-            See https://github.com/sagemath/sage/issues/36394 for details.
-            [  -1    1]
-            [13/5 -3/5]
-            [-4/5  9/5]
-            sage: A*C == B
-            True
-            sage: A._backslash_(B) == A \ B
-            doctest:...: DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
-            See https://github.com/sagemath/sage/issues/36394 for details.
-            True
-            sage: A._backslash_(B) == A.solve_right(B)
-            True
-        """
-        deprecation(36394, 'the backslash operator has been deprecated; use A.solve_right(B) instead')
-        return self.solve_right(B)
-
     def subs(self, *args, **kwds):
         """
         Substitute values to the variables in that matrix.
@@ -4296,9 +4267,11 @@ cdef class Matrix(Matrix1):
           - ``'generic'`` -- naive algorithm usable for matrices over any field
           - ``'flint'`` -- FLINT library code for matrices over the rationals
             or the integers
+          - ``'linbox'`` -- LinBox library code for sparse matrices over the
+            rationals
           - ``'pari'`` -- PARI library code for matrices over number fields
             or the integers
-          - ``'padic'`` -- padic algorithm from IML library for matrices
+          - ``'padic'`` -- `p`-adic algorithm from the IML library for matrices
             over the rationals and integers
           - ``'pluq'`` -- PLUQ matrix factorization for matrices mod 2
 
@@ -4348,12 +4321,17 @@ cdef class Matrix(Matrix1):
 
         Over the Rational Numbers:
 
-        Kernels are computed by the IML library in
-        :meth:`~sage.matrix.matrix_rational_dense.Matrix_rational_dense._right_kernel_matrix`.
-        Setting the `algorithm` keyword to 'default', 'padic' or unspecified
-        will yield the same result, as there is no optional behavior.
-        The 'computed' format of the basis vectors are exactly the negatives
-        of the vectors in the 'pivot' format. ::
+        The ``algorithm`` keyword can be set to ``'default'`` or ``'padic'`` to
+        use the `p`-adic algorithm from the IML library (for dense or sparse
+        matrices), or to ``'linbox'`` to use the LinBox library (only for
+        sparse matrices).
+        Kernels are computed by the IML library for dense matrices in
+        :meth:`~sage.matrix.matrix_rational_dense.Matrix_rational_dense._right_kernel_matrix`,
+        and sparse matrices are first converted to dense matrices.
+        Kernels are computed by the LinBox library for sparse matrices in
+        :meth:`~sage.matrix.matrix_rational_sparse.Matrix_rational_sparse._right_kernel_matrix_linbox`.
+        The 'computed' format of the basis vectors returned by IML are exactly
+        the negatives of the vectors in the 'pivot' format. ::
 
             sage: A = matrix(QQ, [[1, 0, 1, -3, 1],
             ....:                 [-5, 1, 0, 7, -3],
@@ -4417,6 +4395,11 @@ cdef class Matrix(Matrix1):
             [   0    1 -1/2 -1/4 -1/4]
             sage: set_verbose(0)
             sage: D == S
+            True
+            sage: K = B.right_kernel_matrix(algorithm='linbox', basis='computed'); K
+            [ 1 -2  2  1  0]
+            [-1 -2  0  0  1]
+            sage: B*K.transpose() == zero_matrix(QQ, 4, 2, sparse=True)
             True
 
         Over Number Fields:
@@ -4839,7 +4822,7 @@ cdef class Matrix(Matrix1):
         algorithm = kwds.pop('algorithm', None)
         if algorithm is None:
             algorithm = 'default'
-        elif algorithm not in ['default', 'generic', 'flint', 'pari', 'padic', 'pluq']:
+        elif algorithm not in ['default', 'generic', 'flint', 'linbox', 'pari', 'padic', 'pluq']:
             raise ValueError("matrix kernel algorithm '%s' not recognized" % algorithm)
         elif algorithm == 'padic' and not isinstance(R, (IntegerRing_class,
                                                          RationalField)):
@@ -4847,6 +4830,11 @@ cdef class Matrix(Matrix1):
         elif algorithm == 'flint' and not isinstance(R, (IntegerRing_class,
                                                          RationalField)):
             raise ValueError("'flint' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
+        elif algorithm == 'linbox' and not isinstance(self, sage.matrix.matrix_rational_sparse.Matrix_rational_sparse):
+            if isinstance(R, RationalField):
+                raise ValueError("'linbox' matrix kernel algorithm only available for sparse matrices over the rationals")
+            else:
+                raise ValueError("'linbox' matrix kernel algorithm only available over the rationals, not over %s" % R)
         elif algorithm == 'pari' and not (isinstance(R, (IntegerRing_class, NumberField)) and not isinstance(R, RationalField)):
             raise ValueError("'pari' matrix kernel algorithm only available over non-trivial number fields and the integers, not over %s" % R)
         elif algorithm == 'generic' and R not in _Fields:
@@ -4996,9 +4984,11 @@ cdef class Matrix(Matrix1):
           - ``'generic'`` -- naive algorithm usable for matrices over any field
           - ``'flint'`` -- FLINT library code for matrices over the rationals
             or the integers
+          - ``'linbox'`` -- LinBox library code for sparse matrices over the
+            rationals
           - ``'pari'`` -- PARI library code for matrices over number fields
             or the integers
-          - ``'padic'`` -- padic algorithm from IML library for matrices
+          - ``'padic'`` -- `p`-adic algorithm from the IML library for matrices
             over the rationals and integers
           - ``'pluq'`` -- PLUQ matrix factorization for matrices mod 2
 
@@ -5233,7 +5223,7 @@ cdef class Matrix(Matrix1):
             Quaternion Algebra (-1, -1) with base ring Rational Field
 
         Sparse matrices, over the rationals and the integers,
-        use the same routines as the dense versions. ::
+        use the same routines as the dense versions by default. ::
 
             sage: A = matrix(ZZ, [[0, -1, 1, 1, 2],
             ....:                 [1, -2, 0, 1, 3],
@@ -5365,9 +5355,11 @@ cdef class Matrix(Matrix1):
           - ``'generic'`` -- naive algorithm usable for matrices over any field
           - ``'flint'`` -- FLINT library code for matrices over the rationals
             or the integers
+          - ``'linbox'`` -- LinBox library code for sparse matrices over the
+            rationals
           - ``'pari'`` -- PARI library code for matrices over number fields
             or the integers
-          - ``'padic'`` -- padic algorithm from IML library for matrices
+          - ``'padic'`` -- `p`-adic algorithm from the IML library for matrices
             over the rationals and integers
           - ``'pluq'`` -- PLUQ matrix factorization for matrices mod 2
 
@@ -7326,14 +7318,14 @@ cdef class Matrix(Matrix1):
 
         OUTPUT:
 
-        Returns a list of tuples of the form ``(e,V,n)``,
-        each tuple corresponds to a distinct eigenvalue,
+        A list of tuples of the form ``(e,V,n)``.
+        Each tuple corresponds to a distinct eigenvalue,
         where ``e`` is the eigenvalue, ``V`` is a list of eigenvectors forming a
         basis for the corresponding left eigenspace, and ``n`` is the algebraic
         multiplicity of the eigenvalue.
 
-        If the option ``extend`` is set to ``False``, then only the eigenvalues that
-        live in the base ring are considered.
+        If the option ``extend`` is set to ``False``, then only the
+        eigenvalues that live in the base ring are considered.
 
         EXAMPLES:
 
@@ -7375,13 +7367,6 @@ cdef class Matrix(Matrix1):
             NotImplementedError: generalized eigenvector decomposition is
             implemented for RDF and CDF, but not for Rational Field
 
-        Check the deprecation::
-
-            sage: matrix(QQ, [[1, 2], [3, 4]]).eigenvectors_left(False)                 # needs sage.rings.number_field
-            doctest:...: DeprecationWarning: "extend" should be used as keyword argument
-            See https://github.com/sagemath/sage/issues/29243 for details.
-            []
-
         Check :issue:`30518`::
 
             sage: # needs sage.rings.number_field
@@ -7405,29 +7390,23 @@ cdef class Matrix(Matrix1):
             []
         """
         if other is not None:
-            if isinstance(other, bool):
-                # for backward compatibility
-                from sage.misc.superseded import deprecation
-                deprecation(29243,
-                            '"extend" should be used as keyword argument')
-                extend = other
-                other = None
-            else:
-                raise NotImplementedError('generalized eigenvector '
-                                          'decomposition is implemented '
-                                          'for RDF and CDF, but not for %s'
-                                          % self.base_ring())
+            raise NotImplementedError('generalized eigenvector '
+                                      'decomposition is implemented '
+                                      'for RDF and CDF, but not for %s'
+                                      % self.base_ring())
 
         if algorithm is None:
             R = self.base_ring()
             from sage.rings.abc import RealField, ComplexField
             if isinstance(R, (RealField, ComplexField)):
                 return self._eigenvectors_left(
-                        other, extend=extend, algorithm='flint', suppress_future_warning=True)
+                    other, extend=extend, algorithm='flint',
+                    suppress_future_warning=True)
             else:
                 algorithm = 'sage'
         return self._eigenvectors_left(
-                other, extend=extend, algorithm=algorithm, suppress_future_warning=False)
+            other, extend=extend, algorithm=algorithm,
+            suppress_future_warning=False)
 
     def _eigenvectors_left(self, other=None, *, extend: bool, algorithm: str,
                            suppress_future_warning: bool) -> list:
@@ -15900,7 +15879,7 @@ cdef class Matrix(Matrix1):
         """
         return self._is_positive_definite_or_semidefinite(True)
 
-    def is_positive_definite(self, certificate=False):
+    def is_positive_definite(self):
         r"""
         Determine if a matrix is positive-definite.
 
@@ -15923,9 +15902,6 @@ cdef class Matrix(Matrix1):
         INPUT:
 
         - ``self`` -- a matrix
-        - ``certificate`` -- boolean (default: ``False``); return the
-          lower-triangular and diagonal parts of the :meth:`block_ldlt`
-          factorization when the matrix is positive-definite. Deprecated.
 
         OUTPUT:
 
@@ -15937,14 +15913,6 @@ cdef class Matrix(Matrix1):
         1. Have a fraction field implemented; and
         2. Be a subring of the real numbers, complex numbers,
            or symbolic ring.
-
-        If ``certificate`` is ``True``, a triplet ``(b, L, d)`` will
-        be returned instead, with ``b`` containing the result (true or
-        false). If the matrix is positive-definite, then ``L`` and
-        ``d`` will contain the lower-triangular and diagonal parts of
-        the :meth:`block_ldlt` factorization, respectively. Or if the
-        matrix is not positive-definite (that is, if ``b`` is
-        ``False``), then both ``L`` and ``d`` will be ``None``.
 
         .. SEEALSO::
 
@@ -16078,22 +16046,7 @@ cdef class Matrix(Matrix1):
             sage: matrix.identity(SR,4).is_positive_definite()                          # needs sage.symbolic
             True
         """
-        result = self._is_positive_definite_or_semidefinite(False)
-        if certificate:
-            from sage.misc.superseded import deprecation
-            msg = "the 'certificate' argument is deprecated; if you "
-            msg += "need the corresponding factorization, you can "
-            msg += "simply compute it yourself (the results are cached)"
-            deprecation(31619, msg)
-            L = None
-            d = None
-            if result:
-                from sage.modules.free_module_element import vector
-                _, L, D = self.block_ldlt()
-                d = vector(D.base_ring(), D.diagonal())
-            return (result, L, d)
-        else:
-            return result
+        return self._is_positive_definite_or_semidefinite(False)
 
     def principal_square_root(self, check_positivity=True):
         r"""
