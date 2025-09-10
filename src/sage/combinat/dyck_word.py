@@ -77,7 +77,6 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from collections.abc import Iterator
 
 from .combinat import CombinatorialElement, catalan_number
 from sage.combinat.combinatorial_map import combinatorial_map
@@ -97,6 +96,10 @@ from sage.combinat.words.word import Word
 from sage.combinat.set_partition import SetPartitions
 from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 lazy_import('sage.combinat.alternating_sign_matrix', 'AlternatingSignMatrices')
 

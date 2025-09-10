@@ -25,8 +25,7 @@ AUTHORS:
 # ****************************************************************************
 
 from __future__ import annotations
-from typing import NewType
-from collections.abc import Iterator
+from typing import NewType, TYPE_CHECKING
 
 from sage.structure.richcmp import richcmp, richcmp_method
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -43,6 +42,9 @@ from sage.arith.misc import Sigma, binomial, factorial
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 lazy_import('sage.modules.free_module_element', 'vector')
 
