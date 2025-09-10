@@ -241,7 +241,7 @@ Classes and methods
 from __future__ import annotations
 import itertools
 import operator
-from typing import Iterable, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from sage.arith.misc import factorial, multinomial
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -271,6 +271,7 @@ from sage.structure.element import Element, get_coercion_model
 from sage.structure.unique_representation import UniqueRepresentation
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
     from collections.abc import Iterator
 
 lazy_import('sage.combinat.rsk', ['RSK', 'RSK_inverse'])

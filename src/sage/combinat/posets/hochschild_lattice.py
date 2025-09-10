@@ -16,7 +16,7 @@ For `n \geq 1`, the cardinality of the Hochschild lattice `H_n` is
 The underlying set of `H_n` consists of some words in the alphabet
 `(0,1,2)`, whose precise description can be found in [Com2021]_.
 """
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.combinat.posets.lattices import LatticePoset
 from sage.graphs.digraph import DiGraph
