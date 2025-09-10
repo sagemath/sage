@@ -231,7 +231,7 @@ if [ -n "$SAGE_LOCAL" ]; then
     export SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"  # deprecated
 fi
 if [ -n "$SAGE_SHARE" ]; then
-    export SAGE_DOC="$SAGE_SHARE/doc/sage"
+    export SAGE_DOC="$SAGE_ROOT/build/sage-distro/src/doc"
 fi
 if [ -d "$SAGE_ROOT" ]; then
     export SAGE_LOGS="$SAGE_ROOT/logs/pkgs"
