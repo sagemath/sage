@@ -59,7 +59,7 @@ Cython functions::
     sage: sage_getdoc(sage.rings.rational.make_rational).lstrip()
     'Make a rational number ...'
     sage: sage_getsource(sage.rings.rational.make_rational)
-    '@cython.binding(True)\ndef make_rational(s):...'
+    'def make_rational(s):...'
 
 Python functions::
 
@@ -2386,7 +2386,7 @@ def sage_getsourcelines(obj):
 
         sage: # needs sage.modules
         sage: sage_getsourcelines(matrix)[1]
-        21
+        20
         sage: sage_getsourcelines(matrix)[0][0]
         'def matrix(*args, **kwds):\n'
 
