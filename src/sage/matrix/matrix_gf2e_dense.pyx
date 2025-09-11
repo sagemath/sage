@@ -88,7 +88,6 @@ from sage.structure.element cimport Matrix
 from sage.structure.element cimport Element
 from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.finite_rings.element_base cimport Cache_base
-from sage.rings.finite_rings.element_givaro cimport FiniteField_givaroElement
 
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.misc.randstate cimport randstate, current_randstate
@@ -127,7 +126,7 @@ cdef class M4RIE_finite_field:
         if self.ff:
             gf2e_free(self.ff)
 
-cdef m4ri_word poly_to_word(FiniteField_givaroElement f) except? -1:
+cdef m4ri_word poly_to_word(f) except? -1:
     """
     Internal function to convert a finite field element to ``m4ri_word``.
 
