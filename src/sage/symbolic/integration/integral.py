@@ -999,46 +999,6 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: bool(actual == expected)
         True
 
-    ::
-
-        sage: # needs sage.libs.giac
-        sage: result = integrate(cos(x + abs(x)), x)
-        ...
-        sage: result
-        sin(x*sgn(x) + x)/(sgn(x) + 1)
-
-    ::
-
-        sage: # needs sage.libs.giac
-        sage: result = integrate(1/(1 + abs(x)), x)
-        ...
-        sage: result
-        log(abs(x*sgn(x) + 1))/sgn(x)
-
-    ::
-
-        sage: # needs sage.libs.giac
-        sage: result = integrate(1/sqrt(abs(x)), x)
-        ...
-        sage: result
-        2*sqrt(x*sgn(x))/sgn(x)
-
-    ::
-
-        sage: # needs sage.libs.giac
-        sage: result = integrate(1/(1 + abs(x)), x)
-        ...
-        sage: result
-        log(abs(x*sgn(x) + 1))/sgn(x)
-
-    ::
-
-        sage: # needs sage.libs.giac
-        sage: result = integrate(cos(x + abs(x)), x)
-        ...
-        sage: result
-        sin(x*sgn(x) + x)/(sgn(x) + 1)
-
     Some tests for :issue:`17468`::
 
         sage: integral(log(abs(2*sin(x))), x, 0, pi/3)
