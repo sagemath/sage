@@ -30,7 +30,7 @@ from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.functional import denominator, is_even
 from sage.misc.lazy_import import lazy_import
-from sage.misc.superseded import deprecated_function_alias, deprecation
+from sage.misc.superseded import deprecated_function_alias
 from sage.modules.free_module_element import vector
 from sage.quadratic_forms.quadratic_form__evaluate import (
     QFEvaluateMatrix,
@@ -44,29 +44,6 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.structure.element import Matrix, Vector
 from sage.structure.sage_object import SageObject
-
-
-def is_QuadraticForm(Q):
-    """
-    Determine if the object ``Q`` is an element of the :class:`QuadraticForm` class.
-
-    This function is deprecated.
-
-    EXAMPLES::
-
-        sage: Q = QuadraticForm(ZZ, 2, [1,2,3])
-        sage: from sage.quadratic_forms.quadratic_form import is_QuadraticForm
-        sage: is_QuadraticForm(Q)
-        doctest:...: DeprecationWarning: the function is_QuadraticForm is deprecated;
-        use isinstance(x, sage.quadratic_forms.quadratic_form.QuadraticForm) instead...
-        True
-        sage: is_QuadraticForm(2)
-        False
-    """
-    deprecation(35305,
-                "the function is_QuadraticForm is deprecated; use "
-                "isinstance(x, sage.quadratic_forms.quadratic_form.QuadraticForm) instead")
-    return isinstance(Q, QuadraticForm)
 
 
 def quadratic_form_from_invariants(F, rk, det, P, sminus):
@@ -521,7 +498,7 @@ class QuadraticForm(SageObject):
         unsafe_initialization=False,
         number_of_automorphisms=None,
         determinant=None,
-    ):
+    ) -> None:
         """
         EXAMPLES::
 
@@ -721,7 +698,7 @@ class QuadraticForm(SageObject):
         """
         return self.matrix().__pari__()
 
-    def _pari_init_(self):
+    def _pari_init_(self) -> str:
         """
         Return a PARI-formatted Hessian matrix for Q, as string.
 
@@ -733,7 +710,7 @@ class QuadraticForm(SageObject):
         """
         return self.matrix()._pari_init_()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Give a text representation for the quadratic form given as an upper-triangular matrix of coefficients.
 
@@ -758,7 +735,7 @@ class QuadraticForm(SageObject):
             out_str += "]"
         return out_str
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         Give a LaTeX representation for the quadratic form given as an upper-triangular matrix of coefficients.
 
@@ -847,7 +824,7 @@ class QuadraticForm(SageObject):
         except Exception:
             raise RuntimeError("this coefficient cannot be coerced to an element of the base ring for the quadratic form")
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         TESTS::
 
@@ -861,7 +838,7 @@ class QuadraticForm(SageObject):
         """
         return hash(self.__base_ring) ^ hash(tuple(self.__coeffs))
 
-    def __eq__(self, right):
+    def __eq__(self, right) -> bool:
         """
         Determines if two quadratic forms are equal.
 

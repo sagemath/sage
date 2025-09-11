@@ -66,6 +66,7 @@ import logging
 import os
 import pickle
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -265,13 +266,37 @@ class DocBuilder():
             with open(tex_file, 'w') as f:
                 f.write(ref)
 
-        make_target = "cd '%s' && $MAKE %s && mv -f *.pdf '%s'"
-        error_message = "failed to run $MAKE %s in %s"
-        command = 'all-pdf'
+        make_cmd = os.environ.get('MAKE', 'make')
+        command = shlex.split(make_cmd) + ['all-pdf']
+        logger.debug(f"Running {' '.join(command)} in {tex_dir}")
 
-        if subprocess.call(make_target % (tex_dir, command, pdf_dir), close_fds=False, shell=True):
-            raise RuntimeError(error_message % (command, tex_dir))
-        logger.warning(f"Build finished. The built documents can be found in {pdf_dir}.")
+        proc = subprocess.run(
+            command,
+            check=False, cwd=tex_dir,
+            capture_output=True,
+            text=True,
+        )
+
+        if proc.returncode != 0:
+            logger.error(f"stdout from {make_cmd}:\n{proc.stdout}")
+            logger.error(f"stderr from {make_cmd}:\n{proc.stderr}")
+            raise RuntimeError(f"failed to run {' '.join(command)} in {tex_dir}")
+
+        if proc.stdout:
+            logger.debug(f"make stdout:\n{proc.stdout}")
+        if proc.stderr:
+            # Still surface stderr even on success, but at debug level
+            logger.debug(f"make stderr:\n{proc.stderr}")
+
+        # Move generated PDFs
+        for pdf in tex_dir.glob("*.pdf"):
+            try:
+                shutil.move(str(pdf), pdf_dir)
+            except Exception as e:
+                logger.error(f"Failed moving {pdf} to {pdf_dir}: {e}")
+                raise
+
+        logger.info(f"Build finished. The built documents can be found in {pdf_dir}.")
 
     def clean(self, *args):
         shutil.rmtree(self._doctrees_dir())
@@ -634,13 +659,6 @@ class ReferenceSubBuilder(DocBuilder):
         if _sage.exists():
             logger.info(f"Copying over custom reST files from {_sage} ...")
             shutil.copytree(_sage, self.dir / 'sage')
-
-        # Copy over some generated reST file in the build directory
-        # (Background: Meson puts them in the build directory, but Sphinx can also read
-        # files from the source directory, see https://github.com/sphinx-doc/sphinx/issues/3132)
-        generated_dir = self._options.output_dir / self.name
-        for file in generated_dir.rglob('*'):
-            shutil.copy2(file, self.dir / file.relative_to(generated_dir))
 
         getattr(DocBuilder, build_type)(self, *args, **kwds)
 
