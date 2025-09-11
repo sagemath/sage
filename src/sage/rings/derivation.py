@@ -62,7 +62,7 @@ and now play with them::
     True
 
 Alternatively we can use the method
-:meth:`~sage.rings.ring.CommutativeRing.derivation`
+:meth:`~sage.categories.commutative_rings.CommutativeRings.ParentMethods.derivation`
 of the ring `A` to create derivations::
 
     sage: Dx = A.derivation(x); Dx

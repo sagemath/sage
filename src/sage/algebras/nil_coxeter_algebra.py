@@ -2,13 +2,13 @@
 """
 Nil-Coxeter Algebra
 """
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2011 Chris Berg <cberg at fields.utoronto.ca>
 #                     Anne Schilling <anne at math.ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from sage.algebras.iwahori_hecke_algebra import IwahoriHeckeAlgebra
 from sage.combinat.sf.sf import SymmetricFunctions
 from sage.misc.misc_c import prod
@@ -66,7 +66,7 @@ class NilCoxeterAlgebra(IwahoriHeckeAlgebra.T):
         H = IwahoriHeckeAlgebra(W, 0, 0, base_ring=base_ring)
         super(IwahoriHeckeAlgebra.T, self).__init__(H, prefix=prefix)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
