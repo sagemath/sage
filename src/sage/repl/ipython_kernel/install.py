@@ -148,16 +148,14 @@ class SageKernelSpec:
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
             sage: spec = SageKernelSpec(prefix=tmp_dir())
             sage: spec._kernel_cmd()
-            ['/.../sage',
-             '--python',
+            ['python3',
              '-m',
              'sage.repl.ipython_kernel',
              '-f',
              '{connection_file}']
         """
         return [
-            os.path.join(SAGE_VENV, 'bin', 'sage'),
-            '--python',
+            'python3',
             '-m', 'sage.repl.ipython_kernel',
             '-f', '{connection_file}',
         ]
