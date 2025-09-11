@@ -24,7 +24,7 @@ Python modules::
     '.../sageinspect.py'
     sage: print(sage_getdoc(sage.misc.sageinspect).lstrip()[:40])
     Inspect Python, Sage, and Cython objects
-    sage: sage_getsource(sage.misc.sageinspect).lstrip()[51:-1]
+    sage: sage_getsource(sage.misc.sageinspect).lstrip()[5:-1]
     'Inspect Python, Sage, and Cython objects...'
 
 Test introspection of classes defined in Python and Cython files:
@@ -108,13 +108,13 @@ AUTHORS:
 """
 
 import ast
-import inspect
 import functools
+import inspect
 import os
+import re
 import sys
 import tokenize
-import re
-from inspect import Signature, Parameter
+from inspect import Parameter, Signature
 
 try:
     import importlib.machinery as import_machinery
@@ -1335,12 +1335,11 @@ def sage_getfile(obj):
         if isinstance(obj, functools.partial):
             return sage_getfile(obj.func)
         return sage_getfile(obj.__class__)  # inspect.getabsfile(obj.__class__)
-    else:
-        if hasattr(obj, '__init__'):
-            pos = _extract_embedded_position(_sage_getdoc_unformatted(obj.__init__))
-            if pos is not None:
-                (_, filename, _) = pos
-                return filename
+    elif hasattr(obj, '__init__'):
+        pos = _extract_embedded_position(_sage_getdoc_unformatted(obj.__init__))
+        if pos is not None:
+            (_, filename, _) = pos
+            return filename
 
     # No go? fall back to inspect.
     try:
@@ -1387,7 +1386,7 @@ def sage_getfile_relative(obj):
     if not filename:
         return filename
 
-    from os.path import relpath, normpath, commonprefix
+    from os.path import commonprefix, normpath, relpath
 
     def directories():
         try:
@@ -1608,8 +1607,8 @@ def sage_getargspec(obj):
         sage: shell.run_cell('f??')
         ...the source code string...
     """
-    from sage.misc.lazy_attribute import lazy_attribute
     from sage.misc.abstract_method import AbstractMethod
+    from sage.misc.lazy_attribute import lazy_attribute
     if inspect.isclass(obj):
         return sage_getargspec(obj.__call__)
     if isinstance(obj, (lazy_attribute, AbstractMethod)):
@@ -1954,9 +1953,8 @@ def sage_formatargspec(args, varargs=None, varkw=None, defaults=None,
         specs.append(spec)
     if varargs is not None:
         specs.append(formatvarargs(formatargandannotation(varargs)))
-    else:
-        if kwonlyargs:
-            specs.append('*')
+    elif kwonlyargs:
+        specs.append('*')
     if kwonlyargs:
         for kwonlyarg in kwonlyargs:
             spec = formatargandannotation(kwonlyarg)
