@@ -361,94 +361,8 @@ def nest(f, n, x):
 
 
 #################################################################
-# The A \ b operator
+# The A \ b operator has been removed after issue #36394
 #################################################################
-
-
-class BackslashOperator:
-    r"""
-    Implement Matlab-style backslash operator for solving systems::
-
-        A \ b
-
-    The preparser converts this to multiplications using
-    ``BackslashOperator()``.
-
-    EXAMPLES::
-
-        sage: preparse("A \\ matrix(QQ,2,1,[1/3,'2/3'])")
-        "A  * BackslashOperator() * matrix(QQ,Integer(2),Integer(1),[Integer(1)/Integer(3),'2/3'])"
-        sage: preparse("A \\ matrix(QQ,2,1,[1/3,2*3])")
-        'A  * BackslashOperator() * matrix(QQ,Integer(2),Integer(1),[Integer(1)/Integer(3),Integer(2)*Integer(3)])'
-        sage: preparse("A \\ B + C")
-        'A  * BackslashOperator() * B + C'
-        sage: preparse("A \\ eval('C+D')")
-        "A  * BackslashOperator() * eval('C+D')"
-        sage: preparse("A \\ x / 5")
-        'A  * BackslashOperator() * x / Integer(5)'
-        sage: preparse("A^3 \\ b")
-        'A**Integer(3)  * BackslashOperator() * b'
-    """
-
-    def __rmul__(self, left):
-        """
-        EXAMPLES::
-
-            sage: # needs sage.modules
-            sage: A = random_matrix(ZZ, 4)
-            sage: while A.rank() != 4:
-            ....:     A = random_matrix(ZZ, 4)
-            sage: B = random_matrix(ZZ, 4)
-            sage: temp = A * BackslashOperator()
-            doctest:...:
-            DeprecationWarning: the backslash operator has been deprecated
-            See https://github.com/sagemath/sage/issues/36394 for details.
-            sage: temp.left is A
-            True
-            sage: X = temp * B
-            doctest:...:
-            DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
-            See https://github.com/sagemath/sage/issues/36394 for details.
-            sage: A * X == B
-            True
-        """
-        from sage.misc.superseded import deprecation
-
-        deprecation(36394, 'the backslash operator has been deprecated')
-        self.left = left
-        return self
-
-    def __mul__(self, right):
-        r"""
-        EXAMPLES::
-
-            sage: # needs scipy sage.modules
-            sage: A = matrix(RDF, 5, 5, 2)
-            sage: b = vector(RDF, 5, range(5))
-            sage: v = A \ b
-            doctest:...:
-            DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
-            See https://github.com/sagemath/sage/issues/36394 for details.
-            sage: v.zero_at(1e-19)  # On at least one platform, we get a "negative zero"
-            (0.0, 0.5, 1.0, 1.5, 2.0)
-            sage: v = A._backslash_(b)
-            doctest:...:
-            DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
-            See https://github.com/sagemath/sage/issues/36394 for details.
-            sage: v.zero_at(1e-19)
-            (0.0, 0.5, 1.0, 1.5, 2.0)
-            sage: v = A * BackslashOperator() * b
-            doctest:...:
-            DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
-            See https://github.com/sagemath/sage/issues/36394 for details.
-            sage: v.zero_at(1e-19)
-            (0.0, 0.5, 1.0, 1.5, 2.0)
-        """
-        from sage.misc.superseded import deprecation
-
-        deprecation(36394, 'the backslash operator has been deprecated')
-        return self.left._backslash_(right)
-
 
 #################################################################
 # is_iterator function
@@ -495,7 +409,7 @@ def is_iterator(it) -> bool:
         sage: is_iterator(iter(P))                                                      # needs sage.combinat
         True
     """
-    # see trac #7398 for a discussion
+    # see issue #7398 for a discussion
     try:
         return it is iter(it)
     except Exception:
@@ -538,7 +452,7 @@ def random_sublist(X, s):
     return [a for a in X if random.random() <= s]
 
 
-def is_sublist(X, Y):
+def is_sublist(X, Y) -> bool:
     """
     Test whether ``X`` is a sublist of ``Y``.
 
