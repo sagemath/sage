@@ -12,6 +12,9 @@ and the :wikipedia:`bash <Bash_(Unix_shell)>` shell,
 the following standard command-line development tools must be installed on your
 computer:
 
+- **C compiler** (**C/C++** - compiler required on macOS): a sufficently modern compiler.
+  Ideally these can be directly used to build Sage. The options are essentially GNU gcc/g++ on Linux,
+  and clang/clang++ on macOS (which conventionally misnames them gcc/g++), on *BSD, and also on Linux.
 - **make**: GNU make, version 3.80 or later. Version 3.82 or later is recommended.
 - **m4**: GNU m4 1.4.2 or later (non-GNU or older versions might also work).
 - **perl**: version 5.8.0 or later.
@@ -34,8 +37,8 @@ computer:
 Other versions of these may work, but they are untested.
 
 On macOS, suitable versions of most of these tools are provided
-by the Xcode Command Line Tools.  To install them, open a terminal
-window and run ``xcode-select --install``; then click "Install" in the
+by the Xcode Command Line Tools.  To install them, after installing XCode itself,
+open a terminal window and run ``xcode-select --install``; then click "Install" in the
 pop-up window.  If the Xcode Command Line Tools are already installed,
 you may want to check if they need to be updated by typing
 ``softwareupdate -l``. The remaining are provided by either one of macOS's
@@ -50,6 +53,10 @@ programs are usually located in packages with their respective names.
 Boost is available with most supported distribitions.
 It can also be installed using the Boost's project `installer B2
 <https://www.boost.org/doc/user-guide/getting-started.html#_download_boost>`_.
+After downloading and untarring the archive, and changing to the directory with the sources,
+``./bootstrap.sh && ./b2 && ./b2 install --prefix=/usr/local`` will
+install Boost in ``/usr/local``; this takes around 5 minutes of wall clock time
+on a moderately fast M1 Apple Mac.
 
 On Redhat-derived systems not all perl components are installed by
 default and you might have to install the ``perl-ExtUtils-MakeMaker``
