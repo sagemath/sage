@@ -127,7 +127,6 @@ as this base class still provides a few more methods than a general parent::
      '_latex_names',
      '_list',
      '_one_element',
-     '_pseudo_fraction_field',
      '_zero_element',
      'base_extend',
      'extension',

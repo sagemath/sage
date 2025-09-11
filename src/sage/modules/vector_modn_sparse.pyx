@@ -264,7 +264,7 @@ cdef int add_c_vector_modint_init(c_vector_modint* sum, c_vector_modint* v,
             z.entries[k] = v.entries[i]
             i = i + 1
             k = k + 1
-        elif v.positions[i] > w.positions[j]: # copy entry from w in
+        elif v.positions[i] > w.positions[j]:  # copy entry from w in
             s = (multiple * w.entries[j]) % v.p
             if s != 0:
                 z.positions[k] = w.positions[j]
