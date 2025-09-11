@@ -472,41 +472,21 @@ class SineGordonYsystem(SageObject):
         else:
             radius = ceil(self.r() / (2 * pi))
         points_opts = {}
-        if 'points_color' in kwds:
-            points_opts['color'] = kwds['points_color']
-        else:
-            points_opts['color'] = 'black'
-        if 'points_size' in kwds:
-            points_opts['size'] = kwds['points_size']
-        else:
-            points_opts['size'] = 7
+        points_opts['color'] = kwds.get('points_color', 'black')
+        points_opts['size'] = kwds.get('points_size', 7)
         triangulation_opts = {}
-        if 'triangulation_color' in kwds:
-            triangulation_opts['color'] = kwds['triangulation_color']
-        else:
-            triangulation_opts['color'] = 'black'
-        if 'triangulation_thickness' in kwds:
-            triangulation_opts['thickness'] = kwds['triangulation_thickness']
-        else:
-            triangulation_opts['thickness'] = 0.5
+        triangulation_opts['color'] = kwds.get('triangulation_color', 'black')
+        triangulation_opts['thickness'] = kwds.get('triangulation_thickness',
+                                                   0.5)
         shading_opts = {}
-        if 'shading_color' in kwds:
-            shading_opts['color'] = kwds['shading_color']
-        else:
-            shading_opts['color'] = 'lightgray'
+        shading_opts['color'] = kwds.get('shading_color', 'lightgray')
         reflections_opts = {}
-        if 'reflections_color' in kwds:
-            reflections_opts['color'] = kwds['reflections_color']
-        else:
-            reflections_opts['color'] = 'blue'
-        if 'reflections_thickness' in kwds:
-            reflections_opts['thickness'] = kwds['reflections_thickness']
-        else:
-            reflections_opts['thickness'] = 1
+        reflections_opts['color'] = kwds.get('reflections_color', 'blue')
+        reflections_opts['thickness'] = kwds.get('reflections_thickness', 1)
         # Helper functions
 
         def triangle(x):
-            (a, b) = sorted(x[:2])
+            a, b = sorted(x[:2])
             for p in self.vertices():
                 if (p, a) in self.triangulation() or (a, p) in self.triangulation():
                     if (p, b) in self.triangulation() or (b, p) in self.triangulation():
@@ -522,7 +502,7 @@ class SineGordonYsystem(SageObject):
             if p - q in [1, -1]:
                 def f(t):
                     return (radius * cos(t), radius * sin(t))
-                (p, q) = sorted([p, q])
+                p, q = sorted([p, q])
                 angle_p = vertex_to_angle(p)
                 angle_q = vertex_to_angle(q)
                 return parametric_plot(f(t), (t, angle_q, angle_p), **opts)
@@ -533,7 +513,7 @@ class SineGordonYsystem(SageObject):
                     angle_p += 2 * pi
                 internal_angle = angle_p - angle_q
                 if internal_angle > pi:
-                    (angle_p, angle_q) = (angle_q + 2 * pi, angle_p)
+                    angle_p, angle_q = (angle_q + 2 * pi, angle_p)
                     internal_angle = angle_p - angle_q
                 angle_center = (angle_p + angle_q) / 2
                 hypotenuse = radius / cos(internal_angle / 2)
@@ -607,8 +587,8 @@ class SineGordonYsystem(SageObject):
         P += line([(0, 1.1 * radius), (0, -1.1 * radius)],
                   zorder=len(P), **reflections_opts)
         axis_angle = vertex_to_angle(-0.5 * (self.rk() + (1, 1))[1])
-        (a, b) = (1.1 * radius * cos(axis_angle),
-                  1.1 * radius * sin(axis_angle))
+        a, b = (1.1 * radius * cos(axis_angle),
+                1.1 * radius * sin(axis_angle))
         P += line([(a, b), (-a, -b)], zorder=len(P), **reflections_opts)
         # Wrap up
         P.set_aspect_ratio(1)
