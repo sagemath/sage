@@ -665,13 +665,6 @@ class ReferenceSubBuilder(DocBuilder):
             logger.info(f"Copying over custom reST files from {_sage} ...")
             shutil.copytree(_sage, self.dir / 'sage')
 
-        # Copy over some generated reST file in the build directory
-        # (Background: Meson puts them in the build directory, but Sphinx can also read
-        # files from the source directory, see https://github.com/sphinx-doc/sphinx/issues/3132)
-        generated_dir = self._options.output_dir / self.name
-        for file in generated_dir.rglob('*'):
-            shutil.copy2(file, self.dir / file.relative_to(generated_dir))
-
         getattr(DocBuilder, build_type)(self, *args, **kwds)
 
     def cache_file(self) -> Path:
