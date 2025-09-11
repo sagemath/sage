@@ -525,34 +525,6 @@ cdef class CommutativeRing(Ring):
             self.__fraction_field = K
         return self.__fraction_field
 
-    def _pseudo_fraction_field(self):
-        r"""
-        This method is used by the coercion model to determine if `a / b`
-        should be treated as `a * (1/b)`, for example when dividing an element
-        of `\ZZ[x]` by an element of `\ZZ`.
-
-        The default is to return the same value as ``self.fraction_field()``,
-        but it may return some other domain in which division is usually
-        defined (for example, ``\ZZ/n\ZZ`` for possibly composite `n`).
-
-        EXAMPLES::
-
-            sage: ZZ._pseudo_fraction_field()
-            Rational Field
-            sage: ZZ['x']._pseudo_fraction_field()
-            Fraction Field of Univariate Polynomial Ring in x over Integer Ring
-            sage: Integers(15)._pseudo_fraction_field()
-            Ring of integers modulo 15
-            sage: Integers(15).fraction_field()
-            Traceback (most recent call last):
-            ...
-            TypeError: self must be an integral domain.
-        """
-        try:
-            return self.fraction_field()
-        except (NotImplementedError,TypeError):
-            return coercion_model.division_parent(self)
-
     def extension(self, poly, name=None, names=None, **kwds):
         """
         Algebraically extend ``self`` by taking the quotient

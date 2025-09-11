@@ -142,9 +142,9 @@ def AbelianGroupWithValues(values, n, gens_orders=None, names='f', check=False, 
     if values_group is None:
         from sage.structure.sequence import Sequence
         values_group = Sequence(values).universe()
-    values = tuple( values_group(val) for val in values )
-    M = AbelianGroupWithValues_class(gens_orders, names, values, values_group)
-    return M
+    values = tuple(values_group(val) for val in values)
+    return AbelianGroupWithValues_class(gens_orders, names,
+                                        values, values_group)
 
 
 class AbelianGroupWithValuesEmbedding(Morphism):
@@ -264,7 +264,7 @@ class AbelianGroupWithValuesElement(AbelianGroupElement):
         """
         if self._value is None:
             values = self.parent().gens_values()
-            self._value = prod( v**e for v,e in zip(values, self.exponents()) )
+            self._value = prod(v**e for v, e in zip(values, self.exponents()))
         return self._value
 
     def _div_(left, right):
