@@ -36,7 +36,7 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
         sage: elt = ((x^3-z)*x + y)^2
         sage: TestSuite(elt).run()
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
