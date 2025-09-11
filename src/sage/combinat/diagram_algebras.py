@@ -1328,9 +1328,8 @@ class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
                 return False
         if obj.base_diagram():
             tst = sorted(flatten(obj.base_diagram()))
-            if len(tst) % 2 or tst != list(range(-len(tst)//2,0)) + list(range(1,len(tst)//2+1)):
-                return False
-            return True
+            ell = len(tst)
+            return not ell % 2 and tst == list(range(-ell // 2, 0)) + list(range(1, ell // 2 + 1))
         return self.order == 0
 
     def _element_constructor_(self, d):
