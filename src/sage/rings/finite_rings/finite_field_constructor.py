@@ -209,15 +209,18 @@ class FiniteFieldFactory(UniqueFactory):
 
     - ``order`` -- a prime power `p^n`, or a pair `(p,n)`
 
-    - ``name`` -- string, optional.  Note that there can be a
-      substantial speed penalty (in creating extension fields) when
-      omitting the variable name, since doing so triggers the
-      computation of pseudo-Conway polynomials in order to define a
-      coherent lattice of extensions of the prime field.  The speed
-      penalty grows with the size of extension degree and with
-      the number of factors of the extension degree.
-      Note that the second argument can also be the degree,
-      where ``GF(p,n)`` is equivalent to ``GF((p,n))``.
+    - ``name`` -- string or integer, optional. For a string,
+      ``name`` is the name of the generator over the prime
+      field. For convenience, in ``name`` is an integer, then
+      ``GF(p, n)`` is equivalent to ``GF((p, n))`` (see examples below).
+      Note that there can be a substantial speed penalty (in creating
+      extension fields) when omitting the variable name, since doing so
+      triggers the computation of pseudo-Conway polynomials in order to
+      define a coherent lattice of extensions of the prime field.  The
+      speed penalty grows with the size of extension degree and with the
+      number of factors of the extension degree.  Note that the second
+      argument can also be the degree, where ``GF(p,n)`` is equivalent to
+      ``GF((p,n))``.
 
     - ``modulus`` -- (optional) either a defining polynomial for the
       field, or a string specifying an algorithm to use to generate
