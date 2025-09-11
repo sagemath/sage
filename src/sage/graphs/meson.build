@@ -1,18 +1,26 @@
-bliss = cc.find_library('bliss', required: false, disabler: true)
-# mcqd is a header-only library
-if cc.has_header('mcqd.h')
-  mcqd = declare_dependency()
-else
-  mcqd = disabler()
-endif
-cliquer = cc.find_library('cliquer', required: not is_windows, disabler: true)
+bliss = cc.find_library('bliss', required: get_option('bliss'), disabler: true)
 
-# Cannot be found via pkg-config
-planarity = cc.find_library(
-  'planarity',
-  required: not is_windows,
-  disabler: true,
-)
+mcqd = disabler()
+if cc.has_header('mcqd.h', required: get_option('mcqd'))
+  # mcqd is a header-only library
+  mcqd = declare_dependency()
+endif
+
+cliquer = dependency('libcliquer', required: false, disabler: true)
+if not cliquer.found()
+  # fallback for older versions without pkg-config
+  cliquer = cc.find_library('cliquer', required: not is_windows, disabler: true)
+endif
+
+planarity = dependency('libplanarity', required: false, disabler: true)
+if not planarity.found()
+  # fallback for older versions without pkg-config
+  planarity = cc.find_library(
+    'planarity',
+    required: not is_windows,
+    disabler: true,
+  )
+endif
 
 py.install_sources(
   '__init__.py',
@@ -55,7 +63,6 @@ py.install_sources(
   'print_graphs.py',
   'schnyder.py',
   'traversals.pxd',
-  'trees.pxd',
   'tutte_polynomial.py',
   subdir: 'sage/graphs',
 )
@@ -80,7 +87,6 @@ extension_data = {
   'planarity' : files('planarity.pyx'),
   'spanning_tree' : files('spanning_tree.pyx'),
   'strongly_regular_db' : files('strongly_regular_db.pyx'),
-  'trees' : files('trees.pyx'),
   'views' : files('views.pyx'),
   'weakly_chordal' : files('weakly_chordal.pyx'),
 }

@@ -55,7 +55,6 @@ from sage.doctest.sources import DictAsObject, FileDocTestSource, get_basename
 from sage.doctest.util import Timer, count_noun, dict_difference
 from sage.env import DOT_SAGE, SAGE_EXTCODE, SAGE_LIB, SAGE_SRC
 from sage.misc import randstate
-from sage.misc.temporary_file import tmp_dir
 from sage.structure.sage_object import SageObject
 
 # Optional tags which are always automatically added
@@ -69,7 +68,7 @@ class DocTestDefaults(SageObject):
 
     INPUT:
 
-    - ``runtest_default`` -- (boolean, default ``False``); if ``True``,
+    - ``runtest_default`` -- boolean (default: ``False``); if ``True``,
       fills in attribute to be the same as the defaults defined in
       ``sage-runtests``. If ``False``, change defaults in a few places
       for use in doctests of the doctester, which is mostly to make
@@ -1125,7 +1124,7 @@ class DocTestController(SageObject):
             sage: DC.expand_files_into_sources()
             sage: DC.run_doctests()
             Doctesting 1 file.
-            sage -t .../sage/rings/homset.py
+            .../sage/rings/homset.py
                 [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1202,7 +1201,7 @@ class DocTestController(SageObject):
             sage: DC.run()
             Running doctests with ID ...
             Doctesting 1 file.
-            sage -t .../rings/all.py
+            .../rings/all.py
                 [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1368,8 +1367,6 @@ class DocTestController(SageObject):
             return
 
         # Setup signal handlers.
-        # Save crash logs in temporary directory.
-        os.putenv('CYSIGNALS_CRASH_LOGS', tmp_dir("crash_logs_"))
         init_cysignals()
 
         import signal
@@ -1406,7 +1403,7 @@ class DocTestController(SageObject):
             sage: DC.run()
             Running doctests with ID ...
             Doctesting 1 file.
-            sage -t .../sage/sets/non_negative_integers.py
+            .../sage/sets/non_negative_integers.py
                 [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1430,7 +1427,7 @@ class DocTestController(SageObject):
             Using --optional=external,sage
             Features to be detected: ...
             Doctesting 1 file.
-            sage -t ....py
+            ....py
                 [0 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1456,7 +1453,7 @@ class DocTestController(SageObject):
             Using --optional=sage...
             Features to be detected: ...
             Doctesting 1 file.
-            sage -t ....py
+            ....py
                 [4 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1474,7 +1471,7 @@ class DocTestController(SageObject):
             Using --optional=sage
             Features to be detected: ...
             Doctesting 1 file.
-            sage -t ....py
+            ....py
                 [4 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1492,7 +1489,7 @@ class DocTestController(SageObject):
             Using --optional=sage
             Features to be detected: ...
             Doctesting 1 file.
-            sage -t ....py
+            ....py
                 [4 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1600,7 +1597,7 @@ def run_doctests(module, options=None):
         sage: run_doctests(sage.rings.all)
         Running doctests with ID ...
         Doctesting 1 file.
-        sage -t .../sage/rings/all.py
+        .../sage/rings/all.py
             [... tests, ...s wall]
         ----------------------------------------------------------------------
         All tests passed!

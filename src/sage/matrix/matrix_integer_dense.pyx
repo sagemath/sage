@@ -2978,6 +2978,10 @@ cdef class Matrix_integer_dense(Matrix_dense):
                           precision=precision)
 
             R = A.to_matrix(self.new_matrix())
+
+        else:
+            raise ValueError("unknown algorithm")
+
         return R
 
     def LLL(self, delta=None, eta=None, algorithm='fpLLL:wrapper', fp=None, prec=0, early_red=False, use_givens=False, use_siegel=False, transformation=False, **kwds):
@@ -3235,8 +3239,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         tm = verbose("LLL of %sx%s matrix (algorithm %s)" % (self.nrows(),
                                                              self.ncols(),
                                                              algorithm))
-        import sage.libs.ntl.all
-        ntl_ZZ = sage.libs.ntl.all.ZZ
+        from sage.libs.ntl.ntl_ZZ import ntl_ZZ
 
         verb = get_verbose() >= 2
 
@@ -3297,8 +3300,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 raise TypeError("eta must be >= 0.5")
 
         if algorithm.startswith('NTL:'):
+            from sage.libs.ntl.ntl_mat_ZZ import ntl_mat_ZZ as mat_ZZ
 
-            A = sage.libs.ntl.all.mat_ZZ(self.nrows(),self.ncols(),
+            A = mat_ZZ(self.nrows(),self.ncols(),
                     [ntl_ZZ(z) for z in self.list()])
 
             if algorithm == "NTL:LLL":
