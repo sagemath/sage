@@ -36,14 +36,14 @@ Using Conda
 
     .. tab:: Linux
 
-        .. code-block:: shell
+        .. code-block:: console
 
             $ mamba env create --file environment-3.12-linux.yml --name sage-dev
             $ mamba activate sage-dev
 
     .. tab:: macOS
 
-        .. code-block:: shell
+        .. code-block:: console
 
             $ mamba env create --file environment-3.12-macos.yml --name sage-dev
             $ mamba activate sage-dev
@@ -62,7 +62,7 @@ Using Conda
         If you prefer, you can also run the following command to install the necessary
         components:
 
-        .. code-block:: shell
+        .. code-block:: console
 
             $ winget install Microsoft.VisualStudio.2022.BuildTools --force --override "--wait --passive --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows11SDK.22621"
 
@@ -76,7 +76,7 @@ Using Conda
         Open the "VS x64 Native Tools Command Prompt" (for 64bit) or
         "Developer Command Prompt for VS2022 (or 2019)" (for 32bit).
 
-        .. code-block:: shell
+        .. code-block:: console
 
             $ mamba env create --file environment-3.12-win.yml --name sage-dev
             $ conda activate sage-dev
@@ -100,7 +100,8 @@ Using Conda
     desired version.
 
 - To compile and install Sage in editable install, just use:
-  .. code-block:: shell-session
+  
+  .. code-block:: console
 
       $ pip install --no-build-isolation --editable .
 
@@ -135,21 +136,23 @@ Depending on your distribution, install the following packages:
     At least Fedora 41 is required.
 
    .. literalinclude:: fedora.txt
-
+      :language: console
 
 .. tab:: Arch Linux
 
    .. literalinclude:: arch.txt
+      :language: console
 
 .. tab:: Void Linux
 
    .. literalinclude:: void.txt
+      :language: console
 
 
 In the case that you want to install some dependencies manually, set the
 correct environment variables to point to the installed libraries:
 
-.. code-block:: shell-session
+.. code-block:: console
 
     $ export C_INCLUDE_PATH=$C_INCLUDE_PATH:/your/path/to/include
     $ export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/your/path/to/include
@@ -160,7 +163,7 @@ We also recommend to install the Python package manager
 
 To compile and install Sage in editable install, then just use:
 
-.. code-block:: shell-session
+.. code-block:: console
 
     $ uv venv
     $ uv pip install \
@@ -207,7 +210,9 @@ Remarks
 
 .. note::
 
-    To build the documentation, use::
+    To build the documentation, use:
+
+    .. code-block:: console
 
         $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-docbuild
         $ sage --docbuild all html
@@ -228,7 +233,7 @@ We can also use meson directly as follows.
 
 To configure the project, we need to run the following command:
 
-.. code-block:: shell-session
+.. code-block:: console
 
     $ meson setup builddir
 
@@ -237,7 +242,7 @@ build artifacts. Certain options are configurable at build time. The
 easiest way to obtain an overview of these options is by using ``meson
 configure``:
 
-.. code-block:: shell-session
+.. code-block:: console
 
     $ meson configure builddir
 
@@ -247,7 +252,7 @@ are unique to SageMath. To change the value of an option, the flag
 ``-Doption=value`` can be passed to ``meson setup``. For example, if
 you don't want to build the HTML documentation, you might use
 
-.. code-block:: shell-session
+.. code-block:: console
 
     $ meson setup -Dbuild-docs=false builddir
 
@@ -257,7 +262,7 @@ If pip is used as above with ``--editable``, ``builddir`` is set to be
 
 To compile the project, run the following command:
 
-.. code-block:: shell-session
+.. code-block:: console
 
     $ meson compile -C builddir
 
@@ -269,7 +274,7 @@ alternatively, use a debug build of the Python interpreter.
 
 Installing is done with the following command:
 
-.. code-block:: shell-session
+.. code-block:: console
 
     $ meson install -C builddir
 
@@ -283,7 +288,7 @@ compilation.
     If you want to install the project to a different directory, you can specify
     the ``--prefix`` option when running the ``meson setup`` command:
 
-    .. code-block:: shell-session
+    .. code-block:: console
 
         $ meson setup builddir --prefix=/desired/install/path -Dpython.install_env=prefix
 
@@ -292,13 +297,13 @@ compilation.
     ``/desired/install/path/lib/python3.12/site-packages/sage``.
     Usually, this directory is not on your Python path, so you have to use:
 
-    .. code-block:: shell-session
+    .. code-block:: console
 
         $ PYTHONPATH=/desired/install/path ./sage
 
 Alternatively, we can still use pip to install:
 
-.. code-block:: shell-session
+.. code-block:: console
 
     $ pip install --no-build-isolation --config-settings=builddir=builddir --editable .
 
@@ -308,7 +313,7 @@ Alternatively, we can still use pip to install:
     to install to a different directory than the install prefix.
     Both are supported naturally by Meson:
 
-    .. code-block:: shell-session
+    .. code-block:: console
 
         $ meson setup builddir --prefix=/usr --libdir=... -Dcpp_args=...
         $ meson compile -C builddir
