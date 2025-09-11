@@ -87,11 +87,13 @@ def is_package_or_sage_namespace_package_dir(path):
         sage: is_package_or_sage_namespace_package_dir(directory)
         False
     """
-    if os.path.exists(os.path.join(path, '__init__.py')):                # ordinary package
+    if os.path.exists(os.path.join(path, "__init__.py")):  # ordinary package
         return True
-    if os.path.exists(os.path.join(path, '__init__.pxd')):               # for consistency with Cython
+    if os.path.exists(
+        os.path.join(path, "__init__.pxd")
+    ):  # for consistency with Cython
         return True
-    fname = os.path.join(path, 'all.py')
+    fname = os.path.join(path, "all.py")
     if os.path.exists(fname):
         return True  # namespace package
     return False
@@ -107,15 +109,20 @@ def cython_namespace_package_support():
     import Cython.Build.Cythonize
     import Cython.Build.Dependencies
     import Cython.Utils
+
     orig_is_package_dir = Cython.Utils.is_package_dir
-    Cython.Utils.is_package_dir = Cython.Build.Cythonize.is_package_dir = Cython.Build.Dependencies.is_package_dir = Cython.Utils.cached_function(is_package_or_sage_namespace_package_dir)
+    Cython.Utils.is_package_dir = Cython.Build.Cythonize.is_package_dir = (
+        Cython.Build.Dependencies.is_package_dir
+    ) = Cython.Utils.cached_function(is_package_or_sage_namespace_package_dir)
     try:
         yield
     finally:
-        Cython.Utils.is_package_dir = Cython.Build.Cythonize.is_package_dir = Cython.Build.Dependencies.is_package_dir = orig_is_package_dir
+        Cython.Utils.is_package_dir = Cython.Build.Cythonize.is_package_dir = (
+            Cython.Build.Dependencies.is_package_dir
+        ) = orig_is_package_dir
 
 
-def walk_packages(path=None, prefix='', onerror=None):
+def walk_packages(path=None, prefix="", onerror=None):
     r"""
     Yield :class:`pkgutil.ModuleInfo` for all modules recursively on ``path``.
 
@@ -151,7 +158,7 @@ def walk_packages(path=None, prefix='', onerror=None):
     """
     # Adapted from https://github.com/python/cpython/blob/3.11/Lib/pkgutil.py
 
-    def iter_modules(path=None, prefix=''):
+    def iter_modules(path=None, prefix=""):
         """
         Yield :class:`ModuleInfo` for all submodules on ``path``.
         """
@@ -160,7 +167,9 @@ def walk_packages(path=None, prefix='', onerror=None):
         if path is None:
             importers = iter_importers()
         elif isinstance(path, str):
-            raise ValueError("path must be None or list of paths to look for modules in")
+            raise ValueError(
+                "path must be None or list of paths to look for modules in"
+            )
         else:
             importers = map(get_importer, path)
 
@@ -171,7 +180,7 @@ def walk_packages(path=None, prefix='', onerror=None):
                     yielded[name] = 1
                     yield ModuleInfo(i, name, ispkg)
 
-    def _iter_importer_modules_helper(importer, prefix=''):
+    def _iter_importer_modules_helper(importer, prefix=""):
         r"""
         Helper function for :func:`iter_importer_modules`.
         """
@@ -183,6 +192,7 @@ def walk_packages(path=None, prefix='', onerror=None):
 
             yielded = {}
             import inspect
+
             try:
                 filenames = os.listdir(importer.path)
             except OSError:
@@ -195,30 +205,30 @@ def walk_packages(path=None, prefix='', onerror=None):
                 path = os.path.join(importer.path, fn)
                 ispkg = False
 
-                if not modname and os.path.isdir(path) and '.' not in fn:
+                if not modname and os.path.isdir(path) and "." not in fn:
                     modname = fn
                     if not (ispkg := is_package_or_sage_namespace_package_dir(path)):
                         continue
 
-                if modname and '.' not in modname:
+                if modname and "." not in modname:
                     yielded[modname] = 1
                     yield prefix + modname, ispkg
 
-        elif not hasattr(importer, 'iter_modules'):
+        elif not hasattr(importer, "iter_modules"):
             yield from []
 
         else:
             yield from importer.iter_modules(prefix)
 
-    def iter_importer_modules(importer, prefix=''):
+    def iter_importer_modules(importer, prefix=""):
         r"""
         Yield :class:`ModuleInfo` for all modules of ``importer``.
         """
         for name, ispkg in sorted(_iter_importer_modules_helper(importer, prefix)):
             # we sort again for consistency of output ordering if importer is not
             # a FileFinder (needed in doctest of :func:`sage.misc.dev_tools/load_submodules`)
-            modname = name.rsplit('.', 1)[-1]
-            if modname in ['__init__', 'all'] or modname.startswith('all__'):
+            modname = name.rsplit(".", 1)[-1]
+            if modname in ["__init__", "all"] or modname.startswith("all__"):
                 continue
             yield name, ispkg
 
@@ -242,10 +252,9 @@ def walk_packages(path=None, prefix='', onerror=None):
                 else:
                     raise
             else:
-                path = getattr(sys.modules[info.name], '__path__', None) or []
+                path = getattr(sys.modules[info.name], "__path__", None) or []
 
                 # don't traverse path items we've seen before
                 path = [p for p in path if not seen(p)]
 
-                yield from walk_packages(path, info.name + '.', onerror)
-
+                yield from walk_packages(path, info.name + ".", onerror)
