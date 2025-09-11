@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 
 """Utilities for interfacing with the standard library's atexit module."""
 

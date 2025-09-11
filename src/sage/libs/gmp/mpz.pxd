@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 # distutils: libraries = gmp
 
 from sage.libs.gmp.types cimport *
