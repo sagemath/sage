@@ -3562,7 +3562,7 @@ def krasner_check(poly, prec):
     return True  # This needs to be implemented
 
 
-def is_eisenstein(poly):
+def is_eisenstein(poly) -> bool:
     r"""
     Return ``True`` iff this monic polynomial is Eisenstein.
 
@@ -3587,12 +3587,10 @@ def is_eisenstein(poly):
     """
     if poly[0].valuation() != 1:
         return False
-    if reduce(lambda a, b: a or b, [(c.valuation() < 1) for c in poly.list()[1:poly.degree()]]):
-        return False
-    return True
+    return not any(c.valuation() < 1 for c in poly.list()[1:poly.degree()])
 
 
-def is_unramified(poly):
+def is_unramified(poly) -> bool:
     r"""
     Return ``True`` iff this monic polynomial is unramified.
 
@@ -3614,9 +3612,7 @@ def is_unramified(poly):
     """
     if poly[0].valuation() > 0:
         return False
-    if reduce(lambda a, b: a or b, [(c.valuation() < 0) for c in poly.list()[1:poly.degree()]]):
+    if any(c.valuation() < 0 for c in poly.list()[1:poly.degree()]):
         return False
     F = poly.parent().change_ring(poly.base_ring().residue_class_field())(poly).factor()
-    if len(F) != 1 or F[0][1] != 1:
-        return False
-    return True
+    return len(F) == 1 and F[0][1] == 1
