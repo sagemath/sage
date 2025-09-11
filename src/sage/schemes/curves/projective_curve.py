@@ -2862,14 +2862,11 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         phi = self._map_to_function_field
         denom = self._coordinate_functions[i]
-        gs = [phi(f)/denom**f.degree() for f in prime.gens()]
+        gs = [phi(f) / denom**f.degree() for f in prime.gens()]
         fs = [g for g in gs if not g.is_zero()]
         f = fs.pop()
-        places = []
-        for p in f.zeros():
-            if all(f.valuation(p) > 0 for f in fs):
-                places.append(p)
-        return places
+        return [p for p in f.zeros()
+                if all(f.valuation(p) > 0 for f in fs)]
 
     def jacobian(self, model, base_div=None):
         """
