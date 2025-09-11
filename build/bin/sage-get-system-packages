@@ -14,29 +14,29 @@ fi
 
 case "$SYSTEM" in
     install-requires)
-        # Collect from src/pyproject.toml or from version_requirements.txt (falling back to requirements.txt) and output it in the format
+        # Collect from pyproject.toml or from version_requirements.txt (falling back to requirements.txt) and output it in the format
         # needed by setup.cfg [options] install_requires=
-        SYSTEM_PACKAGES_FILE_NAMES="src/pyproject.toml version_requirements.txt requirements.txt"
+        SYSTEM_PACKAGES_FILE_NAMES="pyproject.toml version_requirements.txt requirements.txt"
         # also normalizes quotes from "" to ''.
         STRIP_COMMENTS="sed s/#.*//;/^[[:space:]]*$/d;s/\"/'/g;"
         COLLECT=
         ;;
     install-requires-toml)
-        # Collect from src/pyproject.toml or from version_requirements.txt (falling back to requirements.txt) and output it in the format
+        # Collect from pyproject.toml or from version_requirements.txt (falling back to requirements.txt) and output it in the format
         # needed by pyproject.toml [build-system] requires=
-        SYSTEM_PACKAGES_FILE_NAMES="src/pyproject.toml version_requirements.txt requirements.txt"
+        SYSTEM_PACKAGES_FILE_NAMES="pyproject.toml version_requirements.txt requirements.txt"
         # also normalizes quotes from '' to "".
         STRIP_COMMENTS="sed s/#.*//;/^[[:space:]]*$/d;s/'/\"/g;s/^/'/;s/$/',/;"
         COLLECT=
         ;;
     pip)
-        SYSTEM_PACKAGES_FILE_NAMES="requirements.txt src/pyproject.toml version_requirements.txt"
+        SYSTEM_PACKAGES_FILE_NAMES="requirements.txt pyproject.toml version_requirements.txt"
         STRIP_COMMENTS='sed s/#.*//;s/[[:space:]]//g;'
         COLLECT=echo
         ;;
     versions)
         # For use in sage-spkg-info
-        SYSTEM_PACKAGES_FILE_NAMES="package-version.txt requirements.txt src/pyproject.toml version_requirements.txt"
+        SYSTEM_PACKAGES_FILE_NAMES="package-version.txt requirements.txt pyproject.toml version_requirements.txt"
         strip_comments () {
             TEXT=$(sed "s/#.*//;/^[[:space:]]*$/d;s/\"/'/g;s/^/    /;" "$@")
             if [ -n "$(echo $TEXT)" ]; then
@@ -101,9 +101,9 @@ for PKG_BASE in $SPKGS; do
             *pyproject.toml)
                 SYSTEM_PACKAGES_FILE="$SAGE_ROOT"/$NAME
                 if [ -f "$SYSTEM_PACKAGES_FILE" ]; then
-                    # Extract from the "requires" block in src/pyproject.toml
+                    # Extract from the "requires" block in pyproject.toml
                     # Packages are in the format "'sage-conf ~= 10.3b3',"
-                    PACKAGE_INFO=$(sed -n '/requires *= *\[/,/^\]/s/^ *'\''\('$PKG_BASE'.*\)'\'',/\1/p' "$SAGE_ROOT/src/pyproject.toml")
+                    PACKAGE_INFO=$(sed -n '/requires *= *\[/,/^\]/s/^ *'\''\('$PKG_BASE'.*\)'\'',/\1/p' "$SAGE_ROOT/pyproject.toml")
                     if [ -n "$PACKAGE_INFO" ]; then
                         echo "$PACKAGE_INFO" | ${STRIP_COMMENTS}
                         [ $SYSTEM = versions ] || break

@@ -1,2 +1,1 @@
-pythran>=0.14.0,<0.18.0
-# per https://github.com/scipy/scipy/blob/maintenance/1.15.x/pyproject.toml
+pythran>=0.18.0
