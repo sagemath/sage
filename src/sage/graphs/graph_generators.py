@@ -221,7 +221,7 @@ __append_to_doc(
 __doc__ += """
 **Families of graphs**
 
-A family of graph is an infinite set of graphs which can be indexed by fixed
+A family of graphs is a set of graphs, which can be indexed by fixed
 number of parameters, e.g. two integer parameters. (A method whose name starts
 with a small letter does not return a single graph object but a graph iterator
 or a list of graphs or ...)
@@ -230,7 +230,6 @@ or a list of graphs or ...)
 __append_to_doc(
     ["AlternatingFormsGraph",
      "AztecDiamondGraph",
-     "BalancedTree",
      "BarbellGraph",
      "BilinearFormsGraph",
      "BiwheelGraph",
@@ -247,7 +246,6 @@ __append_to_doc(
      "DoubleGrassmannGraph",
      "DoubleOddGraph",
      "EgawaGraph",
-     "FibonacciTree",
      "FoldedCubeGraph",
      "FriendshipGraph",
      "fullerenes",
@@ -284,6 +282,7 @@ __append_to_doc(
      "PaleyGraph",
      "PasechnikGraph",
      "petersen_family",
+     "p2_forbidden_minors",
      "planar_graphs",
      "plantri_gen",
      "quadrangulations",
@@ -293,9 +292,7 @@ __append_to_doc(
      "SwitchedSquaredSkewHadamardMatrixGraph",
      "StaircaseGraph",
      "strongly_regular_graph",
-     "trees",
      "TruncatedBiwheelGraph",
-     "nauty_gentreeg",
      "triangulations",
      "TuranGraph",
      "UstimenkoGraph",
@@ -365,23 +362,33 @@ __append_to_doc(
      "RandomRegularBipartite",
      "RandomBlockGraph",
      "RandomBoundedToleranceGraph",
+     "RandomChordalGraph",
      "RandomGNM",
      "RandomGNP",
      "RandomHolmeKim",
-     "RandomChordalGraph",
      "RandomIntervalGraph",
      "RandomKTree",
      "RandomPartialKTree",
-     "RandomLobster",
      "RandomNewmanWattsStrogatz",
      "RandomProperIntervalGraph",
      "RandomRegular",
      "RandomShell",
      "RandomToleranceGraph",
-     "RandomTree",
-     "RandomTreePowerlaw",
      "RandomTriangulation",
      "RandomUnitDiskGraph"])
+
+__doc__ += """
+**Trees**
+"""
+
+__append_to_doc(
+    ["BalancedTree",
+     "FibonacciTree",
+     "RandomLobster",
+     "RandomTree",
+     "RandomTreePowerlaw",
+     "trees",
+     "nauty_gentreeg"])
 
 __doc__ += """
 **Graphs with a given degree sequence**
@@ -2725,7 +2732,6 @@ class GraphGenerators:
     from . import strongly_regular_db
     AlternatingFormsGraph = staticmethod(distance_regular.AlternatingFormsGraph)
     AztecDiamondGraph = staticmethod(families.AztecDiamondGraph)
-    BalancedTree = staticmethod(families.BalancedTree)
     BarbellGraph = staticmethod(families.BarbellGraph)
     BilinearFormsGraph = staticmethod(distance_regular.BilinearFormsGraph)
     BiwheelGraph = staticmethod(families.BiwheelGraph)
@@ -2743,7 +2749,6 @@ class GraphGenerators:
     DoubleGrassmannGraph = staticmethod(distance_regular.DoubleGrassmannGraph)
     DoubleOddGraph = staticmethod(distance_regular.DoubleOddGraph)
     EgawaGraph = staticmethod(families.EgawaGraph)
-    FibonacciTree = staticmethod(families.FibonacciTree)
     FoldedCubeGraph = staticmethod(families.FoldedCubeGraph)
     FriendshipGraph = staticmethod(families.FriendshipGraph)
     FurerGadget = staticmethod(families.FurerGadget)
@@ -2775,6 +2780,7 @@ class GraphGenerators:
     NKStarGraph = staticmethod(families.NKStarGraph)
     NStarGraph = staticmethod(families.NStarGraph)
     OddGraph = staticmethod(families.OddGraph)
+    p2_forbidden_minors = staticmethod(families.p2_forbidden_minors)
     PaleyGraph = staticmethod(families.PaleyGraph)
     PasechnikGraph = staticmethod(families.PasechnikGraph)
     petersen_family = staticmethod(families.petersen_family)
@@ -2787,9 +2793,7 @@ class GraphGenerators:
     strongly_regular_graph = staticmethod(strongly_regular_db.strongly_regular_graph)
     TabacjnGraph = staticmethod(families.TabacjnGraph)
     TadpoleGraph = staticmethod(families.TadpoleGraph)
-    trees = staticmethod(families.trees)
     TruncatedBiwheelGraph = staticmethod(families.TruncatedBiwheelGraph)
-    nauty_gentreeg = staticmethod(families.nauty_gentreeg)
     TuranGraph = staticmethod(families.TuranGraph)
     UstimenkoGraph = staticmethod(distance_regular.UstimenkoGraph)
     WheelGraph = staticmethod(families.WheelGraph)
@@ -2852,7 +2856,6 @@ class GraphGenerators:
     RandomGNP = staticmethod(random.RandomGNP)
     RandomHolmeKim = staticmethod(random.RandomHolmeKim)
     RandomIntervalGraph = staticmethod(random.RandomIntervalGraph)
-    RandomLobster = staticmethod(random.RandomLobster)
     RandomNewmanWattsStrogatz = staticmethod(random.RandomNewmanWattsStrogatz)
     RandomProperIntervalGraph = staticmethod(random.RandomProperIntervalGraph)
     RandomRegular = staticmethod(random.RandomRegular)
@@ -2860,10 +2863,20 @@ class GraphGenerators:
     RandomKTree = staticmethod(random.RandomKTree)
     RandomPartialKTree = staticmethod(random.RandomPartialKTree)
     RandomToleranceGraph = staticmethod(random.RandomToleranceGraph)
-    RandomTreePowerlaw = staticmethod(random.RandomTreePowerlaw)
-    RandomTree = staticmethod(random.RandomTree)
     RandomTriangulation = staticmethod(random.RandomTriangulation)
     RandomUnitDiskGraph = staticmethod(random.RandomUnitDiskGraph)
+
+###########################################################################
+# Trees
+###########################################################################
+    from .generators import trees as gen_trees
+    BalancedTree = staticmethod(gen_trees.BalancedTree)
+    FibonacciTree = staticmethod(gen_trees.FibonacciTree)
+    nauty_gentreeg = staticmethod(gen_trees.nauty_gentreeg)
+    RandomLobster = staticmethod(gen_trees.RandomLobster)
+    RandomTreePowerlaw = staticmethod(gen_trees.RandomTreePowerlaw)
+    RandomTree = staticmethod(gen_trees.RandomTree)
+    trees = staticmethod(gen_trees.trees)
 
 ###########################################################################
 # Maps

@@ -105,7 +105,7 @@ from sage.matrix.matrix_misc import permanental_minor_polynomial
 from sage.misc.misc_c import prod
 
 # used to deprecate only adjoint method
-from sage.misc.superseded import deprecation, deprecated_function_alias
+from sage.misc.superseded import deprecated_function_alias
 
 
 # temporary hack to silence the warnings from #34806
@@ -140,35 +140,6 @@ cdef class Matrix(Matrix1):
         [x], [0]
         )
     """
-    def _backslash_(self, B):
-        r"""
-        Used to compute `A \backslash B`, i.e., the backslash solver
-        operator.
-
-        DEPRECATED
-
-        EXAMPLES::
-
-            sage: A = matrix(QQ, 3, [1,2,4,2,3,1,0,1,2])
-            sage: B = matrix(QQ, 3, 2, [1,7,5, 2,1,3])
-            sage: C = A._backslash_(B); C
-            doctest:...: DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
-            See https://github.com/sagemath/sage/issues/36394 for details.
-            [  -1    1]
-            [13/5 -3/5]
-            [-4/5  9/5]
-            sage: A*C == B
-            True
-            sage: A._backslash_(B) == A \ B
-            doctest:...: DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
-            See https://github.com/sagemath/sage/issues/36394 for details.
-            True
-            sage: A._backslash_(B) == A.solve_right(B)
-            True
-        """
-        deprecation(36394, 'the backslash operator has been deprecated; use A.solve_right(B) instead')
-        return self.solve_right(B)
-
     def subs(self, *args, **kwds):
         """
         Substitute values to the variables in that matrix.
@@ -878,6 +849,32 @@ cdef class Matrix(Matrix1):
             sage: v = vector(GF(3), [1,1])
             sage: m.solve_right(v)
             (2, 1)
+
+        Test ``extend``::
+
+            sage: matrix(ZZ, [[2]]).solve_right(vector(ZZ, [1]), extend=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+            sage: matrix(ZZ, [[2], [2]]).solve_right(vector(ZZ, [1, 1]), extend=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+            sage: matrix(ZZ, [[2], [2]]).solve_right(vector(ZZ, [2, 4]), extend=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+            sage: matrix(ZZ, [[2], [2]]).solve_right(vector(ZZ, [2, 2]), extend=False)
+            (1)
+            sage: matrix(QQ, [[2]]).solve_right(vector(QQ, [1]), extend=False)
+            (1/2)
+            sage: v = matrix.identity(QQ, 500).solve_right(vector(QQ, [1]*500), extend=True)  # <1s
+            sage: v = matrix.identity(QQ, 500).solve_right(vector(QQ, [1]*500), extend=False)  # <1s
+            sage: matrix.identity(QQ, 500).hermite_form()  # not tested (slow)
+            sage: v = (matrix.identity(ZZ, 500)*2).solve_right(vector(ZZ, [2]*500), extend=False)  # <1s
+            sage: m = matrix.identity(ZZ, 250).stack(matrix.identity(ZZ, 250))*2
+            sage: v = m.solve_right(vector(ZZ, [2]*500), extend=False)  # <1s
+            sage: m._solve_right_hermite_form(matrix(ZZ, [[2]]*500))  # not tested (slow)
         """
         try:
             L = B.base_ring()
@@ -944,11 +941,23 @@ cdef class Matrix(Matrix1):
 
         C = B.column() if b_is_vec else B
 
-        if not extend:
-            try:
-                X = self._solve_right_hermite_form(C)
-            except NotImplementedError:
-                X = self._solve_right_smith_form(C)
+        if P not in _Fields and not extend:
+            if self.rank() == self.ncols():
+                # hermite_form is slow, avoid if possible
+                F = P.fraction_field()
+                if self.is_square():
+                    X = self.change_ring(F)._solve_right_nonsingular_square(C.change_ring(F), check_rank=False)
+                else:
+                    X = self.change_ring(F)._solve_right_general(C.change_ring(F))
+                try:
+                    X = X.change_ring(P)
+                except TypeError:
+                    raise ValueError('matrix equation has no solutions')
+            else:
+                try:
+                    X = self._solve_right_hermite_form(C)
+                except NotImplementedError:
+                    X = self._solve_right_smith_form(C)
             return X.column(0) if b_is_vec else X
 
         if not self.is_square():
@@ -1114,14 +1123,54 @@ cdef class Matrix(Matrix1):
             [-236774176922867   -3334450741532  470910201757143          1961587  230292926737068]
             [  82318322106118    1159275026338 -163719448527234          -681977  -80065012022313]
             [  53148766104440     748485096017 -105705345467375          -440318  -51693918051894]
-        """
-        S,U,V = self.smith_form()
 
-        n,m = self.dimensions()
+        TESTS:
+
+        Check for :issue:`40210`::
+
+            sage: A = vector(ZZ, [1, 2, 3]).column()
+            sage: B = vector(ZZ, [1, 1, 1]).column()
+            sage: A._solve_right_smith_form(B)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+
+        Random testing::
+
+            sage: m = randrange(1,100)
+            sage: n = randrange(1,100)
+            sage: A = matrix(ZZ, [[randrange(-10,11) for _ in range(n)] for _ in range(m)])
+            sage: y = A * vector(ZZ, [randrange(-100,101) for _ in range(n)])
+            sage: unsolvable = randrange(1 + (A.column_space() != ZZ^m))
+            sage: if unsolvable:
+            ....:     while y in A.column_space():
+            ....:         y += (ZZ^m).random_element()
+            sage: y = y.column()
+            sage: try:
+            ....:     x = A._solve_right_smith_form(y)
+            ....:     solved = True
+            ....: except ValueError:
+            ....:     solved = False
+            sage: solved == (not unsolvable)
+            True
+            sage: not solved or A * x == y
+            True
+        """
+        S,U,V = self.smith_form()  # S == U * self * V
+
+        m,n = self.dimensions()
         r = B.ncols()
 
+        # we will solve S * X_ == U * B
+        UB = U * B
+
+        # S is zero past the nth row; check if this already renders the system unsolvable
+        if UB[n:]:
+            raise ValueError("matrix equation has no solutions")
+
+        # solve the system, detecting inconsistencies up to the nth row along the way
         X_ = []
-        for d, v in zip(S.diagonal(), (U*B).rows()):
+        for d, v in zip(S.diagonal(), UB):
             if d:
                 X_.append(v / d)
             elif v:
@@ -1129,14 +1178,15 @@ cdef class Matrix(Matrix1):
             else:
                 X_.append([0] * r)
 
-        X_ += [[0] * r] * (m - n)  # arbitrary
+        X_ += [[0] * r] * (n - m)  # arbitrary
 
         from sage.matrix.constructor import matrix
         try:
-            X_ = matrix(self.base_ring(), m, r, X_)
+            X_ = matrix(self.base_ring(), n, r, X_)
         except TypeError:
             raise ValueError("matrix equation has no solutions")
 
+        # now V * X_ is a solution since self * V * X_ = U^-1 * S * X_ = U^-1 * U * B = B
         return V * X_
 
     def _solve_right_hermite_form(self, B):
@@ -1181,26 +1231,64 @@ cdef class Matrix(Matrix1):
             [  968595469303  1461570161933   781069571508  1246248350502       -1629017]
             [ -235552378240  -355438713600  -189948023680  -303074680960         396160]
             [             0              0              0              0              0]
+
+        TESTS:
+
+        Check for :issue:`40210`::
+
+            sage: A = vector(ZZ, [1, 2, 3]).column()
+            sage: B = vector(ZZ, [1, 1, 1]).column()
+            sage: A._solve_right_hermite_form(B)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+
+        Random testing::
+
+            sage: m = randrange(1,100)
+            sage: n = randrange(1,100)
+            sage: A = matrix(ZZ, [[randrange(-10,11) for _ in range(n)] for _ in range(m)])
+            sage: y = A * vector(ZZ, [randrange(-100,101) for _ in range(n)])
+            sage: unsolvable = randrange(1 + (A.column_space() != ZZ^m))
+            sage: if unsolvable:
+            ....:     while y in A.column_space():
+            ....:         y += (ZZ^m).random_element()
+            sage: y = y.column()
+            sage: try:
+            ....:     x = A._solve_right_hermite_form(y)
+            ....:     solved = True
+            ....: except ValueError:
+            ....:     solved = False
+            sage: solved == (not unsolvable)
+            True
+            sage: not solved or A * x == y
+            True
         """
         H,U = self.transpose().hermite_form(transformation=True)
         H = H.transpose()
         U = U.transpose()
-#        assert self*U == H
 
-        n,m = self.dimensions()
+        m,n = self.dimensions()
         r = B.ncols()
 
         from sage.matrix.constructor import matrix
-        X_ = matrix(self.base_ring(), m, r)
-        for i in range(min(n,m)):
-            v = B[i,:]
-            v -= H[i,:i] * X_[:i]
-            d = H[i][i]
-            try:
-                X_[i] = v / d
-            except (ZeroDivisionError, TypeError) as e:
-                raise ValueError("matrix equation has no solution")
-#        assert H*X_ == B
+        X_ = matrix(self.base_ring(), n, r)
+        j = 0  # current column
+        for i in range(m):
+            if j < n and H[i,j]:
+                # pivot for column j is in row i
+                v = B[i,:]
+                v -= H[i,:j] * X_[:j]
+                try:
+                    X_[j] = v / H[i,j]
+                except TypeError:
+                    raise ValueError("matrix equation has no solutions")
+                j += 1
+            else:
+                # pivot for column j is below row i
+                assert not H[i,j:]
+                if H[i] * X_ != B[i]:
+                    raise ValueError("matrix equation has no solutions")
 
         return U * X_
 
@@ -4179,9 +4267,11 @@ cdef class Matrix(Matrix1):
           - ``'generic'`` -- naive algorithm usable for matrices over any field
           - ``'flint'`` -- FLINT library code for matrices over the rationals
             or the integers
+          - ``'linbox'`` -- LinBox library code for sparse matrices over the
+            rationals
           - ``'pari'`` -- PARI library code for matrices over number fields
             or the integers
-          - ``'padic'`` -- padic algorithm from IML library for matrices
+          - ``'padic'`` -- `p`-adic algorithm from the IML library for matrices
             over the rationals and integers
           - ``'pluq'`` -- PLUQ matrix factorization for matrices mod 2
 
@@ -4231,12 +4321,17 @@ cdef class Matrix(Matrix1):
 
         Over the Rational Numbers:
 
-        Kernels are computed by the IML library in
-        :meth:`~sage.matrix.matrix_rational_dense.Matrix_rational_dense._right_kernel_matrix`.
-        Setting the `algorithm` keyword to 'default', 'padic' or unspecified
-        will yield the same result, as there is no optional behavior.
-        The 'computed' format of the basis vectors are exactly the negatives
-        of the vectors in the 'pivot' format. ::
+        The ``algorithm`` keyword can be set to ``'default'`` or ``'padic'`` to
+        use the `p`-adic algorithm from the IML library (for dense or sparse
+        matrices), or to ``'linbox'`` to use the LinBox library (only for
+        sparse matrices).
+        Kernels are computed by the IML library for dense matrices in
+        :meth:`~sage.matrix.matrix_rational_dense.Matrix_rational_dense._right_kernel_matrix`,
+        and sparse matrices are first converted to dense matrices.
+        Kernels are computed by the LinBox library for sparse matrices in
+        :meth:`~sage.matrix.matrix_rational_sparse.Matrix_rational_sparse._right_kernel_matrix_linbox`.
+        The 'computed' format of the basis vectors returned by IML are exactly
+        the negatives of the vectors in the 'pivot' format. ::
 
             sage: A = matrix(QQ, [[1, 0, 1, -3, 1],
             ....:                 [-5, 1, 0, 7, -3],
@@ -4300,6 +4395,11 @@ cdef class Matrix(Matrix1):
             [   0    1 -1/2 -1/4 -1/4]
             sage: set_verbose(0)
             sage: D == S
+            True
+            sage: K = B.right_kernel_matrix(algorithm='linbox', basis='computed'); K
+            [ 1 -2  2  1  0]
+            [-1 -2  0  0  1]
+            sage: B*K.transpose() == zero_matrix(QQ, 4, 2, sparse=True)
             True
 
         Over Number Fields:
@@ -4722,7 +4822,7 @@ cdef class Matrix(Matrix1):
         algorithm = kwds.pop('algorithm', None)
         if algorithm is None:
             algorithm = 'default'
-        elif algorithm not in ['default', 'generic', 'flint', 'pari', 'padic', 'pluq']:
+        elif algorithm not in ['default', 'generic', 'flint', 'linbox', 'pari', 'padic', 'pluq']:
             raise ValueError("matrix kernel algorithm '%s' not recognized" % algorithm)
         elif algorithm == 'padic' and not isinstance(R, (IntegerRing_class,
                                                          RationalField)):
@@ -4730,6 +4830,11 @@ cdef class Matrix(Matrix1):
         elif algorithm == 'flint' and not isinstance(R, (IntegerRing_class,
                                                          RationalField)):
             raise ValueError("'flint' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
+        elif algorithm == 'linbox' and not isinstance(self, sage.matrix.matrix_rational_sparse.Matrix_rational_sparse):
+            if isinstance(R, RationalField):
+                raise ValueError("'linbox' matrix kernel algorithm only available for sparse matrices over the rationals")
+            else:
+                raise ValueError("'linbox' matrix kernel algorithm only available over the rationals, not over %s" % R)
         elif algorithm == 'pari' and not (isinstance(R, (IntegerRing_class, NumberField)) and not isinstance(R, RationalField)):
             raise ValueError("'pari' matrix kernel algorithm only available over non-trivial number fields and the integers, not over %s" % R)
         elif algorithm == 'generic' and R not in _Fields:
@@ -4879,9 +4984,11 @@ cdef class Matrix(Matrix1):
           - ``'generic'`` -- naive algorithm usable for matrices over any field
           - ``'flint'`` -- FLINT library code for matrices over the rationals
             or the integers
+          - ``'linbox'`` -- LinBox library code for sparse matrices over the
+            rationals
           - ``'pari'`` -- PARI library code for matrices over number fields
             or the integers
-          - ``'padic'`` -- padic algorithm from IML library for matrices
+          - ``'padic'`` -- `p`-adic algorithm from the IML library for matrices
             over the rationals and integers
           - ``'pluq'`` -- PLUQ matrix factorization for matrices mod 2
 
@@ -5116,7 +5223,7 @@ cdef class Matrix(Matrix1):
             Quaternion Algebra (-1, -1) with base ring Rational Field
 
         Sparse matrices, over the rationals and the integers,
-        use the same routines as the dense versions. ::
+        use the same routines as the dense versions by default. ::
 
             sage: A = matrix(ZZ, [[0, -1, 1, 1, 2],
             ....:                 [1, -2, 0, 1, 3],
@@ -5248,9 +5355,11 @@ cdef class Matrix(Matrix1):
           - ``'generic'`` -- naive algorithm usable for matrices over any field
           - ``'flint'`` -- FLINT library code for matrices over the rationals
             or the integers
+          - ``'linbox'`` -- LinBox library code for sparse matrices over the
+            rationals
           - ``'pari'`` -- PARI library code for matrices over number fields
             or the integers
-          - ``'padic'`` -- padic algorithm from IML library for matrices
+          - ``'padic'`` -- `p`-adic algorithm from the IML library for matrices
             over the rationals and integers
           - ``'pluq'`` -- PLUQ matrix factorization for matrices mod 2
 
@@ -7060,6 +7169,53 @@ cdef class Matrix(Matrix1):
                         extend=extend, algorithm=algorithm,
                         suppress_future_warning=False))
 
+    def singular_values(self) -> Sequence:
+        """
+        Return a sequence of singular values of a matrix.
+
+        EXAMPLES::
+
+            sage: A = matrix([[1, 2], [3, 4]])
+            sage: A.singular_values()
+            [0.3659661906262578?, 5.464985704219043?]
+
+        TESTS::
+
+            sage: type(A.singular_values())
+            <class 'sage.structure.sequence.Sequence_generic'>
+
+        Ensure floating point error does not cause trouble::
+
+            sage: set_random_seed(100)
+            sage: A = matrix.random(CC, 5)
+            sage: Sequence((A*A.H).eigenvalues(), universe=RR)
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert ... to an element of Real Field with 53 bits of precision
+            sage: A.singular_values()  # abs tol 1e-13
+            [0.317896596475411, 1.25232496300299, 1.48403213017074, 2.08062167993720, 2.59091978815526]
+
+        Ensure all returned values are real::
+
+            sage: set_random_seed(100)
+            sage: m = matrix.random(RR, 5, 4) * matrix.random(RR, 4, 5)
+            sage: l = (m*m.H).eigenvalues(); l  # abs tol 1e-13
+            [-2.25142178936519049e-17, 0.128915466573149680, 0.754320277644353032, 1.04552196882464885, 5.11544233853116598]
+            sage: min(l) < 0
+            True
+            sage: m.singular_values()  # abs tol 1e-13
+            [0.000000000000000000, 0.359048000374810165, 0.868516135511800973, 1.02250768643793033, 2.26173436515678516]
+        """
+        from sage.rings.abc import ComplexField
+        e: Sequence = (self*self.H).eigenvalues()  # guaranteed to be real nonnegative
+        from sage.rings.abc import RealField, ComplexField
+        if isinstance(self.base_ring(), (RealField, ComplexField)):
+            # because of floating point error e may not be all real nonnegative
+            e = Sequence([x.real() for x in e])
+            zero = e.universe().zero()
+            e = Sequence([max(x, zero) for x in e], universe=e.universe())
+        return Sequence([x.sqrt() for x in e])
+
     def _eigenvectors_result_to_eigenvalues(self, eigenvectors: list) -> Sequence:
         """
         Convert the result of :meth:`eigenvectors_left` to a sequence of eigenvalues
@@ -7162,14 +7318,14 @@ cdef class Matrix(Matrix1):
 
         OUTPUT:
 
-        Returns a list of tuples of the form ``(e,V,n)``,
-        each tuple corresponds to a distinct eigenvalue,
+        A list of tuples of the form ``(e,V,n)``.
+        Each tuple corresponds to a distinct eigenvalue,
         where ``e`` is the eigenvalue, ``V`` is a list of eigenvectors forming a
         basis for the corresponding left eigenspace, and ``n`` is the algebraic
         multiplicity of the eigenvalue.
 
-        If the option ``extend`` is set to ``False``, then only the eigenvalues that
-        live in the base ring are considered.
+        If the option ``extend`` is set to ``False``, then only the
+        eigenvalues that live in the base ring are considered.
 
         EXAMPLES:
 
@@ -7211,13 +7367,6 @@ cdef class Matrix(Matrix1):
             NotImplementedError: generalized eigenvector decomposition is
             implemented for RDF and CDF, but not for Rational Field
 
-        Check the deprecation::
-
-            sage: matrix(QQ, [[1, 2], [3, 4]]).eigenvectors_left(False)                 # needs sage.rings.number_field
-            doctest:...: DeprecationWarning: "extend" should be used as keyword argument
-            See https://github.com/sagemath/sage/issues/29243 for details.
-            []
-
         Check :issue:`30518`::
 
             sage: # needs sage.rings.number_field
@@ -7241,29 +7390,23 @@ cdef class Matrix(Matrix1):
             []
         """
         if other is not None:
-            if isinstance(other, bool):
-                # for backward compatibility
-                from sage.misc.superseded import deprecation
-                deprecation(29243,
-                            '"extend" should be used as keyword argument')
-                extend = other
-                other = None
-            else:
-                raise NotImplementedError('generalized eigenvector '
-                                          'decomposition is implemented '
-                                          'for RDF and CDF, but not for %s'
-                                          % self.base_ring())
+            raise NotImplementedError('generalized eigenvector '
+                                      'decomposition is implemented '
+                                      'for RDF and CDF, but not for %s'
+                                      % self.base_ring())
 
         if algorithm is None:
             R = self.base_ring()
             from sage.rings.abc import RealField, ComplexField
             if isinstance(R, (RealField, ComplexField)):
                 return self._eigenvectors_left(
-                        other, extend=extend, algorithm='flint', suppress_future_warning=True)
+                    other, extend=extend, algorithm='flint',
+                    suppress_future_warning=True)
             else:
                 algorithm = 'sage'
         return self._eigenvectors_left(
-                other, extend=extend, algorithm=algorithm, suppress_future_warning=False)
+            other, extend=extend, algorithm=algorithm,
+            suppress_future_warning=False)
 
     def _eigenvectors_left(self, other=None, *, extend: bool, algorithm: str,
                            suppress_future_warning: bool) -> list:
@@ -8485,6 +8628,7 @@ cdef class Matrix(Matrix1):
         if v is not None:
             self.cache('echelon_transformation', v)
         self.cache('pivots', E.pivots())
+
         if transformation and v is not None:
             return (E, v)
         else:
@@ -15735,7 +15879,7 @@ cdef class Matrix(Matrix1):
         """
         return self._is_positive_definite_or_semidefinite(True)
 
-    def is_positive_definite(self, certificate=False):
+    def is_positive_definite(self):
         r"""
         Determine if a matrix is positive-definite.
 
@@ -15758,9 +15902,6 @@ cdef class Matrix(Matrix1):
         INPUT:
 
         - ``self`` -- a matrix
-        - ``certificate`` -- boolean (default: ``False``); return the
-          lower-triangular and diagonal parts of the :meth:`block_ldlt`
-          factorization when the matrix is positive-definite. Deprecated.
 
         OUTPUT:
 
@@ -15772,14 +15913,6 @@ cdef class Matrix(Matrix1):
         1. Have a fraction field implemented; and
         2. Be a subring of the real numbers, complex numbers,
            or symbolic ring.
-
-        If ``certificate`` is ``True``, a triplet ``(b, L, d)`` will
-        be returned instead, with ``b`` containing the result (true or
-        false). If the matrix is positive-definite, then ``L`` and
-        ``d`` will contain the lower-triangular and diagonal parts of
-        the :meth:`block_ldlt` factorization, respectively. Or if the
-        matrix is not positive-definite (that is, if ``b`` is
-        ``False``), then both ``L`` and ``d`` will be ``None``.
 
         .. SEEALSO::
 
@@ -15913,22 +16046,7 @@ cdef class Matrix(Matrix1):
             sage: matrix.identity(SR,4).is_positive_definite()                          # needs sage.symbolic
             True
         """
-        result = self._is_positive_definite_or_semidefinite(False)
-        if certificate:
-            from sage.misc.superseded import deprecation
-            msg = "the 'certificate' argument is deprecated; if you "
-            msg += "need the corresponding factorization, you can "
-            msg += "simply compute it yourself (the results are cached)"
-            deprecation(31619, msg)
-            L = None
-            d = None
-            if result:
-                from sage.modules.free_module_element import vector
-                _, L, D = self.block_ldlt()
-                d = vector(D.base_ring(), D.diagonal())
-            return (result, L, d)
-        else:
-            return result
+        return self._is_positive_definite_or_semidefinite(False)
 
     def principal_square_root(self, check_positivity=True):
         r"""
@@ -16320,6 +16438,11 @@ cdef class Matrix(Matrix1):
 
             sage: matrix(CDF, 2, 2, sparse=True).norm(1)
             0.0
+
+        Check the euclidean norm for a sparse matrix (:issue:`40492`)::
+
+            sage: matrix(ZZ, [[1, 2], [3, 4]], sparse=True).norm()
+            5.464985704219043
         """
         from sage.rings.real_double import RDF
 
@@ -16330,8 +16453,11 @@ cdef class Matrix(Matrix1):
         if p == 2:
             from sage.rings.complex_double import CDF
 
-            A = self.change_ring(CDF)
-            A = A.conjugate().transpose() * A
+            # Always try to convert to ``dense_matrix`` since sparse matrices
+            # don't expose the ``SVD`` method. If the matrix is already dense,
+            # the cost is negligible.
+            A = self.dense_matrix().change_ring(CDF)
+            A = A.conjugate_transpose() * A
             S = A.SVD()[1]
             return max(S.list()).real().sqrt()
 

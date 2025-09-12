@@ -1072,11 +1072,7 @@ class QuiverRepElement(ModuleElement):
             return False
 
         # Return False if the elements differ at any vertex
-        for v in self._quiver:
-            if self._elems[v] != other._elems[v]:
-                return False
-
-        return True
+        return all(self._elems[v] == other._elems[v] for v in self._quiver)
 
     def __ne__(self, other):
         """
@@ -1103,11 +1099,7 @@ class QuiverRepElement(ModuleElement):
             return True
 
         # Return True if the elements differ at any vertex
-        for v in self._quiver:
-            if self._elems[v] != other._elems[v]:
-                return True
-
-        return False
+        return any(self._elems[v] != other._elems[v] for v in self._quiver)
 
     ###########################################################################
     #                                                                         #
@@ -1224,11 +1216,7 @@ class QuiverRepElement(ModuleElement):
             sage: M.zero().is_zero()
             True
         """
-        for v in self._quiver:
-            if not self._elems[v].is_zero():
-                return False
-
-        return True
+        return all(self._elems[v].is_zero() for v in self._quiver)
 
     def support(self):
         """
@@ -1831,10 +1819,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         """
         # A quiver representation is semisimple if and only if the zero map is
         # assigned to each edge.
-        for x in self._semigroup._sorted_edges:
-            if not self._maps[x].is_zero():
-                return False
-        return True
+        return all(self._maps[x].is_zero() for x in self._semigroup._sorted_edges)
 
     def an_element(self):
         """

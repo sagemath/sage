@@ -9,6 +9,10 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #                          Emily A. Kirkman
 #                     2009 Michael C. Yurko <myurko@gmail.com>
 #                     2016 Rowan Schrecker <rowan.schrecker@hertford.ox.ac.uk>
+#                     2025 Juan M. Lazaro Ruiz, Steve Schluchter, and
+#                          Kristina Obrenovic Gilmour: is_projective_planar
+#                          in graph.py and associated method p2_forbidden_minors
+#                          in sage.graphs.generators.families module.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -489,107 +493,6 @@ def HammingGraph(n, q, X=None):
                 u = prefix + (el,) + suffix
                 g.add_edge(v, u)
     return g
-
-
-def BalancedTree(r, h):
-    r"""
-    Return the perfectly balanced tree of height `h \geq 1`,
-    whose root has degree `r \geq 2`.
-
-    The number of vertices of this graph is
-    `1 + r + r^2 + \cdots + r^h`, that is,
-    `\frac{r^{h+1} - 1}{r - 1}`. The number of edges is one
-    less than the number of vertices.
-
-    INPUT:
-
-    - ``r`` -- positive integer `\geq 2`; the degree of the root node
-
-    - ``h`` -- positive integer `\geq 1`; the height of the balanced tree
-
-    OUTPUT:
-
-    The perfectly balanced tree of height `h \geq 1` and whose root has
-    degree `r \geq 2`.
-
-    EXAMPLES:
-
-    A balanced tree whose root node has degree `r = 2`, and of height
-    `h = 1`, has order 3 and size 2::
-
-        sage: G = graphs.BalancedTree(2, 1); G
-        Balanced tree: Graph on 3 vertices
-        sage: G.order()
-        3
-        sage: G.size()
-        2
-        sage: r = 2; h = 1
-        sage: v = 1 + r
-        sage: v; v - 1
-        3
-        2
-
-    Plot a balanced tree of height 5, whose root node has degree `r = 3`::
-
-        sage: G = graphs.BalancedTree(3, 5)
-        sage: G.plot()                          # long time                             # needs sage.plot
-        Graphics object consisting of 728 graphics primitives
-
-    A tree is bipartite. If its vertex set is finite, then it is planar. ::
-
-        sage: # needs networkx
-        sage: r = randint(2, 5); h = randint(1, 7)
-        sage: T = graphs.BalancedTree(r, h)
-        sage: T.is_bipartite()
-        True
-        sage: T.is_planar()
-        True
-        sage: v = (r^(h + 1) - 1) / (r - 1)
-        sage: T.order() == v
-        True
-        sage: T.size() == v - 1
-        True
-
-    TESTS:
-
-    Normally we would only consider balanced trees whose root node
-    has degree `r \geq 2`, but the construction degenerates
-    gracefully::
-
-        sage: graphs.BalancedTree(1, 10)
-        Balanced tree: Graph on 11 vertices
-
-    Similarly, we usually want the tree must have height `h \geq 1`
-    but the algorithm also degenerates gracefully here::
-
-        sage: graphs.BalancedTree(3, 0)
-        Balanced tree: Graph on 1 vertex
-
-    The construction is the same as the one of networkx::
-
-        sage: # needs networkx
-        sage: import networkx
-        sage: r = randint(2, 4); h = randint(1, 5)
-        sage: T = graphs.BalancedTree(r, h)
-        sage: N = Graph(networkx.balanced_tree(r, h), name="Balanced tree")
-        sage: T.is_isomorphic(N)
-        True
-    """
-    # Compute the number of vertices per level of the tree
-    order = [r**l for l in range(h + 1)]
-    # Compute the first index of the vertices of a level
-    begin = [0]
-    begin.extend(begin[-1] + val for val in order)
-    # The number of vertices of the tree is the first index of level h + 1
-    T = Graph(begin[-1], name="Balanced tree")
-
-    # Add edges of the r-ary tree
-    for level in range(h):
-        start = begin[level + 1]
-        for u in range(begin[level], begin[level + 1]):
-            T.add_edges((u, v) for v in range(start, start + r))
-            start += r
-    return T
 
 
 def BarbellGraph(n1, n2):
@@ -1606,68 +1509,6 @@ def FuzzyBallGraph(partition, q):
         g.add_edges([(curr_vertex + i, 'a{0}'.format(e + 1)) for i in range(p)])
         curr_vertex += p
     return g
-
-
-def FibonacciTree(n):
-    r"""
-    Return the graph of the Fibonacci Tree `F_{i}` of order `n`.
-
-    The Fibonacci tree `F_{i}` is recursively defined as the tree
-    with a root vertex and two attached child trees `F_{i-1}` and
-    `F_{i-2}`, where `F_{1}` is just one vertex and `F_{0}` is empty.
-
-    INPUT:
-
-    - ``n`` -- the recursion depth of the Fibonacci Tree
-
-    EXAMPLES::
-
-        sage: g = graphs.FibonacciTree(3)                                               # needs sage.libs.pari
-        sage: g.is_tree()                                                               # needs sage.libs.pari
-        True
-
-    ::
-
-        sage: l1 = [ len(graphs.FibonacciTree(_)) + 1 for _ in range(6) ]               # needs sage.libs.pari
-        sage: l2 = list(fibonacci_sequence(2,8))                                        # needs sage.libs.pari
-        sage: l1 == l2                                                                  # needs sage.libs.pari
-        True
-
-    AUTHORS:
-
-    - Harald Schilly and Yann Laigle-Chapuy (2010-03-25)
-    """
-    T = Graph(name=f"Fibonacci-Tree-{n}")
-    if n == 1:
-        T.add_vertex(0)
-    if n < 2:
-        return T
-
-    from sage.combinat.combinat import fibonacci_sequence
-    F = list(fibonacci_sequence(n + 2))
-    s = 1.618 ** (n / 1.618 - 1.618)
-    pos = {}
-
-    def fib(level, node, y):
-        pos[node] = (node, y)
-        if level < 2:
-            return
-        level -= 1
-        y -= s
-        diff = F[level]
-        T.add_edge(node, node - diff)
-        if level == 1:  # only one child
-            pos[node - diff] = (node, y)
-            return
-        T.add_edge(node, node + diff)
-        fib(level, node - diff, y)
-        fib(level - 1, node + diff, y)
-
-    T.add_vertices(range(sum(F[:-1])))
-    fib(n, F[n + 1] - 1, 0)
-    T.set_pos(pos)
-
-    return T
 
 
 def GeneralizedPetersenGraph(n, k):
@@ -3162,6 +3003,62 @@ def petersen_family(generate=False):
     return [Graph(x) for x in l]
 
 
+def p2_forbidden_minors():
+    r"""
+    Return an array containing the 35 minimal forbidden excluded minors
+    of the projective plane.
+
+    We constructed the graphs given in Theorem 6.5.1 of [MT2001]_,
+    which is a result of Archdeacon and encoded them in graph6 format.
+    The order of the graphs is the same as they appear in [WA2025]_.
+
+    TESTS::
+
+        sage: len(graphs.families.p2_forbidden_minors())
+        35
+    """
+
+    p2_forbidden_minors_graph6 = [
+        'KFz_????wF?[',
+        'J~{???F@oM?',
+        'I~{?GKF@w',
+        'JFz_?AB_sE?',
+        'I~{?CME`_',
+        'H~}CKMF',
+        'G^~EMK',
+        'H^|ACME',
+        'Himp`cr',
+        'Iimp_CpKO',
+        'IFz@GCdHO',
+        'IBz__aB_o',
+        'FQ~~w',
+        'GlvJ`k',
+        'HilKH`J',
+        'GjlKJs',
+        'HhI]ECZ',
+        'HiMIKSp',
+        'HFwO]Kf',
+        'I]q?a?n@o',
+        'IHIWuFGo_',
+        'IXJWMC`Eg',
+        'GFzfF?',
+        'I]o__OF@o',
+        'G?^vf_',
+        'H?]ufBo',
+        'GlrHhs',
+        'HhIWuRB',
+        'IXCO]FGb?',
+        'Fvz~o',
+        'GlfH]{',
+        'Hl`HGvV',
+        'HhcIHmv',
+        'IhEGICRiw',
+        'JhEIDSD?ga_'
+    ]
+
+    return [Graph(graph_str) for graph_str in p2_forbidden_minors_graph6]
+
+
 def SierpinskiGasketGraph(n):
     """
     Return the Sierpinski Gasket graph of generation `n`.
@@ -3549,7 +3446,7 @@ def WindmillGraph(k, n):
         slide = 1/sin(sector/4)
 
         pos_dict = {}
-        for i in range(0, k):
+        for i in range(k):
             x = float(cos(i*pi/(k-2)))
             y = float(sin(i*pi/(k-2))) + slide
             pos_dict[i] = (x, y)
@@ -3569,179 +3466,6 @@ def WindmillGraph(k, n):
 
     G.name("Windmill graph Wd({}, {})".format(k, n))
     return G
-
-
-def trees(vertices):
-    r"""
-    Return a generator of the distinct trees on a fixed number of vertices.
-
-    INPUT:
-
-    - ``vertices`` -- the size of the trees created
-
-    OUTPUT:
-
-    A generator which creates an exhaustive, duplicate-free listing
-    of the connected free (unlabeled) trees with ``vertices`` number
-    of vertices.  A tree is a graph with no cycles.
-
-    ALGORITHM:
-
-    Uses an algorithm that generates each new tree
-    in constant time.  See the documentation for, and implementation
-    of, the :mod:`sage.graphs.trees` module, including a citation.
-
-    EXAMPLES:
-
-    We create an iterator, then loop over its elements. ::
-
-        sage: tree_iterator = graphs.trees(7)
-        sage: for T in tree_iterator:
-        ....:     print(T.degree_sequence())
-        [2, 2, 2, 2, 2, 1, 1]
-        [3, 2, 2, 2, 1, 1, 1]
-        [3, 2, 2, 2, 1, 1, 1]
-        [4, 2, 2, 1, 1, 1, 1]
-        [3, 3, 2, 1, 1, 1, 1]
-        [3, 3, 2, 1, 1, 1, 1]
-        [4, 3, 1, 1, 1, 1, 1]
-        [3, 2, 2, 2, 1, 1, 1]
-        [4, 2, 2, 1, 1, 1, 1]
-        [5, 2, 1, 1, 1, 1, 1]
-        [6, 1, 1, 1, 1, 1, 1]
-
-    The number of trees on the first few vertex counts.
-    This is sequence A000055 in Sloane's OEIS. ::
-
-        sage: [len(list(graphs.trees(i))) for i in range(0, 15)]
-        [1, 1, 1, 1, 2, 3, 6, 11, 23, 47, 106, 235, 551, 1301, 3159]
-    """
-    from sage.graphs.trees import TreeIterator
-    return iter(TreeIterator(vertices))
-
-
-def nauty_gentreeg(options='', debug=False):
-    r"""
-    Return a generator which creates non-isomorphic trees from nauty's gentreeg
-    program.
-
-    INPUT:
-
-    - ``options`` -- string (default: ``""``); a string passed to ``gentreeg``
-      as if it was run at a system command line. At a minimum, you *must* pass
-      the number of vertices you desire. Sage expects the graphs to be in
-      nauty's "sparse6" format, do not set an option to change this default or
-      results will be unpredictable.
-
-    - ``debug`` -- boolean (default: ``False``); if ``True`` the first line of
-      ``gentreeg``'s output to standard error is captured and the first call to
-      the generator's ``next()`` function will return this line as a string. A
-      line leading with ">A" indicates a successful initiation of the program
-      with some information on the arguments, while a line beginning with ">E"
-      indicates an error with the input.
-
-    The possible options, obtained as output of ``gentreeg -help``::
-
-           n            : the number of vertices. Must be in range 1..128
-        res/mod         : only generate subset res out of subsets 0..mod-1
-          -D<int>       : an upper bound for the maximum degree
-          -Z<int>:<int> : bounds on the diameter
-          -q            : suppress auxiliary output
-
-    Options which cause ``gentreeg`` to use an output format different than the
-    sparse6 format are not listed above (-p, -l, -u) as they will confuse the
-    creation of a Sage graph. The res/mod option can be useful when using the
-    output in a routine run several times in parallel.
-
-    OUTPUT:
-
-    A generator which will produce the graphs as Sage graphs. These will be
-    simple graphs: no loops, no multiple edges, no directed edges.
-
-    .. SEEALSO::
-
-        :meth:`trees` -- another generator of trees
-
-    EXAMPLES:
-
-    The generator can be used to construct trees for testing, one at a time
-    (usually inside a loop). Or it can be used to create an entire list all at
-    once if there is sufficient memory to contain it::
-
-        sage: gen = graphs.nauty_gentreeg("4")
-        sage: next(gen)
-        Graph on 4 vertices
-        sage: next(gen)
-        Graph on 4 vertices
-        sage: next(gen)
-        Traceback (most recent call last):
-        ...
-        StopIteration
-
-    The number of trees on the first few vertex counts. This agrees with
-    :oeis:`A000055`::
-
-        sage: [len(list(graphs.nauty_gentreeg(str(i)))) for i in range(1, 15)]
-        [1, 1, 1, 2, 3, 6, 11, 23, 47, 106, 235, 551, 1301, 3159]
-
-    The ``debug`` switch can be used to examine ``gentreeg``'s reaction to the
-    input in the ``options`` string.  We illustrate success. (A failure will be
-    a string beginning with ">E".)  Passing the "-q" switch to ``gentreeg`` will
-    suppress the indicator of a successful initiation, and so the first returned
-    value might be an empty string if ``debug`` is ``True``::
-
-        sage: gen = graphs.nauty_gentreeg("4", debug=True)
-        sage: print(next(gen))
-        >A ...gentreeg ...
-        sage: gen = graphs.nauty_gentreeg("4 -q", debug=True)
-        sage: next(gen)
-        ''
-
-    TESTS:
-
-    The number `n` of vertices must be in range 1..128::
-
-        sage: list(graphs.nauty_gentreeg("0", debug=False))
-        Traceback (most recent call last):
-        ...
-        ValueError: wrong format of parameter options
-        sage: list(graphs.nauty_gentreeg("0", debug=True))
-        ['>E gentreeg: n must be in the range 1..128\n']
-        sage: list(graphs.nauty_gentreeg("200", debug=True))
-        ['>E gentreeg: n must be in the range 1..128\n']
-
-    Wrong input::
-
-        sage: list(graphs.nauty_gentreeg("3 -x", debug=False))
-        Traceback (most recent call last):
-        ...
-        ValueError: wrong format of parameter options
-        sage: list(graphs.nauty_gentreeg("3 -x", debug=True))
-        ['>E Usage: ...gentreeg [-D#] [-Z#:#] [-ulps] [-q] n... [res/mod] ...
-        sage: list(graphs.nauty_gentreeg("3", debug=True))
-        ['>A ...gentreeg ...\n', Graph on 3 vertices]
-    """
-    import shlex
-    from sage.features.nauty import NautyExecutable
-    gen_path = NautyExecutable("gentreeg").absolute_filename()
-    sp = subprocess.Popen(shlex.quote(gen_path) + " {0}".format(options), shell=True,
-                          stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                          stderr=subprocess.PIPE, close_fds=True,
-                          encoding='latin-1')
-    msg = sp.stderr.readline()
-    if debug:
-        yield msg
-    elif msg.startswith('>E'):
-        raise ValueError('wrong format of parameter options')
-    gen = sp.stdout
-    while True:
-        try:
-            s = next(gen)
-        except StopIteration:
-            # Exhausted list of graphs from nauty geng
-            return
-        G = Graph(s[:-1], format='sparse6', loops=False, multiedges=False)
-        yield G
 
 
 def RingedTree(k, vertex_labels=True):
@@ -3792,6 +3516,7 @@ def RingedTree(k, vertex_labels=True):
         raise ValueError('The number of levels must be >= 1.')
 
     # Creating the Balanced tree, which contains most edges already
+    from sage.graphs.generators.trees import BalancedTree
     g = BalancedTree(2, k - 1)
     g.name('Ringed Tree on ' + str(k) + ' levels')
 
@@ -4292,7 +4017,7 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
     if Sigma == 'random':
         for x in range(m):
             for line in L_i[x]:
-                [i, j] = line
+                i, j = line
                 temp = phi[(j, line)][:]
                 for hyp in phi[(i, line)]:
                     rand = randrange(0, len(temp))
@@ -4302,7 +4027,7 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
     elif Sigma == 'fixed':
         for x in range(m):
             for line in L_i[x]:
-                [i, j] = line
+                i, j = line
                 temp = phi[(j, line)][:]
                 for hyp in phi[(i, line)]:
                     val = temp.pop()

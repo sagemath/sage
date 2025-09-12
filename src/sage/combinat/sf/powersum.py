@@ -797,6 +797,9 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 sage: p.zero().principal_specialization(3)
                 0
             """
+            if n == 1:
+                return self.base_ring().sum(self.coefficients(sort=False))
+
             def get_variable(ring, name):
                 try:
                     ring(name)
@@ -926,12 +929,9 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                     t = get_variable(self.base_ring(), 't')
 
                 def f(partition):
-                    n = 0
-                    for part in partition:
-                        if part != 1:
-                            return 0
-                        n += 1
-                    return t**n
+                    if partition and partition[0] != 1:
+                        return 0
+                    return t**len(partition)
 
                 return self.parent()._apply_module_morphism(self, f, t.parent())
 

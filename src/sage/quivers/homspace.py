@@ -223,9 +223,7 @@ class QuiverHomSpace(Homset):
             return False
         if not other._domain.has_coerce_map_from(self._domain):
             return False
-        if not self._codomain.has_coerce_map_from(other._codomain):
-            return False
-        return True
+        return self._codomain.has_coerce_map_from(other._codomain)
 
     def __call__(self, *data, **kwds):
         r"""

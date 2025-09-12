@@ -94,7 +94,7 @@ def write_flint_cython_headers(output_dir, documentation=False):
                 print('    ## {}'.format(section), file=output)
             for func_signatures, doc in content[section]:
                 if documentation:
-                    print('', file=output)
+                    print(file=output)
                     for line in doc:
                         print('    # {}'.format(line), file=output)
                 for line in func_signatures:

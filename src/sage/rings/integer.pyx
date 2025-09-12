@@ -401,6 +401,42 @@ cdef class IntegerWrapper(Integer):
             Element.__init__(self, parent=parent)
         Integer.__init__(self, x, base=base)
 
+
+cdef inline Integer move_integer_from_mpz(mpz_t x):
+    """
+    Construct an :class:`Integer` by moving it from a ``mpz_t`` object.
+
+    This function is intend to be used as follows::
+
+        cdef mpz_t x  # local variable
+        mpz_init(x)
+        sig_on()
+        mpz_SOMETHING_MUTATE_X(x, ...)
+        sig_off()
+        return move_integer_from_mpz(x)  # no need mpz_clear(x)
+
+    The reason to do so is explained in :issue:`24986`:
+    if the user interrupts the operation, ``x`` may be in an inconsistent state,
+    as such we don't want to call ``fast_tp_dealloc`` on it, because
+    putting a corrupted object in the integer pool may lead to incorrect results
+    afterwards.
+
+    Here we do not call ``mpz_clear(x)`` either, but double ``free()``
+    is also undesirable. Compared to these issues, memory leak is the least problematic.
+
+    In this case:
+
+    - if ``sig_on()`` throws, :func:`move_integer_from_mpz` will not be called, as such
+      ``x`` will not be cleared;
+
+    - if ``sig_on()`` does not throw, :func:`move_integer_from_mpz` will call ``mpz_clear(x)``.
+    """
+    cdef Integer y = <Integer>PY_NEW(Integer)
+    mpz_swap(y.value, x)
+    mpz_clear(x)
+    return y
+
+
 cdef class Integer(sage.structure.element.EuclideanDomainElement):
     r"""
     The :class:`Integer` class represents arbitrary precision
@@ -447,6 +483,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
     """
 
     def __cinit__(self):
+        # this function is only called to create global_dummy_Integer,
+        # after that it will be replaced by fast_tp_new
         global the_integer_ring
         mpz_init(self.value)
         self._parent = the_integer_ring
@@ -1071,6 +1109,19 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             NotImplementedError: gmpy2 is not installed
         """
         return gmpy2.GMPy_MPZ_From_mpz(self.value)
+
+    def _regina_(self, regina):
+        r"""
+        Return a Regina integer.
+
+        EXAMPLES::
+
+            sage: r5 = regina(5);(r5, type(r5), type(r5._inst))  # optional regina
+            (5,
+            <class 'sage.interfaces.regina.ReginaElement'>,
+            <class 'regina.engine.Integer'>)
+        """
+        return regina.Integer(mpz_get_si(self.value))
 
     def str(self, int base=10):
         r"""
@@ -1746,9 +1797,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         cdef Integer temp
 
         if mpz_sgn(self.value) == 0:
-            temp = PY_NEW(Integer)
-            mpz_set_ui(temp.value, 0)
-            return temp
+            return self
 
         if mpz_sgn(self.value) > 0:
             temp = self.exact_log(base)
@@ -1780,7 +1829,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             mpz_add(x.value, (<Integer>left).value, (<Integer>right).value)
             return x
         elif type(right) is Rational:
-            y = <Rational> Rational.__new__(Rational)
+            y = <Rational>PY_NEW(Rational)
             mpq_add_z(y.value, (<Rational>right).value, (<Integer>left).value)
             return y
 
@@ -1863,7 +1912,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             mpz_sub(x.value, (<Integer>left).value, (<Integer>right).value)
             return x
         elif type(right) is Rational:
-            y = <Rational> Rational.__new__(Rational)
+            y = <Rational>PY_NEW(Rational)
             mpz_mul(mpq_numref(y.value), (<Integer>left).value,
                     mpq_denref((<Rational>right).value))
             mpz_sub(mpq_numref(y.value), mpq_numref(y.value),
@@ -1975,7 +2024,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             mpz_mul(x.value, (<Integer>left).value, (<Integer>right).value)
             return x
         elif type(right) is Rational:
-            y = <Rational> Rational.__new__(Rational)
+            y = <Rational>PY_NEW(Rational)
             mpq_mul_z(y.value, (<Rational>right).value, (<Integer>left).value)
             return y
 
@@ -2038,14 +2087,14 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         if type(left) is type(right):
             if mpz_sgn((<Integer>right).value) == 0:
                 raise ZeroDivisionError("rational division by zero")
-            x = <Rational> Rational.__new__(Rational)
+            x = <Rational>PY_NEW(Rational)
             mpq_div_zz(x.value, (<Integer>left).value, (<Integer>right).value)
             return x
         elif type(right) is Rational:
             if mpq_sgn((<Rational>right).value) == 0:
                 raise ZeroDivisionError("rational division by zero")
             # left * den(right) / num(right)
-            y = <Rational> Rational.__new__(Rational)
+            y = <Rational>PY_NEW(Rational)
             mpq_div_zz(y.value, (<Integer>left).value,
                        mpq_numref((<Rational>right).value))
             mpz_mul(mpq_numref(y.value), mpq_numref(y.value),
@@ -2067,7 +2116,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         if mpz_sgn((<Integer>right).value) == 0:
             raise ZeroDivisionError("rational division by zero")
-        x = <Rational> Rational.__new__(Rational)
+        x = <Rational>PY_NEW(Rational)
         mpq_div_zz(x.value, self.value, (<Integer>right).value)
         return x
 
@@ -2299,18 +2348,18 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         elif n == 1:
             return self
 
-        cdef Integer x
         cdef Rational q
+        cdef mpz_t x
         if n > 0:
-            x = PY_NEW(Integer)
+            mpz_init(x)
             sig_on()
-            mpz_pow_ui(x.value, self.value, n)
+            mpz_pow_ui(x, self.value, n)
             sig_off()
-            return x
+            return move_integer_from_mpz(x)
         else:
             if mpz_sgn(self.value) == 0:
                 raise ZeroDivisionError("rational division by zero")
-            q = Rational.__new__(Rational)
+            q = <Rational>PY_NEW(Rational)
             sig_on()
             mpz_pow_ui(mpq_denref(q.value), self.value, -n)
             if mpz_sgn(mpq_denref(q.value)) > 0:
@@ -2934,7 +2983,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: y.exp(prec=53)  # default RealField precision                         # needs sage.symbolic
             +infinity
         """
-        from sage.functions.all import exp
+        from sage.functions.log import exp
         res = exp(self, dont_call_method_on_arg=True)
         if prec:
             return res.n(prec=prec)
@@ -3584,7 +3633,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             ZeroDivisionError: rational reconstruction with zero modulus
         """
         cdef Integer a
-        cdef Rational x = <Rational>Rational.__new__(Rational)
+        cdef Rational x = <Rational>PY_NEW(Rational)
         try:
             mpq_rational_reconstruction(x.value, self.value, m.value)
         except ValueError:
@@ -3876,8 +3925,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sig_off()
             return x
 
-    def factor(self, algorithm='pari', proof=None, limit=None, int_=False,
-               verbose=0):
+    def factor(self, algorithm=None, proof=None, limit=None, int_=False,
+               verbose=0, *, flint_bits=None):
         """
         Return the prime factorization of this integer as a
         formal Factorization object.
@@ -3896,7 +3945,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
           - ``'magma'`` -- use the MAGMA computer algebra system (requires
             an installation of MAGMA)
 
-          - ``'qsieve'`` -- use Bill Hart's quadratic sieve code;
+          - ``'qsieve'`` -- use ``qsieve_factor`` in the FLINT library;
             WARNING: this may not work as expected, see qsieve? for
             more information
 
@@ -3909,6 +3958,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         - ``limit`` -- integer or ``None`` (default: ``None``); if limit is
           given it must fit in a ``signed int``, and the factorization is done
           using trial division and primes up to limit
+
+        - ``flint_bits`` -- integer or ``None`` (default: ``None``); if specified,
+          perform only a partial factorization, primes at most ``2^flint_bits``
+          have a high probability of being detected
 
         OUTPUT: a Factorization object containing the prime factors and
         their multiplicities
@@ -3958,6 +4011,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: n.factor(algorithm='flint')                                           # needs sage.libs.flint
             2 * 3 * 11 * 13 * 41 * 73 * 22650083 * 1424602265462161
 
+        Example with ``flint_bits``. The small prime factor is found since it is
+        much smaller than `2^{50}`, but not the large ones::
+
+            sage: n = next_prime(2^256) * next_prime(2^257) * next_prime(2^40)
+            sage: n.factor(algorithm='flint', flint_bits=50)                            # needs sage.libs.flint
+            1099511627791 * 2681...6291
+
         We factor using a quadratic sieve algorithm::
 
             sage: # needs sage.libs.pari
@@ -3985,13 +4045,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: n.factor(algorithm='foobar')
             Traceback (most recent call last):
             ...
-            ValueError: Algorithm is not known
+            ValueError: algorithm is not known
         """
         from sage.structure.factorization import Factorization
         from sage.structure.factorization_integer import IntegerFactorization
-
-        if algorithm not in ['pari', 'flint', 'kash', 'magma', 'qsieve', 'ecm']:
-            raise ValueError("Algorithm is not known")
 
         cdef Integer n, p, unit
 
@@ -4003,17 +4060,26 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             unit = one
         else:
             n = PY_NEW(Integer)
-            unit = PY_NEW(Integer)
             mpz_neg(n.value, self.value)
-            mpz_set_si(unit.value, -1)
-
-        if mpz_cmpabs_ui(n.value, 1) == 0:
-            return IntegerFactorization([], unit=unit, unsafe=True,
-                                        sort=False, simplify=False)
+            unit = smallInteger(-1)
 
         if limit is not None:
+            if algorithm is not None:
+                raise ValueError('trial division will always be used when limit is provided')
             from sage.rings.factorint import factor_trial_division
             return factor_trial_division(self, limit)
+
+        if algorithm is None:
+            algorithm = 'pari'
+        elif algorithm not in ['pari', 'flint', 'kash', 'magma', 'qsieve', 'ecm']:
+            raise ValueError("algorithm is not known")
+
+        if algorithm != 'flint' and flint_bits is not None:
+            raise ValueError("cannot specify flint_bits when algorithm is not flint")
+
+        if n.is_one():
+            return IntegerFactorization([], unit=unit, unsafe=True,
+                                        sort=False, simplify=False)
 
         if mpz_fits_slong_p(n.value):
             global n_factor_to_list
@@ -4044,7 +4110,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                                         sort=False, simplify=False)
         elif algorithm == 'flint':
             from sage.rings.factorint_flint import factor_using_flint
-            F = factor_using_flint(n)
+            if flint_bits is not None and flint_bits <= 0:
+                raise ValueError('flint_bits must be positive or None')
+            F = factor_using_flint(n, flint_bits or 0)
             F.sort()
             return IntegerFactorization(F, unit=unit, unsafe=True,
                                         sort=False, simplify=False)
@@ -6662,13 +6730,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         if not mpz_sgn(n.value):
             mpz_set_ui(t.value, 0)
             mpz_abs(g.value, self.value)
-            mpz_set_si(s.value, 1 if mpz_sgn(self.value) >= 0 else -1)
+            s = smallInteger(1 if mpz_sgn(self.value) >= 0 else -1)
             return g, s, t
 
         if not mpz_sgn(self.value):
             mpz_set_ui(s.value, 0)
             mpz_abs(g.value, n.value)
-            mpz_set_si(t.value, 1 if mpz_sgn(n.value) >= 0 else -1)
+            t = smallInteger(1 if mpz_sgn(n.value) >= 0 else -1)
             return g, s, t
 
         # both n and self are nonzero, so we need to do a division and
@@ -6888,8 +6956,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         if mpz_sgn(self.value) == 0:
             raise ZeroDivisionError("rational division by zero")
-        cdef Rational x
-        x = <Rational> Rational.__new__(Rational)
+        cdef Rational x = <Rational>PY_NEW(Rational)
         mpz_set_ui(mpq_numref(x.value), 1)
         mpz_set(mpq_denref(x.value), self.value)
         if mpz_sgn(self.value) == -1:
@@ -7509,8 +7576,6 @@ cdef int sizeof_Integer
 # from. DO NOT INITIALIZE IT AGAIN and DO NOT REFERENCE IT!
 cdef Integer global_dummy_Integer
 global_dummy_Integer = Integer()
-# Reallocate to one limb to fix :issue:`31340` and :issue:`33081`
-_mpz_realloc(global_dummy_Integer.value, 1)
 
 
 def _check_global_dummy_Integer():
@@ -7523,10 +7588,10 @@ def _check_global_dummy_Integer():
         sage: _check_global_dummy_Integer()
         True
     """
-    # Check that it has exactly one limb allocated
-    # This is assumed later in fast_tp_new() :issue:`33081`
+    # Check that it has no allocation (requires GMP >= 6.2, see :issue:`31340`)
+    # fast_tp_new() later assumes that memcpy this mpz object gives a valid new mpz
     cdef mpz_ptr dummy = global_dummy_Integer.value
-    if dummy._mp_alloc == 1 and dummy._mp_size == 0:
+    if dummy._mp_alloc == 0 and dummy._mp_size == 0:
         return True
 
     raise AssertionError(
@@ -7556,7 +7621,6 @@ cdef PyObject* fast_tp_new(type t, args, kwds) except NULL:
     global integer_pool, integer_pool_count, total_alloc, use_pool
 
     cdef PyObject* new
-    cdef mpz_ptr new_mpz
 
     # for profiling pool usage
     # total_alloc += 1
@@ -7589,12 +7653,10 @@ cdef PyObject* fast_tp_new(type t, args, kwds) except NULL:
         # created before this tp_new started to operate.
         memcpy(new, (<void*>global_dummy_Integer), sizeof_Integer)
 
-        # We allocate memory for the _mp_d element of the value of this
-        # new Integer. We allocate one limb. Normally, one would use
-        # mpz_init() for this, but we allocate the memory directly.
-        # This saves time both by avoiding extra function calls and
-        # because the rest of the mpz struct was already initialized
-        # fully using the memcpy above.
+        # In sufficiently new versions of GMP, mpz_init() does not allocate
+        # any memory. We assume that memcpy a newly-initialized mpz results
+        # in a valid new mpz. Normally, one would use mpz_init() for this.
+        # This saves time by avoiding extra function calls.
         #
         # What is done here is potentially very dangerous as it reaches
         # deeply into the internal structure of GMP. Consequently things
@@ -7606,10 +7668,6 @@ cdef PyObject* fast_tp_new(type t, args, kwds) except NULL:
         #  various internals described here may change in future GMP releases.
         #  Applications expecting to be compatible with future releases should use
         #  only the documented interfaces described in previous chapters."
-        #
-        # NOTE: This assumes global_dummy_Integer.value._mp_alloc == 1
-        new_mpz = <mpz_ptr>((<Integer>new).value)
-        new_mpz._mp_d = <mp_ptr>check_malloc(GMP_LIMB_BITS >> 3)
 
     # This line is only needed if Python is compiled in debugging mode
     # './configure --with-pydebug' or SAGE_DEBUG=yes. If that is the
@@ -7622,7 +7680,7 @@ cdef PyObject* fast_tp_new(type t, args, kwds) except NULL:
     # The global_dummy_Integer may have a reference count larger than
     # one, but it is expected that newly created objects have a
     # reference count of one. This is potentially unneeded if
-    # everybody plays nice, because the gobal_dummy_Integer has only
+    # everybody plays nice, because the global_dummy_Integer has only
     # one reference in that case.
 
     # Objects from the pool have reference count zero, so this
@@ -7659,7 +7717,7 @@ cdef void fast_tp_dealloc(PyObject* o) noexcept:
             return
 
         # No space in the pool, so just free the mpz_t.
-        sig_free(o_mpz._mp_d)
+        mpz_clear(o_mpz)
 
     # Free the object. This assumes that Py_TPFLAGS_HAVE_GC is not
     # set. If it was set another free function would need to be
@@ -7813,11 +7871,6 @@ cdef double mpz_get_d_nearest(mpz_t x) except? -648555075988944.5:
     # to have 54 bits remaining.
     cdef mp_bitcnt_t shift = sx - 54
 
-    # Compute q = trunc(x / 2^shift) and let remainder_is_zero be True
-    # if and only if no truncation occurred.
-    cdef int remainder_is_zero
-    remainder_is_zero = mpz_divisible_2exp_p(x, shift)
-
     sig_on()
 
     cdef mpz_t q
@@ -7842,12 +7895,16 @@ cdef double mpz_get_d_nearest(mpz_t x) except? -648555075988944.5:
         # Round towards zero
         pass
     else:
-        if not remainder_is_zero:
-            # Remainder is nonzero: round away from zero
+        if (q64 & 2) == 2:
+            # round to even and round away from zero gives the same result, no need to check
             q64 += 1
         else:
-            # Halfway case: round to even
-            q64 += (q64 & 2) - 1
+            if mpz_divisible_2exp_p(x, shift):
+                # Halfway case: round to even
+                q64 -= 1
+            else:
+                # Remainder is nonzero: round away from zero
+                q64 += 1
 
     # The conversion of q64 to double is *exact*.
     # This is because q64 is even and satisfies 2^53 <= q64 <= 2^54.

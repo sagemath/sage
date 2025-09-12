@@ -78,13 +78,13 @@ extension_data = {
   'matrix_generic_dense' : files('matrix_generic_dense.pyx'),
   'matrix_generic_sparse' : files('matrix_generic_sparse.pyx'),
   'matrix_gfpn_dense' : files('matrix_gfpn_dense.pyx'),
+  'matrix_gf2e_dense': files('matrix_gf2e_dense.pyx'),
   'matrix_laurent_mpolynomial_dense' : files(
     'matrix_laurent_mpolynomial_dense.pyx',
   ),
   'matrix_numpy_dense' : files('matrix_numpy_dense.pyx'),
   'matrix_numpy_integer_dense' : files('matrix_numpy_integer_dense.pyx'),
   'matrix_polynomial_dense' : files('matrix_polynomial_dense.pyx'),
-  'matrix_rational_sparse' : files('matrix_rational_sparse.pyx'),
   'matrix_real_double_dense' : files('matrix_real_double_dense.pyx'),
   'matrix_sparse' : files('matrix_sparse.pyx'),
   'matrix_symbolic_dense' : files('matrix_symbolic_dense.pyx'),
@@ -108,6 +108,8 @@ foreach name, pyx : extension_data
     deps += [flint, mpfi]
   elif name == 'misc_flint' or name == 'matrix_rational_sparse' or name == 'change_ring'
     deps += [flint]
+  elif name == 'matrix_gf2e_dense'
+    deps += [m4rie]
   endif
 
   py.extension_module(
@@ -129,7 +131,6 @@ endforeach
 
 extension_data_cpp = {
   'matrix_cyclo_dense': files('matrix_cyclo_dense.pyx'),
-  'matrix_gf2e_dense': files('matrix_gf2e_dense.pyx'),
   'matrix_integer_dense': files('matrix_integer_dense.pyx'),
   'matrix_integer_sparse': files('matrix_integer_sparse.pyx'),
   'matrix_mod2_dense': files('matrix_mod2_dense.pyx'),
@@ -138,17 +139,18 @@ extension_data_cpp = {
   'matrix_modn_sparse': files('matrix_modn_sparse.pyx'),
   'matrix_mpolynomial_dense': files('matrix_mpolynomial_dense.pyx'),
   'matrix_rational_dense': files('matrix_rational_dense.pyx'),
+  'matrix_rational_sparse': files('matrix_rational_sparse.pyx'),
 }
 
 foreach name, pyx : extension_data_cpp
   override_options = ['cython_language=cpp']
   if name in [
-    'matrix_gf2e_dense',
     'matrix_integer_dense',
     'matrix_integer_sparse',
     'matrix_modn_dense_float',
     'matrix_modn_dense_double',
     'matrix_modn_sparse',
+    'matrix_rational_sparse',
   ]
     # Temporary workaround for https://github.com/linbox-team/linbox/issues/306 and https://github.com/malb/m4rie/pull/6
     override_options += ['cpp_std=c++11']
@@ -178,9 +180,6 @@ foreach name, pyx : extension_data_cpp
     singular,
     zlib,
   ]
-  if name == 'matrix_gf2e_dense'
-    deps += [m4rie]
-  endif
 
   py.extension_module(
     name,

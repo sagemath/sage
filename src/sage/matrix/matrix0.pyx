@@ -556,6 +556,28 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         raise NotImplementedError("this must be defined in the derived type.")
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        """
+        Copy element (iSrc, jSrc) from ``src`` to position (iDst, jDst) in
+        ``self``. It is assumed ``src`` is the same type of matrix as``self``,
+        with the same base ring.
+
+        This should generally be reimplemented in subclasses to avoid the type
+        conversion that often is necessary in ``get_unsafe`` and
+        ``set_unsafe``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be the same type as
+                    ``self`` with the same base ring.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+        """
+        cdef Matrix _src = <Matrix>src
+        self.set_unsafe(iDst, jDst, _src.get_unsafe(iSrc, jSrc))
+
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
@@ -3019,9 +3041,15 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         return self.with_permuted_rows(row_permutation).with_permuted_columns(column_permutation)
 
-    def add_multiple_of_row(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_col=0):
+    def add_multiple_of_row(self, Py_ssize_t i, Py_ssize_t j, s,
+                            Py_ssize_t start_col=0, Py_ssize_t end_col=-1):
         """
-        Add s times row j to row i.
+        Add ``s`` times row ``j`` to row ``i``.
+
+        This operates on columns ``c`` such that ``start_col <= c <= end_col``.
+
+        The parameters ``start_col`` and ``end_col`` may be negative,
+        representing indices from the end of the row.
 
         EXAMPLES: We add -3 times the first row to the second row of an
         integer matrix, remembering to start numbering rows at zero::
@@ -3049,11 +3077,28 @@ cdef class Matrix(sage.structure.element.Matrix):
             ...
             TypeError: Multiplying row by Symbolic Ring element cannot be done over
             Rational Field, use change_ring or with_added_multiple_of_row instead.
+
+        Using the optional parameters::
+
+            sage: m = matrix(3, 4, range(12)); m
+            [ 0  1  2  3]
+            [ 4  5  6  7]
+            [ 8  9 10 11]
+            sage: m.add_multiple_of_row(0, 1, -2, start_col=1, end_col=2); m
+            [  0  -9 -10   3]
+            [  4   5   6   7]
+            [  8   9  10  11]
         """
         self.check_row_bounds_and_mutability(i, j)
+        nc = self._ncols
+        if start_col < 0: start_col += nc
+        if end_col < 0: end_col += nc
         try:
             s = self._coerce_element(s)
-            self.add_multiple_of_row_c(i, j, s, start_col)
+            if end_col == nc - 1:
+                self.add_multiple_of_row_c(i, j, s, start_col)
+            else:
+                self.add_multiple_of_row_c_end(i, j, s, start_col, end_col)
         except TypeError:
             raise TypeError('Multiplying row by %s element cannot be done over %s, use change_ring or with_added_multiple_of_row instead.' % (s.parent(), self.base_ring()))
 
@@ -3062,7 +3107,14 @@ cdef class Matrix(sage.structure.element.Matrix):
         for c from start_col <= c < self._ncols:
             self.set_unsafe(i, c, self.get_unsafe(i, c) + s*self.get_unsafe(j, c))
 
-    def with_added_multiple_of_row(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_col=0):
+    cdef add_multiple_of_row_c_end(self, Py_ssize_t i, Py_ssize_t j, s,
+                               Py_ssize_t start_col, Py_ssize_t end_col):
+        cdef Py_ssize_t c
+        for c from start_col <= c <= end_col:
+            self.set_unsafe(i, c, self.get_unsafe(i, c) + s*self.get_unsafe(j, c))
+
+    def with_added_multiple_of_row(self, Py_ssize_t i, Py_ssize_t j, s,
+                                   Py_ssize_t start_col=0, Py_ssize_t end_col=-1):
         """
         Add s times row j to row i, returning new matrix.
 
@@ -3091,22 +3143,31 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         cdef Matrix temp
         self.check_row_bounds_and_mutability(i, j)
+        nc = self._ncols
+        if start_col < 0: start_col += nc
+        if end_col < 0: end_col += nc
         try:
             s = self._coerce_element(s)
             temp = self.__copy__()
-            temp.add_multiple_of_row_c(i, j, s, start_col)
+            temp.add_multiple_of_row_c_end(i, j, s, start_col, end_col)
             return temp
         # If scaling factor cannot be coerced, change the base ring to
         # one acceptable to both the original base ring and the scaling factor.
         except TypeError:
             temp = self.change_ring(Sequence([s,self.base_ring()(0)]).universe())
             s = temp._coerce_element(s)
-            temp.add_multiple_of_row_c(i, j, s, start_col)
+            temp.add_multiple_of_row_c_end(i, j, s, start_col, end_col)
             return temp
 
-    def add_multiple_of_column(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_row=0):
+    def add_multiple_of_column(self, Py_ssize_t i, Py_ssize_t j, s,
+                               Py_ssize_t start_row=0, Py_ssize_t end_row=-1):
         """
-        Add s times column j to column i.
+        Add ``s`` times column ``j`` to column ``i``.
+
+        This operates on rows ``r`` such that ``start_row <= r <= end_row``.
+
+        The parameters ``start_row`` and ``end_row`` may be negative,
+        representing indices from the end of the column.
 
         EXAMPLES: We add -1 times the third column to the second column of
         an integer matrix, remembering to start numbering cols at zero::
@@ -3134,11 +3195,30 @@ cdef class Matrix(sage.structure.element.Matrix):
             ...
             TypeError: Multiplying column by Symbolic Ring element cannot be done over
             Rational Field, use change_ring or with_added_multiple_of_column instead.
+
+        Using the optional parameters::
+
+            sage: m = matrix(4, 3, range(12)); m
+            [ 0  1  2]
+            [ 3  4  5]
+            [ 6  7  8]
+            [ 9 10 11]
+            sage: m.add_multiple_of_column(0, 1, -2, start_row=1, end_row=2); m
+            [ 0  1  2]
+            [-5  4  5]
+            [-8  7  8]
+            [ 9 10 11]
         """
         self.check_column_bounds_and_mutability(i, j)
+        nr = self._nrows
+        if start_row < 0: start_row += nr
+        if end_row < 0: end_row += nr
         try:
             s = self._coerce_element(s)
-            self.add_multiple_of_column_c(i, j, s, start_row)
+            if end_row == nr - 1:
+                self.add_multiple_of_column_c(i, j, s, start_row)
+            else:
+                self.add_multiple_of_column_c_end(i, j, s, start_row, end_row)
         except TypeError:
             raise TypeError('Multiplying column by %s element cannot be done over %s, use change_ring or with_added_multiple_of_column instead.' % (s.parent(), self.base_ring()))
 
@@ -3147,7 +3227,14 @@ cdef class Matrix(sage.structure.element.Matrix):
         for r from start_row <= r < self._nrows:
             self.set_unsafe(r, i, self.get_unsafe(r, i) + s*self.get_unsafe(r, j))
 
-    def with_added_multiple_of_column(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_row=0):
+    cdef add_multiple_of_column_c_end(self, Py_ssize_t i, Py_ssize_t j, s,
+                                      Py_ssize_t start_row, Py_ssize_t end_row):
+        cdef Py_ssize_t r
+        for r from start_row <= r <= end_row:
+            self.set_unsafe(r, i, self.get_unsafe(r, i) + s*self.get_unsafe(r, j))
+
+    def with_added_multiple_of_column(self, Py_ssize_t i, Py_ssize_t j, s,
+                                      Py_ssize_t start_row=0, Py_ssize_t end_row=-1):
         """
         Add s times column j to column i, returning new matrix.
 
@@ -3176,17 +3263,20 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         cdef Matrix temp
         self.check_column_bounds_and_mutability(i, j)
+        nr = self._nrows
+        if start_row < 0: start_row += nr
+        if end_row < 0: end_row += nr
         try:
             s = self._coerce_element(s)
             temp = self.__copy__()
-            temp.add_multiple_of_column_c(i, j, s, start_row)
+            temp.add_multiple_of_column_c_end(i, j, s, start_row, end_row)
             return temp
         # If scaling factor cannot be coerced, change the base ring to
         # one acceptable to both the original base ring and the scaling factor.
         except TypeError:
             temp = self.change_ring(Sequence([s,self.base_ring()(0)]).universe())
             s = temp._coerce_element(s)
-            temp.add_multiple_of_column_c(i, j, s, start_row)
+            temp.add_multiple_of_column_c_end(i, j, s, start_row, end_row)
             return temp
 
     def rescale_row(self, Py_ssize_t i, s, Py_ssize_t start_col=0):
@@ -6284,39 +6374,3 @@ def unpickle(cls, parent, immutability, cache, data, version):
     else:
         A._unpickle_generic(data, version)
     return A
-
-
-def set_max_rows(n):
-    """
-    Set the global variable ``max_rows`` (which is used in deciding how to
-    output a matrix).
-
-    EXAMPLES::
-
-        sage: from sage.matrix.matrix0 import set_max_rows
-        sage: set_max_rows(20)
-        doctest:...: DeprecationWarning: 'set_max_rows' is replaced by 'matrix.options.max_rows'
-        See https://github.com/sagemath/sage/issues/30552 for details.
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(30552, "'set_max_rows' is replaced by 'matrix.options.max_rows'")
-    from sage.matrix.constructor import options
-    options.max_rows = n-1
-
-
-def set_max_cols(n):
-    """
-    Set the global variable ``max_cols`` (which is used in deciding how to
-    output a matrix).
-
-    EXAMPLES::
-
-        sage: from sage.matrix.matrix0 import set_max_cols
-        sage: set_max_cols(50)
-        doctest:...: DeprecationWarning: 'set_max_cols' is replaced by 'matrix.options.max_cols'
-        See https://github.com/sagemath/sage/issues/30552 for details.
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(30552, "'set_max_cols' is replaced by 'matrix.options.max_cols'")
-    from sage.matrix.constructor import options
-    options.max_cols = n-1

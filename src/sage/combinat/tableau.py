@@ -9350,10 +9350,7 @@ class IncreasingTableaux_shape_weight(IncreasingTableaux_shape):
             for i in row:
                 content_list[i-1] = 1
 
-        if tuple(content_list) != self.weight:
-            return False
-
-        return True
+        return tuple(content_list) == self.weight
 
     def __iter__(self):
         """

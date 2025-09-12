@@ -482,7 +482,7 @@ SAGE_ROOT                 Root directory (create by git clone)
 │   └── pkgs              Every package is a subdirectory here
 │       ├── 4ti2/
 │       …
-│       └── zlib/
+│       └── zipp/
 ├── configure             Top-level configure script
 ├── COPYING.txt           Copyright information
 ├── pkgs                  Source trees of Python distribution packages
@@ -492,8 +492,9 @@ SAGE_ROOT                 Root directory (create by git clone)
 │   ├── sage-setup
 │   │   ├── sage_setup/
 │   │   └── setup.py
-│   └── sage-sws2rst
-│       ├── sage_sws2rst/
+│   └── sagemath-standard
+│       ├── bin/
+│       ├── sage -> ../../src/sage
 │       └── setup.py
 ├── local  (SAGE_LOCAL)   Installation hierarchy for non-Python packages
 │   ├── bin               Executables
@@ -522,7 +523,7 @@ SAGE_ROOT                 Root directory (create by git clone)
 │   └── pkgs              Build logs of individual packages
 │       ├── alabaster-0.7.12.log
 │       …
-│       └── zlib-1.2.11.log
+│       └── zipp-3.19.0.log
 ├── m4                    M4 macros for generating the configure script
 │   └── *.m4
 ├── Makefile              Running "make" uses this file
@@ -536,7 +537,7 @@ SAGE_ROOT                 Root directory (create by git clone)
 ├── upstream              Source tarballs of packages
 │   ├── Babel-2.9.1.tar.gz
 │   …
-│   └── zlib-1.2.11.tar.gz
+│   └── zipp-3.19.0-py3-none-any.whl
 ├── venv -> SAGE_VENV     Convenience symlink to the virtual environment
 └── VERSION.txt
 ```

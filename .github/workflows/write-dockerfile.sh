@@ -275,7 +275,7 @@ cat <<EOF
 FROM with-system-packages AS bootstrapped
 #:bootstrapping:
 RUN rm -rf /new /sage/.git
-$ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap conftest.py configure_wrapper configure.ac sage .homebrew-build-env tox.ini .gitignore pyproject.toml meson.build /new/
+$ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap conftest.py configure_wrapper configure.ac sage .homebrew-build-env tox.ini .gitignore pyproject.toml meson.build meson.options /new/
 $ADD config/config.rpath /new/config/config.rpath
 $ADD src/doc/bootstrap /new/src/doc/bootstrap
 $ADD src/meson.build /new/src/
@@ -327,7 +327,7 @@ ARG NUMPROC=8
 ENV MAKE="make -j\${NUMPROC}"
 ARG USE_MAKEFLAGS="-k V=0"
 ENV SAGE_CHECK=warn
-ENV SAGE_CHECK_PACKAGES="!cython,!python3,!cysignals,!linbox,!ppl,!cmake,!rpy2,!sage_sws2rst"
+ENV SAGE_CHECK_PACKAGES="!cython,!python3,!cysignals,!linbox,!ppl,!cmake,!rpy2"
 #:toolchain:
 $RUN$CHECK_STATUS_THEN make \${USE_MAKEFLAGS} base-toolchain$ENDRUN$THEN_SAVE_STATUS
 
@@ -336,7 +336,7 @@ ARG NUMPROC=8
 ENV MAKE="make -j\${NUMPROC}"
 ARG USE_MAKEFLAGS="-k V=0"
 ENV SAGE_CHECK=warn
-ENV SAGE_CHECK_PACKAGES="!cython,!python3,!cysignals,!linbox,!ppl,!cmake,!rpy2,!sage_sws2rst"
+ENV SAGE_CHECK_PACKAGES="!cython,!python3,!cysignals,!linbox,!ppl,!cmake,!rpy2"
 #:make:
 ARG TARGETS_PRE="all-sage-local"
 $RUN$CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS_PRE}$ENDRUN$THEN_SAVE_STATUS
@@ -346,7 +346,7 @@ ARG NUMPROC=8
 ENV MAKE="make -j\${NUMPROC}"
 ARG USE_MAKEFLAGS="-k V=0"
 ENV SAGE_CHECK=warn
-ENV SAGE_CHECK_PACKAGES="!cython,!python3,!cysignals,!linbox,!ppl,!cmake,!rpy2,!sage_sws2rst"
+ENV SAGE_CHECK_PACKAGES="!cython,!python3,!cysignals,!linbox,!ppl,!cmake,!rpy2"
 $ADD .gitignore /new/.gitignore
 $ADD src /new/src
 RUN cd /new && rm -rf .git && \\
@@ -367,7 +367,7 @@ ARG NUMPROC=8
 ENV MAKE="make -j\${NUMPROC}"
 ARG USE_MAKEFLAGS="-k V=0"
 ENV SAGE_CHECK=warn
-ENV SAGE_CHECK_PACKAGES="!cython,!python3,!cysignals,!linbox,!ppl,!cmake,!rpy2,!sage_sws2rst"
+ENV SAGE_CHECK_PACKAGES="!cython,!python3,!cysignals,!linbox,!ppl,!cmake,!rpy2"
 ARG TARGETS_OPTIONAL="ptest"
 $RUN$CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS_OPTIONAL} || echo "(error ignored)"$ENDRUN$THEN_SAVE_STATUS
 

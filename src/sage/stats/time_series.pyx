@@ -1041,7 +1041,8 @@ cdef class TimeSeries:
             sage: v.plot() + v.plot(points=True, rgbcolor='red', pointsize=50)
             Graphics object consisting of 2 graphics primitives
         """
-        from sage.plot.all import line, point
+        from sage.plot.line import line
+        from sage.plot.point import point
         cdef Py_ssize_t s
 
         if self._length < plot_points:
@@ -1910,7 +1911,7 @@ cdef class TimeSeries:
             sage: v.plot_histogram(bins=3,normalize=False,aspect_ratio=1)               # needs sage.plot
             Graphics object consisting of 3 graphics primitives
         """
-        from sage.plot.all import polygon
+        from sage.plot.polygon import polygon
         counts, intervals = self.histogram(bins, normalize=normalize)
         s = 0
         kwds.setdefault('aspect_ratio','automatic')
@@ -1947,7 +1948,9 @@ cdef class TimeSeries:
             sage: v.plot_candlestick(bins=20)                                           # needs sage.plot
             Graphics object consisting of 40 graphics primitives
         """
-        from sage.plot.all import line, polygon, Graphics
+        from sage.plot.line import line
+        from sage.plot.polygon import polygon
+        from sage.plot.graphics import Graphics
 
         cdef TimeSeries t = new_time_series(self._length)
         cdef TimeSeries s

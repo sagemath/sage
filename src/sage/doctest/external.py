@@ -384,7 +384,7 @@ def external_features():
     yield from sage.features.ffmpeg.all_features()
     import sage.features.interfaces
     for feature in sage.features.interfaces.all_features():
-        if feature.name != 'mathics':
+        if feature.name not in ('mathics', 'regina'):
             yield feature
     from sage.features.mip_backends import CPLEX, Gurobi
     yield CPLEX()
@@ -507,10 +507,7 @@ class AvailableSoftware:
             sage: available_software.issuperset(set(['internet','latex','magma'])) # random, optional - internet latex magma
             True
         """
-        for item in other:
-            if item not in self:
-                return False
-        return True
+        return all(item in self for item in other)
 
     def detectable(self):
         """

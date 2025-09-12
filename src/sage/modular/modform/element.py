@@ -2760,6 +2760,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
         Testing modular forms of nontrivial character::
 
+            sage: # long time (:issue:`39569`)
             sage: F = ModularForms(DirichletGroup(17).0^2, 2).2
             sage: F3 = F^3; F3
             q^3 + (-3*zeta8^2 + 6)*q^4 + (-12*zeta8^2 + 3*zeta8 + 18)*q^5 + O(q^6)
@@ -2942,7 +2943,9 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
             G = DirichletGroup(level, base_ring=R)
             M = constructor(G(epsilon) * G(chi)**2, self.weight(), base_ring=R)
         else:
-            from sage.modular.arithgroup.all import Gamma1
+            from sage.modular.arithgroup.congroup_gamma1 import (
+                Gamma1_constructor as Gamma1,
+            )
             if level is None:
                 # See [AL1978], Proposition 3.1.
                 level = lcm([N, Q]) * Q
@@ -3808,8 +3811,8 @@ class GradedModularFormElement(ModuleElement):
         f_other = other._forms_dictionary
         f_mul = defaultdict(int)
 
-        for k_self in f_self.keys():
-            for k_other in f_other.keys():
+        for k_self in f_self:
+            for k_other in f_other:
                 f_mul[k_self + k_other] += f_self[k_self] * f_other[k_other]
 
         return GM(self.parent(), f_mul)
@@ -4006,7 +4009,7 @@ class GradedModularFormElement(ModuleElement):
         mat = Matrix(matrix_datum).transpose()
 
         # initialize the column vector of the coefficients of self
-        coef_self = vector(self[k].coefficients(range(0, sturm_bound + 1))).column()
+        coef_self = vector(self[k].coefficients(range(sturm_bound + 1))).column()
 
         # solve the linear system: mat * X = coef_self
         soln = mat.solve_right(coef_self)
