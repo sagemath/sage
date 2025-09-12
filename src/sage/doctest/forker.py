@@ -1258,7 +1258,6 @@ class SageDocTestRunner(doctest.DocTestRunner):
             ::error title=Failed example:,file=.../sage/doctest/forker.py,line=12::Failed example:
                 doctest_var = 42; doctest_var^2
             <BLANKLINE>
-            sage: DTR.options.format = 'sage'
         """
         out = [self.DIVIDER]
         with OriginalSource(example):
