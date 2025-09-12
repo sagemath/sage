@@ -2419,8 +2419,8 @@ REFERENCES:
             curves and Riemann surfaces: The algorithms of the Maple package
             "Algcurves"*, In: A. Bobenko and C. Klein (eds) Computational 
             approach to Riemann surfaces. Lecture Notes in Mathematics 2013. 
-            Springer, Berlin, Heidelberg. (2011)
-            :doi: `10.1007/978-3-642-17413-1_2`
+            Springer, Berlin, Heidelberg. (2011).
+            :doi:`10.1007/978-3-642-17413-1_2`
 
 .. [DPS2017] Kevin Dilks, Oliver Pechenik, and Jessica Striker,
              *Resonance in orbits of plane partitions and increasing
