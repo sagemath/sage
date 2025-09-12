@@ -19630,8 +19630,13 @@ def _matrix_power_symbolic(A, n):
     repeated eigen values::
 
         sage: var('k n')
+        (k, n)
         sage: A = matrix([[k,1,0,1],[1,k,1,0],[0,1,k,1],[1,0,1,k]])^n
         sage: A
+        [1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n]
+        [          1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n]
+        [1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n]
+        [          1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n]
     """
     from sage.rings.qqbar import AlgebraicNumber
     from sage.matrix.constructor import matrix
