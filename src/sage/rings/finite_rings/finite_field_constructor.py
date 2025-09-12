@@ -211,7 +211,7 @@ class FiniteFieldFactory(UniqueFactory):
 
     - ``name`` -- string or integer, optional. For a string,
       ``name`` is the name of the generator over the prime
-      field. For convenience, in ``name`` is an integer, then
+      field. For convenience, if ``name`` is an integer, then
       ``GF(p, n)`` is equivalent to ``GF((p, n))`` (see examples below).
       Note that there can be a substantial speed penalty (in creating
       extension fields) when omitting the variable name, since doing so
