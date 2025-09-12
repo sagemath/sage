@@ -168,8 +168,21 @@ jobs:
             pytest --doctest-ignore-import-errors --doctest -rfEs -s src || true
           else
             pytest -rfEs -s src
-            ./sage -t ${{ matrix.tests == 'all' && '--all' || '--new --long' }} -p4 --format github
+            ./sage -t ${{
+              matrix.tests == 'all' &&
+              '--all-except="src/sage/libs/singular/function.pyx src/sage/rings/polynomial/plural.pyx"' ||
+              '--new --long' }} -p4 --format github
           fi
+
+      - name: Test flaky files
+        # unknown issues with plural.pyx causes sporadic failure: https://github.com/sagemath/sage/issues/29528
+        # we rerun a few times, this step succeeds if any of the 5 runs succeed
+        if: runner.os != 'windows' && matrix.tests == 'all'
+        shell: bash -l {0}
+        run: |
+          for i in {1..5}; do
+            ./sage -t -p4 --format github src/sage/libs/singular/function.pyx src/sage/rings/polynomial/plural.pyx && break
+          done
 
       - name: Check that all modules can be imported
         shell: bash -l {0}
