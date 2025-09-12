@@ -150,11 +150,6 @@ def builder_helper(type):
             if build_options.ABORT_ON_ERROR:
                 raise Exception("Non-exception during docbuild: %s" % (e,), e)
 
-        if type == 'latex':
-            logger.warning(f"LaTeX files can be found in {output_dir}.")
-        elif type != 'inventory':
-            logger.warning(f"Build finished. The built documents can be found in {output_dir}.")
-
     f.is_output_format = True
     return f
 
@@ -1226,7 +1221,7 @@ def get_all_reference_documents(source: Path) -> list[Path]:
             n = len(list(directory.iterdir()))
             documents.append((-n, directory.relative_to(source)))
 
-    # Sort largest component (most subdirectory entries) first since 
+    # Sort largest component (most subdirectory entries) first since
     # they will take the longest to build
     docs = [doc[1] for doc in sorted(documents)]
     # Put the bibliography first, because it needs to be built first:

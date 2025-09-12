@@ -12,18 +12,23 @@
 all: doc-html
 
 clean:
-	rm -rf "$(SAGE_ROOT)/build/sage-distro/src/doc"
-	# and a few more things that were previously generated
 	rm -rf en/reference/*/sage
 	rm -rf en/reference/documentation/sage_docbuild
 	rm -rf en/reference/sage
 	rm -f common/*.pyc
+	# clean the meson build directory
+	rm -rf ../../build/sage-distro/src/doc
 
 doc-html:
 	meson compile -C ../../build/sage-distro doc-html
+	mkdir -p $(SAGE_DOC)
+	cp -rf ../../build/sage-distro/src/doc/html $(SAGE_DOC)
+	cp -f ../../build/sage-distro/src/doc/index.html $(SAGE_DOC)
 
 doc-pdf:
 	meson compile -C ../../build/sage-distro doc-pdf
+	mkdir -p $(SAGE_DOC)
+	cp -rf ../../build/sage-distro/src/doc/pdf $(SAGE_DOC)
 
 .PHONY: all clean \
 	doc-src \
