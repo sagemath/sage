@@ -10518,7 +10518,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = GF(2^13)[]
             sage: f = R.random_element(degree=1000)
-            sage: g = f.squarefree_decomposition().radical_value()  # < 1s
+            sage: g = f.radical()
         """
         P = self._parent
         R = P.base_ring()
