@@ -1933,9 +1933,11 @@ class RiemannSurface:
             True
             sage: f2 = y^3 - 2*x*y + x^5
             sage: S2 = RiemannSurface(f2)
+            sage: S2.is_hyperelliptic()
             False
-            sage: f3 = y^9 + 3*x^3*y^6 + 3*x^4*y^3 + x^6 + y^2
-            sage: S3 = RiemannSurface(f3)
+            sage: f3 = y^9 + 3*x^2*y^6 + 3*x^4*y^3 + x^6 + y^2
+            sage: S3 = RiemannSurface(f3) # long time
+            sage: S3.is_hyperelliptic() # long time
             True
 
         ALGORITHM:
@@ -1966,7 +1968,7 @@ class RiemannSurface:
         for p in pairs:
             mons += p.monomials()
         mons = list(set(mons))
-        CM = matrix([[p.monomial_coefficient(mon) for p in pairs]
+        CM = Matrix([[p.monomial_coefficient(mon) for p in pairs]
                      for mon in mons])
         # test the number of linearly independent pairs
         return CM.rank() <= 2*self.genus - 1  
