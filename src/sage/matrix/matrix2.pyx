@@ -19625,6 +19625,13 @@ def _matrix_power_symbolic(A, n):
         sage: B = A^n; B
         [  kronecker_delta(0, n) n*kronecker_delta(1, n)]
         [                      0   kronecker_delta(0, n)]
+
+    Check if :issue:`40803` is fixed:Checking symbolic power of matrix with
+    repeated eigen values::
+
+        sage: var('k n')
+        sage: A = matrix([[k,1,0,1],[1,k,1,0],[0,1,k,1],[1,0,1,k]])^n
+        sage: A
     """
     from sage.rings.qqbar import AlgebraicNumber
     from sage.matrix.constructor import matrix

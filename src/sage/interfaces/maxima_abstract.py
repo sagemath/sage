@@ -1632,13 +1632,13 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         Q = P(other)
         return P('%s . %s' % (self.name(), Q.name()))
 
-    def __getitem__(self, n):
+    def __getitem__(self, i):
         r"""
-        Return the `n`-th element of this list.
+        Return the `i`-th element of this list.
 
         INPUT:
 
-        - ``n`` -- integer
+        - ``i`` -- integer
 
         OUTPUT: Maxima object
 
@@ -1658,13 +1658,18 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: v[10]
             Traceback (most recent call last):
             ...
-            IndexError: n = (10) must be between 0 and 5
+            IndexError: i = (10) must be between 0 and 5
         """
-        n = int(n)
-        if n < 0 or n >= len(self):
-            raise IndexError("n = (%s) must be between %s and %s" % (n, 0, len(self)-1))
-        # If you change the n+1 to n below, better change __iter__ as well.
-        return InterfaceElement.__getitem__(self, n+1)
+        # Handle slices as well
+        if isinstance(i, slice):
+            start, stop, step = i.indices(len(self))
+            return list(self)[start:stop:step]
+        else:
+            i = int(i)
+            if i < 0 or i >= len(self):
+                raise IndexError("i = (%s) must be between %s and %s" % (i, 0, len(self)-1))
+            # If you change the i+1 to i below, better change __iter__ as well.
+            return InterfaceElement.__getitem__(self, i+1)
 
     def __iter__(self):
         """

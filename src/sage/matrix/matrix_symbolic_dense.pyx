@@ -164,6 +164,7 @@ cdef maxima
 
 from sage.calculus.calculus import maxima
 
+from sage.misc.flatten import flatten
 
 cdef class Matrix_symbolic_dense(Matrix_generic_dense):
     def echelonize(self, **kwds):
@@ -702,12 +703,20 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             sage: matrix([[a, b], [c, d]]).jordan_form(subdivide=False)
             [1/2*a + 1/2*d - 1/2*sqrt(a^2 + 4*b*c - 2*a*d + d^2)                                                   0]
             [                                                  0 1/2*a + 1/2*d + 1/2*sqrt(a^2 + 4*b*c - 2*a*d + d^2)]
+
+        Check that :issue:`40803` is fixed::
+
+            sage: matrix([[a, 0], [0, a]]).jordan_form()
+            [a|0]
+            [-+-]
+            [0|a]
         """
         A = self._maxima_lib_()
         jordan_info = A.jordan()
         J = jordan_info.dispJordan()._sage_()
         if subdivide:
-            v = [x[1] for x in jordan_info]
+            # Repeated eigen values indices are part of the same list
+            v = flatten([x[1:] for x in jordan_info])
             w = [sum(v[0:i]) for i in range(1, len(v))]
             J.subdivide(w, w)
         if transformation:
