@@ -1,13 +1,13 @@
 doc_sources = [
-  'Abstract-Algebra.rst',
-  'Differential-Equations.rst',
-  'Graphs-and-Discrete.rst',
-  'Interact.rst',
-  'Linear-Algebra.rst',
-  'Multivariable-Calculus.rst',
-  'NumAnalysis.rst',
-  'Number-Theory.rst',
-  'Statistics-and-Distributions.rst',
+  'abstract-algebra.rst',
+  'differential-equations.rst',
+  'graphs-and-discrete.rst',
+  'interact.rst',
+  'linear-algebra.rst',
+  'multivariable-calculus.rst',
+  'numerical-analysis.rst',
+  'number-theory.rst',
+  'statistics-and-distributions.rst',
 ]
 
 foreach file : doc_sources
