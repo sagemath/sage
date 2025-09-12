@@ -1948,7 +1948,28 @@ class RiemannSurface:
 
         """
 
-        
+        # This uses common theory of Riemann surfaces
+        if self.genus <= 2:
+            return True
+
+        # Find the products of pairs of holomorphic differentials. We reduce
+        # these modulo the curve so that a linear dependence between the 
+        # monomial coefficients becomes a linear dependence between the 
+        # corresponding quadratic differentials
+        II = self._R.ideal(self.f)
+        diffs = self.cohomology_basis()
+        pairs = [II.reduce(diffs[i]*diffs[j]) for i in range(self.genus)
+                 for j in range(i, self.genus)]
+
+        # Find the monomials present and their coefficients
+        mons = []
+        for p in pairs:
+            mons += p.monomials()
+        mons = list(set(mons))
+        CM = matrix([[p.monomial_coefficient(mon) for p in pairs]
+                     for mon in mons])
+        # test the number of linearly independent pairs
+        return CM.rank() <= 2*self.genus - 1  
         
 
     def _bounding_data(self, differentials, exact=False):
