@@ -10513,6 +10513,12 @@ cdef class Polynomial(CommutativePolynomial):
             sage: P.<x> = GF(2)[]
             sage: (x^3 + x^2).radical()                                                 # needs sage.rings.finite_rings
             x^2 + x
+
+        TESTS::
+
+            sage: R.<x> = GF(2^13)[]
+            sage: f = R.random_element(degree=1000)
+            sage: g = f.squarefree_decomposition().radical_value()  # < 1s
         """
         P = self._parent
         R = P.base_ring()
@@ -10528,7 +10534,7 @@ cdef class Polynomial(CommutativePolynomial):
                 self_1 = (self//content)
                 return (self_1 // self_1.gcd(self_1.derivative())) * content.radical()
         else:  # The above method is not always correct (see Issue 8736)
-            return self.factor().radical_value()
+            return self.squarefree_decomposition().radical_value()
 
     def content_ideal(self):
         """
