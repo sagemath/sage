@@ -19,11 +19,11 @@ else
   )
   dependencies += [ec_lib]
 endif
+
 proj = mod.add_project('configure',
   configure_options : [
                         '--enable-ecl',
                         '--with-ecl=' + ecl,
-                        '--disable-build-docs',
                         # Maxima configure checks for git and, if it finds it, uses
                         # versions information from the repo. See #15529. We disable this.
                         'git_found=false',
@@ -41,3 +41,5 @@ maxima_dep = declare_dependency(
   dependencies: maxima_fas_dep
 )
 meson.override_dependency('maxima', maxima_dep)
+
+subdir('build')
