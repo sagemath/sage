@@ -153,18 +153,17 @@ Check that :issue:`12778` is fixed::
     sage: parent(M)
     Full MatrixSpace of 3 by 4 dense matrices over Symbolic Ring
 """
-
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.factorization import Factorization
 
 from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 from sage.matrix.constructor import matrix
+from sage.misc.flatten import flatten
 
 cdef maxima
 
 from sage.calculus.calculus import maxima
 
-from sage.misc.flatten import flatten
 
 cdef class Matrix_symbolic_dense(Matrix_generic_dense):
     def echelonize(self, **kwds):
