@@ -376,6 +376,11 @@ class Link(SageObject):
         """
         from sage.features.snappy import SnapPy
         self._snappy = SnapPy()
+        self._pd_code = None
+        self._oriented_gauss_code = None
+        self._braid = None
+        self._mirror = None  # set on invocation of :meth:`mirror_image`
+        self._reverse = None  # set on invocation of :meth:`reverse`
 
         if isinstance(data, list):
             # either oriented Gauss or PD code
@@ -389,8 +394,6 @@ class Link(SageObject):
                 if any(flat.count(i) != 2 for i in set(flat)):
                     raise ValueError("invalid PD code: each segment must appear twice")
                 self._pd_code = [list(vertex) for vertex in data]
-                self._oriented_gauss_code = None
-                self._braid = None
             else:
                 # oriented Gauss code
                 flat = flatten(data[0])
@@ -399,8 +402,6 @@ class Link(SageObject):
                     if 2 * len(data[1]) != len(flat) or set(range(b, a + 1)) - set([0]) != set(flat):
                         raise ValueError("invalid input: data is not a valid oriented Gauss code")
                 self._oriented_gauss_code = data
-                self._pd_code = None
-                self._braid = None
 
         elif isinstance(data, Braid):
             # Remove all unused strands
@@ -414,26 +415,41 @@ class Link(SageObject):
             else:
                 B = BraidGroup(len(support))
             self._braid = B([d[x] for x in data.Tietze()])
-            self._oriented_gauss_code = None
-            self._pd_code = None
 
         else:
             # construct from instances of external packages
             from_external = False
-            if self._snappy.is_present():
-                from snappy import Link as SnapPyLink
-                if isinstance(data, SnapPyLink):
-                    L = data.sage_link()
+            from sage.interfaces.interface import InterfaceElement
+            if isinstance(data, InterfaceElement):
+                L = data.sage()
+                if isinstance(L, Link):
                     self._pd_code = L._pd_code
-                    self._braid = L._braid
-                    self._oriented_gauss_code = L._oriented_gauss_code
                     from_external = True
 
             if not from_external:
                 raise ValueError("invalid input: data must be either a list or a braid")
 
-        self._mirror = None  # set on invocation of :meth:`mirror_image`
-        self._reverse = None  # set on invocation of :meth:`reverse`
+    @cached_method
+    def _regina_(self, regina):
+        r"""
+        Return ``self`` as in instance of the Regina link class.
+        This method requires the optional package Regina to be present.
+
+        EXAMPLES::
+
+            sage: K = Knot([[[1,-2,3,-1,2,-3]],[1,1,1]])
+            sage: Krp = regina(K); Krp.pdData()       # optional regina
+            [[2, 6, 3, 5], [4, 2, 5, 1], [6, 4, 1, 3]]
+            sage: K.is_isotopic(Link(Krp))            # optional regina
+            True
+        """
+        # reduce arc numbers
+        L = regina.Link()  # empty Link
+        pd = self.pd_code()
+        segments = list(set(flatten(pd)))
+        red = {i: segments.index(i) + 1 for i in segments}
+        pd_red = [[red[i] for i in cr] for cr in pd]
+        return L.fromPD(pd_red)
 
     @cached_method
     def snappy_link(self, use_braid=False):
@@ -540,7 +556,7 @@ class Link(SageObject):
                     res = res + rescom
             return res
 
-    def fundamental_group(self, presentation='wirtinger'):
+    def fundamental_group(self, presentation='wirtinger', algorithm=None):
         r"""
         Return the fundamental group of the complement of ``self``.
 
@@ -552,6 +568,17 @@ class Link(SageObject):
             (see :wikipedia:`Link_group`)
           * ``'braid'`` -- the presentation is given by the braid action
             on the free group (see chapter 2 of [Bir1975]_)
+
+        - ``algorithm`` -- (default: ``None``) per default native calculation
+          is used; this can be changed to use algorithms of Regina (if the
+          according optional package is installed):
+
+          * ``regina.ALG_WIRTINGER`` -- the Wirtinger presentation via Regina
+
+          * ``regina.ALG_SIMPLIFY`` -- a simplified presentation from Regina
+
+          * ``regina.ALG_USE_EXTERIOR`` -- use Regina's implementation for the
+            exterior of ``self``
 
         OUTPUT: a finitely presented group
 
@@ -582,7 +609,33 @@ class Link(SageObject):
             sage: GB.simplified()
             Finitely presented group
              < x0, x2 | x2^-1*x0*x2^-1*x0^-1*x2*x0*x2^-1*x0*x2*x0^-1 >
+
+        Using algorithms of Regina::
+
+            sage: # optional regina
+            sage: K8.fundamental_group(algorithm=regina.ALG_WIRTINGER)
+            Finitely presented group < x0, x1, x2, x3 |
+             x0*x3*x0^-1*x2^-1, x2*x1*x2^-1*x0^-1,
+             x3*x1*x3^-1*x2^-1, x1*x3*x1^-1*x0^-1 >
+            sage: K8.fundamental_group(algorithm=regina.ALG_SIMPLIFY)
+            Finitely presented group < x0, x1 | x0*x1^-1*x0^-1*x1*x0^2*x1*x0^-1*x1^-1 >
+            sage: K8.fundamental_group(algorithm=regina.ALG_USE_EXTERIOR)
+            Finitely presented group < x0, x1 | x0^2*x1^-1*x0^-1*x1*x0*x1*x0^-1*x1^-1 >
         """
+        if algorithm:
+            from sage.interfaces.regina import regina
+            if isinstance(algorithm, regina._object_class()):
+                if not isinstance(algorithm._inst, regina.AlgorithmExt._name):
+                    raise TypeError('algorithm must be of type %s' % regina.AlgorithmExt._name)
+                Lr = regina(self)
+                if algorithm == regina.ALG_WIRTINGER:
+                    return Lr.group(simplify=False).sage()
+                elif algorithm == regina.ALG_SIMPLIFY:
+                    return Lr.group().sage()
+                elif algorithm == regina.ALG_USE_EXTERIOR:
+                    return Lr.complement().group().sage()
+                else:
+                    raise ValueError('algorithm %s is not supported' % algorithm)
         from sage.groups.free_group import FreeGroup
         if presentation == 'braid':
             b = self.braid()
@@ -3178,8 +3231,8 @@ class Link(SageObject):
         return [[list(i) for i in j]
                 for j in G.connected_components(sort=False)]
 
-    @cached_method
-    def homfly_polynomial(self, var1=None, var2=None, normalization='lm'):
+    @cached_method(key=lambda s, v1, v2, n, a: (s, v1, v2, n))
+    def homfly_polynomial(self, var1=None, var2=None, normalization='lm', algorithm=None):
         r"""
         Return the HOMFLY polynomial of ``self``.
 
@@ -3208,6 +3261,20 @@ class Link(SageObject):
           where `P(K _+)`, `P(K _-)` and `P(K _0)` represent the HOMFLY
           polynomials of three links that vary only in one crossing;
           that is the positive, negative, or smoothed links respectively
+
+        - ``algorithm`` -- (default: ``None``) per default libhomfly is
+          used for the calculation; this can be changed to use the algorithms
+
+          * ``regina.ALG_DEFAULT`` -- the default algorithm from Regina
+
+          * ``regina.ALG_BACKTRACK`` -- optimised backtracking algorithm from Regina
+
+          * ``regina.ALG_TREWIDTH`` -- treewidth-based algorithm from Regina
+
+          * ``regina.ALG_NAIV`` -- naive algorithm from Regina (only for experimental use)
+
+          from Regina (this only applies if the optional package Regina is present);
+          for more information see `Regina Algorithm <https://regina-normal.github.io/engine-docs/group__engine.html#gae6548c6577d3db2adb39ccea0c57dce1>`__
 
         OUTPUT: a Laurent polynomial over the integers
 
@@ -3281,6 +3348,26 @@ class Link(SageObject):
             -a^10*z^4 + a^8*z^6 - 3*a^10*z^2 + 4*a^8*z^4 + a^6*z^6 - a^10
              + 3*a^8*z^2 + 5*a^6*z^4 - a^8 + 7*a^6*z^2 + 3*a^6
 
+        Using the algorithms of Regina::
+
+            sage: # optional regina
+            sage: K = Knots().from_table(8, 21)
+            sage: HRlm = K.homfly_polynomial(algorithm=regina.ALG_DEFAULT); HRlm
+            L^6*M^2 - L^4*M^4 - L^6 + 3*L^4*M^2 - 3*L^4 + 2*L^2*M^2 - 3*L^2
+            sage: K.homfly_polynomial.clear_cache()  # since cache does not distinguish algorithms
+            sage: HRlm == K.homfly_polynomial()
+            True
+            sage: HRaz = K.homfly_polynomial(normalization='az', algorithm=regina.ALG_BACKTRACK); HRaz
+            a^6*z^2 - a^4*z^4 + a^6 - 3*a^4*z^2 - 3*a^4 + 2*a^2*z^2 + 3*a^2
+            sage: K.homfly_polynomial.clear_cache()
+            sage: HRaz == K.homfly_polynomial(normalization='az')
+            True
+            sage: HRvz = K.homfly_polynomial(normalization='vz', algorithm=regina.ALG_TREEWIDTH); HRvz
+            2*v^-2*z^2 - v^-4*z^4 + 3*v^-2 - 3*v^-4*z^2 - 3*v^-4 + v^-6*z^2 + v^-6
+            sage: K.homfly_polynomial.clear_cache()
+            sage: HRvz == K.homfly_polynomial(normalization='vz')
+            True
+
         TESTS:
 
         This works with isolated components::
@@ -3325,7 +3412,27 @@ class Link(SageObject):
             else:
                 var2 = 'z'
 
+        if normalization == 'vz':
+            h_az = self.homfly_polynomial(var1=var1, var2=var2, normalization='az', algorithm=algorithm)
+            a, z = h_az.parent().gens()
+            v = ~a
+            return h_az.subs({a: v})
+
         L = LaurentPolynomialRing(ZZ, [var1, var2])
+
+        if algorithm:
+            from sage.interfaces.regina import regina
+            if isinstance(algorithm, regina._object_class()):
+                if not isinstance(algorithm._inst, regina.Algorithm._name):
+                    raise TypeError('algorithm must be of type %s' % regina.Algorithm._name)
+                Lr = regina(self)
+                if normalization == 'az':
+                    Hr = Lr.homflyAZ(algorithm)
+                else:
+                    Hr = Lr.homflyLM(algorithm)
+                Hr._sage_parent = L
+                return Hr.sage()
+
         if len(self._isolated_components()) > 1:
             if normalization == 'lm':
                 fact = L({(1, -1): -1, (-1, -1): -1})
@@ -3364,11 +3471,6 @@ class Link(SageObject):
                 return L(auxdic)
             else:
                 return -L(auxdic)
-        elif normalization == 'vz':
-            h_az = self.homfly_polynomial(var1=var1, var2=var2, normalization='az')
-            a, z = h_az.parent().gens()
-            v = ~a
-            return h_az.subs({a: v})
         else:
             raise ValueError('normalization must be either `lm`, `az` or `vz`')
 
@@ -4291,6 +4393,11 @@ class Link(SageObject):
         br = self.braid()
         br_ind = br.strands()
 
+        def cmp_braid(b):
+            if (b.strands() <= br_ind):
+                return self._markov_move_cmp(b)
+            return False
+
         res = []
         for L in l:
             if L.pd_notation() == pd_code:
@@ -4298,10 +4405,10 @@ class Link(SageObject):
                 res.append(L)
                 continue
 
-            Lbraid = L.braid()
-            if Lbraid.strands() <= br_ind:
-                if self._markov_move_cmp(Lbraid):
-                    res.append(L)
+            if cmp_braid(L.braid()):
+                res.append(L)
+            elif cmp_braid(L.link().braid()):
+                res.append(L)
 
         if res:
             if len(res) > 1 or res[0].is_unique():
@@ -4988,26 +5095,41 @@ class Link(SageObject):
         """
         return self.find_hyperbolic_shapes(verbose=verbose, bits_prec=bits_prec) is not None
 
-    def simplify(self, mode='basic', type_III_limit=100):
+    def simplify(self, mode='basic', type_III_limit=100, exhaustive=True, height=1, threads=1):
         r"""
         Return an isotopic Link with less crossings or ``None`` if the
         calculation was not successful.
 
         INPUT:
 
-          - ``mode`` -- string (default ``basic``) to choose between different
-            strategies. These are
+        - ``mode`` -- string (default ``basic``) to choose between different
+          strategies. These are
 
-            - ``basic`` -- do Reidemeister I and II moves until none are possible
-            - ``level`` -- do random Reidemeister III moves in addition to
-              ``basic`` but at most ``type_III_limit`` consecutive times.
-            - ``pickup`` -- also minimizes the number of crossings of strands
-              which cross entirely above (or below) the diagram by finding the
-              path crossing over the diagram with the least number of
-              overcrossings (or undercrossings)
-            - ``global`` -- combines ``level`` and ``pickup``
+          - ``basic`` -- do Reidemeister I and II moves until none are possible
+          - ``level`` -- do random Reidemeister III moves in addition to
+            ``basic`` but at most ``type_III_limit`` consecutive times.
+          - ``pickup`` -- also minimizes the number of crossings of strands
+            which cross entirely above (or below) the diagram by finding the
+            path crossing over the diagram with the least number of
+            overcrossings (or undercrossings)
+          - ``global`` -- combines ``level`` and ``pickup``
 
-          - type_III_limit -- integer (default 100) see ``mode level``
+        - type_III_limit -- integer (default 100) see ``mode level``
+
+        - ``exhaustive`` -- boolean (default ``True``) if set to
+          ``False`` a faster but less successful algorithm is
+          used; this does not apply to multicomponent links (here
+          ``exhaustive=False`` is automatically set)
+        - ``height`` -- integer (default ``1``) the maximum number
+          of additional crossings to allow beyond the number of
+          crossings originally present in this diagram, or a
+          negative number if this should not be bounded; this
+          does not apply if `exhaustive=False``
+          argument is not applied if ``exhaustive=False``
+        - ``threads`` -- integer (default ``1``) the number of
+          threads to use. If this is 1 or smaller then the
+          routine will run single-threaded; this
+          does not apply if `exhaustive=False``
 
         .. NOTE::
 
@@ -5015,6 +5137,13 @@ class Link(SageObject):
             and therefore needs the optional package ``snappy``. More
             information on the usage of the method can be found
             `here <https://snappy.computop.org/spherogram.html#spherogram.Link.simplify>`__.
+
+            This method is taken from the Regina methods ``simplifyExhaustive``
+            (for knots) and ``intelligentSimplify`` (for multi-component links
+            or if the option ``exhaustive=False`` is set) and therefore needs
+            the optional package ``regina``. More information on the usage of
+            the method can be found
+            `here <https://regina-normal.github.io/engine-docs/classregina_1_1Link.html#a60fe044c436e5e1a8861de2ccb106e1c>`__.
 
         OUTPUT: an instance of class :class:`Link` or ``None``
 
@@ -5031,9 +5160,24 @@ class Link(SageObject):
             True
             sage: M = L.simplify(mode='level'); M    # optional snappy
             Link with 2 components represented by 5 crossings
+            sage: U.simplify()                       # optional regina
+            Link with 1 component represented by 0 crossings
+            sage: K = Knots().from_table(10, 24)
+            sage: K2 = Knot(K.braid()); K2
+            Knot represented by 12 crossings
+            sage: K2.simplify()                      # optional regina
+            Knot represented by 11 crossings
         """
         sL = self.snappy_link()
         res = sL.simplify(mode=mode, type_III_limit=type_III_limit)
         if res:
             return sL.sage_link()
+        from sage.interfaces.regina import regina
+        rL = regina(self)
+        if self.is_knot() and exhaustive:
+            res = rL.simplifyExhaustive(height=height, threads=threads)
+        else:
+            res = rL.intelligentSimplify()
+        if res:
+            return self.__class__(rL)
         return None

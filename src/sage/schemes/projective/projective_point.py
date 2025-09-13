@@ -676,14 +676,14 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             ...
             ValueError: can...t dehomogenize at 0 coordinate
         """
-        if self[n].is_zero():
+        sn = self[n]
+        if sn.is_zero():
             raise ValueError("can't dehomogenize at 0 coordinate")
         PS = self.codomain()
         A = PS.affine_patch(n)
-        Q = []
-        for i in range(PS.ambient_space().dimension_relative() + 1):
-            if i != n:
-                Q.append(self[i] / self[n])
+        Q = [self[i] / sn
+             for i in range(PS.ambient_space().dimension_relative() + 1)
+             if i != n]
         return A.point(Q)
 
     def global_height(self, prec=None):
