@@ -1703,7 +1703,9 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: [e._sage_() for e in L]
             [0, x, 2*x^2, 3*x^3, 4*x^4, 5*x^5]
         """
-        # Maxima lists are linked lists with slow random access
+        # Maxima lists are linked lists with O(n) random access time
+        # hence we create a copy and pop elements from the front instead
+        # so that __iter__ has complexity as O(n) and not O(n^2)
         copied_list = self.copylist()
         for i in range(len(copied_list)):
             yield copied_list.pop()
