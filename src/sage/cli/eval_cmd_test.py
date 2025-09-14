@@ -2,6 +2,7 @@ from sage.cli.eval_cmd import EvalCmd
 from sage.cli.options import CliOptions
 import pytest
 
+
 def test_eval_cmd_print(capsys):
     options = CliOptions(command="print(3^33)")
     eval_cmd = EvalCmd(options)
