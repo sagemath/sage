@@ -1,8 +1,6 @@
 # @configure_input@
 from pathlib import Path
 
-import numpy
-
 import sage
 
 VERSION = "@PACKAGE_VERSION@"
@@ -130,9 +128,6 @@ def get_include_dirs() -> list[Path]:
     Headers should be included with the prefix "sage/", e.g.,
     ``#include <sage/cpython/cython_metaclass.h>``.
 
-    This includes the path to the Numpy headers as well to make it
-    easier to compile Cython extensions that (indirectly) depend on Numpy.
-
     EXAMPLES::
 
         sage: from sage.config import get_include_dirs
@@ -151,5 +146,4 @@ def get_include_dirs() -> list[Path]:
         # We return both the source and build directory,
         # because some headers are generated in the build directory.
         dirs.extend([root / "src" for root in editable_root])
-    dirs.append(Path(numpy.get_include()))
     return [dir for dir in dirs if dir.is_dir()]
