@@ -134,7 +134,7 @@ jobs:
         continue-on-error: true
         if: inputs.free_disk_space
       - name: Check out SageMath
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: ${{ inputs.sage_repo }}
           ref: ${{ inputs.sage_ref }}
