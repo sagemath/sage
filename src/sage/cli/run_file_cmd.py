@@ -38,12 +38,8 @@ class RunFileCmd:
         Execute the given command.
         """
         input_file = preparse_file_named(self.options.file) if self.options.file.endswith('.sage') else self.options.file
-        try:
-            if self.options.file.endswith('.pyx') or self.options.file.endswith('.spyx'):
-                s = load_cython(input_file)
-                eval(compile(s, tmp_filename(), 'exec'), sage_globals())
-            else:
-                eval(compile(open(input_file, 'rb').read(), input_file, 'exec'), sage_globals())
-        except Exception as e:
-            raise RuntimeError(f"An error occurred while executing the file: {e}") from e
-        return 0
+        if self.options.file.endswith('.pyx') or self.options.file.endswith('.spyx'):
+            s = load_cython(input_file)
+            eval(compile(s, tmp_filename(), 'exec'), sage_globals())
+        else:
+            eval(compile(open(input_file, 'rb').read(), input_file, 'exec'), sage_globals())
