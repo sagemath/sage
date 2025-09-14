@@ -579,8 +579,8 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         .. WARNING::
 
-           When ``right`` is not an instance of ``AbelianGroup`` and both ``left`` and ``right``
-           are infinite, this method will throw a ``GAPError``.
+           This method may fail if ``right`` is not an instance of
+           ``AbelianGroup`` and both ``left`` and ``right`` are infinite.
 
         EXAMPLES::
 
@@ -618,11 +618,12 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             ...
             sage.libs.gap.util.GAPError: Error, cannot test isomorphism of infinite groups
         """
+        from sage.libs.gap.libgap import libgap
         if not isinstance(right, Group):
             raise TypeError("right must be a group")
         if not isinstance(right, AbelianGroup_class):
             iso = left._libgap_().IsomorphismGroups(right)
-            return str(iso) != "fail"
+            return iso != libgap.eval('fail')
         return left.elementary_divisors() == right.elementary_divisors()
 
     def is_subgroup(left, right):
