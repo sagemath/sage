@@ -28,6 +28,7 @@ jobs:
           #- ubuntu:22.04 - fails due to issue with cypari2
           #- ubuntu:24.04 - fails due to issue with cypari2
           - ubuntu:25.04
+          - almalinux:10
     container:
       image: ${{ matrix.container }}
 
