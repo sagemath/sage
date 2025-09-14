@@ -174,7 +174,7 @@ class SuperCrystals(Category_singleton):
                 CCs = []
 
                 for mg in self.connected_components_generators():
-                    subcrystal = self.subcrystal(generators=mg,
+                    subcrystal = self.subcrystal(generators=(mg,),
                                                  index_set=index_set,
                                                  cartan_type=cartan_type,
                                                  category=category)
