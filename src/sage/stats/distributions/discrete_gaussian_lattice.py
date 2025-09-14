@@ -504,7 +504,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             ....:     add_samples(1000)
             sage: sum(counter.values())  # random
             3000
-            sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1:                     # needs sage.symbolic
+            sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1:  # long time, needs sage.symbolic
             ....:     add_samples(1000)
 
         If the covariance provided is not positive definite, an error is thrown::
