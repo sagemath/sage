@@ -1,4 +1,3 @@
-# cython: binding=True
 # sage_setup: distribution = sagemath-objects
 r"""
 Cython-like rich comparisons in Python
