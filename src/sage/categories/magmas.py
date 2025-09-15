@@ -685,12 +685,21 @@ class Magmas(Category_singleton):
                         ZeroDivisionError: rational division by zero
 
                         sage: ~C([2,2,2,2])                                             # needs sage.rings.real_mpfr
-                        (1/2, 1/2, 0.500000000000000, 3)
+                        Traceback (most recent call last):
+                        ...
+                        TypeError: no conversion of this rational to integer
+
+                    TESTS::
+
+                        sage: # needs sage.groups sage.modules
+                        sage: a1 = Permutation((4,2,1,3))
+                        sage: a2 = SL(2, 3)([2,1,1,1])
+                        sage: h = cartesian_product([a1, a2])
+                        sage: ~h
+                        ([2, 4, 1, 3], [1 2]
+                        [2 2])
                     """
-                    # variant without coercion:
-                    # return self.parent()._cartesian_product_of_elements(
-                    return self.parent()(
-                        ~x for x in self.cartesian_factors())
+                    return self.parent()(~x for x in self.cartesian_factors())
 
         class Algebras(AlgebrasCategory):
 
@@ -1100,6 +1109,25 @@ class Magmas(Category_singleton):
                 prods = ((a * b) for a, b in zip(left.cartesian_factors(),
                                                  right.cartesian_factors()))
                 return self._cartesian_product_of_elements(prods)
+
+        class ElementMethods:
+            def sqrt(self, *, all=False):
+                """
+                EXAMPLES::
+
+                    sage: cartesian_product([4, 9]).sqrt()
+                    (2, 3)
+                    sage: set(cartesian_product([4, 9]).sqrt(all=True))
+                    {(-2, -3), (-2, 3), (2, -3), (2, 3)}
+                """
+                if all:
+                    import itertools
+                    return (
+                        self.parent()._cartesian_product_of_elements(t)
+                        for t in itertools.product(*(x.sqrt(all=True) for x in self.cartesian_factors())))
+                else:
+                    return self.parent()._cartesian_product_of_elements(
+                        x.sqrt() for x in self.cartesian_factors())
 
     class Subquotients(SubquotientsCategory):
         r"""
