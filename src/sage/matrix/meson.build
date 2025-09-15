@@ -67,6 +67,7 @@ extension_data = {
   'matrix0' : files('matrix0.pyx'),
   'matrix1' : files('matrix1.pyx'),
   'matrix2' : files('matrix2.pyx'),
+  'matrix_cartesian_product' : files('matrix_cartesian_product.pyx'),
   'matrix_cdv' : files('matrix_cdv.pyx'),
   'matrix_complex_ball_dense' : files('matrix_complex_ball_dense.pyx'),
   'matrix_complex_double_dense' : files('matrix_complex_double_dense.pyx'),

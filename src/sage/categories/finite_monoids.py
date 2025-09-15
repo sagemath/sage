@@ -10,6 +10,8 @@ Finite monoids
 # *****************************************************************************
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
+from sage.categories.magmas import Magmas
+from sage.categories.cartesian_product import CartesianProductsCategory
 
 
 class FiniteMonoids(CategoryWithAxiom):
@@ -301,6 +303,8 @@ class FiniteMonoids(CategoryWithAxiom):
                 Traceback (most recent call last):
                 ...
                 ValueError: the element 3 is not invertible
+                sage: ~cartesian_product([GF(998244353)(2)]*2)  # should not use this naive implementation
+                (499122177, 499122177)
             """
             parent = self.parent()
             one = parent.one()
@@ -311,3 +315,21 @@ class FiniteMonoids(CategoryWithAxiom):
                 return next(it)
             except StopIteration:
                 raise ValueError(f"the element {self} is not invertible")
+
+    class CartesianProducts(CartesianProductsCategory):
+        class ElementMethods:
+            # needed otherwise __invert__ from FiniteMonoids will override this
+            __invert__ = Magmas.Unital.CartesianProducts.ElementMethods.__invert__
+
+        def extra_super_categories(self):
+            r"""
+            Implement the fact that this structure is stable under (finite) Cartesian
+            products. Also to ensure this base class appears before ``FiniteMonoids``.
+
+            TESTS::
+
+                sage: from sage.categories.rngs import Rngs
+                sage: FiniteMonoids().CartesianProducts().extra_super_categories()
+                [Category of finite monoids]
+            """
+            return [FiniteMonoids()]
