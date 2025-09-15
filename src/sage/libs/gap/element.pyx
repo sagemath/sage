@@ -28,7 +28,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
 
-from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
 from sage.combinat.permutation import Permutation
 from sage.structure.coerce cimport coercion_model as cm
 
@@ -1473,7 +1472,6 @@ cdef class GapElement(RingElement):
             return FreeGroup_class(names, gap_group=self)
 
         elif self.IsFpGroup():
-            from sage.groups.free_group import FreeGroup
             from sage.groups.finitely_presented import FinitelyPresentedGroup
             # names = tuple(str(g).replace(".", "_") for g in self.FreeGroupOfFpGroup().GeneratorsOfGroup())
             F = self.FreeGroupOfFpGroup().sage()

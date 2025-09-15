@@ -2352,8 +2352,8 @@ class PermutationGroup_generic(FiniteGroup):
             sage: a^6
             ()
         """
-        current_randstate().set_seed_gap()
-        return self(self._gap_().Random(), check=False)
+        current_randstate().set_seed_libgap()
+        return self(self._libgap_().Random(), check=False)
 
     def group_id(self):
         """

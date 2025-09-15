@@ -394,16 +394,14 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
             # For every partition p of size n, compute self(p) in
             # terms of the dual basis using the scalar product.
-            i = 0
-            for s_part in partitions_n:
+            for i, s_part in enumerate(partitions_n):
                 # s_part corresponds to self(dual_basis(part))
                 # s_mcs  corresponds to self(dual_basis(part))._monomial_coefficients
                 s_mcs = {}
 
                 # We need to compute the scalar product of d[s_part] and
                 # all of the d[p_part]'s
-                j = 0
-                for p_part in partitions_n:
+                for j, p_part in enumerate(partitions_n):
                     # Compute the scalar product of d[s_part] and d[p_part]
                     sp = zero
                     for ds_part in d[s_part]:
@@ -413,10 +411,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
                         s_mcs[p_part] = sp
                         transition_matrix_n[i,j] = sp
 
-                    j += 1
-
                 self._to_self_cache[ s_part ] = s_mcs
-                i += 1
 
         else:
             # Now the other case. Note that just being in this case doesn't

@@ -190,7 +190,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
             self._cartan_type = dynkin_type
         self._is_finite = dynkin_type is not None
         cat = Sets().Enumerated().Finite() if self._is_finite else Sets().Infinite()
-        super().__init__(self, category=cat)
+        super().__init__(category=cat)
 
     def _repr_(self) -> str:
         """

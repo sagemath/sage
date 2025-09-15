@@ -74,8 +74,6 @@ from sage.structure.element import parent
 from sage.structure.sequence import Sequence
 from sage.modules.free_module_element import vector
 
-from sage.misc.superseded import deprecated_function_alias
-
 
 class UnwrappingMorphism(Morphism):
     r"""
@@ -308,23 +306,12 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
             sage: el = A.random_element()
             sage: A.discrete_exp(A.discrete_log(el)) == el
             True
-
-        TESTS:
-
-        Check that :meth:`_discrete_exp` still works (for now)::
-
-            sage: A._discrete_exp(list(range(1,6)))
-            doctest:warning ...
-            DeprecationWarning: _discrete_exp is deprecated. ...
-            (1, 2, 3, 4, 5)
         """
         from sage.misc.verbose import verbose
         v = self.V()(v)
         verbose("Calling discrete exp on %s" % v)
         # DUMB IMPLEMENTATION!
         return sum([self._gen_elements[i] * ZZ(v[i]) for i in range(len(v))], self.universe()(0))
-
-    _discrete_exp = deprecated_function_alias(32384, discrete_exp)
 
     def discrete_log(self, x, gens=None):
         r"""
@@ -374,18 +361,6 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
             Traceback (most recent call last):
             ...
             NotImplementedError: No black-box discrete log for infinite abelian groups
-
-        TESTS:
-
-        Check that :meth:`_discrete_log` still works (for now)::
-
-            sage: orders = [2, 2*3, 2*3*5, 2*3*5*7, 2*3*5*7*11]
-            sage: G = AdditiveAbelianGroup(orders)
-            sage: A = AdditiveAbelianGroupWrapper(G.0.parent(), G.gens(), orders)
-            sage: A._discrete_log(sum(i*g for i,g in enumerate(G.gens(),1)))
-            doctest:warning ...
-            DeprecationWarning: _discrete_log is deprecated. ...
-            (1, 2, 3, 4, 5)
         """
         from sage.arith.misc import CRT_list
         from sage.rings.infinity import Infinity
@@ -420,8 +395,6 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
         res = vector(CRT_list(*map(list, zip(*l))) for l in crt_data)
         assert x == sum(r * g for r, g in zip(res, gens))
         return res
-
-    _discrete_log = deprecated_function_alias(32384, discrete_log)
 
     def torsion_subgroup(self, n=None):
         r"""
@@ -594,7 +567,7 @@ def _discrete_log_pgroup(p, vals, aa, b):
 
         assert k - j == 1
         aajk = subbasis(j, k)
-        assert not any(p*a for a in aajk)  # orders are in {1,p}
+        assert not any(p * a for a in aajk)  # orders are in {1,p}
         idxs = [i for i, a in enumerate(aajk) if a]
 
         rs = [([0], [0]) for i in range(len(aajk))]
@@ -627,7 +600,7 @@ def _discrete_log_pgroup(p, vals, aa, b):
             return _base(j, k, c)
 
         w = 2
-        js = list(range(j, k, (k-j+w-1) // w)) + [k]
+        js = list(range(j, k, (k - j + w - 1) // w)) + [k]
         assert len(js) == w + 1
 
         x = vector([0] * len(aa))
@@ -635,10 +608,10 @@ def _discrete_log_pgroup(p, vals, aa, b):
 
             gamma = p ** (js[i] - j) * c - dotprod(x, subbasis(js[i], k))
 
-            v = _rec(js[i], js[i+1], gamma)
+            v = _rec(js[i], js[i + 1], gamma)
 
-            assert not any(q1 % q2 for q1, q2 in zip(qq(js[i], js[i+1]), qq(js[i], k)))
-            x += vector(q1 // q2 * r for q1, q2, r in zip(qq(js[i], js[i+1]), qq(js[i], k), v))
+            assert not any(q1 % q2 for q1, q2 in zip(qq(js[i], js[i + 1]), qq(js[i], k)))
+            x += vector(q1 // q2 * r for q1, q2, r in zip(qq(js[i], js[i + 1]), qq(js[i], k), v))
 
         return x
 
@@ -700,7 +673,7 @@ def _expand_basis_pgroup(p, alphas, vals, beta, h, rel):
 
     # step 1
     min_r = rel[-1] or float('inf')
-    for i in range(k-1):
+    for i in range(k - 1):
         if not rel[i]:
             continue
         if rel[i] < 0:
@@ -712,16 +685,16 @@ def _expand_basis_pgroup(p, alphas, vals, beta, h, rel):
     if min_r == float('inf'):
         raise ValueError('rel must have at least one nonzero entry')
     val_rlast = rel[-1].valuation(p)
-#    assert rel[-1] == p ** val_rlast
-#    assert not sum(r*a for r,a in zip(rel, alphas+[beta]))
+    #    assert rel[-1] == p ** val_rlast
+    #    assert not sum(r*a for r,a in zip(rel, alphas+[beta]))
 
     # step 2
     if rel[-1] == min_r:
-        for i in range(k-1):
-            beta += alphas[i] * (rel[i]//rel[-1])
+        for i in range(k - 1):
+            beta += alphas[i] * (rel[i] // rel[-1])
         alphas.append(beta)
         vals.append(val_rlast)
-#        assert alphas[-1].order() == p**vals[-1]
+        #        assert alphas[-1].order() == p**vals[-1]
         return
 
     # step 3
