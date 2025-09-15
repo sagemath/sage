@@ -183,7 +183,7 @@ def khoca_raw_data(link, ring, red_typ=True, **kwds):
             # i[0]: degree, i[1]: height, i[2]: torsion i[3]: rank
             d, h, t, r = i
             # make d compatibil with Sage
-            d = int(t/2) - d
+            d = int(t / 2) - d
             if (h, d, t) in data_as_dict:
                 data_as_dict[(h, d, t)] += r
             else:
@@ -207,7 +207,7 @@ def khoca_raw_data(link, ring, red_typ=True, **kwds):
     raw_data = khoca_raw_data(link, ring, red_typ=False, **kwds)
     if 'reduced' in kwds:
         red = kwds['reduced']
-        if type(red) == bool:
+        if isinstance(red, bool):
             if red:
                 return raw_data['red']
             else:

@@ -1986,7 +1986,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
                 g = N.gcd(al)
 
                 if bl % g != 0:
-                    return [] # No solution
+                    return []  # No solution
                 else:
                     # whole eqn divided by g
                     N_by_g = N.divide_knowing_divisible_by(g)
@@ -1997,8 +1997,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
                     # single root
                     _root = self(f.roots(_R, multiplicities=False)[0])
                     inc = self(N_by_g)
-                    return [_root + k*inc for k in range(g)]
-
+                    return [_root + k * inc for k in range(g)]
 
         # Finite fields are a base case
         if self.is_field():
