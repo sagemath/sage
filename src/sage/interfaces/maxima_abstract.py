@@ -73,7 +73,6 @@ from .interface import (
 COMMANDS_CACHE = '%s/maxima_commandlist_cache.sobj' % DOT_SAGE
 
 
-
 # The Maxima "apropos" command, e.g., apropos(det) gives a list
 # of all identifiers that begin in a certain way.  This could
 # maybe be useful somehow... (?)  Also maxima has a lot for getting
