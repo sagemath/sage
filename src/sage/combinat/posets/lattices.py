@@ -337,7 +337,7 @@ class FiniteMeetSemilattice(FinitePoset):
             return []
         return self.upper_covers(self.bottom())
 
-    def submeetsemilattice(self, elms):
+    def submeetsemilattice(self, elms, **kwds):
         r"""
         Return the smallest meet-subsemilattice containing elements on the given list.
 
@@ -377,9 +377,9 @@ class FiniteMeetSemilattice(FinitePoset):
                 gens_remaining.add(self.meet(x, g))
             current_set.add(g)
 
-        return MeetSemilattice(self.subposet(current_set))
+        return MeetSemilattice(self.subposet(current_set), **kwds)
 
-    def subjoinsemilattice(self, elms):
+    def subjoinsemilattice(self, elms, **kwds):
         r"""
         Return the smallest join-subsemilattice containing elements on the given list.
 
@@ -419,7 +419,7 @@ class FiniteMeetSemilattice(FinitePoset):
                 gens_remaining.add(self.join(x, g))
             current_set.add(g)
 
-        return JoinSemilattice(self.subposet(current_set))
+        return JoinSemilattice(self.subposet(current_set), **kwds)
 
     def pseudocomplement(self, element):
         r"""
@@ -1125,6 +1125,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
           ``(False, e)`` such that `e^* \vee e^{**} \neq \top`.
           If ``certificate=False`` return ``True`` or ``False``.
 
+        If the lattice is not distributive, the result is either
+        ``(False, None)`` or ``False``.
+
         EXAMPLES:
 
         Divisor lattices are canonical example::
@@ -1156,7 +1159,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         # is extended to directed, use that; see comment below.
 
         if not self.is_distributive():
-            raise ValueError("the lattice is not distributive")
+            return (False, None) if certificate else False
 
         from sage.arith.misc import factor
         ok = (True, None) if certificate else True
@@ -2346,7 +2349,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return self
         elms = [self._vertex_to_element(v) for v in
                 self._hasse_diagram.skeleton()]
-        return LatticePoset(self.subposet(elms))
+        return LatticePoset(self.subposet(elms),
+                            category=FiniteLatticePosets().Stone())
 
     def is_orthocomplemented(self, unique=False) -> bool:
         """
@@ -3234,7 +3238,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return (True, self._vertex_to_element(e))
         return True
 
-    def sublattice(self, elms):
+    def sublattice(self, elms, **kwds):
         r"""
         Return the smallest sublattice containing elements on the given list.
 
@@ -3268,7 +3272,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                 gens_remaining.add(self.meet(x, g))
             current_set.add(g)
 
-        return LatticePoset(self.subposet(current_set))
+        return LatticePoset(self.subposet(current_set), **kwds)
 
     def is_sublattice(self, other) -> bool:
         """
@@ -3766,7 +3770,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         """
         neutrals = self.neutral_elements()
         comps = self.complements()
-        return self.sublattice([e for e in neutrals if e in comps])
+        return self.sublattice([e for e in neutrals if e in comps],
+                               category=FiniteLatticePosets().Stone())
 
     def is_dismantlable(self, certificate=False) -> bool | tuple:
         r"""

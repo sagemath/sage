@@ -926,11 +926,10 @@ class DyckWord(CombinatorialElement):
         horizontal = "<line x1=\"{}\" y1=\"{}\" x2=\"{}\" y2=\"{}\"/>"
         hori_lines = []
         path = ['<polyline points=\"0,0']
-        x, y = 0, 0
+        y = 0
         max_y = 0
         last_seen_level = [0]
-        for e in self:
-            x += 1
+        for x, e in enumerate(self, start=1):
             if e == open_symbol:
                 y += 1
                 last_seen_level.append(x - 1)

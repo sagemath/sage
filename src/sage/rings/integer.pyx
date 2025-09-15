@@ -7513,7 +7513,6 @@ def GCD_list(v):
     return z
 
 
-@cython.binding(True)
 def make_integer(s):
     """
     Create a Sage integer from the base-32 Python *string* ``s``. This is

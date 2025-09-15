@@ -16,6 +16,7 @@ from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement
 from sage.structure.element import parent
 from sage.misc.cachefunc import cached_method
+from sage.misc.randstate import current_randstate
 from sage.groups.class_function import ClassFunction_libgap
 from sage.groups.libgap_wrapper import ElementLibGAP
 
@@ -797,6 +798,7 @@ class GroupMixinLibGAP:
             sage: G.random_element() in G
             True
         """
+        current_randstate().set_seed_libgap()
         return self(self.gap().Random())
 
     def __iter__(self):

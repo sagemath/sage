@@ -281,7 +281,7 @@ class Posets(metaclass=ClasscallMetaclass):
                          for y in range(n) if v & (1 << y) == 0]
                      for v in range(2**n)})
         return FiniteLatticePoset(hasse_diagram=D,
-                                  category=FiniteLatticePosets(),
+                                  category=FiniteLatticePosets().Stone(),
                                   facade=facade)
 
     BubblePoset = staticmethod(bubble_shuffle.BubblePoset)
@@ -332,7 +332,7 @@ class Posets(metaclass=ClasscallMetaclass):
         D = DiGraph([range(n), [[x, x + 1] for x in range(n - 1)]],
                     format='vertices_and_edges')
         return FiniteLatticePoset(hasse_diagram=D,
-                                  category=FiniteLatticePosets(),
+                                  category=FiniteLatticePosets().Stone(),
                                   facade=facade)
 
     @staticmethod
@@ -413,7 +413,8 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: posets.DiamondPoset(5).is_distributive()
             False
         """
-        return LatticePoset([[1, 2], [4], [3], [4], []], facade=facade)
+        return LatticePoset([[1, 2], [4], [3], [4], []], facade=facade,
+                            category=FiniteLatticePosets().CongruenceUniform())
 
     @staticmethod
     def DiamondPoset(n, facade=None):
@@ -439,8 +440,10 @@ class Posets(metaclass=ClasscallMetaclass):
         c[0] = list(range(1, n - 1))
         c[n - 1] = []
         D = DiGraph({v: c[v] for v in range(n)}, format='dict_of_lists')
-        return FiniteLatticePoset(hasse_diagram=D,
-                                  category=FiniteLatticePosets(),
+        cat = FiniteLatticePosets()
+        if n <= 4:
+            cat = cat.Stone()
+        return FiniteLatticePoset(hasse_diagram=D, category=cat,
                                   facade=facade)
 
     @staticmethod
@@ -777,7 +780,8 @@ class Posets(metaclass=ClasscallMetaclass):
 
         def compare(a, b):
             return all(x <= y for x, y in zip(a, b))
-        return LatticePoset([elements, compare], facade=facade)
+        return LatticePoset([elements, compare], facade=facade,
+                            category=FiniteLatticePosets().Distributive())
 
     @staticmethod
     def RandomPoset(n, p):
@@ -1273,10 +1277,8 @@ class Posets(metaclass=ClasscallMetaclass):
         elem_labels = {}
         if 'labels' in labels:
             if labels['labels'] == 'integers':
-                labelcount = 0
-                for i, j, k in elem:
-                    elem_labels[(i, j, k)] = labelcount
-                    labelcount += 1
+                for labelcount, ijk in enumerate(elem):
+                    elem_labels[ijk] = labelcount
         for c in colors:
             for i, j, k in elem:
                 if i + j + k < n - 1:
@@ -1639,7 +1641,7 @@ class Posets(metaclass=ClasscallMetaclass):
         edges.extend([(n, n + 1), (n, n + 2), (n + 1, n + 3), (n + 2, n + 3)])
         edges.extend((i, i + 1) for i in range(n + 3, 2 * n + 2))
         p = DiGraph([list(range(1, 2 * n + 3)), edges])
-        return DCompletePoset(p)
+        return DCompletePoset(p, category=FiniteLatticePosets().Distributive())
 
     @staticmethod
     def PermutationPattern(n):

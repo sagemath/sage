@@ -38,11 +38,10 @@ from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import deprecated_function_alias
 
 
 class BinaryTree(AbstractClonableTree, ClonableArray,
-        metaclass=InheritComparisonClasscallMetaclass):
+                 metaclass=InheritComparisonClasscallMetaclass):
     """
     Binary trees.
 
@@ -3271,8 +3270,6 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             return B([self.under(bt[0]), bt[1]], lab)
         else:
             return B([self.under(bt[0]), bt[1]])
-
-    _backslash_ = deprecated_function_alias(36394, under)
 
     def under_decomposition(self):
         r"""
