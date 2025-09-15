@@ -24,11 +24,13 @@ doc-html:
 	mkdir -p $(SAGE_DOC)
 	cp -rf ../../build/sage-distro/src/doc/html $(SAGE_DOC)
 	cp -f ../../build/sage-distro/src/doc/index.html $(SAGE_DOC)
+	@echo "The html documentation was installed to $(SAGE_DOC)/html."
 
 doc-pdf:
 	meson compile -C ../../build/sage-distro doc-pdf
 	mkdir -p $(SAGE_DOC)
 	cp -rf ../../build/sage-distro/src/doc/pdf $(SAGE_DOC)
+	@echo "The pdf documentation was installed to $(SAGE_DOC)/pdf."
 
 .PHONY: all clean \
 	doc-src \
