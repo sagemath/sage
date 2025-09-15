@@ -299,16 +299,16 @@ class OreFunctionField(Parent, UniqueRepresentation):
             sage: T.<d> = OrePolynomialRing(R, der)
             sage: T.fraction_field()                                                    # needs sage.rings.function_field
             Ore Function Field in d over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+
+        TESTS::
+
+            sage: k = GF(7)
+            sage: S.<x> = SkewPolynomialRing(k, polcast=False)
+            sage: S.fraction_field()
+            Ore Function Field in x over Finite Field of size 7 untwisted
         """
-        s = "Ore Function Field in %s over %s twisted by " % (self.variable_name(), self.base_ring())
-        morphism = self.twisting_morphism()
-        derivation = self.twisting_derivation()
-        if derivation is None:
-            s += morphism._repr_short()
-        else:
-            if morphism is not None:
-                s += "%s and " % morphism._repr_short()
-            s += derivation._repr_()
+        s = "Ore Function Field in %s over %s " % (self.variable_name(), self.base_ring())
+        s += self._ring._repr_twist()
         return s
 
     def _latex_(self):
@@ -331,15 +331,20 @@ class OreFunctionField(Parent, UniqueRepresentation):
             sage: L = T.fraction_field()
             sage: latex(L)  # indirect doctest
             \mathrm{Frac}(\Bold{Q}[t])\left(\delta ; \frac{d}{dt} \right)
+
+        TESTS::
+
+            sage: k = GF(7)
+            sage: S.<x> = SkewPolynomialRing(k, polcast=False)
+            sage: K = S.fraction_field()
+            sage: latex(K)  # indirect doctest
+            \Bold{F}_{7}\left(x\right)
         """
         from sage.misc.latex import latex
         s = "%s\\left(%s" % (latex(self.base_ring()), self.latex_variable_names()[0])
-        sep = ";"
-        if self.twisting_morphism() is not None:
-            s += sep + latex(self.twisting_morphism())
-            sep = ","
-        if self.twisting_derivation() is not None:
-            s += sep + latex(self.twisting_derivation())
+        twist = self._ring._latex_twist()
+        if twist != "":
+            s += ";" + twist
         return s + "\\right)"
 
     def change_var(self, var):

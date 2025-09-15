@@ -66,6 +66,7 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from sage.categories.finite_lattice_posets import FiniteLatticePosets
 from sage.combinat.nu_dyck_word import NuDyckWords, NuDyckWord
 from sage.combinat.posets.lattices import LatticePoset
 
@@ -111,7 +112,8 @@ def NuTamariLattice(nu):
             new_ndw = ndw.mutate(i)
             if new_ndw is not None:
                 covers.append([ndw, new_ndw])
-    return LatticePoset([elements, covers])
+    cat = FiniteLatticePosets().Trim().CongruenceUniform()
+    return LatticePoset([elements, covers], cover_relations=True, category=cat)
 
 
 def delta_swap(p, k, delta):
@@ -220,7 +222,7 @@ def AltNuTamariLattice(nu, delta=None):
         Finite lattice containing 7 elements
         sage: AltNuTamariLattice('01001') == AltNuTamariLattice('01001', [2, 0])
         True
-        sage: nu = '00100100101'; P = AltNuTamariLattice(nu); Q = NuTamariLattice(nu); P == Q
+        sage: nu = '00100100101'; P = AltNuTamariLattice(nu); Q = NuTamariLattice(nu); P.is_isomorphic(Q)
         True
 
     TESTS::

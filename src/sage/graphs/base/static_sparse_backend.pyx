@@ -1510,7 +1510,6 @@ cdef class StaticSparseBackend(CGraphBackend):
                     seen.add(u)
 
 
-@cython.binding(True)
 def _run_it_on_static_instead(f):
     r"""
     A decorator function to force the (Di)Graph functions to compute from a
