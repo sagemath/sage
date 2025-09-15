@@ -9,9 +9,11 @@ Coxeter Groups
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-# With contributions from Dan Bump, Steve Pon, Qiang Wang, Anne Schilling, Christian Stump, Mark Shimozono
+# With contributions from Dan Bump, Steve Pon, Qiang Wang, Anne
+# Schilling, Christian Stump, Mark Shimozono
 from copy import copy
 from collections import deque
+from itertools import combinations
 
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.enumerated_sets import EnumeratedSets
@@ -436,6 +438,30 @@ class CoxeterGroups(Category_singleton):
                     #    because of an incompatible index
                     pass
             return self.element_class(self, x, **args)
+
+        def is_commutative(self) -> bool:
+            """
+            Return whether this Coxeter group is commutative.
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroup(['B', 3])
+                sage: W.is_commutative()
+                False
+
+            TESTS::
+
+                sage: # optional - coxeter3
+                sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
+                sage: W.is_commutative()
+                False
+                sage: W = CoxeterGroup(['A', 1], implementation='coxeter3')
+                sage: W.is_commutative()
+                True
+            """
+            M = self.coxeter_matrix()
+            Idx = M.index_set()
+            return all(M[i, j] == 2 for i, j in combinations(Idx, 2))
 
         def weak_order_ideal(self, predicate, side='right', category=None):
             """
@@ -1427,7 +1453,7 @@ class CoxeterGroups(Category_singleton):
                         tester.assertNotEqual(l**p, one, "unexpected relation")
 
     class ElementMethods:
-        def has_descent(self, i, side='right', positive=False):
+        def has_descent(self, i, side='right', positive=False) -> bool:
             """
             Return whether `i` is a (left/right) descent of ``self``.
 
@@ -1459,7 +1485,7 @@ class CoxeterGroups(Category_singleton):
             return self.has_left_descent(i) != positive
 
 #        @abstract_method(optional = True)
-        def has_right_descent(self, i):
+        def has_right_descent(self, i) -> bool:
             """
             Return whether `i` is a right descent of ``self``.
 
@@ -1478,7 +1504,7 @@ class CoxeterGroups(Category_singleton):
             """
             return (~self).has_left_descent(i)
 
-        def has_left_descent(self, i):
+        def has_left_descent(self, i) -> bool:
             """
             Return whether `i` is a left descent of ``self``.
 
@@ -1820,7 +1846,7 @@ class CoxeterGroups(Category_singleton):
             """
             return set(self.reduced_word())
 
-        def has_full_support(self):
+        def has_full_support(self) -> bool:
             r"""
             Return whether ``self`` has full support.
 

@@ -35,6 +35,7 @@ Classes and methods
 -------------------
 """
 
+cimport cython
 from cysignals.memory cimport check_calloc, sig_free
 
 from sage.graphs.base.static_sparse_graph cimport (init_short_digraph,
@@ -1507,42 +1508,6 @@ cdef class StaticSparseBackend(CGraphBackend):
                 if u not in seen:
                     yield self._vertex_to_labels[u]
                     seen.add(u)
-
-    def add_vertex(self, v):
-        r"""
-        Addition of vertices is not available on an immutable graph.
-
-        EXAMPLES::
-
-            sage: g = DiGraph(graphs.PetersenGraph(), data_structure='static_sparse')
-            sage: g.add_vertex(1)
-            Traceback (most recent call last):
-            ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
-            sage: g.add_vertices([1,2,3])
-            Traceback (most recent call last):
-            ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
-        """
-        (<StaticSparseCGraph> self._cg).add_vertex(v)
-
-    def del_vertex(self, v):
-        r"""
-        Removal of vertices is not available on an immutable graph.
-
-        EXAMPLES::
-
-            sage: g = DiGraph(graphs.PetersenGraph(), data_structure='static_sparse')
-            sage: g.delete_vertex(1)
-            Traceback (most recent call last):
-            ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
-            sage: g.delete_vertices([1,2,3])
-            Traceback (most recent call last):
-            ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
-        """
-        (<StaticSparseCGraph> self._cg).del_vertex(v)
 
 
 def _run_it_on_static_instead(f):

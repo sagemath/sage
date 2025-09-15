@@ -31,8 +31,8 @@ and showing that these lead to reproducible results. ::
     sage: G = PermutationGroup([[(1,2,3),(4,5)], [(1,2)]])
     sage: rgp = Gp()
     sage: def gap_randstring(n):
-    ....:     current_randstate().set_seed_gap()
-    ....:     return gap(n).SCRRandomString()
+    ....:     current_randstate().set_seed_libgap()
+    ....:     return libgap(n).SCRRandomString()
     sage: def rtest():
     ....:     current_randstate().set_seed_gp(rgp)
     ....:     return (ZZ.random_element(1000), RR.random_element(),
@@ -454,6 +454,7 @@ cdef randstate _current_randstate
 cdef randstate _libc_seed_randstate
 cdef randstate _ntl_seed_randstate
 cdef randstate _gap_seed_randstate
+cdef randstate _libgap_seed_randstate
 cdef randstate _pari_seed_randstate
 # For each gp subprocess that has been seeded, keep track of which
 # randstate object was the most recent one to seed it.
@@ -742,6 +743,43 @@ cdef class randstate:
                     prev_mersenne_seed, prev_classic_seed
 
             _gap_seed_randstate = self
+
+    def set_seed_libgap(self):
+        r"""
+        Check to see if ``self`` was the most recent :class:`randstate`
+        to seed the GAP random number generator.  If not, seeds
+        the generator.
+
+        EXAMPLES::
+
+            sage: set_random_seed(99900000999)
+            sage: current_randstate().set_seed_libgap()
+            sage: libgap.Random(1, 10^50)
+            1496738263332555434474532297768680634540939580077
+            sage: libgap(35).SCRRandomString()
+            [ 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1,
+              1, 0, 0, 1, 1, 1, 1, 1, 0, 1 ]
+        """
+        global _libgap_seed_randstate
+        if _libgap_seed_randstate is not self:
+            from sage.libs.gap.libgap import libgap
+
+            if self._libgap_saved_seed is not None:
+                mersenne_seed, classic_seed = self._libgap_saved_seed
+            else:
+                from sage.rings.integer_ring import ZZ
+                seed = ZZ.random_element(1<<128)
+                classic_seed = seed
+                mersenne_seed = seed
+
+            prev_mersenne_seed = libgap.Reset(libgap.GlobalMersenneTwister, mersenne_seed)
+            prev_classic_seed = libgap.Reset(libgap.GlobalRandomSource, classic_seed)
+
+            if _libgap_seed_randstate is not None:
+                _libgap_seed_randstate._libgap_saved_seed = \
+                    prev_mersenne_seed, prev_classic_seed
+
+            _libgap_seed_randstate = self
 
     def set_seed_gp(self, gp=None):
         r"""
@@ -1036,9 +1074,8 @@ def benchmark_mt():
         sage: timeit('benchmark_mt()')    # random
         125 loops, best of 3: 2.11 ms per loop
     """
-    cdef int i
     cdef randstate rstate = _current_randstate
-    for i from 0 <= i < 100000:
+    for _ in range(100000):
         gmp_urandomb_ui(rstate.gmp_state, 32)
 
 

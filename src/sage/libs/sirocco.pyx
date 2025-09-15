@@ -200,7 +200,6 @@ cpdef list[list] contpath(int deg, list values, double y0r, double y0i) noexcept
     """
     cdef double* rop
     cdef double* c_values = <double*> check_allocarray(len(values), sizeof(double))
-    cdef int clen = <int> len(values)
     cdef int i
     for i, v in enumerate(values):
         c_values[i] = values[i]
@@ -262,7 +261,6 @@ cpdef list[list] contpath_comps(int deg, list values, double y0r, double y0i, li
     cdef double* c_values = <double*> check_allocarray(len(values), sizeof(double))
     cdef int* c_otherdegrees = <int*> check_allocarray(len(otherdegrees), sizeof(int))
     cdef double* c_othercoefs = <double*> check_allocarray(len(othercoefs), sizeof(double))
-    cdef int clen = <int> len(values)
     cdef int i
     for i, v in enumerate(values):
         c_values[i] = values[i]

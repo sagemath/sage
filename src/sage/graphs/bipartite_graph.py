@@ -400,7 +400,16 @@ class BipartiteGraph(Graph):
             sage: B.add_vertices([4], left=True)
             Traceback (most recent call last):
             ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
+            TypeError: this graph is immutable and so cannot be changed
+
+        Check that :issue:`39756` is fixed::
+
+            sage: B = BipartiteGraph([(0,2), (0,3), (1,2), (1,3)])
+            sage: B.left, B.right
+            ({0, 1}, {2, 3})
+            sage: B.clear()
+            sage: B.left, B.right
+            (set(), set())
         """
         if kwds is None:
             kwds = {'loops': False}
@@ -943,7 +952,20 @@ class BipartiteGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: vertex (0) not in the graph
+
+        TESTS:
+
+        Check that :issue:`39756` is fixed::
+
+            sage: B = BipartiteGraph([(0,2), (0,3), (1,2), (1,3)])
+            sage: B.left, B.right
+            ({0, 1}, {2, 3})
+            sage: B.delete_vertices(B.vertex_iterator())
+            sage: B.left, B.right
+            (set(), set())
         """
+        vertices = list(vertices)
+
         # remove vertices from the graph
         Graph.delete_vertices(self, vertices)
 

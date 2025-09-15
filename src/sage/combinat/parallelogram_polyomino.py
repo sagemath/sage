@@ -1,7 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Parallelogram Polyominoes
-=========================
+Parallelogram polyominoes
 
 The goal of this module is to give some tools to manipulate the
 parallelogram polyominoes.
@@ -3143,9 +3142,7 @@ class ParallelogramPolyomino(ClonableList,
             return False
         if self[pos[0] - 1][pos[1]] == 0:
             return True
-        if self[pos[0]][pos[1] - 1] == 0:
-            return True
-        return False
+        return self[pos[0]][pos[1] - 1] == 0
 
     def box_is_root(self, box) -> bool:
         r"""

@@ -673,6 +673,48 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         finally:
             sig_off()
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_gfpn_dense with
+                    the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: from sage.matrix.matrix_gfpn_dense import Matrix_gfpn_dense
+            sage: K.<z> = GF(59)
+            sage: M = MatrixSpace(K, 3, 4, implementation=Matrix_gfpn_dense)(range(12))
+            sage: M
+            [ 0  1  2  3]
+            [ 4  5  6  7]
+            [ 8  9 10 11]
+            sage: M.transpose()
+            [ 0  4  8]
+            [ 1  5  9]
+            [ 2  6 10]
+            [ 3  7 11]
+            sage: M.matrix_from_rows([0,2])
+            [ 0  1  2  3]
+            [ 8  9 10 11]
+            sage: M.matrix_from_columns([1,3])
+            [ 1  3]
+            [ 5  7]
+            [ 9 11]
+            sage: M.matrix_from_rows_and_columns([1,2],[0,3])
+            [ 4  7]
+            [ 8 11]
+        """
+        cdef Matrix_gfpn_dense _src = <Matrix_gfpn_dense>src
+        FfInsert(FfGetPtr(self.Data.Data, iDst), jDst, FfExtract(MatGetPtr(_src.Data,iSrc), jSrc))
+
     def randomize(self, density=None, nonzero=False, *args, **kwds):
         """
         Fill the matrix with random values.

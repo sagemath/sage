@@ -214,7 +214,7 @@ from itertools import product
 
 from sage.modules.module import Module
 from sage.modules.free_module import FreeModule_generic
-from sage.structure.all import parent
+from sage.structure.element import parent
 from sage.structure.sequence import Sequence
 from .fgp_element import DEBUG, FGP_Element
 from .fgp_morphism import FGP_Morphism, FGP_Homset
@@ -764,7 +764,7 @@ class FGP_Module_class(Module):
         V = self._V.submodule(x) + self._W
         return self._module_constructor(V, self._W)
 
-    def has_canonical_map_to(self, A):
+    def has_canonical_map_to(self, A) -> bool:
         """
         Return ``True`` if ``self`` has a canonical map to ``A``, relative to the
         given presentation of ``A``.

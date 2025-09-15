@@ -450,7 +450,11 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
                 return self._indices(m)
         else:
             def build_index(m):
-                return self._indices(reversed(m)).trim()
+                mc = m.monomial_coefficients()
+                v = [0 for _ in range(max(mc, default=-1) + 1)]
+                for i, e in mc.items():
+                    v[i] = e
+                return self._indices(v)
 
         self._build_index = build_index
 
@@ -652,8 +656,8 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
         if f not in self._polynomial_ring:
             try:  # to accept elements of SymbolicRing
                 from sage.calculus.var import var
-                f = f.substitute(list(d == var(f'z_{i}')
-                                 for i, d in enumerate(f.variables())))
+                f = f.substitute([d == var(f'z_{i}')
+                                  for i, d in enumerate(f.variables())])
                 f = self._polynomial_ring(f)
             except AttributeError:
                 raise ValueError(f"f must be an element of {self._polynomial_ring}")

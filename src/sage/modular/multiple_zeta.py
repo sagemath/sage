@@ -1803,16 +1803,14 @@ class Multizetas_iterated(CombinatorialFreeModule):
         compo = tuple(iterated_to_composition(w))
         if compo in B_data[N]:
             # do not forget the sign
-            result_QQ = (-1)**len(compo) * phi_on_multiplicative_basis(compo)
-            return result_QQ
+            return (-1)**len(compo) * phi_on_multiplicative_basis(compo)
         u = compute_u_on_basis(w)
         rho_inverse_u = rho_inverse(u)
         xi = self.composition_on_basis(w, QQ)
         c_xi = (xi - rho_inverse_u)._numerical_approx_pari()
         c_xi /= Multizeta(N)._numerical_approx_pari()
         c_xi = c_xi.bestappr().sage()  # in QQ
-        result_QQ = u + c_xi * f(N)
-        return result_QQ
+        return u + c_xi * f(N)
 
     @lazy_attribute
     def phi(self):

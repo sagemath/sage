@@ -75,52 +75,82 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from itertools import count
-from collections import Counter
 
-from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import deprecation
+from collections import Counter
+from itertools import count
+
+from cypari2.gen import Gen as pari_gen
 
 import sage.rings.abc
+import sage.rings.complex_interval_field
 import sage.rings.complex_mpfr
-from sage.rings.polynomial.polynomial_element import Polynomial
-import sage.rings.real_mpfr
 import sage.rings.real_double
 import sage.rings.real_lazy
-
+import sage.rings.real_mpfr
+import sage.structure.coerce_exceptions
 from sage.arith.misc import euler_phi, factor, gcd, next_prime
+from sage.categories.homset import Hom
+from sage.categories.number_fields import NumberFields
+from sage.categories.sets_cat import Sets
+from sage.interfaces.abc import GapElement
+from sage.libs.pari import pari
+from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
 from sage.misc.functional import is_odd, lift
+from sage.misc.latex import latex, latex_variable_name
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.sage_eval import sage_eval
-from sage.rings.infinity import Infinity
-from sage.rings.finite_rings.integer_mod import mod
-from sage.categories.number_fields import NumberFields
-
-from sage.misc.latex import latex_variable_name
-
-from sage.structure.element import Element
-from sage.structure.parent import Parent
-from sage.structure.sequence import Sequence
-from sage.structure.factorization import Factorization
-from sage.structure.category_object import normalize_names
-import sage.structure.parent_gens
-import sage.structure.coerce_exceptions
-
-from sage.structure.proof.proof import get_flag
-from . import maps
-from . import structure
-from . import number_field_morphisms
-
-from sage.categories.homset import Hom
-from sage.categories.sets_cat import Sets
+from sage.misc.superseded import deprecation
 from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_element import vector
-from sage.rings.real_mpfr import RR
-
-from sage.interfaces.abc import GapElement
+from sage.rings import infinity
+from sage.rings.cif import CIF
+from sage.rings.finite_rings.integer_mod import mod
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.infinity import Infinity
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.number_field import (
+    maps,
+    number_field_base,
+    number_field_morphisms,
+    structure,
+)
 from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
+from sage.rings.number_field.number_field_element import (
+    NumberFieldElement,
+    NumberFieldElement_absolute,
+    OrderElement_absolute,
+    OrderElement_relative,
+)
+from sage.rings.number_field.number_field_element_quadratic import (
+    NumberFieldElement_gaussian,
+    NumberFieldElement_quadratic,
+    NumberFieldElement_quadratic_sqrt,
+    OrderElement_quadratic,
+    Q_to_quadratic_field_element,
+    Z_to_quadratic_field_element,
+    is_sqrt_disc,
+)
+from sage.rings.number_field.number_field_ideal import (
+    NumberFieldFractionalIdeal,
+    NumberFieldIdeal,
+)
+from sage.rings.polynomial import polynomial_element
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.rational import Rational
+from sage.rings.rational_field import QQ
+from sage.rings.real_double import RDF
+from sage.rings.real_lazy import CLF, RLF
+from sage.rings.real_mpfr import RR
+from sage.structure.category_object import normalize_names
+from sage.structure.element import Element
+from sage.structure.factorization import Factorization
+from sage.structure.factory import UniqueFactory
+from sage.structure.parent import Parent
+from sage.structure.proof.proof import get_flag
+from sage.structure.sequence import Sequence
 
 lazy_import('sage.libs.gap.element', 'GapElement', as_='LibGapElement')
 lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicFieldElement')
@@ -192,28 +222,6 @@ def proof_flag(t):
         'banana'
     """
     return get_flag(t, "number_field")
-
-
-from sage.misc.latex import latex
-
-import sage.rings.infinity as infinity
-from sage.rings.rational import Rational
-from sage.rings.integer import Integer
-import sage.rings.polynomial.polynomial_element as polynomial_element
-
-from sage.structure.factory import UniqueFactory
-from . import number_field_element
-from . import number_field_element_quadratic
-from .number_field_ideal import NumberFieldIdeal, NumberFieldFractionalIdeal
-from sage.libs.pari import pari
-from cypari2.gen import Gen as pari_gen
-
-from sage.rings.rational_field import QQ
-from sage.rings.integer_ring import ZZ
-from sage.rings.cif import CIF
-from sage.rings.real_double import RDF
-from sage.rings.real_lazy import RLF, CLF
-from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 
 
 def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
@@ -422,12 +430,12 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
 
         sage: K.<a> = NumberField(2*x^3 + x + 1)
         sage: K.pari_polynomial()
-        x^3 - x^2 - 2
+        x^3 + 2*x + 4
 
     Elements and ideals may be converted to and from PARI as follows::
 
         sage: pari(a)
-        Mod(-1/2*y^2 + 1/2*y, y^3 - y^2 - 2)
+        Mod(1/2*y, y^3 + 2*y + 4)
         sage: K(pari(a))
         a
         sage: I = K.ideal(a); I
@@ -1190,9 +1198,6 @@ class CyclotomicFieldFactory(UniqueFactory):
 CyclotomicField = CyclotomicFieldFactory("sage.rings.number_field.number_field.CyclotomicField")
 
 
-from . import number_field_base
-
-
 is_NumberField = number_field_base.is_NumberField
 
 
@@ -1657,10 +1662,10 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         a warning is printed unless ``check=False`` is specified::
 
             sage: b = pari(a); b                                                        # needs sage.libs.pari
-            Mod(-1/12*y^2 - 1/12*y + 1/6, y^3 - 3*y - 22)
+            Mod(1/6*y, y^3 - 18*y + 72)
             sage: K(b.lift())                                                           # needs sage.libs.pari
-            doctest:...: UserWarning: interpreting PARI polynomial -1/12*y^2 - 1/12*y + 1/6
-            relative to the defining polynomial x^3 - 3*x - 22 of the PARI number field
+            doctest:warning...
+            UserWarning: interpreting PARI polynomial 1/6*y relative to the defining polynomial x^3 - 18*x + 72 of the PARI number field
             a
             sage: K(b.lift(), check=False)                                              # needs sage.libs.pari
             a
@@ -1705,13 +1710,13 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: K([1]).parent()
             Number Field in a with defining polynomial x
         """
-        if isinstance(x, number_field_element.NumberFieldElement):
+        if isinstance(x, NumberFieldElement):
             K = x.parent()
             if K is self:
                 return x
-            elif isinstance(x, (number_field_element.OrderElement_absolute,
-                                number_field_element.OrderElement_relative,
-                                number_field_element_quadratic.OrderElement_quadratic)):
+            elif isinstance(x, (OrderElement_absolute,
+                                OrderElement_relative,
+                                OrderElement_quadratic)):
                 L = K.number_field()
                 if L is self:
                     return self._element_class(self, x)
@@ -2600,11 +2605,11 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         f = x**2 + x
         while w < u and not w % 2:
             s = F.lift(q((a - 1) / pi**w).sqrt())
-            a = a / (1 + s*(pi**(w/2)))**2
+            a = a / (1 + s * (pi**(w / 2)))**2
             w = (a - 1).valuation(p)
         if w < u and w % 2:
             return v + w
-        if w == u and (f + F((a-1) / 4)).is_irreducible():
+        if w == u and (f + F((a - 1) / 4)).is_irreducible():
             return v + w
         return Infinity
 
@@ -3415,7 +3420,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
                     H.append(chi)
         return H
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this number field.
 
@@ -3435,7 +3440,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             result += " with {} = {}".format(self.variable_name(), gen)
         return result
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return latex representation of this number field. This is viewed as
         a polynomial quotient ring over a field.
@@ -4054,7 +4059,9 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: [P.residue_class_degree() for P in Ps]
             [1, 1, 1]
         """
-        from sage.rings.number_field.small_primes_of_degree_one import Small_primes_of_degree_one_iter
+        from sage.rings.number_field.small_primes_of_degree_one import (
+            Small_primes_of_degree_one_iter,
+        )
         return Small_primes_of_degree_one_iter(self, num_integer_primes, max_iterations)
 
     def primes_of_degree_one_list(self, n, num_integer_primes=10000, max_iterations=100):
@@ -4203,16 +4210,39 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: K.<a> = NumberField(2*x^2 + 1/3)
             sage: K._pari_absolute_structure()
             (y^2 + 6, Mod(1/6*y, y^2 + 6), Mod(6*y, y^2 + 1/6))
+
+        TESTS:
+
+        Checking that the representation in not improved in a costly manner (see :issue:`39920`)::
+
+            sage: from cysignals.alarm import alarm
+            sage: K = NumberField(ZZ['x']([1]*200 + [2]), 'a')
+            sage: QQasNF = NumberField(ZZ['x']([1,-1]), 'b')
+            sage: alarm(0.5) # ensuring that a trivial isomorphism finishes in reasonable time
+            sage: K.is_isomorphic(QQasNF)
+            False
+            sage: cancel_alarm()
         """
-        f = self.absolute_polynomial()._pari_with_name('y')
-        f = f * f.content().denominator()
-        if f.pollead() == 1:
-            g = f
-            alpha = beta = g.variable().Mod(g)
-        else:
-            g, alpha = f.polredbest(flag=1)
-            beta = alpha.modreverse()
-        return g, alpha, beta
+        g = self.absolute_polynomial()
+        # make it integral
+        g *= g.denominator()
+        g = g.change_ring(ZZ)
+        scalar = g.leading_coefficient()
+        if scalar != 1:
+            # doing g = g(x/scalar) in linear time
+            from itertools import accumulate
+            from operator import mul
+            # scalar^i
+            powers = accumulate([1/scalar] + [scalar] * g.degree(), mul)
+            # need to double reverse
+            g = g.parent()([c*p for c, p in zip(g.reverse(), powers)]).reverse()
+        g /= g.content()
+        assert g.leading_coefficient() == 1
+        f = g._pari_with_name('y')
+        y = f.variable()
+        alpha = (y/scalar).Mod(f)
+        beta = alpha.modreverse()
+        return f, alpha, beta
 
     def pari_polynomial(self, name='x'):
         """
@@ -4237,11 +4267,11 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: y = polygen(QQ)
             sage: k.<a> = NumberField(y^2 - 3/2*y + 5/3)
             sage: k.pari_polynomial()
-            x^2 - x + 40
+            x^2 - 9*x + 60
             sage: k.polynomial().__pari__()
             x^2 - 3/2*x + 5/3
             sage: k.pari_polynomial('a')
-            a^2 - a + 40
+            a^2 - 9*a + 60
 
         Some examples with relative number fields::
 
@@ -6526,10 +6556,10 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         # faster than computing all the conjugates, etc ...
 
         # flag to disable FLATTER, which is much more unstable than fplll
-        flag = 1 if pari.version() >= (2,17) else 0
+        flag = 1 if pari.version() >= (2, 17) else 0
         if self.is_totally_real():
             from sage.matrix.constructor import matrix
-            M = matrix(ZZ, d, d, [[(x*y).trace() for x in ZK] for y in ZK])
+            M = matrix(ZZ, d, d, [[(x * y).trace() for x in ZK] for y in ZK])
             T = pari(M).qflllgram(flag=flag)
         else:
             M = self.minkowski_embedding(ZK, prec=prec)
@@ -6774,12 +6804,13 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         try:
             return (self.__polynomial_ntl, self.__denominator_ntl)
         except AttributeError:
-            import sage.libs.ntl.all as ntl
+            from sage.libs.ntl.ntl_ZZ import ntl_ZZ
+            from sage.libs.ntl.ntl_ZZX import ntl_ZZX
 
-            self.__denominator_ntl = ntl.ZZ()
+            self.__denominator_ntl = ntl_ZZ()
             den = self.polynomial().denominator()
             self.__denominator_ntl.set_from_sage_int(ZZ(den))
-            self.__polynomial_ntl = ntl.ZZX((self.polynomial()*den).list())
+            self.__polynomial_ntl = ntl_ZZX((self.polynomial() * den).list())
         return (self.__polynomial_ntl, self.__denominator_ntl)
 
     def polynomial(self):
@@ -8086,7 +8117,7 @@ class NumberField_absolute(NumberField_generic):
         """
         NumberField_generic.__init__(self, polynomial, name, latex_name, check, embedding,
                                      assume_disc_small=assume_disc_small, maximize_at_primes=maximize_at_primes, structure=structure)
-        self._element_class = number_field_element.NumberFieldElement_absolute
+        self._element_class = NumberFieldElement_absolute
         self._zero_element = self._element_class(self, 0)
         self._one_element = self._element_class(self, 1)
 
@@ -9933,10 +9964,9 @@ class NumberField_absolute(NumberField_generic):
         # step 1: construct the abstract field generated by alpha.w
         # step 2: make a relative extension of it.
         # step 3: construct isomorphisms
+        from sage.categories.map import Map
         from sage.matrix.constructor import matrix
         from sage.modules.free_module_element import vector
-
-        from sage.categories.map import Map
         if isinstance(alpha, Map):
             # alpha better be a morphism with codomain self
             if alpha.codomain() != self:
@@ -10397,10 +10427,12 @@ class NumberField_absolute(NumberField_generic):
 
         - Simon Brandhorst, Anna Haensch (01-05-2018)
         """
-        from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-        from sage.modules.free_module import VectorSpace
+        from sage.groups.additive_abelian.additive_abelian_group import (
+            AdditiveAbelianGroup,
+        )
         from sage.matrix.constructor import matrix
-        from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
+        from sage.modules.free_module import VectorSpace
+        from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 
         # input checks
         if not isinstance(S, list):
@@ -10841,15 +10873,14 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             from sage.rings.complex_double import CDF
 
             self._standard_embedding = not CDF.has_coerce_map_from(self) or CDF(self.gen()).imag() > 0
-            self._cache_an_element = None
 
             if n == 4:
-                self._element_class = number_field_element_quadratic.NumberFieldElement_gaussian
+                self._element_class = NumberFieldElement_gaussian
                 self._D = ZZ(-1)
                 self._NumberField_generic__gen = self._element_class(self, (QQ(0), QQ.one()))
             else:
                 # n is 3 or 6
-                self._element_class = number_field_element_quadratic.NumberFieldElement_quadratic
+                self._element_class = NumberFieldElement_quadratic
                 self._D = ZZ(-3)
                 one_half = QQ((1, 2))
                 if n == 3:
@@ -10997,7 +11028,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         from sage.libs.gap.libgap import libgap
         return libgap.CyclotomicField(self.__n)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return string representation of this cyclotomic field.
 
@@ -11029,7 +11060,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         """
         return self.__n
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the latex representation of this cyclotomic field.
 
@@ -11202,9 +11233,9 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
 
         elif self.degree() == 2:
             if K is ZZ:
-                return number_field_element_quadratic.Z_to_quadratic_field_element(self)
+                return Z_to_quadratic_field_element(self)
             if K is QQ:
-                return number_field_element_quadratic.Q_to_quadratic_field_element(self)
+                return Q_to_quadratic_field_element(self)
 
         return NumberField_absolute._coerce_map_from_(self, K)
 
@@ -11350,7 +11381,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             sage: K(O.1^2 + O.1 - 2)
             z^2 + z - 2
         """
-        if isinstance(x, number_field_element.NumberFieldElement):
+        if isinstance(x, NumberFieldElement):
             if isinstance(x.parent(), NumberField_cyclotomic):
                 return self._coerce_from_other_cyclotomic_field(x)
             else:
@@ -12068,12 +12099,11 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         parts = -b/(2*a), (Dpoly/D).sqrt()/(2*a)
 
         if a.is_one() and b.is_zero() and c.is_one():
-            self._element_class = number_field_element_quadratic.NumberFieldElement_gaussian
+            self._element_class = NumberFieldElement_gaussian
+        elif is_sqrt_disc(parts[0], parts[1]):
+            self._element_class = NumberFieldElement_quadratic_sqrt
         else:
-            if number_field_element_quadratic.is_sqrt_disc(parts[0], parts[1]):
-                self._element_class = number_field_element_quadratic.NumberFieldElement_quadratic_sqrt
-            else:
-                self._element_class = number_field_element_quadratic.NumberFieldElement_quadratic
+            self._element_class = NumberFieldElement_quadratic
 
         self._NumberField_generic__gen = self._element_class(self, parts)
 
@@ -12082,7 +12112,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         # we must set the flag _standard_embedding *before* any element creation
         # Note that in the following code, no element is built.
         if self.coerce_embedding() is not None and CDF.has_coerce_map_from(self):
-            rootD = CDF(number_field_element_quadratic.NumberFieldElement_quadratic(self, (QQ(0), QQ(1))))
+            rootD = CDF(NumberFieldElement_quadratic(self, (QQ(0), QQ(1))))
             if D > 0:
                 self._standard_embedding = rootD.real() > 0
             else:
@@ -12123,11 +12153,11 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
             True
         """
         if K is ZZ:
-            return number_field_element_quadratic.Z_to_quadratic_field_element(self)
+            return Z_to_quadratic_field_element(self)
         if K is int:
             return self._coerce_map_via([ZZ], int)  # faster than direct
         if K is QQ:
-            return number_field_element_quadratic.Q_to_quadratic_field_element(self)
+            return Q_to_quadratic_field_element(self)
         return NumberField_absolute._coerce_map_from_(self, K)
 
     def _latex_(self):
@@ -12654,11 +12684,10 @@ def refine_embedding(e, prec=None):
             elist = K.embeddings(sage.rings.qqbar.AA)
         else:
             elist = K.real_embeddings(prec)
+    elif prec == Infinity:
+        elist = K.embeddings(sage.rings.qqbar.QQbar)
     else:
-        if prec == Infinity:
-            elist = K.embeddings(sage.rings.qqbar.QQbar)
-        else:
-            elist = K.complex_embeddings(prec)
+        elist = K.complex_embeddings(prec)
 
     # Now we determine which is an extension of the old one; this
     # relies on the fact that coercing a high-precision root into a

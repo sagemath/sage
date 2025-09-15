@@ -21,3 +21,6 @@ class CliOptions:
 
     """The command to execute."""
     command: str | None = None
+
+    """The file to execute."""
+    file: str | None = None

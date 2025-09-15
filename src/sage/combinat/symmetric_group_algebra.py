@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules sage.groups
 r"""
-Symmetric Group Algebra
+Symmetric group algebra
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
@@ -1313,6 +1313,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         modules (which are the :meth:`Specht modules <specht_module>`
         and also projective modules)::
 
+            sage: # long time
             sage: SGA = SymmetricGroupAlgebra(QQ, 5)
             sage: for la in Partitions(SGA.n):
             ....:     idem = SGA.ladder_idempotent(la)
@@ -2625,7 +2626,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         try:
             from sage.libs.coxeter3.coxeter_group import CoxeterGroup as Coxeter3Group
         except ImportError:
-            # Falback to using the KL polynomial
+            # Fallback to using the KL polynomial
             from sage.combinat.kazhdan_lusztig import KazhdanLusztigPolynomial
             from sage.groups.perm_gps.permgroup_named import SymmetricGroup
             q = PolynomialRing(R, 'q').gen()

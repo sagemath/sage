@@ -1705,7 +1705,7 @@ class Sigma:
             124.0
         """
         v = [(n, sigma(n, k)) for n in range(xmin, xmax + 1)]
-        from sage.plot.all import list_plot
+        from sage.plot.plot import list_plot
         P = list_plot(v, pointsize=pointsize, rgbcolor=rgbcolor, **kwds)
         if join:
             P += list_plot(v, plotjoined=True, rgbcolor=(0.7, 0.7, 0.7), **kwds)
@@ -2236,9 +2236,9 @@ def get_gcd(order):
     EXAMPLES::
 
         sage: sage.arith.misc.get_gcd(4000)
-        <built-in method gcd_int of sage.rings.fast_arith.arith_int object at ...>
+        <bound method arith_int.gcd_int of <sage.rings.fast_arith.arith_int object at ...>
         sage: sage.arith.misc.get_gcd(400000)
-        <built-in method gcd_longlong of sage.rings.fast_arith.arith_llong object at ...>
+        <bound method arith_llong.gcd_longlong of <sage.rings.fast_arith.arith_llong object at ...>
         sage: sage.arith.misc.get_gcd(4000000000)
         <function gcd at ...>
     """
@@ -2258,9 +2258,9 @@ def get_inverse_mod(order):
     EXAMPLES::
 
         sage: sage.arith.misc.get_inverse_mod(6000)
-        <built-in method inverse_mod_int of sage.rings.fast_arith.arith_int object at ...>
+        <bound method arith_int.inverse_mod_int of <sage.rings.fast_arith.arith_int object at ...>
         sage: sage.arith.misc.get_inverse_mod(600000)
-        <built-in method inverse_mod_longlong of sage.rings.fast_arith.arith_llong object at ...>
+        <bound method arith_llong.inverse_mod_longlong of <sage.rings.fast_arith.arith_llong object at ...>
         sage: sage.arith.misc.get_inverse_mod(6000000000)
         <function inverse_mod at ...>
     """
@@ -2560,7 +2560,7 @@ def trial_division(n, bound=None):
         return ZZ(n).trial_division(bound)
 
 
-def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
+def factor(n, proof=None, int_=False, algorithm=None, verbose=0, **kwds):
     """
     Return the factorization of ``n``.  The result depends on the
     type of ``n``.
@@ -2734,6 +2734,11 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
         sage: len(factor(2^2203-1,proof=false))
         1
+
+    Test ``limit``::
+
+        sage: factor(2990, limit=10)
+        2 * 5 * 299
     """
     try:
         m = n.factor
@@ -3193,7 +3198,7 @@ class Euler_Phi:
             46.0
         """
         v = [(n, euler_phi(n)) for n in range(xmin, xmax + 1)]
-        from sage.plot.all import list_plot
+        from sage.plot.plot import list_plot
         P = list_plot(v, pointsize=pointsize, rgbcolor=rgbcolor, **kwds)
         if join:
             P += list_plot(v, plotjoined=True, rgbcolor=(0.7, 0.7, 0.7), **kwds)
@@ -3600,6 +3605,13 @@ def CRT_list(values, moduli=None):
         [1, 2, 3]
         sage: ms
         [5, 7, 9]
+
+    Tests for call with length 1 lists (:issue:`40074`)::
+
+        sage: x = CRT_list([1], [2]); x
+        1
+        sage: x = CRT_list([int(1)], [int(2)]); x
+        1
     """
     if not isinstance(values, list) or (moduli is not None and not isinstance(moduli, list)):
         raise ValueError("arguments to CRT_list should be lists")
@@ -3621,10 +3633,11 @@ def CRT_list(values, moduli=None):
         if not values:
             return ZZ.zero()
         if len(values) == 1:
-            return moduli[0].parent()(values[0])
+            return parent(moduli[0])(values[0])
 
     # The result is computed using a binary tree. In typical cases,
     # this scales much better than folding the list from one side.
+    # See also sage.misc.misc_c.balanced_list_prod
     from sage.arith.functions import lcm
     while len(values) > 1:
         vs, ms = values[::2], moduli[::2]
@@ -3711,7 +3724,7 @@ def CRT_basis(moduli, *, require_coprime_moduli=True):
         for i in range(1, n):
             partial_prod_table.append((1 - e[-i]) * partial_prod_table[-1])
         for i in range(n):
-            cs.append(e[i] * partial_prod_table[-i-1])
+            cs.append(e[i] * partial_prod_table[-i - 1])
         # also return a boolean flag to report that the moduli are not coprime
         return [cs, False]
 
@@ -3762,8 +3775,8 @@ def CRT_vectors(X, moduli):
                  for j in range(len(X[0]))]
     if not res[1] and any((X[i][j] - candidate[j]) % moduli[i] != 0
                           for i in range(n)
-        for j in range(len(X[i]))):
-            raise ValueError("solution does not exist")
+                          for j in range(len(X[i]))):
+        raise ValueError("solution does not exist")
     return candidate
 
 
@@ -4735,7 +4748,7 @@ class Moebius:
         """
         values = self.range(xmin, xmax + 1)
         v = [(n, values[n - xmin]) for n in range(xmin, xmax + 1)]
-        from sage.plot.all import list_plot
+        from sage.plot.plot import list_plot
         P = list_plot(v, pointsize=pointsize, rgbcolor=rgbcolor, **kwds)
         if join:
             P += list_plot(v, plotjoined=True, rgbcolor=(0.7, 0.7, 0.7), **kwds)
@@ -5263,7 +5276,7 @@ def falling_factorial(x, a):
         (isinstance(a, Expression) and
          a.is_integer())) and a >= 0:
         return prod(((x - i) for i in range(a)), z=x.parent().one())
-    from sage.functions.all import gamma
+    from sage.functions.gamma import gamma
     return gamma(x + 1) / gamma(x - a + 1)
 
 
@@ -5355,7 +5368,7 @@ def rising_factorial(x, a):
         (isinstance(a, Expression) and
          a.is_integer())) and a >= 0:
         return prod(((x + i) for i in range(a)), z=x.parent().one())
-    from sage.functions.all import gamma
+    from sage.functions.gamma import gamma
     return gamma(x + a) / gamma(x)
 
 

@@ -506,7 +506,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             ...
             ValueError: expected 2 inputs for xmin and xmax, but got 1
 
-        Error also occured when ``xmin`` is greater or equal than``xmax``::
+        Error also occurred when ``xmin`` is greater or equal than``xmax``::
 
             sage: plot(p1, 5, 3)
             Traceback (most recent call last):

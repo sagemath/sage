@@ -266,7 +266,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         # No further validity checks necessary!
         Parent.__init__(self, base=k, names=names, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -749,8 +749,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         """
         if not self.is_unitary():
             raise TypeError("algebra is not unitary")
-        else:
-            return self(self._one)
+        return self(self._one)
 
     def random_element(self, *args, **kwargs):
         """

@@ -607,10 +607,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: H < G
             False
         """
-        for l in left.gens():
-            if l not in right:
-                return False
-        return True
+        return all(l in right for l in left.gens())
 
     __le__ = is_subgroup
 
@@ -1182,7 +1179,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             order = g.order()
             if order is infinity:
                 order = 42  # infinite order; randomly chosen maximum
-            result *= g ** (randint(0, order))
+            result *= g ** randint(0, order-1)
         return result
 
     def _repr_(self) -> str:

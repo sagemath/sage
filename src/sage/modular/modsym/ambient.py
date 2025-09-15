@@ -980,8 +980,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         K = self.base_ring()
         W = R.new_matrix(nrows=len(B), ncols=R.nrows())
         syms = self.manin_symbols()
-        j = 0
-        for i in B:
+        for j, i in enumerate(B):
             for h in H:
                 entries = syms.apply(i, h)
                 for k, x in entries:
@@ -989,7 +988,6 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
                     if s:
                         # W[j,f] = W[j,f] + s*K(x)
                         W.add_to_entry(j, f, s * K(x))
-            j += 1
         tm = verbose("start matrix multiply", tm)
         if hasattr(W, '_matrix_times_matrix_dense'):
             Tp = W._matrix_times_matrix_dense(R)
@@ -1050,8 +1048,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         hom = self.Hom(M)
         if self.dimension() == 0 or M.dimension() == 0:
             A = MS(0)
-            phi = hom(A, "Heilbronn operator(%s,%s)" % (H, t))
-            return phi
+            return hom(A, "Heilbronn operator(%s,%s)" % (H, t))
 
         rows = []
         B = self.manin_basis()
@@ -2668,8 +2665,7 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
                 z += M((i, hg[1, 0], hg[1, 1]))
             rows.append(z.element())
 
-        A = MS(rows)
-        return A
+        return MS(rows)
 
     def _cuspidal_new_submodule_dimension_formula(self):
         r"""
@@ -2939,9 +2935,8 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
         mod2term = self._mod2term
         R = self.manin_gens_to_basis()
         W = R.new_matrix(nrows=len(B), ncols=R.nrows())  # the 0 with given number of rows and cols.
-        j = 0
         tm = verbose("Matrix non-reduced", tm)
-        for i in B:
+        for j, i in enumerate(B):
             # The following step is where most of the time is spent.
             c, d = P1[i]
             v = H.apply(c, d, N)
@@ -2962,7 +2957,6 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
                     f, s = mod2term[k]
                     if s != 0:
                         W[j, f] = W[j, f] + s*m
-            j += 1
         tm = verbose("done making non-reduced matrix", tm)
         verbose("start matrix-matrix (%s x %s) times (%s x %s) multiply to get Tp" % (W.nrows(), W.ncols(),
                                                                                       R.nrows(), R.ncols()))
@@ -3258,8 +3252,7 @@ class ModularSymbolsAmbient_wtk_g1(ModularSymbolsAmbient):
                 z += M((i, hg[1, 0], hg[1, 1]))
             rows.append(z.element())
 
-        A = MS(rows)
-        return A
+        return MS(rows)
 
     def boundary_space(self):
         r"""
@@ -3336,7 +3329,7 @@ class ModularSymbolsAmbient_wtk_gamma_h(ModularSymbolsAmbient):
             9
             sage: M._dimension_formula()
         """
-        return None
+        return
 
     def _repr_(self):
         r"""
@@ -3360,7 +3353,7 @@ class ModularSymbolsAmbient_wtk_gamma_h(ModularSymbolsAmbient):
             sage: ModularSymbols(GammaH(15,[4]),2)._cuspidal_submodule_dimension_formula() is None
             True
         """
-        return None
+        return
 
     def _cuspidal_new_submodule_dimension_formula(self):
         r"""
@@ -3371,7 +3364,7 @@ class ModularSymbolsAmbient_wtk_gamma_h(ModularSymbolsAmbient):
             sage: ModularSymbols(GammaH(15,[4]),2)._cuspidal_new_submodule_dimension_formula() is None
             True
         """
-        return None
+        return
 
     def _compute_hecke_matrix_prime_power(self, p, r):
         r"""
@@ -3665,8 +3658,7 @@ class ModularSymbolsAmbient_wtk_eps(ModularSymbolsAmbient):
                 hg = h * g
                 z += eps(h[0, 0]) * M((i, hg[1, 0], hg[1, 1]))
             rows.append(z.element())
-        A = MS(rows)
-        return A
+        return MS(rows)
 
     def _dimension_formula(self):
         r"""
@@ -3680,7 +3672,7 @@ class ModularSymbolsAmbient_wtk_eps(ModularSymbolsAmbient):
             0
             sage: M._dimension_formula()
         """
-        return None
+        return
 
     def boundary_space(self):
         r"""

@@ -43,7 +43,7 @@ from sage.structure.all import Sequence, SageObject
 from sage.structure.richcmp import (richcmp_method, richcmp,
                                     rich_to_bool, richcmp_not_equal)
 
-from sage.modular.arithgroup.all import Gamma0, Gamma0_class  # for Sturm bound given a character
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0, Gamma0_class # for Sturm bound given a character
 from sage.modular.hecke.module import HeckeModule_free_module
 from sage.modular.modsym.element import ModularSymbolsElement
 
@@ -1259,11 +1259,9 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             # should we perhaps check at this point if self is new?
             f = self.q_eigenform(prec, names)
             R = PowerSeriesRing(self.base_ring(), 'q')
-            B = [R([f[i][j] for i in range(prec)], prec)
-                 for j in range(self.rank())]
-            return B
-        else:
-            raise NotImplementedError
+            return [R([f[i][j] for i in range(prec)], prec)
+                    for j in range(self.rank())]
+        raise NotImplementedError
 
     #########################################################################
     #

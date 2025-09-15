@@ -1841,7 +1841,8 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: C.flag_f_vector()                                                     # needs sage.combinat
             {(-1,): 1, (0, 1): 0, (0, 2): 0, (0,): 0, (1, 2): 8, (1,): 4, (2,): 4, 3: 1}
 
-        If the arguments are not stricly increasing or out of range, a key error is raised::
+        If the arguments are not strictly increasing or out of range,
+        a key error is raised::
 
             sage: C.flag_f_vector(-1,0,3,5)                                             # needs sage.combinat
             Traceback (most recent call last):
@@ -3507,8 +3508,9 @@ cdef class CombinatorialPolyhedron(SageObject):
         If ``dual``, use the face iterator in dual mode, else in non-dual.
         If ``dual`` is ``-1`` determine this automatically.
 
-        If the ``f_vector`` is unkown computes it as well if computing the edges
-        in non-dual mode or the ridges in dual-mode.
+        If the ``f_vector`` is unknown computes it as well if
+        computing the edges in non-dual mode or the ridges in
+        dual-mode.
 
         See :meth:`CombinatorialPolyhedron.edges` and :meth:`CombinatorialPolyhedron.ridges`.
         """

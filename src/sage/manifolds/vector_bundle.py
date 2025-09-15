@@ -23,14 +23,14 @@ REFERENCES:
 - [Mil1974]_
 """
 
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2019 Michael Jung <micjung@uni-potsdam.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#******************************************************************************
+# ****************************************************************************
 
 import sage.rings.abc
 from sage.categories.vector_bundles import VectorBundles
@@ -265,16 +265,19 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: E = M.vector_bundle(2, 'E')
             sage: E._init_attributes()
         """
-        self._section_modules = {} # dict of section modules with domains as
-                                   # keys
+        self._section_modules = {}
+        # dict of section modules with domains as keys
+
         self._atlas = []  # list of trivializations defined on self
-        self._transitions = {} # dictionary of transition maps (key: pair of
-                               # of trivializations)
+        self._transitions = {}
+        # dictionary of transition maps (key: pair of trivializations)
+
         self._frames = []  # list of local frames for self
         self._frame_changes = {}  # dictionary of changes of frames
-        self._coframes = [] # list of local coframes for self
-        self._trivial_parts = set() # subsets of base space on which self is
-                                    # trivial
+        self._coframes = []  # list of local coframes for self
+        self._trivial_parts = set()
+        # subsets of base space on which self is trivial
+
         self._def_frame = None
 
     def base_space(self):
@@ -526,7 +529,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
              Trivialization (phi_V, E|_V),
              Trivialization (phi_M, E|_M)]
         """
-        return list(self._atlas) # Make a (shallow) copy
+        return list(self._atlas)  # Make a (shallow) copy
 
     def is_manifestly_trivial(self):
         r"""
@@ -869,17 +872,19 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: M = Manifold(3, 'M', structure='top')
             sage: E = M.vector_bundle(2, 'E')
             sage: E.total_space()
-            6-dimensional topological manifold E
+            5-dimensional topological manifold E
         """
         if self._total_space is None:
             from sage.manifolds.manifold import Manifold
             base_space = self._base_space
-            dim = base_space._dim * self._rank
+            dim = base_space._dim + self._rank
             sindex = base_space.start_index()
-            self._total_space = Manifold(dim, self._name,
-                                   latex_name=self._latex_name,
-                                   field=self._field, structure='topological',
-                                   start_index=sindex)
+            self._total_space = Manifold(
+                dim, self._name,
+                latex_name=self._latex_name,
+                field=self._field, structure='topological',
+                start_index=sindex
+            )
 
         # TODO: if update_atlas: introduce charts via self._atlas
 
@@ -934,7 +939,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
                              "section module")
         if isinstance(change_of_frame, FreeModuleAutomorphism):
             auto = change_of_frame
-        else: # Otherwise try to coerce the input
+        else:  # Otherwise try to coerce the input
             auto_group = sec_module.general_linear_group()
             auto = auto_group(change_of_frame, basis=frame1)
         sec_module.set_change_of_basis(frame1, frame2, auto,
@@ -1247,7 +1252,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
                             break
         return list(self._orientation)
 
-    def has_orientation(self):
+    def has_orientation(self) -> bool:
         r"""
         Check whether ``self`` admits an obvious or by user set orientation.
 

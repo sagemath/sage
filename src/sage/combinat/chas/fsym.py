@@ -327,7 +327,7 @@ class FSymBases(Category_realization_of_parent):
 
                 sage: z = G[[1,3,5],[2,4]]
                 sage: all(F.duality_pairing(F[p1] * F[p2], z) == c
-                ....:     for ((p1, p2), c) in z.coproduct())
+                ....:     for (p1, p2), c in z.coproduct())
                 True
 
             TESTS:
@@ -341,7 +341,7 @@ class FSymBases(Category_realization_of_parent):
                 Rational Field
             """
             y = self.dual_basis()(y)
-            return self.base_ring().sum(coeff * y[t] for (t, coeff) in x)
+            return self.base_ring().sum(coeff * y[t] for t, coeff in x)
 
         def duality_pairing_matrix(self, basis, degree):
             r"""
@@ -495,7 +495,7 @@ class FreeSymmetricFunctions(UniqueRepresentation, Parent):
         cat = HopfAlgebras(base_ring).Graded().Connected()
         Parent.__init__(self, base=base_ring, category=cat.WithRealizations())
 
-    _shorthands = ['G']
+    _shorthands = ('G',)
 
     def a_realization(self):
         r"""
@@ -790,7 +790,7 @@ class FreeSymmetricFunctions_Dual(UniqueRepresentation, Parent):
         sage: TF(F[[5, 1, 4, 2, 3]])
         F[135|2|4]
     """
-    def __init__(self, base_ring):
+    def __init__(self, base_ring) -> None:
         r"""
         Initialize ``self``.
 
@@ -802,7 +802,7 @@ class FreeSymmetricFunctions_Dual(UniqueRepresentation, Parent):
         cat = HopfAlgebras(base_ring).Graded().Connected()
         Parent.__init__(self, base=base_ring, category=cat.WithRealizations())
 
-    _shorthands = ['F']
+    _shorthands = ('F',)
 
     def a_realization(self):
         r"""
@@ -1113,7 +1113,7 @@ def ascent_set(t):
         [2, 4, 5]
     """
     row_locations = {}
-    for (i, row) in enumerate(t):
+    for i, row in enumerate(t):
         for entry in row:
             row_locations[entry] = i
     n = len(row_locations)

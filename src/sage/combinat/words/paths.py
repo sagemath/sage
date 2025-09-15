@@ -1197,16 +1197,14 @@ class FiniteWordPath_all(SageObject):
             sage: P('aabdee').is_simple()
             False
         """
-        n = 0
         s = set()
         include_last = not self.is_closed()
-        for p in self.points(include_last=include_last):
+        for n, p in enumerate(self.points(include_last=include_last), start=1):
             # We need the elements to have a common parent,
             # so we convert the points to immutable vectors.
             v = vector(p)
             v.set_immutable()
             s.add(v)
-            n += 1
             if len(s) != n:
                 return False
         return True
@@ -1393,7 +1391,7 @@ class FiniteWordPath_all(SageObject):
         if letters is None:
             letters = self.parent().alphabet()
         if color is None:
-            from sage.plot.all import hue
+            from sage.plot.colors import hue
             A = self.parent().alphabet()
             color = {a: hue(A.rank(a) / float(A.cardinality())) for a in A}
         it = self.projected_point_iterator(v, ring=ring)
@@ -1655,7 +1653,9 @@ class FiniteWordPath_2d(FiniteWordPath_all):
 
             See www.imagemagick.org, for example.
         """
-        from sage.plot.all import line, polygon, animate
+        from sage.plot.line import line
+        from sage.plot.polygon import polygon
+        from sage.plot.animate import animate
 
         pts = list(self.points())
 
