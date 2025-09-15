@@ -5,7 +5,7 @@
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
-from sage.libs.m4ri cimport mzd_t, m4ri_word
+from sage.libs.m4ri cimport mzd_t, m4ri_word, mzp_t
 
 
 cdef extern from "m4rie/m4rie.h":
@@ -108,6 +108,8 @@ cdef extern from "m4rie/m4rie.h":
     size_t mzed_echelonize(mzed_t *, size_t)
 
     size_t mzed_echelonize_ple(mzed_t *, size_t)
+
+    int mzed_ple(mzed_t *A, mzp_t *P, mzp_t *Q)
 
 #cdef extern from "m4rie/strassen.h":
     mzed_t *mzed_mul_strassen(mzed_t *, mzed_t *, mzed_t *, size_t cutoff)

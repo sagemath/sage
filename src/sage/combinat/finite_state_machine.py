@@ -4720,8 +4720,7 @@ class FiniteStateMachine(SageObject):
             accepting_show_empty = False
 
         result = "\\begin{tikzpicture}[%s]\n" % ", ".join(options)
-        j = 0
-        for vertex in self.iter_states():
+        for j, vertex in enumerate(self.iter_states()):
             if not hasattr(vertex, "coordinates"):
                 vertex.coordinates = (3*cos(2*pi*j/len(self.states())),
                                       3*sin(2*pi*j/len(self.states())))
@@ -4761,8 +4760,6 @@ class FiniteStateMachine(SageObject):
                     EndOfWordLaTeX,
                     self.format_transition_label(vertex.final_word_out),
                     angle, accepting_distance)
-
-            j += 1
 
         def key_function(s):
             return (s.from_state, s.to_state)

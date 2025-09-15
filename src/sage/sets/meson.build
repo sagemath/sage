@@ -1,7 +1,6 @@
 py.install_sources(
   '__init__.py',
   'all.py',
-  'all__sagemath_objects.py',
   'cartesian_product.py',
   'condition_set.py',
   'disjoint_set.pxd',

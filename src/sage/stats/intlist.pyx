@@ -560,7 +560,6 @@ cdef IntList new_int_list(Py_ssize_t length):
     return t
 
 
-@cython.binding(True)
 def unpickle_intlist_v1(bytes v, Py_ssize_t n):
     """
     Version 1 unpickle method.
