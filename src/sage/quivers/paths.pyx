@@ -767,7 +767,6 @@ cdef class QuiverPath(MonoidElement):
         return out
 
 
-@cython.binding(True)
 def NewQuiverPath(Q, start, end, biseq_data):
     """
     Return a new quiver path for given defining data.

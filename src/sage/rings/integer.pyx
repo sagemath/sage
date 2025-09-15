@@ -7535,7 +7535,6 @@ def GCD_list(v):
     return move_integer_from_mpz(tmp)
 
 
-@cython.binding(True)
 def make_integer(s):
     """
     Create a Sage integer from the base-32 Python *string* ``s``. This is
