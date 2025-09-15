@@ -1972,32 +1972,32 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         if deg < 0:
             # All residue classes are roots of the zero polynomial
             return [*map(self, range(self.cardinality()))]
-        elif deg == 0:
+        if deg == 0:
             return []
-        elif deg == 1:
+        if deg == 1:
             # assume form a*x + b
             b, a = f.list()
             if a.is_unit():
                 return [-b * (~a)]
-            else:
-                al, bl = a.lift(), b.lift()
 
-                N = self.order()
-                g = N.gcd(al)
+            al, bl = a.lift(), b.lift()
 
-                if bl % g != 0:
-                    return []  # No solution
-                else:
-                    # whole eqn divided by g
-                    N_by_g = N.divide_knowing_divisible_by(g)
-                    a_by_g = al.divide_knowing_divisible_by(g)
-                    _R = Zmod(N_by_g)
-                    assert _R(a_by_g).is_unit()
+            N = self.order()
+            g = N.gcd(al)
 
-                    # single root
-                    _root = self(f.roots(_R, multiplicities=False)[0])
-                    inc = self(N_by_g)
-                    return [_root + k * inc for k in range(g)]
+            if bl % g != 0:
+                return []  # No solution
+
+            # whole eqn divided by g
+            N_by_g = N.divide_knowing_divisible_by(g)
+            a_by_g = al.divide_knowing_divisible_by(g)
+            _R = Zmod(N_by_g)
+            assert _R(a_by_g).is_unit()
+
+            # single root
+            _root = self(f.roots(_R, multiplicities=False)[0])
+            inc = self(N_by_g)
+            return [_root + k * inc for k in range(g)]
 
         # Finite fields are a base case
         if self.is_field():
