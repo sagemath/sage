@@ -2478,7 +2478,6 @@ cdef new_time_series(Py_ssize_t length):
     return t
 
 
-@cython.binding(True)
 def unpickle_time_series_v1(bytes v, Py_ssize_t n):
     r"""
     Version 1 unpickle method.

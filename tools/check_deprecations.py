@@ -36,6 +36,8 @@ def search_deprecations(path: str) -> set[tuple[str, int]]:
                 content = f.read()
                 matches = DEPRECATION_PATTERN.findall(content)
                 for match in matches:
+                    if isinstance(match, tuple):
+                        match = match[1]
                     deprecations.add((str(filepath), int(match)))
         except (PermissionError, UnicodeDecodeError):
             pass
