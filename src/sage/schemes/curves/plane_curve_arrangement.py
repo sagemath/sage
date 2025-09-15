@@ -954,11 +954,11 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             sage: A.meridians()
             {0: [x0, x1*x0*x1^-1], 1: [x0^-1*x1^-1*x0^-1], 2: [x1]}
             sage: A = H(y^2 + x*z, z*x, y)
+            sage: A.meridians()
+            {0: [x0, x2*x0*x2^-1], 1: [x2, x0^-1*x2^-1*x1^-1*x0^-1], 2: [x1]}
             sage: A.fundamental_group()
             Finitely presented group < x0, x1, x2 | x2*x0*x1*x0^-1*x2^-1*x1^-1,
                                                     x1*(x2*x0)^2*x2^-1*x1^-1*x0^-1*x2^-1*x0^-1 >
-            sage: A.meridians()
-            {0: [x0, x2*x0*x2^-1], 1: [x2, x0^-1*x2^-1*x1^-1*x0^-1], 2: [x1]}
         """
         if simplified:
             computed = self._meridians_simpl
@@ -966,7 +966,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             computed = self._meridians_nonsimpl
         if computed:
             return dict(computed)
-        self._fundamental_group(simplified=simplified)
+        self.fundamental_group(simplified=simplified)
         if simplified:
             return dict(self._meridians_simpl)
         else:

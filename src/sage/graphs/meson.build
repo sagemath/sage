@@ -25,9 +25,6 @@ endif
 py.install_sources(
   '__init__.py',
   'all.py',
-  'all__sagemath_bliss.py',
-  'all__sagemath_mcqd.py',
-  'all__sagemath_tdlib.py',
   'bipartite_graph.py',
   'cliquer.pxd',
   'cographs.py',
@@ -63,7 +60,6 @@ py.install_sources(
   'print_graphs.py',
   'schnyder.py',
   'traversals.pxd',
-  'trees.pxd',
   'tutte_polynomial.py',
   subdir: 'sage/graphs',
 )
@@ -88,7 +84,6 @@ extension_data = {
   'planarity' : files('planarity.pyx'),
   'spanning_tree' : files('spanning_tree.pyx'),
   'strongly_regular_db' : files('strongly_regular_db.pyx'),
-  'trees' : files('trees.pyx'),
   'views' : files('views.pyx'),
   'weakly_chordal' : files('weakly_chordal.pyx'),
 }

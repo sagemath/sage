@@ -1052,6 +1052,21 @@ cdef class Rational(sage.structure.element.FieldElement):
         """
         return self.numerator()._magma_init_(magma) + '/' + self.denominator()._magma_init_(magma)
 
+    def _regina_(self, regina):
+        r"""
+        Return a Regina Rational.
+
+        EXAMPLES::
+
+            sage: r53 = regina(5/3); (r53, type(r53), type(r53._inst))  # optional regina
+            (5/3,
+            <class 'sage.interfaces.regina.ReginaElement'>,
+            <class 'regina.engine.Rational'>)
+        """
+        num = self.numerator()
+        den = self.denominator()
+        return regina.Rational(num, den)
+
     @property
     def __array_interface__(self):
         """
@@ -4072,7 +4087,6 @@ cdef double mpq_get_d_nearest(mpq_t x) except? -648555075988944.5:
     return ldexp(d, shift)
 
 
-@cython.binding(True)
 def make_rational(s):
     """
     Make a rational number from ``s`` (a string in base 32).
