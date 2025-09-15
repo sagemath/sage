@@ -9,7 +9,6 @@ rw = cc.find_library('rw', required: get_option('rankwidth'), disabler: true)
 py.install_sources(
   '__init__.py',
   'all.py',
-  'all__sagemath_tdlib.py',
   'bandwidth.pyx',
   'clique_separators.pyx',
   'cutwidth.pyx',

@@ -6,7 +6,6 @@ py.install_sources(
   'action.pxd',
   'action.pyx',
   'all.py',
-  'all__sagemath_meataxe.py',
   'args.pxd',
   'args.pyx',
   'benchmark.py',

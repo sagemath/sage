@@ -25,9 +25,6 @@ endif
 py.install_sources(
   '__init__.py',
   'all.py',
-  'all__sagemath_bliss.py',
-  'all__sagemath_mcqd.py',
-  'all__sagemath_tdlib.py',
   'asteroidal_triples.pyx',
   'bipartite_graph.py',
   'bliss.pyx',

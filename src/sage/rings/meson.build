@@ -4,7 +4,6 @@ py.install_sources(
   'abc.pyx',
   'algebraic_closure_finite_field.py',
   'all.py',
-  'all__sagemath_objects.py',
   'bernmm.pyx',
   'bernoulli_mod_p.pyx',
   'big_oh.py',

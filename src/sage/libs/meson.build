@@ -99,10 +99,6 @@ endif
 py.install_sources(
   '__init__.py',
   'all.py',
-  'all__sagemath_coxeter3.py',
-  'all__sagemath_meataxe.py',
-  'all__sagemath_objects.py',
-  'all__sagemath_sirocco.py',
   'braiding.pyx',
   'ecl.pxd',
   'ecl.pyx',

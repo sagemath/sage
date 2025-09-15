@@ -1,7 +1,6 @@
 py.install_sources(
   '__init__.py',
   'all.py',
-  'all__sagemath_polyhedra.py',
   'gauss_legendre.pyx',
   'interactive_simplex_method.py',
   'knapsack.py',
