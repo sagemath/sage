@@ -478,7 +478,7 @@ class ShephardToddFamilyGroup(UniqueRepresentation, Parent):
             return ColoredPermutations(m, n)
         return super().__classcall__(cls, m, p, n)
 
-    def __init__(self, m, p, n):
+    def __init__(self, m, p, n) -> None:
         r"""
         Initialize ``self``.
 
@@ -509,9 +509,7 @@ class ShephardToddFamilyGroup(UniqueRepresentation, Parent):
         self._C = IntegerModRing(self._m)
         self._P = Permutations(self._n)
 
-        if (self._p == 1 and (self._m == 1 or self._m == 2)
-            or (self._p == 2 and self._m == 2)
-                or (self._n == 2 and self._p == self._m)):
+        if self._p <= self._m <= 2 or (self._n == 2 and self._p == self._m):
             from sage.categories.finite_coxeter_groups import FiniteCoxeterGroups
             category = FiniteCoxeterGroups()
             if not (self._n == self._m == self._p == 2):  # special case of type D_2
@@ -523,7 +521,7 @@ class ShephardToddFamilyGroup(UniqueRepresentation, Parent):
                 category = category.WellGenerated()
         Parent.__init__(self, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -2922,7 +2920,7 @@ class SimpleModule(Representation_abstract, QuotientModuleWithBasis):
         [0 0 0 0 0 0 1 0]
         [0 0 0 0 0 0 0 1]
     """
-    def __init__(self, specht_module):
+    def __init__(self, specht_module) -> None:
         r"""
         Initialize ``self``.
 
@@ -2932,18 +2930,19 @@ class SimpleModule(Representation_abstract, QuotientModuleWithBasis):
             sage: D = B4.simple_module([[2,1], [1]], GF(3))
             sage: TestSuite(D).run()
         """
-        self._diagram = specht_module._diagram
         p = specht_module.base_ring().characteristic()
-        if (not all(la.is_regular(p) for la in specht_module._diagram)
-                or (p == 2 and specht_module._diagram[0])):
+        d = self._diagram = specht_module._diagram
+        if (p == 2 and d[0]) or not all(la.is_regular(p) for la in d):
             raise ValueError(f"the partition must be {p}-regular")
-        Representation_abstract.__init__(self, specht_module._semigroup, specht_module._side,
+        Representation_abstract.__init__(self, specht_module._semigroup,
+                                         specht_module._side,
                                          algebra=specht_module._semigroup_algebra)
         cat = specht_module.category()
-        QuotientModuleWithBasis.__init__(self, specht_module.maximal_submodule(),
+        QuotientModuleWithBasis.__init__(self,
+                                         specht_module.maximal_submodule(),
                                          cat, prefix='D', bracket='')
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -2955,7 +2954,7 @@ class SimpleModule(Representation_abstract, QuotientModuleWithBasis):
         """
         return f"Simple module of {self._diagram} over {self.base_ring()}"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
