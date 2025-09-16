@@ -21039,8 +21039,7 @@ def _matrix_power_symbolic(A, n):
         [  kronecker_delta(0, n) n*kronecker_delta(1, n)]
         [                      0   kronecker_delta(0, n)]
 
-    Check if :issue:`40803` is fixed:Checking symbolic power of matrix with
-    repeated eigen values::
+    Check symbolic power of matrix with repeated eigenvalues (:issue:`40803`)::
 
         sage: var('k n')
         (k, n)
@@ -21050,6 +21049,13 @@ def _matrix_power_symbolic(A, n):
         [          1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n]
         [1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n]
         [          1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n]
+        sage: B = matrix([[k,1,0,1],[1,k,1,0],[0,1,k,1],[1,0,1,k]], sparse=True)^n
+        sage: B
+        [1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n]
+        [          1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n]
+        [1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n]
+        [          1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n]
+        
     """
     from sage.rings.qqbar import AlgebraicNumber
     from sage.matrix.constructor import matrix
