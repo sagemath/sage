@@ -3536,26 +3536,20 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
             # For every composition I of size n, expand self[I] in terms
             # of the monomial basis M.
-            i = 0
-            for I in compositions_n:
+            for i, I in enumerate(compositions_n):
                 # M_coeffs will be M(self[I])._monomial_coefficients
                 M_coeffs = {}
 
                 self_I_in_M_basis = M.prod([from_self_gen_function(self._indices(list(J)))
                                             for J in Word(I).lyndon_factorization()])
 
-                j = 0
-
-                for J in compositions_n:
+                for j, J in enumerate(compositions_n):
                     if J in self_I_in_M_basis._monomial_coefficients:
                         sp = self_I_in_M_basis._monomial_coefficients[J]
                         M_coeffs[J] = sp
-                        transition_matrix_n[i,j] = sp
-
-                    j += 1
+                        transition_matrix_n[i, j] = sp
 
                 from_self_cache[I] = M_coeffs
-                i += 1
 
             # Save the transition matrix
             inverse_transition_matrices[n] = transition_matrix_n
