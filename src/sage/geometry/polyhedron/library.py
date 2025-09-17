@@ -2859,8 +2859,7 @@ class Polytopes:
 
         REFERENCES:
 
-        - Federico Ardila, Laura Escobar, *The harmonic polytope*,
-          :arxiv:`2006.03078`.
+        - [AE2006]_
 
         EXAMPLES::
 
@@ -2877,7 +2876,7 @@ class Polytopes:
         """
         if n <= 0:
             raise ValueError("n must be positive")
-        D_vertices = [[1 if j % n == i else 0 for j in range(2 * n)]
+        D_vertices = [2 * [1 if j == i else 0 for j in range(n)]
                       for i in range(n)]
         Dn = Polyhedron(vertices=D_vertices)
         perms = [tuple(sigma) for sigma in Permutations(n)]
@@ -3371,15 +3370,19 @@ class Polytopes:
 
             # An inequality -x_i       + b_i >= 0 for i <  dim
             # resp.          x_{dim-i} - a_i >= 0 for i >= dim
-            ieq_b = lambda i: intervals[i][1] if i < dim \
-                else -intervals[i-dim][0]
+            def ieq_b(i):
+                return intervals[i][1] if i < dim else -intervals[i - dim][0]
         else:
             raise ValueError("the dimension of the hypercube must match the number of intervals")
 
         # An inequality -x_i       + ieq_b(i)     >= 0 for i <  dim
         # resp.          x_{dim-i} + ieq_b(i-dim) >= 0 for i >= dim
         def ieq_A(i, pos):
-            return -1 if i == pos else 1 if i == pos + dim else 0
+            if i == pos:
+                return -1
+            if i == pos + dim:
+                return 1
+            return 0
 
         ieqs = (tuple(ieq_b(i) if pos == 0 else ieq_A(i, pos - 1)
                       for pos in range(dim + 1))
