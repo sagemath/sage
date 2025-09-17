@@ -105,6 +105,7 @@ jobs:
     if: github.ref_type == 'tag'
     permissions:
       contents: write
+      discussions: write
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -115,7 +116,7 @@ jobs:
           name: dist
           path: dist
 
-      - name: Create release assets
+      - name: Create release
         uses: softprops/action-gh-release@v2
         with:
           files: |
@@ -124,6 +125,7 @@ jobs:
           token: ${{ secrets.RELEASE_CREATION_TOKEN }}
           generate_release_notes: true
           prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
+          discussion_category_name: announcements
 
   build_wheels:
     # Temporarily disabled due to build errors
