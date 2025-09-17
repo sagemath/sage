@@ -119,10 +119,6 @@ $spkg_configures_python
 $spkg_finalizes
 EOF
 
-    for pkgname in $(sage-package list --has-file bootstrap "$@"); do
-        eval DIR=\$path_$pkgname
-        (cd "$DIR" && if [ -x bootstrap ]; then ./bootstrap; else echo >&2 "bootstrap:$LINENO: Nothing to do for $pkgname"; fi) || exit 1
-    done
 
     if [ $# != 0 ]; then
         return
@@ -227,10 +223,6 @@ save () {
 	configure real_configure configure_wrapper \
 	config/install-sh config/compile config/config.guess config/config.sub config/missing \
 	build/make/Makefile-auto.in \
-	src/doc/en/installation/*.txt \
-	$(find src/doc/en/reference/spkg -maxdepth 1 -name index.rst -prune -o -name "*.rst" -print) \
-	environment-3.1[0-9]-*.yml \
-	pyproject.toml \
 	build/pkgs/cypari/version_requirements.txt \
 	build/pkgs/cysignals/version_requirements.txt \
 	build/pkgs/cython/version_requirements.txt \
