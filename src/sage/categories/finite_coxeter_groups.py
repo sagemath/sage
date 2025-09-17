@@ -570,6 +570,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: CoxeterGroup(["A",2]).m_cambrian_lattice((1,2),2)
                 Finite lattice containing 12 elements
             """
+            from sage.categories.finite_lattice_posets import FiniteLatticePosets
             from sage.combinat.posets.lattices import LatticePoset
             if hasattr(c, "reduced_word"):
                 c = c.reduced_word()
@@ -627,7 +628,11 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                         if cov_element not in elements:
                             new.add(cov_element)
                         covers.append((new_element, cov_element))
-            return LatticePoset([elements, covers], cover_relations=True)
+            cat = FiniteLatticePosets()
+            if m == 1:
+                cat = cat.CongruenceUniform().Trim()
+            return LatticePoset([elements, covers], cover_relations=True,
+                                category=cat)
 
         def cambrian_lattice(self, c, on_roots=False):
             """
