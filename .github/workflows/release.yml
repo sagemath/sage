@@ -38,11 +38,9 @@ jobs:
         env:
           MAKE: make -j8
 
-      - name: make download
+      - name: Download tarballs of all packages
         run: |
-          make -k download DOWNLOAD_PACKAGES=":all: --no-file huge --allow-upstream"
-        env:
-          MAKE: make -j8
+          build/bin/sage-package download :all: --no-file huge --allow-upstream
 
       - name: Remove what cannot be distributed
         run: |
