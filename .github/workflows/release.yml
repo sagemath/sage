@@ -32,12 +32,6 @@ jobs:
           ./bootstrap
           ./configure
 
-      - name: make dist
-        run: |
-          make dist
-        env:
-          MAKE: make -j8
-
       - name: Download tarballs of all packages
         run: |
           build/bin/sage-package download :all: --no-file huge --allow-upstream
@@ -48,14 +42,11 @@ jobs:
 
       - name: List files
         run: |
-          ls -l dist
           ls -l upstream
 
       - uses: actions/upload-artifact@v4
         with:
-          path: |
-            dist/*.tar.gz
-            upstream
+          path: upstream
           name: package_tarballs
 
   sdists:
