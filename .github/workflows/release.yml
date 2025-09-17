@@ -1,4 +1,4 @@
-name: Prepare source distributions and wheels
+name: Release
 
 on:
   push:
@@ -12,25 +12,13 @@ on:
       - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
   pull_request:
     paths:
-      - '.github/workflows/dist.yml'
+      - '.github/workflows/release.yml'
   workflow_dispatch:
     # Allow to run manually
 
 jobs:
 
-  release_dist:
-
-    # This job first checks whether "configure --enable-download-from-upstream-url"
-    # (the default since #32390) is needed.
-    #
-    # In this way, we check that all necessary package tarballs
-    # have already been uploaded to the Sage server at the time
-    # of pushing a release tag.
-    #
-    # It also uses "bootstrap -D", thus checking that the "configure"
-    # tarball has been uploaded to the Sage server at the time
-    # of pushing a release tag.
-
+  package_tarballs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -38,45 +26,39 @@ jobs:
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap _prereq)
-      - name: make dist (--disable-download-from-upstream-url)
-        id: make_dist
+
+      - name: Configure
         run: |
-          ./bootstrap -D && ./configure --disable-download-from-upstream-url && make dist
-        env:
-          MAKE: make -j8
-      - name: make download (--disable-download-from-upstream-url)
-        id: make_download
-        run: |
-          make -k download DOWNLOAD_PACKAGES=":all: --no-file huge"
-        env:
-          MAKE: make -j8
-      - name: Reconfigure with --enable-download-from-upstream-url
-        if: (success() || failure()) && (steps.make_dist.outcome != 'success' || steps.make_download.outcome != 'success')
-        run: |
+          ./bootstrap
           ./configure
-      - name: make dist (--enable-download-from-upstream-url)
-        if: (success() || failure()) && steps.make_dist.outcome != 'success'
+
+      - name: make dist
         run: |
           make dist
         env:
           MAKE: make -j8
-      - name: make download (--enable-download-from-upstream-url)
-        if: (success() || failure()) && steps.make_download.outcome != 'success'
+
+      - name: make download
         run: |
           make -k download DOWNLOAD_PACKAGES=":all: --no-file huge --allow-upstream"
         env:
           MAKE: make -j8
+
       - name: Remove what cannot be distributed
-        if: success() || failure()
         run: |
           rm -f upstream/*do-not-distribute*
+
+      - name: List files
+        run: |
+          ls -l dist
+          ls -l upstream
+
       - uses: actions/upload-artifact@v4
-        if: success() || failure()
         with:
           path: |
             dist/*.tar.gz
             upstream
-          name: release_dist
+          name: package_tarballs
 
   sdists:
 
@@ -118,7 +100,7 @@ jobs:
         if: env.CAN_DEPLOY == 'true'
 
   release:
-    needs: [release_dist, sdists]
+    needs: [package_tarballs, sdists]
     runs-on: ubuntu-latest
     if: github.ref_type == 'tag'
     permissions:
@@ -126,7 +108,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: release_dist
+          name: package_tarballs
 
       - uses: actions/download-artifact@v4
         with:
