@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Convexity properties of graphs
 
@@ -701,11 +700,12 @@ def is_geodetic(G):
     r"""
     Check whether the input (di)graph is geodetic.
 
-    A graph `G` is *geodetic* if there exists only one shortest path between
+    A graph `G` is *geodetic* if there exists at most one shortest path between
     every pair of its vertices. This can be checked in time `O(nm)` for
     ``SparseGraph`` and `O(nm+n^2)` for ``DenseGraph`` in unweighted (di)graphs
     with `n` nodes and `m` edges. Examples of geodetic graphs are trees, cliques
     and odd cycles. See the :wikipedia:`Geodetic_graph` for more details.
+    Note that we do not require geodetic graphs to be connected.
 
     (Di)graphs with multiple edges are not considered geodetic.
 
@@ -741,6 +741,11 @@ def is_geodetic(G):
         sage: G = graphs.Grid2dGraph(2, 3)
         sage: G.is_geodetic()
         False
+
+    A graph is geodetic iff all its connected components are geodetic::
+
+        sage: all(G.is_geodetic() == all(H.is_geodetic() for H in G.connected_components_subgraphs()) for G in graphs(5))
+        True
 
     This method is also valid for digraphs::
 

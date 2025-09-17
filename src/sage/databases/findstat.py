@@ -3821,7 +3821,7 @@ class FindStatCompoundMap(Element, FindStatCombinatorialMap):
                 Mp00099: bounce path: Dyck paths -> Dyck paths
         """
         for mp in self:
-                mp.info()
+            mp.info()
 
 
 class FindStatMatchingMap(FindStatCompoundMap):

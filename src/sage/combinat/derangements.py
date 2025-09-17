@@ -464,7 +464,7 @@ class Derangements(UniqueRepresentation, Parent):
                         A[i - 1], A[j - 1] = A[j - 1], A[i - 1]
                         break
                 p = random()
-                if p < (u - 1) * self._count_der(u - 2) // self._count_der(u):
+                if p * self._count_der(u) < (u - 1) * self._count_der(u - 2):
                     mark[j - 1] = True
                     u -= 1
                 u -= 1
@@ -472,22 +472,17 @@ class Derangements(UniqueRepresentation, Parent):
         return A
 
     def random_element(self):
-        r"""
-        Produce all derangements of a positive integer, a list, or
-        a string.  The list or string may contain repeated elements.
-        If an integer `n` is given, then a random
-        derangements of `[1, 2, 3, \ldots, n]` is returned
+        r"""Return a random derangement.
 
-        For an integer, or a list or string with all elements
-        distinct, the value is obtained by an algorithm described in
-        [MPP2008]_. For a list or string with repeated elements the
-        derangement is formed by choosing an element at random from the list of
-        all possible derangements.
+        If the elements of the underlying multiset are all distinct,
+        an algorithm described in [MPP2008]_ is used.  For a list or
+        string with repeated elements the derangement is formed by
+        choosing an element at random from the list of all possible
+        derangements.
 
         OUTPUT:
 
-        A single list or string containing a derangement, or an
-        empty list if there are no derangements.
+        A derangement, or an empty list if there are no derangements.
 
         EXAMPLES::
 
@@ -516,6 +511,13 @@ class Derangements(UniqueRepresentation, Parent):
 
             sage: D = Derangements([1,1,2,2])
             sage: _ = [D.random_element() for _ in range(20)]
+
+        Check that we do not produce a derangement of a single
+        element::
+
+            sage: D = Derangements(1)
+            sage: D.random_element()
+            []
         """
         if self.__multi:
             L = list(self)
@@ -523,5 +525,8 @@ class Derangements(UniqueRepresentation, Parent):
                 return self.element_class(self, [])
             i = randrange(len(L))
             return L[i]
+
+        if len(self._set) == 1:
+            return self.element_class(self, [])
         temp = self._rand_der()
         return self.element_class(self, [self._set[ii - 1] for ii in temp])

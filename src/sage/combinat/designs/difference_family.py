@@ -58,7 +58,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
-def group_law(G):
+def group_law(G) -> tuple:
     r"""
     Return a triple ``(identity, operation, inverse)`` that define the
     operations on the group ``G``.
@@ -77,15 +77,14 @@ def group_law(G):
     from sage.categories.groups import Groups
     from sage.categories.additive_groups import AdditiveGroups
 
-    if G in Groups():            # multiplicative groups
+    if G in Groups():          # multiplicative groups
         return (G.one(), operator.mul, operator.inv)
-    elif G in AdditiveGroups():  # additive groups
+    if G in AdditiveGroups():  # additive groups
         return (G.zero(), operator.add, operator.neg)
-    else:
-        raise ValueError("%s does not seem to be a group" % G)
+    raise ValueError(f"{G} does not seem to be a group")
 
 
-def block_stabilizer(G, B):
+def block_stabilizer(G, B) -> list:
     r"""
     Compute the left stabilizer of the block ``B`` under the action of ``G``.
 
@@ -128,7 +127,7 @@ def block_stabilizer(G, B):
     return S
 
 
-def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
+def is_difference_family(G, D, v=None, k=None, l=None, verbose=False) -> bool:
     r"""
     Check whether ``D`` forms a difference family in the group ``G``.
 
@@ -329,7 +328,7 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
     return True
 
 
-def singer_difference_set(q, d):
+def singer_difference_set(q, d) -> tuple:
     r"""
     Return a difference set associated to the set of hyperplanes in a projective
     space of dimension `d` over `GF(q)`.
@@ -803,8 +802,7 @@ def one_radical_difference_family(K, k):
     # instead of the complicated multiplicative group K^*/(±C) we use the
     # discrete logarithm to convert everything into the additive group Z/cZ
     c = m * (q-1) // e  # cardinal of ±C
-    from sage.groups.generic import discrete_log
-    logA = [discrete_log(a,x) % c for a in A]
+    logA = [a.log(x) % c for a in A]
 
     # if two elements of A are equal modulo c then no tiling is possible
     if len(set(logA)) != m:
@@ -1897,22 +1895,6 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
         assert is_supplementary_difference_set([K1, K2, K3, K4], lmbda=q-1, G=G)
 
     return G, [K1, K2, K3, K4]
-
-
-def supplementary_difference_set(q, existence=False, check=True):
-    r"""
-    Construct `4-\{2v; v, v+1, v, v; 2v\}` supplementary difference sets where `q=2v+1`.
-
-    This is a deprecated version of :func:`supplementary_difference_set_from_rel_diff_set`,
-    please use that instead.
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(35211, 'This function is deprecated, please use supplementary_difference_set_from_rel_diff_set instead.')
-
-    if existence:
-        return supplementary_difference_set_from_rel_diff_set(q, existence=True)
-    _, s = supplementary_difference_set_from_rel_diff_set(q, check=check)
-    return s
 
 
 def get_fixed_relative_difference_set(G, rel_diff_set, as_elements=False):
