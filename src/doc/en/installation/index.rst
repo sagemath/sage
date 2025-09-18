@@ -1,8 +1,8 @@
 .. _installation-guide:
 
-==================================
-Welcome to Sage Installation Guide
-==================================
+=======================
+Sage Installation Guide
+=======================
 
 This is the installation guide for SageMath, a free open-source mathematics software system.
 It is designed to help you install SageMath on your computer.
@@ -122,10 +122,17 @@ obtaining the source code and building SageMath.
       $ conda activate sage
       $ sage
 
-    This way of starting Sage gives you the most basic way of using
-    Sage in the terminal. See :ref:`sec-launching` for recommended next steps,
-    in particular for setting up the Jupyter notebook, which is required if
-    you want to use graphics.
+
+After installation, you can start SageMath in a terminal as follows:
+
+  .. code-block:: console
+
+    $ sage
+
+This way of starting Sage gives you the most basic way of using
+Sage in the terminal. See :ref:`sec-launching` for recommended next steps,
+in particular for setting up the Jupyter notebook, which is required if
+you want to use graphics.
 
 .. _sec-cloud:
 
@@ -145,13 +152,14 @@ In the cloud
   <https://hub.docker.com/r/sagemathinc/cocalc>`_ can be used on any system with Docker to run CoCalc locally.
 
 
-More information:
+More information
+================
 
 .. toctree::
    :maxdepth: 2
 
    conda
    source
-   meson
+   source-distro
    launching
    troubles
