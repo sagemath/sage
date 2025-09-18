@@ -91,7 +91,6 @@ jobs:
   release:
     needs: [package_tarballs, sdists]
     runs-on: ubuntu-latest
-    if: github.ref_type == 'tag'
     permissions:
       contents: write
       discussions: write
@@ -99,19 +98,25 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: package_tarballs
+          path: tarballs
 
       - uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist
 
+      - name: List files
+        run: |
+          ls -l -R dist
+          ls -l -R tarballs
+
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
           files: |
             dist/*
-            upstream/*
-          token: ${{ secrets.RELEASE_CREATION_TOKEN }}
+            tarballs/*
+          token: ${{ github.ref_type == 'tag' && secrets.RELEASE_CREATION_TOKEN || 'FAIL' }}
           generate_release_notes: true
           prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
           discussion_category_name: announcements
