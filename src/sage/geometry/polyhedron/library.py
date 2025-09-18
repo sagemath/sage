@@ -2866,6 +2866,8 @@ class Polytopes:
             sage: polytopes.harmonic_polytope(2)
             A 2-dimensional polyhedron in ZZ^4 defined as the convex hull
             of 6 vertices
+            sage: P3 = polytopes.harmonic_polytope(3); P3.f_vector()
+            (1, 66, 144, 102, 24, 1)
 
         TESTS::
 
@@ -2876,11 +2878,11 @@ class Polytopes:
         """
         if n <= 0:
             raise ValueError("n must be positive")
-        D_vertices = [2 * [1 if j == i else 0 for j in range(n)]
-                      for i in range(n)]
+        D_vertices = (2 * [1 if j == i else 0 for j in range(n)]
+                      for i in range(n))
         Dn = Polyhedron(vertices=D_vertices)
-        perms = [tuple(sigma) for sigma in Permutations(n)]
-        P_vertices = [a + b for a in perms for b in perms]
+        perms = [list(sigma) for sigma in Permutations(n)]
+        P_vertices = (a + b for a in perms for b in perms)
         Pin_Pin = Polyhedron(vertices=P_vertices)
         return Dn + Pin_Pin
 
