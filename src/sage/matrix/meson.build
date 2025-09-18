@@ -174,7 +174,6 @@ foreach name, pyx : extension_data_cpp
     mpfr,
     ntl,
     numpy,
-    pari,
     png,
     singular,
     zlib,
