@@ -4,7 +4,7 @@ Troubleshooting
 ===============
 
 If no binary version is available for your system, you can fallback to
-the :ref:`sec-build-source` or use one of the alternatives
+the :ref:`section-build-source` or use one of the alternatives
 proposed at the end of :ref:`installation-guide`.
 
 If you have any problems building or running Sage, please take a look

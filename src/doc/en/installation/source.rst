@@ -1,4 +1,4 @@
-.. _build-source:
+.. _section-build-source:
 
 ====================
 Building from source

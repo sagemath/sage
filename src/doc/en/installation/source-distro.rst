@@ -10,7 +10,7 @@ Sage-the-distribution (classical build)
    This section describes the classical build process using
    ``./configure && make``.
    It is recommended to use the modern Meson build system instead;
-   see :ref:`build-source`.
+   see :ref:`section-build-source`.
 
 
 Building Sage from the source code has the major
@@ -382,7 +382,7 @@ Installation steps
 
   The following steps use the classical ``./configure && make`` build
   process. The modern Meson build system is also supported, see
-  :ref:`build-source`.
+  :ref:`section-build-source`.
 
 #. Follow the procedure in the file `README.md <https://github.com/sagemath/sage/#readme>`_
    in ``SAGE_ROOT``.
