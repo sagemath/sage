@@ -1689,6 +1689,17 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             # If you change the i+1 to i below, better change __iter__ as well.
             return InterfaceElement.__getitem__(self, i+1)
 
+    def __iter_without_mutation(self):
+        """
+        Returns an iterator for ``self``. It is assumed that ``self`` won't be
+        mutated during the iteration.
+        """
+        N = len(self)
+        z = self
+        for _ in range(N):
+            yield z.first()
+            z = z.rest()
+
     def __iter__(self):
         """
         Return an iterator for ``self``.
@@ -1702,12 +1713,8 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: [e._sage_() for e in L]
             [0, x, 2*x^2, 3*x^3, 4*x^4, 5*x^5]
         """
-        # Maxima lists are linked lists with O(n) random access time
-        # hence we create a copy and pop elements from the front instead
-        # so that __iter__ has complexity as O(n) and not O(n^2)
-        copied_list = self.copylist()
-        for i in range(len(copied_list)):
-            yield copied_list.pop()
+        # NOTE: `self` should not be mutated during iteration
+        return self.__iter_without_mutation()
 
     def subst(self, val):
         """
