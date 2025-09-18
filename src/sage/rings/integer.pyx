@@ -4963,6 +4963,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             (2, 2)
             sage: 256.perfect_power()
             (2, 8)
+            sage: (26**2).perfect_power()
+            (26, 2)
         """
         cdef long n
         # Fast PARI-free path
@@ -4974,7 +4976,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                 if not (n & 1):
                     if mpz_popcount(self.value) == 1:
                         return smallInteger(2), smallInteger(mpz_sizeinbase(self.value, 2) - 1)
-                if n < 1000:
+                elif n < 1000:
                     if _small_primes_table[n >> 1]:
                         return self, one
 
