@@ -180,7 +180,6 @@ class AsciiArt(CharacterArt):
          pi*x
         e
     """
-    _string_type = str
 
 
 _ascii_art_factory = CharacterArtFactory(

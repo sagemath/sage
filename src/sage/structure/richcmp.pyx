@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Cython-like rich comparisons in Python
 
