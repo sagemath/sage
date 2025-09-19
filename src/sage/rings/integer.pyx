@@ -4963,6 +4963,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             (2, 2)
             sage: 256.perfect_power()
             (2, 8)
+
+        Test small powers of even numbers that are not a power of 2
+        (see :issue:`40846`)::
+
             sage: (26**2).perfect_power()
             (26, 2)
         """
