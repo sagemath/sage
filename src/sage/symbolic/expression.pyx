@@ -13585,7 +13585,6 @@ def _eval_on_operands(f):
         Some documentation.
     """
     @sage_wraps(f)
-    @cython.binding(True)
     def new_f(ex, *args, **kwds):
         new_args = list(ex._unpack_operands())
         new_args.extend(args)
