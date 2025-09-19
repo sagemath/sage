@@ -58,6 +58,7 @@ COMMANDS_CACHE = '%s/maxima_commandlist_cache.sobj' % DOT_SAGE
 
 from sage.cpython.string import bytes_to_str
 
+from sage.misc.cachefunc import cached_method
 from sage.misc.multireplace import multiple_replace
 from sage.structure.richcmp import richcmp, rich_to_bool
 
@@ -291,36 +292,63 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         cmd_list = [x for x in cmd_list[1:-1].split(',') if x[0] != '?' and not x.endswith('-impl')]
         return [x for x in cmd_list if x.find(s) == 0]
 
-    def _commands(self, verbose=True):
+    @cached_method
+    def _commands(self):
         """
         Return list of all commands defined in Maxima.
 
-        INPUT:
+        OUTPUT:
 
-        - ``verbose`` -- boolean (default: ``True``)
+        A list of strings.
 
-        OUTPUT: array of strings
+        EXAMPLES:
 
-        EXAMPLES::
+        The list changes from time to time (with new versions of
+        Maxima), so we look only for a few reliable commands::
 
-            # The output is kind of random
-            sage: sorted(maxima._commands(verbose=False))
-            [...
-             'display',
-             ...
-             'gcd',
-             ...
-             'verbose',
-             ...]
+            sage: # long time
+            sage: cs = maxima_calculus._commands()
+            sage: "display" in cs
+            True
+            sage: "gcd" in cs
+            True
+            sage: "verbose" in cs
+            True
+
         """
-        try:
-            return self.__commands
-        except AttributeError:
-            self.__commands = sum(
-                [self.completions(chr(65+n), verbose=verbose) +
-                 self.completions(chr(97+n), verbose=verbose)
-                 for n in range(26)], [])
-        return self.__commands
+        # Passing the empty string to apropos() gets ALL names.
+        all_names = self._eval_line('apropos("")',
+                                    error_check=False).split(",")
+
+        # At the time of writing, searching a string for a specific
+        # character was much much faster than searching a list/tuple.
+        a_to_Z = "".join(chr(i+j)
+                         for i in range(ord('A'),ord('Z')+1)
+                         for j in (0, 32))  # 'a' = 'A' + 32
+
+        # Whack-a-mole to kill junk entries:
+        #
+        #  * 'erf_%iargs',
+        #  * 'exp\\-form'
+        #  * 'is\\-boole\\-eval'
+        #  * 'is\\-boole\\-verify'
+        #  * 'maybe\\-boole\\-verify'
+        #  * 'time\\/\\/call'
+        #  * 'unknown\\?'
+        #  * 'SPLITS\\ IN\\ Q'
+        #
+        # None of these are documented, and the backslash / question
+        # mark / percent symbol probably aren't going to do what you
+        # think they're going to do if you type them in an ipython
+        # shell. We have to trim spaces too because some names show up
+        # with random leading spaces: ' tminverse', ' toeplitz', etc.
+        #
+        bad_chars = ("\\", "/", "?", "%")
+        return [c
+                for n in all_names
+                if (c := n.strip())
+                and c[0] in a_to_Z
+                and not any(bad in c for bad in bad_chars)]
 
     def _tab_completion(self, verbose=True, use_disk_cache=True):
         r"""
@@ -357,7 +385,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
                 print("\nBuilding Maxima command completion list (this takes")
                 print("a few seconds only the first time you do it).")
                 print("To force rebuild later, delete %s." % COMMANDS_CACHE)
-            v = self._commands(verbose=verbose)
+            v = self._commands()
             if verbose:
                 print("\nDone!")
             self.__tab_completion = v

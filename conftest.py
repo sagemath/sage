@@ -198,10 +198,6 @@ def pytest_collect_file(
                 # This is an executable file.
                 return IgnoreCollector.from_parent(parent)
 
-            if file_path.name == "conftest_inputtest.py":
-                # This is an input file for testing the doctest machinery (and contains broken doctests).
-                return IgnoreCollector.from_parent(parent)
-
             if (
                 (
                     file_path.name == "finite_dimensional_lie_algebras_with_basis.py"
@@ -345,3 +341,21 @@ def add_imports(doctest_namespace: dict[str, Any]):
     sage_namespace["__name__"] = "__main__"
 
     doctest_namespace.update(**sage_namespace)
+
+
+@pytest.fixture
+def tmpfile():
+    r"""
+    Temporary file fixture that can be reopened/closed and still
+    clean itself up afterwards.
+
+    Similar to the built-in ``tmpdir`` fixture, but safer for now:
+
+    * https://github.com/pytest-dev/pytest/issues/13669
+
+    """
+    from tempfile import NamedTemporaryFile
+    from os import unlink
+    t = NamedTemporaryFile(delete=False)
+    yield t
+    unlink(t.name)

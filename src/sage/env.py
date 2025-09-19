@@ -159,9 +159,9 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
             except ImportError:
                 pass
 
-    # Try all fallbacks in order as long as we don't have a value
+    # Try all fallbacks in order as long as we don't have a non-empty value
     for f in fallbacks:
-        if value is not None:
+        if value not in (None, ""):
             break
         value = f
     SAGE_ENV[key] = value
@@ -234,6 +234,7 @@ THREEJS_DIR = var("THREEJS_DIR")
 PPLPY_DOCS = var("PPLPY_DOCS", join(SAGE_SHARE, "doc", "pplpy"))
 MAXIMA = var("MAXIMA", "maxima")
 MAXIMA_FAS = var("MAXIMA_FAS")
+MAXIMA_SHARE = var("MAXIMA_SHARE")
 KENZO_FAS = var("KENZO_FAS")
 SAGE_NAUTY_BINS_PREFIX = var("SAGE_NAUTY_BINS_PREFIX", "")
 SAGE_ECMBIN = var("SAGE_ECMBIN", "ecm")
