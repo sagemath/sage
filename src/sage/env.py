@@ -545,8 +545,8 @@ def sage_data_paths(name: str | None) -> set[str]:
         }
         paths.add(user_data_dir("sagemath"))
         paths.add(user_data_dir())
-        paths.add(site_data_dir("sagemath"))
-        paths.add(site_data_dir())
+        for path in site_data_dir("sagemath", multipath=True).split(os.pathsep) + site_data_dir(multipath=True).split(os.pathsep):
+            paths.add(path)
     else:
         paths = {path for path in SAGE_DATA_PATH.split(os.pathsep)}
 
