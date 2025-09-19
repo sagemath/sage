@@ -125,9 +125,9 @@ obtaining the source code and building SageMath.
 
 After installation, you can start SageMath in a terminal as follows:
 
-  .. code-block:: console
+.. code-block:: console
 
-    $ sage
+  $ sage
 
 This way of starting Sage gives you the most basic way of using
 Sage in the terminal. See :ref:`sec-launching` for recommended next steps,
