@@ -124,7 +124,7 @@ jobs:
           discussion_category_name: releases
 
       - name: Trigger Generate Changelog Workflow in website repo
-        if: github.ref_type == 'tag' && !env.IS_PRERELEASE
+        if: github.ref_type == 'tag' && env.IS_PRERELEASE == 'false'
         env:
           GITHUB_PAT: ${{ secrets.WEBSITE_ACCESS_TOKEN }}
           RELEASE_TAG: ${{ github.ref_name }}
