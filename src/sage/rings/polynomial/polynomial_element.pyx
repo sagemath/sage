@@ -6006,6 +6006,8 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: K.<x,y> = QQ['x,y']
             sage: g = K.random_element()
+            sage: while not g:
+            ....:     g = K.random_element()
             sage: f.sylvester_matrix(g) == K(f).sylvester_matrix(g, x)                  # needs sage.modules
             True
 
@@ -7148,6 +7150,10 @@ cdef class Polynomial(CommutativePolynomial):
         Return polynomial as a PARI object with topmost variable
         ``name``.  By default, use 'x' for the variable name.
 
+        It is not recommended to pass a user-specified value
+        as the variable name, because some names such as ``I``
+        are reserved. See :issue:`20631`, :issue:`40273`.
+
         For internal use only.
 
         EXAMPLES::
@@ -7157,6 +7163,13 @@ cdef class Polynomial(CommutativePolynomial):
             2*x^2 + x
             sage: (2*a^2 + a)._pari_with_name('y')                                      # needs sage.libs.pari
             2*y^2 + y
+
+        TESTS::
+
+            sage: (2*a^2 + a)._pari_with_name('I')                                      # needs sage.libs.pari
+            Traceback (most recent call last):
+            ...
+            cypari2.handle_error.PariError: I already exists with incompatible valence
         """
         vals = [x.__pari__() for x in self.list()]
         return pari(vals).Polrev(name)
@@ -7288,6 +7301,32 @@ cdef class Polynomial(CommutativePolynomial):
         s = '+'.join('(%s)*%s' % (self.monomial_coefficient(m)._giac_init_(),
                                   m._repr(g)) for m in self.monomials())
         return s if s else '0'
+
+    def _regina_(self, regina):
+        r"""
+        Return polynomial as a Regina object.
+
+        EXAMPLES::
+
+            sage: R.<v> = QQ[]
+            sage: p = v^3 + 3*v + 1/5
+            sage: rp = regina(p); (rp, type(rp), type(rp._inst)) # optional regina
+            (<regina.Polynomial: x^3 + 3 x + 1/5>,
+            <class 'sage.interfaces.regina.ReginaElement'>,
+            <class 'regina.engine.Polynomial'>)
+            sage: regina(p.change_ring(CC))                      # optional regina
+            Traceback (most recent call last):
+            ...
+            TypeError: only integral or rational polynomials available in Regina
+        """
+        try:
+            data = [ZZ(c) for c in self.list(copy=False)]
+        except TypeError:
+            try:
+                data = [QQ(c) for c in self.list(copy=False)]
+            except TypeError:
+                raise TypeError('only integral or rational polynomials available in Regina')
+        return regina.Polynomial(data)
 
     ######################################################################
 

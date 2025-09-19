@@ -1793,16 +1793,16 @@ class PermutationGroup_generic(FiniteGroup):
         from sage.sets.set import Set
 
         actions = {
-            "OnPoints"           : [],
-            "OnSets"             : [Set],
-            "OnPairs"            : [tuple],
-            "OnTuples"           : [tuple],
-            "OnSetsSets"         : [Set, Set],
-            "OnSetsDisjointSets" : [Set, Set],
-            "OnSetsTuples"       : [Set, tuple],
-            "OnTuplesSets"       : [tuple, Set],
-            "OnTuplesTuples"     : [tuple, tuple],
-            }
+            "OnPoints": [],
+            "OnSets": [Set],
+            "OnPairs": [tuple],
+            "OnTuples": [tuple],
+            "OnSetsSets": [Set, Set],
+            "OnSetsDisjointSets": [Set, Set],
+            "OnSetsTuples": [Set, tuple],
+            "OnTuplesSets": [tuple, Set],
+            "OnTuplesTuples": [tuple, tuple],
+        }
 
         def input_for_gap(x, depth, container):
             if depth == len(container):
@@ -2352,8 +2352,8 @@ class PermutationGroup_generic(FiniteGroup):
             sage: a^6
             ()
         """
-        current_randstate().set_seed_gap()
-        return self(self._gap_().Random(), check=False)
+        current_randstate().set_seed_libgap()
+        return self(self._libgap_().Random(), check=False)
 
     def group_id(self):
         """
@@ -2782,13 +2782,13 @@ class PermutationGroup_generic(FiniteGroup):
         D = PermutationGroup(gap_group=G)
         if not maps:
             return D
-        else:
-            from sage.groups.perm_gps.permgroup_morphism import PermutationGroupMorphism_from_gap
-            iota1 = PermutationGroupMorphism_from_gap(self,  D, G.Embedding(1))
-            iota2 = PermutationGroupMorphism_from_gap(other, D, G.Embedding(2))
-            pr1 = PermutationGroupMorphism_from_gap(D, self, G.Projection(1))
-            pr2 = PermutationGroupMorphism_from_gap(D, other, G.Projection(2))
-            return D, iota1, iota2, pr1, pr2
+
+        from sage.groups.perm_gps.permgroup_morphism import PermutationGroupMorphism_from_gap
+        iota1 = PermutationGroupMorphism_from_gap(self, D, G.Embedding(1))
+        iota2 = PermutationGroupMorphism_from_gap(other, D, G.Embedding(2))
+        pr1 = PermutationGroupMorphism_from_gap(D, self, G.Projection(1))
+        pr2 = PermutationGroupMorphism_from_gap(D, other, G.Projection(2))
+        return D, iota1, iota2, pr1, pr2
 
     def semidirect_product(self, N, mapping, check=True):
         r"""

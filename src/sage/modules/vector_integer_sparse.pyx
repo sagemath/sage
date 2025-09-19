@@ -163,10 +163,10 @@ cdef object mpz_vector_to_list(mpz_vector* v):
     cdef Integer a
     cdef Py_ssize_t i
     X = []
-    for i from 0 <= i < v.num_nonzero:
+    for i in range(v.num_nonzero):
         a = Integer()
         a.set_from_mpz(v.entries[i])
-        X.append( (v.positions[i], a) )
+        X.append((v.positions[i], a))
     return X
 
 
@@ -318,7 +318,7 @@ cdef int add_mpz_vector_init(mpz_vector* sum,
             mpz_set(z.entries[k], v.entries[i])
             i = i + 1
             k = k + 1
-        elif v.positions[i] > w.positions[j]: # copy entry from w in
+        elif v.positions[i] > w.positions[j]:  # copy entry from w in
             if do_multiply:
                 # This means: tmp = multiple*w.entries[j]
                 mpz_mul(tmp, multiple, w.entries[j])
@@ -343,7 +343,7 @@ cdef int add_mpz_vector_init(mpz_vector* sum,
                 k = k + 1     # only increment if sum is nonzero!
             i = i + 1
             j = j + 1
-        #end if
+        # end if
     # end while
     for i from k <= i < z.num_nonzero:
         mpz_clear(z.entries[i])
@@ -357,7 +357,7 @@ cdef int mpz_vector_scale(mpz_vector* v, mpz_t scalar) except -1:
         mpz_vector_init(v, v.degree, 0)
         return 0
     cdef Py_ssize_t i
-    for i from 0 <= i < v.num_nonzero:
+    for i in range(v.num_nonzero):
         # v.entries[i] = scalar * v.entries[i]
         mpz_mul(v.entries[i], v.entries[i], scalar)
     return 0
