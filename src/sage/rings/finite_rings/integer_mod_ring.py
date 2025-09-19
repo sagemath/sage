@@ -2040,7 +2040,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
     #######################################################
     # Suppose for interfaces
     #######################################################
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
         EXAMPLES::
 
@@ -2050,9 +2050,9 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: gap(R)  # indirect doctest                                            # needs sage.libs.gap
             (Integers mod 12345678900)
         """
-        return 'ZmodnZ({})'.format(self.order())
+        return f'ZmodnZ({self.order()})'
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         EXAMPLES::
 
@@ -2062,7 +2062,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: magma(R)  # indirect doctest, optional - magma
             Residue class ring of integers modulo 12345678900
         """
-        return 'Integers({})'.format(self.order())
+        return f'Integers({self.order()})'
 
     def degree(self):
         """
