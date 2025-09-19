@@ -18,6 +18,7 @@ The underlying set of `H_n` consists of some words in the alphabet
 """
 from typing import Iterator
 
+from sage.categories.finite_lattice_posets import FiniteLatticePosets
 from sage.combinat.posets.lattices import LatticePoset
 from sage.graphs.digraph import DiGraph
 from sage.topology.simplicial_complex import SimplicialComplex
@@ -101,7 +102,8 @@ def hochschild_lattice(n) -> LatticePoset:
 
     dg = DiGraph({a: list(cover_relations(a)) for a in verts},
                  format="dict_of_lists")
-    return LatticePoset(dg.reverse(), cover_relations=True, check=False)
+    return LatticePoset(dg.reverse(), cover_relations=True, check=False,
+                        category=FiniteLatticePosets().CongruenceUniform())
 
 
 def hochschild_fan(n):

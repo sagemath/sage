@@ -115,7 +115,7 @@ Sage 中默认安装了 SageTeX，但要在 LaTeX 文档中使用 SageTeX，你�
 
 - 第二种方法是使用 ``TEXMFLOCAL`` 环境变量。如果你使用的是 bash shell，可以这样做：
 
-  .. CODE-BLOCK:: shell-session
+  .. code-block:: console
 
       $ export TEXMFLOCAL=SAGE_ROOT/venv/share/texmf
       $ mktexlsr       # update kpathsea ls-R databases
@@ -133,14 +133,14 @@ Sage 中默认安装了 SageTeX，但要在 LaTeX 文档中使用 SageTeX，你�
   大多数 TeX 发行版会自动搜索主目录中的 ``texmf`` 目录以寻找包。
   要确切了解这个目录的位置，请在命令行种执行以下操作：
 
-  .. CODE-BLOCK:: shell-session
+  .. code-block:: console
 
       $ kpsewhich -var-value=TEXMFHOME
 
   这将打印出一个目录，例如 ``/home/drake/texmf`` 或 ``/Users/drake/Library/texmf``。
   使用如下命令将 :file:`SAGE_ROOT/venv/share/texmf/` 中的 ``tex/`` 目录复制到主目录的 ``texmf`` 目录：
 
-  .. CODE-BLOCK:: shell-session
+  .. code-block:: console
 
       $ cp -R SAGE_ROOT/venv/share/texmf/tex TEXMFHOME
 
@@ -154,7 +154,7 @@ Sage 中默认安装了 SageTeX，但要在 LaTeX 文档中使用 SageTeX，你�
 - 对于多用户系统上的安装，只需适当修改上述指令，将 ``sagetex.sty`` 复制到系统范围的 TeX 目录中。
   最好的选择可能是使用以下结果，而不是 ``TEXMFHOME`` 目录：
 
-  .. CODE-BLOCK:: shell-session
+  .. code-block:: console
 
       $ kpsewhich -var-value=TEXMFLOCAL
 
@@ -162,7 +162,7 @@ Sage 中默认安装了 SageTeX，但要在 LaTeX 文档中使用 SageTeX，你�
   按照上述方式将 ``tex`` 目录复制到 ``TEXMFLOCAL`` 目录中。
   现在需要通过运行以下命令更新 TeX 的包数据库：
 
-  .. CODE-BLOCK:: shell-session
+  .. code-block:: console
 
       $ texhash TEXMFLOCAL
 

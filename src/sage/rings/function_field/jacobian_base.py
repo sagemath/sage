@@ -540,7 +540,7 @@ class JacobianGroup_finite_field_base(JacobianGroup_base):
 
         return sum(bs)
 
-    def get_points(self, n):
+    def get_points(self, n) -> list:
         """
         Return `n` points of the Jacobian group.
 

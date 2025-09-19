@@ -1014,6 +1014,8 @@ cdef class FiniteField(Field):
         """
         if self.degree() == 1:
             return self(randrange(self.order()))
+        if not args and not kwds:
+            return self.from_integer(randrange(self.order()))
         v = self.vector_space(map=False).random_element(*args, **kwds)
         return self(v)
 

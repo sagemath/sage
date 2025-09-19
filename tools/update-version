@@ -22,7 +22,7 @@ if [ $# -ne 1 ]; then
 fi
 
 if [ -z "$SAGE_ROOT" ]; then
-    die "must be run from within a Sage environment, or with SAGE_ROOT provided"
+    SAGE_ROOT="$(pwd)"
 fi
 
 if [ -z "$SAGE_SRC" ]; then
@@ -48,11 +48,7 @@ done
       if [ -f "$spkg"/version_requirements.txt -a -d "$spkg"/src ]; then
           ( echo "# This file is updated on every release by the update-version script"
             # Normalize the package name to PyPI convention (dashes, not underscores)
-            if [ "$spkg" = sagelib ]; then
-                pkg=sagemath-standard
-            else
-                pkg=${spkg//_/-}
-            fi
+            pkg=${spkg//_/-}
             # Normalize the version (updated above as VERSION.txt) according to PEP440.
             version=$(cat "$spkg"/package-version.txt)
             version=${version//.beta/b}
@@ -85,7 +81,7 @@ SAGE_VERSION_BANNER='$SAGE_VERSION_BANNER'
 EOF
 
 # Create a top-level VERSION.txt file, which some external utilities rely on
-echo "$SAGE_VERSION_BANNER" > "$SAGE_ROOT/VERSION.txt"
+echo "$SAGE_VERSION" > "$SAGE_ROOT/VERSION.txt"
 
 # Add version to the front of GitHub release assets URLs.
 SAGE_MINOR_VERSION=${SAGE_VERSION//.alpha*/}
@@ -135,7 +131,6 @@ fi
 git commit -m "Updated SageMath version to $SAGE_VERSION" -- \
     "$SAGE_ROOT/VERSION.txt" \
     "$SAGE_SRC/sage/version.py" \
-    "$SAGE_SRC/VERSION.txt" \
     "$SAGE_ROOT/CITATION.cff" \
     "$SAGE_SRC/bin/sage-version.sh" \
     "$SAGE_ROOT/build/pkgs/configure/checksums.ini" \

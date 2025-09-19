@@ -11,7 +11,7 @@ requires = [
   'gmpy2 ~=2.1.b999',
   'jinja2',
   'memory_allocator',
-  'numpy >=1.25',
+  'numpy >=2.2.4',
 ]
 [tool.meson-python.args]
 # Prevent meson from trying to install the autoconf subprojects
@@ -69,7 +69,7 @@ dependencies = [
   'ptyprocess > 0.5',
   'requests >=2.13.0',
   'scipy >=1.11',
-  'sphinx >=5.2, <9',
+  'sphinx >=6.2, <9',
   'sympy >=1.6, <2.0',
   # According to https://github.com/python/typing_extensions/blob/main/CHANGELOG.md,
   # version 4.4.0 adds another Python 3.11 typing backport
@@ -90,13 +90,13 @@ R = ['rpy2 >=3.3']
 extra = [
   'igraph',
   'lrcalc ~=2.1; sys_platform != "win32"',
-  'p_group_cohomology >=3.3', # Only used in tests
+  #'p_group_cohomology >=3.3', # Only used in tests, not available on PyPI
   'pycosat >=0.6.3',
   'pynormaliz >=2.18; platform_machine != "aarch64" and platform_machine != "arm64"', # Not yet available for Linux aarch64
   'sage_numerical_backends_coin',
   'symengine >= 0.6.1', # Only used in tests
 ]
-giac = ['sagemath_giac']
+#giac = ['sagemath_giac'] # Not yet available on PyPI (https://github.com/sagemath/sagemath-giac/issues/3)
 
 [project.readme]
 content-type = "text/markdown"

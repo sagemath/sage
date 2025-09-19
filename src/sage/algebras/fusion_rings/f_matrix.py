@@ -301,7 +301,7 @@ class FMatrix(SageObject):
     #   Class utilities   #
     #######################
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

@@ -18,7 +18,7 @@ import tqdm
 from github.MainClass import Github
 
 # Regex pattern to find deprecation instances
-DEPRECATION_PATTERN = re.compile(r'deprecation\((\d+),')
+DEPRECATION_PATTERN = re.compile(r'(deprecation|deprecated_function_alias)\((\d+),')
 
 
 def get_pr_closed_date(github_token: str, pr_number: int) -> datetime:
@@ -36,6 +36,8 @@ def search_deprecations(path: str) -> set[tuple[str, int]]:
                 content = f.read()
                 matches = DEPRECATION_PATTERN.findall(content)
                 for match in matches:
+                    if isinstance(match, tuple):
+                        match = match[1]
                     deprecations.add((str(filepath), int(match)))
         except (PermissionError, UnicodeDecodeError):
             pass

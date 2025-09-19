@@ -7,6 +7,7 @@ inventory files. The documentation files are not written.
 from __future__ import annotations
 
 from os import path
+from pathlib import Path
 from typing import Any, Iterable
 from urllib.parse import quote
 
@@ -61,6 +62,7 @@ class InventoryBuilder(DummyBuilder):
         """
         assert self.env is not None
 
+        Path(self.outdir).mkdir(parents=True, exist_ok=True)
         InventoryFile.dump(
             path.join(self.outdir, INVENTORY_FILENAME), self.env, self
         )

@@ -342,7 +342,6 @@ cpdef clustering_coeff(g, vertices=None):
     return (average_clustering, clust_v_sage)
 
 
-@cython.binding(True)
 cpdef dominator_tree(g, root, return_dict=False, reverse=False):
     r"""
     Use Boost to compute the dominator tree of ``g``, rooted at ``root``.

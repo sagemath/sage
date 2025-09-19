@@ -1,10 +1,12 @@
 name: Build Docker images and push to DockerHub
 
 on:
+  pull_request:
+    paths:
+      - '.github/workflows/push_to_docker_hub.yml'
+      - 'docker/Dockerfile'
   workflow_dispatch:
     # Allow to run manually
-    branches:
-      - 'develop'
   push:
     tags:
       # Match all release tags including beta, rc

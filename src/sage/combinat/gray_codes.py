@@ -69,19 +69,18 @@ def product(m):
         ....:     assert sum(1 for _ in product(t)) == prod(t)-1
     """
     # n is the length of the element (we ignore sets of size 1)
-    n = k = 0
+    n = 0
 
     new_m = []   # will be the set of upper bounds m_i different from 1
     mm = []      # index of each set (we skip sets of cardinality 1)
-    for i in m:
+    for k, i in enumerate(m):
         i = int(i)
         if i <= 0:
             raise ValueError("accept only positive integers")
         if i > 1:
-            new_m.append(i-1)
+            new_m.append(i - 1)
             mm.append(k)
             n += 1
-        k += 1
 
     m = new_m
     f = list(range(n + 1))  # focus pointer

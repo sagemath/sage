@@ -354,10 +354,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             if self(self.domain().one()) is infinity:
                 # the constant infinity
                 return True
-            if self(self.uniformizer()) != 0:
-                # not constant on the nonzero elements
-                return False
-            return True
+            return self(self.uniformizer()) == 0
 
         @abstract_method
         def uniformizer(self):

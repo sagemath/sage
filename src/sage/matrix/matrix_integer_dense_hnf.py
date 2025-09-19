@@ -899,7 +899,12 @@ def probable_hnf(A, include_zero_rows, proof):
     B = A.matrix_from_rows(rows)
     cols = list(probable_pivot_columns(B))
     C = B.matrix_from_columns(cols)
-    # Now C is a submatrix of A that has full rank and is square.
+    # Now C is a submatrix of A that has full rank and is (probably)
+    # square, unless reduction mod p in probable_pivot_columns()
+    # was unlucky enough to introduce a linear dependence.
+    while not C.is_square():
+        cols = list(probable_pivot_columns(B))
+        C = B.matrix_from_columns(cols)
 
     # We compute the HNF of C, which is a square nonsingular matrix.
     try:

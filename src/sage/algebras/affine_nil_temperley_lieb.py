@@ -113,7 +113,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
         """
         return self.weyl_group().one()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -242,7 +242,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
                 return j not in wi.descents()
         return self.has_no_braid_relation(w * s[w.first_descent()], i)
 
-    def _repr_term(self, t, short_display=True):
+    def _repr_term(self, t, short_display=True) -> str:
         """
         EXAMPLES::
 
