@@ -19588,7 +19588,7 @@ cdef class Matrix(Matrix1):
             k = row_profile_exhausted + row_profile_self + row_extension
 
             # calculate sorting permutation, sort k by (shifts[c]+d, c)
-            k_rows = [x[2] for x in  self._krylov_row_coordinates(shifts, degrees, k)]
+            k_rows = [x[2] for x in self._krylov_row_coordinates(shifts, degrees, k)]
             k_perm = Permutation([x + 1 for x in k_rows])
 
             # fast calculation of rows formed by indices in k
@@ -19633,7 +19633,7 @@ cdef class Matrix(Matrix1):
             k = row_profile_exhausted + row_profile_self
             R = exhausted.stack(R)
 
-            k_rows = [x[2] for x in  self._krylov_row_coordinates(shifts, degrees, k)]
+            k_rows = [x[2] for x in self._krylov_row_coordinates(shifts, degrees, k)]
             k_perm = Permutation([x + 1 for x in k_rows])
 
             R.permute_rows(k_perm)
