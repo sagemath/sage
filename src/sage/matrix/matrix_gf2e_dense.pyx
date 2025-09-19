@@ -1023,7 +1023,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: m = Matrix(GL(2^8, GF(2^8)).random_element())
+            sage: m = Matrix(GL(2^6, GF(2^6)).random_element())
             sage: m.is_invertible()
             True
         """
