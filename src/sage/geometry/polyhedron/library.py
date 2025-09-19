@@ -2878,12 +2878,13 @@ class Polytopes:
         """
         if n <= 0:
             raise ValueError("n must be positive")
-        D_vertices = (2 * [1 if j == i else 0 for j in range(n)]
-                      for i in range(n))
-        Dn = Polyhedron(vertices=D_vertices)
+        parent = Polyhedra(ZZ, 2 * n)
+        D_vertices = [2 * [1 if j == i else 0 for j in range(n)]
+                      for i in range(n)]
+        Dn = parent([D_vertices, [], []], None, convert=False)
         perms = [list(sigma) for sigma in Permutations(n)]
-        P_vertices = (a + b for a in perms for b in perms)
-        Pin_Pin = Polyhedron(vertices=P_vertices)
+        P_vertices = [a + b for a in perms for b in perms]
+        Pin_Pin = parent([P_vertices, [], []], None, convert=False)
         return Dn + Pin_Pin
 
     def omnitruncated_one_hundred_twenty_cell(self, exact=True, backend=None):
