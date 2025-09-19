@@ -121,7 +121,7 @@ jobs:
           token: ${{ github.ref_type == 'tag' && github.token || 'FAIL' }}
           generate_release_notes: true
           prerelease: ${{ env.IS_PRERELEASE }}
-          discussion_category_name: announcements
+          discussion_category_name: releases
 
       - name: Trigger Generate Changelog Workflow in website repo
         if: github.ref_type == 'tag' && !env.IS_PRERELEASE
