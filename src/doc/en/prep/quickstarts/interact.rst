@@ -45,7 +45,7 @@ This was important because it allowed you to step back and think about
 what you would really be doing.
 
 Now for the technical part.  We make this a ``def`` function \- see the
-:doc:`programming tutorial <../Programming>`.
+:doc:`programming tutorial <../programming>`.
 
 ::
 
