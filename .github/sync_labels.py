@@ -414,7 +414,7 @@ class GhLabelSynchronizer:
         if Status.needs_work.value in self.get_labels():
             for com in date_commits:
                 message =  com['messageHeadline']
-                if message.startswith('Merge') and message.find('develop') > 0:
+                if message.startswith('Merge') and 'develop' in message:
                     debug('Ignore merge commit %s for commit_date' % com['oid'])
                     date_commits.remove(com)
 
