@@ -94,6 +94,8 @@ jobs:
     permissions:
       contents: write
       discussions: write
+    env:
+      IS_PRERELEASE: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -116,10 +118,24 @@ jobs:
           files: |
             dist/*
             tarballs/*
-          token: ${{ github.ref_type == 'tag' && secrets.RELEASE_CREATION_TOKEN || 'FAIL' }}
+          token: ${{ github.ref_type == 'tag' && github.token || 'FAIL' }}
           generate_release_notes: true
-          prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
+          prerelease: ${{ env.IS_PRERELEASE }}
           discussion_category_name: announcements
+
+      - name: Trigger Generate Changelog Workflow in website repo
+        if: github.ref_type == 'tag' && !env.IS_PRERELEASE
+        env:
+          GITHUB_PAT: ${{ secrets.WEBSITE_ACCESS_TOKEN }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          curl -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_PAT" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/sagemath/website/actions/workflows/generate_changelog.yml/dispatches \
+            -d '{"ref":"master","inputs":{"release_tag":"'"$RELEASE_TAG"'"}}'
 
   build_wheels:
     # Temporarily disabled due to build errors
