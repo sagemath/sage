@@ -4391,6 +4391,15 @@ class FinitePoset(UniqueRepresentation, Parent):
         transformation. This polynomial only depends on the derived
         category of modules on the poset.
 
+        .. NOTE::
+
+            By Corollary 4.3 of [Lad2021]_, this polynomial does
+            not depend on the order of the ordinal summands.
+
+        .. SEEALSO::
+
+            :meth:`ordinal_sum`, :meth:`ordinal_summands`
+
         EXAMPLES::
 
             sage: P = posets.PentagonPoset()

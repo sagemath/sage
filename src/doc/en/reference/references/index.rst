@@ -4387,6 +4387,9 @@ REFERENCES:
 .. [Labelle2008] \G. Labelle. *New combinatorial computational methods
                  arising from pseudo-singletons.* DMTCS Proceedings 1, 2008.
 
+.. [Lad2021] S. Ladkani. *Refined Coxeter polynomials*, Proceedings ICRA 2020,
+             EMS Publishing House. :arxiv:`2110.15329`
+
 .. [Lak2010] Dan Laksov. *Splitting algebras and Gysin homomorphisms*.
              Journal of Commutative Algebra, Volume 2, Number 3, Fall 2010
 
