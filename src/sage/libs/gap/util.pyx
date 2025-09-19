@@ -17,7 +17,7 @@ from posix.dlfcn cimport dlopen, dlclose, dlerror, RTLD_LAZY, RTLD_GLOBAL
 from posix.signal cimport sigaction, sigaction_t, sigemptyset
 
 from cpython.exc cimport PyErr_Fetch, PyErr_Restore
-from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
+from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE, Py_TYPE
 from cpython.ref cimport PyObject, Py_XINCREF, Py_XDECREF
 
 import os
@@ -179,17 +179,23 @@ MakeReadOnlyGlobal("ERROR_OUTPUT");
 MakeImmutable(libgap_errout);
 """
 
+
 # "Global" signal handler info structs. The GAP one we enable/disable
 # before/after GAP code. The Sage ones we use to store the existing
 # handlers before we do that.
 cdef sigaction_t gap_sigint_sa
 cdef sigaction_t sage_sigint_sa
 cdef sigaction_t sage_sigalrm_sa
+cdef int last_signum = 0
+
 
 cdef void gap_interrupt_asap(int signum) noexcept:
     # A wrapper around InterruptExecStat(). This tells GAP to raise an
     # error at the next opportunity.
+    global last_signum
+    last_signum = signum
     InterruptExecStat()
+
 
 cdef initialize():
     """
@@ -303,6 +309,7 @@ cdef initialize():
             f.close()
             gap_eval('SaveWorkspace("{0}")'.format(f.name))
 
+
 cpdef void gap_sig_on() noexcept:
     # Install GAP's own SIGINT handler, typically for the duration of
     # some libgap commands. We install it for SIGALRM too so that the
@@ -313,6 +320,7 @@ cpdef void gap_sig_on() noexcept:
     sigaction(SIGINT, &gap_sigint_sa, &sage_sigint_sa)
     sigaction(SIGALRM, &gap_sigint_sa, &sage_sigalrm_sa)
 
+
 cpdef void gap_sig_off() noexcept:
     # Restore the Sage handlers that were saved & overwritten in
     # gap_sig_on(). Better make sure the two are paired correctly!
@@ -320,6 +328,7 @@ cpdef void gap_sig_off() noexcept:
     global sage_sigalrm_sa
     sigaction(SIGINT, &sage_sigint_sa, NULL)
     sigaction(SIGALRM, &sage_sigalrm_sa, NULL)
+
 
 ############################################################################
 ### Evaluate string in GAP #################################################
@@ -438,6 +447,7 @@ cdef Obj gap_eval(str gap_string) except? NULL:
 ### Error handler ##########################################################
 ############################################################################
 
+
 class GAPError(ValueError):  # ValueError for historical reasons
     """
     Exceptions raised by the GAP library
@@ -482,6 +492,7 @@ cdef void error_handler() noexcept with gil:
     cdef PyObject* exc_type = NULL
     cdef PyObject* exc_val = NULL
     cdef PyObject* exc_tb = NULL
+    global last_signum
 
     try:
         GAP_EnterStack()
@@ -507,19 +518,36 @@ cdef void error_handler() noexcept with gil:
         elif not msg:
             msg = "an unknown error occurred in GAP"
 
+        # PyErr_Fetch gives us a reference to the object, we need to free them
+        Py_XDECREF(exc_type)
+        Py_XDECREF(exc_val)
+
         # Raise an exception using PyErr_Restore().
         # This way, we can keep any existing traceback object.
         # Note that we manually need to deal with refcounts here.
-        Py_XDECREF(exc_type)
-        Py_XDECREF(exc_val)
-        if "user interrupt" in msg:
-            exc_type = <PyObject*>KeyboardInterrupt
+        if last_signum:
+            if last_signum == SIGINT:
+                exc_type = <PyObject*>KeyboardInterrupt
+                exc_val_python = KeyboardInterrupt()
+                exc_val = <PyObject*>exc_val_python
+            elif last_signum == SIGALRM:
+                from cysignals.signals import AlarmInterrupt
+                exc_type = <PyObject*>AlarmInterrupt
+                exc_val_python = AlarmInterrupt()
+                exc_val = <PyObject*>exc_val_python
+            else:
+                msg = f'{msg}\nunexpected signal value {last_signum} handled, this cannot happen'
+                exc_type = <PyObject*>GAPError
+                exc_val = <PyObject*>msg
+            last_signum = 0
         else:
             exc_type = <PyObject*>GAPError
-        exc_val = <PyObject*>msg
+            exc_val = <PyObject*>msg
+
         Py_XINCREF(exc_type)
         Py_XINCREF(exc_val)
         PyErr_Restore(exc_type, exc_val, exc_tb)
+        # as explained in libgap.pyx, this is handled because GAP_Enter's declaration has "except 0"
     finally:
         # Reset ERROR_OUTPUT with a new text string stream
         GAP_EvalStringNoExcept(_reset_error_output_cmd)
