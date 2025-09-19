@@ -16,9 +16,19 @@ obtaining the source code and building SageMath.
 
   .. tab:: Conda
 
-    Install SageMath from
-    the `conda-forge <https://conda-forge.org/>`_ project, as described in section
-    :ref:`sec-installation-conda`.
+    To install SageMath from
+    the `conda-forge <https://conda-forge.org/>`_ project
+    you can use the following command:
+    .. code-block:: console
+
+      $ conda create -n sage sage python=3.11
+
+    This will create a new conda environment named ``sage``
+    containing SageMath and Python 3.11.
+    You can then activate this environment with the command
+    ``conda activate sage`` and start SageMath by typing ``sage``.
+    
+    For more details, see section :ref:`sec-installation-conda`.
 
   .. tab:: Arch Linux/Manjaro
 
