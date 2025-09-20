@@ -196,7 +196,7 @@ class DocTestReporter(SageObject):
             sage: print(DTR.report_head(FDS, "Failed by self-sabotage"))
             ... --long .../sage/doctest/reporting.py  # Failed by self-sabotage
         """
-        cmd = os.path.relpath(argv[0]) if "sage-runtests" in argv[0] else "python3 -m sage.doctest"
+        cmd = os.path.relpath(argv[0]).replace("-runtests", " -t") if "sage-runtests" in argv[0] else "python3 -m sage.doctest"
         if self.controller.options.long:
             cmd += " --long"
 
