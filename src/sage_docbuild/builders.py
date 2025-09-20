@@ -291,9 +291,10 @@ class DocBuilder():
         # Move generated PDFs
         for pdf in tex_dir.glob("*.pdf"):
             try:
-                shutil.move(str(pdf), pdf_dir)
+                dst_pdf = os.path.join(pdf_dir, os.path.basename(pdf))
+                shutil.move(str(pdf), dst_pdf)
             except Exception as e:
-                logger.error(f"Failed moving {pdf} to {pdf_dir}: {e}")
+                logger.error(f"Failed moving {pdf} to {dst_pdf}: {e}")
                 raise
 
         logger.info(f"Build finished. The built documents can be found in {pdf_dir}.")
