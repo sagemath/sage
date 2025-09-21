@@ -121,6 +121,7 @@ from sage.structure.factory import UniqueFactory
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
 from sage.structure.category_object import normalize_names
+from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
 from sage.categories.map cimport Map
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
@@ -183,17 +184,27 @@ def tower_bases(ring, degree):
         bases.append(base)
         if degree:
             degrees.append(deg)
-            try:
-                d = base.relative_degree()
-            except AttributeError:
-                try:
-                    d = base.degree()
-                except AttributeError:
+            if isinstance(base, PolynomialQuotientRing_generic):
+                d = base.degree()
+                assert d != Infinity
+                if d == 0:
                     break
-            if d is Infinity: break
+            else:
+                try:
+                    d = base.relative_degree()
+                except AttributeError:
+                    try:
+                        d = base.degree()
+                    except AttributeError:
+                        break
+                if d is Infinity: break
             deg *= d
-        newbase = base._base
-        if newbase is base: break
+        if isinstance(base, PolynomialQuotientRing_generic):
+            newbase = base.base_ring()
+            assert newbase is not base
+        else:
+            newbase = base._base
+            if newbase is base: break
         base = newbase
     return bases, degrees
 
@@ -345,7 +356,7 @@ class RingExtensionFactory(UniqueFactory):
         sage: E2 is E                                                                   # needs sage.rings.number_field
         False
     """
-    def create_key_and_extra_args(self, ring, defining_morphism=None, gens=None, names=None, constructors=None):
+    def create_key_and_extra_args(self, ring, defining_morphism=None, gens=None, names=None, constructors=None, check=True):
         """
         Create a key and return it together with a list of constructors
         of the object.
@@ -389,7 +400,7 @@ class RingExtensionFactory(UniqueFactory):
                 To:   Finite Field in z4 of size 5^4
                 Defn: z2 |--> z4^3 + z4^2 + z4 + 3, (z4,), ('a',)),
              {'constructors': [(<class 'sage.rings.ring_extension.RingExtensionWithGen'>,
-                               {'gen': z4, 'is_backend_exposed': True, 'names': ('a',)})]})
+                                {'check': True, 'gen': z4, 'is_backend_exposed': True, 'names': ('a',)})]})
         """
         use_generic_constructor = True
         is_backend_exposed = True
@@ -457,7 +468,7 @@ class RingExtensionFactory(UniqueFactory):
             constructors = []
             if gens is not None and len(gens) == 1:
                 constructors.append((RingExtensionWithGen,
-                                     {'gen': gens[0], 'names': names,
+                                     {'gen': gens[0], 'names': names, 'check': check,
                                       'is_backend_exposed': is_backend_exposed}))
             if use_generic_constructor:
                 constructors.append((RingExtension_generic,
@@ -2572,6 +2583,22 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
             Field in a with defining polynomial x^3 + 3*x + 1 over its base
 
             sage: TestSuite(E).run()                                                    # needs sage.rings.number_field
+
+            sage: p = 886368969471450739924935101400677
+            sage: K = GF(p)
+            sage: Kx.<x> = K[]
+            sage: K3.<u> = K.extension(Kx([4, 1, 0, 1]))
+            sage: K3y.<y> = K3[]
+            sage: K6.<t> = K3.extension(K3y([2, 0, 1]))
+            sage: K6t.<t1> = K6.over(K, gen=t)
+            Traceback (most recent call last):
+            ...
+            ValueError: the given family is not a basis
+            sage: K6t.<t1> = K6.over(K, gen=t+u)
+            sage: K6t(t1).minpoly()
+            x^6 + 8*x^4 + 8*x^3 + 13*x^2 + 886368969471450739924935101400637*x + 18
+            sage: K6t(t1).minpoly()(t1)
+            0
         """
         self._name = names[0]
         backend_base = backend_parent(defining_morphism.domain())
