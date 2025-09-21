@@ -28,8 +28,6 @@ Natalie Schoenhals for their contribution to the project and the code.
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from collections import deque
-
 from sage.categories.coxeter_groups import CoxeterGroups
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.misc.lazy_import import lazy_import

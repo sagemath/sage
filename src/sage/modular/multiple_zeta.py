@@ -167,7 +167,6 @@ REFERENCES:
 # ****************************************************************************
 from __future__ import annotations
 import numbers
-from collections.abc import Iterator
 from itertools import product
 
 from sage.misc.fast_methods import Singleton
@@ -194,6 +193,10 @@ from sage.modules.free_module import VectorSpace
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.sets.positive_integers import PositiveIntegers
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 lazy_import('sage.libs.pari', 'pari')
 

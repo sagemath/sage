@@ -2,8 +2,12 @@ py.install_sources(
   '__init__.py',
   'all.py',
   'ext_impl.pxd',
+  'ext_impl.pyx',
+  'ext_libmp.pyx',
   'ext_main.pxd',
+  'ext_main.pyx',
   'utils.pxd',
+  'utils.pyx',
   subdir: 'sage/libs/mpmath',
 )
 

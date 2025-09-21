@@ -12,6 +12,7 @@ py.install_sources(
   'arb_hypgeom.pxd',
   'arb_wrap.h',
   'arf.pxd',
+  'arith.pyx',
   'bernoulli.pxd',
   'mag.pxd',
   'types.pxd',

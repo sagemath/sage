@@ -21,6 +21,7 @@ py.install_sources(
   'rigged_configuration_element.py',
   'rigged_configurations.py',
   'rigged_partition.pxd',
+  'rigged_partition.pyx',
   'tensor_product_kr_tableaux.py',
   'tensor_product_kr_tableaux_element.py',
   subdir: 'sage/combinat/rigged_configurations',

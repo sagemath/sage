@@ -1003,7 +1003,7 @@ three building blocks: conversion, coercion, and equality test.
 
 #. Clearly, if the conversion `P(x)` raises an error, then `x` cannot be seen as an element of `P`. On the other hand, a conversion `P(x)` can generally do very nasty things. So, the fact that `P(x)` works without error is necessary, but not sufficient for `x \in P`.
 #. If `P` is the parent of `x`, then the conversion `P(x)` will not change `x` (at least, that's the default). Hence, we will have `x=P(x)`.
-#. Sage uses coercion not only for arithmetic operations, but also for comparison: *If* there is a coercion from the parent of `x` to `P`, then the equality test ``x==P(x)`` reduces to ``P(x)==P(x)``. Otherwise, ``x==P(x)`` will evaluate as false.
+#. Sage uses coercion not only for arithmetic operations, but also for comparison: *If* there is a coercion from the parent of `x` to `P`, then the equality test ``x==P(x)`` reduces to ``P(x)==P(x)``. (Otherwise, the equality test might still hold. For example ``mod(1, 4) in ZZ`` is true, even though there is no coercion from ``Zmod(4)`` to ``ZZ``, because ``ZZ(mod(1, 4)) == 1``)
 
 That leads to the following default implementation of element containment testing:
 

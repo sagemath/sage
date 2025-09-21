@@ -3,7 +3,6 @@ from sage.structure.richcmp import richcmp
 from sage.structure.element import FieldElement
 from sage.rings.function_field.element import FunctionFieldElement
 
-
 class FunctionFieldElement_polymod(FunctionFieldElement):
     def __init__(self, parent: Any, x: Any, reduce: bool = True) -> None:
         ...

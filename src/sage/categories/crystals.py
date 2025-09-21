@@ -1250,7 +1250,7 @@ class Crystals(Category_singleton):
         __add__ = direct_sum
 
         @abstract_method(optional=True)
-        def connected_components_generators(self):
+        def connected_components_generators(self) -> tuple:
             """
             Return a tuple of generators for each of the connected components
             of ``self``.

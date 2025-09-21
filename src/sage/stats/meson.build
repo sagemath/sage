@@ -3,8 +3,10 @@ py.install_sources(
   'all.py',
   'basic_stats.py',
   'intlist.pxd',
+  'intlist.pyx',
   'r.py',
   'time_series.pxd',
+  'time_series.pyx',
   subdir: 'sage/stats',
 )
 

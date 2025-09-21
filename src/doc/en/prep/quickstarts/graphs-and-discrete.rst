@@ -253,7 +253,7 @@ Cryptography (for education)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This is also briefly mentioned in the :doc:`Number theory quickstart
-<Number-Theory>`. Sage has a number of good pedagogical resources
+<number-theory>`. Sage has a number of good pedagogical resources
 for cryptography.
 
 .. skip

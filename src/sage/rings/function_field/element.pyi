@@ -1,7 +1,6 @@
 from typing import Any, List
 from sage.structure.element import FieldElement
 
-
 class FunctionFieldElement(FieldElement):
     _x: Any
     _matrix: Any

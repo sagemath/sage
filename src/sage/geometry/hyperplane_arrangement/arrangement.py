@@ -1612,7 +1612,7 @@ class HyperplaneArrangementElement(Element):
         return self.is_central(certificate=True)[1]
 
     @cached_method
-    def is_simplicial(self):
+    def is_simplicial(self) -> bool:
         r"""
         Test whether the arrangement is simplicial.
 

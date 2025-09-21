@@ -2,6 +2,7 @@ py.install_sources(
   '__init__.py',
   'all.py',
   'dist.pxd',
+  'dist.pyx',
   'distributions.py',
   'fund_domain.py',
   'manin_map.py',
