@@ -376,8 +376,8 @@ class RingExtensionFactory(UniqueFactory):
           (default: ``None``)
 
         - ``constructors`` -- list of constructors; each constructor
-          is a pair `(class, arguments)` where `class` is the class
-          implementing the extension and `arguments` is the dictionary
+          is a pair ``(class, arguments)`` where ``class`` is the class
+          implementing the extension and ``arguments`` is the dictionary
           of arguments to pass in to init function
 
         TESTS::
@@ -2397,7 +2397,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
             Vector space of dimension 6 over Finite Field of size 11
 
         In this case, the isomorphisms between `V` and `L` are given by the
-        basis `(1, a, b, ab, b^2, ab^2)`:
+        basis `(1, a, b, ab, b^2, ab^2)`::
 
             sage: j(a*b)                                                                # needs sage.rings.finite_rings
             (0, 0, 0, 1, 0, 0)
