@@ -115,8 +115,8 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
         [   1 -3/2]
         [-3/2    1]
 
-    It is possible to create the Coxeter matrices associated to hyperbolic 
-    Coxeter groups, as refered in Humphrey's book [Reflection Groups and 
+    It is possible to create the Coxeter matrices associated to hyperbolic
+    Coxeter groups, as refered in Humphrey's book [Reflection Groups and
     Coxeter Groups]::
 
         sage: C = CoxeterType(["Hyperbolic", (142, 1, 3)])
