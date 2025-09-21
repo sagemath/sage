@@ -83,7 +83,9 @@ function's documentation.  Type
 Hyperlinks
 ==========
 
-The documentation can contain links toward modules, classes, or methods, e.g.::
+The documentation can contain links toward modules, classes, or methods, e.g.:
+
+.. CODE-BLOCK:: rest
 
     :mod:`link to a module <sage.module_name>`
     :mod:`sage.module_name` (here the link's text is the module's name)
