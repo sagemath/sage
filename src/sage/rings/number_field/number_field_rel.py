@@ -467,7 +467,7 @@ class NumberField_relative(NumberField_generic):
         ans = Sequence(ans, immutable=True, cr=bool(ans))
         return ans
 
-    def is_absolute(self):
+    def is_absolute(self) -> bool:
         r"""
         Return ``False``, since this is not an absolute field.
 
@@ -1171,14 +1171,15 @@ class NumberField_relative(NumberField_generic):
             sage: k._pari_base_nf()
             [y^2 + 2, [0, 1], -8, 1, ..., [1, 0, 0, -2; 0, 1, 1, 0]]
         """
-        abs_base, from_abs_base, to_abs_base = self.absolute_base_field()
+        abs_base, _, _ = self.absolute_base_field()
         return abs_base.pari_nf()
 
-    def is_galois(self):
+    def is_galois(self) -> bool:
         r"""
         For a relative number field, :meth:`is_galois` is deliberately not
         implemented, since it is not clear whether this would mean "Galois over
         `\QQ`" or "Galois over the given base field".
+
         Use either :meth:`is_galois_absolute` or :meth:`is_galois_relative`, respectively.
 
         EXAMPLES::
@@ -1193,7 +1194,7 @@ class NumberField_relative(NumberField_generic):
         """
         raise NotImplementedError("For a relative number field L you must use either L.is_galois_relative() or L.is_galois_absolute() as appropriate")
 
-    def is_galois_relative(self):
+    def is_galois_relative(self) -> bool:
         r"""
         Return ``True`` if for this relative extension `L/K`, `L` is a
         Galois extension of `K`.
@@ -1223,7 +1224,7 @@ class NumberField_relative(NumberField_generic):
             rel_poly = self.relative_polynomial()
             return d == len(rel_poly.base_extend(self).factor())
 
-    def is_galois_absolute(self):
+    def is_galois_absolute(self) -> bool:
         r"""
         Return ``True`` if for this relative extension `L/K`, `L` is a Galois extension of `\QQ`.
 
@@ -1238,7 +1239,7 @@ class NumberField_relative(NumberField_generic):
         f = self.absolute_polynomial()
         return f.galois_group(pari_group=True).order() == self.absolute_degree()
 
-    def is_isomorphic_relative(self, other, base_isom=None):
+    def is_isomorphic_relative(self, other, base_isom=None) -> bool:
         r"""
         For this relative extension `L/K` and another relative extension `M/K`, return ``True``
         if there is a `K`-linear isomorphism from `L` to `M`. More generally, ``other`` can be a
@@ -1325,10 +1326,12 @@ class NumberField_relative(NumberField_generic):
             raise ValueError("base_isom is not a homomorphism from self's base_field to other's base_field")
         raise ValueError("other must be a relative number field.")
 
-    def is_CM_extension(self):
+    def is_CM_extension(self) -> bool:
         """
-        Return ``True`` is this is a CM extension, i.e. a totally imaginary
-        quadratic extension of a totally real field.
+        Return ``True`` is this is a CM extension.
+
+        This means a totally imaginary quadratic extension of a
+        totally real field.
 
         EXAMPLES::
 
@@ -2481,11 +2484,11 @@ class NumberField_relative(NumberField_generic):
         gens = [self(x) for x in gens]
         return relative_order_from_ring_generators(gens, **kwds)
 
-    def is_free(self, proof=None):
+    def is_free(self, proof=None) -> bool:
         r"""
         Determine whether or not `L/K` is free.
 
-        (i.e. if `\mathcal{O}_L` is a free `\mathcal{O}_K`-module).
+        This means that `\mathcal{O}_L` is a free `\mathcal{O}_K`-module.
 
         INPUT:
 

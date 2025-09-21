@@ -1336,7 +1336,7 @@ class PermutationGroup_generic(FiniteGroup):
                 raise ValueError("you must specify which generator you want")
         return gens[i]
 
-    def ngens(self):
+    def ngens(self) -> int:
         """
         Return the number of generators of ``self``.
 
@@ -4260,11 +4260,12 @@ class PermutationGroup_generic(FiniteGroup):
         """
         return bool(self._libgap_().IsCyclic())
 
-    def is_elementary_abelian(self):
+    def is_elementary_abelian(self) -> bool:
         """
-        Return ``True`` if this group is elementary abelian. An elementary
-        abelian group is a finite abelian group, where every nontrivial
-        element has order `p`, where `p` is a prime.
+        Return ``True`` if this group is elementary abelian.
+
+        An elementary abelian group is a finite abelian group, where
+        every nontrivial element has order `p`, where `p` is a prime.
 
         EXAMPLES::
 
@@ -4327,7 +4328,7 @@ class PermutationGroup_generic(FiniteGroup):
         from .permgroup_morphism import PermutationGroupMorphism_im_gens
         return PermutationGroupMorphism_im_gens(self, right, dsts)
 
-    def is_isomorphic(self, right):
+    def is_isomorphic(self, right) -> bool:
         """
         Return ``True`` if the groups are isomorphic.
 
@@ -4419,7 +4420,7 @@ class PermutationGroup_generic(FiniteGroup):
         """
         return bool(self._libgap_().IsPerfectGroup())
 
-    def is_pgroup(self) -> bools:
+    def is_pgroup(self) -> bool:
         r"""
         Return ``True`` if this group is a `p`-group.
 
@@ -4466,7 +4467,7 @@ class PermutationGroup_generic(FiniteGroup):
         """
         return bool(self._libgap_().IsSimpleGroup())
 
-    def is_solvable(self):
+    def is_solvable(self) -> bool:
         """
         Return ``True`` if the group is solvable.
 
@@ -4478,7 +4479,7 @@ class PermutationGroup_generic(FiniteGroup):
         """
         return bool(self._libgap_().IsSolvableGroup())
 
-    def is_subgroup(self, other):
+    def is_subgroup(self, other) -> bool:
         """
         Return ``True`` if ``self`` is a subgroup of ``other``.
 
@@ -4489,9 +4490,9 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G.is_subgroup(H)
             True
         """
-        return all((x in other) for x in self.gens())
+        return all(x in other for x in self.gens())
 
-    def is_supersolvable(self):
+    def is_supersolvable(self) -> bool:
         """
         Return ``True`` if the group is supersolvable.
 
@@ -4548,7 +4549,7 @@ class PermutationGroup_generic(FiniteGroup):
         non_fixed_points = self.non_fixed_points()
         return [i for i in self.domain() if i not in non_fixed_points]
 
-    def is_transitive(self, domain=None):
+    def is_transitive(self, domain=None) -> bool:
         r"""
         Return ``True`` if ``self`` acts transitively on ``domain``.
 
@@ -4604,7 +4605,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         return bool(self._libgap_().IsTransitive(domain))
 
-    def is_primitive(self, domain=None):
+    def is_primitive(self, domain=None) -> bool:
         r"""
         Return ``True`` if ``self`` acts primitively on ``domain``.
 
@@ -4657,7 +4658,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         return bool(self._libgap_().IsPrimitive(domain))
 
-    def is_semi_regular(self, domain=None):
+    def is_semi_regular(self, domain=None) -> bool:
         r"""
         Return ``True`` if ``self`` acts semi-regularly on ``domain``.
 
@@ -4689,7 +4690,7 @@ class PermutationGroup_generic(FiniteGroup):
             return False
         return bool(self._libgap_().IsSemiRegular(domain))
 
-    def is_regular(self, domain=None):
+    def is_regular(self, domain=None) -> bool:
         r"""
         Return ``True`` if ``self`` acts regularly on ``domain``.
 
@@ -5270,11 +5271,12 @@ class PermutationGroup_subgroup(PermutationGroup_generic):
         """
         return self._ambient_group
 
-    def is_normal(self, other=None):
+    def is_normal(self, other=None) -> bool:
         """
-        Return ``True`` if this group is a normal subgroup of
-        ``other``.  If ``other`` is not specified, then it is assumed
-        to be the ambient group.
+        Return ``True`` if this group is a normal subgroup of ``other``.
+
+        If ``other`` is not specified, then it is assumed to be the
+        ambient group.
 
         EXAMPLES::
 

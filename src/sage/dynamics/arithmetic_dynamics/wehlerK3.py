@@ -709,7 +709,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
              4*((self._Lcoeff(i, 2))**2)*(self._Qcoeff(i, 1, 1))*(self._Qcoeff(i, 0, 0))
 
     @cached_method
-    def is_degenerate(self):
+    def is_degenerate(self) -> bool:
         r"""
         Function will return ``True`` if there is a fiber (over the algebraic closure of the
         base ring) of dimension greater than 0 and ``False`` otherwise.
@@ -2411,7 +2411,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             Orb.append(Q)
         return Orb
 
-    def is_isomorphic(self, right):
+    def is_isomorphic(self, right) -> bool:
         r"""
         Check to see if two K3 surfaces have the same defining ideal.
 
@@ -2449,10 +2449,12 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         """
         return self.defining_ideal() == right.defining_ideal()
 
-    def is_symmetric_orbit(self, orbit):
+    def is_symmetric_orbit(self, orbit) -> bool:
         r"""
-        Check to see if the orbit is symmetric (i.e. if one of the points on the
-        orbit is fixed by '\sigma_x' or '\sigma_y').
+        Check to see if the orbit is symmetric.
+
+        This means that one of the points on the
+        orbit is fixed by '\sigma_x' or '\sigma_y'.
 
         INPUT:
 

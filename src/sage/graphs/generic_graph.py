@@ -14177,7 +14177,7 @@ class GenericGraph(GenericGraph_pyx):
         """
         return sorted(self.degree_iterator(), reverse=True)
 
-    def is_regular(self, k=None):
+    def is_regular(self, k=None) -> bool:
         """
         Check whether this graph is (`k`-)regular.
 
