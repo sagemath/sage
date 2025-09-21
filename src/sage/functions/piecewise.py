@@ -261,10 +261,7 @@ class PiecewiseFunction(BuiltinFunction):
         def is_piecewise(ex):
             if ex.operator() is piecewise:
                 return True
-            for op in ex.operands():
-                if is_piecewise(op):
-                    return True
-            return False
+            return any(is_piecewise(op) for op in ex.operands())
         return is_piecewise(ex)
 
     @staticmethod
@@ -802,16 +799,21 @@ class PiecewiseFunction(BuiltinFunction):
                           y|-->1/2*y^2 + 3*y + 9/2 on (-3, 0),
                           y|-->3*y + 9/2 on (0, +oo); y)
 
-            ::
+            The output from this can change a bit depending on the
+            version of Maxima used, so we test for equality with a
+            known result on the sole piece::
 
+                sage: # long time
                 sage: f1(x) = e^(-abs(x))
                 sage: f = piecewise([[(-infinity, infinity), f1]])
                 sage: result = f.integral(definite=True)
                 ...
                 sage: result
                 2
-                sage: f.integral()
-                piecewise(x|-->-integrate(e^(-abs(x)), x, x, +Infinity) on (-oo, +oo); x)
+                sage: actual = f.integral().expression_at(0) # only one piece
+                sage: expected = -1/2*e^(-x)*sgn(x) - 1/2*e^x*sgn(x) - 1/2*e^(-x) + 1/2*e^x + sgn(x) - 1
+                sage: bool(actual == expected)
+                True
 
             ::
 
@@ -836,6 +838,7 @@ class PiecewiseFunction(BuiltinFunction):
 
             Check that the algorithm keyword can be used::
 
+                sage: # needs sage.libs.giac
                 sage: ex = piecewise([([0, 1], 1), ((1, oo), 1/x**2)])
                 sage: integral(ex, x, 0, 100, algorithm='sympy')
                 199/100

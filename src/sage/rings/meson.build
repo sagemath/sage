@@ -1,11 +1,8 @@
-pthread = cc.find_library('pthread')
-
 py.install_sources(
+  '__init__.py',
   'abc.pxd',
   'algebraic_closure_finite_field.py',
   'all.py',
-  'all__sagemath_categories.py',
-  'all__sagemath_objects.py',
   'big_oh.py',
   'cc.py',
   'cfinite_sequence.py',
@@ -40,6 +37,7 @@ py.install_sources(
   'laurent_series_ring_element.pxd',
   'lazy_series.py',
   'lazy_series_ring.py',
+  'lazy_species.py',
   'localization.py',
   'monomials.py',
   'morphism.pxd',
@@ -74,6 +72,7 @@ py.install_sources(
   'ring_extension_element.pxd',
   'ring_extension_homset.py',
   'ring_extension_morphism.pxd',
+  'species.py',
   'sum_of_squares.pxd',
   'tate_algebra.py',
   'tate_algebra_element.pxd',
@@ -87,7 +86,6 @@ extension_data = {
   'abc' : files('abc.pyx'),
   'complex_arb' : files('complex_arb.pyx'),
   'complex_conversion' : files('complex_conversion.pyx'),
-  'complex_double' : files('complex_double.pyx'),
   'complex_interval' : files('complex_interval.pyx'),
   'complex_mpc' : files('complex_mpc.pyx'),
   'complex_mpfr' : files('complex_mpfr.pyx'),
@@ -124,6 +122,45 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, cysignals, gmp]
+  if name == 'complex_arb'
+    deps += [
+      flint,
+      mpfi,
+      gsl,  # Runtime dependency
+    ]
+  elif name == 'complex_conversion'
+    deps += [gsl, mpfr]
+  elif name == 'complex_interval'
+    deps += [
+      mpfi,
+      flint,  # Runtime dependency
+    ]
+  elif name == 'complex_mpc'
+    deps += [gmpy2, mpfr, mpc]
+  elif name == 'complex_mpfr'
+    deps += [gmpy2, mpfr]
+  elif name == 'factorint_flint'
+    deps += [flint]
+  elif name == 'integer'
+    deps += [gmpy2]
+  elif name == 'power_series_pari'
+    deps += [cypari2]
+  elif name == 'real_arb'
+    deps += [flint, mpfi]
+  elif name == 'real_double'
+    deps += [gmpy2]
+  elif name == 'real_double_element_gsl'
+    deps += [gsl]
+  elif name == 'real_mpfi'
+    deps += [mpfi]
+  elif name == 'real_mpfr'
+    deps += [gmpy2, mpfr]
+  elif name == 'tate_algebra_element'
+    deps += [
+      ntl,  # Indirect dependency
+    ]
+  endif
   py.extension_module(
     name,
     sources: pyx,
@@ -138,22 +175,7 @@ foreach name, pyx : extension_data
       inc_rings,
       inc_rings_finite,
     ],
-    dependencies: [
-      py_dep,
-      cypari2,
-      cysignals,
-      flint,
-      gmp,
-      gmpy2,
-      gsl,
-      m,
-      mpc,
-      mpfi,
-      mpfr,
-      ntl,
-      pari,
-      pthread,
-    ],
+    dependencies: deps,
   )
 endforeach
 
@@ -165,11 +187,26 @@ extension_data_cpp = {
     'bernmm/bern_rat.cpp',
   ),
   'bernoulli_mod_p': files('bernoulli_mod_p.pyx'),
+  # Has to be compiled as c++ due to https://github.com/cython/cython/issues/6524
+  'complex_double' : files('complex_double.pyx'),
   'fraction_field_FpT': files('fraction_field_FpT.pyx'),
   'rational': files('rational.pyx'),
 }
 
 foreach name, pyx : extension_data_cpp
+  deps = [py_dep, cysignals, gmp]
+  if name == 'bernmm'
+    deps += [ntl]
+  elif name == 'bernoulli_mod_p'
+    deps += [ntl]
+  elif name == 'complex_double'
+    deps += [gmpy2, gsl]
+  elif name == 'fraction_field_FpT'
+    deps += [flint]
+  elif name == 'rational'
+    deps += [gmpy2]
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
@@ -186,22 +223,7 @@ foreach name, pyx : extension_data_cpp
       inc_rings,
       inc_rings_finite,
     ],
-    dependencies: [
-      py_dep,
-      cypari2,
-      cysignals,
-      flint,
-      gmp,
-      gmpy2,
-      gsl,
-      m,
-      mpc,
-      mpfi,
-      mpfr,
-      ntl,
-      pari,
-      pthread,
-    ],
+    dependencies: deps,
   )
 endforeach
 

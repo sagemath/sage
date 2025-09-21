@@ -213,7 +213,7 @@ keyword argument ``has_type=True``::
 
     sage: M = DrinfeldModularForms(K, 4, has_type=True)
     sage: M.gens()
-    [g1, g2, g3, h4]
+    (g1, g2, g3, h4)
     sage: h4 = M.3
     sage: h4.weight()
     40

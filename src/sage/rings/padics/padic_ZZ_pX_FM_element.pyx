@@ -143,7 +143,7 @@ from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.rings.rational cimport Rational
-from sage.libs.pari.all import pari_gen
+from cypari2.gen cimport Gen as pari_gen
 from sage.interfaces.abc import GpElement
 from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
@@ -879,7 +879,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         ans.value = self.value # does this actually copy correctly
         return ans
 
-    def is_zero(self, absprec = None):
+    def is_zero(self, absprec=None):
         """
         Return whether the valuation of ``self`` is at least
         ``absprec``; if ``absprec`` is ``None``, return whether
@@ -1038,7 +1038,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             ZZ_pX_MulMod_pre(cur.x, cur.x, x, m[0])
         return matrix(R, n, n,  L)
 
-#     def matrix(self, base = None):
+#     def matrix(self, base=None):
 #         """
 #         If base is None, return the matrix of right multiplication by
 #         the element on the power basis `1, x, x^2, \ldots, x^{d-1}`
@@ -1380,7 +1380,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
                 return zero
         return [zero] * ordp + ulist
 
-    def teichmuller_expansion(self, n = None):
+    def teichmuller_expansion(self, n=None):
         r"""
         Return a list `[a_0, a_1, \ldots, a_n]` such that.
 
@@ -1532,7 +1532,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 #         """
 #         raise NotImplementedError
 
-#     def padded_list(self, n, lift_mode = 'simple'):
+#     def padded_list(self, n, lift_mode='simple'):
 #         """
 #         Returns a list of coefficients of pi starting with `pi^0` up to
 #         `pi^n` exclusive (padded with zeros if needed)

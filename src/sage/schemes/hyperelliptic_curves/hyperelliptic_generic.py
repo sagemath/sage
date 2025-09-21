@@ -630,7 +630,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         from .constructor import HyperellipticCurve
         return HyperellipticCurve(fnew, 0, names=self._names, PP=self._PP)
 
-    def has_odd_degree_model(self):
+    def has_odd_degree_model(self) -> bool:
         r"""
         Return ``True`` if an odd degree model of ``self`` exists over the
         field of definition; ``False`` otherwise.
@@ -669,7 +669,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             Hyperelliptic Curve over Finite Field in a of size 3^2
             defined by y^2 + x^10*y = x^3 + x + 2
             sage: D = magma(C); D                                                       # needs sage.rings.finite_rings
-            Hyperelliptic Curve defined by y^2 + (x^10)*y = x^3 + x + 2 over GF(3^2)
+            Hyperelliptic Curve defined by y^2 + x^10*y = x^3 + x + 2 over GF(3^2)
             sage: D.sage()                                                              # needs sage.rings.finite_rings
             Hyperelliptic Curve over Finite Field in a of size 3^2
             defined by y^2 + x^10*y = x^3 + x + 2

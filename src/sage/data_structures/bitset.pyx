@@ -16,7 +16,7 @@ linear in ``capacity``.
     faster.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Jason Grout <jason-sage@creativetrax.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -28,8 +28,8 @@ linear in ``capacity``.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.data_structures.bitset_base cimport *
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
@@ -164,7 +164,7 @@ cdef class FrozenBitset:
 
     Try a random bitset::
 
-        sage: a = Bitset(randint(0, 1) for n in range(1, randint(1, 10^4)))
+        sage: a = Bitset(randint(0, 1) for n in range(randint(1, 10^4)))
         sage: b = FrozenBitset(a); c = FrozenBitset(b)
         sage: bitcmp(a, b, c)
         True
@@ -239,7 +239,7 @@ cdef class FrozenBitset:
 
     A random iterable, with all duplicate elements removed::
 
-        sage: L = [randint(0, 100) for n in range(1, randint(1, 10^4))]
+        sage: L = [randint(0, 100) for n in range(randint(1, 10^4))]
         sage: FrozenBitset(L) == FrozenBitset(list(set(L)))
         True
         sage: FrozenBitset(tuple(L)) == FrozenBitset(tuple(set(L)))
@@ -763,7 +763,6 @@ cdef class FrozenBitset:
             ...
             ValueError: other cannot be None
         """
-        cdef bint retval
         if other is None:
             raise ValueError("other cannot be None")
         cdef FrozenBitset left, right
@@ -778,7 +777,7 @@ cdef class FrozenBitset:
         # Assumes ``left.size <= right.size``.
         return bitset_are_disjoint(left._bitset, right._bitset)
 
-    def __contains__(self, unsigned long n):
+    def __contains__(self, unsigned long n) -> bool:
         """
         Test to see if ``n`` is in ``self``.
 
@@ -821,7 +820,7 @@ cdef class FrozenBitset:
         """
         return bitset_len(self._bitset)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Return a string representing the bitset as a binary vector.
 
@@ -2271,7 +2270,6 @@ def test_bitset_set_first_n(py_a, long n):
         sage: test_bitset_set_first_n('00'*64, 128)
         a.set_first_n(n)    11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
     """
-    cdef bint bit = True
     cdef bitset_t a
 
     bitset_from_str(a, py_a)

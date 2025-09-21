@@ -203,7 +203,7 @@ class Interface(WithEqualityById, ParentWithBase):
     def _post_interact(self):
         pass
 
-    def cputime(self):
+    def cputime(self) -> float:
         """
         CPU time since this process started running.
         """
@@ -817,8 +817,8 @@ class InterfaceElement(Element):
             sage: S = singular.ring(0, ('x'))
             sage: loads(dumps(S))
             polynomial ring, over a field, global ordering
-            //   coefficients: QQ
-            //   number of vars : 1
+            // coefficients: QQ...
+            // number of vars : 1
             //        block   1 : ordering lp
             //                  : names    x
             //        block   2 : ordering C
@@ -880,7 +880,7 @@ class InterfaceElement(Element):
 
         Special care has to be taken with strings. Since for example `r("abc")` will be
         interpreted as the R-command abc (not a string in R), we have to reduce to
-        `"'abc'"` instead. That is dependant on the Elements `is_string` function to
+        `"'abc'"` instead. That is dependant on the Elements ``is_string`` function to
         be implemented correctly. This has gone wrong in the past and remained uncaught
         by the doctests because the original identifier was reused. This test makes sure
         that does not happen again::
@@ -1045,8 +1045,7 @@ class InterfaceElement(Element):
         ::
 
             sage: gp(10.^80)._sage_repr()
-            '1.0000000000000000000000000000000000000e80'    # 64-bit
-            '1.000000000000000000000000000e80'              # 32-bit
+            '1.0000000000000000000000000000000000000e80'
             sage: mathematica('10.^80')._sage_repr()  # optional - mathematica
             '1.e80'
 

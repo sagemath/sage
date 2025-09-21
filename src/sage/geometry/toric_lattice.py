@@ -149,7 +149,7 @@ from sage.geometry.toric_lattice_element import ToricLatticeElement
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.geometry.toric_plotter', 'ToricPlotter')
 from sage.misc.latex import latex
-from sage.structure.all import parent
+from sage.structure.element import parent
 from sage.structure.richcmp import (richcmp_method, richcmp, rich_to_bool,
                                     richcmp_not_equal)
 from sage.modules.fg_pid.fgp_element import FGP_Element
@@ -1099,19 +1099,13 @@ class ToricLattice_sublattice_with_basis(ToricLattice_generic,
         sage: sublattice.has_user_basis()
         True
         sage: sublattice.basis()
-        [
-        N(1, 1, 0),
-        N(3, 2, 1)
-        ]
+        [N(1, 1, 0), N(3, 2, 1)]
 
     Even if you have provided your own basis, you still can access the
     "standard" one::
 
         sage: sublattice.echelonized_basis()
-        [
-        N(1, 0, 1),
-        N(0, 1, -1)
-        ]
+        [N(1, 0, 1), N(0, 1, -1)]
     """
 
     def _repr_(self):
@@ -1245,19 +1239,13 @@ class ToricLattice_sublattice(ToricLattice_sublattice_with_basis,
         sage: sublattice.has_user_basis()
         False
         sage: sublattice.basis()
-        [
-        N(1, 0, 1),
-        N(0, 1, -1)
-        ]
+        [N(1, 0, 1), N(0, 1, -1)]
 
     For sublattices without user-specified basis, the basis obtained above is
     the same as the "standard" one::
 
         sage: sublattice.echelonized_basis()
-        [
-        N(1, 0, 1),
-        N(0, 1, -1)
-        ]
+        [N(1, 0, 1), N(0, 1, -1)]
     """
     pass
 

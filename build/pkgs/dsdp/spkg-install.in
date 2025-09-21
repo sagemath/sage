@@ -5,6 +5,7 @@ sdh_cmake -DCMAKE_BUILD_TYPE=Release \
           -DBUILD_SHARED_LIBS=ON \
           -DBLA_VENDOR=OpenBLAS \
           -DBLAS_LIBRARIES="$(pkg-config --libs blas)" \
-          -DLAPACK_LIBRARIES="$(pkg-config --libs lapack)"
+          -DLAPACK_LIBRARIES="$(pkg-config --libs lapack)" \
+          .
 sdh_make
 sdh_make_install

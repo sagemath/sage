@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.rings.finite_rings
 r"""
-Difference Matrices
+Difference matrices
 
 This module gathers code related to difference matrices. One can build those
 objects (or know if they can be built) with :func:`difference_matrix`::
@@ -124,7 +124,7 @@ def difference_matrix_product(k, M1, G1, lmbda1, M2, G2, lmbda2, check=True):
     return G,M
 
 
-def difference_matrix(g,k,lmbda=1,existence=False,check=True):
+def difference_matrix(g, k, lmbda=1, existence=False, check=True):
     r"""
     Return a `(g,k,\lambda)`-difference matrix.
 

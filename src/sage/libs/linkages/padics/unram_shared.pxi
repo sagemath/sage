@@ -1,7 +1,6 @@
 cimport cython
 
 
-@cython.binding(True)
 def frobenius_unram(self, arithmetic=True):
     """
     Return the image of this element under the Frobenius automorphism
@@ -82,8 +81,7 @@ def frobenius_unram(self, arithmetic=True):
     return ans << ppow
 
 
-@cython.binding(True)
-def norm_unram(self, base = None):
+def norm_unram(self, base=None):
     r"""
     Return the absolute or relative norm of this element.
 
@@ -169,8 +167,7 @@ def norm_unram(self, base = None):
         return self.parent().ground_ring()(self.unit_part().matrix_mod_pn().det()) * norm_of_uniformizer**self.valuation()
 
 
-@cython.binding(True)
-def trace_unram(self, base = None):
+def trace_unram(self, base=None):
     r"""
     Return the absolute or relative trace of this element.
 

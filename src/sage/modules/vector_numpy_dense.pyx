@@ -10,7 +10,7 @@ AUTHORS:
 - William Stein
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2006-2010 William Stein <wstein@gmail.com>
 #       Copyright (C) 2009      Alexandru Ghitza
 #       Copyright (C) 2020      Antonio Rojas
@@ -25,7 +25,7 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ***************************************************************************
 
 cimport numpy
 import numpy
@@ -73,7 +73,8 @@ cdef class Vector_numpy_dense(FreeModuleElement):
         Return a new vector with same parent as ``self``.
         """
         cdef Vector_numpy_dense v
-        v = self.__class__.__new__(self.__class__,self._parent,None,None,None)
+        v = self.__class__.__new__(self.__class__, self._parent,
+                                   None, None, None)
         v._is_immutable = 0
         v._parent = self._parent
         v._degree = self._parent.degree()
@@ -128,7 +129,7 @@ cdef class Vector_numpy_dense(FreeModuleElement):
         from copy import copy
         return self._new(copy(self._vector_numpy))
 
-    def __init__(self, parent, entries, coerce = True, copy = True):
+    def __init__(self, parent, entries, coerce=True, copy=True):
         """
         Fill the vector with entries.
 
@@ -165,16 +166,16 @@ cdef class Vector_numpy_dense(FreeModuleElement):
             (0.0, 0.0)
         """
         cdef Py_ssize_t i
-        if isinstance(entries,(tuple, list)):
-            if len(entries)!=self._degree:
-                    raise TypeError("entries has wrong length")
+        if isinstance(entries, (tuple, list)):
+            if len(entries) != self._degree:
+                raise TypeError("entries has wrong length")
 
             if coerce:
-                for i from 0<=i<self._degree:
-                    self.set_unsafe(i,self._python_dtype(entries[i]))
+                for i in range(self._degree):
+                    self.set_unsafe(i, self._python_dtype(entries[i]))
             else:
-                for i from 0<=i<self._degree:
-                    self.set_unsafe(i,entries[i])
+                for i in range(self._degree):
+                    self.set_unsafe(i, entries[i])
 
         elif isinstance(entries, numpy.ndarray):
             self._replace_self_with_numpy(entries)
@@ -182,17 +183,16 @@ cdef class Vector_numpy_dense(FreeModuleElement):
             numpy.PyArray_FILLWBYTE(self._vector_numpy, 0)
             if entries is None:
                 return
-            else:
-                try:
-                    z = self._python_dtype(entries)
-                except TypeError:
-                    raise TypeError("unable to convert {!r} to {}".format(entries, self._python_dtype))
-                if z != 0:
-                    raise TypeError("entries must be a list or 0")
-                else:
-                    # Set all entries to z=0.
-                    for i from 0<=i<self._degree:
-                        self.set_unsafe(i,z)
+            try:
+                z = self._python_dtype(entries)
+            except TypeError:
+                raise TypeError("unable to convert {!r} to {}".format(entries, self._python_dtype))
+            if z != 0:
+                raise TypeError("entries must be a list or 0")
+
+            # Set all entries to z=0.
+            for i in range(self._degree):
+                self.set_unsafe(i, z)
 
     def __len__(self):
         """
@@ -226,9 +226,10 @@ cdef class Vector_numpy_dense(FreeModuleElement):
         # numpy does not know how to deal with complex numbers other
         # than the built-in complex number type.
         cdef int status
-        status = numpy.PyArray_SETITEM(self._vector_numpy,
-                        numpy.PyArray_GETPTR1(self._vector_numpy, i),
-                        self._python_dtype(value))
+        status = numpy.PyArray_SETITEM(
+            self._vector_numpy,
+            numpy.PyArray_GETPTR1(self._vector_numpy, i),
+            self._python_dtype(value))
         # TODO: Throw an error if status == -1
 
     cdef get_unsafe(self, Py_ssize_t i):
@@ -245,8 +246,9 @@ cdef class Vector_numpy_dense(FreeModuleElement):
             (3.0 + 2.0*I, -1.0)
         """
         # We assume that Py_ssize_t is the same as npy_intp
-        return self._sage_dtype(numpy.PyArray_GETITEM(self._vector_numpy,
-                                                numpy.PyArray_GETPTR1(self._vector_numpy, i)))
+        return self._sage_dtype(numpy.PyArray_GETITEM(
+            self._vector_numpy,
+            numpy.PyArray_GETPTR1(self._vector_numpy, i)))
 
     cdef _replace_self_with_numpy(self, numpy.ndarray numpy_array):
         """

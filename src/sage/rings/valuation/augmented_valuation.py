@@ -433,6 +433,12 @@ class AugmentedValuation_base(InductiveValuation):
         r"""
         Return a list with the chain of augmentations down to the underlying :mod:`Gauss valuation <sage.rings.valuation.gauss_valuation>`.
 
+        .. NOTE::
+
+            This method runs in time linear in the length of the chain (though
+            the printed representation might seem to indicate that it takes
+            quadratic time to construct the chain.)
+
         EXAMPLES::
 
             sage: R.<x> = QQ[]
@@ -538,8 +544,8 @@ class AugmentedValuation_base(InductiveValuation):
         if ring is self.domain():
             return [self]
 
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-        if isinstance(ring, PolynomialRing_general):  # univariate
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+        if isinstance(ring, PolynomialRing_generic):  # univariate
             base_valuations = self._base_valuation.extensions(ring)
             phi = self.phi().change_ring(ring.base_ring())
 
@@ -578,8 +584,8 @@ class AugmentedValuation_base(InductiveValuation):
             base = self._base_valuation.restriction(ring)
             if ring.is_subring(self.domain().base_ring()):
                 return base
-            from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-            if isinstance(ring, PolynomialRing_general):  # univariate
+            from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+            if isinstance(ring, PolynomialRing_generic):  # univariate
                 return base.augmentation(self.phi().change_ring(ring.base_ring()), self._mu)
         return super().restriction(ring)
 
@@ -790,8 +796,8 @@ class AugmentedValuation_base(InductiveValuation):
             sage: v.change_domain(QQ['x'])
             [ Gauss valuation induced by 2-adic valuation, v(x) = 1 ]
         """
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-        if isinstance(ring, PolynomialRing_general) and ring.variable_name() == self.domain().variable_name():
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+        if isinstance(ring, PolynomialRing_generic) and ring.variable_name() == self.domain().variable_name():
             return self._base_valuation.change_domain(ring).augmentation(self.phi().change_ring(ring.base_ring()), self._mu, check=False)
         return super().change_domain(ring)
 

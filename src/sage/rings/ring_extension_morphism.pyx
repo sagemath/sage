@@ -461,7 +461,7 @@ cdef class RingExtensionHomomorphism(RingMap):
         if self.base_map() is not None:
             s += "with map on base ring"
             ss = self.base_map()._repr_defn()
-            ss = re.sub('\nwith map on base ring:?$', '', ss, 0, re.MULTILINE)
+            ss = re.sub('\nwith map on base ring:?$', '', ss, flags=re.MULTILINE)
             if ss != "": s += ":\n" + ss
         if s != "" and s[-1] == "\n":
             s = s[:-1]
@@ -835,20 +835,20 @@ cdef class MapRelativeRingToFreeModule(Map):
         # We compute the matrix of our isomorphism (over base)
         from sage.rings.ring_extension import common_base
         base = common_base(K, L, False)
-        EK, iK, jK = K.free_module(base, map=True)
-        EL, iL, jL = L.free_module(base, map=True)
+        EK, iK, _ = K.free_module(base, map=True)
+        jL = L.free_module(base, map=True)[2]
 
         self._dimK = EK.dimension()
         self._iK = iK
         self._jL = jL
 
-        M = [ ]
+        M = []
         for x in self._basis:
             for v in EK.basis():
                 y = x * f(iK(v))
                 M.append(jL(y))
         from sage.matrix.matrix_space import MatrixSpace
-        self._matrix = MatrixSpace(base,len(M))(M).inverse_of_unit()
+        self._matrix = MatrixSpace(base, len(M))(M).inverse_of_unit()
 
     def is_injective(self):
         r"""

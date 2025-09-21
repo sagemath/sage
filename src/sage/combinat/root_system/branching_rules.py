@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.libs.gap
 """
-Branching Rules
+Branching rules
 """
 # ****************************************************************************
 #  Copyright (C) 2014 Daniel Bump <bump at match.stanford.edu>
@@ -136,7 +136,7 @@ def branch_weyl_character(chi, R, S, rule='default'):
         sage: B4 = WeylCharacterRing("B4", style='coroots')
         sage: A6 = WeylCharacterRing("A6", style='coroots')
         sage: A7 = WeylCharacterRing("A7", style='coroots')
-        sage: def try_default_rule(R,S): return [R(f).branch(S) for f in R.fundamental_weights()]
+        sage: def try_default_rule(R, S): return [R(f).branch(S) for f in R.fundamental_weights()]
         sage: try_default_rule(A2,A1)
         [A1(0) + A1(1), A1(0) + A1(1)]
         sage: try_default_rule(D4,B3)
@@ -1525,7 +1525,7 @@ def branching_rule(Rtype, Stype, rule='default'):
             return BranchingRule(Rtype, Stype, lambda x: [(x[4]-3*x[5])/2,(x[0]+x[1]+x[2]+x[3])/2,(-x[0]-x[1]+x[2]+x[3])/2,(-x[0]+x[1]-x[2]+x[3])/2], "symmetric")
         elif Rtype == CartanType("E6") and Stype == CartanType("C4"):
             def f(x):
-                [x0, x1, x2, x3, x4, x5] = x[:6]
+                x0, x1, x2, x3, x4, x5 = x[:6]
                 return [(x0+x1+x2+x3+x4-3*x5)/2,
                         (-x0-x1-x2-x3+x4-3*x5)/2,
                         -x0 + x3, -x1 + x2]
@@ -1712,12 +1712,12 @@ def branching_rule(Rtype, Stype, rule='default'):
             return BranchingRule(Rtype, Stype, lambda x: x, "isomorphic")
         elif Rtype == CartanType("B2") and Stype == CartanType("C2"):
             def rule(x):
-                [x1, x2] = x
+                x1, x2 = x
                 return [x1 + x2, x1 - x2]
             return BranchingRule(Rtype, Stype, rule, "isomorphic")
         elif Rtype == CartanType("C2") and Stype == CartanType("B2"):
             def rule(x):
-                [x1, x2] = x
+                x1, x2 = x
                 return [(x1 + x2) / 2, (x1 - x2) / 2]
             return BranchingRule(Rtype, Stype, rule, "isomorphic")
         elif Rtype == CartanType("B1") and Stype == CartanType("A1"):
@@ -1730,18 +1730,18 @@ def branching_rule(Rtype, Stype, rule='default'):
             return BranchingRule(Rtype, Stype, lambda x: [x[0]-x[1]], "isomorphic")
         elif Rtype == CartanType("A3") and Stype == CartanType("D3"):
             def rule(x):
-                [x1, x2, x3, x4] = x
+                x1, x2, x3, x4 = x
                 return [(x1+x2-x3-x4)/2, (x1-x2+x3-x4)/2, (x1-x2-x3+x4)/2]
             return BranchingRule(Rtype, Stype, rule, "isomorphic")
         elif Rtype == CartanType("D3") and Stype == CartanType("A3"):
             def rule(x):
-                [t1, t2, t3] = x
+                t1, t2, t3 = x
                 return [(t1+t2+t3)/2, (t1-t2-t3)/2,
                         (-t1+t2-t3)/2, (-t1-t2+t3)/2]
             return BranchingRule(Rtype, Stype, rule, "isomorphic")
         elif Rtype == CartanType("D2") and Stype == CartanType("A1xA1"):
             def rule(x):
-                [t1, t2] = x
+                t1, t2 = x
                 return [(t1-t2)/2, -(t1-t2)/2, (t1+t2)/2, -(t1+t2)/2]
             return BranchingRule(Rtype, Stype, rule, "isomorphic")
         else:
@@ -1759,7 +1759,7 @@ def branching_rule(Rtype, Stype, rule='default'):
             nr = 2*Rtype[1]
         else:
             raise ValueError("Rule not found")
-        [s1, s2] = [stypes[i][1] for i in range(2)]
+        s1, s2 = [stypes[i][1] for i in range(2)]
         ns = [s1, s2]
         for i in range(2):
             if stypes[i][0] == 'A':
@@ -1774,7 +1774,8 @@ def branching_rule(Rtype, Stype, rule='default'):
             if all(t[0] == 'A' for t in stypes):
                 def rule(x):
                     ret = [sum(x[i*ns[1]:(i+1)*ns[1]]) for i in range(ns[0])]
-                    ret.extend([sum(x[ns[1]*j+i] for j in range(ns[0])) for i in range(ns[1])])
+                    ret.extend(sum(x[ns[1]*j+i] for j in range(ns[0]))
+                               for i in range(ns[1]))
                     return ret
                 return BranchingRule(Rtype, Stype, rule, "tensor")
             else:
@@ -1859,14 +1860,14 @@ def branching_rule(Rtype, Stype, rule='default'):
                     return BranchingRule(Rtype, Stype, lambda x: [x[1]+x[3],x[2]-x[3],-x[1]-x[2],-2*x[6],x[4]+x[5],-x[4]+x[5]], "miscellaneous")
                 elif stypes == [CartanType("F4"), CartanType("A1")]:
                     def f(x):
-                        [x0, x1, x2, x3, x4, x5, x6] = x[:7]
+                        x0, x1, x2, x3, x4, x5, x6 = x[:7]
                         return [(x4-x5)/2-x6, (x0+x1+x2+x3)/2,
                                 (-x0-x1+x2+x3)/2, (-x0+x1-x2+x3)/2,
                                 x5-x6, x6-x5]
                     return BranchingRule(Rtype, Stype, f, "miscellaneous")
                 elif stypes == [CartanType("A1"), CartanType("F4")]:
                     def f(x):
-                        [x0, x1, x2, x3, x4, x5, x6] = x[:7]
+                        x0, x1, x2, x3, x4, x5, x6 = x[:7]
                         return [x5-x6, x6-x5, (x4-x5)/2-x6,
                                 (x0+x1+x2+x3)/2,
                                 (-x0-x1+x2+x3)/2,
@@ -2288,7 +2289,7 @@ def maximal_subgroups(ct, mode='print_rules'):
     elif mode == "get_rule":
         d = {}
         for line in rul:
-            [k, br] = line.split(":")
+            k, br = line.split(":")
             br = eval(br)
             if k in d:
                 if not isinstance(d[k], list):

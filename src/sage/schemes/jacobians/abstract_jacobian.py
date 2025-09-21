@@ -20,7 +20,7 @@ AUTHORS:
 
 from sage.categories.schemes import Jacobians
 from sage.categories.fields import Fields
-from sage.schemes.generic.scheme import Scheme, is_Scheme
+from sage.schemes.generic.scheme import Scheme
 from sage.structure.richcmp import richcmp_method, richcmp
 
 _Fields = Fields()
@@ -101,14 +101,14 @@ class Jacobian_generic(Scheme):
         Note: this is an abstract parent, so we skip element tests::
 
             sage: TestSuite(J).run(skip =["_test_an_element", \
-                                          "_test_zero", \
-                                          "_test_elements", \
-                                          "_test_elements_eq_reflexive", \
-                                          "_test_elements_eq_symmetric", \
-                                          "_test_elements_eq_transitive", \
-                                          "_test_additive_associativity", \
-                                          "_test_elements_neq", \
-                                          "_test_some_elements"])
+            ....:                         "_test_zero", \
+            ....:                         "_test_elements", \
+            ....:                         "_test_elements_eq_reflexive", \
+            ....:                         "_test_elements_eq_symmetric", \
+            ....:                         "_test_elements_eq_transitive", \
+            ....:                         "_test_additive_associativity", \
+            ....:                         "_test_elements_neq", \
+            ....:                         "_test_some_elements"])
 
         ::
 

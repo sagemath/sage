@@ -47,11 +47,10 @@ Functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.misc import is_prime_power
+from sage.arith.misc import is_prime_power, is_square, factor
 from sage.misc.cachefunc import cached_function
 
 from sage.categories.sets_cat import EmptySetError
-import sage.arith.all as arith
 from sage.misc.unknown import Unknown
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.integer import Integer
@@ -59,7 +58,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
-def group_law(G):
+def group_law(G) -> tuple:
     r"""
     Return a triple ``(identity, operation, inverse)`` that define the
     operations on the group ``G``.
@@ -78,15 +77,14 @@ def group_law(G):
     from sage.categories.groups import Groups
     from sage.categories.additive_groups import AdditiveGroups
 
-    if G in Groups():            # multiplicative groups
+    if G in Groups():          # multiplicative groups
         return (G.one(), operator.mul, operator.inv)
-    elif G in AdditiveGroups():  # additive groups
+    if G in AdditiveGroups():  # additive groups
         return (G.zero(), operator.add, operator.neg)
-    else:
-        raise ValueError("%s does not seem to be a group" % G)
+    raise ValueError(f"{G} does not seem to be a group")
 
 
-def block_stabilizer(G, B):
+def block_stabilizer(G, B) -> list:
     r"""
     Compute the left stabilizer of the block ``B`` under the action of ``G``.
 
@@ -129,7 +127,7 @@ def block_stabilizer(G, B):
     return S
 
 
-def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
+def is_difference_family(G, D, v=None, k=None, l=None, verbose=False) -> bool:
     r"""
     Check whether ``D`` forms a difference family in the group ``G``.
 
@@ -292,8 +290,8 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
 
         # Normalized number of occurrences added to counter
         stabi = len(stab[i])
-        for gg in tmp_counter:
-            counter[gg] += tmp_counter[gg]//stabi
+        for gg, tmp_gg in tmp_counter.items():
+            counter[gg] += tmp_gg // stabi
 
     # Check the counter and report any error
     too_few = []
@@ -330,7 +328,7 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
     return True
 
 
-def singer_difference_set(q,d):
+def singer_difference_set(q, d) -> tuple:
     r"""
     Return a difference set associated to the set of hyperplanes in a projective
     space of dimension `d` over `GF(q)`.
@@ -572,13 +570,13 @@ def radical_difference_set(K, k, l=1, existence=False, check=True):
         add_zero = True
 
     # q = 4t^2 + 1, t odd
-    elif v % 8 == 5 and k == (v-1)//4 and arith.is_square((v-1)//4):
+    elif v % 8 == 5 and k == (v-1)//4 and is_square((v-1)//4):
         if existence:
             return True
         add_zero = False
 
     # q = 4t^2 + 9, t odd
-    elif v % 8 == 5 and k == (v+3)//4 and arith.is_square((v-9)//4):
+    elif v % 8 == 5 and k == (v+3)//4 and is_square((v-9)//4):
         if existence:
             return True
         add_zero = True
@@ -641,7 +639,7 @@ def radical_difference_set(K, k, l=1, existence=False, check=True):
     return D
 
 
-def one_cyclic_tiling(A,n):
+def one_cyclic_tiling(A, n):
     r"""
     Given a subset ``A`` of the cyclic additive group `G = Z / nZ` return
     another subset `B` so that `A + B = G` and `|A| |B| = n` (i.e. any element
@@ -804,8 +802,7 @@ def one_radical_difference_family(K, k):
     # instead of the complicated multiplicative group K^*/(±C) we use the
     # discrete logarithm to convert everything into the additive group Z/cZ
     c = m * (q-1) // e  # cardinal of ±C
-    from sage.groups.generic import discrete_log
-    logA = [discrete_log(a,x) % c for a in A]
+    logA = [a.log(x) % c for a in A]
 
     # if two elements of A are equal modulo c then no tiling is possible
     if len(set(logA)) != m:
@@ -1307,9 +1304,7 @@ def _is_periodic_sequence(seq, period):
                 break
         if periodic:
             return False
-    if seq[:period] != seq[period : 2*period]:
-        return False
-    return True
+    return seq[:period] == seq[period:2 * period]
 
 
 def _create_m_sequence(q, n, check=True):
@@ -1579,7 +1574,7 @@ def is_relative_difference_set(R, G, H, params, verbose=False):
     - ``H`` -- list; a submodule of ``G`` of order `n`
     - ``params`` -- tuple in the form `(m, n, k, d)`
     - ``verbose`` -- boolean (default: ``False``); if ``True``, the function
-      will be verbose when the sequences do not satisfy the contraints
+      will be verbose when the sequences do not satisfy the constraints
 
     EXAMPLES::
 
@@ -1659,7 +1654,7 @@ def is_supplementary_difference_set(Ks, v=None, lmbda=None, G=None, verbose=Fals
     - ``lmbda`` -- integer; the parameter `\lambda` of the supplementary difference sets
     - ``G`` -- a group of order `v`
     - ``verbose`` -- boolean (default: ``False``); if ``True``, the function will
-      be verbose when the sets do not satisfy the contraints
+      be verbose when the sets do not satisfy the constraints
 
     EXAMPLES::
 
@@ -1757,7 +1752,7 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
     OUTPUT:
 
     If ``existence=False``, the function returns the 4 sets (containing integers),
-    or raises an error if ``q`` does not satify the constraints.
+    or raises an error if ``q`` does not satisfy the constraints.
     If ``existence=True``, the function returns a boolean representing whether
     supplementary difference sets can be constructed.
 
@@ -1902,22 +1897,6 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
     return G, [K1, K2, K3, K4]
 
 
-def supplementary_difference_set(q, existence=False, check=True):
-    r"""
-    Construct `4-\{2v; v, v+1, v, v; 2v\}` supplementary difference sets where `q=2v+1`.
-
-    This is a deprecated version of :func:`supplementary_difference_set_from_rel_diff_set`,
-    please use that instead.
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(35211, 'This function is deprecated, please use supplementary_difference_set_from_rel_diff_set instead.')
-
-    if existence:
-        return supplementary_difference_set_from_rel_diff_set(q, existence=True)
-    _, s = supplementary_difference_set_from_rel_diff_set(q, check=check)
-    return s
-
-
 def get_fixed_relative_difference_set(G, rel_diff_set, as_elements=False):
     r"""
     Construct an equivalent relative difference set fixed by the size of the set.
@@ -2029,10 +2008,7 @@ def is_fixed_relative_difference_set(R, q):
         sage: is_fixed_relative_difference_set(s2, len(s2))                             # needs sage.libs.pari sage.modules
         False
     """
-    for el in R:
-        if q * el not in R:
-            return False
-    return True
+    return all(q * el in R for el in R)
 
 
 def skew_supplementary_difference_set_over_polynomial_ring(n, existence=False, check=True):
@@ -3084,7 +3060,7 @@ def are_complementary_difference_sets(G, A, B, verbose=False):
     - ``A`` -- set of elements of ``G``
     - ``B`` -- set of elements of ``G``
     - ``verbose`` -- boolean (default: ``False``); if ``True`` the function will
-      be verbose when the sets do not satisfy the contraints
+      be verbose when the sets do not satisfy the constraints
 
     EXAMPLES::
 
@@ -3532,7 +3508,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
     For `k=6,7` we look at the set of small prime powers for which a
     construction is available::
 
-        sage: def prime_power_mod(r,m):
+        sage: def prime_power_mod(r, m):
         ....:     k = m+r
         ....:     while True:
         ....:         if is_prime_power(k):
@@ -3828,7 +3804,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         G = Zmod(v)
         return G, [list(range(1, v))]
 
-    factorization = arith.factor(v)
+    factorization = factor(v)
     if len(factorization) == 1:
         from sage.rings.finite_rings.finite_field_constructor import GF
         K = GF(v,'z')

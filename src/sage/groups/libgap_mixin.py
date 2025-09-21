@@ -16,6 +16,7 @@ from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement
 from sage.structure.element import parent
 from sage.misc.cachefunc import cached_method
+from sage.misc.randstate import current_randstate
 from sage.groups.class_function import ClassFunction_libgap
 from sage.groups.libgap_wrapper import ElementLibGAP
 
@@ -797,6 +798,7 @@ class GroupMixinLibGAP:
             sage: G.random_element() in G
             True
         """
+        current_randstate().set_seed_libgap()
         return self(self.gap().Random())
 
     def __iter__(self):
@@ -946,4 +948,16 @@ class GroupMixinLibGAP:
             sage: F == G, G == H, F == H
             (False, False, False)
         """
-        return self.gap().IsomorphismGroups(H.gap()) != libgap.fail
+        # If GAP doesn't know that the groups are finite, it will
+        # check. This emits an informational warning, and then
+        # annotates the groups as being finite (assuming they were) so
+        # that future isomorphism checks are silent. This can lead to
+        # apparent non-determinism in the output as statements are
+        # rearranged. There's nothing the user can do about this
+        # anyway, and it happens in trivial cases like the alternating
+        # group on one element, so we prefer to hide the warning.
+        old_warnlevel = libgap.InfoLevel(libgap.InfoWarning)
+        libgap.SetInfoLevel(libgap.InfoWarning, 0)
+        result = self.gap().IsomorphismGroups(H.gap()) != libgap.fail
+        libgap.SetInfoLevel(libgap.InfoWarning, old_warnlevel)
+        return result

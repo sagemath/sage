@@ -1,4 +1,9 @@
-py.install_sources('all.py', 'random_variable.py', subdir: 'sage/probability')
+py.install_sources(
+  '__init__.py',
+  'all.py',
+  'random_variable.py',
+  subdir: 'sage/probability',
+)
 
 extension_data = {
   'probability_distribution' : files('probability_distribution.pyx'),

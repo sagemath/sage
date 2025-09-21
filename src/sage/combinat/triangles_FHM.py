@@ -46,6 +46,8 @@ The Gamma-triangles are related to the H-triangles by an
 analog of the relationship between gamma-vectors and h-vectors of flag
 simplicial complexes.
 """
+from __future__ import annotations
+
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -62,7 +64,7 @@ def _matrix_display(self, variables=None):
 
     - ``variables`` -- (optional) choice of 2 variables
 
-    OUPUT:
+    OUTPUT:
 
     matrix
 
@@ -132,7 +134,7 @@ class Triangle(SageObject):
         ⎝1 4⎠
     """
 
-    def __init__(self, poly, variables=None):
+    def __init__(self, poly, variables=None) -> None:
         """
         EXAMPLES::
 
@@ -194,7 +196,7 @@ class Triangle(SageObject):
         """
         return self._prefix + ": " + repr(self._poly)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the LaTeX representation (as a matrix).
 
@@ -275,7 +277,7 @@ class Triangle(SageObject):
         """
         return self._poly.__getitem__(*args)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash value.
 
@@ -343,6 +345,26 @@ class Triangle(SageObject):
             p = p.truncate(v, d)
         return self.__class__(p, self._vars)
 
+    def factor(self) -> list:
+        """
+        Return the decomposition of ``self`` as a product.
+
+        This is defined by factoring the underlying polynomial.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.triangles_FHM import M_triangle
+            sage: x, y = polygens(ZZ, 'x,y')
+            sage: p = 3*x^3*y^3 - 7*x^2*y^3 + 5*x^2*y^2
+            sage: p += 5*x*y^3 - 8*x*y^2 - y^3 + 3*x*y + 3*y^2 - 3*y + 1
+            sage: m = M_triangle(p)
+            sage: m.factor()
+            [M: x*y - y + 1, M: 3*x^2*y^2 - 4*x*y^2 + 2*x*y + y^2 - 2*y + 1]
+        """
+        p = self._poly
+        return [self.__class__(fac, self._vars)
+                for fac, exp in p.factor() for _ in range(exp)]
+
 
 class M_triangle(Triangle):
     """
@@ -359,7 +381,7 @@ class M_triangle(Triangle):
     """
     _prefix = 'M'
 
-    def dual(self):
+    def dual(self) -> M_triangle:
         """
         Return the dual M-triangle.
 
@@ -384,7 +406,7 @@ class M_triangle(Triangle):
                      for (dx, dy), coeff in self._poly.monomial_coefficients().items()}
         return M_triangle(A(dict_dual), variables=(x, y))
 
-    def transmute(self):
+    def transmute(self) -> M_triangle:
         """
         Return the image of ``self`` by an involution.
 
@@ -406,7 +428,7 @@ class M_triangle(Triangle):
         """
         return self.h().transpose().m()
 
-    def h(self):
+    def h(self) -> H_triangle:
         """
         Return the associated H-triangle.
 
@@ -427,12 +449,13 @@ class M_triangle(Triangle):
         """
         x, y = self._vars
         n = self._n
-        step = self._poly(x=y / (y - 1), y=(y - 1) * x / (1 + (y - 1) * x))
+        step = self._poly.subs({x: y / (y - 1),
+                                y: (y - 1) * x / (1 + (y - 1) * x)})
         step *= (1 + (y - 1) * x)**n
         polyh = step.numerator()
         return H_triangle(polyh, variables=(x, y))
 
-    def f(self):
+    def f(self) -> F_triangle:
         """
         Return the associated F-triangle.
 
@@ -460,7 +483,7 @@ class H_triangle(Triangle):
     """
     _prefix = 'H'
 
-    def transpose(self):
+    def transpose(self) -> H_triangle:
         """
         Return the transposed H-triangle.
 
@@ -487,7 +510,7 @@ class H_triangle(Triangle):
                      for (dx, dy), coeff in self._poly.monomial_coefficients().items()}
         return H_triangle(A(dict_dual), variables=(x, y))
 
-    def m(self):
+    def m(self) -> M_triangle:
         """
         Return the associated M-triangle.
 
@@ -503,11 +526,12 @@ class H_triangle(Triangle):
         """
         x, y = self._vars
         n = self._n
-        step = self._poly(x=(x - 1) * y / (1 - y), y=x / (x - 1)) * (1 - y)**n
+        step = self._poly.subs({x: (x - 1) * y / (1 - y),
+                                y: x / (x - 1)}) * (1 - y)**n
         polym = step.numerator()
         return M_triangle(polym, variables=(x, y))
 
-    def f(self):
+    def f(self) -> F_triangle:
         """
         Return the associated F-triangle.
 
@@ -536,12 +560,12 @@ class H_triangle(Triangle):
         """
         x, y = self._vars
         n = self._n
-        step1 = self._poly(x=x / (1 + x), y=y) * (x + 1)**n
-        step2 = step1(x=x, y=y / x)
+        step1 = self._poly.subs({x: x / (1 + x), y: y}) * (x + 1)**n
+        step2 = step1.subs({x: x, y: y / x})
         polyf = step2.numerator()
         return F_triangle(polyf, variables=(x, y))
 
-    def gamma(self):
+    def gamma(self) -> Gamma_triangle:
         """
         Return the associated Gamma-triangle.
 
@@ -585,8 +609,9 @@ class H_triangle(Triangle):
             sage: H_triangle(ht).vector()
             x^2 + 3*x + 1
         """
-        anneau = PolynomialRing(ZZ, 'x')
-        return anneau(self._poly(y=1))
+        x, y = self._vars
+        anneau = PolynomialRing(ZZ, "x")
+        return anneau(self._poly.subs({y: 1}))
 
 
 class F_triangle(Triangle):
@@ -595,7 +620,7 @@ class F_triangle(Triangle):
     """
     _prefix = 'F'
 
-    def h(self):
+    def h(self) -> H_triangle:
         """
         Return the associated H-triangle.
 
@@ -617,11 +642,12 @@ class F_triangle(Triangle):
         """
         x, y = self._vars
         n = self._n
-        step = (1 - x)**n * self._poly(x=x / (1 - x), y=x * y / (1 - x))
+        step = (1 - x)**n * self._poly.subs({x: x / (1 - x),
+                                             y: x * y / (1 - x)})
         polyh = step.numerator()
         return H_triangle(polyh, variables=(x, y))
 
-    def m(self):
+    def m(self) -> M_triangle:
         """
         Return the associated M-triangle.
 
@@ -662,10 +688,38 @@ class F_triangle(Triangle):
         """
         x, y = self._vars
         n = self._n
-        step = self._poly(x=y * (x - 1) / (1 - x * y), y=x * y / (1 - x * y))
+        step = self._poly.subs({x: y * (x - 1) / (1 - x * y),
+                                y: x * y / (1 - x * y)})
         step *= (1 - x * y)**n
         polym = step.numerator()
         return M_triangle(polym, variables=(x, y))
+
+    def parabolic(self) -> F_triangle:
+        """
+        Return a parabolic version of the F-triangle.
+
+        This is obtained by replacing the variable `y` by `y-1`.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.triangles_FHM import H_triangle
+            sage: x, y = polygens(ZZ,'x,y')
+            sage: H_triangle(1+x*y).f()
+            F: x + y + 1
+            sage: _.parabolic()
+            F: x + y
+
+        TESTS::
+
+            sage: a, b = polygens(ZZ,'a,b')
+            sage: H_triangle(1+a*b).f()
+            F: a + b + 1
+            sage: _.parabolic()
+            F: a + b
+        """
+        x, y = self._vars
+        polyf = self._poly.subs({y: y - 1})
+        return F_triangle(polyf, variables=(x, y))
 
     def vector(self):
         """
@@ -681,9 +735,10 @@ class F_triangle(Triangle):
             sage: F_triangle(ft).vector()
             5*x^2 + 5*x + 1
         """
-        anneau = PolynomialRing(ZZ, 'x')
-        x = anneau.gen()
-        return anneau(self._poly(y=x))
+        x, y = self._vars
+        anneau = PolynomialRing(ZZ, "x")
+        nx = anneau.gen()
+        return anneau(self._poly.subs({x: nx, y: nx}))
 
 
 class Gamma_triangle(Triangle):
@@ -692,7 +747,7 @@ class Gamma_triangle(Triangle):
     """
     _prefix = 'Γ'
 
-    def h(self):
+    def h(self) -> H_triangle:
         r"""
         Return the associated H-triangle.
 

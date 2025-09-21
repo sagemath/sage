@@ -28,7 +28,7 @@ cdef class ParentWithBase(Parent_old):
         Parent_old.__init__(self, *args, **kwds)
         self._base = base
 
-    cdef _coerce_c_impl(self,x):
+    cdef _coerce_c_impl(self, x):
         check_old_coerce(self)
         from sage.misc.superseded import deprecation
         deprecation(33497, "_coerce_c_impl is deprecated, use coerce instead")

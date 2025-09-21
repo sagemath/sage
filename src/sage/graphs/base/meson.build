@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'boost_graph.pxd',
   'c_graph.pxd',
@@ -38,14 +39,23 @@ extension_data_cpp = {
 }
 
 foreach name, pyx : extension_data_cpp
+  deps = [py_dep, cysignals, gmp]
+  override_options = ['cython_language=cpp']
+  if name == 'boost_graph'
+    deps += [boost]
+    if not boost_cpp17_compatible
+      override_options += ['cpp_std=c++11']
+    endif
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/graphs/base',
     install: true,
-    override_options: ['cython_language=cpp'],
+    override_options: override_options,
     include_directories: [inc_cpython, inc_data_structures, inc_rings],
-    dependencies: [py_dep, cysignals, gmp],
+    dependencies: deps,
   )
 endforeach
 

@@ -351,8 +351,8 @@ def __find_eisen_chars_gamma1(N, k):
     E = list(G)
     parity = [c(-1) for c in E]
     for i in range(len(E)):
-        for j in range(i,len(E)):
-            if parity[i]*parity[j] == s and N % (E[i].conductor()*E[j].conductor()) == 0:
+        for j in range(i, len(E)):
+            if parity[i] * parity[j] == s and N % (E[i].conductor() * E[j].conductor()) == 0:
                 chi, psi = __common_minimal_basering(E[i], E[j])
                 if k != 1:
                     pairs.append((chi, psi))
@@ -384,11 +384,12 @@ def eisenstein_series_lseries(weight, prec=53,
                               max_imaginary_part=0,
                               max_asymp_coeffs=40):
     r"""
-    Return the `L`-series of the weight `2k` Eisenstein series
+    Return the `L`-series of the weight `2k` Eisenstein series `E_{2k}`
     on `\SL_2(\ZZ)`.
 
     This actually returns an interface to Tim Dokchitser's program
-    for computing with the `L`-series of the Eisenstein series
+    for computing with the `L`-series of the Eisenstein series.
+    See :class:`~sage.lfunctions.dokchitser.Dokchitser`.
 
     INPUT:
 
@@ -400,18 +401,22 @@ def eisenstein_series_lseries(weight, prec=53,
 
     - ``max_asymp_coeffs`` -- integer
 
-    OUTPUT: the `L`-series of the Eisenstein series
+    OUTPUT: the `L`-series of the Eisenstein series. This can be
+    evaluated at argument `s`, or have
+    :meth:`~sage.lfunctions.dokchitser.Dokchitser.derivative` called, etc.
 
     EXAMPLES:
 
     We compute with the `L`-series of `E_{16}` and then `E_{20}`::
 
-       sage: L = eisenstein_series_lseries(16)
-       sage: L(1)
-       -0.291657724743874
-      sage: L = eisenstein_series_lseries(20)
-       sage: L(2)
-       -5.02355351645998
+        sage: L = eisenstein_series_lseries(16)
+        sage: L(1)
+        -0.291657724743874
+        sage: L.derivative(1)
+        0.0756072194360656
+        sage: L = eisenstein_series_lseries(20)
+        sage: L(2)
+        -5.02355351645998
 
     Now with higher precision::
 
@@ -420,7 +425,7 @@ def eisenstein_series_lseries(weight, prec=53,
         -5.0235535164599797471968418348135050804419155747868718371029
     """
     f = eisenstein_series_qexp(weight, prec)
-    from sage.lfunctions.all import Dokchitser
+    from sage.lfunctions.dokchitser import Dokchitser
     j = weight
     L = Dokchitser(conductor=1,
                    gammaV=[0, 1],

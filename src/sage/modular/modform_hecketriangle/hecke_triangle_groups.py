@@ -996,18 +996,15 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         if max_block_length <= self._max_block_length:
             return
 
-        def is_cycle(seq):
+        def is_cycle(seq) -> bool:
             length = len(seq)
             for n in divisors(length):
                 if n < length and is_cycle_of_length(seq, n):
                     return True
             return False
 
-        def is_cycle_of_length(seq, n):
-            for j in range(n, len(seq)):
-                if seq[j] != seq[j % n]:
-                    return False
-            return True
+        def is_cycle_of_length(seq, n) -> bool:
+            return all(seq[j] == seq[j % n] for j in range(n, len(seq)))
 
         j_list = range(1, self.n())
 
@@ -1240,10 +1237,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         if D in self._conj_prim:
             return True
-        elif not primitive and D in self._conj_nonprim:
-            return True
-        else:
-            return False
+        return not primitive and D in self._conj_nonprim
 
     def list_discriminants(self, D, primitive=True, hyperbolic=True, incomplete=False):
         r"""
@@ -1383,7 +1377,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         The method assumes that ``D > 0``.
 
-        Also see the element method `rational_period_function` for more information.
+        Also see the element method ``rational_period_function`` for more information.
 
         - ``k`` -- even integer, the desired weight of the rational period
           functions

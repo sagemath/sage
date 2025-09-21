@@ -255,7 +255,7 @@ def function(s, **kwds):
         sage: foo(x).conjugate()
         2*x
 
-        sage: def deriv(self, *args,**kwds): print("{} {}".format(args, kwds)); return args[kwds['diff_param']]^2
+        sage: def deriv(self, *args, **kwds): print("{} {}".format(args, kwds)); return args[kwds['diff_param']]^2
         sage: foo = function("foo", nargs=2, derivative_func=deriv)
         sage: foo(x,y).derivative(y)
         (x, y) {'diff_param': 1}

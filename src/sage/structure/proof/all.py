@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-objects
+from sage.structure.proof.proof import WithProof
 
 
 def arithmetic(t=None):
@@ -240,6 +241,3 @@ def all(t=None):
         return _proof_prefs._require_proof.copy()
     for s in _proof_prefs._require_proof:
         _proof_prefs._require_proof[s] = bool(t)
-
-
-from sage.structure.proof.proof import WithProof

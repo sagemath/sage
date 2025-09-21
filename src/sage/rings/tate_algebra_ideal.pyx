@@ -390,7 +390,7 @@ class TateAlgebraIdeal(Ideal_generic):
         if self.ring().base_ring().is_field():
             return self
         gb = self.groebner_basis()
-        gens = [ g.monic() for g in gb ]
+        gens = [g.monic() for g in gb]
         return self.ring().ideal(gens)
 
 
@@ -432,14 +432,14 @@ def groebner_basis_buchberger(I, prec, py_integral):
          ...0000000001*x^2*y + ...1210121020 + O(3^10 * <x, y>),
          ...000000001*y^2 + ...210121020*x + O(3^9 * <x, y>)]
     """
-    cdef list gb, rgb, indices, ts, S = [ ]
+    cdef list gb, rgb, indices, S = []
     cdef int i, j, l
     cdef TateAlgebraTerm ti, tj, t
     cdef TateAlgebraElement f, g, r, s
     cdef bint do_reduce = True
     cdef bint integral = py_integral
 
-    gb = [ ]
+    gb = []
     l = 0
     for f in I.gens():
         if not f:
@@ -550,9 +550,10 @@ def groebner_basis_buchberger(I, prec, py_integral):
                 rgb[i] = g._positive_lshift_c(1)
                 _, rgb[i] = g._quo_rem_c(rgb, False, True, True)
         else:
-            rgb = [ g.monic() for g in rgb ]
+            rgb = [g.monic() for g in rgb]
     else:
-        rgb = [ g * base(g.leading_coefficient().unit_part()).inverse_of_unit() for g in rgb ]
+        rgb = [g * base(g.leading_coefficient().unit_part()).inverse_of_unit()
+               for g in rgb]
 
     rgb.sort(reverse=True)
     return rgb
@@ -638,11 +639,10 @@ cdef TateAlgebraElement regular_reduce(sgb, TateAlgebraTerm s, TateAlgebraElemen
     cdef dict coeffs = { }
     cdef TateAlgebraElement f
     cdef TateAlgebraTerm lt, factor
-    cdef list ltds = [ (<TateAlgebraElement>(d[1]))._terms_c()[0] for d in sgb ]
+    cdef list ltds = [(<TateAlgebraElement>(d[1]))._terms_c()[0] for d in sgb]
     cdef list terms = v._terms_c()
     cdef int index = 0
     cdef int i
-    cdef bint in_rem
 
     f = v._new_c()
     f._poly = PolyDict(v._poly.__repn, None)
@@ -712,7 +712,7 @@ cdef TateAlgebraElement reduce(gb, TateAlgebraElement v, stopval):
     cdef dict coeffs = { }
     cdef TateAlgebraElement f
     cdef TateAlgebraTerm lt, factor
-    cdef list ltds = [ (<TateAlgebraElement>d)._terms_c()[0] for d in gb ]
+    cdef list ltds = [(<TateAlgebraElement>d)._terms_c()[0] for d in gb]
     cdef list terms = v._terms_c()
     cdef int index = 0
     cdef int i
@@ -855,7 +855,7 @@ def groebner_basis_pote(I, prec, verbose=0):
     cdef TateAlgebraTerm term_one = I.ring().monoid_of_terms().one()
     cdef bint integral = not I.ring().base_ring().is_field()
 
-    gb = [ ]
+    gb = []
 
     for f in sorted(I.gens()):
         sig_check()
@@ -870,11 +870,10 @@ def groebner_basis_pote(I, prec, verbose=0):
             print("new generator: %s + ..." % f.leading_term())
         # Initial strong Grobner basis:
         # we add signatures
-        sgb = [ (None, g) for g in gb if g ]
+        sgb = [(None, g) for g in gb if g]
         # We compute initial J-pairs
-        l = len(sgb)
         p = (term_one, f.add_bigoh(prec))
-        Jpairs = [ ]
+        Jpairs = []
         for P in sgb:
             sig_check()
             J = Jpair(p, P)
@@ -883,7 +882,7 @@ def groebner_basis_pote(I, prec, verbose=0):
         sgb.append(p)
 
         # For the syzygy criterium
-        gb0 = [ g.leading_term() for g in gb ]
+        gb0 = [g.leading_term() for g in gb]
 
         if verbose > 1:
             print("%s initial J-pairs" % len(Jpairs))
@@ -1005,7 +1004,7 @@ def groebner_basis_pote(I, prec, verbose=0):
                 print("| %s" % g)
 
     if not integral:
-        gb = [ f.monic() for f in gb ]
+        gb = [f.monic() for f in gb]
     gb.sort(reverse=True)
     return gb
 
@@ -1100,9 +1099,9 @@ def groebner_basis_vapote(I, prec, verbose=0, interrupt_red_with_val=False, inte
     cdef list terms
     cdef bint do_reduce, integral
     term_one = I.ring().monoid_of_terms().one()
-    gb = [ ]
+    gb = []
 
-    gens = [ ]
+    gens = []
     for f in I.gens():
         if f:
             val = f.valuation()
@@ -1157,11 +1156,10 @@ def groebner_basis_vapote(I, prec, verbose=0, interrupt_red_with_val=False, inte
 
         # Initial strong Grobner basis:
         # we add signatures
-        sgb = [ (None, g) for g in gb if g ]
+        sgb = [(None, g) for g in gb if g]
         # We compute initial J-pairs
-        l = len(sgb)
         p = (term_one, f.add_bigoh(prec))
-        Jpairs = [ ]
+        Jpairs = []
         for P in sgb:
             J = Jpair(p, P)
             if J is not None:
@@ -1169,7 +1167,7 @@ def groebner_basis_vapote(I, prec, verbose=0, interrupt_red_with_val=False, inte
         sgb.append(p)
 
         # For the syzygy criterium
-        gb0 = [ g.leading_term() for g in gb ]
+        gb0 = [g.leading_term() for g in gb]
 
         if verbose > 1:
             print("%s initial J-pairs" % len(Jpairs))
@@ -1257,8 +1255,8 @@ def groebner_basis_vapote(I, prec, verbose=0, interrupt_red_with_val=False, inte
                 sgb.append(p)
 
         # We forget signatures
-        # gb = [ v.monic() for (s,v) in sgb ]
-        gb = [ v for (s,v) in sgb ]
+        # gb = [v.monic() for s, v in sgb]
+        gb = [v for s, v in sgb]
         if verbose > 1:
             print("%s elements in GB before minimization" % len(gb))
         if verbose > 3:
@@ -1300,7 +1298,7 @@ def groebner_basis_vapote(I, prec, verbose=0, interrupt_red_with_val=False, inte
         for g in gb:
             print("| %s" % g)
     if not integral:
-        gb = [ f.monic() for f in gb ]
+        gb = [f.monic() for f in gb]
     gb.sort(reverse=True)
 
     return gb

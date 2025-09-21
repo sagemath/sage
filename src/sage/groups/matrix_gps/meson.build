@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'binary_dihedral.py',
   'catalog.py',
@@ -8,13 +9,11 @@ py.install_sources(
   'group_element.pxd',
   'group_element_gap.pxd',
   'heisenberg.py',
-  'homset.py',
   'isometries.py',
   'linear.py',
   'linear_gap.py',
   'matrix_group.py',
   'matrix_group_gap.py',
-  'morphism.py',
   'named_group.py',
   'named_group_gap.py',
   'orthogonal.py',
@@ -33,13 +32,18 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, gmp]
+  if name == 'group_element_gap'
+    deps += [gap]
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/groups/matrix_gps',
     install: true,
     include_directories: [inc_cpython],
-    dependencies: [py_dep, gmp],
+    dependencies: deps,
   )
 endforeach
 

@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'animate.py',
   'arc.py',
@@ -40,8 +41,8 @@ foreach name, pyx : extension_data
     sources: pyx,
     subdir: 'sage/plot',
     install: true,
-    include_directories: [inc_cpython, inc_gsl, inc_numpy, inc_rings],
-    dependencies: [py_dep, cysignals, gmp, gsl],
+    include_directories: [inc_cpython, inc_gsl, inc_rings],
+    dependencies: [py_dep, cysignals, gmp, gsl, numpy],
   )
 endforeach
 

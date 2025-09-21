@@ -1,3 +1,6 @@
+"""
+Gross-Zagier L-series
+"""
 from sage.rings.integer import Integer
 from sage.structure.sage_object import SageObject
 from sage.lfunctions.dokchitser import Dokchitser
@@ -73,7 +76,7 @@ class GrossZagierLseries(SageObject):
 
         - ``s`` -- complex number
 
-        - ``der`` -- (default: 0)
+        - ``der`` -- order of derivative (default: 0)
 
         EXAMPLES::
 
@@ -84,8 +87,10 @@ class GrossZagierLseries(SageObject):
             sage: G = GrossZagierLseries(e, A)
             sage: G(3)
             -0.272946890617590
+            sage: G(3, 1)
+            0.212442670030741
         """
-        return self._dokchister(s, der)
+        return self._dokchister.derivative(s, der)
 
     def taylor_series(self, s=1, series_prec=6, var='z'):
         r"""

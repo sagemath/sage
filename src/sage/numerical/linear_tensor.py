@@ -85,14 +85,14 @@ become symbolic inequalities. See
     construction.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 
 from copy import copy
@@ -447,9 +447,7 @@ class LinearTensorParent_class(Parent):
         """
         if self.free_module().has_coerce_map_from(R):
             return True
-        if self.linear_functions().has_coerce_map_from(R):
-            return True
-        return False
+        return self.linear_functions().has_coerce_map_from(R)
 
     def _an_element_(self):
         """

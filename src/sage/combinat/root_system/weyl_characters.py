@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.graphs sage.groups sage.modules
 """
-Weyl Character Rings
+Weyl character rings
 """
 # ****************************************************************************
 #  Copyright (C) 2011 Daniel Bump <bump at match.stanford.edu>
@@ -535,7 +535,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
         """
         d = {}
         for k in d1:
-            [epsilon, g] = self.dot_reduce(b + k)
+            epsilon, g = self.dot_reduce(b + k)
             if epsilon == 1:
                 d[g] = d.get(g, 0) + d1[k]
             elif epsilon == -1:
@@ -566,7 +566,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
         """
         alphacheck = self._space.simple_coroots()
         alpha = self._space.simple_roots()
-        [epsilon, ret] = [1, a]
+        epsilon, ret = [1, a]
         done = False
         while not done:
             done = True
@@ -761,14 +761,9 @@ class WeylCharacterRing(CombinatorialFreeModule):
                         next[mu] = next.get(mu, 0) - accum[v]
                         if debug:
                             print("     mu=%s, next[mu]=%s" % (mu, next[mu]))
-            accum = {}
-            for v in next:
-                accum[v] = next[v]
-        ret = {}
-        for v in accum:
-            if accum[v]:
-                ret[self._space.from_vector_notation(v, style='coroots')] = accum[v]
-        return ret
+            accum = dict(next)
+        return {self._space.from_vector_notation(v, style='coroots'): val
+                for v, val in accum.items() if val}
 
     @cached_method
     def _weight_multiplicities(self, x):
@@ -2205,8 +2200,8 @@ class WeightRing(CombinatorialFreeModule):
 
                 sage: P.<v> = PolynomialRing(QQ)
                 sage: B2 = WeylCharacterRing("B2",style='coroots',base_ring=P); b2 = B2.ambient()
-                sage: def T1(f): return f.demazure_lusztig(1,v)
-                sage: def T2(f): return f.demazure_lusztig(2,v)
+                sage: def T1(f): return f.demazure_lusztig(1, v)
+                sage: def T2(f): return f.demazure_lusztig(2, v)
                 sage: T1(T2(T1(T2(b2(1,-1)))))
                 (v^2-v)*b2(0,-1) + v^2*b2(-1,1)
                 sage: [T1(T1(f))==(v-1)*T1(f)+v*f for f in [b2(0,0), b2(1,0), b2(2,3)]]

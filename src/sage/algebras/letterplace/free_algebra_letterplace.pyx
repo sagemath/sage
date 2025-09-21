@@ -121,7 +121,7 @@ TESTS::
     algebras with different term orderings, yet.
 """
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.libs.singular.function import lib, singular_function
+from sage.libs.singular.function import lib
 from sage.libs.singular.function cimport RingWrap
 from sage.libs.singular.ring cimport singular_ring_delete, singular_ring_reference
 from sage.categories.algebras import Algebras
@@ -132,7 +132,6 @@ from sage.misc.cachefunc import cached_method
 #####################
 # Define some singular functions
 lib("freegb.lib")
-freeAlgebra = singular_function("freeAlgebra")
 
 # unfortunately we cannot set Singular attributes for MPolynomialRing_libsingular
 # Hence, we must constantly work around Letterplace's sanity checks,
@@ -349,7 +348,7 @@ cdef class FreeAlgebra_letterplace(Parent):
             p *= self._current_ring.gen(j)
         return FreeAlgebraElement_letterplace(self, p)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the tuple of generators.
 
@@ -421,7 +420,7 @@ cdef class FreeAlgebra_letterplace(Parent):
         return self._degrees
 
     # Some basic properties of this ring
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
         Tell whether this free algebra is a field.
 
@@ -438,7 +437,7 @@ cdef class FreeAlgebra_letterplace(Parent):
         """
         return (not (self._ngens - self._nb_slackvars)) and self._base.is_field(proof=proof)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -454,7 +453,7 @@ cdef class FreeAlgebra_letterplace(Parent):
         """
         return "Free Associative Unital Algebra on %d generators %s over %s" % (self._ngens - self._nb_slackvars, self.gens(), self._base)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Representation of this free algebra in LaTeX.
 
@@ -892,6 +891,8 @@ cdef class FreeAlgebra_letterplace_libsingular():
 
     def __cinit__(self, MPolynomialRing_libsingular commutative_ring,
                   int degbound):
+        from sage.libs.singular.function import singular_function
+        freeAlgebra = singular_function("freeAlgebra")
         cdef RingWrap rw = freeAlgebra(commutative_ring, degbound)
         self._lp_ring = singular_ring_reference(rw._ring)
         # `_lp_ring` viewed as `MPolynomialRing_libsingular` with additional

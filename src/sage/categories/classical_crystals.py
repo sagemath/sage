@@ -65,6 +65,8 @@ class ClassicalCrystals(Category_singleton):
         running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
+        running ._test_random() . . . pass
+        running ._test_rank() . . . pass
         running ._test_some_elements() . . . pass
         running ._test_stembridge_local_axioms() . . . pass
     """
@@ -288,6 +290,8 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_new() . . . pass
                 running ._test_not_implemented_methods() . . . pass
                 running ._test_pickling() . . . pass
+                running ._test_random() . . . pass
+                running ._test_rank() . . . pass
                 running ._test_some_elements() . . . pass
                 running ._test_stembridge_local_axioms() . . . pass
 
@@ -317,6 +321,8 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_new() . . . pass
                 running ._test_not_implemented_methods() . . . pass
                 running ._test_pickling() . . . pass
+                running ._test_random() . . . pass
+                running ._test_rank() . . . pass
                 running ._test_some_elements() . . . pass
                 running ._test_stembridge_local_axioms() . . . pass
 
@@ -328,11 +334,11 @@ class ClassicalCrystals(Category_singleton):
                 sage: fb4 = lambda a,b,c,d: crystals.Tableaux(['B',4],shape=[a+b+c+d,b+c+d,c+d,d])
                 sage: fd4 = lambda a,b,c,d: crystals.Tableaux(['D',4],shape=[a+b+c+d,b+c+d,c+d,d])
                 sage: fd5 = lambda a,b,c,d,e: crystals.Tableaux(['D',5],shape=[a+b+c+d+e,b+c+d+e,c+d+e,d+e,e])
-                sage: def fd4spinplus(a,b,c,d):
+                sage: def fd4spinplus(a, b, c, d):
                 ....:     C = crystals.Tableaux(['D',4],shape=[a+b+c+d,b+c+d,c+d,d])
                 ....:     D = crystals.SpinsPlus(['D',4])
                 ....:     return crystals.TensorProduct(C,D,generators=[[C[0],D[0]]])
-                sage: def fb3spin(a,b,c):
+                sage: def fb3spin(a, b, c):
                 ....:     C = crystals.Tableaux(['B',3],shape=[a+b+c,b+c,c])
                 ....:     D = crystals.Spins(['B',3])
                 ....:     return crystals.TensorProduct(C,D,generators=[[C[0],D[0]]])
@@ -371,6 +377,8 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_new() . . . pass
                 running ._test_not_implemented_methods() . . . pass
                 running ._test_pickling() . . . pass
+                running ._test_random() . . . pass
+                running ._test_rank() . . . pass
                 running ._test_some_elements() . . . pass
                 running ._test_stembridge_local_axioms() . . . pass
 

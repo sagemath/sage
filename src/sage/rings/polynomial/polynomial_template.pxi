@@ -2,7 +2,7 @@
 Polynomial Template for C/C++ Library Interfaces
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2008 Martin Albrecht <M.R.Albrecht@rhul.ac.uk>
 #       Copyright (C) 2008 Robert Bradshaw
 #
@@ -10,8 +10,8 @@ Polynomial Template for C/C++ Library Interfaces
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial
@@ -20,7 +20,7 @@ from sage.structure.element import coerce_binop
 from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.integer cimport Integer
-from sage.libs.pari.all import pari_gen
+from cypari2.gen cimport Gen as pari_gen
 
 import operator
 
@@ -32,9 +32,9 @@ def make_element(parent, args):
 cdef inline Polynomial_template element_shift(self, int n):
      if not isinstance(self, Polynomial_template):
          if n > 0:
-             error_msg = "Cannot shift %s << %n."%(self, n)
+             error_msg = "Cannot shift %s << %n." % (self, n)
          else:
-             error_msg = "Cannot shift %s >> %n."%(self, n)
+             error_msg = "Cannot shift %s >> %n." % (self, n)
          raise TypeError(error_msg)
 
      if n == 0:
@@ -117,16 +117,16 @@ cdef class Polynomial_template(Polynomial):
                 celement_construct(&self.x, (<Polynomial_template>self)._cparent)
                 celement_set(&self.x, &(<Polynomial_template>x).x, (<Polynomial_template>self)._cparent)
             except NotImplementedError:
-                raise TypeError("%s not understood."%x)
+                raise TypeError("%s not understood" % x)
 
-        elif isinstance(x, int) or isinstance(x, Integer):
+        elif isinstance(x, (int, Integer)):
             try:
                 celement_construct(&self.x, (<Polynomial_template>self)._cparent)
                 celement_set_si(&self.x, int(x), (<Polynomial_template>self)._cparent)
             except NotImplementedError:
-                raise TypeError("%s not understood."%x)
+                raise TypeError("%s not understood" % x)
 
-        elif isinstance(x, list) or isinstance(x, tuple):
+        elif isinstance(x, (list, tuple)):
             celement_construct(&self.x, (<Polynomial_template>self)._cparent)
             gen = celement_new((<Polynomial_template>self)._cparent)
             monomial = celement_new((<Polynomial_template>self)._cparent)
@@ -629,7 +629,7 @@ cdef class Polynomial_template(Polynomial):
             0
         """
         if not isinstance(self, Polynomial_template):
-            raise NotImplementedError("%s^%s not defined."%(ee,self))
+            raise NotImplementedError("%s^%s not defined." % (ee, self))
         cdef bint recip = 0, do_sig
 
         cdef long e

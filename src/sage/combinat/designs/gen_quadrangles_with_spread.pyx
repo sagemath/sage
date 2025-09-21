@@ -267,7 +267,7 @@ def generalised_quadrangle_hermitian_with_ovoid(const int q):
     TESTS::
 
         sage: from sage.combinat.designs.gen_quadrangles_with_spread import \
-              is_GQ_with_spread, dual_GQ_ovoid
+        ....: is_GQ_with_spread, dual_GQ_ovoid
         sage: t = designs.generalised_quadrangle_hermitian_with_ovoid(3)
         sage: t = dual_GQ_ovoid(*t)
         sage: is_GQ_with_spread(*t, s=3, t=9)

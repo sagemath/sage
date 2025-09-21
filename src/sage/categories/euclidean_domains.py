@@ -53,7 +53,7 @@ class EuclideanDomains(Category_singleton):
     class ParentMethods:
         def is_euclidean_domain(self):
             """
-            Return True, since this in an object of the category of Euclidean domains.
+            Return ``True``, since this in an object of the category of Euclidean domains.
 
             EXAMPLES::
 

@@ -851,7 +851,7 @@ cdef class tr_data:
                     self.a[k] = lrint(ceil(akmin))
                     self.amax[k] = lrint(floor(akmax))
 
-                    if self.a[n-1] == 0 and (n-k)%2 == 1:
+                    if self.a[n-1] == 0 and (n-k) % 2 == 1:
                         # Can replace alpha by -alpha, so if all
                         # "odd" coefficients are zero, may assume next
                         # "odd" coefficient is positive.

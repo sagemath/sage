@@ -7,12 +7,12 @@ AUTHORS:
 - Travis Scrimshaw (2014-10-08): Initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2014 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from copy import copy
@@ -196,7 +196,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
         phi = self.module_morphism(diagonal=lambda x: base_one, codomain=A)
         self._A.register_conversion(phi)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -213,7 +213,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
             return "Graded Algebra of {}".format(self._A)
         return "Graded Module of {}".format(self._A)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

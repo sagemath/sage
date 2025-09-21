@@ -47,6 +47,7 @@ Methods
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+import itertools
 
 from sage.rings.integer import Integer
 from sage.graphs.views import EdgesView
@@ -55,7 +56,7 @@ from sage.graphs.views import EdgesView
 def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
                          *, integrality_tolerance=1e-3):
     r"""
-    Return whether the graph has a perfect matching
+    Return whether the graph has a perfect matching.
 
     INPUT:
 
@@ -162,14 +163,14 @@ def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
 def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
                   solver=None, verbose=0, *, integrality_tolerance=0.001):
     r"""
-    Check if the graph is bicritical
+    Check if the graph is bicritical.
 
     A nontrivial graph `G` is *bicritical* if `G - u - v` has a perfect
     matching for any two distinct vertices `u` and `v` of `G`. Bicritical
     graphs are special kind of matching covered graphs. Each maximal barrier of
     a bicritical graph is a singleton. Thus, for a bicritical graph, the
     canonical partition of the vertex set is the set of sets where each set is
-    an indiviudal vertex. Three-connected bicritical graphs, aka *bricks*, play
+    an individual vertex. Three-connected bicritical graphs, aka *bricks*, play
     an important role in the theory of matching covered graphs.
 
     This method implements the algorithm proposed in [LZ2001]_ and we
@@ -270,12 +271,9 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
 
     A graph (of order more than two) with more that one component is not bicritical::
 
-        sage: cycle1 = graphs.CycleGraph(4)
-        sage: cycle2 = graphs.CycleGraph(6)
-        sage: cycle2.relabel(lambda v: v + 4)
-        sage: G = Graph()
-        sage: G.add_edges(cycle1.edges() + cycle2.edges())
-        sage: len(G.connected_components(sort=False))
+        sage: G = graphs.CycleGraph(4)
+        sage: G += graphs.CycleGraph(6)
+        sage: G.connected_components_number()
         2
         sage: G.is_bicritical()
         False
@@ -434,7 +432,7 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
         for component in components:
             if u is not None and not len(component) % 2:
                 v = component[0]
-                return (False, set([u, v]))
+                return (False, {u, v})
             elif len(component) == 1:
                 u = component[0]
 
@@ -449,42 +447,42 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
             return (False, set(list(A)[:2]))
         return (False, set(list(B)[:2]))
 
-    # A graph (without a self-loop) is bicritical if and only if the underlying
-    # simple graph is bicritical
-    G_simple = G.to_simple()
-
     from sage.graphs.graph import Graph
     if matching:
         # The input matching must be a valid perfect matching of the graph
         M = Graph(matching)
         if any(d != 1 for d in M.degree()):
             raise ValueError("the input is not a matching")
-        if any(not G_simple.has_edge(edge) for edge in M.edge_iterator()):
+
+        if any(not G.has_edge(edge) for edge in M.edge_iterator()):
             raise ValueError("the input is not a matching of the graph")
-        if (G_simple.order() != M.order()) or (G_simple.order() != 2*M.size()):
+
+        if (G.order() != M.order()) or (G.order() != 2*M.size()):
             raise ValueError("the input is not a perfect matching of the graph")
     else:
         # A maximum matching of the graph is computed
-        M = Graph(G_simple.matching(algorithm=algorithm, solver=solver, verbose=verbose,
-                                    integrality_tolerance=integrality_tolerance))
+        M = Graph(G.matching(algorithm=algorithm, solver=solver, verbose=verbose,
+                             integrality_tolerance=integrality_tolerance))
 
         # It must be a perfect matching
-        if G_simple.order() != M.order():
+        if G.order() != M.order():
             u, v = next(M.edge_iterator(labels=False))
-            return (False, set([u, v])) if coNP_certificate else False
+            return (False, {u, v}) if coNP_certificate else False
 
-    # G is bicritical if and only if for each vertex u with its M-matched neighbor being v,
-    # every vertex of the graph distinct from v must be reachable from u through an even length
-    # M-alternating uv-path starting with an edge not in M and ending with an edge in M
+    # G is bicritical if and only if for each vertex u with its
+    # M-matched neighbor being v, every vertex of the graph distinct
+    # from v must be reachable from u through an even length
+    # M-alternating uv-path starting with an edge not in M and ending
+    # with an edge in M
 
-    for u in G_simple:
+    for u in G:
         v = next(M.neighbor_iterator(u))
 
-        even = M_alternating_even_mark(G_simple, u, M)
+        even = M_alternating_even_mark(G, u, M)
 
-        for w in G_simple:
+        for w in G:
             if w != v and w not in even:
-                return (False, set([v, w])) if coNP_certificate else False
+                return (False, {v, w}) if coNP_certificate else False
 
     return (True, None) if coNP_certificate else True
 
@@ -560,8 +558,8 @@ def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbo
 
     Friendship graphs are non-Hamiltonian factor-critical graphs::
 
-        sage: [graphs.FriendshipGraph(i).is_factor_critical() for i in range(1, 5)]             # needs networkx
-        [True, True, True, True]
+        sage: all(graphs.FriendshipGraph(i).is_factor_critical() for i in range(1, 5))             # needs networkx
+        True
 
     Bipartite graphs are not factor-critical::
 
@@ -671,7 +669,6 @@ def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbo
                 R.pop()
                 # Set t as pred of all vertices of the chains and add
                 # vertices marked odd to the queue
-                import itertools
 
                 for a in itertools.chain(P, R):
                     pred[a] = t
@@ -882,7 +879,7 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
         sage: H = graphs.PathGraph(20)
         sage: M = H.matching()
         sage: H.is_matching_covered(matching=M, coNP_certificate=True)
-        (False, (1, 2, None))
+        (False, (2, 1, None))
 
     TESTS:
 
@@ -943,7 +940,9 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
         sage: G.is_matching_covered()
         Traceback (most recent call last):
         ...
-        ValueError: This method is not known to work on graphs with loops. Perhaps this method can be updated to handle them, but in the meantime if you want to use it please disallow loops using allow_loops().
+        ValueError: This method is not known to work on graphs with loops.
+        Perhaps this method can be updated to handle them, but in the meantime
+        if you want to use it please disallow loops using allow_loops().
 
     REFERENCES:
 
@@ -980,27 +979,26 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
     if G.order() == 2:
         return (True, None) if coNP_certificate else True
 
-    # A graph (without a self-loop) is matching covered if and only if the
-    # underlying simple graph is matching covered
-    G_simple = G.to_simple()
-
     from sage.graphs.graph import Graph
     if matching:
         # The input matching must be a valid perfect matching of the graph
         M = Graph(matching)
+
         if any(d != 1 for d in M.degree()):
             raise ValueError("the input is not a matching")
-        if any(not G_simple.has_edge(edge) for edge in M.edge_iterator()):
+
+        if any(not G.has_edge(edge) for edge in M.edge_iterator()):
             raise ValueError("the input is not a matching of the graph")
-        if (G_simple.order() != M.order()) or (G_simple.order() != 2*M.size()):
+
+        if (G.order() != M.order()) or (G.order() != 2*M.size()):
             raise ValueError("the input is not a perfect matching of the graph")
     else:
         # A maximum matching of the graph is computed
-        M = Graph(G_simple.matching(algorithm=algorithm, solver=solver, verbose=verbose,
-                                    integrality_tolerance=integrality_tolerance))
+        M = Graph(G.matching(algorithm=algorithm, solver=solver, verbose=verbose,
+                             integrality_tolerance=integrality_tolerance))
 
         # It must be a perfect matching
-        if G_simple.order() != M.order():
+        if G.order() != M.order():
             return (False, next(M.edge_iterator())) if coNP_certificate else False
 
     # Biparite graph:
@@ -1011,58 +1009,47 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
     # if it is in M or otherwise direct it from B to A. The graph G is
     # matching covered if and only if D is strongly connected.
 
-    if G_simple.is_bipartite():
-        A, _ = G_simple.bipartite_sets()
+    if G.is_bipartite():
+        A, _ = G.bipartite_sets()
         color = dict()
 
-        for u in G_simple:
+        for u in G:
             color[u] = 0 if u in A else 1
 
         from sage.graphs.digraph import DiGraph
         H = DiGraph()
 
-        for u, v in G_simple.edge_iterator(labels=False):
+        for u, v in G.edge_iterator(labels=False):
             if color[u]:
                 u, v = v, u
 
-            if M.has_edge(u, v):
-                H.add_edge(u, v)
-            else:
-                H.add_edge(v, u)
+            H.add_edge((u, v))
+            if next(M.neighbor_iterator(u)) == v:
+                H.add_edge((v, u))
 
         # Check if H is strongly connected using Kosaraju's algorithm
-        def dfs(J, v, visited, orientation):
+        def dfs(v, visited, neighbor_iterator):
             stack = [v]  # a stack of vertices
 
             while stack:
                 v = stack.pop()
+                visited.add(v)
 
-                if v not in visited:
-                    visited[v] = True
-
-                if orientation == 'in':
-                    for u in J.neighbors_out(v):
-                        if u not in visited:
-                            stack.append(u)
-
-                elif orientation == 'out':
-                    for u in J.neighbors_in(v):
-                        if u not in visited:
-                            stack.append(u)
-                else:
-                    raise ValueError('Unknown orientation')
+                for u in neighbor_iterator(v):
+                    if u not in visited:
+                        stack.append(u)
 
         root = next(H.vertex_iterator())
 
-        visited_in = {}
-        dfs(H, root, visited_in, 'in')
+        visited_in = set()
+        dfs(root, visited_in, H.neighbor_in_iterator)
 
-        visited_out = {}
-        dfs(H, root, visited_out, 'out')
+        visited_out = set()
+        dfs(root, visited_out, H.neighbor_out_iterator)
 
         for edge in H.edge_iterator():
             u, v, _ = edge
-            if (u not in visited_in) or (v not in visited_out):
+            if (u not in visited_out) or (v not in visited_in):
                 if not M.has_edge(edge):
                     return (False, edge) if coNP_certificate else False
 
@@ -1075,12 +1062,12 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
     # an M-alternating odd length uv-path starting and ending with edges not
     # in M.
 
-    for u in G_simple:
+    for u in G:
         v = next(M.neighbor_iterator(u))
 
-        even = M_alternating_even_mark(G_simple, u, M)
+        even = M_alternating_even_mark(G, u, M)
 
-        for w in G_simple.neighbor_iterator(v):
+        for w in G.neighbor_iterator(v):
             if w != u and w not in even:
                 return (False, (v, w)) if coNP_certificate else False
 
@@ -1092,7 +1079,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
              *, integrality_tolerance=1e-3):
     r"""
     Return a maximum weighted matching of the graph represented by the list
-    of its edges
+    of its edges.
 
     For more information, see the :wikipedia:`Matching_(graph_theory)`.
 
@@ -1255,7 +1242,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
 
         from sage.graphs.graph import Graph
         return EdgesView(Graph([(u, v, L[frozenset((u, v))]) for u, v in d],
-                                format='list_of_edges'))
+                               format='list_of_edges'))
 
     elif algorithm == "LP":
         g = G
@@ -1272,7 +1259,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
         # the maximum matching
         for v in g:
             p.add_constraint(p.sum(b[frozenset(e)] for e in G.edge_iterator(vertices=[v], labels=False)
-                                    if e[0] != e[1]), max=1)
+                                   if e[0] != e[1]), max=1)
 
         p.solve(log=verbose)
         b = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
@@ -1284,14 +1271,14 @@ def matching(G, value_only=False, algorithm='Edmonds',
         from sage.graphs.graph import Graph
         return EdgesView(Graph([(u, v, L[frozenset((u, v))])
                                 for u, v in L if b[frozenset((u, v))]],
-                                format='list_of_edges'))
+                               format='list_of_edges'))
 
     raise ValueError('algorithm must be set to either "Edmonds" or "LP"')
 
 
 def perfect_matchings(G, labels=False):
     r"""
-    Return an iterator over all perfect matchings of the graph
+    Return an iterator over all perfect matchings of the graph.
 
     ALGORITHM:
 
@@ -1395,8 +1382,6 @@ def perfect_matchings(G, labels=False):
     G_copy.allow_multiple_edges(False)
 
     # For each unlabeled matching, we yield all its possible labelings
-    import itertools
-
     for m in rec(G_copy):
         yield from itertools.product(*[edges[frozenset(e)] for e in m])
 
@@ -1404,7 +1389,7 @@ def perfect_matchings(G, labels=False):
 def M_alternating_even_mark(G, vertex, matching):
     r"""
     Return the vertices reachable from ``vertex`` via an even alternating path
-    starting with a non-matching edge
+    starting with a non-matching edge.
 
     This method implements the algorithm proposed in [LR2004]_. Note that
     the complexity of the algorithm is linear in number of edges.
@@ -1570,11 +1555,11 @@ def M_alternating_even_mark(G, vertex, matching):
     M = Graph(matching)
     if any(d != 1 for d in M.degree()):
         raise ValueError("the input is not a matching")
-    if any(not G_simple.has_edge(edge) for edge in M.edge_iterator()):
+
+    if any(not G.has_edge(edge) for edge in M.edge_iterator()):
         raise ValueError("the input is not a matching of the graph")
 
     # Build an M-alternating tree T rooted at vertex
-    import itertools
     from queue import Queue
 
     q = Queue()
@@ -1605,8 +1590,10 @@ def M_alternating_even_mark(G, vertex, matching):
                 while ancestor_x[-1] != ancestor_y[-1]:
                     if rank[ancestor_x[-1]] > rank[ancestor_y[-1]]:
                         ancestor_x.append(predecessor[ancestor_x[-1]])
+
                     elif rank[ancestor_x[-1]] < rank[ancestor_y[-1]]:
                         ancestor_y.append(predecessor[ancestor_y[-1]])
+
                     else:
                         ancestor_x.append(predecessor[ancestor_x[-1]])
                         ancestor_y.append(predecessor[ancestor_y[-1]])
@@ -1616,6 +1603,7 @@ def M_alternating_even_mark(G, vertex, matching):
                 # Set t as pred of all vertices of the chains and add
                 # vertices marked odd to the queue
                 next_rank_to_lcs_rank = rank[lcs] + 1
+
                 for a in itertools.chain(ancestor_x, ancestor_y):
                     predecessor[a] = lcs
                     rank[a] = next_rank_to_lcs_rank

@@ -1,9 +1,7 @@
 py.install_sources(
+  '__init__.py',
   'abstract_method.py',
   'all.py',
-  'all__sagemath_environment.py',
-  'all__sagemath_objects.py',
-  'all__sagemath_repl.py',
   'allocator.pxd',
   'banner.py',
   'benchmark.py',
@@ -37,6 +35,7 @@ py.install_sources(
   'latex_macros.py',
   'latex_standalone.py',
   'lazy_format.py',
+  'lazy_import.pxd',
   'lazy_import_cache.py',
   'lazy_list.pxd',
   'lazy_string.pxd',
@@ -61,7 +60,6 @@ py.install_sources(
   'random_testing.py',
   'randstate.pxd',
   'remote_file.py',
-  'replace_dot_all.py',
   'repr.py',
   'rest_index_of_methods.py',
   'sage_eval.py',
@@ -124,13 +122,22 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  if is_windows and (name == 'sage_ostools')
+    # Uses posix API
+    continue
+  endif
+  deps = [py_dep, gmp]
+  if name == 'binary_tree'
+    deps += [cysignals]
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/misc',
     install: true,
     include_directories: [inc_cpython, inc_rings],
-    dependencies: [py_dep, cysignals, gmp],
+    dependencies: deps,
   )
 endforeach
 

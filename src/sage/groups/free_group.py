@@ -291,6 +291,29 @@ class FreeGroupElement(ElementLibGAP):
         """
         return (self.parent(), (self.Tietze(),))
 
+    def _regina_(self, regina):
+        r"""
+        Return the string used to construct the object in Regina.
+
+        EXAMPLES::
+
+            sage: F = FreeGroup(3)
+            sage: f = F.an_element(); f
+            x0*x1*x2
+            sage: regina(f)      # optional regina
+            <regina.GroupExpression: g0 g1 g2>
+        """
+        import string
+        word = ''
+        for i in self.Tietze():
+            if i > 0:
+                next_char = string.ascii_lowercase[i - 1]
+            else:
+                next_char = string.ascii_uppercase[-i - 1]
+            word = '%s%s' % (word, next_char)
+        res = regina.GroupExpression(word)
+        return res
+
     @cached_method
     def Tietze(self):
         """
@@ -457,8 +480,9 @@ class FreeGroupElement(ElementLibGAP):
                 R = ring
             symb = list(im_gens)
             symb += reversed([a**(-1) for a in im_gens])
-        i = gen.Tietze()[0]  # So ``gen`` is the `i`-th
-                             # generator of the free group.
+        i = gen.Tietze()[0]
+        # so gen is the i-th generator of the free group
+
         a = R.zero()
         coef = R.one()
         while l:
@@ -506,7 +530,7 @@ class FreeGroupElement(ElementLibGAP):
         for i in range(k):
             exponent = exponent_syllable(g, i+1).sage()
             generator = gen(generator_syllable(g, i+1).sage() - 1)
-            result.append( (generator, exponent) )
+            result.append((generator, exponent))
         return tuple(result)
 
     def __call__(self, *values):
@@ -811,6 +835,18 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
         gen_str = ', '.join(gap_names)
         return 'FreeGroup(['+gen_str+'])'
 
+    def _regina_(self, regina):
+        r"""
+        Return this group as an object in Regina.
+
+        EXAMPLES::
+
+            sage: F = FreeGroup(3)
+            sage: regina(F)              # optional regina
+            <regina.GroupPresentation: < a b c >>
+        """
+        return regina.GroupPresentation(int(self.ngens()))
+
     def _element_constructor_(self, *args, **kwds):
         """
         TESTS::
@@ -936,6 +972,7 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
             Finitely presented group < a, b, c, d | a*b*a^-1 >
         """
         from sage.groups.finitely_presented import FinitelyPresentedGroup
-        return FinitelyPresentedGroup(self, tuple(map(self, relations) ), **kwds)
+        return FinitelyPresentedGroup(self,
+                                      tuple(map(self, relations)), **kwds)
 
     __truediv__ = quotient

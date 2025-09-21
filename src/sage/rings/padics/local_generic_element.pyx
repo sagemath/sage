@@ -194,7 +194,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
         """
         raise TypeError("this local element is not iterable")
 
-    def slice(self, i, j, k = 1, lift_mode='simple'):
+    def slice(self, i, j, k=1, lift_mode='simple'):
         r"""
         Return the sum of the `pi^{i + l \cdot k}` terms of the series
         expansion of this element, where pi is the uniformizer,
@@ -377,7 +377,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         # make sure that start and stop are nonnegative
         if start<0:
-            i += -start # fix the value of ppow below
+            i += -start  # fix the value of ppow below
             start = 0
         stop = max(stop, 0)
 
@@ -815,7 +815,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
         """
         return self.square_root(extend, all)
 
-    #def square_root(self, extend = True, all = False):
+    #def square_root(self, extend=True, all=False):
     #    raise NotImplementedError
 
     #def unit_part(self):

@@ -13,7 +13,7 @@ from sage.structure.element import coerce_binop, parent
 from sage.structure.factorization import Factorization
 from sage.misc.derivative import multi_derivative
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.structure.richcmp cimport richcmp, rich_to_bool
 from sage.rings.infinity import minus_infinity
 
@@ -429,7 +429,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         if self.__n < 0:
             raise ValueError("Laurent polynomial with negative valuation cannot be converted to polynomial")
 
-        if isinstance(R, PolynomialRing_general):
+        if isinstance(R, PolynomialRing_generic):
             return R(self.__u) << self.__n
         elif self.__n == 0:
             return R(self.__u)
@@ -600,6 +600,29 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         s = s.replace(" 1*", " ")
         s = s.replace(" -1*", " -")
         return s[1:]
+
+    def _regina_(self, regina):
+        r"""
+        Return polynomial as a Regina object.
+
+        EXAMPLES::
+
+            sage: R.<v> = LaurentPolynomialRing(ZZ)
+            sage: p = v^(-3) + 3*v + 5
+            sage: rp = regina(p); (rp, type(rp), type(rp._inst)) # optional regina
+            (<regina.Laurent: 3 x + 5 + x^-3>,
+            <class 'sage.interfaces.regina.ReginaElement'>,
+            <class 'regina.engine.Laurent'>)
+            sage: regina(p.change_ring(CC))                      # optional regina
+            Traceback (most recent call last):
+            ...
+            TypeError: only integral Laurent polynomials available in Regina
+        """
+        from sage.rings.integer_ring import ZZ
+        try:
+            return regina.Laurent(int(self.valuation()), [ZZ(c) for c in self])
+        except TypeError:
+            raise TypeError('only integral Laurent polynomials available in Regina')
 
     def _latex_(self):
         r"""

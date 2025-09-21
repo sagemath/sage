@@ -18,13 +18,17 @@ The basic command syntax is as follows::
     ======================================================================
 """
 
-from .constructor import random_matrix, Matrix
+import sys
+
+from sage.matrix.constructor import Matrix, random_matrix
 from sage.misc.lazy_import import lazy_import
+from sage.misc.timing import cputime
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.misc.timing import cputime
-from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
+
+if sys.platform != 'win32':
+    from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
 
 lazy_import('sage.interfaces.magma', 'magma')
 
@@ -687,7 +691,7 @@ s := Cputime(t);
         raise ValueError('unknown system "%s"' % system)
 
 
-def matrix_add_GF(n=1000, p=16411, system='sage',times=100):
+def matrix_add_GF(n=1000, p=16411, system='sage', times=100):
     """
     Given two n x n matrix over GF(p) with random entries, add them.
 
@@ -1116,7 +1120,7 @@ delete h;
         return float(magma.eval('s'))
 
 
-def MatrixVector_QQ(n=1000,h=100,system='sage',times=1):
+def MatrixVector_QQ(n=1000, h=100, system='sage', times=1):
     """
     Compute product of square ``n`` matrix by random vector with num and
     denom bounded by ``h`` the given number of ``times``.

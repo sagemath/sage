@@ -342,7 +342,6 @@ cpdef clustering_coeff(g, vertices=None):
     return (average_clustering, clust_v_sage)
 
 
-@cython.binding(True)
 cpdef dominator_tree(g, root, return_dict=False, reverse=False):
     r"""
     Use Boost to compute the dominator tree of ``g``, rooted at ``root``.
@@ -1071,7 +1070,7 @@ cdef get_predecessors(BoostWeightedGraph g, result, int_to_v, directed, weight_t
         sage: johnson_shortest_paths(g, distances=False, predecessors=True) == expected
         True
     """
-    cdef vector[pair[int, pair[int, double]]] edges
+    cdef vector[pair[v_index, pair[v_index, double]]] edges
     sig_on()
     edges = g.edge_list()
     sig_off()

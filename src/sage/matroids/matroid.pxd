@@ -148,7 +148,6 @@ cdef class Matroid(SageObject):
     cpdef minor(self, contractions=*, deletions=*)
     cpdef contract(self, X)
     cpdef delete(self, X)
-    cpdef _backslash_(self, X)
     cpdef dual(self)
     cpdef truncation(self)
     cpdef has_minor(self, N, bint certificate=*)
@@ -234,9 +233,9 @@ cdef class Matroid(SageObject):
     cpdef broken_circuit_complex(self, ordering=*)
 
     # visualization
-    cpdef plot(self,B=*,lineorders=*,pos_method=*,pos_dict=*,save_pos=*)
-    cpdef show(self,B=*,lineorders=*,pos_method=*,pos_dict=*,save_pos=*,lims=*)
-    cpdef _fix_positions(self,pos_dict=*,lineorders=*)
+    cpdef plot(self, B=*, lineorders=*, pos_method=*, pos_dict=*, save_pos=*)
+    cpdef show(self, B=*, lineorders=*, pos_method=*, pos_dict=*, save_pos=*, lims=*)
+    cpdef _fix_positions(self, pos_dict=*, lineorders=*)
 
     # construction
     cpdef direct_sum(self, matroids)

@@ -142,7 +142,7 @@ class GaloisGroup_GF(GaloisGroup_cyc):
             else:
                 raise RuntimeError("Automorphism was not a power of Frobenius")
         elif isinstance(x, FrobeniusEndomorphism_finite_field):
-            if check and not x.domain() is k:
+            if check and x.domain() is not k:
                 raise ValueError("Not an automorphism of the correct finite field")
             n = x.power()
         elif isinstance(x, list) and len(x) == 1 and x[0] in ZZ:

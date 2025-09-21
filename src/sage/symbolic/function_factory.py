@@ -10,7 +10,6 @@ Factory for symbolic functions
 #                  https://www.gnu.org/licenses/
 ###############################################################################
 from __future__ import annotations
-from typing import Union
 
 from sage.symbolic.function import (SymbolicFunction, sfunctions_funcs,
                                     unpickle_wrapper)
@@ -270,7 +269,7 @@ def function(s, **kwds) -> SymbolicFunction | list[SymbolicFunction]:
         sage: foo(x).conjugate()
         2*x
 
-        sage: def deriv(self, *args,**kwds):
+        sage: def deriv(self, *args, **kwds):
         ....:     print("{} {}".format(args, kwds))
         ....:     return args[kwds['diff_param']]^2
         sage: foo = function("foo", nargs=2, derivative_func=deriv)

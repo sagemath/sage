@@ -116,6 +116,23 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             Traceback (most recent call last):
             ...
             TypeError: no conversion between padics when prime numbers differ
+
+        Check that bug :issue:`28555` is fixed::
+
+            sage: A.<a> = Qq(5^2)
+            sage: A.base_ring()(A(1))
+            1 + O(5^20)
+            sage: A.base_ring()(a)
+            Traceback (most recent call last):
+            ...
+            TypeError: element in a proper extension
+
+        Check that bug :issue:`33527` is fixed::
+
+            sage: K = Qq(25, names='a')
+            sage: K0 = K.base_ring()
+            sage: K0(K(1))
+            1 + O(5^20)
         """
         self.prime_pow = <PowComputer_?>parent.prime_pow
         pAdicGenericElement.__init__(self, parent)
@@ -137,7 +154,11 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
                 if x.parent().modulus().change_ring(self.base_ring()) == self.parent().modulus():
                     x = x.polynomial().change_ring(self.base_ring()).list()
                 else:
-                    x = self.base_ring()(x)
+                    if x.polynomial().degree() >= 1:
+                        if self.parent() is x.parent().base_ring():
+                            raise TypeError("element in a proper extension")
+                        raise NotImplementedError("conversion between different p-adic extensions not implemented")
+                    x = self.base_ring()(x.polynomial().constant_coefficient())
                     if x.is_zero():
                         absprec = min(absprec, x.precision_absolute()*self.prime_pow.e)
                         x = []
@@ -383,7 +404,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         """
         raise NotImplementedError
 
-    def expansion(self, n = None, lift_mode = 'simple', start_val = None):
+    def expansion(self, n=None, lift_mode='simple', start_val=None):
         r"""
         Return the coefficients in a `\pi`-adic expansion.
         If this is a field element, start at
@@ -560,7 +581,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             else:
                 return expansion[n]
 
-    def teichmuller_expansion(self, n = None):
+    def teichmuller_expansion(self, n=None):
         r"""
         Return an iterator over coefficients `a_0, a_1, \dots, a_n` such that
 
@@ -1044,7 +1065,7 @@ cdef class ExpansionIterable():
 
     def __cinit__(self, pAdicTemplateElement elt, long prec, long val_shift, expansion_mode mode):
         """
-        Allocate memory for the iteratable.
+        Allocate memory for the iterable.
 
         TESTS::
 
@@ -1064,7 +1085,7 @@ cdef class ExpansionIterable():
 
     def __dealloc__(self):
         """
-        Deallocate memory for the iteratable.
+        Deallocate memory for the iterable.
 
         TESTS::
 

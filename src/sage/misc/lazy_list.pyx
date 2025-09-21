@@ -117,7 +117,7 @@ empty_lazy_list.cache = []
 
 
 def lazy_list(data=None, initial_values=None, start=None, stop=None, step=None,
-        update_function=None):
+              update_function=None):
     r"""
     Return a lazy list.
 
@@ -224,7 +224,7 @@ def lazy_list(data=None, initial_values=None, start=None, stop=None, step=None,
         assert callable(update_function)
         return lazy_list_from_update_function(update_function, cache)
 
-    if isinstance(data, (tuple,list)):
+    if isinstance(data, (tuple, list)):
         data = cache + list(data)
         l = lazy_list_generic(data, start=0, stop=len(data), step=1)
     elif isinstance(data, lazy_list_generic):
@@ -1137,7 +1137,7 @@ cdef class lazy_list_from_update_function(lazy_list_generic):
             stop         2147483647             # 32-bit
             step         1
         """
-        cdef Py_ssize_t l,ll
+        cdef Py_ssize_t l, ll
         l = len(self.cache)
         while l <= i:
             self.update_function(self.cache)

@@ -16,9 +16,8 @@ Finite fields of characteristic 2
 #*****************************************************************************
 
 from sage.rings.finite_rings.finite_field_base import FiniteField
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 from sage.rings.integer import Integer
-from sage.misc.superseded import deprecated_function_alias
 
 
 def late_import():
@@ -288,8 +287,6 @@ class FiniteField_ntl_gf2e(FiniteField):
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
         """
         return self._cache.fetch_int(number)
-
-    fetch_int = deprecated_function_alias(33941, from_integer)
 
     def _pari_modulus(self):
         """

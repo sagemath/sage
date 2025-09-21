@@ -1327,12 +1327,15 @@ class IncidenceStructure:
 
         - ``perm`` -- can be one of
 
-            - a dictionary -- then each point ``p`` (which should be a key of
-              ``d``) is relabeled to ``d[p]``
+            - a dictionary -- then each point ``p`` (which should be a key
+              of ``perm``) is relabeled to ``perm[p]``
 
-            - a list or a tuple of length ``n`` -- the first point returned by
-              :meth:`ground_set` is relabeled to ``l[0]``, the second to
-              ``l[1]``, ...
+            - an iterable of length ``n`` -- the first point returned by
+              :meth:`ground_set` is relabeled to ``perm[0]``, the second to
+              ``perm[1]``, ...
+
+            - a callable -- then each point ``p`` is relabeled to
+              ``perm(p)``
 
             - ``None`` -- the incidence structure is relabeled to be on
               `\{0,1,...,n-1\}` in the ordering given by :meth:`ground_set`
@@ -1375,6 +1378,7 @@ class IncidenceStructure:
 
             sage: I.automorphism_group()                                                # needs sage.groups
             Permutation Group with generators [(2,4)]
+
         """
         if not inplace:
             from copy import copy
@@ -1387,11 +1391,18 @@ class IncidenceStructure:
             self._point_to_index = None
             return
 
-        if isinstance(perm, (list, tuple)):
-            perm = dict(zip(self._points, perm))
-
         if not isinstance(perm, dict):
-            raise ValueError("perm argument must be None, a list or a dictionary")
+            # Check for generic iterable/callable
+            try:
+                it = iter(perm)
+            except TypeError:
+                if not callable(perm):
+                    raise
+                # callable
+                perm = {v: perm(v) for v in self._points}
+            else:
+                # iterable
+                perm = dict(zip(self._points, it))
 
         if len(set(perm.values())) != len(perm):
             raise ValueError("two points are getting relabelled with the same name")
@@ -1592,6 +1603,13 @@ class IncidenceStructure:
             sage: I = IncidenceStructure(2, [[0],[0,1]])
             sage: I.is_t_design(return_parameters=True)
             (False, (0, 0, 0, 0))
+
+        Verify that :issue:`38454` is fixed::
+
+            sage: I = IncidenceStructure(points=[0,1,2,3,4,5],
+            ....:                        blocks=[[0,1], [1,2], [0,2]])
+            sage: I.is_t_design(return_parameters=True)
+            (True, (0, 6, 2, 3))
         """
         from sage.arith.misc import binomial
 
@@ -1653,7 +1671,7 @@ class IncidenceStructure:
                 for i in combinations(block, tt):
                     s[i] = s.get(i, 0) + 1
 
-            if len(set(s.values())) != 1:
+            if (len(s) != binomial(v, tt)) or (len(set(s.values())) != 1):
                 tt -= 1
                 break
 
@@ -1700,7 +1718,7 @@ class IncidenceStructure:
         - ``verbose`` -- boolean; whether to print an explanation when the
           instance is not a generalized quadrangle
 
-        - ``parameters`` -- (boolean; ``False``); if set to ``True``, the
+        - ``parameters`` -- boolean (default: ``False``); if set to ``True``, the
           function returns a pair ``(s,t)`` instead of ``True`` answers. In this
           case, `s` and `t` are the integers defined above if they exist (each
           can be set to ``False`` otherwise).

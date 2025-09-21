@@ -1,5 +1,5 @@
 py.install_sources(
-  'all__sagemath_objects.py',
+  '__init__.py',
   'ccobject.h',
   'cplusplus.pxd',
   'fast_callable.pxd',

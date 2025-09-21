@@ -127,7 +127,7 @@ class DoublyLinkedList:
         self.next_value[self.prev_value[i]] = self.next_value[i]
         self.prev_value[self.next_value[i]] = self.prev_value[i]
 
-    def unhide(self,i):
+    def unhide(self, i):
         """
         TESTS::
 

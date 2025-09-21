@@ -21,10 +21,10 @@ from sage.structure.parent_gens import localvars
 
 from sage.structure.proof import all as proof
 
-from sage.misc.lazy_import import lazy_import
-lazy_import('sage.structure.formal_sum', ['FormalSums', 'FormalSum'])
-del lazy_import
-
 from sage.structure.mutability import Mutability
 
 from sage.structure.element_wrapper import ElementWrapper
+
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.structure.formal_sum', ['FormalSums', 'FormalSum'])
+del lazy_import

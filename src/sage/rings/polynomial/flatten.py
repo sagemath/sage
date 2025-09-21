@@ -38,7 +38,7 @@ from sage.categories.homset import Homset
 from sage.categories.morphism import Morphism
 from sage.misc.cachefunc import cached_method
 from .polynomial_ring_constructor import PolynomialRing
-from .polynomial_ring import PolynomialRing_general
+from .polynomial_ring import PolynomialRing_generic
 from .multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.fraction_field import FractionField_generic
 from sage.rings.fraction_field_element import FractionFieldElement
@@ -160,14 +160,14 @@ class FlatteningMorphism(Morphism):
             sage: fl.section()(fl(p)) == p
             True
         """
-        if not isinstance(domain, PolynomialRing_general) and not isinstance(domain, MPolynomialRing_base):
+        if not isinstance(domain, (PolynomialRing_generic, MPolynomialRing_base)):
             raise ValueError("domain should be a polynomial ring")
 
         ring = domain
         variables = []
         intermediate_rings = []
 
-        while isinstance(ring, PolynomialRing_general) or isinstance(ring, MPolynomialRing_base):
+        while isinstance(ring, (PolynomialRing_generic, MPolynomialRing_base)):
             intermediate_rings.append(ring)
             v = ring.variable_names()
             variables.extend(reversed(v))
@@ -221,7 +221,7 @@ class FlatteningMorphism(Morphism):
 
         for ring in self._intermediate_rings:
             new_p = {}
-            if isinstance(ring, PolynomialRing_general):
+            if isinstance(ring, PolynomialRing_generic):
                 for mon, pp in p.items():
                     assert pp.parent() is ring
                     for i, j in pp.monomial_coefficients().items():
@@ -347,14 +347,14 @@ class UnflatteningMorphism(Morphism):
         """
         if not isinstance(domain, MPolynomialRing_base):
             raise ValueError("domain should be a multivariate polynomial ring")
-        if not isinstance(codomain, PolynomialRing_general) and not isinstance(codomain, MPolynomialRing_base):
+        if not isinstance(codomain, (PolynomialRing_generic, MPolynomialRing_base)):
             raise ValueError("codomain should be a polynomial ring")
 
         ring = codomain
         intermediate_rings = []
 
         while True:
-            is_polynomial_ring = isinstance(ring, PolynomialRing_general)
+            is_polynomial_ring = isinstance(ring, PolynomialRing_generic)
             if not (is_polynomial_ring or isinstance(ring, MPolynomialRing_base)):
                 break
             intermediate_rings.append((ring, is_polynomial_ring))
@@ -499,7 +499,7 @@ class SpecializationMorphism(Morphism):
               Defn: Defined on coordinates by sending (z) to
                     (z^2 + 1.00000000000000)
         """
-        if not isinstance(domain, PolynomialRing_general) and not isinstance(domain, MPolynomialRing_base):
+        if not isinstance(domain, (PolynomialRing_generic, MPolynomialRing_base)):
             raise TypeError("domain should be a polynomial ring")
 
         # use only the generators that are in the stack somewhere,
@@ -538,7 +538,9 @@ class SpecializationMorphism(Morphism):
         # Construct unflattened codomain R
         new_vars = []
         R = domain
-        while isinstance(R, PolynomialRing_general) or isinstance(R, MPolynomialRing_base) or isinstance(R, FractionField_generic):
+        while isinstance(R, (PolynomialRing_generic,
+                             MPolynomialRing_base,
+                             FractionField_generic)):
             if isinstance(R, FractionField_generic):
                 # We've hit base_ring, so set _sub_specialization and exit the loop
                 field_over = R.base()

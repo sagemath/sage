@@ -1124,8 +1124,9 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
       name-construction pairs
 
     - ``quotes`` -- string (default: ``"'"``); used to surround string
-      arguments to RealNumber and ComplexNumber. If ``None``, will rebuild
-      the string using a list of its Unicode code-points.
+      arguments to RealNumber and ComplexNumber, and Integer when the
+      number is longer than 4300 digits. If ``None``, will rebuild the
+      string using a list of its Unicode code-points.
 
     OUTPUT:
 
@@ -1188,6 +1189,15 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
         'Integer(42)'
         sage: preparse_numeric_literals('000042')
         'Integer(42)'
+
+    Check that :issue:`40179` is fixed::
+
+        sage: preparse_numeric_literals("1" * 4300) == f"Integer({'1' * 4300})"
+        True
+        sage: preparse_numeric_literals("1" * 4301) == f"Integer('{'1' * 4301}')"
+        True
+        sage: preparse_numeric_literals("1" * 4301, quotes=None) == f'Integer(str().join(map(chr, {[49] * 4301})))'
+        True
 
     Test underscores as digit separators (PEP 515,
     https://www.python.org/dev/peps/pep-0515/)::
@@ -1324,7 +1334,13 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
                 # Python 3 does not allow leading zeroes. Sage does, so just strip them out.
                 # The number is still interpreted as decimal, not octal!
                 num = re.sub(r'^0+', '', num)
-                num_make = "Integer(%s)" % num
+                if len(num) <= 4300:
+                    num_make = "Integer(%s)" % num
+                elif quotes:
+                    num_make = "Integer(%s%s%s)" % (quotes, num, quotes)
+                else:
+                    code_points = list(map(ord, list(num)))
+                    num_make = "Integer(str().join(map(chr, %s)))" % code_points
 
             literals[num_name] = num_make
 
@@ -1721,11 +1737,11 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
         8
 
         sage: preparse("A \\ B")
-        'A  * BackslashOperator() * B'
+        'A \\ B'
         sage: preparse("A^2 \\ B + C")
-        'A**Integer(2)  * BackslashOperator() * B + C'
+        'A**Integer(2) \\ B + C'
         sage: preparse("a \\ b \\") # There is really only one backslash here, it is just being escaped.
-        'a  * BackslashOperator() * b \\'
+        'a \\ b \\'
 
         sage: preparse("time R.<x> = ZZ[]", do_time=True)
         '__time__ = cputime(); __wall__ = walltime(); R = ZZ[\'x\']; print("Time: CPU {:.2f} s, Wall: {:.2f} s".format(cputime(__time__), walltime(__wall__))); (x,) = R._first_ngens(1)'
@@ -1836,9 +1852,6 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
     # Calculus functions
     # f(x,y) = x^3 - sin(y)
     L = preparse_calculus(L)
-
-    # Backslash
-    L = re.sub(r'''\\\s*([^\t ;#])''', r' * BackslashOperator() * \1', L)
 
     if do_time:
         # Time keyword

@@ -74,8 +74,8 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
     `[2,0,1]`::
 
         sage: E[L0([2,0,1])]                                                            # needs sage.libs.gap
-        ((-q*q1-q*q2)/(-q*q1-q2))*B[(1, 1, 1)]
-         + ((-q1-q2)/(-q*q1-q2))*B[(2, 1, 0)] + B[(2, 0, 1)]
+        -((q*q1+q*q2)/(-q*q1-q2))*B[(1, 1, 1)]
+        - ((q1+q2)/(-q*q1-q2))*B[(2, 1, 0)] + B[(2, 0, 1)]
 
     It can be seen as a polynomial (or in general a Laurent
     polynomial) by interpreting each term as an exponent vector. The
@@ -106,8 +106,8 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: L0 = E.keys()
         sage: omega = L0.fundamental_weights()
         sage: E[omega[2] - omega[1]]
-        ((-q*q1^3*q2-q*q1^2*q2^2)/(q*q1^4-q2^4))*B[(0, 0, 0)]
-         + B[(1, -1, 0)] + ((-q1*q2^3-q2^4)/(q*q1^4-q2^4))*B[(1, 0, -1)]
+        -((q*q1^3*q2+q*q1^2*q2^2)/(q*q1^4-q2^4))*B[(0, 0, 0)] + B[(1, -1, 0)]
+        - ((q1*q2^3+q2^4)/(q*q1^4-q2^4))*B[(1, 0, -1)]
 
     Many more examples are given after the background section.
 
@@ -228,11 +228,11 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: Y1 = Y[alphacheck[1]]
         sage: Y1(x)
         ((q1^2+2*q1*q2+q2^2)/(-q1*q2))*B[e[0] + e['deltacheck']]
-        + ((-q1^2-2*q1*q2-q2^2)/(-q2^2))*B[-e[1] + e['deltacheck']]
-        + ((-q1^2-q1*q2)/(-q2^2))*B[2*e[0] - e[1] - e['delta']
-        + e['deltacheck']] + ((q1^3+q1^2*q2)/(-q2^3))*B[e[0] - e['delta']
-        + e['deltacheck']] + ((q1^3+q1^2*q2)/(-q2^3))*B[e[0] - 2*e[1] - e['delta']
-        + e['deltacheck']] + ((q1+q2)/(-q2))*B[e[1] + e['deltacheck']]
+        - ((q1^2+2*q1*q2+q2^2)/(-q2^2))*B[-e[1] + e['deltacheck']]
+        - ((q1^2+q1*q2)/(-q2^2))*B[2*e[0] - e[1] - e['delta'] + e['deltacheck']]
+        + ((q1^3+q1^2*q2)/(-q2^3))*B[e[0] - e['delta'] + e['deltacheck']]
+        + ((q1^3+q1^2*q2)/(-q2^3))*B[e[0] - 2*e[1] - e['delta'] + e['deltacheck']]
+        + ((q1+q2)/(-q2))*B[e[1] + e['deltacheck']]
         + ((q1^3+2*q1^2*q2+q1*q2^2)/(-q2^3))*B[-e[1] - e['delta'] + e['deltacheck']]
         + ((q1^3+q1^2*q2)/(-q2^3))*B[2*e[0] - e[1] - 2*e['delta'] + e['deltacheck']]
         + ((q1^3+2*q1^2*q2+q1*q2^2)/(-q2^3))*B[-e[0] - e['delta'] + e['deltacheck']]
@@ -273,7 +273,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: omega = L0.fundamental_weights()
         sage: x = KL0.monomial(omega[1])
         sage: T[0](x)
-        (-q*q2)*B[(-1, 0)]
+        -q*q2*B[(-1, 0)]
 
     For classical nodes these are the usual Demazure-Lusztig operators::
 
@@ -377,16 +377,16 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E = NonSymmetricMacdonaldPolynomials(['D',3,1], q, u, -1/u)
         sage: omega = E.keys().fundamental_weights()
         sage: E[omega[1]+omega[3]]
-        ((-q*u^2+q)/(-q*u^4+1))*B[(1/2, -1/2, 1/2)]
-         + ((-q*u^2+q)/(-q*u^4+1))*B[(1/2, 1/2, -1/2)] + B[(3/2, 1/2, 1/2)]
+        -((q*u^2-q)/(-q*u^4+1))*B[(1/2, -1/2, 1/2)]
+        - ((q*u^2-q)/(-q*u^4+1))*B[(1/2, 1/2, -1/2)] + B[(3/2, 1/2, 1/2)]
 
         sage: KL = RootSystem(["D",3,1]).ambient_space().algebra(K)
         sage: P = NonSymmetricMacdonaldPolynomials(KL, q, u, -1/u)
         sage: E[omega[1]+omega[3]] == P[omega[1]+omega[3]]
         True
         sage: E[E.keys()((0,1,-1))]
-        ((-q*u^2+q)/(-q*u^2+1))*B[(0, 0, 0)] + ((-u^2+1)/(-q*u^2+1))*B[(1, 1, 0)]
-        + ((-u^2+1)/(-q*u^2+1))*B[(1, 0, -1)] + B[(0, 1, -1)]
+        -((q*u^2-q)/(-q*u^2+1))*B[(0, 0, 0)] - ((u^2-1)/(-q*u^2+1))*B[(1, 1, 0)]
+        - ((u^2-1)/(-q*u^2+1))*B[(1, 0, -1)] + B[(0, 1, -1)]
 
     In type `A`, there is also a combinatorial implementation of the
     nonsymmetric Macdonald polynomials in terms of augmented diagram
@@ -457,11 +457,11 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
     The same, directly in the ambient lattice with several shifts::
 
         sage: E[L0([2,0])]                                                              # needs sage.combinat
-        ((-q*t+q)/(-q*t+1))*B[(1, 1)] + B[(2, 0)]
+        -((q*t-q)/(-q*t+1))*B[(1, 1)] + B[(2, 0)]
         sage: E[L0([1,-1])]                                                             # needs sage.combinat
-        ((-q*t+q)/(-q*t+1))*B[(0, 0)] + B[(1, -1)]
+        -((q*t-q)/(-q*t+1))*B[(0, 0)] + B[(1, -1)]
         sage: E[L0([0,-2])]                                                             # needs sage.combinat
-        ((-q*t+q)/(-q*t+1))*B[(-1, -1)] + B[(0, -2)]
+        -((q*t-q)/(-q*t+1))*B[(-1, -1)] + B[(0, -2)]
 
     Systematic checks with Sage's implementation of [HHL06]_::
 
@@ -478,31 +478,29 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: L0 = E.keys()
 
         sage: E[L0.fundamental_weight(1).weyl_action([2,4,3,2,1])]
-        ((-u^2+1)/(-q*u^16+1))*B[-Lambda[1] + Lambda[3]]
-        + ((-u^2+1)/(-q*u^16+1))*B[Lambda[1]]
-        + B[-Lambda[2] + Lambda[5]]
-        + ((-u^2+1)/(-q*u^16+1))*B[Lambda[2] - Lambda[4] + Lambda[5]]
-        + ((-u^2+1)/(-q*u^16+1))*B[-Lambda[3] + Lambda[4]]
+        -((u^2-1)/(-q*u^16+1))*B[-Lambda[1] + Lambda[3]]
+        - ((u^2-1)/(-q*u^16+1))*B[Lambda[1]] + B[-Lambda[2] + Lambda[5]]
+        - ((u^2-1)/(-q*u^16+1))*B[Lambda[2]
+        - Lambda[4] + Lambda[5]] - ((u^2-1)/(-q*u^16+1))*B[-Lambda[3] + Lambda[4]]
 
         sage: E[L0.fundamental_weight(2).weyl_action([2,5,3,4,2])]      # long time (6s)
-        ((-q^2*u^20+q^2*u^18+q*u^2-q)/(-q^2*u^32+2*q*u^16-1))*B[0]
+        -((q^2*u^20-q^2*u^18-q*u^2+q)/(-q^2*u^32+2*q*u^16-1))*B[0]
         + B[Lambda[1] - Lambda[3] + Lambda[4] - Lambda[5] + Lambda[6]]
-        + ((-u^2+1)/(-q*u^16+1))*B[Lambda[1] - Lambda[3] + Lambda[5]]
-        + ((-q*u^20+q*u^18+u^2-1)/(-q^2*u^32+2*q*u^16-1))*B[-Lambda[2] + Lambda[4]]
-        + ((-q*u^20+q*u^18+u^2-1)/(-q^2*u^32+2*q*u^16-1))*B[Lambda[2]]
+        - ((u^2-1)/(-q*u^16+1))*B[Lambda[1] - Lambda[3] + Lambda[5]]
+        - ((q*u^20-q*u^18-u^2+1)/(-q^2*u^32+2*q*u^16-1))*B[-Lambda[2] + Lambda[4]]
+        - ((q*u^20-q*u^18-u^2+1)/(-q^2*u^32+2*q*u^16-1))*B[Lambda[2]]
         + ((u^4-2*u^2+1)/(q^2*u^32-2*q*u^16+1))*B[Lambda[3] - Lambda[4] + Lambda[5]]
-        + ((-u^2+1)/(-q*u^16+1))*B[Lambda[3] - Lambda[5] + Lambda[6]]
+        - ((u^2-1)/(-q*u^16+1))*B[Lambda[3] - Lambda[5] + Lambda[6]]
         sage: E[L0.fundamental_weight(1)+L0.fundamental_weight(6)]      # long time (13s)
         ((q^2*u^10-q^2*u^8-q^2*u^2+q^2)/(q^2*u^26-q*u^16-q*u^10+1))*B[0]
-        + ((-q*u^2+q)/(-q*u^10+1))*B[Lambda[1] - Lambda[2] + Lambda[6]]
-        + ((-q*u^2+q)/(-q*u^10+1))*B[Lambda[1] + Lambda[2] - Lambda[4] + Lambda[6]]
-        + ((-q*u^2+q)/(-q*u^10+1))*B[Lambda[1] - Lambda[3] + Lambda[4] - Lambda[5] + Lambda[6]]
-        + ((-q*u^2+q)/(-q*u^10+1))*B[Lambda[1] - Lambda[3] + Lambda[5]]
-        + B[Lambda[1] + Lambda[6]]
-        + ((-q*u^2+q)/(-q*u^10+1))*B[-Lambda[2] + Lambda[4]]
-        + ((-q*u^2+q)/(-q*u^10+1))*B[Lambda[2]]
-        + ((-q*u^2+q)/(-q*u^10+1))*B[Lambda[3] - Lambda[4] + Lambda[5]]
-        + ((-q*u^2+q)/(-q*u^10+1))*B[Lambda[3] - Lambda[5] + Lambda[6]]
+        - ((q*u^2-q)/(-q*u^10+1))*B[Lambda[1] - Lambda[2] + Lambda[6]]
+        - ((q*u^2-q)/(-q*u^10+1))*B[Lambda[1] + Lambda[2] - Lambda[4] + Lambda[6]]
+        - ((q*u^2-q)/(-q*u^10+1))*B[Lambda[1] - Lambda[3] + Lambda[4] - Lambda[5] + Lambda[6]]
+        - ((q*u^2-q)/(-q*u^10+1))*B[Lambda[1] - Lambda[3] + Lambda[5]] + B[Lambda[1] + Lambda[6]]
+        - ((q*u^2-q)/(-q*u^10+1))*B[-Lambda[2] + Lambda[4]]
+        - ((q*u^2-q)/(-q*u^10+1))*B[Lambda[2]]
+        - ((q*u^2-q)/(-q*u^10+1))*B[Lambda[3] - Lambda[4] + Lambda[5]]
+        - ((q*u^2-q)/(-q*u^10+1))*B[Lambda[3] - Lambda[5] + Lambda[6]]
 
     We test various other types::
 
@@ -512,51 +510,50 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E = NonSymmetricMacdonaldPolynomials(KL, q, u, -1/u)
         sage: L0 = E.keys()
         sage: E[L0.fundamental_weight(2)]
-        ((-q*u^2+q)/(-q*u^8+1))*B[(0, 0, 0)] + B[(1, 1, 0)]
+        -((q*u^2-q)/(-q*u^8+1))*B[(0, 0, 0)] + B[(1, 1, 0)]
         sage: E[L0((0,-1,1))]                   # long time (1.5s)
-        ((-q^2*u^10+q^2*u^8-q*u^6+q*u^4+q*u^2+u^2-q-1)/(-q^3*u^12+q^2*u^8+q*u^4-1))*B[(0, 0, 0)]
-        + ((-u^2+1)/(-q*u^4+1))*B[(1, -1, 0)]
+        -((q^2*u^10-q^2*u^8+q*u^6-q*u^4-q*u^2-u^2+q+1)/(-q^3*u^12+q^2*u^8+q*u^4-1))*B[(0, 0, 0)]
+        - ((u^2-1)/(-q*u^4+1))*B[(1, -1, 0)]
         + ((u^6-u^4-u^2+1)/(q^3*u^12-q^2*u^8-q*u^4+1))*B[(1, 1, 0)]
         + ((u^4-2*u^2+1)/(q^3*u^12-q^2*u^8-q*u^4+1))*B[(1, 0, -1)]
         + ((q^2*u^12-q^2*u^10-u^2+1)/(q^3*u^12-q^2*u^8-q*u^4+1))*B[(1, 0, 1)]
         + B[(0, -1, 1)]
-        + ((-u^2+1)/(-q^2*u^8+1))*B[(0, 1, -1)] + ((-u^2+1)/(-q^2*u^8+1))*B[(0, 1, 1)]
+        - ((u^2-1)/(-q^2*u^8+1))*B[(0, 1, -1)] - ((u^2-1)/(-q^2*u^8+1))*B[(0, 1, 1)]
         sage: K = QQ['q,u'].fraction_field()
         sage: q, u = K.gens()
         sage: KL = RootSystem(["E",6,2]).ambient_space().algebra(K)
         sage: E = NonSymmetricMacdonaldPolynomials(KL,q,u,-1/u)
         sage: L0 = E.keys()
         sage: E[L0.fundamental_weight(4)]       # long time (5s)
-        ((-q^3*u^20+q^3*u^18+q^2*u^2-q^2)/(-q^3*u^28+q^2*u^22+q*u^6-1))*B[(0, 0, 0, 0)]
-        + ((-q*u^2+q)/(-q*u^6+1))*B[(1/2, 1/2, -1/2, -1/2)]
-        + ((-q*u^2+q)/(-q*u^6+1))*B[(1/2, 1/2, -1/2, 1/2)]
-        + ((-q*u^2+q)/(-q*u^6+1))*B[(1/2, 1/2, 1/2, -1/2)]
-        + ((-q*u^2+q)/(-q*u^6+1))*B[(1/2, 1/2, 1/2, 1/2)]
-        + ((q*u^2-q)/(q*u^6-1))*B[(1, 0, 0, 0)]
-        + B[(1, 1, 0, 0)]
-        + ((-q*u^2+q)/(-q*u^6+1))*B[(0, 1, 0, 0)]
+        -((q^3*u^20-q^3*u^18-q^2*u^2+q^2)/(-q^3*u^28+q^2*u^22+q*u^6-1))*B[(0, 0, 0, 0)]
+        - ((q*u^2-q)/(-q*u^6+1))*B[(1/2, 1/2, -1/2, -1/2)]
+        - ((q*u^2-q)/(-q*u^6+1))*B[(1/2, 1/2, -1/2, 1/2)]
+        - ((q*u^2-q)/(-q*u^6+1))*B[(1/2, 1/2, 1/2, -1/2)]
+        - ((q*u^2-q)/(-q*u^6+1))*B[(1/2, 1/2, 1/2, 1/2)]
+        + ((q*u^2-q)/(q*u^6-1))*B[(1, 0, 0, 0)] + B[(1, 1, 0, 0)]
+        - ((q*u^2-q)/(-q*u^6+1))*B[(0, 1, 0, 0)]
         sage: E[L0((1,-1,0,0))]                 # long time (23s)
         ((q^3*u^18-q^3*u^16+q*u^4-q^2*u^2-2*q*u^2+q^2+q)/(q^3*u^18-q^2*u^12-q*u^6+1))*B[(0, 0, 0, 0)]
-        + ((-q^3*u^18+q^3*u^16+q*u^2-q)/(-q^3*u^18+q^2*u^12+q*u^6-1))*B[(1/2, -1/2, -1/2, -1/2)]
-        + ((-q^3*u^18+q^3*u^16+q*u^2-q)/(-q^3*u^18+q^2*u^12+q*u^6-1))*B[(1/2, -1/2, -1/2, 1/2)]
+        - ((q^3*u^18-q^3*u^16-q*u^2+q)/(-q^3*u^18+q^2*u^12+q*u^6-1))*B[(1/2, -1/2, -1/2, -1/2)]
+        - ((q^3*u^18-q^3*u^16-q*u^2+q)/(-q^3*u^18+q^2*u^12+q*u^6-1))*B[(1/2, -1/2, -1/2, 1/2)]
         + ((q^3*u^18-q^3*u^16-q*u^2+q)/(q^3*u^18-q^2*u^12-q*u^6+1))*B[(1/2, -1/2, 1/2, -1/2)]
         + ((q^3*u^18-q^3*u^16-q*u^2+q)/(q^3*u^18-q^2*u^12-q*u^6+1))*B[(1/2, -1/2, 1/2, 1/2)]
         + ((q*u^8-q*u^6-q*u^2+q)/(q^3*u^18-q^2*u^12-q*u^6+1))*B[(1/2, 1/2, -1/2, -1/2)]
         + ((q*u^8-q*u^6-q*u^2+q)/(q^3*u^18-q^2*u^12-q*u^6+1))*B[(1/2, 1/2, -1/2, 1/2)]
-        + ((-q*u^8+q*u^6+q*u^2-q)/(-q^3*u^18+q^2*u^12+q*u^6-1))*B[(1/2, 1/2, 1/2, -1/2)]
-        + ((-q*u^8+q*u^6+q*u^2-q)/(-q^3*u^18+q^2*u^12+q*u^6-1))*B[(1/2, 1/2, 1/2, 1/2)]
-        + ((-q^2*u^18+q^2*u^16-q*u^8+q*u^6+q*u^2+u^2-q-1)/(-q^3*u^18+q^2*u^12+q*u^6-1))*B[(1, 0, 0, 0)]
-        + B[(1, -1, 0, 0)] + ((-u^2+1)/(-q^2*u^12+1))*B[(1, 1, 0, 0)]
-        + ((-u^2+1)/(-q^2*u^12+1))*B[(1, 0, -1, 0)]
+        - ((q*u^8-q*u^6-q*u^2+q)/(-q^3*u^18+q^2*u^12+q*u^6-1))*B[(1/2, 1/2, 1/2, -1/2)]
+        - ((q*u^8-q*u^6-q*u^2+q)/(-q^3*u^18+q^2*u^12+q*u^6-1))*B[(1/2, 1/2, 1/2, 1/2)]
+        - ((q^2*u^18-q^2*u^16+q*u^8-q*u^6-q*u^2-u^2+q+1)/(-q^3*u^18+q^2*u^12+q*u^6-1))*B[(1, 0, 0, 0)]
+        + B[(1, -1, 0, 0)] - ((u^2-1)/(-q^2*u^12+1))*B[(1, 1, 0, 0)]
+        - ((u^2-1)/(-q^2*u^12+1))*B[(1, 0, -1, 0)]
         + ((u^2-1)/(q^2*u^12-1))*B[(1, 0, 1, 0)]
-        + ((-u^2+1)/(-q^2*u^12+1))*B[(1, 0, 0, -1)]
-        + ((-u^2+1)/(-q^2*u^12+1))*B[(1, 0, 0, 1)]
-        + ((-q*u^2+q)/(-q*u^6+1))*B[(0, -1, 0, 0)]
-        + ((-q*u^4+2*q*u^2-q)/(-q^3*u^18+q^2*u^12+q*u^6-1))*B[(0, 1, 0, 0)]
-        + ((-q*u^4+2*q*u^2-q)/(-q^3*u^18+q^2*u^12+q*u^6-1))*B[(0, 0, -1, 0)]
-        + ((-q*u^4+2*q*u^2-q)/(-q^3*u^18+q^2*u^12+q*u^6-1))*B[(0, 0, 1, 0)]
-        + ((-q*u^4+2*q*u^2-q)/(-q^3*u^18+q^2*u^12+q*u^6-1))*B[(0, 0, 0, -1)]
-        + ((-q*u^4+2*q*u^2-q)/(-q^3*u^18+q^2*u^12+q*u^6-1))*B[(0, 0, 0, 1)]
+        - ((u^2-1)/(-q^2*u^12+1))*B[(1, 0, 0, -1)]
+        - ((u^2-1)/(-q^2*u^12+1))*B[(1, 0, 0, 1)]
+        - ((q*u^2-q)/(-q*u^6+1))*B[(0, -1, 0, 0)]
+        - ((q*u^4-2*q*u^2+q)/(-q^3*u^18+q^2*u^12+q*u^6-1))*B[(0, 1, 0, 0)]
+        - ((q*u^4-2*q*u^2+q)/(-q^3*u^18+q^2*u^12+q*u^6-1))*B[(0, 0, -1, 0)]
+        - ((q*u^4-2*q*u^2+q)/(-q^3*u^18+q^2*u^12+q*u^6-1))*B[(0, 0, 1, 0)]
+        - ((q*u^4-2*q*u^2+q)/(-q^3*u^18+q^2*u^12+q*u^6-1))*B[(0, 0, 0, -1)]
+        - ((q*u^4-2*q*u^2+q)/(-q^3*u^18+q^2*u^12+q*u^6-1))*B[(0, 0, 0, 1)]
 
     Next we test a twisted type (checked against Maple computation by
     Bogdan Ion for `q_1=t^2` and `q_2=-1`)::
@@ -574,13 +571,13 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         + ((q1+q2)/(q*q1+q2))*B[(0, 0, -1)] + ((q1+q2)/(q*q1+q2))*B[(0, 0, 1)]
 
         sage: E[omega[2]]
-        ((-q1*q2^3-q2^4)/(q*q1^4-q2^4))*B[(1, 0, 0)] + B[(0, 1, 0)]
+        -((q1*q2^3+q2^4)/(q*q1^4-q2^4))*B[(1, 0, 0)] + B[(0, 1, 0)]
 
         sage: E[-omega[2]]
         ((q^2*q1^7+q^2*q1^6*q2-q1*q2^6-q2^7)/(q^3*q1^7-q^2*q1^5*q2^2+q*q1^2*q2^5-q2^7))*B[(1, 0, 0)]
         + B[(0, -1, 0)]
         + ((q*q1^5*q2^2+q*q1^4*q2^3-q1*q2^6-q2^7)/(q^3*q1^7-q^2*q1^5*q2^2+q*q1^2*q2^5-q2^7))*B[(0, 1, 0)]
-        + ((-q1*q2-q2^2)/(q*q1^2-q2^2))*B[(0, 0, -1)]
+        - ((q1*q2+q2^2)/(q*q1^2-q2^2))*B[(0, 0, -1)]
         + ((q1*q2+q2^2)/(-q*q1^2+q2^2))*B[(0, 0, 1)]
 
         sage: E[-omega[1]-omega[2]]
@@ -588,7 +585,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         + B[(-1, -1, 0)]
         + ((q*q1^4+q*q1^3*q2+q1*q2^3+q2^4)/(q^3*q1^4+q^2*q1^3*q2+q*q1*q2^3+q2^4))*B[(-1, 1, 0)]
         + ((q1+q2)/(q*q1+q2))*B[(-1, 0, -1)]
-        + ((-q1-q2)/(-q*q1-q2))*B[(-1, 0, 1)]
+        - ((q1+q2)/(-q*q1-q2))*B[(-1, 0, 1)]
         + ((q*q1^4+q*q1^3*q2+q1*q2^3+q2^4)/(q^3*q1^4+q^2*q1^3*q2+q*q1*q2^3+q2^4))*B[(1, -1, 0)]
         + ((q^2*q1^6+q^2*q1^5*q2+q*q1^5*q2-q*q1^3*q2^3-q1^5*q2-q1^4*q2^2+q1^3*q2^3+q1^2*q2^4-q1*q2^5-q2^6)/(q^4*q1^6+q^3*q1^5*q2-q^3*q1^4*q2^2+q*q1^2*q2^4-q*q1*q2^5-q2^6))*B[(1, 1, 0)]
         + ((q*q1^4+2*q*q1^3*q2+q*q1^2*q2^2-q1^3*q2-q1^2*q2^2+q1*q2^3+q2^4)/(q^3*q1^4+q^2*q1^3*q2+q*q1*q2^3+q2^4))*B[(1, 0, -1)]
@@ -602,17 +599,17 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         ((q^3*q1^7+q^3*q1^6*q2-q*q1*q2^6-q*q2^7)/(q^3*q1^7-q^2*q1^5*q2^2+q*q1^2*q2^5-q2^7))*B[(0, 0, 0)]
         + B[(1, -1, 0)]
         + ((q*q1^5*q2^2+q*q1^4*q2^3-q1*q2^6-q2^7)/(q^3*q1^7-q^2*q1^5*q2^2+q*q1^2*q2^5-q2^7))*B[(1, 1, 0)]
-        + ((-q1*q2-q2^2)/(q*q1^2-q2^2))*B[(1, 0, -1)]
+        - ((q1*q2+q2^2)/(q*q1^2-q2^2))*B[(1, 0, -1)]
         + ((q1*q2+q2^2)/(-q*q1^2+q2^2))*B[(1, 0, 1)]
 
         sage: E[omega[3]]
-        ((-q1*q2^2-q2^3)/(-q*q1^3-q2^3))*B[(1, 0, 0)]
-        + ((-q1*q2^2-q2^3)/(-q*q1^3-q2^3))*B[(0, 1, 0)] + B[(0, 0, 1)]
+        -((q1*q2^2+q2^3)/(-q*q1^3-q2^3))*B[(1, 0, 0)]
+        - ((q1*q2^2+q2^3)/(-q*q1^3-q2^3))*B[(0, 1, 0)] + B[(0, 0, 1)]
 
         sage: E[-omega[3]]
         ((q*q1^4*q2+q*q1^3*q2^2-q1*q2^4-q2^5)/(-q^2*q1^5-q2^5))*B[(1, 0, 0)]
         + ((q*q1^4*q2+q*q1^3*q2^2-q1*q2^4-q2^5)/(-q^2*q1^5-q2^5))*B[(0, 1, 0)]
-        + B[(0, 0, -1)] + ((-q1*q2^4-q2^5)/(-q^2*q1^5-q2^5))*B[(0, 0, 1)]
+        + B[(0, 0, -1)] - ((q1*q2^4+q2^5)/(-q^2*q1^5-q2^5))*B[(0, 0, 1)]
 
     .. RUBRIC:: Comparison with the energy function of crystals
 
@@ -776,18 +773,18 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: omega = L0.fundamental_weights()
 
         sage: E[omega[1]]
-        ((-q*t^4+q*t^2)/(-q*t^6+1))*B[(0, 0)] + B[(1, 0)]
+        -((q*t^4-q*t^2)/(-q*t^6+1))*B[(0, 0)] + B[(1, 0)]
         sage: E[omega[2]]
         B[(1/2, 1/2)]
         sage: E[-omega[1]]
-        ((-q^2*t^8+q^2*t^6-q*t^6+2*q*t^4-q*t^2+t^2-1)/(-q^3*t^8+q^2*t^6+q*t^2-1))*B[(0, 0)]
-        + B[(-1, 0)] + ((-q*t^8+q*t^6+t^2-1)/(-q^3*t^8+q^2*t^6+q*t^2-1))*B[(1, 0)]
-        + ((-t^2+1)/(-q*t^2+1))*B[(0, -1)] + ((t^2-1)/(q*t^2-1))*B[(0, 1)]
+        -((q^2*t^8-q^2*t^6+q*t^6-2*q*t^4+q*t^2-t^2+1)/(-q^3*t^8+q^2*t^6+q*t^2-1))*B[(0, 0)]
+        + B[(-1, 0)] - ((q*t^8-q*t^6-t^2+1)/(-q^3*t^8+q^2*t^6+q*t^2-1))*B[(1, 0)]
+        - ((t^2-1)/(-q*t^2+1))*B[(0, -1)] + ((t^2-1)/(q*t^2-1))*B[(0, 1)]
         sage: E[L0([0,1])]
-        ((-q*t^4+q*t^2)/(-q*t^4+1))*B[(0, 0)] + ((-t^2+1)/(-q*t^4+1))*B[(1, 0)] + B[(0, 1)]
+        -((q*t^4-q*t^2)/(-q*t^4+1))*B[(0, 0)] - ((t^2-1)/(-q*t^4+1))*B[(1, 0)] + B[(0, 1)]
         sage: E[L0([1,1])]
-        ((q*t^2-q)/(q*t^2-1))*B[(0, 0)] + ((-q*t^2+q)/(-q*t^2+1))*B[(1, 0)]
-        + B[(1, 1)] + ((-q*t^2+q)/(-q*t^2+1))*B[(0, 1)]
+        ((q*t^2-q)/(q*t^2-1))*B[(0, 0)] - ((q*t^2-q)/(-q*t^2+1))*B[(1, 0)]
+        + B[(1, 1)] - ((q*t^2-q)/(-q*t^2+1))*B[(0, 1)]
 
         sage: E = NonSymmetricMacdonaldPolynomials(["A",2,1], q=q,q1=t,q2=-1/t)
         sage: L0 = E.keys()
@@ -809,7 +806,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E._T_Y[0] ( KL0.monomial(L0.zero()) )
         t*B[(0)]
         sage: E._T_Y[0] ( KL0.monomial(-e[0]))
-        ((-t^2+1)/(q*t))*B[(0)] + 1/(q^2*t)*B[(1)]
+        -((t^2-1)/(q*t))*B[(0)] + 1/(q^2*t)*B[(1)]
 
         sage: Y = E.Y()
         sage: alphacheck = Y.keys().simple_roots()
@@ -856,20 +853,21 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E[0*omega[1]]
         B[(0, 0)]
         sage: E[omega[1]]
-        ((-q*q1*q2^3-q*q2^4)/(q^2*q1^4-q2^4))*B[(0, 0)] + B[(1, 0)]
+        -((q*q1*q2^3+q*q2^4)/(q^2*q1^4-q2^4))*B[(0, 0)] + B[(1, 0)]
 
         sage: E[2*omega[2]]  # not checked against Bogdan's notes, but a good self-consistency test  # long time
-        ((-q^12*q1^6-q^12*q1^5*q2+2*q^10*q1^5*q2+5*q^10*q1^4*q2^2+3*q^10*q1^3*q2^3+2*q^8*q1^5*q2+4*q^8*q1^4*q2^2+q^8*q1^3*q2^3-q^8*q1^2*q2^4+q^8*q1*q2^5+q^8*q2^6-q^6*q1^3*q2^3+q^6*q1^2*q2^4+4*q^6*q1*q2^5+2*q^6*q2^6+q^4*q1^3*q2^3+3*q^4*q1^2*q2^4+4*q^4*q1*q2^5+2*q^4*q2^6)/(-q^12*q1^6-q^10*q1^5*q2-q^8*q1^3*q2^3+q^6*q1^4*q2^2-q^6*q1^2*q2^4+q^4*q1^3*q2^3+q^2*q1*q2^5+q2^6))*B[(0, 0)]
+        -((q^12*q1^6+q^12*q1^5*q2-2*q^10*q1^5*q2-5*q^10*q1^4*q2^2-3*q^10*q1^3*q2^3-2*q^8*q1^5*q2-4*q^8*q1^4*q2^2-q^8*q1^3*q2^3+q^8*q1^2*q2^4-q^8*q1*q2^5-q^8*q2^6+q^6*q1^3*q2^3-q^6*q1^2*q2^4-4*q^6*q1*q2^5-2*q^6*q2^6-q^4*q1^3*q2^3-3*q^4*q1^2*q2^4-4*q^4*q1*q2^5-2*q^4*q2^6)/(-q^12*q1^6-q^10*q1^5*q2-q^8*q1^3*q2^3+q^6*q1^4*q2^2-q^6*q1^2*q2^4+q^4*q1^3*q2^3+q^2*q1*q2^5+q2^6))*B[(0, 0)]
         + ((q^7*q1^2*q2+2*q^7*q1*q2^2+q^7*q2^3+q^5*q1^2*q2+2*q^5*q1*q2^2+q^5*q2^3)/(-q^8*q1^3-q^6*q1^2*q2+q^2*q1*q2^2+q2^3))*B[(-1, 0)]
-        + ((-q^6*q1*q2-q^6*q2^2)/(q^6*q1^2-q2^2))*B[(-1, -1)]
+        - ((q^6*q1*q2+q^6*q2^2)/(q^6*q1^2-q2^2))*B[(-1, -1)]
         + ((q^6*q1^2*q2+2*q^6*q1*q2^2+q^6*q2^3+q^4*q1^2*q2+2*q^4*q1*q2^2+q^4*q2^3)/(-q^8*q1^3-q^6*q1^2*q2+q^2*q1*q2^2+q2^3))*B[(-1, 1)]
-        + ((-q^3*q1*q2-q^3*q2^2)/(q^6*q1^2-q2^2))*B[(-1, 2)]
-        + ((q^7*q1^3+q^7*q1^2*q2-q^7*q1*q2^2-q^7*q2^3-2*q^5*q1^2*q2-4*q^5*q1*q2^2-2*q^5*q2^3-2*q^3*q1^2*q2-4*q^3*q1*q2^2-2*q^3*q2^3)/(q^8*q1^3+q^6*q1^2*q2-q^2*q1*q2^2-q2^3))*B[(1, 0)] + ((q^6*q1^2*q2+2*q^6*q1*q2^2+q^6*q2^3+q^4*q1^2*q2+2*q^4*q1*q2^2+q^4*q2^3)/(-q^8*q1^3-q^6*q1^2*q2+q^2*q1*q2^2+q2^3))*B[(1, -1)]
+        - ((q^3*q1*q2+q^3*q2^2)/(q^6*q1^2-q2^2))*B[(-1, 2)]
+        + ((q^7*q1^3+q^7*q1^2*q2-q^7*q1*q2^2-q^7*q2^3-2*q^5*q1^2*q2-4*q^5*q1*q2^2-2*q^5*q2^3-2*q^3*q1^2*q2-4*q^3*q1*q2^2-2*q^3*q2^3)/(q^8*q1^3+q^6*q1^2*q2-q^2*q1*q2^2-q2^3))*B[(1, 0)]
+        + ((q^6*q1^2*q2+2*q^6*q1*q2^2+q^6*q2^3+q^4*q1^2*q2+2*q^4*q1*q2^2+q^4*q2^3)/(-q^8*q1^3-q^6*q1^2*q2+q^2*q1*q2^2+q2^3))*B[(1, -1)]
         + ((q^8*q1^3+q^8*q1^2*q2+q^6*q1^3+q^6*q1^2*q2-q^6*q1*q2^2-q^6*q2^3-2*q^4*q1^2*q2-4*q^4*q1*q2^2-2*q^4*q2^3-q^2*q1^2*q2-3*q^2*q1*q2^2-2*q^2*q2^3)/(q^8*q1^3+q^6*q1^2*q2-q^2*q1*q2^2-q2^3))*B[(1, 1)]
         + ((q^5*q1^2+q^5*q1*q2-q^3*q1*q2-q^3*q2^2-q*q1*q2-q*q2^2)/(q^6*q1^2-q2^2))*B[(1, 2)]
-        + ((-q^6*q1^2-q^6*q1*q2+q^4*q1*q2+q^4*q2^2+q^2*q1*q2+q^2*q2^2)/(-q^6*q1^2+q2^2))*B[(2, 0)]
-        + ((-q^3*q1*q2-q^3*q2^2)/(q^6*q1^2-q2^2))*B[(2, -1)]
-        + ((-q^5*q1^2-q^5*q1*q2+q^3*q1*q2+q^3*q2^2+q*q1*q2+q*q2^2)/(-q^6*q1^2+q2^2))*B[(2, 1)]
+        - ((q^6*q1^2+q^6*q1*q2-q^4*q1*q2-q^4*q2^2-q^2*q1*q2-q^2*q2^2)/(-q^6*q1^2+q2^2))*B[(2, 0)]
+        - ((q^3*q1*q2+q^3*q2^2)/(q^6*q1^2-q2^2))*B[(2, -1)]
+        - ((q^5*q1^2+q^5*q1*q2-q^3*q1*q2-q^3*q2^2-q*q1*q2-q*q2^2)/(-q^6*q1^2+q2^2))*B[(2, 1)]
         + B[(2, 2)]
         + ((q^7*q1^2*q2+2*q^7*q1*q2^2+q^7*q2^3+q^5*q1^2*q2+2*q^5*q1*q2^2+q^5*q2^3)/(-q^8*q1^3-q^6*q1^2*q2+q^2*q1*q2^2+q2^3))*B[(0, -1)]
         + ((q^7*q1^3+q^7*q1^2*q2-q^7*q1*q2^2-q^7*q2^3-2*q^5*q1^2*q2-4*q^5*q1*q2^2-2*q^5*q2^3-2*q^3*q1^2*q2-4*q^3*q1*q2^2-2*q^3*q2^3)/(q^8*q1^3+q^6*q1^2*q2-q^2*q1*q2^2-q2^3))*B[(0, 1)]
@@ -891,11 +889,11 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: Ye1(KL0.one())
         q1^2/q2^2*B[(0, 0)]
         sage: Ye2(KL0.one())
-        ((-q1)/q2)*B[(0, 0)]
+        -q1/q2*B[(0, 0)]
         sage: Yalpha0(KL0.one())
         q2^2/(q*q1^2)*B[(0, 0)]
         sage: Yalpha1(KL0.one())
-        ((-q1)/q2)*B[(0, 0)]
+        -q1/q2*B[(0, 0)]
         sage: Yalpha2(KL0.one())
         q1^2/q2^2*B[(0, 0)]
 
@@ -952,11 +950,11 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: T0check_on_basis.j    # what to match it with?
         2
         sage: T0check_on_basis(KL0.basis().keys().zero())
-        ((-q1^2)/q2)*B[(1, 0)]
+        -q1^2/q2*B[(1, 0)]
 
         sage: T0check = E._T[0]
         sage: T0check(KL0.one())
-        ((-q1^2)/q2)*B[(1, 0)]
+        -q1^2/q2*B[(1, 0)]
 
 
     Systematic tests of nonsymmetric Macdonald polynomials in type
@@ -983,24 +981,24 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E.eigenvalues(_)
         [t, 1/(q*t)]
         sage: E[2*omega[1]]
-        ((-q*t+q)/(-q*t+1))*B[0] + B[2*Lambda[1]]
+        -((q*t-q)/(-q*t+1))*B[0] + B[2*Lambda[1]]
         sage: E.eigenvalues(_)
         [q*t, 1/(q^2*t)]
         sage: E[3*omega[1]]
-        ((-q^2*t+q^2)/(-q^2*t+1))*B[-Lambda[1]]
-        + ((-q^2*t+q^2-q*t+q)/(-q^2*t+1))*B[Lambda[1]] + B[3*Lambda[1]]
+        -((q^2*t-q^2)/(-q^2*t+1))*B[-Lambda[1]]
+        - ((q^2*t-q^2+q*t-q)/(-q^2*t+1))*B[Lambda[1]] + B[3*Lambda[1]]
         sage: E.eigenvalues(_)
         [q^2*t, 1/(q^3*t)]
         sage: E[4*omega[1]]
         ((q^5*t^2-q^5*t+q^4*t^2-2*q^4*t+q^3*t^2+q^4-2*q^3*t+q^3-q^2*t+q^2)/(q^5*t^2-q^3*t-q^2*t+1))*B[0]
-        + ((-q^3*t+q^3)/(-q^3*t+1))*B[-2*Lambda[1]]
-        + ((-q^3*t+q^3-q^2*t+q^2-q*t+q)/(-q^3*t+1))*B[2*Lambda[1]]
+        - ((q^3*t-q^3)/(-q^3*t+1))*B[-2*Lambda[1]]
+        - ((q^3*t-q^3+q^2*t-q^2+q*t-q)/(-q^3*t+1))*B[2*Lambda[1]]
         + B[4*Lambda[1]]
         sage: E.eigenvalues(_)
         [q^3*t, 1/(q^4*t)]
         sage: E[6*omega[1]]
-        ((-q^12*t^3+q^12*t^2-q^11*t^3+2*q^11*t^2-2*q^10*t^3-q^11*t+4*q^10*t^2-2*q^9*t^3-2*q^10*t+5*q^9*t^2-2*q^8*t^3-4*q^9*t+6*q^8*t^2-q^7*t^3+q^9-5*q^8*t+5*q^7*t^2-q^6*t^3+q^8-6*q^7*t+4*q^6*t^2+2*q^7-5*q^6*t+2*q^5*t^2+2*q^6-4*q^5*t+q^4*t^2+2*q^5-2*q^4*t+q^4-q^3*t+q^3)/(-q^12*t^3+q^9*t^2+q^8*t^2+q^7*t^2-q^5*t-q^4*t-q^3*t+1))*B[0]
-        + ((-q^5*t+q^5)/(-q^5*t+1))*B[-4*Lambda[1]]
+        -((q^12*t^3-q^12*t^2+q^11*t^3-2*q^11*t^2+2*q^10*t^3+q^11*t-4*q^10*t^2+2*q^9*t^3+2*q^10*t-5*q^9*t^2+2*q^8*t^3+4*q^9*t-6*q^8*t^2+q^7*t^3-q^9+5*q^8*t-5*q^7*t^2+q^6*t^3-q^8+6*q^7*t-4*q^6*t^2-2*q^7+5*q^6*t-2*q^5*t^2-2*q^6+4*q^5*t-q^4*t^2-2*q^5+2*q^4*t-q^4+q^3*t-q^3)/(-q^12*t^3+q^9*t^2+q^8*t^2+q^7*t^2-q^5*t-q^4*t-q^3*t+1))*B[0]
+        - ((q^5*t-q^5)/(-q^5*t+1))*B[-4*Lambda[1]]
         + ((q^9*t^2-q^9*t+q^8*t^2-2*q^8*t+q^7*t^2+q^8-2*q^7*t+q^6*t^2+q^7-2*q^6*t+q^5*t^2+q^6-2*q^5*t+q^5-q^4*t+q^4)/(q^9*t^2-q^5*t-q^4*t+1))*B[-2*Lambda[1]]
         + ((q^9*t^2-q^9*t+q^8*t^2-2*q^8*t+2*q^7*t^2+q^8-3*q^7*t+2*q^6*t^2+q^7-4*q^6*t+2*q^5*t^2+2*q^6-4*q^5*t+q^4*t^2+2*q^5-3*q^4*t+q^3*t^2+2*q^4-2*q^3*t+q^3-q^2*t+q^2)/(q^9*t^2-q^5*t-q^4*t+1))*B[2*Lambda[1]]
         + ((q^5*t-q^5+q^4*t-q^4+q^3*t-q^3+q^2*t-q^2+q*t-q)/(q^5*t-1))*B[4*Lambda[1]]
@@ -1008,7 +1006,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E.eigenvalues(_)
         [q^5*t, 1/(q^6*t)]
         sage: E[-omega[1]]
-        B[-Lambda[1]] + ((-t+1)/(-q*t+1))*B[Lambda[1]]
+        B[-Lambda[1]] - ((t-1)/(-q*t+1))*B[Lambda[1]]
         sage: E.eigenvalues(_)
         [(-1)/(-q^2*t), q*t]
 
@@ -1070,7 +1068,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: L0 = E.keys()
         sage: omega = L0.fundamental_weights()
         sage: E[2*omega[2]]
-        ((-q*q1-q*q2)/(-q*q1-q2))*B[(1, 2, 1)] + ((-q*q1-q*q2)/(-q*q1-q2))*B[(2, 1, 1)] + B[(2, 2, 0)]
+        -((q*q1+q*q2)/(-q*q1-q2))*B[(1, 2, 1)] - ((q*q1+q*q2)/(-q*q1-q2))*B[(2, 1, 1)] + B[(2, 2, 0)]
         sage: for d in range(4):                # long time (9s)
         ....:     for weight in IntegerVectors(d,3).map(list).map(L0):
         ....:         eigenvalues = E.eigenvalues(E[L0(weight)])
@@ -1093,35 +1091,35 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         [t, 1/(q*t^3), t]
 
         sage: E[-omega[1]]           # consistent with before refactoring
-        B[(-1, 0)] + ((-t+1)/(-q*t+1))*B[(1, 0)]
-        + ((-t+1)/(-q*t+1))*B[(0, -1)] + ((t-1)/(q*t-1))*B[(0, 1)]
+        B[(-1, 0)] - ((t-1)/(-q*t+1))*B[(1, 0)] - ((t-1)/(-q*t+1))*B[(0, -1)]
+        + ((t-1)/(q*t-1))*B[(0, 1)]
         sage: E.eigenvalues(_)  # not checked
         [(-1)/(-q^2*t^3), q*t, t]
         sage: E[-omega[1]+omega[2]]  # consistent with before refactoring
-        ((-t+1)/(-q*t^3+1))*B[(1, 0)] + B[(0, 1)]
+        -((t-1)/(-q*t^3+1))*B[(1, 0)] + B[(0, 1)]
         sage: E.eigenvalues(_)  # not checked
         [t, q*t^3, (-1)/(-q*t^2)]
         sage: E[omega[1]-omega[2]]   # consistent with before refactoring
-        ((-t+1)/(-q*t^2+1))*B[(1, 0)] + B[(0, -1)] + ((-t+1)/(-q*t^2+1))*B[(0, 1)]
+        -((t-1)/(-q*t^2+1))*B[(1, 0)] + B[(0, -1)] - ((t-1)/(-q*t^2+1))*B[(0, 1)]
         sage: E.eigenvalues(_)  # not checked
         [1/(q^2*t^3), 1/(q*t), q*t^2]
 
         sage: E[-omega[2]]
-        ((-q^2*t^4+q^2*t^3-q*t^3+2*q*t^2-q*t+t-1)/(-q^3*t^4+q^2*t^3+q*t-1))*B[(0, 0)]
-        + B[(-1, -1)] + ((-t+1)/(-q*t+1))*B[(-1, 1)] + ((t-1)/(q*t-1))*B[(1, -1)]
-        + ((-q*t^4+q*t^3+t-1)/(-q^3*t^4+q^2*t^3+q*t-1))*B[(1, 1)]
+        -((q^2*t^4-q^2*t^3+q*t^3-2*q*t^2+q*t-t+1)/(-q^3*t^4+q^2*t^3+q*t-1))*B[(0, 0)]
+        + B[(-1, -1)] - ((t-1)/(-q*t+1))*B[(-1, 1)] + ((t-1)/(q*t-1))*B[(1, -1)]
+        - ((q*t^4-q*t^3-t+1)/(-q^3*t^4+q^2*t^3+q*t-1))*B[(1, 1)]
         sage: E.eigenvalues(_)  # not checked   # long time (1s)
         [1/(q^3*t^3), t, q*t]
         sage: E[-omega[2]].map_coefficients(lambda c: c.subs(t=0))     # checking against crystals
         B[(0, 0)] + B[(-1, -1)] + B[(-1, 1)] + B[(1, -1)] + B[(1, 1)]
 
         sage: E[2*omega[2]]
-        ((-q^6*t^7+q^6*t^6-q^5*t^6+2*q^5*t^5-q^4*t^5-q^5*t^3+3*q^4*t^4-3*q^4*t^3+q^3*t^4+q^4*t^2-2*q^3*t^2+q^3*t-q^2*t+q^2)/(-q^6*t^7+q^5*t^6+q^4*t^4+q^3*t^4-q^3*t^3-q^2*t^3-q*t+1))*B[(0, 0)]
-        + ((-q^3*t^2+q^3*t)/(-q^3*t^3+1))*B[(-1, -1)]
-        + ((-q^3*t^3+2*q^3*t^2-q^3*t)/(-q^4*t^4+q^3*t^3+q*t-1))*B[(-1, 1)]
-        + ((-q^3*t^3+2*q^3*t^2-q^3*t)/(-q^4*t^4+q^3*t^3+q*t-1))*B[(1, -1)]
-        + ((-q^4*t^4+q^4*t^3-q^3*t^3+2*q^3*t^2-q^2*t^3-q^3*t+2*q^2*t^2-q^2*t+q*t-q)/(-q^4*t^4+q^3*t^3+q*t-1))*B[(1, 1)]
-        + ((q*t-q)/(q*t-1))*B[(2, 0)] + B[(2, 2)] + ((-q*t+q)/(-q*t+1))*B[(0, 2)]
+        -((q^6*t^7-q^6*t^6+q^5*t^6-2*q^5*t^5+q^4*t^5+q^5*t^3-3*q^4*t^4+3*q^4*t^3-q^3*t^4-q^4*t^2+2*q^3*t^2-q^3*t+q^2*t-q^2)/(-q^6*t^7+q^5*t^6+q^4*t^4+q^3*t^4-q^3*t^3-q^2*t^3-q*t+1))*B[(0, 0)]
+        - ((q^3*t^2-q^3*t)/(-q^3*t^3+1))*B[(-1, -1)]
+        - ((q^3*t^3-2*q^3*t^2+q^3*t)/(-q^4*t^4+q^3*t^3+q*t-1))*B[(-1, 1)]
+        - ((q^3*t^3-2*q^3*t^2+q^3*t)/(-q^4*t^4+q^3*t^3+q*t-1))*B[(1, -1)]
+        - ((q^4*t^4-q^4*t^3+q^3*t^3-2*q^3*t^2+q^2*t^3+q^3*t-2*q^2*t^2+q^2*t-q*t+q)/(-q^4*t^4+q^3*t^3+q*t-1))*B[(1, 1)]
+        + ((q*t-q)/(q*t-1))*B[(2, 0)] + B[(2, 2)] - ((q*t-q)/(-q*t+1))*B[(0, 2)]
         sage: E.eigenvalues(_)  # not checked
         [q^3*t^3, t, (-1)/(-q^2*t^2)]
 
@@ -1154,22 +1152,22 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E.eigenvalues(_)
         [1/(q*t^2), t, t]
         sage: E[omega[1]]
-        ((-q*t+q)/(-q*t^2+1))*B[(0, 0)] + B[(1, 0)]
+        -((q*t-q)/(-q*t^2+1))*B[(0, 0)] + B[(1, 0)]
         sage: E.eigenvalues(_)
         [q*t^2, 1/(q^2*t^3), t]
 
         sage: E[-omega[1]]
-        ((-q*t+q-t+1)/(-q^2*t+1))*B[(0, 0)] + B[(-1, 0)] + ((-t+1)/(-q^2*t+1))*B[(1, 0)]
-        + ((-t+1)/(-q^2*t+1))*B[(0, -1)] + ((t-1)/(q^2*t-1))*B[(0, 1)]
+        -((q*t-q+t-1)/(-q^2*t+1))*B[(0, 0)] + B[(-1, 0)] - ((t-1)/(-q^2*t+1))*B[(1, 0)]
+        - ((t-1)/(-q^2*t+1))*B[(0, -1)] + ((t-1)/(q^2*t-1))*B[(0, 1)]
         sage: E.eigenvalues(_)
         [(-1)/(-q^3*t^2), q^2*t, t]
         sage: E[-omega[1]+omega[2]]
-        B[(-1/2, 1/2)] + ((-t+1)/(-q^2*t^3+1))*B[(1/2, -1/2)]
-        + ((-q*t^3+q*t^2-t+1)/(-q^2*t^3+1))*B[(1/2, 1/2)]
+        B[(-1/2, 1/2)] - ((t-1)/(-q^2*t^3+1))*B[(1/2, -1/2)]
+        - ((q*t^3-q*t^2+t-1)/(-q^2*t^3+1))*B[(1/2, 1/2)]
         sage: E.eigenvalues(_)
         [(-1)/(-q^2*t^2), q^2*t^3, (-1)/(-q*t)]
         sage: E[omega[1]-omega[2]]
-        B[(1/2, -1/2)] + ((-t+1)/(-q*t^2+1))*B[(1/2, 1/2)]
+        B[(1/2, -1/2)] - ((t-1)/(-q*t^2+1))*B[(1/2, 1/2)]
         sage: E.eigenvalues(_)
         [t, 1/(q^2*t^3), q*t^2]
 
@@ -1234,7 +1232,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E[0*omega[1]]
         B[(0, 0)]
         sage: E[omega[1]]
-        ((-q^2*q1^3*q2-q^2*q1^2*q2^2)/(q^2*q1^4-q2^4))*B[(0, 0)] + B[(1, 0)]
+        -((q^2*q1^3*q2+q^2*q1^2*q2^2)/(q^2*q1^4-q2^4))*B[(0, 0)] + B[(1, 0)]
         sage: Eomega1 = (KL.one() * (q^2*(-q1/q2)^2*(1-(-q1/q2))) / (1-q^2*(-q1/q2)^4)
         ....:             + KL.monomial(omega[1]))
         sage: E[omega[1]] == Eomega1
@@ -1272,7 +1270,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         ....:     assert Tinv2(T[2](x)) == x and T[2](Tinv2(x)) == x
 
         sage: start = E[omega[1]]; start
-        ((-q^2*q1^3*q2-q^2*q1^2*q2^2)/(q^2*q1^4-q2^4))*B[(0, 0)] + B[(1, 0)]
+        -((q^2*q1^3*q2+q^2*q1^2*q2^2)/(q^2*q1^4-q2^4))*B[(0, 0)] + B[(1, 0)]
         sage: Tinv1(Tinv2(Tinv1(Tinv0(Tinv1(Tinv2(Tinv1(Tinv0(start)))))))) * (q1*q2)^4/q^2 == Y0(start)
         True
         sage: Y0(start) == q^2*q1^4/q2^4 * start
@@ -1684,8 +1682,8 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
             of the affine weight lattice
             sage: E[2*omega[2]]                                                         # needs sage.libs.gap
             ((q^2*q1^2+q^2*q1*q2)/(q^2*q1^2-q2^2))*B[(0, 0)]
-            + ((-q^2*q1^2-q^2*q1*q2)/(-q^2*q1^2+q2^2))*B[(1, 0)] + B[(1, 1)]
-            + ((-q^2*q1^2-q^2*q1*q2)/(-q^2*q1^2+q2^2))*B[(0, 1)]
+            - ((q^2*q1^2+q^2*q1*q2)/(-q^2*q1^2+q2^2))*B[(1, 0)] + B[(1, 1)]
+            - ((q^2*q1^2+q^2*q1*q2)/(-q^2*q1^2+q2^2))*B[(0, 1)]
         """
         muaff = self._L.embed_at_level(mu, 0)
         if not all(muaff.scalar(coroot) in ZZ for coroot in self._L.simple_coroots()):
@@ -1908,14 +1906,44 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
             sage: E = NonSymmetricMacdonaldPolynomials(['C',3,1], q, v, -1/v)
             sage: om = E.L0().fundamental_weights()
             sage: E.symmetric_macdonald_polynomial(om[1]+om[2])
-            B[(-2, -1, 0)] + B[(-2, 1, 0)] + B[(-2, 0, -1)] + B[(-2, 0, 1)] + ((4*q^3*v^14+2*q^2*v^14-2*q^3*v^12+2*q^2*v^12-2*q^3*v^10+q*v^12-5*q^2*v^10-5*q*v^4+q^2*v^2-2*v^4+2*q*v^2-2*v^2+2*q+4)/(q^3*v^14-q^2*v^10-q*v^4+1))*B[(-1, 0, 0)] + B[(-1, -2, 0)] + ((2*q*v^4+v^4-q*v^2+v^2-q-2)/(q*v^4-1))*B[(-1, -1, -1)] + ((2*q*v^4+v^4-q*v^2+v^2-q-2)/(q*v^4-1))*B[(-1, -1, 1)] + ((2*q*v^4+v^4-q*v^2+v^2-q-2)/(q*v^4-1))*B[(-1, 1, -1)] + ((2*q*v^4+v^4-q*v^2+v^2-q-2)/(q*v^4-1))*B[(-1, 1, 1)] + B[(-1, 2, 0)] + B[(-1, 0, -2)] + B[(-1, 0, 2)] + ((4*q^3*v^14+2*q^2*v^14-2*q^3*v^12+2*q^2*v^12-2*q^3*v^10+q*v^12-5*q^2*v^10-5*q*v^4+q^2*v^2-2*v^4+2*q*v^2-2*v^2+2*q+4)/(q^3*v^14-q^2*v^10-q*v^4+1))*B[(1, 0, 0)] + B[(1, -2, 0)] + ((2*q*v^4+v^4-q*v^2+v^2-q-2)/(q*v^4-1))*B[(1, -1, -1)] + ((2*q*v^4+v^4-q*v^2+v^2-q-2)/(q*v^4-1))*B[(1, -1, 1)] + ((2*q*v^4+v^4-q*v^2+v^2-q-2)/(q*v^4-1))*B[(1, 1, -1)] + ((2*q*v^4+v^4-q*v^2+v^2-q-2)/(q*v^4-1))*B[(1, 1, 1)] + B[(1, 2, 0)] + B[(1, 0, -2)] + B[(1, 0, 2)] + B[(2, -1, 0)] + B[(2, 1, 0)] + B[(2, 0, -1)] + B[(2, 0, 1)] + B[(0, -2, -1)] + B[(0, -2, 1)] + ((-4*q^3*v^14-2*q^2*v^14+2*q^3*v^12-2*q^2*v^12+2*q^3*v^10-q*v^12+5*q^2*v^10+5*q*v^4-q^2*v^2+2*v^4-2*q*v^2+2*v^2-2*q-4)/(-q^3*v^14+q^2*v^10+q*v^4-1))*B[(0, -1, 0)] + B[(0, -1, -2)] + B[(0, -1, 2)] + ((-4*q^3*v^14-2*q^2*v^14+2*q^3*v^12-2*q^2*v^12+2*q^3*v^10-q*v^12+5*q^2*v^10+5*q*v^4-q^2*v^2+2*v^4-2*q*v^2+2*v^2-2*q-4)/(-q^3*v^14+q^2*v^10+q*v^4-1))*B[(0, 1, 0)] + B[(0, 1, -2)] + B[(0, 1, 2)] + B[(0, 2, -1)] + B[(0, 2, 1)] + ((4*q^3*v^14+2*q^2*v^14-2*q^3*v^12+2*q^2*v^12-2*q^3*v^10+q*v^12-5*q^2*v^10-5*q*v^4+q^2*v^2-2*v^4+2*q*v^2-2*v^2+2*q+4)/(q^3*v^14-q^2*v^10-q*v^4+1))*B[(0, 0, -1)] + ((4*q^3*v^14+2*q^2*v^14-2*q^3*v^12+2*q^2*v^12-2*q^3*v^10+q*v^12-5*q^2*v^10-5*q*v^4+q^2*v^2-2*v^4+2*q*v^2-2*v^2+2*q+4)/(q^3*v^14-q^2*v^10-q*v^4+1))*B[(0, 0, 1)]
+            B[(-2, -1, 0)] + B[(-2, 1, 0)] + B[(-2, 0, -1)] + B[(-2, 0, 1)]
+            + ((4*q^3*v^14+2*q^2*v^14-2*q^3*v^12+2*q^2*v^12-2*q^3*v^10+q*v^12-5*q^2*v^10-5*q*v^4+q^2*v^2-2*v^4+2*q*v^2-2*v^2+2*q+4)/(q^3*v^14-q^2*v^10-q*v^4+1))*B[(-1, 0, 0)]
+            + B[(-1, -2, 0)] + ((2*q*v^4+v^4-q*v^2+v^2-q-2)/(q*v^4-1))*B[(-1, -1, -1)]
+            + ((2*q*v^4+v^4-q*v^2+v^2-q-2)/(q*v^4-1))*B[(-1, -1, 1)] + ((2*q*v^4+v^4-q*v^2+v^2-q-2)/(q*v^4-1))*B[(-1, 1, -1)]
+            + ((2*q*v^4+v^4-q*v^2+v^2-q-2)/(q*v^4-1))*B[(-1, 1, 1)] + B[(-1, 2, 0)] + B[(-1, 0, -2)] + B[(-1, 0, 2)]
+            + ((4*q^3*v^14+2*q^2*v^14-2*q^3*v^12+2*q^2*v^12-2*q^3*v^10+q*v^12-5*q^2*v^10-5*q*v^4+q^2*v^2-2*v^4+2*q*v^2-2*v^2+2*q+4)/(q^3*v^14-q^2*v^10-q*v^4+1))*B[(1, 0, 0)] + B[(1, -2, 0)]
+            + ((2*q*v^4+v^4-q*v^2+v^2-q-2)/(q*v^4-1))*B[(1, -1, -1)]
+            + ((2*q*v^4+v^4-q*v^2+v^2-q-2)/(q*v^4-1))*B[(1, -1, 1)]
+            + ((2*q*v^4+v^4-q*v^2+v^2-q-2)/(q*v^4-1))*B[(1, 1, -1)]
+            + ((2*q*v^4+v^4-q*v^2+v^2-q-2)/(q*v^4-1))*B[(1, 1, 1)] + B[(1, 2, 0)] + B[(1, 0, -2)] + B[(1, 0, 2)]
+            + B[(2, -1, 0)] + B[(2, 1, 0)] + B[(2, 0, -1)] + B[(2, 0, 1)] + B[(0, -2, -1)] + B[(0, -2, 1)]
+            - ((4*q^3*v^14+2*q^2*v^14-2*q^3*v^12+2*q^2*v^12-2*q^3*v^10+q*v^12-5*q^2*v^10-5*q*v^4+q^2*v^2-2*v^4+2*q*v^2-2*v^2+2*q+4)/(-q^3*v^14+q^2*v^10+q*v^4-1))*B[(0, -1, 0)]
+            + B[(0, -1, -2)]
+            + B[(0, -1, 2)]
+            - ((4*q^3*v^14+2*q^2*v^14-2*q^3*v^12+2*q^2*v^12-2*q^3*v^10+q*v^12-5*q^2*v^10-5*q*v^4+q^2*v^2-2*v^4+2*q*v^2-2*v^2+2*q+4)/(-q^3*v^14+q^2*v^10+q*v^4-1))*B[(0, 1, 0)]
+            + B[(0, 1, -2)] + B[(0, 1, 2)] + B[(0, 2, -1)] + B[(0, 2, 1)]
+            + ((4*q^3*v^14+2*q^2*v^14-2*q^3*v^12+2*q^2*v^12-2*q^3*v^10+q*v^12-5*q^2*v^10-5*q*v^4+q^2*v^2-2*v^4+2*q*v^2-2*v^2+2*q+4)/(q^3*v^14-q^2*v^10-q*v^4+1))*B[(0, 0, -1)]
+            + ((4*q^3*v^14+2*q^2*v^14-2*q^3*v^12+2*q^2*v^12-2*q^3*v^10+q*v^12-5*q^2*v^10-5*q*v^4+q^2*v^2-2*v^4+2*q*v^2-2*v^2+2*q+4)/(q^3*v^14-q^2*v^10-q*v^4+1))*B[(0, 0, 1)]
 
         An example for type `G`::
 
             sage: E = NonSymmetricMacdonaldPolynomials(['G',2,1], q, v, -1/v)
             sage: om = E.L0().fundamental_weights()
             sage: E.symmetric_macdonald_polynomial(2*om[1])
-            ((3*q^6*v^22+3*q^5*v^22-3*q^6*v^20+q^4*v^22-4*q^5*v^20+q^4*v^18-q^5*v^16+q^3*v^18-2*q^4*v^16+q^5*v^14-q^3*v^16+q^4*v^14-4*q^4*v^12+q^2*v^14+q^5*v^10-8*q^3*v^12+4*q^4*v^10-4*q^2*v^12+8*q^3*v^10-q*v^12-q^4*v^8+4*q^2*v^10-q^2*v^8+q^3*v^6-q*v^8+2*q^2*v^6-q^3*v^4+q*v^6-q^2*v^4+4*q*v^2-q^2+3*v^2-3*q-3)/(q^6*v^22-q^5*v^20-q^4*v^12-q^3*v^12+q^3*v^10+q^2*v^10+q*v^2-1))*B[(0, 0, 0)] + ((q*v^2+v^2-q-1)/(q*v^2-1))*B[(-2, 1, 1)] + B[(-2, 2, 0)] + B[(-2, 0, 2)] + ((-q*v^2-v^2+q+1)/(-q*v^2+1))*B[(-1, -1, 2)] + ((2*q^4*v^12+2*q^3*v^12-2*q^4*v^10-2*q^3*v^10+q^2*v^8-q^3*v^6+q*v^8-2*q^2*v^6+q^3*v^4-q*v^6+q^2*v^4-2*q*v^2-2*v^2+2*q+2)/(q^4*v^12-q^3*v^10-q*v^2+1))*B[(-1, 1, 0)] + ((-q*v^2-v^2+q+1)/(-q*v^2+1))*B[(-1, 2, -1)] + ((2*q^4*v^12+2*q^3*v^12-2*q^4*v^10-2*q^3*v^10+q^2*v^8-q^3*v^6+q*v^8-2*q^2*v^6+q^3*v^4-q*v^6+q^2*v^4-2*q*v^2-2*v^2+2*q+2)/(q^4*v^12-q^3*v^10-q*v^2+1))*B[(-1, 0, 1)] + ((-q*v^2-v^2+q+1)/(-q*v^2+1))*B[(1, -2, 1)] + ((-2*q^4*v^12-2*q^3*v^12+2*q^4*v^10+2*q^3*v^10-q^2*v^8+q^3*v^6-q*v^8+2*q^2*v^6-q^3*v^4+q*v^6-q^2*v^4+2*q*v^2+2*v^2-2*q-2)/(-q^4*v^12+q^3*v^10+q*v^2-1))*B[(1, -1, 0)] + ((-q*v^2-v^2+q+1)/(-q*v^2+1))*B[(1, 1, -2)] + ((-2*q^4*v^12-2*q^3*v^12+2*q^4*v^10+2*q^3*v^10-q^2*v^8+q^3*v^6-q*v^8+2*q^2*v^6-q^3*v^4+q*v^6-q^2*v^4+2*q*v^2+2*v^2-2*q-2)/(-q^4*v^12+q^3*v^10+q*v^2-1))*B[(1, 0, -1)] + B[(2, -2, 0)] + ((q*v^2+v^2-q-1)/(q*v^2-1))*B[(2, -1, -1)] + B[(2, 0, -2)] + B[(0, -2, 2)] + ((-2*q^4*v^12-2*q^3*v^12+2*q^4*v^10+2*q^3*v^10-q^2*v^8+q^3*v^6-q*v^8+2*q^2*v^6-q^3*v^4+q*v^6-q^2*v^4+2*q*v^2+2*v^2-2*q-2)/(-q^4*v^12+q^3*v^10+q*v^2-1))*B[(0, -1, 1)] + ((2*q^4*v^12+2*q^3*v^12-2*q^4*v^10-2*q^3*v^10+q^2*v^8-q^3*v^6+q*v^8-2*q^2*v^6+q^3*v^4-q*v^6+q^2*v^4-2*q*v^2-2*v^2+2*q+2)/(q^4*v^12-q^3*v^10-q*v^2+1))*B[(0, 1, -1)] + B[(0, 2, -2)]
+            ((3*q^6*v^22+3*q^5*v^22-3*q^6*v^20+q^4*v^22-4*q^5*v^20+q^4*v^18-q^5*v^16+q^3*v^18-2*q^4*v^16+q^5*v^14-q^3*v^16+q^4*v^14-4*q^4*v^12+q^2*v^14+q^5*v^10-8*q^3*v^12+4*q^4*v^10-4*q^2*v^12+8*q^3*v^10-q*v^12-q^4*v^8+4*q^2*v^10-q^2*v^8+q^3*v^6-q*v^8+2*q^2*v^6-q^3*v^4+q*v^6-q^2*v^4+4*q*v^2-q^2+3*v^2-3*q-3)/(q^6*v^22-q^5*v^20-q^4*v^12-q^3*v^12+q^3*v^10+q^2*v^10+q*v^2-1))*B[(0, 0, 0)]
+            + ((q*v^2+v^2-q-1)/(q*v^2-1))*B[(-2, 1, 1)] + B[(-2, 2, 0)] + B[(-2, 0, 2)]
+            - ((q*v^2+v^2-q-1)/(-q*v^2+1))*B[(-1, -1, 2)]
+            + ((2*q^4*v^12+2*q^3*v^12-2*q^4*v^10-2*q^3*v^10+q^2*v^8-q^3*v^6+q*v^8-2*q^2*v^6+q^3*v^4-q*v^6+q^2*v^4-2*q*v^2-2*v^2+2*q+2)/(q^4*v^12-q^3*v^10-q*v^2+1))*B[(-1, 1, 0)]
+            - ((q*v^2+v^2-q-1)/(-q*v^2+1))*B[(-1, 2, -1)]
+            + ((2*q^4*v^12+2*q^3*v^12-2*q^4*v^10-2*q^3*v^10+q^2*v^8-q^3*v^6+q*v^8-2*q^2*v^6+q^3*v^4-q*v^6+q^2*v^4-2*q*v^2-2*v^2+2*q+2)/(q^4*v^12-q^3*v^10-q*v^2+1))*B[(-1, 0, 1)]
+            - ((q*v^2+v^2-q-1)/(-q*v^2+1))*B[(1, -2, 1)]
+            - ((2*q^4*v^12+2*q^3*v^12-2*q^4*v^10-2*q^3*v^10+q^2*v^8-q^3*v^6+q*v^8-2*q^2*v^6+q^3*v^4-q*v^6+q^2*v^4-2*q*v^2-2*v^2+2*q+2)/(-q^4*v^12+q^3*v^10+q*v^2-1))*B[(1, -1, 0)]
+            - ((q*v^2+v^2-q-1)/(-q*v^2+1))*B[(1, 1, -2)]
+            - ((2*q^4*v^12+2*q^3*v^12-2*q^4*v^10-2*q^3*v^10+q^2*v^8-q^3*v^6+q*v^8-2*q^2*v^6+q^3*v^4-q*v^6+q^2*v^4-2*q*v^2-2*v^2+2*q+2)/(-q^4*v^12+q^3*v^10+q*v^2-1))*B[(1, 0, -1)]
+            + B[(2, -2, 0)] + ((q*v^2+v^2-q-1)/(q*v^2-1))*B[(2, -1, -1)] + B[(2, 0, -2)] + B[(0, -2, 2)]
+            - ((2*q^4*v^12+2*q^3*v^12-2*q^4*v^10-2*q^3*v^10+q^2*v^8-q^3*v^6+q*v^8-2*q^2*v^6+q^3*v^4-q*v^6+q^2*v^4-2*q*v^2-2*v^2+2*q+2)/(-q^4*v^12+q^3*v^10+q*v^2-1))*B[(0, -1, 1)]
+            + ((2*q^4*v^12+2*q^3*v^12-2*q^4*v^10-2*q^3*v^10+q^2*v^8-q^3*v^6+q*v^8-2*q^2*v^6+q^3*v^4-q*v^6+q^2*v^4-2*q*v^2-2*v^2+2*q+2)/(q^4*v^12-q^3*v^10-q*v^2+1))*B[(0, 1, -1)]
+            + B[(0, 2, -2)]
         """
         if self.cartan_type().classical() != mu.parent().cartan_type() or not mu.is_dominant():
             raise ValueError("%s must be a dominant weight for the classical subrootsystem of %s" % (mu, self.cartan_type()))

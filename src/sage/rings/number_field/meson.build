@@ -1,5 +1,6 @@
 py.install_sources(
   'S_unit_solver.py',
+  '__init__.py',
   'all.py',
   'bdd_height.py',
   'class_group.py',
@@ -37,13 +38,18 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, cysignals, gmp]
+  if name == 'totallyreal'
+    deps += [cypari2]
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/rings/number_field',
     install: true,
     include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_rings],
-    dependencies: [py_dep, cypari2, cysignals, flint, gmp, mpfi, mpfr, ntl],
+    dependencies: deps,
   )
 endforeach
 

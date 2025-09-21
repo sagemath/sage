@@ -404,7 +404,7 @@ class AbelianGroupAutomorphismGroup_gap(CachedRepresentation,
         """
         if not isinstance(G, AbelianGroupAutomorphismGroup_gap):
             raise ValueError("input must be an instance of AbelianGroup_gap")
-        if not self.ambient() is G.ambient():
+        if self.ambient() is not G.ambient():
             return False
         return G.gap().IsSubsemigroup(self).sage()
 

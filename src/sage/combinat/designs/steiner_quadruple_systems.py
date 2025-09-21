@@ -1,5 +1,5 @@
 r"""
-Steiner Quadruple Systems
+Steiner quadruple systems
 
 A Steiner Quadruple System on `n` points is a family `SQS_n \subset \binom {[n]}
 4` of `4`-sets, such that any set `S\subset [n]` of size three is a subset of
@@ -540,7 +540,7 @@ def P(alpha, m):
             return pairs
 
 
-def _missing_pair(n,l):
+def _missing_pair(n, l):
     r"""
     Return the smallest `(x,x+1)` that is not contained in `l`.
 

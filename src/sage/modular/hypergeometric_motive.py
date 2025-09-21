@@ -355,16 +355,16 @@ def cyclotomic_to_gamma(cyclo_up, cyclo_down) -> dict:
         sage: cyclotomic_to_gamma([6], [1])
         {2: -1, 3: -1, 6: 1}
     """
-    dico = defaultdict(int)
+    dico: dict[int, int] = defaultdict(int)
     for d in cyclo_up:
         dico[d] += 1
     for d in cyclo_down:
         dico[d] -= 1
 
-    resu = defaultdict(int)
+    resu: dict[int, int] = defaultdict(int)
     for n in dico:
         for d in divisors(n):
-            resu[d] += moebius(n / d) * dico[n]
+            resu[d] += moebius(n // d) * dico[n]
 
     return {d: resu[d] for d in resu if resu[d]}
 
@@ -399,7 +399,7 @@ def gamma_list_to_cyclotomic(galist):
         sage: gamma_list_to_cyclotomic([8, 2, 2, 2, -6, -4, -3, -1])
         ([2, 2, 8], [3, 3, 6])
     """
-    resu = defaultdict(int)
+    resu: dict[int, int] = defaultdict(int)
     for n in galist:
         eps = sgn(n)
         for d in divisors(abs(n)):
@@ -685,7 +685,7 @@ class HypergeometricData:
         Count ``alpha``'s at most ``x`` minus ``beta``'s at most ``x``.
 
         This function is used to compute the weight and the Hodge numbers.
-        With `flip_beta` set to ``True``, replace each `b` in `\beta`
+        With ``flip_beta`` set to ``True``, replace each `b` in `\beta`
         with `1-b`.
 
         .. SEEALSO::
@@ -824,7 +824,7 @@ class HypergeometricData:
         alpha = [(x, 'a') for x in self._alpha]
         beta = [(x, 'b') for x in self._beta]
         height = 0
-        hodge = defaultdict(int)
+        hodge: dict[int, int] = defaultdict(int)
         for x, letter in sorted(alpha + beta):
             if letter == 'a':
                 hodge[height] += 1
@@ -1317,7 +1317,7 @@ class HypergeometricData:
         If left unspecified, `prec` is set to the minimum `p`-adic precision
         needed to recover the Euler factor.
 
-        If `cache_p` is ``True``, then the function caches an intermediate
+        If ``cache_p`` is ``True``, then the function caches an intermediate
         result which depends only on `p` and `f`. This leads to a significant
         speedup when iterating over `t`.
 
@@ -1423,7 +1423,7 @@ class HypergeometricData:
         if q > 2 ** 31:
             raise ValueError("p^f cannot exceed 2^31")
 
-        m = defaultdict(int)
+        m: dict[int, int] = defaultdict(int)
         for b in beta:
             u = b * (q - 1)
             if u.is_integer():
@@ -1701,7 +1701,7 @@ class HypergeometricData:
             return ZZ.one()
         q = p ** f
         prec = ceil(deg*(self.weight()+1-mul)/2 + log(2*d + 1, p))
-        k = (q-1) // mo
+        k = (q - 1) // mo
         flip = (f == 1 and prec == 1)
         gtab_prec, gtab = self.gauss_table(p, f, prec)
         try:
@@ -1711,7 +1711,8 @@ class HypergeometricData:
         M = self.M_value()
         teich = p_ring.teichmuller(M / t0)
         m = {r: self._beta.count(QQ((r, q - 1))) for r in range(q - 1)}
-        D = -min(self.zigzag(x, flip_beta=True) for x in self._alpha + self._beta)
+        D = -min(self.zigzag(x, flip_beta=True)
+                 for x in self._alpha + self._beta)
         gamma = self.gamma_array()
         l = []
         for j in range(mo):
@@ -1724,13 +1725,15 @@ class HypergeometricData:
                     ct += gv * sum(r1.digits(p))
                     term *= p_ring(gtab[r1]) ** (-gv if flip else gv)
                 ct //= p - 1
-                term *= ZZ(-1) ** ct
+                term *= ZZ(-1)**ct
                 ct += f * (D + m[0] - m[r])
                 l.append(term * p**ct)
-        traces = [0 if j % f else sum(i ** (j//f) for i in l) for j in range(1,d+1)]
+        traces = [0 if j % f else sum(i**(j // f) for i in l)
+                  for j in range(1, d + 1)]
         R = IntegerModRing(p**prec)
         traces = [R(i).lift_centered() for i in traces]
-        return characteristic_polynomial_from_traces(traces, d, p, 0, 1, deg, use_fe=False)
+        return characteristic_polynomial_from_traces(traces, d, p, 0, 1,
+                                                     deg, use_fe=False)
 
     @cached_method
     def euler_factor(self, t, p, deg=None, cache_p=False):
@@ -1933,13 +1936,13 @@ class HypergeometricData:
         P = PolynomialRing(ZZ, 'T')
         if t.numerator() % p == 0 or t.denominator() % p == 0:
             ans = P.one()
-            for m in set(j for i in self.cyclotomic_data() for j in i):
+            for m in {j for i in self.cyclotomic_data() for j in i}:
                 ans *= self.euler_factor_tame_contribution(t, p, m, deg)
             if deg is not None:
                 ans = ans.truncate(deg + 1)
             return ans
         # now p is good, or p is tame and t is a p-adic unit
-        elif (t-1) % p == 0:
+        elif (t - 1) % p == 0:
             typ = "mult"
             d = self.degree() - 1
             if d % 2:

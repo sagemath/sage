@@ -1,20 +1,36 @@
-bliss = cc.find_library('bliss', required: false, disabler: true)
-mcqd = cc.find_library('mcqd', required: false, disabler: true)
-cliquer = cc.find_library('cliquer')
+bliss = cc.find_library('bliss', required: get_option('bliss'), disabler: true)
 
-# Cannot be found via pkg-config
-planarity = cc.find_library('planarity')
+mcqd = disabler()
+if cc.has_header('mcqd.h', required: get_option('mcqd'))
+  # mcqd is a header-only library
+  mcqd = declare_dependency()
+endif
+
+cliquer = dependency('libcliquer', required: false, disabler: true)
+if not cliquer.found()
+  # fallback for older versions without pkg-config
+  cliquer = cc.find_library('cliquer', required: not is_windows, disabler: true)
+endif
+
+planarity = dependency('libplanarity', required: false, disabler: true)
+if not planarity.found()
+  # fallback for older versions without pkg-config
+  planarity = cc.find_library(
+    'planarity',
+    required: not is_windows,
+    disabler: true,
+  )
+endif
 
 py.install_sources(
+  '__init__.py',
   'all.py',
-  'all__sagemath_bliss.py',
-  'all__sagemath_mcqd.py',
-  'all__sagemath_tdlib.py',
   'bipartite_graph.py',
   'cliquer.pxd',
   'cographs.py',
   'connectivity.pxd',
   'convexity_properties.pxd',
+  'cycle_enumeration.py',
   'digraph.py',
   'digraph_generators.py',
   'distances_all_pairs.pxd',
@@ -36,6 +52,7 @@ py.install_sources(
   'isgci.py',
   'lovasz_theta.py',
   'matching.py',
+  'matching_covered_graph.py',
   'mcqd.pxd',
   'orientations.py',
   'partial_cube.py',
@@ -43,7 +60,6 @@ py.install_sources(
   'print_graphs.py',
   'schnyder.py',
   'traversals.pxd',
-  'trees.pxd',
   'tutte_polynomial.py',
   subdir: 'sage/graphs',
 )
@@ -68,7 +84,6 @@ extension_data = {
   'planarity' : files('planarity.pyx'),
   'spanning_tree' : files('spanning_tree.pyx'),
   'strongly_regular_db' : files('strongly_regular_db.pyx'),
-  'trees' : files('trees.pyx'),
   'views' : files('views.pyx'),
   'weakly_chordal' : files('weakly_chordal.pyx'),
 }

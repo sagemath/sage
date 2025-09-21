@@ -660,7 +660,7 @@ class TermOrder(SageObject):
             sage: R.<x,y,z> = PolynomialRing(QQ, order=T)
             sage: R._singular_()                                                        # needs sage.libs.singular
             polynomial ring, over a field, global ordering
-            // coefficients: QQ
+            // coefficients: QQ...
             // number of vars : 3
             //        block   1 : ordering dp
             //                  : names    x y z
@@ -676,7 +676,7 @@ class TermOrder(SageObject):
             False
             sage: S._singular_()                                                        # needs sage.libs.singular
             polynomial ring, over a field, global ordering
-            // coefficients: QQ
+            // coefficients: QQ...
             // number of vars : 3
             //        block   1 : ordering C
             //        block   2 : ordering dp
@@ -1211,7 +1211,7 @@ class TermOrder(SageObject):
             n += len(block)
         return key
 
-    def greater_tuple_matrix(self,f,g):
+    def greater_tuple_matrix(self, f, g):
         """
         Return the greater exponent tuple with respect to the matrix
         term order.
@@ -1240,7 +1240,7 @@ class TermOrder(SageObject):
                 return g
         return g
 
-    def greater_tuple_lex(self,f,g):
+    def greater_tuple_lex(self, f, g):
         """
         Return the greater exponent tuple with respect to the
         lexicographical term order.
@@ -1262,7 +1262,7 @@ class TermOrder(SageObject):
         """
         return f > g and f or g
 
-    def greater_tuple_invlex(self,f,g):
+    def greater_tuple_invlex(self, f, g):
         """
         Return the greater exponent tuple with respect to the inversed
         lexicographical term order.
@@ -1286,7 +1286,7 @@ class TermOrder(SageObject):
         """
         return f.reversed() > g.reversed() and f or g
 
-    def greater_tuple_deglex(self,f,g):
+    def greater_tuple_deglex(self, f, g):
         """
         Return the greater exponent tuple with respect to the total degree
         lexicographical term order.
@@ -1312,7 +1312,7 @@ class TermOrder(SageObject):
         sg = sum(g.nonzero_values(sort=False))
         return ( sf > sg or ( sf == sg and f > g )) and f or g
 
-    def greater_tuple_degrevlex(self,f,g):
+    def greater_tuple_degrevlex(self, f, g):
         """
         Return the greater exponent tuple with respect to the total degree
         reversed lexicographical term order.
@@ -1338,7 +1338,7 @@ class TermOrder(SageObject):
         sg = sum(g.nonzero_values(sort=False))
         return ( sf > sg or ( sf == sg and f.reversed() < g.reversed() )) and f or g
 
-    def greater_tuple_negdegrevlex(self,f,g):
+    def greater_tuple_negdegrevlex(self, f, g):
         """
         Return the greater exponent tuple with respect to the negative
         degree reverse lexicographical term order.
@@ -1367,7 +1367,7 @@ class TermOrder(SageObject):
         sg = sum(g.nonzero_values(sort=False))
         return ( sf < sg or ( sf == sg and f.reversed() < g.reversed() )) and f or g
 
-    def greater_tuple_negdeglex(self,f,g):
+    def greater_tuple_negdeglex(self, f, g):
         """
         Return the greater exponent tuple with respect to the negative
         degree lexicographical term order.
@@ -1396,7 +1396,7 @@ class TermOrder(SageObject):
         sg = sum(g.nonzero_values(sort=False))
         return ( sf < sg or ( sf == sg and f > g )) and f or g
 
-    def greater_tuple_degneglex(self,f,g):
+    def greater_tuple_degneglex(self, f, g):
         """
         Return the greater exponent tuple with respect to the degree negative
         lexicographical term order.
@@ -1422,7 +1422,7 @@ class TermOrder(SageObject):
         sg = sum(g.nonzero_values(sort=False))
         return ( sf > sg or ( sf == sg and f < g )) and f or g
 
-    def greater_tuple_neglex(self,f,g):
+    def greater_tuple_neglex(self, f, g):
         """
         Return the greater exponent tuple with respect to the negative
         lexicographical term order.
@@ -1447,7 +1447,7 @@ class TermOrder(SageObject):
         """
         return (f < g) and f or g
 
-    def greater_tuple_wdeglex(self,f,g):
+    def greater_tuple_wdeglex(self, f, g):
         """
         Return the greater exponent tuple with respect to the weighted degree
         lexicographical term order.
@@ -1474,7 +1474,7 @@ class TermOrder(SageObject):
         sg = sum(l*r for (l,r) in zip(g,self._weights))
         return (sf > sg or ( sf == sg and f > g )) and f or g
 
-    def greater_tuple_wdegrevlex(self,f,g):
+    def greater_tuple_wdegrevlex(self, f, g):
         """
         Return the greater exponent tuple with respect to the weighted degree
         reverse lexicographical term order.
@@ -1501,7 +1501,7 @@ class TermOrder(SageObject):
         sg = sum(l*r for (l,r) in zip(g,self._weights))
         return (sf > sg or ( sf == sg and f.reversed() < g.reversed())) and f or g
 
-    def greater_tuple_negwdeglex(self,f,g):
+    def greater_tuple_negwdeglex(self, f, g):
         """
         Return the greater exponent tuple with respect to the negative
         weighted degree lexicographical term order.
@@ -1531,7 +1531,7 @@ class TermOrder(SageObject):
         sg = sum(l*r for (l,r) in zip(g,self._weights))
         return (sf < sg or ( sf == sg and f > g )) and f or g
 
-    def greater_tuple_negwdegrevlex(self,f,g):
+    def greater_tuple_negwdegrevlex(self, f, g):
         """
         Return the greater exponent tuple with respect to the negative
         weighted degree reverse lexicographical term order.
@@ -1561,7 +1561,7 @@ class TermOrder(SageObject):
         sg = sum(l*r for (l,r) in zip(g,self._weights))
         return (sf < sg or ( sf == sg and f.reversed() < g.reversed() )) and f or g
 
-    def greater_tuple_block(self, f,g):
+    def greater_tuple_block(self, f, g):
         """
         Return the greater exponent tuple with respect to the block
         order as specified when constructing this element.
@@ -1661,8 +1661,8 @@ class TermOrder(SageObject):
             '(lp(3),Dp(5),lp(2))'
             sage: P._singular_()                                                        # needs sage.libs.singular
             polynomial ring, over a field, global ordering
-            //   coefficients: ZZ/127
-            //   number of vars : 10
+            // coefficients: ZZ/127...
+            // number of vars : 10
             //        block   1 : ordering lp
             //                  : names    x0 x1 x2
             //        block   2 : ordering Dp
@@ -1687,8 +1687,8 @@ class TermOrder(SageObject):
             '(a(1:2),ls(2),a(1:2),ls(2))'
             sage: P._singular_()                                                        # needs sage.libs.singular
             polynomial ring, over a field, global ordering
-            //   coefficients: QQ
-            //   number of vars : 4
+            // coefficients: QQ...
+            // number of vars : 4
             //        block   1 : ordering a
             //                  : names    x0 x1
             //                  : weights   1  1
@@ -1709,7 +1709,7 @@ class TermOrder(SageObject):
             sage: P = PolynomialRing(QQ, 4, names='x', order=T)
             sage: P._singular_()                                                        # needs sage.libs.singular
             polynomial ring, over a field, global ordering
-            // coefficients: QQ
+            // coefficients: QQ...
             // number of vars : 4
             //        block   1 : ordering C
             //        block   2 : ordering a
@@ -1727,7 +1727,7 @@ class TermOrder(SageObject):
             sage: P = PolynomialRing(QQ, 4, names='y', order=T)
             sage: P._singular_()                                                        # needs sage.libs.singular
             polynomial ring, over a field, global ordering
-            // coefficients: QQ
+            // coefficients: QQ...
             // number of vars : 4
             //        block   1 : ordering c
             //        block   2 : ordering a
@@ -1745,7 +1745,7 @@ class TermOrder(SageObject):
             sage: P = PolynomialRing(QQ, 4, names='z', order=T)
             sage: P._singular_()                                                        # needs sage.libs.singular
             polynomial ring, over a field, global ordering
-            // coefficients: QQ
+            // coefficients: QQ...
             // number of vars : 4
             //        block   1 : ordering a
             //                  : names    z0 z1
@@ -2183,7 +2183,7 @@ def termorder_from_singular(S):
         sage: # needs sage.libs.singular
         sage: singular.ring(0, '(x,y,z,w)', '(C,dp(2),lp(2))')
         polynomial ring, over a field, global ordering
-        // coefficients: QQ
+        // coefficients: QQ...
         // number of vars : 4
         //        block   1 : ordering C
         //        block   2 : ordering dp
@@ -2201,7 +2201,7 @@ def termorder_from_singular(S):
         sage: # needs sage.libs.singular
         sage: singular.ring(0, '(x,y,z,w)', '(c,dp(2),lp(2))')
         polynomial ring, over a field, global ordering
-        // coefficients: QQ
+        // coefficients: QQ...
         // number of vars : 4
         //        block   1 : ordering c
         //        block   2 : ordering dp

@@ -1,5 +1,6 @@
 py.install_sources(
   'SJT.py',
+  '__init__.py',
   'abstract_tree.py',
   'affine_permutation.py',
   'algebraic_combinatorics.py',
@@ -86,6 +87,7 @@ py.install_sources(
   'ranker.py',
   'recognizable_series.py',
   'regular_sequence.py',
+  'regular_sequence_bounded.py',
   'restricted_growth.py',
   'ribbon.py',
   'ribbon_shaped_tableau.py',
@@ -145,13 +147,18 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, cysignals, gmp]
+  if name == 'enumeration_mod_permgroup'
+    deps += [gap]
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/combinat',
     install: true,
     include_directories: [inc_cpython, inc_data_structures, inc_rings],
-    dependencies: [py_dep, cysignals, gmp],
+    dependencies: deps,
   )
 endforeach
 

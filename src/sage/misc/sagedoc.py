@@ -694,7 +694,7 @@ def format(s, embedded=False):
     We check that the todo Sphinx extension is correctly activated::
 
         sage: sage.misc.sagedoc.format(sage.combinat.ranker.on_fly.__doc__)             # needs sphinx
-        "   Return ...  Todo: add tests as in combinat::rankers\n"
+        "...Return ...Todo: add tests as in combinat::rankers\n"
 
     In the following use case, the ``nodetex`` directive would have been ignored prior
     to :issue:`11815`::
@@ -1135,10 +1135,11 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
     The following produces an error because the string 'fetch(' is a
     malformed regular expression::
 
-        sage: print(search_src(" fetch(", "def", interact=False))
-        Traceback (most recent call last):
-        ...
-        error: missing ), unterminated subpattern at position 6
+        sage: try:
+        ....:     print(search_src(" fetch(", "def", interact=False))
+        ....: except Exception as e:
+        ....:     print(e)
+        missing ), unterminated subpattern at position 6
 
     To fix this, *escape* the parenthesis with a backslash::
 
@@ -1186,7 +1187,6 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
         misc/sagedoc.py:... len(search_src("matrix", interact=False).splitlines())...
         misc/sagedoc.py:... len(search_src("matrix", module="sage.calculus", interact=False).splitlines())...
         misc/sagedoc.py:... len(search_src("matrix", path_re="calc"...
-        misc/sagedoc.py:... print(search_src(" fetch(", "def", interact=False))...
         misc/sagedoc.py:... print(search_src(r" fetch\(", "def", interact=False))...
         misc/sagedoc.py:... print(search_src(r" fetch\(", "def", "pyx", interact=False))...
         misc/sagedoc.py:... s = search_src('Matrix', path_re='matrix', interact=False); s.find('x') > 0...
@@ -1456,7 +1456,7 @@ class _sage_doc:
         sage: browse_sage_doc._open("reference", testing=True)[0]                       # needs sagemath_doc_html
         'http://localhost:8000/doc/live/reference/index.html'
         sage: browse_sage_doc(identity_matrix, 'rst')[-107:-47]                         # needs sage.modules
-        'Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring'
+        '...Full MatrixSpace of 3 by 3 sparse matrices...'
     """
     def __init__(self):
         """

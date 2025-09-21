@@ -1,11 +1,11 @@
 r"""
-Plane Partitions
+Plane partitions
 
 AUTHORS:
 
-- Jang Soo Kim (2016): Initial implementation
-- Jessica Striker (2016): Added additional methods
-- Kevin Dilks (2021): Added symmetry classes
+- Jang Soo Kim (2016): initial implementation
+- Jessica Striker (2016): added additional methods
+- Kevin Dilks (2021): added symmetry classes
 """
 # ****************************************************************************
 #       Copyright (C) 2016 Jang Soo Kim <jangsookim@skku.edu>,
@@ -139,7 +139,7 @@ class PlanePartition(ClonableArray,
                 self._max_y = 0
                 self._max_z = 0
         else:
-            (self._max_x, self._max_y, self._max_z) = self.parent()._box
+            self._max_x, self._max_y, self._max_z = self.parent()._box
 
     def __richcmp__(self, other, op):
         r"""
@@ -912,9 +912,7 @@ class PlanePartition(ClonableArray,
             sage: PlanePartition([]).is_CSPP()
             True
         """
-        if self.z_tableau() == self.y_tableau():
-            return True
-        return False
+        return self.z_tableau() == self.y_tableau()
 
     def is_TSPP(self) -> bool:
         r"""
@@ -1100,17 +1098,14 @@ class PlanePartition(ClonableArray,
             [(0, 0, 0), (0, 0, 1), (0, 1, 0), (1, 0, 0), (2, 0, 0)]
         """
         from sage.combinat.posets.poset_examples import posets
-        (a, b, c) = (self._max_x, self._max_y, self._max_z)
-        Q = posets.ProductOfChains([a, b, c])
-        count = 0
+        abc = [self._max_x, self._max_y, self._max_z]
+        Q = posets.ProductOfChains(abc)
         generate = []
         for i, row in enumerate(self):
             for j, val in enumerate(row):
                 if val > 0:
-                    generate.append((i, j, val-1))
-            count += 1
-        oi = Q.order_ideal(generate)
-        return oi
+                    generate.append((i, j, val - 1))
+        return Q.order_ideal(generate)
 
     def maximal_boxes(self) -> list:
         r"""
@@ -2180,7 +2175,7 @@ class PlanePartitions_CSPP(PlanePartitions):
 
     def from_order_ideal(self, I) -> PP:
         r"""
-        Return the cylically symmetric plane partition corresponding
+        Return the cyclically symmetric plane partition corresponding
         to an order ideal in the poset given in :meth:`to_poset`.
 
         EXAMPLES::

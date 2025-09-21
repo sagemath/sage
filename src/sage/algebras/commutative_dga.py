@@ -321,7 +321,7 @@ class Differential(UniqueRepresentation, Morphism,
                 idx += 1
         return res
 
-    def _repr_defn(self):
+    def _repr_defn(self) -> str:
         r"""
         Return a string showing where ``self`` sends each generator.
 
@@ -338,7 +338,7 @@ class Differential(UniqueRepresentation, Morphism,
         """
         return '\n'.join(f"{i} --> {self(i)}" for i in self.domain().gens())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1051,7 +1051,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
         category = Algebras(R.base_ring()).Graded().or_subcategory(category)
         QuotientRing_nc.__init__(self, R, I, names, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -1286,8 +1286,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
         if isinstance(x, sage.interfaces.abc.SingularElement):
             # self._singular_().set_ring()
-            x = self.element_class(self, x.sage_poly(self.cover_ring()))
-            return x
+            return self.element_class(self, x.sage_poly(self.cover_ring()))
 
         return self.element_class(self, x)
 
@@ -1559,7 +1558,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                     res[deg] = term
             return {i: res[i] for i in sorted(res.keys())}
 
-        def monomial_coefficients(self):
+        def monomial_coefficients(self, copy=True):
             r"""
             A dictionary that determines the element.
 
@@ -1578,7 +1577,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                 sage: sorted(elt.dict().items())
                 [((0, 1, 1, 0), -5), ((1, 1, 0, 0), 1), ((1, 2, 3, 1), 7)]
             """
-            return self.lift().monomial_coefficients()
+            return self.lift().monomial_coefficients(copy=copy)
 
         dict = monomial_coefficients
 
@@ -1788,7 +1787,7 @@ class GCAlgebra_multigraded(GCAlgebra):
         self._degrees_multi = degrees
         self._grading_rank = len(list(degrees[0]))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -2199,7 +2198,7 @@ class DifferentialGCAlgebra(GCAlgebra):
         """
         return GCAlgebra._repr_(self).replace('Graded Commutative', 'Commutative Differential Graded')
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3912,7 +3911,7 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
                        and x.degree(total=total) == y.degree(total=total))
                    for (x, y) in zip(self.domain().gens(), self.im_gens()))
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         EXAMPLES::
 
@@ -3930,7 +3929,7 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
             return "Commutative Differential Graded Algebra"
         return "Graded Commutative Algebra"
 
-    def _repr_defn(self):
+    def _repr_defn(self) -> str:
         """
         EXAMPLES::
 
@@ -4131,7 +4130,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
         """
         return hash(self._x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4141,7 +4140,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
         """
         return '[{}]'.format(self._x)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 

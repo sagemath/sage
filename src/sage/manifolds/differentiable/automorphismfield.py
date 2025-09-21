@@ -24,9 +24,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.tensor.modules.free_module_automorphism import FreeModuleAutomorphism
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
+from sage.tensor.modules.free_module_automorphism import FreeModuleAutomorphism
 
 
 class AutomorphismField(TensorField):
@@ -1168,9 +1168,9 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
             sage: b is ~a
             True
         """
+        from sage.manifolds.differentiable.vectorframe import CoordFrame
         from sage.matrix.constructor import matrix
         from sage.tensor.modules.comp import Components
-        from sage.manifolds.differentiable.vectorframe import CoordFrame
         if self._is_identity:
             return self
         if self._inverse is None:
@@ -1199,7 +1199,7 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
                 if isinstance(frame, CoordFrame):
                     chart = frame._chart
                 else:
-                    chart = self._domain._def_chart #!# to be improved
+                    chart = self._domain._def_chart  # ! # to be improved
                 try:
                     # TODO: do the computation without the 'SR' enforcement
                     mat_self = matrix(
@@ -1370,7 +1370,7 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
         if dest_map.is_identity():
             amb_point = point
         else:
-            amb_point = dest_map(point)  #  "ambient" point
+            amb_point = dest_map(point)  # "ambient" point
         ts = amb_point._manifold.tangent_space(amb_point)
         if self._is_identity:
             return ts.identity_map()

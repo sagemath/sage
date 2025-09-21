@@ -295,11 +295,13 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         raise TypeError("The polyhedron's backend should be 'normaliz'")
 
     @cached_method(do_pickle=True)
-    def ehrhart_polynomial(self, engine=None, variable='t', verbose=False, dual=None,
-            irrational_primal=None, irrational_all_primal=None, maxdet=None,
-            no_decomposition=None, compute_vertex_cones=None, smith_form=None,
-            dualization=None, triangulation=None, triangulation_max_height=None,
-            **kwds):
+    def ehrhart_polynomial(self, engine=None, variable='t', verbose=False,
+                           dual=None, irrational_primal=None,
+                           irrational_all_primal=None, maxdet=None,
+                           no_decomposition=None, compute_vertex_cones=None,
+                           smith_form=None, dualization=None,
+                           triangulation=None, triangulation_max_height=None,
+                           **kwds):
         r"""
         Return the Ehrhart polynomial of this polyhedron.
 
@@ -458,11 +460,15 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             sage: Q.ehrhart_polynomial.is_in_cache()  # optional - latte_int
             True
         """
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        from sage.rings.rational_field import QQ
+        R = PolynomialRing(QQ, variable)
+
         if self.is_empty():
-            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            from sage.rings.rational_field import QQ
-            R = PolynomialRing(QQ, variable)
             return R.zero()
+
+        if self.dimension() == 0:
+            return R.one()
 
         if not self.is_compact():
             raise ValueError("Ehrhart polynomial only defined for compact polyhedra")
@@ -582,7 +588,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         return True
 
     @cached_method
-    def has_IP_property(self):
+    def has_IP_property(self) -> bool:
         """
         Test whether the polyhedron has the IP property.
 
@@ -644,22 +650,22 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             raise ValueError('Only polytopes (compact polyhedra) are allowed.')
 
         nonzero_points = [p for p in self.integral_points() if not p.is_zero()]
-        origin = [[0]*self.ambient_dim()]
+        origin = [[0] * self.ambient_dim()]
         fibers = set()
         parent = self.parent()
 
         for points in Combinations(nonzero_points, dim):
-                plane = parent.element_class(parent, [origin,[],points], None)
-                if plane.dim() != dim:
-                    continue
-                fiber = self.intersection(plane)
-                if fiber.base_ring() is not ZZ:
-                    continue
-                fiber_vertices = tuple(sorted(tuple(v) for v in fiber.vertex_generator()))
-                if fiber_vertices not in fibers:
-                    yield fiber
-                    fibers.update([fiber_vertices])
-                plane._delete()
+            plane = parent.element_class(parent, [origin, [], points], None)
+            if plane.dim() != dim:
+                continue
+            fiber = self.intersection(plane)
+            if fiber.base_ring() is not ZZ:
+                continue
+            fiber_vertices = tuple(sorted(tuple(v) for v in fiber.vertex_generator()))
+            if fiber_vertices not in fibers:
+                yield fiber
+                fibers.update([fiber_vertices])
+            plane._delete()
 
     def find_translation(self, translated_polyhedron):
         r"""

@@ -275,7 +275,7 @@ cdef class Map(Element):
         maps::
 
             sage: phi.domain                                                            # needs sage.rings.number_field
-            <weakref at ...; to 'NumberField_quadratic_with_category' at ...>
+            <weakref at ...; to '...NumberField_quadratic_with_category' at ...>
             sage: phi._make_strong_references()                                         # needs sage.rings.number_field
             sage: print(phi.domain)                                                     # needs sage.rings.number_field
             The constant function (...) -> Number Field in a
@@ -343,7 +343,7 @@ cdef class Map(Element):
         maps::
 
             sage: phi.domain                                                            # needs sage.rings.number_field
-            <weakref at ...; to 'NumberField_quadratic_with_category' at ...>
+            <weakref at ...; to '...NumberField_quadratic_with_category' at ...>
             sage: phi._make_strong_references()                                         # needs sage.rings.number_field
             sage: print(phi.domain)                                                     # needs sage.rings.number_field
             The constant function (...) -> Number Field in a

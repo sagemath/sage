@@ -20,7 +20,7 @@ from sage.matrix.matrix_window cimport MatrixWindow
 from cysignals.signals cimport sig_on, sig_off
 
 
-def strassen_window_multiply(C, A,B, cutoff):
+def strassen_window_multiply(C, A, B, cutoff):
     """
     Multiply the submatrices specified by A and B, places result in
     C. Assumes that A and B have compatible dimensions to be
@@ -805,7 +805,7 @@ def test(n, m, R, c=2):
 
 #         TODO -- the doctests below are currently not
 #         tested/enabled/working -- enable them when linear algebra
-#         restructing gets going.
+#         restructuring gets going.
 
 #         sage: dim1 = 64; dim2 = 83; dim3 = 101
 #         sage: R = MatrixSpace(QQ, dim1, dim2)

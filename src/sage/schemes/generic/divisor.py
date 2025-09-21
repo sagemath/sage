@@ -53,7 +53,7 @@ from sage.structure.formal_sum import FormalSum
 lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
 
 
-def CurvePointToIdeal(C,P):
+def CurvePointToIdeal(C, P):
     r"""
     Return the vanishing ideal of a point on a curve.
 
@@ -69,8 +69,8 @@ def CurvePointToIdeal(C,P):
     R = A.coordinate_ring()
     n = A.ngens()
     x = A.gens()
-    polys = [ ]
-    m = n-1
+    polys = []
+    m = n - 1
     while m > 0 and P[m] == 0:
         m += -1
     if isinstance(A, ProjectiveSpace_ring):
@@ -89,8 +89,7 @@ def CurvePointToIdeal(C,P):
                 polys.append(x[i])
             else:
                 polys.append(x[i]-ai)
-    for i in range(m+1,n):
-        polys.append(x[i])
+    polys.extend(x[i] for i in range(m + 1, n))
     return R.ideal(polys)
 
 

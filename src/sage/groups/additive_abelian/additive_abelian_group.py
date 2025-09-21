@@ -363,7 +363,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class):
 
     def is_multiplicative(self):
         r"""
-        Return False since this is an additive group.
+        Return ``False`` since this is an additive group.
 
         EXAMPLES::
 

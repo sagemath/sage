@@ -225,6 +225,59 @@ class MagmaticAlgebras(Category_over_base_ring):
 
         class FiniteDimensional(CategoryWithAxiom_over_base_ring):
             class ParentMethods:
+                def to_finite_dimensional_algebra(self, names='e', assume_associative=True, assume_unital=True):
+                    r"""
+                    Return ``self`` as a :class:`sage.algebras.finite_dimensional_algebra.FiniteDimensionalAlgebra`.
+
+                    This forgets the indexing of the basis, flattening the
+                    elements into vectors.
+                    The name of the vectors can be passed via the ``names``
+                    parameter.
+
+                    To convert an element `v` of ``self`` into the
+                    ``FiniteDimensionalAlgebra`` ``F`` returned by this method,
+                    use ``F(v.to_vector())``. For the inverse direction,
+                    use ``self.from_vector(v.vector())``.
+
+                    INPUT:
+
+                    - ``names`` -- string (default: ``'e'``); names for the basis
+                      elements
+
+                    - ``assume_associative`` -- boolean (default: ``False``); if
+                      ``True``, then the category is set to ``category.Associative()``
+                      and methods requiring associativity assume this
+
+                    - ``assume_unital`` -- boolean (default: ``False``); if
+                      ``True``, then the category is set to ``category.Unital()``
+                      and methods requiring unitality assume this
+
+                    EXAMPLES::
+
+                        sage: B = DescentAlgebra(QQ,3).B()
+                        sage: list(B.basis())
+                        [B[1, 1, 1], B[1, 2], B[2, 1], B[3]]
+                        sage: B_fda = B.to_finite_dimensional_algebra(); B_fda
+                        Finite-dimensional algebra of degree 4 over Rational Field
+                        sage: e = B_fda.basis(); e
+                        Finite family {0: e0, 1: e1, 2: e2, 3: e3}
+                        sage: x = e[1] * e[2]; x
+                        e0 + e1
+                        sage: y = B[1,2] * B[2,1]; y
+                        B[1, 1, 1] + B[1, 2]
+                        sage: B_fda(y.to_vector()) == x
+                        True
+                        sage: B.from_vector(x.vector()) == y
+                        True
+                    """
+                    from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra import FiniteDimensionalAlgebra
+                    R = self.base_ring()
+                    return FiniteDimensionalAlgebra(R, [x.to_matrix(side="right").transpose()
+                                                        for x in self.basis()],
+                                                    names=names,
+                                                    assume_associative=assume_associative,
+                                                    assume_unital=assume_unital)
+
                 @cached_method
                 def derivations_basis(self):
                     r"""

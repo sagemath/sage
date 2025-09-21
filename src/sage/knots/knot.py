@@ -30,6 +30,8 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.categories.monoids import Monoids
 
 # We need Link to be first in the MRO in order to use its equality, hash, etc.
+
+
 class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A knot.
@@ -290,7 +292,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
                     crossing = i
                     break
             if not string_found:
-                for i in range(0, crossing):
+                for i in range(crossing):
                     if abs(b[i]) == string or abs(b[i]) == string - 1:
                         string_found = True
                         crossing = i

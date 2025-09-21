@@ -125,7 +125,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.real_mpfr import RealField
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 
 
 def _ex_set(p):
@@ -203,7 +203,7 @@ class GaloisRepresentation(SageObject):
         """
         return "Compatible family of Galois representations associated to the " + repr(self._E)
 
-    def __eq__(self,other):
+    def __eq__(self, other):
         r"""
         Compare two Galois representations.
         We define tho compatible families of representations
@@ -1081,7 +1081,7 @@ class GaloisRepresentation(SageObject):
         self.__image_type[p] = "The image could not be determined. Sorry."
         return self.__image_type[p]
 
-    def image_classes(self,p,bound=10000):
+    def image_classes(self, p, bound=10000):
         r"""
         This function returns, given the representation `\rho`
         a list of `p` values that add up to 1, representing the
@@ -1228,7 +1228,7 @@ class GaloisRepresentation(SageObject):
 
 # ell-adic reps
 
-    def is_unramified(self,p,ell):
+    def is_unramified(self, p, ell):
         r"""
         Return true if the Galois representation to `GL_2(\ZZ_p)` is unramified at `\ell`, i.e.
         if the inertia group at a place above `\ell` in `\text{Gal}(\bar\QQ/\QQ)` has trivial image in
@@ -1262,7 +1262,7 @@ class GaloisRepresentation(SageObject):
             raise ValueError('ell (=%s) must be prime' % ell)
         return (ell != p) and self._E.has_good_reduction(ell)
 
-    def is_unipotent(self,p,ell):
+    def is_unipotent(self, p, ell):
         r"""
         Return true if the Galois representation to `GL_2(\ZZ_p)` is unipotent at `\ell\neq p`, i.e.
         if the inertia group at a place above `\ell` in `\text{Gal}(\bar\QQ/\QQ)` maps into a Borel subgroup.
@@ -1301,7 +1301,7 @@ class GaloisRepresentation(SageObject):
             raise ValueError("unipotent is not defined for l = p, use semistable instead.")
         return not self._E.has_additive_reduction(ell)
 
-    def is_quasi_unipotent(self,p,ell):
+    def is_quasi_unipotent(self, p, ell):
         r"""
         Return true if the Galois representation to `GL_2(\ZZ_p)` is quasi-unipotent at `\ell\neq p`, i.e. if there is a finite extension `K/\QQ` such that the inertia group at a place above `\ell` in `\text{Gal}(\bar\QQ/K)` maps into a Borel subgroup.
 
@@ -1330,7 +1330,7 @@ class GaloisRepresentation(SageObject):
 
 # p-adic reps
 
-    def is_ordinary(self,p):
+    def is_ordinary(self, p):
         r"""
         Return true if the `p`-adic Galois representation to `GL_2(\ZZ_p)` is ordinary, i.e.
         if the image of the decomposition group in `\text{Gal}(\bar\QQ/\QQ)` above he prime `p` maps into
@@ -1360,7 +1360,7 @@ class GaloisRepresentation(SageObject):
             raise NotImplementedError('is_ordinary is only implemented for semi-stable representations')
         return self._E.has_multiplicative_reduction(p) or (self._E.has_good_reduction(p) and self._E.ap(p) % p != 0)
 
-    def is_crystalline(self,p):
+    def is_crystalline(self, p):
         r"""
         Return true is the `p`-adic Galois representation to `GL_2(\ZZ_p)` is crystalline.
 
@@ -1384,7 +1384,7 @@ class GaloisRepresentation(SageObject):
             raise ValueError('p (=%s) must be prime' % p)
         return self._E.has_good_reduction(p)
 
-    def is_potentially_crystalline(self,p):
+    def is_potentially_crystalline(self, p):
         r"""
         Return true is the `p`-adic Galois representation to `GL_2(\ZZ_p)` is potentially crystalline, i.e.
         if there is a finite extension `K/\QQ_p` such that the `p`-adic representation becomes crystalline.
@@ -1409,7 +1409,7 @@ class GaloisRepresentation(SageObject):
             raise ValueError('p (=%s) must be prime' % p)
         return self._E.j_invariant().valuation(p) >= 0
 
-    def is_semistable(self,p):
+    def is_semistable(self, p):
         r"""
         Return true if the `p`-adic Galois representation to `GL_2(\ZZ_p)` is semistable.
 
@@ -1435,7 +1435,7 @@ class GaloisRepresentation(SageObject):
             raise ValueError('p (=%s) must be prime' % p)
         return not self._E.has_additive_reduction(p)
 
-    def is_potentially_semistable(self,p):
+    def is_potentially_semistable(self, p):
         r"""
         Return true if the `p`-adic Galois representation to `GL_2(\ZZ_p)` is potentially semistable.
 

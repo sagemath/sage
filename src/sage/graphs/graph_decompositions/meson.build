@@ -1,12 +1,16 @@
-tdlib = cc.find_library('tdlib', required: false, disabler: true)
+tdlib = disabler()
+if cc.has_header('treedec/combinations.hpp', required: get_option('tdlib'))
+  # tdlib is a header-only library
+  tdlib = declare_dependency()
+endif
 # Cannot be found via pkg-config
-rw = cc.find_library('rw')
+rw = cc.find_library('rw', required: get_option('rankwidth'), disabler: true)
 
 py.install_sources(
+  '__init__.py',
   'all.py',
-  'all__sagemath_tdlib.py',
   'fast_digraph.pxd',
-  'modular_decomposition.py',
+  'modular_decomposition.pxd',
   'rankwidth.pxd',
   'slice_decomposition.pxd',
   'tree_decomposition.pxd',
@@ -25,19 +29,24 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, cysignals, gmp]
+  if name == 'rankwidth'
+    deps += [rw]
+  endif
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/graphs/graph_decompositions',
     install: true,
     include_directories: [inc_cpython, inc_data_structures],
-    dependencies: [py_dep, cysignals, gmp, rw],
+    dependencies: deps,
   )
 endforeach
 
 extension_data_cpp = {
   'clique_separators': files('clique_separators.pyx'),
   'slice_decomposition' : files('slice_decomposition.pyx'),
+  'modular_decomposition' : files('modular_decomposition.pyx'),
 }
 
 foreach name, pyx : extension_data_cpp
@@ -48,7 +57,7 @@ foreach name, pyx : extension_data_cpp
     install: true,
     override_options: ['cython_language=cpp'],
     include_directories: [inc_cpython, inc_data_structures],
-    dependencies: [py_dep, cysignals, gmp, rw],
+    dependencies: [py_dep, cysignals, gmp],
   )
 endforeach
 

@@ -140,7 +140,7 @@ class Gamma_class(CongruenceSubgroup):
         """
         return prod([p**(3*e-2)*(p*p-1) for (p,e) in self.level().factor()])
 
-    def _contains_sl2(self, a,b,c,d):
+    def _contains_sl2(self, a, b, c, d):
         r"""
         EXAMPLES::
 
@@ -315,7 +315,7 @@ def is_Gamma(x):
 
     EXAMPLES::
 
-        sage: from sage.modular.arithgroup.all import Gamma_class
+        sage: from sage.modular.arithgroup.congroup_gamma import Gamma_class
         sage: isinstance(Gamma0(13), Gamma_class)
         False
         sage: isinstance(Gamma(4), Gamma_class)
@@ -326,7 +326,7 @@ def is_Gamma(x):
     return isinstance(x, Gamma_class)
 
 
-def _lift_pair(U,V,N):
+def _lift_pair(U, V, N):
     r"""
     Utility function. Given integers ``U, V, N``, with `N \ge 1` and `{\rm
     gcd}(U, V, N) = 1`, return a pair `(u, v)` congruent to `(U, V) \bmod N`,

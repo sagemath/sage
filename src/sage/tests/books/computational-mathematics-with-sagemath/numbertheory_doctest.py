@@ -98,7 +98,7 @@ Sage example in ./numbertheory.tex, line 571::
 
 Sage example in ./numbertheory.tex, line 593::
 
-  sage: def harmonic_mod(n,m):
+  sage: def harmonic_mod(n, m):
   ....:     return add([1/x % m for x in range(1,n+1)])
   sage: def harmonic2(n):
   ....:     q = lcm(range(1,n+1))

@@ -35,7 +35,7 @@ from sage.structure.element import IntegralDomainElement, EuclideanDomainElement
 from sage.rings.polynomial.polynomial_singular_interface import Polynomial_singular_repr
 
 try:
-    from sage.libs.pari.all import pari_gen
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
 
@@ -128,7 +128,7 @@ class Polynomial_generic_sparse(Polynomial):
         if check:
             self.__normalize()
 
-    def monomial_coefficients(self):
+    def monomial_coefficients(self, copy=None):
         """
         Return a new copy of the dict of the underlying
         elements of ``self``.
@@ -176,10 +176,9 @@ class Polynomial_generic_sparse(Polynomial):
         """
         if sparse:
             return [self.__coeffs[e] for e in self.exponents()]
-        else:
-            zero = self.parent().base_ring().zero()
-            return [self.__coeffs[i] if i in self.__coeffs else zero
-                    for i in range(self.degree() + 1)]
+
+        zero = self.parent().base_ring().zero()
+        return [self.__coeffs.get(i, zero) for i in range(self.degree() + 1)]
 
     def exponents(self):
         """

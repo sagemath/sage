@@ -16,20 +16,22 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.cachefunc import cached_method
+from typing import Self
+
+from sage.algebras.lie_algebras.verma_module import ModulePrinting
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.monoids import Monoids
-from sage.structure.parent import Parent
-from sage.structure.indexed_generators import IndexedGenerators
-from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid, IndexedMonoid
 from sage.combinat.free_module import CombinatorialFreeModule
+from sage.data_structures.blas_dict import iaxpy
+from sage.matrix.constructor import matrix
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid, IndexedMonoid
+from sage.rings.integer_ring import ZZ
 from sage.sets.family import Family
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-from sage.matrix.constructor import matrix
-from sage.rings.integer_ring import ZZ
-from sage.data_structures.blas_dict import iaxpy
-from sage.algebras.lie_algebras.verma_module import ModulePrinting
+from sage.structure.indexed_generators import IndexedGenerators
+from sage.structure.parent import Parent
 
 
 class BGGDualModule(CombinatorialFreeModule):
@@ -172,7 +174,7 @@ class BGGDualModule(CombinatorialFreeModule):
         return self._module._repr_generator(m) + "^*"
 
     def _latex_generator(self, m):
-        """
+        r"""
         Return a latex representation of the generator indexed by ``m``.
 
         EXAMPLES::
@@ -779,7 +781,9 @@ class SimpleModuleIndices(IndexedFreeAbelianMonoid):
             P = Phi.weight_lattice()
             coroots = Phi.root_lattice().simple_coroots()
             la = P._from_dict({i: weight.scalar(ac) for i, ac in coroots.items()})
-            from sage.combinat.crystals.monomial_crystals import CrystalOfNakajimaMonomials
+            from sage.combinat.crystals.monomial_crystals import (
+                CrystalOfNakajimaMonomials,
+            )
             return CrystalOfNakajimaMonomials(la).cardinality()
         from sage.rings.infinity import infinity
         return infinity
@@ -979,7 +983,7 @@ class SimpleModule(ModulePrinting, CombinatorialFreeModule):
             raise ValueError(f"{m} does not index a basis element")
         return self._indices._basis[m]
 
-    def dual(self):
+    def dual(self) -> Self:
         r"""
         Return the dual module of ``self``, which is ``self`` since simple
         modules are self-dual.

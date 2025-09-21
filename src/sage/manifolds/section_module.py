@@ -26,13 +26,13 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.rings.infinity import infinity
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.misc.cachefunc import cached_method
 from sage.categories.modules import Modules
-from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
 from sage.manifolds.section import Section, TrivialSection
+from sage.misc.cachefunc import cached_method
+from sage.rings.infinity import infinity
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
 
 
 class SectionModule(UniqueRepresentation, Parent):
@@ -467,7 +467,7 @@ class SectionModule(UniqueRepresentation, Parent):
             sage: C0.default_frame().domain()
             Open subset U of the 3-dimensional topological manifold M
         """
-        from .local_frame import LocalFrame
+        from sage.manifolds.local_frame import LocalFrame
         if not isinstance(basis, LocalFrame):
             raise ValueError("the argument is not a local frame")
         elif not basis._domain.is_subset(self._domain):
@@ -587,7 +587,7 @@ class SectionFreeModule(FiniteRankFreeModule):
             True
             sage: TestSuite(C0).run()
         """
-        from .scalarfield import ScalarField
+        from sage.manifolds.scalarfield import ScalarField
         self._domain = domain
         name = "C^0({};{})".format(domain._name, vbundle._name)
         latex_name = r'C^0({};{})'.format(domain._latex_name,

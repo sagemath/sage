@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'constructor.py',
   'derivations.py',
@@ -11,6 +12,7 @@ py.install_sources(
   'function_field.py',
   'function_field_polymod.py',
   'function_field_rational.py',
+  'function_field_test.py',
   'ideal.py',
   'ideal_polymod.py',
   'ideal_rational.py',

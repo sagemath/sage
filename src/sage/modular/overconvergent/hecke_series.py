@@ -153,7 +153,7 @@ def low_weight_bases(N, p, m, NN, weightbound):
     return generators
 
 
-def random_low_weight_bases(N,p,m,NN,weightbound):
+def random_low_weight_bases(N, p, m, NN, weightbound):
     r"""
     Return list of random integral bases of modular forms of level `N` and
     (even) weight at most weightbound with coefficients reduced modulo
@@ -197,7 +197,7 @@ def random_low_weight_bases(N,p,m,NN,weightbound):
     return RandomLWB
 
 
-def low_weight_generators(N,p,m,NN):
+def low_weight_generators(N, p, m, NN):
     r"""
     Return a list of lists of modular forms, and an even natural number.
 
@@ -236,19 +236,15 @@ def low_weight_generators(N,p,m,NN):
         [q + 116*q^4 + 115*q^5 + 102*q^6 + 121*q^7 + 96*q^8 + 106*q^9 + O(q^10)]], 4)
     """
     M = ModularFormsRing(N, base_ring=Zmod(p))
-
     b = M.gen_forms(maxweight=8)
-
-    weightbound = max([f.weight() for f in b])
-    generators = []
-
-    for k in range(2, weightbound + 2, 2):
-        generators.append([f.qexp(NN).change_ring(Zmod(p ** m)) for f in b if f.weight() == k])
-
+    weightbound = max(f.weight() for f in b)
+    generators = [[f.qexp(NN).change_ring(Zmod(p ** m))
+                   for f in b if f.weight() == k]
+                  for k in range(2, weightbound + 2, 2)]
     return generators, weightbound
 
 
-def random_solution(B,K):
+def random_solution(B, K):
     r"""
     Return a random solution in nonnegative integers to the equation `a_1 + 2
     a_2 + 3 a_3 + ... + B a_B = K`, using a greedy algorithm.
@@ -926,7 +922,7 @@ def katz_expansions(k0, p, ellp, mdash, n):
     # deal of time). The effect is that Ep1mi = Ep1 ** (-i).
     Ep1m1 = ~Ep1
     Ep1mi = 1
-    for i in range(0,n + 1):
+    for i in range(n + 1):
         Wi,hj = compute_Wi(k0 + i * (p - 1), p, h, hj, E4, E6)
         for bis in Wi:
             eis = p ** floor(i / (p + 1)) * Ep1mi * bis
@@ -1006,7 +1002,7 @@ def level1_UpGj(p, klist, m, extra_data=False):
         kdiv = k // (p - 1)
         Gkdiv = G ** kdiv
         u = []
-        for i in range(0, ell):
+        for i in range(ell):
             ei = e[i]
             ui = Gkdiv * ei
             u.append(ui)
@@ -1018,8 +1014,8 @@ def level1_UpGj(p, klist, m, extra_data=False):
         S = e[0][0].parent()
         T = matrix(S, ell, ell)
 
-        for i in range(0, ell):
-            for j in range(0, ell):
+        for i in range(ell):
+            for j in range(ell):
                 T[i, j] = u[i][p * j]
 
         verbose("done step 5", t)
@@ -1032,10 +1028,10 @@ def level1_UpGj(p, klist, m, extra_data=False):
         A = matrix(S, ell, ell)
         verbose("solving a square matrix problem of dimension %s" % ell, t)
 
-        for i in range(0, ell):
+        for i in range(ell):
             Ti = T[i]
-            for j in range(0,ell):
-                ej = Ti.parent()([e[j][l] for l in range(0, ell)])
+            for j in range(ell):
+                ej = Ti.parent()([e[j][l] for l in range(ell)])
                 lj = ZZ(ej[j])
                 A[i, j] = S(ZZ(Ti[j]) / lj)
                 Ti = Ti - A[i, j] * ej
@@ -1051,7 +1047,7 @@ def level1_UpGj(p, klist, m, extra_data=False):
 # *** CODE FOR GENERAL LEVEL ***
 
 
-def is_valid_weight_list(klist, p):
+def is_valid_weight_list(klist, p) -> None:
     r"""
     This function checks that ``klist`` is a nonempty list of integers all of
     which are congruent modulo `(p-1)`. Otherwise, it will raise a
@@ -1079,7 +1075,7 @@ def is_valid_weight_list(klist, p):
     if len(klist) == 0:
         raise ValueError("List of weights must be non-empty")
     k0 = klist[0] % (p - 1)
-    for i in range(1,len(klist)):
+    for i in range(1, len(klist)):
         if (klist[i] % (p-1)) != k0:
             raise ValueError("List of weights must be all congruent modulo p-1 = %s, but given list contains %s and %s which are not congruent" % (p - 1, klist[0], klist[i]))
 
