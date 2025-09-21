@@ -5,8 +5,8 @@ coxeter3 = cc.find_library(
 )
 py.install_sources(
   '__init__.py',
-  'all__sagemath_coxeter3.py',
   'coxeter.pxd',
+  'coxeter.pyx',
   'coxeter_group.py',
   'decl.pxd',
   subdir: 'sage/libs/coxeter3',

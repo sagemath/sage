@@ -143,6 +143,10 @@ REFERENCES:
             quasiperiodicities in strings*,
             Theoret. Comput. Sci. 119 (1993) 247--265.
 
+.. [AE2006] Federico Ardila, Laura Escobar, *The harmonic polytope*,
+            Selecta Math. Vol. 27 (2021)
+            :doi:`10.1007/s00029-021-00687-6`, :arxiv:`2006.03078`
+
 .. [AG1988] George E. Andrews, F. G. Garvan,
             *Dyson's crank of a partition*.
             Bull. Amer. Math. Soc. (N.S.) Volume 18, Number 2 (1988),
@@ -1010,6 +1014,11 @@ REFERENCES:
             Fast Computation of Matrix-Type Padé Approximants*. SIAM J. Matrix
             Anal. Appl. 15 (1994) 804-823.
             :doi:`10.1137/S0895479892230031`
+
+.. [BecLab2000] Bernhard Beckermann, George Labahn. *Fraction-Free Computation
+                of Matrix Rational Interpolants and Matrix GCDs*. SIAM J.
+                Matrix Anal. Appl. 22 (2000) 114-144.
+                :doi:`10.1137/S0895479897326912`
 
 .. [BL1995] \W. Bosma, H.W. Lenstra: *Complete Systems of Two Addition Laws for
             Elliptic Curves*. Journal of Number Theory, volume 53, issue 2,
@@ -3808,9 +3817,15 @@ REFERENCES:
              http://code.google.com/p/graph-theory-algorithms-book/
 
 .. [JNSV2016] Claude-Pierre Jeannerod, Vincent Neiger, Eric Schost, and Gilles
-             Villard. Fast Computation of Minimal Interpolation Bases in Popov
-             Form for Arbitrary Shifts. In Proceedings ISSAC 2016 (pages
-             295-302). :doi:`10.1145/2930889.2930928`
+              Villard. *Fast Computation of Minimal Interpolation Bases in
+              Popov Form for Arbitrary Shifts*. In Proceedings ISSAC 2016
+              (pages 295-302).
+              :doi:`10.1145/2930889.2930928`
+
+.. [JNSV2017] Claude-Pierre Jeannerod, Vincent Neiger, Eric Schost, and Gilles
+              Villard. *Computing Minimal Interpolation Bases*. J. Symb.
+              Comput. 83, 2017 (pp 272--314).
+              :doi:`10.1016/j.jsc.2016.11.015`
 
 .. [Joh1990] \D.L. Johnson. *Presentations of Groups*. Cambridge
              University Press. (1990).
@@ -5239,6 +5254,9 @@ REFERENCES:
 
 .. [Mur1983] \G. E. Murphy. *The idempotents of the symmetric group
              and Nakayama's conjecture*. J. Algebra **81** (1983). 258-265.
+
+.. [Mus2023] Yossef Musleh. *Algorithms for Drinfeld Modules*. 
+             PhD thesis, University of Waterloo, 2023.
 
 .. [Muth2019] Robert Muth. *Super RSK correspondence with symmetry*.
               Electron. J. Combin. **26** (2019), no. 2, Paper 2.27, 29 pp.
@@ -6913,6 +6931,9 @@ REFERENCES:
 .. [WFYTP2008] \D. Watanable, S. Furuya, H. Yoshida, K. Takaragi, and B. Preneel,
                *A new keystream generator MUGI*; in
                FSE, (2002), pp. 179-194.
+
+.. [Wes2022] \B. Wesolowski. 2022. *Computing isogenies between finite Drinfeld modules*.
+             Cryptology ePrint Archive, Paper 2022/438. https://eprint.iacr.org/2022/438
 
 .. [Whi1932] \H. Whitney, *Congruent graphs and the connectivity of graphs*,
              American Journal of Mathematics,

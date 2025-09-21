@@ -16,7 +16,6 @@ Hasse diagrams of posets
 from __future__ import annotations
 
 from collections import deque
-from typing import Iterator
 
 from sage.arith.misc import binomial
 from sage.combinat.posets.hasse_cython import IncreasingChains
@@ -26,6 +25,10 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
 from sage.misc.rest_index_of_methods import gen_rest_table_index
 from sage.rings.integer_ring import ZZ
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 lazy_import('sage.combinat.posets.hasse_cython_flint',
             ['moebius_matrix_fast', 'coxeter_matrix_fast',
