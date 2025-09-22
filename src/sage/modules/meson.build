@@ -31,10 +31,12 @@ py.install_sources(
   'quotient_module.py',
   'real_double_vector.py',
   'submodule.py',
+  'submodule_helper.py',
   'tensor_operations.py',
   'torsion_quadratic_module.py',
   'tutorial_free_modules.py',
   'vector_callable_symbolic_dense.py',
+  'vector_cartesian_product.pyx',
   'vector_complex_double_dense.pxd',
   'vector_complex_double_dense.pyx',
   'vector_double_dense.pxd',
@@ -63,7 +65,6 @@ py.install_sources(
   'vector_space_morphism.py',
   'vector_symbolic_dense.py',
   'vector_symbolic_sparse.py',
-  'submodule_helper.py',
   subdir: 'sage/modules',
 )
 
