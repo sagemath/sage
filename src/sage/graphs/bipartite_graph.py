@@ -2345,6 +2345,8 @@ class BipartiteGraph(Graph):
             sage: B = BipartiteGraph(graphs.CycleGraph(4) * 2)
             sage: len(B.vertex_cover())                                                 # needs networkx
             4
+            sage: B.vertex_cover(value_only=True)                                       # needs networkx
+            4
 
         Empty bipartite graph and bipartite graphs without edges::
 
@@ -2376,7 +2378,7 @@ class BipartiteGraph(Graph):
                 if b.size():
                     VC.extend(b.vertex_cover(algorithm='Konig'))
             if value_only:
-                return sum(VC)
+                return len(VC)
             return VC
 
         M = Graph(self.matching())

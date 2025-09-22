@@ -5,6 +5,7 @@ py.install_sources(
   'lcalc.py',
   'pari.py',
   'sympow.py',
+  'zero_sums.pyx',
   subdir: 'sage/lfunctions',
 )
 

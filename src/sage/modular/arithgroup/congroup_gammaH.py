@@ -19,7 +19,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 #
 # #############################################################################
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.arith.functions import lcm
 from sage.arith.misc import (euler_phi, gcd, divisors, get_inverse_mod,

@@ -1003,7 +1003,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                     bad_primes.remove(p)
         return bad_primes
 
-    def is_smooth(self):
+    def is_smooth(self) -> bool:
         r"""
         Function will return the status of the smoothness of the surface.
 

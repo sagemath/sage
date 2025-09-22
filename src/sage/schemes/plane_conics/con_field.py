@@ -727,7 +727,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             return self.Hom(Y)(x, check=False)
         return super().hom(x, Y)
 
-    def is_diagonal(self):
+    def is_diagonal(self) -> bool:
         r"""
         Return ``True`` if and only if the conic has the form
         `a x^2 + b y^2 + c z^2`.
@@ -746,7 +746,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         """
         return all(self.coefficients()[i] == 0 for i in [1, 2, 4])
 
-    def is_smooth(self):
+    def is_smooth(self) -> bool:
         r"""
         Return ``True`` if and only if ``self`` is smooth.
 

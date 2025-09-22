@@ -9,6 +9,7 @@ py.install_sources(
   'generic_ds.py',
   'product_projective_ds.py',
   'projective_ds.py',
+  'projective_ds_helper.pyx',
   'wehlerK3.py',
   subdir: 'sage/dynamics/arithmetic_dynamics',
 )

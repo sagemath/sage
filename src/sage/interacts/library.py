@@ -35,7 +35,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 from sage.arith.misc import factor
 from sage.arith.srange import srange

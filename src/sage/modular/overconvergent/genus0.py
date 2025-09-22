@@ -194,7 +194,7 @@ classical) does not apply.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from typing import Iterator
+from collections.abc import Iterator
 
 import weakref
 

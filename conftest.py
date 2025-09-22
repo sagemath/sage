@@ -11,8 +11,7 @@ import doctest
 import inspect
 import sys
 import warnings
-from pathlib import Path
-from typing import Any, Iterable, Optional
+from typing import Any, Iterable, Optional, TYPE_CHECKING
 
 import pytest
 from _pytest.doctest import (
@@ -31,6 +30,9 @@ from sage.doctest.forker import (
     showwarning_with_traceback,
 )
 from sage.doctest.parsing import SageDocTestParser, SageOutputChecker
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class SageDoctestModule(DoctestModule):

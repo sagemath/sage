@@ -60,7 +60,7 @@ from subprocess import PIPE, Popen
 import pexpect
 import re
 import string
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.structure.sage_object import SageObject
 from sage.interfaces.gfan import gfan

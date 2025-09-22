@@ -19,7 +19,7 @@ This document describes how to get into a Sage worksheet in the first
 place. If you already feel comfortable with this process, or at least
 comfortable enough to see how to actually use Sage, the main content of
 the tutorials begins with :doc:`the introductory tutorial
-<Intro-Tutorial>`.
+<intro-tutorial>`.
 
 There are three main types of worksheets for Sage, all of which have
 somewhat similar behavior.
@@ -46,7 +46,7 @@ Sage you may see a screen like this.
 
 There are three actions you can take, each of which is highlighted
 in the next picture.  Note that if you have no previous worksheets,
-the third option to "export" them will not make sense.  
+the third option to "export" them will not make sense.
 
 .. image:: media/NotebookExportDetails.png
     :align: center
