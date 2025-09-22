@@ -4576,7 +4576,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         return not self._is_immutable
 
-    def is_immutable(self)-> bool:
+    def is_immutable(self) -> bool:
         """
         Return ``True`` if immutable.
 
@@ -4591,7 +4591,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         return self._is_immutable
 
-    def cone_vertices(self):
+    def cone_vertices(self) -> list:
         r"""
         Return the list of cone vertices of ``self``.
 
