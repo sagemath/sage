@@ -5,6 +5,7 @@ py.install_sources(
   'picosat.py',
   'sat_lp.py',
   'satsolver.pxd',
+  'satsolver.pyx',
   subdir: 'sage/sat/solvers',
 )
 
