@@ -3,6 +3,7 @@ py.install_sources(
   '__init__.py',
   'all.py',
   'constructor.py',
+  'hypellfrob.pyx',
   'hyperelliptic_finite_field.py',
   'hyperelliptic_g2.py',
   'hyperelliptic_generic.py',

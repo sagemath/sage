@@ -383,47 +383,47 @@ class Interface(WithEqualityById, ParentWithBase):
     # these should all be appropriately overloaded by the derived class
     ###################################################################
 
-    def _left_list_delim(self):
+    def _left_list_delim(self) -> str:
         return "["
 
-    def _right_list_delim(self):
+    def _right_list_delim(self) -> str:
         return "]"
 
-    def _left_func_delim(self):
+    def _left_func_delim(self) -> str:
         return "("
 
-    def _right_func_delim(self):
+    def _right_func_delim(self) -> str:
         return ")"
 
-    def _assign_symbol(self):
+    def _assign_symbol(self) -> str:
         return "="
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         raise NotImplementedError
 
     # For efficiency purposes, you should definitely override these
     # in your derived class.
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         try:
             return self.__true_symbol
         except AttributeError:
             self.__true_symbol = self.get('1 %s 1' % self._equality_symbol())
             return self.__true_symbol
 
-    def _false_symbol(self):
+    def _false_symbol(self) -> str:
         try:
             return self.__false_symbol
         except AttributeError:
             self.__false_symbol = self.get('1 %s 2' % self._equality_symbol())
             return self.__false_symbol
 
-    def _lessthan_symbol(self):
+    def _lessthan_symbol(self) -> str:
         return '<'
 
-    def _greaterthan_symbol(self):
+    def _greaterthan_symbol(self) -> str:
         return '>'
 
-    def _inequality_symbol(self):
+    def _inequality_symbol(self) -> str:
         return '!='
 
     def _relation_symbols(self):
@@ -445,7 +445,7 @@ class Interface(WithEqualityById, ParentWithBase):
                 operator.gt: self._greaterthan_symbol(),
                 operator.ge: ">="}
 
-    def _exponent_symbol(self):
+    def _exponent_symbol(self) -> str:
         """
         Return the symbol used to denote ``*10^`` in floats, e.g 'e' in 1.5e6.
 
