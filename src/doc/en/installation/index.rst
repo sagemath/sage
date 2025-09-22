@@ -19,6 +19,7 @@ obtaining the source code and building SageMath.
     To install SageMath from
     the `conda-forge <https://conda-forge.org/>`_ project
     you can use the following command:
+
     .. code-block:: console
 
       $ conda create -n sage sage python=3.11
