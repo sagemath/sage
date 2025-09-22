@@ -7046,6 +7046,8 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
         """
         return symmetrica.kostka_tab(self.shape, self.weight)
 
+    random_element = FiniteEnumeratedSets.ParentMethods._random_element_from_unrank
+
 
 class SemistandardTableaux_size_weight(SemistandardTableaux):
     r"""
