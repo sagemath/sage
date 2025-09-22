@@ -77,7 +77,6 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from collections.abc import Iterator
 
 from .combinat import CombinatorialElement, catalan_number
 from sage.combinat.combinatorial_map import combinatorial_map
@@ -97,6 +96,10 @@ from sage.combinat.words.word import Word
 from sage.combinat.set_partition import SetPartitions
 from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 lazy_import('sage.combinat.alternating_sign_matrix', 'AlternatingSignMatrices')
 
@@ -926,11 +929,10 @@ class DyckWord(CombinatorialElement):
         horizontal = "<line x1=\"{}\" y1=\"{}\" x2=\"{}\" y2=\"{}\"/>"
         hori_lines = []
         path = ['<polyline points=\"0,0']
-        x, y = 0, 0
+        y = 0
         max_y = 0
         last_seen_level = [0]
-        for e in self:
-            x += 1
+        for x, e in enumerate(self, start=1):
             if e == open_symbol:
                 y += 1
                 last_seen_level.append(x - 1)

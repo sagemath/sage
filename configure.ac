@@ -220,6 +220,14 @@ then
     AC_MSG_ERROR([Exiting, as the archiver 'ar' can not be found.])
 fi
 
+AC_CHECK_PROG(found_patch, patch, yes, no)
+if test x$found_patch != xyes
+then
+    AC_MSG_NOTICE([Sorry, the 'patch' command must be in the path to build AC_PACKAGE_NAME])
+    AC_MSG_NOTICE([See e.g. https://www.gnu.org/software/patch/])
+    AC_MSG_ERROR([Exiting, as the utility 'patch' can not be found.])
+fi
+
 AC_CHECK_PROG(found_m4, m4, yes, no)
 if test x$found_m4 != xyes
 then
@@ -572,8 +580,6 @@ AC_SUBST(SAGE_PKG_CONFIG_PATH, [$SAGE_DARWIN_PKG_CONFIG_PATH'$SAGE_LOCAL/lib/pkg
 
 AC_CONFIG_FILES([build/make/Makefile-auto build/make/Makefile])
 AC_CONFIG_FILES([src/bin/sage-env-config src/bin/sage-src-env-config build/bin/sage-build-env-config])
-
-AC_CONFIG_FILES([pkgs/sage-conf/_sage_conf/_conf.py])
 
 dnl Create basic directories needed for Sage
 AC_CONFIG_COMMANDS(mkdirs,

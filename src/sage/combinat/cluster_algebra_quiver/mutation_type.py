@@ -23,7 +23,8 @@ AUTHORS:
 from copy import copy
 from pathlib import Path
 import pickle
-from typing import Any, Iterator
+from typing import Any
+from collections.abc import Iterator
 
 
 from sage.misc.cachefunc import cached_function
