@@ -70,7 +70,7 @@ Python functions::
     sage: sage_getdoc(sage.misc.sageinspect.sage_getfile).lstrip()
     'Get the full file name associated to "obj" as a string...'
     sage: sage_getsource(sage.misc.sageinspect.sage_getfile)[4:]
-    'sage_getfile(obj):...'
+    'sage_getfile(obj) -> None | str:...'
 
 Unfortunately, no argspec is extractable from builtins. Hence, we use a
 generic argspec::
@@ -110,17 +110,18 @@ AUTHORS:
 
 import ast
 import functools
+import importlib.machinery as import_machinery
 import inspect
 import os
 import re
 import sys
 import tokenize
+from collections.abc import Generator
 from inspect import Parameter, Signature
+from pathlib import Path
 
-try:
-    import importlib.machinery as import_machinery
-except ImportError:
-    pass
+import sage
+from sage.env import SAGE_SRC
 
 
 def is_function_or_cython_function(obj):
@@ -1265,7 +1266,7 @@ def _sage_getargspec_cython(source):
                                      varargs + keywords + '): pass')
 
 
-def sage_getfile(obj):
+def sage_getfile(obj) -> None | str:
     r"""
     Get the full file name associated to ``obj`` as a string.
 
@@ -1358,7 +1359,7 @@ def sage_getfile(obj):
     return sourcefile
 
 
-def sage_getfile_relative(obj):
+def sage_getfile_relative(obj) -> None | str:
     r"""
     Get the file name associated to ``obj`` as a string.
 
@@ -1383,28 +1384,31 @@ def sage_getfile_relative(obj):
         sage: sage_getfile_relative(range)
         ''
     """
-    filename = sage_getfile(obj)
-    if not filename:
-        return filename
+    file = sage_getfile(obj)
+    if not file:
+        return file
 
-    from os.path import commonprefix, normpath, relpath
+    path = Path(file)
 
-    def directories():
-        try:
-            from sage.env import SAGE_SRC
-        except ImportError:
-            pass
-        else:
-            if SAGE_SRC:
-                yield normpath(os.path.join(SAGE_SRC, 'sage'))
-        import sage
-        yield from sage.__path__
+    # If we already have a relative path starting with 'sage', keep it.
+    if not path.is_absolute() and path.parts and path.parts[0] == "sage":
+        return str(path)
+
+    def directories() -> Generator[Path, None]:
+        if SAGE_SRC:
+            yield Path(SAGE_SRC) / "sage"
+        for p in sage.__path__:
+            yield Path(p)
+        yield Path(sage.__file__).parent
 
     for directory in directories():
-        if commonprefix([filename, directory]) == directory:
-            return os.path.join('sage', relpath(filename, directory))
+        try:
+            relative_path = path.relative_to(directory)
+            return str(Path("sage") / relative_path)
+        except ValueError:
+            continue
 
-    return filename
+    return file
 
 
 def sage_getargspec(obj):
