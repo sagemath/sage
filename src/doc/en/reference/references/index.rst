@@ -143,6 +143,10 @@ REFERENCES:
             quasiperiodicities in strings*,
             Theoret. Comput. Sci. 119 (1993) 247--265.
 
+.. [AE2006] Federico Ardila, Laura Escobar, *The harmonic polytope*,
+            Selecta Math. Vol. 27 (2021)
+            :doi:`10.1007/s00029-021-00687-6`, :arxiv:`2006.03078`
+
 .. [AG1988] George E. Andrews, F. G. Garvan,
             *Dyson's crank of a partition*.
             Bull. Amer. Math. Soc. (N.S.) Volume 18, Number 2 (1988),
