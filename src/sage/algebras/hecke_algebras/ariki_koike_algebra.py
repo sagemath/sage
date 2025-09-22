@@ -348,7 +348,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
         T.module_morphism(LT._from_T_basis, codomain=LT).register_as_coercion()
         LT.module_morphism(T._from_LT_basis, codomain=T).register_as_coercion()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -364,7 +364,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
         return "Ariki-Koike algebra of rank {} and order {} with q={} and u={} over {}".format(
             self._r, self._n, self._q, self._u, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -468,7 +468,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             """
             return [Realizations(self.base()), self.base()._category]
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             r"""
             Return the representation of ``self``.
 
@@ -487,7 +487,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             cases, these are just default implementations that will get
             specialized in a basis.
             """
-            def _repr_(self):
+            def _repr_(self) -> str:
                 r"""
                 Text representation of this basis of Iwahori-Hecke algebra.
 
@@ -632,7 +632,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             _Basis.__init__(self, algebra, prefix='LT')
             self._assign_names(self.algebra_generators().keys())
 
-        def _repr_term(self, m):
+        def _repr_term(self, m) -> str:
             r"""
             Return a string representation of the basis element indexed by ``m``.
 
@@ -655,7 +655,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 return rhs
             return lhs + '*' + rhs
 
-        def _latex_term(self, m):
+        def _latex_term(self, m) -> str:
             r"""
             Return a latex representation for the basis element indexed by ``m``.
 
@@ -1230,7 +1230,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             redword.extend(t[1].reduced_word())
             return redword
 
-        def _repr_term(self, t):
+        def _repr_term(self, t) -> str:
             r"""
             Return a string representation of the basis element indexed by ``m``.
 
@@ -1246,7 +1246,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             return (self._print_options['prefix']
                     + '[%s]' % ','.join('%d' % i for i in redword))
 
-        def _latex_term(self, t):
+        def _latex_term(self, t) -> str:
             r"""
             Return a latex representation for the basis element indexed by ``m``.
 
