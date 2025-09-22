@@ -409,10 +409,10 @@ class GhLabelSynchronizer:
 
         self._commits = self.view('commits')
 
-        # ignore merge commits with the develop branch for _commit_date except positive review is set
+        # ignore merge commits with the develop branch for _commit_date unless positive review is set
         date_commits = list(self._commits)
         if Status.positive_review.value not in self.get_labels():
-            for com in date_commits:
+            for com in self._commits:
                 message =  com['messageHeadline']
                 if message.startswith('Merge') and 'develop' in message:
                     debug('Ignore merge commit %s for commit_date' % com['oid'])
