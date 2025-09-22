@@ -4,7 +4,6 @@ from typing import Any
 
 from sage.symbolic.function import SymbolicFunction
 
-
 def function_factory(
     name: str,
     nargs: int = 0,
@@ -25,7 +24,6 @@ def function_factory(
 ) -> SymbolicFunction:
     ...
 
-
 def unpickle_function(
     name: str,
     nargs: int,
@@ -35,7 +33,6 @@ def unpickle_function(
     pickled_funcs: list[Any],
 ) -> SymbolicFunction:
     ...
-
 
 def function(
     s: str,
