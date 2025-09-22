@@ -9,7 +9,6 @@ Finite lattice posets
 # *****************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
-from sage.misc.cachefunc import cached_method
 
 
 class FiniteLatticePosets(CategoryWithAxiom):

@@ -1954,7 +1954,7 @@ class VectorFunctor(ConstructionFunctor):
             return FreeModule(R, self.n, sparse=self.is_sparse, inner_product_matrix=self.inner_product_matrix,
                               with_basis=self.with_basis, basis_keys=self.basis_keys)
         return FreeModule(R, self.n, sparse=self.is_sparse, inner_product_matrix=self.inner_product_matrix,
-                              with_basis=self.with_basis, basis_keys=self.basis_keys, name=name, latex_name=latex_name)
+                          with_basis=self.with_basis, basis_keys=self.basis_keys, name=name, latex_name=latex_name)
 
     def _apply_functor_to_morphism(self, f):
         """

@@ -1923,10 +1923,10 @@ class CoxeterGroups(Category_singleton):
 
             P = self.parent()
             edges = []
-            for i, x in enumerate(R):
-                x = tuple(x)
-                for y in R[i:]:
-                    y = tuple(y)
+            for i, _x in enumerate(R):
+                x = tuple(_x)
+                for _y in R[i:]:
+                    y = tuple(_y)
                     # Check that the reduced expressions differ by only
                     #   a single braid move
                     j = 0

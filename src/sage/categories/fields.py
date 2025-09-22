@@ -691,6 +691,13 @@ class Fields(CategoryWithAxiom):
                 sage: f = QQbar['x'](1)                                                 # needs sage.rings.number_field
                 sage: f.squarefree_decomposition()                                      # needs sage.rings.number_field
                 1
+
+            .. NOTE::
+
+                Currently factorization over non-finite fields with positive characteristic
+                is not implemented, it would be useful to port the algorithm in
+                :meth:`sage.rings.finite_rings.finite_field_base.FiniteField._squarefree_decomposition_univariate_polynomial`
+                here.
             """
             from sage.structure.factorization import Factorization
             if f.degree() == 0:
