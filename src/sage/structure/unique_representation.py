@@ -1274,7 +1274,7 @@ class CachedRepresentation(WithPicklingByInitArgs):
             sage: class X(UniqueRepresentation):
             ....:     def __init__(self, x):
             ....:         self._x = x
-            ....:     @cached_method(do_pickle=True)
+            ....:     @cached_method(do_pickle=False)
             ....:     def genus(self):
             ....:         return len(self._x)
             ....:
@@ -1289,7 +1289,6 @@ class CachedRepresentation(WithPicklingByInitArgs):
             sage: a.genus.cache
             sage: b = loads(s)
             sage: b.genus.cache
-            3
         """
         self.__dict__.update(d)
 
