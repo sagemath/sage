@@ -2874,12 +2874,12 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: LatticePolytope(([1],[2])).nfacets()
             doctest:warning...
             DeprecationWarning: nfacets is deprecated. Please use n_facets instead.
-            See https://github.com/sagemath/sage/issues/44444 for details.
+            See https://github.com/sagemath/sage/issues/40875 for details.
             2
         """
         return len(self.facet_normals()) if self.dim() > 0 else 0
 
-    nfacets = deprecated_function_alias(44444, n_facets)
+    nfacets = deprecated_function_alias(40875, n_facets)
 
     @cached_method
     def normal_form(self, algorithm='palp_native', permutation=False):
@@ -3356,7 +3356,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: LatticePolytope(([1],[2])).npoints()
             doctest:warning...
             DeprecationWarning: npoints is deprecated. Please use n_points instead.
-            See https://github.com/sagemath/sage/issues/44444 for details.
+            See https://github.com/sagemath/sage/issues/40875 for details.
             2
         """
         try:
@@ -3364,7 +3364,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         except AttributeError:
             return len(self.points())
 
-    npoints = deprecated_function_alias(44444, n_points)
+    npoints = deprecated_function_alias(40875, n_points)
 
     def n_vertices(self):
         r"""
@@ -3385,12 +3385,12 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: LatticePolytope(([1],[2])).nvertices()
             doctest:warning...
             DeprecationWarning: nvertices is deprecated. Please use n_vertices instead.
-            See https://github.com/sagemath/sage/issues/44444 for details.
+            See https://github.com/sagemath/sage/issues/40875 for details.
             2
         """
         return len(self._vertices)
 
-    nvertices = deprecated_function_alias(44444, n_vertices)
+    nvertices = deprecated_function_alias(40875, n_vertices)
 
     @cached_method
     def origin(self):
@@ -4826,12 +4826,12 @@ class NefPartition(SageObject, Hashable):
             sage: np.nparts()
             doctest:warning...
             DeprecationWarning: nparts is deprecated. Please use n_parts instead.
-            See https://github.com/sagemath/sage/issues/44444 for details.
+            See https://github.com/sagemath/sage/issues/40875 for details.
             2
         """
         return self._nparts
 
-    nparts = deprecated_function_alias(44444, n_parts)
+    nparts = deprecated_function_alias(40875, n_parts)
 
     def part(self, i, all_points=False):
         r"""
