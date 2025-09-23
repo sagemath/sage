@@ -184,10 +184,12 @@ class GenericCombinatorialSpecies(SageObject):
 
     def _getstate_(self):
         r"""
-        This returns an (\*args, \*\*kwds) tuple which can be passed into the
-        constructor for the class of this species. Any subclass should define a
-        ``_state_info`` list for any arguments which need to be passed in the
-        constructor.
+        This is used during the pickling process and returns a dictionary
+        of the data needed to create this object during the unpickling
+        process. It returns an (\*args, \*\*kwds) tuple which is to be
+        passed into the constructor for the class of this species. Any
+        subclass should define a ``_state_info`` list for any arguments which
+        need to be passed in the constructor.
 
         EXAMPLES::
 
@@ -206,11 +208,8 @@ class GenericCombinatorialSpecies(SageObject):
 
     def _setstate_(self, state):
         """
-        This reconstructs an object of this class with args and kwds from `state`
-
-        INPUT:
-
-        - `state` -- args and kwds from :meth:`self._getstate_()`
+        This is used during unpickling to recreate this object from the
+        data provided by the ``_getstate_`` method.
 
         TESTS::
 

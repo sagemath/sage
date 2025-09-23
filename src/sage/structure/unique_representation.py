@@ -534,9 +534,7 @@ accordingly, for example by inheriting from
 AUTHORS:
 
 - Nicolas M. Thiery (2008): initial version
-
 - Simon A. King (2013-02): separated cached and unique representation
-
 - Simon A. King (2013-08): extended documentation
 """
 # ****************************************************************************
@@ -614,7 +612,7 @@ class WithPicklingByInitArgs(metaclass=ClasscallMetaclass):
 
             sage: x = UniqueRepresentation()
             sage: x.__reduce__()          # indirect doctest
-            (<function unreduce at ...>, (<class 'sage.structure.unique_representation.UniqueRepresentation'>, (), {}))
+            (<function unreduce at ...>, (<class 'sage.structure.unique_representation.UniqueRepresentation'>, (), {}), {})
         """
         return (unreduce, self._reduction)
 
@@ -1207,15 +1205,19 @@ class CachedRepresentation(WithPicklingByInitArgs):
         for k in del_list:
             del cache[k]
 
+    def __reduce__(self):
+        """
+        Return the arguments that have been passed to
+        :meth:`__new__<object.__new__>` to construct this object,
+        as per the pickle protocol.
 
-class UniqueRepresentation(WithEqualityById, CachedRepresentation):
         See also :class:`CachedRepresentation` and
         :class:`UniqueRepresentation` for a discussion.
 
         EXAMPLES::
 
             sage: x = UniqueRepresentation()
-            sage: x.__reduce__()  # indirect doctest
+            sage: x.__reduce__()          # indirect doctest
             (<function unreduce at ...>, (<class 'sage.structure.unique_representation.UniqueRepresentation'>, (), {}), {})
         """
         return unreduce, self._reduction, self.__getstate__()
@@ -1290,49 +1292,6 @@ class UniqueRepresentation(WithEqualityById, CachedRepresentation):
             3
         """
         self.__dict__.update(d)
-
-    def __copy__(self):
-        """
-        Return ``self``, as a semantic copy of ``self``.
-
-        This assumes that the object is semantically immutable.
-
-        EXAMPLES::
-
-            sage: x = UniqueRepresentation()
-            sage: x is copy(x)    # indirect doctest
-            True
-        """
-        return self
-
-    def __deepcopy__(self, memo):
-        """
-        Return ``self``, as a semantic deep copy of ``self``.
-
-        This assumes that the object is semantically immutable.
-
-        EXAMPLES::
-
-            sage: from copy import deepcopy
-            sage: x = UniqueRepresentation()
-            sage: x is deepcopy(x)      # indirect doctest
-            True
-        """
-        return self
-
-def unreduce(cls, args, keywords):
-    """
-    Calls a class on the given arguments::
-
-        sage: sage.structure.unique_representation.unreduce(Integer, (1,), {})
-        1
-
-    .. TODO::
-
-        should reuse something preexisting ...
-
-    """
-    return cls(*args, **keywords)
 
 
 class UniqueRepresentation(CachedRepresentation, WithEqualityById):
