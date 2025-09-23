@@ -5,8 +5,10 @@ py.install_sources(
   'diamond_cutting.py',
   'filtered_vector_space.py',
   'finite_submodule_iter.pxd',
+  'finite_submodule_iter.pyx',
   'free_module.py',
   'free_module_element.pxd',
+  'free_module_element.pyx',
   'free_module_homspace.py',
   'free_module_integer.py',
   'free_module_morphism.py',
@@ -17,9 +19,11 @@ py.install_sources(
   'matrix_morphism.py',
   'misc.py',
   'module.pxd',
+  'module.pyx',
   'module_functors.py',
   'multi_filtered_vector_space.py',
   'numpy_util.pxd',
+  'numpy_util.pyx',
   'ore_module.py',
   'ore_module_element.py',
   'ore_module_homspace.py',
@@ -32,21 +36,34 @@ py.install_sources(
   'tutorial_free_modules.py',
   'vector_callable_symbolic_dense.py',
   'vector_complex_double_dense.pxd',
+  'vector_complex_double_dense.pyx',
   'vector_double_dense.pxd',
+  'vector_double_dense.pyx',
   'vector_integer_dense.pxd',
+  'vector_integer_dense.pyx',
   'vector_integer_sparse.pxd',
+  'vector_integer_sparse.pyx',
   'vector_mod2_dense.pxd',
+  'vector_mod2_dense.pyx',
   'vector_modn_dense.pxd',
+  'vector_modn_dense.pyx',
   'vector_modn_sparse.pxd',
+  'vector_modn_sparse.pyx',
   'vector_numpy_dense.pxd',
+  'vector_numpy_dense.pyx',
   'vector_numpy_integer_dense.pxd',
+  'vector_numpy_integer_dense.pyx',
   'vector_rational_dense.pxd',
+  'vector_rational_dense.pyx',
   'vector_rational_sparse.pxd',
+  'vector_rational_sparse.pyx',
   'vector_real_double_dense.pxd',
+  'vector_real_double_dense.pyx',
   'vector_space_homspace.py',
   'vector_space_morphism.py',
   'vector_symbolic_dense.py',
   'vector_symbolic_sparse.py',
+  'submodule_helper.py',
   subdir: 'sage/modules',
 )
 
@@ -73,14 +90,8 @@ foreach name, pyx : extension_data
     sources: pyx,
     subdir: 'sage/modules',
     install: true,
-    include_directories: [
-      inc_cpython,
-      inc_ext,
-      inc_numpy,
-      inc_rings,
-      inc_rings_finite,
-    ],
-    dependencies: [py_dep, cysignals, gd, gmp, m4ri, png],
+    include_directories: [inc_cpython, inc_ext, inc_rings, inc_rings_finite],
+    dependencies: [py_dep, cysignals, gd, gmp, m4ri, png, numpy],
   )
 endforeach
 
@@ -90,20 +101,19 @@ extension_data_cpp = {
 }
 
 foreach name, pyx : extension_data_cpp
+  if is_windows
+    # sage_modules_vector_mod2_dense.pyx.cpp.obj : error LNK2019: unresolved external symbol "struct mzd_t * __cdecl mzd_init(int,int)"
+    continue
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/modules',
     install: true,
     override_options: ['cython_language=cpp'],
-    include_directories: [
-      inc_cpython,
-      inc_ext,
-      inc_numpy,
-      inc_rings,
-      inc_rings_finite,
-    ],
-    dependencies: [py_dep, cysignals, gd, gmp, m4ri, png],
+    include_directories: [inc_cpython, inc_ext, inc_rings, inc_rings_finite],
+    dependencies: [py_dep, cysignals, gd, gmp, m4ri, png, numpy],
   )
 endforeach
 

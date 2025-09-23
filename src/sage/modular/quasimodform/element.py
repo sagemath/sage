@@ -482,10 +482,10 @@ class QuasiModularFormsElement(ModuleElement):
         E2 = poly_gens[0]
         poly_gens = poly_gens[1:]
         modform_poly_gens = self.parent().modular_forms_subring().polynomial_ring(names='x').gens()
-        subs_dictionnary = {}
+        subs_dictionary = {}
         for idx, g in enumerate(modform_poly_gens):
-            subs_dictionnary[g] = poly_gens[idx]
-        return sum(f.to_polynomial().subs(subs_dictionnary) * E2 ** exp for exp, f in enumerate(self._polynomial.coefficients(sparse=False)))
+            subs_dictionary[g] = poly_gens[idx]
+        return sum(f.to_polynomial().subs(subs_dictionary) * E2 ** exp for exp, f in enumerate(self._polynomial.coefficients(sparse=False)))
 
     to_polynomial = polynomial # alias
 
@@ -617,7 +617,7 @@ class QuasiModularFormsElement(ModuleElement):
         for i, c in enumerate(self._polynomial.coefficients(sparse=False)):
             if c:
                 forms = c._forms_dictionary
-                for k in forms.keys():
+                for k in forms:
                     try:
                         components[ZZ(k + 2*i)] += QM(forms[k]*(E2**i))
                     except KeyError:

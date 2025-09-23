@@ -546,7 +546,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
     # Interfaces
     #################################################################
     def _pari_init_(self):
-        return 'Mod(%s,%s)'%(str(self), self._modulus.sageInteger)
+        return 'Mod(%s,%s)' % (str(self), self._modulus.sageInteger)
 
     def __pari__(self):
         return self.lift().__pari__().Mod(self._modulus.sageInteger)
@@ -584,7 +584,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: b^2
             1
         """
-        return '%s!%s'%(self.parent()._magma_init_(magma), self)
+        return '%s!%s' % (self.parent()._magma_init_(magma), self)
 
     def _axiom_init_(self):
         """
@@ -607,7 +607,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: aa.typeOf()                   # optional - fricas
             IntegerMod(15)
         """
-        return '%s :: %s'%(self, self.parent()._axiom_init_())
+        return '%s :: %s' % (self, self.parent()._axiom_init_())
 
     _fricas_init_ = _axiom_init_
 
@@ -1784,9 +1784,9 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         n = self._modulus.sageInteger
         return sage.rings.integer.Integer(n // self.lift().gcd(n))
 
-    def is_primitive_root(self):
+    def is_primitive_root(self) -> bool:
         """
-        Determines whether this element generates the group of units modulo n.
+        Determine whether this element generates the group of units modulo n.
 
         This is only possible if the group of units is cyclic, which occurs if
         n is 2, 4, a power of an odd prime or twice a power of an odd prime.
@@ -1894,7 +1894,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         try:
             return sage.rings.integer.Integer(self.__pari__().znorder())
         except PariError:
-            raise ArithmeticError("multiplicative order of %s not defined since it is not a unit modulo %s"%(
+            raise ArithmeticError("multiplicative order of %s not defined since it is not a unit modulo %s" % (
                 self, self._modulus.sageInteger))
 
     def valuation(self, p):

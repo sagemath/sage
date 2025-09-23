@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules sage.groups
 r"""
-Symmetric Group Algebra
+Symmetric group algebra
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
@@ -1313,6 +1313,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         modules (which are the :meth:`Specht modules <specht_module>`
         and also projective modules)::
 
+            sage: # long time
             sage: SGA = SymmetricGroupAlgebra(QQ, 5)
             sage: for la in Partitions(SGA.n):
             ....:     idem = SGA.ladder_idempotent(la)
@@ -2175,7 +2176,6 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             ...
             NotImplementedError: not implemented when p|n!; dimension of invariant forms may be greater than one
         """
-        from sage.matrix.special import diagonal_matrix
         F = self.base_ring()
         G = self.group()
 
@@ -2208,9 +2208,9 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                 return F.zero()
             z = F.multiplicative_generator()
             k = u.log(z)
-            if k % (q+1) != 0:
+            if k % (q + 1) != 0:
                 raise ValueError(f"unable to factor as {u} is not in base field GF({q})")
-            return z ** ((k//(q+1)) % (q-1))
+            return z ** ((k // (q + 1)) % (q - 1))
 
         dft_matrix = self.dft()
         n = dft_matrix.nrows()
@@ -2535,7 +2535,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         T = []
         total = 1  # make it 1-based
         for r in la:
-            T.append(list(range(total, total+r)))
+            T.append(list(range(total, total + r)))
             total += r
         T = Tableau(T)
         G = self.group()
@@ -2625,7 +2625,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         try:
             from sage.libs.coxeter3.coxeter_group import CoxeterGroup as Coxeter3Group
         except ImportError:
-            # Falback to using the KL polynomial
+            # Fallback to using the KL polynomial
             from sage.combinat.kazhdan_lusztig import KazhdanLusztigPolynomial
             from sage.groups.perm_gps.permgroup_named import SymmetricGroup
             q = PolynomialRing(R, 'q').gen()
@@ -2633,7 +2633,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             self._cellular_KL = KazhdanLusztigPolynomial(self._KLG, q)
             polyfunc = self._cellular_KL.P
         else:
-            self._cellular_KL = Coxeter3Group(['A', self.n+1])
+            self._cellular_KL = Coxeter3Group(['A', self.n + 1])
             self._KLG = self._cellular_KL
             polyfunc = self._cellular_KL.kazhdan_lusztig_polynomial
 
@@ -3564,9 +3564,9 @@ class HeckeAlgebraSymmetricGroup_generic(CombinatorialFreeModule):
         if x in Permutations():
             if len(x) < self.n:
                 return self.monomial(self._indices(
-                            list(x) + list(range(len(x) + 1, self.n + 1))
-                        ))
-            if all(x[i] == i+1 for i in range(self.n, len(x))):
+                    list(x) + list(range(len(x) + 1, self.n + 1))
+                ))
+            if all(x[i] == i + 1 for i in range(self.n, len(x))):
                 return self.monomial(self._indices(x[:self.n]))
 
         return self._indices(x)

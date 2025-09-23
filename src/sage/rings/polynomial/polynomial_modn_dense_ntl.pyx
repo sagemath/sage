@@ -41,7 +41,8 @@ from cypari2.gen cimport Gen as pari_gen
 
 from sage.rings.integer cimport smallInteger
 
-from sage.libs.ntl.all import ZZX, ZZ_pX
+from sage.libs.ntl.ntl_ZZX import ntl_ZZX as ZZX
+from sage.libs.ntl.ntl_ZZ_pX import ntl_ZZ_pX as ZZ_pX
 from sage.rings.integer_ring import ZZ
 
 from sage.rings.fraction_field_element import FractionFieldElement
@@ -635,17 +636,17 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
 
     if epsilon is None:
         epsilon = beta/8
-    verbose("epsilon = %f"%epsilon, level=2)
+    verbose("epsilon = %f" % epsilon, level=2)
 
     m = max(beta**2/(delta * epsilon), 7*beta/delta).ceil()
-    verbose("m = %d"%m, level=2)
+    verbose("m = %d" % m, level=2)
 
     t = int( ( delta*m*(1/beta -1) ).floor() )
-    verbose("t = %d"%t, level=2)
+    verbose("t = %d" % t, level=2)
 
     if X is None:
         X = (0.5 * N**(beta**2/delta - epsilon)).ceil()
-    verbose("X = %s"%X, level=2)
+    verbose("X = %s" % X, level=2)
 
     # we could do this much faster, but this is a cheap step
     # compared to LLL

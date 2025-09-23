@@ -1,19 +1,19 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-Non-symmetric Macdonald Polynomials
+Non-symmetric Macdonald polynomials
 """
 import copy
 
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.combinat.backtrack import GenericBacktracker
 from sage.combinat.combinat import CombinatorialObject
-from sage.combinat.words.word import Word
 from sage.combinat.combination import Combinations
 from sage.combinat.permutation import Permutation
+from sage.combinat.words.word import Word
+from sage.misc.misc_c import prod
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-from sage.misc.misc_c import prod
-from sage.combinat.backtrack import GenericBacktracker
 from sage.structure.parent import Parent
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.structure.unique_representation import UniqueRepresentation
 
 
@@ -352,10 +352,7 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
             sage: a.is_non_attacking()
             True
         """
-        for a, b in self.attacking_boxes():
-            if self[a] == self[b]:
-                return False
-        return True
+        return all(self[a] != self[b] for a, b in self.attacking_boxes())
 
     def weight(self):
         """

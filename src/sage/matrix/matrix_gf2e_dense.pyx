@@ -95,7 +95,7 @@ from sage.misc.randstate cimport randstate, current_randstate
 from sage.matrix.matrix_mod2_dense cimport Matrix_mod2_dense
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 
-from sage.libs.m4ri cimport m4ri_word, mzd_copy
+from sage.libs.m4ri cimport m4ri_word, mzd_copy, mzp_t, mzp_init, mzp_free
 from sage.libs.m4rie cimport *
 from sage.libs.m4rie cimport mzed_t
 
@@ -126,7 +126,20 @@ cdef class M4RIE_finite_field:
         if self.ff:
             gf2e_free(self.ff)
 
-cdef m4ri_word poly_to_word(f) noexcept:
+cdef m4ri_word poly_to_word(f) except? -1:
+    """
+    Internal function to convert a finite field element to ``m4ri_word``.
+
+    TESTS:
+
+    If the user interrupts some long computation in the middle of the execution of
+    :func:`poly_to_word`, it will raise ``KeyboardInterrupt``. Make sure it is correctly
+    propagated::
+
+        sage: from sage.doctest.util import ensure_interruptible_after
+        sage: with ensure_interruptible_after(0.5):
+        ....:     MatrixSpace(GF(2^8), 2^9).random_element().LU()
+    """
     return f.to_integer()
 
 
@@ -283,6 +296,47 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef int r = mzed_read_elem(self._entries, i, j)
         cdef Cache_base cache = <Cache_base> self._base_ring._cache
         return cache.fetch_int(r)
+
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_gf2e_dense with
+                    the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: K.<z> = GF(512)
+            sage: m = matrix(K,3,4,[sum([(i//(2^j))%2 * z^j for j in range(4)]) for i in range(12)])
+            sage: m
+            [          0           1           z       z + 1]
+            [        z^2     z^2 + 1     z^2 + z z^2 + z + 1]
+            [        z^3     z^3 + 1     z^3 + z z^3 + z + 1]
+            sage: m.transpose()
+            [          0         z^2         z^3]
+            [          1     z^2 + 1     z^3 + 1]
+            [          z     z^2 + z     z^3 + z]
+            [      z + 1 z^2 + z + 1 z^3 + z + 1]
+            sage: m.matrix_from_rows([0,2])
+            [          0           1           z       z + 1]
+            [        z^3     z^3 + 1     z^3 + z z^3 + z + 1]
+            sage: m.matrix_from_columns([1,3])
+            [          1       z + 1]
+            [    z^2 + 1 z^2 + z + 1]
+            [    z^3 + 1 z^3 + z + 1]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [        z^2 z^2 + z + 1]
+            [        z^3 z^3 + z + 1]
+        """
+        cdef Matrix_gf2e_dense _src = <Matrix_gf2e_dense>src
+        mzed_write_elem(self._entries, iDst, jDst, mzed_read_elem(_src._entries, iSrc, jSrc))
 
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         r"""
@@ -930,7 +984,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             self._echelon_in_place(algorithm='classical')
 
         else:
-            raise ValueError("No algorithm '%s'."%algorithm)
+            raise ValueError("No algorithm '%s'." % algorithm)
 
         self.cache('in_echelon_form',True)
         self.cache('rank', r)
@@ -963,6 +1017,22 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
                 break
         return pivots
 
+    def is_invertible(self):
+        """
+        Return ``True`` if this matrix is invertible.
+
+        EXAMPLES::
+
+            sage: m = Matrix(GL(2^6, GF(2^6)).random_element())
+            sage: m.is_invertible()
+            True
+        """
+        if self._ncols != self._nrows:
+            return False
+        if self._nrows != self.rank():
+            return False
+        return True
+
     def __invert__(self):
         """
         EXAMPLES::
@@ -980,7 +1050,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef Matrix_gf2e_dense A
         A = Matrix_gf2e_dense.__new__(Matrix_gf2e_dense, self._parent, 0, 0, 0)
 
-        if self.rank() != self._nrows:
+        if not self.is_invertible():
             raise ZeroDivisionError("Matrix does not have full rank.")
 
         if self._nrows:
@@ -1085,6 +1155,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: B[2] == A[2]
             True
         """
+        if self._ncols == 0:
+            return
         mzed_row_swap(self._entries, row1, row2)
 
     cdef swap_columns_c(self, Py_ssize_t col1, Py_ssize_t col2):
@@ -1123,6 +1195,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: A.column(14) == B.column(0)
             True
         """
+        if self._nrows == 0:
+            return
         mzed_col_swap(self._entries, col1, col2)
 
     def augment(self, right):
@@ -1327,16 +1401,16 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef int highc = col + ncols
 
         if row < 0:
-            raise TypeError("Expected row >= 0, but got %d instead."%row)
+            raise TypeError("Expected row >= 0, but got %d instead." % row)
 
         if col < 0:
-            raise TypeError("Expected col >= 0, but got %d instead."%col)
+            raise TypeError("Expected col >= 0, but got %d instead." % col)
 
         if highc > self._entries.ncols:
-            raise TypeError("Expected highc <= self.ncols(), but got %d > %d instead."%(highc, self._entries.ncols))
+            raise TypeError("Expected highc <= self.ncols(), but got %d > %d instead." % (highc, self._entries.ncols))
 
         if highr > self._entries.nrows:
-            raise TypeError("Expected highr <= self.nrows(), but got %d > %d instead."%(highr, self._entries.nrows))
+            raise TypeError("Expected highr <= self.nrows(), but got %d > %d instead." % (highr, self._entries.nrows))
 
         cdef Matrix_gf2e_dense A = self.new_matrix(nrows=nrows, ncols=ncols)
         if ncols == 0 or nrows == 0:
@@ -1540,6 +1614,88 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         mzed_set_ui(self._entries, 0)
         mzed_cling(self._entries, v)
         mzd_slice_free(v)
+
+    def determinant(self):
+        """
+        Return the determinant of this matrix.
+
+        Relies directly on M4RIE's PLE decomposition, and incidentally caches
+        the rank of ``self``.
+
+        EXAMPLES::
+
+            sage: gf4.<z> = GF(4)
+            sage: mat = matrix(gf4, 2, 2, [[z + 1, z + 1], [z, 1]])
+            sage: mat
+            [z + 1 z + 1]
+            [    z     1]
+            sage: mat.determinant()
+            z
+            sage: gf256.<t> = GF(2**8)
+            sage: mat = matrix(gf256, 3, 3, [[1, t, t**2],
+            ....:                            [t**2, 1, t],
+            ....:                            [t, t**2, 1]])
+            sage: mat.determinant()
+            t^6 + 1
+            sage: mat = matrix(gf256, 3, 3, [[1, t, t**2],
+            ....:                            [t**2, 1, t],
+            ....:                            [t**2 + 1, t + 1, t**2 + t]])
+            sage: mat.determinant()
+            0
+
+        Non-square matrices and the `0 \times 0` matrix are taken care of::
+
+            sage: matrix(gf4, 0, 0).determinant()
+            1
+            sage: matrix(gf4, 3, 2).determinant()
+            Traceback (most recent call last):
+            ...
+            ValueError: self must be a square matrix
+        """
+        cdef size_t m = self._nrows 
+
+        if m != self._ncols:
+            raise ValueError("self must be a square matrix")
+        if m == 0:
+            return self._one
+
+        x = self.fetch('det')
+        if x is not None:
+            return x
+
+        cdef mzed_t * A = mzed_copy(NULL, self._entries)
+        cdef mzp_t * P = mzp_init(m)
+        cdef mzp_t * Q = mzp_init(m)
+
+        sig_on()
+        cdef int r = mzed_ple(A, P, Q)
+        sig_off()
+
+        self.cache('rank', r)
+
+        if r < m:
+            mzp_free(P)
+            mzp_free(Q)
+            mzed_free(A)
+            self.cache('det', self._zero)
+            return self._zero
+
+        cdef Cache_base cache = <Cache_base> self._base_ring._cache
+
+        # characteristic 2, so det(P) == det(Q) == 1
+        cdef Py_ssize_t i
+        cdef int elt
+        cdef det = self._one
+        for i from 0 <= i < m:
+            elt = mzed_read_elem(A, i, i)
+            det = det * cache.fetch_int(elt)
+
+        mzp_free(P)
+        mzp_free(Q)
+        mzed_free(A)
+
+        self.cache('det', det)
+        return det
 
 
 def unpickle_matrix_gf2e_dense_v0(Matrix_mod2_dense a, base_ring, nrows, ncols):

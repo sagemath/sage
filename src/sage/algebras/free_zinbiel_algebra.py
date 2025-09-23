@@ -259,7 +259,7 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
         if self._n is not None:
             self._assign_names(names)
 
-    def _repr_term(self, t):
+    def _repr_term(self, t) -> str:
         """
         Return a string representation of the basis element indexed by ``t``.
 
@@ -271,7 +271,7 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
         """
         return "{!s}[{!s}]".format(self._print_options['prefix'], repr(t)[6:])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -671,7 +671,8 @@ class ZinbielFunctor(ConstructionFunctor):
         Functor.__init__(self, Rings(), Magmas())
         self.vars = variables
         self._side = side
-        self._finite_vars = bool(isinstance(variables, (list, tuple)) or variables in Sets().Finite())
+        self._finite_vars = (isinstance(variables, (list, tuple))
+                             or variables in Sets().Finite())
 
     def _apply_functor(self, R):
         """

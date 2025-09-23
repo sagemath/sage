@@ -1,13 +1,13 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Virtual Crystals
+Virtual crystals
 
 These are the crystals that are subsets of a larger ambient crystal with
 virtual crystal operators.
 
 AUTHORS:
 
-- Travis Scrimshaw (2013-10-16): Initial implementation
+- Travis Scrimshaw (2013-10-16): initial implementation
 """
 
 #*****************************************************************************

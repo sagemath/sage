@@ -364,7 +364,7 @@ class PlaneCurveArrangementElement(Element):
         """
         return prod(self.defining_polynomials())
 
-    def have_common_factors(self):
+    def have_common_factors(self) -> bool:
         r"""
         Check if the curves have common factors.
 
@@ -390,7 +390,7 @@ class PlaneCurveArrangementElement(Element):
         - ``clean`` -- boolean (default: ``False``); if ``False``
           and there are common factors it returns ``None`` and
           a warning message. If ``True``, the common factors are kept
-          only in the first occurance.
+          only in the first occurrence.
 
         EXAMPLES::
 
@@ -528,8 +528,8 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             sage: A.meridians(simplified=False, vertical=False)
             {0: [x2, x3], 1: [x1], 2: [x0], 3: [x3^-1*x2^-1*x1^-1*x0^-1]}
             sage: A = H(x * y^2 + x + y, y + x -1, x, y)
-            sage: G = A.fundamental_group()
-            sage: G.sorted_presentation()
+            sage: G = A.fundamental_group()  # long time (:issue:`39569`)
+            sage: G.sorted_presentation()  # long time (:issue:`39569`)
             Finitely presented group
             < x0, x1, x2, x3 | x3^-1*x2^-1*x3*x2, x3^-1*x1^-1*x3*x1,
                                x3^-1*x0^-1*x3*x0, x2^-1*x1^-1*x2*x1,
@@ -635,8 +635,9 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
     def braid_monodromy(self, vertical=True):
         r"""
         Return the braid monodromy of the complement of the union
-        of affine plane curves in `\CC^2`. If there are vertical
-        asymptotes a change of variable is done.
+        of affine plane curves in `\CC^2`.
+
+        If there are vertical asymptotes a change of variable is done.
 
         INPUT:
 
@@ -646,7 +647,7 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
 
         OUTPUT:
 
-        A braid monodromy with dictionnaries identifying strands with components
+        A braid monodromy with dictionaries identifying strands with components
         and braids with vertical lines.
 
         .. NOTE::
@@ -809,7 +810,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
     def fundamental_group(self, simplified=True):
         r"""
         Return the fundamental group of the complement of the union
-        of an arragnement of projective plane curves
+        of an arrangement of projective plane curves
         in the projective plane.
 
         INPUT:
@@ -953,11 +954,11 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             sage: A.meridians()
             {0: [x0, x1*x0*x1^-1], 1: [x0^-1*x1^-1*x0^-1], 2: [x1]}
             sage: A = H(y^2 + x*z, z*x, y)
+            sage: A.meridians()
+            {0: [x0, x2*x0*x2^-1], 1: [x2, x0^-1*x2^-1*x1^-1*x0^-1], 2: [x1]}
             sage: A.fundamental_group()
             Finitely presented group < x0, x1, x2 | x2*x0*x1*x0^-1*x2^-1*x1^-1,
                                                     x1*(x2*x0)^2*x2^-1*x1^-1*x0^-1*x2^-1*x0^-1 >
-            sage: A.meridians()
-            {0: [x0, x2*x0*x2^-1], 1: [x2, x0^-1*x2^-1*x1^-1*x0^-1], 2: [x1]}
         """
         if simplified:
             computed = self._meridians_simpl
@@ -965,7 +966,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             computed = self._meridians_nonsimpl
         if computed:
             return dict(computed)
-        self._fundamental_group(simplified=simplified)
+        self.fundamental_group(simplified=simplified)
         if simplified:
             return dict(self._meridians_simpl)
         else:

@@ -273,11 +273,11 @@ class FunctionFieldIdeal(Element):
         gens = self.gens()
         if len(gens) == 1:
             return gens
-        candidate_gensets = []
-        for genset in powerset(gens):
-            if self.parent()(genset) == self:
-                candidate_gensets.append(genset)
-        candidate_gensets.sort(key=lambda item: (len(item), len(repr(item)), item))
+        candidate_gensets = [genset for genset in powerset(gens)
+                             if self.parent()(genset) == self]
+        candidate_gensets.sort(key=lambda item: (len(item),
+                                                 len(repr(item)),
+                                                 item))
         return candidate_gensets[0]
 
     def ring(self):
@@ -1000,11 +1000,8 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
         if self.ring() != other.ring():
             raise ValueError("rings must be the same")
 
-        if (self.module().is_submodule(other.module()) and
-            other.module().is_submodule(self.module())):
-            return True
-        else:
-            return False
+        return (self.module().is_submodule(other.module()) and
+                other.module().is_submodule(self.module()))
 
     def module(self):
         """

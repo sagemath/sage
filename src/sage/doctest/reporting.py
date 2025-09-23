@@ -42,16 +42,20 @@ AUTHORS:
 # ****************************************************************************
 
 import re
-from sys import stdout
-from signal import (SIGABRT, SIGALRM, SIGBUS, SIGFPE, SIGHUP, SIGILL,
-                    SIGINT, SIGKILL, SIGPIPE, SIGQUIT, SIGSEGV, SIGTERM)
-from sage.structure.sage_object import SageObject
-from sage.doctest.util import count_noun
+import sys
+from signal import SIGABRT, SIGFPE, SIGILL, SIGINT, SIGSEGV, SIGTERM, Signals
+from sys import argv, stdout
+
+from sage.doctest.external import available_software
 from sage.doctest.sources import DictAsObject
-from .external import available_software
+from sage.doctest.util import count_noun
+from sage.structure.sage_object import SageObject
+
+if sys.platform != "win32":
+    from signal import SIGALRM, SIGBUS, SIGHUP, SIGKILL, SIGPIPE, SIGQUIT
 
 
-def signal_name(sig):
+def signal_name(sig: int | Signals) -> str:  # noqa: PLR0911
     """
     Return a string describing a signal number.
 
@@ -157,9 +161,7 @@ class DocTestReporter(SageObject):
         """
         if self.controller.options.optional is True or tag in self.controller.options.optional:
             return True
-        if tag in available_software.seen():
-            return True
-        return False
+        return tag in available_software.seen()
 
     def report_head(self, source, fail_msg=None):
         """
@@ -183,17 +185,17 @@ class DocTestReporter(SageObject):
             sage: DC = DocTestController(DD, [filename])
             sage: DTR = DocTestReporter(DC)
             sage: print(DTR.report_head(FDS))
-            sage -t .../sage/doctest/reporting.py
+            .../sage/doctest/reporting.py
 
         The same with various options::
 
             sage: DD.long = True
             sage: print(DTR.report_head(FDS))
-            sage -t --long .../sage/doctest/reporting.py
+            ... --long .../sage/doctest/reporting.py
             sage: print(DTR.report_head(FDS, "Failed by self-sabotage"))
-            sage -t --long .../sage/doctest/reporting.py  # Failed by self-sabotage
+            ... --long .../sage/doctest/reporting.py  # Failed by self-sabotage
         """
-        cmd = "sage -t"
+        cmd = "sage-runtests" if "sage-runtests" in argv[0] else "python3 -m sage.doctest"
         if self.controller.options.long:
             cmd += " --long"
 
@@ -252,6 +254,14 @@ class DocTestReporter(SageObject):
             Tests run before process (pid=1234) timed out:
             Output so far...
             **********************************************************************
+
+        TESTS:
+
+        Test GitHub output format (used for GitHub Actions annotations)::
+
+            sage: DTR.controller.options.format = 'github'
+            sage: DTR._log_failure(FDS, "Timed out", "process (pid=1234) timed out", "Output so far...")
+            ::error title=Timed out,file=.../sage/doctest/reporting.py::Output so far...
         """
         log = self.controller.log
         format = self.controller.options.format
@@ -598,17 +608,15 @@ class DocTestReporter(SageObject):
                         elif tag == "not implemented":
                             if self.controller.options.show_skipped:
                                 log("    %s for not implemented functionality not run" % (count_noun(nskipped, "test")))
-                        else:
-                            if not self.were_doctests_with_optional_tag_run(tag):
-                                if tag == "bug":
-                                    if self.controller.options.show_skipped:
-                                        log("    %s not run due to known bugs" % (count_noun(nskipped, "test")))
-                                elif tag == "":
-                                    if self.controller.options.show_skipped:
-                                        log("    %s not run" % (count_noun(nskipped, "unlabeled test")))
-                                else:
-                                    if self.controller.options.show_skipped:
-                                        log("    %s not run" % (count_noun(nskipped, tag + " test")))
+                        elif not self.were_doctests_with_optional_tag_run(tag):
+                            if tag == "bug":
+                                if self.controller.options.show_skipped:
+                                    log("    %s not run due to known bugs" % (count_noun(nskipped, "test")))
+                            elif tag == "":
+                                if self.controller.options.show_skipped:
+                                    log("    %s not run" % (count_noun(nskipped, "unlabeled test")))
+                            elif self.controller.options.show_skipped:
+                                log("    %s not run" % (count_noun(nskipped, tag + " test")))
 
                     nskipped = result_dict.walltime_skips
                     if self.controller.options.show_skipped:
@@ -695,9 +703,9 @@ class DocTestReporter(SageObject):
             sage: DC.sources = [None] * 4 # to fool the finalize method
             sage: DTR.finalize()
             ----------------------------------------------------------------------
-            sage -t .../sage/doctest/reporting.py  # Timed out
-            sage -t .../sage/doctest/reporting.py  # Bad exit: 3
-            sage -t .../sage/doctest/reporting.py  # 1 doctest failed
+            .../sage/doctest/reporting.py  # Timed out
+            .../sage/doctest/reporting.py  # Bad exit: 3
+            .../sage/doctest/reporting.py  # 1 doctest failed
             ----------------------------------------------------------------------
             Total time for all tests: 0.0 seconds
                 cpu time: 0.0 seconds
@@ -710,9 +718,9 @@ class DocTestReporter(SageObject):
             sage: DTR.finalize()
             <BLANKLINE>
             ----------------------------------------------------------------------
-            sage -t .../sage/doctest/reporting.py  # Timed out
-            sage -t .../sage/doctest/reporting.py  # Bad exit: 3
-            sage -t .../sage/doctest/reporting.py  # 1 doctest failed
+            .../sage/doctest/reporting.py  # Timed out
+            .../sage/doctest/reporting.py  # Bad exit: 3
+            .../sage/doctest/reporting.py  # 1 doctest failed
             Doctests interrupted: 4/6 files tested
             ----------------------------------------------------------------------
             Total time for all tests: 0.0 seconds

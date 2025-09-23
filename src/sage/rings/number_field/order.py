@@ -78,6 +78,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.integral_domains import IntegralDomains
+from sage.categories.noetherian_rings import NoetherianRings
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.sequence import Sequence
@@ -457,6 +458,16 @@ class Order(Parent, sage.rings.abc.Order):
         Traceback (most recent call last):
         ...
         ValueError: the rank of the span of gens is wrong
+
+    Orders are always Noetherian::
+
+        sage: x = polygen(ZZ, 'x')
+        sage: L.<alpha> = NumberField(x**4 - x**2 + 7)
+        sage: O = L.maximal_order() ; O.is_noetherian()
+        True
+        sage: E.<w> = NumberField(x^2 - x + 2)
+        sage: OE = E.ring_of_integers(); OE.is_noetherian()
+        True
     """
 
     def __init__(self, K):
@@ -479,8 +490,9 @@ class Order(Parent, sage.rings.abc.Order):
             0.0535229072603327 + 1.20934552493846*I
         """
         self._K = K
+        cat = IntegralDomains() & NoetherianRings()
         Parent.__init__(self, base=ZZ, names=K.variable_names(),
-                        normalize=False, category=IntegralDomains())
+                        normalize=False, category=cat)
         self._populate_coercion_lists_(embedding=self.number_field())
         if self.absolute_degree() == 2:
             self.is_maximal()       # cache
@@ -614,22 +626,6 @@ class Order(Parent, sage.rings.abc.Order):
             False
         """
         return False
-
-    def is_noetherian(self):
-        r"""
-        Return ``True`` (because orders are always Noetherian).
-
-        EXAMPLES::
-
-            sage: x = polygen(ZZ, 'x')
-            sage: L.<alpha> = NumberField(x**4 - x**2 + 7)
-            sage: O = L.maximal_order() ; O.is_noetherian()
-            True
-            sage: E.<w> = NumberField(x^2 - x + 2)
-            sage: OE = E.ring_of_integers(); OE.is_noetherian()
-            True
-        """
-        return True
 
     def is_integrally_closed(self) -> bool:
         r"""
@@ -822,7 +818,7 @@ class Order(Parent, sage.rings.abc.Order):
             from sage.matrix.constructor import Matrix
             self.__basis_matrix_inverse = Matrix([to_V(b) for b in self.basis()]).inverse()
             M = self.__basis_matrix_inverse
-        return to_V(K(x))*M
+        return to_V(K(x)) * M
 
     def free_module(self):
         r"""
@@ -1375,7 +1371,8 @@ class Order(Parent, sage.rings.abc.Order):
             sage: A.random_element().parent() is A
             True
         """
-        return sum([ZZ.random_element(*args, **kwds)*a for a in self.basis()])
+        return sum([ZZ.random_element(*args, **kwds) * a
+                    for a in self.basis()])
 
     def absolute_degree(self):
         r"""
@@ -1492,41 +1489,41 @@ class Order(Parent, sage.rings.abc.Order):
                 elements.append(self(a))
         return elements
 
-##     def absolute_polynomial(self):
-##         """
-##         Return the absolute polynomial of this order, which is just the absolute polynomial of the number field.
+#     def absolute_polynomial(self):
+#         """
+#         Return the absolute polynomial of this order, which is just the absolute polynomial of the number field.
 
-##         EXAMPLES::
+#         EXAMPLES::
 
-##         sage: K.<a, b> = NumberField([x^2 + 1, x^3 + x + 1]); OK = K.maximal_order()
-##         Traceback (most recent call last):
-##         ...
-##         NotImplementedError
+#         sage: K.<a, b> = NumberField([x^2 + 1, x^3 + x + 1]); OK = K.maximal_order()
+#         Traceback (most recent call last):
+#         ...
+#         NotImplementedError
 
-##         #sage: OK.absolute_polynomial()
-##         #x^6 + 5*x^4 - 2*x^3 + 4*x^2 + 4*x + 1
-##         """
-##         return self.number_field().absolute_polynomial()
+#         #sage: OK.absolute_polynomial()
+#         #x^6 + 5*x^4 - 2*x^3 + 4*x^2 + 4*x + 1
+#         """
+#         return self.number_field().absolute_polynomial()
 
-##     def polynomial(self):
-##         """
-##         Return the polynomial defining the number field that contains self.
-##         """
-##         return self.number_field().polynomial()
+#     def polynomial(self):
+#         """
+#         Return the polynomial defining the number field that contains self.
+#         """
+#         return self.number_field().polynomial()
 
-##     def polynomial_ntl(self):
-##         """
-##         Return defining polynomial of the parent number field as a
-##         pair, an ntl polynomial and a denominator.
+#     def polynomial_ntl(self):
+#         """
+#         Return defining polynomial of the parent number field as a
+#         pair, an ntl polynomial and a denominator.
 
-##         This is used mainly to implement some internal arithmetic.
+#         This is used mainly to implement some internal arithmetic.
 
-##         EXAMPLES::
+#         EXAMPLES::
 
-##             sage: NumberField(x^2 + 1,'a').maximal_order().polynomial_ntl()
-##             ([1 0 1], 1)
-##         """
-##         return self.number_field().polynomial_ntl()
+#             sage: NumberField(x^2 + 1,'a').maximal_order().polynomial_ntl()
+#             ([1 0 1], 1)
+#         """
+#         return self.number_field().polynomial_ntl()
 
 
 class Order_absolute(Order):
@@ -1603,7 +1600,7 @@ class Order_absolute(Order):
             3*a^2 + 2*a + 1
         """
         if isinstance(x, (tuple, list)):
-            x = sum(xi*gi for xi, gi in zip(x, self.gens()))
+            x = sum(xi * gi for xi, gi in zip(x, self.gens()))
         if not isinstance(x, Element) or x.parent() is not self._K:
             x = self._K(x)
         V, _, embedding = self._K.vector_space()
@@ -1737,18 +1734,27 @@ class Order_absolute(Order):
             sage: L.discriminant() / O.discriminant() == L.index_in(O)^2
             True
 
+
         TESTS::
 
             sage: type(K.order(5*a).discriminant())
             <class 'sage.rings.integer.Integer'>
+
+        This should be fast (:issue:`40770`)::
+
+            sage: x = polygen(ZZ, 'x')
+            sage: f = -10200*x^5 + 3394506606*x^4 + 1499062700037543*x^3 - 399446093061413660294*x^2 - 54234952557577515347321243*x + 2514415152433747751031436303788
+            sage: K.<a> = NumberField(f)
+            sage: easy = [2,3,5,7,11,83,5443,3548737,108743131120471]
+            sage: OK = K.maximal_order(v=easy, assume_maximal=True)
+            sage: OK.discriminant()
+            -2233837184359702514053503341104978970680899423438448397157179110318387386336251895416563127827690136506493208269682596127007739109465589455
+
         """
         try:
             return self.__discriminant
         except AttributeError:
-            if self._is_maximal():
-                D = self._K.discriminant()
-            else:
-                D = ZZ(self._K.discriminant(self.basis()))
+            D = ZZ(self._K.discriminant(self.basis()))
             self.__discriminant = D
             return D
 
