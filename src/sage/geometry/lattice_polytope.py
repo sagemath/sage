@@ -705,6 +705,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         """
         state = self.__dict__.copy()
         state.pop('_vertices')
+        state.pop('_distances', None)
         try:
             state['_npoints'] = len(state['_points'])
             state.pop('_points')
