@@ -597,6 +597,8 @@ class WithPicklingByInitArgs(metaclass=ClasscallMetaclass):
         assert isinstance(instance, cls)
         if instance.__class__.__reduce__ == WithPicklingByInitArgs.__reduce__:
             instance._reduction = (cls, args, options)
+            instance.__class__.__getstate__ = WithPicklingByInitArgs.__getstate__
+            instance.__class__.__setstate__ = WithPicklingByInitArgs.__setstate__
         return instance
 
     def __reduce__(self):
@@ -614,7 +616,7 @@ class WithPicklingByInitArgs(metaclass=ClasscallMetaclass):
             sage: x.__reduce__()          # indirect doctest
             (<function unreduce at ...>, (<class 'sage.structure.unique_representation.UniqueRepresentation'>, (), {}), {})
         """
-        return (unreduce, self._reduction)
+        return (unreduce, self._reduction, self.__getstate__())
 
     def __copy__(self):
         """
@@ -644,6 +646,78 @@ class WithPicklingByInitArgs(metaclass=ClasscallMetaclass):
             True
         """
         return self
+
+    def __getstate__(self):
+        """
+        Used for pickling.
+
+        An object of :class:`WithPicklingByInitArgs` does not keep its dictionary
+        when pickled, because the object is constructed anew upon unpickling.
+
+        Here we make some exceptions so that cached functions with
+        ``do_pickle=True`` attached to an object to be kept in the pickle.
+
+        EXAMPLES::
+
+            sage: from sage.structure.unique_representation import WithPicklingByInitArgs
+            sage: class X(WithPicklingByInitArgs):
+            ....:     def __init__(self, x):
+            ....:         self._x = x
+            ....:     @cached_method(do_pickle=True)
+            ....:     def genus(self):
+            ....:         return len(self._x)
+            ....:
+            sage: import __main__; __main__.X = X  # not needed in an interactive session
+            sage: a = X((1,2,3))
+            sage: a.genus()
+            3
+            sage: a.genus.cache
+            3
+            sage: s = dumps(a)
+            sage: a.genus.clear_cache()
+            sage: a.genus.cache
+            sage: b = loads(s)
+            sage: b.genus.cache
+            3
+        """
+        from sage.misc.cachefunc import CachedFunction
+        d = {}
+        try:
+            for key, value in self.__dict__.items():
+                if isinstance(value, CachedFunction) and value.is_pickled_with_cache():
+                    d[key] = value
+        except AttributeError:
+            pass
+
+        return d
+
+    def __setstate__(self, d):
+        """
+        Used for unpickling.
+
+        EXAMPLES::
+
+            sage: from sage.structure.unique_representation import WithPicklingByInitArgs
+            sage: class X(WithPicklingByInitArgs):
+            ....:     def __init__(self, x):
+            ....:         self._x = x
+            ....:     @cached_method(do_pickle=False)
+            ....:     def genus(self):
+            ....:         return len(self._x)
+            ....:
+            sage: import __main__; __main__.X = X  # not needed in an interactive session
+            sage: a = X((1,2,3))
+            sage: a.genus()
+            3
+            sage: a.genus.cache
+            3
+            sage: s = dumps(a)
+            sage: a.genus.clear_cache()
+            sage: a.genus.cache
+            sage: b = loads(s)
+            sage: b.genus.cache
+        """
+        self.__dict__.update(d)
 
 
 def unreduce(cls, args, keywords):
@@ -1109,13 +1183,7 @@ class CachedRepresentation(WithPicklingByInitArgs):
             sage: x is y   # indirect doctest
             True
         """
-        instance = typecall(cls, *args, **options)
-        assert isinstance(instance, cls)
-        if instance.__class__.__reduce__ == CachedRepresentation.__reduce__:
-            instance._reduction = (cls, args, options)
-            instance.__class__.__getstate__ = CachedRepresentation.__getstate__
-            instance.__class__.__setstate__ = CachedRepresentation.__setstate__
-        return instance
+        return super().__classcall__(cls, *args, **options)
 
     @classmethod
     def _clear_cache_(cls):
@@ -1204,93 +1272,6 @@ class CachedRepresentation(WithPicklingByInitArgs):
         del_list = [k for k in cache if issubclass(k[0][0], cls)]
         for k in del_list:
             del cache[k]
-
-    def __reduce__(self):
-        """
-        Return the arguments that have been passed to
-        :meth:`__new__<object.__new__>` to construct this object,
-        as per the pickle protocol.
-
-        See also :class:`CachedRepresentation` and
-        :class:`UniqueRepresentation` for a discussion.
-
-        EXAMPLES::
-
-            sage: x = UniqueRepresentation()
-            sage: x.__reduce__()          # indirect doctest
-            (<function unreduce at ...>, (<class 'sage.structure.unique_representation.UniqueRepresentation'>, (), {}), {})
-        """
-        return unreduce, self._reduction, self.__getstate__()
-
-    def __getstate__(self):
-        """
-        Used for pickling.
-
-        An object of :class:`CachedRepresentation` does not keep its dictionary
-        when pickled, because the object is constructed anew upon unpickling.
-
-        Here we make some exceptions so that cached functions with
-        `do_pickle=True` attached to an object to be kept in the pickle.
-
-        EXAMPLES::
-
-            sage: class X(UniqueRepresentation):
-            ....:     def __init__(self, x):
-            ....:         self._x = x
-            ....:     @cached_method(do_pickle=True)
-            ....:     def genus(self):
-            ....:         return len(self._x)
-            ....:
-            sage: import __main__; __main__.X = X  # not needed in an interactive session
-            sage: a = X((1,2,3))
-            sage: a.genus()
-            3
-            sage: a.genus.cache
-            3
-            sage: s = dumps(a)
-            sage: a.genus.clear_cache()
-            sage: a.genus.cache
-            sage: b = loads(s)
-            sage: b.genus.cache
-            3
-        """
-        from sage.misc.cachefunc import CachedFunction
-        d = {}
-        try:
-            for key, value in self.__dict__.items():
-                if isinstance(value, CachedFunction) and value.is_pickled_with_cache():
-                    d[key] = value
-        except AttributeError:
-            pass
-
-        return d
-
-    def __setstate__(self, d):
-        """
-        Used for unpickling.
-
-        EXAMPLES::
-
-            sage: class X(UniqueRepresentation):
-            ....:     def __init__(self, x):
-            ....:         self._x = x
-            ....:     @cached_method(do_pickle=False)
-            ....:     def genus(self):
-            ....:         return len(self._x)
-            ....:
-            sage: import __main__; __main__.X = X  # not needed in an interactive session
-            sage: a = X((1,2,3))
-            sage: a.genus()
-            3
-            sage: a.genus.cache
-            3
-            sage: s = dumps(a)
-            sage: a.genus.clear_cache()
-            sage: a.genus.cache
-            sage: b = loads(s)
-            sage: b.genus.cache
-        """
-        self.__dict__.update(d)
 
 
 class UniqueRepresentation(WithEqualityById, CachedRepresentation):
