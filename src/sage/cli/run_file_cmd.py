@@ -40,8 +40,10 @@ class RunFileCmd:
         r"""
         Execute the given command.
         """
-        input_file = preparse_file_named(self.options.file[0]) if self.options.file[0].endswith('.sage') else self.options.file[0]
-        if self.options.file[0].endswith('.pyx') or self.options.file[0].endswith('.spyx'):
+        input_file = self.options.file[0]
+        if input_file.endswith('.sage'):
+            input_file = str(preparse_file_named(input_file))
+        if input_file.endswith('.pyx') or input_file.endswith('.spyx'):
             s = load_cython(input_file)
             eval(compile(s, tmp_filename(), 'exec'), sage_globals())
         else:
