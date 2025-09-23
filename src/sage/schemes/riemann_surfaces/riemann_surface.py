@@ -1962,10 +1962,7 @@ class RiemannSurface:
                  for j in range(i, self.genus)]
 
         # Find the monomials present and their coefficients
-        mons = []
-        for p in pairs:
-            mons += p.monomials()
-        mons = list(set(mons))
+        mons = {mon for p in pairs for mon in p.monomials()}
         CM = Matrix([[p.monomial_coefficient(mon) for p in pairs]
                      for mon in mons])
         # test the number of linearly independent pairs
