@@ -1294,7 +1294,7 @@ class CachedRepresentation(WithPicklingByInitArgs):
         self.__dict__.update(d)
 
 
-class UniqueRepresentation(CachedRepresentation, WithEqualityById):
+class UniqueRepresentation(WithEqualityById, CachedRepresentation):
     r"""
     Classes derived from ``UniqueRepresentation`` inherit a unique
     representation behavior for their instances.
