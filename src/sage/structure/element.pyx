@@ -3215,7 +3215,7 @@ cdef class CommutativeRingElement(RingElement):
         return I.reduce(self)
 
 
-    ##############################################
+##############################################
 
 cdef class Expression(CommutativeRingElement):
 
@@ -4579,7 +4579,6 @@ def coerce_binop(method):
         TypeError: algorithm 1 not supported
     """
     @sage_wraps(method)
-    @cython.binding(True)
     def new_method(self, other, *args, **kwargs):
         if have_same_parent(self, other):
             return method(self, other, *args, **kwargs)
