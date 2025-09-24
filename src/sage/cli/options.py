@@ -23,4 +23,4 @@ class CliOptions:
     command: str | None = None
 
     """The file to execute."""
-    file: List[str] | None = None
+    file: list[str] | None = None
