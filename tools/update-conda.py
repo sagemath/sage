@@ -91,50 +91,49 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
         return
 
     def process_platform_python(platform_key, platform_value, python):
-        for python in pythons:
-            dependencies = get_dependencies(pyproject_toml, python, platform_key)
-            for tag in tags:
-                # Pin Python version
-                pinned_dependencies = {
-                    f"python={python}" if dep == "python" else dep
-                    for dep in dependencies
-                }
-                pinned_dependencies = sorted(pinned_dependencies)
+        dependencies = get_dependencies(pyproject_toml, python, platform_key)
+        for tag in tags:
+            # Pin Python version
+            pinned_dependencies = {
+                f"python={python}" if dep == "python" else dep
+                for dep in dependencies
+            }
+            pinned_dependencies = sorted(pinned_dependencies)
 
-                env_file = source_dir / f"environment{tag}-{python}.yml"
-                write_env_file(env_file, pinned_dependencies)
-                lock_file = source_dir / f"environment{tag}-{python}-{platform_value}"
-                lock_file_gen = (
-                    source_dir / f"environment{tag}-{python}-{platform_value}.yml"
-                )
-                print(
-                    f"Updating lock file for {env_file} at {lock_file_gen}", flush=True
-                )
-                subprocess.run(
-                    [
-                        "conda-lock",
-                        "--mamba",
-                        "--channel",
-                        "conda-forge",
-                        "--kind",
-                        "env",
-                        "--platform",
-                        platform_key,
-                        "--file",
-                        str(env_file),
-                        "--lockfile",
-                        str(lock_file),
-                        "--filename-template",
-                        str(lock_file),
-                    ],
-                    check=True,
-                )
+            env_file = source_dir / f"environment{tag}-{python}.yml"
+            write_env_file(env_file, pinned_dependencies)
+            lock_file = source_dir / f"environment{tag}-{python}-{platform_value}"
+            lock_file_gen = (
+                source_dir / f"environment{tag}-{python}-{platform_value}.yml"
+            )
+            print(
+                f"Updating lock file for {env_file} at {lock_file_gen}", flush=True
+            )
+            subprocess.run(
+                [
+                    "conda-lock",
+                    "--mamba",
+                    "--channel",
+                    "conda-forge",
+                    "--kind",
+                    "env",
+                    "--platform",
+                    platform_key,
+                    "--file",
+                    str(env_file),
+                    "--lockfile",
+                    str(lock_file),
+                    "--filename-template",
+                    str(lock_file),
+                ],
+                check=True,
+            )
 
-                # Add conda env name to lock file at beginning
-                with open(lock_file_gen, "r+") as f:
-                    content = f.read()
-                    f.seek(0, 0)
-                    f.write(f"name: sage{tag or '-dev'}\n{content}")
+            # Add conda env name to lock file at beginning
+            with open(lock_file_gen, "r+") as f:
+                content = f.read()
+                f.seek(0, 0)
+                f.write(f"name: sage{tag or '-dev'}\n{content}")
 
     with ThreadPoolExecutor(max_workers=3) as executor:
         futures = [
@@ -170,6 +169,10 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         .replace("memory_allocator", "memory-allocator")
         .replace("pkg:generic/r-lattice", "r-lattice")
         .replace("pkg:generic/latexmk", "latexmk")
+        .replace("pkg:generic/sagemath-elliptic-curves", "sagemath-db-elliptic-curves")
+        .replace("pkg:generic/sagemath-graphs", "sagemath-db-graphs")
+        .replace("pkg:generic/sagemath-polytopes-db", "sagemath-db-polytopes")
+        .replace("pkg:generic/tachyon", "tachyon")
         for req in all_requirements
     }
     # Exclude requirements not available on conda (for a given platform)
@@ -272,8 +275,10 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         # all_requirements.add("gcc_win-64 >= 14.2.0")
         # all_requirements.add("gxx_win-64")
     else:
-        all_requirements.add("c-compiler")
-        all_requirements.add("cxx-compiler")
+        # Not possible to use GCC 14 until https://github.com/conda-forge/fflas-ffpack-feedstock/pull/21 is merged
+        # Thus add version constraint to avoid conda picking GCC 14
+        all_requirements.add("c-compiler <= 1.10")
+        all_requirements.add("cxx-compiler <= 1.10")
 
     # Add additional dependencies based on platform
     if platform == "win-64":
@@ -288,6 +293,12 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         all_requirements.add("m4")
     # Needed to fix a bug on Macos with broken pkg-config
     all_requirements.add("expat")
+
+    # Packages with version constraints
+    # https://github.com/sagemath/sage/pull/40679
+    all_requirements.remove("maxima")
+    all_requirements.add("maxima < 5.48.0")
+
     return all_requirements
 
 
