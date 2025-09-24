@@ -296,8 +296,9 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
 
     # Packages with version constraints
     # https://github.com/sagemath/sage/pull/40679
-    all_requirements.remove("maxima")
-    all_requirements.add("maxima < 5.48.0")
+    if platform != "win-64":
+        all_requirements.remove("maxima")
+        all_requirements.add("maxima < 5.48.0")
 
     return all_requirements
 
