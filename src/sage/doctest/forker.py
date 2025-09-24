@@ -514,6 +514,7 @@ class SageSpoofInOut(SageObject):
 
 
 from collections import namedtuple
+
 TestResults = namedtuple('TestResults', 'failed attempted')
 
 
@@ -1254,7 +1255,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: DTR.options.format = 'github'
             sage: print(DTR._failure_header(doctests[0], ex))
             **********************************************************************
-            ::error title=Failed example:,file=.../sage/doctest/forker.py,line=12::Failed example:
+            ::error title=Failed example:,file=.../sage/doctest/forker.py,line=...::Failed example:
                 doctest_var = 42; doctest_var^2
             <BLANKLINE>
         """
@@ -1511,8 +1512,9 @@ class SageDocTestRunner(doctest.DocTestRunner):
                         print(src)
                         if ex.want:
                             print(doctest._indent(ex.want[:-1]))
-                    from sage.repl.configuration import sage_ipython_config
                     from IPython.terminal.embed import InteractiveShellEmbed
+
+                    from sage.repl.configuration import sage_ipython_config
                     cfg = sage_ipython_config.default()
                     cfg.InteractiveShell.enable_tip = False
                     # Currently this doesn't work: prompts only work in pty
