@@ -122,10 +122,13 @@ AUTHORS:
 # ****************************************************************************
 from __future__ import annotations
 
+import os
+import shlex
 from collections.abc import Hashable
 from copyreg import constructor as copyreg_constructor
 from functools import reduce
 from io import IOBase, StringIO
+from subprocess import PIPE, Popen
 from typing import TYPE_CHECKING, Literal
 
 import sage.geometry.abc
