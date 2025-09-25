@@ -8,12 +8,14 @@ from __future__ import annotations
 
 from os import path
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, TYPE_CHECKING
 from urllib.parse import quote
 
-from sphinx.application import Sphinx
 from sphinx.builders.dummy import DummyBuilder
 from sphinx.util.inventory import InventoryFile
+
+if TYPE_CHECKING:
+    from sphinx.application import Sphinx
 
 INVENTORY_FILENAME = "objects.inv"
 

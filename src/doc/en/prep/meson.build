@@ -1,10 +1,10 @@
 doc_sources = [
-  'Advanced-2DPlotting.rst',
-  'Calculus.rst',
-  'Intro-Tutorial.rst',
-  'Logging-On.rst',
-  'Programming.rst',
-  'Symbolics-and-Basic-Plotting.rst',
+  'advanced-2D-plotting.rst',
+  'calculus.rst',
+  'intro-tutorial.rst',
+  'logging-on.rst',
+  'programming.rst',
+  'symbolics-and-basic-plotting.rst',
   'conf.py',
   'index.rst',
   'quickstart.rst',
@@ -15,4 +15,4 @@ foreach file : doc_sources
 endforeach
 
 subdir('media')
-subdir('Quickstarts')
+subdir('quickstarts')
