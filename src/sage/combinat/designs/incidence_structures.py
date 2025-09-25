@@ -753,7 +753,7 @@ class IncidenceStructure:
 
         The old method name is kept as an alias::
 
-            sage: designs.DesarguesianProjectivePlaneDesign(2).npoints()
+            sage: designs.DesarguesianProjectivePlaneDesign(2).num_points()
             7
         """
         return len(self._points)
@@ -776,7 +776,7 @@ class IncidenceStructure:
 
         The old method name is kept as an alias::
 
-            sage: designs.DesarguesianProjectivePlaneDesign(2).npoints()
+            sage: designs.DesarguesianProjectivePlaneDesign(2).num_blocks()
             7
         """
         return len(self._blocks)
