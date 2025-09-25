@@ -74,44 +74,42 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.libs.ntl.ntl_ZZ import ntl_ZZ
-from sage.libs.ntl.ntl_ZZX import ntl_ZZX
-
-from sage.categories.map import Map
-from sage.structure.sequence import Sequence
-
-import sage.rings.abc
-import sage.structure.parent_gens
-
-from . import maps
-from . import structure
-
-from sage.misc.latex import latex
-from sage.misc.cachefunc import cached_method
-from sage.structure.factorization import Factorization
-import sage.rings.polynomial.polynomial_element as polynomial_element
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-
-from . import number_field_element
-import sage.rings.number_field.number_field_ideal_rel
-from .number_field_ideal import NumberFieldIdeal
-from .number_field import (NumberField, NumberField_generic,
-    put_natural_embedding_first, proof_flag,
-    is_NumberFieldHomsetCodomain)
-from sage.rings.number_field.number_field_base import NumberField as NumberField_base
-from sage.rings.number_field.order import (RelativeOrder,
-                                           relative_order_from_ring_generators)
-from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
 from cypari2.gen import Gen as pari_gen
 
+import sage.rings.abc
+import sage.rings.number_field.number_field_ideal_rel
+import sage.structure.parent_gens
 from sage.categories.homset import Hom
+from sage.categories.map import Map
 from sage.categories.sets_cat import Sets
+from sage.libs.ntl.ntl_ZZ import ntl_ZZ
+from sage.libs.ntl.ntl_ZZX import ntl_ZZX
+from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
 from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_element import vector
-
-from sage.rings.real_mpfr import RR
-from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
+from sage.rings.number_field import maps, number_field_element, structure
+from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
+from sage.rings.number_field.number_field import (
+    NumberField,
+    NumberField_generic,
+    is_NumberFieldHomsetCodomain,
+    proof_flag,
+    put_natural_embedding_first,
+)
+from sage.rings.number_field.number_field_base import NumberField as NumberField_base
+from sage.rings.number_field.number_field_ideal import NumberFieldIdeal
+from sage.rings.number_field.order import (
+    RelativeOrder,
+    relative_order_from_ring_generators,
+)
+from sage.rings.polynomial import polynomial_element
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RR
+from sage.structure.factorization import Factorization
+from sage.structure.sequence import Sequence
 
 
 def is_RelativeNumberField(x):
