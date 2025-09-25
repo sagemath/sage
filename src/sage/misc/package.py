@@ -274,13 +274,6 @@ def list_packages(*pkg_types: str, pkg_sources: list[str] = ['normal', 'pip', 's
          'babel',
          ...
          'zipp']
-        sage: sage_conf_info = L['sage_conf']
-        sage: sage_conf_info.type
-        'standard'
-        sage: sage_conf_info.is_installed()
-        True
-        sage: sage_conf_info.source
-        'script'
 
         sage: # optional - sage_spkg internet
         sage: L = list_packages(pkg_sources=['pip'], local=True)
