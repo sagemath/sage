@@ -1530,10 +1530,11 @@ class InfGenDifferentialWeylAlgebra(UniqueRepresentation, Parent):
             True
         """
         from sage.sets.non_negative_integers import NonNegativeIntegers
-        return Family(NonNegativeIntegers(), lambda x: self.gen(x), name=self.variable_names()[0])
+        return Family(NonNegativeIntegers(), lambda x: self.gen(x),
+                      name=self.variable_names()[0])
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the algebra generators of ``self``.
 
