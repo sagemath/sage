@@ -622,9 +622,10 @@ class PermutationGroup_generic(FiniteGroup):
         natural_domain = FiniteEnumeratedSet(list(range(1, len(domain)+1)))
         return domain == natural_domain
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return a string showing how to declare / initialize ``self`` in GAP.
+
         Stored in the ``self._gap_string`` attribute.
 
         EXAMPLES:
@@ -638,7 +639,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: A4._gap_init_()
             'Group([PermList([1, 3, 4, 2]), PermList([2, 3, 1, 4])])'
         """
-        return 'Group([%s])' % (', '.join([g._gap_init_() for g in self.gens()]))
+        return 'Group([%s])' % (', '.join(g._gap_init_() for g in self.gens()))
 
     @cached_method
     def gap(self):
