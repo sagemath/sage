@@ -1061,7 +1061,7 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
 
     ambient_dim = lattice_dim
 
-    def nrays(self):
+    def n_rays(self) -> int:
         r"""
         Return the number of rays of ``self``.
 
@@ -1070,10 +1070,20 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
         EXAMPLES::
 
             sage: c = Cone([(1,0), (0,1)])
+            sage: c.n_rays()
+            2
+
+        TESTS:
+
+        The old method name is kept as an alias::
+
+            sage: c = Cone([(1,0), (0,1)])
             sage: c.nrays()
             2
         """
         return len(self._rays)
+
+    nrays = n_rays
 
     def plot(self, **options):
         r"""
