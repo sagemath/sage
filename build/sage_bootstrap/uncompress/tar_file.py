@@ -97,7 +97,7 @@ class SageBaseTarFile(tarfile.TarFile):
                        else name_to_member[m]
                        for m in members]
         return super(SageBaseTarFile, self).extractall(path=path,
-                                                       members=members,
+                                                       members=members, filter='fully_trusted',
                                                        **kwargs)
 
     def extractbytes(self, member):
