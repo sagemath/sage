@@ -23,7 +23,6 @@ AUTHORS:
 from copy import copy
 from pathlib import Path
 import pickle
-from typing import Any
 from collections.abc import Iterator
 
 
@@ -34,10 +33,11 @@ from sage.combinat.combination import Combinations
 from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMutationType
 
 
-def is_mutation_finite(M, nr_of_checks=None) -> tuple[bool, Any]:
+def is_mutation_finite(M, nr_of_checks=None) -> tuple[bool, None | list[int]]:
     r"""
-    Use a non-deterministic method by random mutations in various
-    directions. Can result in a wrong answer.
+    Use a non-deterministic method by random mutations in various directions.
+
+    This can result in a wrong answer.
 
     .. WARNING::
 
@@ -50,7 +50,8 @@ def is_mutation_finite(M, nr_of_checks=None) -> tuple[bool, Any]:
 
     ALGORITHM:
 
-    A quiver is mutation infinite if and only if every edge label (a, -b) satisfy a*b > 4.
+    A quiver is mutation infinite if and only if every edge label (a, -b)
+    satisfy a*b > 4.
     Thus, we apply random mutations in random directions
 
     EXAMPLES::
@@ -342,11 +343,24 @@ def _connected_mutation_type(dg):
     n = dg.order()
     edges = dg.edges(sort=True)
     vertices = list(dg)
-    # initializing lists of the edges with labels (2, -1) or (1, -2); (4, -1) or (1, -4); or (2, -2), respectively
+    # initializing lists of the edges with labels (2, -1) or (1, -2);
+    # (4, -1) or (1, -4); or (2, -2), respectively
     exc_labels = []
     exc_labels41 = []
     double_edges = []
     # letter = None
+
+    # some short-circuits for rank 2
+    if n == 2 and len(edges) == 1:
+        ab = tuple(sorted(dg.edge_labels()[0]))
+        if ab == (-1, 1):
+            return QuiverMutationType(['A', 2])
+        if ab in {(-2, 1), (-1, 2)}:
+            return QuiverMutationType(['B', 2])
+        if ab in {(-3, 1), (-1, 3)}:
+            return QuiverMutationType(['G', 2])
+        if ab == (-2, 2):
+            return QuiverMutationType(['A', 1, 1])
 
     # replacing higher labels by multiple edges.  Multiple edges and acyclic is a sign that quiver is infinite mutation type with the exception of A_tilde where there might be one multiple edge with multiplicity 2.  Multiple edges is at least a sign that the quiver is of 'undetermined finite mutation type'.
     dg.allow_multiple_edges(True)
