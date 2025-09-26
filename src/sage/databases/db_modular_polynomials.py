@@ -32,6 +32,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import bz2
+import os
 from pathlib import Path
 
 
