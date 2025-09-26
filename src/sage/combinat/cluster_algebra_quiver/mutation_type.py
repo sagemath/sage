@@ -1273,7 +1273,7 @@ def load_data(n: int, user=True) -> dict:
     # we check
     # - if the data is stored by the user, and if this is not the case
     # - if the data is stored by the optional package install
-    paths = list(sage_data_paths())
+    paths = [Path(path) for path in sage_data_paths()]
     if user:
         paths.append(Path(DOT_SAGE))
     data = {}

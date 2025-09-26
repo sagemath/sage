@@ -1,3 +1,4 @@
+# sage.doctest: needs sloane_database
 """
 Local copy of the On-Line Encyclopedia of Integer Sequences
 
@@ -11,21 +12,21 @@ To look up a sequence, type
 
 ::
 
-    sage: SloaneEncyclopedia[60843]  # optional - sloane_database
+    sage: SloaneEncyclopedia[60843]
     [1, 6, 21, 107, 47176870]
 
 To get the name of a sequence, type
 
 ::
 
-    sage: SloaneEncyclopedia.sequence_name(1)  # optional - sloane_database
+    sage: SloaneEncyclopedia.sequence_name(1)
     'Number of groups of order n.'
 
 To search locally for a particular subsequence, type
 
 ::
 
-    sage: SloaneEncyclopedia.find([1,2,3,4,5], 1)    # optional - sloane_database
+    sage: SloaneEncyclopedia.find([1,2,3,4,5], 1)
     [(15, [1, 2, 3, 4, 5, 7, 7, 8, 9, 11, 11, 13, 13, 16, 16, 16, 17, 19, 19, 23, 23, 23, 23, 25, 25, 27, 27, 29, 29, 31, 31, 32, 37, 37, 37, 37, 37, 41, 41, 41, 41, 43, 43, 47, 47, 47, 47, 49, 49, 53, 53, 53, 53, 59, 59, 59, 59, 59, 59, 61, 61, 64, 64, 64, 67, 67, 67, 71, 71, 71, 71, 73])]
 
 The default maximum number of results is 30, but to return up to
@@ -33,7 +34,7 @@ The default maximum number of results is 30, but to return up to
 
 ::
 
-    sage: SloaneEncyclopedia.find([1,2,3,4,5], 100)  # optional - sloane_database
+    sage: SloaneEncyclopedia.find([1,2,3,4,5], 100)
     [(15, [1, 2, 3, 4, 5, 7, 7, 8, 9, 11, 11, ...
 
 Results in either case are of the form [ (number, list) ].
@@ -160,7 +161,7 @@ class SloaneEncyclopediaClass:
 
         EXAMPLES::
 
-            sage: SloaneEncyclopedia.is_installed()  # optional - sloane_database
+            sage: SloaneEncyclopedia.is_installed()
             True
         """
         return os.path.exists(self.__file__) and os.path.exists(self.__file_names__)
@@ -338,7 +339,7 @@ class SloaneEncyclopediaClass:
 
         EXAMPLES::
 
-            sage: SloaneEncyclopedia.sequence_name(1) # optional - sloane_database
+            sage: SloaneEncyclopedia.sequence_name(1)
             'Number of groups of order n.'
         """
         self.load()
