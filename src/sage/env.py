@@ -524,7 +524,7 @@ def cython_aliases(required_modules=None, optional_modules=None):
     return aliases
 
 
-def sage_data_paths(name: str | None) -> set[str]:
+def sage_data_paths(name: str = '') -> set[str]:
     r"""
     Search paths for general data files.
 
@@ -550,6 +550,4 @@ def sage_data_paths(name: str | None) -> set[str]:
     else:
         paths = {path for path in SAGE_DATA_PATH.split(os.pathsep)}
 
-    if name is None:
-        return {path for path in paths if os.path.exists(path)}
     return {os.path.join(path, name) for path in paths if os.path.exists(path)}
