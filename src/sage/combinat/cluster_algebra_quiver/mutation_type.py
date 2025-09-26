@@ -1268,12 +1268,12 @@ def load_data(n: int, user=True) -> dict:
            ('BKO', (((1, 0), (3, -1)), ((2, 1), (1, -3)))),
            ('BP_', (((0, 1), (2, -2)), ((1, 2), (1, -3)), ((2, 0), (3, -1))))])]
     """
-    from sage.env import DOT_SAGE, SAGE_SHARE
+    from sage.env import DOT_SAGE, sage_data_paths
 
     # we check
     # - if the data is stored by the user, and if this is not the case
     # - if the data is stored by the optional package install
-    paths = [Path(SAGE_SHARE)]
+    paths = list(sage_data_paths())
     if user:
         paths.append(Path(DOT_SAGE))
     data = {}

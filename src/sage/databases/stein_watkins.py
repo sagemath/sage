@@ -137,7 +137,7 @@ REFERENCE:
 import bz2
 import os
 
-from sage.env import SAGE_SHARE
+from sage.env import sage_data_paths
 
 
 class SteinWatkinsIsogenyClass:
@@ -183,7 +183,13 @@ class SteinWatkinsAllData:
             raise RuntimeError("num (=%s) must be a nonnegative integer" % num)
         name = str(num)
         name = '0' * (3 - len(name)) + name
-        self._file = os.path.join(SAGE_SHARE, 'stein_watkins', 'a.%s.bz2' % name)
+        self._file = None
+        for path in sage_data_paths('stein_watkins'):
+            file = os.path.join(path, 'a.%s.bz2' % name)
+            if os.path.exists(file):
+                self._file = file
+        if not self._file:
+            raise FileNotFoundError('Could not find the Stein-Watkins database')
         self._iter = iter(self)
 
     def __repr__(self):
@@ -317,7 +323,13 @@ class SteinWatkinsPrimeData(SteinWatkinsAllData):
             raise RuntimeError("num (=%s) must be a nonnegative integer" % num)
         name = str(num)
         name = '0' * (2 - len(name)) + name
-        self._file = os.path.join(SAGE_SHARE, 'stein_watkins', 'p.%s.bz2' % name)
+        self._file = None
+        for path in sage_data_paths('stein_watkins'):
+            file = os.path.join(path, 'p.%s.bz2' % name)
+            if os.path.exists(file):
+                self._file = file
+        if not self._file:
+            raise FileNotFoundError('Could not find the Stein-Watkins database')
         self._iter = iter(self)
 
     def __repr__(self):

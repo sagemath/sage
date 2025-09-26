@@ -87,7 +87,7 @@ from urllib.request import urlretrieve
 import ssl
 
 from sage.misc.verbose import verbose
-from sage.env import SAGE_SHARE
+from sage.env import DOT_SAGE, sage_data_paths
 from sage.rings.integer_ring import ZZ
 
 
@@ -101,7 +101,12 @@ class SloaneEncyclopediaClass:
         """
         Initialize the database but do not load any of the data.
         """
-        self.__path__ = os.path.join(SAGE_SHARE, 'sloane')
+        self.__path__ = os.path.join(DOT_SAGE, 'db', 'sloane')
+        for path in sage_data_paths('sloane'):
+            file_oeis = os.path.join(path, 'sloane-oeis.bz2')
+            file_names = os.path.join(path, 'sloane-names.bz2')
+            if os.path.exists(file_oeis) and os.path.exists(file_names):
+                self.__path__ = path
         self.__file__ = os.path.join(self.__path__, 'sloane-oeis.bz2')
         self.__file_names__ = os.path.join(self.__path__, 'sloane-names.bz2')
         self.__loaded__ = False
