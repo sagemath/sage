@@ -1,4 +1,4 @@
- pathspec tomli editables pluggy packaging trove_classifiers | pip $(PYTHON)
+setuptools-scm hatchling | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.
