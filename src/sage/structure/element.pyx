@@ -3215,7 +3215,7 @@ cdef class CommutativeRingElement(RingElement):
         return I.reduce(self)
 
 
-    ##############################################
+##############################################
 
 cdef class Expression(CommutativeRingElement):
 
