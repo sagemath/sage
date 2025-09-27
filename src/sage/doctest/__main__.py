@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+import shlex
 
 # Note: the DOT_SAGE and SAGE_STARTUP_FILE environment variables have already been set by sage-env
 DOT_SAGE = os.environ.get('DOT_SAGE', os.path.join(os.environ.get('HOME'),
@@ -53,6 +54,9 @@ def _make_parser():
     parser.add_argument("-T", "--timeout", type=int, default=-1, help="timeout (in seconds) for doctesting one file, 0 for no timeout")
     what = parser.add_mutually_exclusive_group()
     what.add_argument("-a", "--all", action="store_true", default=False, help="test all files in the Sage library")
+    what.add_argument("--all-except", type=shlex.split, default=None,
+                      help="test all files in the Sage library except the specified space-separated list "
+                      "(backslash or quote are needed to escape spaces or backslashes or quotes)")
     what.add_argument("--installed", action="store_true", default=False, help="test all installed modules of the Sage library")
     parser.add_argument("--logfile", type=argparse.FileType('a'), metavar="FILE", help="log all output to FILE")
 
@@ -163,7 +167,7 @@ def main():
     in_filenames = False
     afterlog = False
     for arg in sys.argv[1:]:
-        if arg in ('-n', '--new', '-a', '--all', '--installed'):
+        if arg in ('-n', '--new', '-a', '--all', '--installed') or arg.startswith("--all-except"):
             need_filenames = False
         elif need_filenames and not (afterlog or in_filenames) and os.path.exists(arg):
             in_filenames = True
@@ -174,8 +178,8 @@ def main():
 
     args = parser.parse_args(new_arguments)
 
-    if not args.filenames and not (args.all or args.new or args.installed):
-        print('either use --new, --all, --installed, or some filenames')
+    if not args.filenames and not (args.all or args.new or args.installed) and args.all_except is None:
+        print('either use --new, --all, --all-except=..., --installed, or some filenames')
         return 2
 
     # Limit the number of threads to 2 to save system resources.
