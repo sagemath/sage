@@ -71,42 +71,44 @@ factor `x`.
 ################################################################################
 
 import sage.modular.arithgroup.all as arithgroup
-
-from sage.arith.misc import is_prime, divisors, number_of_divisors, crt
+from sage.arith.misc import crt, divisors, is_prime, number_of_divisors
+from sage.categories.fields import Fields
 from sage.categories.homset import Hom
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.verbose import verbose
 from sage.modular.arithgroup.arithgroup_element import M2Z
+from sage.modular.cusps import Cusp
 from sage.modular.dirichlet import DirichletCharacter, TrivialCharacter
 from sage.modular.hecke.ambient_module import AmbientHeckeModule
-from sage.modular.cusps import Cusp
+from sage.modular.modsym import (
+    boundary,
+    element,
+    heilbronn,
+    modsym,
+    modular_symbols,
+    p1list,
+    relation_matrix,
+    subspace,
+)
 from sage.modular.modsym.apply import apply_to_monomial
 from sage.modular.modsym.manin_symbol import ManinSymbol
-from sage.modular.modsym.manin_symbol_list import (ManinSymbolList_gamma0,
-                                                   ManinSymbolList_gamma1,
-                                                   ManinSymbolList_gamma_h,
-                                                   ManinSymbolList_character)
+from sage.modular.modsym.manin_symbol_list import (
+    ManinSymbolList_character,
+    ManinSymbolList_gamma0,
+    ManinSymbolList_gamma1,
+    ManinSymbolList_gamma_h,
+)
+from sage.modular.modsym.space import ModularSymbolsSpace
 from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.rational_field import QQ
-from sage.categories.fields import Fields
 from sage.structure.factorization import Factorization
 from sage.structure.formal_sum import FormalSum
-
-from . import boundary
-from . import element
-from . import heilbronn
-from . import modular_symbols
-from . import modsym
-from . import p1list
-from . import relation_matrix
-from .space import ModularSymbolsSpace
-from . import subspace
 
 
 class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):

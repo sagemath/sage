@@ -41,6 +41,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import os
 import re
 import sys
 from signal import SIGABRT, SIGFPE, SIGILL, SIGINT, SIGSEGV, SIGTERM, Signals
@@ -195,7 +196,7 @@ class DocTestReporter(SageObject):
             sage: print(DTR.report_head(FDS, "Failed by self-sabotage"))
             ... --long .../sage/doctest/reporting.py  # Failed by self-sabotage
         """
-        cmd = "sage-runtests" if "sage-runtests" in argv[0] else "python3 -m sage.doctest"
+        cmd = os.path.relpath(argv[0]).replace("-runtests", " -t") if "sage-runtests" in argv[0] else "python3 -m sage.doctest"
         if self.controller.options.long:
             cmd += " --long"
 

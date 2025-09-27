@@ -286,7 +286,7 @@ class SymmetricGroup(PermutationGroup_symalt):
             self._gens = tuple([self.element_class(g, self, check=False)
                                 for g in gens])
 
-    def _gap_init_(self, gap=None):
+    def _gap_init_(self) -> str:
         """
         Return the string used to create this group in GAP.
 
@@ -759,7 +759,7 @@ class AlternatingGroup(PermutationGroup_symalt):
         """
         PermutationGroup_symalt.__init__(self, gap_group='AlternatingGroup(%s)' % len(domain), domain=domain)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -768,7 +768,7 @@ class AlternatingGroup(PermutationGroup_symalt):
         """
         return "Alternating group of order %s!/2 as a permutation group" % self.degree()
 
-    def _gap_init_(self, gap=None):
+    def _gap_init_(self) -> str:
         """
         Return the string used to create this group in GAP.
 
@@ -781,7 +781,7 @@ class AlternatingGroup(PermutationGroup_symalt):
             sage: A._gap_init_()
             'AlternatingGroup(3)'
         """
-        return 'AlternatingGroup(%s)' % self.degree()
+        return f'AlternatingGroup({self.degree()})'
 
 
 class CyclicPermutationGroup(PermutationGroup_unique):

@@ -408,7 +408,17 @@ class GhLabelSynchronizer:
             return self._commits
 
         self._commits = self.view('commits')
-        self._commit_date = max( com['committedDate'] for com in self._commits )
+
+        # ignore merge commits with the develop branch for _commit_date unless positive review is set
+        date_commits = list(self._commits)
+        if Status.positive_review.value not in self.get_labels():
+            for com in self._commits:
+                message =  com['messageHeadline']
+                if message.startswith('Merge') and 'develop' in message:
+                    debug('Ignore merge commit %s for commit_date' % com['oid'])
+                    date_commits.remove(com)
+
+        self._commit_date = max(com['committedDate'] for com in date_commits)
         info('Commits until %s for %s: %s' % (self._commit_date, self._issue, self._commits))
         return self._commits
 
@@ -1034,6 +1044,35 @@ class GhLabelSynchronizer:
             elif self.is_pull_request():
                 self.run(action)
 
+    def test_method(self, method, *args, **kwds):
+        r"""
+        Run the given method for testing.
+
+        EXAMPLES::
+
+            sage$ python .github/sync_labels.py https://github.com/sagemath/sage/pull/40634 soehms is_auth_team_member "{'login': 'soehms'}" -t
+            INFO:root:cmdline_args (4) ['https://github.com/sagemath/sage/pull/40634', 'soehms', 'is_auth_team_member', "{'login': 'soehms'}"]
+            ...
+            DEBUG:root:call is_auth_team_member with args () and kwds {'login': 'soehms'}
+            DEBUG:root:================================================================================
+            DEBUG:root:Execute command: gh api -X GET -H "Accept: application/vnd.github+json" /orgs/sagemath/teams/triage/memberships/soehms
+            INFO:root:User soehms is a member of triage
+            INFO:root:result of is_auth_team_member with args () and kwds {'login': 'soehms'} is True
+            INFO:root:================================================================================
+            ...
+        """
+        if hasattr(self, method):
+            meth = self.__getattribute__(method)
+            if callable(meth):
+                debug('call %s with args %s and kwds %s' % (method, args, kwds))
+                debug('='*80)
+                res = meth(*args, **kwds)
+                info('result of %s with args %s and kwds %s is %s' % (method, args, kwds, res))
+                info('='*80)
+                debug('state of self: %s' % self.__dict__)
+                return
+        raise ValueError('%s is not a method of %s' % (method, self))
+
 
 ###############################################################################
 # Main
@@ -1068,8 +1107,10 @@ else:
 num_args = len(cmdline_args)
 info('cmdline_args (%s) %s' % (num_args, cmdline_args))
 
-if run_tests and num_args in (1,2):
-    if num_args == 2:
+if run_tests:
+    if num_args == 4:
+        url, actor, method, args = cmdline_args
+    elif num_args == 2:
         url, actor = cmdline_args
     else:
         url, = cmdline_args
@@ -1079,7 +1120,10 @@ if run_tests and num_args in (1,2):
     info('actor: %s' % actor)
 
     gh = GhLabelSynchronizer(url, actor)
-    gh.run_tests()
+    if num_args == 4:
+        gh.test_method(method, **eval(args))
+    else:
+        gh.run_tests()
 
 elif num_args == 5:
     action, url, actor, label, rev_state = cmdline_args

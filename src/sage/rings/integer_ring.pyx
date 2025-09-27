@@ -1456,7 +1456,7 @@ cdef class IntegerRing_class(CommutativeRing):
     #  Coercions to interfaces
     #################################
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
         Return a GAP representation of ``self``.
 
@@ -1467,7 +1467,7 @@ cdef class IntegerRing_class(CommutativeRing):
         """
         return 'Integers'
 
-    def _fricas_init_(self):
+    def _fricas_init_(self) -> str:
         """
         Return a FriCAS representation of ``self``.
 
@@ -1478,7 +1478,7 @@ cdef class IntegerRing_class(CommutativeRing):
         """
         return 'Integer'
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Return a magma representation of ``self``.
 
@@ -1489,7 +1489,7 @@ cdef class IntegerRing_class(CommutativeRing):
         """
         return 'IntegerRing()'
 
-    def _macaulay2_init_(self, macaulay2=None):
+    def _macaulay2_init_(self, macaulay2=None) -> str:
         """
         Return a macaulay2 representation of ``self``.
 

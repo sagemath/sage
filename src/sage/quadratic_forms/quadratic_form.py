@@ -30,14 +30,13 @@ from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.functional import denominator, is_even
 from sage.misc.lazy_import import lazy_import
-from sage.misc.superseded import deprecated_function_alias
 from sage.modules.free_module_element import vector
 from sage.quadratic_forms.quadratic_form__evaluate import (
     QFEvaluateMatrix,
     QFEvaluateVector,
 )
 from sage.rings.ideal import Ideal
-from sage.rings.integer_ring import ZZ, IntegerRing
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -120,7 +119,7 @@ def quadratic_form_from_invariants(F, rk, det, P, sminus):
     f = 0
     if sminus % 4 in (2, 3):
         f = 1
-    if (f + len(P)) % 2 == 1:
+    if (f + len(P)) % 2:
         raise ValueError("invariants do not define a rational quadratic form")
     D = []
     while rk >= 2:
@@ -128,7 +127,7 @@ def quadratic_form_from_invariants(F, rk, det, P, sminus):
             if sminus > 0:
                 a = ZZ(-1)
             else:
-                a = ZZ(1)
+                a = ZZ.one()
         elif rk == 3:
             Pprime = [p for p in P if hilbert_symbol(-1, -d, p) == 1]
             Pprime += [p for p in (2 * d).prime_divisors()
@@ -136,7 +135,7 @@ def quadratic_form_from_invariants(F, rk, det, P, sminus):
             if sminus > 0:
                 a = ZZ(-1)
             else:
-                a = ZZ(1)
+                a = ZZ.one()
             for p in Pprime:
                 if d.valuation(p) % 2 == 0:
                     a *= p
@@ -650,11 +649,13 @@ class QuadraticForm(SageObject):
                 self.__det = determinant
                 self._external_initialization_list.append('determinant')
 
-    def list_external_initializations(self):
+    def list_external_initializations(self) -> list:
         """
         Return a list of the fields which were set externally at
         creation, and not created through the usual :class:`QuadraticForm`
-        methods.  These fields are as good as the external process
+        methods.
+
+        These fields are as good as the external process
         that made them, and are thus not guaranteed to be correct.
 
         EXAMPLES::
@@ -728,7 +729,7 @@ class QuadraticForm(SageObject):
                 out_str += '\n'
             out_str += "[ "
             for j in range(n):
-                if (i > j):
+                if i > j:
                     out_str += "* "
                 else:
                     out_str += str(self[i, j]) + " "
@@ -752,7 +753,7 @@ class QuadraticForm(SageObject):
         out_str += "\\left[ \\begin{array}{" + n * "c" + "}"
         for i in range(n):
             for j in range(n):
-                if (i > j):
+                if i > j:
                     out_str += " * & "
                 else:
                     out_str += str(self[i, j]) + " & "
@@ -780,11 +781,9 @@ class QuadraticForm(SageObject):
 
         # Ensure we're using upper-triangular coordinates
         if i > j:
-            tmp = i
-            i = j
-            j = tmp
+            i, j = j, i
 
-        return self.__coeffs[i*self.__n - i*(i-1)//2 + j - i]
+        return self.__coeffs[i * self.__n - i * (i - 1) // 2 + j - i]
 
     def __setitem__(self, ij, coeff):
         r"""
@@ -814,13 +813,11 @@ class QuadraticForm(SageObject):
 
         # Ensure we're using upper-triangular coordinates
         if i > j:
-            tmp = i
-            i = j
-            j = tmp
+            i, j = j, i
 
         # Set the entry
         try:
-            self.__coeffs[i*self.__n - i*(i-1)//2 + j - i] = self.__base_ring(coeff)
+            self.__coeffs[i * self.__n - i * (i - 1) // 2 + j - i] = self.__base_ring(coeff)
         except Exception:
             raise RuntimeError("this coefficient cannot be coerced to an element of the base ring for the quadratic form")
 
@@ -884,7 +881,7 @@ class QuadraticForm(SageObject):
         """
         if not isinstance(right, QuadraticForm):
             raise TypeError("cannot add these objects since they are not both quadratic forms")
-        elif (self.base_ring() != right.base_ring()):
+        elif self.base_ring() != right.base_ring():
             raise TypeError("cannot add these since the quadratic forms do not have the same base rings")
 
         Q = QuadraticForm(self.base_ring(), self.dim() + right.dim())
@@ -1106,7 +1103,7 @@ class QuadraticForm(SageObject):
 
         # Test that all entries coerce to R
         n = A.nrows()
-        if not ((A.base_ring() == R) or ring_coerce_test):
+        if not (A.base_ring() == R or ring_coerce_test):
             try:
                 for i in range(n):
                     for j in range(i, n):
@@ -1186,7 +1183,7 @@ class QuadraticForm(SageObject):
             sage: A.base_ring()
             Rational Field
         """
-        return (ZZ(1) / ZZ(2)) * self.matrix()
+        return (ZZ.one() / ZZ(2)) * self.matrix()
 
     def Gram_matrix(self):
         r"""
@@ -1558,13 +1555,13 @@ class QuadraticForm(SageObject):
         # Return the coerced form
         return QuadraticForm(R, self.dim(), [R(x) for x in self.coefficients()])
 
-    base_change_to = deprecated_function_alias(35248, change_ring)
-
     def level(self):
         r"""
-        Determines the level of the quadratic form over a PID, which is a
-        generator for the smallest ideal `N` of `R` such that `N\cdot (` the matrix of
-        `2*Q` `)^{(-1)}` is in `R` with diagonal in `2R`.
+        Determine the level of the quadratic form over a PID.
+
+        This is a generator for the smallest ideal `N` of `R` such
+        that `N\cdot (` the matrix of `2*Q` `)^{(-1)}` is in `R` with
+        diagonal in `2R`.
 
         Over `\ZZ` this returns a nonnegative number.
 
@@ -1610,7 +1607,7 @@ class QuadraticForm(SageObject):
             inv_denoms = []
             for i in range(self.dim()):
                 for j in range(i, self.dim()):
-                    if (i == j):
+                    if i == j:
                         inv_denoms += [denominator(mat_inv[i, j] / 2)]
                     else:
                         inv_denoms += [denominator(mat_inv[i, j])]
@@ -1623,7 +1620,7 @@ class QuadraticForm(SageObject):
             ##############################################################
 
             # Normalize the result over ZZ
-            if self.base_ring() == IntegerRing():
+            if self.base_ring() == ZZ:
                 lvl = abs(lvl)
 
             # Cache and return the level
@@ -1632,10 +1629,13 @@ class QuadraticForm(SageObject):
 
     def level_ideal(self):
         r"""
-        Determine the level of the quadratic form (over `R`), which is the
-        smallest ideal `N` of `R` such that `N \cdot (` the matrix of `2Q` `)^{(-1)}` is
-        in `R` with diagonal in `2R`.
-        (Caveat: This always returns the principal ideal when working over a field!)
+        Determine the level of the quadratic form (over `R`).
+
+        This is the smallest ideal `N` of `R` such that `N \cdot (`
+        the matrix of `2Q` `)^{(-1)}` is in `R` with diagonal in `2R`.
+
+        (Caveat: This always returns the principal ideal when working
+        over a field!)
 
         .. WARNING::
 
@@ -1724,7 +1724,7 @@ class QuadraticForm(SageObject):
         return (self(v + w) - self(v) - self(w)) / 2
 
 
-def DiagonalQuadraticForm(R, diag):
+def DiagonalQuadraticForm(R, diag) -> QuadraticForm:
     """
     Return a quadratic form over `R` which is a sum of squares.
 

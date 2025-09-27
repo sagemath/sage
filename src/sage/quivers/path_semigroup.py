@@ -24,13 +24,12 @@ from sage.categories.monoids import Monoids
 from sage.categories.semigroups import Semigroups
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.quivers.paths import QuiverPath
+from sage.quivers.representation import QuiverRep
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-
-from .paths import QuiverPath
-from .representation import QuiverRep
 
 #########################
 # Some auxiliary function to create generating functions to count paths.
