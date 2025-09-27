@@ -1619,6 +1619,8 @@ cdef class NCPolynomial_plural(RingElement):
             sage: P = A.g_algebra(relations={y*x:-x*y + z},  order='lex')
             sage: P.inject_variables()
             Defining x, z, y
+
+            sage: # needs !32_bit
             sage: f = x^2^19; f
             x^524288
             sage: f*f
@@ -1692,7 +1694,10 @@ cdef class NCPolynomial_plural(RingElement):
             sage: P.inject_variables()
             Defining x, z, y
             sage: x^(2^20-1)
-            x^1048575
+            Traceback (most recent call last):             # 32-bit
+            ...                                            # 32-bit
+            OverflowError: exponent overflow (1048575)     # 32-bit
+            x^1048575  # 64-bit
             sage: x^2^20
             Traceback (most recent call last):
             ....
@@ -1708,9 +1713,15 @@ cdef class NCPolynomial_plural(RingElement):
         When there are only two variables, the maximum exponent is `2^{32}-1`,
         however because of a Singular bug, raising a variable directly to the `2^{32}-1`-th
         power is very slow.
+        Note that the discussion on maximum exponent above is only valid for 64-bit machines,
+        see :meth:`MPolynomial_libsingular.__pow__`.
+
+        ::
 
             sage: A.<x,y> = FreeAlgebra(QQ)
             sage: B.<x,y> = A.g_algebra(relations={y*x: -x*y}, order='lex')
+
+            sage: # needs !32_bit
             sage: (x^65537)^65535
             x^4294967295
             sage: x^(2^31)  # known bug (very slow)
