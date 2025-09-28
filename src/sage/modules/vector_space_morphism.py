@@ -735,7 +735,15 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     # arg2 might be a matrix that began in arg0
     D = arg0
     C = arg1
-    H = Hom(D, C, category=None)
+    
+    # Determine the appropriate category for the homspace
+    # Since we've verified both D and C are vector spaces over the same field,
+    # we should use VectorSpaces category to get VectorSpaceHomspace which creates VectorSpaceMorphism
+    from sage.categories.vector_spaces import VectorSpaces
+    base_field = D.base_ring()
+    category = VectorSpaces(base_field)
+    
+    H = Hom(D, C, category=category)
 
     # Examine arg2 as the "rule" for the linear transformation
     # Pass on matrices, Python functions and lists to homspace call
