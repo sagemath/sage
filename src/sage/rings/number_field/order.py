@@ -119,6 +119,83 @@ def quadratic_order_class_number(disc):
         h = pari.qfbclassno(disc)
     return ZZ(h)
 
+def quadratic_order_approximate_class_number(disc, *, bound=10**4):
+    r"""
+    Return *an approximation of* the class number of
+    the quadratic order of given discriminant.
+
+    Currently only implemented for maximal orders
+    in imaginary-quadratic fields.
+
+    EXAMPLES::
+
+        sage: from sage.rings.number_field.order import quadratic_order_approximate_class_number
+        sage: QuadraticField(-419).class_number()
+        9
+        sage: quadratic_order_approximate_class_number(-419)
+        9.0...
+
+    ::
+
+        sage: from sage.rings.number_field.order import quadratic_order_approximate_class_number
+        sage: d = 100000000000031
+        sage: QuadraticField(-d).class_number(proof=False)
+        14414435
+        sage: round(quadratic_order_approximate_class_number(-d))
+        144...
+        sage: round(quadratic_order_approximate_class_number(-d, bound=10**6))
+        1441...
+
+    ::
+
+        sage: from sage.rings.number_field.order import quadratic_order_approximate_class_number
+        sage: # Test it against the exact class number computed for the CSIDH-512 prime
+        sage: # Source: https://eprint.iacr.org/2019/498.pdf
+        sage: p = 4 * prod(primes(3,374)) * 587 - 1
+        sage: hreal = 84884147409828091725676728670213067387206838101828807864190286991865870575397
+        sage: assert not hreal * BQFClassGroup(-p).random_element()
+        sage: h = round(quadratic_order_approximate_class_number(-p, bound=10**3)); h
+        8...
+        sage: RR(h / hreal)
+        1.00...
+        sage: h = round(quadratic_order_approximate_class_number(-p, bound=10**4)); h
+        84...
+        sage: RR(h / hreal)
+        0.99...
+        sage: h = round(quadratic_order_approximate_class_number(-p, bound=10**5)); h
+        848...
+        sage: RR(h / hreal)
+        0.999...
+        sage: h = round(quadratic_order_approximate_class_number(-p, bound=10**6)); h  # long time -- 2s
+        84884...
+        sage: RR(h / hreal)  # long time -- 2s
+        1.00000...
+
+    ALGORITHM: Finite approximation of the infinite product given by
+    the analytic class number formula, using primes up to ``bound``.
+    """
+    disc = ZZ(disc)
+    if disc >= 0:
+        raise NotImplementedError('only imaginary-quadratic fields supported')
+    if not disc.is_fundamental_discriminant():
+        raise NotImplementedError('only fundamental discriminants supported')
+
+    from sage.rings.real_mpfr import RealField
+    from sage.arith.misc import primes, kronecker_symbol
+    from sage.symbolic.constants import pi
+
+    w = 6 if disc == -3 else 4 if disc == -4 else 2
+    RR = RealField(max(53, disc.bit_length()))  # wild guess!
+
+    # compute numerator and denominator separately for numerical stability
+    L1 = L2 = RR(1)
+    for ell in primes(bound):
+        L1 *= ell
+        L2 *= ell - kronecker_symbol(disc, ell)
+    L = L1 / L2
+
+    return RR(w * abs(disc).sqrt() * L / (2 * pi))
+
 
 class OrderFactory(UniqueFactory):
     r"""
