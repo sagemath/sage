@@ -953,7 +953,7 @@ class InfinitelyGeneratedLieAlgebra(LieAlgebraWithGenerators):
         return self.lie_algebra_generators()[self._indices.an_element()]
 
 # Do we want this to return lie_algebra_generators()? Perhaps in the category?
-#    def gens(self):
+#    def gens(self) -> tuple:
 #        """
 #        Return a tuple whose entries are the generators for this
 #        object, in some order.

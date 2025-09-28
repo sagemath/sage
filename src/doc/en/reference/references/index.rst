@@ -2424,6 +2424,13 @@ REFERENCES:
 
 .. [dotspec] http://www.graphviz.org/doc/info/lang.html
 
+.. [DP2011] \B. Deconinck and M. S. Patterson, *Computing with plane algebraic
+            curves and Riemann surfaces: The algorithms of the Maple package
+            "Algcurves"*, In: A. Bobenko and C. Klein (eds) Computational 
+            approach to Riemann surfaces. Lecture Notes in Mathematics 2013. 
+            Springer, Berlin, Heidelberg. (2011).
+            :doi:`10.1007/978-3-642-17413-1_2`
+
 .. [DPS2017] Kevin Dilks, Oliver Pechenik, and Jessica Striker,
              *Resonance in orbits of plane partitions and increasing
              tableaux*, JCTA 148 (2017), 244-274,
@@ -4390,6 +4397,9 @@ REFERENCES:
 
 .. [Labelle2008] \G. Labelle. *New combinatorial computational methods
                  arising from pseudo-singletons.* DMTCS Proceedings 1, 2008.
+
+.. [Lad2021] S. Ladkani. *Refined Coxeter polynomials*, Proceedings ICRA 2020,
+             EMS Publishing House. :arxiv:`2110.15329`
 
 .. [Lak2010] Dan Laksov. *Splitting algebras and Gysin homomorphisms*.
              Journal of Commutative Algebra, Volume 2, Number 3, Fall 2010
