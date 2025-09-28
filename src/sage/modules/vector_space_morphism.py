@@ -3,7 +3,7 @@ Morphisms of vector spaces (linear transformations)
 
 AUTHOR:
 
-   - Rob Beezer: (2011-06-29)
+    - Rob Beezer: (2011-06-29)
 
 A vector space morphism is a homomorphism between vector spaces, better known
 as a linear transformation.  These are a specialization of Sage's free module
@@ -23,32 +23,32 @@ First a matrix representation.  By default input matrices are understood
 to act on vectors placed to left of the matrix.  Optionally, an input
 matrix can be described as acting on vectors placed to the right.  ::
 
-   sage: A = matrix(QQ, [[-1, 2, 3], [4, 2, 0]])
-   sage: phi = linear_transformation(A)
-   sage: phi
-   Vector space morphism represented by the matrix:
-   [-1  2  3]
-   [ 4  2  0]
-   Domain:   Vector space of dimension 2 over Rational Field
-   Codomain: Vector space of dimension 3 over Rational Field
-   sage: phi([2, -3])
-   (-14, -2, 6)
+    sage: A = matrix(QQ, [[-1, 2, 3], [4, 2, 0]])
+    sage: phi = linear_transformation(A)
+    sage: phi
+    Vector space morphism represented by the matrix:
+    [-1  2  3]
+    [ 4  2  0]
+    Domain:   Vector space of dimension 2 over Rational Field
+    Codomain: Vector space of dimension 3 over Rational Field
+    sage: phi([2, -3])
+    (-14, -2, 6)
 
 A symbolic function can be used to specify the "rule" for a
 linear transformation, along with explicit descriptions of the
 domain and codomain.  ::
 
-   sage: # needs sage.symbolic
-   sage: F = Integers(13)
-   sage: D = F^3
-   sage: C = F^2
-   sage: x, y, z = var('x y z')
-   sage: f(x, y, z) = [2*x + 3*y + 5*z, x + z]
-   sage: rho = linear_transformation(D, C, f)
-   sage: f(1, 2, 3)
-   (23, 4)
-   sage: rho([1, 2, 3])
-   (10, 4)
+    sage: # needs sage.symbolic
+    sage: F = Integers(13)
+    sage: D = F^3
+    sage: C = F^2
+    sage: x, y, z = var('x y z')
+    sage: f(x, y, z) = [2*x + 3*y + 5*z, x + z]
+    sage: rho = linear_transformation(D, C, f)
+    sage: f(1, 2, 3)
+    (23, 4)
+    sage: rho([1, 2, 3])
+    (10, 4)
 
 A "vector space homspace" is the set of all linear transformations
 between two vector spaces.  Various input can be coerced into a
