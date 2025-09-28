@@ -214,22 +214,29 @@ We check that :issue:`17990` is fixed::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 
 from sys import maxsize
+from typing import TYPE_CHECKING, Literal, NoReturn
+
+from typing_extensions import Self
 
 import sage.rings.abc
-
-from sage.structure.parent import Parent
 from sage.categories.rings import Rings
 from sage.categories.semirings import Semirings
 from sage.misc.fast_methods import Singleton
 from sage.misc.lazy_import import lazy_import
 from sage.rings.ring import CommutativeRing
-from sage.structure.element import RingElement, InfinityElement
+from sage.structure.element import InfinityElement, RingElement
+from sage.structure.parent import Parent
 from sage.structure.richcmp import rich_to_bool, richcmp
 
 lazy_import('sage.rings.integer', 'Integer')
 
+if TYPE_CHECKING:
+    import sympy
+
+    from sage.misc.sage_input import SageInputBuilder, SageInputExpression
 
 _obj = {}
 
@@ -251,6 +258,9 @@ class _uniq:
 
 
 class AnInfinity:
+    _sign: Literal[-1, 0, 1]
+    _sign_char: Literal['', '+', '-']
+
     """
     TESTS::
 
@@ -354,7 +364,7 @@ class AnInfinity:
         """
         return self._sign_char + "\\infty"
 
-    def __abs__(self):
+    def __abs__(self) -> AnInfinity:
         """
         EXAMPLES::
 
@@ -363,7 +373,7 @@ class AnInfinity:
         """
         return -self if self._sign < 0 else self
 
-    def _add_(self, other):
+    def _add_(self, other) -> Self:
         """
         Add ``self`` to ``other``.
 
@@ -400,7 +410,7 @@ class AnInfinity:
                 raise SignError("cannot add infinity to minus infinity")
         return self
 
-    def _sub_(self, other):
+    def _sub_(self, other) -> Self:
         """
         EXAMPLES::
 
@@ -434,7 +444,7 @@ class AnInfinity:
                 raise SignError("cannot add infinity to minus infinity")
         return self
 
-    def _mul_(self, other):
+    def _mul_(self, other) -> AnInfinity:
         """
         EXAMPLES::
 
@@ -459,7 +469,7 @@ class AnInfinity:
             return self
         raise SignError("cannot multiply infinity by zero")
 
-    def _div_(self, other):
+    def _div_(self, other) -> AnInfinity:
         """
         EXAMPLES::
 
@@ -485,7 +495,7 @@ class AnInfinity:
         """
         return self * ~other
 
-    def __float__(self):
+    def __float__(self) -> float:
         r"""
         Generate a floating-point infinity.
 
@@ -519,7 +529,7 @@ class AnInfinity:
             raise ValueError('unsigned infinity cannot be represented in a float')
         return float(self._sign_char + 'inf')
 
-    def lcm(self, x):
+    def lcm(self, x) -> AnInfinity | Literal[0]:
         """
         Return the least common multiple of ``oo`` and ``x``, which
         is by definition oo unless ``x`` is 0.
@@ -542,7 +552,7 @@ class AnInfinity:
         else:
             return abs(self)
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
         """
         Produce an expression which will reproduce this value when evaluated.
 
@@ -604,7 +614,7 @@ class UnsignedInfinityRing_class(Singleton, Parent):
         """
         return 1
 
-    def gen(self, n=0):
+    def gen(self, n=0) -> UnsignedInfinity:
         """
         The "generator" of ``self`` is the infinity object.
 
@@ -626,7 +636,7 @@ class UnsignedInfinityRing_class(Singleton, Parent):
         else:
             raise IndexError("UnsignedInfinityRing only has one generator")
 
-    def gens(self) -> tuple:
+    def gens(self) -> tuple[UnsignedInfinity]:
         """
         The "generator" of ``self`` is the infinity object.
 
@@ -637,7 +647,7 @@ class UnsignedInfinityRing_class(Singleton, Parent):
         """
         return (self.gen(),)
 
-    def less_than_infinity(self):
+    def less_than_infinity(self) -> LessThanInfinity:
         """
         This is the element that represents a finite value.
 
@@ -665,7 +675,7 @@ class UnsignedInfinityRing_class(Singleton, Parent):
         """
         return "The Unsigned Infinity Ring"
 
-    def _element_constructor_(self, x):
+    def _element_constructor_(self, x) -> UnsignedInfinity | LessThanInfinity:
         """
         The element constructor.
 
@@ -792,7 +802,7 @@ class LessThanInfinity(_uniq, RingElement):
         """
         return "(<\\infty)"
 
-    def _add_(self, other):
+    def _add_(self, other) -> UnsignedInfinity | Self:
         """
         EXAMPLES::
 
@@ -805,7 +815,7 @@ class LessThanInfinity(_uniq, RingElement):
             return other
         return self
 
-    def _sub_(self, other):
+    def _sub_(self, other) -> UnsignedInfinity | Self:
         """
         EXAMPLES::
 
@@ -818,7 +828,7 @@ class LessThanInfinity(_uniq, RingElement):
             return other
         return self
 
-    def _mul_(self, other):
+    def _mul_(self, other) -> Self:
         """
         EXAMPLES::
 
@@ -835,7 +845,7 @@ class LessThanInfinity(_uniq, RingElement):
             raise ValueError("oo times number < oo not defined")
         return self
 
-    def _div_(self, other):
+    def _div_(self, other) -> Integer:
         """
         Can't eliminate possibility of zero division....
 
@@ -852,7 +862,7 @@ class LessThanInfinity(_uniq, RingElement):
             return Integer(0)  # noqa: F821
         raise ValueError("quotient of number < oo by number < oo not defined")
 
-    def _richcmp_(self, other, op) -> bool:
+    def _richcmp_(self, other, op: int) -> bool:
         """
         Compare ``self`` to ``other``.
 
@@ -903,7 +913,7 @@ class UnsignedInfinity(_uniq, AnInfinity, InfinityElement):
         """
         InfinityElement.__init__(self, UnsignedInfinityRing)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         TESTS::
 
@@ -913,7 +923,7 @@ class UnsignedInfinity(_uniq, AnInfinity, InfinityElement):
         """
         return maxsize - 1
 
-    def _mul_(self, other):
+    def _mul_(self, other) -> Self:
         """
         Can't rule out an attempt at multiplication by 0.
 
@@ -934,7 +944,7 @@ class UnsignedInfinity(_uniq, AnInfinity, InfinityElement):
             return self
         raise ValueError("unsigned oo times smaller number not defined")
 
-    def _sympy_(self):
+    def _sympy_(self) -> sympy.core.numbers.ComplexInfinity:
         """
         Convert ``unsigned_infinity`` to sympy ``zoo``.
 
@@ -952,7 +962,7 @@ class UnsignedInfinity(_uniq, AnInfinity, InfinityElement):
         import sympy
         return sympy.zoo
 
-    def _richcmp_(self, other, op) -> bool:
+    def _richcmp_(self, other, op: int) -> bool:
         """
         Compare ``self`` to ``other``.
 
@@ -966,8 +976,8 @@ class UnsignedInfinity(_uniq, AnInfinity, InfinityElement):
         return rich_to_bool(op, 0)
 
 
-unsigned_infinity = UnsignedInfinityRing.gen(0)
-less_than_infinity = UnsignedInfinityRing.less_than_infinity()
+unsigned_infinity: UnsignedInfinity = UnsignedInfinityRing.gen(0)
+less_than_infinity: LessThanInfinity = UnsignedInfinityRing.less_than_infinity()
 
 
 def is_Infinite(x) -> bool:
@@ -1007,7 +1017,10 @@ class SignError(ArithmeticError):
 
 
 class InfinityRing_class(Singleton, CommutativeRing):
-    def __init__(self):
+    _gen0: PlusInfinity | None = None
+    _gen1: MinusInfinity | None = None
+
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
@@ -1025,7 +1038,7 @@ class InfinityRing_class(Singleton, CommutativeRing):
         """
         CommutativeRing.__init__(self, self, names=('oo',), normalize=False)
 
-    def fraction_field(self):
+    def fraction_field(self) -> NoReturn:
         """
         This isn't really a ring, let alone an integral domain.
 
@@ -1051,7 +1064,7 @@ class InfinityRing_class(Singleton, CommutativeRing):
         """
         return 2
 
-    def gen(self, n=0):
+    def gen(self, n=0) -> PlusInfinity | MinusInfinity:
         """
         The two generators are plus and minus infinity.
 
@@ -1066,22 +1079,18 @@ class InfinityRing_class(Singleton, CommutativeRing):
             ...
             IndexError: n must be 0 or 1
         """
-        try:
-            if n == 0:
-                return self._gen0
-            elif n == 1:
-                return self._gen1
-            else:
-                raise IndexError("n must be 0 or 1")
-        except AttributeError:
-            if n == 0:
+        if n == 0:
+            if self._gen0 is None:
                 self._gen0 = PlusInfinity()
-                return self._gen0
-            elif n == 1:
+            return self._gen0
+        elif n == 1:
+            if self._gen1 is None:
                 self._gen1 = MinusInfinity()
-                return self._gen1
+            return self._gen1
+        else:
+            raise IndexError("n must be 0 or 1")
 
-    def gens(self) -> tuple:
+    def gens(self) -> tuple[PlusInfinity, MinusInfinity]:
         """
         The two generators are plus and minus infinity.
 
@@ -1125,7 +1134,7 @@ class InfinityRing_class(Singleton, CommutativeRing):
         """
         return "The Infinity Ring"
 
-    def _element_constructor_(self, x):
+    def _element_constructor_(self, x) -> PlusInfinity | MinusInfinity | FiniteNumber:
         """
         The element constructor.
 
@@ -1317,7 +1326,7 @@ class FiniteNumber(RingElement):
         RingElement.__init__(self, parent)
         self.value = x
 
-    def _richcmp_(self, other, op) -> bool:
+    def _richcmp_(self, other, op: int) -> bool:
         """
         Compare ``self`` and ``other``.
 
@@ -1337,7 +1346,7 @@ class FiniteNumber(RingElement):
             return rich_to_bool(op, 1)
         return richcmp(self.value, other.value, op)
 
-    def _add_(self, other):
+    def _add_(self, other) -> InfinityElement | FiniteNumber:
         """
         EXAMPLES::
 
@@ -1379,7 +1388,7 @@ class FiniteNumber(RingElement):
             raise SignError("cannot add positive finite value to negative finite value")
         return FiniteNumber(self.parent(), self.value + other.value)
 
-    def _mul_(self, other):
+    def _mul_(self, other) -> Integer | FiniteNumber | InfinityElement:
         """
         EXAMPLES::
 
@@ -1418,7 +1427,7 @@ class FiniteNumber(RingElement):
                 raise SignError("cannot multiply infinity by zero")
             return Integer(0)  # noqa: F821
 
-    def _div_(self, other):
+    def _div_(self, other) -> Integer | FiniteNumber | InfinityElement:
         """
         EXAMPLES::
 
@@ -1434,7 +1443,7 @@ class FiniteNumber(RingElement):
         """
         return self * ~other
 
-    def __invert__(self):
+    def __invert__(self) -> Self:
         """
         EXAMPLES::
 
@@ -1452,7 +1461,7 @@ class FiniteNumber(RingElement):
             raise ZeroDivisionError("Cannot divide by zero")
         return self
 
-    def _neg_(self):
+    def _neg_(self) -> FiniteNumber:
         """
         EXAMPLES::
 
@@ -1501,7 +1510,7 @@ class FiniteNumber(RingElement):
         """
         return self._repr_()
 
-    def __abs__(self):
+    def __abs__(self) -> FiniteNumber:
         """
         EXAMPLES::
 
@@ -1516,7 +1525,7 @@ class FiniteNumber(RingElement):
             return FiniteNumber(self.parent(), 0)
         return FiniteNumber(self.parent(), 1)
 
-    def sign(self):
+    def sign(self) -> Literal[0, 1, -1]:
         """
         Return the sign of ``self``.
 
@@ -1544,7 +1553,7 @@ class FiniteNumber(RingElement):
             return 1
         return -1
 
-    def sqrt(self):
+    def sqrt(self) -> Self:
         """
         EXAMPLES::
 
@@ -1578,7 +1587,7 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
         """
         InfinityElement.__init__(self, InfinityRing)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         TESTS::
 
@@ -1588,7 +1597,7 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
         """
         return ~maxsize
 
-    def _richcmp_(self, other, op) -> bool:
+    def _richcmp_(self, other, op: int) -> bool:
         """
         Compare ``self`` and ``other``.
 
@@ -1606,7 +1615,7 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
             return rich_to_bool(op, 0)
         return rich_to_bool(op, -1)
 
-    def _neg_(self):
+    def _neg_(self) -> PlusInfinity:
         """
         EXAMPLES::
 
@@ -1615,7 +1624,7 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
         """
         return self.parent().gen(0)
 
-    def sqrt(self):
+    def sqrt(self) -> NoReturn:
         """
         EXAMPLES::
 
@@ -1677,7 +1686,7 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
         """
         InfinityElement.__init__(self, InfinityRing)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         TESTS::
 
@@ -1687,7 +1696,7 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
         """
         return maxsize
 
-    def _richcmp_(self, other, op) -> bool:
+    def _richcmp_(self, other, op: int) -> bool:
         """
         Compare ``self`` and ``other``.
 
@@ -1705,7 +1714,7 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
             return rich_to_bool(op, 0)
         return rich_to_bool(op, 1)
 
-    def _neg_(self):
+    def _neg_(self) -> MinusInfinity:
         """
         TESTS::
 
@@ -1714,7 +1723,7 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
         """
         return self.parent().gen(1)
 
-    def sqrt(self):
+    def sqrt(self) -> Self:
         """
         The square root of ``self``.
 
@@ -1760,128 +1769,6 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
 
 
 InfinityRing = InfinityRing_class()
-infinity = InfinityRing.gen(0)
-Infinity = infinity
-minus_infinity = InfinityRing.gen(1)
-
-
-def check_comparison(ring):
-    """
-    Check comparison with infinity.
-
-    INPUT:
-
-    - ``ring`` -- a sub-ring of the real numbers
-
-    OUTPUT:
-
-    Various attempts are made to generate elements of ``ring``. An
-    assertion is triggered if one of these elements does not compare
-    correctly with plus/minus infinity.
-
-    EXAMPLES::
-
-        sage: from sage.rings.infinity import check_comparison
-        sage: rings = [ZZ, QQ, RDF]
-        sage: rings += [RR, RealField(200)]                                             # needs sage.rings.real_mpfr
-        sage: rings += [RLF, RIF]                                                       # needs sage.rings.real_interval_field
-        sage: for R in rings:
-        ....:     print('testing {}'.format(R))
-        ....:     check_comparison(R)
-        testing Integer Ring
-        testing Rational Field
-        testing Real Double Field...
-        sage: check_comparison(AA)                                                       # needs sage.rings.number_field
-
-    Comparison with number fields does not work::
-
-        sage: x = polygen(ZZ, 'x')
-        sage: K.<sqrt3> = NumberField(x^2 - 3)                                          # needs sage.rings.number_field
-        sage: (-oo < 1 + sqrt3) and (1 + sqrt3 < oo)    # known bug                     # needs sage.rings.number_field
-        False
-
-    The symbolic ring handles its own infinities, but answers
-    ``False`` (meaning: cannot decide) already for some very
-    elementary comparisons::
-
-        sage: check_comparison(SR)               # known bug                             # needs sage.symbolic
-        Traceback (most recent call last):
-        ...
-        AssertionError: testing -1000.0 in Symbolic Ring: id = ...
-    """
-
-    from sage.rings.rational_field import QQ
-    elements = [-1e3, 99.9999, 0, 1, 100000]
-    try:
-        from sage.symbolic.ring import SR
-    except ImportError:
-        pass
-    else:
-        elements += [-SR(2).sqrt(), SR.pi(), 3 ** (-QQ.one() / 3)]
-    elements.append(ring.an_element())
-    elements.extend(ring.some_elements())
-    for z in elements:
-        try:
-            z = ring(z)
-        except (ValueError, TypeError):
-            continue    # ignore if z is not in ring
-        msg = 'testing {} in {}: id = {}, {}, {}'.format(z, ring, id(z), id(infinity), id(minus_infinity))
-        assert minus_infinity < z, msg
-        assert z > minus_infinity, msg
-        assert z < infinity, msg
-        assert infinity > z, msg
-        assert minus_infinity <= z, msg
-        assert z >= minus_infinity, msg
-        assert z <= infinity, msg
-        assert infinity >= z, msg
-
-
-def check_signed_infinity(pos_inf):
-    """
-    Test consistency of infinity representations.
-
-    There are different possible representations of infinity in
-    Sage. These are all consistent with the infinity ring, that is,
-    compare with infinity in the expected way. See also :issue:`14045`
-
-    INPUT:
-
-    - ``pos_inf`` -- a representation of positive infinity
-
-    OUTPUT:
-
-    An assertion error is raised if the representation is not
-    consistent with the infinity ring.
-
-    Check that :issue:`14045` is fixed::
-
-        sage: InfinityRing(float('+inf'))
-        +Infinity
-        sage: InfinityRing(float('-inf'))
-        -Infinity
-        sage: oo > float('+inf')
-        False
-        sage: oo == float('+inf')
-        True
-
-    EXAMPLES::
-
-        sage: from sage.rings.infinity import check_signed_infinity
-        sage: check_signed_infinity(oo)
-        sage: check_signed_infinity(float('+inf'))
-        sage: check_signed_infinity(RLF(oo))                                             # needs sage.rings.real_interval_field
-        sage: check_signed_infinity(RIF(oo))                                             # needs sage.rings.real_interval_field
-        sage: check_signed_infinity(SR(oo))                                              # needs sage.symbolic
-    """
-    msg = f'testing {pos_inf} ({type(pos_inf)})'
-    assert InfinityRing(pos_inf) is infinity, msg
-    assert InfinityRing(-pos_inf) is minus_infinity, msg
-    assert infinity == pos_inf, msg
-    assert not (infinity > pos_inf), msg
-    assert not (infinity < pos_inf), msg
-    assert minus_infinity == -pos_inf, msg
-    assert not (minus_infinity > -pos_inf), msg
-    assert not (minus_infinity < -pos_inf), msg
-    assert pos_inf > -pos_inf, msg
-    assert infinity > -pos_inf, msg
-    assert pos_inf > minus_infinity, msg
+infinity: PlusInfinity = InfinityRing.gen(0)
+Infinity: PlusInfinity = infinity
+minus_infinity: MinusInfinity = InfinityRing.gen(1)
