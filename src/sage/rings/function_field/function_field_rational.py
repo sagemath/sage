@@ -26,16 +26,15 @@ Function Fields: rational
 # *****************************************************************************
 
 from sage.arith.functions import lcm
+from sage.categories.function_fields import FunctionFields
+from sage.categories.homset import Hom
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
-from sage.structure.category_object import CategoryObject
+from sage.rings.function_field.element import FunctionFieldElement
+from sage.rings.function_field.element_rational import FunctionFieldElement_rational
+from sage.rings.function_field.function_field import FunctionField
 from sage.rings.integer import Integer
-from sage.categories.homset import Hom
-from sage.categories.function_fields import FunctionFields
-
-from .element import FunctionFieldElement
-from .element_rational import FunctionFieldElement_rational
-from .function_field import FunctionField
+from sage.structure.category_object import CategoryObject
 
 
 class RationalFunctionField(FunctionField):
@@ -170,8 +169,8 @@ class RationalFunctionField(FunctionField):
         from .maps import FractionFieldToFunctionField
         self.register_coercion(hom.__make_element_class__(FractionFieldToFunctionField)(hom.domain(), hom.codomain()))
 
-        from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
         from sage.categories.morphism import SetMorphism
+        from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
         R.register_conversion(SetMorphism(self.Hom(R, SetsWithPartialMaps()), self._to_polynomial))
 
         self._gen = self(R.gen())
@@ -534,7 +533,7 @@ class RationalFunctionField(FunctionField):
         """
         if basis is not None:
             raise NotImplementedError
-        from .maps import MapVectorSpaceToFunctionField, MapFunctionFieldToVectorSpace
+        from .maps import MapFunctionFieldToVectorSpace, MapVectorSpaceToFunctionField
         if base is None:
             base = self
         elif base is not self:
