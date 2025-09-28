@@ -64,18 +64,17 @@ matrices and Latin squares. See:
 # ****************************************************************************
 from copy import copy
 
-import sage.matrix.matrix_space as matrix_space
 from sage.categories.rings import Rings
-from sage.modules.free_module_element import vector
-from sage.structure.element import Matrix, parent, RingElement
-from sage.structure.sequence import Sequence
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.integer import Integer
+from sage.matrix import matrix_space
+from sage.matrix.constructor import matrix
 from sage.misc.misc_c import running_total
 from sage.misc.prandom import randint, shuffle
-from .constructor import matrix
-import sage.categories.pushout
+from sage.modules.free_module_element import vector
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.structure.element import Matrix, RingElement, parent
+from sage.structure.sequence import Sequence
 
 
 def matrix_method(func=None, name=None):
@@ -2130,8 +2129,8 @@ def block_matrix(*args, **kwds):
 
     # At this point sub_matrices is a list of lists
 
-    from sage.structure.element import Vector
     from sage.structure.coerce import py_scalar_to_element
+    from sage.structure.element import Vector
     sub_matrices = [[M.column() if isinstance(M, Vector) else M if isinstance(M, Matrix) else py_scalar_to_element(M)
                      for M in row] for row in sub_matrices]
 
@@ -2189,11 +2188,10 @@ def block_matrix(*args, **kwds):
                     zero_widths[i] = 0
                 else:
                     continue  # zero-width matrix
+            elif zero_widths is not None:
+                M = matrix(ring, row_heights[i], row_heights[i], M, sparse=sparse)
             else:
-                if zero_widths is not None:
-                    M = matrix(ring, row_heights[i], row_heights[i], M, sparse=sparse)
-                else:
-                    M = matrix(ring, row_heights[i], col_widths[j], M, sparse=sparse)
+                M = matrix(ring, row_heights[i], col_widths[j], M, sparse=sparse)
 
             # append M to this row
             if row is None:
@@ -3279,7 +3277,7 @@ def random_unitary_matrix(parent):
         # characteristic separately.
         raise ValueError("base ring of parent must have characteristic zero")
 
-    from sage.rings.real_lazy import RLF, CLF
+    from sage.rings.real_lazy import CLF, RLF
     if not (RLF.has_coerce_map_from(F) or
             F.has_coerce_map_from(RLF) or
             CLF.has_coerce_map_from(F) or
