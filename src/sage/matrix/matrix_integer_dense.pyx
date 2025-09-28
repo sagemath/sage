@@ -1409,10 +1409,13 @@ cdef class Matrix_integer_dense(Matrix_dense):
             fmpz_mat_charpoly(g._poly, self._matrix)
             sig_off()
         elif algorithm == 'linbox':
-            g = (<Polynomial_integer_dense_flint> PolynomialRing(ZZ, names=var).gen())._new()
-            sig_on()
-            linbox_fmpz_mat_charpoly(g._poly, self._matrix)
-            sig_off()
+            while True:  # linbox is unreliable, see :issue:`37068`
+                g = (<Polynomial_integer_dense_flint> PolynomialRing(ZZ, names=var).gen())._new()
+                sig_on()
+                linbox_fmpz_mat_charpoly(g._poly, self._matrix)
+                sig_off()
+                if g.lc() == 1:
+                    break
         elif algorithm == 'generic':
             g = Matrix_dense.charpoly(self, var)
         else:
@@ -1492,10 +1495,13 @@ cdef class Matrix_integer_dense(Matrix_dense):
             return g.change_variable_name(var)
 
         if algorithm == 'linbox':
-            g = (<Polynomial_integer_dense_flint> PolynomialRing(ZZ, names=var).gen())._new()
-            sig_on()
-            linbox_fmpz_mat_minpoly(g._poly, self._matrix)
-            sig_off()
+            while True:  # linbox is unreliable, see :issue:`37068`
+                g = (<Polynomial_integer_dense_flint> PolynomialRing(ZZ, names=var).gen())._new()
+                sig_on()
+                linbox_fmpz_mat_minpoly(g._poly, self._matrix)
+                sig_off()
+                if g.lc() == 1:
+                    break
         elif algorithm == 'generic':
             g = Matrix_dense.minpoly(self, var)
         else:

@@ -11,7 +11,7 @@ import doctest
 import inspect
 import sys
 import warnings
-from typing import Any, Iterable, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Iterable, Optional
 
 import pytest
 from _pytest.doctest import (
@@ -33,6 +33,17 @@ from sage.doctest.parsing import SageDocTestParser, SageOutputChecker
 
 if TYPE_CHECKING:
     from pathlib import Path
+
+
+def is_subpath(path: Path, parent: Path) -> bool:
+    # Check if the path is in a subdirectory, or a subsubdirectory, ... of the parent
+    path = path.resolve()
+    parent = parent.resolve()
+    try:
+        path.relative_to(parent)
+        return True
+    except ValueError:
+        return False
 
 
 class SageDoctestModule(DoctestModule):
@@ -111,8 +122,10 @@ class SageDoctestModule(DoctestModule):
                             "valgrind",
                             "rpy2",
                             "sage.libs.coxeter3.coxeter",
+                            "sagemath_giac",
                         ):
                             pytest.skip(
+                                f"unable to import module {self.path} due to missing feature {exception.name}"
                                 f"unable to import module {self.path} due to missing feature {exception.name}"
                             )
                     raise
@@ -140,7 +153,7 @@ class SageDoctestModule(DoctestModule):
         except ModuleNotFoundError as exception:
             # TODO: Remove this once all optional things are using Features
             pytest.skip(
-                f"unable to import module {self.path} due to missing feature {exception.name}"
+                f"unable to import module {self.path} due to missing module {exception.name}"
             )
 
 
@@ -281,6 +294,28 @@ def pytest_collect_file(
             return SageDoctestModule.from_parent(parent, path=file_path)
 
 
+def pytest_ignore_collect(
+    collection_path: Path, path: str, config: pytest.Config
+) -> None | bool:
+    """
+    This hook is called when collecting test files, and can be used to
+    prevent considering this path for collection by returning ``True``.
+
+    See `pytest documentation <https://docs.pytest.org/en/latest/reference/reference.html#pytest.hookspec.pytest_ignore_collect>`_.
+    """
+    root = config.rootpath
+    if (
+        is_subpath(collection_path, root / "src" / "sage_docbuild")
+        or is_subpath(collection_path, root / "src" / "sage_setup")
+        or collection_path == root / "src" / "build-docs.py"
+    ):
+        # Fails to import with Meson
+        return True
+    if collection_path.name == "all.py":
+        # all.py do not contain tests and may fail when imported twice / in the wrong order
+        return True
+
+
 def pytest_addoption(parser):
     # Add a command line option to run doctests
     # (we don't use the built-in --doctest-modules option because then doctests are collected twice)
@@ -416,8 +451,8 @@ def tmpfile():
     * https://github.com/pytest-dev/pytest/issues/13669
 
     """
-    from tempfile import NamedTemporaryFile
     from os import unlink
+    from tempfile import NamedTemporaryFile
     t = NamedTemporaryFile(delete=False)
     yield t
     unlink(t.name)
