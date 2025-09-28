@@ -1232,9 +1232,7 @@ cdef class MPolynomial(CommutativePolynomial):
             ((0, 2), (1, 1), (2, 0))
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
-        e = self.exponents()
-        P = Polyhedron(vertices=e, base_ring=ZZ)
-        return P
+        return Polyhedron(vertices=self.exponents(), base_ring=ZZ)
 
     def __iter__(self):
         r"""

@@ -2,6 +2,8 @@ sage_install_dir = py.get_install_dir() / 'sage'
 
 # Generate the configuration file
 conf_data = configuration_data()
+conf_data.set('EDITABLE_SRC', root)
+conf_data.set('EDITABLE_BUILD', root_build)
 conf_data.set('PACKAGE_VERSION', '1.2.3')
 # We use Python's prefix here to make it work with conda
 prefix = fs.as_posix(py.get_variable('prefix', ''))
@@ -16,9 +18,6 @@ if not fs.exists(datadir / 'cremona')
     'Warning: The specified datadir does not contain the necessary Cremona database. Either specify a different datadir or specify a correct the correct path via the environment variable SAGE_SHARE during runtime.',
   )
 endif
-conf_data.set('SAGE_MAXIMA', maxima.full_path())
-# Conda's ecl does not have any problems with Maxima, so nothing needs to be set here:
-conf_data.set('SAGE_MAXIMA_FAS', '')
 # Kenzo cannot yet be provided by the system, so we always use the SAGE_LOCAL path for now.
 conf_data.set('SAGE_KENZO_FAS', '\'${prefix}\'/lib/ecl/kenzo.fas')
 # It can be found, so we don't have to set anything here:
@@ -59,14 +58,6 @@ ecm_bin = find_program(
 )
 conf_data.set('SAGE_ECMBIN', ecm_bin.full_path())
 
-config_file = configure_file(
-  input: '../../pkgs/sage-conf/_sage_conf/_conf.py.in',
-  output: 'config.py',
-  install_dir: sage_install_dir,
-  install: true,
-  configuration: conf_data,
-)
-
 # Packages that need no processing and can be installed directly
 no_processing = [
   'cli',
@@ -93,16 +84,8 @@ endforeach
 py.install_sources(
   '__init__.py',
   'all.py',
-  'all__sagemath_bliss.py',
-  'all__sagemath_coxeter3.py',
-  'all__sagemath_environment.py',
-  'all__sagemath_mcqd.py',
-  'all__sagemath_meataxe.py',
-  'all__sagemath_objects.py',
-  'all__sagemath_repl.py',
-  'all__sagemath_sirocco.py',
-  'all__sagemath_tdlib.py',
   'all_cmdline.py',
+  'config_test.py',
   'env.py',
   'version.py',
   subdir: 'sage',
@@ -162,4 +145,14 @@ configure_file(
   install_dir: kernel_dir,
   install: true,
   configuration: kernel_data,
+)
+
+# Write config file
+# Should be last so that subdir calls can modify the config data
+config_file = configure_file(
+  input: 'config.py.in',
+  output: 'config.py',
+  install_dir: sage_install_dir,
+  install: true,
+  configuration: conf_data,
 )

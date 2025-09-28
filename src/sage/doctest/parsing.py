@@ -38,10 +38,10 @@ import collections.abc
 import doctest
 import platform
 import re
+import sys
 from collections import defaultdict
 from functools import reduce
 from re import Pattern
-import sys
 from typing import Literal, Union, overload
 
 from sage.doctest.check_tolerance import (
@@ -848,7 +848,7 @@ class SageDocTestParser(doctest.DocTestParser):
         """
         return not (self == other)
 
-    def parse(self, string: str, name: str = "<string>") -> list[str | doctest.Example]:
+    def parse(self, string: str, name: str = "<string>") -> list[doctest.Example | str]:
         r"""
         A Sage specialization of :class:`doctest.DocTestParser`.
 
@@ -1034,8 +1034,8 @@ class SageDocTestParser(doctest.DocTestParser):
             string = find_python_continuation.sub(r"\1" + ellipsis_tag + r"\2", string)
         string = find_sage_prompt.sub(r"\1>>> sage: ", string)
         string = find_sage_continuation.sub(r"\1...", string)
-        res = doctest.DocTestParser.parse(self, string, name)
-        filtered: list[str | doctest.Example] = []
+        res: list[doctest.Example | str] = doctest.DocTestParser.parse(self, string, name)
+        filtered: list[doctest.Example | str] = []
         persistent_optional_tags = self.file_optional_tags
         persistent_optional_tag_setter = None
         persistent_optional_tag_setter_index = None
@@ -1172,12 +1172,11 @@ class SageDocTestParser(doctest.DocTestParser):
                     if item.sage_source.lstrip().startswith('#'):
                         continue
                     item.source = preparse(item.sage_source)
-            else:
-                if '\n' in item:
-                    check_and_clear_tag_counts()
-                    persistent_optional_tags = self.file_optional_tags
-                    persistent_optional_tag_setter = first_example_in_block = None
-                    persistent_optional_tag_setter_index = first_example_in_block_index = None
+            elif '\n' in item:
+                check_and_clear_tag_counts()
+                persistent_optional_tags = self.file_optional_tags
+                persistent_optional_tag_setter = first_example_in_block = None
+                persistent_optional_tag_setter_index = first_example_in_block_index = None
             filtered.append(item)
 
         check_and_clear_tag_counts()

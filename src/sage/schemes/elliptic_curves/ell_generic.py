@@ -71,6 +71,7 @@ from sage.rings.rational_field import RationalField
 from sage.rings.real_mpfr import RealField
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
+from sage.structure.coerce import py_scalar_to_element
 
 # Schemes
 import sage.schemes.projective.projective_space as projective_space
@@ -922,8 +923,15 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E = EllipticCurve(F, [1,1])
             sage: {E.lift_x(t+1) for _ in range(1000)}  # but .lift_x() uses a fixed one
             {(t + 1 : 39*t^2 + 14*t + 12 : 1)}
+
+        Check python types::
+
+            sage: E = EllipticCurve('37a').short_weierstrass_model().change_ring(GF(17))
+            sage: E.lift_x(int(7), all=True)
+            [(7 : 3 : 1), (7 : 14 : 1)]
         """
         K = self.base_ring()
+        x = py_scalar_to_element(x)
         L = x.parent()
         E = self
 
@@ -2384,6 +2392,10 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         - or just `f(x)` if ``x_only`` is ``True``
 
+        .. SEEALSO::
+
+            :meth:`scalar_multiplication` to get a morphism instead.
+
         .. NOTE::
 
             - The result is not cached.
@@ -2405,6 +2417,14 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: f
             ((x^4 + 2*x^2 - 24*x + 1)/(4*x^3 - 4*x + 12),
              (8*x^6*y - 40*x^4*y + 480*x^3*y - 40*x^2*y + 96*x*y - 568*y)/(64*x^6 - 128*x^4 + 384*x^3 + 64*x^2 - 384*x + 576))
+
+        We check that the rational maps agree with :meth:`scalar_multiplication`::
+
+            sage: phi = E.scalar_multiplication(2)
+            sage: phi.x_rational_map() == f[0]
+            True
+            sage: phi.rational_maps() == f
+            True
 
         Grab only the x-coordinate (less work)::
 
@@ -2464,6 +2484,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: assert(E(eval(f,P)) == 2*P)
 
         The following test shows that :issue:`6413` is fixed for elliptic curves over finite fields::
+
+            sage: # long time (:issue:`39569`)
             sage: p = 7
             sage: K.<a> = GF(p^2)
             sage: E = EllipticCurve(K, [a + 3, 5 - a])
@@ -3193,16 +3215,15 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         R = self.base_ring()
         P = PolynomialRing(R, 'v')
 
-        sols = []
-        for r in P([b, a, 0, 1]).roots(multiplicities=False):
-            for s in P([3 * r**2 + a, 0, -1]).roots(multiplicities=False):
-                sols.append((r,s))
+        sols = [(r, s)
+                for r in P([b, a, 0, 1]).roots(multiplicities=False)
+                for s in P([3 * r**2 + a, 0, -1]).roots(multiplicities=False)]
 
         if not sols:
             raise ValueError(f'{self} has no Montgomery model')
 
         # square s allows us to take B=1
-        r,s = max(sols, key=lambda t: t[1].is_square())
+        r, s = max(sols, key=lambda t: t[1].is_square())
 
         A = 3 * r / s
         B = R.one() if s.is_square() else ~s

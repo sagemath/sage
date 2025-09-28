@@ -10,16 +10,19 @@ py.install_sources(
   'complexity_measures.py',
   'constants.py',
   'expression.pxd',
+  'expression.pyx',
   'expression_conversion_algebraic.py',
   'expression_conversion_sympy.py',
   'expression_conversions.py',
   'function.pxd',
+  'function.pyx',
   'function_factory.py',
   'operators.py',
   'pynac_wrap.h',
   'random_tests.py',
   'relation.py',
   'ring.pxd',
+  'ring.pyx',
   'subring.py',
   'symbols.py',
   'symengine.py',
@@ -124,7 +127,7 @@ foreach name, pyx : extension_data_cpp
       inc_rings,
       include_directories('../libs/gmp'),
     ],
-    dependencies: [py_dep, cysignals, gmp, gsl, singular_factory],
+    dependencies: [py_dep, cysignals, flint, gmp, gsl, singular_factory],
   )
 endforeach
 

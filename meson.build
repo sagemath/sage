@@ -1,7 +1,7 @@
 project(
   'SageMath',
   ['c', 'cpp', 'cython'],
-  version: files('src/VERSION.txt'),
+  version: files('VERSION.txt'),
   license: 'GPL v3',
   default_options: ['c_std=c17', 'cpp_std=c++17', 'python.install_env=auto'],
   meson_version: '>=1.2',
@@ -217,5 +217,6 @@ for path in file_paths:
 run_command(create_files_command, check: true)
 
 root = meson.current_source_dir()
+root_build = meson.current_build_dir()
 
 subdir('src')

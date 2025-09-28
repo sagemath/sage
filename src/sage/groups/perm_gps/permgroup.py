@@ -1349,7 +1349,7 @@ class PermutationGroup_generic(FiniteGroup):
         """
         return len(self.gens())
 
-    def is_trivial(self):
+    def is_trivial(self) -> bool:
         r"""
         Return ``True`` if this group is the trivial group.
 
@@ -1793,16 +1793,16 @@ class PermutationGroup_generic(FiniteGroup):
         from sage.sets.set import Set
 
         actions = {
-            "OnPoints"           : [],
-            "OnSets"             : [Set],
-            "OnPairs"            : [tuple],
-            "OnTuples"           : [tuple],
-            "OnSetsSets"         : [Set, Set],
-            "OnSetsDisjointSets" : [Set, Set],
-            "OnSetsTuples"       : [Set, tuple],
-            "OnTuplesSets"       : [tuple, Set],
-            "OnTuplesTuples"     : [tuple, tuple],
-            }
+            "OnPoints": [],
+            "OnSets": [Set],
+            "OnPairs": [tuple],
+            "OnTuples": [tuple],
+            "OnSetsSets": [Set, Set],
+            "OnSetsDisjointSets": [Set, Set],
+            "OnSetsTuples": [Set, tuple],
+            "OnTuplesSets": [tuple, Set],
+            "OnTuplesTuples": [tuple, tuple],
+        }
 
         def input_for_gap(x, depth, container):
             if depth == len(container):
@@ -2352,8 +2352,8 @@ class PermutationGroup_generic(FiniteGroup):
             sage: a^6
             ()
         """
-        current_randstate().set_seed_gap()
-        return self(self._gap_().Random(), check=False)
+        current_randstate().set_seed_libgap()
+        return self(self._libgap_().Random(), check=False)
 
     def group_id(self):
         """
@@ -2782,13 +2782,13 @@ class PermutationGroup_generic(FiniteGroup):
         D = PermutationGroup(gap_group=G)
         if not maps:
             return D
-        else:
-            from sage.groups.perm_gps.permgroup_morphism import PermutationGroupMorphism_from_gap
-            iota1 = PermutationGroupMorphism_from_gap(self,  D, G.Embedding(1))
-            iota2 = PermutationGroupMorphism_from_gap(other, D, G.Embedding(2))
-            pr1 = PermutationGroupMorphism_from_gap(D, self, G.Projection(1))
-            pr2 = PermutationGroupMorphism_from_gap(D, other, G.Projection(2))
-            return D, iota1, iota2, pr1, pr2
+
+        from sage.groups.perm_gps.permgroup_morphism import PermutationGroupMorphism_from_gap
+        iota1 = PermutationGroupMorphism_from_gap(self, D, G.Embedding(1))
+        iota2 = PermutationGroupMorphism_from_gap(other, D, G.Embedding(2))
+        pr1 = PermutationGroupMorphism_from_gap(D, self, G.Projection(1))
+        pr2 = PermutationGroupMorphism_from_gap(D, other, G.Projection(2))
+        return D, iota1, iota2, pr1, pr2
 
     def semidirect_product(self, N, mapping, check=True):
         r"""
@@ -3131,15 +3131,11 @@ class PermutationGroup_generic(FiniteGroup):
 
             sage: PermutationGroup([]).as_finitely_presented_group()
             Finitely presented group < a | a >
-            sage: S = SymmetricGroup(6)
+            sage: S = SymmetricGroup(4)
             sage: perm_ls = [S.random_element() for i in range(3)]
             sage: G = PermutationGroup(perm_ls)
-            sage: while True:
-            ....:     try:
-            ....:         assert G.as_finitely_presented_group().as_permutation_group().is_isomorphic(G)  # sometimes results in GAP error (see :issue:`32141`)
-            ....:         break
-            ....:     except ValueError:
-            ....:         pass
+            sage: G.as_finitely_presented_group().as_permutation_group().is_isomorphic(G)
+            True
 
         `D_9` is the only non-Abelian group of order 18
         with an automorphism group of order 54 [TW1980]_::
@@ -4219,7 +4215,7 @@ class PermutationGroup_generic(FiniteGroup):
 
     # #####################  Boolean tests #####################
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return ``True`` if this group is abelian.
 
@@ -4234,7 +4230,7 @@ class PermutationGroup_generic(FiniteGroup):
         """
         return bool(self._libgap_().IsAbelian())
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         Return ``True`` if this group is commutative.
 
@@ -4249,7 +4245,7 @@ class PermutationGroup_generic(FiniteGroup):
         """
         return self.is_abelian()
 
-    def is_cyclic(self):
+    def is_cyclic(self) -> bool:
         """
         Return ``True`` if this group is cyclic.
 
@@ -4361,7 +4357,7 @@ class PermutationGroup_generic(FiniteGroup):
         iso = self._libgap_().IsomorphismGroups(right)
         return str(iso) != 'fail'
 
-    def is_monomial(self):
+    def is_monomial(self) -> bool:
         """
         Return ``True`` if the group is monomial. A finite group is monomial
         if every irreducible complex character is induced from a linear
@@ -4375,7 +4371,7 @@ class PermutationGroup_generic(FiniteGroup):
         """
         return bool(self._libgap_().IsMonomialGroup())
 
-    def is_nilpotent(self):
+    def is_nilpotent(self) -> bool:
         """
         Return ``True`` if this group is nilpotent.
 
@@ -4390,7 +4386,7 @@ class PermutationGroup_generic(FiniteGroup):
         """
         return bool(self._libgap_().IsNilpotent())
 
-    def is_normal(self, other):
+    def is_normal(self, other) -> bool:
         """
         Return ``True`` if this group is a normal subgroup of ``other``.
 
@@ -4407,7 +4403,7 @@ class PermutationGroup_generic(FiniteGroup):
             raise TypeError("%s must be a subgroup of %s" % (self, other))
         return bool(other._libgap_().IsNormal(self))
 
-    def is_perfect(self):
+    def is_perfect(self) -> bool:
         """
         Return ``True`` if this group is perfect. A group is perfect if it
         equals its derived subgroup.
@@ -4423,7 +4419,7 @@ class PermutationGroup_generic(FiniteGroup):
         """
         return bool(self._libgap_().IsPerfectGroup())
 
-    def is_pgroup(self):
+    def is_pgroup(self) -> bools:
         r"""
         Return ``True`` if this group is a `p`-group.
 
@@ -4438,7 +4434,7 @@ class PermutationGroup_generic(FiniteGroup):
         """
         return bool(self._libgap_().IsPGroup())
 
-    def is_polycyclic(self):
+    def is_polycyclic(self) -> bool:
         r"""
         Return ``True`` if this group is polycyclic. A group is polycyclic if
         it has a subnormal series with cyclic factors. (For finite groups,
@@ -4456,7 +4452,7 @@ class PermutationGroup_generic(FiniteGroup):
         """
         return bool(self._libgap_().IsPolycyclicGroup())
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         """
         Return ``True`` if the group is simple.
 

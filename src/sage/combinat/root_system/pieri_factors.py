@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.libs.gap
 r"""
-Pieri Factors
+Pieri factors
 """
 # ****************************************************************************
 #  Copyright (C) 2009-2010 Steven Pon <spon at math.ucdavis.edu>
@@ -699,12 +699,12 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
             return False
 
         if not (self._min_length <= len(support) and
-               len(support) <= self._max_length and
-               self._min_support.issubset(support) and
-               support.issubset(self._max_support)):
+                len(support) <= self._max_length and
+                self._min_support.issubset(support) and
+                support.issubset(self._max_support)):
             return False
 
-        [rank, unrank] = sage.combinat.ranker.from_list(red)
+        rank, unrank = sage.combinat.ranker.from_list(red)
         for i in red:
             j = (i + 1) % (n + 1)
             if j in support:

@@ -230,6 +230,7 @@ Miscellaneous
 
 Conversion to Maxima::
 
+    sage: from sage.interfaces.maxima_lib import maxima
     sage: x = var('x')
     sage: eq = (x^(3/5) >= pi^2 + e^i)
     sage: eq._maxima_init_()

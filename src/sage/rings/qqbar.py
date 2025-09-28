@@ -3592,7 +3592,7 @@ class ANDescr(SageObject):
     ``ANDescr`` and all of its subclasses are for internal use, and should not
     be used directly.
     """
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Check whether this descriptor represents a value with the same
         algebraic degree as the number field associated with the descriptor.
@@ -4269,7 +4269,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         self.exactify()
         return bool(self)
 
-    def is_square(self):
+    def is_square(self) -> bool:
         """
         Return whether or not this number is square.
 
@@ -6735,7 +6735,7 @@ class ANRational(ANDescr):
         """
         return self
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         """
         Check whether this descriptor represents a value with the same
         algebraic degree as the number field associated with the descriptor.
@@ -7997,7 +7997,7 @@ class ANExtensionElement(ANDescr):
         """
         return not self._exactly_real
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Check whether this descriptor represents a value with the same
         algebraic degree as the number field associated with the descriptor.

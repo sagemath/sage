@@ -1,14 +1,9 @@
 r"""
-Ordered Multiset Partitions into Sets and the Minimaj Crystal
+Ordered multiset partitions into sets and the minimaj crystal
 
 This module provides element and parent classes for ordered multiset
 partitions. It also implements the minimaj crystal of Benkart et al.
 [BCHOPSY2017]_. (See :class:`MinimajCrystal`.)
-
-AUTHORS:
-
-- Aaron Lauve (2018): initial implementation. First draft of minimaj crystal
-  code provided by Anne Schilling.
 
 REFERENCES:
 
@@ -50,6 +45,11 @@ with 4 letters divided into 2 blocks::
      ((3, 1), (1, 2)), ((3, 1, 2), (2,)), ((3, 1), (1, 3)), ((3, 1), (2, 3)),
      ((3, 2), (2, 3)), ((2, 1), (1, 3)), ((2,), (1, 2, 3)), ((3,), (1, 2, 3)),
      ((1,), (1, 2, 3)), ((1, 2), (2, 3)), ((1, 2, 3), (3,))]
+
+AUTHORS:
+
+- Aaron Lauve (2018): initial implementation. First draft of minimaj crystal
+  code provided by Anne Schilling.
 """
 
 # ****************************************************************************
@@ -2028,7 +2028,12 @@ class OrderedMultisetPartitionsIntoSets_n(OrderedMultisetPartitionsIntoSets):
         TESTS::
 
             sage: C = OrderedMultisetPartitionsIntoSets(Integer(4))
-            sage: TestSuite(C).run()
+
+        We have to skip checking that elements are produced uniformly
+        at random by :meth:`random_element`, because this is not the
+        case.::
+
+            sage: TestSuite(C).run(skip="_test_random")
             sage: C2 = OrderedMultisetPartitionsIntoSets(int(4))
             sage: C is C2
             True
@@ -2202,11 +2207,17 @@ class OrderedMultisetPartitionsIntoSets_X(OrderedMultisetPartitionsIntoSets):
         TESTS::
 
             sage: C = OrderedMultisetPartitionsIntoSets([1,1,4])
-            sage: TestSuite(C).run()
+
+        We have to skip checking that elements are produced uniformly
+        at random by :meth:`random_element`, because this is not the
+        case.::
+
+            sage: TestSuite(C).run(skip="_test_random")
 
             sage: C2 = OrderedMultisetPartitionsIntoSets({1:2, 4:1})
             sage: C is C2
             True
+
         """
         self._X = X
         # sort the multiset
@@ -2415,7 +2426,12 @@ class OrderedMultisetPartitionsIntoSets_alph_d(OrderedMultisetPartitionsIntoSets
         TESTS::
 
             sage: C = OrderedMultisetPartitionsIntoSets(3, 2)
-            sage: TestSuite(C).run()
+
+        We have to skip checking that elements are produced uniformly
+        at random by :meth:`random_element`, because this is not the
+        case.::
+
+            sage: TestSuite(C).run(skip="_test_random")
 
             sage: C2 = OrderedMultisetPartitionsIntoSets([1,2,3], 2)
             sage: C is C2

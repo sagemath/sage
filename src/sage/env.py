@@ -49,6 +49,7 @@ from typing import Optional
 from platformdirs import site_data_dir, user_data_dir
 
 from sage import version
+from sage.config import get_include_dirs
 
 # All variables set by var() appear in this SAGE_ENV dict
 SAGE_ENV = dict()
@@ -159,9 +160,9 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
             except ImportError:
                 pass
 
-    # Try all fallbacks in order as long as we don't have a value
+    # Try all fallbacks in order as long as we don't have a non-empty value
     for f in fallbacks:
-        if value is not None:
+        if value not in (None, ""):
             break
         value = f
     SAGE_ENV[key] = value
@@ -234,6 +235,7 @@ THREEJS_DIR = var("THREEJS_DIR")
 PPLPY_DOCS = var("PPLPY_DOCS", join(SAGE_SHARE, "doc", "pplpy"))
 MAXIMA = var("MAXIMA", "maxima")
 MAXIMA_FAS = var("MAXIMA_FAS")
+MAXIMA_SHARE = var("MAXIMA_SHARE")
 KENZO_FAS = var("KENZO_FAS")
 SAGE_NAUTY_BINS_PREFIX = var("SAGE_NAUTY_BINS_PREFIX", "")
 SAGE_ECMBIN = var("SAGE_ECMBIN", "ecm")
@@ -306,6 +308,9 @@ def sage_include_directories(use_sources=False):
 
         sage: import sage.env
         sage: sage.env.sage_include_directories()
+        doctest:warning...
+        DeprecationWarning: use sage.config.get_include_dirs() instead
+        ...
         ['...',
          '.../numpy/...core/include',
          '.../include/python...']
@@ -326,6 +331,9 @@ def sage_include_directories(use_sources=False):
         sage: any(os.path.isfile(os.path.join(d, file)) for d in dirs)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(40765, 'use sage.config.get_include_dirs() instead')
+
     if use_sources:
         dirs = [SAGE_SRC]
     else:
@@ -339,6 +347,8 @@ def sage_include_directories(use_sources=False):
         pass
 
     dirs.append(sysconfig.get_config_var('INCLUDEPY'))
+
+    dirs.extend([dir.as_posix() for dir in get_include_dirs()])
 
     return dirs
 
@@ -535,8 +545,8 @@ def sage_data_paths(name: str | None) -> set[str]:
         }
         paths.add(user_data_dir("sagemath"))
         paths.add(user_data_dir())
-        paths.add(site_data_dir("sagemath"))
-        paths.add(site_data_dir())
+        for path in site_data_dir("sagemath", multipath=True).split(os.pathsep) + site_data_dir(multipath=True).split(os.pathsep):
+            paths.add(path)
     else:
         paths = {path for path in SAGE_DATA_PATH.split(os.pathsep)}
 

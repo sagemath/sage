@@ -214,6 +214,7 @@ class Gp(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.gp import gp
             sage: gp == loads(dumps(gp))
             True
         """

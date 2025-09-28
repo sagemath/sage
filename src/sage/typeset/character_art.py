@@ -37,7 +37,7 @@ MAX_WIDTH = None
 
 class CharacterArt(SageObject):
 
-    def __init__(self, lines=[], breakpoints=[], baseline=None):
+    def __init__(self, lines=[], breakpoints=[], baseline=None) -> None:
         r"""
         Abstract base class for character art.
 
@@ -103,8 +103,7 @@ class CharacterArt(SageObject):
             sage: from sage.typeset.ascii_art import AsciiArt
             sage: AsciiArt.empty()
         """
-        empty_string = cls._string_type()
-        return cls([empty_string])
+        return cls([''])
 
     def __getitem__(self, key):
         r"""
@@ -135,7 +134,7 @@ class CharacterArt(SageObject):
         """
         yield from self._matrix
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -167,7 +166,7 @@ class CharacterArt(SageObject):
             sage: format(unicode_art(M))                                                # needs sage.modules
             '\u239b1 2\u239e\n\u239d3 4\u23a0'
         """
-        return format(self._string_type(self), fmt)
+        return format(str(self), fmt)
 
     def get_baseline(self):
         r"""
@@ -203,38 +202,7 @@ class CharacterArt(SageObject):
         """
         return self._baseline
 
-    def get_breakpoints(self):
-        r"""
-        Return an iterator of breakpoints where the object can be split.
-
-        This method is deprecated, as its output is an implementation detail.
-        The mere breakpoints of a character art element do not reflect the best
-        way to split it if nested structures are involved. For details, see
-        :issue:`29204`.
-
-        For example the expression::
-
-               5    4
-            14x + 5x
-
-        can be split on position 4 (on the ``+``).
-
-        EXAMPLES::
-
-            sage: from sage.typeset.ascii_art import AsciiArt
-            sage: p3 = AsciiArt([" * ", "***"])
-            sage: p5 = AsciiArt(["  *  ", " * * ", "*****"])
-            sage: aa = ascii_art([p3, p5])
-            sage: aa.get_breakpoints()
-            doctest:...: DeprecationWarning: get_breakpoints() is deprecated
-            See https://github.com/sagemath/sage/issues/29204 for details.
-            [6]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(29204, "get_breakpoints() is deprecated")
-        return self._breakpoints
-
-    def _isatty(self):
+    def _isatty(self) -> bool:
         """
         Test whether ``stdout`` is a TTY.
 
@@ -357,7 +325,7 @@ class CharacterArt(SageObject):
         if bp is not None:
             yield bp
 
-    def _split_repr_(self, size):
+    def _split_repr_(self, size) -> str:
         r"""
         Split the representation into chunks of length at most ``size``.
 
