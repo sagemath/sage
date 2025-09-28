@@ -272,15 +272,19 @@ class EllipticCurvePoint(AdditiveGroupElement,
             ....:     if xs:
             ....:         pts.append(E(choice(xs), y, z))
             sage: P, Q = pts
-            sage: R = P + Q  # not tested (:issue:`39191`)
-            sage: for d in N.divisors():  # not tested (:issue:`39191`)
+            sage: R = P + Q
+            sage: for d in N.divisors():
             ....:     if d > 1:
             ....:         assert R.change_ring(Zmod(d)) == P.change_ring(Zmod(d)) + Q.change_ring(Zmod(d))
         """
-        if self.is_zero():
-            return other
-        if other.is_zero():
-            return self
+        # Not using these shortcuts seems to prevent the test failures from
+        # :issue:`39191`, but this doesn't seem to address the root cause of
+        # the problem: Over some choices of ZZ/N, the elliptic-curve points
+        # do not even seem to define a group. See comments in :issue:`39191`.
+#        if self.is_zero():
+#            return other
+#        if other.is_zero():
+#            return self
 
         E = self.curve()
         R = E.base_ring()
@@ -360,6 +364,9 @@ class EllipticCurvePoint(AdditiveGroupElement,
         # Below, we simply try random linear combinations until we
         # find a good choice. Is there a general method that doesn't
         # involve guessing?
+        # Answer: Yes.
+        # See pages 7-8 of Lenstra's "Elliptic Curves and Number-Theoretic Algorithms".
+        # https://cr.yp.to/bib/1987/lenstra-ecnta.pdf
 
         pts = [vector(R, pt) for pt in pts]
         for _ in range(1000):
