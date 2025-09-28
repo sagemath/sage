@@ -142,6 +142,7 @@ from sage.libs.gmp.pylong cimport mpz_set_pylong
 from sage.libs.mpfr cimport *
 from sage.libs.mpmath.utils cimport mpfr_to_mpfval
 from sage.misc.randstate cimport randstate, current_randstate
+from sage.misc.sage_input import SageInputBuilder, SageInputExpression
 
 from sage.structure.element cimport Element
 from sage.structure.parent cimport Parent
@@ -595,7 +596,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
         """
         return "\\Bold{R}"
 
-    def _sage_input_(self, sib, coerce):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when
         evaluated.
@@ -1685,7 +1686,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         return self.str(10, e='*^')
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 

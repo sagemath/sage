@@ -172,6 +172,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from typing import Literal
 
 from sage.misc.lazy_import import lazy_import
 
@@ -343,7 +344,7 @@ class SageInputBuilder:
         self._next_local = 1
         self._locals = {}
 
-    def __call__(self, x, coerced=False):
+    def __call__(self, x, coerced: bool | Literal[2] = False):
         r"""
         Try to convert an arbitrary value ``x`` into a
         :class:`SageInputExpression` (an SIE).
@@ -477,11 +478,10 @@ class SageInputBuilder:
                     return SIE_literal_stringrep(self, str(x) + 'r')
             elif self._preparse is False:
                 return self.int(x)
+            elif x < 0:
+                return -self.name('int')(self.int(-x))
             else:
-                if x < 0:
-                    return -self.name('int')(self.int(-x))
-                else:
-                    return self.name('int')(self.int(x))
+                return self.name('int')(self.int(x))
 
         if isinstance(x, float):
             # floats could often have prettier output,
@@ -499,8 +499,8 @@ class SageInputBuilder:
                     return -SIE_literal_stringrep(self, str(-x))
                 else:
                     return SIE_literal_stringrep(self, str(x))
-            from sage.rings.real_mpfr import RR
             from sage.rings.integer_ring import ZZ
+            from sage.rings.real_mpfr import RR
             rrx = RR(x)
             if rrx in ZZ and abs(rrx) < (1 << 53):
                 return self.name('float')(self.int(ZZ(rrx)))
@@ -593,7 +593,7 @@ class SageInputBuilder:
         """
         return SIE_literal_stringrep(self, n)
 
-    def name(self, n):
+    def name(self, n) -> SageInputExpression:
         r"""
         Given a string representing a Python name,
         produces a :class:`SageInputExpression` for that name.
@@ -2228,11 +2228,10 @@ class SIE_tuple(SageInputExpression):
         values = [sif.format(val, 0) for val in self._sie_values]
         if self._sie_is_list:
             return '[%s]' % ', '.join(values), _prec_atomic
+        elif len(values) == 1:
+            return '(%s,)' % values[0], _prec_atomic
         else:
-            if len(values) == 1:
-                return '(%s,)' % values[0], _prec_atomic
-            else:
-                return '(%s)' % ', '.join(values), _prec_atomic
+            return '(%s)' % ', '.join(values), _prec_atomic
 
 
 class SIE_dict(SageInputExpression):

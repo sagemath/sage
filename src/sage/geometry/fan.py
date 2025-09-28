@@ -233,9 +233,9 @@ inclusion!)
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 from collections.abc import Callable, Container
 from copy import copy
+from typing import TYPE_CHECKING, Literal
 from warnings import warn
 
 import sage.geometry.abc
@@ -261,6 +261,9 @@ from sage.modules.free_module import span
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
+
+if TYPE_CHECKING:
+    from sage.misc.sage_input import SageInputBuilder, SageInputExpression
 
 
 def is_Fan(x) -> bool:
@@ -1217,7 +1220,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         if virtual_rays is not None:
             self._virtual_rays = PointCollection(virtual_rays, self.lattice())
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
         """
         Return Sage command to reconstruct ``self``.
 

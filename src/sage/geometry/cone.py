@@ -201,9 +201,9 @@ REFERENCES:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 from collections.abc import Hashable, Iterable, Container
 from copy import copy
+from typing import TYPE_CHECKING, Literal
 from warnings import warn
 
 from sage.misc.lazy_import import lazy_import
@@ -240,6 +240,9 @@ lazy_import('ppl', ['C_Polyhedron', 'Generator_System', 'Constraint_System',
                     feature=PythonModule("ppl", spkg='pplpy', type='standard'))
 lazy_import('ppl', ['ray', 'point'], as_=['PPL_ray', 'PPL_point'],
                     feature=PythonModule("ppl", spkg='pplpy', type='standard'))
+
+if TYPE_CHECKING:
+    from sage.misc.sage_input import SageInputBuilder, SageInputExpression
 
 
 def is_Cone(x):
@@ -1500,7 +1503,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         if PPL is not None:
             self._PPL_C_Polyhedron = PPL
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
         """
         Return Sage command to reconstruct ``self``.
 

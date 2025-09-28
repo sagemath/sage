@@ -128,6 +128,7 @@ from sage.misc.cachefunc import cached_function
 from sage.categories.map cimport Map
 from sage.categories.morphism cimport Morphism
 
+from sage.misc.sage_input import SageInputBuilder, SageInputExpression
 from sage.misc.superseded import deprecation_cython as deprecation, deprecated_function_alias
 from sage.misc.cachefunc import cached_method
 
@@ -3298,7 +3299,7 @@ cdef class Polynomial(CommutativePolynomial):
             return "0"
         return s[1:].lstrip().rstrip()
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when
         evaluated.
