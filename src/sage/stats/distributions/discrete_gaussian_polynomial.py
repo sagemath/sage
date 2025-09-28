@@ -53,9 +53,11 @@ EXAMPLES::
 # policies, either expressed or implied, of the FreeBSD Project.
 # *****************************************************************************/
 
-from sage.rings.real_mpfr import RR
 from sage.rings.integer_ring import ZZ
-from .discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
+from sage.rings.real_mpfr import RR
+from sage.stats.distributions.discrete_gaussian_integer import (
+    DiscreteGaussianDistributionIntegerSampler,
+)
 from sage.structure.sage_object import SageObject
 
 

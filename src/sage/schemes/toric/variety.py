@@ -1232,7 +1232,7 @@ class ToricVariety_field(AmbientSpace):
                 return self.dimension() - codim
         return -1
 
-    def is_homogeneous(self, polynomial):
+    def is_homogeneous(self, polynomial) -> bool:
         r"""
         Check if ``polynomial`` is homogeneous.
 
@@ -1307,7 +1307,7 @@ class ToricVariety_field(AmbientSpace):
                 return False
         return True
 
-    def is_isomorphic(self, another):
+    def is_isomorphic(self, another) -> bool:
         r"""
         Check if ``self`` is isomorphic to ``another``.
 
