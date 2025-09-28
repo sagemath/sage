@@ -130,9 +130,10 @@ class ClassFunction_gap(SageObject):
         e = self._gap_classfunction.Conductor()
         self._base_ring = CyclotomicField(e)
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return a string showing how to declare / initialize ``self`` in Gap.
+
         Stored in the \code{self._gap_string} attribute.
 
         EXAMPLES::
