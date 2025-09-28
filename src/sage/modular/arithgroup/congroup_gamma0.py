@@ -11,17 +11,16 @@ Congruence subgroup `\Gamma_0(N)`
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.misc import kronecker_symbol, divisors, euler_phi, gcd, moebius
+from sage.arith.misc import divisors, euler_phi, gcd, kronecker_symbol, moebius
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_class
+from sage.modular.arithgroup.congroup_gammaH import GammaH_class
+from sage.modular.arithgroup.congroup_generic import CongruenceSubgroup
 from sage.modular.cusps import Cusp
-from sage.modular.modsym.p1list import lift_to_sl2z, P1List
+from sage.modular.modsym.p1list import P1List, lift_to_sl2z
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer_ring import ZZ
-
-from .congroup_gamma1 import Gamma1_class
-from .congroup_gammaH import GammaH_class
-from .congroup_generic import CongruenceSubgroup
 
 
 def is_Gamma0(x):
@@ -62,7 +61,7 @@ def Gamma0_constructor(N):
         sage: G is Gamma0(51)
         True
     """
-    from .all import SL2Z
+    from sage.modular.arithgroup.all import SL2Z
     if N == 1:
         return SL2Z
     try:
@@ -378,6 +377,7 @@ class Gamma0_class(GammaH_class):
 
         elif algorithm == "todd-coxeter":
             from sage.modular.modsym.p1list import P1List
+
             from .congroup import generators_helper
             level = self.level()
             if level == 1: # P1List isn't very happy working mod 1
