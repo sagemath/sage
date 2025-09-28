@@ -790,12 +790,11 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
         try:
             # Ensure all elements are vectors in the codomain
             images = [C(a) for a in arg2]
-            # Convert to matrix representation relative to bases
-            arg2 = matrix(D.base_ring(), D.dimension(), C.dimension(), 
-                         [C.coordinates(a) for a in images])
         except (ArithmeticError, TypeError) as e:
-            msg = 'some proposed image is not in the codomain, because\n' + e.args[0]
-            raise ArithmeticError(msg)
+            raise TypeError('some proposed image is not in the codomain, because\n' + e.args[0])
+            # Convert to matrix representation relative to bases
+        arg2 = matrix(D.base_ring(), D.dimension(), C.dimension(), 
+                      [C.coordinates(a) for a in images])
     elif isinstance(arg2, Vector_callable_symbolic_dense):
         from sage.symbolic.ring import SR
         args = arg2.parent().base_ring()._arguments
