@@ -913,10 +913,7 @@ class Chart(UniqueRepresentation, SageObject):
         """
         if len(coordinates) != self.domain()._dim:
             return False
-        if 'parameters' in kwds:
-            parameters = kwds['parameters']
-        else:
-            parameters = None
+        parameters = kwds.get('parameters', None)
         # Check of restrictions:
         if self._restrictions:
             substitutions = dict(zip(self._xx, coordinates))
@@ -2556,14 +2553,8 @@ class RealChart(Chart):
         n = len(coordinates)
         if n != self._manifold._dim:
             return False
-        if 'tolerance' in kwds:
-            tolerance = kwds['tolerance']
-        else:
-            tolerance = 0
-        if 'parameters' in kwds:
-            parameters = kwds['parameters']
-        else:
-            parameters = None
+        tolerance = kwds.get('tolerance', 0)
+        parameters = kwds.get('parameters', None)
         # Check of the coordinate ranges:
         for x, bounds in zip(coordinates, self._bounds):
             xmin = bounds[0][0] - tolerance

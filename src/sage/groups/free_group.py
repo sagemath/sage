@@ -291,6 +291,29 @@ class FreeGroupElement(ElementLibGAP):
         """
         return (self.parent(), (self.Tietze(),))
 
+    def _regina_(self, regina):
+        r"""
+        Return the string used to construct the object in Regina.
+
+        EXAMPLES::
+
+            sage: F = FreeGroup(3)
+            sage: f = F.an_element(); f
+            x0*x1*x2
+            sage: regina(f)      # optional regina
+            <regina.GroupExpression: g0 g1 g2>
+        """
+        import string
+        word = ''
+        for i in self.Tietze():
+            if i > 0:
+                next_char = string.ascii_lowercase[i - 1]
+            else:
+                next_char = string.ascii_uppercase[-i - 1]
+            word = '%s%s' % (word, next_char)
+        res = regina.GroupExpression(word)
+        return res
+
     @cached_method
     def Tietze(self):
         """
@@ -798,7 +821,7 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
         """
         return self.ngens()
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
         Return the string used to construct the object in gap.
 
@@ -808,9 +831,20 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
             sage: G._gap_init_()
             'FreeGroup(["x0", "x1", "x2"])'
         """
-        gap_names = ['"' + s + '"' for s in self._gen_names]
-        gen_str = ', '.join(gap_names)
-        return 'FreeGroup(['+gen_str+'])'
+        gap_names = ('"' + s + '"' for s in self._gen_names)
+        return 'FreeGroup([' + ', '.join(gap_names) + '])'
+
+    def _regina_(self, regina):
+        r"""
+        Return this group as an object in Regina.
+
+        EXAMPLES::
+
+            sage: F = FreeGroup(3)
+            sage: regina(F)              # optional regina
+            <regina.GroupPresentation: < a b c >>
+        """
+        return regina.GroupPresentation(int(self.ngens()))
 
     def _element_constructor_(self, *args, **kwds):
         """
