@@ -55,19 +55,19 @@ between two vector spaces.  Various input can be coerced into a
 homspace to create a linear transformation.  See
 :mod:`sage.modules.vector_space_homspace` for more. ::
 
-   sage: D = QQ^4
-   sage: C = QQ^2
-   sage: hom_space = Hom(D, C)
-   sage: images = [[1, 3], [2, -1], [4, 0], [3, 7]]
-   sage: zeta = hom_space(images)
-   sage: zeta
-   Vector space morphism represented by the matrix:
-   [ 1  3]
-   [ 2 -1]
-   [ 4  0]
-   [ 3  7]
-   Domain:   Vector space of dimension 4 over Rational Field
-   Codomain: Vector space of dimension 2 over Rational Field
+    sage: D = QQ^4
+    sage: C = QQ^2
+    sage: hom_space = Hom(D, C)
+    sage: images = [[1, 3], [2, -1], [4, 0], [3, 7]]
+    sage: zeta = hom_space(images)
+    sage: zeta
+    Vector space morphism represented by the matrix:
+    [ 1  3]
+    [ 2 -1]
+    [ 4  0]
+    [ 3  7]
+    Domain:   Vector space of dimension 4 over Rational Field
+    Codomain: Vector space of dimension 2 over Rational Field
 
 A homomorphism may also be created via a method on the domain.  ::
 
