@@ -1325,6 +1325,29 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         # Find the minimal valuation of x by checking each term
         return Integer(min(e[i] for e in self.exponents()))
 
+    def newton_polytope(self):
+        r"""
+        Return the Newton polytope of this Laurent polynomial.
+
+        EXAMPLES::
+
+            sage: R.<x, y> = LaurentPolynomialRing(QQ)
+            sage: f = 1 + x*y + y**2 + 33 * x^-3
+            sage: P = f.newton_polytope(); P                                            # needs sage.geometry.polyhedron
+            A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices
+
+        TESTS::
+
+            sage: R.<x,y> = LaurentPolynomialRing(QQ)
+            sage: R(0).newton_polytope()                                                # needs sage.geometry.polyhedron
+            The empty polyhedron in ZZ^0
+            sage: R(1).newton_polytope()                                                # needs sage.geometry.polyhedron
+            A 0-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex
+        """
+        from sage.geometry.polyhedron.constructor import Polyhedron
+        from sage.rings.integer_ring import ZZ
+        return Polyhedron(vertices=self.exponents(), base_ring=ZZ)
+
     def has_inverse_of(self, i):
         """
         INPUT:
