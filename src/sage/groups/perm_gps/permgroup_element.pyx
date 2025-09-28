@@ -923,7 +923,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
     # see sage.groups.perm_gps.permgroup.PermutationGroup_generic.gap
     gap = _libgap_
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return a GAP string representation for this
         PermutationGroupElement.
@@ -934,9 +934,9 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: g._gap_init_()
             'PermList([2, 3, 1, 5, 4])'
         """
-        return 'PermList(%s)' % self._gap_list()
+        return f'PermList({self._gap_list()})'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return string representation of this permutation.
 
