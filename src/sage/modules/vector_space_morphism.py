@@ -786,8 +786,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
         # vectors in the codomain. Convert to matrix representation early
         # to avoid issues in VectorSpaceHomspace.__call__
         if len(arg2) != D.dimension():
-            msg = "number of images should equal the size of the domain's basis (={0}), not {1}"
-            raise ValueError(msg.format(D.dimension(), len(arg2)))
+            raise ValueError(f"number of images should equal the dimension of the domain (={D.dimension()}), not {len(arg2)}")
         try:
             # Ensure all elements are vectors in the codomain
             images = [C(a) for a in arg2]
