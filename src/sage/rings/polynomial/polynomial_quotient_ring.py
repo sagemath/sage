@@ -38,27 +38,22 @@ TESTS::
 #*****************************************************************************
 
 
-from . import polynomial_element
 import sage.rings.rational_field
-
 from sage.arith.misc import crt
-from sage.rings.ring import Field, CommutativeRing
-
-from sage.misc.cachefunc import cached_method
-from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
-
 from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.commutative_rings import CommutativeRings
-
+from sage.misc.cachefunc import cached_method
+from sage.rings.polynomial import polynomial_element
+from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
+from sage.rings.polynomial.polynomial_quotient_ring_element import (
+    PolynomialQuotientRingElement,
+)
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
 from sage.rings.quotient_ring import QuotientRing_generic
-
+from sage.rings.ring import CommutativeRing, Field
 from sage.structure.category_object import normalize_names
 from sage.structure.coerce_maps import DefaultConvertMap_unique
 from sage.structure.factory import UniqueFactory
-
-from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
-
 from sage.structure.richcmp import richcmp
 
 
@@ -244,8 +239,8 @@ class PolynomialQuotientRingFactory(UniqueFactory):
         ring, polynomial, names = key
 
         R = ring.base_ring()
-        from sage.categories.integral_domains import IntegralDomains
         from sage.categories.fields import Fields
+        from sage.categories.integral_domains import IntegralDomains
         if R in IntegralDomains():
             try:
                 is_irreducible = polynomial.is_irreducible()
@@ -338,8 +333,16 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         sage: isinstance(Q.an_element(), Q.element_class)
         True
         sage: [s for s in dir(Q.category().element_class) if not s.startswith('_')]
-        ['cartesian_product', 'inverse', 'inverse_of_unit', 'is_idempotent',
-         'is_one', 'is_unit', 'lift', 'powers']
+        ['cartesian_product',
+         'inverse',
+         'inverse_of_unit',
+         'is_idempotent',
+         'is_one',
+         'is_square',
+         'is_unit',
+         'lift',
+         'powers',
+         'sqrt']
         sage: first_class = Q.__class__
 
     We try to find out whether `Q` is a field. Indeed it is, and thus its category,
@@ -361,12 +364,14 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
          'inverse_of_unit',
          'is_idempotent',
          'is_one',
+         'is_square',
          'is_unit',
          'lcm',
          'lift',
          'powers',
          'quo_rem',
          'radical',
+         'sqrt',
          'squarefree_part',
          'xgcd']
 

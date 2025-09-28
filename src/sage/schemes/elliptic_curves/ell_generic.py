@@ -71,6 +71,7 @@ from sage.rings.rational_field import RationalField
 from sage.rings.real_mpfr import RealField
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
+from sage.structure.coerce import py_scalar_to_element
 
 # Schemes
 import sage.schemes.projective.projective_space as projective_space
@@ -922,8 +923,15 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E = EllipticCurve(F, [1,1])
             sage: {E.lift_x(t+1) for _ in range(1000)}  # but .lift_x() uses a fixed one
             {(t + 1 : 39*t^2 + 14*t + 12 : 1)}
+
+        Check python types::
+
+            sage: E = EllipticCurve('37a').short_weierstrass_model().change_ring(GF(17))
+            sage: E.lift_x(int(7), all=True)
+            [(7 : 3 : 1), (7 : 14 : 1)]
         """
         K = self.base_ring()
+        x = py_scalar_to_element(x)
         L = x.parent()
         E = self
 
@@ -2476,6 +2484,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: assert(E(eval(f,P)) == 2*P)
 
         The following test shows that :issue:`6413` is fixed for elliptic curves over finite fields::
+
+            sage: # long time (:issue:`39569`)
             sage: p = 7
             sage: K.<a> = GF(p^2)
             sage: E = EllipticCurve(K, [a + 3, 5 - a])
@@ -3205,16 +3215,15 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         R = self.base_ring()
         P = PolynomialRing(R, 'v')
 
-        sols = []
-        for r in P([b, a, 0, 1]).roots(multiplicities=False):
-            for s in P([3 * r**2 + a, 0, -1]).roots(multiplicities=False):
-                sols.append((r,s))
+        sols = [(r, s)
+                for r in P([b, a, 0, 1]).roots(multiplicities=False)
+                for s in P([3 * r**2 + a, 0, -1]).roots(multiplicities=False)]
 
         if not sols:
             raise ValueError(f'{self} has no Montgomery model')
 
         # square s allows us to take B=1
-        r,s = max(sols, key=lambda t: t[1].is_square())
+        r, s = max(sols, key=lambda t: t[1].is_square())
 
         A = 3 * r / s
         B = R.one() if s.is_square() else ~s

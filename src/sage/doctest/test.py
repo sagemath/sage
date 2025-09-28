@@ -29,7 +29,7 @@ Check that :issue:`2235` has been fixed::
     ....:       "--random-seed=0", "--optional=sage", "longtime.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
-    sage -t --warn-long 0.0 --random-seed=0 longtime.rst
+    ... --warn-long 0.0 --random-seed=0 longtime.rst
     [0 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
@@ -40,7 +40,7 @@ Check that :issue:`2235` has been fixed::
     ....:      "--random-seed=0", "--optional=sage", "-l", "longtime.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
-    sage -t --long --warn-long 0.0 --random-seed=0 longtime.rst
+    ... --long --warn-long 0.0 --random-seed=0 longtime.rst
     [1 test, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
@@ -50,11 +50,11 @@ Check that :issue:`2235` has been fixed::
 
 Check slow doctest warnings are correctly raised::
 
-    sage: subprocess.call(["sage", "-t", "--warn-long",     # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long",     # long time
     ....:       "--random-seed=0", "--optional=sage", "sleep2.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
-    sage -t --warn-long --random-seed=0 sleep2.rst
+    ... --warn-long --random-seed=0 sleep2.rst
     **********************************************************************
     File "sleep2.rst", line 4, in sage.doctest.tests.sleep2
     Warning: slow doctest:
@@ -67,11 +67,11 @@ Check slow doctest warnings are correctly raised::
     ----------------------------------------------------------------------
     ...
     0
-    sage: subprocess.call(["sage", "-t", "--format=github", "--warn-long",     # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--format=github", "--warn-long",     # long time
     ....:       "--random-seed=0", "--optional=sage", "sleep2.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
-    sage -t --warn-long --random-seed=0 sleep2.rst
+    ... --warn-long --random-seed=0 sleep2.rst
     **********************************************************************
     ::warning title=Warning: slow doctest:,file=sleep2.rst,line=4::slow doctest:: Test ran for ...s cpu, ...s wall%0ACheck ran for ...s cpu, ...s wall%0A
         while walltime(t) < 2: pass
@@ -90,7 +90,7 @@ Check handling of tolerances::
     ....:      "--random-seed=0", "--optional=sage", "tolerance.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
-    sage -t --warn-long 0.0 --random-seed=0 tolerance.rst
+    ... --warn-long 0.0 --random-seed=0 tolerance.rst
     **********************************************************************
     File "tolerance.rst", line ..., in sage.doctest.tests.tolerance
     Failed example:
@@ -160,7 +160,7 @@ Test the ``--initial`` option::
     ....:      "--random-seed=0", "--optional=sage", "-i", "initial.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
-    sage -t --warn-long 0.0 --random-seed=0 initial.rst
+    ... --warn-long 0.0 --random-seed=0 initial.rst
     **********************************************************************
     File "initial.rst", line 4, in sage.doctest.tests.initial
     Failed example:
@@ -180,7 +180,7 @@ Test the ``--initial`` option::
     **********************************************************************
     ...
     ----------------------------------------------------------------------
-    sage -t  --warn-long 0.0 --random-seed=0 initial.rst  # 5 doctests failed
+    ...  --warn-long 0.0 --random-seed=0 initial.rst  # 5 doctests failed
     ----------------------------------------------------------------------
     ...
     1
@@ -191,7 +191,7 @@ Test the ``--exitfirst`` option::
     ....:      "--random-seed=0", "--optional=sage", "--exitfirst", "initial.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
-    sage -t --warn-long 0.0 --random-seed=0 initial.rst
+    ... --warn-long 0.0 --random-seed=0 initial.rst
     **********************************************************************
     File "initial.rst", line 4, in sage.doctest.tests.initial
     Failed example:
@@ -203,7 +203,7 @@ Test the ``--exitfirst`` option::
     **********************************************************************
     ...
     ----------------------------------------------------------------------
-    sage -t  --warn-long 0.0 --random-seed=0 initial.rst  # 1 doctest failed
+    ...  --warn-long 0.0 --random-seed=0 initial.rst  # 1 doctest failed
     ----------------------------------------------------------------------
     ...
     1
@@ -219,13 +219,13 @@ manner (:issue:`26912`)::
     ....:      "--random-seed=0", "--optional=sage", "99seconds.rst"], **kwds2)
     Running doctests...
     Doctesting 1 file.
-    sage -t --warn-long 0.0 --random-seed=0 99seconds.rst
+    ... --warn-long 0.0 --random-seed=0 99seconds.rst
         Timed out
     **********************************************************************
     Tests run before process (pid=...) timed out:
     ...
     ----------------------------------------------------------------------
-    sage -t --warn-long 0.0 --random-seed=0 99seconds.rst  # Timed out
+    ... --warn-long 0.0 --random-seed=0 99seconds.rst  # Timed out
     ----------------------------------------------------------------------
     ...
     4
@@ -236,7 +236,7 @@ Test handling of ``KeyboardInterrupt`` in doctests::
     ....:      "--random-seed=0", "--optional=sage", "keyboardinterrupt.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
-    sage -t --warn-long 0.0 --random-seed=0 keyboardinterrupt.rst
+    ... --warn-long 0.0 --random-seed=0 keyboardinterrupt.rst
     **********************************************************************
     File "keyboardinterrupt.rst", line 11, in sage.doctest.tests.keyboardinterrupt
     Failed example:
@@ -248,7 +248,7 @@ Test handling of ``KeyboardInterrupt`` in doctests::
     **********************************************************************
     ...
     ----------------------------------------------------------------------
-    sage -t --warn-long 0.0 --random-seed=0 keyboardinterrupt.rst  # 1 doctest failed
+    ... --warn-long 0.0 --random-seed=0 keyboardinterrupt.rst  # 1 doctest failed
     ----------------------------------------------------------------------
     ...
     1
@@ -314,7 +314,7 @@ Test a doctest failing with ``abort()``::
     ....:      "--random-seed=0", "--optional=sage", "abort.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
-    sage -t --warn-long 0.0 --random-seed=0 abort.rst
+    ... --warn-long 0.0 --random-seed=0 abort.rst
         Killed due to abort
     **********************************************************************
     Tests run before process (pid=...) failed:
@@ -327,7 +327,7 @@ Test a doctest failing with ``abort()``::
     ------------------------------------------------------------------------
     ...
     ----------------------------------------------------------------------
-    sage -t --warn-long 0.0 --random-seed=0 abort.rst  # Killed due to abort
+    ... --warn-long 0.0 --random-seed=0 abort.rst  # Killed due to abort
     ----------------------------------------------------------------------
     ...
     16
@@ -344,7 +344,7 @@ represented by ``<DOTSCOLON>`` below)::
     sage: print(proc.stdout.replace('sage:', 'sage<COLON>').replace('....:', '<DOTSCOLON>'))
     Running doctests...
     Doctesting 1 file.
-    sage -t --warn-long 0.0 --random-seed=0 fail_and_die.rst
+    ... --warn-long 0.0 --random-seed=0 fail_and_die.rst
     **********************************************************************
     File "fail_and_die.rst", line 8, in sage.doctest.tests.fail_and_die
     Failed example:
@@ -364,7 +364,7 @@ represented by ``<DOTSCOLON>`` below)::
     sage<COLON> os.kill(os.getpid(), signal.SIGKILL) ## line 9 ##
     **********************************************************************
     ----------------------------------------------------------------------
-    sage -t --warn-long 0.0 --random-seed=0 fail_and_die.rst  # Killed due to kill signal
+    ... --warn-long 0.0 --random-seed=0 fail_and_die.rst  # Killed due to kill signal
     ----------------------------------------------------------------------
     ...
     sage: proc.returncode
@@ -376,7 +376,7 @@ Test that ``sig_on_count`` is checked correctly::
     ....:      "--random-seed=0", "--optional=sage", "sig_on.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
-    sage -t --warn-long 0.0 --random-seed=0 sig_on.rst
+    ... --warn-long 0.0 --random-seed=0 sig_on.rst
     **********************************************************************
     File "sig_on.rst", line 6, in sage.doctest.tests.sig_on
     Failed example:
@@ -390,7 +390,7 @@ Test that ``sig_on_count`` is checked correctly::
        1 of   5 in sage.doctest.tests.sig_on
         [3 tests, 1 failure, ...]
     ----------------------------------------------------------------------
-    sage -t --warn-long 0.0 --random-seed=0 sig_on.rst  # 1 doctest failed
+    ... --warn-long 0.0 --random-seed=0 sig_on.rst  # 1 doctest failed
     ----------------------------------------------------------------------
     ...
     1
@@ -405,7 +405,7 @@ Test logfiles in serial and parallel mode (see :issue:`19271`)::
     sage: print(open(t).read())  # long time
     Running doctests...
     Doctesting 1 file.
-    sage -t --warn-long 0.0 --random-seed=0 simple_failure.rst
+    ... --warn-long 0.0 --random-seed=0 simple_failure.rst
     **********************************************************************
     File "simple_failure.rst", line 7, in sage.doctest.tests.simple_failure
     Failed example:
@@ -419,7 +419,7 @@ Test logfiles in serial and parallel mode (see :issue:`19271`)::
        1 of   5 in sage.doctest.tests.simple_failure
         [4 tests, 1 failure, ...]
     ----------------------------------------------------------------------
-    sage -t --warn-long 0.0 --random-seed=0 simple_failure.rst  # 1 doctest failed
+    ... --warn-long 0.0 --random-seed=0 simple_failure.rst  # 1 doctest failed
     ----------------------------------------------------------------------
     ...
 
@@ -430,7 +430,7 @@ Test logfiles in serial and parallel mode (see :issue:`19271`)::
     sage: print(open(t).read())  # long time
     Running doctests...
     Doctesting 1 file.
-    sage -t --warn-long 0.0 --random-seed=0 simple_failure.rst
+    ... --warn-long 0.0 --random-seed=0 simple_failure.rst
     **********************************************************************
     File "simple_failure.rst", line 7, in sage.doctest.tests.simple_failure
     Failed example:
@@ -444,7 +444,7 @@ Test logfiles in serial and parallel mode (see :issue:`19271`)::
        1 of   5 in sage.doctest.tests.simple_failure
         [4 tests, 1 failure, ...]
     ----------------------------------------------------------------------
-    sage -t --warn-long 0.0 --random-seed=0 simple_failure.rst  # 1 doctest failed
+    ... --warn-long 0.0 --random-seed=0 simple_failure.rst  # 1 doctest failed
     ----------------------------------------------------------------------
     ...
 
@@ -455,7 +455,7 @@ Test the ``--debug`` option::
     ....:      stdin=open(os.devnull), **kwds)
     Running doctests...
     Doctesting 1 file.
-    sage -t --warn-long 0.0 --random-seed=0 simple_failure.rst
+    ... --warn-long 0.0 --random-seed=0 simple_failure.rst
     **********************************************************************
     File "simple_failure.rst", line 7, in sage.doctest.tests.simple_failure
     Failed example:
@@ -478,7 +478,7 @@ Test the ``--debug`` option::
        1 of   5 in sage.doctest.tests.simple_failure
         [4 tests, 1 failure, ...]
     ----------------------------------------------------------------------
-    sage -t --warn-long 0.0 --random-seed=0 simple_failure.rst  # 1 doctest failed
+    ... --warn-long 0.0 --random-seed=0 simple_failure.rst  # 1 doctest failed
     ----------------------------------------------------------------------
     ...
     1
@@ -491,7 +491,7 @@ Test running under gdb, without and with a timeout::
     exec gdb ...
     Running doctests...
     Doctesting 1 file...
-    sage -t... 1second.rst...
+    ... 1second.rst...
         [2 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
@@ -515,7 +515,7 @@ Test the ``--show-skipped`` option::
     ....:      "--random-seed=0", "--optional=sage", "--show-skipped", "show_skipped.rst"], **kwds)
     Running doctests ...
     Doctesting 1 file.
-    sage -t --warn-long 0.0 --random-seed=0 show_skipped.rst
+    ... --warn-long 0.0 --random-seed=0 show_skipped.rst
         2 tests not run due to known bugs
         1 gap test not run
         1 long test not run
@@ -534,7 +534,7 @@ Optional tests are run correctly::
     ....:      "--random-seed=0", "--show-skipped", "--optional=sage,gap", "show_skipped.rst"], **kwds)
     Running doctests ...
     Doctesting 1 file.
-    sage -t --long --warn-long 0.0 --random-seed=0 show_skipped.rst
+    ... --long --warn-long 0.0 --random-seed=0 show_skipped.rst
         2 tests not run due to known bugs
         1 not tested test not run
         0 tests not run because we ran out of time
@@ -549,7 +549,7 @@ Optional tests are run correctly::
     ....:      "--random-seed=0", "--show-skipped", "--optional=gAp", "show_skipped.rst"], **kwds)
     Running doctests ...
     Doctesting 1 file.
-    sage -t --long --warn-long 0.0 --random-seed=0 show_skipped.rst
+    ... --long --warn-long 0.0 --random-seed=0 show_skipped.rst
         2 tests not run due to known bugs
         1 not tested test not run
         2 sage tests not run
@@ -582,7 +582,7 @@ Test ``atexit`` support in the doctesting framework::
     ....:      "--random-seed=0", "--optional=sage", "atexit.rst"], **kwds2)
     Running doctests...
     Doctesting 1 file.
-    sage -t --warn-long 0.0 --random-seed=0 atexit.rst
+    ... --warn-long 0.0 --random-seed=0 atexit.rst
         [3 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
@@ -602,7 +602,7 @@ Test that random tests are reproducible::
     ....:      "--random-seed=0", "--optional=sage", "random_seed.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
-    sage -t --warn-long 0.0 --random-seed=0 random_seed.rst
+    ... --warn-long 0.0 --random-seed=0 random_seed.rst
     **********************************************************************
     File "random_seed.rst", line 3, in sage.doctest.tests.random_seed
     Failed example:
@@ -616,7 +616,7 @@ Test that random tests are reproducible::
        1 of   2 in sage.doctest.tests.random_seed
         [1 test, 1 failure, ...s wall]
     ----------------------------------------------------------------------
-    sage -t --warn-long 0.0 --random-seed=0 random_seed.rst  # 1 doctest failed
+    ... --warn-long 0.0 --random-seed=0 random_seed.rst  # 1 doctest failed
     ----------------------------------------------------------------------
     ...
     1
@@ -624,7 +624,7 @@ Test that random tests are reproducible::
     ....:      "--random-seed=1", "--optional=sage", "random_seed.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
-    sage -t --warn-long 0.0 --random-seed=1 random_seed.rst
+    ... --warn-long 0.0 --random-seed=1 random_seed.rst
         [1 test, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!

@@ -770,6 +770,7 @@ class Modules(Category_module):
                 :meth:`sage.structure.category_object.CategoryObject.base_ring`::
 
                     sage: H.base_ring.__module__                                        # needs sage.modules
+                    'sage.structure.category_object'
 
                 Here we call it directly::
 
@@ -925,9 +926,7 @@ class Modules(Category_module):
 
                     sage: A = FreeModule(ZZ, 2)                                         # needs sage.modules
                     sage: B = cartesian_product([A, A]); B                              # needs sage.modules
-                    The Cartesian product of
-                     (Ambient free module of rank 2 over the principal ideal domain Integer Ring,
-                      Ambient free module of rank 2 over the principal ideal domain Integer Ring)
+                    The Cartesian product of 2 copies of Ambient free module of rank 2 over the principal ideal domain Integer Ring
                     sage: 5*B(([1, 2], [3, 4]))                                         # needs sage.modules
                     ((5, 10), (15, 20))
                 """

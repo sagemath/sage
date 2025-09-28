@@ -347,10 +347,6 @@ Likewise for :envvar:`CXXFLAGS`, :envvar:`FCFLAGS`, and :envvar:`F77FLAGS`.
     python3.  You should use this if you are installing a Python package
     to make sure that the libraries are installed in the right place.
 
-    By the way, there is also a script ``sage-python``. This should be
-    used at runtime, for example in scripts in ``SAGE_LOCAL/bin`` which
-    expect Sage's Python to already be built.
-
 Many packages currently do not separate the build and install steps and only
 provide a ``spkg-install.in`` file that does both.  The separation is useful in
 particular for root-owned install hierarchies, where something like ``sudo``

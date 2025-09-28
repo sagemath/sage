@@ -227,7 +227,8 @@ from sage.modules.free_module import span, VectorSpace
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.structure.all import SageObject, parent
+from sage.structure.sage_object import SageObject
+from sage.structure.element import parent
 from sage.structure.richcmp import richcmp_method, richcmp
 lazy_import('sage.geometry.integral_points', 'parallelotope_points')
 from sage.geometry.convex_set import ConvexSet_closed
@@ -3239,7 +3240,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         raise NotImplementedError("isomorphism check for not strictly convex "
                                   "cones is not implemented")
 
-    def is_simplicial(self):
+    def is_simplicial(self) -> bool:
         r"""
         Check if ``self`` is simplicial.
 
@@ -3261,7 +3262,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         return self.nrays() == self.dim()
 
     @cached_method
-    def is_smooth(self):
+    def is_smooth(self) -> bool:
         r"""
         Check if ``self`` is smooth.
 
@@ -3309,7 +3310,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         """
         return False
 
-    def is_trivial(self):
+    def is_trivial(self) -> bool:
         """
         Check if the cone has no rays.
 
@@ -3327,7 +3328,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
     is_compact = is_trivial
 
-    def is_strictly_convex(self):
+    def is_strictly_convex(self) -> bool:
         r"""
         Check if ``self`` is strictly convex.
 
@@ -6924,7 +6925,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
                     # cone strictly convex. Whether or not those
                     # coordinates become positive/negative is chosen
                     # randomly.
-                    from random import choice
+                    from sage.misc.prandom import choice
                     pm = choice([-1,1])
 
                     # rays has immutable elements

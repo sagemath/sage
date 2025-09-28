@@ -234,6 +234,7 @@ THREEJS_DIR = var("THREEJS_DIR")
 PPLPY_DOCS = var("PPLPY_DOCS", join(SAGE_SHARE, "doc", "pplpy"))
 MAXIMA = var("MAXIMA", "maxima")
 MAXIMA_FAS = var("MAXIMA_FAS")
+MAXIMA_SHARE = var("MAXIMA_SHARE")
 KENZO_FAS = var("KENZO_FAS")
 SAGE_NAUTY_BINS_PREFIX = var("SAGE_NAUTY_BINS_PREFIX", "")
 SAGE_ECMBIN = var("SAGE_ECMBIN", "ecm")
@@ -535,8 +536,8 @@ def sage_data_paths(name: str | None) -> set[str]:
         }
         paths.add(user_data_dir("sagemath"))
         paths.add(user_data_dir())
-        paths.add(site_data_dir("sagemath"))
-        paths.add(site_data_dir())
+        for path in site_data_dir("sagemath", multipath=True).split(os.pathsep) + site_data_dir(multipath=True).split(os.pathsep):
+            paths.add(path)
     else:
         paths = {path for path in SAGE_DATA_PATH.split(os.pathsep)}
 

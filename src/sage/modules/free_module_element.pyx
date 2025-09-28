@@ -117,7 +117,7 @@ from cpython.slice cimport PySlice_GetIndicesEx
 
 from sage.categories.rings import Rings
 from sage.structure.sequence import Sequence
-from sage.structure.element cimport Element, RingElement, Vector
+from sage.structure.element cimport Element, Vector
 from sage.structure.element import canonical_coercion
 from sage.structure.richcmp cimport richcmp_not_equal, richcmp, rich_to_bool
 
@@ -791,6 +791,8 @@ def zero_vector(arg0, arg1=None):
 
 def random_vector(ring, degree=None, *args, **kwds):
     r"""
+    This function is available as ``random_vector(…)`` and ``vector.random(…)``.
+
     Return a vector (or module element) with random entries.
 
     INPUT:
@@ -931,6 +933,11 @@ def random_vector(ring, degree=None, *args, **kwds):
         Traceback (most recent call last):
         ...
         ValueError: degree of a random vector must be nonnegative, not -9
+    
+    We may also use vector.random(...) in place of random_vector(...). ::
+
+        sage: vector.random(10).parent()
+        Ambient free module of rank 10 over the principal ideal domain Integer Ring
     """
     if isinstance(ring, (Integer, int)):
         if degree is not None:
@@ -946,10 +953,13 @@ def random_vector(ring, degree=None, *args, **kwds):
     if ring not in Rings():
         raise TypeError("elements of a vector, or module element, must come from a ring, not %s" % ring)
     if not hasattr(ring, "random_element"):
-        raise AttributeError("cannot create a random vector since there is no random_element() method for %s" % ring )
+        raise AttributeError("cannot create a random vector since there is no random_element() method for %s" % ring)
     sparse = kwds.pop('sparse', False)
     entries = [ring.random_element(*args, **kwds) for _ in range(degree)]
     return vector(ring, degree, entries, sparse)
+
+
+vector.random = random_vector
 
 
 cdef class FreeModuleElement(Vector):   # abstract base class
@@ -1280,16 +1290,15 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         # on the elements, which is sometimes much prettier than
         # the coerced=False we would get otherwise.
         if self.is_sparse_c():
-            items = [(n, sib(e, 2))
-                     for n,e in self.dict().items()]
+            items = [(n, sib(e, 2)) for n, e in self.dict().items()]
             items.sort()
             if len(self):
                 # we may need to add an extra element on the end to
                 # set the size.  (There doesn't seem to be a better way
                 # to do it.)
-                if len(items) == 0 or len(self)-1 > items[-1][0]:
+                if not items or len(self)-1 > items[-1][0]:
                     items.append((len(self)-1, sib.int(0)))
-            items_dict = sib.dict([(sib.int(n), e) for n,e in items])
+            items_dict = sib.dict([(sib.int(n), e) for n, e in items])
 
             return sib.name('vector')(self.base_ring(), items_dict)
         else:
@@ -1498,7 +1507,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         from sage.matrix.args import MatrixArgs
         ma = MatrixArgs(self._parent._base, 1, self.degree(),
-                list(self), sparse=self.is_sparse())
+                        list(self), sparse=self.is_sparse())
         return ma.matrix()
 
     def column(self):
@@ -1570,7 +1579,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         from sage.matrix.args import MatrixArgs
         ma = MatrixArgs(self._parent._base, self.degree(), 1,
-                [(x,) for x in self], sparse=self.is_sparse())
+                        [(x,) for x in self], sparse=self.is_sparse())
         return ma.matrix()
 
     def __copy__(self):
@@ -1612,7 +1621,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: v.subs(a=b, b=d)
             (b, d, d, e)
         """
-        return self.parent()([ a.subs(in_dict, **kwds) for a in self.list() ])
+        return self.parent()([a.subs(in_dict, **kwds) for a in self.list()])
 
     def change_ring(self, R):
         """
@@ -2471,7 +2480,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
                 from sage.plot.plot3d.shapes2 import line3d, point3d
 
                 if plot_type == 'arrow':
-                    return line3d([start, [(u+v) for u,v in zip(coords, start)]], arrow_head=True, **kwds)
+                    return line3d([start,
+                                   [(u+v) for u, v in zip(coords, start)]],
+                                  arrow_head=True, **kwds)
                 else:
                     return point3d(coords, **kwds)
             elif dimension < 3:
@@ -2482,7 +2493,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
                 from sage.plot.all import arrow, point
                 if plot_type == 'arrow':
-                    return arrow(start, [(u+v) for u,v in zip(coords, start)], **kwds)
+                    return arrow(start,
+                                 [(u+v) for u, v in zip(coords, start)], **kwds)
                 else:
                     return point(coords, **kwds)
             else:
@@ -2494,7 +2506,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             raise NotImplementedError("plot_type was unrecognized")
 
     def plot_step(self, xmin=0, xmax=1, eps=None, res=None,
-             connect=True, **kwds):
+                  connect=True, **kwds):
         r"""
         INPUT:
 
@@ -2532,9 +2544,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             y = float(self[i])
             if x > xmax:
                 break
-            v.append((x,y))
+            v.append((x, y))
             x += eps
-            v.append((x,y))
+            v.append((x, y))
         from sage.plot.all import line, points
         if connect:
             return line(v, **kwds)
@@ -2875,9 +2887,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             MS = MatrixSpace(R, rank, rank, sparse=self.is_sparse())
             s = self.list(copy=False)
             return MS([
-                [ zero, -s[2],  s[1]],
-                [ s[2],  zero, -s[0]],
-                [-s[1],  s[0],  zero]])
+                [zero, -s[2], s[1]],
+                [s[2], zero, -s[0]],
+                [-s[1], s[0], zero]])
         elif rank == 7:
             MS = MatrixSpace(R, rank, rank, sparse=self.is_sparse())
             s = self.list(copy=False)
@@ -4021,16 +4033,16 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             zero_res = 0
             if len(self.dict(copy=False)) < self._degree:
                 # OK, we have some zero entries.
-                zero_res = phi(self.base_ring()(0))
+                zero_res = phi(self.base_ring().zero())
                 if not zero_res.is_zero():
                     # And phi maps 0 to a nonzero value.
                     v = [zero_res] * self._degree
-                    for i,z in self.dict(copy=False).items():
+                    for i, z in self.dict(copy=False).items():
                         v[i] = phi(z)
 
             if v is None:
                 # phi maps 0 to 0 (or else we don't have any zeroes at all)
-                v = dict([(i,phi(z)) for i,z in self.dict(copy=False).items()])
+                v = {i: phi(z) for i, z in self.dict(copy=False).items()}
                 # add a zero at the last position, if it is not already set.
                 # This will help the constructor to determine the right degree.
                 v.setdefault(self._degree-1, zero_res)
@@ -4084,7 +4096,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         if var is None:
             if isinstance(self.coordinate_ring(), sage.rings.abc.CallableSymbolicExpressionRing):
-                from sage.calculus.all import jacobian
+                from sage.calculus.functions import jacobian
                 return jacobian(self, self.coordinate_ring().arguments())
             else:
                 raise ValueError("No differentiation variable specified.")
@@ -4179,14 +4191,14 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         # return self.apply_map(lambda x: x.nintegral(*args, **kwds) for x in self)
 
         if self.is_sparse():
-            v = [(i,z.nintegral(*args, **kwds)) for i,z in self.dict(copy=False).items()]
-            answers = dict([(i,a[0]) for i,a in v])
-            v=dict(v)
+            v = {i: z.nintegral(*args, **kwds)
+                 for i, z in self.dict(copy=False).items()}
+            answers = {i: a[0] for i, a in v.items()}
         else:
             v = [z.nintegral(*args, **kwds) for z in self.list()]
             answers = [a[0] for a in v]
 
-        return (vector(answers,sparse=self.is_sparse()), v)
+        return (vector(answers, sparse=self.is_sparse()), v)
 
     nintegrate = nintegral
 
@@ -4271,12 +4283,55 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             return vector(ring, coeffs)
         return vector(coeffs)
 
+    def compositional_inverse(self, allow_multivalued_inverse=True, **kwargs):
+        """
+        Find the compositional inverse of this symbolic function.
+
+        INPUT: see :meth:`sage.symbolic.expression.Expression.compositional_inverse`
+
+        .. SEEALSO::
+
+            :meth:`sage.symbolic.expression.Expression.compositional_inverse`
+
+        EXAMPLES::
+
+            sage: f(x, y, z) = (y, z, x)
+            sage: f.compositional_inverse()
+            (x, y, z) |--> (z, x, y)
+
+        TESTS::
+
+            sage: f.change_ring(SR)
+            (y, z, x)
+            sage: f.change_ring(SR).compositional_inverse()
+            Traceback (most recent call last):
+            ...
+            ValueError: base ring must be a symbolic expression ring
+        """
+        from sage.rings.abc import CallableSymbolicExpressionRing
+        if not isinstance(self.base_ring(), CallableSymbolicExpressionRing):
+            raise ValueError("base ring must be a symbolic expression ring")
+        from sage.symbolic.ring import SR
+        tmp_vars = [SR.symbol() for _ in range(self.parent().dimension())]
+        input_vars = self.base_ring().args()
+        from sage.symbolic.relation import solve
+        l = solve([a == b for a, b in zip(self.change_ring(SR), tmp_vars)], input_vars, solution_dict=True, **kwargs)
+        if not l:
+            raise ValueError("cannot find an inverse")
+        if len(l) > 1 and not allow_multivalued_inverse:
+            raise ValueError("inverse is multivalued, pass allow_multivalued_inverse=True to bypass")
+        d = l[0]
+        subs_dict = dict(zip(tmp_vars, input_vars))
+        for x in input_vars:
+            if set(d[x].variables()) & set(input_vars):
+                raise ValueError("cannot find an inverse")
+        return self.parent()([d[x].subs(subs_dict) for x in input_vars])
+
 
 # ############################################
 # Generic dense element
 # ############################################
 
-@cython.binding(True)
 def make_FreeModuleElement_generic_dense(parent, entries, degree):
     """
     EXAMPLES::
@@ -4296,7 +4351,6 @@ def make_FreeModuleElement_generic_dense(parent, entries, degree):
     return v
 
 
-@cython.binding(True)
 def make_FreeModuleElement_generic_dense_v1(parent, entries, degree, is_mutable):
     """
     EXAMPLES::
@@ -4509,7 +4563,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         """
         cdef list a = left._entries
         cdef list b = (<FreeModuleElement_generic_dense>right)._entries
-        v = [(<RingElement> a[i])._add_(<RingElement> b[i]) for i in range(left._degree)]
+        v = [(<Element> a[i])._add_(<Element> b[i]) for i in range(left._degree)]
         return left._new_c(v)
 
     @cython.boundscheck(False)
@@ -4529,7 +4583,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         """
         cdef list a = left._entries
         cdef list b = (<FreeModuleElement_generic_dense>right)._entries
-        v = [(<RingElement> a[i])._sub_(<RingElement> b[i]) for i in range(left._degree)]
+        v = [(<Element> a[i])._sub_(<Element> b[i]) for i in range(left._degree)]
         return left._new_c(v)
 
     cpdef _rmul_(self, Element left):
@@ -4550,7 +4604,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             (1, x^4)
         """
         if left._parent is self._parent.coordinate_ring():
-            v = [left._mul_(<RingElement>x) for x in self._entries]
+            v = [left._mul_(<Element>x) for x in self._entries]
         else:
             v = [left * x for x in self._entries]
         return self._new_c(v)
@@ -4573,9 +4627,16 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             sage: M = span([[x, x^2+1], [1/x, x^3]], R)
             sage: M.basis()[0] * x
             (1, x^4)
+        
+        Check :issue:`40611` is fixed::
+
+            sage: R = cartesian_product([ZZ, ZZ])
+            sage: assert R in CommutativeRings()
+            sage: matrix(1, 1, [R.zero()]) * vector([R.zero()])
+            ((0, 0))
         """
         if right._parent is self._parent.coordinate_ring():
-            v = [(<RingElement>x)._mul_(right) for x in self._entries]
+            v = [(<Element>x)._mul_(right) for x in self._entries]
         else:
             v = [x * right for x in self._entries]
         return self._new_c(v)
@@ -4597,7 +4658,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             right = left.parent().ambient_module()(right)
         cdef list a = left._entries
         cdef list b = (<FreeModuleElement_generic_dense>right)._entries
-        v = [(<RingElement> a[i])._mul_(<RingElement> b[i]) for i in range(left._degree)]
+        v = [(<Element> a[i])._mul_(<Element> b[i]) for i in range(left._degree)]
         return left._new_c(v)
 
     def __reduce__(self):
@@ -4756,7 +4817,6 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
 # Generic sparse element
 # ############################################
 
-@cython.binding(True)
 def make_FreeModuleElement_generic_sparse(parent, entries, degree):
     """
     EXAMPLES::
@@ -4772,7 +4832,6 @@ def make_FreeModuleElement_generic_sparse(parent, entries, degree):
     return v
 
 
-@cython.binding(True)
 def make_FreeModuleElement_generic_sparse_v1(parent, entries, degree, is_mutable):
     """
     EXAMPLES::
@@ -4985,7 +5044,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         cdef dict v = dict((<FreeModuleElement_generic_sparse>right)._entries)
         for i, a in left._entries.iteritems():
             if i in v:
-                sum = (<RingElement>a)._add_(<RingElement> v[i])
+                sum = (<Element>a)._add_(<Element> v[i])
                 if sum:
                     v[i] = sum
                 else:
@@ -5005,7 +5064,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         cdef dict v = dict(left._entries)   # dict to make a copy
         for i, a in (<FreeModuleElement_generic_sparse>right)._entries.iteritems():
             if i in v:
-                diff = (<RingElement> v[i])._sub_(<RingElement>a)
+                diff = (<Element> v[i])._sub_(<Element>a)
                 if diff:
                     v[i] = diff
                 else:
@@ -5025,7 +5084,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         cdef dict v = {}
         if right:
             for i, a in self._entries.iteritems():
-                prod = (<RingElement>a)._mul_(right)
+                prod = (<Element>a)._mul_(right)
                 if prod:
                     v[i] = prod
         return self._new_c(v)
@@ -5111,7 +5170,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         cdef dict v = {}
         for i, a in left._entries.iteritems():
             if i in e:
-                prod = (<RingElement>a)._mul_(<RingElement> e[i])
+                prod = (<Element>a)._mul_(<Element> e[i])
                 if prod:
                     v[i] = prod
         return left._new_c(v)
@@ -5457,4 +5516,4 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         if prec is None:
             prec = digits_to_bits(digits)
         return vector({k: v.numerical_approx(prec, algorithm=algorithm)
-                for k, v in self._entries.iteritems()}, sparse=True)
+                       for k, v in self._entries.iteritems()}, sparse=True)

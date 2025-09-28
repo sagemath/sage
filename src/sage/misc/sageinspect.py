@@ -59,7 +59,7 @@ Cython functions::
     sage: sage_getdoc(sage.rings.rational.make_rational).lstrip()
     'Make a rational number ...'
     sage: sage_getsource(sage.rings.rational.make_rational)
-    '@cython.binding(True)\ndef make_rational(s):...'
+    'def make_rational(s):...'
 
 Python functions::
 
@@ -109,13 +109,13 @@ AUTHORS:
 """
 
 import ast
-import inspect
 import functools
+import inspect
 import os
+import re
 import sys
 import tokenize
-import re
-from inspect import Signature, Parameter
+from inspect import Parameter, Signature
 
 try:
     import importlib.machinery as import_machinery
@@ -149,7 +149,7 @@ def is_function_or_cython_function(obj):
         sage: is_function_or_cython_function(_mul_parent)
         True
         sage: is_function_or_cython_function(Integer.digits)     # unbound method
-        False
+        True
         sage: is_function_or_cython_function(Integer(1).digits)  # bound method
         False
 
@@ -1336,12 +1336,11 @@ def sage_getfile(obj):
         if isinstance(obj, functools.partial):
             return sage_getfile(obj.func)
         return sage_getfile(obj.__class__)  # inspect.getabsfile(obj.__class__)
-    else:
-        if hasattr(obj, '__init__'):
-            pos = _extract_embedded_position(_sage_getdoc_unformatted(obj.__init__))
-            if pos is not None:
-                (_, filename, _) = pos
-                return filename
+    elif hasattr(obj, '__init__'):
+        pos = _extract_embedded_position(_sage_getdoc_unformatted(obj.__init__))
+        if pos is not None:
+            (_, filename, _) = pos
+            return filename
 
     # No go? fall back to inspect.
     try:
@@ -1388,7 +1387,7 @@ def sage_getfile_relative(obj):
     if not filename:
         return filename
 
-    from os.path import relpath, normpath, commonprefix
+    from os.path import commonprefix, normpath, relpath
 
     def directories():
         try:
@@ -1448,7 +1447,7 @@ def sage_getargspec(obj):
                     annotations={})
         sage: sage_getargspec(factor)
         FullArgSpec(args=['n', 'proof', 'int_', 'algorithm', 'verbose'],
-                    varargs=None, varkw='kwds', defaults=(None, False, 'pari', 0),
+                    varargs=None, varkw='kwds', defaults=(None, False, None, 0),
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     In the case of a class or a class instance, the :class:`FullArgSpec` of the
@@ -1609,8 +1608,8 @@ def sage_getargspec(obj):
         sage: shell.run_cell('f??')
         ...the source code string...
     """
-    from sage.misc.lazy_attribute import lazy_attribute
     from sage.misc.abstract_method import AbstractMethod
+    from sage.misc.lazy_attribute import lazy_attribute
     if inspect.isclass(obj):
         return sage_getargspec(obj.__call__)
     if isinstance(obj, (lazy_attribute, AbstractMethod)):
@@ -1808,7 +1807,7 @@ def sage_signature(obj):
         sage: sage_signature(identity_matrix)                                          # needs sage.modules
         <Signature (ring, n=0, sparse=False)>
         sage: sage_signature(factor)
-        <Signature (n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds)>
+        <Signature (n, proof=None, int_=False, algorithm=None, verbose=0, **kwds)>
 
     In the case of a class or a class instance, the :class:`Signature` of the
     ``__new__``, ``__init__`` or ``__call__`` method is returned::
@@ -1955,9 +1954,8 @@ def sage_formatargspec(args, varargs=None, varkw=None, defaults=None,
         specs.append(spec)
     if varargs is not None:
         specs.append(formatvarargs(formatargandannotation(varargs)))
-    else:
-        if kwonlyargs:
-            specs.append('*')
+    elif kwonlyargs:
+        specs.append('*')
     if kwonlyargs:
         for kwonlyarg in kwonlyargs:
             spec = formatargandannotation(kwonlyarg)
@@ -2388,7 +2386,7 @@ def sage_getsourcelines(obj):
 
         sage: # needs sage.modules
         sage: sage_getsourcelines(matrix)[1]
-        21
+        20
         sage: sage_getsourcelines(matrix)[0][0]
         'def matrix(*args, **kwds):\n'
 
@@ -2665,14 +2663,10 @@ def __internal_tests():
         sage: sage_getdoc(None)
         ''
 
-        sage: import sage.all__sagemath_objects
-        sage: sage_getsource(sage.all__sagemath_objects)
-        '...all...'
-
     A cython function with default arguments (one of which is a string)::
 
-        sage: sage_getdef(sage.rings.integer.Integer.factor, obj_name='factor')
-        "factor(algorithm='pari', proof=None, limit=None, int_=False, verbose=0)"
+        sage: sage_getdef(sage.rings.integer.Integer.binomial, obj_name='binomial')
+        "binomial(m, algorithm='gmp')"
 
     This used to be problematic, but was fixed in :issue:`10094`::
 

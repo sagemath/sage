@@ -84,7 +84,7 @@ def corneil_habib_paul_tedder_algorithm(G):
         ....:                                                         3, 4, 0.2)
         sage: recreate_decomposition(10, corneil_habib_paul_tedder_algorithm,
         ....:                                                         4, 5, 0.2)
-        sage: recreate_decomposition(3, corneil_habib_paul_tedder_algorithm,
+        sage: recreate_decomposition(3, corneil_habib_paul_tedder_algorithm,  # long time (:issue:`39569`)
         ....:                                                         6, 5, 0.2)
 
         sage: H = Graph('Hv|mmjz', format='graph6')
@@ -1210,7 +1210,6 @@ def relabel_tree(root, perm):
     """
     # If perm is not a dictionary, we build one !
     if perm is None:
-
         # vertices() returns a sorted list:
         # this guarantees consistent relabeling
         perm = {v: i for i, v in enumerate(get_vertices(root))}
@@ -1315,7 +1314,7 @@ def permute_decomposition(trials, algorithm, vertices, prob, verbose=False):
         t2 = algorithm(g2)
         assert check_modular_decomposition(t1, g1)
         assert check_modular_decomposition(t2, g2)
-        t1p = relabel_tree(t1, random_perm)
+        t1p = relabel_tree(t1, list(random_perm))
         assert equivalent_trees(t1p, t2)
         if verbose:
             print("Passes!")
