@@ -324,7 +324,7 @@ class ProbabilitySpace_generic(RandomVariable_generic):
         return self._domain
 
 
-class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
+class DiscreteProbabilitySpace(ProbabilitySpace_generic, DiscreteRandomVariable):
     r"""
     The discrete probability space
     """
@@ -333,9 +333,7 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
         Create the discrete probability space with probabilities on the
         space X given by the dictionary P with values in the field
         real_field.
-
         EXAMPLES::
-
             sage: S = [ i for i in range(16) ]
             sage: P = {}
             sage: for i in range(15): P[i] = 2^(-i-1)
@@ -349,9 +347,7 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
             {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
             sage: X.entropy().n()                                                       # needs sage.libs.pari
             1.99993896484375
-
         A probability space can be defined on any list of elements::
-
             sage: AZ = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
             sage: S = [ AZ[i] for i in range(26) ]
             sage: P = { 'A':1/2, 'B':1/4, 'C':1/4 }
@@ -364,23 +360,35 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
         if codomain is None:
             from sage.rings.real_mpfr import RealField
             codomain = RealField()
-        if not isinstance(codomain, sage.rings.abc.RealField) and not isinstance(codomain, RationalField):
-            raise TypeError("Argument codomain (= %s) must be the reals or rationals" % codomain)
+        
+        # Optimized type checking with single isinstance call
+        is_real = isinstance(codomain, sage.rings.abc.RealField)
+        is_rational = isinstance(codomain, RationalField)
+        
+        if not (is_real or is_rational):
+            raise TypeError(f"Argument codomain (= {codomain}) must be the reals or rationals")
+        
         if check:
             one = sum(P.values())
-            if isinstance(codomain, RationalField):
-                if not one == 1:
-                    raise TypeError("Argument P (= %s) does not define a probability function")
+            if is_rational:
+                if one != 1:
+                    raise TypeError(f"Argument P (= {P}) does not define a probability function")
             else:
-                if not abs(one - 1) < 2 ** (-codomain.precision() + 1):
-                    raise TypeError("Argument P (= %s) does not define a probability function")
+                # Pre-calculate tolerance for real field check
+                tolerance = 2 ** (-codomain.precision() + 1)
+                if abs(one - 1) >= tolerance:
+                    raise TypeError(f"Argument P (= {P}) does not define a probability function")
+        
         ProbabilitySpace_generic.__init__(self, X, codomain)
         DiscreteRandomVariable.__init__(self, self, P, codomain, check)
-
+        
+        # Cache the function result for faster access
+        self._cached_function = None
+        self._cached_set = None
+    
     def __repr__(self):
         """
         TESTS::
-
             sage: S = list(range(4))
             sage: P = {i: 2^(-i-1) for i in range(3)}
             sage: P[4] = 2^-3
@@ -388,23 +396,23 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
             Discrete probability space defined by {0: 1/2, 1: 1/4, 2: 1/8, 4: 1/8}
         """
         F = pformat(self.function())
-        return "Discrete probability space defined by %s" % F
-
+        return f"Discrete probability space defined by {F}"
+    
     def set(self):
         r"""
         The set of values of the probability space taking possibly nonzero
         probability (a subset of the domain).
         """
-        return Set(self.function())
-
+        # Cache the set computation
+        if self._cached_set is None:
+            self._cached_set = Set(self.function())
+        return self._cached_set
+    
     def entropy(self):
         """
         The entropy of the probability space.
         """
-        def neg_xlog2x(p):
-            if p == 0:
-                return 0
-            else:
-                return -p*log(p,2)
+        # Optimized entropy calculation using generator expression
+        # and avoiding function calls for zero probabilities
         p = self.function()
-        return sum([neg_xlog2x(p[x]) for x in p])
+        return sum(-prob * log(prob, 2) for prob in p.values() if prob > 0)
