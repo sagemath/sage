@@ -182,11 +182,10 @@ class GenericSpeciesStructure(CombinatorialObject):
             [1, 2, 3]
         """
         if isinstance(i, (int, Integer)):
-            return self._labels[i-1]
-        else:
-            return i
+            return self._labels[i - 1]
+        return i
 
-    def is_isomorphic(self, x):
+    def is_isomorphic(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -203,7 +202,7 @@ class GenericSpeciesStructure(CombinatorialObject):
         if self.parent() != x.parent():
             return False
 
-        #We don't care about the labels for isomorphism testing
+        # We don't care about the labels for isomorphism testing
         return self.canonical_label()._list == x.canonical_label()._list
 
 
