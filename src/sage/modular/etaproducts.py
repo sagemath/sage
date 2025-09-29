@@ -84,7 +84,7 @@ def EtaGroup(level):
 
 class EtaGroupElement(Element):
 
-    def __init__(self, parent, rdict):
+    def __init__(self, parent, rdict) -> None:
         r"""
         Create an eta product object. Usually called implicitly via
         EtaGroup_class.__call__ or the EtaProduct factory function.
@@ -419,7 +419,7 @@ class EtaGroup_class(UniqueRepresentation, Parent):
         True
     """
 
-    def __init__(self, level):
+    def __init__(self, level) -> None:
         r"""
         Create the group of eta products of a given level, which must be a
         positive integer.
@@ -662,7 +662,7 @@ def EtaProduct(level, dic) -> EtaGroupElement:
     return EtaGroup(level)(dic)
 
 
-def ncusps_of_width(N, d) -> Integer:
+def n_cusps_of_width(N, d) -> Integer:
     r"""
     Return the number of cusps on `X_0(N)` of width ``d``.
 
@@ -674,10 +674,10 @@ def ncusps_of_width(N, d) -> Integer:
 
     EXAMPLES::
 
-        sage: from sage.modular.etaproducts import ncusps_of_width
-        sage: [ncusps_of_width(18,d) for d in divisors(18)]
+        sage: from sage.modular.etaproducts import n_cusps_of_width
+        sage: [n_cusps_of_width(18,d) for d in divisors(18)]
         [1, 1, 2, 2, 1, 1]
-        sage: ncusps_of_width(4,8)
+        sage: n_cusps_of_width(4,8)
         Traceback (most recent call last):
         ...
         ValueError: N and d must be positive integers with d|N
@@ -698,12 +698,12 @@ def ncusps_of_width(N, d) -> Integer:
     return euler_phi(d.gcd(N // d))
 
 
-num_cusps_of_width = ncusps_of_width
+num_cusps_of_width = n_cusps_of_width
 
 
 def AllCusps(N) -> list:
     r"""
-    Return a list of CuspFamily objects corresponding to the cusps of
+    Return a list of :class:`CuspFamily` objects corresponding to the cusps of
     `X_0(N)`.
 
     INPUT:
@@ -725,7 +725,7 @@ def AllCusps(N) -> list:
 
     c = []
     for d in divisors(N):
-        n = ncusps_of_width(N, d)
+        n = n_cusps_of_width(N, d)
         if n == 1:
             c.append(CuspFamily(N, d))
         elif n > 1:
@@ -739,7 +739,7 @@ class CuspFamily(SageObject):
     r"""
     A family of elliptic curves parametrising a region of `X_0(N)`.
     """
-    def __init__(self, N, width, label=None):
+    def __init__(self, N, width, label=None) -> None:
         r"""
         Create the cusp of width d on X_0(N) corresponding to the family
         of Tate curves `(\CC_p/q^d, \langle \zeta q\rangle)`.
@@ -762,9 +762,9 @@ class CuspFamily(SageObject):
         self._width = width
         if N % width:
             raise ValueError("bad width")
-        if ncusps_of_width(N, width) > 1 and label is None:
-            raise ValueError("there are %s > 1 cusps of width %s on X_0(%s): specify a label" % (ncusps_of_width(N, width), width, N))
-        if ncusps_of_width(N, width) == 1 and label is not None:
+        if n_cusps_of_width(N, width) > 1 and label is None:
+            raise ValueError("there are %s > 1 cusps of width %s on X_0(%s): specify a label" % (n_cusps_of_width(N, width), width, N))
+        if n_cusps_of_width(N, width) == 1 and label is not None:
             raise ValueError("there is only one cusp of width %s on X_0(%s): no need to specify a label" % (width, N))
         self.label = label
 
