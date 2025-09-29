@@ -8,8 +8,9 @@ Verify that importing ``sage.all`` works in Sage's Python without any
 we normalize it, but keep in mind that ``SAGE_ROOT`` may also be
 ``None``::
 
+    sage: # long time
     sage: env = {k:v for (k,v) in os.environ.items() if not k.startswith("SAGE_")}
-    sage: from subprocess import check_output
+    sage: from subprocess import run, PIPE
     sage: module_name = "sage.all"   # hide .all import from the linter
     sage: cmd  = f"from {module_name} import SAGE_ROOT, SAGE_LOCAL;"
     sage: cmd +=  "from os.path import samefile;"
@@ -19,9 +20,13 @@ we normalize it, but keep in mind that ``SAGE_ROOT`` may also be
     ....:     cmd += f"s1 = samefile(SAGE_ROOT, '{SAGE_ROOT}');"
     sage: cmd += f"s2 = samefile(SAGE_LOCAL, '{SAGE_LOCAL}');"
     sage: cmd += "print(s1 and s2);"
-    sage: out = check_output([sys.executable, "-c", cmd], env=env).decode().strip()   # long time
-    sage: out == "True"                                                               # long time
-    True
+    sage: out = run([sys.executable, "-c", cmd], env=env, stdout=PIPE, stderr=PIPE, check=False, text=True, encoding='u8', errors='replace')
+    sage: out.returncode
+    0
+    sage: out.stdout.strip()
+    'True'
+    sage: out.stderr.strip()
+    ''
 
 AUTHORS:
 
