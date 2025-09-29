@@ -5,7 +5,8 @@ from sage.repl.preparse import preparse_file_named
 from sage.repl.load import load_cython
 from sage.misc.temporary_file import tmp_filename
 from sage.all import sage_globals
-import os, sys
+import os
+import sys
 
 
 class RunFileCmd:

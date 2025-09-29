@@ -3,7 +3,8 @@ import argparse
 from sage.cli.options import CliOptions
 from sage.repl.preparse import preparse
 from sage.all import sage_globals
-import os, sys
+import os
+import sys
 
 
 class EvalCmd:
