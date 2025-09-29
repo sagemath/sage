@@ -4803,8 +4803,8 @@ class GenericGraph(GenericGraph_pyx):
         """
         Return the number of vertices.
 
-        Note that ``len(G)`` and :meth:`num_verts` also return the number of
-        vertices in `G`.
+        Note that ``len(G)`` and :meth:`n_vertices` also return the
+        number of vertices in `G`.
 
         EXAMPLES::
 
@@ -4817,6 +4817,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G = graphs.TetrahedralGraph()
             sage: len(G)
             4
+
         """
         return self._backend.num_verts()
 
@@ -4824,21 +4825,26 @@ class GenericGraph(GenericGraph_pyx):
 
     num_verts = order
 
+    n_vertices = order
+
     def size(self):
         """
         Return the number of edges.
 
-        Note that :meth:`num_edges` also returns the number of edges in `G`.
+        Note that :meth:`n_edges` also returns the number of edges in `G`.
 
         EXAMPLES::
 
             sage: G = graphs.PetersenGraph()
             sage: G.size()
             15
+
         """
         return self._backend.num_edges(self._directed)
 
     num_edges = size
+
+    n_edges = size
 
     def eulerian_circuit(self, return_vertices=False, labels=True, path=False):
         r"""
@@ -6987,7 +6993,7 @@ class GenericGraph(GenericGraph_pyx):
             faces.append(path)
         return faces
 
-    def num_faces(self, embedding=None):
+    def n_faces(self, embedding=None):
         """
         Return the number of faces of an embedded graph.
 
@@ -7073,6 +7079,8 @@ class GenericGraph(GenericGraph_pyx):
             emb = None if embedding is None else {v: embedding[v] for v in g}
             F += g.num_faces(emb) - 1
         return F
+
+    num_faces = n_faces
 
     def planar_dual(self, embedding=None):
         """
