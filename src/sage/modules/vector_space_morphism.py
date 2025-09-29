@@ -417,7 +417,8 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
       to the size of the basis of the domain.  Each basis element of the domain
       is mapped to the corresponding element of the ``images`` list, and the
       linear transformation returned is the unique linear transformation that
-      extends this mapping.
+      extends this mapping. Note: the resulting matrix will be dense. For sparse
+      matrices, create the matrix manually and pass it directly.
 
     OUTPUT:
 
@@ -626,6 +627,23 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
         sage: T_right(v)
         (3, 7)
 
+    We can also work with CombinatorialFreeModule-based vector spaces such as
+    VectorSpace with non-standard indexing sets.  ::
+
+        sage: from sage.sets.integer_range import IntegerRange
+        sage: V = VectorSpace(QQ, IntegerRange(3))
+        sage: W = QQ^2
+        sage: # Define images for basis elements indexed by 0, 1, 2
+        sage: images = [vector(QQ, [1, 0]), vector(QQ, [0, 1]), vector(QQ, [1, 1])]
+        sage: T = linear_transformation(V, W, images)
+        sage: T.matrix()
+        [1 0 1]
+        [0 1 1]
+        sage: # Test with a specific element
+        sage: v = V.basis()[1] + 2*V.basis()[2]  # corresponds to [0, 1, 2] in standard notation
+        sage: T(v)
+        (2, 3)
+
     TESTS:
 
     We test some bad inputs.  First, the wrong things in the wrong places.  ::
@@ -817,8 +835,20 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
         except (ArithmeticError, TypeError) as e:
             raise TypeError('some proposed image is not in the codomain, because\n' + e.args[0])
             # Convert to matrix representation relative to bases
+            # Handle both regular vector spaces (with coordinates method) and
+            # CombinatorialFreeModule (with monomial_coefficients method)
+            def get_coordinates(space, vector):
+                if hasattr(space, 'coordinates'):
+                    return space.coordinates(vector)
+                else:
+                    # For CombinatorialFreeModule, use monomial_coefficients
+                    # and convert to coordinate vector relative to the basis
+                    coeffs = vector.monomial_coefficients()
+                    basis_keys = list(space.basis().keys())
+                    return [coeffs.get(key, space.base_ring().zero()) for key in basis_keys]
+            
         coord_matrix = matrix(D.base_ring(), D.dimension(), C.dimension(), 
-                             [C.coordinates(a) for a in images])
+                             [get_coordinates(C, a) for a in images])
         if side == 'left':
             arg2 = coord_matrix.transpose()
         else:  # side == 'right'
