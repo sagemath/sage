@@ -2164,13 +2164,12 @@ def repr_lincomb(symbols, coeffs):
         sage: latex(x)
         \text{\texttt{x}} + 2\text{\texttt{y}}
     """
-    s = ""
-    first = True
-    i = 0
-
     from sage.rings.cc import CC
 
-    for c in coeffs:
+    s = ""
+    first = True
+
+    for i, c in enumerate(coeffs):
         bv = symbols[i]
         b = latex(bv)
         if c != 0:
@@ -2198,7 +2197,6 @@ def repr_lincomb(symbols, coeffs):
                 except Exception:
                     s += "%s%s" % (coeff, b)
             first = False
-        i += 1
     if first:
         s = "0"
     s = s.replace("+ -", "- ")

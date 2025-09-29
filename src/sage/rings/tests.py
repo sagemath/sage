@@ -369,10 +369,8 @@ def check_random_elements(level=MAX_LEVEL, trials=1):
         survived 0 tests...
     """
     r = random_rings(level)
-    i = 0
-    for R in r:
-        print("survived %s tests" % i)
-        i += 1
+    for i, R in enumerate(r):
+        print(f"survived {i} tests")
         print(R)
         print(R.random_element())
         print("----")
@@ -416,10 +414,8 @@ def check_random_arith(level=MAX_LEVEL, trials=1):
         sage: sage.rings.tests.check_random_arith(trials=1000)   # long time (5 seconds?)
         survived 0 tests...
     """
-    i = 0
-    for x in random_rings(level):
-        print("survived %s tests" % i)
-        i += 1
+    for i, x in enumerate(random_rings(level)):
+        print(f"survived {i} tests")
         print(x)
         a = x.random_element()
         b = x.random_element()
@@ -431,9 +427,9 @@ def check_random_arith(level=MAX_LEVEL, trials=1):
 
 @random_testing
 def check_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
-                                  ref_mul=lambda f, g: f._mul_generic(g),
-                                  base_ring_random_elt_args=[],
-                                  numtests=10, verbose=False):
+                                   ref_mul=lambda f, g: f._mul_generic(g),
+                                   base_ring_random_elt_args=[],
+                                   numtests=10, verbose=False):
     """
     Test univariate Karatsuba multiplication against other multiplication algorithms.
 

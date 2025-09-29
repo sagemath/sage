@@ -11924,18 +11924,17 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         try:
             return self.__multiplicative_order_table
         except AttributeError:
-            t = {}
-            x = self(1)
-            n = self.zeta_order()
-            m = 0
-            zeta = self.zeta(n)
-            # todo: this desperately needs to be optimized!!!
-            for i in range(n):
-                t[x.polynomial()] = n // gcd(m, n)  # multiplicative_order of (zeta_n)**m
-                x *= zeta
-                m += 1
-            self.__multiplicative_order_table = t
-            return t
+            pass
+        t = {}
+        x = self.one()
+        n = self.zeta_order()
+        zeta = self.zeta(n)
+        # todo: this desperately needs to be optimized!!!
+        for m in range(n):
+            t[x.polynomial()] = n // gcd(m, n)  # multiplicative_order of (zeta_n)**m
+            x *= zeta
+        self.__multiplicative_order_table = t
+        return t
 
     def zeta(self, n=None, all=False):
         """

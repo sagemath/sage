@@ -928,11 +928,9 @@ def Matroid(groundset=None, data=None, **kwds):
             V = G.vertices(sort=True)
             n = G.num_verts()
             A = matrix(ZZ, n, m, 0)
-            mm = 0
-            for i, j, k in G.edge_iterator():
+            for mm, (i, j, k) in enumerate(G.edge_iterator()):
                 A[V.index(i), mm] = -1
                 A[V.index(j), mm] += 1  # So loops get 0
-                mm += 1
             M = RegularMatroid(matrix=A, groundset=groundset)
             want_regular = False  # Save some time, since result is already regular
         else:
