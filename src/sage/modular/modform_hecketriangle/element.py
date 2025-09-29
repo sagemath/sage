@@ -334,9 +334,9 @@ class FormsElement(FormsRingElement):
 
         # TODO for later: Figure out the correct coefficient growth and do L.set_coeff_growth(...)
 
-        # num_coeffs = L.num_coeffs()
-        num_coeffs = L.num_coeffs(1.2)
-        coeff_vector = list(self.q_expansion_vector(min_exp=0, max_exp=num_coeffs + 1, fix_d=True))
+        # n_coeffs = L.n_coeffs()
+        n_coeffs = L.n_coeffs(1.2)
+        coeff_vector = list(self.q_expansion_vector(min_exp=0, max_exp=n_coeffs + 1, fix_d=True))
         pari_precode = "coeff = {};".format(coeff_vector)
 
         L.init_coeffs(v="coeff[k+1]", pari_precode=pari_precode,

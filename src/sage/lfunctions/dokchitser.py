@@ -108,7 +108,7 @@ class Dokchitser(SageObject):
         0.305999773834052
         sage: L.derivative(1,2)
         0.373095594536324
-        sage: L.num_coeffs()
+        sage: L.n_coeffs()
         50
         sage: L.taylor_series(1,4)
         0.000000000000000 + 0.305999773834052*z + 0.186547797268162*z^2 - 0.136791463097188*z^3 + O(z^4)
@@ -122,7 +122,7 @@ class Dokchitser(SageObject):
 
         sage: E = EllipticCurve('389a')
         sage: L = E.lseries().dokchitser(algorithm='pari')
-        sage: L.num_coeffs()
+        sage: L.n_coeffs()
         163
         sage: L.derivative(1,E.rank())
         1.51863300057685
@@ -138,7 +138,7 @@ class Dokchitser(SageObject):
         sage: L = K.zeta_function(algorithm='gp')
         sage: L.conductor
         400
-        sage: L.num_coeffs()
+        sage: L.n_coeffs()
         313
         sage: L(2)
         1.10398438736918
@@ -158,10 +158,10 @@ class Dokchitser(SageObject):
     coefgrow(n)= `(4n)^{11/2}` (by a factor 1024), so
     re-defining coefgrow() improves efficiency (slightly faster). ::
 
-        sage: L.num_coeffs()
+        sage: L.n_coeffs()
         12
         sage: L.set_coeff_growth('2*n^(11/2)')
-        sage: L.num_coeffs()
+        sage: L.n_coeffs()
         11
 
     Now we're ready to evaluate, etc. ::
@@ -201,7 +201,7 @@ class Dokchitser(SageObject):
         Initialization of Dokchitser calculator EXAMPLES::
 
             sage: L = Dokchitser(conductor=1, gammaV=[0], weight=1, eps=1, poles=[1], residues=[-1], init='1')
-            sage: L.num_coeffs()
+            sage: L.n_coeffs()
             4
         """
         self.conductor = conductor
@@ -335,9 +335,9 @@ class Dokchitser(SageObject):
         if not self.__init:
             raise ValueError("you must call init_coeffs on the L-function first")
 
-    def num_coeffs(self, T=1):
+    def n_coeffs(self, T=1):
         """
-        Return number of coefficients `a_n` that are needed in
+        Return the number of coefficients `a_n` that are needed in
         order to perform most relevant `L`-function computations to
         the desired precision.
 
@@ -345,26 +345,28 @@ class Dokchitser(SageObject):
 
             sage: E = EllipticCurve('11a')
             sage: L = E.lseries().dokchitser(algorithm='pari')
-            sage: L.num_coeffs()
+            sage: L.n_coeffs()
             27
             sage: E = EllipticCurve('5077a')
             sage: L = E.lseries().dokchitser(algorithm='pari')
-            sage: L.num_coeffs()
+            sage: L.n_coeffs()
             591
             sage: L = Dokchitser(conductor=1, gammaV=[0], weight=1, eps=1, poles=[1], residues=[-1], init='1')
-            sage: L.num_coeffs()
+            sage: L.n_coeffs()
             4
 
-        Verify that ``num_coeffs`` works with non-real spectral
+        Verify that ``n_coeffs`` works with non-real spectral
         parameters, e.g. for the `L`-function of the level 10 Maass form
         with eigenvalue 2.7341055592527126::
 
             sage: ev = 2.7341055592527126
             sage: L = Dokchitser(conductor=10, gammaV=[ev*i, -ev*i],weight=2,eps=1)
-            sage: L.num_coeffs()
+            sage: L.n_coeffs()
             26
         """
         return Integer(self._gp_call_inst('cflength', T))
+
+    num_coeffs = n_coeffs
 
     def init_coeffs(self, v, cutoff=1,
                     w=None,
@@ -654,7 +656,7 @@ class Dokchitser(SageObject):
           balance
 
         - if you don't have to verify the functional equation or the
-          L-values, call num_coeffs(1) and initLdata("a(k)",1), you need
+          L-values, call n_coeffs(1) and initLdata("a(k)",1), you need
           slightly less coefficients.
 
         EXAMPLES::

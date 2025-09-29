@@ -1159,8 +1159,8 @@ class ModularForm_abstract(ModuleElement):
                        prec=prec)
         # Find out how many coefficients of the Dirichlet series are needed
         # in order to compute to the required precision
-        num_coeffs = L.num_coeffs()
-        coeffs = self.q_expansion(num_coeffs + 1).padded_list()[1:]
+        n_coeffs = L.n_coeffs()
+        coeffs = self.q_expansion(n_coeffs + 1).padded_list()[1:]
 
         # renormalize so that coefficient of q is 1
         b = coeffs[0]
@@ -1269,7 +1269,7 @@ class ModularForm_abstract(ModuleElement):
         else:
             L = Dokchitser(N, [0, 1, -weight + 1], 2 * weight - 1,
                            eps * C((0, 1)), prec=prec)
-        lcoeffs_prec = L.num_coeffs()
+        lcoeffs_prec = L.n_coeffs()
 
         t = verbose("Computing %s coefficients of F" % lcoeffs_prec, level=1)
         F_series = [u**2 for u in self.qexp(lcoeffs_prec + 1).list()[1:]]

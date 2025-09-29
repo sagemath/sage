@@ -65,7 +65,7 @@ class GrossZagierLseries(SageObject):
                              [0, 0, 1, 1],
                              weight=2, eps=epsilon)
         L = LFunction(Lpari, prec=prec, max_im=max_imaginary_part)
-        nterms = Integer(L.num_coeffs())
+        nterms = Integer(L.n_coeffs())
         if nterms > 1e6:
             # just takes way to long
             raise ValueError(f"Too many terms: {nterms}")

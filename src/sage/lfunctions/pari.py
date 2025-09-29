@@ -573,7 +573,7 @@ class LFunction(SageObject):
         0.305999773834052
         sage: L.derivative(1, 2)
         0.373095594536324
-        sage: L.num_coeffs()
+        sage: L.n_coeffs()
         50
         sage: L.taylor_series(1, 4)
         0.000000000000000 + 0.305999773834052*z + 0.186547797268162*z^2
@@ -588,7 +588,7 @@ class LFunction(SageObject):
 
         sage: E = EllipticCurve('389a')
         sage: L = E.lseries().dokchitser(algorithm='pari')
-        sage: L.num_coeffs()
+        sage: L.n_coeffs()
         163
         sage: L.derivative(1, E.rank())
         1.51863300057685
@@ -604,7 +604,7 @@ class LFunction(SageObject):
         sage: L = K.zeta_function(algorithm='pari')
         sage: L.conductor
         400
-        sage: L.num_coeffs()
+        sage: L.n_coeffs()
         313
         sage: L(2)
         1.10398438736918
@@ -644,7 +644,7 @@ class LFunction(SageObject):
             sage: from sage.lfunctions.pari import lfun_generic, LFunction
             sage: lf = lfun_generic(conductor=1, gammaV=[0], weight=1, eps=1, poles=[1], residues=[-1], v=pari('k->vector(k,n,1)'))
             sage: L = LFunction(lf)
-            sage: L.num_coeffs()
+            sage: L.n_coeffs()
             4
         """
         if isinstance(lfun, lfun_generic):
@@ -701,7 +701,7 @@ class LFunction(SageObject):
         """
         return self._conductor
 
-    def num_coeffs(self, domain=None):
+    def n_coeffs(self, domain=None):
         """
         Return number of coefficients `a_n` that are needed in
         order to perform most relevant `L`-function computations to
@@ -720,18 +720,18 @@ class LFunction(SageObject):
 
             sage: E = EllipticCurve('11a')
             sage: L = E.lseries().dokchitser(algorithm='pari')
-            sage: L.num_coeffs()
+            sage: L.n_coeffs()
             27
             sage: E = EllipticCurve('5077a')
             sage: L = E.lseries().dokchitser(algorithm='pari')
-            sage: L.num_coeffs()
+            sage: L.n_coeffs()
             591
 
             sage: from sage.lfunctions.pari import lfun_generic, LFunction
             sage: lf = lfun_generic(conductor=1, gammaV=[0], weight=1, eps=1,
             ....:        poles=[1], residues=[-1], v=pari('k->vector(k,n,1)'))
             sage: L = LFunction(lf)
-            sage: L.num_coeffs()
+            sage: L.n_coeffs()
             4
         """
         # domain syntax :
@@ -750,6 +750,8 @@ class LFunction(SageObject):
         pari.default("realbitprecision", saved_prec)
 
         return num
+
+    num_coeffs = n_coeffs
 
     def Lambda(self, s):
         """
