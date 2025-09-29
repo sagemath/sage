@@ -1506,7 +1506,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             """
             return self.upper_central_series()[-1]
 
-        def is_abelian(self):
+        def is_abelian(self) -> bool:
             """
             Return if ``self`` is an abelian Lie algebra.
 

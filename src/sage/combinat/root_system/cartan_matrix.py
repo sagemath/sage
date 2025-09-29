@@ -805,7 +805,7 @@ class CartanMatrix(Base, CartanType_abstract,
         return self._cartan_type.is_finite()
 
     @cached_method
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         Return ``True`` if ``self`` is an affine type or ``False`` otherwise.
 
