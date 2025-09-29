@@ -662,7 +662,7 @@ def EtaProduct(level, dic) -> EtaGroupElement:
     return EtaGroup(level)(dic)
 
 
-def num_cusps_of_width(N, d) -> Integer:
+def ncusps_of_width(N, d) -> Integer:
     r"""
     Return the number of cusps on `X_0(N)` of width ``d``.
 
@@ -674,13 +674,21 @@ def num_cusps_of_width(N, d) -> Integer:
 
     EXAMPLES::
 
-        sage: from sage.modular.etaproducts import num_cusps_of_width
-        sage: [num_cusps_of_width(18,d) for d in divisors(18)]
+        sage: from sage.modular.etaproducts import ncusps_of_width
+        sage: [ncusps_of_width(18,d) for d in divisors(18)]
         [1, 1, 2, 2, 1, 1]
-        sage: num_cusps_of_width(4,8)
+        sage: ncusps_of_width(4,8)
         Traceback (most recent call last):
         ...
         ValueError: N and d must be positive integers with d|N
+
+    TESTS:
+
+    The old method name is kept as an alias::
+
+        sage: from sage.modular.etaproducts import num_cusps_of_width
+        sage: [num_cusps_of_width(6,d) for d in divisors(6)]
+        [1, 1, 1, 1]
     """
     N = ZZ(N)
     d = ZZ(d)
@@ -688,6 +696,9 @@ def num_cusps_of_width(N, d) -> Integer:
         raise ValueError("N and d must be positive integers with d|N")
 
     return euler_phi(d.gcd(N // d))
+
+
+num_cusps_of_width = ncusps_of_width
 
 
 def AllCusps(N) -> list:
@@ -714,7 +725,7 @@ def AllCusps(N) -> list:
 
     c = []
     for d in divisors(N):
-        n = num_cusps_of_width(N, d)
+        n = ncusps_of_width(N, d)
         if n == 1:
             c.append(CuspFamily(N, d))
         elif n > 1:
@@ -751,9 +762,9 @@ class CuspFamily(SageObject):
         self._width = width
         if N % width:
             raise ValueError("bad width")
-        if num_cusps_of_width(N, width) > 1 and label is None:
-            raise ValueError("there are %s > 1 cusps of width %s on X_0(%s): specify a label" % (num_cusps_of_width(N, width), width, N))
-        if num_cusps_of_width(N, width) == 1 and label is not None:
+        if ncusps_of_width(N, width) > 1 and label is None:
+            raise ValueError("there are %s > 1 cusps of width %s on X_0(%s): specify a label" % (ncusps_of_width(N, width), width, N))
+        if ncusps_of_width(N, width) == 1 and label is not None:
             raise ValueError("there is only one cusp of width %s on X_0(%s): no need to specify a label" % (width, N))
         self.label = label
 
