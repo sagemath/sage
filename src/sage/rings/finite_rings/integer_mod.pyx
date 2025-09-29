@@ -551,7 +551,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
     def __pari__(self):
         return self.lift().__pari__().Mod(self._modulus.sageInteger)
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return string representation of corresponding GAP object.
 
@@ -570,7 +570,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         """
         return '%s*One(ZmodnZ(%s))' % (self, self._modulus.sageInteger)
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Coercion to Magma.
 
@@ -586,7 +586,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         """
         return '%s!%s' % (self.parent()._magma_init_(magma), self)
 
-    def _axiom_init_(self):
+    def _axiom_init_(self) -> str:
         """
         Return a string representation of the corresponding to
         (Pan)Axiom object.
