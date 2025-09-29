@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Connectivity related functions
 
@@ -778,6 +777,7 @@ def blocks_and_cuts_tree(G):
                 g.add_edge(('B', bloc), ('C', c))
     return g
 
+
 def biconnected_components_subgraphs(G):
     r"""
     Return a list of biconnected components as graph objects.
@@ -816,6 +816,7 @@ def biconnected_components_subgraphs(G):
         raise TypeError("the input must be a Sage graph")
 
     return [G.subgraph(c) for c in blocks_and_cut_vertices(G)[0]]
+
 
 def is_edge_cut(G, edges):
     """
@@ -1585,7 +1586,7 @@ def edge_connectivity(G,
     if implementation == "boost":
         from sage.graphs.base.boost_graph import edge_connectivity
 
-        [obj, edges] = edge_connectivity(g)
+        obj, edges = edge_connectivity(g)
 
         if value_only:
             return obj
@@ -2460,7 +2461,7 @@ def bridges(G, labels=True):
         if len(b) == 2 and not tuple(b) in ME:
             if labels:
                 if multiple_edges:
-                    [label] = G.edge_label(b[0], b[1])
+                    label, = G.edge_label(b[0], b[1])
                 else:
                     label = G.edge_label(b[0], b[1])
                 yield (b[0], b[1], label)
