@@ -1611,7 +1611,7 @@ class DiGraph(GenericGraph):
         `vu` is in the returned feedback arc set::
 
            sage: g = graphs.RandomGNP(5,.3)
-           sage: while not g.num_edges():
+           sage: while not g.n_edges():
            ....:     g = graphs.RandomGNP(5,.3)
            sage: dg = DiGraph(g)
            sage: feedback = dg.feedback_edge_set()                                      # needs sage.numerical.mip

@@ -942,7 +942,7 @@ class HasseDiagram(DiGraph):
             sage: H = L.hasse_diagram()
             sage: H.size()
             80
-            sage: H.size() == H.num_edges()
+            sage: H.size() == H.n_edges()
             True
         """
         return self.order()

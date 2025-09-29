@@ -306,7 +306,7 @@ def RandomLobster(n, p, q, seed=None):
         sage: G.delete_vertices(leaves)                                 # path
         sage: s = G.degree_sequence()
         sage: if G:
-        ....:     if G.num_verts() == 1:
+        ....:     if G.n_vertices() == 1:
         ....:         assert s == [0]
         ....:     else:
         ....:         assert s[-2:] == [1, 1]
@@ -511,7 +511,7 @@ cdef class TreeIterator:
         ....:     for t in TreeIterator(n):
         ....:         if not t.is_tree():
         ....:             return False
-        ....:         if t.num_verts() != n:
+        ....:         if t.n_vertices() != n:
         ....:             return False
         ....:         if t.num_edges() != n - 1:
         ....:             return False

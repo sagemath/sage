@@ -362,18 +362,18 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     Certain border cases need to be tested as well::
 
         sage: G = Graph('Fll^G')
-        sage: a,b,c = st(G, [range(G.num_verts())], order=True); b
+        sage: a,b,c = st(G, [range(G.n_vertices())], order=True); b
         Graph on 7 vertices
         sage: c
         48
         sage: G = Graph(21)
-        sage: st(G, [range(G.num_verts())], order=True)[2] == factorial(21)
+        sage: st(G, [range(G.n_vertices())], order=True)[2] == factorial(21)
         True
 
         sage: G = Graph('^????????????????????{??N??@w??FaGa?PCO@CP?AGa?_QO?Q@G?CcA??cc????Bo????{????F_')
         sage: perm = {3:15, 15:3}
         sage: H = G.relabel(perm, inplace=False)
-        sage: st(G, [range(G.num_verts())])[1] == st(H, [range(H.num_verts())])[1]
+        sage: st(G, [range(G.n_vertices())])[1] == st(H, [range(H.n_vertices())])[1]
         True
 
         sage: st(Graph(':Dkw'), [range(5)], lab=False, dig=True)
