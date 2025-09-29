@@ -573,6 +573,8 @@ AC_SUBST(SAGE_PKG_CONFIG_PATH, [$SAGE_DARWIN_PKG_CONFIG_PATH'$SAGE_LOCAL/lib/pkg
 AC_CONFIG_FILES([build/make/Makefile-auto build/make/Makefile])
 AC_CONFIG_FILES([src/bin/sage-env-config src/bin/sage-src-env-config build/bin/sage-build-env-config])
 
+AC_CONFIG_FILES([pkgs/sage-conf/_sage_conf/_conf.py])
+
 dnl Create basic directories needed for Sage
 AC_CONFIG_COMMANDS(mkdirs,
     [

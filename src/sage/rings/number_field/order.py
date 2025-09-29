@@ -77,22 +77,24 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import sage.rings.abc
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.noetherian_rings import NoetherianRings
+from sage.libs.pari import pari
 from sage.misc.cachefunc import cached_method
-from sage.structure.parent import Parent
-from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
-import sage.rings.abc
+from sage.rings.monomials import monomials
+from sage.rings.number_field.number_field_element import (
+    OrderElement_absolute,
+    OrderElement_relative,
+)
+from sage.rings.number_field.number_field_element_quadratic import (
+    OrderElement_quadratic,
+)
 from sage.structure.element import Element
 from sage.structure.factory import UniqueFactory
-from .number_field_element import OrderElement_absolute, OrderElement_relative
-
-from .number_field_element_quadratic import OrderElement_quadratic
-
-from sage.rings.monomials import monomials
-
-from sage.libs.pari import pari
+from sage.structure.parent import Parent
+from sage.structure.sequence import Sequence
 
 
 def quadratic_order_class_number(disc):
@@ -410,7 +412,7 @@ def EquationOrder(f, names, **kwds):
         ...
         ValueError: each generator must be integral
     """
-    from .number_field import NumberField
+    from sage.rings.number_field.number_field import NumberField
     R = ZZ['x']
     if isinstance(f, (list, tuple)):
         for g in f:
@@ -859,7 +861,7 @@ class Order(Parent, sage.rings.abc.Order):
             return self.__free_module
         except AttributeError:
             pass
-        from .number_field_ideal import basis_to_module
+        from sage.rings.number_field.number_field_ideal import basis_to_module
         M = basis_to_module(self.basis(), self.number_field())
         self.__free_module = M
         return M
