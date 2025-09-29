@@ -3496,11 +3496,16 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3)]])
             sage: G.order()
             12
-            sage: G.character_table()                                                   # needs sage.rings.number_field
+            sage: Gct = G.character_table(); Gct                                        # random, needs sage.rings.number_field
             [         1          1          1          1]
             [         1 -zeta3 - 1      zeta3          1]
             [         1      zeta3 -zeta3 - 1          1]
             [         3          0          0         -1]
+            sage: sorted(Gct)                                                           # needs sage.rings.number_field
+            [(1, -zeta3 - 1, zeta3, 1),
+             (1, zeta3, -zeta3 - 1, 1),
+             (1, 1, 1, 1),
+             (3, 0, 0, -1)]
             sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3)]])
             sage: CT = gap(G).CharacterTable()
 
@@ -3539,11 +3544,11 @@ class PermutationGroup_generic(FiniteGroup):
             [ 5  1  1 -1  1 -1  0]
             [ 4  2  0  1 -1  0 -1]
             [ 1  1  1  1  1  1  1]
-            sage: list(AlternatingGroup(6).character_table())
-            [(1, 1, 1, 1, 1, 1, 1), (5, 1, 2, -1, -1, 0, 0), (5, 1, -1, 2, -1, 0, 0),
+            sage: sorted(AlternatingGroup(6).character_table())
+            [(1, 1, 1, 1, 1, 1, 1), (5, 1, 2, -1, -1, 0, 0), (9, 1, 0, 0, 1, -1, -1),
+             (5, 1, -1, 2, -1, 0, 0), (10, -2, 1, 1, 0, 0, 0),
              (8, 0, -1, -1, 0, zeta5^3 + zeta5^2 + 1, -zeta5^3 - zeta5^2),
-             (8, 0, -1, -1, 0, -zeta5^3 - zeta5^2, zeta5^3 + zeta5^2 + 1),
-             (9, 1, 0, 0, 1, -1, -1), (10, -2, 1, 1, 0, 0, 0)]
+             (8, 0, -1, -1, 0, -zeta5^3 - zeta5^2, zeta5^3 + zeta5^2 + 1)]
 
         Suppose that you have a class function `f(g)` on
         `G` and you know the values `v_1, \ldots, v_n` on

@@ -2285,7 +2285,7 @@ class PrimitiveGroup(PermutationGroup_unique):
         sage: PrimitiveGroup(2^12,1)
         Traceback (most recent call last):
         ...
-        GAPError: Error, Primitive groups of degree 4096 are not known!
+        GAPError: Error...
     """
 
     def __init__(self, d, n):
@@ -2375,10 +2375,10 @@ def PrimitiveGroups(d=None):
 
     The database is currently limited::
 
-         sage: PrimitiveGroups(2^12).cardinality()
+         sage: PrimitiveGroups(2^13).cardinality()
          Traceback (most recent call last):
          ...
-         GAPError: Error, Primitive groups of degree 4096 are not known!
+         GAPError: Error...
 
     .. TODO::
 
@@ -2606,10 +2606,10 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
 
             sage: PrimitiveGroups(2500).cardinality()
             34
-            sage: PrimitiveGroups(2^12).cardinality()
+            sage: PrimitiveGroups(2^13).cardinality()
             Traceback (most recent call last):
             ...
-            GAPError: Error, Primitive groups of degree 4096 are not known!
+            GAPError: Error...
         """
         if self._degree <= 1:
             # gap.NrPrimitiveGroups(0) fails, so Sage needs to handle this

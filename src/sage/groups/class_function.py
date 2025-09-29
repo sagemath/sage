@@ -746,17 +746,17 @@ class ClassFunction_gap(SageObject):
 
             sage: G = groups.permutation.Alternating(5)
             sage: chars = G.irreducible_characters()
-            sage: [chi.adams_operation(2).values() for chi in chars]
+            sage: sorted([chi.adams_operation(2).values() for chi in chars])
             [[1, 1, 1, 1, 1],
-             [3, 3, 0, -zeta5^3 - zeta5^2, zeta5^3 + zeta5^2 + 1],
-             [3, 3, 0, zeta5^3 + zeta5^2 + 1, -zeta5^3 - zeta5^2],
              [4, 4, 1, -1, -1],
-             [5, 5, -1, 0, 0]]
-            sage: chars[4].adams_operation(2).decompose()
-            ((1, Character of Alternating group of order 5!/2 as a permutation group),
-             (-1, Character of Alternating group of order 5!/2 as a permutation group),
-             (-1, Character of Alternating group of order 5!/2 as a permutation group),
-             (2, Character of Alternating group of order 5!/2 as a permutation group))
+             [5, 5, -1, 0, 0],
+             [3, 3, 0, -zeta5^3 - zeta5^2, zeta5^3 + zeta5^2 + 1],
+             [3, 3, 0, zeta5^3 + zeta5^2 + 1, -zeta5^3 - zeta5^2]]
+            sage: [chi.adams_operation(2).decompose() for chi in chars if chi.adams_operation(2).values()==[5, 5, -1, 0, 0]]
+            [((1, Character of Alternating group of order 5!/2 as a permutation group),
+              (-1, Character of Alternating group of order 5!/2 as a permutation group),
+              (-1, Character of Alternating group of order 5!/2 as a permutation group),
+              (2, Character of Alternating group of order 5!/2 as a permutation group))]
 
         REFERENCES:
 
