@@ -602,6 +602,30 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
         [ 1  1]
         [ 1 -1]
 
+    We can specify the side parameter when providing a list of images.
+    The default is ``side='left'``, where the transformation acts as
+    left multiplication, and the provided images become the columns of 
+    the matrix representation. With ``side='right'``, the images become
+    the rows of the matrix representation.  ::
+
+        sage: D = QQ^2
+        sage: C = QQ^2  
+        sage: images = [vector(QQ, [1, 2]), vector(QQ, [3, 4])]
+        sage: T_left = linear_transformation(D, C, images, side='left')
+        sage: T_left.matrix()
+        [1 3]
+        [2 4]
+        sage: T_right = linear_transformation(D, C, images, side='right')
+        sage: T_right.matrix()
+        [1 2]
+        [3 4]
+        sage: # Verify they produce different results
+        sage: v = vector(QQ, [1, 1])
+        sage: T_left(v)
+        (4, 6)
+        sage: T_right(v)
+        (3, 7)
+
     TESTS:
 
     We test some bad inputs.  First, the wrong things in the wrong places.  ::
@@ -793,8 +817,12 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
         except (ArithmeticError, TypeError) as e:
             raise TypeError('some proposed image is not in the codomain, because\n' + e.args[0])
             # Convert to matrix representation relative to bases
-        arg2 = matrix(D.base_ring(), D.dimension(), C.dimension(), 
-                      [C.coordinates(a) for a in images])
+        coord_matrix = matrix(D.base_ring(), D.dimension(), C.dimension(), 
+                             [C.coordinates(a) for a in images])
+        if side == 'left':
+            arg2 = coord_matrix.transpose()
+        else:  # side == 'right'
+            arg2 = coord_matrix
     elif isinstance(arg2, Vector_callable_symbolic_dense):
         from sage.symbolic.ring import SR
         args = arg2.parent().base_ring()._arguments
