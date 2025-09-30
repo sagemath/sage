@@ -16,7 +16,7 @@ Here is what the module can do:
 
     :meth:`is_connected` | Check whether the (di)graph is connected.
     :meth:`connected_components` | Return the list of connected components
-    :meth:`connected_components_number` | Return the number of connected components.
+    :meth:`number_of_connected_components` | Return the number of connected components.
     :meth:`connected_components_subgraphs` | Return a list of connected components as graph objects.
     :meth:`connected_component_containing_vertex` | Return a list of the vertices connected to vertex.
     :meth:`connected_components_sizes` | Return the sizes of the connected components as a list.
@@ -238,7 +238,7 @@ def connected_components(G, sort=False, key=None, forbidden_vertices=None):
     return components
 
 
-def connected_components_number(G, forbidden_vertices=None):
+def number_of_connected_components(G, forbidden_vertices=None):
     """
     Return the number of connected components.
 
@@ -251,30 +251,32 @@ def connected_components_number(G, forbidden_vertices=None):
 
     EXAMPLES::
 
-        sage: from sage.graphs.connectivity import connected_components_number
+        sage: from sage.graphs.connectivity import number_of_connected_components
         sage: G = Graph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
-        sage: connected_components_number(G)
+        sage: number_of_connected_components(G)
         2
-        sage: G.connected_components_number()
+        sage: G.number_of_connected_components()
         2
         sage: D = DiGraph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
-        sage: connected_components_number(D)
+        sage: number_of_connected_components(D)
         2
-        sage: connected_components_number(D, forbidden_vertices=[1, 3])
+        sage: number_of_connected_components(D, forbidden_vertices=[1, 3])
         3
 
     TESTS:
 
     If ``G`` is not a Sage graph, an error is raised::
 
-        sage: from sage.graphs.connectivity import connected_components_number
-        sage: connected_components_number('I am not a graph')
+        sage: from sage.graphs.connectivity import number_of_connected_components
+        sage: number_of_connected_components('I am not a graph')
         Traceback (most recent call last):
         ...
         TypeError: the input must be a Sage graph
     """
     return len(connected_components(G, sort=False,
                                     forbidden_vertices=forbidden_vertices))
+
+connected_components_number = number_of_connected_components
 
 
 def connected_components_subgraphs(G, forbidden_vertices=None):
