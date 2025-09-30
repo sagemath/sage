@@ -1,8 +1,6 @@
 r"""
 Feature for testing if Meson editable install is used.
 """
-from sage.config import is_editable_install
-
 from . import Feature, FeatureTestResult
 
 
@@ -37,7 +35,9 @@ class MesonEditable(Feature):
             sage: MesonEditable()._is_present()  # random
             FeatureTestResult('meson_editable', True)
         """
-        return FeatureTestResult(self, is_editable_install())
+        import sage
+        result = type(sage.__loader__).__module__ == '_sagemath_editable_loader'
+        return FeatureTestResult(self, result)
 
 
 def all_features():
