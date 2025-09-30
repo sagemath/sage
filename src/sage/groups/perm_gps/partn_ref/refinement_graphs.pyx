@@ -84,8 +84,8 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
             if G_in.has_loops():
                 loops = 1
             if n == -1:
-                n = G_in.num_verts()
-            elif n != G_in.num_verts():
+                n = G_in.n_vertices()
+            elif n != G_in.n_vertices():
                 return False
             if G_in.vertices(sort=True) != list(range(n)):
                 G_in = copy(G_in)
@@ -390,7 +390,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     from copy import copy
     if isinstance(G_in, GenericGraph):
         loops = G_in.has_loops()
-        n = G_in.num_verts()
+        n = G_in.n_vertices()
         if G_in.vertices(sort=False) != list(range(n)):
             G_in = copy(G_in)
             to = G_in.relabel(return_map=True)
@@ -1594,7 +1594,7 @@ def generate_dense_graphs_vert_addition(int n, base_G=None,
                 return Integer(1)
             return Integer(2)
 
-    cdef int start_deg = 1 if base_G is None else base_G.num_verts()
+    cdef int start_deg = 1 if base_G is None else base_G.n_vertices()
     graph_iterator = allocate_dg_vert_gen(start_deg, n+1-start_deg)
     if graph_iterator is NULL:
         raise MemoryError

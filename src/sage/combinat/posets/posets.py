@@ -5370,7 +5370,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         dg = self._hasse_diagram
         if not dg.is_connected() or not dg.order():
             raise NotImplementedError('the poset is empty or not connected')
-        if Integer(dg.num_verts()).is_prime():
+        if Integer(dg.n_vertices()).is_prime():
             return [self]
         if sum(e for _, e in self.degree_polynomial().factor()) == 1:
             return [self]

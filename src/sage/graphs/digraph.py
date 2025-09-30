@@ -2389,7 +2389,7 @@ class DiGraph(GenericGraph):
                                                     weight_function=weight_function,
                                                     check_weight=False)
 
-            if len(length) != self.num_verts():
+            if len(length) != self.n_vertices():
                 ecc[u] = Infinity
             else:
                 ecc[u] = max(length.values())
@@ -3478,7 +3478,7 @@ class DiGraph(GenericGraph):
             * :meth:`~sage.graphs.GenericGraph.odd_girth` -- return the odd
               girth of the graph
         """
-        n = self.num_verts()
+        n = self.n_vertices()
         best = n + 1
         seen = set()
         for w in self:

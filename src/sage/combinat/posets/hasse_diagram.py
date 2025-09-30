@@ -541,7 +541,7 @@ class HasseDiagram(DiGraph):
         """
         if self.cardinality() == 0:
             return True
-        return (self.num_edges() + 1 == self.num_verts() and  # tree
+        return (self.n_edges() + 1 == self.n_vertices() and  # tree
                 all(d <= 1 for d in self.out_degree()) and
                 all(d <= 1 for d in self.in_degree()))
 
@@ -589,7 +589,7 @@ class HasseDiagram(DiGraph):
             False
         """
         H = self.reverse(immutable=False)
-        H.relabel(perm=list(range(H.num_verts() - 1, -1, -1)), inplace=True)
+        H.relabel(perm=list(range(H.n_vertices() - 1, -1, -1)), inplace=True)
         return HasseDiagram(H)
 
     def _precompute_intervals(self) -> None:

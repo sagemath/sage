@@ -154,7 +154,7 @@ def is_connected(G, forbidden_vertices=None):
         for _ in G.depth_first_search(v, ignore_direction=True,
                                       forbidden_vertices=forbidden):
             n += 1
-        return n == G.num_verts()
+        return n == G.n_vertices()
 
 
 def connected_components(G, sort=False, key=None, forbidden_vertices=None):
@@ -1576,7 +1576,7 @@ def edge_connectivity(G,
         raise ValueError("the Boost implementation is currently not able to handle edge labels")
 
     # Otherwise, an error is created
-    if not g.num_edges() or not g.num_verts():
+    if not g.n_edges() or not g.n_vertices():
         if value_only:
             return 0
         elif vertices:

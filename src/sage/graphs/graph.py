@@ -2228,9 +2228,9 @@ class Graph(GenericGraph):
             True
         """
         # # A possible optimized version. But the gain in speed is very little.
-        # return bool(self._backend.num_verts() & 1) and (  # odd order n
-        #     2 * self._backend.num_edges(self._directed) > #2m > \Delta(G)*(n-1)
-        #     max(self.degree()) * (self._backend.num_verts() - 1))
+        # return bool(self._backend.n_vertices() & 1) and (  # odd order n
+        #     2 * self._backend.n_edges(self._directed) > #2m > \Delta(G)*(n-1)
+        #     max(self.degree()) * (self._backend.n_vertices() - 1))
         # unoptimized version
         return (self.order() % 2 == 1) and (
             2 * self.size() > max(self.degree()) * (self.order() - 1))
@@ -4943,7 +4943,7 @@ class Graph(GenericGraph):
                                                     weight_function=weight_function,
                                                     check_weight=check_weight)
 
-            if len(length) != self.num_verts():
+            if len(length) != self.n_vertices():
                 ecc[u] = Infinity
             else:
                 ecc[u] = max(length.values())
@@ -9164,7 +9164,7 @@ class Graph(GenericGraph):
             [(0, 2), (1, 3)]
         """
         self._scream_if_not_simple()
-        if self.num_verts() < 2:
+        if self.n_vertices() < 2:
             raise ValueError('this method is defined for graphs with at least 2 vertices')
         verts = list(self)
         M = self.common_neighbors_matrix(vertices=verts, nonedgesonly=nonedgesonly)
@@ -9172,8 +9172,8 @@ class Graph(GenericGraph):
         coefficients = M.coefficients()
         if coefficients:
             maximum = max(coefficients)
-            for v in range(self.num_verts()):
-                for w in range(v + 1, self.num_verts()):
+            for v in range(self.n_vertices()):
+                for w in range(v + 1, self.n_vertices()):
                     if M[v, w] == maximum:
                         output.append((verts[v], verts[w]))
         return output
@@ -9591,14 +9591,14 @@ class Graph(GenericGraph):
         """
 
         from sage.graphs.generators.families import p2_forbidden_minors
-        num_verts_G = self.num_verts()
-        num_edges_G = self.num_edges()
+        num_verts_G = self.n_vertices()
+        num_edges_G = self.n_edges()
 
         for forbidden_minor in p2_forbidden_minors():
             # Can't be a minor if it has more vertices or edges than G
 
-            if (forbidden_minor.num_verts() > num_verts_G
-                    or forbidden_minor.num_edges() > num_edges_G):
+            if (forbidden_minor.n_vertices() > num_verts_G
+                    or forbidden_minor.n_edges() > num_edges_G):
                 continue
 
             try:
