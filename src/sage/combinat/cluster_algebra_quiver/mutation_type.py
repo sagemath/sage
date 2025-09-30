@@ -352,15 +352,8 @@ def _connected_mutation_type(dg):
 
     # some short-circuits for rank 2
     if n == 2 and len(edges) == 1:
-        ab = tuple(sorted(dg.edge_labels()[0]))
-        if ab == (-1, 1):
-            return QuiverMutationType(['A', 2])
-        if ab in {(-2, 1), (-1, 2)}:
-            return QuiverMutationType(['B', 2])
-        if ab in {(-3, 1), (-1, 3)}:
-            return QuiverMutationType(['G', 2])
-        if ab == (-2, 2):
-            return QuiverMutationType(['A', 1, 1])
+        a, b = sorted(dg.edge_labels()[0])
+        return QuiverMutationType('R2', (-a, b))
 
     # replacing higher labels by multiple edges.  Multiple edges and acyclic is a sign that quiver is infinite mutation type with the exception of A_tilde where there might be one multiple edge with multiplicity 2.  Multiple edges is at least a sign that the quiver is of 'undetermined finite mutation type'.
     dg.allow_multiple_edges(True)
