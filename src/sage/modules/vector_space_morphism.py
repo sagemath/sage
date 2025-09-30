@@ -360,6 +360,7 @@ TESTS::
 
 import sage.modules.free_module_morphism as free_module_morphism
 import sage.modules.matrix_morphism as matrix_morphism
+from sage.matrix.constructor import identity_matrix
 from sage.modules import vector_space_homspace
 from sage.structure.element import Matrix
 
@@ -886,3 +887,182 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     # arg2 now compatible with homspace H call method
     # __init__ will check matrix sizes versus domain/codomain dimensions
     return H(arg2)
+
+
+def is_VectorSpaceMorphism(x) -> bool:
+    r"""
+    Return ``True`` if ``x`` is a vector space morphism (a linear transformation).
+    This function is deprecated.
+    INPUT:
+    - ``x`` -- anything
+    OUTPUT:
+    ``True`` only if ``x`` is an instance of a vector space morphism,
+    which are also known as linear transformations.
+    EXAMPLES::
+        sage: V = QQ^2; f = V.hom([V.1,-2*V.0])
+        sage: sage.modules.vector_space_morphism.is_VectorSpaceMorphism(f)
+        doctest:warning...
+        DeprecationWarning: is_VectorSpaceMorphism is deprecated;
+        use isinstance(..., VectorSpaceMorphism) or categories instead
+        See https://github.com/sagemath/sage/issues/37731 for details.
+        True
+        sage: sage.modules.vector_space_morphism.is_VectorSpaceMorphism('junk')
+        False
+    """
+    from sage.misc.superseded import deprecation
+    deprecation(37731,
+                "is_VectorSpaceMorphism is deprecated; "
+                "use isinstance(..., VectorSpaceMorphism) or categories instead")
+    return isinstance(x, VectorSpaceMorphism)
+
+
+class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
+
+    def __init__(self, homspace, A, side='left'):
+        r"""
+        Create a linear transformation, a morphism between vector spaces.
+        INPUT:
+        - ``homspace`` -- a homspace (of vector spaces) to serve
+          as a parent for the linear transformation and a home for
+          the domain and codomain of the morphism
+        - ``A`` -- a matrix representing the linear transformation,
+          which will act on vectors placed to the left of the matrix
+        EXAMPLES:
+        Nominally, we require a homspace to hold the domain
+        and codomain and a matrix representation of the morphism
+        (linear transformation).  ::
+            sage: from sage.modules.vector_space_homspace import VectorSpaceHomspace
+            sage: from sage.modules.vector_space_morphism import VectorSpaceMorphism
+            sage: H = VectorSpaceHomspace(QQ^3, QQ^2)
+            sage: A = matrix(QQ, 3, 2, range(6))
+            sage: zeta = VectorSpaceMorphism(H, A)
+            sage: zeta
+            Vector space morphism represented by the matrix:
+            [0 1]
+            [2 3]
+            [4 5]
+            Domain:   Vector space of dimension 3 over Rational Field
+            Codomain: Vector space of dimension 2 over Rational Field
+        See the constructor,
+        :func:`sage.modules.vector_space_morphism.linear_transformation`
+        for another way to create linear transformations.
+        The ``.hom()`` method of a vector space will create a vector
+        space morphism. ::
+            sage: V = QQ^3; W = V.subspace_with_basis([[1,2,3], [-1,2,5/3], [0,1,-1]])
+            sage: phi = V.hom(matrix(QQ, 3, range(9)), codomain=W) # indirect doctest
+            sage: type(phi)
+            <class 'sage.modules.vector_space_morphism.VectorSpaceMorphism'>
+        A matrix may be coerced into a vector space homspace to
+        create a vector space morphism.  ::
+            sage: from sage.modules.vector_space_homspace import VectorSpaceHomspace
+            sage: H = VectorSpaceHomspace(QQ^3, QQ^2)
+            sage: A = matrix(QQ, 3, 2, range(6))
+            sage: rho = H(A)  # indirect doctest
+            sage: type(rho)
+            <class 'sage.modules.vector_space_morphism.VectorSpaceMorphism'>
+        """
+        if not isinstance(homspace, vector_space_homspace.VectorSpaceHomspace):
+            raise TypeError('homspace must be a vector space hom space, not {}'.format(homspace))
+        if isinstance(A, matrix_morphism.MatrixMorphism):
+            A = A.matrix()
+        if not isinstance(A, Matrix):
+            msg = 'input must be a matrix representation or another matrix morphism, not {0}'
+            raise TypeError(msg.format(A))
+        # now have a vector space homspace, and a matrix, check compatibility
+        if side == "left":
+            if homspace.domain().dimension() != A.nrows():
+                raise TypeError('domain dimension is incompatible with matrix size')
+            if homspace.codomain().dimension() != A.ncols():
+                raise TypeError('codomain dimension is incompatible with matrix size')
+        if side == "right":
+            if homspace.domain().dimension() != A.nrows():
+                raise TypeError('domain dimension is incompatible with matrix size')
+            if homspace.codomain().dimension() != A.ncols():
+                raise TypeError('codomain dimension is incompatible with matrix size')
+
+        A = homspace._matrix_space(side)(A)
+        free_module_morphism.FreeModuleMorphism.__init__(self, homspace, A, side)
+
+    def is_invertible(self) -> bool:
+        r"""
+        Determine if the vector space morphism has an inverse.
+        OUTPUT:
+        ``True`` if the vector space morphism is invertible, otherwise
+        ``False``.
+        EXAMPLES:
+        If the dimension of the domain does not match the dimension
+        of the codomain, then the morphism cannot be invertible.  ::
+            sage: V = QQ^3
+            sage: U = V.subspace_with_basis([V.0 + V.1, 2*V.1 + 3*V.2])
+            sage: phi = V.hom([U.0, U.0 + U.1, U.0 - U.1], U)
+            sage: phi.is_invertible()
+            False
+        An invertible linear transformation. ::
+            sage: A = matrix(QQ, 3, [[-3, 5, -5], [4, -7, 7], [6, -8, 10]])
+            sage: A.determinant()
+            2
+            sage: H = Hom(QQ^3, QQ^3)
+            sage: rho = H(A)
+            sage: rho.is_invertible()
+            True
+        A non-invertible linear transformation, an endomorphism of
+        a vector space over a finite field.  ::
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(11^2)
+            sage: A = matrix(F, [[6*a + 3,   8*a +  2, 10*a + 3],
+            ....:                [2*a + 7,   4*a +  3,  2*a + 3],
+            ....:                [9*a + 2,  10*a + 10,  3*a + 3]])
+            sage: A.nullity()
+            1
+            sage: E = End(F^3)
+            sage: zeta = E(A)
+            sage: zeta.is_invertible()
+            False
+        """
+        # endomorphism or not, this is equivalent to invertibility of
+        #   the matrix representation, so any test of this will suffice
+        m = self.matrix()
+        if not m.is_square():
+            return False
+        return m.rank() == m.ncols()
+
+    def _latex_(self):
+        r"""
+        A LaTeX representation of this vector space morphism.
+        EXAMPLES::
+            sage: H = Hom(QQ^3, QQ^2)
+            sage: f = H(matrix(3, 2, range(6)))
+            sage: f._latex_().split(' ')
+            ['\\text{vector', 'space', 'morphism', 'from',
+            '}\n\\Bold{Q}^{3}\\text{', 'to', '}\n\\Bold{Q}^{2}\\text{',
+            'represented', 'by', 'the', 'matrix',
+            '}\n\\left(\\begin{array}{rr}\n0', '&', '1',
+            '\\\\\n2', '&', '3', '\\\\\n4', '&', '5\n\\end{array}\\right)']
+        """
+        s = ('\\text{vector space morphism from }\n', self.domain()._latex_(),
+             '\\text{ to }\n', self.codomain()._latex_(),
+             '\\text{ represented by the matrix }\n', self.matrix()._latex_())
+        return ''.join(s)
+
+    def _repr_(self):
+        r"""
+        A text representation of this vector space morphism.
+        EXAMPLES::
+            sage: H = Hom(QQ^3, QQ^2)
+            sage: f = H(matrix(3, 2, range(6)))
+            sage: f._repr_().split(' ')
+            ['Vector', 'space', 'morphism', 'represented', 'by',
+            'the', 'matrix:\n[0', '1]\n[2', '3]\n[4', '5]\nDomain:',
+            'Vector', 'space', 'of', 'dimension', '3', 'over',
+            'Rational', 'Field\nCodomain:', 'Vector', 'space', 'of',
+            'dimension', '2', 'over', 'Rational', 'Field']
+        """
+        m = self.matrix()
+        act = ""
+        if self.side() == "right":
+            act = "as left-multiplication "
+        msg = ("Vector space morphism represented {}by the matrix:\n",
+               "{!r}\n",
+               "Domain: {}\n",
+               "Codomain: {}")
+        return ''.join(msg).format(act, m, self.domain(), self.codomain())
