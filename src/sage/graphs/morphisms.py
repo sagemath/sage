@@ -299,5 +299,164 @@ def is_homeomorphic(G, H):
     return X.is_isomorphic(Y)
 
 
+@doc_index("Homomorphism")
+def has_homomorphism_to(G, H, core=False, solver=None, verbose=0,
+                        *, integrality_tolerance=1e-3):
+    r"""
+    Check whether there is a homomorphism between two graphs.
+
+    A homomorphism from a graph `G` to a graph `H` is a function
+    `\phi:V(G)\mapsto V(H)` such that for any edge `uv \in E(G)` the pair
+    `\phi(u)\phi(v)` is an edge of `H`.
+
+    Saying that a graph can be `k`-colored is equivalent to saying that it has a
+    homomorphism to `K_k`, the complete graph of order `k`.
+
+    For more information, see the :wikipedia:`Graph_homomorphism`.
+
+    INPUT:
+
+    - ``G`` -- the graph to map
+
+    - ``H`` -- the graph to which ``G`` should be sent
+
+    - ``core`` -- boolean (default: ``False``); whether to minimize the size of
+      the mapping's image (see examples below). This is set to ``False`` by
+      default.
+
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
+      <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+      :class:`MixedIntegerLinearProgram
+      <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set to 0
+      by default, which means quiet.
+
+    - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
+      over an inexact base ring; see
+      :meth:`MixedIntegerLinearProgram.get_values`.
+
+    OUTPUT:
+
+    This method returns ``False`` when the homomorphism does not exist, and
+    returns the homomorphism otherwise as a dictionary associating a vertex of
+    `H` to a vertex of `G`.
+
+    EXAMPLES:
+
+    Is Petersen's graph 3-colorable::
+
+        sage: P = graphs.PetersenGraph()
+        sage: P.has_homomorphism_to(graphs.CompleteGraph(3)) is not False               # needs sage.numerical.mip
+        True
+
+    An odd cycle admits a homomorphism to a smaller odd cycle, but not to an
+    even cycle::
+
+        sage: g = graphs.CycleGraph(9)
+        sage: g.has_homomorphism_to(graphs.CycleGraph(5)) is not False                  # needs sage.numerical.mip
+        True
+        sage: g.has_homomorphism_to(graphs.CycleGraph(7)) is not False                  # needs sage.numerical.mip
+        True
+        sage: g.has_homomorphism_to(graphs.CycleGraph(4)) is not False                  # needs sage.numerical.mip
+        False
+
+    One can compute the core of a graph (with respect to homomorphism)
+    with this method::
+
+        sage: # needs sage.numerical.mip
+        sage: g = graphs.CycleGraph(8)
+        sage: mapping = g.has_homomorphism_to(g, core=True)
+        sage: print(f"The size of the core is {len(set(mapping.values()))}")
+        The size of the core is 2
+        sage: g = graphs.CycleGraph(9)
+        sage: mapping = g.has_homomorphism_to(g, core=True)
+        sage: print(f"The size of the core is {len(set(mapping.values()))}")
+        The size of the core is 9
+
+    The chromatic number of a graph is the order of the smallest clique to which
+    it has an homomorphism::
+
+        sage: # needs sage.numerical.mip
+        sage: g = graphs.CycleGraph(9)
+        sage: g.chromatic_number()
+        3
+        sage: g.has_homomorphism_to(graphs.CompleteGraph(3)) is not False
+        True
+        sage: g.has_homomorphism_to(graphs.CompleteGraph(2)) is not False
+        False
+        sage: K6 = graphs.CompleteGraph(6)
+        sage: g.has_homomorphism_to(K6) is not False
+        True
+        sage: mapping = g.has_homomorphism_to(K6, core=True)
+        sage: print(f"The size of the core is {len(set(mapping.values()))}")
+        The size of the core is 3
+
+    A circuit of order `n` admits a homomorphism to smaller circuit of order `p
+    \leq n` if `p` is a divisor of `n`::
+
+        sage: g = digraphs.Circuit(12)
+        sage: [i for i in range(2, g.order() + 1)                                       # needs sage.numerical.mip
+        ....:  if g.has_homomorphism_to(digraphs.Circuit(i)) is not False]
+        [2, 3, 4, 6, 12]
+
+    TESTS::
+
+        sage: Graph(1).has_homomorphism_to(DiGraph(1))
+        False
+    """
+    G._scream_if_not_simple()
+    H._scream_if_not_simple()
+    if G.is_directed() is not H.is_directed():
+        return False
+    undirected = not G.is_directed()
+
+    from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
+    p = MixedIntegerLinearProgram(solver=solver, maximization=False)
+    b = p.new_variable(binary=True)
+
+    # Each vertex has an image
+    for ug in G:
+        p.add_constraint(p.sum(b[ug, uh] for uh in H) == 1)
+
+    nonedges = H.complement().edges(sort=False, labels=False)
+    for ug, vg in G.edges(sort=False, labels=False):
+        # Two adjacent vertices cannot be mapped to the same element
+        for uh in H:
+            p.add_constraint(b[ug, uh] + b[vg, uh] <= 1)
+
+        # Two adjacent vertices cannot be mapped to no adjacent vertices
+        for uh, vh in nonedges:
+            p.add_constraint(b[ug, uh] + b[vg, vh] <= 1)
+
+        if undirected:
+            # Both directions of edges must be considered for undirected graphs
+            for uh, vh in nonedges:
+                p.add_constraint(b[ug, vh] + b[vg, uh] <= 1)
+
+    # Minimize the mapping's size
+    if core:
+
+        # The value of m is one if the corresponding vertex of H is used
+        m = p.new_variable(nonnegative=True)
+        for uh in H:
+            for ug in G:
+                p.add_constraint(b[ug, uh] <= m[uh])
+
+        # Minimize the number of used vertices of H
+        p.set_objective(p.sum(m[vh] for vh in H))
+
+    try:
+        p.solve(log=verbose)
+    except MIPSolverException:
+        return False
+
+    b = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
+    return dict(x[0] for x in b.items() if x[1])
+
+
 _additional_categories = {}
 __doc__ = __doc__.replace("{INDEX_OF_METHODS}", gen_thematic_rest_table_index(Graph, _additional_categories))
