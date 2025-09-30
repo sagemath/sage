@@ -966,7 +966,7 @@ class AbstractTree:
         return Integer(m)
 
     node_number_at_depth = number_of_nodes_at_depth
-    
+
     def paths_to_the_right(self, path):
         r"""
         Return a generator of paths for all nodes at the same
@@ -1073,7 +1073,7 @@ class AbstractTree:
         return result
 
     node_number_to_the_right = number_of_nodes_to_the_right
-    
+
     def subtrees(self):
         """
         Return a generator for all nonempty subtrees of ``self``.
