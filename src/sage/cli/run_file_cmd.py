@@ -1,12 +1,11 @@
 import argparse
+import sys
 
 from sage.cli.options import CliOptions
 from sage.repl.preparse import preparse_file_named
 from sage.repl.load import load_cython
 from sage.misc.temporary_file import tmp_filename
 from sage.all import sage_globals
-import os
-import sys
 
 
 class RunFileCmd:
@@ -41,9 +40,6 @@ class RunFileCmd:
         r"""
         Execute the given command.
         """
-        # Allow importing modules from the current directory, matching python behavior
-        sys.path.append(os.getcwd())
-
         input_file = self.options.file[0]
         if input_file.endswith('.sage'):
             input_file = str(preparse_file_named(input_file))

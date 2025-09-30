@@ -3,8 +3,6 @@ import argparse
 from sage.cli.options import CliOptions
 from sage.repl.preparse import preparse
 from sage.all import sage_globals
-import os
-import sys
 
 
 class EvalCmd:
@@ -38,9 +36,6 @@ class EvalCmd:
         r"""
         Execute the given command.
         """
-        # Allow importing modules from the current directory, matching python behavior
-        sys.path.append(os.getcwd())
-
         code = preparse(self.options.command)
         eval(compile(code, "<cmdline>", "exec"), sage_globals())
         return 0
