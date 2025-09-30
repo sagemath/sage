@@ -1,5 +1,5 @@
 r"""
-`*`morphisms
+Morphisms
 
 This module gathers methods related to homeomorphims, homomorphisms,
 isomorphisms, etc. in (di)graphs.
