@@ -3703,7 +3703,7 @@ class ExoticTheory(_CombinatorialTheory):
 
     reset = reset_exclude
 
-    def get_total_excluded(self, n):
+    def get_total_excluded(self, n=16):
         ret = [xx for xx in self._excluded if xx.size()<=n]
         return tuple(ret)
     
