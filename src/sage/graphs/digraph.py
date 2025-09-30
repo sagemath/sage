@@ -1494,7 +1494,7 @@ class DiGraph(GenericGraph):
 
         .. SEEALSO::
 
-            :meth:`num_verts` for the value at `(x, y) = (1, 1)`
+            :meth:`n_vertices` for the value at `(x, y) = (1, 1)`
 
         EXAMPLES::
 
