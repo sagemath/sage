@@ -2165,7 +2165,35 @@ def repr_lincomb(symbols, coeffs):
         \text{\texttt{x}} + 2\text{\texttt{y}}
     """
     from sage.rings.cc import CC
+    terms = []
+    for c, sym in zip(coeffs, symbols):
+        if c == 0:
+            continue
+        if c == 1:
+            coeff = ""
+        elif c == -1:
+            coeff = "-"            
+        else:
+            coeff = coeff_repr(c)            
 
+        b = latex(sym)
+        # this is a hack: i want to say that if the symbol happens to
+        # be a number, then we should put a multiplication sign in
+        try:
+            if sym in CC and coeff not in ("", "-"):
+                term = f"{coeff}\\cdot {b}"
+            else:
+                term = f"{coeff}{b}"
+        except Exception:
+            term = f"{coeff}{b}"
+
+        terms.append(term)
+
+    if not terms:
+        return "0"
+
+    s = " + ".join(terms)
+    return s.replace("+ -", "- ")
     s = ""
     first = True
 
