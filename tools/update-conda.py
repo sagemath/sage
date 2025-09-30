@@ -35,7 +35,7 @@ parser.add_argument(
     choices=platforms.keys(),
 )
 options = parser.parse_args()
-pythons = ["3.11", "3.12", "3.13"]
+pythons = ["3.12", "3.13", "3.14"]
 tags = [""]
 
 
@@ -44,6 +44,7 @@ def write_env_file(env_file: Path, dependencies: list[str]) -> None:
         """name: sage
 channels:
   - conda-forge
+  - conda-forge/label/python_rc
   - nodefaults
 dependencies:
 """
@@ -113,8 +114,6 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
                 [
                     "conda-lock",
                     "--mamba",
-                    "--channel",
-                    "conda-forge",
                     "--kind",
                     "env",
                     "--platform",
