@@ -2237,8 +2237,8 @@ def blossoming_contour(t, shift=0, seed=None):
     t1, t2 = t
     leaf_xb = ('xb',)
     leaf_x = ('x',)
-    n1 = t1.node_number()
-    n = t.node_number()
+    n1 = t1.n_nodes()
+    n = t.n_nodes()
 
     # adding buds on edges in t1
     if not t1:
