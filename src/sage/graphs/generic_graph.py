@@ -26019,7 +26019,7 @@ class GenericGraph(GenericGraph_pyx):
     )
     from sage.graphs.line_graph import line_graph
     rooted_product = LazyImport('sage.graphs.graph_decompositions.graph_products', 'rooted_product')
-    from sage.graphs.marphisms import (
+    from sage.graphs.morphisms import (
         has_homomorphism_to,
         is_homeomorphic,
         reduced_homeomorphic_graph,

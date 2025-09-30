@@ -4,7 +4,16 @@ r"""
 This module gathers methods related to homeomorphims, homomorphisms,
 isomorphisms, etc. in (di)graphs.
 
-{INDEX_OF_METHODS}
+**This module contains the following methods**
+
+.. csv-table::
+    :class: contentstable
+    :widths: 30, 70
+    :delim: |
+
+    :meth:`~is_homeomorphic` | Check whether ``G`` and ``H`` are homeomorphic.
+    :meth:`~reduced_homeomorphic_graph` | Return the smallest graph homeomorphic to ``G``.
+    :meth:`~has_homomorphism_to` | Check whether there is a homomorphism between two graphs.
 
 .. TODO::
 
@@ -24,10 +33,7 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_index
 
-
-@doc_index("Homeomorphism")
 def reduced_homeomorphic_graph(G, allow_multiple_edges=False, allow_loops=False,
                                return_steps=False, immutable=None):
     r"""
@@ -114,7 +120,7 @@ def reduced_homeomorphic_graph(G, allow_multiple_edges=False, allow_loops=False,
         ....:         h.delete_edge(P[0], P[2])
         ....:     return h
 
-        sage: G = graphs.WindmillGraph(3, 10)
+        sage: G = graphs.WindmillGraph(3, 5)
         sage: G.order(), G.size()
         (11, 15)
         sage: H, steps = G.reduced_homeomorphic_graph(return_steps=True)
@@ -224,7 +230,6 @@ def reduced_homeomorphic_graph(G, allow_multiple_edges=False, allow_loops=False,
     return H
 
 
-@doc_index("Homeomorphism")
 def is_homeomorphic(G, H):
     r"""
     Check whether ``G`` and ``H`` are homeomorphic.
@@ -299,7 +304,6 @@ def is_homeomorphic(G, H):
     return X.is_isomorphic(Y)
 
 
-@doc_index("Homomorphism")
 def has_homomorphism_to(G, H, core=False, solver=None, verbose=0,
                         *, integrality_tolerance=1e-3):
     r"""
@@ -456,7 +460,3 @@ def has_homomorphism_to(G, H, core=False, solver=None, verbose=0,
 
     b = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
     return dict(x[0] for x in b.items() if x[1])
-
-
-_additional_categories = {}
-__doc__ = __doc__.replace("{INDEX_OF_METHODS}", gen_thematic_rest_table_index(Graph, _additional_categories))
