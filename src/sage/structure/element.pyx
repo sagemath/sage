@@ -3545,6 +3545,7 @@ cdef class Vector(ModuleElementWithMutability):
             sage: (b / A) * A == b
             True
         """
+        # TODO: Create new methods vector_by_vector and vector_by_matrix
         right = py_scalar_to_element(right)
         if isinstance(right, Vector):
             try:
@@ -3565,9 +3566,13 @@ cdef class Vector(ModuleElementWithMutability):
                 # TODO : solve_left should be made possible for cartesian product rings
                 pass
         if right.parent() in _Rings:
-            # Let __mul__ do the job
-            return left * ~right
-        raise bin_op_exception('/', left, right)
+            try:
+                # Let __mul__ do the job
+                return left * ~right
+            except (NotImplementedError, TypeError):
+                # Inverse may not exist sometimes
+                pass
+        return coercion_model.bin_op(left, right, truediv)
 
     def _magma_init_(self, magma):
         """
@@ -4005,6 +4010,7 @@ cdef class Matrix(ModuleElement):
             sage: A / B # matrix-by-matrix
             [(2/3, 2/3)]
         """
+        # TODO: Create new methods matrix_by_matrix
         right = py_scalar_to_element(right)
         if isinstance(right, Matrix):
             try:
@@ -4014,8 +4020,12 @@ cdef class Matrix(ModuleElement):
                 # TODO : solve_left should be made possible for cartesian product rings
                 pass
         if right.parent() in _Rings:
-            # Let __mul__ do the job
-            return left * ~right
+            try:
+                # Let __mul__ do the job
+                return left * ~right
+            except (NotImplementedError, TypeError):
+                # Inverse may not exist sometimes
+                pass
         return coercion_model.bin_op(left, right, truediv)
 
     cdef _vector_times_matrix_(matrix_right, Vector vector_left):
