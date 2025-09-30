@@ -2172,12 +2172,12 @@ def repr_lincomb(symbols, coeffs):
         if c == 1:
             coeff = ""
         elif c == -1:
-            coeff = "-"            
+            coeff = "-"
         else:
-            coeff = coeff_repr(c)            
+            coeff = coeff_repr(c)
 
         b = latex(sym)
-        # this is a hack: i want to say that if the symbol happens to
+        # this is a hack: I want to say that if the symbol happens to
         # be a number, then we should put a multiplication sign in
         try:
             if sym in CC and coeff not in ("", "-"):
@@ -2194,41 +2194,6 @@ def repr_lincomb(symbols, coeffs):
 
     s = " + ".join(terms)
     return s.replace("+ -", "- ")
-    s = ""
-    first = True
-
-    for i, c in enumerate(coeffs):
-        bv = symbols[i]
-        b = latex(bv)
-        if c != 0:
-            if c == 1:
-                if first:
-                    s += b
-                else:
-                    s += " + %s" % b
-            else:
-                coeff = coeff_repr(c)
-                if coeff == "-1":
-                    coeff = "-"
-                if first:
-                    coeff = str(coeff)
-                else:
-                    coeff = " + %s" % coeff
-                # this is a hack: i want to say that if the symbol
-                # happens to be a number, then we should put a
-                # multiplication sign in
-                try:
-                    if bv in CC:
-                        s += r"%s\cdot %s" % (coeff, b)
-                    else:
-                        s += "%s%s" % (coeff, b)
-                except Exception:
-                    s += "%s%s" % (coeff, b)
-            first = False
-    if first:
-        s = "0"
-    s = s.replace("+ -", "- ")
-    return s
 
 
 common_varnames = ['alpha',
