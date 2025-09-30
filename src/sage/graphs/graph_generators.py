@@ -798,7 +798,7 @@ class GraphGenerators:
         ::
 
             sage: for g in graphs():
-            ....:    if g.num_verts() > 3: break
+            ....:    if g.n_vertices() > 3: break
             ....:    print(g)
             Graph on 0 vertices
             Graph on 1 vertex

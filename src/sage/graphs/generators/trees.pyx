@@ -513,7 +513,7 @@ cdef class TreeIterator:
         ....:             return False
         ....:         if t.n_vertices() != n:
         ....:             return False
-        ....:         if t.num_edges() != n - 1:
+        ....:         if t.n_edges() != n - 1:
         ....:             return False
         ....:         for tree in trees:
         ....:             if tree.is_isomorphic(t):
