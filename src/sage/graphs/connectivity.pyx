@@ -22,6 +22,7 @@ Here is what the module can do:
     :meth:`connected_components_sizes` | Return the sizes of the connected components as a list.
     :meth:`blocks_and_cut_vertices` | Return the blocks and cut vertices of the graph.
     :meth:`blocks_and_cuts_tree` | Return the blocks-and-cuts tree of the graph.
+    :meth:`is_biconnected` | Check whether the graph is biconnected.
     :meth:`biconnected_components` | Return the list of biconnected components.
     :meth:`biconnected_components_subgraphs` | Return a list of biconnected components as graph objects.
     :meth:`number_of_biconnected_components` | Return the number of biconnected components.
@@ -92,7 +93,7 @@ def is_connected(G, forbidden_vertices=None):
 
     .. SEEALSO::
 
-        - :meth:`~Graph.is_biconnected`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.is_biconnected`
 
     EXAMPLES::
 
@@ -507,7 +508,7 @@ def blocks_and_cut_vertices(G, algorithm='Tarjan_Boost', sort=False, key=None):
 
         - :meth:`blocks_and_cuts_tree`
         - :func:`sage.graphs.base.boost_graph.blocks_and_cut_vertices`
-        - :meth:`~Graph.is_biconnected`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.is_biconnected`
         - :meth:`~Graph.bridges`
 
     EXAMPLES:
@@ -718,7 +719,7 @@ def blocks_and_cuts_tree(G):
     .. SEEALSO::
 
         - :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cut_vertices`
-        - :meth:`~Graph.is_biconnected`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.is_biconnected`
 
     EXAMPLES::
 
@@ -778,6 +779,46 @@ def blocks_and_cuts_tree(G):
             if c in set_C:
                 g.add_edge(('B', bloc), ('C', c))
     return g
+
+
+def is_biconnected(G):
+    r"""
+    Check whether the graph is biconnected.
+
+    A biconnected graph is a connected graph on two or more vertices that is not
+    broken into disconnected pieces by deleting any single vertex.
+
+    .. SEEALSO::
+
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.is_connected`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cut_vertices`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cuts_tree`
+        - :wikipedia:`Biconnected_graph`
+
+    EXAMPLES::
+
+        sage: G = graphs.PetersenGraph()
+        sage: G.is_biconnected()
+        True
+        sage: G.add_path([0,'a','b'])
+        sage: G.is_biconnected()
+        False
+        sage: G.add_edge('b', 1)
+        sage: G.is_biconnected()
+        True
+
+    TESTS::
+
+        sage: Graph().is_biconnected()
+        False
+        sage: Graph(1).is_biconnected()
+        False
+        sage: graphs.CompleteGraph(2).is_biconnected()
+        True
+    """
+    if G.order() < 2 or not G.is_connected():
+        return False
+    return not G.blocks_and_cut_vertices()[1]
 
 
 def biconnected_components(G):
@@ -867,7 +908,7 @@ def number_of_biconnected_components(G):
     .. SEEALSO::
 
         - :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cut_vertices`
-        - :meth:`~Graph.is_biconnected`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.is_biconnected`
 
     EXAMPLES:
 
@@ -3466,7 +3507,7 @@ cdef class TriconnectivitySPQR:
     .. SEEALSO::
 
         - :meth:`sage.graphs.connectivity.spqr_tree`
-        - :meth:`~Graph.is_biconnected`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.is_biconnected`
         - :wikipedia:`SPQR_tree`
 
     EXAMPLES:
@@ -4892,7 +4933,7 @@ def is_triconnected(G):
     .. SEEALSO::
 
         - :meth:`~sage.graphs.generic_graph.GenericGraph.is_connected`
-        - :meth:`~Graph.is_biconnected`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.is_biconnected`
         - :meth:`~sage.graphs.connectivity.spqr_tree`
         - :wikipedia:`SPQR_tree`
 

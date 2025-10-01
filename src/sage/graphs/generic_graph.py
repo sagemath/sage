@@ -236,7 +236,7 @@ can be applied on both. Here is what it can do:
     :widths: 30, 70
     :delim: |
 
-    :meth:`~GenericGraph.is_connected` | Test whether the (di)graph is connected.
+    :meth:`~GenericGraph.is_connected` | Check whether the (di)graph is connected.
     :meth:`~GenericGraph.connected_components` | Return the list of connected components
     :meth:`~GenericGraph.connected_components_number` | Return the number of connected components.
     :meth:`~GenericGraph.connected_components_subgraphs` | Return a list of connected components as graph objects.
@@ -244,6 +244,7 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.connected_components_sizes` | Return the sizes of the connected components as a list.
     :meth:`~GenericGraph.blocks_and_cut_vertices` | Compute the blocks and cut vertices of the graph.
     :meth:`~GenericGraph.blocks_and_cuts_tree` | Compute the blocks-and-cuts tree of the graph.
+    :meth:`~GenericGraph.is_biconnected` | Check whether the graph is biconnected.
     :meth:`~GenericGraph.biconnected_components` | Return the list of biconnected components.
     :meth:`~GenericGraph.biconnected_components_subgraphs` | Return a list of biconnected components as graph objects.
     :meth:`~GenericGraph.number_of_biconnected_components` | Return the number of biconnected components.
@@ -26003,6 +26004,7 @@ class GenericGraph(GenericGraph_pyx):
         connected_components_sizes,
         connected_components_subgraphs,
         edge_connectivity,
+        is_biconnected,
         is_connected,
         is_cut_edge,
         is_cut_vertex,
