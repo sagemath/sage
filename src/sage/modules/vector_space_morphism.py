@@ -573,6 +573,47 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
         [ 1  1]
         [ 1 -1]
 
+    Linear transformations work with combinatorial free modules::
+
+        sage: from sage.sets.integer_range import IntegerRange
+        sage: V = VectorSpace(QQ, IntegerRange(3))
+        sage: A = identity_matrix(3)
+        sage: lt = linear_transformation(V, V, A)
+        sage: v = V.an_element()
+        sage: v
+        B[0] + 2*B[1] + 4*B[2]
+        sage: lt(v)
+        B[0] + 2*B[1] + 4*B[2]
+
+        sage: # Matrix with different dimensions
+        sage: W = VectorSpace(QQ, IntegerRange(2))
+        sage: A = matrix(QQ, [[1,2],[3,4],[5,6]])
+        sage: lt = linear_transformation(V, W, A)
+        sage: v = V.basis()[0] + V.basis()[1] + V.basis()[2]
+        sage: lt(v)
+        9*B[0] + 12*B[1]
+
+        sage: # Using functions
+        sage: def f(x):
+        ....:     # Extract coefficients and compute result
+        ....:     coeffs = x.monomial_coefficients()
+        ....:     # Map basis indices to result coefficients
+        ....:     result_coeffs = {}
+        ....:     result_coeffs[0] = coeffs.get(0, 0) + coeffs.get(1, 0)
+        ....:     result_coeffs[1] = coeffs.get(1, 0) + coeffs.get(2, 0)
+        ....:     return W._from_dict(result_coeffs)
+        sage: lt = linear_transformation(V, W, f)
+        sage: v = V.basis()[0] + 2*V.basis()[1] + 3*V.basis()[2]
+        sage: lt(v)
+        3*B[0] + 5*B[1]
+
+        sage: # Using lists of images
+        sage: images = [W.basis()[0] + W.basis()[1], W.basis()[1], 2*W.basis()[0]]
+        sage: lt = linear_transformation(V, W, images)
+        sage: v = V.basis()[0] + V.basis()[1] + V.basis()[2]
+        sage: lt(v)
+        3*B[0] + 2*B[1]
+
     TESTS:
 
     We test some bad inputs.  First, the wrong things in the wrong places.  ::
@@ -703,6 +744,12 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
         )
     except ImportError:
         Vector_callable_symbolic_dense = ()
+    
+    # Try to import CombinatorialFreeModule
+    try:
+        from sage.combinat.free_module import CombinatorialFreeModule
+    except ImportError:
+        CombinatorialFreeModule = ()
 
     if side not in ['left', 'right']:
         raise ValueError("side must be 'left' or 'right', not {}".format(side))
@@ -735,6 +782,110 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     # arg2 might be a matrix that began in arg0
     D = arg0
     C = arg1
+    
+    # Check if we're dealing with CombinatorialFreeModule objects
+    if CombinatorialFreeModule and (isinstance(D, CombinatorialFreeModule) or isinstance(C, CombinatorialFreeModule)):
+        # Special handling for CombinatorialFreeModule
+        if isinstance(arg2, Matrix):
+            # Check dimensions
+            if side == 'left':
+                if D.dimension() != arg2.nrows():
+                    raise TypeError('domain dimension is incompatible with matrix size')
+                if C.dimension() != arg2.ncols():
+                    raise TypeError('codomain dimension is incompatible with matrix size')
+                mat = arg2
+            else:  # side == 'right'
+                if D.dimension() != arg2.ncols():
+                    raise TypeError('domain dimension is incompatible with matrix size')
+                if C.dimension() != arg2.nrows():
+                    raise TypeError('codomain dimension is incompatible with matrix size')
+                mat = arg2.transpose()
+            
+            # Define the morphism by its action on basis elements
+            def morphism_on_basis(x):
+                # Get the index of x in the basis
+                basis_keys = list(D.basis().keys())
+                idx = basis_keys.index(x)
+                
+                # Get the corresponding row of the matrix
+                row = mat[idx]
+                
+                # Build the result as a linear combination in C
+                result = C.zero()
+                C_basis = list(C.basis())
+                for j, coeff in enumerate(row):
+                    if coeff != 0:
+                        result += coeff * C_basis[j]
+                return result
+            
+            return D.module_morphism(morphism_on_basis, codomain=C)
+        
+        elif isinstance(arg2, (list, tuple)):
+            # List of images for basis elements
+            basis_keys = list(D.basis().keys())
+            if len(arg2) != len(basis_keys):
+                raise ValueError('number of images should equal the size of the domain\'s basis (={}), not {}'.format(len(basis_keys), len(arg2)))
+            
+            # Check that images are in codomain
+            for img in arg2:
+                if img not in C:
+                    msg = 'some proposed image is not in the codomain, because\nelement {} is not in free module'
+                    raise ArithmeticError(msg.format(img))
+            
+            # Create function that maps basis keys to images
+            images_dict = dict(zip(basis_keys, arg2))
+            def morphism_on_basis(x):
+                return images_dict[x]
+            
+            return D.module_morphism(morphism_on_basis, codomain=C)
+        
+        elif isinstance(arg2, Vector_callable_symbolic_dense):
+            # Handle symbolic functions by converting to matrix first
+            from sage.symbolic.ring import SR
+            args = arg2.parent().base_ring()._arguments
+            exprs = arg2.change_ring(SR)
+            m = len(args)
+            n = len(exprs)
+            if m != D.dimension():
+                raise ValueError('symbolic function has the wrong number of inputs for domain')
+            if n != C.dimension():
+                raise ValueError('symbolic function has the wrong number of outputs for codomain')
+            mat = [[e.coefficient(a) for e in exprs] for a in args]
+            try:
+                mat = matrix(D.base_ring(), m, n, mat)
+            except TypeError as e:
+                msg = 'symbolic function must be linear in all the inputs:\n' + e.args[0]
+                raise ValueError(msg)
+            # Recurse with matrix
+            return linear_transformation(D, C, mat, side='left')
+        
+        elif callable(arg2):
+            # Apply function to each basis element
+            basis_keys = list(D.basis().keys())
+            images = {}
+            for key in basis_keys:
+                try:
+                    basis_elem = D.monomial(key)
+                    img = arg2(basis_elem)
+                    if img not in C:
+                        msg = 'some image of the function is not in the codomain, because\nelement {} is not in free module'
+                        raise ArithmeticError(msg.format(img))
+                    images[key] = img
+                except Exception as e:
+                    msg = 'function cannot be applied properly to some basis element because\n{}'
+                    raise ValueError(msg.format(str(e)))
+            
+            # Create function from images dictionary
+            def morphism_on_basis(x):
+                return images[x]
+            
+            return D.module_morphism(morphism_on_basis, codomain=C)
+        
+        else:
+            msg = 'third argument must be a matrix, function, or list of images, not {0}'
+            raise TypeError(msg.format(arg2))
+    
+    # Original code continues for standard vector spaces
     H = Hom(D, C, category=None)
 
     # Examine arg2 as the "rule" for the linear transformation
