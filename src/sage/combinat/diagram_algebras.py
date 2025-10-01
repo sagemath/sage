@@ -4491,7 +4491,6 @@ class TemperleyLiebAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
                o o o o      o o o o       o o o o
         """
         M = x.monomial_coefficients(copy=False)
-        I = self._indices
         return self._from_dict({d.dual(): c for d, c in M.items()},
                                remove_zeros=False)
 

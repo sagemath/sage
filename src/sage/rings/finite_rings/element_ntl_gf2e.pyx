@@ -1131,7 +1131,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         """
         return self
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return a string that evaluates to the GAP representation of
         this element.

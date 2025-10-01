@@ -1159,13 +1159,6 @@ cdef class Element(SageObject):
             return True
         return NotImplemented
 
-    cpdef int _cmp_(left, right) except -2:
-        """
-        This was the old comparison framework. Now deprecated. Do not use.
-        """
-        deprecation(30130, "please use _richcmp_ for comparison methods")
-        raise NotImplementedError("__cmp__ and _cmp_ are deprecated")
-
     ##################################################
     # Arithmetic using the coercion model
     ##################################################
@@ -3215,7 +3208,7 @@ cdef class CommutativeRingElement(RingElement):
         return I.reduce(self)
 
 
-    ##############################################
+##############################################
 
 cdef class Expression(CommutativeRingElement):
 

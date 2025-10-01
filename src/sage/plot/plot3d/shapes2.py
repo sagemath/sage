@@ -25,17 +25,14 @@ AUTHORS:
 
 import math
 
-from . import shapes
-
-from .base import PrimitiveObject, point_list_bounding_box
-
-from sage.rings.real_double import RDF
-from sage.modules.free_module_element import vector
-from sage.misc.decorators import options, rename_keyword
 from sage.arith.srange import srange
-
-from .texture import Texture
-from .shapes import Text, Sphere
+from sage.misc.decorators import options, rename_keyword
+from sage.modules.free_module_element import vector
+from sage.plot.plot3d import shapes
+from sage.plot.plot3d.base import PrimitiveObject, point_list_bounding_box
+from sage.plot.plot3d.shapes import Sphere, Text
+from sage.plot.plot3d.texture import Texture
+from sage.rings.real_double import RDF
 
 TACHYON_PIXEL = 1 / 200.0
 
@@ -285,9 +282,10 @@ def bezier3d(path, **options):
         sage: bezier3d(p3d)                                                             # needs sage.symbolic
         Graphics3d Object
     """
-    from . import parametric_plot3d as P3D
     from sage.modules.free_module_element import vector
     from sage.symbolic.ring import SR
+
+    from . import parametric_plot3d as P3D
 
     p0 = vector(path[0][-1])
     t = SR.var('t')

@@ -1232,7 +1232,7 @@ class ToricVariety_field(AmbientSpace):
                 return self.dimension() - codim
         return -1
 
-    def is_homogeneous(self, polynomial):
+    def is_homogeneous(self, polynomial) -> bool:
         r"""
         Check if ``polynomial`` is homogeneous.
 
@@ -1307,7 +1307,7 @@ class ToricVariety_field(AmbientSpace):
                 return False
         return True
 
-    def is_isomorphic(self, another):
+    def is_isomorphic(self, another) -> bool:
         r"""
         Check if ``self`` is isomorphic to ``another``.
 
@@ -1342,7 +1342,7 @@ class ToricVariety_field(AmbientSpace):
                 "got %s" % another)
         raise NotImplementedError("isomorphism check is not yet implemented")
 
-    def is_affine(self):
+    def is_affine(self) -> bool:
         r"""
         Check if ``self`` is an affine toric variety.
 
@@ -1361,7 +1361,7 @@ class ToricVariety_field(AmbientSpace):
         """
         return self.fan().ngenerating_cones() == 1
 
-    def is_complete(self):
+    def is_complete(self) -> bool:
         r"""
         Check if ``self`` is complete.
 
@@ -1377,7 +1377,7 @@ class ToricVariety_field(AmbientSpace):
         """
         return self.fan().is_complete()
 
-    def is_orbifold(self):
+    def is_orbifold(self) -> bool:
         r"""
         Check if ``self`` has only quotient singularities.
 
@@ -1404,7 +1404,7 @@ class ToricVariety_field(AmbientSpace):
         """
         return self.fan().is_simplicial()
 
-    def is_smooth(self):
+    def is_smooth(self) -> bool:
         r"""
         Check if ``self`` is smooth.
 

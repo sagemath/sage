@@ -705,7 +705,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
         return Integer(self.__pari__().ellcard())
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return points which generate the abelian group of points on
         this elliptic curve.
@@ -800,7 +800,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
             self._order = ZZ(card)
         pts = tuple(self.point(list(P)) for P in pts)
         if len(pts) >= 1:
-            pts[0]._order = ZZ(ords[0]) # PARI documentation: "P is of order d_1"
+            pts[0]._order = ZZ(ords[0])  # PARI documentation: "P is of order d_1"
         return pts
 
     def __iter__(self):

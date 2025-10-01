@@ -18,11 +18,10 @@ List of coset representatives for `\Gamma_H(N)` in `\SL_2(\ZZ)`
 #
 #                  https://www.gnu.org/licenses/
 ###########################################################################
-from sage.structure.richcmp import richcmp_method, richcmp
-from sage.structure.sage_object import SageObject
 from sage.misc.persist import register_unpickle_override
-
-from . import p1list
+from sage.modular.modsym import p1list
+from sage.structure.richcmp import richcmp, richcmp_method
+from sage.structure.sage_object import SageObject
 
 
 @richcmp_method

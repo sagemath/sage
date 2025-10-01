@@ -5,6 +5,7 @@ py.install_sources(
   'chessboard.py',
   'classical_geometries.py',
   'degree_sequence.py',
+  'distance_regular.pyx',
   'families.py',
   'generators_test.py',
   'intersection.py',
@@ -13,6 +14,7 @@ py.install_sources(
   'shortened_000_111_extended_binary_Golay_code_graph.pickle.xz',
   'smallgraphs.py',
   'trees.pxd',
+  'trees.pyx',
   'world_map.py',
   subdir: 'sage/graphs/generators',
 )
