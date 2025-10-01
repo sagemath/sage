@@ -45,13 +45,12 @@ class CNFEncoder:
                 if e.constant() and not e.terminal_one():
                     indices.append(nav.value())
                     nav = t
-                else:
-                    if self.random_generator.randint(0, 1):
-                        indices.append(nav.value())
-                        nav = t
+                elif self.random_generator.randint(0, 1):
+                    indices.append(nav.value())
+                    nav = t
 
-                    else:
-                        nav = e
+                else:
+                    nav = e
             assert nav.terminal_one()
             res = self.one_set
             for i in reversed(indices):

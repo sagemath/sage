@@ -280,7 +280,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         """
         return self.projective_embedding(i, PP).codomain()
 
-    def is_smooth(self, point=None):
+    def is_smooth(self, point=None) -> bool:
         r"""
         Test whether the algebraic subscheme is smooth.
 
