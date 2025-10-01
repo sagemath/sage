@@ -1,5 +1,9 @@
 r"""
 Ore modules
+
+AUTHORS:
+
+- Xavier Caruso (2024-09): initial implementation
 """
 
 # ***************************************************************************

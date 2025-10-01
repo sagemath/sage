@@ -189,6 +189,7 @@ from sage.structure.factorization import Factorization
 from sage.structure.sequence import Sequence
 from sage.structure.unique_representation import UniqueRepresentation
 
+from sage.categories.fields import Fields
 from sage.categories.action import Action
 from sage.categories.ore_modules import OreModules
 
@@ -351,7 +352,9 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             When specifying a nontrivial denominator, the Ore module
             continues to be defined over the base ring of ``mat``;
             however, the Ore action is only defined after extending
-            scalars to the fraction field.
+            scalars to the fraction field. We underline in particular
+            that morphisms such Ore modules continue to be defined
+            over the base ring (and not the fraction field).
             This construction is useful in the theory of Anderson
             motives and in `p`-adic Hodge theory.
 
@@ -410,9 +413,6 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
           :class:`sage.structure.factorization.Factorization`;
           ``None`` is understood as the empty factorization with
           value `1`
-
-        - ``denominator`` -- a instance of
-          class:sage.structure.factorization.Factorization`
 
         - ``names`` -- a string of a list of strings,
           the names of the vector of the canonical basis; if ``None``,
@@ -725,8 +725,9 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
 
         TESTS:
 
-        When the Ore module has a nontrivial denominator, a pseudomorphism
-        over the fraction field is returned::
+        When the Ore module `M` has a nontrivial denominator, the
+        pseudomorphism of the extension of `M` to the fraction field
+        is returned::
 
             sage: from sage.modules.ore_module import OreModule
             sage: A.<t> = QQ[]
@@ -946,9 +947,9 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             [t^2/(t - 1) t^3/(t - 1)]
         """
         base = self._base
-        field = base.fraction_field()
-        if base is field:
+        if base in Fields():
             return self
+        field = base.fraction_field()
         mat = self.matrix().change_ring(field)
         twist = self._ore.twisting_derivation()
         if twist is None:
