@@ -42,13 +42,15 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from typing import Self
+
+from sage.categories.category import Category
 from sage.misc.cachefunc import cached_function, cached_method
 from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.misc.lazy_import import LazyImport
-from sage.categories.category import Category
+from sage.structure.dynamic_class import DynamicMetaclass
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.dynamic_class import DynamicMetaclass
 
 
 class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
@@ -624,7 +626,7 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
         f = self._functor_category
         return not any(hasattr(C, f) for C in base.super_categories())
 
-    def additional_structure(self):
+    def additional_structure(self) -> Self | None:
         r"""
         Return the additional structure defined by ``self``.
 

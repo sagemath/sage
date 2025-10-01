@@ -52,7 +52,6 @@ from random import randrange
 import pexpect
 from pexpect import ExceptionPexpect
 import sage.interfaces.abc
-from sage.interfaces.sagespawn import SageSpawn
 from sage.interfaces.interface import (Interface, InterfaceElement,
             InterfaceFunction, InterfaceFunctionElement)
 
@@ -509,6 +508,8 @@ If this all works, you can then make calls like:
         os.chdir(self.__path)
         try:
             try:
+                from sage.interfaces.sagespawn import SageSpawn
+
                 self._expect = SageSpawn(cmd,
                         logfile=self.__logfile,
                         timeout=None,  # no timeout
@@ -1238,7 +1239,7 @@ If this all works, you can then make calls like:
             sage: print(sage0.eval("dummy=gp.eval('0'); alarm(1); gp._expect_expr('1')"))  # long time
             ...Interrupting PARI/GP interpreter. Please wait a few seconds...
             ...
-            AlarmInterrupt:
+            ...AlarmInterrupt...
         """
         if expr is None:
             # the following works around gap._prompt_wait not being defined
@@ -1328,8 +1329,8 @@ If this all works, you can then make calls like:
             sage: R.<x> = QQ[]; f = x^3 + x + 1;  g = x^3 - x - 1; r = f.resultant(g); gap(ZZ); singular(R)
             Integers
             polynomial ring, over a field, global ordering
-            //   coefficients: QQ
-            //   number of vars : 1
+            // coefficients: QQ...
+            // number of vars : 1
             //        block   1 : ordering lp
             //                  : names    x
             //        block   2 : ordering C

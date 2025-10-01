@@ -76,12 +76,12 @@ and target sum::
     [69, 21, 5, 2, 1]
 """
 
-#*****************************************************************************
+# ***************************************************************************
 # Copyright (C) 2009 Minh Van Nguyen <nguyenminh2@gmail.com>
 #
 # Distributed under the terms of the GNU General Public License (GPL)
 #
-# http://www.gnu.org/licenses/
+# https://www.gnu.org/licenses/
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -92,11 +92,12 @@ and target sum::
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#*****************************************************************************
+# ***************************************************************************
 
 from sage.misc.latex import latex
 from sage.rings.integer import Integer
 from sage.structure.sage_object import SageObject
+
 
 class Superincreasing(SageObject):
     r"""
@@ -544,6 +545,7 @@ class Superincreasing(SageObject):
             return candidates
         else:
             return []
+
 
 def knapsack(seq, binary=True, max=1, value_only=False, solver=None, verbose=0,
              *, integrality_tolerance=1e-3):

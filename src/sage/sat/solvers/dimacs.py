@@ -425,7 +425,7 @@ class DIMACS(SatSolver):
         try:
             process = subprocess.Popen(args, stdout=subprocess.PIPE)
         except OSError:
-            raise OSError("Could run '%s', perhaps you need to add your SAT solver to $PATH?" % (" ".join(args)))
+            raise OSError("Could not run '%s', perhaps you need to add your SAT solver to $PATH?" % (" ".join(args)))
 
         try:
             while process.poll() is None:

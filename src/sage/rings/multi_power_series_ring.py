@@ -59,11 +59,11 @@ Construct multivariate power series rings over various base rings.
     sage: z = H.base_ring().gens()
     sage: f = H.gens()
     sage: h = 4*z[1]^2 + 2*z[0]*z[2] + z[1]*z[2] + z[2]^2 \
-    + (-z[2]^2 - 2*z[0] + z[2])*f[0]*f[2] \
-    + (-22*z[0]^2 + 2*z[1]^2 - z[0]*z[2] + z[2]^2 - 1955*z[2])*f[1]*f[2] \
-    + (-z[0]*z[1] - 2*z[1]^2)*f[2]*f[3] \
-    + (2*z[0]*z[1] + z[1]*z[2] - z[2]^2 - z[1] + 3*z[2])*f[3]^2 \
-    + H.O(3)
+    ....: + (-z[2]^2 - 2*z[0] + z[2])*f[0]*f[2] \
+    ....: + (-22*z[0]^2 + 2*z[1]^2 - z[0]*z[2] + z[2]^2 - 1955*z[2])*f[1]*f[2] \
+    ....: + (-z[0]*z[1] - 2*z[1]^2)*f[2]*f[3] \
+    ....: + (2*z[0]*z[1] + z[1]*z[2] - z[2]^2 - z[1] + 3*z[2])*f[3]^2 \
+    ....: + H.O(3)
     sage: h in H
     True
     sage: h
@@ -208,7 +208,7 @@ import sage.misc.latex as latex
 from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity
 from sage.rings.multi_power_series_ring_element import MPowerSeries
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
 from sage.rings.polynomial.term_order import TermOrder
@@ -674,7 +674,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             True
         """
         P = f.parent()
-        if isinstance(P, (PolynomialRing_general, MPolynomialRing_base,
+        if isinstance(P, (PolynomialRing_generic, MPolynomialRing_base,
                           PowerSeriesRing_generic, MPowerSeriesRing_generic,
                           LazyPowerSeriesRing)):
             if set(P.variable_names()).issubset(set(self.variable_names())):
@@ -841,7 +841,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             True
         """
         if isinstance(P, (MPolynomialRing_base, MPowerSeriesRing_generic, LazyPowerSeriesRing,
-                          PolynomialRing_general, PowerSeriesRing_generic)):
+                          PolynomialRing_generic, PowerSeriesRing_generic)):
             if set(P.variable_names()).issubset(set(self.variable_names())):
                 if self.has_coerce_map_from(P.base_ring()):
                     return True

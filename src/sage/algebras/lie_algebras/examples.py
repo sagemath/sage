@@ -85,7 +85,7 @@ def three_dimensional(R, a, b, c, d, names=['X', 'Y', 'Z']):
         sage: Q.<a,b,c,d> = PolynomialRing(QQ)
         sage: L = lie_algebras.three_dimensional(Q, a, b, c, d)
         sage: L.structure_coefficients()
-        Finite family {('X', 'Y'): d*Y + a*Z, ('X', 'Z'): (-c)*Y + (-d)*Z, ('Y', 'Z'): b*X}
+        Finite family {('X', 'Y'): d*Y + a*Z, ('X', 'Z'): -c*Y - d*Z, ('Y', 'Z'): b*X}
         sage: TestSuite(L).run()
     """
     if isinstance(names, str):
@@ -167,7 +167,7 @@ def three_dimensional_by_rank(R, n, a=None, names=['X', 'Y', 'Z']):
 
     if n == 2:
         if a is None:
-            raise ValueError("The parameter 'a' must be specified")
+            raise ValueError("the parameter 'a' must be specified")
         X = names[0]
         Y = names[1]
         Z = names[2]
@@ -195,7 +195,7 @@ def three_dimensional_by_rank(R, n, a=None, names=['X', 'Y', 'Z']):
         L.rename("sl2 over {}".format(R))
         return L
 
-    raise ValueError("Invalid rank")
+    raise ValueError("invalid rank")
 
 
 def affine_transformations_line(R, names=['X', 'Y'], representation='bracket'):

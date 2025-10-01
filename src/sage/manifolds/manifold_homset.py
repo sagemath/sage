@@ -16,7 +16,7 @@ REFERENCES:
 - [Lee2011]_
 - [KN1963]_
 """
-#******************************************************************************
+# ******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2016 Travis Scrimshaw <tscrimsh@umn.edu>
 #
@@ -25,13 +25,13 @@ REFERENCES:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 from sage.categories.homset import Homset
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.manifolds.continuous_map import ContinuousMap
 from sage.misc.cachefunc import cached_method
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class TopologicalManifoldHomset(UniqueRepresentation, Homset):
@@ -173,12 +173,17 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
              embedded in the Euclidean plane E^2 to the Euclidean plane E^2
         """
         from sage.manifolds.manifold import TopologicalManifold
+
         if not isinstance(domain, TopologicalManifold):
-            raise TypeError("domain = {} is not an ".format(domain) +
-                            "instance of TopologicalManifold")
+            raise TypeError(
+                "domain = {} is not an ".format(domain)
+                + "instance of TopologicalManifold"
+            )
         if not isinstance(codomain, TopologicalManifold):
-            raise TypeError("codomain = {} is not an ".format(codomain) +
-                            "instance of TopologicalManifold")
+            raise TypeError(
+                "codomain = {} is not an ".format(codomain)
+                + "instance of TopologicalManifold"
+            )
         common_cat = domain.category()._meet_(codomain.category())
         Homset.__init__(self, domain, codomain, category=common_cat)
         if name is None:
@@ -187,7 +192,8 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
             self._name = name
         if latex_name is None:
             self._latex_name = r"\mathrm{{Hom}}\left({},{}\right)".format(
-                                    domain._latex_name, codomain._latex_name)
+                domain._latex_name, codomain._latex_name
+            )
         else:
             self._latex_name = latex_name
 
@@ -211,8 +217,14 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
 
     #### Parent methods ####
 
-    def _element_constructor_(self, coord_functions, name=None, latex_name=None,
-                              is_isomorphism=False, is_identity=False):
+    def _element_constructor_(
+        self,
+        coord_functions,
+        name=None,
+        latex_name=None,
+        is_isomorphism=False,
+        is_identity=False,
+    ):
         r"""
         Construct an element of the homset, i.e. a continuous map `M \to N`,
         where `M` is the domain of the homset and `N` its codomain.
@@ -266,10 +278,14 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
                (x, y) ↦ (x, y)
         """
         # Standard construction
-        return self.element_class(self, coord_functions=coord_functions,
-                                  name=name, latex_name=latex_name,
-                                  is_isomorphism=is_isomorphism,
-                                  is_identity=is_identity)
+        return self.element_class(
+            self,
+            coord_functions=coord_functions,
+            name=name,
+            latex_name=latex_name,
+            is_isomorphism=is_isomorphism,
+            is_identity=is_identity,
+        )
 
     def _an_element_(self):
         r"""
@@ -330,8 +346,9 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
             True
         """
         if isinstance(other, TopologicalManifoldHomset):
-            return (other.domain().has_coerce_map_from(self.domain())
-                    and self.codomain().has_coerce_map_from(other.codomain()))
+            return other.domain().has_coerce_map_from(
+                self.domain()
+            ) and self.codomain().has_coerce_map_from(other.codomain())
         return False
 
     #!# check

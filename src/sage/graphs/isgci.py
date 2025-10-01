@@ -500,7 +500,7 @@ class GraphClass(SageObject, CachedRepresentation):
             sage: graph_classes.Chordal == graph_classes.Tree
             Unknown
         """
-        return self >= other and other >= self
+        return self >= other >= self
 
     def __lt__(self, other):
         r"""
@@ -564,7 +564,7 @@ class GraphClass(SageObject, CachedRepresentation):
 
         return [smallgraphs[g] for g in excluded]
 
-    def __contains__(self, g):
+    def __contains__(self, g) -> bool:
         r"""
         Check if ``g`` belongs to the graph class represented by ``self``.
 
@@ -603,11 +603,7 @@ class GraphClass(SageObject, CachedRepresentation):
             raise NotImplementedError("No recognition algorithm is available "
                                       "for this class.")
 
-        for gg in excluded:
-            if g.subgraph_search(gg, induced=True):
-                return False
-
-        return True
+        return not any(g.subgraph_search(gg, induced=True) for gg in excluded)
 
     def description(self):
         r"""
@@ -852,13 +848,8 @@ class GraphClasses(UniqueRepresentation):
 
         This method downloads the ISGCI database from the website
         `GraphClasses.org <http://www.graphclasses.org/>`_. It then extracts the
-        zip file and parses its XML content.
-
-        Depending on the credentials of the user running Sage when this command
-        is run, one attempt is made at saving the result in Sage's directory so
-        that all users can benefit from it. If the credentials are not
-        sufficient, the XML file are saved instead in the user's directory (in
-        the SAGE_DB folder).
+        zip file and parses its XML content. The XML file is saved in the directory
+        controlled by the :class:`DatabaseGraphs` class (usually, ``$HOME/.sage/db``).
 
         EXAMPLES::
 

@@ -16,14 +16,13 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from sage.structure.richcmp import richcmp, op_EQ, op_NE
-from sage.misc.cachefunc import cached_method
-from sage.misc.latex import latex
-
+from sage.categories.homset import Hom
 from sage.categories.map import Map
 from sage.categories.morphism import Morphism
-from sage.categories.homset import Hom
+from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
 from sage.structure.element import AlgebraElement
+from sage.structure.richcmp import op_EQ, op_NE, richcmp
 
 
 class OreFunction(AlgebraElement):
@@ -930,7 +929,7 @@ class OreFunction_with_large_center(OreFunction):
             (x^6 + 4)^(-1) * (x^3 + 2)
 
         By default, the name of the central variable is usually ``z`` (see
-        :meth:`sage.rings.polynomial.skew_polynomial_ring.SkewPolynomiaRing_finite_order.center`
+        :meth:`sage.rings.polynomial.skew_polynomial_ring.SkewPolynomialRing_finite_order.center`
         for more details about this).
         However, the user can specify a different variable name if desired::
 

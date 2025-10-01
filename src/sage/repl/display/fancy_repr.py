@@ -120,7 +120,7 @@ class SomeIPythonRepr(ObjectReprABC):
         self._type_repr = type_repr
 
     def __call__(self, obj, p, cycle):
-        """
+        r"""
         Format object.
 
         INPUT:
@@ -142,7 +142,17 @@ class SomeIPythonRepr(ObjectReprABC):
             sage: pp = SomeIPythonRepr()
             sage: pp.format_string(set([1, 2, 3]))
             '{1, 2, 3}'
+
+        TESTS::
+
+            sage: pp.format_string(Sequence([[1]*20, [2]*20]))
+            '[[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],\n [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]]'
         """
+        if hasattr(type(obj), '_repr_pretty_'):
+            # standard method for classes to extend pretty library
+            # see https://ipython.readthedocs.io/en/stable/api/generated/IPython.lib.pretty.html#extending
+            obj._repr_pretty_(p, cycle)
+            return True
         try:
             pretty_repr = self._type_repr[type(obj)]
         except KeyError:
@@ -218,7 +228,7 @@ class PlainPythonRepr(ObjectReprABC):
 
     def __call__(self, obj, p, cycle):
         r"""
-        Format matrix.
+        Format object.
 
         INPUT:
 

@@ -572,12 +572,12 @@ class PrincipalClusterAlgebraElement(ClusterAlgebraElement):
                 components[g_vect] += self.parent().retract(x.monomial_coefficient(m) * m)
             else:
                 components[g_vect] = self.parent().retract(x.monomial_coefficient(m) * m)
-        for g_vect in components:
-            components[g_vect]._is_homogeneous = True
-            components[g_vect]._g_vector = g_vect
+        for g_vect, compo in components.items():
+            compo._is_homogeneous = True
+            compo._g_vector = g_vect
         self._is_homogeneous = (len(components) == 1)
         if self._is_homogeneous:
-            self._g_vector = list(components.keys())[0]
+            self._g_vector = next(iter(components))
         return components
 
     def theta_basis_decomposition(self):
@@ -1763,7 +1763,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
             This method implements the piecewise-linear map `\\nu_c` introduced in Section 9.1 of [ReSt2020]_.
 
-        .. WARNING:
+        .. WARNING::
 
             This implementation works only when the initial exchange matrix is acyclic.
 
@@ -1789,7 +1789,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
             This method implements the inverse of the piecewise-linear map `\\nu_c` introduced in Section 9.1 of [ReSt2020]_.
 
-        .. WARNING:
+        .. WARNING::
 
             This implementation works only when the initial exchange matrix is acyclic.
 
@@ -1988,8 +1988,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
                 msg += "you can compute it by mutating from the initial seed along the sequence "
                 msg += str(self._path_dict[g_vector])
                 raise KeyError(msg)
-            else:
-                raise KeyError("the g-vector %s has not been found yet" % str(g_vector))
+            raise KeyError("the g-vector {} has not been found yet".format(g_vector))
 
     def find_g_vector(self, g_vector, depth=infinity):
         r"""
@@ -2094,7 +2093,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         return self(x)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the list of initial cluster variables and coefficients of ``self``.
 

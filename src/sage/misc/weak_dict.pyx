@@ -404,7 +404,7 @@ cdef class WeakValueDictionary(dict):
             True
         """
         out = WeakValueDictionary()
-        for k,v in self.items():
+        for k, v in self.items():
             out[deepcopy(k, memo)] = v
         return out
 
@@ -624,7 +624,7 @@ cdef class WeakValueDictionary(dict):
             ...
             KeyError: 'popitem(): weak value dictionary is empty'
         """
-        for k,v in self.items():
+        for k, v in self.items():
             del self[k]
             return k, v
         raise KeyError('popitem(): weak value dictionary is empty')

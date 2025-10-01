@@ -1,8 +1,10 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'automatic_semigroup.py',
   'free_abelian_monoid.py',
   'free_abelian_monoid_element.pxd',
+  'free_abelian_monoid_element.pyx',
   'free_monoid.py',
   'free_monoid_element.py',
   'hecke_monoid.py',

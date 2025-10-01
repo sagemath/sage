@@ -19,8 +19,8 @@ cdef extern from "flint_wrap.h":
     void * flint_realloc(void * ptr, size_t size) noexcept
     void * flint_calloc(size_t num, size_t size) noexcept
     void flint_free(void * ptr) noexcept
-    flint_rand_s * flint_rand_alloc() noexcept
-    void flint_rand_free(flint_rand_s * state) noexcept
+    flint_rand_struct * flint_rand_alloc() noexcept
+    void flint_rand_free(flint_rand_struct * state) noexcept
     void flint_randinit(flint_rand_t state) noexcept
     void flint_randclear(flint_rand_t state) noexcept
     void flint_set_num_threads(int num_threads) noexcept

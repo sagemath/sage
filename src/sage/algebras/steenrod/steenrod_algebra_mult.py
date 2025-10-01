@@ -194,10 +194,10 @@ squares or `p`-th power operations and Bocksteins into a dictionary
 representing a sum of admissible monomials.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008-2010 John H. Palmieri <palmieri@math.washington.edu>
 #  Distributed under the terms of the GNU General Public License (GPL)
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_function
 

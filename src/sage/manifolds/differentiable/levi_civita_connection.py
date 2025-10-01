@@ -29,10 +29,10 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.parallel.decorate import parallel
-from sage.parallel.parallelism import Parallelism
 from sage.manifolds.differentiable.affine_connection import AffineConnection
 from sage.manifolds.differentiable.vectorframe import CoordFrame
+from sage.parallel.decorate import parallel
+from sage.parallel.parallelism import Parallelism
 
 
 class LeviCivitaConnection(AffineConnection):
@@ -364,9 +364,9 @@ class LeviCivitaConnection(AffineConnection):
             sage: nab._new_coef(e)
             3-indices components w.r.t. Vector frame (M, (e_0,e_1))
         """
-        from sage.tensor.modules.comp import Components, CompWithSym
         from sage.manifolds.differentiable.scalarfield import DiffScalarField
         from sage.manifolds.differentiable.vectorframe import CoordFrame
+        from sage.tensor.modules.comp import Components, CompWithSym
         if isinstance(frame, CoordFrame):
             # the Christoffel symbols are symmetric:
             return CompWithSym(frame._domain.scalar_field_algebra(), frame, 3,
@@ -729,8 +729,8 @@ class LeviCivitaConnection(AffineConnection):
                                         if not use_Bianchi or (j <= k or j <= l):
                                             res[i,j,k,l] = frame[k](gam[[i,j,l]]) - \
                                                            frame[l](gam[[i,j,k]]) + \
-                                                           gam_gam[[i,k,j,l]] -  \
-                                                           gam_gam[[i,l,j,k]] -  \
+                                                           gam_gam[[i,k,j,l]] - \
+                                                           gam_gam[[i,l,j,k]] - \
                                                            gam_sc[[i,j,k,l]]
                             if use_Bianchi:
                                 # first Bianchi identity

@@ -36,6 +36,23 @@ that (s)he can remove the flag::
     UserWarning: Option ``at_startup=True`` for lazy import ZZ not needed anymore
     Integer Ring
 
+.. WARNING::
+
+    After the first usage, the imported object is directly injected into the
+    namespace; however, before that, the :class:`LazyImport` object
+    is not exactly equivalent to the actual imported object. For example::
+
+        sage: from sage.misc.lazy_import import LazyImport
+        sage: my_qqbar = LazyImport('sage.rings.qqbar', 'QQbar')
+        sage: my_qqbar(5) == QQbar(5)  # good
+        True
+        sage: isinstance(QQbar, Parent)
+        True
+        sage: isinstance(my_qqbar, Parent)  # fails!
+        False
+
+    To avoid this issue, you may execute the import inside the function instead.
+
 .. SEEALSO:: :func:`lazy_import`, :class:`LazyImport`
 
 AUTHOR:
@@ -183,15 +200,6 @@ cdef class LazyImport():
         ...
         TypeError: no conversion of this rational to integer
     """
-    cdef readonly _object  # The actual object if imported, None otherwise
-    cdef _module
-    cdef _name
-    cdef _as_name
-    cdef _namespace
-    cdef bint _at_startup
-    cdef _deprecation
-    cdef _feature
-
     def __init__(self, module, name, as_name=None, at_startup=False, namespace=None,
                  deprecation=None, feature=None):
         """
@@ -484,17 +492,17 @@ cdef class LazyImport():
 
         Here we show how to take a function in a module, and lazy
         import it as a method of a class. For the sake of this
-        example, we add manually a function in :mod:`sage.all__sagemath_objects`::
+        example, we add manually a function in :mod:`sage.all`::
 
             sage: def my_method(self): return self
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.my_method = my_method
+            sage: import sage.all
+            sage: sage.all.my_method = my_method
 
         Now we lazy import it as a method of a new class ``Foo``::
 
             sage: from sage.misc.lazy_import import LazyImport
             sage: class Foo():
-            ....:     my_method = LazyImport('sage.all__sagemath_objects', 'my_method')
+            ....:     my_method = LazyImport('sage.all', 'my_method')
 
         Now we can use it as a usual method::
 
@@ -571,13 +579,13 @@ cdef class LazyImport():
         TESTS::
 
             sage: from sage.misc.lazy_import import LazyImport
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = list(range(10))
-            sage: lazy_foo = LazyImport('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = list(range(10))
+            sage: lazy_foo = LazyImport('sage.all', 'foo')
             sage: lazy_foo[1] = 100
             sage: print(lazy_foo)
             [0, 100, 2, 3, 4, 5, 6, 7, 8, 9]
-            sage: sage.all__sagemath_objects.foo
+            sage: sage.all.foo
             [0, 100, 2, 3, 4, 5, 6, 7, 8, 9]
         """
         self.get_object()[key] = value
@@ -587,13 +595,13 @@ cdef class LazyImport():
         TESTS::
 
             sage: from sage.misc.lazy_import import LazyImport
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = list(range(10))
-            sage: lazy_foo = LazyImport('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = list(range(10))
+            sage: lazy_foo = LazyImport('sage.all', 'foo')
             sage: del lazy_foo[1]
             sage: print(lazy_foo)
             [0, 2, 3, 4, 5, 6, 7, 8, 9]
-            sage: print(sage.all__sagemath_objects.foo)
+            sage: print(sage.all.foo)
             [0, 2, 3, 4, 5, 6, 7, 8, 9]
         """
         del self.get_object()[key]
@@ -628,9 +636,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: foo + 1
             11
         """
@@ -640,9 +648,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: foo - 1
             9
         """
@@ -652,9 +660,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: foo * 2
             20
         """
@@ -666,9 +674,9 @@ cdef class LazyImport():
 
             sage: # needs sympy
             sage: from sympy import Matrix
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = Matrix([[1,1], [0,1]])
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = Matrix([[1,1], [0,1]])
+            sage: lazy_import('sage.all', 'foo')
             sage: foo.__matmul__(foo)
             Matrix([
             [1, 2],
@@ -680,9 +688,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: foo  // 3
             3
         """
@@ -692,9 +700,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: operator.truediv(foo, 3)
             10/3
         """
@@ -704,9 +712,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: foo ** 2
             100
         """
@@ -716,9 +724,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: foo % 7
             3
         """
@@ -728,9 +736,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: foo << 3
             80
         """
@@ -740,9 +748,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: foo >> 2
             2
         """
@@ -752,9 +760,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: foo & 7
             2
         """
@@ -764,9 +772,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: foo | 7
             15
         """
@@ -776,9 +784,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: foo ^^ 7
             13
         """
@@ -788,9 +796,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: -foo
             -10
         """
@@ -800,9 +808,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: +foo
             10
         """
@@ -812,9 +820,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = -1000
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = -1000
+            sage: lazy_import('sage.all', 'foo')
             sage: abs(foo)
             1000
         """
@@ -824,9 +832,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: ~foo
             1/10
         """
@@ -836,9 +844,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: complex(foo)
             (10+0j)
         """
@@ -848,9 +856,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: int(foo)
             10
         """
@@ -860,9 +868,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: float(foo)
             10.0
         """
@@ -872,9 +880,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: oct(foo)
             '0o12'
         """
@@ -884,9 +892,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: hex(foo)
             '0xa'
         """
@@ -896,9 +904,9 @@ cdef class LazyImport():
         """
         TESTS::
 
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = 10
-            sage: lazy_import('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = 10
+            sage: lazy_import('sage.all', 'foo')
             sage: list(range(100))[foo]
             10
         """
@@ -911,13 +919,13 @@ cdef class LazyImport():
         TESTS::
 
             sage: from sage.misc.lazy_import import LazyImport
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = [[1,2], 3]
-            sage: lazy_foo = LazyImport('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = [[1,2], 3]
+            sage: lazy_foo = LazyImport('sage.all', 'foo')
             sage: a = copy(lazy_foo)
-            sage: a is sage.all__sagemath_objects.foo        # copy
+            sage: a is sage.all.foo        # copy
             False
-            sage: a[0] is sage.all__sagemath_objects.foo[0]  # copy but not deep
+            sage: a[0] is sage.all.foo[0]  # copy but not deep
             True
             sage: type(lazy_foo) is LazyImport
             True
@@ -932,13 +940,13 @@ cdef class LazyImport():
         TESTS::
 
             sage: from sage.misc.lazy_import import LazyImport
-            sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = [[1,2], 3]
-            sage: lazy_foo = LazyImport('sage.all__sagemath_objects', 'foo')
+            sage: import sage.all
+            sage: sage.all.foo = [[1,2], 3]
+            sage: lazy_foo = LazyImport('sage.all', 'foo')
             sage: a = deepcopy(lazy_foo)
-            sage: a is sage.all__sagemath_objects.foo        # copy
+            sage: a is sage.all.foo        # copy
             False
-            sage: a[0] is sage.all__sagemath_objects.foo[0]  # deep copy
+            sage: a[0] is sage.all.foo[0]  # deep copy
             False
             sage: type(lazy_foo) is LazyImport
             True
@@ -990,7 +998,8 @@ cdef class LazyImport():
 
 
 def lazy_import(module, names, as_=None, *,
-    at_startup=False, namespace=None, deprecation=None, feature=None):
+                at_startup=False, namespace=None,
+                deprecation=None, feature=None):
     """
     Create a lazy import object and inject it into the caller's global
     namespace. For the purposes of introspection and calling, this is

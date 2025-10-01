@@ -4,12 +4,14 @@ import os
 import platform
 from pathlib import Path
 
+
 def _environ_prepend(var, value, separator=':'):
     if value:
         if var in os.environ:
             os.environ[var] = value + separator + os.environ[var]
         else:
             os.environ[var] = value
+
 
 def setenv():
     from sage.env import SAGE_LOCAL, SAGE_VENV, SAGE_ARCHFLAGS, SAGE_PKG_CONFIG_PATH

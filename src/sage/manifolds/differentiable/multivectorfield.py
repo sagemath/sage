@@ -36,9 +36,9 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.tensor.modules.alternating_contr_tensor import AlternatingContrTensor
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
+from sage.tensor.modules.alternating_contr_tensor import AlternatingContrTensor
 
 
 class MultivectorField(TensorField):
@@ -300,8 +300,8 @@ class MultivectorField(TensorField):
             sage: c.display(e_uv)
             a∧b = (-v^2 + u) ∂/∂u∧∂/∂v
         """
-        from sage.typeset.unicode_characters import unicode_wedge
         from sage.tensor.modules.format_utilities import is_atomic
+        from sage.typeset.unicode_characters import unicode_wedge
         if self._domain.is_subset(other._domain):
             if not self._ambient_domain.is_subset(other._ambient_domain):
                 raise ValueError("incompatible ambient domains for exterior " +
@@ -493,18 +493,20 @@ class MultivectorField(TensorField):
         vmodule = dom_resu.vector_field_module(dest_map=dest_map_resu)
         resu_degree = form._tensor_rank - self._tensor_rank
         resu = vmodule.alternating_form(resu_degree,
-                                    name=resu_name, latex_name=resu_latex_name)
+                                        name=resu_name,
+                                        latex_name=resu_latex_name)
         for dom in self_r._restrictions:
             if dom in form_r._restrictions:
                 resu._restrictions[dom] = \
                     self_r._restrictions[dom].interior_product(
-                                                     form_r._restrictions[dom])
+                        form_r._restrictions[dom])
         if resu_degree == 0:
-            if not resu._express: # only the restrictions to subdomains have
-                                  # been initialized
+            if not resu._express:
+                # only the restrictions to subdomains have
+                # been initialized
                 for chart in dom_resu.top_charts():
                     resu._express[chart] = \
-                            resu.restrict(chart.domain()).coord_function(chart)
+                        resu.restrict(chart.domain()).coord_function(chart)
         return resu
 
     def bracket(self, other):
@@ -1401,10 +1403,10 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             True
         """
         from itertools import combinations
+
         from sage.combinat.permutation import Permutation
-        from sage.tensor.modules.comp import (Components, CompWithSym,
-                                              CompFullyAntiSym)
         from sage.manifolds.differentiable.scalarfield import DiffScalarField
+        from sage.tensor.modules.comp import CompFullyAntiSym, Components, CompWithSym
         pp = self._tensor_rank
         mp1 = (-1)**(pp+1)
         if isinstance(other, DiffScalarField):

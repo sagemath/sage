@@ -57,6 +57,7 @@ from sage.rings.integer_ring import ZZ
 
 from sage.env import SAGE_ECMBIN
 
+
 class ECM(SageObject):
 
     def __init__(self, B1=10, B2=None, **kwds):
@@ -619,7 +620,7 @@ class ECM(SageObject):
             True
         """
         n = self._validate(n)
-        factors = [n]                 # factors that need to be factorized futher
+        factors = [n]       # factors that need to be factorized further
         probable_prime_factors = []   # output prime factors
         while factors:
             n = factors.pop()

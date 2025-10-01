@@ -55,7 +55,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
     TESTS::
 
         sage: from sage.schemes.product_projective.subscheme \
-              import AlgebraicScheme_subscheme_product_projective
+        ....: import AlgebraicScheme_subscheme_product_projective
         sage: AlgebraicScheme_subscheme_product_projective(P, [u*x^2 - v*y*x])
         Closed subscheme of Product of projective spaces P^1 x P^1
          over Rational Field defined by:
@@ -242,7 +242,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
                 self.__dimension = phi.codomain().defining_ideal().dimension() - 1
             return self.__dimension
 
-    def is_smooth(self, point=None):
+    def is_smooth(self, point=None) -> bool:
         r"""
         Test whether the algebraic subscheme is smooth.
 

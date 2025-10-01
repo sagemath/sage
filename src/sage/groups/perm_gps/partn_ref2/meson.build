@@ -1,6 +1,8 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'refinement_generic.pxd',
+  'refinement_generic.pyx',
   subdir: 'sage/groups/perm_gps/partn_ref2',
 )
 

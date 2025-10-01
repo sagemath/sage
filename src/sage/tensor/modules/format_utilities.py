@@ -10,15 +10,15 @@ AUTHORS:
 - Michael Jung (2020): extended usage of :func:`is_atomic()`
 """
 
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -247,7 +247,7 @@ def format_unop_txt(operator, name):
     if name is None:
         return None
     if not is_atomic(name) or not is_atomic_wedge_txt(name):
-    #!# is_atomic_otimes_txt should be added
+        # ! is_atomic_otimes_txt should be added
         name = '(' + name + ')'
     return operator + name
 
@@ -270,7 +270,7 @@ def format_unop_latex(operator, name):
     if name is None:
         return None
     if not is_atomic(name) or not is_atomic_wedge_latex(name):
-    #!# is_atomic_otimes_latex should be added
+        # ! is_atomic_otimes_latex should be added
         name = r'\left(' + name + r'\right)'
     return operator + name
 

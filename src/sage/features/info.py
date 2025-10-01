@@ -5,6 +5,7 @@ Feature for testing the presence of ``info``, from GNU Info
 
 from . import Executable
 
+
 class Info(Executable):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :ref:`info <spkg_info>`.
@@ -25,6 +26,7 @@ class Info(Executable):
         """
         Executable.__init__(self, 'info', executable='info',
                             spkg='info', type='standard')
+
 
 def all_features():
     return [Info()]

@@ -255,10 +255,10 @@ def triangular_factorization(B, n=-1):
         sage: p3 = (x-2)^2*(y-1)^3
         sage: I = R.ideal(p1,p2,p3)
         sage: triangular_factorization(I.groebner_basis())                              # needs sage.libs.singular
-        [[x^2 - 4*x + 4, y, z],
-         [x^5 - 3*x^4 + 3*x^3 - x^2, y - 1, z],
-         [x^2 - 4*x + 4, y, z - 1],
-         [x^5 - 3*x^4 + 3*x^3 - x^2, y - 1, z - 1]]
+        [[x^2 - 4*x + 4, y, z - 1],
+         [x^5 - 3*x^4 + 3*x^3 - x^2, y - 1, z - 1],
+         [x^2 - 4*x + 4, y, z],
+         [x^5 - 3*x^4 + 3*x^3 - x^2, y - 1, z]]
     """
     # type checking in a probably vain attempt to avoid stupid errors
     if isinstance(B, (tuple, list)):

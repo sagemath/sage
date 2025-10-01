@@ -47,7 +47,6 @@ from sage.categories.dedekind_domains import DedekindDomains
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
-from sage.categories.complete_discrete_valuation import CompleteDiscreteValuationRings
 
 from sage.categories.fields import Fields
 from sage.categories.quotient_fields import QuotientFields

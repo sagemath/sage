@@ -28,7 +28,7 @@ from .base import Polyhedron_base
 
 def _number_field_elements_from_algebraics_list_of_lists_of_lists(listss, **kwds):
     r"""
-    Like `number_field_elements_from_algebraics`, but for a list of lists of lists.
+    Like ``number_field_elements_from_algebraics``, but for a list of lists of lists.
 
     EXAMPLES::
 

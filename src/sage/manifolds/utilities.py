@@ -27,14 +27,15 @@ AUTHORS:
 # ****************************************************************************
 
 from operator import pow as _pow
+
+from sage.functions.other import abs_symbolic
+from sage.functions.trig import cos, sin
+from sage.misc.functional import sqrt
+from sage.rings.rational import Rational
+from sage.symbolic.constants import pi
 from sage.symbolic.expression import Expression
 from sage.symbolic.expression_conversions import ExpressionTreeWalker
 from sage.symbolic.ring import SR
-from sage.symbolic.constants import pi
-from sage.functions.other import abs_symbolic
-from sage.misc.functional import sqrt
-from sage.functions.trig import cos, sin
-from sage.rings.rational import Rational
 
 
 class SimplifySqrtReal(ExpressionTreeWalker):
@@ -971,12 +972,10 @@ class ExpressionNice(Expression):
                     strv[i] = "(" + sv + ")"
 
             # dictionary to group multiple occurrences of differentiation: d/dxdx -> d/dx^2 etc.
-            occ = dict((i, strv[i] + "^" + str(diffargs.count(i))
-                       if (diffargs.count(i) > 1) else strv[i])
-                       for i in diffargs)
+            occ = {i: strv[i] + "^" + str(D) if (D := diffargs.count(i)) > 1
+                   else strv[i] for i in diffargs}
 
-            res = "d" + str(numargs) + "(" + str(funcname) + ")/d" + "d".join(
-                occ.values())
+            res = f"d{numargs}({funcname})/d" + "d".join(occ.values())
 
             # str representation of the operator
             s = self._parent._repr_element_(m[0])
@@ -991,6 +990,7 @@ class ExpressionNice(Expression):
             d = d.replace(o, res)
 
         import re
+
         from sage.manifolds.manifold import TopologicalManifold
         if TopologicalManifold.options.omit_function_arguments:
             list_f = []
@@ -1144,6 +1144,7 @@ def _list_derivatives(ex, list_d, exponent=0):
     operands = ex.operands()
 
     import operator
+
     from sage.misc.latex import latex, latex_variable_name
     from sage.symbolic.operators import FDerivativeOperator
 

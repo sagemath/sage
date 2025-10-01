@@ -67,7 +67,6 @@ def ClassFunction(group, values):
         sage: chi = ClassFunction(G, values); chi
         Character of Cyclic group of order 4 as a permutation group
     """
-    from sage.misc.superseded import deprecation
     try:
         return group.class_function(values)
     except AttributeError:
@@ -131,9 +130,10 @@ class ClassFunction_gap(SageObject):
         e = self._gap_classfunction.Conductor()
         self._base_ring = CyclotomicField(e)
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return a string showing how to declare / initialize ``self`` in Gap.
+
         Stored in the \code{self._gap_string} attribute.
 
         EXAMPLES::

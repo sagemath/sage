@@ -1313,7 +1313,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
         except TypeError:
             return False
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a set of generators for this field.
 
@@ -1811,7 +1811,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
         from sage.rings.rational_field import QQ
         return (AlgebraicClosureFunctor(), QQ)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a set of generators for this field.
 
@@ -2711,7 +2711,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
         -1
         sage: nfI^2
         -1
-        sage: sum = nfrt2 + nfrt3 + nfI + nfz3; sum
+        sage: sum = nfrt2 + nfrt3 + nfI + nfz3; sum  # random
         a^5 + a^4 - a^3 + 2*a^2 - a - 1
         sage: hom(sum)
         2.646264369941973? + 1.866025403784439?*I
@@ -2777,11 +2777,12 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
             To:   Algebraic Real Field
             Defn: a |--> 1.732050807568878?)
         sage: number_field_elements_from_algebraics((rt2,qqI))                          # needs sage.symbolic
-        (Number Field in a with defining polynomial y^4 + 1, [-a^3 + a, a^2],
+        (Number Field in a with defining polynomial y^4 + 1,
+         [a^3 - a, a^2],
          Ring morphism:
-            From: Number Field in a with defining polynomial y^4 + 1
-            To:   Algebraic Field
-            Defn: a |--> 0.7071067811865475? + 0.7071067811865475?*I)
+           From: Number Field in a with defining polynomial y^4 + 1
+           To:   Algebraic Field
+           Defn: a |--> -0.7071067811865475? - 0.7071067811865475?*I)
 
     Note that for the first example, where \sage does not realize that
     the number is real, we get a homomorphism to ``QQbar``::
@@ -3591,7 +3592,7 @@ class ANDescr(SageObject):
     ``ANDescr`` and all of its subclasses are for internal use, and should not
     be used directly.
     """
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Check whether this descriptor represents a value with the same
         algebraic degree as the number field associated with the descriptor.
@@ -4268,7 +4269,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         self.exactify()
         return bool(self)
 
-    def is_square(self):
+    def is_square(self) -> bool:
         """
         Return whether or not this number is square.
 
@@ -4660,8 +4661,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             Number Field in a with defining polynomial y^4 - 20*y^2 + 81
              with a in -3.789313782671036?
             sage: (QQbar(7)^(3/5))._exact_field()
-            Number Field in a with defining polynomial
-             y^5 - 2*y^4 - 18*y^3 + 38*y^2 + 82*y - 181 with a in 2.554256611698490?
+            Number Field in a with defining polynomial y^5 - 7 with a in 1.475773161594552?
         """
         sd = self._descr
         if isinstance(sd, (ANRational, ANExtensionElement)):
@@ -4681,7 +4681,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             sage: (sqrt(QQbar(2)) + sqrt(QQbar(19)))._exact_value()
             -1/9*a^3 + a^2 + 11/9*a - 10 where a^4 - 20*a^2 + 81 = 0 and a in -3.789313782671036?
             sage: (QQbar(7)^(3/5))._exact_value()
-            2*a^4 + 2*a^3 - 34*a^2 - 17*a + 150 where a^5 - 2*a^4 - 18*a^3 + 38*a^2 + 82*a - 181 = 0 and a in 2.554256611698490?
+            a^3 where a^5 - 7 = 0 and a in 1.475773161594552?
         """
         sd = self._descr
         if isinstance(sd, (ANRational, ANExtensionElement)):
@@ -6735,7 +6735,7 @@ class ANRational(ANDescr):
         """
         return self
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         """
         Check whether this descriptor represents a value with the same
         algebraic degree as the number field associated with the descriptor.
@@ -7083,7 +7083,7 @@ class AlgebraicPolynomialTracker(SageObject):
         return roots
 
     def exactify(self):
-        """
+        r"""
         Compute a common field that holds all of the algebraic coefficients
         of this polynomial, then factor the polynomial over that field.
         Store the factors for later use (ignoring multiplicity).
@@ -7098,11 +7098,25 @@ class AlgebraicPolynomialTracker(SageObject):
             sage: cp.exactify()
             sage: cp._exact
             True
+
+        TESTS:
+
+        Check that interrupting ``exactify()`` does not lead to incoherent state::
+
+            sage: x = polygen(AA)
+            sage: p = AA(2)^(1/100) * x + AA(3)^(1/100)
+            sage: cp = AA.common_polynomial(p)
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: from warnings import catch_warnings, filterwarnings
+            sage: with ensure_interruptible_after(0.5), catch_warnings():
+            ....:     filterwarnings("ignore", r"cypari2 leaked \d+ bytes on the PARI stack")
+            ....:     cp.generator()
+            sage: with ensure_interruptible_after(0.5), catch_warnings():
+            ....:     filterwarnings("ignore", r"cypari2 leaked \d+ bytes on the PARI stack")
+            ....:     cp.generator()
         """
         if self._exact:
             return
-
-        self._exact = True
 
         if self._poly.base_ring() is QQ:
             self._factors = [fac_exp[0] for fac_exp in self._poly.factor()]
@@ -7127,6 +7141,8 @@ class AlgebraicPolynomialTracker(SageObject):
                 fp = fld_poly(coeffs)
 
                 self._factors = [fac_exp[0] for fac_exp in fp.factor()]
+
+        self._exact = True
 
     def factors(self):
         r"""
@@ -7909,8 +7925,8 @@ class ANExtensionElement(ANDescr):
             sage: sage_input(v, verify=True)
             # Verified
             R.<y> = QQ[]
-            v = QQbar.polynomial_root(AA.common_polynomial(y^8 - y^7 + y^5 - y^4 + y^3 - y + 1), CIF(RIF(RR(0.91354545764260087), RR(0.91354545764260098)), RIF(RR(0.40673664307580015), RR(0.40673664307580021))))
-            v^5 + v^3
+            v = QQbar.polynomial_root(AA.common_polynomial(y^8 - y^7 + y^5 - y^4 + y^3 - y + 1), CIF(RIF(RR(0.66913060635885813), RR(0.66913060635885824)), RIF(-RR(0.74314482547739424), -RR(0.74314482547739413))))
+            v^6 + v^5
             sage: v = QQbar(sqrt(AA(2)))
             sage: v.exactify()
             sage: sage_input(v, verify=True)
@@ -7981,7 +7997,7 @@ class ANExtensionElement(ANDescr):
         """
         return not self._exactly_real
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Check whether this descriptor represents a value with the same
         algebraic degree as the number field associated with the descriptor.

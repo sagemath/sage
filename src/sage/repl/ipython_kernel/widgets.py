@@ -20,7 +20,7 @@ We need to setup a proper test environment for widgets::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 
@@ -119,7 +119,7 @@ class TransformWidget:
             <... 'dict'>
         """
         self.__transform = kwds.pop("transform", None)
-        return super().__init__(*args, **kwds)
+        super().__init__(*args, **kwds)
 
     def get_value(self):
         """

@@ -1321,7 +1321,7 @@ class TopologicalManifold(ManifoldSubset):
             sage: M.default_chart()
             Chart (M, (u, v))
         """
-        from .chart import Chart
+        from sage.manifolds.chart import Chart
         if not isinstance(chart, Chart):
             raise TypeError("{} is not a chart".format(chart))
         if chart not in self._atlas:
@@ -1692,7 +1692,7 @@ class TopologicalManifold(ManifoldSubset):
         r"""
         Get the preferred orientation of ``self`` if available.
 
-        An *orientation* of an `n`-dimensional topologial manifold is an
+        An *orientation* of an `n`-dimensional topological manifold is an
         atlas of charts whose transition maps are orientation preserving. A
         homeomorphism `f \colon U \to V` for open subsets `U, V \subset \RR^n`
         is called *orientation preserving* if for each `x \in U` the
@@ -1776,7 +1776,7 @@ class TopologicalManifold(ManifoldSubset):
                             break
         return list(self._orientation)
 
-    def has_orientation(self):
+    def has_orientation(self) -> bool:
         r"""
         Check whether ``self`` admits an obvious or by user set orientation.
 
@@ -2950,14 +2950,20 @@ def Manifold(
         sage: isinstance(M, sage.misc.fast_methods.WithEqualityById)
         True
     """
-    from sage.rings.infinity import infinity
+    from sage.manifolds.differentiable.degenerate import DegenerateManifold
+    from sage.manifolds.differentiable.degenerate_submanifold import (
+        DegenerateSubmanifold,
+    )
+    from sage.manifolds.differentiable.differentiable_submanifold import (
+        DifferentiableSubmanifold,
+    )
     from sage.manifolds.differentiable.manifold import DifferentiableManifold
     from sage.manifolds.differentiable.pseudo_riemannian import PseudoRiemannianManifold
-    from sage.manifolds.differentiable.degenerate import DegenerateManifold
+    from sage.manifolds.differentiable.pseudo_riemannian_submanifold import (
+        PseudoRiemannianSubmanifold,
+    )
     from sage.manifolds.topological_submanifold import TopologicalSubmanifold
-    from sage.manifolds.differentiable.differentiable_submanifold import DifferentiableSubmanifold
-    from sage.manifolds.differentiable.pseudo_riemannian_submanifold import PseudoRiemannianSubmanifold
-    from sage.manifolds.differentiable.degenerate_submanifold import DegenerateSubmanifold
+    from sage.rings.infinity import infinity
 
     global _manifold_id
 
@@ -3046,13 +3052,13 @@ def Manifold(
             ambient = extra_kwds['ambient']
             if structure == 'degenerate_metric':
                 return DegenerateSubmanifold(dim, name, ambient=ambient,
-                                               metric_name=metric_name,
-                                               signature=signature,
-                                               diff_degree=diff_degree,
-                                               latex_name=latex_name,
-                                               metric_latex_name=metric_latex_name,
-                                               start_index=start_index,
-                                               unique_tag=unique_tag())
+                                             metric_name=metric_name,
+                                             signature=signature,
+                                             diff_degree=diff_degree,
+                                             latex_name=latex_name,
+                                             metric_latex_name=metric_latex_name,
+                                             start_index=start_index,
+                                             unique_tag=unique_tag())
             return PseudoRiemannianSubmanifold(dim, name, ambient=ambient,
                                                metric_name=metric_name,
                                                signature=signature,
@@ -3062,13 +3068,13 @@ def Manifold(
                                                start_index=start_index,
                                                unique_tag=unique_tag())
         if structure == 'degenerate_metric':
-                return DegenerateManifold(dim, name, metric_name=metric_name,
-                                               signature=signature,
-                                               diff_degree=diff_degree,
-                                               latex_name=latex_name,
-                                               metric_latex_name=metric_latex_name,
-                                               start_index=start_index,
-                                               unique_tag=unique_tag())
+            return DegenerateManifold(dim, name, metric_name=metric_name,
+                                      signature=signature,
+                                      diff_degree=diff_degree,
+                                      latex_name=latex_name,
+                                      metric_latex_name=metric_latex_name,
+                                      start_index=start_index,
+                                      unique_tag=unique_tag())
         return PseudoRiemannianManifold(dim, name, metric_name=metric_name,
                                         signature=signature,
                                         diff_degree=diff_degree,
@@ -3076,7 +3082,7 @@ def Manifold(
                                         metric_latex_name=metric_latex_name,
                                         start_index=start_index,
                                         unique_tag=unique_tag())
-    raise NotImplementedError("manifolds of type {} are ".format(structure) +
+    raise NotImplementedError(f"manifolds of type {structure} are " +
                               "not implemented")
 
 

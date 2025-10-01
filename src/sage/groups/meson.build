@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'artin.py',
   'braid.py',
@@ -15,6 +16,7 @@ py.install_sources(
   'galois_group_perm.py',
   'generic.py',
   'group.pxd',
+  'group.pyx',
   'group_exp.py',
   'group_semidirect_product.py',
   'groups_catalog.py',
@@ -24,7 +26,7 @@ py.install_sources(
   'libgap_mixin.py',
   'libgap_morphism.py',
   'libgap_wrapper.pxd',
-  'old.pxd',
+  'libgap_wrapper.pyx',
   'pari_group.py',
   'raag.py',
   subdir: 'sage/groups',
@@ -33,17 +35,20 @@ py.install_sources(
 extension_data = {
   'group' : files('group.pyx'),
   'libgap_wrapper' : files('libgap_wrapper.pyx'),
-  'old' : files('old.pyx'),
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, gmp]
+  if name == 'libgap_wrapper'
+    deps += [gap]
+  endif
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/groups',
     install: true,
     include_directories: [inc_cpython],
-    dependencies: [py_dep, gmp, gap],
+    dependencies: deps,
   )
 endforeach
 

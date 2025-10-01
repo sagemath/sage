@@ -130,7 +130,7 @@ class AffineWeylGroups(Category_singleton):
                     if (length < k and i == u1.first_descent(side='left') and
                             u1.is_affine_grassmannian()):
                         yield (u1, length + 1)
-                return
+
             return RecursivelyEnumeratedSet_forest(((self.one(), 0),), succ, algorithm='breadth',
                                                    category=FiniteEnumeratedSets(),
                                                    post_process=select_length)

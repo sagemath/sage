@@ -83,7 +83,7 @@ cdef class dfs_manager:
     """
     Data structure to manage depth-first search.
 
-    Such a structure is created and managed by an instance of `WeilPolynomials_iter`.
+    Such a structure is created and managed by an instance of ``WeilPolynomials_iter``.
     There is generally no need for a user to manipulate it directly.
     """
     cdef int d
@@ -156,8 +156,8 @@ cdef class dfs_manager:
         """
         Count nodes.
 
-        This method should not be called directly. Instead, use the `node_count` method
-        of an instance of `WeilPolynomials` or `WeilPolynomials_iter`.
+        This method should not be called directly. Instead, use the ``node_count`` method
+        of an instance of ``WeilPolynomials`` or ``WeilPolynomials_iter``.
 
         TESTS::
 
@@ -179,7 +179,7 @@ cdef class dfs_manager:
         Advance the tree exhaustion.
 
         This method should not be called directly. Instead, use the iterator
-        `WeilPolynomials_iter` or the iterable `WeilPolynomials`.
+        ``WeilPolynomials_iter`` or the iterable ``WeilPolynomials``.
 
         TESTS::
 
@@ -298,7 +298,7 @@ class WeilPolynomials_iter():
             k = Integer(k)
             if len(modlist) == 0 and k != 0:
                 raise ValueError("Leading coefficient must be specified exactly")
-            if len(modlist) > 0 and ((k != 0 and modlist[-1]%k != 0) or (k == 0 and modlist[-1] != 0)):
+            if modlist and ((k != 0 and modlist[-1] % k != 0) or (k == 0 and modlist[-1] != 0)):
                 raise ValueError("Invalid moduli")
             coefflist.append(j)
             modlist.append(k)

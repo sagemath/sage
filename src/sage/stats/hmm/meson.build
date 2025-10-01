@@ -1,8 +1,13 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
+  'chmm.pyx',
   'distributions.pxd',
+  'distributions.pyx',
   'hmm.pxd',
+  'hmm.pyx',
   'util.pxd',
+  'util.pyx',
   subdir: 'sage/stats/hmm',
 )
 

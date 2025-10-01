@@ -89,16 +89,17 @@ class AbelianLieConformalAlgebra(GradedLieConformalAlgebra):
             names = 'a'
             self._latex_names = tuple(r'a_{%d}' % i for i in range(ngens))
 
-        names,index_set = standardize_names_index_set(names=names,
-                                                      index_set=index_set,
-                                                      ngens=ngens)
+        names, index_set = standardize_names_index_set(names=names,
+                                                       index_set=index_set,
+                                                       ngens=ngens)
         abeliandict = {}
 
         GradedLieConformalAlgebra.__init__(self, R, abeliandict, names=names,
-                                           index_set=index_set, weights=weights,
+                                           index_set=index_set,
+                                           weights=weights,
                                            parity=parity)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation.
 

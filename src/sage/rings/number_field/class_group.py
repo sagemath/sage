@@ -303,7 +303,7 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
                 return P
         raise RuntimeError("No prime of norm less than %s found in class %s" % (norm_bound, c))
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return generators for a representative ideal in this
         (`S`-)ideal class.
@@ -524,9 +524,9 @@ class ClassGroup(AbelianGroupWithValues_class):
             Class group of order 68 with structure C34 x C2 of Number Field
             in a with defining polynomial x^2 + x + 23899
             sage: C.gens()
-            (Fractional ideal class (7, a + 5), Fractional ideal class (5, a + 3))
+            (Fractional ideal class (83, a + 21), Fractional ideal class (15, a + 8))
             sage: C.gens_ideals()
-            (Fractional ideal (7, a + 5), Fractional ideal (5, a + 3))
+            (Fractional ideal (83, a + 21), Fractional ideal (15, a + 8))
         """
         return self.gens_values()
 

@@ -32,7 +32,12 @@
 #include "operators.h"
 #include "utils.h"
 
-#include <unistd.h>
+#ifdef _WIN32
+  #define NOMINMAX
+  #include <windows.h>
+#else
+  #include <unistd.h>
+#endif
 #include <iostream>
 #include <algorithm>
 

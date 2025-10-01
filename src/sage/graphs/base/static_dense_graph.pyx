@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Static dense graphs
 

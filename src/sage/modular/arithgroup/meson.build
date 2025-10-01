@@ -1,13 +1,17 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
+  'arithgroup_element.pyx',
   'arithgroup_generic.py',
   'arithgroup_perm.py',
+  'congroup.pyx',
   'congroup_gamma.py',
   'congroup_gamma0.py',
   'congroup_gamma1.py',
   'congroup_gammaH.py',
   'congroup_generic.py',
   'congroup_sl2z.py',
+  'farey_symbol.pyx',
   'tests.py',
   subdir: 'sage/modular/arithgroup',
 )

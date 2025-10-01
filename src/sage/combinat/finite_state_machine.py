@@ -4720,8 +4720,7 @@ class FiniteStateMachine(SageObject):
             accepting_show_empty = False
 
         result = "\\begin{tikzpicture}[%s]\n" % ", ".join(options)
-        j = 0
-        for vertex in self.iter_states():
+        for j, vertex in enumerate(self.iter_states()):
             if not hasattr(vertex, "coordinates"):
                 vertex.coordinates = (3*cos(2*pi*j/len(self.states())),
                                       3*sin(2*pi*j/len(self.states())))
@@ -4761,8 +4760,6 @@ class FiniteStateMachine(SageObject):
                     EndOfWordLaTeX,
                     self.format_transition_label(vertex.final_word_out),
                     angle, accepting_distance)
-
-            j += 1
 
         def key_function(s):
             return (s.from_state, s.to_state)
@@ -5412,7 +5409,7 @@ class FiniteStateMachine(SageObject):
     # properties (state and transitions)
     # ************************************************************************
 
-    def has_state(self, state):
+    def has_state(self, state) -> bool:
         """
         Return whether ``state`` is one of the states of the finite
         state machine.
@@ -5434,7 +5431,7 @@ class FiniteStateMachine(SageObject):
         except LookupError:
             return False
 
-    def has_transition(self, transition):
+    def has_transition(self, transition) -> bool:
         """
         Return whether ``transition`` is one of the transitions of
         the finite state machine.
@@ -5460,7 +5457,7 @@ class FiniteStateMachine(SageObject):
             return transition in self.iter_transitions()
         raise TypeError("Transition is not an instance of FSMTransition.")
 
-    def has_initial_state(self, state):
+    def has_initial_state(self, state) -> bool:
         """
         Return whether ``state`` is one of the initial states of the
         finite state machine.
@@ -5482,7 +5479,7 @@ class FiniteStateMachine(SageObject):
         except LookupError:
             return False
 
-    def has_initial_states(self):
+    def has_initial_states(self) -> bool:
         """
         Return whether the finite state machine has an initial state.
 
@@ -5495,7 +5492,7 @@ class FiniteStateMachine(SageObject):
         """
         return bool(self.initial_states())
 
-    def has_final_state(self, state):
+    def has_final_state(self, state) -> bool:
         """
         Return whether ``state`` is one of the final states of the
         finite state machine.
@@ -5516,7 +5513,7 @@ class FiniteStateMachine(SageObject):
         except LookupError:
             return False
 
-    def has_final_states(self):
+    def has_final_states(self) -> bool:
         """
         Return whether the finite state machine has a final state.
 
@@ -11258,7 +11255,7 @@ class Automaton(FiniteStateMachine):
             False
         """
         A = self.minimization().relabeled()
-        [initial] = A.initial_states()
+        initial, = A.initial_states()
         address = {initial: ()}
         for v in A.digraph().breadth_first_search(initial.label()):
             state = A.state(v)
@@ -14717,7 +14714,7 @@ class _FSMProcessIteratorEpsilon_(FSMProcessIterator):
         self.TapeCache = _FSMTapeCacheDetectEpsilon_
         self.visited_states = {}
         kwargs['check_epsilon_transitions'] = False
-        return super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _push_branch_(self, state, tape_cache, outputs):
         """
@@ -14842,7 +14839,7 @@ class _FSMProcessIteratorAll_(FSMProcessIterator):
         self.TapeCache = _FSMTapeCacheDetectAll_
         self.visited_states = {}
         kwargs['check_epsilon_transitions'] = False
-        return super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 # ****************************************************************************

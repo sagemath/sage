@@ -636,7 +636,7 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
                         (len(cones), len(generating_cones)))
         elif discard_faces:
             cones = _discard_faces(cones)
-        ray_set = set([])
+        ray_set = set()
         for cone in cones:
             ray_set.update(cone.rays())
         if rays:    # Preserve the initial order of rays, if they were given
@@ -2438,6 +2438,69 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         m = self.rays().matrix().stack(matrix(ZZ, 1, self.lattice_dim()))
         m = m.augment(matrix(ZZ, m.nrows(), 1, [1] * m.nrows()))
         return matrix(ZZ, m.integer_kernel().matrix())
+
+    def is_polytopal(self) -> bool:
+        r"""
+        Check if ``self`` is the normal fan of a polytope.
+
+        A rational polyhedral fan is *polytopal* if it is the normal fan of a
+        polytope. This is also called *regular*, or provides a *coherent*
+        subdivision or leads to a *projective* toric variety.
+
+        OUTPUT: ``True`` if ``self`` is polytopal and ``False`` otherwise
+
+        EXAMPLES:
+
+        This is the mother of all examples (see Section 7.1.1 in
+        [DLRS2010]_)::
+
+            sage: def mother(epsilon=0):
+            ....:     rays = [(4-epsilon,epsilon,0),(0,4-epsilon,epsilon),(epsilon,0,4-epsilon),(2,1,1),(1,2,1),(1,1,2),(-1,-1,-1)]
+            ....:     L = [(0,1,4),(0,3,4),(1,2,5),(1,4,5),(0,2,3),(2,3,5),(3,4,5),(6,0,1),(6,1,2),(6,2,0)]
+            ....:     S1 = [Cone([rays[i] for i in indices]) for indices in L]
+            ....:     return Fan(S1)
+
+        When epsilon=0, it is not polytopal::
+
+            sage: epsilon = 0
+            sage: mother(epsilon).is_polytopal()
+            False
+
+        Doing a slight perturbation makes the same subdivision polytopal::
+
+            sage: epsilon = 1/2
+            sage: mother(epsilon).is_polytopal()
+            True
+
+        TESTS::
+
+            sage: cone = Cone([(1,1), (2,1)])
+            sage: F = Fan([cone])
+            sage: F.is_polytopal()
+            Traceback (most recent call last):
+            ...
+            ValueError: to be polytopal, the fan should be complete
+
+        .. SEEALSO::
+
+            :meth:`is_projective`.
+        """
+        if not self.is_complete():
+            raise ValueError('to be polytopal, the fan should be complete')
+        from sage.geometry.triangulation.point_configuration import PointConfiguration
+        from sage.geometry.polyhedron.constructor import Polyhedron
+        pc = PointConfiguration(self.rays())
+        v_pc = [tuple(p) for p in pc]
+        pc_to_indices = {tuple(p):i for i, p in enumerate(pc)}
+        indices_to_vr = (tuple(r) for r in self.rays())
+        cone_indices = (cone.ambient_ray_indices() for cone in self.generating_cones())
+        translator = [pc_to_indices[t] for t in indices_to_vr]
+        translated_cone_indices = [[translator[i] for i in ci] for ci in cone_indices]
+        dc_pc = pc.deformation_cone(translated_cone_indices)
+        lift = dc_pc.an_element()
+        ieqs = [(lift_i,) + v for (lift_i, v) in zip(lift, v_pc)]
+        poly = Polyhedron(ieqs=ieqs)
+        return self.is_equivalent(poly.normal_fan())
 
     def generating_cone(self, n):
         r"""

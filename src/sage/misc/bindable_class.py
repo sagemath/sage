@@ -113,7 +113,7 @@ class BindableClass(metaclass=ClasscallMetaclass):
         Still, documentation works as usual::
 
             sage: outer.Inner.__doc__
-            ' some documentation '
+            '...some documentation '
 
     TESTS::
 

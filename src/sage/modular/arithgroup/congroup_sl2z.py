@@ -14,17 +14,16 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 ################################################################################
 
 from sage.arith.misc import gcd
+from sage.modular.arithgroup.arithgroup_element import ArithmeticSubgroupElement
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_class
 from sage.modular.cusps import Cusp
 from sage.modular.modsym.p1list import lift_to_sl2z
 from sage.rings.integer_ring import ZZ
-
-from .congroup_gamma0 import Gamma0_class
-from .arithgroup_element import ArithmeticSubgroupElement
 
 
 def is_SL2Z(x):
@@ -140,7 +139,7 @@ class SL2Z_class(Gamma0_class):
         """
         return "Modular Group SL(2,Z)"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the \LaTeX representation of ``self``.
 
@@ -153,7 +152,7 @@ class SL2Z_class(Gamma0_class):
         """
         return "\\mbox{\\rm SL}_2(%s)" % (ZZ._latex_())
 
-    def is_subgroup(self, right):
+    def is_subgroup(self, right) -> bool:
         """
         Return ``True`` if ``self`` is a subgroup of ``right``.
 

@@ -365,6 +365,13 @@ def _normalize(n, gens_orders=None, names='f'):
         Traceback (most recent call last):
         ...
         TypeError: unable to convert 's' to an integer
+
+    Verify that :issue:`38967` is fixed::
+
+        sage: AbelianGroup([-4])
+        Traceback (most recent call last):
+        ...
+        ValueError: orders of generators cannot be negative but they are (-4,)
     """
     if gens_orders is None:
         if isinstance(n, (list, tuple)):
@@ -376,6 +383,8 @@ def _normalize(n, gens_orders=None, names='f'):
     if len(gens_orders) < n:
         gens_orders = [0] * (n - len(gens_orders)) + list(gens_orders)
     gens_orders = tuple(ZZ(i) for i in gens_orders)
+    if any(i < 0 for i in gens_orders):
+        raise ValueError(f'orders of generators cannot be negative but they are {gens_orders}')
     if len(gens_orders) > n:
         raise ValueError('gens_orders (='+str(gens_orders)+') must have length n (='+str(n)+')')
     if isinstance(names, list):
@@ -598,10 +607,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: H < G
             False
         """
-        for l in left.gens():
-            if l not in right:
-                return False
-        return True
+        return all(l in right for l in left.gens())
 
     __le__ = is_subgroup
 
@@ -875,7 +881,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         GapPackage("polycyclic", spkg='gap_packages').require()
         return libgap.AbelianPcpGroup(self.gens_orders())
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return string that defines corresponding abelian group in GAP.
 
@@ -1173,7 +1179,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             order = g.order()
             if order is infinity:
                 order = 42  # infinite order; randomly chosen maximum
-            result *= g ** (randint(0, order))
+            result *= g ** randint(0, order-1)
         return result
 
     def _repr_(self) -> str:
@@ -1398,7 +1404,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         # The group order is prod(p^e for (p,e) in primary_factors)
         primary_factors = list(chain.from_iterable(
-                        factor(ed) for ed in self.elementary_divisors()))
+            factor(ed) for ed in self.elementary_divisors()))
         sylow_types = defaultdict(list)
         for p, e in primary_factors:
             sylow_types[p].append(e)
@@ -1787,7 +1793,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
                 [g.list() for g in self._gens]
             )
             return (vector(ZZ, x.list())
-                in inv_basis.stack(gens_basis).row_module())
+                    in inv_basis.stack(gens_basis).row_module())
         return False
 
     def ambient_group(self):
@@ -1852,7 +1858,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             return left.is_isomorphic(right)
         if left_ambient is not right_ambient:
             return False
-        return left <= right and right <= left
+        return left <= right <= left
 
     __eq__ = equals
 

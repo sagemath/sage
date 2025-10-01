@@ -4,8 +4,7 @@ Combinatorics quickref
 Integer Sequences::
 
     sage: s = oeis([1,3,19,211]); s                         # optional - internet
-    0: A000275: Coefficients of a Bessel function (reciprocal of J_0(z));
-                also pairs of permutations with rise/rise forbidden.
+    0: A000275: ...
     sage: s[0].programs()                                   # optional - internet
     [('maple', ...),
      ('mathematica', ...),
@@ -30,7 +29,7 @@ Combinatorial objects::
 
 Constructions and Species::
 
-    sage: for (p, s) in cartesian_product([P,S]): print((p, s)) # not tested
+    sage: for ps in cartesian_product([P,S]): print(ps) # not tested
     sage: def IV_3(n):
     ....:     return IntegerVectors(n, 3)
     sage: DisjointUnionEnumeratedSets(Family(IV_3, NonNegativeIntegers))  # not tested

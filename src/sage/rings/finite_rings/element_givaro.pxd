@@ -21,7 +21,7 @@ cdef extern from "givaro/givrandom.h":
 
 cdef extern from "givaro/gfq.h":
     cdef cppclass GivaroGfq "Givaro::GFqDom<int>":
-        #attributes
+        # attributes
         unsigned int one
         unsigned int zero
 
@@ -65,7 +65,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
     cdef FiniteField_givaroElement _new_c(self, int value)
 
 cdef class Cache_givaro(Cache_base):
-    cdef GivaroGfq *objectptr # C++ object
+    cdef GivaroGfq *objectptr  # C++ object
     cdef public object _array
     cdef FiniteField_givaroElement _zero_element
     cdef FiniteField_givaroElement _one_element

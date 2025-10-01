@@ -22,18 +22,21 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 from __future__ import annotations
-from typing import Union, Optional
 
-from sage.symbolic.expression import Expression
+from typing import Optional, Union, TYPE_CHECKING
+
 from sage.manifolds.differentiable.diff_form import DiffForm, DiffFormParal
-from sage.manifolds.differentiable.diff_map import DiffMap
-from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
-from sage.manifolds.differentiable.tensorfield import TensorField
-from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
-from sage.manifolds.differentiable.manifold import DifferentiableManifold
-from sage.manifolds.differentiable.scalarfield import DiffScalarField
-from sage.manifolds.differentiable.vectorfield import VectorField
-from sage.manifolds.differentiable.poisson_tensor import PoissonTensorField
+
+if TYPE_CHECKING:
+    from sage.manifolds.differentiable.diff_map import DiffMap
+    from sage.manifolds.differentiable.manifold import DifferentiableManifold
+    from sage.symbolic.expression import Expression
+    from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
+    from sage.manifolds.differentiable.vectorfield import VectorField
+    from sage.manifolds.differentiable.scalarfield import DiffScalarField
+    from sage.manifolds.differentiable.poisson_tensor import PoissonTensorField
+    from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
+    from sage.manifolds.differentiable.tensorfield import TensorField
 
 
 class SymplecticForm(DiffForm):
@@ -534,7 +537,7 @@ class SymplecticForm(DiffForm):
             self._vol_form = vol_form
 
         result = self._vol_form
-        for k in range(0, contra):
+        for k in range(contra):
             result = result.up(self, k)
         if contra > 1:
             # restoring the antisymmetry after the up operation:

@@ -11,11 +11,12 @@ Degenerate manifolds
 # *****************************************************************************
 
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-from sage.rings.infinity import infinity
-from sage.manifolds.structure import DegenerateStructure
 from sage.manifolds.differentiable.manifold import DifferentiableManifold
+from sage.manifolds.structure import DegenerateStructure
+from sage.rings.infinity import infinity
 
 if TYPE_CHECKING:
     from sage.manifolds.differentiable.metric import DegenerateMetric
@@ -368,8 +369,8 @@ class DegenerateManifold(DifferentiableManifold):
 
 #*******************************************************************************************
 
-from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
 from sage.manifolds.differentiable.tensorfield import TensorField
+from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
 
 
 class TangentTensor(TensorFieldParal):

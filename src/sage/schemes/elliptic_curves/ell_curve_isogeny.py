@@ -219,7 +219,7 @@ def isogeny_codomain_from_kernel(E, kernel):
     if algorithm == 'velu':
         # if we are using Velu's formula, just instantiate the isogeny
         # and return the codomain
-        return EllipticCurveIsogeny(E, kernel).codomain()
+        return E.isogeny(kernel).codomain()
 
     if algorithm == 'kohel':
         return compute_codomain_kohel(E, kernel)
@@ -3319,12 +3319,13 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         else:
             # trac 7096
-            # this should take care of the case when the isogeny is not normalized.
+            # this should take care of the case when the isogeny is
+            # not normalized.
             u = self.scaling_factor()
             E2 = E2pr.change_weierstrass_model(u/F(d), 0, 0, 0)
 
             phi_hat = EllipticCurveIsogeny(E1, None, E2, d)
-#            assert phi_hat.scaling_factor() == 1
+            # assert phi_hat.scaling_factor() == 1
 
             for pre_iso in self._codomain.isomorphisms(E1):
                 for post_iso in E2.isomorphisms(self._domain):
@@ -3335,7 +3336,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
                     continue
                 break
             else:
-                assert "bug in dual()"
+                raise RuntimeError("bug in dual()")
 
             phi_hat._set_pre_isomorphism(pre_iso)
             phi_hat._set_post_isomorphism(post_iso)
