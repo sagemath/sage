@@ -1910,7 +1910,7 @@ class Rings(CategoryWithAxiom):
             return q
 
     class CartesianProducts(CartesianProductsCategory):
-        def extra_super_categories(self):
+        def extra_super_categories(self) -> list:
             """
             Implement the fact that a Cartesian product of rings is a ring.
 
@@ -1924,7 +1924,7 @@ class Rings(CategoryWithAxiom):
             return [Rings()]
 
         class ElementMethods:
-            def is_unit(self):
+            def is_unit(self) -> bool:
                 r"""
                 Return ``True`` is ``self`` is invertible.
 
