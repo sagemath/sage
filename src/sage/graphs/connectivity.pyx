@@ -22,6 +22,7 @@ Here is what the module can do:
     :meth:`connected_components_sizes` | Return the sizes of the connected components as a list.
     :meth:`blocks_and_cut_vertices` | Return the blocks and cut vertices of the graph.
     :meth:`blocks_and_cuts_tree` | Return the blocks-and-cuts tree of the graph.
+    :meth:`biconnected_components` | Return the list of biconnected components.
     :meth:`biconnected_components_subgraphs` | Return a list of biconnected components as graph objects.
     :meth:`number_of_biconnected_components` | Return the number of biconnected components.
     :meth:`is_cut_edge` | Check whether the input edge is a cut-edge or a bridge.
@@ -779,12 +780,49 @@ def blocks_and_cuts_tree(G):
     return g
 
 
+def biconnected_components(G):
+    r"""
+    Return the list of biconnected components.
+
+    A biconnected component is a maximal subgraph on two or more vertices that
+    is biconnected, i.e., removing any vertex does not disconnect it.
+
+    INPUT:
+
+    - ``G`` -- the input graph
+
+    EXAMPLES::
+
+        sage: from sage.graphs.connectivity import biconnected_components
+        sage: G = Graph({0: [1, 2], 1: [0, 2], 2: [0, 1, 3], 3: [2]})
+        sage: sorted(len(b) for b in biconnected_components(G))
+        [2, 3]
+        sage: sorted(len(b) for b in biconnected_components(2 * G))
+        [2, 2, 3, 3]
+
+    TESTS:
+
+    If ``G`` is not a Sage graph, an error is raised::
+
+        sage: from sage.graphs.connectivity import biconnected_components
+        sage: biconnected_components('I am not a graph')
+        Traceback (most recent call last):
+        ...
+        TypeError: the input must be a Sage graph
+    """
+    from sage.graphs.generic_graph import GenericGraph
+    if not isinstance(G, GenericGraph):
+        raise TypeError("the input must be a Sage graph")
+
+    return [b for b in blocks_and_cut_vertices(G)[0] if len(b) > 1]
+
+
 def biconnected_components_subgraphs(G):
     r"""
     Return a list of biconnected components as graph objects.
 
-    A biconnected component is a maximal subgraph that is biconnected, i.e.,
-    removing any vertex does not disconnect it.
+    A biconnected component is a maximal subgraph on two or more vertices that
+    is biconnected, i.e., removing any vertex does not disconnect it.
 
     INPUT:
 
@@ -816,7 +854,7 @@ def biconnected_components_subgraphs(G):
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
 
-    return [G.subgraph(c) for c in blocks_and_cut_vertices(G)[0]]
+    return [G.subgraph(c) for c in G.biconnected_components()]
 
 
 def number_of_biconnected_components(G):
@@ -880,7 +918,7 @@ def number_of_biconnected_components(G):
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
 
-    return len([c for c in G.blocks_and_cut_vertices()[0] if len(c) > 1])
+    return len(G.biconnected_components())
 
 
 def is_edge_cut(G, edges):
