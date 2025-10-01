@@ -239,10 +239,9 @@ Classes and methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from collections.abc import Iterator
 import itertools
 import operator
-from typing import Iterable
+from typing import TYPE_CHECKING
 
 from sage.arith.misc import factorial, multinomial
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -270,6 +269,9 @@ from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
 from sage.structure.element import Element, get_coercion_model
 from sage.structure.unique_representation import UniqueRepresentation
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Iterator
 
 lazy_import('sage.combinat.rsk', ['RSK', 'RSK_inverse'])
 lazy_import('sage.combinat.tableau', 'Tableau')

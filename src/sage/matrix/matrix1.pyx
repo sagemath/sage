@@ -90,9 +90,9 @@ cdef class Matrix(Matrix0):
         from sage.libs.pari import pari
         return pari.matrix(self._nrows, self._ncols, self._list())
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
-        Return a string defining a gap representation of ``self``.
+        Return a string defining a GAP representation of ``self``.
 
         EXAMPLES::
 
