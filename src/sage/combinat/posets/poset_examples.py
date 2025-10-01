@@ -440,7 +440,7 @@ class Posets(metaclass=ClasscallMetaclass):
         c[0] = list(range(1, n - 1))
         c[n - 1] = []
         D = DiGraph({v: c[v] for v in range(n)}, format='dict_of_lists')
-        cat = FiniteLatticePosets()
+        cat = FiniteLatticePosets().ChainGraded()
         if n <= 4:
             cat = cat.Stone()
         return FiniteLatticePoset(hasse_diagram=D, category=cat,
@@ -1182,14 +1182,14 @@ class Posets(metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: posets.SymmetricGroupWeakOrderPoset(4)
-            Finite poset containing 24 elements
+            Finite lattice containing 24 elements
         """
         if n < 10 and labels == "permutations":
-            element_labels = dict([[s, "".join(map(str, s))]
-                                   for s in Permutations(n)])
+            element_labels = {s: "".join(map(str, s))
+                              for s in Permutations(n)}
         if n < 10 and labels == "reduced_words":
-            element_labels = dict([[s, "".join(map(str, s.reduced_word_lexmin()))]
-                                   for s in Permutations(n)])
+            element_labels = {s: "".join(map(str, s.reduced_word_lexmin()))
+                              for s in Permutations(n)}
         if side == "left":
 
             def weak_covers(s):
@@ -1200,6 +1200,7 @@ class Posets(metaclass=ClasscallMetaclass):
                 return [v for v in s.bruhat_succ() if
                         s.length() + (s.inverse().right_action_product(v)).length() == v.length()]
         else:
+
             def weak_covers(s):
                 r"""
                 Nested function for computing the covers of elements in the
@@ -1207,8 +1208,11 @@ class Posets(metaclass=ClasscallMetaclass):
                 """
                 return [v for v in s.bruhat_succ() if
                         s.length() + (s.inverse().left_action_product(v)).length() == v.length()]
-        return Poset(dict([[s, weak_covers(s)] for s in Permutations(n)]),
-                     element_labels)
+        return LatticePoset(
+            {s: weak_covers(s) for s in Permutations(n)},
+            element_labels, check=False,
+            category=FiniteLatticePosets().ChainGraded().Semidistributive()
+        )
 
     @staticmethod
     def TetrahedralPoset(n, *colors, **labels):
@@ -2125,7 +2129,7 @@ def _random_distributive_lattice(n):
     return D
 
 
-def _random_stone_lattice(n):
+def _random_stone_lattice(n) -> DiGraph:
     """
     Return a random Stone lattice on `n` elements.
 
