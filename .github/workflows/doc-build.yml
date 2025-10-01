@@ -20,6 +20,13 @@ env:
 jobs:
   doc-html:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        n: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+    name: doc-html ${{ matrix.n }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -55,6 +62,10 @@ jobs:
           activate-environment: sage-dev
           environment-file: environment-${{ env.PYTHON_VERSION }}-linux.yml
 
+      - name: Show disk space
+        run: |
+          df
+
       - name: Build Sage
         shell: bash -l {0}
         run: |
@@ -78,6 +89,10 @@ jobs:
             '.workflow_runs[] | select(.name == $name and .conclusion == $conclusion) | .id' | head -n 1)
           echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
 
+      - name: Show disk space
+        run: |
+          df
+
       - name: Download old doc
         if: github.event_name == 'pull_request'
         uses: actions/download-artifact@v4
@@ -86,6 +101,10 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
           run-id: ${{ env.RUN_ID }}
+
+      - name: Show disk space
+        run: |
+          df
 
       - name: Store old doc
         if: github.event_name == 'pull_request'
@@ -127,6 +146,10 @@ jobs:
              git add -A && git commit --quiet -m 'old')
           fi
 
+      - name: Show disk space
+        run: |
+          df
+
       - name: Build documentation
         shell: bash -l {0}
         run: |
@@ -134,6 +157,22 @@ jobs:
         env:
           SAGE_USE_CDNS: yes
           SAGE_DOCBUILD_OPTS: "--include-tests-blocks"
+
+      - name: Maximize build disk space
+        shell: bash -l {0}
+        run: |
+          echo "Before maximize:"
+          df
+          echo "Deleting files..."
+          for x in /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL; do
+            echo "Removing $x..."
+            cd "$x"
+            perl -e 'for(<*>){((stat)[9]<(unlink))}'   # https://unix.stackexchange.com/a/79656/
+            echo "... done"
+            df
+          done
+          echo "Removed all"
+          df
 
       - name: Copy doc
         run: |
