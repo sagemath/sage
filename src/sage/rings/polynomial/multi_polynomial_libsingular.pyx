@@ -5296,6 +5296,25 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         self._parent._singular_().set_ring()
         return self._repr_short_()
 
+    def _singular_(self, singular=None):
+        """
+        Override :meth:`sage.structure.sage_object.SageObject._singular_`
+        to declare the type of ``self`` to be ``'poly'``.
+        Needed because even with ``setring``, constant polynomials are not considered
+        polynomials of the current ring.
+
+        TESTS::
+
+            sage: R.<x,y> = Zmod(5)[]
+            sage: a = singular(R(2)) + singular(R(2)) + singular(R(1)); a
+            0
+            sage: a == singular(R(0))
+            True
+        """
+        if singular is None:
+            from sage.interfaces.singular import singular
+        return singular(self._singular_init_(singular), type='poly')
+
     def sub_m_mul_q(self, MPolynomial_libsingular m, MPolynomial_libsingular q):
         """
         Return ``self - m*q``, where ``m`` must be a monomial and
