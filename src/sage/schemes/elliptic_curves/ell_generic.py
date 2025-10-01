@@ -71,6 +71,7 @@ from sage.rings.rational_field import RationalField
 from sage.rings.real_mpfr import RealField
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
+from sage.structure.coerce import py_scalar_to_element
 
 # Schemes
 import sage.schemes.projective.projective_space as projective_space
@@ -922,8 +923,15 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E = EllipticCurve(F, [1,1])
             sage: {E.lift_x(t+1) for _ in range(1000)}  # but .lift_x() uses a fixed one
             {(t + 1 : 39*t^2 + 14*t + 12 : 1)}
+
+        Check python types::
+
+            sage: E = EllipticCurve('37a').short_weierstrass_model().change_ring(GF(17))
+            sage: E.lift_x(int(7), all=True)
+            [(7 : 3 : 1), (7 : 14 : 1)]
         """
         K = self.base_ring()
+        x = py_scalar_to_element(x)
         L = x.parent()
         E = self
 
