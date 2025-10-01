@@ -1010,7 +1010,6 @@ cdef class GapElement(RingElement):
             GAP_Leave()
             gap_sig_off()
 
-
     cdef bint _compare_less(self, Element other) except -2:
         """
         Compare ``self`` with ``other``.
@@ -1033,7 +1032,6 @@ cdef class GapElement(RingElement):
         finally:
             GAP_Leave()
             gap_sig_off()
-
 
     cpdef _add_(self, right):
         r"""
