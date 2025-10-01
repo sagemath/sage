@@ -15,17 +15,16 @@ It is necessary to use algebras in the category of associative algebras.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .finite_dimensional_algebra_element import FiniteDimensionalAlgebraElement
-
-from sage.matrix.constructor import matrix
-from sage.rings.ideal import Ideal_generic
-from sage.structure.element import Matrix, parent
-
-from sage.misc.cachefunc import cached_method
 from functools import reduce
 
-from sage.structure.richcmp import (op_LT, op_LE, op_EQ, op_NE,
-                                    op_GT, op_GE)
+from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra_element import (
+    FiniteDimensionalAlgebraElement,
+)
+from sage.matrix.constructor import matrix
+from sage.misc.cachefunc import cached_method
+from sage.rings.ideal import Ideal_generic
+from sage.structure.element import Matrix, parent
+from sage.structure.richcmp import op_EQ, op_GE, op_GT, op_LE, op_LT, op_NE
 
 
 class FiniteDimensionalAlgebraIdeal(Ideal_generic):

@@ -3,12 +3,18 @@ py.install_sources(
   'all.py',
   'constants.pxd',
   'functions.pxd',
+  'functions.pyx',
   'long.pxd',
   'misc.py',
   'multi_modular.pxd',
+  'multi_modular.pyx',
   'numerical_approx.pxd',
+  'numerical_approx.pyx',
   'power.pxd',
+  'power.pyx',
   'rational_reconstruction.pxd',
+  'rational_reconstruction.pyx',
+  'srange.pyx',
   subdir: 'sage/arith',
 )
 

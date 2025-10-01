@@ -123,7 +123,6 @@ AUTHORS:
 # ****************************************************************************
 from __future__ import annotations
 
-from collections.abc import Iterator
 
 from sage.arith.misc import bernoulli, factorial
 from sage.combinat.combinat_cython import _stirling_number2
@@ -138,6 +137,10 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.structure.element import Element
 from sage.structure.sage_object import SageObject
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 lazy_import('sage.interfaces.maxima_lib', 'maxima')
 lazy_import('sage.libs.pari', 'pari')

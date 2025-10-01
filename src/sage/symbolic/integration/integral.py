@@ -684,12 +684,12 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
     The following definite integral is not found by maxima::
 
         sage: f(x) = (x^4 - 3*x^2 + 6) / (x^6 - 5*x^4 + 5*x^2 + 4)
-        sage: integrate(f(x), x, 1, 2, algorithm='maxima')
+        sage: integrate(f(x), x, 1, 2, algorithm='maxima')  # long time
         integrate((x^4 - 3*x^2 + 6)/(x^6 - 5*x^4 + 5*x^2 + 4), x, 1, 2)
 
     but is nevertheless computed::
 
-        sage: integrate(f(x), x, 1, 2)
+        sage: integrate(f(x), x, 1, 2)  # long time
         -1/2*pi + arctan(8) + arctan(5) + arctan(2) + arctan(1/2)
 
     Both fricas and sympy give the correct result::

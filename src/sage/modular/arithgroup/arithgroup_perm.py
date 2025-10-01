@@ -101,16 +101,16 @@ AUTHORS:
 
 from sage.arith.functions import lcm
 from sage.arith.misc import CRT_basis
-from sage.groups.perm_gps.constructor import PermutationGroupElement as PermutationConstructor
+from sage.groups.perm_gps.constructor import (
+    PermutationGroupElement as PermutationConstructor,
+)
 from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
+from sage.modular.arithgroup.arithgroup_generic import ArithmeticSubgroup
+from sage.modular.arithgroup.congroup_sl2z import SL2Z
 from sage.rings.integer_ring import ZZ
-
-from .all import SL2Z
-from .arithgroup_generic import ArithmeticSubgroup
-
 
 Idm = SL2Z([1,0,0,1])    # identity
 

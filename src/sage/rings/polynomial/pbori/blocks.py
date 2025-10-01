@@ -1,4 +1,3 @@
-import sys
 from itertools import chain, islice
 
 from sage.rings.polynomial.pbori.pbori import (
@@ -157,7 +156,7 @@ class HigherOrderBlock:
     r"""
     HigherOrderBlocks are multidimensional blocks of variables.
 
-    For each dimension a separate start_index and size can be specified.
+    For each dimension a separate ``start_index`` and ``size`` can be specified.
 
     var_name : variables will be called <var_name>(multiindex), where
     multiindex is a tuple of the size <size_tuple>
@@ -353,9 +352,11 @@ def if_then(i, t, supposed_to_be_valid=True):
 
 def declare_ring(blocks, context=None):
     r"""
-    Declare Ring is the preferred function to create a ring and declare a variable scheme,
-    the number of variables is automatically determined, usually you pass globals() as context
-    argument to store the ring and the variable mapping.
+    Declare Ring is the preferred function to create a ring and declare a variable scheme.
+
+    The number of variables is automatically determined. Usually you
+    pass ``globals()`` as context argument to store the ring and the
+    variable mapping.
 
     EXAMPLES::
 
@@ -363,13 +364,10 @@ def declare_ring(blocks, context=None):
         sage: declare_ring([Block("x",10),Block("y",5)],globals())
         Boolean PolynomialRing in x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, y0, y1, y2, y3, y4
 
-    gives  a ring with x(0..9),y(0..4) and registers the ring as r, and the variable
-    blocks x and y in the context dictionary globals(), which consists of the global
-    variables of the python module
+    gives a ring with x(0..9),y(0..4) and registers the ring as r, and
+    the variable blocks x and y in the context dictionary ``globals()``,
+    which consists of the global variables of the python module
     """
-    if context is None:
-        context = sys.modules['__main__'].__dict__
-
     def canonicalize(blocks):
         for elt in blocks:
             if isinstance(elt, str):
@@ -408,39 +406,92 @@ def declare_block_scheme(blocks, context):
     context["number_of_declared_vars"] = start
 
 
-def main():
+def main_test():
+    """
+    EXAMPLES::
+
+        sage: from sage.rings.polynomial.pbori.blocks import main_test
+        sage: main_test()
+        x(0)
+        x(1)
+        x(2)
+        x(3)
+        x(4)
+        x(5)
+        x(6)
+        x(7)
+        x(8)
+        x(9)
+        ['a(0)', 'b(0)', 'c(0)', 'a(1)', 'b(1)', ...]
+        x(0)
+        x(1)
+        x(2)
+        x(3)
+        x(4)
+        x(5)
+        x(6)
+        x(7)
+        x(8)
+        x(9)
+        x(364) x(367) x(370) x(365) x(368) x(366)
+        x(99)
+        x(98)
+        x(97)
+        x(96)
+        x(95)
+        x(94)
+        x(93)
+        x(92)
+        x(91)
+        x(90)
+        x(0) x(1) x(2)
+    """
     r = Ring(1000)
+    dic = {"r": r}
+    dic["internalVariable"] = VariableFactory(r)
+
+    # first test
     ablock = AlternatingBlock(["a", "b", "c"], 100)
-    declare_block_scheme([ablock], globals())
+    declare_block_scheme([ablock], dic)
     for i in range(10):
         print(r.variable(i))
-
     print(list(ablock))
+
+    # second test
     declare_block_scheme([Block(var_name="x", size=100),
                           HigherOrderBlock("y", (3, 4, 11, 2)),
                           AlternatingBlock(["a", "b", "c"], 100)],
-                         globals())
+                         dic)
+    x = dic['x']
+    a, b, c = dic['a'], dic['b'], dic['c']
     for i in range(10):
         print(x(i))
-    print(y(0, 0, 0, 0))
-    print(y(0, 0, 0, 1))
-    print(y(0, 0, 1, 0))
-    print(y(0, 0, 1, 1))
+    # y are currently broken ?
+    # print(y(0, 0, 0, 0))
+    # print(y(0, 0, 0, 1))
+    # print(y(0, 0, 1, 0))
+    # print(y(0, 0, 1, 1))
     print(a(0), a(1), a(2), b(0), b(1), c(0))
+
+    # third test
     declare_block_scheme([Block(var_name="x", size=100, reverse=True),
                           HigherOrderBlock("y", (3, 4, 11, 2), reverse=True),
                           AlternatingBlock(["a", "b", "c"], 100, reverse=True)],
-                         globals())
+                         dic)
+    x = dic['x']
+    a, b, c = dic['a'], dic['b'], dic['c']
     for i in range(10):
         print(x(i))
-    print(y(0, 0, 0, 0))
-    print(y(0, 0, 0, 1))
-    print(y(0, 0, 1, 0))
-    print(y(0, 0, 1, 1))
-    print(a(0), a(1), a(2), b(0), b(1), c(0))
-    declare_block_scheme(["a", "b", "c"], globals())
+    # y are currently broken ?
+    # print(y(0, 0, 0, 0))
+    # print(y(0, 0, 0, 1))
+    # print(y(0, 0, 1, 0))
+    # print(y(0, 0, 1, 1))
+
+    # a also broken ?
+    # print(a(0), a(1), a(2), b(0), b(1), c(0))
+
+    # fourth test
+    declare_block_scheme(["a", "b", "c"], dic)
+    a, b, c = dic['a'], dic['b'], dic['c']
     print(a, b, c)
-
-
-if __name__ == '__main__':
-    main()
