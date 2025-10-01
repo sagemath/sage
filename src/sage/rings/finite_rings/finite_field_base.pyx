@@ -1440,22 +1440,27 @@ cdef class FiniteField(Field):
         from sage.rings.finite_rings.finite_field_constructor import GF
         from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.rings.integer import Integer
-        if name is None and names is not None:
-            name = names
+        if name is not None and names is None:
+            if isinstance(name, str):
+                names = (name,)
+            else:
+                from sage.misc.superseded import deprecation
+                deprecation(40948, "name should be a str, if you want to pass a tuple use names instead")
+                names = name
         if latex_name is None and latex_names is not None:
             latex_name = latex_names
         if self.degree() == 1:
             if isinstance(modulus, (int, Integer)):
-                E = GF((self.characteristic(), modulus), name=name, **kwds)
+                E = GF((self.characteristic(), modulus), names=names, **kwds)
             elif isinstance(modulus, (list, tuple)):
-                E = GF((self.characteristic(), len(modulus) - 1), name=name, modulus=modulus, **kwds)
+                E = GF((self.characteristic(), len(modulus) - 1), names=names, modulus=modulus, **kwds)
             elif isinstance(modulus, Polynomial):
                 if modulus.change_ring(self).is_irreducible():
-                    E = GF((self.characteristic(), modulus.degree()), name=name, modulus=modulus, **kwds)
+                    E = GF((self.characteristic(), modulus.degree()), names=names, modulus=modulus, **kwds)
                 else:
-                    E = Field.extension(self, modulus, name=name, embedding=embedding, **kwds)
+                    E = Field.extension(self, modulus, names=names, embedding=embedding, **kwds)
         elif isinstance(modulus, (int, Integer)):
-            E = GF((self.characteristic(), self.degree() * modulus), name=name, **kwds)
+            E = GF((self.characteristic(), self.degree() * modulus), names=names, **kwds)
             if E is self:
                 pass # coercion map (identity map) is automatically found
             elif hasattr(E, '_prefix') and hasattr(self, '_prefix'):
@@ -1470,7 +1475,7 @@ cdef class FiniteField(Field):
                 except AssertionError: # coercion already exists
                     pass
         else:
-            E = Field.extension(self, modulus, name=name, embedding=embedding, latex_name=latex_name, **kwds)
+            E = Field.extension(self, modulus, names=names, embedding=embedding, latex_name=latex_name, **kwds)
         if map:
             return (E, E.coerce_map_from(self))
         else:
