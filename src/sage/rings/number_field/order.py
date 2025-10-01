@@ -77,22 +77,24 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import sage.rings.abc
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.noetherian_rings import NoetherianRings
+from sage.libs.pari import pari
 from sage.misc.cachefunc import cached_method
-from sage.structure.parent import Parent
-from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
-import sage.rings.abc
+from sage.rings.monomials import monomials
+from sage.rings.number_field.number_field_element import (
+    OrderElement_absolute,
+    OrderElement_relative,
+)
+from sage.rings.number_field.number_field_element_quadratic import (
+    OrderElement_quadratic,
+)
 from sage.structure.element import Element
 from sage.structure.factory import UniqueFactory
-from .number_field_element import OrderElement_absolute, OrderElement_relative
-
-from .number_field_element_quadratic import OrderElement_quadratic
-
-from sage.rings.monomials import monomials
-
-from sage.libs.pari import pari
+from sage.structure.parent import Parent
+from sage.structure.sequence import Sequence
 
 
 def quadratic_order_class_number(disc):
@@ -410,7 +412,7 @@ def EquationOrder(f, names, **kwds):
         ...
         ValueError: each generator must be integral
     """
-    from .number_field import NumberField
+    from sage.rings.number_field.number_field import NumberField
     R = ZZ['x']
     if isinstance(f, (list, tuple)):
         for g in f:
@@ -859,7 +861,7 @@ class Order(Parent, sage.rings.abc.Order):
             return self.__free_module
         except AttributeError:
             pass
-        from .number_field_ideal import basis_to_module
+        from sage.rings.number_field.number_field_ideal import basis_to_module
         M = basis_to_module(self.basis(), self.number_field())
         self.__free_module = M
         return M
@@ -1734,18 +1736,27 @@ class Order_absolute(Order):
             sage: L.discriminant() / O.discriminant() == L.index_in(O)^2
             True
 
+
         TESTS::
 
             sage: type(K.order(5*a).discriminant())
             <class 'sage.rings.integer.Integer'>
+
+        This should be fast (:issue:`40770`)::
+
+            sage: x = polygen(ZZ, 'x')
+            sage: f = -10200*x^5 + 3394506606*x^4 + 1499062700037543*x^3 - 399446093061413660294*x^2 - 54234952557577515347321243*x + 2514415152433747751031436303788
+            sage: K.<a> = NumberField(f)
+            sage: easy = [2,3,5,7,11,83,5443,3548737,108743131120471]
+            sage: OK = K.maximal_order(v=easy, assume_maximal=True)
+            sage: OK.discriminant()
+            -2233837184359702514053503341104978970680899423438448397157179110318387386336251895416563127827690136506493208269682596127007739109465589455
+
         """
         try:
             return self.__discriminant
         except AttributeError:
-            if self._is_maximal():
-                D = self._K.discriminant()
-            else:
-                D = ZZ(self._K.discriminant(self.basis()))
+            D = ZZ(self._K.discriminant(self.basis()))
             self.__discriminant = D
             return D
 

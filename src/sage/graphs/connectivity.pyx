@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Connectivity related functions
 
@@ -778,6 +777,7 @@ def blocks_and_cuts_tree(G):
                 g.add_edge(('B', bloc), ('C', c))
     return g
 
+
 def biconnected_components_subgraphs(G):
     r"""
     Return a list of biconnected components as graph objects.
@@ -816,6 +816,7 @@ def biconnected_components_subgraphs(G):
         raise TypeError("the input must be a Sage graph")
 
     return [G.subgraph(c) for c in blocks_and_cut_vertices(G)[0]]
+
 
 def is_edge_cut(G, edges):
     """

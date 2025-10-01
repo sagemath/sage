@@ -16,7 +16,6 @@ from sage.misc.lazy_attribute import lazy_attribute
 
 from sage.categories.modules import Modules
 from sage.categories.category_types import Category_over_base_ring
-from sage.categories.homsets import Homsets
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 
 
