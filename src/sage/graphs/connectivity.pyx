@@ -23,6 +23,7 @@ Here is what the module can do:
     :meth:`blocks_and_cut_vertices` | Return the blocks and cut vertices of the graph.
     :meth:`blocks_and_cuts_tree` | Return the blocks-and-cuts tree of the graph.
     :meth:`biconnected_components_subgraphs` | Return a list of biconnected components as graph objects.
+    :meth:`number_of_biconnected_components` | Return the number of biconnected components.
     :meth:`is_cut_edge` | Check whether the input edge is a cut-edge or a bridge.
     :meth:`is_edge_cut` | Check whether the input edges form an edge cut.
     :meth:`is_cut_vertex` | Check whether the input vertex is a cut-vertex.
@@ -816,6 +817,70 @@ def biconnected_components_subgraphs(G):
         raise TypeError("the input must be a Sage graph")
 
     return [G.subgraph(c) for c in blocks_and_cut_vertices(G)[0]]
+
+
+def number_of_biconnected_components(G):
+    r"""
+    Return the number of biconnected components.
+
+    A biconnected component is a maximal subgraph on two or more vertices that
+    is biconnected, i.e., removing any vertex does not disconnect it.
+
+    .. SEEALSO::
+
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cut_vertices`
+        - :meth:`~Graph.is_biconnected`
+
+    EXAMPLES:
+
+    The disjoint union of cycles has as many biconnected components as the
+    number of cycles::
+
+        sage: G = graphs.CycleGraph(5)
+        sage: G.number_of_biconnected_components()
+        1
+        sage: (3 * G).number_of_biconnected_components()
+        3
+
+    A block graph is a connected graph in which every biconnected component
+    (block) is a clique. Hence its number of biconnected components is its
+    number of blocks::
+
+        sage: number_of_blocks = randint(4, 10)
+        sage: G = graphs.RandomBlockGraph(number_of_blocks, 5)
+        sage: G.number_of_biconnected_components() == number_of_blocks
+        True
+
+    By definition, an edge is a biconnected component. Hence, the number of
+    biconnected components of a tree is its number of edges::
+
+        sage: T = graphs.RandomTree(randint(0, 10))
+        sage: T.number_of_biconnected_components() == T.size()
+        True
+
+    An isolated vertex is a block but not a biconnected component::
+
+        sage: G = Graph(3)
+        sage: len(G.blocks_and_cut_vertices()[0])
+        3
+        sage: G.number_of_biconnected_components()
+        0
+
+    TESTS:
+
+    An error is raised if the input is not a Sage graph::
+
+        sage: from sage.graphs.connectivity import number_of_biconnected_components
+        sage: number_of_biconnected_components('I am not a graph')
+        Traceback (most recent call last):
+        ...
+        TypeError: the input must be a Sage graph
+    """
+    from sage.graphs.generic_graph import GenericGraph
+    if not isinstance(G, GenericGraph):
+        raise TypeError("the input must be a Sage graph")
+
+    return len([c for c in G.blocks_and_cut_vertices()[0] if len(c) > 1])
 
 
 def is_edge_cut(G, edges):
