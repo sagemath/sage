@@ -1619,7 +1619,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         """
         return self
 
-    def _gap_init_(FiniteField_givaroElement self):
+    def _gap_init_(FiniteField_givaroElement self) -> str:
         """
         Return a string that evaluates to the GAP representation of
         this element.

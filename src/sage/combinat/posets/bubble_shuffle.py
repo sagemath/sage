@@ -14,7 +14,7 @@ two words `X = (x_1,x_2,\ldots,x_{m})` and `Y = (y_1,y_2,\ldots,y_n)`.
     In the implementation here, the underlying set is the set of all shuffles
     of subsets of `\{-m,\ldots,-1\}` with subsets of `\{1,\ldots,n\}`.
 """
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.categories.finite_lattice_posets import FiniteLatticePosets
 from sage.combinat.posets.lattices import LatticePoset

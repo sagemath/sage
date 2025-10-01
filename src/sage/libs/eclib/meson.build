@@ -4,9 +4,13 @@ py.install_sources(
   'all.py',
   'constructor.py',
   'homspace.pxd',
+  'homspace.pyx',
   'interface.py',
   'mat.pxd',
+  'mat.pyx',
+  'mwrank.pyx',
   'newforms.pxd',
+  'newforms.pyx',
   subdir: 'sage/libs/eclib',
 )
 

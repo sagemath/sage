@@ -2,6 +2,7 @@ py.install_sources(
   '__init__.py',
   'all.py',
   'semimonomial_transformation.pxd',
+  'semimonomial_transformation.pyx',
   'semimonomial_transformation_group.py',
   subdir: 'sage/groups/semimonomial_transformations',
 )

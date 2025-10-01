@@ -275,7 +275,7 @@ class Monoids(CategoryWithAxiom):
             """
             return left * ~right
 
-        def is_one(self):
+        def is_one(self) -> bool:
             r"""
             Return whether ``self`` is the one of the monoid.
 
@@ -604,7 +604,7 @@ class Monoids(CategoryWithAxiom):
 
         class ElementMethods:
 
-            def is_central(self):
+            def is_central(self) -> bool:
                 r"""
                 Return whether the element ``self`` is central.
 

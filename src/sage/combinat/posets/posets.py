@@ -1396,9 +1396,9 @@ class FinitePoset(UniqueRepresentation, Parent):
         return self.hasse_diagram()._latex_()
 
     def tikz(self, format=None, edge_labels=False, color_by_label=False,
-            prog='dot', rankdir='up', standalone_config=None,
-            usepackage=None, usetikzlibrary=None, macros=None,
-            use_sage_preamble=None, **kwds):
+             prog='dot', rankdir='up', standalone_config=None,
+             usepackage=None, usetikzlibrary=None, macros=None,
+             use_sage_preamble=None, **kwds):
         r"""
         Return a TikzPicture illustrating the poset.
 
@@ -1460,10 +1460,10 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         G = self.hasse_diagram()
         return G.tikz(format=format, edge_labels=edge_labels,
-            color_by_label=color_by_label, prog=prog, rankdir=rankdir,
-            standalone_config=standalone_config, usepackage=usepackage,
-            usetikzlibrary=usetikzlibrary, macros=macros,
-            use_sage_preamble=use_sage_preamble, **kwds)
+                      color_by_label=color_by_label, prog=prog, rankdir=rankdir,
+                      standalone_config=standalone_config, usepackage=usepackage,
+                      usetikzlibrary=usetikzlibrary, macros=macros,
+                      use_sage_preamble=use_sage_preamble, **kwds)
 
     def _repr_(self) -> str:
         r"""
@@ -3596,8 +3596,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         ALGORITHM:
 
-        As explained [FT00]_, the dimension of a poset is equal to the (weak)
-        chromatic number of a hypergraph. More precisely:
+        As explained in [FT00]_, the dimension of a poset is equal to
+        the (weak) chromatic number of a hypergraph. More precisely:
 
             Let `inc(P)` be the set of (ordered) pairs of incomparable elements
             of `P`, i.e. all `uv` and `vu` such that `u\not \leq_P v` and `v\not
@@ -4390,6 +4390,15 @@ class FinitePoset(UniqueRepresentation, Parent):
         The output is the characteristic polynomial of the Coxeter
         transformation. This polynomial only depends on the derived
         category of modules on the poset.
+
+        .. NOTE::
+
+            By Corollary 4.3 of [Lad2021]_, this polynomial does
+            not depend on the order of the ordinal summands.
+
+        .. SEEALSO::
+
+            :meth:`ordinal_sum`, :meth:`ordinal_summands`
 
         EXAMPLES::
 
@@ -7776,13 +7785,17 @@ class FinitePoset(UniqueRepresentation, Parent):
         elements in the poset. List of coefficients of this polynomial
         is also called a *f-vector* of the poset.
 
+        This is multiplicative with respect to ordinal sum.
+
         .. NOTE::
 
             This is not what has been called the chain polynomial
             in [St1986]_. The latter is identical with the order
             polynomial in SageMath (:meth:`order_polynomial`).
 
-        .. SEEALSO:: :meth:`f_polynomial`, :meth:`order_polynomial`
+        .. SEEALSO::
+
+            :meth:`f_polynomial`, :meth:`order_polynomial`, :meth:`ordinal_sum`
 
         EXAMPLES::
 

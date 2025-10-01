@@ -242,7 +242,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
                 self.__dimension = phi.codomain().defining_ideal().dimension() - 1
             return self.__dimension
 
-    def is_smooth(self, point=None):
+    def is_smooth(self, point=None) -> bool:
         r"""
         Test whether the algebraic subscheme is smooth.
 
