@@ -351,7 +351,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
         X = self.singular_subscheme()
         return [self.point(p, check=False) for p in X.rational_points(F=F)]
 
-    def is_singular(self, P=None):
+    def is_singular(self, P=None) -> bool:
         r"""
         Return whether ``P`` is a singular point of this curve, or if no point
         is passed, whether this curve is singular or not.

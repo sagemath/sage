@@ -21,7 +21,6 @@ from sage.algebras.lie_algebras.subalgebra import LieSubalgebra_finite_dimension
 from sage.categories.homset import Hom
 from sage.categories.lie_algebras import LieAlgebras
 from sage.categories.morphism import SetMorphism
-from sage.structure.element import Element
 from sage.structure.indexed_generators import standardize_names_index_set
 
 
@@ -218,7 +217,6 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
 
         # extract an index set from a complementary basis to the ideal
         I_supp = [X.leading_support() for X in I.leading_monomials()]
-        inv = ambient.basis().inverse_family()
         IA = I.ambient()
         B = ambient.basis()
         if index_set_mapping is None:
@@ -264,7 +262,6 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
             sage: TestSuite(K).run()
         """
         B = L.basis()
-        IA = I.ambient()
         self._index_set_mapping = dict(index_set_mapping)
         sm = L.module().submodule_with_basis([I.reduce(B[k]).to_vector()
                                               for k in self._index_set_mapping.values()])

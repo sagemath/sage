@@ -1,15 +1,20 @@
 py.install_sources(
   '__init__.py',
   'all.py',
+  'gauss_legendre.pyx',
   'interactive_simplex_method.py',
   'knapsack.py',
   'linear_functions.pxd',
+  'linear_functions.pyx',
   'linear_tensor.py',
   'linear_tensor_constraints.py',
   'linear_tensor_element.pxd',
+  'linear_tensor_element.pyx',
   'mip.pxd',
+  'mip.pyx',
   'optimize.py',
   'sdp.pxd',
+  'sdp.pyx',
   subdir: 'sage/numerical',
 )
 

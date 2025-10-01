@@ -18,9 +18,10 @@ AUTHORS:
 
 
 from cypari2.handle_error import PariError
-from .element_pari_ffelt import FiniteFieldElement_pari_ffelt
-from .finite_field_base import FiniteField
-from .finite_field_constructor import GF
+
+from sage.rings.finite_rings.element_pari_ffelt import FiniteFieldElement_pari_ffelt
+from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.finite_rings.finite_field_constructor import GF
 
 
 class FiniteField_pari_ffelt(FiniteField):

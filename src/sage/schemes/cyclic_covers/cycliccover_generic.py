@@ -267,7 +267,7 @@ class CyclicCover_generic(AffinePlaneCurve):
             P = PolynomialRing(K, var)
             return P(self._f)
 
-    def is_singular(self):
+    def is_singular(self) -> bool:
         r"""
         Return if this curve is singular or not.
 
@@ -290,7 +290,7 @@ class CyclicCover_generic(AffinePlaneCurve):
         else:
             return not self._f.is_squarefree()
 
-    def is_smooth(self):
+    def is_smooth(self) -> bool:
         r"""
         Return if this curve is smooth or not.
 

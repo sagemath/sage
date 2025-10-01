@@ -1359,7 +1359,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         zero = "%s*a" % self._parent.characteristic()
         return "subst(%s+%s,a,%s)" % (self, zero, ffgen)
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Return a string representing ``self`` in Magma.
 
@@ -1372,7 +1372,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         km = magma(k)
         return str(self).replace(k.variable_name(), km.gen(1).name())
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return the string representing ``self`` in GAP.
 
