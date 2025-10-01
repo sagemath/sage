@@ -655,7 +655,7 @@ class WithPicklingByInitArgs(metaclass=ClasscallMetaclass):
         when pickled, because the object is constructed anew upon unpickling.
 
         Here we make some exceptions so that cached functions with
-        ``do_pickle=True`` attached to an object to be kept in the pickle.
+        ``do_pickle=True`` attached to an object are kept in the pickle.
 
         EXAMPLES::
 
