@@ -8,6 +8,7 @@ lcalc = dependency(
 py.install_sources(
   '__init__.py',
   'lcalc_Lfunction.pxd',
+  'lcalc_Lfunction.pyx',
   'lcalc_sage.h',
   subdir: 'sage/libs/lcalc',
 )

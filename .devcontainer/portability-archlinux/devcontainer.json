@@ -13,6 +13,10 @@
 			"version": "latest"
 		}
     },
+    "containerEnv": {
+        "devcontainerId": "${devcontainerId}",
+        "UV_PROJECT_ENVIRONMENT": ".venv-${devcontainerId}" 
+    },
     "customizations": {
         "vscode": {
             "extensions": [
