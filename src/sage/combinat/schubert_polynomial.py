@@ -1,7 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Schubert Polynomials
-
+Schubert polynomials
 
 See :wikipedia:`Schubert_polynomial` and
 `SymmetricFunctions.com <https://www.symmetricfunctions.com/schubert.htm#schubert>`_.
@@ -158,7 +157,7 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
             p = R(p)
         return p
 
-    def divided_difference(self, i, algorithm="sage"):
+    def divided_difference(self, i, algorithm='sage'):
         r"""
         Return the ``i``-th divided difference operator, applied to ``self``.
 

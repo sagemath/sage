@@ -1,10 +1,10 @@
 r"""
-Known lower bounds on the number of Mutually Orthogonal Latin
-Squares (MOLS) of a given size.
+Bounds on the number of mutually orthogonal Latin squares
 
-This module consists (almost) entirely of an internal, constant tuple
-of python integers corresponding to Table 3.87 in the Handbook of
-Combinatorial Designs, 2nd edition, by Colbourn and Dinitz. One public
+This module contains known lower bounds on the number of mutually orthogonal
+Latin squares (MOLS) of a given size, and consists (almost) entirely of an
+internal, constant tuple of Python integers corresponding to Table 3.87 in the
+Handbook of Combinatorial Designs, 2nd edition, by Colbourn and Dinitz. One public
 function, :func:`lower_bound`, is provided to access it.
 
 Make sure we have all of the entries::
@@ -565,6 +565,5 @@ def lower_bound(order: int) -> int:
         sage: from sage.combinat.designs import MOLS_handbook_data
         sage: MOLS_handbook_data.lower_bound(0)
         0
-
     """
     return _LOWER_BOUNDS[order]

@@ -581,7 +581,7 @@ void archive::clear()
 /** Delete cached unarchived expressions in all archive_nodes (mainly for debugging). */
 void archive::forget()
 {
-	for_each(nodes.begin(), nodes.end(), std::mem_fun_ref(&archive_node::forget));
+	std::for_each(nodes.begin(), nodes.end(), [](archive_node &node) { node.forget(); });
 }
 
 /** Delete cached unarchived expressions from node (for debugging). */

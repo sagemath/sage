@@ -1,4 +1,4 @@
-#!/usr/bin/env sage-python
+#!/usr/bin/env python3
 
 r"""
 This postprocess script fixes some issues with .rst files returned by nbconvert:
@@ -19,8 +19,8 @@ if __name__ == '__main__':
 
     file_name = sys.argv[1]
 
-    with open(file_name, 'r') as f:
-            lines = f.readlines()
+    with open(file_name) as f:
+        lines = f.readlines()
 
     # states of the parser
     wrong_math_def_started = False

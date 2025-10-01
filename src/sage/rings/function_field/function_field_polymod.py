@@ -27,19 +27,18 @@ Function Fields: extension
 # *****************************************************************************
 
 from sage.arith.functions import lcm
+from sage.categories.function_fields import FunctionFields
+from sage.categories.homset import Hom
+from sage.categories.number_fields import NumberFields
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
-from sage.rings.qqbar_decorators import handle_AA_and_QQbar
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.function_field.element import FunctionFieldElement
+from sage.rings.function_field.element_polymod import FunctionFieldElement_polymod
+from sage.rings.function_field.function_field import FunctionField
+from sage.rings.function_field.function_field_rational import RationalFunctionField
 from sage.rings.integer import Integer
-from sage.categories.homset import Hom
-from sage.categories.function_fields import FunctionFields
-from sage.categories.number_fields import NumberFields
-
-from .element import FunctionFieldElement
-from .element_polymod import FunctionFieldElement_polymod
-from .function_field import FunctionField
-from .function_field_rational import RationalFunctionField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.qqbar_decorators import handle_AA_and_QQbar
 
 
 class FunctionField_polymod(FunctionField):
@@ -247,8 +246,7 @@ class FunctionField_polymod(FunctionField):
 
         INPUT:
 
-        - ``f`` -- element of the function field which lies in the base
-          field.
+        - ``f`` -- element of the function field which lies in the base field
 
         EXAMPLES::
 
@@ -323,10 +321,10 @@ class FunctionField_polymod(FunctionField):
 
         INPUT:
 
-        - ``names`` -- a string or a tuple of up to two strings (default:
-          ``None``), the name of the generator of the field, and the name of
-          the generator of the underlying rational function field (if a tuple);
-          if not given, then the names are chosen automatically.
+        - ``names`` -- string or tuple of up to two strings (default:
+          ``None``); the name of the generator of the field, and the name of
+          the generator of the underlying rational function field (if a tuple).
+          If not given, then the names are chosen automatically.
 
         OUTPUT:
 
@@ -410,7 +408,6 @@ class FunctionField_polymod(FunctionField):
               To:   Function field in yy defined by yy^2 - xx
               Defn: y |--> yy
                     x |--> xx)
-
         """
         if names:
             if not isinstance(names, tuple):
@@ -425,25 +422,24 @@ class FunctionField_polymod(FunctionField):
                                 from_L(ret_to_L(ret.base_field().gen()))])
             to_ret = self.hom([L_to_ret(to_L(k.gen())) for k in self._intermediate_fields(self.rational_function_field())])
             return ret, from_ret, to_ret
+        elif self.polynomial().is_monic() and all(c.denominator().is_one() for c in self.polynomial()):
+            # self is already monic and integral
+            if names is None or names == ():
+                names = (self.variable_name(),)
+            return self.change_variable_name(names)
         else:
-            if self.polynomial().is_monic() and all(c.denominator().is_one() for c in self.polynomial()):
-                # self is already monic and integral
-                if names is None or names == ():
-                    names = (self.variable_name(),)
-                return self.change_variable_name(names)
-            else:
-                if not names:
-                    names = (self.variable_name() + "_",)
-                if len(names) == 1:
-                    names = (names[0], self.rational_function_field().variable_name())
+            if not names:
+                names = (self.variable_name() + "_",)
+            if len(names) == 1:
+                names = (names[0], self.rational_function_field().variable_name())
 
-                g, d = self._make_monic_integral(self.polynomial())
-                K, from_K, to_K = self.base_field().change_variable_name(names[1])
-                g = g.map_coefficients(to_K)
-                ret = K.extension(g, names=names[0])
-                from_ret = ret.hom([self.gen() * d, self.base_field().gen()])
-                to_ret = self.hom([ret.gen() / d, ret.base_field().gen()])
-                return ret, from_ret, to_ret
+            g, d = self._make_monic_integral(self.polynomial())
+            K, from_K, to_K = self.base_field().change_variable_name(names[1])
+            g = g.map_coefficients(to_K)
+            ret = K.extension(g, names=names[0])
+            from_ret = ret.hom([self.gen() * d, self.base_field().gen()])
+            to_ret = self.hom([ret.gen() / d, ret.base_field().gen()])
+            return ret, from_ret, to_ret
 
     def _make_monic_integral(self, f):
         """
@@ -528,7 +524,7 @@ class FunctionField_polymod(FunctionField):
         INPUT:
 
         - ``base`` -- a function field (default: ``None``), a function field
-          from which this field has been constructed as a finite extension.
+          from which this field has been constructed as a finite extension
 
         EXAMPLES::
 
@@ -554,7 +550,6 @@ class FunctionField_polymod(FunctionField):
             Traceback (most recent call last):
             ...
             ValueError: base must be the rational function field itself
-
         """
         if base is None:
             base = self.base_field()
@@ -574,7 +569,21 @@ class FunctionField_polymod(FunctionField):
             sage: L._repr_()
             'Function field in y defined by y^5 - 2*x*y + (-x^4 - 1)/x'
         """
-        return "Function field in %s defined by %s" % (self.variable_name(), self._polynomial)
+        return f"Function field in {self.variable_name()} defined by {self._polynomial}"
+
+    def _latex_(self):
+        r"""
+        Return the LaTeX representation of the function field.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(QQ); R.<y> = K[]
+            sage: L.<y> = K.extension(y^5 - (x^3 + 2*x*y + 1/x))
+            sage: latex(L)
+            \text{Function field in } y \text{ defined by } y^{5} - 2 x y + \frac{-x^{4} - 1}{x}
+        """
+        return (fr"\text{{Function field in }} {self.variable_name()} "
+                fr"\text{{ defined by }} {self._polynomial._latex_()}")
 
     def base_field(self):
         """
@@ -659,7 +668,6 @@ class FunctionField_polymod(FunctionField):
             sage: L.<y> = K.extension(y^5 - 1)
             sage: L.is_separable()
             False
-
         """
         if base is None:
             base = self.base_field()
@@ -701,10 +709,10 @@ class FunctionField_polymod(FunctionField):
           space is over this subfield `R`, which defaults to the base field of this
           function field.
 
-        - ``basis`` -- a basis for this field over the base.
+        - ``basis`` -- a basis for this field over the base
 
-        - ``maps`` -- boolean (default ``True``), whether to return
-          `R`-linear maps to and from `V`.
+        - ``maps`` -- boolean (default: ``True``); whether to return
+          `R`-linear maps to and from `V`
 
         OUTPUT:
 
@@ -785,11 +793,10 @@ class FunctionField_polymod(FunctionField):
              Isomorphism:
               From: Function field in z defined by z^2 - y
               To:   Vector space of dimension 10 over Rational function field in x over Rational Field)
-
         """
         if basis is not None:
             raise NotImplementedError
-        from .maps import MapVectorSpaceToFunctionField, MapFunctionFieldToVectorSpace
+        from .maps import MapFunctionFieldToVectorSpace, MapVectorSpaceToFunctionField
         if base is None:
             base = self.base_field()
         degree = self.degree(base)
@@ -891,7 +898,7 @@ class FunctionField_polymod(FunctionField):
         INPUT:
 
         - ``im_gens`` -- list of images of the generators of the function field
-          and of successive base rings.
+          and of successive base rings
 
         - ``base_morphism`` -- homomorphism of the base ring, after the
           ``im_gens`` are used.  Thus if ``im_gens`` has length 2, then
@@ -986,7 +993,6 @@ class FunctionField_polymod(FunctionField):
               To:   Function field in y defined by y^2 - x^3 - 1
               Defn: xx |--> x
                     yy |--> y
-
         """
         if not isinstance(im_gens, (list, tuple)):
             im_gens = [im_gens]
@@ -1051,7 +1057,7 @@ class FunctionField_polymod(FunctionField):
 
         INPUT:
 
-        - ``name`` -- a string, the name of the generator of `N`
+        - ``name`` -- string; the name of the generator of `N`
 
         ALGORITHM:
 
@@ -1127,7 +1133,6 @@ class FunctionField_polymod(FunctionField):
                To:   Function field in v defined by v^6 + x*v^4 + x^2*v^2 + x^3 + 1
                Defn: z |--> v^4 + x^2
                      y |--> v^4 + v + x^2)
-
         """
         M = self
         L = M.base_field()
@@ -1188,7 +1193,7 @@ class FunctionField_polymod(FunctionField):
 
         INPUT:
 
-        - ``name`` -- a string (default: ``None``), the name of generator of
+        - ``name`` -- string (default: ``None``); the name of generator of
           the simple extension. If ``None``, then the name of the generator
           will be the same as the name of the generator of this function field.
 
@@ -1366,7 +1371,7 @@ class FunctionField_polymod(FunctionField):
 
         INPUT:
 
-        - ``names`` -- a tuple of two strings or ``None`` (default: ``None``);
+        - ``names`` -- tuple of two strings or ``None`` (default: ``None``);
           the second entry will be used as the variable name of the rational
           function field, the first entry will be used as the variable name of
           its separable extension. If ``None``, then the variable names will be
@@ -1512,7 +1517,6 @@ class FunctionField_polymod(FunctionField):
                Defn: z |--> x_
                      y |--> x_^3
                      x |--> x_^6)
-
         """
         if names is None:
             pass
@@ -1582,9 +1586,9 @@ class FunctionField_polymod(FunctionField):
 
         INPUT:
 
-        - ``name`` -- a string or a tuple consisting of a strings, the names of
+        - ``name`` -- string or tuple consisting of a strings; the names of
           the new variables starting with a generator of this field and going
-          down to the rational function field.
+          down to the rational function field
 
         OUTPUT:
 
@@ -1642,7 +1646,6 @@ class FunctionField_polymod(FunctionField):
               Defn: z |--> zz
                     y |--> yy
                     x |--> xx)
-
         """
         if not isinstance(name, tuple):
             name = (name,)
@@ -1736,7 +1739,7 @@ class FunctionField_simple(FunctionField_polymod):
 
         INPUT:
 
-        - ``p`` -- place of the base rational function field.
+        - ``p`` -- place of the base rational function field
 
         EXAMPLES::
 
@@ -1898,7 +1901,7 @@ class FunctionField_simple(FunctionField_polymod):
         ideal.
 
         If an element not in the valuation ring is applied to the map, an
-        exception ``TypeError`` is raised.
+        exception :exc:`TypeError` is raised.
 
         EXAMPLES::
 
@@ -2096,7 +2099,7 @@ class FunctionField_global(FunctionField_simple):
 
         INPUT:
 
-        - ``degree`` -- a positive integer
+        - ``degree`` -- positive integer
 
         OUTPUT: a place of ``degree`` if any exists; otherwise ``None``
 
@@ -2122,7 +2125,6 @@ class FunctionField_global(FunctionField_simple):
             sage: L.get_place(7)
             Place (x^7 + x + 1, y + x^6 + x^5 + x^4 + x^3 + x)
             sage: L.get_place(8)
-
         """
         for p in self._places_finite(degree):
             return p
@@ -2390,22 +2392,20 @@ def _singular_normal(ideal):
         sage: _singular_normal(ideal(f))
         [[1]]
     """
-    from sage.libs.singular.function import singular_function, lib
-    lib('normal.lib')
+    from sage.libs.singular.function import (
+        get_printlevel,
+        set_printlevel,
+        singular_function,
+    )
+    from sage.libs.singular.function import lib as singular_lib
+    singular_lib('normal.lib')
     normal = singular_function('normal')
-    execute = singular_function('execute')
 
-    try:
-        get_printlevel = singular_function('get_printlevel')
-    except NameError:
-        execute('proc get_printlevel {return (printlevel);}')
-        get_printlevel = singular_function('get_printlevel')
-
-    # It's fairly verbose unless printlevel is -1.
+    # verbose unless printlevel is -1.
     saved_printlevel = get_printlevel()
-    execute('printlevel=-1')
+    set_printlevel(-1)
     nor = normal(ideal)
-    execute('printlevel={}'.format(saved_printlevel))
+    set_printlevel(saved_printlevel)
 
     return nor[1]
 
@@ -2435,6 +2435,7 @@ class FunctionField_integral(FunctionField_simple):
         in some algorithms.
         """
         from sage.matrix.constructor import matrix
+
         from .hermite_form_polynomial import reversed_hermite_form
 
         k = self.constant_base_field()
@@ -2449,8 +2450,8 @@ class FunctionField_integral(FunctionField_simple):
         g = sum([v[i].numerator().subs(x) * y**i for i in range(len(v))])
 
         if self.is_global():
-            from sage.libs.singular.function import singular_function, lib
             from sage.env import SAGE_EXTCODE
+            from sage.libs.singular.function import lib, singular_function
             lib(SAGE_EXTCODE + '/singular/function_field/core.lib')
             normalize = singular_function('core_normalize')
 

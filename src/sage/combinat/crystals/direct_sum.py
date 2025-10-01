@@ -1,8 +1,8 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-Direct Sum of Crystals
+Direct sum of crystals
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Anne Schilling <anne at math.ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -15,7 +15,7 @@ Direct Sum of Crystals
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#****************************************************************************
+# ***************************************************************************
 
 from sage.categories.category import Category
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
@@ -33,8 +33,8 @@ class DirectSumOfCrystals(DisjointUnionEnumeratedSets):
 
     INPUT:
 
-     - ``crystals``  -- a list of crystals of the same Cartan type
-     - ``keepkey``   -- a boolean
+    - ``crystals`` -- list of crystals of the same Cartan type
+    - ``keepkey`` -- boolean
 
     The option ``keepkey`` is by default set to ``False``, assuming
     that the crystals are all distinct. In this case the elements of

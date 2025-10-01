@@ -66,7 +66,6 @@ space associated with certain multiple of `B` (depending on the model). This
 allows representing points of Jacobian as matrices once we fix a basis of the
 Riemann-Roch space.
 
-
 EXAMPLES::
 
     sage: P2.<x,y,z> = ProjectiveSpace(GF(17), 2)
@@ -170,7 +169,6 @@ class JacobianPoint(JacobianPoint_base):
         [0 0 0 1 0 0 0 0 5]
         [0 0 0 0 0 1 0 0 5]
         [0 0 0 0 0 0 1 0 4]
-
     """
     def __init__(self, parent, w):
         """
@@ -338,7 +336,7 @@ class JacobianPoint(JacobianPoint_base):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -361,7 +359,7 @@ class JacobianPoint(JacobianPoint_base):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -621,18 +619,15 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
         D0 = base_div
 
-        self._V_cache = 10*[None]
-
-        V_cache = self._V_cache
+        self._base_div_degree = base_div.degree()
+        self._V_cache = dict()
 
         def V(n):
-            if n in V_cache:
-                return V_cache[n]
+            if n in self._V_cache:
+                return self._V_cache[n]
 
-            Vn, from_Vn, to_Vn = (n * D0).function_space()
-            V_cache[n] = (Vn, from_Vn, to_Vn)
-
-            return Vn, from_Vn, to_Vn
+            self._V_cache[n] = (n * D0).function_space()
+            return self._V_cache[n]
 
         def mu(n, m, i, j):
             Vn, from_Vn, to_Vn = V(n)
@@ -762,10 +757,12 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             if x.degree() == 0:
                 return self.point(x)
             if x.is_effective():
+                if x.degree() != self._base_div_degree:
+                    raise ValueError(f"effective divisor is not of degree {self._base_div_degree}")
                 wd = self._wd_from_divisor(x)
                 return self.element_class(self, wd)
 
-        raise ValueError(f"Cannot construct a point from {x}")
+        raise ValueError(f"cannot construct a point from {x}")
 
     def point(self, divisor):
         """

@@ -135,7 +135,6 @@ def set_stab_py(generators, sett, relab=False):
         ([], [7, 8, 6, 3, 4, 5, 2, 0, 1])
         sage: set_stab_py([[0,2,1,4,3,5,8,7,6],[8,7,6,3,5,4,2,1,0]], [0,3,5,6,8], True)
         ([], [2, 1, 0, 5, 4, 3, 7, 6, 8])
-
     """
     if len(generators) == 0:
         return []
@@ -644,8 +643,8 @@ cdef int allocate_subset_gen_2(int degree, int max_size, iterator *it) noexcept:
         cgd.iterator_stack[i].data = allocate_sgd(degree)
         cgd.iterator_stack[i].next = &subset_generator_next
         if cgd.iterator_stack[i].data is NULL or \
-           cgd.object_stack[i]        is NULL or \
-           cgd.parent_stack[i]        is NULL:
+           cgd.object_stack[i] is NULL or \
+           cgd.parent_stack[i] is NULL:
             for j from 0 <= j <= i:
                 deallocate_sgd(cgd.iterator_stack[i].data)
                 free_subset(cgd.object_stack[i])
@@ -696,11 +695,11 @@ def sets_modulo_perm_group(list generators, int max_size,
 
     INPUT:
 
-    - ``generators`` -- (list of lists) list of generators in list form
-    - ``max_size`` -- (int) maximum size of subsets to be generated
-    - ``indicate_mem_err`` -- (bool) whether to raise an error
-        if we run out of memory, or simply append a :class:`MemoryError`
-        instance to the end of the output
+    - ``generators`` -- list of generators in list form
+    - ``max_size`` -- integer; maximum size of subsets to be generated
+    - ``indicate_mem_err`` -- boolean; whether to raise an error.
+      If we run out of memory, or simply append a :exc:`MemoryError`
+      instance to the end of the output.
 
     EXAMPLES::
 

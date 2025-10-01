@@ -5,13 +5,13 @@ This module provides the class :class:`VoronoiDiagram` for computing the
 Voronoi diagram of a finite list of points in `\RR^d`.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Moritz Firsching <moritz@math.fu-berlin.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
 from sage.geometry.polyhedron.constructor import Polyhedron
@@ -29,12 +29,10 @@ class VoronoiDiagram(SageObject):
 
     INPUT:
 
-    - ``points`` -- a list of points. Any valid input for the
-      :class:`PointConfiguration` will do.
+    - ``points`` -- list of points; any valid input for the
+      :class:`PointConfiguration` will do
 
-    OUTPUT:
-
-    An instance of the VoronoiDiagram class.
+    OUTPUT: an instance of the VoronoiDiagram class
 
     EXAMPLES:
 
@@ -251,11 +249,9 @@ class VoronoiDiagram(SageObject):
         - ``cell_colors`` -- (default: ``None``) provide the colors for the cells, either as
           dictionary. Randomly colored cells are provided with ``None``.
         - ``**kwds`` -- optional keyword parameters, passed on as arguments for
-          plot().
+          plot()
 
-        OUTPUT:
-
-        A graphics object.
+        OUTPUT: a graphics object
 
         EXAMPLES::
 
@@ -284,7 +280,10 @@ class VoronoiDiagram(SageObject):
             NotImplementedError: Plotting of 3-dimensional Voronoi diagrams not
             implemented
         """
-        from sage.plot.all import line, point, rainbow, plot
+        from sage.plot.line import line
+        from sage.plot.point import point
+        from sage.plot.colors import rainbow
+        from sage.plot.plot import plot
 
         if self.ambient_dim() == 2:
             S = line([])
@@ -294,7 +293,7 @@ class VoronoiDiagram(SageObject):
                 cell_colors = rainbow(self._n)
                 shuffle(cell_colors)
             else:
-                if not (isinstance(cell_colors, list) or (isinstance(cell_colors, dict))):
+                if not isinstance(cell_colors, (list, dict)):
                     raise AssertionError("'cell_colors' must be a list or a dictionary")
             for i, p in enumerate(self._P):
                 col = cell_colors[i]

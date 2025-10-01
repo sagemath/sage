@@ -13,8 +13,8 @@ cpdef inline richcmp(x, y, int op):
 
     - ``x``, ``y`` -- arbitrary Python objects
 
-    - ``op`` -- comparison operator (one of ``op_LT`, ``op_LE``,
-      ``op_EQ``, ``op_NE``, ``op_GT``, ``op_GE``).
+    - ``op`` -- comparison operator (one of ``op_LT``, ``op_LE``,
+      ``op_EQ``, ``op_NE``, ``op_GT``, ``op_GE``)
 
     EXAMPLES::
 
@@ -127,7 +127,7 @@ cpdef inline bint rich_to_bool(int op, int c) noexcept:
 
     - ``op`` -- a rich comparison operation (e.g. ``Py_EQ``)
 
-    - ``c`` -- the result of an old-style comparison: -1, 0 or 1.
+    - ``c`` -- the result of an old-style comparison: -1, 0 or 1
 
     OUTPUT: 1 or 0 (corresponding to ``True`` and ``False``)
 

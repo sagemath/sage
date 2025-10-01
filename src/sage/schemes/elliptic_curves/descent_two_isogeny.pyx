@@ -20,7 +20,7 @@ from sage.rings.polynomial.polynomial_ring import polygen
 cdef object x_ZZ = polygen(ZZ)
 from sage.rings.polynomial.real_roots import real_roots
 from sage.arith.misc import prime_divisors
-import sage.libs.ntl.all as ntl
+from sage.libs.ntl.ntl_ZZ_pX import ntl_ZZ_pX as ZZ_pX
 
 from sage.rings.integer cimport Integer
 from sage.libs.gmp.mpz cimport *
@@ -89,7 +89,7 @@ def test_valuation(a, p):
 
 cdef int padic_square(mpz_t a, mpz_t p) noexcept:
     """
-    Test if a is a p-adic square.
+    Test if a is a `p`-adic square.
     """
     cdef unsigned long v
     cdef mpz_t aa
@@ -134,7 +134,7 @@ def test_padic_square(a, p):
 cdef int lemma6(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
                 mpz_t x, mpz_t p, unsigned long nu) noexcept:
     """
-    Implements Lemma 6 of BSD's "Notes on elliptic curves, I" for odd p.
+    Implement Lemma 6 of BSD's "Notes on elliptic curves, I" for odd `p`.
 
     Returns -1 for insoluble, 0 for undecided, +1 for soluble.
     """
@@ -184,7 +184,7 @@ cdef int lemma6(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 cdef int lemma7(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
                 mpz_t x, mpz_t p, unsigned long nu) noexcept:
     """
-    Implements Lemma 7 of BSD's "Notes on elliptic curves, I" for p=2.
+    Implement Lemma 7 of BSD's "Notes on elliptic curves, I" for `p=2`.
 
     Returns -1 for insoluble, 0 for undecided, +1 for soluble.
     """
@@ -579,8 +579,8 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         mpz_set(D.value, d)
         mpz_set(E.value, e)
         mpz_set(P.value, pp)
-        f = ntl.ZZ_pX([E, D, C, B, A], P)
-        f /= ntl.ZZ_pX([A], P)  # now f is monic, and we are done with A,B,C,D,E
+        f = ZZ_pX([E, D, C, B, A], P)
+        f /= ZZ_pX([A], P)  # now f is monic, and we are done with A,B,C,D,E
         mpz_set(qq, A.value)  # qq is the leading coefficient of the polynomial
         f_factzn = f.factor()
         result = 0
@@ -593,7 +593,7 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         if result:
             return 1
 
-        f = ntl.ZZ_pX([1], P)
+        f = ZZ_pX([1], P)
         for factor, exponent in f_factzn:
             for j in range(exponent // 2):
                 f *= factor
@@ -732,8 +732,8 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         mpz_set(D.value, d)
         mpz_set(E.value, e)
         mpz_set(P.value, pp)
-        f = ntl.ZZ_pX([E, D, C, B, A], P)
-        f /= ntl.ZZ_pX([A], P)  # now f is monic
+        f = ZZ_pX([E, D, C, B, A], P)
+        f /= ZZ_pX([A], P)  # now f is monic
         f_factzn = f.factor()
 
         has_roots = 0
@@ -948,7 +948,7 @@ def test_qpls(a, b, c, d, e, p):
 
 cdef int everywhere_locally_soluble(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e) except -1:
     """
-    Returns whether the quartic has local solutions at all primes p.
+    Return whether the quartic has local solutions at all primes `p`.
     """
     cdef Integer A, B, C, D, E, Delta,p
     cdef mpz_t mpz_2
@@ -978,6 +978,8 @@ cdef int everywhere_locally_soluble(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e)
 
     # Odd finite primes
     Delta = f.discriminant()
+    if not Delta:
+        raise ValueError("the curve is singular, Delta is zero")
     for p in prime_divisors(Delta):
         if p == 2:
             continue
@@ -1002,6 +1004,15 @@ def test_els(a, b, c, d, e):
         ....:                 print("This never happened", a, b, c, d, e)
         ....:         except ValueError:
         ....:             continue
+
+    TESTS:
+
+    Check that :issue:`39864` is fixed::
+
+        sage: test_els(194, 617, 846, 617, 194)
+        Traceback (most recent call last):
+        ...
+        ValueError: the curve is singular, Delta is zero
     """
     cdef Integer A, B, C, D, E
     A = Integer(a)
@@ -1208,10 +1219,8 @@ def two_descent_by_two_isogeny(E,
         Elliptic Curve defined by y^2 = x^3 - x^2 - 900*x - 10098 over Rational Field
         sage: E.sha().an()
         4
-        sage: alarm(0.5); two_descent_by_two_isogeny(E, global_limit_large=10^8)
-        Traceback (most recent call last):
-        ...
-        AlarmInterrupt
+        sage: from sage.doctest.util import ensure_interruptible_after
+        sage: with ensure_interruptible_after(0.5): two_descent_by_two_isogeny(E, global_limit_large=10^8)
     """
     cdef Integer a1, a2, a3, a4, a6, s2, s4, s6
     cdef Integer c, d, x0
@@ -1318,7 +1327,7 @@ def two_descent_by_two_isogeny_work(Integer c, Integer d,
                 p_list_len += 1
     else:
         # Factor more slowly using Pari via Python.
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         d = Integer(0)
         mpz_set(d.value, d_mpz)
         primes = list(pari(d).factor()[0])

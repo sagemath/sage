@@ -131,6 +131,10 @@ AUTHORS:
   laziness :issue:`28627`)
 """
 
+import re
+from collections import defaultdict
+from ssl import create_default_context as default_context
+from urllib.parse import urlencode
 # ****************************************************************************
 #       Copyright (C) 2012 Thierry Monteil <sage!lma.metelu.net>
 #
@@ -139,24 +143,20 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from urllib.request import urlopen
-from urllib.parse import urlencode
-from ssl import create_default_context as default_context
-from collections import defaultdict
-import re
+from urllib.request import urlopen, Request
 
-from sage.structure.sage_object import SageObject
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.version import version
 from sage.cpython.string import bytes_to_str
-from sage.rings.integer import Integer
-from sage.misc.verbose import verbose
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
+from sage.misc.html import HtmlFragment
 from sage.misc.temporary_file import tmp_filename
 from sage.misc.unknown import Unknown
-from sage.misc.html import HtmlFragment
+from sage.misc.verbose import verbose
 from sage.repl.preparse import preparse
-
+from sage.rings.integer import Integer
+from sage.structure.sage_object import SageObject
+from sage.structure.unique_representation import UniqueRepresentation
 
 oeis_url = 'https://oeis.org/'
 
@@ -167,11 +167,9 @@ def _fetch(url):
 
     INPUT:
 
-    - ``url`` -- a string corresponding to the URL to be fetched.
+    - ``url`` -- string corresponding to the URL to be fetched
 
-    OUTPUT:
-
-    - a string representing the fetched web page.
+    OUTPUT: string representing the fetched web page
 
     TESTS::
 
@@ -181,10 +179,8 @@ def _fetch(url):
     """
     try:
         verbose("Fetching URL %s ..." % url, caller_name='OEIS')
-        f = urlopen(url, context=default_context())
-        result = f.read()
-        f.close()
-        return bytes_to_str(result)
+        with urlopen(Request(url, headers={'User-Agent': f'SageMath/{version}'})) as f:
+            return bytes_to_str(f.read())
     except OSError as msg:
         raise OSError("%s\nerror fetching %s" % (msg, url))
 
@@ -198,11 +194,9 @@ def _urls(html_string):
 
     INPUT:
 
-    - ``html_string`` -- a string representing some HTML code.
+    - ``html_string`` -- string representing some HTML code
 
-    OUTPUT:
-
-    - a list of (string) URLs contained in ``html_string``.
+    OUTPUT: list of (string) URLs contained in ``html_string``
 
     EXAMPLES::
 
@@ -252,11 +246,11 @@ class OEIS:
       - a list representing a sequence of integers.
       - a string, representing a text search.
 
-    - ``max_results`` -- (integer, default: 30) the maximum number of
+    - ``max_results`` -- integer (default: 30); the maximum number of
       results to return, they are sorted according to their relevance. In
       any cases, the OEIS website will never provide more than 100 results.
 
-    - ``first_result`` -- (integer, default: 0) allow to skip the
+    - ``first_result`` -- integer (default: 0); allow to skip the
       ``first_result`` first results in the search, to go further.
       This is useful if you are looking for a sequence that may appear
       after the 100 first found sequences.
@@ -362,6 +356,10 @@ class OEIS:
 
         sage: oeis((1,2,5,16,61))    # optional -- internet
         0: A000111: ...
+        sage: oeis('A000040')  # optional -- internet
+        A000040: The prime numbers.
+        sage: oeis('A000045')  # optional -- internet
+        A000045: Fibonacci numbers: F(n) = F(n-1) + F(n-2) with F(0) = 0 and F(1) = 1.
     """
 
     def __call__(self, query, max_results=3, first_result=0):
@@ -398,18 +396,15 @@ class OEIS:
 
     def find_by_id(self, ident, fetch=False):
         r"""
-
         INPUT:
 
-        - ``ident`` -- a string representing the A-number of the sequence
-          or an integer representing its number.
+        - ``ident`` -- string representing the A-number of the sequence
+          or an integer representing its number
 
-        - ``fetch`` -- (bool, default: ``False``) whether to force fetching the
-          content of the sequence on the internet.
+        - ``fetch`` -- boolean (default: ``False``); whether to force fetching the
+          content of the sequence on the internet
 
-        OUTPUT:
-
-        - The OEIS sequence whose A-number or number corresponds to ``ident``.
+        OUTPUT: the OEIS sequence whose A-number or number corresponds to ``ident``
 
         EXAMPLES::
 
@@ -426,15 +421,12 @@ class OEIS:
 
     def find_by_entry(self, entry):
         r"""
-
         INPUT:
 
-        - ``entry`` -- a string corresponding to an entry in the internal format
-          of the OEIS.
+        - ``entry`` -- string corresponding to an entry in the internal format
+          of the OEIS
 
-        OUTPUT:
-
-        - The corresponding OEIS sequence.
+        OUTPUT: the corresponding OEIS sequence
 
         EXAMPLES::
 
@@ -454,13 +446,13 @@ class OEIS:
 
         INPUT:
 
-        - ``description`` -- (string) the description the searched sequences.
+        - ``description`` -- string; the description the searched sequences
 
-        - ``max_results`` -- (integer, default: 3) the maximum number of results
+        - ``max_results`` -- integer (default: 3); the maximum number of results
           we want. In any case, the on-line encyclopedia will not return more
           than 100 results.
 
-        - ``first_result`` -- (integer, default: 0) allow to skip the
+        - ``first_result`` -- integer (default: 0); allow to skip the
           ``first_result`` first results in the search, to go further.
           This is useful if you are looking for a sequence that may appear
           after the 100 first found sequences.
@@ -507,20 +499,20 @@ class OEIS:
 
         INPUT:
 
-        - ``subsequence`` -- a list or tuple of integers.
+        - ``subsequence`` -- list or tuple of integers
 
-        - ``max_results`` -- (integer, default: 3), the maximum of results requested.
+        - ``max_results`` -- integer (default: 3); the maximum of results requested
 
-        - ``first_result`` -- (integer, default: 0) allow to skip the
+        - ``first_result`` -- integer (default: 0); allow to skip the
           ``first_result`` first results in the search, to go further.
           This is useful if you are looking for a sequence that may appear
           after the 100 first found sequences.
 
         OUTPUT:
 
-        - a tuple (with fancy formatting) of at most ``max_results`` OEIS
-          sequences. Those sequences can be used without the need to fetch the
-          database again.
+        A tuple (with fancy formatting) of at most ``max_results`` OEIS
+        sequences. Those sequences can be used without the need to fetch the
+        database again.
 
         EXAMPLES::
 
@@ -552,14 +544,12 @@ class OEIS:
 
         INPUT:
 
-        - ``ident`` -- a string representing the A-number of the sequence.
+        - ``ident`` -- string representing the A-number of the sequence
 
-        - ``keywords`` -- a string corresponding to the keyword field of the
-          sequence.
+        - ``keywords`` -- string corresponding to the keyword field of the
+          sequence
 
-        OUTPUT:
-
-        - a string representing the entry of the sequence.
+        OUTPUT: string representing the entry of the sequence
 
         TESTS::
 
@@ -570,7 +560,6 @@ class OEIS:
             sage: s = oeis.find_by_entry(entry=oeis._imaginary_entry(ident='A999998', keywords=keywords))
             sage: ','.join(s.keywords()) == keywords
             True
-
         """
         return ('%I ' + ident + ' M9999 N9999\n'
                 '%S ' + ident + ' 1,1,1,1,2,1,1,1,\n'
@@ -612,14 +601,12 @@ class OEIS:
 
         INPUT:
 
-        - ``ident`` -- a string representing the A-number of the sequence.
+        - ``ident`` -- string representing the A-number of the sequence
 
-        - ``keywords`` -- string (default: 'sign,easy'), a list of words
-          separated by commas.
+        - ``keywords`` -- string (default: ``'sign,easy'``); a list of words
+          separated by commas
 
-        OUTPUT:
-
-        - OEIS sequence.
+        OUTPUT: OEIS sequence
 
         TESTS::
 
@@ -689,8 +676,8 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``ident`` -- a string representing the A-number of the sequence or an
-          integer representing its number.
+        - ``ident`` -- string representing the A-number of the sequence or an
+          integer representing its number
 
         TESTS::
 
@@ -754,7 +741,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``format`` -- (string, default: 'A').
+        - ``format`` -- string (default: ``'A'``)
 
         OUTPUT:
 
@@ -791,9 +778,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         This method allows unique representation of OEIS sequences.
 
-        OUTPUT:
-
-        - Python `int`.
+        OUTPUT: Python integer
 
         EXAMPLES::
 
@@ -825,9 +810,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         The raw entry is fetched online if needed.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -856,9 +839,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         r"""
         Return the name of the sequence ``self``.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -920,9 +901,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         from 1) whose absolute value is greater than 1. This is set to 1 if all
         the terms are 0 or +-1.
 
-        OUTPUT:
-
-        - tuple of two elements.
+        OUTPUT: tuple of two elements
 
         EXAMPLES::
 
@@ -947,9 +926,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         r"""
         Return the author of the sequence in the encyclopedia.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -971,9 +948,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         r"""
         Return the keywords associated to the sequence ``self``.
 
-        OUTPUT:
-
-        - tuple of strings.
+        OUTPUT: tuple of strings
 
         EXAMPLES::
 
@@ -1097,12 +1072,12 @@ class OEISSequence(SageObject, UniqueRepresentation):
             from sage.rings.real_lazy import RealLazyField
             return RealLazyField()('0' + ''.join(map(str, terms[:offset])) + '.' + ''.join(map(str, terms[offset:])))
         elif 'nonn' in self.keywords():
-            from sage.structure.sequence import Sequence
             from sage.rings.semirings.non_negative_integer_semiring import NN
+            from sage.structure.sequence import Sequence
             return Sequence(self.first_terms(), NN)
         else:
-            from sage.structure.sequence import Sequence
             from sage.rings.integer_ring import ZZ
+            from sage.structure.sequence import Sequence
             return Sequence(self.first_terms(), ZZ)
 
     def is_dead(self, warn_only=False) -> bool:
@@ -1179,7 +1154,6 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: s = oeis._imaginary_sequence(ident='A999993', keywords='nonn,finit')
             sage: s.is_finite()
             True
-
         """
         if 'finit' in self.keywords() or 'full' in self.keywords():
             return True
@@ -1237,13 +1211,11 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``number`` -- (integer or ``None``, default: ``None``) the number of
+        - ``number`` -- integer or ``None`` (default); the number of
           terms returned (if less than the number of available terms). When set
-          to None, returns all the known terms.
+          to ``None``, returns all the known terms.
 
-        OUTPUT:
-
-        - tuple of integers.
+        OUTPUT: tuple of integers
 
         EXAMPLES::
 
@@ -1273,9 +1245,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         r"""
         Print the sequence number and a short summary of this sequence.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1297,11 +1267,9 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``k`` -- integer.
+        - ``k`` -- integer
 
-        OUTPUT:
-
-        - integer.
+        OUTPUT: integer
 
         .. NOTE::
 
@@ -1354,18 +1322,16 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
     def __getitem__(self, i):
         r"""
-        Return the ``i``th element of sequence ``self``, viewed as a tuple.
+        Return the `i`-th element of sequence ``self``, viewed as a tuple.
 
         The first element appearing in the sequence ``self``corresponds to
         ``self[0]``. Do not confuse with calling ``self(k)``.
 
         INPUT:
 
-        - ``i`` -- integer.
+        - ``i`` -- integer
 
-        OUTPUT:
-
-        - integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1395,9 +1361,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         those first terms are exhausted and the real associated sequence
         still have terms to produce.
 
-        OUTPUT:
-
-        - integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1498,12 +1462,12 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``browse`` -- an integer, a list of integers, or the word 'all'
-          (default: ``None``): which links to open in a web browser.
+        - ``browse`` -- integer; a list of integers, or the word 'all'
+          (default: ``None``) which links to open in a web browser
 
-        - ``format`` -- string (default: 'guess'): how to display the links.
+        - ``format`` -- string (default: ``'guess'``); how to display the links
 
-        OUTPUT: Tuple of strings (with fancy formatting):
+        OUTPUT: tuple of strings (with fancy formatting):
 
         - if ``format`` is ``url``, returns a tuple of absolute links without description.
         - if ``format`` is ``html``, returns nothing but prints a tuple of clickable absolute links in their context.
@@ -1534,7 +1498,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: s.links(format='url')[3]
             'https://oeis.org/A000024'
 
-            sage: HTML = s.links(format="html");  HTML
+            sage: HTML = s.links(format='html');  HTML
             0: Wikipedia, <a href="https://en.wikipedia.org/wiki/42_(number)">42 (number)</a>
             1: See. also <a href="https://github.com/sagemath/sage/issues/42">github issue #42</a>
             ...
@@ -1597,7 +1561,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``fetch`` -- boolean (default: ``False``).
+        - ``fetch`` -- boolean (default: ``False``)
 
         OUTPUT:
 
@@ -1725,9 +1689,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         r"""
         Return the URL of the page associated to the sequence ``self``.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1828,15 +1790,15 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``language`` -- string (default: 'all'), the chosen language.
+        - ``language`` -- string (default: ``'all'``); the chosen language.
           Possible values are 'all' for the full list, or
           any language name, for example 'sage', 'maple', 'mathematica', etc.
 
         Some further optional input is specific to sage code treatment:
 
-        - ``preparsing`` -- boolean (default: ``True``) whether to preparse
+        - ``preparsing`` -- boolean (default: ``True``); whether to preparse
           sage code
-        - ``keep_comments`` -- boolean (default: ``False``) whether to keep
+        - ``keep_comments`` -- boolean (default: ``False``); whether to keep
           comments in sage code
 
         OUTPUT:
@@ -1849,11 +1811,9 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: ee = oeis('A001113') ; ee             # optional -- internet
-            A001113: Decimal expansion of e.
-
+            sage: ee = oeis.find_by_id('A00260')        # optional -- internet
             sage: ee.programs('pari')[0]                # optional -- internet
-            0: default(realprecision, 50080); x=exp(1); for (n=1, 50000, d=floor(x); x=(x-d)*10; write("b001113.txt", n, " ", d)); \\ _Harry J. Smith_, Apr 15 2009
+            0: {a(n) = binomial(...)};...
 
             sage: G = oeis.find_by_id('A27642')   # optional -- internet
             sage: G.programs('all')               # optional -- internet
@@ -1970,7 +1930,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             return sorted(table)
         return sorted(prog for la, prog in table if la == language)
 
-    def test_compile_sage_code(self):
+    def check_compile_sage_code(self):
         """
         Try to compile the extracted sage code, if there is any.
 
@@ -1986,13 +1946,13 @@ class OEISSequence(SageObject, UniqueRepresentation):
         One correct sequence::
 
             sage: s = oeis.find_by_id('A027642')        # optional -- internet
-            sage: s.test_compile_sage_code()            # optional -- internet
+            sage: s.check_compile_sage_code()            # optional -- internet
             True
 
         One dead sequence::
 
             sage: s = oeis.find_by_id('A000154')        # optional -- internet
-            sage: s.test_compile_sage_code()            # optional -- internet
+            sage: s.check_compile_sage_code()            # optional -- internet
             True
         """
         if self.is_dead():
@@ -2070,7 +2030,7 @@ class FancyTuple(tuple):
     def __getitem__(self, x):
         r"""
         If ``x`` is a slice return the corresponding sub FancyTuple,
-        else return the `̀`x``-th item of ``self``.
+        else return the ``x``-th item of ``self``.
 
         TESTS::
 

@@ -113,8 +113,7 @@ clean:
 	fi
 
 # "c_lib", ".cython_version", "build" in $(SAGE_SRC) are from old sage versions
-# Cleaning .so files (and .c and .cpp files associated with .pyx files) is for editable installs.
-# Also cython_debug is for editable installs.
+# Cleaning .so files (and .c and .cpp files associated with .pyx files), cython_debug and "sagelib/src/build" is for old editable installs.
 sagelib-clean:
 	@echo "Deleting Sage library build artifacts..."
 	if [ -d "$(SAGE_SRC)" ]; then \
@@ -122,9 +121,12 @@ sagelib-clean:
 	     rm -rf c_lib .cython_version cython_debug; \
 	     rm -rf build; find . -name '*.pyc' -o -name "*.so" | xargs rm -f; \
 	     rm -f $$(find . -name "*.pyx" | sed 's/\(.*\)[.]pyx$$/\1.c \1.cpp/'); \
-	     rm -rf sage/ext/interpreters) \
-	    && (cd "$(SAGE_ROOT)/build/pkgs/sagelib/src/" && rm -rf build); \
+	     cd sage/ext/interpreters/ && rm -f *.so *.c *.h *.py* *.pxd) \
+	    && rm -rf "$(SAGE_ROOT)"/build/pkgs/sagelib/src/build; \
 	fi
+# Don't use "meson setup --wipe "$$d";" due to https://github.com/sagemath/sage/pull/39030#issuecomment-3021583924
+	@echo "Wiping meson build directories..."
+	rm -rf "$(SAGE_ROOT)/build/sage-distro"
 
 sage_docbuild-clean:
 	(cd "$(SAGE_ROOT)/build/pkgs/sage_docbuild/src" && rm -rf build)
@@ -173,11 +175,8 @@ distclean: build-clean
 bootstrap-clean:
 	rm -rf config/install-sh config/compile config/config.guess config/config.sub config/missing configure build/make/Makefile-auto.in
 	rm -f src/doc/en/installation/*.txt
-	rm -rf src/doc/en/reference/spkg/*.rst
-	for a in environment environment-optional src/environment src/environment-dev src/environment-optional; do rm -f $$a.yml $$a-3.[89].yml $$a-3.1[0-9].yml; done
-	rm -f src/Pipfile
-	rm -f src/requirements.txt
-	rm -f src/setup.cfg
+	find src/doc/en/reference/spkg -maxdepth 1 -name index.rst -prune -o -name "*.rst" -exec rm -f {} \+
+	for a in environment environment-optional src/environment src/environment-optional; do rm -f $$a.yml $$a-3.[89].yml $$a-3.1[0-9].yml; done
 	rm -f build/pkgs/cypari/version_requirements.txt
 	rm -f build/pkgs/cysignals/version_requirements.txt
 	rm -f build/pkgs/cython/version_requirements.txt
@@ -254,9 +253,13 @@ TEST_TARGET = $@
 
 TEST = ./sage -t --logfile=$(TEST_LOG) $(TEST_FLAGS) --optional=$(TEST_OPTIONAL) $(TEST_FILES)
 
+test-git-no-uncommitted-changes:
+	./tools/test-git-no-uncommitted-changes
+
 test: all
 	@echo '### make $(TEST_TARGET): Running $(TEST)' >> $(TEST_LOG)
-	$(TEST)
+	$(TEST); \
+	$(MAKE) test-git-no-uncommitted-changes
 
 check:
 	@$(MAKE) test
@@ -303,7 +306,8 @@ ptestoptionallong:
 test-nodoc: TEST_OPTIONAL := $(TEST_OPTIONAL),!sagemath_doc_html,!sagemath_doc_pdf
 test-nodoc: build
 	@echo '### make $(TEST_TARGET): Running $(TEST)' >> $(TEST_LOG)
-	$(TEST)
+	$(TEST); \
+	$(MAKE) test-git-no-uncommitted-changes
 
 check-nodoc:
 	@$(MAKE) test-nodoc
@@ -351,7 +355,7 @@ ptestoptionallong-nodoc:
 # CONFIGURE_DEPENDENCIES is the list of files that influence the generation of 'configure'.
 CONFIGURE_DEPENDENCIES =							\
 	configure.ac src/bin/sage-version.sh m4/*.m4				\
-	src/pyproject.toml							\
+	pyproject.toml							\
 	build/pkgs/*/spkg-configure.m4						\
 	build/pkgs/*/type build/pkgs/*/SPKG.rst					\
 	build/pkgs/*/checksums.ini build/pkgs/*/requirements.txt		\
@@ -388,5 +392,6 @@ list:
 	misc-clean bdist-clean distclean bootstrap-clean maintainer-clean \
 	test check testoptional testall testlong testoptionallong testallong \
 	ptest ptestoptional ptestall ptestlong ptestoptionallong ptestallong \
+	test-git-no-uncommitted-changes \
 	list \
 	doc-clean clean sagelib-clean build-clean

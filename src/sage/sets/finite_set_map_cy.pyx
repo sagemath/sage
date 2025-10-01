@@ -60,11 +60,11 @@ from sage.sets.set import Set_object_enumerated
 
 cpdef fibers(f, domain):
     r"""
-    Returns the fibers of the function ``f`` on the finite set ``domain``
+    Return the fibers of the function ``f`` on the finite set ``domain``.
 
     INPUT:
 
-    - ``f``      -- a function or callable
+    - ``f`` -- a function or callable
     - ``domain`` -- a finite iterable
 
     OUTPUT:
@@ -98,7 +98,7 @@ cpdef fibers(f, domain):
 
 def fibers_args(f, domain, *args, **opts):
     r"""
-    Returns the fibers of the function ``f`` on the finite set ``domain``
+    Return the fibers of the function ``f`` on the finite set ``domain``.
 
     It is the same as :func:`fibers` except that one can pass extra
     argument for ``f`` (with a small overhead)
@@ -118,23 +118,21 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
     We assume that the parent given as argument is such that:
 
-    - ``m`` is stored in ``self.parent()._m``
-    - ``n`` is stored in ``self.parent()._n``
+    - ``m`` -- stored in ``self.parent()._m``
+    - ``n`` -- stored in ``self.parent()._n``
     - the domain is in ``self.parent().domain()``
     - the codomain is in ``self.parent().codomain()``
     """
 
     def __call__(self, int i):
         """
-        Returns the image of ``i`` under the map ``self``
+        Return the image of ``i`` under the map ``self``.
 
         INPUT:
 
-        - ``i`` -- an int
+        - ``i`` -- integer
 
-        OUTPUT:
-
-        an int
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -147,7 +145,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
     # Needed by generic power which refuses to compute 0^0
     def __bool__(self):
         """
-        Returns whether ``self`` is non zero; this is always ``True``.
+        Return whether ``self`` is nonzero; this is always ``True``.
 
         EXAMPLES::
 
@@ -159,7 +157,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
     cpdef domain(self):
         """
-        Returns the domain of ``self``
+        Return the domain of ``self``.
 
         EXAMPLES::
 
@@ -170,7 +168,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
     cpdef codomain(self):
         """
-        Returns the codomain of ``self``
+        Return the codomain of ``self``.
 
         EXAMPLES::
 
@@ -181,7 +179,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
     cpdef _setimage(self, int i, int j):
         """
-        Set the image of ``i`` as ``j`` in ``self``
+        Set the image of ``i`` as ``j`` in ``self``.
 
         This is a fast internal version where ``i`` and ``j`` are both int's.
 
@@ -189,9 +187,9 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
         INPUT:
 
-        - ``i``, ``j`` -- two ``int``'s
+        - ``i``, ``j`` -- integers
 
-        OUTPUT: ``None``
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -223,13 +221,13 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
     cpdef _getimage(self, int i):
         """
-        Returns the image of ``i`` by ``self``
+        Return the image of ``i`` by ``self``.
 
-        This is a fast internal version where ``i`` is an int.
+        This is a fast internal version where ``i`` is integer.
 
         INPUT:
 
-        - ``i`` -- an ``int``
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -241,7 +239,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
     cpdef setimage(self, i, j):
         """
-        Set the image of ``i`` as ``j`` in ``self``
+        Set the image of ``i`` as ``j`` in ``self``.
 
         .. warning:: ``self`` must be mutable; otherwise an exception is raised.
 
@@ -249,7 +247,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
         - ``i``, ``j`` -- two ``object``'s
 
-        OUTPUT: ``None``
+        OUTPUT: none
 
         .. NOTE:: if you need speed, please use instead :meth:`_setimage`
 
@@ -270,11 +268,11 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
     cpdef getimage(self, i):
         """
-        Returns the image of ``i`` by ``self``
+        Return the image of ``i`` by ``self``.
 
         INPUT:
 
-        - ``i`` -- any object.
+        - ``i`` -- any object
 
         .. NOTE:: if you need speed, please use instead :meth:`_getimage`
 
@@ -288,7 +286,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
     cpdef image_set(self):
         """
-        Returns the image set of ``self``
+        Return the image set of ``self``.
 
         EXAMPLES::
 
@@ -301,7 +299,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
     cpdef fibers(self):
         """
-        Returns the fibers of ``self``
+        Return the fibers of ``self``.
 
         OUTPUT:
 
@@ -320,7 +318,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
     cpdef items(self):
         """
-        The items of ``self``
+        The items of ``self``.
 
         Return the list of the ordered pairs ``(x, self(x))``
 
@@ -333,7 +331,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
     cpdef check(self):
         """
-        Performs checks on ``self``
+        Perform checks on ``self``.
 
         Check that ``self`` is a proper function and then calls
         ``parent.check_element(self)`` where ``parent`` is the parent
@@ -357,7 +355,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
         n = self._parent._n
         assert self._len == m, "Wrong number of values"
         for i in range(m):
-            assert 0 <= self._list[i] < n, "Wrong value self(%i) = %i"%(i, self._list[i])
+            assert 0 <= self._list[i] < n, "Wrong value self(%i) = %i" % (i, self._list[i])
         if hasattr(self._parent, 'check_element'):
             self._parent.check_element(self)
 
@@ -385,7 +383,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
 cpdef FiniteSetMap_Set FiniteSetMap_Set_from_list(t, parent, lst):
     """
-    Creates a ``FiniteSetMap`` from a list
+    Create a ``FiniteSetMap`` from a list.
 
     .. warning:: no check is performed !
 
@@ -408,7 +406,7 @@ cpdef FiniteSetMap_Set FiniteSetMap_Set_from_list(t, parent, lst):
 
 cpdef FiniteSetMap_Set FiniteSetMap_Set_from_dict(t, parent, d):
     """
-    Creates a ``FiniteSetMap`` from a dictionary
+    Create a ``FiniteSetMap`` from a dictionary.
 
     .. warning:: no check is performed !
 
@@ -432,7 +430,7 @@ cpdef FiniteSetMap_Set FiniteSetMap_Set_from_dict(t, parent, d):
 
 cdef class FiniteSetMap_Set(FiniteSetMap_MN):
     """
-    Data structure for maps
+    Data structure for maps.
 
     We assume that the parent given as argument is such that:
 
@@ -471,15 +469,13 @@ cdef class FiniteSetMap_Set(FiniteSetMap_MN):
 
     def __call__(self, i):
         """
-        Returns the image of ``i`` under the map ``self``
+        Return the image of ``i`` under the map ``self``.
 
         INPUT:
 
-        - ``i`` -- an int
+        - ``i`` -- integer
 
-        OUTPUT:
-
-        an int
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -493,7 +489,7 @@ cdef class FiniteSetMap_Set(FiniteSetMap_MN):
 
     cpdef image_set(self):
         """
-        Returns the image set of ``self``
+        Return the image set of ``self``.
 
         EXAMPLES::
 
@@ -509,7 +505,7 @@ cdef class FiniteSetMap_Set(FiniteSetMap_MN):
 
     cpdef setimage(self, i, j):
         """
-        Set the image of ``i`` as ``j`` in ``self``
+        Set the image of ``i`` as ``j`` in ``self``.
 
         .. warning:: ``self`` must be mutable otherwise an exception is raised.
 
@@ -517,7 +513,7 @@ cdef class FiniteSetMap_Set(FiniteSetMap_MN):
 
         - ``i``, ``j`` -- two ``object``'s
 
-        OUTPUT: ``None``
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -552,11 +548,11 @@ cdef class FiniteSetMap_Set(FiniteSetMap_MN):
 
     cpdef getimage(self, i):
         """
-        Returns the image of ``i`` by ``self``
+        Return the image of ``i`` by ``self``.
 
         INPUT:
 
-        - ``i`` -- an ``int``
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -570,7 +566,7 @@ cdef class FiniteSetMap_Set(FiniteSetMap_MN):
 
     cpdef items(self):
         """
-        The items of ``self``
+        The items of ``self``.
 
         Return the list of the couple ``(x, self(x))``
 
@@ -604,7 +600,7 @@ cdef class FiniteSetMap_Set(FiniteSetMap_MN):
 
 cdef class FiniteSetEndoMap_N(FiniteSetMap_MN):
     """
-    Maps from ``range(n)`` to itself.
+    Map from ``range(n)`` to itself.
 
     .. SEEALSO:: :class:`FiniteSetMap_MN` for assumptions on the parent
 
@@ -621,15 +617,14 @@ cdef class FiniteSetEndoMap_N(FiniteSetMap_MN):
             sage: F = FiniteSetMaps(3)
             sage: F([1, 0, 2]) * F([2, 1, 0])
             [2, 0, 1]
-            sage: F = FiniteSetMaps(3, action="right")
+            sage: F = FiniteSetMaps(3, action='right')
             sage: F([1, 0, 2]) * F([2, 1, 0])
             [1, 2, 0]
         """
-        assert(self._parent is other._parent), "Parent mismatch"
+        assert (self._parent is other._parent), "Parent mismatch"
         if self._parent._action == "right":
             return self._compose_internal_(other, self._parent)
-        else:
-            return other._compose_internal_(self, self._parent)
+        return other._compose_internal_(self, self._parent)
 
     def __pow__(self, n, dummy):
         """
@@ -637,8 +632,8 @@ cdef class FiniteSetEndoMap_N(FiniteSetMap_MN):
 
         INPUT:
 
-        - ``n`` -- a positive integer
-        - ``dummy`` -- not used; must be set to ``None`` (for compatibility only).
+        - ``n`` -- positive integer
+        - ``dummy`` -- not used; must be set to ``None`` (for compatibility only)
 
         EXAMPLES::
 
@@ -657,7 +652,7 @@ cdef class FiniteSetEndoMap_N(FiniteSetMap_MN):
 
 cdef class FiniteSetEndoMap_Set(FiniteSetMap_Set):
     """
-    Maps from a set to itself
+    Map from a set to itself.
 
     .. SEEALSO:: :class:`FiniteSetMap_Set` for assumptions on the parent
 
@@ -683,20 +678,19 @@ cdef class FiniteSetEndoMap_Set(FiniteSetMap_Set):
             sage: g * f
             map: a -> c, b -> c, c -> c
         """
-        assert(self._parent is other._parent), "Parent mismatch"
+        assert (self._parent is other._parent), "Parent mismatch"
         if self._parent._action == "right":
             return self._compose_internal_(other, self._parent)
-        else:
-            return other._compose_internal_(self, self._parent)
+        return other._compose_internal_(self, self._parent)
 
     def __pow__(self, n, dummy):
         """
-        Return the ``n``-th power of self.
+        Return the ``n``-th power of ``self``.
 
         INPUT:
 
-        - ``n`` -- a positive integer
-        - ``dummy`` -- not used; must be set to None (for compatibility only).
+        - ``n`` -- positive integer
+        - ``dummy`` -- not used; must be set to None (for compatibility only)
 
         EXAMPLES::
 

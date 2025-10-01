@@ -14,13 +14,13 @@ algebra. You do not have to install any optional packages.
 
 The Macaulay2 interface offers three pieces of functionality:
 
-- ``macaulay2_console()`` -- A function that dumps you
-  into an interactive command-line Macaulay2 session.
+- ``macaulay2_console()`` -- a function that dumps you
+  into an interactive command-line Macaulay2 session
 
-- ``macaulay2.eval(expr)`` -- Evaluation of arbitrary Macaulay2
-  expressions, with the result returned as a string.
+- ``macaulay2.eval(expr)`` -- evaluation of arbitrary Macaulay2
+  expressions, with the result returned as a string
 
-- ``macaulay2(expr)`` -- Creation of a Sage object that wraps a
+- ``macaulay2(expr)`` -- creation of a Sage object that wraps a
   Macaulay2 object.  This provides a Pythonic interface to Macaulay2.  For
   example, if ``f = macaulay2(10)``, then ``f.gcd(25)`` returns the
   GCD of `10` and `25` computed using Macaulay2.
@@ -126,14 +126,17 @@ import os
 import re
 
 import sage.interfaces.abc
-
-from sage.interfaces.expect import (Expect, ExpectElement, ExpectFunction,
-                                    FunctionElement)
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+)
 from sage.interfaces.interface import AsciiArtString
-from sage.misc.multireplace import multiple_replace
-from sage.misc.superseded import deprecated_function_alias
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
+from sage.misc.multireplace import multiple_replace
+from sage.misc.superseded import deprecated_function_alias
 from sage.structure.global_options import GlobalOptions
 
 
@@ -152,7 +155,7 @@ def remove_output_labels(s) -> str:
 
     Return type: string
 
-    .. note::
+    .. NOTE::
 
         If ``s`` consists of several outputs and their labels have
         different width, it is possible that some strings will have leading
@@ -202,6 +205,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
         TESTS::
 
+            sage: from sage.interfaces.macaulay2 import macaulay2
             sage: macaulay2 == loads(dumps(macaulay2))
             True
         """
@@ -255,8 +259,8 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        - filename: the name of the file to be loaded and executed
-          (type: string)
+        - ``filename`` -- string; the name of the file to be loaded and
+          executed
 
         OUTPUT:
 
@@ -310,8 +314,8 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        - code -- str
-        - strip -- ignored
+        - ``code`` -- string
+        - ``strip`` -- ignored
 
         EXAMPLES::
 
@@ -343,8 +347,8 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        - ``seed`` -- number (default: ``None``). If ``None``, it
-          is set to a random number.
+        - ``seed`` -- number (default: ``None``); if ``None``, it
+          is set to a random number
 
         OUTPUT: the new seed
 
@@ -401,7 +405,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
         - ``var`` -- string; the name of the variable in Macaulay2
 
-        OUTPUT: a string of the textual representation of the variable in
+        OUTPUT: string of the textual representation of the variable in
         Macaulay2
 
         EXAMPLES::
@@ -427,7 +431,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
         INPUT:
 
         - ``var`` -- string; the name of the variable in Macaulay2
-        - ``value`` -- a string to evaluate
+        - ``value`` -- string to evaluate
 
         EXAMPLES::
 
@@ -544,7 +548,6 @@ class Macaulay2(ExtraTabCompletion, Expect):
             Macaulay 2, version 1.1
             with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition, SchurRings, TangentCone
             ...
-
         """
         macaulay2_console()
 
@@ -584,7 +587,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
     def _left_list_delim(self):
         """
-        Returns the Macaulay2 left delimiter for lists.
+        Return the Macaulay2 left delimiter for lists.
 
         EXAMPLES::
 
@@ -595,7 +598,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
     def _right_list_delim(self):
         """
-        Returns the Macaulay2 right delimiter for lists.
+        Return the Macaulay2 right delimiter for lists.
 
         EXAMPLES::
 
@@ -606,7 +609,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
     def _true_symbol(self):
         """
-        Returns the Macaulay2 symbol for True.
+        Return the Macaulay2 symbol for True.
 
         EXAMPLES::
 
@@ -617,7 +620,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
     def _false_symbol(self):
         """
-        Returns the Macaulay2 symbol for False.
+        Return the Macaulay2 symbol for False.
 
         EXAMPLES::
 
@@ -628,7 +631,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
     def _equality_symbol(self):
         """
-        Returns the Macaulay2 symbol for equality.
+        Return the Macaulay2 symbol for equality.
 
         EXAMPLES::
 
@@ -674,12 +677,10 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        - gens -- list or tuple of Macaulay2 objects (or objects that can be
+        - ``gens`` -- list or tuple of Macaulay2 objects (or objects that can be
           made into Macaulay2 objects via evaluation)
 
-        OUTPUT:
-
-        the Macaulay2 ideal generated by the given list of gens
+        OUTPUT: the Macaulay2 ideal generated by the given list of gens
 
         EXAMPLES::
 
@@ -693,7 +694,6 @@ class Macaulay2(ExtraTabCompletion, Expect):
             {-7} | xy6-2xy5+xy4-y7+2y6-y5    |
             {-5} | x2y3-x2y2-2xy4+2xy3+y5-y4 |
             {-3} | x3-3x2y+3xy2-y3           |
-
         """
         if len(gens) == 1 and isinstance(gens[0], (list, tuple)):
             gens = gens[0]
@@ -712,8 +712,8 @@ class Macaulay2(ExtraTabCompletion, Expect):
         INPUT:
 
         - ``base_ring`` -- base ring (see examples below)
-        - ``vars`` -- a tuple or string that defines the variable names
-        - ``order`` -- string (default: 'Lex'); the monomial order
+        - ``vars`` -- tuple or string that defines the variable names
+        - ``order`` -- string (default: ``'Lex'``); the monomial order
 
         OUTPUT: a Macaulay2 ring
 
@@ -850,7 +850,6 @@ class Macaulay2(ExtraTabCompletion, Expect):
             MutableList{...3...}
             sage: list(l)                                        # optional - macaulay2
             [1, 2, 3]
-
         """
         type = self(type)
         value = self(value)
@@ -1001,8 +1000,8 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
 
         INPUT:
 
-        - ``new_name`` -- string (default: ``None``). If ``None``, return the
-          name of this element; else return a new object identical to ``self``
+        - ``new_name`` -- string (default: ``None``); if ``None``, return the
+          name of this element. Else return a new object identical to ``self``
           whose name is ``new_name``.
 
         Note that this can overwrite existing variables in the system.
@@ -1085,7 +1084,6 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
             sage: l[0] = 4               # optional - macaulay2
             sage: list(l)                # optional - macaulay2
             [4, 2, 3]
-
         """
         P = self.parent()
         index = P(index)
@@ -1113,7 +1111,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
 
     def __floordiv__(self, x):
         """
-        Quotient of division of self by other.  This is denoted //.
+        Quotient of division of ``self`` by ``other``.  This is denoted ``//``.
 
         EXAMPLES::
 
@@ -1141,7 +1139,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
 
     def __mod__(self, x):
         """
-        Remainder of division of self by other.  This is denoted %.
+        Remainder of division of ``self`` by ``other``.  This is denoted ``%``.
 
         EXAMPLES::
 
@@ -1256,7 +1254,6 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
             sage: a = a.substitute(P)
             sage: a.sage().parent()
             Univariate Polynomial Ring in x over Finite Field of size 7
-
         """
         return self.__getattr__("substitute")(*args, **kwds)
 
@@ -1363,8 +1360,8 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
 
     def _operator(self, opstr, x):
         """
-        Returns the infix binary operation specified by opstr applied
-        to self and x.
+        Return the infix binary operation specified by opstr applied
+        to ``self`` and x.
 
         EXAMPLES::
 
@@ -1399,7 +1396,6 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
             sage: a = macaulay2([1,2]).set()  # optional - macaulay2
             sage: a.starstar(a)               # optional - macaulay2
             set {(1, 1), (1, 2), (2, 1), (2, 2)}
-
         """
         return self._operator("**", x)
 
@@ -1570,7 +1566,6 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
             2*x*y^18 + y^14
             sage: f.parent()                            # optional - macaulay2
             Quotient of Multivariate Polynomial Ring in x, y over Finite Field of size 7 by the ideal (x^3 - y^2)
-
         """
         repr_str = str(self)
         cls_str = str(self.cls())
@@ -1599,8 +1594,8 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
                 # Handle the ZZ/n case
                 ambient = self.ambient()
                 if ambient.external_string() == 'ZZ':
-                    from sage.rings.integer_ring import ZZ
                     from sage.rings.finite_rings.finite_field_constructor import GF
+                    from sage.rings.integer_ring import ZZ
                     external_string = self.external_string()
                     zz, n = external_string.split("/")
 
@@ -1612,7 +1607,9 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
                     ideal = self.ideal()._sage_()
                     return ambient_ring.quotient(ideal, names=ambient_ring.variable_names())
             elif cls_str == "PolynomialRing":
-                from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                from sage.rings.polynomial.polynomial_ring_constructor import (
+                    PolynomialRing,
+                )
                 from sage.rings.polynomial.term_order import inv_macaulay2_name_mapping
 
                 # Get the base ring
@@ -1638,8 +1635,8 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
 
                 return PolynomialRing(base_ring, order=order, names=gens)
             elif cls_str == "GaloisField":
-                from sage.rings.integer_ring import ZZ
                 from sage.rings.finite_rings.finite_field_constructor import GF
+                from sage.rings.integer_ring import ZZ
                 gf, n = repr_str.split(" ")
                 n = ZZ(n)
                 if n.is_prime():
@@ -1871,7 +1868,7 @@ class Macaulay2FunctionElement(FunctionElement):
 
 def is_Macaulay2Element(x):
     """
-    Return True if ``x`` is a :class:`Macaulay2Element`
+    Return ``True`` if ``x`` is a :class:`Macaulay2Element`.
 
     This function is deprecated; use :func:`isinstance`
     (of :class:`sage.interfaces.abc.Macaulay2Element`) instead.

@@ -43,7 +43,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
             sage: R = RootSystem(['A', [4,2]])
             sage: AL = R.ambient_space(); AL
             Ambient space of the Root system of type ['A', [4, 2]]
-            sage: TestSuite(AL).run(skip="_test_norm_of_simple_roots")
+            sage: TestSuite(AL).run(skip='_test_norm_of_simple_roots')
         """
         ct = root_system.cartan_type()
         if index_set is None:
@@ -375,10 +375,10 @@ class AmbientSpace(ambient_space.AmbientSpace):
             I = P.index_set()
             return P.sum((-c/dep[0]) * h[I[i]] for i,c in dep[1:].items())
 
-        def has_descent(self, i, positive=False):
+        def has_descent(self, i, positive=False) -> bool:
             """
             Test if ``self`` has a descent at position `i`, that is
-            if ``self`` is on the strict negative side of the `i^{th}`
+            if ``self`` is on the strict negative side of the `i`-th
             simple reflection hyperplane.
 
             If ``positive`` is ``True``, tests if it is on the strict
@@ -414,7 +414,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
             else:
                 return s < 0
 
-        def is_dominant_weight(self):
+        def is_dominant_weight(self) -> bool:
             """
             Test whether ``self`` is a dominant element of the weight lattice.
 
@@ -710,7 +710,7 @@ class CartanType(SuperCartanType_standard):
         from . import type_relabel
         return type_relabel.CartanType(self, relabelling)
 
-    def _latex_draw_node(self, x, y, label, position="below=4pt"):
+    def _latex_draw_node(self, x, y, label, position='below=4pt'):
         r"""
         Draw (possibly marked [crossed out]) circular node ``i`` at the
         position ``(x,y)`` with node label ``label`` .

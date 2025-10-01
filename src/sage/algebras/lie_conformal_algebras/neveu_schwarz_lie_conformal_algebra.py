@@ -35,7 +35,7 @@ class NeveuSchwarzLieConformalAlgebra(GradedLieConformalAlgebra):
     INPUT:
 
     - ``R`` -- a commutative Ring; the base ring of this Lie
-      conformal algebra.
+      conformal algebra
 
     EXAMPLES::
 
@@ -52,7 +52,7 @@ class NeveuSchwarzLieConformalAlgebra(GradedLieConformalAlgebra):
     """
     def __init__(self, R):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 
@@ -72,7 +72,7 @@ class NeveuSchwarzLieConformalAlgebra(GradedLieConformalAlgebra):
         GradedLieConformalAlgebra.__init__(self, R, nsdict, names=('L', 'G'),
                     central_elements=('C',), weights=weights, parity=parity)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The name of this Lie Conformal algebra.
 

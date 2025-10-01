@@ -16,7 +16,6 @@ Low level part of the interface to Fokko Ducloux's Coxeter 3 library
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 from sage.libs.coxeter3.decl cimport *
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 from sage.cpython.string cimport str_to_bytes, bytes_to_str
@@ -55,7 +54,7 @@ cdef class String:
 
     def __hash__(self):
         """
-        Return the hash of this String
+        Return the hash of this String.
 
         This is the hash of the tuple consisting of the class name and
         the name of this type.
@@ -423,7 +422,8 @@ cdef class CoxGroup(SageObject):
             sage: W = CoxGroup(['A', 5]); W
             Coxeter group of type A and rank 5
         """
-        return "Coxeter group of type %s and rank %s"%(self.type(), self.rank())
+        return "Coxeter group of type %s and rank %s" % (self.type(),
+                                                         self.rank())
 
     def __iter__(self):
         """
@@ -532,7 +532,7 @@ cdef class CoxGroup(SageObject):
         EXAMPLES::
 
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
-            sage: W = CoxGroup(['A', 5])
+            sage: W = CoxGroup(['A', 3])
             sage: W.is_finite()
             True
             sage: W = CoxGroup(['A', 3, 1])
@@ -595,9 +595,7 @@ cdef class CoxGroup(SageObject):
 
         - ``w`` -- a word for an element of ``self``, not necessarily reduced
 
-        OUTPUT:
-
-        - a reduced expression for ``w``
+        OUTPUT: a reduced expression for ``w``
 
         EXAMPLES::
 
@@ -623,7 +621,6 @@ cdef class CoxGroup(SageObject):
             [2 3 1 3 2]
             [2 2 3 1 3]
             [2 2 2 3 1]
-
         """
         from sage.matrix.constructor import matrix
         rank = self.rank()
@@ -750,13 +747,12 @@ cdef class CoxGroupElement:
             sage: w = W([1,2,3])
             sage: w.parent_group()
             Coxeter group of type A and rank 5
-
         """
         return self._parent_group
 
     def __getitem__(self, i):
         """
-        Return the `i^{th}` entry of this element.
+        Return the `i`-th entry of this element.
 
         EXAMPLES::
 
@@ -798,7 +794,6 @@ cdef class CoxGroupElement:
             sage: W = CoxGroup(['A',5])
             sage: w = W([1,2,3]); w
             [1, 2, 3]
-
         """
         return repr(list(self))
 
@@ -944,7 +939,7 @@ cdef class CoxGroupElement:
 
     def is_two_sided_descent(self, s):
         """
-        Return whether ``s`` is a two sided descent of ``self``.
+        Return whether ``s`` is a two-sided descent of ``self``.
 
         EXAMPLES::
 
@@ -1006,7 +1001,6 @@ cdef class CoxGroupElement:
             [2, 1, 2]
             sage: w.normal_form()
             [1, 2, 1]
-
         """
         cdef CoxGroupElement res = self._new()
         self.group.normalForm(res.word)

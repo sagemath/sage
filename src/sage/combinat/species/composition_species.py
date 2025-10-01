@@ -27,6 +27,9 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
         TESTS::
 
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
             sage: L = E(C)
             sage: a = L.structures(['a','b','c']).random_element()                      # needs sage.libs.flint
             sage: a == loads(dumps(a))                                                  # needs sage.libs.flint
@@ -72,11 +75,11 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
 
         INPUT:
 
-        - ``labels``, a list of labels.
+        - ``labels`` -- list of labels
 
         OUTPUT:
 
-        A structure with the i-th label of self replaced with the i-th
+        A structure with the `i`-th label of ``self`` replaced with the `i`-th
         label of the list.
 
         EXAMPLES::
@@ -99,7 +102,7 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
 class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
     def __init__(self, F, G, min=None, max=None, weight=None):
         """
-        Returns the composition of two species.
+        Return the composition of two species.
 
         EXAMPLES::
 
@@ -255,7 +258,7 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def weight_ring(self):
         """
-        Returns the weight ring for this species. This is determined by
+        Return the weight ring for this species. This is determined by
         asking Sage's coercion model what the result is when you multiply
         (and add) elements of the weight rings for each of the operands.
 

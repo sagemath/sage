@@ -4,19 +4,20 @@ Hidden Markov Models -- Utility functions
 
 AUTHOR:
 
-   - William Stein, 2010-03
+- William Stein, 2010-03
 """
 
-#############################################################################
+# ##########################################################################
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL) v2+.
 #  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
-#############################################################################
+#                  https://www.gnu.org/licenses/
+# ##########################################################################
 
 
 from sage.structure.element import Matrix
-from sage.misc.flatten  import flatten
+from sage.misc.flatten import flatten
+
 
 cdef class HMM_Util:
     """
@@ -38,9 +39,7 @@ cdef class HMM_Util:
         - ``i`` -- nonnegative integer
         - ``j`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``T`` is modified
+        OUTPUT: ``T`` is modified
 
         EXAMPLES::
 
@@ -97,9 +96,7 @@ cdef class HMM_Util:
           equal to 1.  If the sum of the entries in a row is 0, replace them
           all by `1/N`.
 
-        OUTPUT:
-
-        - a :class:`TimeSeries` of length `N`
+        OUTPUT: a :class:`TimeSeries` of length `N`
 
         EXAMPLES::
 
@@ -127,7 +124,6 @@ cdef class HMM_Util:
         This function is used internally by the ``__init__`` methods of
         Hidden Markov Models to make a transition matrix from ``A``.
 
-
         INPUT:
 
         - ``A`` -- matrix, list, list of lists, or :class:`TimeSeries`
@@ -137,9 +133,7 @@ cdef class HMM_Util:
           equal to 1.  If the sum of the entries in a row is 0, replace them
           all by `1/N`.
 
-        OUTPUT:
-
-        - a :class:`TimeSeries`
+        OUTPUT: a :class:`TimeSeries`
 
         EXAMPLES::
 

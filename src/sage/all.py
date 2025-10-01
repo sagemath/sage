@@ -28,7 +28,8 @@ except for the known bad apples::
     sage: def is_not_allowed(frame):
     ....:     module = inspect.getmodule(frame)
     ....:     if module is None: return False
-    ....:     return not any(module.__name__.startswith(name) for name in allowed)
+    ....:     return not any(module.__name__.startswith(name)
+    ....:                    for name in allowed)
     sage: [inspect.getmodule(f).__name__ for f in frames if is_not_allowed(f)]
     []
 
@@ -56,98 +57,215 @@ Check that :issue:`34506` is resolved::
 import os
 import operator
 import math
+import sys
 
-################ end setup warnings ###############################
+# Set up warning filters before importing Sage stuff
+import warnings
 
-from sage.all__sagemath_repl import *  # includes .all__sagemath_objects, .all__sagemath_environment
+# This is a Python debug build (--with-pydebug)
+__with_pydebug = hasattr(sys, 'gettotalrefcount')
+if __with_pydebug:
+    # a debug build does not install the default warning filters. Sadly, this breaks doctests so we
+    # have to re-add them:
+    warnings.filterwarnings('ignore', category=PendingDeprecationWarning)
+    warnings.filterwarnings('ignore', category=ImportWarning)
+    warnings.filterwarnings('ignore', category=ResourceWarning)
+else:
+    deprecationWarning = ('ignore', None, DeprecationWarning, None, 0)
+    if deprecationWarning in warnings.filters:
+        warnings.filters.remove(deprecationWarning)
 
-###################################################################
+# Ignore all deprecations from IPython etc.
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        module='(IPython|ipykernel|jupyter_client|jupyter_core|nbformat|notebook|ipywidgets|storemagic|jedi)')
+
+# scipy 1.18 introduced deprecation warnings on a number of things they are moving to
+# numpy, e.g. DeprecationWarning: scipy.array is deprecated
+#             and will be removed in SciPy 2.0.0, use numpy.array instead
+# This affects networkx 2.2 up and including 2.4 (cf. :issue:29766)
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        module='(scipy|networkx)')
+
+# However, be sure to keep OUR deprecation warnings
+warnings.filterwarnings('default', category=DeprecationWarning,
+                        message=r'[\s\S]*See https?://trac\.sagemath\.org/[0-9]* for details.')
+
+# Ignore Python 3.9 deprecation warnings
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        module='ast')
+
+# Ignore packaging 20.5 deprecation warnings
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        module='(.*[.]_vendor[.])?packaging')
+
+# Ignore a few warnings triggered by pythran 0.12.1
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message='\n\n  `numpy.distutils` is deprecated since NumPy 1.23.0',
+                        module='pythran.dist')
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message='pkg_resources is deprecated as an API|'
+                        'Deprecated call to `pkg_resources.declare_namespace(.*)`',
+                        module='pkg_resources|setuptools.sandbox')
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message='msvccompiler is deprecated and slated to be removed',
+                        module='distutils.msvccompiler')
+
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message='The distutils(.sysconfig module| package) is deprecated',
+                        module='Cython|distutils|numpy|sage.env|sage.features')
+
+# triggered by cython 0.29.32
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message="'cgi' is deprecated and slated for removal in Python 3.13",
+                        module='Cython')
+
+# triggered by pyparsing 2.4.7
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message="module 'sre_constants' is deprecated",
+                        module='pyparsing')
+
+# importlib.resources.path and ...read_binary are deprecated in python 3.11,
+# but the replacement importlib.resources.files needs python 3.9
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message=r'(path|read_binary) is deprecated\. Use files\(\) instead\.',
+                        module='sage.repl.rich_output.output_(graphics|graphics3d|video)')
+
+# triggered by sphinx
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message="'imghdr' is deprecated and slated for removal in Python 3.13",
+                        module='sphinx.util.images')
+
+# triggered by docutils 0.19 on Python 3.11
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message=r"Use setlocale\(\), getencoding\(\) and getlocale\(\) instead",
+                        module='docutils.io')
+
+# triggered by dateutil 2.8.2 and sphinx 7.0.1 on Python 3.12
+# see: https://github.com/dateutil/dateutil/pull/1285
+# see: https://github.com/sphinx-doc/sphinx/pull/11468
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message=r"datetime.datetime.utcfromtimestamp\(\) is deprecated",
+                        module='dateutil.tz.tz|sphinx.(builders.gettext|util.i18n)')
+
+# triggered on Python 3.12
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message=r"This process.* is multi-threaded, "
+                                r"use of .*\(\) may lead to deadlocks in the child.")
+
+# pickling of itertools is deprecated in Python 3.12
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message=r"Pickle, copy, and deepcopy support will be "
+                                r"removed from itertools in Python 3.14.")
+
+# rpy2>=3.6 emits warnings for R modifying LD_LIBRARY_PATH
+warnings.filterwarnings('ignore', category=UserWarning,
+                        message=r".*redefined by R and overriding existing variable.*",
+                        module='rpy2.*')
+
+# ############### end setup warnings ###############################
 
 # This import also sets up the interrupt handler
 from cysignals.signals import (AlarmInterrupt, SignalError,
-        sig_on_reset as sig_on_count)
+                               sig_on_reset as sig_on_count)
 
-from time                import sleep
+from time import sleep
+
+from sage.structure.all import *
+from sage.arith.power import generic_power as power
+
+from sage.cpython.all import *
+
+from copy import copy, deepcopy
+
+true = True
+false = False
+
+from sage.env import SAGE_ROOT, SAGE_SRC, SAGE_DOC_SRC, SAGE_LOCAL, DOT_SAGE, SAGE_ENV
+
+from sage.misc.all import *
+
+from sage.doctest.all import *
+from sage.repl.all import *
+
 from functools import reduce  # in order to keep reduce in python3
 
 import sage.misc.lazy_import
 
-from sage.misc.all       import *         # takes a while
-from sage.typeset.all    import *
+from sage.misc.all import *         # takes a while
+from sage.typeset.all import *
 
 from sage.misc.sh import sh
 
-from sage.libs.all       import *
+from sage.libs.all import *
 from sage.data_structures.all import *
 
-from sage.structure.all  import *
-from sage.rings.all      import *
-from sage.arith.all      import *
-from sage.matrix.all     import *
+from sage.structure.all import *
+from sage.rings.all import *
+from sage.arith.all import *
+from sage.matrix.all import *
 
-from sage.symbolic.all   import *
-from sage.modules.all    import *
-from sage.monoids.all    import *
-from sage.algebras.all   import *
-from sage.modular.all    import *
-from sage.sat.all        import *
-from sage.schemes.all    import *
-from sage.graphs.all     import *
-from sage.groups.all     import *
-from sage.arith.power    import generic_power as power
-from sage.databases.all  import *
+from sage.symbolic.all import *
+from sage.modules.all import *
+from sage.monoids.all import *
+from sage.algebras.all import *
+from sage.modular.all import *
+from sage.sat.all import *
+from sage.schemes.all import *
+from sage.graphs.all import *
+from sage.groups.all import *
+from sage.databases.all import *
 from sage.categories.all import *
-from sage.sets.all       import *
+from sage.sets.all import *
 from sage.probability.all import *
 from sage.interfaces.all import *
 
-from sage.functions.all  import *
-from sage.calculus.all   import *
+from sage.functions.all import *
+from sage.calculus.all import *
 
-from sage.cpython.all    import *
+from sage.cpython.all import *
 
-from sage.crypto.all     import *
+from sage.crypto.all import *
 import sage.crypto.mq as mq
 
-from sage.plot.all       import *
-from sage.plot.plot3d.all     import *
+from sage.plot.all import *
+from sage.plot.plot3d.all import *
 
-from sage.coding.all     import *
-from sage.combinat.all   import *
+from sage.coding.all import *
+from sage.combinat.all import *
 
 from sage.lfunctions.all import *
 
-from sage.geometry.all   import *
-from sage.geometry.triangulation.all   import *
-from sage.geometry.riemannian_manifolds.all   import *
+from sage.geometry.all import *
+from sage.geometry.triangulation.all import *
+from sage.geometry.riemannian_manifolds.all import *
 
-from sage.dynamics.all   import *
+from sage.dynamics.all import *
 
-from sage.homology.all   import *
+from sage.homology.all import *
 
-from sage.topology.all   import *
+from sage.topology.all import *
 
 from sage.quadratic_forms.all import *
 
-from sage.games.all      import *
+from sage.games.all import *
 
-from sage.logic.all      import *
+from sage.logic.all import *
 
-from sage.numerical.all  import *
+from sage.numerical.all import *
 
-from sage.stats.all      import *
+from sage.stats.all import *
 import sage.stats.all as stats
 
-from sage.parallel.all   import *
+from sage.parallel.all import *
 
-from sage.ext.fast_callable  import fast_callable
-from sage.ext.fast_eval      import fast_float
+from sage.ext.fast_callable import fast_callable
+from sage.ext.fast_eval import fast_float
 
 from sage.sandpiles.all import *
 
-from sage.tensor.all     import *
+from sage.tensor.all import *
 
-from sage.matroids.all   import *
+from sage.matroids.all import *
 
 from sage.game_theory.all import *
 
@@ -155,19 +273,18 @@ from sage.knots.all import *
 
 from sage.manifolds.all import *
 
-from cysignals.alarm import alarm, cancel_alarm
+if sys.platform != 'win32':
+    from cysignals.alarm import alarm, cancel_alarm
 
 # Lazily import interacts (#15335)
 lazy_import('sage.interacts', 'all', 'interacts')
-
-from copy import copy, deepcopy
 
 # The code executed here uses a large amount of Sage components
 from sage.rings.qqbar import _init_qqbar
 _init_qqbar()
 
 ###########################################################
-#### WARNING:
+#    WARNING:
 # DO *not* import numpy / matplotlib / networkx here!!
 # Each takes a surprisingly long time to initialize,
 # and that initialization should be done more on-the-fly
@@ -191,20 +308,29 @@ copyright = license
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.categories.category', 'Sets', Sets)
-register_unpickle_override('sage.categories.category_types', 'HeckeModules', HeckeModules)
-register_unpickle_override('sage.categories.category_types', 'Objects', Objects)
-register_unpickle_override('sage.categories.category_types', 'Rings', Rings)
-register_unpickle_override('sage.categories.category_types', 'Fields', Fields)
-register_unpickle_override('sage.categories.category_types', 'VectorSpaces', VectorSpaces)
-register_unpickle_override('sage.categories.category_types', 'Schemes_over_base', sage.categories.schemes.Schemes_over_base)
-register_unpickle_override('sage.categories.category_types', 'ModularAbelianVarieties', ModularAbelianVarieties)
+register_unpickle_override('sage.categories.category_types', 'HeckeModules',
+                           HeckeModules)
+register_unpickle_override('sage.categories.category_types', 'Objects',
+                           Objects)
+register_unpickle_override('sage.categories.category_types', 'Rings',
+                           Rings)
+register_unpickle_override('sage.categories.category_types', 'Fields',
+                           Fields)
+register_unpickle_override('sage.categories.category_types', 'VectorSpaces',
+                           VectorSpaces)
+register_unpickle_override('sage.categories.category_types',
+                           'Schemes_over_base',
+                           sage.categories.schemes.Schemes_over_base)
+register_unpickle_override('sage.categories.category_types',
+                           'ModularAbelianVarieties',
+                           ModularAbelianVarieties)
 register_unpickle_override('sage.libs.pari.gen_py', 'pari', pari)
 
 # Cache the contents of star imports.
 sage.misc.lazy_import.save_cache_file()
 
 
-### Debugging for Singular, see trac #10903
+# ##### Debugging for Singular, see issue #10903
 # from sage.libs.singular.ring import poison_currRing
 # sys.settrace(poison_currRing)
 
@@ -226,7 +352,7 @@ del clean_namespace
 sage.misc.lazy_import.finish_startup()
 
 
-### Python broke large ints; see trac #34506
+# Python broke large ints; see trac #34506
 
 if hasattr(sys, "set_int_max_str_digits"):
     sys.set_int_max_str_digits(0)

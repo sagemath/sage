@@ -375,12 +375,13 @@ class Magmas(Category_singleton):
             return [MagmaticAlgebras(self.base_ring())]
 
         class ParentMethods:
+
             def is_field(self, proof=True):
                 r"""
                 Return ``True`` if ``self`` is a field.
 
-                For a magma algebra `RS` this is always false unless
-                `S` is trivial and the base ring `R`` is a field.
+                For a magma algebra `R S` this is always false unless
+                `S` is trivial and the base ring `R` is a field.
 
                 EXAMPLES::
 
@@ -390,15 +391,18 @@ class Magmas(Category_singleton):
                     False
                     sage: SymmetricGroup(2).algebra(QQ).is_field()                      # needs sage.combinat sage.groups
                     False
+                    sage: Magmas().example().algebra(QQ).is_field()
+                    False
+
                 """
                 if not self.base_ring().is_field(proof):
                     return False
-                return (self.basis().keys().cardinality() == 1)
+                return self.basis().keys().cardinality() == 1
 
     class Commutative(CategoryWithAxiom):
 
         class ParentMethods:
-            def is_commutative(self):
+            def is_commutative(self) -> bool:
                 """
                 Return ``True``, since commutative magmas are commutative.
 
@@ -835,9 +839,9 @@ class Magmas(Category_singleton):
 
         def multiplication_table(self, names='letters', elements=None):
             r"""
-            Returns a table describing the multiplication operation.
+            Return a table describing the multiplication operation.
 
-            .. note:: The order of the elements in the row and column
+            .. NOTE:: The order of the elements in the row and column
               headings is equal to the order given by the table's
               :meth:`~sage.matrix.operation_table.OperationTable.list`
               method.  The association can also be retrieved with the
@@ -861,7 +865,7 @@ class Magmas(Category_singleton):
                 of the elements themselves.
               * a list - a list of strings, where the length
                 of the list equals the number of elements.
-            - ``elements`` -- default = ``None``.  A list of
+            - ``elements`` -- (default: ``None``) a list of
               elements of the magma, in forms that can be
               coerced into the structure, eg. their string
               representations. This may be used to impose an
@@ -987,15 +991,13 @@ class Magmas(Category_singleton):
         @abstract_method(optional=True)
         def _mul_(self, right):
             """
-            Product of two elements
+            Product of two elements.
 
             INPUT:
 
             - ``self``, ``right`` -- two elements with the same parent
 
-            OUTPUT:
-
-            - an element of the same parent
+            OUTPUT: an element of the same parent
 
             EXAMPLES::
 
@@ -1031,7 +1033,6 @@ class Magmas(Category_singleton):
                 'x'
                 sage: x.is_idempotent()
                 True
-
             """
             return self * self == self
 
@@ -1180,7 +1181,6 @@ class Magmas(Category_singleton):
                     sage: y = Out.an_element()
                     sage: Out.product(x, y)
                     Out[{}] + 4*Out[{1}] + 9*Out[{2}] + Out[{1, 2}]
-
                 """
                 R = self.realization_of().a_realization()
                 return self(R(left) * R(right))

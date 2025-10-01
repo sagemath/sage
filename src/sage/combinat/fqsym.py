@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Free Quasi-symmetric functions
+Free quasi-symmetric functions
 
 AUTHORS:
 
@@ -55,7 +55,7 @@ class FQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         CombinatorialFreeModule.__init__(self, alg.base_ring(),
                                          Permutations(),
                                          category=FQSymBases(alg),
-                                         bracket="", prefix=self._prefix)
+                                         bracket='', prefix=self._prefix)
 
     def _coerce_map_from_(self, R):
         r"""
@@ -165,8 +165,7 @@ class FQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
 
         return super()._coerce_map_from_(R)
 
-    @cached_method
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an element of ``self``.
 
@@ -364,8 +363,14 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
 
             sage: F = algebras.FQSym(QQ)
             sage: TestSuite(F).run() # long time (3s)
+
+            sage: F = algebras.FQSym(ZZ).F()
+            sage: F.is_commutative()
+            False
         """
         category = HopfAlgebras(R).Graded().Connected()
+        if R.is_zero():
+            category = category.Commutative()
         Parent.__init__(self, base=R, category=category.WithRealizations())
 
         # Bases
@@ -401,7 +406,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
         """
         return self.F()
 
-    _shorthands = tuple(['F', 'G', 'M'])
+    _shorthands = ('F', 'G', 'M')
 
     class F(FQSymBasis_abstract):
         r"""
@@ -689,7 +694,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
                     raise ValueError("n must be at least the maximal degree")
 
                 SGA = SymmetricGroupAlgebra(self.base_ring(), n)
-                return SGA._from_dict({Permutations(n)(key): c for (key, c) in self})
+                return SGA._from_dict({Permutations(n)(key): c for key, c in self})
 
     class G(FQSymBasis_abstract):
         r"""
@@ -800,9 +805,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
 
             - ``w`` -- a permutation
 
-            OUTPUT:
-
-            - An element of the F basis
+            OUTPUT: an element of the F basis
 
             TESTS::
 
@@ -832,9 +835,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
 
             - ``w`` -- a permutation
 
-            OUTPUT:
-
-            - An element of the G basis
+            OUTPUT: an element of the G basis
 
             TESTS::
 
@@ -911,10 +912,10 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
 
             F = self.realization_of().F()
             phi = F.module_morphism(self._F_to_M_on_basis, codomain=self,
-                                    unitriangular="lower")
+                                    unitriangular='lower')
             phi.register_as_coercion()
             phi_i = self.module_morphism(self._M_to_F_on_basis, codomain=F,
-                                         unitriangular="lower")
+                                         unitriangular='lower')
             phi_i.register_as_coercion()
 
         def _element_constructor_(self, x):
@@ -1018,9 +1019,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
 
             - ``w`` -- a permutation
 
-            OUTPUT:
-
-            - An element of the M basis
+            OUTPUT: an element of the M basis
 
             TESTS::
 
@@ -1047,9 +1046,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
 
             - ``w`` -- a permutation
 
-            OUTPUT:
-
-            - An element of the F basis
+            OUTPUT: an element of the F basis
 
             ALGORITHM:
 
@@ -1227,7 +1224,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
                 # See the FQSymBases.ElementMethods.star_involution doc
                 # for the formula we're using here.
                 M = self.parent()
-                return M._from_dict({w.complement().reverse(): c for (w, c) in self},
+                return M._from_dict({w.complement().reverse(): c for w, c in self},
                                     remove_zeros=False)
 
 
@@ -1238,7 +1235,7 @@ class FQSymBases(Category_realization_of_parent):
 
     def __init__(self, base):
         r"""
-        Initialize the bases of an `FQSym`
+        Initialize the bases of an `FQSym`.
 
         INPUT:
 
@@ -1358,18 +1355,6 @@ class FQSymBases(Category_realization_of_parent):
                 False
             """
             return False
-
-        def is_commutative(self):
-            """
-            Return whether this `FQSym` is commutative.
-
-            EXAMPLES::
-
-                sage: F = algebras.FQSym(ZZ).F()
-                sage: F.is_commutative()
-                False
-            """
-            return self.base_ring().is_zero()
 
         def some_elements(self):
             """
@@ -1531,7 +1516,7 @@ class FQSymBases(Category_realization_of_parent):
                 sage: A.from_symmetric_group_algebra(SGA4.zero())
                 0
             """
-            return self._from_dict({Permutation(key): c for (key, c) in x})
+            return self._from_dict({Permutation(key): c for key, c in x})
 
     class ElementMethods:
         def omega_involution(self):
@@ -1642,7 +1627,7 @@ class FQSymBases(Category_realization_of_parent):
             # componentwise, then convert back.
             parent = self.parent()
             F = parent.realization_of().F()
-            dct = {I.reverse(): coeff for (I, coeff) in F(self)}
+            dct = {I.reverse(): coeff for I, coeff in F(self)}
             return parent(F._from_dict(dct, remove_zeros=False))
 
         def psi_involution(self):
@@ -1744,7 +1729,7 @@ class FQSymBases(Category_realization_of_parent):
             # componentwise, then convert back.
             parent = self.parent()
             F = parent.realization_of().F()
-            dct = {I.complement(): coeff for (I, coeff) in F(self)}
+            dct = {I.complement(): coeff for I, coeff in F(self)}
             return parent(F._from_dict(dct, remove_zeros=False))
 
         def star_involution(self):
@@ -1864,7 +1849,7 @@ class FQSymBases(Category_realization_of_parent):
             # complement componentwise, then convert back.
             parent = self.parent()
             F = parent.realization_of().F()
-            dct = {I.complement().reverse(): coeff for (I, coeff) in F(self)}
+            dct = {I.complement().reverse(): coeff for I, coeff in F(self)}
             return parent(F._from_dict(dct, remove_zeros=False))
 
         def to_symmetric_group_algebra(self, n=None):

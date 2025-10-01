@@ -13,11 +13,12 @@ Graded algebras with basis
 from sage.categories.graded_modules import GradedModulesCategory
 from sage.categories.signed_tensor import SignedTensorProductsCategory, tensor_signed
 from sage.misc.cachefunc import cached_method
+from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 
 
 class GradedAlgebrasWithBasis(GradedModulesCategory):
     """
-    The category of graded algebras with a distinguished basis
+    The category of graded algebras with a distinguished basis.
 
     EXAMPLES::
 
@@ -89,7 +90,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
         def free_graded_module(self, generator_degrees, names=None):
             """
-            Create a finitely generated free graded module over ``self``
+            Create a finitely generated free graded module over ``self``.
 
             INPUT:
 
@@ -154,6 +155,24 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
     class ElementMethods:
         pass
 
+    class FiniteDimensional(CategoryWithAxiom_over_base_ring):
+        class ParentMethods:
+            @cached_method
+            def top_degree(self):
+                r"""
+                Return the top degree of the finite dimensional graded algebra.
+
+                EXAMPLES::
+
+                    sage: ch = matroids.Uniform(4,6).chow_ring(QQ, False)
+                    sage: ch.top_degree()
+                    3
+                    sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'atom-free')
+                    sage: ch.top_degree()
+                    3
+                """
+                return max(b.degree() for b in self.basis())
+
     class SignedTensorProducts(SignedTensorProductsCategory):
         """
         The category of algebras with basis constructed by signed tensor
@@ -175,7 +194,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
         class ParentMethods:
             """
-            Implements operations on tensor products of super algebras
+            Implement operations on tensor products of super algebras
             with basis.
             """
             @cached_method

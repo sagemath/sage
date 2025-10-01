@@ -42,13 +42,15 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from typing import Self
+
+from sage.categories.category import Category
 from sage.misc.cachefunc import cached_function, cached_method
 from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.misc.lazy_import import LazyImport
-from sage.categories.category import Category
+from sage.structure.dynamic_class import DynamicMetaclass
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.dynamic_class import DynamicMetaclass
 
 
 class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
@@ -93,14 +95,14 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
     In practice, each subclass of this class should provide the
     following attributes:
 
-     - ``_functor_category`` -- a string which should match the name of
-       the nested category class to be used in each category to
-       specify information and generic operations for elements of this
-       category.
+    - ``_functor_category`` -- string which should match the name of
+      the nested category class to be used in each category to
+      specify information and generic operations for elements of this
+      category
 
-     - ``_functor_name`` -- a string which specifies the name of the
-       functor, and also (when relevant) of the method on parents and
-       elements used for calling the construction.
+    - ``_functor_name`` -- string which specifies the name of the
+      functor, and also (when relevant) of the method on parents and
+      elements used for calling the construction
 
     TODO: What syntax do we want for `F_{Cat}`? For example, for the
     tensor product construction, which one do we want among (see
@@ -131,8 +133,8 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
 
         INPUT:
 
-         - self: a functor F
-         - parents: a list (or iterable) of parents.
+         - ``self`` -- a functor `F`
+         - ``parents`` -- a list (or iterable) of parents
 
         EXAMPLES::
 
@@ -157,8 +159,8 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
 
         INPUT:
 
-         - ``self``: a functor `F`
-         - ``categories``: a non empty tuple of categories
+         - ``self`` -- a functor `F`
+         - ``categories`` -- a non empty tuple of categories
 
         EXAMPLES::
 
@@ -182,8 +184,8 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
 
         INPUT:
 
-         - ``self``: a functor `F`
-         - ``category``: a category
+         - ``self`` -- a functor `F`
+         - ``category`` -- a category
 
         EXAMPLES::
 
@@ -205,18 +207,18 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
 
     def __call__(self, args, **kwargs):
         """
-        Functorial construction application
+        Functorial construction application.
 
         INPUT:
 
-         - ``self``: a covariant functorial construction `F`
-         - ``args``: a tuple (or iterable) of parents or elements
+         - ``self`` -- a covariant functorial construction `F`
+         - ``args`` -- a tuple (or iterable) of parents or elements
 
         Returns `F(args)`
 
         EXAMPLES::
 
-            sage: E = CombinatorialFreeModule(QQ, ["a", "b", "c"]); E.rename("E")       # needs sage.modules
+            sage: E = CombinatorialFreeModule(QQ, ["a", "b", "c"]); E.rename('E')       # needs sage.modules
             sage: tensor((E, E, E))                                                     # needs sage.modules
             E # E # E
         """
@@ -237,9 +239,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         """
         Recover the class of the base category.
 
-        OUTPUT:
-
-        A *tuple* whose single entry is the base category class.
+        OUTPUT: a *tuple* whose single entry is the base category class
 
         .. WARNING::
 
@@ -396,9 +396,9 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
 
         INPUT:
 
-         - ``cls`` -- the category class for the functorial construction `F`
-         - ``category`` -- a category `Cat`
-         - ``*args`` -- further arguments for the functor
+        - ``cls`` -- the category class for the functorial construction `F`
+        - ``category`` -- a category `Cat`
+        - ``*args`` -- further arguments for the functor
 
         EXAMPLES::
 
@@ -527,9 +527,9 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
 
         INPUT:
 
-         - ``cls`` -- the category class for the functor `F`
-         - ``category`` -- a category `Cat`
-         - ``*args`` -- further arguments for the functor
+        - ``cls`` -- the category class for the functor `F`
+        - ``category`` -- a category `Cat`
+        - ``*args`` -- further arguments for the functor
 
         OUTPUT: a (join) category
 
@@ -626,7 +626,7 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
         f = self._functor_category
         return not any(hasattr(C, f) for C in base.super_categories())
 
-    def additional_structure(self):
+    def additional_structure(self) -> Self | None:
         r"""
         Return the additional structure defined by ``self``.
 
@@ -677,9 +677,7 @@ class RegressiveCovariantConstructionCategory(CovariantConstructionCategory):
         - ``category`` -- a category `Cat`
         - ``*args`` -- further arguments for the functor
 
-        OUTPUT:
-
-        A join category.
+        OUTPUT: a join category
 
         This implements the property that an induced subcategory is a
         subcategory.

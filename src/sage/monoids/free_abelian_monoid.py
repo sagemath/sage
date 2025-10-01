@@ -54,15 +54,14 @@ lists of integer exponents.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.structure.category_object import normalize_names
-from sage.structure.parent import Parent
 from sage.categories.monoids import Monoids
-from .free_abelian_monoid_element import FreeAbelianMonoidElement
+from sage.misc.cachefunc import cached_method
+from sage.monoids.free_abelian_monoid_element import FreeAbelianMonoidElement
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-
+from sage.structure.category_object import normalize_names
 from sage.structure.factory import UniqueFactory
+from sage.structure.parent import Parent
 
 
 class FreeAbelianMonoidFactory(UniqueFactory):
@@ -71,11 +70,9 @@ class FreeAbelianMonoidFactory(UniqueFactory):
 
     INPUT:
 
+    - ``n`` -- integer
 
-    -  ``n`` -- integer
-
-    -  ``names`` -- names of generators
-
+    - ``names`` -- names of generators
 
     OUTPUT: free abelian monoid
 
@@ -116,7 +113,7 @@ def FreeAbelianMonoid(index_set=None, names=None, **kwds):
     Return a free abelian monoid on `n` generators or with the generators
     indexed by a set `I`.
 
-    We construct free abelian monoids by specifing either:
+    We construct free abelian monoids by specifying either:
 
     - the number of generators and/or the names of the generators
     - the indexing set for the generators (this ignores the other two inputs)
@@ -126,11 +123,9 @@ def FreeAbelianMonoid(index_set=None, names=None, **kwds):
     - ``index_set`` -- an indexing set for the generators; if an integer,
       then this becomes `\{0, 1, \ldots, n-1\}`
 
-    -  ``names`` -- names of generators
+    - ``names`` -- names of generators
 
-    OUTPUT:
-
-    A free abelian monoid.
+    OUTPUT: a free abelian monoid
 
     EXAMPLES::
 
@@ -163,7 +158,7 @@ def FreeAbelianMonoid(index_set=None, names=None, **kwds):
 
 def is_FreeAbelianMonoid(x):
     """
-    Return True if `x` is a free abelian monoid.
+    Return ``True`` if `x` is a free abelian monoid.
 
     EXAMPLES::
 
@@ -231,7 +226,7 @@ class FreeAbelianMonoid_class(Parent):
 
     def __contains__(self, x):
         """
-        Return True if `x` is an element of this abelian monoid.
+        Return ``True`` if `x` is an element of this abelian monoid.
 
         EXAMPLES::
 

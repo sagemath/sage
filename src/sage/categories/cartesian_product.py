@@ -13,9 +13,14 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.lazy_import import lazy_import
-from sage.categories.covariant_functorial_construction import CovariantFunctorialConstruction, CovariantConstructionCategory
+from typing import Self
+
+from sage.categories.covariant_functorial_construction import (
+    CovariantConstructionCategory,
+    CovariantFunctorialConstruction,
+)
 from sage.categories.pushout import MultivariateConstructionFunctor
+from sage.misc.lazy_import import lazy_import
 
 native_python_containers = {tuple, list, set, frozenset, range}
 
@@ -105,7 +110,6 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
     <sage.categories.monoids.Monoids.CartesianProducts>` of
     ``Monoids(QQ)``. This nested class is itself a subclass of
     :class:`CartesianProductsCategory`.
-
     """
     _functor_name = "cartesian_product"
     _functor_category = "CartesianProducts"
@@ -242,12 +246,11 @@ class CartesianProductsCategory(CovariantConstructionCategory):
 
             sage: ModulesWithBasis(QQ).CartesianProducts() # indirect doctest
             Category of Cartesian products of vector spaces with basis over Rational Field
-
         """
         # This method is only required for the capital `C`
         return "Cartesian products of %s" % (self.base_category()._repr_object_names())
 
-    def CartesianProducts(self):
+    def CartesianProducts(self) -> Self:
         """
         Return the category of (finite) Cartesian products of objects
         of ``self``.

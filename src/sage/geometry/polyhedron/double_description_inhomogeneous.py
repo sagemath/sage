@@ -7,7 +7,7 @@ double description method for cones
 H/V-representations of polyhedra. The latter works with cones
 only. This is sufficient to treat general polyhedra by the following
 construction: Any polyhedron can be embedded in one dimension higher
-in the hyperplane `(1,*,\dots,*)`. The cone over the embedded
+in the hyperplane `(1, *, \dots, *)`. The cone over the embedded
 polyhedron will be called the *homogenized cone* in the
 following. Conversely, intersecting the homogenized cone with the
 hyperplane `x_0=1` gives you back the original polyhedron.
@@ -16,7 +16,7 @@ While slower than specialized C/C++ implementations, the
 implementation is general and works with any field in Sage that allows
 you to define polyhedra.
 
-.. note::
+.. NOTE::
 
     If you just want polyhedra over arbitrary fields then you should
     just use the
@@ -66,13 +66,13 @@ class PivotedInequalities(SageObject):
 
     def __init__(self, base_ring, dim):
         """
-        Base class for inequalities that may contain linear subspaces
+        Base class for inequalities that may contain linear subspaces.
 
         INPUT:
 
-        - ``base_ring`` -- a field.
+        - ``base_ring`` -- a field
 
-        - ``dim`` -- integer. The ambient space dimension.
+        - ``dim`` -- integer; the ambient space dimension
 
         EXAMPLES::
 
@@ -98,11 +98,9 @@ class PivotedInequalities(SageObject):
 
         INPUT:
 
-        - ``A`` -- matrix. The inequalities.
+        - ``A`` -- matrix; the inequalities
 
-        OUTPUT:
-
-        The matrix of pivot columns.
+        OUTPUT: the matrix of pivot columns
 
         EXAMPLES::
 
@@ -125,11 +123,9 @@ class PivotedInequalities(SageObject):
 
         INPUT:
 
-        - ``ray`` -- ray in the pivoted coordinates.
+        - ``ray`` -- ray in the pivoted coordinates
 
-        OUTPUT:
-
-        Ray in the original coordinates.
+        OUTPUT: ray in the original coordinates
 
         EXAMPLES::
 
@@ -156,15 +152,15 @@ class Hrep2Vrep(PivotedInequalities):
 
         INPUT:
 
-        - ``base_ring`` -- a field.
+        - ``base_ring`` -- a field
 
-        - ``dim`` -- integer. The ambient space dimension.
+        - ``dim`` -- integer; the ambient space dimension
 
-        - ``inequalities`` -- list of inequalities. Each inequality
-          is given as constant term, ``dim`` coefficients.
+        - ``inequalities`` -- list of inequalities; each inequality
+          is given as constant term, ``dim`` coefficients
 
-        - ``equations`` -- list of equations. Same notation as for
-          inequalities.
+        - ``equations`` -- list of equations; same notation as for
+          inequalities
 
         EXAMPLES::
 
@@ -213,15 +209,13 @@ class Hrep2Vrep(PivotedInequalities):
 
     def _init_Vrep(self, inequalities, equations):
         """
-        Split off the linear subspace from the inequalities and select pivots
+        Split off the linear subspace from the inequalities and select pivots.
 
         INPUT:
 
-        - ``inequalities``, ``equations`` -- see :class:`Vrep2Hrep`.
+        - ``inequalities``, ``equations`` -- see :class:`Vrep2Hrep`
 
-        OUTPUT:
-
-        The pivoted inequalities.
+        OUTPUT: the pivoted inequalities
 
         TESTS::
 
@@ -274,18 +268,18 @@ class Hrep2Vrep(PivotedInequalities):
             return l1, L0 + [l - l[0] * l1 for l in L1]
 
     def _extract_Vrep(self, DD):
-        """
+        r"""
         Extract the V-representation from the extremal rays
         of the homogeneous cone.
 
         The V-representation is the intersection of the cone generated
         by the rays `R` and ``self._linear_subspace`` with the
-        hyperplane `(1,*,*,...,*)`.
+        hyperplane `(1, *, *, \ldots, *)`.
 
         INPUT:
 
         - ``DD`` -- a
-          :class:`~sage.geometry.polyhedron.double_description.DoubleDescriptionPair`.
+          :class:`~sage.geometry.polyhedron.double_description.DoubleDescriptionPair`
 
         TESTS::
 
@@ -355,7 +349,7 @@ class Hrep2Vrep(PivotedInequalities):
 
         INPUT:
 
-        - ``inequalities``, ``equations`` -- see :class:`Hrep2Vrep`.
+        - ``inequalities``, ``equations`` -- see :class:`Hrep2Vrep`
 
         EXAMPLES::
 
@@ -388,18 +382,18 @@ class Vrep2Hrep(PivotedInequalities):
 
         INPUT:
 
-        - ``base_ring`` -- a field.
+        - ``base_ring`` -- a field
 
-        - ``dim`` -- integer. The ambient space dimension.
+        - ``dim`` -- integer; the ambient space dimension
 
-        - ``vertices`` -- list of vertices. Each vertex is given as
-          list of ``dim`` coordinates.
+        - ``vertices`` -- list of vertices; each vertex is given as
+          list of ``dim`` coordinates
 
-        - ``rays`` -- list of rays. Each ray is given as
-          list of ``dim`` coordinates, not all zero.
+        - ``rays`` -- list of rays; each ray is given as
+          list of ``dim`` coordinates, not all zero
 
-        - ``lines`` -- list of line generators. Each line is given as
-          list of ``dim`` coordinates, not all zero.
+        - ``lines`` -- list of line generators; each line is given as
+          list of ``dim`` coordinates, not all zero
 
         EXAMPLES::
 
@@ -465,11 +459,9 @@ class Vrep2Hrep(PivotedInequalities):
 
         INPUT:
 
-        - ``vertices``, ``rays``, ``lines`` -- see :class:`Vrep2Hrep`.
+        - ``vertices``, ``rays``, ``lines`` -- see :class:`Vrep2Hrep`
 
-        OUTPUT:
-
-        Matrix of pivoted inequalities for the dual homogenized cone.
+        OUTPUT: matrix of pivoted inequalities for the dual homogenized cone
 
         TESTS::
 
@@ -497,7 +489,7 @@ class Vrep2Hrep(PivotedInequalities):
         INPUT:
 
         - ``DD`` -- a
-          :class:`~sage.geometry.polyhedron.double_description.DoubleDescriptionPair`.
+          :class:`~sage.geometry.polyhedron.double_description.DoubleDescriptionPair`
 
         EXAMPLES::
 
@@ -520,9 +512,7 @@ class Vrep2Hrep(PivotedInequalities):
         r"""
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -548,7 +538,7 @@ class Vrep2Hrep(PivotedInequalities):
 
         INPUT:
 
-        - ``vertices``, ``rays``, ``lines`` -- see :class:`Vrep2Hrep`.
+        - ``vertices``, ``rays``, ``lines`` -- see :class:`Vrep2Hrep`
 
         EXAMPLES::
 

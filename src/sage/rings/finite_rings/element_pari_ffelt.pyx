@@ -54,7 +54,6 @@ cdef GEN _INT_to_FFELT(GEN g, GEN x) except NULL:
         sage: F.<x> = GF(p^2)
         sage: x * 2^63
         9223372036854775808*x
-
     """
     cdef GEN f, p = gel(g, 4), result
     cdef long t
@@ -381,7 +380,6 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: R = [r[0] for r in pol.roots()]
             sage: prod(Fq_X.gen() - r for r in R) == pol
             True
-
         """
         cdef GEN f, g, result, x_GEN
         cdef long i, n, t
@@ -540,8 +538,17 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: k.<c> = GF(3^17, impl='pari_ffelt')
             sage: c^20  # indirect doctest
             c^4 + 2*c^3
+
+        TESTS::
+
+            sage: F.<I> = GF((2^128+51)^2)
+            sage: I
+            I
         """
-        return str(new_gen_noclear(self.val))
+        s = str(new_gen_noclear(self.val))
+        if self._parent._need_replace_varname:
+            s = s.replace("x", self._parent._names[0])  # .variable_name() is slower
+        return s
 
     def __hash__(self):
         """
@@ -756,7 +763,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
     def is_unit(self):
         """
-        Return ``True`` if ``self`` is non-zero.
+        Return ``True`` if ``self`` is nonzero.
 
         EXAMPLES::
 
@@ -849,7 +856,6 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             exponent to an integer.  This means that ``a^Mod(1, n)``
             returns `a` even if `n` is not a multiple of the
             multiplicative order of `a`.
-
         """
         if exp == 0:
             return self._parent.one()
@@ -863,7 +869,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
     def pth_power(FiniteFieldElement_pari_ffelt self, int k=1):
         r"""
-        Return the `(p^k)^{th}` power of ``self``, where `p` is the
+        Return the `(p^k)`-th power of ``self``, where `p` is the
         characteristic of the field.
 
         INPUT:
@@ -960,7 +966,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         INPUT:
 
-        - ``var`` -- string (default: 'x'): variable name to use.
+        - ``var`` -- string (default: ``'x'``); variable name to use
 
         EXAMPLES::
 
@@ -979,7 +985,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         INPUT:
 
-        - ``var`` -- string (default: 'x'): variable name to use.
+        - ``var`` -- string (default: ``'x'``); variable name to use
 
         EXAMPLES::
 
@@ -1029,13 +1035,13 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         INPUT:
 
-        - ``extend`` -- bool (default: ``False``)
+        - ``extend`` -- boolean (default: ``False``)
 
            .. WARNING::
 
                This option is not implemented.
 
-        - ``all`` -- bool (default: ``False``)
+        - ``all`` -- boolean (default: ``False``)
 
         OUTPUT:
 
@@ -1045,7 +1051,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         If ``extend`` is ``True``, a square root is chosen in an
         extension field if necessary.  If ``extend`` is ``False``, a
-        :class:`ValueError` is raised if the element is not a square in the
+        :exc:`ValueError` is raised if the element is not a square in the
         base field.
 
         .. WARNING::
@@ -1107,15 +1113,15 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         INPUT:
 
-        - ``base`` -- non-zero field element
+        - ``base`` -- nonzero field element
         - ``order`` -- integer (optional), the order of the base
-        - ``check`` -- boolean (default: ``False``): If set,
-          test whether the given ``order`` is correct.
+        - ``check`` -- boolean (default: ``False``); if set,
+          test whether the given ``order`` is correct
 
         OUTPUT:
 
         An integer `x` such that ``self`` equals ``base`` raised to
-        the power `x`.  If no such `x` exists, a ``ValueError`` is
+        the power `x`.  If no such `x` exists, a :exc:`ValueError` is
         raised.
 
         EXAMPLES::
@@ -1211,7 +1217,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
     def multiplicative_order(self):
         """
-        Returns the order of ``self`` in the multiplicative group.
+        Return the order of ``self`` in the multiplicative group.
 
         EXAMPLES::
 
@@ -1307,7 +1313,17 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: b = a**2 + 2*a + 1
             sage: b.__pari__()
             a^2 + 2*a + 1
+
+        TESTS::
+
+            sage: F.<I> = GF((2^128+51)^2)
+            sage: pari(I)
+            Traceback (most recent call last):
+            ...
+            ValueError: variable name illegal in PARI
         """
+        if self._parent._need_replace_varname:
+            raise ValueError("variable name illegal in PARI")
         return new_gen_noclear(self.val)
 
     def _pari_init_(self):
@@ -1343,7 +1359,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         zero = "%s*a" % self._parent.characteristic()
         return "subst(%s+%s,a,%s)" % (self, zero, ffgen)
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Return a string representing ``self`` in Magma.
 
@@ -1356,7 +1372,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         km = magma(k)
         return str(self).replace(k.variable_name(), km.gen(1).name())
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return the string representing ``self`` in GAP.
 
@@ -1391,7 +1407,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: # needs sage.libs.gap
             sage: F = FiniteField(next_prime(200)^2, 'a', impl='pari_ffelt')
             sage: a = F.multiplicative_generator()
-            sage: a._gap_ (gap)
+            sage: a._gap_(gap)
             Z(211^2)
             sage: (a^20)._gap_(gap)
             Z(211^2)^20
@@ -1415,11 +1431,11 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             raise TypeError("order must be at most 65536")
 
         if self == 0:
-            return '0*Z(%s)'%F.order()
+            return '0*Z(%s)' % F.order()
         assert F.degree() > 1
         g = F.multiplicative_generator()
         n = self.log(g)
-        return 'Z(%s)^%s'%(F.order(), n)
+        return 'Z(%s)^%s' % (F.order(), n)
 
 
 def unpickle_FiniteFieldElement_pari_ffelt(parent, elem):

@@ -67,16 +67,15 @@ def normalize_args_vectorspace(*args, **kwds):
 
     * Degree and base ring:
 
-      - ``degree`` -- integer. The degree of the affine group, that
-        is, the dimension of the affine space the group is acting on.
+      - ``degree`` -- integer; the degree of the affine group, that
+        is, the dimension of the affine space the group is acting on
 
       - ``ring`` -- a ring or an integer. The base ring of the affine
         space. If an integer is given, it must be a prime power and
         the corresponding finite field is constructed.
 
-      - ``var='a'`` -- optional keyword argument to specify the finite
-        field generator name in the case where ``ring`` is a prime
-        power.
+      - ``var='a'`` -- (optional) keyword argument to specify the finite
+        field generator name in the case where ``ring`` is a prime power
 
     OUTPUT: a pair ``(degree, ring)``
 
@@ -136,7 +135,7 @@ def normalize_args_invariant_form(R, d, invariant_form):
     - ``d`` -- integer giving the dimension of the module the classical
       group is operating on
 
-    - ``invariant_form`` --  (optional) instances being accepted by
+    - ``invariant_form`` -- (optional) instances being accepted by
       the matrix-constructor that define a `d \times d` square matrix
       over R describing the bilinear form to be kept invariant
       by the classical group
@@ -209,7 +208,7 @@ class NamedMatrixGroup_generic(CachedRepresentation, MatrixGroup_generic):
           the constructor of
           :class:`sage.groups.matrix_gps.matrix_group.MatrixGroup_generic`
 
-        - ``invariant_form`` --  (optional) square-matrix of the given
+        - ``invariant_form`` -- (optional) square-matrix of the given
           degree over the given base_ring describing a bilinear form
           to be kept invariant by the group
 

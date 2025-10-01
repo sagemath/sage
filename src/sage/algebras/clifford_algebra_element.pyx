@@ -15,13 +15,15 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from copy import copy
+
 from sage.structure.parent cimport Parent
 from sage.data_structures.bitset cimport Bitset
 from sage.algebras.weyl_algebra import repr_from_monomials
 from sage.data_structures.blas_dict cimport scal
-from copy import copy
+
 
 cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
     """
@@ -34,7 +36,7 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
         sage: elt = ((x^3-z)*x + y)^2
         sage: TestSuite(elt).run()
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -713,7 +715,7 @@ cdef class ExteriorAlgebraElement(CliffordAlgebraElement):
 
         INPUT:
 
-        - ``I`` -- a list of exterior algebra elements or an ideal
+        - ``I`` -- list of exterior algebra elements or an ideal
         - ``left`` -- boolean; if reduce as a left ideal (``True``)
           or right ideal (``False``), ignored if ``I`` is an ideal
 

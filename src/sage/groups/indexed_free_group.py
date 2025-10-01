@@ -137,6 +137,7 @@ class IndexedGroup(IndexedMonoid):
 
     gens = group_generators
 
+
 class IndexedFreeGroup(IndexedGroup, Group):
     """
     An indexed free group.
@@ -279,7 +280,7 @@ class IndexedFreeGroup(IndexedGroup, Group):
             return self.__class__(self.parent(),
                    tuple((x[0], -x[1]) for x in reversed(self._monomial)))
 
-        def to_word_list(self):
+        def to_word_list(self) -> list[tuple]:
             """
             Return ``self`` as a word represented as a list whose entries
             are the pairs ``(i, s)`` where ``i`` is the index and ``s`` is
@@ -293,9 +294,9 @@ class IndexedFreeGroup(IndexedGroup, Group):
                 sage: x.to_word_list()
                 [(0, 1), (1, 1), (1, 1), (4, 1), (0, -1)]
             """
-            sign = lambda x: 1 if x > 0 else -1 # It is never 0
-            return [ (k, sign(e)) for k,e in self._sorted_items()
-                     for dummy in range(abs(e))]
+            return [(k, 1 if e > 0 else -1) for k, e in self._sorted_items()
+                    for dummy in range(abs(e))]
+
 
 class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
     """
@@ -347,9 +348,7 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
             sage: G({1: 3, -2: 12})
             F[-2]^12*F[1]^3
             sage: G(-5)
-            Traceback (most recent call last):
-            ...
-            TypeError: unable to convert -5, use gen() instead
+            F[-5]
 
         TESTS::
 

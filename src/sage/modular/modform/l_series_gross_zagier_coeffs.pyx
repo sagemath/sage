@@ -1,3 +1,6 @@
+"""
+Utilities for Gross-Zagier L-series
+"""
 from cysignals.memory cimport check_allocarray, check_calloc, sig_free
 from cysignals.signals cimport sig_check, sig_on, sig_off
 
@@ -14,7 +17,7 @@ from libc.string cimport memcpy
 
 cpdef to_series(L, var):
     """
-    Create a power series element out of a list ``L`` in the variable`` var``.
+    Create a power series element out of a list ``L`` in the variable ``var``.
 
     EXAMPLES::
 
@@ -42,7 +45,7 @@ def bqf_theta_series(Q, long bound, var=None):
 
     .. MATH::
 
-        \sum_{(x,y) \in \Z^2} q^{f(x,y)} = \sum_{n=-\infty}^{\infty} r(n)q^n
+        \sum_{(x,y) \in \ZZ^2} q^{f(x,y)} = \sum_{n=-\infty}^{\infty} r(n)q^n
 
     where `r(n)` give the number of way `n` is represented by `f`.
 
@@ -52,9 +55,7 @@ def bqf_theta_series(Q, long bound, var=None):
     - ``bound`` -- how many terms to compute
     - ``var`` -- (optional) the variable in which to express this power series
 
-    OUTPUT:
-
-    A power series in ``var``, or list of ints if ``var`` is unspecified.
+    OUTPUT: a power series in ``var``, or list of ints if ``var`` is unspecified
 
     EXAMPLES::
 
@@ -99,19 +100,17 @@ cdef long* bqf_theta_series_c(long* terms, long bound, long a, long b, long c) e
 
 def gross_zagier_L_series(an_list, Q, long N, long u, var=None):
     """
-    Compute the coefficients of the Gross-Zagier L-series.
+    Compute the coefficients of the Gross-Zagier `L`-series.
 
     INPUT:
 
-    - ``an_list`` -- list of coefficients of the L-series of an elliptic curve
+    - ``an_list`` -- list of coefficients of the `L`-series of an elliptic curve
     - ``Q`` -- a positive definite quadratic form
     - ``N`` -- conductor of the elliptic curve
     - ``u`` -- number of roots of unity in the field associated with ``Q``
     - ``var`` -- (optional) the variable in which to express this power series
 
-    OUTPUT:
-
-    A power series in ``var``, or list of ints if ``var`` is unspecified.
+    OUTPUT: a power series in ``var``, or list of ints if ``var`` is unspecified
 
     The number of terms is the length of the input ``an_list``.
 

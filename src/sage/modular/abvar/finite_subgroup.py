@@ -27,7 +27,7 @@ EXAMPLES::
     sage: C.order()
     100
     sage: C.gens()
-    [[(1/10, 0, 1/10, 1/10, 1/10, 3/10)], [(0, 1/5, 1/10, 0, 1/10, 9/10)], [(0, 0, 1/2, 0, 1/2, 1/2)]]
+    ([(1/10, 0, 1/10, 1/10, 1/10, 3/10)], [(0, 1/5, 1/10, 0, 1/10, 9/10)], [(0, 0, 1/2, 0, 1/2, 1/2)])
     sage: C.0 + C.1
     [(1/10, 1/5, 1/5, 1/10, 1/5, 6/5)]
     sage: 10*(C.0 + C.1)
@@ -35,7 +35,7 @@ EXAMPLES::
     sage: G = C.subgroup([C.0 + C.1]); G
     Finite subgroup with invariants [10] over QQbar of Abelian variety J0(33) of dimension 3
     sage: G.gens()
-    [[(1/10, 1/5, 1/5, 1/10, 1/5, 1/5)]]
+    ([(1/10, 1/5, 1/5, 1/10, 1/5, 1/5)],)
     sage: G.order()
     10
     sage: G <= C
@@ -88,15 +88,15 @@ TESTS::
     True
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sage.rings.abc
 
@@ -263,10 +263,10 @@ class FiniteSubgroup(Module):
         # order gets reversed in passing to lattices.
         return lx._echelon_matrix_richcmp(rx, op)
 
-    def is_subgroup(self, other):
+    def is_subgroup(self, other) -> bool:
         """
-        Return ``True`` exactly if ``self`` is a subgroup of ``other``, and both are
-        defined as subgroups of the same ambient abelian variety.
+        Return ``True`` exactly if ``self`` is a subgroup of ``other``,
+        and both are defined as subgroups of the same ambient abelian variety.
 
         EXAMPLES::
 
@@ -298,7 +298,7 @@ class FiniteSubgroup(Module):
 
             sage: C = J0(22).cuspidal_subgroup()
             sage: C.gens()
-            [[(1/5, 1/5, 4/5, 0)], [(0, 0, 0, 1/5)]]
+            ([(1/5, 1/5, 4/5, 0)], [(0, 0, 0, 1/5)])
             sage: A = C.subgroup([C.0]); B = C.subgroup([C.1])
             sage: A + B == C
             True
@@ -328,7 +328,7 @@ class FiniteSubgroup(Module):
         """
         Return the exponent of this finite abelian group.
 
-        OUTPUT: Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -352,9 +352,7 @@ class FiniteSubgroup(Module):
 
         INPUT:
 
-
-        -  ``other`` -- a finite group
-
+        - ``other`` -- a finite group
 
         OUTPUT: a finite group
 
@@ -440,17 +438,15 @@ class FiniteSubgroup(Module):
 
     def __mul__(self, right):
         """
-        Multiply this subgroup by the rational number right.
+        Multiply this subgroup by the rational number ``right``.
 
-        If right is an integer the result is a subgroup of self. If right
-        is a rational number `n/m`, then this group is first
+        If ``right`` is an integer the result is a subgroup of ``self``. If
+        ``right`` is a rational number `n/m`, then this group is first
         divided by `m` then multiplied by `n`.
 
         INPUT:
 
-
-        -  ``right`` -- a rational number
-
+        - ``right`` -- a rational number
 
         OUTPUT: a subgroup
 
@@ -583,22 +579,24 @@ class FiniteSubgroup(Module):
             self.__order = o
             return o
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
-        Return generators for this finite subgroup.
+        Return a tuple of the generators for this finite subgroup.
 
-        EXAMPLES: We list generators for several cuspidal subgroups::
+        EXAMPLES:
+
+        We list generators for several cuspidal subgroups::
 
             sage: J0(11).cuspidal_subgroup().gens()
-            [[(0, 1/5)]]
+            ([(0, 1/5)],)
             sage: J0(37).cuspidal_subgroup().gens()
-            [[(0, 0, 0, 1/3)]]
+            ([(0, 0, 0, 1/3)],)
             sage: J0(43).cuspidal_subgroup().gens()
-            [[(0, 1/7, 0, 6/7, 0, 5/7)]]
+            ([(0, 1/7, 0, 6/7, 0, 5/7)],)
             sage: J1(13).cuspidal_subgroup().gens()
-            [[(1/19, 0, 9/19, 9/19)], [(0, 1/19, 0, 9/19)]]
+            ([(1/19, 0, 9/19, 9/19)], [(0, 1/19, 0, 9/19)])
             sage: J0(22).torsion_subgroup(6).gens()
-            [[(1/6, 0, 0, 0)], [(0, 1/6, 0, 0)], [(0, 0, 1/6, 0)], [(0, 0, 0, 1/6)]]
+            ([(1/6, 0, 0, 0)], [(0, 1/6, 0, 0)], [(0, 0, 1/6, 0)], [(0, 0, 0, 1/6)])
         """
         try:
             return self.__gens
@@ -606,19 +604,19 @@ class FiniteSubgroup(Module):
             pass
 
         B = [self.element_class(self, v) for v in self.lattice().basis() if v.denominator() > 1]
-        self.__gens = Sequence(B, immutable=True)
+        self.__gens = tuple(B)
         return self.__gens
 
     def gen(self, n):
         r"""
-        Return `n^{th}` generator of self.
+        Return `n`-th generator of ``self``.
 
         EXAMPLES::
 
             sage: J = J0(23)
             sage: C = J.torsion_subgroup(3)
             sage: C.gens()
-            [[(1/3, 0, 0, 0)], [(0, 1/3, 0, 0)], [(0, 0, 1/3, 0)], [(0, 0, 0, 1/3)]]
+            ([(1/3, 0, 0, 0)], [(0, 1/3, 0, 0)], [(0, 0, 1/3, 0)], [(0, 0, 0, 1/3)])
             sage: C.gen(0)
             [(1/3, 0, 0, 0)]
             sage: C.gen(3)
@@ -626,7 +624,7 @@ class FiniteSubgroup(Module):
             sage: C.gen(4)
             Traceback (most recent call last):
             ...
-            IndexError: list index out of range
+            IndexError: tuple index out of range
 
         Negative indices wrap around::
 
@@ -687,7 +685,6 @@ class FiniteSubgroup(Module):
             Traceback (most recent call last):
             ...
             ValueError: ambient abelian varieties are different
-
         """
         if isinstance(x, TorsionPoint):
             if x.parent().abelian_variety() != self.abelian_variety():
@@ -711,7 +708,7 @@ class FiniteSubgroup(Module):
             sage: G2 = J0(27).cuspidal_subgroup(); G2
             Finite subgroup with invariants [3, 3] over QQ of Abelian variety J0(27) of dimension 1
             sage: G2.gens()
-            [[(1/3, 0)], [(0, 1/3)]]
+            ([(1/3, 0)], [(0, 1/3)])
 
         Now we check whether various elements are in `G_1` and `G_2`::
 
@@ -847,18 +844,15 @@ class FiniteSubgroup_lattice(FiniteSubgroup):
 
         INPUT:
 
+        - ``abvar`` -- a modular abelian variety
 
-        -  ``abvar`` -- a modular abelian variety
+        - ``lattice`` -- a lattice that contains the lattice of abvar
 
-        -  ``lattice`` -- a lattice that contains the lattice of
-           abvar
+        - ``field_of_definition`` -- the field of definition
+          of this finite group scheme
 
-        -  ``field_of_definition`` -- the field of definition
-           of this finite group scheme
-
-        -  ``check`` -- bool (default: ``True``) whether or not to
-           check that lattice contains the abvar lattice.
-
+        - ``check`` -- boolean (default: ``True``); whether or not to
+          check that lattice contains the abvar lattice
 
         EXAMPLES::
 

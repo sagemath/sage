@@ -145,7 +145,7 @@ cdef binary_tree_node *binary_tree_head_excise(binary_tree_node *self) noexcept:
 
 
 cdef int LIST_PREORDER, LIST_POSTORDER, LIST_INORDER, LIST_KEYS, LIST_VALUES
-LIST_PREORDER  = 1
+LIST_PREORDER = 1
 LIST_INORDER = 2
 LIST_POSTORDER = 4
 LIST_KEYS = 8
@@ -438,7 +438,7 @@ cdef class BinaryTree:
         """
         return self.head == NULL
 
-    def keys(BinaryTree self, order="inorder"):
+    def keys(BinaryTree self, order='inorder'):
         """
         Return the keys sorted according to "order" parameter.
 
@@ -457,7 +457,7 @@ cdef class BinaryTree:
 
         return binary_tree_list(self.head, LIST_KEYS + o)
 
-    def values(BinaryTree self, order="inorder"):
+    def values(BinaryTree self, order='inorder'):
         """
         Return the keys sorted according to "order" parameter.
 
@@ -491,7 +491,7 @@ class Test:
     def random(self):
         self.binary_tree()
 
-    def binary_tree(self, values = 100, cycles = 100000):
+    def binary_tree(self, values=100, cycles=100000):
         """
         Perform a sequence of random operations, given random inputs
         to stress test the binary tree structure.

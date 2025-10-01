@@ -1,20 +1,17 @@
 r"""
-Set Partitions
+Set partitions
+
+This module defines a class for immutable partitioning of a set. For
+mutable version see :func:`DisjointSet`.
 
 AUTHORS:
 
 - Mike Hansen
-
 - MuPAD-Combinat developers (for algorithms and design inspiration).
-
 - Travis Scrimshaw (2013-02-28): Removed ``CombinatorialClass`` and added
   entry point through :class:`SetPartition`.
-
 - Martin Rubey (2017-10-10): Cleanup, add crossings and nestings, add
   random generation.
-
-This module defines a class for immutable partitioning of a set. For
-mutable version see :func:`DisjointSet`.
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
@@ -73,7 +70,11 @@ class AbstractSetPartition(ClonableArray,
             sage: S([[1,3],[2,4]])
             {{1, 3}, {2, 4}}
         """
-        return '{' + ', '.join('{' + repr(sorted(x))[1:-1] + '}' for x in self) + '}'
+        try:
+            s = [sorted(x) for x in self]
+        except TypeError:
+            s = [sorted(x, key=str) for x in self]
+        return '{' + ', '.join('{' + repr(x)[1:-1] + '}' for x in s) + '}'
 
     def __hash__(self):
         """
@@ -487,11 +488,9 @@ class AbstractSetPartition(ClonableArray,
 
         INPUT:
 
-        - ``self`` -- a set partition of an ordered set
+        - ``self`` -- set partition of an ordered set
 
-        OUTPUT:
-
-        a set partition
+        OUTPUT: a set partition
 
         EXAMPLES::
 
@@ -534,7 +533,7 @@ class AbstractSetPartition(ClonableArray,
 
 
 class SetPartition(AbstractSetPartition,
-        metaclass=InheritComparisonClasscallMetaclass):
+                   metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A partition of a set.
 
@@ -622,7 +621,11 @@ class SetPartition(AbstractSetPartition,
             {}
         """
         self._latex_options = {}
-        ClonableArray.__init__(self, parent, sorted(map(frozenset, s), key=min), check=check)
+        try:
+            s = sorted(map(frozenset, s), key=min)
+        except TypeError:
+            s = sorted(map(frozenset, s), key=lambda b: min(str(b)))
+        ClonableArray.__init__(self, parent, s, check=check)
 
     def check(self):
         """
@@ -652,7 +655,7 @@ class SetPartition(AbstractSetPartition,
 
     def set_latex_options(self, **kwargs):
         r"""
-        Set the latex options for use in the ``_latex_`` function
+        Set the latex options for use in the ``_latex_`` function.
 
         - ``tikz_scale`` -- (default: 1) scale for use with tikz package
 
@@ -662,14 +665,14 @@ class SetPartition(AbstractSetPartition,
 
         - ``color`` -- (default: ``'black'``) the arc colors
 
-        - ``fill`` -- (default: ``False``) if ``True`` then fills ``color``,
-          else you can pass in a color to alter the fill color -
+        - ``fill`` -- boolean (default: ``False``); if ``True`` then fills
+          ``color``, else you can pass in a color to alter the fill color -
           *only works with cyclic plot*
 
-        - ``show_labels`` -- (default: ``True``) if ``True`` shows labels -
-          *only works with plots*
+        - ``show_labels`` -- boolean (default: ``True``); if ``True`` shows
+          labels (*only works with plots*)
 
-        - ``radius`` -- (default: ``"1cm"``) radius of circle for cyclic
+        - ``radius`` -- (default: ``'1cm'``) radius of circle for cyclic
           plot - *only works with cyclic plot*
 
         - ``angle`` -- (default: 0) angle for linear plot
@@ -945,15 +948,15 @@ class SetPartition(AbstractSetPartition,
         """
         return Permutation(tuple(map(tuple, self.standard_form())))
 
-    def to_restricted_growth_word(self, bijection="blocks"):
+    def to_restricted_growth_word(self, bijection='blocks'):
         r"""
         Convert a set partition of `\{1,...,n\}` to a word of length `n`
-        with letters in the non-negative integers such that each
+        with letters in the nonnegative integers such that each
         letter is at most 1 larger than all the letters before.
 
         INPUT:
 
-        - ``bijection`` (default: ``blocks``) -- defines the map from
+        - ``bijection`` -- (default: ``blocks``) defines the map from
           set partitions to restricted growth functions.  These are
           currently:
 
@@ -961,9 +964,7 @@ class SetPartition(AbstractSetPartition,
 
           - ``intertwining``: :meth:`to_restricted_growth_word_intertwining`.
 
-        OUTPUT:
-
-        A restricted growth word.
+        OUTPUT: a restricted growth word
 
         .. SEEALSO::
 
@@ -1009,16 +1010,14 @@ class SetPartition(AbstractSetPartition,
     def to_restricted_growth_word_blocks(self):
         r"""
         Convert a set partition of `\{1,...,n\}` to a word of length `n`
-        with letters in the non-negative integers such that each
+        with letters in the nonnegative integers such that each
         letter is at most 1 larger than all the letters before.
 
         The word is obtained by sorting the blocks by their minimal
         element and setting the letters at the positions of the
         elements in the `i`-th block to `i`.
 
-        OUTPUT:
-
-        a restricted growth word.
+        OUTPUT: a restricted growth word
 
         .. SEEALSO::
 
@@ -1041,7 +1040,7 @@ class SetPartition(AbstractSetPartition,
     def to_restricted_growth_word_intertwining(self):
         r"""
         Convert a set partition of `\{1,...,n\}` to a word of length `n`
-        with letters in the non-negative integers such that each
+        with letters in the nonnegative integers such that each
         letter is at most 1 larger than all the letters before.
 
         The `i`-th letter of the word is the numbers of crossings of
@@ -1049,9 +1048,7 @@ class SetPartition(AbstractSetPartition,
         `i`, with arcs (or half-arcs) beginning at a smaller element
         and ending at a larger element.
 
-        OUTPUT:
-
-        a restricted growth word.
+        OUTPUT: a restricted growth word
 
         .. SEEALSO::
 
@@ -1098,7 +1095,7 @@ class SetPartition(AbstractSetPartition,
         """
         return sorted([max(B) for B in self])
 
-    def to_rook_placement(self, bijection="arcs"):
+    def to_rook_placement(self, bijection='arcs'):
         r"""
         Return a set of pairs defining a placement of non-attacking rooks
         on a triangular board.
@@ -1108,7 +1105,7 @@ class SetPartition(AbstractSetPartition,
 
         INPUT:
 
-        - ``bijection`` (default: ``arcs``) -- defines the bijection
+        - ``bijection`` -- (default: ``arcs``) defines the bijection
           from set partitions to rook placements.  These are
           currently:
 
@@ -1160,9 +1157,7 @@ class SetPartition(AbstractSetPartition,
         rook, which are not yet attacked by another rook, equals the
         index of the block to which `n+1-i` belongs.
 
-        OUTPUT:
-
-        A list of coordinates.
+        OUTPUT: list of coordinates
 
         .. SEEALSO::
 
@@ -1236,9 +1231,7 @@ class SetPartition(AbstractSetPartition,
         One can show that the precisely those rows which correspond
         to openers of the set partition remain empty.
 
-        OUTPUT:
-
-        A list of coordinates.
+        OUTPUT: list of coordinates
 
         .. SEEALSO::
 
@@ -1297,9 +1290,7 @@ class SetPartition(AbstractSetPartition,
         Return the rook diagram obtained by placing rooks according to
         Yip's bijection psi.
 
-        OUTPUT:
-
-        A list of coordinates.
+        OUTPUT: list of coordinates
 
         .. SEEALSO::
 
@@ -1644,7 +1635,7 @@ class SetPartition(AbstractSetPartition,
         for S in self[1:]:
             if maximum_so_far < min(S):
                 return False
-            maximum_so_far = max(maximum_so_far, max(S))
+            maximum_so_far = max(maximum_so_far, *S)
         return True
 
     def standardization(self):
@@ -2105,11 +2096,7 @@ class SetPartitions(UniqueRepresentation, Parent):
             return False
 
         # Check to make sure each element of x is a set
-        for s in x:
-            if not isinstance(s, (set, frozenset, Set_generic)):
-                return False
-
-        return True
+        return all(isinstance(s, (set, frozenset, Set_generic)) for s in x)
 
     def _element_constructor_(self, s, check=True):
         """
@@ -2117,7 +2104,7 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``s`` -- a set of sets
+        - ``s`` -- set of sets
 
         EXAMPLES::
 
@@ -2139,17 +2126,17 @@ class SetPartitions(UniqueRepresentation, Parent):
 
     Element = SetPartition
 
-    def from_restricted_growth_word(self, w, bijection="blocks"):
+    def from_restricted_growth_word(self, w, bijection='blocks'):
         r"""
-        Convert a word of length `n` with letters in the non-negative
+        Convert a word of length `n` with letters in the nonnegative
         integers such that each letter is at most 1 larger than all
         the letters before to a set partition of `\{1,...,n\}`.
 
         INPUT:
 
-        - ``w`` -- a restricted growth word.
+        - ``w`` -- a restricted growth word
 
-        - ``bijection`` (default: ``blocks``) -- defines the map from
+        - ``bijection`` -- (default: ``blocks``) defines the map from
           restricted growth functions to set partitions.  These are
           currently:
 
@@ -2157,9 +2144,7 @@ class SetPartitions(UniqueRepresentation, Parent):
 
           - ``intertwining``: :meth:`from_restricted_growth_word_intertwining`.
 
-        OUTPUT:
-
-        A set partition.
+        OUTPUT: a set partition
 
         .. SEEALSO::
 
@@ -2184,7 +2169,7 @@ class SetPartitions(UniqueRepresentation, Parent):
 
     def from_restricted_growth_word_blocks(self, w):
         r"""
-        Convert a word of length `n` with letters in the non-negative
+        Convert a word of length `n` with letters in the nonnegative
         integers such that each letter is at most 1 larger than all
         the letters before to a set partition of `\{1,...,n\}`.
 
@@ -2193,11 +2178,9 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``w`` -- a restricted growth word.
+        - ``w`` -- a restricted growth word
 
-        OUTPUT:
-
-        A set partition.
+        OUTPUT: a set partition
 
         .. SEEALSO::
 
@@ -2219,7 +2202,7 @@ class SetPartitions(UniqueRepresentation, Parent):
 
     def from_restricted_growth_word_intertwining(self, w):
         r"""
-        Convert a word of length `n` with letters in the non-negative
+        Convert a word of length `n` with letters in the nonnegative
         integers such that each letter is at most 1 larger than all
         the letters before to a set partition of `\{1,...,n\}`.
 
@@ -2230,11 +2213,9 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``w`` -- a restricted growth word.
+        - ``w`` -- a restricted growth word
 
-        OUTPUT:
-
-        A set partition.
+        OUTPUT: a set partition
 
         .. SEEALSO::
 
@@ -2264,7 +2245,7 @@ class SetPartitions(UniqueRepresentation, Parent):
             C = [i + 1] + C
         return self.element_class(self, R)
 
-    def from_rook_placement(self, rooks, bijection="arcs", n=None):
+    def from_rook_placement(self, rooks, bijection='arcs', n=None):
         r"""
         Convert a rook placement of the triangular grid to a set
         partition of `\{1,...,n\}`.
@@ -2275,10 +2256,10 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``rooks`` -- a list of pairs `(i,j)` satisfying
-          `0 < i < j < n+1`.
+        - ``rooks`` -- list of pairs `(i,j)` satisfying
+          `0 < i < j < n+1`
 
-        - ``bijection`` (default: ``arcs``) -- defines the map from
+        - ``bijection`` -- (default: ``arcs``) defines the map from
           rook placements to set partitions.  These are currently:
 
           - ``arcs``: :meth:`from_arcs`.
@@ -2286,7 +2267,7 @@ class SetPartitions(UniqueRepresentation, Parent):
           - ``rho``: :meth:`from_rook_placement_rho`.
           - ``psi``: :meth:`from_rook_placement_psi`.
 
-        - ``n`` -- (optional) the size of the ground set.
+        - ``n`` -- (optional) the size of the ground set
 
         .. SEEALSO::
 
@@ -2342,11 +2323,11 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``n`` -- an integer specifying the size of the set
-          partition to be produced.
+        - ``n`` -- integer specifying the size of the set
+          partition to be produced
 
-        - ``arcs`` -- a list of pairs specifying which elements are
-          in the same block.
+        - ``arcs`` -- list of pairs specifying which elements are
+          in the same block
 
         .. SEEALSO::
 
@@ -2377,14 +2358,12 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``n`` -- an integer specifying the size of the set
-          partition to be produced.
+        - ``n`` -- integer specifying the size of the set
+          partition to be produced
 
-        - ``rooks`` -- a list of pairs `(i,j)` such that `0 < i < j < n+1`.
+        - ``rooks`` -- list of pairs `(i,j)` such that `0 < i < j < n+1`
 
-        OUTPUT:
-
-        A set partition.
+        OUTPUT: a set partition
 
         .. SEEALSO::
 
@@ -2433,14 +2412,12 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``n`` -- an integer specifying the size of the set
-          partition to be produced.
+        - ``n`` -- integer specifying the size of the set
+          partition to be produced
 
-        - ``rooks`` -- a list of pairs `(i,j)` such that `0 < i < j < n+1`.
+        - ``rooks`` -- list of pairs `(i,j)` such that `0 < i < j < n+1`
 
-        OUTPUT:
-
-        A set partition.
+        OUTPUT: a set partition
 
         .. SEEALSO::
 
@@ -2499,15 +2476,12 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``n`` -- an integer specifying the size of the set
-          partition to be produced.
+        - ``n`` -- integer specifying the size of the set
+          partition to be produced
 
-        - ``rooks`` -- a list of pairs `(i,j)` such that `0 < i < j <
-          n+1`.
+        - ``rooks`` -- list of pairs `(i,j)` such that `0 < i < j < n+1`
 
-        OUTPUT:
-
-        A set partition.
+        OUTPUT: a set partition
 
         .. SEEALSO::
 
@@ -2527,7 +2501,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         # Yip draws the diagram as an upper triangular matrix, thus
         # we refer to the cell in row i and column j with (i, j)
         P = []
-        rooks_by_column = {j: i for (i, j) in rooks}
+        rooks_by_column = {j: i for i, j in rooks}
         for c in range(1, n + 1):
             # determine the weight of column c
             try:
@@ -2536,7 +2510,7 @@ class SetPartitions(UniqueRepresentation, Parent):
                 ne = r - 1 + sum(1 for i, j in rooks if i > r and j < c)
             except KeyError:
                 n_rooks = 0
-                ne = sum(1 for i, j in rooks if j < c)
+                ne = sum(1 for _, j in rooks if j < c)
 
             b = c - n_rooks - ne
             if len(P) == b - 1:
@@ -2848,7 +2822,11 @@ class SetPartitions_set(SetPartitions):
             sage: SetPartitions(["a", "b"]).list()
             [{{'a', 'b'}}, {{'a'}, {'b'}}]
         """
-        for sp in set_partition_iterator(sorted(self._set)):
+        try:
+            s = sorted(self._set)
+        except TypeError:
+            s = sorted(self._set, key=str)
+        for sp in set_partition_iterator(s):
             yield self.element_class(self, sp, check=False)
 
     def base_set(self):
@@ -3206,7 +3184,11 @@ class SetPartitions_setn(SetPartitions_set):
             sage: SetPartitions(["a", "b", "c"], 2).list()
             [{{'a', 'c'}, {'b'}}, {{'a'}, {'b', 'c'}}, {{'a', 'b'}, {'c'}}]
         """
-        for sp in set_partition_iterator_blocks(sorted(self._set), self._k):
+        try:
+            s = sorted(self._set)
+        except TypeError:
+            s = sorted(self._set, key=str)
+        for sp in set_partition_iterator_blocks(s, self._k):
             yield self.element_class(self, sp, check=False)
 
     def __contains__(self, x):
@@ -3297,7 +3279,7 @@ def cyclic_permutations_of_set_partition(set_part):
 
 def cyclic_permutations_of_set_partition_iterator(set_part):
     """
-    Iterates over all combinations of cyclic permutations of each cell
+    Iterate over all combinations of cyclic permutations of each cell
     of the set partition.
 
     AUTHORS:

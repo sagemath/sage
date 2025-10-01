@@ -8,7 +8,7 @@ Finite monoids
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-
+from sage.misc.cachefunc import cached_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
 
 
@@ -29,6 +29,12 @@ class FiniteMonoids(CategoryWithAxiom):
     TESTS::
 
         sage: TestSuite(FiniteMonoids()).run()
+
+        sage: R = IntegerModRing(15)
+        sage: M = R.subsemigroup([R(5)], one=R(10),
+        ....:     category=Semigroups().Finite().Subobjects() & Groups())
+        sage: M.one()
+        10
     """
     class ParentMethods:
 
@@ -47,7 +53,7 @@ class FiniteMonoids(CategoryWithAxiom):
 
                 a_1 * a_2 * \cdots * a_k
 
-            The 0th face of this is obtained by deleting `a_1`, and
+            The `0`-th face of this is obtained by deleting `a_1`, and
             the `k`-th face is obtained by deleting `a_k`. The other
             faces are obtained by multiplying elements: the 1st face
             is
@@ -170,7 +176,7 @@ class FiniteMonoids(CategoryWithAxiom):
 
             INPUT:
 
-            - ``base_ring`` (default: `\QQ`) a field
+            - ``base_ring`` -- (default: `\QQ`) a field
 
             OUTPUT:
 
@@ -186,7 +192,7 @@ class FiniteMonoids(CategoryWithAxiom):
                 sage: # needs sage.combinat sage.groups sage.modules
                 sage: from sage.monoids.hecke_monoid import HeckeMonoid
                 sage: H3 = HeckeMonoid(SymmetricGroup(3))
-                sage: H3.repr_element_method(style="reduced")
+                sage: H3.repr_element_method(style='reduced')
                 sage: H3.rhodes_radical_congruence()
                 [([1, 2], [2, 1]), ([1, 2], [1, 2, 1]), ([2, 1], [1, 2, 1])]
 
@@ -270,3 +276,38 @@ class FiniteMonoids(CategoryWithAxiom):
                 k += 1
                 self_power_k = self_power_k * self
             return [k, self_powers[self_power_k]]
+
+        @cached_method
+        def __invert__(self):
+            """
+            Return the inverse of ``self`` if it exists.
+
+            This is the generic implementation, very naive and slow.
+
+            EXAMPLES::
+
+                sage: R = IntegerModRing(15)
+                sage: M = R.subsemigroup([R(5)], one=R(10),
+                ....:     category=Semigroups().Finite().Subobjects() & Groups())
+                sage: [~x for x in M]
+                [10, 5]
+
+            TESTS::
+
+                sage: R = IntegerModRing(15)
+                sage: M = R.subsemigroup([R(3)], one=R(1),
+                ....:     category=Semigroups().Finite().Subobjects())
+                sage: ~M(3)
+                Traceback (most recent call last):
+                ...
+                ValueError: the element 3 is not invertible
+            """
+            parent = self.parent()
+            one = parent.one()
+            if self == one:
+                return one
+            it = (v for v in parent if v * self == one == self * v)
+            try:
+                return next(it)
+            except StopIteration:
+                raise ValueError(f"the element {self} is not invertible")

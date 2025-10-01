@@ -26,11 +26,11 @@ from sage.env import (
 )
 
 
-class SageKernelSpec():
+class SageKernelSpec:
 
     def __init__(self, prefix=None):
         """
-        Utility to manage SageMath kernels and extensions
+        Utility to manage SageMath kernels and extensions.
 
         INPUT:
 
@@ -57,7 +57,7 @@ class SageKernelSpec():
 
     def _mkdirs(self):
         """
-        Create necessary parent directories
+        Create necessary parent directories.
 
         EXAMPLES::
 
@@ -79,9 +79,9 @@ class SageKernelSpec():
     @classmethod
     def identifier(cls):
         """
-        Internal identifier for the SageMath kernel
+        Internal identifier for the SageMath kernel.
 
-        OUTPUT: the string ``"sagemath"``.
+        OUTPUT: the string ``'sagemath'``
 
         EXAMPLES::
 
@@ -93,7 +93,7 @@ class SageKernelSpec():
 
     def symlink(self, src, dst):
         """
-        Symlink ``src`` to ``dst``
+        Symlink ``src`` to ``dst``.
 
         This is not an atomic operation.
 
@@ -141,36 +141,30 @@ class SageKernelSpec():
         """
         Helper to construct the SageMath kernel command.
 
-        OUTPUT:
-
-        List of strings. The command to start a new SageMath kernel.
+        OUTPUT: list of strings; the command to start a new SageMath kernel
 
         EXAMPLES::
 
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
             sage: spec = SageKernelSpec(prefix=tmp_dir())
             sage: spec._kernel_cmd()
-            ['/.../sage',
-             '--python',
+            ['python3',
              '-m',
              'sage.repl.ipython_kernel',
              '-f',
              '{connection_file}']
         """
         return [
-            os.path.join(SAGE_VENV, 'bin', 'sage'),
-            '--python',
+            'python3',
             '-m', 'sage.repl.ipython_kernel',
             '-f', '{connection_file}',
         ]
 
     def kernel_spec(self):
         """
-        Return the kernel spec as Python dictionary
+        Return the kernel spec as Python dictionary.
 
-        OUTPUT:
-
-        A dictionary. See the Jupyter documentation for details.
+        OUTPUT: a dictionary; see the Jupyter documentation for details
 
         EXAMPLES::
 
@@ -187,14 +181,13 @@ class SageKernelSpec():
 
     def _install_spec(self):
         """
-        Install the SageMath Jupyter kernel
+        Install the SageMath Jupyter kernel.
 
         EXAMPLES::
 
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
             sage: spec = SageKernelSpec(prefix=tmp_dir())
             sage: spec._install_spec()
-
         """
         jsonfile = os.path.join(self.kernel_dir, "kernel.json")
         import json
@@ -203,7 +196,7 @@ class SageKernelSpec():
 
     def _symlink_resources(self):
         """
-        Symlink miscellaneous resources
+        Symlink miscellaneous resources.
 
         This method symlinks additional resources (like the SageMath
         documentation) into the SageMath kernel directory. This is
@@ -215,7 +208,6 @@ class SageKernelSpec():
             sage: spec = SageKernelSpec(prefix=tmp_dir())
             sage: spec._install_spec()
             sage: spec._symlink_resources()
-
         """
         path = os.path.join(SAGE_EXTCODE, 'notebook-ipython')
         for filename in os.listdir(path):
@@ -231,7 +223,7 @@ class SageKernelSpec():
     @classmethod
     def update(cls, *args, **kwds):
         """
-        Configure the Jupyter notebook for the SageMath kernel
+        Configure the Jupyter notebook for the SageMath kernel.
 
         This method does everything necessary to use the SageMath kernel,
         you should never need to call any of the other methods
@@ -241,7 +233,6 @@ class SageKernelSpec():
 
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
             sage: SageKernelSpec.update(prefix=tmp_dir())
-
         """
         instance = cls(*args, **kwds)
         instance.use_local_threejs()
@@ -278,7 +269,7 @@ class SageKernelSpec():
                               '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html)')
 
 
-def have_prerequisites(debug=True):
+def have_prerequisites(debug=True) -> bool:
     """
     Check that we have all prerequisites to run the Jupyter notebook.
 
@@ -287,12 +278,10 @@ def have_prerequisites(debug=True):
 
     INPUT:
 
-    - ``debug`` -- boolean (default: ``True``). Whether to print debug
-      information in case that prerequisites are missing.
+    - ``debug`` -- boolean (default: ``True``); whether to print debug
+      information in case that prerequisites are missing
 
-    OUTPUT:
-
-    Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 

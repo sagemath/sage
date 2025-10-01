@@ -47,14 +47,16 @@ REFERENCES:
 
 from sage.arith.misc import factor, is_prime, valuation
 from sage.misc.misc_c import prod
-from sage.modular.arithgroup.all import (Gamma0, Gamma1, ArithmeticSubgroup,
-                                         GammaH_class)
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_constructor as Gamma1
+from sage.modular.arithgroup.congroup_gammaH import GammaH_class
+from sage.modular.arithgroup.congroup_generic import ArithmeticSubgroup
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer import Integer
 from sage.rings.rational_field import frac
 
-from . import dirichlet
+from sage.modular import dirichlet
 
 ##########################################################################
 # Helper functions for calculating dimensions of spaces of modular forms
@@ -69,7 +71,7 @@ def eisen(p):
 
     - ``p`` -- a prime
 
-    OUTPUT: Integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -96,13 +98,13 @@ def CO_delta(r, p, N, eps):
 
     INPUT:
 
-    -  ``r`` -- positive integer
+    - ``r`` -- positive integer
 
-    -  ``p`` -- a prime
+    - ``p`` -- a prime
 
-    -  ``N`` -- positive integer
+    - ``N`` -- positive integer
 
-    -  ``eps`` -- character
+    - ``eps`` -- character
 
     OUTPUT: element of the base ring of the character
 
@@ -140,13 +142,13 @@ def CO_nu(r, p, N, eps):
 
     INPUT:
 
-    -  ``r`` -- positive integer
+    - ``r`` -- positive integer
 
-    -  ``p`` -- a prime
+    - ``p`` -- a prime
 
-    -  ``N`` -- positive integer
+    - ``N`` -- positive integer
 
-    -  ``eps`` -- character
+    - ``eps`` -- character
 
     OUTPUT: element of the base ring of the character
 
@@ -185,11 +187,11 @@ def CohenOesterle(eps, k):
 
     INPUT:
 
-    -  ``eps`` -- Dirichlet character
+    - ``eps`` -- Dirichlet character
 
-    -  ``k`` -- integer
+    - ``k`` -- integer
 
-    OUTPUT: element of the base ring of eps.
+    OUTPUT: element of the base ring of eps
 
     EXAMPLES::
 
@@ -219,9 +221,9 @@ def CohenOesterle(eps, k):
 
         INPUT:
 
-        -  ``r, s, p`` -- integers
+        - ``r``, ``s``, ``p`` -- integers
 
-        OUTPUT: Integer
+        OUTPUT: integer
 
         EXAMPLES: (indirect doctest)
 
@@ -258,12 +260,12 @@ def dimension_new_cusp_forms(X, k=2, p=0):
 
     INPUT:
 
-    -  ``X`` -- integer, congruence subgroup or Dirichlet
-       character
+    - ``X`` -- integer, congruence subgroup or Dirichlet
+      character
 
-    -  ``k`` -- weight (integer)
+    - ``k`` -- weight (integer)
 
-    -  ``p`` -- 0 or a prime
+    - ``p`` -- 0 or a prime
 
     EXAMPLES::
 
@@ -320,10 +322,10 @@ def dimension_cusp_forms(X, k=2):
 
     INPUT:
 
-    -  ``X`` -- congruence subgroup or Dirichlet character
-       or integer
+    - ``X`` -- congruence subgroup or Dirichlet character
+      or integer
 
-    -  ``k`` -- weight (integer)
+    - ``k`` -- weight (integer)
 
     EXAMPLES::
 
@@ -416,10 +418,10 @@ def dimension_eis(X, k=2):
 
     INPUT:
 
-    -  ``X`` -- congruence subgroup or Dirichlet character
-       or integer
+    - ``X`` -- congruence subgroup or Dirichlet character
+      or integer
 
-    -  ``k`` -- weight (integer)
+    - ``k`` -- integer; weight
 
     EXAMPLES::
 
@@ -488,9 +490,9 @@ def dimension_modular_forms(X, k=2):
 
     INPUT:
 
-    -  ``X`` -- congruence subgroup or Dirichlet character
+    - ``X`` -- congruence subgroup or Dirichlet character
 
-    -  ``k`` -- weight (integer)
+    - ``k`` -- integer; weight
 
     EXAMPLES::
 
@@ -539,10 +541,10 @@ def sturm_bound(level, weight=2):
 
     INPUT:
 
-    - ``level`` -- an integer (interpreted as a level for Gamma0) or a
-       congruence subgroup
+    - ``level`` -- integer (interpreted as a level for `\Gamma0`) or a
+      congruence subgroup
 
-    -  ``weight`` -- an integer `\geq 2` (default: 2)
+    - ``weight`` -- integer `\geq 2` (default: 2)
 
     EXAMPLES::
 

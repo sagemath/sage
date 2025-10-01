@@ -32,9 +32,7 @@ def best_linear_code_in_guava(n, k, F):
 
     - ``F`` -- the base field of the code to look up
 
-    OUTPUT:
-
-    A :class:`LinearCode` which is a best linear code of the given parameters known to GUAVA.
+    OUTPUT: a :class:`LinearCode` which is a best linear code of the given parameters known to GUAVA
 
     EXAMPLES::
 
@@ -52,9 +50,9 @@ def best_linear_code_in_guava(n, k, F):
     """
     from sage.features.gap import GapPackage
     from .linear_code import LinearCode
-    GapPackage("guava", spkg="gap_packages").require()
+    GapPackage('guava', spkg='gap_packages').require()
     from sage.libs.gap.libgap import libgap
-    libgap.load_package("guava")
+    libgap.load_package('guava')
     C = libgap.BestKnownLinearCode(n, k, F)
     return LinearCode(C.GeneratorMat()._matrix_(F))
 
@@ -85,9 +83,7 @@ def bounds_on_minimum_distance_in_guava(n, k, F):
 
     - ``F`` -- the base field of the code to look up
 
-    OUTPUT:
-
-    - A GAP record object. See below for an example.
+    OUTPUT: a GAP record object. See below for an example
 
     EXAMPLES::
 
@@ -113,9 +109,9 @@ def bounds_on_minimum_distance_in_guava(n, k, F):
           upperBoundExplanation := ... )
     """
     from sage.features.gap import GapPackage
-    GapPackage("guava", spkg="gap_packages").require()
+    GapPackage('guava', spkg='gap_packages').require()
     from sage.libs.gap.libgap import libgap
-    libgap.load_package("guava")
+    libgap.load_package('guava')
     return libgap.BoundsMinimumDistance(n, k, F)
 
 
@@ -126,17 +122,15 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
 
     INPUT:
 
-    -  ``n`` -- Integer, the length of the code
+    - ``n`` -- integer; the length of the code
 
-    -  ``k`` -- Integer, the dimension of the code
+    - ``k`` -- integer; the dimension of the code
 
-    -  ``F`` -- Finite field, of order 2, 3, 4, 5, 7, 8, or 9
+    - ``F`` -- finite field, of order 2, 3, 4, 5, 7, 8, or 9
 
-    -  ``verbose`` -- Bool (default: ``False``)
+    - ``verbose`` -- boolean (default: ``False``)
 
-    OUTPUT:
-
-    -  An unparsed text explaining the construction of the code.
+    OUTPUT: an unparsed text explaining the construction of the code
 
     EXAMPLES::
 
@@ -153,8 +147,8 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
         <BLANKLINE>
         last modified: 2002-03-20
 
-    This function raises an :class:`IOError` if an error occurs downloading data or
-    parsing it. It raises a :class:`ValueError` if the ``q`` input is invalid.
+    This function raises an :exc:`IOError` if an error occurs downloading data or
+    parsing it. It raises a :exc:`ValueError` if the ``q`` input is invalid.
 
     AUTHORS:
 
@@ -188,29 +182,29 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
 def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     in_test=None):
     """
-    Returns a Python iterator which generates a complete set of
+    Return a Python iterator which generates a complete set of
     representatives of all permutation equivalence classes of
     self-orthogonal binary linear codes of length in ``[1..n]`` and
     dimension in ``[1..k]``.
 
     INPUT:
 
-    -  ``n`` -- Integer, maximal length
+    - ``n`` -- integer; maximal length
 
-    -  ``k`` -- Integer, maximal dimension
+    - ``k`` -- integer; maximal dimension
 
-    -  ``b`` -- Integer, requires that the generators all have weight divisible
-       by ``b`` (if ``b=2``, all self-orthogonal codes are generated, and if
-       ``b=4``, all doubly even codes are generated). Must be an even positive
-       integer.
+    - ``b`` -- integer; requires that the generators all have weight divisible
+      by ``b`` (if ``b=2``, all self-orthogonal codes are generated, and if
+      ``b=4``, all doubly even codes are generated). Must be an even positive
+      integer.
 
-    -  ``parent`` -- Used in recursion (default: ``None``)
+    - ``parent`` -- used in recursion (default: ``None``)
 
-    -  ``BC`` -- Used in recursion (default: ``None``)
+    - ``BC`` -- used in recursion (default: ``None``)
 
-    -  ``equal`` -- If ``True``, generates only [n, k] codes (default: ``False``)
+    - ``equal`` -- if ``True``, generates only [n, k] codes (default: ``False``)
 
-    -  ``in_test`` -- Used in recursion (default: ``None``)
+    - ``in_test`` -- used in recursion (default: ``None``)
 
     EXAMPLES:
 

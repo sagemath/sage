@@ -29,10 +29,10 @@ cdef class ModularSymbols:
 
         INPUT:
 
-        - ``level`` (int) -- the level: an integer, at least 2.
-        - ``sign`` (int, default 0) -- the sign: 0, +1 or -1
-        - ``cuspidal`` (boolean, default: ``False``) -- True for cuspidal homology
-        - ``verbose`` (int, default 0) -- verbosity level
+        - ``level`` -- integer; the level: at least 2
+        - ``sign`` -- integer (default: 0); the sign: 0, +1 or -1
+        - ``cuspidal`` -- boolean (default: ``False``); ``True`` for cuspidal homology
+        - ``verbose`` -- integer (default: 0); verbosity level
 
         EXAMPLES::
 
@@ -71,7 +71,7 @@ cdef class ModularSymbols:
             sage: CremonaModularSymbols(37, cuspidal=True).__repr__()
             'Cremona Cuspidal Modular Symbols space of dimension 4 for Gamma_0(37) of weight 2 with sign 0'
         """
-        return "Cremona %sModular Symbols space of dimension %s for Gamma_0(%s) of weight 2 with sign %s"%(
+        return "Cremona %sModular Symbols space of dimension %s for Gamma_0(%s) of weight 2 with sign %s" % (
             'Cuspidal ' if self.is_cuspidal() else '',
             self.dimension(), self.level(), self.sign())
 
@@ -164,11 +164,11 @@ cdef class ModularSymbols:
 
         - ``p`` -- a prime number
 
-        - ``dual`` -- (default: ``False``) whether to compute the Hecke
-                    operator acting on the dual space, i.e., the
-                    transpose of the Hecke operator
+        - ``dual`` -- boolean (default: ``False``); whether to compute the
+          Hecke operator acting on the dual space, i.e., the transpose of the
+          Hecke operator
 
-        - ``verbose`` -- (default: ``False``) print verbose output
+        - ``verbose`` -- boolean (default: ``False``); print verbose output
 
         OUTPUT:
 
@@ -224,11 +224,11 @@ cdef class ModularSymbols:
 
         - ``p`` -- a prime number
 
-        - ``dual`` -- (default: ``False``) whether to compute the Hecke
-                    operator acting on the dual space, i.e., the
-                    transpose of the Hecke operator
+        - ``dual`` -- boolean (default: ``False``); whether to compute the
+          Hecke operator acting on the dual space, i.e., the transpose of the Hecke
+          operator
 
-        - ``verbose`` -- (default: ``False``) print verbose output
+        - ``verbose`` -- boolean (default: ``False``); print verbose output
 
         OUTPUT:
 

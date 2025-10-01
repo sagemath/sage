@@ -32,7 +32,7 @@ cdef extern from "transcendantal.c":
 
 cdef class PowComputer_(PowComputer_base):
     """
-    A PowComputer for a capped-absolute padic ring.
+    A PowComputer for a capped-absolute `p`-adic ring.
     """
     def __init__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field):
         """
@@ -51,7 +51,7 @@ cdef class PowComputer_(PowComputer_base):
 
 cdef class pAdicCappedAbsoluteElement(CAElement):
     """
-    Constructs new element with given parent and value.
+    Construct new element with given parent and value.
 
     INPUT:
 
@@ -126,7 +126,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
 
     cdef pari_gen _to_gen(self):
         """
-        Converts this element to an equivalent pari element.
+        Convert this element to an equivalent pari element.
 
         EXAMPLES::
 
@@ -156,7 +156,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
 
     def _integer_(self, Z=None):
         r"""
-        Converts this element to an integer.
+        Convert this element to an integer.
 
         TESTS::
 
@@ -173,12 +173,14 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
 
         INPUT:
 
-        - ``absprec`` -- a non-negative integer (default: 1)
+        - ``absprec`` -- nonnegative integer (default: 1)
 
-        - ``field`` -- boolean (default ``None``).  Whether to return an element of GF(p) or Zmod(p).
+        - ``field`` -- boolean (default: ``None``); whether to return an
+          element of GF(p) or Zmod(p)
 
-        - ``check_prec`` -- boolean (default ``True``).  Whether to raise an error if this
-          element has insufficient precision to determine the reduction.
+        - ``check_prec`` -- boolean (default: ``True``); whether to raise an
+          error if this element has insufficient precision to determine the
+          reduction
 
         OUTPUT:
 
@@ -231,7 +233,6 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
         .. SEEALSO::
 
             :meth:`_mod_`
-
         """
         if not isinstance(absprec, Integer):
             absprec = Integer(absprec)
@@ -260,7 +261,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
 
         OUTPUT:
 
-        The multiplicative order of self.  This is the minimum multiplicative
+        The multiplicative order of ``self``.  This is the minimum multiplicative
         order of all elements of `\ZZ_p` lifting ``self`` to infinite
         precision.
 
@@ -306,19 +307,19 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
 
     def _log_binary_splitting(self, aprec, mina=0):
         r"""
-        Return ``\log(self)`` for ``self`` equal to 1 in the residue field
+        Return ``\log(self)`` for ``self`` equal to 1 in the residue field.
 
         This is a helper method for :meth:`log`.
         It uses a fast binary splitting algorithm.
 
         INPUT:
 
-        - ``aprec`` -- an integer, the precision to which the result is
+        - ``aprec`` -- integer; the precision to which the result is
           correct. ``aprec`` must not exceed the precision cap of the ring over
           which this element is defined.
-        - ``mina`` -- an integer (default: 0), the series will check `n` up to
+        - ``mina`` -- integer (default: 0); the series will check `n` up to
           this valuation (and beyond) to see if they can contribute to the
-          series.
+          series
 
         .. NOTE::
 
@@ -384,13 +385,13 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
 
     def _exp_binary_splitting(self, aprec):
         r"""
-        Compute the exponential power series of this element
+        Compute the exponential power series of this element.
 
         This is a helper method for :meth:`exp`.
 
         INPUT:
 
-        - ``aprec`` -- an integer, the precision to which to compute the
+        - ``aprec`` -- integer; the precision to which to compute the
           exponential
 
         .. NOTE::
@@ -422,9 +423,8 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
 
             sage: R = Zp(7,5)
             sage: x = R(7)
-            sage: x.exp(algorithm="binary_splitting")   # indirect doctest
+            sage: x.exp(algorithm='binary_splitting')   # indirect doctest
             1 + 7 + 4*7^2 + 2*7^3 + O(7^5)
-
         """
         cdef unsigned long p
         cdef unsigned long prec = aprec
@@ -444,16 +444,16 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
 
     def _exp_newton(self, aprec, log_algorithm=None):
         r"""
-        Compute the exponential power series of this element
+        Compute the exponential power series of this element.
 
         This is a helper method for :meth:`exp`.
 
         INPUT:
 
-        - ``aprec`` -- an integer, the precision to which to compute the
+        - ``aprec`` -- integer; the precision to which to compute the
           exponential
 
-        - ``log_algorithm`` (default: None) -- the algorithm used for
+        - ``log_algorithm`` -- (default: ``None``) the algorithm used for
           computing the logarithm. This attribute is passed to the log
           method. See :meth:`log` for more details about the possible
           algorithms.
@@ -480,7 +480,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
             sage: # needs sage.libs.ntl
             sage: R.<w> = Zq(7^2,5)
             sage: x = R(7*w)
-            sage: x.exp(algorithm="newton")   # indirect doctest
+            sage: x.exp(algorithm='newton')   # indirect doctest
             1 + w*7 + (4*w + 2)*7^2 + (w + 6)*7^3 + 5*7^4 + O(7^5)
         """
         cdef unsigned long p

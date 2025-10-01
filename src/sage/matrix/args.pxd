@@ -12,7 +12,7 @@ cdef enum entries_type:
     MA_FLAG_SPARSE        = 0x20_00  # Sparse by default
 
     # types of input entries
-    MA_ENTRIES_UNKNOWN    =       0  # anything
+    MA_ENTRIES_UNKNOWN    = 0        # anything
     MA_ENTRIES_ZERO       = 0x17_01  # zero matrix
     MA_ENTRIES_SCALAR     = 0x17_02  # single scalar value
     MA_ENTRIES_SEQ_SEQ    = 0x10_03  # list of lists
@@ -88,7 +88,7 @@ cdef class MatrixArgs:
         value was previously set, it must remain the same.
         """
         if n < 0:
-            raise ArithmeticError("number of columns must be non-negative")
+            raise ArithmeticError("number of columns must be nonnegative")
         cdef long p = self.ncols
         if p != -1 and p != n:
             raise ValueError(f"inconsistent number of columns: should be {p} "
@@ -104,7 +104,7 @@ cdef class MatrixArgs:
         value was previously set, it must remain the same.
         """
         if n < 0:
-            raise ArithmeticError("number of rows must be non-negative")
+            raise ArithmeticError("number of rows must be nonnegative")
         cdef long p = self.nrows
         if p != -1 and p != n:
             raise ValueError(f"inconsistent number of rows: should be {p} but got {n}")

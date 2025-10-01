@@ -18,7 +18,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 def diffxy(f, x, xtimes, y, ytimes):
     r"""
     Differentiate a polynomial ``f``, ``xtimes`` with respect to ``x``, and
-    ```ytimes`` with respect to ``y``.
+    ``ytimes`` with respect to ``y``.
 
     EXAMPLES::
 

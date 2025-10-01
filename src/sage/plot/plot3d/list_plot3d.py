@@ -5,7 +5,6 @@ List plots
 from sage.structure.element import Matrix
 from sage.matrix.constructor import matrix
 from sage.rings.real_double import RDF
-from sage.misc.superseded import deprecation
 
 
 def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
@@ -22,7 +21,7 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
       - a list of 3-tuples
 
       - a list of lists (all of the same length) -- this is treated the same as
-        a matrix.
+        a matrix
 
     OPTIONAL KEYWORDS:
 
@@ -35,22 +34,22 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
       Clough-Tocher scheme.  The interpolant is guaranteed to be
       continuously differentiable.  The gradients of the interpolant
       are chosen so that the curvature of the interpolating surface is
-      approximatively minimized.
+      approximately minimized.
 
       The option 'spline' interpolates using a bivariate B-spline.
 
       When v is a matrix the default is to use linear interpolation, when
       v is a list of points the default is 'clough'.
 
-    - ``degree`` -- an integer between 1 and 5, controls the degree of spline
+    - ``degree`` -- integer between 1 and 5, controls the degree of spline
       used for spline interpolation. For data that is highly oscillatory
       use higher values
 
-    - ``point_list`` -- If point_list=True is passed, then if the array
+    - ``point_list`` -- if ``point_list=True`` is passed, then if the array
       is a list of lists of length three, it will be treated as an
       array of points rather than a 3xn array.
 
-    - ``num_points`` -- Number of points to sample interpolating
+    - ``num_points`` -- number of points to sample interpolating
       function in each direction, when ``interpolation_type`` is not
       ``default``. By default for an `n\times n` array this is `n`.
 
@@ -247,21 +246,8 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
         Traceback (most recent call last):
         ...
         ValueError: we need at least 3 points to perform the interpolation
-
-    TESTS::
-
-        sage: P = list_plot3d([(0, 0, 1), (2, 3, 4)], texture='tomato')
-        doctest:warning...:
-        DeprecationWarning: please use 'color' instead of 'texture'
-        See https://github.com/sagemath/sage/issues/27084 for details.
     """
     import numpy
-    if 'texture' in kwds:
-        deprecation(27084, "please use 'color' instead of 'texture'")
-        txtr = kwds.pop('texture')
-        if txtr == "automatic":
-            txtr = "lightblue"
-        kwds['color'] = txtr
     if isinstance(v, Matrix):
         if (interpolation_type == 'default' or
                 interpolation_type == 'linear' and 'num_points' not in kwds):
@@ -392,8 +378,8 @@ def list_plot3d_array_of_arrays(v, interpolation_type, **kwds):
 
     INPUT:
 
-    - ``v`` -- a list of lists, all the same length
-    - ``interpolation_type`` -- (default: 'linear')
+    - ``v`` -- list of lists, all the same length
+    - ``interpolation_type`` -- (default: ``'linear'``)
 
     OPTIONAL KEYWORDS:
 
@@ -474,15 +460,15 @@ def list_plot3d_tuples(v, interpolation_type, **kwds):
       When ``v`` is a matrix the default is to use linear interpolation, when
       ``v`` is a list of points the default is ``'clough'``.
 
-    - ``degree`` -- an integer between 1 and 5, controls the degree of spline
+    - ``degree`` -- integer between 1 and 5, controls the degree of spline
       used for spline interpolation. For data that is highly oscillatory
       use higher values
 
-    - ``point_list`` -- If ``point_list=True`` is passed, then if the array
+    - ``point_list`` -- if ``point_list=True`` is passed, then if the array
       is a list of lists of length three, it will be treated as an
       array of points rather than a `3\times n` array.
 
-    - ``num_points`` -- Number of points to sample interpolating
+    - ``num_points`` -- number of points to sample interpolating
       function in each direction.  By default for an `n\times n`
       array this is `n`.
 
@@ -632,8 +618,8 @@ def list_plot3d_tuples(v, interpolation_type, **kwds):
         return G
 
     if interpolation_type == 'spline':
-        kx = kwds['kx'] if 'kx' in kwds else 3
-        ky = kwds['ky'] if 'ky' in kwds else 3
+        kx = kwds.get('kx', 3)
+        ky = kwds.get('ky', 3)
         if 'degree' in kwds:
             kx = kwds['degree']
             ky = kwds['degree']

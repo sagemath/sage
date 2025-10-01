@@ -25,6 +25,7 @@ from sage.structure.richcmp import richcmp, op_NE, op_EQ
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 
+
 class DrinfeldModularFormsElement(ModuleElement):
     r"""
     Element class of rings of Drinfeld modular forms.
@@ -84,9 +85,9 @@ class DrinfeldModularFormsElement(ModuleElement):
         sage: M(T*f1 + f2^3 + T^2 + 1)
         g2^3 + T*g1 + (T^2 + 1)
 
-    .. note::
+    .. NOTE::
 
-        This class should not be directly instanciated, instead create
+        This class should not be directly instantiated, instead create
         an instance of the parent
         :class:`~sage.modular.drinfeld_modform.ring.DrinfeldModularForms`
         and access its elements using the relevant methods.
@@ -253,7 +254,7 @@ class DrinfeldModularFormsElement(ModuleElement):
         """
         return self.parent()._rank
 
-    def is_one(self):
+    def is_one(self) -> bool:
         r"""
         Return ``True`` whether this graded Drinfeld form is the
         multiplicative identity.
@@ -270,7 +271,7 @@ class DrinfeldModularFormsElement(ModuleElement):
         """
         return self._polynomial.is_one()
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return ``True`` whether this graded Drinfeld form is the
         additive identity.
@@ -292,7 +293,7 @@ class DrinfeldModularFormsElement(ModuleElement):
         """
         return not bool(self)
 
-    def is_homogeneous(self):
+    def is_homogeneous(self) -> bool:
         r"""
         Return whether the graded form is homogeneous in the weight.
 
@@ -341,9 +342,7 @@ class DrinfeldModularFormsElement(ModuleElement):
         Return this graded Drinfeld forms as a multivariate polynomial
         over the generators of the ring.
 
-        OUTPUT:
-
-        A multivariate polynomial over the base ring.
+        OUTPUT: a multivariate polynomial over the base ring
 
         EXAMPLES::
 

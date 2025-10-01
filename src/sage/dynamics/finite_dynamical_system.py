@@ -139,7 +139,7 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
       (and thus subject to mutation or exhaustion).
 
     - ``phi`` -- function, or callable that acts like a
-      function; the evolution of the DDS.
+      function; the evolution of the DDS
 
     - ``cache_orbits`` -- boolean (default: ``False``);
       whether or not the orbits should be cached once they
@@ -366,15 +366,15 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: D = DiscreteDynamicalSystem([1, 3, 4], lambda x: (3 if x == 4 else 1), create_tuple=True)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem([1, 3, 4], lambda x: (3 if x == 4 else 1), create_tuple=True, is_finite=False)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem(NN, lambda x: (3 if x == 4 else 1))
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem(None, lambda x: (3 if x == 4 else 1))
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem([1, 3, 4], lambda x: x, create_tuple=True)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
         """
         if create_tuple:
             X = tuple(X)
@@ -678,6 +678,7 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
             return True
         return orbavgs[0] == average
 
+
 class InvertibleDiscreteDynamicalSystem(DiscreteDynamicalSystem):
     r"""
     An invertible discrete dynamical system.
@@ -705,7 +706,7 @@ class InvertibleDiscreteDynamicalSystem(DiscreteDynamicalSystem):
       ``X``, as otherwise the input would be exposed.
 
     - ``phi`` -- function, or callable that acts like a
-      function; the evolution of the DDS.
+      function; the evolution of the DDS
 
     - ``inverse`` -- function, or callable that acts like a
       function; the inverse evolution of the DDS. (A
@@ -756,13 +757,13 @@ class InvertibleDiscreteDynamicalSystem(DiscreteDynamicalSystem):
         EXAMPLES::
 
             sage: D = DiscreteDynamicalSystem([1, 3, 4], lambda x: x, create_tuple=True, inverse=True)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem([1, 3, 4], lambda x: x, create_tuple=True, is_finite=False, inverse=True)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem(NN, lambda x: x, inverse=True)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem(None, lambda x: x, inverse=True)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
         """
         if create_tuple:
             X = tuple(X)
@@ -969,6 +970,7 @@ class InvertibleDiscreteDynamicalSystem(DiscreteDynamicalSystem):
         """
         return self.orbit(x)[-1]
 
+
 class FiniteDynamicalSystem(DiscreteDynamicalSystem):
     r"""
     A finite discrete dynamical system.
@@ -1112,6 +1114,7 @@ class FiniteDynamicalSystem(DiscreteDynamicalSystem):
                     # removed from ``l`` is closed under ``phi``).
                     break
         return cycs
+
 
 class InvertibleFiniteDynamicalSystem(InvertibleDiscreteDynamicalSystem, FiniteDynamicalSystem):
     r"""

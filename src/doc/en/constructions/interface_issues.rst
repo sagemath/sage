@@ -13,7 +13,7 @@ Background jobs
 Yes, a Sage job can be run in the background on a
 UNIX system. The canonical thing to do is type
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ nohup sage < command_file  > output_file &
 
@@ -92,7 +92,7 @@ Sage and other computer algebra systems
 
 If ``foo`` is a Pari, GAP ( without ending semicolon), Singular,
 Maxima command, resp., enter ``gp("foo")`` for Pari,
-``gap.eval("foo")}`` ``singular.eval("foo")``, ``maxima("foo")``, resp..
+``libgap.eval("foo")`` ``singular.eval("foo")``, ``maxima("foo")``, resp..
 These programs merely send the command string to the external
 program, execute it, and read the result back into Sage. Therefore,
 these will not work if the external program is not installed and in
@@ -108,7 +108,7 @@ know where it occurs in Sage, just type
 ``sage -grep <string>`` to find all occurrences of ``<string>`` in the
 Sage source code. For example,
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ sage -grep berlekamp_massey
     matrix/all.py:from berlekamp_massey import berlekamp_massey

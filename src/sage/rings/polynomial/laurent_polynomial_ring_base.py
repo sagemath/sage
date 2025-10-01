@@ -23,32 +23,32 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
+from sage.combinat.integer_vector import IntegerVectors
+from sage.misc.cachefunc import cached_method
 from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.ring import CommutativeRing
 from sage.structure.parent import Parent
-from sage.combinat.integer_vector import IntegerVectors
 
-class LaurentPolynomialRing_generic(CommutativeRing, Parent):
+
+class LaurentPolynomialRing_generic(Parent):
     """
     Laurent polynomial ring (base class).
 
     EXAMPLES:
 
-    This base class inherits from :class:`~sage.rings.ring.CommutativeRing`.
-    Since :issue:`11900`, it is also initialised as such::
+    Since :issue:`11900`, it is in the category of commutative rings::
 
         sage: R.<x1,x2> = LaurentPolynomialRing(QQ)
         sage: R.category()
         Join of Category of unique factorization domains
+            and Category of algebras with basis
+                over (number fields and quotient fields and metric spaces)
             and Category of commutative algebras
                 over (number fields and quotient fields and metric spaces)
             and Category of infinite sets
         sage: TestSuite(R).run()
-
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         EXAMPLES::
 
@@ -60,15 +60,16 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         self._R = R
         names = R.variable_names()
         self._one_element = self.element_class(self, R.one())
-        CommutativeRing.__init__(self, R.base_ring(), names=names,
-                                 category=R.category())
+        Parent.__init__(self, base=R.base_ring(), names=names,
+                        category=R.category())
         ernames = []
         for n in names:
             ernames.append(n)
             ernames.append(n + "inv")
         ER = PolynomialRing(R.base_ring(), ernames)
         self._extended_ring = ER
-        self._extended_ring_ideal = ER.ideal([ER.gen(2*i)*ER.gen(2*i+1)-1 for i in range(self._n)])
+        self._extended_ring_ideal = ER.ideal([ER.gen(2*i) * ER.gen(2*i+1) - 1
+                                              for i in range(self._n)])
 
     def ngens(self):
         """
@@ -83,10 +84,25 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         return self._n
 
+    @cached_method
+    def gens(self) -> tuple:
+        """
+        Return the tuple of generators of ``self``.
+
+        EXAMPLES::
+
+            sage: LaurentPolynomialRing(ZZ, 2, 'x').gens()
+            (x0, x1)
+            sage: LaurentPolynomialRing(QQ, 1, 'x').gens()
+            (x,)
+        """
+        return tuple(self(x) for x in self._R.gens())
+
     def gen(self, i=0):
         r"""
-        Returns the `i^{th}` generator of self.  If i is not specified, then
-        the first generator will be returned.
+        Return the `i`-th generator of ``self``.
+
+        If `i` is not specified, then the first generator will be returned.
 
         EXAMPLES::
 
@@ -106,24 +122,18 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         if i < 0 or i >= self._n:
             raise ValueError("generator not defined")
-        try:
-            return self.__generators[i]
-        except AttributeError:
-            self.__generators = tuple(self(x) for x in self._R.gens())
-            return self.__generators[i]
+        return self.gens()[i]
 
-    def variable_names_recursive(self, depth=infinity):
+    def variable_names_recursive(self, depth=infinity) -> tuple[str]:
         r"""
         Return the list of variable names of this ring and its base rings,
         as if it were a single multi-variate Laurent polynomial.
 
         INPUT:
 
-        - ``depth`` -- an integer or :mod:`Infinity <sage.rings.infinity>`.
+        - ``depth`` -- integer or :mod:`Infinity <sage.rings.infinity>`
 
-        OUTPUT:
-
-        A tuple of strings.
+        OUTPUT: a tuple of strings
 
         EXAMPLES::
 
@@ -145,9 +155,9 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         except AttributeError:
             return my_vars
 
-    def is_integral_domain(self, proof=True):
+    def is_integral_domain(self, proof=True) -> bool:
         """
-        Return ``True`` if self is an integral domain.
+        Return ``True`` if ``self`` is an integral domain.
 
         EXAMPLES::
 
@@ -163,9 +173,9 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         return self.base_ring().is_integral_domain(proof)
 
-    def is_noetherian(self):
+    def is_noetherian(self) -> bool:
         """
-        Return ``True`` if self is Noetherian.
+        Return ``True`` if ``self`` is Noetherian.
 
         EXAMPLES::
 
@@ -183,7 +193,6 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: LaurentPolynomialRing(QQ, 2, 'x,y').construction()
             (LaurentPolynomialFunctor,
              Univariate Laurent Polynomial Ring in x over Rational Field)
-
         """
         from sage.categories.pushout import LaurentPolynomialFunctor
         from .laurent_polynomial_ring import LaurentPolynomialRing
@@ -287,10 +296,10 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         if f is not None:
             return f
         if (isinstance(R, LaurentPolynomialRing_generic)
-            and self._R.has_coerce_map_from(R._R)):
+                and self._R.has_coerce_map_from(R._R)):
             return self._generic_coerce_map(R)
 
-    def __eq__(self, right):
+    def __eq__(self, right) -> bool:
         """
         Check whether ``self`` is equal to ``right``.
 
@@ -313,7 +322,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             return False
         return self._R == right._R
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -334,7 +343,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         return not (self == other)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of ``self``.
 
@@ -349,7 +358,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         return hash(self._R) ^ 12059065606945654693
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -393,7 +402,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         from sage.rings.polynomial.laurent_polynomial_ideal import LaurentPolynomialIdeal
         return LaurentPolynomialIdeal(self, *args, **kwds)
 
-    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
+    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None) -> bool:
         """
         EXAMPLES::
 
@@ -413,35 +422,29 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             # we need that elements of the base ring
             # canonically coerce into codomain.
             return False
-        for a in im_gens:
-            # in addition, the image of each generator must be invertible.
-            if not a.is_unit():
-                return False
-        return True
+        return all(a.is_unit() for a in im_gens)
 
     def term_order(self):
         """
-        Returns the term order of self.
+        Return the term order of ``self``.
 
         EXAMPLES::
 
             sage: LaurentPolynomialRing(QQ, 2, 'x').term_order()
             Degree reverse lexicographic term order
-
         """
         return self._R.term_order()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         EXAMPLES::
 
             sage: LaurentPolynomialRing(QQ, 2, 'x').is_finite()
             False
-
         """
         return False
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
         EXAMPLES::
 
@@ -452,7 +455,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
     def polynomial_ring(self):
         """
-        Returns the polynomial ring associated with self.
+        Return the polynomial ring associated with ``self``.
 
         EXAMPLES::
 
@@ -465,7 +468,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
     def characteristic(self):
         """
-        Returns the characteristic of the base ring.
+        Return the characteristic of the base ring.
 
         EXAMPLES::
 
@@ -473,7 +476,6 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             0
             sage: LaurentPolynomialRing(GF(3), 2, 'x').characteristic()
             3
-
         """
         return self.base_ring().characteristic()
 
@@ -498,10 +500,10 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         INPUT:
 
-        - ``min_valuation`` -- integer (default: ``-2``); the
+        - ``min_valuation`` -- integer (default: `-2`); the
           minimal allowed valuation of the polynomial
 
-        - ``max_degree`` -- integer (default: ``2``); the
+        - ``max_degree`` -- integer (default: `2`); the
           maximal allowed degree of the polynomial
 
         - ``*args``, ``**kwds`` -- passed to the random element generator of the
@@ -625,7 +627,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         abs_deg = (max_degree - min_valuation)
         f_rand = self._R.random_element(degree=abs_deg, *args, **kwds)
 
-        # Cast this polynomial back the `self``
+        # Cast this polynomial back the ``self``
         f = self(f_rand)
 
         # For the univariate case we simply shift by x**min_valuation
@@ -647,7 +649,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             s = ~s
         return f * s
 
-    def is_exact(self):
+    def is_exact(self) -> bool:
         """
         Return ``True`` if the base ring is exact.
 

@@ -36,7 +36,7 @@ class VirasoroLieConformalAlgebra(GradedLieConformalAlgebra):
     INPUT:
 
     - ``R`` -- a commutative ring; behaviour is undefined if `R` is
-      not a Field of characteristic zero.
+      not a Field of characteristic zero
 
     EXAMPLES::
 
@@ -55,7 +55,7 @@ class VirasoroLieConformalAlgebra(GradedLieConformalAlgebra):
     """
     def __init__(self, R):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 
@@ -68,7 +68,7 @@ class VirasoroLieConformalAlgebra(GradedLieConformalAlgebra):
         GradedLieConformalAlgebra.__init__(self, R, virdict,
             names=('L',), central_elements=('C',), weights=(2,))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The name of this Lie conformal algebra.
 

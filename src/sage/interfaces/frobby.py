@@ -37,14 +37,12 @@ class Frobby:
 
         INPUT:
 
-        - action -- A string telling Frobby what to do.
-        - input -- None or a string that is passed to Frobby as standard in.
-        - options -- A list of options without the dash in front.
-        - verbose -- bool (default: false) Print detailed information.
+        - ``action`` -- string telling Frobby what to do
+        - ``input`` -- ``None`` or string that is passed to Frobby as standard in
+        - ``options`` -- list of options without the dash in front
+        - ``verbose`` -- boolean (default: ``False``); print detailed information
 
-        OUTPUT:
-
-        - string -- What Frobby wrote to the standard output stream.
+        OUTPUT: string; what Frobby wrote to the standard output stream
 
         EXAMPLES:
 
@@ -104,11 +102,9 @@ class Frobby:
 
         INPUT:
 
-        - monomial_ideal -- The monomial ideal to decompose.
+        - ``monomial_ideal`` -- the monomial ideal to decompose
 
-        OUTPUT:
-
-        The monomial corresponding to the Alexander dual.
+        OUTPUT: the monomial corresponding to the Alexander dual
 
         EXAMPLES:
 
@@ -131,8 +127,6 @@ class Frobby:
             sage: I=R.ideal([prod([R.gen(i-1) for i in a]) for a in t.facets()])
             sage: len(frobby.alexander_dual(I).gens())
             643
-
-
         """
         frobby_input = self._ideal_to_string(monomial_ideal)
         frobby_output = self('alexdual', input=frobby_input)
@@ -140,7 +134,7 @@ class Frobby:
 
     def hilbert(self, monomial_ideal):
         r"""
-        Computes the multigraded Hilbert-Poincaré series of the input
+        Compute the multigraded Hilbert-Poincaré series of the input
         ideal. Use the -univariate option to get the univariate series.
 
         The Hilbert-Poincaré series of a monomial ideal is the sum of all
@@ -151,13 +145,11 @@ class Frobby:
 
         INPUT:
 
-
-            monomial_ideal -- A monomial ideal.
+        - ``monomial_ideal`` -- a monomial ideal
 
         OUTPUT:
 
-
-            A polynomial in the same ring as the ideal.
+        A polynomial in the same ring as the ideal.
 
         EXAMPLES::
 
@@ -165,7 +157,6 @@ class Frobby:
             sage: I=[d*b*c,b^2*c,b^10,d^10]*R # optional - frobby
             sage: frobby.hilbert(I) # optional - frobby
             d^10*b^10*c + d^10*b^10 + d^10*b*c + b^10*c + d^10 + b^10 + d*b^2*c + d*b*c + b^2*c + 1
-
         """
         frobby_input = self._ideal_to_string(monomial_ideal)
         frobby_output = self('hilbert', input=frobby_input)
@@ -189,7 +180,7 @@ class Frobby:
 
         INPUT:
 
-        - monomial_ideal -- The monomial ideal to decompose.
+        - ``monomial_ideal`` -- the monomial ideal to decompose
 
         OUTPUT:
 
@@ -203,7 +194,6 @@ class Frobby:
             sage: frobby.associated_primes(I)   # optional - frobby
             [Ideal (d, b) of Multivariate Polynomial Ring in d, b, c over Rational Field,
             Ideal (d, b, c) of Multivariate Polynomial Ring in d, b, c over Rational Field]
-
         """
         frobby_input = self._ideal_to_string(monomial_ideal)
         frobby_output = self('assoprimes', input=frobby_input)
@@ -224,11 +214,9 @@ class Frobby:
 
         INPUT:
 
-        - monomial_ideal -- The monomial ideal to decompose.
+        - ``monomial_ideal`` -- the monomial ideal to decompose
 
-        OUTPUT:
-
-        The dimension of the zero set of the ideal.
+        OUTPUT: the dimension of the zero set of the ideal
 
         EXAMPLES::
 
@@ -236,7 +224,6 @@ class Frobby:
             sage: I=[d*b*c,b^2*c,b^10,d^10]*R # optional - frobby
             sage: frobby.dimension(I)   # optional - frobby
             1
-
         """
         frobby_input = self._ideal_to_string(monomial_ideal)
         frobby_output = self('dimension', input=frobby_input)
@@ -250,7 +237,7 @@ class Frobby:
 
         INPUT:
 
-        - monomial_ideal -- The monomial ideal to decompose.
+        - ``monomial_ideal`` -- the monomial ideal to decompose
 
         OUTPUT:
 
@@ -309,9 +296,9 @@ class Frobby:
 
         INPUT:
 
-        - string -- The string to be parsed.
-        - ring -- The ring within which to construct the irreducible
-          monomial ideals within.
+        - ``string`` -- the string to be parsed
+        - ``ring`` -- the ring within which to construct the irreducible
+          monomial ideals within
 
         OUTPUT:
 
@@ -327,7 +314,6 @@ class Frobby:
             sage: frobby._parse_ideals(string, ring)
             [Ideal (x*y^2*z^3, y^5) of Multivariate Polynomial Ring in x, y, z over Rational Field,
             Ideal (x*y^2*z^3, x^4*y^5*z^6) of Multivariate Polynomial Ring in x, y, z over Rational Field]
-
         """
         lines = string.split('\n')
         if lines[-1] == '':
@@ -359,7 +345,7 @@ class Frobby:
 
         INPUT:
 
-        - string -- The string to be parsed.
+        - ``string`` -- the string to be parsed
 
         OUTPUT:
 
@@ -412,11 +398,9 @@ class Frobby:
 
         INPUT:
 
-        - monomial_ideal -- The monomial ideal to be formatted as a string.
+        - ``monomial_ideal`` -- the monomial ideal to be formatted as a string
 
-        OUTPUT:
-
-        A string in 4ti2 format representing the ideal.
+        OUTPUT: string in ``4ti2`` format representing the ideal
 
         EXAMPLES::
 
@@ -446,11 +430,9 @@ class Frobby:
 
         INPUT:
 
-        - monomial -- The monomial whose exponent vector is to be formatted.
+        - ``monomial`` -- the monomial whose exponent vector is to be formatted
 
-        OUTPUT:
-
-        A string representing the exponent vector of monomial.
+        OUTPUT: string representing the exponent vector of monomial
 
         EXAMPLES::
 

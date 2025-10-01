@@ -19,9 +19,7 @@ def symbolic_expression(x):
 
     - ``x`` - an object
 
-    OUTPUT:
-
-    - a symbolic expression.
+    OUTPUT: a symbolic expression
 
     EXAMPLES::
 

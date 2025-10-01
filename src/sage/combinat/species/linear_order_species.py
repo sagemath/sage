@@ -1,7 +1,7 @@
 """
-Linear-order Species
+Linear-order species
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,7 +14,7 @@ Linear-order Species
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 from .species import GenericCombinatorialSpecies
 from .structure import GenericSpeciesStructure
 from sage.structure.unique_representation import UniqueRepresentation
@@ -27,6 +27,9 @@ class LinearOrderSpeciesStructure(GenericSpeciesStructure):
         EXAMPLES::
 
             sage: P = species.LinearOrderSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
             sage: s = P.structures(["a", "b", "c"]).random_element()
             sage: s.canonical_label()
             ['a', 'b', 'c']
@@ -35,7 +38,7 @@ class LinearOrderSpeciesStructure(GenericSpeciesStructure):
 
     def transport(self, perm):
         """
-        Returns the transport of this structure along the permutation
+        Return the transport of this structure along the permutation
         perm.
 
         EXAMPLES::
@@ -51,7 +54,7 @@ class LinearOrderSpeciesStructure(GenericSpeciesStructure):
 
     def automorphism_group(self):
         """
-        Returns the group of permutations whose action on this structure
+        Return the group of permutations whose action on this structure
         leave it fixed. For the species of linear orders, there is no
         non-trivial automorphism.
 
@@ -81,7 +84,7 @@ class LinearOrderSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def __init__(self, min=None, max=None, weight=None):
         """
-        Returns the species of linear orders.
+        Return the species of linear orders.
 
         EXAMPLES::
 

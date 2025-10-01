@@ -72,6 +72,7 @@ from sage.structure.parent import Parent
 from sage.categories.homset import Hom
 from sage.categories.rings import Rings
 
+
 class FunctionFieldValuationRing(UniqueRepresentation, Parent):
     """
     Base class for valuation rings of function fields.

@@ -96,7 +96,7 @@ With power series the behavior is the same.
 # ****************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE
-from sage.rings.infinity import infinity, is_Infinite
+from sage.rings.infinity import infinity, InfinityElement
 
 from sage.rings.rational_field import QQ
 
@@ -104,6 +104,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 import sage.misc.misc
 import sage.arith.all as arith
 import sage.misc.latex
+from sage.structure.element import parent
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 
@@ -125,6 +126,9 @@ def is_PowerSeries(x):
         sage: R.<x> = PowerSeriesRing(ZZ)
         sage: from sage.rings.power_series_ring_element import is_PowerSeries
         sage: is_PowerSeries(1 + x^2)
+        doctest:warning...
+        DeprecationWarning: The function is_PowerSeries is deprecated; use 'isinstance(..., PowerSeries)' instead.
+        See https://github.com/sagemath/sage/issues/38266 for details.
         True
         sage: is_PowerSeries(x - x)
         True
@@ -135,6 +139,10 @@ def is_PowerSeries(x):
         sage: is_PowerSeries(1 + x^2)                                                   # needs sage.symbolic
         False
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38266,
+                       "The function is_PowerSeries is deprecated; "
+                       "use 'isinstance(..., PowerSeries)' instead.")
     return isinstance(x, PowerSeries)
 
 
@@ -164,7 +172,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def __hash__(self):
         """
-        Compute a hash of self.
+        Compute a hash of ``self``.
 
         EXAMPLES::
 
@@ -224,7 +232,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: (1 + 2*t).is_gen()
             False
 
-        Note that this only returns True on the actual generator, not on
+        Note that this only returns ``True`` on the actual generator, not on
         something that happens to be equal to it.
 
         ::
@@ -269,7 +277,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def change_ring(self, R):
         """
-        Change if possible the coefficients of self to lie in R.
+        Change if possible the coefficients of ``self`` to lie in R.
 
         EXAMPLES::
 
@@ -313,7 +321,7 @@ cdef class PowerSeries(AlgebraElement):
 
     cpdef _richcmp_(self, right, int op):
         r"""
-        Comparison of self and ``right``.
+        Comparison of ``self`` and ``right``.
 
         We say two approximate power series are equal if they agree for
         all coefficients up to the *minimum* of the precisions of each.
@@ -403,7 +411,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def coefficients(self):
         """
-        Return the nonzero coefficients of self.
+        Return the nonzero coefficients of ``self``.
 
         EXAMPLES::
 
@@ -417,7 +425,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def exponents(self):
         """
-        Return the exponents appearing in self with nonzero coefficients.
+        Return the exponents appearing in ``self`` with nonzero coefficients.
 
         EXAMPLES::
 
@@ -479,7 +487,7 @@ cdef class PowerSeries(AlgebraElement):
 
         INPUT:
 
-        - ``absprec`` -- an integer or ``None`` (default: ``None``), the
+        - ``absprec`` -- integer or ``None`` (default: ``None``); the
           absolute precision of the result. If ``None``, lifts to an exact
           element.
 
@@ -491,7 +499,6 @@ cdef class PowerSeries(AlgebraElement):
             t + t^2 + O(t^10)
             sage: x.lift_to_precision()
             t + t^2
-
         """
         if absprec is not None and absprec <= self.precision_absolute():
             return self
@@ -531,20 +538,17 @@ cdef class PowerSeries(AlgebraElement):
 
     def padded_list(self, n=None):
         """
-        Return a list of coefficients of self up to (but not including)
+        Return a list of coefficients of ``self`` up to (but not including)
         `q^n`.
 
-        Includes 0's in the list on the right so that the list has length
-        `n`.
+        Includes 0s in the list on the right so that the list has length `n`.
 
         INPUT:
 
-
-        -  ``n`` -- (optional) an integer that is at least 0. If ``n`` is
-           not given, it will be taken to be the precision of self,
-           unless this is ``+Infinity``, in which case we just return
-           ``self.list()``.
-
+        - ``n`` -- (optional) an integer that is at least 0. If ``n`` is
+          not given, it will be taken to be the precision of ``self``,
+          unless this is ``+Infinity``, in which case we just return
+          ``self.list()``.
 
         EXAMPLES::
 
@@ -666,7 +670,7 @@ cdef class PowerSeries(AlgebraElement):
             if self.prec() is infinity:
                 return "0"
             else:
-                return "O(%s^%s)"%(self._parent.variable_name(),self.prec())
+                return "O(%s^%s)" % (self._parent.variable_name(), self.prec())
 
         atomic_repr = self._parent.base_ring()._repr_option('element_is_atomic')
         X = self._parent.variable_name()
@@ -683,14 +687,14 @@ cdef class PowerSeries(AlgebraElement):
                     if s != ' ':
                         s += " + "
                     if not atomic_repr and n > 0 and (x.find("+") != -1 or x.find("-") != -1):
-                        x = "(%s)"%x
+                        x = "(%s)" % x
                     if n > 1:
-                        var = "*%s^%s"%(X,n)
+                        var = "*%s^%s" % (X, n)
                     elif n==1:
-                        var = "*%s"%X
+                        var = "*%s" % X
                     else:
                         var = ""
-                    s += "%s%s"%(x,var)
+                    s += "%s%s" % (x, var)
         else:
             v = self.list()
             m = len(v)
@@ -702,14 +706,14 @@ cdef class PowerSeries(AlgebraElement):
                     if not first:
                         s += " + "
                     if not atomic_repr and n > 0 and (x[1:].find("+") != -1 or x[1:].find("-") != -1):
-                        x = "(%s)"%x
+                        x = "(%s)" % x
                     if n > 1:
-                        var = "*%s^%s"%(X,n)
+                        var = "*%s^%s" % (X, n)
                     elif n==1:
-                        var = "*%s"%X
+                        var = "*%s" % X
                     else:
                         var = ""
-                    s += "%s%s"%(x,var)
+                    s += "%s%s" % (x, var)
                     first = False
         # end
 
@@ -720,12 +724,12 @@ cdef class PowerSeries(AlgebraElement):
             if self._prec == 0:
                 bigoh = "O(1)"
             elif self._prec == 1:
-                bigoh = "O(%s)"%self._parent.variable_name()
+                bigoh = "O(%s)" % self._parent.variable_name()
             else:
-                bigoh = "O(%s^%s)"%(self._parent.variable_name(),self._prec)
+                bigoh = "O(%s^%s)" % (self._parent.variable_name(),self._prec)
             if s==" ":
                 return bigoh
-            s += " + %s"%bigoh
+            s += " + %s" % bigoh
         return s[1:]
 
     def _latex_(self):
@@ -765,15 +769,15 @@ cdef class PowerSeries(AlgebraElement):
                 if not first:
                     s += " + "
                 if not atomic_repr and n > 0 and (x[1:].find("+") != -1 or x[1:].find("-") != -1):
-                    x = "\\left(%s\\right)"%x
+                    x = "\\left(%s\\right)" % x
                 if n > 1:
-                    var = "%s^{%s}"%(X,n)
+                    var = "%s^{%s}" % (X, n)
                 elif n==1:
-                    var = "%s"%X
+                    var = "%s" % X
                 else:
                     var = ""
                 if n > 0:
-                    s += "%s| %s"%(x,var)
+                    s += "%s| %s" % (x, var)
                 else:
                     s += repr(x)
                 first = False
@@ -786,14 +790,13 @@ cdef class PowerSeries(AlgebraElement):
             if self._prec == 0:
                 bigoh = "O(1)"
             elif self._prec == 1:
-                bigoh = "O(%s)"%(X,)
+                bigoh = "O(%s)" % (X,)
             else:
-                bigoh = "O(%s^{%s})"%(X,self._prec)
+                bigoh = "O(%s^{%s})" % (X, self._prec)
             if s == " ":
                 return bigoh
-            s += " + %s"%bigoh
+            s += " + %s" % bigoh
         return s.lstrip(" ")
-
 
     def truncate(self, prec=infinity):
         """
@@ -837,13 +840,13 @@ cdef class PowerSeries(AlgebraElement):
         v = [a[i] for i in range(min(prec, len(a)))]
         return self._parent(v, prec)
 
-    def __getitem__(self,n):
+    def __getitem__(self, n):
         r"""
         Return the coefficient of `t^n` in this power series, where
         `t` is the indeterminate of the power series ring.
 
         If `n` is negative return 0. If `n` is beyond the precision, raise an
-        IndexError.
+        :exc:`IndexError`.
 
         EXAMPLES::
 
@@ -1008,7 +1011,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def valuation_zero_part(self):
         r"""
-        Factor self as `q^n \cdot (a_0 + a_1 q + \cdots)` with
+        Factor ``self`` as `q^n \cdot (a_0 + a_1 q + \cdots)` with
         `a_0` nonzero. Then this function returns
         `a_0 + a_1 q + \cdots` .
 
@@ -1043,7 +1046,7 @@ cdef class PowerSeries(AlgebraElement):
         else:
             n = int(n)
             v = {}
-            for k, x in self.dict().iteritems():
+            for k, x in self.monomial_coefficients().items():
                 if k >= n:
                     v[k-n] = x
         return self._parent(v, self.prec()-n)
@@ -1076,7 +1079,6 @@ cdef class PowerSeries(AlgebraElement):
             True
             sage: (1/(2*x)).parent()
             Laurent Series Ring in x over Rational Field
-
         """
         denom = <PowerSeries>denom_r
         if denom.is_zero():
@@ -1135,11 +1137,33 @@ cdef class PowerSeries(AlgebraElement):
             sage: O(x^4)^(1/2)
             O(x^2)
 
+            sage: R.<x,t> = QQ[[]]
+            sage: f = (1+x)^(1+t)
+            sage: f.O(5)
+            1 + x + x*t + 1/2*x^2*t - 1/6*x^3*t + 1/2*x^2*t^2 + O(x, t)^5
+
+            sage: R.<x> = QQ[[]]
+            sage: (e^(e^x - 1)).O(5)
+            1 + x + x^2 + 5/6*x^3 + 5/8*x^4 + O(x^5)
+            sage: e^e^x
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: constant term of power series does not support exponentiation
+
+            sage: R.<x> = QQ[[]]
+            sage: S.<t> = QQ[] # a polynomial ring
+            sage: (1+x)^(1+t)
+            Traceback (most recent call last):
+            ...
+            ValueError: exponent must be a rational number or power series
         """
         try:
             right = QQ.coerce(r)
-        except TypeError:
-            raise ValueError("exponent must be a rational number")
+        except (TypeError, ValueError):
+            if r.parent() is self.parent():
+                return (r * self.log()).exp()
+            else:
+                raise ValueError("exponent must be a rational number or power series")
 
         if right.denominator() == 1:
             right = right.numerator()
@@ -1232,8 +1256,8 @@ cdef class PowerSeries(AlgebraElement):
 
     def is_monomial(self):
         """
-        Return ``True`` if this element is a monomial.  That is, if self is
-        `x^n` for some non-negative integer `n`.
+        Return ``True`` if this element is a monomial.  That is, if ``self`` is
+        `x^n` for some nonnegative integer `n`.
 
         EXAMPLES::
 
@@ -1254,20 +1278,20 @@ cdef class PowerSeries(AlgebraElement):
 
     def map_coefficients(self, f, new_base_ring=None):
         r"""
-        Return the series obtained by applying ``f`` to the non-zero
+        Return the series obtained by applying ``f`` to the nonzero
         coefficients of ``self``.
 
         If ``f`` is a :class:`sage.categories.map.Map`, then the resulting
         series will be defined over the codomain of ``f``. Otherwise, the
-        resulting polynomial will be over the same ring as self. Set
+        resulting polynomial will be over the same ring as ``self``. Set
         ``new_base_ring`` to override this behaviour.
 
         INPUT:
 
-        - ``f`` -- a callable that will be applied to the coefficients of self.
+        - ``f`` -- a callable that will be applied to the coefficients of ``self``
 
-        - ``new_base_ring`` (optional) -- if given, the resulting polynomial
-          will be defined over this ring.
+        - ``new_base_ring`` -- (optional) if given, the resulting polynomial
+          will be defined over this ring
 
         EXAMPLES::
 
@@ -1384,6 +1408,86 @@ cdef class PowerSeries(AlgebraElement):
             serie = (u - 1 - A * t) / (B * t ** 2)
         return tuple(resu)
 
+    def super_delta_fraction(self, delta):
+        r"""
+        Return the super delta continued fraction of ``self``.
+
+        This is a continued fraction of the following shape:
+
+        .. MATH::
+
+            \cfrac{v_0 x^{k_0}} {U_1(x) -
+            \cfrac{v_1 x^{k_0 + k_1 + \delta}} {U_2(x) -
+            \cfrac{v_2 x^{k_0 + k_1 + k_2 + \delta}} {U_3(x) - \cdots} } }
+
+        where each `U_j(x) = 1 + u_j(x) x`.
+
+        INPUT:
+
+        - ``delta`` -- positive integer, usually 2
+
+        OUTPUT: list of `(v_j, k_j, U_{j+1}(x))_{j \geq 0}`
+
+        REFERENCES:
+
+        - [Han2016]_
+
+        EXAMPLES::
+
+            sage: deg = 30
+            sage: PS = PowerSeriesRing(QQ, 'q', default_prec=deg+1)
+            sage: q = PS.gen()
+            sage: F = prod([(1+q**k).add_bigoh(deg+1) for k in range(1,deg)])
+            sage: F.super_delta_fraction(2)
+            [(1, 0, -q + 1),
+             (1, 1, q + 1),
+             (-1, 2, -q^3 + q^2 - q + 1),
+             (1, 1, q^2 + q + 1),
+             (-1, 0, -q + 1),
+             (-1, 1, q^2 + q + 1),
+             (-1, 0, -q + 1),
+             (1, 1, 3*q^2 + 2*q + 1),
+             (-4, 0, -q + 1)]
+
+        A Jacobi continued fraction::
+
+            sage: t = PowerSeriesRing(QQ, 't').gen()
+            sage: s = sum(factorial(k) * t**k for k in range(12)).O(12)
+            sage: s.super_delta_fraction(2)
+            [(1, 0, -t + 1),
+            (1, 0, -3*t + 1),
+            (4, 0, -5*t + 1),
+            (9, 0, -7*t + 1),
+            (16, 0, -9*t + 1),
+            (25, 0, -11*t + 1)]
+        """
+        q = self.parent().gen()
+        Gi, Gj = self.parent().one(), self
+        deg = self.prec()
+
+        list_vkU = []
+        di = Gi.valuation()
+        ci = Gi[di]
+
+        while deg >= 0:
+            dj = Gj.valuation()
+            cj = Gj[dj]
+            k, v = dj - di, cj / ci
+            c = v * q**k
+            gi = Gi.add_bigoh(dj + delta)
+            gj = Gj.add_bigoh(k + dj + delta)
+            U = (c * gi / gj).truncate()
+            Gk = (U * Gj - Gi * c) >> (k + delta)
+            deg -= 2 * k + delta
+            if deg < 0:
+                break
+            list_vkU.append((v, k, U))
+            if deg == 0 or Gk.degree() == -1:
+                break
+            di, ci, Gi, Gj = dj, cj, Gj, Gk
+
+        return list_vkU
+
     def stieltjes_continued_fraction(self):
         r"""
         Return the Stieltjes continued fraction of ``self``.
@@ -1396,9 +1500,7 @@ cdef class PowerSeries(AlgebraElement):
 
             1 / (1 - A_1 t / (1 - A_2 t / (1 - A_3 t / (1 - \cdots))))
 
-        OUTPUT:
-
-        `A_n` for `n \geq 1`
+        OUTPUT: `A_n` for `n \geq 1`
 
         The expansion is done as long as possible given the precision.
         Whenever the expansion is not well-defined, because it would
@@ -1511,22 +1613,21 @@ cdef class PowerSeries(AlgebraElement):
 
         INPUT:
 
-          - ``prec`` -- integer (default: ``None``): if not ``None`` and the series
-            has infinite precision, truncates series at precision
-            ``prec``.
+          - ``prec`` -- integer (default: ``None``); if not ``None`` and the
+            series has infinite precision, truncates series at precision ``prec``
 
-          - ``extend`` -- bool (default: ``False``); if ``True``, return a square
-            root in an extension ring, if necessary. Otherwise, raise
-            a :class:`ValueError` if the square root is not in the base power series
+          - ``extend`` -- boolean (default: ``False``); if ``True``, return a
+            square root in an extension ring, if necessary. Otherwise, raise
+            a :exc:`ValueError` if the square root is not in the base power series
             ring. For example, if ``extend`` is ``True``, the square root of a
             power series with odd degree leading coefficient is
             defined as an element of a formal extension ring.
 
-          - ``name`` -- string; if ``extend`` is ``True``, you must also specify the print
-            name of the formal square root.
+          - ``name`` -- string; if ``extend`` is ``True``, you must also
+            specify the print name of the formal square root
 
-          - ``all`` -- bool (default: ``False``); if ``True``, return all square
-            roots of ``self``, instead of just one.
+          - ``all`` -- boolean (default: ``False``); if ``True``, return all
+            square roots of ``self``, instead of just one
 
         ALGORITHM: Newton's method
 
@@ -1838,12 +1939,10 @@ cdef class PowerSeries(AlgebraElement):
 
         INPUT:
 
-        - ``prec`` -- Integer or ``infinity``. The degree to truncate
-          the result to.
+        - ``prec`` -- integer or ``infinity``; the degree to truncate
+          the result to
 
-        OUTPUT:
-
-        A new power series.
+        OUTPUT: a new power series
 
         EXAMPLES:
 
@@ -1865,7 +1964,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: f.cos(prec=2)
             1 + O(a, b)^2
 
-        If the power series has a non-zero constant coefficient `c`,
+        If the power series has a nonzero constant coefficient `c`,
         one raises an error::
 
             sage: g = 2+f
@@ -1898,10 +1997,10 @@ cdef class PowerSeries(AlgebraElement):
                              'series with zero constant term')
         x = self
         val = x.valuation()
-        assert(val >= 1)
+        assert val >= 1
 
         prec = min(prec, self.prec())
-        if is_Infinite(prec):
+        if isinstance(prec, InfinityElement):
             prec = R.default_prec()
         n_inv_factorial = R.base_ring().one()
         x_pow_n = R.one()
@@ -1923,12 +2022,10 @@ cdef class PowerSeries(AlgebraElement):
 
         INPUT:
 
-        - ``prec`` -- Integer or ``infinity``. The degree to truncate
-          the result to.
+        - ``prec`` -- integer or ``infinity``; the degree to truncate
+          the result to
 
-        OUTPUT:
-
-        A new power series.
+        OUTPUT: a new power series
 
         EXAMPLES:
 
@@ -1950,7 +2047,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: f.sin(prec=2)
             a + b + O(a, b)^2
 
-        If the power series has a non-zero constant coefficient `c`,
+        If the power series has a nonzero constant coefficient `c`,
         one raises an error::
 
             sage: g = 2+f
@@ -1982,12 +2079,12 @@ cdef class PowerSeries(AlgebraElement):
             raise ValueError('can only apply sin to formal power '
                              'series with zero constant term')
         val = self.valuation()
-        assert(val >= 1)
+        assert val >= 1
 
         x = self
 
         prec = min(prec, self.prec())
-        if is_Infinite(prec):
+        if isinstance(prec, InfinityElement):
             prec = R.default_prec()
         n_inv_factorial = R.base_ring().one()
         x_pow_n = x
@@ -2009,12 +2106,10 @@ cdef class PowerSeries(AlgebraElement):
 
         INPUT:
 
-        - ``prec`` -- Integer or ``infinity``. The degree to truncate
-          the result to.
+        - ``prec`` -- integer or ``infinity``; the degree to truncate
+          the result to
 
-        OUTPUT:
-
-        A new power series.
+        OUTPUT: a new power series
 
         EXAMPLES:
 
@@ -2036,7 +2131,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: f.tan(prec=2)
             a + b + O(a, b)^2
 
-        If the power series has a non-zero constant coefficient `c`,
+        If the power series has a nonzero constant coefficient `c`,
         one raises an error::
 
             sage: g = 2 + f
@@ -2064,7 +2159,7 @@ cdef class PowerSeries(AlgebraElement):
         if not self[0].is_zero():
             raise ValueError('can only apply tan to formal power '
                              'series with zero constant term')
-        assert(self.valuation() >= 1)
+        assert self.valuation() >= 1
         return self.sin(prec) / self.cos(prec)
 
     def sinh(self, prec=infinity):
@@ -2073,12 +2168,10 @@ cdef class PowerSeries(AlgebraElement):
 
         INPUT:
 
-        - ``prec`` -- Integer or ``infinity``. The degree to truncate
-          the result to.
+        - ``prec`` -- integer or ``infinity``; the degree to truncate
+          the result to
 
-        OUTPUT:
-
-        A new power series.
+        OUTPUT: a new power series
 
         EXAMPLES:
 
@@ -2100,7 +2193,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: f.sinh(prec=2)
             a + b + O(a, b)^2
 
-        If the power series has a non-zero constant coefficient `c`,
+        If the power series has a nonzero constant coefficient `c`,
         one raises an error::
 
             sage: g = 2 + f
@@ -2126,7 +2219,6 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: sinh(a^2 + T.O(5))
             a^2 + O(a, b)^5
-
         """
         R = self.parent()
 
@@ -2135,12 +2227,12 @@ cdef class PowerSeries(AlgebraElement):
             raise ValueError('can only apply sinh to formal power '
                              'series with zero constant term')
         val = self.valuation()
-        assert(val >= 1)
+        assert val >= 1
 
         x = self
 
         prec = min(prec, self.prec())
-        if is_Infinite(prec):
+        if isinstance(prec, InfinityElement):
             prec = R.default_prec()
         n_inv_factorial = R.base_ring().one()
         x_pow_n = x
@@ -2162,12 +2254,10 @@ cdef class PowerSeries(AlgebraElement):
 
         INPUT:
 
-        - ``prec`` -- Integer or ``infinity``. The degree to truncate
-          the result to.
+        - ``prec`` -- integer or ``infinity``; the degree to truncate
+          the result to
 
-        OUTPUT:
-
-        A new power series.
+        OUTPUT: a new power series
 
         EXAMPLES:
 
@@ -2189,7 +2279,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: f.cosh(prec=2)
             1 + O(a, b)^2
 
-        If the power series has a non-zero constant coefficient `c`,
+        If the power series has a nonzero constant coefficient `c`,
         one raises an error::
 
             sage: g = 2 + f
@@ -2215,7 +2305,6 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: cosh(a^2 + T.O(5))
             1 + 1/2*a^4 + O(a, b)^5
-
         """
         R = self.parent()
 
@@ -2225,10 +2314,10 @@ cdef class PowerSeries(AlgebraElement):
                              'series with zero constant term')
         x = self
         val = x.valuation()
-        assert(val >= 1)
+        assert val >= 1
 
         prec = min(prec, self.prec())
-        if is_Infinite(prec):
+        if isinstance(prec, InfinityElement):
             prec = R.default_prec()
         n_inv_factorial = R.base_ring().one()
         x_pow_n = R.one()
@@ -2250,12 +2339,10 @@ cdef class PowerSeries(AlgebraElement):
 
         INPUT:
 
-        - ``prec`` -- Integer or ``infinity``. The degree to truncate
-          the result to.
+        - ``prec`` -- integer or ``infinity``; the degree to truncate
+          the result to
 
-        OUTPUT:
-
-        A new power series.
+        OUTPUT: a new power series
 
         EXAMPLES:
 
@@ -2277,7 +2364,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: f.tanh(prec=2)
             a + b + O(a, b)^2
 
-        If the power series has a non-zero constant coefficient `c`,
+        If the power series has a nonzero constant coefficient `c`,
         one raises an error::
 
             sage: g = 2 + f
@@ -2303,12 +2390,11 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: tanh(a^2 + T.O(5))
             a^2 + O(a, b)^5
-
         """
         if not self[0].is_zero():
             raise ValueError('can only apply tanh to formal power '
                              'series with zero constant term')
-        assert(self.valuation() >= 1)
+        assert self.valuation() >= 1
         return self.sinh(prec) / self.cosh(prec)
 
     def O(self, prec):
@@ -2328,14 +2414,14 @@ cdef class PowerSeries(AlgebraElement):
             sage: p.O(-5)
             Traceback (most recent call last):
             ...
-            ValueError: prec (= -5) must be non-negative
+            ValueError: prec (= -5) must be nonnegative
         """
         if prec is infinity or prec >= self.prec():
             return self
         coeffs = self[:prec]
         return self._parent(coeffs, prec)
 
-    def solve_linear_de(self, prec = infinity, b = None, f0 = None):
+    def solve_linear_de(self, prec=infinity, b=None, f0=None):
         r"""
         Obtain a power series solution to an inhomogeneous linear
         differential equation of the form:
@@ -2346,16 +2432,15 @@ cdef class PowerSeries(AlgebraElement):
 
         INPUT:
 
-        -  ``self`` -- the power series `a(t)`
+        - ``self`` -- the power series `a(t)`
 
-        -  ``b`` -- the power series `b(t)` (default is
-           zero)
+        - ``b`` -- the power series `b(t)` (default: zero)
 
-        -  ``f0`` -- the constant term of `f` ("initial
-           condition") (default is 1)
+        - ``f0`` -- the constant term of `f` ("initial condition")
+          (default: 1)
 
-        -  ``prec`` -- desired precision of result (this will be
-           reduced if either a or b have less precision available)
+        - ``prec`` -- desired precision of result (this will be
+          reduced if either a or b have less precision available)
 
         OUTPUT: the power series `f`, to indicated precision
 
@@ -2373,7 +2458,7 @@ cdef class PowerSeries(AlgebraElement):
 
            - For other coefficient rings, things are more
              complicated. A solution may not exist, and if it does it
-             may not be unique. Generally, by the time the nth term
+             may not be unique. Generally, by the time the `n`-th term
              has been computed, the algorithm will have attempted
              divisions by `n!` in the coefficient ring. So if
              your coefficient ring has enough 'precision', and if your
@@ -2430,7 +2515,7 @@ cdef class PowerSeries(AlgebraElement):
         if prec == 0:
             return self._parent(0, 0)
         if prec < 0:
-            raise ValueError("prec (=%s) must be a non-negative integer" % prec)
+            raise ValueError("prec (=%s) must be a nonnegative integer" % prec)
 
         base_ring = self._parent.base_ring()
         R = PolynomialRing(base_ring, self._parent.variable_name())
@@ -2449,10 +2534,7 @@ cdef class PowerSeries(AlgebraElement):
 
         INPUT:
 
-
-        -  ``prec`` -- integer; default is
-           ``self.parent().default_prec``
-
+        - ``prec`` -- integer (default: ``self.parent().default_prec``)
 
         ALGORITHM: See :meth:`.solve_linear_de`.
 
@@ -2563,7 +2645,7 @@ cdef class PowerSeries(AlgebraElement):
 
         INPUT:
 
-        -  ``prec`` -- integer; default is ``self.parent().default_prec()``
+        - ``prec`` -- integer (default: ``self.parent().default_prec()``)
 
         ALGORITHM: See :meth:`solve_linear_de()`.
 
@@ -2628,14 +2710,14 @@ cdef class PowerSeries(AlgebraElement):
         v = self.list()
         m = 0
         w = []
-        zero = self.base_ring()(0)
-        for i in range(len(v)*n):
-            if i%n != 0:
+        zero = self.base_ring().zero()
+        for i in range(len(v) * n):
+            if i % n != 0:
                 w.append(zero)
             else:
                 w.append(v[m])
                 m += 1
-        return self._parent(w, self.prec()*n)
+        return self._parent(w, self.prec() * n)
 
     def valuation(self):
         """
@@ -2724,7 +2806,6 @@ cdef class PowerSeries(AlgebraElement):
             1 - 12*x^2 + O(x^4)
         """
         return multi_derivative(self, args)
-
 
     def __setitem__(self, n, value):
         """
@@ -2836,7 +2917,7 @@ cdef class PowerSeries(AlgebraElement):
 
 def _solve_linear_de(R, N, L, a, b, f0):
     r"""
-    Internal function used by PowerSeries.solve_linear_de().
+    Internal function used by ``PowerSeries.solve_linear_de()``.
 
     INPUT:
 
@@ -2846,29 +2927,25 @@ def _solve_linear_de(R, N, L, a, b, f0):
 
     - ``L`` -- integer >= 1
 
-    - ``a`` -- list of coefficients of `a`, any
-      length, all coefficients should belong to base ring of R.
+    - ``a`` -- list of coefficients of `a`, any length, all coefficients should
+      belong to base ring of `R`
 
-    - ``b`` -- list of coefficients of `b`, length
-      at least `L` (only first `L` coefficients are
-      used), all coefficients should belong to base ring of R.
+    - ``b`` -- list of coefficients of `b`, length at least `L` (only first `L`
+      coefficients are used), all coefficients should belong to base ring of `R`
 
-    - ``f0`` -- constant term of `f` (only used if
-      `N == 0`), should belong to base ring of R.
+    - ``f0`` -- constant term of `f` (only used if ``N == 0``), should belong
+      to base ring of `R`
 
-
-    OUTPUT: List of coefficients of `f` (length exactly
-    `L`), where `f` is a solution to the linear
-    inhomogeneous differential equation:
+    OUTPUT: list of coefficients of `f` (length exactly `L`), where `f` is a
+    solution to the linear inhomogeneous differential equation:
 
     .. MATH::
 
          (t^N f)'  =  a t^N f  +  t^{N-1} b  +  O(t^{N+L-1}).
 
 
-    The constant term of `f` is taken to be f0 if
-    `N == 0`, and otherwise is determined by
-    `N f_0 = b_0`.
+    The constant term of `f` is taken to be f0 if `N == 0`, and otherwise is
+    determined by `N f_0 = b_0`.
 
     ALGORITHM: The algorithm implemented here is inspired by the "fast
     lazy multiplication algorithm" described in the paper "Lazy
@@ -2942,11 +3019,11 @@ def _solve_linear_de(R, N, L, a, b, f0):
     g = _solve_linear_de(R, N, L2, a, b, f0)
 
     term1 = R(g)  # we must not have check=False, since otherwise [..., 0, 0] is not stripped
-    term2 = R(a[:L]) #, check=False)
+    term2 = R(a[:L])  # , check=False)
     product = (term1 * term2).list()
 
     # todo: perhaps next loop could be made more efficient
-    c = b[L2 : L]
+    c = b[L2:L]
     for j in range(L2 - 1, min(L-1, len(product))):
         c[j - (L2-1)] = c[j - (L2-1)] + product[j]
 

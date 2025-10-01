@@ -273,11 +273,11 @@ class FunctionFieldIdeal(Element):
         gens = self.gens()
         if len(gens) == 1:
             return gens
-        candidate_gensets = []
-        for genset in powerset(gens):
-            if self.parent()(genset) == self:
-                candidate_gensets.append(genset)
-        candidate_gensets.sort(key=lambda item: (len(item), len(repr(item)), item))
+        candidate_gensets = [genset for genset in powerset(gens)
+                             if self.parent()(genset) == self]
+        candidate_gensets.sort(key=lambda item: (len(item),
+                                                 len(repr(item)),
+                                                 item))
         return candidate_gensets[0]
 
     def ring(self):
@@ -445,7 +445,6 @@ class FunctionFieldIdeal(Element):
             sage: I = O.ideal(y)
             sage: I == I.factor().prod()
             True
-
         """
         return Factorization(self._factor(), cr=True)
 
@@ -700,9 +699,7 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
         The formation of the module is compatible with the vector
         space corresponding to the function field.
 
-        OUTPUT:
-
-        - a module over the maximal order of the base field of the ideal
+        OUTPUT: a module over the maximal order of the base field of the ideal
 
         EXAMPLES::
 
@@ -726,7 +723,7 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
         """
         return self._module
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a set of generators of this ideal.
 
@@ -967,7 +964,7 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
 
     def __hash__(self):
         """
-        Return the hash of this ideal
+        Return the hash of this ideal.
 
         EXAMPLES::
 
@@ -1003,11 +1000,8 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
         if self.ring() != other.ring():
             raise ValueError("rings must be the same")
 
-        if (self.module().is_submodule(other.module()) and
-            other.module().is_submodule(self.module())):
-            return True
-        else:
-            return False
+        return (self.module().is_submodule(other.module()) and
+                other.module().is_submodule(self.module()))
 
     def module(self):
         """
@@ -1069,7 +1063,7 @@ class IdealMonoid(UniqueRepresentation, Parent):
             sage: M = O.ideal_monoid()
             sage: TestSuite(M).run()
         """
-        self.Element = R._ideal_class
+        self.Element = R._ideal_class_
         Parent.__init__(self, category=Monoids())
 
         self.__R = R

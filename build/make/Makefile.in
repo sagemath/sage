@@ -130,17 +130,8 @@ PIP_PACKAGES = @SAGE_PIP_PACKAGES@
 # Packages that use the 'script' package build rules
 SCRIPT_PACKAGES = @SAGE_SCRIPT_PACKAGES@
 
-# Packages for which we build platform-independent wheels for PyPI
-PYPI_NOARCH_WHEEL_PACKAGES =			\
-	sage_sws2rst				\
-	sage_setup				\
-	sagemath_environment			\
-
 # Packages for which we build wheels for PyPI
-PYPI_WHEEL_PACKAGES = $(PYPI_NOARCH_WHEEL_PACKAGES) \
-	sagemath_objects			\
-	sagemath_repl				\
-	sagemath_categories			\
+PYPI_WHEEL_PACKAGES = \
 	sagemath_bliss 				\
 	sagemath_mcqd 				\
 	sagemath_tdlib				\
@@ -224,8 +215,8 @@ SAGE_I_TARGETS = sagelib doc
 
 # Tell make not to look for files with these names:
 .PHONY: all all-sage all-toolchain all-build all-sageruntime \
-	all-start build-start base toolchain toolchain-deps base-toolchain \
-	pypi-sdists pypi-noarch-wheels pypi-wheels wheels \
+	all-start build-start toolchain toolchain-deps base-toolchain \
+	pypi-sdists pypi-wheels wheels \
 	sagelib \
 	doc doc-html doc-html-jsmath doc-html-mathjax doc-pdf \
 	doc-uninstall \
@@ -271,11 +262,11 @@ all-build: toolchain-deps
 # This used to do run "sage-starts" script, now it's just an alias
 build-start: all-build
 
-# The 2 preliminary build phases: base and toolchain.
-base-toolchain: _clean-broken-gcc base
+# The preliminary build phase: toolchain.
+base-toolchain: _clean-broken-gcc
 	+$(MAKE_REC) toolchain
 
-# All targets except for the base packages and except the documentation
+# All targets except for the documentation
 all-sage: \
 		$(SAGE_LOCAL_INSTALLED_PACKAGE_INSTS) $(SAGE_LOCAL_UNINSTALLED_PACKAGES_UNINSTALLS) \
 		$(SAGE_VENV_INSTALLED_PACKAGE_INSTS)  $(SAGE_VENV_UNINSTALLED_PACKAGES_UNINSTALLS)
@@ -303,7 +294,7 @@ download-for-sdist:
 		$(SDIST_PACKAGES)
 
 # TOOLCHAIN consists of dependencies determined by configure.
-# These are built after the "base" target but before anything else.
+# These are built before anything else.
 toolchain: $(foreach pkgname,$(TOOLCHAIN),$(inst_$(pkgname))) $(PCFILES)
 
 # Build all packages that GCC links against serially, otherwise this
@@ -314,7 +305,7 @@ toolchain: $(foreach pkgname,$(TOOLCHAIN),$(inst_$(pkgname))) $(PCFILES)
 # See #14168 and #14232.
 #
 # Note: This list consists of only the *runtime* dependencies of the toolchain.
-TOOLCHAIN_DEPS = zlib $(MP_LIBRARY) mpfr mpc
+TOOLCHAIN_DEPS = $(MP_LIBRARY) mpfr mpc
 TOOLCHAIN_DEP_INSTS = \
 	$(foreach pkgname,$(TOOLCHAIN_DEPS),$(inst_$(pkgname)))
 
@@ -343,13 +334,6 @@ SAGERUNTIME = sagelib $(inst_ipython) $(inst_pexpect)
 all-sageruntime: toolchain-deps
 	+$(MAKE_REC) $(SAGERUNTIME)
 
-
-###############################################################################
-# Building the base system
-#
-# This consists of packages which are required for the Sage build system.
-###############################################################################
-base: $(inst_patch) $(inst_pkgconf)
 
 ###############################################################################
 # Building the documentation
@@ -458,13 +442,6 @@ pypi-sdists: $(PYPI_SDIST_PACKAGES:%=%-sdist)
 # Ensuring wheels are present, even for packages that may have been installed
 # as editable. Until we have better uninstallation of script packages, we
 # just remove the timestamps, which will lead to rebuilds of the packages.
-pypi-noarch-wheels:
-	for a in $(PYPI_NOARCH_WHEEL_PACKAGES); do \
-	    rm -f $(SAGE_VENV)/var/lib/sage/installed/$$a-*; \
-	done
-	$(MAKE_REC) SAGE_EDITABLE=no SAGE_WHEELS=yes $(PYPI_NOARCH_WHEEL_PACKAGES)
-	@echo "Built wheels are in venv/var/lib/sage/wheels/"
-
 pypi-wheels:
 	for a in $(PYPI_WHEEL_PACKAGES); do \
 	    rm -f $(SAGE_VENV)/var/lib/sage/installed/$$a-*; \
@@ -577,7 +554,7 @@ pkg_deps = \
 #
 # For example, for python3 this will expand to:
 #
-# $(INST)/python3-3.7.3: $(inst_zlib) $(inst_readline) $(inst_sqlite) $(inst_libpng) $(inst_bzip2) $(inst_xz) $(inst_libffi)
+# $(INST)/python3-3.7.3: $(inst_readline) $(inst_sqlite) $(inst_libpng) $(inst_xz) $(inst_libffi)
 #     +$(AM_V_at)sage-logger -p '$(SAGE_SPKG) python3-3.7.3' '$(SAGE_LOGS)/python3-3.7.3.log'
 #
 # python3: $(INST)/python3-3.7.3
@@ -741,7 +718,7 @@ $(1)-$(4)-no-deps:
 	    echo "Error: The installation tree $(4) has been disabled" 2>&1; \
 	    echo "$$($(4)_DISABLED_MESSAGE)" 2>&1; \
 	    exit 1; \
-	elif [ -x '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' -o -r '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install.in' ]; then \
+	else \
 	    rm -rf '$$($(4))/var/lib/sage/scripts/$(1)'; \
 	    cd '$$(SAGE_ROOT)/build/pkgs/$(1)' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
@@ -749,29 +726,10 @@ $(1)-$(4)-no-deps:
 		. '$$(SAGE_ROOT)/src/bin/sage-env' && \
 		. '$$(SAGE_ROOT)/build/bin/sage-build-env-config' && \
 		. '$$(SAGE_ROOT)/build/bin/sage-build-env' && \
-		PKG_BASE="$(1)" \
-		PKG_VER="$(2)" \
-		PKG_NAME="$(1)-$(2)" \
-		SAGE_SPKG_WHEELS=$$($(4))/var/lib/sage/wheels \
-		SAGE_SPKG_SCRIPTS=$$($(4))/var/lib/sage/scripts \
-		SAGE_INST_LOCAL=$$($(4)) \
 		SAGE_CHECK=$$(SAGE_CHECK_$(1)) \
 		sage-logger -p 'SAGE_CHECK=$$(SAGE_CHECK_$(1)) PATH=$$(SAGE_SRC)/bin:$$($(4))/bin:$$$$PATH $$(SAGE_SPKG) $$(SAGE_SPKG_OPTIONS) \
 		$(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-existing) \
 		$(1)-$(2) $$($(4))' '$$(SAGE_LOGS)/$(1)-$(2).log'; \
-	else ( \
-	    echo; \
-	    echo "Note: $(1) is a dummy package that the Sage distribution uses"; \
-	    echo "to provide information about equivalent system packages."; \
-	    echo "It cannot be installed using the Sage distribution."; \
-	    echo "Please install it manually, for example using the system packages"; \
-	    echo "recommended at the end of a run of './configure'"; \
-	    echo "See below for package-specific information."; \
-	    echo; \
-	    $$(SAGE_ROOT)/build/bin/sage-spkg-info $(1); \
-	    echo; \
-	    echo "Error: $(1) is a dummy package and "; \
-	    echo "cannot be installed using the Sage distribution." ) | sage-logger -p 'cat; exit 1' '$$(SAGE_LOGS)/$(1)-$(2).log'; \
 	fi
 
 $(1)-no-deps: $(1)-$(4)-no-deps
@@ -798,12 +756,14 @@ $(1)-sdist: FORCE python_build sage_setup cython
 		. '$$(SAGE_ROOT)/src/bin/sage-env' && \
 		'$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-src'
 
-# Recursive tox invocation (note - we do not set the environment here).
+# Recursive tox invocation
 # Setting SAGE_SPKG_WHEELS is for the benefit of sagelib's tox.ini
 $(1)-tox-%: FORCE
 	$(AM_V_at)cd '$$(SAGE_ROOT)/build/pkgs/$(1)/src' && \
-		export PATH="$$(SAGE_ORIG_PATH)" && \
-		SAGE_SPKG_WHEELS=$$(SAGE_LOCAL)/var/lib/sage/wheels \
+		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
+		. '$$(SAGE_ROOT)/src/bin/sage-env-config' && \
+		. '$$(SAGE_ROOT)/src/bin/sage-env' && \
+		SAGE_SPKG_WHEELS=$$(SAGE_VENV)/var/lib/sage/wheels \
 		tox -v -v -v -e $$*
 
 .PHONY: $(1) $(1)-uninstall $(1)-clean $(1)-build-deps $(1)-no-deps $(1)-clean

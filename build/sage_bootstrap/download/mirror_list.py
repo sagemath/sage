@@ -170,7 +170,8 @@ class MirrorList_from_url(object):
         This method is used by the YUM fastestmirror plugin
         """
         timed_mirrors = []
-        import time, socket
+        import time
+        import socket
         log.info('Searching fastest mirror')
         timeout = 1
         for mirror in self.mirrors:

@@ -17,7 +17,6 @@ using LiE (and get the result back as a string).
 
 To access the LiE interpreter directly, run lie_console().
 
-
 EXAMPLES::
 
     sage: a4 = lie('A4')             # optional - lie
@@ -286,16 +285,21 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 #
 ##########################################################################
+import os
+from itertools import chain
 
-from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
-from sage.interfaces.interface import AsciiArtString
-from sage.misc.misc_c import prod
 from sage.env import DOT_SAGE, LIE_INFO_DIR
-from sage.misc.sage_eval import sage_eval
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+)
+from sage.interfaces.interface import AsciiArtString
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
-import os
-
+from sage.misc.misc_c import prod
+from sage.misc.sage_eval import sage_eval
 
 COMMANDS_CACHE = '%s/lie_commandlist_cache.sobj' % DOT_SAGE
 HELP_CACHE = '%s/lie_helpdict_cache.sobj' % DOT_SAGE
@@ -319,6 +323,7 @@ class LiE(ExtraTabCompletion, Expect):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.lie import lie
             sage: lie == loads(dumps(lie))
             True
         """
@@ -449,9 +454,7 @@ class LiE(ExtraTabCompletion, Expect):
         info.close()
 
         # Build the list of all possible command completions
-        l = []
-        for key in commands:
-            l += commands[key]
+        l = list(chain(*commands.values()))
 
         # Save the data
         self._tab_completion_dict = commands
@@ -575,7 +578,7 @@ class LiE(ExtraTabCompletion, Expect):
         EXAMPLES::
 
             sage: lie.version() # optional - lie
-            '2.2'
+            '2...'
         """
         return lie_version()
 
@@ -805,7 +808,6 @@ class LiEElement(ExtraTabCompletion, ExpectElement):
             [ 3 -5 -2  9]
             sage: lie('-1X[1,1]').sage() # optional - lie
             -x0*x1
-
         """
         t = self.type()
         if t == 'grp':
@@ -945,7 +947,7 @@ def lie_version():
 
         sage: from sage.interfaces.lie import lie_version
         sage: lie_version() # optional - lie
-        '2.2'
+        '2...'
     """
     with open(os.path.join(LIE_INFO_DIR, 'INFO.0')) as f:
         lines = f.readlines()

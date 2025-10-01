@@ -20,11 +20,11 @@ sage: factor(2007)
 3^2 * 223
 sage: factor(31415926535898)
 2 * 3 * 53 * 73 * 2531 * 534697
-sage: n = 7403756347956171282804679609742957314259318888\
-....: 9231289084936232638972765034028266276891996419625117\
-....: 8439958943305021275853701189680982867331732731089309\
-....: 0055250511687706329907239638078671008609696253793465\
-....: 0563796359
+sage: n = Integer('7403756347956171282804679609742957314259318888'
+....: '9231289084936232638972765034028266276891996419625117'
+....: '8439958943305021275853701189680982867331732731089309'
+....: '0055250511687706329907239638078671008609696253793465'
+....: '0563796359')
 sage: len(n.str(2))
 704
 sage: len(n.str(10))
@@ -206,9 +206,9 @@ sage: def rsa(bits):
 ....:         if gcd(e,phi_n) == 1: break
 ....:     d = lift(Mod(e,phi_n)^(-1))
 ....:     return e, d, n
-sage: def encrypt(m,e,n):
+sage: def encrypt(m, e, n):
 ....:     return lift(Mod(m,n)^e)
-sage: def decrypt(c,d,n):
+sage: def decrypt(c, d, n):
 ....:     return lift(Mod(c,n)^d)
 sage: e,d,n = rsa(20)
 sage: c = encrypt(123, e, n)
@@ -348,7 +348,7 @@ sage: zeta^5
 1
 sage: 1/zeta
 -zeta^3 - zeta^2 - zeta - 1
-sage: def gauss_sum(a,p):
+sage: def gauss_sum(a, p):
 ....:     K.<zeta> = CyclotomicField(p)
 ....:     return sum(legendre_symbol(n,p) * zeta^(a*n) for n in range(1,p))
 sage: g2 = gauss_sum(2,5); g2
@@ -527,7 +527,7 @@ sage: rels = [y1^2 - (x1^3 + a*x1 + b),
 ....:         y3^2 - (x3^3 + a*x3 + b)]
 ...
 sage: Q = R.quotient(rels)
-sage: def op(P1,P2):
+sage: def op(P1, P2):
 ....:     x1,y1 = P1;  x2,y2 = P2
 ....:     lam = (y1 - y2)/(x1 - x2); nu  = y1 - lam*x1
 ....:     x3 = lam^2 - x1 - x2; y3 = -lam*x3 - nu

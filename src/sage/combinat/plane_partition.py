@@ -1,11 +1,11 @@
 r"""
-Plane Partitions
+Plane partitions
 
 AUTHORS:
 
-- Jang Soo Kim (2016): Initial implementation
-- Jessica Striker (2016): Added additional methods
-- Kevin Dilks (2021): Added symmetry classes
+- Jang Soo Kim (2016): initial implementation
+- Jessica Striker (2016): added additional methods
+- Kevin Dilks (2021): added symmetry classes
 """
 # ****************************************************************************
 #       Copyright (C) 2016 Jang Soo Kim <jangsookim@skku.edu>,
@@ -25,7 +25,7 @@ AUTHORS:
 # ****************************************************************************
 
 from __future__ import annotations
-from typing import NewType, Iterator
+from typing import NewType, TYPE_CHECKING
 
 from sage.structure.richcmp import richcmp, richcmp_method
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -43,6 +43,9 @@ from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
 
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+
 lazy_import('sage.modules.free_module_element', 'vector')
 
 
@@ -56,15 +59,13 @@ class PlanePartition(ClonableArray,
 
     INPUT:
 
-    - ``PP`` -- a list of lists which represents a tableau
+    - ``PP`` -- list of lists which represents a tableau
     - ``box_size`` -- (optional) a list ``[A, B, C]`` of 3 positive integers,
       where ``A``, ``B``, ``C`` are the lengths of the box in the `x`-axis,
       `y`-axis, `z`-axis, respectively; if this is not given, it is
       determined by the smallest box bounding ``PP``
 
-    OUTPUT:
-
-    The plane partition whose tableau representation is ``PP``.
+    OUTPUT: the plane partition whose tableau representation is ``PP``
 
     EXAMPLES::
 
@@ -140,7 +141,7 @@ class PlanePartition(ClonableArray,
                 self._max_y = 0
                 self._max_z = 0
         else:
-            (self._max_x, self._max_y, self._max_z) = self.parent()._box
+            self._max_x, self._max_y, self._max_z = self.parent()._box
 
     def __richcmp__(self, other, op):
         r"""
@@ -162,9 +163,7 @@ class PlanePartition(ClonableArray,
 
         - ``other`` -- the element that ``self`` is compared to
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -214,7 +213,6 @@ class PlanePartition(ClonableArray,
             Traceback (most recent call last):
             ...
             ValueError: entries not all integers
-
         """
         if not all(a in ZZ for b in self for a in b):
             raise ValueError("entries not all integers")
@@ -355,9 +353,7 @@ class PlanePartition(ClonableArray,
           also shows the visible tiles on the `xy`-, `yz`-, `zx`-planes
         - ``use_unicode`` -- boolean (default: ``False``); use unicode
 
-        OUTPUT:
-
-        A string of the 3D diagram of the plane partition.
+        OUTPUT: string of the 3D diagram of the plane partition
 
         EXAMPLES::
 
@@ -508,9 +504,7 @@ class PlanePartition(ClonableArray,
         - ``show_box`` -- boolean (default: ``False``); if ``True``,
           also shows the visible tiles on the `xy`-, `yz`-, `zx`-planes
 
-        OUTPUT:
-
-        A pretty print of the plane partition.
+        OUTPUT: a pretty print of the plane partition
 
         EXAMPLES::
 
@@ -616,9 +610,7 @@ class PlanePartition(ClonableArray,
         - ``colors`` -- (default: ``["white", "lightgray", "darkgray"]``)
           list ``[A, B, C]`` of 3 strings representing colors
 
-        OUTPUT:
-
-        Latex code for drawing the plane partition.
+        OUTPUT: latex code for drawing the plane partition
 
         EXAMPLES::
 
@@ -696,15 +688,15 @@ class PlanePartition(ClonableArray,
                     for P in side]
 
         def add_topside(i, j, k):
-            return polygon(move(Uside, i, j, k), edgecolor="black",
+            return polygon(move(Uside, i, j, k), edgecolor='black',
                            color=colors[0])
 
         def add_leftside(i, j, k):
-            return polygon(move(Lside, i, j, k), edgecolor="black",
+            return polygon(move(Lside, i, j, k), edgecolor='black',
                            color=colors[1])
 
         def add_rightside(i, j, k):
-            return polygon(move(Rside, i, j, k), edgecolor="black",
+            return polygon(move(Rside, i, j, k), edgecolor='black',
                            color=colors[2])
         TP = plot([])
         for r in range(len(self.z_tableau())):
@@ -922,9 +914,7 @@ class PlanePartition(ClonableArray,
             sage: PlanePartition([]).is_CSPP()
             True
         """
-        if self.z_tableau() == self.y_tableau():
-            return True
-        return False
+        return self.z_tableau() == self.y_tableau()
 
     def is_TSPP(self) -> bool:
         r"""
@@ -1110,17 +1100,14 @@ class PlanePartition(ClonableArray,
             [(0, 0, 0), (0, 0, 1), (0, 1, 0), (1, 0, 0), (2, 0, 0)]
         """
         from sage.combinat.posets.poset_examples import posets
-        (a, b, c) = (self._max_x, self._max_y, self._max_z)
-        Q = posets.ProductOfChains([a, b, c])
-        count = 0
+        abc = [self._max_x, self._max_y, self._max_z]
+        Q = posets.ProductOfChains(abc)
         generate = []
         for i, row in enumerate(self):
             for j, val in enumerate(row):
                 if val > 0:
-                    generate.append((i, j, val-1))
-            count += 1
-        oi = Q.order_ideal(generate)
-        return oi
+                    generate.append((i, j, val - 1))
+        return Q.order_ideal(generate)
 
     def maximal_boxes(self) -> list:
         r"""
@@ -1485,7 +1472,7 @@ class PlanePartitions_all(PlanePartitions, DisjointUnionEnumeratedSets):
     """
     def __init__(self):
         r"""
-        Initializes the class of all plane partitions.
+        Initialize the class of all plane partitions.
 
         .. WARNING::
 
@@ -1544,7 +1531,7 @@ class PlanePartitions_box(PlanePartitions):
     """
     def __init__(self, box_size):
         r"""
-        Initializes the class of plane partitions that fit in a box of a
+        Initialize the class of plane partitions that fit in a box of a
         specified size.
 
         EXAMPLES::
@@ -1638,7 +1625,7 @@ class PlanePartitions_box(PlanePartitions):
             pp_matrix[x][y] = z + 1
 
         # For each value in current antichain, fill in the rest of the matrix by
-        # rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partition format
+        # rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichain is now in plane partition format
         if A:
             for i in range(a):
                 i = a - (i + 1)
@@ -1740,7 +1727,7 @@ class PlanePartitions_n(PlanePartitions):
     """
     def __init__(self, n):
         r"""
-        Initializes the class of plane partitions with ``n`` boxes.
+        Initialize the class of plane partitions with ``n`` boxes.
 
         .. WARNING::
 
@@ -1851,7 +1838,6 @@ class PlanePartitions_n(PlanePartitions):
             sage: P = PlanePartitions(17)
             sage: P.cardinality()
             18334
-
         """
         PPn = [1]
         for i in range(1, 1+self._n):
@@ -2172,7 +2158,7 @@ class PlanePartitions_CSPP(PlanePartitions):
             pp_matrix[x][y] = (z+1)
 
         # For each value in current antichain, fill in the rest of the
-        # matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is
+        # matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichain is
         # now in plane partition format.
         if acl != []:
             for i in range(b):
@@ -2191,7 +2177,7 @@ class PlanePartitions_CSPP(PlanePartitions):
 
     def from_order_ideal(self, I) -> PP:
         r"""
-        Return the cylically symmetric plane partition corresponding
+        Return the cyclically symmetric plane partition corresponding
         to an order ideal in the poset given in :meth:`to_poset`.
 
         EXAMPLES::
@@ -2379,7 +2365,7 @@ class PlanePartitions_TSPP(PlanePartitions):
             pp_matrix[y][x] = z + 1  # z,y,x
 
         # for each value in current antichain, fill in the rest of the matrix by
-        # rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partition format
+        # rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichain is now in plane partition format
         if acl != []:
             for i in range(b):
                 i = b - (i + 1)
@@ -3177,7 +3163,7 @@ class PlanePartitions_TSSCPP(PlanePartitions):
         n = a
         N = n // 2
         pp_matrix = [[0] * (c) for i in range(b)]
-        # creates a matrix for the plane parition populated by 0s
+        # creates a matrix for the plane partition populated by 0s
         # EX: [[0,0,0], [0,0,0], [0,0,0]]
         width = N - 1
         height = N - 1

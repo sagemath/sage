@@ -1,4 +1,4 @@
-#!/usr/bin/env sage-python
+#!/usr/bin/env python3
 """
 Preparse .sage files and save the result to .sage.py files.
 
@@ -11,11 +11,11 @@ AUTHOR:
 """
 
 import os
-import sys
 import re
+import sys
 
-from sage.repl.preparse import preparse_file
 from sage.misc.temporary_file import atomic_write
+from sage.repl.preparse import preparse_file
 
 # The spkg/bin/sage script passes the files to be preparsed as
 # arguments (but remove sys.argv[0]).
@@ -74,7 +74,7 @@ def do_preparse(f, files_before=[]):
     - ``f`` -- string: the name of a file
     - ``files_before`` -- list of strings of previous filenames loaded (to avoid circular loops)
 
-    OUTPUT: None (writes a file with extension .sage.py to disk).
+    OUTPUT: none (writes a file with extension .sage.py to disk)
     """
     if f in files_so_far:
         return

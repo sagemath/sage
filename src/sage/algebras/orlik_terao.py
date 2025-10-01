@@ -186,7 +186,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         """
         return (-len(x), sorted(x))
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         r"""
         Return a string representation of the basis element indexed by ``m``.
 
@@ -199,7 +199,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         """
         return "OT{{{}}}".format(', '.join(str(t) for t in sorted(m)))
 
-    def _latex_term(self, m):
+    def _latex_term(self, m) -> str:
         r"""
         Return a string representation of the basis element indexed by ``m``.
 
@@ -219,7 +219,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         from sage.sets.set import Set
         return "e_{{{}}}".format(latex(Set(sorted(m))))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -242,7 +242,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
 
             sage: M = matroids.Wheel(3)
             sage: OT = M.orlik_terao_algebra(QQ)
-            sage: OT.one_basis() == frozenset([])
+            sage: OT.one_basis() == frozenset()
             True
         """
         return frozenset({})
@@ -292,7 +292,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         """
         return len(m)
 
-    ## Multiplication
+    # Multiplication
 
     def product_on_basis(self, a, b):
         r"""
@@ -359,7 +359,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``S`` -- a frozenset which is a subset of the groundset of `M`
+        - ``S`` -- frozenset which is a subset of the groundset of `M`
 
         EXAMPLES::
 
@@ -391,7 +391,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
             [[(1, 2), (1, 4), (2, 3), (3, 4)],
              [(3, 5), (3, 6), (5, 6)]]
             sage: OT = M.orlik_terao_algebra(QQ, ordering=s)
-            sage: OT.subset_image(frozenset([]))
+            sage: OT.subset_image(frozenset())
             OT{}
             sage: OT.subset_image(frozenset([(1,2),(3,4),(1,4),(2,3)]))
             0
@@ -419,7 +419,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
              [0, 3, 5], [1, 2, 4], [1, 2, 5], [1, 3, 4],
              [1, 3, 5], [2, 3], [4, 5]]
             sage: OT = M.orlik_terao_algebra()
-            sage: OT.subset_image(frozenset([]))
+            sage: OT.subset_image(frozenset())
             OT{}
             sage: OT.subset_image(frozenset([1, 2, 3]))
             0
@@ -438,7 +438,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
             sage: sorted([sorted(c) for c in M.circuits()])
             [[0, 1], [2, 3, 4]]
             sage: OT = M.orlik_terao_algebra(QQ)
-            sage: OT.subset_image(frozenset([]))
+            sage: OT.subset_image(frozenset())
             OT{}
             sage: OT.subset_image(frozenset([1, 3, 4]))
             -OT{0, 2, 3} + OT{0, 2, 4}
@@ -557,7 +557,7 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
     defines the action we want, but since the groundset is `\{0,1,2\}`
     we first add `1` and then subtract `1`::
 
-        sage: def on_groundset(g,x):
+        sage: def on_groundset(g, x):
         ....:     return g(x+1)-1
 
     Now that we have defined an action we can create the invariant, and
@@ -613,7 +613,6 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
         Finite family {0: B[0], 1: B[1]}
         sage: [OTG.lift(b) for b in OTG.basis()]
         [OT{}, OT{0} + OT{1} + OT{2} + OT{3} + OT{4} + OT{5}]
-
     """
     def __init__(self, R, M, G, action_on_groundset=None, *args, **kwargs):
         r"""
@@ -626,11 +625,10 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
             ....:             [0,0,-1,0,-1,-1]])
             sage: M = Matroid(A);
             sage: G = SymmetricGroup(6)
-            sage: def on_groundset(g,x): return g(x+1)-1
+            sage: def on_groundset(g, x): return g(x+1)-1
             sage: import __main__; __main__.on_groundset = on_groundset
             sage: OTG = M.orlik_terao_algebra(QQ, invariant = (G,on_groundset))
             sage: TestSuite(OTG).run()
-
         """
         ordering = kwargs.pop('ordering', None)
         OT = OrlikTeraoAlgebra(R, M, ordering)
@@ -689,13 +687,13 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
             sage: A = matrix([[1,1,0],[-1,0,1],[0,-1,-1]])
             sage: M = Matroid(A)
             sage: G = SymmetricGroup(3)
-            sage: def on_groundset(g,x):
+            sage: def on_groundset(g, x):
             ....:     return g(x+1)-1
             sage: OTG = M.orlik_terao_algebra(QQ, invariant=(G,on_groundset))
             sage: OTG.construction() is None
             True
         """
-        return None
+        return
 
     def _basis_action(self, g, f):
         r"""
@@ -720,7 +718,7 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
             sage: M.groundset()
             frozenset({0, 1, 2})
             sage: G = SymmetricGroup(3)
-            sage: def on_groundset(g,x):
+            sage: def on_groundset(g, x):
             ....:     return g(x+1)-1
             sage: OTG = M.orlik_terao_algebra(QQ, invariant=(G,on_groundset))
             sage: def act(g):

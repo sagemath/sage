@@ -48,7 +48,7 @@ register('sage', sage_inputhook)
 
 def install():
     """
-    Install the Sage input hook
+    Install the Sage input hook.
 
     EXAMPLES:
 
@@ -75,7 +75,7 @@ def install():
 
 def uninstall():
     """
-    Uninstall the Sage input hook
+    Uninstall the Sage input hook.
 
     EXAMPLES::
 

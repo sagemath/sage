@@ -86,7 +86,7 @@ def cocliques_HoffmannSingleton():
         if len(c1.intersection(c2)) == 8:
             edges.append((c1, c2))
 
-    G = Graph(edges, format="list_of_edges")
+    G = Graph(edges, format='list_of_edges')
     return G
 
 
@@ -488,34 +488,58 @@ def shortened_000_111_extended_binary_Golay_code_graph():
     EXAMPLES::
 
         sage: # long time, needs sage.modules sage.rings.finite_rings
-        sage: G = graphs.shortened_000_111_extended_binary_Golay_code_graph()   # 25 s
+        sage: G = graphs.shortened_000_111_extended_binary_Golay_code_graph()
         sage: G.is_distance_regular(True)
         ([21, 20, 16, 9, 2, 1, None], [None, 1, 2, 3, 16, 20, 21])
 
     ALGORITHM:
 
-    Compute the extended binary Golay code. Compute its subcode whose codewords
-    start with 000 or 111. Remove the first 3 entries from all the codewords
-    from the new linear code and compute its coset graph.
+    The vertices and edges of this graph have been precomputed and
+    pickled, so truthfully, we just unpickle them and pass them to the
+    Graph constructor. But the algorithm used to compute those
+    vertices and edges in the first place is,
+
+    #. Compute the extended binary Golay code.
+    #. Compute its subcode whose codewords start with 000 or 111.
+    #. Remove the first 3 entries from all the codewords from the
+       new linear code and compute its coset graph.
+
+    This construction is tested in ``generators_test.py``, where the
+    result is compared with the result from this method.
 
     REFERENCES:
 
-    Description and construction of this graph can be found in [BCN1989]_ p. 365.
+    The description and construction of this graph can be found in
+    [BCN1989]_, page 365.
     """
-    from sage.coding.linear_code import LinearCode
+    import lzma
+    from importlib.resources import as_file, files
+    from pickle import load
 
-    code = codes.GolayCode(GF(2))
-    C_basis = code.basis()
+    # Path to the pickled-and-xz'd list of (vertices, edges)
+    ppath = files('sage.graphs.generators').joinpath(
+      "shortened_000_111_extended_binary_Golay_code_graph.pickle.xz"
+    )
 
-    # now special shortening
-    v = C_basis[0] + C_basis[1] + C_basis[2]  # v has 111 at the start
-    C_basis = C_basis[3:]
-    C_basis.append(v)
-    C_basis = list(map(lambda x: x[3:], C_basis))
+    with as_file(ppath) as p:
+        with lzma.open(p) as f:
+            vs_and_es = load(f, fix_imports=False)
 
-    code = LinearCode(Matrix(GF(2), C_basis))
+    # Vertices/edges are pickled as tuples of ints, but should be
+    # vectors with entries in GF(2).
+    V = VectorSpace(GF(2), 21)
+    for i in range(2048):
+        # vertex i
+        vs_and_es[0][i] = V(vs_and_es[0][i])
+        vs_and_es[0][i].set_immutable()
+    for i in range(21504):
+        # edge i = (v1, v2, l)
+        vs_and_es[1][i][0] = V(vs_and_es[1][i][0]) # v1
+        vs_and_es[1][i][0].set_immutable()
+        vs_and_es[1][i][1] = V(vs_and_es[1][i][1]) # v2
+        vs_and_es[1][i][1].set_immutable()
 
-    G = code.cosetGraph()
+    G = Graph(vs_and_es, format='vertices_and_edges')
     G.name("Shortened 000 111 extended binary Golay code")
     return G
 
@@ -578,11 +602,11 @@ def LeonardGraph():
         if M[i, j] * M[i, l] * M[k, j] * M[k, l] == -1:
             edges.append(((i, j), (k, l)))
 
-    D = Graph(edges, format="list_of_edges")
+    D = Graph(edges, format='list_of_edges')
     blocks = [frozenset(cl) for cl in D.cliques_maximum()]
 
     edges = [(p, b) for b in blocks for p in b]
-    G = Graph(edges, format="list_of_edges")
+    G = Graph(edges, format='list_of_edges')
     return G
 
 
@@ -740,7 +764,7 @@ def AlternatingFormsGraph(const int n, const int q):
     matrices over `GF(q)` with zero diagonal. Two vertices are adjacent
     if and only if the difference of the two matrices has rank 2.
 
-    This grap is distance-regular with classical parameters
+    This graph is distance-regular with classical parameters
     `(\lfloor \frac n 2 \rfloor,  q^2, q^2 - 1, q^{2 \lceil \frac n 2 \rceil -1})`.
 
     INPUT:
@@ -853,7 +877,7 @@ def HermitianFormsGraph(const int n, const int r):
         sage: G.is_distance_regular(True)
         ([5, 4, None], [None, 1, 2])
         sage: G = graphs.HermitianFormsGraph(3, 3)      # not tested (2 min)
-        sage: G.order()                         # not tested (bacuase of the above)
+        sage: G.order()                         # not tested (because of the above)
         19683
 
     REFERENCES:
@@ -1129,7 +1153,7 @@ def DoubleGrassmannGraph(const int q, const int e):
     r"""
     Return the bipartite double of the distance-`e` graph of the Grassmann graph `J_q(n,e)`.
 
-    This graph can also be descirbed as follows:
+    This graph can also be described as follows:
     Let `V` be the vector space of dimension `n` over `GF(q)`.
     The vertex set is the set of `e+1` or `e` subspaces of `V`.
     Two vertices are adjacent if one subspace is contained in the other.
@@ -1301,7 +1325,7 @@ def graph_from_GQ_spread(const int s, const int t):
             sig_check()
             edges.append((p1, p2))
 
-    return Graph(edges, format="list_of_edges")
+    return Graph(edges, format='list_of_edges')
 
 
 def GeneralisedDodecagonGraph(const int s, const int t):
@@ -1423,14 +1447,14 @@ def GeneralisedOctagonGraph(const int s, const int t):
     EXAMPLES::
 
         sage: # needs sage.libs.gap
-        sage: G = graphs.GeneralisedOctagonGraph(1, 4)
-        sage: G.is_distance_regular(True)
+        sage: G = graphs.GeneralisedOctagonGraph(1, 4)          # optional - database_graphs
+        sage: G.is_distance_regular(True)                       # optional - database_graphs
         ([5, 4, 4, 4, None], [None, 1, 1, 1, 5])
         sage: G = graphs.GeneralisedOctagonGraph(2, 4)          # optional - gap_package_atlasrep internet
         sage: G.is_distance_regular(True)                       # optional - gap_package_atlasrep internet
         ([10, 8, 8, 8, None], [None, 1, 1, 1, 5])
-        sage: G = graphs.GeneralisedOctagonGraph(5, 1)
-        sage: G.is_distance_regular(True)
+        sage: G = graphs.GeneralisedOctagonGraph(5, 1)          # optional - database_graphs
+        sage: G.is_distance_regular(True)                       # optional - database_graphs
         ([10, 5, 5, 5, None], [None, 1, 1, 1, 2])
 
     .. NOTE::
@@ -1792,7 +1816,7 @@ def _line_graph_generalised_polygon(H):
             sig_check()
             edges.append((l1, l2))
 
-    return Graph(edges, format="list_of_edges")
+    return Graph(edges, format='list_of_edges')
 
 
 def _intersection_array_from_graph(G):
@@ -1806,7 +1830,7 @@ def _intersection_array_from_graph(G):
 
     INPUT:
 
-    - G -- a graph
+    - ``G`` -- a graph
 
     EXAMPLES::
 
@@ -1869,8 +1893,8 @@ def is_classical_parameters_graph(list array):
     graphs with classical parameters, then this function  returns a tuple
     consisting of the  parameters `(d, b, \alpha, \beta)` and a fourth parameter
     which is the enum ``CalssicalParametersGraph`` indicating the family with
-    the given itersection array.
-    If the array doesn't belong to any classical parameter graph, then this
+    the given intersection array.
+    If the array does not belong to any classical parameter graph, then this
     function returns ``False``.
     If the array belongs to a sporadic graph rather than a family of graphs,
     then the function returns ``False``. This is to reduce the overlap with
@@ -2539,10 +2563,10 @@ def near_polygon_graph(family, params):
 
     INPUT:
 
-    - ``family`` -- int; an element of the enum ``NearPolygonGraph``.
+    - ``family`` -- integer; an element of the enum ``NearPolygonGraph``
 
-    - ``params`` -- int or tuple; the parameters needed to construct a graph
-      of the family ``family``.
+    - ``params`` -- integer or tuple; the parameters needed to construct a graph
+      of the family ``family``
 
     EXAMPLES::
 
@@ -2707,7 +2731,7 @@ def distance_regular_graph(list arr, existence=False, check=True):
 
       - ``False`` -- if there is no graph with the given intersection array;
 
-      - ``Unknown`` -- if Sage doesn't know if such a graph exists.
+      - ``Unknown`` -- if Sage doesn't know if such a graph exists
 
     - ``check`` -- boolean (default: ``True``); if ``True``, then checks that the result
       of this function has the given intersection array
@@ -2741,7 +2765,7 @@ def distance_regular_graph(list arr, existence=False, check=True):
         Hamming Graph with parameters 7,3: Graph on 2187 vertices
         sage: graphs.distance_regular_graph([66, 45, 28, 1, 6, 30])
         Graph on 1024 vertices
-        sage: graphs.distance_regular_graph([6,5,5,5,1,1,1,6])
+        sage: graphs.distance_regular_graph([6,5,5,5,1,1,1,6])  # optional - database_graphs
         Generalised octagon of order (1, 5): Graph on 312 vertices
         sage: graphs.distance_regular_graph([64, 60, 1, 1, 15, 64], check=True)
         Graph on 325 vertices

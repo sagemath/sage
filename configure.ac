@@ -101,6 +101,23 @@ AC_SUBST([SAGE_DOCS], ['${SAGE_LOCAL}'])dnl Quoted so that it is resolved at bui
 
 #---------------------------------------------------------
 
+# Check for systems where Meson build is recommended
+AC_ARG_ENABLE([meson-check],
+  [AS_HELP_STRING([--disable-meson-check],
+    [do not fail the build if running on systems where Meson is preferred])],
+  [enable_meson_check=$enableval],
+  [enable_meson_check=yes])
+
+if test "$enable_meson_check" != no; then
+  AC_MSG_CHECKING([for Arch Linux])
+  if grep -qi 'arch' /etc/os-release 2>/dev/null || test -f /etc/arch-release; then
+    AC_MSG_RESULT([yes])
+    AC_MSG_ERROR([Building on Arch Linux using make is not recommended. Please use Meson as described at https://doc.sagemath.org/html/en/installation/meson.html. Use --disable-meson-check to override.])
+  else
+    AC_MSG_RESULT([no])
+  fi
+fi
+
 AC_ARG_ENABLE([build-as-root],
               [AS_HELP_STRING([--enable-build-as-root],
                               [allow building Sage as root (for use in containers)])],
@@ -203,6 +220,14 @@ then
     AC_MSG_ERROR([Exiting, as the archiver 'ar' can not be found.])
 fi
 
+AC_CHECK_PROG(found_patch, patch, yes, no)
+if test x$found_patch != xyes
+then
+    AC_MSG_NOTICE([Sorry, the 'patch' command must be in the path to build AC_PACKAGE_NAME])
+    AC_MSG_NOTICE([See e.g. https://www.gnu.org/software/patch/])
+    AC_MSG_ERROR([Exiting, as the utility 'patch' can not be found.])
+fi
+
 AC_CHECK_PROG(found_m4, m4, yes, no)
 if test x$found_m4 != xyes
 then
@@ -222,7 +247,11 @@ dnl Exit autoconf with exit code 16 in this case. This will be
 dnl caught by the bootstrap script.
 m4_exit(16)])
 
-PKG_PROG_PKG_CONFIG([0.29])
+PKG_PROG_PKG_CONFIG([0.29], [
+    AC_MSG_NOTICE([Sorry, the 'pkg-config' command version 0.29 or better must be in the path to build AC_PACKAGE_NAME])
+    AC_MSG_NOTICE([Please install 'pkg-config' (also known as 'pkgconf'), e.g. from http://pkgconf.org/.])
+    AC_MSG_ERROR([Exiting, as 'pkg-config' cannot be found.])
+])
 
 AC_CHECK_PROG(found_ranlib, ranlib, yes, no)
 if test x$found_ranlib != xyes
@@ -288,6 +317,36 @@ if test -z "$MAKE"; then
     AS_IF([test x$command_MAKE != x$ac_cv_path_MAKE],
           [AC_MSG_ERROR([[found GNU make in $ac_cv_path_MAKE, but it's not the first "make" program in your PATH]])])
 fi
+
+m4_pushdef([SAGE_PREREQ_URL],[See https://doc.sagemath.org/html/en/reference/spkg/_prereq.html])
+
+# Check for bzip2 and libbz2 
+   AC_CHECK_HEADER(bzlib.h, [
+      AC_SEARCH_LIBS([BZ2_bzCompress], [bz2], [
+        AC_PATH_PROG([bzip2_prog], [bzip2])
+        AS_IF([test x$bzip2_prog = x],
+              [AC_MSG_ERROR([could not find bzip2 executable. $SAGE_PREREQ_URL])])
+      ], [AC_MSG_ERROR([could not find libbz2 library. $SAGE_PREREQ_URL])])
+    ], [AC_MSG_ERROR([could not find bzlib.h - the header of libbz2 library. $SAGE_PREREQ_URL])
+   ])
+
+SAGE_DARWIN_PKG_CONFIG_PATH=
+# Check for zlib
+    PKG_CHECK_MODULES([zlib], [zlib >= 1.2.11], [], [
+      case $host in
+         *-*-darwin*)
+         SAGE_DARWIN_PKG_CONFIG_PATH=`pwd`"/build/platform/darwin/pkgconfig:"
+         ;;
+         *)
+         AC_MSG_ERROR([could not find pkg-config zlib.pc file. $SAGE_PREREQ_URL])
+         esac 
+    ]) 
+    AC_CHECK_LIB([z], [inflateEnd], [],
+         [AC_MSG_ERROR([could not find libz. $SAGE_PREREQ_URL])])
+    AC_CHECK_LIB([z], [inflateValidate], [],
+       [AC_MSG_ERROR([libz does not have inflateValidate. $SAGE_PREREQ_URL])])
+    AC_CHECK_HEADER([zlib.h], [],
+       [AC_MSG_ERROR([cannot find libz headers. $SAGE_PREREQ_URL])])
 
 # Check for system python
 AC_MSG_CHECKING([for Python])
@@ -431,7 +490,7 @@ AS_IF([test "x$enable_download_from_upstream_url" = "xyes"], [
 ])
 AC_SUBST([SAGE_SPKG_OPTIONS])
 
-AC_ARG_ENABLE([sagelib],
+AC_ARG_ENABLE([sage_conf],
   AS_HELP_STRING([--disable-sage_conf],
                  [disable build of the sage_conf package]), [
     for pkg in sage_conf; do
@@ -450,7 +509,7 @@ AC_ARG_ENABLE([cvxopt],
 AC_ARG_ENABLE([notebook],
   AS_HELP_STRING([--disable-notebook],
                  [disable build of the Jupyter notebook and related packages]), [
-    for pkg in notebook nbconvert beautifulsoup4 sagenb_export nbformat nbclient terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi argon2_cffi_bindings webencodings tinycss2 ipympl soupsieve fastjsonschema anyio arrow async_lru fqdn isoduration json5 jsonpointer jsonschema_specifications jupyter_events jupyter_lsp jupyter_server jupyter_server_terminals jupyterlab jupyterlab_server jupyterlab_pygments jupyterlab_mathjax2 notebook_shim overrides python_json_logger pyyaml referencing rfc3339_validator rfc3986_validator sniffio types_python_dateutil uri_template webcolors websocket_client; do
+    for pkg in notebook nbconvert beautifulsoup4 sagenb_export nbformat nbclient terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi argon2_cffi_bindings webencodings tinycss2 ipympl soupsieve fastjsonschema anyio arrow async_lru fqdn isoduration json5 jsonpointer jsonschema_specifications jupyter_events jupyter_lsp jupyter_server jupyter_server_terminals jupyterlab jupyterlab_server jupyterlab_pygments jupyterlab_mathjax2 jupyter_sphinx notebook_shim overrides python_json_logger pyyaml referencing rfc3339_validator rfc3986_validator sniffio types_python_dateutil uri_template webcolors websocket_client httpx httpcore h11; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])
@@ -461,6 +520,12 @@ AC_ARG_ENABLE([r],
     for pkg in r rpy2 r_jupyter tzlocal pytz_deprecation_shim tzdata; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
+  ])
+
+AC_ARG_ENABLE([sagetex],
+  AS_HELP_STRING([--disable-sagetex],
+                 [don't build SageTeX]), [
+    AS_VAR_SET([SAGE_ENABLE_sagetex], [$enableval])
   ])
 
 AC_ARG_ENABLE([doc],
@@ -511,6 +576,8 @@ AS_VAR_SET([sage_use_system_gcc], [force])
 
 SAGE_SPKG_COLLECT()
 
+AC_SUBST(SAGE_PKG_CONFIG_PATH, [$SAGE_DARWIN_PKG_CONFIG_PATH'$SAGE_LOCAL/lib/pkgconfig'])
+
 AC_CONFIG_FILES([build/make/Makefile-auto build/make/Makefile])
 AC_CONFIG_FILES([src/bin/sage-env-config src/bin/sage-src-env-config build/bin/sage-build-env-config])
 
@@ -537,6 +604,19 @@ AC_CONFIG_COMMANDS(mkdirs,
             AC_MSG_NOTICE([[creating symbolic link lib64 -> lib]])
             ln -s lib "$SAGE_LOCAL/lib64"
         fi
+        dnl Check that the file system is sufficiently functional
+        if test -z "$SAGE_BUILD_DIR"; then
+            SAGE_BUILD_DIR="$SAGE_LOCAL/var/tmp/sage/build"
+        fi
+        AC_MSG_NOTICE([creating directory $SAGE_BUILD_DIR])
+        mkdir -p "$SAGE_BUILD_DIR" || AC_MSG_ERROR([error creating directory $SAGE_BUILD_DIR (SAGE_BUILD_DIR)])
+        rm -f "$SAGE_BUILD_DIR"/conftest
+        touch "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([error creating a file in $SAGE_BUILD_DIR])
+        chmod +x "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([error setting file permissions +x in $SAGE_BUILD_DIR])
+        test -x "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([file permissions +x did not persist in $SAGE_BUILD_DIR])
+        chmod -x "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([error setting file permissions -x in $SAGE_BUILD_DIR])
+        test -x "$SAGE_BUILD_DIR"/conftest && AC_MSG_ERROR([file permissions -x did not persist in $SAGE_BUILD_DIR])
+        rm -f "$SAGE_BUILD_DIR"/conftest
     ],
     [
         SAGE_LOGS="$SAGE_ROOT/logs/pkgs"

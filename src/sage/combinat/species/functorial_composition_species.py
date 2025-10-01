@@ -26,11 +26,14 @@ class FunctorialCompositionStructure(GenericSpeciesStructure):
 class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
     def __init__(self, F, G, min=None, max=None, weight=None):
         """
-        Returns the functorial composition of two species.
+        Return the functorial composition of two species.
 
         EXAMPLES::
 
             sage: E = species.SetSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
             sage: E2 = species.SetSpecies(size=2)
             sage: WP = species.SubsetSpecies()
             sage: P2 = E2*E
@@ -124,7 +127,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
 
     def weight_ring(self):
         """
-        Returns the weight ring for this species. This is determined by
+        Return the weight ring for this species. This is determined by
         asking Sage's coercion model what the result is when you multiply
         (and add) elements of the weight rings for each of the operands.
 

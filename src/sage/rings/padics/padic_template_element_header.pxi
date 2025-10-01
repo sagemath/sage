@@ -1,6 +1,6 @@
 """
 This file provides the declaration for the pAdicTemplateElement class,
-which collects common functionality for the different p-adic template
+which collects common functionality for the different `p`-adic template
 classes.
 
 It is included in CR_template_header.pxi, CA_template_header.pxi and
@@ -19,7 +19,7 @@ AUTHORS:
 - David Roe (2012-03-01) -- initial version
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2012 David Roe <roed.math@gmail.com>
 #                          William Stein <wstein@gmail.com>
 #
@@ -27,8 +27,8 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.structure.element cimport ModuleElement, RingElement
 from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
@@ -43,7 +43,6 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
     cdef int _get_unit(self, celement value) except -1
     cdef pAdicTemplateElement _lshift_c(self, long shift)
     cdef pAdicTemplateElement _rshift_c(self, long shift)
-    #cpdef RingElement _floordiv_c_impl(self, RingElement right)
     cdef int check_preccap(self) except -1
     cdef pAdicTemplateElement lift_to_precision_c(self, long absprec)
     cpdef pAdicTemplateElement unit_part(self)

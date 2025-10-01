@@ -238,7 +238,7 @@ class JacobianGroupFunctor(ConstructionFunctor):
 
     def merge(self, other):
         """
-        Return the functor merging ``self`` and ``other``
+        Return the functor merging ``self`` and ``other``.
 
         INPUT:
 
@@ -540,7 +540,7 @@ class JacobianGroup_finite_field_base(JacobianGroup_base):
 
         return sum(bs)
 
-    def get_points(self, n):
+    def get_points(self, n) -> list:
         """
         Return `n` points of the Jacobian group.
 
@@ -549,7 +549,7 @@ class JacobianGroup_finite_field_base(JacobianGroup_base):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -633,7 +633,7 @@ class Jacobian_base(Parent):
 
     def __call__(self, x):
         """
-        Return the point of ``self`` constructed from ``x``
+        Return the point of ``self`` constructed from ``x``.
 
         It is assumed that ``self`` and ``x`` are points of the Jacobians
         attached to the same function field.
@@ -651,6 +651,26 @@ class Jacobian_base(Parent):
             True
             sage: J_hess(q) == p
             True
+
+        If ``x`` is an effective divisor, it is checked that the degree
+        is equal to the degree of the base divisor. See :issue:`38623`.
+
+            sage: K.<x> = FunctionField(GF(7))
+            sage: _.<t> = K[]
+            sage: F.<y> = K.extension(t^2 - x^6 - 3)
+            sage: O = F.maximal_order()
+            sage: D1 = (O.ideal(x + 1, y + 2) * O.ideal(x + 2, y + 2)).divisor()
+            sage: I = O.ideal(x + 3, y+5) * O.ideal(x + 4, y + 5) * O.ideal(x + 5, y + 5)
+            sage: D2 = I.divisor()
+            sage: J = F.jacobian(model='hess')
+            sage: J(D1)
+            [Place (x + 1, y + 2) + Place (x + 2, y + 2)]
+            sage: J(D2)
+            Traceback (most recent call last):
+            ...
+            ValueError: effective divisor is not of degree 2
+            sage: J.base_divisor().degree()
+            2
         """
         F = self._function_field
         if isinstance(x, JacobianPoint_base):
@@ -666,9 +686,8 @@ class Jacobian_base(Parent):
         if x == 0:
             return self.group().zero()
         if x in F.divisor_group():
-            G = self.group()
-            return G.point(x)
-        raise ValueError(f"Cannot create a point of the Jacobian from {x}")
+            return self.group()(x)
+        raise ValueError(f"cannot create a point of the Jacobian from {x}")
 
     def curve(self):
         """
@@ -718,7 +737,7 @@ class Jacobian_base(Parent):
         """
         if not self._system:
             return [self.group()]
-        return list(self.group(k) for k in self._system)
+        return [self.group(k) for k in self._system]
 
     def base_divisor(self):
         """
@@ -776,7 +795,7 @@ class Jacobian_base(Parent):
 
         INPUT:
 
-        - ``place`` -- a rational place of the function field.
+        - ``place`` -- a rational place of the function field
 
         The base place `B` is used to map a rational place `P` of the function
         field to the point of the Jacobian defined by the divisor `P - B`.

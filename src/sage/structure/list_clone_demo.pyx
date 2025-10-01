@@ -6,18 +6,19 @@ This module demonstrate the usage of the various classes defined in
 :mod:`~sage.structure.list_clone`
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2011 Florent Hivert <Florent.Hivert@univ-rouen.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.categories.sets_cat import Sets
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.list_clone cimport (
-    ClonableArray, ClonableList, NormalizedClonableList, ClonableIntArray )
+    ClonableArray, ClonableList, NormalizedClonableList, ClonableIntArray)
 from sage.structure.parent import Parent
+
 
 cdef class IncreasingArray(ClonableArray):
     """
@@ -116,7 +117,7 @@ cdef class IncreasingList(ClonableList):
 
     cpdef check(self):
         """
-        Check that ``self`` is increasing
+        Check that ``self`` is increasing.
 
         EXAMPLES::
 
@@ -195,7 +196,7 @@ cdef class SortedList(NormalizedClonableList):
     """
     cpdef normalize(self):
         """
-        Normalize ``self``
+        Normalize ``self``.
 
         Sort the list stored in ``self``.
 
@@ -215,7 +216,7 @@ cdef class SortedList(NormalizedClonableList):
 
     cpdef check(self):
         """
-        Check that ``self`` is strictly increasing
+        Check that ``self`` is strictly increasing.
 
         EXAMPLES::
 

@@ -45,6 +45,7 @@ BPF = 53        # Number of bits in a float
 
 import _random
 
+
 class Random(_random.Random):
     """Random number generator base class used by bound module functions.
 
@@ -59,7 +60,6 @@ class Random(_random.Random):
     methods: random(), seed(), getstate(), setstate() and jumpahead().
     Optionally, implement a getrandbits() method so that randrange() can cover
     arbitrarily large ranges.
-
     """
 
     VERSION = 3     # used by getstate/setstate
@@ -155,7 +155,6 @@ class Random(_random.Random):
 
         This fixes the problem with randint() which includes the
         endpoint; in Python this is usually not what you want.
-
         """
 
         # This code is a bit messy to make it fast for the
@@ -257,7 +256,6 @@ class Random(_random.Random):
 
         Optional arg random is a 0-argument function returning a random
         float in [0.0, 1.0); by default, the standard random.random.
-
         """
 
         if random is None:
@@ -347,7 +345,6 @@ class Random(_random.Random):
         and having a given mode value in-between.
 
         http://en.wikipedia.org/wiki/Triangular_distribution
-
         """
         u = self.random()
         try:
@@ -366,7 +363,6 @@ class Random(_random.Random):
         """Normal distribution.
 
         mu is the mean, and sigma is the standard deviation.
-
         """
         # mu = mean, sigma = standard deviation
 
@@ -393,7 +389,6 @@ class Random(_random.Random):
         If you take the natural logarithm of this distribution, you'll get a
         normal distribution with mean mu and standard deviation sigma.
         mu can have any value, and sigma must be greater than zero.
-
         """
         return _exp(self.normalvariate(mu, sigma))
 
@@ -407,7 +402,6 @@ class Random(_random.Random):
         a reserved word in Python.)  Returned values range from 0 to
         positive infinity if lambd is positive, and from negative
         infinity to 0 if lambd is negative.
-
         """
         # lambd: rate lambd = 1/mean
         # ('lambda' is a Python reserved word)
@@ -425,7 +419,6 @@ class Random(_random.Random):
         kappa is the concentration parameter, which must be greater than or
         equal to zero.  If kappa is equal to zero, this distribution reduces
         to a uniform random angle over the range 0 to 2*pi.
-
         """
         # mu:    mean angle (in radians between 0 and 2*pi)
         # kappa: concentration parameter kappa (>= 0)
@@ -476,7 +469,6 @@ class Random(_random.Random):
                     x ** (alpha - 1) * math.exp(-x / beta)
           pdf(x) =  --------------------------------------
                       math.gamma(alpha) * beta ** alpha
-
         """
 
         # alpha > 0, beta > 0, mean is alpha*beta, variance is alpha*beta**2
@@ -545,7 +537,6 @@ class Random(_random.Random):
         slightly faster than the normalvariate() function.
 
         Not thread-safe without a lock around calls.
-
         """
 
         # When x and y are two variables from [0, 1), uniformly
@@ -596,7 +587,6 @@ class Random(_random.Random):
 
         Conditions on the parameters are alpha > 0 and beta > 0.
         Returned values range between 0 and 1.
-
         """
 
         # This version due to Janne Sinkkonen, and matches all the std
@@ -622,7 +612,6 @@ class Random(_random.Random):
         """Weibull distribution.
 
         alpha is the scale parameter and beta is the shape parameter.
-
         """
         # Jain, pg. 499; bug fix courtesy Bill Arms
 

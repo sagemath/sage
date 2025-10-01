@@ -128,6 +128,23 @@ Of course, multiplication remains noncommutative::
     sage: g^(-1) * f
     (d - 1/t)^(-1) * (d + (t^2 - 1)/t)
 
+TESTS:
+
+The Ore function field is commutative if the twisting morphism is the
+identity and the twisting derivation vanishes. ::
+
+    sage: # needs sage.rings.finite_rings
+    sage: k.<a> = GF(5^3)
+    sage: Frob = k.frobenius_endomorphism()
+    sage: S.<x> = k['x', Frob]
+    sage: K = S.fraction_field()
+    sage: K.is_commutative()
+    False
+    sage: T.<y> = k['y', Frob^3]
+    sage: L = T.fraction_field()
+    sage: L.is_commutative()
+    True
+
 AUTHOR:
 
 - Xavier Caruso (2020-05)
@@ -144,21 +161,21 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-import sage
-
-from sage.structure.richcmp import op_EQ
-from sage.structure.category_object import normalize_names
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
 from sage.categories.algebras import Algebras
+from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
-
-from sage.rings.morphism import RingHomomorphism
 from sage.categories.homset import Hom
 from sage.categories.map import Section
-
+from sage.rings.morphism import RingHomomorphism
+from sage.rings.polynomial.ore_function_element import (
+    OreFunction_with_large_center,
+    OreFunctionBaseringInjection,
+)
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
-from sage.rings.polynomial.ore_function_element import OreFunctionBaseringInjection
+from sage.structure.category_object import normalize_names
+from sage.structure.parent import Parent
+from sage.structure.richcmp import op_EQ
+from sage.structure.unique_representation import UniqueRepresentation
 
 WORKING_CENTER_MAX_TRIES = 1000
 
@@ -200,7 +217,10 @@ class OreFunctionField(Parent, UniqueRepresentation):
             self._simplification = False
         self._ring = ring
         base = ring.base_ring()
-        category = Algebras(base).or_subcategory(category)
+        if ring in CommutativeRings():
+            category = Algebras(base).Commutative().or_subcategory(category)
+        else:
+            category = Algebras(base).or_subcategory(category)
         Parent.__init__(self, base=base, names=ring.variable_name(),
                         normalize=True, category=category)
 
@@ -279,16 +299,16 @@ class OreFunctionField(Parent, UniqueRepresentation):
             sage: T.<d> = OrePolynomialRing(R, der)
             sage: T.fraction_field()                                                    # needs sage.rings.function_field
             Ore Function Field in d over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+
+        TESTS::
+
+            sage: k = GF(7)
+            sage: S.<x> = SkewPolynomialRing(k, polcast=False)
+            sage: S.fraction_field()
+            Ore Function Field in x over Finite Field of size 7 untwisted
         """
-        s = "Ore Function Field in %s over %s twisted by " % (self.variable_name(), self.base_ring())
-        morphism = self.twisting_morphism()
-        derivation = self.twisting_derivation()
-        if derivation is None:
-            s += morphism._repr_short()
-        else:
-            if morphism is not None:
-                s += "%s and " % morphism._repr_short()
-            s += derivation._repr_()
+        s = "Ore Function Field in %s over %s " % (self.variable_name(), self.base_ring())
+        s += self._ring._repr_twist()
         return s
 
     def _latex_(self):
@@ -311,15 +331,20 @@ class OreFunctionField(Parent, UniqueRepresentation):
             sage: L = T.fraction_field()
             sage: latex(L)  # indirect doctest
             \mathrm{Frac}(\Bold{Q}[t])\left(\delta ; \frac{d}{dt} \right)
+
+        TESTS::
+
+            sage: k = GF(7)
+            sage: S.<x> = SkewPolynomialRing(k, polcast=False)
+            sage: K = S.fraction_field()
+            sage: latex(K)  # indirect doctest
+            \Bold{F}_{7}\left(x\right)
         """
         from sage.misc.latex import latex
         s = "%s\\left(%s" % (latex(self.base_ring()), self.latex_variable_names()[0])
-        sep = ";"
-        if self.twisting_morphism() is not None:
-            s += sep + latex(self.twisting_morphism())
-            sep = ","
-        if self.twisting_derivation() is not None:
-            s += sep + latex(self.twisting_derivation())
+        twist = self._ring._latex_twist()
+        if twist != "":
+            s += ";" + twist
         return s + "\\right)"
 
     def change_var(self, var):
@@ -329,7 +354,7 @@ class OreFunctionField(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``var`` -- a string representing the name of the new variable.
+        - ``var`` -- string representing the name of the new variable
 
         EXAMPLES::
 
@@ -375,7 +400,7 @@ class OreFunctionField(Parent, UniqueRepresentation):
 
         INPUT:
 
-        -  ``n`` -- an integer (default: 1)
+        - ``n`` -- integer (default: 1)
 
         EXAMPLES::
 
@@ -438,8 +463,8 @@ class OreFunctionField(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``n`` -- index of generator to return (default: 0). Exists for
-          compatibility with other polynomial rings.
+        - ``n`` -- index of generator to return (default: 0); exists for
+          compatibility with other polynomial rings
 
         EXAMPLES::
 
@@ -579,7 +604,7 @@ class OreFunctionField(Parent, UniqueRepresentation):
         - ``degree`` -- (default: 2) an integer or a list of
           two integers; the degrees of the denominator and numerator
 
-        - ``monic`` -- (default: ``False``) if ``True``, return a monic
+        - ``monic`` -- boolean (default: ``False``); if ``True``, return a monic
           Ore function with monic numerator and denominator
 
         - ``*args``, ``**kwds`` -- passed in to the :meth:`random_element`
@@ -613,27 +638,6 @@ class OreFunctionField(Parent, UniqueRepresentation):
         numerator = self._ring.random_element(degnum, monic, *args, **kwds)
         denominator = self._ring.random_element(degdenom, True, *args, **kwds)
         return self(numerator, denominator)
-
-    def is_commutative(self) -> bool:
-        r"""
-        Return ``True`` if this Ore function field is commutative, i.e. if the
-        twisting morphism is the identity and the twisting derivation vanishes.
-
-        EXAMPLES::
-
-            sage: # needs sage.rings.finite_rings
-            sage: k.<a> = GF(5^3)
-            sage: Frob = k.frobenius_endomorphism()
-            sage: S.<x> = k['x', Frob]
-            sage: K = S.fraction_field()
-            sage: K.is_commutative()
-            False
-            sage: T.<y> = k['y', Frob^3]
-            sage: L = T.fraction_field()
-            sage: L.is_commutative()
-            True
-        """
-        return self._ring.is_commutative()
 
     def is_field(self, proof=False) -> bool:
         r"""
@@ -892,7 +896,7 @@ class OreFunctionField_with_large_center(OreFunctionField):
             sage: TestSuite(K).run()
         """
         if self.Element is None:
-            self.Element = sage.rings.polynomial.ore_function_element.OreFunction_with_large_center
+            self.Element = OreFunction_with_large_center
         OreFunctionField.__init__(self, ring, category)
         self._center = {}
         self._center_variable_name = 'z'
@@ -917,10 +921,10 @@ class OreFunctionField_with_large_center(OreFunctionField):
 
         INPUT:
 
-        - ``name`` -- a string or ``None`` (default: ``None``);
+        - ``name`` -- string or ``None`` (default: ``None``);
           the name for the central variable
 
-        - ``default`` -- a boolean (default: ``False``); if ``True``,
+        - ``default`` -- boolean (default: ``False``); if ``True``,
           set the default variable name for the center to ``name``
 
         EXAMPLES::

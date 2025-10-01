@@ -48,23 +48,30 @@ and library interfaces to Maxima.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from itertools import islice
+import operator
 import os
 import re
-import sys
 import subprocess
-
-from sage.env import DOT_SAGE, MAXIMA
-COMMANDS_CACHE = '%s/maxima_commandlist_cache.sobj' % DOT_SAGE
+import sys
 
 from sage.cpython.string import bytes_to_str
-
-from sage.misc.multireplace import multiple_replace
-from sage.structure.richcmp import richcmp, rich_to_bool
-
-from .interface import (Interface, InterfaceElement, InterfaceFunctionElement,
-                        InterfaceFunction, AsciiArtString)
+from sage.env import DOT_SAGE, MAXIMA
 from sage.interfaces.tab_completion import ExtraTabCompletion
+from sage.misc.cachefunc import cached_method
 from sage.misc.instancedoc import instancedoc
+from sage.misc.multireplace import multiple_replace
+from sage.structure.richcmp import rich_to_bool, richcmp
+
+from .interface import (
+    AsciiArtString,
+    Interface,
+    InterfaceElement,
+    InterfaceFunction,
+    InterfaceFunctionElement,
+)
+COMMANDS_CACHE = '%s/maxima_commandlist_cache.sobj' % DOT_SAGE
+
 
 # The Maxima "apropos" command, e.g., apropos(det) gives a list
 # of all identifiers that begin in a certain way.  This could
@@ -114,7 +121,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         Interface.__init__(self, name)
 
     ###########################################
-    # System -- change directory, etc
+    # System -- change directory, etc.
     ###########################################
     def chdir(self, dir):
         r"""
@@ -189,9 +196,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         - ``s`` -- string
 
-        OUTPUT:
-
-        Maxima's help for ``s``
+        OUTPUT: Maxima's help for ``s``
 
         EXAMPLES::
 
@@ -211,9 +216,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         - ``s`` -- string
 
-        OUTPUT:
-
-        Maxima's examples for ``s``
+        OUTPUT: Maxima's examples for ``s``
 
         EXAMPLES::
 
@@ -295,36 +298,63 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         cmd_list = [x for x in cmd_list[1:-1].split(',') if x[0] != '?' and not x.endswith('-impl')]
         return [x for x in cmd_list if x.find(s) == 0]
 
-    def _commands(self, verbose=True):
+    @cached_method
+    def _commands(self):
         """
         Return list of all commands defined in Maxima.
 
-        INPUT:
+        OUTPUT:
 
-        - ``verbose`` -- boolean (default: ``True``)
+        A list of strings.
 
-        OUTPUT: array of strings
+        EXAMPLES:
 
-        EXAMPLES::
+        The list changes from time to time (with new versions of
+        Maxima), so we look only for a few reliable commands::
 
-            # The output is kind of random
-            sage: sorted(maxima._commands(verbose=False))
-            [...
-             'display',
-             ...
-             'gcd',
-             ...
-             'verbose',
-             ...]
+            sage: # long time
+            sage: cs = maxima_calculus._commands()
+            sage: "display" in cs
+            True
+            sage: "gcd" in cs
+            True
+            sage: "verbose" in cs
+            True
+
         """
-        try:
-            return self.__commands
-        except AttributeError:
-            self.__commands = sum(
-                [self.completions(chr(65+n), verbose=verbose) +
-                 self.completions(chr(97+n), verbose=verbose)
-                 for n in range(26)], [])
-        return self.__commands
+        # Passing the empty string to apropos() gets ALL names.
+        all_names = self._eval_line('apropos("")',
+                                    error_check=False).split(",")
+
+        # At the time of writing, searching a string for a specific
+        # character was much much faster than searching a list/tuple.
+        a_to_Z = "".join(chr(i+j)
+                         for i in range(ord('A'),ord('Z')+1)
+                         for j in (0, 32))  # 'a' = 'A' + 32
+
+        # Whack-a-mole to kill junk entries:
+        #
+        #  * 'erf_%iargs',
+        #  * 'exp\\-form'
+        #  * 'is\\-boole\\-eval'
+        #  * 'is\\-boole\\-verify'
+        #  * 'maybe\\-boole\\-verify'
+        #  * 'time\\/\\/call'
+        #  * 'unknown\\?'
+        #  * 'SPLITS\\ IN\\ Q'
+        #
+        # None of these are documented, and the backslash / question
+        # mark / percent symbol probably aren't going to do what you
+        # think they're going to do if you type them in an ipython
+        # shell. We have to trim spaces too because some names show up
+        # with random leading spaces: ' tminverse', ' toeplitz', etc.
+        #
+        bad_chars = ("\\", "/", "?", "%")
+        return [c
+                for n in all_names
+                if (c := n.strip())
+                and c[0] in a_to_Z
+                and not any(bad in c for bad in bad_chars)]
 
     def _tab_completion(self, verbose=True, use_disk_cache=True):
         r"""
@@ -361,7 +391,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
                 print("\nBuilding Maxima command completion list (this takes")
                 print("a few seconds only the first time you do it).")
                 print("To force rebuild later, delete %s." % COMMANDS_CACHE)
-            v = self._commands(verbose=verbose)
+            v = self._commands()
             if verbose:
                 print("\nDone!")
             self.__tab_completion = v
@@ -373,8 +403,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         Start the interactive Maxima console. This is a completely separate
         maxima session from this interface. To interact with this session,
         you should instead use ``maxima.interact()``.
-
-        INPUT: none
 
         OUTPUT: none
 
@@ -402,12 +430,12 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
     def cputime(self, t=None):
         r"""
-        Returns the amount of CPU time that this Maxima session has used.
+        Return the amount of CPU time that this Maxima session has used.
 
         INPUT:
 
-        - ``t`` -- float (default: None); If \var{t} is not None, then
-          it returns the difference between the current CPU time and \var{t}.
+        - ``t`` -- float (default: ``None``); if \var{t} is not None, then
+          it returns the difference between the current CPU time and \var{t}
 
         OUTPUT: float
 
@@ -427,8 +455,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         r"""
         Return the version of Maxima that Sage includes.
 
-        INPUT: none
-
         OUTPUT: none
 
         EXAMPLES::
@@ -445,8 +471,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
     def _assign_symbol(self):
         r"""
         Return the assign symbol in Maxima.
-
-        INPUT: none
 
         OUTPUT: string
 
@@ -465,8 +489,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         Return the true symbol in Maxima.
 
-        INPUT: none
-
         OUTPUT: string
 
         EXAMPLES::
@@ -482,8 +504,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         Return the false symbol in Maxima.
 
-        INPUT: none
-
         OUTPUT: string
 
         EXAMPLES::
@@ -497,9 +517,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
     def _equality_symbol(self):
         """
-        Returns the equality symbol in Maxima.
-
-        INPUT: none
+        Return the equality symbol in Maxima.
 
         OUTPUT: string
 
@@ -516,9 +534,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
     def _inequality_symbol(self):
         """
-        Returns the inequality symbol in Maxima.
-
-        INPUT: none
+        Return the inequality symbol in Maxima.
 
         OUTPUT: string
 
@@ -535,8 +551,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         Return the Python class of Maxima functions.
 
-        INPUT: none
-
         OUTPUT: type
 
         EXAMPLES::
@@ -549,8 +563,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
     def _object_class(self):
         """
         Return the Python class of Maxima elements.
-
-        INPUT: none
 
         OUTPUT: type
 
@@ -565,8 +577,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         Return the Python class of Maxima functions of elements.
 
-        INPUT: none
-
         OUTPUT: type
 
         EXAMPLES::
@@ -579,8 +589,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
     def _object_function_class(self):
         """
         Return the Python class of Maxima user-defined functions.
-
-        INPUT: none
 
         OUTPUT: type
 
@@ -601,14 +609,14 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``args`` -- a string with variable names separated by
-           commas
+        - ``args`` -- string with variable names separated by
+          commas
 
-        - ``defn`` -- a string (or Maxima expression) that
-           defines a function of the arguments in Maxima.
+        - ``defn`` -- string (or Maxima expression) that
+          defines a function of the arguments in Maxima
 
         - ``rep`` -- an optional string; if given, this is how
-           the function will print.
+          the function will print
 
         OUTPUT: Maxima function
 
@@ -669,7 +677,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
 #         INPUT:
 
-#         flag -- bool (default: ``True``)
+#         flag -- boolean (default: ``True``)
 
 #         EXAMPLES::
 
@@ -692,11 +700,11 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``f`` -- a string representing a function (such as
-           f="sin(x)") [var, xmin, xmax]
+        - ``f`` -- string representing a function (such as
+          f="sin(x)") [var, xmin, xmax]
 
         - ``options`` -- an optional string representing plot2d
-           options in gnuplot format
+          options in gnuplot format
 
         EXAMPLES::
 
@@ -715,18 +723,18 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``r`` -- a string representing a function (such as
-           r="[x(t),y(t)]")
+        - ``r`` -- string representing a function (such as
+          r="[x(t),y(t)]")
 
-        - ``var`` -- a string representing the variable (such
-           as var = "t")
+        - ``var`` -- string representing the variable (such
+          as var = "t")
 
         - ``trange`` -- [tmin, tmax] are numbers with tmintmax
 
-        - ``nticks`` -- int (default: 50)
+        - ``nticks`` -- integer (default: 50)
 
         - ``options`` -- an optional string representing plot2d
-           options in gnuplot format
+          options in gnuplot format
 
         EXAMPLES::
 
@@ -762,8 +770,8 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``f`` -- a string representing a function (such as
-           f="sin(x)") [var, min, max]
+        - ``f`` -- string representing a function (such as
+          f="sin(x)") [var, min, max]
 
         - ``args`` should be of the form '[x, xmin, xmax]', '[y, ymin, ymax]',
           '[grid, nx, ny]', options
@@ -787,17 +795,17 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``x``, ``y``, ``z`` -- a string representing a function (such
-           as ``x="u2+v2"``, ...) vars is a list or two strings
-           representing variables (such as vars = ["u","v"])
+        - ``x``, ``y``, ``z`` -- string representing a function (such
+          as ``x="u2+v2"``, ...) vars is a list or two strings
+          representing variables (such as vars = ["u","v"])
 
         - ``urange`` -- [umin, umax]
 
         - ``vrange`` -- [vmin, vmax] are lists of numbers with
-           umin umax, vmin vmax
+          umin umax, vmin vmax
 
-        - ``options`` -- optional string representing plot2d
-           options in gnuplot format
+        - ``options`` -- (optional) string representing plot2d
+          options in gnuplot format
 
         OUTPUT: displays a plot on screen or saves to a file
 
@@ -835,18 +843,18 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
     def de_solve(self, de, vars, ics=None):
         """
-        Solves a 1st or 2nd order ordinary differential equation (ODE) in
+        Solve a 1st or 2nd order ordinary differential equation (ODE) in
         two variables, possibly with initial conditions.
 
         INPUT:
 
-        -  ``de`` -- a string representing the ODE
+        - ``de`` -- string representing the ODE
 
-        - ``vars`` -- a list of strings representing the two
-           variables.
+        - ``vars`` -- list of strings representing the two
+          variables
 
         - ``ics`` -- a triple of numbers [a,b1,b2] representing
-           y(a)=b1, y'(a)=b2
+          y(a)=b1, y'(a)=b2
 
         EXAMPLES::
 
@@ -877,20 +885,20 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
     def de_solve_laplace(self, de, vars, ics=None):
         """
-        Solves an ordinary differential equation (ODE) using Laplace
+        Solve an ordinary differential equation (ODE) using Laplace
         transforms.
 
         INPUT:
 
-        - ``de`` -- a string representing the ODE (e.g., de =
-           "diff(f(x),x,2)=diff(f(x),x)+sin(x)")
+        - ``de`` -- string representing the ODE (e.g., de =
+          "diff(f(x),x,2)=diff(f(x),x)+sin(x)")
 
-        - ``vars`` -- a list of strings representing the
-           variables (e.g., vars = ["x","f"])
+        - ``vars`` -- list of strings representing the
+          variables (e.g., ``vars = ["x","f"]``)
 
-        - ``ics`` -- a list of numbers representing initial
-           conditions, with symbols allowed which are represented by strings
-           (eg, f(0)=1, f'(0)=2 is ics = [0,1,2])
+        - ``ics`` -- list of numbers representing initial
+          conditions, with symbols allowed which are represented by strings
+          (eg, f(0)=1, f'(0)=2 is ics = [0,1,2])
 
         EXAMPLES::
 
@@ -911,7 +919,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
                                       dx       !
                                                !x = 0
 
-        .. note::
+        .. NOTE::
 
            The second equation sets the values of `f(0)` and
            `f'(0)` in Maxima, so subsequent ODEs involving these
@@ -932,10 +940,10 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``eqns`` -- a list of m strings; each representing a linear
+        - ``eqns`` -- list of m strings; each representing a linear
           question in m = n variables
 
-        - ``vars`` -- a list of n strings; each
+        - ``vars`` -- list of n strings; each
           representing a variable
 
         EXAMPLES::
@@ -966,7 +974,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -1002,18 +1010,18 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         INPUT:
 
         - ``ptsx`` -- [x1,...,xn], where the xi and yi are
-           real,
+          real,
 
         - ``ptsy`` -- [y1,...,yn]
 
-        - ``options`` -- a string representing maxima plot2d
-           options.
+        - ``options`` -- string representing maxima plot2d
+          options
 
         The points are (x1,y1), (x2,y2), etc.
 
         This function requires maxima 5.9.2 or newer.
 
-        .. note::
+        .. NOTE::
 
            More that 150 points can sometimes lead to the program
            hanging. Why?
@@ -1051,7 +1059,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         Requires maxima 5.9.2 at least.
 
-        .. note::
+        .. NOTE::
 
            More that 150 points can sometimes lead to the program
            hanging.
@@ -1113,8 +1121,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         Printing an object explicitly gives ASCII art.
 
-        INPUT: none
-
         OUTPUT: string
 
         EXAMPLES::
@@ -1132,8 +1138,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
     def __bool__(self):
         """
         Convert ``self`` into a boolean.
-
-        INPUT: none
 
         OUTPUT: boolean
 
@@ -1207,8 +1211,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         Attempt to make a native Sage object out of this Maxima object.
         This is useful for automatic coercions in addition to other
         things.
-
-        INPUT: none
 
         OUTPUT: Sage object
 
@@ -1289,8 +1291,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
     def __complex__(self):
         """
         Return a complex number equivalent to this Maxima object.
-
-        INPUT: none
 
         OUTPUT: complex
 
@@ -1383,8 +1383,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         Return the real part of this Maxima element.
 
-        INPUT: none
-
         OUTPUT: Maxima real
 
         EXAMPLES::
@@ -1398,8 +1396,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         Return the imaginary part of this Maxima element.
 
-        INPUT: none
-
         OUTPUT: Maxima real
 
         EXAMPLES::
@@ -1411,9 +1407,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
     def numer(self):
         """
-        Return numerical approximation to self as a Maxima object.
-
-        INPUT: none
+        Return numerical approximation to ``self`` as a Maxima object.
 
         OUTPUT: Maxima object
 
@@ -1430,8 +1424,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         Return string representation of this Maxima object.
 
-        INPUT: none
-
         OUTPUT: string
 
         EXAMPLES::
@@ -1444,15 +1436,15 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
     def diff(self, var='x', n=1):
         """
-        Return the n-th derivative of self.
+        Return the `n`-th derivative of ``self``.
 
         INPUT:
 
-        - ``var`` -- variable (default: 'x')
+        - ``var`` -- variable (default: ``'x'``)
 
         - ``n`` -- integer (default: 1)
 
-        OUTPUT: n-th derivative of self with respect to the variable var
+        OUTPUT: `n`-th derivative of ``self`` with respect to the variable var
 
         EXAMPLES::
 
@@ -1482,8 +1474,8 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
                   desired_relative_error='1e-8',
                   maximum_num_subintervals=200):
         r"""
-        Return a numerical approximation to the integral of self from a to
-        b.
+        Return a numerical approximation to the integral of ``self`` from `a`
+        to `b`.
 
         INPUT:
 
@@ -1493,18 +1485,16 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         - ``b`` -- upper endpoint of integration
 
-        - ``desired_relative_error`` -- (default: '1e-8') the
-           desired relative error
+        - ``desired_relative_error`` -- (default: ``'1e-8'``) the
+          desired relative error
 
         - ``maximum_num_subintervals`` -- (default: 200)
-           maxima number of subintervals
+          maxima number of subintervals
 
-        OUTPUT:
-
-        - approximation to the integral
+        OUTPUT: approximation to the integral
 
         - estimated absolute error of the
-           approximation
+          approximation
 
         - the number of integrand evaluations
 
@@ -1533,8 +1523,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         high precision very quickly::
 
             sage: gp('intnum(x=0,1,exp(-sqrt(x)))')
-            0.5284822353142307136179049194             # 32-bit
-            0.52848223531423071361790491935415653022   # 64-bit
+            0.52848223531423071361790491935415653022
             sage: _ = gp.set_precision(80)
             sage: gp('intnum(x=0,1,exp(-sqrt(x)))')
             0.52848223531423071361790491935415653021675547587292866196865279321015401702040079
@@ -1546,19 +1535,17 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
     def integral(self, var='x', min=None, max=None):
         r"""
-        Return the integral of self with respect to the variable x.
+        Return the integral of ``self`` with respect to the variable `x`.
 
         INPUT:
 
         - ``var`` -- variable
 
-        - ``min`` -- default: None
+        - ``min`` -- (default: ``None``)
 
-        - ``max`` -- default: None
+        - ``max`` -- (default: ``None``)
 
-        OUTPUT:
-
-        - the definite integral if xmin is not None
+        OUTPUT: the definite integral if xmin is not ``None``
 
         - an indefinite integral otherwise
 
@@ -1599,8 +1586,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         Return floating point version of this Maxima element.
 
-        INPUT: none
-
         OUTPUT: real
 
         EXAMPLES::
@@ -1621,8 +1606,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         Return the length of a list.
 
-        INPUT: none
-
         OUTPUT: integer
 
         EXAMPLES::
@@ -1636,11 +1619,11 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
     def dot(self, other):
         """
-        Implements the notation self . other.
+        Implement the notation ``self . other``.
 
         INPUT:
 
-        - ``other`` -- matrix; argument to dot.
+        - ``other`` -- matrix; argument to dot
 
         OUTPUT: Maxima matrix
 
@@ -1655,17 +1638,17 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         Q = P(other)
         return P('%s . %s' % (self.name(), Q.name()))
 
-    def __getitem__(self, n):
+    def __getitem__(self, i):
         r"""
-        Return the n-th element of this list.
+        Return the `i`-th element of this list.
 
         INPUT:
 
-        - ``n`` -- integer
+        - ``i`` -- integer or slice
 
         OUTPUT: Maxima object
 
-        .. note::
+        .. NOTE::
 
            Lists are 0-based when accessed via the Sage interface, not
            1-based as they are in the Maxima interpreter.
@@ -1681,19 +1664,34 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: v[10]
             Traceback (most recent call last):
             ...
-            IndexError: n = (10) must be between 0 and 5
+            IndexError: i = (10) must be between 0 and 5
+            sage: v[2:]
+            [2*x^2, 3*x^3, 4*x^4, 5*x^5]
+            sage: v[:3]
+            [0, x, 2*x^2]
+            sage: v[1:4]
+            [x, 2*x^2, 3*x^3]
+            sage: v[3::-1]
+            [3*x^3, 2*x^2, x, 0]
         """
-        n = int(n)
-        if n < 0 or n >= len(self):
-            raise IndexError("n = (%s) must be between %s and %s" % (n, 0, len(self)-1))
-        # If you change the n+1 to n below, better change __iter__ as well.
-        return InterfaceElement.__getitem__(self, n+1)
+        # Handle slices as well
+        if isinstance(i, slice):
+            start, stop, step = i.start or 0, i.stop or len(self), i.step or 1
+            if start >= 0 and stop >= 0 and step >= 0:
+                return list(islice(self, start, stop, step))
+            else:
+                # Hard to tackle slices esp with negative step
+                return list(self)[i]
+        else:
+            i = operator.index(i)
+            if i < 0 or i >= len(self):
+                raise IndexError("i = (%s) must be between %s and %s" % (i, 0, len(self)-1))
+            # If you change the i+1 to i below, better change __iter__ as well.
+            return InterfaceElement.__getitem__(self, i+1)
 
     def __iter__(self):
         """
-        Return an iterator for self.
-
-        INPUT: none
+        Return an iterator for ``self``.
 
         OUTPUT: iterator
 
@@ -1704,8 +1702,9 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: [e._sage_() for e in L]
             [0, x, 2*x^2, 3*x^3, 4*x^4, 5*x^5]
         """
-        for i in range(len(self)):
-            yield self[i]
+        z = self.copy()
+        for _ in range(len(z)):
+            yield z.pop()
 
     def subst(self, val):
         """
@@ -1752,8 +1751,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
     def _latex_(self):
         r"""
         Return Latex representation of this Maxima object.
-
-        INPUT: none
 
         OUTPUT: string
 
@@ -1818,7 +1815,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
     def _matrix_(self, R):
         r"""
-        If self is a Maxima matrix, return the corresponding Sage matrix
+        If ``self`` is a Maxima matrix, return the corresponding Sage matrix
         over the Sage ring `R`.
 
         INPUT:
@@ -1828,7 +1825,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         OUTPUT: matrix
 
         This may or may not work depending in how complicated the entries
-        of self are! It only works if the entries of self can be coerced as
+        of ``self`` are! It only works if the entries of ``self`` can be coerced as
         strings to produce meaningful elements of `R`.
 
         EXAMPLES::
@@ -1866,7 +1863,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
     def partial_fraction_decomposition(self, var='x'):
         """
-        Return the partial fraction decomposition of self with respect to
+        Return the partial fraction decomposition of ``self`` with respect to
         the variable var.
 
         INPUT:
@@ -1899,11 +1896,11 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``operation`` -- a string representing the operation
-          being performed. For example, '*', or '1/'.
+        - ``operation`` -- string representing the operation
+          being performed. For example, '*', or '1/'
 
         - ``other`` -- the other operand. If ``other`` is ``None``,
-          then the operation is assumed to be unary rather than binary.
+          then the operation is assumed to be unary rather than binary
 
         OUTPUT: Maxima object
 
@@ -1990,11 +1987,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
         """
         Implement __reduce__ for ``MaximaAbstractElementFunction``.
 
-        INPUT: none
-
-        OUTPUT:
-
-        A couple consisting of:
+        OUTPUT: a couple consisting of:
 
         - the function to call for unpickling
 
@@ -2038,8 +2031,6 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
         """
         Return print representation of this Maxima function.
 
-        INPUT: none
-
         OUTPUT: string
 
         EXAMPLES::
@@ -2069,16 +2060,14 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
     def arguments(self, split=True):
         r"""
-        Returns the arguments of this Maxima function.
+        Return the arguments of this Maxima function.
 
         INPUT:
 
-        - ``split`` -- boolean; if True return a tuple of strings,
+        - ``split`` -- boolean; if ``True`` return a tuple of strings,
           otherwise return a string of comma-separated arguments
 
-        OUTPUT:
-
-        - a string if ``split`` is False
+        OUTPUT: string if ``split`` is False
 
         - a list of strings if ``split`` is True
 
@@ -2100,11 +2089,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
     def definition(self):
         """
-        Returns the definition of this Maxima function as a string.
-
-        INPUT: none
-
-        OUTPUT: string
+        Return the definition of this Maxima function as a string.
 
         EXAMPLES::
 
@@ -2116,7 +2101,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
     def integral(self, var):
         """
-        Returns the integral of self with respect to the variable var.
+        Return the integral of ``self`` with respect to the variable var.
 
         INPUT:
 
@@ -2147,7 +2132,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
     integrate = integral
 
-    def _operation(self, operation, f=None):
+    def _operation(self, operation, other=None):
         r"""
         This is a utility function which factors out much of the
         commonality used in the arithmetic operations for
@@ -2155,12 +2140,12 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
         INPUT:
 
-        - ``operation`` -- A string representing the operation
-           being performed. For example, '\*', or '1/'.
+        - ``operation`` -- string representing the operation
+          being performed. For example, '\*', or '1/'
 
-        - ``f`` -- The other operand. If f is
-           ``None``, then the operation is assumed to be unary
-           rather than binary.
+        - ``other`` -- the other operand; if ``other`` is
+          ``None``, then the operation is assumed to be unary
+          rather than binary
 
         EXAMPLES::
 
@@ -2175,16 +2160,16 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
             1/sin(y+x)
         """
         P = self._check_valid()
-        if isinstance(f, P._object_function_class()):
-            tmp = sorted(set(self.arguments() + f.arguments()))
+        if isinstance(other, P._object_function_class()):
+            tmp = sorted(set(self.arguments() + other.arguments()))
             args = ','.join(tmp)
-            defn = "(%s)%s(%s)" % (self.definition(), operation, f.definition())
-        elif f is None:
+            defn = "(%s)%s(%s)" % (self.definition(), operation, other.definition())
+        elif other is None:
             args = self.arguments(split=False)
             defn = "%s(%s)" % (operation, self.definition())
         else:
             args = self.arguments(split=False)
-            defn = "(%s)%s(%s)" % (self.definition(), operation, repr(f))
+            defn = "(%s)%s(%s)" % (self.definition(), operation, repr(other))
 
         return P.function(args, P.eval(defn))
 

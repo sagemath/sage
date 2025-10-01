@@ -24,6 +24,11 @@ from sage.categories.rings import Rings
 from sage.categories.fields import Fields
 from sage.categories.homsets import HomsetsCategory
 from sage.misc.abstract_method import abstract_method
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.categories.map', 'Map')
+lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
+lazy_import('sage.schemes.generic.scheme', 'Scheme')
 
 
 class Schemes(Category):
@@ -94,7 +99,7 @@ class Schemes(Category):
 
     def _call_(self, x):
         """
-        Construct a scheme from the data in ``x``
+        Construct a scheme from the data in ``x``.
 
         EXAMPLES:
 
@@ -138,17 +143,11 @@ class Schemes(Category):
               Defn: Natural morphism:
                       From: Integer Ring
                       To:   Rational Field
-
         """
-        from sage.schemes.generic.scheme import Scheme
-        if isinstance(x, Scheme):
-            return x
-        from sage.schemes.generic.morphism import is_SchemeMorphism
-        if is_SchemeMorphism(x):
+        if isinstance(x, (SchemeMorphism, Scheme)):
             return x
         from sage.categories.commutative_rings import CommutativeRings
         from sage.schemes.generic.spec import Spec
-        from sage.categories.map import Map
         if x in CommutativeRings():
             return Spec(x)
         elif isinstance(x, Map) and x.category_for().is_subcategory(Rings()):

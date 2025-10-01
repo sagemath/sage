@@ -642,7 +642,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
             sage: AA(UCF.gen(5))
             Traceback (most recent call last):
             ...
-            ValueError: Cannot coerce algebraic number with non-zero imaginary
+            ValueError: Cannot coerce algebraic number with nonzero imaginary
             part to algebraic real
         """
         return R(QQbar(self))
@@ -1047,13 +1047,13 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
         INPUT:
 
-        -  ``extend`` -- bool (default: ``True``); if ``True``, might return a
-           square root in the algebraic closure of the rationals. If false,
-           return a square root in the universal cyclotomic field or raises
-           an error.
+        - ``extend`` -- boolean (default: ``True``); if ``True``, might return
+          a square root in the algebraic closure of the rationals. If
+          ``False``, return a square root in the universal cyclotomic field or
+          raises an error.
 
-        -  ``all`` -- bool (default: ``False``); if ``True``, return a
-           list of all square roots.
+        - ``all`` -- boolean (default: ``False``); if ``True``, return a
+          list of all square roots
 
         EXAMPLES::
 
@@ -1249,7 +1249,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
         INPUT:
 
-        - ``var`` -- (default: 'x') the name of the variable to use.
+        - ``var`` -- (default: ``'x'``) the name of the variable to use
 
         EXAMPLES::
 
@@ -1586,8 +1586,8 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
 
         OUTPUT:
 
-        - A factorization of ``f`` over self into a unit and monic irreducible
-          factors
+        A factorization of ``f`` over ``self`` into a unit and monic
+        irreducible factors.
 
         .. NOTE::
 
@@ -1620,7 +1620,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
             (x - 2) * (x - 2*E(3)) * (x - 2*E(3)^2)
 
         In most situations, the factorization will fail with a
-        :class:`NotImplementedError`::
+        :exc:`NotImplementedError`::
 
             sage: (x^3 - 2).factor()
             Traceback (most recent call last):
@@ -1656,7 +1656,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
         if f.degree() == 1:
             return Factorization([(f, 1)], unit)
 
-        # From now on, we restrict to polynomial with rational cofficients. The
+        # From now on, we restrict to polynomial with rational coefficients. The
         # factorization is provided only in the case it is a product of
         # cyclotomic polynomials and quadratic polynomials. In this situation
         # the roots belong to UCF and the polynomial factorizes as a product of

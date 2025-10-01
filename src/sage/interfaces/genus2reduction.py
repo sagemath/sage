@@ -36,7 +36,7 @@ from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 
 roman_numeral = ["", "I", "II", "III", "IV", "V", "VI", "VII"]
 
@@ -192,7 +192,7 @@ def divisors_to_string(divs):
 
     - ``divs`` -- a (possibly empty) list of numbers
 
-    OUTPUT: a string representation of these numbers
+    OUTPUT: string representation of these numbers
 
     EXAMPLES::
 

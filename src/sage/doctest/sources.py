@@ -78,7 +78,8 @@ doctest_line_number = re.compile(r"^\s*doctest:[0-9]")
 
 def get_basename(path):
     """
-    This function returns the basename of the given path, e.g. sage.doctest.sources or doc.ru.tutorial.tour_advanced
+    This function returns the basename of the given path, e.g.
+    ``sage.doctest.sources`` or ``doc.ru.tutorial.tour_advanced``.
 
     EXAMPLES::
 
@@ -86,7 +87,17 @@ def get_basename(path):
         sage: import os
         sage: get_basename(sage.doctest.sources.__file__)
         'sage.doctest.sources'
+
+    ::
+
+        sage: # optional - !meson_editable
         sage: get_basename(os.path.join(sage.structure.__path__[0], 'element.pxd'))
+        'sage.structure.element.pxd'
+
+    TESTS::
+
+        sage: # optional - meson_editable
+        sage: get_basename(os.path.join(os.path.dirname(sage.structure.__file__), 'element.pxd'))
         'sage.structure.element.pxd'
     """
     if path is None:
@@ -123,14 +134,14 @@ def get_basename(path):
     return basename
 
 
-class DocTestSource():
+class DocTestSource:
     """
     This class provides a common base class for different sources of doctests.
 
     INPUT:
 
     - ``options`` -- a :class:`sage.doctest.control.DocTestDefaults`
-      instance or equivalent.
+      instance or equivalent
     """
     def __init__(self, options):
         """
@@ -182,7 +193,7 @@ class DocTestSource():
         """
         return not (self == other)
 
-    def _process_doc(self, doctests, doc, namespace, start):
+    def _process_doc(self, doctests: list[doctest.DocTest], doc, namespace, start):
         """
         Appends doctests defined in ``doc`` to the list ``doctests``.
 
@@ -194,20 +205,21 @@ class DocTestSource():
         INPUT:
 
         - ``doctests`` -- a running list of doctests to which the new
-          test(s) will be appended.
+          test(s) will be appended
 
-        - ``doc`` -- a list of lines of a docstring, each including
-          the trailing newline.
+        - ``doc`` -- list of lines of a docstring, each including
+          the trailing newline
 
-        - ``namespace`` -- a dictionary or
+        - ``namespace`` -- dictionary or
           :class:`sage.doctest.util.RecordingDict`, used in the
-          creation of new :class:`doctest.DocTest` s.
+          creation of new :class:`doctest.DocTest` s
 
-        - ``start`` -- an integer, giving the line number of the start
-          of this docstring in the larger file.
+        - ``start`` -- integer giving the line number of the start
+          of this docstring in the larger file
 
         EXAMPLES::
 
+            sage: # long time
             sage: from sage.doctest.control import DocTestDefaults
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.parsing import SageDocTestParser
@@ -255,9 +267,9 @@ class DocTestSource():
         """
         return set()
 
-    def _create_doctests(self, namespace, tab_okay=None):
+    def _create_doctests(self, namespace, tab_okay=None) -> tuple[list[doctest.DocTest], dict]:
         """
-        Creates a list of doctests defined in this source.
+        Create a list of doctests defined in this source.
 
         This function collects functionality common to file and string
         sources, and is called by
@@ -265,18 +277,18 @@ class DocTestSource():
 
         INPUT:
 
-        - ``namespace`` -- a dictionary or
+        - ``namespace`` -- dictionary or
           :class:`sage.doctest.util.RecordingDict`, used in the
           creation of new :class:`doctest.DocTest` s.
 
-        - ``tab_okay`` -- whether tabs are allowed in this source.
+        - ``tab_okay`` -- whether tabs are allowed in this source
 
         OUTPUT:
 
-        - ``doctests`` -- a list of doctests defined by this source
+        - ``doctests`` -- list of doctests defined by this source
 
-        - ``extras`` -- a dictionary with ``extras['tab']`` either
-          False or a list of linenumbers on which tabs appear.
+        - ``extras`` -- dictionary with ``extras['tab']`` either
+          ``False`` or a list of linenumbers on which tabs appear
 
         EXAMPLES::
 
@@ -303,7 +315,7 @@ class DocTestSource():
                                         probed_tags=self.options.probe,
                                         file_optional_tags=self.file_optional_tags)
         self.linking = False
-        doctests = []
+        doctests: list[doctest.DocTest] = []
         in_docstring = False
         unparsed_doc = False
         doc = []
@@ -385,19 +397,19 @@ class StringDocTestSource(DocTestSource):
     INPUT:
 
     - ``basename`` -- string such as 'sage.doctests.sources', going
-      into the names of created doctests and examples.
+      into the names of created doctests and examples
 
-    - ``source`` -- a string, giving the source code to be parsed for
-      doctests.
+    - ``source`` -- string, giving the source code to be parsed for
+      doctests
 
     - ``options`` -- a :class:`sage.doctest.control.DocTestDefaults`
-      or equivalent.
+      or equivalent
 
-    - ``printpath`` -- a string, to be used in place of a filename
-      when doctest failures are displayed.
+    - ``printpath`` -- string, to be used in place of a filename
+      when doctest failures are displayed
 
-    - ``lineno_shift`` -- an integer (default: 0) by which to shift
-      the line numbers of all doctests defined in this string.
+    - ``lineno_shift`` -- integer (default: 0) by which to shift
+      the line numbers of all doctests defined in this string
 
     EXAMPLES::
 
@@ -429,7 +441,7 @@ class StringDocTestSource(DocTestSource):
     """
     def __init__(self, basename, source, options, printpath, lineno_shift=0):
         r"""
-        Initialization
+        Initialization.
 
         TESTS::
 
@@ -469,20 +481,20 @@ class StringDocTestSource(DocTestSource):
         for lineno, line in enumerate(self.source.split('\n')):
             yield lineno + self.lineno_shift, line + '\n'
 
-    def create_doctests(self, namespace):
+    def create_doctests(self, namespace) -> tuple[list[doctest.DocTest], dict]:
         r"""
-        Creates doctests from this string.
+        Create doctests from this string.
 
         INPUT:
 
-        - ``namespace`` -- a dictionary or :class:`sage.doctest.util.RecordingDict`.
+        - ``namespace`` -- dictionary or :class:`sage.doctest.util.RecordingDict`
 
         OUTPUT:
 
-        - ``doctests`` -- a list of doctests defined by this string
+        - ``doctests`` -- list of doctests defined by this string
 
-        - ``tab_locations`` -- either False or a list of linenumbers
-          on which tabs appear.
+        - ``extras`` -- dictionary with ``extras['tab']`` either
+          ``False`` or a list of linenumbers on which tabs appear
 
         EXAMPLES::
 
@@ -492,10 +504,12 @@ class StringDocTestSource(DocTestSource):
             sage: s = "'''\n    sage: 2 + 2\n    4\n'''"
             sage: PythonStringSource = dynamic_class('PythonStringSource',(StringDocTestSource, PythonSource))
             sage: PSS = PythonStringSource('<runtime>', s, DocTestDefaults(), 'runtime')
-            sage: dt, tabs = PSS.create_doctests({})
+            sage: dt, extras = PSS.create_doctests({})
             sage: for t in dt:
             ....:     print("{} {}".format(t.name, t.examples[0].sage_source))
             <runtime> 2 + 2
+            sage: extras
+            {...'tab': []...}
         """
         return self._create_doctests(namespace)
 
@@ -506,10 +520,10 @@ class FileDocTestSource(DocTestSource):
 
     INPUT:
 
-    - ``path`` -- string, the filename
+    - ``path`` -- string; the filename
 
     - ``options`` -- a :class:`sage.doctest.control.DocTestDefaults`
-      instance or equivalent.
+      instance or equivalent
 
     EXAMPLES::
 
@@ -528,13 +542,12 @@ class FileDocTestSource(DocTestSource):
 
         sage: from sage.doctest.control import DocTestDefaults
         sage: from sage.doctest.sources import FileDocTestSource
-        sage: filename = tmp_filename(ext=".txtt")
+        sage: filename = tmp_filename(ext='.txtt')
         sage: FDS = FileDocTestSource(filename, DocTestDefaults())
         Traceback (most recent call last):
         ...
         ValueError: unknown extension for the file to test (=...txtt),
         valid extensions are: .py, .pyx, .pxd, .pxi, .sage, .spyx, .tex, .rst, .rst.txt
-
     """
     def __init__(self, path, options):
         """
@@ -578,7 +591,7 @@ class FileDocTestSource(DocTestSource):
 
             sage: from sage.doctest.control import DocTestDefaults
             sage: from sage.doctest.sources import FileDocTestSource
-            sage: filename = tmp_filename(ext=".py")
+            sage: filename = tmp_filename(ext='.py')
             sage: s = "'''\n    sage: 2 + 2\n    4\n'''"
             sage: with open(filename, 'w') as f:
             ....:     _ = f.write(s)
@@ -660,7 +673,7 @@ class FileDocTestSource(DocTestSource):
     @lazy_attribute
     def basename(self):
         """
-        The basename of this file source, e.g. sage.doctest.sources
+        The basename of this file source, e.g. ``sage.doctest.sources``.
 
         EXAMPLES::
 
@@ -726,19 +739,19 @@ class FileDocTestSource(DocTestSource):
         from .parsing import parse_file_optional_tags
         return parse_file_optional_tags(self)
 
-    def create_doctests(self, namespace):
+    def create_doctests(self, namespace) -> tuple[list[doctest.DocTest], dict]:
         r"""
         Return a list of doctests for this file.
 
         INPUT:
 
-        - ``namespace`` -- a dictionary or :class:`sage.doctest.util.RecordingDict`.
+        - ``namespace`` -- dictionary or :class:`sage.doctest.util.RecordingDict`
 
         OUTPUT:
 
-        - ``doctests`` -- a list of doctests defined in this file.
+        - ``doctests`` -- list of doctests defined in this file
 
-        - ``extras`` -- a dictionary
+        - ``extras`` -- dictionary
 
         EXAMPLES::
 
@@ -766,11 +779,11 @@ class FileDocTestSource(DocTestSource):
 
             sage: import sys
             sage: bitness = '64' if sys.maxsize > (1 << 32) else '32'
-            sage: gp.get_precision() == 38                                              # needs sage.libs.pari
+            sage: sys.maxsize == 2^63 - 1
             False # 32-bit
             True  # 64-bit
             sage: ex = doctests[20].examples[11]
-            sage: ((bitness == '64' and ex.want == 'True  \n')                          # needs sage.libs.pari
+            sage: ((bitness == '64' and ex.want == 'True  \n')
             ....:  or (bitness == '32' and ex.want == 'False \n'))
             True
 
@@ -805,11 +818,11 @@ class FileDocTestSource(DocTestSource):
 
         INPUT:
 
-        - ``check_extras`` -- bool (default ``True``), whether to check if
+        - ``check_extras`` -- boolean (default: ``True``); whether to check if
           doctests are created that do not correspond to either a ``sage:``
           or a ``>>>`` prompt
 
-        - ``verbose`` -- bool (default ``True``), whether to print
+        - ``verbose`` -- boolean (default: ``True``); whether to print
           offending line numbers when there are missing or extra tests
 
         TESTS::
@@ -900,7 +913,7 @@ class SourceLanguage:
 
     Currently supported languages include Python, ReST and LaTeX.
     """
-    def parse_docstring(self, docstring, namespace, start):
+    def parse_docstring(self, docstring, namespace, start) -> list[doctest.DocTest]:
         """
         Return a list of doctest defined in this docstring.
 
@@ -911,14 +924,15 @@ class SourceLanguage:
 
         INPUT:
 
-        - ``docstring`` -- a string containing documentation and tests.
+        - ``docstring`` -- string containing documentation and tests
 
-        - ``namespace`` -- a dictionary or :class:`sage.doctest.util.RecordingDict`.
+        - ``namespace`` -- dictionary or :class:`sage.doctest.util.RecordingDict`
 
-        - ``start`` -- an integer, one less than the starting line number
+        - ``start`` -- integer; one less than the starting line number
 
         EXAMPLES::
 
+            sage: # long time
             sage: from sage.doctest.control import DocTestDefaults
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.parsing import SageDocTestParser
@@ -975,7 +989,7 @@ class PythonSource(SourceLanguage):
 
     def _update_quotetype(self, line):
         r"""
-        Updates the track of what kind of quoted string we're in.
+        Update the track of what kind of quoted string we are in.
 
         We need to track whether we're inside a triple quoted
         string, since a triple quoted string that starts a line
@@ -1013,7 +1027,7 @@ class PythonSource(SourceLanguage):
             sage: print(FDS.quotetype)
             None
         """
-        def _update_parens(start,end=None):
+        def _update_parens(start, end=None):
             self.paren_count += line.count("(",start,end) - line.count(")",start,end)
             self.bracket_count += line.count("[",start,end) - line.count("]",start,end)
             self.curly_count += line.count("{",start,end) - line.count("}",start,end)
@@ -1078,11 +1092,9 @@ class PythonSource(SourceLanguage):
 
         INPUT:
 
-        - ``line`` -- a string, one line of an input file
+        - ``line`` -- string; one line of an input file
 
-        OUTPUT:
-
-        - either None or a Match object.
+        OUTPUT: either ``None`` or a Match object
 
         EXAMPLES::
 
@@ -1151,13 +1163,11 @@ class PythonSource(SourceLanguage):
 
         INPUT:
 
-        - ``line`` -- a string, one line of an input file.
+        - ``line`` -- string, one line of an input file
 
-        OUTPUT:
-
-        - an object that, when evaluated in a boolean context, gives
-          ``True`` or ``False`` depending on whether the input line marks the
-          end of a docstring.
+        OUTPUT: an object that, when evaluated in a boolean context, gives
+        ``True`` or ``False`` depending on whether the input line marks the
+        end of a docstring
 
         EXAMPLES::
 
@@ -1189,8 +1199,8 @@ class PythonSource(SourceLanguage):
 
         INPUT:
 
-        - ``reindent`` -- an integer, the number of spaces to indent
-          the result.
+        - ``reindent`` -- integer; the number of spaces to indent
+          the result
 
         EXAMPLES::
 
@@ -1270,12 +1280,10 @@ class TexSource(SourceLanguage):
 
         INPUT:
 
-        - ``line`` -- a string, one line of an input file
+        - ``line`` -- string, one line of an input file
 
-        OUTPUT:
-
-        - a boolean giving whether the input line marks the
-          start of a docstring (verbatim block).
+        OUTPUT: boolean; whether the input line marks the start of a docstring
+        (verbatim block)
 
         EXAMPLES::
 
@@ -1347,14 +1355,13 @@ class TexSource(SourceLanguage):
 
         INPUT:
 
-        - ``line`` -- a string, one line of an input file
+        - ``line`` -- string, one line of an input file
 
-        - ``check_skip`` -- boolean (default: ``True``), used internally in starting_docstring.
+        - ``check_skip`` -- boolean (default: ``True``); used internally in
+          ``starting_docstring``
 
-        OUTPUT:
-
-        - a boolean giving whether the input line marks the
-          end of a docstring (verbatim block).
+        OUTPUT: boolean; whether the input line marks the end of a docstring
+        (verbatim block)
 
         EXAMPLES::
 
@@ -1449,11 +1456,9 @@ class RestSource(SourceLanguage):
 
         INPUT:
 
-        - ``line`` -- a string, one line of an input file
+        - ``line`` -- string; one line of an input file
 
-        OUTPUT:
-
-        - either None or a Match object.
+        OUTPUT: either ``None`` or a Match object
 
         EXAMPLES::
 
@@ -1507,11 +1512,9 @@ class RestSource(SourceLanguage):
 
         INPUT:
 
-        - ``line`` -- a string, one line of an input file
+        - ``line`` -- string; one line of an input file
 
-        OUTPUT:
-
-        - a boolean, whether the verbatim block is ending.
+        OUTPUT: boolean; whether the verbatim block is ending
 
         EXAMPLES::
 
@@ -1618,7 +1621,7 @@ class DictAsObject(dict):
 
         INPUT:
 
-        - ``attrs`` -- a dictionary.
+        - ``attrs`` -- dictionary
 
         EXAMPLES::
 

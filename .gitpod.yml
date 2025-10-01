@@ -7,7 +7,7 @@ tasks:
   - name: Setup
     # Create conda environment, then configure and build sage
     init: >-
-      && mamba env create --file src/environment-dev-3.11-linux.yml --prefix venv
+      && mamba env create --file environment-3.11-linux.yml --prefix venv
       && conda config --append envs_dirs $(pwd)
       && conda activate $(pwd)/venv
       && ./bootstrap
