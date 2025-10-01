@@ -2244,11 +2244,10 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         else:
             invX = x
 
-        psi = poly_ring.one()
-        for xQ in self.__kernel_mod_sign.keys():
-            psi *= x - invX(xQ)
+        from sage.misc.misc_c import prod
+        psi = prod([x - invX(xQ) for xQ in self.__kernel_mod_sign.keys()])  # building the list is not redundant; this is slightly faster
 
-        self.__kernel_polynomial = psi
+        self.__kernel_polynomial = poly_ring(psi)
 
     ###################################
     # Kohel's Variant of Velu's Formula
