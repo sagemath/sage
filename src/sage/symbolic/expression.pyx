@@ -1183,7 +1183,7 @@ cdef class Expression(Expression_abc):
         from sage.symbolic.expression_conversions import InterfaceInit
         return InterfaceInit(I)(self)
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
         Convert symbolic object to GAP string.
 
@@ -1192,9 +1192,9 @@ cdef class Expression(Expression_abc):
             sage: gap(e + pi^2 + x^3)                                                   # needs sage.libs.gap
             x^3 + pi^2 + e
         """
-        return '"%s"' % repr(self)
+        return f'"{repr(self)}"'
 
-    def _singular_init_(self):
+    def _singular_init_(self) -> str:
         """
         Conversion of a symbolic object to Singular string.
 
@@ -1203,9 +1203,9 @@ cdef class Expression(Expression_abc):
             sage: singular(e + pi^2 + x^3)                                              # needs sage.libs.singular
             x^3 + pi^2 + e
         """
-        return '"%s"' % repr(self)
+        return f'"{repr(self)}"'
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Return string representation in Magma of this symbolic expression.
 
@@ -13602,7 +13602,6 @@ def _eval_on_operands(f):
         Some documentation.
     """
     @sage_wraps(f)
-    @cython.binding(True)
     def new_f(ex, *args, **kwds):
         new_args = list(ex._unpack_operands())
         new_args.extend(args)
