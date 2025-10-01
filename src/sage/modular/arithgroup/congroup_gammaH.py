@@ -19,21 +19,27 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 #
 # #############################################################################
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.arith.functions import lcm
-from sage.arith.misc import (euler_phi, gcd, divisors, get_inverse_mod,
-                             get_gcd, factor, xgcd)
-from .congroup_generic import CongruenceSubgroup
+from sage.arith.misc import (
+    divisors,
+    euler_phi,
+    factor,
+    gcd,
+    get_gcd,
+    get_inverse_mod,
+    xgcd,
+)
 from sage.groups.matrix_gps.finitely_generated import MatrixGroup
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
+from sage.modular.arithgroup.congroup_generic import CongruenceSubgroup
 from sage.modular.cusps import Cusp
 from sage.modular.modsym.p1list import lift_to_sl2z
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.integer_ring import ZZ
-from sage.structure.richcmp import richcmp_method, richcmp
-
+from sage.structure.richcmp import richcmp, richcmp_method
 
 _gammaH_cache = {}
 
@@ -70,7 +76,7 @@ def GammaH_constructor(level, H):
         ...
         ArithmeticError: The generators [10] must be units modulo 14
     """
-    from .all import Gamma0, Gamma1, SL2Z
+    from .all import SL2Z, Gamma0, Gamma1
     if level == 1:
         return SL2Z
     elif H == 0:
@@ -492,6 +498,7 @@ class GammaH_class(CongruenceSubgroup):
             return self.farey_symbol().generators()
         if algorithm == "todd-coxeter":
             from sage.modular.modsym.ghlist import GHlist
+
             from .congroup import generators_helper
             level = self.level()
             gen_list = generators_helper(GHlist(self), level)
