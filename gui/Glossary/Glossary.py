@@ -16,10 +16,10 @@ if __name__ == "__main__":
     #]
     app = QtWidgets.QApplication(sys.argv)
 
-    w = QtWidgets.QMainWindow()
-    w.setCentralWidget(QtWidgets.QWidget())
+    window = QtWidgets.QMainWindow()
+    window.setCentralWidget(QtWidgets.QWidget())
     dock = QtWidgets.QDockWidget("Glossary")
-    w.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
+    window.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
 
     scroll = QtWidgets.QScrollArea()
     dock.setWidget(scroll)
@@ -33,13 +33,13 @@ if __name__ == "__main__":
     max_label_width = 0
 
 
-    definitions=outputContent("LA")
-    for key in definitions:
-        box = CollapsibleBox(key)
+    definitions=outputContent("GT")
+    for word in definitions:
+        box = CollapsibleBox(word)
         vlay.addWidget(box)
         lay = QtWidgets.QVBoxLayout()
 
-        label = QtWidgets.QLabel(definitions[key])
+        label = QtWidgets.QLabel(definitions[word])
         label.setStyleSheet("font-size: 10pt;")
         label.setMinimumSize(label.sizeHint())
         lay.addWidget(label)
@@ -56,6 +56,6 @@ if __name__ == "__main__":
 
     vlay.addStretch()
 
-    w.resize(1024, 768)
-    w.show()
+    window.resize(1024, 768)
+    window.show()
     sys.exit(app.exec_())
