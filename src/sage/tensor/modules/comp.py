@@ -242,12 +242,13 @@ In case of symmetries, only non-redundant components are stored::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from operator import itemgetter
+from typing import Iterator
 
-from sage.structure.sage_object import SageObject
-from sage.rings.integer import Integer
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
-from operator import itemgetter
+from sage.rings.integer import Integer
+from sage.structure.sage_object import SageObject
 
 
 class Components(SageObject):
@@ -484,7 +485,7 @@ class Components(SageObject):
         True
     """
     def __init__(self, ring, frame, nb_indices, start_index=0,
-                 output_formatter=None):
+                 output_formatter=None) -> None:
         r"""
         TESTS::
 
@@ -503,7 +504,7 @@ class Components(SageObject):
         self._comp = {} # the dictionary of components, with the index tuples
                         # as keys
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -542,9 +543,9 @@ class Components(SageObject):
         description += suffix
         return description
 
-    def _repr_symmetry(self):
+    def _repr_symmetry(self) -> tuple[str, str]:
         r"""
-        Return a prefix and a suffix string describing the symmetry of ``self``.
+        Return prefix and suffix strings describing the symmetry of ``self``.
 
         EXAMPLES::
 
@@ -606,11 +607,13 @@ class Components(SageObject):
                 result._comp[ind] = val
         return result
 
-    def _del_zeros(self):
+    def _del_zeros(self) -> None:
         r"""
         Delete all the zeros in the dictionary :attr:`_comp`.
 
-        NB: The use case of this method must be rare because zeros are not
+        ..NOTE::
+
+            The use case of this method must be rare because zeros are not
             stored in :attr:`_comp`.
 
         EXAMPLES::
@@ -624,14 +627,11 @@ class Components(SageObject):
         """
         # The zeros are first searched; they are deleted in a second stage, to
         # avoid changing the dictionary while it is read
-        zeros = []
-        for ind, value in self._comp.items():
-            if value == 0:
-                zeros.append(ind)
+        zeros = [ind for ind, value in self._comp.items() if value == 0]
         for ind in zeros:
             del self._comp[ind]
 
-    def _check_indices(self, indices):
+    def _check_indices(self, indices) -> tuple:
         r"""
         Check the validity of a list of indices and returns a tuple from it.
 
@@ -874,7 +874,7 @@ class Components(SageObject):
             return [self._gen_list(ind + [i], no_format, format_type)
                     for i in range(si, nsi)]
 
-    def __setitem__(self, args, value):
+    def __setitem__(self, args, value) -> None:
         r"""
         Set the component corresponding to the given indices.
 
@@ -954,7 +954,7 @@ class Components(SageObject):
                     # element of the algebra's base ring, cf. the discussion at
                     # https://github.com/sagemath/sage/issues/16054
 
-    def _set_list(self, ind_slice, format_type, values):
+    def _set_list(self, ind_slice, format_type, values) -> None:
         r"""
         Set the components from a list.
 
@@ -1033,7 +1033,7 @@ class Components(SageObject):
             for i in range(si, nsi):
                 self._set_value_list(ind + [i], format_type, val[i-si])
 
-    def items(self):
+    def items(self) -> Iterator:
         r"""
         Return an iterable of ``(indices, value)`` elements.
 
@@ -1359,7 +1359,7 @@ class Components(SageObject):
             # called and not the present function.
         return result
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return ``True`` if all the components are zero and ``False`` otherwise.
 
@@ -1400,13 +1400,13 @@ class Components(SageObject):
         if not self._comp:
             return True
 
-        #!# What follows could be skipped since _comp should not contain
+        # What follows could be skipped since _comp should not contain
         # any zero value
         # In other words, the full method should be
         #   return self.comp == {}
         return all(val == 0 for val in self._comp.values())
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Comparison (equality) operator.
 
@@ -1454,7 +1454,7 @@ class Components(SageObject):
                 return False
             return (self - other).is_zero()
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Non-equality operator.
 
@@ -1991,7 +1991,7 @@ class Components(SageObject):
         if self._nid == 2:
             res = 0
             for i in range(si, nsi):
-                res += self[[i,i]]
+                res += self[[i, i]]
             return res
         else:
             # More than 2 indices
@@ -2228,8 +2228,8 @@ class Components(SageObject):
         #  (None = the position is involved in a contraction and therefore
         #   does not appear in the final result)
         #
-        pos_s = [None for i in range(self._nid)]  # initialization
-        pos_o = [None for i in range(other._nid)] # initialization
+        pos_s = [None for i in range(self._nid)]   # initialization
+        pos_o = [None for i in range(other._nid)]  # initialization
         shift = 0
         for pos in range(self._nid):
             for contract_pair in contractions:
@@ -2250,8 +2250,8 @@ class Components(SageObject):
         #
         # Determination of the symmetries of the result
         #
-        max_len_sym = 0 # maximum length of symmetries in the result
-        max_len_antisym = 0 # maximum length of antisymmetries in the result
+        max_len_sym = 0  # maximum length of symmetries in the result
+        max_len_antisym = 0  # maximum length of antisymmetries in the result
         if res_nid > 1:  # no need to search for symmetries if res_nid == 1
             if isinstance(self, CompWithSym):
                 s_sym = self._sym
@@ -2300,7 +2300,7 @@ class Components(SageObject):
                     res_antisym.append(r_isym)
                     max_len_antisym = max(max_len_antisym, len(r_isym))
         #
-        # Construction of the result object in view of the remaining symmetries:
+        # Construction of the result object in view of the remaining symmetries
         #
         if max_len_sym == 0 and max_len_antisym == 0:
             res = Components(self._ring, self._frame, res_nid,
@@ -2345,11 +2345,11 @@ class Components(SageObject):
             # definition of the parallel function
             @parallel(p_iter='multiprocessing', ncpus=nproc)
             def make_Contraction(this, other, local_list, rev_s, rev_o,
-                                 shift_o,contractions, comp_for_contr):
+                                 shift_o, contractions, comp_for_contr):
                 local_res = []
                 for ind in local_list:
-                    ind_s = [None for i in range(this._nid)]  # initialization
-                    ind_o = [None for i in range(other._nid)] # initialization
+                    ind_s = [None for i in range(this._nid)]   # initialization
+                    ind_o = [None for i in range(other._nid)]  # initialization
                     for i, pos in enumerate(rev_s):
                         ind_s[pos] = ind[i]
                     for i, pos in enumerate(rev_o):
@@ -2372,8 +2372,8 @@ class Components(SageObject):
         else:
             # sequential computation
             for ind in res.non_redundant_index_generator():
-                ind_s = [None for i in range(self._nid)]  # initialization
-                ind_o = [None for i in range(other._nid)] # initialization
+                ind_s = [None for i in range(self._nid)]   # initialization
+                ind_o = [None for i in range(other._nid)]  # initialization
                 for i, pos in enumerate(rev_s):
                     ind_s[pos] = ind[i]
                 for i, pos in enumerate(rev_o):
@@ -2391,7 +2391,7 @@ class Components(SageObject):
 
         return res
 
-    def index_generator(self):
+    def index_generator(self) -> Iterator:
         r"""
         Generator of indices.
 
@@ -2426,9 +2426,9 @@ class Components(SageObject):
                 elif pos != 0:
                     ind[pos] = si
                 else:
-                    return # end point reached
+                    return  # end point reached
 
-    def non_redundant_index_generator(self):
+    def non_redundant_index_generator(self) -> Iterator:
         r"""
         Generator of non redundant indices.
 
@@ -2771,11 +2771,11 @@ class Components(SageObject):
             raise ValueError("the set of components must have 2 indices")
         si = self._sindex
         nsi = self._dim + si
-        tab = [[self[[i,j]] for j in range(si, nsi)] for i in range(si, nsi)]
+        tab = [[self[[i, j]] for j in range(si, nsi)] for i in range(si, nsi)]
         return matrix(tab)
 
 
-#******************************************************************************
+# ****************************************************************************
 
 class CompWithSym(Components):
     r"""
@@ -2975,7 +2975,7 @@ class CompWithSym(Components):
         True
     """
     def __init__(self, ring, frame, nb_indices, start_index=0,
-                 output_formatter=None, sym=None, antisym=None):
+                 output_formatter=None, sym=None, antisym=None) -> None:
         r"""
         TESTS::
 
@@ -3084,9 +3084,9 @@ class CompWithSym(Components):
                              "index position appears more than once")
         return result_sym, result_antisym
 
-    def _repr_symmetry(self):
+    def _repr_symmetry(self) -> tuple[str, str]:
         r"""
-        Return a prefix and a suffix string describing the symmetry of ``self``.
+        Return prefix and suffix strings describing the symmetry of ``self``.
 
         EXAMPLES::
 
@@ -3123,7 +3123,7 @@ class CompWithSym(Components):
         return CompWithSym(self._ring, self._frame, self._nid, self._sindex,
                           self._output_formatter, self._sym, self._antisym)
 
-    def _ordered_indices(self, indices):
+    def _ordered_indices(self, indices) -> tuple:
         r"""
         Given a set of indices, return a set of indices with the indices
         at the positions of symmetries or antisymmetries being ordered,
@@ -3278,7 +3278,7 @@ class CompWithSym(Components):
                         return self._output_formatter(
                                                 -self._comp[ind], format_type)
 
-    def __setitem__(self, args, value):
+    def __setitem__(self, args, value) -> None:
         r"""
         Set the component corresponding to the given indices.
 
@@ -3821,7 +3821,7 @@ class CompWithSym(Components):
         if self._nid == 2:
             res = 0
             for i in range(si, nsi):
-                res += self[[i,i]]
+                res += self[[i, i]]
             return res
         else:
             # More than 2 indices
@@ -3905,7 +3905,7 @@ class CompWithSym(Components):
                 result[[ind_res]] = res
             return result
 
-    def non_redundant_index_generator(self):
+    def non_redundant_index_generator(self) -> Iterator:
         r"""
         Generator of indices, with only ordered indices in case of symmetries,
         so that only non-redundant indices are generated.
@@ -4740,7 +4740,7 @@ class CompFullySym(CompWithSym):
         True
     """
     def __init__(self, ring, frame, nb_indices, start_index=0,
-                 output_formatter=None):
+                 output_formatter=None) -> None:
         r"""
         TESTS::
 
@@ -4751,9 +4751,9 @@ class CompFullySym(CompWithSym):
         CompWithSym.__init__(self, ring, frame, nb_indices, start_index,
                              output_formatter, sym=range(nb_indices))
 
-    def _repr_symmetry(self):
+    def _repr_symmetry(self) -> tuple[str, str]:
         r"""
-        Return a prefix and a suffix string describing the symmetry of ``self``.
+        Return prefix and suffix strings describing the symmetry of ``self``.
 
         EXAMPLES::
 
@@ -4854,7 +4854,7 @@ class CompFullySym(CompWithSym):
             return self._output_formatter(self._ring.zero(),
                                              format_type)
 
-    def __setitem__(self, args, value):
+    def __setitem__(self, args, value) -> None:
         r"""
         Set the component corresponding to the given indices.
 
@@ -5054,7 +5054,7 @@ class CompFullySym(CompWithSym):
             return CompWithSym.__add__(self, other)
 
 
-#******************************************************************************
+# ****************************************************************************
 
 class CompFullyAntiSym(CompWithSym):
     r"""
@@ -5190,7 +5190,7 @@ class CompFullyAntiSym(CompWithSym):
         True
     """
     def __init__(self, ring, frame, nb_indices, start_index=0,
-                 output_formatter=None):
+                 output_formatter=None) -> None:
         r"""
         TESTS::
 
@@ -5201,9 +5201,9 @@ class CompFullyAntiSym(CompWithSym):
         CompWithSym.__init__(self, ring, frame, nb_indices, start_index,
                              output_formatter, antisym=range(nb_indices))
 
-    def _repr_symmetry(self):
+    def _repr_symmetry(self) -> tuple[str, str]:
         r"""
-        Return a prefix and a suffix string describing the symmetry of ``self``.
+        Return prefix and suffix strings describing the symmetry of ``self``.
 
         EXAMPLES::
 
@@ -5226,8 +5226,8 @@ class CompFullyAntiSym(CompWithSym):
             sage: c._new_instance()
             Fully antisymmetric 4-indices components w.r.t. (1, 2, 3)
         """
-        return CompFullyAntiSym(self._ring, self._frame, self._nid, self._sindex,
-                                self._output_formatter)
+        return CompFullyAntiSym(self._ring, self._frame, self._nid,
+                                self._sindex, self._output_formatter)
 
     def __add__(self, other):
         r"""
@@ -5238,7 +5238,9 @@ class CompFullyAntiSym(CompWithSym):
         - ``other`` -- components of the same number of indices and defined
           on the same frame as ``self``
 
-        OUTPUT: components resulting from the addition of ``self`` and ``other``
+        OUTPUT:
+
+        components resulting from the addition of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -5491,7 +5493,7 @@ class CompFullyAntiSym(CompWithSym):
             res[[ind]] = factorial_s*sm
         return res
 
-#******************************************************************************
+# ****************************************************************************
 
 
 class KroneckerDelta(CompFullySym):
@@ -5551,7 +5553,8 @@ class KroneckerDelta(CompFullySym):
         sage: d[:]
         [['1', '0', '0'], ['0', '1', '0'], ['0', '0', '1']]
     """
-    def __init__(self, ring, frame, start_index=0, output_formatter=None):
+    def __init__(self, ring, frame, start_index=0,
+                 output_formatter=None) -> None:
         r"""
         TESTS::
 
@@ -5562,9 +5565,9 @@ class KroneckerDelta(CompFullySym):
         CompFullySym.__init__(self, ring, frame, 2, start_index,
                               output_formatter)
         for i in range(self._sindex, self._dim + self._sindex):
-            self._comp[(i,i)] = self._ring(1)
+            self._comp[(i, i)] = self._ring(1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
