@@ -1716,7 +1716,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         cdef dict d = self.dict(copy=False)
         yield from d.items()
 
-    iteritems = deprecated_function_alias(40960, "items")
+    iteritems = deprecated_function_alias(40960, items)
 
     def __abs__(self):
         """
@@ -5217,7 +5217,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         """
         return iter(self._entries.items())
 
-    iteritems = deprecated_function_alias(40960, "items")
+    iteritems = deprecated_function_alias(40960, items)
 
     def __reduce__(self):
         """
