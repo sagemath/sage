@@ -1,1 +1,1 @@
-dev-python/hatchling
+dev-python/hatch-vcs
