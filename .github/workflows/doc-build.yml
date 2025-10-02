@@ -22,6 +22,7 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         n: [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
@@ -166,9 +167,8 @@ jobs:
           echo "Deleting files..."
           for x in /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL; do
             echo "Removing $x..."
-            cd "$x"
-            perl -e 'for(<*>){((stat)[9]<(unlink))}'   # https://unix.stackexchange.com/a/79656/
-            echo "... done"
+            cd "$x" && { perl -e 'for(<*>){((stat)[9]<(unlink))}' ; echo "... done"; } || echo "... not exist"
+            # https://unix.stackexchange.com/a/79656/
             df
           done
           echo "Removed all"
