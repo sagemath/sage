@@ -411,7 +411,7 @@ in the Installation Guide.
     If there are numerous failures, there was a serious problem with your build.
 
 17. The HTML version of the [documentation](https://doc.sagemath.org/html/en/index.html)
-    can be build by running `make doc-html` and resides in
+    can be built by running `make doc-html` and resides in
     `build/sage-distro/src/doc/`. You may want to bookmark it in your browser.
 
 18. Optional: If you want to build the PDF version of the documentation,
