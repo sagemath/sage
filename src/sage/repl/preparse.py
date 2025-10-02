@@ -1746,6 +1746,15 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
         sage: preparse("time R.<x> = ZZ[]", do_time=True)
         '__time__ = cputime(); __wall__ = walltime(); R = ZZ[\'x\']; print("Time: CPU {:.2f} s, Wall: {:.2f} s".format(cputime(__time__), walltime(__wall__))); (x,) = R._first_ngens(1)'
 
+    Environment variable assignments are converted to os.environ assignments::
+
+        sage: preparse("SAGE_NUM_THREADS=8")
+        "__import__('os').environ['SAGE_NUM_THREADS'] = str(8)"
+        sage: preparse("MY_VAR=123")
+        "__import__('os').environ['MY_VAR'] = str(123)"
+        sage: preparse("TEST_VAR='hello'")
+        "__import__('os').environ['TEST_VAR'] = str('hello')"
+
     TESTS:
 
     Check support for unicode characters (:issue:`29278`)::
@@ -1789,6 +1798,16 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
         # Get rid of leading sage: and >>> so that pasting of examples from
         # the documentation works.
         line = strip_prompts(line)
+
+    # Check for environment variable assignment (e.g., SAGE_NUM_THREADS=8)
+    # This should match: IDENTIFIER=value where IDENTIFIER is all uppercase with underscores
+    env_var_pattern = r'^\s*([A-Z][A-Z0-9_]*)\s*=\s*(.+)\s*$'
+    env_match = re.match(env_var_pattern, line)
+    if env_match:
+        var_name = env_match.group(1)
+        var_value = env_match.group(2).strip()
+        # Convert to os.environ assignment
+        return f"__import__('os').environ['{var_name}'] = str({var_value})"
 
     # This part handles lines with semi-colons all at once
     # Then can also handle multiple lines more efficiently, but
