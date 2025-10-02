@@ -146,11 +146,9 @@ def quadratic_order_approximate_class_number(disc, *, bound=10**4):
         sage: round(quadratic_order_approximate_class_number(-d, bound=10**6))
         1441...
 
-    ::
+    Test it against the exact class number computed for the CSIDH-512 prime (source: https://eprint.iacr.org/2019/498.pdf)::
 
         sage: from sage.rings.number_field.order import quadratic_order_approximate_class_number
-        sage: # Test it against the exact class number computed for the CSIDH-512 prime
-        sage: # Source: https://eprint.iacr.org/2019/498.pdf
         sage: p = 4 * prod(primes(3,374)) * 587 - 1
         sage: hreal = 84884147409828091725676728670213067387206838101828807864190286991865870575397
         sage: assert not hreal * BQFClassGroup(-p).random_element()
