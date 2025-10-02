@@ -116,6 +116,7 @@ cimport cython
 from cpython.slice cimport PySlice_GetIndicesEx
 
 from sage.categories.rings import Rings
+from sage.misc.superseded import deprecated_function_alias
 from sage.structure.sequence import Sequence
 from sage.structure.element cimport Element, Vector
 from sage.structure.element import canonical_coercion
