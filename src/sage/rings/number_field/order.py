@@ -185,7 +185,7 @@ def quadratic_order_approximate_class_number(disc, *, bound=10**4):
     w = 6 if disc == -3 else 4 if disc == -4 else 2
     RR = RealField(max(53, disc.bit_length()))  # wild guess!
 
-    # compute numerator and denominator separately for numerical stability
+    # compute numerator and denominator separately for speed
     L1 = L2 = RR(1)
     for ell in primes(bound):
         L1 *= ell
