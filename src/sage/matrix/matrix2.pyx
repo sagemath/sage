@@ -1610,7 +1610,7 @@ cdef class Matrix(Matrix1):
 
         TESTS::
 
-            sage: A = matrix(ZZ, 0,0, [])
+            sage: A = matrix(ZZ, 0, 0, [])
             sage: A.permanent()
             1
         """
