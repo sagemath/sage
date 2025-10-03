@@ -1,3 +1,4 @@
+"""
 #Relevant functions and how to use them
 from sage.all import Graph
 
@@ -37,4 +38,5 @@ G.girth() #returns girth of the graph ex: 3
 G.is_planar() #returns true or false
 
 G.is_connected() #returns true or false
+"""
 
