@@ -465,7 +465,8 @@ def connected_components_sizes(G, forbidden_vertices=None):
                                                    forbidden_vertices=forbidden_vertices)]
 
 
-def blocks_and_cut_vertices(G, algorithm='Tarjan_Boost', sort=False, key=None):
+def blocks_and_cut_vertices(G, algorithm='Tarjan_Boost', sort=False, key=None,
+                            forbidden_vertices=None):
     """
     Return the blocks and cut vertices of the graph.
 
@@ -495,6 +496,10 @@ def blocks_and_cut_vertices(G, algorithm='Tarjan_Boost', sort=False, key=None):
       vertex as its one argument and returns a value that can be used for
       comparisons in the sorting algorithm (we must have ``sort=True``)
 
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search. This parameter is currently only available when
+      ``algorithm`` is ``'Tarjan_Sage'`` and so is ignored otherwise.
+
     OUTPUT: ``(B, C)``, where ``B`` is a list of blocks - each is a list of
     vertices and the blocks are the corresponding induced subgraphs - and
     ``C`` is a list of cut vertices.
@@ -508,7 +513,7 @@ def blocks_and_cut_vertices(G, algorithm='Tarjan_Boost', sort=False, key=None):
 
         - :meth:`blocks_and_cuts_tree`
         - :func:`sage.graphs.base.boost_graph.blocks_and_cut_vertices`
-        - :meth:`~sage.graphs.generic_graph.GenericGraph.is_biconnected`
+        - :meth:`~Graph.is_biconnected`
         - :meth:`~Graph.bridges`
 
     EXAMPLES:
@@ -554,6 +559,23 @@ def blocks_and_cut_vertices(G, algorithm='Tarjan_Boost', sort=False, key=None):
         sage: blocks_and_cut_vertices(rings, algorithm='Tarjan_Boost')
         ([[0, 1, 4, 2, 3], [0, 6, 9, 7, 8]], [0])
 
+    Check the behavior of parameter ``forbidden_vertices``::
+
+        sage: G = graphs.WindmillGraph(4, 3)
+        sage: G.blocks_and_cut_vertices(sort=True, algorithm='Tarjan_Sage')
+        ([[0, 1, 2, 3], [0, 4, 5, 6], [0, 7, 8, 9]], [0])
+        sage: G.blocks_and_cut_vertices(sort=True, algorithm='Tarjan_Sage', forbidden_vertices=[0])
+        ([[1, 2, 3], [4, 5, 6], [7, 8, 9]], [])
+        sage: G.blocks_and_cut_vertices(sort=True, algorithm='Tarjan_Sage', forbidden_vertices=[1])
+        ([[0, 2, 3], [0, 4, 5, 6], [0, 7, 8, 9]], [0])
+        sage: G = graphs.PathGraph(3)
+        sage: G.blocks_and_cut_vertices(sort=True, algorithm='Tarjan_Sage')
+        ([[1, 2], [0, 1]], [1])
+        sage: G.blocks_and_cut_vertices(sort=True, algorithm='Tarjan_Sage', forbidden_vertices=[0])
+        ([[1, 2]], [])
+        sage: G.blocks_and_cut_vertices(sort=True, algorithm='Tarjan_Sage', forbidden_vertices=[1])
+        ([[0], [2]], [])
+
     TESTS::
 
         sage: blocks_and_cut_vertices(Graph(0))
@@ -586,18 +608,22 @@ def blocks_and_cut_vertices(G, algorithm='Tarjan_Boost', sort=False, key=None):
     if (not sort) and key:
         raise ValueError('sort keyword is False, yet a key function is given')
 
+    forbidden = set(forbidden_vertices) if forbidden_vertices is not None else set()
+
     blocks = []
     cut_vertices = set()
 
     # We iterate over all vertices to ensure that we visit each connected
     # component of the graph
-    seen = set()
+    seen = set(forbidden)
     for start in G.vertex_iterator():
         if start in seen:
             continue
 
         # Special case of an isolated vertex
-        if not G.degree(start):
+        if (not G.degree(start) or
+                (forbidden and
+                 len(set(G.neighbors(start, closed=True)) - forbidden) == 1)):
             blocks.append([start])
             seen.add(start)
             continue
@@ -636,6 +662,9 @@ def blocks_and_cut_vertices(G, algorithm='Tarjan_Boost', sort=False, key=None):
             try:
                 # We consider the next of its neighbors
                 w = next(neighbors[v])
+
+                if w in forbidden:
+                    continue
 
                 # If we never met w before, we remember the direction of
                 # edge vw, and add w to the stack.
