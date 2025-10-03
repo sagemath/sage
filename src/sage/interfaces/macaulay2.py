@@ -136,7 +136,6 @@ from sage.interfaces.interface import AsciiArtString
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
 from sage.misc.multireplace import multiple_replace
-from sage.misc.superseded import deprecated_function_alias
 from sage.structure.global_options import GlobalOptions
 
 
@@ -1697,8 +1696,6 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
             return sage_eval(repr_str)
         except Exception:
             raise NotImplementedError("cannot convert %s to a Sage object" % repr_str)
-
-    to_sage = deprecated_function_alias(27848, ExpectElement.sage)
 
     def _matrix_(self, R):
         r"""
