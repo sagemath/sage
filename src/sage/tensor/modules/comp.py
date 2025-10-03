@@ -501,8 +501,9 @@ class Components(SageObject):
         self._dim = len(frame)
         self._sindex = start_index
         self._output_formatter = output_formatter
-        self._comp = {} # the dictionary of components, with the index tuples
-                        # as keys
+
+        # the dictionary of components, with the index tuples as keys
+        self._comp = {}
 
     def _repr_(self) -> str:
         r"""
@@ -611,7 +612,7 @@ class Components(SageObject):
         r"""
         Delete all the zeros in the dictionary :attr:`_comp`.
 
-        ..NOTE::
+        .. NOTE::
 
             The use case of this method must be rare because zeros are not
             stored in :attr:`_comp`.
@@ -722,12 +723,12 @@ class Components(SageObject):
             [ 0  0  0]
         """
         no_format = self._output_formatter is None
-        format_type = None # default value, possibly redefined below
+        format_type = None  # default value, possibly redefined below
         if isinstance(args, list):  # case of [[...]] syntax
             no_format = True
             if isinstance(args[0], slice):
                 indices = args[0]
-            elif isinstance(args[0], (tuple, list)): # to ensure equivalence between
+            elif isinstance(args[0], (tuple, list)):  # to ensure equivalence between
                 indices = args[0]           # [[(i,j,...)]] or [[[i,j,...]]] and [[i,j,...]]
             else:
                 indices = tuple(args)
@@ -762,7 +763,7 @@ class Components(SageObject):
                     return self._output_formatter(self._ring.zero())
                 else:
                     return self._output_formatter(self._ring.zero(),
-                                                 format_type)
+                                                  format_type)
 
     def _get_list(self, ind_slice, no_format=True, format_type=None):
         r"""
@@ -829,8 +830,8 @@ class Components(SageObject):
             else:
                 return [self[i, format_type] for i in range(start, stop)]
         if ind_slice.start is not None or ind_slice.stop is not None:
-            raise NotImplementedError("function [start:stop] not " +
-                      "implemented for components with {} indices".format(self._nid))
+            raise NotImplementedError("function [start:stop] not implemented " +
+                                      f"for components with {self._nid} indices")
         resu = [self._gen_list([i], no_format, format_type)
                 for i in range(si, nsi)]
         if self._nid == 2:
@@ -906,11 +907,11 @@ class Components(SageObject):
             [3 4 5]
             [6 7 8]
         """
-        format_type = None # default value, possibly redefined below
+        format_type = None  # default value, possibly redefined below
         if isinstance(args, list):  # case of [[...]] syntax
             if isinstance(args[0], slice):
                 indices = args[0]
-            elif isinstance(args[0], (tuple, list)): # to ensure equivalence between
+            elif isinstance(args[0], (tuple, list)):  # to ensure equivalence between
                 indices = args[0]           # [[(i,j,...)]] or [[[i,j,...]]] and [[i,j,...]]
             else:
                 indices = tuple(args)
@@ -1265,8 +1266,8 @@ class Components(SageObject):
                 zero_value = val == 0
             if not zero_value or not only_nonzero:
                 indices = ''  # text indices
-                d_indices = '' # LaTeX down indices
-                u_indices = '' # LaTeX up indices
+                d_indices = ''  # LaTeX down indices
+                u_indices = ''  # LaTeX up indices
                 previous = None  # position of previous index
                 for k in range(self._nid):
                     i = ind[k] - si
@@ -1436,12 +1437,12 @@ class Components(SageObject):
             sage: c.__eq__(v)
             False
         """
-        if isinstance(other, (int, Integer)): # other is 0
+        if isinstance(other, (int, Integer)):  # other is 0
             if other == 0:
                 return self.is_zero()
             else:
                 raise TypeError("cannot compare a set of components to a number")
-        else: # other is another Components
+        else:  # other is another Components
             if not isinstance(other, Components):
                 raise TypeError("an instance of Components is expected")
             if other._frame != self._frame:
@@ -1817,14 +1818,14 @@ class Components(SageObject):
                     # list of input parameters:
                     listParalInput = [(self, ind_part) for ind_part in local_list]
 
-                    @parallel(p_iter='multiprocessing',ncpus=nproc)
+                    @parallel(p_iter='multiprocessing', ncpus=nproc)
                     def paral_mul(a, local_list_ind):
                         partial = []
                         for ind in local_list_ind:
                             partial.append([ind, a[[ind[0]]]*a[[ind[1]]]])
                         return partial
 
-                    for ii,val in paral_mul(listParalInput):
+                    for ii, val in paral_mul(listParalInput):
                         for jj in val:
                             result[[jj[0]]] = jj[1]
                 else:
@@ -1856,7 +1857,7 @@ class Components(SageObject):
                         partial.append([ind + ind_o, a._comp[ind]*val_o])
                 return partial
 
-            for ii,val in paral_mul(listParalInput):
+            for ii, val in paral_mul(listParalInput):
                 for jj in val:
                     result._comp[jj[0]] = jj[1]
         else:
@@ -2419,7 +2420,7 @@ class Components(SageObject):
         ind = [si for k in range(self._nid)]
         while True:
             yield tuple(ind)
-            for pos in range(self._nid-1,-1,-1):
+            for pos in range(self._nid-1, -1, -1):
                 if ind[pos] != imax:
                     ind[pos] += 1
                     break
@@ -3121,7 +3122,7 @@ class CompWithSym(Components):
             4-indices components w.r.t. [1, 2, 3], with symmetry on the index positions (0, 1)
         """
         return CompWithSym(self._ring, self._frame, self._nid, self._sindex,
-                          self._output_formatter, self._sym, self._antisym)
+                           self._output_formatter, self._sym, self._antisym)
 
     def _ordered_indices(self, indices) -> tuple:
         r"""
@@ -3251,14 +3252,14 @@ class CompWithSym(Components):
             return self._get_list(indices, no_format, format_type)
         else:
             sign, ind = self._ordered_indices(indices)
-            if (sign == 0) or (ind not in self._comp): # the value is zero:
+            if sign == 0 or ind not in self._comp:  # the value is zero:
                 if no_format:
                     return self._ring.zero()
                 elif format_type is None:
                     return self._output_formatter(self._ring.zero())
                 else:
                     return self._output_formatter(self._ring.zero(),
-                                                 format_type)
+                                                  format_type)
             else: # nonzero value
                 if no_format:
                     if sign == 1:
@@ -3273,10 +3274,10 @@ class CompWithSym(Components):
                 else:
                     if sign == 1:
                         return self._output_formatter(
-                                                 self._comp[ind], format_type)
+                            self._comp[ind], format_type)
                     else: # sign = -1
                         return self._output_formatter(
-                                                -self._comp[ind], format_type)
+                            -self._comp[ind], format_type)
 
     def __setitem__(self, args, value) -> None:
         r"""
@@ -3582,7 +3583,7 @@ class CompWithSym(Components):
                     partial.append([ind, a[[ind]]+b[[ind]]])
                 return partial
 
-            for ii,val in paral_sum(listParalInput):
+            for ii, val in paral_sum(listParalInput):
                 for jj in val:
                     result[[jj[0]]] = jj[1]
         else:
@@ -3686,7 +3687,7 @@ class CompWithSym(Components):
                         partial.append([ind + ind_o, a._comp[ind]*val_o])
                 return partial
 
-            for ii,val in paral_mul(listParalInput):
+            for ii, val in paral_mul(listParalInput):
                 for jj in val:
                     result._comp[jj[0]] = jj[1]
         else:
@@ -3993,17 +3994,17 @@ class CompWithSym(Components):
                             return
                         ind[pos] = ind[isym[k-1]] + 1
             if not any(pos in isym for isym in sym) and not any(pos in isym for isym in antisym):
-                sym.append([pos]) # treat non-symmetrized indices as being symmetrized with themselves
+                sym.append([pos])  # treat non-symmetrized indices as being symmetrized with themselves
         while True:
             yield tuple(ind)
-            step_finished = False # each step generates a new index
-            for i in range(len(sym)-1,-1,-1):
+            step_finished = False  # each step generates a new index
+            for i in range(len(sym)-1, -1, -1):
                 # start with symmetrized indices, loop until we find
                 # an index which we can increase without going over
                 # the maximum
                 isym = sym[i]
                 if not step_finished:
-                    for k in range(len(isym)-1,-1,-1):
+                    for k in range(len(isym)-1, -1, -1):
                         if ind[isym[k]] != imax:
                             # we have found an index which we can
                             # increase; adjust other indices in the
@@ -4021,12 +4022,12 @@ class CompWithSym(Components):
                     return # we went through all indices and didn't
                            # find one which we can increase, thus we
                            # have generated all indices
-            for i in range(len(antisym)-1,-1,-1):
+            for i in range(len(antisym)-1, -1, -1):
                 # the antisymmetrized indices work similar to the
                 # symmetrized ones
                 isym = antisym[i]
                 if not step_finished:
-                    for k in range(len(isym)-1,-1,-1):
+                    for k in range(len(isym)-1, -1, -1):
                         if ind[isym[k]] + len(isym)-1-k != imax:
                             ind[isym[k]] += 1
                             for l in range(k+1, len(isym)):
@@ -4038,7 +4039,7 @@ class CompWithSym(Components):
                             # reset the index
                             ind[isym[k]] = si + k
                 if not step_finished and i == 0:
-                    return # end point reach
+                    return  # end point reach
 
     def symmetrize(self, *pos):
         r"""
@@ -4609,7 +4610,7 @@ class CompWithSym(Components):
         return result
 
 
-#******************************************************************************
+# ****************************************************************************
 
 class CompFullySym(CompWithSym):
     r"""
@@ -4852,7 +4853,7 @@ class CompFullySym(CompWithSym):
             return self._output_formatter(self._ring.zero())
         else:
             return self._output_formatter(self._ring.zero(),
-                                             format_type)
+                                          format_type)
 
     def __setitem__(self, args, value) -> None:
         r"""
@@ -5041,7 +5042,7 @@ class CompFullySym(CompWithSym):
                         partial.append([ind, a[[ind]]+b[[ind]]])
                     return partial
 
-                for ii,val in paral_sum(listParalInput):
+                for ii, val in paral_sum(listParalInput):
                     for jj in val:
                         result[[jj[0]]] = jj[1]
 
