@@ -732,7 +732,7 @@ def blocks_and_cut_vertices(G, algorithm='Tarjan_Boost', sort=False, key=None,
     return blocks, list(cut_vertices)
 
 
-def blocks_and_cuts_tree(G):
+def blocks_and_cuts_tree(G, forbidden_vertices=None):
     """
     Return the blocks-and-cuts tree of ``self``.
 
@@ -750,6 +750,14 @@ def blocks_and_cuts_tree(G):
     type `B`.
 
     We referred to [HarPri]_ and [Gallai]_ for blocks and cuts tree.
+
+    INPUT:
+
+    - ``G`` -- a Sage graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search. This is equilavent to get the blocks-and-cut tree
+      of a graph in which the forbidden vertices have been removed.
 
     .. SEEALSO::
 
@@ -782,6 +790,18 @@ def blocks_and_cuts_tree(G):
         sage: T.vertices(sort=True)
         [('B', (0, 1, 4, 5, 2, 6, 3, 7, 8, 9))]
 
+    Check the behavior of parameter ``forbidden_vertices``::
+
+        sage: G = graphs.CycleGraph(5)
+        sage: G.blocks_and_cut_vertices()
+        ([[0, 1, 4, 2, 3]], [])
+        sage: G.blocks_and_cuts_tree()
+        Graph on 1 vertex
+        sage: G.blocks_and_cut_vertices(forbidden_vertices=[0])
+        ([[3, 4], [2, 3], [1, 2]], [2, 3])
+        sage: G.blocks_and_cuts_tree(forbidden_vertices=[0])
+        Graph on 5 vertices
+
     TESTS:
 
     When ``self`` is not connected, the resulting graph is a forest
@@ -804,7 +824,7 @@ def blocks_and_cuts_tree(G):
         raise TypeError("the input must be a Sage graph")
 
     from sage.graphs.graph import Graph
-    B, C = G.blocks_and_cut_vertices()
+    B, C = G.blocks_and_cut_vertices(forbidden_vertices=forbidden_vertices)
     B = map(tuple, B)
     set_C = set(C)
     g = Graph()
@@ -816,12 +836,20 @@ def blocks_and_cuts_tree(G):
     return g
 
 
-def is_biconnected(G):
+def is_biconnected(G, forbidden_vertices=None):
     r"""
     Check whether the graph is biconnected.
 
     A biconnected graph is a connected graph on two or more vertices that is not
     broken into disconnected pieces by deleting any single vertex.
+
+    INPUT:
+
+    - ``G`` -- a Sage graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search. This is equilavent to check whether the graph in
+      which the forbidden vertices have been removed is biconnected.
 
     .. SEEALSO::
 
@@ -842,6 +870,14 @@ def is_biconnected(G):
         sage: G.is_biconnected()
         True
 
+    Check the behavior of parameter ``forbidden_vertices``::
+
+        sage: G = graphs.CycleGraph(5)
+        sage: G.is_biconnected()
+        True
+        sage: G.is_biconnected(forbidden_vertices=[0])
+        False
+
     TESTS::
 
         sage: Graph().is_biconnected()
@@ -853,10 +889,10 @@ def is_biconnected(G):
     """
     if G.order() < 2 or not G.is_connected():
         return False
-    return not G.blocks_and_cut_vertices()[1]
+    return not G.blocks_and_cut_vertices(forbidden_vertices=forbidden_vertices)[1]
 
 
-def biconnected_components(G):
+def biconnected_components(G, forbidden_vertices=None):
     r"""
     Return the list of biconnected components.
 
@@ -867,6 +903,10 @@ def biconnected_components(G):
 
     - ``G`` -- the input graph
 
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search. This is equilavent to get the biconnected
+      components of the graph after the removal of the forbidden vertices.
+
     EXAMPLES::
 
         sage: from sage.graphs.connectivity import biconnected_components
@@ -875,6 +915,14 @@ def biconnected_components(G):
         [2, 3]
         sage: sorted(len(b) for b in biconnected_components(2 * G))
         [2, 2, 3, 3]
+
+    Check the behavior of parameter ``forbidden_vertices``::
+
+        sage: G = graphs.CycleGraph(5)
+        sage: len(G.biconnected_components())
+        1
+        sage: len(G.biconnected_components(forbidden_vertices=[0]))
+        3
 
     TESTS:
 
@@ -890,10 +938,11 @@ def biconnected_components(G):
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
 
-    return [b for b in blocks_and_cut_vertices(G)[0] if len(b) > 1]
+    B = blocks_and_cut_vertices(G, forbidden_vertices=forbidden_vertices)[0]
+    return [b for b in B if len(b) > 1]
 
 
-def biconnected_components_subgraphs(G):
+def biconnected_components_subgraphs(G, forbidden_vertices=None):
     r"""
     Return a list of biconnected components as graph objects.
 
@@ -903,6 +952,11 @@ def biconnected_components_subgraphs(G):
     INPUT:
 
     - ``G`` -- the input graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search. This is equilavent to get the biconnected
+      components subgraphs of the graph after the removal of the forbidden
+      vertices.
 
     EXAMPLES::
 
@@ -915,6 +969,14 @@ def biconnected_components_subgraphs(G):
         [(2, 3, None)]
         sage: L[1].edges()
         [(0, 1, None), (0, 2, None), (1, 2, None)]
+
+    Check the behavior of parameter ``forbidden_vertices``::
+
+        sage: G = graphs.CycleGraph(5)
+        sage: len(G.biconnected_components_subgraphs())
+        1
+        sage: len(G.biconnected_components_subgraphs(forbidden_vertices=[0]))
+        3
 
     TESTS:
 
@@ -930,15 +992,25 @@ def biconnected_components_subgraphs(G):
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
 
-    return [G.subgraph(c) for c in G.biconnected_components()]
+    B = G.biconnected_components(forbidden_vertices=forbidden_vertices)
+    return [G.subgraph(c) for c in B]
 
 
-def number_of_biconnected_components(G):
+def number_of_biconnected_components(G, forbidden_vertices=None):
     r"""
     Return the number of biconnected components.
 
     A biconnected component is a maximal subgraph on two or more vertices that
     is biconnected, i.e., removing any vertex does not disconnect it.
+
+    INPUT:
+
+    - ``G`` -- the input graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search. This is equilavent to get the number of
+      biconnected components of the graph after the removal of the forbidden
+      vertices.
 
     .. SEEALSO::
 
@@ -980,6 +1052,14 @@ def number_of_biconnected_components(G):
         sage: G.number_of_biconnected_components()
         0
 
+    Check the behavior of parameter ``forbidden_vertices``::
+
+        sage: G = graphs.CycleGraph(5)
+        sage: G.number_of_biconnected_components()
+        1
+        sage: G.number_of_biconnected_components(forbidden_vertices=[0])
+        3
+
     TESTS:
 
     An error is raised if the input is not a Sage graph::
@@ -994,7 +1074,7 @@ def number_of_biconnected_components(G):
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
 
-    return len(G.biconnected_components())
+    return len(G.biconnected_components(forbidden_vertices=forbidden_vertices))
 
 
 def is_edge_cut(G, edges):
