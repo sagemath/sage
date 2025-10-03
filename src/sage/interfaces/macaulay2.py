@@ -1218,27 +1218,6 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
         """
         return self.external_string().replace('^', '**')
 
-    def structure_sheaf(self):
-        """
-        EXAMPLES::
-
-            sage: # optional - macaulay2
-            sage: S = macaulay2('QQ[a..d]')
-            sage: R = S / macaulay2('a^3 + b^3 + c^3 + d^3')
-            sage: X = R.Proj().name('X')
-            sage: X.structure_sheaf()
-            doctest:...: DeprecationWarning: The function `structure_sheaf` is deprecated. Use `self.sheaf()` instead.
-            See https://github.com/sagemath/sage/issues/27848 for details.
-            OO
-              X
-            sage: X.sheaf()
-            OO
-              X
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(27848, 'The function `structure_sheaf` is deprecated. Use `self.sheaf()` instead.')
-        return self.parent()('OO_%s' % self.name())
-
     def subs(self, *args, **kwds):
         """
         Note that we have to override the substitute method so that we get
@@ -1864,29 +1843,6 @@ class Macaulay2FunctionElement(FunctionElement):
         return self._obj.parent().eval(
             'code select(methods %s, m->instance(%s, m#1))'
             % (self._name, self._obj._name))
-
-
-def is_Macaulay2Element(x):
-    """
-    Return ``True`` if ``x`` is a :class:`Macaulay2Element`.
-
-    This function is deprecated; use :func:`isinstance`
-    (of :class:`sage.interfaces.abc.Macaulay2Element`) instead.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.macaulay2 import is_Macaulay2Element
-        sage: is_Macaulay2Element(2)              # optional - macaulay2
-        doctest:...: DeprecationWarning: the function is_Macaulay2Element is deprecated; use isinstance(x, sage.interfaces.abc.Macaulay2Element) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: is_Macaulay2Element(macaulay2(2))   # optional - macaulay2
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_Macaulay2Element is deprecated; use isinstance(x, sage.interfaces.abc.Macaulay2Element) instead")
-
-    return isinstance(x, Macaulay2Element)
 
 
 # An instance
