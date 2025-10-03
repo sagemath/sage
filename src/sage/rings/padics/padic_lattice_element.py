@@ -48,6 +48,7 @@ def unpickle_le(parent, value, prec):
 
         sage: from sage.rings.padics.padic_lattice_element import unpickle_le
         sage: R = ZpLC(5,8)
+        doctest:...: FutureWarning:...
         sage: a = unpickle_le(R, 42, 6); a
         2 + 3*5 + 5^2 + O(5^6)
         sage: a.parent() is R
@@ -192,6 +193,7 @@ class pAdicLatticeElement(pAdicGenericElement):
         EXAMPLES::
 
             sage: K = QpLC(7)
+            doctest:...: FutureWarning:...
             sage: K.random_element()._is_base_elt(7)  # not tested, known bug (see :issue:`32126`)
             True
         """
@@ -1291,6 +1293,7 @@ class pAdicLatticeFloatElement(pAdicLatticeElement):
         TESTS::
 
             sage: R = ZpLF(17)
+            doctest:...: FutureWarning:...
             sage: prec = R.precision()
 
             sage: prec.del_elements()
