@@ -1345,7 +1345,6 @@ class FunctionField(Field):
         # Finally, put the result together and transform it into the correct output
         res = k(-1)**(v_a * v_b * e) * a_rd_pw * b_rd_pw
 
-        from sage.rings.integer import Integer
         return Integer(1) if res.is_one() else Integer(-1)
 
     def extension_constant_field(self, k) -> ConstantFieldExtension:
