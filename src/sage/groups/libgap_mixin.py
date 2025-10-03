@@ -740,14 +740,14 @@ class GroupMixinLibGAP:
             sage: ct = MatrixGroup(SymmetricGroup(2)).character_table(); ct             # random, needs sage.rings.number_field
             [ 1 -1]
             [ 1  1]
-            sage: sorted(ct)                                                            # needs sage.rings.number_field
-            [(1, 1), (1, -1)]
+            sage: sorted(ct, key=str)                                                   # needs sage.rings.number_field
+            [(1, -1), (1, 1)]
             sage: ct = MatrixGroup(SymmetricGroup(3)).character_table(); ct             # random, needs sage.rings.number_field
             [ 1  1 -1]
             [ 2 -1  0]
             [ 1  1  1]
-            sage: sorted(ct)                                                            # needs sage.rings.number_field
-            [(1, 1, 1), (1, 1, -1), (2, -1, 0)]
+            sage: sorted(ct, key=str)                                                   # needs sage.rings.number_field
+            [(1, 1, -1), (1, 1, 1), (2, -1, 0)]
             sage: ct = MatrixGroup(SymmetricGroup(5)).character_table(); ct             # random, long time
             [ 1 -1 -1  1 -1  1  1]
             [ 4  0  1 -1 -2  1  0]
@@ -756,9 +756,9 @@ class GroupMixinLibGAP:
             [ 5 -1  1  0  1 -1  1]
             [ 4  0 -1 -1  2  1  0]
             [ 1  1  1  1  1  1  1]
-            sage: sorted(ct.rows())                                                     # long time
-            [(1, 1, 1, 1, 1, 1, 1), (1, -1, -1, 1, -1, 1, 1),
-             (4, 0, 1, -1, -2, 1, 0), (4, 0, -1, -1, 2, 1, 0),
+            sage: sorted(ct, key=str)                                                   # long time
+            [(1, -1, -1, 1, -1, 1, 1), (1, 1, 1, 1, 1, 1, 1),
+             (4, 0, -1, -1, 2, 1, 0), (4, 0, 1, -1, -2, 1, 0),
              (5, -1, 1, 0, 1, -1, 1), (5, 1, -1, 0, -1, -1, 1), (6, 0, 0, 1, 0, 0, -2)]
         """
         # code from function in permgroup.py, but modified for
