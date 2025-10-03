@@ -235,26 +235,26 @@ AUTHORS:
 # *****************************************************************************
 
 from __future__ import annotations
-from typing import Literal, TYPE_CHECKING
 
+from typing import TYPE_CHECKING, Literal
+
+from sage.categories.function_fields import FunctionFields
+from sage.categories.homset import Hom
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
+from sage.rings.integer import Integer
 from sage.rings.ring import Field
-from sage.categories.homset import Hom
-from sage.categories.function_fields import FunctionFields
 from sage.structure.category_object import CategoryObject
 
 if TYPE_CHECKING:
+    from sage.rings.function_field.divisor import DivisorGroup
     from sage.rings.function_field.element import FunctionFieldElement
     from sage.rings.function_field.extensions import ConstantFieldExtension
-    from sage.rings.function_field.divisor import DivisorGroup
     from sage.rings.function_field.function_field_rational import RationalFunctionField
     from sage.rings.function_field.jacobian_base import Jacobian_base
     from sage.rings.function_field.maps import FunctionFieldCompletion
     from sage.rings.function_field.place import PlaceSet
     from sage.rings.function_field.valuation import FunctionFieldValuation
-    from sage.rings.integer import Integer
-
 
 def is_FunctionField(x) -> bool:
     """
@@ -1429,9 +1429,8 @@ class FunctionField(Field):
             if base_place is None:
                 raise ValueError('the function field has no rational place')
             # appropriate base divisor is constructed below.
-        else:
-            if isinstance(base_div, FunctionFieldPlace):
-                base_div = base_div.divisor()
+        elif isinstance(base_div, FunctionFieldPlace):
+            base_div = base_div.divisor()
 
         g = self.genus()
         curve = kwds.get('curve')
