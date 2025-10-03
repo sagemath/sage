@@ -525,8 +525,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
           coefficients or an Ore polynomial
 
         - ``A_field`` (default: ``None``) -- the `A`-field over which
-          this Drinfeld module is defined; if ``None``, it is infered
-          from ``gen``
+          this Drinfeld module is defined (either a field or a ring
+          extension); if ``None``, it is infered from ``gen``
 
         - ``name`` -- (default: ``'τ'``) the name of the variable of
           the Ore polynomial
@@ -1184,10 +1184,15 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         return self._gen.coefficients(sparse=sparse)
 
-    def change_Afield(self, A_field):
+    def change_A_field(self, A_field):
         r"""
         Return this Drinfeld module viewed over another
         `A`-field.
+
+        INPUT:
+
+        - ``A_field`` -- a field or an instance of
+          class:`sage.rings.ring_extension.RingExtension`
 
         EXAMPLES::
 
@@ -1199,7 +1204,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             Drinfeld module defined by T |--> (z + 2)*τ^2 + (z + 1)*τ + z
 
             sage: L = K.extension(2)
-            sage: phi.change_Afield(L)
+            sage: phi.change_A_field(L)
             Drinfeld module defined by T |--> (z4^3 + z4^2 + z4)*τ^2 + (z4^3 + z4^2 + z4 + 4)*τ + z4^3 + z4^2 + z4 + 3
         """
         return DrinfeldModule(self._function_ring, self._gen, A_field=A_field)
