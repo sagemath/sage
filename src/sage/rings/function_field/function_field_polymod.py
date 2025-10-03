@@ -26,6 +26,8 @@ Function Fields: extension
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
+from typing import Literal
+
 from sage.arith.functions import lcm
 from sage.categories.function_fields import FunctionFields
 from sage.categories.homset import Hom
@@ -107,7 +109,7 @@ class FunctionField_polymod(FunctionField):
     """
     Element = FunctionFieldElement_polymod
 
-    def __init__(self, polynomial, names, category=None):
+    def __init__(self, polynomial, names, category=None) -> None:
         """
         Create a function field defined as an extension of another function
         field by adjoining a root of a univariate polynomial.
@@ -171,7 +173,7 @@ class FunctionField_polymod(FunctionField):
         self._populate_coercion_lists_(coerce_list=[base_field, self._ring])
         self._gen = self(self._ring.gen())
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return hash of the function field.
 
@@ -186,7 +188,7 @@ class FunctionField_polymod(FunctionField):
         """
         return self._hash
 
-    def _element_constructor_(self, x):
+    def _element_constructor_(self, x) -> FunctionFieldElement_polymod:
         r"""
         Make ``x`` into an element of the function field, possibly not canonically.
 
@@ -226,7 +228,7 @@ class FunctionField_polymod(FunctionField):
             raise IndexError("there is only one generator")
         return self._gen
 
-    def ngens(self):
+    def ngens(self) -> Literal[1]:
         """
         Return the number of generators of the function field over its base
         field. This is by definition 1.
@@ -517,7 +519,7 @@ class FunctionField_polymod(FunctionField):
         return self.base_field().constant_base_field()
 
     @cached_method(key=lambda self, base: self.base_field() if base is None else base)
-    def degree(self, base=None):
+    def degree(self, base=None) -> Integer:
         """
         Return the degree of the function field over the function field ``base``.
 
@@ -558,7 +560,7 @@ class FunctionField_polymod(FunctionField):
             return ZZ(1)
         return self._polynomial.degree() * self.base_field().degree(base)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the function field.
 
@@ -571,7 +573,7 @@ class FunctionField_polymod(FunctionField):
         """
         return f"Function field in {self.variable_name()} defined by {self._polynomial}"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the LaTeX representation of the function field.
 
@@ -600,7 +602,7 @@ class FunctionField_polymod(FunctionField):
         """
         return self._base_field
 
-    def random_element(self, *args, **kwds):
+    def random_element(self, *args, **kwds) -> FunctionFieldElement_polymod:
         """
         Create a random element of the function field. Parameters are passed
         onto the random_element method of the base_field.
@@ -1843,7 +1845,8 @@ class FunctionField_simple(FunctionField_polymod):
 
         return k_ext, embedding
 
-    def genus(self):
+    @cached_method
+    def genus(self) -> Integer:
         """
         Return the genus of the function field.
 
@@ -2042,7 +2045,7 @@ class FunctionField_global(FunctionField_simple):
     """
     _differentials_space = LazyImport('sage.rings.function_field.differential', 'DifferentialsSpace_global')
 
-    def __init__(self, polynomial, names):
+    def __init__(self, polynomial, names) -> None:
         """
         Initialize.
 
@@ -2319,7 +2322,7 @@ class FunctionField_global(FunctionField_simple):
 
         return ZZ[name](a)
 
-    def number_of_rational_places(self, r=1):
+    def number_of_rational_places(self, r=1) -> Integer:
         """
         Return the number of rational places of the function field whose
         constant field extended by degree ``r``.

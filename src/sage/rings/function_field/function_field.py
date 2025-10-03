@@ -234,6 +234,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+from __future__ import annotations
+from typing import Literal, TYPE_CHECKING
+
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
 from sage.rings.ring import Field
@@ -241,8 +244,19 @@ from sage.categories.homset import Hom
 from sage.categories.function_fields import FunctionFields
 from sage.structure.category_object import CategoryObject
 
+if TYPE_CHECKING:
+    from sage.rings.function_field.element import FunctionFieldElement
+    from sage.rings.function_field.extensions import ConstantFieldExtension
+    from sage.rings.function_field.divisor import DivisorGroup
+    from sage.rings.function_field.function_field_rational import RationalFunctionField
+    from sage.rings.function_field.jacobian_base import Jacobian_base
+    from sage.rings.function_field.maps import FunctionFieldCompletion
+    from sage.rings.function_field.place import PlaceSet
+    from sage.rings.function_field.valuation import FunctionFieldValuation
+    from sage.rings.integer import Integer
 
-def is_FunctionField(x):
+
+def is_FunctionField(x) -> bool:
     """
     Return ``True`` if ``x`` is a function field.
 
@@ -284,7 +298,7 @@ class FunctionField(Field):
     """
     _differentials_space = LazyImport('sage.rings.function_field.differential', 'DifferentialsSpace')
 
-    def __init__(self, base_field, names, category=FunctionFields()):
+    def __init__(self, base_field, names, category=FunctionFields()) -> None:
         """
         Initialize.
 
@@ -304,7 +318,7 @@ class FunctionField(Field):
         to_constant_base_field._make_weak_references()
         self.constant_base_field().register_conversion(to_constant_base_field)
 
-    def is_perfect(self):
+    def is_perfect(self) -> bool:
         r"""
         Return whether the field is perfect, i.e., its characteristic `p` is zero
         or every element has a `p`-th root.
@@ -318,7 +332,7 @@ class FunctionField(Field):
         """
         return self.characteristic() == 0
 
-    def some_elements(self):
+    def some_elements(self) -> list[FunctionFieldElement]:
         """
         Return some elements in this function field.
 
@@ -367,7 +381,7 @@ class FunctionField(Field):
 
         return elements
 
-    def characteristic(self):
+    def characteristic(self) -> Integer:
         """
         Return the characteristic of the function field.
 
@@ -389,7 +403,7 @@ class FunctionField(Field):
         """
         return self.constant_base_field().characteristic()
 
-    def is_finite(self):
+    def is_finite(self) -> Literal[False]:
         """
         Return whether the function field is finite, which is false.
 
@@ -404,7 +418,7 @@ class FunctionField(Field):
         """
         return False
 
-    def is_global(self):
+    def is_global(self) -> bool:
         """
         Return whether the function field is global, that is, whether
         the constant field is finite.
@@ -847,7 +861,7 @@ class FunctionField(Field):
                 raise ValueError("field has not been constructed as a finite extension of base")
         return ret
 
-    def rational_function_field(self):
+    def rational_function_field(self) -> RationalFunctionField:
         r"""
         Return the rational function field from which this field has been
         created as an extension.
@@ -872,7 +886,7 @@ class FunctionField(Field):
 
         return self if isinstance(self, RationalFunctionField) else self.base_field().rational_function_field()
 
-    def valuation(self, prime):
+    def valuation(self, prime) -> FunctionFieldValuation:
         r"""
         Return the discrete valuation on this function field defined by
         ``prime``.
@@ -1067,7 +1081,7 @@ class FunctionField(Field):
 
     basis_of_differentials_of_first_kind = basis_of_holomorphic_differentials
 
-    def divisor_group(self):
+    def divisor_group(self) -> DivisorGroup:
         """
         Return the group of divisors attached to the function field.
 
@@ -1090,7 +1104,7 @@ class FunctionField(Field):
         from .divisor import DivisorGroup
         return DivisorGroup(self)
 
-    def place_set(self):
+    def place_set(self) -> PlaceSet:
         """
         Return the set of all places of the function field.
 
@@ -1113,7 +1127,7 @@ class FunctionField(Field):
         return PlaceSet(self)
 
     @cached_method
-    def completion(self, place, name=None, prec=None, gen_name=None):
+    def completion(self, place, name=None, prec=None, gen_name=None) -> FunctionFieldCompletion:
         """
         Return the completion of the function field at the place.
 
@@ -1216,7 +1230,7 @@ class FunctionField(Field):
         from .maps import FunctionFieldCompletion
         return FunctionFieldCompletion(self, place, name=name, prec=prec, gen_name=gen_name)
 
-    def hilbert_symbol(self, a, b, P):
+    def hilbert_symbol(self, a, b, P) -> Integer:
         r"""
         Return the Hilbert symbol `(a,b)_{F_P}` for the local field `F_P`.
 
@@ -1301,7 +1315,7 @@ class FunctionField(Field):
             raise ValueError('a and b must be elements of the function field')
 
         if a.is_zero() or b.is_zero():
-            return 0
+            return Integer(0)
 
         # Compute the completion map to precision 1 for computation of the
         # valuations v(a), v(b) as well as the elements a0, b0
@@ -1334,7 +1348,7 @@ class FunctionField(Field):
         from sage.rings.integer import Integer
         return Integer(1) if res.is_one() else Integer(-1)
 
-    def extension_constant_field(self, k):
+    def extension_constant_field(self, k) -> ConstantFieldExtension:
         """
         Return the constant field extension with constant field `k`.
 
@@ -1357,7 +1371,7 @@ class FunctionField(Field):
         return ConstantFieldExtension(self, k)
 
     @cached_method
-    def jacobian(self, model=None, base_div=None, **kwds):
+    def jacobian(self, model=None, base_div=None, **kwds) -> Jacobian_base:
         """
         Return the Jacobian of the function field.
 
