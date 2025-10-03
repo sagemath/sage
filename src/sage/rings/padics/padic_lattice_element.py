@@ -5,23 +5,6 @@ AUTHOR:
 
 - Xavier Caruso (2018-02): initial version
 
-TESTS:
-
-We create some rings and run the test suite for them. We skip the Smith form
-tests because they take a few minutes as of mid 2018, see :issue:`25431`::
-
-    sage: R1 = ZpLC(2)
-    doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-    See https://github.com/sagemath/sage/issues/23505 for details.
-    sage: R2 = ZpLF(2)
-    sage: R3 = QpLC(2)
-    sage: R4 = QpLF(2)
-
-    sage: # long time, needs sage.rings.padics
-    sage: TestSuite(R1).run(skip=['_test_teichmuller', '_test_matrix_smith'])
-    sage: TestSuite(R2).run(skip=['_test_teichmuller', '_test_matrix_smith'])
-    sage: TestSuite(R3).run(skip=['_test_teichmuller', '_test_matrix_smith'])
-    sage: TestSuite(R4).run(skip=['_test_teichmuller', '_test_matrix_smith'])
 """
 
 # ****************************************************************************
