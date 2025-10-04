@@ -64,8 +64,12 @@ nauty_progs = [
   'genktreeg',
   'genposetg',
 ]
+extra_bin_paths = []
+if get_option('SAGE_LOCAL') != ''
+  extra_bin_paths += [join_paths(get_option('SAGE_LOCAL'), 'bin')]
+endif
 foreach prog : nauty_progs
-  nauty_check = find_program(prog, required: false)
+  nauty_check = find_program(prog, dirs: extra_bin_paths, required: false)
   if nauty_check.found()
     nauty_bins_prefix = nauty_check.full_path().replace(prog, '')
   endif
