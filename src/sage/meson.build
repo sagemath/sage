@@ -54,7 +54,23 @@ ecm_bin = find_program(
   disabler: true,
 )
 conf_data.set('SAGE_ECMBIN', ecm_bin.full_path())
-
+nauty_bins_prefix = ''
+nauty_progs = [
+  'directg',
+  'gentourng',
+  'geng',
+  'genbg',
+  'gentreeg',
+  'genktreeg',
+  'genposetg',
+]
+foreach prog : nauty_progs
+  nauty_check = find_program(prog, required: false)
+  if nauty_check.found()
+    nauty_bins_prefix = nauty_check.full_path().replace(prog, '')
+  endif
+endforeach
+conf_data.set('SAGE_NAUTY_BINS_PREFIX', nauty_bins_prefix)
 # Packages that need no processing and can be installed directly
 no_processing = [
   'cli',
