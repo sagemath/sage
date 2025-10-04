@@ -83,7 +83,7 @@ pairs = [("J", None),
 
 
 @pytest.mark.parametrize("ff,max_runs", pairs)
-def test_function_field_testsuite(ff, max_runs, request):
+def test_function_field_testsuite(ff, max_runs, request) -> None:
     r"""
     Run the TestSuite() on some function fields that are
     constructed in the documentation. They are slow, random, and not

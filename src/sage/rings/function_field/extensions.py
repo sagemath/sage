@@ -83,7 +83,7 @@ class ConstantFieldExtension(FunctionFieldExtension):
 
     - ``k_ext`` -- an extension of `k`
     """
-    def __init__(self, F, k_ext):
+    def __init__(self, F, k_ext) -> None:
         """
         Initialize.
 

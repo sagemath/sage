@@ -52,7 +52,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         sage: O.ideal(y)
         Ideal (y) of Maximal order of Function field in y defined by y^2 + x^3*y + x
     """
-    def __init__(self, ring, hnf, denominator=1):
+    def __init__(self, ring, hnf, denominator=1) -> None:
         """
         Initialize.
 
@@ -1046,7 +1046,7 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
         sage: O.ideal(y)
         Ideal (y) of Maximal order of Function field in y defined by y^2 + x^3*y + x
     """
-    def __init__(self, ring, hnf, denominator=1):
+    def __init__(self, ring, hnf, denominator=1) -> None:
         """
         Initialize.
 
@@ -1319,7 +1319,7 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
         Ideal (1/x^4*y^2) of Maximal infinite order of Function field
         in y defined by y^3 + y^2 + 2*x^4
     """
-    def __init__(self, ring, ideal):
+    def __init__(self, ring, ideal) -> None:
         """
         Initialize this ideal.
 

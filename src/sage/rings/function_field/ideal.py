@@ -119,7 +119,7 @@ class FunctionFieldIdeal(Element):
         sage: O.ideal(x^3 + 1)
         Ideal (x^3 + 1) of Maximal order of Rational function field in x over Finite Field of size 7
     """
-    def __init__(self, ring):
+    def __init__(self, ring) -> None:
         """
         Initialize.
 
@@ -607,7 +607,7 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
         sage: I^2
         Ideal (x^3 + 1, (-x^3 - 1)*y) of Order in Function field in y defined by y^2 - x^3 - 1
     """
-    def __init__(self, ring, module):
+    def __init__(self, ring, module) -> None:
         """
         Initialize.
 
@@ -912,7 +912,7 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
         sage: O.ideal(y)
         Ideal (x^3 + 1, -y) of Order in Function field in y defined by y^2 - x^3 - 1
     """
-    def __init__(self, ring, module):
+    def __init__(self, ring, module) -> None:
         """
         Initialize.
 
@@ -1052,7 +1052,7 @@ class IdealMonoid(UniqueRepresentation, Parent):
         Monoid of ideals of Maximal order of Rational function field in x over Finite Field of size 2
     """
 
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize the ideal monoid.
 

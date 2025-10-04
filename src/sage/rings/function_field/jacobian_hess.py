@@ -118,7 +118,7 @@ class JacobianPoint(JacobianPoint_base):
         sage: -(dS.divisor() + ds.divisor()) == pl
         True
     """
-    def __init__(self, parent, dS, ds):
+    def __init__(self, parent, dS, ds) -> None:
         """
         Initialize.
 
@@ -445,7 +445,7 @@ class JacobianGroupEmbedding(Map):
           To:   Group of rational points of Jacobian
            over Finite Field in z3 of size 17^3 (Hess model)
     """
-    def __init__(self, base_group, extension_group):
+    def __init__(self, base_group, extension_group) -> None:
         """
         Initialize.
 
@@ -559,7 +559,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
     Element = JacobianPoint
     _embedding_map_class = JacobianGroupEmbedding
 
-    def __init__(self, parent, function_field, base_div):
+    def __init__(self, parent, function_field, base_div) -> None:
         """
         Initialize.
 
@@ -865,7 +865,7 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
     """
     Element = JacobianPoint_finite_field
 
-    def __init__(self, parent, function_field, base_div):
+    def __init__(self, parent, function_field, base_div) -> None:
         """
         Initialize.
 
@@ -1012,7 +1012,7 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
         Jacobian of Projective Plane Curve over Finite Field of size 17
          defined by x^3 - y^2*z + 5*z^3 (Hess model)
     """
-    def __init__(self, function_field, base_div, **kwds):
+    def __init__(self, function_field, base_div, **kwds) -> None:
         """
         Initialize.
 

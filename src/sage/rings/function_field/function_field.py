@@ -744,7 +744,7 @@ class FunctionField(Field):
                             # canonical, we require the names of the roots to match
                             return source.hom([sourcegen_in_self], base_morphism=base_coercion)
 
-    def _test_derivation(self, **options):
+    def _test_derivation(self, **options) -> None:
         """
         Test the correctness of the derivations of the function field.
 

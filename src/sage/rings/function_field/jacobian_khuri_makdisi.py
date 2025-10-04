@@ -170,7 +170,7 @@ class JacobianPoint(JacobianPoint_base):
         [0 0 0 0 0 1 0 0 5]
         [0 0 0 0 0 0 1 0 4]
     """
-    def __init__(self, parent, w):
+    def __init__(self, parent, w) -> None:
         """
         Initialize.
 
@@ -508,7 +508,7 @@ class JacobianGroupEmbedding(Map):
           To:   Group of rational points of Jacobian
                 over Finite Field in z2 of size 5^2 (Khuri-Makdisi large model)
     """
-    def __init__(self, base_group, extension_group):
+    def __init__(self, base_group, extension_group) -> None:
         """
         Initialize.
 
@@ -603,7 +603,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
     Element = JacobianPoint
     _embedding_map_class = JacobianGroupEmbedding
 
-    def __init__(self, parent, function_field, base_div):
+    def __init__(self, parent, function_field, base_div) -> None:
         """
         Initialize.
 
@@ -855,7 +855,7 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
     """
     Element = JacobianPoint_finite_field
 
-    def __init__(self, parent, function_field, base_div):
+    def __init__(self, parent, function_field, base_div) -> None:
         """
         Initialize.
 

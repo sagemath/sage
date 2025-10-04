@@ -40,7 +40,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
         sage: I = O.ideal(1/(x^2+x)); I
         Ideal (1/(x^2 + x)) of Maximal order of Rational function field in x over Rational Field
     """
-    def __init__(self, ring, gen):
+    def __init__(self, ring, gen) -> None:
         """
         Initialize.
 
@@ -369,7 +369,7 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
         sage: Oinf.ideal(x)
         Ideal (x) of Maximal infinite order of Rational function field in x over Finite Field of size 2
     """
-    def __init__(self, ring, gen):
+    def __init__(self, ring, gen) -> None:
         """
         Initialize.
 

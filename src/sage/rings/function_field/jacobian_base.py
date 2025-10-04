@@ -195,7 +195,7 @@ class JacobianGroupFunctor(ConstructionFunctor):
     """
     rank = 20
 
-    def __init__(self, base_field, field):
+    def __init__(self, base_field, field) -> None:
         """
         Initialize.
 
@@ -287,7 +287,7 @@ class JacobianGroup_base(Parent):
     """
     _embedding_map_class = None
 
-    def __init__(self, parent, function_field, base_div):
+    def __init__(self, parent, function_field, base_div) -> None:
         """
         Initialize.
 
@@ -584,7 +584,7 @@ class Jacobian_base(Parent):
         sage: F.jacobian()
         Jacobian of Function field in y defined by y^2 + y + (x^2 + 1)/x (Hess model)
     """
-    def __init__(self, function_field, base_div, **kwds):
+    def __init__(self, function_field, base_div, **kwds) -> None:
         """
         Initialize.
 
@@ -789,7 +789,7 @@ class Jacobian_base(Parent):
 
         return grp
 
-    def set_base_place(self, place):
+    def set_base_place(self, place) -> None:
         """
         Set ``place`` as the base place.
 
