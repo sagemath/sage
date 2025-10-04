@@ -695,7 +695,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         # The first row:
         # we write u = u0 + u1*phiT + u2*phiT^2 + ...
         u = self.ore_polynomial()
-        us = [ ]
+        us = []
         while not u.is_zero():
             u, ui = u.right_quo_rem(phiT)
             us.append(ui)

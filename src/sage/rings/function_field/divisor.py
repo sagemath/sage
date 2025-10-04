@@ -214,8 +214,8 @@ class FunctionFieldDivisor(ModuleElement):
         if m == 1:
             r = formatter(p)
         elif m == -1:
-            r = '- ' + formatter(p) # seems more readable than `-`
-        else: # nonzero
+            r = '- ' + formatter(p)  # seems more readable than `-`
+        else:  # nonzero
             r = formatter(m) + mul + formatter(p)
         for p in places:
             m = self._data[p]
@@ -355,7 +355,7 @@ class FunctionFieldDivisor(ModuleElement):
             True
         """
         divisor_group = self.parent()
-        places = set(self.support()).union( set(other.support()))
+        places = set(self.support()).union(set(other.support()))
         data = {}
         for place in places:
             m = self.multiplicity(place) + other.multiplicity(place)
@@ -811,7 +811,7 @@ class FunctionFieldDivisor(ModuleElement):
 
         # Step 2.5: get the denominator d of M and set mat = d * M
         den = lcm([e.denominator() for e in M.list()])
-        R = den.parent() # polynomial ring
+        R = den.parent()  # polynomial ring
         one = R.one()
         mat = matrix(R, n, [e.numerator() for e in (den * M).list()])
         gens = list(I.gens_over_base())
@@ -922,7 +922,7 @@ class FunctionFieldDivisor(ModuleElement):
                 if e != 0:
                     return (i, e.numerator().degree() - e.denominator().degree())
 
-        def greater(v, w): # v and w are not equal
+        def greater(v, w):  # v and w are not equal
             return v[0] < w[0] or v[0] == w[0] and v[1] > w[1]
 
         # collate rows by their pivot position
@@ -968,7 +968,7 @@ class FunctionFieldDivisor(ModuleElement):
             coords = [k(0) for i in range(m)]
             while v != 0:
                 p = pivot(v)
-                ind = npivots.index(p) # an exception implies x is not in the domain
+                ind = npivots.index(p)  # an exception implies x is not in the domain
                 w = nbasis[ind]
                 cv = v[p[0]].numerator().lc() / v[p[0]].denominator().lc()
                 cw = w[p[0]].numerator().lc() / w[p[0]].denominator().lc()
@@ -1012,7 +1012,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
         """
         Parent.__init__(self, base=IntegerRing(), category=CommutativeAdditiveGroups())
 
-        self._field = field # function field
+        self._field = field  # function field
 
     def _repr_(self) -> str:
         """
@@ -1097,7 +1097,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
         N = 10
         d = 1
         places = []
-        while len(places) <= N: # collect at least N places
+        while len(places) <= N:  # collect at least N places
             places += self._field.places(d)
             d += 1
         e = self.element_class(self, {})

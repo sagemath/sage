@@ -132,7 +132,7 @@ class FunctionFieldDifferential(ModuleElement):
             sage: f.differential()
             (-1/x^2) d(x)
         """
-        if self._f.is_zero(): # zero differential
+        if self._f.is_zero():  # zero differential
             return '0'
 
         r = 'd({})'.format(self.parent()._gen_base_differential)
@@ -155,7 +155,7 @@ class FunctionFieldDifferential(ModuleElement):
             sage: latex(w)                                                              # needs sage.rings.function_field
             \left( x y^{2} + \frac{1}{x} y \right)\, dx
         """
-        if self._f.is_zero(): # zero differential
+        if self._f.is_zero():  # zero differential
             return '0'
 
         r = 'd{}'.format(self.parent()._gen_base_differential)

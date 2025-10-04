@@ -494,7 +494,7 @@ class FunctionFieldOrderInfinite_basis(FunctionFieldOrderInfinite):
         gens = [F(a) for a in gens]
 
         V, from_V, to_V = F.vector_space()
-        M = V.span([to_V(b) for b in gens], base_ring=S) # not work
+        M = V.span([to_V(b) for b in gens], base_ring=S)  # not work
 
         return self.ideal_monoid().element_class(self, M)
 

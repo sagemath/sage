@@ -72,14 +72,14 @@ def T(F):
 #
 #   https://github.com/pytest-dev/pytest/issues/349
 #
-pairs = [ ("J", None),
+pairs = [("J", None),
           ("K", 16),
           ("L", 2),
           ("M", 1),
           ("N", 1),
           ("O", None),
           ("T", None),
-          ("S", 8) ]
+          ("S", 8)]
 
 
 @pytest.mark.parametrize("ff,max_runs", pairs)
@@ -109,7 +109,7 @@ def test_function_field_testsuite(ff, max_runs, request):
     ff = request.getfixturevalue(ff)
 
     # Pass max_runs only if it's not None; otherwise use the default
-    run_args = { "verbose": True, "raise_on_failure": True }
+    run_args = {"verbose": True, "raise_on_failure": True}
     if max_runs:
         run_args["max_runs"] = max_runs
 

@@ -65,7 +65,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
             sage: I = O.ideal(1/(x^2+x))
             sage: d = { I: 1, I^2: 2 }
         """
-        return hash( (self._ring, self._gen) )
+        return hash((self._ring, self._gen))
 
     def __contains__(self, element):
         """
@@ -397,7 +397,7 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
             sage: J = Oinf.ideal(1/x)
             sage: d = { I: 1, J: 2 }
         """
-        return hash( (self.ring(), self._gen) )
+        return hash((self.ring(), self._gen))
 
     def __contains__(self, element):
         """

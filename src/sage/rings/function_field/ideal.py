@@ -1109,7 +1109,7 @@ class IdealMonoid(UniqueRepresentation, Parent):
             sage: M([x-4, 1/x])
             Ideal (1/x) of Maximal order of Rational function field in x over Finite Field of size 2
         """
-        try: # x is an ideal
+        try:  # x is an ideal
             x = x.gens()
         except AttributeError:
             pass

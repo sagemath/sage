@@ -142,7 +142,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
             [[1, 2, 4], [1, 2, 4], [1, 2, 4]]
         """
         if self.degree() == 1:
-            return self._gaps_rational() # faster for rational places
+            return self._gaps_rational()  # faster for rational places
         else:
             return self._gaps_wronskian()
 
@@ -264,7 +264,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
                 else:
                     prev = dim
                 i += 1
-        else: # self is a finite place
+        else:  # self is a finite place
             Binv = B.inverse()
             while g:
                 I = I * prime_inv
@@ -480,8 +480,8 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
         Obasis = O.basis()
 
         M = prime.hnf()
-        R = M.base_ring() # univariate polynomial ring
-        n = M.nrows() # extension degree of the function field
+        R = M.base_ring()  # univariate polynomial ring
+        n = M.nrows()  # extension degree of the function field
 
         # Step 1: construct a vector space representing the residue field
         #
@@ -493,7 +493,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
         k = F.constant_base_field()
         degs = [M[i, i].degree() for i in range(n)]
-        deg = sum(degs) # degree of the place
+        deg = sum(degs)  # degree of the place
 
         # Let V = k**deg
 
@@ -616,7 +616,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
                 prim = min_poly.roots(K)[0][0]
 
                 W, from_W, to_W = K.vector_space(k, basis=[prim**i for i in range(deg)], map=True)
-        else: # deg == 1
+        else:  # deg == 1
             K = k
 
             def from_W(e):
@@ -648,8 +648,8 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
                 # s powered by the valuation of den at the prime
                 alpha_power = alpha_powered_by_ramification_index ** den.valuation(p)
-                rn = num * alpha_power # in O
-                rd = den * alpha_power # in O but not in prime
+                rn = num * alpha_power  # in O
+                rd = den * alpha_power  # in O but not in prime
 
                 # Note that rn is not in O if and only if f is
                 # not in the valuation ring. Hence f is in the
