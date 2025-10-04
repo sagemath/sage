@@ -289,7 +289,7 @@ class DrinfeldModuleHomset(Homset):
             self.register_coercion(A)
         self._basis = None
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of the homset.
 
@@ -309,7 +309,7 @@ class DrinfeldModuleHomset(Homset):
                f'\\text{{{{ }}to{{ }}(gen){{ }}}}'\
                f'{latex(self.codomain().gen())}'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of the homset.
 

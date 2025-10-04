@@ -750,7 +750,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         from sage.rings.function_field.drinfeld_modules.homset import DrinfeldModuleHomset
         return DrinfeldModuleHomset(self, other, category)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of the Drinfeld module.
 
@@ -780,7 +780,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             return f'\\phi: {latex(self._function_ring.gen())} \\mapsto ' \
                    f'{latex(self._gen)}'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this Drinfeld module.
 
@@ -824,7 +824,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         tester.assertTrue(isinstance(self, category.parent_class),
                 _LazyString("category of %s improperly initialized", (self,), {}))
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return a hash of ``self``.
 

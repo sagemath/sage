@@ -217,7 +217,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         self._codomain = parent.codomain()
         self._ore_polynomial = ore_pol
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of the morphism.
 
@@ -235,7 +235,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         return f'{latex(self._ore_polynomial)}'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of the morphism.
 
@@ -265,7 +265,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
                    f'  To:   {self._codomain}\n' \
                    f'  Defn: {self._ore_polynomial}'
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return a hash of ``self``.
 
