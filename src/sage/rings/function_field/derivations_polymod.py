@@ -164,7 +164,7 @@ class FunctionFieldDerivation_separable(FunctionFieldDerivation):
 
 
 class FunctionFieldDerivation_inseparable(FunctionFieldDerivation):
-    def __init__(self, parent, u=None):
+    def __init__(self, parent, u=None) -> None:
         r"""
         Initialize this derivation.
 

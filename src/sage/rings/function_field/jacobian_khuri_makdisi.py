@@ -532,7 +532,7 @@ class JacobianGroupEmbedding(Map):
 
         Map.__init__(self, Hom(base_group, extension_group, CommutativeAdditiveGroups()))
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         Return string representation of ``self``.
 
@@ -979,7 +979,7 @@ class Jacobian(UniqueRepresentation, Jacobian_base):
         Jacobian of Projective Plane Curve over Finite Field of size 7
          defined by x^3 - y^2*z - 2*z^3 (Khuri-Makdisi large model)
     """
-    def __init__(self, function_field, base_div, model, **kwds):
+    def __init__(self, function_field, base_div, model, **kwds) -> None:
         """
         Initialize.
 

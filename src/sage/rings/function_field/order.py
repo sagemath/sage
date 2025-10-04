@@ -148,7 +148,7 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
         self._ideal_class_ = ideal_class  # element class for parent ideal monoid
         self._field = field
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
         Return ``False`` since orders are never fields.
 
@@ -159,7 +159,7 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
         """
         return False
 
-    def is_noetherian(self):
+    def is_noetherian(self) -> bool:
         """
         Return ``True`` since orders in function fields are Noetherian.
 
@@ -183,7 +183,7 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
 
     fraction_field = function_field
 
-    def is_subring(self, other):
+    def is_subring(self, other) -> bool:
         """
         Return ``True`` if the order is a subring of the other order.
 

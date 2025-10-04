@@ -790,7 +790,7 @@ class DifferentialsSpaceInclusion(Morphism):
         s += "\n  To:   {}".format(self.codomain())
         return s
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         """
         Return ``True``, since the inclusion morphism is injective.
 

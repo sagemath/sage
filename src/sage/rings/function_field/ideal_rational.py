@@ -67,7 +67,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
         """
         return hash((self._ring, self._gen))
 
-    def __contains__(self, element):
+    def __contains__(self, element) -> bool:
         """
         Test if ``element`` is in this ideal.
 
@@ -399,7 +399,7 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
         """
         return hash((self.ring(), self._gen))
 
-    def __contains__(self, element):
+    def __contains__(self, element) -> bool:
         """
         Test if ``element`` is in this ideal.
 

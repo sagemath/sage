@@ -632,7 +632,7 @@ class FunctionField_polymod(FunctionField):
         """
         return self._polynomial
 
-    def is_separable(self, base=None):
+    def is_separable(self, base=None) -> bool:
         r"""
         Return whether this is a separable extension of ``base``.
 

@@ -134,7 +134,7 @@ class FunctionFieldIdeal(Element):
         Element.__init__(self, ring.ideal_monoid())
         self._ring = ring
 
-    def _repr_short(self):
+    def _repr_short(self) -> str:
         """
         Return a string representation of this ideal that doesn't
         include the name of the ambient ring.
@@ -631,7 +631,7 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
         # module generators are still ideal generators
         Ideal_generic.__init__(self, ring, self._gens, coerce=False)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is in this ideal.
 
@@ -937,7 +937,7 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
         # module generators are still ideal generators
         Ideal_generic.__init__(self, ring, self._gens, coerce=False)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is in this ideal.
 

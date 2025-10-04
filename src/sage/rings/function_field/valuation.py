@@ -680,7 +680,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
         sage: K.<x> = FunctionField(QQ)
         sage: v = K.valuation(x^2 + 1) # indirect doctest
     """
-    def __init__(self, parent, base_valuation):
+    def __init__(self, parent, base_valuation) -> None:
         r"""
         TESTS::
 
@@ -1273,7 +1273,7 @@ class FunctionFieldMappedValuationRelative_base(FunctionFieldMappedValuation_bas
         sage: v = K.valuation(1/x); v
         Valuation at the infinite place
     """
-    def __init__(self, parent, base_valuation, to_base_valuation_domain, from_base_valuation_domain):
+    def __init__(self, parent, base_valuation, to_base_valuation_domain, from_base_valuation_domain) -> None:
         r"""
         TESTS::
 

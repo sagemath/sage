@@ -93,7 +93,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         # if the second gen is zero, the tuple has only the first gen.
         self._gens_two_vecs = None
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Test if this ideal is zero.
 
@@ -151,7 +151,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         """
         return hash((self._ring, self._hnf, self._denominator))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is in this ideal.
 
@@ -833,7 +833,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         return n
 
     @cached_method
-    def is_prime(self):
+    def is_prime(self) -> bool:
         """
         Return ``True`` if this ideal is a prime ideal.
 
@@ -1357,7 +1357,7 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
         """
         return hash((self.ring(), self._ideal))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is in this ideal.
 

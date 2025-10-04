@@ -448,7 +448,7 @@ class FunctionFieldMorphism_polymod(FunctionFieldMorphism):
         sage: f(y).charpoly('y')
         y^3 + 6*x^3 + x
     """
-    def __init__(self, parent, im_gen, base_morphism):
+    def __init__(self, parent, im_gen, base_morphism) -> None:
         """
         Initialize.
 
