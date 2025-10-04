@@ -256,6 +256,7 @@ if TYPE_CHECKING:
     from sage.rings.function_field.place import PlaceSet
     from sage.rings.function_field.valuation import FunctionFieldValuation
 
+
 def is_FunctionField(x) -> bool:
     """
     Return ``True`` if ``x`` is a function field.
