@@ -35,7 +35,7 @@ doc_bootstrap = custom_target(
   # doc_src is not really a dependency of the bootstrap, but we want to make sure
   # that all the source files are present before running the actual doc build
   # so let's collect all source-related targets here.
-  depends: doc_src
+  depends: doc_src,
 )
 
 references = run_command(
