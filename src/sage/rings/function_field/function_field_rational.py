@@ -482,7 +482,7 @@ class RationalFunctionField(FunctionField):
         return self[var]
 
     @cached_method(key=lambda self, base, basis, map: map)
-    def free_module(self, base=None, basis=None, map=True):
+    def free_module(self, base=None, basis=None, map: bool=True):
         """
         Return a vector space `V` and isomorphisms from the field to `V` and
         from `V` to the field.

@@ -488,7 +488,7 @@ class FunctionFieldDifferential(ModuleElement):
             c = g_shifted.higher_derivative(-r - 1, s)
             return to_R(c)
 
-    def monomial_coefficients(self, copy=True):
+    def monomial_coefficients(self, copy: bool=True):
         """
         Return a dictionary whose keys are indices of basis elements in the
         support of ``self`` and whose values are the corresponding coefficients.

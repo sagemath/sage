@@ -229,7 +229,7 @@ class FunctionFieldDivisor(ModuleElement):
                 r += cr + minus + formatter(-m) + mul + formatter(p)
         return r
 
-    def _repr_(self, split=True) -> str:
+    def _repr_(self, split: bool=True) -> str:
         """
         Return a string representation of the divisor.
 
