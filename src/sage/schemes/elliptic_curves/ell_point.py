@@ -4521,32 +4521,6 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         return ZZ(pari.elllog(self.curve(), self, base, n))
 
-    def discrete_log(self, Q):
-        r"""
-        Legacy version of :meth:`log` with its arguments swapped.
-
-        Note that this method uses the opposite argument ordering
-        of all other logarithm methods in Sage; see :issue:`37150`.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve(j=GF(101)(5))
-            sage: P, = E.gens()
-            sage: (2*P).log(P)
-            2
-            sage: (2*P).discrete_log(P)
-            doctest:warning ...
-            DeprecationWarning: The syntax P.discrete_log(Q) ... Please update your code. ...
-            45
-            sage: P.discrete_log(2*P)
-            2
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(37150, 'The syntax P.discrete_log(Q) is being replaced by '
-                           'Q.log(P) to make the argument ordering of logarithm'
-                           ' methods in Sage uniform. Please update your code.')
-        return Q.log(self)
-
     def padic_elliptic_logarithm(self, Q, p):
         r"""
         Return the discrete logarithm of `Q` to base `P` = ``self``,
