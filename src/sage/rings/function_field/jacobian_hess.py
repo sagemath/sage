@@ -135,7 +135,7 @@ class JacobianPoint(JacobianPoint_base):
         super().__init__(parent)
         self._data = (dS, ds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -585,7 +585,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
         self._base_place = None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -1032,7 +1032,7 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
         else:
             self._group_class = JacobianGroup
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 

@@ -116,7 +116,7 @@ class FunctionFieldDifferential(ModuleElement):
 
         self._f = f
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the differential.
 
@@ -142,7 +142,7 @@ class FunctionFieldDifferential(ModuleElement):
 
         return '({})'.format(self._f) + ' ' + r
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of the differential.
 
@@ -627,7 +627,7 @@ class DifferentialsSpace(UniqueRepresentation, Parent):
         self._gen_base_differential = F.gen()
         self._gen_derivative_inv = ~der(F.gen())  # used for fast computation
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the space of differentials.
 
@@ -770,7 +770,7 @@ class DifferentialsSpaceInclusion(Morphism):
           To:   Space of differentials of Function field in y defined by y^2 - x*y + 4*x^3
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of this morphism.
 

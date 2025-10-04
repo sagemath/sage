@@ -134,7 +134,7 @@ class FunctionFieldValuationRing(UniqueRepresentation, Parent):
         else:
             raise TypeError
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the valuation ring.
 

@@ -154,7 +154,7 @@ class FunctionFieldIdeal(Element):
 
         return "(%s)" % (', '.join([repr(g) for g in self.gens_reduced()]), )
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of this ideal.
 
@@ -214,7 +214,7 @@ class FunctionFieldIdeal(Element):
 
         return "Ideal %s of %s" % (self._repr_short(), self.ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the LaTeX representation of the ideal.
 
@@ -1069,7 +1069,7 @@ class IdealMonoid(UniqueRepresentation, Parent):
         self.__R = R
         self._populate_coercion_lists_()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the ideal monoid.
 

@@ -249,7 +249,7 @@ class FunctionFieldDivisor(ModuleElement):
         """
         return self._format(repr, '*', '\n' if split else '')
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the LaTeX representation of the divisor.
 
@@ -1014,7 +1014,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
 
         self._field = field # function field
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the group of divisors.
 

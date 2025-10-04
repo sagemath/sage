@@ -110,7 +110,7 @@ class FunctionFieldPlace(Element):
         """
         return hash((self.function_field(), self._prime))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the place.
 
@@ -129,7 +129,7 @@ class FunctionFieldPlace(Element):
         gens_str = ', '.join(repr(g) for g in gens)
         return "Place ({})".format(gens_str)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the LaTeX representation of the place.
 
@@ -351,7 +351,7 @@ class PlaceSet(UniqueRepresentation, Parent):
 
         self._field = field
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the place.
 

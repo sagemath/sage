@@ -219,7 +219,7 @@ class FunctionFieldOrder(FunctionFieldOrder_base):
     """
     Base class for orders in function fields.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation.
 
@@ -235,7 +235,7 @@ class FunctionFieldOrderInfinite(FunctionFieldOrder_base):
     """
     Base class for infinite orders in function fields.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -249,7 +249,7 @@ class FunctionFieldMaximalOrder(UniqueRepresentation, FunctionFieldOrder):
     """
     Base class of maximal orders of function fields.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the order.
 
@@ -265,7 +265,7 @@ class FunctionFieldMaximalOrderInfinite(FunctionFieldMaximalOrder, FunctionField
     """
     Base class of maximal infinite orders of function fields.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

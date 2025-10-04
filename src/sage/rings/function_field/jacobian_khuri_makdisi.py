@@ -190,7 +190,7 @@ class JacobianPoint(JacobianPoint_base):
         w.set_immutable()
         self._w = w
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -663,7 +663,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
         self._base_place = None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -1009,7 +1009,7 @@ class Jacobian(UniqueRepresentation, Jacobian_base):
         else:
             self._group_class = JacobianGroup
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
