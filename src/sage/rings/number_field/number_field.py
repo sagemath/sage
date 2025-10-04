@@ -4514,14 +4514,15 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
     def _gap_init_(self):
         """
-        Create a GAP object representing ``self`` and return its name.
+        Implements :meth:`sage.structure.sage_object.SageObject._gap_init_` for number fields
+        to make ``gap(K)`` work. Not to be used directly.
 
         EXAMPLES::
 
             sage: # needs sage.libs.gap
             sage: z = QQ['z'].0
             sage: K.<zeta> = NumberField(z^2 - 2)
-            sage: K._gap_init_()  # the following variable name $sage1 represents the F.base_ring() in gap and is somehow random
+            sage: K._gap_init_()  # random (the variable name $sage1 represents F.base_ring() in gap is somehow random)
             'CallFuncList(function() local z,E; z:=Indeterminate($sage1,"z"); E:=AlgebraicExtension($sage1,z^2 - 2,"zeta"); return E; end,[])'
             sage: k = gap(K); k
             <algebraic extension over the Rationals of degree 2>
@@ -4548,10 +4549,61 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         from sage.interfaces.gap import gap as G
 
         q = self.polynomial()
-        if q.variable_name() != 'E':
-            return 'CallFuncList(function() local %s,E; %s:=Indeterminate(%s,"%s"); E:=AlgebraicExtension(%s,%s,"%s"); return E; end,[])' % (q.variable_name(), q.variable_name(), G(self.base_ring()).name(), q.variable_name(), G(self.base_ring()).name(), repr(self.polynomial()), str(self.gen()))
+        x = q.variable_name()
+        E = 'E' if x != 'E' else 'F'
+        R = G(self.base_ring())
 
-        return 'CallFuncList(function() local %s,F; %s:=Indeterminate(%s,"%s"); F:=AlgebraicExtension(%s,%s,"%s"); return F; end,[])' % (q.variable_name(), q.variable_name(), G(self.base_ring()).name(), q.variable_name(), G(self.base_ring()).name(), repr(self.polynomial()), str(self.gen()))
+        return (
+            f'CallFuncList(function() local {x},{E}; {x}:=Indeterminate({R.name()},"{x}"); '
+            f'{E}:=AlgebraicExtension({R.name()},{self.polynomial()!r},"{self.gen()}"); '
+            f'return {E}; end,[])'
+        )
+
+    def _libgap_(self):
+        """
+        Override :meth:`sage.structure.sage_object.SageObject._libgap_`
+        for better performance. Not to be used directly, use ``libgap(K)`` instead.
+
+        EXAMPLES::
+
+            sage: K.<a> = NumberField(x^2 - 2)
+            sage: gapK = libgap(K); gapK
+            <algebraic extension over the Rationals of degree 2>
+
+        TESTS::
+
+            sage: type(gapK)
+            <class 'sage.libs.gap.element.GapElement_Ring'>
+            sage: gapK.DefiningPolynomial()
+            x^2-2
+            sage: gapK.PrimitiveElement()
+            a
+
+        Check that libgap global variables does not interfere with this method
+        (as it should if the method is correctly implemented and avoid ``libgap.eval``)::
+
+            sage: libgap.eval("x:=1")
+            1
+            sage: libgap.eval("a:=2")
+            2
+            sage: K.<a> = NumberField(x^2 - 3)
+            sage: gapK = libgap(K); gapK
+            <algebraic extension over the Rationals of degree 2>
+            sage: libgap.eval("[x, a]")
+            [ 1, 2 ]
+            sage: gapK.DefiningPolynomial()
+            x^2-3
+            sage: gapK.PrimitiveElement()
+            a
+        """
+        if not self.is_absolute():
+            raise NotImplementedError("Currently, only simple algebraic extensions are implemented in libgap")
+
+        from sage.libs.gap.libgap import libgap
+        q = self.polynomial()
+        R = libgap(self.base_ring())
+        E = R.AlgebraicExtension(self.polynomial(), str(self.gen()))
+        return E
 
     def characteristic(self):
         """
