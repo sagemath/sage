@@ -396,7 +396,7 @@ class FunctionFieldDifferential(ModuleElement):
         """
         F = self.parent().function_field()
         x = F.base_field().gen()
-        return self._f.divisor() + (-2)*F(x).divisor_of_poles() + F.different()
+        return self._f.divisor() + (-2) * F(x).divisor_of_poles() + F.different()
 
     def valuation(self, place):
         """
@@ -416,7 +416,7 @@ class FunctionFieldDifferential(ModuleElement):
         """
         F = self.parent().function_field()
         x = F.base_field().gen()
-        return (self._f.valuation(place) + 2*min(F(x).valuation(place), 0)
+        return (self._f.valuation(place) + 2 * min(F(x).valuation(place), 0)
                 + F.different().valuation(place))
 
     def residue(self, place):
@@ -485,7 +485,7 @@ class FunctionFieldDifferential(ModuleElement):
             return R.zero()
         else:
             g_shifted = g * s**(-r)
-            c = g_shifted.higher_derivative(-r-1, s)
+            c = g_shifted.higher_derivative(-r - 1, s)
             return to_R(c)
 
     def monomial_coefficients(self, copy=True):
@@ -849,4 +849,4 @@ class DifferentialsSpaceInclusion(Morphism):
         """
         domain = self.domain()
         F = self.codomain().function_field()
-        return F(v._f)*F(domain._gen_base_differential).differential()
+        return F(v._f) * F(domain._gen_base_differential).differential()

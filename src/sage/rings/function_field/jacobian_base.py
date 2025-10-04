@@ -462,8 +462,8 @@ class JacobianGroup_finite_field_base(JacobianGroup_base):
         q = F.constant_base_field().order()
         g = self._genus
 
-        c = 2*g/(q.sqrt() - 1)
-        return integer_floor(math.exp(c)*q**g)
+        c = 2 * g / (q.sqrt() - 1)
+        return integer_floor(math.exp(c) * q**g)
 
     def order(self, algorithm='numeric'):
         """
@@ -492,50 +492,50 @@ class JacobianGroup_finite_field_base(JacobianGroup_base):
         if algorithm == 'numeric':
             # numeric method - fast but might be inaccurate by numerical noise
             from sage.rings.qqbar import AlgebraicField
-            h = Integer(math.prod([(1-a**(-b))**m for a, m in f.change_ring(AlgebraicField()).roots()]))
+            h = Integer(math.prod([(1 - a**(-b))**m for a, m in f.change_ring(AlgebraicField()).roots()]))
             return h
 
         # algebraic method - slow
 
         es = []
         s = -1
-        for i in range(1, 2*g + 1):
-            es.append(s*f[i])
+        for i in range(1, 2 * g + 1):
+            es.append(s * f[i])
             s = -s
         es
 
         ps = [es[0]]
-        for i in range(1, 2*g):
+        for i in range(1, 2 * g):
             p = 0
             s = 1
             for j in range(i):
-                p = p + s*es[j]*ps[-j-1]
+                p = p + s * es[j] * ps[-j - 1]
                 s = -s
-            ps.append(p + s*(i + 1)*es[i])
+            ps.append(p + s * (i + 1) * es[i])
 
-        while len(ps) < b*2*g:
+        while len(ps) < b * 2 * g:
             p = 0
             s = 1
-            for j in range(2*g):
-                p = p + s*es[j]*ps[-j-1]
+            for j in range(2 * g):
+                p = p + s * es[j] * ps[-j - 1]
                 s = -s
             ps.append(p)
 
-        qs = [ps[b*(i + 1) - 1] for i in range(2*g)]
+        qs = [ps[b * (i + 1) - 1] for i in range(2 * g)]
 
         fs = [qs[0]]
-        for i in range(1, 2*g):
+        for i in range(1, 2 * g):
             k = qs[i]
             s = -1
             for j in range(i):
-                k = k + s*fs[j]*qs[i - j - 1]
+                k = k + s * fs[j] * qs[i - j - 1]
                 s = -s
-            fs.append(-s*k // (i + 1))
+            fs.append(-s * k // (i + 1))
 
         bs = [1]
         s = -1
-        for i in range(2*g):
-            bs.append(s*fs[i])
+        for i in range(2 * g):
+            bs.append(s * fs[i])
             s = -s
 
         return sum(bs)
@@ -682,7 +682,7 @@ class Jacobian_base(Parent):
                 K = G._function_field
                 return G.point(K.divisor_group()(x.divisor()))
         if x in F.place_set():
-            return self(x - x.degree()*self._base_place)
+            return self(x - x.degree() * self._base_place)
         if x == 0:
             return self.group().zero()
         if x in F.divisor_group():

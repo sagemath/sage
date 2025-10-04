@@ -304,7 +304,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
         O = self.ring()
         d = ideal.denominator()
-        return self._valuation(d*ideal) - self._valuation(O.ideal(d))
+        return self._valuation(d * ideal) - self._valuation(O.ideal(d))
 
     def _valuation(self, ideal):
         """
@@ -531,7 +531,7 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
             True
         """
         x = self._ring.fraction_field().gen()
-        return self._gen == 1/x
+        return self._gen == 1 / x
 
     def gen(self):
         """

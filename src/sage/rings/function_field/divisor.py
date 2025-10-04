@@ -813,7 +813,7 @@ class FunctionFieldDivisor(ModuleElement):
         den = lcm([e.denominator() for e in M.list()])
         R = den.parent() # polynomial ring
         one = R.one()
-        mat = matrix(R, n, [e.numerator() for e in (den*M).list()])
+        mat = matrix(R, n, [e.numerator() for e in (den * M).list()])
         gens = list(I.gens_over_base())
 
         # Step 3: transform mat to a weak Popov form, together with gens
@@ -953,7 +953,7 @@ class FunctionFieldDivisor(ModuleElement):
                 for i in rows[1:]:
                     vi = vbasis[i][head[0]]
                     ci = vi.numerator().lc() / vi.denominator().lc()
-                    vbasis[i] -= ci/cr * vbasis[r]
+                    vbasis[i] -= ci / cr * vbasis[r]
                     p = pivot(vbasis[i])
                     if p in pivot_rows:
                         pivot_rows[p].append(i)
@@ -972,7 +972,7 @@ class FunctionFieldDivisor(ModuleElement):
                 w = nbasis[ind]
                 cv = v[p[0]].numerator().lc() / v[p[0]].denominator().lc()
                 cw = w[p[0]].numerator().lc() / w[p[0]].denominator().lc()
-                c = cv/cw
+                c = cv / cw
                 v -= c * w
                 coords[ind] = c
             return coords

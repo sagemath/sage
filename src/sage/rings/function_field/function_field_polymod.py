@@ -480,7 +480,7 @@ class FunctionField_polymod(FunctionField):
         d = lcm([b.denominator() for b in f.list() if b])
         if d != 1:
             x = f.parent().gen()
-            g = (d**n) * f(x/d)
+            g = (d**n) * f(x / d)
         else:
             g = f
         return g, d
@@ -891,7 +891,7 @@ class FunctionField_polymod(FunctionField):
             (1, x^3*y, x^6*y^2, x^9*y^3, x^12*y^4)
         """
         d = self._make_monic_integral(self.polynomial())[1]
-        return self.order(d*self.gen(), check=False)
+        return self.order(d * self.gen(), check=False)
 
     def hom(self, im_gens, base_morphism=None):
         """
@@ -1159,9 +1159,9 @@ class FunctionField_polymod(FunctionField):
         factor = self.constant_base_field().zero()
         exponent = 0
         while True:
-            v = M(a+b*factor*x**exponent)
+            v = M(a + b * factor * x**exponent)
             minpoly = v.matrix(K).minpoly()
-            if minpoly.degree() == M.degree()*L.degree():
+            if minpoly.degree() == M.degree() * L.degree():
                 break
             factor += 1
             if factor == 0:
@@ -1544,7 +1544,7 @@ class FunctionField_polymod(FunctionField):
             raise NotImplementedError("constructing a separable model is only implemented for function fields over a perfect constant base field")
 
         if names is None:
-            names = (self.variable_name()+"_", self.rational_function_field().variable_name()+"_")
+            names = (self.variable_name() + "_", self.rational_function_field().variable_name() + "_")
 
         L, from_L, to_L = self.monic_integral_model()
 
@@ -1722,7 +1722,7 @@ class FunctionField_simple(FunctionField_polymod):
         K = self.base_field()
         R = PolynomialRing(K, 'T')
         x = K.gen()
-        xinv = 1/x
+        xinv = 1 / x
 
         h = K.hom(xinv)
         F_poly = R([h(c) for c in self.polynomial().list()])
@@ -1733,7 +1733,7 @@ class FunctionField_simple(FunctionField_polymod):
 
         M, M2F, F2M = F.monic_integral_model('s')
 
-        return M, F2self*M2F, F2M*self2F
+        return M, F2self * M2F, F2M * self2F
 
     def places_above(self, p):
         """
@@ -2286,7 +2286,7 @@ class FunctionField_global(FunctionField_simple):
         Mx = matrix(M.nrows(), [c._x for c in M.list()])
         detM = self(Mx.determinant() % self._polynomial)
 
-        R = detM.divisor() + sum(gaps)*W  # ramification divisor
+        R = detM.divisor() + sum(gaps) * W  # ramification divisor
 
         return R, gaps
 
@@ -2310,15 +2310,15 @@ class FunctionField_global(FunctionField_simple):
         q = self.constant_field().order()
         g = self.genus()
 
-        B = [len(self.places(i+1)) for i in range(g)]
-        N = [sum(d * B[d-1] for d in ZZ(i+1).divisors()) for i in range(g)]
-        S = [N[i] - q**(i+1) - 1 for i in range(g)]
+        B = [len(self.places(i + 1)) for i in range(g)]
+        N = [sum(d * B[d - 1] for d in ZZ(i + 1).divisors()) for i in range(g)]
+        S = [N[i] - q**(i + 1) - 1 for i in range(g)]
 
         a = [1]
-        for i in range(1, g+1):
-            a.append(sum(S[j] * a[i-j-1] for j in range(i)) / i)
-        for j in range(1, g+1):
-            a.append(q**j * a[g-j])
+        for i in range(1, g + 1):
+            a.append(sum(S[j] * a[i - j - 1] for j in range(i)) / i)
+        for j in range(1, g + 1):
+            a.append(q**j * a[g - j])
 
         return ZZ[name](a)
 
@@ -2350,7 +2350,7 @@ class FunctionField_global(FunctionField_simple):
         R = IntegerRing()[[L.parent().gen()]]  # power series ring
 
         f = R(Lp / L, prec=r)
-        n = f[r-1] + q**r + 1
+        n = f[r - 1] + q**r + 1
 
         return n
 
@@ -2487,7 +2487,7 @@ class FunctionField_integral(FunctionField_simple):
         for f in pols_in_S:
             p = f.polynomial(S.gen(0))
             s = 0
-            for i in range(p.degree()+1):
+            for i in range(p.degree() + 1):
                 s += p[i].subs(x) * y**i
             pols.append(s)
 
@@ -2514,7 +2514,7 @@ class FunctionField_integral(FunctionField_simple):
         basis_V = [to_V(bvec) for bvec in _basis]
         l = lcm([vvec.denominator() for vvec in basis_V])
 
-        _mat = matrix([[coeff.numerator() for coeff in l*v] for v in basis_V])
+        _mat = matrix([[coeff.numerator() for coeff in l * v] for v in basis_V])
         reversed_hermite_form(_mat)
 
         basis = [fr_V(v) / l for v in _mat if not v.is_zero()]
@@ -2566,9 +2566,9 @@ class FunctionField_integral(FunctionField_simple):
         y = self.gen()
         x = self.base_field().gen()
 
-        cf = max([(f[i].numerator().degree()/(n-i)).ceil() for i in range(n)
+        cf = max([(f[i].numerator().degree() / (n - i)).ceil() for i in range(n)
                   if f[i] != 0])
-        return y*x**(-cf)
+        return y * x**(-cf)
 
     @cached_method
     def equation_order_infinite(self):

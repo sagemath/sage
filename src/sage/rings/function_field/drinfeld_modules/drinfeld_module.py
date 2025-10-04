@@ -1000,7 +1000,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                 raise TypeError('coefficients indices must be integers')
             if max(coeff_indices) >= r or min(coeff_indices) <= 0:
                 raise ValueError(f'indices must be > 0 and < {r}')
-            if not all(coeff_indices[i] < coeff_indices[i+1] for i in
+            if not all(coeff_indices[i] < coeff_indices[i + 1] for i in
                        range(len(coeff_indices) - 1)):
                 raise ValueError('indices must be distinct and sorted')
             if nonzero:
@@ -1022,7 +1022,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             # Create inequalities of the form
             #   delta_i <= (q^r - 1)/(q^{gcd(i,r)} - 1)
             upper_bounds = [Integer((q**r - 1) / (q**(gcd(i, r)) - 1))]\
-                            + [0]*(len(coeff_indices) + 1)
+                            + [0] * (len(coeff_indices) + 1)
             upper_bounds[idx + 1] = -1
             inequalities.extend((lower_bounds, upper_bounds))
         equation.append(1 - q**r)
@@ -1396,7 +1396,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         B = other.gen()
         e = Integer(0)
         ue = self._base(1)
-        for i in range(1, r+1):
+        for i in range(1, r + 1):
             ai = A[i]
             bi = B[i]
             if ai == 0 and bi == 0:
@@ -1407,8 +1407,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                 # u^e = ue
                 # u^(q^i - 1) = ai/bi
                 e, s, t = e.xgcd(q**i - 1)
-                ue = ue**s * (ai/bi)**t
-        for i in range(1, r+1):
+                ue = ue**s * (ai / bi)**t
+        for i in range(1, r + 1):
             if A[i]:
                 f = (q**i - 1) // e
                 if A[i] != B[i] * ue**f:
@@ -1666,14 +1666,14 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             if r != 2:
                 raise TypeError("parameter must not be None "
                                 "if the rank is greater than 2")
-            return self._gen[1]**(q+1)/self._gen[2]
+            return self._gen[1]**(q + 1) / self._gen[2]
         if parameter in ZZ:
             parameter = ZZ(parameter)
             if parameter <= 0 or parameter >= r:
                 raise ValueError("integer parameter must be >= 1 and < the "
                                  f"rank (={r})")
-            dk = Integer((q**r - 1)/(q**gcd(parameter, r) - 1))
-            dr = Integer((q**parameter - 1)/(q**gcd(parameter, r) - 1))
+            dk = Integer((q**r - 1) / (q**gcd(parameter, r) - 1))
+            dr = Integer((q**parameter - 1) / (q**gcd(parameter, r) - 1))
             return self._gen[parameter]**dk / self._gen[-1]**dr
         elif isinstance(parameter, (tuple, list)):
             if len(parameter) != 2:
@@ -1696,8 +1696,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             #   d_1 (q - 1) + ... + d_{r-1} (q^{r-1} - 1)
             #   = d_r (q^r - 1)
             if check:
-                right = parameter_1[-1]*(q**r - 1)
-                left = sum(parameter_1[i]*(q**(parameter_0[i]) - 1) for i in
+                right = parameter_1[-1] * (q**r - 1)
+                left = sum(parameter_1[i] * (q**(parameter_0[i]) - 1) for i in
                            range(len(parameter_0)))
                 if left != right:
                     raise ValueError("parameter does not satisfy the "
@@ -2120,4 +2120,4 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         d = self.characteristic().degree()
         if d < 0:
             raise ValueError("the characteristic of the Drinfeld module must be nonzero")
-        return self.hom(tau**(n*d))
+        return self.hom(tau**(n * d))

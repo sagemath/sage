@@ -916,7 +916,7 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
                         return
                     generators.append(F._places_finite(deg))
                     deg += 1
-            multiples.append((d0 + 1)*[None])
+            multiples.append((d0 + 1) * [None])
             wn = self._wd_from_divisor(new_pl.divisor())
             dn = new_pl.degree()
             wr = zero_divisor

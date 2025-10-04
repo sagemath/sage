@@ -376,7 +376,7 @@ class FunctionField(Field):
         for numerator in polynomials:
             for denominator in polynomials:
                 if denominator:
-                    some_element = numerator/denominator
+                    some_element = numerator / denominator
                     if some_element not in elements:
                         elements.append(some_element)
 
@@ -556,8 +556,8 @@ class FunctionField(Field):
         if len(x) == 1:
             g = x[0]
             basis = [self(1)]
-            for i in range(self.degree()-1):
-                basis.append(basis[-1]*g)
+            for i in range(self.degree() - 1):
+                basis.append(basis[-1] * g)
         else:
             raise NotImplementedError
         return self.order_with_basis(basis, check=check)
@@ -645,8 +645,8 @@ class FunctionField(Field):
         if len(x) == 1:
             g = x[0]
             basis = [self(1)]
-            for i in range(self.degree()-1):
-                basis.append(basis[-1]*g)
+            for i in range(self.degree() - 1):
+                basis.append(basis[-1] * g)
         else:
             raise NotImplementedError
         return self.order_infinite_with_basis(tuple(basis), check=check)
@@ -770,12 +770,12 @@ class FunctionField(Field):
             tester.assertEqual(0, d(f))
         # Leibniz's law
         for x, y in tester.some_elements(product(S, S)):
-            tester.assertEqual(d(x*y), x*d(y) + d(x)*y)
+            tester.assertEqual(d(x * y), x * d(y) + d(x) * y)
         # Linearity
         for x, y in tester.some_elements(product(S, S)):
-            tester.assertEqual(d(x+y), d(x) + d(y))
+            tester.assertEqual(d(x + y), d(x) + d(y))
         for c, x in tester.some_elements(product(K, S)):
-            tester.assertEqual(d(c*x), c*d(x))
+            tester.assertEqual(d(c * x), c * d(x))
         # Constants map to zero
         for c in tester.some_elements(K):
             tester.assertEqual(d(c), 0)
@@ -1439,15 +1439,15 @@ class FunctionField(Field):
             from .jacobian_khuri_makdisi import Jacobian
             if model == 'km' or model.endswith('large'):
                 if base_div is None:
-                    base_div = (2*g + 1) * base_place
-                if not base_div.degree() >= 2*g + 1:
+                    base_div = (2 * g + 1) * base_place
+                if not base_div.degree() >= 2 * g + 1:
                     raise ValueError("Khuri-Makdisi large model requires base divisor of degree "
                                      "at least 2*g + 1 for genus g")
                 return Jacobian(self, base_div, model='large', curve=curve)
             elif model.endswith('medium'):
                 if base_div is None:
-                    base_div = (2*g + 1) * base_place
-                if not base_div.degree() >= 2*g + 1:
+                    base_div = (2 * g + 1) * base_place
+                if not base_div.degree() >= 2 * g + 1:
                     raise ValueError("Khuri-Makdisi medium model requires base divisor of degree "
                                      "at least 2*g + 1 for genus g")
                 return Jacobian(self, base_div, model='medium', curve=curve)

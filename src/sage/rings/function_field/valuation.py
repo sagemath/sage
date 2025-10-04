@@ -616,7 +616,7 @@ class RationalFunctionFieldValuation_base(FunctionFieldValuation_base):
             return super().element_with_valuation(s)
 
         a, b = self.value_group()._element_with_valuation(constant_valuation.value_group(), s)
-        ret = self.uniformizer()**a * constant_valuation.element_with_valuation(constant_valuation.value_group().gen()*b)
+        ret = self.uniformizer()**a * constant_valuation.element_with_valuation(constant_valuation.value_group().gen() * b)
 
         return self.simplify(ret, error=s)
 
@@ -924,10 +924,10 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
             # This case is not implemented yet, so we just return f which is always safe.
             return f
 
-        numerator = self.domain()(self._base_valuation.simplify(numerator, error=error+v_denominator, force=force))
-        denominator = self.domain()(self._base_valuation.simplify(denominator, error=max(v_denominator, error - v_numerator + 2*v_denominator), force=force))
+        numerator = self.domain()(self._base_valuation.simplify(numerator, error=error + v_denominator, force=force))
+        denominator = self.domain()(self._base_valuation.simplify(denominator, error=max(v_denominator, error - v_numerator + 2 * v_denominator), force=force))
 
-        ret = numerator/denominator
+        ret = numerator / denominator
         assert self(ret - f) > error
         return ret
 
@@ -1355,7 +1355,7 @@ class InfiniteRationalFunctionFieldValuation(FunctionFieldMappedValuationRelativ
             True
         """
         x = parent.domain().gen()
-        FunctionFieldMappedValuationRelative_base.__init__(self, parent, FunctionFieldValuation(parent.domain(), x), parent.domain().hom([1/x]), parent.domain().hom([1/x]))
+        FunctionFieldMappedValuationRelative_base.__init__(self, parent, FunctionFieldValuation(parent.domain(), x), parent.domain().hom([1 / x]), parent.domain().hom([1 / x]))
         RationalFunctionFieldValuation_base.__init__(self, parent)
         ClassicalFunctionFieldValuation_base.__init__(self, parent)
 

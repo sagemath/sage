@@ -803,7 +803,7 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
             sage: I * J
             Ideal ((-x^5 + x^4 - x^2 + x)*y + x^3 + 1, (x^3 - x^2 + 1)*y) of Order in Function field in y defined by y^2 - x^3 - 1
         """
-        return self.ring().ideal([x*y for x in self.gens() for y in other.gens()])
+        return self.ring().ideal([x * y for x in self.gens() for y in other.gens()])
 
     def _acted_upon_(self, other, on_left):
         """

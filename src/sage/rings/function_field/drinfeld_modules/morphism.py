@@ -711,8 +711,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         T = KT.gen()
         for i in range(1, r):
             twist = [c.map_coefficients(Frob) for c in row]
-            row = [(inv*T - B[0]) * twist[-1]]
-            row += [twist[j-1] - B[j]*twist[-1] for j in range(1, r)]
+            row = [(inv * T - B[0]) * twist[-1]]
+            row += [twist[j - 1] - B[j] * twist[-1] for j in range(1, r)]
             rows.append(row)
 
         return matrix(KT, rows)

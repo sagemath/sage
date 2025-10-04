@@ -182,7 +182,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
         # Hess' Riemann-Roch basis algorithm stripped down for gaps computation
         def dim_RR(M):
             den = lcm([e.denominator() for e in M.list()])
-            mat = matrix(R, M.nrows(), [(den*e).numerator() for e in M.list()])
+            mat = matrix(R, M.nrows(), [(den * e).numerator() for e in M.list()])
 
             # initialise pivot_row and conflicts list
             pivot_row = [[] for i in range(n)]
@@ -559,9 +559,9 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
             # Trial 3: exhaustive search in O using only polynomials
             # with coefficients 0 or 1
             for d in range(deg):
-                G = itertools.product(itertools.product([0, 1], repeat=d+1), repeat=n)
+                G = itertools.product(itertools.product([0, 1], repeat=d + 1), repeat=n)
                 for g in G:
-                    gen = sum([R(c1)*c2 for c1, c2 in zip(g, Obasis)])
+                    gen = sum([R(c1) * c2 for c1, c2 in zip(g, Obasis)])
                     yield gen
 
             # Trial 4: exhaustive search in O using all polynomials
@@ -577,7 +577,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
                     if g[j].leading_coefficient() != 1:
                         continue
 
-                    gen = sum([c1*c2 for c1, c2 in zip(g, Obasis)])
+                    gen = sum([c1 * c2 for c1, c2 in zip(g, Obasis)])
                     yield gen
 
         # Search for a primitive element. It is such an element g of O
@@ -638,7 +638,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
         # at this place and no other poles at finite places.
         p = prime.prime_below().gen().numerator()
         beta = prime._beta
-        alpha = ~p * sum(c1*c2 for c1, c2 in zip(beta, Obasis))
+        alpha = ~p * sum(c1 * c2 for c1, c2 in zip(beta, Obasis))
         alpha_powered_by_ramification_index = alpha ** prime._ramification_index
 
         def to_K(f):

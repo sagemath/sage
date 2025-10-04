@@ -25,16 +25,16 @@ def K():
 def L(F):
     x = F.gen()
     Y = PolynomialRing(F, 'Y').gen()
-    return F.extension(Y**2 + Y + x + 1/x, 'y')
+    return F.extension(Y**2 + Y + x + 1 / x, 'y')
 
 
 @pytest.fixture
 def M(K, R, S):
     x = K.gen()
     y = R.gen()
-    L = K.extension(y**3 - (x**3 + 2*x*y + 1/x))
+    L = K.extension(y**3 - (x**3 + 2 * x * y + 1 / x))
     t = S.gen()
-    return L.extension(t**2 - x*y)
+    return L.extension(t**2 - x * y)
 
 
 @pytest.fixture
@@ -56,7 +56,7 @@ def R(K):
 def S(K, R):
     x = K.gen()
     y = R.gen()
-    L = K.extension(y**3 - (x**3 + 2*x*y + 1/x))
+    L = K.extension(y**3 - (x**3 + 2 * x * y + 1 / x))
     return PolynomialRing(L, 't')
 
 
