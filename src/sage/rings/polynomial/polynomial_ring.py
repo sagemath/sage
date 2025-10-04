@@ -137,6 +137,8 @@ Check that :issue:`5562` has been fixed::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
+
 import sys
 from typing import TYPE_CHECKING, Literal
 

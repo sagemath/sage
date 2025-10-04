@@ -29,6 +29,8 @@ Base class for polyhedra: Initialization and access to Vrepresentation and Hrepr
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Literal
 from sage.misc.cachefunc import cached_method
 from sage.misc.abstract_method import abstract_method

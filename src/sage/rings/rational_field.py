@@ -52,6 +52,8 @@ AUTHORS:
 
 - Anna Haensch (2018-03): Added function ``quadratic_defect()``
 """
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Literal
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
