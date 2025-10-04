@@ -4561,8 +4561,11 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
     def _libgap_(self):
         """
-        Override :meth:`sage.structure.sage_object.SageObject._libgap_`
-        for better performance. Not to be used directly, use ``libgap(K)`` instead.
+        Override :meth:`sage.structure.sage_object.SageObject._libgap_`,
+        because the current implementation of :meth:`_gap_init_` doesn't work with libgap,
+        and it is cleaner to implement this using ``libgap`` object manipulations
+        instead of ``libgap.eval(self._gap_init_())``.
+        Not to be used directly, use ``libgap(K)`` instead.
 
         EXAMPLES::
 
