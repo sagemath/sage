@@ -152,7 +152,7 @@ class JacobianPoint(JacobianPoint_base):
         divisor = (~dS).divisor() + (~ds).divisor()
         return f'[{divisor}]'
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of ``self``.
 

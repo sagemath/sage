@@ -54,7 +54,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
         FunctionFieldIdeal.__init__(self, ring)
         self._gen = gen
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash computed from the data.
 
@@ -384,7 +384,7 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
         FunctionFieldIdealInfinite.__init__(self, ring)
         self._gen = gen
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of this fractional ideal.
 

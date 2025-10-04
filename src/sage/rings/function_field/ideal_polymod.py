@@ -128,7 +128,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         """
         return self._hnf.nrows() != 0
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of this ideal.
 
@@ -1335,7 +1335,7 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
         FunctionFieldIdealInfinite.__init__(self, ring)
         self._ideal = ideal
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of this ideal.
 

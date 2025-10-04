@@ -212,7 +212,7 @@ class JacobianPoint(JacobianPoint_base):
         """
         return f'Point of Jacobian determined by \n{self._w}'
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of ``self``.
 

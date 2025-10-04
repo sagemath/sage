@@ -165,7 +165,7 @@ class FunctionFieldDifferential(ModuleElement):
 
         return '\\left(' + latex(self._f) + '\\right)\\,' + r
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of ``self``.
 

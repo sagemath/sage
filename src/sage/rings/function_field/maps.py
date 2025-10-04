@@ -165,7 +165,7 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
         return richcmp((self.domain(), self.codomain()),
                        (other.domain(), other.codomain()), op)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return a hash value of this map.
 

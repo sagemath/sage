@@ -96,7 +96,7 @@ class FunctionFieldPlace(Element):
 
         self._prime = prime
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of the place.
 
