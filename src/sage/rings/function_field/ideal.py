@@ -665,7 +665,7 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
             sage: I = O.ideal(y)
             sage: d = {I: 1}  # indirect doctest
         """
-        return hash((self._ring,self._module))
+        return hash((self._ring, self._module))
 
     def _richcmp_(self, other, op):
         """
@@ -843,7 +843,7 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
             try:
                 if self.ring().has_coerce_map_from(other):
                     return self
-            except (TypeError,ArithmeticError,ValueError):
+            except (TypeError, ArithmeticError, ValueError):
                 pass
             other = self.ring().ideal(other)
 
@@ -975,7 +975,7 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
             sage: I = O.ideal_with_gens_over_base([1, y])
             sage: d = {I: 2}  # indirect doctest
         """
-        return hash((self._ring,self._module))
+        return hash((self._ring, self._module))
 
     def __eq__(self, other):
         """

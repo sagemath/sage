@@ -18,7 +18,7 @@ def J():
 
 @pytest.fixture
 def K():
-    return FunctionField(FiniteField(5**2,'a'), 'x')
+    return FunctionField(FiniteField(5**2, 'a'), 'x')
 
 
 @pytest.fixture

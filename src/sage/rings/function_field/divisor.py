@@ -583,7 +583,7 @@ class FunctionFieldDivisor(ModuleElement):
             sage: D.basis_function_space()
             [x/(x + 3), 1/(x + 3)]
         """
-        basis,_ = self._function_space()
+        basis, _ = self._function_space()
         return basis
 
     @cached_method
@@ -624,8 +624,8 @@ class FunctionFieldDivisor(ModuleElement):
         from sage.rings.function_field.maps import (
             FunctionFieldLinearMap, FunctionFieldLinearMapSection)
 
-        mor_from_V = FunctionFieldLinearMap(Hom(V,F), from_V)
-        mor_to_V = FunctionFieldLinearMapSection(Hom(F,V), to_V)
+        mor_from_V = FunctionFieldLinearMap(Hom(V, F), from_V)
+        mor_to_V = FunctionFieldLinearMapSection(Hom(F, V), to_V)
 
         return V, mor_from_V, mor_to_V
 
@@ -728,8 +728,8 @@ class FunctionFieldDivisor(ModuleElement):
         from sage.rings.function_field.maps import (
             FunctionFieldLinearMap, FunctionFieldLinearMapSection)
 
-        mor_from_V = FunctionFieldLinearMap(Hom(V,W), from_V)
-        mor_to_V = FunctionFieldLinearMapSection(Hom(W,V), to_V)
+        mor_from_V = FunctionFieldLinearMap(Hom(V, W), from_V)
+        mor_to_V = FunctionFieldLinearMapSection(Hom(W, V), to_V)
 
         return V, mor_from_V, mor_to_V
 
@@ -804,7 +804,7 @@ class FunctionFieldDivisor(ModuleElement):
 
         # Step 2: construct matrix M of rational functions in x such that
         # M * B == C where B = [b1,b1,...,bn], C =[v1,v2,...,vn]
-        V,fr,to = F.free_module(map=True)
+        V, fr, to = F.free_module(map=True)
         B = matrix([to(b) for b in J.gens_over_base()])
         C = matrix([to(v) for v in I.gens_over_base()])
         M = C * B.inverse()
@@ -825,13 +825,13 @@ class FunctionFieldDivisor(ModuleElement):
             bestp = -1
             best = -1
             for c in range(n):
-                d = mat[i,c].degree()
+                d = mat[i, c].degree()
                 if d >= best:
                     bestp = c
                     best = d
 
             if best >= 0:
-                pivot_row[bestp].append((i,best))
+                pivot_row[bestp].append((i, best))
                 if len(pivot_row[bestp]) > 1:
                     conflicts.append(bestp)
 
@@ -839,31 +839,31 @@ class FunctionFieldDivisor(ModuleElement):
         while conflicts:
             c = conflicts.pop()
             row = pivot_row[c]
-            i,ideg = row.pop()
-            j,jdeg = row.pop()
+            i, ideg = row.pop()
+            j, jdeg = row.pop()
 
             if jdeg > ideg:
-                i,j = j,i
-                ideg,jdeg = jdeg,ideg
+                i, j = j, i
+                ideg, jdeg = jdeg, ideg
 
-            coeff = - mat[i,c].lc() / mat[j,c].lc()
+            coeff = - mat[i, c].lc() / mat[j, c].lc()
             s = coeff * one.shift(ideg - jdeg)
 
             mat.add_multiple_of_row(i, j, s)
             gens[i] += s * gens[j]
 
-            row.append((j,jdeg))
+            row.append((j, jdeg))
 
             bestp = -1
             best = -1
             for c in range(n):
-                d = mat[i,c].degree()
+                d = mat[i, c].degree()
                 if d >= best:
                     bestp = c
                     best = d
 
             if best >= 0:
-                pivot_row[bestp].append((i,best))
+                pivot_row[bestp].append((i, best))
                 if len(pivot_row[bestp]) > 1:
                     conflicts.append(bestp)
 
@@ -920,7 +920,7 @@ class FunctionFieldDivisor(ModuleElement):
             for i in range(n):
                 e = v[i]
                 if e != 0:
-                    return (i,e.numerator().degree() - e.denominator().degree())
+                    return (i, e.numerator().degree() - e.denominator().degree())
 
         def greater(v, w): # v and w are not equal
             return v[0] < w[0] or v[0] == w[0] and v[1] > w[1]
@@ -942,7 +942,7 @@ class FunctionFieldDivisor(ModuleElement):
 
             head = pivots[0]
             for p in pivots[1:]:
-                if not greater(head,p):
+                if not greater(head, p):
                     head = p
 
             rows = pivot_rows[head]
@@ -1063,7 +1063,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
         """
         if isinstance(S, PlaceSet):
             func = lambda place: prime_divisor(self._field, place)
-            return SetMorphism(Hom(S,self), func)
+            return SetMorphism(Hom(S, self), func)
 
     def function_field(self):
         """
@@ -1101,6 +1101,6 @@ class DivisorGroup(UniqueRepresentation, Parent):
             places += self._field.places(d)
             d += 1
         e = self.element_class(self, {})
-        for i in range(random.randint(0,N)):
+        for i in range(random.randint(0, N)):
             e += random.choice(places)
         return e

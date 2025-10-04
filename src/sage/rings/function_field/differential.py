@@ -471,7 +471,7 @@ class FunctionFieldDifferential(ModuleElement):
             sage: sum([QQ(w.residue(p)) for p in d.support()])
             0
         """
-        R,fr_R,to_R = place._residue_field()
+        R, fr_R, to_R = place._residue_field()
 
         # Step 1: compute f such that fds equals this differential.
         s = place.local_uniformizer()

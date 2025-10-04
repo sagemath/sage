@@ -242,7 +242,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
             L = LazyPowerSeriesRing(self._base, name)
             return L(coeff_exp, valuation=1)
         L = PowerSeriesRing(self._base, name, default_prec=prec)
-        return L([0] + [coeff_exp(i) for i in range(1,prec)], prec=prec)
+        return L([0] + [coeff_exp(i) for i in range(1, prec)], prec=prec)
 
     @cached_method
     def _compute_coefficient_log(self, k):
@@ -643,7 +643,7 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
             while ip < dim and j == pivots[ip]:
                 j += 1
             ip += 1
-            V[i,j] = 1
+            V[i, j] = 1
         N = (V * M * ~V).submatrix(dim, dim)
 
         # The class module is now H where the action of T

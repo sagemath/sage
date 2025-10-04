@@ -206,6 +206,6 @@ class FunctionFieldValuationRing(UniqueRepresentation, Parent):
         from .maps import FunctionFieldRingMorphism as morphism
 
         k, from_k, to_k = self._place._residue_field(name=name)
-        mor_from_k = morphism(Hom(k,self), from_k)
-        mor_to_k = morphism(Hom(self,k), to_k)
+        mor_from_k = morphism(Hom(k, self), from_k)
+        mor_to_k = morphism(Hom(self, k), to_k)
         return k, mor_from_k, mor_to_k

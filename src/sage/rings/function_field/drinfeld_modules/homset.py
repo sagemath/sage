@@ -595,7 +595,7 @@ class DrinfeldModuleHomset(Homset):
             taus.append(taui)
         for i in range(r):
             s = FrobT(taui[-1])
-            taui = [s*xT[0]] + [FrobT(taui[j-1]) + s*xT[j] for j in range(1,r)]
+            taui = [s*xT[0]] + [FrobT(taui[j-1]) + s*xT[j] for j in range(1, r)]
             taus.append(taui)
 
         # We precompute the Frob^k(z^i)
@@ -715,7 +715,7 @@ class DrinfeldModuleHomset(Homset):
                 elem = elem ** q
                 v = elem.vector()
                 for j in range(n):
-                    frob_matrices[k][i,j] = v[j]
+                    frob_matrices[k][i, j] = v[j]
 
         # We write the linear system and solve it
         sys = Matrix(Fq, (d + r + 1)*n, (d + 1)*n)

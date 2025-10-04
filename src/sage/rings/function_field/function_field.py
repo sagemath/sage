@@ -769,12 +769,12 @@ class FunctionField(Field):
             f = self.polynomial()
             tester.assertEqual(0, d(f))
         # Leibniz's law
-        for x,y in tester.some_elements(product(S, S)):
+        for x, y in tester.some_elements(product(S, S)):
             tester.assertEqual(d(x*y), x*d(y) + d(x)*y)
         # Linearity
-        for x,y in tester.some_elements(product(S, S)):
+        for x, y in tester.some_elements(product(S, S)):
             tester.assertEqual(d(x+y), d(x) + d(y))
-        for c,x in tester.some_elements(product(K, S)):
+        for c, x in tester.some_elements(product(K, S)):
             tester.assertEqual(d(c*x), c*d(x))
         # Constants map to zero
         for c in tester.some_elements(K):

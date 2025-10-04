@@ -171,9 +171,9 @@ class FunctionFieldExtensionFactory(UniqueFactory):
         """
         if names is None:
             names = polynomial.variable_name()
-        if not isinstance(names,tuple):
+        if not isinstance(names, tuple):
             names = (names,)
-        return (polynomial,names,polynomial.base_ring())
+        return (polynomial, names, polynomial.base_ring())
 
     def create_object(self, version, key, **extra_args):
         """
