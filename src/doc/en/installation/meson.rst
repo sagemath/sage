@@ -100,7 +100,7 @@ Using Conda
     desired version.
 
 - To compile and install Sage in editable install, just use:
-  
+
   .. code-block:: console
 
       $ pip install --no-build-isolation --editable .
@@ -222,8 +222,7 @@ Remarks
   You can update the conda lock files by running ``tools/update-conda.py``.
   In order to update the conda environment afterwards use:
 
-    .. code-block:: console
-
+  .. code-block:: console
 
         $ mamba env update --file environment-3.12-linux.yml --name sage-dev
 
