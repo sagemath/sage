@@ -124,7 +124,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         True
     """
 
-    def __init__(self, gen, category):
+    def __init__(self, gen, category) -> None:
         """
         Initialize ``self``.
 

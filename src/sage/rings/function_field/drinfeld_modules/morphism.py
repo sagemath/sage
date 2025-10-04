@@ -186,7 +186,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             raise ValueError('Ore polynomial does not define a morphism')
         return cls.__classcall__(cls, parent, ore_pol)
 
-    def __init__(self, parent, ore_pol):
+    def __init__(self, parent, ore_pol) -> None:
         r"""
         Initialize ``self``.
 
@@ -331,7 +331,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         return self._ore_polynomial == 1
 
-    def is_isogeny(self):
+    def is_isogeny(self) -> bool:
         r"""
         Return ``True`` whether the morphism is an isogeny.
 

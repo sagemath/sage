@@ -621,7 +621,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             return DrinfeldModule_charzero(gen, category)
         return cls.__classcall__(cls, gen, category)
 
-    def __init__(self, gen, category):
+    def __init__(self, gen, category) -> None:
         """
         Initialize ``self``.
 
@@ -797,7 +797,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         return f'Drinfeld module defined by {self._function_ring.gen()} ' \
                f'|--> {self._gen}'
 
-    def _test_category(self, **options):
+    def _test_category(self, **options) -> None:
         """
         Run generic tests on the method :meth:`.category`.
 
@@ -1270,7 +1270,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         except NotImplementedError:
             raise NotImplementedError('height not implemented in this case')
 
-    def is_isomorphic(self, other, absolutely=False):
+    def is_isomorphic(self, other, absolutely=False) -> bool:
         r"""
         Return ``True`` if this Drinfeld module is isomorphic to ``other``;
         return ``False`` otherwise.
