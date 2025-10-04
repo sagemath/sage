@@ -874,7 +874,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
             return self._base_valuation.restriction(ring)
         return super().restriction(ring)
 
-    def simplify(self, f, error=None, force: bool=False):
+    def simplify(self, f, error=None, force: bool = False):
         r"""
         Return a simplified version of ``f``.
 

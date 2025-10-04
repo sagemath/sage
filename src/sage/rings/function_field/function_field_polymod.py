@@ -696,7 +696,7 @@ class FunctionField_polymod(FunctionField):
         return self._ring
 
     @cached_method(key=lambda self, base, basis, map: (self.base_field() if base is None else base, basis, map))
-    def free_module(self, base=None, basis=None, map: bool=True):
+    def free_module(self, base=None, basis=None, map: bool = True):
         """
         Return a vector space and isomorphisms from the field to and from the
         vector space.
