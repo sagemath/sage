@@ -6217,14 +6217,11 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         return pari_pol.galoisinit().galoisisabelian(1) == 1
 
     @cached_method
-    def galois_group(self, type=None, algorithm='pari', names=None, gc_numbering=None):
+    def galois_group(self, algorithm='pari', names=None, gc_numbering=None):
         r"""
         Return the Galois group of the Galois closure of this number field.
 
         INPUT:
-
-        - ``type`` -- deprecated; the different versions of Galois groups have been
-          merged in :issue:`28782`
 
         - ``algorithm`` -- ``'pari'``, ``'gap'``, ``'kash'``, or ``'magma'``
           (default: ``'pari'``); for degrees between 12 and 15 default is
@@ -6312,23 +6309,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             if you want the Galois group of the absolute field
             See https://github.com/sagemath/sage/issues/28782 for details.
             Galois group 10T22 (S(5)[x]2) with order 240 of t^5 - t + a
-
-        TESTS:
-
-        We check that the changes in :issue:`28782` won't break code that used v1 Galois groups::
-
-            sage: # needs sage.groups
-            sage: G = NumberField(x^3 - 2, 'a').galois_group(type='pari')
-            ...DeprecationWarning: the different Galois types have been merged into one class
-            See https://github.com/sagemath/sage/issues/28782 for details.
-            sage: G.group()
-            ...DeprecationWarning: the group method is deprecated; you can use _pol_galgp if you really need it
-            See https://github.com/sagemath/sage/issues/28782 for details.
-            PARI group [6, -1, 2, "S3"] of degree 3
         """
-        if type is not None:
-            deprecation(28782, "the different Galois types have been merged into one class")
-
         from .galois_group import GaloisGroup_v2
         return GaloisGroup_v2(self, algorithm=algorithm, names=names, gc_numbering=gc_numbering, _type=type)
 
