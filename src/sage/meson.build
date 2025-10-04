@@ -46,7 +46,6 @@ if gap_exe.found()
     check: true,
   )
   gap_root_paths = gaprun.stdout().strip()
-  gap_root_paths = '${prefix}/lib/gap;${prefix}/share/gap;' + gaprun.stdout().strip()
   conf_data.set('GAP_ROOT_PATHS', gap_root_paths)
 endif
 ecm_bin = find_program(
