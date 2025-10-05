@@ -21078,13 +21078,13 @@ def _matrix_power_symbolic(A, n):
 
     # Where each Jordan block starts, and number of blocks
     block_start = [0] + J.subdivisions()[0]
-    num_blocks = len(block_start)
+    n_blocks = len(block_start)
 
     # Prepare matrix M to store `J^n`, computed by Jordan block
     M = matrix(SR, J.ncols())
     M.subdivide(J.subdivisions())
 
-    for k in range(num_blocks):
+    for k in range(n_blocks):
 
         # Jordan block Jk, its dimension nk, the eigenvalue m
         Jk = J.subdivision(k, k)
