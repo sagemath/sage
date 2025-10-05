@@ -1674,7 +1674,7 @@ class FiniteWord_class(Word_class):
         g = copy(self.rauzy_graph(n))
         # Otherwise it changes the rauzy_graph function.
         l = [v for v in g if g.in_degree(v) == 1 == g.out_degree(v)]
-        if g.num_verts() != 0 and len(l) == g.num_verts():
+        if len(l) == g.n_vertices() != 0:
             # In this case, the Rauzy graph is simply a cycle.
             g = DiGraph()
             g.allow_loops(True)

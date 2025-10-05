@@ -459,7 +459,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
             sage: DynkinDiagram("A2","B2","F4").rank()
             8
         """
-        return self.num_verts()
+        return self.n_vertices()
 
     def dynkin_diagram(self):
         """

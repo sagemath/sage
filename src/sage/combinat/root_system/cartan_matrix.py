@@ -1173,7 +1173,7 @@ def find_cartan_type_from_matrix(CM):
     relabel = []
     for S in CM.dynkin_diagram().connected_components_subgraphs():
         S = DiGraph(S) # We need a simple digraph here
-        n = S.num_verts()
+        n = S.n_vertices()
         # Build the list to test based upon rank
         if n == 1:
             relabel.append({1: S.vertices()[0]})

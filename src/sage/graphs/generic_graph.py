@@ -2028,7 +2028,7 @@ class GenericGraph(GenericGraph_pyx):
 
         igraph_feature().require()
         import igraph
-        return igraph.Graph(n=self.num_verts(),
+        return igraph.Graph(n=self.n_vertices(),
                             edges=edges,
                             directed=self.is_directed(),
                             vertex_attrs=vertex_attrs,
@@ -2715,7 +2715,7 @@ class GenericGraph(GenericGraph_pyx):
         if base_ring is None:
             base_ring = ZZ
         immutable = kwds.pop('immutable', False)
-        m = matrix(base_ring, self.num_verts(), self.num_edges(), sparse=sparse, **kwds)
+        m = matrix(base_ring, self.n_vertices(), self.n_edges(), sparse=sparse, **kwds)
 
         if oriented:
             for i, e in enumerate(edges):
@@ -3032,9 +3032,9 @@ class GenericGraph(GenericGraph_pyx):
 
         from sage.matrix.constructor import matrix
         if base_ring is None:
-            M = matrix(self.num_verts(), D, sparse=sparse, **kwds)
+            M = matrix(self.n_vertices(), D, sparse=sparse, **kwds)
         else:
-            M = matrix(base_ring, self.num_verts(), D, sparse=sparse, **kwds)
+            M = matrix(base_ring, self.n_vertices(), D, sparse=sparse, **kwds)
         return M
 
     def kirchhoff_matrix(self, weighted=None, indegree=True, normalized=False, signless=False, **kwds):
@@ -4817,7 +4817,7 @@ class GenericGraph(GenericGraph_pyx):
             4
 
         """
-        return self._backend.num_verts()
+        return self._backend.n_vertices()
 
     __len__ = order
 
@@ -4838,7 +4838,7 @@ class GenericGraph(GenericGraph_pyx):
             15
 
         """
-        return self._backend.num_edges(self._directed)
+        return self._backend.n_edges(self._directed)
 
     num_edges = size
 
@@ -7090,7 +7090,7 @@ class GenericGraph(GenericGraph_pyx):
         F = 1
         for g in self.connected_components_subgraphs():
             emb = None if embedding is None else {v: embedding[v] for v in g}
-            F += g.num_faces(emb) - 1
+            F += g.n_faces(emb) - 1
         return F
 
     num_faces = n_faces
@@ -15260,7 +15260,7 @@ class GenericGraph(GenericGraph_pyx):
             multiedges using allow_multiple_edges().
         """
         # number of edges of H must divide the number of edges of self
-        if self.num_edges() % H.num_edges():
+        if self.n_edges() % H.n_edges():
             return
 
         from sage.combinat.matrices.dancing_links import dlx_solver
@@ -16252,7 +16252,7 @@ class GenericGraph(GenericGraph_pyx):
         if isinstance(self, DiGraph) and not isinstance(other, DiGraph):
             raise ValueError('the input parameter must be a DiGraph')
 
-        if self.num_verts() > other.num_verts() or self.num_edges() > other.num_edges():
+        if self.n_vertices() > other.n_vertices() or self.n_edges() > other.n_edges():
             return False
 
         if up_to_isomorphism:
@@ -17083,7 +17083,7 @@ class GenericGraph(GenericGraph_pyx):
             * :meth:`~GenericGraph.girth` -- return the girth of the graph.
             * :meth:`~GenericGraph.odd_girth` -- return the odd girth of the graph.
         """
-        n = self.num_verts()
+        n = self.n_vertices()
         best = n + 1
         seen = set()
         for w in self:
@@ -17516,7 +17516,7 @@ class GenericGraph(GenericGraph_pyx):
             else:
                 distv = distances[v]
             try:
-                closeness[v] = float(len(distv) - 1) * (len(distv) - 1) / (float(sum(distv.values())) * (self.num_verts() - 1))
+                closeness[v] = float(len(distv) - 1) * (len(distv) - 1) / (float(sum(distv.values())) * (self.n_vertices() - 1))
             except ZeroDivisionError:
                 pass
         if onlyone:
@@ -18519,7 +18519,7 @@ class GenericGraph(GenericGraph_pyx):
         elif algorithm == 'Dijkstra_NetworkX':
             import networkx
             # If this is not present, an error might be raised by NetworkX
-            if self.num_verts() == 1 and next(self.vertex_iterator()) == u:
+            if self.n_vertices() == 1 and next(self.vertex_iterator()) == u:
                 return {u: [u]}
             if by_weight:
                 if self.is_directed():
@@ -21713,7 +21713,7 @@ class GenericGraph(GenericGraph_pyx):
         # obstruction[y] is the smallest value of x to which a vertex at height
         # y can be assigned. All vertices at height y which have already been
         # assigned are on the left of (x-1,y).
-        obstruction = [0.0] * self.num_verts()
+        obstruction = [0.0] * self.n_vertices()
 
         if tree_orientation in ['down', 'left']:
             o = -1
@@ -22251,7 +22251,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: dm.preferences.supplemental_plot = 'never'
         """
         prefs = display_manager.preferences
-        is_small = (0 < self.num_verts() < 20)
+        is_small = (0 < self.n_vertices() < 20)
         can_plot = (prefs.supplemental_plot != 'never')
         plot_graph = can_plot and (prefs.supplemental_plot == 'always' or is_small)
         # Under certain circumstances we display the plot as graphics
@@ -24978,7 +24978,7 @@ class GenericGraph(GenericGraph_pyx):
         if orbits:
             G_from = {G_to[v]: v for v in G_to}
             from sage.groups.perm_gps.partn_ref.refinement_graphs import get_orbits
-            output.append([[G_from[v] for v in W] for W in get_orbits(a, self.num_verts())])
+            output.append([[G_from[v] for v in W] for W in get_orbits(a, self.n_vertices())])
 
         if len(output) == 1:
             return output[0]
@@ -26355,7 +26355,7 @@ class GenericGraph(GenericGraph_pyx):
         """
         from sage.geometry.polyhedron.parent import Polyhedra
         from sage.matrix.special import identity_matrix
-        dim = self.num_verts()
+        dim = self.n_vertices()
         e = identity_matrix(dim).rows()
         dic = {v: e[i] for i, v in enumerate(self)}
         vertices = ((dic[i] + dic[j]) for i, j in self.edge_iterator(sort_vertices=False, labels=False))
@@ -26487,7 +26487,7 @@ class GenericGraph(GenericGraph_pyx):
 
         from sage.geometry.polyhedron.parent import Polyhedra
         from sage.matrix.special import identity_matrix
-        dim = self.num_verts()
+        dim = self.n_vertices()
         e = identity_matrix(dim).rows()
         dic = {v: e[i] for i, v in enumerate(self)}
         vertices = chain(((dic[i] - dic[j]) for i, j in self.edge_iterator(sort_vertices=False, labels=False)),
