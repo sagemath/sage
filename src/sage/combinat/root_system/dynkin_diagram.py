@@ -681,7 +681,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
         """
         if self._cartan_type is not None:
             return self._cartan_type.is_irreducible()
-        return self.connected_components_number() == 1
+        return self.number_of_connected_components() == 1
 
     def is_crystallographic(self) -> bool:
         """

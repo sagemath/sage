@@ -934,7 +934,7 @@ class CartanMatrix(Base, CartanType_abstract,
             sage: M.is_indecomposable()
             False
         """
-        comp_num = self.dynkin_diagram().connected_components_number()
+        comp_num = self.dynkin_diagram().number_of_connected_components()
         # consider the empty matrix to be indecomposable
         return comp_num <= 1
 

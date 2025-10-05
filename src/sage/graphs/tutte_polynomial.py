@@ -648,12 +648,12 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
     if len(blocks) > 1:
         return prod([recursive_tp(G.subgraph(block)) for block in blocks])
 
-    components = G.connected_components_number()
+    components = G.number_of_connected_components()
     edge = edge_selector(G)
     unlabeled_edge = edge[:2]
 
     with removed_edge(G, edge):
-        if G.connected_components_number() > components:
+        if G.number_of_connected_components() > components:
             with contracted_edge(G, unlabeled_edge):
                 return x*recursive_tp()
 

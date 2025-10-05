@@ -238,7 +238,7 @@ can be applied on both. Here is what it can do:
 
     :meth:`~GenericGraph.is_connected` | Test whether the (di)graph is connected.
     :meth:`~GenericGraph.connected_components` | Return the list of connected components
-    :meth:`~GenericGraph.connected_components_number` | Return the number of connected components.
+    :meth:`~GenericGraph.number_of_connected_components` | Return the number of connected components.
     :meth:`~GenericGraph.connected_components_subgraphs` | Return a list of connected components as graph objects.
     :meth:`~GenericGraph.connected_component_containing_vertex` | Return a list of the vertices connected to vertex.
     :meth:`~GenericGraph.connected_components_sizes` | Return the sizes of the connected components as a list.
@@ -7078,7 +7078,7 @@ class GenericGraph(GenericGraph_pyx):
             if embedding is None:
                 if self.is_planar():
                     # We use Euler's formula: V-E+F-C=1
-                    C = self.connected_components_number()
+                    C = self.number_of_connected_components()
                     return self.size() - self.order() + C + 1
                 else:
                     raise ValueError("no embedding is provided and the graph is not planar")
@@ -26018,6 +26018,7 @@ class GenericGraph(GenericGraph_pyx):
         connected_component_containing_vertex,
         connected_components,
         connected_components_number,
+        number_of_connected_components,
         connected_components_sizes,
         connected_components_subgraphs,
         edge_connectivity,
@@ -26404,7 +26405,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: P = G.symmetric_edge_polytope()                                       # needs networkx sage.geometry.polyhedron
             sage: P.ambient_dim() == n                                                  # needs networkx sage.geometry.polyhedron
             True
-            sage: P.dim() == n - G.connected_components_number()                        # needs networkx sage.geometry.polyhedron
+            sage: P.dim() == n - G.number_of_connected_components()                     # needs networkx sage.geometry.polyhedron
             True
 
         The SEP of a graph is isomorphic to the subdirect sum of

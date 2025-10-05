@@ -388,7 +388,7 @@ class MatchingCoveredGraph(Graph):
 
         sage: G = graphs.CycleGraph(4)
         sage: G += graphs.CycleGraph(6)
-        sage: G.connected_components_number()
+        sage: G.number_of_connected_components()
         2
         sage: H = MatchingCoveredGraph(G)
         Traceback (most recent call last):

@@ -710,13 +710,13 @@ cdef class GraphicMatroid(Matroid):
         cdef list edgelist = self._groundset_to_edges(Y)
         cdef GenericGraph_pyx g = self._subgraph_from_set(XX)
         cdef list V = g.vertices(sort=False)
-        cdef int components = g.connected_components_number()
+        cdef int components = g.number_of_connected_components()
         for e in edgelist:
             # a non-loop edge is in the closure iff both its vertices are
             # in the induced subgraph, and the edge doesn't connect components
             if e[0] in V and e[1] in V:
                 g.add_edge(e)
-                if g.connected_components_number() >= components:
+                if g.number_of_connected_components() >= components:
                     XX.add(e[2])
                 else:
                     g.delete_edge(e)
@@ -906,12 +906,12 @@ cdef class GraphicMatroid(Matroid):
         """
         cdef GenericGraph_pyx g = self.graph()
         g.delete_edges(self._groundset_to_edges(X))
-        cdef int components = g.connected_components_number()
+        cdef int components = g.number_of_connected_components()
         cdef set XX = set(X)
         cdef frozenset Y = self.groundset().difference(XX)
         for e in self._groundset_to_edges(Y):
             g.delete_edge(e)
-            if g.connected_components_number() > components:
+            if g.number_of_connected_components() > components:
                 XX.add(e[2])
             g.add_edge(e)
         return frozenset(XX)
