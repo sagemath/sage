@@ -32,6 +32,7 @@ NTL_LIBDIR = "@NTL_LIBDIR@"
 # Path to the ecl-config script
 ECL_CONFIG = "@SAGE_ECL_CONFIG@".replace('${prefix}', SAGE_LOCAL)
 
+# Path to the nauty binaries; of the form "/path/to/" or "/path/to/nauty-" 
 SAGE_NAUTY_BINS_PREFIX = "@SAGE_NAUTY_BINS_PREFIX@"
 
 SAGE_ECMBIN = "@SAGE_ECMBIN@"
