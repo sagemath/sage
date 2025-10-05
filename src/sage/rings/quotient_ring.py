@@ -320,7 +320,7 @@ def QuotientRing(R, I, names=None, **kwds):
         return R
     try:
         if I.is_principal():
-            return R.quotient_by_principal_ideal(I.gen(), names)
+            return R.quotient_by_principal_ideal(I.gen(), names, **kwds)
     except (AttributeError, NotImplementedError):
         pass
     if not is_commutative:

@@ -171,7 +171,7 @@ class PolynomialQuotientRingFactory(UniqueFactory):
         sage: R.quotient_by_principal_ideal(f)
         Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x^2 - 1
     """
-    def create_key(self, ring, polynomial, names=None):
+    def create_key(self, ring, polynomial, names=None, category=None):
         r"""
         Return a unique description of the quotient ring specified by the
         arguments.
@@ -223,7 +223,7 @@ class PolynomialQuotientRingFactory(UniqueFactory):
         else:
             names = normalize_names(ring.ngens(), names)
 
-        return ring, polynomial, names
+        return ring, polynomial, names, category
 
     def create_object(self, version, key):
         r"""
@@ -236,7 +236,7 @@ class PolynomialQuotientRingFactory(UniqueFactory):
             ....:                                      (R, x^2 - 1, ('xbar')))
             Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x^2 - 1
         """
-        ring, polynomial, names = key
+        ring, polynomial, names, category = key
 
         R = ring.base_ring()
         from sage.categories.fields import Fields
@@ -244,15 +244,15 @@ class PolynomialQuotientRingFactory(UniqueFactory):
         if R in IntegralDomains():
             try:
                 is_irreducible = polynomial.is_irreducible()
-            except NotImplementedError: # is_irreducible sometimes not implemented
+            except NotImplementedError:  # is_irreducible sometimes not implemented
                 pass
             else:
                 if is_irreducible:
                     if R in Fields():
-                        return PolynomialQuotientRing_field(ring, polynomial, names)
+                        return PolynomialQuotientRing_field(ring, polynomial, names, category=category)
                     else:
-                        return PolynomialQuotientRing_domain(ring, polynomial, names)
-        return PolynomialQuotientRing_generic(ring, polynomial, names)
+                        return PolynomialQuotientRing_domain(ring, polynomial, names, category=category)
+        return PolynomialQuotientRing_generic(ring, polynomial, names, category=category)
 
 
 PolynomialQuotientRing = PolynomialQuotientRingFactory("PolynomialQuotientRing")
@@ -434,14 +434,16 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         self.__ring = ring
         self.__polynomial = polynomial
-        category = CommutativeAlgebras(ring.base_ring().category()).Quotients().or_subcategory(category)
+        cat = CommutativeAlgebras(ring.base_ring().category()).Quotients()
+        if category is not None:
+            cat &= category
         if self.is_finite():
             # We refine the category for finite quotients.
             # Note that is_finite() is cheap so it does not seem to do a lazy
             # _refine_category_() in is_finite() as we do for is_field()
-            category = category.Finite()
+            cat = cat.Finite()
 
-        QuotientRing_generic.__init__(self, ring, ring.ideal(polynomial), names=name, category=category)
+        QuotientRing_generic.__init__(self, ring, ring.ideal(polynomial), names=name, category=cat)
         self._base = ring  # backwards compatibility -- different from QuotientRing_generic
 
     _ideal_class_ = QuotientRing_generic._ideal_class_
@@ -595,7 +597,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             try:
                 if not self.__polynomial.divides(R.modulus()):
                     return False
-            except (ZeroDivisionError,ArithmeticError):
+            except (ZeroDivisionError, ArithmeticError):
                 return False
             from sage.categories.homset import Hom
             parent = Hom(R, self, category=self.category()._meet_(R.category()))
@@ -1278,7 +1280,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             raise TypeError("self must be an integral domain")
 
         frac = self.base_ring().fraction_field()
-        return self.base().change_ring(frac).quo(self.modulus())
+        return self.base().change_ring(frac).quo(self.modulus(),
+                                                 category=Fields())
 
     def random_element(self, degree=None, *args, **kwds):
         """
