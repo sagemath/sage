@@ -2387,8 +2387,8 @@ class MatchingCoveredGraph(Graph):
         .. NOTE::
 
             This method overwrites the
-            :meth:`~sage.graphs.graph.Graph.is_biconnected` method
-            in order to return ``True`` as matching covered graphs are
+            :meth:`~sage.graphs.generic_graph.GenericGraph.is_biconnected`
+            method in order to return ``True`` as matching covered graphs are
             biconnected.
 
         EXAMPLES:

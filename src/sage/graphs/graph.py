@@ -1755,46 +1755,6 @@ class Graph(GenericGraph):
         return len(self.faces()) == sum(1 for b in B if len(b) > 2) + 1
 
     @doc_index("Graph properties")
-    def is_biconnected(self):
-        """
-        Test if the graph is biconnected.
-
-        A biconnected graph is a connected graph on two or more vertices that is
-        not broken into disconnected pieces by deleting any single vertex.
-
-        .. SEEALSO::
-
-            - :meth:`~sage.graphs.generic_graph.GenericGraph.is_connected`
-            - :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cut_vertices`
-            - :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cuts_tree`
-            - :wikipedia:`Biconnected_graph`
-
-        EXAMPLES::
-
-            sage: G = graphs.PetersenGraph()
-            sage: G.is_biconnected()
-            True
-            sage: G.add_path([0,'a','b'])
-            sage: G.is_biconnected()
-            False
-            sage: G.add_edge('b', 1)
-            sage: G.is_biconnected()
-            True
-
-        TESTS::
-
-            sage: Graph().is_biconnected()
-            False
-            sage: Graph(1).is_biconnected()
-            False
-            sage: graphs.CompleteGraph(2).is_biconnected()
-            True
-        """
-        if self.order() < 2 or not self.is_connected():
-            return False
-        return not self.blocks_and_cut_vertices()[1]
-
-    @doc_index("Graph properties")
     def is_block_graph(self):
         r"""
         Return whether this graph is a block graph.
