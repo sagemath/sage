@@ -1257,30 +1257,30 @@ def load_data(n: int, user=True) -> dict:
     We test data from the ``database_mutation_class`` optional package::
 
         sage: load_data(2, user=False)      # optional - database_mutation_class
-        {('G', 2): [('AO', (((0, 1), (1, -3)), )), ('AO', (((0, 1), (3, -1)), ))]}
+        {('G', 2): [('AO', (((0, 1), (1, -3)),)), ('AO', (((0, 1), (3, -1)),))]}
         sage: D = load_data(3, user=False)  # optional - database_mutation_class
         sage: sorted(D.items())             # optional - database_mutation_class
         [(('G', 2, -1),
-          [('BH?', (((1, 2), (1, -3)), )),
-           ('BGO', (((2, 1), (3, -1)), )),
-           ('BW?', (((0, 1), (3, -1)), )),
-           ('BP?', (((0, 1), (1, -3)), )),
+          [('BH?', (((1, 2), (1, -3)),)),
+           ('BGO', (((2, 1), (3, -1)),)),
+           ('BW?', (((0, 1), (3, -1)),)),
+           ('BP?', (((0, 1), (1, -3)),)),
            ('BP_', (((0, 1), (1, -3)), ((2, 0), (3, -1)))),
            ('BP_', (((0, 1), (3, -1)), ((1, 2), (1, -3)), ((2, 0), (2, -2))))]),
          (('G', 2, 1),
-          [('BH?', (((1, 2), (3, -1)), )),
-           ('BGO', (((2, 1), (1, -3)), )),
-           ('BW?', (((0, 1), (1, -3)), )),
-           ('BP?', (((0, 1), (3, -1)), )),
+          [('BH?', (((1, 2), (3, -1)),)),
+           ('BGO', (((2, 1), (1, -3)),)),
+           ('BW?', (((0, 1), (1, -3)),)),
+           ('BP?', (((0, 1), (3, -1)),)),
            ('BKO', (((1, 0), (3, -1)), ((2, 1), (1, -3)))),
            ('BP_', (((0, 1), (2, -2)), ((1, 2), (1, -3)), ((2, 0), (3, -1))))])]
     """
-    from sage.env import DOT_SAGE, SAGE_SHARE
+    from sage.env import DOT_SAGE, sage_data_paths
 
     # we check
     # - if the data is stored by the user, and if this is not the case
     # - if the data is stored by the optional package install
-    paths = [Path(SAGE_SHARE)]
+    paths = [Path(path) for path in sage_data_paths()]
     if user:
         paths.append(Path(DOT_SAGE))
     data = {}
