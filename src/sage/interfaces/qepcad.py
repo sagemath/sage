@@ -39,10 +39,8 @@ such, it does not cover several issues that are very important to use
 QEPCAD efficiently, such as variable ordering, the efficient use of
 the alternate quantifiers and ``_root_`` expressions, the
 ``measure-zero-error`` command, etc.  For more information on QEPCAD,
-see the `online
-documentation<https://www.usna.edu/Users/cs/wcbrown/qepcad/B/QEPCAD.html>`_
-and Chris Brown's `tutorial
-handout<https://www.usna.edu/Users/cs/wcbrown/research/ISSAC04/Tutorial.html>`_.
+see the `online documentation<https://www.usna.edu/Users/cs/wcbrown/qepcad/B/QEPCAD.html>`_
+and Chris Brown's `tutorial handout<https://www.usna.edu/Users/cs/wcbrown/research/ISSAC04/Tutorial.html>`_.
 (Several of the examples in this documentation came from these sources.)
 
 The examples below require that the optional qepcad package is installed.
