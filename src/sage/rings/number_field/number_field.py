@@ -2505,7 +2505,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         return (K, new_alpha, hom)
 
-    def is_absolute(self):
+    def is_absolute(self) -> bool:
         """
         Return ``True`` if ``self`` is an absolute field.
 
@@ -6182,7 +6182,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         return self.galois_group().is_galois()
 
     @cached_method
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         r"""
         Return ``True`` if this number field is an abelian Galois extension of
         `\QQ`.
@@ -8528,7 +8528,7 @@ class NumberField_absolute(NumberField_generic):
         for v in cartesian_product([M.base_ring()] * M.dimension()):
             yield f(M(list(v)))
 
-    def is_absolute(self):
+    def is_absolute(self) -> bool:
         r"""
         Return ``True`` since ``self`` is an absolute field.
 
@@ -11567,7 +11567,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         from sage.rings.number_field.homset import CyclotomicFieldHomset
         return CyclotomicFieldHomset(self, codomain, category)
 
-    def is_galois(self):
+    def is_galois(self) -> bool:
         """
         Return ``True`` since all cyclotomic fields are automatically Galois.
 
@@ -11578,7 +11578,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         """
         return True
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return ``True`` since all cyclotomic fields are automatically abelian.
 
@@ -11589,7 +11589,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         """
         return True
 
-    def is_isomorphic(self, other):
+    def is_isomorphic(self, other) -> bool:
         """
         Return ``True`` if the cyclotomic field ``self`` is isomorphic as a number
         field to ``other``.

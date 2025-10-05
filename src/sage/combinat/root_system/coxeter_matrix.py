@@ -944,7 +944,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
         """
         return self.coxeter_graph().is_connected()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return if ``self`` is a finite type or ``False`` if unknown.
 
@@ -962,7 +962,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
         """
         return self._is_finite
 
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         Return if ``self`` is an affine type or ``False`` if unknown.
 
