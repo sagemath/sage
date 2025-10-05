@@ -6947,6 +6947,15 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: graphs.PathGraph(3).faces()
             [[(0, 1), (1, 2), (2, 1), (1, 0)]]
+
+        Check that :issue:`40885` is fixed::
+
+            sage: g = graphs.CycleGraph(3)
+            sage: hasattr(g, '_embedding')
+            False
+            sage: F = g.faces()
+            sage: hasattr(g, '_embedding')
+            False
         """
         if not self.order() or not self.size():
             return []
@@ -6957,9 +6966,13 @@ class GenericGraph(GenericGraph_pyx):
         else:
             embedding = self.get_embedding()
             if embedding is None:
+                has_attribute = hasattr(self, '_embedding')
                 if self.is_planar(set_embedding=True):
                     embedding = self._embedding
-                    self._embedding = None
+                    if has_attribute:
+                        self._embedding = None
+                    else:
+                        del self._embedding
                 else:
                     raise ValueError("no embedding is provided and the graph is not planar")
 
