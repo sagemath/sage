@@ -3088,7 +3088,7 @@ class Graph(GenericGraph):
                     pewveo.extend(certif)
                 return True, pewveo
             return all(gg.is_chordal_bipartite() for gg in
-                        self.connected_components_subgraphs())
+                       self.connected_components_subgraphs())
 
         left = [v for v, c in bipartite_certificate.items() if c == 0]
         right = [v for v, c in bipartite_certificate.items() if c == 1]
@@ -3756,8 +3756,8 @@ class Graph(GenericGraph):
             # edges in stack to current subgraph.
             if not stack:
                 return p.monomial(_Partitions(sorted(
-                            [s for v, s in sizes.items() if dsf[v] is None],
-                            reverse=True)))
+                    [s for v, s in sizes.items() if dsf[v] is None],
+                    reverse=True)))
             ret = p.zero()
             e = stack.pop()
             u = find(dsf, e[0])
@@ -7732,7 +7732,7 @@ class Graph(GenericGraph):
                   PARALLEL[5[], 6[], 7[]]]
         """
         from sage.graphs.graph_decompositions.modular_decomposition import \
-                modular_decomposition
+            modular_decomposition
 
         D = modular_decomposition(self, algorithm=algorithm)
 
@@ -8033,7 +8033,7 @@ class Graph(GenericGraph):
             True
         """
         from sage.graphs.graph_decompositions.modular_decomposition import \
-                modular_decomposition
+            modular_decomposition
 
         if self.order() <= 1:
             return True
@@ -9565,7 +9565,7 @@ class Graph(GenericGraph):
 
         EXAMPLES:
 
-        The Peterson graph is a known projective planar graph::
+        The Petersen graph is a known projective planar graph::
 
             sage: P = graphs.PetersenGraph()
             sage: P.is_projective_planar()  # long time
@@ -9731,6 +9731,6 @@ _additional_categories = {
     "is_matching_covered"       : "Matching",
     "matching"                  : "Matching",
     "perfect_matchings"         : "Matching"
-    }
+}
 
 __doc__ = __doc__.replace("{INDEX_OF_METHODS}", gen_thematic_rest_table_index(Graph, _additional_categories))
