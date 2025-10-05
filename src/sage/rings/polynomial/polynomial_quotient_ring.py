@@ -2344,8 +2344,10 @@ class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, CommutativeR
             sage: h.parent() is H
             True
         """
-        category = CommutativeAlgebras(ring.base_ring().category()).Quotients().NoZeroDivisors().or_subcategory(category)
-        PolynomialQuotientRing_generic.__init__(self, ring, polynomial, name, category)
+        cat = CommutativeAlgebras(ring.base_ring().category()).Quotients().NoZeroDivisors()
+        if category is not None:
+            cat &= category
+        PolynomialQuotientRing_generic.__init__(self, ring, polynomial, name, cat)
 
     def field_extension(self, names):
         r"""
