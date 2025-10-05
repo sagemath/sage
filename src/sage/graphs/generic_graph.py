@@ -872,7 +872,7 @@ class GenericGraph(GenericGraph_pyx):
             '101001100110000010000001001000010110000010110'
             sage: len([a for a in G._bit_vector() if a == '1'])
             15
-            sage: G.num_edges()
+            sage: G.n_edges()
             15
 
         TESTS:
@@ -4801,8 +4801,8 @@ class GenericGraph(GenericGraph_pyx):
         """
         Return the number of vertices.
 
-        Note that ``len(G)`` and :meth:`num_verts` also return the number of
-        vertices in `G`.
+        Note that ``len(G)`` and :meth:`n_vertices` also return the
+        number of vertices in `G`.
 
         EXAMPLES::
 
@@ -4815,6 +4815,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G = graphs.TetrahedralGraph()
             sage: len(G)
             4
+
         """
         return self._backend.num_verts()
 
@@ -4822,21 +4823,26 @@ class GenericGraph(GenericGraph_pyx):
 
     num_verts = order
 
+    n_vertices = order
+
     def size(self):
         """
         Return the number of edges.
 
-        Note that :meth:`num_edges` also returns the number of edges in `G`.
+        Note that :meth:`n_edges` also returns the number of edges in `G`.
 
         EXAMPLES::
 
             sage: G = graphs.PetersenGraph()
             sage: G.size()
             15
+
         """
         return self._backend.num_edges(self._directed)
 
     num_edges = size
+
+    n_edges = size
 
     def eulerian_circuit(self, return_vertices=False, labels=True, path=False):
         r"""
@@ -6987,7 +6993,7 @@ class GenericGraph(GenericGraph_pyx):
             faces.append(path)
         return faces
 
-    def num_faces(self, embedding=None):
+    def n_faces(self, embedding=None):
         """
         Return the number of faces of an embedded graph.
 
@@ -7015,35 +7021,35 @@ class GenericGraph(GenericGraph_pyx):
         EXAMPLES::
 
             sage: T = graphs.TetrahedralGraph()
-            sage: T.num_faces()
+            sage: T.n_faces()
             4
 
         The external face of a disconnected graph is counted only once::
 
-            sage: (T + T).num_faces()
+            sage: (T + T).n_faces()
             7
-            sage: (T + T + T).num_faces()
+            sage: (T + T + T).n_faces()
             10
 
         Trees and forests have a single face::
 
             sage: T = graphs.RandomTree(10)
-            sage: T.num_faces()
+            sage: T.n_faces()
             1
-            sage: (T + T).num_faces()
+            sage: (T + T).n_faces()
             1
 
         TESTS::
 
             sage: G = graphs.CompleteBipartiteGraph(3, 3)
-            sage: G.num_faces()
+            sage: G.n_faces()
             Traceback (most recent call last):
             ...
             ValueError: no embedding is provided and the graph is not planar
 
         Issue :issue:`22003` is fixed::
 
-            sage: Graph(1).num_faces()
+            sage: Graph(1).n_faces()
             1
         """
         if not self:
@@ -7073,6 +7079,8 @@ class GenericGraph(GenericGraph_pyx):
             emb = None if embedding is None else {v: embedding[v] for v in g}
             F += g.num_faces(emb) - 1
         return F
+
+    num_faces = n_faces
 
     def planar_dual(self, embedding=None):
         """
@@ -13285,10 +13293,10 @@ class GenericGraph(GenericGraph_pyx):
         ::
 
             sage: G = Graph({0: {1: 1}}, sparse=True)
-            sage: G.num_edges()
+            sage: G.n_edges()
             1
             sage: G.set_edge_label(0, 1, 1)
-            sage: G.num_edges()
+            sage: G.n_edges()
             1
         """
         if self.allows_multiple_edges():
@@ -20245,7 +20253,7 @@ class GenericGraph(GenericGraph_pyx):
              ((1, 'ab'), (1, 'ba')), ((1, 'ab'), (1, 'bb')),
              ((1, 'ba'), (1, 'aa')), ((1, 'ba'), (1, 'ab')),
              ((1, 'bb'), (1, 'ba')), ((1, 'bb'), (1, 'bb'))]
-            sage: Q.strongly_connected_components_digraph().num_verts()                 # needs sage.combinat
+            sage: Q.strongly_connected_components_digraph().n_vertices()                # needs sage.combinat
             2
             sage: V = Q.strongly_connected_component_containing_vertex((0, 'aa'))       # needs sage.combinat
             sage: B.is_isomorphic(Q.subgraph(V))                                        # needs sage.combinat
@@ -26378,7 +26386,7 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: n = randint(5, 12)
             sage: G = Graph()
-            sage: while not G.num_edges():                                              # needs networkx
+            sage: while not G.n_edges():                                                # needs networkx
             ....:     G = graphs.RandomGNP(n, 0.2)
             sage: P = G.symmetric_edge_polytope()                                       # needs networkx sage.geometry.polyhedron
             sage: P.ambient_dim() == n                                                  # needs networkx sage.geometry.polyhedron

@@ -968,9 +968,9 @@ class Graph(GenericGraph):
         Loops are not counted as multiedges (see :issue:`11693`) and edges are
         not counted twice ::
 
-            sage: Graph({1:[1]}).num_edges()
+            sage: Graph({1:[1]}).n_edges()
             1
-            sage: Graph({1:[2,2]}).num_edges()
+            sage: Graph({1:[2,2]}).n_edges()
             2
 
         An empty list or dictionary defines a simple graph
@@ -5363,7 +5363,7 @@ class Graph(GenericGraph):
 
             sage: G = graphs.OddGraph(4)
             sage: d = G.diameter()
-            sage: n = G.num_verts()
+            sage: n = G.n_vertices()
             sage: H = G.distance_graph(list(range(d+1)))
             sage: H.is_isomorphic(graphs.CompleteGraph(n))
             False
@@ -5418,10 +5418,10 @@ class Graph(GenericGraph):
         Empty input, or unachievable distances silently yield empty graphs::
 
             sage: G = graphs.CompleteGraph(5)
-            sage: G.distance_graph([]).num_edges()
+            sage: G.distance_graph([]).n_edges()
             0
             sage: G = graphs.CompleteGraph(5)
-            sage: G.distance_graph(23).num_edges()
+            sage: G.distance_graph(23).n_edges()
             0
 
         It is an error to provide a distance that is not an integer type::

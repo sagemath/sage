@@ -66,7 +66,7 @@ modified::
     sage: N1 = M1.contract((0,1))
     sage: N1.graph().edges_incident(0, sort=True)
     [(0, 2, (0, 2)), (0, 2, (1, 2)), (0, 3, (1, 3))]
-    sage: M2 = Matroid(range(G.num_edges()), G)
+    sage: M2 = Matroid(range(G.n_edges()), G)
     sage: N2 = M2.contract(0)
     sage: N1.is_isomorphic(N2)
     True
@@ -229,7 +229,7 @@ cdef class GraphicMatroid(Matroid):
             sage: sorted(M.groundset())
             [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3)]
             sage: G = graphs.CompleteGraph(3).disjoint_union(graphs.CompleteGraph(4))
-            sage: M = Matroid(range(G.num_edges()), G); sorted(M.groundset())
+            sage: M = Matroid(range(G.n_edges()), G); sorted(M.groundset())
             [0, 1, 2, 3, 4, 5, 6, 7, 8]
             sage: M = Matroid(Graph([(0, 1, 'a'), (0, 2, 'b'), (0, 3, 'c')]))
             sage: sorted(M.groundset())
@@ -1178,7 +1178,7 @@ cdef class GraphicMatroid(Matroid):
 
             sage: G = Graph([(0, 1), (0, 2), (1, 2), (3, 4), (3, 5), (4, 5),
             ....: (6, 7), (6, 8), (7, 8), (8, 8), (7, 8)], multiedges=True, loops=True)
-            sage: M = Matroid(range(G.num_edges()), G)
+            sage: M = Matroid(range(G.n_edges()), G)
             sage: M.graph().edges(sort=True)
             [(0, 1, 0),
              (0, 2, 1),
