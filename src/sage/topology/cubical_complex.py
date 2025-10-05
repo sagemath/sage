@@ -1015,7 +1015,7 @@ class CubicalComplex(GenericCellComplex):
         """
         return hash(frozenset(self._facets))
 
-    def is_subcomplex(self, other):
+    def is_subcomplex(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` is a subcomplex of ``other``.
 

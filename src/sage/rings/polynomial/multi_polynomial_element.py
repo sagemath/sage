@@ -58,20 +58,25 @@ We verify Lagrange's four squares identity::
 
 import operator
 
-from sage.structure.element import CommutativeRingElement, coerce_binop, get_coercion_model, parent
-from sage.misc.misc_c import prod
-from sage.rings.integer import Integer
 import sage.rings.integer_ring
-from sage.rings.qqbar_decorators import handle_AA_and_QQbar
-from . import polydict
-from sage.structure.factorization import Factorization
-from sage.rings.polynomial.polynomial_singular_interface import Polynomial_singular_repr
-from sage.structure.sequence import Sequence
-from .multi_polynomial import MPolynomial, is_MPolynomial
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.misc_c import prod
 from sage.misc.superseded import deprecated_function_alias
-from sage.rings.rational_field import QQ
 from sage.rings.fraction_field import FractionField
+from sage.rings.integer import Integer
+from sage.rings.polynomial import polydict
+from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.rings.polynomial.polynomial_singular_interface import Polynomial_singular_repr
+from sage.rings.qqbar_decorators import handle_AA_and_QQbar
+from sage.rings.rational_field import QQ
+from sage.structure.element import (
+    CommutativeRingElement,
+    coerce_binop,
+    get_coercion_model,
+    parent,
+)
+from sage.structure.factorization import Factorization
+from sage.structure.sequence import Sequence
 
 
 class MPolynomial_element(MPolynomial):
