@@ -1607,7 +1607,16 @@ cdef class Matrix(Matrix1):
             sage: A = matrix(R, 2,2, [x, y, x^2, y^2])
             sage: A.permanent()
             x^2*y + x*y^2
+
+        TESTS::
+
+            sage: A = matrix(ZZ, 0, 0, [])
+            sage: A.permanent()
+            1
         """
+        if not self.nrows():
+            return self.base_ring().one()
+
         if algorithm == "Ryser":
             return self._permanent_ryser()
 
@@ -2899,7 +2908,7 @@ cdef class Matrix(Matrix1):
         """
         M = self.parent().change_ring(phi.codomain())
         if self.is_sparse():
-            values = {(i, j): phi(z) for (i, j), z in self.dict()}
+            values = {ij: phi(z) for ij, z in self.dict()}
         else:
             values = [phi(z) for z in self.list()]
         image = M(values)
@@ -3009,7 +3018,7 @@ cdef class Matrix(Matrix1):
                 return self.dense_matrix()
 
         if self.is_sparse():
-            values = {(i, j): phi(v) for (i, j), v in self.dict().iteritems()}
+            values = {ij: phi(v) for ij, v in self.dict().iteritems()}
             if R is None:
                 R = sage.structure.sequence.Sequence(values.values()).universe()
         else:
@@ -12227,7 +12236,7 @@ cdef class Matrix(Matrix1):
             evals = eigenvalues
         else:
             evals = A.charpoly().roots()
-        if sum(mult for (_, mult) in evals) < n:
+        if sum(mult for _, mult in evals) < n:
             raise RuntimeError("Some eigenvalue does not exist in %s." % (A.base_ring()))
 
         # Compute the block information.  Here, ``blocks`` is a list of pairs,
@@ -12254,7 +12263,7 @@ cdef class Matrix(Matrix1):
         # are ordered firstly by the eigenvalues, in the same order as obeyed
         # by ``.roots()``, and secondly by size from greatest to smallest.
         J = block_diagonal_matrix([jordan_block(eval, size, sparse=sparse)
-                                   for (eval, size) in blocks],
+                                   for eval, size in blocks],
                                   subdivide=subdivide)
 
         if transformation:
@@ -12513,7 +12522,7 @@ cdef class Matrix(Matrix1):
 
         # check if the sum of algebraic multiplicities equals the number of rows
         evals = A.charpoly().roots()
-        if sum(mult for (_, mult) in evals) < self._nrows:
+        if sum(mult for _, mult in evals) < self._nrows:
             raise ValueError('not diagonalizable over {}'.format(A.base_ring()))
 
         # compute diagonalization from the eigenspaces
@@ -12706,7 +12715,7 @@ cdef class Matrix(Matrix1):
 
         # check if the sum of algebraic multiplicities equals to the number of rows
         evals = A.charpoly().roots()
-        if sum(mult for (_, mult) in evals) < self._nrows:
+        if sum(mult for _, mult in evals) < self._nrows:
             return False
 
         # Obtaining a generic minimal polynomial requires much more
@@ -17082,9 +17091,9 @@ cdef class Matrix(Matrix1):
             return R.ideal(prod(elemdiv[:rank_minors]))
         except (TypeError, NotImplementedError, ArithmeticError):
             pass
-        for (nr, r) in enumerate(self.rows()):
+        for nr, r in enumerate(self.rows()):
             nz = [e for e in enumerate(r) if e[1]]
-            if len(nz) == 0:
+            if not nz:
                 N = self.delete_rows([nr])
                 return N.fitting_ideal(i)
             elif len(nz) == 1:
@@ -17093,7 +17102,7 @@ cdef class Matrix(Matrix1):
                 N = N.delete_columns([nz[0][0]])
                 F2 = N.fitting_ideal(i)
                 return F1 + nz[0][1]*F2
-        for (nc, c) in enumerate(self.columns()):
+        for nc, c in enumerate(self.columns()):
             nz = [e for e in enumerate(c) if e[1]]
             if len(nz) == 0:
                 N = self.delete_columns([nc])
@@ -18679,7 +18688,7 @@ cdef class Matrix(Matrix1):
             raise ValueError(msg)
 
         return all(s * (self * x) >= 0
-                   for (x, s) in K.discrete_complementarity_set())
+                   for x, s in K.discrete_complementarity_set())
 
     def is_Z_operator_on(self, K):
         r"""
@@ -18955,7 +18964,7 @@ cdef class Matrix(Matrix1):
         # many inequalities as the number of equalities that we're
         # about to check.
         return all(s * (self * x) == 0
-                   for (x, s) in K.discrete_complementarity_set())
+                   for x, s in K.discrete_complementarity_set())
 
     def LLL_gram(self, flag=0):
         """
@@ -19775,7 +19784,7 @@ cdef class Matrix(Matrix1):
             [ 0  0 27], ((0, 0, 0), (0, 1, 1), (0, 2, 2))
             )
             sage: rows.sort(key=lambda x: (x[1] + shifts[x[0]], x[0]))
-            sage: [(i, j) for (i, j, k) in rows[:3]]
+            sage: [(i, j) for i, j, k in rows[:3]]
             [(0, 0),
              (0, 1),
              (0, 2)]
@@ -19798,7 +19807,7 @@ cdef class Matrix(Matrix1):
             [ 0  0 50], ((1, 0, 0), (1, 1, 1), (1, 2, 2))
             )
             sage: rows.sort(key=lambda x: (x[1] + shifts[x[0]], x[0]))
-            sage: [(i, j) for (i, j, k) in rows[:3]]
+            sage: [(i, j) for i, j, k in rows[:3]]
             [(1, 0),
              (1, 1),
              (1, 2)]
