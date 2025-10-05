@@ -180,7 +180,7 @@ class PolynomialQuotientRingFactory(UniqueFactory):
 
             sage: R.<x> = QQ[]
             sage: PolynomialQuotientRing.create_key(R, x + 1)
-            (Univariate Polynomial Ring in x over Rational Field, x + 1, ('xbar',))
+            (Univariate Polynomial Ring in x over Rational Field, x + 1, ('xbar',), None)
 
         TESTS:
 
@@ -188,7 +188,7 @@ class PolynomialQuotientRingFactory(UniqueFactory):
         leading coefficient here::
 
             sage: PolynomialQuotientRing.create_key(R, 2*x + 2)
-            (Univariate Polynomial Ring in x over Rational Field, 2*x + 2, ('xbar',))
+            (Univariate Polynomial Ring in x over Rational Field, 2*x + 2, ('xbar',), None)
 
         Consequently, you get two distinct objects::
 
@@ -233,7 +233,7 @@ class PolynomialQuotientRingFactory(UniqueFactory):
 
             sage: R.<x> = QQ[]
             sage: PolynomialQuotientRing.create_object((8, 0, 0),
-            ....:                                      (R, x^2 - 1, ('xbar')))
+            ....:                                      (R, x^2 - 1, ('xbar'), None))
             Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x^2 - 1
         """
         ring, polynomial, names, category = key
