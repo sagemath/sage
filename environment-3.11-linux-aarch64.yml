@@ -39,12 +39,12 @@ dependencies:
   - bzip2=1.0.8=h4777abc_8
   - c-ares=1.34.5=h86ecc28_0
   - c-compiler=1.11.0=hdceaead_0
-  - ca-certificates=2025.8.3=hbd8a1cb_0
+  - ca-certificates=2025.10.5=hbd8a1cb_0
   - cachecontrol=0.14.3=pyha770c72_0
   - cachecontrol-with-filecache=0.14.3=pyhd8ed1ab_0
   - cairo=1.18.4=h83712da_0
   - cddlib=1!0.94m=h719063d_0
-  - certifi=2025.8.3=pyhd8ed1ab_0
+  - certifi=2025.10.5=pyhd8ed1ab_0
   - cffi=2.0.0=py311h3324b35_0
   - charset-normalizer=3.4.3=pyhd8ed1ab_0
   - click=8.3.0=pyh707e725_0
