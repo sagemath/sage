@@ -275,10 +275,8 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         # all_requirements.add("gcc_win-64 >= 14.2.0")
         # all_requirements.add("gxx_win-64")
     else:
-        # Not possible to use GCC 14 until https://github.com/conda-forge/fflas-ffpack-feedstock/pull/21 is merged
-        # Thus add version constraint to avoid conda picking GCC 14
-        all_requirements.add("c-compiler <= 1.10")
-        all_requirements.add("cxx-compiler <= 1.10")
+        all_requirements.add("c-compiler")
+        all_requirements.add("cxx-compiler")
 
     # Add additional dependencies based on platform
     if platform == "win-64":
