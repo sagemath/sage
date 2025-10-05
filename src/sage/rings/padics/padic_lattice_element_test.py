@@ -1,40 +1,29 @@
 import pytest
+from sage.rings.padics.factory import ZpLC, ZpLF, QpLC, QpLF
+
+# ZpLC, ZpLF, QpLC, and QpLF all raise FutureWarnings
+from warnings import catch_warnings, filterwarnings
+filterwarnings("ignore", category=FutureWarning)
 
 
 @pytest.fixture
 def R1():
-    from warnings import catch_warnings, filterwarnings
-    from sage.rings.padics.factory import ZpLC
-    with catch_warnings(category=FutureWarning):
-        filterwarnings("ignore", category=FutureWarning)
-        return ZpLC(2)
+    return ZpLC(2)
 
 
 @pytest.fixture
 def R2():
-    from warnings import catch_warnings, filterwarnings
-    from sage.rings.padics.factory import ZpLF
-    with catch_warnings(category=FutureWarning):
-        filterwarnings("ignore", category=FutureWarning)
-        return ZpLF(2)
+    return ZpLF(2)
 
 
 @pytest.fixture
 def R3():
-    from warnings import catch_warnings, filterwarnings
-    from sage.rings.padics.factory import QpLC
-    with catch_warnings(category=FutureWarning):
-        filterwarnings("ignore", category=FutureWarning)
-        return QpLC(2)
+    return QpLC(2)
 
 
 @pytest.fixture
 def R4():
-    from warnings import catch_warnings, filterwarnings
-    from sage.rings.padics.factory import QpLF
-    with catch_warnings(category=FutureWarning):
-        filterwarnings("ignore", category=FutureWarning)
-        return QpLF(2)
+    return QpLF(2)
 
 
 # Use strings for the fixture names here, and then later convert them
