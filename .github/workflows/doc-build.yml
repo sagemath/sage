@@ -170,6 +170,8 @@ jobs:
             # Restore the new doc dropping changes by "wipe out"
             (cd doc && git checkout --quiet -f HEAD~1)
             .github/workflows/create-changes-html.sh diff.txt doc
+            du -b diff.txt | cut -f1 > doc/DIFF_FILE_SIZE.txt
+            # note that the file above is generated after generating the diff, be careful to not contaminate the git diff
             # Sometimes rm -rf .git errors out because of some diehard hidden files
             # So we simply move it out of the doc directory
             (cd doc && mv .git ../git && mv .gitattributes ../gitattributes)
