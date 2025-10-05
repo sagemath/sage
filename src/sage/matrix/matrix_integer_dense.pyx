@@ -1416,7 +1416,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 sig_on()
                 linbox_fmpz_mat_charpoly(g._poly, self._matrix)
                 sig_off()
-                if g.lc() == 1:
+                if g.lc() == 1 and g.degree() == self._nrows:
                     break
         elif algorithm == 'generic':
             g = Matrix_dense.charpoly(self, var)
