@@ -632,7 +632,7 @@ class Option:
         """
         return bool(self._options[self._name])
 
-    def __call__(self, *args, **kwds):
+    def __call__(self, *args):
         r"""
         Get or set value of the option ``self``.
 
@@ -662,38 +662,20 @@ class Option:
             True
             sage: config._reset()
 
-        Check the deprecation::
+        Check the input::
 
-            sage: config.size(value=None)
-            doctest:...: DeprecationWarning: keyword argument "value" should be replaced by positional argument
-            See https://github.com/sagemath/sage/issues/30763 for details.
-            sage: config.size() is None
-            True
             sage: config.size(1, 2)
             Traceback (most recent call last):
             ...
-            TypeError: option takes at most one argument "value"
-            sage: config.size(unknown=3)
-            Traceback (most recent call last):
-            ...
-            TypeError: option takes at most one argument "value"
-            sage: config.size(4, value=5)
-            Traceback (most recent call last):
-            ...
-            TypeError: option takes at most one argument "value"
+            TypeError: option takes at most one argument
         """
-        if not args and not kwds:
+        if not args:
             return self._options[self._name]
-        if 'value' in kwds:
-            from sage.misc.superseded import deprecation
-            deprecation(30763, 'keyword argument "value" should be replaced '
-                               'by positional argument')
-            args += (kwds.pop('value'),)
-        if len(args) > 1 or kwds:
-            raise TypeError('option takes at most one argument "value"')
+        if len(args) > 1:
+            raise TypeError('option takes at most one argument')
         self._options[self._name] = args[0]
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Equality testing for an option in based on the value of the attribute.
 
@@ -708,7 +690,7 @@ class Option:
         """
         return self._options[self._name] == other
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Inequality testing for an option in based on the value of
         the attribute.
@@ -724,7 +706,7 @@ class Option:
         """
         return self._options[self._name] != other
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return the hash of ``self``, which is the hash of the corresponding
         value.
@@ -736,7 +718,7 @@ class Option:
         """
         return hash(self._options[self._name])
 
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
         Return the string representation of ``self``, which is the string of
         the corresponding value.
