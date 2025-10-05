@@ -67,6 +67,7 @@ py.install_sources(
   'independent_sets.pyx',
   'isgci.py',
   'isoperimetric_inequalities.pyx',
+  'is_projective_planar_test.py',
   'line_graph.pyx',
   'lovasz_theta.py',
   'matching.py',
