@@ -14,7 +14,7 @@ if __name__ == "__main__":
     #    "Handshaking Lemma", "Planar Graph", "Bipartite Graph",
     #    "Subgraph", "Kuratowski's Theorem", "Path", "Cycle"
     #]
-    app = QtWidgets.QApplication(sys.argv)
+    application = QtWidgets.QApplication(sys.argv)
 
     window = QtWidgets.QMainWindow()
     window.setCentralWidget(QtWidgets.QWidget())
@@ -29,33 +29,38 @@ if __name__ == "__main__":
 
     vlay = QtWidgets.QVBoxLayout(content)
 
-    boxes = []
+    searchBar = QtWidgets.QLineEdit()
+    searchBar.setPlaceholderText("Search definitions or theorems...")
+    searchBar.setClearButtonEnabled(True)
+    vlay.addWidget(searchBar)
+
+    listOfContentBoxes = []
     max_label_width = 0
 
 
     definitions=outputContent("GT")
     for word in definitions:
-        box = CollapsibleBox(word)
-        vlay.addWidget(box)
+        contentBox = CollapsibleBox(word)
+        vlay.addWidget(contentBox)
         lay = QtWidgets.QVBoxLayout()
 
-        label = QtWidgets.QLabel(definitions[word])
-        label.setStyleSheet("font-size: 10pt;")
-        label.setMinimumSize(label.sizeHint())
-        lay.addWidget(label)
+        contentLabel = QtWidgets.QLabel(definitions[word])
+        contentLabel.setStyleSheet("font-size: 10pt;")
+        contentLabel.setMinimumSize(contentLabel.sizeHint())
+        lay.addWidget(contentLabel)
 
-        box.setContentLayout(lay)
-        boxes.append(box)
+        contentBox.setContentLayout(lay)
+        listOfContentBoxes.append(contentBox)
 
         # track widest label (this scales the width the widget)
-        max_label_width = max(max_label_width, label.sizeHint().width())
+        max_label_width = max(max_label_width, contentLabel.sizeHint().width())
 
     # Apply the widest label width to all boxes
-    for box in boxes:
+    for box in listOfContentBoxes:
         box.setMinimumWidth(max_label_width + 40)  # + some padding
 
     vlay.addStretch()
 
     window.resize(1024, 768)
     window.show()
-    sys.exit(app.exec_())
+    sys.exit(application.exec_())
