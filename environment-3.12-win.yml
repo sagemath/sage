@@ -30,11 +30,11 @@ dependencies:
   - brotli-python=1.1.0=py312hbb81ca0_4
   - bwidget=1.10.1=h57928b3_1
   - bzip2=1.0.8=h0ad9c76_8
-  - ca-certificates=2025.8.3=h4c7d964_0
+  - ca-certificates=2025.10.5=h4c7d964_0
   - cachecontrol=0.14.3=pyha770c72_0
   - cachecontrol-with-filecache=0.14.3=pyhd8ed1ab_0
   - cairo=1.18.4=h5782bbf_0
-  - certifi=2025.8.3=pyhd8ed1ab_0
+  - certifi=2025.10.5=pyhd8ed1ab_0
   - cffi=2.0.0=py312he06e257_0
   - charset-normalizer=3.4.3=pyhd8ed1ab_0
   - clang=19.1.7=default_hac490eb_5

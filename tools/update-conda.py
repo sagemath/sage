@@ -173,6 +173,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         .replace("pkg:generic/sagemath-graphs", "sagemath-db-graphs")
         .replace("pkg:generic/sagemath-polytopes-db", "sagemath-db-polytopes")
         .replace("pkg:generic/tachyon", "tachyon")
+        .replace("brial", "libbrial") # on Conda, 'brial' refers to the Python package
         for req in all_requirements
     }
     # Exclude requirements not available on conda (for a given platform)
@@ -193,7 +194,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         exclude_packages |= {
             "4ti2",
             "bc",
-            "brial",
+            "libbrial",
             "bliss",
             "cddlib",
             "cliquer",
