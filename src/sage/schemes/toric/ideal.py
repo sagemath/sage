@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs sage.libs.singular
 r"""
 Toric ideals
 
@@ -146,24 +147,24 @@ class ToricIdeal(MPolynomialIdeal):
 
     INPUT:
 
-    - ``A`` -- integer matrix. The defining matrix of the toric ideal.
+    - ``A`` -- integer matrix; the defining matrix of the toric ideal
 
-    - ``names`` -- string (optional). Names for the variables. By
+    - ``names`` -- string (optional); names for the variables. By
       default, this is ``'z'`` and the variables will be named ``z0``,
       ``z1``, ...
 
-    - ``base_ring`` -- a ring (optional). Default: `\QQ`. The base
+    - ``base_ring`` -- a ring (default: `\QQ`); the base
       ring of the ideal. A toric ideal uses only coefficients `\pm 1`.
 
-    - ``polynomial_ring`` -- a polynomial ring (optional). The
-      polynomial ring to construct the ideal in.
+    - ``polynomial_ring`` -- a polynomial ring (optional); the
+      polynomial ring to construct the ideal in
 
       You may specify the ambient polynomial ring via the
       ``polynomial_ring`` parameter or via the ``names`` and
-      ``base_ring`` parameter. A ``ValueError`` is raised if you
+      ``base_ring`` parameter. A :exc:`ValueError` is raised if you
       specify both.
 
-    - ``algorithm`` -- string (optional). The algorithm to use. For
+    - ``algorithm`` -- string (optional); the algorithm to use. For
       now, must be ``'HostenSturmfels'`` which is the algorithm
       proposed by Hosten and Sturmfels in [SH1995b]_.
 
@@ -217,7 +218,7 @@ class ToricIdeal(MPolynomialIdeal):
             sage: ToricIdeal(A)
             Ideal (-z1^2 + z0*z2) of Multivariate Polynomial Ring
             in z0, z1, z2 over Rational Field
-            sage: ToricIdeal(A, names='x', base_ring=GF(101))                           # optional - sage.rings.finite_rings
+            sage: ToricIdeal(A, names='x', base_ring=GF(101))
             Ideal (-x1^2 + x0*x2) of Multivariate Polynomial Ring
             in x0, x1, x2 over Finite Field of size 101
             sage: ToricIdeal(A, names='x', base_ring=FractionField(QQ['t']))
@@ -249,7 +250,7 @@ class ToricIdeal(MPolynomialIdeal):
         """
         Return the defining matrix.
 
-        OUTPUT: An integer matrix.
+        OUTPUT: integer matrix
 
         EXAMPLES::
 
@@ -265,7 +266,7 @@ class ToricIdeal(MPolynomialIdeal):
         """
         Return the kernel of the defining matrix.
 
-        OUTPUT: The kernel of ``self.A()``.
+        OUTPUT: the kernel of ``self.A()``.
 
         EXAMPLES::
 
@@ -285,8 +286,7 @@ class ToricIdeal(MPolynomialIdeal):
         r"""
         Return the number of variables of the ambient polynomial ring.
 
-        OUTPUT: An integer. The number of columns of the defining matrix
-        :meth:`A`.
+        OUTPUT: integer; the number of columns of the defining matrix :meth:`A`
 
         EXAMPLES::
 
@@ -303,12 +303,10 @@ class ToricIdeal(MPolynomialIdeal):
 
         INPUT:
 
-        - ``term_order`` -- string. The order of the variables, for
-          example ``'neglex'`` and ``'degrevlex'``.
+        - ``term_order`` -- string; the order of the variables, for
+          example ``'neglex'`` and ``'degrevlex'``
 
-        OUTPUT:
-
-        A polynomial ring with the given term order.
+        OUTPUT: a polynomial ring with the given term order
 
         .. NOTE::
 
@@ -339,11 +337,9 @@ class ToricIdeal(MPolynomialIdeal):
 
         INPUT:
 
-        - ``ring`` -- the ambient ring of the ideal.
+        - ``ring`` -- the ambient ring of the ideal
 
-        OUTPUT:
-
-        A subideal of the toric ideal in the polynomial ring ``ring``.
+        OUTPUT: a subideal of the toric ideal in the polynomial ring ``ring``
 
         EXAMPLES::
 
@@ -358,8 +354,8 @@ class ToricIdeal(MPolynomialIdeal):
         x = ring.gens()
         binomials = []
         for row in self.ker().matrix().rows():
-            xpos = prod(x[i]**max( row[i],0) for i in range(0,len(x)))
-            xneg = prod(x[i]**max(-row[i],0) for i in range(0,len(x)))
+            xpos = prod(x[i]**max(row[i], 0) for i in range(len(x)))
+            xneg = prod(x[i]**max(-row[i], 0) for i in range(len(x)))
             binomials.append(xpos - xneg)
         return ring.ideal(binomials)
 
@@ -369,15 +365,13 @@ class ToricIdeal(MPolynomialIdeal):
 
         INPUT:
 
-        - ``ring`` -- the ambient polynomial ring in neglex order.
+        - ``ring`` -- the ambient polynomial ring in neglex order
 
-        - ``ideal`` -- the ideal `J`.
+        - ``ideal`` -- the ideal `J`
 
-        - ``n`` -- Integer. The index of the next variable to divide by.
+        - ``n`` -- integer; the index of the next variable to divide by
 
-        OUTPUT:
-
-        The ideal quotient `(J:x_n^\infty)`.
+        OUTPUT: the ideal quotient `(J:x_n^\infty)`
 
         ALGORITHM:
 
@@ -413,7 +407,7 @@ class ToricIdeal(MPolynomialIdeal):
             return tuple([l[0] - power] + l[1:])
 
         def divide_by_x_n(p):
-            d_old = p.dict()
+            d_old = p.monomial_coefficients()
             power = min(e[0] for e in d_old)
             d_new = {subtract(exponent, power): coefficient
                      for exponent, coefficient in d_old.items()}
@@ -451,6 +445,6 @@ class ToricIdeal(MPolynomialIdeal):
         J = self._naive_ideal(ring)
         if J.is_zero():
             return J
-        for i in range(0,self.nvariables()):
+        for i in range(self.nvariables()):
             J = self._ideal_quotient_by_variable(ring, J, i)
         return J

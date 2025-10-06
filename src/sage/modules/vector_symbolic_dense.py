@@ -22,7 +22,7 @@ EXAMPLES::
 TESTS:
 
 Check that the outcome of arithmetic with symbolic vectors is again
-a symbolic vector (:trac:`11549`)::
+a symbolic vector (:issue:`11549`)::
 
     sage: v = vector(SR, [1, 2])
     sage: w = vector(SR, [sin(x), 0])
@@ -42,25 +42,24 @@ Test pickling/unpickling::
     sage: u = vector(SR, [sin(x^2)])
     sage: loads(dumps(u)) == u
     True
-
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Joris Vankerschaver (jv@caltech.edu)
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from . import free_module_element
+from sage.modules import free_module_element
 from sage.symbolic.expression import Expression
 
 
 def apply_map(phi):
     """
-    Returns a function that applies phi to its argument.
+    Return a function that applies ``phi`` to its argument.
 
     EXAMPLES::
 
@@ -69,7 +68,6 @@ def apply_map(phi):
         sage: f = apply_map(lambda x: x+1)
         sage: f(v)
         (2, 3, 4)
-
     """
     def apply(self, *args, **kwds):
         """

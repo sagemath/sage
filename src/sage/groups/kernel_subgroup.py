@@ -21,6 +21,7 @@ from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
+
 class KernelSubgroup(UniqueRepresentation, Parent):
     r"""
     The kernel (normal) subgroup.
@@ -69,7 +70,7 @@ class KernelSubgroup(UniqueRepresentation, Parent):
         """
         return "Kernel subgroup defined by {}".format(self._morphism)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self``.
 
@@ -94,8 +95,8 @@ class KernelSubgroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: PJ3 = groups.misc.PureCactus(3)
-            sage: PJ3.defining_morphism()
+            sage: PJ3 = groups.misc.PureCactus(3)                                       # needs sage.rings.number_field
+            sage: PJ3.defining_morphism()                                               # needs sage.rings.number_field
             Conversion via _from_cactus_group_element map:
               From: Cactus Group with 3 fruit
               To:   Symmetric group of order 3! as a permutation group
@@ -109,8 +110,8 @@ class KernelSubgroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: PJ3 = groups.misc.PureCactus(3)
-            sage: PJ3.ambient()
+            sage: PJ3 = groups.misc.PureCactus(3)                                       # needs sage.rings.number_field
+            sage: PJ3.ambient()                                                         # needs sage.rings.number_field
             Cactus Group with 3 fruit
         """
         return self._morphism.domain()
@@ -121,8 +122,8 @@ class KernelSubgroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: PJ3 = groups.misc.PureCactus(3)
-            sage: PJ3.an_element()
+            sage: PJ3 = groups.misc.PureCactus(3)                                       # needs sage.rings.number_field
+            sage: PJ3.an_element()                                                      # needs sage.rings.number_field
             1
         """
         return self.element_class(self, self.ambient().one())
@@ -133,8 +134,8 @@ class KernelSubgroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: PJ3 = groups.misc.PureCactus(3)
-            sage: PJ3.lift(PJ3.an_element()).parent()
+            sage: PJ3 = groups.misc.PureCactus(3)                                       # needs sage.rings.number_field
+            sage: PJ3.lift(PJ3.an_element()).parent()                                   # needs sage.rings.number_field
             Cactus Group with 3 fruit
         """
         return x.value
@@ -145,6 +146,7 @@ class KernelSubgroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: J3 = groups.misc.Cactus(3)
             sage: s12,s13,s23 = J3.group_generators()
             sage: PJ3 = groups.misc.PureCactus(3)
@@ -161,6 +163,7 @@ class KernelSubgroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: J3 = groups.misc.Cactus(3)
             sage: s12,s13,s23 = J3.group_generators()
             sage: PJ3 = groups.misc.PureCactus(3)
@@ -200,6 +203,7 @@ class KernelSubgroup(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
+                sage: # needs sage.rings.number_field
                 sage: J3 = groups.misc.Cactus(3)
                 sage: s12,s13,s23 = J3.group_generators()
                 sage: PJ3 = groups.misc.PureCactus(3)
@@ -215,6 +219,7 @@ class KernelSubgroup(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
+                sage: # needs sage.rings.number_field
                 sage: J3 = groups.misc.Cactus(3)
                 sage: s12,s13,s23 = J3.group_generators()
                 sage: PJ3 = groups.misc.PureCactus(3)

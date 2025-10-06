@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 
 Cyclic covers over a finite field
@@ -54,8 +54,6 @@ EXAMPLES::
     [          0           0 79 + O(107)      O(107)]
     [     O(107) 42 + O(107)           0           0]
     [30 + O(107)      O(107)           0           0]
-
-
 """
 
 # *****************************************************************************
@@ -68,19 +66,20 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-
 from sage.arith.misc import euler_phi
-from sage.functions.other import ceil, binomial, floor
-from sage.functions.log import log
+from sage.matrix.constructor import matrix, zero_matrix
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
+from sage.modules.free_module_element import vector
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.padics.factory import Zp, Zq, Qq
-from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.matrix.constructor import matrix, zero_matrix
-from sage.modules.free_module_element import vector
-from sage.schemes.hyperelliptic_curves.hypellfrob import interval_products
-from sage.misc.cachefunc import cached_method
+
+lazy_import("sage.functions.log", "log")
+lazy_import("sage.functions.other", ["ceil", "binomial", "floor"])
+lazy_import('sage.rings.padics.factory', ['Zp', 'Zq', 'Qq'])
+lazy_import('sage.schemes.hyperelliptic_curves.hypellfrob', 'interval_products')
 
 from .charpoly_frobenius import charpoly_frobenius
 from . import cycliccover_generic
@@ -88,16 +87,16 @@ from . import cycliccover_generic
 
 def _N0_nodenominators(p, g, n):
     """
-    Return the necessary p-adic precision for the Frobenius matrix to deduce
+    Return the necessary `p`-adic precision for the Frobenius matrix to deduce
     the characteristic polynomial of Frobenius using the Newton identities,
     using :meth:`charpoly_frobenius`, which assumes that the Frobenius matrix
     is integral, i.e., has no denominators.
 
     INPUT:
 
-    - `p` -- prime
-    - `g` -- genus
-    - `n` -- degree of residue field
+    - ``p`` -- prime
+    - ``g`` -- genus
+    - ``n`` -- degree of residue field
 
     TESTS::
 
@@ -124,7 +123,6 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
             1 + 8*t + 102*t^2 + O(t^3)
             sage: C.frobenius_polynomial().reverse()(t)/((1-t)*(1-p*t)) + O(t^5)
             1 + 8*t + 102*t^2 + 1384*t^3 + 18089*t^4 + O(t^5)
-
         """
         cycliccover_generic.CyclicCover_generic.__init__(self, AA, r, f, names=names)
         self._verbose = verbose
@@ -234,22 +232,22 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
                     self._Zq = IntegerModRing(self._p**self._N)
                     if self._sqrtp:
                         self._Zq0 = IntegerModRing(self._p**(self._N - 1))
-                    self._Qq = Qq(self._p, prec=self._N, type="capped-rel")
+                    self._Qq = Qq(self._p, prec=self._N, type='capped-rel')
                     self._w = 1
                 else:
                     self._Zq = Zq(
                         self._q,
-                        names="w",
+                        names='w',
                         modulus=self._Fq.polynomial(),
                         prec=self._N,
-                        type="capped-abs",
+                        type='capped-abs',
                     )
                     self._w = self._Zq.gen()
                     self._Qq = self._Zq.fraction_field()
             else:
                 self._Zq = Qq(
                     self._q,
-                    names="w",
+                    names='w',
                     modulus=self._Fq.polynomial(),
                     prec=self._N + self._extraworkingprec,
                 )
@@ -329,24 +327,24 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
 
     def _frob_sparse(self, i, j, N0):
         r"""
-        Compute `Frob(x^i y^(-j) dx ) / dx` for y^r = f(x) with N0 terms
+        Compute `Frob(x^i y^(-j) dx ) / dx` for y^r = f(x) with N0 terms.
 
         INPUT:
 
-        -   ``i`` - The power of x in the expression `Frob(x^i dx/y^j) / dx`
+        - ``i`` -- the power of x in the expression `Frob(x^i dx/y^j) / dx`
 
-        -   ``j`` - The (negative) power of y in the expression
-                    `Frob(x^i dx/y^j) / dx`
+        - ``j`` -- the (negative) power of y in the expression
+          `Frob(x^i dx/y^j) / dx`
 
         OUTPUT:
 
-        ``frobij`` - a Matrix of size  (d * (N0 - 1) + ) x (N0)
-                     that represents the Frobenius expansion of
-                     x^i dx/y^j modulo p^(N0 + 1)
+        ``frobij`` -- a Matrix of size  (d * (N0 - 1) + ) x (N0)
+                      that represents the Frobenius expansion of
+                      x^i dx/y^j modulo p^(N0 + 1)
 
-                    the entry (l, s) corresponds to the coefficient associated
-                    to the monomial x**(p * (i + 1 + l) -1) * y**(p * -(j + r*s))
-                    (l, s) --> (p * (i + 1 + l) -1, p * -(j + r*s))
+                      the entry (l, s) corresponds to the coefficient associated
+                      to the monomial x**(p * (i + 1 + l) -1) * y**(p * -(j + r*s))
+                      (l, s) --> (p * (i + 1 + l) -1, p * -(j + r*s))
 
         ALGORITHM:
 
@@ -585,7 +583,6 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
             [ 74203580341   2817857481  75142866164]
             [108017870113            0   2817857481]
             ))
-
         """
 
         d = self._d
@@ -733,8 +730,8 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
                 targets[2 * l] = self._p * l
                 targets[2 * l + 1] = self._p * (l + 1) - d - 1
             (m0, m1), (M0, M1) = self._horizontal_matrix_reduction(s)
-            M0, M1 = [elt.change_ring(self._Zq0) for elt in [M0, M1]]
-            D0, D1 = [matrix(self._Zq0, [elt]) for elt in [m0, m1]]
+            M0, M1 = (elt.change_ring(self._Zq0) for elt in [M0, M1])
+            D0, D1 = (matrix(self._Zq0, [elt]) for elt in [m0, m1])
             MH = interval_products(M0, M1, targets)
             DH = [elt[0, 0] for elt in interval_products(D0, D1, targets)]
             if L > N:  # Vandermonde interpolation
@@ -826,7 +823,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
 
     def _reduce_vector_vertical(self, G, s0, s, k=1):
         r"""
-        Reduce the vector `G` representing an element of `W_{-1,rs + s0}` by `r k` steps
+        Reduce the vector `G` representing an element of `W_{-1,rs + s0}` by `r k` steps.
 
         INPUT:
 
@@ -835,7 +832,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
         OUTPUT:
 
         - a vector -- `H \in W_{-1, r*(s - k) + s0}` such that
-            `G y^{-(r*s + s0)} dx \cong H y^{-(r*(s -k) + s0)} dx`
+          `G y^{-(r*s + s0)} dx \cong H y^{-(r*(s -k) + s0)} dx`
 
         TESTS::
 
@@ -907,7 +904,6 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
         """
         Initialise reduction matrices for vertical reductions for blocks from `s0` to `s0 + max_upper_target`.
 
-
         TESTS::
 
             sage: p = 4999
@@ -921,7 +917,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
         L = floor((max_upper_target - self._epsilon) / self._p) + 1
         if s0 not in self._vertical_fat_s:
             (m0, m1), (M0, M1) = self._vertical_matrix_reduction(s0)
-            D0, D1 = map(lambda y: matrix(self._Zq, [y]), [m0, m1])
+            D0, D1 = (matrix(self._Zq, [y]) for y in [m0, m1])
             targets = [0] * (2 * L)
             for l in reversed(range(L)):
                 targets[2 * l] = max_upper_target - self._p * (L - l)
@@ -954,8 +950,8 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
 
         INPUT:
 
-        - `i`,`j` -- exponents of the basis differential
-        - `N0` -- desired p-adic precision for the Frobenius expansion
+        - ``i``, ``j`` -- exponents of the basis differential
+        - ``N0`` -- desired `p`-adic precision for the Frobenius expansion
 
         TESTS::
 
@@ -1020,7 +1016,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
     @cached_method
     def frobenius_matrix(self, N=None):
         """
-        Compute p-adic Frobenius matrix to precision p^N.
+        Compute `p`-adic Frobenius matrix to precision `p^N`.
 
         If `N` not supplied, a default value is selected, which is the minimum
         needed to recover the charpoly unambiguously.
@@ -1150,7 +1146,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
             x^8 + 532*x^7 - 2877542*x^6 - 242628176*x^5 + 4390163797795*x^4 - 247015136050256*x^3
              - 2982540407204025062*x^2 + 561382189105547134612*x + 1074309286591662654798721
 
-        A non-monic example checking that :trac:`29015` is fixed::
+        A non-monic example checking that :issue:`29015` is fixed::
 
             sage: a = 3
             sage: K.<s> = GF(83^3);
@@ -1244,8 +1240,6 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
             ....: else:
             ....:     True
             True
-
-
         """
         self._init_frob()
         F = self.frobenius_matrix(self._N0)
@@ -1268,7 +1262,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
                 f = x ** self._delta - lc
                 L = f.splitting_field("a")
                 roots = [r for r, _ in f.change_ring(L).roots()]
-                roots_dict = dict([(r, i) for i, r in enumerate(roots)])
+                roots_dict = {r: i for i, r in enumerate(roots)}
                 rootsfrob = [L.frobenius_endomorphism(self._Fq.degree())(r) for r in roots]
                 m = zero_matrix(len(roots))
                 for i, r in enumerate(roots):

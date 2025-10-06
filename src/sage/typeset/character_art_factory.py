@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-categories
 r"""
 Factory for Character-Based Art
 """
@@ -26,7 +26,7 @@ class CharacterArtFactory(SageObject):
                  art_type, string_type, magic_method_name,
                  parenthesis, square_bracet, curly_brace):
         r"""
-        Abstract base class for character art factory
+        Abstract base class for character art factory.
 
         This class is the common implementation behind
         :func:`~sage.typeset.ascii_art.ascii_art` and
@@ -37,11 +37,10 @@ class CharacterArtFactory(SageObject):
         - ``art_type`` -- type of the character art (i.e. a subclass of
           :class:`~sage.typeset.character_art.CharacterArt`)
 
-        - ``string_type`` -- type of strings (the lines in the
-          character art, e.g. ``str`` or ``unicode``).
+        - ``string_type`` -- ignored (always ``str``)
 
         - ``magic_method_name`` -- name of the Sage magic method (e.g.
-          ``'_ascii_art_'`` or ``'_unicode_art_'``).
+          ``'_ascii_art_'`` or ``'_unicode_art_'``)
 
         - ``parenthesis`` -- left/right pair of two multi-line
           symbols. The parenthesis, a.k.a. round brackets (used for printing
@@ -60,8 +59,6 @@ class CharacterArtFactory(SageObject):
             <class 'sage.typeset.character_art_factory.CharacterArtFactory'>
         """
         self.art_type = art_type
-        assert isinstance(string_type('a'), str)
-        self.string_type = string_type
         assert magic_method_name in ['_ascii_art_', '_unicode_art_']
         self.magic_method_name = magic_method_name
         self.left_parenthesis, self.right_parenthesis = parenthesis
@@ -78,9 +75,7 @@ class CharacterArtFactory(SageObject):
           we want
         - ``baseline`` -- (optional) the baseline of the object
 
-        OUTPUT:
-
-        Character art object.
+        OUTPUT: character art object
 
         EXAMPLES::
 
@@ -136,11 +131,9 @@ class CharacterArtFactory(SageObject):
 
     def build_empty(self):
         """
-        Return the empty character art object
+        Return the empty character art object.
 
-        OUTPUT:
-
-        Character art instance.
+        OUTPUT: character art instance
 
         EXAMPLES::
 
@@ -152,11 +145,9 @@ class CharacterArtFactory(SageObject):
 
     def build_from_magic_method(self, obj, baseline=None):
         """
-        Return the character art object created by the object's magic method
+        Return the character art object created by the object's magic method.
 
-        OUTPUT:
-
-        Character art instance.
+        OUTPUT: character art instance
 
         EXAMPLES::
 
@@ -183,9 +174,7 @@ class CharacterArtFactory(SageObject):
         - ``obj`` -- utf-8 encoded byte string or unicode
         - ``baseline`` -- (default: 0) the baseline of the object
 
-        OUTPUT:
-
-        Character art instance.
+        OUTPUT: character art instance
 
         EXAMPLES::
 
@@ -212,13 +201,11 @@ class CharacterArtFactory(SageObject):
             bb
             ccc
         """
-        if self.string_type is str and not isinstance(obj, str):
+        if not isinstance(obj, str):
             if isinstance(obj, bytes):
                 obj = obj.decode('utf-8')
             else:
                 obj = str(obj)
-        if self.string_type is bytes and not isinstance(obj, bytes):
-            obj = str(obj).encode('utf-8')
         return self.art_type(obj.splitlines(), baseline=baseline)
 
     def build_container(self, content, left_border, right_border, baseline=0):
@@ -251,7 +238,7 @@ class CharacterArtFactory(SageObject):
             sage: l._breakpoints                                                        # needs sage.combinat
             [9, 17, 25, 33]
 
-        Check that zero-height strings are handled (:trac:`28527`)::
+        Check that zero-height strings are handled (:issue:`28527`)::
 
             sage: s = ascii_art(''); s.height()
             0
@@ -271,7 +258,7 @@ class CharacterArtFactory(SageObject):
         left_border = left_border.character_art(h)
         right_border = right_border.character_art(h)
         lines = []
-        pad = self.string_type(' ')
+        pad = ' '
         for left, line, right in zip(left_border, matrix, right_border):
             lines.append(left + pad + line.ljust(w) + pad + right)
         shift = len(left_border) + len(pad)
@@ -303,7 +290,7 @@ class CharacterArtFactory(SageObject):
             {            /\    /\      /\/\    /  \  }
             { /\/\/\, /\/  \, /  \/\, /    \, /    \ }
         """
-        comma = self.art_type([self.string_type(', ')], baseline=0)
+        comma = self.art_type([', '], baseline=0)
         repr_elems = self.concatenate(s, comma, nested=True)
         return self.build_container(
             repr_elems, self.left_curly_brace, self.right_curly_brace,
@@ -326,15 +313,15 @@ class CharacterArtFactory(SageObject):
             sage: art._breakpoints
             [11, 21, 31, 41]
 
-        Check that :trac:`29447` is fixed::
+        Check that :issue:`29447` is fixed::
 
             sage: ascii_art({'a': '', '': ''})
             { a:, : }
         """
-        comma = self.art_type([self.string_type(', ')],
+        comma = self.art_type([', '],
                               baseline=0,
                               breakpoints=[1])
-        colon = self.art_type([self.string_type(':')], baseline=0)
+        colon = self.art_type([':'], baseline=0)
 
         def concat_no_breakpoint(k, v):
             k = self.build(k)
@@ -372,13 +359,13 @@ class CharacterArtFactory(SageObject):
             sage: l._breakpoints                                                        # needs sage.combinat
             [(2, [7]), 17, (18, [7])]
 
-        The parentheses only stretch as high as the content (:trac:`28527`)::
+        The parentheses only stretch as high as the content (:issue:`28527`)::
 
             sage: ascii_art([ascii_art('a', baseline=1)])
             [ a ]
 
         Line breaks inside list elements are avoided if possible
-        (:trac:`29204`)::
+        (:issue:`29204`)::
 
             sage: str(ascii_art([[1..5], [1..5], [1..25], [1..5], [1..15]]))
             '[ [ 1, 2, 3, 4, 5 ], [ 1, 2, 3, 4, 5 ],\n\n
@@ -386,7 +373,7 @@ class CharacterArtFactory(SageObject):
               22, 23, 24, 25 ], [ 1, 2, 3, 4, 5 ],\n\n
               [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ] ]'
         """
-        comma = self.art_type([self.string_type(', ')],
+        comma = self.art_type([', '],
                               baseline=0,
                               breakpoints=[1])
         repr_elems = self.concatenate(l, comma, nested=True)
@@ -405,7 +392,7 @@ class CharacterArtFactory(SageObject):
             (            /\    /\      /\/\    /  \  )
             ( /\/\/\, /\/  \, /  \/\, /    \, /    \ )
         """
-        comma = self.art_type([self.string_type(', ')],
+        comma = self.art_type([', '],
                               baseline=0,
                               breakpoints=[1])
         repr_elems = self.concatenate(t, comma, nested=True)
@@ -416,7 +403,7 @@ class CharacterArtFactory(SageObject):
     def concatenate(self, iterable, separator, empty=None, baseline=0,
                     nested=False):
         r"""
-        Concatenate multiple character art instances
+        Concatenate multiple character art instances.
 
         The breakpoints are set as the breakpoints of the ``separator``
         together with the breakpoints of the objects in ``iterable``.
@@ -459,7 +446,7 @@ class CharacterArtFactory(SageObject):
             [  ]
 
         Check that ``empty`` is not prepended to non-empty objects
-        (:trac:`28527`)::
+        (:issue:`28527`)::
 
             sage: s = 'abc'
             sage: [sage.typeset.ascii_art._ascii_art_factory.concatenate(
@@ -477,11 +464,9 @@ class CharacterArtFactory(SageObject):
         top = separator._h - bot
         for obj in iterable:
             bot1 = obj.get_baseline()
-            if bot1 > bot:
-                bot = bot1
+            bot = max(bot1, bot)
             top1 = obj._h - bot1
-            if top1 > top:
-                top = top1
+            top = max(top1, top)
         # bot + top is the new height
 
         def padded_line(obj, i):
@@ -531,7 +516,7 @@ class CharacterArtFactory(SageObject):
 
         INPUT:
 
-        - ``kwds`` -- a dict
+        - ``kwds`` -- dictionary
 
         OUTPUT:
 

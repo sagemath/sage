@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Example of a crystal
@@ -93,6 +94,8 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
         running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
+        running ._test_random() . . . pass
+        running ._test_rank() . . . pass
         running ._test_some_elements() . . . pass
         running ._test_stembridge_local_axioms() . . . pass
     """
@@ -117,7 +120,7 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
             sage: Crystals().example()
             Highest weight crystal of type A_3 of highest weight omega_1
         """
-        return "Highest weight crystal of type A_%s of highest weight omega_1"%(self.n)
+        return "Highest weight crystal of type A_%s of highest weight omega_1" % (self.n)
 
     # temporary workaround while an_element is overridden by Parent
     _an_element_ = EnumeratedSets.ParentMethods._an_element_
@@ -126,7 +129,7 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
 
         def e(self, i):
             r"""
-            Returns the action of `e_i` on ``self``.
+            Return the action of `e_i` on ``self``.
 
             EXAMPLES::
 
@@ -142,7 +145,7 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
 
         def f(self, i):
             r"""
-            Returns the action of `f_i` on ``self``.
+            Return the action of `f_i` on ``self``.
 
             EXAMPLES::
 
@@ -188,7 +191,8 @@ class NaiveCrystal(UniqueRepresentation, Parent):
         self.n = 2
         self._cartan_type = CartanType(['A', 2])
         self.G = DiGraph(5)
-        self.G.add_edges([ [0,1,1], [1,2,1], [2,3,1], [3,5,1],  [0,4,2], [4,5,2] ])
+        self.G.add_edges([[0, 1, 1], [1, 2, 1], [2, 3, 1],
+                          [3, 5, 1], [0, 4, 2], [4, 5, 2]])
         self.module_generators = [self(0)]
 
     def __repr__(self):
@@ -203,7 +207,7 @@ class NaiveCrystal(UniqueRepresentation, Parent):
     class Element(ElementWrapper):
         def e(self, i):
             r"""
-            Returns the action of `e_i` on ``self``.
+            Return the action of `e_i` on ``self``.
 
             EXAMPLES::
 
@@ -219,7 +223,7 @@ class NaiveCrystal(UniqueRepresentation, Parent):
 
         def f(self, i):
             r"""
-            Returns the action of `f_i` on ``self``.
+            Return the action of `f_i` on ``self``.
 
             EXAMPLES::
 

@@ -10,7 +10,7 @@ AUTHORS:
 - Jon Hanke
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 from sage.misc.misc_c import prod
 
 
@@ -69,7 +69,6 @@ def _is_finite(L, fallback=True):
         sage: from itertools import product
         sage: _is_finite(product([1],[1])) # does not provide is_finite() or __len__()
         True
-
     """
     try:
         return L.is_finite()
@@ -86,9 +85,7 @@ def _is_finite(L, fallback=True):
         return fallback
 
     from sage.rings.infinity import infinity
-    if n is infinity:
-        return False
-    return True
+    return n is not infinity
 
 
 def _xmrange_iter(iter_list, typ=list):
@@ -106,7 +103,7 @@ def _xmrange_iter(iter_list, typ=list):
         sage: l1 is l2
         False
 
-    However, if you would like to re-use the list object::
+    However, if you would like to reuse the list object::
 
         sage: iter = sage.misc.mrange._xmrange_iter( [[1,2],[1,3]], lambda x: x )
         sage: l1 = next(iter)
@@ -114,7 +111,7 @@ def _xmrange_iter(iter_list, typ=list):
         sage: l1 is l2  # eeek, this is freaky!
         True
 
-    We check that :trac:`14285` has been resolved::
+    We check that :issue:`14285` has been resolved::
 
         sage: iter = sage.misc.mrange._xmrange_iter([ZZ,[]])
         sage: next(iter)
@@ -122,7 +119,7 @@ def _xmrange_iter(iter_list, typ=list):
         ...
         StopIteration
 
-    We check that :trac:`28521` is fixed::
+    We check that :issue:`28521` is fixed::
 
         sage: next(sage.misc.mrange._xmrange_iter([[], [1]]))
         Traceback (most recent call last):
@@ -182,16 +179,16 @@ def mrange_iter(iter_list, typ=list):
     More precisely, return the iterator over all objects of type ``typ`` of
     n-tuples of Python ints with entries between 0 and the integers in
     the sizes list. The iterator is empty if sizes is empty or contains
-    any non-positive integer.
+    any nonpositive integer.
 
     INPUT:
 
-    -  ``iter_list`` - a finite iterable of finite iterables
+    - ``iter_list`` -- a finite iterable of finite iterables
 
-    -  ``typ`` - (default: list) a type or class; more
-       generally, something that can be called with a list as input.
+    - ``typ`` -- (default: list) a type or class; more
+      generally, something that can be called with a list as input
 
-    OUTPUT: a list
+    OUTPUT: list
 
     EXAMPLES::
 
@@ -209,7 +206,7 @@ def mrange_iter(iter_list, typ=list):
         sage: mrange_iter([range(5), range(3), range(-2)])
         []
 
-    This example is not empty, and should not be. See :trac:`6561`.
+    This example is not empty, and should not be. See :issue:`6561`.
 
     ::
 
@@ -228,24 +225,24 @@ class xmrange_iter:
     Return the multirange iterate derived from the given iterators and
     type.
 
-    .. note::
+    .. NOTE::
 
        This basically gives you the Cartesian product of sets.
 
     More precisely, return the iterator over all objects of type typ of
     n-tuples of Python ints with entries between 0 and the integers in
     the sizes list. The iterator is empty if sizes is empty or contains
-    any non-positive integer.
+    any nonpositive integer.
 
     Use :func:`mrange_iter` for the non-iterator form.
 
     INPUT:
 
-    - ``iter_list`` - a list of objects usable as iterators (possibly
-       lists)
+    - ``iter_list`` -- list of objects usable as iterators (possibly
+      lists)
 
-    - ``typ`` - (default: list) a type or class; more generally,
-       something that can be called with a list as input.
+    - ``typ`` -- (default: list) a type or class; more generally,
+      something that can be called with a list as input
 
     OUTPUT: a generator
 
@@ -292,7 +289,7 @@ class xmrange_iter:
         sage: list(xmrange_iter([range(5),range(3),range(0)]))
         []
 
-    This example is not empty, and should not be. See :trac:`6561`.
+    This example is not empty, and should not be. See :issue:`6561`.
 
     ::
 
@@ -336,8 +333,8 @@ class xmrange_iter:
         """
         Return the cardinality of this iterator as an int.
 
-        Raises a ``TypeError`` if the cardinality does not fit into a Python
-        int.
+        This raises a :exc:`TypeError` if the cardinality does not fit
+        into a Python int.
 
         EXAMPLES::
 
@@ -433,16 +430,16 @@ def mrange(sizes, typ=list):
     More precisely, return the iterator over all objects of type typ of
     n-tuples of Python ints with entries between 0 and the integers in
     the sizes list. The iterator is empty if sizes is empty or contains
-    any non-positive integer.
+    any nonpositive integer.
 
     INPUT:
 
-    -  ``sizes`` - a list of nonnegative integers
+    - ``sizes`` -- list of nonnegative integers
 
-    -  ``typ`` - (default: list) a type or class; more
-       generally, something that can be called with a list as input.
+    - ``typ`` -- (default: list) a type or class; more
+      generally, something that can be called with a list as input
 
-    OUTPUT: a list
+    OUTPUT: list
 
     EXAMPLES::
 
@@ -460,7 +457,7 @@ def mrange(sizes, typ=list):
         sage: mrange([5,3,0])
         []
 
-    This example is not empty, and should not be. See :trac:`6561`.
+    This example is not empty, and should not be. See :issue:`6561`.
 
     ::
 
@@ -483,18 +480,16 @@ class xmrange:
     More precisely, return the iterator over all objects of type typ of
     n-tuples of Python ints with entries between 0 and the integers in
     the sizes list. The iterator is empty if sizes is empty or contains
-    any non-positive integer.
+    any nonpositive integer.
 
     Use mrange for the non-iterator form.
 
     INPUT:
 
+    - ``sizes`` -- list of nonnegative integers
 
-    -  ``sizes`` - a list of nonnegative integers
-
-    -  ``typ`` - (default: list) a type or class; more
-       generally, something that can be called with a list as input.
-
+    - ``typ`` -- (default: list) a type or class; more
+      generally, something that can be called with a list as input
 
     OUTPUT: a generator
 
@@ -545,7 +540,7 @@ class xmrange:
         sage: list(xmrange([5,3,0]))
         []
 
-    This example is not empty, and should not be. See :trac:`6561`.
+    This example is not empty, and should not be. See :issue:`6561`.
 
     ::
 
@@ -604,7 +599,7 @@ def cartesian_product_iterator(X):
 
     INPUT:
 
-    -  ``X`` - list or tuple of lists
+    - ``X`` -- list or tuple of lists
 
     OUTPUT: iterator over the Cartesian product of the elements of X
 
@@ -617,7 +612,7 @@ def cartesian_product_iterator(X):
 
     TESTS:
 
-    Check that :trac:`28521` is fixed::
+    Check that :issue:`28521` is fixed::
 
         sage: list(cartesian_product_iterator([[], [1]]))
         []
@@ -639,7 +634,7 @@ def cantor_product(*args, **kwds):
     - a certain number of iterables
 
     - ``repeat`` -- an optional integer. If it is provided, the input is
-      repeated ``repeat`` times.
+      repeated ``repeat`` times
 
     Other keyword arguments are passed to
     :class:`sage.combinat.integer_lists.invlex.IntegerListsLex`.
@@ -708,7 +703,7 @@ def cantor_product(*args, **kwds):
         [(0, 1), (0, 2), (1, 2), (0, 3), (1, 3),
          (0, 4), (2, 3), (1, 4), (2, 4), (3, 4)]
 
-    Check that :trac:`24897` is fixed::
+    Check that :issue:`24897` is fixed::
 
         sage: from sage.misc.mrange import cantor_product
         sage: list(cantor_product([1]))

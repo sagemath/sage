@@ -8,5 +8,30 @@ requires = [
     SPKG_INSTALL_REQUIRES_cython
     SPKG_INSTALL_REQUIRES_memory_allocator
     SPKG_INSTALL_REQUIRES_cysignals
+    SPKG_INSTALL_REQUIRES_pkgconfig
 ]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "sagemath-mcqd"
+description = "Sage: Open Source Mathematics Software: Finding maximum cliques with mcqd"
+dependencies = [
+    SPKG_INSTALL_REQUIRES_memory_allocator
+    SPKG_INSTALL_REQUIRES_cysignals
+]
+dynamic = ["version"]
+include(`pyproject_toml_metadata.m4')dnl'
+
+[project.readme]
+file = "README.rst"
+content-type = "text/x-rst"
+
+[tool.setuptools]
+packages = ["sage.graphs"]
+include-package-data = false
+
+[tool.setuptools.dynamic]
+version = {file = ["VERSION.txt"]}
+
+[tool.setuptools.package-data]
+"sage.graphs" = ["mcqd.pxd"]

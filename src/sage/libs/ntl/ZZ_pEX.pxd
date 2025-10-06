@@ -1,6 +1,6 @@
 # distutils: depends = NTL/ZZ.h
 
-from .types cimport (ZZ_c, ZZ_p_c, ZZ_pContext_c, ZZ_pE_c, vec_ZZ_p_c,
+from sage.libs.ntl.types cimport (ZZ_c, ZZ_p_c, ZZ_pContext_c, ZZ_pE_c, vec_ZZ_p_c,
         vec_ZZ_pE_c, ZZ_pEX_c, ZZ_pEX_Modulus_c)
 
 
@@ -81,6 +81,8 @@ cdef extern from "ntlwrap.h":
     void ZZ_pEX_rem_pre "rem"(ZZ_pEX_c x, ZZ_pEX_c a, ZZ_pEX_Modulus_c F)
     void ZZ_pEX_DivRem_pre "DivRem"(ZZ_pEX_c q, ZZ_pEX_c r, ZZ_pEX_c a, ZZ_pEX_Modulus_c F)
     void ZZ_pEX_div_pre "div"(ZZ_pEX_c q, ZZ_pEX_c a, ZZ_pEX_Modulus_c F)
+
+    void ZZ_pEX_CompMod "CompMod"(ZZ_pEX_c x, ZZ_pEX_c f, ZZ_pEX_c g, ZZ_pEX_Modulus_c F)
 
     void ZZ_pEX_MinPolyMod "MinPolyMod"(ZZ_pEX_c h, ZZ_pEX_c g, ZZ_pEX_c f)
     void ZZ_pEX_MinPolyMod_pre "MinPolyMod"(ZZ_pEX_c h, ZZ_pEX_c g, ZZ_pEX_Modulus_c F)

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Lambda Bracket Algebras With Basis
 
@@ -18,6 +19,7 @@ AUTHORS:
 
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.graded_modules import GradedModulesCategory
+
 
 class LambdaBracketAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     """

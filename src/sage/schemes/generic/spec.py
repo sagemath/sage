@@ -42,25 +42,25 @@ def Spec(R, S=None):
         Spectrum of Univariate Polynomial Ring in x over Rational Field
         sage: Spec(PolynomialRing(QQ, 'x', 3))
         Spectrum of Multivariate Polynomial Ring in x0, x1, x2 over Rational Field
-        sage: X = Spec(PolynomialRing(GF(49,'a'), 3, 'x')); X                           # optional - sage.rings.finite_rings
+        sage: X = Spec(PolynomialRing(GF(49,'a'), 3, 'x')); X                           # needs sage.rings.finite_rings
         Spectrum of Multivariate Polynomial Ring in x0, x1, x2
          over Finite Field in a of size 7^2
-        sage: TestSuite(X).run()                                                        # optional - sage.rings.finite_rings
+        sage: TestSuite(X).run()                                                        # needs sage.rings.finite_rings
 
     Applying ``Spec`` twice to the same ring gives identical output
-    (see :trac:`17008`)::
+    (see :issue:`17008`)::
 
         sage: A = Spec(ZZ); B = Spec(ZZ)
         sage: A is B
         True
 
-    A ``TypeError`` is raised if the input is not a commutative ring::
+    A :exc:`TypeError` is raised if the input is not a commutative ring::
 
         sage: Spec(5)
         Traceback (most recent call last):
         ...
         TypeError: x (=5) is not in Category of commutative rings
-        sage: Spec(FreeAlgebra(QQ, 2, 'x'))
+        sage: Spec(FreeAlgebra(QQ, 2, 'x'))                                             # needs sage.combinat sage.modules
         Traceback (most recent call last):
         ...
         TypeError: x (=Free Algebra on 2 generators (x0, x1) over Rational Field)
@@ -152,7 +152,7 @@ class SpecFunctor(Functor, UniqueRepresentation):
 
             sage: from sage.schemes.generic.spec import SpecFunctor
             sage: F = SpecFunctor()
-            sage: F(RR) # indirect doctest
+            sage: F(RR)  # indirect doctest                                             # needs sage.rings.real_mpfr
             Spectrum of Real Field with 53 bits of precision
         """
         # The second argument of AffineScheme defaults to None.
@@ -170,11 +170,11 @@ class SpecFunctor(Functor, UniqueRepresentation):
         EXAMPLES::
 
             sage: from sage.schemes.generic.spec import SpecFunctor
-            sage: F = SpecFunctor(GF(7))                                                # optional - sage.rings.finite_rings
-            sage: A.<x, y> = GF(7)[]                                                    # optional - sage.rings.finite_rings
-            sage: B.<t> = GF(7)[]                                                       # optional - sage.rings.finite_rings
-            sage: f = A.hom((t^2, t^3))                                                 # optional - sage.rings.finite_rings
-            sage: Spec(f) # indirect doctest                                            # optional - sage.rings.finite_rings
+            sage: F = SpecFunctor(GF(7))
+            sage: A.<x, y> = GF(7)[]
+            sage: B.<t> = GF(7)[]
+            sage: f = A.hom((t^2, t^3))
+            sage: Spec(f)  # indirect doctest
             Affine Scheme morphism:
               From: Spectrum of Univariate Polynomial Ring in t over Finite Field of size 7
               To:   Spectrum of Multivariate Polynomial Ring in x, y over Finite Field of size 7

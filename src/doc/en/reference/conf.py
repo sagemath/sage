@@ -25,10 +25,16 @@ html_static_path = [] + html_common_static_path
 ref_src = os.path.join(SAGE_DOC_SRC, 'en', 'reference')
 ref_out = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
 
+# Add small view/edit buttons.
+html_theme_options.update({
+  'source_view_link': os.path.join(source_repository, 'blob/develop/src/doc/en/reference/index.rst'),
+  'source_edit_link': os.path.join(source_repository, 'edit/develop/src/doc/en/reference/index.rst'),
+})
+
 # General information about the project.
 project = "Reference Manual"
 
-# The name for this set of Sphinx documents.
+# The name for this set of Sphinx documents. Do not include release info.
 html_title = project
 html_short_title = project
 

@@ -144,7 +144,7 @@ Conversion to Maxima::
 
 TESTS:
 
-Check that :trac:`12778` is fixed::
+Check that :issue:`12778` is fixed::
 
     sage: M = Matrix([[1, 0.9, 1/5, x^2], [2, 1.9, 2/5, x^3], [3, 2.9, 3/5, x^4]], sparse=True); M
     [                1 0.900000000000000               1/5               x^2]
@@ -165,8 +165,9 @@ Check that :issue:`35653` is fixed::
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.factorization import Factorization
 
-from .matrix_generic_sparse cimport Matrix_generic_sparse
-from .constructor import matrix
+from sage.matrix.matrix_generic_sparse cimport Matrix_generic_sparse
+from sage.matrix.constructor import matrix
+from sage.misc.flatten import flatten
 
 cdef maxima
 
@@ -177,7 +178,6 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
         """
         Echelonize using the classical algorithm.
 
-
         TESTS::
 
             sage: m = matrix([[cos(pi/5), sin(pi/5)], [-sin(pi/5), cos(pi/5)]], sparse=True)
@@ -185,7 +185,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             [1 0]
             [0 1]
         """
-        return super().echelonize(algorithm="classical", **kwds)
+        return super().echelonize(algorithm='classical', **kwds)
 
     def eigenvalues(self, extend=True):
         """
@@ -203,7 +203,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
 
         TESTS:
 
-        Check for :trac:`31700`::
+        Check for :issue:`31700`::
 
             sage: m = matrix([[cos(pi/5), sin(pi/5)], [-sin(pi/5), cos(pi/5)]], sparse=True)
             sage: t = linear_transformation(m)
@@ -309,7 +309,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             NotImplementedError: generalized eigenvector decomposition is
             implemented for RDF and CDF, but not for Symbolic Ring
 
-        Check that :trac:`23332` is fixed::
+        Check that :issue:`23332` is fixed::
 
             sage: matrix([[x, x^2], [1, 0]], sparse=True).eigenvectors_left()
             [(-1/2*x*(sqrt(5) - 1), [(1, -1/2*x*(sqrt(5) + 1))], 1),
@@ -374,7 +374,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             NotImplementedError: generalized eigenvector decomposition is
             implemented for RDF and CDF, but not for Symbolic Ring
 
-        Check that :trac:`23332` is fixed::
+        Check that :issue:`23332` is fixed::
 
             sage: matrix([[x, x^2], [1, 0]], sparse=True).eigenvectors_right()
             [(-1/2*x*(sqrt(5) - 1), [(1, -1/2*(sqrt(5) + 1)/x)], 1),
@@ -409,7 +409,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             [1/2*(e^(2*x) - 1)*e^(-x) 1/2*(e^(2*x) + 1)*e^(-x)]
 
         Exponentiation works on 0x0 and 1x1 matrices, but the 1x1 example
-        requires a patched version of maxima (:trac:`32898`) for now::
+        requires a patched version of maxima (:issue:`32898`) for now::
 
             sage: m = matrix(SR,0,[], sparse=True); m
             []
@@ -486,7 +486,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
 
         INPUT:
 
-        - ``var`` -- (default: 'x') name of variable of charpoly
+        - ``var`` -- (default: ``'x'``) name of variable of charpoly
 
         EXAMPLES::
 
@@ -499,7 +499,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
         TESTS:
 
         The cached polynomial should be independent of the ``var``
-        argument (:trac:`12292`). We check (indirectly) that the
+        argument (:issue:`12292`). We check (indirectly) that the
         second call uses the cached value by noting that its result is
         not cached::
 
@@ -515,17 +515,17 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             x^2 - 3*x - 2
 
         Ensure the variable name of the polynomial does not conflict
-        with variables used within the matrix (:trac:`14403`)::
+        with variables used within the matrix (:issue:`14403`)::
 
             sage: Matrix(SR, [[sqrt(x), x],[1,x]], sparse=True).charpoly().list()
             [x^(3/2) - x, -x - sqrt(x), 1]
 
-        Test that :trac:`13711` is fixed::
+        Test that :issue:`13711` is fixed::
 
             sage: matrix([[sqrt(2), -1], [pi, e^2]], sparse=True).charpoly()
             x^2 + (-sqrt(2) - e^2)*x + pi + sqrt(2)*e^2
 
-        Test that :trac:`26427` is fixed::
+        Test that :issue:`26427` is fixed::
 
             sage: M = matrix(SR, 7, 7, SR.var('a', 49), sparse=True)
             sage: M.charpoly().degree() # long time
@@ -576,7 +576,6 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             sage: m = matrix([[x]], sparse=True)
             sage: m.minimal_polynomial('y')
             y - x
-
         """
         mp = self.fetch('minpoly')
         if mp is None:
@@ -593,7 +592,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
 
         INPUT:
 
-        - ``var`` -- (default: 'x') name of variable of charpoly
+        - ``var`` -- (default: ``'x'``) name of variable of charpoly
 
         EXAMPLES::
 
@@ -612,7 +611,6 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             (x^2 - 65*x - 250) * x^3
             sage: list(a.fcp())
             [(x^2 - 65*x - 250, 1), (x, 3)]
-
         """
         from sage.symbolic.ring import SR
         sub_dict = {var: SR.var(var)}
@@ -712,12 +710,20 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             sage: matrix([[a, b], [c, d]], sparse=True).jordan_form(subdivide=False)
             [1/2*a + 1/2*d - 1/2*sqrt(a^2 + 4*b*c - 2*a*d + d^2)                                                   0]
             [                                                  0 1/2*a + 1/2*d + 1/2*sqrt(a^2 + 4*b*c - 2*a*d + d^2)]
+        
+        Check that :issue:`40803` is fixed::
+
+            sage: matrix([[a, 0], [0, a]], sparse=True).jordan_form()
+            [a|0]
+            [-+-]
+            [0|a]
         """
         A = self._maxima_lib_()
         jordan_info = A.jordan()
         J = matrix(jordan_info.dispJordan()._sage_(), sparse=True)
         if subdivide:
-            v = [x[1] for x in jordan_info]
+            # Repeated eigen values indices are part of the same list
+            v = flatten([x[1:] for x in jordan_info])
             w = [sum(v[0:i]) for i in range(1, len(v))]
             J.subdivide(w, w)
         if transformation:
@@ -786,11 +792,9 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
 
         INPUT:
 
-        - ``self`` -- the matrix whose entries we should simplify.
+        - ``self`` -- the matrix whose entries we should simplify
 
-        OUTPUT:
-
-        A copy of ``self`` with all of its entries simplified.
+        OUTPUT: a copy of ``self`` with all of its entries simplified
 
         EXAMPLES:
 
@@ -805,7 +809,6 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             sage: A.simplify_full()
             [                1    sin(1/(x + 1))]
             [     factorial(n) x^(-a + 1)*sin(2)]
-
         """
         M = self.parent()
         return M([expr.simplify_full() for expr in self])

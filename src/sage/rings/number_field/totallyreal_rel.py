@@ -1,5 +1,6 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.libs.linbox sage.modules sage.rings.number_field
 r"""
-Enumeration of Totally Real Fields: Relative Extensions
+Enumeration of totally real fields: relative extensions
 
 This module contains functions to enumerate primitive extensions `L / K`, where
 `K` is a given totally real number field, with given degree and small root
@@ -51,7 +52,7 @@ with root discriminant `\le 10`.
     sage: [ f[0] for f in ls ]
     [725, 1125, 1600, 2000, 2225, 2525, 3600, 4225, 4400, 4525, 5125, 5225, 5725, 6125, 7225, 7600, 7625, 8000, 8525, 8725, 9225]
 
-    sage: [NumberField(ZZx(x[1]), 't').is_galois() for x in ls]
+    sage: [NumberField(ZZx(x[1]), 't').is_galois() for x in ls]                         # needs sage.groups
     [False, True, True, True, False, False, True, True, False, False, False, False, False, True, True, False, False, True, False, False, False]
 
 Eight out of 21 such fields are Galois (with Galois group `C_4`
@@ -72,13 +73,13 @@ discriminant `\le 17 \times 10^9`.
 
 TESTS:
 
-Check that :trac:`27646` is fixed::
+Check that :issue:`27646` is fixed::
 
     sage: L = enumerate_totallyreal_fields_all(6,435000) # long time
 
 AUTHORS:
 
-- John Voight (2007-11-03): Initial version.
+- John Voight (2007-11-03): initial version
 """
 
 # ****************************************************************************
@@ -99,7 +100,7 @@ from sage.rings.number_field.totallyreal_data import ZZx, lagrange_degree_3, int
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.number_field.totallyreal import weed_fields, odlyzko_bound_totallyreal, enumerate_totallyreal_fields_prim
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
@@ -117,7 +118,7 @@ def integral_elements_in_box(K, C):
     INPUT:
 
     - ``K`` -- a totally real number field
-    - ``C`` -- a list ``[[lower, upper], ...]`` of lower and upper bounds,
+    - ``C`` -- list ``[[lower, upper], ...]`` of lower and upper bounds,
       for each embedding
 
     EXAMPLES::
@@ -226,6 +227,7 @@ def integral_elements_in_box(K, C):
 
 eps_global = 10**(-6)
 
+
 class tr_data_rel:
     r"""
     This class encodes the data used in the enumeration of totally real
@@ -243,11 +245,11 @@ class tr_data_rel:
 
         INPUT:
 
-        - ``F`` -- number field, the base field
-        - ``m`` -- integer, the relative degree
-        - ``B`` -- integer, the discriminant bound
-        - ``a`` -- list (default: ``[]``), the coefficient list to begin with,
-          corresponding to ``a[len(a)]*x^n + ... + a[0]x^(n-len(a))``.
+        - ``F`` -- number field; the base field
+        - ``m`` -- integer; the relative degree
+        - ``B`` -- integer; the discriminant bound
+        - ``a`` -- list (default: ``[]``); the coefficient list to begin with,
+          corresponding to ``a[len(a)]*x^n + ... + a[0]x^(n-len(a))``
 
         OUTPUT:
 
@@ -286,11 +288,11 @@ class tr_data_rel:
         Z_Fbasis = self.Z_F.basis()
 
         # Initialize variables.
-        if a == []:
+        if not a:
             # No starting input, all polynomials will be found; initialize to zero.
             self.a = [0]*m + [1]
             self.amaxvals = [[]]*m
-            anm1s = [[i] for i in range(0,m//2+1)]
+            anm1s = [[i] for i in range(m//2+1)]
             for i in range(1,self.d):
                 for j in range(len(anm1s)):
                     anm1s[j] = [anm1s[j] + [i] for i in range(m)]
@@ -300,7 +302,7 @@ class tr_data_rel:
             import numpy
             for i in range(len(anm1s)):
                 Q = [[v(m*x) for v in self.Foo] + [0] for x in Z_Fbasis] + [[v(anm1s[i]) for v in self.Foo] + [10**6]]
-                pari_string = '['+';'.join([','.join(["%s"%ii for ii in row]) for row in zip(*Q)])+']'
+                pari_string = '[' + ';'.join(','.join("%s" % ii for ii in row) for row in zip(*Q)) + ']'
                 adj = pari(pari_string).qflll()[self.d]
                 anm1s[i] += sum([m*Z_Fbasis[ii]*int(adj[ii])//int(adj[self.d]) for ii in range(self.d)])
 
@@ -322,7 +324,7 @@ class tr_data_rel:
             # currently unknown; e.g., if k == -1, then we can iterate
             # over polynomials, and if k == n-1, then we have finished iterating.
             if a[len(a)-1] != 1:
-                raise ValueError("a[len(a)-1](=%s) must be 1 so polynomial is monic"%a[len(a)-1])
+                raise ValueError("a[len(a)-1](=%s) must be 1 so polynomial is monic" % a[len(a)-1])
 
             raise NotImplementedError("These have not been checked.")
 
@@ -370,17 +372,15 @@ class tr_data_rel:
 
         INPUT:
 
-        - ``f_out`` -- an integer sequence, to be written with the
-          coefficients of the next polynomial
-        - ``verbose`` -- boolean or nonnegative integer (default: ``False``)
-          print verbosely computational details. It prints extra
-          information if ``verbose`` is set to ``2`` or more
-        - ``haltk`` -- integer, the level at which to halt the inductive
+        - ``f_out`` -- integer sequence; to be written with the coefficients of
+          the next polynomial
+        - ``verbose`` -- boolean or nonnegative integer (default: ``False``);
+          print verbosely computational details. It prints extra information if
+          ``verbose`` is set to ``2`` or more.
+        - ``haltk`` -- integer; the level at which to halt the inductive
           coefficient bounds
 
-        OUTPUT:
-
-        the successor polynomial as a coefficient list.
+        OUTPUT: the successor polynomial as a coefficient list
         """
         import numpy
 
@@ -392,7 +392,7 @@ class tr_data_rel:
         if k == -1:
             if len(self.amaxvals[0]) > 0 and self.amaxvals[0]:
                 self.a[0] = self.amaxvals[0].pop()
-                for i in range(0,m):
+                for i in range(m):
                     f_out[i] = self.a[i]
                 return
             else:
@@ -430,7 +430,7 @@ class tr_data_rel:
                     print(k, ":", end="")
                     for i in range(self.m + 1):
                         print(self.a[i], end="")
-                    print("")
+                    print()
 
                 if k == m - 2:
                     # We only know the value of a[n-1], the trace.
@@ -452,15 +452,13 @@ class tr_data_rel:
                     # Enumerate all elements of Z_F with T_2 <= br
                     T2s = []
                     trace_elts_found = False
-                    for i in range(len(self.trace_elts)):
-                        tre = self.trace_elts[i]
+                    for tre in self.trace_elts:
                         if tre[0] <= bl and tre[1] >= br:
                             trace_elts_found = True
                             if verbose >= 2:
                                 print("  found copy!")
-                            for theta in tre[2]:
-                                if theta.trace() >= bl and theta.trace() <= br:
-                                    T2s.append(theta)
+                            T2s.extend(theta for theta in tre[2]
+                                       if bl <= theta.trace() <= br)
                             break
                     if not trace_elts_found:
                         T2s = self.F._positive_integral_elements_with_trace([bl,br])
@@ -652,34 +650,33 @@ def enumerate_totallyreal_fields_rel(F, m, B, a=[], verbose=0,
 
     ::
 
-        a[d]*x^n + ... + a[0]*x^(n-d)
+        a[k]*x^m + ... + a[0]*x^(m-k)
 
-    if ``length(a) = d+1``, so in particular always ``a[d] = 1``.
+    if ``length(a) = k+1``, so in particular always ``a[k] = 1``.
 
-    .. note::
+    .. NOTE::
 
         This is guaranteed to give all primitive such fields, and
         seems in practice to give many imprimitive ones.
 
     INPUT:
 
-    - ``F`` -- number field, the base field
-    - ``m`` -- integer, the degree
-    - ``B`` -- integer, the discriminant bound
-    - ``a`` -- list (default: ``[]``), the coefficient list to begin with
-    - ``verbose`` -- boolean or nonnegative integer or string (default: 0)
+    - ``F`` -- number field; the base field
+    - ``m`` -- integer; the degree
+    - ``B`` -- integer; the discriminant bound
+    - ``a`` -- list (default: ``[]``); the coefficient list to begin with
+    - ``verbose`` -- boolean or nonnegative integer or string (default: 0);
       give a verbose description of the computations being performed. If
       ``verbose`` is set to ``2`` or more then it outputs some extra
       information. If ``verbose`` is a string then it outputs to a file
-      specified by ``verbose``
-    - ``return_seqs`` -- (boolean, default ``False``) If ``True``, then return
+      specified by ``verbose``.
+    - ``return_seqs`` -- boolean (default: ``False``); if ``True``, then return
       the polynomials as sequences (for easier exporting to a file). This
       also returns a list of four numbers, as explained in the OUTPUT
       section below.
-    - ``return_pari_objects`` -- (boolean, default: ``True``) if
-      both ``return_seqs`` and ``return_pari_objects`` are ``False`` then
-      it returns the elements as Sage objects; otherwise it returns PARI
-      objects.
+    - ``return_pari_objects`` -- boolean (default: ``True``); if both
+      ``return_seqs`` and ``return_pari_objects`` are ``False`` then it returns
+      the elements as Sage objects; otherwise it returns PARI objects.
 
     OUTPUT:
 
@@ -799,7 +796,7 @@ def enumerate_totallyreal_fields_rel(F, m, B, a=[], verbose=0,
                 counts[1] += 1
                 if nf.polisirreducible():
                     counts[2] += 1
-                    [zk,d] = nf.nfbasis_d()
+                    zk, d = nf.nfbasis_d()
 
                     if d <= B:
                         if verbose:
@@ -911,21 +908,19 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
 
     INPUT:
 
-    - ``n`` -- integer, the degree
-    - ``B`` -- integer, the discriminant bound
-    - ``verbose`` -- boolean or nonnegative integer or string (default: 0)
+    - ``n`` -- integer; the degree
+    - ``B`` -- integer; the discriminant bound
+    - ``verbose`` -- boolean or nonnegative integer or string (default: 0);
       give a verbose description of the computations being performed. If
-      ``verbose`` is set to ``2`` or more, it outputs some extra
-      information. If ``verbose`` is a string, it outputs to a file
-      specified by ``verbose``
-    - ``return_seqs`` -- (boolean, default ``False``) If ``True``, then return
+      ``verbose`` is set to ``2`` or more, it outputs some extra information.
+      If ``verbose`` is a string, it outputs to a file specified by ``verbose``.
+    - ``return_seqs`` -- boolean (default: ``False``); if ``True``, then return
       the polynomials as sequences (for easier exporting to a file). This
       also returns a list of four numbers, as explained in the OUTPUT
       section below.
-    - ``return_pari_objects`` -- (boolean, default: True) if both
+    - ``return_pari_objects`` -- boolean (default: ``True``); if both
       ``return_seqs`` and ``return_pari_objects`` are ``False`` then it
-      returns the elements as Sage objects; otherwise it returns PARI
-      objects.
+      returns the elements as Sage objects; otherwise it returns PARI objects.
 
     EXAMPLES::
 
@@ -958,7 +953,7 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
     :func:`~sage.rings.number_field.totallyreal.enumerate_totallyreal_fields_prim`
     finds four out of the five (the exception being `x^4 - 6x^2 + 4`).
 
-    The following was fixed in :trac:`13101`::
+    The following was fixed in :issue:`13101`::
 
         sage: enumerate_totallyreal_fields_all(8, 10^6)  # long time (about 2 s)
         []

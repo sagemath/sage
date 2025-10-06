@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 r"""
 Discrete Gaussian Samplers for `\ZZ[x]`
 
 This class realizes oracles which returns polynomials in `\ZZ[x]`
 where each coefficient is sampled independently with a probability
-proportional to `\exp(-(x-c)²/(2σ²))`.
+proportional to `\exp(-(x-c)^2/(2σ^2))`.
 
 AUTHORS:
 
@@ -21,9 +20,8 @@ EXAMPLES::
     sage: from numpy import mean                                                        # needs numpy
     sage: mean(l), sqrt(64)*sigma  # abs tol 5e-1                                       # needs numpy sage.symbolic
     (24.0, 24.0)
-
 """
-#******************************************************************************
+# ******************************************************************************
 #
 #                        DGS - Discrete Gaussian Samplers
 #
@@ -53,11 +51,13 @@ EXAMPLES::
 # The views and conclusions contained in the software and documentation are
 # those of the authors and should not be interpreted as representing official
 # policies, either expressed or implied, of the FreeBSD Project.
-#*****************************************************************************/
+# *****************************************************************************/
 
-from sage.rings.real_mpfr import RR
 from sage.rings.integer_ring import ZZ
-from .discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
+from sage.rings.real_mpfr import RR
+from sage.stats.distributions.discrete_gaussian_integer import (
+    DiscreteGaussianDistributionIntegerSampler,
+)
 from sage.structure.sage_object import SageObject
 
 
@@ -88,10 +88,10 @@ class DiscreteGaussianDistributionPolynomialSampler(SageObject):
 
         INPUT:
 
-        - ``P`` - a univariate polynomial ring over the Integers
-        - ``n`` - number of coefficients to be sampled
-        - ``sigma`` - coefficients `x` are accepted with probability
-          proportional to `\exp(-x²/(2σ²))`. If an object of type
+        - ``P`` -- a univariate polynomial ring over the Integers
+        - ``n`` -- number of coefficients to be sampled
+        - ``sigma`` -- coefficients `x` are accepted with probability
+          proportional to `\exp(-x^2/(2σ^2))`. If an object of type
           :class:`sage.stats.distributions.discrete_gaussian_integer.DiscreteGaussianDistributionIntegerSampler`
           is passed, then this sampler is used to sample coefficients.
 

@@ -31,7 +31,7 @@ release of Sage.
 The Sage Jupyter notebook runs within a web browser. To start the notebook,
 issue the following command in a terminal, if ``sage`` is in your ``PATH``
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ sage -notebook
 
@@ -61,16 +61,16 @@ needs to have a working C compiler if you want to compile Sage
 from source. On
 Debian/Ubuntu, you can install these prerequisites as follows:
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ sudo apt-get install build-essential m4
 
 If you have a multi-core system, you can opt for a parallel build of
 Sage. The command
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
-    $ export MAKE='make -j8'
+    $ export MAKEFLAGS='-j8'
 
 will enable 8 threads for parts of the build that support
 parallelism. Change the number 8 as appropriate to suit the number of
@@ -79,7 +79,7 @@ cores on your system. Some Sage installations may have OpenMP-enabled BLAS
 the environment variable OMP_NUM_THREADS; however, it is known to not
 play well with Python parallelism, and you might want to
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ export OMP_NUM_THREADS=1
 
@@ -93,20 +93,22 @@ How to get Sage's Python to recognize my system's Tcl/Tk install?
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 It may be that you have Tcl/Tk installed and that your system's Python
-recognizes it but Sage's Python does not. To fix that, install the
-tcl/tk development library. On Ubuntu, this is the command
+recognizes it but Sage's Python does not. Normally speaking, there is little
+need to build Sage's Python nowadays (anno 2023), but if you do, here it is.
+Make sure you installed the Tcl/Tk development library.  On Ubuntu, this is the
+command
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ sudo apt-get install tk8.5-dev
 
 or something along that line. Next, reinstall Sage's Python:
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
-    $ sage -f python3
+    $ make python3-clean python3-uninstall && make python3
 
-This will pick up the tcl/tk library automatically. After successfully
+This will pick up the Tcl/Tk library automatically. After successfully
 reinstalling Sage's Python, from within the Sage command line interface,
 issue these commands:
 
@@ -135,7 +137,7 @@ option ``-python`` which would run your script using the version of
 Python that comes with Sage. For example, if Sage is in your ``PATH``
 variable then you can do this:
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ sage -python /path/to/my/script.py
 
@@ -144,7 +146,7 @@ itself. A Sage script has the file extension ``.sage`` and is more or
 less a Python script but uses Sage-specific functions and
 commands. You can then run that Sage script like so:
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ sage /path/to/my/script.sage
 
@@ -217,8 +219,8 @@ by a web search.
 
 * `Building Skills in Python <http://homepage.mac.com/s_lott/books/python.html>`_
   by Steven F. Lott
-* `Dive into Python <http://www.diveintopython.net>`_ by Mark Pilgrim
-* `How to Think Like a Computer Scientist <http://www.openbookproject.net/thinkCSpy>`_
+* `Dive into Python <https://diveintopython3.net>`_ by Mark Pilgrim
+* `How to Think Like a Computer Scientist <https://www.openbookproject.net/thinkcs/python/english3e/>`_
   by Jeffrey Elkner, Allen B. Downey, and Chris Meyers
 * `Official Python Tutorial <https://docs.python.org/tutorial>`_
 * `Python <https://www.python.org>`_ home page and the
@@ -322,7 +324,7 @@ ints. For example::
     sage: RealNumber = float; Integer = int
     sage: from scipy import stats
     sage: stats.ttest_ind([1,2,3,4,5], [2,3,4,5,.6])
-    Ttest...Result(statistic=0.0767529..., pvalue=0.940704...)
+    Ttest...Result(statistic=...0.0767529..., pvalue=...0.940704...)
     sage: stats.uniform(0,15).ppf([0.5,0.7])
     array([  7.5,  10.5])
 
@@ -456,7 +458,7 @@ When I start Sage, SELinux complains that "/path/to/libpari-gmp.so.2" requires t
 
 The problem can be fixed by running the following command:
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ chcon -t textrel_shlib_t /path/to/libpari-gmp.so.2
 
@@ -476,35 +478,6 @@ How do I run sage in daemon mode, i.e. as a service?
 
 There are several possibilities. Use ``screen``, ``nohup`` or ``disown``.
 
-
-The show command for plotting 3-D objects does not work.
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-The default live 3-D plotting for Sage 6.4+ uses
-`Jmol/JSmol <http://jmol.sourceforge.net>`_
-for viewing. From the command line the Jmol Java application is used,
-and for in browser viewing either pure javascript or a Java applet
-is used.  By default in browsers pure javascript is used to avoid
-the problems with some browsers that do not support java applet
-plugins (namely Chrome).  On each browser worksheet there is a
-checkbox which must be checked before a 3-D plot is generated if
-the user wants to use the Java applet (the applet is a little faster
-with complex plots).
-
-The most likely reason for a malfunction is that you do not have
-a Java Run Time Environment (JRE) installed or you have one older than
-version 1.7.  If things work from the command line another possibility
-is that your browser does not have the proper plugin to support Java
-applets (at present, 2014, plugins do not work with most versions of
-Chrome).  Make sure you have installed either the IcedTea browser
-plugin (for linux see your package manager), see:
-`IcedTea <http://icedtea.classpath.org/wiki/IcedTea-Web>`_,
-or the Oracle Java plugin see:
-`Java <https://java.com/en/download/help/index_installing.xml>`_.
-
-If you are using a Sage server over the web and even javascript rendering
-does not work, you may have a problem with your browser's javascript
-engine or have it turned off.
 
 May I use Sage tools in a commercial environment?
 """""""""""""""""""""""""""""""""""""""""""""""""
@@ -589,7 +562,7 @@ include the following:
     limit maxproc 512 2048
 
 then reboot. See
-`this page <http://www.macosxhints.com/article.php?story=20050709233920660>`_
+`this page <https://web.archive.org/web/20051106134912/http://www.macosxhints.com/article.php?story=20050709233920660>`_
 for more details.
 
 How do I plot the cube root (or other odd roots) for negative input?
@@ -674,17 +647,17 @@ You will need to do this from the command line.  Just run a command like this.
 
 * Linux (assuming you have Sage in ``/usr/bin``):
 
-  .. CODE-BLOCK:: shell-session
+  .. code-block:: console
 
-    $ env BROWSER=opera /usr/bin/sage --notebook
+      $ env BROWSER=opera /usr/bin/sage --notebook
 
 * Mac (assuming you are in the directory of your downloaded Sage).
   With the Jupyter notebook:
 
-  .. CODE-BLOCK:: shell-session
+  .. code-block:: console
 
-    $ BROWSER='open -a Firefox %s' ./sage --notebook jupyter
-    $ BROWSER='open -a Google\ Chrome %s' ./sage --notebook jupyter
+      $ BROWSER='open -a Firefox %s' ./sage --notebook jupyter
+      $ BROWSER='open -a Google\ Chrome %s' ./sage --notebook jupyter
 
 
 Where is the source code for ``<function>``?

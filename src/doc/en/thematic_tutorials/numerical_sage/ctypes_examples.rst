@@ -25,8 +25,6 @@ following C code.
     } double_sparse_matrix;
 
 
-
-
     double_sparse_matrix * initialize_matrix(int nrows, int ncols)
     {
       int i;
@@ -148,7 +146,7 @@ following C code.
 
 Put it in a file called linked_list_sparse.c and compile it using
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ gcc -c linked_list_sparse.c
     $ gcc -shared -o linked_list_sparse.so linked_list_sparse.o

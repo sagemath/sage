@@ -22,10 +22,16 @@ from sage_docbuild.conf import *
 # contains common paths.
 html_static_path = [] + html_common_static_path
 
+# Add small view/edit buttons.
+html_theme_options.update({
+  'source_view_link': os.path.join(source_repository, 'blob/develop/src/doc/en/thematic_tutorials', '{filename}'),
+  'source_edit_link': os.path.join(source_repository, 'edit/develop/src/doc/en/thematic_tutorials', '{filename}'),
+})
+
 # General information about the project.
 project = "Thematic Tutorials"
 
-# The name for this set of Sphinx documents.
+# The name for this set of Sphinx documents. Do not include release info.
 html_title = project
 html_short_title = project
 

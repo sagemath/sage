@@ -1,5 +1,6 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
-Kostka-Foulkes Polynomials
+Kostka-Foulkes polynomials
 
 Based on the algorithms in John Stembridge's SF package for Maple
 which can be found at http://www.math.lsa.umich.edu/~jrs/maple.html
@@ -23,24 +24,36 @@ which can be found at http://www.math.lsa.umich.edu/~jrs/maple.html
 
 from sage.combinat.partition import _Partitions
 from sage.combinat.partitions import ZS1_iterator
-from sage.rings.polynomial.polynomial_ring import polygen
+from sage.combinat.skew_partition import SkewPartitions
+from sage.combinat.skew_tableau import SemistandardSkewTableaux
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring import polygen
 
 
 def KostkaFoulkesPolynomial(mu, nu, t=None):
     r"""
-    Returns the Kostka-Foulkes polynomial `K_{\mu, \nu}(t)`.
+    Return the Kostka-Foulkes polynomial `K_{\mu, \nu}(t)`.
+    Here, `\mu` is a partition or a skew partition, whereas
+    `\nu` is a partition of the same size.
+
+    The Kostka-Foulkes polynomial is defined to be the sum
+    of the monomials `t^{\operatorname{charge}(T)}` over all
+    semistandard tableaux `T` of shape `\lambda / \mu``,
+    where `\operatorname{charge}(T)` denotes the charge
+    of the reading word of `T`
+    (see :meth:`sage.combinat.words.finite_word.FiniteWord_class.charge`).
 
     INPUT:
 
-    - ``mu``, ``nu`` -- partitions
+    - ``mu`` -- partition or skew partition
+    - ``nu`` -- partition
     - ``t`` -- an optional parameter (default: ``None``)
 
     OUTPUT:
 
-    - the Koskta-Foulkes polynomial indexed by partitions ``mu`` and ``nu`` and
+    - the Kostka-Foulkes polynomial indexed by ``mu`` and ``nu`` and
       evaluated at the parameter ``t``.  If ``t`` is ``None`` the resulting
-      polynomial is in the polynomial ring `\ZZ['t']`.
+      polynomial is in the polynomial ring `\ZZ[t]`.
 
     EXAMPLES::
 
@@ -55,13 +68,15 @@ def KostkaFoulkesPolynomial(mu, nu, t=None):
         sage: q = PolynomialRing(QQ,'q').gen()
         sage: KostkaFoulkesPolynomial([2,2],[2,1,1],q)
         q
+        sage: KostkaFoulkesPolynomial([[3,2],[1]],[2,2],q)
+        q + 1
 
     TESTS::
 
         sage: KostkaFoulkesPolynomial([2,4],[2,2])
         Traceback (most recent call last):
         ...
-        ValueError: mu must be a partition
+        ValueError: mu must be a partition or a skew partition
         sage: KostkaFoulkesPolynomial([2,2],[2,4])
         Traceback (most recent call last):
         ...
@@ -72,7 +87,9 @@ def KostkaFoulkesPolynomial(mu, nu, t=None):
         ValueError: mu and nu must be partitions of the same size
     """
     if mu not in _Partitions:
-        raise ValueError("mu must be a partition")
+        if mu in SkewPartitions():
+            return kfpoly_skew(mu, nu, t)
+        raise ValueError("mu must be a partition or a skew partition")
     if nu not in _Partitions:
         raise ValueError("nu must be a partition")
     if sum(mu) != sum(nu):
@@ -93,7 +110,7 @@ def kfpoly(mu, nu, t=None):
 
     OUTPUT:
 
-    - the Koskta-Foulkes polynomial indexed by partitions ``mu`` and ``nu`` and
+    - the Kostka-Foulkes polynomial indexed by partitions ``mu`` and ``nu`` and
       evaluated at the parameter ``t``.  If ``t`` is ``None`` the resulting polynomial
       is in the polynomial ring `\ZZ['t']`.
 
@@ -125,6 +142,49 @@ def kfpoly(mu, nu, t=None):
     f = lambda x: weight(x, t) if x[0] == nuc else 0
 
     return sum(f(rg) for rg in riggings(mu))
+
+
+def kfpoly_skew(lamu, nu, t=None):
+    r"""
+    Return the Kostka-Foulkes polynomial `K_{\lambda / \mu, \nu}(t)`
+    by summing `t^{\operatorname{charge}(T)}` over all semistandard
+    tableaux `T` of shape `\lambda / \mu``.
+
+    INPUT:
+
+    - ``lamu`` -- skew partition `\lambda / \mu`
+    - ``nu`` -- partition `\nu`
+    - ``t`` -- an optional parameter (default: ``None``)
+
+    OUTPUT:
+
+    - the Kostka-Foulkes polynomial indexed by ``mu`` and ``nu`` and
+      evaluated at the parameter ``t``.  If ``t`` is ``None`` the
+      resulting polynomial is in the polynomial ring `\ZZ['t']`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.sf.kfpoly import kfpoly_skew
+        sage: kfpoly_skew([[3,3], [1,1]], [2,1,1])
+        t
+        sage: kfpoly_skew([[3,3], [1,1]], [2,1,1], 5)
+        5
+        sage: kfpoly_skew([[5], [1]], [2,2])
+        t^2
+
+    TESTS::
+
+        sage: from sage.combinat.sf.kfpoly import kfpoly, kfpoly_skew
+        sage: all(kfpoly_skew(SkewPartition([b,[]]), c) == kfpoly(b,c)
+        ....:     for n in range(6) for b in Partitions(n)
+        ....:     for c in Partitions(n))
+        True
+    """
+    if t is None:
+        t = polygen(ZZ, 't')
+
+    return t.parent().sum(t ** T.to_word().charge()
+                          for T in SemistandardSkewTableaux(lamu, nu))
 
 
 def schur_to_hl(mu, t=None):
@@ -196,10 +256,7 @@ def schur_to_hl(mu, t=None):
     for rg in riggings(mu):
         res[rg[0]] = res.get(rg[0], 0) + weight(rg, t)
 
-    d = {}
-    for key in res:
-        d[ key.conjugate() ] = res[key]
-    return d
+    return {key.conjugate(): value for key, value in res.items()}
 
 
 def riggings(part):
@@ -210,9 +267,7 @@ def riggings(part):
 
     - ``part`` -- a partition
 
-    OUTPUT:
-
-    - a list of riggings associated to the partition ``part``
+    OUTPUT: list of riggings associated to the partition ``part``
 
     EXAMPLES::
 
@@ -251,12 +306,10 @@ def compat(n, mu, nu):
 
     INPUT:
 
-    - ``n`` -- a positive integer
+    - ``n`` -- positive integer
     - ``mu``, ``nu`` -- partitions
 
-    OUTPUT:
-
-    - a list of partitions
+    OUTPUT: list of partitions
 
     EXAMPLES::
 
@@ -303,9 +356,7 @@ def dom(mup, snu):
     - ``mup`` -- a partition conjugate to ``mu``
     - ``snu`` -- a sequence of positive integers
 
-    OUTPUT:
-
-    - a boolean value
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -355,9 +406,7 @@ def weight(rg, t=None):
     - ``rg`` -- a rigging, a list of partitions
     - ``t`` -- an optional parameter, (default: the generator from `\ZZ['t']`)
 
-    OUTPUT:
-
-    - a polynomial in the parameter ``t``
+    OUTPUT: a polynomial in the parameter `t`
 
     EXAMPLES::
 

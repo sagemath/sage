@@ -8,10 +8,11 @@ Quartic curve constructor
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.schemes.projective.projective_space import is_ProjectiveSpace, ProjectiveSpace
+from sage.schemes.projective.projective_space import ProjectiveSpace_ring, ProjectiveSpace
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 
 from .quartic_generic import QuarticCurve_generic
+
 
 def QuarticCurve(F, PP=None, check=False):
     """
@@ -21,9 +22,9 @@ def QuarticCurve(F, PP=None, check=False):
 
     - ``F`` -- a polynomial in three variables, homogeneous of degree 4
 
-    - ``PP`` -- a projective plane (default: None)
+    - ``PP`` -- a projective plane (default: ``None``)
 
-    - ``check`` -- whether to check for smoothness or not (default: False)
+    - ``check`` -- whether to check for smoothness or not (default: ``False``)
 
     EXAMPLES::
 
@@ -48,7 +49,6 @@ def QuarticCurve(F, PP=None, check=False):
         Traceback (most recent call last):
         ...
         ValueError: Argument F (=x^4 + y^4) must be a polynomial in 3 variables
-
     """
     if not isinstance(F, MPolynomial):
         raise ValueError(f"Argument F (={F}) must be a multivariate polynomial")
@@ -59,7 +59,7 @@ def QuarticCurve(F, PP=None, check=False):
         raise ValueError("Argument F (=%s) must be a homogeneous polynomial of degree 4" % F)
 
     if PP is not None:
-        if not is_ProjectiveSpace(PP) and PP.dimension == 2:
+        if not isinstance(PP, ProjectiveSpace_ring) and PP.dimension == 2:
             raise ValueError(f"Argument PP (={PP}) must be a projective plane")
     else:
         PP = ProjectiveSpace(P)

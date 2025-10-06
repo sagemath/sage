@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.rings.padics
 r"""
 Manin map
 
@@ -34,21 +34,24 @@ EXAMPLES::
     1
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.rings.continued_fraction import convergents
-from .sigma0 import Sigma0
-from .fund_domain import t00, t10, t01, t11, M2Z
+from typing import Self
+
 from sage.matrix.matrix_space import MatrixSpace
+from sage.rings.continued_fraction import convergents
 from sage.rings.integer_ring import ZZ
 from sage.structure.element import coercion_model
+
+from .fund_domain import M2Z, t00, t01, t10, t11
+from .sigma0 import Sigma0
 
 
 def unimod_matrices_to_infty(r, s):
@@ -85,7 +88,6 @@ def unimod_matrices_to_infty(r, s):
     This is Manin's continued fraction trick, which gives an expression
     `\{0,r/s\} = \{0,\infty\} + ... + \{a,b\} + ... + \{*,r/s\}`, where each `\{a,b\}` is
     the image of `\{0,\infty\}` under a matrix in `SL_2(\ZZ)`.
-
     """
     if s == 0:
         return []
@@ -140,7 +142,6 @@ def unimod_matrices_from_infty(r, s):
     This is Manin's continued fraction trick, which gives an expression
     `\{\infty,r/s\} = \{\infty,0\} + ... + \{a,b\} + ... + \{*,r/s\}`, where each
     `\{a,b\}` is the image of `\{0,\infty\}` under a matrix in `SL_2(\ZZ)`.
-
     """
     if s != 0:
         L = convergents(r / s)
@@ -161,7 +162,7 @@ def unimod_matrices_from_infty(r, s):
         return []
 
 
-class ManinMap():
+class ManinMap:
     r"""
     Map from a set of right coset representatives of `\Gamma_0(N)` in
     `SL_2(\ZZ)` to a coefficient module that satisfies the Manin
@@ -170,12 +171,13 @@ class ManinMap():
     INPUT:
 
     - ``codomain`` -- coefficient module
-    - ``manin_relations`` -- a :class:`sage.modular.pollack_stevens.fund_domain.ManinRelations` object
-    - ``defining_data`` -- a dictionary whose keys are a superset of
+    - ``manin_relations`` -- a :class:`sage.modular.pollack_stevens.fund_domain.ManinRelations`
+      object
+    - ``defining_data`` -- dictionary whose keys are a superset of
       ``manin_relations.gens()`` and a subset of ``manin_relations.reps()``,
-      and whose values are in the codomain.
+      and whose values are in the codomain
     - ``check`` -- do numerous (slow) checks and transformations to
-      ensure that the input data is perfect.
+      ensure that the input data is perfect
 
     EXAMPLES::
 
@@ -194,11 +196,11 @@ class ManinMap():
 
         - ``codomain`` -- coefficient module
         - ``manin_relations`` -- a :class:`ManinRelations` object
-        - ``defining_data`` -- a dictionary whose keys are a superset of
+        - ``defining_data`` -- dictionary whose keys are a superset of
           :meth:`manin_relations.gens()` and a subset of manin_relations.reps(),
-          and whose values are in the codomain.
+          and whose values are in the codomain
         - ``check`` -- do numerous (slow) checks and transformations to
-          ensure that the input data is perfect.
+          ensure that the input data is perfect
 
         TESTS:
 
@@ -243,7 +245,9 @@ class ManinMap():
 
     def extend_codomain(self, new_codomain, check=True):
         r"""
-        Extend the codomain of self to new_codomain. There must be a valid conversion operation from the old to the new codomain. This is most often used for extension of scalars from `\QQ` to `\QQ_p`.
+        Extend the codomain of ``self`` to ``new_codomain``. There must be a
+        valid conversion operation from the old to the new codomain. This is
+        most often used for extension of scalars from `\QQ` to `\QQ_p`.
 
         EXAMPLES::
 
@@ -268,11 +272,12 @@ class ManinMap():
 
         INPUT:
 
-        - ``B`` --  generator of Manin relations.
+        - ``B`` -- generator of Manin relations
 
         OUTPUT:
 
-        - an element in the codomain of self (e.g. a distribution), the image of ``B`` under ``self``.
+        An element in the codomain of ``self`` (e.g. a distribution), the image
+        of ``B`` under ``self``.
 
         EXAMPLES::
 
@@ -300,11 +305,12 @@ class ManinMap():
 
         INPUT:
 
-        - ``B`` -- coset representative of Manin relations.
+        - ``B`` -- coset representative of Manin relations
 
         OUTPUT:
 
-        - an element in the codomain of self (e.g. a distribution), the image of ``B`` under ``self``.
+        An element in the codomain of ``self`` (e.g. a distribution), the image
+        of ``B`` under ``self``.
 
         EXAMPLES::
 
@@ -312,13 +318,13 @@ class ManinMap():
             sage: from sage.modular.pollack_stevens.fund_domain import ManinRelations
             sage: S = Symk(0,QQ)
             sage: MR = ManinRelations(37); MR.gens()
-            [
+            (
             [1 0]  [ 0 -1]  [-1 -1]  [-1 -2]  [-2 -3]  [-3 -1]  [-1 -4]  [-4 -3]
             [0 1], [ 1  4], [ 4  3], [ 3  5], [ 5  7], [ 7  2], [ 2  7], [ 7  5],
             <BLANKLINE>
             [-2 -3]
             [ 3  4]
-            ]
+            )
 
             sage: data  = {M2Z([-2,-3,5,7]): S(0), M2Z([1,0,0,1]): S(0), M2Z([-1,-2,3,5]): S(0), M2Z([-1,-4,2,7]): S(1), M2Z([0,-1,1,4]): S(1), M2Z([-3,-1,7,2]): S(-1), M2Z([-2,-3,3,4]): S(0), M2Z([-4,-3,7,5]): S(0), M2Z([-1,-1,4,3]): S(0)}
             sage: D = OverconvergentDistributions(2, 37, 40)
@@ -342,7 +348,8 @@ class ManinMap():
 
     def compute_full_data(self):
         r"""
-        Compute the values of self on all coset reps from its values on our generating set.
+        Compute the values of ``self`` on all coset reps from its values on our
+        generating set.
 
         EXAMPLES::
 
@@ -350,13 +357,13 @@ class ManinMap():
             sage: from sage.modular.pollack_stevens.fund_domain import ManinRelations
             sage: S = Symk(0,QQ)
             sage: MR = ManinRelations(37); MR.gens()
-            [
+            (
             [1 0]  [ 0 -1]  [-1 -1]  [-1 -2]  [-2 -3]  [-3 -1]  [-1 -4]  [-4 -3]
             [0 1], [ 1  4], [ 4  3], [ 3  5], [ 5  7], [ 7  2], [ 2  7], [ 7  5],
             <BLANKLINE>
             [-2 -3]
             [ 3  4]
-            ]
+            )
 
             sage: data  = {M2Z([-2,-3,5,7]): S(0), M2Z([1,0,0,1]): S(0), M2Z([-1,-2,3,5]): S(0), M2Z([-1,-4,2,7]): S(1), M2Z([0,-1,1,4]): S(1), M2Z([-3,-1,7,2]): S(-1), M2Z([-2,-3,3,4]): S(0), M2Z([-4,-3,7,5]): S(0), M2Z([-1,-1,4,3]): S(0)}
             sage: f = ManinMap(S,MR,data)
@@ -372,16 +379,15 @@ class ManinMap():
 
     def __add__(self, right):
         r"""
-        Return sum self + right, where self and right are
+        Return sum ``self + right``, where ``self`` and ``right`` are
         assumed to have identical codomains and Manin relations.
 
         INPUT:
 
-        - ``self`` and ``right`` -- two Manin maps with the same codomain and Manin relations.
+        - ``self``, ``right`` -- two Manin maps with the same codomain and
+          Manin relations
 
-        OUTPUT:
-
-        - the sum of ``self`` and ``right`` -- a Manin map
+        OUTPUT: the sum of ``self`` and ``right`` -- a Manin map
 
         EXAMPLES::
 
@@ -409,16 +415,15 @@ class ManinMap():
 
     def __sub__(self, right):
         """
-        Return difference self - right, where self and right are
+        Return difference ``self`` - right, where ``self`` and ``right`` are
         assumed to have identical codomains and Manin relations.
 
         INPUT:
 
-        - ``self`` and ``right`` -- two Manin maps with the same codomain and Manin relations.
+        - ``self``, ``right`` -- two Manin maps with the same codomain and
+          Manin relations
 
-        OUTPUT:
-
-        - the difference of ``self`` and ``right`` -- a Manin map
+        OUTPUT: the difference of ``self`` and ``right`` -- a Manin map
 
         EXAMPLES::
 
@@ -446,17 +451,15 @@ class ManinMap():
 
     def __mul__(self, right):
         """
-        Return scalar multiplication self * right, where right is in the
-        base ring of the codomain.
+        Return scalar multiplication ``self * right``, where ``right`` is in
+        the base ring of the codomain.
 
         INPUT:
 
-        - ``self`` -- a Manin map.
-        - ``right`` -- an element of the base ring of the codomain of self.
+        - ``self`` -- a Manin map
+        - ``right`` -- an element of the base ring of the codomain of self
 
-        OUTPUT:
-
-        - the sum ``self`` and ``right`` -- a Manin map
+        OUTPUT: the sum ``self`` and ``right`` -- a Manin map
 
         EXAMPLES::
 
@@ -483,7 +486,7 @@ class ManinMap():
 
     def __repr__(self):
         """
-        Return string representation of self.
+        Return string representation of ``self``.
 
         EXAMPLES::
 
@@ -499,7 +502,7 @@ class ManinMap():
 
     def _eval_sl2(self, A):
         r"""
-        Return the value of self on the unimodular divisor corresponding to `A`.
+        Return the value of ``self`` on the unimodular divisor corresponding to `A`.
 
         Note that `A` must be in `SL_2(Z)` for this to work.
 
@@ -509,7 +512,8 @@ class ManinMap():
 
         OUTPUT:
 
-        The value of self on the divisor corresponding to `A` -- i.e. on the divisor `\{A(0)\} - \{A(\infty)\}`.
+        The value of ``self`` on the divisor corresponding to `A` -- i.e. on
+        the divisor `\{A(0)\} - \{A(\infty)\}`.
 
         EXAMPLES::
 
@@ -531,15 +535,14 @@ class ManinMap():
 
     def __call__(self, A):
         """
-        Evaluate self at A.
+        Evaluate ``self`` at A.
 
         INPUT:
 
         - ``A`` -- a `2 \times 2` matrix
 
-        OUTPUT:
-
-        The value of self on the divisor corresponding to ``A`` -- an element of the codomain of self.
+        OUTPUT: the value of ``self`` on the divisor corresponding to ``A`` --
+        an element of the codomain of self
 
         EXAMPLES::
 
@@ -592,9 +595,11 @@ class ManinMap():
 
         INPUT:
 
-        - ``f`` -- anything that can be called with elements of the coefficient module
-        - ``codomain`` -- (default: None) the codomain of the return map
-        - ``to_moments`` -- (default: False) if True, will apply ``f`` to each of the moments instead
+        - ``f`` -- anything that can be called with elements of the coefficient
+          module
+        - ``codomain`` -- (default: ``None``) the codomain of the return map
+        - ``to_moments`` -- boolean (default: ``False``); if ``True``, will
+          apply ``f`` to each of the moments instead
 
         EXAMPLES::
 
@@ -654,12 +659,10 @@ class ManinMap():
 
         INPUT:
 
-        - ``gamma`` - `2 \times 2` integer matrix of nonzero determinant, with a
+        - ``gamma`` -- `2 \times 2` integer matrix of nonzero determinant, with a
           well-defined action on the coefficient module
 
-        OUTPUT:
-
-        - the image of self under the action of `\gamma` -- a Manin map.
+        OUTPUT: the image of ``self`` under the action of `\gamma` -- a Manin map
 
         EXAMPLES::
 
@@ -690,10 +693,10 @@ class ManinMap():
             D[ky] = self(gamma * ky) * gamma
         return self.__class__(self._codomain, self._manin, D, check=False)
 
-    def normalize(self):
+    def normalize(self) -> Self:
         r"""
-        Normalize every value of self -- e.g., reduces each value's
-        `j`-th moment modulo `p^{N-j}`
+        Normalize every value of ``self`` -- e.g., reduce each value's
+        `j`-th moment modulo `p^{N-j}`.
 
         EXAMPLES::
 
@@ -719,7 +722,7 @@ class ManinMap():
 
         INPUT:
 
-        - ``M`` -- an integer, the new precision.
+        - ``M`` -- integer; the new precision
 
         EXAMPLES::
 
@@ -770,13 +773,9 @@ class ManinMap():
 
         - ``ell`` -- a prime
 
-        - ``algorithm`` -- a string, either 'prep' (default) or
-          'naive'
+        - ``algorithm`` -- string; either ``'prep'`` (default) or ``'naive'``
 
-        OUTPUT:
-
-        - The image of this ManinMap under the Hecke operator
-          `T_{\ell}`
+        OUTPUT: the image of this ManinMap under the Hecke operator `T_{\ell}`
 
         EXAMPLES::
 
@@ -817,20 +816,18 @@ class ManinMap():
 
     def p_stabilize(self, p, alpha, V):
         r"""
-        Return the `p`-stabilization of self to level `N*p` on which
+        Return the `p`-stabilization of ``self`` to level `N*p` on which
         `U_p` acts by `\alpha`.
 
         INPUT:
 
-        - ``p`` -- a prime.
+        - ``p`` -- a prime
 
-        - ``alpha`` -- a `U_p`-eigenvalue.
+        - ``alpha`` -- a `U_p`-eigenvalue
 
-        - ``V`` -- a space of modular symbols.
+        - ``V`` -- a space of modular symbols
 
-        OUTPUT:
-
-        - The image of this ManinMap under the Hecke operator `T_{\ell}`
+        OUTPUT: the image of this ManinMap under the Hecke operator `T_{\ell}`
 
         EXAMPLES::
 
@@ -852,5 +849,4 @@ class ManinMap():
             # construction functor in order to scale by something
             # outside the base ring.
             D[g] = W(self._eval_sl2(g) - (self(pmat * g) * pmat).scale(scalar))
-        ans = self.__class__(W, manin, D, check=False)
-        return ans
+        return self.__class__(W, manin, D, check=False)

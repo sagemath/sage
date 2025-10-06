@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Examples of semigroups in cython
 """
@@ -127,7 +128,7 @@ cdef class LeftZeroSemigroupElement(Element):
 
 class LeftZeroSemigroup(LeftZeroSemigroupPython):
     r"""
-    An example of semigroup
+    An example of semigroup.
 
     This class illustrates a minimal implementation of a semi-group
     where the element class is an extension type, and still gets code

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.flint
+# sage.doctest: needs sage.libs.flint
 r"""
 Integer factorization using FLINT
 
@@ -20,10 +20,11 @@ from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.flint.fmpz cimport fmpz_t, fmpz_init, fmpz_set_mpz
 from sage.libs.flint.fmpz_factor cimport *
+from sage.libs.flint.fmpz_factor_sage cimport *
 from sage.rings.integer cimport Integer
 
 
-def factor_using_flint(Integer n):
+def factor_using_flint(Integer n, unsigned bits=0):
     r"""
     Factor the nonzero integer ``n`` using FLINT.
 
@@ -33,7 +34,8 @@ def factor_using_flint(Integer n):
 
     INPUT:
 
-    - ``n`` -- a nonzero sage Integer; the number to factor.
+    - ``n`` -- a nonzero sage Integer; the number to factor
+    - ``bits`` -- if nonzero, passed to ``fmpz_factor_smooth``
 
     OUTPUT:
 
@@ -88,7 +90,10 @@ def factor_using_flint(Integer n):
     fmpz_factor_init(factors)
 
     sig_on()
-    fmpz_factor(factors, p)
+    if bits:
+        fmpz_factor_smooth(factors, p, bits, 0)  # TODO make proved=* customizable
+    else:
+        fmpz_factor(factors, p)
     sig_off()
 
     pairs = fmpz_factor_to_pairlist(factors)

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari
 r"""
 Quotients of the Bruhat-Tits tree
 
@@ -42,15 +42,17 @@ from copy import copy
 from collections import deque
 
 from sage.arith.misc import gcd, xgcd, kronecker_symbol, fundamental_discriminant
+from sage.interfaces.magma import magma
 from sage.matrix.constructor import Matrix
 from sage.matrix.matrix_space import MatrixSpace
+from sage.matrix.special import column_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.verbose import verbose
-from sage.modular.arithgroup.all import Gamma0
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
 from sage.modular.arithgroup.congroup_gammaH import GammaH_constructor
 from sage.modular.dirichlet import DirichletGroup
 from sage.quadratic_forms.quadratic_form import QuadraticForm
@@ -66,7 +68,7 @@ lazy_import("sage.plot.colors", "rainbow")
 
 lazy_import('sage.algebras.quatalg.quaternion_algebra', 'QuaternionAlgebra')
 lazy_import('sage.graphs.graph', 'Graph')
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 lazy_import('sage.plot.colors', 'rainbow')
 lazy_import('sage.rings.number_field.number_field', 'NumberField')
 lazy_import('sage.rings.padics.factory', ['Qp', 'Zp'])
@@ -113,12 +115,12 @@ class DoubleCosetReduction(SageObject):
 
     INPUT:
 
-    - ``Y`` -  BruhatTitsQuotient object in which to work
-    - ``x`` -  Something coercible into a matrix in `GL_2(\ZZ)`. In
-       principle we should allow elements in `GL_2(\QQ_p)`, but it is
-       enough to work with integral entries
-    - ``extrapow`` - gets added to the power attribute, and it is
-       used for the Hecke action.
+    - ``Y`` -- BruhatTitsQuotient object in which to work
+    - ``x`` -- Something coercible into a matrix in `GL_2(\ZZ)`. In
+      principle we should allow elements in `GL_2(\QQ_p)`, but it is
+      enough to work with integral entries
+    - ``extrapow`` -- gets added to the power attribute, and it is
+      used for the Hecke action
 
     EXAMPLES::
 
@@ -181,7 +183,7 @@ class DoubleCosetReduction(SageObject):
 
     def _repr_(self):
         r"""
-        Return the representation of self as a string.
+        Return the representation of ``self`` as a string.
 
         EXAMPLES::
 
@@ -196,7 +198,7 @@ class DoubleCosetReduction(SageObject):
 
     def __eq__(self, other):
         """
-        Return self == other
+        Return ``self == other``.
 
         TESTS::
 
@@ -223,13 +225,11 @@ class DoubleCosetReduction(SageObject):
             return False
         if self._t_prec != other._t_prec:
             return False
-        if self._igamma_prec != other._igamma_prec:
-            return False
-        return True
+        return self._igamma_prec == other._igamma_prec
 
     def __ne__(self, other):
         """
-        Return self != other
+        Return ``self != other``.
 
         TESTS::
 
@@ -290,7 +290,7 @@ class DoubleCosetReduction(SageObject):
 
         INPUT:
 
-        - ``embedding`` - an integer, or a function (default:
+        - ``embedding`` -- integer; or a function (default:
           none). If ``embedding`` is None, then the image of
           ``self.gamma`` under the local splitting associated to
           ``self.Y`` is used. If ``embedding`` is an integer, then
@@ -339,7 +339,7 @@ class DoubleCosetReduction(SageObject):
 
         INPUT:
 
-        - ``prec`` - a `p`-adic precision that t will be computed
+        - ``prec`` -- a `p`-adic precision that t will be computed
           to. Defaults to the default working precision of self.
 
         OUTPUT:
@@ -384,7 +384,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
     INPUT:
 
-    - ``p`` - a prime number. The corresponding tree is then `p+1` regular
+    - ``p`` -- a prime number. The corresponding tree is then `p+1` regular
 
     EXAMPLES:
 
@@ -421,7 +421,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
     """
     def __init__(self, p):
         """
-        Initialize a BruhatTitsTree object for a given prime `p`
+        Initialize a BruhatTitsTree object for a given prime `p`.
 
         EXAMPLES::
 
@@ -442,14 +442,14 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``e`` - a 2x2 matrix with integer entries
+        - ``e`` -- a 2x2 matrix with integer entries
 
-        - ``normalized`` - boolean (default: false). If True
-            then the input matrix is assumed to be normalized.
+        - ``normalized`` -- boolean (default: ``False``); if True
+            then the input matrix is assumed to be normalized
 
         OUTPUT:
 
-        - ``e`` - 2x2 integer matrix representing the target of
+        - ``e`` -- 2x2 integer matrix representing the target of
           the input edge
 
         EXAMPLES::
@@ -475,14 +475,12 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``e`` - a 2x2 matrix with integer entries
+        - ``e`` -- a 2x2 matrix with integer entries
 
-        - ``normalized`` - boolean (default: false). If True
+        - ``normalized`` -- boolean (default: ``False``); if True
           then the input matrix M is assumed to be normalized
 
-        OUTPUT:
-
-        - ``e`` - A 2x2 integer matrix
+        OUTPUT: ``e`` -- 2x2 integer matrix
 
         EXAMPLES::
 
@@ -508,11 +506,9 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``M`` - a 2x2 integer matrix
+        - ``M`` -- 2x2 integer matrix
 
-        OUTPUT:
-
-        - ``newM`` - a 2x2 integer matrix
+        OUTPUT: ``newM`` -- 2x2 integer matrix
 
         EXAMPLES::
 
@@ -527,20 +523,18 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         def lift(a):
             """
-            Naively approximate a p-adic integer by a positive integer.
+            Naively approximate a `p`-adic integer by a positive integer.
 
             INPUT:
 
-            - ``a`` - a p-adic integer.
+            - ``a`` -- `p`-adic integer
 
-            OUTPUT:
-
-            An integer.
+            OUTPUT: integer
 
             EXAMPLES::
 
-                sage: x = Zp(3)(-17)
-                sage: lift(x)
+                sage: x = Zp(3)(-17)                                                    # needs sage.rings.padics
+                sage: lift(x)                                                           # needs sage.rings.padics
                 3486784384
             """
             try:
@@ -592,14 +586,13 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``M`` - 2x2 integer matrix
+        - ``M`` -- 2x2 integer matrix
 
-        OUTPUT:
-
-        - a 2x2 integer matrix
+        OUTPUT: a 2x2 integer matrix
 
         EXAMPLES::
 
+            sage: # needs sage.rings.padics
             sage: from sage.modular.btquotients.btquotient import BruhatTitsTree
             sage: p = 5
             sage: T = BruhatTitsTree(p)
@@ -654,9 +647,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
         leaving the origin vertex corresponding to the homothety class
         of `\ZZ_p^2`. These are cached.
 
-        OUTPUT:
-
-        -  A list of size `p+1` of 2x2 integer matrices
+        OUTPUT: list of size `p+1` of 2x2 integer matrices
 
         EXAMPLES::
 
@@ -683,18 +674,18 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``v1`` - 2x2 integer matrix
+        - ``v1`` -- 2x2 integer matrix
 
-        - ``v2`` - 2x2 integer matrix
+        - ``v2`` -- 2x2 integer matrix
 
-        - ``normalized`` - boolean (default: False), whether the
-          vertices are normalized.
+        - ``normalized`` -- boolean (default: ``False``); whether the
+          vertices are normalized
 
         OUTPUT:
 
         - 2x2 integer matrix, representing the edge from ``v1`` to
           ``v2``.  If ``v1`` and ``v2`` are not at distance `1`, raise
-          a ``ValueError``.
+          a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -730,15 +721,13 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
     def leaving_edges(self, M):
         r"""
-        Return edges leaving a vertex
+        Return edges leaving a vertex.
 
         INPUT:
 
-        - ``M`` - 2x2 integer matrix
+        - ``M`` -- 2x2 integer matrix
 
-        OUTPUT:
-
-        List of size `p+1` of 2x2 integer matrices
+        OUTPUT: list of size `p+1` of 2x2 integer matrices
 
         EXAMPLES::
 
@@ -760,11 +749,9 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``e`` - 2x2 integer matrix
+        - ``e`` -- 2x2 integer matrix
 
-        OUTPUT:
-
-        2x2 integer matrix
+        OUTPUT: 2x2 integer matrix
 
         EXAMPLES::
 
@@ -789,11 +776,9 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``v`` - 2x2 integer matrix
+        - ``v`` -- 2x2 integer matrix
 
-        OUTPUT:
-
-        A list of size `p+1` of 2x2 integer matrices
+        OUTPUT: list of size `p+1` of 2x2 integer matrices
 
         EXAMPLES::
 
@@ -810,7 +795,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
     def subdivide(self, edgelist, level):
         r"""
-        (Ordered) edges of self may be regarded as open balls in
+        (Ordered) edges of ``self`` may be regarded as open balls in
         `P^1(\QQ_p)`.  Given a list of edges, this function return a list
         of edges corresponding to the level-th subdivision of the
         corresponding opens.  That is, each open ball of the input is
@@ -818,13 +803,11 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``edgelist`` - a list of edges
+        - ``edgelist`` -- list of edges
 
-        - ``level`` - an integer
+        - ``level`` -- integer
 
-        OUTPUT:
-
-        A list of 2x2 integer matrices
+        OUTPUT: list of 2x2 integer matrices
 
         EXAMPLES::
 
@@ -886,10 +869,10 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``v`` - a 2x2 matrix representing a vertex ``boundary``
+        - ``v`` -- a 2x2 matrix representing a vertex ``boundary``
 
-        - a list of matrices (default: None). If omitted, finds the
-          geodesic from ``v`` to the central vertex.
+        - a list of matrices (default: ``None``); if omitted, finds the
+          geodesic from ``v`` to the central vertex
 
         OUTPUT:
 
@@ -952,15 +935,14 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``z`` - an element of an unramified extension of `\QQ_p`
-          that is not contained in `\QQ_p`.
+        - ``z`` -- an element of an unramified extension of `\QQ_p`
+          that is not contained in `\QQ_p`
 
-        OUTPUT:
-
-        A 2x2 integer matrix representing a vertex of ``self``.
+        OUTPUT: a 2x2 integer matrix representing a vertex of ``self``
 
         EXAMPLES::
 
+            sage: # needs sage.rings.padics
             sage: from sage.modular.btquotients.btquotient import BruhatTitsTree
             sage: T = BruhatTitsTree(5)
             sage: K.<a> = Qq(5^2,20)
@@ -976,9 +958,9 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
         affinoid. That is, it is a `p`-adic unit and its reduction
         modulo `p` is not in `\GF{p}`::
 
-            sage: gz = (v[0,0]*z+v[0,1])/(v[1,0]*z+v[1,1]); gz
+            sage: gz = (v[0,0]*z+v[0,1])/(v[1,0]*z+v[1,1]); gz                          # needs sage.rings.padics
             (a + 1) + O(5^19)
-            sage: gz.valuation() == 0
+            sage: gz.valuation() == 0                                                   # needs sage.rings.padics
             True
         """
         # Assume z belongs to some extension of QQp.
@@ -988,9 +970,8 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
         a = 0
         pn = 1
         val = z.valuation()
-        L = []
-        for ii in range(val):
-            L.append(0)
+        L = [0 for _ in range(val)]
+
         L.extend(z.expansion())
         for n in range(len(L)):
             if L[n] != 0:
@@ -1003,15 +984,15 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
     def find_geodesic(self, v1, v2, normalized=True):
         r"""
-        This function computes the geodesic between two vertices
+        This function computes the geodesic between two vertices.
 
         INPUT:
 
-        - ``v1`` - 2x2 integer matrix representing a vertex
+        - ``v1`` -- 2x2 integer matrix representing a vertex
 
-        - ``v2`` - 2x2 integer matrix representing a vertex
+        - ``v2`` -- 2x2 integer matrix representing a vertex
 
-        - ``normalized`` - boolean (default: True)
+        - ``normalized`` -- boolean (default: ``True``)
 
         OUTPUT:
 
@@ -1045,7 +1026,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
     def find_covering(self, z1, z2, level=0):
         r"""
         Compute a covering of `P^1(\QQ_p)` adapted to a certain
-        geodesic in self.
+        geodesic in ``self``.
 
         More precisely, the `p`-adic upper half plane points ``z1``
         and ``z2`` reduce to vertices `v_1`, `v_2`.
@@ -1054,14 +1035,13 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``z1``, ``z2`` - unramified algebraic points of h_p
+        - ``z1``, ``z2`` -- unramified algebraic points of h_p
 
-        OUTPUT:
-
-        a list of 2x2 integer matrices representing edges of self
+        OUTPUT: list of 2x2 integer matrices representing edges of self
 
         EXAMPLES::
 
+            sage: # needs sage.rings.padics
             sage: from sage.modular.btquotients.btquotient import BruhatTitsTree
             sage: p = 3
             sage: K.<a> = Qq(p^2)
@@ -1108,24 +1088,24 @@ class Vertex(SageObject):
 
     INPUT:
 
-    - ``p`` - a prime integer.
+    - ``p`` -- prime integer
 
-    - ``label`` - An integer which uniquely identifies this vertex.
+    - ``label`` -- integer which uniquely identifies this vertex
 
-    - ``rep`` - A 2x2 matrix in reduced form representing this
-      vertex.
+    - ``rep`` -- a 2x2 matrix in reduced form representing this
+      vertex
 
-    - ``leaving_edges`` - (default: empty list) A list of edges
-      leaving this vertex.
+    - ``leaving_edges`` -- (default: empty list) list of edges
+      leaving this vertex
 
-    - ``entering_edges`` - (default: empty list) A list of edges
-      entering this vertex.
+    - ``entering_edges`` -- (default: empty list) list of edges
+      entering this vertex
 
-    - ``determinant`` - (default: None) The determinant of ``rep``,
-      if known.
+    - ``determinant`` -- (default: ``None``) the determinant of ``rep``,
+      if known
 
-    - ``valuation`` - (default: None) The valuation of the
-      determinant of ``rep``, if known.
+    - ``valuation`` -- (default: ``None``) the valuation of the
+      determinant of ``rep``, if known
 
     EXAMPLES::
 
@@ -1175,7 +1155,7 @@ class Vertex(SageObject):
 
     def _repr_(self):
         r"""
-        Return the representation of self as a string.
+        Return the representation of ``self`` as a string.
 
         EXAMPLES::
 
@@ -1187,7 +1167,7 @@ class Vertex(SageObject):
 
     def __eq__(self, other):
         """
-        Return self == other
+        Return ``self == other``.
 
         TESTS::
 
@@ -1206,13 +1186,11 @@ class Vertex(SageObject):
             return False
         if self.valuation != other.valuation:
             return False
-        if self.parity != other.parity:
-            return False
-        return True
+        return self.parity == other.parity
 
     def __ne__(self, other):
         """
-        Return self != other
+        Return ``self != other``.
 
         TESTS::
 
@@ -1232,27 +1210,27 @@ class Edge(SageObject):
 
     INPUT:
 
-    - ``p`` - a prime integer.
+    - ``p`` -- prime integer
 
-    - ``label`` - An integer which uniquely identifies this edge.
+    - ``label`` -- integer which uniquely identifies this edge
 
-    - ``rep`` - A 2x2 matrix in reduced form representing this edge.
+    - ``rep`` -- a 2x2 matrix in reduced form representing this edge
 
-    - ``origin`` - The origin vertex of ``self``.
+    - ``origin`` -- the origin vertex of ``self``
 
-    - ``target`` - The target vertex of ``self``.
+    - ``target`` -- the target vertex of ``self``
 
-    - ``links`` - (Default: empty list) A list of elements of
+    - ``links`` -- (default: empty list) list of elements of
       `\Gamma` which identify different edges in the Bruhat-Tits tree
-      which are equivalent to ``self``.
+      which are equivalent to ``self``
 
-    - ``opposite`` - (Default: None) The edge opposite to ``self``
+    - ``opposite`` -- (default: ``None``) the edge opposite to ``self``
 
-    - ``determinant`` - (Default: None) The determinant of ``rep``,
-      if known.
+    - ``determinant`` -- (default: ``None``) the determinant of ``rep``,
+      if known
 
-    - ``valuation`` - (Default: None) The valuation of the
-      determinant of ``rep``, if known.
+    - ``valuation`` -- (default: ``None``) the valuation of the
+      determinant of ``rep``, if known
 
     EXAMPLES::
 
@@ -1304,7 +1282,7 @@ class Edge(SageObject):
 
     def _repr_(self):
         r"""
-        Return the representation of self as a string.
+        Return the representation of ``self`` as a string.
 
         EXAMPLES::
 
@@ -1316,7 +1294,7 @@ class Edge(SageObject):
 
     def __eq__(self, other):
         """
-        Return self == other
+        Return ``self == other``.
 
         TESTS::
 
@@ -1345,13 +1323,11 @@ class Edge(SageObject):
             return False
         if self.valuation != other.valuation:
             return False
-        if self.parity != other.parity:
-            return False
-        return True
+        return self.parity == other.parity
 
     def __ne__(self, other):
         """
-        Return self != other
+        Return ``self != other``.
 
         TESTS::
 
@@ -1376,27 +1352,27 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
     INPUT:
 
-    - ``p`` - a prime number
+    - ``p`` -- a prime number
 
-    - ``Nminus`` - squarefree integer divisible by an odd number of
+    - ``Nminus`` -- squarefree integer divisible by an odd number of
       distinct primes and relatively prime to p. This is the
       discriminant of the definite quaternion algebra that one is
       quotienting by.
 
-    - ``Nplus`` - an integer coprime to pNminus (Default: 1). This is
+    - ``Nplus`` -- integer coprime to pNminus (default: 1). This is
       the tame level. It need not be squarefree! If Nplus is not 1
       then the user currently needs magma installed due to sage's
       inability to compute well with nonmaximal Eichler orders in
       rational (definite) quaternion algebras.
 
-    - ``character`` - a Dirichlet character (Default: None) of modulus
-      `pN^-N^+`.
+    - ``character`` -- a Dirichlet character (default: ``None``) of modulus
+      `pN^-N^+`
 
-    - ``use_magma`` - boolean (default: False). If True, uses Magma
-      for quaternion arithmetic.
+    - ``use_magma`` -- boolean (default: ``False``); if True, uses Magma
+      for quaternion arithmetic
 
-    - ``magma_session`` -- (default: None). If specified, the Magma session
-      to use.
+    - ``magma_session`` -- (default: ``None``) if specified, the Magma session
+      to use
 
     EXAMPLES:
 
@@ -1549,7 +1525,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
     def _repr_(self):
         r"""
-        Return the representation of self as a string.
+        Return the representation of ``self`` as a string.
 
         EXAMPLES::
 
@@ -1560,7 +1536,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
     def __eq__(self, other):
         r"""
-        Compare self with other.
+        Compare ``self`` with ``other``.
 
         EXAMPLES::
 
@@ -1575,13 +1551,11 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             return False
         if self._Nplus != other._Nplus:
             return False
-        if self._character != other._character:
-            return False
-        return True
+        return self._character == other._character
 
     def __ne__(self, other):
         r"""
-        Compare self with other.
+        Compare ``self`` with ``other``.
 
         EXAMPLES::
 
@@ -1608,9 +1582,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         This function returns the vertices of the quotient viewed as
         a dict.
 
-        OUTPUT:
-
-        A python dict with the vertices of the quotient.
+        OUTPUT: a Python dict with the vertices of the quotient
 
         EXAMPLES::
 
@@ -1630,10 +1602,6 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Return a list of the vertices of the quotient.
 
-        OUTPUT:
-
-        - A list with the vertices of the quotient.
-
         EXAMPLES::
 
             sage: X = BruhatTitsQuotient(37,3)
@@ -1651,16 +1619,11 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Return a list of ``Edge`` which represent a fundamental
         domain inside the Bruhat-Tits tree for the quotient.
 
-        OUTPUT:
-
-        A list of ``Edge``.
-
         EXAMPLES::
 
             sage: X = BruhatTitsQuotient(37,3)
             sage: len(X.get_edge_list())
             8
-
         """
         try:
             return self._edge_list
@@ -1674,10 +1637,6 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         domain inside the Bruhat-Tits tree for the quotient,
         together with a list of the opposite edges. This is used
         to work with automorphic forms.
-
-        OUTPUT:
-
-        A list of ``Edge``.
 
         EXAMPLES::
 
@@ -1748,7 +1707,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Compute certain invariants from the level data of the quotient
         which allow one to compute the genus of the curve.
 
-        Details to be found in Theorem 9 of [FM2014]_.
+        Details to be found in Theorem 3.8 of [FM2014]_.
 
         EXAMPLES::
 
@@ -1791,9 +1750,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
            e_k =\prod_{\ell\mid pN^-}\left(1-\left(\frac{-3}{\ell}\right)\right)\prod_{\ell \| N^+}\left(1+\left(\frac{-3}{\ell}\right)\right)\prod_{\ell^2\mid N^+} \nu_\ell(3)
 
-        OUTPUT:
-
-        an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1813,9 +1770,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
            e_k =\prod_{\ell\mid pN^-}\left(1-\left(\frac{-k}{\ell}\right)\right)\prod_{\ell \| N^+}\left(1+\left(\frac{-k}{\ell}\right)\right)\prod_{\ell^2\mid N^+} \nu_\ell(k)
 
-        OUTPUT:
-
-        an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1829,11 +1784,9 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
     @lazy_attribute
     def mu(self):
         """
-        Compute the mu invariant of self.
+        Compute the mu invariant of ``self``.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1869,9 +1822,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         the formula relating the genus `g` with the number of vertices `V`
         and that of unordered edges `E/2`: `E = 2(g + V - 1)`.
 
-        OUTPUT:
-
-        - An integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1886,9 +1837,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Compute the genus of the quotient from the data of the
         quotient graph. This should agree with self.genus().
 
-        OUTPUT:
-
-        An integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1912,15 +1861,13 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - level: Integer (default: None) a level. By default, use that
+        - ``level`` -- integer (default: ``None``); a level. By default, use that
           of ``self``.
 
-        - Nplus: Integer (default: None) a conductor. By default, use
+        - ``Nplus`` -- integer (default: ``None``); a conductor. By default, use
           that of ``self``.
 
-        OUTPUT:
-
-        An integer equal to the genus
+        OUTPUT: integer equal to the genus
 
         EXAMPLES::
 
@@ -1939,9 +1886,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Compute the dimension of the space of harmonic cocycles
         of weight `k` on ``self``.
 
-        OUTPUT:
-
-        An integer equal to the dimension
+        OUTPUT: integer equal to the dimension
 
         EXAMPLES::
 
@@ -2012,9 +1957,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Return the tame level `N^+`.
 
-        OUTPUT:
-
-        An integer equal to `N^+`.
+        OUTPUT: integer equal to `N^+`
 
         EXAMPLES::
 
@@ -2064,9 +2007,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Return the prime one is working with.
 
-        OUTPUT:
-
-        An integer equal to the fixed prime `p`
+        OUTPUT: integer equal to the fixed prime `p`
 
         EXAMPLES::
 
@@ -2080,9 +2021,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Return the quotient graph (and compute it if needed).
 
-        OUTPUT:
-
-        A graph representing the quotient of the Bruhat-Tits tree.
+        OUTPUT: a graph representing the quotient of the Bruhat-Tits tree
 
         EXAMPLES::
 
@@ -2100,9 +2039,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Return the fundamental domain (and computes it if needed).
 
-        OUTPUT:
-
-        A fundamental domain for the action of `\Gamma`.
+        OUTPUT: a fundamental domain for the action of `\Gamma`
 
         EXAMPLES::
 
@@ -2120,14 +2057,12 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Plot the quotient graph.
 
-        OUTPUT:
-
-        A plot of the quotient graph
+        OUTPUT: a plot of the quotient graph
 
         EXAMPLES::
 
             sage: X = BruhatTitsQuotient(7,23)
-            sage: X.plot()
+            sage: X.plot()                                                              # needs sage.plot
             Graphics object consisting of 17 graphics primitives
         """
         S = self.get_graph()
@@ -2153,14 +2088,12 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Plot a fundamental domain.
 
-        OUTPUT:
-
-        A plot of the fundamental domain.
+        OUTPUT: a plot of the fundamental domain
 
         EXAMPLES::
 
             sage: X = BruhatTitsQuotient(7,23)
-            sage: X.plot_fundom()
+            sage: X.plot_fundom()                                                       # needs sage.plot
             Graphics object consisting of 88 graphics primitives
         """
         S = self.get_fundom_graph()
@@ -2180,7 +2113,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         my_args.update(kwargs)
         return S.plot(*args, **my_args)
 
-    def is_admissible(self, D):
+    def is_admissible(self, D) -> bool:
         r"""
         Test whether the imaginary quadratic field of
         discriminant `D` embeds in the quaternion algebra. It
@@ -2189,12 +2122,10 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``D`` - an integer whose squarefree part will define the
+        - ``D`` -- integer whose squarefree part will define the
           quadratic field
 
-        OUTPUT:
-
-        A boolean describing whether the quadratic field is admissible
+        OUTPUT: boolean describing whether the quadratic field is admissible
 
         EXAMPLES::
 
@@ -2206,10 +2137,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         for f in self.level().factor():
             if kronecker_symbol(disc, f[0]) != -1:
                 return False
-        for f in self._Nplus.factor():
-            if kronecker_symbol(disc, f[0]) != 1:
-                return False
-        return True
+        return all(kronecker_symbol(disc, f[0]) == 1 for f in self._Nplus.factor())
 
     def _local_splitting_map(self, prec):
         r"""
@@ -2218,11 +2146,9 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``prec`` -- Integer. The precision of the splitting.
+        - ``prec`` -- integer; the precision of the splitting
 
-        OUTPUT:
-
-        A function giving the splitting.
+        OUTPUT: a function giving the splitting
 
         EXAMPLES::
 
@@ -2247,11 +2173,9 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``prec`` - Integer. The precision of the splitting.
+        - ``prec`` -- integer; the precision of the splitting
 
-        OUTPUT:
-
-        - Matrices `I`, `J`, `K` giving the splitting.
+        OUTPUT: matrices `I`, `J`, `K` giving the splitting
 
         EXAMPLES::
 
@@ -2302,7 +2226,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``prec`` - Integer. The precision of the embedding matrix.
+        - ``prec`` -- integer; the precision of the embedding matrix
 
         EXAMPLES:
 
@@ -2339,9 +2263,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         else:
             phi = self._local_splitting_map(prec)
             B = self.get_eichler_order_basis()
-            return Matrix(Zmod(self._p ** prec), 4, 4,
-                          [phi(B[kk])[ii, jj] for ii in range(2)
-                           for jj in range(2) for kk in range(4)])
+            return column_matrix(Zmod(self._p ** prec), 4, 4, [phi(b).list() for b in B])
 
     @cached_method
     def get_extra_embedding_matrices(self):
@@ -2374,7 +2296,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             [1 0 2 0]
             [0 0 2 0]
             [0 0 0 0]
-            [1 0 2 2]
+            [1 2 2 0]
             ]
         """
         if not self._use_magma or len(self._extra_level) == 0:
@@ -2452,18 +2374,16 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``exact`` boolean (Default: ``False``). If ``True``, return an
+        - ``exact`` -- boolean (default: ``False``); if ``True``, return an
           embedding into a matrix algebra with coefficients in a
           number field. Otherwise, embed into matrices over `p`-adic
           numbers.
 
-        - ``prec`` Integer (Default: ``None``). If specified, return the
+        - ``prec`` -- integer (default: ``None``); if specified, return the
           matrix with precision ``prec``. Otherwise, return the
           cached matrix (with the current working precision).
 
-        OUTPUT:
-
-        - A 4x4 matrix representing the embedding.
+        OUTPUT: a 4x4 matrix representing the embedding
 
         EXAMPLES::
 
@@ -2509,12 +2429,10 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                 verbose('self._prec = %s, prec = %s' % (self._prec, prec))
                 Iotamod = self._compute_embedding_matrix(prec)
                 self._Iotainv_lift = Iotamod.inverse().lift()
-                self._Iota = Matrix(self._R, 4, 4, [Iotamod[ii, jj]
-                                                    for ii in range(4)
-                                                    for jj in range(4)])
+                self._Iota = Matrix(self._R, Iotamod)
 
             self._prec = prec
-            self._Iotainv = self._Mat_44([self._Iotainv_lift[ii, jj] % self._pN for ii in range(4) for jj in range(4)])
+            self._Iotainv = self._Mat_44(self._Iotainv_lift.apply_map(lambda x: x % self._pN))
             return self._Iota
 
     def embed_quaternion(self, g, exact=False, prec=None):
@@ -2523,11 +2441,11 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``g`` a row vector of size `4` whose entries represent a
-          quaternion in our basis.
+        - ``g`` -- a column vector of size `4` whose entries represent a
+          quaternion in our basis
 
-        - ``exact`` boolean (default: False) - If True, tries to embed
-          ``g`` into a matrix algebra over a number field. If False,
+        - ``exact`` -- boolean (default: ``False``); if True, tries to embed
+          ``g`` into a matrix algebra over a number field. If ``False``,
           the target is the matrix algebra over `\QQ_p`.
 
         OUTPUT:
@@ -2680,9 +2598,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Return the underlying quaternion algebra.
 
-        OUTPUT:
-
-        The underlying definite quaternion algebra
+        OUTPUT: the underlying definite quaternion algebra
 
         EXAMPLES::
 
@@ -2701,9 +2617,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Return the underlying Eichler order of level `N^+`.
 
-        OUTPUT:
-
-        An Eichler order.
+        OUTPUT: an Eichler order
 
         EXAMPLES::
 
@@ -2732,9 +2646,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Return the underlying maximal order containing the
         Eichler order.
 
-        OUTPUT:
-
-        A maximal order.
+        OUTPUT: a maximal order
 
         EXAMPLES::
 
@@ -2775,7 +2687,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
             sage: X = BruhatTitsQuotient(5,11,use_magma=True) # optional - magma
             sage: X.get_splitting_field() # optional - magma
-            Number Field in a with defining polynomial X1^2 + 11
+            Number Field in a with defining polynomial x^2 + 11
         """
         if not self._use_magma:
             raise NotImplementedError('Sage does not know yet how to work with the kind of orders that you are trying to use. Try installing Magma first and set it up so that Sage can use it.')
@@ -2790,9 +2702,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Return a basis for the global Eichler order.
 
-        OUTPUT:
-
-        Basis for the underlying Eichler order of level Nplus.
+        OUTPUT: basis for the underlying Eichler order of level Nplus
 
         EXAMPLES::
 
@@ -2813,9 +2723,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Eichler order of level ``Nplus``. Required for finding elements in
         the arithmetic subgroup Gamma.
 
-        OUTPUT:
-
-        The norm form of the underlying Eichler order
+        OUTPUT: the norm form of the underlying Eichler order
 
         EXAMPLES::
 
@@ -2839,9 +2747,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         This function returns the matrix of the quadratic form of
         the underlying Eichler order in the fixed basis.
 
-        OUTPUT:
-
-        A 4x4 integral matrix describing the norm form.
+        OUTPUT: a 4x4 integral matrix describing the norm form
 
         EXAMPLES::
 
@@ -2927,7 +2833,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``q`` - integer dividing p*Nminus*Nplus
+        - ``q`` -- integer dividing p*Nminus*Nplus
 
         EXAMPLES::
 
@@ -2973,7 +2879,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``l`` - a prime l.
+        - ``l`` -- a prime l
 
         EXAMPLES::
 
@@ -2995,7 +2901,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         while not V:
             V = [g for g in self._find_elements_in_order(l * p ** nninc)
                  if prod([self._character(ZZ((v * Matrix(ZZ, 4, 1, g))[0, 0]))
-                          / self._character((p ** (nninc // 2)))
+                          / self._character(p ** (nninc // 2))
                           for v in self.get_extra_embedding_matrices()]) == 1]
             if not V:
                 nninc += 2
@@ -3008,31 +2914,29 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         letters = self.get_nontorsion_generators()
         letters += [g for g in self._find_elements_in_order(1)
                     if prod([self._character(ZZ((v * Matrix(ZZ, 4, 1, g))[0, 0]))
-                             / self._character((p ** (nninc // 2)))
+                             / self._character(p ** (nninc // 2))
                              for v in self.get_extra_embedding_matrices()]) == 1]
-        n_iters = 0
 
         def enumerate_words(v, n=None):
             if n is None:
                 n = []
             while True:
                 add_new = True
-                for jj in range(len(n)):
-                    n[jj] += 1
-                    if n[jj] != len(v):
+                for j in range(len(n)):
+                    n[j] += 1
+                    if n[j] != len(v):
                         add_new = False
                         break
-                    else:
-                        n[jj] = 0
+                    n[j] = 0
                 if add_new:
                     n.append(0)
                 yield [v[x] for x in n]
 
-        for wd in enumerate_words([self._conv(x) for x in letters]):
+        conv_list = [self._conv(x) for x in letters]
+        for n_iters, wd in enumerate(enumerate_words(conv_list)):
             if len(T) == l + 1:
                 break
             v = prod(wd)
-            n_iters += 1
             v0 = v * alpha0
             vinv = self.get_quaternion_algebra()(v0 ** (-1))
             new = True
@@ -3067,15 +2971,15 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``v0`` -- a 2x2 matrix in `\ZZ_p` representing a
-            vertex in the Bruhat-Tits tree.
+            vertex in the Bruhat-Tits tree
 
-        - ``V`` -- list (Default: None) If a list of Vertex is given,
+        - ``V`` -- list (default: ``None``); if a list of Vertex is given,
             restrict the search to the vertices in ``V``. Otherwise
             use all the vertices in a fundamental domain.
 
-        - ``valuation`` -- an integer (Default: None): The valuation
+        - ``valuation`` -- integer (default: ``None``); the valuation
             of the determinant of ``v0``, if known (otherwise it is
-            calculated).
+            calculated)
 
         OUTPUT:
 
@@ -3115,13 +3019,13 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``e0`` -- a 2x2 matrix in `\ZZ_p` representing an
-            edge in the Bruhat-Tits tree.
+            edge in the Bruhat-Tits tree
 
-        - ``E`` -- list (Default: None) If a list of Edge is given,
+        - ``E`` -- list (default: ``None``); if a list of Edge is given,
             restrict the search to the vertices in ``E``. Otherwise
             use all the edges in a fundamental domain.
 
-        - ``valuation`` -- an integer (Default: None): The valuation
+        - ``valuation`` -- integer (default: ``None``); the valuation
             of the determinant of ``e0``, if known (otherwise it is
             calculated).
 
@@ -3165,11 +3069,9 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``v1`` - a 2x2 matrix representing a normalized vertex.
+        - ``v1`` -- a 2x2 matrix representing a normalized vertex
 
-        OUTPUT:
-
-        A ``Vertex`` equivalent to ``v1``, in the fundamental domain.
+        OUTPUT: a ``Vertex`` equivalent to ``v1``, in the fundamental domain
 
         EXAMPLES::
 
@@ -3180,8 +3082,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             Vertex of Bruhat-Tits tree for p = 3
         """
         try:
-            tmp = self._cached_paths[v1]
-            return tmp
+            return self._cached_paths[v1]
         except KeyError:
             pass
         chain, v = self._BT.find_path(v1, self.get_vertex_dict())
@@ -3204,18 +3105,16 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``v1``, ``v2`` - 2x2 matrices. They represent either a pair
-          of normalized vertices or a pair of normalized edges.
+        - ``v1``, ``v2`` -- 2x2 matrices; they represent either a pair
+          of normalized vertices or a pair of normalized edges
 
-        - ``as_edges`` - boolean. If True, the inputs will be
-          considered as edges instead of vertices.
+        - ``as_edges`` -- boolean; if ``True``, the inputs will be
+          considered as edges instead of vertices
 
-        - ``m`` - integer - The valuation of the determinant of
-          ``v1``*``v2``.
+        - ``m`` -- integer; the valuation of the determinant of
+          ``v1``*``v2``
 
-        OUTPUT:
-
-        A 4x4 integer matrix whose columns encode a lattice and a 4x4 integer matrix encoding a quadratic form.
+        OUTPUT: a 4x4 integer matrix whose columns encode a lattice and a 4x4 integer matrix encoding a quadratic form
 
         EXAMPLES::
 
@@ -3237,8 +3136,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         v1adj = v1.adjugate()
         R = self._Mat_44
         vecM = [v2 * X[ii] * v1adj for ii in range(4)]
-        M = self._Iotainv * R([[vecM[ii][jj, kk] for ii in range(4)]
-                               for jj in range(2) for kk in range(2)])
+        M = self._Iotainv * column_matrix(4, 4, [m.list() for m in vecM])
         M = M.augment(R(self._pN)).transpose()
         E = M.echelon_form().submatrix(0, 0, 4, 4)
         Et = E.transpose()
@@ -3250,9 +3148,9 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``e`` - A 2x2 matrix representing an edge or vertex
+        - ``e`` -- a 2x2 matrix representing an edge or vertex
 
-        - ``as_edge`` - Boolean (Default = True). Determines whether
+        - ``as_edge`` -- boolean (default: ``True``); determines whether
           ``e`` is treated as an edge or vertex
 
         OUTPUT:
@@ -3299,18 +3197,19 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``vec`` - 4x1 integer matrix. It encodes the quaternion to
-          test in the basis defined by the columns of E.
+        - ``vec`` -- 4x1 integer matrix; it encodes the quaternion to
+          test in the basis defined by the columns of E
 
-        - ``twom`` - An integer.
+        - ``twom`` -- integer
 
-        - ``E`` - 4x4 integer matrix. Its columns should form a
-          basis for an order in the quaternion algebra.
+        - ``E`` -- 4x4 integer matrix; its columns should form a
+          basis for an order in the quaternion algebra
 
-        - ``A`` - 4x4 integer matrix. It encodes the quadratic form on the order defined by the columns of E.
+        - ``A`` -- 4x4 integer matrix; it encodes the quadratic form on the
+          order defined by the columns of E
 
-        - ``flag`` - integer (Default = 0). Passed to Pari for finding
-          minimal elements in a positive definite lattice.
+        - ``flag`` -- integer (default: 0); Passed to Pari for finding
+          minimal elements in a positive definite lattice
 
         OUTPUT:
 
@@ -3365,22 +3264,22 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``v1``, ``v2`` - two 2x2 integral matrices representing
+        - ``v1``, ``v2`` -- two 2x2 integral matrices representing
           either vertices or edges
 
-        - ``as_edges`` - boolean (Default: False). Tells whether the
-          matrices should be interpreted as edges (if true), or as
-          vertices (if false)
+        - ``as_edges`` -- boolean (default: ``False``); whether the
+          matrices should be interpreted as edges (if ``True``), or as
+          vertices (if ``False``)
 
-        - ``twom`` - integer (Default: None) If specified,
+        - ``twom`` -- integer (default: ``None``); if specified,
           indicates the valuation of the determinant of ``v1``
           `\times` ``v2``.
 
         OUTPUT:
 
-          If the objects are equivalent, returns an element of
-          the arithmetic group Gamma that takes ``v1`` to ``v2``.
-          Otherwise returns False.
+        If the objects are equivalent, returns an element of
+        the arithmetic group `\Gamma` that takes ``v1`` to ``v2``.
+        Otherwise returns ``False``.
 
         EXAMPLES::
 
@@ -3465,7 +3364,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             OBasis = Omagma.Basis()
             self._A = QuaternionAlgebra((g[0] ** 2).sage(), (g[1] ** 2).sage())
             i, j, k = self._A.gens()
-            v = [1] + self._A.gens()
+            v = [1] + list(self._A.gens())
             self._B = [self._A(sum([OBasis[tt + 1][rr + 1].sage() * v[rr]
                                     for rr in range(4)])) for tt in range(4)]
             self._O = self._A.quaternion_order(self._B)
@@ -3475,7 +3374,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             # Note that we can't work with non-maximal orders in sage
             assert self._Nplus == 1
             self._A = QuaternionAlgebra(self._Nminus)
-            v = [1] + self._A.gens()
+            v = [1] + list(self._A.gens())
             self._O = self._A.maximal_order()
             self._OMax = self._O
             OBasis = self._O.basis()
@@ -3512,9 +3411,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Return a quaternion having coordinates in the fixed
         basis for the order given by ``v``.
 
-        OUTPUT:
-
-        A quaternion.
+        OUTPUT: a quaternion
 
         EXAMPLES::
 
@@ -3539,13 +3436,13 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``norm`` - integer. The required reduced norm.
+        - ``norm`` -- integer; the required reduced norm
 
-        - ``trace`` - integer (Default: None). If specified, returns
-          elements only reduced trace ``trace``.
+        - ``trace`` -- integer (default: ``None``); if specified, returns
+          elements only reduced trace ``trace``
 
-        - ``primitive`` boolean (Default: False). If True, return only
-          elements that cannot be divided by `p`.
+        - ``primitive`` -- boolean (default: ``False``); if ``True``, return only
+          elements that cannot be divided by `p`
 
         EXAMPLES::
 
@@ -3570,7 +3467,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``check`` - Boolean (Default = True).
+        - ``check`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
@@ -3620,8 +3517,8 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         v0 = Vertex(p, num_verts, self._Mat_22([1, 0, 0, 1]),
                     determinant=1, valuation=0)
         V = deque([v0])
-        S = Graph(0, multiedges=True, weighted=True)
-        Sfun = Graph(0)
+        S = Graph(0, multiedges=True, weighted=True)  # noqa:F821
+        Sfun = Graph(0)  # noqa:F821
         edge_list = []
         vertex_list = [v0]
         num_edges = 0
@@ -3707,7 +3604,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                                    'from expected.')
 
         self._nontorsion_generators = nontorsion_generators
-        self._boundary = dict([(vv.rep, vv) for vv in vertex_list])
+        self._boundary = {vv.rep: vv for vv in vertex_list}
         self._edge_list = edge_list
         self._vertex_list = vertex_list
         self._num_edges = num_edges
@@ -3726,12 +3623,10 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         - ``E`` -- an elliptic curve over the rational numbers
 
-        - ``prec`` -- (default: None) If specified, the harmonic cocycle will take values
+        - ``prec`` -- (default: ``None``) if specified, the harmonic cocycle will take values
           in `\QQ_p` with precision ``prec``. Otherwise it will take values in `\ZZ`.
 
-        OUTPUT:
-
-        A harmonic cocycle attached via modularity to the given elliptic curve.
+        OUTPUT: a harmonic cocycle attached via modularity to the given elliptic curve
 
         EXAMPLES::
 
@@ -3781,16 +3676,16 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``k`` - integer - The weight. It must be even.
+        - ``k`` -- integer; the weight. It must be even.
 
-        - ``prec`` - integer (default: None). If specified, the
+        - ``prec`` -- integer (default: ``None``); if specified, the
           precision for the coefficient module
 
-        - ``basis_matrix`` - a matrix (default: None).
+        - ``basis_matrix`` -- a matrix (default: ``None``)
 
-        - ``base_field`` - a ring (default: None)
+        - ``base_field`` -- a ring (default: ``None``)
 
-        OUTPUT: A space of harmonic cocycles
+        OUTPUT: a space of harmonic cocycles
 
         EXAMPLES::
 
@@ -3810,23 +3705,23 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``U`` -- A distributions module or an integer. If ``U`` is a
+        - ``U`` -- a distributions module or an integer. If ``U`` is a
           distributions module then this creates the relevant space of
           automorphic forms. If ``U`` is an integer then the coefficients
           are the (`U-2`)nd power of the symmetric representation of
           `GL_2(\QQ_p)`.
 
-        - ``prec`` -- A precision (default : None). If not None should
-          be a positive integer.
+        - ``prec`` -- a precision (default: ``None``). if not ``None`` should
+          be a positive integer
 
-        - ``t`` -- (default : None). The number of additional moments to store. If None, determine
-          it automatically from ``prec``, ``U`` and the ``overconvergent`` flag.
+        - ``t`` -- (default: ``None``) the number of additional moments to store. If ``None``, determine
+          it automatically from ``prec``, ``U`` and the ``overconvergent`` flag
 
-        - ``R`` -- (default : None). If specified, coefficient field of the automorphic forms.
+        - ``R`` -- (default: ``None``) if specified, coefficient field of the automorphic forms.
           If not specified it defaults to the base ring of the distributions ``U``, or to `\QQ_p`
           with the working precision ``prec``.
 
-        - ``overconvergent`` -- Boolean (default = False). If True, will construct overconvergent
+        - ``overconvergent`` -- boolean (default: ``False``); if ``True``, will construct overconvergent
           `p`-adic automorphic forms. Otherwise it constructs the finite dimensional space of
           `p`-adic automorphic forms which is isomorphic to the space of harmonic cocycles.
 

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap
 r"""
 Series constructor for modular forms for Hecke triangle groups
 
@@ -85,14 +86,12 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``group``      -- A Hecke triangle group (default: HeckeTriangleGroup(3)).
+        - ``group`` -- a Hecke triangle group (default: HeckeTriangleGroup(3))
 
-        - ``prec``       -- An integer (default: 10), the default precision used
-                            in calculations in the LaurentSeriesRing or PowerSeriesRing.
+        - ``prec`` -- integer (default: 10), the default precision used in
+          calculations in the LaurentSeriesRing or PowerSeriesRing
 
-        OUTPUT:
-
-        The constructor for Fourier expansion with the specified settings.
+        OUTPUT: the constructor for Fourier expansion with the specified settings
 
         EXAMPLES::
 
@@ -114,10 +113,9 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
             sage: MFSeriesConstructor(group=infinity)
             Power series constructor for Hecke modular forms for n=+Infinity with (basic series) precision 10
         """
-
         self._group = group
         self._prec = prec
-        self._series_ring = PowerSeriesRing(QQ,'q',default_prec=self._prec)
+        self._series_ring = PowerSeriesRing(QQ, 'q', default_prec=self._prec)
 
     def _repr_(self):
         r"""
@@ -146,7 +144,6 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
             sage: MFSeriesConstructor(group=4).group()
             Hecke triangle group for n = 4
         """
-
         return self._group
 
     def hecke_n(self):
@@ -159,7 +156,6 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
             sage: MFSeriesConstructor(group=4).hecke_n()
             4
         """
-
         return self._group.n()
 
     def prec(self):
@@ -174,7 +170,6 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
             sage: MFSeriesConstructor(group=5, prec=20).prec()
             20
         """
-
         return self._prec
 
     @cached_method
@@ -192,9 +187,9 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
 
         .. TODO::
 
-          The functions that are used in this implementation are
-          products of hypergeometric series with other, elementary,
-          functions.  Implement them and clean up this representation.
+            The functions that are used in this implementation are
+            products of hypergeometric series with other, elementary,
+            functions.  Implement them and clean up this representation.
 
         EXAMPLES::
 
@@ -209,39 +204,35 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
             sage: MFSeriesConstructor(group=infinity, prec=3).J_inv_ZZ()
             q^-1 + 3/8 + 69/1024*q + O(q^2)
         """
+        def F1(a, b):
+            return self._series_ring(
+                [ZZ.zero()]
+                + [rising_factorial(a, k) * rising_factorial(b, k) / (ZZ(k).factorial())**2
+                   * sum(ZZ.one()/(a+j) + ZZ.one()/(b+j) - ZZ(2)/ZZ(1+j)
+                         for j in range(k))
+                   for k in range(1, self._prec + 1)
+                   ],
+                ZZ(self._prec + 1)
+            )
 
-        F1 = lambda a,b:   self._series_ring(
-                       [ ZZ(0) ]
-                       + [
-                           rising_factorial(a,k) * rising_factorial(b,k) / (ZZ(k).factorial())**2
-                           * sum(ZZ(1)/(a+j) + ZZ(1)/(b+j) - ZZ(2)/ZZ(1+j)
-                                  for j in range(ZZ(0),ZZ(k))
-                             )
-                           for k in range(ZZ(1), ZZ(self._prec+1))
-                       ],
-                       ZZ(self._prec+1)
-                   )
+        def F(a, b, c):
+            return self._series_ring(
+                [rising_factorial(a, k) * rising_factorial(b, k) / rising_factorial(c, k) / ZZ(k).factorial()
+                 for k in range(self._prec + 1)],
+                ZZ(self._prec + 1)
+            )
 
-        F = lambda a,b,c: self._series_ring(
-                       [
-                         rising_factorial(a,k) * rising_factorial(b,k) / rising_factorial(c,k) / ZZ(k).factorial()
-                         for k in range(ZZ(0), ZZ(self._prec+1))
-                       ],
-                       ZZ(self._prec+1)
-                   )
         a = self._group.alpha()
         b = self._group.beta()
-        Phi = F1(a,b) / F(a,b,ZZ(1))
+        Phi = F1(a, b) / F(a, b, ZZ.one())
         q = self._series_ring.gen()
 
         # the current implementation of power series reversion is slow
         # J_inv_ZZ = ZZ(1) / ((q*Phi.exp()).reverse())
 
-        temp_f = (q*Phi.exp()).polynomial()
-        new_f = temp_f.revert_series(temp_f.degree()+1)
-        J_inv_ZZ = ZZ(1) / (new_f + O(q**(temp_f.degree()+1)))
-
-        return J_inv_ZZ
+        temp_f = (q * Phi.exp()).polynomial()
+        new_f = temp_f.revert_series(temp_f.degree() + 1)
+        return ZZ.one() / (new_f + O(q**(temp_f.degree() + 1)))
 
     @cached_method
     def f_rho_ZZ(self):
@@ -370,15 +361,15 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
             q^-1 - 1/8 - 59/1024*q + O(q^2)
         """
         n = self.hecke_n()
-        # Note that G_inv is not a weakly holomorphic form (because of the behavior at -1)
+        # Note that G_inv is not a weakly holomorphic form (because of
+        # the behavior at -1)
         if n == infinity:
             q = self._series_ring.gen()
             temp_expr = (self.J_inv_ZZ()/self.f_inf_ZZ()*q**2).power_series()
             return 1/q*self.f_i_ZZ()*(temp_expr.log()/2).exp()
-        elif (ZZ(2).divides(n)):
+        if (ZZ(2).divides(n)):
             return self.f_i_ZZ()*(self.f_rho_ZZ()**(ZZ(n/ZZ(2))))/self.f_inf_ZZ()
-        else:
-            raise ValueError("G_inv doesn't exist for n={}.".format(self.hecke_n()))
+        raise ValueError("G_inv doesn't exist for n={}.".format(self.hecke_n()))
 
     @cached_method
     def E4_ZZ(self):
@@ -404,10 +395,8 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
             sage: MFSeriesConstructor(group=infinity, prec=3).E4_ZZ()
             1 + 1/4*q + 7/256*q^2 + O(q^3)
         """
-
         q = self._series_ring.gen()
-        E4_ZZ = ((-q*self.J_inv_ZZ().derivative())**2/(self.J_inv_ZZ()*(self.J_inv_ZZ()-1))).power_series()
-        return E4_ZZ
+        return ((-q*self.J_inv_ZZ().derivative())**2 / (self.J_inv_ZZ()*(self.J_inv_ZZ()-1))).power_series()
 
     @cached_method
     def E6_ZZ(self):
@@ -433,10 +422,8 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
             sage: MFSeriesConstructor(group=infinity, prec=3).E6_ZZ()
             1 - 1/8*q - 31/512*q^2 + O(q^3)
         """
-
         q = self._series_ring.gen()
-        E6_ZZ = ((-q*self.J_inv_ZZ().derivative())**3/(self.J_inv_ZZ()**2*(self.J_inv_ZZ()-1))).power_series()
-        return E6_ZZ
+        return ((-q*self.J_inv_ZZ().derivative())**3 / (self.J_inv_ZZ()**2*(self.J_inv_ZZ()-1))).power_series()
 
     @cached_method
     def Delta_ZZ(self):
@@ -489,10 +476,8 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
             sage: MFSeriesConstructor(group=infinity, prec=3).E2_ZZ()
             1 - 1/8*q - 1/512*q^2 + O(q^3)
         """
-
         q = self._series_ring.gen()
-        E2_ZZ = (q*self.f_inf_ZZ().derivative())/self.f_inf_ZZ()
-        return E2_ZZ
+        return (q * self.f_inf_ZZ().derivative()) / self.f_inf_ZZ()
 
     @cached_method
     def EisensteinSeries_ZZ(self, k):
@@ -508,7 +493,7 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``k``  -- A non-negative even integer, namely the weight.
+        - ``k`` -- a nonnegative even integer, namely the weight
 
         EXAMPLES::
 
@@ -551,7 +536,7 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
                 raise TypeError(None)
             k = 2*ZZ(k/2)
         except TypeError:
-            raise TypeError("k={} has to be a non-negative even integer!".format(k))
+            raise TypeError("k={} has to be a nonnegative even integer!".format(k))
 
         if (not self.group().is_arithmetic() or self.group().n() == infinity):
             # Exceptional cases should be called manually (see in FormsRing_abstract)

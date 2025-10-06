@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Generic dual bases symmetric functions
 """
@@ -16,16 +17,35 @@ Generic dual bases symmetric functions
 #
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from sage.categories.morphism import SetMorphism
-from sage.categories.homset import Hom
-from sage.matrix.constructor import matrix
 import sage.combinat.partition
 import sage.data_structures.blas_dict as blas
+from sage.categories.homset import Hom
+from sage.categories.modules_with_basis import ModulesWithBasis
+from sage.categories.morphism import SetMorphism
+from sage.matrix.constructor import matrix
+
 from . import classical
 
 
 class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical):
-    def __init__(self, dual_basis, scalar, scalar_name="", basis_name=None, prefix=None):
+    @staticmethod
+    def __classcall__(cls, dual_basis, scalar, scalar_name='', basis_name=None, prefix=None):
+        """
+        Normalize the arguments.
+
+        TESTS::
+
+            sage: w = SymmetricFunctions(QQ).w()
+            sage: B1 = w.dual_basis()
+            sage: B2 = w.dual_basis(prefix='d_w')
+            sage: B1 is B2
+            True
+        """
+        if prefix is None:
+            prefix = 'd_'+dual_basis.prefix()
+        return super().__classcall__(cls, dual_basis, scalar, scalar_name, basis_name, prefix)
+
+    def __init__(self, dual_basis, scalar, scalar_name, basis_name, prefix):
         r"""
         Generic dual basis of a basis of symmetric functions.
 
@@ -33,7 +53,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
         - ``dual_basis`` -- a basis of the ring of symmetric functions
 
-        - ``scalar`` -- A function `z` on partitions which determines the
+        - ``scalar`` -- a function `z` on partitions which determines the
           scalar product on the power sum basis by
           `\langle p_{\mu}, p_{\mu} \rangle = z(\mu)`. (Independently on the
           function chosen, the power sum basis will always be orthogonal; the
@@ -71,9 +91,9 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         EXAMPLES::
 
             sage: e = SymmetricFunctions(QQ).e()
-            sage: f = e.dual_basis(prefix = "m", basis_name="Forgotten symmetric functions"); f
+            sage: f = e.dual_basis(prefix='m', basis_name="Forgotten symmetric functions"); f
             Symmetric Functions over Rational Field in the Forgotten symmetric functions basis
-            sage: TestSuite(f).run(elements = [f[1,1]+2*f[2], f[1]+3*f[1,1]])
+            sage: TestSuite(f).run(elements=[f[1,1]+2*f[2], f[1]+3*f[1,1]])
             sage: TestSuite(f).run() # long time (11s on sage.math, 2011)
 
         This class defines canonical coercions between ``self`` and
@@ -110,14 +130,13 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
         TESTS:
 
-        Regression test for :trac:`12489`. This issue improving
+        Regression test for :issue:`12489`. This issue improving
         equality test revealed that the conversion back from the dual
         basis did not strip cancelled terms from the dictionary::
 
             sage: y = e[1, 1, 1, 1] - 2*e[2, 1, 1] + e[2, 2]
             sage: sorted(f.element_class(f, dual = y))
             [([1, 1, 1, 1], 6), ([2, 1, 1], 2), ([2, 2], 1)]
-
         """
         self._dual_basis = dual_basis
         self._scalar = scalar
@@ -144,17 +163,28 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         self._sym = sage.combinat.sf.sf.SymmetricFunctions(scalar_target)
         self._p = self._sym.power()
 
-        if prefix is None:
-            prefix = 'd_'+dual_basis.prefix()
-
         classical.SymmetricFunctionAlgebra_classical.__init__(self, self._sym,
                                                               basis_name=basis_name,
                                                               prefix=prefix)
 
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
-        category = sage.categories.all.ModulesWithBasis(self.base_ring())
+        category = ModulesWithBasis(self.base_ring())
         self.register_coercion(SetMorphism(Hom(self._dual_basis, self, category), self._dual_to_self))
         self._dual_basis.register_coercion(SetMorphism(Hom(self, self._dual_basis, category), self._self_to_dual))
+
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: w = SymmetricFunctions(ZZ).witt()
+            sage: w.dual_basis().construction()
+            (SymmetricFunctionsFunctor[dual Witt], Integer Ring)
+        """
+        return DualBasisFunctor(self), self.base_ring()
 
     def _dual_to_self(self, x):
         """
@@ -164,9 +194,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
         - ``x`` -- an element in the dual basis of ``self``
 
-        OUTPUT:
-
-        - returns ``x`` expressed in the basis ``self``
+        OUTPUT: ``x`` expressed in the basis ``self``
 
         EXAMPLES::
 
@@ -202,9 +230,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
         - ``x`` -- an element of ``self``
 
-        OUTPUT:
-
-        - returns ``x`` expressed in the dual basis
+        OUTPUT: ``x`` expressed in the dual basis
 
         EXAMPLES::
 
@@ -228,7 +254,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
     def _dual_basis_default(self):
         """
-        Returns the default value for ``self.dual_basis()``
+        Return the default value for ``self.dual_basis()``.
 
         This returns the basis ``self`` has been built from by
         duality.
@@ -258,13 +284,29 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         """
         return self._dual_basis
 
+    def basis_name(self):
+        r"""
+        Return the name of the basis of ``self``.
+
+        This is used for output and, for the classical bases of
+        symmetric functions, to connect this basis with :ref:`Symmetrica <spkg_symmetrica>`.
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: f = Sym.f()
+            sage: f.basis_name()
+            'forgotten'
+        """
+        if self._basis_name is None:
+            return "dual " + self._dual_basis.basis_name()
+        return self._basis_name
+
     def _repr_(self):
         """
         Representation of ``self``.
 
-        OUTPUT:
-
-        - a string description of ``self``
+        OUTPUT: string description of ``self``
 
         EXAMPLES::
 
@@ -275,12 +317,11 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             sage: h = m.dual_basis(scalar=zee, scalar_name='Hall scalar product'); h #indirect doctest
             Dual basis to Symmetric Functions over Rational Field in the monomial basis with respect to the Hall scalar product
         """
-        if hasattr(self, "_basis"):
+        if self._basis_name is not None:
             return super()._repr_()
         if self._scalar_name:
             return "Dual basis to %s" % self._dual_basis + " with respect to the " + self._scalar_name
-        else:
-            return "Dual basis to %s" % self._dual_basis
+        return "Dual basis to %s" % self._dual_basis
 
     def _precompute(self, n):
         """
@@ -353,16 +394,14 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
             # For every partition p of size n, compute self(p) in
             # terms of the dual basis using the scalar product.
-            i = 0
-            for s_part in partitions_n:
+            for i, s_part in enumerate(partitions_n):
                 # s_part corresponds to self(dual_basis(part))
                 # s_mcs  corresponds to self(dual_basis(part))._monomial_coefficients
                 s_mcs = {}
 
                 # We need to compute the scalar product of d[s_part] and
                 # all of the d[p_part]'s
-                j = 0
-                for p_part in partitions_n:
+                for j, p_part in enumerate(partitions_n):
                     # Compute the scalar product of d[s_part] and d[p_part]
                     sp = zero
                     for ds_part in d[s_part]:
@@ -372,10 +411,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
                         s_mcs[p_part] = sp
                         transition_matrix_n[i,j] = sp
 
-                    j += 1
-
                 self._to_self_cache[ s_part ] = s_mcs
-                i += 1
 
         else:
             # Now the other case. Note that just being in this case doesn't
@@ -441,7 +477,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
     def transition_matrix(self, basis, n):
         r"""
-        Returns the transition matrix between the `n^{th}` homogeneous components
+        Return the transition matrix between the `n`-th homogeneous components
         of ``self`` and ``basis``.
 
         INPUT:
@@ -501,9 +537,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
         - ``left``, ``right`` -- elements of ``self``
 
-        OUTPUT:
-
-        - the product of ``left`` and ``right`` in the basis ``self``
+        OUTPUT: the product of ``left`` and ``right`` in the basis ``self``
 
         EXAMPLES::
 
@@ -534,7 +568,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         - ``dictionary`` -- an internal dictionary for the
           monomials and coefficients of ``self``
 
-        - ``dual`` -- self as an element of the dual basis.
+        - ``dual`` -- self as an element of the dual basis
         """
 
         def __init__(self, A, dictionary=None, dual=None):
@@ -668,9 +702,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             :meth:`omega_involution` is a synonym for the :meth:`omega`
             method.
 
-            OUTPUT:
-
-            - the result of applying omega to ``self``
+            OUTPUT: the result of applying omega to ``self``
 
             EXAMPLES::
 
@@ -696,9 +728,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
             - ``x`` -- element of the symmetric functions
 
-            OUTPUT:
-
-            - the scalar product between ``x`` and ``self``
+            OUTPUT: the scalar product between ``x`` and ``self``
 
             EXAMPLES::
 
@@ -719,9 +749,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
             - ``x`` -- element of the same dual basis as ``self``
 
-            OUTPUT:
-
-            - the Hall-Littlewood scalar product between ``x`` and ``self``
+            OUTPUT: the Hall-Littlewood scalar product between ``x`` and ``self``
 
             EXAMPLES::
 
@@ -742,9 +770,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
             - ``y`` -- element of the same dual basis as ``self``
 
-            OUTPUT:
-
-            - the sum of ``self`` and ``y``
+            OUTPUT: the sum of ``self`` and ``y``
 
             EXAMPLES::
 
@@ -784,9 +810,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
             - ``y`` -- element of the same dual basis as ``self``
 
-            OUTPUT:
-
-            - the difference of ``self`` and ``y``
+            OUTPUT: the difference of ``self`` and ``y``
 
             EXAMPLES::
 
@@ -809,9 +833,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
             - ``y`` -- element of base field
 
-            OUTPUT:
-
-            - the element ``self`` divided by ``y``
+            OUTPUT: the element ``self`` divided by ``y``
 
             EXAMPLES::
 
@@ -829,9 +851,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             Invert ``self`` (only possible if ``self`` is a scalar
             multiple of `1` and we are working over a field).
 
-            OUTPUT:
-
-            - multiplicative inverse of ``self`` if possible
+            OUTPUT: multiplicative inverse of ``self`` if possible
 
             EXAMPLES::
 
@@ -858,7 +878,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
             - ``alphabet`` -- (default: ``'x'``) a variable for the expansion
 
@@ -889,6 +909,83 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             return self._dual.expand(n, alphabet)
 
 
+from sage.combinat.sf.sfa import SymmetricFunctionsFunctor
+
+
+class DualBasisFunctor(SymmetricFunctionsFunctor):
+    """
+    A constructor for algebras of symmetric functions constructed by
+    duality.
+
+    EXAMPLES::
+
+        sage: w = SymmetricFunctions(ZZ).witt()
+        sage: w.dual_basis().construction()
+        (SymmetricFunctionsFunctor[dual Witt], Integer Ring)
+    """
+    def __init__(self, basis):
+        r"""
+        Initialize the functor.
+
+        INPUT:
+
+        - ``basis`` -- the basis of the symmetric function algebra
+
+        TESTS::
+
+            sage: w = SymmetricFunctions(ZZ).witt()
+            sage: F = w.dual_basis().construction()[0]
+            sage: TestSuite(F).run()
+        """
+        self._dual_basis = basis._dual_basis
+        self._basis_name = basis._basis_name
+        self._scalar = basis._scalar
+        self._scalar_name = basis._scalar_name
+        self._prefix = basis._prefix
+        super().__init__(basis, self._basis_name)
+
+    def _apply_functor(self, R):
+        """
+        Apply the functor to an object of ``self``'s domain.
+
+        EXAMPLES::
+
+            sage: m = SymmetricFunctions(ZZ).monomial()
+            sage: zee = sage.combinat.sf.sfa.zee
+            sage: h = m.dual_basis(scalar=zee)
+            sage: F, R = h.construction()  # indirect doctest
+            sage: F(QQ)
+            Dual basis to Symmetric Functions over Rational Field in the monomial basis
+
+            sage: b = m.dual_basis(scalar=zee).dual_basis(scalar=lambda x: 1)
+            sage: F, R = b.construction()  # indirect doctest
+            sage: F(QQ)
+            Dual basis to Dual basis to Symmetric Functions over Rational Field in the monomial basis
+        """
+        dual_basis = self._dual_basis.change_ring(R)
+        return self._basis(dual_basis, self._scalar, self._scalar_name,
+                           self._basis_name, self._prefix)
+
+    def _repr_(self):
+        """
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: w = SymmetricFunctions(ZZ).witt()
+            sage: w.dual_basis().construction()
+            (SymmetricFunctionsFunctor[dual Witt], Integer Ring)
+        """
+        if self._basis_name is None:
+            name = "dual " + self._dual_basis.basis_name()
+        else:
+            name = self._basis_name
+        return "SymmetricFunctionsFunctor[" + name + "]"
+
+
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.sf.dual', 'SymmetricFunctionAlgebraElement_dual',  SymmetricFunctionAlgebra_dual.Element)
+
+register_unpickle_override('sage.combinat.sf.dual',
+                           'SymmetricFunctionAlgebraElement_dual',
+                           SymmetricFunctionAlgebra_dual.Element)

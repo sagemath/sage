@@ -77,7 +77,7 @@ is equivalent to specifying our element modulo
 
 The *absolute precision* of a finite approximation
 `\bar{x} \in \ZZ/p^n\ZZ` to `x \in \ZZ_p`
-is the non-negative integer `n`.
+is the nonnegative integer `n`.
 
 In the second representation, we can achieve the same thing by
 truncating a series
@@ -309,7 +309,7 @@ In addition to requiring a prime power as the first argument,
 ``Zq`` also requires a name for the generator of the residue field.
 One can specify this name as follows::
 
-    sage: R.<c> = Zq(125, prec = 20); R
+    sage: R.<c> = Zq(125, prec=20); R                                                   # needs sage.libs.ntl
     5-adic Unramified Extension Ring in c defined by x^3 + 3*x + 3
 
 Eisenstein Extensions
@@ -328,11 +328,11 @@ Then define the polynomial yielding the desired extension.::
 Finally, use the ``ext`` function on the ground field to create the
 desired extension.::
 
-    sage: W.<w> = R.ext(f)
+    sage: W.<w> = R.ext(f)                                                              # needs sage.libs.ntl sage.rings.padics
 
 You can do arithmetic in this Eisenstein extension::
 
-    sage: (1 + w)^7
+    sage: (1 + w)^7                                                                     # needs sage.libs.ntl sage.rings.padics
     1 + 2*w + w^2 + w^5 + 3*w^6 + 3*w^7 + 3*w^8 + w^9 + O(w^10)
 
 Note that the precision cap increased by a factor of 5, since the

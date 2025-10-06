@@ -23,7 +23,7 @@ two vertices `u,v\in G` is the Hamming distance between their labels.
 **Tokens** and their **action**: in the terminology of
 [Epp2008]_, a token represents a transition of the form:
 
-    *switch the k-th bit of the binary string from 0 to 1*
+    *switch the `k`-th bit of the binary string from 0 to 1*
 
 Each token can be matched with a 'reversed' token that performs the
 same switch in the opposite direction. Alternatively, a token can be
@@ -104,9 +104,9 @@ def breadth_first_level_search(G, start):
 
     INPUT:
 
-    - ``G`` -- a graph to perform the search on.
+    - ``G`` -- a graph to perform the search on
 
-    - ``start`` -- vertex or list of vertices from which to start the traversal.
+    - ``start`` -- vertex or list of vertices from which to start the traversal
 
     EXAMPLES::
 
@@ -120,7 +120,6 @@ def breadth_first_level_search(G, start):
           '20': set(),
           '21': set(),
           '22': set()}]
-
     """
     neighbors = G.neighbor_out_iterator
     visited = set()
@@ -150,9 +149,9 @@ def depth_first_traversal(G, start):
 
     INPUT:
 
-    - ``G`` -- a graph to perform the search on.
+    - ``G`` -- a graph to perform the search on
 
-    - ``start`` -- vertex or list of vertices from which to start the traversal.
+    - ``start`` -- vertex or list of vertices from which to start the traversal
 
     OUTPUT:
 
@@ -329,7 +328,7 @@ def is_partial_cube(G, certificate=False):
         labeled = Graph([contracted.vertices(sort=False), []])
         for v, w in contracted.edge_iterator(labels=False):
             diff = bitvec[v] ^ bitvec[w]
-            if not diff or not bitvec[w] &~ bitvec[v]:
+            if not diff or not bitvec[w] & ~bitvec[v]:
                 continue    # zero edge or wrong direction
             if diff not in neighbors:
                 return fail
@@ -363,7 +362,7 @@ def is_partial_cube(G, certificate=False):
     # Make a digraph with edges labeled by the equivalence classes in unionfind
     g = DiGraph({v: {w: unionfind.find((v, w)) for w in G[v]} for v in G})
 
-    # Associates to a vertex the token that acts on it, an check that
+    # Associates to a vertex the token that acts on it, and check that
     # no two edges on a single vertex have the same label
     action = {}
     for v in g:

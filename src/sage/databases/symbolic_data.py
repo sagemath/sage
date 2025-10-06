@@ -1,16 +1,15 @@
 """
 Ideals from the Symbolic Data project
 
-This file implements a thin wrapper for the optional symbolic data set
-of ideals as published on http://www.symbolicdata.org . From the
-project website:
+This module implements a thin wrapper for the optional symbolic dataset of
+ideals as published on http://www.symbolicdata.org. From the project website:
 
-    For different purposes algorithms and implementations are tested
+    For different purposes, algorithms and implementations are tested
     on certified and reliable data. The development of tools and data
     for such tests is usually 'orthogonal' to the main
     implementation efforts, it requires different skills and
     technologies and is not loved by programmers. On the other hand,
-    in many cases tools and data could easily be reused - with slight
+    in many cases, tools and data could easily be reused - with slight
     modifications - across similar projects. The SymbolicData Project
     is set out to coordinate such efforts within the Computer Algebra
     Community.  Commonly collected certified and reliable data can
@@ -21,32 +20,36 @@ project website:
     there are not yet well agreed aims of such a
     benchmarking. Nevertheless various (often high quality) special
     benchmarks are scattered through the literature.  During the last
-    years efforts toward collection of test data for symbolic
+    years, efforts toward collection of test data for symbolic
     computations were intensified. They focused mainly on the creation
     of general benchmarks for different areas of symbolic computation
     and the collection of such activities on different Web site.  For
-    further qualification of these efforts it would be of great
+    further qualification of these efforts, it would be of great
     benefit to create a commonly available digital archive of these
     special benchmark data scattered through the literature. This
     would provide the community with an electronic repository of
     certified data that could be addressed and extended during further
     development.
 
+In order to use this dataset, you need to install the optional
+:ref:`database_symbolic_data <spkg_database_symbolic_data>` package by the Sage
+command ::
+
+    sage -i database_symbolic_data
+
 EXAMPLES::
 
-    sage: sd = SymbolicData(); sd # optional - database_symbolic_data
+    sage: # optional - database_symbolic_data
+    sage: sd = SymbolicData(); sd
     SymbolicData with 372 ideals
-
-    sage: sd.ZeroDim__example_1 # optional - database_symbolic_data
+    sage: sd.ZeroDim__example_1
     Ideal (x1^2 + x2^2 - 10, x1^2 + x1*x2 + 2*x2^2 - 16) of Multivariate Polynomial Ring in x1, x2 over Rational Field
-
-    sage: sd.Katsura_3 # optional - database_symbolic_data
+    sage: sd.Katsura_3
     Ideal (u0 + 2*u1 + 2*u2 + 2*u3 - 1,
            u1^2 + 2*u0*u2 + 2*u1*u3 - u2,
            2*u0*u1 + 2*u1*u2 + 2*u2*u3 - u1,
            u0^2 + 2*u1^2 + 2*u2^2 + 2*u3^2 - u0) of Multivariate Polynomial Ring in u0, u1, u2, u3 over Rational Field
-
-    sage: sd.get_ideal('Katsura_3',GF(127),'degrevlex') # optional - database_symbolic_data
+    sage: sd.get_ideal('Katsura_3', GF(127), 'degrevlex')
     Ideal (u0 + 2*u1 + 2*u2 + 2*u3 - 1,
            u1^2 + 2*u0*u2 + 2*u1*u3 - u2,
            2*u0*u1 + 2*u1*u2 + 2*u2*u3 - u1,
@@ -54,8 +57,19 @@ EXAMPLES::
 
 AUTHORS:
 
-- Martin Albrecht <martinralbrecht@googlemail.com>
+- Martin Albrecht (2007-02-19): initial version
 """
+
+# ****************************************************************************
+#       Copyright (C) 2007 Martin Albrecht <martinralbrecht@googlemail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 import os
 from xml.dom.minidom import parse
 from sage.rings.rational_field import QQ
@@ -82,7 +96,7 @@ class SymbolicData:
         self.__intpath = path + "/Data/XMLResources/INTPS/"
         self.__genpath = path + "/Data/XMLResources/GenPS/"
 
-    def get_ideal(self, name, base_ring=QQ, term_order="degrevlex"):
+    def get_ideal(self, name, base_ring=QQ, term_order='degrevlex'):
         """
         Return the ideal given by 'name' over the base ring given by
         'base_ring' in a polynomial ring with the term order given by
@@ -90,13 +104,11 @@ class SymbolicData:
 
         INPUT:
 
-        - ``name`` - name as on the symbolic data website
-        - ``base_ring`` - base ring for the polynomial ring (default: ``QQ``)
-        - ``term_order`` - term order for the polynomial ring (default: ``degrevlex``)
+        - ``name`` -- name as on the symbolic data website
+        - ``base_ring`` -- base ring for the polynomial ring (default: ``QQ``)
+        - ``term_order`` -- term order for the polynomial ring (default: ``degrevlex``)
 
-        OUTPUT:
-
-            ideal as given by ``name`` in ``PolynomialRing(base_ring,vars,term_order)``
+        OUTPUT: ideal as given by ``name`` in ``PolynomialRing(base_ring,vars,term_order)``
 
         EXAMPLES::
 
@@ -118,8 +130,6 @@ class SymbolicData:
             return t
 
         def _dom2ideal(node):
-            """
-            """
             l = []
 
             if str(node.nodeName) in ['vars', 'poly']:
@@ -136,12 +146,12 @@ class SymbolicData:
         try:
             name = self.__intpath + name + ".xml"
             open(name)
-        except IOError:
+        except OSError:
             try:
                 name = self.__genpath + name + ".xml"
                 open(name)
-            except IOError:
-                raise AttributeError("No ideal matching '%s' found in database." % orig_name)
+            except OSError:
+                raise AttributeError(f"no ideal matching '{orig_name}' found in database")
 
         dom = parse(name)
         res = _dom2ideal(dom)
@@ -172,7 +182,7 @@ class SymbolicData:
            sage: sd.Cyclic5 # optional - database_symbolic_data
            Traceback (most recent call last):
            ...
-           AttributeError: No ideal matching 'Cyclic5' found in database.
+           AttributeError: no ideal matching 'Cyclic5' found in database...
 
            sage: sd.Cyclic_5 # optional - database_symbolic_data
            Ideal (v + w + x + y + z,

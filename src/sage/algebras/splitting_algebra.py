@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari sage.modules
 r"""
 Splitting Algebras
 
@@ -33,18 +33,18 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
 from warnings import warn
 
+from sage.misc.flatten import flatten as flatten_list
 from sage.misc.verbose import verbose
 from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_domain
 from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
 
 
-# ------------------------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Element class for the splitting algebra
-# --------------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 class SplittingAlgebraElement(PolynomialQuotientRingElement):
     r"""
     Element class for :class:`SplittingAlgebra`.
@@ -77,7 +77,7 @@ class SplittingAlgebraElement(PolynomialQuotientRingElement):
             sage: ~(e3 + 5)
             Traceback (most recent call last):
             ...
-            NotImplementedError: The base ring (=Integer Ring) is not a field
+            ArithmeticError: element is non-invertible
         """
         inv_elements = self.parent()._invertible_elements
         if self in inv_elements:
@@ -85,7 +85,7 @@ class SplittingAlgebraElement(PolynomialQuotientRingElement):
 
         return super().__invert__()
 
-    def is_unit(self):
+    def is_unit(self) -> bool:
         r"""
         Return ``True`` if ``self`` is invertible.
 
@@ -102,7 +102,7 @@ class SplittingAlgebraElement(PolynomialQuotientRingElement):
 
         return super().is_unit()
 
-    def dict(self):
+    def monomial_coefficients(self, copy=True) -> dict:
         r"""
         Return the dictionary of ``self`` according to its lift to the cover.
 
@@ -110,15 +110,24 @@ class SplittingAlgebraElement(PolynomialQuotientRingElement):
 
             sage: from sage.algebras.splitting_algebra import SplittingAlgebra
             sage: CR3.<e3> = SplittingAlgebra(cyclotomic_polynomial(3))
-            sage: (e3 + 42).dict()
+            sage: f = e3 + 42
+            sage: f.monomial_coefficients()
+            {0: 42, 1: 1}
+
+        ``dict`` is an alias::
+
+            sage: f.dict()
             {0: 42, 1: 1}
         """
-        return self.lift().dict()
+        return self.lift().monomial_coefficients(copy=copy)
 
+    dict = monomial_coefficients
 
-# ------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Parent class of the splitting algebra
-# --------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+
+
 class SplittingAlgebra(PolynomialQuotientRing_domain):
     r"""
     For a given monic polynomial `p(t)` of degree `n` over a commutative
@@ -138,11 +147,11 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
     INPUT:
 
     - ``monic_polynomial`` -- the monic polynomial which should be split
-    - ``names``  -- names for the indeterminates to be adjoined to the
+    - ``names`` -- names for the indeterminates to be adjoined to the
       base ring of ``monic_polynomial``
-    - ``warning`` -- (default: ``True``) can be used (by setting to ``False``)
-      to suppress a warning which will be thrown whenever it cannot be
-      checked that the Galois group of ``monic_polynomial`` is maximal
+    - ``warning`` -- boolean (default: ``True``); can be used (by setting to
+      ``False``) to suppress a warning which will be thrown whenever it cannot
+      be checked that the Galois group of ``monic_polynomial`` is maximal
 
     EXAMPLES::
 
@@ -194,7 +203,8 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
     """
     Element = SplittingAlgebraElement
 
-    def __init__(self, monic_polynomial, names='X', iterate=True, warning=True):
+    def __init__(self, monic_polynomial, names='X',
+                 iterate=True, warning=True) -> None:
         r"""
         Python constructor.
 
@@ -203,13 +213,13 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             sage: from sage.algebras.splitting_algebra import SplittingAlgebra
             sage: Lw.<w> = LaurentPolynomialRing(ZZ)
             sage: PuvLw.<u,v> = Lw[]; t = polygen(PuvLw)
-            sage: S.<x, y> = SplittingAlgebra(t^3 - u*t^2 + v*t - w, warning=False)
+            sage: poly = t^3 - u*t^2 + v*t - w
+            sage: S.<x, y> = SplittingAlgebra(poly, warning=False)
             sage: TestSuite(S).run()
         """
-
-        # ---------------------------------------------------------------------------------
+        # ---------------------------------------------------------------
         # checking input parameters
-        # ---------------------------------------------------------------------------------
+        # ---------------------------------------------------------------
 
         base_ring = monic_polynomial.base_ring()
         if not monic_polynomial.is_monic():
@@ -217,7 +227,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
         deg = monic_polynomial.degree()
 
         from sage.structure.category_object import normalize_names
-        self._root_names = normalize_names(deg-1, names)
+        self._root_names = normalize_names(deg - 1, names)
         root_names = list(self._root_names)
         verbose("Create splitting algebra to base ring %s and polynomial %s (%s %s)"
                 % (base_ring, monic_polynomial, iterate, warning))
@@ -229,11 +239,11 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             if not base_ring.is_integral_domain():
                 raise TypeError("base_ring must be an integral domain")
         except NotImplementedError:
-            from sage.rings.ring import Ring
-            if not isinstance(base_ring, Ring):
-                raise TypeError("base_ring must be an instance of ring")
+            from sage.categories.rings import Rings
+            if base_ring not in Rings():
+                raise TypeError("base_ring must be a ring")
             if warning:
-                warn('Assuming %s to be an integral domain!' % (base_ring))
+                warn(f'Assuming {base_ring} to be an integral domain!')
 
         if deg < 1:
             raise ValueError("the degree of the polynomial must positive")
@@ -245,9 +255,9 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
         if isinstance(base_ring, SplittingAlgebra):
             self._invertible_elements = base_ring._invertible_elements
 
-        # ------------------------------------------------------------------------------------
+        # -----------------------------------------------------------
         # taking next root_name
-        # ------------------------------------------------------------------------------------
+        # -----------------------------------------------------------
         root_name = root_names[0]
         p = monic_polynomial.change_variable_name(root_name)
         P = p.parent()
@@ -260,34 +270,37 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             # assuming this has been checked mathematically before
             self._set_modulus_irreducible_ = True
             if warning:
-                warn('Assuming %s to have maximal Galois group!' % (monic_polynomial))
-                warning = False # one warning must be enough
+                warn(f'Assuming {monic_polynomial} to have maximal Galois group!')
+                warning = False  # one warning must be enough
 
         verbose("P %s defined:" % (P))
 
         if deg > 2 and iterate:
-            # ------------------------------------------------------------------------------------
+            # -----------------------------------------------------------
             # successive solution via recursion (on base_ring_step)
-            # ------------------------------------------------------------------------------------
-            base_ring_step = SplittingAlgebra(monic_polynomial, tuple(root_names), iterate=False, warning=False)
+            # -----------------------------------------------------------
+            base_ring_step = SplittingAlgebra(monic_polynomial,
+                                              tuple(root_names),
+                                              iterate=False, warning=False)
             first_root = base_ring_step.gen()
 
             verbose("base_ring_step %s defined:" % (base_ring_step))
 
-            # ------------------------------------------------------------------------------------
+            # -------------------------------------------------------------
             # splitting first root off
-            # ------------------------------------------------------------------------------------
+            # -------------------------------------------------------------
             from copy import copy
             root_names_reduces = copy(root_names)
             root_names_reduces.remove(root_name)
 
             P = base_ring_step[root_names_reduces[0]]
-            p = P(monic_polynomial.dict())
-            q, _ = p.quo_rem((P.gen() - first_root))
+            p = P(monic_polynomial.monomial_coefficients())
+            q, _ = p.quo_rem(P.gen() - first_root)
 
             verbose("Invoking recursion with: %s" % (q,))
 
-            SplittingAlgebra.__init__(self, q, root_names_reduces, warning=False)
+            SplittingAlgebra.__init__(self, q, root_names_reduces,
+                                      warning=False)
 
             splitting_roots = base_ring_step._splitting_roots + self._splitting_roots
             coefficients_list = base_ring_step._coefficients_list + self._coefficients_list
@@ -319,10 +332,13 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
         verbose("splitting_roots: %s embedded" % (self._splitting_roots))
 
         # --------------------------------------------------------------------
-        # try to calculate inverses of the roots. This is possible if the original polynomial
-        # has an invertible constant term. For example let cf = [-w, v,-u, 1] that is
-        # p = h^3 -u*h^2 + v*h -w, than u = x + y + z, v = x*y + x*z + y*z, w = x*y*z. If
-        # w is invertible then 1/x = (v -(u-x)*x)/w, 1/y = (v -(u-y)*y)/w, 1/z = (v -(u-z)*z)/w
+        # try to calculate inverses of the roots. This is possible if
+        # the original polynomial has an invertible constant term. For
+        # example let cf = [-w, v,-u, 1] that is
+        # p = h^3 -u*h^2 + v*h -w, then
+        # u = x + y + z, v = x*y + x*z + y*z, w = x*y*z. If w is
+        # invertible then 1/x = (v -(u-x)*x)/w, 1/y = (v -(u-y)*y)/w,
+        # 1/z = (v -(u-z)*z)/w
         # -----------------------------------------------------------------
         # first find the polynomial with invertible constant coefficient
         # -----------------------------------------------------------------
@@ -332,30 +348,30 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             try:
                 cf0_inv = ~(cf[0])
                 cf0_inv = self(cf0_inv)
-                verbose("invertible coefficient: %s found" %(cf0_inv))
+                verbose("invertible coefficient: %s found" % (cf0_inv))
                 break
             except NotImplementedError:
-                verbose("constant coefficient: %s not invertibe" %(cf0))
+                verbose("constant coefficient: %s not invertibe" % (cf0))
 
         # ------------------------------------------------------------------
         # assuming that cf splits into linear factors over self
         # and the _splitting_roots are its roots we can calculate inverses
         # ------------------------------------------------------------------
         if cf0_inv is not None:
-            deg_cf = len(cf)-1
+            deg_cf = len(cf) - 1
             pf = P(cf)
             for root in self._splitting_roots:
                 check = self(pf)
                 if not check.is_zero():
                     continue
                 root_inv = self.one()
-                for pos in range(deg_cf-1 ):
-                    root_inv = (-1 )**(pos+1 ) * cf[deg_cf-pos-1 ] - root_inv * root
+                for pos in range(deg_cf - 1):
+                    root_inv = (-1)**(pos + 1) * cf[deg_cf - pos - 1] - root_inv * root
                 verbose("inverse %s of root %s" % (root_inv, root))
-                root_inv = (-1 )**(deg_cf) * cf0_inv * root_inv
-                self._invertible_elements.update({root:root_inv})
+                root_inv = (-1)**(deg_cf) * cf0_inv * root_inv
+                self._invertible_elements.update({root: root_inv})
                 verbose("adding inverse %s of root %s" % (root_inv, root))
-            invert_items = [(k,v) for k, v in self._invertible_elements.items()]
+            invert_items = list(self._invertible_elements.items())
             for k, v in invert_items:
                 self._invertible_elements.update({v: k})
         return
@@ -365,7 +381,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
     # overloaded inherited methods
     # ----------------------------------------------------------------------
     ########################################################################
-    def __reduce__(self):
+    def __reduce__(self) -> tuple:
         r"""
         Used in pickling.
 
@@ -375,10 +391,10 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             sage: L.<t, u, v, w > = LaurentPolynomialRing(ZZ); x = polygen(L)
             sage: S = SplittingAlgebra(x^4 -t*x^3 - u*x^2 - v*x + w, ('X', 'Y', 'Z'), warning=False)
             sage: S.__reduce__()
-            (<class 'sage.algebras.splitting_algebra.SplittingAlgebra_with_category'>,
+            (<...SplittingAlgebra_with_category'>,
             (x^4 - t*x^3 - u*x^2 - v*x + w, ('X', 'Y', 'Z'), True, False))
             sage: S.base_ring().__reduce__()
-            (<class 'sage.algebras.splitting_algebra.SplittingAlgebra_with_category'>,
+            (<...SplittingAlgebra_with_category'>,
             (Y^3 + (X - t)*Y^2 + (X^2 - t*X - u)*Y + X^3 - t*X^2 - u*X - v,
             ('Y', 'Z'),
             False,
@@ -386,15 +402,16 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
 
             sage: TestSuite(S).run()
         """
-        defining_polynomial = self.defining_polynomial()
-        definig_coefficients = self._coefficients_list[0]
-        if defining_polynomial.coefficients(sparse=False) != definig_coefficients:
+        def_polynomial = self.defining_polynomial()
+        def_coefficients = self._coefficients_list[0]
+        if def_polynomial.coefficients(sparse=False) != def_coefficients:
             # case of factorization algebra (intermediate construction step)
             par_pol = self.cover_ring()
-            defining_polynomial = par_pol(definig_coefficients)
-        return self.__class__, (defining_polynomial, self._root_names, self._iterate, False)
+            def_polynomial = par_pol(def_coefficients)
+        return self.__class__, (def_polynomial, self._root_names,
+                                self._iterate, False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -410,16 +427,19 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
              over Multivariate Polynomial Ring in u, v over Integer Ring'
             sage: Spl.base_ring()    # indirect doctest
             Factorization Algebra of x^3 + (-u^2 + v)*x^2 + (u + v)*x - 1
-             with roots [S] over Multivariate Polynomial Ring in u, v over Integer Ring
+             with roots [S] over Multivariate Polynomial Ring in u, v
+             over Integer Ring
         """
         if self.is_completely_split():
             return ('Splitting Algebra of %s with roots %s over %s'
-                    % (self.defining_polynomial(), self.splitting_roots(), self.scalar_base_ring()))
-        else:
-            return ('Factorization Algebra of %s with roots %s over %s'
-                    % (self.defining_polynomial(), self.splitting_roots(), self.scalar_base_ring()))
+                    % (self.defining_polynomial(), self.splitting_roots(),
+                       self.scalar_base_ring()))
 
-    def _first_ngens(self, n):
+        return ('Factorization Algebra of %s with roots %s over %s'
+                % (self.defining_polynomial(), self.splitting_roots(),
+                   self.scalar_base_ring()))
+
+    def _first_ngens(self, n) -> tuple:
         r"""
         Used by the preparser for ``R.<x> = ...``.
 
@@ -437,13 +457,14 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             (X, Y, u, v)
         """
         srts = self.splitting_roots()
-        k = len(srts)-1
+        k = len(srts) - 1
         gens = srts[:k] + list(self.scalar_base_ring().gens())
         return tuple(gens[:n])
 
     def _element_constructor_(self, x):
         r"""
-        Make sure ``x`` is a valid member of ``self``, and return the constructed element.
+        Make sure ``x`` is a valid member of ``self``, and return the
+        constructed element.
 
         TESTS::
 
@@ -492,23 +513,27 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
 
         all_gens = self.gens_dict_recursive()
         if len(im_gens) != len(all_gens):
-            return super().hom(im_gens, codomain=codomain, check=check, base_map=base_map)
+            return super().hom(im_gens, codomain=codomain,
+                               check=check, base_map=base_map)
 
         num_gens = len(self.gens())
         im_gens_start = [img for img in im_gens if im_gens.index(img) < num_gens]
         im_gens_end = [img for img in im_gens if im_gens.index(img) >= num_gens]
 
         if not im_gens_end:
-            return super().hom(im_gens, codomain=codomain, check=check, base_map=base_map)
+            return super().hom(im_gens, codomain=codomain,
+                               check=check, base_map=base_map)
 
         verbose('base %s im_gens_end %s codomain %s check %s base_map %s' % (base_ring, im_gens_end, codomain, check, base_map))
-        hom_on_base_recurs = base_ring.hom(im_gens_end, codomain=codomain, check=check, base_map=base_map)
+        hom_on_base_recurs = base_ring.hom(im_gens_end, codomain=codomain,
+                                           check=check, base_map=base_map)
         verbose('hom_on_base_recurs %s' % (hom_on_base_recurs))
 
         cover_ring = self.cover_ring()
-        hom_from_cover = cover_ring.hom(im_gens_start, codomain=codomain, check=check, base_map=hom_on_base_recurs)
+        hom_from_cover = cover_ring.hom(im_gens_start, codomain=codomain,
+                                        check=check, base_map=hom_on_base_recurs)
         lift = self.lifting_map()
-        return hom_from_cover*lift
+        return hom_from_cover * lift
 
     ###################################################################
     # -----------------------------------------------------------------
@@ -522,9 +547,10 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
     # -----------------------------------------------------------------
     ###################################################################
 
-    def is_completely_split(self):
+    def is_completely_split(self) -> bool:
         r"""
-        Return True if the defining polynomial of ``self`` splits into linear factors over ``self``.
+        Return ``True`` if the defining polynomial of ``self`` splits into
+        linear factors over ``self``.
 
         EXAMPLES::
 
@@ -541,8 +567,10 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
     @cached_method
     def lifting_map(self):
         r"""
-        Return a section map from ``self`` to the cover ring. It is implemented according
-        to the same named method of :class:`~sage.rings.quotient_ring.QuotientRing_nc`.
+        Return a section map from ``self`` to the cover ring.
+
+        It is implemented according to the same named method of
+        :class:`~sage.rings.quotient_ring.QuotientRing_nc`.
 
         EXAMPLES::
 
@@ -559,7 +587,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
         from sage.rings.morphism import RingMap_lift
         return RingMap_lift(self, self.cover_ring())
 
-    def splitting_roots(self):
+    def splitting_roots(self) -> list:
         r"""
         Return the roots of the split equation.
 
@@ -576,7 +604,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
     @cached_method
     def scalar_base_ring(self):
         r"""
-        Return the ring of scalars of ``self`` (considered as an algebra)
+        Return the ring of scalars of ``self`` (considered as an algebra).
 
         EXAMPLES::
 
@@ -586,7 +614,8 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             sage: S = SplittingAlgebra(x^3 - u*x^2 + v*x - w, ('X', 'Y'))
             sage: S.base_ring()
             Factorization Algebra of x^3 - u*x^2 + v*x - w with roots [X]
-             over Multivariate Laurent Polynomial Ring in u, v, w over Integer Ring
+             over Multivariate Laurent Polynomial Ring in u, v, w
+             over Integer Ring
             sage: S.scalar_base_ring()
             Multivariate Laurent Polynomial Ring in u, v, w over Integer Ring
         """
@@ -623,30 +652,33 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
         return self._defining_polynomial
 
 
-# --------------------------------------------------------------------------------------------
-# ============================================================================================
-# Utility function to create the roots of a polynomial in an appropriate extension ring
-# ============================================================================================
-# --------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
+# ======================================================================
+# Utility function to create the roots of a polynomial in an
+# appropriate extension ring
+# ======================================================================
+# ----------------------------------------------------------------------
 
-def solve_with_extension(monic_polynomial, root_names=None, var='x', flatten=False, warning=True):
+def solve_with_extension(monic_polynomial, root_names=None, var='x',
+                         flatten=False, warning=True) -> list[tuple]:
     r"""
-    Return all roots of a monic polynomial in its base ring or in an appropriate
-    extension ring, as far as possible.
+    Return all roots of a monic polynomial in its base ring or in an
+    appropriate extension ring, as far as possible.
 
     INPUT:
 
-    - ``monic_polynomial`` -- the monic polynomial whose roots should be created
-    - ``root_names``  -- names for the indeterminates needed to define the
+    - ``monic_polynomial`` -- the monic polynomial whose roots
+      should be created
+    - ``root_names`` -- names for the indeterminates needed to define the
       splitting algebra of the ``monic_polynomial`` (if necessary and possible)
-    - ``var``  -- (default: ``'x'``) for the indeterminate needed to define the
+    - ``var`` -- (default: ``'x'``) for the indeterminate needed to define the
       splitting field of the ``monic_polynomial`` (if necessary and possible)
-    - ``flatten`` -- (default: ``True``) if ``True`` the roots will not be
-      given as a list of pairs ``(root, multiplicity)`` but as a list of
+    - ``flatten`` -- boolean (default: ``True``); if ``True`` the roots will
+      not be given as a list of pairs ``(root, multiplicity)`` but as a list of
       roots repeated according to their multiplicity
-    - ``warning`` -- (default: ``True``) can be used (by setting to ``False``)
-      to suppress a warning which will be thrown whenever it cannot be checked
-      that the Galois group of ``monic_polynomial`` is maximal
+    - ``warning`` -- boolean (default: ``True``); can be used (by setting to
+      ``False``) to suppress a warning which will be thrown whenever it cannot
+      be checked that the Galois group of ``monic_polynomial`` is maximal
 
     OUTPUT:
 
@@ -663,7 +695,8 @@ def solve_with_extension(monic_polynomial, root_names=None, var='x', flatten=Fal
         sage: solve_with_extension(p)
         [(1, 2)]
 
-        sage: cp5 = cyclotomic_polynomial(5, var='T').change_ring(UniversalCyclotomicField())
+        sage: U = UniversalCyclotomicField()
+        sage: cp5 = cyclotomic_polynomial(5, var='T').change_ring(U)
         sage: solve_with_extension(cp5)
         [(E(5), 1), (E(5)^4, 1), (E(5)^2, 1), (E(5)^3, 1)]
         sage: _[0][0].parent()
@@ -682,9 +715,10 @@ def solve_with_extension(monic_polynomial, root_names=None, var='x', flatten=Fal
 
         - ``monic_polynomial`` -- the monic polynomial whose roots should
           be created
-        - ``warning`` -- (default: ``True``) can be used (by setting to ``False``)
-          to suppress a warning which will be thrown whenever it cannot be
-          checked that the Galois group of ``monic_polynomial`` is maximal
+        - ``warning`` -- boolean (default: ``True``); can be used (by setting
+          to ``False``) to suppress a warning which will be thrown whenever it
+          cannot be checked that the Galois group of ``monic_polynomial`` is
+          maximal
         """
         parent = monic_polynomial.parent()
         base_ring = parent.base_ring()
@@ -696,10 +730,10 @@ def solve_with_extension(monic_polynomial, root_names=None, var='x', flatten=Fal
                 # in this case the SplittingAlgebra is preferred
                 raise NotImplementedError
 
-            # -------------------------------------------------------------------------------------
-            # in some cases the embedding of the base_ring in ext_field can not be obtained
-            # as coercion
-            # -------------------------------------------------------------------------------------
+            # -------------------------------------------------------------
+            # in some cases the embedding of the base_ring in
+            # ext_field can not be obtained as coercion
+            # -------------------------------------------------------------
             reset_coercion = False
             from sage.rings.number_field.number_field import NumberField_generic
             if isinstance(base_ring, NumberField_generic):
@@ -715,7 +749,8 @@ def solve_with_extension(monic_polynomial, root_names=None, var='x', flatten=Fal
             pol_emb = monic_polynomial.change_ring(ext_field)
             roots = pol_emb.roots()
         except NotImplementedError:
-            ext_ring = SplittingAlgebra(monic_polynomial, name_list, warning=warning)
+            ext_ring = SplittingAlgebra(monic_polynomial, name_list,
+                                        warning=warning)
             verbose("splitting algebra %s defined" % (ext_ring))
             roots = [(r, 1) for r in ext_ring.splitting_roots()]
         return roots
@@ -723,7 +758,7 @@ def solve_with_extension(monic_polynomial, root_names=None, var='x', flatten=Fal
     deg_pol = monic_polynomial.degree()
     if not root_names:
         from sage.structure.category_object import normalize_names
-        root_names = normalize_names(deg_pol-1, 'r')
+        root_names = normalize_names(deg_pol - 1, 'r')
     name_list = list(root_names)
     root_list = []
     try:
@@ -741,20 +776,20 @@ def solve_with_extension(monic_polynomial, root_names=None, var='x', flatten=Fal
         roots = create_roots(monic_polynomial, warning=warning)
 
     else:
-        # ------------------------------------------------------------------
+        # ----------------------------------------------------------------
         # root calculation was possible but maybe some more roots in
         # an appropriate extension ring can be constructed.
-        # ------------------------------------------------------------------
-        num_roots = sum(m for r, m in root_list)
+        # ----------------------------------------------------------------
+        num_roots = sum(m for _, m in root_list)
         if num_roots < deg_pol:
             h = monic_polynomial.variables()[0]
             divisor = monic_polynomial.base_ring().one()
             for r, m in root_list:
                 divisor *= (h - r)**m
-            q, r = monic_polynomial.quo_rem(divisor)
+            q, _ = monic_polynomial.quo_rem(divisor)
             if len(name_list) > deg_pol - num_roots - 1:
-                name_list = [name_list[i] for i in range(deg_pol - num_roots - 1)]
-            verbose("%d root found in base ring, now solving %s" % (num_roots,q))
+                name_list = name_list[:deg_pol - num_roots - 1]
+            verbose(f"{num_roots} root found in base ring, now solving {q}")
             missing_roots = create_roots(q, warning=True)
             roots = root_list + missing_roots
         else:
@@ -762,6 +797,5 @@ def solve_with_extension(monic_polynomial, root_names=None, var='x', flatten=Fal
             verbose("all roots in base ring")
 
     if flatten:
-        from sage.misc.flatten import flatten
-        return flatten([[rt]*m for rt, m in roots])
+        return flatten_list([[rt] * m for rt, m in roots])
     return roots

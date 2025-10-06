@@ -1,4 +1,4 @@
-$(PYTHON) beniget gast ply numpy | $(PYTHON_TOOLCHAIN)
+beniget gast ply | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

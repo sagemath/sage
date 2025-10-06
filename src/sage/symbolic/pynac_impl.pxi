@@ -40,11 +40,9 @@ from sage.arith.functions import lcm
 from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.all cimport *
-from sage.libs.gsl.types cimport *
 from sage.libs.gsl.complex cimport *
 from sage.libs.gsl.gamma cimport gsl_sf_lngamma_complex_e
 from sage.libs.mpmath import utils as mpmath_utils
-from sage.libs.pari.all import pari
 from sage.misc.persist import loads, dumps
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer, smallInteger
@@ -70,7 +68,7 @@ cdef ex_to_pyExpression(GEx juice):
     cdef Expression nex
     nex = <Expression>Expression.__new__(Expression)
     nex._gobj = GEx(juice)
-    from .ring import SR
+    from sage.symbolic.ring import SR
     nex._parent = SR
     return nex
 
@@ -136,7 +134,7 @@ def unpack_operands(Expression ex):
 
 cdef exvector_to_PyTuple(GExVector seq):
     """
-    Converts arguments list given to a function to a PyTuple.
+    Convert arguments list given to a function to a PyTuple.
 
     Used to pass arguments to python methods assigned to custom
     evaluation, derivative, etc. functions of symbolic functions.
@@ -167,7 +165,6 @@ cdef exvector_to_PyTuple(GExVector seq):
         len(args): 2, types: [<class 'sage.rings.integer.Integer'>, <class 'sage.symbolic.expression.Expression'>]
         len(args): 2, types: [<class 'sage.symbolic.expression.Expression'>, <class 'sage.symbolic.expression.Expression'>]
         tfunc(sin(x), tfunc(1, x^2))
-
     """
     from sage.symbolic.ring import SR
     res = []
@@ -182,14 +179,14 @@ cdef exvector_to_PyTuple(GExVector seq):
 
 cdef GEx pyExpression_to_ex(res) except *:
     """
-    Converts an Expression object to a GiNaC::ex.
+    Convert an Expression object to a GiNaC::ex.
 
     Used to pass return values of custom python evaluation, derivation
     functions back to C++ level.
     """
     if res is None:
         raise TypeError("function returned None, expected return value of type sage.symbolic.expression.Expression")
-    from .ring import SR
+    from sage.symbolic.ring import SR
     try:
         t = SR.coerce(res)
     except TypeError as err:
@@ -198,7 +195,7 @@ cdef GEx pyExpression_to_ex(res) except *:
 
 cdef paramset_to_PyTuple(const_paramset_ref s):
     """
-    Converts a std::multiset<unsigned> to a PyTuple.
+    Convert a std::multiset<unsigned> to a PyTuple.
 
     Used to pass a list of parameter numbers with respect to which a function
     is differentiated to the printing functions py_print_fderivative and
@@ -236,9 +233,9 @@ cdef set_ginac_fn_serial():
     global GINAC_FN_SERIAL
     GINAC_FN_SERIAL = g_registered_functions().size()
 
-cdef int py_get_ginac_serial():
+cdef int py_get_ginac_serial() noexcept:
     """
-    Returns the number of C++ level functions defined by GiNaC.
+    Return the number of C++ level functions defined by GiNaC.
 
     EXAMPLES::
 
@@ -276,8 +273,7 @@ def get_fn_serial():
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import get_fn_serial
-        sage: from sage.symbolic.function import get_sfunction_from_serial
+        sage: from sage.symbolic.expression import get_fn_serial, get_sfunction_from_serial
         sage: get_fn_serial() > 125
         True
         sage: print(get_sfunction_from_serial(get_fn_serial()))
@@ -339,7 +335,7 @@ cdef subs_args_to_PyTuple(const GExMap& map, unsigned options, const GExVector& 
 #    Structure: 70
 ##########################################################################
 
-cdef stdstring* py_repr(o, int level):
+cdef stdstring* py_repr(o, int level) noexcept:
     """
     Return string representation of o.  If level > 0, possibly put
     parentheses around the string.
@@ -363,7 +359,7 @@ cdef stdstring* py_repr(o, int level):
     return string_from_pystr(s)
 
 
-cdef stdstring* py_latex(o, int level):
+cdef stdstring* py_latex(o, int level) noexcept:
     """
     Return latex string representation of o.  If level > 0, possibly
     put parentheses around the string.
@@ -378,7 +374,7 @@ cdef stdstring* py_latex(o, int level):
 
 cdef stdstring* string_from_pystr(py_str) except NULL:
     """
-    Creates a C++ string with the same contents as the given python string.
+    Create a C++ string with the same contents as the given python string.
 
     Used when passing string output to Pynac for printing, since we don't want
     to mess with reference counts of the python objects and we cannot guarantee
@@ -395,7 +391,7 @@ cdef stdstring* string_from_pystr(py_str) except NULL:
         s = b"(INVALID)"  # Avoid segfaults for invalid input
     return new stdstring(s)
 
-cdef stdstring* py_latex_variable(var_name):
+cdef stdstring* py_latex_variable(var_name) noexcept:
     r"""
     Return a c++ string containing the latex representation of the given
     variable name.
@@ -448,15 +444,14 @@ def py_print_function_pystring(id, args, fname_paren=False):
 
     INPUT:
 
-    - id --   serial number of the corresponding symbolic function
-    - params -- Set of parameter numbers with respect to which to take the
-      derivative.
-    - args -- arguments of the function.
+    - ``id`` -- serial number of the corresponding symbolic function
+    - ``params`` -- set of parameter numbers with respect to which to take the
+      derivative
+    - ``args`` -- arguments of the function
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import py_print_function_pystring, get_ginac_serial, get_fn_serial
-        sage: from sage.symbolic.function import get_sfunction_from_serial
+        sage: from sage.symbolic.expression import py_print_function_pystring, get_ginac_serial, get_fn_serial, get_sfunction_from_serial
         sage: var('x,y,z')
         (x, y, z)
         sage: foo = function('foo', nargs=2)
@@ -506,7 +501,7 @@ def py_print_function_pystring(id, args, fname_paren=False):
     return ''.join(olist)
 
 
-cdef stdstring* py_print_function(unsigned id, args):
+cdef stdstring* py_print_function(unsigned id, args) noexcept:
     return string_from_pystr(py_print_function_pystring(id, args))
 
 
@@ -519,8 +514,7 @@ def py_latex_function_pystring(id, args, fname_paren=False):
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import py_latex_function_pystring, get_ginac_serial, get_fn_serial
-        sage: from sage.symbolic.function import get_sfunction_from_serial
+        sage: from sage.symbolic.expression import py_latex_function_pystring, get_ginac_serial, get_fn_serial, get_sfunction_from_serial
         sage: var('x,y,z')
         (x, y, z)
         sage: foo = function('foo', nargs=2)
@@ -558,8 +552,6 @@ def py_latex_function_pystring(id, args, fname_paren=False):
         True
         sage: py_latex_function_pystring(i, (x,y^z))
         'my args are: x, y^z'
-
-
     """
     cdef Function func = get_sfunction_from_serial(id)
     # This function is called from two places, from function::print in Pynac
@@ -598,7 +590,7 @@ def py_latex_function_pystring(id, args, fname_paren=False):
     return ''.join(olist)
 
 
-cdef stdstring* py_latex_function(unsigned id, args):
+cdef stdstring* py_latex_function(unsigned id, args) noexcept:
     return string_from_pystr(py_latex_function_pystring(id, args))
 
 
@@ -619,7 +611,7 @@ def tolerant_is_symbol(a):
         sage: None.is_symbol()
         Traceback (most recent call last):
         ...
-        AttributeError: 'NoneType' object has no attribute 'is_symbol'
+        AttributeError: 'NoneType' object has no attribute 'is_symbol'...
     """
     try:
         return a.is_symbol()
@@ -628,17 +620,17 @@ def tolerant_is_symbol(a):
 
 
 cdef stdstring* py_print_fderivative(unsigned id, params,
-        args):
+        args) noexcept:
     """
     Return a string with the representation of the derivative of the symbolic
     function specified by the given id, lists of params and args.
 
     INPUT:
 
-    - id --   serial number of the corresponding symbolic function
-    - params -- Set of parameter numbers with respect to which to take the
-      derivative.
-    - args -- arguments of the function.
+    - ``id`` -- serial number of the corresponding symbolic function
+    - ``params`` -- set of parameter numbers with respect to which to take the
+      derivative
+    - ``args`` -- arguments of the function
     """
     if all(tolerant_is_symbol(a) for a in args) and len(set(args)) == len(args):
         diffvarstr = ', '.join(repr(args[i]) for i in params)
@@ -657,10 +649,9 @@ def py_print_fderivative_for_doctests(id, params, args):
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import py_print_fderivative_for_doctests as py_print_fderivative, get_ginac_serial, get_fn_serial
+        sage: from sage.symbolic.expression import py_print_fderivative_for_doctests as py_print_fderivative, get_ginac_serial, get_fn_serial, get_sfunction_from_serial
         sage: var('x,y,z')
         (x, y, z)
-        sage: from sage.symbolic.function import get_sfunction_from_serial
         sage: foo = function('foo', nargs=2)
         sage: for i in range(get_ginac_serial(), get_fn_serial()):
         ....:     if get_sfunction_from_serial(i) == foo: break
@@ -681,7 +672,6 @@ def py_print_fderivative_for_doctests(id, params, args):
         True
         sage: py_print_fderivative(i, (0, 1, 0, 1), (x, y^z))
         D[0, 1, 0, 1]func_with_args(x, y^z)
-
     """
     cdef stdstring* ostr = py_print_fderivative(id, params, args)
     print(char_to_str(ostr.c_str()))
@@ -689,13 +679,12 @@ def py_print_fderivative_for_doctests(id, params, args):
 
 
 cdef stdstring* py_latex_fderivative(unsigned id, params,
-        args):
+        args) noexcept:
     """
     Return a string with the latex representation of the derivative of the
     symbolic function specified by the given id, lists of params and args.
 
     See documentation of py_print_fderivative for more information.
-
     """
     if all(tolerant_is_symbol(a) for a in args) and len(set(args)) == len(args):
         param_iter = iter(params)
@@ -707,20 +696,20 @@ cdef stdstring* py_latex_fderivative(unsigned id, params,
                 nv += 1
             else:
                 if nv == 1:
-                    diff_args.append(r"\partial %s"%(args[v]._latex_(),))
+                    diff_args.append(r"\partial %s" % (args[v]._latex_(),))
                 else:
-                    diff_args.append(r"(\partial %s)^{%s}"%(args[v]._latex_(),nv))
+                    diff_args.append(r"(\partial %s)^{%s}" % (args[v]._latex_(),nv))
                 v=next_v
                 nv=1
         if nv == 1:
-            diff_args.append(r"\partial %s"%(args[v]._latex_(),))
+            diff_args.append(r"\partial %s" % (args[v]._latex_(),))
         else:
-            diff_args.append(r"(\partial %s)^{%s}"%(args[v]._latex_(),nv))
+            diff_args.append(r"(\partial %s)^{%s}" % (args[v]._latex_(),nv))
         if len(params) == 1:
-            operator_string=r"\frac{\partial}{%s}"%(''.join(diff_args),)
+            operator_string=r"\frac{\partial}{%s}" % (''.join(diff_args),)
         else:
-            operator_string=r"\frac{\partial^{%s}}{%s}"%(len(params),''.join(diff_args))
-        py_res = operator_string+py_latex_function_pystring(id,args,False)
+            operator_string=r"\frac{\partial^{%s}}{%s}" % (len(params),''.join(diff_args))
+        py_res = operator_string+py_latex_function_pystring(id, args, False)
     else:
         ostr = ''.join([r'\mathrm{D}_{',
                         ', '.join(repr(int(x)) for x in params), '}'])
@@ -735,11 +724,9 @@ def py_latex_fderivative_for_doctests(id, params, args):
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import py_latex_fderivative_for_doctests as py_latex_fderivative, get_ginac_serial, get_fn_serial
-
+        sage: from sage.symbolic.expression import py_latex_fderivative_for_doctests as py_latex_fderivative, get_ginac_serial, get_fn_serial, get_sfunction_from_serial
         sage: var('x,y,z')
         (x, y, z)
-        sage: from sage.symbolic.function import get_sfunction_from_serial
         sage: foo = function('foo', nargs=2)
         sage: for i in range(get_ginac_serial(), get_fn_serial()):
         ....:   if get_sfunction_from_serial(i) == foo: break
@@ -780,7 +767,7 @@ def py_latex_fderivative_for_doctests(id, params, args):
 # Archive helpers
 #################################################################
 
-cdef stdstring* py_dumps(o):
+cdef stdstring* py_dumps(o) noexcept:
     s = dumps(o, compress=False)
     # pynac archive format terminates atoms with zeroes.
     # since pickle output can break the archive format
@@ -800,7 +787,7 @@ cdef py_get_sfunction_from_serial(unsigned s):
     """
     return get_sfunction_from_serial(s)
 
-cdef unsigned py_get_serial_from_sfunction(f):
+cdef unsigned py_get_serial_from_sfunction(f) noexcept:
     """
     Given a Function object return its serial.
 
@@ -814,7 +801,7 @@ cdef unsigned py_get_serial_from_sfunction(f):
     return (<Function>f)._serial
 
 cdef unsigned py_get_serial_for_new_sfunction(stdstring &s,
-        unsigned nargs):
+        unsigned nargs) noexcept:
     """
     Return a symbolic function with the given name and number of arguments.
 
@@ -824,7 +811,16 @@ cdef unsigned py_get_serial_for_new_sfunction(stdstring &s,
     create one and set up the function tables properly.
     """
     from sage.symbolic.function_factory import function_factory
-    cdef Function fn = function_factory(s.c_str(), nargs)
+    # The input string s comes from GiNaC::function::function, the constructor
+    # that reads the function name from an archive.
+    # The archive is created by GiNaC::function::archive, which sets the name
+    # to GiNaC::function::registered_functions()[serial].name.
+    # Functions are registered using GiNaC::function::register_new.
+    # For symbolic functions this happens in the register_or_update_function
+    # which is defined in src/sage/symbolic/pynac_function_impl.pxi.
+    # In there, str_to_bytes is applied to the name.
+    # Hence we must apply the inverse char_to_str here.
+    cdef Function fn = function_factory(char_to_str(s.c_str()), nargs)
     return fn._serial
 
 
@@ -836,7 +832,7 @@ cdef int py_get_parent_char(o) except -1:
     """
     TESTS:
 
-    :trac:`24072` fixes the workaround provided in :trac:`21187`::
+    :issue:`24072` fixes the workaround provided in :issue:`21187`::
 
         sage: p = next_prime(2^100)
         sage: R.<y> = FiniteField(p)[]
@@ -886,7 +882,7 @@ cdef py_binomial_int(int n, unsigned int k):
     cdef bint sign
     if n < 0:
         n = -n + (k-1)
-        sign = k%2
+        sign = k % 2
     else:
         sign = 0
     cdef Integer ans = PY_NEW(Integer)
@@ -903,7 +899,7 @@ cdef py_binomial(n, k):
     cdef bint sign
     if n < 0:
         n = k-n-1
-        sign = k%2
+        sign = k % 2
     else:
         sign = 0
     # Convert n and k to unsigned ints.
@@ -927,11 +923,9 @@ def test_binomial(n, k):
 
     INPUT:
 
-    - n, k -- integers, with k >= 0.
+    - ``n``, ``k`` -- integers, with ``k >= 0``
 
-    OUTPUT:
-
-        integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -989,7 +983,7 @@ cdef py_lcm(n, k):
 #################################################################
 cdef py_real(x):
     """
-    Returns the real part of x.
+    Return the real part of x.
 
     TESTS::
 
@@ -1110,22 +1104,22 @@ cdef py_conjugate(x):
         return x  # assume is real since it doesn't have an imag attribute.
 
 
-cdef bint py_is_rational(x):
+cdef bint py_is_rational(x) noexcept:
     return (type(x) is Rational or
             type(x) is Integer or
             isinstance(x, int))
 
 
-cdef bint py_is_equal(x, y):
+cdef bint py_is_equal(x, y) noexcept:
     """
-    Return True precisely if x and y are equal.
+    Return ``True`` precisely if x and y are equal.
     """
     return bool(x == y)
 
 
-cdef bint py_is_integer(x):
+cdef bint py_is_integer(x) noexcept:
     r"""
-    Returns True if pynac should treat this object as an integer.
+    Return ``True`` if pynac should treat this object as an integer.
 
     EXAMPLES::
 
@@ -1156,7 +1150,7 @@ cdef bint py_is_integer(x):
     if not isinstance(x, Element):
         return False
     P = (<Element>x)._parent
-    from .ring import SymbolicRing
+    from sage.symbolic.ring import SymbolicRing
     return (isinstance(P, SymbolicRing) or P.is_exact()) and x in ZZ
 
 
@@ -1176,7 +1170,7 @@ def py_is_integer_for_doctests(x):
     return py_is_integer(x)
 
 
-cdef bint py_is_even(x):
+cdef bint py_is_even(x) noexcept:
     try:
         return not(x % 2)
     except Exception:
@@ -1187,7 +1181,7 @@ cdef bint py_is_even(x):
     return 0
 
 
-cdef bint py_is_crational(x):
+cdef bint py_is_crational(x) noexcept:
     if py_is_rational(x):
         return True
     return isinstance(x, Element) and (<Element>x)._parent is pynac_I._parent
@@ -1195,7 +1189,7 @@ cdef bint py_is_crational(x):
 
 def py_is_crational_for_doctest(x):
     r"""
-    Return True if pynac should treat this object as an element of `\QQ(i)`.
+    Return ``True`` if pynac should treat this object as an element of `\QQ(i)`.
 
     TESTS::
 
@@ -1214,7 +1208,7 @@ def py_is_crational_for_doctest(x):
     return py_is_crational(x)
 
 
-cdef bint py_is_real(a):
+cdef bint py_is_real(a) noexcept:
     if isinstance(a, (int, Integer, float)):
         return True
     try:
@@ -1228,7 +1222,7 @@ cdef bint py_is_real(a):
     return py_imag(a) == 0
 
 
-cdef bint py_is_prime(n):
+cdef bint py_is_prime(n) noexcept:
     try:
         return n.is_prime()
     except Exception:  # yes, I'm doing this on purpose.
@@ -1240,13 +1234,13 @@ cdef bint py_is_prime(n):
     return False
 
 
-cdef bint py_is_exact(x):
+cdef bint py_is_exact(x) noexcept:
     if isinstance(x, (int, Integer)):
         return True
     if not isinstance(x, Element):
         return False
     P = (<Element>x)._parent
-    from .ring import SymbolicRing
+    from sage.symbolic.ring import SymbolicRing
     return isinstance(P, SymbolicRing) or P.is_exact()
 
 
@@ -1285,6 +1279,7 @@ cdef py_numer(n):
             return n*n.denominator()
         except AttributeError:
             return n
+
 
 def py_numer_for_doctests(n):
     """
@@ -1335,13 +1330,13 @@ def py_denom_for_doctests(n):
     return py_denom(n)
 
 
-cdef bint py_is_cinteger(x):
+cdef bint py_is_cinteger(x) noexcept:
     return py_is_integer(x) or (py_is_crational(x) and py_denom(x) == 1)
 
 
 def py_is_cinteger_for_doctest(x):
     r"""
-    Returns True if pynac should treat this object as an element of `\ZZ(i)`.
+    Return ``True`` if pynac should treat this object as an element of `\ZZ(i)`.
 
     TESTS::
 
@@ -1396,6 +1391,7 @@ cdef py_float(n, PyObject* kwds):
             return RR(n)
         except TypeError:
             return CC(n)
+
 
 def py_float_for_doctests(n, kwds):
     """
@@ -1457,6 +1453,7 @@ cdef py_tgamma(x):
             return CC(res)
     return res
 
+
 def py_tgamma_for_doctests(x):
     """
     This function is for testing py_tgamma().
@@ -1481,8 +1478,8 @@ cdef py_factorial(x):
         sage: py_factorial(-2/3)
         2.67893853470775
     """
-    # factorial(x) is only defined for non-negative integers x
-    # so we first test if x can be coerced into ZZ and is non-negative.
+    # factorial(x) is only defined for nonnegative integers x
+    # so we first test if x can be coerced into ZZ and is nonnegative.
     # If this is not the case then we return the symbolic expression gamma(x+1)
     # This fixes Issue 9240
     try:
@@ -1495,6 +1492,7 @@ cdef py_factorial(x):
         return factorial(x)
     else:
         return py_tgamma(x+1)
+
 
 def py_factorial_py(x):
     """
@@ -1517,6 +1515,7 @@ cdef py_doublefactorial(x):
     from sage.misc.misc_c import prod  # fast balanced product
     return prod([n - 2*i for i in range(n//2)])
 
+
 def doublefactorial(n):
     """
     The double factorial combinatorial function:
@@ -1525,7 +1524,7 @@ def doublefactorial(n):
 
     INPUT:
 
-    - n -- an integer > = 1
+    - ``n`` -- integer ``>= 1``
 
     EXAMPLES::
 
@@ -1547,13 +1546,14 @@ def doublefactorial(n):
 
 
 cdef py_fibonacci(n):
+    from sage.libs.pari import pari
     return Integer(pari(n).fibonacci())
 
 cdef py_step(n):
     """
     Return step function of n.
     """
-    from .ring import SR
+    from sage.symbolic.ring import SR
     if n < 0:
         return SR(0)
     elif n > 0:
@@ -1611,7 +1611,7 @@ cdef py_stieltjes(x):
     """
     Return the Stieltjes constant of the given index.
 
-    The value is expected to be a non-negative integer.
+    The value is expected to be a nonnegative integer.
 
     TESTS::
 
@@ -1636,6 +1636,7 @@ cdef py_stieltjes(x):
     else:
         prec = 53
     return mpmath_utils.call(mpmath.stieltjes, n, prec=prec)
+
 
 def py_stieltjes_for_doctests(x):
     """
@@ -1670,6 +1671,7 @@ cdef py_zeta(x):
         return x.zeta()
     except AttributeError:
         return CC(x).zeta()
+
 
 def py_zeta_for_doctests(x):
     """
@@ -1711,6 +1713,7 @@ cdef py_exp(x):
         return RR(x).exp()
     except (TypeError, ValueError):
         return CC(x).exp()
+
 
 def py_exp_for_doctests(x):
     """
@@ -1781,6 +1784,7 @@ cdef py_log(x):
     except (TypeError, ValueError):
         return CC(x).log()
 
+
 def py_log_for_doctests(x):
     """
     This function tests py_log.
@@ -1848,26 +1852,26 @@ cdef py_atan2(x, y):
         sage: py_atan2(RR100(0), RR100(1))
         1.5707963267948966192313216916
 
-    Check that :trac:`21428` is fixed::
+    Check that :issue:`21428` is fixed::
 
         sage: plot(real(sqrt(x - 1.*I)), (x,0,1))
         Graphics object consisting of 1 graphics primitive
 
-    Check that :trac:`22553` is fixed::
+    Check that :issue:`22553` is fixed::
 
         sage: arctan2(1.5, -1.300000000000001)
         2.284887025407...
         sage: atan2(2.1000000000000000000000000000000000000, -1.20000000000000000000000000000000)
         2.089942441041419571002776071...
 
-    Check that :trac:`22877` is fixed::
+    Check that :issue:`22877` is fixed::
 
         sage: atan2(CC(I), CC(I+1))
         0.553574358897045 + 0.402359478108525*I
         sage: atan2(CBF(I), CBF(I+1))
         [0.55357435889705 +/- ...] + [0.402359478108525 +/- ...]*I
 
-    Check that :trac:`23776` is fixed and RDF input gives real output::
+    Check that :issue:`23776` is fixed and RDF input gives real output::
 
         sage: atan2(RDF(-3), RDF(-1))
         -1.8925468811915387
@@ -2117,7 +2121,7 @@ cdef int py_int_length(x) except -1:
 
 cdef py_li(x, n, parent):
     """
-    Returns a numerical approximation of polylog(n, x) with precision given
+    Return a numerical approximation of polylog(n, x) with precision given
     by the ``parent`` argument.
 
     EXAMPLES::
@@ -2202,6 +2206,7 @@ cdef py_psi2(n, x):
         prec = 53
     return mpmath_utils.call(mpmath.psi, n, x, prec=prec)
 
+
 def py_psi2_for_doctests(n, x):
     """
     This function is a python wrapper so py_psi2 can be tested. The real tests
@@ -2249,11 +2254,10 @@ def py_li2_for_doctests(x):
 # Constants
 ##################################################################
 
-cdef GConstant py_get_constant(const char* name):
+cdef GConstant py_get_constant(const char* name) noexcept:
     """
-    Returns a constant given its name. This is called by
-    constant::unarchive in constant.cpp in Pynac and is used for
-    pickling.
+    Return a constant given its name. This is called by constant::unarchive in
+    constant.cpp in Pynac and is used for pickling.
     """
     from sage.symbolic.constants import constants_name_table
     cdef PynacConstant pc
@@ -2271,10 +2275,11 @@ cdef py_eval_constant(unsigned serial, kwds):
 
 cdef py_eval_unsigned_infinity():
     """
-    Returns unsigned_infinity.
+    Return ``unsigned_infinity``.
     """
     from sage.rings.infinity import unsigned_infinity
     return unsigned_infinity
+
 
 def py_eval_unsigned_infinity_for_doctests():
     """
@@ -2290,10 +2295,11 @@ def py_eval_unsigned_infinity_for_doctests():
 
 cdef py_eval_infinity():
     """
-    Returns positive infinity, i.e., oo.
+    Return positive infinity, i.e., oo.
     """
     from sage.rings.infinity import infinity
     return infinity
+
 
 def py_eval_infinity_for_doctests():
     """
@@ -2309,10 +2315,11 @@ def py_eval_infinity_for_doctests():
 
 cdef py_eval_neg_infinity():
     """
-    Returns minus_infinity.
+    Return ``minus_infinity``.
     """
     from sage.rings.infinity import minus_infinity
     return minus_infinity
+
 
 def py_eval_neg_infinity_for_doctests():
     """
@@ -2348,19 +2355,19 @@ cdef py_rational_from_mpq(mpq_t bigrat):
     return rat
 
 
-cdef bint py_is_Integer(x):
+cdef bint py_is_Integer(x) noexcept:
     return isinstance(x, Integer)
 
 
-cdef bint py_is_Rational(x):
+cdef bint py_is_Rational(x) noexcept:
     return isinstance(x, Rational)
 
 
-cdef mpz_ptr py_mpz_from_integer(x):
+cdef mpz_ptr py_mpz_from_integer(x) noexcept:
     return <mpz_ptr>((<Integer>x).value)
 
 
-cdef mpq_ptr py_mpq_from_rational(x):
+cdef mpq_ptr py_mpq_from_rational(x) noexcept:
     return <mpq_ptr>((<Rational>x).value)
 
 
@@ -2385,7 +2392,7 @@ def init_pynac_I():
         sage: symbolic_I^2
         -1
 
-    Note that conversions to real fields will give :class:`TypeError`::
+    Note that conversions to real fields will give :exc:`TypeError`::
 
         sage: float(symbolic_I)
         Traceback (most recent call last):
@@ -2446,7 +2453,7 @@ def init_pynac_I():
         sage: type(I.pyobject())
         <class 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_gaussian'>
 
-    Check that :trac:`10064` is fixed::
+    Check that :issue:`10064` is fixed::
 
         sage: y = symbolic_I*symbolic_I*x / x  # so y is the expression -1
         sage: y.is_positive()
@@ -2457,7 +2464,7 @@ def init_pynac_I():
         sage: bool(z == y)
         True
 
-    Check that :trac:`31869` is fixed::
+    Check that :issue:`31869` is fixed::
 
         sage: x * ((3*I + 4)*x - 5)
         ((3*I + 4)*x - 5)*x
@@ -2466,13 +2473,13 @@ def init_pynac_I():
     from sage.rings.number_field.number_field import GaussianField
     pynac_I = GaussianField().gen()
     ginac_pyinit_I(pynac_I)
-    from .ring import SR
+    from sage.symbolic.ring import SR
     return new_Expression_from_GEx(SR, g_I)
 
 
 def init_function_table():
     """
-    Initializes the function pointer table in Pynac.  This must be
+    Initialize the function pointer table in Pynac.  This must be
     called before Pynac is used; otherwise, there will be segfaults.
     """
 

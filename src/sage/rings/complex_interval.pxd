@@ -2,7 +2,7 @@ from sage.libs.mpfr.types cimport mpfr_prec_t
 from sage.libs.mpfi.types cimport mpfi_t
 
 cimport sage.structure.element
-from .real_mpfi cimport RealIntervalFieldElement, RealIntervalField_class
+from sage.rings.real_mpfi cimport RealIntervalFieldElement, RealIntervalField_class
 
 
 cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):

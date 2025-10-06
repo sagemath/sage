@@ -1,5 +1,4 @@
 # distutils: language = c++
-
 """
 Example of a class wrapping an STL vector
 
@@ -23,7 +22,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
@@ -39,7 +38,7 @@ from sage.cpython.string cimport char_to_str
 
 cdef class stl_int_vector(SageObject):
     """
-    Example class wrapping an STL vector
+    Example class wrapping an STL vector.
 
     EXAMPLES::
 

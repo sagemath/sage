@@ -12,21 +12,16 @@ License
 -------
 
 -  GPL 2+
--  Note that we have deleted references to Mozilla PL as an option,
-   which we are allowed to do by the full rpy2 license in order to
-   remain GPL-compatible
-
 
 Upstream Contact
 ----------------
 
--  https://rpy2.bitbucket.io
+- https://github.com/rpy2/rpy2
 
-Special Update/Build Instructions
+Special Installation Instructions
 ---------------------------------
 
-Patches
-~~~~~~~
-
--  setup.patch: takes care of a few parsing issues.
--  cygwin.patch: let rpy2 build on Cygwin.
+In the Sage distribution, ``rpy2`` is a "semi-standard" package: It will be
+automatically installed by the Sage distribution if a suitable system
+installation of R is detected by ``configure``. (Note that Sage no longer
+ships and installs its own copy of R.)

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 r"""
 Weight 1 modular forms
 
@@ -16,8 +17,10 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.misc.verbose import verbose
 from sage.structure.sequence import Sequence
-from sage.modular.arithgroup.all import Gamma0, GammaH
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
+from sage.modular.arithgroup.congroup_gammaH import GammaH_constructor as GammaH
 from sage.modular.arithgroup.arithgroup_generic import ArithmeticSubgroup
+
 
 @cached_function
 def modular_ratio_space(chi):
@@ -26,7 +29,7 @@ def modular_ratio_space(chi):
     level N and character chi such that f * E is a holomorphic cusp form for
     every Eisenstein series E of weight 1 and character 1/chi.
 
-    Elements are returned as q-expansions up to precision R, where R is one
+    Elements are returned as `q`-expansions up to precision R, where R is one
     greater than the weight 3 Sturm bound.
 
     EXAMPLES::
@@ -51,10 +54,10 @@ def modular_ratio_space(chi):
     I = V
     d = I.rank()
 
-    t = verbose("Calculating Eisenstein forms in weight 1...",level=1)
+    t = verbose("Calculating Eisenstein forms in weight 1...", level=1)
     B0 = EisensteinForms(~chi, 1).q_echelon_basis(prec=R)
     B = [b + B0[0] for b in B0]
-    verbose("Done (dimension %s)" % len(B),level=1,t=t)
+    verbose("Done (dimension %s)" % len(B), level=1, t=t)
 
     t = verbose("Calculating in weight 2...", level=1)
     C = CuspForms(Gamma0(N), 2).q_echelon_basis(prec=R)
@@ -62,7 +65,7 @@ def modular_ratio_space(chi):
 
     t = verbose("Computing candidate space", level=1)
     for b in B:
-        quots = (c/b for c in C)
+        quots = (c / b for c in C)
         W = V.span(V(x.padded_list(R)) for x in quots)
         I = I.intersection(W)
         if I.rank() < d:
@@ -79,7 +82,7 @@ def modular_ratio_space(chi):
 
 def modular_ratio_to_prec(chi, qexp, prec):
     r"""
-    Given a q-expansion of a modular ratio up to sufficient precision to
+    Given a `q`-expansion of a modular ratio up to sufficient precision to
     determine it uniquely, compute it to greater precision.
 
     EXAMPLES::
@@ -99,12 +102,13 @@ def modular_ratio_to_prec(chi, qexp, prec):
     fB_elt = C(fB, check=False)
     return fB_elt.qexp(prec) / B
 
+
 @cached_function
 def hecke_stable_subspace(chi, aux_prime=ZZ(2)):
     r"""
-    Compute a q-expansion basis for S_1(chi).
+    Compute a `q`-expansion basis for `S_1(\chi)`.
 
-    Results are returned as q-expansions to a certain fixed (and fairly high)
+    Results are returned as `q`-expansions to a certain fixed (and fairly high)
     precision. If more precision is required this can be obtained with
     :func:`modular_ratio_to_prec`.
 
@@ -138,7 +142,7 @@ def hecke_stable_subspace(chi, aux_prime=ZZ(2)):
     verbose("Auxiliary prime: %s" % l, level=1)
 
     # Compute working precision
-    R = l*Gamma0(N).sturm_bound(l + 2)
+    R = l * Gamma0(N).sturm_bound(l + 2)
 
     t = verbose("Computing modular ratio space", level=1)
     mrs = modular_ratio_space(chi)
@@ -177,14 +181,14 @@ def hecke_stable_subspace(chi, aux_prime=ZZ(2)):
     # The theory does not guarantee that J is exactly S_1(chi), just that it is
     # intermediate between S_1(chi) and M_1(chi). In every example I know of,
     # it is equal to S_1(chi), but just for honesty, we check this anyway.
-    t=verbose("Checking cuspidality", level=1)
+    t = verbose("Checking cuspidality", level=1)
     JEis = V.span(V(x.padded_list(R)) for x in EisensteinForms(chi, 1).q_echelon_basis(prec=R))
     D = JEis.intersection(J)
     if D.dimension() != 0:
         raise ArithmeticError("Got non-cuspidal form!")
     verbose("Done", t=t, level=1)
-    qexps = Sequence(A(x.list()).add_bigoh(R) for x in J.gens())
-    return qexps
+    return Sequence(A(x.list()).add_bigoh(R) for x in J.gens())
+
 
 @cached_function
 def dimension_wt1_cusp_forms(chi):
@@ -198,6 +202,7 @@ def dimension_wt1_cusp_forms(chi):
         1
     """
     return len(hecke_stable_subspace(chi))
+
 
 @cached_function
 def dimension_wt1_cusp_forms_gH(group):

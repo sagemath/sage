@@ -2,7 +2,8 @@
 Vectors over callable symbolic rings
 
 AUTHOR:
-    -- Jason Grout (2010)
+
+- Jason Grout (2010)
 
 EXAMPLES::
 
@@ -30,11 +31,9 @@ TESTS::
     sage: f(u,v,w) = (2*u+v,u-w,w^2+u)
     sage: loads(dumps(f)) == f
     True
-
-
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Jason Grout <jason-sage@creativetrax.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -46,17 +45,17 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from . import free_module_element
+from sage.modules import free_module_element
 from sage.symbolic.ring import SR
 
 
 class Vector_callable_symbolic_dense(free_module_element.FreeModuleElement_generic_dense):
     def _repr_(self):
         """
-        Returns the string representation of the vector
+        Return the string representation of the vector.
 
         EXAMPLES::
 
@@ -69,7 +68,7 @@ class Vector_callable_symbolic_dense(free_module_element.FreeModuleElement_gener
         """
         ring = self.coordinate_ring()
         args = ring.arguments()
-        repr_x=self.change_ring(SR)._repr_()
+        repr_x = self.change_ring(SR)._repr_()
         if len(args) == 1:
             return "%s |--> %s" % (args[0], repr_x)
         else:

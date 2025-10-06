@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Weyl Lie Conformal Algebra
 
@@ -46,16 +47,15 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
     INPUT:
 
     - ``R`` -- a commutative ring; the base ring of this Lie
-      conformal algebra.
-    - ``ngens``: an even positive Integer (default `2`); The number
-      of non-central generators of this Lie conformal algebra.
-    - ``gram_matrix``: a matrix (default: ``None``); A non-singular
-      skew-symmetric square matrix with coefficients in `R`.
-    - ``names`` -- a list or tuple of ``str``; alternative names
+      conformal algebra
+    - ``ngens`` -- an even positive Integer (default: `2`); the number
+      of non-central generators of this Lie conformal algebra
+    - ``gram_matrix`` -- a matrix (default: ``None``); a non-singular
+      skew-symmetric square matrix with coefficients in `R`
+    - ``names`` -- list or tuple of strings; alternative names
       for the generators
     - ``index_set`` -- an enumerated set; alternative indexing set
       for the generators
-
 
     OUTPUT:
 
@@ -109,21 +109,21 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
         sage: alpha0.degree()
         Traceback (most recent call last):
         ...
-        AttributeError: 'WeylLieConformalAlgebra_with_category.element_class' object has no attribute 'degree'
+        AttributeError: 'WeylLieConformalAlgebra_with_category.element_class' object has no attribute 'degree'...
 
     TESTS::
 
         sage: lie_conformal_algebras.Weyl(ZZ, gram_matrix=identity_matrix(ZZ,3))
         Traceback (most recent call last):
         ...
-        ValueError: The gram_matrix should be a non degenerate skew-symmetric 3 x 3 matrix, got [1 0 0]
+        ValueError: the Gram_matrix should be a non degenerate skew-symmetric 3 x 3 matrix, got [1 0 0]
         [0 1 0]
         [0 0 1]
     """
     def __init__(self, R, ngens=None, gram_matrix=None, names=None,
                  index_set=None):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 
@@ -142,11 +142,11 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
             try:
                 assert (gram_matrix in MatrixSpace(R, ngens, ngens))
             except AssertionError:
-                raise ValueError("The gram_matrix should be a skew-symmetric "
+                raise ValueError("the Gram_matrix should be a skew-symmetric "
                     "{0} x {0} matrix, got {1}".format(ngens, gram_matrix))
             if (not gram_matrix.is_skew_symmetric() or
                     gram_matrix.is_singular()):
-                raise ValueError("The gram_matrix should be a non degenerate "
+                raise ValueError("the Gram_matrix should be a non degenerate "
                                  "skew-symmetric {0} x {0} matrix, got {1}"
                                  .format(ngens, gram_matrix))
         elif gram_matrix is None:
@@ -174,7 +174,7 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
                          central_elements=('K',))
         self._gram_matrix = gram_matrix
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The name of this Lie conformal algebra.
 

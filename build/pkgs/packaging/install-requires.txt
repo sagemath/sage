@@ -1,2 +1,0 @@
-packaging >=18.0
-# Trac #30975: packaging 20.5 is known to work but we have to silence "DeprecationWarning: Creating a LegacyVersion"

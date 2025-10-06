@@ -123,7 +123,11 @@ https://github.com/alice/sage.
 
 Next if you don't have a local Git repo of Sage, then start afresh `cloning
 your fork
-<https://docs.github.com/en/get-started/quickstart/fork-a-repo#cloning-your-forked-repository>`_::
+<https://docs.github.com/en/get-started/quickstart/fork-a-repo#cloning-your-forked-repository>`_:
+
+.. tab:: By HTTPS protocol
+
+   ::
 
     [alice@localhost ~]$ git clone https://github.com/alice/sage.git
     Cloning into 'sage'...
@@ -139,7 +143,30 @@ your fork
     origin  https://github.com/alice/sage.git (fetch)
     origin  https://github.com/alice/sage.git (push)
 
-If you already have a local Git repo and only want to link your fork as ``origin`` remote, then do::
+.. tab:: By SSH protocol
+
+   ::
+
+    [alice@localhost ~]$ git clone git@github.com:alice/sage.git
+    Cloning into 'sage'...
+    remote: Enumerating objects: 914565, done.
+    remote: Counting objects: 100% (2738/2738), done.
+    remote: Compressing objects: 100% (855/855), done.
+    remote: Total 914565 (delta 1950), reused 2493 (delta 1875), pack-reused 911827
+    Receiving objects: 100% (914565/914565), 331.09 MiB | 11.22 MiB/s, done.
+    Resolving deltas: 100% (725438/725438), done.
+    Updating files: 100% (9936/9936), done.
+    [alice@localhost ~]$ cd sage
+    [alice@localhost sage]$ git remote -v
+    origin  git@github.com:alice/sage.git (fetch)
+    origin  git@github.com:alice/sage.git (push)
+
+
+If you already have a local Git repo and only want to link your fork as ``origin`` remote, then do:
+
+.. tab:: By HTTPS protocol
+
+   ::
 
     [alice@localhost sage]$ git remote add origin https://github.com/alice/sage.git
     [alice@localhost sage]$ git remote -v
@@ -155,7 +182,29 @@ If you already have a local Git repo and only want to link your fork as ``origin
     From https://github.com/alice/sage
      * [new branch]      develop     -> origin/develop
 
-You also add the Sage repo ``sagemath/sage`` as your remote ``upstream``::
+.. tab:: By SSH protocol
+
+   ::
+
+    [alice@localhost sage]$ git remote add origin git@github.com:alice/sage.git
+    [alice@localhost sage]$ git remote -v
+    origin  git@github.com:alice/sage.git (fetch)
+    origin  git@github.com:alice/sage.git (push)
+    [alice@localhost sage]$ git fetch origin
+    remote: Enumerating objects: 1136, done.
+    remote: Counting objects: 100% (1084/1084), done.
+    remote: Compressing objects: 100% (308/308), done.
+    remote: Total 1136 (delta 825), reused 982 (delta 776), pack-reused 52
+    Receiving objects: 100% (1136/1136), 2.62 MiB | 5.30 MiB/s, done.
+    Resolving deltas: 100% (838/838), completed with 145 local objects.
+    From git@github.com:alice/sage
+     * [new branch]      develop     -> origin/develop
+
+You also add the Sage repo ``sagemath/sage`` as your remote ``upstream``:
+
+.. tab:: By HTTPS protocol
+
+   ::
 
     [alice@localhost sage]$ git remote add upstream https://github.com/sagemath/sage.git
     [alice@localhost sage]$ git remote -v
@@ -164,19 +213,16 @@ You also add the Sage repo ``sagemath/sage`` as your remote ``upstream``::
     upstream    https://github.com/sagemath/sage.git (fetch)
     upstream    https://github.com/sagemath/sage.git (push)
 
+.. tab:: By SSH protocol
 
-.. NOTE::
+   ::
 
-    If you linked your Git to GitHub by SSH protocol, then do the following
-    instead to set up remotes::
-
-        [alice@localhost sage]$ git remote add origin git@github.com:alice/sage.git
-        [alice@localhost sage]$ git remote add upstream git@github.com:sagemath/sage.git
-        [alice@localhost sage]$ git remote -v
-        origin  git@github.com:alice/sage.git (fetch)
-        origin  git@github.com:alice/sage.git (push)
-        upstream    git@github.com:sagemath/sage.git (fetch)
-        upstream    git@github.com:sagemath/sage.git (push)
+    [alice@localhost sage]$ git remote add upstream git@github.com:sagemath/sage.git
+    [alice@localhost sage]$ git remote -v
+    origin  git@github.com:alice/sage.git (fetch)
+    origin  git@github.com:alice/sage.git (push)
+    upstream    git@github.com:sagemath/sage.git (fetch)
+    upstream    git@github.com:sagemath/sage.git (push)
 
 To prevent accidental pushes to ``upstream`` (instead of ``origin``), you may want to disable it by running::
 
@@ -416,25 +462,71 @@ Actions.
   test. Details are again available by clicking on the check.
 
   The automatic workflow runs on a container based on
-  ``ubuntu-focal-standard``.  To request a run of the workflow on a different
+  ``ubuntu``.  To request a run of the workflow on a different
   platform, you can issue a `workflow dispatch
   <https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow#running-a-workflow>`_.
   You can select any of the platforms for which a `prebuilt container image
   <https://github.com/orgs/sagemath/packages?tab=packages&q=with-targets-optional>`_
   exists.
 
-* The `build documentation workflow
+* The `documentation build workflow
   <https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-build.yml>`_
   on GitHub Actions builds the HTML documentation for the current branch.
 
-  A link to the built doc is added in a comment, and so you can easily inspect changes
-  to the documentation without the need to locally rebuild the docs yourself.
+  A link to the built doc is added in a comment, and so you can easily inspect
+  changes to the documentation of the current branch without the need to
+  locally rebuild the docs yourself.
 
-  If the doc build fails, you can go to Actions tab and examine `documentation
-  build workflow
+  If the doc build fails, you can go to Actions tab and examine `runs of the
+  documentation build workflow
   <https://github.com/sagemath/sage/actions/workflows/doc-build.yml>`_ and
   choose the particular branch to see what went wrong.
 
+Documentation Previews
+======================
+
+We value documentation as much as the code. Hence the Sage GitHub repo provides
+documentation previews before a stable release is published to the official
+site `<https://doc.sagemath.org>`_. Developers are expected to check the
+previews. Several GitHub workflows work together to create the previews.
+
+As mentioned above, for a check on a PR (say #12345), an HTML documentation
+preview is published to `<https://doc-pr-12345--sagemath.netlify.app>`_ by the
+`documentation publish workflow
+<https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-publish.yml>`_
+which uses the ``doc`` artifact built by the `documentation build workflow
+<https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-build.yml>`_.
+The run of the build workflow provides the ``doc`` artifact containing the html
+files.
+
+The documentation preview for a PR is accompanied by a "changes" log, which is
+generated from diffs of the htmls in the ``doc`` artifact and the htmls for the
+latest release in the ``doc-develop`` artifact. To facilitate this, on every
+release, the build workflow creates the ``doc-develop`` artifact and the
+publish workflow publishes the html documentation to
+`<https://doc-develop--sagemath.netlify.app>`_.
+
+PDF docs are also built for a PR by the `PDF build workflow
+<https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-build-pdf.yml>`_.
+The PR author should check the success of the PDF build workflow before
+requesting review. If the workflow failed, check the run of the workflow.
+
+The HTML documentation preview for a PR does not include PDF docs, which take
+much longer time to build than the HTML docs. On the other hand, the
+HTML documentation preview and PDF docs contain TESTS blocks to enable the
+PR author to check newly added TESTS blocks. The official documentation for end
+users do not contain TESTS blocks.
+
+Finally, on every release, the full documentation including PDF docs and
+featured with live (runnable) Examples (but no TESTS blocks) is built and
+published to `<https://doc-release--sagemath.netlify.app>`_, a link to which is
+in the `Documentation section of the GitHub Wiki
+<https://github.com/sagemath/sage/wiki#documentation-for-last-release>`_. The
+`livedoc build workflow
+<https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-build-livedoc.yml>`_
+creates the ``livedoc`` artifact used by the `livedoc publish workflow
+<https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-publish-livedoc.yml>`_
+to publish the full documentation.
 
 Final notes
 ===========

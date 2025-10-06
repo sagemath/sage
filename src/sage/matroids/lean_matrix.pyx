@@ -1,5 +1,4 @@
 # sage.doctest: optional - sage.rings.finite_rings
-# cython: profile=True
 """
 Lean matrices
 
@@ -18,7 +17,6 @@ Cython code.
 AUTHORS:
 
 - Rudi Pendavingh, Stefan van Zwam (2013-04-01): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
@@ -37,6 +35,7 @@ from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.data_structures.bitset_base cimport *
+from sage.matrix.constructor import matrix
 from sage.matrix.matrix2 cimport Matrix
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
@@ -44,7 +43,6 @@ from sage.rings.rational_field import QQ
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.libs.gmp.mpq cimport *
-import sage.matrix.constructor
 
 
 cdef class LeanMatrix:
@@ -107,7 +105,7 @@ cdef class LeanMatrix:
             True
         """
         cdef long r, c
-        M = sage.matrix.constructor.Matrix(self.base_ring(), self._nrows, self._ncols)
+        M = matrix(self.base_ring(), self._nrows, self._ncols)
         for r in range(self._nrows):
             for c in range(self._ncols):
                 M[r, c] = self.get_unsafe(r, c)
@@ -168,7 +166,7 @@ cdef class LeanMatrix:
         cdef long i, j
         cdef LeanMatrix A = type(self)(self.nrows(), self.ncols() + self.nrows())
         for i in range(self.nrows()):
-            A.set_unsafe(i, i, self.base_ring()(1))
+            A.set_unsafe(i, i, self.base_ring().one())
             for j in range(self.ncols()):
                 A.set_unsafe(i, self.nrows() + j, self.get_unsafe(i, j))
         return A
@@ -210,9 +208,9 @@ cdef class LeanMatrix:
             sage: A.base_ring()
             Traceback (most recent call last):
             ...
-            NotImplementedError: subclasses need to implement this.
+            NotImplementedError: subclasses need to implement this
         """
-        raise NotImplementedError("subclasses need to implement this.")
+        raise NotImplementedError("subclasses need to implement this")
 
     cpdef characteristic(self):
         """
@@ -359,7 +357,7 @@ cdef class LeanMatrix:
         and compatible dimensions.
         """
         cdef LeanMatrix A = type(self)(self.nrows(), other.ncols())
-        cdef i, j, k
+        cdef long i, j, k
         for i in range(self.nrows()):
             for j in range(other.ncols()):
                 for k in range(self.ncols()):
@@ -478,32 +476,6 @@ cdef class LeanMatrix:
 
     #    Copying, loading, saving:
 
-    def __copy__(self):
-        """
-        Return a copy of ``self``.
-
-        EXAMPLES::
-
-            sage: from sage.matroids.lean_matrix import *
-            sage: A = GenericMatrix(2, 5, Matrix(GF(5), [[1, 0, 1, 1, 1], [0, 1, 1, 2, 3]]))
-            sage: A == copy(A)  # indirect doctest
-            True
-        """
-        return self.copy()
-
-    def __deepcopy__(self, memo=None):
-        """
-        Return a deep copy of ``self``.
-
-        EXAMPLES::
-
-            sage: from sage.matroids.lean_matrix import *
-            sage: A = GenericMatrix(2, 5, Matrix(GF(5), [[1, 0, 1, 1, 1], [0, 1, 1, 2, 3]]))
-            sage: A == deepcopy(A)  # indirect doctest
-            True
-        """
-        return self.copy()
-
     def __reduce__(self):
         """
         Save the object.
@@ -515,20 +487,20 @@ cdef class LeanMatrix:
             sage: A == loads(dumps(A))  # indirect doctest
             Traceback (most recent call last):
             ...
-            NotImplementedError: subclasses need to implement this.
+            NotImplementedError: subclasses need to implement this
         """
-        raise NotImplementedError("subclasses need to implement this.")
+        raise NotImplementedError("subclasses need to implement this")
 
     cdef shifting_all(self, P_rows, P_cols, Q_rows, Q_cols, int m):
         r"""
         Given a partial matrix `M`. If the submatrix `M` using rows
-        `P_rows` columns `P_cols` and submatrix using rows `Q_rows` columns
-        `Q_cols` can be extended to a ``m``-separator, then it returns
-        `True, E`, where `E` is a ``m``-separator. Otherwise it returns
-        `False, None`
+        ``P_rows`` columns ``P_cols`` and submatrix using rows ``Q_rows``
+        columns ``Q_cols`` can be extended to an ``m``-separator, then it
+        returns ``True, E``, where `E` is an ``m``-separator. Otherwise it
+        returns ``False, None``.
 
-        `P_rows` and `Q_rows` must be disjoint subsets of row indices.
-        `P_cols` and `Q_cols` must be disjoint subsets of column indices.
+        ``P_rows`` and ``Q_rows`` must be disjoint subsets of row indices.
+        ``P_cols`` and ``Q_cols`` must be disjoint subsets of column indices.
 
         Internal version does not verify the above properties hold.
 
@@ -542,23 +514,23 @@ cdef class LeanMatrix:
 
         OUTPUT:
 
-        - `False, None`  -- if the input submatrices does not induce a `m``-separator.
-        - `True, E` -- if there exist a ``m``-separator ``E``.
-
+        - ``False, None`` -- if the input submatrices does not induce an
+          ``m``-separator
+        - ``True, E`` -- if there exists an ``m``-separator ``E``
         """
         for z in range(self.ncols()):
             if z in P_cols+Q_cols:
                 continue
-            sol,cert = self.shifting(P_rows,P_cols,Q_rows,Q_cols,z,None,m)
+            sol, cert = self.shifting(P_rows, P_cols, Q_rows, Q_cols, z, None, m)
             if sol:
                 return True, cert
-            sol,cert = self.shifting(Q_rows,Q_cols,P_rows,P_cols,None,z,m)
+            sol, cert = self.shifting(Q_rows, Q_cols, P_rows, P_cols, None, z, m)
             if sol:
                 return True, cert
-            sol,cert = self.shifting(P_rows,P_cols,Q_rows,Q_cols,None,z,m)
+            sol, cert = self.shifting(P_rows, P_cols, Q_rows, Q_cols, None, z, m)
             if sol:
                 return True, cert
-            sol,cert = self.shifting(Q_rows,Q_cols,P_rows,P_cols,z,None,m)
+            sol, cert = self.shifting(Q_rows, Q_cols, P_rows, P_cols, z, None, m)
             if sol:
                 return True, cert
         return False, None
@@ -569,9 +541,9 @@ cdef class LeanMatrix:
         optional column `z2` attached.
         Let `E_2` be the submatrix using rows `U_2` and columns `V_1` with
         optional column `z1` attached.
-        If `E_1` and `E_2` can be extended to a ``m``-separator, then it
-        returns `True, E`, where `E` is a ``m``-separator. Otherwise it
-        returns `False, None`
+        If `E_1` and `E_2` can be extended to an ``m``-separator, then it
+        returns ``True, E``, where `E` is an ``m``-separator. Otherwise it
+        returns ``False, None``.
 
         `U_1` and `U_2` must be disjoint subsets of row indices.
         `V_1` and `V_2` must be disjoint subsets of column indices.
@@ -584,14 +556,16 @@ cdef class LeanMatrix:
         - ``V_2`` -- list of column indices of the first submatrix
         - ``U_2`` -- list of row indices of the second submatrix
         - ``V_1`` -- list of column indices of the second submatrix
-        - ``z2``  -- start by add an additional column with index `z2` to `V_2`
-        - ``z1``  -- start by add an additional column with index `z1` to `V_1`
+        - ``z2`` -- start by add an additional column with index `z2` to `V_2`
+        - ``z1`` -- start by add an additional column with index `z1` to `V_1`
         - ``m`` -- separation size
 
         OUTPUT:
 
-        - `False, None`  -- if the input submatrices does not induce a `m``-separator.
-        - `True, (X,Y)` -- row indices `X` and column indices `Y` defines a ``m``-separator.
+        - ``False, None`` -- if the input submatrices does not induce an
+          ``m``-separator
+        - ``True, (X,Y)`` -- row indices `X` and column indices `Y` defines an
+          ``m``-separator
         """
         # make copy because of destructive updates
         cdef list X_1 = list(U_1)
@@ -619,33 +593,36 @@ cdef class LeanMatrix:
 
         cdef list lU_2 = sorted(list(U_2))
         cdef list lV_2 = sorted(list(V_2))
-        cdef dict rU = dict(zip(lU_2,range(len(U_2))))
-        cdef dict rV = dict(zip(lV_2,range(len(V_2))))
+        cdef dict rU = dict(zip(lU_2, range(len(U_2))))
+        cdef dict rV = dict(zip(lV_2, range(len(V_2))))
 
         # find a unique representation of every column in U_1xY_3 using columns in U_1xV_2
         B = self.matrix_from_rows_and_columns(list(U_1), range(len(Y)))
         B.gauss_jordan_reduce(lV_2)
         # find a unique representation of every rows in X_3xV_1 using rows in U_2xV_1
-        BT = self.matrix_from_rows_and_columns(range(len(X)),list(V_1)).transpose()
+        BT = self.matrix_from_rows_and_columns(range(len(X)),
+                                               list(V_1)).transpose()
         BT.gauss_jordan_reduce(lU_2)
 
         cdef set X_p = set(X_1)
         cdef set Y_p = set(Y_1)
         while True:
-            #rowshifts
-            X_p_new = set([])
+            # rowshifts
+            X_p_new = set()
             for x in set(X_3):
                 for y in Y_p:
-                    if sum([BT.get_unsafe(rU[u],x)*self.get_unsafe(u,y) for u in U_2]) != self.get_unsafe(x,y):
+                    if sum([BT.get_unsafe(rU[u], x) * self.get_unsafe(u, y)
+                            for u in U_2]) != self.get_unsafe(x, y):
                         X_1.append(x)
                         X_3.remove(x)
                         X_p_new.add(x)
                         break
-            #colshifts
-            Y_p_new = set([])
+            # colshifts
+            Y_p_new = set()
             for y in set(Y_3):
                 for x in X_p:
-                    if sum([B.get_unsafe(rV[v],y)*self.get_unsafe(x,v) for v in V_2]) != self.get_unsafe(x,y):
+                    if sum([B.get_unsafe(rV[v], y) * self.get_unsafe(x, v)
+                            for v in V_2]) != self.get_unsafe(x, y):
                         Y_1.append(y)
                         Y_3.remove(y)
                         Y_p_new.add(y)
@@ -673,8 +650,8 @@ cdef class GenericMatrix(LeanMatrix):
     - ``nrows`` -- number of rows
     - ``ncols`` -- number of columns
     - ``M`` -- (default: ``None``) a ``Matrix`` or ``GenericMatrix`` of
-      dimensions at most ``m*n``.
-    - ``ring`` -- (default: ``None``) a Sage ring.
+      dimensions at most ``m*n``
+    - ``ring`` -- (default: ``None``) a Sage ring
 
     .. NOTE::
 
@@ -696,7 +673,7 @@ cdef class GenericMatrix(LeanMatrix):
 
     def __init__(self, long nrows, long ncols, M=None, ring=None):
         """
-        See class docstring for full information.
+        See the class docstring for full information.
 
         EXAMPLES::
 
@@ -719,8 +696,8 @@ cdef class GenericMatrix(LeanMatrix):
         # Default:
         if self._base_ring is None:
             self._base_ring = ZZ
-        self._zero = self._base_ring(0)
-        self._one = self._base_ring(1)
+        self._zero = self._base_ring.zero()
+        self._one = self._base_ring.one()
         self._entries = [self._zero] * nrows * ncols
         if M is not None:
             if isinstance(M, GenericMatrix):
@@ -964,11 +941,11 @@ cdef class BinaryMatrix(LeanMatrix):
 
     INPUT:
 
-    - ``m`` -- Number of rows.
-    - ``n`` -- Number of columns.
-    - ``M`` -- (default: ``None``) Matrix or BinaryMatrix instance.
+    - ``m`` -- number of rows
+    - ``n`` -- number of columns
+    - ``M`` -- (default: ``None``) ``Matrix`` or ``BinaryMatrix`` instance.
       Assumption: dimensions of ``M`` are at most ``m`` by ``n``.
-    - ``ring`` -- (default: ``None``) ignored.
+    - ``ring`` -- (default: ``None``) ignored
 
     EXAMPLES::
 
@@ -1005,7 +982,7 @@ cdef class BinaryMatrix(LeanMatrix):
 
     def __init__(self, long m, long n, object M=None, object ring=None):
         """
-        See class docstring for full specification.
+        See the class docstring for full specification.
 
         EXAMPLES::
 
@@ -1018,8 +995,8 @@ cdef class BinaryMatrix(LeanMatrix):
         global GF2, GF2_zero, GF2_one, GF2_not_defined
         if GF2_not_defined:
             GF2 = GF(2)
-            GF2_zero = GF2(0)
-            GF2_one = GF2(1)
+            GF2_zero = GF2.zero()
+            GF2_one = GF2.one()
             GF2_not_defined = False
         if M is not None:
             if isinstance(M, BinaryMatrix):
@@ -1047,7 +1024,7 @@ cdef class BinaryMatrix(LeanMatrix):
 
     def __repr__(self):
         r"""
-        Return representation string
+        Return representation string.
 
         EXAMPLES::
 
@@ -1078,7 +1055,7 @@ cdef class BinaryMatrix(LeanMatrix):
             True
         """
         cdef long i, j
-        M = sage.matrix.constructor.Matrix(GF(2), self._nrows, self._ncols)
+        M = matrix(GF(2), self._nrows, self._ncols)
         for i in range(self._nrows):
             for j in range(self._ncols):
                 if bitset_in(self._M[i], j):
@@ -1194,10 +1171,10 @@ cdef class BinaryMatrix(LeanMatrix):
     cdef inline bint is_nonzero(self, long r, long c) except -2:   # Not a Sage matrix operation
         return bitset_in(self._M[r], c)
 
-    cdef inline bint get(self, long r, long c):   # Not a Sage matrix operation
+    cdef inline bint get(self, long r, long c) noexcept:   # Not a Sage matrix operation
         return bitset_in(self._M[r], c)
 
-    cdef inline void set(self, long x, long y):   # Not a Sage matrix operation
+    cdef inline void set(self, long x, long y) noexcept:   # Not a Sage matrix operation
         bitset_add(self._M[x], y)
 
     cdef int pivot(self, long x, long y) except -1:   # Not a Sage matrix operation
@@ -1225,7 +1202,7 @@ cdef class BinaryMatrix(LeanMatrix):
         """
         return bitset_len(self._M[i])
 
-    cdef inline bint row_inner_product(self, long i, long j):   # Not a Sage matrix operation
+    cdef inline bint row_inner_product(self, long i, long j) noexcept:   # Not a Sage matrix operation
         """
         Return the inner product between rows ``i`` and ``j``.
         """
@@ -1353,7 +1330,7 @@ cdef class BinaryMatrix(LeanMatrix):
         for r in range(len(rows)):
             row = self._M[rows[r]]
             row2 = A._M[r]
-            bitset_intersection(row2, row, mask) # yes, this is safe
+            bitset_intersection(row2, row, mask)  # yes, this is safe
             for g in range(lg):
                 if bitset_in(row, cols[g]):
                     bitset_add(row2, gaps[g])
@@ -1456,7 +1433,7 @@ cdef class BinaryMatrix(LeanMatrix):
         if s_eq.nrows() != o_eq.nrows():
             return False
         if s_eq.nrows() == s_eq.ncols():  # s_eq and o_eq partition into singletons
-            morph = [0 for i in range(self._nrows)]
+            morph = [0 for _ in range(self._nrows)]
             for i in range(self._nrows):
                 morph[bitset_first(s_eq._M[i])] = bitset_first(o_eq._M[i])
             for i in range(self._nrows):
@@ -1573,11 +1550,11 @@ cdef class TernaryMatrix(LeanMatrix):
 
     INPUT:
 
-    - ``m`` -- Number of rows.
-    - ``n`` -- Number of columns.
+    - ``m`` -- number of rows
+    - ``n`` -- number of columns
     - ``M`` -- (default: ``None``) ``Matrix`` or ``TernaryMatrix`` instance.
       Assumption: dimensions of ``M`` are at most ``m`` by ``n``.
-    - ``ring`` -- (default: ``None``) ignored.
+    - ``ring`` -- (default: ``None``) ignored
 
     EXAMPLES::
 
@@ -1603,8 +1580,8 @@ cdef class TernaryMatrix(LeanMatrix):
         global GF3, GF3_zero, GF3_one, GF3_minus_one, GF3_not_defined
         if GF3_not_defined:
             GF3 = GF(3)
-            GF3_zero = GF3(0)
-            GF3_one = GF3(1)
+            GF3_zero = GF3.zero()
+            GF3_one = GF3.one()
             GF3_minus_one = GF3(2)
             GF3_not_defined = False
 
@@ -1628,7 +1605,7 @@ cdef class TernaryMatrix(LeanMatrix):
 
     def __init__(self, long m, long n, M=None, ring=None):
         """
-        See class docstring for full specification.
+        See the class docstring for full specification.
 
         EXAMPLES::
 
@@ -1675,7 +1652,7 @@ cdef class TernaryMatrix(LeanMatrix):
 
     def __repr__(self):
         r"""
-        Return representation string
+        Return representation string.
 
         EXAMPLES::
 
@@ -1715,7 +1692,7 @@ cdef class TernaryMatrix(LeanMatrix):
             True
         """
         cdef int i, j
-        M = sage.matrix.constructor.Matrix(GF(3), self._nrows, self._ncols)
+        M = matrix(GF(3), self._nrows, self._ncols)
         for i in range(self._nrows):
             for j in range(self._ncols):
                 M[i, j] = self.get(i, j)
@@ -1829,7 +1806,7 @@ cdef class TernaryMatrix(LeanMatrix):
         """
         return 3
 
-    cdef inline long get(self, long r, long c):   # Not a Sage matrix operation
+    cdef inline long get(self, long r, long c) noexcept:   # Not a Sage matrix operation
         if not bitset_in(self._M0[r], c):
             return 0
         if not bitset_in(self._M1[r], c):
@@ -1851,16 +1828,16 @@ cdef class TernaryMatrix(LeanMatrix):
     cdef inline bint is_nonzero(self, long r, long c) except -2:   # Not a Sage matrix operation
         return bitset_in(self._M0[r], c)
 
-    cdef inline bint _is_negative(self, long r, long c):
+    cdef inline bint _is_negative(self, long r, long c) noexcept:
         return bitset_in(self._M1[r], c)
 
-    cdef inline long row_len(self, long i):   # Not a Sage matrix operation
+    cdef inline long row_len(self, long i) noexcept:   # Not a Sage matrix operation
         """
         Return number of nonzero entries in row ``i``.
         """
         return bitset_len(self._M0[i])
 
-    cdef inline long row_inner_product(self, long i, long j):   # Not a Sage matrix operation
+    cdef inline long row_inner_product(self, long i, long j) noexcept:   # Not a Sage matrix operation
         """
         Return the inner product between rows ``i`` and ``j``.
         """
@@ -1898,7 +1875,7 @@ cdef class TernaryMatrix(LeanMatrix):
             self.row_subs(x, y)
         return 0
 
-    cdef void row_subs(self, long x, long y):   # Not a Sage matrix operation
+    cdef void row_subs(self, long x, long y) noexcept:   # Not a Sage matrix operation
         """
         Subtract row ``y`` from row ``x``.
         """
@@ -1909,7 +1886,7 @@ cdef class TernaryMatrix(LeanMatrix):
         bitset_symmetric_difference(self._s, self._M0[y], self._M1[x])
         bitset_intersection(self._M1[x], self._s, self._t)
 
-    cdef void _row_negate(self, long x):
+    cdef void _row_negate(self, long x) noexcept:
         bitset_symmetric_difference(self._M1[x], self._M1[x], self._M0[x])
 
     cdef int swap_rows_c(self, long x, long y) except -1:
@@ -2032,8 +2009,8 @@ cdef class TernaryMatrix(LeanMatrix):
             row1 = self._M1[rows[r]]
             row0_2 = A._M0[r]
             row1_2 = A._M1[r]
-            bitset_intersection(row0_2, row0, mask) # yes, this is safe
-            bitset_intersection(row1_2, row1, mask) # yes, this is safe
+            bitset_intersection(row0_2, row0, mask)  # yes, this is safe
+            bitset_intersection(row1_2, row1, mask)  # yes, this is safe
             for g in range(lg):
                 p = cols[g]
                 if bitset_in(row0, p):
@@ -2130,13 +2107,13 @@ cdef class QuaternaryMatrix(LeanMatrix):
 
     INPUT:
 
-    - ``m`` -- Number of rows
-    - ``n`` -- Number of columns
-    - ``M`` -- (default: ``None``) A QuaternaryMatrix or LeanMatrix or (Sage)
-      Matrix instance. If not given, new matrix will be filled with zeroes.
-      Assumption: ``M`` has dimensions at most ``m`` times ``n``.
-    - ``ring`` -- (default: ``None``) A copy of GF(4). Useful for specifying
-      generator name.
+    - ``m`` -- number of rows
+    - ``n`` -- number of columns
+    - ``M`` -- (default: ``None``) ``QuaternaryMatrix`` or ``LeanMatrix`` or
+      (Sage) ``Matrix`` instance. If not given, new matrix will be filled with
+      zeroes. Assumption: ``M`` has dimensions at most ``m`` times ``n``.
+    - ``ring`` -- (default: ``None``) a copy of GF(4); useful for specifying
+      generator name
 
     EXAMPLES::
 
@@ -2180,7 +2157,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
 
     def __init__(self, long m, long n, M=None, ring=None):
         """
-        See class docstring for full specification.
+        See the class docstring for full specification.
 
         EXAMPLES::
 
@@ -2193,8 +2170,8 @@ cdef class QuaternaryMatrix(LeanMatrix):
         if M is not None:
             if isinstance(M, QuaternaryMatrix):
                 self._gf4 = (<QuaternaryMatrix>M)._gf4
-                self._zero = self._gf4(0)
-                self._one = self._gf4(1)
+                self._zero = self._gf4.zero()
+                self._one = self._gf4.one()
                 self._x_zero = self._gf4.gens()[0]
                 self._x_one = self._x_zero + self._one
                 for i in range((<QuaternaryMatrix>M)._nrows):
@@ -2202,8 +2179,8 @@ cdef class QuaternaryMatrix(LeanMatrix):
                     bitset_copy(self._M1[i], (<QuaternaryMatrix>M)._M1[i])
             elif isinstance(M, LeanMatrix):
                 self._gf4 = (<LeanMatrix>M).base_ring()
-                self._zero = self._gf4(0)
-                self._one = self._gf4(1)
+                self._zero = self._gf4.zero()
+                self._one = self._gf4.one()
                 self._x_zero = self._gf4.gens()[0]
                 self._x_one = self._x_zero + self._one
                 for i in range(M.nrows()):
@@ -2211,19 +2188,19 @@ cdef class QuaternaryMatrix(LeanMatrix):
                         self.set(i, j, (<LeanMatrix>M).get_unsafe(i, j))
             elif isinstance(M, Matrix):
                 self._gf4 = (<Matrix>M).base_ring()
-                self._zero = self._gf4(0)
-                self._one = self._gf4(1)
+                self._zero = self._gf4.zero()
+                self._one = self._gf4.one()
                 self._x_zero = self._gf4.gens()[0]
                 self._x_one = self._x_zero + self._one
                 for i in range(M.nrows()):
                     for j in range(M.ncols()):
                         self.set(i, j, (<Matrix>M).get_unsafe(i, j))
             else:
-                raise TypeError("unrecognized input type.")
+                raise TypeError("unrecognized input type")
         else:
             self._gf4 = ring
-            self._zero = self._gf4(0)
-            self._one = self._gf4(1)
+            self._zero = self._gf4.zero()
+            self._one = self._gf4.one()
             self._x_zero = self._gf4.gens()[0]
             self._x_one = self._x_zero + self._one
 
@@ -2251,7 +2228,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
 
     def __repr__(self):
         r"""
-        Return representation string
+        Return representation string.
 
         EXAMPLES::
 
@@ -2293,7 +2270,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
             [0 0 0]
             [0 0 0]
         """
-        M = sage.matrix.constructor.Matrix(self._gf4, self._nrows, self._ncols)
+        M = matrix(self._gf4, self._nrows, self._ncols)
         for i in range(self._nrows):
             for j in range(self._ncols):
                 M[i, j] = self.get(i, j)
@@ -2547,7 +2524,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
                 T.set(i, j, self.get(j, i))
         return T
 
-    cdef void conjugate(self):   # Not a Sage matrix operation
+    cdef void conjugate(self) noexcept:   # Not a Sage matrix operation
         """
         Apply the nontrivial GF(4)-automorphism to the entries.
         """
@@ -2576,7 +2553,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
         Return a submatrix indexed by indicated rows and columns, as well as
         the column order of the resulting submatrix.
         """
-        cdef QuaternaryMatrix A = QuaternaryMatrix(len(rows), len(columns), ring = self._gf4)
+        cdef QuaternaryMatrix A = QuaternaryMatrix(len(rows), len(columns), ring=self._gf4)
         cdef long r, c, lc, lg
         cdef mp_bitcnt_t *cols
         # deal with trivial case
@@ -2616,7 +2593,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
             row1 = self._M1[rows[r]]
             row0_2 = A._M0[r]
             row1_2 = A._M1[r]
-            bitset_intersection(row0_2, row0, mask) # yes, this is safe
+            bitset_intersection(row0_2, row0, mask)  # yes, this is safe
             bitset_intersection(row1_2, row1, mask)
             for g in range(lg):
                 p = cols[g]
@@ -2798,7 +2775,7 @@ cdef class PlusMinusOneMatrix(LeanMatrix):
 
     def __init__(self, long nrows, long ncols, M=None, ring=None):
         """
-        See class docstring for full information.
+        See the class docstring for full information.
 
         EXAMPLES::
 
@@ -2849,10 +2826,10 @@ cdef class PlusMinusOneMatrix(LeanMatrix):
         """
         return "PlusMinusOneMatrix instance with {} rows and {} columns".format(self._nrows, self._ncols)
 
-    cdef inline int get(self, long r, long c):   # Not a Sage matrix operation
+    cdef inline int get(self, long r, long c) noexcept:   # Not a Sage matrix operation
         return self._entries[r * self._ncols + c]
 
-    cdef inline void set(self, long r, long c, int x):   # Not a Sage matrix operation
+    cdef inline void set(self, long r, long c, int x) noexcept:   # Not a Sage matrix operation
         self._entries[r * self._ncols + c] = x
 
     cdef get_unsafe(self, long r, long c):
@@ -2904,7 +2881,7 @@ cdef class PlusMinusOneMatrix(LeanMatrix):
 
     cdef LeanMatrix stack(self, LeanMatrix M):
         """
-        Warning: assumes ``M`` is an PlusMinusOneMatrix instance of right
+        Warning: assumes ``M`` is a PlusMinusOneMatrix instance of right
         dimensions!
         """
         cdef PlusMinusOneMatrix A
@@ -3232,7 +3209,7 @@ cdef class RationalMatrix(LeanMatrix):
 
     def __init__(self, long nrows, long ncols, M=None, ring=None):
         """
-        See class docstring for full information.
+        See the class docstring for full information.
 
         EXAMPLES::
 
@@ -3259,11 +3236,11 @@ cdef class RationalMatrix(LeanMatrix):
             elif isinstance(M, LeanMatrix):
                 for i in range(M.nrows()):
                     for j in range(M.ncols()):
-                        mpq_set(self._entries[i * self._ncols + j], Rational((<LeanMatrix>M).get_unsafe(i,j)).value)
+                        mpq_set(self._entries[i * self._ncols + j], Rational((<LeanMatrix>M).get_unsafe(i, j)).value)
             else:  # Sage Matrix or otherwise
                 for i in range(M.nrows()):
                     for j in range(M.ncols()):
-                        mpq_set(self._entries[i * self._ncols + j], Rational(M[i,j]).value)
+                        mpq_set(self._entries[i * self._ncols + j], Rational(M[i, j]).value)
 
     def __dealloc__(self):
         """
@@ -3296,10 +3273,10 @@ cdef class RationalMatrix(LeanMatrix):
         """
         return "RationalMatrix instance with {} rows and {} columns".format(self._nrows, self._ncols)
 
-    cdef inline long index(self, long r, long c):   # Not a Sage matrix operation
+    cdef inline long index(self, long r, long c) noexcept:   # Not a Sage matrix operation
         return r * self._ncols + c
 
-    cdef inline void set(self, long r, long c, mpq_t x):   # Not a Sage matrix operation
+    cdef inline void set(self, long r, long c, mpq_t x) noexcept:   # Not a Sage matrix operation
         mpq_set(self._entries[r * self._ncols + c], x)
 
     cdef get_unsafe(self, long r, long c):
@@ -3361,7 +3338,7 @@ cdef class RationalMatrix(LeanMatrix):
 
     cdef LeanMatrix stack(self, LeanMatrix M):
         """
-        Warning: assumes ``M`` is an RationalMatrix instance of right
+        Warning: assumes ``M`` is a RationalMatrix instance of right
         dimensions!
         """
         cdef RationalMatrix A
@@ -3384,7 +3361,7 @@ cdef class RationalMatrix(LeanMatrix):
         A = RationalMatrix(self._nrows, self._ncols + Mn)
         for i in range(self._nrows):
             for j in range(self._ncols):
-                mpq_set(A._entries[A.index(i,j)], self._entries[self.index(i,j)])
+                mpq_set(A._entries[A.index(i, j)], self._entries[self.index(i, j)])
                 mpq_set(A._entries[i*A._ncols + self._ncols + j], (<RationalMatrix>M)._entries[i*Mn + j])
         return A
 
@@ -3392,9 +3369,10 @@ cdef class RationalMatrix(LeanMatrix):
         cdef RationalMatrix A = RationalMatrix(self._nrows, self._ncols + self._nrows)
         cdef long i, j
         for i in range(self._nrows):
-            mpq_set_si(A._entries[A.index(i,i)], 1, 1)
+            mpq_set_si(A._entries[A.index(i, i)], 1, 1)
             for j in range(self._ncols):
-                mpq_set(A._entries[A.index(i,self._nrows+j)], self._entries[self.index(i,j)])
+                mpq_set(A._entries[A.index(i, self._nrows + j)],
+                        self._entries[self.index(i, j)])
         return A
 
     cpdef base_ring(self):

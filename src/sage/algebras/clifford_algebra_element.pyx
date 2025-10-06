@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 """
 Clifford algebra elements
 
@@ -14,13 +15,15 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from copy import copy
+
 from sage.structure.parent cimport Parent
 from sage.data_structures.bitset cimport Bitset
 from sage.algebras.weyl_algebra import repr_from_monomials
 from sage.data_structures.blas_dict cimport scal
-from copy import copy
+
 
 cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
     """
@@ -33,7 +36,7 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
         sage: elt = ((x^3-z)*x + y)^2
         sage: TestSuite(elt).run()
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -89,7 +92,7 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
             sage: 0*x
             0
 
-        :trac:`34707`::
+        :issue:`34707`::
 
             sage: Q = QuadraticForm(QQ, 2, [0,5,0])
             sage: C.<p,q> = CliffordAlgebra(Q)
@@ -712,7 +715,7 @@ cdef class ExteriorAlgebraElement(CliffordAlgebraElement):
 
         INPUT:
 
-        - ``I`` -- a list of exterior algebra elements or an ideal
+        - ``I`` -- list of exterior algebra elements or an ideal
         - ``left`` -- boolean; if reduce as a left ideal (``True``)
           or right ideal (``False``), ignored if ``I`` is an ideal
 
@@ -944,6 +947,7 @@ cdef class CohomologyRAAGElement(CliffordAlgebraElement):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs sage.groups
             sage: C4 = graphs.CycleGraph(4)
             sage: A = groups.misc.RightAngledArtin(C4)
             sage: H = A.cohomology()

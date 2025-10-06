@@ -23,5 +23,6 @@ other types of cell complexes.
    sage/topology/simplicial_set_morphism
    sage/topology/cell_complex
    sage/topology/filtered_simplicial_complex
+   sage/topology/moment_angle_complex
 
 .. include:: ../footer.txt

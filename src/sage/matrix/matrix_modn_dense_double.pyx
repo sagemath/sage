@@ -47,7 +47,7 @@ include "matrix_modn_dense_template.pxi"
 
 cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
     r"""
-    Dense matrices over `\ZZ/n\ZZ` for `n < 94906266` using LinBox's ``Modular<double>``
+    Dense matrices over `\ZZ/n\ZZ` for `n < 94906266` using LinBox's ``Modular<double>``.
 
     These are matrices with integer entries mod ``n`` represented as
     floating-point numbers in a 64-bit word for use with LinBox routines.
@@ -61,7 +61,7 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
 
     def __cinit__(self):
         """
-        The Cython constructor
+        The Cython constructor.
 
         TESTS::
 
@@ -73,9 +73,9 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
         # note that INTEGER_MOD_INT32_LIMIT is ceil(sqrt(2^31-1)) < 94906266
         self._fits_int32 = ((<Matrix_modn_dense_template>self).p <= INTEGER_MOD_INT32_LIMIT)
 
-    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
+    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value) noexcept:
         r"""
-        Set the (i,j) entry of self to the int value.
+        Set the (i,j) entry of ``self`` to the int value.
 
         EXAMPLES::
 
@@ -175,3 +175,45 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
             return (<IntegerMod_int>_self._get_template)._new_c(<int_fast32_t>result)
         else:
             return (<IntegerMod_int64>_self._get_template)._new_c(<int_fast64_t>result)
+
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a
+                    Matrix_modn_dense_double with the same base ring as
+                    ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: m = matrix(GF(257),3,4,range(12))
+            sage: m
+            [ 0  1  2  3]
+            [ 4  5  6  7]
+            [ 8  9 10 11]
+            sage: m.transpose()
+            [ 0  4  8]
+            [ 1  5  9]
+            [ 2  6 10]
+            [ 3  7 11]
+            sage: m.matrix_from_rows([0,2])
+            [ 0  1  2  3]
+            [ 8  9 10 11]
+            sage: m.matrix_from_columns([1,3])
+            [ 1  3]
+            [ 5  7]
+            [ 9 11]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [ 4  7]
+            [ 8 11]
+        """
+        cdef Matrix_modn_dense_double _src = <Matrix_modn_dense_double>src
+        self._matrix[iDst][jDst] = _src._matrix[iSrc][jSrc]
+        

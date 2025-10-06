@@ -1,3 +1,4 @@
+# sage.doctest: needs giac
 r"""
 Pexpect Interface to Giac
 
@@ -25,7 +26,6 @@ If the giac spkg is installed, you should find the full html documentation there
 
     $SAGE_LOCAL/share/giac/doc/en/cascmd_local/index.html
 
-
 EXAMPLES::
 
     sage: giac('3 * 5')
@@ -48,7 +48,7 @@ EXAMPLES::
 
 
 If the string "error" (case insensitive) occurs in the output of
-anything from Giac, a RuntimeError exception is raised.
+anything from Giac, a :exc:`RuntimeError` exception is raised.
 
 Tutorial
 --------
@@ -214,7 +214,7 @@ For more details, see the documentation for ``._sage_()``.
 
 TESTS:
 
-Test that conversion of symbolic functions with latex names works (:trac:`31047`)::
+Test that conversion of symbolic functions with latex names works (:issue:`31047`)::
 
     sage: var('phi')
     phi
@@ -237,16 +237,20 @@ Test that conversion of symbolic functions with latex names works (:trac:`31047`
 
 import os
 
-from sage.interfaces.expect import Expect, ExpectElement, ExpectFunction, FunctionElement, gc_disabled
-
 import pexpect
 
 from sage.cpython.string import bytes_to_str
 from sage.env import DOT_SAGE
-from sage.misc.pager import pager
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+    gc_disabled,
+)
 from sage.misc.instancedoc import instancedoc
+from sage.misc.pager import pager
 from sage.structure.richcmp import rich_to_bool
-
 
 COMMANDS_CACHE = '%s/giac_commandlist_cache.sobj' % DOT_SAGE
 
@@ -326,6 +330,7 @@ class Giac(Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.giac import giac
             sage: giac == loads(dumps(giac))
             True
         """
@@ -359,7 +364,7 @@ class Giac(Expect):
 
     def _keyboard_interrupt(self):
         """
-        The pexepect interface for giac has a very poor support of keyboard interruptions.
+        The pexpect interface for giac has a very poor support of keyboard interruptions.
         """
         print("Interrupting %s..." % self)
         self._expect.sendline(chr(3))  # send ctrl-c
@@ -448,7 +453,6 @@ Full html documentation for giac is available from your giac installation at:
     ``$PREFIX``/share/giac/doc/en/cascmd_en/index.html
 
 If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
-
 """
 
     def expect(self):
@@ -482,7 +486,6 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
             Press CTRL and D simultaneously to finish session
             Type ?commandname for help
             0>>
-
         """
         giac_console()
 
@@ -559,7 +562,7 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
                 try:
                     self.__tab_completion = sage.misc.persist.load(COMMANDS_CACHE)
                     return self.__tab_completion
-                except IOError:
+                except OSError:
                     pass
             if verbose:
                 print("\nBuilding Giac command completion list (this takes")
@@ -611,7 +614,6 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
             sage: giac_result = giac(h1) + giac(h2)
             sage: bool(giac_result.sage() == x)
             True
-
         """
         with gc_disabled():
             z = Expect._eval_line(self, line, allow_use_file=allow_use_file,
@@ -630,8 +632,8 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
 
         INPUT:
 
-        - code -- str
-        - strip -- Default is True and removes ``\n``
+        - ``code`` -- str
+        - ``strip`` -- default is ``True`` and removes ``\n``
 
         EXAMPLES::
 
@@ -773,7 +775,7 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
 
         INPUT:
 
-        -  ``string`` -- a string to search for in the giac help system
+        - ``string`` -- string to search for in the giac help system
 
         EXAMPLES::
 
@@ -805,7 +807,6 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
 
             sage: giac.version()
             "giac...
-
         """
         return giac('version()')
 
@@ -815,7 +816,7 @@ class GiacFunction(ExpectFunction):
     def _instancedoc_(self):
         """
         Return the Giac help for this function. This gets called when
-        doing "?" on self.
+        doing ``?`` on ``self``.
 
         EXAMPLES::
 
@@ -831,7 +832,7 @@ class GiacFunctionElement(FunctionElement):
     def _instancedoc_(self):
         """
         Return the Giac help for this function. This gets called when
-        doing "?" on self.
+        doing ``?`` on ``self``.
 
         EXAMPLES::
 
@@ -846,7 +847,7 @@ class GiacFunctionElement(FunctionElement):
 class GiacElement(ExpectElement):
     def __float__(self):
         """
-        Return a floating point version of self.
+        Return a floating point version of ``self``.
 
         EXAMPLES::
 
@@ -859,7 +860,7 @@ class GiacElement(ExpectElement):
 
     def unapply(self, var):
         """
-        Creates a Giac function in the given arguments from a Giac symbol.
+        Create a Giac function in the given arguments from a Giac symbol.
 
         EXAMPLES::
 
@@ -889,7 +890,7 @@ class GiacElement(ExpectElement):
 
     def _richcmp_(self, other, op):
         """
-        Compare equality between self and other, using giac.
+        Compare equality between ``self`` and ``other``, using giac.
 
         These examples are optional, and require Giac to be installed. You
         do not need to install any Sage packages for this.
@@ -1013,7 +1014,6 @@ class GiacElement(ExpectElement):
             sage: gf = giac('(x^4 - y)/(y^2-3*x)')
             sage: latex(gf)          # output changed slightly from 1.5.0-63 to 1.5.0-87
             \frac{...x^{4}...-...y...}{...y^{2}-3...x...}
-
         """
         s = self.parent().eval('latex(%s)' % self.name())
         if s.startswith('"'):
@@ -1107,12 +1107,12 @@ class GiacElement(ExpectElement):
 
         TESTS:
 
-        Check conversion of Booleans (:trac:`28705`)::
+        Check conversion of Booleans (:issue:`28705`)::
 
             sage: giac('true')._sage_(), giac('false')._sage_()
             (True, False)
 
-        Check that variables and constants are not mixed up (:trac:`30133`)::
+        Check that variables and constants are not mixed up (:issue:`30133`)::
 
             sage: ee, ii, pp = SR.var('e,i,pi')
             sage: giac(ee * ii * pp).sage().variables()
@@ -1120,8 +1120,11 @@ class GiacElement(ExpectElement):
             sage: giac(e * i * pi).sage().variables()
             ()
         """
+        from sage.calculus.calculus import (
+            SR_parser_giac,
+            symbolic_expression_from_string,
+        )
         from sage.symbolic.expression import symbol_table
-        from sage.calculus.calculus import symbolic_expression_from_string, SR_parser_giac
 
         if locals is None:
             locals = {}
@@ -1146,19 +1149,17 @@ class GiacElement(ExpectElement):
 
     def integral(self, var='x', min=None, max=None):
         r"""
-        Return the integral of self with respect to the variable x.
+        Return the integral of ``self`` with respect to the variable `x`.
 
         INPUT:
 
+        - ``var`` -- variable
 
-        -  ``var`` - variable
+        - ``min`` -- (default: ``None``)
 
-        -  ``min`` - default: None
+        - ``max`` -- (default: ``None``)
 
-        -  ``max`` - default: None
-
-
-        This returns the definite integral if xmin is not None, otherwise
+        This returns the definite integral if xmin is not ``None``, otherwise
         an indefinite integral.
 
         EXAMPLES::
@@ -1186,17 +1187,17 @@ class GiacElement(ExpectElement):
 
     def sum(self, var, min=None, max=None):
         r"""
-        Return the sum of self with respect to the variable x.
+        Return the sum of ``self`` with respect to the variable `x`.
 
         INPUT:
 
-        -  ``var`` - variable
+        - ``var`` -- variable
 
-        -  ``min`` - default: None
+        - ``min`` -- (default: ``None``)
 
-        -  ``max`` - default: None
+        - ``max`` -- (default: ``None``)
 
-        This returns the definite integral if xmin is not None, otherwise
+        This returns the definite integral if xmin is not ``None``, otherwise
         an indefinite integral.
 
         EXAMPLES::

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Conjugacy classes of groups
 
@@ -24,7 +23,7 @@ Conjugacy classes for groups of permutations::
 
     sage: G = SymmetricGroup(4)
     sage: g = G((1,2,3,4))
-    sage: G.conjugacy_class(g)
+    sage: G.conjugacy_class(g)                                                          # needs sage.combinat
     Conjugacy class of cycle type [4] in Symmetric group of order 4! as a permutation group
 
 Conjugacy classes for groups of matrices::
@@ -48,12 +47,12 @@ TESTS::
     sage: TestSuite(C).run()
 """
 
-#****************************************************************************
+# **************************************************************************
 #       Copyright (C) 2011 Javier López Peña <jlopez@ende.cc>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# **************************************************************************
 
 from sage.structure.parent import Parent
 from sage.misc.cachefunc import cached_method
@@ -90,7 +89,7 @@ class ConjugacyClass(Parent):
             sage: ConjugacyClass(G,g)
             Conjugacy class of (1,2,3,4) in Symmetric group of order 4! as a
             permutation group
-            sage: TestSuite(G).run()
+            sage: TestSuite(G).run()                                                    # needs sage.rings.number_field
         """
         self._parent = group
         self._representative = element
@@ -217,7 +216,6 @@ class ConjugacyClass(Parent):
             True
             sage: any(x == m2 for x in C)
             True
-
         """
         from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
         g = self._representative
@@ -251,12 +249,12 @@ class ConjugacyClass(Parent):
             sage: h = H(matrix(F,2,[1,2, -1, 1]))
             sage: C = ConjugacyClass(H,h)
             sage: S = [[[3, 2], [2, 4]], [[0, 1], [2, 2]], [[3, 4], [1, 4]],\
-                  [[0, 3], [4, 2]], [[1, 2], [4, 1]], [[2, 1], [2, 0]],\
-                  [[4, 1], [4, 3]], [[4, 4], [1, 3]], [[2, 4], [3, 0]],\
-                  [[1, 4], [2, 1]], [[3, 3], [3, 4]], [[2, 3], [4, 0]],\
-                  [[0, 2], [1, 2]], [[1, 3], [1, 1]], [[4, 3], [3, 3]],\
-                  [[4, 2], [2, 3]], [[0, 4], [3, 2]], [[1, 1], [3, 1]],\
-                  [[2, 2], [1, 0]], [[3, 1], [4, 4]]]
+            ....: [[0, 3], [4, 2]], [[1, 2], [4, 1]], [[2, 1], [2, 0]],\
+            ....: [[4, 1], [4, 3]], [[4, 4], [1, 3]], [[2, 4], [3, 0]],\
+            ....: [[1, 4], [2, 1]], [[3, 3], [3, 4]], [[2, 3], [4, 0]],\
+            ....: [[0, 2], [1, 2]], [[1, 3], [1, 1]], [[4, 3], [3, 3]],\
+            ....: [[4, 2], [2, 3]], [[0, 4], [3, 2]], [[1, 1], [3, 1]],\
+            ....: [[2, 2], [1, 0]], [[3, 1], [4, 4]]]
             sage: C.set() == Set(H(x) for x in S)
             True
 
@@ -432,6 +430,7 @@ class ConjugacyClassGAP(ConjugacyClass):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: W = WeylGroup(['C',6])
             sage: cc = W.conjugacy_class(W.an_element())
             sage: cc.cardinality()
@@ -449,6 +448,7 @@ class ConjugacyClassGAP(ConjugacyClass):
 
         TESTS::
 
+            sage: # needs sage.rings.number_field
             sage: W = WeylGroup(['C',6])
             sage: g0,g1,g2,g3,g4,g5 = W.gens()
             sage: cc = W.conjugacy_class(g0)
@@ -516,7 +516,6 @@ class ConjugacyClassGAP(ConjugacyClass):
             sage: S = [(1,3,2,4), (1,4,3,2), (1,3,4,2), (1,2,3,4), (1,4,2,3), (1,2,4,3)]
             sage: C.set() == Set(G(x) for x in S)
             True
-
         """
         from sage.sets.set import Set
         try:

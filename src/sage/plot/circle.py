@@ -36,7 +36,7 @@ class Circle(GraphicPrimitive):
 
     - ``r`` -- radius of Circle object
 
-    - ``options`` -- dict of valid plot options to pass to constructor
+    - ``options`` -- dictionary of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -59,7 +59,7 @@ class Circle(GraphicPrimitive):
     """
     def __init__(self, x, y, r, options):
         """
-        Initializes base class Circle.
+        Initialize base class Circle.
 
         EXAMPLES::
 
@@ -133,7 +133,7 @@ class Circle(GraphicPrimitive):
             sage: c = C[0]; c
             Circle defined by (2.0,3.0) with r=5.0
         """
-        return "Circle defined by (%s,%s) with r=%s"%(self.x, self.y, self.r)
+        return f"Circle defined by ({self.x},{self.y}) with r={self.r}"
 
     def _render_on_subplot(self, subplot):
         """
@@ -148,7 +148,7 @@ class Circle(GraphicPrimitive):
         options = self.options()
         p = patches.Circle((float(self.x), float(self.y)), float(self.r), clip_on=options['clip'])
         if not options['clip']:
-            self._bbox_extra_artists=[p]
+            self._bbox_extra_artists = [p]
         p.set_linewidth(float(options['thickness']))
         p.set_fill(options['fill'])
         a = float(options['alpha'])
@@ -172,8 +172,7 @@ class Circle(GraphicPrimitive):
 
         INPUT:
 
-
-        -  ``z`` - optional 3D height above `xy`-plane.
+        - ``z`` -- (optional) 3D height above `xy`-plane
 
         EXAMPLES::
 
@@ -240,27 +239,27 @@ def circle(center, radius, **options):
 
     OPTIONS:
 
-    - ``alpha`` - default: 1
+    - ``alpha`` -- (default: 1)
 
-    - ``fill`` - default: False
+    - ``fill`` -- (default: ``False``)
 
-    - ``thickness`` - default: 1
+    - ``thickness`` -- (default: 1)
 
-    - ``linestyle`` - default: ``'solid'`` (2D plotting only) The style of the
+    - ``linestyle`` -- (default: ``'solid'``) (2D plotting only) the style of the
       line, which is one of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``,
-      or ``'--'``, ``':'``, ``'-'``, ``'-.'``, respectively.
+      or ``'--'``, ``':'``, ``'-'``, ``'-.'``, respectively
 
-    - ``edgecolor`` - default: 'blue' (2D plotting only)
+    - ``edgecolor`` -- (default: ``'blue'``) 2D plotting only
 
-    - ``facecolor`` - default: 'blue' (2D plotting only, useful only
-      if ``fill=True``)
+    - ``facecolor`` -- (default: ``'blue'``) 2D plotting only, useful only
+      if ``fill=True``
 
-    - ``rgbcolor`` - 2D or 3D plotting.  This option overrides
-      ``edgecolor`` and ``facecolor`` for 2D plotting.
+    - ``rgbcolor`` -- 2D or 3D plotting.  This option overrides
+      ``edgecolor`` and ``facecolor`` for 2D plotting
 
-    - ``legend_label`` - the label for this item in the legend
+    - ``legend_label`` -- the label for this item in the legend
 
-    - ``legend_color`` - the color for the legend label
+    - ``legend_color`` -- the color for the legend label
 
     EXAMPLES:
 
@@ -406,8 +405,12 @@ def circle(center, radius, **options):
         sage: P = circle((1,1), 1)
         sage: P.aspect_ratio()
         1.0
+
+    Verify that :issue:`36153` does not arise::
+
+        sage: C = circle((1,1), 1, legend_label='test')
     """
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
 
     # Reset aspect_ratio to 'automatic' in case scale is 'semilog[xy]'.
     # Otherwise matplotlib complains.

@@ -1,4 +1,4 @@
-$(PYTHON) typing_extensions | setuptools pip wheel tomli packaging
+packaging setuptools tomli typing_extensions | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

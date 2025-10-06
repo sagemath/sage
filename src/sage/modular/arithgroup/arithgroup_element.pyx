@@ -39,12 +39,11 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
 
         - ``parent`` -- an arithmetic subgroup
 
-        - `x` -- data defining a 2x2 matrix over ZZ
-                 which lives in parent
+        - ``x`` -- data defining a 2x2 matrix over ZZ
+          which lives in ``parent``
 
         - ``check`` -- if ``True``, check that parent is an arithmetic
-                       subgroup, and that `x` defines a matrix of
-                       determinant `1`.
+          subgroup, and that `x` defines a matrix of determinant `1`
 
         We tend not to create elements of arithmetic subgroups that are not
         SL2Z, in order to avoid coercion issues (that is, the other arithmetic
@@ -78,8 +77,8 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             True
         """
         if check:
-            from .arithgroup_generic import is_ArithmeticSubgroup
-            if not is_ArithmeticSubgroup(parent):
+            from .arithgroup_generic import ArithmeticSubgroup
+            if not isinstance(parent, ArithmeticSubgroup):
                 raise TypeError("parent (= %s) must be an arithmetic subgroup" % parent)
 
             x = M2Z(x, copy=True, coerce=True)
@@ -160,8 +159,8 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
 
     cpdef _richcmp_(self, right_r, int op):
         """
-        Compare self to right, where right is guaranteed to have the same
-        parent as self.
+        Compare ``self`` to ``right``, where ``right`` is guaranteed to have
+        the same parent as ``self``.
 
         EXAMPLES::
 
@@ -180,7 +179,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             sage: x != y
             True
 
-        This once caused a segfault (see :trac:`5443`)::
+        This once caused a segfault (see :issue:`5443`)::
 
             sage: r,s,t,u,v = map(SL2Z, [[1, 1, 0, 1], [-1, 0, 0, -1], [1, -1, 0, 1], [1, -1, 2, -1], [-1, 1, -2, 1]])
             sage: v == s*u
@@ -206,7 +205,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
 
     cpdef _mul_(self, right):
         """
-        Return self * right.
+        Return ``self * right``.
 
         EXAMPLES::
 
@@ -216,7 +215,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             sage: x.parent()
             Modular Group SL(2,Z)
 
-        We check that :trac:`5048` is fixed::
+        We check that :issue:`5048` is fixed::
 
             sage: a = Gamma0(10).1 * Gamma0(5).2; a # random
             sage: a.parent()
@@ -334,12 +333,13 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
 
         An example of g acting on a symbolic variable::
 
-            sage: z = var('z')
-            sage: g.acton(z)
+            sage: z = var('z')                                                          # needs sage.symbolic
+            sage: g.acton(z)                                                            # needs sage.symbolic
             (z + 2)/(15*z + 31)
 
         An example involving the Gaussian numbers::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: g.acton(i)
@@ -375,8 +375,8 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             sage: G([1, 4, 0, 1]).acton(infinity)
             +Infinity
         """
-        from sage.rings.infinity import is_Infinite, infinity
-        if is_Infinite(z):
+        from sage.rings.infinity import InfinityElement, infinity
+        if isinstance(z, InfinityElement):
             if self.c() != 0:
                 return self.a() / self.c()
             else:

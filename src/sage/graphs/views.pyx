@@ -204,7 +204,7 @@ cdef class EdgesView:
         sage: G.has_edge(1, 0)
         False
 
-    We can consider only the edges between two specifed sets of vertices::
+    We can consider only the edges between two specified sets of vertices::
 
         sage: G = Graph([(0, 1), (1, 2)])
         sage: E = EdgesView(G, vertices=[0], vertices2=[1], labels=False)
@@ -412,8 +412,7 @@ cdef class EdgesView:
             if self._graph._directed and self._ignore_direction:
                 return 2 * self._graph.size()
             return self._graph.size()
-        else:
-            return sum(1 for _ in self)
+        return sum(1 for _ in self)
 
     def __repr__(self):
         """
@@ -565,7 +564,7 @@ cdef class EdgesView:
             sage: G == E
             False
 
-        Check that :trac:`29180` is fixed::
+        Check that :issue:`29180` is fixed::
 
             sage: G = graphs.CycleGraph(4)
             sage: E = graphs.EmptyGraph()
@@ -646,20 +645,20 @@ cdef class EdgesView:
                 return (self._graph._backend.has_edge(u, v, label)
                         or self._graph._backend.has_edge(v, u, label))
             return self._graph._backend.has_edge(u, v, label)
-        else:
-            if u not in self._vertex_set2 and v not in self._vertex_set2:
+
+        if u not in self._vertex_set2 and v not in self._vertex_set2:
+            return False
+        if (self._vertex_set is not None
+                and u not in self._vertex_set and v not in self._vertex_set):
+            return False
+        if self._graph._directed:
+            if self._ignore_direction:
+                return (self._graph._backend.has_edge(u, v, label)
+                        or self._graph._backend.has_edge(v, u, label))
+            elif ((self._vertex_set is not None and u not in self._vertex_set)
+                  or v not in self._vertex_set2):
                 return False
-            if (self._vertex_set is not None
-                    and u not in self._vertex_set and v not in self._vertex_set):
-                return False
-            if self._graph._directed:
-                if self._ignore_direction:
-                    return (self._graph._backend.has_edge(u, v, label)
-                            or self._graph._backend.has_edge(v, u, label))
-                elif ((self._vertex_set is not None and u not in self._vertex_set)
-                          or v not in self._vertex_set2):
-                    return False
-            return self._graph._backend.has_edge(u, v, label)
+        return self._graph._backend.has_edge(u, v, label)
 
     def __getitem__(self, i):
         r"""
@@ -703,11 +702,10 @@ cdef class EdgesView:
                 return list(self)[i]
         elif i < 0:
             return list(self)[i]
-        else:
-            try:
-                return next(islice(self, i, i + 1, 1))
-            except StopIteration:
-                raise IndexError('index out of range')
+        try:
+            return next(islice(self, i, i + 1, 1))
+        except StopIteration:
+            raise IndexError('index out of range')
 
     def __add__(left, right):
         """
@@ -718,7 +716,7 @@ cdef class EdgesView:
 
         INPUT:
 
-        - ``left,right`` -- :class:`EdgesView` or list of edges
+        - ``left``, ``right`` -- :class:`EdgesView` or list of edges
 
         EXAMPLES::
 
@@ -791,6 +789,5 @@ cdef class EdgesView:
         """
         if isinstance(left, EdgesView):
             return list(left) * right
-        else:
-            # Case __rmul__
-            return list(right) * left
+        # Case __rmul__
+        return list(right) * left

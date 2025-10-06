@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.function_field
+# sage.doctest: needs sage.rings.function_field
 """
 Places of function fields: extension
 """
@@ -387,7 +387,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
         INPUT:
 
-        - ``name`` -- string (default: `None`); name of the generator
+        - ``name`` -- string (default: ``None``); name of the generator
           of the residue field
 
         EXAMPLES::
@@ -463,7 +463,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
         prime = self.prime_ideal()  # Let P be this prime ideal
 
         if self.is_infinite_place():
-            _F, from_F, to_F  = F._inversion_isomorphism()
+            _F, from_F, to_F = F._inversion_isomorphism()
             _prime = prime._ideal
             _place = _prime.place()
 
@@ -510,13 +510,12 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
             v = O._coordinate_vector(e)
             vec = []
             for i in reversed(range(n)):
-                q,r = v[i].quo_rem(M[i,i])
+                q, r = v[i].quo_rem(M[i, i])
                 v -= q * M[i]
-                for j in range(degs[i]):
-                    vec.append(r[j])
+                vec.extend(r[j] for j in range(degs[i]))
             return vector(vec)
 
-        def fr_V(vec): # to_O
+        def fr_V(vec):  # to_O
             vec = vec.list()
             pos = 0
             e = F(0)
@@ -602,7 +601,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
         if deg > 1:
             if isinstance(k, NumberField):
                 if name is None:
-                    name='s'
+                    name = 's'
                 K = k.extension(min_poly, names=name)
 
                 def from_W(e):

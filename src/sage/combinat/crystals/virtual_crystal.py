@@ -1,12 +1,13 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
-Virtual Crystals
+Virtual crystals
 
 These are the crystals that are subsets of a larger ambient crystal with
 virtual crystal operators.
 
 AUTHORS:
 
-- Travis Scrimshaw (2013-10-16): Initial implementation
+- Travis Scrimshaw (2013-10-16): initial implementation
 """
 
 #*****************************************************************************
@@ -63,9 +64,9 @@ class VirtualCrystal(Subcrystal):
     INPUT:
 
     - ``ambient`` -- the ambient crystal
-    - ``virtualization`` -- a dictionary whose key `i` corresponds
+    - ``virtualization`` -- dictionary whose key `i` corresponds
       to the set `\sigma_i`
-    - ``scaling_factors`` -- a dictionary whose key `i` corresponds to
+    - ``scaling_factors`` -- dictionary whose key `i` corresponds to
       the scaling factor `\gamma_i`
     - ``contained`` -- (optional) a set (or function) which specifies when an
       element is contained in the subcrystal; the default is everything
@@ -171,7 +172,7 @@ class VirtualCrystal(Subcrystal):
 
         TESTS:
 
-        Check that :trac:`19481` is fixed::
+        Check that :issue:`19481` is fixed::
 
             sage: from sage.combinat.crystals.virtual_crystal import VirtualCrystal
             sage: A = crystals.Tableaux(['A',3], shape=[2,1,1])

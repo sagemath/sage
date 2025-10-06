@@ -2,16 +2,16 @@
 Few functions from ``bitset_base.pxd`` that are not inlined.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #     Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
-cdef char* bitset_chars(char* s, fused_bitset_t bits, char zero=c'0', char one=c'1'):
+cdef char* bitset_chars(char* s, fused_bitset_t bits, char zero=c'0', char one=c'1') noexcept:
     """
     Return a string representation of the bitset in s, using zero for
     the character representing the items not in the bitset and one for

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Commutative additive groups
 """
@@ -13,6 +14,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.additive_groups import AdditiveGroups
+
 
 class CommutativeAdditiveGroups(CategoryWithAxiom, AbelianCategory):
     """

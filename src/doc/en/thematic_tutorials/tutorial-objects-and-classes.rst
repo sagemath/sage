@@ -25,7 +25,7 @@ surprising for people used to imperative languages like C or Maple. The reason
 is that they are **not variables but names**.
 
 The following explanation is `borrowed from
-David Goodger <http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html#python-has-names>`_.
+David Goodger <https://web.archive.org/web/20070928013054/http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html#python-has-names>`_.
 
 Other languages have "variables"
 ================================
@@ -318,7 +318,7 @@ http://docs.python.org/library/ for a complete list. ::
         sage: e.__dict__
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__dict__'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__dict__'...
 
         sage: id4 = SymmetricGroup(4).one()
         sage: type(id4)
@@ -326,7 +326,7 @@ http://docs.python.org/library/ for a complete list. ::
         sage: id4.__dict__
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.groups.perm_gps.permgroup_element.SymmetricGroupElement' object has no attribute '__dict__'
+        AttributeError: 'sage.groups.perm_gps.permgroup_element.SymmetricGroupElement' object has no attribute '__dict__'...
 
 .. note::
 
@@ -366,7 +366,6 @@ define the methods and the attributes of the object.
 
 **attribute**
    variable where information about the object is stored.
-
 
 
 An example: glass of beverage in a restaurant

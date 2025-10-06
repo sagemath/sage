@@ -7,7 +7,6 @@ This module provides classes for isomorphisms between finite fields and vector s
 AUTHORS:
 
 - Kwankyu Lee (2017-11-07): initial version
-
 """
 
 #*****************************************************************************
@@ -21,6 +20,7 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.categories.morphism import Morphism
+
 
 class FiniteFieldVectorSpaceIsomorphism(Morphism):
     """
@@ -41,7 +41,6 @@ class FiniteFieldVectorSpaceIsomorphism(Morphism):
             Isomorphism:
               From: Vector space of dimension 1 over Finite Field in z4 of size 2^4
               To:   Finite Field in z4 of size 2^4
-
         """
         s = "Isomorphism:"
         s += "\n  From: {}".format(self.domain())
@@ -71,6 +70,7 @@ class FiniteFieldVectorSpaceIsomorphism(Morphism):
             True
         """
         return True
+
 
 class MorphismVectorSpaceToFiniteField(FiniteFieldVectorSpaceIsomorphism):
     """
@@ -131,6 +131,7 @@ class MorphismVectorSpaceToFiniteField(FiniteFieldVectorSpaceIsomorphism):
             for i in range(m):
                 w[i*n:(i+1)*n] = v[i]._vector_()
             return E(w * self._C)
+
 
 class MorphismFiniteFieldToVectorSpace(FiniteFieldVectorSpaceIsomorphism):
     """

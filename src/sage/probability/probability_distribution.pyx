@@ -40,14 +40,14 @@ REFERENCES:
 # ****************************************************************************
 from cysignals.memory cimport sig_malloc, sig_free
 
-from sage.libs.gsl.all cimport *
+from sage.libs.gsl.rng cimport *
+from sage.libs.gsl.random cimport *
 import sage.misc.prandom as random
 import sage.rings.real_double
 from sage.modules.free_module_element import vector
 
 # TODO: Add more distributions available in gsl
-# available but not currently wrapped are exponential, laplace, cauchy, landau, gamma,
-# gamma, beta logistic.
+# available but not currently wrapped are laplace, cauchy, landau, logistic.
 
 cdef enum:
     uniform
@@ -61,6 +61,8 @@ cdef enum:
     exppow
     weibull
     beta
+    exponential
+    gamma
 
 cdef class ProbabilityDistribution:
     r"""
@@ -100,7 +102,7 @@ cdef class ProbabilityDistribution:
           the probability distribution
 
         - ``bins`` -- (optional) number of bins to divide the samples
-          into.
+          into
 
         OUTPUT:
 
@@ -139,6 +141,9 @@ cdef class ProbabilityDistribution:
              1.8,
              2.0]
         """
+        import numpy as np
+        if int(np.version.short_version[0]) > 1:
+            np.set_printoptions(legacy="1.25")
         import pylab
         ell = [float(self.get_random_element()) for _ in range(num_samples)]
         S = pylab.hist(ell, bins, density=True)
@@ -151,13 +156,13 @@ cdef class ProbabilityDistribution:
 
         INPUT:
 
-        - ``name`` -- file to save the histogram plot (as a PNG).
+        - ``name`` -- file to save the histogram plot (as a PNG)
 
         - ``num_samples`` -- (optional) number of times to sample from
           the probability distribution
 
         - ``bins`` -- (optional) number of bins to divide the samples
-          into.
+          into
 
         EXAMPLES:
 
@@ -204,7 +209,7 @@ cdef class SphericalDistribution(ProbabilityDistribution):
     TESTS:
 
     Make sure that repeated initializations are randomly seeded
-    (:trac:`9770`)::
+    (:issue:`9770`)::
 
         sage: Xs = [tuple(SphericalDistribution(2).get_random_element()) for _ in range(1000)]
         sage: len(set(Xs)) > 2^^32
@@ -227,7 +232,7 @@ cdef class SphericalDistribution(ProbabilityDistribution):
 
         TESTS:
 
-        Until :trac:`15089` a value of the ``seed`` keyword
+        Until :issue:`15089` a value of the ``seed`` keyword
         besides ``None`` was ignored. We check here that setting
         a seed is effective. ::
 
@@ -501,6 +506,31 @@ cdef class RealDistribution(ProbabilityDistribution):
         sage: T.cum_distribution_function(1)
         1.0
 
+    The exponential distribution has one parameter ``mu``::
+
+        sage: mu = 2
+        sage: T = RealDistribution('exponential', mu)
+        sage: s = T.get_random_element()
+        sage: 0 <= s
+        True
+        sage: s.parent()
+        Real Double Field
+        sage: T.distribution_function(0)
+        0.5
+
+    The gamma distribution has two parameters ``a`` and ``b``::
+
+        sage: a = 2
+        sage: b = 2
+        sage: T = RealDistribution('gamma', [a, b])
+        sage: s = T.get_random_element()
+        sage: 0 <= s
+        True
+        sage: s.parent()
+        Real Double Field
+        sage: T.distribution_function(0)
+        0.0
+
     The weibull distribution has two parameters ``a`` and ``b``::
 
         sage: a = 1
@@ -535,12 +565,11 @@ cdef class RealDistribution(ProbabilityDistribution):
     TESTS:
 
     Make sure that repeated initializations are randomly seeded
-    (:trac:`9770`)::
+    (:issue:`9770`)::
 
         sage: Xs = [RealDistribution('gaussian', 1).get_random_element() for _ in range(1000)]
         sage: len(set(Xs)) > 2^^32
         True
-
     """
     cdef gsl_rng_type *T
     cdef gsl_rng *r
@@ -563,7 +592,7 @@ cdef class RealDistribution(ProbabilityDistribution):
 
         TESTS:
 
-        Until :trac:`15089` a value of the ``seed`` keyword
+        Until :issue:`15089` a value of the ``seed`` keyword
         besides ``None`` was ignored. We check here that setting
         a seed is effective. ::
 
@@ -656,7 +685,6 @@ cdef class RealDistribution(ProbabilityDistribution):
             sage: T = RealDistribution('gaussian', 1, seed=0)
             sage: T.get_random_element()  # rel tol 4e-16
             0.13391860811867587
-
         """
         cdef double result
         if self.distribution_type == uniform:
@@ -682,6 +710,10 @@ cdef class RealDistribution(ProbabilityDistribution):
             result = gsl_ran_weibull(self.r, self.parameters[0], self.parameters[1])
         elif self.distribution_type == beta:
             result = gsl_ran_beta(self.r, self.parameters[0], self.parameters[1])
+        elif self.distribution_type == exponential:
+            result = gsl_ran_exponential(self.r, self.parameters[0])
+        elif self.distribution_type == gamma:
+            result = gsl_ran_gamma(self.r, self.parameters[0], self.parameters[1])
         else:
             raise TypeError("Not a supported probability distribution")
 
@@ -732,7 +764,6 @@ cdef class RealDistribution(ProbabilityDistribution):
             self.parameters[1] = float(parameters[1])
             self.distribution_type = pareto
         elif name == 'rayleigh':
-            self.distribution_type = rayleigh
             try:
                 float(parameters)
             except Exception:
@@ -813,6 +844,25 @@ cdef class RealDistribution(ProbabilityDistribution):
             self.parameters[0] = float(parameters[0])
             self.parameters[1] = float(parameters[1])
             self.distribution_type = beta
+        elif name == 'exponential':
+            try:
+                float(parameters)
+            except Exception:
+                raise TypeError("exponential distribution requires parameter mu coercible to float")
+            self.parameters = <double*>sig_malloc(sizeof(double))
+            self.parameters[0] = float(parameters)
+            self.distribution_type = exponential
+        elif name == 'gamma':
+            if len(parameters) != 2:
+                raise TypeError("gamma distribution requires two real parameters")
+            try:
+                map(float, parameters)
+            except Exception:
+                raise TypeError("gamma distribution requires real parameters")
+            self.parameters = <double *>sig_malloc(sizeof(double)*2)
+            self.parameters[0] = float(parameters[0])
+            self.parameters[1] = float(parameters[1])
+            self.distribution_type = gamma
         else:
             raise TypeError("Not a supported probability distribution")
 
@@ -878,6 +928,10 @@ cdef class RealDistribution(ProbabilityDistribution):
             return sage.rings.real_double.RDF(gsl_ran_weibull_pdf(x, self.parameters[0], self.parameters[1]))
         elif self.distribution_type == beta:
             return sage.rings.real_double.RDF(gsl_ran_beta_pdf(x, self.parameters[0], self.parameters[1]))
+        elif self.distribution_type == exponential:
+            return sage.rings.real_double.RDF(gsl_ran_exponential_pdf(x, self.parameters[0]))
+        elif self.distribution_type == gamma:
+            return sage.rings.real_double.RDF(gsl_ran_gamma_pdf(x, self.parameters[0], self.parameters[1]))
         else:
             raise TypeError("Not a supported probability distribution")
 
@@ -914,6 +968,10 @@ cdef class RealDistribution(ProbabilityDistribution):
             return sage.rings.real_double.RDF(gsl_cdf_weibull_P(x, self.parameters[0], self.parameters[1]))
         elif self.distribution_type == beta:
             return sage.rings.real_double.RDF(gsl_cdf_beta_P(x, self.parameters[0], self.parameters[1]))
+        elif self.distribution_type == exponential:
+            return sage.rings.real_double.RDF(gsl_cdf_exponential_P(x, self.parameters[0]))
+        elif self.distribution_type == gamma:
+            return sage.rings.real_double.RDF(gsl_cdf_gamma_P(x, self.parameters[0], self.parameters[1]))
         else:
             raise TypeError("Not a supported probability distribution")
 
@@ -951,6 +1009,10 @@ cdef class RealDistribution(ProbabilityDistribution):
             return sage.rings.real_double.RDF(gsl_cdf_weibull_Pinv(x, self.parameters[0], self.parameters[1]))
         elif self.distribution_type == beta:
             return sage.rings.real_double.RDF(gsl_cdf_beta_Pinv(x, self.parameters[0], self.parameters[1]))
+        elif self.distribution_type == exponential:
+            return sage.rings.real_double.RDF(gsl_cdf_exponential_Pinv(x, self.parameters[0]))
+        elif self.distribution_type == gamma:
+            return sage.rings.real_double.RDF(gsl_cdf_gamma_Pinv(x, self.parameters[0], self.parameters[1]))
         else:
             raise TypeError("Not a supported probability distribution")
 
@@ -975,19 +1037,17 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
 
     INPUT:
 
-    - ``P`` -- list of probabilities. The list will automatically be
-      normalised if ``sum(P)`` is not equal to 1.
+    - ``P`` -- list of probabilities; the list will automatically be
+      normalised if ``sum(P)`` is not equal to 1
 
-    - ``rng`` -- (optional) random number generator to use. May be
-      one of ``'default'``, ``'luxury'``, or ``'taus'``.
+    - ``rng`` -- (optional) random number generator to use; may be
+      one of ``'default'``, ``'luxury'``, or ``'taus'``
 
     - ``seed`` -- (optional) seed to use with the random number
-      generator.
+      generator
 
-    OUTPUT:
-
-    - a probability distribution where the probability of selecting
-      ``x`` is ``P[x]``.
+    OUTPUT: a probability distribution where the probability of selecting
+    ``x`` is ``P[x]``.
 
     EXAMPLES:
 
@@ -1023,19 +1083,19 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
     TESTS:
 
     Make sure that repeated initializations are randomly seeded
-    (:trac:`9770`)::
+    (:issue:`9770`)::
 
         sage: P = [0.001] * 1000
         sage: Xs = [GeneralDiscreteDistribution(P).get_random_element() for _ in range(1000)]
         sage: len(set(Xs)) > 2^^32
         True
 
-    The distribution probabilities must be non-negative::
+    The distribution probabilities must be nonnegative::
 
         sage: GeneralDiscreteDistribution([0.1, -0.1])
         Traceback (most recent call last):
         ...
-        ValueError: The distribution probabilities must be non-negative
+        ValueError: The distribution probabilities must be nonnegative
     """
     cdef gsl_rng_type * T
     cdef gsl_rng * r
@@ -1055,7 +1115,7 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
 
         TESTS:
 
-        Until :trac:`15089` a value of the ``seed`` keyword
+        Until :issue:`15089` a value of the ``seed`` keyword
         besides ``None`` was ignored. We check here that setting
         a seed is effective. ::
 
@@ -1071,7 +1131,7 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
             sage: one == three
             False
 
-        Testing that :trac:`24416` is fixed for when entries are larger
+        Testing that :issue:`24416` is fixed for when entries are larger
         than `2^{1024}`::
 
             sage: from collections import Counter
@@ -1100,7 +1160,7 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
         for i in range(n):
             if P[i] < 0:
                 raise ValueError("The distribution probabilities must "
-                                 "be non-negative")
+                                 "be nonnegative")
             P_vec[i] = P[i]
 
         self.dist = gsl_ran_discrete_preproc(n, P_vec)

@@ -1,5 +1,6 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
-Crystal of Bernstein-Zelevinsky Multisegments
+Crystal of Bernstein-Zelevinsky multisegments
 """
 
 #*****************************************************************************
@@ -289,7 +290,7 @@ class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
 
             TESTS:
 
-            Check that :trac:`23439` is fixed::
+            Check that :issue:`23439` is fixed::
 
                 sage: B = crystals.infinity.Multisegments(2)
                 sage: b = B.highest_weight_vector()

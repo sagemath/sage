@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 cimport cython
 from cpython.object cimport PyObject
 
@@ -18,7 +19,7 @@ cdef class MonoDict:
     cdef bint weak_values
     cdef eraser
 
-    cdef mono_cell* lookup(self, PyObject* key)
+    cdef mono_cell* lookup(self, PyObject* key) noexcept
     cdef get(self, k)
     cdef int set(self, k, value) except -1
     cdef int resize(self) except -1
@@ -44,7 +45,7 @@ cdef class TripleDict:
     cdef bint weak_values
     cdef eraser
 
-    cdef triple_cell* lookup(self, PyObject* key1, PyObject* key2, PyObject* key3)
+    cdef triple_cell* lookup(self, PyObject* key1, PyObject* key2, PyObject* key3) noexcept
     cdef get(self, k1, k2, k3)
     cdef int set(self, k1, k2, k3, value) except -1
     cdef int resize(self) except -1

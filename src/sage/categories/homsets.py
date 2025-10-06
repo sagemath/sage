@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-objects
 r"""
 Homset categories
 """
@@ -10,13 +10,13 @@ Homset categories
 # *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.categories.category import Category, JoinCategory
+from sage.categories.category import Category, JoinCategory, CategoryWithParameters
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.covariant_functorial_construction import FunctorialConstructionCategory
 
 
-class HomsetsCategory(FunctorialConstructionCategory):
+class HomsetsCategory(FunctorialConstructionCategory, CategoryWithParameters):
 
     _functor_category = "Homsets"
 
@@ -27,8 +27,8 @@ class HomsetsCategory(FunctorialConstructionCategory):
 
         INPUT:
 
-         - ``cls`` -- the category class for the functor `F`
-         - ``category`` -- a category `Cat`
+        - ``cls`` -- the category class for the functor `F`
+        - ``category`` -- a category `Cat`
 
         OUTPUT: a category
 
@@ -122,7 +122,7 @@ class HomsetsCategory(FunctorialConstructionCategory):
 
     def _test_homsets_category(self, **options):
         r"""
-        Run generic tests on this homsets category
+        Run generic tests on this homsets category.
 
         .. SEEALSO:: :class:`TestSuite`.
 
@@ -148,13 +148,29 @@ class HomsetsCategory(FunctorialConstructionCategory):
 
             sage: ModulesWithBasis(ZZ).Homsets().base()
             Integer Ring
-
         """
         from sage.categories.category_types import Category_over_base
         for C in self._all_super_categories_proper:
             if isinstance(C,Category_over_base):
                 return C.base()
         raise AttributeError("This hom category has no base")
+
+    def _make_named_class_key(self, name):
+        r"""
+        Return what the element/parent/... classes depend on.
+
+        .. SEEALSO::
+
+            - :meth:`CategoryWithParameters`
+            - :meth:`CategoryWithParameters._make_named_class_key`
+
+        TESTS::
+
+            sage: ModulesWithBasis(ZZ).Homsets()._make_named_class_key('parent_class')
+            <class 'sage.categories.modules_with_basis.ModulesWithBasis.parent_class'>
+        """
+        return getattr(self.base_category(), name)
+
 
 class HomsetsOf(HomsetsCategory):
     """
@@ -199,7 +215,7 @@ class HomsetsOf(HomsetsCategory):
         except ValueError:
             assert isinstance(base_category, JoinCategory)
             object_names = ' and '.join(cat._repr_object_names() for cat in base_category.super_categories())
-        return "homsets of %s"%(object_names)
+        return "homsets of %s" % (object_names)
 
     def super_categories(self):
         r"""
@@ -218,6 +234,7 @@ class HomsetsOf(HomsetsCategory):
             [Category of homsets]
         """
         return [Homsets()]
+
 
 class Homsets(Category_singleton):
     """
@@ -238,7 +255,7 @@ class Homsets(Category_singleton):
     or equivalently that we only implement locally small categories.
     See :wikipedia:`Category_(mathematics)`.
 
-    :trac:`17364`: every homset category shall be a subcategory of the
+    :issue:`17364`: every homset category shall be a subcategory of the
     category of all homsets::
 
         sage: Schemes().Homsets().is_subcategory(Homsets())

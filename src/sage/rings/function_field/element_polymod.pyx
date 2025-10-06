@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.function_field
+# sage.doctest: needs sage.rings.function_field
 r"""
 Elements of function fields: extension
 """
@@ -114,7 +114,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
     cpdef _richcmp_(self, other, int op):
         """
-        Do rich comparison with the other element with respect to ``op``
+        Do rich comparison with the other element with respect to ``op``.
 
         EXAMPLES::
 
@@ -257,7 +257,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         OUTPUT:
 
@@ -293,7 +293,6 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
             x
             sage: L(x^9).nth_root(-27)^-27
             x^9
-
         """
         if n == 1:
             return self
@@ -317,13 +316,13 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
         raise NotImplementedError("nth_root() not implemented for this n")
 
-    cpdef bint is_nth_power(self, n):
+    cpdef bint is_nth_power(self, n) noexcept:
         r"""
         Return whether this element is an ``n``-th power in the function field.
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         ALGORITHM:
 
@@ -345,7 +344,6 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
             False
             sage: L(x).is_nth_power(2)
             True
-
         """
         if n == 0:
             return self.is_one()
@@ -385,7 +383,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         if deg == 1:
             return self._parent(self._x[0].nth_root(self._parent.characteristic()))
 
-        from .function_field_rational import RationalFunctionField
+        from sage.rings.function_field.function_field_rational import RationalFunctionField
         if not isinstance(self.base_ring(), RationalFunctionField):
             raise NotImplementedError("only implemented for simple extensions of function fields")
         # compute a representation of the generator y of the field in terms of powers of y^p

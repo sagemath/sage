@@ -1,4 +1,5 @@
 # distutils: language = c++
+# distutils: extra_compile_args = -std=c++11
 # sage_setup: distribution = sagemath-tdlib
 
 r"""
@@ -76,7 +77,7 @@ cdef extern from "sage_tdlib.cpp":
 # the following will be used implicitly to do the translation
 # between Sage graph encoding and BGL graph encoding.
 
-cdef make_tdlib_graph(G, vertex_to_int, vector[unsigned int] &V, vector[unsigned int] &E):
+cdef make_tdlib_graph(G, vertex_to_int, vector[unsigned int] &V, vector[unsigned int] &E) noexcept:
     for i in range(G.order()):
         V.push_back(i)
 
@@ -85,7 +86,7 @@ cdef make_tdlib_graph(G, vertex_to_int, vector[unsigned int] &V, vector[unsigned
         E.push_back(vertex_to_int[v])
 
 
-cdef make_sage_decomp(G, vector[vector[int]] &V, vector[unsigned int] &E, int_to_vertex):
+cdef make_sage_decomp(G, vector[vector[int]] &V, vector[unsigned int] &E, int_to_vertex) noexcept:
     cdef int i, j
     for i in range(len(V)):
         G.add_vertex(Set([int_to_vertex[j] for j in V[i]]))
@@ -139,7 +140,6 @@ def treedecomposition_exact(G, lb=-1):
         sage: T = tdlib.treedecomposition_exact(G)
         sage: G = graphs.PetersenGraph()
         sage: T = tdlib.treedecomposition_exact(G)
-
     """
     cdef vector[unsigned int] V_G, E_G, E_T
     cdef vector[vector[int]] V_T
@@ -171,9 +171,7 @@ def get_width(T):
 
     - ``T`` -- a tree decomposition
 
-    OUTPUT:
-
-    - The width of ``T``
+    OUTPUT: the width of ``T``
 
     EXAMPLES::
 

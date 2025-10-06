@@ -1,3 +1,4 @@
 cd src
-# --no-build-isolation to ignore the numpy version pin in pyproject.toml
-sdh_pip_install --no-build-isolation .
+# Remove numpy version pin in pyproject.toml
+sed -E -i.bak -e "s,setuptools[ <>=]+[0-9.]+,setuptools,;s/oldest-supported-numpy/numpy/;" pyproject.toml
+sdh_pip_install .

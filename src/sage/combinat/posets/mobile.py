@@ -28,13 +28,13 @@ class MobilePoset(FinitePoset):
 
     EXAMPLES::
 
-        sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),                      # optional - sage.combinat
+        sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),                      # needs sage.combinat sage.modules
         ....:                        {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
         ....:                         3: [posets.DoubleTailedDiamond(6)]},
         ....:                        anchor=(4, 2, posets.ChainPoset(6)))
-        sage: len(P._ribbon)                                                            # optional - sage.combinat
+        sage: len(P._ribbon)                                                            # needs sage.combinat sage.modules
         8
-        sage: P._anchor                                                                 # optional - sage.combinat
+        sage: P._anchor                                                                 # needs sage.combinat sage.modules
         (4, 5)
 
     This example is Example 5.9 in [GGMM2020]_::
@@ -53,7 +53,7 @@ class MobilePoset(FinitePoset):
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
         sage: P2._anchor
         (8, (8, 0))
-        sage: P2.linear_extensions().cardinality()                                      # optional - sage.modules
+        sage: P2.linear_extensions().cardinality()                                      # needs sage.modules
         21399440939
 
         sage: EP = posets.MobilePoset(posets.ChainPoset(0), {})
@@ -64,7 +64,7 @@ class MobilePoset(FinitePoset):
     _lin_ext_type = LinearExtensionsOfMobile
     _desc = 'Finite mobile poset'
 
-    def __init__(self, hasse_diagram, elements, category, facade, key, ribbon=None, check=True):
+    def __init__(self, hasse_diagram, elements, category, facade, key, ribbon=None, check=True) -> None:
         r"""
         Initialize ``self``.
 
@@ -91,7 +91,7 @@ class MobilePoset(FinitePoset):
 
         INPUT:
 
-        - ``ribbon`` -- a list of elements that form a ribbon in your poset
+        - ``ribbon`` -- list of elements that form a ribbon in your poset
 
         TESTS::
 
@@ -112,13 +112,13 @@ class MobilePoset(FinitePoset):
         num_anchors = 0
 
         for r in ribbon:
-            anchor_neighbors = set(G.neighbors_out(r)).difference(set(R.neighbors_out(r)))
+            anchor_neighbors = set(G.neighbor_out_iterator(r)).difference(set(R.neighbor_out_iterator(r)))
             if len(anchor_neighbors) == 1:
                 num_anchors += 1
             elif len(anchor_neighbors) > 1:
                 return False
 
-            for lc in G.neighbors_in(r):
+            for lc in G.neighbor_in_iterator(r):
                 if lc in ribbon:
                     continue
 
@@ -151,7 +151,7 @@ class MobilePoset(FinitePoset):
 
         # Find the anchor vertex, if it exists, and return the edge
         for r in ribbon:
-            anchor_neighbors = set(H.neighbors_out(r)).difference(set(R.neighbors_out(r)))
+            anchor_neighbors = set(H.neighbor_out_iterator(r)).difference(set(R.neighbor_out_iterator(r)))
             if len(anchor_neighbors) == 1:
                 anchor = (r, anchor_neighbors.pop())
                 break

@@ -21,11 +21,11 @@ Shuffle product of words
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.combinat.words.word import Word_class, Word
-from sage.arith.misc import binomial
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.composition import Composition
+from sage.combinat.integer_vector import IntegerVectors
+from sage.combinat.words.word import Word_class, Word
+from sage.rings.integer import Integer
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -56,7 +56,7 @@ class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``check`` -- boolean (default ``True``) whether to check that
+        - ``check`` -- boolean (default: ``True``); whether to check that
           all words in the shuffle product belong to the correct parent
 
         EXAMPLES::
@@ -118,7 +118,7 @@ class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
             sage: w in S
             False
 
-        We check that :trac:`14121` is solved::
+        We check that :issue:`14121` is solved::
 
             sage: w = W('ab')
             sage: x = W('ac')
@@ -174,7 +174,7 @@ class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
         """
         len_w1 = self._w1.length()
         len_w2 = self._w2.length()
-        return binomial(len_w1 + len_w2, len_w1)
+        return Integer(len_w1 + len_w2).binomial(len_w1)
 
     def __iter__(self):
         """
@@ -199,7 +199,7 @@ class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
         TESTS:
 
         Sage is no longer confused by a too-restrictive parent of `I`
-        when shuffling compositions `I` and `J` (cf. :trac:`15131`)::
+        when shuffling compositions `I` and `J` (cf. :issue:`15131`)::
 
             sage: I = Compositions(2)([1, 1])
             sage: J = Composition([2])
@@ -243,7 +243,7 @@ class ShuffleProduct_shifted(ShuffleProduct_w1w2):
 
         INPUT:
 
-        - ``check`` -- boolean (default ``True``) whether to check that
+        - ``check`` -- boolean (default: ``True``); whether to check that
           all words in the shuffle product belong to the correct parent
 
         EXAMPLES::

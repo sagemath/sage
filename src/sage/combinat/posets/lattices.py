@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.modules
 r"""
 Finite lattices and semilattices
 
@@ -62,6 +62,7 @@ List of (semi)lattice methods
     :meth:`~FiniteLatticePoset.is_planar` | Return ``True`` if the lattice has an upward planar drawing.
     :meth:`~FiniteLatticePoset.is_dismantlable` | Return ``True`` if the lattice is dismantlable.
     :meth:`~FiniteLatticePoset.is_interval_dismantlable` | Return ``True`` if the lattice is interval dismantlable.
+    :meth:`~FiniteLatticePoset.is_left_modular` | Return ``True`` if the lattice is left_modular.
     :meth:`~FiniteLatticePoset.is_sublattice_dismantlable` | Return ``True`` if the lattice is sublattice dismantlable.
     :meth:`~FiniteLatticePoset.is_stone` | Return ``True`` if the lattice is a Stone lattice.
     :meth:`~FiniteLatticePoset.is_trim` | Return ``True`` if the lattice is a trim lattice.
@@ -214,7 +215,7 @@ def MeetSemilattice(data=None, *args, **options):
 
 class FiniteMeetSemilattice(FinitePoset):
     """
-    .. note::
+    .. NOTE::
         We assume that the argument passed to MeetSemilattice is the poset
         of a meet-semilattice (i.e. a poset with greatest lower bound for
         each pair of elements).
@@ -266,8 +267,8 @@ class FiniteMeetSemilattice(FinitePoset):
 
         INPUT:
 
-        -  ``x, y`` -- two elements of the (semi)lattice OR
-        -  ``x`` -- a list or tuple of elements
+        - ``x``, ``y`` -- two elements of the (semi)lattice OR
+        - ``x`` -- list or tuple of elements
 
         EXAMPLES::
 
@@ -336,13 +337,13 @@ class FiniteMeetSemilattice(FinitePoset):
             return []
         return self.upper_covers(self.bottom())
 
-    def submeetsemilattice(self, elms):
+    def submeetsemilattice(self, elms, **kwds):
         r"""
         Return the smallest meet-subsemilattice containing elements on the given list.
 
         INPUT:
 
-        - ``elms`` -- a list of elements of the lattice.
+        - ``elms`` -- list of elements of the lattice
 
         EXAMPLES::
 
@@ -376,15 +377,15 @@ class FiniteMeetSemilattice(FinitePoset):
                 gens_remaining.add(self.meet(x, g))
             current_set.add(g)
 
-        return MeetSemilattice(self.subposet(current_set))
+        return MeetSemilattice(self.subposet(current_set), **kwds)
 
-    def subjoinsemilattice(self, elms):
+    def subjoinsemilattice(self, elms, **kwds):
         r"""
         Return the smallest join-subsemilattice containing elements on the given list.
 
         INPUT:
 
-        - ``elms`` -- a list of elements of the lattice.
+        - ``elms`` -- list of elements of the lattice
 
         EXAMPLES::
 
@@ -418,7 +419,7 @@ class FiniteMeetSemilattice(FinitePoset):
                 gens_remaining.add(self.join(x, g))
             current_set.add(g)
 
-        return JoinSemilattice(self.subposet(current_set))
+        return JoinSemilattice(self.subposet(current_set), **kwds)
 
     def pseudocomplement(self, element):
         r"""
@@ -435,7 +436,7 @@ class FiniteMeetSemilattice(FinitePoset):
 
         INPUT:
 
-        - ``element`` -- an element of the lattice.
+        - ``element`` -- an element of the lattice
 
         OUTPUT:
 
@@ -554,7 +555,6 @@ class FiniteJoinSemilattice(FinitePoset):
         sage: P = Poset([[1,2],[3],[3]])
         sage: J = JoinSemilattice(P)
         sage: TestSuite(J).run()
-
     """
     Element = JoinSemilatticeElement
     _desc = 'Finite join-semilattice'
@@ -592,8 +592,8 @@ class FiniteJoinSemilattice(FinitePoset):
 
         INPUT:
 
-        -  ``x, y`` -- two elements of the (semi)lattice OR
-        -  ``x`` -- a list or tuple of elements
+        - ``x``, ``y`` -- two elements of the (semi)lattice OR
+        - ``x`` -- list or tuple of elements
 
         EXAMPLES::
 
@@ -675,9 +675,7 @@ def LatticePoset(data=None, *args, **options):
       be passed down to :func:`Poset` to construct a poset that is
       also a lattice.
 
-    OUTPUT:
-
-    An instance of :class:`FiniteLatticePoset`.
+    OUTPUT: an instance of :class:`FiniteLatticePoset`
 
     .. SEEALSO::
 
@@ -737,7 +735,10 @@ def LatticePoset(data=None, *args, **options):
                 error.x = P._vertex_to_element(error.x)
                 error.y = P._vertex_to_element(error.y)
                 raise
-    return FiniteLatticePoset(P, category=FiniteLatticePosets(), facade=P._is_facade)
+    from sage.categories.posets import Posets
+    cat = Posets().or_subcategory(options.get('category', None))
+    cat = cat & FiniteLatticePosets()
+    return FiniteLatticePoset(P, category=cat, facade=P._is_facade)
 
 
 class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
@@ -756,11 +757,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         sage: P = Poset([[1,2],[3],[3]])
         sage: L = LatticePoset(P)
         sage: TestSuite(L).run()
-
     """
     Element = LatticePosetElement
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -780,7 +780,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             s += " with distinguished linear extension"
         return s
 
-    def double_irreducibles(self):
+    def double_irreducibles(self) -> list:
         """
         Return the list of double irreducible elements of this lattice.
 
@@ -814,7 +814,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         return [self._vertex_to_element(e) for e in H
                 if H.in_degree(e) == 1 and H.out_degree(e) == 1]
 
-    def join_primes(self):
+    def join_primes(self) -> list:
         r"""
         Return the join-prime elements of the lattice.
 
@@ -851,7 +851,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         return [self._vertex_to_element(v) for
                 v in self._hasse_diagram.prime_elements()[0]]
 
-    def meet_primes(self):
+    def meet_primes(self) -> list:
         r"""
         Return the meet-prime elements of the lattice.
 
@@ -888,7 +888,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         return [self._vertex_to_element(v) for
                 v in self._hasse_diagram.prime_elements()[1]]
 
-    def neutral_elements(self):
+    def neutral_elements(self) -> list:
         r"""
         Return the list of neutral elements of the lattice.
 
@@ -920,7 +920,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         t = sorted(self._hasse_diagram.neutral_elements())
         return [self._vertex_to_element(v) for v in t]
 
-    def is_join_distributive(self, certificate=False):
+    def is_join_distributive(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is join-distributive and ``False``
         otherwise.
@@ -935,7 +935,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1009,7 +1009,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         diamond = next(self._hasse_diagram.subgraph_search_iterator(M3, return_graphs=False))
         return (False, self[diamond[0]])
 
-    def is_meet_distributive(self, certificate=False):
+    def is_meet_distributive(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is meet-distributive and ``False``
         otherwise.
@@ -1023,7 +1023,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1097,7 +1097,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         diamond = next(self._hasse_diagram.subgraph_search_iterator(M3, return_graphs=False))
         return (False, self[diamond[4]])
 
-    def is_stone(self, certificate=False):
+    def is_stone(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is a Stone lattice, and ``False``
         otherwise.
@@ -1116,7 +1116,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1124,6 +1124,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         - If ``certificate=True`` return either ``(True, None)`` or
           ``(False, e)`` such that `e^* \vee e^{**} \neq \top`.
           If ``certificate=False`` return ``True`` or ``False``.
+
+        If the lattice is not distributive, the result is either
+        ``(False, None)`` or ``False``.
 
         EXAMPLES:
 
@@ -1156,7 +1159,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         # is extended to directed, use that; see comment below.
 
         if not self.is_distributive():
-            raise ValueError("the lattice is not distributive")
+            return (False, None) if certificate else False
 
         from sage.arith.misc import factor
         ok = (True, None) if certificate else True
@@ -1192,7 +1195,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         return ok
 
-    def is_distributive(self, certificate=False):
+    def is_distributive(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is distributive, and ``False``
         otherwise.
@@ -1204,7 +1207,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         in lattices it follows that then also join distributes over
         meet.
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1232,7 +1235,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
               :meth:`is_semidistributive`, :meth:`is_join_distributive`,
               :meth:`is_meet_distributive`, :meth:`is_subdirectly_reducible`,
               :meth:`is_trim`,
-              :meth:`is_constructible_by_doublings` (by interval doubling),
+              :meth:`is_congruence_uniform`,
               :meth:`is_extremal`
 
             - Stronger properties: :meth:`is_stone`
@@ -1266,7 +1269,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                         self._vertex_to_element(diamond[2]),
                         self._vertex_to_element(diamond[3])))
 
-    def is_semidistributive(self):
+    def is_semidistributive(self) -> bool:
         """
         Return ``True`` if the lattice is both join- and meet-semidistributive,
         and ``False`` otherwise.
@@ -1296,7 +1299,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
             - Weaker properties: :meth:`is_join_semidistributive`,
               :meth:`is_meet_semidistributive`
-            - Stronger properties: :meth:`is_distributive`
+            - Stronger properties: :meth:`is_distributive`,
+              :meth:`is_congruence_uniform`
 
         TESTS::
 
@@ -1311,7 +1315,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                  H.out_degree_sequence().count(1)) and
                 self.is_meet_semidistributive())
 
-    def is_meet_semidistributive(self, certificate=False):
+    def is_meet_semidistributive(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is meet-semidistributive, and ``False``
         otherwise.
@@ -1326,7 +1330,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1368,7 +1372,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: L.is_meet_semidistributive()
             False
 
-        Confirm that :trac:`21340` is fixed::
+        Confirm that :issue:`21340` is fixed::
 
             sage: posets.BooleanLattice(4).is_meet_semidistributive()
             True
@@ -1403,7 +1407,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return (True, None)
         return True
 
-    def is_join_semidistributive(self, certificate=False):
+    def is_join_semidistributive(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is join-semidistributive, and ``False``
         otherwise.
@@ -1418,7 +1422,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1460,7 +1464,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: L.is_join_semidistributive()
             False
 
-        Confirm that :trac:`21340` is fixed::
+        Confirm that :issue:`21340` is fixed::
 
             sage: posets.BooleanLattice(3).is_join_semidistributive()
             True
@@ -1499,7 +1503,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         return all(H.kappa_dual(v) is not None
                    for v in H if H.out_degree(v) == 1)
 
-    def is_extremal(self):
+    def is_extremal(self) -> bool:
         """
         Return ``True`` if the lattice is extremal, and ``False``
         otherwise.
@@ -1529,7 +1533,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         mi = len(self.meet_irreducibles())
         return ji == mi == self.height() - 1
 
-    def is_trim(self, certificate=False):
+    def is_trim(self, certificate=False) -> bool | tuple:
         """
         Return whether a lattice is trim.
 
@@ -1539,7 +1543,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - certificate -- boolean (default ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           instead a maximum chain of left modular elements
 
         EXAMPLES::
@@ -1557,9 +1561,24 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: LatticePoset({1:[]}).is_trim(True)
             (True, [1])
 
+        Testing a trim lattice ::
+
+            sage: L = LatticePoset(([1,2,3,4,5,6],
+            ....:     [[1,2],[1,3],[3,4],[4,5],[2,5],[2,6],[6,5],[2,4]]))
+            sage: L.is_trim(True)
+            (True, [1, 2, 6, 5])
+
+        Testing a lattice which is not trim ::
+
+            sage: L = LatticePoset(([1,2,3,4,5,6],
+            ....:     [[1,2],[1,3],[3,4],[4,5],[2,5],[2,6],[6,5]]))
+            sage: L.is_trim(True)
+            (False, None)
+
         .. SEEALSO::
 
             - Weaker properties: :meth:`is_extremal`
+            - Weaker properties: :meth:`is_left_modular`
             - Stronger properties: :meth:`is_distributive`
 
         REFERENCES:
@@ -1575,10 +1594,75 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         if all(self.is_left_modular_element(e) for e in chain):
             return (True, chain) if certificate else True
-        else:
-            return (False, None) if certificate else False
+        return (False, None) if certificate else False
 
-    def is_complemented(self, certificate=False):
+    def is_left_modular(self, H=None, certificate=False) -> bool | tuple:
+        r"""
+        Return whether ``self`` is a left-modular lattice.
+
+        INPUT:
+
+        - ``H`` -- subset of elements; full ``self`` if no ``H`` is given
+
+        - ``certificate`` --  boolean (default: ``False``); whether to return
+          a failure
+
+        OUTPUT:
+
+        if ``certificate == True``, this returns either ``(True, None)``
+        or ``(False, (y, x, z))`` where the tuple `(y, x, z)`
+        fails left-modularity.
+
+        if ``certificate == False``, this returns ``False`` if any
+        `x \in H` fails to be left-modular and ``True`` otherwise.
+
+        ALGORITHM:
+
+        Given a lattice `L` and a subset of elements `H`,
+        an element `x \in H` is left-modular
+        if for every `y,z \in L, y \leq z`
+        we have `(y \vee x) \wedge z = y \vee (x \wedge z)`.
+
+        .. SEEALSO::
+
+            - Stronger properties: :meth:`is_trim`
+
+            - :meth:`is_left_modular_element`
+
+        EXAMPLES:
+
+        A lattice that is not left-modular::
+
+            sage: L = LatticePoset(([1,2,3,4,5],
+            ....:     [[1,2],[1,3],[3,4],[4,5],[2,5]]))
+            sage: L.is_left_modular()
+            False
+
+        A left-modular lattice::
+
+            sage: L = LatticePoset(([1,2,3,4,5,6],
+            ....:     [[1,2],[1,3],[3,4],[4,5],[2,5],[2,6],[6,5],[2,4]]))
+            sage: L.is_left_modular()
+            True
+
+        TESTS::
+
+            sage: L = LatticePoset(([1,2,3,4,5],
+            ....:     [[1,2],[1,3],[3,4],[4,5],[2,5]]))
+            sage: L.is_left_modular(certificate=True)
+            (False, (3, 2, 4))
+        """
+        if H is None:
+            H = self
+        for x in H:
+            for z in self:
+                mxz = self.meet(x, z)
+                for y in self.lower_covers_iterator(z):
+                    if self.join(y, mxz) != self.meet(self.join(y, x), z):
+                        return False if not certificate else (False, (y, x, z))
+        return (True, None) if certificate else True
+
+    def is_complemented(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is complemented, and
         ``False`` otherwise.
@@ -1588,7 +1672,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1629,7 +1713,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return (True, None)
         return (False, self._vertex_to_element(e))
 
-    def is_cosectionally_complemented(self, certificate=False):
+    def is_cosectionally_complemented(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is cosectionally complemented, and
         ``False`` otherwise.
@@ -1640,8 +1724,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) Whether to return
-          a certificate if the lattice is not cosectionally complemented.
+        - ``certificate`` -- boolean (default: ``False``); whether to return
+          a certificate if the lattice is not cosectionally complemented
 
         OUTPUT:
 
@@ -1695,7 +1779,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         n = H.order()
         for e in range(n - 2, -1, -1):
             t = 0
-            for uc in H.neighbors_out(e):
+            for uc in H.neighbor_out_iterator(e):
                 t = jn[t, uc]
                 if t == n - 1:
                     break
@@ -1705,7 +1789,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                 return False
         return (True, None) if certificate else True
 
-    def is_relatively_complemented(self, certificate=False):
+    def is_relatively_complemented(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is relatively complemented, and
         ``False`` otherwise.
@@ -1715,8 +1799,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) Whether to return
-          a certificate if the lattice is not relatively complemented.
+        - ``certificate`` -- boolean (default: ``False``); whether to return
+          a certificate if the lattice is not relatively complemented
 
         OUTPUT:
 
@@ -1782,7 +1866,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: L.is_relatively_complemented()
             False
 
-        Confirm that :trac:`22292` is fixed::
+        Confirm that :issue:`22292` is fixed::
 
             sage: L = LatticePoset(DiGraph('IYOS`G?CE?@?C?_@??'))
             sage: L.is_relatively_complemented(certificate=True)
@@ -1805,20 +1889,20 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                 return False
 
         for e1 in range(n - 1):
-            C = Counter(flatten([H.neighbors_out(e2) for e2 in H.neighbors_out(e1)]))
+            C = Counter(flatten([H.neighbors_out(e2) for e2 in H.neighbor_out_iterator(e1)]))
             for e3, c in C.items():
                 if c == 1 and len(H.closed_interval(e1, e3)) == 3:
                     if not certificate:
                         return False
-                    for e2 in H.neighbors_in(e3):
-                        if e2 in H.neighbors_out(e1):
+                    for e2 in H.neighbor_in_iterator(e3):
+                        if e2 in H.neighbor_out_iterator(e1):
                             break
                     return (False, (self._vertex_to_element(e1),
                                     self._vertex_to_element(e2),
                                     self._vertex_to_element(e3)))
         return (True, None) if certificate else True
 
-    def is_sectionally_complemented(self, certificate=False):
+    def is_sectionally_complemented(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is sectionally complemented, and
         ``False`` otherwise.
@@ -1829,8 +1913,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) Whether to return
-          a certificate if the lattice is not sectionally complemented.
+        - ``certificate`` -- boolean (default: ``False``); whether to return
+          a certificate if the lattice is not sectionally complemented
 
         OUTPUT:
 
@@ -1885,7 +1969,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         n = H.order() - 1
         for e in range(2, n + 1):
             t = n
-            for lc in H.neighbors_in(e):
+            for lc in H.neighbor_in_iterator(e):
                 t = mt[t, lc]
                 if t == 0:
                     break
@@ -1895,7 +1979,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                 return False
         return (True, None) if certificate else True
 
-    def breadth(self, certificate=False):
+    def breadth(self, certificate=False) -> int | tuple:
         r"""
         Return the breadth of the lattice.
 
@@ -1909,7 +1993,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1988,7 +2072,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
                 # Get elements more than B levels below it.
                 too_close = set(H.breadth_first_search(j,
-                                                       neighbors=H.neighbors_in,
+                                                       neighbors=H.neighbor_in_iterator,
                                                        distance=B - 2))
                 elems = [e for e in H.order_ideal([j]) if e not in too_close]
 
@@ -2000,10 +2084,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                     if join(A) == j:
                         if all(join(A[:i] + A[i + 1:]) != j for i in range(B)):
                             if certificate:
-                                return (B, [self._vertex_to_element(e) for e in A])
-                            else:
-                                return B
-        assert False, "BUG: breadth() in lattices.py have an error."
+                                return (B, [self._vertex_to_element(e)
+                                            for e in A])
+                            return B
+        raise RuntimeError("BUG: breadth() in lattices.py have an error")
 
     def complements(self, element=None):
         r"""
@@ -2089,7 +2173,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                 if self.meet(x, element) == self.bottom() and
                 self.join(x, element) == self.top()]
 
-    def is_pseudocomplemented(self, certificate=False):
+    def is_pseudocomplemented(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is pseudocomplemented, and ``False``
         otherwise.
@@ -2102,7 +2186,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -2156,7 +2240,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return (True, None)
         return True
 
-    def is_join_pseudocomplemented(self, certificate=False):
+    def is_join_pseudocomplemented(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is join-pseudocomplemented, and
         ``False`` otherwise.
@@ -2167,7 +2251,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -2265,9 +2349,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return self
         elms = [self._vertex_to_element(v) for v in
                 self._hasse_diagram.skeleton()]
-        return LatticePoset(self.subposet(elms))
+        return LatticePoset(self.subposet(elms),
+                            category=FiniteLatticePosets().Stone())
 
-    def is_orthocomplemented(self, unique=False):
+    def is_orthocomplemented(self, unique=False) -> bool:
         """
         Return ``True`` if the lattice admits an orthocomplementation, and
         ``False`` otherwise.
@@ -2281,7 +2366,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``unique``, a Boolean -- If ``True``, return ``True`` only
+        - ``unique`` -- boolean; if ``True``, return ``True`` only
           if the lattice has exactly one orthocomplementation. If
           ``False`` (the default), return ``True`` when the lattice
           has at least one orthocomplementation.
@@ -2293,13 +2378,13 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             False
 
             sage: D6 = posets.DiamondPoset(6)
-            sage: D6.is_orthocomplemented()
+            sage: D6.is_orthocomplemented()                                             # needs sage.groups
             True
-            sage: D6.is_orthocomplemented(unique=True)
+            sage: D6.is_orthocomplemented(unique=True)                                  # needs sage.groups
             False
 
-            sage: hexagon = LatticePoset({0:[1, 2], 1:[3], 2:[4], 3:[5], 4:[5]})
-            sage: hexagon.is_orthocomplemented(unique=True)
+            sage: hexagon = LatticePoset({0: [1, 2], 1: [3], 2: [4], 3:[5], 4: [5]})
+            sage: hexagon.is_orthocomplemented(unique=True)                             # needs sage.groups
             True
 
         .. SEEALSO::
@@ -2326,7 +2411,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return True
         raise AssertionError("bug in is_orthocomplemented()")
 
-    def is_atomic(self, certificate=False):
+    def is_atomic(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is atomic, and ``False`` otherwise.
 
@@ -2334,7 +2419,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -2378,13 +2463,13 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         if self.cardinality() < 3:
             return (True, None)
         H = self._hasse_diagram
-        atoms = set(H.neighbors_out(0))
+        atoms = set(H.neighbor_out_iterator(0))
         for v in H:
             if H.in_degree(v) == 1 and v not in atoms:
                 return (False, self._vertex_to_element(v))
         return (True, None)
 
-    def is_coatomic(self, certificate=False):
+    def is_coatomic(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is coatomic, and ``False`` otherwise.
 
@@ -2393,7 +2478,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -2436,13 +2521,13 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         if self.cardinality() < 3:
             return (True, None)
         H = self._hasse_diagram
-        coatoms = set(H.neighbors_in(n - 1))
+        coatoms = set(H.neighbor_in_iterator(n - 1))
         for v in H:
             if H.out_degree(v) == 1 and v not in coatoms:
                 return (False, self._vertex_to_element(v))
         return (True, None)
 
-    def is_geometric(self):
+    def is_geometric(self) -> bool:
         """
         Return ``True`` if the lattice is geometric, and ``False`` otherwise.
 
@@ -2453,8 +2538,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         Canonical example is the lattice of partitions of finite set
         ordered by refinement::
 
-            sage: L = posets.SetPartitions(4)
-            sage: L.is_geometric()
+            sage: L = posets.SetPartitions(4)                                           # needs sage.combinat
+            sage: L.is_geometric()                                                      # needs sage.combinat
             True
 
         Smallest example of geometric lattice that is not modular::
@@ -2487,7 +2572,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         """
         return self.is_atomic() and self.is_upper_semimodular()
 
-    def is_planar(self):
+    def is_planar(self) -> bool:
         r"""
         Return ``True`` if the lattice is *upward* planar, and ``False``
         otherwise.
@@ -2552,7 +2637,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         g.add_edge(0, self.cardinality() - 1)
         return g.is_planar()
 
-    def is_modular(self, L=None, certificate=False):
+    def is_modular(self, L=None, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is modular and ``False`` otherwise.
 
@@ -2574,7 +2659,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         - ``L`` -- (default: ``None``) a list of elements to check being
           modular, if ``L`` is ``None``, then this checks the entire lattice
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -2657,7 +2742,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return (True, None)
         return True
 
-    def is_modular_element(self, x):
+    def is_modular_element(self, x) -> bool:
         r"""
         Return ``True`` if ``x`` is a modular element and ``False`` otherwise.
 
@@ -2689,7 +2774,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         """
         return self.is_modular([x])
 
-    def is_left_modular_element(self, x):
+    def is_left_modular_element(self, x) -> bool:
         r"""
         Return ``True`` if ``x`` is a left modular element
         and ``False`` otherwise.
@@ -2717,12 +2802,14 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         .. SEEALSO::
 
             - Stronger properties: :meth:`is_modular_element`
+
+            - :meth:`is_left_modular`
         """
         return all(self.meet(self.join(y, x), z) ==
                    self.join(y, self.meet(x, z))
                    for y, z in self.cover_relations_iterator())
 
-    def is_upper_semimodular(self, certificate=False):
+    def is_upper_semimodular(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is upper semimodular and
         ``False`` otherwise.
@@ -2732,8 +2819,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) Whether to return
-          a certificate if the lattice is not upper semimodular.
+        - ``certificate`` -- boolean (default: ``False``); whether to return
+          a certificate if the lattice is not upper semimodular
 
         OUTPUT:
 
@@ -2754,8 +2841,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: L.is_upper_semimodular()
             False
 
-            sage: L = LatticePoset(posets.IntegerPartitions(4))
-            sage: L.is_upper_semimodular()
+            sage: L = LatticePoset(posets.IntegerPartitions(4))                         # needs sage.combinat
+            sage: L.is_upper_semimodular()                                              # needs sage.combinat
             True
 
             sage: L = LatticePoset({1:[2, 3, 4], 2: [5], 3:[5, 6], 4:[6], 5:[7], 6:[7]})
@@ -2782,7 +2869,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                             self._vertex_to_element(nonmodular[1])))
         return False
 
-    def is_lower_semimodular(self, certificate=False):
+    def is_lower_semimodular(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is lower semimodular and
         ``False`` otherwise.
@@ -2792,8 +2879,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) Whether to return
-          a certificate if the lattice is not lower semimodular.
+        - ``certificate`` -- boolean (default: ``False``); whether to return
+          a certificate if the lattice is not lower semimodular
 
         OUTPUT:
 
@@ -2837,7 +2924,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                             self._vertex_to_element(nonmodular[1])))
         return False
 
-    def is_supersolvable(self, certificate=False):
+    def is_supersolvable(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is supersolvable, and
         ``False`` otherwise.
@@ -2849,7 +2936,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -2915,7 +3002,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         next_ = [H.neighbor_in_iterator(cur)]
 
         @cached_function
-        def is_modular_elt(a):
+        def is_modular_elt(a) -> bool:
             return all(H._rank[a] + H._rank[b] ==
                        H._rank[mt[a, b]] + H._rank[jn[a, b]]
                        for b in range(n))
@@ -2955,13 +3042,13 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         - ``other`` -- a lattice
 
-        - ``labels`` -- a string (default ``'pairs'``); can be one of
+        - ``labels`` -- string (default: ``'pairs'``); can be one of
           the following:
 
-          * ``'pairs'`` - each element ``v`` in this poset will be
+          * ``'pairs'`` -- each element ``v`` in this poset will be
             named ``(0, v)`` and each element ``u`` in ``other`` will
             be named ``(1, u)`` in the result
-          * ``'integers'`` - the elements of the result will be
+          * ``'integers'`` -- the elements of the result will be
             relabeled with consecutive integers
 
         EXAMPLES::
@@ -3049,7 +3136,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``elements_only`` - if ``True``, return the list of decomposing
+        - ``elements_only`` -- if ``True``, return the list of decomposing
           elements as defined above; if ``False`` (the default),
           return the list of sublattices so that the lattice is a
           vertical composition of them.
@@ -3080,8 +3167,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         if self.cardinality() <= 2:
             if not elements_only:
                 return [self]
-            else:
-                return []
+            return []
         if elements_only:
             return [self[e] for e in
                     self._hasse_diagram.vertical_decomposition(return_list=True)]
@@ -3089,13 +3175,12 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                 self._hasse_diagram.vertical_decomposition(return_list=True) +
                 [self.cardinality() - 1])
         n = len(elms)
-        result = []
-        for i in range(n - 1):
-            result.append(LatticePoset(
-                self.subposet([self[e] for e in range(elms[i], elms[i + 1] + 1)])))
-        return result
+        return [LatticePoset(self.subposet([self[e]
+                                            for e in range(elms[i],
+                                                           elms[i + 1] + 1)]))
+                for i in range(n - 1)]
 
-    def is_vertically_decomposable(self, certificate=False):
+    def is_vertically_decomposable(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is vertically decomposable, and
         ``False`` otherwise.
@@ -3110,7 +3195,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -3153,13 +3238,13 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return (True, self._vertex_to_element(e))
         return True
 
-    def sublattice(self, elms):
+    def sublattice(self, elms, **kwds):
         r"""
         Return the smallest sublattice containing elements on the given list.
 
         INPUT:
 
-        - ``elms`` -- a list of elements of the lattice.
+        - ``elms`` -- list of elements of the lattice
 
         EXAMPLES::
 
@@ -3187,9 +3272,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                 gens_remaining.add(self.meet(x, g))
             current_set.add(g)
 
-        return LatticePoset(self.subposet(current_set))
+        return LatticePoset(self.subposet(current_set), **kwds)
 
-    def is_sublattice(self, other):
+    def is_sublattice(self, other) -> bool:
         """
         Return ``True`` if the lattice is a sublattice of ``other``,
         and ``False`` otherwise.
@@ -3311,10 +3396,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
           * ``'lattice'`` (default) elements of the lattice will be
             lattices that correspond to sublattices of the original lattice
 
-          * ``'tuple'`` - elements are tuples of elements of the sublattices
+          * ``'tuple'`` -- elements are tuples of elements of the sublattices
             of the original lattice
 
-          * ``'integer'`` - elements are plain integers
+          * ``'integer'`` -- elements are plain integers
 
         EXAMPLES::
 
@@ -3356,7 +3441,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - other --  a finite lattice
+        - ``other`` -- a finite lattice
 
         EXAMPLES:
 
@@ -3461,16 +3546,14 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: sorted(L.frattini_sublattice().list())
             [1, 2, 4, 10, 19, 22, 33]
         """
-        return LatticePoset(self.subposet([self[x] for x in
-                self._hasse_diagram.frattini_sublattice()]))
+        return LatticePoset(self.subposet([self[x]
+                for x in self._hasse_diagram.frattini_sublattice()]))
 
     def moebius_algebra(self, R):
         """
         Return the Möbius algebra of ``self`` over ``R``.
 
-        OUTPUT:
-
-        An instance of :class:`sage.combinat.posets.moebius_algebra.MoebiusAlgebra`.
+        OUTPUT: an instance of :class:`sage.combinat.posets.moebius_algebra.MoebiusAlgebra`
 
         EXAMPLES::
 
@@ -3489,9 +3572,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         - ``q`` -- (optional) the deformation parameter `q`
 
-        OUTPUT:
-
-        An instance of :class:`sage.combinat.posets.moebius_algebra.QuantumMoebiusAlgebra`.
+        OUTPUT: an instance of :class:`sage.combinat.posets.moebius_algebra.QuantumMoebiusAlgebra`
 
         EXAMPLES::
 
@@ -3558,7 +3639,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             True
         """
         # Rationale for naming of elements: a lattice can have
-        # elements 1, (1, 1), (1, (1, 1)) and so on. We can't just
+        # elements 1, (1, 1), (1, (1, 1)) and so on. We cannot just
         # make a copy of S with elements (s, 1).
 
         # The construction could be defined for any convex
@@ -3616,7 +3697,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: PP.atoms()
             [(0, 1), (0, 2), (1, 'a')]
             sage: PP.coatoms()
-            [(0, 3), (0, 1)]
+            [(0, 1), (0, 3)]
 
         TESTS::
 
@@ -3634,9 +3715,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         if not isinstance(other, FiniteLatticePoset):
             raise ValueError("other is not a finite lattice")
         if not self.is_greater_than(b, a):
-            raise ValueError("element %s is not greater than %s in the lattice" % (b, a))
+            raise ValueError(f"element {b} is not greater than {a} in the lattice")
         if self.covers(a, b):
-            raise ValueError("element %s covers element %s in the lattice" % (b, a))
+            raise ValueError(f"element {b} covers element {a} in the lattice")
 
         if other.cardinality() == 0:
             return self.relabel(lambda e: (0, e))
@@ -3689,9 +3770,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         """
         neutrals = self.neutral_elements()
         comps = self.complements()
-        return self.sublattice([e for e in neutrals if e in comps])
+        return self.sublattice([e for e in neutrals if e in comps],
+                               category=FiniteLatticePosets().Stone())
 
-    def is_dismantlable(self, certificate=False):
+    def is_dismantlable(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is dismantlable, and ``False``
         otherwise.
@@ -3705,7 +3787,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` (boolean) -- Whether to return a certificate.
+        - ``certificate`` -- boolean; whether to return a certificate
 
           * If ``certificate = False`` (default), returns ``True`` or
             ``False`` accordingly.
@@ -3782,8 +3864,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                     if certificate:
                         cert.append(e)
                     if i == 1 and o == 1:  # Remove inside the lattice
-                        lower = H.neighbors_in(e)[0]
-                        upper = H.neighbors_out(e)[0]
+                        lower = next(H.neighbor_in_iterator(e))
+                        upper = next(H.neighbor_out_iterator(e))
                         H.delete_vertex(e)
                         if upper not in H.depth_first_search(lower):
                             H.add_edge(lower, upper)
@@ -3806,7 +3888,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return True
         return (True, [self[e] for e in cert])
 
-    def is_interval_dismantlable(self, certificate=False):
+    def is_interval_dismantlable(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is interval dismantlable, and
         ``False`` otherwise.
@@ -3822,7 +3904,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -3919,7 +4001,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return result if certificate else True
         return (False, minimal_non_int_dismant(self)) if certificate else False
 
-    def is_sublattice_dismantlable(self):
+    def is_sublattice_dismantlable(self) -> bool:
         """
         Return ``True`` if the lattice is sublattice dismantlable, and
         ``False`` otherwise.
@@ -3963,7 +4045,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
             Add a certificate-option.
         """
-        # Todo: This can be made much faster, if we don't regenerate meet- and
+        # Todo: This can be made much faster, if we do not regenerate meet- and
         # join-matrices every time, but instead remove some rows and columns
         # from them.
 
@@ -3992,7 +4074,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         return False
 
-    def is_subdirectly_reducible(self, certificate=False):
+    def is_subdirectly_reducible(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is subdirectly reducible.
 
@@ -4003,7 +4085,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -4021,21 +4103,21 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         EXAMPLES::
 
             sage: N5 = posets.PentagonPoset()
-            sage: N5.is_subdirectly_reducible()
+            sage: N5.is_subdirectly_reducible()                                         # needs sage.combinat
             False
 
             sage: hex = LatticePoset({1: [2, 3], 2: [4], 3: [5], 4: [6], 5: [6]})
-            sage: hex.is_subdirectly_reducible()
+            sage: hex.is_subdirectly_reducible()                                        # needs sage.combinat
             True
 
-            sage: hex.is_subdirectly_reducible(certificate=True)
+            sage: hex.is_subdirectly_reducible(certificate=True)                        # needs sage.combinat
             (True,
              (Finite lattice containing 5 elements, Finite lattice containing 5 elements))
 
-            sage: N5.is_subdirectly_reducible(certificate=True)
+            sage: N5.is_subdirectly_reducible(certificate=True)                         # needs sage.combinat
             (False, (2, 3))
-            sage: res, cert = hex.is_subdirectly_reducible(certificate=True)
-            sage: cert[0].is_isomorphic(N5)
+            sage: res, cert = hex.is_subdirectly_reducible(certificate=True)            # needs sage.combinat
+            sage: cert[0].is_isomorphic(N5)                                             # needs sage.combinat
             True
 
         .. SEEALSO::
@@ -4046,7 +4128,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         TESTS::
 
-            sage: [posets.ChainPoset(i).is_subdirectly_reducible() for i in range(5)]
+            sage: [posets.ChainPoset(i).is_subdirectly_reducible() for i in range(5)]   # needs sage.combinat
             [False, False, False, True, True]
         """
         H = self._hasse_diagram
@@ -4093,9 +4175,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         - ``e`` -- an element of the lattice
 
-        OUTPUT:
-
-        - canonical meetands as a list, if it exists; if not, ``None``
+        OUTPUT: canonical meetands as a list, if it exists; if not, ``None``
 
         EXAMPLES::
 
@@ -4125,11 +4205,11 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         H = self._hasse_diagram
         e = self._element_to_vertex(e)
         meetands = []
-        for a in H.neighbors_out(e):
-            above_a = list(H.depth_first_search(a))
+        for a in H.neighbor_out_iterator(e):
+            above_a = set(H.depth_first_search(a))
 
             def go_up(v):
-                return [v_ for v_ in H.neighbors_out(v) if v_ not in above_a]
+                return [v_ for v_ in H.neighbor_out_iterator(v) if v_ not in above_a]
 
             result = None
             for v in H.depth_first_search(e, neighbors=go_up):
@@ -4159,9 +4239,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         - ``e`` -- an element of the lattice
 
-        OUTPUT:
-
-        - canonical joinands as a list, if it exists; if not, ``None``
+        OUTPUT: canonical joinands as a list, if it exists; if not, ``None``
 
         EXAMPLES::
 
@@ -4191,11 +4269,11 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         H = self._hasse_diagram
         e = self._element_to_vertex(e)
         joinands = []
-        for a in H.neighbors_in(e):
-            below_a = list(H.depth_first_search(a, neighbors=H.neighbors_in))
+        for a in H.neighbor_in_iterator(e):
+            below_a = set(H.depth_first_search(a, neighbors=H.neighbor_in_iterator))
 
             def go_down(v):
-                return [v_ for v_ in H.neighbors_in(v) if v_ not in below_a]
+                return [v_ for v_ in H.neighbor_in_iterator(v) if v_ not in below_a]
 
             result = None
             for v in H.depth_first_search(e, neighbors=go_down):
@@ -4223,15 +4301,15 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``type`` -- a string; can be one of the following:
+        - ``type`` -- string; can be one of the following:
 
-          * ``'interval'`` - allow only doublings of an interval
-          * ``'lower'`` - allow doublings of lower pseudo-interval; that is, a
+          * ``'interval'`` -- allow only doublings of an interval
+          * ``'lower'`` -- allow doublings of lower pseudo-interval; that is, a
             subset of the lattice with a unique minimal element
-          * ``'upper'`` - allow doublings of upper pseudo-interval; that is, a
+          * ``'upper'`` -- allow doublings of upper pseudo-interval; that is, a
             subset of the lattice with a unique maximal element
-          * ``'convex'`` - allow doubling of any convex set
-          * ``'any'`` - allow doubling of any set
+          * ``'convex'`` -- allow doubling of any convex set
+          * ``'any'`` -- allow doubling of any set
 
         EXAMPLES:
 
@@ -4241,7 +4319,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: posets.PentagonPoset().is_constructible_by_doublings('interval')
             True
 
-            sage: posets.DiamondPoset(5).is_constructible_by_doublings('any')
+            sage: posets.DiamondPoset(5).is_constructible_by_doublings('any')           # needs sage.combinat
             False
 
         After doubling both upper and lower pseudo-interval a lattice is
@@ -4256,7 +4334,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: L = L.day_doubling([(3,0), (1,1), (2,1)])  # An upper pseudo-interval
             sage: L.is_constructible_by_doublings('upper')
             False
-            sage: L.is_constructible_by_doublings('convex')
+            sage: L.is_constructible_by_doublings('convex')                             # needs sage.combinat
             True
 
         An example of a lattice that can be constructed by doublings
@@ -4283,7 +4361,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         The congruence lattice of this lattice has maximal chains satisfying the needed
         property, but also maximal chains not satisfying that; this shows that the code
-        can't be optimized to test just some maximal chain::
+        cannot be optimized to test just some maximal chain::
 
             sage: L = LatticePoset(DiGraph('QSO?I?_?_GBG??_??a???@?K??A??B???C??s??G??I??@??A??@???'))
             sage: L.is_constructible_by_doublings('convex')
@@ -4356,7 +4434,30 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                     todo.append(e_up)
         return False
 
-    def is_isoform(self, certificate=False):
+    def is_congruence_uniform(self) -> bool:
+        """
+        Return whether ``self`` is congruence uniform.
+
+        This is equivalent to being constructible by doubling intervals.
+
+        .. SEEALSO:: :meth:`is_constructible_by_doublings`
+
+        EXAMPLES::
+
+            sage: P = posets.PentagonPoset()
+            sage: P.is_congruence_uniform()
+            True
+            sage: P = posets.DiamondPoset(5)
+            sage: P.is_congruence_uniform()
+            False
+
+        REFERENCES:
+
+        - [Day1979]_
+        """
+        return self.is_constructible_by_doublings(type="interval")
+
+    def is_isoform(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is isoform and ``False`` otherwise.
 
@@ -4366,7 +4467,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate if the lattice is not isoform
 
         OUTPUT:
@@ -4378,18 +4479,20 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         EXAMPLES::
 
-            sage: L = LatticePoset({1:[2, 3, 4], 2: [5, 6], 3: [6, 7], 4: [7], 5: [8], 6: [8], 7: [8]})
-            sage: L.is_isoform()
+            sage: L = LatticePoset({1: [2, 3, 4], 2: [5, 6], 3: [6, 7],
+            ....:                   4: [7], 5: [8], 6: [8], 7: [8]})
+            sage: L.is_isoform()                                                        # needs sage.combinat
             True
 
         Every isoform lattice is (trivially) uniform, but the converse is
         not true::
 
-            sage: L = LatticePoset({1: [2, 3, 6], 2: [4, 5], 3: [5], 4: [9, 8], 5: [7, 8], 6: [9], 7: [10], 8: [10], 9: [10]})
-            sage: L.is_isoform(), L.is_uniform()
+            sage: L = LatticePoset({1: [2, 3, 6], 2: [4, 5], 3: [5], 4: [9, 8],
+            ....:                   5: [7, 8], 6: [9], 7: [10], 8: [10], 9: [10]})
+            sage: L.is_isoform(), L.is_uniform()                                        # needs sage.combinat
             (False, True)
 
-            sage: L.is_isoform(certificate=True)
+            sage: L.is_isoform(certificate=True)                                        # needs sage.combinat
             (False, {{1, 2, 4, 6, 9}, {3, 5, 7, 8, 10}})
 
         .. SEEALSO::
@@ -4404,7 +4507,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: [posets.ChainPoset(i).is_isoform() for i in range(5)]
             [True, True, True, False, False]
 
-            sage: posets.DiamondPoset(5).is_isoform()  # Simple, so trivially isoform
+            sage: posets.DiamondPoset(5).is_isoform()  # Simple, so trivially isoform   # needs sage.combinat
             True
         """
         ok = (True, None) if certificate else True
@@ -4429,7 +4532,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                     return False
         return ok
 
-    def is_uniform(self, certificate=False):
+    def is_uniform(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is uniform and ``False`` otherwise.
 
@@ -4439,7 +4542,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate if the lattice is not uniform
 
         OUTPUT:
@@ -4451,8 +4554,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         EXAMPLES::
 
-            sage: L = LatticePoset({1: [2, 3, 4], 2: [6, 7], 3: [5], 4: [5], 5: [9, 8], 6: [9], 7: [10], 8: [10], 9: [10]})
-            sage: L.is_uniform()
+            sage: L = LatticePoset({1: [2, 3, 4], 2: [6, 7], 3: [5], 4: [5],
+            ....:                   5: [9, 8], 6: [9], 7: [10], 8: [10], 9: [10]})
+            sage: L.is_uniform()                                                        # needs sage.combinat
             True
 
         Every uniform lattice is regular, but the converse is not true::
@@ -4461,7 +4565,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: N6.is_uniform(), N6.is_regular()
             (False, True)
 
-            sage: N6.is_uniform(certificate=True)
+            sage: N6.is_uniform(certificate=True)                                       # needs sage.combinat
             (False, {{1, 2, 3, 4}, {5, 6}})
 
         .. SEEALSO::
@@ -4475,7 +4579,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: [posets.ChainPoset(i).is_uniform() for i in range(5)]
             [True, True, True, False, False]
 
-            sage: posets.DiamondPoset(5).is_uniform()  # Simple, so trivially uniform
+            sage: posets.DiamondPoset(5).is_uniform()  # Simple, so trivially uniform   # needs sage.combinat
             True
         """
         ok = (True, None) if certificate else True
@@ -4508,7 +4612,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                     return False
         return ok
 
-    def is_regular(self, certificate=False):
+    def is_regular(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is regular and ``False`` otherwise.
 
@@ -4518,7 +4622,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate if the lattice is not regular
 
         OUTPUT:
@@ -4532,14 +4636,15 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         EXAMPLES::
 
-            sage: L = LatticePoset({1: [2, 3, 4], 2: [5, 6], 3: [8, 7], 4: [6, 7], 5: [8], 6: [9], 7: [9], 8: [9]})
-            sage: L.is_regular()
+            sage: L = LatticePoset({1: [2, 3, 4], 2: [5, 6], 3: [8, 7], 4: [6, 7],
+            ....:                   5: [8], 6: [9], 7: [9], 8: [9]})
+            sage: L.is_regular()                                                        # needs sage.combinat
             True
 
             sage: N5 = posets.PentagonPoset()
-            sage: N5.is_regular()
+            sage: N5.is_regular()                                                       # needs sage.combinat
             False
-            sage: N5.is_regular(certificate=True)
+            sage: N5.is_regular(certificate=True)                                       # needs sage.combinat
             (False, ({{0}, {1}, {2, 3}, {4}}, [0]))
 
         .. SEEALSO::
@@ -4552,7 +4657,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         TESTS::
 
-            sage: [posets.ChainPoset(i).is_regular() for i in range(5)]
+            sage: [posets.ChainPoset(i).is_regular() for i in range(5)]                 # needs sage.combinat
             [True, True, True, False, False]
         """
         ok = (True, None) if certificate else True
@@ -4575,7 +4680,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                     return False
         return ok
 
-    def is_simple(self, certificate=False):
+    def is_simple(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is simple and ``False`` otherwise.
 
@@ -4586,7 +4691,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate if the lattice is not simple
 
         OUTPUT:
@@ -4598,6 +4703,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         EXAMPLES::
 
+            sage: # needs sage.combinat
             sage: posets.DiamondPoset(5).is_simple()  # Smallest nontrivial example
             True
             sage: L = LatticePoset({1: [2, 3], 2: [4, 5], 3: [6], 4: [6], 5: [6]})
@@ -4611,11 +4717,11 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
             sage: L = LatticePoset({1: [2, 3, 4], 2: [5], 3: [5], 4: [6, 7],
             ....:                   5: [8], 6: [8], 7: [8]})
-            sage: L.is_simple()
+            sage: L.is_simple()                                                         # needs sage.combinat
             False
             sage: L = LatticePoset({1: [2, 3], 2: [4, 5], 3: [6, 7], 4: [8],
             ....:                   5: [8], 6: [8], 7: [8]})
-            sage: L.is_simple()
+            sage: L.is_simple()                                                         # needs sage.combinat
             True
 
         .. SEEALSO::
@@ -4652,9 +4758,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         EXAMPLES::
 
-            sage: posets.ChainPoset(3).subdirect_decomposition()
+            sage: posets.ChainPoset(3).subdirect_decomposition()                        # needs sage.combinat
             [Finite lattice containing 2 elements, Finite lattice containing 2 elements]
 
+            sage: # needs sage.combinat
             sage: L = LatticePoset({1: [2, 4], 2: [3], 3: [6, 7], 4: [5, 7],
             ....:                   5: [9, 8], 6: [9], 7: [9], 8: [10], 9: [10]})
             sage: Ldecomp = L.subdirect_decomposition()
@@ -4665,6 +4772,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         TESTS::
 
+            sage: # needs sage.combinat
             sage: posets.ChainPoset(0).subdirect_decomposition()
             [Finite lattice containing 0 elements]
             sage: posets.ChainPoset(1).subdirect_decomposition()
@@ -4676,7 +4784,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         has only one element::
 
             sage: N5 = posets.PentagonPoset()
-            sage: N5.subdirect_decomposition()
+            sage: N5.subdirect_decomposition()                                          # needs sage.combinat
             [Finite lattice containing 5 elements]
         """
         H = self._hasse_diagram
@@ -4727,7 +4835,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``S`` -- a list of lists; list of element blocks that the congruence
+        - ``S`` -- list of lists; list of element blocks that the congruence
           will contain
 
         OUTPUT:
@@ -4737,6 +4845,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         EXAMPLES::
 
+            sage: # needs sage.combinat
             sage: L = posets.DivisorLattice(12)
             sage: cong = L.congruence([[1, 3]])
             sage: sorted(sorted(c) for c in cong)
@@ -4745,19 +4854,20 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             {{1, 2, 4}, {3, 6, 12}}
 
             sage: L = LatticePoset({1: [2, 3], 2: [4], 3: [4], 4: [5]})
-            sage: L.congruence([[1, 2]])
+            sage: L.congruence([[1, 2]])                                                # needs sage.combinat
             {{1, 2}, {3, 4}, {5}}
 
             sage: L = LatticePoset({1: [2, 3], 2: [4, 5, 6], 4: [5], 5: [7, 8],
             ....:                   6: [8], 3: [9], 7: [10], 8: [10], 9:[10]})
-            sage: cong = L.congruence([[1, 2]])
-            sage: cong[0]
+            sage: cong = L.congruence([[1, 2]])                                         # needs sage.combinat
+            sage: cong[0]                                                               # needs sage.combinat
             frozenset({1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
 
         .. SEEALSO:: :meth:`quotient`
 
         TESTS::
 
+            sage: # needs sage.combinat
             sage: P = posets.PentagonPoset()
             sage: P.congruence([])
             {{0}, {1}, {2}, {3}, {4}}
@@ -4774,13 +4884,13 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         works::
 
             sage: L = LatticePoset(DiGraph('P^??@_?@??B_?@??B??@_?@??B_?@??B??@??A??C??G??O???'))
-            sage: sorted(sorted(p) for p in L.congruence([[1,6]]))
+            sage: sorted(sorted(p) for p in L.congruence([[1,6]]))                      # needs sage.combinat
             [[0], [1, 6], [2], [3, 8], [4], [5, 10], [7, 12], [9, 14], [11], [13], [15], [16]]
 
         Simple lattice, i.e. a lattice without any nontrivial congruence::
 
             sage: L = LatticePoset(DiGraph('GPb_@?OC@?O?'))
-            sage: L.congruence([[1,2]])
+            sage: L.congruence([[1,2]])                                                 # needs sage.combinat
             {{0, 1, 2, 3, 4, 5, 6, 7}}
         """
         from sage.combinat.set_partition import SetPartition
@@ -4809,10 +4919,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         - ``labels`` -- string; the elements of the resulting
           lattice and can be one of the following:
 
-          * ``'tuple'`` - elements are tuples of elements of the original
+          * ``'tuple'`` -- elements are tuples of elements of the original
             lattice
-          * ``'lattice'`` - elements are sublattices of the original lattice
-          * ``'integer'`` - elements are labeled by integers
+          * ``'lattice'`` -- elements are sublattices of the original lattice
+          * ``'integer'`` -- elements are labeled by integers
 
         .. WARNING::
 
@@ -4821,6 +4931,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         EXAMPLES::
 
+            sage: # needs sage.combinat
             sage: L = posets.PentagonPoset()
             sage: c = L.congruence([[0, 1]])
             sage: I = L.quotient(c); I
@@ -4831,6 +4942,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: I.top()
             Finite lattice containing 3 elements
 
+            sage: # needs sage.combinat
             sage: B3 = posets.BooleanLattice(3)
             sage: c = B3.congruence([[0,1]])
             sage: B2 = B3.quotient(c, labels='integer')
@@ -4846,7 +4958,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             Finite lattice containing 0 elements
 
             sage: L = posets.PentagonPoset()
-            sage: L.quotient(L.congruence([[1]])).is_isomorphic(L)
+            sage: L.quotient(L.congruence([[1]])).is_isomorphic(L)                      # needs sage.combinat
             True
         """
         if labels not in ['lattice', 'tuple', 'integer']:
@@ -4855,9 +4967,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         parts_H = [sorted([self._element_to_vertex(e) for e in part]) for
                    part in congruence]
         minimal_vertices = [part[0] for part in parts_H]
-        H = self._hasse_diagram.transitive_closure().subgraph(minimal_vertices).transitive_reduction()
+        H = self._hasse_diagram.transitive_closure().subgraph(minimal_vertices).transitive_reduction(immutable=False)
         if labels == 'integer':
-            H.relabel(list(range(len(minimal_vertices))))
+            H.relabel()
             return LatticePoset(H)
         part_dict = {m[0]: [self._vertex_to_element(x) for x in m] for m
                      in parts_H}
@@ -4880,11 +4992,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``labels`` -- a string; the type of elements in the resulting lattice
+        - ``labels`` -- string; the type of elements in the resulting lattice
 
-        OUTPUT:
-
-        A distributive lattice.
+        OUTPUT: a distributive lattice
 
         - If ``labels='congruence'``, then elements of the
           result will be congruences given as
@@ -4894,6 +5004,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         EXAMPLES::
 
+            sage: # needs sage.combinat
             sage: N5 = posets.PentagonPoset()
             sage: CL = N5.congruences_lattice(); CL
             Finite lattice containing 5 elements
@@ -4903,12 +5014,13 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             [{{0, 1}, {2, 3, 4}}, {{0, 2, 3}, {1, 4}}]
 
             sage: C4 = posets.ChainPoset(4)
-            sage: CL = C4.congruences_lattice(labels='integer')
-            sage: CL.is_isomorphic(posets.BooleanLattice(3))
+            sage: CL = C4.congruences_lattice(labels='integer')                         # needs sage.combinat
+            sage: CL.is_isomorphic(posets.BooleanLattice(3))                            # needs sage.combinat
             True
 
         TESTS::
 
+            sage: # needs sage.combinat
             sage: posets.ChainPoset(0).congruences_lattice()
             Finite lattice containing 1 elements
             sage: posets.ChainPoset(1).congruences_lattice()
@@ -4980,7 +5092,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         INPUT:
 
         - ``G`` -- a subset of elements of ``self``
-        - ``use_defining`` -- (default: ``False``) whether or not to use
+        - ``use_defining`` -- boolean (default: ``False``); whether or not to use
           the defining presentation in `x_g`
         - ``base_ring`` -- (default: `\QQ`) the base ring
 
@@ -5002,11 +5114,12 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         We reproduce the example from Section 5 of [Coron2023]_::
 
+            sage: # needs sage.geometry.polyhedron
             sage: H.<a,b,c,d> = HyperplaneArrangements(QQ)
             sage: Arr = H(a-b, b-c, c-d, d-a)
             sage: P = LatticePoset(Arr.intersection_poset())
             sage: FY = P.feichtner_yuzvinsky_ring([P.top(),5,1,2,3,4])
-            sage: FY.defining_ideal().groebner_basis()
+            sage: FY.defining_ideal().groebner_basis()                                  # needs sage.libs.singular
             [h0^2 - h0*h1, h1^2, h2, h3, h4, h5]
 
         TESTS::

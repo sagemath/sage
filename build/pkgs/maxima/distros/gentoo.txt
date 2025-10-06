@@ -1,2 +1,2 @@
-sci-mathematics/maxima[ecls]
+sci-mathematics/maxima[ecl]
 

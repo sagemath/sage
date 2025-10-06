@@ -1,1 +1,1 @@
-python3-alabaster
+python3${PYTHON_MINOR}-alabaster

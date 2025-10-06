@@ -1,7 +1,7 @@
 from libc.stdint cimport uint32_t
 
 cdef unsigned short * c_shortest_path_all_pairs(G, vertex_list=*) except NULL
-cdef unsigned short * c_distances_all_pairs(G, vertex_list=*)
+cdef unsigned short * c_distances_all_pairs(G, vertex_list=*) noexcept
 cdef all_pairs_shortest_path_BFS(gg,
                                  unsigned short * predecessors,
                                  unsigned short * distances,

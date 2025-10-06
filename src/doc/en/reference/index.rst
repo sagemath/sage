@@ -51,6 +51,7 @@ Linear Algebra
 * :doc:`Matrices and Spaces of Matrices <matrices/index>`
 * :doc:`Vectors and Modules <modules/index>`
 * :doc:`Tensors on Free Modules of Finite Rank <tensor_free_modules/index>`
+* :doc:`Modules over Ore rings <oremodules/index>`
 
 Calculus and Analysis
 ---------------------
@@ -66,7 +67,6 @@ Probability and Statistics
 
 * :doc:`Probability <probability/index>`
 * :doc:`Statistics <stats/index>`
-* :doc:`Quantitative Finance <finance/index>`
 
 Mathematical Structures
 -----------------------

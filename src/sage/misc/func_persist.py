@@ -43,7 +43,7 @@ with one file for each evaluation of the function.
 import inspect
 import os
 
-from . import persist
+from sage.misc import persist
 
 
 class func_persist:
@@ -57,7 +57,7 @@ class func_persist:
         os.makedirs(dir, exist_ok=True)
         self.__doc__ = '%s%s%s' % (
             f.__name__,
-            inspect.formatargspec(*inspect.getargs(f.__code__)),
+            inspect.signature(f),
             f.__doc__)
 
     def __call__(self, *args, **kwds):

@@ -1,1 +1,1 @@
-python3-ptyprocess
+python3${PYTHON_MINOR}-ptyprocess

@@ -73,7 +73,7 @@ class SolitonCellularAutomata(SageObject):
           current state:
           34......224....2223
 
-    We then apply an standard evolution::
+    We then apply a standard evolution::
 
         sage: B.evolve()
         sage: B
@@ -755,7 +755,7 @@ class SolitonCellularAutomata(SageObject):
         - ``num`` -- (default: the current state) the state to print
         - ``vacuum_letter`` -- (default: ``'.'``) the letter to print
           for the vacuum
-        - ``remove_trailing_vacuums`` -- (default: ``False``) if ``True``
+        - ``remove_trailing_vacuums`` -- boolean (default: ``False``); if ``True``
           then this does not print the vacuum letters at the right end
           of the state
 
@@ -951,7 +951,7 @@ class SolitonCellularAutomata(SageObject):
             state = [vacuum]*(num_factors - len(state)) + list(state)
             output = [self._column_repr(b, vacuum_letter) for b in state]
             max_width = max(b.width() for b in output)
-            start = ascii_art("t: %s \n"%i)
+            start = ascii_art("t: %s \n" % i)
             start._baseline = -1
             print(start
                   + sum((ascii_art(' '*(max_width-b.width())) + b for b in output),
@@ -964,9 +964,9 @@ class SolitonCellularAutomata(SageObject):
         INPUT:
 
         - ``num`` -- the number of states
-        - ``as_array`` (default: ``True``) if ``True``, then the states are
-          placed inside of an array; if ``False``, then the states are
-          given as a word
+        - ``as_array`` -- boolean (default: ``True``); if ``True``, then the
+          states are placed inside of an array; if ``False``, then the states
+          are given as a word
         - ``box_width`` -- (default: ``'5pt'``) the width of the ``.`` used
           to represent the vacuum state when ``as_array`` is ``True``
 
@@ -1024,7 +1024,7 @@ class SolitonCellularAutomata(SageObject):
 
         def compact_repr(b):
             if as_array and b == vacuum:
-                return "\\makebox[%s]{.}"%box_width
+                return "\\makebox[%s]{.}" % box_width
 
             if b.parent()._tableau_height == 1:
                 temp = latex(b[0])
@@ -1034,22 +1034,22 @@ class SolitonCellularAutomata(SageObject):
                 temp += "\\end{array}"
 
             if b == vacuum:
-                return "{\\color{gray} %s}"%temp
+                return "{\\color{gray} %s}" % temp
             return temp # "\\makebox[%s]{$%s$}"%(box_width, temp)
 
         num_factors = len(self._states[num-1])
         if as_array:
             ret = "{\\arraycolsep=0.5pt \\begin{array}"
-            ret += "{c|c%s}\n"%('c'*num_factors)
+            ret += "{c|c%s}\n" % ('c'*num_factors)
         else:
             ret = "{\\begin{array}"
             ret += "{c|c}\n"
         for i,state in enumerate(self._states[:num]):
             state = [vacuum]*(num_factors-len(state)) + list(state)
             if as_array:
-                ret += "t = %s & \\cdots & %s \\\\\n"%(i, r" & ".join(compact_repr(b) for b in state))
+                ret += "t = %s & \\cdots & %s \\\\\n" % (i, r" & ".join(compact_repr(b) for b in state))
             else:
-                ret += "t = %s & \\cdots %s \\\\\n"%(i, r" ".join(compact_repr(b) for b in state))
+                ret += "t = %s & \\cdots %s \\\\\n" % (i, r" ".join(compact_repr(b) for b in state))
         ret += "\\end{array}}\n"
         return LatexExpr(ret)
 

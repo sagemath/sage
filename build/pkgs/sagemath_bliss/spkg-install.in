@@ -1,0 +1,9 @@
+cd src
+
+export PIP_NO_INDEX=true
+export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
+
+# Modularized install via wheels
+# --no-build-isolation so that declared build dependencies,
+# in particular sagemath-environment do not have to be present as wheels.
+sdh_pip_install --no-build-isolation .

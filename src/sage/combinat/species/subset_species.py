@@ -1,8 +1,8 @@
 """
-Subset Species
+Subset species
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -15,7 +15,7 @@ Subset Species
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from .species import GenericCombinatorialSpecies
 from .set_species import SetSpecies
@@ -32,6 +32,9 @@ class SubsetSpeciesStructure(GenericSpeciesStructure):
 
             sage: set_random_seed(0)
             sage: S = species.SubsetSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
             sage: a = S.structures(["a","b","c"])[0]; a
             {}
         """
@@ -74,11 +77,11 @@ class SubsetSpeciesStructure(GenericSpeciesStructure):
             sage: F = species.SubsetSpecies()
             sage: a = F.structures(["a", "b", "c"])[5]; a
             {'a', 'c'}
-            sage: p = PermutationGroupElement((1,2))
-            sage: a.transport(p)
+            sage: p = PermutationGroupElement((1,2))                                    # needs sage.groups
+            sage: a.transport(p)                                                        # needs sage.groups
             {'b', 'c'}
-            sage: p = PermutationGroupElement((1,3))
-            sage: a.transport(p)
+            sage: p = PermutationGroupElement((1,3))                                    # needs sage.groups
+            sage: a.transport(p)                                                        # needs sage.groups
             {'a', 'c'}
         """
         l = sorted([perm(i) for i in self._list])
@@ -94,12 +97,12 @@ class SubsetSpeciesStructure(GenericSpeciesStructure):
             sage: F = species.SubsetSpecies()
             sage: a = F.structures([1,2,3,4])[6]; a
             {1, 3}
-            sage: a.automorphism_group()
+            sage: a.automorphism_group()                                                # needs sage.groups
             Permutation Group with generators [(2,4), (1,3)]
 
         ::
 
-            sage: [a.transport(g) for g in a.automorphism_group()]
+            sage: [a.transport(g) for g in a.automorphism_group()]                      # needs sage.groups
             [{1, 3}, {1, 3}, {1, 3}, {1, 3}]
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -134,7 +137,7 @@ class SubsetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: S = species.SubsetSpecies(); S
             Subset species
         """
-        return super(SubsetSpecies, cls).__classcall__(cls, *args, **kwds)
+        return super().__classcall__(cls, *args, **kwds)
 
     def __init__(self, min=None, max=None, weight=None):
         """
@@ -215,7 +218,7 @@ class SubsetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def _cis(self, series_ring, base_ring):
         r"""
-        The cycle index series for the species of subsets satisfies
+        The cycle index series for the species of subsets satisfies.
 
         .. MATH::
 
@@ -224,7 +227,7 @@ class SubsetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: S = species.SubsetSpecies()
-            sage: S.cycle_index_series()[0:5]
+            sage: S.cycle_index_series()[0:5]                                           # needs sage.modules
             [p[],
              2*p[1],
              2*p[1, 1] + p[2],

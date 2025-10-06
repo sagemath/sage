@@ -1,6 +1,6 @@
 from sage.libs.m4rie cimport mzed_t
 from sage.libs.m4ri cimport m4ri_word
-from .matrix_dense cimport Matrix_dense
+from sage.matrix.matrix_dense cimport Matrix_dense
 
 
 cdef class Matrix_gf2e_dense(Matrix_dense):

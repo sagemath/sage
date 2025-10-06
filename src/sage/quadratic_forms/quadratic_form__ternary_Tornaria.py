@@ -25,7 +25,7 @@ from sage.rings.integer_ring import ZZ
 
 
 # TO DO -- Add second argument
-#  def __call__(self,v,w=None):
+#  def __call__(self, v, w=None):
 #    if w is None:
 #        return half(v * self._matrix_() * v)
 #    else:
@@ -53,7 +53,6 @@ def disc(self):
         4
         sage: DiagonalQuadraticForm(ZZ, [1,1,1,1]).disc()
         16
-
     """
     if is_odd(self.dim()):
         # This is not so good for characteristic 2.
@@ -89,28 +88,28 @@ def content(self):
 
 
 # in quadratic_form.py
-#def is_primitive(self):
-#    """
-#    Checks if the form is a multiple of another form... only over ZZ for now.
-#    """
-#    return self.content() == 1
+# def is_primitive(self) -> bool:
+#     """
+#     Checks if the form is a multiple of another form... only over ZZ for now.
+#     """
+#     return self.content() == 1
 
 
 # in quadratic_form.py
-#def primitive(self):
-#    """
-#    Return a primitive quadratic forms in the similarity class of the given form.
+# def primitive(self):
+#     """
+#     Return a primitive quadratic forms in the similarity class of the given form.
 #
-#    This only works when we have GCDs... so over ZZ.
-#    """
-#    c=self.content()
-#    new_coeffs = [self.base_ring()(a/c)  for a in self.__coeffs]
-#    return QuadraticForm(self.base_ring(), self.dim(), new_coeffs)
+#     This only works when we have GCDs... so over ZZ.
+#     """
+#     c = self.content()
+#     new_coeffs = [self.base_ring()(a/c)  for a in self.__coeffs]
+#     return QuadraticForm(self.base_ring(), self.dim(), new_coeffs)
 
 
 def adjoint(self):
     """
-    This gives the adjoint (integral) quadratic form associated to the
+    Return the adjoint (integral) quadratic form associated to the
     given form, essentially defined by taking the adjoint of the matrix.
 
     EXAMPLES::
@@ -129,10 +128,8 @@ def adjoint(self):
         [ 39 2 8 ]
         [ * 19 4 ]
         [ * * 8 ]
-
     """
-    from sage.quadratic_forms.quadratic_form import QuadraticForm as QuadraticForm
-
+    from sage.quadratic_forms.quadratic_form import QuadraticForm
     if is_odd(self.dim()):
         return QuadraticForm(self.matrix().adjoint_classical() * 2)
     return QuadraticForm(self.matrix().adjoint_classical())
@@ -155,14 +152,14 @@ def antiadjoint(self):
         ...
         ValueError: not an adjoint
     """
+    n = self.dim()
+    R = self.base_ring()
     try:
-        n = self.dim()
-        R = self.base_ring()
-        d = R(self.disc()**(ZZ(1)/(n-1)))
+        d = R(self.disc()**(ZZ.one() / (n - 1)))
         if is_odd(n):
-            return self.adjoint().scale_by_factor( R(1) / 4 / d**(n-2) )
+            return self.adjoint().scale_by_factor(R.one() / 4 / d**(n - 2))
         else:
-            return self.adjoint().scale_by_factor( R(1) / d**(n-2) )
+            return self.adjoint().scale_by_factor(R.one() / d**(n - 2))
     except TypeError:
         raise ValueError("not an adjoint")
 
@@ -189,6 +186,7 @@ def is_adjoint(self) -> bool:
 def reciprocal(self):
     r"""
     This gives the reciprocal quadratic form associated to the given form.
+
     This is defined as the multiple of the primitive adjoint with the same
     content as the given form.
 
@@ -207,14 +205,13 @@ def reciprocal(self):
         [ * * 37 ]
         sage: Q.reciprocal().reciprocal() == Q
         True
-
     """
-    return self.adjoint().primitive() . scale_by_factor( self.content() )
+    return self.adjoint().primitive() . scale_by_factor(self.content())
 
 
 def omega(self):
     r"""
-    This is the content of the adjoint of the primitive associated quadratic form.
+    Return the content of the adjoint of the primitive associated quadratic form.
 
     Ref: See Dickson's "Studies in Number Theory".
 
@@ -223,15 +220,15 @@ def omega(self):
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,37])
         sage: Q.omega()
         4
-
     """
     return self.primitive().adjoint().content()
 
 
 def delta(self):
     r"""
-    This is the omega of the adjoint form,
-    which is the same as the omega of the reciprocal form.
+    Return the omega of the adjoint form.
+
+    This is the same as the omega of the reciprocal form.
 
     EXAMPLES::
 
@@ -244,15 +241,16 @@ def delta(self):
 
 def level__Tornaria(self):
     r"""
-    Return the level of the quadratic form,
-    defined as
+    Return the level of the quadratic form.
+
+    This is defined as
 
     - level(`B`)    for even dimension,
     - level(`B`)/4  for odd dimension,
 
     where `2Q(x) = x^t\cdot B\cdot x`.
 
-    This agrees with the usual level for even dimension...
+    This agrees with the usual level for even dimension.
 
     EXAMPLES::
 
@@ -265,7 +263,7 @@ def level__Tornaria(self):
         sage: DiagonalQuadraticForm(ZZ, [1,1,1,1]).level__Tornaria()
         4
     """
-    return self.base_ring()(abs(self.disc())/self.omega()/self.content()**self.dim())
+    return self.base_ring()(abs(self.disc()) / self.omega() / self.content()**self.dim())
 
 
 def discrec(self):
@@ -289,7 +287,9 @@ def discrec(self):
 
 def hasse_conductor(self):
     """
-    This is the product of all primes where the Hasse invariant equals `-1`
+    Return the Hasse conductor.
+
+    This is the product of all primes where the Hasse invariant equals `-1`.
 
     EXAMPLES::
 
@@ -307,14 +307,16 @@ def hasse_conductor(self):
         sage: QuadraticForm(ZZ, 3, [2, -2, 0, 2, 0, 5]).hasse_conductor()               # needs sage.libs.pari
         10
     """
-    return prod([x[0] for x in factor(2 * self.level())
-                 if self.hasse_invariant(x[0]) == -1])
+    return prod([x for x, _ in factor(2 * self.level())
+                 if self.hasse_invariant(x) == -1])
 
 
 def clifford_invariant(self, p):
     """
-    This is the Clifford invariant, i.e. the class in the Brauer group of the
-    Clifford algebra for even dimension, of the even Clifford Algebra for odd dimension.
+    Return the Clifford invariant.
+
+    This is the class in the Brauer group of the Clifford algebra for
+    even dimension, of the even Clifford Algebra for odd dimension.
 
     See Lam (AMS GSM 67) p. 117 for the definition, and p. 119 for the formula
     relating it to the Hasse invariant.
@@ -348,7 +350,7 @@ def clifford_invariant(self, p):
 
 def clifford_conductor(self):
     """
-    This is the product of all primes where the Clifford invariant is `-1`
+    Return the product of all primes where the Clifford invariant is `-1`.
 
     .. NOTE::
 
@@ -385,15 +387,15 @@ def clifford_conductor(self):
         sage: (H + H + H + H).clifford_conductor()
         1
     """
-    return prod([x[0] for x in factor(2 * self.level())
-                 if self.clifford_invariant(x[0]) == -1])
+    return prod([x for x, _ in factor(2 * self.level())
+                 if self.clifford_invariant(x) == -1])
 
 
 # Genus theory
 
 def basiclemma(self, M):
     """
-    Find a number represented by self and coprime to `M`.
+    Find a number represented by ``self`` and coprime to `M`.
 
     EXAMPLES::
 
@@ -423,24 +425,24 @@ def basiclemmavec(self, M):
     mod = []
     M0 = abs(M)
     if M0 == 1:
-        return V(0)
+        return V.zero()
 
     for i in range(self.dim()):
-        M1 = prime_to_m_part(M0, self[i,i])
+        M1 = prime_to_m_part(M0, self[i, i])
         if M1 != 1:
             vec.append(V.gen(i))
             mod.append(M1)
-        M0 = M0/M1
+        M0 = M0 / M1
         if M0 == 1:
             return tuple(CRT_vectors(vec, mod))
 
     for i in range(self.dim()):
         for j in range(i):
-            M1 = prime_to_m_part(M0, self[i,j])
+            M1 = prime_to_m_part(M0, self[i, j])
             if M1 != 1:
                 vec.append(V.i + V.j)
                 mod.append(M1)
-            M0 = M0/M1
+            M0 = M0 / M1
             if M0 == 1:
                 return tuple(CRT_vectors(vec, mod))
 
@@ -479,7 +481,7 @@ def xi(self, p):
     return kronecker_symbol(self.basiclemma(p), p)
 
 
-def xi_rec(self,p):
+def xi_rec(self, p):
     """
     Return Xi(`p`) for the reciprocal form.
 
@@ -534,7 +536,7 @@ def representation_number_list(self, B):
         sage: Q.representation_number_list(10)                                          # needs sage.libs.pari
         [1, 16, 112, 448, 1136, 2016, 3136, 5504, 9328, 12112]
     """
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
 
     ans = pari(1).concat(self.__pari__().qfrep(B - 1, 1) * 2)
     return ans.sage()

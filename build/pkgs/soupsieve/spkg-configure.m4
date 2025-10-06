@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([soupsieve], [SAGE_PYTHON_PACKAGE_CHECK([soupsieve])])

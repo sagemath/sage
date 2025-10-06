@@ -8,5 +8,5 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
     cdef GEN val
 
     cdef FiniteFieldElement_pari_ffelt _new(self)
-    cdef void construct(self, GEN g)
+    cdef void construct(self, GEN g) noexcept
     cdef int construct_from(self, x) except -1

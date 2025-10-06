@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Quantum Matrix Coordinate Algebras
 
@@ -82,7 +83,7 @@ class QuantumMatrixCoordinateAlgebra_abstract(CombinatorialFreeModule):
             indices = IndexedFreeAbelianMonoid(gp_indices, sorting_key=indices_key)
         CombinatorialFreeModule.__init__(self, R, indices, category=category)
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         r"""
         Return a string representation of the term indexed by ``m``.
 
@@ -108,7 +109,7 @@ class QuantumMatrixCoordinateAlgebra_abstract(CombinatorialFreeModule):
         return '*'.join(('x[{},{}]'.format(*k) if k != 'c' else 'c') + exp(e)
                         for k, e in m._sorted_items())
 
-    def _latex_term(self, m):
+    def _latex_term(self, m) -> str:
         r"""
         Return a latex representation of the term indexed by ``m``.
 
@@ -187,7 +188,7 @@ class QuantumMatrixCoordinateAlgebra_abstract(CombinatorialFreeModule):
         return self._indices.one()
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self`` as a tuple.
 
@@ -281,7 +282,7 @@ class QuantumMatrixCoordinateAlgebra_abstract(CombinatorialFreeModule):
                 if ax[0] < bx[0]:
                     # In order, so nothing more to do
                     break
-                elif ax[0] == bx[0]:
+                if ax[0] == bx[0]:
                     if ax[1] > bx[1]:
                         # x_{it} x_{ij} = q^{-1} x_{ij} x_{it} if t < j
                         coeff *= qi ** (ae * be)
@@ -540,7 +541,7 @@ class QuantumMatrixCoordinateAlgebra(QuantumMatrixCoordinateAlgebra_abstract):
         names = [base.format(*k) for k in gp_indices]
         self._assign_names(names)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -557,7 +558,7 @@ class QuantumMatrixCoordinateAlgebra(QuantumMatrixCoordinateAlgebra_abstract):
         txt = "Quantized coordinate algebra of M({}, {}) with q={} over {}"
         return txt.format(self._m, self._n, self._q, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -585,7 +586,7 @@ class QuantumMatrixCoordinateAlgebra(QuantumMatrixCoordinateAlgebra_abstract):
         return self._m
 
     @cached_method
-    def algebra_generators(self):
+    def algebra_generators(self) -> Family:
         """
         Return the algebra generators of ``self``.
 
@@ -762,7 +763,7 @@ class QuantumGL(QuantumMatrixCoordinateAlgebra_abstract):
         names.append('c')
         self._assign_names(names)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -775,7 +776,7 @@ class QuantumGL(QuantumMatrixCoordinateAlgebra_abstract):
         txt = "Quantized coordinate algebra of GL({}) with q={} over {}"
         return txt.format(self._n, self._q, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -974,6 +975,7 @@ class QuantumGL(QuantumMatrixCoordinateAlgebra_abstract):
                       if t != 'c' else T.monomial((I['c'], I['c'])) ** e
                       for t, e in x._sorted_items())
 
+
 def _generator_key(t):
     """
     Helper function to make ``'c'`` less that all other indices for
@@ -981,11 +983,9 @@ def _generator_key(t):
 
     INPUT:
 
-    a tuple (index, exponent)
+    - ``t`` -- tuple (index, exponent)
 
-    OUTPUT:
-
-    a tuple made from the index only
+    OUTPUT: a tuple made from the index only
 
     EXAMPLES::
 

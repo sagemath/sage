@@ -1,1 +1,2 @@
-gsl gsl-devel
+gsl
+gsl-devel

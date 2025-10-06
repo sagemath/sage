@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.real_double
+# sage.doctest: needs sage.rings.real_double
 
 r"""
 The cdd backend for polyhedral computations, floating point version
@@ -22,15 +22,15 @@ from .base_RDF import Polyhedron_RDF
 
 class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
     """
-    Polyhedra over RDF with cdd
+    Polyhedra over RDF with cdd.
 
     INPUT:
 
-    - ``ambient_dim`` -- integer. The dimension of the ambient space.
+    - ``ambient_dim`` -- integer; the dimension of the ambient space
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``.
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``
 
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``.
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``
 
     EXAMPLES::
 
@@ -42,7 +42,7 @@ class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
 
     TESTS:
 
-    Checks that :trac:`24877` is fixed::
+    Checks that :issue:`24877` is fixed::
 
         sage: n1 = 1045602428815736513789288687833080060779
         sage: n2 = 76591188009721216624438400001815308369088648782156930777145
@@ -70,7 +70,7 @@ class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
         sage: P.n_facets()
         10
 
-    Check that :trac:`19803` is fixed::
+    Check that :issue:`19803` is fixed::
 
         sage: from sage.geometry.polyhedron.parent import Polyhedra
         sage: P_cdd = Polyhedra(RDF, 3, 'cdd')
@@ -132,7 +132,7 @@ class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
 
         TESTS:
 
-        Test that :trac:`29568` is fixed::
+        Test that :issue:`29568` is fixed::
 
             sage: # needs sage.groups
             sage: P = polytopes.buckyball(exact=False)
@@ -143,7 +143,7 @@ class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
             sage: P.is_combinatorially_isomorphic(R)
             True
 
-        The polyhedron with zero inequalities works correctly; see :trac:`29899`::
+        The polyhedron with zero inequalities works correctly; see :issue:`29899`::
 
             sage: Vrep = [[], [], [[1.0]]]
             sage: Hrep = [[], []]
@@ -152,7 +152,7 @@ class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
             sage: p
             A 1-dimensional polyhedron in RDF^1 defined as the convex hull of 1 vertex and 1 line
 
-        Test that :trac:`30330` is fixed::
+        Test that :issue:`30330` is fixed::
 
             sage: P1 = polytopes.regular_polygon(5, exact=False)
             sage: P2 = Polyhedron()

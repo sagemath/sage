@@ -26,16 +26,19 @@ class FunctorialCompositionStructure(GenericSpeciesStructure):
 class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
     def __init__(self, F, G, min=None, max=None, weight=None):
         """
-        Returns the functorial composition of two species.
+        Return the functorial composition of two species.
 
         EXAMPLES::
 
             sage: E = species.SetSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
             sage: E2 = species.SetSpecies(size=2)
             sage: WP = species.SubsetSpecies()
             sage: P2 = E2*E
             sage: G = WP.functorial_composition(P2)
-            sage: G.isotype_generating_series()[0:5]
+            sage: G.isotype_generating_series()[0:5]                                    # needs sage.modules
             [1, 1, 2, 4, 11]
 
             sage: G = species.SimpleGraphSpecies()
@@ -44,7 +47,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
             <class 'sage.combinat.species.functorial_composition_species.FunctorialCompositionSpecies'>
             sage: G == loads(dumps(G))
             True
-            sage: G._check() #False due to isomorphism types not being implemented
+            sage: G._check()  # False due to isomorphism types not being implemented    # needs sage.modules
             False
         """
         self._F = F
@@ -81,7 +84,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
         EXAMPLES::
 
             sage: G = species.SimpleGraphSpecies()
-            sage: G.isotypes([1,2,3]).list()
+            sage: G.isotypes([1,2,3]).list()                                            # needs sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -103,7 +106,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
         EXAMPLES::
 
             sage: G = species.SimpleGraphSpecies()
-            sage: G.isotype_generating_series()[0:5]
+            sage: G.isotype_generating_series()[0:5]                                    # needs sage.modules
             [1, 1, 2, 4, 11]
         """
         return self.cycle_index_series(base_ring).isotype_generating_series()
@@ -113,7 +116,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
         EXAMPLES::
 
             sage: G = species.SimpleGraphSpecies()
-            sage: G.cycle_index_series()[0:5]
+            sage: G.cycle_index_series()[0:5]                                           # needs sage.modules
             [p[],
              p[1],
              p[1, 1] + p[2],
@@ -124,7 +127,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
 
     def weight_ring(self):
         """
-        Returns the weight ring for this species. This is determined by
+        Return the weight ring for this species. This is determined by
         asking Sage's coercion model what the result is when you multiply
         (and add) elements of the weight rings for each of the operands.
 

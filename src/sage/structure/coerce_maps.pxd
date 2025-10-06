@@ -1,11 +1,8 @@
+# sage_setup: distribution = sagemath-objects
 from sage.categories.map cimport Map
 
 
-cdef class DefaultConvertMap(Map):
-    pass
-
-
-cdef class DefaultConvertMap_unique(DefaultConvertMap):
+cdef class DefaultConvertMap_unique(Map):
     pass
 
 

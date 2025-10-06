@@ -27,9 +27,9 @@ AUTHOR:
 from sage.categories.homset import Hom
 from sage.structure.element cimport Element
 
-from .hom_finite_field cimport SectionFiniteFieldHomomorphism_generic
-from .hom_finite_field cimport FiniteFieldHomomorphism_generic
-from .hom_finite_field cimport FrobeniusEndomorphism_finite_field
+from sage.rings.finite_rings.hom_finite_field cimport SectionFiniteFieldHomomorphism_generic
+from sage.rings.finite_rings.hom_finite_field cimport FiniteFieldHomomorphism_generic
+from sage.rings.finite_rings.hom_finite_field cimport FrobeniusEndomorphism_finite_field
 
 from sage.rings.finite_rings.finite_field_base import FiniteField
 
@@ -37,7 +37,7 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 cdef class SectionFiniteFieldHomomorphism_prime(SectionFiniteFieldHomomorphism_generic):
     cpdef Element _call_(self, x):
         try:
-            return self._codomain._element_constructor(x)
+            return self._codomain._element_constructor_(x)
         except TypeError:
             raise ValueError("%s is not in the image of %s" % (x, self._inverse))
 
@@ -89,7 +89,7 @@ cdef class FiniteFieldHomomorphism_prime(FiniteFieldHomomorphism_generic):
             sage: a.parent()
             Finite Field in t of size 3^5
         """
-        return self._codomain._element_constructor(x)
+        return self._codomain._element_constructor_(x)
 
 
 cdef class FrobeniusEndomorphism_prime(FrobeniusEndomorphism_finite_field):
@@ -117,9 +117,9 @@ cdef class FrobeniusEndomorphism_prime(FrobeniusEndomorphism_finite_field):
 
     def _composition(self, right):
         """
-        Return self o right.
+        Return ``self`` o ``right``.
 
-        It is always right, since self is always identity because
+        It is always ``right``, since ``self`` is always identity because
         the domain is a prime field.
         """
         return right

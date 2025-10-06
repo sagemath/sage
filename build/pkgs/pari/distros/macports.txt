@@ -1,1 +1,2 @@
-pari
+# incomplete, unusable for sage, causes cysignals build failure
+#pari

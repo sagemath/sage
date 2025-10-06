@@ -35,11 +35,15 @@ from cpython.sequence cimport *
 
 from sage.rings.rational cimport Rational
 from sage.rings.integer  cimport Integer
-from .matrix cimport Matrix
-from .args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.matrix cimport Matrix
+from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.mpq cimport *
+
+cimport sage.libs.linbox.givaro as givaro
+cimport sage.libs.linbox.linbox as linbox
+from sage.libs.linbox.conversion cimport new_linbox_matrix_rational_sparse
 
 from sage.libs.flint.fmpq cimport fmpq_set_mpq
 from sage.libs.flint.fmpq_mat cimport fmpq_mat_entry
@@ -51,8 +55,8 @@ cimport sage.structure.element
 
 import sage.matrix.matrix_space
 
-from .matrix_integer_sparse cimport Matrix_integer_sparse
-from .matrix_rational_dense cimport Matrix_rational_dense
+from sage.matrix.matrix_integer_sparse cimport Matrix_integer_sparse
+from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense
 
 
 cdef class Matrix_rational_sparse(Matrix_sparse):
@@ -76,14 +80,14 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
         INPUT:
 
-        - ``parent`` -- a matrix space over ``QQ``
+        - ``parent`` -- a matrix space over `\QQ`
 
         - ``entries`` -- see :func:`matrix`
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
-          entries are of type :class:`Rational`.
+        - ``coerce`` -- if ``False``, assume without checking that the
+          entries are of type :class:`Rational`
         """
         ma = MatrixArgs_init(parent, entries)
         cdef Rational z
@@ -101,6 +105,49 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         x = Rational()
         mpq_vector_get_entry(x.value, &self._matrix[i], j)
         return x
+
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_rational_sparse
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: M = matrix(QQ,3,4,[i + 1/(i+1) if is_prime(i) else 0 for i in range(12)],sparse=True)
+            sage: M
+            [     0      0    7/3   13/4]
+            [     0   31/6      0   57/8]
+            [     0      0      0 133/12]
+            sage: M.transpose()
+            [     0      0      0]
+            [     0   31/6      0]
+            [   7/3      0      0]
+            [  13/4   57/8 133/12]
+            sage: M.matrix_from_rows([0,2])
+            [     0      0    7/3   13/4]
+            [     0      0      0 133/12]
+            sage: M.matrix_from_columns([1,3])
+            [     0   13/4]
+            [  31/6   57/8]
+            [     0 133/12]
+            sage: M.matrix_from_rows_and_columns([1,2],[0,3])
+            [     0   57/8]
+            [     0 133/12]
+        """
+        cdef Rational x
+        x = Rational()
+        cdef Matrix_rational_sparse _src = <Matrix_rational_sparse> src
+        mpq_vector_get_entry(x.value, &_src._matrix[iSrc], jSrc)
+        mpq_vector_set_entry(&self._matrix[iDst], jDst, x.value)
 
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
@@ -150,7 +197,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         mpq_add(z, z, (<Rational>elt).value)
         mpq_vector_set_entry(&self._matrix[i], j, z)
         mpq_clear(z)
-
 
     ########################################################################
     # LEVEL 2 functionality
@@ -237,7 +283,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         cdef mpq_vector* v
 
         # Build a table that gives the nonzero positions in each column of right
-        nonzero_positions_in_columns = [set([]) for _ in range(right._ncols)]
+        nonzero_positions_in_columns = [set() for _ in range(right._ncols)]
         cdef Py_ssize_t i, j, k
         for i in range(right._nrows):
             v = &(right._matrix[i])
@@ -303,13 +349,13 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         if d is not None:
             return d
 
-        cdef Py_ssize_t i, j, k
+        cdef Py_ssize_t i, j
         d = {}
-        for i from 0 <= i < self._nrows:
-            for j from 0 <= j < self._matrix[i].num_nonzero:
+        for i in range(self._nrows):
+            for j in range(self._matrix[i].num_nonzero):
                 x = Rational()
                 mpq_set((<Rational>x).value, self._matrix[i].entries[j])
-                d[(int(i),int(self._matrix[i].positions[j]))] = x
+                d[(int(i), int(self._matrix[i].positions[j]))] = x
         self.cache('dict', d)
         return d
 
@@ -357,9 +403,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         multiple of all numerators and denominators of elements of
         this matrix.
 
-        OUTPUT:
-
-            -- Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -377,7 +421,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         cdef mpz_t x, h
         mpz_init(x)
         mpz_init_set_si(h, 0)
-        cdef int i, j
+        cdef Py_ssize_t i, j
         sig_on()
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self._matrix[i].num_nonzero:
@@ -396,25 +440,21 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         return 0
 
     cdef int mpz_denom(self, mpz_t d) except -1:
-        mpz_set_si(d,1)
+        mpz_set_si(d, 1)
         cdef Py_ssize_t i, j
-        cdef mpq_vector *v
 
         sig_on()
-        for i from 0 <= i < self._nrows:
-            for j from 0 <= j < self._matrix[i].num_nonzero:
+        for i in range(self._nrows):
+            for j in range(self._matrix[i].num_nonzero):
                 mpz_lcm(d, d, mpq_denref(self._matrix[i].entries[j]))
         sig_off()
         return 0
-
 
     def denominator(self):
         """
         Return the denominator of this matrix.
 
-        OUTPUT:
-
-            -- Sage Integer
+        OUTPUT: Sage Integer
 
         EXAMPLES::
 
@@ -430,13 +470,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
     def _clear_denom(self):
         """
-        INPUT:
-
-        self -- a matrix
-
-        OUTPUT:
-
-        D*self, D
+        OUTPUT: ``d*self, D``
 
         The product D*self is a matrix over ZZ
 
@@ -486,8 +520,8 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
         INPUT:
 
-        ``height_guess``, ``proof``, ``**kwds`` -- all passed to the multimodular
-        algorithm; ignored by the p-adic algorithm.
+        - ``height_guess``, ``proof``, ``**kwds`` -- all passed to the multimodular
+          algorithm; ignored by the `p`-adic algorithm
 
         OUTPUT:
 
@@ -509,7 +543,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [      0       0       1 238/157]
             [      0       0       0       0]
 
-        :trac:`10319` has been fixed::
+        :issue:`10319` has been fixed::
 
             sage: m = Matrix(QQ, [1], sparse=True); m.echelonize()
             sage: m = Matrix(QQ, [1], sparse=True); m.echelonize(); m
@@ -533,12 +567,10 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         """
         INPUT:
 
-        ``height_guess``, ``proof``, ``**kwds`` -- all passed to the multimodular
-        algorithm; ignored by the p-adic algorithm.
+        - ``height_guess``, ``proof``, ``**kwds`` -- all passed to the multimodular
+          algorithm; ignored by the `p`-adic algorithm
 
-        OUTPUT:
-
-            self is no in reduced row echelon form.
+        OUTPUT: ``self`` is no in reduced row echelon form
 
         EXAMPLES::
 
@@ -553,7 +585,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [      0       0       1 238/157]
             [      0       0       0       0]
         """
-        label = 'echelon_form_%s'%algorithm
+        label = 'echelon_form_%s' % algorithm
         x = self.fetch(label)
         if x is not None:
             return x
@@ -577,21 +609,20 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
     def _echelon_form_multimodular(self, height_guess=None, proof=True):
         """
-        Returns reduced row-echelon form using a multi-modular
-        algorithm.  Does not change self.
+        Return reduced row-echelon form using a multi-modular
+        algorithm.  Does not change ``self``.
 
         INPUT:
 
-        - height_guess -- integer or None
-        - proof -- boolean (default: True)
+        - ``height_guess`` -- integer or ``None``
+        - ``proof`` -- boolean (default: ``True``)
         """
-        from .misc import matrix_rational_echelon_form_multimodular
+        from sage.matrix.misc import matrix_rational_echelon_form_multimodular
         cdef Matrix E
         E, pivots = matrix_rational_echelon_form_multimodular(self,
                                  height_guess=height_guess, proof=proof)
         E._parent = self._parent
         return E, pivots
-
 
     def set_row_to_multiple_of_row(self, i, j, s):
         """
@@ -665,17 +696,17 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
                                                                  Py_ssize_t r, cols,
                                                                  cols_index=None):
         """
-        Set row i of self to -(row r of A), but where we only take the
+        Set row i of ``self`` to -(row r of A), but where we only take the
         given column positions in that row of A.  Note that we *DO*
-        zero out the other entries of self's row i.
+        zero out the other entries of ``self``'s row i.
 
         INPUT:
 
-        - i -- integer, index into the rows of self
-        - A -- a sparse matrix
-        - r -- integer, index into rows of A
-        - cols -- a *sorted* list of integers.
-        - cols_index -- (optional).  But set it to this to vastly speed up
+        - ``i`` -- integer, index into the rows of self
+        - ``A`` -- a sparse matrix
+        - ``r`` -- integer, index into rows of A
+        - ``cols`` -- a *sorted* list of integers
+        - ``cols_index`` -- (optional) set it to this to vastly speed up
           calls to this function::
 
                 dict([(cols[i], i) for i in range(len(cols))])
@@ -714,7 +745,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         v = &self._matrix[i]
         w = &_A._matrix[r]
 
-
         if cols_index is None:
             cols_index = dict([(cols[i], i) for i in range(len(cols))])
 
@@ -727,32 +757,34 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         v.num_nonzero = n
         v.degree = self._ncols
 
-
         for l from 0 <= l < n:
             v.positions[l] = cols_index[w.positions[pos[l]]]
             mpq_mul(v.entries[l], w.entries[pos[l]], minus_one)
 
-    def _right_kernel_matrix(self, **kwds):
+    def _right_kernel_matrix(self, algorithm='default', proof=None):
         r"""
-        Returns a pair that includes a matrix of basis vectors
+        Return a pair that includes a matrix of basis vectors
         for the right kernel of ``self``.
 
         INPUT:
 
-        - ``kwds`` - these are provided for consistency with other versions
-          of this method.  Here they are ignored as there is no optional
-          behavior available.
+        - ``algorithm`` -- (default: ``'default'``) a keyword that selects the
+          algorithm employed.  Allowable values are:
+
+          - ``'default'`` -- equivalent to ``'padic'``
+          - ``'padic'`` -- `p`-adic algorithm from the IML library for matrices
+            over the rationals and integers
+          - ``'linbox'`` -- LinBox library code for sparse matrices over the
+            rationals
 
         OUTPUT:
 
-        Returns a pair.  First item is the string 'computed-iml-rational'
-        that identifies the nature of the basis vectors.
+        Returns a pair.  First item is a string that identifies the nature
+        of the basis vectors, either 'computed-iml-rational' or
+        'computed-linbox-rational'.
 
-        Second item is a matrix whose rows are a basis for the right kernel,
-        over the rationals, as computed by the IML library.  Notice that the
-        IML library returns a matrix that is in the 'pivot' format, once the
-        whole matrix is multiplied by -1.  So the 'computed' format is very
-        close to the 'pivot' format.
+        Second item is a matrix whose nonzero rows are a basis for the right kernel,
+        over the rationals, as computed by the IML library or the LinBox library.
 
         EXAMPLES::
 
@@ -771,11 +803,14 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             sage: X = result[1].transpose()
             sage: A*X == zero_matrix(QQ, 4, 2)
             True
-
-        Computed result is the negative of the pivot basis, which
-        is just slightly more efficient to compute. ::
-
-            sage: A.right_kernel_matrix(basis='pivot') == -A.right_kernel_matrix(basis='computed')
+            sage: result = A._right_kernel_matrix(algorithm='linbox')
+            sage: result[0]
+            'computed-linbox-rational'
+            sage: result[1]
+            [ 1 -2  2  1  0]
+            [-1 -2  0  0  1]
+            sage: X = result[1].transpose()
+            sage: A*X == zero_matrix(QQ, 4, 2)
             True
 
         TESTS:
@@ -794,8 +829,79 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [1 0 0]
             [0 1 0]
             [0 0 1]
+
+        .. SEEALSO::
+
+            :meth:`~sage.matrix.matrix_rational_dense.Matrix_rational_dense._right_kernel_matrix`
         """
-        return self.dense_matrix()._right_kernel_matrix()
+        if algorithm == 'default' or algorithm == 'padic':
+            return self.dense_matrix()._right_kernel_matrix()
+        elif algorithm == 'linbox':
+            return self._right_kernel_matrix_linbox()
+        else:
+            raise ValueError(f"matrix kernel algorithm '{algorithm}' not recognized")
+
+    def _right_kernel_matrix_linbox(self):
+        r"""
+        Return a pair that includes a matrix of basis vectors
+        for the right kernel of ``self``.
+
+        OUTPUT:
+
+        Returns a pair.  First item is the string 'computed-linbox-rational'
+        that identifies the nature of the basis vectors.
+
+        Second item is a matrix whose rows are a basis for the right kernel,
+        over the rationals, as computed by the LinBox library.
+        """
+        # NOTE: Degenerate cases (0 rows or columns) are handled by right_kernel_matrix.
+
+        cdef givaro.QField givQQ
+        cdef linbox.SparseMatrix_rational * M = new_linbox_matrix_rational_sparse(givQQ, self)
+
+        MQ = sage.matrix.matrix_space.MatrixSpace(QQ, self._ncols, self._ncols, sparse=True)
+        A = MQ.zero_matrix().__copy__()
+
+        cdef linbox.SparseMatrix_rational * N = new_linbox_matrix_rational_sparse(givQQ, A)
+
+        cdef linbox.GaussDomain_rational * dom = new linbox.GaussDomain_rational(givQQ)
+
+        cdef Matrix_rational_sparse ans
+        cdef mpq_t s
+
+        try:
+            sig_on()
+            dom.nullspacebasisin(N[0], M[0])
+            sig_off()
+        except KeyboardInterrupt:
+            del N
+            raise
+        finally:
+            del M, dom
+
+        ans = self.new_matrix(N.coldim(), N.rowdim()) # NOTE: Transposing.
+        cdef size_t i, k
+        cdef Py_ssize_t j
+        mpq_init(s)
+        for i in range(N.rowdim()):
+            for k in range(N.getRow(i).size()):
+                j = <Py_ssize_t> N.getRow(i)[k].first
+                entry = N.getRow(i)[k].second
+                mpq_set_num(s, entry.nume().get_mpz())
+                mpq_set_den(s, entry.deno().get_mpz())
+                mpq_vector_set_entry(&ans._matrix[j], i, s) # NOTE: Transposing.
+        mpq_clear(s)
+
+        del N
+
+        # Remove zero rows, if any.
+        if ans.nrows() > 0:
+            r = ans.nrows() - 1
+            while r >= 0 and ans.row(r) == 0:
+                r -= 1
+            ans = ans.submatrix(0, 0, r + 1)
+
+        return 'computed-linbox-rational', ans
 
 
 #########################

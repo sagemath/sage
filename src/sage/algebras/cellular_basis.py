@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Cellular Basis
 ==============
@@ -97,19 +98,21 @@ REFERENCES:
 - http://webusers.imj-prg.fr/~bernhard.keller/ictp2006/lecturenotes/xi.pdf
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015-2018 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.combinat.free_module import CombinatorialFreeModule
+from typing import Self
+
 from sage.categories.algebras import Algebras
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.misc.cachefunc import cached_method
 
 
 class CellularBasis(CombinatorialFreeModule):
@@ -135,21 +138,21 @@ class CellularBasis(CombinatorialFreeModule):
         sage: len(S.basis())
         6
         sage: a,b,c,d,e,f = C.basis()
-        sage: a
+        sage: f
         C([3], [[1, 2, 3]], [[1, 2, 3]])
         sage: c
         C([2, 1], [[1, 3], [2]], [[1, 2], [3]])
         sage: d
         C([2, 1], [[1, 2], [3]], [[1, 3], [2]])
-        sage: a * a
+        sage: f * f
         C([3], [[1, 2, 3]], [[1, 2, 3]])
-        sage: a * c
+        sage: f * c
         0
         sage: d * c
         C([2, 1], [[1, 2], [3]], [[1, 2], [3]])
         sage: c * d
         C([2, 1], [[1, 3], [2]], [[1, 3], [2]])
-        sage: S(a)
+        sage: S(f)
         1/6*[1, 2, 3] + 1/6*[1, 3, 2] + 1/6*[2, 1, 3] + 1/6*[2, 3, 1]
          + 1/6*[3, 1, 2] + 1/6*[3, 2, 1]
         sage: S(d)
@@ -163,7 +166,7 @@ class CellularBasis(CombinatorialFreeModule):
          - C([2, 1], [[1, 3], [2]], [[1, 3], [2]])
          + C([3], [[1, 2, 3]], [[1, 2, 3]])
     """
-    def __init__(self, A):
+    def __init__(self, A, to_algebra=None, from_algebra=None, **kwargs):
         r"""
         Initialize ``self``.
 
@@ -180,26 +183,31 @@ class CellularBasis(CombinatorialFreeModule):
 
         # TODO: Use instead A.category().Realizations() so
         #   operations are defined by coercion?
+        prefix = kwargs.pop('prefix', 'C')
         cat = Algebras(A.category().base_ring()).FiniteDimensional().WithBasis().Cellular()
         CombinatorialFreeModule.__init__(self, A.base_ring(), I,
-                                         prefix='C', bracket=False,
-                                         category=cat)
+                                         prefix=prefix, bracket=False,
+                                         category=cat, **kwargs)
 
         # Register coercions
-        if A._to_cellular_element is not NotImplemented:
-            to_cellular = A.module_morphism(A._to_cellular_element, codomain=self,
+        if from_algebra is None:
+            from_algebra = A._to_cellular_element
+        if to_algebra is None:
+            to_algebra = A._from_cellular_index
+        if from_algebra is not NotImplemented:
+            to_cellular = A.module_morphism(from_algebra, codomain=self,
                                             category=cat)
-        if A._from_cellular_index is NotImplemented:
+        if to_algebra is NotImplemented:
             from_cellular = ~to_cellular
         else:
-            from_cellular = self.module_morphism(A._from_cellular_index, codomain=A,
+            from_cellular = self.module_morphism(to_algebra, codomain=A,
                                                  category=cat)
-            if A._to_cellular_element is NotImplemented:
+            if from_algebra is NotImplemented:
                 to_cellular = ~from_cellular
         to_cellular.register_as_coercion()
         from_cellular.register_as_coercion()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -211,7 +219,7 @@ class CellularBasis(CombinatorialFreeModule):
         """
         return "Cellular basis of {}".format(self._algebra)
 
-    def _latex_term(self, x):
+    def _latex_term(self, x) -> str:
         r"""
         Return a latex representation of the term indexed by ``x``.
 
@@ -233,7 +241,7 @@ class CellularBasis(CombinatorialFreeModule):
         sm = latex(m)
         if sm.find('\\text{\\textt') != -1:
             sm = str(m)
-        return "C^{%s}_{%s}"%(sla, sm)
+        return "C^{%s}_{%s}" % (sla, sm)
 
     def cellular_basis_of(self):
         """
@@ -277,7 +285,7 @@ class CellularBasis(CombinatorialFreeModule):
         """
         return self._algebra.cell_module_indices(la)
 
-    def cellular_basis(self):
+    def cellular_basis(self) -> Self:
         """
         Return the cellular basis of ``self``, which is ``self``.
 
@@ -321,6 +329,18 @@ class CellularBasis(CombinatorialFreeModule):
             sage: t = StandardTableau([[1,3],[2]])
             sage: C.product_on_basis((la, s, t), (la, s, t))
             0
+
+        TESTS::
+
+            sage: C5.<z5> = CyclotomicField(5)
+            sage: TL = TemperleyLiebAlgebra(2, z5 + ~z5, C5)
+            sage: m = TL.cell_module(0)
+            sage: c = m.basis().keys()[0]
+            sage: B = TL.cellular_basis()
+            sage: B.product_on_basis((0, c, c), (0, c, c))
+            (-z5^3-z5^2-1)*C(0, {{1, 2}}, {{1, 2}})
+
+            sage: p = TL(B.monomial((0,c,c))) * TL(B.monomial((0,c,c)))
         """
         A = self._algebra
         return self(A(self.monomial(x)) * A(self.monomial(y)))

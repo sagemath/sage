@@ -1,12 +1,13 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
-Crystal of Rigged Configurations
-
-AUTHORS:
-
-- Travis Scrimshaw (2010-09-26): Initial version
+Crystal of rigged configurations
 
 We only consider the highest weight crystal structure, not the
 Kirillov-Reshetikhin structure, and we extend this to symmetrizable types.
+
+AUTHORS:
+
+- Travis Scrimshaw (2010-09-26): initial version
 """
 
 # ****************************************************************************
@@ -152,7 +153,7 @@ class CrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
         if isinstance(cartan_type, CartanTypeFolded):
             return CrystalOfNonSimplyLacedRC(cartan_type, wt, WLR)
 
-        return super(CrystalOfRiggedConfigurations, cls).__classcall__(cls, wt, WLR=WLR)
+        return super().__classcall__(cls, wt, WLR=WLR)
 
     def __init__(self, wt, WLR):
         r"""
@@ -224,7 +225,7 @@ class CrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Check that :trac:`17054` is fixed::
+        Check that :issue:`17054` is fixed::
 
             sage: La = RootSystem(['A', 2]).weight_lattice().fundamental_weights()
             sage: RC = crystals.RiggedConfigurations(4*La[1] + 4*La[2])
@@ -313,7 +314,7 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
             sage: La = RootSystem(['C', 3]).weight_lattice().fundamental_weights()
             sage: RC = crystals.RiggedConfigurations(La[1])
             sage: TestSuite(RC).run()
-         """
+        """
         self._folded_ct = vct
         CrystalOfRiggedConfigurations.__init__(self, wt, WLR)
 

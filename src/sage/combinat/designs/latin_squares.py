@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.modules
 r"""
-Mutually Orthogonal Latin Squares (MOLS)
+Mutually orthogonal Latin squares (MOLS)
 
 The main function of this module is :func:`mutually_orthogonal_latin_squares`
 and can be can be used to generate MOLS (or check that they exist)::
@@ -21,7 +21,7 @@ The functions defined here are
     :meth:`mutually_orthogonal_latin_squares` | Return `k` Mutually Orthogonal `n\times n` Latin Squares.
     :meth:`are_mutually_orthogonal_latin_squares` | Check that the list ``l`` of matrices in are MOLS.
     :meth:`latin_square_product` | Return the product of two (or more) latin squares.
-    :meth:`MOLS_table` | Prints the MOLS table.
+    :meth:`MOLS_table` | Print the MOLS table.
 
 **Table of MOLS**
 
@@ -75,7 +75,7 @@ Comparison with the results from the Handbook of Combinatorial Designs (2ed)
       0|                                                           +               +
      20|
      40|
-     60|   +
+     60|
      80|
     100|
     120|
@@ -126,7 +126,8 @@ from itertools import repeat
 from sage.rings.integer import Integer
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
-from sage.env import COMBINATORIAL_DESIGN_DATA_DIR
+from sage.arith.misc import is_prime_power
+from sage.rings.finite_rings.finite_field_constructor import GF
 
 
 def are_mutually_orthogonal_latin_squares(l, verbose=False):
@@ -136,7 +137,7 @@ def are_mutually_orthogonal_latin_squares(l, verbose=False):
 
     INPUT:
 
-    - ``verbose`` - if ``True`` then print why the list of matrices provided are
+    - ``verbose`` -- if ``True`` then print why the list of matrices provided are
       not mutually orthogonal latin squares
 
     EXAMPLES::
@@ -200,7 +201,7 @@ def are_mutually_orthogonal_latin_squares(l, verbose=False):
             return False
 
     from .designs_pyx import is_orthogonal_array
-    return is_orthogonal_array(list(zip(*[[x for R in M for x in R] for M in l])),k,n, verbose=verbose, terminology="MOLS")
+    return is_orthogonal_array(list(zip(*[[x for R in M for x in R] for M in l])),k,n, verbose=verbose, terminology='MOLS')
 
 
 def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
@@ -212,12 +213,12 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
 
     INPUT:
 
-    - ``k`` (integer) -- number of MOLS. If ``k=None`` it is set to the largest
-      value available.
+    - ``k`` -- integer; number of MOLS. If ``k`` is ``None`` it is set to the largest
+      value available
 
-    - ``n`` (integer) -- size of the latin square.
+    - ``n`` -- integer; size of the latin square
 
-    - ``partitions`` (boolean) -- a Latin Square can be seen as 3 partitions of
+    - ``partitions`` -- boolean; a Latin Square can be seen as 3 partitions of
       the `n^2` cells of the array into `n` sets of size `n`, respectively:
 
       * The partition of rows
@@ -232,31 +233,30 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
       partitions satisfying this intersection property instead of the `k+2` MOLS
       (though the data is exactly the same in both cases).
 
-    - ``check`` -- (boolean) Whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to
-      ``True`` by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     EXAMPLES::
 
         sage: designs.mutually_orthogonal_latin_squares(4,5)                            # needs sage.schemes
         [
-        [0 2 4 1 3]  [0 3 1 4 2]  [0 4 3 2 1]  [0 1 2 3 4]
-        [4 1 3 0 2]  [3 1 4 2 0]  [2 1 0 4 3]  [4 0 1 2 3]
-        [3 0 2 4 1]  [1 4 2 0 3]  [4 3 2 1 0]  [3 4 0 1 2]
-        [2 4 1 3 0]  [4 2 0 3 1]  [1 0 4 3 2]  [2 3 4 0 1]
-        [1 3 0 2 4], [2 0 3 1 4], [3 2 1 0 4], [1 2 3 4 0]
+        [0 1 2 3 4]  [0 1 2 3 4]  [0 1 2 3 4]  [0 1 2 3 4]
+        [1 2 3 4 0]  [2 3 4 0 1]  [3 4 0 1 2]  [4 0 1 2 3]
+        [2 3 4 0 1]  [4 0 1 2 3]  [1 2 3 4 0]  [3 4 0 1 2]
+        [3 4 0 1 2]  [1 2 3 4 0]  [4 0 1 2 3]  [2 3 4 0 1]
+        [4 0 1 2 3], [3 4 0 1 2], [2 3 4 0 1], [1 2 3 4 0]
         ]
 
         sage: designs.mutually_orthogonal_latin_squares(3,7)                            # needs sage.schemes
         [
-        [0 2 4 6 1 3 5]  [0 3 6 2 5 1 4]  [0 4 1 5 2 6 3]
-        [6 1 3 5 0 2 4]  [5 1 4 0 3 6 2]  [4 1 5 2 6 3 0]
-        [5 0 2 4 6 1 3]  [3 6 2 5 1 4 0]  [1 5 2 6 3 0 4]
-        [4 6 1 3 5 0 2]  [1 4 0 3 6 2 5]  [5 2 6 3 0 4 1]
-        [3 5 0 2 4 6 1]  [6 2 5 1 4 0 3]  [2 6 3 0 4 1 5]
-        [2 4 6 1 3 5 0]  [4 0 3 6 2 5 1]  [6 3 0 4 1 5 2]
-        [1 3 5 0 2 4 6], [2 5 1 4 0 3 6], [3 0 4 1 5 2 6]
+        [0 1 2 3 4 5 6]  [0 1 2 3 4 5 6]  [0 1 2 3 4 5 6]
+        [1 2 3 4 5 6 0]  [2 3 4 5 6 0 1]  [3 4 5 6 0 1 2]
+        [2 3 4 5 6 0 1]  [4 5 6 0 1 2 3]  [6 0 1 2 3 4 5]
+        [3 4 5 6 0 1 2]  [6 0 1 2 3 4 5]  [2 3 4 5 6 0 1]
+        [4 5 6 0 1 2 3]  [1 2 3 4 5 6 0]  [5 6 0 1 2 3 4]
+        [5 6 0 1 2 3 4]  [3 4 5 6 0 1 2]  [1 2 3 4 5 6 0]
+        [6 0 1 2 3 4 5], [5 6 0 1 2 3 4], [4 5 6 0 1 2 3]
         ]
 
         sage: designs.mutually_orthogonal_latin_squares(2,5,partitions=True)            # needs sage.schemes
@@ -270,16 +270,16 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
           [2, 7, 12, 17, 22],
           [3, 8, 13, 18, 23],
           [4, 9, 14, 19, 24]],
-         [[0, 8, 11, 19, 22],
-          [3, 6, 14, 17, 20],
-          [1, 9, 12, 15, 23],
-          [4, 7, 10, 18, 21],
-          [2, 5, 13, 16, 24]],
          [[0, 9, 13, 17, 21],
-          [2, 6, 10, 19, 23],
-          [4, 8, 12, 16, 20],
           [1, 5, 14, 18, 22],
-          [3, 7, 11, 15, 24]]]
+          [2, 6, 10, 19, 23],
+          [3, 7, 11, 15, 24],
+          [4, 8, 12, 16, 20]],
+         [[0, 8, 11, 19, 22],
+          [1, 9, 12, 15, 23],
+          [2, 5, 13, 16, 24],
+          [3, 6, 14, 17, 20],
+          [4, 7, 10, 18, 21]]]
 
     What is the maximum number of MOLS of size 8 that Sage knows how to build?::
 
@@ -291,16 +291,16 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
 
         sage: designs.orthogonal_arrays.is_available(5+2, 5) # 5 MOLS of order 5
         False
-        sage: designs.orthogonal_arrays.is_available(4+2,6) # 4 MOLS of order 6         # needs sage.schemes
+        sage: designs.orthogonal_arrays.is_available(4+2,6)  # 4 MOLS of order 6        # needs sage.schemes
         False
 
     Sage, however, is not able to prove that the second MOLS do not exist::
 
-        sage: designs.orthogonal_arrays.exists(4+2,6) # 4 MOLS of order 6               # needs sage.schemes
+        sage: designs.orthogonal_arrays.exists(4+2,6)  # 4 MOLS of order 6              # needs sage.schemes
         Unknown
 
     If you ask for such a MOLS then you will respectively get an informative
-    ``EmptySetError`` or ``NotImplementedError``::
+    :exc:`EmptySetError` or :exc:`NotImplementedError`::
 
         sage: designs.mutually_orthogonal_latin_squares(5, 5)
         Traceback (most recent call last):
@@ -343,6 +343,21 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
         [3 4 5 6 7 1 2 0 8 9]  [5 6 7 1 2 3 4 0 9 8]
         [4 5 6 7 1 2 3 9 0 8], [7 1 2 3 4 5 6 9 8 0]
         ]
+
+    Verify the construction from [KD2015]_::
+
+        sage: designs.mutually_orthogonal_latin_squares(2, 9)
+        [
+        [0 1 2 3 4 5 6 7 8]  [0 1 2 3 4 5 6 7 8]
+        [2 3 6 4 1 8 0 5 7]  [3 8 4 7 5 2 1 0 6]
+        [3 8 4 7 5 2 1 0 6]  [4 7 1 5 8 6 3 2 0]
+        [4 7 1 5 8 6 3 2 0]  [5 0 8 2 6 1 7 4 3]
+        [5 0 8 2 6 1 7 4 3]  [6 4 0 1 3 7 2 8 5]
+        [6 4 0 1 3 7 2 8 5]  [7 6 5 0 2 4 8 3 1]
+        [7 6 5 0 2 4 8 3 1]  [8 2 7 6 0 3 5 1 4]
+        [8 2 7 6 0 3 5 1 4]  [1 5 3 8 7 0 4 6 2]
+        [1 5 3 8 7 0 4 6 2], [2 3 6 4 1 8 0 5 7]
+        ]
     """
     from sage.combinat.designs.orthogonal_arrays import orthogonal_array
     from sage.matrix.constructor import Matrix
@@ -367,6 +382,22 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
         _, construction = MOLS_constructions[n]
 
         matrices = construction()[:k]
+
+    # Implements the construction from Theorem 5.2.4 of [KD2015]_ for prime powers.
+    # This was implemented to fix :issue:`26107`, which pointed out that this
+    # function was unacceptably slow when n was a large prime power
+    elif is_prime_power(n):
+        F = list(GF(n))
+
+        # We need the first element of the list to be 0
+        assert F[0] == 0
+
+        # This dictionary is used to convert from field elements to integers
+        conv = {F[i] : i for i in range(n)}
+
+        # Make the matrices
+        matrices = [Matrix([[conv[F[i] + F[r]*F[j]] for i in range(n)]
+                 for j in range(n)]) for r in range(1, k+1)]
 
     elif orthogonal_array(k + 2, n, existence=True) is not Unknown:
         # Forwarding non-existence results
@@ -426,7 +457,8 @@ def latin_square_product(M, N, *others):
 
     INPUT:
 
-    An arbitrary number of latin squares (greater than 2).
+    - ``M``, ``N``, ``*others`` -- an arbitrary number of latin squares
+      (greater than or equal to 2)
 
     EXAMPLES::
 
@@ -450,27 +482,27 @@ def latin_square_product(M, N, *others):
     P = Matrix(D)
 
     if others:
-        return latin_square_product(P, others[0],*others[1:])
+        return latin_square_product(P, others[0], *others[1:])
     else:
         return P
 
 
-def MOLS_table(start,stop=None,compare=False,width=None):
+def MOLS_table(start, stop=None, compare=False, width=None):
     r"""
-    Prints the MOLS table that Sage can produce.
+    Print the MOLS table that Sage can produce.
 
     INPUT:
 
-    - ``start,stop`` (integers) -- print the table of MOLS for value of `n` such
-      that ``start<=n<stop``. If only one integer is given as input, it is
-      interpreted as the value of ``stop`` with ``start=0`` (same behaviour as
-      ``range``).
+    - ``start``, ``stop`` -- integers; print the table of MOLS for value of
+      `n` such that ``start<=n<stop``. If only one integer is given as input,
+      it is interpreted as the value of ``stop`` with ``start=0`` (same
+      behaviour as ``range``).
 
-    - ``compare`` (boolean) -- if sets to ``True`` the MOLS displays
+    - ``compare`` -- boolean; if sets to ``True`` the MOLS displays
       with `+` and `-` entries its difference with the table from the
       Handbook of Combinatorial Designs (2ed).
 
-    - ``width`` (integer) -- the width of each column of the table. By default,
+    - ``width`` -- integer; the width of each column of the table. By default,
       it is computed from range of values determined by the parameters ``start``
       and ``stop``.
 
@@ -500,30 +532,25 @@ def MOLS_table(start,stop=None,compare=False,width=None):
           0|                                                           +               +
          20|
          40|
-         60|   +
+         60|
          80|
         sage: MOLS_table(50, 100, compare=True)
                0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19
             ________________________________________________________________________________
          40|
-         60|   +
+         60|
          80|
     """
     from .orthogonal_arrays import largest_available_k
     if stop is None:
         start,stop = 0,start
     # make start and stop be congruent to 0 mod 20
-    start = start - (start%20)
+    start = start - (start % 20)
     stop = stop-1
-    stop = stop + (20-(stop%20))
-    assert start%20 == 0 and stop%20 == 0
+    stop = stop + (20-(stop % 20))
+    assert start % 20 == 0 and stop % 20 == 0
     if stop <= start:
         return
-
-    if compare:
-        handbook_file = open("{}/MOLS_table.txt".format(COMBINATORIAL_DESIGN_DATA_DIR), 'r')
-        hb = [int(_) for _ in handbook_file.readlines()[9].split(',')]
-        handbook_file.close()
 
     # choose an appropriate width (needs to be >= 3 because "+oo" should fit)
     if width is None:
@@ -537,9 +564,11 @@ def MOLS_table(start,stop=None,compare=False,width=None):
             print("\n{:>{width}}|".format(i, width=width), end="")
         k = largest_available_k(i)-2
         if compare:
-            if i < 2 or hb[i] == k:
+            from . import MOLS_handbook_data
+            lower_bound = MOLS_handbook_data.lower_bound(i)
+            if i < 2 or lower_bound == k:
                 c = ""
-            elif hb[i] < k:
+            elif lower_bound < k:
                 c = "+"
             else:
                 c = "-"

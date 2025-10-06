@@ -44,7 +44,7 @@ include "matrix_modn_dense_template.pxi"
 
 cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
     r"""
-    Dense matrices over `\ZZ/n\ZZ` for `n < 2^{8}` using LinBox's ``Modular<float>``
+    Dense matrices over `\ZZ/n\ZZ` for `n < 2^{8}` using LinBox's ``Modular<float>``.
 
     These are matrices with integer entries mod ``n`` represented as
     floating-point numbers in a 32-bit word for use with LinBox routines.
@@ -57,7 +57,7 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
     """
     def __cinit__(self):
         """
-        The Cython constructor
+        The Cython constructor.
 
         TESTS::
 
@@ -67,9 +67,9 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
         """
         self._get_template = self._base_ring.zero()
 
-    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
+    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value) noexcept:
         r"""
-        Set the (i,j) entry of self to the int value.
+        Set the (i,j) entry of ``self`` to the int value.
 
         EXAMPLES::
 
@@ -151,3 +151,43 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
         """
         cdef float result = (<Matrix_modn_dense_template>self)._matrix[i][j]
         return (<Matrix_modn_dense_float>self)._get_template._new_c(<int_fast32_t>result)
+
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_modn_dense_float
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: m = matrix(GF(131),3,4,range(12))
+            sage: m
+            [ 0  1  2  3]
+            [ 4  5  6  7]
+            [ 8  9 10 11]
+            sage: m.transpose()
+            [ 0  4  8]
+            [ 1  5  9]
+            [ 2  6 10]
+            [ 3  7 11]
+            sage: m.matrix_from_rows([0,2])
+            [ 0  1  2  3]
+            [ 8  9 10 11]
+            sage: m.matrix_from_columns([1,3])
+            [ 1  3]
+            [ 5  7]
+            [ 9 11]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [ 4  7]
+            [ 8 11]
+        """
+        cdef Matrix_modn_dense_float _src = <Matrix_modn_dense_float>src
+        self._matrix[iDst][jDst] = _src._matrix[iSrc][jSrc]

@@ -1,11 +1,12 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
-Induced Crystals
+Induced crystals
 
 We construct a crystal structure on a set induced by a bijection `\Phi`.
 
 AUTHORS:
 
-- Travis Scrimshaw (2014-05-15): Initial implementation
+- Travis Scrimshaw (2014-05-15): initial implementation
 """
 
 #*****************************************************************************
@@ -46,8 +47,8 @@ class InducedCrystal(UniqueRepresentation, Parent):
     - ``X`` -- the base set
     - ``phi`` -- the map `\Phi`
     - ``inverse`` -- (optional) the inverse map `\Phi^{-1}`
-    - ``from_crystal`` -- (default: ``False``) if the induced structure is
-      of the second type `\Phi : C \to X`
+    - ``from_crystal`` -- boolean (default: ``False``); if the induced
+      structure is of the second type `\Phi : C \to X`
 
     EXAMPLES:
 

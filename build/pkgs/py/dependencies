@@ -1,4 +1,4 @@
-$(PYTHON) | $(PYTHON_TOOLCHAIN) setuptools_scm
+ | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

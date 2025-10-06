@@ -1,0 +1,5 @@
+bash
+gettext-dev
+autoconf
+automake
+libtool

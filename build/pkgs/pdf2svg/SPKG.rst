@@ -1,5 +1,5 @@
-pdf2svg - PDF to SVG convertor
-==============================
+pdf2svg: PDF to SVG convertor
+=============================
 
 Description
 -----------

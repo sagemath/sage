@@ -1,5 +1,5 @@
-from .PyPolyBoRi import Polynomial, BoolePolynomialVector
-from .pbori import FGLMStrategy, BooleSet
+from sage.rings.polynomial.pbori.pbori import BooleSet, FGLMStrategy
+from sage.rings.polynomial.pbori.PyPolyBoRi import BoolePolynomialVector, Polynomial
 
 
 def _fglm(I, from_ring, to_ring):
@@ -22,13 +22,13 @@ def fglm(I, from_ring, to_ring):
 
         sage: from sage.rings.polynomial.pbori import *
         sage: from sage.rings.polynomial.pbori.PyPolyBoRi import OrderCode
+        sage: from sage.rings.polynomial.pbori.fglm import fglm
         sage: dp_asc = OrderCode.dp_asc
-        sage: r=declare_ring(['x','y','z'],dict())
+        sage: r = declare_ring(['x','y','z'],dict())
         sage: old_ring = r
         sage: new_ring = old_ring.clone(ordering=dp_asc)
-        sage: (x,y,z) = [old_ring.variable(i) for i in range(3)]
-        sage: ideal=[x+z, y+z]# lp Groebner basis
-        sage: from sage.rings.polynomial.pbori.fglm import fglm
+        sage: x,y,z = (old_ring.variable(i) for i in range(3))
+        sage: ideal = [x+z, y+z]  # lp Groebner basis
         sage: list(fglm(ideal, old_ring, new_ring))
         [y + x, z + x]
     """

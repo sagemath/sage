@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 """
 The Sage ZMQ Kernel
 
@@ -16,7 +16,18 @@ notebook or remote Jupyter sessions.
 # ***************************************************************************
 
 import sys
-from ipykernel.ipkernel import IPythonKernel
+import warnings
+with warnings.catch_warnings():
+    # When upstream pydevd (as opposed to the bundled version) is used
+    # with debugpy, a PEP 420 warning is emitted. Debugpy and/or
+    # pydevd will eventually work around this, but as of September
+    # 2023, hiding the warning gives us more flexibility in the
+    # versions of those packages that we can accept.
+    warnings.filterwarnings("ignore",
+                            message=r".*pkg_resources\.declare_namespace",
+                            category=DeprecationWarning)
+    from ipykernel.ipkernel import IPythonKernel
+
 from ipykernel.zmqshell import ZMQInteractiveShell
 from traitlets import Type
 
@@ -37,11 +48,11 @@ class SageKernel(IPythonKernel):
 
     def __init__(self, **kwds):
         """
-        The Sage Jupyter Kernel
+        The Sage Jupyter Kernel.
 
         INPUT:
 
-        See the Jupyter documentation
+        See the Jupyter documentation.
 
         EXAMPLES::
 
@@ -55,14 +66,12 @@ class SageKernel(IPythonKernel):
     @property
     def banner(self):
         r"""
-        The Sage Banner
+        The Sage Banner.
 
         The value of this property is displayed in the Jupyter
         notebook.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -77,16 +86,9 @@ class SageKernel(IPythonKernel):
     @property
     def help_links(self):
         r"""
-        Help in the Jupyter Notebook
+        Help in the Jupyter Notebook.
 
-        OUTPUT:
-
-        See the Jupyter documentation.
-
-        .. NOTE::
-
-            Urls starting with "kernelspecs" are prepended by the
-            browser with the appropriate path.
+        OUTPUT: see the Jupyter documentation
 
         EXAMPLES::
 
@@ -94,43 +96,67 @@ class SageKernel(IPythonKernel):
             sage: sk = SageKernel.__new__(SageKernel)
             sage: sk.help_links
             [{'text': 'Sage Documentation',
-              'url': 'kernelspecs/sagemath/doc/html/en/index.html'},
+              'url': '.../html/en/index.html'},
              ...]
         """
-        from sage.repl.ipython_kernel.install import SageKernelSpec
-        identifier = SageKernelSpec.identifier()
+        # A Sage doc server starts when Jupyter notebook launches if the Sage
+        # documentation is available locally.  See the corresponding code in
+        # src/bin/sage-notebook.
 
-        def kernel_url(x):
-            return 'kernelspecs/{0}/{1}'.format(identifier, x)
+        from sage.env import SAGE_DOC_SERVER_URL
+        from sage.env import SAGE_DOC_LOCAL_PORT as port
+        from sage.features.sagemath import sagemath_doc_html
+
+        if SAGE_DOC_SERVER_URL:
+            def doc_url(path):
+                return f'{SAGE_DOC_SERVER_URL}/{path}'
+        elif sagemath_doc_html().is_present() and int(port):
+            def doc_url(path):
+                return f'http://127.0.0.1:{port}/{path}'
+        else:
+            def doc_url(path):
+                return f'https://doc.sagemath.org/{path}'
 
         return [
             {
                 'text': 'Sage Documentation',
-                'url': kernel_url('doc/html/en/index.html'),
+                'url': doc_url('html/en/index.html'),
+            },
+            {
+                'text': 'A Tour of Sage',
+                'url': doc_url('html/en/a_tour_of_sage/index.html'),
             },
             {
                 'text': 'Tutorial',
-                'url': kernel_url('doc/html/en/tutorial/index.html'),
+                'url': doc_url('html/en/tutorial/index.html'),
             },
             {
                 'text': 'Thematic Tutorials',
-                'url': kernel_url('doc/html/en/thematic_tutorials/index.html'),
-            },
-            {
-                'text': 'FAQs',
-                'url': kernel_url('doc/html/en/faq/index.html'),
+                'url': doc_url('html/en/thematic_tutorials/index.html'),
             },
             {
                 'text': 'PREP Tutorials',
-                'url': kernel_url('doc/html/en/prep/index.html'),
+                'url': doc_url('html/en/prep/index.html'),
             },
             {
-                'text': 'Reference',
-                'url': kernel_url('doc/html/en/reference/index.html'),
+                'text': 'Constructions',
+                'url': doc_url('html/en/constructions/index.html'),
             },
             {
-                'text': "Developer's Guide",
-                'url': kernel_url('doc/html/en/developer/index.html'),
+                'text': 'FAQ',
+                'url': doc_url('html/en/faq/index.html'),
+            },
+            {
+                'text': 'Reference Manual',
+                'url': doc_url('html/en/reference/index.html'),
+            },
+            {
+                'text': "Installation Guide",
+                'url': doc_url('html/en/installation/index.html'),
+            },
+            {
+                'text': "Developer Guide",
+                'url': doc_url('html/en/developer/index.html'),
             },
             {
                 'text': "Python",
@@ -177,7 +203,7 @@ class SageKernel(IPythonKernel):
         attribute. This is needed because Jupyter needs to change the
         ``SIGINT`` handler.
 
-        See :trac:`19135`.
+        See :issue:`19135`.
 
         TESTS::
 

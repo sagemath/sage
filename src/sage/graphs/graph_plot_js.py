@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.plot
 r"""
 Graph plotting in Javascript with d3.js
 
@@ -15,7 +16,7 @@ What Sage feeds javascript with is a "graph" object with the following content:
 
 - ``vertices`` -- each vertex is a dictionary defining :
 
-    - ``name``  -- The vertex's label
+    - ``name`` -- the vertex's label
 
     - ``group`` -- the vertex' color (integer)
 
@@ -27,7 +28,7 @@ The ID of a vertex is its index in the vertex list.
 
     - ``target`` -- the ID (int) of the edge's destination
 
-    - ``color``  -- the edge's color (integer)
+    - ``color`` -- the edge's color (integer)
 
     - ``value`` -- thickness of the edge
 
@@ -39,7 +40,7 @@ The ID of a vertex is its index in the vertex list.
       center of the edge. It defines the curve of the edge, which can be useful
       for multigraphs.
 
-- ``pos`` -- a list whose `i` th element is a dictionary defining the position
+- ``pos`` -- list whose `i` th element is a dictionary defining the position
   of the `i` th vertex
 
 It also contains the definition of some numerical/boolean variables whose
@@ -72,9 +73,9 @@ Authors:
 Functions
 ---------
 """
+from pathlib import Path
 from sage.misc.temporary_file import tmp_filename
 from sage.misc.lazy_import import lazy_import
-import os
 lazy_import("sage.plot.colors", "rainbow")
 
 # ****************************************************************************
@@ -119,12 +120,12 @@ def gen_html_code(G,
 
     - ``vertex_partition`` -- list (default: ``[]``); a list of lists
       representing a partition of the vertex set. Vertices are then colored in
-      the graph according to the partition
+      the graph according to the partition.
 
-    - ``vertex_colors`` -- dict (default: ``None``); a dictionary representing a
-      partition of the vertex set. Keys are colors (ignored) and values are
-      lists of vertices. Vertices are then colored in the graph according to the
-      partition
+    - ``vertex_colors`` -- dictionary (default: ``None``); a dictionary
+      representing a partition of the vertex set. Keys are colors (ignored) and
+      values are lists of vertices. Vertices are then colored in the graph
+      according to the partition.
 
     - ``edge_partition`` -- list (default: ``[]``); same as
       ``vertex_partition``, with edges instead
@@ -133,24 +134,24 @@ def gen_html_code(G,
       previously computed position of nodes into account if there is one, or to
       compute a spring layout
 
-    - ``vertex_size`` -- integer (default: ``7``); the size of a vertex' circle
+    - ``vertex_size`` -- integer (default: 7); the size of a vertex' circle
 
-    - ``edge_thickness`` -- integer (default: ``4``); thickness of an edge
+    - ``edge_thickness`` -- integer (default: 4); thickness of an edge
 
-    - ``charge`` -- integer (default: ``-120``); the vertices' charge. Defines
+    - ``charge`` -- integer (default: -120); the vertices' charge. Defines
       how they repulse each other. See
       `<https://github.com/mbostock/d3/wiki/Force-Layout>`_ for more
       information
 
-    - ``link_distance`` -- integer (default: ``30``); see
+    - ``link_distance`` -- integer (default: 30); see
       `<https://github.com/mbostock/d3/wiki/Force-Layout>`_ for more
       information
 
-    - ``link_strength`` -- integer (default: ``2``); see
+    - ``link_strength`` -- integer (default: 2); see
       `<https://github.com/mbostock/d3/wiki/Force-Layout>`_ for more
       information
 
-    - ``gravity`` -- float (default: ``0.04``); see
+    - ``gravity`` -- float (default: 0.04); see
       `<https://github.com/mbostock/d3/wiki/Force-Layout>`_ for more
       information
 
@@ -164,15 +165,15 @@ def gen_html_code(G,
 
     EXAMPLES::
 
-        sage: graphs.RandomTree(50).show(method="js")                           # optional - internet, needs sage.plot
+        sage: graphs.RandomTree(50).show(method='js')                           # optional - internet
 
         sage: g = graphs.PetersenGraph()
-        sage: g.show(method="js", vertex_partition=g.coloring())                # optional - internet, needs sage.plot
+        sage: g.show(method='js', vertex_partition=g.coloring())                # optional - internet
 
-        sage: graphs.DodecahedralGraph().show(method="js",                      # optional - internet, needs sage.plot
+        sage: graphs.DodecahedralGraph().show(method='js',                      # optional - internet
         ....:                                 force_spring_layout=True)
 
-        sage: graphs.DodecahedralGraph().show(method="js")                      # optional - internet, needs sage.plot
+        sage: graphs.DodecahedralGraph().show(method='js')                      # optional - internet
 
         sage: # needs sage.combinat
         sage: g = digraphs.DeBruijn(2, 2)
@@ -182,7 +183,7 @@ def gen_html_code(G,
         sage: g.add_edge("10", "10", "c")
         sage: g.add_edge("10", "10", "d")
         sage: g.add_edge("01", "11", "1")
-        sage: g.show(method="js", vertex_labels=True, edge_labels=True,         # optional - internet, needs sage.plot
+        sage: g.show(method='js', vertex_labels=True, edge_labels=True,         # optional - internet
         ....:        link_distance=200, gravity=.05, charge=-500,
         ....:        edge_partition=[[("11", "12", "2"), ("21", "21", "a")]],
         ....:        edge_thickness=4)
@@ -192,13 +193,13 @@ def gen_html_code(G,
         sage: from sage.graphs.graph_plot_js import gen_html_code
         sage: filename = gen_html_code(graphs.PetersenGraph())
 
-    :trac:`17370`::
+    :issue:`17370`::
 
         sage: filename = gen_html_code(graphs.CompleteBipartiteGraph(4, 5))
 
     In the generated html code, the source (resp. target) of a link is the index
     of the node in the list defining the names of the nodes. We check that the
-    order is correct (:trac:`27460`)::
+    order is correct (:issue:`27460`)::
 
         sage: filename = gen_html_code(DiGraph({1: [10]}))
         sage: with open(filename, 'r') as f:
@@ -316,14 +317,13 @@ def gen_html_code(G,
                                    "edge_thickness": int(edge_thickness)})
 
     from sage.env import SAGE_EXTCODE, SAGE_SHARE
-    js_code_file = open(SAGE_EXTCODE + "/graphs/graph_plot_js.html", 'r')
-    js_code = js_code_file.read().replace("// GRAPH_DATA_HEREEEEEEEEEEE", string)
-    js_code_file.close()
+    with open(Path(SAGE_EXTCODE) / "graphs" / "graph_plot_js.html") as f:
+        js_code = f.read().replace("// GRAPH_DATA_HEREEEEEEEEEEE", string)
 
     # Add d3.js script depending on whether d3js package is installed.
-    d3js_filepath = os.path.join(SAGE_SHARE, 'd3js', 'd3.min.js')
-    if os.path.exists(d3js_filepath):
-        with open(d3js_filepath, 'r') as d3js_code_file:
+    d3js_filepath = Path(SAGE_SHARE) / 'd3js' / 'd3.min.js'
+    if d3js_filepath.exists():
+        with open(d3js_filepath) as d3js_code_file:
             d3js_script = '<script>' + d3js_code_file.read() + '</script>'
     else:
         d3js_script = '<script src="http://d3js.org/d3.v3.min.js"></script>'

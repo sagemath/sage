@@ -9,5 +9,6 @@ Data Structures
    sage/data_structures/bounded_integer_sequences
    sage/data_structures/stream
    sage/data_structures/mutable_poset
+   sage/data_structures/pairing_heap
 
 .. include:: ../footer.txt

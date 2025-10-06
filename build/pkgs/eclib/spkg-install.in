@@ -3,38 +3,11 @@ CXXFLAGS="$CXXFLAGS_O3_NON_NATIVE"
 
 export CFLAGS CXXFLAGS
 
-
-echo "Deleting old versions of eclib libraries, which"
-echo "would interfere with new builds..."
-# Delete any pre-autotools libraries:
-rm -f "$SAGE_LOCAL"/lib/lib{curvesntl,g0nntl,jcntl,rankntl,mwrank}.*
-# Delete autotools libraries:
-rm -f "$SAGE_LOCAL"/lib/lib{e,j}c.*
-if [ "$UNAME" = "CYGWIN" ]; then
-    rm -f "$SAGE_LOCAL"/lib/cyg{e,j}c-*.dll
-fi
-echo "Deleting old include directory..."
-rm -rf "$SAGE_LOCAL"/include/eclib/
-
-
 cd src/
-
-#############################################################
-# the workaround with SAGE_CONFIGURE_FLINT_ECLIB
-# introduced by #28401 may be removed once
-# github.com/JohnCremona/eclib/pull/57 is in  Sage
-#############################################################
-if test x$SAGE_FLINT_PREFIX = x; then
-   SAGE_CONFIGURE_FLINT_ECLIB="--with-flint"
-else
-   SAGE_CONFIGURE_FLINT_ECLIB="--with-flint=$SAGE_FLINT_PREFIX"
-fi
-
-echo $SAGE_CONFIGURE_FLINT_ECLIB
 
 sdh_configure $SAGE_CONFIGURE_NTL \
               $SAGE_CONFIGURE_PARI \
-              $SAGE_CONFIGURE_FLINT_ECLIB \
+              --with-flint=$SAGE_FLINT_PREFIX \
               --with-boost="no" \
               --disable-allprogs
 sdh_make

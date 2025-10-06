@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
-Word Quasi-symmetric functions
+Word quasi-symmetric functions
 
 AUTHORS:
 
@@ -37,7 +37,6 @@ We check that the coercion `C \to M` goes through the `X` basis::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
 from sage.misc.bindable_class import BindableClass
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -75,7 +74,7 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
                                          OrderedSetPartitions(),
                                          category=WQSymBases(alg, graded),
                                          sorting_key=sorting_key,
-                                         bracket="", prefix=self._prefix)
+                                         bracket='', prefix=self._prefix)
 
     def _repr_term(self, osp):
         r"""
@@ -238,8 +237,7 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
             return self._coerce_map_via([target], R)
         return super()._coerce_map_from_(R)
 
-    @cached_method
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an element of ``self``.
 
@@ -473,8 +471,14 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
             sage: A = algebras.WQSym(QQ)
             sage: TestSuite(A).run()  # long time
+
+            sage: M = algebras.WQSym(ZZ).M()
+            sage: M.is_commutative()
+            False
         """
         category = HopfAlgebras(R).Graded().Connected()
+        if R.is_zero():
+            category = category.Commutative()
         Parent.__init__(self, base=R, category=category.WithRealizations())
 
     def _repr_(self):
@@ -500,7 +504,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         """
         return self.M()
 
-    _shorthands = tuple(['M', 'X', 'C', 'Q', 'Phi'])
+    _shorthands = ('M', 'X', 'C', 'Q', 'Phi')
 
     # add options to class
     class options(GlobalOptions):
@@ -549,12 +553,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         NAME = 'WordQuasiSymmetricFunctions element'
         module = 'sage.combinat.chas.wqsym'
         option_class = 'WordQuasiSymmetricFunctions'
-        objects = dict(default="compositions",
+        objects = dict(default='compositions',
                        description='Specifies how basis elements of WordQuasiSymmetricFunctions should be indexed',
                        values=dict(compositions="Indexing the basis by ordered set partitions",
                                    words="Indexing the basis by packed words"),
                        case_sensitive=False)
-        display = dict(default="normal",
+        display = dict(default='normal',
                        description='Specifies how basis elements of WordQuasiSymmetricFunctions should be printed',
                        values=dict(normal="Using the normal representation",
                                    tight="Dropping spaces after commas",
@@ -763,7 +767,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 # for the formula we're using here.
                 Q = self.parent()
                 OSPs = Q.basis().keys()
-                return Q._from_dict({OSPs(A.reversed()): c for (A, c) in self},
+                return Q._from_dict({OSPs(A.reversed()): c for A, c in self},
                                     remove_zeros=False)
 
             def coalgebraic_complement(self):
@@ -800,7 +804,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 # for the formula we're using here.
                 Q = self.parent()
                 OSPs = Q.basis().keys()
-                return Q._from_dict({OSPs(A.complement()): c for (A, c) in self},
+                return Q._from_dict({OSPs(A.complement()): c for A, c in self},
                                     remove_zeros=False)
 
             def star_involution(self):
@@ -836,7 +840,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 # for the formula we're using here.
                 Q = self.parent()
                 OSPs = Q.basis().keys()
-                return Q._from_dict({OSPs(A.complement().reversed()): c for (A, c) in self},
+                return Q._from_dict({OSPs(A.complement().reversed()): c for A, c in self},
                                     remove_zeros=False)
 
     X = Characteristic
@@ -918,7 +922,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             WQSymBasis_abstract.__init__(self, alg)
 
             X = self.realization_of().X()
-            phi = self.module_morphism(self._C_to_X, codomain=X, unitriangular="upper")
+            phi = self.module_morphism(self._C_to_X, codomain=X, unitriangular='upper')
             phi.register_as_coercion()
             inv_phi = ~phi
             inv_phi.register_as_coercion()
@@ -986,12 +990,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             cur = {data[0]: 1}
             for B in data[1:]:
                 ret = {}
-                for A in cur:
+                for A, curA in cur.items():
                     for C in ShuffleProduct_overlapping(A, B, element_constructor=OSP, add=union):
                         if C in ret:
-                            ret[C] += cur[A]
+                            ret[C] += curA
                         else:
-                            ret[C] = cur[A]
+                            ret[C] = curA
                 cur = ret
 
             # Return the result in the X basis
@@ -1067,9 +1071,9 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             WQSymBasis_abstract.__init__(self, alg)
 
             M = self.realization_of().M()
-            phi = self.module_morphism(self._Q_to_M, codomain=M, unitriangular="lower")
+            phi = self.module_morphism(self._Q_to_M, codomain=M, unitriangular='lower')
             phi.register_as_coercion()
-            phi_inv = M.module_morphism(self._M_to_Q, codomain=self, unitriangular="lower")
+            phi_inv = M.module_morphism(self._M_to_Q, codomain=self, unitriangular='lower')
             phi_inv.register_as_coercion()
 
         def some_elements(self):
@@ -1282,7 +1286,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     return {OSPs(P): (one if (len(R) % 2 == len(P) % 2)
                                       else mine)
                             for R in Rs for P in R.strongly_fatter()}
-                return Q._from_dict(linear_combination((img(A), c) for (A, c) in self))
+                return Q._from_dict(linear_combination((img(A), c) for A, c in self))
 
             def coalgebraic_complement(self):
                 r"""
@@ -1330,7 +1334,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     return {OSPs(P): (one if (len(R) % 2 == len(P) % 2)
                                       else mine)
                             for R in Rs for P in R.strongly_fatter()}
-                return Q._from_dict(linear_combination((img(A), c) for (A, c) in self))
+                return Q._from_dict(linear_combination((img(A), c) for A, c in self))
 
             def star_involution(self):
                 r"""
@@ -1365,7 +1369,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 # for the formula we're using here.
                 Q = self.parent()
                 OSPs = Q.basis().keys()
-                return Q._from_dict({OSPs(A.complement().reversed()): c for (A, c) in self},
+                return Q._from_dict({OSPs(A.complement().reversed()): c for A, c in self},
                                     remove_zeros=False)
 
     Q = StronglyCoarser
@@ -1449,9 +1453,9 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             WQSymBasis_abstract.__init__(self, alg)
 
             M = self.realization_of().M()
-            phi = self.module_morphism(self._Phi_to_M, codomain=M, unitriangular="lower")
+            phi = self.module_morphism(self._Phi_to_M, codomain=M, unitriangular='lower')
             phi.register_as_coercion()
-            phi_inv = M.module_morphism(self._M_to_Phi, codomain=self, unitriangular="lower")
+            phi_inv = M.module_morphism(self._M_to_Phi, codomain=self, unitriangular='lower')
             phi_inv.register_as_coercion()
 
         def some_elements(self):
@@ -1635,7 +1639,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 return self.monomial(x)
             xlist = [(j, (k == 0))
                      for part in x
-                     for (k, j) in enumerate(sorted(part))]
+                     for k, j in enumerate(sorted(part))]
             # xlist is a list of the form
             # [(e_1, s_1), (e_2, s_2), ..., (e_n, s_n)],
             # where e_1, e_2, ..., e_n are the entries of the parts of
@@ -1645,7 +1649,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             m = max(max(part) for part in x)  # The degree of x
             ylist = [(m + j, (k == 0))
                      for part in y
-                     for (k, j) in enumerate(sorted(part))]
+                     for k, j in enumerate(sorted(part))]
             # ylist is like xlist, but for y instead of x, and with
             # a shift by m.
 
@@ -1750,7 +1754,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     deconcatenates.append((left, right))
             T = self.tensor_square()
             return T.sum_of_monomials((standardize(left), standardize(right))
-                                      for (left, right) in deconcatenates)
+                                      for left, right in deconcatenates)
 
         class Element(WQSymBasis_abstract.Element):
             def algebraic_complement(self):
@@ -1799,7 +1803,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     return {OSPs(P): (one if (len(R) % 2 == len(P) % 2)
                                       else mine)
                             for R in Rs for P in R.strongly_finer()}
-                return Phi._from_dict(linear_combination((img(A), c) for (A, c) in self))
+                return Phi._from_dict(linear_combination((img(A), c) for A, c in self))
 
             def coalgebraic_complement(self):
                 r"""
@@ -1847,7 +1851,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     return {OSPs(P): (one if (len(R) % 2 == len(P) % 2)
                                       else mine)
                             for R in Rs for P in R.strongly_finer()}
-                return Phi._from_dict(linear_combination((img(A), c) for (A, c) in self))
+                return Phi._from_dict(linear_combination((img(A), c) for A, c in self))
 
             def star_involution(self):
                 r"""
@@ -1882,7 +1886,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 # for the formula we're using here.
                 Phi = self.parent()
                 OSPs = Phi.basis().keys()
-                return Phi._from_dict({OSPs(A.complement().reversed()): c for (A, c) in self},
+                return Phi._from_dict({OSPs(A.complement().reversed()): c for A, c in self},
                                       remove_zeros=False)
 
     Phi = StronglyFiner
@@ -1945,18 +1949,18 @@ class WQSymBases(Category_realization_of_parent):
             sage: bases = WQSymBases(WQSym, True)
             sage: bases.super_categories()
             [Category of realizations of Word Quasi-symmetric functions over Integer Ring,
-             Join of Category of realizations of hopf algebras over Integer Ring
+             Join of Category of realizations of Hopf algebras over Integer Ring
                  and Category of graded algebras over Integer Ring
                  and Category of graded coalgebras over Integer Ring,
-             Category of graded connected hopf algebras with basis over Integer Ring]
+             Category of graded connected Hopf algebras with basis over Integer Ring]
 
             sage: bases = WQSymBases(WQSym, False)
             sage: bases.super_categories()
             [Category of realizations of Word Quasi-symmetric functions over Integer Ring,
-             Join of Category of realizations of hopf algebras over Integer Ring
+             Join of Category of realizations of Hopf algebras over Integer Ring
                  and Category of graded algebras over Integer Ring
                  and Category of graded coalgebras over Integer Ring,
-             Join of Category of filtered connected hopf algebras with basis over Integer Ring
+             Join of Category of filtered connected Hopf algebras with basis over Integer Ring
                  and Category of graded algebras over Integer Ring
                  and Category of graded coalgebras over Integer Ring]
         """
@@ -2042,18 +2046,6 @@ class WQSymBases(Category_realization_of_parent):
                 False
             """
             return False
-
-        def is_commutative(self):
-            """
-            Return whether ``self`` is commutative.
-
-            EXAMPLES::
-
-                sage: M = algebras.WQSym(ZZ).M()
-                sage: M.is_commutative()
-                False
-            """
-            return self.base_ring().is_zero()
 
         def one_basis(self):
             """
@@ -2264,7 +2256,7 @@ class WQSymBases(Category_realization_of_parent):
             # complement componentwise, then convert back.
             parent = self.parent()
             M = parent.realization_of().M()
-            dct = {I.reversed(): coeff for (I, coeff) in M(self)}
+            dct = {I.reversed(): coeff for I, coeff in M(self)}
             return parent(M._from_dict(dct, remove_zeros=False))
 
         def coalgebraic_complement(self):
@@ -2429,7 +2421,7 @@ class WQSymBases(Category_realization_of_parent):
             # complement componentwise, then convert back.
             parent = self.parent()
             M = parent.realization_of().M()
-            dct = {I.complement(): coeff for (I, coeff) in M(self)}
+            dct = {I.complement(): coeff for I, coeff in M(self)}
             return parent(M._from_dict(dct, remove_zeros=False))
 
         def star_involution(self):
@@ -2557,7 +2549,7 @@ class WQSymBases(Category_realization_of_parent):
             # complement componentwise, then convert back.
             parent = self.parent()
             M = parent.realization_of().M()
-            dct = {I.reversed().complement(): coeff for (I, coeff) in M(self)}
+            dct = {I.reversed().complement(): coeff for I, coeff in M(self)}
             return parent(M._from_dict(dct, remove_zeros=False))
 
         def to_quasisymmetric_function(self):
@@ -2572,9 +2564,7 @@ class WQSymBases(Category_realization_of_parent):
             sizes of the blocks of `P`.
             This `\pi` is a ring homomorphism.
 
-            OUTPUT:
-
-            - an element of the quasisymmetric functions in the monomial basis
+            OUTPUT: an element of the quasisymmetric functions in the monomial basis
 
             EXAMPLES::
 
@@ -2601,4 +2591,4 @@ class WQSymBases(Category_realization_of_parent):
             M = QuasiSymmetricFunctions(self.parent().base_ring()).Monomial()
             MW = self.parent().realization_of().M()
             return M.sum_of_terms((i.to_composition(), coeff)
-                                  for (i, coeff) in MW(self))
+                                  for i, coeff in MW(self))

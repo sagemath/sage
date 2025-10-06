@@ -9,4 +9,4 @@ cdef extern from "rw.h":
     subset_t *cslots
     subset_t *adjacency_matrix
 
-cdef void print_rank_dec(subset_t s, int l)
+cdef void print_rank_dec(subset_t s, int l) noexcept

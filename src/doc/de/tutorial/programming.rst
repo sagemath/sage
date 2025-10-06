@@ -177,7 +177,6 @@ Polynome, usw.:
     #!/usr/bin/env sage
 
     import sys
-    from sage.all import *
 
     if len(sys.argv) != 2:
         print("Usage: %s <n>" % sys.argv[0])
@@ -264,15 +263,9 @@ aussehen könnten. Hier sind einige Beispiele:
     sqrt(2)
     sage: V = VectorSpace(QQ,2)
     sage: V.basis()
-        [
-        (1, 0),
-        (0, 1)
-        ]
+        [(1, 0), (0, 1)]
     sage: basis(V)
-        [
-        (1, 0),
-        (0, 1)
-        ]
+        [(1, 0), (0, 1)]
     sage: M = MatrixSpace(GF(7), 2); M
     Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 7
     sage: A = M([1,2,3,4]); A
@@ -426,11 +419,7 @@ Vektorräumen. Es ist wichtig, dass sie nicht verändert werden können.
 ::
 
     sage: V = QQ^3; B = V.basis(); B
-    [
-    (1, 0, 0),
-    (0, 1, 0),
-    (0, 0, 1)
-    ]
+    [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
     sage: type(B)
     <class 'sage.structure.sequence.Sequence_generic'>
     sage: B[0] = B[1]
@@ -446,8 +435,8 @@ Dictionaries
 Ein Dictionary (manchmal auch assoziativer Array genannt) ist eine
 Abbildung von 'hashbaren' Objekten (z.B. Strings, Zahlen und Tupel;
 Lesen Sie die Python documentation
-http://docs.python.org/tut/node7.html und
-http://docs.python.org/lib/typesmapping.html für weitere Details) zu
+http://docs.python.org/3/tutorial/datastructures.html und
+https://docs.python.org/3/library/stdtypes.html#typesmapping für weitere Details) zu
 beliebigen Objekten.
 
 ::

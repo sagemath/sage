@@ -1,1 +1,1 @@
-"pkgconfig(m4ri)"
+pkgconfig(m4ri)

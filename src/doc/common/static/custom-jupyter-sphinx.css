@@ -1,0 +1,136 @@
+div.jupyter_container {
+  border: 0;
+}
+
+div.jupyter_container + div.jupyter_container {
+  margin: 0 0 .5rem 0;
+}
+
+div.jupyter_container div.cell_input pre {
+  margin: .5rem;
+}
+
+div.jupyter_container div.cell_output div.output {
+  margin: .5rem;
+}
+
+.thebelab-cell .jp-OutputArea {
+  margin: 0 .5rem;
+}
+
+.thebelab-cell .jp-OutputArea-output {
+  margin: 0 0 .5rem 0;
+  overflow-x: auto;
+}
+
+.thebelab-button {
+  margin: .5rem 0 .5rem .5rem;
+  padding: 0 .5rem;
+  min-width: 2rem;
+}
+
+.thebelab-button:active {
+  color: #0f0fff;
+}
+
+.thebelab-busy {
+  margin-left: .5rem;
+}
+
+#thebelab-activate-button {
+  position: fixed;
+  right: -5.1rem;
+  top: calc(50% - 1.5rem);
+  width: 6rem;
+  border-radius: 1rem;
+  transition-property: right;
+  transition-duration: 300ms;
+  transition-timing-function: ease-out;
+  z-index: 100;
+}
+
+#thebelab-activate-button:hover {
+  right: .4rem;
+}
+
+#thebelab-activate-button:active {
+  color: #0f0fff;
+}
+
+body[data-theme="dark"] {
+  .jupyter_container {
+    color: white;
+    background-color: black;
+  }
+
+  .jupyter_container .highlight {
+    background-color: black;
+  }
+
+  .thebelab-button {
+    color: #d0d0d0;
+    background-color: #383838;
+  }
+
+  .thebelab-button:active {
+    color: #368ce2;
+  }
+
+  #thebelab-activate-button {
+    background-color: #383838;
+  }
+
+  #thebelab-activate-button:active {
+    color: #368ce2;
+  }
+
+  .thebelab-cell .jp-OutputArea-output {
+    color: white;
+    background-color: black;
+  }
+
+  .thebelab-cell .jp-OutputArea-output pre {
+    color: white;
+    background-color: black;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body[data-theme="auto"] { /* the same styles with body[data-theme="dark"] */
+    .jupyter_container {
+      color: white;
+      background-color: black;
+    }
+
+    .jupyter_container .highlight {
+      background-color: black;
+    }
+
+    .thebelab-button {
+      color: #d0d0d0;
+      background-color: #383838;
+    }
+
+    .thebelab-button:active {
+      color: #368ce2;
+    }
+
+    #thebelab-activate-button {
+      background-color: #383838;
+    }
+
+    #thebelab-activate-button:active {
+      color: #368ce2;
+    }
+
+    .thebelab-cell .jp-OutputArea-output {
+      color: white;
+      background-color: black;
+    }
+
+    .thebelab-cell .jp-OutputArea-output pre {
+      color: white;
+      background-color: black;
+    }
+  }
+}

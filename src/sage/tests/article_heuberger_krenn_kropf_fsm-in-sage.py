@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs sage.modules
 r"""
 This file contains doctests of the article ::
 
@@ -505,11 +506,11 @@ Sage example in fsm-in-sage.tex, line 1064::
 
 Sage example in fsm-in-sage.tex, line 1091::
 
-    sage: var('y')
+    sage: var('y')                                                                      # needs sage.symbolic
     y
     sage: def am_entry(trans):
     ....:     return y^add(trans.word_out) / 2
-    sage: A = W.adjacency_matrix(entry=am_entry)
+    sage: A = W.adjacency_matrix(entry=am_entry)                                        # needs sage.symbolic
 
 
 Sage example in fsm-in-sage.tex, line 1097::
@@ -519,7 +520,7 @@ Sage example in fsm-in-sage.tex, line 1097::
 
 Sage example in fsm-in-sage.tex, line 1099::
 
-    sage: latex(A)
+    sage: latex(A)                                                                      # needs sage.symbolic
     \left(\begin{array}{ccccccccc}
     \frac{1}{2} & \frac{1}{2} \, y^{2} & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
     0 & 0 & \frac{1}{2} & \frac{1}{2} & 0 & 0 & 0 & 0 & 0 \\
@@ -535,95 +536,94 @@ Sage example in fsm-in-sage.tex, line 1099::
 
 Sage example in fsm-in-sage.tex, line 1109::
 
-    sage: (pi_not_normalized,) = (A.subs(y=1) - A.parent().identity_matrix())\
-    ....:                            .left_kernel().basis()
-    sage: pi = pi_not_normalized / pi_not_normalized.norm(p=1)
+    sage: A1mI = (A.subs(y=1) - A.parent().identity_matrix())                           # needs sage.symbolic
+    sage: (pi_not_normalized,) = A1mI.left_kernel().basis()                             # needs sage.symbolic
+    sage: pi = pi_not_normalized / pi_not_normalized.norm(p=1)                          # needs sage.symbolic
 
 
 Sage example in fsm-in-sage.tex, line 1110::
 
-    sage: str(pi)
+    sage: str(pi)                                                                       # needs sage.symbolic
     '(1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9)'
 
 
 Sage example in fsm-in-sage.tex, line 1117::
 
-    sage: expected_output = derivative(A, y).subs(y=1) * vector(len(W.states())*[1])
+    sage: expected_output = derivative(A, y).subs(y=1) * vector(len(W.states())*[1])    # needs sage.symbolic
 
 
 Sage example in fsm-in-sage.tex, line 1118::
 
-    sage: latex(expected_output)
+    sage: latex(expected_output)                                                        # needs sage.symbolic
     \left(1,\,0,\,0,\,0,\,\frac{1}{2},\,1,\,1,\,\frac{1}{2},\,1\right)
 
 
 Sage example in fsm-in-sage.tex, line 1126::
 
-    sage: pi * expected_output
+    sage: pi * expected_output                                                          # needs sage.symbolic
     5/9
 
 
 Sage example in fsm-in-sage.tex, line 1127::
 
-    sage: latex(pi * expected_output)
+    sage: latex(pi * expected_output)                                                   # needs sage.symbolic
     \frac{5}{9}
 
 
 Sage example in fsm-in-sage.tex, line 1129::
 
-    sage: latex(pi * expected_output)
+    sage: latex(pi * expected_output)                                                   # needs sage.symbolic
     \frac{5}{9}
 
 
 Sage example in fsm-in-sage.tex, line 1145::
 
-    sage: var('k')
+    sage: var('k')                                                                      # needs sage.symbolic
     k
-    sage: moments = W.asymptotic_moments(k)
+    sage: moments = W.asymptotic_moments(k)                                             # needs sage.symbolic
 
 
 Sage example in fsm-in-sage.tex, line 1155::
 
-    sage: latex(moments['expectation'])
+    sage: latex(moments['expectation'])                                                 # needs sage.symbolic
     \frac{5}{9} \, k + \mathcal{O}\left(1\right)
 
 
 Sage example in fsm-in-sage.tex, line 1162::
 
-    sage: latex(moments['variance'])
+    sage: latex(moments['variance'])                                                    # needs sage.symbolic
     \frac{44}{243} \, k + \mathcal{O}\left(1\right)
 
 
 Sage example in fsm-in-sage.tex, line 1192::
 
-    sage: expectation_binary = Id.asymptotic_moments(k)['expectation']
+    sage: expectation_binary = Id.asymptotic_moments(k)['expectation']                  # needs sage.symbolic
 
 
 Sage example in fsm-in-sage.tex, line 1195::
 
-    sage: latex(expectation_binary)
+    sage: latex(expectation_binary)                                                     # needs sage.symbolic
     \frac{1}{2} \, k + \mathcal{O}\left(1\right)
 
 
 Sage example in fsm-in-sage.tex, line 1202::
 
-    sage: expectation_NAF = Weight(NAF).asymptotic_moments(k)['expectation']
+    sage: expectation_NAF = Weight(NAF).asymptotic_moments(k)['expectation']            # needs sage.symbolic
 
 
 Sage example in fsm-in-sage.tex, line 1205::
 
-    sage: latex(expectation_NAF)
+    sage: latex(expectation_NAF)                                                        # needs sage.symbolic
     \frac{1}{3} \, k + \mathcal{O}\left(1\right)
 
 
 Sage example in fsm-in-sage.tex, line 1211::
 
-    sage: Abs = transducers.abs([-1, 0, 1])
+    sage: Abs = transducers.abs([-1, 0, 1])                                             # needs sage.symbolic
 
 
 Sage example in fsm-in-sage.tex, line 1216::
 
-    sage: latex(moments['expectation'])
+    sage: latex(moments['expectation'])                                                 # needs sage.symbolic
     \frac{5}{9} \, k + \mathcal{O}\left(1\right)
-
 """

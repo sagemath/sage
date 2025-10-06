@@ -3,7 +3,14 @@ Base class for polyhedra over `\ZZ`
 """
 
 # ****************************************************************************
-#       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2011-2013 Volker Braun <vbraun.name@gmail.com>
+#                     2015      Nathann Cohen
+#                     2015      Vincent Delecroix
+#                     2017-2018 Frédéric Chapoton
+#                     2019      Sophia Elia
+#                     2019-2020 Jonathan Kliem
+#                     2023      Luze Xu
+#                     2023      Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +30,7 @@ from sage.arith.misc import gcd
 #########################################################################
 class Polyhedron_ZZ(Polyhedron_QQ):
     r"""
-    Base class for Polyhedra over `\ZZ`
+    Base class for Polyhedra over `\ZZ`.
 
     TESTS::
 
@@ -84,7 +91,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         TESTS:
 
-        Check :trac:`22622`::
+        Check :issue:`22622`::
 
             sage: P1 = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]])
             sage: P1.is_lattice_polytope()
@@ -108,26 +115,26 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         INPUT:
 
-        - ``verbose`` - boolean (default: ``False``); if ``True``, print the
-          whole output of the LattE command.
+        - ``verbose`` -- boolean (default: ``False``); if ``True``, print the
+          whole output of the LattE command
 
         The following options are passed to the LattE command, for details you
         should consult `the LattE documentation
         <https://www.math.ucdavis.edu/~latte/software/packages/latte_current/>`__:
 
-        - ``dual`` - boolean; triangulate and signed-decompose in the dual
+        - ``dual`` -- boolean; triangulate and signed-decompose in the dual
           space
 
-        - ``irrational_primal`` - boolean; triangulate in the dual space,
-          signed-decompose in the primal space using irrationalization.
+        - ``irrational_primal`` -- boolean; triangulate in the dual space,
+          signed-decompose in the primal space using irrationalization
 
-        - ``irrational_all_primal`` - boolean; triangulate and signed-decompose
-          in the primal space using irrationalization.
+        - ``irrational_all_primal`` -- boolean; triangulate and signed-decompose
+          in the primal space using irrationalization
 
         - ``maxdet`` -- integer; decompose down to an index (determinant) of
-          ``maxdet`` instead of index 1 (unimodular cones).
+          ``maxdet`` instead of index 1 (unimodular cones)
 
-        - ``no_decomposition`` -- boolean; do not signed-decompose simplicial cones.
+        - ``no_decomposition`` -- boolean; do not signed-decompose simplicial cones
 
         - ``compute_vertex_cones`` -- string; either 'cdd' or 'lrs' or '4ti2'
 
@@ -135,9 +142,9 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         - ``dualization`` -- string; either 'cdd' or '4ti2'
 
-        - ``triangulation`` - string; 'cddlib', '4ti2' or 'topcom'
+        - ``triangulation`` -- string; 'cddlib', '4ti2' or 'topcom'
 
-        - ``triangulation_max_height`` - integer; use a uniform distribution of
+        - ``triangulation_max_height`` -- integer; use a uniform distribution of
           height from 1 to this number
 
         .. NOTE::
@@ -259,12 +266,10 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         INPUT:
 
-        - ``variable`` -- (string, default='t'); the variable in which the
-          Ehrhart polynomial is expressed.
+        - ``variable`` -- string (default: ``'t'``); the variable in which the
+          Ehrhart polynomial is expressed
 
-        OUTPUT:
-
-        A univariate polynomial over a rational field.
+        OUTPUT: a univariate polynomial over a rational field
 
         EXAMPLES::
 
@@ -290,11 +295,13 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         raise TypeError("The polyhedron's backend should be 'normaliz'")
 
     @cached_method(do_pickle=True)
-    def ehrhart_polynomial(self, engine=None, variable='t', verbose=False, dual=None,
-            irrational_primal=None, irrational_all_primal=None, maxdet=None,
-            no_decomposition=None, compute_vertex_cones=None, smith_form=None,
-            dualization=None, triangulation=None, triangulation_max_height=None,
-            **kwds):
+    def ehrhart_polynomial(self, engine=None, variable='t', verbose=False,
+                           dual=None, irrational_primal=None,
+                           irrational_all_primal=None, maxdet=None,
+                           no_decomposition=None, compute_vertex_cones=None,
+                           smith_form=None, dualization=None,
+                           triangulation=None, triangulation_max_height=None,
+                           **kwds):
         r"""
         Return the Ehrhart polynomial of this polyhedron.
 
@@ -309,7 +316,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         INPUT:
 
-        - ``engine`` -- string; The backend to use. Allowed values are:
+        - ``engine`` -- string; the backend to use. Allowed values are:
 
           * ``None`` (default); When no input is given the Ehrhart polynomial
             is computed using LattE Integrale (optional)
@@ -317,23 +324,23 @@ class Polyhedron_ZZ(Polyhedron_QQ):
           * ``'normaliz'``; use Normaliz program (optional). The backend of
             ``self`` must be set to 'normaliz'.
 
-        - ``variable`` -- string (default: 't'); The variable in which the
-          Ehrhart polynomial should be expressed.
+        - ``variable`` -- string (default: ``'t'``); the variable in which the
+          Ehrhart polynomial should be expressed
 
         - When the ``engine`` is 'latte' or None, the additional input values are:
 
-          * ``verbose`` - boolean (default: ``False``); if ``True``, print the
+          * ``verbose`` -- boolean (default: ``False``); if ``True``, print the
             whole output of the LattE command.
 
           The following options are passed to the LattE command, for details
           consult `the LattE documentation
           <https://www.math.ucdavis.edu/~latte/software/packages/latte_current/>`__:
 
-          * ``dual`` - boolean; triangulate and signed-decompose in the dual
+          * ``dual`` -- boolean; triangulate and signed-decompose in the dual
             space
-          * ``irrational_primal`` - boolean; triangulate in the dual space,
+          * ``irrational_primal`` -- boolean; triangulate in the dual space,
             signed-decompose in the primal space using irrationalization.
-          * ``irrational_all_primal`` - boolean; Triangulate and signed-decompose
+          * ``irrational_all_primal`` -- boolean; triangulate and signed-decompose
             in the primal space using irrationalization.
           * ``maxdet`` -- integer; decompose down to an index (determinant) of
             ``maxdet`` instead of index 1 (unimodular cones).
@@ -342,8 +349,8 @@ class Polyhedron_ZZ(Polyhedron_QQ):
           * ``compute_vertex_cones`` -- string; either 'cdd' or 'lrs' or '4ti2'
           * ``smith_form`` -- string; either 'ilio' or 'lidia'
           * ``dualization`` -- string; either 'cdd' or '4ti2'
-          * ``triangulation`` - string; 'cddlib', '4ti2' or 'topcom'
-          * ``triangulation_max_height`` - integer; use a uniform distribution of
+          * ``triangulation`` -- string; 'cddlib', '4ti2' or 'topcom'
+          * ``triangulation_max_height`` -- integer; use a uniform distribution of
             height from 1 to this number
 
         OUTPUT:
@@ -453,11 +460,15 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             sage: Q.ehrhart_polynomial.is_in_cache()  # optional - latte_int
             True
         """
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        from sage.rings.rational_field import QQ
+        R = PolynomialRing(QQ, variable)
+
         if self.is_empty():
-            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            from sage.rings.rational_field import QQ
-            R = PolynomialRing(QQ, variable)
             return R.zero()
+
+        if self.dimension() == 0:
+            return R.one()
 
         if not self.is_compact():
             raise ValueError("Ehrhart polynomial only defined for compact polyhedra")
@@ -507,7 +518,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         TESTS:
 
-        Test that :trac:`28551` is fixed::
+        Test that :issue:`28551` is fixed::
 
             sage: polytopes.cube(backend='normaliz').polar().backend()  # optional - pynormaliz
             'normaliz'
@@ -577,7 +588,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         return True
 
     @cached_method
-    def has_IP_property(self):
+    def has_IP_property(self) -> bool:
         """
         Test whether the polyhedron has the IP property.
 
@@ -620,8 +631,8 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         INPUT:
 
-        - ``dim`` -- integer. The dimension of the lattice polytope
-          fiber.
+        - ``dim`` -- integer; the dimension of the lattice polytope
+          fiber
 
         OUTPUT:
 
@@ -639,22 +650,22 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             raise ValueError('Only polytopes (compact polyhedra) are allowed.')
 
         nonzero_points = [p for p in self.integral_points() if not p.is_zero()]
-        origin = [[0]*self.ambient_dim()]
+        origin = [[0] * self.ambient_dim()]
         fibers = set()
         parent = self.parent()
 
         for points in Combinations(nonzero_points, dim):
-                plane = parent.element_class(parent, [origin,[],points], None)
-                if plane.dim() != dim:
-                    continue
-                fiber = self.intersection(plane)
-                if fiber.base_ring() is not ZZ:
-                    continue
-                fiber_vertices = tuple(sorted(tuple(v) for v in fiber.vertex_generator()))
-                if fiber_vertices not in fibers:
-                    yield fiber
-                    fibers.update([fiber_vertices])
-                plane._delete()
+            plane = parent.element_class(parent, [origin, [], points], None)
+            if plane.dim() != dim:
+                continue
+            fiber = self.intersection(plane)
+            if fiber.base_ring() is not ZZ:
+                continue
+            fiber_vertices = tuple(sorted(tuple(v) for v in fiber.vertex_generator()))
+            if fiber_vertices not in fibers:
+                yield fiber
+                fibers.update([fiber_vertices])
+            plane._delete()
 
     def find_translation(self, translated_polyhedron):
         r"""
@@ -662,12 +673,12 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         INPUT:
 
-        - ``translated_polyhedron`` -- a polyhedron.
+        - ``translated_polyhedron`` -- a polyhedron
 
         OUTPUT:
 
         A `\ZZ`-vector that translates ``self`` to
-        ``translated_polyhedron``. A ``ValueError`` is raised if
+        ``translated_polyhedron``. A :exc:`ValueError` is raised if
         ``translated_polyhedron`` is not a translation of ``self``,
         this can be used to check that two polyhedra are not
         translates of each other.
@@ -736,12 +747,12 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             sage: list( Polyhedron()._subpoly_parallel_facets() )
             [The empty polyhedron in ZZ^0]
         """
-        if self.dim()>2 or not self.is_compact():
+        if self.dim() > 2 or not self.is_compact():
             raise NotImplementedError('only implemented for bounded polygons')
         from sage.geometry.polyhedron.plot import cyclic_sort_vertices_2d
         vertices = cyclic_sort_vertices_2d(self.vertices())
         n = len(vertices)
-        if n==1:  # single point
+        if n == 1:  # single point
             yield self
             return
         edge_vectors = []
@@ -759,7 +770,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             for e in edges:
                 point += e
                 v.append(point)
-            if point!=origin:   # does not close up, not a subpolygon
+            if point != origin:   # does not close up, not a subpolygon
                 continue
             yield parent([v, [], []], None)
 
@@ -834,3 +845,89 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             decompositions.append((X, Y))
             summands += [X, Y]
         return tuple(decompositions)
+
+    def normal_form(self, algorithm='palp_native', permutation=False):
+        r"""
+        Return the normal form of vertices of the lattice polytope ``self``.
+
+        INPUT:
+
+        - ``algorithm`` -- must be ``'palp_native'``, the default
+
+        - ``permutation`` -- boolean (default: ``False``); if ``True``, the permutation
+          applied to vertices to obtain the normal form is returned as well
+
+        For more more detail,
+        see :meth:`~sage.geometry.lattice_polytope.LatticePolytopeClass.normal_form`.
+
+        EXAMPLES:
+
+        We compute the normal form of the "diamond"::
+
+            sage: d = Polyhedron([(1,0), (0,1), (-1,0), (0,-1)])
+            sage: d.vertices()
+            (A vertex at (-1, 0),
+             A vertex at (0, -1),
+             A vertex at (0, 1),
+             A vertex at (1, 0))
+            sage: d.normal_form()                                                       # needs sage.groups
+            [(1, 0), (0, 1), (0, -1), (-1, 0)]
+            sage: d.lattice_polytope().normal_form("palp_native")                       # needs sage.groups
+            M( 1,  0),
+            M( 0,  1),
+            M( 0, -1),
+            M(-1,  0)
+            in 2-d lattice M
+
+        Using ``permutation=True``::
+
+            sage: d.normal_form(permutation=True)                                       # needs sage.groups
+            ([(1, 0), (0, 1), (0, -1), (-1, 0)], ())
+
+        It is not possible to compute normal forms for polytopes which do not
+        span the space::
+
+            sage: p = Polyhedron([(1,0,0), (0,1,0), (-1,0,0), (0,-1,0)])
+            sage: p.normal_form()
+            Traceback (most recent call last):
+            ...
+            ValueError: normal form is not defined for lower-dimensional polyhedra, got
+            A 2-dimensional polyhedron in ZZ^3 defined as the convex hull of 4 vertices
+
+        The normal form is also not defined for unbounded polyhedra::
+
+            sage: p = Polyhedron(vertices=[[1, 1]], rays=[[1, 0], [0, 1]], base_ring=ZZ)
+            sage: p.normal_form()
+            Traceback (most recent call last):
+            ...
+            ValueError: normal form is not defined for unbounded polyhedra, got
+            A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex and 2 rays
+
+        See :issue:`15280` for proposed extensions to these cases.
+
+        TESTS::
+
+            sage: d.normal_form(algorithm='palp_fiction')
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm must be 'palp_native'
+        """
+        from sage.geometry.palp_normal_form import _palp_PM_max, _palp_canonical_order
+
+        if algorithm != "palp_native":
+            raise ValueError("algorithm must be 'palp_native'")
+
+        if self.dim() < self.ambient_dim():
+            raise ValueError("normal form is not defined for lower-dimensional polyhedra, got %s" % self)
+
+        if not self.is_compact():
+            raise ValueError("normal form is not defined for unbounded polyhedra, got %s" % self)
+
+        PM = self.slack_matrix().transpose()
+        PM_max, permutations = _palp_PM_max(PM, check=True)
+        out = _palp_canonical_order(self.vertices(), PM_max, permutations)
+
+        if permutation:
+            return out
+        else:
+            return out[0]

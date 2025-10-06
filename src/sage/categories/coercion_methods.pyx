@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Coercion methods for categories
 
@@ -23,9 +24,7 @@ def _mul_parent(self, other):
 
     - ``other`` -- an element of the parent of ``self``
 
-    OUTPUT:
-
-    - an element of the parent of ``self``
+    OUTPUT: an element of the parent of ``self``
 
     EXAMPLES::
 

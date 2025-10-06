@@ -1,13 +1,12 @@
-# -*- coding: utf-8
 r"""
-Univariate polynomials over `\CC` with interval coefficients using Arb.
+Univariate polynomials over `\CC` with Arb ball coefficients.
 
-This is a binding to the `Arb library <http://arblib.org>`_; it
-may be useful to refer to its documentation for more details.
+This is a binding to the `acb_poly module of FLINT <https://flintlib.org/doc/acb_poly.html>`_;
+it may be useful to refer to its documentation for more details.
 
-Parts of the documentation for this module are copied or adapted from
-Arb's own documentation, licenced under the GNU General Public License
-version 2, or later.
+Parts of the documentation for this module are copied or adapted from Arb's
+(now FLINT's) own documentation, licenced (at the time) under the GNU General
+Public License version 2, or later.
 
 .. SEEALSO::
 
@@ -20,12 +19,11 @@ TESTS:
     sage: Pol.<x> = CBF[]
     sage: (x+1/2)^3
     x^3 + 1.500000000000000*x^2 + 0.7500000000000000*x + 0.1250000000000000
-
 """
 
 from cysignals.signals cimport sig_on, sig_off
 
-from sage.libs.arb.acb cimport *
+from sage.libs.flint.acb cimport *
 from sage.libs.flint.fmpz cimport *
 from sage.rings.integer cimport Integer, smallInteger
 from sage.rings.complex_arb cimport ComplexBall
@@ -33,12 +31,13 @@ from sage.structure.element cimport Element
 
 from sage.structure.element import coerce_binop
 
-cdef inline long prec(Polynomial_complex_arb pol):
+cdef inline long prec(Polynomial_complex_arb pol) noexcept:
     return pol._parent._base._prec
+
 
 cdef class Polynomial_complex_arb(Polynomial):
     r"""
-    Wrapper for `Arb <http://arblib.org>`_ polynomials of type
+    Wrapper for `FLINT <https://flintlib.org>`_ polynomials of type
     ``acb_poly_t``
 
     EXAMPLES::
@@ -119,7 +118,7 @@ cdef class Polynomial_complex_arb(Polynomial):
             2.000000000000000*x
             sage: Polynomial_complex_arb(Pol, (1,))
             1.000000000000000
-            sage: Polynomial_complex_arb(Pol, (CBF(i), 1))
+            sage: Polynomial_complex_arb(Pol, (CBF(i), 1))                              # needs sage.symbolic
             x + I
             sage: Polynomial_complex_arb(Pol, polygen(QQ,'y')+2)
             x + 2.000000000000000
@@ -152,21 +151,27 @@ cdef class Polynomial_complex_arb(Polynomial):
             if isinstance(x, list):
                 lst = <list> x
                 length = len(lst)
-                sig_on(); acb_poly_fit_length(self._poly, length); sig_off()
+                sig_on()
+                acb_poly_fit_length(self._poly, length)
+                sig_off()
                 for i in range(length):
                     ball = Coeff(lst[i])
                     acb_poly_set_coeff_acb(self._poly, i, ball.value)
             elif isinstance(x, tuple):
                 tpl = <tuple> x
                 length = len(tpl)
-                sig_on(); acb_poly_fit_length(self._poly, length); sig_off()
+                sig_on()
+                acb_poly_fit_length(self._poly, length)
+                sig_off()
                 for i in range(length):
                     ball = Coeff(tpl[i])
                     acb_poly_set_coeff_acb(self._poly, i, ball.value)
             elif isinstance(x, Polynomial):
                 pol = <Polynomial> x
                 length = pol.degree() + 1
-                sig_on(); acb_poly_fit_length(self._poly, length); sig_off()
+                sig_on()
+                acb_poly_fit_length(self._poly, length)
+                sig_off()
                 for i in range(length):
                     ball = Coeff(pol.get_unsafe(i))
                     acb_poly_set_coeff_acb(self._poly, i, ball.value)
@@ -176,7 +181,9 @@ cdef class Polynomial_complex_arb(Polynomial):
                     acb_poly_zero(self._poly)
                 else:
                     length = max(int(i) for i in dct) + 1
-                    sig_on(); acb_poly_fit_length(self._poly, length); sig_off()
+                    sig_on()
+                    acb_poly_fit_length(self._poly, length)
+                    sig_off()
                     for i, c in dct.iteritems():
                         ball = Coeff(c)
                         acb_poly_set_coeff_acb(self._poly, i, ball.value)
@@ -190,6 +197,7 @@ cdef class Polynomial_complex_arb(Polynomial):
 
         TESTS::
 
+            sage: # needs sage.symbolic
             sage: Pol.<x> = ComplexBallField(42)[]
             sage: pol = (x + i)/3
             sage: pol2 = loads(dumps(pol))
@@ -375,7 +383,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         r"""
         Compute the Euclidean division of this ball polynomial by ``divisor``.
 
-        Raises a ``ZeroDivisionError`` when the divisor is zero or its leading
+        Raises a :exc:`ZeroDivisionError` when the divisor is zero or its leading
         coefficient contains zero. Returns a pair (quotient, remainder)
         otherwise.
 
@@ -586,8 +594,8 @@ cdef class Polynomial_complex_arb(Polynomial):
 
         INPUT:
 
-        - ``expo`` - non-negative integer exponent
-        - ``n`` - truncation order
+        - ``expo`` -- nonnegative integer exponent
+        - ``n`` -- truncation order
 
         EXAMPLES::
 
@@ -796,7 +804,7 @@ cdef class Polynomial_complex_arb(Polynomial):
 
         For ``a = 1``, this computes the usual Riemann zeta function.
 
-        If ``deflate`` is True, evaluate ζ(s,a) + 1/(1-s), see the Arb
+        If ``deflate`` is True, evaluate ζ(s,a) + 1/(1-s), see the FLINT
         documentation for details.
 
         EXAMPLES::

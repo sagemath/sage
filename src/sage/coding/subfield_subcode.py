@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Subfield subcode
 
@@ -34,11 +34,11 @@ class SubfieldSubcode(AbstractLinearCode):
 
     INPUT:
 
-    - ``original_code``  -- the code ``self`` comes from.
+    - ``original_code`` -- the code ``self`` comes from
 
-    - ``subfield`` -- the base field of ``self``.
+    - ``subfield`` -- the base field of ``self``
 
-    - ``embedding`` -- (default: ``None``) an homomorphism from ``subfield`` to
+    - ``embedding`` -- (default: ``None``) a homomorphism from ``subfield`` to
       ``original_code``'s base field. If ``None`` is provided, it will default
       to the first homomorphism of the list of homomorphisms Sage can build.
 
@@ -71,7 +71,6 @@ class SubfieldSubcode(AbstractLinearCode):
             Traceback (most recent call last):
             ...
             ValueError: subfield has to be a subfield of the base field of the original code
-
         """
         if not isinstance(original_code, AbstractLinearCode):
             raise ValueError("original_code must be a linear code")
@@ -98,7 +97,7 @@ class SubfieldSubcode(AbstractLinearCode):
 
     def __eq__(self, other):
         r"""
-        Tests equality between Subfield Subcode objects.
+        Test equality between Subfield Subcode objects.
 
         EXAMPLES::
 
@@ -254,10 +253,7 @@ class SubfieldSubcode(AbstractLinearCode):
                     H[i*m+k, j] = h_vec[k]
 
         H = H.echelon_form()
-        delete = []
-        for i in range(H.nrows()):
-            if H.row(i) == 0:
-                delete.append(i)
+        delete = [i for i in range(H.nrows()) if H.row(i) == 0]
         M = H.delete_rows(delete)
         M.set_immutable()
         return M
@@ -269,14 +265,14 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this decoder
+    - ``code`` -- the associated code of this decoder
 
-    - ``original_decoder`` -- (default: ``None``) The decoder that will be used
+    - ``original_decoder`` -- (default: ``None``) the decoder that will be used
       over the original code. It has to be a decoder object over the original
       code. If it is set to ``None``, the default decoder over the original
       code will be used.
 
-    - ``**kwargs`` -- All extra arguments are forwarded to original code's decoder
+    - ``**kwargs`` -- all extra arguments are forwarded to original code's decoder
 
     EXAMPLES::
 
@@ -406,8 +402,8 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
 
         INPUT:
 
-        - ``kwargs`` -- Optional arguments are forwarded to original decoder's
-          :meth:`sage.coding.decoder.Decoder.decoding_radius` method.
+        - ``kwargs`` -- optional arguments are forwarded to original decoder's
+          :meth:`sage.coding.decoder.Decoder.decoding_radius` method
 
         EXAMPLES::
 

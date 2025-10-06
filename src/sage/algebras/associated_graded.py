@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 r"""
 Associated Graded Algebras To Filtered Algebras
 
@@ -6,12 +7,12 @@ AUTHORS:
 - Travis Scrimshaw (2014-10-08): Initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2014 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from copy import copy
@@ -19,6 +20,7 @@ from copy import copy
 from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.sets.family import Family
 from sage.combinat.free_module import CombinatorialFreeModule
+
 
 class AssociatedGradedAlgebra(CombinatorialFreeModule):
     r"""
@@ -194,7 +196,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
         phi = self.module_morphism(diagonal=lambda x: base_one, codomain=A)
         self._A.register_conversion(phi)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -211,7 +213,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
             return "Graded Algebra of {}".format(self._A)
         return "Graded Module of {}".format(self._A)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -284,7 +286,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
             Finite family {'x': bar(U['x']), 'y': bar(U['y']), 'z': bar(U['z'])}
         """
         G = self._A.algebra_generators()
-        return Family(G.keys(), lambda x: self(G[x]), name="generator")
+        return Family(G.keys(), lambda x: self(G[x]), name='generator')
 
     def degree_on_basis(self, x):
         """

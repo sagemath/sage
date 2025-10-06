@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Domains
 """
@@ -13,9 +14,10 @@ from sage.misc.lazy_import import LazyImport
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.rings import Rings
 
+
 class Domains(CategoryWithAxiom):
     """
-    The category of domains
+    The category of domains.
 
     A domain (or non-commutative integral domain), is a ring, not
     necessarily commutative, with no nonzero zero divisors.
@@ -75,7 +77,6 @@ class Domains(CategoryWithAxiom):
 
                 sage: ZZ._test_zero_divisors()
                 sage: ZpFM(5)._test_zero_divisors()                                     # needs sage.rings.padics
-
             """
             if not self.is_exact():
                 return # Can't check on inexact rings

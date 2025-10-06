@@ -1,5 +1,6 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
-Partition/Diagram Algebras
+Partition/diagram algebras
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
@@ -15,18 +16,19 @@ Partition/Diagram Algebras
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.arith.misc import binomial, factorial
+from sage.arith.misc import binomial, factorial, integer_ceil as ceil
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.combinat.combinat import catalan_number
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutations
 from sage.combinat.set_partition import SetPartition, SetPartitions, SetPartitions_set
 from sage.combinat.subset import Subsets
-from sage.functions.all import ceil
-from sage.graphs.graph import Graph
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.sets.set import Set, Set_generic
+
+lazy_import('sage.graphs.graph', 'Graph')
 
 
 def _int_or_half_int(k):
@@ -35,7 +37,7 @@ def _int_or_half_int(k):
 
     OUTPUT:
 
-    If ``k`` is not in `1/2 \ZZ`, then this raises a ``ValueError``.
+    If ``k`` is not in `1/2 \ZZ`, then this raises a :exc:`ValueError`.
     Otherwise, we return the pair:
 
     - boolean; ``True`` if ``k`` is an integer and ``False`` if a half integer
@@ -189,7 +191,7 @@ class SetPartitionsAkhalf_k(SetPartitions_set):
         s = self.k + 1
         return "Set partitions of {1, ..., %s, -1, ..., -%s} with %s and -%s in the same block" % (s, s, s, s)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -205,11 +207,8 @@ class SetPartitionsAkhalf_k(SetPartitions_set):
         if x not in SetPartitionsAk_k(self.k + 1):
             return False
 
-        for part in x:
-            if self.k + 1 in part and -self.k - 1 not in part:
-                return False
-
-        return True
+        return all(self.k + 1 not in part or -self.k - 1 in part
+                   for part in x)
 
     def __iter__(self):
         """
@@ -323,10 +322,7 @@ class SetPartitionsSk_k(SetPartitionsAk_k):
         if not SetPartitionsAk_k.__contains__(self, x):
             return False
 
-        if propagating_number(x) != self.k:
-            return False
-
-        return True
+        return propagating_number(x) == self.k
 
     def cardinality(self):
         """
@@ -362,9 +358,7 @@ class SetPartitionsSk_k(SetPartitionsAk_k):
             True
         """
         for p in Permutations(self.k):
-            res = []
-            for i in range(self.k):
-                res.append(Set([i + 1, -p[i]]))
+            res = [Set([i, -pi]) for i, pi in enumerate(p, start=1)]
             yield self.element_class(self, res)
 
 
@@ -384,9 +378,7 @@ class SetPartitionsSkhalf_k(SetPartitionsAkhalf_k):
         """
         if not SetPartitionsAkhalf_k.__contains__(self, x):
             return False
-        if propagating_number(x) != self.k + 1:
-            return False
-        return True
+        return propagating_number(x) == self.k + 1
 
     def _repr_(self):
         """
@@ -431,10 +423,7 @@ class SetPartitionsSkhalf_k(SetPartitionsAkhalf_k):
              {{1, -3}, {2, -2}, {4, -4}, {3, -1}}]
         """
         for p in Permutations(self.k):
-            res = []
-            for i in range(self.k):
-                res.append(Set([i + 1, -p[i]]))
-
+            res = [Set([i, -pi]) for i, pi in enumerate(p, start=1)]
             res.append(Set([self.k + 1, -self.k - 1]))
             yield self.element_class(self, res)
 
@@ -508,9 +497,7 @@ class SetPartitionsIk_k(SetPartitionsAk_k):
         """
         if not SetPartitionsAk_k.__contains__(self, x):
             return False
-        if propagating_number(x) >= self.k:
-            return False
-        return True
+        return propagating_number(x) < self.k
 
     def cardinality(self):
         """
@@ -561,9 +548,7 @@ class SetPartitionsIkhalf_k(SetPartitionsAkhalf_k):
         """
         if not SetPartitionsAkhalf_k.__contains__(self, x):
             return False
-        if propagating_number(x) >= self.k + 1:
-            return False
-        return True
+        return propagating_number(x) < self.k + 1
 
     def _repr_(self):
         """
@@ -671,11 +656,7 @@ class SetPartitionsBk_k(SetPartitionsAk_k):
         if not SetPartitionsAk_k.__contains__(self, x):
             return False
 
-        for part in x:
-            if len(part) != 2:
-                return False
-
-        return True
+        return all(len(part) == 2 for part in x)
 
     def cardinality(self):
         r"""
@@ -767,10 +748,7 @@ class SetPartitionsBkhalf_k(SetPartitionsAkhalf_k):
         """
         if not SetPartitionsAkhalf_k.__contains__(self, x):
             return False
-        for part in x:
-            if len(part) != 2:
-                return False
-        return True
+        return all(len(part) == 2 for part in x)
 
     def cardinality(self):
         """
@@ -849,7 +827,6 @@ def SetPartitionsPk(k):
         {{-1}, {-2}, {2}, {3, -3}, {1}}
         sage: P2p5.random_element() #random
         {{1, 2, 3, -3}, {-1, -2}}
-
     """
     is_int, k = _int_or_half_int(k)
     if not is_int:
@@ -883,10 +860,7 @@ class SetPartitionsPk_k(SetPartitionsAk_k):
         if not SetPartitionsAk_k.__contains__(self, x):
             return False
 
-        if not is_planar(x):
-            return False
-
-        return True
+        return is_planar(x)
 
     def cardinality(self):
         """
@@ -942,10 +916,7 @@ class SetPartitionsPkhalf_k(SetPartitionsAkhalf_k):
         """
         if not SetPartitionsAkhalf_k.__contains__(self, x):
             return False
-        if not is_planar(x):
-            return False
-
-        return True
+        return is_planar(x)
 
     def _repr_(self):
         """
@@ -1049,10 +1020,7 @@ class SetPartitionsTk_k(SetPartitionsBk_k):
         if not SetPartitionsBk_k.__contains__(self, x):
             return False
 
-        if not is_planar(x):
-            return False
-
-        return True
+        return is_planar(x)
 
     def cardinality(self):
         """
@@ -1101,10 +1069,7 @@ class SetPartitionsTkhalf_k(SetPartitionsBkhalf_k):
         """
         if not SetPartitionsBkhalf_k.__contains__(self, x):
             return False
-        if not is_planar(x):
-            return False
-
-        return True
+        return is_planar(x)
 
     def _repr_(self):
         """
@@ -1394,10 +1359,7 @@ class SetPartitionsPRk_k(SetPartitionsRk_k):
         if not SetPartitionsRk_k.__contains__(self, x):
             return False
 
-        if not is_planar(x):
-            return False
-
-        return True
+        return is_planar(x)
 
     def cardinality(self):
         """
@@ -1453,10 +1415,7 @@ class SetPartitionsPRkhalf_k(SetPartitionsRkhalf_k):
         if not SetPartitionsRkhalf_k.__contains__(self, x):
             return False
 
-        if not is_planar(x):
-            return False
-
-        return True
+        return is_planar(x)
 
     def _repr_(self):
         """
@@ -1577,7 +1536,7 @@ class PartitionAlgebra_ak(PartitionAlgebra_generic):
             name = "Partition algebra A_%s(%s)" % (k, n)
         cclass = SetPartitionsAk(k)
         self._element_class = PartitionAlgebraElement_ak
-        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix="A")
+        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix='A')
 
 
 class PartitionAlgebraElement_bk(PartitionAlgebraElement_generic):
@@ -1598,7 +1557,7 @@ class PartitionAlgebra_bk(PartitionAlgebra_generic):
             name = "Partition algebra B_%s(%s)" % (k, n)
         cclass = SetPartitionsBk(k)
         self._element_class = PartitionAlgebraElement_bk
-        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix="B")
+        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix='B')
 
 
 class PartitionAlgebraElement_sk(PartitionAlgebraElement_generic):
@@ -1619,7 +1578,7 @@ class PartitionAlgebra_sk(PartitionAlgebra_generic):
             name = "Partition algebra S_%s(%s)" % (k, n)
         cclass = SetPartitionsSk(k)
         self._element_class = PartitionAlgebraElement_sk
-        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix="S")
+        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix='S')
 
 
 class PartitionAlgebraElement_pk(PartitionAlgebraElement_generic):
@@ -1640,7 +1599,7 @@ class PartitionAlgebra_pk(PartitionAlgebra_generic):
             name = "Partition algebra P_%s(%s)" % (k, n)
         cclass = SetPartitionsPk(k)
         self._element_class = PartitionAlgebraElement_pk
-        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix="P")
+        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix='P')
 
 
 class PartitionAlgebraElement_tk(PartitionAlgebraElement_generic):
@@ -1661,7 +1620,7 @@ class PartitionAlgebra_tk(PartitionAlgebra_generic):
             name = "Partition algebra T_%s(%s)" % (k, n)
         cclass = SetPartitionsTk(k)
         self._element_class = PartitionAlgebraElement_tk
-        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix="T")
+        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix='T')
 
 
 class PartitionAlgebraElement_rk(PartitionAlgebraElement_generic):
@@ -1682,7 +1641,7 @@ class PartitionAlgebra_rk(PartitionAlgebra_generic):
             name = "Partition algebra R_%s(%s)" % (k, n)
         cclass = SetPartitionsRk(k)
         self._element_class = PartitionAlgebraElement_rk
-        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix="R")
+        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix='R')
 
 
 class PartitionAlgebraElement_prk(PartitionAlgebraElement_generic):
@@ -1703,7 +1662,7 @@ class PartitionAlgebra_prk(PartitionAlgebra_generic):
             name = "Partition algebra PR_%s(%s)" % (k, n)
         cclass = SetPartitionsPRk(k)
         self._element_class = PartitionAlgebraElement_prk
-        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix="PR")
+        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix='PR')
 
 
 ##########################################################
@@ -1842,7 +1801,7 @@ def pair_to_graph(sp1, sp2):
          ((-2, 1), (1, 1), None),
          ((-2, 1), (2, 2), None)]
 
-    Another example which used to be wrong until :trac:`15958`::
+    Another example which used to be wrong until :issue:`15958`::
 
         sage: sp3 = pa.to_set_partition([[1, -1], [2], [-2]])
         sage: sp4 = pa.to_set_partition([[1], [-1], [2], [-2]])
@@ -1930,7 +1889,7 @@ def to_set_partition(l, k=None):
         if not l:
             return Set([])
         else:
-            k = max((max(map(abs, x)) for x in l))
+            k = max(max(map(abs, x)) for x in l)
 
     to_be_added = Set(list(range(1, k + 1)) + [-x for x in range(1, k + 1)])
 
@@ -1940,15 +1899,15 @@ def to_set_partition(l, k=None):
         to_be_added -= spart
         sp.append(spart)
 
-    for singleton in to_be_added:
-        sp.append(Set([singleton]))
+    sp.extend(Set([singleton])
+              for singleton in to_be_added)
 
     return Set(sp)
 
 
 def identity(k):
-    """
-    Return the identity set partition 1, -1, ..., k, -k
+    r"""
+    Return the identity set partition `1, -1, \ldots, k, -k`.
 
     EXAMPLES::
 
@@ -1980,7 +1939,7 @@ def set_partition_composition(sp1, sp2):
     total_removed = 0
     for cc in connected_components:
         # Remove the vertices that live in the middle two rows
-        new_cc = [x for x in cc if not((x[0] < 0 and x[1] == 1) or
+        new_cc = [x for x in cc if not ((x[0] < 0 and x[1] == 1) or
                                        (x[0] > 0 and x[1] == 2))]
 
         if not new_cc:

@@ -1,7 +1,7 @@
 """
 `p`-adic Fixed-Mod Element
 
-Elements of p-adic Rings with Fixed Modulus
+Elements of `p`-adic Rings with Fixed Modulus
 
 AUTHORS:
 
@@ -27,14 +27,14 @@ include "FM_template.pxi"
 from sage.libs.pari.convert_gmp cimport new_gen_from_padic
 from sage.rings.finite_rings.integer_mod import Mod
 
-cdef extern from "sage/rings/padics/transcendantal.c":
+cdef extern from "transcendantal.c":
     cdef void padiclog(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, const mpz_t modulo)
     cdef void padicexp(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, const mpz_t modulo)
     cdef void padicexp_Newton(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, unsigned long precinit, const mpz_t modulo)
 
 cdef class PowComputer_(PowComputer_base):
     """
-    A PowComputer for a fixed-modulus padic ring.
+    A PowComputer for a fixed-modulus `p`-adic ring.
     """
     def __init__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field):
         """
@@ -55,9 +55,9 @@ cdef class pAdicFixedModElement(FMElement):
     r"""
     INPUT:
 
-    - ``parent`` -- a ``pAdicRingFixedMod`` object.
+    - ``parent`` -- a ``pAdicRingFixedMod`` object
 
-    - ``x`` -- input data to be converted into the parent.
+    - ``x`` -- input data to be converted into the parent
 
     - ``absprec`` -- ignored; for compatibility with other `p`-adic rings
 
@@ -158,7 +158,7 @@ cdef class pAdicFixedModElement(FMElement):
 
     cdef lift_c(self):
         r"""
-        Returns an integer congruent to this element modulo the precision.
+        Return an integer congruent to this element modulo the precision.
 
         .. WARNING::
 
@@ -169,7 +169,7 @@ cdef class pAdicFixedModElement(FMElement):
 
         EXAMPLES::
 
-            sage: R = ZpFM(7,4); a = R(8); a.lift() # indirect doctest
+            sage: R = ZpFM(7,4); a = R(8); a.lift()  # indirect doctest
             8
         """
         cdef Integer ans = PY_NEW(Integer)
@@ -183,7 +183,7 @@ cdef class pAdicFixedModElement(FMElement):
         EXAMPLES::
 
             sage: R = ZpCA(5)
-            sage: pari(R(1777)) #indirect doctest
+            sage: pari(R(1777))  # indirect doctest                                     # needs sage.libs.pari
             2 + 5^2 + 4*5^3 + 2*5^4 + O(5^20)
         """
         return self._to_gen()
@@ -194,19 +194,19 @@ cdef class pAdicFixedModElement(FMElement):
 
         EXAMPLES::
 
-            sage: R = ZpFM(5, 10); a = R(17); pari(a) # indirect doctest
+            sage: R = ZpFM(5, 10); a = R(17); pari(a)  # indirect doctest
             2 + 3*5 + O(5^10)
-            sage: pari(R(0))
+            sage: pari(R(0))                                                            # needs sage.libs.pari
             O(5^10)
-            sage: pari(R(0,5))
+            sage: pari(R(0,5))                                                          # needs sage.libs.pari
             O(5^10)
-            sage: pari(R(0)).debug()
+            sage: pari(R(0)).debug()                                                    # needs sage.libs.pari
             [&=...] PADIC(lg=5):... (precp=0,valp=10):... ... ... ...
                 p : [&=...] INT(lg=3):... (+,lgefint=3):... ...
               p^l : [&=...] INT(lg=3):... (+,lgefint=3):... ...
                 I : gen_0
 
-        This checks that :trac:`15653` is fixed::
+        This checks that :issue:`15653` is fixed::
 
             sage: x = polygen(ZpFM(3,10))
             sage: (x^3 + x + 1).__pari__().poldisc()
@@ -250,11 +250,13 @@ cdef class pAdicFixedModElement(FMElement):
 
         INPUT:
 
-        - ``absprec`` -- an integer (default: ``1``)
+        - ``absprec`` -- integer (default: 1)
 
-        - ``field`` -- boolean (default ``None``).  Whether to return an element of GF(p) or Zmod(p).
+        - ``field`` -- boolean (default: ``None``); whether to return an
+          element of GF(p) or Zmod(p)
 
-        - ``check_prec`` -- boolean (default ``False``).  No effect (for compatibility with other types).
+        - ``check_prec`` -- boolean (default: ``False``); no effect (for
+          compatibility with other types)
 
         OUTPUT:
 
@@ -299,7 +301,6 @@ cdef class pAdicFixedModElement(FMElement):
         .. SEEALSO::
 
             :meth:`_mod_`
-
         """
         cdef Integer selfvalue, modulus
         cdef long aprec
@@ -375,19 +376,19 @@ cdef class pAdicFixedModElement(FMElement):
 
     def _log_binary_splitting(self, aprec, mina=0):
         r"""
-        Return ``\log(self)`` for ``self`` equal to 1 in the residue field
+        Return ``\log(self)`` for ``self`` equal to 1 in the residue field.
 
         This is a helper method for :meth:`log`.
         It uses a fast binary splitting algorithm.
 
         INPUT:
 
-        - ``aprec`` -- an integer, the precision to which the result is
+        - ``aprec`` -- integer; the precision to which the result is
           correct. ``aprec`` must not exceed the precision cap of the ring over
           which this element is defined.
-        - ``mina`` -- an integer (default: 0), the series will check `n` up to
+        - ``mina`` -- integer (default: 0); the series will check `n` up to
           this valuation (and beyond) to see if they can contribute to the
-          series.
+          series
 
         .. NOTE::
 
@@ -450,13 +451,13 @@ cdef class pAdicFixedModElement(FMElement):
 
     def _exp_binary_splitting(self, aprec):
         r"""
-        Compute the exponential power series of this element
+        Compute the exponential power series of this element.
 
         This is a helper method for :meth:`exp`.
 
         INPUT:
 
-        - ``aprec`` -- an integer, the precision to which to compute the
+        - ``aprec`` -- integer; the precision to which to compute the
           exponential
 
         .. NOTE::
@@ -488,9 +489,8 @@ cdef class pAdicFixedModElement(FMElement):
 
             sage: R = Zp(7,5)
             sage: x = R(7)
-            sage: x.exp(algorithm="binary_splitting")   # indirect doctest
+            sage: x.exp(algorithm='binary_splitting')   # indirect doctest
             1 + 7 + 4*7^2 + 2*7^3 + O(7^5)
-
         """
         cdef unsigned long p
         cdef unsigned long prec = aprec
@@ -509,16 +509,16 @@ cdef class pAdicFixedModElement(FMElement):
 
     def _exp_newton(self, aprec, log_algorithm=None):
         r"""
-        Compute the exponential power series of this element
+        Compute the exponential power series of this element.
 
         This is a helper method for :meth:`exp`.
 
         INPUT:
 
-        - ``aprec`` -- an integer, the precision to which to compute the
+        - ``aprec`` -- integer; the precision to which to compute the
           exponential
 
-        - ``log_algorithm`` (default: None) -- the algorithm used for
+        - ``log_algorithm`` -- (default: ``None``) the algorithm used for
           computing the logarithm. This attribute is passed to the log
           method. See :meth:`log` for more details about the possible
           algorithms.
@@ -542,9 +542,10 @@ cdef class pAdicFixedModElement(FMElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<w> = Zq(7^2,5)
             sage: x = R(7*w)
-            sage: x.exp(algorithm="newton")   # indirect doctest
+            sage: x.exp(algorithm='newton')   # indirect doctest
             1 + w*7 + (4*w + 2)*7^2 + (w + 6)*7^3 + 5*7^4 + O(7^5)
         """
         cdef unsigned long p

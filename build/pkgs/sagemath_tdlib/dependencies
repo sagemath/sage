@@ -1,1 +1,1 @@
-$(PYTHON) tdlib cysignals | $(PYTHON_TOOLCHAIN) sage_setup sagemath_environment cython pkgconfig
+ tdlib cysignals boost_cropped | $(PYTHON_TOOLCHAIN) sage_setup sagemath_environment cython pkgconfig $(PYTHON)

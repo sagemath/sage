@@ -1,9 +1,9 @@
 SAGE_SPKG_CONFIGURE([maxima], [
-  m4_pushdef([SAGE_MAXIMA_MINVER],["5.45.0"])dnl this version and higher allowed
+  m4_pushdef([SAGE_MAXIMA_MINVER],[5.45.0])dnl this version and higher allowed
   SAGE_SPKG_DEPCHECK([ecl], [
     dnl First check for the "maxima" executable in the user's PATH, because
     dnl we still use pexpect to communicate with it in a few places.
-    AC_CACHE_CHECK([for Maxima >= $SAGE_MAXIMA_MINVER], [ac_cv_path_MAXIMA], [
+    AC_CACHE_CHECK([for Maxima >= SAGE_MAXIMA_MINVER], [ac_cv_path_MAXIMA], [
         AC_PATH_PROGS_FEATURE_CHECK([MAXIMA], [maxima], [
             maxima_version=`$ac_path_MAXIMA --version 2>&1 | tail -n 1\
                 | $SED -n -e 's/Maxima *\([[0-9]]*\.[[0-9]]*\.[[0-9]]*\)/\1/p'`
@@ -24,6 +24,13 @@ SAGE_SPKG_CONFIGURE([maxima], [
       AS_IF([ecl --eval "(require 'maxima)" --eval "(quit)" \
                >&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD], [
         AC_MSG_RESULT(yes)
+        dnl check also for the Maxima help - needed by Sage
+        AC_MSG_CHECKING([if maxima help is working])
+	maxima_help_ok=`echo ? ? | ${SAGE_MAXIMA} 2>&1 | grep Details\:`
+	AS_IF([test x$maxima_help_ok = x], [AC_MSG_RESULT(yes)], [
+               AC_MSG_RESULT(no)
+               sage_spkg_install_maxima=yes
+        ])
       ], [
         AC_MSG_RESULT(no)
         sage_spkg_install_maxima=yes

@@ -1,38 +1,35 @@
 .. _a-tour-of-sage:
 
-=========================
-Welcome to a Tour of Sage
-=========================
+===============
+Welcome to Sage
+===============
 
-This is a tour of Sage that closely follows the tour of Mathematica
-that is at the beginning of the Mathematica Book.
+This is a short tour of Sage as a calculator.
 
-
-Sage as a Calculator
-====================
-
-The Sage command line has a ``sage:`` prompt; you do not have to add
-it. If you use the Sage notebook, then put everything after the
-``sage:`` prompt in an input cell, and press shift-enter to compute the
-corresponding output.
+The Sage command line has a prompt "``sage:``". To experiment with the
+following examples, you only enter the part after the prompt.
 
 ::
 
     sage: 3 + 5
     8
 
+If you use Sage on the Jupyter notebook, then likewise put everything after the
+prompt in an input cell, and press :kbd:`Shift-Enter` to get the corresponding
+output.
+
 The caret symbol means "raise to a power".
 
 ::
 
-    sage: 57.1 ^ 100
+    sage: 57.1^100
     4.60904368661396e175
 
 We compute the inverse of a :math:`2 \times 2` matrix in Sage.
 
 ::
 
-    sage: matrix([[1,2], [3,4]])^(-1)
+    sage: matrix([[1, 2], [3, 4]])^(-1)
     [  -2    1]
     [ 3/2 -1/2]
 
@@ -41,11 +38,11 @@ Here we integrate a simple function.
 ::
 
     sage: x = var('x')   # create a symbolic variable
-    sage: integrate(sqrt(x)*sqrt(1+x), x)
-    1/4*((x + 1)^(3/2)/x^(3/2) + sqrt(x + 1)/sqrt(x))/((x + 1)^2/x^2 - 2*(x + 1)/x + 1) - 1/8*log(sqrt(x + 1)/sqrt(x) + 1) + 1/8*log(sqrt(x + 1)/sqrt(x) - 1)
+    sage: integrate(sqrt(x) * sqrt(1 + x), x)
+    1/4*((x + 1)^(3/2)/x^(3/2) + sqrt(x + 1)/sqrt(x))/((x + 1)^2/x^2 - 2*(x + 1)/x + 1)
+    - 1/8*log(sqrt(x + 1)/sqrt(x) + 1) + 1/8*log(sqrt(x + 1)/sqrt(x) - 1)
 
-This asks Sage to solve a quadratic equation. The symbol ``==``
-represents equality in Sage.
+This asks Sage to solve a quadratic equation. The symbol ``==`` represents equality in Sage.
 
 ::
 
@@ -59,10 +56,10 @@ The result is a list of equalities.
 
 ::
 
-    sage: S[0].rhs()
+    sage: S[0].rhs()  # right hand side of the equation
     -1/2*sqrt(4*a + 1) - 1/2
 
-Naturally, Sage can plot various useful functions.
+Sage can plot various useful functions, of course.
 
 ::
 
@@ -71,39 +68,39 @@ Naturally, Sage can plot various useful functions.
 .. image:: sin_plot.*
 
 
-Power Computing with Sage
-=========================
-
-First we create a :math:`500 \times 500` matrix of random
-numbers.
+Sage is a very powerful calculator. To experience it, first we create a :math:`500 \times 500`
+matrix of random numbers.
 
 ::
 
-    sage: m = random_matrix(RDF,500)
+    sage: m = random_matrix(RDF, 500)
 
-It takes Sage a few seconds to compute the eigenvalues of the
-matrix and plot them.
+It takes Sage a second to compute the eigenvalues of the matrix and plot them.
 
 .. link
 
 ::
 
-    sage: e = m.eigenvalues()  #about 2 seconds
+    sage: e = m.eigenvalues()  # about 1 second
     sage: w = [(i, abs(e[i])) for i in range(len(e))]
     sage: show(points(w))
 
 .. image:: eigen_plot.*
 
 
-Thanks to the GNU Multiprecision Library (GMP), Sage can handle
-very large numbers, even numbers with millions or billions of
+Sage can handle very large numbers, even numbers with millions or billions of
 digits.
 
 ::
 
     sage: factorial(100)
     93326215443944152681699238856266700490715968264381621468592963895217599993229915608941463976156518286253697920827223758251185210916864000000000000000000000000
-    sage: n = factorial(1000000)  #about 2.5 seconds
+
+::
+
+    sage: n = factorial(1000000)  # about 1 second
+    sage: len(n.digits())
+    5565709
 
 This computes at least 100 digits of :math:`\pi`.
 
@@ -131,17 +128,13 @@ This asks Sage to factor a polynomial in two variables.
     sage: F.expand()
     x^99 + y^99
 
-Sage takes just under 5 seconds to compute the numbers of ways to
-partition one hundred million as a sum of positive integers.
+Sage takes less than 1 second to compute the numbers of ways to partition one
+hundred million as a sum of positive integers.
 
 ::
 
-    sage: z = Partitions(10^8).cardinality() #about 4.5 seconds
-    sage: str(z)[:40]
-    '1760517045946249141360373894679135204009'
+    sage: z = Partitions(10^8).cardinality()  # about .1 second
+    sage: z
+    1760517045946249141360373894679135204009...
 
-Accessing Algorithms in Sage
-============================
-
-Whenever you use Sage you are accessing one of the world's largest
-collections of open source computational algorithms.
+Sage is the world's most advanced open source math software.

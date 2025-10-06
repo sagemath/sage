@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 include "sage/libs/linkages/padics/Polynomial_ram.pxi"
 include "CA_template.pxi"
 
@@ -19,7 +20,7 @@ cdef class RelativeRamifiedCappedAbsoluteElement(CAElement):
             sage: W(5)._poly_rep()
             5
 
-        The coefficients of P are floating point p-adics::
+        The coefficients of P are floating point `p`-adics::
 
             sage: P = W.random_element()._poly_rep()
             sage: ring = P.parent().base_ring()

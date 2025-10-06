@@ -12,7 +12,7 @@ Orders of function fields: rational
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 import sage.rings.abc
@@ -43,7 +43,7 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
         sage: R = K.maximal_order(); R
         Maximal order of Rational function field in t over Finite Field of size 19
     """
-    def __init__(self, field):
+    def __init__(self, field) -> None:
         """
         Initialize.
 
@@ -59,8 +59,8 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
         self._populate_coercion_lists_(coerce_list=[field._ring])
 
         self._ring = field._ring
-        self._gen = self(self._ring.gen())
-        self._basis = (self.one(),)
+        self._gen = self(self._ring.gen())  # generator as a ring
+        self._basis = (self.one(),)  # basis as a module over itself
 
     def _element_constructor_(self, f):
         """
@@ -72,10 +72,12 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             sage: O = K.maximal_order()
             sage: O._element_constructor_(y)
             y
+
             sage: O._element_constructor_(1/y)
             Traceback (most recent call last):
             ...
-            TypeError: 1/y is not an element of Maximal order of Rational function field in y over Rational Field
+            TypeError: 1/y is not an element of Maximal order of
+            Rational function field in y over Rational Field
         """
         F = self.function_field()
         try:
@@ -83,8 +85,8 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
         except TypeError:
             raise TypeError("unable to convert to an element of {}".format(F))
 
-        if not f.denominator() in self.function_field().constant_base_field():
-            raise TypeError("%r is not an element of %r"%(f,self))
+        if f.denominator() not in self.function_field().constant_base_field():
+            raise TypeError("%r is not an element of %r" % (f, self))
 
         return f
 
@@ -98,10 +100,11 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                # needs sage.rings.function_field
-            sage: O = L.equation_order()                                                            # needs sage.rings.function_field
-            sage: O.ideal_with_gens_over_base([x^3 + 1, -y])                                        # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order()
+            sage: O.ideal_with_gens_over_base([x^3 + 1, -y])
             Ideal (x^3 + 1, -y) of Order in Function field in y defined by y^2 - x^3 - 1
         """
         return self.ideal(gens)
@@ -110,8 +113,9 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
         """
         Return a field isomorphic to the residue field at the prime ideal.
 
-        The residue field is by definition `k[x]/q` where `q` is the irreducible
-        polynomial generating the prime ideal and `k` is the constant base field.
+        The residue field is by definition `k[x]/q` where `q` is the
+        irreducible polynomial generating the prime ideal and `k` is
+        the constant base field.
 
         INPUT:
 
@@ -129,7 +133,7 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.modules sage.rings.finite_rings
             sage: F.<x> = FunctionField(GF(2))
             sage: O = F.maximal_order()
             sage: I = O.ideal(x^2 + x + 1)
@@ -150,7 +154,7 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             sage: to_R(e2).parent() is R
             True
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.modules sage.rings.finite_rings
             sage: F.<x> = FunctionField(GF(2))
             sage: O = F.maximal_order()
             sage: I = O.ideal(x + 1)
@@ -171,20 +175,21 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             sage: to_R(e2).parent() is R
             True
 
+            sage: # needs sage.modules sage.rings.number_field
             sage: F.<x> = FunctionField(QQ)
             sage: O = F.maximal_order()
             sage: I = O.ideal(x^2 + x + 1)
-            sage: R, fr_R, to_R = O._residue_field(I)                                               # needs sage.rings.number_field
-            sage: R                                                                                 # needs sage.rings.number_field
+            sage: R, fr_R, to_R = O._residue_field(I)
+            sage: R
             Number Field in a with defining polynomial x^2 + x + 1
-            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())                       # needs sage.rings.number_field
-            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)                                              # needs sage.rings.number_field
+            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())
+            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)
             True
-            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)                                              # needs sage.rings.number_field
+            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)
             True
-            sage: to_R(e1).parent() is R                                                            # needs sage.rings.number_field
+            sage: to_R(e1).parent() is R
             True
-            sage: to_R(e2).parent() is R                                                            # needs sage.rings.number_field
+            sage: to_R(e2).parent() is R
             True
 
             sage: F.<x> = FunctionField(QQ)
@@ -286,7 +291,6 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             sage: K, fr_K, to_K = O._residue_field_global(_f)                                       # needs sage.modules
             sage: all(to_K(fr_K(e)) == e for e in K)                                                # needs sage.modules
             True
-
         """
         # polynomial ring over the base field
         R = self._ring
@@ -299,7 +303,7 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
         # extend the base field to a field of degree r*s over the
         # prime field
         s = q.degree()
-        K,sigma = k.extension(s, map=True, name=name)
+        K, sigma = k.extension(s, map=True, name=name)
 
         # find a root beta in K satisfying the irreducible q
         S = K['X']
@@ -328,20 +332,22 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             coeffs = (f % q).list()
             return sum((sigma(c) * beta_pow[i] for i, c in enumerate(coeffs)), K.zero())
 
-        if r == 1: # take care of the prime field case
+        if r == 1:  # take care of the prime field case
             def fr_K(g):
                 co = W.coordinates(V(g), check=False)
                 return R([k(co[j]) for j in range(s)])
         else:
             def fr_K(g):
                 co = W.coordinates(V(g), check=False)
-                return R([k(co[i:i+r]) for i in range(0, r*s, r)])
+                return R([k(co[i:i + r]) for i in range(0, r * s, r)])
 
         return K, fr_K, to_K
 
-    def basis(self):
+    def basis(self) -> tuple:
         """
-        Return the basis (=1) of the order as a module over the polynomial ring.
+        Return the basis of the order as a module over the polynomial ring.
+
+        This is the tuple (1,).
 
         EXAMPLES::
 
@@ -354,13 +360,18 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
     def gen(self, n=0):
         """
-        Return the ``n``-th generator of the order. Since there is only one generator ``n`` must be 0.
+        Return the ``n``-th generator of the order.
+
+        Since there is only one generator ``n`` must be 0.
 
         EXAMPLES::
 
             sage: O = FunctionField(QQ,'y').maximal_order()
             sage: O.gen()
             y
+
+        TESTS::
+
             sage: O.gen(1)
             Traceback (most recent call last):
             ...
@@ -370,9 +381,11 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             raise IndexError("there is only one generator")
         return self._gen
 
-    def ngens(self):
+    def ngens(self) -> int:
         """
-        Return 1 the number of generators of the order.
+        Return the number of generators of the order.
+
+        This is 1.
 
         EXAMPLES::
 
@@ -413,12 +426,12 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
                     gens = (gens,)
         K = self.function_field()
         gens = [K(e) for e in gens if e != 0]
-        if len(gens) == 0:
-            gen = K(0)
+        if not gens:
+            gen = K.zero()
         else:
             d = lcm([c.denominator() for c in gens]).monic()
-            g = gcd([(d*c).numerator() for c in gens]).monic()
-            gen = K(g/d)
+            g = gcd([(d * c).numerator() for c in gens]).monic()
+            gen = K(g / d)
 
         return self.ideal_monoid().element_class(self, gen)
 
@@ -438,13 +451,17 @@ class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfini
         sage: R = K.maximal_order_infinite(); R
         Maximal infinite order of Rational function field in t over Finite Field of size 19
     """
-    def __init__(self, field, category=None):
+    def __init__(self, field, category=None) -> None:
         """
         Initialize.
 
         TESTS::
 
             sage: K.<t> = FunctionField(GF(19))
+            sage: O = K.maximal_order_infinite()
+            sage: TestSuite(O).run(skip='_test_gcd_vs_xgcd')
+
+            sage: K.<t> = FunctionField(QQ)
             sage: O = K.maximal_order_infinite()
             sage: TestSuite(O).run(skip='_test_gcd_vs_xgcd')
         """
@@ -458,14 +475,16 @@ class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfini
 
         EXAMPLES::
 
-            sage: K.<y> = FunctionField(QQ)
-            sage: O = K.maximal_order()
-            sage: O._element_constructor_(y)
-            y
+            sage: K.<y> = FunctionField(GF(7))
+            sage: O = K.maximal_order_infinite()
             sage: O._element_constructor_(1/y)
+            1/y
+
+            sage: O._element_constructor_(y)
             Traceback (most recent call last):
             ...
-            TypeError: 1/y is not an element of Maximal order of Rational function field in y over Rational Field
+            TypeError: y is not an element of Maximal infinite order of
+            Rational function field in y over Finite Field of size 7
         """
         F = self.function_field()
         try:
@@ -478,47 +497,23 @@ class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfini
 
         return f
 
-    def basis(self):
+    def basis(self) -> tuple:
         """
-        Return the basis (=1) of the order as a module over the polynomial ring.
+        Return the basis of the maximal infinite order as a module over itself.
 
         EXAMPLES::
 
             sage: K.<t> = FunctionField(GF(19))
-            sage: O = K.maximal_order()
+            sage: O = K.maximal_order_infinite()
+            sage: O.basis()
+            (1,)
+
+            sage: K.<t> = FunctionField(QQ)
+            sage: O = K.maximal_order_infinite()
             sage: O.basis()
             (1,)
         """
-        return 1/self.function_field().gen()
-
-    def gen(self, n=0):
-        """
-        Return the ``n``-th generator of self. Since there is only one generator ``n`` must be 0.
-
-        EXAMPLES::
-
-            sage: O = FunctionField(QQ,'y').maximal_order()
-            sage: O.gen()
-            y
-            sage: O.gen(1)
-            Traceback (most recent call last):
-            ...
-            IndexError: there is only one generator
-        """
-        if n != 0:
-            raise IndexError("there is only one generator")
-        return self._gen
-
-    def ngens(self):
-        """
-        Return 1 the number of generators of the order.
-
-        EXAMPLES::
-
-            sage: FunctionField(QQ,'y').maximal_order().ngens()
-            1
-        """
-        return 1
+        return (1,)
 
     def prime_ideal(self):
         """
@@ -532,7 +527,7 @@ class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfini
             Ideal (1/t) of Maximal infinite order of Rational function field in t
             over Finite Field of size 19
         """
-        return self.ideal( 1/self.function_field().gen() )
+        return self.ideal(1 / self.function_field().gen())
 
     def ideal(self, *gens):
         """
@@ -547,15 +542,19 @@ class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfini
             sage: K.<x> = FunctionField(QQ)
             sage: O = K.maximal_order_infinite()
             sage: O.ideal(x)
-            Ideal (x) of Maximal infinite order of Rational function field in x over Rational Field
+            Ideal (x) of Maximal infinite order of Rational function field in x
+            over Rational Field
             sage: O.ideal([x, 1/x]) == O.ideal(x ,1/x)  # multiple generators may be given as a list
             True
             sage: O.ideal(x^3 + 1, x^3 + 6)
-            Ideal (x^3) of Maximal infinite order of Rational function field in x over Rational Field
+            Ideal (x^3) of Maximal infinite order of Rational function field in x
+            over Rational Field
             sage: I = O.ideal((x^2+1)*(x^3+1), (x^3+6)*(x^2+1)); I
-            Ideal (x^5) of Maximal infinite order of Rational function field in x over Rational Field
+            Ideal (x^5) of Maximal infinite order of Rational function field in x
+            over Rational Field
             sage: O.ideal(I)
-            Ideal (x^5) of Maximal infinite order of Rational function field in x over Rational Field
+            Ideal (x^5) of Maximal infinite order of Rational function field in x
+            over Rational Field
         """
         if len(gens) == 1:
             gens = gens[0]
@@ -567,9 +566,10 @@ class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfini
         K = self.function_field()
         gens = [K(g) for g in gens]
         try:
-            d = max(g.numerator().degree() - g.denominator().degree() for g in gens if g != 0)
+            d = max(g.numerator().degree() - g.denominator().degree()
+                    for g in gens if g != 0)
             gen = K.gen() ** d
-        except ValueError: # all gens are zero
-            gen = K(0)
+        except ValueError:  # all gens are zero
+            gen = K.zero()
 
         return self.ideal_monoid().element_class(self, gen)

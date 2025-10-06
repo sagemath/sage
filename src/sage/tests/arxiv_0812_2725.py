@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 r"""
 Sage code for computing k-distant crossing numbers.
 
@@ -23,9 +24,8 @@ points since they cannot create any sort of crossing. ::
     sage: from sage.tests.arxiv_0812_2725 import *
     sage: dcrossing([(1,5), (2,4), (4,9), (6,12), (7,10), (10,11)])
     3
-
 """
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2008 Dan Drake <ddrake@member.ams.org>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -34,8 +34,8 @@ points since they cannot create any sort of crossing. ::
 # your option) any later version.
 #
 # See https://www.gnu.org/licenses/.
-#*****************************************************************************
-from sage.combinat.set_partition import SetPartitions as SetPartitions
+# ****************************************************************************
+from sage.combinat.set_partition import SetPartitions
 
 
 def CompleteMatchings(n):
@@ -44,7 +44,7 @@ def CompleteMatchings(n):
 
     INPUT:
 
-    n -- nonnegative integer
+    - ``n`` -- nonnegative integer
 
     OUTPUT:
 
@@ -85,8 +85,8 @@ def matchingsset(L):
 
     INPUT:
 
-    L -- a sequence. Lists, tuples, et cetera; anything that
-    supports len() and slicing should work.
+    - ``L`` -- a sequence. Lists, tuples, et cetera; anything that
+      supports ``len()`` and slicing should work.
 
     OUTPUT:
 
@@ -121,10 +121,10 @@ def dcrossing(m_):
 
     INPUT:
 
-    m -- a matching or set partition, as a list of 2-element tuples
-    representing the edges. You'll need to call setp_to_edges() on
-    the objects returned by SetPartitions() to put them into the
-    proper format.
+    - ``m`` -- a matching or set partition, as a list of 2-element tuples
+      representing the edges. You'll need to call ``setp_to_edges()`` on
+      the objects returned by ``SetPartitions()`` to put them into the
+      proper format.
 
     OUTPUT:
 
@@ -188,7 +188,7 @@ def setp_to_edges(p):
 
     INPUT:
 
-    p -- a Sage set partition.
+    - ``p`` -- a Sage set partition
 
     OUTPUT:
 
@@ -203,12 +203,8 @@ def setp_to_edges(p):
         sage: sorted(setp_to_edges(Set(map(Set, [[1,5],[2,4,9],[3],[6,12],[7,10,11],[8]]))))
         [[1, 5], [2, 4], [4, 9], [6, 12], [7, 10], [10, 11]]
     """
-    q = [sorted(b) for b in p]
-    ans = []
-    for b in q:
-        for n in range(len(b) - 1):
-            ans.append(b[n: n + 2])
-    return ans
+    q = (sorted(b) for b in p)
+    return [b[n: n + 2] for b in q for n in range(len(b) - 1)]
 
 
 def dcrossvec_setp(n):
@@ -217,7 +213,7 @@ def dcrossvec_setp(n):
 
     INPUT:
 
-    n -- a nonnegative integer.
+    - ``n`` -- nonnegative integer
 
     OUTPUT:
 
@@ -259,7 +255,7 @@ def dcrossvec_cm(n):
 
     INPUT:
 
-    n -- a nonnegative integer.
+    - ``n`` -- nonnegative integer
 
     OUTPUT:
 
@@ -314,10 +310,10 @@ def tablecolumn(n, k):
 
     INPUT:
 
-    n -- positive integer.
+    - ``n`` -- positive integer
 
-    k -- integer for which table you want: Table 1 is complete
-    matchings, Table 2 is set partitions.
+    - ``k`` -- integer for which table you want: Table 1 is complete
+      matchings, Table 2 is set partitions
 
     OUTPUT:
 

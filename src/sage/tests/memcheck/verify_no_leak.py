@@ -1,4 +1,5 @@
-from typing import Tuple, Sequence, List, Callable, Any
+from typing import Any
+from collections.abc import Callable
 import valgrind
 
 

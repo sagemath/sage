@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Output functions
 
@@ -23,15 +22,16 @@ from sage.combinat.tableau import Tableaux
 lr_macro = Template(r'\def\lr#1{\multicolumn{1}{$bar@{\hspace{.6ex}}c@{\hspace{.6ex}}$bar}{\raisebox{-.3ex}{$$#1$$}}}')
 
 
-def tex_from_array(array, with_lines=True):
+def tex_from_array(array, with_lines=True) -> str:
     r"""
-    Return a latex string for a two dimensional array of partition, composition or skew composition shape
+    Return a latex string for a two dimensional array of partition, composition
+    or skew composition shape.
 
     INPUT:
 
-    - ``array`` -- a list of list
-    - ``with_lines`` -- a boolean (default: ``True``)
-       Whether to draw a line to separate the entries in the array.
+    - ``array`` -- list of list
+    - ``with_lines`` -- boolean (default: ``True``); whether to draw a line to
+      separate the entries in the array
 
     Empty rows are allowed; however, such rows should be given as
     ``[None]`` rather than ``[]``.
@@ -238,20 +238,35 @@ def tex_from_array(array, with_lines=True):
     lr = lr_macro.substitute(bar='|' if with_lines else '')
     if Tableaux.options.convention == "English":
         return '{%s\n%s\n}' % (lr, tex_from_skew_array(array, with_lines))
-    else:
-        return '{%s\n%s\n}' % (lr, tex_from_skew_array(array[::-1], with_lines, align='t'))
+    return '{%s\n%s\n}' % (lr, tex_from_skew_array(array[::-1], with_lines,
+                                                   align='t'))
 
 
-def tex_from_array_tuple(a_tuple, with_lines=True):
+def svg_from_array(array, with_lines=True) -> str:
+    """
+    Return the svg code for this array.
+
+    EXAMPLES::
+
+        sage: array=[[1,9,1],[6,9,1],[2,8,3,3]]
+        sage: sage.combinat.output.svg_from_array(array)
+        '<?xml version="1.0" ...</svg>'
+    """
+    if Tableaux.options.convention == "English":
+        return svg_from_skew_array(array, with_lines)
+    return svg_from_skew_array(array[::-1], with_lines, align='t')
+
+
+def tex_from_array_tuple(a_tuple, with_lines=True) -> str:
     r"""
     Return a latex string for a tuple of two dimensional array of partition,
     composition or skew composition shape.
 
     INPUT:
 
-    - ``a_tuple`` -- a tuple of lists of lists
-    - ``with_lines`` -- a boolean (default: ``True``)
-      Whether to draw lines to separate the entries in the components of ``a_tuple``.
+    - ``a_tuple`` -- tuple of lists of lists
+    - ``with_lines`` -- boolean (default: ``True``); whether to draw lines to
+      separate the entries in the components of ``a_tuple``
 
     .. SEEALSO:: :meth:`tex_from_array` for the description of each array
 
@@ -332,28 +347,30 @@ def tex_from_array_tuple(a_tuple, with_lines=True):
     lr = lr_macro.substitute(bar='|' if with_lines else '')
     if Tableaux.options.convention == "English":
         return '{%s\n%s\n}' % (lr, ','.join(
-            r'\emptyset' if comp == [] else tex_from_skew_array(comp, with_lines) for comp in a_tuple))
+            r'\emptyset' if not comp else tex_from_skew_array(comp, with_lines) for comp in a_tuple))
     else:
         return '{%s\n%s\n}' % (lr, ','.join(
-            r'\emptyset' if comp == [] else tex_from_skew_array(comp[::-1], with_lines, align='t') for comp in a_tuple))
+            r'\emptyset' if not comp else tex_from_skew_array(comp[::-1], with_lines, align='t') for comp in a_tuple))
 
 
-def tex_from_skew_array(array, with_lines=False, align='b'):
+def tex_from_skew_array(array, with_lines=False, align='b') -> str:
     r"""
-    This function creates latex code for a "skew composition" ``array``.
-    That is, for a two dimensional array in which each row can begin with
-    an arbitrary number ``None``'s and the remaining entries could, in
-    principle, be anything but probably should be strings or integers of similar
-    width. A row consisting completely of ``None``'s is allowed.
+    Create latex code for a "skew composition" ``array``.
+
+    That is, for a two dimensional array in which each row can begin
+    with an arbitrary number ``None``'s and the remaining entries
+    could, in principle, be anything but probably should be strings or
+    integers of similar width. A row consisting completely of
+    ``None``'s is allowed.
 
     INPUT:
 
-    - ``array`` -- The array
+    - ``array`` -- the array
 
-    - ``with_lines`` -- (Default: ``False``) If ``True`` lines are drawn, if
+    - ``with_lines`` -- (default: ``False``) if ``True`` lines are drawn, if
       ``False`` they are not
 
-    - ``align`` -- (Default: ``'b'``) Determines the alignment on the latex
+    - ``align`` -- (default: ``'b'``) determine the alignment on the latex
       array environments
 
     EXAMPLES::
@@ -392,7 +409,8 @@ def tex_from_skew_array(array, with_lines=False, align='b'):
                 finish = max(len(array[r]), len(array[r-1]))
             return r'\\' if start > finish else r'\\\cline{%s-%s}' % (start, finish)
     else:
-        end_line = lambda r: r'\\'
+        def end_line(r):
+            return r'\\'
 
     # now we draw the array
     raisebox_start = r'\raisebox{-.6ex}{'
@@ -408,12 +426,49 @@ def tex_from_skew_array(array, with_lines=False, align='b'):
     tex = r'%s$\begin{array}[%s]{*{%s}c}' % (raisebox_start, align, max(map(len, array)))
     tex += end_line(0)+'\n'
     for r in range(len(array)):
-        tex += '&'.join('' if c is None else r'%s%s%s' % (lr_start, c, lr_end) for c in array[r])
+        tex += '&'.join('' if c is None else r'%s%s%s' % (lr_start, c, lr_end)
+                        for c in array[r])
         tex += end_line(r+1)+'\n'
-    return tex+r'\end{array}$'+raisebox_end
+    return tex + r'\end{array}$' + raisebox_end
 
 
-def ascii_art_table(data, use_unicode=False, convention="English"):
+def svg_from_skew_array(array, with_lines=False, align='b') -> str:
+    """
+    Return the svg code for this skew array.
+
+    EXAMPLES::
+
+        sage: array=[[None, 2,3,4],[None,None],[5,6,7,8]]
+        sage: sage.combinat.output.svg_from_skew_array(array)
+        '<?xml version="1.0" ...</svg>'
+    """
+    resu = '<?xml version=\"1.0\" standalone=\"no\"?>'
+    resu += '<svg xmlns=\"http://www.w3.org/2000/svg\" '
+    resu += 'xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"300\" viewBox='
+
+    resu1 = '<defs><polygon points=\"0, 0 10, 0 10, 10 0, 10\" '
+    resu1 += 'id=\"square\" style=\"stroke-width:0.1;stroke:black;fill:white\"/></defs>'
+    resu1 += '<g style=\"stroke-width:0.1;fill:steelblue;font-size:6;dominant-baseline:middle;text-anchor:middle\">'
+
+    Nx = max((len(line) for line in array), default=0)
+    Ny = len(array)
+    # viewBox
+    resu += '\"%.3f %.3f %.3f %.3f \">' % (-5, -5,
+                                           10 * Nx + 10, 10 * Ny + 10)
+    resu += resu1
+
+    for i, line in enumerate(array):
+        ci = 10 * i
+        for j, content in enumerate(line):
+            cj = 10 * j
+            if content is not None:
+                resu += '<use transform=\"translate(%.3f, %.3f)' % (cj, ci)
+                resu += '\" xlink:href=\"#square\" />'
+                resu += f'<text x=\"{cj + 5}\" y=\"{ci + 5}\">{content}</text>'
+    return resu + '</g></svg>'
+
+
+def ascii_art_table(data, use_unicode=False, convention='English'):
     r"""
     Return an ascii art table of ``data``.
 
@@ -505,7 +560,7 @@ def ascii_art_table(data, use_unicode=False, convention="English"):
         def get_len(e):
             if e is None:
                 return 0
-            return len(e) - list(str(e)).count(u"\u0304")
+            return len(e) - list(str(e)).count("\u0304")
     else:
         def get_len(e):
             if e is None:
@@ -692,7 +747,7 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
         def get_len(e):
             if e is None:
                 return 0
-            return len(e) - list(str(e)).count(u"\u0304")
+            return len(e) - list(str(e)).count("\u0304")
     else:
         def get_len(e):
             if e is None:
@@ -738,7 +793,7 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
                         st += ' '
                     if E_box:
                         st_num = str_tab[k-j][j]
-                        ln_left = int((len(st_num) - (len(st_num) % 2))/2)
+                        ln_left = len(st_num) // 2
                         st += st_num.rjust(row_height - 1 - ln_left + len(st_num), ' ').ljust(diag_length, ' ')
                     else:
                         st += ' ' * diag_length
@@ -759,21 +814,23 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
             str_list.append(st)
 
     import re
-    mm = min(len(re.search('^ +', l)[0]) for l in str_list) - 1
-    str_list = [l[mm:].rstrip() for l in str_list]
-    while str_list[-1] == '':
+    mm = min(len(re.search('^ +', ell)[0]) for ell in str_list) - 1
+    str_list = [ell[mm:].rstrip() for ell in str_list]
+    while not str_list[-1]:
         str_list.pop()
     return "\n".join(str_list)
 
 
-def box_exists(tab, i, j):
+def box_exists(tab, i, j) -> bool:
     r"""
-    Return ``True`` if ``tab[i][j]`` exists and is not ``None``; in particular this
+    Return ``True`` if ``tab[i][j]`` exists and is not ``None``.
+
+    In particular this
     allows for `tab[i][j]` to be ``''`` or ``0``.
 
     INPUT:
 
-    - ``tab`` -- a list of lists
+    - ``tab`` -- list of lists
     - ``i`` -- first coordinate
     - ``j`` -- second coordinate
 

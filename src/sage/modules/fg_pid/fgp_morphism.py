@@ -17,13 +17,16 @@ AUTHOR:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # *************************************************************************
 
-from sage.categories.morphism import Morphism, is_Morphism
+from sage.categories.morphism import Morphism
 from .fgp_module import DEBUG
 from sage.structure.richcmp import richcmp, op_NE
 from sage.misc.cachefunc import cached_method
+from sage.categories.homset import Homset
+import sage.misc.weak_dict
+
 
 class FGP_Morphism(Morphism):
     """
@@ -93,12 +96,12 @@ class FGP_Morphism(Morphism):
                 if phi.parent() != parent:
                     raise TypeError
             phi = phi._phi
-            check = False # no need
+            check = False  # no need
 
         # input: phi is a morphism from MO = M.optimized().V() to N.V()
         # that sends MO.W() to N.W()
         if check:
-            if not is_Morphism(phi) and M == N:
+            if not isinstance(phi, Morphism) and M == N:
                 A = M.optimized()[0].V()
                 B = N.V()
                 s = M.base_ring()(phi) * B.coordinate_module(A).basis_matrix()
@@ -127,7 +130,7 @@ class FGP_Morphism(Morphism):
             sage: phi._repr_()
             'Morphism from module over Integer Ring with invariants (4, 12) to module with invariants (4, 12) that sends the generators to [(1, 3), (0, 11)]'
         """
-        return "Morphism from module over %s with invariants %s to module with invariants %s that sends the generators to %s"%(
+        return "Morphism from module over %s with invariants %s to module with invariants %s that sends the generators to %s" % (
             self.domain().base_ring(), self.domain().invariants(), self.codomain().invariants(),
             list(self.im_gens()))
 
@@ -274,8 +277,8 @@ class FGP_Morphism(Morphism):
             sage: phi(8*Q.1) == phi(x)
             True
         """
-        from .fgp_module import is_FGP_Module
-        if is_FGP_Module(x):
+        from .fgp_module import FGP_Module_class
+        if isinstance(x, FGP_Module_class):
             if not x.is_submodule(self.domain()):
                 raise ValueError("x must be a submodule or element of the domain")
             # perhaps can be optimized with a matrix multiply; but note
@@ -352,8 +355,8 @@ class FGP_Morphism(Morphism):
             ...
             ValueError: A must be a submodule of the codomain
         """
-        from .fgp_module import is_FGP_Module
-        if not is_FGP_Module(A):
+        from .fgp_module import FGP_Module_class
+        if not isinstance(A, FGP_Module_class):
             raise TypeError("A must be a finitely generated quotient module")
         if not A.is_submodule(self.codomain()):
             raise ValueError("A must be a submodule of the codomain")
@@ -388,7 +391,7 @@ class FGP_Morphism(Morphism):
 
         INPUT:
 
-        - ``x`` -- element of the codomain of self.
+        - ``x`` -- element of the codomain of self
 
         EXAMPLES::
 
@@ -407,7 +410,6 @@ class FGP_Morphism(Morphism):
             sage: V = span([[5, -1/2]],ZZ); W = span([[20,-2]],ZZ); Q = V/W; phi=Q.hom([2*Q.0])
             sage: x = phi.image().0; phi(phi.lift(x)) == x
             True
-
         """
         x = self.codomain()(x)
 
@@ -443,19 +445,17 @@ class FGP_Morphism(Morphism):
 
         # Write back in terms of rows of B, and delete rows not corresponding to A,
         # since those corresponding to relations
-        v = (z*U)[:A.nrows()]
+        v = (z * U)[:A.nrows()]
 
         # Take the linear combination that v defines.
-        y = v*self.domain().optimized()[0].V().basis_matrix()
+        y = v * self.domain().optimized()[0].V().basis_matrix()
 
         # Return the finitely generated module element defined by y.
         y = self.domain()(y)
         assert self(y) == x, "bug in phi.lift()"
         return y
 
-from sage.categories.homset import Homset
 
-import sage.misc.weak_dict
 _fgp_homset = sage.misc.weak_dict.WeakValueDictionary()
 
 
@@ -484,7 +484,7 @@ def FGP_Homset(X, Y):
 
 class FGP_Homset_class(Homset):
     """
-    Homsets of :class:`~sage.modules.fg_pid.fgp_module.FGP_Module`
+    Homsets of :class:`~sage.modules.fg_pid.fgp_module.FGP_Module`.
 
     TESTS::
 
@@ -505,8 +505,8 @@ class FGP_Homset_class(Homset):
             <class 'sage.modules.fg_pid.fgp_morphism.FGP_Homset_class_with_category'>
         """
         if category is None:
-            from sage.modules.free_module import is_FreeModule
-            if is_FreeModule(X) and is_FreeModule(Y):
+            from sage.modules.free_module import FreeModule_generic
+            if isinstance(X, FreeModule_generic) and isinstance(Y, FreeModule_generic):
                 from sage.categories.modules_with_basis import ModulesWithBasis
                 category = ModulesWithBasis(X.base_ring())
             else:

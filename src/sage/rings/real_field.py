@@ -1,4 +1,4 @@
-def create_RealField(prec=53, type="MPFR", rnd="RNDN", sci_not=0):
+def create_RealField(prec=53, type='MPFR', rnd='RNDN', sci_not=0):
     """
     Create a real field with given precision, type, rounding mode and
     scientific notation.
@@ -7,7 +7,7 @@ def create_RealField(prec=53, type="MPFR", rnd="RNDN", sci_not=0):
 
     INPUT:
 
-    - ``prec`` -- a positive integer
+    - ``prec`` -- positive integer
 
     - ``type`` -- type of real field:
 
@@ -26,20 +26,18 @@ def create_RealField(prec=53, type="MPFR", rnd="RNDN", sci_not=0):
 
     - ``sci_not`` -- boolean, whether to use scientific notation for printing
 
-    OUTPUT:
-
-    the appropriate real field
+    OUTPUT: the appropriate real field
 
     EXAMPLES::
 
         sage: from sage.rings.real_field import create_RealField
         sage: create_RealField(30)
         Real Field with 30 bits of precision
-        sage: create_RealField(20, 'RDF') # ignores precision
+        sage: create_RealField(20, 'RDF')  # ignores precision
         Real Double Field
-        sage: create_RealField(60, 'Interval')
+        sage: create_RealField(60, 'Interval')                                          # needs sage.rings.real_interval_field
         Real Interval Field with 60 bits of precision
-        sage: create_RealField(40, 'RLF') # ignores precision
+        sage: create_RealField(40, 'RLF')  # ignores precision                          # needs sage.rings.real_interval_field
         Real Lazy Field
     """
     if type == "RDF":

@@ -1,9 +1,12 @@
-from __future__ import print_function, absolute_import
+#!/usr/bin/env python3
+# Usage: python -m sage_setup.autogen.interpreters <output_dir>
 
-import os
-from sage.env import SAGE_SRC
+import argparse
 
-from . import rebuild
+from internal import rebuild
 
+parser = argparse.ArgumentParser()
+parser.add_argument("output_dir", help="Output directory")
+args = parser.parse_args()
 
-rebuild(os.path.join(SAGE_SRC, "sage", "ext", "interpreters"))
+rebuild(args.output_dir)

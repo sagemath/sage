@@ -3,7 +3,7 @@ Message delivery
 
 Various interfaces to messaging services. Currently:
 
-- ``pushover`` - a platform for sending and receiving push notifications
+- ``pushover`` -- a platform for sending and receiving push notifications
 
 is supported.
 
@@ -33,30 +33,30 @@ def pushover(message, **kwds):
 
     INPUT:
 
-      - ``message`` - your message
+      - ``message`` -- your message
 
-      - ``user`` - the user key (not e-mail address) of your user (or you), viewable when logged
+      - ``user`` -- the user key (not e-mail address) of your user (or you), viewable when logged
         into the Pushover dashboard. (default: ``None``)
 
-      - ``device`` - your user's device identifier to send the message directly to that device,
+      - ``device`` -- your user's device identifier to send the message directly to that device,
         rather than all of the user's devices (default: ``None``)
 
-      - ``title`` - your message's title, otherwise uses your app's name (default: ``None``)
+      - ``title`` -- your message's title, otherwise uses your app's name (default: ``None``)
 
-      - ``url`` - a supplementary URL to show with your message (default: ``None``)
+      - ``url`` -- a supplementary URL to show with your message (default: ``None``)
 
-      - ``url_title`` - a title for your supplementary URL (default: ``None``)
+      - ``url_title`` -- a title for your supplementary URL (default: ``None``)
 
-      - ``priority`` - set to 1 to display as high-priority and bypass quiet hours, or -1 to always
+      - ``priority`` -- set to 1 to display as high-priority and bypass quiet hours, or -1 to always
         send as a quiet notification (default: ``0``)
 
-      - ``timestamp`` - set to a unix timestamp to have your message show with a particular time,
+      - ``timestamp`` -- set to a unix timestamp to have your message show with a particular time,
         rather than now (default: ``None``)
 
-      - ``sound`` - set to the name of one of the sounds supported by device clients to override the
+      - ``sound`` -- set to the name of one of the sounds supported by device clients to override the
         user's default sound choice (default: ``None``)
 
-      - ``token`` - your application's API token (default: Sage's default App token)
+      - ``token`` -- your application's API token (default: Sage's default App token)
 
     EXAMPLES::
 
@@ -68,7 +68,7 @@ def pushover(message, **kwds):
         sage: sage.misc.messaging.pushover_defaults["user"] = "USER_TOKEN"
         sage: sage.misc.messaging.pushover("Hi, how are you?") # not tested
 
-    .. note::
+    .. NOTE::
 
         You may want to populate ``sage.misc.messaging.pushover_defaults`` with default values such
         as the default user in ``$HOME/.sage/init.sage``.

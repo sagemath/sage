@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Valuations on polynomial rings based on `\phi`-adic expansions
 
@@ -39,10 +38,9 @@ Here, the expansion lists the remainders of repeated division by `x^2 + x + 1`::
 
     sage: list(w.coefficients(f))
     [x + 1, 1]
-
 """
 # ****************************************************************************
-#       Copyright (C) 2013-2017 Julian Rüth <julian.rueth@fsfe.org>
+#       Copyright (C) 2013-2025 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -68,8 +66,7 @@ class DevelopingValuation(DiscretePseudoValuation):
 
     TESTS::
 
-        sage: TestSuite(v).run() # long time
-
+        sage: TestSuite(v).run()                # long time                             # needs sage.geometry.polyhedron
     """
     def __init__(self, parent, phi):
         r"""
@@ -80,13 +77,12 @@ class DevelopingValuation(DiscretePseudoValuation):
             sage: from sage.rings.valuation.developing_valuation import DevelopingValuation
             sage: isinstance(v, DevelopingValuation)
             True
-
         """
         DiscretePseudoValuation.__init__(self, parent)
 
         domain = parent.domain()
-        from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-        if not is_PolynomialRing(domain) or not domain.ngens() == 1:
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+        if not isinstance(domain, PolynomialRing_generic) or not domain.ngens() == 1:
             raise TypeError("domain must be a univariate polynomial ring but %r is not" % (domain,))
 
         phi = domain.coerce(phi)
@@ -102,10 +98,32 @@ class DevelopingValuation(DiscretePseudoValuation):
         EXAMPLES::
 
             sage: R = Zp(2,5)
-            sage: S.<x> = R[]
-            sage: v = GaussValuation(S)
-            sage: v.phi()
+            sage: S.<x> = R[]                                                           # needs sage.libs.ntl
+            sage: v = GaussValuation(S)                                                 # needs sage.libs.ntl
+            sage: v.phi()                                                               # needs sage.libs.ntl
             (1 + O(2^5))*x
+
+        Use
+        :meth:`~sage.rings.valuation.inductive_valuation.InductiveValuation.augmentation_chain`
+        to obtain the sequence of key polynomials of an
+        :class:`~sage.rings.valuation.inductive_valuation.InductiveValuation`::
+
+            sage: R.<x> = QQ[]
+            sage: v = GaussValuation(R, QQ.valuation(2))
+            sage: v = v.augmentation(x, 1)
+            sage: v = v.augmentation(x^2 + 2*x + 4, 3)
+
+            sage: v
+            [ Gauss valuation induced by 2-adic valuation, v(x) = 1, v(x^2 + 2*x + 4) = 3 ]
+
+            sage: [w.phi() for w in v.augmentation_chain()[:-1]]
+            [x^2 + 2*x + 4, x]
+
+        A similar approach can be used to obtain the key polynomials and their
+        corresponding valuations::
+
+            sage: [(w.phi(), w.mu()) for w in v.augmentation_chain()[:-1]]
+            [(x^2 + 2*x + 4, 3), (x, 1)]
 
         """
         return self._phi
@@ -120,10 +138,11 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         INPUT:
 
-        - ``f`` -- a non-zero polynomial in the domain of this valuation
+        - ``f`` -- a nonzero polynomial in the domain of this valuation
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R = Zp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -131,12 +150,11 @@ class DevelopingValuation(DiscretePseudoValuation):
             1
             sage: v.effective_degree(2*x + 1)
             0
-
         """
         f = self.domain().coerce(f)
 
         if f.is_zero():
-            raise ValueError("the effective degree is only defined for non-zero polynomials")
+            raise ValueError("the effective degree is only defined for nonzero polynomials")
 
         if valuations is None:
             valuations = list(self.valuations(f))
@@ -156,12 +174,12 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R = Zp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
             sage: v._pow(2*x + 1, 10, effective_degree=0, error=5)
             1 + O(2^5)
-
         """
         if e == 0:
             return self.domain().one()
@@ -189,16 +207,16 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R = Qp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
             sage: f = x^2 + 2*x + 3
-            sage: list(v.coefficients(f)) # note that these constants are in the polynomial ring
+            sage: list(v.coefficients(f))  # note that these constants are in the polynomial ring
             [1 + 2 + O(2^5), 2 + O(2^6), 1 + O(2^5)]
             sage: v = v.augmentation( x^2 + x + 1, 1)
             sage: list(v.coefficients(f))
             [(1 + O(2^5))*x + 2 + O(2^5), 1 + O(2^5)]
-
         """
         domain = self.domain()
         f = domain.coerce(f)
@@ -239,19 +257,18 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R = Qp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
             sage: f = x^2 + 2*x + 3
-            sage: v.newton_polygon(f)
+            sage: v.newton_polygon(f)                                                   # needs sage.geometry.polyhedron
             Finite Newton polygon with 2 vertices: (0, 0), (2, 0)
-
             sage: v = v.augmentation( x^2 + x + 1, 1)
-            sage: v.newton_polygon(f)
+            sage: v.newton_polygon(f)                                                   # needs sage.geometry.polyhedron
             Finite Newton polygon with 2 vertices: (0, 0), (1, 1)
-            sage: v.newton_polygon( f * v.phi()^3 )
+            sage: v.newton_polygon( f * v.phi()^3 )                                     # needs sage.geometry.polyhedron
             Finite Newton polygon with 2 vertices: (3, 3), (4, 4)
-
         """
         f = self.domain().coerce(f)
 
@@ -270,6 +287,7 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R = Qp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -277,6 +295,7 @@ class DevelopingValuation(DiscretePseudoValuation):
             sage: v(f)
             0
 
+            sage: # needs sage.libs.ntl
             sage: v = v.augmentation( x^2 + x + 1, 1)
             sage: v(f)
             0
@@ -284,7 +303,6 @@ class DevelopingValuation(DiscretePseudoValuation):
             3
             sage: v(S.zero())
             +Infinity
-
         """
         f = self.domain().coerce(f)
 
@@ -315,13 +333,13 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R = Qp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S, R.valuation())
             sage: f = x^2 + 2*x + 16
             sage: list(v.valuations(f))
             [4, 1, 0]
-
         """
 
     def _test_effective_degree(self, **options):
@@ -331,9 +349,9 @@ class DevelopingValuation(DiscretePseudoValuation):
         EXAMPLES::
 
             sage: R = Zp(2,5)
-            sage: S.<x> = R[]
-            sage: v = GaussValuation(S)
-            sage: v._test_effective_degree()
+            sage: S.<x> = R[]                                                           # needs sage.libs.ntl
+            sage: v = GaussValuation(S)                                                 # needs sage.libs.ntl
+            sage: v._test_effective_degree()                                            # needs sage.libs.ntl
         """
         tester = self._tester(**options)
         S = tester.some_elements(self.domain().base_ring().some_elements())

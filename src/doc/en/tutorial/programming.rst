@@ -166,7 +166,6 @@ etc:
     #!/usr/bin/env sage
 
     import sys
-    from sage.all import *
 
     if len(sys.argv) != 2:
         print("Usage: %s <n>" % sys.argv[0])
@@ -178,7 +177,7 @@ etc:
 In order to use this script, your ``SAGE_ROOT`` must be in your PATH.
 If the above script is called ``factor``, here is an example usage:
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ ./factor 2006
     2 * 17 * 59
@@ -249,15 +248,9 @@ examples.
     sqrt(2)
     sage: V = VectorSpace(QQ,2)
     sage: V.basis()
-        [
-        (1, 0),
-        (0, 1)
-        ]
+        [(1, 0), (0, 1)]
     sage: basis(V)
-        [
-        (1, 0),
-        (0, 1)
-        ]
+        [(1, 0), (0, 1)]
     sage: M = MatrixSpace(GF(7), 2); M
     Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 7
     sage: A = M([1,2,3,4]); A
@@ -408,11 +401,7 @@ sequences, since it's important that you don't change them.
 ::
 
     sage: V = QQ^3; B = V.basis(); B
-    [
-    (1, 0, 0),
-    (0, 1, 0),
-    (0, 0, 1)
-    ]
+    [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
     sage: type(B)
     <class 'sage.structure.sequence.Sequence_generic'>
     sage: B[0] = B[1]
@@ -428,8 +417,8 @@ Dictionaries
 A dictionary (also sometimes called an associative array) is a
 mapping from 'hashable' objects (e.g., strings, numbers, and tuples
 of such; see the Python documentation
-http://docs.python.org/tut/node7.html and
-http://docs.python.org/lib/typesmapping.html for details) to
+http://docs.python.org/3/tutorial/datastructures.html and
+https://docs.python.org/3/library/stdtypes.html#typesmapping for details) to
 arbitrary objects.
 
 ::
@@ -802,7 +791,7 @@ visualization.
 
 On a system shell, type
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ hotshot2calltree -o cachegrind.out.42 pythongrind.prof
 

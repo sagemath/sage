@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.groups
 r"""
 Testing arithmetic subgroup
 """
@@ -14,12 +15,18 @@ Testing arithmetic subgroup
 ################################################################################
 from __future__ import annotations
 
-from .arithgroup_perm import ArithmeticSubgroup_Permutation, EvenArithmeticSubgroup_Permutation, OddArithmeticSubgroup_Permutation
-from sage.modular.arithgroup.all import Gamma, Gamma0, Gamma1, GammaH
-from sage.rings.finite_rings.integer_mod_ring import Zmod
-
-import sage.misc.prandom as prandom
+from sage.misc import prandom
 from sage.misc.timing import cputime
+from sage.modular.arithgroup.arithgroup_perm import (
+    ArithmeticSubgroup_Permutation,
+    EvenArithmeticSubgroup_Permutation,
+    OddArithmeticSubgroup_Permutation,
+)
+from sage.modular.arithgroup.congroup_gamma import Gamma_constructor as Gamma
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_constructor as Gamma1
+from sage.modular.arithgroup.congroup_gammaH import GammaH_constructor as GammaH
+from sage.rings.finite_rings.integer_mod_ring import Zmod
 
 
 def random_even_arithgroup(index, nu2_max=None, nu3_max=None):
@@ -100,9 +107,9 @@ class Test:
 
         INPUT:
 
-        - ``index`` - the index of random subgroup to test
+        - ``index`` -- the index of random subgroup to test
 
-        - ``index_max`` - the maximum index for congruence subgroup to test
+        - ``index_max`` -- the maximum index for congruence subgroup to test
 
         EXAMPLES::
 
@@ -310,7 +317,7 @@ class Test:
             if getattr(G, f)() != getattr(GG, f)():
                 raise AssertionError("results of %s does not coincide for %s" % (f, G))
 
-        if sorted((G.cusp_width(c) for c in G.cusps())) != GG.cusp_widths():
+        if sorted(G.cusp_width(c) for c in G.cusps()) != GG.cusp_widths():
             raise AssertionError("Cusps widths are different for %s" % G)
 
         for _ in range(20):
@@ -350,8 +357,9 @@ class Test:
             sage: Test().test_spanning_trees() #random
         """
         from sage.misc.misc_c import prod
+
         from .all import SL2Z
-        from .arithgroup_perm import S2m, S3m, Lm
+        from .arithgroup_perm import Lm, S2m, S3m
 
         G = random_even_arithgroup(self.index)
 
@@ -389,7 +397,7 @@ class Test:
             sage: Test().test_todd_coxeter() #random
         """
         from .all import SL2Z
-        from .arithgroup_perm import S2m, S3m, Lm
+        from .arithgroup_perm import Lm, S2m, S3m
 
         G = random_even_arithgroup(self.index)
 

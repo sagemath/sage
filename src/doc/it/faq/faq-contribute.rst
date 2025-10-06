@@ -21,7 +21,7 @@ Voglio contribuire a Sage. Da dove inizio?
 Dai un'occhiata alla
 `guida ufficiale per lo sviluppo <https://doc.sagemath.org/html/en/developer>`_
 di Sage. Come minimo, la lettura del primo capitolo è richiesta per ogni
-svilluppatore di Sage. Inoltre sii molto attento alle
+sviluppatore di Sage. Inoltre sii molto attento alle
 `linee guida per trac <https://doc.sagemath.org/html/en/developer/trac.html>`_.
 Puoi entrare nella lista email
 `sage-devel <https://groups.google.com/group/sage-devel>`_.
@@ -29,7 +29,7 @@ Mentre inizi a conoscere la comunità prendi una copia del codice sorgente di Sa
 e familiarizza con `git <https://git-scm.com>`_, un software per il controllo
 versione.
 
-Il migiol mode per diventare familiare con il processo di sviluppo di Sage
+Il miglior modo per diventare familiare con il processo di sviluppo di Sage
 è quello di scegliere un ticket dal
 `server trac <https://trac.sagemath.org>`_
 ed esaminare i cambiamenti proposti in quel ticket.
@@ -65,16 +65,16 @@ Un altro posto da guardare è al link
 `Dive Into Python <https://diveintopython3.net>`_ di Marc Pilgrim,
 che può essere veramente d'aiuto su temi specifici come
 lo sviluppo guidato dai test. Il libro
-`Building Skills in Python <http://itmaybeahack.com/homepage/books/python.html>`_
+`Building Skills in Python <https://itmaybeahack.com/homepage/books/python.html>`_
 di Steven F. Lott è adatto a chiunque sia già a suo agio nel programmare.
 
 Se desideri, puoi iniziare a imparare Python usando Sage.
 Tuttavia, è utile sapere cosa è semplice Python e quando Sage sta usando la
-sua "magia". Ci sono molte cose che funzionano in Phyton, ma non in Sage e
+sua "magia". Ci sono molte cose che funzionano in Python, ma non in Sage e
 vice versa. Per di più anche quando la sintassi è identica, molti concetti
 di programmazione sono spiegati più dettagliatamente in risorse focalizzate
 su Python piuttosto che in risorse centrate su Sage; in quest'ultime,
-la prioirità viene data alla matematica.
+la priorità viene data alla matematica.
 
 Non sono un programmatore. C'è qualche altro modo in cui posso aiutare?
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -119,9 +119,8 @@ Ulteriori risorse possono essere trovate cercando sul web.
 * `pep8 <https://pypi.org/project/pep8>`_
 * `pydeps <https://pypi.org/project/pydeps>`_
 * `pycallgraph <https://pycallgraph.readthedocs.io>`_
-* `PyChecker <http://pychecker.sourceforge.net>`_
 * `PyFlakes <https://pypi.org/project/pyflakes>`_
-* `Pylint <https://www.logilab.org/project/pylint>`_
+* `Pylint <https://pylint.readthedocs.io>`_
 * `Python <https://www.python.org>`_ home page e la
   `Documentazione standard su Python <https://docs.python.org>`_
 * `Snakefood <http://furius.ca/snakefood>`_
@@ -130,10 +129,10 @@ Ulteriori risorse possono essere trovate cercando sul web.
 
 **Tutorial e libri**
 
-* `Cython Tutorial <http://conference.scipy.org/proceedings/SciPy2009/paper_1/>`_
+* `Cython Tutorial <https://proceedings.scipy.org/articles/MJMV8092.pdf>`_
   di Stefan Behnel, Robert W. Bradshaw, e Dag Sverre Seljebotn
 * `Dive Into Python 3 <http://www.diveintopython3.net>`_ di Mark Pilgrim
-* `Fast Numerical Computations with Cython <http://conference.scipy.org/proceedings/SciPy2009/paper_2/>`_
+* `Fast Numerical Computations with Cython <https://proceedings.scipy.org/articles/GTCA8577.pdf>`_
   di Dag Sverre Seljebotn
 * `Tutorial ufficiale di Python <https://docs.python.org/3/tutorial/>`_
 
@@ -158,8 +157,8 @@ Consulta anche la Guida dello Sviluppo Sage, specialmente il capitolo
 `Convenzioni per scrivere codice sorgente in Sage <https://doc.sagemath.org/html/en/developer/#sage-coding-details>`_.
 
 
-Ho inviato al server trac una correzione molte settimane fa. Perchè la state ignorando?
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Ho inviato al GitHub Sage repo una correzione molte settimane fa. Perché la state ignorando?
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 Non stiamo cercando di ignorare la tua correzione.
 Le persone che lavorano su Sage lo fanno nel loro tempo libero.
@@ -190,7 +189,7 @@ Se la tua correzione non ha la possibilità di essere aggiunta nell'albero dei
 sorgenti di Sage, non la ignoreremo ma semplicemente chiuderemo il ticket
 relativo con una spiegazione sul perché non possiamo includerla.
 
-Come e quando posso ricordardare alla comunità di Sage una correzione a cui tengo?
+Come e quando posso ricordare alla comunità di Sage una correzione a cui tengo?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 Ti suggeriamo di fare uno sforzo ulteriore sul come ricordare alla comunità di
@@ -221,7 +220,7 @@ preparser di Sage) e la necessità di importare quello che ti serve.
     primalità e la fattorizzazione.
   - Dovresti anche notare che ``2 / 3`` non significa più
     ``Integer(2) / Integer(3)`` che restituisce ``2/3``, ma invece
-    ``int(2) / int(3)``, e pertanto restituisce ``0`` poichè la divisione è
+    ``int(2) / int(3)``, e pertanto restituisce ``0`` poiché la divisione è
     intera e trascura il resto. Se stai lavorando con i tipi ``Integer``
     ma in realtà hai bisogno di eseguire una divisione intera puoi usare
     ``Integer(2) // Integer(3)``.

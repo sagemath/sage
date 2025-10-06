@@ -169,6 +169,7 @@ dictkeys_set_index(PyDictKeysObject *keys, Py_ssize_t i, Py_ssize_t ix)
 #else   /* Python >= 3.11 */
 
 #define Py_BUILD_CORE
+#undef _PyGC_FINALIZED
 #include <internal/pycore_dict.h>
 
 /************************************************************/

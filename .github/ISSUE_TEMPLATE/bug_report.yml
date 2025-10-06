@@ -46,9 +46,8 @@ body:
           - **OS**: Ubuntu 20.04
           - Sage Version: 9.2
       value: |
-          - **OS**:
-          - **Sage Version**:
-      render: markdown
+          - **OS**: 
+          - **Sage Version**: 
     validations:
       required: true
   - type: checkboxes

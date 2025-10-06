@@ -45,7 +45,6 @@ REFERENCES:
 - [Lee2013]_
 - [ONe1983]_
 - [BG1988]_
-
 """
 
 # *****************************************************************************
@@ -60,10 +59,12 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
 from sage.manifolds.differentiable.multivectorfield import (
-                                       MultivectorField, MultivectorFieldParal)
+    MultivectorField,
+    MultivectorFieldParal,
+)
 from sage.misc.decorators import options
+from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
 
 
 class VectorField(MultivectorField):
@@ -196,7 +197,6 @@ class VectorField(MultivectorField):
         v(f): W → ℝ
            (x, y) ↦ 2*x^2 - 2*y^2 + 2*x + 2*y
            (t, u) ↦ 2*t*u + 2*t
-
     """
     def __init__(self, vector_field_module, name=None, latex_name=None):
         r"""
@@ -230,7 +230,6 @@ class VectorField(MultivectorField):
         .. TODO::
 
             Fix ``_test_pickling`` (in the superclass :class:`TensorField`).
-
         """
         MultivectorField.__init__(self, vector_field_module, 1, name=name,
                                   latex_name=latex_name)
@@ -253,7 +252,6 @@ class VectorField(MultivectorField):
             'Vector field v on the 2-dimensional differentiable manifold M'
             sage: v  # indirect doctest
             Vector field v on the 2-dimensional differentiable manifold M
-
         """
         description = "Vector field "
         if self._name is not None:
@@ -272,7 +270,6 @@ class VectorField(MultivectorField):
             Vector field on the 2-dimensional differentiable manifold M
             sage: u.parent() is v.parent()
             True
-
         """
         return type(self)(self._vmodule)
 
@@ -285,7 +282,6 @@ class VectorField(MultivectorField):
             sage: M = Manifold(2, 'M')
             sage: v = M.vector_field(name='v')
             sage: v._init_dependencies()
-
         """
         self._lie_der_along_self = {}
 
@@ -298,10 +294,9 @@ class VectorField(MultivectorField):
             sage: M = Manifold(2, 'M')
             sage: v = M.vector_field(name='v')
             sage: v._del_dependencies()
-
         """
         if self._lie_der_along_self != {}:
-            for idtens, tens in self._lie_der_along_self.items():
+            for tens in self._lie_der_along_self.values():
                 del tens._lie_derivatives[id(self)]
             self._lie_der_along_self.clear()
 
@@ -338,7 +333,6 @@ class VectorField(MultivectorField):
             on V: (u, v) ↦ 2*(u^2 + v^2)/(u^4 + 2*u^2*v^2 + v^4 + 1)
             sage: s == f.differential()(a)
             True
-
         """
         if scalar._tensor_type == (0,1):
             # This is actually the action of the vector field on a 1-form,
@@ -425,12 +419,12 @@ class VectorField(MultivectorField):
           values of the parameters that may appear in the coordinate expression
           of the vector field (see example below)
 
-        - ``label_axes`` -- (default: ``True``) boolean determining whether
+        - ``label_axes`` -- boolean (default: ``True``); determining whether
           the labels of the coordinate axes of ``chart`` shall be added to
           the graph; can be set to ``False`` if the graph is 3D and must be
           superposed with another graph
 
-        - ``color`` -- (default: 'blue') color of the arrows representing
+        - ``color`` -- (default: ``'blue'``) color of the arrows representing
           the vectors
 
         - ``max_range`` -- (default: 8) numerical value substituted to
@@ -465,7 +459,7 @@ class VectorField(MultivectorField):
             sage: v = M.vector_field(-y, x, name='v')
             sage: v.display()
             v = -y ∂/∂x + x ∂/∂y
-            sage: v.plot()
+            sage: v.plot()                                                              # needs sage.plot
             Graphics object consisting of 80 graphics primitives
 
         .. PLOT::
@@ -478,7 +472,7 @@ class VectorField(MultivectorField):
 
         Plot with various options::
 
-            sage: v.plot(scale=0.5, color='green', linestyle='--', width=1,
+            sage: v.plot(scale=0.5, color='green', linestyle='--', width=1,             # needs sage.plot
             ....:        arrowsize=6)
             Graphics object consisting of 80 graphics primitives
 
@@ -492,7 +486,7 @@ class VectorField(MultivectorField):
 
         ::
 
-            sage: v.plot(max_range=4, number_values=5, scale=0.5)
+            sage: v.plot(max_range=4, number_values=5, scale=0.5)                       # needs sage.plot
             Graphics object consisting of 24 graphics primitives
 
         .. PLOT::
@@ -506,7 +500,7 @@ class VectorField(MultivectorField):
         Plot using parallel computation::
 
             sage: Parallelism().set(nproc=2)
-            sage: v.plot(scale=0.5,  number_values=10, linestyle='--', width=1,
+            sage: v.plot(scale=0.5,  number_values=10, linestyle='--', width=1,         # needs sage.plot
             ....:        arrowsize=6)
             Graphics object consisting of 100 graphics primitives
 
@@ -524,7 +518,7 @@ class VectorField(MultivectorField):
 
         Plots along a line of fixed coordinate::
 
-            sage: v.plot(fixed_coords={x: -2})
+            sage: v.plot(fixed_coords={x: -2})                                          # needs sage.plot
             Graphics object consisting of 9 graphics primitives
 
         .. PLOT::
@@ -537,7 +531,7 @@ class VectorField(MultivectorField):
 
         ::
 
-            sage: v.plot(fixed_coords={y: 1})
+            sage: v.plot(fixed_coords={y: 1})                                           # needs sage.plot
             Graphics object consisting of 9 graphics primitives
 
         .. PLOT::
@@ -566,7 +560,7 @@ class VectorField(MultivectorField):
         Rather, we have to select some coordinates for the plot, via
         the argument ``ambient_coords``. For instance, for a 3D plot::
 
-            sage: v.plot(ambient_coords=(x, y, z), fixed_coords={t: 1},  # long time
+            sage: v.plot(ambient_coords=(x, y, z), fixed_coords={t: 1},         # long time, needs sage.plot
             ....:        number_values=4)
             Graphics3d Object
 
@@ -580,7 +574,7 @@ class VectorField(MultivectorField):
 
         ::
 
-            sage: v.plot(ambient_coords=(x, y, t), fixed_coords={z: 0},  # long time
+            sage: v.plot(ambient_coords=(x, y, t), fixed_coords={z: 0},         # long time, needs sage.plot
             ....:        ranges={x: (-2,2), y: (-2,2), t: (-1, 4)},
             ....:        number_values=4)
             Graphics3d Object
@@ -596,7 +590,7 @@ class VectorField(MultivectorField):
 
         or, for a 2D plot::
 
-            sage: v.plot(ambient_coords=(x, y), fixed_coords={t: 1, z: 0})  # long time
+            sage: v.plot(ambient_coords=(x, y), fixed_coords={t: 1, z: 0})      # long time, needs sage.plot
             Graphics object consisting of 80 graphics primitives
 
         .. PLOT::
@@ -609,7 +603,7 @@ class VectorField(MultivectorField):
 
         ::
 
-            sage: v.plot(ambient_coords=(x, t), fixed_coords={y: 1, z: 0})  # long time
+            sage: v.plot(ambient_coords=(x, t), fixed_coords={y: 1, z: 0})      # long time, needs sage.plot
             Graphics object consisting of 72 graphics primitives
 
         .. PLOT::
@@ -636,9 +630,9 @@ class VectorField(MultivectorField):
             sage: v = XS.frame()[1] ; v  # the coordinate vector ∂/∂phi
             Vector field ∂/∂ph on the Open subset U of the 2-dimensional
              differentiable manifold S^2
-            sage: graph_v = v.plot(chart=X3, mapping=F, label_axes=False)
-            sage: graph_S2 = XS.plot(chart=X3, mapping=F, number_values=9)
-            sage: graph_v + graph_S2
+            sage: graph_v = v.plot(chart=X3, mapping=F, label_axes=False)               # needs sage.plot
+            sage: graph_S2 = XS.plot(chart=X3, mapping=F, number_values=9)              # needs sage.plot
+            sage: graph_v + graph_S2                                                    # needs sage.plot
             Graphics3d Object
 
         .. PLOT::
@@ -670,16 +664,15 @@ class VectorField(MultivectorField):
         color. To restore the original default options, it suffices to type::
 
             sage: v.plot.reset()
-
         """
-        from sage.rings.infinity import Infinity
-        from sage.misc.functional import numerical_approx
-        from sage.misc.latex import latex
-        from sage.plot.graphics import Graphics
         from sage.manifolds.chart import RealChart
         from sage.manifolds.utilities import set_axes_labels
+        from sage.misc.functional import numerical_approx
+        from sage.misc.latex import latex
         from sage.parallel.decorate import parallel
         from sage.parallel.parallelism import Parallelism
+        from sage.plot.graphics import Graphics
+        from sage.rings.infinity import Infinity
 
         #
         # 1/ Treatment of input parameters
@@ -715,7 +708,7 @@ class VectorField(MultivectorField):
         elif not isinstance(ambient_coords, tuple):
             ambient_coords = tuple(ambient_coords)
         nca = len(ambient_coords)
-        if nca != 2 and nca !=3:
+        if nca != 2 and nca != 3:
             raise ValueError("the number of ambient coordinates must be " +
                              "either 2 or 3, not {}".format(nca))
         if ranges is None:
@@ -757,11 +750,11 @@ class VectorField(MultivectorField):
             steps = {}
         for coord in coords:
             if coord not in steps:
-                steps[coord] = (ranges[coord][1] - ranges[coord][0])/ \
+                steps[coord] = (ranges[coord][1] - ranges[coord][0]) / \
                                (number_values[coord]-1)
             else:
                 number_values[coord] = 1 + int(
-                           (ranges[coord][1] - ranges[coord][0])/ steps[coord])
+                           (ranges[coord][1] - ranges[coord][0]) / steps[coord])
         #
         # 2/ Plots
         #    -----
@@ -907,9 +900,7 @@ class VectorField(MultivectorField):
 
         - ``other`` -- a :class:`VectorField`
 
-        OUTPUT:
-
-        - the :class:`VectorField` ``[self, other]``
+        OUTPUT: the :class:`VectorField` ``[self, other]``
 
         EXAMPLES::
 
@@ -931,7 +922,6 @@ class VectorField(MultivectorField):
             True
             sage: vw == w.lie_derivative(v)
             True
-
         """
         # Call of the Schouten-Nijenhuis bracket
         return MultivectorField.bracket(self, other)
@@ -984,9 +974,7 @@ class VectorField(MultivectorField):
           :class:`~sage.manifolds.differentiable.pseudo_riemannian.PseudoRiemannianManifold`)
           and the latter is used to define the curl
 
-        OUTPUT:
-
-        - instance of :class:`VectorField` representing the curl of ``self``
+        OUTPUT: instance of :class:`VectorField` representing the curl of ``self``
 
         EXAMPLES:
 
@@ -1025,7 +1013,6 @@ class VectorField(MultivectorField):
             Vector field on the Euclidean space E^3
             sage: s.display()
             0
-
         """
         if self._domain.dim() < 3:
             raise ValueError("the curl is not defined in dimension lower " +
@@ -1141,7 +1128,6 @@ class VectorField(MultivectorField):
             sage: s.display()
             u.e_x: (0, 2*pi) → ℝ
                t ↦ cos(t)
-
         """
         default_metric = metric is None
         if default_metric:
@@ -1239,7 +1225,6 @@ class VectorField(MultivectorField):
             sage: s.display()
             |C'|: (0, 2*pi) → ℝ
                t ↦ sqrt(4*cos(t)^4 - 3*cos(t)^2 + 1)
-
         """
         default_metric = metric is None
         if default_metric:
@@ -1363,7 +1348,6 @@ class VectorField(MultivectorField):
              on the Euclidean space E^3
             sage: w.display()
             C' x e_x = e_y - cos(t) e_z
-
         """
         if self._ambient_domain.dim() != 3:
             raise ValueError("the cross product is not defined in dimension " +
@@ -1393,6 +1377,7 @@ class VectorField(MultivectorField):
     cross = cross_product
 
 #******************************************************************************
+
 
 class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
                        VectorField):
@@ -1599,7 +1584,6 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
         w = ∂/∂y
         sage: w.at(p) == v.at(Phi(p))
         True
-
     """
     def __init__(self, vector_field_module, name=None, latex_name=None):
         r"""
@@ -1629,7 +1613,6 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
             sage: u.parent() is v.parent()
             True
             sage: TestSuite(u).run()
-
         """
         FiniteRankFreeModuleElement.__init__(self, vector_field_module,
                                              name=name, latex_name=latex_name)
@@ -1659,7 +1642,6 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
             'Vector field v on the 2-dimensional differentiable manifold M'
             sage: v  # indirect doctest
             Vector field v on the 2-dimensional differentiable manifold M
-
         """
         return VectorField._repr_(self)
 
@@ -1676,7 +1658,6 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
             Vector field on the 2-dimensional differentiable manifold M
             sage: u.parent() is v.parent()
             True
-
         """
         return type(self)(self._fmodule)
 
@@ -1686,7 +1667,7 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
 
         INPUT:
 
-        - ``del_restrictions`` -- (default: ``True``) determines whether
+        - ``del_restrictions`` -- boolean (default: ``True``); determines whether
           the restrictions of ``self`` to subdomains are deleted
 
         TESTS::
@@ -1695,7 +1676,6 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
             sage: X.<x,y> = M.chart()  # makes M parallelizable
             sage: v = M.vector_field(name='v')
             sage: v._del_derived()
-
         """
         MultivectorFieldParal._del_derived(self,
                                            del_restrictions=del_restrictions)
@@ -1729,7 +1709,6 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
             sage: v(f).display()
             M → ℝ
             (x, y) ↦ 2*x^2*y - y^3
-
         """
         # This method enforces VectorField.__call__
         # instead of FiniteRankFreeModuleElement.__call__, which would have

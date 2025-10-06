@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 """
 Sparse action of Hecke operators
 """
@@ -8,13 +9,13 @@ Sparse action of Hecke operators
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 ##########################################################################
 
 import sage.modular.hecke.hecke_operator
 from sage.arith.misc import is_prime
-from . import heilbronn
+from sage.modular.modsym import heilbronn
 
 
 class HeckeOperator(sage.modular.hecke.hecke_operator.HeckeOperator):
@@ -22,7 +23,7 @@ class HeckeOperator(sage.modular.hecke.hecke_operator.HeckeOperator):
         """
         Return the image of ``x`` under ``self``.
 
-        If ``x`` is not in ``self.domain()``, raise a ``TypeError``.
+        If ``x`` is not in ``self.domain()``, raise a :exc:`TypeError`.
 
         EXAMPLES::
 

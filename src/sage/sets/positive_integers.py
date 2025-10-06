@@ -68,7 +68,7 @@ class PositiveIntegers(IntegerRangeInfinite):
 
     def an_element(self):
         r"""
-        Returns an element of ``self``.
+        Return an element of ``self``.
 
         EXAMPLES::
 
@@ -83,7 +83,7 @@ class PositiveIntegers(IntegerRangeInfinite):
 
         EXAMPLES::
 
-            sage: PositiveIntegers()._sympy_()
+            sage: PositiveIntegers()._sympy_()                                          # needs sympy
             Naturals
         """
         from sympy import Naturals

@@ -1,1 +1,1 @@
-"perl(Term::ReadLine::Gnu)"
+perl(Term::ReadLine::Gnu)

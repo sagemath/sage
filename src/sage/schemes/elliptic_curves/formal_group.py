@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Formal groups of elliptic curves
 
@@ -119,7 +118,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         .. WARNING::
 
-            The resulting power series will have precision prec, but
+            The resulting power series will have precision ``prec``, but
             its parent PowerSeriesRing will have default precision 20
             (or whatever the default default is).
 
@@ -252,7 +251,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         .. WARNING::
 
-            The resulting series will have precision prec, but its
+            The resulting series will have precision ``prec``, but its
             parent PowerSeriesRing will have default precision 20 (or
             whatever the default default is).
 
@@ -290,7 +289,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         .. WARNING::
 
-            The resulting series will have precision prec, but its
+            The resulting series will have precision ``prec``, but its
             parent PowerSeriesRing will have default precision 20 (or
             whatever the default default is).
 
@@ -339,7 +338,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         .. WARNING::
 
-            The resulting series will have precision prec, but its
+            The resulting series will have precision ``prec``, but its
             parent PowerSeriesRing will have default precision 20 (or
             whatever the default default is).
 
@@ -418,7 +417,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         .. WARNING::
 
-            The resulting power series will have precision prec, but
+            The resulting power series will have precision ``prec``, but
             its parent PowerSeriesRing will have default precision 20
             (or whatever the default default is).
 
@@ -488,29 +487,29 @@ class EllipticCurveFormalGroup(SageObject):
             sage: ehat.group_law(5)
             t1 + t2 - t1*t2 - 2*t1^3*t2 - 3*t1^2*t2^2 - 2*t1*t2^3 + O(t1, t2)^5
 
-            sage: e = EllipticCurve(GF(7), [3, 4])                                      # optional - sage.rings.finite_rings
-            sage: ehat = e.formal()                                                     # optional - sage.rings.finite_rings
-            sage: ehat.group_law(3)                                                     # optional - sage.rings.finite_rings
+            sage: e = EllipticCurve(GF(7), [3, 4])
+            sage: ehat = e.formal()
+            sage: ehat.group_law(3)
             t1 + t2 + O(t1, t2)^3
-            sage: F = ehat.group_law(7); F                                              # optional - sage.rings.finite_rings
+            sage: F = ehat.group_law(7); F
             t1 + t2 + t1^4*t2 + 2*t1^3*t2^2 + 2*t1^2*t2^3 + t1*t2^4 + O(t1, t2)^7
 
         TESTS::
 
-            sage: R.<x,y,z> = GF(7)[[]]                                                 # optional - sage.rings.finite_rings
-            sage: F(x, ehat.inverse()(x))                                               # optional - sage.rings.finite_rings
+            sage: R.<x,y,z> = GF(7)[[]]
+            sage: F(x, ehat.inverse()(x))
             0 + O(x, y, z)^7
-            sage: F(x, y) == F(y, x)                                                    # optional - sage.rings.finite_rings
+            sage: F(x, y) == F(y, x)
             True
-            sage: F(x, F(y, z)) == F(F(x, y), z)                                        # optional - sage.rings.finite_rings
+            sage: F(x, F(y, z)) == F(F(x, y), z)
             True
 
         Let's ensure caching with changed precision is working::
 
-            sage: e.formal_group().group_law(4)                                         # optional - sage.rings.finite_rings
+            sage: e.formal_group().group_law(4)
             t1 + t2 + O(t1, t2)^4
 
-        Test for :trac:`9646`::
+        Test for :issue:`9646`::
 
             sage: P.<a1, a2, a3, a4, a6> = PolynomialRing(ZZ, 5)
             sage: E = EllipticCurve(list(P.gens()))
@@ -552,7 +551,7 @@ class EllipticCurveFormalGroup(SageObject):
         # note that the following formula differs from the one in Silverman page 119.
         # See github issue 9646 for the explanation and justification.
         t3 = -t1 - t2 - \
-             (a1*lam + a3*lam2 + a2*nu + 2*a4*lam*nu + 3*a6*lam2*nu) /  \
+             (a1*lam + a3*lam2 + a2*nu + 2*a4*lam*nu + 3*a6*lam2*nu) / \
              (1 + a2*lam + a4*lam2 + a6*lam3)
         inv = self.inverse(prec)
 
@@ -580,7 +579,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         .. WARNING::
 
-            The resulting power series will have precision prec, but
+            The resulting power series will have precision ``prec``, but
             its parent PowerSeriesRing will have default precision 20
             (or whatever the default default is).
 
@@ -625,12 +624,12 @@ class EllipticCurveFormalGroup(SageObject):
 
         TESTS::
 
-            sage: F = EllipticCurve(GF(17), [1, 1]).formal_group()                      # optional - sage.rings.finite_rings
-            sage: F.mult_by_n(10, 50)  # long time (13s on sage.math, 2011)             # optional - sage.rings.finite_rings
+            sage: F = EllipticCurve(GF(17), [1, 1]).formal_group()
+            sage: F.mult_by_n(10, 50)           # long time
             10*t + 5*t^5 + 7*t^7 + 13*t^9 + t^11 + 16*t^13 + 13*t^15 + 9*t^17 + 16*t^19 + 15*t^23 + 15*t^25 + 2*t^27 + 10*t^29 + 8*t^31 + 15*t^33 + 6*t^35 + 7*t^37 + 9*t^39 + 10*t^41 + 5*t^43 + 4*t^45 + 6*t^47 + 13*t^49 + O(t^50)
 
-            sage: F = EllipticCurve(GF(101), [1, 1]).formal_group()                     # optional - sage.rings.finite_rings
-            sage: F.mult_by_n(100, 20)                                                  # optional - sage.rings.finite_rings
+            sage: F = EllipticCurve(GF(101), [1, 1]).formal_group()
+            sage: F.mult_by_n(100, 20)
             100*t + O(t^20)
 
             sage: P.<a1, a2, a3, a4, a6> = PolynomialRing(ZZ, 5)

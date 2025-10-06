@@ -1,11 +1,11 @@
 r"""
-Plane Partitions
+Plane partitions
 
 AUTHORS:
 
-- Jang Soo Kim (2016): Initial implementation
-- Jessica Striker (2016): Added additional methods
-- Kevin Dilks (2021): Added symmetry classes
+- Jang Soo Kim (2016): initial implementation
+- Jessica Striker (2016): added additional methods
+- Kevin Dilks (2021): added symmetry classes
 """
 # ****************************************************************************
 #       Copyright (C) 2016 Jang Soo Kim <jangsookim@skku.edu>,
@@ -25,14 +25,14 @@ AUTHORS:
 # ****************************************************************************
 
 from __future__ import annotations
-from typing import NewType, Iterator
+from typing import NewType, TYPE_CHECKING
 
 from sage.structure.richcmp import richcmp, richcmp_method
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.tableau import Tableau
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
-from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
 from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
@@ -42,6 +42,11 @@ from sage.arith.misc import Sigma, binomial, factorial
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+
+lazy_import('sage.modules.free_module_element', 'vector')
 
 
 @richcmp_method
@@ -54,15 +59,13 @@ class PlanePartition(ClonableArray,
 
     INPUT:
 
-    - ``PP`` -- a list of lists which represents a tableau
+    - ``PP`` -- list of lists which represents a tableau
     - ``box_size`` -- (optional) a list ``[A, B, C]`` of 3 positive integers,
       where ``A``, ``B``, ``C`` are the lengths of the box in the `x`-axis,
       `y`-axis, `z`-axis, respectively; if this is not given, it is
       determined by the smallest box bounding ``PP``
 
-    OUTPUT:
-
-    The plane partition whose tableau representation is ``PP``.
+    OUTPUT: the plane partition whose tableau representation is ``PP``
 
     EXAMPLES::
 
@@ -138,7 +141,7 @@ class PlanePartition(ClonableArray,
                 self._max_y = 0
                 self._max_z = 0
         else:
-            (self._max_x, self._max_y, self._max_z) = self.parent()._box
+            self._max_x, self._max_y, self._max_z = self.parent()._box
 
     def __richcmp__(self, other, op):
         r"""
@@ -160,9 +163,7 @@ class PlanePartition(ClonableArray,
 
         - ``other`` -- the element that ``self`` is compared to
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -212,7 +213,6 @@ class PlanePartition(ClonableArray,
             Traceback (most recent call last):
             ...
             ValueError: entries not all integers
-
         """
         if not all(a in ZZ for b in self for a in b):
             raise ValueError("entries not all integers")
@@ -314,22 +314,22 @@ class PlanePartition(ClonableArray,
             return Tableau(X)
         return X
 
-    def cells(self) -> list[list[int]]:
+    def cells(self) -> list[tuple[int, int, int]]:
         r"""
         Return the list of cells inside ``self``.
+
+        Each cell is a tuple.
 
         EXAMPLES::
 
             sage: PP = PlanePartition([[3,1],[2]])
             sage: PP.cells()
-            [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [1, 0, 0], [1, 0, 1]]
+            [(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 1, 0), (1, 0, 0), (1, 0, 1)]
         """
-        L = []
-        for r in range(len(self)):
-            for c in range(len(self[r])):
-                for h in range(self[r][c]):
-                    L.append([r, c, h])
-        return L
+        return [(r, c, h)
+                for r in range(len(self))
+                for c in range(len(self[r]))
+                for h in range(self[r][c])]
 
     def number_of_boxes(self) -> Integer:
         r"""
@@ -353,9 +353,7 @@ class PlanePartition(ClonableArray,
           also shows the visible tiles on the `xy`-, `yz`-, `zx`-planes
         - ``use_unicode`` -- boolean (default: ``False``); use unicode
 
-        OUTPUT:
-
-        A string of the 3D diagram of the plane partition.
+        OUTPUT: string of the 3D diagram of the plane partition
 
         EXAMPLES::
 
@@ -387,9 +385,9 @@ class PlanePartition(ClonableArray,
         drawing = [[" " for i in range(2 * x + y + z)]
                    for j in range(y + z + 1)]
 
-        hori = u"_" if use_unicode else "_"
-        down = u"╲" if use_unicode else "\\"
-        up = u"╱" if use_unicode else "/"
+        hori = "_" if use_unicode else "_"
+        down = "╲" if use_unicode else "\\"
+        up = "╱" if use_unicode else "/"
 
         def superpose(l, c, letter):
             # add the given letter at line l and column c
@@ -449,10 +447,10 @@ class PlanePartition(ClonableArray,
                 check = False
 
         if not drawing:
-            return u"∅" if use_unicode else ""
+            return "∅" if use_unicode else ""
 
         if use_unicode:
-            return u'\n'.join(u"".join(row) for row in drawing)
+            return '\n'.join("".join(row) for row in drawing)
         return '\n'.join("".join(row) for row in drawing)
 
     def _ascii_art_(self):
@@ -506,9 +504,7 @@ class PlanePartition(ClonableArray,
         - ``show_box`` -- boolean (default: ``False``); if ``True``,
           also shows the visible tiles on the `xy`-, `yz`-, `zx`-planes
 
-        OUTPUT:
-
-        A pretty print of the plane partition.
+        OUTPUT: a pretty print of the plane partition
 
         EXAMPLES::
 
@@ -544,7 +540,7 @@ class PlanePartition(ClonableArray,
         EXAMPLES::
 
             sage: PP = PlanePartition([[2, 1, 1], [1, 1]])
-            sage: PP._repr_svg_()
+            sage: PP._repr_svg_()                                                       # needs sage.modules
             '<?xml...</g></svg>'
         """
         colors = ["snow", "tomato", "steelblue"]
@@ -614,14 +610,12 @@ class PlanePartition(ClonableArray,
         - ``colors`` -- (default: ``["white", "lightgray", "darkgray"]``)
           list ``[A, B, C]`` of 3 strings representing colors
 
-        OUTPUT:
-
-        Latex code for drawing the plane partition.
+        OUTPUT: latex code for drawing the plane partition
 
         EXAMPLES::
 
             sage: PP = PlanePartition([[1]])
-            sage: latex(PP)
+            sage: latex(PP)                                                             # needs sage.graphs
             \begin{tikzpicture}
             \draw[fill=white,shift={(210:0)},shift={(-30:0)},shift={(90:1)}]
             (0,0)--(-30:1)--(0,-1)--(210:1)--(0,0);
@@ -669,7 +663,7 @@ class PlanePartition(ClonableArray,
         EXAMPLES::
 
             sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
-            sage: PP.plot()                                                     # optional - sage.plot
+            sage: PP.plot()                                                             # needs sage.plot
             Graphics object consisting of 27 graphics primitives
         """
         from sage.functions.trig import cos, sin
@@ -694,15 +688,15 @@ class PlanePartition(ClonableArray,
                     for P in side]
 
         def add_topside(i, j, k):
-            return polygon(move(Uside, i, j, k), edgecolor="black",
+            return polygon(move(Uside, i, j, k), edgecolor='black',
                            color=colors[0])
 
         def add_leftside(i, j, k):
-            return polygon(move(Lside, i, j, k), edgecolor="black",
+            return polygon(move(Lside, i, j, k), edgecolor='black',
                            color=colors[1])
 
         def add_rightside(i, j, k):
-            return polygon(move(Rside, i, j, k), edgecolor="black",
+            return polygon(move(Rside, i, j, k), edgecolor='black',
                            color=colors[2])
         TP = plot([])
         for r in range(len(self.z_tableau())):
@@ -766,7 +760,7 @@ class PlanePartition(ClonableArray,
         EXAMPLES::
 
             sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
-            sage: PP.plot3d()                                                   # optional - sage.plot
+            sage: PP.plot3d()                                                           # needs sage.plot
             Graphics3d Object
         """
         if colors is None:
@@ -920,9 +914,7 @@ class PlanePartition(ClonableArray,
             sage: PlanePartition([]).is_CSPP()
             True
         """
-        if self.z_tableau() == self.y_tableau():
-            return True
-        return False
+        return self.z_tableau() == self.y_tableau()
 
     def is_TSPP(self) -> bool:
         r"""
@@ -1101,23 +1093,21 @@ class PlanePartition(ClonableArray,
 
         EXAMPLES::
 
-            sage: PlanePartition([[3,2,1],[2,2],[2]]).to_order_ideal()
-            [(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 1, 0), (0, 1, 1), (0, 2, 0), (1, 0, 0), (1, 0, 1), (1, 1, 0), (1, 1, 1), (2, 0, 0), (2, 0, 1)]
-            sage: PlanePartition([[2,1],[1],[1]]).to_order_ideal()
+            sage: PlanePartition([[3,2,1],[2,2],[2]]).to_order_ideal()                  # needs sage.graphs sage.modules
+            [(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 1, 0), (0, 1, 1), (0, 2, 0),
+             (1, 0, 0), (1, 0, 1), (1, 1, 0), (1, 1, 1), (2, 0, 0), (2, 0, 1)]
+            sage: PlanePartition([[2,1],[1],[1]]).to_order_ideal()                      # needs sage.graphs sage.modules
             [(0, 0, 0), (0, 0, 1), (0, 1, 0), (1, 0, 0), (2, 0, 0)]
         """
         from sage.combinat.posets.poset_examples import posets
-        (a, b, c) = (self._max_x, self._max_y, self._max_z)
-        Q = posets.ProductOfChains([a, b, c])
-        count = 0
+        abc = [self._max_x, self._max_y, self._max_z]
+        Q = posets.ProductOfChains(abc)
         generate = []
         for i, row in enumerate(self):
             for j, val in enumerate(row):
                 if val > 0:
-                    generate.append((i, j, val-1))
-            count += 1
-        oi = Q.order_ideal(generate)
-        return oi
+                    generate.append((i, j, val - 1))
+        return Q.order_ideal(generate)
 
     def maximal_boxes(self) -> list:
         r"""
@@ -1160,6 +1150,8 @@ class PlanePartition(ClonableArray,
             Plane partition [[3, 1, 1, 1], [1]]
             sage: PP == PP.cyclically_rotate().cyclically_rotate().cyclically_rotate()
             True
+
+            sage: # needs sage.graphs sage.modules
             sage: PP = PlanePartitions([4,3,2]).random_element()
             sage: PP.cyclically_rotate().parent()
             Plane partitions inside a 2 x 4 x 3 box
@@ -1400,7 +1392,7 @@ class PlanePartitions(UniqueRepresentation, Parent):
         TESTS::
 
             sage: PP = PlanePartitions(box_size=[2,2,1])
-            sage: TestSuite(PP).run()
+            sage: TestSuite(PP).run()                                                   # needs sage.modules
         """
         if box_size is not None and len(box_size) != 3:
             raise ValueError("invalid box size")
@@ -1480,7 +1472,7 @@ class PlanePartitions_all(PlanePartitions, DisjointUnionEnumeratedSets):
     """
     def __init__(self):
         r"""
-        Initializes the class of all plane partitions.
+        Initialize the class of all plane partitions.
 
         .. WARNING::
 
@@ -1539,13 +1531,13 @@ class PlanePartitions_box(PlanePartitions):
     """
     def __init__(self, box_size):
         r"""
-        Initializes the class of plane partitions that fit in a box of a
+        Initialize the class of plane partitions that fit in a box of a
         specified size.
 
         EXAMPLES::
 
             sage: PP = PlanePartitions([4,3,2])
-            sage: TestSuite(PP).run()                                           # long time
+            sage: TestSuite(PP).run()           # long time                             # needs sage.modules
         """
         super().__init__(box_size, category=FiniteEnumeratedSets())
 
@@ -1585,7 +1577,7 @@ class PlanePartitions_box(PlanePartitions):
 
         EXAMPLES::
 
-            sage: PlanePartitions([2,2,2]).to_poset()
+            sage: PlanePartitions([2,2,2]).to_poset()                                   # needs sage.graphs sage.modules
             Finite lattice containing 8 elements
         """
         a = self._box[0]
@@ -1601,8 +1593,9 @@ class PlanePartitions_box(PlanePartitions):
 
         EXAMPLES::
 
-            sage: I = [(1, 0, 0), (1, 0, 1), (1, 1, 0), (0, 1, 0), (0, 0, 0), (0, 0, 1), (0, 1, 1)]
-            sage: PlanePartitions([2,2,2]).from_order_ideal(I)
+            sage: I = [(1, 0, 0), (1, 0, 1), (1, 1, 0), (0, 1, 0),
+            ....:      (0, 0, 0), (0, 0, 1), (0, 1, 1)]
+            sage: PlanePartitions([2,2,2]).from_order_ideal(I)                          # needs sage.graphs sage.modules
             Plane partition [[2, 2], [2, 1]]
         """
         return self.from_antichain(self.to_poset().order_ideal_generators(I))
@@ -1632,7 +1625,7 @@ class PlanePartitions_box(PlanePartitions):
             pp_matrix[x][y] = z + 1
 
         # For each value in current antichain, fill in the rest of the matrix by
-        # rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partition format
+        # rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichain is now in plane partition format
         if A:
             for i in range(a):
                 i = a - (i + 1)
@@ -1654,7 +1647,7 @@ class PlanePartitions_box(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions([1,2,1]))
+            sage: list(PlanePartitions([1,2,1]))                                        # needs sage.modules
             [Plane partition [], Plane partition [[1]], Plane partition [[1, 1]]]
 
         TESTS::
@@ -1721,7 +1714,7 @@ class PlanePartitions_box(PlanePartitions):
         EXAMPLES::
 
             sage: P = PlanePartitions([4,3,5])
-            sage: P.random_element() # random
+            sage: P.random_element()  # random                                          # needs sage.graphs sage.modules
             Plane partition [[4, 3, 3], [4], [2]]
         """
         Z = self.from_order_ideal(self.to_poset().random_order_ideal())
@@ -1734,7 +1727,7 @@ class PlanePartitions_n(PlanePartitions):
     """
     def __init__(self, n):
         r"""
-        Initializes the class of plane partitions with ``n`` boxes.
+        Initialize the class of plane partitions with ``n`` boxes.
 
         .. WARNING::
 
@@ -1748,7 +1741,7 @@ class PlanePartitions_n(PlanePartitions):
             <class 'sage.combinat.plane_partition.PlanePartitions_n_with_category'>
             sage: TestSuite(PP).run()
         """
-        super(PlanePartitions_n, self).__init__(category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets())
         self._n = n
 
     def _repr_(self) -> str:
@@ -1845,7 +1838,6 @@ class PlanePartitions_n(PlanePartitions):
             sage: P = PlanePartitions(17)
             sage: P.cardinality()
             18334
-
         """
         PPn = [1]
         for i in range(1, 1+self._n):
@@ -1871,7 +1863,7 @@ class PlanePartitions_SPP(PlanePartitions):
         TESTS::
 
             sage: PP = PlanePartitions([3,3,2], symmetry='SPP')
-            sage: TestSuite(PP).run()
+            sage: TestSuite(PP).run()                                                   # needs sage.graphs sage.modules
             sage: PlanePartitions([4,3,2], symmetry='SPP')
             Traceback (most recent call last):
             ...
@@ -1916,9 +1908,9 @@ class PlanePartitions_SPP(PlanePartitions):
         EXAMPLES::
 
             sage: PP = PlanePartitions([3,3,2], symmetry='SPP')
-            sage: PP.to_poset()
+            sage: PP.to_poset()                                                         # needs sage.graphs
             Finite poset containing 12 elements
-            sage: PP.to_poset().order_ideals_lattice().cardinality() == PP.cardinality()
+            sage: PP.to_poset().order_ideals_lattice().cardinality() == PP.cardinality()            # needs sage.graphs sage.modules sage.rings.finite_rings
             True
         """
         a = self._box[0]
@@ -1941,7 +1933,7 @@ class PlanePartitions_SPP(PlanePartitions):
 
             sage: PP = PlanePartitions([3,3,2], symmetry='SPP')
             sage: I = [(0, 0, 0), (1, 0, 0), (1, 1, 0), (2, 0, 0)]
-            sage: PP.from_order_ideal(I)
+            sage: PP.from_order_ideal(I)                                                # needs sage.graphs
             Plane partition [[1, 1, 1], [1, 1], [1]]
         """
         return self.from_antichain(self.to_poset().order_ideal_generators(I))
@@ -1993,15 +1985,15 @@ class PlanePartitions_SPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions([2,2,1], symmetry='SPP'))
+            sage: list(PlanePartitions([2,2,1], symmetry='SPP'))                        # needs sage.graphs sage.modules sage.rings.finite_rings
             [Plane partition [],
-            Plane partition [[1, 1], [1, 1]],
-            Plane partition [[1, 1], [1]],
-            Plane partition [[1]]]
+             Plane partition [[1, 1], [1, 1]],
+             Plane partition [[1, 1], [1]],
+             Plane partition [[1]]]
 
         TESTS::
 
-            sage: all(len(set(PP)) == PP.cardinality()
+            sage: all(len(set(PP)) == PP.cardinality()                                  # needs sage.graphs sage.modules
             ....:     for a, b in cartesian_product([range(4)]*2)
             ....:     if (PP := PlanePartitions([a, a, b], symmetry='SPP')))
             True
@@ -2053,7 +2045,7 @@ class PlanePartitions_SPP(PlanePartitions):
         EXAMPLES::
 
             sage: PP = PlanePartitions([3,3,2], symmetry='SPP')
-            sage: PP.random_element() # random
+            sage: PP.random_element()  # random                                         # needs sage.graphs
             Plane partition [[2, 2, 2], [2, 2], [2]]
         """
         Z = self.from_order_ideal(self.to_poset().random_order_ideal())
@@ -2074,7 +2066,7 @@ class PlanePartitions_CSPP(PlanePartitions):
         TESTS::
 
             sage: PP = PlanePartitions([3,3,3], symmetry='CSPP')
-            sage: TestSuite(PP).run()
+            sage: TestSuite(PP).run()                                                   # needs sage.graphs sage.modules sage.rings.finite_rings
             sage: PlanePartitions([4,3,2], symmetry='CSPP')
             Traceback (most recent call last):
             ...
@@ -2119,9 +2111,9 @@ class PlanePartitions_CSPP(PlanePartitions):
         EXAMPLES::
 
             sage: PP = PlanePartitions([3,3,3], symmetry='CSPP')
-            sage: PP.to_poset()
+            sage: PP.to_poset()                                                         # needs sage.graphs
             Finite poset containing 11 elements
-            sage: PP.to_poset().order_ideals_lattice().cardinality() == PP.cardinality()
+            sage: PP.to_poset().order_ideals_lattice().cardinality() == PP.cardinality()            # needs sage.graphs
             True
         """
         a = self._box[0]
@@ -2166,7 +2158,7 @@ class PlanePartitions_CSPP(PlanePartitions):
             pp_matrix[x][y] = (z+1)
 
         # For each value in current antichain, fill in the rest of the
-        # matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is
+        # matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichain is
         # now in plane partition format.
         if acl != []:
             for i in range(b):
@@ -2185,7 +2177,7 @@ class PlanePartitions_CSPP(PlanePartitions):
 
     def from_order_ideal(self, I) -> PP:
         r"""
-        Return the cylically symmetric plane partition corresponding
+        Return the cyclically symmetric plane partition corresponding
         to an order ideal in the poset given in :meth:`to_poset`.
 
         EXAMPLES::
@@ -2193,7 +2185,7 @@ class PlanePartitions_CSPP(PlanePartitions):
             sage: PP = PlanePartitions([3,3,3], symmetry='CSPP')
             sage: I = [(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 1, 1), (0, 1, 2),
             ....:      (1, 0, 2), (0, 2, 2), (1, 1, 1), (1, 1, 2), (1, 2, 2)]
-            sage: PP.from_order_ideal(I)
+            sage: PP.from_order_ideal(I)                                                # needs sage.graphs
             Plane partition [[3, 3, 3], [3, 3, 3], [3, 3, 2]]
         """
         return self.from_antichain(self.to_poset().order_ideal_generators(I))
@@ -2212,7 +2204,7 @@ class PlanePartitions_CSPP(PlanePartitions):
         EXAMPLES::
 
             sage: PP = PlanePartitions([3,3,3], symmetry='CSPP')
-            sage: PP.random_element() # random
+            sage: PP.random_element()  # random                                         # needs sage.graphs
             Plane partition [[3, 2, 2], [3, 1], [1, 1]]
         """
         Z = self.from_order_ideal(self.to_poset().random_order_ideal())
@@ -2224,16 +2216,17 @@ class PlanePartitions_CSPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions([2,2,2], symmetry='CSPP'))
+            sage: list(PlanePartitions([2,2,2], symmetry='CSPP'))                       # needs sage.graphs sage.modules
             [Plane partition [],
-            Plane partition [[2, 2], [2, 2]],
-            Plane partition [[2, 2], [2, 1]],
-            Plane partition [[2, 1], [1]],
-            Plane partition [[1]]]
+             Plane partition [[2, 2], [2, 2]],
+             Plane partition [[2, 2], [2, 1]],
+             Plane partition [[2, 1], [1]],
+             Plane partition [[1]]]
 
         TESTS::
 
-            sage: all(len(set(PP)) == PP.cardinality() for n in range(5) if (PP := PlanePartitions([n]*3, symmetry='CSPP')))
+            sage: all(len(set(PP)) == PP.cardinality() for n in range(5)                # needs sage.graphs sage.modules
+            ....:     if (PP := PlanePartitions([n]*3, symmetry='CSPP')))
             True
         """
         for acl in self.to_poset().antichains_iterator():
@@ -2281,7 +2274,7 @@ class PlanePartitions_TSPP(PlanePartitions):
         TESTS::
 
             sage: PP = PlanePartitions([3,3,3], symmetry='TSPP')
-            sage: TestSuite(PP).run()
+            sage: TestSuite(PP).run()                                                   # needs sage.graphs sage.modules
             sage: PlanePartitions([4,3,2], symmetry='TSPP')
             Traceback (most recent call last):
             ...
@@ -2325,9 +2318,10 @@ class PlanePartitions_TSPP(PlanePartitions):
         EXAMPLES::
 
             sage: PP = PlanePartitions([3,3,3], symmetry='TSPP')
-            sage: PP.to_poset()
+            sage: PP.to_poset()                                                         # needs sage.graphs
             Finite poset containing 10 elements
-            sage: PP.to_poset().order_ideals_lattice().cardinality() == PP.cardinality()
+            sage: (PP.to_poset().order_ideals_lattice().cardinality()                   # needs sage.graphs sage.modules sage.rings.finite_rings
+            ....:     == PP.cardinality())
             True
         """
         a = self._box[0]
@@ -2371,7 +2365,7 @@ class PlanePartitions_TSPP(PlanePartitions):
             pp_matrix[y][x] = z + 1  # z,y,x
 
         # for each value in current antichain, fill in the rest of the matrix by
-        # rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partition format
+        # rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichain is now in plane partition format
         if acl != []:
             for i in range(b):
                 i = b - (i + 1)
@@ -2396,7 +2390,7 @@ class PlanePartitions_TSPP(PlanePartitions):
 
             sage: PP = PlanePartitions([3,3,3], symmetry='TSPP')
             sage: I = [(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 1, 1)]
-            sage: PP.from_order_ideal(I)
+            sage: PP.from_order_ideal(I)                                                # needs sage.graphs
             Plane partition [[3, 2, 1], [2, 1], [1]]
         """
         return self.from_antichain(self.to_poset().order_ideal_generators(I))
@@ -2407,7 +2401,7 @@ class PlanePartitions_TSPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions([2,2,2], symmetry='TSPP'))
+            sage: list(PlanePartitions([2,2,2], symmetry='TSPP'))                       # needs sage.graphs sage.modules
             [Plane partition [],
              Plane partition [[2, 2], [2, 2]],
              Plane partition [[2, 2], [2, 1]],
@@ -2739,7 +2733,7 @@ class PlanePartitions_TCPP(PlanePartitions):
         TESTS::
 
             sage: PP = PlanePartitions([3,3,2], symmetry='TCPP')
-            sage: TestSuite(PP).run()
+            sage: TestSuite(PP).run()                                                   # needs sage.graphs sage.modules
 
             sage: PlanePartitions([3,3,3], symmetry='TCPP')
             Traceback (most recent call last):
@@ -2773,7 +2767,7 @@ class PlanePartitions_TCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions([3,3,2], symmetry='TCPP'))
+            sage: list(PlanePartitions([3,3,2], symmetry='TCPP'))                       # needs sage.modules
             [Plane partition [[2, 2, 1], [2, 1], [1]],
             Plane partition [[2, 1, 1], [2, 1, 1], [1]],
             Plane partition [[2, 2, 1], [1, 1], [1, 1]],
@@ -2825,10 +2819,10 @@ class PlanePartitions_SSCPP(PlanePartitions):
         TESTS::
 
             sage: PP = PlanePartitions([2, 2, 4], symmetry='SSCPP')
-            sage: TestSuite(PP).run()
+            sage: TestSuite(PP).run()                                                   # needs sage.modules
 
             sage: PP = PlanePartitions([4, 4, 2], symmetry='SSCPP')
-            sage: TestSuite(PP).run()
+            sage: TestSuite(PP).run()           # long time                             # needs sage.modules
 
             sage: PlanePartitions([4, 2, 2], symmetry='SSCPP')
             Traceback (most recent call last):
@@ -2862,7 +2856,7 @@ class PlanePartitions_SSCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions([4,4,2], symmetry='SSCPP'))
+            sage: list(PlanePartitions([4,4,2], symmetry='SSCPP'))                      # needs sage.modules
             [Plane partition [[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]],
              Plane partition [[2, 2, 2, 1], [2, 1, 1], [2, 1, 1], [1]],
              Plane partition [[2, 2, 1, 1], [2, 2, 1, 1], [1, 1], [1, 1]],
@@ -2934,7 +2928,7 @@ class PlanePartitions_CSTCPP(PlanePartitions):
         TESTS::
 
             sage: PP = PlanePartitions([2,2,2], symmetry='CSTCPP')
-            sage: TestSuite(PP).run()
+            sage: TestSuite(PP).run()                                                   # needs sage.modules
 
             sage: PlanePartitions([4,3,2], symmetry='CSTCPP')
             Traceback (most recent call last):
@@ -2968,7 +2962,7 @@ class PlanePartitions_CSTCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions([2,2,2], symmetry='CSTCPP'))
+            sage: list(PlanePartitions([2,2,2], symmetry='CSTCPP'))                     # needs sage.modules
             [Plane partition [[2, 1], [1]]]
 
         TESTS::
@@ -3020,7 +3014,7 @@ class PlanePartitions_CSSCPP(PlanePartitions):
         TESTS::
 
             sage: PP = PlanePartitions([2,2,2], symmetry='CSSCPP')
-            sage: TestSuite(PP).run()
+            sage: TestSuite(PP).run()                                                   # needs sage.modules
             sage: PlanePartitions([4,3,2], symmetry='CSSCPP')
             Traceback (most recent call last):
             ...
@@ -3052,7 +3046,7 @@ class PlanePartitions_CSSCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions([2,2,2], symmetry='CSSCPP'))
+            sage: list(PlanePartitions([2,2,2], symmetry='CSSCPP'))                     # needs sage.modules
             [Plane partition [[2, 1], [1]]]
         """
         # any CSSCPP is a SCPP and an CSPP, there are much fewer CSPP
@@ -3095,7 +3089,7 @@ class PlanePartitions_TSSCPP(PlanePartitions):
         TESTS::
 
             sage: PP = PlanePartitions([4,4,4], symmetry='TSSCPP')
-            sage: TestSuite(PP).run()
+            sage: TestSuite(PP).run()                                                   # needs sage.modules
             sage: PlanePartitions([4,3,2], symmetry='TSSCPP')
             Traceback (most recent call last):
             ...
@@ -3129,9 +3123,9 @@ class PlanePartitions_TSSCPP(PlanePartitions):
         EXAMPLES::
 
             sage: PP = PlanePartitions([6,6,6], symmetry='TSSCPP')
-            sage: PP.to_poset()
+            sage: PP.to_poset()                                                         # needs sage.graphs sage.modules
             Finite poset containing 4 elements
-            sage: PP.to_poset().order_ideals_lattice().cardinality() == PP.cardinality()
+            sage: PP.to_poset().order_ideals_lattice().cardinality() == PP.cardinality()            # needs sage.graphs sage.modules
             True
         """
         from sage.combinat.posets.posets import Poset
@@ -3159,7 +3153,8 @@ class PlanePartitions_TSSCPP(PlanePartitions):
             sage: PP = PlanePartitions([6,6,6], symmetry='TSSCPP')
             sage: A = [(0, 0, 1), (1, 1, 0)]
             sage: PP.from_antichain(A)
-            Plane partition [[6, 6, 6, 5, 5, 3], [6, 5, 5, 4, 3, 1], [6, 5, 4, 3, 2, 1], [5, 4, 3, 2, 1], [5, 3, 2, 1, 1], [3, 1, 1]]
+            Plane partition [[6, 6, 6, 5, 5, 3], [6, 5, 5, 4, 3, 1], [6, 5, 4, 3, 2, 1],
+                             [5, 4, 3, 2, 1], [5, 3, 2, 1, 1], [3, 1, 1]]
         """
         # ac format ex: [x,y,z]
         a = self._box[0]
@@ -3168,7 +3163,7 @@ class PlanePartitions_TSSCPP(PlanePartitions):
         n = a
         N = n // 2
         pp_matrix = [[0] * (c) for i in range(b)]
-        # creates a matrix for the plane parition populated by 0s
+        # creates a matrix for the plane partition populated by 0s
         # EX: [[0,0,0], [0,0,0], [0,0,0]]
         width = N - 1
         height = N - 1
@@ -3250,10 +3245,11 @@ class PlanePartitions_TSSCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: PP = PlanePartitions([6,6,6], symmetry='TSSCPP')
+            sage: PP = PlanePartitions([6,6,6], symmetry='TSSCPP')                      # needs sage.graphs
             sage: I = [(0, 0, 0), (0, 1, 0), (1, 1, 0)]
-            sage: PP.from_order_ideal(I)
-            Plane partition [[6, 6, 6, 5, 5, 3], [6, 5, 5, 3, 3, 1], [6, 5, 5, 3, 3, 1], [5, 3, 3, 1, 1], [5, 3, 3, 1, 1], [3, 1, 1]]
+            sage: PP.from_order_ideal(I)                                                # needs sage.graphs
+            Plane partition [[6, 6, 6, 5, 5, 3], [6, 5, 5, 3, 3, 1], [6, 5, 5, 3, 3, 1],
+                             [5, 3, 3, 1, 1], [5, 3, 3, 1, 1], [3, 1, 1]]
         """
         return self.from_antichain(self.to_poset().order_ideal_generators(I))
 
@@ -3263,13 +3259,14 @@ class PlanePartitions_TSSCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions([4,4,4], symmetry='TSSCPP'))
+            sage: list(PlanePartitions([4,4,4], symmetry='TSSCPP'))                     # needs sage.graphs sage.modules
             [Plane partition [[4, 4, 2, 2], [4, 4, 2, 2], [2, 2], [2, 2]],
-            Plane partition [[4, 4, 3, 2], [4, 3, 2, 1], [3, 2, 1], [2, 1]]]
+             Plane partition [[4, 4, 3, 2], [4, 3, 2, 1], [3, 2, 1], [2, 1]]]
 
         TESTS::
 
-            sage: all(len(set(PP)) == PP.cardinality() for n in range(0,11,2) if (PP := PlanePartitions([n]*3, symmetry='TSSCPP')))
+            sage: all(len(set(PP)) == PP.cardinality() for n in range(0,11,2)           # needs sage.graphs sage.modules
+            ....:     if (PP := PlanePartitions([n]*3, symmetry='TSSCPP')))
             True
         """
         for acl in self.to_poset().antichains_iterator():

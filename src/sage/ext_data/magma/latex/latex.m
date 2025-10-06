@@ -206,8 +206,6 @@ intrinsic Latex(x::FldPadElt) -> MonStgElt
 end intrinsic;
 
 
-
-
 function S(x)
    if x gt 0 then
        return "+";
@@ -450,10 +448,6 @@ end if;
 s:=s*Sprintf("+O(%o^{%o})",zn,n);
   return s;
 end intrinsic;
-
-
-
-
 
 intrinsic Latex(E::CrvEll) -> MonStgElt
 {}
@@ -796,7 +790,6 @@ intrinsic Latex(x::.) -> MonStgElt
 {}
     return Sprintf("\\mbox{\\rm %o}", x);
 end intrinsic;
-
 
 
 /*

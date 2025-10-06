@@ -1,5 +1,6 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
-Orthogonal Symmetric Functions
+Orthogonal symmetric functions
 
 AUTHORS:
 
@@ -20,10 +21,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import sfa
-import sage.libs.lrcalc.lrcalc as lrcalc
 from sage.combinat.partition import Partitions
+from sage.libs.lrcalc import lrcalc
 from sage.misc.cachefunc import cached_method
+
+from . import sfa
 
 
 class SymmetricFunctionAlgebra_orthogonal(sfa.SymmetricFunctionAlgebra_generic):
@@ -220,9 +222,7 @@ class SymmetricFunctionAlgebra_orthogonal(sfa.SymmetricFunctionAlgebra_generic):
 
         - ``lam`` -- a partition
 
-        OUTPUT:
-
-        - the expansion of ``s[lam]`` in the orthogonal basis ``self``
+        OUTPUT: the expansion of ``s[lam]`` in the orthogonal basis ``self``
 
         EXAMPLES::
 

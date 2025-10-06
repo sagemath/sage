@@ -3,7 +3,7 @@ Vectors with integer mod `n` entries, with small `n`
 
 EXAMPLES::
 
-    sage: v = vector(Integers(8),[1,2,3,4,5])
+    sage: v = vector(Integers(8), [1,2,3,4,5])
     sage: type(v)
     <class 'sage.modules.vector_modn_dense.Vector_modn_dense'>
     sage: v
@@ -21,8 +21,8 @@ EXAMPLES::
     sage: v * v
     7
 
-    sage: v = vector(Integers(8),[1,2,3,4,5])
-    sage: u = vector(Integers(8),[1,2,3,4,4])
+    sage: v = vector(Integers(8), [1,2,3,4,5])
+    sage: u = vector(Integers(8), [1,2,3,4,4])
     sage: v - u
     (0, 0, 0, 0, 1)
     sage: u - v
@@ -79,7 +79,7 @@ TESTS::
     sage: isinstance(hash(w), int)
     True
 
-Test that :trac:`28042` is fixed::
+Test that :issue:`28042` is fixed::
 
     sage: # needs sage.rings.finite_rings
     sage: p = 193379
@@ -141,10 +141,10 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         y._init(self._degree, self._parent, self._p)
         return y
 
-    cdef bint is_dense_c(self):
+    cdef bint is_dense_c(self) noexcept:
         return 1
 
-    cdef bint is_sparse_c(self):
+    cdef bint is_sparse_c(self) noexcept:
         return 0
 
     def __copy__(self):
@@ -168,19 +168,34 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
             self._init(parent.degree(), parent, parent.base_ring().order())
 
     def __init__(self, parent, x, coerce=True, copy=True):
+        """
+        Create an element.
+
+        TESTS:
+
+        Note that ``coerce=False`` is dangerous::
+
+            sage: V = VectorSpace(GF(7), 3)
+            sage: v = V([2, 9, -5], coerce=False)
+            sage: v[0] == v[1]
+            False
+            sage: v[0] + 1 == v[1] + 1
+            True
+            sage: v[0] == v[2]
+            False
+        """
         cdef Py_ssize_t i
-        cdef mod_int a, p
-        if isinstance(x, xrange):
+        cdef mod_int a
+        if isinstance(x, range):
             x = tuple(x)
         if isinstance(x, (list, tuple)):
             if len(x) != self._degree:
                 raise TypeError("x must be a list of the right length")
             if coerce:
                 R = parent.base_ring()
-                p = R.order()
                 for i from 0 <= i < self._degree:
                     a = int(R(x[i]))
-                    self._entries[i] = a % p
+                    self._entries[i] = a
             else:
                 for i from 0 <= i < self._degree:
                     self._entries[i] = x[i]
@@ -271,7 +286,6 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         """
         self._entries[i] = ivalue(<IntegerMod_abstract>value)
 
-
     def __reduce__(self):
         return unpickle_v1, (self._parent, self.list(), self._degree,
                              self._p, not self._is_immutable)
@@ -284,7 +298,6 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         for i from 0 <= i < self._degree:
             z._entries[i] = (self._entries[i] + r._entries[i]) % self._p
         return z
-
 
     cpdef _sub_(self, right):
         cdef Vector_modn_dense z, r
@@ -302,7 +315,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         cdef Vector_modn_dense r = right
 
         if use_32bit_type(self._p):
-            n =  IntegerMod_int.__new__(IntegerMod_int)
+            n = IntegerMod_int.__new__(IntegerMod_int)
             IntegerMod_abstract.__init__(n, self.base_ring())
             n.ivalue = 0
             for i in range(self._degree):
@@ -356,6 +369,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
                 z._entries[i] = 0
         return z
 
+
 def unpickle_v0(parent, entries, degree, p):
     # If you think you want to change this function, don't.
     # Instead make a new version with a name like
@@ -367,6 +381,7 @@ def unpickle_v0(parent, entries, degree, p):
     for i from 0 <= i < degree:
         v._entries[i] = entries[i]
     return v
+
 
 def unpickle_v1(parent, entries, degree, p, is_mutable):
     cdef Vector_modn_dense v

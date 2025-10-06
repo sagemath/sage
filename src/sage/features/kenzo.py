@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Feature for testing the presence of ``kenzo``
 """
@@ -17,6 +18,7 @@ Feature for testing the presence of ``kenzo``
 
 from . import Feature, FeatureTestResult
 
+
 class Kenzo(Feature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :ref:`Kenzo <spkg_kenzo>`.
@@ -35,8 +37,8 @@ class Kenzo(Feature):
             sage: isinstance(Kenzo(), Kenzo)
             True
         """
-        Feature.__init__(self, name="kenzo", spkg="kenzo",
-                         url="https://github.com/miguelmarco/kenzo/")
+        Feature.__init__(self, name='kenzo', spkg='kenzo',
+                         url='https://github.com/miguelmarco/kenzo/')
 
     def _is_present(self):
         r"""

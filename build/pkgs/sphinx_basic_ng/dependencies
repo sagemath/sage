@@ -1,4 +1,4 @@
-$(PYTHON) sphinx | $(PYTHON_TOOLCHAIN)
+ sphinx | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

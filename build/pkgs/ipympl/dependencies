@@ -1,6 +1,4 @@
-$(PYTHON) ipywidgets matplotlib ipykernel | $(PYTHON_TOOLCHAIN)  jupyter_packaging
+ipython numpy ipython_genutils pillow traitlets ipywidgets matplotlib | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.
-
-jupyterlab is listed as a "build-system requires", but the package installs correctly without it.

@@ -3,9 +3,8 @@ Splitting fields of polynomials over number fields
 
 AUTHORS:
 
-- Jeroen Demeyer (2014-01-02): initial version for :trac:`2217`
-
-- Jeroen Demeyer (2014-01-03): add ``abort_degree`` argument, :trac:`15626`
+- Jeroen Demeyer (2014-01-02): initial version for :issue:`2217`
+- Jeroen Demeyer (2014-01-03): added ``abort_degree`` argument, :issue:`15626`
 """
 
 #*****************************************************************************
@@ -22,8 +21,9 @@ from sage.rings.integer import Integer
 from sage.arith.misc import factorial
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import RationalField, is_RationalField
-from sage.libs.pari.all import pari, PariError
+from sage.rings.rational_field import RationalField
+from sage.libs.pari import pari
+from cypari2.handle_error import PariError
 
 
 class SplittingFieldAbort(Exception):
@@ -91,7 +91,7 @@ class SplittingData:
 
     def poldegree(self):
         """
-        Return the degree of ``self.pol``
+        Return the degree of ``self.pol``.
 
         EXAMPLES::
 
@@ -109,7 +109,7 @@ class SplittingData:
             sage: print(SplittingData(pari("polcyclo(24)"), 2))
             SplittingData(x^8 - x^4 + 1, 2)
         """
-        return "SplittingData(%s, %s)"%(self.pol, self.dm)
+        return "SplittingData(%s, %s)" % (self.pol, self.dm)
 
     def _repr_tuple(self):
         """
@@ -133,7 +133,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
 
     - ``name`` -- a variable name for the number field
 
-    - ``map`` -- (default: ``False``) also return an embedding of
+    - ``map`` -- boolean (default: ``False``); also return an embedding of
       ``poly`` into the resulting field. Note that computing this
       embedding might be expensive.
 
@@ -145,14 +145,14 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
       if it can be determined that the absolute degree of the splitting
       field is strictly larger than ``abort_degree``.
 
-    - ``simplify`` -- (default: ``True``) during the algorithm, try
+    - ``simplify`` -- boolean (default: ``True``); during the algorithm, try
       to find a simpler defining polynomial for the intermediate
-      number fields using PARI's ``polred()``.  This usually speeds
+      number fields using PARI's ``polredbest()``.  This usually speeds
       up the computation but can also considerably slow it down.
       Try and see what works best in the given situation.
 
-    - ``simplify_all`` -- (default: ``False``) If ``True``, simplify
-      intermediate fields and also the resulting number field.
+    - ``simplify_all`` -- boolean (default: ``False``); if ``True``, simplify
+      intermediate fields and also the resulting number field
 
     OUTPUT:
 
@@ -171,7 +171,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
 
     The ``simplify`` and ``simplify_all`` flags usually yield
     fields defined by polynomials with smaller coefficients.
-    By default, ``simplify`` is True and ``simplify_all`` is False.
+    By default, ``simplify`` is ``True`` and ``simplify_all`` is ``False``.
 
     ::
 
@@ -283,8 +283,8 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
     Some bigger examples::
 
         sage: R.<x> = PolynomialRing(QQ)
-        sage: pol15 = chebyshev_T(31, x) - 1    # 2^30*(x-1)*minpoly(cos(2*pi/31))^2    # needs sage.symbolic
-        sage: pol15.splitting_field('a')                                                # needs sage.symbolic
+        sage: pol15 = chebyshev_T(31, x) - 1    # 2^30*(x-1)*minpoly(cos(2*pi/31))^2
+        sage: pol15.splitting_field('a')
         Number Field in a with defining polynomial
          x^15 - x^14 - 14*x^13 + 13*x^12 + 78*x^11 - 66*x^10 - 220*x^9 + 165*x^8
           + 330*x^7 - 210*x^6 - 252*x^5 + 126*x^4 + 84*x^3 - 28*x^2 - 8*x + 1
@@ -297,7 +297,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
     computation, in particular for polynomials of degree >= 12 or
     for relative extensions::
 
-        sage: pol15.splitting_field('a', degree_multiple=15)                            # needs sage.symbolic
+        sage: pol15.splitting_field('a', degree_multiple=15)
         Number Field in a with defining polynomial
          x^15 + x^14 - 14*x^13 - 13*x^12 + 78*x^11 + 66*x^10 - 220*x^9 - 165*x^8
           + 330*x^7 + 210*x^6 - 252*x^5 - 126*x^4 + 84*x^3 + 28*x^2 - 8*x - 1
@@ -383,7 +383,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
 
     # Kpol = PARI polynomial in y defining the extension found so far
     F = poly.base_ring()
-    if is_RationalField(F):
+    if isinstance(F, RationalField):
         Kpol = pari("'y")
     else:
         Kpol = F.pari_polynomial("y")
@@ -391,7 +391,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
     # (only needed if map=True)
     if map:
         Fgen = F.gen().__pari__()
-    verbose("Starting field: %s"%Kpol)
+    verbose("Starting field: %s" % Kpol)
 
     # L and Lred are lists of SplittingData.
     # L contains polynomials which are irreducible over K,
@@ -415,7 +415,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
             raise SplittingFieldAbort(absolute_degree * rel_degree_divisor, degree_multiple)
 
         # First, factor polynomials in Lred and store the result in L
-        verbose("SplittingData to factor: %s"%[s._repr_tuple() for s in Lred])
+        verbose("SplittingData to factor: %s" % [s._repr_tuple() for s in Lred])
         t = cputime()
         for splitting in Lred:
             m = splitting.dm.gcd(degree_multiple).gcd(factorial(splitting.poldegree()))
@@ -455,7 +455,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
                     # Compute cubic resolvent
                     a0, a1, a2, a3, a4 = (q/q.pollead()).Vecrev()
                     assert a4 == 1
-                    cubicpol = pari([4*a0*a2 - a1*a1 -a0*a3*a3, a1*a3 - 4*a0, -a2, 1]).Polrev()
+                    cubicpol = pari([4*a0*a2 - a1*a1 - a0*a3*a3, a1*a3 - 4*a0, -a2, 1]).Polrev()
                     cubicfactors = Kpol.nffactor(cubicpol)[0]
                     if len(cubicfactors) == 1:    # A4 or S4
                         # After adding a root of the cubic resolvent,
@@ -505,8 +505,8 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
 
         # Sort according to degree to handle low degrees first
         L.sort(key=lambda x: x.key())
-        verbose("SplittingData to handle: %s"%[s._repr_tuple() for s in L])
-        verbose("Bounds for absolute degree: [%s, %s]"%(degree_divisor,degree_multiple))
+        verbose("SplittingData to handle: %s" % [s._repr_tuple() for s in L])
+        verbose("Bounds for absolute degree: [%s, %s]" % (degree_divisor,degree_multiple))
 
         # Check consistency
         if degree_multiple % degree_divisor != 0:
@@ -525,7 +525,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
         # Add a root of f = L[0] to construct the field N = K[x]/f(x)
         splitting = L[0]
         f = splitting.pol
-        verbose("Handling polynomial %s"%(f.lift()), level=2)
+        verbose("Handling polynomial %s" % (f.lift()), level=2)
         t = cputime()
         Npol, KtoN, k = Kpol.rnfequation(f, flag=1)
 
@@ -547,13 +547,11 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
 
         if simplify_all or (simplify and not finished):
             # Find a simpler defining polynomial Lpol for Mpol
-            verbose("New field before simplifying: %s"%Mpol, t)
+            verbose("New field before simplifying: %s" % Mpol, t)
             t = cputime()
-            M = Mpol.polred(flag=3)
-            n = len(M[0])-1
-            Lpol = M[1][n].change_variable_name("y")
-            LtoM = M[0][n].change_variable_name("y").Mod(Mpol.change_variable_name("y"))
-            MtoL = LtoM.modreverse()
+            M = Mpol.polredbest(1)
+            Lpol = M[0].change_variable_name("y")
+            MtoL = M[1].lift().change_variable_name("y").Mod(Lpol)
         else:
             # Lpol = Mpol
             Lpol = Mpol.change_variable_name("y")
@@ -562,7 +560,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
         NtoL = MtoL/Mdiv
         KtoL = KtoN.lift().subst("x", NtoL).Mod(Lpol)
         Kpol = Lpol   # New Kpol (for next iteration)
-        verbose("New field: %s"%Kpol, t)
+        verbose("New field: %s" % Kpol, t)
         if map:
             t = cputime()
             Fgen = Fgen.lift().subst("y", KtoL)

@@ -1,6 +1,7 @@
+# sage_setup: distribution = sagemath-objects
 # distutils: libraries = gmp
 
-from .types cimport *
+from sage.libs.gmp.types cimport *
 
 cdef extern from "gmp.h":
 
@@ -54,4 +55,3 @@ cdef extern from "gmp.h":
     # Input and Output Functions
     # size_t mpq_out_str (file *stream, int base, mpq_t op)
     # size_t mpq_inp_str (mpq_t rop, file *stream, int base)
-

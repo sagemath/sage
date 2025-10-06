@@ -18,13 +18,17 @@ The basic command syntax is as follows::
     ======================================================================
 """
 
-from .constructor import random_matrix, Matrix
+import sys
+
+from sage.matrix.constructor import Matrix, random_matrix
 from sage.misc.lazy_import import lazy_import
+from sage.misc.timing import cputime
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.misc.timing import cputime
-from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
+
+if sys.platform != 'win32':
+    from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
 
 lazy_import('sage.interfaces.magma', 'magma')
 
@@ -39,10 +43,10 @@ def report(F, title, systems=['sage', 'magma'], **kwds):
 
     INPUT:
 
-    - ``F`` - a list of callables used for benchmarking
-    - ``title`` - a string describing this report
-    - ``systems`` - a list of systems (supported entries are 'sage' and 'magma')
-    - ``**kwds`` - keyword arguments passed to all functions in ``F``
+    - ``F`` -- list of callables used for benchmarking
+    - ``title`` -- string describing this report
+    - ``systems`` -- list of systems (supported entries are 'sage' and 'magma')
+    - ``**kwds`` -- keyword arguments passed to all functions in ``F``
 
     EXAMPLES::
 
@@ -98,7 +102,7 @@ def report_ZZ(**kwds):
 
     INPUT:
 
-    - ``**kwds`` - passed through to :func:`report`
+    - ``**kwds`` -- passed through to :func:`report`
 
     EXAMPLES::
 
@@ -121,6 +125,7 @@ def report_ZZ(**kwds):
 
 # Integer Nullspace
 
+
 def nullspace_ZZ(n=200, min=0, max=2**32, system='sage'):
     """
     Nullspace over ZZ:
@@ -129,10 +134,10 @@ def nullspace_ZZ(n=200, min=0, max=2**32, system='sage'):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: ``200``)
-    - ``min`` - minimal value for entries of matrix (default: ``0``)
-    - ``max`` - maximal value for entries of matrix (default: ``2**32``)
-    - ``system`` - either 'sage' or 'magma' (default: 'sage')
+    - ``n`` -- matrix dimension (default: ``200``)
+    - ``min`` -- minimal value for entries of matrix (default: ``0``)
+    - ``max`` -- maximal value for entries of matrix (default: ``2**32``)
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -152,13 +157,13 @@ A := RMatrixSpace(RationalField(), n+1,n)![Random(%s,%s) : i in [1..n*(n+1)]];
 t := Cputime();
 K := Kernel(A);
 s := Cputime(t);
-"""%(n,min,max)
+""" % (n,min,max)
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
 
 
 def charpoly_ZZ(n=100, min=0, max=9, system='sage'):
@@ -169,10 +174,10 @@ def charpoly_ZZ(n=100, min=0, max=9, system='sage'):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: ``100``)
-    - ``min`` - minimal value for entries of matrix (default: ``0``)
-    - ``max`` - maximal value for entries of matrix (default: ``9``)
-    - ``system`` - either 'sage' or 'magma' (default: 'sage')
+    - ``n`` -- matrix dimension (default: ``100``)
+    - ``min`` -- minimal value for entries of matrix (default: ``0``)
+    - ``max`` -- maximal value for entries of matrix (default: ``9``)
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -192,13 +197,13 @@ A := MatrixAlgebra(IntegerRing(), n)![Random(%s,%s) : i in [1..n^2]];
 t := Cputime();
 K := CharacteristicPolynomial(A);
 s := Cputime(t);
-"""%(n,min,max)
+""" % (n,min,max)
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
 
 
 def rank_ZZ(n=700, min=0, max=9, system='sage'):
@@ -209,10 +214,10 @@ def rank_ZZ(n=700, min=0, max=9, system='sage'):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: ``700``)
-    - ``min`` - minimal value for entries of matrix (default: ``0``)
-    - ``max`` - maximal value for entries of matrix (default: ``9``)
-    - ``system`` - either 'sage' or 'magma' (default: 'sage')
+    - ``n`` -- matrix dimension (default: ``700``)
+    - ``min`` -- minimal value for entries of matrix (default: ``0``)
+    - ``max`` -- maximal value for entries of matrix (default: ``9``)
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -232,13 +237,14 @@ A := RMatrixSpace(IntegerRing(), n, n+10)![Random(%s,%s) : i in [1..n*(n+10)]];
 t := Cputime();
 K := Rank(A);
 s := Cputime(t);
-"""%(n,min,max)
+""" % (n,min,max)
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
+
 
 def rank2_ZZ(n=400, min=0, max=2**64, system='sage'):
     """
@@ -248,10 +254,10 @@ def rank2_ZZ(n=400, min=0, max=2**64, system='sage'):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: ``400``)
-    - ``min`` - minimal value for entries of matrix (default: ``0``)
-    - ``max`` - maximal value for entries of matrix (default: ``2**64``)
-    - ``system`` - either 'sage' or 'magma' (default: 'sage')
+    - ``n`` -- matrix dimension (default: ``400``)
+    - ``min`` -- minimal value for entries of matrix (default: ``0``)
+    - ``max`` -- maximal value for entries of matrix (default: ``2**64``)
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -271,15 +277,16 @@ A := RMatrixSpace(IntegerRing(), n+10, n)![Random(%s,%s) : i in [1..n*(n+10)]];
 t := Cputime();
 K := Rank(A);
 s := Cputime(t);
-"""%(n,min,max)
+""" % (n,min,max)
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
 
 # Smith Form
+
 
 def smithform_ZZ(n=128, min=0, max=9, system='sage'):
     """
@@ -289,10 +296,10 @@ def smithform_ZZ(n=128, min=0, max=9, system='sage'):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: ``128``)
-    - ``min`` - minimal value for entries of matrix (default: ``0``)
-    - ``max`` - maximal value for entries of matrix (default: ``9``)
-    - ``system`` - either 'sage' or 'magma' (default: 'sage')
+    - ``n`` -- matrix dimension (default: ``128``)
+    - ``min`` -- minimal value for entries of matrix (default: ``0``)
+    - ``max`` -- maximal value for entries of matrix (default: ``9``)
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -312,13 +319,13 @@ A := MatrixAlgebra(IntegerRing(), n)![Random(%s,%s) : i in [1..n^2]];
 t := Cputime();
 K := ElementaryDivisors(A);
 s := Cputime(t);
-"""%(n,min,max)
+""" % (n,min,max)
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
 
 
 def matrix_multiply_ZZ(n=300, min=-9, max=9, system='sage', times=1):
@@ -329,11 +336,11 @@ def matrix_multiply_ZZ(n=300, min=-9, max=9, system='sage', times=1):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: ``300``)
-    - ``min`` - minimal value for entries of matrix (default: ``-9``)
-    - ``max`` - maximal value for entries of matrix (default: ``9``)
-    - ``system`` - either 'sage' or 'magma' (default: 'sage')
-    - ``times`` - number of experiments (default: ``1``)
+    - ``n`` -- matrix dimension (default: ``300``)
+    - ``min`` -- minimal value for entries of matrix (default: ``-9``)
+    - ``max`` -- maximal value for entries of matrix (default: ``9``)
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
+    - ``times`` -- number of experiments (default: ``1``)
 
     EXAMPLES::
 
@@ -358,13 +365,14 @@ for z in [1..%s] do
     K := A * B;
 end for;
 s := Cputime(t);
-"""%(n,min,max,times)
+""" % (n,min,max,times)
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))/times
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
+
 
 def matrix_add_ZZ(n=200, min=-9, max=9, system='sage', times=50):
     """
@@ -374,11 +382,11 @@ def matrix_add_ZZ(n=200, min=-9, max=9, system='sage', times=50):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: ``200``)
-    - ``min`` - minimal value for entries of matrix (default: ``-9``)
-    - ``max`` - maximal value for entries of matrix (default: ``9``)
-    - ``system`` - either 'sage' or 'magma' (default: 'sage')
-    - ``times`` - number of experiments (default: ``50``)
+    - ``n`` -- matrix dimension (default: ``200``)
+    - ``min`` -- minimal value for entries of matrix (default: ``-9``)
+    - ``max`` -- maximal value for entries of matrix (default: ``9``)
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
+    - ``times`` -- number of experiments (default: ``50``)
 
     EXAMPLES::
 
@@ -405,13 +413,14 @@ for z in [1..%s] do
     K := A + B;
 end for;
 s := Cputime(t);
-"""%(n,min,max,times)
+""" % (n,min,max,times)
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))/times
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
+
 
 def matrix_add_ZZ_2(n=200, bits=16, system='sage', times=50):
     """
@@ -421,10 +430,10 @@ def matrix_add_ZZ_2(n=200, bits=16, system='sage', times=50):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: ``200``)
-    - ``bits`` - bitsize of entries
-    - ``system`` - either 'sage' or 'magma' (default: 'sage')
-    - ``times`` - number of experiments (default: ``50``)
+    - ``n`` -- matrix dimension (default: ``200``)
+    - ``bits`` -- bitsize of entries
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
+    - ``times`` -- number of experiments (default: ``50``)
 
     EXAMPLES::
 
@@ -435,6 +444,7 @@ def matrix_add_ZZ_2(n=200, bits=16, system='sage', times=50):
     b = 2**bits
     return matrix_add_ZZ(n=n, min=-b, max=b,system=system, times=times)
 
+
 def det_ZZ(n=200, min=1, max=100, system='sage'):
     """
     Dense integer determinant over ZZ.
@@ -443,10 +453,10 @@ def det_ZZ(n=200, min=1, max=100, system='sage'):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: ``200``)
-    - ``min`` - minimal value for entries of matrix (default: ``1``)
-    - ``max`` - maximal value for entries of matrix (default: ``100``)
-    - ``system`` - either 'sage' or 'magma' (default: 'sage')
+    - ``n`` -- matrix dimension (default: ``200``)
+    - ``min`` -- minimal value for entries of matrix (default: ``1``)
+    - ``max`` -- maximal value for entries of matrix (default: ``100``)
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -466,13 +476,13 @@ A := MatrixAlgebra(IntegerRing(), n)![Random(%s,%s) : i in [1..n^2]];
 t := Cputime();
 d := Determinant(A);
 s := Cputime(t);
-"""%(n,min,max)
+""" % (n,min,max)
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
 
 
 def det_QQ(n=300, num_bound=10, den_bound=10, system='sage'):
@@ -483,10 +493,10 @@ def det_QQ(n=300, num_bound=10, den_bound=10, system='sage'):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: ``200``)
-    - ``num_bound`` - numerator bound, inclusive (default: ``10``)
-    - ``den_bound`` - denominator bound, inclusive (default: ``10``)
-    - ``system`` - either 'sage' or 'magma' (default: 'sage')
+    - ``n`` -- matrix dimension (default: ``200``)
+    - ``num_bound`` -- numerator bound, inclusive (default: ``10``)
+    - ``den_bound`` -- denominator bound, inclusive (default: ``10``)
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -507,13 +517,13 @@ A := MatrixAlgebra(RationalField(), n)![Random(%s,%s)/Random(1,%s) : i in [1..n^
 t := Cputime();
 d := Determinant(A);
 s := Cputime(t);
-"""%(n,-num_bound, num_bound, den_bound)
+""" % (n,-num_bound, num_bound, den_bound)
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
 
 
 def vecmat_ZZ(n=300, min=-9, max=9, system='sage', times=200):
@@ -526,11 +536,11 @@ def vecmat_ZZ(n=300, min=-9, max=9, system='sage', times=200):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: ``300``)
-    - ``min`` - minimal value for entries of matrix (default: ``-9``)
-    - ``max`` - maximal value for entries of matrix (default: ``9``)
-    - ``system`` - either 'sage' or 'magma' (default: 'sage')
-    - ``times`` - number of runs (default: ``200``)
+    - ``n`` -- matrix dimension (default: ``300``)
+    - ``min`` -- minimal value for entries of matrix (default: ``-9``)
+    - ``max`` -- maximal value for entries of matrix (default: ``9``)
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
+    - ``times`` -- number of runs (default: ``200``)
 
     EXAMPLES::
 
@@ -555,13 +565,13 @@ for z in [1..%s] do
     K := v * A;
 end for;
 s := Cputime(t);
-"""%(n,min,max,times)
+""" % (n,min,max,times)
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))/times
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
 
 
 #######################################################################
@@ -570,15 +580,15 @@ s := Cputime(t);
 
 def report_GF(p=16411, **kwds):
     """
-    Runs all the reports for finite field matrix operations, for
+    Run all the reports for finite field matrix operations, for
     prime p=16411.
 
     INPUT:
 
-    - ``p`` - ignored
-    - ``**kwds`` - passed through to :func:`report`
+    - ``p`` -- ignored
+    - ``**kwds`` -- passed through to :func:`report`
 
-    .. note::
+    .. NOTE::
 
         right now, even though p is an input, it is being ignored!  If
         you need to check the performance for other primes, you can
@@ -602,6 +612,7 @@ def report_GF(p=16411, **kwds):
 
 # Nullspace over GF
 
+
 def nullspace_GF(n=300, p=16411, system='sage'):
     """
     Given a n+1 x n  matrix over GF(p) with random
@@ -609,9 +620,9 @@ def nullspace_GF(n=300, p=16411, system='sage'):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: 300)
-    - ``p`` - prime number (default: ``16411``)
-    - ``system`` - either 'magma' or 'sage' (default: 'sage')
+    - ``n`` -- matrix dimension (default: 300)
+    - ``p`` -- prime number (default: ``16411``)
+    - ``system`` -- either 'magma' or 'sage' (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -631,13 +642,13 @@ A := Random(RMatrixSpace(GF(%s), n, n+1));
 t := Cputime();
 K := Kernel(A);
 s := Cputime(t);
-"""%(n,p)
+""" % (n,p)
         if verbose:
             print(code)
         magma.eval(code)
         return magma.eval('s')
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
 
 
 # Characteristic Polynomial over GF
@@ -649,9 +660,9 @@ def charpoly_GF(n=100, p=16411, system='sage'):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: 100)
-    - ``p`` - prime number (default: ``16411``)
-    - ``system`` - either 'magma' or 'sage' (default: 'sage')
+    - ``n`` -- matrix dimension (default: 100)
+    - ``p`` -- prime number (default: ``16411``)
+    - ``system`` -- either 'magma' or 'sage' (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -671,24 +682,25 @@ A := Random(MatrixAlgebra(GF(%s), n));
 t := Cputime();
 K := CharacteristicPolynomial(A);
 s := Cputime(t);
-"""%(n,p)
+""" % (n,p)
         if verbose:
             print(code)
         magma.eval(code)
         return magma.eval('s')
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
 
-def matrix_add_GF(n=1000, p=16411, system='sage',times=100):
+
+def matrix_add_GF(n=1000, p=16411, system='sage', times=100):
     """
     Given two n x n matrix over GF(p) with random entries, add them.
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: 300)
-    - ``p`` - prime number (default: ``16411``)
-    - ``system`` - either 'magma' or 'sage' (default: 'sage')
-    - ``times`` - number of experiments (default: ``100``)
+    - ``n`` -- matrix dimension (default: 300)
+    - ``p`` -- prime number (default: ``16411``)
+    - ``system`` -- either 'magma' or 'sage' (default: ``'sage'``)
+    - ``times`` -- number of experiments (default: ``100``)
 
     EXAMPLES::
 
@@ -713,13 +725,13 @@ for z in [1..%s] do
     K := A + B;
 end for;
 s := Cputime(t);
-"""%(n,p,p,times)
+""" % (n,p,p,times)
         if verbose:
             print(code)
         magma.eval(code)
         return magma.eval('s')
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
 
 
 # Matrix multiplication over GF(p)
@@ -731,10 +743,10 @@ def matrix_multiply_GF(n=100, p=16411, system='sage', times=3):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: 100)
-    - ``p`` - prime number (default: ``16411``)
-    - ``system`` - either 'magma' or 'sage' (default: 'sage')
-    - ``times`` - number of experiments (default: ``3``)
+    - ``n`` -- matrix dimension (default: 100)
+    - ``p`` -- prime number (default: ``16411``)
+    - ``system`` -- either 'magma' or 'sage' (default: ``'sage'``)
+    - ``times`` -- number of experiments (default: ``3``)
 
     EXAMPLES::
 
@@ -759,13 +771,13 @@ for z in [1..%s] do
     K := A * B;
 end for;
 s := Cputime(t);
-"""%(n,p,times)
+""" % (n,p,times)
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))/times
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
 
 
 def rank_GF(n=500, p=16411, system='sage'):
@@ -775,9 +787,9 @@ def rank_GF(n=500, p=16411, system='sage'):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: 300)
-    - ``p`` - prime number (default: ``16411``)
-    - ``system`` - either 'magma' or 'sage' (default: 'sage')
+    - ``n`` -- matrix dimension (default: 300)
+    - ``p`` -- prime number (default: ``16411``)
+    - ``system`` -- either 'magma' or 'sage' (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -797,13 +809,14 @@ A := Random(MatrixAlgebra(GF(%s), n));
 t := Cputime();
 K := Rank(A);
 s := Cputime(t);
-"""%(n,p)
+""" % (n,p)
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
+
 
 def rank2_GF(n=500, p=16411, system='sage'):
     """
@@ -812,9 +825,9 @@ def rank2_GF(n=500, p=16411, system='sage'):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: 300)
-    - ``p`` - prime number (default: ``16411``)
-    - ``system`` - either 'magma' or 'sage' (default: 'sage')
+    - ``n`` -- matrix dimension (default: 300)
+    - ``p`` -- prime number (default: ``16411``)
+    - ``system`` -- either 'magma' or 'sage' (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -834,13 +847,14 @@ A := Random(MatrixAlgebra(GF(%s), n));
 t := Cputime();
 K := Rank(A);
 s := Cputime(t);
-"""%(n,p)
+""" % (n,p)
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
+
 
 def det_GF(n=400, p=16411 , system='sage'):
     """
@@ -850,9 +864,9 @@ def det_GF(n=400, p=16411 , system='sage'):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: 300)
-    - ``p`` - prime number (default: ``16411``)
-    - ``system`` - either 'magma' or 'sage' (default: 'sage')
+    - ``n`` -- matrix dimension (default: 300)
+    - ``p`` -- prime number (default: ``16411``)
+    - ``system`` -- either 'magma' or 'sage' (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -872,13 +886,13 @@ A := Random(MatrixAlgebra(GF(%s), n));
 t := Cputime();
 d := Determinant(A);
 s := Cputime(t);
-"""%(n,p)
+""" % (n,p)
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
 
 
 #######################################################################
@@ -887,7 +901,7 @@ s := Cputime(t);
 
 def hilbert_matrix(n):
     """
-    Returns the Hilbert matrix of size n over rationals.
+    Return the Hilbert matrix of size n over rationals.
 
     EXAMPLES::
 
@@ -905,6 +919,7 @@ def hilbert_matrix(n):
 
 # Reduced row echelon form over QQ
 
+
 def echelon_QQ(n=100, min=0, max=9, system='sage'):
     """
     Given a n x (2*n) matrix over QQ with random integer entries
@@ -912,10 +927,10 @@ def echelon_QQ(n=100, min=0, max=9, system='sage'):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: ``300``)
-    - ``min`` - minimal value for entries of matrix (default: ``-9``)
-    - ``max`` - maximal value for entries of matrix (default: ``9``)
-    - ``system`` - either 'sage' or 'magma' (default: 'sage')
+    - ``n`` -- matrix dimension (default: ``300``)
+    - ``min`` -- minimal value for entries of matrix (default: ``-9``)
+    - ``max`` -- maximal value for entries of matrix (default: ``9``)
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -935,15 +950,16 @@ A := RMatrixSpace(RationalField(), n, 2*n)![Random(%s,%s) : i in [1..n*2*n]];
 t := Cputime();
 K := EchelonForm(A);
 s := Cputime(t);
-"""%(n,min,max)
+""" % (n,min,max)
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
 
 # Invert a matrix over QQ.
+
 
 def inverse_QQ(n=100, min=0, max=9, system='sage'):
     """
@@ -952,10 +968,10 @@ def inverse_QQ(n=100, min=0, max=9, system='sage'):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: ``300``)
-    - ``min`` - minimal value for entries of matrix (default: ``-9``)
-    - ``max`` - maximal value for entries of matrix (default: ``9``)
-    - ``system`` - either 'sage' or 'magma' (default: 'sage')
+    - ``n`` -- matrix dimension (default: ``300``)
+    - ``min`` -- minimal value for entries of matrix (default: ``-9``)
+    - ``max`` -- maximal value for entries of matrix (default: ``9``)
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -975,13 +991,13 @@ A := MatrixAlgebra(RationalField(), n)![Random(%s,%s) : i in [1..n*n]];
 t := Cputime();
 K := A^(-1);
 s := Cputime(t);
-"""%(n,min,max)
+""" % (n,min,max)
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
 
 
 # Matrix multiplication over QQ
@@ -993,10 +1009,10 @@ def matrix_multiply_QQ(n=100, bnd=2, system='sage', times=1):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: ``300``)
-    - ``bnd`` - numerator and denominator bound (default: ``bnd``)
-    - ``system`` - either 'sage' or 'magma' (default: 'sage')
-    - ``times`` - number of experiments (default: ``1``)
+    - ``n`` -- matrix dimension (default: ``300``)
+    - ``bnd`` -- numerator and denominator bound (default: ``bnd``)
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
+    - ``times`` -- number of experiments (default: ``1``)
 
     EXAMPLES::
 
@@ -1022,25 +1038,25 @@ for z in [1..%s] do
     K := A * B;
 end for;
 s := Cputime(t);
-"""%(n, A.name(), times)
+""" % (n, A.name(), times)
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))/times
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
 
 
 # Determinant of Hilbert matrix
 def det_hilbert_QQ(n=80, system='sage'):
     """
-    Runs the benchmark for calculating the determinant of the hilbert
+    Run the benchmark for calculating the determinant of the hilbert
     matrix over rationals of dimension n.
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: ``300``)
-    - ``system`` - either 'sage' or 'magma' (default: 'sage')
+    - ``n`` -- matrix dimension (default: ``300``)
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -1060,22 +1076,24 @@ tinit := Cputime();
 d := Determinant(h);
 s := Cputime(tinit);
 delete h;
-"""%n
+""" % n
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
 
 # inverse of Hilbert matrix
+
+
 def invert_hilbert_QQ(n=40, system='sage'):
     """
-    Runs the benchmark for calculating the inverse of the hilbert
+    Run the benchmark for calculating the inverse of the hilbert
     matrix over rationals of dimension n.
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: ``300``)
-    - ``system`` - either 'sage' or 'magma' (default: 'sage')
+    - ``n`` -- matrix dimension (default: ``300``)
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -1095,23 +1113,24 @@ tinit := Cputime();
 d := h^(-1);
 s := Cputime(tinit);
 delete h;
-"""%n
+""" % n
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
 
-def MatrixVector_QQ(n=1000,h=100,system='sage',times=1):
+
+def MatrixVector_QQ(n=1000, h=100, system='sage', times=1):
     """
     Compute product of square ``n`` matrix by random vector with num and
     denom bounded by ``h`` the given number of ``times``.
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: ``300``)
-    - ``h`` - numerator and denominator bound (default: ``bnd``)
-    - ``system`` - either 'sage' or 'magma' (default: 'sage')
-    - ``times`` - number of experiments (default: ``1``)
+    - ``n`` -- matrix dimension (default: ``300``)
+    - ``h`` -- numerator and denominator bound (default: ``bnd``)
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
+    - ``times`` -- number of experiments (default: ``1``)
 
     EXAMPLES::
 
@@ -1119,13 +1138,13 @@ def MatrixVector_QQ(n=1000,h=100,system='sage',times=1):
         sage: ts = b.MatrixVector_QQ(500)
         sage: tm = b.MatrixVector_QQ(500, system='magma')  # optional - magma
     """
-    if system=='sage':
-        V=QQ**n
-        v=V.random_element(h)
-        M=random_matrix(QQ,n)
-        t=cputime()
+    if system == 'sage':
+        V = QQ**n
+        v = V.random_element(h)
+        M = random_matrix(QQ,n)
+        t = cputime()
         for i in range(times):
-            w=M*v
+            w = M*v
         return cputime(t)
     elif system == 'magma':
         code = """
@@ -1139,13 +1158,13 @@ def MatrixVector_QQ(n=1000,h=100,system='sage',times=1):
                 W:=v*M;
             end for;
             s := Cputime(t);
-        """%(n,h,times)
+        """ % (n,h,times)
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
 
 
 #######################################################################
@@ -1164,10 +1183,10 @@ def nullspace_RR(n=300, min=0, max=10, system='sage'):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: ``300``)
-    - ``min`` - minimal value for entries of matrix (default: ``0``)
-    - ``max`` - maximal value for entries of matrix (default: ``10``)
-    - ``system`` - either 'sage' or 'magma' (default: 'sage')
+    - ``n`` -- matrix dimension (default: ``300``)
+    - ``min`` -- minimal value for entries of matrix (default: ``0``)
+    - ``max`` -- maximal value for entries of matrix (default: ``10``)
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -1188,13 +1207,13 @@ A := RMatrixSpace(RealField(16), n+1,n)![Random(%s,%s) : i in [1..n*(n+1)]];
 t := Cputime();
 K := Kernel(A);
 s := Cputime(t);
-"""%(n,min,max)
+""" % (n,min,max)
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
-        raise ValueError('unknown system "%s"'%system)
+        raise ValueError('unknown system "%s"' % system)
 
 
 def nullspace_RDF(n=300, min=0, max=10, system='sage'):
@@ -1205,10 +1224,10 @@ def nullspace_RDF(n=300, min=0, max=10, system='sage'):
 
     INPUT:
 
-    - ``n`` - matrix dimension (default: ``300``)
-    - ``min`` - minimal value for entries of matrix (default: ``0``)
-    - ``max`` - maximal value for entries of matrix (default: `10``)
-    - ``system`` - either 'sage' or 'magma' (default: 'sage')
+    - ``n`` -- matrix dimension (default: ``300``)
+    - ``min`` -- minimal value for entries of matrix (default: ``0``)
+    - ``max`` -- maximal value for entries of matrix (default: ``10``)
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 

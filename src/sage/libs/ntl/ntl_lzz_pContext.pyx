@@ -70,7 +70,7 @@ cdef class ntl_zz_pContext_class():
 
     def modulus(self):
         """
-        Print the modulus for self.
+        Print the modulus for ``self``.
 
         EXAMPLES::
 
@@ -92,7 +92,7 @@ cdef class ntl_zz_pContext_class():
         """
         self.restore_c()
 
-    cdef void restore_c(self):
+    cdef void restore_c(self) noexcept:
         """
         Actual code for the above.
 

@@ -1,1 +1,1 @@
-$(PYTHON) coxeter3 | $(PYTHON_TOOLCHAIN) sage_setup sagemath_environment cython pkgconfig
+ coxeter3 | $(PYTHON_TOOLCHAIN) sage_setup sagemath_environment cython pkgconfig $(PYTHON)

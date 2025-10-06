@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Regular Supercrystals
@@ -38,7 +39,7 @@ class RegularSuperCrystals(Category_singleton):
 
     - either an attribute ``_cartan_type`` or a method ``cartan_type``
 
-    - ``module_generators``: a list (or container) of distinct elements
+    - ``module_generators`` -- a list (or container) of distinct elements
       that generate the crystal using `f_i` and `e_i`
 
     Furthermore, their elements ``x`` should implement the following
@@ -88,6 +89,8 @@ class RegularSuperCrystals(Category_singleton):
         running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
+        running ._test_random() . . . pass
+        running ._test_rank() . . . pass
         running ._test_some_elements() . . . pass
     """
     def super_categories(self):

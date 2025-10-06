@@ -1,11 +1,11 @@
 """
 Faster versions of some key functions in mpmath.libmp
 """
-from .ext_impl cimport *
+from sage.libs.mpmath.ext_impl cimport *
 from sage.libs.gmp.all cimport *
 
 # the next line is used by mpmath
-from .ext_impl import exp_fixed, cos_sin_fixed, log_int_fixed
+from sage.libs.mpmath.ext_impl import exp_fixed, cos_sin_fixed, log_int_fixed
 
 # Note: not thread-safe
 cdef MPF tmp1
@@ -218,7 +218,6 @@ def mpf_pow(tuple x, tuple y, int prec, str rnd='d'):
         sage: z = mpf_pow(x, y, 53, 'n')
         sage: to_float(z)
         8.0
-
     """
     cdef MPopts opts
     MPF_set_tuple(&tmp1, x)

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Library of commonly used, famous, or interesting polytopes
 
@@ -32,6 +31,7 @@ The following constructions are available
     :meth:`~sage.geometry.polyhedron.library.Polytopes.Gosset_3_21`
     :meth:`~sage.geometry.polyhedron.library.Polytopes.grand_antiprism`
     :meth:`~sage.geometry.polyhedron.library.Polytopes.great_rhombicuboctahedron`
+    :meth:`~sage.geometry.polyhedron.library.Polytopes.harmonic_polytope`
     :meth:`~sage.geometry.polyhedron.library.Polytopes.hypercube`
     :meth:`~sage.geometry.polyhedron.library.Polytopes.hypersimplex`
     :meth:`~sage.geometry.polyhedron.library.Polytopes.icosahedron`
@@ -84,13 +84,15 @@ import itertools
 from sage.rings.integer_ring import ZZ
 from sage.misc.lazy_import import lazy_import
 from sage.rings.rational_field import QQ
-lazy_import('sage.combinat.permutation', 'Permutations')
-lazy_import('sage.groups.perm_gps.permgroup_named', 'AlternatingGroup')
 from .constructor import Polyhedron
 from .parent import Polyhedra
+
+lazy_import('sage.combinat.permutation', 'Permutations')
+lazy_import('sage.groups.perm_gps.permgroup_named', 'AlternatingGroup')
 lazy_import('sage.graphs.digraph', 'DiGraph')
 lazy_import('sage.graphs.graph', 'Graph')
 lazy_import('sage.combinat.root_system.associahedron', 'Associahedron')
+
 
 def zero_sum_projection(d, base_ring=None):
     r"""
@@ -120,7 +122,6 @@ def zero_sum_projection(d, base_ring=None):
         sage: zero_sum_projection(3, base_ring=AA)                                      # needs sage.rings.number_field
         [ 0.7071067811865475? -0.7071067811865475?                    0]
         [ 0.4082482904638630?  0.4082482904638630? -0.8164965809277260?]
-
     """
     from sage.matrix.constructor import matrix
     from sage.modules.free_module_element import vector
@@ -136,10 +137,10 @@ def project_points(*points, **kwds):
 
     INPUT:
 
-    - ``points``... -- the points to project.
+    - ``points``... -- the points to project
 
     - ``base_ring`` -- (defaults to ``RDF`` if keyword is ``None`` or not
-      provided in ``kwds``) the base ring to use.
+      provided in ``kwds``) the base ring to use
 
     The projection is isometric to the orthogonal projection on the hyperplane
     made of zero sum vector. Hence, if the set of points have all equal sums,
@@ -184,7 +185,6 @@ def project_points(*points, **kwds):
         sage: for i in range(len(V)):                                                   # needs sage.combinat sage.rings.number_field
         ....:     for j in range(len(V)):
         ....:         assert (V[i]-V[j]).norm() == (P[i]-P[j]).norm()
-
     """
     if not points:
         return []
@@ -209,10 +209,10 @@ def gale_transform_to_polytope(vectors, base_ring=None, backend=None):
 
     - ``vectors`` -- the vectors of the Gale transform
 
-    - ``base_ring`` -- string (default: `None`);
+    - ``base_ring`` -- string (default: ``None``);
       the base ring to be used for the construction
 
-    - ``backend`` -- string (default: `None`);
+    - ``backend`` -- string (default: ``None``);
       the backend to use to create the polytope
 
     .. NOTE::
@@ -322,6 +322,7 @@ def gale_transform_to_polytope(vectors, base_ring=None, backend=None):
 
     return P
 
+
 def gale_transform_to_primal(vectors, base_ring=None, backend=None):
     r"""
     Return a point configuration dual to a totally cyclic vector configuration.
@@ -334,15 +335,15 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
 
     - ``vectors`` -- the ordered vectors of the Gale transform
 
-    - ``base_ring`` -- string (default: `None`);
+    - ``base_ring`` -- string (default: ``None``);
       the base ring to be used for the construction
 
-    - ``backend`` -- string (default: `None`);
+    - ``backend`` -- string (default: ``None``);
       the backend to be use to construct a polyhedral,
       used internally in case the center is not the origin,
       see :func:`~sage.geometry.polyhedron.constructor.Polyhedron`
 
-    OUTPUT: An ordered point configuration as list of vectors.
+    OUTPUT: an ordered point configuration as list of vectors
 
     .. NOTE::
 
@@ -435,7 +436,7 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
         ValueError: input vectors not totally cyclic
     """
     from sage.modules.free_module_element import vector
-    from sage.matrix.constructor import Matrix
+    from sage.matrix.constructor import matrix
     if base_ring:
         vectors = tuple(vector(base_ring, x) for x in vectors)
     else:
@@ -444,7 +445,7 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
     if not sum(vectors).is_zero():
         # The center of the input vectors shall be the origin.
         # If this is not the case, we scale them accordingly.
-        # This has the adventage that right kernel of ``vectors`` can be
+        # This has the advantage that right kernel of ``vectors`` can be
         # presented in the form ``[[1], [V]]``, where ``V`` are the points
         # in the dual point configuration.
         # (Dehomogenization is straightforward.)
@@ -455,9 +456,9 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
         # (And this is faster.)
 
         if base_ring:
-            ker = Matrix(base_ring, vectors).left_kernel()
+            ker = matrix(base_ring, vectors).left_kernel()
         else:
-            ker = Matrix(vectors).left_kernel()
+            ker = matrix(vectors).left_kernel()
         solutions = Polyhedron(lines=tuple(ker.basis_matrix()), base_ring=base_ring, backend=backend)
 
         from sage.matrix.special import identity_matrix
@@ -471,15 +472,15 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
         x = pos_solutions.representative_point()
         if not all(y > 0 for y in x):
             raise ValueError("input vectors not totally cyclic")
-        vectors = tuple(vec*x[i] for i,vec in enumerate(vectors))
+        vectors = tuple(vec*x[i] for i, vec in enumerate(vectors))
 
     # The right kernel of ``vectors`` has a basis of the form ``[[1], [V]]``,
     # where ``V`` is the dehomogenized dual point configuration.
     # If we append a row of ones to ``vectors``, ``V`` is just the right kernel.
     if base_ring:
-        m = Matrix(base_ring, vectors).transpose().stack(Matrix(base_ring, [[1]*len(vectors)]))
+        m = matrix(base_ring, vectors).transpose().stack(matrix(base_ring, [[1]*len(vectors)]))
     else:
-        m = Matrix(vectors).transpose().stack(Matrix([[1]*len(vectors)]))
+        m = matrix(vectors).transpose().stack(matrix([[1]*len(vectors)]))
 
     if m.rank() != len(vectors[0]) + 1:
         # The given vectors do not span the ambient space,
@@ -489,7 +490,7 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
     return m.right_kernel_matrix(basis='computed').columns()
 
 
-class Polytopes():
+class Polytopes:
     """
     A class of constructors for commonly used, famous, or interesting
     polytopes.
@@ -501,17 +502,17 @@ class Polytopes():
 
         INPUT:
 
-        - ``n`` -- a positive integer, the number of vertices.
+        - ``n`` -- positive integer; the number of vertices
 
-        - ``exact`` -- (boolean, default ``True``) if ``False`` floating point
-          numbers are used for coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` floating point
+          numbers are used for coordinates
 
         - ``base_ring`` -- a ring in which the coordinates will lie. It is
           ``None`` by default. If it is not provided and ``exact`` is ``True``
           then it will be the field of real algebraic number, if ``exact`` is
           ``False`` it will be the real double field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -580,9 +581,9 @@ class Polytopes():
 
         INPUT:
 
-        - ``n`` -- a positive integer giving the size of the permutation matrices.
+        - ``n`` -- positive integer giving the size of the permutation matrices
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         .. SEEALSO::
 
@@ -633,21 +634,21 @@ class Polytopes():
 
         INPUT:
 
-        - ``dim`` -- The dimension of the simplex, a positive
-          integer.
+        - ``dim`` -- the dimension of the simplex, a positive
+          integer
 
-        - ``project`` -- (boolean, default ``False``) if ``True``, the polytope
+        - ``project`` -- boolean (default: ``False``); if ``True``, the polytope
           is (isometrically) projected to a vector space of dimension
           ``dim-1``.  This corresponds to the projection given by the matrix
           from :func:`zero_sum_projection`.  By default, this operation turns
           the coordinates into floating point approximations (see
           ``base_ring``).
 
-        - ``base_ring`` -- the base ring to use to create the polytope.
-          If ``project`` is ``False``, this defaults to `\ZZ`.
+        - ``base_ring`` -- the base ring to use to create the polytope;
+          if ``project`` is ``False``, this defaults to `\ZZ`.
           Otherwise, it defaults to ``RDF``.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         .. SEEALSO::
 
@@ -706,8 +707,8 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
         - ``base_ring`` -- (optional) the ring in which the coordinates will
           belong to.  Note that this ring must contain `\sqrt(5)`. If it is not
@@ -715,7 +716,7 @@ class Polytopes():
           `\QQ[\sqrt(5)]` and if ``exact=False`` it will be the real double
           field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -760,8 +761,7 @@ class Polytopes():
             sage: TestSuite(ico).run()
 
             sage: ico = polytopes.icosahedron(exact=False)                              # needs sage.groups
-            sage: TestSuite(ico).run(skip="_test_lawrence")                             # needs sage.groups
-
+            sage: TestSuite(ico).run(skip='_test_lawrence')                             # needs sage.groups
         """
         if base_ring is None and exact:
             from sage.rings.number_field.number_field import QuadraticField
@@ -789,8 +789,8 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
         - ``base_ring`` -- (optional) the ring in which the coordinates will
           belong to.  Note that this ring must contain `\sqrt(5)`. If it is not
@@ -798,7 +798,7 @@ class Polytopes():
           `\QQ[\sqrt(5)]` and if ``exact=False`` it will be the real double
           field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -840,15 +840,15 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
         - ``base_ring`` -- the ring in which the coordinates will belong to. If
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False``
           it will be the real double field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -912,15 +912,15 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
         - ``base_ring`` -- the ring in which the coordinates will belong to. If
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False``
           it will be the real double field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -970,7 +970,7 @@ class Polytopes():
 
         INPUT:
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         .. SEEALSO::
 
@@ -1002,8 +1002,8 @@ class Polytopes():
             sage: rd_norm = polytopes.rhombic_dodecahedron(backend='normaliz')  # optional - pynormaliz
             sage: TestSuite(rd_norm).run()                                      # optional - pynormaliz
         """
-        v = [[2,0,0],[-2,0,0],[0,2,0],[0,-2,0],[0,0,2],[0,0,-2]]
-        v.extend((itertools.product([1, -1], repeat=3)))
+        v = [[2, 0, 0], [-2, 0, 0], [0, 2, 0], [0, -2, 0], [0, 0, 2], [0, 0, -2]]
+        v.extend(itertools.product([1, -1], repeat=3))
         return Polyhedron(vertices=v, base_ring=ZZ, backend=backend)
 
     def cuboctahedron(self, backend=None):
@@ -1018,7 +1018,7 @@ class Polytopes():
 
         INPUT:
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         .. SEEALSO::
 
@@ -1066,15 +1066,15 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
         - ``base_ring`` -- the ring in which the coordinates will belong to. If
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\sqrt{2}]` and if ``exact=False`` it
           will be the real double field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1100,7 +1100,6 @@ class Polytopes():
             sage: co.f_vector()                 # optional - pynormaliz                 # needs sage.rings.number_field
             (1, 24, 36, 14, 1)
             sage: TestSuite(co).run()           # optional - pynormaliz                 # needs sage.rings.number_field
-
         """
         if base_ring is None and exact:
             from sage.rings.number_field.number_field import QuadraticField
@@ -1130,7 +1129,7 @@ class Polytopes():
 
         INPUT:
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         .. SEEALSO::
 
@@ -1174,7 +1173,7 @@ class Polytopes():
 
         INPUT:
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1201,10 +1200,10 @@ class Polytopes():
             sage: tt_norm = polytopes.truncated_tetrahedron(backend='normaliz')     # optional - pynormaliz
             sage: TestSuite(tt_norm).run()                                          # optional - pynormaliz
         """
-        v = [(3,1,1), (1,3,1), (1,1,3),
-             (-3,-1,1), (-1,-3,1), (-1,-1,3),
-             (-3,1,-1), (-1,3,-1), (-1,1,-3),
-             (3,-1,-1), (1,-3,-1), (1,-1,-3)]
+        v = [(3, 1, 1), (1, 3, 1), (1, 1, 3),
+             (-3, -1, 1), (-1, -3, 1), (-1, -1, 3),
+             (-3, 1, -1), (-1, 3, -1), (-1, 1, -3),
+             (3, -1, -1), (1, -3, -1), (1, -1, -3)]
         return Polyhedron(vertices=v, base_ring=ZZ, backend=backend)
 
     def truncated_octahedron(self, backend=None):
@@ -1220,7 +1219,7 @@ class Polytopes():
 
         INPUT:
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1264,7 +1263,7 @@ class Polytopes():
 
         INPUT:
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1307,15 +1306,15 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``False``) if ``True`` use exact
+        - ``exact`` -- boolean (default: ``False``); if ``True`` use exact
           coordinates instead of floating point approximations
 
-        - ``base_ring`` -- the field to use. If ``None`` (the default),
+        - ``base_ring`` -- the field to use; if ``None`` (the default),
           construct the exact number field needed (if ``exact`` is ``True``) or
-          default to ``RDF`` (if ``exact`` is ``True``).
+          default to ``RDF`` (if ``exact`` is ``True``)
 
-        - ``backend`` -- the backend to use to create the polytope.  If
-          ``None`` (the default), the backend will be selected automatically.
+        - ``backend`` -- the backend to use to create the polytope; if
+          ``None`` (the default), the backend will be selected automatically
 
         EXAMPLES::
 
@@ -1362,7 +1361,6 @@ class Polytopes():
             sage: sc = polytopes.snub_cube(exact=True, backend='normaliz')      # optional - pynormaliz, needs sage.groups sage.rings.number_field
             sage: sc.f_vector()                                                 # optional - pynormaliz, needs sage.groups sage.rings.number_field
             (1, 24, 60, 38, 1)
-
         """
         def construct_z(field):
             # z here is the reciprocal of the tribonacci constant, that is, the
@@ -1413,15 +1411,15 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
         - ``base_ring`` -- the ring in which the coordinates will belong to. If
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False``
           it will be the real double field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1456,7 +1454,6 @@ class Polytopes():
             sage: bb.base_ring()
             Number Field in sqrt5 with defining polynomial x^2 - 5
              with sqrt5 = 2.236067977499790?
-
         """
         return self.icosahedron(exact=exact, base_ring=base_ring, backend=backend).truncation()
 
@@ -1470,10 +1467,10 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1531,19 +1528,19 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
-        - ``base_ring`` -- the ring in which the coordinates will belong to.
+        - ``base_ring`` -- the ring in which the coordinates will belong to
           If it is not provided and ``exact=True`` it will be a the number
           field `\QQ[\phi]` where `\phi` is the golden ratio and if
           ``exact=False`` it will be the real double field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
-            sage: id = polytopes.icosidodecahedron_V2()   # long time - 6secs
+            sage: id = polytopes.icosidodecahedron_V2()   # long time (6s)
             sage: id.f_vector()                           # long time
             (1, 30, 60, 32, 1)
             sage: id.base_ring()                          # long time
@@ -1605,15 +1602,15 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
         - ``base_ring`` -- the ring in which the coordinates will belong to. If
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False``
           it will be the real double field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1658,7 +1655,6 @@ class Polytopes():
             sage: td.base_ring()
             Number Field in sqrt5 with defining polynomial x^2 - 5
              with sqrt5 = 2.236067977499790?
-
         """
         if base_ring is None and exact:
             from sage.rings.number_field.number_field import QuadraticField
@@ -1673,7 +1669,7 @@ class Polytopes():
 
         z = base_ring.zero()
         pts = [[z, s1 * base_ring.one() / g, s2 * (2 + g)]
-                for s1, s2 in itertools.product([1, -1], repeat=2)]
+               for s1, s2 in itertools.product([1, -1], repeat=2)]
         pts += [[s1 * base_ring.one() / g, s2 * g, s3 * (2 * g)]
                 for s1, s2, s3 in itertools.product([1, -1], repeat=3)]
         pts += [[s1 * g, s2 * base_ring(2), s3 * (g ** 2)]
@@ -1694,19 +1690,19 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
         - ``base_ring`` -- the ring in which the coordinates will belong to. If
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False``
           it will be the real double field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
-            sage: pd = polytopes.pentakis_dodecahedron()    # long time - ~10 sec
+            sage: pd = polytopes.pentakis_dodecahedron()    # long time (10s)
             sage: pd.n_vertices()                           # long time
             32
             sage: pd.n_inequalities()                       # long time
@@ -1737,7 +1733,7 @@ class Polytopes():
 
         INPUT:
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1776,15 +1772,15 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
         - ``base_ring`` -- the ring in which the coordinates will belong to. If
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False``
           it will be the real double field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1821,7 +1817,6 @@ class Polytopes():
             sage: rid.base_ring()
             Number Field in sqrt5 with defining polynomial x^2 - 5
              with sqrt5 = 2.236067977499790?
-
         """
         if base_ring is None and exact:
             from sage.rings.number_field.number_field import QuadraticField
@@ -1835,7 +1830,7 @@ class Polytopes():
             g = (1 + base_ring(5).sqrt()) / 2
 
         pts = [[s1 * base_ring.one(), s2 * base_ring.one(), s3 * (g**3)]
-                for s1, s2, s3 in itertools.product([1, -1], repeat=3)]
+               for s1, s2, s3 in itertools.product([1, -1], repeat=3)]
         pts += [[s1 * (g**2), s2 * g, s3 * 2 * g]
                 for s1, s2, s3 in itertools.product([1, -1], repeat=3)]
         pts += [[s1 * (2 + g), 0, s2 * (g**2)]
@@ -1856,15 +1851,15 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
         - ``base_ring`` -- the ring in which the coordinates will belong to. If
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False``
           it will be the real double field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1899,7 +1894,6 @@ class Polytopes():
             (1, 120, 180, 62, 1)
             sage: ti.base_ring()                                                  # optional - pynormaliz
             Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
-
         """
         if base_ring is None and exact:
             from sage.rings.number_field.number_field import QuadraticField
@@ -1913,7 +1907,7 @@ class Polytopes():
             g = (1 + base_ring(5).sqrt()) / 2
 
         pts = [[s1 * 1 / g, s2 * 1 / g, s3 * (3 + g)]
-                for s1, s2, s3 in itertools.product([1, -1], repeat=3)]
+               for s1, s2, s3 in itertools.product([1, -1], repeat=3)]
         pts += [[s1 * 2 / g, s2 * g, s3 * (1 + 2 * g)]
                 for s1, s2, s3 in itertools.product([1, -1], repeat=3)]
         pts += [[s1 * 1 / g, s2 * (g**2), s3 * (-1 + 3 * g)]
@@ -1938,10 +1932,10 @@ class Polytopes():
 
         INPUT:
 
-        - ``base_ring`` -- the ring in which the coordinates will belong to. If
-          it is not provided it will be the real double field.
+        - ``base_ring`` -- the ring in which the coordinates will belong to; if
+          it is not provided it will be the real double field
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES:
 
@@ -1974,7 +1968,6 @@ class Polytopes():
             (1, 60, 150, 92, 1)
             sage: sd.base_ring()                            # not tested
             Real Double Field
-
         """
         if base_ring is None:
             from sage.rings.real_double import RDF as base_ring
@@ -1984,10 +1977,10 @@ class Polytopes():
 
         alpha = xi - 1 / xi
         beta = xi * phi + phi**2 + phi / xi
-        signs = [[-1,-1,-1], [-1,1,1], [1,-1,1], [1,1,-1]]
+        signs = [[-1, -1, -1], [-1, 1, 1], [1, -1, 1], [1, 1, -1]]
 
         pts = [[s1 * 2 * alpha, s2 * 2 * base_ring.one(), s3 * 2 * beta]
-                for s1, s2, s3 in signs]
+               for s1, s2, s3 in signs]
         pts += [[s1 * (alpha + beta/phi + phi), s2 * (-alpha * phi + beta + 1/phi), s3 * (alpha/phi + beta * phi - 1)]
                 for s1, s2, s3 in signs]
         pts += [[s1 * (alpha + beta/phi - phi), s2 * (alpha * phi - beta + 1/phi), s3 * (alpha/phi + beta * phi + 1)]
@@ -2013,7 +2006,7 @@ class Polytopes():
 
         INPUT:
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2062,10 +2055,10 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``True``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2091,10 +2084,10 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``True``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2120,10 +2113,10 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``True``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2149,10 +2142,10 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``False``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``False``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2189,10 +2182,10 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``False``) if ``True`` use exact
+        - ``exact`` -- boolean (default: ``False``); if ``True`` use exact
           coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2202,7 +2195,7 @@ class Polytopes():
         It is possible to use the backend ``'normaliz'`` to get an exact
         representation::
 
-            sage: polytopes.truncated_six_hundred_cell(exact=True,backend='normaliz') # not tested - long time ~16sec
+            sage: polytopes.truncated_six_hundred_cell(exact=True,backend='normaliz')  # not tested, long time (16s)
             A 4-dimensional polyhedron in AA^4 defined as the convex hull of 1440 vertices
         """
         return self.generalized_permutahedron(['H', 4], point=[1, 1, 0, 0], exact=exact, backend=backend, regular=True)
@@ -2223,14 +2216,14 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``True``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
-            sage: polytopes.rectified_six_hundred_cell(backend='normaliz')  # not tested - long time ~14sec
+            sage: polytopes.rectified_six_hundred_cell(backend='normaliz')              # not tested, long time (14s)
             A 4-dimensional polyhedron in AA^4 defined as the convex hull of 720 vertices
         """
         return self.generalized_permutahedron(['H', 4], point=[0, 1, 0, 0], exact=exact, backend=backend, regular=True)
@@ -2249,10 +2242,10 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``False``) if ``True`` use exact
+        - ``exact`` -- boolean (default: ``False``); if ``True`` use exact
           coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2287,11 +2280,11 @@ class Polytopes():
 
         q12 = base_ring(1) / base_ring(2)
         z = base_ring.zero()
-        verts = [[s1*q12, s2*q12, s3*q12, s4*q12] for s1,s2,s3,s4 in itertools.product([1,-1], repeat=4)]
+        verts = [[s1*q12, s2*q12, s3*q12, s4*q12] for s1, s2, s3, s4 in itertools.product([1, -1], repeat=4)]
         V = (base_ring)**4
         verts.extend(V.basis())
         verts.extend(-v for v in V.basis())
-        pts = [[s1 * q12, s2*g/2, s3/(2*g), z] for (s1,s2,s3) in itertools.product([1,-1], repeat=3)]
+        pts = [[s1 * q12, s2*g/2, s3/(2*g), z] for s1, s2, s3 in itertools.product([1, -1], repeat=3)]
         for p in AlternatingGroup(4):
             verts.extend(p(x) for x in pts)
         return Polyhedron(vertices=verts, base_ring=base_ring, backend=backend)
@@ -2313,10 +2306,10 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``False`` use floating
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use floating
           point approximations instead of exact coordinates
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2358,22 +2351,31 @@ class Polytopes():
 
         q12 = base_ring(1) / base_ring(2)
         z = base_ring.zero()
-        verts = [[s1*q12, s2*q12, s3*q12, s4*q12] for s1,s2,s3,s4 in product([1,-1], repeat=4)]
+        verts = [[s1*q12, s2*q12, s3*q12, s4*q12]
+                 for s1, s2, s3, s4 in product([1, -1], repeat=4)]
         V = (base_ring)**4
         verts.extend(V.basis()[2:])
         verts.extend(-v for v in V.basis()[2:])
 
-        verts.extend([s1 * q12, s2/(2*g), s3*g/2, z] for (s1,s2,s3) in product([1,-1], repeat=3))
-        verts.extend([s3*g/2, s1 * q12, s2/(2*g), z] for (s1,s2,s3) in product([1,-1], repeat=3))
-        verts.extend([s2/(2*g), s3*g/2, s1 * q12, z] for (s1,s2,s3) in product([1,-1], repeat=3))
+        verts.extend([s1 * q12, s2/(2*g), s3*g/2, z]
+                     for s1, s2, s3 in product([1, -1], repeat=3))
+        verts.extend([s3*g/2, s1 * q12, s2/(2*g), z]
+                     for s1, s2, s3 in product([1, -1], repeat=3))
+        verts.extend([s2/(2*g), s3*g/2, s1 * q12, z]
+                     for s1, s2, s3 in product([1, -1], repeat=3))
 
-        verts.extend([s1 * q12, s2*g/2, z, s3/(2*g)] for (s1,s2,s3) in product([1,-1], repeat=3))
-        verts.extend([s3/(2*g), s1 * q12, z, s2*g/2] for (s1,s2,s3) in product([1,-1], repeat=3))
-        verts.extend([s2*g/2, s3/(2*g), z, s1 * q12] for (s1,s2,s3) in product([1,-1], repeat=3))
+        verts.extend([s1 * q12, s2*g/2, z, s3/(2*g)]
+                     for s1, s2, s3 in product([1, -1], repeat=3))
+        verts.extend([s3/(2*g), s1 * q12, z, s2*g/2]
+                     for s1, s2, s3 in product([1, -1], repeat=3))
+        verts.extend([s2*g/2, s3/(2*g), z, s1 * q12]
+                     for s1, s2, s3 in product([1, -1], repeat=3))
 
-        verts.extend([s1 * q12, z, s2/(2*g), s3*g/2] for (s1,s2,s3) in product([1,-1], repeat=3))
+        verts.extend([s1 * q12, z, s2/(2*g), s3*g/2]
+                     for s1, s2, s3 in product([1, -1], repeat=3))
 
-        verts.extend([z, s1 * q12, s2*g/2, s3/(2*g)] for (s1,s2,s3) in product([1,-1], repeat=3))
+        verts.extend([z, s1 * q12, s2*g/2, s3/(2*g)]
+                     for s1, s2, s3 in product([1, -1], repeat=3))
 
         verts.extend([z, s1/(2*g), q12, g/2] for s1 in [1, -1])
         verts.extend([z, s1/(2*g), -q12, -g/2] for s1 in [1, -1])
@@ -2399,7 +2401,7 @@ class Polytopes():
 
         INPUT:
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2434,13 +2436,13 @@ class Polytopes():
 
         INPUT:
 
-        - ``dim`` -- positive integer. the dimension of the polytope.
+        - ``dim`` -- positive integer; the dimension of the polytope
 
-        - ``n`` -- positive integer. the number of vertices.
+        - ``n`` -- positive integer; the number of vertices
 
-        - ``base_ring`` -- either ``QQ`` (default) or ``RDF``.
+        - ``base_ring`` -- either ``QQ`` (default) or ``RDF``
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2475,13 +2477,13 @@ class Polytopes():
 
         - ``n`` -- the numbers ``(1,...,n)`` are permuted
 
-        - ``project`` -- (boolean, default ``False``) if ``True``, the polytope
+        - ``project`` -- boolean (default: ``False``); if ``True``, the polytope
           is (isometrically) projected to a vector space of dimension
           ``dim-1``.  This operation turns the coordinates into floating point
           approximations and corresponds to the projection given by the matrix
           from :func:`zero_sum_projection`.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2526,13 +2528,13 @@ class Polytopes():
 
         - ``n`` -- integer
 
-        - ``project`` -- (boolean, default ``False``) if ``True``, the polytope
+        - ``project`` -- boolean (default: ``False``); if ``True``, the polytope
           is (isometrically) projected to a vector space of dimension
           ``dim-1``.  This operation turns the coordinates into floating point
           approximations and corresponds to the projection given by the matrix
           from :func:`zero_sum_projection`.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2552,7 +2554,7 @@ class Polytopes():
             sage: perm4.graph().is_isomorphic(graphs.BubbleSortGraph(4))                # needs sage.graphs
             True
 
-        As both Hrepresentation an Vrepresentation are known, the permutahedron can be set
+        As both Hrepresentation and Vrepresentation are known, the permutahedron can be set
         up with both using the backend ``field``. The following takes very very long time
         to recompute, e.g. with backend ``ppl``::
 
@@ -2589,14 +2591,14 @@ class Polytopes():
             # a facet that minimizes the coordinates in `S`.
             # The minimal sum for `m` coordinates is `(m*(m+1))/2`.
             ieqs = ((-tri(sum(x)),) + x
-                    for x in itertools.product([0,1], repeat=n)
+                    for x in itertools.product([0, 1], repeat=n)
                     if 0 < sum(x) < n)
 
             # Adding the defining equality.
             eqns = ((-tri(n),) + tuple(1 for _ in range(n)),)
 
             return parent([verts, [], []], [ieqs, eqns],
-                          Vrep_minimal=True, Hrep_minimal=True, pref_rep="Hrep")
+                          Vrep_minimal=True, Hrep_minimal=True, pref_rep='Hrep')
 
     def generalized_permutahedron(self, coxeter_type, point=None, exact=True, regular=False, backend=None):
         r"""
@@ -2610,17 +2612,17 @@ class Polytopes():
         INPUT:
 
         - ``coxeter_type`` -- a Coxeter type; given as a pair [type,rank],
-          where type is a letter and rank is the number of generators.
+          where type is a letter and rank is the number of generators
 
-        - ``point`` -- a list (default: ``None``); a point given by its
+        - ``point`` -- list (default: ``None``); a point given by its
           coordinates in the weight basis. If ``None`` is given, the point
           `(1, 1, 1, \ldots)` is used.
 
-        - ``exact`` - (boolean, default ``True``) if ``False`` use floating
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use floating
           point approximations instead of exact coordinates
 
         - ``regular`` -- boolean (default: ``False``); whether to apply a
-          linear transformation making the vertex figures isometric.
+          linear transformation making the vertex figures isometric
 
         - ``backend`` -- backend to use to create the polytope; (default:
           ``None``)
@@ -2840,6 +2842,51 @@ class Polytopes():
             br = RDF
         return Polyhedron(vertices=vertices, backend=backend, base_ring=br)
 
+    def harmonic_polytope(self, n):
+        r"""
+        Return the `n`-th harmonic polytope `H_{n,n}`.
+
+        INPUT:
+
+        - `n` -- positive integer
+
+        This is a polytope of dimension `2n-2` in `\RR^{2n}`
+        with `3^n - 3` facets.
+
+        The name comes from the number of vertices, given by
+        `n!^2 \times \mathsf{H}_n` where `\mathsf{H}_n` is the usual
+        harmonic number.
+
+        REFERENCES:
+
+        - [AE2006]_
+
+        EXAMPLES::
+
+            sage: polytopes.harmonic_polytope(2)
+            A 2-dimensional polyhedron in ZZ^4 defined as the convex hull
+            of 6 vertices
+            sage: P3 = polytopes.harmonic_polytope(3); P3.f_vector()
+            (1, 66, 144, 102, 24, 1)
+
+        TESTS::
+
+            sage: polytopes.harmonic_polytope(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: n must be positive
+        """
+        if n <= 0:
+            raise ValueError("n must be positive")
+        parent = Polyhedra(ZZ, 2 * n)
+        D_vertices = [2 * [1 if j == i else 0 for j in range(n)]
+                      for i in range(n)]
+        Dn = parent([D_vertices, [], []], None, convert=False)
+        perms = [list(sigma) for sigma in Permutations(n)]
+        P_vertices = [a + b for a in perms for b in perms]
+        Pin_Pin = parent([P_vertices, [], []], None, convert=False)
+        return Dn + Pin_Pin
+
     def omnitruncated_one_hundred_twenty_cell(self, exact=True, backend=None):
         """
         Return the omnitruncated 120-cell.
@@ -2856,10 +2903,10 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``True``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2889,10 +2936,10 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``False``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``False``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2929,10 +2976,10 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``True``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2957,10 +3004,10 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``False``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``False``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2996,10 +3043,10 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``True``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -3024,10 +3071,10 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``True``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -3052,10 +3099,10 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``True``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -3080,19 +3127,19 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``True``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
-        - ``construction`` -- the construction to use (string, default 'coxeter');
-          the other possibility is 'as_permutahedron'.
+        - ``construction`` -- string (default: ``'coxeter'``); the construction to use.
+          The other possibility is 'as_permutahedron'.
 
-`       EXAMPLES:
+        EXAMPLES:
 
         The classical construction given by Coxeter in [Cox1969]_ is given by::
 
-            sage: polytopes.one_hundred_twenty_cell()                    # not tested - long time ~15 sec.
+            sage: polytopes.one_hundred_twenty_cell()                    # not tested, long time (~15s)
             A 4-dimensional polyhedron in (Number Field in sqrt5 with defining
              polynomial x^2 - 5 with sqrt5 = 2.236067977499790?)^4 defined as
              the convex hull of 600 vertices
@@ -3125,27 +3172,32 @@ class Polytopes():
             phi_inv = base_ring.one() / phi
 
             # The 24 permutations of [0,0,±2,±2] (the ± are independent)
-            verts = Permutations([0,0,2,2]).list() + Permutations([0,0,-2,-2]).list() + Permutations([0,0,2,-2]).list()
+            verts = Permutations([0, 0, 2, 2]).list() + Permutations([0, 0, -2, -2]).list() + Permutations([0, 0, 2, -2]).list()
 
             # The 64 permutations of the following vectors:
             # [±1,±1,±1,±sqrt(5)]
             # [±1/phi^2,±phi,±phi,±phi]
             # [±1/phi,±1/phi,±1/phi,±phi^2]
             from sage.categories.cartesian_product import cartesian_product
-            full_perm_vectors = [[[1,-1],[1,-1],[1,-1],[-sqrt5,sqrt5]],
-                                 [[phi_inv**2,-phi_inv**2],[phi,-phi],[phi,-phi],[-phi,phi]],
-                                 [[phi_inv,-phi_inv],[phi_inv,-phi_inv],[phi_inv,-phi_inv],[-(phi**2),phi**2]]]
+            full_perm_vectors = [
+                [[1, -1], [1, -1], [1, -1], [-sqrt5, sqrt5]],
+                [[phi_inv**2, -phi_inv**2], [phi, -phi], [phi, -phi], [-phi, phi]],
+                [[phi_inv, -phi_inv], [phi_inv, -phi_inv], [phi_inv, -phi_inv], [-(phi**2), phi**2]]
+            ]
             for vect in full_perm_vectors:
                 cp = cartesian_product(vect)
                 # The group action creates duplicates, so we reduce it:
-                verts += list(set([tuple(p) for c in cp for p in Permutations(list(c))]))
+                verts += list({tuple(p) for c in cp
+                               for p in Permutations(list(c))})
 
             # The 96 even permutations of [0,±1/phi^2,±1,±phi^2]
             # The 96 even permutations of [0,±1/phi,±phi,±sqrt(5)]
             # The 192 even permutations of [±1/phi,±1,±phi,±2]
-            even_perm_vectors = [[[0],[phi_inv**2,-phi_inv**2],[1,-1],[-(phi**2),phi**2]],
-                                 [[0],[phi_inv,-phi_inv],[phi,-phi],[-sqrt5,sqrt5]],
-                                 [[phi_inv,-phi_inv],[1,-1],[phi,-phi],[-2,2]]]
+            even_perm_vectors = [
+                [[0], [phi_inv**2, -phi_inv**2], [1, -1], [-(phi**2), phi**2]],
+                [[0], [phi_inv, -phi_inv], [phi, -phi], [-sqrt5, sqrt5]],
+                [[phi_inv, -phi_inv], [1, -1], [phi, -phi], [-2, 2]]
+            ]
             even_perm = AlternatingGroup(4)
             for vect in even_perm_vectors:
                 cp = cartesian_product(vect)
@@ -3169,21 +3221,21 @@ class Polytopes():
 
         INPUT:
 
-        - ``dim`` -- integer. The dimension of the hypercube.
+        - ``dim`` -- integer; the dimension of the hypercube
 
-        - ``intervals`` -- (default = None). It takes the following
+        - ``intervals`` -- (default: ``None``) it takes the following
           possible inputs:
 
           - If ``None`` (the default), it returns the `\pm 1`-cube of
             dimension ``dim``.
 
-          - ``'zero_one'`` -- (string). Return the `0/1`-cube.
+          - ``'zero_one'`` -- string; return the `0/1`-cube
 
           - a list of length ``dim``. Its elements are pairs of
             numbers `(a,b)` with `a < b`. The cube will be the product of
             these intervals.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES:
 
@@ -3235,7 +3287,7 @@ class Polytopes():
             sage: P = polytopes.hypercube(4, intervals, backend='field')
             sage: TestSuite(P).run()
 
-        Check that :trac:`29904` is fixed::
+        Check that :issue:`29904` is fixed::
 
             sage: intervals = [[-2,2]]
             sage: P = polytopes.hypercube(1, intervals, 'field')
@@ -3272,7 +3324,7 @@ class Polytopes():
             sage: P1 = polytopes.hypercube(4, intervals, backend='ppl')                 # needs pplpy
             sage: assert P == P1                                                        # needs pplpy
 
-        Check that coercion for input invervals is handled correctly::
+        Check that coercion for input intervals is handled correctly::
 
             sage: P = polytopes.hypercube(2, [[1/2, 2], [0, 1]])
             sage: P = polytopes.hypercube(2, [[1/2, 2], [0, 1.0]])
@@ -3286,12 +3338,12 @@ class Polytopes():
         convert = False
 
         # If the intervals are (a_1,b_1), ..., (a_dim, b_dim),
-        # then the inequalites correspond to
+        # then the inequalities correspond to
         # b_1,b_2,...,b_dim, a_1,a_2,...,a_dim
         # in that order.
 
         if intervals is None:
-            cp = itertools.product((-1,1), repeat=dim)
+            cp = itertools.product((-1, 1), repeat=dim)
 
             # An inequality -x_i       + 1 >= 0 for i <  dim
             # resp.          x_{dim-i} + 1 >= 0 for i >= dim
@@ -3299,7 +3351,7 @@ class Polytopes():
 
         elif isinstance(intervals, str):
             if intervals == 'zero_one':
-                cp = itertools.product((0,1), repeat=dim)
+                cp = itertools.product((0, 1), repeat=dim)
 
                 # An inequality -x_i       + 1 >= 0 for i <  dim
                 # resp.          x_{dim-i} + 0 >= 0 for i >= dim
@@ -3307,9 +3359,9 @@ class Polytopes():
             else:
                 raise ValueError("the only allowed string is 'zero_one'")
         elif len(intervals) == dim:
-            if not all(a < b for a,b in intervals):
+            if not all(a < b for a, b in intervals):
                 raise ValueError("each interval must be a pair `(a, b)` with `a < b`")
-            parent = parent.base_extend(sum(a + b for a,b in intervals))
+            parent = parent.base_extend(sum(a + b for a, b in intervals))
             if parent.base_ring() not in (ZZ, QQ):
                 convert = True
             if backend and parent.backend() is not backend:
@@ -3321,19 +3373,23 @@ class Polytopes():
 
             # An inequality -x_i       + b_i >= 0 for i <  dim
             # resp.          x_{dim-i} - a_i >= 0 for i >= dim
-            ieq_b = lambda i: intervals[i][1] if i < dim \
-                              else -intervals[i-dim][0]
+            def ieq_b(i):
+                return intervals[i][1] if i < dim else -intervals[i - dim][0]
         else:
             raise ValueError("the dimension of the hypercube must match the number of intervals")
 
         # An inequality -x_i       + ieq_b(i)     >= 0 for i <  dim
         # resp.          x_{dim-i} + ieq_b(i-dim) >= 0 for i >= dim
-        ieq_A = lambda i, pos: -1 if i == pos           \
-                               else 1 if i == pos + dim \
-                               else 0
-        ieqs = (tuple(ieq_b(i) if pos == 0 else ieq_A(i, pos-1)
-                      for pos in range(dim+1))
-                for i in range(2*dim))
+        def ieq_A(i, pos):
+            if i == pos:
+                return -1
+            if i == pos + dim:
+                return 1
+            return 0
+
+        ieqs = (tuple(ieq_b(i) if pos == 0 else ieq_A(i, pos - 1)
+                      for pos in range(dim + 1))
+                for i in range(2 * dim))
 
         return parent([cp, [], []], [ieqs, []], convert=convert, Vrep_minimal=True, Hrep_minimal=True, pref_rep='Hrep')
 
@@ -3357,16 +3413,14 @@ class Polytopes():
           - If the input is ``None`` (the default), returns the convex hull of
             the eight `\pm 1` vectors of length three.
 
-          - ``'zero_one'`` -- (string). Return the `0/1`-cube.
+          - ``'zero_one'`` -- string; return the `0/1`-cube
 
           - a list of 3 lists of length 2. The cube will be a product of
             these three intervals.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
-        OUTPUT:
-
-        A cube as a polyhedron object.
+        OUTPUT: a cube as a polyhedron object
 
         EXAMPLES:
 
@@ -3408,9 +3462,9 @@ class Polytopes():
 
         INPUT:
 
-        - ``dim`` -- integer. The dimension of the cross-polytope.
+        - ``dim`` -- integer; the dimension of the cross-polytope
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -3439,7 +3493,7 @@ class Polytopes():
         """
         verts = tuple((ZZ**dim).basis())
         verts += tuple(-v for v in verts)
-        ieqs = ((1,) + x for x in itertools.product((-1,1), repeat=dim))
+        ieqs = ((1,) + x for x in itertools.product((-1, 1), repeat=dim))
         parent = Polyhedra(ZZ, dim, backend=backend)
         return parent([verts, [], []], [ieqs, []], Vrep_minimal=True, Hrep_minimal=True, pref_rep='Vrep')
 
@@ -3452,9 +3506,9 @@ class Polytopes():
 
         INPUT:
 
-        - ``generators`` -- a list of vectors of same dimension
+        - ``generators`` -- list of vectors of same dimension
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 

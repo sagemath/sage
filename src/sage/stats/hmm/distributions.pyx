@@ -12,12 +12,12 @@ AUTHOR:
 - William Stein, 2010-03
 """
 
-#############################################################################
+# ##########################################################################
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
-#############################################################################
+#                  https://www.gnu.org/licenses/
+# ##########################################################################
 
 from cpython.object cimport PyObject_RichCompare
 
@@ -33,8 +33,7 @@ from sage.misc.randstate cimport current_randstate, randstate
 from sage.stats.time_series cimport TimeSeries
 
 
-
-cdef double random_normal(double mean, double std, randstate rstate):
+cdef double random_normal(double mean, double std, randstate rstate) noexcept:
     r"""
     Return a floating point number chosen from the normal distribution
     with given mean and standard deviation, using the given randstate.
@@ -79,9 +78,7 @@ cdef class Distribution:
 
         - ``n`` -- ``None`` or a positive integer
 
-        OUTPUT:
-
-        - a single sample if `n` is 1; otherwise many samples
+        OUTPUT: a single sample if `n` is 1; otherwise many samples
 
         EXAMPLES:
 
@@ -103,9 +100,7 @@ cdef class Distribution:
 
         - ``x`` -- object
 
-        OUTPUT:
-
-        - float
+        OUTPUT: float
 
         EXAMPLES:
 
@@ -127,9 +122,7 @@ cdef class Distribution:
 
         - ``args`` and ``kwds``, passed to the Sage :func:`plot` function
 
-        OUTPUT:
-
-        - a :class:`Graphics` object
+        OUTPUT: a :class:`Graphics` object
 
         EXAMPLES::
 
@@ -137,7 +130,7 @@ cdef class Distribution:
             sage: P.plot(-10,30)                                                        # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
-        from sage.plot.all import plot
+        from sage.plot.plot import plot
         return plot(self.prob, *args, **kwds)
 
 cdef class GaussianMixtureDistribution(Distribution):
@@ -166,12 +159,12 @@ cdef class GaussianMixtureDistribution(Distribution):
         r"""
         INPUT:
 
-        - ``B`` -- a list of triples ``(c_i, mean_i, std_i)``, where
+        - ``B`` -- list of triples ``(c_i, mean_i, std_i)``, where
           the ``c_i`` and ``std_i`` are positive and the sum of the
-          ``c_i`` is `1`.
+          ``c_i`` is `1`
 
         - ``eps`` -- positive real number; any standard deviation in B
-          less than eps is replaced by eps.
+          less than eps is replaced by eps
 
         - ``normalize`` -- if ``True``, ensure that the ``c_i`` are nonnegative
 
@@ -182,8 +175,9 @@ cdef class GaussianMixtureDistribution(Distribution):
             sage: hmm.GaussianMixtureDistribution([(1,-1,0)], eps=1e-3)
             1.0*N(-1.0,0.001)
         """
-        B = [[c if c>=0 else 0,  mu,  std if std>0 else eps] for c,mu,std in B]
-        if len(B) == 0:
+        B = [[(c if c >= 0 else 0), mu, (std if std > 0 else eps)]
+             for c, mu, std in B]
+        if not B:
             raise ValueError("must specify at least one component of the mixture model")
         cdef double s
         if normalize:
@@ -196,9 +190,9 @@ cdef class GaussianMixtureDistribution(Distribution):
                 else:
                     for a in B:
                         a[0] /= s
-        self.c0 = TimeSeries([c/(sqrt2pi*std) for c,_,std in B])
-        self.c1 = TimeSeries([-1.0/(2*std*std) for _,_,std in B])
-        self.param = TimeSeries(sum([list(x) for x in B],[]))
+        self.c0 = TimeSeries([c/(sqrt2pi*std) for c, _, std in B])
+        self.c1 = TimeSeries([-1.0/(2*std*std) for _, _, std in B])
+        self.param = TimeSeries(sum([list(x) for x in B], []))
         self.fixed = IntList(self.c0._length)
 
     def __getitem__(self, Py_ssize_t i):
@@ -209,9 +203,7 @@ cdef class GaussianMixtureDistribution(Distribution):
 
         - ``i`` -- integer
 
-        OUTPUT:
-
-        - triple of floats
+        OUTPUT: triple of floats
 
         EXAMPLES::
 
@@ -361,7 +353,6 @@ cdef class GaussianMixtureDistribution(Distribution):
             True
             sage: P.unfix(); P.is_fixed()
             False
-
         """
         cdef int j
         if i is None:
@@ -369,7 +360,6 @@ cdef class GaussianMixtureDistribution(Distribution):
                 self.fixed[j] = 0
         else:
             self.fixed[i] = 0
-
 
     def __repr__(self):
         r"""
@@ -434,7 +424,7 @@ cdef class GaussianMixtureDistribution(Distribution):
                 T._values[i] = self._sample(rstate)
             return T
 
-    cdef double _sample(self, randstate rstate):
+    cdef double _sample(self, randstate rstate) noexcept:
         r"""
         Used internally to compute a sample from this distribution quickly.
 
@@ -459,7 +449,7 @@ cdef class GaussianMixtureDistribution(Distribution):
                 return random_normal(self.param._values[3*n+1], self.param._values[3*n+2], rstate)
         raise RuntimeError("invalid probability distribution")
 
-    cpdef double prob(self, double x):
+    cpdef double prob(self, double x) noexcept:
         r"""
         Return the probability of `x`.
 
@@ -470,9 +460,7 @@ cdef class GaussianMixtureDistribution(Distribution):
 
         - ``x`` -- float
 
-        OUTPUT:
-
-        - float
+        OUTPUT: float
 
         EXAMPLES::
 
@@ -495,7 +483,7 @@ cdef class GaussianMixtureDistribution(Distribution):
             s += self.c0._values[n]*exp((x-mu)*(x-mu)*self.c1._values[n])
         return s
 
-    cpdef double prob_m(self, double x, int m):
+    cpdef double prob_m(self, double x, int m) noexcept:
         r"""
         Return the probability of `x` using just the `m`-th summand.
 
@@ -504,9 +492,7 @@ cdef class GaussianMixtureDistribution(Distribution):
         - ``x`` -- float
         - ``m`` -- integer
 
-        OUTPUT:
-
-        - float
+        OUTPUT: float
 
         EXAMPLES::
 
@@ -523,6 +509,7 @@ cdef class GaussianMixtureDistribution(Distribution):
             raise IndexError("index out of range")
         mu = self.param._values[3*m+1]
         return self.c0._values[m]*exp((x-mu)*(x-mu)*self.c1._values[m])
+
 
 def unpickle_gaussian_mixture_distribution_v1(TimeSeries c0, TimeSeries c1,
                                               TimeSeries param, IntList fixed):

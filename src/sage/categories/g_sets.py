@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 G-Sets
 """
@@ -11,7 +12,8 @@ G-Sets
 #******************************************************************************
 
 from sage.categories.category import Category
-from .sets_cat import Sets
+from sage.categories.sets_cat import Sets
+
 
 #############################################################
 # GSets
@@ -46,7 +48,7 @@ class GSets(Category):
             sage: GSets(SymmetricGroup(8))  # indirect doctests                         # needs sage.groups
             Category of G-sets for Symmetric group of order 8! as a permutation group
         """
-        return "G-sets for %s"%self.__G
+        return "G-sets for %s" % self.__G
 
     #def construction(self):
     #    return (self.__class__, self.__G)
@@ -63,7 +65,7 @@ class GSets(Category):
     @classmethod
     def an_instance(cls):
         """
-        Returns an instance of this class.
+        Return an instance of this class.
 
         EXAMPLES::
 

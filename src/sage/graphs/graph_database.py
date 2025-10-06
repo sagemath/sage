@@ -43,15 +43,14 @@ REFERENCES:
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         https://www.gnu.org/licenses/
 # ##############################################################################
+import re
 
 from . import graph
-import os
-import re
 from sage.rings.integer import Integer
 from sage.databases.sql_db import SQLDatabase, SQLQuery
-from sage.env import GRAPHS_DATA_DIR
+from sage.features.databases import DatabaseGraphs
 from sage.graphs.graph import Graph
-dblocation = os.path.join(GRAPHS_DATA_DIR, 'graphs.db')
+dblocation = DatabaseGraphs().absolute_filename()
 
 
 def degseq_to_data(degree_sequence):
@@ -99,7 +98,7 @@ def data_to_degseq(data, graph6=None):
     """
     degseq = Integer(data).digits(10)
     if not degseq:
-        # compute number of 0's in list from graph6 string
+        # compute number of 0s in list from graph6 string
         from sage.graphs.generic_graph_pyx import length_and_string_from_graph6
         return length_and_string_from_graph6(str(graph6))[0] * [0]
     return degseq
@@ -266,12 +265,12 @@ class GenericGraphQuery(SQLQuery):
 
         INPUT:
 
-        - ``query_string`` -- a string representing the SQL query
+        - ``query_string`` -- string representing the SQL query
 
-        - ``database`` -- (default: ``None``); the :class:`~GraphDatabase`
+        - ``database`` -- (default: ``None``) the :class:`~GraphDatabase`
           instance to query (if ``None`` then a new instance is created)
 
-        - ``param_tuple`` -- a tuple of strings (default: ``None``); what to
+        - ``param_tuple`` -- tuple of strings (default: ``None``); what to
           replace question marks in ``query_string`` with (optional, but a good
           idea)
 
@@ -321,8 +320,9 @@ class GenericGraphQuery(SQLQuery):
 
 class GraphQuery(GenericGraphQuery):
 
-    def __init__(self, graph_db=None, query_dict=None, display_cols=None, **kwds):
-        """
+    def __init__(self, graph_db=None, query_dict=None, display_cols=None,
+                 immutable=False, **kwds):
+        r"""
         A query for an instance of :class:`~GraphDatabase`.
 
         This class nicely wraps the :class:`sage.databases.sql_db.SQLQuery`
@@ -343,8 +343,8 @@ class GraphQuery(GenericGraphQuery):
         - ``graph_db`` -- :class:`~GraphDatabase` (default: ``None``); instance
           to apply the query to (If ``None``, then a new instance is created)
 
-        - ``query_dict`` -- dict (default: ``None``); a dictionary specifying
-          the query itself. Format is: ``{'table_name': 'tblname',
+        - ``query_dict`` -- dictionary (default: ``None``); a dictionary
+          specifying the query itself. Format is: ``{'table_name': 'tblname',
           'display_cols': ['col1', 'col2'], 'expression': [col, operator,
           value]}``. If not ``None``, ``query_dict`` will take precedence over
           all other arguments.
@@ -352,6 +352,9 @@ class GraphQuery(GenericGraphQuery):
         - ``display_cols`` -- list of strings (default: ``None``); a list of
           column names (strings) to display in the result when running or
           showing a query
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return
+          immutable or mutable graphs
 
         - ``kwds`` -- the columns of the database are all keywords. For a
           database table/column structure dictionary, call
@@ -414,7 +417,17 @@ class GraphQuery(GenericGraphQuery):
             F_?@w                7                    [1, 1, 1, 1, 1, 1, 4]
             F_?Hg                7                    [1, 1, 1, 1, 1, 2, 3]
             F_?XO                7                    [1, 1, 1, 1, 2, 2, 2]
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: Q = GraphQuery(display_cols=['graph6'], num_vertices=3)
+            sage: any(g.is_immutable() for g in Q)
+            False
+            sage: Q = GraphQuery(display_cols=['graph6'], num_vertices=3, immutable=True)
+            sage: all(g.is_immutable() for g in Q)
+            True
         """
+        self._immutable = immutable
         if graph_db is None:
             graph_db = GraphDatabase()
         if query_dict is not None:
@@ -428,7 +441,7 @@ class GraphQuery(GenericGraphQuery):
             SQLQuery.__init__(self, graph_db)
 
             # if display_cols is None:
-            #    raise TypeError, 'Nonetype display_cols cannot retrieve data.'
+            #     raise TypeError('Nonetype display_cols cannot retrieve data')
 
             master_join = {}
 
@@ -535,9 +548,15 @@ class GraphQuery(GenericGraphQuery):
                                                self.__query_string__)
                 self.__query_string__ += ' ORDER BY graph_data.graph6'
 
-    def query_iterator(self):
+    def query_iterator(self, immutable=None):
         """
         Return an iterator over the results list of the :class:`~GraphQuery`.
+
+        INPUT:
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create
+          mutable/immutable graphs. By default (``immutable=None``), follow the
+          behavior of ``self``.
 
         EXAMPLES::
 
@@ -567,8 +586,27 @@ class GraphQuery(GenericGraphQuery):
             FEOhW
             FGC{o
             FIAHo
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: Q = GraphQuery(display_cols=['graph6'], num_vertices=3)
+            sage: any(g.is_immutable() for g in Q.query_iterator())
+            False
+            sage: all(g.is_immutable() for g in Q.query_iterator(immutable=True))
+            True
+            sage: Q = GraphQuery(display_cols=['graph6'], num_vertices=3, immutable=True)
+            sage: all(g.is_immutable() for g in Q.query_iterator())
+            True
+            sage: any(g.is_immutable() for g in Q.query_iterator(immutable=False))
+            False
         """
-        return iter(self.get_graphs_list())
+        if immutable is None:
+            immutable = self._immutable
+        s = self.__query_string__
+        re.sub('SELECT.*FROM ', 'SELECT graph6 FROM ', s)
+        q = GenericGraphQuery(s, self.__database__, self.__param_tuple__)
+        for g in q.query_results():
+            yield Graph(str(g[0]), immutable=immutable)
 
     __iter__ = query_iterator
 
@@ -688,9 +726,15 @@ class GraphQuery(GenericGraphQuery):
                           format_cols=format_cols, relabel_cols=relabel,
                           id_col='graph6')
 
-    def get_graphs_list(self):
+    def get_graphs_list(self, immutable=None):
         """
         Return a list of Sage Graph objects that satisfy the query.
+
+        INPUT:
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create
+          mutable/immutable graphs. By default (``immutable=None``), follow the
+          behavior of ``self``.
 
         EXAMPLES::
 
@@ -700,12 +744,23 @@ class GraphQuery(GenericGraphQuery):
             Graph on 2 vertices
             sage: len(L)
             35
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: Q = GraphQuery(display_cols=['graph6'], num_vertices=3)
+            sage: any(g.is_immutable() for g in Q.get_graphs_list())
+            False
+            sage: all(g.is_immutable() for g in Q.get_graphs_list(immutable=True))
+            True
+            sage: Q = GraphQuery(display_cols=['graph6'], num_vertices=3, immutable=True)
+            sage: all(g.is_immutable() for g in Q.get_graphs_list())
+            True
+            sage: any(g.is_immutable() for g in Q.get_graphs_list(immutable=False))
+            False
         """
-        s = self.__query_string__
-        re.sub('SELECT.*FROM ', 'SELECT graph6 FROM ', s)
-        q = GenericGraphQuery(s, self.__database__, self.__param_tuple__)
-        graph6_list = q.query_results()
-        return [Graph(str(g[0])) for g in graph6_list]
+        if immutable is None:
+            immutable = self._immutable
+        return list(self.query_iterator(immutable=immutable))
 
     def number_of(self):
         """
@@ -728,7 +783,7 @@ class GraphDatabase(SQLDatabase):
 
     def __init__(self):
         """
-        Graph Database
+        Graph Database.
 
         This class interfaces with the ``sqlite`` database ``graphs.db``. It is
         an immutable database that inherits from
@@ -972,8 +1027,8 @@ class GraphDatabase(SQLDatabase):
         EXAMPLES::
 
             sage: D = GraphDatabase()
-            sage: q = D.query(display_cols=['graph6', 'num_vertices', 'degree_sequence'], num_edges=['<=', 5])
-            sage: q.show()
+            sage: q = D.query(display_cols=['graph6', 'num_vertices', 'degree_sequence'], num_edges=['<=', 5])          # needs sage.symbolic
+            sage: q.show()                                                              # needs sage.symbolic
             Graph6               Num Vertices         Degree Sequence
             ------------------------------------------------------------
             @                    1                    [0]
@@ -1109,7 +1164,7 @@ class GraphDatabase(SQLDatabase):
         EXAMPLES::
 
             sage: D = GraphDatabase()
-            sage: D.interactive_query(display_cols=['graph6', 'num_vertices', 'degree_sequence'], num_edges=5, max_degree=3)
+            sage: D.interactive_query(display_cols=['graph6', 'num_vertices', 'degree_sequence'], num_edges=5, max_degree=3)                                    # needs sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: not available in Jupyter notebook

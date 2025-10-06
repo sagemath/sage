@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Graded Lie Algebras
 
@@ -18,6 +19,7 @@ AUTHORS:
 
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.graded_modules import GradedModulesCategory
+
 
 class GradedLieAlgebras(GradedModulesCategory):
     r"""
@@ -72,7 +74,7 @@ class GradedLieAlgebras(GradedModulesCategory):
             """
             def extra_super_categories(self):
                 """
-                Implements the fact that a finite dimensional stratified Lie
+                Implement the fact that a finite dimensional stratified Lie
                 algebra is nilpotent.
 
                 EXAMPLES::

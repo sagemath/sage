@@ -1,4 +1,4 @@
-$(PYTHON) vcversioner attrs importlib_metadata pyrsistent | $(PYTHON_TOOLCHAIN) hatchling hatch_vcs hatch_fancy_pypi_readme
+jsonschema_specifications pyrsistent attrs fqdn isoduration jsonpointer uri_template webcolors | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

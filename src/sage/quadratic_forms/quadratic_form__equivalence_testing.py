@@ -5,6 +5,8 @@ AUTHORS:
 
 - Anna Haensch (2014-12-01): added test for rational isometry
 """
+from typing import Any
+
 from sage.arith.misc import (hilbert_symbol,
                              GCD,
                              is_prime,
@@ -20,7 +22,7 @@ from sage.rings.rational_field import QQ
 # (For now, we require both forms to be positive definite.)                  #
 ##############################################################################
 
-def is_globally_equivalent_to(self, other, return_matrix=False):
+def is_globally_equivalent_to(self, other, return_matrix=False) -> bool | Any:
     r"""
     Determine if the current quadratic form is equivalent to the
     given form over `\ZZ`.
@@ -32,7 +34,7 @@ def is_globally_equivalent_to(self, other, return_matrix=False):
 
     - ``self``, ``other`` -- positive definite integral quadratic forms
 
-    - ``return_matrix`` -- (boolean, default ``False``) return
+    - ``return_matrix`` -- boolean (default: ``False``); return
       the transformation matrix instead of a boolean
 
     OUTPUT:
@@ -85,7 +87,7 @@ def is_globally_equivalent_to(self, other, return_matrix=False):
 
     TESTS:
 
-    :trac:`27749` is fixed::
+    :issue:`27749` is fixed::
 
         sage: Q = QuadraticForm(ZZ, 2, [2, 3, 5])
         sage: P = QuadraticForm(ZZ, 2, [8, 6, 5])
@@ -114,7 +116,8 @@ def is_globally_equivalent_to(self, other, return_matrix=False):
         return True
 
 
-def is_locally_equivalent_to(self, other, check_primes_only=False, force_jordan_equivalence_test=False):
+def is_locally_equivalent_to(self, other, check_primes_only=False,
+                             force_jordan_equivalence_test=False) -> bool:
     r"""
     Determine if the current quadratic form (defined over `\ZZ`) is
     locally equivalent to the given form over the real numbers and the
@@ -172,7 +175,7 @@ def is_locally_equivalent_to(self, other, check_primes_only=False, force_jordan_
     return True
 
 
-def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
+def has_equivalent_Jordan_decomposition_at_prime(self, other, p) -> bool:
     """
     Determine if the given quadratic form has a Jordan decomposition
     equivalent to that of ``self``.
@@ -281,15 +284,14 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
 
             # Condition (i): Check that their (unit) ratio is a square (but it suffices to check at most mod 8).
             modulus = norm_list[i] * norm_list[i+1] / (scale_list[i] ** 2)
-            if modulus > 8:
-                modulus = 8
+            modulus = min(modulus, 8)
             if (modulus > 1) and (((self_chain_det_list[i] / other_chain_det_list[i]) % modulus) != 1):
                 return False
 
             # Check O'Meara's condition (ii) when appropriate
             if norm_list[i + 1] % (4 * norm_list[i]) == 0:
                 if self_hasse_chain_list[i] * hilbert_symbol(norm_list[i] * other_chain_det_list[i], -self_chain_det_list[i], 2) \
-                       != other_hasse_chain_list[i] * hilbert_symbol(norm_list[i], -other_chain_det_list[i], 2):      # Nipp conditions
+                   != other_hasse_chain_list[i] * hilbert_symbol(norm_list[i], -other_chain_det_list[i], 2):      # Nipp conditions
                     return False
 
         # All tests passed for the prime 2.
@@ -299,7 +301,7 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
         raise TypeError("this should not have happened")
 
 
-def is_rationally_isometric(self, other, return_matrix=False):
+def is_rationally_isometric(self, other, return_matrix=False) -> bool | Any:
     """
     Determine if two regular quadratic forms over a number field are isometric.
 
@@ -307,8 +309,9 @@ def is_rationally_isometric(self, other, return_matrix=False):
 
     - ``other`` -- a quadratic form over a number field
 
-    - ``return_matrix`` -- (boolean, default ``False``) return
-      the transformation matrix instead of a boolean; this is currently only implemented for forms over ``QQ``
+    - ``return_matrix`` -- boolean (default: ``False``); return
+      the transformation matrix instead of a boolean; this is currently
+      only implemented for forms over ``QQ``
 
     OUTPUT:
 
@@ -442,9 +445,9 @@ def is_rationally_isometric(self, other, return_matrix=False):
         sage: V.is_rationally_isometric(W)
         Traceback (most recent call last):
         ...
-        NotImplementedError: This only tests regular forms
+        NotImplementedError: this only tests regular forms
 
-    Forms must have the same base ring otherwise a `TypeError` is raised::
+    Forms must have the same base ring otherwise a :exc:`TypeError` is raised::
 
         sage: # needs sage.rings.number_field
         sage: K1.<a> = QuadraticField(5)
@@ -491,7 +494,7 @@ def is_rationally_isometric(self, other, return_matrix=False):
         True
     """
     if self.Gram_det() == 0 or other.Gram_det() == 0:
-        raise NotImplementedError("This only tests regular forms")
+        raise NotImplementedError("this only tests regular forms")
 
     if self.base_ring() != other.base_ring():
         raise TypeError("forms must have the same base ring.")
@@ -658,12 +661,10 @@ def _gram_schmidt(m, fixed_vector_index, inner_product):
     - ``m`` -- a square matrix whose columns represent vectors
     - ``fixed_vector_index`` -- any vectors preceding the vector (i.e. to its left)
         at this index are not changed.
-    - ``inner_product`` - a function that takes two vector arguments and returns a scalar,
-        representing an inner product.
+    - ``inner_product`` -- a function that takes two vector arguments and returns a scalar,
+        representing an inner product
 
-    OUTPUT:
-
-    - A matrix consisting of orthogonal columns with respect to the given inner product
+    OUTPUT: a matrix consisting of orthogonal columns with respect to the given inner product
 
     EXAMPLES::
 

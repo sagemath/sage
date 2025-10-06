@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.rings.finite_rings
 r"""
 Univariate dense skew polynomials over finite fields
 
@@ -98,7 +99,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             return len(self._norm_factor) == 1 and self._norm_factor[0][1] == 1
         N = self._parent._working_center(self.reduced_norm(var=False))
         return N.is_irreducible()
-
 
     def type(self, N):
         r"""
@@ -208,7 +208,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         self._types[N] = type
         return type
 
-
     # Finding divisors
     # ----------------
 
@@ -238,7 +237,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         cdef Py_ssize_t i, j, t, r = skew_ring._order
         cdef Polynomial dd, xx, yy, zz
         cdef Integer exp
-        cdef list lM, lV
+        cdef list lM
         cdef bint char2
 
         center = parent(N)
@@ -286,7 +285,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             if D.degree() == 0:
                 continue
             return D
-
 
     def _reduced_norm_factor_uniform(self):
         r"""
@@ -356,7 +354,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             if random < count[i]:
                 return F[i][0]
 
-
     def _irreducible_divisors(self, bint right):
         r"""
         Return an iterator over all irreducible monic
@@ -368,7 +365,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
 
         INPUT:
 
-        - ``right`` -- a boolean; if ``True``, return right divisors,
+        - ``right`` -- boolean; if ``True``, return right divisors,
           otherwise, return left divisors
 
         TESTS::
@@ -468,14 +465,13 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
                     d, _ = quo_rem2(P, d)
                     yield d
 
-
     def right_irreducible_divisor(self, uniform=False):
         r"""
         Return a right irreducible divisor of this skew polynomial.
 
         INPUT:
 
-        - ``uniform`` -- a boolean (default: ``False``); whether the
+        - ``uniform`` -- boolean (default: ``False``); whether the
           output irreducible divisor should be uniformly distributed
           among all possibilities
 
@@ -550,7 +546,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
 
         INPUT:
 
-        - ``uniform`` -- a boolean (default: ``False``); whether the
+        - ``uniform`` -- boolean (default: ``False``); whether the
           output irreducible divisor should be uniformly distributed
           among all possibilities
 
@@ -616,7 +612,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             if LD.degree() == degN:
                 return LD
 
-
     def right_irreducible_divisors(self):
         r"""
         Return an iterator over all irreducible monic right divisors
@@ -629,7 +624,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             sage: S.<x> = k['x',Frob]
             sage: a = x^4 + 2*t*x^3 + 3*t^2*x^2 + (t^2 + t + 1)*x + 4*t + 3
             sage: iter = a.right_irreducible_divisors(); iter
-            <generator object at 0x...>
+            <...generator object at 0x...>
             sage: next(iter)   # random
             x + 2*t^2 + 4*t + 4
             sage: next(iter)   # random
@@ -664,7 +659,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             sage: S.<x> = k['x',Frob]
             sage: a = x^4 + 2*t*x^3 + 3*t^2*x^2 + (t^2 + t + 1)*x + 4*t + 3
             sage: iter = a.left_irreducible_divisors(); iter
-            <generator object at 0x...>
+            <...generator object at 0x...>
             sage: next(iter)  # random
             x + 3*t + 3
             sage: next(iter)  # random
@@ -684,7 +679,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             True
         """
         return self._irreducible_divisors(False)
-
 
     def count_irreducible_divisors(self):
         r"""
@@ -743,7 +737,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             count += (cardL**m - 1) // (cardL - 1)
         return count
 
-
     # Finding factorizations
     # ----------------------
 
@@ -761,13 +754,12 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             del a[0]
             val += 1
 
-        cdef Py_ssize_t degQ, degrandom, m, mP, i
+        cdef Py_ssize_t degrandom, m, mP, i
         cdef N
         cdef list factors = [ (skew_ring.gen(), val) ]
         cdef SkewPolynomial_finite_field_dense P, Q, P1, NS, g, right, Pn
         cdef unit = self.leading_coefficient()
         cdef Polynomial gencenter = skew_ring._working_center.gen()
-        cdef Py_ssize_t p = skew_ring.characteristic()
         cdef F = self._reduced_norm_factored()
 
         for N, m in F:
@@ -849,7 +841,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         cdef list indices = <list>sample(range(1, m+1), m)
 
         cdef unit = self.leading_coefficient()
-        cdef SkewPolynomial_finite_field_dense left = self._new_c(self._coeffs[:],skew_ring)
+        cdef SkewPolynomial_finite_field_dense left = self._new_c(self._coeffs[:], skew_ring)
         left = left.right_monic()
         cdef SkewPolynomial_finite_field_dense right = <SkewPolynomial_finite_field_dense>skew_ring.one()
         cdef SkewPolynomial_finite_field_dense L, R
@@ -925,14 +917,13 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         factors.reverse()
         return Factorization(factors, sort=False, unit=unit)
 
-
     def factor(self, uniform=False):
         r"""
         Return a factorization of this skew polynomial.
 
         INPUT:
 
-        - ``uniform`` -- a boolean (default: ``False``); whether the
+        - ``uniform`` -- boolean (default: ``False``); whether the
           output irreducible divisor should be uniformly distributed
           among all possibilities
 
@@ -954,7 +945,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             (x + t^2 + 4) * (x + t + 3) * (x + t)
 
         However, the algorithm is probabilistic. Hence if we first
-        reinitialiaze `a`, we may get a different answer::
+        reinitialize `a`, we may get a different answer::
 
             sage: a = x^3 + (t^2 + 4*t + 2)*x^2 + (3*t + 3)*x + t^2 + 1
             sage: F = a.factor(); F   # random
@@ -992,7 +983,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
                 self._factorization = self._factor_c()
             F = self._factorization
         return F
-
 
     def count_factorizations(self):
         r"""
@@ -1052,7 +1042,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             sage: S.<x> = k['x',Frob]
             sage: a = x^3 + (t^2 + 1)*x^2 + (2*t + 3)*x + t^2 + t + 2
             sage: iter = a.factorizations(); iter
-            <generator object at 0x...>
+            <...generator object at 0x...>
             sage: next(iter)   # random
             (x + 3*t^2 + 4*t) * (x + 2*t^2) * (x + 4*t^2 + 4*t + 2)
             sage: next(iter)   # random
@@ -1079,7 +1069,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         we can get different orderings::
 
             sage: factorizations2 = [ F for F in a.factorizations() ]
-            sage: factorizations == factorizations2
+            sage: factorizations == factorizations2  # random
             False
             sage: sorted(factorizations) == sorted(factorizations2)
             True

@@ -2,6 +2,11 @@
  Sage: Open Source Mathematics Software: Build system of the Sage documentation
 ================================================================================
 
+.. NOTE::
+
+   If you are a developer and want to build the SageMath documentation from source,
+   refer to `developer's guide <../../developer/sage_manuals.html>`_.
+
 About SageMath
 --------------
 
@@ -12,7 +17,7 @@ About SageMath
 
    https://www.sagemath.org
 
-SageMath fully supports all major Linux distributions, recent versions of macOS, and Windows (using Cygwin or Windows Subsystem for Linux).
+SageMath fully supports all major Linux distributions, recent versions of macOS, and Windows (using Windows Subsystem for Linux).
 
 The traditional and recommended way to install SageMath is from source via Sage-the-distribution (https://www.sagemath.org/download-source.html).  Sage-the-distribution first builds a large number of open source packages from source (unless it finds suitable versions installed in the system) and then installs the Sage Library (sagelib, implemented in Python and Cython).
 

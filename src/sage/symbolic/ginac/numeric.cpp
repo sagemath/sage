@@ -49,9 +49,9 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#define register
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
+#include "gmp.h"
 #include "flint/fmpz.h"
 #include "flint/fmpz_factor.h"
 
@@ -67,20 +67,12 @@
 #include "archive.h"
 #include "tostring.h"
 #include "utils.h"
+#include "../../cpython/pycore_long.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-register"
 #include "factory/factory.h"
 #pragma clang diagnostic pop
-
-#ifdef PYNAC_HAVE_LIBGIAC
-#undef _POSIX_C_SOURCE
-#undef _XOPEN_SOURCE
-
-#include <giac/global.h>
-#include <giac/gausspol.h>
-#include <giac/fraction.h>
-#endif
 
 //#define Logging_refctr
 #if defined(Logging_refctr)
@@ -176,12 +168,7 @@ inline void py_error(const char* errmsg) {
                         "pyerror() called but no error occurred!");
 }
 
-#if PY_MAJOR_VERSION < 3
-#define PyNumber_TrueDivide PyNumber_Divide
-
-#else
 #define PyString_FromString PyUnicode_FromString
-#endif
 
 // The following variable gets changed to true once
 // this library has been imported by the Python
@@ -491,15 +478,9 @@ static PyObject* py_tuple_from_numvector(const std::vector<numeric>& vec)
 // class numeric
 ///////////////////////////////////////////////////////////////////////////////
 
-#if PY_MAJOR_VERSION < 3
-PyObject* ZERO = PyInt_FromLong(0); // todo: never freed
-PyObject* ONE = PyInt_FromLong(1); // todo: never freed
-PyObject* TWO = PyInt_FromLong(2); // todo: never freed
-#else
 PyObject* ZERO = PyLong_FromLong(0); // todo: never freed
 PyObject* ONE = PyLong_FromLong(1); // todo: never freed
 PyObject* TWO = PyLong_FromLong(2); // todo: never freed
-#endif
 
 std::ostream& operator<<(std::ostream& os, const numeric& s) {
         switch (s.t) {
@@ -717,18 +698,12 @@ static long _mpq_pythonhash(mpq_t the_rat)
 // Initialize an mpz_t from a Python long integer
 static void _mpz_set_pylong(mpz_t z, PyLongObject* l)
 {
-    Py_ssize_t pylong_size = Py_SIZE(l);
-    int sign = 1;
-
-    if (pylong_size < 0) {
-        pylong_size = -pylong_size;
-        sign = -1;
-    }
+    Py_ssize_t pylong_size = _PyLong_DigitCount(l);
 
     mpz_import(z, pylong_size, -1, sizeof(digit), 0,
-               8*sizeof(digit) - PyLong_SHIFT, l->ob_digit);
+               8*sizeof(digit) - PyLong_SHIFT, ob_digit(l));
 
-    if (sign < 0)
+    if (_PyLong_IsNegative(l))
         mpz_neg(z, z);
 }
 
@@ -811,16 +786,6 @@ void set_from(Type& t, Value& v, long& hash, mpq_t bigrat)
 numeric::numeric(PyObject* o, bool force_py) : basic(&numeric::tinfo_static) {
         if (o == nullptr) py_error("Error");
         if (not force_py) {
-#if PY_MAJOR_VERSION < 3
-                if (PyInt_Check(o)) {
-                        t = LONG;
-                        v._long = PyInt_AsLong(o);
-                        hash = (v._long==-1) ? -2 : v._long;
-                        setflag(status_flags::evaluated | status_flags::expanded);
-                        Py_DECREF(o);
-                        return;
-                } 
-#endif
                 if (PyLong_Check(o)) {
                     t = MPZ;
                     mpz_init(v._bigint);
@@ -1215,10 +1180,11 @@ numeric numeric::conj() const {
                 "conjugate");
                 if (obj == nullptr)
                         return *this;
-                obj = PyObject_CallObject(obj, NULL);
-                if (obj == nullptr)
+                PyObject *res = PyObject_CallObject(obj, NULL);
+                Py_DECREF(obj);
+                if (res == nullptr)
                         py_error("Error calling Python conjugate");
-                return obj;
+                return res;
         }
         default:
                 stub("invalid type: ::conjugate() type not handled");
@@ -1533,31 +1499,6 @@ const numeric numeric::div(const numeric &other) const {
                 return bigrat;
         }
         case PYOBJECT:
-#if PY_MAJOR_VERSION < 3
-                if (PyObject_Compare(other.v._pyobject, ONE) == 0
-                and py_funcs.py_is_integer(other.v._pyobject) != 0) {
-                        return *this;
-                }
-                if (PyInt_Check(v._pyobject)) {
-                        if (PyInt_Check(other.v._pyobject)) {
-                                // This branch happens at startup.
-                                PyObject *o = PyNumber_TrueDivide(Integer(PyInt_AsLong(v._pyobject)),
-                                Integer(PyInt_AsLong(other.v._pyobject)));
-                                // I don't 100% understand why I have to incref this,
-                                // but if I don't, Sage crashes on exit.
-                                Py_INCREF(o);
-                                return o;
-                        }
-                        if (PyLong_Check(other.v._pyobject)) {
-                                PyObject *d = py_funcs.
-                                        py_integer_from_python_obj(other.v._pyobject);
-                                PyObject *ans = PyNumber_TrueDivide(v._pyobject,
-                                                d);
-                                Py_DECREF(d);
-                                return ans;
-                        }
-                }
-#endif
                 if (PyLong_Check(v._pyobject)) {
                         PyObject *n = py_funcs.
                                 py_integer_from_python_obj(v._pyobject);
@@ -1866,17 +1807,6 @@ const ex numeric::power(const numeric &exponent) const {
 
         // any PyObjects castable to long are casted
         if (exponent.t == PYOBJECT) {
-#if PY_MAJOR_VERSION < 3
-                if (PyInt_Check(exponent.v._pyobject)) {
-                        long si = PyInt_AsLong(exponent.v._pyobject);
-                        if (si == -1 and PyErr_Occurred())
-                                PyErr_Clear();
-                        else {
-                                expo.t = MPZ;
-                                mpz_set_si(expo.v._bigint, si);
-                        }
-                } else
-#endif
                 if (PyLong_Check(exponent.v._pyobject)) {
                         expo.t = MPZ;
                         _mpz_set_pylong(expo.v._bigint,
@@ -2503,49 +2433,6 @@ numeric & operator/=(numeric & lh, const numeric & rh)
                 return lh;
         case PYOBJECT: {
                 PyObject *p = lh.v._pyobject;
-#if PY_MAJOR_VERSION < 3
-                {
-                        if (PyInt_Check(p)) {
-                                if (PyInt_Check(rh.v._pyobject)) {
-                                        // This branch happens at startup.
-                                        lh.v._pyobject = PyNumber_TrueDivide(Integer(PyInt_AsLong(p)),
-                                        Integer(PyInt_AsLong(rh.v._pyobject)));
-                                        // I don't 100% understand why I have to incref this,
-                                        // but if I don't, Sage crashes on exit.
-                                        if (lh.v._pyobject == nullptr) {
-                                                lh.v._pyobject = p;
-                                                py_error("numeric operator/=");
-                                        }
-                                        lh.hash = PyObject_Hash(lh.v._pyobject);
-                                        Py_DECREF(p);
-                                        return lh;
-                                }
-                                if (PyLong_Check(rh.v._pyobject)) {
-                                        PyObject *d = py_funcs.py_integer_from_python_obj(rh.v._pyobject);
-                                        lh.v._pyobject = PyNumber_TrueDivide(p, d);
-                                        if (lh.v._pyobject == nullptr) {
-                                                lh.v._pyobject = p;
-                                                py_error("numeric operator/=");
-                                        }
-                                        lh.hash = PyObject_Hash(lh.v._pyobject);
-                                        Py_DECREF(d);
-                                        Py_DECREF(p);
-                                        return lh;
-                                }
-                        } else if (PyLong_Check(p)) {
-                                PyObject *n = py_funcs.py_integer_from_python_obj(p);
-                                lh.v._pyobject = PyNumber_TrueDivide(n, rh.v._pyobject);
-                                if (lh.v._pyobject == nullptr) {
-                                        lh.v._pyobject = p;
-                                        py_error("numeric operator/=");
-                                }
-                                lh.hash = PyObject_Hash(lh.v._pyobject);
-                                Py_DECREF(n);
-                                Py_DECREF(p);
-                                return lh;
-                        }
-                }
-#else
                 {
                         if (PyLong_Check(p)) {
                                 PyObject *n = py_funcs.py_integer_from_python_obj(p);
@@ -2560,7 +2447,7 @@ numeric & operator/=(numeric & lh, const numeric & rh)
                                 return lh;
                         }
                 }
-#endif
+
                 lh.v._pyobject = PyNumber_TrueDivide(p, rh.v._pyobject);
                 if (lh.v._pyobject == nullptr) {
                         lh.v._pyobject = p;
@@ -3363,33 +3250,6 @@ void numeric::canonicalize()
         }
 }
 
-#ifdef PYNAC_HAVE_LIBGIAC
-giac::gen* numeric::to_giacgen(giac::context* cptr) const
-{
-        if (t == LONG)
-                return new giac::gen(v._long);
-        if (t == MPZ) {
-                mpz_t bigint;
-                mpz_init_set(bigint, v._bigint);
-                auto ret = new giac::gen(bigint);
-                mpz_clear(bigint);
-                return ret;
-        }
-        if (t == MPQ) {
-                mpz_t bigint;
-                mpz_init_set(bigint, mpq_numref(v._bigrat));
-                giac::gen gn(bigint);
-                mpz_set(bigint, mpq_denref(v._bigrat));
-                giac::gen gd(bigint);
-                giac::Tfraction<giac::gen> frac(gn, gd);
-                mpz_clear(bigint);
-                return new giac::gen(frac);
-        }
-        else
-                return nullptr;
-}
-#endif
-
 CanonicalForm numeric::to_canonical() const
 {
         if (t == LONG)
@@ -3518,7 +3378,7 @@ ex numeric::evalf(int /*level*/, PyObject* parent) const {
         if (ans == nullptr)
                 throw (std::runtime_error("numeric::evalf(): error calling py_float()"));
 
-        return ans;
+        return numeric(ans);
 }
 
 const numeric numeric::try_py_method(const std::string& s) const
@@ -3531,7 +3391,6 @@ const numeric numeric::try_py_method(const std::string& s) const
                 PyErr_Clear();
                 throw std::logic_error("");
         }
-        
         return numeric(ret);
 }
 
@@ -3807,7 +3666,7 @@ const numeric numeric::log(const numeric &b, PyObject* parent) const {
 }
 
 // General log
-// Handle special cases here that return MPZ/MPQ
+// Handle special cases here that return MPZ/MPQ (or an infinity)
 const numeric numeric::ratlog(const numeric &b, bool& israt) const {
         israt = true;
         if (b.is_one()) {
@@ -3829,6 +3688,9 @@ const numeric numeric::ratlog(const numeric &b, bool& israt) const {
                 if (b.v._long <= 0) {
                         israt = false;
                         return *_num0_p;
+                }
+                if (v._long == 0) {
+                        return py_funcs.py_eval_neg_infinity();
                 }
                 int c = 0;
                 std::ldiv_t ld;
@@ -5153,13 +5015,18 @@ const numeric isqrt(const numeric &x) {
 
 /** Floating point evaluation of Sage's constants. */
 ex ConstantEvalf(unsigned serial, PyObject* dict) {
+        PyObject* x;
         if (dict == nullptr) {
                 dict = PyDict_New();
                 PyDict_SetItemString(dict, "parent", CC_get());
+                x = py_funcs.py_eval_constant(serial, dict);
+                Py_DECREF(dict); // To avoid a memory leak, see bug #27536.
         }
-        PyObject* x = py_funcs.py_eval_constant(serial, dict);
+        else x = py_funcs.py_eval_constant(serial, dict);
+
         if (x == nullptr) py_error("error getting digits of constant");
-        return x;
+
+        return numeric(x);
 }
 
 ex UnsignedInfinityEvalf(unsigned serial, PyObject* parent) {

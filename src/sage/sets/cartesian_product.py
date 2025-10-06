@@ -55,9 +55,9 @@ class CartesianProduct(UniqueRepresentation, Parent):
         r"""
         INPUT:
 
-         - ``sets`` -- a tuple of parents
-         - ``category`` -- a subcategory of ``Sets().CartesianProducts()``
-         - ``flatten`` -- a boolean (default: ``False``)
+        - ``sets`` -- tuple of parents
+        - ``category`` -- a subcategory of ``Sets().CartesianProducts()``
+        - ``flatten`` -- boolean (default: ``False``)
 
         ``flatten`` is current ignored, and reserved for future use.
 
@@ -82,11 +82,11 @@ class CartesianProduct(UniqueRepresentation, Parent):
 
     def _element_constructor_(self, x):
         r"""
-        Construct an element of a Cartesian product from a list or iterable
+        Construct an element of a Cartesian product from a list or iterable.
 
         INPUT:
 
-        - ``x`` -- a list (or iterable)
+        - ``x`` -- list (or iterable)
 
         Each component of `x` is converted to the corresponding
         Cartesian factor.
@@ -126,7 +126,6 @@ class CartesianProduct(UniqueRepresentation, Parent):
         if self in _Rings and isinstance(x, numbers.Integral):
             return x * self.one()
 
-        from builtins import zip
         x = tuple(x)
 
         if len(x) != len(self._sets):
@@ -141,8 +140,17 @@ class CartesianProduct(UniqueRepresentation, Parent):
 
             sage: cartesian_product([QQ, ZZ, ZZ]) # indirect doctest
             The Cartesian product of (Rational Field, Integer Ring, Integer Ring)
+            sage: cartesian_product([ZZ]*10) # indirect doctest
+            The Cartesian product of 10 copies of Integer Ring
         """
-        return "The Cartesian product of %s" % (self._sets,)
+        if not self._sets:
+            return f"The Cartesian product of {self._sets}"
+        if len(self._sets) == 1:
+            return f"The Cartesian product of 1 copy of {self._sets[0]}"
+        first = self._sets[0]
+        if all(element is first for element in self._sets):
+            return f"The Cartesian product of {len(self._sets)} copies of {first}"
+        return f"The Cartesian product of {self._sets}"
 
     def __contains__(self, x):
         """
@@ -212,7 +220,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: C = Sets().CartesianProducts().example(); C
-            The Cartesian product of (Set of prime numbers (basic implementation), An example of an infinite enumerated set: the non negative integers, An example of a finite enumerated set: {1,2,3})
+            The Cartesian product of (Set of prime numbers (basic implementation), An example of an infinite enumerated set: the nonnegative integers, An example of a finite enumerated set: {1,2,3})
             sage: x = C.an_element(); x
             (47, 42, 1)
             sage: pi = C.cartesian_projection(1)
@@ -299,6 +307,8 @@ class CartesianProduct(UniqueRepresentation, Parent):
 
     an_element = Sets.CartesianProducts.ParentMethods.an_element
 
+    random_element = Sets.CartesianProducts.ParentMethods.random_element
+
     class Element(ElementWrapperCheckWrappedClass):
 
         wrapped_class = tuple
@@ -317,7 +327,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
             EXAMPLES::
 
                 sage: C = Sets().CartesianProducts().example(); C
-                The Cartesian product of (Set of prime numbers (basic implementation), An example of an infinite enumerated set: the non negative integers, An example of a finite enumerated set: {1,2,3})
+                The Cartesian product of (Set of prime numbers (basic implementation), An example of an infinite enumerated set: the nonnegative integers, An example of a finite enumerated set: {1,2,3})
                 sage: x = C.an_element(); x
                 (47, 42, 1)
                 sage: x.cartesian_projection(1)
@@ -336,7 +346,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
                 sage: C = Sets().CartesianProducts().example(); C
                 The Cartesian product of
                 (Set of prime numbers (basic implementation),
-                 An example of an infinite enumerated set: the non negative integers,
+                 An example of an infinite enumerated set: the nonnegative integers,
                  An example of a finite enumerated set: {1,2,3})
                 sage: c = C.an_element(); c
                 (47, 42, 1)
@@ -354,9 +364,9 @@ class CartesianProduct(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: C = cartesian_product([ZZ, QQ, CC])
-                sage: e = C.random_element()
-                sage: len(e)
+                sage: C = cartesian_product([ZZ, QQ, CC])                               # needs sage.rings.real_mpfr
+                sage: e = C.random_element()                                            # needs sage.rings.real_mpfr
+                sage: len(e)                                                            # needs sage.rings.real_mpfr
                 3
             """
             return len(self.value)
@@ -368,7 +378,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
             EXAMPLES::
 
                 sage: A = cartesian_product([ZZ, RR])
-                sage: A((1, 1.23)).cartesian_factors()
+                sage: A((1, 1.23)).cartesian_factors()                                  # needs sage.rings.real_mpfr
                 (1, 1.23000000000000)
                 sage: type(_)
                 <... 'tuple'>

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Kleshchev partitions
 ====================
@@ -130,14 +131,14 @@ class KleshchevPartition(Partition):
 
         EXAMPLES::
 
-            sage: KP = KleshchevPartitions(3, convention="regular")
+            sage: KP = KleshchevPartitions(3, convention='regular')
             sage: KP([5,4,4,3,2]).conormal_cells()
             {0: [(1, 4)], 1: [(5, 0), (4, 2)]}
             sage: KP([5,4,4,3,2]).conormal_cells(0)
             [(1, 4)]
             sage: KP([5,4,4,3,2]).conormal_cells(1)
             [(5, 0), (4, 2)]
-            sage: KP = KleshchevPartitions(3, convention="restricted")
+            sage: KP = KleshchevPartitions(3, convention='restricted')
             sage: KP([5,4,4,3,2]).conormal_cells()
             {0: [(1, 4), (3, 3)], 2: [(0, 5)]}
         """
@@ -161,9 +162,9 @@ class KleshchevPartition(Partition):
                     carry[res] += 1
             else:
                 res = KP._multicharge[0] + self[row] - row - 1
-                if row == len(self)-1 or self[row] > self[row+1]: # removable cell
+                if row == len(self)-1 or self[row] > self[row+1]:  # removable cell
                     carry[res] -= 1
-                if row == 0 or self[row-1] > self[row]:               #addable cell
+                if row == 0 or self[row-1] > self[row]:  # addable cell
                     if carry[res+1] >= 0:
                         conormals[res+1].append((row, self[row]))
                     else:
@@ -191,7 +192,7 @@ class KleshchevPartition(Partition):
 
         EXAMPLES::
 
-            sage: KP = KleshchevPartitions(3, convention="regular")
+            sage: KP = KleshchevPartitions(3, convention='regular')
             sage: KP([5,4,4,3,2]).cogood_cells()
             {0: (1, 4), 1: (4, 2)}
             sage: KP([5,4,4,3,2]).cogood_cells(0)
@@ -427,14 +428,14 @@ class KleshchevPartition(Partition):
         KP = mu.parent()
         return KP.element_class(KP, mu.add_cell(*mu.cogood_cells( r-c-self.parent()._multicharge[0]) ))
 
-    def is_regular(self):
+    def is_regular(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a `e`-regular partition tuple.
 
         A partition tuple is `e`-regular if we can get to the empty partition
         tuple by successively removing a sequence of good cells in the down
         direction. Equivalently, all partitions are `0`-regular and if `e > 0`
-        then a partition is `e`-regular if no `e` non-zero parts of ``self``
+        then a partition is `e`-regular if no `e` nonzero parts of ``self``
         are equal.
 
         EXAMPLES::
@@ -453,7 +454,7 @@ class KleshchevPartition(Partition):
         KP = self.parent()
         return super().is_regular(KP._e, KP._multicharge)
 
-    def is_restricted(self):
+    def is_restricted(self) -> bool:
         r"""
         Return ``True`` if ``self`` is an `e`-restricted partition tuple.
 
@@ -660,25 +661,25 @@ class KleshchevPartitionTuple(PartitionTuple):
         part_lens = [len(part) for part in self]  # so we don't repeatedly call these
         KP = self.parent()
         if KP._convention[0] == 'L':
-            rows = [(k,r) for k,ell in enumerate(part_lens) for r in range(ell+1)]
+            rows = [(k, r) for k, ell in enumerate(part_lens) for r in range(ell+1)]
         else:
-            rows = [(k,r) for k,ell in reversed(list(enumerate(part_lens))) for r in range(ell+1)]
+            rows = [(k, r) for k, ell in reversed(list(enumerate(part_lens))) for r in range(ell+1)]
         if KP._convention[1] == 'S':
             rows.reverse()
 
         for row in rows:
-            k,r = row
-            if r == part_lens[k]: # addable cell at bottom of a component
+            k, r = row
+            if r == part_lens[k]:  # addable cell at bottom of a component
                 carry[KP._multicharge[k]-r] += 1
             else:
                 part = self[k]
                 res = KP._multicharge[k] + (part[r] - r - 1)
-                if r == part_lens[k]-1 or part[r] > part[r+1]: # removable cell
+                if r == part_lens[k]-1 or part[r] > part[r+1]:  # removable cell
                     if carry[res] == 0:
                         normals[res].insert(0, (k, r, part[r]-1))
                     else:
                         carry[res] -= 1
-                if r == 0 or part[r-1] > part[r]:               #addable cell
+                if r == 0 or part[r-1] > part[r]:     # addable cell
                     carry[res+1] += 1
 
         # finally return the result
@@ -787,7 +788,6 @@ class KleshchevPartitionTuple(PartitionTuple):
             ([2, 2, 1, 1], [3, 2, 2, 1, 1])
             sage: mc.parent()
             Kleshchev partitions with e=3 and multicharge=(0,2)
-
         """
         P = self.parent()
         if self.size() == 0:
@@ -811,7 +811,7 @@ class KleshchevPartitionTuple(PartitionTuple):
         KP = mu.parent()
         return KP.element_class(KP, mu.add_cell(*mu.cogood_cells( r-c-self.parent()._multicharge[k])))
 
-    def is_regular(self):
+    def is_regular(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a `e`-regular partition tuple.
 
@@ -835,7 +835,7 @@ class KleshchevPartitionTuple(PartitionTuple):
         KP = self.parent()
         return _is_regular(self.to_list(), KP._multicharge, KP._convention)
 
-    def is_restricted(self):
+    def is_restricted(self) -> bool:
         r"""
         Return ``True`` if ``self`` is an `e`-restricted partition tuple.
 
@@ -860,7 +860,7 @@ class KleshchevPartitionTuple(PartitionTuple):
         return _is_restricted(self.to_list(), KP._multicharge, KP._convention)
 
 
-class KleshchevCrystalMixin():
+class KleshchevCrystalMixin:
     """
     Mixin class for the crystal structure of a Kleshchev partition.
     """
@@ -1097,7 +1097,7 @@ class KleshchevPartitionTupleCrystal(KleshchevPartitionTuple, KleshchevCrystalMi
 
 class KleshchevPartitions(PartitionTuples):
     r"""
-    Kleshchev partitions
+    Kleshchev partitions.
 
     A partition (tuple) `\mu` is Kleshchev if it can be recursively
     obtained by adding a sequence of good nodes to the empty
@@ -1228,7 +1228,7 @@ class KleshchevPartitions(PartitionTuples):
             sage: KP = KleshchevPartitions(5, [3,0,1], 1, convention='LS')
             sage: KP.multicharge()
             (3, 0, 1)
-            """
+        """
         return self._multicharge
 
     def convention(self):
@@ -1278,7 +1278,6 @@ class KleshchevPartitions(PartitionTuples):
             sage: KPls = KleshchevPartitions(2, [0,0], size=2, convention='left restricted')
             sage: [KPlg(mu) for mu in KPls] # indirect doc test
             [([1], [1]), ([2], [])]
-
         """
         if isinstance(mu, (KleshchevPartition, KleshchevPartitionTuple)):
             KPmu = mu.parent()
@@ -1286,11 +1285,11 @@ class KleshchevPartitions(PartitionTuples):
                 return mu
 
             if KPmu._level != self._level or KPmu._e != self._e:
-                raise ValueError('%s is not an element of %s'%(mu, self))
+                raise ValueError('%s is not an element of %s' % (mu, self))
 
             if KPmu._convention[1] != self._convention[1]:
                 mu = [nu.conjugate() for nu in mu]
-                if self._level>1 and KPmu._convention[0] == self._convention[0]:
+                if self._level > 1 and KPmu._convention[0] == self._convention[0]:
                     mu = mu[::-1]
 
         return super()._element_constructor_(mu)
@@ -1425,7 +1424,7 @@ class KleshchevPartitions_all(KleshchevPartitions):
 
     def __init__(self, e, multicharge, convention):
         r"""
-        Initializes ``self``.
+        Initialize ``self``.
 
         EXAMPLES::
 
@@ -1483,7 +1482,7 @@ class KleshchevPartitions_all(KleshchevPartitions):
             return 'Kleshchev partitions with e=%s' % (self._e)
 
         return 'Kleshchev partitions with e=%s and multicharge=(%s)' % (
-                        self._e,','.join('%s'%m for m in self._multicharge))
+                        self._e,','.join('%s' % m for m in self._multicharge))
 
     def __contains__(self, mu):
         """
@@ -1707,7 +1706,7 @@ class KleshchevPartitions_size(KleshchevPartitions):
             return 'Kleshchev partitions with e=%s and size %s' % (self._e, self._size)
 
         return 'Kleshchev partitions with e=%s and multicharge=(%s) and size %s' % (
-            self._e,','.join('%s'%m for m in self._multicharge), self._size
+            self._e,','.join('%s' % m for m in self._multicharge), self._size
         )
 
     def __contains__(self, mu):

@@ -13,13 +13,13 @@ La missione fissata per Sage è di essere un'alternativa open-source a Magma,
 Maple, Mathematica e Matlab. I predecessori di Sage, noti come HECKE e Manin,
 furono creati perché William Stein ebbe bisogno di scriverli come parte della
 sua ricerca sulla Teoria dei Numeri. Iniziato da William nel 2005 quando era
-all'università di Harvard, Sage combina alcuni fra i miglori software open-source
-per la matematica in un'unica intefaccia comune.
+all'università di Harvard, Sage combina alcuni fra i migliori software open-source
+per la matematica in un'unica interfaccia comune.
 Da allora Sage viene utilizzato non solo da ricercatori nel campo della Teoria
 dei Numeri, ma da ricercatori in tutte le scienze matematiche.
 
 Sage si avvale ed estende le funzionalità di molti dei pacchetti inglobati.
-Anche dal principio, quando Sage veiniva usato principalmente per la Teoria dei
+Anche dal principio, quando Sage veniva usato principalmente per la Teoria dei
 Numeri, includeva:
 `Givaro <https://casys.gricad-pages.univ-grenoble-alpes.fr/givaro>`_,
 `GMP <https://gmplib.org>`_,
@@ -30,7 +30,7 @@ professori universitari, ricercatori di tutto il mondo usano Sage perché voglio
 un pacchetto open-source comprensivo per la matematica che offra calcolo sia
 simbolico che numerico. Perlopiù le persone sono contente di quanto offre Sage.
 
-Com'é comune nell'ambito del software open-source (FOSS), spesso ci sono persone
+Come é comune nell'ambito del software open-source (FOSS), spesso ci sono persone
 che individuano casi in cui Sage non dispone delle funzionalità richiesta da loro.
 Quindi si immergono nel codice sorgente di Sage per estenderlo per il loro scopo,
 o ancora per esporre delle funzionalità dei pacchetti inglobati in Sage in modo
@@ -73,14 +73,14 @@ all'opera gratuita di una grande squadra internazionale di studenti, insegnanti,
 professori universitari, ricercatori, ingegneri informatici e persone che
 lavorano in vari ambiti della matematica, delle scienze, dell'ingegneria, dello
 sviluppo software e a tutti i livelli della scuola. Lo sviluppo di Sage ha potuto
-usufruire di fondi asegnati da numerose istituzioni e ha potuto includere sia
+usufruire di fondi assegnati da numerose istituzioni e ha potuto includere sia
 componenti preesistenti che in corso di sviluppo da parte di numerosi autori.
 
 Una lista di coloro che hanno dato un contributo diretto è reperibile al link
 "mappa di sviluppo di Sage"
 (`Sage Development Map <http://www.sagemath.org/development-map.html>`_)
 e la storia delle modifiche può essere reperita al link "changelog di
-alto livello" (`changelog <http://www.sagemath.org/mirror/src/changelog.txt>`_).
+alto livello" (`changelog <https://www.sagemath.org/changelogs/>`_).
 Fai riferimento alla
 `Pagina dei riconoscimenti <http://www.sagemath.org/development-ack.html>`_
 del sito web di Sage per una lista aggiornata di coloro che ci sostengono
@@ -144,7 +144,7 @@ ed in particolare nella seguente citazione::
 
   I computer non sono una minaccia per i matematici più di quanto i robot da
   cucina lo siano per i cuochi. Poiché la matematica diviene sempre più complessa
-  mentre il ritmo delle nostre vite accellera, dobbiamo delegare il più possibile
+  mentre il ritmo delle nostre vite accelera, dobbiamo delegare il più possibile
   alle macchine. Ed intendo sia il lavoro in campo numerico che in quello
   simbolico. Alcune persone possono andare avanti senza lavastoviglie, ma penso
   che le dimostrazioni vengano fuori molto più pulite quando il lavoro di
@@ -153,7 +153,7 @@ ed in particolare nella seguente citazione::
   Questo porta con sè parecchie questioni. Non sono un esperto ma penso che
   abbiamo bisogno di uno standard a livello di calcolo simbolico per rendere le
   manipolazioni al computer più facili da documentare e verificare. Con tutto il
-  rispetto per il libero mercato, forse in questo non dobbiam essere dipendenti
+  rispetto per il libero mercato, forse in questo non dobbiamo essere dipendenti
   da un software commerciale. Un progetto open-source potrebbe, forse, trovare
   risposte migliori a problemi ovvi come la disponibilità, i bug, la
   compatibilità all'indietro, l'indipendenza dalla piattaforma, le librerie
@@ -188,16 +188,13 @@ realizzate attraverso progetti FOSS come
 * `Pari/GP <https://pari.math.u-bordeaux.fr>`_ --- software matematico per
   calcolo veloce in Teoria dei Numeri.
 
-* `Pynac <http://pynac.sagemath.org>`_ --- versione modificata di GiNaC che
-  rimpiazza la dipendenza da CLN con Python.
-
 * `R <http://www.r-project.org>`_ --- linguaggio ed ambiente operativo per
   calcolo statistico e grafici relativi.
 
 * E molti altri troppo numerosi per essere elencati qui.
 
 Una lista aggiornata può essere reperita alla seguente link:
-`repository dei pacchetti standard <http://www.sagemath.org/packages/standard>`_.
+`repository dei pacchetti standard <https://doc.sagemath.org/html/en/reference/spkg/>`_.
 
 I principali linguaggi di programmazione di Sage sono
 `Python <http://www.python.org>`_ e `Cython <http://www.cython.org>`_.
@@ -292,7 +289,7 @@ Per scaricare la documentazione standard di Sage in formato HTML o PDF, visita
 Ogni release di Sage dispone della documentazione completa che costituisce la
 documentazione standard di Sage. Se hai scaricato un rilascio di Sage in formato
 binario, la versione HTML della sua documentazione si trova già disponibile nella
-cartella ``SAGE_ROOT/src/doc/output/html/``. Nel corso della compilazione da
+cartella :sage_root:`src/doc/output/html/`. Nel corso della compilazione da
 sorgente viene preparata anche la documentazione HTML.
 Per construire la versione HTML della documentazione, lancia il seguente comando
 dopo essersi posizionati in ``SAGE_ROOT``::

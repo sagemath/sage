@@ -1,10 +1,12 @@
+# sage.doctest: needs sage.modules
+
 ############################################################
 # Backwards compatible unpickling
 ############################################################
 
 def unpickle_QuaternionAlgebra_v0(*key):
     """
-    The 0th version of pickling for quaternion algebras.
+    The `0`-th version of pickling for quaternion algebras.
 
     EXAMPLES::
 

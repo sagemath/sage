@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.padics
 r"""
 Computation of the Frobenius polynomial using Newton's identities
 """
@@ -7,7 +8,8 @@ Computation of the Frobenius polynomial using Newton's identities
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 from sage.rings.integer_ring import ZZ
-from sage.functions.log import log
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.log", "log")
 
 
 def charpoly_frobenius(frob_matrix, charpoly_prec, p, weight, a=1, known_factor=[1]):
@@ -30,9 +32,8 @@ def charpoly_frobenius(frob_matrix, charpoly_prec, p, weight, a=1, known_factor=
 
     - ``known_factor`` -- the list of coefficients of the known factor
 
-    OUTPUT:
-
-    A list of integers corresponding to the characteristic polynomial of the Frobenius action.
+    OUTPUT: list of integers corresponding to the characteristic polynomial
+    of the Frobenius action
 
     EXAMPLES::
 

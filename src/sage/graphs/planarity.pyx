@@ -30,7 +30,7 @@ cdef extern from "planarity/graph.h":
     cdef int gp_SortVertices(graphP theGraph)
 
 
-def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
+def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, immutable=None):
     r"""
     Check whether ``g`` is planar using Boyer's planarity algorithm.
 
@@ -54,6 +54,11 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
     - ``set_embedding`` -- boolean (default: ``False``); whether to record the
       combinatorial embedding returned (see
       :meth:`~sage.graphs.generic_graph.GenericGraph.get_embedding`)
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graph. ``immutable=None`` (default) means that
+      the graph and the Kuratowski subgraph will behave the same way.
+      This parameter is ignored when ``kuratowski=False``.
 
     EXAMPLES::
 
@@ -95,7 +100,22 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
             ....:     assert (hasattr(G, '_embedding') and G._embedding is not None) == set_embedding, (set_embedding, set_pos)
             ....:     assert (hasattr(G, '_pos') and G._pos is not None) == set_pos, (set_embedding, set_pos)
 
+    Check the behavior of parameter ``immutable``::
+
+        sage: G = graphs.PetersenGraph()
+        sage: G.is_planar(kuratowski=True)
+        (False, Kuratowski subgraph of (Petersen graph): Graph on 9 vertices)
+        sage: G.is_planar(kuratowski=True)[1].is_immutable()
+        False
+        sage: G.is_planar(kuratowski=True, immutable=True)[1].is_immutable()
+        True
+        sage: G = G.copy(immutable=True)
+        sage: G.is_planar(kuratowski=True)[1].is_immutable()
+        True
+        sage: G.is_planar(kuratowski=True, immutable=False)[1].is_immutable()
+        False
     """
+    g._scream_if_not_simple()
     if set_pos and not g.is_connected():
         raise ValueError("is_planar() cannot set vertex positions for a disconnected graph")
 
@@ -118,9 +138,8 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
     # (planarity 3 uses 1-based array indexing, with 0 representing NIL)
     cdef int i
     cdef list listto = list(g)
-    cdef dict ffrom = {vvv: i + 1 for i, vvv in enumerate(listto)}
-    cdef dict to = {i + 1: vvv for i, vvv in enumerate(listto)}
-    g.relabel(ffrom)
+    cdef dict ffrom = {vvv: i for i, vvv in enumerate(listto, start=1)}
+    cdef dict to = {i: vvv for i, vvv in enumerate(listto, start=1)}
 
     cdef graphP theGraph
     theGraph = gp_New()
@@ -129,29 +148,31 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
     if status != OK:
         raise RuntimeError("gp_InitGraph status is not ok")
     for u, v in g.edge_iterator(labels=False):
-        status = gp_AddEdge(theGraph, u, 0, v, 0)
+        status = gp_AddEdge(theGraph, ffrom[u], 0, ffrom[v], 0)
         if status == NOTOK:
             raise RuntimeError("gp_AddEdge status is not ok")
         elif status == NONEMBEDDABLE:
             # We now know that the graph is nonplanar.
             if not kuratowski:
+                gp_Free(&theGraph)
                 return False
             # With just the current edges, we have a nonplanar graph,
-            # so to isolate a kuratowski subgraph, just keep going.
+            # so to isolate a Kuratowski subgraph, just keep going.
             break
 
     status = gp_Embed(theGraph, EMBEDFLAGS_PLANAR)
-    gp_SortVertices(theGraph)
-
-    # Use to and from mappings to relabel vertices back from the set {1,...,n}
-    g.relabel(to)
 
     if status == NOTOK:
         raise RuntimeError("status is not ok")
-    elif status == NONEMBEDDABLE:
+
+    gp_SortVertices(theGraph)
+
+    if status == NONEMBEDDABLE:
         # Kuratowski subgraph isolator
+        if not kuratowski:
+            gp_Free(&theGraph)
+            return False
         g_dict = {}
-        from sage.graphs.graph import Graph
         for i in range(1, theGraph.N + 1):
             linked_list = []
             j = theGraph.V[i].link[1]
@@ -160,29 +181,33 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
                 j = theGraph.E[j].link[1]
             if linked_list:
                 g_dict[to[i]] = linked_list
-        G = Graph(g_dict)
+        if immutable is None:
+            immutable = g.is_immutable()
         gp_Free(&theGraph)
-        if kuratowski:
-            return (False, G)
-        else:
-            return False
-    else:
-        if set_pos or set_embedding:
-            emb_dict = {}
-            for i in range(1, theGraph.N + 1):
-                linked_list = []
-                j = theGraph.V[i].link[1]
-                while j:
-                    linked_list.append(to[theGraph.E[j].neighbor])
-                    j = theGraph.E[j].link[1]
-                emb_dict[to[i]] = linked_list
-            if set_embedding:
-                g._embedding = emb_dict
-            if set_pos:
-                g.layout(layout='planar', save_pos=True, on_embedding=emb_dict)
+        G = g.__class__(data=g_dict, weighted=g._weighted,
+                        loops=g.allows_loops(),
+                        multiedges=g.allows_multiple_edges(),
+                        name="Kuratowski subgraph of (%s)" % g.name(),
+                        immutable=immutable)
+        if g.get_pos():
+            G.set_pos({u: g._pos[u] for u in g_dict})
+        return (False, G)
 
-        gp_Free(&theGraph)
-        if kuratowski:
-            return (True, None)
-        else:
-            return True
+    if set_pos or set_embedding:
+        emb_dict = {}
+        for i in range(1, theGraph.N + 1):
+            linked_list = []
+            j = theGraph.V[i].link[1]
+            while j:
+                linked_list.append(to[theGraph.E[j].neighbor])
+                j = theGraph.E[j].link[1]
+            emb_dict[to[i]] = linked_list
+        if set_embedding:
+            g._embedding = emb_dict
+        if set_pos:
+            g.layout(layout='planar', save_pos=True, on_embedding=emb_dict)
+
+    gp_Free(&theGraph)
+    if kuratowski:
+        return (True, None)
+    return True

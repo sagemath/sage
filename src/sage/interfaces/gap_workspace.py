@@ -2,7 +2,7 @@ r"""
 Support for (lib)GAP workspace files
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Jeroen Demeyer <J.Demeyer@UGent.be>
 #                     2019 Vincent Delecroix <vincent.delecroix@u-bordeaux.fr>
 #
@@ -10,29 +10,29 @@ Support for (lib)GAP workspace files
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import time
 import hashlib
 import subprocess
-from sage.env import DOT_SAGE, HOSTNAME, GAP_LIB_DIR, GAP_SHARE_DIR
+from sage.env import DOT_SAGE, HOSTNAME, GAP_ROOT_PATHS
 
 
-def gap_workspace_file(system="gap", name="workspace", dir=None):
+def gap_workspace_file(system='gap', name='workspace', dir=None):
     r"""
     Return the filename for the GAP workspace.
 
     INPUT:
 
-    - ``system`` -- the name of the system, either ``"gap"`` or
-      ``"libgap"``
+    - ``system`` -- the name of the system, either ``'gap'`` or
+      ``'libgap'``
 
-    - ``name`` -- the kind of workspace, usually ``"workspace"`` but
+    - ``name`` -- the kind of workspace, usually ``'workspace'`` but
       the library interface also uses other files
 
-    - ``dir`` -- the directory where the workspaces should be stored.
+    - ``dir`` -- the directory where the workspaces should be stored
       By default, this is ``DOT_SAGE/gap``
 
     EXAMPLES::
@@ -60,8 +60,12 @@ def gap_workspace_file(system="gap", name="workspace", dir=None):
     if dir is None:
         dir = os.path.join(DOT_SAGE, 'gap')
 
-    data = f'{GAP_LIB_DIR}:{GAP_SHARE_DIR}'
-    for path in GAP_LIB_DIR, GAP_SHARE_DIR:
+    data = f'{GAP_ROOT_PATHS}'
+    for path in GAP_ROOT_PATHS.split(";"):
+        if not path:
+            # If GAP_ROOT_PATHS begins or ends with a semicolon,
+            # we'll get one empty path.
+            continue
         sysinfo = os.path.join(path, "sysinfo.gap")
         if os.path.exists(sysinfo):
             data += subprocess.getoutput(f'. "{sysinfo}" && echo ":$GAP_VERSION:$GAParch"')
@@ -75,7 +79,7 @@ def prepare_workspace_dir(dir=None):
 
     INPUT:
 
-    - ``dir`` -- the directory where the workspaces should be stored.
+    - ``dir`` -- the directory where the workspaces should be stored
       By default, this is ``DOT_SAGE/gap``
 
     OUTPUT: the actual workspace directory
@@ -88,7 +92,9 @@ def prepare_workspace_dir(dir=None):
 
     TESTS::
 
-        sage: prepare_workspace_dir(os.path.join(tmp_dir(), "new"))
+        sage: import tempfile
+        sage: with tempfile.TemporaryDirectory() as d:
+        ....:     prepare_workspace_dir(os.path.join(d, "new"))
         '.../new'
     """
     if dir is None:

@@ -1,0 +1,5 @@
+# Upstream packages as uploaded as GitHub release assets.
+# This file is automatically updated by the update-version script.
+https://github.com/sagemath/sage/releases/download/10.8/
+https://github.com/sagemath/sage/releases/download/10.7/
+https://github.com/sagemath/sage/releases/download/10.6/

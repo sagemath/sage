@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Poirier-Reutenauer Hopf algebra of standard tableaux
 
@@ -71,7 +72,7 @@ class FSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         CombinatorialFreeModule.__init__(self, alg.base_ring(),
                                          StandardTableaux(),
                                          category=FSymBases(alg),
-                                         bracket="", prefix=self._prefix)
+                                         bracket='', prefix=self._prefix)
 
     def _coerce_map_from_(self, R):
         r"""
@@ -213,10 +214,10 @@ class FSymBases(Category_realization_of_parent):
             sage: bases = FSymBases(FSym)
             sage: bases.super_categories()
             [Category of realizations of Hopf algebra of standard tableaux over the Integer Ring,
-             Join of Category of realizations of hopf algebras over Integer Ring
+             Join of Category of realizations of Hopf algebras over Integer Ring
                  and Category of graded algebras over Integer Ring
                  and Category of graded coalgebras over Integer Ring,
-             Category of graded connected hopf algebras with basis over Integer Ring]
+             Category of graded connected Hopf algebras with basis over Integer Ring]
         """
         R = self.base().base_ring()
         return [self.base().Realizations(),
@@ -268,7 +269,7 @@ class FSymBases(Category_realization_of_parent):
             r"""
             The basis elements (optionally: of the specified degree).
 
-            OUTPUT: Family
+            OUTPUT: family
 
             EXAMPLES::
 
@@ -326,7 +327,7 @@ class FSymBases(Category_realization_of_parent):
 
                 sage: z = G[[1,3,5],[2,4]]
                 sage: all(F.duality_pairing(F[p1] * F[p2], z) == c
-                ....:     for ((p1, p2), c) in z.coproduct())
+                ....:     for (p1, p2), c in z.coproduct())
                 True
 
             TESTS:
@@ -340,7 +341,7 @@ class FSymBases(Category_realization_of_parent):
                 Rational Field
             """
             y = self.dual_basis()(y)
-            return self.base_ring().sum(coeff * y[t] for (t, coeff) in x)
+            return self.base_ring().sum(coeff * y[t] for t, coeff in x)
 
         def duality_pairing_matrix(self, basis, degree):
             r"""
@@ -350,7 +351,7 @@ class FSymBases(Category_realization_of_parent):
             INPUT:
 
             - ``basis`` -- a basis of the dual Hopf algebra
-            - ``degree`` -- a non-negative integer
+            - ``degree`` -- nonnegative integer
 
             OUTPUT:
 
@@ -494,7 +495,7 @@ class FreeSymmetricFunctions(UniqueRepresentation, Parent):
         cat = HopfAlgebras(base_ring).Graded().Connected()
         Parent.__init__(self, base=base_ring, category=cat.WithRealizations())
 
-    _shorthands = ['G']
+    _shorthands = ('G',)
 
     def a_realization(self):
         r"""
@@ -674,10 +675,9 @@ class FreeSymmetricFunctions(UniqueRepresentation, Parent):
             """
             n = t1.size()
             m = n + t2.size()
-            tableaux = []
-            for t in StandardTableaux(m):
-                if t.restrict(n) == t1 and standardize(t.anti_restrict(n).rectify()) == t2:
-                    tableaux.append(t)
+            tableaux = [t for t in StandardTableaux(m)
+                        if t.restrict(n) == t1
+                        and standardize(t.anti_restrict(n).rectify()) == t2]
             return self.sum_of_monomials(tableaux)
 
         @cached_method
@@ -790,7 +790,7 @@ class FreeSymmetricFunctions_Dual(UniqueRepresentation, Parent):
         sage: TF(F[[5, 1, 4, 2, 3]])
         F[135|2|4]
     """
-    def __init__(self, base_ring):
+    def __init__(self, base_ring) -> None:
         r"""
         Initialize ``self``.
 
@@ -802,7 +802,7 @@ class FreeSymmetricFunctions_Dual(UniqueRepresentation, Parent):
         cat = HopfAlgebras(base_ring).Graded().Connected()
         Parent.__init__(self, base=base_ring, category=cat.WithRealizations())
 
-    _shorthands = ['F']
+    _shorthands = ('F',)
 
     def a_realization(self):
         r"""
@@ -1113,7 +1113,7 @@ def ascent_set(t):
         [2, 4, 5]
     """
     row_locations = {}
-    for (i, row) in enumerate(t):
+    for i, row in enumerate(t):
         for entry in row:
             row_locations[entry] = i
     n = len(row_locations)

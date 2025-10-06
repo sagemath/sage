@@ -10,10 +10,10 @@ Wrappers on GAP matrices
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from sage.categories.fields import Fields
 from sage.libs.gap.libgap import libgap
 from sage.structure.element cimport Matrix
-from .args cimport MatrixArgs_init
+from sage.matrix.args cimport MatrixArgs_init
 
 
 cdef class Matrix_gap(Matrix_dense):
@@ -48,6 +48,7 @@ cdef class Matrix_gap(Matrix_dense):
         sage: m.transpose().parent() is M
         True
 
+        sage: # needs sage.rings.number_field
         sage: UCF = UniversalCyclotomicField()
         sage: M = MatrixSpace(UCF, 3, implementation='gap')
         sage: m = M([UCF.zeta(i) for i in range(1,10)])
@@ -60,7 +61,9 @@ cdef class Matrix_gap(Matrix_dense):
 
     TESTS::
 
-        sage: for ring in [ZZ, QQ, UniversalCyclotomicField(), GF(2), GF(3)]:
+        sage: rings = [ZZ, QQ, UniversalCyclotomicField(), GF(2), GF(3)]
+        sage: rings += [UniversalCyclotomicField()]                                     # needs sage.rings.number_field
+        sage: for ring in rings:
         ....:     M = MatrixSpace(ring, 2, implementation='gap')
         ....:     TestSuite(M).run(skip=['_test_construction'])
         ....:     M = MatrixSpace(ring, 2, 3, implementation='gap')
@@ -201,6 +204,46 @@ cdef class Matrix_gap(Matrix_dense):
         """
         self._libgap[i,j] = x
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_gap with the
+                    same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: M = MatrixSpace(ZZ, 3, 4, implementation='gap')(range(12))
+            sage: M
+            [ 0  1  2  3]
+            [ 4  5  6  7]
+            [ 8  9 10 11]
+            sage: M.transpose()
+            [ 0  4  8]
+            [ 1  5  9]
+            [ 2  6 10]
+            [ 3  7 11]
+            sage: M.matrix_from_rows([0,2])
+            [ 0  1  2  3]
+            [ 8  9 10 11]
+            sage: M.matrix_from_columns([1,3])
+            [ 1  3]
+            [ 5  7]
+            [ 9 11]
+            sage: M.matrix_from_rows_and_columns([1,2],[0,3])
+            [ 4  7]
+            [ 8 11]
+        """
+        cdef Matrix_gap _src = <Matrix_gap>src
+        self._libgap[iDst,jDst] = _src._libgap[iSrc,jSrc]
+
     cpdef _richcmp_(self, other, int op):
         r"""
         Compare ``self`` and ``right``.
@@ -233,6 +276,7 @@ cdef class Matrix_gap(Matrix_dense):
             sage: m1 != m3
             True
 
+            sage: # needs sage.rings.number_field
             sage: UCF = UniversalCyclotomicField()
             sage: M = MatrixSpace(UCF, 2, implementation='gap')
             sage: m1 = M([E(2), E(3), 0, E(4)])
@@ -273,12 +317,11 @@ cdef class Matrix_gap(Matrix_dense):
             [-1/2    1]
         """
         cdef Matrix_gap M
-        if self._base_ring.is_field():
+        if self._base_ring in Fields():
             M = self._new(self._nrows, self._ncols)
             M._libgap = self._libgap.Inverse()
             return M
-        else:
-            return Matrix_dense.__invert__(self)
+        return Matrix_dense.__invert__(self)
 
     cpdef _add_(left, right):
         r"""
@@ -339,10 +382,44 @@ cdef class Matrix_gap(Matrix_dense):
             [ 4]
             [ 2]
             [52]
+
+        TESTS::
+
+            sage: M = MatrixSpace(QQ, 2, 3, implementation='gap')
+            sage: m = M(range(6))
+            sage: m.subdivide([1],[2])
+            sage: m
+            [0 1|2]
+            [---+-]
+            [3 4|5]
+            sage: m.transpose()
+            [0|3]
+            [1|4]
+            [-+-]
+            [2|5]
+
+            sage: M = MatrixSpace(QQ, 0, 2, implementation='gap')
+            sage: m = M([])
+            sage: m.subdivide([],[1])
+            sage: m.subdivisions()
+            ([], [1])
+            sage: m.transpose().subdivisions()
+            ([1], [])
+
+            sage: M = MatrixSpace(QQ, 2, 0, implementation='gap')
+            sage: m = M([])
+            sage: m.subdivide([1],[])
+            sage: m.subdivisions()
+            ([1], [])
+            sage: m.transpose().subdivisions()
+            ([], [1])
         """
         cdef Matrix_gap M
         M = self._new(self._ncols, self._nrows)
         M._libgap = self._libgap.TransposedMat()
+        if self._subdivisions is not None:
+            row_divs, col_divs = self.subdivisions()
+            M.subdivide(col_divs, row_divs)
         return M
 
     def determinant(self):
@@ -367,6 +444,7 @@ cdef class Matrix_gap(Matrix_dense):
             sage: parent(M(1).determinant())
             Rational Field
 
+            sage: # needs sage.rings.number_field
             sage: M = MatrixSpace(UniversalCyclotomicField(), 1, implementation='gap')
             sage: parent(M(1).determinant())
             Universal Cyclotomic Field
@@ -395,6 +473,7 @@ cdef class Matrix_gap(Matrix_dense):
             sage: parent(M(1).trace())
             Rational Field
 
+            sage: # needs sage.rings.number_field
             sage: M = MatrixSpace(UniversalCyclotomicField(), 1, implementation='gap')
             sage: parent(M(1).trace())
             Universal Cyclotomic Field

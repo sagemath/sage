@@ -7,8 +7,9 @@
 
 from libc.stdint cimport uint32_t, uint64_t
 from libcpp.vector cimport vector as cppvector
+from libcpp.pair cimport pair
 
-from .givaro cimport *
+from sage.libs.linbox.givaro cimport *
 
 cdef extern from "linbox/matrix/dense-matrix.h":
     ## template <class _Field, class _blasRep=typename Vector<_Field>::Dense >
@@ -46,6 +47,12 @@ cdef extern from "linbox/matrix/dense-matrix.h":
 
         ostream& write(ostream&)
 
+cdef extern from "linbox/vector/sparse.h":
+    cdef cppclass Sparse_Vector_rational "LinBox::Sparse_Vector<Givaro::Rational>":
+        ctypedef pair[unsigned int, Rational] Element
+        size_t size()
+        Element& operator[](size_t i)
+
 cdef extern from "linbox/matrix/sparse-matrix.h":
     ## template<class _Field, class _Storage = SparseMatrixFormat::SparseSeq >
     ## class SparseMatrix ;
@@ -71,6 +78,19 @@ cdef extern from "linbox/matrix/sparse-matrix.h":
         void setEntry(size_t i, size_t j, Element &a)
         Element &getEntry(size_t i, size_t j)
         Field& field()
+
+        ostream& write(ostream&)
+
+    cdef cppclass SparseMatrix_rational "LinBox::SparseMatrix<Givaro::QField<Givaro::Rational>>":
+        ctypedef QField Field
+        ctypedef Rational Element
+        SparseMatrix_rational(Field &F, size_t m, size_t n)
+        size_t rowdim()
+        size_t coldim()
+        void setEntry(size_t i, size_t j, Element &a)
+        Element &getEntry(size_t i, size_t j)
+        Field& field()
+        Sparse_Vector_rational& getRow(size_t i)
 
         ostream& write(ostream&)
 
@@ -157,6 +177,12 @@ cdef extern from "linbox/algorithms/gauss.h":
                                              SparseMatrix_Modular_uint64 &A,
                                              unsigned long Ni,
                                              unsigned long Nj)
+
+    cdef cppclass GaussDomain_rational "LinBox::GaussDomain<Givaro::QField<Givaro::Rational>>":
+        ctypedef QField Field
+        ctypedef Rational Element
+        GaussDomain_rational(Field &)
+        SparseMatrix_rational& nullspacebasisin(SparseMatrix_rational &X, SparseMatrix_rational &A)
 
 cdef extern from "linbox/solutions/echelon.h" namespace "LinBox":
     size_t rowEchelon (DenseMatrix_Modular_float&, const DenseMatrix_Modular_float&)

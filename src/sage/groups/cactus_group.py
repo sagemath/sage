@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.number_field
 r"""
 Cactus Groups
 
@@ -42,7 +43,7 @@ class CactusGroup(UniqueRepresentation, Group):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
     EXAMPLES:
 
@@ -77,7 +78,7 @@ class CactusGroup(UniqueRepresentation, Group):
             sage: J3 = groups.misc.Cactus(3)
             sage: it = iter(J3)
             sage: elts = [next(it) for _ in range(100)]
-            sage: TestSuite(J3).run(elements=elts[::7], skip="_test_enumerated_set_contains")
+            sage: TestSuite(J3).run(elements=elts[::7], skip='_test_enumerated_set_contains')
 
         We run this test separately because the words grow very long, very
         quickly. This means the code needs to check a lot of normalizations,
@@ -134,7 +135,7 @@ class CactusGroup(UniqueRepresentation, Group):
         G = Graph([list(range(len(PS))),
                    [[i,j,-1] for j in range(1, len(PS)) for i in range(j)
                     if PS[i] & PS[j] not in [frozenset(), PS[i], PS[j]]]
-                   ], format="vertices_and_edges")
+                   ], format='vertices_and_edges')
         self._subsets = PS
         self._subsets_inv = {X: i for i,X in enumerate(PS)}
         return G
@@ -217,7 +218,7 @@ class CactusGroup(UniqueRepresentation, Group):
         return Family(l, lambda x: self.element_class(self, [x]))
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self`` as a tuple.
 
@@ -942,7 +943,7 @@ class PureCactusGroup(KernelSubgroup):
         return self.gens()[i]
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self``.
 
@@ -970,7 +971,7 @@ class PureCactusGroup(KernelSubgroup):
             sage: gen == b
             True
         """
-        from sage.functions.other import factorial
+        from sage.arith.misc import factorial
         J = self.ambient()
         G = J.gens()
         one = J.one()

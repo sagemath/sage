@@ -1,6 +1,6 @@
 # distutils: depends = NTL/ZZ.h
 
-from .types cimport (ZZ_c, ZZX_c, ZZ_p_c, vec_ZZ_p_c, ZZ_pContext_c,
+from sage.libs.ntl.types cimport (ZZ_c, ZZX_c, ZZ_p_c, vec_ZZ_p_c, ZZ_pContext_c,
         ZZ_pX_c, ZZ_pX_Modulus_c, ZZ_pX_Multiplier_c)
 
 
@@ -119,4 +119,3 @@ cdef extern from "ntlwrap_impl.h":
     void ZZ_pX_right_pshift(ZZ_pX_c x, ZZ_pX_c a, ZZ_c pn, ZZ_pContext_c c)
     void ZZ_pX_InvMod_newton_unram(ZZ_pX_c x, ZZ_pX_c a, ZZ_pX_Modulus_c F, ZZ_pContext_c cpn, ZZ_pContext_c cp)
     void ZZ_pX_InvMod_newton_ram(ZZ_pX_c x, ZZ_pX_c a, ZZ_pX_Modulus_c F, ZZ_pContext_c cpn)
-

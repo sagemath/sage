@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([sqlalchemy], [SAGE_PYTHON_PACKAGE_CHECK([sqlalchemy])])

@@ -40,16 +40,6 @@ Calculando ``A.solve_right(Y)`` obtém-se uma matrix (ou vetor)
     sage: A * X   # checking our answer...
     (0, -4, -1)
 
-Uma barra invertida ``\`` pode ser usada no lugar de ``solve_right``;
-use ``A \ Y`` no lugar de ``A.solve_right(Y)``.
-
-.. link
-
-::
-
-    sage: A \ Y
-    (-2, 1, 0)
-
 Se não existir solução, o Sage retorna um erro:
 
 .. skip
@@ -71,11 +61,7 @@ O Sage também pode calcular autovalores e autovetores::
     [-2*I, 2*I]
     sage: B = matrix([[1, 3], [3, 1]])
     sage: B.eigenvectors_left()
-    [(4, [
-    (1, 1)
-    ], 1), (-2, [
-    (1, -1)
-    ], 1)]
+    [(4, [(1, 1)], 1), (-2, [(1, -1)], 1)]
 
 (A sintaxe para a resposta de ``eigenvectors_left`` é uma lista com
 três componentes: (autovalor, autovetor, multiplicidade).) Autovalores
@@ -230,4 +216,4 @@ Note que o Python é sensível a maiúsculas e minúsculas:
     sage: M = MatrixSpace(QQ, 10,10, Sparse=True)
     Traceback (most recent call last):
     ...
-    TypeError: ...__init__() got an unexpected keyword argument 'Sparse'
+    TypeError: ...__init__() got an unexpected keyword argument 'Sparse'...

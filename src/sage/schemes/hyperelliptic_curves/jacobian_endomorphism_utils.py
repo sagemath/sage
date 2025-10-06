@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Some functions regarding geometric endomorphism rings of Jacobians of
 hyperelliptic curves.
@@ -63,7 +62,7 @@ the LMFDB label of the curve is 169.a.169.1::
     sage: A.geometric_endomorphism_algebra_is_field()
     False
 
-.. WARNING:
+.. WARNING::
 
     There is a very small chance that the algorithms return ``False`` for the
     two methods described above when in fact one or both of them are ``True``.
@@ -77,7 +76,6 @@ the LMFDB label of the curve is 169.a.169.1::
 AUTHORS:
 
 - Barinder S. Banwait and Davide Lombardo (2021-06-09): initial version
-
 """
 
 # ****************************************************************************
@@ -94,14 +92,15 @@ from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
-from sage.rings.number_field.number_field import NumberField
 from sage.misc.lazy_import import lazy_import
 from sage.rings.fast_arith import prime_range
 from sage.arith.misc import GCD as gcd
+
 lazy_import('sage.interfaces.genus2reduction', ['genus2reduction', 'Genus2reduction'])
+lazy_import('sage.rings.number_field.number_field', 'NumberField')
 
 
-def satisfies_coefficient_condition(g, p):
+def satisfies_coefficient_condition(g, p) -> bool:
     """
     This is the coefficient condition in the definition of Omega_K'
     on page 912 of the published version of paper.
@@ -117,14 +116,11 @@ def satisfies_coefficient_condition(g, p):
         sage: satisfies_coefficient_condition(f,23)
         True
     """
-
     if g[0] != p**2:
         return False
-    if g[3]*p != g[1]:
+    if g[3] * p != g[1]:
         return False
-    if g[2]%p == 0:
-        return False
-    return True
+    return bool(g[2] % p)
 
 
 def get_is_geom_field(f, C, bad_primes, B=200):
@@ -143,11 +139,11 @@ def get_is_geom_field(f, C, bad_primes, B=200):
 
     INPUT:
 
-    - ``f`` -- a polynomial defining the hyperelliptic curve.
+    - ``f`` -- a polynomial defining the hyperelliptic curve
 
-    - ``C`` -- the hyperelliptic curve.
+    - ``C`` -- the hyperelliptic curve
 
-    - ``bad_primes`` -- the list of odd primes of bad reduction.
+    - ``bad_primes`` -- the list of odd primes of bad reduction
 
     - ``B`` -- (default: 200) the bound which appears in the statement of
       the algorithm from [Lom2019]_
@@ -253,9 +249,9 @@ def is_geom_trivial_when_field(C, bad_primes, B=200):
 
     INPUT:
 
-    - ``C`` -- the hyperelliptic curve.
+    - ``C`` -- the hyperelliptic curve
 
-    - ``bad_primes`` -- the list of odd primes of bad reduction.
+    - ``bad_primes`` -- the list of odd primes of bad reduction
 
     - ``B`` -- (default: 200) the bound which appears in the statement of
       the algorithm from [Lom2019]_

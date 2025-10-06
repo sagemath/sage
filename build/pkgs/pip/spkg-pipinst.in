@@ -1,0 +1,3 @@
+# pip can install its own wheel! But first we need to ensure that the pip
+# wheelfile is on the PYTHONPATH
+export PYTHONPATH=$(pwd)/$(echo *.whl)

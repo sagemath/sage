@@ -20,14 +20,19 @@ from sage_docbuild.conf import *  # NOQA
 # contains common paths.
 html_static_path = [] + html_common_static_path
 
+# Add small view/edit buttons.
+html_theme_options.update({
+  'source_view_link': os.path.join(source_repository, 'blob/develop/src/doc/tr/a_tour_of_sage', '{filename}'),
+  'source_edit_link': os.path.join(source_repository, 'edit/develop/src/doc/tr/a_tour_of_sage', '{filename}'),
+})
+
 # General information about the project.
 project = 'Sage Turu'
 name = 'a_tour_of_sage'
 
-# The name for this set of Sphinx documents.  If None, it defaults to
-# "<project> v<release> documentation".
-html_title = project + " v" + release
-html_short_title = "Sage Turu v" + release
+# The name for this set of Sphinx documents. Do not include release info.
+html_title = project
+html_short_title = project
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = name

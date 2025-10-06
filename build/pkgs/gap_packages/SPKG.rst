@@ -7,6 +7,20 @@ Description
 Several "official" and "undeposited" GAP packages available from
 https://www.gap-system.org/Packages/packages.html
 
+Installing this SPKG will install the corresponding GAP packages, but
+before you can use them in Sage, they still have to be loaded into
+either the GAP interface or libgap::
+
+  sage: gap.eval('LoadPackage("Grape")')  # optional - gap_packages
+  'true'
+  sage: libgap.LoadPackage("Grape")       # optional - gap_packages
+  true
+
+Those correspond to::
+
+  gap> LoadPackage("Grape");
+
+within the GAP interface and libgap, respectively.
 
 Upstream Contact
 ----------------
@@ -42,13 +56,22 @@ Graaf)
 crime - package to compute the cohomology ring of finite p-groups,
 induced maps, and Massey products. (Author: Marcus Bishop)
 
+crypting - The crypting package provides some cryptographic primitives so that the JupyterKernel package works.
+(Authors: Markus Pfeiffer and The GAP Team)
+
 cryst - Computing with crystallographic groups (Authors: Bettina Eick,
 Franz Gähler, Werner Nickel)
 
 CTblLib - The GAP Character Table Library (Author: Thomas Breuer)
 
+datastructures - The datastructures package provides some standard data structures.
+(Authors: Markus Pfeiffer, Max Horn, Christopher Jefferson and Steve Linton)
+
 DESIGN is a package for classifying, partitioning and studying block
 designs. (Author: Leonard H. Soicher)
+
+Digraphs -  GAP package containing methods for graphs, digraphs, and multidigraphs.
+(Authors: Jan De Beule, Julius Jonusas, James Mitchell, Wilf A. Wilson, Michael Young, Marina Anagnostopoulou-Merkouri, Finn Buck, Stuart Burrell, Graham Campbell, Raiyan Chowdhury, Reinis Cirpons, Ashley Clayton, Tom Conti-Leslie, Joseph Edwards, Luna Elliott, Isuru Fernando, Ewan Gilligan, Sebastian Gutsche, Samantha Harper, Max Horn, Christopher Jefferson, Olexandr Konovalov, Hyeokjun Kwon, Andrea Lee, Saffron McIver, Michael Orlitzky, Matthew Pancer, Markus Pfeiffer, Daniel Pointon, Lea Racine, Christopher Russell, Artur Schaefer, Isabella Scott, Kamran Sharma, Finn Smith, Ben Spiers, Maria Tsalakou, Meike Weiss, Murray Whyte and Fabian Zickgraf)
 
 FactInt is a package providing routines for factoring integers, in
 particular:
@@ -92,6 +115,10 @@ hecke - Provides functions for calculating decomposition matrices of
 Hecke algebras of the symmetric groups and q-Schur algebras. Hecke is a
 port of the GAP 3 package Specht 2.4 to GAP 4. (Author: Dmitriy Traytel)
 
+IO - as its name suggests, provides bindings for GAP to the lower levels
+of Input/Output functionality in the C library.
+(Authors: Max Neunhöffer and Max Horn)
+
 LAGUNA - this package provides functionality for calculation of the
 normalized unit group of the modular group algebra of the finite p-group
 and for investigation of Lie algebra associated with group algebras and
@@ -108,6 +135,10 @@ LieRing - contains functionality for working with finitely presented Lie
 rings and the Lazard correspondence. (Author: Serena Cicalo', Willem
 Adriaan de Graaf)
 
+LINS - provides an algorithm for computing the normal subgroups of a
+finitely presented group up to some given index bound. (Author:
+Friedrich Rober)
+
 loops - Provides researchers in nonassociative algebra with a
 computational tool that integrates standard notions of loop theory with
 libraries of loops and group-theoretical algorithms of GAP. The package
@@ -117,6 +148,13 @@ Petr Vojtechovsky)
 mapclass - The package calculates the mapping class group orbits for a
 given finite group. (Authors: Adam James, Kay Magaard, Sergey
 Shpectorov, Helmut Volklein)
+
+nq - This package provides access to the ANU nilpotent quotient program
+for computing nilpotent factor groups of finitely presented groups.
+(Authors: Max Horn and Werner Nickel)
+
+orb - This package is about enumerating orbits in various ways.
+(Authors: Juergen Mueller, Max Neunhöffer, Felix Noeske and Max Horn)
 
 polymake - an interface with the (standalone) polymake program used by
 HAPcryst. (Author: Marc Roeder)
@@ -134,6 +172,8 @@ Adriaan de Graaf)
 
 repsn - The package provides GAP functions for computing characteristic
 zero matrix representations of finite groups. (Author: Vahid Dabbaghian)
+
+Semigroups -  split out as a separate optional spkg
 
 sla - a package for doing computations with simple Lie algebras (Author:
 Willem Adriaan de Graaf)
