@@ -45,8 +45,6 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field_base import NumberField
 
-import sage.rings.finite_rings.finite_field_constructor
-
 
 def _do_singular_init_(singular, base_ring, char, _vars, order):
     r"""

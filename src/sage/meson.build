@@ -2,8 +2,6 @@ sage_install_dir = py.get_install_dir() / 'sage'
 
 # Generate the configuration file
 conf_data = configuration_data()
-conf_data.set('EDITABLE_SRC', root)
-conf_data.set('EDITABLE_BUILD', root_build)
 conf_data.set('PACKAGE_VERSION', '1.2.3')
 # We use Python's prefix here to make it work with conda
 prefix = fs.as_posix(py.get_variable('prefix', ''))
@@ -85,7 +83,6 @@ py.install_sources(
   '__init__.py',
   'all.py',
   'all_cmdline.py',
-  'config_test.py',
   'env.py',
   'version.py',
   subdir: 'sage',
@@ -150,7 +147,7 @@ configure_file(
 # Write config file
 # Should be last so that subdir calls can modify the config data
 config_file = configure_file(
-  input: 'config.py.in',
+  input: '../../pkgs/sage-conf/_sage_conf/_conf.py.in',
   output: 'config.py',
   install_dir: sage_install_dir,
   install: true,
