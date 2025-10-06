@@ -67,7 +67,6 @@ py.install_sources(
   'independent_sets.pyx',
   'isgci.py',
   'isoperimetric_inequalities.pyx',
-  'is_projective_planar_test.py',
   'line_graph.pyx',
   'lovasz_theta.py',
   'matching.py',
@@ -91,6 +90,7 @@ py.install_sources(
   'weakly_chordal.pyx',
   subdir: 'sage/graphs',
 )
+
 
 extension_data = {
   'asteroidal_triples' : files('asteroidal_triples.pyx'),
@@ -179,3 +179,4 @@ py.extension_module(
 subdir('base')
 subdir('generators')
 subdir('graph_decompositions')
+subdir('tests')
