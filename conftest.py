@@ -11,7 +11,7 @@ import doctest
 import inspect
 import sys
 import warnings
-from typing import Any, Iterable, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Iterable, Optional
 
 import pytest
 from _pytest.doctest import (
@@ -280,7 +280,6 @@ def pytest_ignore_collect(
     root = config.rootpath
     if (
         is_subpath(collection_path, root / "src" / "sage_docbuild")
-        or is_subpath(collection_path, root / "src" / "sage_setup")
         or collection_path == root / "src" / "build-docs.py"
     ):
         # Fails to import with Meson
@@ -390,8 +389,8 @@ def tmpfile():
     * https://github.com/pytest-dev/pytest/issues/13669
 
     """
-    from tempfile import NamedTemporaryFile
     from os import unlink
+    from tempfile import NamedTemporaryFile
     t = NamedTemporaryFile(delete=False)
     yield t
     unlink(t.name)

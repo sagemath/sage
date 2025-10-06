@@ -109,7 +109,7 @@ sage = "sage.cli:main"
 platforms = ['linux-64', 'linux-aarch64', 'osx-64', 'osx-arm64']
 
 [tool.pytest.ini_options]
-norecursedirs = "local prefix venv build builddir pkgs .git src/doc src/bin src/sage_setup/autogen/flint tools subprojects"
+norecursedirs = "local prefix venv build builddir pkgs .git src/doc src/bin tools subprojects"
 python_files = "*_test.py"
 # The "no:warnings" is to stop pytest from capturing warnings so that they are printed to the output of the doctest
 addopts = "--import-mode importlib -p no:warnings"

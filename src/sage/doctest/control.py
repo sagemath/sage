@@ -875,11 +875,6 @@ class DocTestController(SageObject):
             import sage
             self.files.extend(sage.__path__)
             try:
-                import sage_setup
-                self.files.extend(sage_setup.__path__)
-            except ImportError:
-                pass
-            try:
                 import sage_docbuild
                 self.files.extend(sage_docbuild.__path__)
             except ImportError:
@@ -895,15 +890,10 @@ class DocTestController(SageObject):
                 return all_installed_modules()
             self.log("Doctesting entire Sage library.")
             self.files.append(opj(SAGE_SRC, 'sage'))
-            # Only test sage_setup and sage_docbuild if the relevant
+            # Only test sage_docbuild if the relevant
             # imports work. They may not work if not in a build
             # environment or if the documentation build has been
             # disabled.
-            try:
-                import sage_setup
-                self.files.append(opj(SAGE_SRC, 'sage_setup'))
-            except ImportError:
-                pass
             try:
                 import sage_docbuild
                 self.files.append(opj(SAGE_SRC, 'sage_docbuild'))

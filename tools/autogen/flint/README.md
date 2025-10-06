@@ -21,7 +21,7 @@ autogeneration
 5. Set the environment variable `FLINT_GIT_DIR`
 
 6. Run the `flint_autogen.py` script e.g. `python
-   $SAGE_ROOT/src/sage_setup/autogen/flint_autogen.py`. The script writes down
+   tools/autogen/flint_autogen.py`. The script writes down
    the headers in the sage source tree `$SAGE_ROOT/src/sage/libs/flint/`
 
 
