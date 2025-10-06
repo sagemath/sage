@@ -426,9 +426,9 @@ from sage.graphs.independent_sets import IndependentSets
 from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_index
 from sage.graphs.views import EdgesView
 from sage.parallel.decorate import parallel
-
 from sage.misc.lazy_import import lazy_import, LazyImport
 from sage.features.mcqd import Mcqd
+
 lazy_import('sage.graphs.mcqd', ['mcqd'],
             feature=Mcqd())
 
@@ -1718,6 +1718,13 @@ class Graph(GenericGraph):
             sage: Graph('Fli@?').is_cactus()
             False
 
+            sage: Graph('BG').is_cactus()
+            False
+            sage: (Graph(0).is_cactus(), Graph(1).is_cactus())
+            (True, True)
+            sage: (Graph(2).is_cactus(), Graph(3).is_cactus())
+            (False, False)
+
         Test a graph that is not outerplanar, see :issue:`24480`::
 
             sage: graphs.Balaban10Cage().is_cactus()                                    # needs networkx
@@ -1725,8 +1732,15 @@ class Graph(GenericGraph):
         """
         self._scream_if_not_simple()
 
+        if not self.is_connected():
+            return False
+
         # Special cases
         if self.order() < 4:
+            return True
+
+        # trees are cacti
+        if self.order() == self.size() + 1:
             return True
 
         if self.size() > 3 * (self.order() - 1) / 2:
@@ -1734,9 +1748,6 @@ class Graph(GenericGraph):
 
         # Every cactus graph is outerplanar
         if not self.is_circular_planar():
-            return False
-
-        if not self.is_connected():
             return False
 
         # the number of faces is 1 plus the number of blocks of order > 2
@@ -2670,7 +2681,7 @@ class Graph(GenericGraph):
             sage: Graph(':Ab').is_perfect()                                             # needs sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: This method is only defined for simple graphs, and yours is not one of them !
+            ValueError: This method is not known to work on graphs with multiedges/loops...
             sage: g = Graph()
             sage: g.allow_loops(True)
             sage: g.add_edge(0,0)
@@ -2679,17 +2690,20 @@ class Graph(GenericGraph):
             sage: g.is_perfect()                                                        # needs sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: This method is only defined for simple graphs, and yours is not one of them !
+            ValueError: This method is not known to work on graphs with loops. ...
+
+        TESTS:
+
+        Check that immutable graphs are supported::
+
+            sage: g = graphs.HouseGraph(immutable=True)
+            sage: g.is_perfect()                                                        # needs sage.modules
+            True
         """
-        if self.has_multiple_edges() or self.has_loops():
-            raise ValueError("This method is only defined for simple graphs,"
-                             " and yours is not one of them !")
+        self_complement = self.complement(immutable=False)
+
         if self.is_bipartite():
             return True if not certificate else None
-
-        self_complement = self.complement()
-        self_complement.remove_loops()
-        self_complement.remove_multiple_edges()
 
         if self_complement.is_bipartite():
             return True if not certificate else None
@@ -3629,7 +3643,7 @@ class Graph(GenericGraph):
         raise ValueError("The 'algorithm' keyword must be set to either 'DLX' or 'MILP'.")
 
     @doc_index("Coloring")
-    def chromatic_symmetric_function(self, R=None):
+    def chromatic_symmetric_function(self, R=None, weights=None):
         r"""
         Return the chromatic symmetric function of ``self``.
 
@@ -3640,14 +3654,16 @@ class Graph(GenericGraph):
 
             X_G = \sum_{F \subseteq E(G)} (-1)^{|F|} p_{\lambda(F)},
 
-        where `\lambda(F)` is the partition of the sizes of the connected
-        components of the subgraph induced by the edges `F` and `p_{\mu}` is the
-        powersum symmetric function.
+        where `\lambda(F)` is the partition of the (weighted) sizes of the
+        connected components of the subgraph induced by the edges `F` and
+        `p_{\mu}` is the powersum symmetric function.
 
         INPUT:
 
         - ``R`` -- (optional) the base ring for the symmetric functions;
           this uses `\ZZ` by default
+        - ``weights`` -- ``dict`` (optional); a mapping from the vertices
+          of `G` to positive integers; this is `v \mapsto 1` by default
 
         ALGORITHM:
 
@@ -3695,6 +3711,17 @@ class Graph(GenericGraph):
             sage: XG == XG1 + XG2 - XG3
             True
 
+        We give examples that a complete graph with weights `\lambda`
+        produces/yields the monomial symmetric function `m_{\lambda}`
+        (scaled by a constant)::
+
+            sage: m = SymmetricFunctions(ZZ).m()
+            sage: K5 = graphs.CompleteGraph(5)
+            sage: m(K5.chromatic_symmetric_function())
+            120*m[1, 1, 1, 1, 1]
+            sage: m(K5.chromatic_symmetric_function(weights=enumerate([5,2,2,2,1])))
+            6*m[5, 2, 2, 2, 1]
+
         TESTS::
 
             sage: Graph([]).chromatic_symmetric_function() == 1
@@ -3715,7 +3742,10 @@ class Graph(GenericGraph):
         dsf = {v: None for v in self.vertices()}
 
         # Dict to store size of tree rooted at each vertex.
-        sizes = {v: 1 for v in self.vertices()}
+        if weights is None:
+            sizes = {v: 1 for v in self.vertices()}
+        else:
+            sizes = dict(weights)
 
         def find(dsf, v):
             # Find root of tree in disjoint-set forest.
@@ -9510,6 +9540,79 @@ class Graph(GenericGraph):
         prefix = "Extended " if extended else ""
         G.name("%sBipartite Double of %s" % (prefix, self.name()))
         return G
+
+    @doc_index("Graph properties")
+    def is_projective_planar(self, return_map=False):
+        r"""
+        Check whether ``self`` is projective planar.
+
+        A graph is projective planar if it can be embedded in the projective
+        plane.  The approach is to check that the graph does not contain any
+        of the known forbidden minors.
+
+        INPUT:
+
+        - ``return_map`` -- boolean (default: ``False``); whether to return
+          a map indicating one of the forbidden graph minors if in fact the
+          graph is not projective planar, or only True/False.
+
+        OUTPUT:
+
+        Return ``True`` if the graph is projective planar and ``False`` if not.  If the
+        parameter ``map_flag`` is ``True`` and the graph is not projective planar, then
+        the method returns ``False`` and a map from :meth:`~Graph.minor`
+        indicating one of the forbidden graph minors.
+
+        EXAMPLES:
+
+        The Peterson graph is a known projective planar graph::
+
+            sage: P = graphs.PetersenGraph()
+            sage: P.is_projective_planar()  # long time
+            True
+
+        `K_{4,4}` has a projective plane crossing number of 2. One of the
+        minimal forbidden minors is `K_{4,4} - e`, so we get a one-to-one
+        dictionary from :meth:`~Graph.minor`::
+
+            sage: K44 = graphs.CompleteBipartiteGraph(4, 4)
+            sage: K44.is_projective_planar(return_map=True)
+            (False,
+             {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5], 6: [6], 7: [7]})
+
+        .. SEEALSO::
+
+            - :meth:`~Graph.minor`
+
+        TESTS::
+
+            sage: len(graphs.p2_forbidden_minors())
+            35
+        """
+
+        from sage.graphs.generators.families import p2_forbidden_minors
+        num_verts_G = self.num_verts()
+        num_edges_G = self.num_edges()
+
+        for forbidden_minor in p2_forbidden_minors():
+            # Can't be a minor if it has more vertices or edges than G
+
+            if (forbidden_minor.num_verts() > num_verts_G
+                    or forbidden_minor.num_edges() > num_edges_G):
+                continue
+
+            try:
+                minor_map = self.minor(forbidden_minor)
+                if minor_map is not None:
+                    if return_map:
+                        return False, minor_map
+                    return False
+
+            # If G has no H minor, then G.minor(H) throws a ValueError
+            except ValueError:
+                continue
+
+        return True
 
     # Aliases to functions defined in other modules
     from sage.graphs.weakly_chordal import is_long_hole_free, is_long_antihole_free, is_weakly_chordal

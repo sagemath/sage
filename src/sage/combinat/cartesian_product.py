@@ -1,5 +1,5 @@
 r"""
-Cartesian Products
+Cartesian products
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,

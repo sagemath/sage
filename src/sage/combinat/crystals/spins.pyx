@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Spin Crystals
+Spin crystals
 
 These are the crystals associated with the three spin
 representations: the spin representations of odd orthogonal groups

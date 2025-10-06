@@ -41,10 +41,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import os
 import re
 import sys
 from signal import SIGABRT, SIGFPE, SIGILL, SIGINT, SIGSEGV, SIGTERM, Signals
-from sys import stdout
+from sys import argv, stdout
 
 from sage.doctest.external import available_software
 from sage.doctest.sources import DictAsObject
@@ -53,6 +54,7 @@ from sage.structure.sage_object import SageObject
 
 if sys.platform != "win32":
     from signal import SIGALRM, SIGBUS, SIGHUP, SIGKILL, SIGPIPE, SIGQUIT
+
 
 def signal_name(sig: int | Signals) -> str:  # noqa: PLR0911
     """
@@ -184,17 +186,17 @@ class DocTestReporter(SageObject):
             sage: DC = DocTestController(DD, [filename])
             sage: DTR = DocTestReporter(DC)
             sage: print(DTR.report_head(FDS))
-            sage -t .../sage/doctest/reporting.py
+            .../sage/doctest/reporting.py
 
         The same with various options::
 
             sage: DD.long = True
             sage: print(DTR.report_head(FDS))
-            sage -t --long .../sage/doctest/reporting.py
+            ... --long .../sage/doctest/reporting.py
             sage: print(DTR.report_head(FDS, "Failed by self-sabotage"))
-            sage -t --long .../sage/doctest/reporting.py  # Failed by self-sabotage
+            ... --long .../sage/doctest/reporting.py  # Failed by self-sabotage
         """
-        cmd = "sage -t"
+        cmd = os.path.relpath(argv[0]).replace("-runtests", " -t") if "sage-runtests" in argv[0] else "python3 -m sage.doctest"
         if self.controller.options.long:
             cmd += " --long"
 
@@ -253,6 +255,14 @@ class DocTestReporter(SageObject):
             Tests run before process (pid=1234) timed out:
             Output so far...
             **********************************************************************
+
+        TESTS:
+
+        Test GitHub output format (used for GitHub Actions annotations)::
+
+            sage: DTR.controller.options.format = 'github'
+            sage: DTR._log_failure(FDS, "Timed out", "process (pid=1234) timed out", "Output so far...")
+            ::error title=Timed out,file=.../sage/doctest/reporting.py::Output so far...
         """
         log = self.controller.log
         format = self.controller.options.format
@@ -694,9 +704,9 @@ class DocTestReporter(SageObject):
             sage: DC.sources = [None] * 4 # to fool the finalize method
             sage: DTR.finalize()
             ----------------------------------------------------------------------
-            sage -t .../sage/doctest/reporting.py  # Timed out
-            sage -t .../sage/doctest/reporting.py  # Bad exit: 3
-            sage -t .../sage/doctest/reporting.py  # 1 doctest failed
+            .../sage/doctest/reporting.py  # Timed out
+            .../sage/doctest/reporting.py  # Bad exit: 3
+            .../sage/doctest/reporting.py  # 1 doctest failed
             ----------------------------------------------------------------------
             Total time for all tests: 0.0 seconds
                 cpu time: 0.0 seconds
@@ -709,9 +719,9 @@ class DocTestReporter(SageObject):
             sage: DTR.finalize()
             <BLANKLINE>
             ----------------------------------------------------------------------
-            sage -t .../sage/doctest/reporting.py  # Timed out
-            sage -t .../sage/doctest/reporting.py  # Bad exit: 3
-            sage -t .../sage/doctest/reporting.py  # 1 doctest failed
+            .../sage/doctest/reporting.py  # Timed out
+            .../sage/doctest/reporting.py  # Bad exit: 3
+            .../sage/doctest/reporting.py  # 1 doctest failed
             Doctests interrupted: 4/6 files tested
             ----------------------------------------------------------------------
             Total time for all tests: 0.0 seconds

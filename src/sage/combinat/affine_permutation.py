@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.groups
 r"""
-Affine Permutations
+Affine permutations
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Tom Denton <sdenton4@gmail.com>

@@ -476,6 +476,48 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         return fmpz_is_zero(fmpz_mat_entry(self._matrix, i,j))
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        """
+        Copy position iSrc,jSrc of ``src`` to position iDst,jDst of ``self``.
+
+        The object ``src`` must be of type ``Matrix_integer_dense`` and have
+        the same base ring as ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_integer_dense
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: m = matrix(ZZ,3,4,range(12))
+            sage: m
+            [ 0  1  2  3]
+            [ 4  5  6  7]
+            [ 8  9 10 11]
+            sage: m.transpose()
+            [ 0  4  8]
+            [ 1  5  9]
+            [ 2  6 10]
+            [ 3  7 11]
+            sage: m.matrix_from_rows([0,2])
+            [ 0  1  2  3]
+            [ 8  9 10 11]
+            sage: m.matrix_from_columns([1,3])
+            [ 1  3]
+            [ 5  7]
+            [ 9 11]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [ 4  7]
+            [ 8 11]
+        """
+        cdef Matrix_integer_dense _src = <Matrix_integer_dense> src
+        fmpz_set(fmpz_mat_entry(self._matrix, iDst, jDst), fmpz_mat_entry(_src._matrix, iSrc, jSrc))
+
     def _pickle(self):
         """
         EXAMPLES::
@@ -1369,10 +1411,13 @@ cdef class Matrix_integer_dense(Matrix_dense):
             fmpz_mat_charpoly(g._poly, self._matrix)
             sig_off()
         elif algorithm == 'linbox':
-            g = (<Polynomial_integer_dense_flint> PolynomialRing(ZZ, names=var).gen())._new()
-            sig_on()
-            linbox_fmpz_mat_charpoly(g._poly, self._matrix)
-            sig_off()
+            while True:  # linbox is unreliable, see :issue:`37068`
+                g = (<Polynomial_integer_dense_flint> PolynomialRing(ZZ, names=var).gen())._new()
+                sig_on()
+                linbox_fmpz_mat_charpoly(g._poly, self._matrix)
+                sig_off()
+                if g.lc() == 1:
+                    break
         elif algorithm == 'generic':
             g = Matrix_dense.charpoly(self, var)
         else:
@@ -1452,10 +1497,13 @@ cdef class Matrix_integer_dense(Matrix_dense):
             return g.change_variable_name(var)
 
         if algorithm == 'linbox':
-            g = (<Polynomial_integer_dense_flint> PolynomialRing(ZZ, names=var).gen())._new()
-            sig_on()
-            linbox_fmpz_mat_minpoly(g._poly, self._matrix)
-            sig_off()
+            while True:  # linbox is unreliable, see :issue:`37068`
+                g = (<Polynomial_integer_dense_flint> PolynomialRing(ZZ, names=var).gen())._new()
+                sig_on()
+                linbox_fmpz_mat_minpoly(g._poly, self._matrix)
+                sig_off()
+                if g.lc() == 1:
+                    break
         elif algorithm == 'generic':
             g = Matrix_dense.minpoly(self, var)
         else:
@@ -2936,6 +2984,10 @@ cdef class Matrix_integer_dense(Matrix_dense):
                           precision=precision)
 
             R = A.to_matrix(self.new_matrix())
+
+        else:
+            raise ValueError("unknown algorithm")
+
         return R
 
     def LLL(self, delta=None, eta=None, algorithm='fpLLL:wrapper', fp=None, prec=0, early_red=False, use_givens=False, use_siegel=False, transformation=False, **kwds):
@@ -3193,8 +3245,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         tm = verbose("LLL of %sx%s matrix (algorithm %s)" % (self.nrows(),
                                                              self.ncols(),
                                                              algorithm))
-        import sage.libs.ntl.all
-        ntl_ZZ = sage.libs.ntl.all.ZZ
+        from sage.libs.ntl.ntl_ZZ import ntl_ZZ
 
         verb = get_verbose() >= 2
 
@@ -3255,8 +3306,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 raise TypeError("eta must be >= 0.5")
 
         if algorithm.startswith('NTL:'):
+            from sage.libs.ntl.ntl_mat_ZZ import ntl_mat_ZZ as mat_ZZ
 
-            A = sage.libs.ntl.all.mat_ZZ(self.nrows(),self.ncols(),
+            A = mat_ZZ(self.nrows(),self.ncols(),
                     [ntl_ZZ(z) for z in self.list()])
 
             if algorithm == "NTL:LLL":
