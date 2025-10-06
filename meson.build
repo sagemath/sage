@@ -195,6 +195,7 @@ file_paths = [
   'src/sage/graphs/generators/__init__.py',
   'src/sage/graphs/__init__.py',
   'src/sage/graphs/base/__init__.py',
+  'src/sage/graphs/tests/__init__.py',
   'src/sage/databases/__init__.py',
   'src/sage/stats/hmm/__init__.py',
   'src/sage/stats/__init__.py',
