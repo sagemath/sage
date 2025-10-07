@@ -4745,6 +4745,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         Ensure interrupt does not make the internal state inconsistent::
 
+            sage: # long time
             sage: R.<x,y> = QQ[]
             sage: n = 17  # chosen so that the computation takes > 1 second but not excessively long.
             ....: # when Singular improves the algorithm or hardware gets faster, increase n.
