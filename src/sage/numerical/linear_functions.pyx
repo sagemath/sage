@@ -824,7 +824,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         """
         return self._f.items()
 
-    iteritems = items
+    iteritems = deprecated_function_alias(40996, items)
 
     def dict(self):
         r"""

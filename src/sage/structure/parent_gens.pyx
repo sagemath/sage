@@ -167,11 +167,9 @@ cdef class ParentWithGens(ParentWithBase):
         if self._element_constructor is not None:
             return parent.Parent.__getstate__(self)
         try:
-            d = list(self.__dict__.items())  # so we can add elements
+            d = dict(self.__dict__.items())   # so we can add elements
         except AttributeError:
             d = {}
-        else:
-            d = dict(d)
         d['_base'] = self._base
         d['_gens'] = self._gens
         d['_list'] = self._list
