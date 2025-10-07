@@ -107,6 +107,7 @@ from sage.misc.fast_methods cimport hash_by_id
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport ModuleElement, Element
 from sage.misc.cachefunc import cached_function
+from sage.misc.superseded import deprecated_function_alias
 
 #*****************************************************************************
 #
