@@ -2265,8 +2265,8 @@ def dummy_integrate(*args):
 
 def dummy_laplace(*args):
     """
-    This function is called to create formal wrappers of laplace transforms
-    that Maxima can't compute:
+    This function is called to create formal wrappers of Laplace transforms
+    that Maxima cannot compute:
 
     EXAMPLES::
 

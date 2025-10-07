@@ -1035,29 +1035,6 @@ GpFunctionElement = FunctionElement
 GpFunction = ExpectFunction
 
 
-def is_GpElement(x):
-    """
-    Return ``True`` if ``x`` is of type :class:`GpElement`.
-
-    This function is deprecated; use :func:`isinstance`
-    (of :class:`sage.interfaces.abc.GpElement`) instead.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.gp import is_GpElement
-        sage: is_GpElement(gp(2))
-        doctest:...: DeprecationWarning: the function is_GpElement is deprecated; use isinstance(x, sage.interfaces.abc.GpElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        True
-        sage: is_GpElement(2)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_GpElement is deprecated; use isinstance(x, sage.interfaces.abc.GpElement) instead")
-
-    return isinstance(x, GpElement)
-
-
 # An instance
 gp = Gp(logfile=os.path.join(DOT_SAGE, 'gp-expect.log'))
 # useful for debugging!
@@ -1090,7 +1067,8 @@ def gp_console():
     """
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():
-        raise RuntimeError('Can use the console only in the terminal. Try %%gp magics instead.')
+        raise RuntimeError('Can use the console only in the terminal. '
+                           'Try %%gp magics instead.')
     os.system('gp')
 
 
