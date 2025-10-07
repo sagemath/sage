@@ -1,0 +1,130 @@
+r"""
+Lattices of sashes
+
+These lattices were introduced by S. Law in [Law2014]_. They are
+lattice quotients of the weak order on the symmetric groups. This
+implies that they are congruence-uniform.
+
+There is a lattice of sashes `\Sigma_n` for every integer `n \geq 1`.
+The underlying set of `\Sigma_n` is the set of words of length `n`
+in the letters ``□``, ``▨`` and ``■■`` of respective lengths `1,1` and `2`.
+
+The cardinalities of the lattices $\Sigma_n$ are therefore given by
+the Pell numbers (:oeis:`A000129`).
+
+The implementation describes sashes as tuples of strings.
+
+REFERENCES:
+
+- [Law2014]_
+
+"""
+from itertools import pairwise
+from typing import Iterator
+
+from sage.categories.finite_lattice_posets import FiniteLatticePosets
+from sage.combinat.posets.lattices import LatticePoset
+
+B, N, BB = "□", "▨", "■■"
+
+
+def sashes(n: int) -> Iterator[tuple[str, ...]]:
+    """
+    Iterate over the sashes of length `n`.
+
+    INPUT:
+
+    - ``n`` -- nonnegative integer
+
+    EXAMPLES::
+
+        sage: from sage.combinat.posets.sashes import sashes
+        sage: [''.join(s) for s in sashes(2)]
+        ['□□', '□▨', '▨□', '▨▨', '■■']
+
+    TESTS::
+
+        sage: [''.join(s) for s in sashes(0)]
+        ['']
+        sage: [''.join(s) for s in sashes(1)]
+        ['□', '▨']
+        sage: list(sashes(-1))
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be nonnegative
+    """
+    if n < 0:
+        raise ValueError("n must be nonnegative")
+    if n == 0:
+        yield ()
+        return
+    if n == 1:
+        yield (B,)
+        yield (N,)
+        return
+    for s in sashes(n - 1):
+        yield s + (B,)
+        yield s + (N,)
+    for s in sashes(n - 2):
+        yield s + (BB,)
+
+
+def cover_relations(s: tuple[str]) -> Iterator[tuple[str, ...]]:
+    """
+    Iterate over the cover relations of the given sash.
+
+    INPUT:
+
+    - ``s`` -- a sash, as a tuple of strings
+
+    EXAMPLES::
+
+        sage: from sage.combinat.posets.sashes import cover_relations
+        sage: s = ('□', '▨', '▨')
+        sage: [''.join(t) for t in cover_relations(s)]
+        ['□□▨', '□▨□']
+        sage: s = ('□', '■■', '▨')
+        sage: [''.join(t) for t in cover_relations(s)]
+        ['□□□▨', '□■■□']
+    """
+    for i, letter in enumerate(s):
+        if letter == BB:
+            yield s[:i] + (B, B) + s[i + 1:]
+    for i, (l1, l2) in enumerate(pairwise(s)):
+        if l1 == N:
+            if l2 == B:
+                yield s[:i] + (BB,) + s[i + 2:]
+            else:
+                yield s[:i] + (B,) + s[i + 1:]
+    if s[-1] == N:
+        yield s[:-1] + (B,)
+
+
+def lattice_of_sashes(n: int) -> LatticePoset:
+    """
+    Return the lattice of sashes of length `n`.
+
+    INPUT:
+
+    - ``n`` -- positive integer
+
+    EXAMPLES::
+
+        sage: L = posets.Sashes(4); L
+        Finite lattice containing 29 elements
+        sage: L.hasse_diagram().to_undirected().is_regular(4)
+        True
+
+    TESTS::
+
+        sage: posets.Sashes(0)
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be positive
+    """
+    if n <= 0:
+        raise ValueError("n must be positive")
+    cat = FiniteLatticePosets().CongruenceUniform()
+    return LatticePoset({s: list(cover_relations(s)) for s in sashes(n)},
+                        cover_relations=True, check=False,
+                        category=cat)

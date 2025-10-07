@@ -4427,6 +4427,9 @@ REFERENCES:
              modular forms*, LMS J. of Comput. Math. 14 (2011),
              214-231.
 
+.. [Law2014] Shirley Law, *Combinatorial realization of the Hopf algebra
+             of sashes*, Proceedings of FPSAC 2014, DMTCS, :arxiv:`1407.4073`
+
 .. [Laz1992] Daniel Lazard, *Solving Zero-dimensional Algebraic
              Systems*, in Journal of Symbolic Computation (1992)
              vol\. 13, pp\. 117-131
