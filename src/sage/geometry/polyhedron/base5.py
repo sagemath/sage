@@ -659,7 +659,7 @@ class Polyhedron_base5(Polyhedron_base4):
         parent = self.parent().change_ring(self.base_ring(), ambient_dim=self.ambient_dim() + n)
         return parent.element_class(parent, [lambda_V, [], []], None)
 
-    def deformation_cone(self):
+    def deformation_cone(self, backend=None):
         r"""
         Return the deformation cone of ``self``.
 
@@ -668,6 +668,13 @@ class Polyhedron_base5(Polyhedron_base4):
         in `Ax\leq b` where `A` is the matrix of facet normals of ``self``, so
         that the resulting polytope has a normal fan which is a coarsening of
         the normal fan of ``self``.
+
+        INPUT:
+
+        - ``backend`` -- (optional) the backend to be used for polyhedral
+          computations;
+
+        OUTPUT: a polyhedron. 
 
         EXAMPLES:
 
@@ -720,10 +727,10 @@ class Polyhedron_base5(Polyhedron_base4):
         c = None
         for cone_indices in collection:
             dual_cone = Polyhedron(rays=[gale[i] for i in range(n) if i not in
-                                         cone_indices])
+                                         cone_indices],backend=backend)
             c = c.intersection(dual_cone) if c is not None else dual_cone
         preimages = [m_ker.solve_right(r.vector()) for r in c.rays()]
-        return Polyhedron(lines=m.rows(), rays=preimages)
+        return Polyhedron(lines=m.rows(), rays=preimages, backend=backend)
 
     ###########################################################
     # Binary operations.
