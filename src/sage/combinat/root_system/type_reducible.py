@@ -418,7 +418,7 @@ class CartanType(SageObject, CartanType_abstract):
         """
         return CartanType([t.dual() for t in self._types])
 
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         Report that this reducible Cartan type is not affine.
 

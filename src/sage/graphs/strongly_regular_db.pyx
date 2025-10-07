@@ -2500,7 +2500,7 @@ def strongly_regular_from_two_intersection_set(M):
                          for qq in K if not qq == K.zero()])
     g.relabel()
     e = QQ((1,k))
-    qq = g.num_verts()**e
+    qq = g.n_vertices()**e
     g.name('two-intersection set in PG('+str(k)+','+str(qq)+')')
     return g
 

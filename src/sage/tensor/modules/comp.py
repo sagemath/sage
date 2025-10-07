@@ -2349,20 +2349,18 @@ class Components(SageObject):
                                  shift_o, contractions, comp_for_contr):
                 local_res = []
                 for ind in local_list:
-                    ind_s = [None for i in range(this._nid)]   # initialization
-                    ind_o = [None for i in range(other._nid)]  # initialization
+                    ind_s = [None for _ in range(this._nid)]   # initialization
+                    ind_o = [None for _ in range(other._nid)]  # initialization
                     for i, pos in enumerate(rev_s):
                         ind_s[pos] = ind[i]
                     for i, pos in enumerate(rev_o):
-                        ind_o[pos] = ind[shift_o+i]
+                        ind_o[pos] = ind[shift_o + i]
                     sm = 0
                     for ind_c in comp_for_contr.index_generator():
-                        ic = 0
-                        for pos_s, pos_o in contractions:
+                        for ic, (pos_s, pos_o) in enumerate(contractions):
                             k = ind_c[ic]
                             ind_s[pos_s] = k
                             ind_o[pos_o] = k
-                            ic += 1
                         sm += this[[ind_s]] * other[[ind_o]]
                     local_res.append([ind, sm])
                 return local_res
@@ -2373,20 +2371,18 @@ class Components(SageObject):
         else:
             # sequential computation
             for ind in res.non_redundant_index_generator():
-                ind_s = [None for i in range(self._nid)]   # initialization
-                ind_o = [None for i in range(other._nid)]  # initialization
+                ind_s = [None for _ in range(self._nid)]   # initialization
+                ind_o = [None for _ in range(other._nid)]  # initialization
                 for i, pos in enumerate(rev_s):
                     ind_s[pos] = ind[i]
                 for i, pos in enumerate(rev_o):
-                    ind_o[pos] = ind[shift_o+i]
+                    ind_o[pos] = ind[shift_o + i]
                 sm = 0
                 for ind_c in comp_for_contr.index_generator():
-                    ic = 0
-                    for pos_s, pos_o in contractions:
+                    for ic, (pos_s, pos_o) in enumerate(contractions):
                         k = ind_c[ic]
                         ind_s[pos_s] = k
                         ind_o[pos_o] = k
-                        ic += 1
                     sm += self[[ind_s]] * other[[ind_o]]
                 res[[ind]] = sm
 
@@ -4019,9 +4015,10 @@ class CompWithSym(Components):
                             # to reset it
                             ind[isym[k]] = si
                 if not step_finished and i == 0 and len(antisym) == 0:
-                    return # we went through all indices and didn't
-                           # find one which we can increase, thus we
-                           # have generated all indices
+                    # we went through all indices and did not find one
+                    # which we can increase, thus we have generated
+                    # all indices
+                    return
             for i in range(len(antisym)-1, -1, -1):
                 # the antisymmetrized indices work similar to the
                 # symmetrized ones
