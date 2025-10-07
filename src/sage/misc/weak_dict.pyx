@@ -813,24 +813,6 @@ cdef class WeakValueDictionary(dict):
         """
         return list(iter(self))
 
-    def itervalues(self):
-        """
-        Deprecated.
-
-        EXAMPLES::
-
-            sage: import sage.misc.weak_dict
-            sage: class Vals(): pass
-            sage: L = [Vals() for _ in range(10)]
-            sage: D = sage.misc.weak_dict.WeakValueDictionary(enumerate(L))
-            sage: T = list(D.itervalues())
-            doctest:warning...:
-            DeprecationWarning: use values instead
-            See https://github.com/sagemath/sage/issues/34488 for details.
-        """
-        deprecation(34488, "use values instead")
-        return self.values()
-
     def values(self):
         """
         Iterate over the values of this dictionary.
