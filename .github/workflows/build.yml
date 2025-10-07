@@ -167,6 +167,9 @@ jobs:
                      --workdir $(pwd) \
                      ${{ env.BUILD_IMAGE }} /bin/sh
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       # Testing
 
       - name: Test all files (sage -t --long ${{ matrix.tests }})
