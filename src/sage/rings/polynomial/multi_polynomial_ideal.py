@@ -249,7 +249,6 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.noncommutative_ideals import Ideal_nc
 from sage.rings.qqbar_decorators import handle_AA_and_QQbar
-from sage.structure.element import parent
 from sage.structure.richcmp import (op_EQ, op_GE, op_GT, op_LE, op_LT, op_NE,
                                     rich_to_bool, richcmp_method)
 from sage.structure.sequence import Sequence, Sequence_generic
@@ -437,7 +436,7 @@ class MPolynomialIdeal_magma_repr:
                 mgb = mself.GroebnerBasis()
 
         if prot == "sage":
-            print("")
+            print()
             print("Highest degree reached during computation: %2d." % log_parser.max_deg)
 
         # TODO: rewrite this to be much more sophisticated in multi-level nested cases.
@@ -680,58 +679,6 @@ class MPolynomialIdeal_singular_repr(
         from sage.libs.singular.groebner_strategy import GroebnerStrategy
 
         return GroebnerStrategy(MPolynomialIdeal(self.ring(), self.groebner_basis()))
-
-    def plot(self, singular=None):
-        r"""
-        If you somehow manage to install surf, perhaps you can use
-        this function to implicitly plot the real zero locus of this
-        ideal (if principal).
-
-        INPUT:
-
-        - ``self`` -- must be a principal ideal in 2 or 3 vars over `\QQ`
-
-        EXAMPLES:
-
-        Implicit plotting in 2-d::
-
-            sage: R.<x,y> = PolynomialRing(QQ,2)
-            sage: I = R.ideal([y^3 - x^2])
-            sage: I.plot()        # cusp
-            Graphics object consisting of 1 graphics primitive
-            sage: I = R.ideal([y^2 - x^2 - 1])
-            sage: I.plot()        # hyperbola
-            Graphics object consisting of 1 graphics primitive
-            sage: I = R.ideal([y^2 + x^2*(1/4) - 1])
-            sage: I.plot()        # ellipse
-            Graphics object consisting of 1 graphics primitive
-            sage: I = R.ideal([y^2-(x^2-1)*(x-2)])
-            sage: I.plot()        # elliptic curve
-            Graphics object consisting of 1 graphics primitive
-
-        Implicit plotting in 3-d::
-
-            sage: R.<x,y,z> = PolynomialRing(QQ,3)
-            sage: I = R.ideal([y^2 + x^2*(1/4) - z])
-            sage: I.plot()          # a cone; optional - surf
-            sage: I = R.ideal([y^2 + z^2*(1/4) - x])
-            sage: I.plot()          # same code, from a different angle; optional - surf
-            sage: I = R.ideal([x^2*y^2+x^2*z^2+y^2*z^2-16*x*y*z])
-            sage: I.plot()          # Steiner surface; optional - surf
-
-        AUTHORS:
-
-        - David Joyner (2006-02-12)
-        """
-        if self.ring().characteristic() != 0:
-            raise TypeError("base ring must have characteristic 0")
-        if not self.is_principal():
-            raise TypeError("self must be principal")
-        if singular is None:
-            singular = singular_default
-        singular.lib('surf')
-        I = singular(self)
-        I.plot()
 
     @require_field
     @cached_method
@@ -1561,7 +1508,7 @@ class MPolynomialIdeal_singular_repr(
                 raise TypeError("algorithm '%s' unknown" % algorithm)
         self.__gb_singular = S
         if prot == "sage":
-            print("")
+            print()
             print("Highest degree reached during computation: %2d." % log_parser.max_deg)
         return S
 
@@ -2150,9 +2097,7 @@ class MPolynomialIdeal_singular_repr(
                 M.set_immutable()
                 M = sing_reduce(M, self)
 
-            if any(M):
-                return False
-            return True
+            return not any(M)
         except TypeError:
             if singular is None:
                 singular = singular_default
@@ -5088,10 +5033,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: J.is_homogeneous()
             True
         """
-        for f in self.gens():
-            if not f.is_homogeneous():
-                return False
-        return True
+        return all(f.is_homogeneous() for f in self.gens())
 
     def degree_of_semi_regularity(self):
         r"""
@@ -5201,9 +5143,6 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         - ``self`` -- a principal ideal in 2 variables
 
-        - ``algorithm`` -- set this to 'surf' if you want 'surf' to
-          plot the ideal (default: ``None``)
-
         - ``*args`` -- (optional) tuples ``(variable, minimum, maximum)``
           for plotting dimensions
 
@@ -5216,48 +5155,48 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
             sage: R.<x,y> = PolynomialRing(QQ, 2)
             sage: I = R.ideal([y^3 - x^2])
-            sage: I.plot()                         # cusp                               # needs sage.plot
+            sage: I.plot()  # cusp, needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         ::
 
             sage: I = R.ideal([y^2 - x^2 - 1])
-            sage: I.plot((x,-3, 3), (y, -2, 2))    # hyperbola                          # needs sage.plot
+            sage: I.plot((x,-3, 3), (y, -2, 2))  # hyperbola, needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         ::
 
             sage: I = R.ideal([y^2 + x^2*(1/4) - 1])
-            sage: I.plot()                         # ellipse                            # needs sage.plot
+            sage: I.plot()   # ellipse, needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         ::
 
             sage: I = R.ideal([y^2-(x^2-1)*(x-2)])
-            sage: I.plot()                         # elliptic curve                     # needs sage.plot
+            sage: I.plot()  # elliptic curve, needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         ::
 
             sage: f = ((x+3)^3 + 2*(x+3)^2 - y^2)*(x^3 - y^2)*((x-3)^3-2*(x-3)^2-y^2)
             sage: I = R.ideal(f)
-            sage: I.plot()                         # the Singular logo                  # needs sage.plot
+            sage: I.plot()  # the Singular logo, needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         ::
 
             sage: R.<x,y> = PolynomialRing(QQ, 2)
             sage: I = R.ideal([x - 1])
-            sage: I.plot((y, -2, 2))               # vertical line                      # needs sage.plot
+            sage: I.plot((y, -2, 2))  # vertical line, needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         ::
 
             sage: I = R.ideal([-x^2*y + 1])
-            sage: I.plot()                         # blow up                            # needs sage.plot
+            sage: I.plot()  # blow up, needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
-        from sage.plot.all import implicit_plot
+        from sage.plot.contour_plot import implicit_plot
         from sage.rings.real_mpfr import RR
 
         K = self.base_ring()
@@ -5270,50 +5209,45 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         f = self.gens()[0]
 
         variables = sorted(f.parent().gens(), reverse=True)
+        if len(variables) != 2:
+            raise TypeError("ideal generator does not have two variables")
 
-        if len(variables) == 2 and kwds.get('algorithm','') != 'surf':
-            V = [(variables[0], None, None), (variables[1], None, None)]
+        V = [(variables[0], None, None), (variables[1], None, None)]
 
-            if len(args) > 2:
-                raise TypeError("Expected up to 2 optional parameters but got %d." % len(args))
+        if len(args) > 2:
+            raise TypeError("Expected up to 2 optional parameters but got %d." % len(args))
 
-            # first check whether user supplied boundaries
-            for e in args:
-                if not isinstance(e, (tuple, list)) or len(e) != 3:
-                    raise TypeError("Optional parameter must be list or tuple or length 3.")
-                v,mi,ma = e
+        # first check whether user supplied boundaries
+        for e in args:
+            if not isinstance(e, (tuple, list)) or len(e) != 3:
+                raise TypeError("Optional parameter must be list or tuple or length 3.")
+            v,mi,ma = e
 
-                if v not in variables:
-                    raise TypeError("Optional parameter must contain variable of ideal generator.")
+            if v not in variables:
+                raise TypeError("Optional parameter must contain variable of ideal generator.")
 
-                vi = variables.index(v)
-                V[vi] = v,mi,ma
+            vi = variables.index(v)
+            V[vi] = v,mi,ma
 
-            # now check whether we should find boundaries
-            for var_index in range(2):
-                if V[var_index][1] is None:
-                    v, mi, ma = variables[var_index], -10, 10
-                    for i in range(mi, ma):
-                        poly = f.subs({v:i}).univariate_polynomial().change_ring(RR)
-                        if not poly or len(poly.roots()) > 0:
-                            mi = i - 1
-                            break
+        # now check whether we should find boundaries
+        for var_index in range(2):
+            if V[var_index][1] is None:
+                v, mi, ma = variables[var_index], -10, 10
+                for i in range(mi, ma):
+                    poly = f.subs({v:i}).univariate_polynomial().change_ring(RR)
+                    if not poly or len(poly.roots()) > 0:
+                        mi = i - 1
+                        break
 
-                    for i in range(ma, mi, -1):
-                        poly = f.subs({v:i}).univariate_polynomial().change_ring(RR)
-                        if not poly or len(poly.roots()) > 0:
-                            ma = i + 1
-                            break
-                    V[var_index] = variables[var_index], mi, ma
+                for i in range(ma, mi, -1):
+                    poly = f.subs({v:i}).univariate_polynomial().change_ring(RR)
+                    if not poly or len(poly.roots()) > 0:
+                        ma = i + 1
+                        break
+                V[var_index] = variables[var_index], mi, ma
 
-            kwds.setdefault("plot_points",200)
-            kwds.pop('algorithm', '')
-            return implicit_plot(f, V[0], V[1], **kwds)
-
-        elif len(variables) == 3 or kwds.get('algorithm','') == 'surf':
-            MPolynomialIdeal_singular_repr.plot(self, kwds.get("singular",singular_default))
-        else:
-            raise TypeError("Ideal generator may not have either 2 or 3 variables.")
+        kwds.setdefault("plot_points",200)
+        return implicit_plot(f, V[0], V[1], **kwds)
 
     def random_element(self, degree, compute_gb=False, *args, **kwds):
         r"""

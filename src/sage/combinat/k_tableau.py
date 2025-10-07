@@ -1023,7 +1023,7 @@ class WeakTableau_core(WeakTableau_abstract):
             r = self[0].count(1) - i - 1
             for v in range(1,mu[i]):
                 D = self.dictionary_of_coordinates_at_residues(v+1)
-                new_D = {a: b for (a, b) in D.items()
+                new_D = {a: b for a, b in D.items()
                          if all(x not in already_used for x in b)}
                 r = (r - min([self.k+1 - (x-r) % (self.k+1) for x in new_D])) % (self.k+1)
                 standard_cells.append(new_D[r][-1])
@@ -3928,7 +3928,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
 
     options = Tableaux.options
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return the first generated element of the class of ``StrongTableaux``.
 
@@ -4444,11 +4444,11 @@ class StrongTableaux(UniqueRepresentation, Parent):
             # a valid or invalid transposition?
             if msh.length() == sh.length() - 1:
                 # if applying t_{j-l,j+1} reduces the size of the shape by 1
-                valcells = [] # values in all the cells except content j
-                regcells = [] # values in the cells with content j
+                valcells = []  # values in all the cells except content j
+                regcells = []  # values in the cells with content j
                 valid = True
-                for (x,y) in SkewPartition([P, mP]).cells():
-                    if y-x != j:
+                for x, y in SkewPartition([P, mP]).cells():
+                    if y - x != j:
                         if LL[x][y] != m:
                             valid = False
                             break
@@ -4459,7 +4459,8 @@ class StrongTableaux(UniqueRepresentation, Parent):
                     # if all labels that are not content j are v and the label
                     # with content j = -m
                     mcells = mP.cells()
-                    MM = [[LL[a][b] for b in range(len(LL[a])) if (a,b) in mcells]
+                    MM = [[LL[a][b] for b in range(len(LL[a]))
+                           if (a, b) in mcells]
                           for a in range(len(mP))]
                     transeq = self.marked_CST_to_transposition_sequence(MM, k)
                     if transeq is not None:

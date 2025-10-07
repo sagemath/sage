@@ -1,10 +1,10 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Bases for `NCSym`
+Bases for ``NCSym``
 
 AUTHORS:
 
-- Travis Scrimshaw (08-04-2013): Initial version
+- Travis Scrimshaw (08-04-2013): initial version
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>

@@ -11,7 +11,7 @@ Catch warnings produced by :func:`check_tkz_graph`::
     sage: check_tkz_graph()  # random
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010 Anne Schilling <anne at math.ucdavis.edu>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@ Catch warnings produced by :func:`check_tkz_graph`::
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ***************************************************************************
 
 import collections.abc
 
@@ -103,6 +103,8 @@ class Crystals(Category_singleton):
         running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
+        running ._test_random() . . . pass
+        running ._test_rank() . . . pass
         running ._test_some_elements() . . . pass
         running ._test_stembridge_local_axioms() . . . pass
     """
@@ -150,7 +152,7 @@ class Crystals(Category_singleton):
 
     class MorphismMethods:
         @cached_method
-        def is_isomorphism(self):
+        def is_isomorphism(self) -> bool:
             """
             Check if ``self`` is a crystal isomorphism.
 
@@ -169,14 +171,14 @@ class Crystals(Category_singleton):
 
             index_set = self._cartan_type.index_set()
             G = self.domain().digraph(index_set=index_set)
-            if self.codomain().cardinality() != G.num_verts():
+            if self.codomain().cardinality() != G.n_vertices():
                 return False
             H = self.codomain().digraph(index_set=index_set)
             return G.is_isomorphic(H, edge_labels=True)
 
         # TODO: This could be moved to sets
         @cached_method
-        def is_embedding(self):
+        def is_embedding(self) -> bool:
             """
             Check if ``self`` is an injective crystal morphism.
 
@@ -211,7 +213,7 @@ class Crystals(Category_singleton):
             return True
 
         @cached_method
-        def is_strict(self):
+        def is_strict(self) -> bool:
             """
             Check if ``self`` is a strict crystal morphism.
 
@@ -923,7 +925,7 @@ class Crystals(Category_singleton):
             Export a file, suitable for pdflatex, to ``filename``.
 
             This requires
-            a proper installation of ``dot2tex`` in sage-python. For more
+            a proper installation of ``dot2tex``. For more
             information see the documentation for ``self.latex()``.
 
             EXAMPLES::
@@ -1075,17 +1077,17 @@ class Crystals(Category_singleton):
                     outstring = "beginfig(-1);\n\nsx := %d;\nsy := %d;\n\nz1000=(2*sx,0);\nz1001=(-sx,sy);\nz1002=(-5,-5);\n\nz1003=(10,10);\n\n" % (int(scaling_factor*35),int(tallness*scaling_factor*35))
             for i in range(size):
                 if self.cartan_type()[0] == 'A':
-                    [a1,a2,a3] = string_data[i]
+                    a1, a2, a3 = string_data[i]
                 else:
-                    [a1,a2,a3,a4] = string_data[i]
+                    a1, a2, a3, a4 = string_data[i]
                 shift = 0
                 for j in range(i):
                     if self.cartan_type()[0] == 'A':
-                        [b1,b2,b3] = string_data[j]
+                        b1, b2, b3 = string_data[j]
                         if b1+b3 == a1+a3 and b2 == a2:
                             shift += 1
                     else:
-                        [b1,b2,b3,b4] = string_data[j]
+                        b1, b2, b3, b4 = string_data[j]
                         if b1+b3 == a1+a3 and b2+b4 == a2+a4:
                             shift += 1
                 if self.cartan_type()[0] == 'A':
@@ -1105,10 +1107,10 @@ class Crystals(Category_singleton):
                         else:
                             col = "green;  "
                         if self.cartan_type()[0] == 'A':
-                            [a1,a2,a3] = string_data[i] # included to facilitate hand editing of the .mp file
+                            a1, a2, a3 = string_data[i] # included to facilitate hand editing of the .mp file
                             outstring = outstring+"draw z%d--z%d withcolor %s   %% %d %d %d\n" % (i,dest,col,a1,a2,a3)
                         else:
-                            [a1,a2,a3,a4] = string_data[i]
+                            a1, a2, a3, a4 = string_data[i]
                             outstring = outstring+"draw z%d--z%d withcolor %s   %% %d %d %d %d\n" % (i,dest,col,a1,a2,a3,a4)
             outstring += "\npickup pencircle scaled 3;\n\n"
             for i in range(self.cardinality()):
@@ -1248,7 +1250,7 @@ class Crystals(Category_singleton):
         __add__ = direct_sum
 
         @abstract_method(optional=True)
-        def connected_components_generators(self):
+        def connected_components_generators(self) -> tuple:
             """
             Return a tuple of generators for each of the connected components
             of ``self``.
@@ -1299,7 +1301,7 @@ class Crystals(Category_singleton):
             """
             return len(self.connected_components_generators())
 
-        def is_connected(self):
+        def is_connected(self) -> bool:
             """
             Return ``True`` if ``self`` is a connected crystal.
 
@@ -1526,7 +1528,7 @@ class Crystals(Category_singleton):
                     b = b.e(i)
             return b
 
-        def is_highest_weight(self, index_set=None):
+        def is_highest_weight(self, index_set=None) -> bool:
             r"""
             Return ``True`` if ``self`` is a highest weight.
 
@@ -1548,9 +1550,10 @@ class Crystals(Category_singleton):
                 index_set = self.index_set()
             return all(self.e(i) is None for i in index_set)
 
-        def is_lowest_weight(self, index_set=None):
+        def is_lowest_weight(self, index_set=None) -> bool:
             r"""
             Return ``True`` if ``self`` is a lowest weight.
+
             Specifying the option ``index_set`` to be a subset `I` of the
             index set of the underlying crystal, finds all lowest
             weight vectors for arrows in `I`.

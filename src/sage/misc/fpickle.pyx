@@ -1,5 +1,4 @@
 # cython: old_style_globals=True
-# cython: binding=True
 """
 Function pickling
 
@@ -7,7 +6,6 @@ REFERENCE: The python cookbook.
 """
 import copyreg
 import pickle
-import sys
 import types
 
 

@@ -30,6 +30,10 @@
 #pragma push_macro("I")
 #define I Iv
 
+/* flint 3.2 will rename flint_rand_s to flint_rand_struct
+ * the following line can be removed when flint 3.1 is gone */
+#define flint_rand_s flint_rand_struct
+
 #include <flint/flint.h>
 
 /* If flint was already previously included via another header (e.g.

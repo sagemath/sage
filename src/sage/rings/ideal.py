@@ -444,10 +444,7 @@ class Ideal_generic(MonoidElement):
             sage: bool(I)
             False
         """
-        for g in self.gens():
-            if not g.is_zero():
-                return True
-        return False
+        return any(not g.is_zero() for g in self.gens())
 
     def base_ring(self):
         r"""
@@ -856,10 +853,7 @@ class Ideal_generic(MonoidElement):
             raise NotImplementedError
         if len(ass) != 1:
             return False
-        if self == ass[0]:
-            return True
-        else:
-            return False
+        return self == ass[0]
 
     def associated_primes(self):
         r"""

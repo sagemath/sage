@@ -1705,7 +1705,7 @@ class Sigma:
             124.0
         """
         v = [(n, sigma(n, k)) for n in range(xmin, xmax + 1)]
-        from sage.plot.all import list_plot
+        from sage.plot.plot import list_plot
         P = list_plot(v, pointsize=pointsize, rgbcolor=rgbcolor, **kwds)
         if join:
             P += list_plot(v, plotjoined=True, rgbcolor=(0.7, 0.7, 0.7), **kwds)
@@ -2164,14 +2164,14 @@ def xkcd(n=""):
         # default to last comic
         url = "https://xkcd.com/info.0.json"
     else:
-        url = "https://xkcd.com/{}/info.0.json".format(n)
+        url = f"https://xkcd.com/{n}/info.0.json"
 
     try:
         with contextlib.closing(urlopen(url, context=default_context())) as f:
             data = f.read()
     except HTTPError as error:
         if error.getcode() == 400:  # this error occurs when asking for a non valid comic number
-            raise RuntimeError("could not obtain comic data from {}".format(url))
+            raise RuntimeError(f"could not obtain comic data from {url}")
     except URLError:
         pass
 
@@ -2183,8 +2183,8 @@ def xkcd(n=""):
         img = data['img']
         alt = data['alt']
         title = data['safe_title']
-        link = "http://xkcd.com/{}".format(data['num'])
-        return html('<h1>{}</h1><img src="{}" title="{}">'.format(title, img, alt)
+        link = f"http://xkcd.com/{data['num']}"
+        return html(f'<h1>{title}</h1><img src="{img}" title="{alt}">'
                     + '<div>Source: <a href="{0}" target="_blank">{0}</a></div>'.format(link))
 
     # TODO: raise this error in such a way that it's not clear that
@@ -2236,9 +2236,9 @@ def get_gcd(order):
     EXAMPLES::
 
         sage: sage.arith.misc.get_gcd(4000)
-        <built-in method gcd_int of sage.rings.fast_arith.arith_int object at ...>
+        <bound method arith_int.gcd_int of <sage.rings.fast_arith.arith_int object at ...>
         sage: sage.arith.misc.get_gcd(400000)
-        <built-in method gcd_longlong of sage.rings.fast_arith.arith_llong object at ...>
+        <bound method arith_llong.gcd_longlong of <sage.rings.fast_arith.arith_llong object at ...>
         sage: sage.arith.misc.get_gcd(4000000000)
         <function gcd at ...>
     """
@@ -2258,9 +2258,9 @@ def get_inverse_mod(order):
     EXAMPLES::
 
         sage: sage.arith.misc.get_inverse_mod(6000)
-        <built-in method inverse_mod_int of sage.rings.fast_arith.arith_int object at ...>
+        <bound method arith_int.inverse_mod_int of <sage.rings.fast_arith.arith_int object at ...>
         sage: sage.arith.misc.get_inverse_mod(600000)
-        <built-in method inverse_mod_longlong of sage.rings.fast_arith.arith_llong object at ...>
+        <bound method arith_llong.inverse_mod_longlong of <sage.rings.fast_arith.arith_llong object at ...>
         sage: sage.arith.misc.get_inverse_mod(6000000000)
         <function inverse_mod at ...>
     """
@@ -2560,7 +2560,7 @@ def trial_division(n, bound=None):
         return ZZ(n).trial_division(bound)
 
 
-def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
+def factor(n, proof=None, int_=False, algorithm=None, verbose=0, **kwds):
     """
     Return the factorization of ``n``.  The result depends on the
     type of ``n``.
@@ -2689,9 +2689,10 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
     Any object which has a factor method can be factored like this::
 
-        sage: K.<i> = QuadraticField(-1)                                                # needs sage.rings.number_field
-        sage: factor(122 - 454*i)                                                       # needs sage.rings.number_field
-        (-i) * (-i - 2)^3 * (i + 1)^3 * (-2*i + 3) * (i + 4)
+        sage: # needs sage.rings.number_field
+        sage: K.<i> = QuadraticField(-1)
+        sage: f = factor(122 - 454*i); f
+        (-1) * (i - 1)^3 * (2*i - 1)^3 * (3*i + 2) * (i + 4)
 
     To access the data in a factorization::
 
@@ -2733,6 +2734,11 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
         sage: len(factor(2^2203-1,proof=false))
         1
+
+    Test ``limit``::
+
+        sage: factor(2990, limit=10)
+        2 * 5 * 299
     """
     try:
         m = n.factor
@@ -2774,7 +2780,7 @@ def radical(n, *args, **kwds):
         ArithmeticError: radical of 0 is not defined
         sage: K.<i> = QuadraticField(-1)                                                # needs sage.rings.number_field
         sage: radical(K(2))                                                             # needs sage.rings.number_field
-        i + 1
+        i - 1
 
     Tests with numpy and gmpy2 numbers::
 
@@ -3029,7 +3035,7 @@ def is_squarefree(n):
         sage: is_squarefree(O(2))
         False
         sage: O(2).factor()
-        (-I) * (I + 1)^2
+        (I) * (I - 1)^2
 
     This method fails on domains which are not Unique Factorization Domains::
 
@@ -3192,7 +3198,7 @@ class Euler_Phi:
             46.0
         """
         v = [(n, euler_phi(n)) for n in range(xmin, xmax + 1)]
-        from sage.plot.all import list_plot
+        from sage.plot.plot import list_plot
         P = list_plot(v, pointsize=pointsize, rgbcolor=rgbcolor, **kwds)
         if join:
             P += list_plot(v, plotjoined=True, rgbcolor=(0.7, 0.7, 0.7), **kwds)
@@ -3599,6 +3605,13 @@ def CRT_list(values, moduli=None):
         [1, 2, 3]
         sage: ms
         [5, 7, 9]
+
+    Tests for call with length 1 lists (:issue:`40074`)::
+
+        sage: x = CRT_list([1], [2]); x
+        1
+        sage: x = CRT_list([int(1)], [int(2)]); x
+        1
     """
     if not isinstance(values, list) or (moduli is not None and not isinstance(moduli, list)):
         raise ValueError("arguments to CRT_list should be lists")
@@ -3620,10 +3633,11 @@ def CRT_list(values, moduli=None):
         if not values:
             return ZZ.zero()
         if len(values) == 1:
-            return moduli[0].parent()(values[0])
+            return parent(moduli[0])(values[0])
 
     # The result is computed using a binary tree. In typical cases,
     # this scales much better than folding the list from one side.
+    # See also sage.misc.misc_c.balanced_list_prod
     from sage.arith.functions import lcm
     while len(values) > 1:
         vs, ms = values[::2], moduli[::2]
@@ -3637,20 +3651,29 @@ def CRT_list(values, moduli=None):
         return values[0] % moduli[0]
 
 
-def CRT_basis(moduli):
+def CRT_basis(moduli, *, require_coprime_moduli=True):
     r"""
     Return a CRT basis for the given moduli.
 
     INPUT:
 
-    - ``moduli`` -- list of pairwise coprime moduli `m` which admit an
+    - ``moduli`` -- list of moduli `m` which admit an
       extended Euclidean algorithm
+
+    - ``require_coprime_moduli`` -- boolean (default: ``True``); whether the moduli
+      must be pairwise coprime.
 
     OUTPUT:
 
-    - a list of elements `a_i` of the same length as `m` such that
-      `a_i` is congruent to 1 modulo `m_i` and to 0 modulo `m_j` for
-      `j\not=i`.
+    - a list of integers `a_i` of the same length as `m` such that
+      if `r` is any list of integers of the same length as `m`, and we
+      let `x = \sum r_j a_j`, then `x \equiv r_i \pmod{m_i}` for all `i`
+      (if a solution of the system of congruences exists). When the
+      moduli are pairwise coprime, this implies that `a_i` is
+      congruent to 1 modulo `m_i` and to 0 modulo `m_j` for `j \neq i`.
+
+    - if ``require_coprime_moduli`` is ``False``, also returns a boolean value
+      that is ``True`` if the given moduli are pairwise coprime
 
     EXAMPLES::
 
@@ -3662,7 +3685,7 @@ def CRT_basis(moduli):
 
     A polynomial example::
 
-        sage: x=polygen(QQ)
+        sage: x = polygen(QQ)
         sage: mods = [x,x^2+1,2*x-3]
         sage: b = CRT_basis(mods)
         sage: b
@@ -3673,22 +3696,43 @@ def CRT_basis(moduli):
     n = len(moduli)
     if n == 0:
         return []
-    M = prod(moduli)
     cs = []
-    for m in moduli:
-        Mm = M // m
-        d, _, v = xgcd(m, Mm)
-        if not d.is_one():
-            raise ValueError('moduli must be coprime')
-        cs.append((v * Mm) % M)
-    return cs
+    try:
+        M = prod(moduli)
+        for m in moduli:
+            Mm = M // m
+            d, _, v = xgcd(m, Mm)
+            if not d.is_one():
+                raise ValueError('moduli must be coprime')
+            cs.append((v * Mm) % M)
+        if require_coprime_moduli:
+            return cs
+        # also return a boolean flag to report that the moduli are coprime
+        return [cs, True]
+    except ValueError:
+        if require_coprime_moduli:
+            raise
+        e = [1]
+        M_i = moduli[0]
+        for i in range(1, n):
+            m_i = moduli[i]
+            d_i = gcd(M_i, m_i)
+            e_i = CRT(0, 1, M_i // d_i, m_i // d_i)
+            e.append(e_i)
+            M_i = M_i.lcm(m_i)
+        partial_prod_table = [1]
+        for i in range(1, n):
+            partial_prod_table.append((1 - e[-i]) * partial_prod_table[-1])
+        cs.extend(e[i] * partial_prod_table[-i - 1] for i in range(n))
+        # also return a boolean flag to report that the moduli are not coprime
+        return [cs, False]
 
 
 def CRT_vectors(X, moduli):
     r"""
     Vector form of the Chinese Remainder Theorem: given a list of integer
-    vectors `v_i` and a list of coprime moduli `m_i`, find a vector `w` such
-    that `w = v_i \pmod m_i` for all `i`.
+    vectors `v_i` and a list of moduli `m_i`, find a vector `w` such
+    that `w = v_i \pmod{m_i}` for all `i`.
 
     This is more efficient than applying :func:`CRT` to each entry.
 
@@ -3707,6 +3751,15 @@ def CRT_vectors(X, moduli):
 
         sage: CRT_vectors([vector(ZZ, [2,3,1]), Sequence([1,7,8], ZZ)], [8,9])          # needs sage.modules
         [10, 43, 17]
+
+    ``CRT_vectors`` also works for some non-coprime moduli::
+
+        sage: CRT_vectors([[6],[0]],[10, 4])
+        [16]
+        sage: CRT_vectors([[6],[0]],[10, 10])
+        Traceback (most recent call last):
+        ...
+        ValueError: solution does not exist
     """
     # First find the CRT basis:
     if not X or len(X[0]) == 0:
@@ -3714,10 +3767,16 @@ def CRT_vectors(X, moduli):
     n = len(X)
     if n != len(moduli):
         raise ValueError("number of moduli must equal length of X")
-    a = CRT_basis(moduli)
-    modulus = prod(moduli)
-    return [sum(a[i] * X[i][j] for i in range(n)) % modulus
-            for j in range(len(X[0]))]
+    res = CRT_basis(moduli, require_coprime_moduli=False)
+    a = res[0]
+    modulus = LCM_list(moduli)
+    candidate = [sum(a[i] * X[i][j] for i in range(n)) % modulus
+                 for j in range(len(X[0]))]
+    if not res[1] and any((X[i][j] - candidate[j]) % moduli[i] != 0
+                          for i in range(n)
+                          for j in range(len(X[i]))):
+        raise ValueError("solution does not exist")
+    return candidate
 
 
 def binomial(x, m, **kwds):
@@ -3958,7 +4017,7 @@ def binomial(x, m, **kwds):
     P = parent(x)
     x = py_scalar_to_element(x)
 
-    # case 1: native binomial implemented on x
+    # case 1: native binomial implemented on x (see also dont_call_method_on_arg)
     try:
         return P(x.binomial(m, **kwds))
     except (AttributeError, TypeError):
@@ -3978,7 +4037,7 @@ def binomial(x, m, **kwds):
             pass
         else:
             if c > 0 and any(c.gcd(k) > 1 for k in range(2, m + 1)):
-                raise ZeroDivisionError("factorial({}) not invertible in {}".format(m, P))
+                raise ZeroDivisionError(f"factorial({m}) not invertible in {P}")
         return P(x.binomial(m, **kwds))
 
     # case 3: rational, real numbers, complex numbers -> use pari
@@ -4059,7 +4118,7 @@ def multinomial(*ks):
     return c
 
 
-def binomial_coefficients(n):
+def binomial_coefficients(n) -> dict:
     r"""
     Return a dictionary containing pairs
     `\{(k_1,k_2) : C_{k,n}\}` where `C_{k_n}` are
@@ -4559,7 +4618,7 @@ def quadratic_residues(n):
         [0, 1, 3, 4, 5, 9]
     """
     n = abs(int(n))
-    return sorted(set(ZZ((a * a) % n) for a in range(n // 2 + 1)))
+    return sorted({ZZ((a * a) % n) for a in range(n // 2 + 1)})
 
 
 class Moebius:
@@ -4688,7 +4747,7 @@ class Moebius:
         """
         values = self.range(xmin, xmax + 1)
         v = [(n, values[n - xmin]) for n in range(xmin, xmax + 1)]
-        from sage.plot.all import list_plot
+        from sage.plot.plot import list_plot
         P = list_plot(v, pointsize=pointsize, rgbcolor=rgbcolor, **kwds)
         if join:
             P += list_plot(v, plotjoined=True, rgbcolor=(0.7, 0.7, 0.7), **kwds)
@@ -5016,14 +5075,14 @@ def hilbert_conductor(a, b):
     - Gonzalo Tornaria (2009-03-02)
     """
     a, b = ZZ(a), ZZ(b)
-    return ZZ.prod(p for p in set([2]).union(prime_divisors(a),
-                                             prime_divisors(b))
+    return ZZ.prod(p for p in {2}.union(a.prime_divisors(),
+                                        b.prime_divisors())
                    if hilbert_symbol(a, b, p) == -1)
 
 
 def hilbert_conductor_inverse(d):
     r"""
-    Finds a pair of integers `(a,b)` such that ``hilbert_conductor(a,b) == d``.
+    Find a pair of integers `(a,b)` such that ``hilbert_conductor(a,b) == d``.
 
     The quaternion algebra `(a,b)` over `\QQ` will then have (reduced)
     discriminant `d`.
@@ -5063,7 +5122,7 @@ def hilbert_conductor_inverse(d):
         sage: for i in range(100):                                                      # needs sage.libs.pari
         ....:     d = ZZ.random_element(2**32).squarefree_part()
         ....:     if hilbert_conductor(*hilbert_conductor_inverse(d)) != d:
-        ....:         print("hilbert_conductor_inverse failed for d = {}".format(d))
+        ....:         print(f"hilbert_conductor_inverse failed for d = {d}")
 
     Tests with numpy and gmpy2 numbers::
 
@@ -5216,7 +5275,7 @@ def falling_factorial(x, a):
         (isinstance(a, Expression) and
          a.is_integer())) and a >= 0:
         return prod(((x - i) for i in range(a)), z=x.parent().one())
-    from sage.functions.all import gamma
+    from sage.functions.gamma import gamma
     return gamma(x + 1) / gamma(x - a + 1)
 
 
@@ -5308,7 +5367,7 @@ def rising_factorial(x, a):
         (isinstance(a, Expression) and
          a.is_integer())) and a >= 0:
         return prod(((x + i) for i in range(a)), z=x.parent().one())
-    from sage.functions.all import gamma
+    from sage.functions.gamma import gamma
     return gamma(x + a) / gamma(x)
 
 
@@ -5831,15 +5890,15 @@ def sum_of_k_squares(k, n):
                 x, r = n.sqrtrem()
                 if not r:
                     return (x,)
-            raise ValueError("%s is not a sum of 1 square" % n)
+            raise ValueError(f"{n} is not a sum of 1 square")
         if k == 0:
             if n == 0:
-                return tuple()
-            raise ValueError("%s is not a sum of 0 squares" % n)
-        raise ValueError("k = %s must be nonnegative" % k)
+                return ()
+            raise ValueError(f"{n} is not a sum of 0 squares")
+        raise ValueError(f"k = {k} must be nonnegative")
 
     if n < 0:
-        raise ValueError("%s is not a sum of %s squares" % (n, k))
+        raise ValueError(f"{n} is not a sum of {k} squares")
 
     # Recursively subtract the largest square
     t: list[int] = []

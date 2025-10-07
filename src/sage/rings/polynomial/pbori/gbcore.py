@@ -1,22 +1,32 @@
 import contextlib
 from copy import copy
-from itertools import chain
 from inspect import getfullargspec as getargspec
+from itertools import chain
 
-from .nf import GeneratorLimitExceeded, symmGB_F2_C, symmGB_F2_python
-from .pbori import GroebnerStrategy, ll_red_nf_redsb
-from .PyPolyBoRi import (Monomial, Polynomial,
-                         OrderCode)
-from .ll import eliminate, ll_encode
-from .statistics import used_vars_set
-from .heuristics import dense_system, gauss_on_linear
-from .easy_polynomials import easy_linear_polynomials
-from .interpolate import lex_groebner_basis_for_polynomial_via_variety
-from .fglm import _fglm
+from sage.rings.polynomial.pbori.easy_polynomials import easy_linear_polynomials
+from sage.rings.polynomial.pbori.fglm import _fglm
+from sage.rings.polynomial.pbori.heuristics import dense_system, gauss_on_linear
+from sage.rings.polynomial.pbori.interpolate import (
+    lex_groebner_basis_for_polynomial_via_variety,
+)
+from sage.rings.polynomial.pbori.ll import eliminate, ll_encode
+from sage.rings.polynomial.pbori.nf import (
+    GeneratorLimitExceeded,
+    symmGB_F2_C,
+    symmGB_F2_python,
+)
+from sage.rings.polynomial.pbori.pbori import (
+    GroebnerStrategy,
+    Monomial,
+    OrderCode,
+    Polynomial,
+    ll_red_nf_redsb,
+)
+from sage.rings.polynomial.pbori.statistics import used_vars_set
 
 
 def get_options_from_function(f):
-    (argnames, varargs, varopts, defaults) = getargspec(f)[:4]
+    argnames, varargs, varopts, defaults = getargspec(f)[:4]
     return dict(zip(argnames[-len(defaults):], defaults))
 
 
@@ -211,8 +221,8 @@ def gb_with_pre_post_option(option, pre=None,
                     print("preprocessing for option:", option)
 
                 local_symbols = copy(locals())
-                (I, state) = pre(**{k: v for (k, v) in local_symbols.items()
-                                    if k in pre_args})
+                I, state = pre(**{k: v for (k, v) in local_symbols.items()
+                                  if k in pre_args})
             I = f(I, **kwds)
             if option_set and post:
                 post_args = getargspec(post)[0]
@@ -261,7 +271,7 @@ def invert_all_post(I, state):
 
 
 def llfirst_pre(I, prot):
-    (eliminated, llnf, I) = eliminate(I, on_the_fly=False, prot=prot)
+    eliminated, llnf, I = eliminate(I, on_the_fly=False, prot=prot)
     return (I, eliminated)
 
 
@@ -386,7 +396,7 @@ def other_ordering_pre(I, option_set, kwds):
 
 
 def llfirstonthefly_pre(I, prot):
-    (eliminated, llnf, I) = eliminate(I, on_the_fly=True)
+    eliminated, llnf, I = eliminate(I, on_the_fly=True)
     return (I, eliminated)
 
 

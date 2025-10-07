@@ -13,17 +13,15 @@ AUTHOR:
 Functions
 ^^^^^^^^^
 """
-##############################################################################
+# ###########################################################################
 #  Copyright (C) 2012 Martin Albrecht <martinralbrecht@googlemail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
-##############################################################################
-
-from sage.sat.solvers import SatSolver
-from sage.sat.converters import ANF2CNFConverter
-
+#                  https://www.gnu.org/licenses/
+# ###########################################################################
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+from sage.sat.converters import ANF2CNFConverter
+from sage.sat.solvers import SatSolver
 
 
 def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
@@ -220,9 +218,9 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
 
     .. NOTE::
 
-       Although supported, passing converter and solver objects
-       instead of classes is discouraged because these objects are
-       stateful.
+        Although supported, passing converter and solver objects
+        instead of classes is discouraged because these objects are
+        stateful.
     """
     assert n > 0
 
@@ -247,10 +245,8 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
         from sage.sat.solvers import CryptoMiniSat as solver
 
     if not isinstance(solver, SatSolver):
-        solver_kwds = {}
-        for k, v in kwds.items():
-            if k.startswith("s_"):
-                solver_kwds[k[2:]] = v
+        solver_kwds = {k[2:]: v for k, v in kwds.items()
+                       if k.startswith("s_")}
 
         solver = solver(**solver_kwds)
 
@@ -260,15 +256,13 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
         from sage.sat.converters.polybori import CNFEncoder as converter
 
     if not isinstance(converter, ANF2CNFConverter):
-        converter_kwds = {}
-        for k, v in kwds.items():
-            if k.startswith("c_"):
-                converter_kwds[k[2:]] = v
+        converter_kwds = {k[2:]: v for k, v in kwds.items()
+                          if k.startswith("c_")}
 
         converter = converter(solver, P, **converter_kwds)
 
     phi = converter(F)
-    rho = dict((phi[i], i) for i in range(len(phi)))
+    rho = {phi[i]: i for i in range(len(phi))}
 
     S = []
 
@@ -276,7 +270,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
         s = solver()
 
         if s:
-            S.append(dict((x, K(s[rho[x]])) for x in target_variables))
+            S.append({x: K(s[rho[x]]) for x in target_variables})
 
             if n is not None and len(S) == n:
                 break
@@ -288,7 +282,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
             try:
                 learnt = solver.learnt_clauses(unitary_only=True)
                 if learnt:
-                    S.append(dict((phi[abs(i) - 1], K(i < 0)) for i in learnt))
+                    S.append({phi[abs(i) - 1]: K(i < 0) for i in learnt})
                 else:
                     S.append(s)
                     break
@@ -331,9 +325,9 @@ def learn(F, converter=None, solver=None, max_learnt_length=3, interreduction=Fa
 
     .. NOTE::
 
-       More parameters can be passed to the converter and the solver by prefixing them with ``c_`` and
-       ``s_`` respectively. For example, to increase CryptoMiniSat's verbosity level, pass
-       ``s_verbosity=1``.
+        More parameters can be passed to the converter and the solver by prefixing them with ``c_`` and
+        ``s_`` respectively. For example, to increase CryptoMiniSat's verbosity level, pass
+        ``s_verbosity=1``.
 
     OUTPUT: a sequence of Boolean polynomials
 
@@ -364,10 +358,8 @@ def learn(F, converter=None, solver=None, max_learnt_length=3, interreduction=Fa
     if solver is None:
         from sage.sat.solvers.cryptominisat import CryptoMiniSat as solver
 
-    solver_kwds = {}
-    for k, v in kwds.items():
-        if k.startswith("s_"):
-            solver_kwds[k[2:]] = v
+    solver_kwds = {k[2:]: v for k, v in kwds.items()
+                   if k.startswith("s_")}
 
     solver = solver(**solver_kwds)
 
@@ -376,15 +368,13 @@ def learn(F, converter=None, solver=None, max_learnt_length=3, interreduction=Fa
     if converter is None:
         from sage.sat.converters.polybori import CNFEncoder as converter
 
-    converter_kwds = {}
-    for k, v in kwds.items():
-        if k.startswith("c_"):
-            converter_kwds[k[2:]] = v
+    converter_kwds = {k[2:]: v for k, v in kwds.items()
+                      if k.startswith("c_")}
 
     converter = converter(solver, P, **converter_kwds)
 
     phi = converter(F)
-    rho = dict((phi[i], i) for i in range(len(phi)))
+    rho = {phi[i]: i for i in range(len(phi))}
 
     s = solver()
 

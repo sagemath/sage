@@ -153,7 +153,7 @@ intrinsic Sage(X::RngPad) -> MonStgElt, BoolElt
 {p-adic rings, either free precision model or exact model}
     prec := Precision(X);
     if Type(prec) eq Infty then
-      return Sprintf("Zp(%o, %o, 'relaxed')", Sage(Prime(X)), Sage(prec), false;
+      return Sprintf("Zp(%o, %o, 'relaxed')", Sage(Prime(X)), Sage(prec)), false;
     else
       return Sprintf("Zp(%o, %o, 'capped-abs')", Sage(Prime(X)), Sage(prec)), false;
     end if;

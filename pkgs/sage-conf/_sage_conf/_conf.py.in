@@ -8,7 +8,6 @@ VERSION = "@PACKAGE_VERSION@"
 # to it.
 SAGE_LOCAL = "@prefix@"
 SAGE_ROOT = "@SAGE_ROOT@"
-SAGE_SHARE = "@SAGE_SHARE@"
 
 # The semicolon-separated list of GAP root paths. This is the list of
 # locations that are searched for GAP packages. This is passed directly
@@ -21,6 +20,7 @@ MAXIMA = "@SAGE_MAXIMA@".replace('${prefix}', SAGE_LOCAL)
 # Set this to the empty string if your ECL can load maxima without
 # further prodding.
 MAXIMA_FAS = "@SAGE_MAXIMA_FAS@".replace('${prefix}', SAGE_LOCAL)
+MAXIMA_SHARE = "@SAGE_MAXIMA_SHARE@".replace('${prefix}', SAGE_LOCAL)
 
 # Delete this line if your ECL can load Kenzo without further prodding.
 KENZO_FAS = "@SAGE_KENZO_FAS@".replace('${prefix}', SAGE_LOCAL)

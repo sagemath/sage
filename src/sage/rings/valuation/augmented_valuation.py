@@ -433,6 +433,12 @@ class AugmentedValuation_base(InductiveValuation):
         r"""
         Return a list with the chain of augmentations down to the underlying :mod:`Gauss valuation <sage.rings.valuation.gauss_valuation>`.
 
+        .. NOTE::
+
+            This method runs in time linear in the length of the chain (though
+            the printed representation might seem to indicate that it takes
+            quadratic time to construct the chain.)
+
         EXAMPLES::
 
             sage: R.<x> = QQ[]

@@ -2817,15 +2817,13 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             else:
                 raise NotImplementedError(f"unsupported error term: {error}")
             error_growth = error_terms[0].growth
-            points = list(
-                (k, ring((main.subs({variable: k}) - function(k)) /
-                         (error_coeff * error_growth._substitute_(
-                             {str(variable): k, '_one_': ZZ.one()}))))
-                for k in values)
+            points = [(k, ring((main.subs({variable: k}) - function(k)) /
+                               (error_coeff * error_growth._substitute_(
+                                   {str(variable): k, '_one_': ZZ.one()}))))
+                      for k in values]
         else:
-            points = list(
-                (k, ring(main.subs({variable: k}) - function(k)))
-                for k in values)
+            points = [(k, ring(main.subs({variable: k}) - function(k)))
+                      for k in values]
 
         return points
 
@@ -2971,8 +2969,8 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             from sage.symbolic.ring import SR
             R = SR
 
-        return self.substitute(dict((g, R(R.var(str(g))))
-                                    for g in self.parent().gens()),
+        return self.substitute({g: R(R.var(str(g)))
+                                for g in self.parent().gens()},
                                domain=R)
 
     _symbolic_ = symbolic_expression  # will be used by SR._element_constructor_
@@ -3272,20 +3270,19 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
             :meth:`is_little_o_of_one`
         """
-        non_o_one_terms = list(
-            term for term in self.summands
-            if not term.is_little_o_of_one()
-        )
+        non_o_one_terms = [term for term in self.summands
+                           if not term.is_little_o_of_one()]
         if not non_o_one_terms:
             return self.parent().base_ring()(0)
-        elif (
+
+        if (
             len(non_o_one_terms) == 1
             and non_o_one_terms[0].growth.is_one()
             and non_o_one_terms[0].is_exact()
         ):
             return non_o_one_terms[0].coefficient
-        else:
-            raise ValueError("Cannot determine limit of {}".format(self))
+
+        raise ValueError(f"Cannot determine limit of {self}")
 
     def B(self, valid_from=0):
         r"""

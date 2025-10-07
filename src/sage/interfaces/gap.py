@@ -158,7 +158,8 @@ If :envvar:`SAGE_GAP_COMMAND` is set, as well, then
     sage: gap.eval('GAPInfo.CommandLineOptions.s') # not tested
     '"42m"'
 
-After the GAP interface initialisation, setting :envvar:`SAGE_GAP_MEMORY` has no effect::
+After the GAP interface initialisation, setting :envvar:`SAGE_GAP_MEMORY`
+has no effect::
 
     sage: os.environ['SAGE_GAP_MEMORY'] = '24M'
     sage: gap.eval('GAPInfo.CommandLineOptions.s') # not tested
@@ -191,25 +192,30 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .expect import Expect, ExpectElement, FunctionElement, ExpectFunction
-from .gap_workspace import gap_workspace_file, prepare_workspace_dir
-from sage.cpython.string import bytes_to_str
-from sage.env import SAGE_EXTCODE, SAGE_GAP_COMMAND, SAGE_GAP_MEMORY, GAP_ROOT_PATHS
-from sage.misc.misc import is_in_string
-from sage.misc.cachefunc import cached_method
-from sage.misc.instancedoc import instancedoc
-from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.structure.element import ModuleElement
+import os
+import platform
+import re
+import string
+import time
+import warnings
+
+import pexpect
 
 import sage.interfaces.abc
-
-import re
-import os
-import pexpect
-import time
-import platform
-import string
-import warnings
+from sage.cpython.string import bytes_to_str
+from sage.env import GAP_ROOT_PATHS, SAGE_EXTCODE, SAGE_GAP_COMMAND, SAGE_GAP_MEMORY
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+)
+from sage.interfaces.gap_workspace import gap_workspace_file, prepare_workspace_dir
+from sage.interfaces.tab_completion import ExtraTabCompletion
+from sage.misc.cachefunc import cached_method
+from sage.misc.instancedoc import instancedoc
+from sage.misc.misc import is_in_string
+from sage.structure.element import ModuleElement
 
 WORKSPACE = gap_workspace_file()
 
@@ -670,6 +676,15 @@ class Gap_generic(ExtraTabCompletion, Expect):
             Restarting Gap and trying again
             sage: a
             3
+
+        Checks for :issue:`39906`::
+
+            sage: gap("a"*200)
+            Traceback (most recent call last):
+            ...
+            TypeError: Gap terminated unexpectedly while reading in a large line:
+            Gap produced error output
+            Error, Variable: 'aaaa...aaaa' must have a value executing Read("...");
         """
         expect_eof = self._quit_string() in line
 
@@ -728,7 +743,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
                 else:
                     return ''
             else:
-                raise RuntimeError(exc)
+                raise exc
 
         except KeyboardInterrupt:
             self._keyboard_interrupt()
@@ -884,10 +899,9 @@ class Gap_generic(ExtraTabCompletion, Expect):
             res = self.eval(cmd)
         if self.eval(self._identical_function + '(last,__SAGE_LAST__)') != 'true':
             return self.new('last2;')
-        else:
-            if res.strip():
-                from sage.interfaces.interface import AsciiArtString
-                return AsciiArtString(res)
+        elif res.strip():
+            from sage.interfaces.interface import AsciiArtString
+            return AsciiArtString(res)
 
     def get_record_element(self, record, name):
         r"""
@@ -941,7 +955,7 @@ class GapElement_generic(ModuleElement, ExtraTabCompletion, ExpectElement):
             2
         """
         # This is just a copy of ExpectElement._add_ to fix the fact
-        # that the abtract method ModuleElement._add_ comes first in
+        # that the abstract method ModuleElement._add_ comes first in
         # the MRO.
         return self._operation("+", other)
 
@@ -1063,6 +1077,7 @@ class Gap(Gap_generic):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.gap import gap
             sage: gap == loads(dumps(gap))
             True
         """
@@ -1072,7 +1087,7 @@ class Gap(Gap_generic):
         # -p: enable "package output mode"; this confusingly named option
         #     causes GAP to output special control characters that are normally
         #     intended for communication with a window manager (i.e. for xgap)
-        #     but that we also use to control GAP with pexepect
+        #     but that we also use to control GAP with pexpect
         # -T: disable interactive break loop when encountering errors
         # -E: disable readline support
         cmd += " -b -p -T -E"
@@ -1619,28 +1634,6 @@ class GapFunction(ExpectFunction):
         M = self._parent
         help = M.help(self._name, pager=False)
         return help
-
-
-def is_GapElement(x):
-    """
-    Return ``True`` if ``x`` is a :class:`GapElement`.
-
-    This function is deprecated; use :func:`isinstance`
-    (of :class:`sage.interfaces.abc.GapElement`) instead.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.gap import is_GapElement
-        sage: is_GapElement(gap(2))
-        doctest:...: DeprecationWarning: the function is_GapElement is deprecated; use isinstance(x, sage.interfaces.abc.GapElement) instead
-        See https://github.com/sagemath/sage/issues/34823 for details.
-        True
-        sage: is_GapElement(2)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34823, "the function is_GapElement is deprecated; use isinstance(x, sage.interfaces.abc.GapElement) instead")
-    return isinstance(x, GapElement)
 
 
 def gfq_gap_to_sage(x, F):

@@ -1244,7 +1244,7 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
                                          category=category)
         self._assign_names(alg.variable_names())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1255,7 +1255,7 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
         """
         return "The Poincare-Birkhoff-Witt basis of {}".format(self._alg)
 
-    def _repr_term(self, w):
+    def _repr_term(self, w) -> str:
         """
         Return a representation of term indexed by ``w``.
 
@@ -1670,7 +1670,7 @@ class AssociativeFunctor(ConstructionFunctor):
                 o_degs = [1] * len(other.vars)
             else:
                 o_degs = list(other.degs)
-            self_table = {w: d for w, d in zip(self.vars, deg)}
+            self_table = dict(zip(self.vars, deg))
             for v, d in zip(other.vars, o_degs):
                 if v not in self_vars:
                     deg.append(d)

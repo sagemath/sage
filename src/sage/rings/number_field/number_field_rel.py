@@ -38,7 +38,7 @@ We do some arithmetic in a tower of relative number fields::
     sage: a.parent()
     Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
 
-.. WARNING:
+.. WARNING::
 
     Doing arithmetic in towers of relative fields that depends on canonical
     coercions is currently VERY SLOW.  It is much better to explicitly coerce
@@ -74,43 +74,42 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.libs.ntl.all as ntl
-
-from sage.categories.map import Map
-from sage.structure.sequence import Sequence
-
-import sage.rings.abc
-import sage.structure.parent_gens
-
-from . import maps
-from . import structure
-
-from sage.misc.latex import latex
-from sage.misc.cachefunc import cached_method
-from sage.structure.factorization import Factorization
-import sage.rings.polynomial.polynomial_element as polynomial_element
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-
-from . import number_field_element
-import sage.rings.number_field.number_field_ideal_rel
-from .number_field_ideal import NumberFieldIdeal
-from .number_field import (NumberField, NumberField_generic,
-    put_natural_embedding_first, proof_flag,
-    is_NumberFieldHomsetCodomain)
-from sage.rings.number_field.number_field_base import NumberField as NumberField_base
-from sage.rings.number_field.order import (RelativeOrder,
-                                           relative_order_from_ring_generators)
-from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
 from cypari2.gen import Gen as pari_gen
 
+import sage.rings.abc
+import sage.rings.number_field.number_field_ideal_rel
+import sage.structure.parent_gens
 from sage.categories.homset import Hom
+from sage.categories.map import Map
 from sage.categories.sets_cat import Sets
+from sage.libs.ntl.ntl_ZZ import ntl_ZZ
+from sage.libs.ntl.ntl_ZZX import ntl_ZZX
+from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
 from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_element import vector
-
-from sage.rings.real_mpfr import RR
-from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
+from sage.rings.number_field import maps, number_field_element, structure
+from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
+from sage.rings.number_field.number_field import (
+    NumberField,
+    NumberField_generic,
+    is_NumberFieldHomsetCodomain,
+    proof_flag,
+    put_natural_embedding_first,
+)
+from sage.rings.number_field.number_field_base import NumberField as NumberField_base
+from sage.rings.number_field.number_field_ideal import NumberFieldIdeal
+from sage.rings.number_field.order import (
+    RelativeOrder,
+    relative_order_from_ring_generators,
+)
+from sage.rings.polynomial import polynomial_element
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RR
+from sage.structure.factorization import Factorization
+from sage.structure.sequence import Sequence
 
 
 def is_RelativeNumberField(x):
@@ -233,21 +232,21 @@ class NumberField_relative(NumberField_generic):
             sage: l.<b> = k.extension(5*x^2 + 3); l
             Number Field in b with defining polynomial 5*x^2 + 3 over its base field
             sage: l.pari_rnf()
-            [x^2 + (-y^3 + 1/2*y^2 - 6*y + 3/2)*x + (-3/4*y^3 - 1/4*y^2 - 17/4*y - 19/4), ..., y^4 + 6*y^2 + 1, x^2 + (-y^3 + 1/2*y^2 - 6*y + 3/2)*x + (-3/4*y^3 - 1/4*y^2 - 17/4*y - 19/4)], [0, 0]]
+            [x^2 + (5/4*y^3 - 1/4*y^2 + 27/4*y - 3/4)*x + (-9/4*y^3 - 1/4*y^2 - 47/4*y - 7/4), ..., y^4 + 6*y^2 + 1, x^2 + (5/4*y^3 - 1/4*y^2 + 27/4*y - 3/4)*x + (-9/4*y^3 - 1/4*y^2 - 47/4*y - 7/4)], [0, 0]]
             sage: b
             b
 
             sage: l.<b> = k.extension(x^2 + 3/5); l
             Number Field in b with defining polynomial x^2 + 3/5 over its base field
             sage: l.pari_rnf()
-            [x^2 + (-y^3 + 1/2*y^2 - 6*y + 3/2)*x + (-3/4*y^3 - 1/4*y^2 - 17/4*y - 19/4), ..., y^4 + 6*y^2 + 1, x^2 + (-y^3 + 1/2*y^2 - 6*y + 3/2)*x + (-3/4*y^3 - 1/4*y^2 - 17/4*y - 19/4)], [0, 0]]
+            [x^2 + (5/4*y^3 - 1/4*y^2 + 27/4*y - 3/4)*x + (-9/4*y^3 - 1/4*y^2 - 47/4*y - 7/4), ..., y^4 + 6*y^2 + 1, x^2 + (5/4*y^3 - 1/4*y^2 + 27/4*y - 3/4)*x + (-9/4*y^3 - 1/4*y^2 - 47/4*y - 7/4)], [0, 0]]
             sage: b
             b
 
             sage: l.<b> = k.extension(x - 1/a0); l
             Number Field in b with defining polynomial x + 1/2*a0 over its base field
             sage: l.pari_rnf()
-            [x, [4, -x^3 - x^2 - 7*x - 3, -x^3 + x^2 - 7*x + 3, 2*x^3 + 10*x], ..., [x^4 + 6*x^2 + 1, -x, -1, y^4 + 6*y^2 + 1, x], [0, 0]]
+            [x, [4, -x^3 + x^2 - 7*x + 3, -2*x^3 - 10*x, x^3 + x^2 + 7*x + 3], ..., [x^4 + 6*x^2 + 1, -x, -1, y^4 + 6*y^2 + 1, x], [0, 0]]
             sage: b
             -1/2*a0
 
@@ -466,7 +465,7 @@ class NumberField_relative(NumberField_generic):
         ans = Sequence(ans, immutable=True, cr=bool(ans))
         return ans
 
-    def is_absolute(self):
+    def is_absolute(self) -> bool:
         r"""
         Return ``False``, since this is not an absolute field.
 
@@ -1127,7 +1126,7 @@ class NumberField_relative(NumberField_generic):
 
             sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField([x^5 + 2, x^7 + 3])
-            sage: k._fractional_ideal_class_ ()
+            sage: k._fractional_ideal_class_()
             <class 'sage.rings.number_field.number_field_ideal_rel.NumberFieldFractionalIdeal_rel'>
         """
         return sage.rings.number_field.number_field_ideal_rel.NumberFieldFractionalIdeal_rel
@@ -1170,14 +1169,15 @@ class NumberField_relative(NumberField_generic):
             sage: k._pari_base_nf()
             [y^2 + 2, [0, 1], -8, 1, ..., [1, 0, 0, -2; 0, 1, 1, 0]]
         """
-        abs_base, from_abs_base, to_abs_base = self.absolute_base_field()
+        abs_base, _, _ = self.absolute_base_field()
         return abs_base.pari_nf()
 
-    def is_galois(self):
+    def is_galois(self) -> bool:
         r"""
         For a relative number field, :meth:`is_galois` is deliberately not
         implemented, since it is not clear whether this would mean "Galois over
         `\QQ`" or "Galois over the given base field".
+
         Use either :meth:`is_galois_absolute` or :meth:`is_galois_relative`, respectively.
 
         EXAMPLES::
@@ -1192,7 +1192,7 @@ class NumberField_relative(NumberField_generic):
         """
         raise NotImplementedError("For a relative number field L you must use either L.is_galois_relative() or L.is_galois_absolute() as appropriate")
 
-    def is_galois_relative(self):
+    def is_galois_relative(self) -> bool:
         r"""
         Return ``True`` if for this relative extension `L/K`, `L` is a
         Galois extension of `K`.
@@ -1222,7 +1222,7 @@ class NumberField_relative(NumberField_generic):
             rel_poly = self.relative_polynomial()
             return d == len(rel_poly.base_extend(self).factor())
 
-    def is_galois_absolute(self):
+    def is_galois_absolute(self) -> bool:
         r"""
         Return ``True`` if for this relative extension `L/K`, `L` is a Galois extension of `\QQ`.
 
@@ -1237,7 +1237,7 @@ class NumberField_relative(NumberField_generic):
         f = self.absolute_polynomial()
         return f.galois_group(pari_group=True).order() == self.absolute_degree()
 
-    def is_isomorphic_relative(self, other, base_isom=None):
+    def is_isomorphic_relative(self, other, base_isom=None) -> bool:
         r"""
         For this relative extension `L/K` and another relative extension `M/K`, return ``True``
         if there is a `K`-linear isomorphism from `L` to `M`. More generally, ``other`` can be a
@@ -1324,10 +1324,12 @@ class NumberField_relative(NumberField_generic):
             raise ValueError("base_isom is not a homomorphism from self's base_field to other's base_field")
         raise ValueError("other must be a relative number field.")
 
-    def is_CM_extension(self):
+    def is_CM_extension(self) -> bool:
         """
-        Return ``True`` is this is a CM extension, i.e. a totally imaginary
-        quadratic extension of a totally real field.
+        Return ``True`` is this is a CM extension.
+
+        This means a totally imaginary quadratic extension of a
+        totally real field.
 
         EXAMPLES::
 
@@ -1624,9 +1626,9 @@ class NumberField_relative(NumberField_generic):
             sage: K.<a> = NumberField(x^2 + 1)
             sage: L.<b> = K.extension(x^2 - 1/2)
             sage: L._pari_relative_structure()
-            (x^2 + Mod(-y, y^2 + 1),
-             Mod(Mod(1/2*y - 1/2, y^2 + 1)*x, x^2 + Mod(-y, y^2 + 1)),
-             Mod(Mod(-y - 1, y^2 + 1)*x, Mod(1, y^2 + 1)*x^2 + Mod(-1/2, y^2 + 1)))
+            (x^2 + Mod(y, y^2 + 1),
+             Mod(Mod(-1/2*y - 1/2, y^2 + 1)*x, x^2 + Mod(y, y^2 + 1)),
+             Mod(Mod(y - 1, y^2 + 1)*x, x^2 + Mod(-1/2, y^2 + 1)))
 
         An example where both fields are defined by non-integral or
         non-monic polynomials::
@@ -1879,10 +1881,10 @@ class NumberField_relative(NumberField_generic):
         try:
             return (self.__abs_polynomial_ntl, self.__abs_denominator_ntl)
         except AttributeError:
-            self.__abs_denominator_ntl = ntl.ZZ()
+            self.__abs_denominator_ntl = ntl_ZZ()
             den = self.absolute_polynomial().denominator()
             self.__abs_denominator_ntl.set_from_sage_int(ZZ(den))
-            self.__abs_polynomial_ntl = ntl.ZZX((self.absolute_polynomial()*den).list())
+            self.__abs_polynomial_ntl = ntl_ZZX((self.absolute_polynomial()*den).list())
         return (self.__abs_polynomial_ntl, self.__abs_denominator_ntl)
 
     @cached_method
@@ -1922,11 +1924,11 @@ class NumberField_relative(NumberField_generic):
             sage: k.base_field().absolute_polynomial()
             x^2 + 1/4
             sage: k.pari_absolute_base_polynomial()
-            y^2 + 1
+            y^2 + 4
             sage: k.relative_polynomial()
             x^2 + 1/3
             sage: k.pari_relative_polynomial()
-            x^2 + Mod(y, y^2 + 1)*x - 1
+            x^2 + Mod(-1/2*y, y^2 + 4)*x - 1
         """
         return QQ['x'](self._pari_rnfeq()[0])
 
@@ -2480,11 +2482,11 @@ class NumberField_relative(NumberField_generic):
         gens = [self(x) for x in gens]
         return relative_order_from_ring_generators(gens, **kwds)
 
-    def is_free(self, proof=None):
+    def is_free(self, proof=None) -> bool:
         r"""
         Determine whether or not `L/K` is free.
 
-        (i.e. if `\mathcal{O}_L` is a free `\mathcal{O}_K`-module).
+        This means that `\mathcal{O}_L` is a free `\mathcal{O}_K`-module.
 
         INPUT:
 
@@ -2699,7 +2701,7 @@ class NumberField_relative(NumberField_generic):
             sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 + 23, x^2 - 3])
             sage: P = K.prime_factors(5)[0]; P
-            Fractional ideal (5, 1/2*a + b - 5/2)
+            Fractional ideal (5, -1/2*a + b + 5/2)
             sage: u = K.uniformizer(P)
             sage: u.valuation(P)
             1

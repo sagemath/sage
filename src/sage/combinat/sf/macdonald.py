@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Macdonald Polynomials
+Macdonald polynomials
 
 Notation used in the definitions follows mainly [Mac1995]_.
 
@@ -48,17 +48,19 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.morphism import SetMorphism
+import functools
+
 from sage.categories.homset import Hom
 from sage.categories.modules_with_basis import ModulesWithBasis
-from . import sfa
+from sage.categories.morphism import SetMorphism
 from sage.combinat.partition import Partitions_n, _Partitions
 from sage.matrix.matrix_space import MatrixSpace
-from sage.rings.rational_field import QQ
-from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_function
-import functools
+from sage.misc.misc_c import prod
+from sage.rings.rational_field import QQ
+from sage.structure.unique_representation import UniqueRepresentation
+
+from . import sfa
 
 # cache in q,t globally and subs locally with q and t values
 # these caches are stored in self._self_to_s_cache and self._s_to_self_cache
@@ -2007,6 +2009,7 @@ def qt_kostka(lam, mu):
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override('sage.combinat.sf.macdonald', 'MacdonaldPolynomial_h', MacdonaldPolynomials_h.Element)
 register_unpickle_override('sage.combinat.sf.macdonald', 'MacdonaldPolynomial_ht', MacdonaldPolynomials_ht.Element)
 register_unpickle_override('sage.combinat.sf.macdonald', 'MacdonaldPolynomial_j', MacdonaldPolynomials_j.Element)

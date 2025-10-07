@@ -386,7 +386,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
                 point = self.rational_point()
             point = Sequence(point)
             Q = PolynomialRing(QQ, 'x,y')
-            [x, y] = Q.gens()
+            x, y = Q.gens()
             gens = self.ambient_space().gens()
             M = self.symmetric_matrix()
             M *= lcm([t.denominator() for t in M.list()])

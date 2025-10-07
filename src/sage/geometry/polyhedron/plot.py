@@ -1815,33 +1815,7 @@ class Projection(SageObject):
         proj_vector = (rot**(-1))*vector(RDF, [0, 0, 1])
 
         # First compute the back and front vertices and facets
-        facets = self.face_inequalities
-        front_facets = []
-        back_facets = []
-        for index_facet in range(len(facets)):
-            A = facets[index_facet].vector()[1:]
-            B = facets[index_facet].vector()[0]
-            if A*(2000*proj_vector)+B < 0:
-                front_facets += [index_facet]
-            else:
-                back_facets += [index_facet]
-
-        vertices = list(self.parent_polyhedron.Vrep_generator())
-        front_vertices = []
-        for index_facet in front_facets:
-            A = facets[index_facet].vector()[1:]
-            B = facets[index_facet].vector()[0]
-            for v in self.points:
-                if A*self.coords[v]+B < 0.0005 and v not in front_vertices:
-                    front_vertices += [v]
-
-        back_vertices = []
-        for index_facet in back_facets:
-            A = facets[index_facet].vector()[1:]
-            B = facets[index_facet].vector()[0]
-            for v in self.points:
-                if A * self.coords[v] + B < 0.0005 and v not in back_vertices:
-                    back_vertices += [v]
+        front_facets, back_facets, front_vertices, back_vertices = self._front_back_facets(proj_vector)
 
         # Creates the nodes, coordinate and tag for every vertex of the polytope.
         # The tag is used to draw the front facets later on.
@@ -1860,7 +1834,7 @@ class Projection(SageObject):
             dict_drawing[vert] = node, coord, tag
 
         # Separate the edges between back and front
-
+        facets = self.face_inequalities
         for index1, index2 in self.lines:
             # v1 = self.coords[index1]
             # v2 = self.coords[index2]
@@ -1933,6 +1907,7 @@ class Projection(SageObject):
 
         # Draw the facets in the front by going in cycles for every facet.
         tikz_pic += '%%\n%%\n%% Drawing the facets\n%%\n'
+        vertices = self.parent_polyhedron.Vrep_generator()
         vertex_to_index = {v: i for i, v in enumerate(vertices)}
         for index_facet in front_facets:
             cyclic_vert = cyclic_sort_vertices_2d(list(facets[index_facet].incident()))
@@ -1955,3 +1930,56 @@ class Projection(SageObject):
                     tikz_pic += dict_drawing[v][0]
         tikz_pic += '%%\n%%\n\\end{tikzpicture}'
         return LatexExpr(tikz_pic)
+
+    def _front_back_facets(self, projection_vector):
+        r"""
+        Return the front/back vertices/facets of the projected polyhedron
+        with respect to the projection vector.
+
+        INPUT:
+
+        - ``projection_vector`` -- vector
+
+        EXAMPLES::
+
+            sage: # needs sage.plot sage.rings.number_field
+            sage: P = polytopes.small_rhombicuboctahedron()
+            sage: from sage.geometry.polyhedron.plot import Projection
+            sage: proj = Projection(P)
+            sage: v = (-0.544571767341018, 0.8192019648731899, 0.17986030958214505)
+            sage: v = vector(RDF, v)
+            sage: proj._front_back_facets(v)
+            ([0, 2, 4, 5, 8, 9, 10, 17, 18, 19, 20, 22, 24],
+             [1, 3, 6, 7, 11, 12, 13, 14, 15, 16, 21, 23, 25],
+             [2, 3, 14, 15, 0, 12, 1, 4, 13, 16, 6, 7, 18, 19, 20, 21, 23],
+             [4, 9, 16, 21, 3, 5, 15, 17, 10, 22, 2, 6, 8, 7, 11, 20, 23])
+        """
+        facet_ineqs = self.face_inequalities
+        front_facets = []
+        back_facets = []
+        for index_facet,f in enumerate(facet_ineqs):
+            A = f.A()
+            if A * projection_vector < 0:
+                front_facets.append(index_facet)
+            else:
+                back_facets.append(index_facet)
+
+        front_vertices = []
+        for index_facet in front_facets:
+            f_ineq = facet_ineqs[index_facet]
+            A = f_ineq.A()
+            b = f_ineq.b()
+            for v in self.points:
+                if A * self.coords[v] + b < 0.0005 and v not in front_vertices:
+                    front_vertices.append(v)
+
+        back_vertices = []
+        for index_facet in back_facets:
+            f_ineq = facet_ineqs[index_facet]
+            A = f_ineq.A()
+            b = f_ineq.b()
+            for v in self.points:
+                if A * self.coords[v] + b < 0.0005 and v not in back_vertices:
+                    back_vertices.append(v)
+
+        return front_facets, back_facets, front_vertices, back_vertices

@@ -851,10 +851,11 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 MP = P.module()
                 for b in QP.basis():
                     yi = QP.lift(b)
-                    adj = matrix([MP.coordinate_vector(yi.bracket(P.lift(b)).to_vector())
-                                  for b in P.basis()]).transpose()
+                    brackets = [yi.bracket(P.lift(b)) for b in P.basis()]
+                    adj = matrix([MP.coordinate_vector(elt.to_vector())
+                                  for elt in brackets]).transpose()
                     if adj.rank() < s:
-                        J = L.ideal([yi.bracket(p) for p in P.basis()])
+                        J = L.ideal(brackets)
                         QJ = L.quotient(J)
                         M = L.ideal([QJ.lift(b) for b in QJ.nilradical_basis()]
                                     + list(J.basis()))
@@ -1074,11 +1075,12 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 [x, y]
             """
             from sage.algebras.lie_algebras.subalgebra import LieSubalgebra_finite_dimensional_with_basis
-            if len(gens) == 1 and isinstance(gens[0], (list, tuple)):
+            from sage.structure.element import Element
+            if len(gens) == 1 and not isinstance(gens[0], Element):
                 gens = gens[0]
             category = kwds.pop('category', None)
             return LieSubalgebra_finite_dimensional_with_basis(
-                self, gens, ideal=True, category=category, **kwds)
+                self, gens, ideal_of=self, category=category, **kwds)
 
         @cached_method
         def is_ideal(self, A):
@@ -1168,7 +1170,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 NotImplementedError: quotients over non-fields not implemented
             """
             from sage.algebras.lie_algebras.quotient import LieQuotient_finite_dimensional_with_basis
-            return LieQuotient_finite_dimensional_with_basis(I, ambient=self,
+            return LieQuotient_finite_dimensional_with_basis(self, I,
                                                              names=names,
                                                              category=category)
 
@@ -1504,7 +1506,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             """
             return self.upper_central_series()[-1]
 
-        def is_abelian(self):
+        def is_abelian(self) -> bool:
             """
             Return if ``self`` is an abelian Lie algebra.
 
@@ -1786,7 +1788,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                                 vec = elt.to_vector()
                             else:
                                 vec = Lmod.coordinate_vector(elt.to_vector())
-                            for key, coeff in vec.iteritems():
+                            for key, coeff in vec.items():
                                 if not coeff:
                                     continue
                                 s, A = sgn(key, Z)
@@ -2691,26 +2693,45 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: L.<X,Y,Z> = LieAlgebra(ZZ, {('X','Y'): {'Z': 3}})
                     sage: I = L.ideal(Y)
                     sage: I.basis()
-                    Family (Y, 3*Z)
+                    Finite family {'Y': Y, 'Z': 3*Z}
                     sage: I.reduce(3*Z)
                     0
                     sage: I.reduce(Y + 14*Z)
                     2*Z
+
+                We can reduce elements of a subalgebra `A` by an ideal `B`
+                (:issue:`40137`)::
+
+                    sage: L.<a,b,c,d> = LieAlgebra(QQ, {('a','b'): {'c': 1, 'd':1}, ('a','c'): {'b':1}})
+                    sage: A = L.ideal([b, c, d])
+                    sage: B = L.ideal([c+d])
+                    sage: [B.reduce(v) for v in A.basis()]
+                    [0, c, -c]
+                    sage: A.basis()
+                    Finite family {'b': b, 'c': c, 'd': d}
+                    sage: B.basis()
+                    Finite family {'b': b, 'd': c + d}
+                    sage: all(B.reduce(v).parent() is A for v in A.basis())
+                    True
                 """
                 R = self.base_ring()
                 from sage.categories.fields import Fields
                 is_field = R in Fields()
+                P = X.parent()
+                X = self.ambient()(X)  # make sure it is in the ambient space
                 for Y in self.basis():
-                    Y = self.lift(Y)
-                    k, c = Y.leading_item(key=self._order)
+                    lY = self.lift(Y)
+                    k, c = lY.leading_item(key=self._order)
+                    if not X[k]:  # scalar will be 0
+                        continue
 
                     if is_field:
-                        X -= (X[k] / c) * Y
+                        X -= (X[k] / c) * lY
                     else:
                         try:
                             q, _ = X[k].quo_rem(c)
-                            X -= q * Y
+                            X -= q * lY
                         except AttributeError:
                             break
 
-                return X
+                return P(X)  # bring it back to the parent we started with

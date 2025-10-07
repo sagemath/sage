@@ -426,9 +426,9 @@ from sage.graphs.independent_sets import IndependentSets
 from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_index
 from sage.graphs.views import EdgesView
 from sage.parallel.decorate import parallel
-
 from sage.misc.lazy_import import lazy_import, LazyImport
 from sage.features.mcqd import Mcqd
+
 lazy_import('sage.graphs.mcqd', ['mcqd'],
             feature=Mcqd())
 
@@ -968,9 +968,9 @@ class Graph(GenericGraph):
         Loops are not counted as multiedges (see :issue:`11693`) and edges are
         not counted twice ::
 
-            sage: Graph({1:[1]}).num_edges()
+            sage: Graph({1:[1]}).n_edges()
             1
-            sage: Graph({1:[2,2]}).num_edges()
+            sage: Graph({1:[2,2]}).n_edges()
             2
 
         An empty list or dictionary defines a simple graph
@@ -1718,6 +1718,13 @@ class Graph(GenericGraph):
             sage: Graph('Fli@?').is_cactus()
             False
 
+            sage: Graph('BG').is_cactus()
+            False
+            sage: (Graph(0).is_cactus(), Graph(1).is_cactus())
+            (True, True)
+            sage: (Graph(2).is_cactus(), Graph(3).is_cactus())
+            (False, False)
+
         Test a graph that is not outerplanar, see :issue:`24480`::
 
             sage: graphs.Balaban10Cage().is_cactus()                                    # needs networkx
@@ -1725,8 +1732,15 @@ class Graph(GenericGraph):
         """
         self._scream_if_not_simple()
 
+        if not self.is_connected():
+            return False
+
         # Special cases
         if self.order() < 4:
+            return True
+
+        # trees are cacti
+        if self.order() == self.size() + 1:
             return True
 
         if self.size() > 3 * (self.order() - 1) / 2:
@@ -1736,54 +1750,9 @@ class Graph(GenericGraph):
         if not self.is_circular_planar():
             return False
 
-        if not self.is_connected():
-            return False
-
         # the number of faces is 1 plus the number of blocks of order > 2
         B = self.blocks_and_cut_vertices()[0]
         return len(self.faces()) == sum(1 for b in B if len(b) > 2) + 1
-
-    @doc_index("Graph properties")
-    def is_biconnected(self):
-        """
-        Test if the graph is biconnected.
-
-        A biconnected graph is a connected graph on two or more vertices that is
-        not broken into disconnected pieces by deleting any single vertex.
-
-        .. SEEALSO::
-
-            - :meth:`~sage.graphs.generic_graph.GenericGraph.is_connected`
-            - :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cut_vertices`
-            - :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cuts_tree`
-            - :wikipedia:`Biconnected_graph`
-
-        EXAMPLES::
-
-            sage: G = graphs.PetersenGraph()
-            sage: G.is_biconnected()
-            True
-            sage: G.add_path([0,'a','b'])
-            sage: G.is_biconnected()
-            False
-            sage: G.add_edge('b', 1)
-            sage: G.is_biconnected()
-            True
-
-        TESTS::
-
-            sage: Graph().is_biconnected()
-            False
-            sage: Graph(1).is_biconnected()
-            False
-            sage: graphs.CompleteGraph(2).is_biconnected()
-            True
-        """
-        if self.order() < 2 or not self.is_connected():
-            return False
-        if self.blocks_and_cut_vertices()[1]:
-            return False
-        return True
 
     @doc_index("Graph properties")
     def is_block_graph(self):
@@ -2219,9 +2188,9 @@ class Graph(GenericGraph):
             True
         """
         # # A possible optimized version. But the gain in speed is very little.
-        # return bool(self._backend.num_verts() & 1) and (  # odd order n
-        #     2 * self._backend.num_edges(self._directed) > #2m > \Delta(G)*(n-1)
-        #     max(self.degree()) * (self._backend.num_verts() - 1))
+        # return bool(self._backend.n_vertices() & 1) and (  # odd order n
+        #     2 * self._backend.n_edges(self._directed) > #2m > \Delta(G)*(n-1)
+        #     max(self.degree()) * (self._backend.n_vertices() - 1))
         # unoptimized version
         return (self.order() % 2 == 1) and (
             2 * self.size() > max(self.degree()) * (self.order() - 1))
@@ -2672,7 +2641,7 @@ class Graph(GenericGraph):
             sage: Graph(':Ab').is_perfect()                                             # needs sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: This method is only defined for simple graphs, and yours is not one of them !
+            ValueError: This method is not known to work on graphs with multiedges/loops...
             sage: g = Graph()
             sage: g.allow_loops(True)
             sage: g.add_edge(0,0)
@@ -2681,17 +2650,20 @@ class Graph(GenericGraph):
             sage: g.is_perfect()                                                        # needs sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: This method is only defined for simple graphs, and yours is not one of them !
+            ValueError: This method is not known to work on graphs with loops. ...
+
+        TESTS:
+
+        Check that immutable graphs are supported::
+
+            sage: g = graphs.HouseGraph(immutable=True)
+            sage: g.is_perfect()                                                        # needs sage.modules
+            True
         """
-        if self.has_multiple_edges() or self.has_loops():
-            raise ValueError("This method is only defined for simple graphs,"
-                             " and yours is not one of them !")
+        self_complement = self.complement(immutable=False)
+
         if self.is_bipartite():
             return True if not certificate else None
-
-        self_complement = self.complement()
-        self_complement.remove_loops()
-        self_complement.remove_multiple_edges()
 
         if self_complement.is_bipartite():
             return True if not certificate else None
@@ -2919,6 +2891,247 @@ class Graph(GenericGraph):
             elif deg != 2:
                 return False
         return deg_one_counter == 2 and seen_counter == order
+
+    @doc_index("Graph properties")
+    def is_chordal_bipartite(self, certificate=False):
+        r"""
+        Check whether the given graph is chordal bipartite.
+
+        A graph `G` is chordal bipartite if it is bipartite and has no induced
+        cycle of length at least 6.
+
+        An edge `(x, y) \in E` is bisimplical if `N(x) \cup N(y)` induces a
+        complete bipartite subgraph of `G`.
+
+        A Perfect Edge Without Vertex Elimination Ordering of a bipartite graph
+        `G = (X, Y, E)` is an ordering `e_1,...,e_m` of its edge set such that
+        for all `1 \leq i \leq m`, `e_i` is a bisimplical edge of
+        `G_i = (X, Y, E_i)` where `E_i` consists of the edges `e_i,e_{i+1}...,e_m`.
+
+        A graph `G` is chordal bipartite if and only if it has a Perfect Edge
+        Without Vertex Elimination Ordering. See Lemma 4 in [KKD1995]_.
+
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``); whether to return a
+          certificate
+
+        OUTPUT:
+
+        When ``certificate`` is set to ``False`` (default) this method only
+        returns ``True`` or ``False`` answers. When ``certificate`` is set to
+        ``True``, the method either returns:
+
+        * ``(True, pewveo)`` when the graph is chordal bipartite, where ``pewveo``
+          is a Perfect Edge Without Vertex Elimination Ordering of edges.
+
+        * ``(False, cycle)`` when the graph is not chordal bipartite, where
+          ``cycle`` is an odd cycle or a chordless cycle of length at least 6.
+
+        ALGORITHM:
+
+        This algorithm is based on these facts. The first one is trivial.
+
+        * A reduced adjacnecy matrix
+          (:meth:`~sage.graphs.bipartite_graph.BipartiteGraph.reduced_adjacency_matrix`)
+          of a bipartite graph has no cycle submatrix if and only if the graph is
+          chordal bipartite, where cycle submatrix is 0-1 `n \times n` matrix `n \geq 3`
+          with exactly two 1's in each row and column and no proper submatrix satsify
+          this property.
+
+        * A doubly lexical ordering
+          (:meth:`~sage.matrix.matrix_mod2_dense.Matrix_mod2_dense.doubly_lexical_ordering`)
+          of a 0-1 matrix is `\Gamma`-free
+          (:meth:`~sage.matrix.matrix_mod2_dense.Matrix_mod2_dense.is_Gamma_free`) if and
+          only if the matrix has no cycle submatrix. See Theorem 5.4 in [Lub1987]_.
+
+        Hence, checking a doubly lexical ordering of a reduced adjacency matrix
+        of a bipartite graph is `\Gamma`-free leads to detecting the graph
+        is chordal bipartite. Also, this matrix contains a certificate. Hence,
+        if `G` is chordal bipartite, we find a Perfect Edge Without Vertex
+        Elimination Ordering of edges by Lemma 10 in [KKD1995]_.
+        Otherwise, we can find a cycle submatrix by Theorem 5.2 in [Lub1987]_.
+        The time complexity of this algorithm is `O(n^3)`.
+
+        EXAMPLES:
+
+        A non-bipartite graph is not chordal bipartite::
+
+            sage: g = graphs.CycleGraph(5)
+            sage: g.is_chordal_bipartite()
+            False
+            sage: _, cycle = g.is_chordal_bipartite(certificate=True)
+            sage: len(cycle) % 2 == 1
+            True
+
+        A 6-cycle graph is not chordal bipartite::
+
+            sage: g = graphs.CycleGraph(6)
+            sage: g.is_chordal_bipartite()
+            False
+            sage: _, cycle = g.is_chordal_bipartite(certificate=True)
+            sage: len(cycle) == 6
+            True
+
+        A `2 \times n` grid graph is chordal bipartite::
+
+            sage: g = graphs.Grid2dGraph(2, 6)
+            sage: result, pewveo = g.is_chordal_bipartite(certificate=True)
+            sage: result
+            True
+
+        Let us check the certificate given by Sage is indeed a perfect
+        edge without vertex elimination ordering::
+
+            sage: for e in pewveo:
+            ....:     a = g.subgraph(vertices=g.neighbors(e[0]) + g.neighbors(e[1]))
+            ....:     b = BipartiteGraph(a).complement_bipartite()
+            ....:     if b.edges():
+            ....:          raise ValueError("this should never happen")
+            ....:     g.delete_edge(e)
+
+        Let us check the certificate given by Sage is indeed a
+        chordless cycle of length at least 6::
+
+            sage: g = graphs.Grid2dGraph(3, 6)
+            sage: result, cycle = g.is_chordal_bipartite(certificate=True)
+            sage: result
+            False
+            sage: l = len(cycle); l >= 6
+            True
+            sage: for i in range(len(cycle)):
+            ....:     if not g.has_edge(cycle[i], cycle[(i+1)%l]):
+            ....:         raise ValueError("this should never happen")
+            sage: h = g.subgraph(vertices=cycle)
+            sage: h.is_cycle()
+            True
+
+        TESTS:
+
+        The algorithm works correctly for disconnected graphs::
+
+            sage: c4 = graphs.CycleGraph(4)
+            sage: g = c4.disjoint_union(graphs.CycleGraph(6))
+            sage: g.is_chordal_bipartite()
+            False
+            sage: _, cycle = g.is_chordal_bipartite(certificate=True)
+            sage: len(cycle) == 6
+            True
+            sage: g = c4.disjoint_union(graphs.Grid2dGraph(2, 6))
+            sage: g.is_chordal_bipartite()
+            True
+            sage: _, pewveo = g.is_chordal_bipartite(certificate=True)
+            sage: for e in pewveo:
+            ....:     a = g.subgraph(vertices=g.neighbors(e[0]) + g.neighbors(e[1]))
+            ....:     b = BipartiteGraph(a).complement_bipartite()
+            ....:     if b.edges():
+            ....:          raise ValueError("this should never happen")
+            ....:     g.delete_edge(e)
+        """
+        self._scream_if_not_simple()
+        is_bipartite, bipartite_certificate = self.is_bipartite(certificate=True)
+        if not is_bipartite:
+            return False if not certificate else (False, bipartite_certificate)
+
+        # If the graph is not connected, we are computing the result on each
+        # component
+        if not self.is_connected():
+            # If the user wants a certificate, we had no choice but to collect
+            # the Perfect Edge Without Vertex Elimination Ordering. But we
+            # return a cycle certificate immediately if we find any.
+            if certificate:
+                pewveo = []
+                for gg in self.connected_components_subgraphs():
+                    b, certif = gg.is_chordal_bipartite(certificate=True)
+                    if not b:
+                        return False, certif
+                    pewveo.extend(certif)
+                return True, pewveo
+            return all(gg.is_chordal_bipartite() for gg in
+                       self.connected_components_subgraphs())
+
+        left = [v for v, c in bipartite_certificate.items() if c == 0]
+        right = [v for v, c in bipartite_certificate.items() if c == 1]
+        order_left = len(left)
+        order_right = len(right)
+
+        # We set |left| > |right| for optimization, i.e. time complexity of
+        # doubly lexical ordering algorithm is O(nm^2) for a n x m matrix.
+        if order_left < order_right:
+            left, right = right, left
+            order_left, order_right = order_right, order_left
+
+        # create a reduced_adjacency_matrix
+        from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
+        A = self.adjacency_matrix(vertices=left+right, base_ring=FiniteField_prime_modn(2))
+        B = A[range(order_left), range(order_left, order_left + order_right)]
+
+        # get doubly lexical ordering of reduced_adjacency_matrix
+        row_ordering, col_ordering = B.doubly_lexical_ordering(inplace=True)
+
+        # determine if B is Gamma-free or not
+        is_Gamma_free, Gamma_submatrix_indices = B.is_Gamma_free(certificate=True)
+
+        if not certificate:
+            return is_Gamma_free
+
+        row_ordering_dict = {k-1: v-1 for k, v in row_ordering.dict().items()}
+        col_ordering_dict = {k-1: v-1 for k, v in col_ordering.dict().items()}
+        row_vertices = [left[row_ordering_dict[i]] for i in range(order_left)]
+        col_vertices = [right[col_ordering_dict[i]] for i in range(order_right)]
+
+        if is_Gamma_free:
+            pewveo = dict()
+            order = 0
+            for i, vi in enumerate(row_vertices):
+                for j, vj in enumerate(col_vertices):
+                    if B[i, j] == 1:
+                        pewveo[vi, vj] = order
+                        pewveo[vj, vi] = order
+                        order += 1
+            edges = self.edges(sort=True, key=lambda x: pewveo[x[0], x[1]])
+            return True, edges
+
+        # Find a chordless cycle of length at least 6
+        r1, c1, r2, c2 = Gamma_submatrix_indices
+        row_indices = [r1, r2]
+        col_indices = [c1, c2]
+        while not B[row_indices[-1], col_indices[-1]]:
+            # find the rightmost column with different value
+            # in row_indices[-2] and row_indices[-1]
+            col = order_right - 1
+            while col > col_indices[-1]:
+                if not B[row_indices[-2], col] and B[row_indices[-1], col]:
+                    break
+                col -= 1
+            assert col > col_indices[-1]
+
+            # find the bottommost row with different value
+            # in col_indices[-2] and col_indices[-1]
+            row = order_left - 1
+            while row > row_indices[-1]:
+                if not B[row, col_indices[-2]] and B[row, col_indices[-1]]:
+                    break
+                row -= 1
+            assert row > row_indices[-1]
+
+            col_indices.append(col)
+            row_indices.append(row)
+
+        l = len(row_indices)
+        cycle = []
+        for i in range(l):
+            if i % 2 == 0:
+                cycle.append(row_vertices[row_indices[i]])
+            else:
+                cycle.append(col_vertices[col_indices[i]])
+        for i in reversed(range(l)):
+            if i % 2 == 0:
+                cycle.append(col_vertices[col_indices[i]])
+            else:
+                cycle.append(row_vertices[row_indices[i]])
+
+        return False, cycle
 
     @doc_index("Connectivity, orientations, trees")
     def degree_constrained_subgraph(self, bounds, solver=None, verbose=0,
@@ -3390,7 +3603,7 @@ class Graph(GenericGraph):
         raise ValueError("The 'algorithm' keyword must be set to either 'DLX' or 'MILP'.")
 
     @doc_index("Coloring")
-    def chromatic_symmetric_function(self, R=None):
+    def chromatic_symmetric_function(self, R=None, weights=None):
         r"""
         Return the chromatic symmetric function of ``self``.
 
@@ -3401,14 +3614,16 @@ class Graph(GenericGraph):
 
             X_G = \sum_{F \subseteq E(G)} (-1)^{|F|} p_{\lambda(F)},
 
-        where `\lambda(F)` is the partition of the sizes of the connected
-        components of the subgraph induced by the edges `F` and `p_{\mu}` is the
-        powersum symmetric function.
+        where `\lambda(F)` is the partition of the (weighted) sizes of the
+        connected components of the subgraph induced by the edges `F` and
+        `p_{\mu}` is the powersum symmetric function.
 
         INPUT:
 
         - ``R`` -- (optional) the base ring for the symmetric functions;
           this uses `\ZZ` by default
+        - ``weights`` -- ``dict`` (optional); a mapping from the vertices
+          of `G` to positive integers; this is `v \mapsto 1` by default
 
         ALGORITHM:
 
@@ -3456,6 +3671,17 @@ class Graph(GenericGraph):
             sage: XG == XG1 + XG2 - XG3
             True
 
+        We give examples that a complete graph with weights `\lambda`
+        produces/yields the monomial symmetric function `m_{\lambda}`
+        (scaled by a constant)::
+
+            sage: m = SymmetricFunctions(ZZ).m()
+            sage: K5 = graphs.CompleteGraph(5)
+            sage: m(K5.chromatic_symmetric_function())
+            120*m[1, 1, 1, 1, 1]
+            sage: m(K5.chromatic_symmetric_function(weights=enumerate([5,2,2,2,1])))
+            6*m[5, 2, 2, 2, 1]
+
         TESTS::
 
             sage: Graph([]).chromatic_symmetric_function() == 1
@@ -3476,7 +3702,10 @@ class Graph(GenericGraph):
         dsf = {v: None for v in self.vertices()}
 
         # Dict to store size of tree rooted at each vertex.
-        sizes = {v: 1 for v in self.vertices()}
+        if weights is None:
+            sizes = {v: 1 for v in self.vertices()}
+        else:
+            sizes = dict(weights)
 
         def find(dsf, v):
             # Find root of tree in disjoint-set forest.
@@ -3487,8 +3716,8 @@ class Graph(GenericGraph):
             # edges in stack to current subgraph.
             if not stack:
                 return p.monomial(_Partitions(sorted(
-                            [s for v, s in sizes.items() if dsf[v] is None],
-                            reverse=True)))
+                    [s for v, s in sizes.items() if dsf[v] is None],
+                    reverse=True)))
             ret = p.zero()
             e = stack.pop()
             u = find(dsf, e[0])
@@ -4674,7 +4903,7 @@ class Graph(GenericGraph):
                                                     weight_function=weight_function,
                                                     check_weight=check_weight)
 
-            if len(length) != self.num_verts():
+            if len(length) != self.n_vertices():
                 ecc[u] = Infinity
             else:
                 ecc[u] = max(length.values())
@@ -4781,6 +5010,9 @@ class Graph(GenericGraph):
         The diameter is defined to be the maximum distance between two vertices.
         It is infinite if the graph is not connected.
 
+        The default algorithm is ``'iFUB'`` [CGILM2010]_ for unweighted graphs
+        and ``'DHV'`` [Dragan2018]_ for weighted graphs.
+
         For more information and examples on how to use input variables, see
         :meth:`~GenericGraph.shortest_paths` and
         :meth:`~Graph.eccentricity`
@@ -4871,6 +5103,12 @@ class Graph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: algorithm 'iFUB' does not work on weighted graphs
+
+        Check that :issue:`40013` is fixed::
+
+            sage: G = graphs.PetersenGraph()
+            sage: G.diameter(by_weight=True)
+            2.0
         """
         if not self.order():
             raise ValueError("diameter is not defined for the empty graph")
@@ -4883,10 +5121,7 @@ class Graph(GenericGraph):
             weight_function = None
 
         if algorithm is None:
-            if by_weight:
-                algorithm = 'iFUB'
-            else:
-                algorithm = 'DHV'
+            algorithm = 'DHV' if by_weight else 'iFUB'
         elif algorithm == 'BFS':
             algorithm = 'standard'
 
@@ -5088,7 +5323,7 @@ class Graph(GenericGraph):
 
             sage: G = graphs.OddGraph(4)
             sage: d = G.diameter()
-            sage: n = G.num_verts()
+            sage: n = G.n_vertices()
             sage: H = G.distance_graph(list(range(d+1)))
             sage: H.is_isomorphic(graphs.CompleteGraph(n))
             False
@@ -5143,10 +5378,10 @@ class Graph(GenericGraph):
         Empty input, or unachievable distances silently yield empty graphs::
 
             sage: G = graphs.CompleteGraph(5)
-            sage: G.distance_graph([]).num_edges()
+            sage: G.distance_graph([]).n_edges()
             0
             sage: G = graphs.CompleteGraph(5)
-            sage: G.distance_graph(23).num_edges()
+            sage: G.distance_graph(23).n_edges()
             0
 
         It is an error to provide a distance that is not an integer type::
@@ -5540,7 +5775,7 @@ class Graph(GenericGraph):
         """
         from sage.graphs.print_graphs import print_graph_eps
         pos = self.layout(**options)
-        [xmin, xmax, ymin, ymax] = self._layout_bounding_box(pos)
+        xmin, xmax, ymin, ymax = self._layout_bounding_box(pos)
         for v in pos:
             pos[v] = (1.8*(pos[v][0] - xmin)/(xmax - xmin) - 0.9, 1.8*(pos[v][1] - ymin)/(ymax - ymin) - 0.9)
         if filename[-4:] != '.eps':
@@ -7457,7 +7692,7 @@ class Graph(GenericGraph):
                   PARALLEL[5[], 6[], 7[]]]
         """
         from sage.graphs.graph_decompositions.modular_decomposition import \
-                modular_decomposition
+            modular_decomposition
 
         D = modular_decomposition(self, algorithm=algorithm)
 
@@ -7758,7 +7993,7 @@ class Graph(GenericGraph):
             True
         """
         from sage.graphs.graph_decompositions.modular_decomposition import \
-                modular_decomposition
+            modular_decomposition
 
         if self.order() <= 1:
             return True
@@ -7852,6 +8087,26 @@ class Graph(GenericGraph):
             sage: g.edge_connectivity() == min(t.edge_labels()) or not g.is_connected()
             True
 
+        If the graph has an edge whose removal increases the number of connected
+        components, the flow between the parts separated by this edge is one::
+
+            sage: g = Graph()
+            sage: g.add_clique([1, 2, 3, 4])
+            sage: g.add_clique([5, 6, 7, 8])
+            sage: g.add_edge(1, 5)
+            sage: t = g.gomory_hu_tree()
+            sage: t.edge_label(1, 5)
+            1
+            sage: g.flow(randint(1, 4), randint(5, 8)) == t.edge_label(1, 5)
+            True
+            sage: for u, v in g.edge_iterator(labels=False):
+            ....:     g.set_edge_label(u, v, 3)
+            sage: t = g.gomory_hu_tree()
+            sage: t.edge_label(1, 5)
+            3
+            sage: g.flow(randint(1, 4), randint(5, 8)) == t.edge_label(1, 5)
+            True
+
         TESTS:
 
         :issue:`16475`::
@@ -7883,11 +8138,22 @@ class Graph(GenericGraph):
 
         # We use a stack to avoid recursion. An element of the stack contains
         # the graph to be processed and the corresponding set of "real" vertices
-        # (as opposed to the fakes one introduced during the computations.
-        if self.is_connected():
+        # (as opposed to the fakes one introduced during the computations).
+        blocks = self.blocks_and_cut_vertices()[0]
+        if len(blocks) == 1 and len(blocks[0]) == self.order():
+            # The graph is biconnected
             stack = [(self, frozenset(self))]
         else:
-            stack = [(cc, frozenset(cc)) for cc in self.connected_components_subgraphs()]
+            stack = []
+            for block in blocks:
+                if len(block) == 2:
+                    # This block is a cut-edge. It corresponds to an edge of the
+                    # tree with capacity 1 if the label is None
+                    u, v = block
+                    label = self.edge_label(u, v)
+                    T.add_edge(u, v, 1 if label is None else label)
+                else:
+                    stack.append((self.subgraph(block), frozenset(block)))
 
         # We now iteratively decompose the graph to build the tree
         while stack:
@@ -8858,7 +9124,7 @@ class Graph(GenericGraph):
             [(0, 2), (1, 3)]
         """
         self._scream_if_not_simple()
-        if self.num_verts() < 2:
+        if self.n_vertices() < 2:
             raise ValueError('this method is defined for graphs with at least 2 vertices')
         verts = list(self)
         M = self.common_neighbors_matrix(vertices=verts, nonedgesonly=nonedgesonly)
@@ -8866,8 +9132,8 @@ class Graph(GenericGraph):
         coefficients = M.coefficients()
         if coefficients:
             maximum = max(coefficients)
-            for v in range(self.num_verts()):
-                for w in range(v + 1, self.num_verts()):
+            for v in range(self.n_vertices()):
+                for w in range(v + 1, self.n_vertices()):
                     if M[v, w] == maximum:
                         output.append((verts[v], verts[w]))
         return output
@@ -9235,11 +9501,84 @@ class Graph(GenericGraph):
         G.name("%sBipartite Double of %s" % (prefix, self.name()))
         return G
 
+    @doc_index("Graph properties")
+    def is_projective_planar(self, return_map=False):
+        r"""
+        Check whether ``self`` is projective planar.
+
+        A graph is projective planar if it can be embedded in the projective
+        plane.  The approach is to check that the graph does not contain any
+        of the known forbidden minors.
+
+        INPUT:
+
+        - ``return_map`` -- boolean (default: ``False``); whether to return
+          a map indicating one of the forbidden graph minors if in fact the
+          graph is not projective planar, or only True/False.
+
+        OUTPUT:
+
+        Return ``True`` if the graph is projective planar and ``False`` if not.  If the
+        parameter ``map_flag`` is ``True`` and the graph is not projective planar, then
+        the method returns ``False`` and a map from :meth:`~Graph.minor`
+        indicating one of the forbidden graph minors.
+
+        EXAMPLES:
+
+        The Petersen graph is a known projective planar graph::
+
+            sage: P = graphs.PetersenGraph()
+            sage: P.is_projective_planar()  # long time
+            True
+
+        `K_{4,4}` has a projective plane crossing number of 2. One of the
+        minimal forbidden minors is `K_{4,4} - e`, so we get a one-to-one
+        dictionary from :meth:`~Graph.minor`::
+
+            sage: K44 = graphs.CompleteBipartiteGraph(4, 4)
+            sage: K44.is_projective_planar(return_map=True)
+            (False,
+             {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5], 6: [6], 7: [7]})
+
+        .. SEEALSO::
+
+            - :meth:`~Graph.minor`
+
+        TESTS::
+
+            sage: len(graphs.p2_forbidden_minors())
+            35
+        """
+
+        from sage.graphs.generators.families import p2_forbidden_minors
+        num_verts_G = self.n_vertices()
+        num_edges_G = self.n_edges()
+
+        for forbidden_minor in p2_forbidden_minors():
+            # Can't be a minor if it has more vertices or edges than G
+
+            if (forbidden_minor.n_vertices() > num_verts_G
+                    or forbidden_minor.n_edges() > num_edges_G):
+                continue
+
+            try:
+                minor_map = self.minor(forbidden_minor)
+                if minor_map is not None:
+                    if return_map:
+                        return False, minor_map
+                    return False
+
+            # If G has no H minor, then G.minor(H) throws a ValueError
+            except ValueError:
+                continue
+
+        return True
+
     # Aliases to functions defined in other modules
     from sage.graphs.weakly_chordal import is_long_hole_free, is_long_antihole_free, is_weakly_chordal
     from sage.graphs.asteroidal_triples import is_asteroidal_triple_free
     chromatic_polynomial = LazyImport('sage.graphs.chrompoly', 'chromatic_polynomial', at_startup=True)
-    from sage.graphs.graph_decompositions.rankwidth import rank_decomposition
+    rank_decomposition = LazyImport('sage.graphs.graph_decompositions.rankwidth', 'rank_decomposition', at_startup=True)
     from sage.graphs.graph_decompositions.tree_decomposition import treewidth
     from sage.graphs.graph_decompositions.vertex_separation import pathwidth
     from sage.graphs.graph_decompositions.tree_decomposition import treelength
@@ -9352,6 +9691,6 @@ _additional_categories = {
     "is_matching_covered"       : "Matching",
     "matching"                  : "Matching",
     "perfect_matchings"         : "Matching"
-    }
+}
 
 __doc__ = __doc__.replace("{INDEX_OF_METHODS}", gen_thematic_rest_table_index(Graph, _additional_categories))

@@ -13,7 +13,8 @@ AUTHORS:
 - William Stein (2006-03-01): got rid of infinite loop on startup if
   client system missing
 
-- Felix Lawrence (2009-08-21): edited ._sage_() to support lists and float exponents in foreign notation.
+- Felix Lawrence (2009-08-21): edited ._sage_() to support lists
+  and float exponents in foreign notation.
 
 - Simon King (2010-09-25): Expect._local_tmpfile() depends on
   Expect.pid() and is cached; Expect.quit() clears that cache,
@@ -203,7 +204,7 @@ class Interface(WithEqualityById, ParentWithBase):
     def _post_interact(self):
         pass
 
-    def cputime(self):
+    def cputime(self) -> float:
         """
         CPU time since this process started running.
         """
@@ -389,47 +390,47 @@ class Interface(WithEqualityById, ParentWithBase):
     # these should all be appropriately overloaded by the derived class
     ###################################################################
 
-    def _left_list_delim(self):
+    def _left_list_delim(self) -> str:
         return "["
 
-    def _right_list_delim(self):
+    def _right_list_delim(self) -> str:
         return "]"
 
-    def _left_func_delim(self):
+    def _left_func_delim(self) -> str:
         return "("
 
-    def _right_func_delim(self):
+    def _right_func_delim(self) -> str:
         return ")"
 
-    def _assign_symbol(self):
+    def _assign_symbol(self) -> str:
         return "="
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         raise NotImplementedError
 
     # For efficiency purposes, you should definitely override these
     # in your derived class.
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         try:
             return self.__true_symbol
         except AttributeError:
             self.__true_symbol = self.get('1 %s 1' % self._equality_symbol())
             return self.__true_symbol
 
-    def _false_symbol(self):
+    def _false_symbol(self) -> str:
         try:
             return self.__false_symbol
         except AttributeError:
             self.__false_symbol = self.get('1 %s 2' % self._equality_symbol())
             return self.__false_symbol
 
-    def _lessthan_symbol(self):
+    def _lessthan_symbol(self) -> str:
         return '<'
 
-    def _greaterthan_symbol(self):
+    def _greaterthan_symbol(self) -> str:
         return '>'
 
-    def _inequality_symbol(self):
+    def _inequality_symbol(self) -> str:
         return '!='
 
     def _relation_symbols(self):
@@ -451,7 +452,7 @@ class Interface(WithEqualityById, ParentWithBase):
                 operator.gt: self._greaterthan_symbol(),
                 operator.ge: ">="}
 
-    def _exponent_symbol(self):
+    def _exponent_symbol(self) -> str:
         """
         Return the symbol used to denote ``*10^`` in floats, e.g 'e' in 1.5e6.
 
@@ -712,24 +713,6 @@ class InterfaceFunctionElement(SageObject):
         """
         M = self._obj.parent()
         return M.help(self._name)
-
-
-def is_InterfaceElement(x):
-    """
-    Return ``True`` if ``x`` is of type :class:`InterfaceElement`.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.interface import is_InterfaceElement
-        sage: is_InterfaceElement(2)
-        doctest:...: DeprecationWarning: the function is_InterfaceElement is deprecated; use isinstance(x, sage.interfaces.abc.InterfaceElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_InterfaceElement is deprecated; use isinstance(x, sage.interfaces.abc.InterfaceElement) instead")
-
-    return isinstance(x, InterfaceElement)
 
 
 @instancedoc
@@ -1045,8 +1028,7 @@ class InterfaceElement(Element):
         ::
 
             sage: gp(10.^80)._sage_repr()
-            '1.0000000000000000000000000000000000000e80'    # 64-bit
-            '1.000000000000000000000000000e80'              # 32-bit
+            '1.0000000000000000000000000000000000000e80'
             sage: mathematica('10.^80')._sage_repr()  # optional - mathematica
             '1.e80'
 

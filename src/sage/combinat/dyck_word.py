@@ -1,5 +1,5 @@
 r"""
-Dyck Words
+Dyck words
 
 A class of an object enumerated by the
 :func:`Catalan numbers<sage.combinat.combinat.catalan_number>`,
@@ -77,7 +77,6 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from collections.abc import Iterator
 
 from .combinat import CombinatorialElement, catalan_number
 from sage.combinat.combinatorial_map import combinatorial_map
@@ -97,6 +96,10 @@ from sage.combinat.words.word import Word
 from sage.combinat.set_partition import SetPartitions
 from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 lazy_import('sage.combinat.alternating_sign_matrix', 'AlternatingSignMatrices')
 
@@ -368,7 +371,7 @@ class DyckWord(CombinatorialElement):
         - ``diagonal`` -- boolean (default: ``False``); value to draw the
           diagonal or not
 
-        - ``line width`` -- (default: 2*``tikz_scale``) value representing the
+        - ``line width`` -- (default: ``2*tikz_scale``) value representing the
           line width
 
         - ``color`` -- (default: black) the line color
@@ -676,7 +679,7 @@ class DyckWord(CombinatorialElement):
         - ``labelling`` -- (if type is "N-E") a list of labels assigned to
           the up steps in ``self``
 
-        - ``underpath`` -- (if type is "N-E", default:``True``) if ``True``,
+        - ``underpath`` -- (if type is "N-E", default: ``True``) if ``True``,
           the labelling is shown under the path; otherwise, it is shown to
           the right of the path
 
@@ -926,11 +929,10 @@ class DyckWord(CombinatorialElement):
         horizontal = "<line x1=\"{}\" y1=\"{}\" x2=\"{}\" y2=\"{}\"/>"
         hori_lines = []
         path = ['<polyline points=\"0,0']
-        x, y = 0, 0
+        y = 0
         max_y = 0
         last_seen_level = [0]
-        for e in self:
-            x += 1
+        for x, e in enumerate(self, start=1):
             if e == open_symbol:
                 y += 1
                 last_seen_level.append(x - 1)
@@ -2696,7 +2698,7 @@ class DyckWord_complete(DyckWord):
                        bseq[bpeak[-i - 1]] - bseq[bpeak[-i - 1] + 1] + 1)
         return out
 
-    def tunnels(self):
+    def tunnels(self) -> Iterator[tuple[int, int]]:
         r"""
         Return an iterator of ranges of the matching parentheses in the Dyck
         word ``self``.
@@ -2746,15 +2748,14 @@ class DyckWord_complete(DyckWord):
         n = len(self)
         tunnels = self.tunnels()
         if tunnel_type == 'left':
-            return len([1 for (i, j) in tunnels if i + j < n])
-        elif tunnel_type == 'centered':
-            return len([1 for (i, j) in tunnels if i + j == n])
-        elif tunnel_type == 'right':
-            return len([1 for (i, j) in tunnels if i + j > n])
-        elif tunnel_type == 'all':
+            return len([1 for i, j in tunnels if i + j < n])
+        if tunnel_type == 'centered':
+            return len([1 for i, j in tunnels if i + j == n])
+        if tunnel_type == 'right':
+            return len([1 for i, j in tunnels if i + j > n])
+        if tunnel_type == 'all':
             return len(list(tunnels))
-        else:
-            raise ValueError("the given tunnel_type is not valid")
+        raise ValueError("the given tunnel_type is not valid")
 
     @combinatorial_map(order=2, name="Reverse path")
     def reverse(self) -> DyckWord:

@@ -217,7 +217,7 @@ in the Installation Guide.
       for a discussion of suitable compilers.
 
     - Build tools: GNU `make`, GNU `m4`, `perl` (including
-      `ExtUtils::MakeMaker`), `ranlib`, `git`, `tar`, `bc`.
+      `ExtUtils::MakeMaker`), `ranlib`, `git`, `tar`, `bc`, `patch`, `bzip2`, `pkgconf` (also known as `pkg-config`).
       See [build/pkgs/_prereq/SPKG.rst](build/pkgs/_prereq/SPKG.rst) for
       more details.
 
@@ -411,8 +411,8 @@ in the Installation Guide.
     If there are numerous failures, there was a serious problem with your build.
 
 17. The HTML version of the [documentation](https://doc.sagemath.org/html/en/index.html)
-    is built during the compilation process of Sage and resides in the directory
-    `local/share/doc/sage/html/`. You may want to bookmark it in your browser.
+    can be built by running `make doc-html` and resides in
+    `build/sage-distro/src/doc/`. You may want to bookmark it in your browser.
 
 18. Optional: If you want to build the PDF version of the documentation,
     run `make doc-pdf` (this requires LaTeX to be installed).
@@ -427,7 +427,7 @@ in the Installation Guide.
     having to either type the full path or navigate to the Sage
     directory and type `./sage`. This can be done by running:
 
-        $ sudo ln -s $(./sage -sh -c 'ls $SAGE_ROOT/venv/bin/sage') /usr/local/bin
+        $ sudo ln -s $(pwd)/sage /usr/local/bin
 
 21. Optional: Set up SageMath as a Jupyter kernel in an existing Jupyter notebook
     or JupyterLab installation, as described in the section
@@ -526,7 +526,7 @@ SAGE_ROOT                 Root directory (create by git clone)
 │   └── pkgs              Every package is a subdirectory here
 │       ├── 4ti2/
 │       …
-│       └── zlib/
+│       └── zipp/
 ├── configure             Top-level configure script
 ├── COPYING.txt           Copyright information
 ├── pkgs                  Source trees of Python distribution packages
@@ -538,9 +538,6 @@ SAGE_ROOT                 Root directory (create by git clone)
 │   │   └── setup.py
 │   ├── sage-setup
 │   │   ├── sage_setup/
-│   │   └── setup.py
-│   ├── sage-sws2rst
-│   │   ├── sage_sws2rst/
 │   │   └── setup.py
 │   └── sagemath-standard
 │       ├── bin/
@@ -573,7 +570,7 @@ SAGE_ROOT                 Root directory (create by git clone)
 │   └── pkgs              Build logs of individual packages
 │       ├── alabaster-0.7.12.log
 │       …
-│       └── zlib-1.2.11.log
+│       └── zipp-3.19.0.log
 ├── m4                    M4 macros for generating the configure script
 │   └── *.m4
 ├── Makefile              Running "make" uses this file
@@ -587,7 +584,7 @@ SAGE_ROOT                 Root directory (create by git clone)
 ├── upstream              Source tarballs of packages
 │   ├── Babel-2.9.1.tar.gz
 │   …
-│   └── zlib-1.2.11.tar.gz
+│   └── zipp-3.19.0-py3-none-any.whl
 ├── venv -> SAGE_VENV     Convenience symlink to the virtual environment
 └── VERSION.txt
 ```

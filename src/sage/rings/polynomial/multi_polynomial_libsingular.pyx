@@ -172,6 +172,8 @@ AUTHORS:
 
 from warnings import warn
 
+from libc.limits cimport INT_MAX
+
 from cpython.object cimport Py_NE
 from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
@@ -499,8 +501,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             if self is other:
                 return True
             n = other.ngens()
-            if(other.base_ring is base_ring and self.ngens() >= n and
-               self.variable_names()[:n] == other.variable_names()):
+            if (other.base_ring is base_ring and self.ngens() >= n and
+                    self.variable_names()[:n] == other.variable_names()):
                 return True
             elif base_ring.has_coerce_map_from(other._mpoly_base_ring(self.variable_names())):
                 return True
@@ -1383,7 +1385,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         else:
             _vars = str(self.gens())
 
-        order = self.term_order().singular_str()%dict(ngens=self.ngens())
+        order = self.term_order().singular_str() % dict(ngens=self.ngens())
 
         self.__singular, self.__minpoly = \
                 sage.rings.polynomial.polynomial_singular_interface._do_singular_init_(
@@ -2261,8 +2263,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: (x^2^32) * x^2^32
             Traceback (most recent call last):
             ...
-            OverflowError: Python int too large to convert to C unsigned long  # 32-bit
-            OverflowError: exponent overflow (...)  # 64-bit
+            OverflowError: exponent overflow (...)
         """
         # all currently implemented rings are commutative
         cdef poly *_p
@@ -2386,8 +2387,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: (x+y^2^32)^10
             Traceback (most recent call last):
             ....
-            OverflowError: Python int too large to convert to C unsigned long  # 32-bit
-            OverflowError: exponent overflow (...)  # 64-bit
+            OverflowError: exponent overflow (...)
 
         Test fractional powers (:issue:`22329`)::
 
@@ -2425,6 +2425,78 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             Traceback (most recent call last):
             ...
             NotImplementedError: pow() with a modulus is not implemented for this ring
+
+        Check handling of large exponents (:issue:`40442`).
+        The internal representation of a Singular polynomial supports each exponent
+        up to roughly ``2^(bitness//n_var)`` where ``bitness`` is the number of bits in a word,
+        typically either 32 or 64, and ``n_var`` is the number of variables,
+        typically between 1 and 4.
+        However, the ``pPower`` Singular function requires the exponent to fit in an ``int``.
+        As such, the case of univariate and bivariate polynomial ring on 64-bit machine,
+        where the maximum allowed exponent is larger than ``INT_MAX`` is of main interest::
+
+            sage: P.<x> = PolynomialRing(ZZ, implementation="singular")
+            sage: x^(2^31-1)
+            x^2147483647
+
+            sage: # needs !32_bit
+            sage: P.<x> = PolynomialRing(ZZ, implementation="singular")
+            sage: x^(2^31)
+            x^2147483648
+            sage: x^(2^32-1)
+            x^4294967295
+            sage: x^(2^32)
+            x^4294967296
+            sage: x^(2^63-1)
+            x^9223372036854775807
+            sage: x^(2^63)
+            Traceback (most recent call last):
+            ...
+            OverflowError: exponent overflow (9223372036854775808)
+            sage: x^(2^64-1)
+            Traceback (most recent call last):
+            ...
+            OverflowError: exponent overflow (18446744056529682436)
+            sage: x^(2^64)
+            Traceback (most recent call last):
+            ...
+            OverflowError: exponent overflow (18446744056529682436)
+            sage: P(1)^(2^64)
+            1
+
+            sage: # needs !32_bit
+            sage: P.<x,y> = ZZ[]
+            sage: y^(2^32-1)
+            y^4294967295
+            sage: y^(2^32)
+            Traceback (most recent call last):
+            ...
+            OverflowError: exponent overflow (4294967296)
+            sage: P(1)^(2^32)
+            1
+
+        The following isn't affected by :issue:`40442`, but we test for it anyway::
+
+            sage: P.<x,y,z,t> = ZZ[]
+            sage: y^(2^16-1)
+            y^65535
+            sage: y^(2^16)
+            Traceback (most recent call last):
+            ...
+            OverflowError: exponent overflow (65536)
+
+        The following behaviors are known bugs (Singular complains even though
+        the exponentiation result is perfectly representable), and may be changed any time::
+
+            sage: # needs 32_bit
+            sage: P.<x,y> = ZZ[]
+            sage: P(1)^(2^32)  # known bug
+            ...UserWarning: error in Singular ignored: exponent 2147483647 is too large, max. is 65535...
+
+            sage: # needs !32_bit
+            sage: P.<x,y,z,t> = ZZ[]
+            sage: P(1)^(2^16)  # known bug
+            ...UserWarning: error in Singular ignored: exponent 65536 is too large, max. is 65535...
         """
         if mod is not None:
             raise NotImplementedError(
@@ -2451,6 +2523,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             return self._parent._one_element / (self**(-exp))
         elif exp == 0:
             return self._parent._one_element
+        elif exp > INT_MAX:
+            return (self ** INT_MAX) ** (exp // INT_MAX) * self ** (exp % INT_MAX)
 
         cdef ring *_ring = self._parent_ring
         cdef poly *_p
@@ -2985,6 +3059,15 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             -1
             sage: f.monomial_coefficient(x^10)
             0
+
+        TESTS::
+
+            sage: R.<x,y> = PolynomialRing(ZZ)
+            sage: f = x + y
+            sage: f.monomial_coefficient(x - x)
+            Traceback (most recent call last):
+            ...
+            ValueError: mon must not be equal to 0
         """
         cdef poly *p = self._poly
         cdef poly *m = mon._poly
@@ -2992,6 +3075,9 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         if mon._parent is not self._parent:
             raise TypeError("mon must have same parent as self.")
+
+        if mon._poly is NULL:
+            raise ValueError("mon must not be equal to 0")
 
         while p:
             if p_ExpVectorEqual(p, m, r) == 1:
@@ -4543,14 +4629,14 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             (x - y) * (x + y) * (x^2 + y^2) * (x^4 + y^4) * (x^8 + y^8) * (x^16 + y^16) * (x^32 + y^32) * (x^64 + y^64) * (x^128 + y^128) * (x^256 + y^256) * (x^512 + y^512) * (x^1024 + y^1024)
         """
         cdef ring *_ring = self._parent_ring
-        cdef poly *ptemp
         cdef intvec *iv
         cdef int *ivv
         cdef ideal *I = NULL
         cdef MPolynomialRing_libsingular parent = self._parent
         cdef int i
 
-        if _ring!=currRing: rChangeCurrRing(_ring)
+        if _ring != currRing:
+            rChangeCurrRing(_ring)
 
         if p_IsConstant(self._poly, _ring):
             return self.constant_coefficient().factor()
@@ -4563,7 +4649,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                 U = self._parent._base(F.unit()).factor()
                 return Factorization(list(U) + FF, unit=U.unit())
             except Exception:
-                raise NotImplementedError("Factorization of multivariate polynomials over %s is not implemented."%self._parent._base)
+                raise NotImplementedError("Factorization of multivariate polynomials over %s is not implemented." % self._parent._base)
 
         iv = NULL
         if _ring != currRing:
@@ -4597,6 +4683,10 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         find ``s_1,...,s_r`` such that ``g = s_1 f_1 + ... + s_r f_r``.
 
         A :exc:`ValueError` exception is raised if ``g (== self)`` does not belong to ``I``.
+
+        INPUT:
+
+        - ``I`` -- an ideal in ``self.parent()`` or tuple of generators of that ideal
 
         EXAMPLES::
 
@@ -4675,14 +4765,13 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         cdef ideal *_I
         cdef MPolynomialRing_libsingular parent = self._parent
         cdef int i = 0
-        cdef int j
         cdef ring *r = self._parent_ring
         cdef ideal *res = NULL
 
         if isinstance(I, MPolynomialIdeal):
             I = I.gens()
 
-        _I = idInit(len(I),1)
+        _I = idInit(len(I), 1)
 
         for f in I:
             if not (isinstance(f,MPolynomial_libsingular)
@@ -5282,6 +5371,25 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             from sage.interfaces.singular import singular
         self._parent._singular_().set_ring()
         return self._repr_short_()
+
+    def _singular_(self, singular=None):
+        """
+        Override :meth:`sage.structure.sage_object.SageObject._singular_`
+        to declare the type of ``self`` to be ``'poly'``.
+        Needed because even with ``setring``, constant polynomials are not considered
+        polynomials of the current ring.
+
+        TESTS::
+
+            sage: R.<x,y> = Zmod(5)[]
+            sage: a = singular(R(2)) + singular(R(2)) + singular(R(1)); a
+            0
+            sage: a == singular(R(0))
+            True
+        """
+        if singular is None:
+            from sage.interfaces.singular import singular
+        return singular(self._singular_init_(singular), type='poly')
 
     def sub_m_mul_q(self, MPolynomial_libsingular m, MPolynomial_libsingular q):
         """
@@ -6104,7 +6212,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             and only if the remainder involves only the new variables
             `z_i`.
 
-        - ``certificate`` --  boolean (default: ``False``) or string; if``True``
+        - ``certificate`` --  boolean (default: ``False``) or string; if ``True``
           and ``algorithm='groebner'``, return the polynomial generated by
           the algorithm if such a polynomial exists, otherwise return ``None``;
           if a nonempty string, then this is used as the name of the variables

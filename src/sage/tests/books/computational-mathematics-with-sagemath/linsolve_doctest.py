@@ -20,7 +20,7 @@ Sage example in ./linsolve.tex, line 346::
   ....:     A = matrix(QQ, [[1/(i+j-1) for j in [1..n]] for i in [1..n]])
   ....:     y = A*x
   ....:     A[n-1,n-1] = (1/(2*n-1))*(1+1/(10^5))   # modifies the matrix
-  ....:     s = A\y
+  ....:     s = A.solve_right(y)
   ....:     return max(abs(float(s[i]-x[i])) for i in range(0,n))
 
 Sage example in ./linsolve.tex, line 396::

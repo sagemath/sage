@@ -477,7 +477,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         latex_name = self.number_field().latex_variable_names()[0]
         return self.polynomial()._latex_(name=latex_name)
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
         Return gap string representation of ``self``.
 
@@ -507,7 +507,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         Check that :issue:`15276` is fixed::
 
-            sage: for n in range(2,20):                                                 # needs sage.libs.gap
+            sage: for n in range(2,20):                                                 # needs sage.libs.gap, long time (:issue:`39569`)
             ....:     K = CyclotomicField(n)
             ....:     assert K(gap(K.gen())) == K.gen(), "n = {}".format(n)
             ....:     assert K(gap(K.one())) == K.one(), "n = {}".format(n)
@@ -1991,14 +1991,14 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: (6*i + 6).factor()
-            (-i) * (i + 1)^3 * 3
+            (i - 1)^3 * 3
 
         In the following example, the class number is 2.  If a factorization
         in prime elements exists, we will find it::
 
             sage: K.<a> = NumberField(x^2 - 10)
             sage: factor(169*a + 531)
-            (-6*a - 19) * (-3*a - 1) * (-2*a + 9)
+            (-6*a - 19) * (2*a - 9) * (3*a + 1)
             sage: factor(K(3))
             Traceback (most recent call last):
             ...
@@ -2027,7 +2027,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         # Compute the product of the p^e to figure out the unit
         from sage.misc.misc_c import prod
         element_product = prod([p**e for p,e in element_fac], K.one())
-        from sage.structure.all import Factorization
+        from sage.structure.factorization import Factorization
         return Factorization(element_fac, unit=self/element_product)
 
     def is_prime(self):
@@ -2080,7 +2080,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             0
             sage: R = K.maximal_order()
             sage: R(i+1).gcd(2)
-            i + 1
+            i - 1
             sage: R = K.order(2*i)
             sage: R(1).gcd(R(4*i))
             1
@@ -4275,7 +4275,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
             sage: P5s = F(5).support()
             sage: P5s
-            [Fractional ideal (-t^2 - 1), Fractional ideal (t^2 - 2*t - 1)]
+            [Fractional ideal (t^2 + 1), Fractional ideal (t^2 - 2*t - 1)]
             sage: all(5 in P5 for P5 in P5s)
             True
             sage: all(P5.is_prime() for P5 in P5s)
@@ -4524,7 +4524,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: f = Qi.embeddings(K)[0]
             sage: a = f(2+3*i) * (2-zeta)^2
             sage: a.descend_mod_power(Qi,2)
-            [-2*i + 3, 3*i + 2]
+            [3*i + 2, 2*i - 3]
 
         An absolute example::
 
@@ -5343,6 +5343,23 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
         """
         return self._parent.number_field()(NumberFieldElement_absolute.__invert__(self))
 
+    def canonical_associate(self):
+        """
+        Return a canonical associate.
+
+        Only implemented here because order elements inherit from field elements,
+        but the canonical associate implemented there does not apply here.
+
+        EXAMPLES::
+
+            sage: x = polygen(ZZ, 'x')
+            sage: K = NumberField(x^3 - x + 2, 'a')
+            sage: OK = K.ring_of_integers()
+            sage: (OK.1).canonical_associate()
+            NotImplemented
+        """
+        return NotImplemented
+
 
 cdef class OrderElement_relative(NumberFieldElement_relative):
     """
@@ -5555,6 +5572,24 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
         K = self.parent().number_field()
         R = ZZ[var]
         return R(K(self).absolute_minpoly(var))
+
+    def canonical_associate(self):
+        """
+        Return a canonical associate.
+
+        Only implemented here because order elements inherit from
+        field elements, but the canonical associate implemented there
+        does not apply here.
+
+        EXAMPLES::
+
+            sage: x = ZZ['x'].0
+            sage: K.<a,b> = NumberField([x^2 + 1, x^2 - 3])
+            sage: OK = K.maximal_order()
+            sage: (OK.1).canonical_associate()
+            NotImplemented
+        """
+        return NotImplemented
 
 
 class CoordinateFunction():

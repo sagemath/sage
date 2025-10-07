@@ -2657,7 +2657,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         return x
 
     # Bit shifting
-    def _lshift_(RealNumber self, n):
+    def _lshift_(RealNumber self, Integer n):
         """
         Return ``self * (2^n)`` for an integer ``n``.
 
@@ -2668,6 +2668,8 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(1.5)._lshift_(2)
             6.00000000000000
         """
+        if n < 0:
+            return self._rshift_(-n)
         cdef RealNumber x
         if n > sys.maxsize:
             raise OverflowError("n (=%s) must be <= %s" % (n, sys.maxsize))
@@ -2687,6 +2689,15 @@ cdef class RealNumber(sage.structure.element.RingElement):
             Traceback (most recent call last):
             ...
             TypeError: unsupported operands for <<
+
+        TESTS::
+
+            sage: 32r << 2.5
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operands for <<
+            sage: 1.5 << -2
+            0.375000000000000
         """
         if not isinstance(x, RealNumber):
             raise TypeError("unsupported operands for <<")
@@ -2695,7 +2706,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         except TypeError:
             raise TypeError("unsupported operands for <<")
 
-    def _rshift_(RealNumber self, n):
+    def _rshift_(RealNumber self, Integer n):
         """
         Return ``self / (2^n)`` for an integer ``n``.
 
@@ -2706,6 +2717,8 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(1.5)._rshift_(2)
             0.375000000000000
         """
+        if n < 0:
+            return self._lshift_(-n)
         if n > sys.maxsize:
             raise OverflowError("n (=%s) must be <= %s" % (n, sys.maxsize))
         cdef RealNumber x = self._new()
@@ -2724,6 +2737,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
             Traceback (most recent call last):
             ...
             TypeError: unsupported operands for >>
+
+        TESTS::
+
+            sage: 1.5 >> -2
+            6.00000000000000
         """
         if not isinstance(x, RealNumber):
             raise TypeError("unsupported operands for >>")
@@ -5676,18 +5694,20 @@ cdef class RealLiteral(RealNumber):
     casting into higher precision rings.
     """
 
-    cdef readonly literal
+    cdef readonly str literal
     cdef readonly int base
 
-    def __init__(self, RealField_class parent, x=0, int base=10):
+    def __init__(self, RealField_class parent, str x, int base=10):
         """
         Initialize ``self``.
+
+        Note that the constructor parameters are first passed to :meth:`RealNumber.__cinit__`.
 
         EXAMPLES::
 
             sage: RealField(200)(float(1.3))
             1.3000000000000000444089209850062616169452667236328125000000
-            sage: RealField(200)(1.3)
+            sage: RealField(200)(1.3)  # implicit doctest
             1.3000000000000000000000000000000000000000000000000000000000
             sage: 1.3 + 1.2
             2.50000000000000
@@ -5695,9 +5715,8 @@ cdef class RealLiteral(RealNumber):
             10000.0000000000
         """
         RealNumber.__init__(self, parent, x, base)
-        if isinstance(x, str):
-            self.base = base
-            self.literal = x.replace('_', '')
+        self.base = base
+        self.literal = x.replace('_', '')
 
     def __neg__(self):
         """
@@ -5710,10 +5729,25 @@ cdef class RealLiteral(RealNumber):
             sage: RealField(300)(-(-1.2))
             1.20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
         """
-        if self.literal is not None and self.literal[0] == '-':
+        if self.literal[0] == '-':
             return RealLiteral(self._parent, self.literal[1:], self.base)
-        else:
-            return RealLiteral(self._parent, '-'+self.literal, self.base)
+        return RealLiteral(self._parent, '-' + self.literal, self.base)
+
+    def __float__(self):
+        """
+        Return a Python float approximating ``self``.
+        This override is needed to avoid issues with rounding twice,
+        thus guaranteeing round-trip.
+
+        TESTS::
+
+            sage: float(1.133759543500045e+153)
+            1.133759543500045e+153
+            sage: for i in range(1000):
+            ....:     x = float(randint(1, 2**53) << randint(1, 200))
+            ....:     assert float(eval(preparse(str(x)))) == x, x
+        """
+        return float(self.numerical_approx(53))
 
     def numerical_approx(self, prec=None, digits=None, algorithm=None):
         """
@@ -5756,10 +5790,15 @@ cdef class RealLiteral(RealNumber):
             <class 'sage.rings.real_mpfr.RealLiteral'>
             sage: type(n(1.3))
             <class 'sage.rings.real_mpfr.RealNumber'>
+
+        TESTS::
+
+            sage: n(RealNumber('12', base=16))  # abs tol 1e-14
+            18.0000000000000
         """
         if prec is None:
             prec = digits_to_bits(digits)
-        return RealField(prec)(self.literal)
+        return RealField(prec)(self.literal, self.base)
 
 
 RR = RealField()

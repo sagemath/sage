@@ -901,7 +901,7 @@ in particular, it is turned into ``\begin{gather} block
 ``align``) which in ordinary LaTeX would not be wrapped like this, you
 must add a **:nowrap:** flag to the MATH mode. See also `Sphinx's
 documentation for math blocks
-<http://sphinx-doc.org/latest/ext/math.html?highlight=nowrap#directive-math>`_. :
+<https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-math>`_. :
 
 .. CODE-BLOCK:: rest
 
@@ -1441,7 +1441,7 @@ Run ``sage -t <filename.py>`` to test all code examples in
 ``filename.py``. Similar remarks apply to ``.sage`` and ``.pyx``
 files:
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
       $ sage -t [--verbose] [--optional]  [files and directories ... ]
 

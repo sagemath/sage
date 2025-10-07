@@ -35,6 +35,7 @@ Classes and methods
 -------------------
 """
 
+cimport cython
 from cysignals.memory cimport check_calloc, sig_free
 
 from sage.graphs.base.static_sparse_graph cimport (init_short_digraph,
@@ -141,7 +142,7 @@ cdef class StaticSparseCGraph(CGraph):
         bitset_set_first_n(self.active_vertices, self.g.n)
 
         self.num_verts = self.g.n
-        self.num_arcs = self.g.m
+        self.num_arcs = self.g.m if self._directed else (2 * self.g.m)
 
     def __dealloc__(self):
         r"""
@@ -395,7 +396,7 @@ cdef class StaticSparseCGraph(CGraph):
         if u < 0 or u >= self.g.n:
             raise LookupError("the vertex does not belong to the graph")
 
-        return self.g.neighbors[u+1] - self.g.neighbors[u]
+        return out_degree(self.g, u)
 
     cpdef int in_degree(self, int u) except -1:
         r"""
@@ -420,9 +421,8 @@ cdef class StaticSparseCGraph(CGraph):
             raise LookupError("the vertex does not belong to the graph")
 
         if not self._directed:
-            return self.g.neighbors[u+1] - self.g.neighbors[u]
-        else:
-            return self.g_rev.neighbors[u+1] - self.g_rev.neighbors[u]
+            return out_degree(self.g, u)
+        return out_degree(self.g_rev, u)
 
 
 cdef class StaticSparseBackend(CGraphBackend):
@@ -980,7 +980,7 @@ cdef class StaticSparseBackend(CGraphBackend):
                 yield x
         return
 
-    def num_verts(self):
+    def n_vertices(self):
         r"""
         Return the number of vertices.
 
@@ -988,10 +988,12 @@ cdef class StaticSparseBackend(CGraphBackend):
 
             sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
             sage: g = StaticSparseBackend(graphs.PetersenGraph())
-            sage: g.num_verts()
+            sage: g.n_vertices()
             10
         """
         return self._order
+
+    num_verts = n_vertices
 
     def allows_loops(self, value=None):
         r"""
@@ -1043,7 +1045,7 @@ cdef class StaticSparseBackend(CGraphBackend):
         else:
             raise ValueError("the graph is immutable and cannot be changed in any way")
 
-    def num_edges(self, directed):
+    def n_edges(self, directed):
         r"""
         Return the number of edges.
 
@@ -1056,13 +1058,13 @@ cdef class StaticSparseBackend(CGraphBackend):
 
             sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
             sage: g = StaticSparseBackend(graphs.PetersenGraph())
-            sage: g.num_edges(False)
+            sage: g.n_edges(False)
             15
 
         Testing the exception::
 
             sage: g = StaticSparseBackend(digraphs.Circuit(4))
-            sage: g.num_edges(False)
+            sage: g.n_edges(False)
             Traceback (most recent call last):
             ...
             NotImplementedError: Sorry, I have no idea what is expected in this situation. I don't think that it is well-defined either, especially for multigraphs.
@@ -1094,6 +1096,8 @@ cdef class StaticSparseBackend(CGraphBackend):
             else:
                 # Returns the number of edges
                 return int(cg.g.m)
+
+    num_edges = n_edges
 
     def iterator_edges(self, vertices, bint labels):
         r"""
@@ -1508,42 +1512,6 @@ cdef class StaticSparseBackend(CGraphBackend):
                 if u not in seen:
                     yield self._vertex_to_labels[u]
                     seen.add(u)
-
-    def add_vertex(self, v):
-        r"""
-        Addition of vertices is not available on an immutable graph.
-
-        EXAMPLES::
-
-            sage: g = DiGraph(graphs.PetersenGraph(), data_structure='static_sparse')
-            sage: g.add_vertex(1)
-            Traceback (most recent call last):
-            ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
-            sage: g.add_vertices([1,2,3])
-            Traceback (most recent call last):
-            ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
-        """
-        (<StaticSparseCGraph> self._cg).add_vertex(v)
-
-    def del_vertex(self, v):
-        r"""
-        Removal of vertices is not available on an immutable graph.
-
-        EXAMPLES::
-
-            sage: g = DiGraph(graphs.PetersenGraph(), data_structure='static_sparse')
-            sage: g.delete_vertex(1)
-            Traceback (most recent call last):
-            ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
-            sage: g.delete_vertices([1,2,3])
-            Traceback (most recent call last):
-            ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
-        """
-        (<StaticSparseCGraph> self._cg).del_vertex(v)
 
 
 def _run_it_on_static_instead(f):

@@ -270,6 +270,7 @@ cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r) noexcept:
 
     ::
 
+        sage: # long time (:issue:`39569`)
         sage: R.<x,y> = Integers(10)[]
         sage: l = [i*x+j*y+k for i in range(10) for j in range(10) for k in range(10)]
         sage: l.sort()
@@ -283,7 +284,6 @@ cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r) noexcept:
         sage: P(0) > P(-1)
         True
     """
-    cdef number *h
     cdef int tmp
 
     if r != currRing:
@@ -374,7 +374,7 @@ cdef int singular_polynomial_div_coeff(poly** ret, poly *p, poly *q, ring *r) ex
     sig_off()
     return 0
 
-cdef int singular_polynomial_pow(poly **ret, poly *p, unsigned long exp, ring *r) except -1:
+cdef int singular_polynomial_pow(poly **ret, poly *p, int exp, ring *r) except -1:
     """
     ``ret[0] = p**exp`` where ``p`` in ``r`` and ``exp`` > 0.
 

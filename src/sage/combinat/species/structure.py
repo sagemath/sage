@@ -13,6 +13,9 @@ BB = o + o\*BB + o\*|\*BB
 Here we define this species using the default structures::
 
     sage: ball = species.SingletonSpecies()
+    doctest:warning...
+    DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+    See https://github.com/sagemath/sage/issues/38544 for details.
     sage: bar = species.EmptySetSpecies()
     sage: BB = CombinatorialSpecies()
     sage: BB.define(ball + ball*BB + ball*bar*BB)
@@ -179,11 +182,10 @@ class GenericSpeciesStructure(CombinatorialObject):
             [1, 2, 3]
         """
         if isinstance(i, (int, Integer)):
-            return self._labels[i-1]
-        else:
-            return i
+            return self._labels[i - 1]
+        return i
 
-    def is_isomorphic(self, x):
+    def is_isomorphic(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -200,11 +202,8 @@ class GenericSpeciesStructure(CombinatorialObject):
         if self.parent() != x.parent():
             return False
 
-        #We don't care about the labels for isomorphism testing
-        if self.canonical_label()._list == x.canonical_label()._list:
-            return True
-        else:
-            return False
+        # We don't care about the labels for isomorphism testing
+        return self.canonical_label()._list == x.canonical_label()._list
 
 
 #For backward compatibility.  This should be removed in the near

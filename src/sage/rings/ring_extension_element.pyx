@@ -17,6 +17,7 @@ AUTHOR:
 # ***************************************************************************
 
 
+cimport cython
 from sage.ext.stdsage cimport PY_NEW
 from sage.cpython.getattr cimport AttributeErrorMessage
 from sage.cpython.getattr import dir_with_other_class

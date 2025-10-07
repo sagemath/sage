@@ -18,10 +18,9 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .satsolver import SatSolver
-
-from sage.misc.lazy_import import lazy_import
 from sage.features.sat import Pycosat
+from sage.misc.lazy_import import lazy_import
+from sage.sat.solvers.satsolver import SatSolver
 
 lazy_import('pycosat', ['solve'], feature=Pycosat())
 
@@ -130,7 +129,7 @@ class PicoSAT(SatSolver):
             raise ValueError("0 should not appear in the clause: {}".format(lits))
         # pycosat does not handle Sage integers
         lits = [int(i) for i in lits]
-        self._nvars = max(self._nvars, max(abs(i) for i in lits))
+        self._nvars = max(self._nvars, *(abs(i) for i in lits))
         self._clauses.append(lits)
 
     def __call__(self, assumptions=None):
