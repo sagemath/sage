@@ -332,7 +332,7 @@ class Category_over_base(CategoryWithParameters):
 
 
 class AbelianCategory(Category):
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return ``True`` as ``self`` is an abelian category.
 

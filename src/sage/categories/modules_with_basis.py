@@ -177,7 +177,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             raise TypeError("%s\nunable to coerce x (=%s) into %s" % (msg, x, self))
         return M
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return whether this category is abelian.
 
