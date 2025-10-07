@@ -502,16 +502,16 @@ def CPRFanoToricVariety(Delta=None,
         raise ValueError("Delta_polar must be reflexive!")
     # Check/normalize coordinate_points and construct fan rays
     if coordinate_points is None:
-        coordinate_points = list(range(Delta_polar.nvertices()))
+        coordinate_points = list(range(Delta_polar.n_vertices()))
         if charts is not None:
             for chart in charts:
                 for point in chart:
                     if point not in coordinate_points:
                         coordinate_points.append(point)
     elif coordinate_points == "vertices":
-        coordinate_points = list(range(Delta_polar.nvertices()))
+        coordinate_points = list(range(Delta_polar.n_vertices()))
     elif coordinate_points == "all":
-        coordinate_points = list(range(Delta_polar.npoints()))
+        coordinate_points = list(range(Delta_polar.n_points()))
         coordinate_points.remove(Delta_polar.origin())
     elif coordinate_points == "all but facets":
         coordinate_points = Delta_polar.skeleton_points(Delta_polar.dim() - 2)
@@ -524,10 +524,10 @@ def CPRFanoToricVariety(Delta=None,
             raise ValueError(
                 "no repetitions are allowed for coordinate points!\nGot: %s"
                 % coordinate_points)
-        if not cp_set.issuperset(list(range(Delta_polar.nvertices()))):
+        if not cp_set.issuperset(list(range(Delta_polar.n_vertices()))):
             raise ValueError("all %d vertices of Delta_polar must be used "
                 "for coordinates!\nGot: %s"
-                % (Delta_polar.nvertices(), coordinate_points))
+                % (Delta_polar.n_vertices(), coordinate_points))
         if Delta_polar.origin() in cp_set:
             raise ValueError("the origin (point #%d) cannot be used for a "
                 "coordinate!\nGot: %s"
@@ -1304,7 +1304,7 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
             sage: F = GF(5^2, "a")                                                      # needs sage.rings.finite_rings
             sage: X = P1xP1.change_ring(F)                                              # needs sage.rings.finite_rings
             sage: X.anticanonical_hypersurface(monomial_points='all',                   # needs sage.rings.finite_rings
-            ....:                   coefficients=[1]*X.Delta().npoints())
+            ....:                   coefficients=[1]*X.Delta().n_points())
             Closed subscheme of 2-d CPR-Fano toric variety
              covered by 4 affine patches defined by:
               s^2*x^2 + s*t*x^2 + t^2*x^2 + s^2*x*y + s*t*x*y
@@ -1318,11 +1318,11 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
         Delta_polar = Delta.polar()
         # Monomial points normalization
         if monomial_points == "vertices":
-            monomial_points = list(range(Delta.nvertices()))
+            monomial_points = list(range(Delta.n_vertices()))
         elif monomial_points == "all":
-            monomial_points = list(range(Delta.npoints()))
+            monomial_points = list(range(Delta.n_points()))
         elif monomial_points == "vertices+origin":
-            monomial_points = list(range(Delta.nvertices()))
+            monomial_points = list(range(Delta.n_vertices()))
             monomial_points.append(Delta.origin())
         elif monomial_points == "simplified" or monomial_points is None:
             monomial_points = Delta.skeleton_points(Delta.dim() - 2)
@@ -1431,7 +1431,7 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
             raise ValueError("polytopes 'Delta' of the nef-partition and the "
                              "CPR-Fano toric variety must be the same!")
         self._nef_partition = nef_partition
-        k = nef_partition.nparts()
+        k = nef_partition.n_parts()
         # Pre-normalize all parameters
         if isinstance(monomial_points, str):
             monomial_points = [monomial_points] * k
@@ -1448,13 +1448,13 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
             Delta_i = nef_partition.Delta(i)
             # Monomial points normalization
             if monomial_points[i] == "vertices":
-                monomial_points[i] = list(range(Delta_i.nvertices()))
+                monomial_points[i] = list(range(Delta_i.n_vertices()))
             elif monomial_points[i] == "all":
-                monomial_points[i] = list(range(Delta_i.npoints()))
+                monomial_points[i] = list(range(Delta_i.n_points()))
             elif monomial_points[i] == "vertices+origin":
-                monomial_points[i] = list(range(Delta_i.nvertices()))
+                monomial_points[i] = list(range(Delta_i.n_vertices()))
                 if (Delta_i.origin() is not None
-                    and Delta_i.origin() >= Delta_i.nvertices()):
+                    and Delta_i.origin() >= Delta_i.n_vertices()):
                     monomial_points[i].append(Delta_i.origin())
             elif isinstance(monomial_points[i], str):
                 raise ValueError("'%s' is an unsupported description of "

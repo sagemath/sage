@@ -346,7 +346,8 @@ class Polyhedron_base2(Polyhedron_base1):
         r"""
         Return the number of integral points in the polyhedron.
 
-        This generic version of this method simply calls :meth:`integral_points`.
+        This generic version of this method simply calls
+        :meth:`integral_points`.
 
         EXAMPLES::
 
@@ -382,6 +383,8 @@ class Polyhedron_base2(Polyhedron_base1):
             NotImplementedError: ...
         """
         return len(self.integral_points())
+
+    n_points = integral_points_count
 
     def integral_points(self, threshold=100000):
         r"""

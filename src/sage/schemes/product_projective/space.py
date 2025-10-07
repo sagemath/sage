@@ -29,7 +29,7 @@ We can also construct the product by specifying the dimensions and the base ring
     Defining x0, x1, x2, y0, y1, y2
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #       Copyright (C) 2014 Ben Hutz <bn4941@gmail.com>
 #
@@ -37,8 +37,8 @@ We can also construct the product by specifying the dimensions and the base ring
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
@@ -134,7 +134,7 @@ def ProductProjectiveSpaces(n, R=None, names='x'):
         N = []
         R = None
         for PS in n:
-            if not isinstance(PS,ProjectiveSpace_ring):
+            if not isinstance(PS, ProjectiveSpace_ring):
                 raise TypeError("must be a list of projective spaces or (dimensions, base ring, names)")
             if R is None:
                 R = PS.base_ring()
@@ -150,7 +150,7 @@ def ProductProjectiveSpaces(n, R=None, names='x'):
             X = ProductProjectiveSpaces_ring(N, R, names)
         X._components = n
     else:
-        if not isinstance(n,(list, tuple)):
+        if not isinstance(n, (list, tuple)):
             raise ValueError("need list or tuple of dimensions")
         if R not in CommutativeRings():
             raise ValueError("must be a commutative ring")
@@ -165,7 +165,7 @@ def ProductProjectiveSpaces(n, R=None, names='x'):
                 for name, dim in zip(name_list, n):
                     names += normalize_names(dim + 1, name)
             else:
-                n_vars = sum(1+d for d in n)
+                n_vars = sum(1 + d for d in n)
                 names = normalize_names(n_vars, name_list)
         if isinstance(R, FiniteField):
             X = ProductProjectiveSpaces_finite_field(n, R, names)
@@ -242,13 +242,14 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         self._dims = N
         start = 0
         self._components = []
-        for i in range(len(N)):
-            self._components.append(ProjectiveSpace(N[i],R,names[start:start+N[i]+1]))
-            start += N[i]+1
+        for i, Ni in enumerate(N):
+            self._components.append(ProjectiveSpace(Ni, R,
+                                                    names[start:start + Ni + 1]))
+            start += Ni + 1
         # Note that the coordinate ring should really be the tensor product of
         # the component coordinate rings. But we just deal with them as
         # multihomogeneous polynomial rings.
-        self._coordinate_ring = PolynomialRing(R,sum(N) + len(N),names)
+        self._coordinate_ring = PolynomialRing(R, sum(N) + len(N), names)
         self._assign_names(names)
 
     def _repr_(self):
@@ -414,7 +415,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         mm = int(m)
         if mm != m:
             raise ValueError("m must be an integer")
-        return ProductProjectiveSpaces(self.dimension_relative_components()*mm, self.base_ring())
+        return ProductProjectiveSpaces(self.dimension_relative_components() * mm, self.base_ring())
 
     def __mul__(self, right):
         r"""
@@ -468,7 +469,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         elif isinstance(right, ProjectiveSpace_ring):
             return ProductProjectiveSpaces(self.components() + [right])
         elif isinstance(right, AlgebraicScheme_subscheme):
-            AS = self*right.ambient_space()
+            AS = self * right.ambient_space()
             CR = AS.coordinate_ring()
             n = self.ambient_space().coordinate_ring().ngens()
 
@@ -523,7 +524,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         """
         base = self.base_scheme()
         if base.is_noetherian():
-            return sum([self[i].dimension_relative() + base.dimension() for i in range(self.num_components())])
+            return sum([self[i].dimension_relative() + base.dimension() for i in range(self.n_components())])
         raise NotImplementedError("cannot compute the dimension of this scheme.")
 
     dimension = dimension_absolute
@@ -558,12 +559,12 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         """
         base = self.base_scheme()
         if base.is_noetherian():
-            return [self[i].dimension_relative() + base.dimension() for i in range(self.num_components())]
+            return [self[i].dimension_relative() + base.dimension() for i in range(self.n_components())]
         raise NotImplementedError("cannot compute the dimension of this scheme.")
 
     dimension_components = dimension_absolute_components
 
-    def num_components(self):
+    def n_components(self) -> int:
         r"""
         Return the number of components of this space.
 
@@ -572,10 +573,20 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         EXAMPLES::
 
             sage: T = ProductProjectiveSpaces([1, 1, 1], GF(5), 'x')
+            sage: T.n_components()
+            3
+
+        TESTS:
+
+        The old method name is kept as an alias::
+
+            sage: T = ProductProjectiveSpaces([1, 1, 1], GF(5), 'x')
             sage: T.num_components()
             3
         """
         return len(self._components)
+
+    num_components = n_components
 
     def ngens(self):
         r"""
@@ -618,8 +629,8 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         splitv = []
         dims = self._dims
         for i in range(len(dims)):
-            splitv.append(v[index:index+dims[i]+1])
-            index += dims[i]+1
+            splitv.append(v[index:index + dims[i] + 1])
+            index += dims[i] + 1
         return splitv
 
     def _degree(self, polynomial):
@@ -738,12 +749,12 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         """
         if not isinstance(polynomials, (list, tuple)):
             raise TypeError('the argument polynomials=%s must be a list or tuple' % polynomials)
-        #check in the coordinate ring
+        # check in the coordinate ring
         source_ring = self.coordinate_ring()
         try:
             polynomials = [source_ring(poly) for poly in polynomials]
         except TypeError:
-            raise TypeError("polynomials (=%s) must be elements of %s" % (polynomials,source_ring))
+            raise TypeError("polynomials (=%s) must be elements of %s" % (polynomials, source_ring))
         for f in polynomials:
             self._degree(f)  # raises a ValueError if not multi-homogeneous
         return polynomials
@@ -800,13 +811,13 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             n = [R(w) for w in v]
         except TypeError:
             raise TypeError('the components of v=%s must be elements of %s' % (v, R))
-        #check if any of the component points are 0
+        # check if any of the component points are 0
         N = self._dims
         start = 0
         for i in range(len(N)):
-            if v[start:start + N[i]+1] == [R(0)]*(N[i]+1):
+            if v[start:start + N[i] + 1] == [R.zero()] * (N[i] + 1):
                 raise TypeError('the zero vector is not a point in projective space')
-            start += N[i]+1
+            start += N[i] + 1
         return True
 
     def _an_element_(self):
@@ -927,7 +938,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         PP = self.ambient_space()
         N = PP._dims
         if len(I) != len(N):
-            raise ValueError('the argument I=%s must have %s entries' % (I,len(N)))
+            raise ValueError(f'the argument I={I} must have {len(N)} entries')
         I = tuple([int(i) for i in I])   # implicit type checking
         for i in range(len(I)):
             if I[i] < 0 or I[i] > N[i]:
@@ -946,10 +957,10 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         v = list(AA.gens())
         index = 0
         for i in range(len(I)):
-            v.insert(index+I[i], 1)
-            index += N[i]+1
+            v.insert(index + I[i], 1)
+            index += N[i] + 1
         phi = AA.hom(v, self)
-        self.__affine_patches.update({I:(AA, phi)})
+        self.__affine_patches.update({I: (AA, phi)})
         if return_embedding:
             return phi
         else:
@@ -1024,36 +1035,38 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
                      : z1*z2*z5 : z1*z2*z6 : z1*z3*z5 : z1*z3*z6 : z1*z4*z5 : z1*z4*z6).
         """
         N = self._dims
-        M = prod([n+1 for n in N]) - 1
+        M = prod([n + 1 for n in N]) - 1
         CR = self.coordinate_ring()
 
-        vars = list(self.coordinate_ring().variable_names()) + [var + str(i) for i in range(M+1)]
-        R = PolynomialRing(self.base_ring(), self.ngens()+M+1, vars, order='lex')
+        vars = list(self.coordinate_ring().variable_names()) + [var + str(i) for i in range(M + 1)]
+        R = PolynomialRing(self.base_ring(), self.ngens() + M + 1,
+                           vars, order='lex')
 
-        #set-up the elimination for the segre embedding
+        # set-up the elimination for the Segre embedding
         mapping = []
         k = self.ngens()
-        index = self.num_components()*[0]
+        index = self.n_components() * [0]
         for count in range(M + 1):
-            mapping.append(R.gen(k+count)-prod([CR(self[i].gen(index[i])) for i in range(len(index))]))
-            for i in range(len(index)-1, -1, -1):
+            mapping.append(R.gen(k + count) - prod([CR(self[i].gen(index[i]))
+                                                    for i in range(len(index))]))
+            for i in range(len(index) - 1, -1, -1):
                 if index[i] == N[i]:
                     index[i] = 0
                 else:
                     index[i] += 1
-                    break #only increment once
+                    break  # only increment once
 
-        #change the defining ideal of the subscheme into the variables
+        # change the defining ideal of the subscheme into the variables
         I = R.ideal(list(self.defining_polynomials()) + mapping)
         J = I.groebner_basis()
         s = set(R.gens()[:self.ngens()])
-        n = len(J)-1
+        n = len(J) - 1
         L = []
         while s.isdisjoint(J[n].variables()):
             L.append(J[n])
-            n = n-1
+            n -= 1
 
-        #create new subscheme
+        # create new subscheme
         if PP is None:
             PS = ProjectiveSpace(self.base_ring(), M, R.variable_names()[self.ngens():])
             Y = PS.subscheme(L)
@@ -1061,21 +1074,21 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             if PP.dimension_relative() != M:
                 raise ValueError("projective Space %s must be dimension %s") % (PP, M)
             S = PP.coordinate_ring()
-            psi = R.hom([0]*k + list(S.gens()), S)
+            psi = R.hom([0] * k + list(S.gens()), S)
             L = [psi(l) for l in L]
             Y = PP.subscheme(L)
 
-        #create embedding for points
+        # create embedding for points
         mapping = []
-        index = self.num_components()*[0]
+        index = self.n_components() * [0]
         for count in range(M + 1):
             mapping.append(prod([CR(self[i].gen(index[i])) for i in range(len(index))]))
-            for i in range(len(index)-1, -1, -1):
+            for i in range(len(index) - 1, -1, -1):
                 if index[i] == N[i]:
                     index[i] = 0
                 else:
                     index[i] += 1
-                    break #only increment once
+                    break  # only increment once
         phi = self.hom(mapping, Y)
 
         return phi
@@ -1191,11 +1204,13 @@ class ProductProjectiveSpaces_field(ProductProjectiveSpaces_ring):
         B = kwds.pop('bound')
         tol = kwds.pop('tolerance', 1e-2)
         prec = kwds.pop('precision', 53)
-        m = self.num_components()
-        iters = [ self[i].points_of_bounded_height(bound=B, tolerance=tol, precision=prec) for i in range(m) ]
+        m = self.n_components()
+        iters = [self[i].points_of_bounded_height(bound=B, tolerance=tol,
+                                                  precision=prec)
+                 for i in range(m)]
         dim = [self[i].dimension_relative() + 1 for i in range(m)]
 
-        dim_prefix = [0, dim[0]] # prefixes dim list
+        dim_prefix = [0, dim[0]]  # prefixes dim list
         for i in range(1, len(dim)):
             dim_prefix.append(dim_prefix[i] + dim[i])
 
@@ -1216,7 +1231,7 @@ class ProductProjectiveSpaces_field(ProductProjectiveSpaces_ring):
                 i = 0
             except StopIteration:
                 iters[i] = self[i].points_of_bounded_height(bound=B, tolerance=tol, precision=prec)
-                pt = next(iters[i]) # reset
+                pt = next(iters[i])  # reset
                 for j in range(dim[i]):
                     P[dim_prefix[i] + j] = pt[j]
                 i += 1
@@ -1257,7 +1272,7 @@ class ProductProjectiveSpaces_finite_field(ProductProjectiveSpaces_field):
         L = [next(x) for x in iters]  # put at zero
         yield self(L)
         j = 0
-        while j < self.num_components():
+        while j < self.n_components():
             try:
                 L[j] = next(iters[j])
                 yield self(L)

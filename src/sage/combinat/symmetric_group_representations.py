@@ -677,9 +677,9 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
         digraph = copy(Y._digraph)
         digraph.delete_edges((u, v) for (u, v, (j, beta)) in digraph.edges(sort=True)
                              if j != i)
-        M = matrix(self._ring, digraph.num_verts())
+        M = matrix(self._ring, digraph.n_vertices())
         for g in digraph.connected_components_subgraphs():
-            if g.num_verts() == 1:
+            if g.n_vertices() == 1:
                 v, = g.vertices(sort=True)
                 w = self._word_dict[v]
                 trivial = None
@@ -726,7 +726,7 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
             [-1/2  3/2]
             [ 1/2  1/2]
         """
-        m = self._yang_baxter_graph._digraph.num_verts()
+        m = self._yang_baxter_graph._digraph.n_vertices()
         M = matrix(self._ring, m, m, 1)
         for i in Permutation(permutation).reduced_word():
             M *= self.representation_matrix_for_simple_transposition(i)
