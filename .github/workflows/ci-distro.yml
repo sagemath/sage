@@ -83,7 +83,6 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - '13'
           - '14'
           - '15'
 

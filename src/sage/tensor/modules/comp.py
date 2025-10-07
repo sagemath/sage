@@ -762,7 +762,7 @@ class Components(SageObject):
                     return self._output_formatter(self._ring.zero())
                 else:
                     return self._output_formatter(self._ring.zero(),
-                                                 format_type)
+                                                  format_type)
 
     def _get_list(self, ind_slice, no_format=True, format_type=None):
         r"""
@@ -2345,23 +2345,21 @@ class Components(SageObject):
             # definition of the parallel function
             @parallel(p_iter='multiprocessing', ncpus=nproc)
             def make_Contraction(this, other, local_list, rev_s, rev_o,
-                                 shift_o,contractions, comp_for_contr):
+                                 shift_o, contractions, comp_for_contr):
                 local_res = []
                 for ind in local_list:
                     ind_s = [None for i in range(this._nid)]  # initialization
-                    ind_o = [None for i in range(other._nid)] # initialization
+                    ind_o = [None for i in range(other._nid)]  # initialization
                     for i, pos in enumerate(rev_s):
                         ind_s[pos] = ind[i]
                     for i, pos in enumerate(rev_o):
-                        ind_o[pos] = ind[shift_o+i]
+                        ind_o[pos] = ind[shift_o + i]
                     sm = 0
                     for ind_c in comp_for_contr.index_generator():
-                        ic = 0
-                        for pos_s, pos_o in contractions:
+                        for ic, (pos_s, pos_o) in enumerate(contractions):
                             k = ind_c[ic]
                             ind_s[pos_s] = k
                             ind_o[pos_o] = k
-                            ic += 1
                         sm += this[[ind_s]] * other[[ind_o]]
                     local_res.append([ind, sm])
                 return local_res
@@ -2373,19 +2371,17 @@ class Components(SageObject):
             # sequential computation
             for ind in res.non_redundant_index_generator():
                 ind_s = [None for i in range(self._nid)]  # initialization
-                ind_o = [None for i in range(other._nid)] # initialization
+                ind_o = [None for i in range(other._nid)]  # initialization
                 for i, pos in enumerate(rev_s):
                     ind_s[pos] = ind[i]
                 for i, pos in enumerate(rev_o):
-                    ind_o[pos] = ind[shift_o+i]
+                    ind_o[pos] = ind[shift_o + i]
                 sm = 0
                 for ind_c in comp_for_contr.index_generator():
-                    ic = 0
-                    for pos_s, pos_o in contractions:
+                    for ic, (pos_s, pos_o) in enumerate(contractions):
                         k = ind_c[ic]
                         ind_s[pos_s] = k
                         ind_o[pos_o] = k
-                        ic += 1
                     sm += self[[ind_s]] * other[[ind_o]]
                 res[[ind]] = sm
 
@@ -2775,7 +2771,7 @@ class Components(SageObject):
         return matrix(tab)
 
 
-#******************************************************************************
+# *****************************************************************************
 
 class CompWithSym(Components):
     r"""
@@ -4018,15 +4014,16 @@ class CompWithSym(Components):
                             # to reset it
                             ind[isym[k]] = si
                 if not step_finished and i == 0 and len(antisym) == 0:
-                    return # we went through all indices and didn't
-                           # find one which we can increase, thus we
-                           # have generated all indices
-            for i in range(len(antisym)-1,-1,-1):
+                    # we went through all indices and didn't find one
+                    # which we can increase, thus we have generated
+                    # all indices
+                    return
+            for i in range(len(antisym)-1, -1, -1):
                 # the antisymmetrized indices work similar to the
                 # symmetrized ones
                 isym = antisym[i]
                 if not step_finished:
-                    for k in range(len(isym)-1,-1,-1):
+                    for k in range(len(isym)-1, -1, -1):
                         if ind[isym[k]] + len(isym)-1-k != imax:
                             ind[isym[k]] += 1
                             for l in range(k+1, len(isym)):
@@ -4609,7 +4606,7 @@ class CompWithSym(Components):
         return result
 
 
-#******************************************************************************
+# *****************************************************************************
 
 class CompFullySym(CompWithSym):
     r"""
@@ -5054,7 +5051,7 @@ class CompFullySym(CompWithSym):
             return CompWithSym.__add__(self, other)
 
 
-#******************************************************************************
+# *****************************************************************************
 
 class CompFullyAntiSym(CompWithSym):
     r"""
@@ -5491,7 +5488,7 @@ class CompFullyAntiSym(CompWithSym):
             res[[ind]] = factorial_s*sm
         return res
 
-#******************************************************************************
+# *****************************************************************************
 
 
 class KroneckerDelta(CompFullySym):
