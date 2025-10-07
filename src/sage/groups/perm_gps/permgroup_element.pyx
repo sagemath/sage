@@ -1,4 +1,4 @@
-r"""
+"""
 Permutation group elements
 
 AUTHORS:
@@ -1599,7 +1599,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         from_gap = self._parent._domain_from_gap
         to_gap = self._parent._domain_to_gap
         cdef int i
-        return {e:from_gap[self.perm[i-1]+1] for e,i in to_gap.iteritems()}
+        return {e: from_gap[self.perm[i - 1] + 1] for e, i in to_gap.items()}
 
     def multiplicative_order(self):
         r"""

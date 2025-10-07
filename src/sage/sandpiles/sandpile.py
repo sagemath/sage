@@ -642,7 +642,7 @@ class Sandpile(DiGraph):
         del self._nonsink_vertices[self._sink_ind]
         # compute Laplacians:
         self._laplacian = self.laplacian_matrix(indegree=False)
-        temp = list(range(self.num_verts()))
+        temp = list(range(self.n_vertices()))
         del temp[self._sink_ind]
         self._reduced_laplacian = self._laplacian[temp, temp]
 
@@ -780,7 +780,7 @@ class Sandpile(DiGraph):
             sage: repr(Sandpile({0:[1,1], 1:[0]}))
             'sandpile graph: 2 vertices, sink = 0'
         """
-        return self._name + ': ' + str(self.num_verts()) + ' vertices, sink = ' + str(self.sink())
+        return self._name + ': ' + str(self.n_vertices()) + ' vertices, sink = ' + str(self.sink())
 
     def show(self, **kwds):
         r"""
@@ -1228,7 +1228,7 @@ class Sandpile(DiGraph):
             sage: s.all_k_config(7)
             {1: 7, 2: 7, 3: 7}
         """
-        return SandpileConfig(self, [k] * (self.num_verts() - 1))
+        return SandpileConfig(self, [k] * (self.n_vertices() - 1))
 
     def zero_config(self):
         r"""
@@ -1312,11 +1312,11 @@ class Sandpile(DiGraph):
             True
         """
         if self.name() == 'Complete sandpile graph':
-            n = self.num_verts()
+            n = self.n_vertices()
             self._recurrents = [SandpileConfig(self, [n - 1 - i for i in p])
                                 for p in ParkingFunctions(n - 1)]
         elif self.name() == 'Cycle sandpile graph':
-            n = self.num_verts()
+            n = self.n_vertices()
             one = [1] * (n - 2)
             self._recurrents = [SandpileConfig(self, [1] * (n - 1))] + [SandpileConfig(self, one[:i] + [0] + one[i:]) for i in range(n - 1)]
         else:
@@ -1502,7 +1502,7 @@ class Sandpile(DiGraph):
             1
         """
         if self.is_undirected():
-            return self.laplacian().trace() / 2 - self.num_verts() + 1
+            return self.laplacian().trace() / 2 - self.n_vertices() + 1
         raise TypeError("the underlying graph must be undirected")
 
     def is_undirected(self):
@@ -1647,7 +1647,7 @@ class Sandpile(DiGraph):
             sage: '_avalanche_polynomial' in s.__dict__                                 # needs sage.combinat
             True
         """
-        n = self.num_verts() - 1
+        n = self.n_vertices() - 1
         R = PolynomialRing(QQ, "x", n)
         A = R(0)
         V = []
@@ -1697,7 +1697,7 @@ class Sandpile(DiGraph):
             return deepcopy(self._avalanche_polynomial)
         X = self._avalanche_polynomial.parent().gens()
         return self._avalanche_polynomial.subs({X[i]: X[0]
-            for i in range(1, self.num_verts() - 1)})
+            for i in range(1, self.n_vertices() - 1)})
 
     def nonspecial_divisors(self, verbose=True) -> list:
         r"""
@@ -1768,7 +1768,7 @@ class Sandpile(DiGraph):
         """
         if self.is_undirected():
             return SandpileDivisor(self, [self.laplacian()[i][i] - 2
-                                          for i in range(self.num_verts())])
+                                          for i in range(self.n_vertices())])
         raise TypeError("only for undirected graphs")
 
     def _set_invariant_factors(self):
@@ -2195,9 +2195,9 @@ class Sandpile(DiGraph):
         V = self.vertices(sort=True)
         n = len(V)
         if isinstance(st, list):
-            if len(st) == self.num_verts() - 1:
+            if len(st) == self.n_vertices() - 1:
                 st = SandpileConfig(self, st)
-            elif len(st) == self.num_verts():
+            elif len(st) == self.n_vertices():
                 st = SandpileDivisor(self, st)
             else:
                 raise SyntaxError(state)
@@ -2239,7 +2239,7 @@ class Sandpile(DiGraph):
             True
         """
         if self.name() == 'Complete sandpile graph':
-            n = Integer(self.num_verts())
+            n = Integer(self.n_vertices())
             self._stationary_density = (n + QQ.one() / n + sum(falling_factorial(n, i) / n**i for i in range(1, n + 1)) - 3) / 2
         elif self.is_undirected() and '_h_vector' not in self.__dict__:
             t = Graph(self).tutte_polynomial().subs(x=1)
@@ -2248,13 +2248,13 @@ class Sandpile(DiGraph):
             t = myR(t)
             dt = derivative(t, y).subs(y=1)
             t = t.subs(y=1)
-            self._stationary_density = (self.num_edges()/2 + dt/t)/self.num_verts()
+            self._stationary_density = (self.n_edges()/2 + dt/t)/self.n_vertices()
         else:
             sink_deg = self.out_degree(self.sink())
             h = vector(ZZ, self.h_vector())
             m = self.max_stable().deg()
             d = vector(ZZ, range(m, m-len(h), -1))
-            self._stationary_density = (h*d/self.group_order() + sink_deg)/self.num_verts()
+            self._stationary_density = (h*d/self.group_order() + sink_deg)/self.n_vertices()
 
     def stationary_density(self):
         r"""
@@ -2303,7 +2303,7 @@ class Sandpile(DiGraph):
             sage: S.all_k_div(7)
             {0: 7, 1: 7, 2: 7, 3: 7, 4: 7}
         """
-        return SandpileDivisor(self, [k]*self.num_verts())
+        return SandpileDivisor(self, [k]*self.n_vertices())
 
     def zero_div(self):
         r"""
@@ -2723,7 +2723,7 @@ class Sandpile(DiGraph):
             True
         """
         L = self._reduced_laplacian.transpose().dense_matrix()
-        n = self.num_verts() - 1
+        n = self.n_vertices() - 1
         D, U, V = L.smith_form()
         self._points = []
         one = [1] * n
@@ -2892,7 +2892,7 @@ class SandpileConfig(dict):
             sage: ~(3*c)  # stabilization
             {1: 2, 2: 2, 3: 0}
         """
-        if len(c) == S.num_verts()-1:
+        if len(c) == S.n_vertices()-1:
             if isinstance(c, (dict, SandpileConfig)):
                 dict.__init__(self, c)
             elif isinstance(c, list):
@@ -3675,7 +3675,7 @@ class SandpileConfig(dict):
             1 and that its length is equal to the number of sink vertices or the number of nonsink vertices.
         """
         c = deepcopy(self)
-        n = self._sandpile.num_verts()
+        n = self._sandpile.n_vertices()
         if distrib is None:  # default = uniform distribution on nonsink vertices
             distrib = [QQ.one() / (n - 1)] * (n - 1)
         if len(distrib) == n - 1:  # prob. dist. on nonsink vertices
@@ -4135,7 +4135,7 @@ class SandpileDivisor(dict):
             sage: D.support()
             [1, 3, 4, 5]
         """
-        if len(D) == S.num_verts():
+        if len(D) == S.n_vertices():
             if type(D) in [dict, SandpileDivisor, SandpileConfig]:
                 dict.__init__(self, dict(D))
             elif isinstance(D, list):
@@ -4879,7 +4879,7 @@ class SandpileDivisor(dict):
             {0: 2, 1: 3, 2: 1, 3: 2}
             sage: n(mean([D.simulate_threshold().deg() for _ in range(10)]))  # random
             7.10000000000000
-            sage: n(s.stationary_density()*s.num_verts())
+            sage: n(s.stationary_density()*s.n_vertices())
             6.93750000000000
 
         .. NOTE::
@@ -4892,7 +4892,7 @@ class SandpileDivisor(dict):
         E = deepcopy(self)
         S = E.sandpile()
         V = S.vertices(sort=True)
-        n = S.num_verts()
+        n = S.n_vertices()
         if distrib is None:  # default = uniform distribution
             distrib = [QQ.one() / n] * n
         X = GeneralDiscreteDistribution(distrib)
@@ -4921,7 +4921,7 @@ class SandpileDivisor(dict):
             This method requires 4ti2.
         """
         L = self._sandpile._laplacian.transpose()
-        n = self._sandpile.num_verts()
+        n = self._sandpile.n_vertices()
 
         # temporary file names
         lin_sys = tmp_filename()
@@ -5210,7 +5210,7 @@ class SandpileDivisor(dict):
         # If undirected and D has high degree, use Riemann-Roch.
         if S.is_undirected() and not set_witness:
             # We've been careful about loops
-            g = sum(S.laplacian().diagonal()) / 2 - S.num_verts() + 1
+            g = sum(S.laplacian().diagonal()) / 2 - S.n_vertices() + 1
             if self.deg() > 2 * g - 2:
                 self._rank = self.deg() - g
                 return  # return early
@@ -5218,7 +5218,7 @@ class SandpileDivisor(dict):
         # the Cori-Le Borgne algorithm
         if S.name() == 'Complete sandpile graph' and not set_witness:
             # Cori-LeBorgne algorithm
-            n = S.num_verts()
+            n = S.n_vertices()
             rk = -1
             E = self.q_reduced()
             k = E[S.sink()]
@@ -5241,7 +5241,7 @@ class SandpileDivisor(dict):
         else:
             rk = -1
             while True:
-                for e in integer_vectors_nk_fast_iter(rk + 1, S.num_verts()):
+                for e in integer_vectors_nk_fast_iter(rk + 1, S.n_vertices()):
                     E = SandpileDivisor(S, e)
                     if not (self - E).effective_div():
                         self._rank = rk
@@ -5328,7 +5328,7 @@ class SandpileDivisor(dict):
             sage: D._set_r_of_D()                               # optional - 4ti2
         """
         eff = self.effective_div()
-        n = self._sandpile.num_verts()
+        n = self._sandpile.n_vertices()
         r = -1
         if not eff:
             self._r_of_D = (r, self)
@@ -5682,7 +5682,7 @@ class SandpileDivisor(dict):
         S = self.sandpile()
         V = S.vertices(sort=True)
         if distrib is None:  # default = uniform distribution
-            n = S.num_verts()
+            n = S.n_vertices()
             distrib = [QQ.one() / n] * n
         X = GeneralDiscreteDistribution(distrib)
         i = X.get_random_element()

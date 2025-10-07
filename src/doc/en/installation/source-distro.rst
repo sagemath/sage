@@ -1,415 +1,301 @@
-.. _section-build-source:
+.. HIGHLIGHT:: shell-session
 
-====================
-Building from source
-====================    
+.. _sec-installation-from-sources-classical:
 
-This is a short guide on how to build the Sage from source using Meson.
-
-Walkthrough
-===========
+Sage-the-distribution (classical build)
+=======================================
 
 .. note::
 
-    If you have previously build Sage in-place, you first have to delete the
-    already compiled files, e.g. with ``shopt -s globstar`` followed by
-    ``rm src/**/*.so`` or ``for f in src/**/*.so ; do mv "$f" "$f.old"; done``.
-    Moreover, remove the old generated files with
-    ``find src/sage/ext/interpreters -type f ! -name 'meson.build' -delete``.
-    Also uninstall the 'old' sage packages with ``pip uninstall sage-conf sage-setup sagemath-standard``.
+   This section describes the classical build process using
+   ``./configure && make``.
+   It is recommended to use the modern Meson build system instead;
+   see :ref:`section-build-source`.
 
-Sage relies on a number of external libraries, which have to be installed
-before building. The easiest way to install them is to use Conda.
-Alternatively, you can install them via your system package manager.
-Both methods are described below.
 
-Using Conda
-~~~~~~~~~~~
+Building Sage from the source code has the major
+advantage that your install will be optimized for your particular computer and
+should therefore offer better performance and compatibility than a binary
+install.
 
-- If you haven't already, download and install Miniforge for your platform
-  following the `Miniforge instructions <https://github.com/conda-forge/miniforge?tab=readme-ov-file#install>`_.
-  Other Conda distributions like Miniconda should work as well, but
-  may require additional configuration (see :ref:`sec-installation-conda`).
+Moreover, it offers you full development capabilities: you can change
+absolutely any part of Sage or the packages on which it depends, and recompile
+the modified parts.
 
-- Create and activate a new conda environment with the dependencies of Sage
-  and a few additional developer tools:
+See the file `README.md <https://github.com/sagemath/sage/#readme>`_
+in ``SAGE_ROOT`` for information on supported platforms and
+step-by-step instructions.
 
-    .. tab:: Linux
+The following sections provide some additional details. Most users will not
+need to read them. Some familiarity with the use of the Unix command line may
+be required to build Sage from the source code.
 
-        .. code-block:: console
 
-            $ mamba env create --file environment-3.12-linux.yml --name sage-dev
-            $ mamba activate sage-dev
+.. _section-prereqs:
 
-    .. tab:: macOS
+Prerequisites
+-------------
 
-        .. code-block:: console
+Disk space and memory
+^^^^^^^^^^^^^^^^^^^^^
 
-            $ mamba env create --file environment-3.12-macos.yml --name sage-dev
-            $ mamba activate sage-dev
+Your computer comes with at least 6 GB of free disk space.
+It is recommended to have at least 2 GB of RAM, but you might get away
+with less (be sure to have some swap space in this case).
 
-    .. tab:: Windows
+Software prerequisites and recommended packages
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-        .. note::
+Sage depends on `a large number of software packages
+<../reference/spkg/index.html>`_.  Sage provides its own software
+distribution providing most of these packages, so you do not have to
+worry about having to download and install these packages yourself.
 
-            Windows support is very experimental and many features are not working
-            yet.
+If you extracted Sage from a source tarball, the subdirectory
+:file:`upstream` contains the source distributions for all standard
+packages on which Sage depends.  If cloned from a git repository, the
+upstream tarballs will be downloaded, verified, and cached as part of
+the Sage installation process.
 
-        First you need to install the Microsoft Visual C++ compiler.
-        You can download the
-        `Visual Studio Build Tools <https://aka.ms/vs/17/release/vs_BuildTools.exe>`_.
-        Make sure to select "VC++ 2022 version xx.x build tools" and "Windows SDK".
-        If you prefer, you can also run the following command to install the necessary
-        components:
+However, there are minimal prerequisites for building Sage that
+already must be installed on your system:
 
-        .. code-block:: console
+- `Fundamental system packages required for installing from source
+  <../reference/spkg/_prereq.html>`_
 
-            $ winget install Microsoft.VisualStudio.2022.BuildTools --force --override "--wait --passive --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows11SDK.22621"
+- `C/C++ compilers <../reference/spkg/gcc.html>`_
 
-        Alternatively, you can use the compiler that comes bundled with Visual Studio.
+If you have sufficient privileges (for example, on Linux you can
+use ``sudo`` to become the ``root`` user), then you can install these packages
+using the commands for your platform indicated in the pages linked above.
+If you do not have the privileges to do this, ask your system administrator to
+do this for you.
 
-        If you haven't already, install the latest version of Conda from
-        `Miniforge <https://github.com/conda-forge/miniforge?tab=readme-ov-file#windows>`_.
-        It is strongly recommended to choose the option to add Conda to the `PATH`
-        during installation (because we will not use the Miniforge prompt).
+In addition to these minimal prerequisites, we strongly recommend to use system
+installations of the following:
 
-        Open the "VS x64 Native Tools Command Prompt" (for 64bit) or
-        "Developer Command Prompt for VS2022 (or 2019)" (for 32bit).
+- `Fortran compiler <../reference/spkg/gfortran.html>`_
 
-        .. code-block:: console
+- `Python <../reference/spkg/python3.html>`_
 
-            $ mamba env create --file environment-3.12-win.yml --name sage-dev
-            $ conda activate sage-dev
-            $ set LIB=%CONDA_PREFIX%\Library\lib;%LIB%
-            $ set INCLUDE=%CONDA_PREFIX%\Library\include;%INCLUDE%
+Sage developers will also need the `system packages required for
+bootstrapping <../reference/spkg/_bootstrap.html>`_; they cannot be
+installed by Sage.
 
-        Windows support is experimental and not fully working yet.
-        In fact, the Sage prompt is not working at all, but you can use the Python
-        prompt to run certain commands. For example, the following should work
-        after building Sage:
+When the ``./configure`` script runs, it will check for the presence of many
+packages (including the above) and inform you of any that are
+missing or have unsuitable versions. **Please read the messages that
+./configure prints:** It will inform you which additional system packages
+you can install to avoid having to build them from source. This can save a lot of
+time.
 
-        .. code-block:: python
+The following sections provide the commands to install a large
+recommended set of packages on various systems, which will minimize
+the time it takes to build Sage. This is intended as a convenient
+shortcut, but of course you can choose to take a more fine-grained
+approach.
 
-            >>> from sage.rings.integer import Integer
-            >>> Integer(5)
-            5
-            >>> Integer(5) + 2.0
-            7.0
 
-    A different Python version can be selected by replacing ``3.12`` with the
-    desired version.
+.. _sec-installation-from-sources-linux-recommended-installation:
 
-- To compile and install Sage in editable install, just use:
-  
-  .. code-block:: console
+Linux system package installation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-      $ pip install --no-build-isolation --editable .
-
-  This will install Sage in the current Conda environment.
-  The ``--no-build-isolation`` flag is necessary to allow the build system
-  to reuse the already installed build dependencies.
-
-- You can then start Sage from the command line with ``./sage``
-  or run the tests with ``./sage -t``.
-
-Using system package manager
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You can also install the dependencies via your system package manager.
-Note, however, that not all dependencies may be available for your system,
-and that the versions may be outdated.
-In this case, Meson will try to build certain dependencies from source,
-or it will fail with an error message.
-In this case, you can either install the missing dependencies manually,
-or use Conda to install them.
-
-Depending on your distribution, install the following packages:
+We recommend that you install the following packages, depending on your distribution:
 
 .. tab:: Debian/Ubuntu
 
-    Not yet supported.
+   .. literalinclude:: debian.txt
 
-   .. .. literalinclude:: debian.txt
-
-.. tab:: Fedora
-
-    At least Fedora 41 is required.
+.. tab:: Fedora/Redhat/CentOS
 
    .. literalinclude:: fedora.txt
-      :language: console
 
 .. tab:: Arch Linux
 
    .. literalinclude:: arch.txt
-      :language: console
 
 .. tab:: OpenSUSE
 
    .. literalinclude:: opensuse.txt
-      :language: console
 
 .. tab:: Void Linux
 
    .. literalinclude:: void.txt
-      :language: console
 
+If you wish to do Sage development, we recommend that you additionally
+install the following:
 
-In the case that you want to install some dependencies manually, set the
-correct environment variables to point to the installed libraries:
+.. tab:: Debian/Ubuntu
 
    .. literalinclude:: debian-develop.txt
-      :language: console
 
-    $ export C_INCLUDE_PATH=$C_INCLUDE_PATH:/your/path/to/include
-    $ export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/your/path/to/include
-    $ export LIBRARY_PATH=$LIBRARY_PATH:/your/path/to/lib
+.. tab:: Fedora/Redhat/CentOS
 
    .. literalinclude:: fedora-develop.txt
-      :language: console
 
-We also recommend to install the Python package manager
-`uv <https://docs.astral.sh/uv/getting-started/installation/>`_.
-
-To compile and install Sage in editable install, then just use:
+.. tab:: Arch Linux
 
    .. literalinclude:: arch-develop.txt
-      :language: console
 
-    $ uv venv
-    $ uv pip install \
-        meson-python \
-        "cypari2 >=2.2.1" \
-        "cython >=3.0, != 3.0.3, != 3.1.0" \
-        "cython >=3.0, != 3.0.3" \
-        "gmpy2 ~=2.1.b999" \
-        memory_allocator \
-        "numpy >=1.25" \
-        jinja2 \
-        setuptools
-    $ uv sync --frozen --inexact --no-build-isolation
+.. tab:: OpenSUSE
 
    .. literalinclude:: opensuse-develop.txt
-      :language: console
 
-You can then start Sage from the command line with ``./sage``
-or run the tests with ``./sage -t``.
-
-Remarks
-~~~~~~~
+.. tab:: Void Linux
 
    .. literalinclude:: void-develop.txt
-      :language: console
 
-.. note::
+For all users, we recommend that you install the following system
+packages, which provide additional functionality and cannot be
+installed by Sage.  In particular, this includes :wikipedia:`LaTeX
+<LaTeX>` and related tools. In addition to a base install of :ref:`TeX
+Live <spkg_texlive>`, our lists of system packages below include
+everything that is needed for generating the Sage documentation in PDF
+format.  For converting Jupyter notebooks to PDF, also the document
+converter :ref:`pandoc <spkg_pandoc>` is needed.  For making
+animations, Sage needs to use one of the packages :ref:`FFmpeg
+<spkg_ffmpeg>` and :ref:`ImageMagick <spkg_imagemagick>`.
 
-    By using ``pip install --editable`` in the above steps, the Sage library
-    is installed in editable mode. This means that when you only edit source
-    files, there is no need to rebuild the library; it suffices to restart Sage.
-    Note that this even works when you edit Cython files (they will be recompiled
-    automatically), so you no longer need to manually compile after editing Cython
-    files.
-
-.. note::
+.. tab:: Debian/Ubuntu
 
    .. literalinclude:: debian-recommended.txt
-      :language: console
 
-    Note that ``make`` is not used at all, nor is ``configure``.
-    This means that any Sage-the-distribution commands such as ``sage -i``
-    will not work.
-
-.. note::
+.. tab:: Fedora/Redhat/CentOS
 
    .. literalinclude:: fedora-recommended.txt
-      :language: console
 
-    By default, Meson will automatically determine the number of jobs to
-    run in parallel based on the number of CPU available. This can be adjusted
-    by passing ``--config-settings=compile-args=-jN`` to ``pip install``.
-
-
-    ``--verbose`` can be passed to ``pip install``, then the meson commands
-    internally used by pip will be printed out.
+.. tab:: Arch Linux
 
    .. literalinclude:: arch-recommended.txt
-      :language: console
 
-.. note::
-
-    To build the documentation, use:
+.. tab:: OpenSUSE
 
    .. literalinclude:: opensuse-recommended.txt
-      :language: console
 
-        $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-docbuild
-        $ sage --docbuild all html
+.. tab:: Void Linux
 
    .. literalinclude:: void-recommended.txt
-      :language: console
 
-.. note::
+In addition to these, if you don't want Sage to build optional packages that might
+be available from your OS, cf. the growing list of such packages on :issue:`27330`,
+install:
 
-  You can update the conda lock files by running ``tools/update-conda.py``.
-  In order to update the conda environment afterwards use::
-
-    $ mamba env update --file environment-3.12-linux.yml --name sage-dev
+.. tab:: Debian/Ubuntu
 
    .. literalinclude:: debian-optional.txt
-      :language: console
 
-Background information
-======================
+.. tab:: Fedora/Redhat/CentOS
 
    .. literalinclude:: fedora-optional.txt
-      :language: console
 
-Under the hood, pip invokes meson to configure and build the project.
-We can also use meson directly as follows.
-
-To configure the project, we need to run the following command:
+.. tab:: Arch Linux
 
    .. literalinclude:: arch-optional.txt
-      :language: console
 
-    $ meson setup builddir
+.. tab:: OpenSUSE
 
    .. literalinclude:: opensuse-optional.txt
-      :language: console
 
-This will create a build directory ``builddir`` that will hold the
-build artifacts. Certain options are configurable at build time. The
-easiest way to obtain an overview of these options is by using ``meson
-configure``:
-
-.. code-block:: console
+.. tab:: Void Linux
 
    .. literalinclude:: void-optional.txt
-      :language: console
 
-    $ meson configure builddir
 
-This command should display the available options and their associated
-values. The section titled "Project options" contains the options that
-are unique to SageMath. To change the value of an option, the flag
-``-Doption=value`` can be passed to ``meson setup``. For example, if
-you don't want to build the HTML documentation, you might use
+.. _section_macprereqs:
 
-.. code-block:: console
+macOS prerequisites
+^^^^^^^^^^^^^^^^^^^
 
-    $ meson setup -Dbuild-docs=false builddir
+On macOS systems, you need a recent version of
+`Command Line Tools <https://developer.apple.com/downloads/index.action?=command%20line%20tools>`_.
+It provides all the above requirements.
 
-If pip is used as above with ``--editable``, ``builddir`` is set to be
-``build/cp[Python major version][Python minor version]``, such as
-``build/cp311``.
+Run the command ``xcode-select --install`` from a Terminal window and click "Install"
+in the pop-up dialog box.
 
-To compile the project, run the following command:
+If you have already installed `Xcode <https://developer.apple.com/xcode/>`_
+(which at the time of writing is freely available in the Mac App Store,
+or through https://developer.apple.com/downloads/ provided you registered for an
+Apple Developer account), you can install the command line tools from
+there as well.
 
-.. code-block:: console
+If you have not installed `Xcode <https://developer.apple.com/xcode/>`_
+you can get these tools as a relatively small download, but it does require
+a registration.
 
-    $ meson compile -C builddir
+- First, you will need to register as an Apple Developer at
+  https://developer.apple.com/register/.
 
-On Windows, you may encounter a linker error related to a missing
-``python_d.lib`` file. This typically indicates that your Python interpreter is
-not a debug build. To resolve this, it is recommended to use a release build
-by adding ``-Dbuildtype=release`` to the ``meson setup`` command, or
-alternatively, use a debug build of the Python interpreter.
+- Having done so, you should be able to download it for free at
+  https://developer.apple.com/downloads/index.action?=command%20line%20tools
 
-Installing is done with the following command:
+- Alternately, https://developer.apple.com/opensource/ should have a link
+  to Command Line Tools.
 
-.. code-block:: console
 
-    $ meson install -C builddir
+macOS package installation
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This will install the project to currently active Python environment,
-or to the system Python environment if no environment is active.
-When editable install is used, it is not necessary to reinstall after each
-compilation.
-
-.. note::
+If you use the `Homebrew package manager
+<https://brew.sh>`_, you can install the following:
 
 .. literalinclude:: homebrew.txt
-   :language: console
 
 Some Homebrew packages are installed "keg-only," meaning that they are
 not available in standard paths. To make them accessible when building
-Sage, run
+Sage, run ::
 
-.. .. code-block:: console
+    $ source SAGE_ROOT/.homebrew-build-env
 
-If you want to install the project to a different directory, you can specify
-the ``--prefix`` option when running the ``meson setup`` command:
+(replacing ``SAGE_ROOT`` by Sage's home directory). You can add a
+command like this to your shell profile if you want the settings to
+persist between shell sessions.
 
-.. code-block:: console
-
-    $ meson setup builddir --prefix=/desired/install/path -Dpython.install_env=prefix
-
-This will then install in the directory specified by ``--prefix``,
-in particular the root folder will be be installed to
-``/desired/install/path/lib/python3.12/site-packages/sage``.
-Usually, this directory is not on your Python path, so you have to use:
-
-.. code-block:: console
+If you wish to do Sage development, we recommend that you additionally
+install the following:
 
 .. literalinclude:: homebrew-develop.txt
-   :language: console
 
-        $ PYTHONPATH=/desired/install/path ./sage
-
-Alternatively, we can still use pip to install:
+For all users, we recommend that you install the following system packages,
+which provide additional functionality and cannot be installed by Sage:
 
 .. literalinclude:: homebrew-recommended.txt
-   :language: console
 
-    $ pip install --no-build-isolation --config-settings=builddir=builddir --editable .
+Some additional optional packages are taken care of by:
 
 .. literalinclude:: homebrew-optional.txt
-   :language: console
 
-.. tip::
+WSL prerequisites
+^^^^^^^^^^^^^^^^^
 
-    Package maintainers may want to specify further build options or need
-    to install to a different directory than the install prefix.
-    Both are supported naturally by Meson:
+Ubuntu on Windows Subsystem for Linux (WSL) prerequisite installation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    .. code-block:: console
+Refer to :ref:`installation-guide` for installing Ubuntu on
+Windows Subsystem for Linux (WSL). These instructions describe a fresh
+install of Ubuntu, the default distribution in WSL, but other
+distributions or installation methods should work too.
 
-        $ meson setup builddir --prefix=/usr --libdir=... -Dcpp_args=...
-        $ meson compile -C builddir
-        $ DESTDIR=/path/to/staging/root meson install -C builddir
+From this point on, follow the instructions in the :ref:`sec-installation-from-sources-linux-recommended-installation` section.
+It is strongly recommended to put the Sage source files in the Linux file system, for example, in the ``/home/username/sage`` directory, and not in the Windows file system (e.g. ``/mnt/c/...``).
 
-    SageMath's automatic feature detection (based on the packages that
-    happen to be installed at build time) can be disabled in favor of
-    explicit configuration by passing ``-Dauto_features=disabled`` to
-    ``meson setup``. Afterwards, individual features must be enabled
-    explicitly. You can obtain a list of valid feature names through
-    ``meson configure``.
+WSL permission denied error when building ``packaging`` package
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    By default, meson may fall back to bundled versions of certain
-    subprojects known as `wrap dependencies
-    <https://mesonbuild.com/Wrap-dependency-system-manual.html>`_.
-    Maintainers will typically want to disable this behavior as well
-    to ensure that the system dependencies are used. This can be
-    achieved with the `--wrap-mode flag
-    <https://mesonbuild.com/Subprojects.html#commandline-options>`_
+You may encounter permission errors of the kind ``"[Errno 13] Permission denied: 'build/bdist.linux-x86_64/wheel/<package>.dist-info'"`` during ``make``.
+This usually comes from a permission conflict between the Windows and Linux file system.
+To fix it create a temporary build folder in the Linux file system using ``mkdir -p ~/tmp/sage`` and use it for building by ``eval SAGE_BUILD_DIR="~/tmp/sage" make``.
+Also see the `related Github issue <https://github.com/pypa/packaging-problems/issues/258>`_ for other workarounds.
 
-    With the `default <https://mesonbuild.com/Running-Meson.html#installing>`_ prefix
-    being ``/usr/local``, it may then install to
-    ``$DESTDIR/usr/local/lib/python3.12/site-packages/sage``.
+WSL post-installation notes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    See `Meson's quick guide <https://mesonbuild.com/Quick-guide.html#using-meson-as-a-distro-packager>`_
-    and `Meson's install guide <https://mesonbuild.com/Installing.html#destdir-support>`_
-    for more information.
+When the installation is complete, you may be interested in :ref:`sec-launching-wsl-post-installation`.
 
-Miscellaneous tips
-==================
 
-The environment variable ``MESONPY_EDITABLE_VERBOSE=1`` can be set while running ``./sage``,
-so that when Cython files are recompiled a message is printed out.
-See `<https://mesonbuild.com/meson-python/how-to-guides/editable-installs.html#verbose-mode>`_.
-
-If a new ``.pyx`` file is added, it need to be added to ``meson.build`` file in
-the containing directory.
-
+Other platforms
+^^^^^^^^^^^^^^^
 
 On Solaris, you would use ``pkgadd`` and on OpenSolaris ``ipf`` to install
 the necessary software.
@@ -424,20 +310,16 @@ Notes on using conda
 
 If you don't want conda to be used by sage, deactivate conda (for the current shell session).
 
-- Type
+- Type::
 
-  .. code-block:: console
+    $ conda deactivate
 
-      $ conda deactivate
+- Repeat the command until ``conda info`` shows::
 
-- Repeat the command until ``conda info`` shows
+    $ conda info
 
-  .. code-block:: console
-
-      $ conda info
-
-        active environment : None
-        ...
+    active environment : None
+    ...
 
 Then SageMath will be built either using the compilers provided by the
 operating system, or its own compilers.
@@ -450,9 +332,7 @@ If you want to use `Tcl/Tk <https://www.tcl.tk/>`_ libraries in Sage, and you
 are going to use your OS's Python3 as Sage's Python, you merely need to install
 its **Tkinter** module.  On Linux systems, it is usually provided by the
 **python3-tk** or a similarly named (e.g. **python3-tkinter**) package,
-which can be installed using
-
-.. code-block:: console
+which can be installed using::
 
     $ sudo apt-get install python3-tk
 
@@ -465,9 +345,7 @@ If you want to use `Tcl/Tk <https://www.tcl.tk/>`_ libraries in Sage,
 and you are going to build Sage's Python from source, you need to install
 these, and the corresponding headers.
 On Linux systems, these are usually provided by the **tk** and **tk-dev**
-(or **tk-devel**) packages which can be installed using
-
-.. code-block:: console
+(or **tk-devel**) packages which can be installed using::
 
     $ sudo apt-get install tk tk-dev
 
@@ -476,9 +354,7 @@ or similar commands.
 
 Sage's Python will then automatically recognize your system's install of Tcl/Tk.
 If you installed Sage first, all is not lost. You just need to rebuild
-Sage's Python and any part of Sage relying on it
-
-.. code-block:: console
+Sage's Python and any part of Sage relying on it::
 
     $ sage -f python3  # rebuild Python3
     $ make             # rebuild components of Sage depending on Python
@@ -489,7 +365,7 @@ If
 
 .. skip
 
-.. code-block:: ipycon
+.. CODE-BLOCK:: ipycon
 
    sage: import _tkinter
    sage: import Tkinter
@@ -506,7 +382,7 @@ Installation steps
 
   The following steps use the classical ``./configure && make`` build
   process. The modern Meson build system is also supported, see
-  :ref:`build-source-meson`.
+  :ref:`section-build-source`.
 
 #. Follow the procedure in the file `README.md <https://github.com/sagemath/sage/#readme>`_
    in ``SAGE_ROOT``.
@@ -527,18 +403,14 @@ Installation steps
      ``upstream``.
 
      After downloading the source tarball ``sage-x.y.tar.gz`` into
-     a directory ``~/sage/``
+     a directory ``~/sage/``::
 
-     .. code-block:: console
+       $ cd ~/sage/
+       $ tar xf sage-x.y.tar.gz  # adapt x.y; takes a while
 
-         $ cd ~/sage/
-         $ tar xf sage-x.y.tar.gz  # adapt x.y; takes a while
+     This creates the subdirectory ``sage-x.y``. Now change into it::
 
-     This creates the subdirectory ``sage-x.y``. Now change into it
-
-     .. code-block:: console
-
-         $ cd sage-x.y/  # adapt x.y
+       $ cd sage-x.y/  # adapt x.y
 
      .. note::
 
@@ -589,15 +461,11 @@ Installation steps
    :ref:`section_envvar` for additional information on useful environment
    variables used by Sage.
 
-#. To start Sage, you can now simply type from Sage's home directory
-
-   .. code-block:: console
+#. To start Sage, you can now simply type from Sage's home directory::
 
        $ ./sage
 
-   You should see the Sage prompt, which will look something like this
-
-   .. code-block:: console
+   You should see the Sage prompt, which will look something like this::
 
        $ sage
        ┌────────────────────────────────────────────────────────────────────┐
@@ -620,14 +488,14 @@ Installation steps
 
    After Sage has started, try a simple command:
 
-   .. code-block:: ipycon
+   .. CODE-BLOCK:: ipycon
 
        sage: 2 + 2
        4
 
    Or something slightly more complicated:
 
-   .. code-block:: ipycon
+   .. CODE-BLOCK:: ipycon
 
        sage: factor(2005)
        5 * 401
@@ -664,7 +532,7 @@ Installation steps
    script should pass along all of its arguments.
    For example, a ``maple`` script might look like:
 
-   .. code-block:: bash
+   .. CODE-BLOCK:: bash
 
        #!/bin/sh
 
@@ -674,11 +542,9 @@ Installation steps
    There are different possibilities to make using Sage a little easier:
 
    - Make a symbolic link from :file:`/usr/local/bin/sage` (or another
-     directory in your :envvar:`PATH`) to :sage_root:`sage`
+     directory in your :envvar:`PATH`) to :sage_root:`sage`::
 
-     .. code-block:: console
-
-          $ ln -s /path/to/sage_root/sage /usr/local/bin/sage
+         $ ln -s /path/to/sage_root/sage /usr/local/bin/sage
 
      Now simply typing ``sage`` from any directory should be sufficient to run
      Sage.
@@ -686,14 +552,14 @@ Installation steps
    - Copy :sage_root:`sage` to a location in your :envvar:`PATH`.
      If you do this, make sure you edit the line:
 
-     .. code-block:: bash
+     .. CODE-BLOCK:: bash
 
          #SAGE_ROOT=/path/to/sage-version
 
      at the beginning of the copied ``sage`` script according to the direction
      given there to something like:
 
-     .. code-block:: bash
+     .. CODE-BLOCK:: bash
 
          SAGE_ROOT=<SAGE_ROOT>
 
@@ -704,7 +570,7 @@ Installation steps
      ``sage`` containing the lines
      (note that you have to change ``<SAGE_ROOT>`` below!):
 
-     .. code-block:: bash
+     .. CODE-BLOCK:: bash
 
          #!/usr/bin/env bash
 
@@ -725,7 +591,7 @@ Installation steps
      For example, put something similar to the following line in your
      :file:`.bashrc` file:
 
-     .. code-block:: bash
+     .. CODE-BLOCK:: bash
 
          alias sage=<SAGE_ROOT>/sage
 
@@ -852,11 +718,9 @@ Here are some of the more commonly used variables affecting the build process:
   If set to ``0``, silence the build.  Instead of showing a detailed
   compilation log, only one line of output is shown at the beginning
   and at the end of the installation of each Sage package.  To see
-  even less output, use
+  even less output, use::
 
-  .. code-block:: console
-
-      $ make -s V=0
+    $ make -s V=0
 
   (Note that the above uses the syntax of setting a Makefile variable.)
 
@@ -1184,9 +1048,9 @@ Environment variables controlling the documentation build
     ``SAGE_JUPYTER_SERVER=http://localhost:8889``, run a local Jupyter server
     by
 
-    .. code-block:: console
+    .. CODE-BLOCK:: bash
 
-        $ ./sage --notebook=jupyterlab \
+        ./sage --notebook=jupyterlab \
                --ServerApp.token='secret' \
                --ServerApp.allow_origin='null' \
                --ServerApp.disable_check_xsrf=true \
@@ -1305,15 +1169,11 @@ a single copy of Sage in a multi-user computer network.
 #. Using ``sudo``, create the installation directory, for example,
    ``/opt/sage/sage-x.y``. We refer to it as ``SAGE_LOCAL`` in the
    instructions below. Do not try to install into a directory that
-   already contains other software, such as ``/usr/local``
-
-   .. code-block:: console
+   already contains other software, such as ``/usr/local``::
 
        $ sudo mkdir -p SAGE_LOCAL
 
-#. Make the directory writable for you and readable by everyone
-
-   .. code-block:: console
+#. Make the directory writable for you and readable by everyone::
 
        $ sudo chown $(id -un) SAGE_LOCAL
        $ sudo chmod 755 SAGE_LOCAL
@@ -1327,16 +1187,12 @@ a single copy of Sage in a multi-user computer network.
 
 #. Optionally, create a symbolic link to the installed ``sage`` script
    in a directory that is in the users' :envvar:`PATH`, for example
-   ``/usr/local/bin``
-
-   .. code-block:: console
+   ``/usr/local/bin``::
 
        $ sudo ln -s SAGE_LOCAL/bin/sage /usr/local/bin/sage
 
 #. Optionally, change permissions to prevent accidental changes to
-   the installation by yourself
-
-   .. code-block:: console
+   the installation by yourself::
 
        $ sudo chown -R root SAGE_LOCAL
 
@@ -1355,39 +1211,33 @@ The system's package manager does not keep track of the applications that
 make use of the shared libraries.  Therefore indiscriminate upgrades of
 system packages can break a Sage installation.
 
-This can always be fixed by a full rebuild
+This can always be fixed by a full rebuild::
 
-.. code-block:: console
-
-    $ make distclean && make build
+  $ make distclean && make build
 
 But this time-consuming step can often be avoided by just reinstalling a
 few packages. The command ``make -j list-broken-packages`` assists with
-this
+this::
 
-.. code-block:: console
+  $ make -j list-broken-packages
+  make --no-print-directory auditwheel_or_delocate-no-deps
+  ...
+  # Checking .../local/var/lib/sage/installed/bliss-0.73+debian-1+sage-2016-08-02.p0
+  ...
+  Checking shared library file '.../local/lib/libumfpack.dylib'
+  Checking shared library file '.../local/var/tmp/sage/build/suitesparse-5.10.1/src/lib/libsliplu.1.0.2.dylib'
+  Error during installcheck of 'suitesparse': .../local/var/tmp/sage/build/suitesparse-5.10.1/src/lib/libsliplu.1.0.2.dylib
+  ...
+  Uninstall broken packages by typing:
 
-    $ make -j list-broken-packages
-    make --no-print-directory auditwheel_or_delocate-no-deps
-    ...
-    # Checking .../local/var/lib/sage/installed/bliss-0.73+debian-1+sage-2016-08-02.p0
-    ...
-    Checking shared library file '.../local/lib/libumfpack.dylib'
-    Checking shared library file '.../local/var/tmp/sage/build/suitesparse-5.10.1/src/lib/libsliplu.1.0.2.dylib'
-    Error during installcheck of 'suitesparse': .../local/var/tmp/sage/build/suitesparse-5.10.1/src/lib/libsliplu.1.0.2.dylib
-    ...
-    Uninstall broken packages by typing:
+      make lcalc-SAGE_LOCAL-uninstall;
+      make ratpoints-SAGE_LOCAL-uninstall;
+      make r-SAGE_LOCAL-uninstall;
+      make suitesparse-SAGE_LOCAL-uninstall;
 
-        make lcalc-SAGE_LOCAL-uninstall;
-        make ratpoints-SAGE_LOCAL-uninstall;
-        make r-SAGE_LOCAL-uninstall;
-        make suitesparse-SAGE_LOCAL-uninstall;
+After running the suggested commands, run::
 
-After running the suggested commands, run
-
-.. code-block:: console
-
-    $ make build
+  $ make build
 
 
 Upgrading Sage using a separate git worktree
@@ -1401,21 +1251,17 @@ can keep using your existing installation when something goes wrong.
 Start from the directory created when you used ``git clone``, perhaps
 ``~/sage/sage/``. Let's verify that this is indeed a git repository by
 looking at the hidden ``.git`` subdirectory. It will looks like this,
-but the exact contents can vary
+but the exact contents can vary::
 
-.. code-block:: console
+  [alice@localhost sage]$ ls .git
+  COMMIT_EDITMSG HEAD           branches       description    gitk.cache
+  index          logs           packed-refs    FETCH_HEAD     ORIG_HEAD
+  config         hooks          info           objects        refs
 
-    $ ls .git
-    COMMIT_EDITMSG HEAD           branches       description    gitk.cache
-    index          logs           packed-refs    FETCH_HEAD     ORIG_HEAD
-    config         hooks          info           objects        refs
+Good. Now let's see what worktrees already exist::
 
-Good. Now let's see what worktrees already exist
-
-.. code-block:: console
-
-    $ git worktree list
-    /home/alice/sage/sage                     c0ffeefe10 [master]
+  [alice@localhost sage]$ git worktree list
+  /home/alice/sage/sage                     c0ffeefe10 [master]
 
 We see just one line, the directory created when you used ``git clone``.
 We will call this the "main worktree" from now on. Next to the directory,
@@ -1423,56 +1269,46 @@ you can see the abbreviated commit sha and the name of the branch that
 we're on (``master``).
 
 To try out a new version of Sage, let's fetch it first from the main
-repository
+repository::
 
-.. code-block:: console
-
-    $ git fetch upstream 10.3.beta8
-    From https://github.com/sagemath/sage
-    * tag                     10.3.beta8 -> FETCH_HEAD
+  [alice@localhost sage]$ git fetch upstream 10.3.beta8
+  From https://github.com/sagemath/sage
+   * tag                     10.3.beta8 -> FETCH_HEAD
 
 Now let's create a new worktree. We need a name for it; it should
 start with ``worktree-`` but can be anything after that. Experience
 shows that worktrees are often repurposed later, and because a
 directory containing a Sage installation cannot be moved without
 breaking the installation in it, it may be a good idea to choose
-a memorable name without much meaning
+a memorable name without much meaning::
 
-.. code-block:: console
-
-    $ git worktree add worktree-purple FETCH_HEAD
-    Preparing worktree (detached HEAD 30b3d78fac)
-    Updating files: 100% (11191/11191), done.
-    HEAD is now at 30b3d78fac Updated SageMath version to 10.3.beta8
+  [alice@localhost sage]$ git worktree add worktree-purple FETCH_HEAD
+  Preparing worktree (detached HEAD 30b3d78fac)
+  Updating files: 100% (11191/11191), done.
+  HEAD is now at 30b3d78fac Updated SageMath version to 10.3.beta8
 
 We now have a subdirectory ``worktree-purple``. This is a
-"linked worktree"
+"linked worktree"::
 
-.. code-block:: console
-
-    $ git worktree list
-    /home/alice/sage/sage                     c0ffeefe10 [master]
-    /home/alice/sage/sage/worktree-purple     30b3d78fac (detached HEAD)
-    $ cd worktree-purple
-    $ cat VERSION.txt
-    SageMath version 10.3.beta8, Release Date: 2024-02-13
+  [alice@localhost sage]$ git worktree list
+  /home/alice/sage/sage                     c0ffeefe10 [master]
+  /home/alice/sage/sage/worktree-purple     30b3d78fac (detached HEAD)
+  [alice@localhost sage]$ cd worktree-purple
+  [alice@localhost worktree-purple]$ cat VERSION.txt
+  SageMath version 10.3.beta8, Release Date: 2024-02-13
 
 All worktrees created in this way share the same repository,
-so they have access to all branches
+so they have access to all branches::
 
-.. code-block:: console
-
-    $ git --no-pager branch -v
-    * (no branch) 30b3d78fac Updated SageMath version to 10.3.beta8
-    + master      2a9a4267f9 Updated SageMath version to 10.2
+  [alice@localhost worktree-purple]$ git --no-pager branch -v
+  * (no branch) 30b3d78fac Updated SageMath version to 10.3.beta8
+  + master      2a9a4267f9 Updated SageMath version to 10.2
 
 In fact, ``.git`` here is not a directory, just a hidden
-file
+file::
 
-.. code-block:: console
-
-    $ ls -l .git
-    -rw-r--r--  1 alice  staff  59 Feb 20 18:16 .git
+  [alice@localhost worktree-purple]$ ls -l .git
+  -rw-r--r--  1 alice  staff  59 Feb 20 18:16 .git
 
 In the new worktree, we now build Sage from scratch. This
 is completely independent of and will not disrupt your
@@ -1489,23 +1325,13 @@ worry is the directory ``upstream``, where Sage caches
 downloaded archives of packages. To have the new worktree
 share it with the main worktree, let's create a symbolic
 link. This is an optional step that will avoid
-re-downloading files that you already have
+re-downloading files that you already have::
 
-.. code-block:: console
+  [alice@localhost worktree-purple]$ ln -s ../upstream/ .
 
-    $ ln -s ../upstream/ .
+Now let's build Sage, starting with the step::
 
-Now let's build Sage, starting with the step
-
-.. code-block:: console
-
-    $ make configure
+  [alice@localhost worktree-purple]$ make configure
 
 Refer to the file `README.md <https://github.com/sagemath/sage/#readme>`_
 for the following steps.
-
-Unlike the ``make``-based build system which relies on header comments
-``# distutils: language = c++`` to determine whether C++ should be used,
-Meson-based build system requires specifying
-``override_options: ['cython_language=cpp']`` in the ``meson.build`` file.
-Similarly, dependencies need to be specified by ``dependencies: [...]``.
