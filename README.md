@@ -411,8 +411,8 @@ in the Installation Guide.
     If there are numerous failures, there was a serious problem with your build.
 
 17. The HTML version of the [documentation](https://doc.sagemath.org/html/en/index.html)
-    is built during the compilation process of Sage and resides in the directory
-    `local/share/doc/sage/html/`. You may want to bookmark it in your browser.
+    can be built by running `make doc-html` and resides in
+    `build/sage-distro/src/doc/`. You may want to bookmark it in your browser.
 
 18. Optional: If you want to build the PDF version of the documentation,
     run `make doc-pdf` (this requires LaTeX to be installed).
@@ -427,7 +427,7 @@ in the Installation Guide.
     having to either type the full path or navigate to the Sage
     directory and type `./sage`. This can be done by running:
 
-        $ sudo ln -s $(./sage -sh -c 'ls $SAGE_ROOT/venv/bin/sage') /usr/local/bin
+        $ sudo ln -s $(pwd)/sage /usr/local/bin
 
 21. Optional: Set up SageMath as a Jupyter kernel in an existing Jupyter notebook
     or JupyterLab installation, as described in the section

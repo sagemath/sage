@@ -571,21 +571,15 @@ def Frobenius_filter(E, L, patience=100):
                 for P in K.primes_above(p):
                     if E.has_good_reduction(P):
                         yield P
-    numP = 0
-    for P in primes_iter():
+
+    for numP, P in enumerate(primes_iter()):
         if not L or numP == patience:  # stop if no primes are left, or patience is exhausted
             break
 
-        numP += 1
-
         # Discard any l for which the Frobenius polynomial at P is
         # irreducible modulo l
-
         disc = E.reduction(P).frobenius_polynomial().discriminant()
-
-        L = [l for l in L if legendre_symbol(disc,l) != -1]
-
-        #print("After using {} primes P, {}  primes l remain".format(numP,len(L)))
+        L = [l for l in L if legendre_symbol(disc, l) != -1]
 
     if include_2:
         L = [2] + L
