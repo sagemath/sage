@@ -918,22 +918,6 @@ cdef class WeakValueDictionary(dict):
         """
         return list(self.values())
 
-    def iteritems(self):
-        """
-        EXAMPLES::
-
-            sage: import sage.misc.weak_dict
-            sage: class Vals(): pass
-            sage: L = [Vals() for _ in range(10)]
-            sage: D = sage.misc.weak_dict.WeakValueDictionary(enumerate(L))
-            sage: T = list(D.iteritems())
-            doctest:warning...:
-            DeprecationWarning: use items instead
-            See https://github.com/sagemath/sage/issues/34488 for details.
-        """
-        deprecation(34488, "use items instead")
-        return self.items()
-
     def items(self):
         """
         Iterate over the items of this dictionary.
