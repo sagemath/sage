@@ -153,7 +153,7 @@ if not m4rie.found()
   # For some reason, m4rie is not found via pkg-config on some systems (eg Conda)
   m4rie = cc.find_library('m4rie', required: not is_windows, disabler: true)
 endif
-mtx = dependency('mtx', required: false)
+mtx = dependency('libmtx', required: false)
 if not mtx.found()
   # fallback for older versions without pkg-config
   mtx = cc.find_library(

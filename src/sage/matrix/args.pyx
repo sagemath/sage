@@ -1403,7 +1403,7 @@ cdef class MatrixArgs:
                                                            for vec in e])
             self.entries = []
             for i, row in enumerate(e):
-                for j, val in (<Vector?>row).iteritems():
+                for j, val in (<Vector?>row).items():
                     self.entries.append(make_SparseEntry(i, j, val))
 
             self.set_ncols(max((<Vector>vec)._parent.ambient_module().rank() for vec in e))
