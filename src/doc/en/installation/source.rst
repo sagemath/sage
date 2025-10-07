@@ -129,8 +129,6 @@ Depending on your distribution, install the following packages:
 
     Not yet supported.
 
-   .. .. literalinclude:: debian.txt
-
 .. tab:: Fedora
 
     At least Fedora 41 is required.
@@ -282,8 +280,6 @@ build artifacts. Certain options are configurable at build time. The
 easiest way to obtain an overview of these options is by using ``meson
 configure``:
 
-  .. .. literalinclude:: void-optional.txt
-      :language: console
   .. code-block:: console
 
       $ meson configure builddir
@@ -325,15 +321,6 @@ or to the system Python environment if no environment is active.
 When editable install is used, it is not necessary to reinstall after each
 compilation.
 
-.. .. literalinclude:: homebrew.txt
-   :language: console
-
-.. Some Homebrew packages are installed "keg-only," meaning that they are
-.. not available in standard paths. To make them accessible when building
-.. Sage, run
-
-.. .. code-block:: console
-
 .. note::
 
   If you want to install the project to a different directory, you can specify
@@ -348,16 +335,12 @@ compilation.
   ``/desired/install/path/lib/python3.12/site-packages/sage``.
   Usually, this directory is not on your Python path, so you have to use:
 
-  .. .. literalinclude:: homebrew-develop.txt
-    :language: console
   .. code-block:: console
 
           $ PYTHONPATH=/desired/install/path ./sage
 
   Alternatively, we can still use pip to install:
 
- ..  .. literalinclude:: homebrew-recommended.txt
-    :language: console
   .. code-block:: console
 
     $ pip install --no-build-isolation --config-settings=builddir=builddir --editable .
