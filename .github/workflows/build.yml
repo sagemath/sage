@@ -19,7 +19,7 @@ on:
       docker_tag:
         description: 'Docker tag'
         required: true
-        default: 'dev'
+        default: '10.8.beta5'
 
 concurrency:
   # Cancel previous runs of this workflow for the same branch
@@ -166,9 +166,6 @@ jobs:
                      --mount type=bind,src=$(pwd),dst=$(pwd) \
                      --workdir $(pwd) \
                      ${{ env.BUILD_IMAGE }} /bin/sh
-
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
 
       # Testing
 
