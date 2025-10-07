@@ -72,7 +72,7 @@ env:
   BUILD_IMAGE:            "localhost:5000/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-noble-standard' }}-with-targets:ci"
   FROM_DOCKER_REPOSITORY: "ghcr.io/sagemath/sage/"
   FROM_DOCKER_TARGET:     "with-targets"
-  FROM_DOCKER_TAG:        ${{ github.event.inputs.docker_tag || 'dev'}}
+  FROM_DOCKER_TAG:        ${{ github.event.inputs.docker_tag || '10.8.beta5'}}
   EXTRA_CONFIGURE_ARGS:   --enable-fat-binary
 
 jobs:
