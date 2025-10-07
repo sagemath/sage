@@ -1,1 +1,1 @@
-hatch_vcs
+hatch-vcs
