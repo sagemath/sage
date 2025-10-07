@@ -104,9 +104,9 @@ def cheeger_constant(g):
     if g.is_directed():
         raise ValueError("Cheeger constant is only defined on non-oriented graph")
     g._scream_if_not_simple()
-    if g.num_verts() == 0:
+    if not g.n_vertices():
         raise ValueError("Cheeger constant is not defined for the empty graph")
-    elif g.num_verts() == 1:
+    elif g.n_vertices() == 1:
         return Infinity
     elif not g.is_connected():
         return QQ.zero()
@@ -257,9 +257,9 @@ def edge_isoperimetric_number(g):
     if g.is_directed():
         raise ValueError("edge isoperimetric number is only defined on non-oriented graph")
     g._scream_if_not_simple()
-    if g.num_verts() == 0:
+    if not g.n_vertices():
         raise ValueError("edge-isoperimetric number not defined for the empty graph")
-    elif g.num_verts() == 1:
+    elif g.n_vertices() == 1:
         return Infinity
     elif not g.is_connected():
         return QQ((0, 1))

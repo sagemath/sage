@@ -584,7 +584,7 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
         52
     """
     R = ZZ['x, y']
-    if G.num_edges() == 0:
+    if not G.n_edges():
         return R.one()
 
     G = G.relabel(inplace=False, immutable=False)  # making sure the vertices are integers
@@ -615,7 +615,7 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
         sage: P.tutte_polynomial() # indirect doctest
         x^4 + x^3 + x^2 + x + y
     """
-    if not G.num_edges():
+    if not G.n_edges():
         return x.parent().one()
 
     def recursive_tp(graph=None):
@@ -648,12 +648,12 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
     if len(blocks) > 1:
         return prod([recursive_tp(G.subgraph(block)) for block in blocks])
 
-    components = G.connected_components_number()
+    components = G.number_of_connected_components()
     edge = edge_selector(G)
     unlabeled_edge = edge[:2]
 
     with removed_edge(G, edge):
-        if G.connected_components_number() > components:
+        if G.number_of_connected_components() > components:
             with contracted_edge(G, unlabeled_edge):
                 return x*recursive_tp()
 
@@ -667,7 +667,7 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
     # instead of n (allowing for the last part of the recursion).
     # Additionally, the first operand of the final product should be
     # (x+y^{1...(d_n+d_{n-1}-1)}) instead of just (x+y^(d_n+d_{n-1}-1)
-    if uG.num_verts() == uG.num_edges():  # G is a multi-cycle
+    if uG.n_vertices() == uG.n_edges():  # G is a multi-cycle
         n = len(d)
         result = 0
         for i in range(n - 2):

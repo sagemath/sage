@@ -804,10 +804,10 @@ def PBD_4_7_from_Y(gdd, check=True):
     for G in gdd.groups():
         gs = len(G)
         for B in group_PBD[gs]:
-            PBD.append([3*G[x//3]+(x % 3) if x < 3*gs else 3*gdd.num_points()
+            PBD.append([3*G[x//3]+(x % 3) if x < 3*gs else 3*gdd.n_points()
                         for x in B])
 
-    return PairwiseBalancedDesign(3*gdd.num_points()+1,
+    return PairwiseBalancedDesign(3*gdd.n_points()+1,
                                   blocks=PBD,
                                   K=[4, 7],
                                   check=check,

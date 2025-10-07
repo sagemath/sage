@@ -1180,7 +1180,8 @@ def get_all_documents(source: Path) -> list[Path]:
     EXAMPLES::
 
         sage: from sage_docbuild.builders import get_all_documents
-        sage: documents = get_all_documents(Path('src/doc'))
+        sage: from sage.env import SAGE_DOC_SRC
+        sage: documents = get_all_documents(Path(SAGE_DOC_SRC))
         sage: Path('en/tutorial') in documents
         True
     """
@@ -1213,7 +1214,8 @@ def get_all_reference_documents(source: Path) -> list[Path]:
     EXAMPLES::
 
         sage: from sage_docbuild.builders import get_all_reference_documents
-        sage: documents = get_all_reference_documents(Path('src/doc/en'))
+        sage: from sage.env import SAGE_DOC_SRC
+        sage: documents = get_all_reference_documents(Path(SAGE_DOC_SRC) / 'en')
         sage: Path('reference/algebras') in documents
         True
     """

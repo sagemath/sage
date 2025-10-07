@@ -549,7 +549,7 @@ class DrinfeldModuleHomset(Homset):
         where the `g_k` are the coefficients of `\psi_T`
 
         The algorithm consists in solving the above system
-        viewed as a linear system over `\mathbb F_q[T]`.
+        viewed as a linear system over `\GF{q}[T]`.
 
         We refer to [Mus2023]_, Section 7.3 for more details.
 
@@ -650,7 +650,7 @@ class DrinfeldModuleHomset(Homset):
 
     def _Fq_basis(self, degree):
         r"""
-        Return a `\mathbb{F}_q`-basis of the space of morphisms
+        Return a `\GF{q}`-basis of the space of morphisms
         in this homset of degree at most ``degree``.
 
         Currently, it only works over finite fields.
@@ -752,13 +752,13 @@ class DrinfeldModuleHomset(Homset):
 
         If ``degree`` is ``None``, a basis over the underlying
         function ring is returned.
-        Otherwise, a `\mathbb F_q`-basis of the set of morphisms of
+        Otherwise, a `\GF{q}`-basis of the set of morphisms of
         degree at most ``degree`` is returned.
 
         ALGORITHM:
 
-        We reformulate the problem as a linear system over `\mathbb F_q`
-        or `A = \mathbb F_q[T]` and solve it.
+        We reformulate the problem as a linear system over `\GF{q}`
+        or `A = \GF{q}[T]` and solve it.
         We refer to [Wes2022]_ and [Mus2023]_, Section 7.3 for more details.
 
         EXAMPLES::
@@ -774,7 +774,7 @@ class DrinfeldModuleHomset(Homset):
              Endomorphism of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
                Defn: 2*τ^4 + z*τ^3 + z]
 
-        If we specify a degree, a basis over `\mathbb F_q` is computed::
+        If we specify a degree, a basis over `\GF{q}` is computed::
 
             sage: End(phi).basis(degree=5)
             [Identity morphism of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z,
@@ -845,8 +845,8 @@ class DrinfeldModuleHomset(Homset):
 
     def basis_over_frobenius(self):
         r"""
-        Return a basis of this homser over `\mathbb F_q[\tau^n]` where
-        `n = [K:\mathbb F_q]` (and thus `\tau^n` is to the Frobenius endomorphism).
+        Return a basis of this homser over `\GF{q}[\tau^n]` where
+        `n = [K:\GF{q}]` (and thus `\tau^n` is to the Frobenius endomorphism).
 
         ALGORITHM:
 

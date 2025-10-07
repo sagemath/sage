@@ -3285,7 +3285,7 @@ def HoffmanSingletonGraph():
         5
         sage: HS.diameter()
         2
-        sage: HS.num_verts()
+        sage: HS.n_vertices()
         50
 
     Note that you get a different layout each time you create the graph.  ::

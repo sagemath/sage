@@ -963,7 +963,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             count[0] += 1
             count[1] += face.n
         all = {}
-        for part, count in part_counts.iteritems():
+        for part, count in part_counts.items():
             face_set = IndexFaceSet([])
             face_set.realloc(self.vcount, count[0], count[1])
             memcpy(face_set.vs, self.vs, sizeof(point_c) * self.vcount)

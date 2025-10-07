@@ -65,7 +65,7 @@ List of Poset methods
     :meth:`~FinitePoset.cardinality` | Return the number of elements in the poset.
     :meth:`~FinitePoset.height` | Return the number of elements in a longest chain of the poset.
     :meth:`~FinitePoset.width` | Return the number of elements in a longest antichain of the poset.
-    :meth:`~FinitePoset.relations_number` | Return the number of relations in the poset.
+    :meth:`~FinitePoset.number_of_relations` | Return the number of relations in the poset.
     :meth:`~FinitePoset.dimension` | Return the dimension of the poset.
     :meth:`~FinitePoset.jump_number` | Return the jump number of the poset.
     :meth:`~FinitePoset.magnitude` | Return the magnitude of the poset.
@@ -2339,7 +2339,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         .. SEEALSO::
 
-            :meth:`relations_number`, :meth:`relations_iterator`
+            :meth:`number_of_relations`, :meth:`relations_iterator`
 
         TESTS::
 
@@ -2693,7 +2693,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         .. SEEALSO::
 
-            :meth:`relations_number`, :meth:`relations`.
+            :meth:`number_of_relations`, :meth:`relations`.
 
         AUTHOR:
 
@@ -2711,7 +2711,7 @@ class FinitePoset(UniqueRepresentation, Parent):
                 for j in hd.breadth_first_search(i):
                     yield [elements[i], elements[j]]
 
-    def relations_number(self):
+    def number_of_relations(self):
         r"""
         Return the number of relations in the poset.
 
@@ -2724,10 +2724,10 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = posets.PentagonPoset()
-            sage: P.relations_number()
+            sage: P.number_of_relations()
             13
 
-            sage: posets.TamariLattice(4).relations_number()
+            sage: posets.TamariLattice(4).number_of_relations()
             68
 
         .. SEEALSO::
@@ -2736,13 +2736,15 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: Poset().relations_number()
+            sage: Poset().number_of_relations()
             0
         """
         return sum(1 for _ in self.relations_iterator())
 
     # Maybe this should also be deprecated.
-    intervals_number = relations_number
+    intervals_number = number_of_relations
+
+    relations_number = number_of_relations
 
     def linear_intervals_count(self) -> list[int]:
         """
@@ -5379,7 +5381,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         dg = self._hasse_diagram
         if not dg.is_connected() or not dg.order():
             raise NotImplementedError('the poset is empty or not connected')
-        if Integer(dg.num_verts()).is_prime():
+        if Integer(dg.n_vertices()).is_prime():
             return [self]
         if sum(e for _, e in self.degree_polynomial().factor()) == 1:
             return [self]

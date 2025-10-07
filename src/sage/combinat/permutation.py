@@ -61,7 +61,7 @@ Below are listed all methods and classes defined in this file.
     :meth:`~sage.combinat.permutation.Permutation.runs` | Return a list of the runs in the permutation ``self``.
     :meth:`~sage.combinat.permutation.Permutation.longest_increasing_subsequence_length` | Return the length of the longest increasing subsequences of ``self``.
     :meth:`~sage.combinat.permutation.Permutation.longest_increasing_subsequences` | Return the list of the longest increasing subsequences of ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.longest_increasing_subsequences_number` | Return the number of longest increasing subsequences
+    :meth:`~sage.combinat.permutation.Permutation.number_of_longest_increasing_subsequences` | Return the number of longest increasing subsequences
     :meth:`~sage.combinat.permutation.Permutation.cycle_type` | Return the cycle type of ``self`` as a partition of ``len(self)``.
     :meth:`~sage.combinat.permutation.Permutation.foata_bijection` | Return the image of the permutation ``self`` under the Foata bijection `\phi`.
     :meth:`~sage.combinat.permutation.Permutation.foata_bijection_inverse` | Return the image of the permutation ``self`` under the inverse of the Foata bijection `\phi`.
@@ -2441,7 +2441,7 @@ class Permutation(CombinatorialElement):
 
         return sorted([p[1:-1] for p in D.all_paths(0, n + 1)], reverse=True)
 
-    def longest_increasing_subsequences_number(self):
+    def number_of_longest_increasing_subsequences(self):
         r"""
         Return the number of increasing subsequences of maximal length
         in ``self``.
@@ -2459,13 +2459,13 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: sum(p.longest_increasing_subsequences_number()
+            sage: sum(p.number_of_longest_increasing_subsequences()
             ....:     for p in Permutations(8))
             120770
 
             sage: p = Permutations(50).random_element()
             sage: (len(p.longest_increasing_subsequences()) ==                          # needs sage.graphs
-            ....:  p.longest_increasing_subsequences_number())
+            ....:  p.number_of_longest_increasing_subsequences())
             True
         """
         n = self.size()
@@ -2493,6 +2493,8 @@ class Permutation(CombinatorialElement):
                         break
                     count[x] += count[k]
         return sum(count[x] for x in columns[-1])
+
+    longest_increasing_subsequences_number = number_of_longest_increasing_subsequences
 
     def cycle_type(self):
         r"""

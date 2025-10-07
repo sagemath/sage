@@ -733,12 +733,10 @@ def ones(H, pivots):
     # that contain exactly one "1" entry and all other entries 0.
     onecol = []
     onerow = []
-    i = 0
-    for c in pivots:
+    for i, c in enumerate(pivots):
         if H[i, c] == 1:
             onecol.append(c)
             onerow.append(i)
-        i += 1
     onecol_set = set(onecol)
     non_onerow = [j for j in range(len(pivots)) if j not in onerow]
     non_onecol = [j for j in range(H.ncols()) if j not in onecol_set][:len(non_onerow)]
