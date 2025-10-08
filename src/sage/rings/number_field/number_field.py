@@ -4522,7 +4522,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: # needs sage.libs.gap
             sage: z = QQ['z'].0
             sage: K.<zeta> = NumberField(z^2 - 2)
-            sage: K._gap_init_()  # random (the variable name $sage1 represents F.base_ring() in gap is somehow random)
+            sage: K._gap_init_()  # random (the variable name $sage1 represents F.base_ring() in gap and is random)
             'CallFuncList(function() local z,E; z:=Indeterminate($sage1,"z"); E:=AlgebraicExtension($sage1,z^2 - 2,"zeta"); return E; end,[])'
             sage: k = gap(K); k
             <algebraic extension over the Rationals of degree 2>
@@ -4582,8 +4582,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: gapK.PrimitiveElement()
             a
 
-        Check that libgap global variables does not interfere with this method
-        (as it should if the method is correctly implemented and avoid ``libgap.eval``)::
+        Check that libgap global variables do not interfere with this method
+        (as it should if the method is correctly implemented and avoids ``libgap.eval``)::
 
             sage: libgap.eval("x:=1")
             1
@@ -4603,10 +4603,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             raise NotImplementedError("Currently, only simple algebraic extensions are implemented in libgap")
 
         from sage.libs.gap.libgap import libgap
-        q = self.polynomial()
-        R = libgap(self.base_ring())
-        E = R.AlgebraicExtension(self.polynomial(), str(self.gen()))
-        return E
+        return libgap.AlgebraicExtension(self.base_ring(), self.polynomial(), str(self.gen()))
 
     def characteristic(self):
         """
