@@ -2768,7 +2768,7 @@ class MPolynomialIdeal_singular_repr(
             sage: R.<x,y,z> = F[]
             sage: I = Ideal([x^2 - 5*y + z, x*21 + y - z, 20*x + 20*y - 15*z + 20])
             sage: I.variety()
-            verbose 0 (2708: multi_polynomial_ideal.py, variety) Warning: falling back to very slow toy implementation.
+            verbose 0 (...: multi_polynomial_ideal.py, variety) Warning: falling back to very slow toy implementation.
             [{z: 475236874226935968499387140880743357810239093941490264140142,
             y: 303497730986201757454241700121162099180641015844366285478588,
             x: 366193016391757014347340764061969600539773744194969974791622},
