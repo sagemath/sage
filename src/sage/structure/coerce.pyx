@@ -101,6 +101,53 @@ from fractions import Fraction
 cdef type FractionType = <type>Fraction
 
 cpdef _py_scalar_parent_mpmath13(py_type):
+    r"""
+    Version of py_scalar_parent() suitable for use with mpmath-1.3.x.
+    The main py_scalar_parent() will invoke this one if needed.
+
+    EXAMPLES::
+
+        sage: # needs mpmath13
+        sage: from sage.structure.coerce import _py_scalar_parent_mpmath13
+        sage: _py_scalar_parent_mpmath13(int)
+        Integer Ring
+        sage: _py_scalar_parent_mpmath13(float)
+        Real Double Field
+        sage: _py_scalar_parent_mpmath13(complex)                                                 # needs sage.rings.complex_double
+        Complex Double Field
+        sage: _py_scalar_parent_mpmath13(bool)
+        Integer Ring
+        sage: _py_scalar_parent_mpmath13(dict),
+        (None,)
+
+        sage: # needs mpmath13
+        sage: import fractions
+        sage: _py_scalar_parent_mpmath13(fractions.Fraction)
+        Rational Field
+
+        sage: # needs numpy mpmath13
+        sage: import numpy
+        sage: _py_scalar_parent_mpmath13(numpy.int16)
+        Integer Ring
+        sage: _py_scalar_parent_mpmath13(numpy.int32)
+        Integer Ring
+        sage: _py_scalar_parent_mpmath13(numpy.uint64)
+        Integer Ring
+        sage: _py_scalar_parent_mpmath13(numpy.double)
+        Real Double Field
+
+        sage: # needs mpmath13
+        sage: import gmpy2
+        sage: _py_scalar_parent_mpmath13(gmpy2.mpz)
+        Integer Ring
+        sage: _py_scalar_parent_mpmath13(gmpy2.mpq)
+        Rational Field
+        sage: _py_scalar_parent_mpmath13(gmpy2.mpfr)
+        Real Double Field
+        sage: _py_scalar_parent_mpmath13(gmpy2.mpc)                                               # needs sage.rings.complex_double
+        Complex Double Field
+
+    """
     if issubclass(py_type, int):
         import sage.rings.integer_ring
         return sage.rings.integer_ring.ZZ
