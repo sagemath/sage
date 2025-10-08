@@ -68,7 +68,11 @@ jobs:
         run: |
           sudo DEBIAN_FRONTEND=noninteractive sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian texlive texlive_luatex free_fonts xindy)
-          meson compile -C builddir doc-pdf
+          meson compile -C builddir -j1 doc-pdf
+        # We use -j1 to workaround some unknown race condition, likely read/write on file luaotf-lookup-cache.luc.
+        # See https://github.com/sagemath/sage/pull/40597 for discussion.
+        # This is still a bug because someone running `meson compile` or `ninja` on their own machine
+        # will still see the issue.
         env:
           SAGE_DOCBUILD_OPTS: "--include-tests-blocks"
 
