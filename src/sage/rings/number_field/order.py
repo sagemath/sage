@@ -142,9 +142,9 @@ def quadratic_order_approximate_class_number(disc, *, bound=10**4):
         sage: d = 100000000000031
         sage: QuadraticField(-d).class_number(proof=False)
         14414435
-        sage: round(quadratic_order_approximate_class_number(-d))
+        sage: round(quadratic_order_approximate_class_number(-d))  # rel tol .01
         14407657
-        sage: round(quadratic_order_approximate_class_number(-d, bound=10**6))
+        sage: round(quadratic_order_approximate_class_number(-d, bound=10**6))  # rel tol .01
         14413626
 
     Test it against the exact class number computed for the CSIDH-512 prime (source: https://eprint.iacr.org/2019/498.pdf)::
@@ -153,21 +153,21 @@ def quadratic_order_approximate_class_number(disc, *, bound=10**4):
         sage: p = 4 * prod(primes(3,374)) * 587 - 1
         sage: hreal = 84884147409828091725676728670213067387206838101828807864190286991865870575397
         sage: assert not hreal * BQFClassGroup(-p).random_element()
-        sage: h = round(quadratic_order_approximate_class_number(-p, bound=10**3)); h
+        sage: h = round(quadratic_order_approximate_class_number(-p, bound=10**3)); h  # rel tol .01
         85020334529027955331134025285584937708277525762952749243936367281020276898911
-        sage: RR(h / hreal)
+        sage: RR(h / hreal)  # abs tol .01
         1.00160438813790
-        sage: h = round(quadratic_order_approximate_class_number(-p, bound=10**4)); h
+        sage: h = round(quadratic_order_approximate_class_number(-p, bound=10**4)); h  # rel tol .01
         84396416322932187013685015858232028818143153418602750494380687212063263982976
-        sage: RR(h / hreal)
+        sage: RR(h / hreal)  # abs tol .01
         0.994254155790231
-        sage: h = round(quadratic_order_approximate_class_number(-p, bound=10**5)); h
+        sage: h = round(quadratic_order_approximate_class_number(-p, bound=10**5)); h  # rel tol .01
         84823787383264935642168065590216697209124465727576867303448690101681967969348
-        sage: RR(h / hreal)
+        sage: RR(h / hreal)  # abs tol .01
         0.999288912848806
-        sage: h = round(quadratic_order_approximate_class_number(-p, bound=10**6)); h  # long time -- 2s
+        sage: h = round(quadratic_order_approximate_class_number(-p, bound=10**6)); h  # rel tol .01, long time (2s)
         84884627342209070883738394179700676127184729325091471467872632417652836154863
-        sage: RR(h / hreal)  # long time -- 2s
+        sage: RR(h / hreal)  # abs tol .01, long time (2s)
         1.00000565396951
 
     ALGORITHM: Finite approximation of the infinite product given by
