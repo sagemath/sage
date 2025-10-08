@@ -1167,6 +1167,15 @@ class Order(Parent, sage.rings.abc.Order):
         r"""
         Return the class number of this order.
 
+        .. NOTE::
+
+            For some applications (e.g., in algorithms for computing
+            class groups) it is required to merely *approximate* the
+            class number. The function
+            :func:`quadratic_order_approximate_class_number`
+            can be used to compute such an approximation (currently
+            restricted to maximal imaginary-quadratic orders).
+
         EXAMPLES::
 
             sage: ZZ[2^(1/3)].class_number()                                            # needs sage.symbolic
