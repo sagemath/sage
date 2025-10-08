@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.mpmath13
 """
 Utilities for Sage-mpmath interaction
 
