@@ -119,6 +119,7 @@ def quadratic_order_class_number(disc):
         h = pari.qfbclassno(disc)
     return ZZ(h)
 
+
 def quadratic_order_approximate_class_number(disc, *, bound=10**4):
     r"""
     Return *an approximation of* the class number of
