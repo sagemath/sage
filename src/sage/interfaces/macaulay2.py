@@ -1108,8 +1108,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
             y = self.parent(x)
             z = self.parent().new('%s // matrix{%s}' % (self.name(), y.name()))
             return list(z.entries().flatten())
-        else:
-            return self.parent().new('%s // %s' % (self.name(), x.name()))
+        return self.parent().new('%s // %s' % (self.name(), x.name()))
 
     def __mod__(self, x):
         """
@@ -1531,10 +1530,10 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
                     # Note that n must be prime since it is
                     # coming from Macaulay 2
                     return GF(ZZ(n))
-                else:
-                    ambient_ring = ambient._sage_()
-                    ideal = self.ideal()._sage_()
-                    return ambient_ring.quotient(ideal, names=ambient_ring.variable_names())
+ 
+                ambient_ring = ambient._sage_()
+                ideal = self.ideal()._sage_()
+                return ambient_ring.quotient(ideal, names=ambient_ring.variable_names())
             if cls_str == "PolynomialRing":
                 from sage.rings.polynomial.polynomial_ring_constructor import (
                     PolynomialRing,
@@ -1570,9 +1569,8 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
                 n = ZZ(n)
                 if n.is_prime():
                     return GF(n)
-                else:
-                    gen = str(self.gens())[1:-1]
-                    return GF(n, gen)
+                gen = str(self.gens())[1:-1]
+                return GF(n, gen)
             if cls_str == "Boolean":
                 if repr_str == "true":
                     return True
@@ -1626,7 +1624,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
             if cls_str == "ZZ":
                 from sage.rings.integer_ring import ZZ
                 return ZZ(repr_str)
-            elif cls_str == "QQ":
+            if cls_str == "QQ":
                 from sage.rings.rational_field import QQ
                 return QQ((self.numerator()._sage_(),
                            self.denominator()._sage_()))
@@ -1645,7 +1643,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
                 return parent(d)
             if cls_cls_str == "QuotientRing":
                 return parent(self.external_string())
-            elif cls_cls_str == "Module":
+            if cls_cls_str == "Module":
                 entries = self.entries()._sage_()
                 return parent._element_constructor_(entries)
 
