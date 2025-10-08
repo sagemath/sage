@@ -147,7 +147,6 @@ from urllib.request import urlopen, Request
 
 from sage.version import version
 from sage.cpython.string import bytes_to_str
-from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
 from sage.misc.html import HtmlFragment
 from sage.misc.temporary_file import tmp_filename
@@ -689,7 +688,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
     def online_update(self):
         r"""
-        Fetch the online OEIS to update the informations about this sequence.
+        Fetch the sequence from the OEIS.
 
         TESTS::
 
@@ -1205,15 +1204,16 @@ class OEISSequence(SageObject, UniqueRepresentation):
         else:
             return Unknown
 
-    @cached_method
     def first_terms(self, number=None):
         r"""
+        Return the first few terms of the sequence.
 
         INPUT:
 
-        - ``number`` -- integer or ``None`` (default); the number of
-          terms returned (if less than the number of available terms). When set
-          to ``None``, returns all the known terms.
+        - ``number`` -- integer, ``True`` or ``None`` (default); the
+          number of terms returned (if less than the number of
+          available terms).  When set to ``True``, fetches the
+          b-file.  When set to ``None``, returns all the known terms.
 
         OUTPUT: tuple of integers
 
@@ -1237,9 +1237,41 @@ class OEISSequence(SageObject, UniqueRepresentation):
             (1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
             sage: s.first_terms(5)
             (1, 1, 1, 1, 2)
+
         """
-        fields = ['S', 'T', 'U']
-        return to_tuple(" ".join(flatten([self._field(a) for a in fields])))[:number]
+        def fetch_b_file():
+            url = oeis_url + f"b{self.id(format='int')}.txt"
+            terms = _fetch(url)
+            first_terms = tuple()
+            check = None
+            for term in terms.split('\n'):
+                if not term or term[0] == '#':
+                    continue
+                k, v = [Integer(e) for e in term.strip().split()]
+                if check is not None and k != check + 1:
+                    raise ValueError(f"malformed b-file {url}: key {check} followed by {k}")
+                check = k
+                first_terms += (v,)
+            self._first_terms = True, first_terms
+
+        # self._first_terms is a pair (all?, first_terms)
+        if number is True:
+            if not hasattr(self, "_first_terms") or not self._first_terms[0]:
+                fetch_b_file()
+            return self._first_terms[1]
+
+        if not hasattr(self, "_first_terms"):
+            fields = ['S', 'T', 'U']
+            first_terms = to_tuple(" ".join(flatten([self._field(a) for a in fields])))
+            self._first_terms = (False, first_terms)
+
+        if number is None:
+            return self._first_terms[1]
+
+        if number > len(self._first_terms[1]) and not self._first_terms[0]:
+            fetch_b_file()
+
+        return self._first_terms[1][:number]
 
     def _repr_(self):
         r"""
@@ -1755,8 +1787,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             https://oeis.org/A012345
             <BLANKLINE>
             AUTHOR
-            Patrick Demichel (patrick.demichel(AT)hp.com)
-            <BLANKLINE>
+            ...
 
         TESTS::
 
