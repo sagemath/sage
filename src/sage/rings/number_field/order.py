@@ -133,8 +133,8 @@ def quadratic_order_approximate_class_number(disc, *, bound=10**4):
         sage: from sage.rings.number_field.order import quadratic_order_approximate_class_number
         sage: QuadraticField(-419).class_number()
         9
-        sage: quadratic_order_approximate_class_number(-419)
-        9.0...
+        sage: quadratic_order_approximate_class_number(-419)  # rel tol .01
+        9.01653836091712
 
     ::
 
