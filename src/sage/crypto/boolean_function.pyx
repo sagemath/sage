@@ -31,7 +31,6 @@ from cysignals.signals cimport sig_check
 from libc.string cimport memcpy
 
 from sage.data_structures.bitset_base cimport *
-from sage.misc.superseded import deprecated_function_alias
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.integer cimport Integer
@@ -351,7 +350,7 @@ cdef class BooleanFunction(SageObject):
     def __dealloc__(self):
         bitset_free(self._truth_table)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -612,7 +611,7 @@ cdef class BooleanFunction(SageObject):
         """
         return 2**self._nvariables
 
-    def __richcmp__(BooleanFunction self, other, int op):
+    def __richcmp__(BooleanFunction self, other, int op) -> bool:
         """
         Boolean functions are considered to be equal if the number of
         input variables is the same, and all the values are equal.
@@ -745,15 +744,16 @@ cdef class BooleanFunction(SageObject):
             {8: 64}
         """
         d = {}
-        cdef long i
+        cdef long i, a
         for i in self.walsh_hadamard_transform():
-            if abs(i) in d:
-                d[abs(i)] += 1
+            a = abs(i)
+            if a in d:
+                d[a] += 1
             else:
-                d[abs(i)] = 1
+                d[a] = 1
         return d
 
-    def is_balanced(self):
+    def is_balanced(self) -> bool:
         """
         Return ``True`` if the function takes the value ``True`` half of the time.
 
@@ -769,7 +769,7 @@ cdef class BooleanFunction(SageObject):
         """
         return self.walsh_hadamard_transform()[0] == 0
 
-    def is_symmetric(self):
+    def is_symmetric(self) -> bool:
         """
         Return ``True`` if the function is symmetric, i.e. invariant under
         permutation of its input bits.
@@ -821,7 +821,7 @@ cdef class BooleanFunction(SageObject):
                 ((1<<self._nvariables) - max(abs(w) for w in self.walsh_hadamard_transform())) >> 1
         return self._nonlinearity
 
-    def is_bent(self):
+    def is_bent(self) -> bool:
         """
         Return ``True`` if the function is bent.
 
@@ -928,12 +928,13 @@ cdef class BooleanFunction(SageObject):
             [(0, 33), (8, 58), (16, 28), (24, 6), (32, 2), (128, 1)]
         """
         d = {}
-        cdef long i
+        cdef long i, a
         for i in self.autocorrelation():
-            if abs(i) in d:
-                d[abs(i)] += 1
+            a = abs(i)
+            if a in d:
+                d[a] += 1
             else:
-                d[abs(i)] = 1
+                d[a] = 1
         return d
 
     def absolute_indicator(self):
@@ -949,23 +950,12 @@ cdef class BooleanFunction(SageObject):
             sage: B = BooleanFunction("7969817CC5893BA6AC326E47619F5AD0")
             sage: B.absolute_indicator()
             32
-
-        The old method's name contained a typo, it is deprecated::
-
-            sage: B.absolut_indicator()
-            doctest:warning
-            ...
-            DeprecationWarning: absolut_indicator is deprecated. Please use absolute_indicator instead.
-            See https://github.com/sagemath/sage/issues/28001 for details.
-            32
         """
         cdef long a
         if self._absolute_indicator is None:
             D = self.autocorrelation()
             self._absolute_indicator = max([abs(a) for a in D[1:]])
         return self._absolute_indicator
-
-    absolut_indicator = deprecated_function_alias(28001, absolute_indicator)
 
     def sum_of_square_indicator(self):
         """
