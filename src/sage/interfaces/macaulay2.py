@@ -1530,7 +1530,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
                     # Note that n must be prime since it is
                     # coming from Macaulay 2
                     return GF(ZZ(n))
- 
+
                 ambient_ring = ambient._sage_()
                 ideal = self.ideal()._sage_()
                 return ambient_ring.quotient(ideal, names=ambient_ring.variable_names())
