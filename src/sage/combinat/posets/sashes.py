@@ -24,6 +24,10 @@ from typing import Iterator
 
 from sage.categories.finite_lattice_posets import FiniteLatticePosets
 from sage.combinat.posets.lattices import LatticePoset
+from sage.geometry.cone import Cone
+from sage.geometry.fan import Fan
+from sage.misc.cachefunc import cached_function
+from sage.modules.free_module_element import vector
 
 B, N, BB = "□", "▨", "■■"
 
@@ -128,3 +132,43 @@ def lattice_of_sashes(n: int) -> LatticePoset:
     return LatticePoset({s: list(cover_relations(s)) for s in sashes(n)},
                         cover_relations=True, check=False,
                         category=cat)
+
+
+@cached_function
+def pellytope_fan(n: int) -> Fan:
+    """
+    Return the fan of the pellytope of dimension `n`.
+
+    This is defined by induction.
+
+    INPUT:
+
+    - ``n`` -- integer
+
+    EXAMPLES::
+
+        sage: from sage.combinat.posets.sashes import pellytope_fan
+        sage: pellytope_fan(3).f_vector()
+        (1, 8, 18, 12)
+
+    TESTS::
+
+        sage: pellytope_fan(1)
+        Rational polyhedral fan in 1-d lattice N
+        sage: pellytope_fan(0)
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be positive
+
+    REFERENCES:
+
+    - [BTTM2024]_
+    """
+    if n <= 0:
+        raise ValueError("n must be positive")
+    dim_one = Fan([Cone([[-1]]), Cone([[1]])])
+    if n == 1:
+        return dim_one
+    G = pellytope_fan(n - 1).cartesian_product(dim_one)
+    v = vector([0] * (n - 2) + [-1, 1])
+    return G.subdivide(new_rays=[v])
