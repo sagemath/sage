@@ -1,12 +1,16 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-# Note: PyQt does NOT have a default widget for this, so I had help from https://stackoverflow.com/questions/52615115/how-to-create-collapsible-box-in-pyqt and used it as a base and am experimenting with it
+# Note: PyQt does NOT have a default widget for this, so I had help from https://stackoverflow.com/questions/52615115/how-to-create-collapsible-box-in-pyqt and used it as a base
 # Goal: clicking a glossary button will have this window pop out
 # Want to use this as a general class for the glossary
 
 class CollapsibleBox(QtWidgets.QWidget):
     def __init__(self, title="", parent=None):
         super(CollapsibleBox, self).__init__(parent)
+
+        self.labelContent = QtWidgets.QLabel(
+            wordWrap=True,
+            alignment=QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
 
         self.toggleButton = QtWidgets.QToolButton(
             text=title, checkable=True, checked=False
@@ -20,9 +24,12 @@ class CollapsibleBox(QtWidgets.QWidget):
 
         self.toggleAnimation = QtCore.QParallelAnimationGroup(self)
 
+
+        
         self.contentArea = QtWidgets.QScrollArea(
             maximumHeight=0, minimumHeight=0
         )
+        self.contentArea.setWidgetResizable(True)
         self.contentArea.setSizePolicy(
             QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed
         )
@@ -44,9 +51,8 @@ class CollapsibleBox(QtWidgets.QWidget):
         self.toggleAnimation.addAnimation(
             QtCore.QPropertyAnimation(self.contentArea, b"maximumHeight")
         )
-
-    
-
+        
+    # Function for the buttons
     @QtCore.pyqtSlot()
     def pressButton(self):
         checked = self.toggleButton.isChecked()
@@ -60,6 +66,7 @@ class CollapsibleBox(QtWidgets.QWidget):
         )
         self.toggleAnimation.start()
 
+    # Formatting the content on the labels
     def setContentLayout(self, layout):
         contentWidget = QtWidgets.QWidget()
         contentWidget.setLayout(layout)

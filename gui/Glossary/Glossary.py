@@ -11,57 +11,58 @@ if __name__ == "__main__":
     
     # Start an instance of the application
     application = QtWidgets.QApplication(sys.argv)
-    
-    # Make window for the application with widgets
-    window = QtWidgets.QMainWindow()
-    window.setCentralWidget(QtWidgets.QWidget())
+    def glossary(subject):
+        # Make window for the application with widgets
+        window = QtWidgets.QMainWindow()
+        window.setCentralWidget(QtWidgets.QWidget())
 
-    # Make a dockable widget
-    dockableWidget = QtWidgets.QDockWidget("Glossary")
-    window.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dockableWidget)
+        # Make a dockable widget
+        dockableWidget = QtWidgets.QDockWidget("Glossary")
+        window.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dockableWidget)
 
-    # Scroll bar
-    scroll = QtWidgets.QScrollArea()
-    dockableWidget.setWidget(scroll)
-    content = QtWidgets.QWidget()
-    scroll.setWidget(content)
-    scroll.setWidgetResizable(True)
+        # Scroll bar
+        scroll = QtWidgets.QScrollArea()
+        dockableWidget.setWidget(scroll)
+        content = QtWidgets.QWidget()
+        scroll.setWidget(content)
+        scroll.setWidgetResizable(True)
 
 
-    verticalLayout = QtWidgets.QVBoxLayout(content)
+        verticalLayout = QtWidgets.QVBoxLayout(content)
 
-    searchBar = QtWidgets.QLineEdit()
-    searchBar.setPlaceholderText("Search definitions or theorems...")
-    searchBar.setClearButtonEnabled(True)
-    verticalLayout.addWidget(searchBar)
-    
+        searchBar = QtWidgets.QLineEdit()
+        searchBar.setPlaceholderText("Search definitions or theorems...")
+        searchBar.setClearButtonEnabled(True)
+        verticalLayout.addWidget(searchBar)
+        
+        listOfContentBoxes = []
 
-    listOfContentBoxes = []
-    maxLabelWidth = 0
+        # Flag for the glossary to differentiate bewteen subjects (this is temporary)
+        definitions=outputContent(subject)
 
-    # Flag for the glossary to differentiate bewteen subjects (this is temporary)
-    definitions=outputContent("GT")
+        # Adding content to the glossary
+        for word in definitions:
+            contentBox = CollapsibleBox(word)
+            verticalLayout.addWidget(contentBox)
+            layout = QtWidgets.QVBoxLayout()
 
-    # Adding content to the glossary
-    for word in definitions:
-        contentBox = CollapsibleBox(word)
-        verticalLayout.addWidget(contentBox)
-        layout = QtWidgets.QVBoxLayout()
+            contentLabel = QtWidgets.QLabel(definitions[word])
+            contentLabel.setStyleSheet("font-size: 10pt;")
+            contentLabel.setWordWrap(True)
+            contentLabel.setSizePolicy(
+                QtWidgets.QSizePolicy.Expanding,
+                QtWidgets.QSizePolicy.Preferred)
+            
+            layout.addWidget(contentLabel)
 
-        contentLabel = QtWidgets.QLabel(definitions[word])
-        contentLabel.setStyleSheet("font-size: 10pt;")
-        contentLabel.setMinimumSize(contentLabel.sizeHint())
-        layout.addWidget(contentLabel)
+            contentBox.setContentLayout(layout)
+            listOfContentBoxes.append(contentBox)
+        
+        searchBar.textChanged.connect(filterContentBoxes)
 
-        contentBox.setContentLayout(layout)
-        listOfContentBoxes.append(contentBox)
+        verticalLayout.addStretch()
 
-        # Track widest label (this scales the width the widget)
-        maxLabelWidth = max(maxLabelWidth, contentLabel.sizeHint().width())
-
-    # Apply the widest label width to all boxes (this is so no definition or theorem gets cut off, maybe dynamic scaling of the window text?)
-    for box in listOfContentBoxes:
-        box.setMinimumWidth(maxLabelWidth + 40)  # + some padding
+        return window,listOfContentBoxes
 
     # Function to filter through content boxes for the search bar
     def filterContentBoxes(text):
@@ -71,18 +72,16 @@ if __name__ == "__main__":
             title = box.toggleButton.text().lower()
             content = box.contentArea.widget().findChild(QtWidgets.QLabel).text().lower()
 
-            # Show if the search text is in the title or content
+            # Show the queried item if the search text is in the title or content
             if text in title or text in content or text == "":
                 box.show()
             else:
                 box.hide()
 
-    # Grab text inserted into the search bar and feed it into the filter
-    searchBar.textChanged.connect(filterContentBoxes)
-
-    verticalLayout.addStretch()
-
-    window.resize(1024, 768)
-    window.show()
+    
+    # Stuff here to use the wigdet for testing purposes
+    glossaryWindow,listOfContentBoxes=glossary("GT")
+    glossaryWindow.resize(1024, 768)
+    glossaryWindow.show()
     
     sys.exit(application.exec_())
