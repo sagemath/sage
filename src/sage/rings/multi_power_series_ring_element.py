@@ -1290,7 +1290,7 @@ class MPowerSeries(PowerSeries):
         EXAMPLES::
 
             sage: H = QQ[['x,y']]
-            sage: (x,y) = H.gens()
+            sage: x, y = H.gens()
             sage: h = -y^2 - x*y^3 - 6/5*y^6 - x^7 + 2*x^5*y^2 + H.O(10)
             sage: h
             -y^2 - x*y^3 - 6/5*y^6 - x^7 + 2*x^5*y^2 + O(x, y)^10
