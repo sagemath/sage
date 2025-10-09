@@ -162,7 +162,7 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
         return R.prod(chromatic_polynomial(g, algorithm='C') for g in G.connected_components_subgraphs())
     x = R.gen()
     if G.is_tree():
-        return x * (x - 1) ** (G.num_verts() - 1)
+        return x * (x - 1) ** (G.n_vertices() - 1)
 
     cdef int nverts, nedges, i, j, u, v, top, bot, num_chords, next_v
     cdef int *queue
@@ -175,8 +175,8 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
     cdef mpz_t *coeffs
     G = G.relabel(inplace=False, immutable=False)
     G.remove_multiple_edges()
-    nverts = G.num_verts()
-    nedges = G.num_edges()
+    nverts = G.n_vertices()
+    nedges = G.n_edges()
 
     cdef MemoryAllocator mem = MemoryAllocator()
     queue = <int *> mem.allocarray(nverts, sizeof(int))
