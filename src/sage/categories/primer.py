@@ -84,7 +84,7 @@ Some challenges
 
       sage: A = random_matrix(ZZ, 6, 3, x=7)                                            # needs sage.modules
       sage: L = LatticePolytope(A.rows())                                               # needs sage.geometry.polyhedron sage.modules
-      sage: L.npoints()                # oops!   # random                               # needs sage.geometry.polyhedron sage.modules
+      sage: L.n_points()                # oops!   # random                               # needs sage.geometry.polyhedron sage.modules
       37
 
 - How to ensure robustness?

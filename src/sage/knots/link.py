@@ -1988,7 +1988,7 @@ class Link(SageObject):
         for c in pd:
             G.add_edge(c[0], c[2])
             G.add_edge(c[3], c[1])
-        return G.connected_components_number()
+        return G.number_of_connected_components()
 
     def is_knot(self) -> bool:
         r"""

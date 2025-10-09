@@ -1490,7 +1490,8 @@ class VermaModuleHomset(Homset):
                             continue
                         M = matrix(pbw.base_ring(), [[v[s] for v in image] for s in supp])
                         ker = M.right_kernel_matrix()
-                        basis = [C.linear_combination((basis[j], c) for j, c in kv.iteritems())
+                        basis = [C.linear_combination((basis[j], c)
+                                                      for j, c in kv.items())
                                  for kv in ker.rows()]
 
                     assert len(basis) == 1
