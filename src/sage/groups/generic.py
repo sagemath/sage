@@ -6,9 +6,10 @@ groups, including additive and multiplicative groups.
 
 In all cases the group operation is specified by either:
 
-- a parameter ``operation``, which is a string either one of the set of
+- a parameter ``operation``, which is a string in either one of the sets of
   ``multiplication_names`` or ``addition_names`` specified below, or
-- ``operation='other'``, ``identity`` element, and ``inverse`` and ``op`` functions.
+- passing ``operation='other'``, together with an ``identity`` element
+  as well as ``inverse`` and ``op`` functions.
 
 ::
 
@@ -136,7 +137,7 @@ def _parse_group_def(parent, operation, identity, inverse, op, *, check_missing=
     Helper function to parse the user input for group operations.
     Only two possibilities are accepted:
 
-    - ``operation`` is one of the standard operations
+    - either ``operation`` is one of the standard operations
       (multiplication or addition), and all of ``identity``,
       ``inverse``, and ``op`` are ``None``;
     - or ``operation`` is ``'other'``, and all of
@@ -230,10 +231,9 @@ def _power_func(operation, identity, inverse, op):
     import operator
     if op is operator.add:
         return operator.mul
-    elif op is operator.mul:
+    if op is operator.mul:
         return operator.pow
-    else:
-        return lambda x, y: multiple(x, y, operation=operation, identity=identity, inverse=inverse, op=op)
+    return lambda x, y: multiple(x, y, operation=operation, identity=identity, inverse=inverse, op=op)
 
 
 def _ord_from_op(x, op):
@@ -259,10 +259,9 @@ def _ord_from_op(x, op):
     import operator
     if op is operator.add:
         return x.additive_order()
-    elif op is operator.mul:
+    if op is operator.mul:
         return x.multiplicative_order()
-    else:
-        raise ValueError("ord must be specified when operation is neither addition nor multiplication")
+    raise ValueError("ord must be specified when operation is neither addition nor multiplication")
 
 
 def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
