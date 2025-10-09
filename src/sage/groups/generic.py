@@ -241,14 +241,17 @@ def _power_func(operation, identity, inverse, op):
     return lambda x, y: multiple(x, y, operation=operation, identity=identity, inverse=inverse, op=op)
 
 
-def _ord_from_op(x, op):
+def _ord_from_op(x, op, param_name='ord'):
     """
     Return the order of ``x`` in a group with binary operation ``op``.
+    This is an internal helper method, only used inside other functions
+    in this file.
 
     INPUT:
 
     - ``x`` -- an element of a group
     - ``op`` -- output of :func:`_parse_group_def`
+    - ``param_name`` -- the named used in the error message
 
     OUTPUT: An integer representing the order of ``x`` in the group.
 
@@ -260,12 +263,20 @@ def _ord_from_op(x, op):
         5
         sage: _ord_from_op(mod(2, 5), operator.mul)
         4
+        sage: _ord_from_op(mod(2, 5), operator.xor)
+        Traceback (most recent call last):
+        ...
+        ValueError: ord must be specified when operation is neither addition nor multiplication
+        sage: _ord_from_op(1, operator.xor, 'ord_p')
+        Traceback (most recent call last):
+        ...
+        ValueError: ord_p must be specified when operation is neither addition nor multiplication
     """
     if op is operator.add:
         return x.additive_order()
     if op is operator.mul:
         return x.multiplicative_order()
-    raise ValueError("ord must be specified when operation is neither addition nor multiplication")
+    raise ValueError(f"{param_name} must be specified when operation is neither addition nor multiplication")
 
 
 def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
@@ -1218,7 +1229,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
 ################################################################
 
 
-def linear_relation(P, Q, operation='+', identity=None, inverse=None, op=None):
+def linear_relation(P, Q, operation='+', identity=None, inverse=None, op=None, *, ord_p=None, ord_q=None):
     r"""
     Function which solves the equation ``a*P=m*Q`` or ``P^a=Q^m``.
 
@@ -1267,8 +1278,8 @@ def linear_relation(P, Q, operation='+', identity=None, inverse=None, op=None):
     Z = integer_ring.ZZ
 
     operation, identity, inverse, op = _parse_group_def(parent(P), operation, identity, inverse, op)
-    n = _ord_from_op(P, op)
-    m = _ord_from_op(Q, op)
+    n = ord_p if ord_p is not None else _ord_from_op(P, op, 'ord_p')
+    m = ord_q if ord_q is not None else _ord_from_op(Q, op, 'ord_q')
     g = n.gcd(m)
     if g == 1:
         return (m, Z.zero())
