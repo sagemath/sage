@@ -144,51 +144,94 @@ cdef class restore_atexit:
         _set_exithandlers(self._exithandlers)
 
 from cpython.ref cimport PyObject
+import sys
 
-# Implement "_atexit_callbacks()" for each supported python version
+# Implement a uniform interface for getting atexit callbacks
 cdef extern from *:
     """
-    #define Py_BUILD_CORE
+    #ifndef Py_BUILD_CORE_MODULE
+    #define Py_BUILD_CORE_MODULE
+    #endif
     #undef _PyGC_FINALIZED
     #include "internal/pycore_interp.h"
     #include "internal/pycore_pystate.h"
-    #if PY_VERSION_HEX >= 0x030c0000
-    // struct atexit_callback was renamed in 3.12 to atexit_py_callback
-    #define atexit_callback atexit_py_callback
-    #endif
-    static atexit_callback ** _atexit_callbacks(PyObject *self) {
+    
+    // Always define this struct for Cython's use
+    typedef struct {
+        PyObject *func;
+        PyObject *args;
+        PyObject *kwargs;
+    } atexit_callback_struct;
+    
+    #if PY_VERSION_HEX >= 0x030e0000
+    // Python 3.14+: atexit uses a PyList
+    static PyObject* get_atexit_callbacks_list(PyObject *self) {
         PyInterpreterState *interp = _PyInterpreterState_GET();
         struct atexit_state state = interp->atexit;
         return state.callbacks;
     }
+    
+    // Dummy function for Python 3.14+ (never called)
+    static atexit_callback_struct** get_atexit_callbacks_array(PyObject *self) {
+        return NULL;
+    }
+    #else
+    // Python < 3.14: atexit uses C array
+    #if PY_VERSION_HEX >= 0x030c0000
+    #define atexit_callback atexit_py_callback
+    #endif
+    
+    static atexit_callback_struct** get_atexit_callbacks_array(PyObject *self) {
+        PyInterpreterState *interp = _PyInterpreterState_GET();
+        struct atexit_state state = interp->atexit;
+        // Cast from atexit_callback** to our struct type
+        return (atexit_callback_struct**)state.callbacks;
+    }
+    
+    // Dummy function for Python < 3.14 (never called)
+    static PyObject* get_atexit_callbacks_list(PyObject *self) {
+        return NULL;
+    }
+    #endif
     """
-    ctypedef struct atexit_callback:
+    # Declare both functions - they exist in all Python versions (one is dummy)
+    PyObject* get_atexit_callbacks_list(object module)
+    
+    ctypedef struct atexit_callback_struct:
         PyObject* func
         PyObject* args
         PyObject* kwargs
-    atexit_callback** _atexit_callbacks(object module)
+    atexit_callback_struct** get_atexit_callbacks_array(object module)
 
 
 def _get_exithandlers():
     """Return list of exit handlers registered with the atexit module."""
-    cdef atexit_callback ** callbacks
-    cdef atexit_callback callback
-    cdef list exithandlers
+    cdef list exithandlers = []
+    cdef atexit_callback_struct ** callbacks
+    cdef atexit_callback_struct callback
     cdef int idx
     cdef object kwargs
-
-    exithandlers = []
-    callbacks = _atexit_callbacks(atexit)
-
-    for idx in range(atexit._ncallbacks()):
-        callback = callbacks[idx][0]
-        if callback.kwargs:
-            kwargs = <object>callback.kwargs
-        else:
-            kwargs = {}
-        exithandlers.append((<object>callback.func,
-                             <object>callback.args,
-                             kwargs))
+    
+    # Python 3.14+ uses a PyList directly
+    if sys.version_info >= (3, 14):
+        callbacks_list = <object>get_atexit_callbacks_list(atexit)
+        if callbacks_list is None:
+            return exithandlers
+        # callbacks is a list of tuples: [(func, args, kwargs), ...]
+        for item in callbacks_list:
+            exithandlers.append(item)
+    else:
+        # Python < 3.14 uses C array
+        callbacks = get_atexit_callbacks_array(atexit)
+        for idx in range(atexit._ncallbacks()):
+            callback = callbacks[idx][0]
+            if callback.kwargs:
+                kwargs = <object>callback.kwargs
+            else:
+                kwargs = {}
+            exithandlers.append((<object>callback.func,
+                                 <object>callback.args,
+                                 kwargs))
     return exithandlers
 
 
