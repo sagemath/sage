@@ -1,6 +1,6 @@
 /*
  *  C helper functions for the computation
- *  of p-adic transcendantal functions
+ *  of p-adic transcendental functions
  *
  *********************************************/
 
@@ -23,7 +23,7 @@ void padiclog(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, con
          3. we compute each log(1 - a_i*p^(v*2^i)) using Taylor expansion
             and a binary splitting strategy.                                */
 
-    unsigned long i, v, e, N, saveN, Np, tmp, trunc, step;
+    unsigned long i, v, e, N, Np, tmp, trunc, step;
     double den = log(p);
     mpz_t f, arg, trunc_mod, h, hpow, mpz_tmp, mpz_tmp2, d, inv, mod2;
     mpz_t *num, *denom;
