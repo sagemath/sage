@@ -251,7 +251,8 @@ def _ord_from_op(x, op, param_name='ord'):
 
     - ``x`` -- an element of a group
     - ``op`` -- output of :func:`_parse_group_def`
-    - ``param_name`` -- the named used in the error message
+    - ``param_name`` -- the parameter name used in the error message
+      raised when the order cannot be determined, see tests below
 
     OUTPUT: An integer representing the order of ``x`` in the group.
 
