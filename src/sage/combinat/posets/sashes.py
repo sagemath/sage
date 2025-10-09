@@ -26,6 +26,7 @@ from sage.categories.finite_lattice_posets import FiniteLatticePosets
 from sage.combinat.posets.lattices import LatticePoset
 from sage.geometry.cone import Cone
 from sage.geometry.fan import Fan
+from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.misc.cachefunc import cached_function
 from sage.modules.free_module_element import vector
 
@@ -73,7 +74,7 @@ def sashes(n: int) -> Iterator[tuple[str, ...]]:
         yield s + (BB,)
 
 
-def cover_relations(s: tuple[str]) -> Iterator[tuple[str, ...]]:
+def cover_relations(s: tuple[str, ...]) -> Iterator[tuple[str, ...]]:
     """
     Iterate over the cover relations of the given sash.
 
@@ -172,3 +173,47 @@ def pellytope_fan(n: int) -> Fan:
     G = pellytope_fan(n - 1).cartesian_product(dim_one)
     v = vector([0] * (n - 2) + [-1, 1])
     return G.subdivide(new_rays=[v])
+
+
+def pellytope(n: int) -> Polyhedron:
+    """
+    Return the pellytope of dimension `n`.
+
+    This is defined as a Minkowski sum.
+
+    INPUT:
+
+    - ``n`` -- integer
+
+    EXAMPLES::
+
+        sage: from sage.combinat.posets.sashes import pellytope
+        sage: P3 = pellytope(3); P3
+        A 3-dimensional polyhedron in ZZ^3 defined as
+        the convex hull of 12 vertices
+        sage: P3.f_vector()
+        (1, 12, 18, 8, 1)
+
+    TESTS::
+
+        sage: pellytope(0)
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be positive
+
+    REFERENCES:
+
+    - [BTTM2024]_
+    """
+    if n <= 0:
+        raise ValueError("n must be positive")
+    v = [vector([1 if i == j else 0 for i in range(n)])
+         for j in range(n)]
+    zero = [0] * n
+
+    resu = [Polyhedron(vertices=[zero, v[i]]) for i in range(n)]
+
+    resu.extend(Polyhedron(vertices=[zero, v[j], v[j] + v[j + 1]])
+                for j in range(n - 1))
+
+    return sum(resu)
