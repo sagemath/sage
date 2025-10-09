@@ -10,7 +10,7 @@ if __name__ == "__main__":
     import sys
     
     # Start an instance of the application
-    application = QtWidgets.QApplication(sys.argv)
+    
     def glossary(subject):
         # Make window for the application with widgets
         window = QtWidgets.QMainWindow()
@@ -80,6 +80,7 @@ if __name__ == "__main__":
 
     
     # Stuff here to use the wigdet for testing purposes
+    application = QtWidgets.QApplication(sys.argv)
     glossaryWindow,listOfContentBoxes=glossary("GT")
     glossaryWindow.resize(1024, 768)
     glossaryWindow.show()
