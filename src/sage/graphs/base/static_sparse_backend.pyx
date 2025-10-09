@@ -980,7 +980,7 @@ cdef class StaticSparseBackend(CGraphBackend):
                 yield x
         return
 
-    def num_verts(self):
+    def n_vertices(self):
         r"""
         Return the number of vertices.
 
@@ -988,10 +988,12 @@ cdef class StaticSparseBackend(CGraphBackend):
 
             sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
             sage: g = StaticSparseBackend(graphs.PetersenGraph())
-            sage: g.num_verts()
+            sage: g.n_vertices()
             10
         """
         return self._order
+
+    num_verts = n_vertices
 
     def allows_loops(self, value=None):
         r"""
@@ -1043,7 +1045,7 @@ cdef class StaticSparseBackend(CGraphBackend):
         else:
             raise ValueError("the graph is immutable and cannot be changed in any way")
 
-    def num_edges(self, directed):
+    def n_edges(self, directed):
         r"""
         Return the number of edges.
 
@@ -1056,13 +1058,13 @@ cdef class StaticSparseBackend(CGraphBackend):
 
             sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
             sage: g = StaticSparseBackend(graphs.PetersenGraph())
-            sage: g.num_edges(False)
+            sage: g.n_edges(False)
             15
 
         Testing the exception::
 
             sage: g = StaticSparseBackend(digraphs.Circuit(4))
-            sage: g.num_edges(False)
+            sage: g.n_edges(False)
             Traceback (most recent call last):
             ...
             NotImplementedError: Sorry, I have no idea what is expected in this situation. I don't think that it is well-defined either, especially for multigraphs.
@@ -1094,6 +1096,8 @@ cdef class StaticSparseBackend(CGraphBackend):
             else:
                 # Returns the number of edges
                 return int(cg.g.m)
+
+    num_edges = n_edges
 
     def iterator_edges(self, vertices, bint labels):
         r"""
