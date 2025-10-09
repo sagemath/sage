@@ -2353,7 +2353,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                             category=FiniteLatticePosets().Stone())
 
     def is_orthocomplemented(self, unique=False) -> bool:
-        """
+        r"""
         Return ``True`` if the lattice admits an orthocomplementation, and
         ``False`` otherwise.
 

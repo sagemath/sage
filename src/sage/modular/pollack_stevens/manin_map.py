@@ -534,7 +534,7 @@ class ManinMap:
         return (self[B] * gaminv).normalize()
 
     def __call__(self, A):
-        """
+        r"""
         Evaluate ``self`` at A.
 
         INPUT:

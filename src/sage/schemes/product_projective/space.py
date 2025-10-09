@@ -300,7 +300,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         return " \\times ".join(PS._latex_() for PS in self)
 
     def _latex_generic_point(self, v=None):
-        """
+        r"""
         Return a LaTeX representation of the generic point
         on this product space.
 

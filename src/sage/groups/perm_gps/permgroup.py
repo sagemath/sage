@@ -5329,7 +5329,7 @@ class PermutationGroup_action(PermutationGroup_generic):
         Permutation Group with generators [()]
     """
     def __init__(self, gens, action, domain, gap_group=None, category=None, canonicalize=None):
-        """
+        r"""
         Initialize ``self``.
 
         INPUT:

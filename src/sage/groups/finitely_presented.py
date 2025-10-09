@@ -831,7 +831,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         return 'Finitely presented group ' + '< ' + gens + ' | ' + rels + ' >'
 
     def _latex_(self):
-        """
+        r"""
         Return a LaTeX representation.
 
         OUTPUT: string; a valid LaTeX math command sequence

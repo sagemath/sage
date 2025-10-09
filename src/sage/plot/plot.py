@@ -3526,7 +3526,7 @@ def to_float_list(v):
 
 
 def reshape(v, n, m):
-    """
+    r"""
     Helper function for creating graphics arrays.
 
     The input array is flattened and turned into an `n\times m`

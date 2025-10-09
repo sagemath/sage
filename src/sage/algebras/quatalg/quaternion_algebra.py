@@ -2998,7 +2998,7 @@ class QuaternionFractionalIdeal(Ideal_fractional):
 
 
 class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
-    """
+    r"""
     A fractional ideal in a rational quaternion algebra.
 
     INPUT:

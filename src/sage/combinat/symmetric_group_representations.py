@@ -1125,7 +1125,7 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
 
     @lazy_attribute
     def _unitary_change_basis_matrix(self):
-        """
+        r"""
         Compute the change of basis matrix.
 
         We first compute a `G`-invariant symmetric bilinear form. This yields a solution `U`

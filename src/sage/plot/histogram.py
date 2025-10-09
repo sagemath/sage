@@ -205,7 +205,7 @@ class Histogram(GraphicPrimitive):
 
 @options(aspect_ratio='automatic', align='mid', weights=None, range=None, bins=10, edgecolor='black')
 def histogram(datalist, **options):
-    """
+    r"""
     Compute and draw the histogram for list(s) of numerical data.
     See examples for the many options; even more customization is
     available using matplotlib directly.

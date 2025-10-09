@@ -193,7 +193,7 @@ class BackendIPythonCommandline(BackendIPython):
         ])
 
     def displayhook(self, plain_text, rich_output):
-        """
+        r"""
         Backend implementation of the displayhook.
 
         INPUT:
@@ -571,7 +571,7 @@ class BackendIPythonNotebook(BackendIPython):
             raise TypeError('rich_output type not supported')
 
     def threejs_offline_scripts(self):
-        """
+        r"""
         Three.js script for the IPython notebook.
 
         OUTPUT: string containing script tag

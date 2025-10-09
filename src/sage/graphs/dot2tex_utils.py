@@ -68,7 +68,7 @@ for installation instructions.
 
 
 def quoted_latex(x):
-    """
+    r"""
     Strips the latex representation of ``x`` to make it suitable for a
     ``dot2tex`` string.
 

@@ -2757,7 +2757,7 @@ class FreeModule_generic(Module_free_ambient):
         return self.basis_matrix().block_sum(other.basis_matrix()).row_module(self.base_ring())
 
     def coordinates(self, v, check=True):
-        """
+        r"""
         Write `v` in terms of the basis for ``self``.
 
         INPUT:
@@ -5937,7 +5937,7 @@ class FreeModule_ambient(FreeModule_generic):
         return self(v)
 
     def coordinate_vector(self, v, check=True):
-        """
+        r"""
         Write `v` in terms of the standard basis for ``self`` and
         return the resulting coefficients in a vector over the fraction
         field of the base ring.
@@ -6276,7 +6276,7 @@ class FreeModule_ambient_domain(FreeModule_generic_domain, FreeModule_ambient):
             return self.__ambient_vector_space
 
     def coordinate_vector(self, v, check=True):
-        """
+        r"""
         Write `v` in terms of the standard basis for ``self`` and
         return the resulting coefficients in a vector over the fraction
         field of the base ring.
@@ -7551,7 +7551,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             return M.span(B)
 
     def coordinate_vector(self, v, check=True):
-        """
+        r"""
         Write `v` in terms of the user basis for ``self``.
 
         INPUT:
@@ -7604,7 +7604,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         return self.__echelonized_basis
 
     def echelon_coordinate_vector(self, v, check=True):
-        """
+        r"""
         Write `v` in terms of the echelonized basis for ``self``.
 
         INPUT:
@@ -7754,7 +7754,7 @@ class FreeModule_submodule_pid(FreeModule_submodule_with_basis_pid):
         return s
 
     def coordinate_vector(self, v, check=True):
-        """
+        r"""
         Write `v` in terms of the user basis for ``self``.
 
         INPUT:
@@ -8159,7 +8159,7 @@ class FreeModule_submodule_field(FreeModule_submodule_with_basis_field):
                 "Basis matrix:\n%r" % self.basis_matrix()
 
     def echelon_coordinates(self, v, check=True):
-        """
+        r"""
         Write `v` in terms of the echelonized basis of ``self``.
 
         INPUT:
@@ -8223,7 +8223,7 @@ class FreeModule_submodule_field(FreeModule_submodule_with_basis_field):
         return w
 
     def coordinate_vector(self, v, check=True):
-        """
+        r"""
         Write `v` in terms of the user basis for ``self``.
 
         INPUT:

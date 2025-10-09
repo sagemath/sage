@@ -26,7 +26,7 @@ Helper for attaching tolerance information to strings
 
 
 class MarkedOutput(str):
-    """
+    r"""
     A subclass of string with context for whether another string
     matches it.
 

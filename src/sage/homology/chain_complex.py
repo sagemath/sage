@@ -65,7 +65,7 @@ from sage.misc.persist import register_unpickle_override
 
 
 def _latex_module(R, m):
-    """
+    r"""
     LaTeX string representing a free module over ``R`` of rank ``m``.
 
     INPUT:
@@ -1746,7 +1746,7 @@ class ChainComplex_class(Parent):
         return concatenated
 
     def _latex_(self):
-        """
+        r"""
         LaTeX print representation.
 
         EXAMPLES::

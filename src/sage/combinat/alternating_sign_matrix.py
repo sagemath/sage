@@ -1090,7 +1090,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         return self._matrix_space._repr_option(key)
 
     def __contains__(self, asm):
-        """
+        r"""
         Check if ``asm`` is in ``self``.
 
         TESTS::

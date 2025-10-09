@@ -843,7 +843,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 
     @cached_method
     def cartan_matrix(self):
-        """
+        r"""
         Return the Cartan matrix of ``self``.
 
         Note that (up to a reordering of the simple roots) the convention for

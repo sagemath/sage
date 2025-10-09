@@ -2072,7 +2072,7 @@ class ModularAbelianVariety_abstract(Parent):
         return ' x '.join(v)
 
     def _ambient_latex_repr(self):
-        """
+        r"""
         Return Latex representation of the ambient product.
 
         OUTPUT: string

@@ -479,7 +479,7 @@ SagePromptTransformer = PromptStripper(prompt_re=re.compile(r'^(\s*(:?sage: |\.\
 ###################
 
 class logstr(str):
-    """
+    r"""
     For use by :meth`~InterfaceShellTransformer.transform`.
     This provides a ``_latex_`` method which is just the string
     wrapped in a ``\\verb`` environment.

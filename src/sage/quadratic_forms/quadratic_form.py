@@ -737,7 +737,7 @@ class QuadraticForm(SageObject):
         return out_str
 
     def _latex_(self) -> str:
-        """
+        r"""
         Give a LaTeX representation for the quadratic form given as an upper-triangular matrix of coefficients.
 
         EXAMPLES::

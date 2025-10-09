@@ -47,7 +47,7 @@ def coeff_repr(c, is_latex=False):
 
 def repr_lincomb(terms, is_latex=False, scalar_mult='*', strip_one=False,
                  repr_monomial=None, latex_scalar_mult=None):
-    """
+    r"""
     Compute a string representation of a linear combination of some
     formal symbols.
 

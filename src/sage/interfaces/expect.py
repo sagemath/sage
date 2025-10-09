@@ -689,7 +689,7 @@ If this all works, you can then make calls like:
         self._reset_expect()
 
     def _quit_string(self):
-        """
+        r"""
         Return the string which will be used to quit the application.
 
         EXAMPLES::

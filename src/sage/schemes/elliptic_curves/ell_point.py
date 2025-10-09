@@ -606,7 +606,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         return self.codomain().ambient_space()._repr_generic_point(self._coords)
 
     def _latex_(self):
-        """
+        r"""
         Return a LaTeX representation of this point.
 
         EXAMPLES::

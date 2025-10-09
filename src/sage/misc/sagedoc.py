@@ -121,7 +121,7 @@ nonmath_substitutes = [
 
 
 def _rmcmd(s, cmd, left='', right=''):
-    """
+    r"""
     Remove the LaTeX command ``cmd`` from the string ``s``.  This
     function is used by ``detex``.
 

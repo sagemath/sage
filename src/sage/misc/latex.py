@@ -985,7 +985,7 @@ class Latex(LatexCall):
         self.__density = density
 
     def _relation_symbols(self):
-        """
+        r"""
         Return a dictionary whose keys are attributes of the
         :mod:`operator` module and whose values are the corresponding
         LaTeX expressions.

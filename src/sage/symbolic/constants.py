@@ -319,7 +319,7 @@ class Constant:
             return NotImplemented
 
     def __reduce__(self):
-        """
+        r"""
         Add support for pickling constants.
 
         EXAMPLES::

@@ -653,7 +653,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
         AlgebraicScheme.__init__(self, A)
 
     def _latex_(self):
-        """
+        r"""
         Return a LaTeX representation of this algebraic scheme.
 
         EXAMPLES::
@@ -1028,7 +1028,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         return richcmp(self.defining_ideal(), other.defining_ideal(), op)
 
     def _latex_(self):
-        """
+        r"""
         Return a LaTeX representation of this scheme.
 
         EXAMPLES::

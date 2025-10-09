@@ -378,7 +378,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         return s
 
     def _latex_(self) -> str:
-        """
+        r"""
         Return a latex representation of ``self``.
 
         EXAMPLES::

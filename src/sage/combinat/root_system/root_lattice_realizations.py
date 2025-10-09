@@ -1916,7 +1916,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             return self.module_morphism(self._to_classical_on_basis, codomain=self.classical())
 
         def _classical_alpha_0(self):
-            """
+            r"""
             Return the projection of `\alpha_0` in the classical space.
 
             This is used e.g. to construct the projections onto the

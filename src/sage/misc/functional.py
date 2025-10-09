@@ -968,7 +968,7 @@ def lift(x):
 
 
 def log(*args, **kwds):
-    """
+    r"""
     Return the logarithm of the first argument to the base of
     the second argument which if missing defaults to ``e``.
 

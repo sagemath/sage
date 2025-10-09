@@ -1007,7 +1007,7 @@ class TateAlgebra_generic(Parent):
             return "Tate Algebra in %s over %s" % (vars, self._field)
 
     def _latex_(self):
-        """
+        r"""
         Return a LaTeX representation of this algebra.
 
         EXAMPLES::

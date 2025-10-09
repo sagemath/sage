@@ -877,7 +877,7 @@ def _grep_first_pair_of_parentheses(s):
 
 
 def _split_syntactical_unit(s):
-    """
+    r"""
     Split off a sub-expression from the start of a given string.
 
     INPUT:

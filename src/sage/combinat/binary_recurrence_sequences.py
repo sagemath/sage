@@ -191,7 +191,7 @@ class BinaryRecurrenceSequence(SageObject):
         return list(F**n * v)[0]
 
     def is_degenerate(self) -> bool:
-        """
+        r"""
         Decide whether the binary recurrence sequence is degenerate.
 
         Let `\\alpha` and `\\beta` denote the roots of the characteristic polynomial
@@ -287,7 +287,7 @@ class BinaryRecurrenceSequence(SageObject):
         return (self.u1)**2 == (self.b*self.u1 + self.c*self.u0)*self.u0
 
     def is_quasigeometric(self) -> bool:
-        """
+        r"""
         Decide whether the binary recurrence sequence is degenerate and similar to a geometric sequence,
         i.e. the union of multiple geometric sequences, or geometric after term ``u0``.
 
@@ -330,7 +330,7 @@ class BinaryRecurrenceSequence(SageObject):
         return False
 
     def is_arithmetic(self) -> bool:
-        """
+        r"""
         Decide whether the sequence is degenerate and an arithmetic sequence.
 
         The sequence is arithmetic if and only if `u_1 - u_0 = u_2 - u_1 = u_3 - u_2`.
@@ -349,7 +349,7 @@ class BinaryRecurrenceSequence(SageObject):
         return self(1) - self(0) == self(2) - self(1) == self(3) - self(2)
 
     def period(self, m, *, eventual=False):
-        """
+        r"""
         Return the period of the binary recurrence sequence modulo
         an integer ``m``.
 

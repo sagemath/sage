@@ -126,7 +126,7 @@ except ImportError:
 
 
 def is_FilteredVectorSpace(X):
-    """
+    r"""
     Test whether ``X`` is a filtered vector space.
 
     This function is for library use only.

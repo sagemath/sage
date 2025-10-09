@@ -80,7 +80,7 @@ class Sigma0ActionAdjuster(UniqueRepresentation):
 
 
 class _default_adjuster(Sigma0ActionAdjuster):
-    """
+    r"""
     A callable object that does nothing to a matrix, returning its entries
     in the natural, by-row, order.
 

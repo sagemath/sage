@@ -315,7 +315,7 @@ class Scilab(Expect):
         self.set_seed(self._seed)
 
     def eval(self, command, *args, **kwds):
-        """
+        r"""
         Evaluates commands.
 
         EXAMPLES::
@@ -350,7 +350,7 @@ class Scilab(Expect):
         return self.eval('whos' + parameters)
 
     def set(self, var, value):
-        """
+        r"""
         Set the variable var to the given value.
 
         EXAMPLES::
@@ -365,7 +365,7 @@ class Scilab(Expect):
             raise TypeError("Error executing code in Scilab\nCODE:\n\t%s\nScilab ERROR:\n\t%s" % (cmd, out))
 
     def get(self, var):
-        """
+        r"""
         Get the value of the variable ``var``.
 
         EXAMPLES::
@@ -510,7 +510,7 @@ class ScilabElement(ExpectElement):
         return M(v)
 
     def set(self, i, j, x):
-        """
+        r"""
         Set the variable var to the given value.
 
         EXAMPLES::

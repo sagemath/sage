@@ -1208,7 +1208,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         return False
 
     def varname_key(self, x):
-        """
+        r"""
         Key for comparison of variable names.
 
         INPUT:

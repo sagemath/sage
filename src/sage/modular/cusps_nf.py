@@ -83,7 +83,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 @cached_function
 def list_of_representatives(N):
-    """
+    r"""
     Return a list of ideals, coprime to the ideal ``N``, representatives of
     the ideal classes of the corresponding number field.
 
@@ -1108,7 +1108,7 @@ def Gamma0_NFCusps(N):
 
 
 def number_of_Gamma0_NFCusps(N):
-    """
+    r"""
     Return the total number of orbits of cusps under the action of the
     congruence subgroup `\\Gamma_0(N)`.
 

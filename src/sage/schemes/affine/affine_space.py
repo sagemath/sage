@@ -463,7 +463,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         return '(%s)' % (", ".join(str(f) for f in polys))
 
     def _latex_generic_point(self, v=None):
-        """
+        r"""
         Return a LaTeX representation of the generic point
         corresponding to the list of polys ``v`` on this affine space.
 

@@ -98,7 +98,7 @@ class SageTimeitResult:
 
 
 def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, precision=3, seconds=False):
-    """nodetex
+    r"""nodetex
     Accurately measure the wall time required to execute ``stmt``.
 
     INPUT:

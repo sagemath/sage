@@ -308,7 +308,7 @@ class Gp(ExtraTabCompletion, Expect):
         return GpFunction
 
     def _quit_string(self):
-        """
+        r"""
         Return the string used to quit the GP interpreter.
 
         EXAMPLES::

@@ -600,7 +600,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         return "{\\mathbf P}_{%s}^{%s}" % (latex(self.base_ring()), self.dimension_relative())
 
     def _linear_system_as_kernel(self, d, pt, m):
-        """
+        r"""
         Return a matrix whose kernel consists of the coefficient vectors
         of the degree ``d`` hypersurfaces (wrt lexicographic ordering of its
         monomials) with multiplicity at least ``m`` at ``pt``.
@@ -875,7 +875,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         return '(%s)' % (" : ".join(repr(f) for f in v))
 
     def _latex_generic_point(self, v=None):
-        """
+        r"""
         Return a LaTeX representation of the generic point
         corresponding to the list of polys ``v`` on this projective space.
 

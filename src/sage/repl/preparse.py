@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-repl
-"""
+r"""
 The Sage Preparser
 
 EXAMPLES:
@@ -481,7 +481,7 @@ class QuoteStackFrame(SimpleNamespace):
 
     def __init__(self, delim, raw=False, f_string=False, braces=0, parens=0, brackets=0,
                  fmt_spec=False, nested_fmt_spec=False):
-        """
+        r"""
         Create a new QuoteStackFrame.
 
         INPUT:

@@ -782,7 +782,7 @@ class LessThanInfinity(_uniq, RingElement):
         return "A number less than infinity"
 
     def _latex_(self) -> str:
-        """
+        r"""
         Return a latex representation of ``self``.
 
         EXAMPLES::

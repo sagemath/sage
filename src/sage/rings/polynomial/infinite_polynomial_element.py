@@ -321,7 +321,7 @@ class InfinitePolynomial(CommutativePolynomial,
         return self._p
 
     def _latex_(self):
-        """
+        r"""
         Return a latex representation of ``self``.
 
         EXAMPLES::
@@ -1111,7 +1111,7 @@ class InfinitePolynomial(CommutativePolynomial,
         return self._footprint
 
     def symmetric_cancellation_order(self, other):
-        """
+        r"""
         Comparison of leading terms by Symmetric Cancellation Order, `<_{sc}`.
 
         INPUT:

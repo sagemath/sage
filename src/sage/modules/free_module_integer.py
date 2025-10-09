@@ -1,4 +1,4 @@
-"""
+r"""
 Discrete subgroups of `\\ZZ^n`
 
 AUTHORS:

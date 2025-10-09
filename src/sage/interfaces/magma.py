@@ -496,7 +496,7 @@ class Magma(ExtraTabCompletion, Expect):
         return MagmaFunction(self, attrname)
 
     def eval(self, x, strip=True, **kwds) -> str:
-        """
+        r"""
         Evaluate the given block x of code in Magma and return the output
         as a string.
 

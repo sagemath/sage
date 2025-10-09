@@ -302,7 +302,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         return s
 
     def _latex_(self):
-        """
+        r"""
         Internal function. Return a latex string for this elliptic curve.
 
         Users will normally use :func:`latex` instead.

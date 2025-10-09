@@ -225,7 +225,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
     Element = FPElement
 
     def defining_homomorphism(self):
-        """
+        r"""
         Return the homomorphism defining ``self``.
 
         ``self`` is a finitely presented module defined as the

@@ -432,7 +432,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         return s
 
     def _latex_(self):
-        """
+        r"""
         Return latex representation of power series ring.
 
         EXAMPLES::

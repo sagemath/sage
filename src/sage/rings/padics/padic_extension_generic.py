@@ -129,7 +129,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
         return ""
 
     def _repr_(self, do_latex=False):
-        """
+        r"""
         Return a print representation of this extension.
 
         EXAMPLES::

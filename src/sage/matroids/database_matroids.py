@@ -1357,7 +1357,7 @@ def TernaryDowling3(groundset='abcdefghi'):
 
 
 def R9(groundset=None):
-    """
+    r"""
     Return the matroid `R_9`.
 
     The ternary Reid geometry. The only `9`-element rank-`3` simple ternary

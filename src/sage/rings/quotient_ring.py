@@ -578,7 +578,7 @@ class QuotientRing_nc(Parent):
         return "Quotient of %s by the ideal %s" % (self.cover_ring(), self.defining_ideal()._repr_short())
 
     def _latex_(self):
-        """
+        r"""
         Return a latex representation of ``self``.
 
         EXAMPLES::
