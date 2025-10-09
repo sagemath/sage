@@ -1,88 +1,78 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from CollapsibleBox import *
-from Content import *
+from .CollapsibleBox import *
+from .Content import *
+import sys
 
 # Ideally, we do not have to make one for each subject and can just import the appropriate content for the glossary (will talk to the group about this)
 # Will need to look into finding a way to import math typesetting for this
 
 
-if __name__ == "__main__":
-    import sys
-    
+
     # Start an instance of the application
     
-    def glossary(subject):
-        # Make window for the application with widgets
-        window = QtWidgets.QMainWindow()
-        window.setCentralWidget(QtWidgets.QWidget())
 
-        # Make a dockable widget
-        dockableWidget = QtWidgets.QDockWidget("Glossary")
-        window.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dockableWidget)
+class GlossaryWidget(QtWidgets.QWidget):
+    def __init__(self, subject, parent=None):
+        super().__init__(parent)
+        self.subject = subject
+        self.listOfContentBoxes = []
 
-        # Scroll bar
+        # Main layout
+        mainLayout = QtWidgets.QVBoxLayout(self)
+
+        # Scroll area
         scroll = QtWidgets.QScrollArea()
-        dockableWidget.setWidget(scroll)
+        scroll.setWidgetResizable(True)
+        mainLayout.addWidget(scroll)
+
+        # Content widget inside scroll area
         content = QtWidgets.QWidget()
         scroll.setWidget(content)
-        scroll.setWidgetResizable(True)
 
+        self.verticalLayout = QtWidgets.QVBoxLayout(content)
 
-        verticalLayout = QtWidgets.QVBoxLayout(content)
+        # Search bar
+        self.searchBar = QtWidgets.QLineEdit()
+        self.searchBar.setPlaceholderText("Search definitions or theorems...")
+        self.searchBar.setClearButtonEnabled(True)
+        self.verticalLayout.addWidget(self.searchBar)
 
-        searchBar = QtWidgets.QLineEdit()
-        searchBar.setPlaceholderText("Search definitions or theorems...")
-        searchBar.setClearButtonEnabled(True)
-        verticalLayout.addWidget(searchBar)
-        
-        listOfContentBoxes = []
-
-        # Flag for the glossary to differentiate bewteen subjects (this is temporary)
-        definitions=outputContent(subject)
-
-        # Adding content to the glossary
-        for word in definitions:
+        # Add content boxes
+        self.definitions = outputContent(self.subject)
+        for word in self.definitions:
             contentBox = CollapsibleBox(word)
-            verticalLayout.addWidget(contentBox)
+            self.verticalLayout.addWidget(contentBox)
             layout = QtWidgets.QVBoxLayout()
 
-            contentLabel = QtWidgets.QLabel(definitions[word])
+            contentLabel = QtWidgets.QLabel(self.definitions[word])
             contentLabel.setStyleSheet("font-size: 10pt;")
             contentLabel.setWordWrap(True)
             contentLabel.setSizePolicy(
                 QtWidgets.QSizePolicy.Expanding,
                 QtWidgets.QSizePolicy.Preferred)
-            
             layout.addWidget(contentLabel)
 
             contentBox.setContentLayout(layout)
-            listOfContentBoxes.append(contentBox)
-        
-        searchBar.textChanged.connect(filterContentBoxes)
+            self.listOfContentBoxes.append(contentBox)
 
-        verticalLayout.addStretch()
+        self.searchBar.textChanged.connect(self.filterContentBoxes)
+        self.verticalLayout.addStretch()
 
-        return window,listOfContentBoxes
-
-    # Function to filter through content boxes for the search bar
-    def filterContentBoxes(text):
+    def filterContentBoxes(self, text):
         text = text.lower().strip()
-        
-        for box in listOfContentBoxes:
+        for box in self.listOfContentBoxes:
             title = box.toggleButton.text().lower()
             content = box.contentArea.widget().findChild(QtWidgets.QLabel).text().lower()
-
-            # Show the queried item if the search text is in the title or content
             if text in title or text in content or text == "":
                 box.show()
             else:
                 box.hide()
 
-    
-    # Stuff here to use the wigdet for testing purposes
-    application = QtWidgets.QApplication(sys.argv)
-    glossaryWindow,listOfContentBoxes=glossary("GT")
-    glossaryWindow.resize(1024, 768)
-    glossaryWindow.show()
-    
-    sys.exit(application.exec_())
+
+# Stuff here to use the wigdet for testing purposes
+#application = QtWidgets.QApplication(sys.argv)
+#glossaryWindow,listOfContentBoxes=glossary("GT")
+#glossaryWindow.resize(1024, 768)
+#glossaryWindow.show()
+
+#sys.exit(application.exec_())
