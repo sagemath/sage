@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-objects
+# distutils: define_macros=Py_BUILD_CORE=1
 
 """Utilities for interfacing with the standard library's atexit module."""
 
@@ -149,8 +150,8 @@ import sys
 # Implement a uniform interface for getting atexit callbacks
 cdef extern from *:
     """
-    #ifndef Py_BUILD_CORE_MODULE
-    #define Py_BUILD_CORE_MODULE
+    #ifndef Py_BUILD_CORE
+    #define Py_BUILD_CORE
     #endif
     #undef _PyGC_FINALIZED
     #include "internal/pycore_interp.h"
