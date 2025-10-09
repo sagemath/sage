@@ -116,6 +116,7 @@ Some examples in the group of points of an elliptic curve over a finite field:
 # ****************************************************************************
 
 from copy import copy
+import operator
 
 from sage.arith.misc import integer_ceil, integer_floor, xlcm
 from sage.arith.srange import xsrange
@@ -151,9 +152,10 @@ def _parse_group_def(parent, operation, identity, inverse, op, *, check_missing=
     - ``operation`` -- a string, one of the standard operations
       (multiplication or addition) or ``'other'``
     - ``identity`` -- the identity element of the group, or ``None``
-    - ``inverse`` -- a function of one argument returning the inverse
-      of its argument, or ``None``
-    - ``op`` -- a function of two arguments returning the group
+    - ``inverse`` -- if not ``None``, a function taking one argument and
+      returning its inverse
+    - ``op`` -- if not ``None``, a function taking two arguments and
+      computing the group operation on these two arguments
 
     OUTPUT: a tuple ``('other', identity, inverse, op)``
 
@@ -228,7 +230,6 @@ def _power_func(operation, identity, inverse, op):
         sage: _power_func('other', 0, operator.neg, operator.add)
         <built-in function mul>
     """
-    import operator
     if op is operator.add:
         return operator.mul
     if op is operator.mul:
@@ -256,7 +257,6 @@ def _ord_from_op(x, op):
         sage: _ord_from_op(mod(2, 5), operator.mul)
         4
     """
-    import operator
     if op is operator.add:
         return x.additive_order()
     if op is operator.mul:
@@ -721,7 +721,6 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 
     operation, identity, inverse, op = _parse_group_def(parent(a), operation, identity, inverse, op)
-    import operator
 
     # should be reasonable choices
     partition_size = 20
