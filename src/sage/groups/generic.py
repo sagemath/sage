@@ -133,7 +133,7 @@ multiplication_names = ('multiplication', 'times', 'product', '*')
 addition_names = ('addition', 'plus', 'sum', '+')
 
 
-def _parse_group_def(parent, operation, identity, inverse, op, *, check_missing=True):
+def _parse_group_def(parent, operation, identity, inverse, op, *, check=True):
     """
     Helper function to parse the user input for group operations.
     Only two possibilities are accepted:
@@ -156,6 +156,10 @@ def _parse_group_def(parent, operation, identity, inverse, op, *, check_missing=
       returning its inverse
     - ``op`` -- if not ``None``, a function taking two arguments and
       computing the group operation on these two arguments
+    - ``check`` -- boolean (default: ``True``); ensure that everything are specified.
+      The caller may choose to pass ``check=False`` if it only need some of the
+      group operations, for example, :func:`multiple` wouldn't need ``inverse`` and
+      ``identity`` if the exponent is positive.
 
     OUTPUT: a tuple ``('other', identity, inverse, op)``
 
@@ -191,7 +195,7 @@ def _parse_group_def(parent, operation, identity, inverse, op, *, check_missing=
         try:
             identity = parent.one()
         except Exception:
-            if check_missing:
+            if check:
                 raise
         inverse = inv
         op = mul
@@ -202,12 +206,12 @@ def _parse_group_def(parent, operation, identity, inverse, op, *, check_missing=
         try:
             identity = parent.zero()
         except Exception:
-            if check_missing:
+            if check:
                 raise
         inverse = neg
         op = add
     else:
-        if check_missing and (identity is None or inverse is None or op is None):
+        if check and (identity is None or inverse is None or op is None):
             raise ValueError("identity, inverse and operation must all be specified "
                              "when operation is neither addition nor multiplication")
     return 'other', identity, inverse, op
