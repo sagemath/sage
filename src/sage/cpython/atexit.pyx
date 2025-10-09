@@ -219,8 +219,12 @@ def _get_exithandlers():
         if callbacks_list is None:
             return exithandlers
         # callbacks is a list of tuples: [(func, args, kwargs), ...]
+        # Normalize kwargs to ensure it's always a dict (not None)
         for item in callbacks_list:
-            exithandlers.append(item)
+            func, args, kwargs = item
+            if kwargs is None:
+                kwargs = {}
+            exithandlers.append((func, args, kwargs))
     else:
         # Python < 3.14 uses C array
         callbacks = get_atexit_callbacks_array(atexit)
