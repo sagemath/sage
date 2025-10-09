@@ -90,32 +90,21 @@ cimport sage.libs.linbox.linbox as linbox
 
 from sage.arith.misc import is_prime
 from sage.data_structures.binary_search cimport *
-from sage.ext.stdsage cimport PY_NEW
-from sage.libs.flint.fmpz cimport fmpz_get_mpz, fmpz_set_mpz
-from sage.libs.flint.fmpz_mat cimport fmpz_mat_entry
-from sage.libs.gmp.mpz cimport mpz_set
-from sage.libs.linbox.conversion cimport (get_method,
-                                          METHOD_DEFAULT,
+from sage.libs.linbox.conversion cimport (METHOD_DEFAULT,
                                           METHOD_DENSE_ELIMINATION,
                                           METHOD_SPARSE_ELIMINATION,
                                           METHOD_BLACKBOX,
                                           METHOD_WIEDEMANN,
-                                          new_linbox_matrix_modn_sparse,
-                                          new_linbox_matrix_integer_sparse,
-                                          new_linbox_vector_integer_dense,
-                                          new_sage_vector_integer_dense)
+                                          new_linbox_matrix_modn_sparse)
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 from sage.matrix.matrix2 import Matrix as Matrix2
 from sage.matrix.matrix_dense cimport Matrix_dense
-from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.matrix.matrix_sparse cimport Matrix_sparse
 from sage.misc.verbose import verbose, get_verbose
-from sage.modules.vector_integer_dense cimport Vector_integer_dense
 from sage.modules.vector_integer_sparse cimport *
 from sage.modules.vector_modn_sparse cimport *
 from sage.rings.fast_arith cimport arith_int
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int, IntegerMod_abstract
-from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
 from sage.structure.element cimport Matrix
 
@@ -129,6 +118,7 @@ ai = arith_int()
 # int's, even on 64-bit computers.  Improving this is
 # Github Issue #12679.
 MAX_MODULUS = 46341
+
 
 cdef class Matrix_modn_sparse(Matrix_sparse):
     def __cinit__(self):

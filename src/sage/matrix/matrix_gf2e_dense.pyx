@@ -95,7 +95,7 @@ from sage.misc.randstate cimport randstate, current_randstate
 from sage.matrix.matrix_mod2_dense cimport Matrix_mod2_dense
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 
-from sage.libs.m4ri cimport m4ri_word, mzd_copy
+from sage.libs.m4ri cimport m4ri_word, mzd_copy, mzp_t, mzp_init, mzp_free
 from sage.libs.m4rie cimport *
 from sage.libs.m4rie cimport mzed_t
 
@@ -126,7 +126,20 @@ cdef class M4RIE_finite_field:
         if self.ff:
             gf2e_free(self.ff)
 
-cdef m4ri_word poly_to_word(f) noexcept:
+cdef m4ri_word poly_to_word(f) except? -1:
+    """
+    Internal function to convert a finite field element to ``m4ri_word``.
+
+    TESTS:
+
+    If the user interrupts some long computation in the middle of the execution of
+    :func:`poly_to_word`, it will raise ``KeyboardInterrupt``. Make sure it is correctly
+    propagated::
+
+        sage: from sage.doctest.util import ensure_interruptible_after
+        sage: with ensure_interruptible_after(0.5):
+        ....:     MatrixSpace(GF(2^8), 2^9).random_element().LU()
+    """
     return f.to_integer()
 
 
@@ -1010,7 +1023,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: m = Matrix(GL(2^8, GF(2^8)).random_element())
+            sage: m = Matrix(GL(2^6, GF(2^6)).random_element())
             sage: m.is_invertible()
             True
         """
@@ -1601,6 +1614,88 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         mzed_set_ui(self._entries, 0)
         mzed_cling(self._entries, v)
         mzd_slice_free(v)
+
+    def determinant(self):
+        """
+        Return the determinant of this matrix.
+
+        Relies directly on M4RIE's PLE decomposition, and incidentally caches
+        the rank of ``self``.
+
+        EXAMPLES::
+
+            sage: gf4.<z> = GF(4)
+            sage: mat = matrix(gf4, 2, 2, [[z + 1, z + 1], [z, 1]])
+            sage: mat
+            [z + 1 z + 1]
+            [    z     1]
+            sage: mat.determinant()
+            z
+            sage: gf256.<t> = GF(2**8)
+            sage: mat = matrix(gf256, 3, 3, [[1, t, t**2],
+            ....:                            [t**2, 1, t],
+            ....:                            [t, t**2, 1]])
+            sage: mat.determinant()
+            t^6 + 1
+            sage: mat = matrix(gf256, 3, 3, [[1, t, t**2],
+            ....:                            [t**2, 1, t],
+            ....:                            [t**2 + 1, t + 1, t**2 + t]])
+            sage: mat.determinant()
+            0
+
+        Non-square matrices and the `0 \times 0` matrix are taken care of::
+
+            sage: matrix(gf4, 0, 0).determinant()
+            1
+            sage: matrix(gf4, 3, 2).determinant()
+            Traceback (most recent call last):
+            ...
+            ValueError: self must be a square matrix
+        """
+        cdef size_t m = self._nrows 
+
+        if m != self._ncols:
+            raise ValueError("self must be a square matrix")
+        if m == 0:
+            return self._one
+
+        x = self.fetch('det')
+        if x is not None:
+            return x
+
+        cdef mzed_t * A = mzed_copy(NULL, self._entries)
+        cdef mzp_t * P = mzp_init(m)
+        cdef mzp_t * Q = mzp_init(m)
+
+        sig_on()
+        cdef int r = mzed_ple(A, P, Q)
+        sig_off()
+
+        self.cache('rank', r)
+
+        if r < m:
+            mzp_free(P)
+            mzp_free(Q)
+            mzed_free(A)
+            self.cache('det', self._zero)
+            return self._zero
+
+        cdef Cache_base cache = <Cache_base> self._base_ring._cache
+
+        # characteristic 2, so det(P) == det(Q) == 1
+        cdef Py_ssize_t i
+        cdef int elt
+        cdef det = self._one
+        for i from 0 <= i < m:
+            elt = mzed_read_elem(A, i, i)
+            det = det * cache.fetch_int(elt)
+
+        mzp_free(P)
+        mzp_free(Q)
+        mzed_free(A)
+
+        self.cache('det', det)
+        return det
 
 
 def unpickle_matrix_gf2e_dense_v0(Matrix_mod2_dense a, base_ring, nrows, ncols):

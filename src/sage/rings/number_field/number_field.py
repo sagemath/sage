@@ -2505,7 +2505,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         return (K, new_alpha, hom)
 
-    def is_absolute(self):
+    def is_absolute(self) -> bool:
         """
         Return ``True`` if ``self`` is an absolute field.
 
@@ -5732,8 +5732,16 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             try:
                 return self.__disc
             except AttributeError:
+                pass
+            try:
+                # use the maximal order if we have it, but do not
+                # trigger its computation if we don't.
+                OK = self.__maximal_order
+            except AttributeError:
                 self.__disc = ZZ(self.pari_polynomial().nfdisc())
-                return self.__disc
+            else:
+                self.__disc = ZZ(self.discriminant(OK.basis()))
+            return self.__disc
         else:
             return QQ(self.trace_pairing(v).det())
 
@@ -6174,7 +6182,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         return self.galois_group().is_galois()
 
     @cached_method
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         r"""
         Return ``True`` if this number field is an abelian Galois extension of
         `\QQ`.
@@ -8086,6 +8094,17 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             400160824478095086350656915693814563600
             sage: O3.is_maximal()
             False
+
+        If we compute the maximal order via assume_maximal=True, further
+        calls to maximal_order() should be fast; see :issue:`40770`::
+
+            sage: x = polygen(ZZ, 'x')
+            sage: f = -10200*x^5 + 3394506606*x^4 + 1499062700037543*x^3 - 399446093061413660294*x^2 - 54234952557577515347321243*x + 2514415152433747751031436303788
+            sage: K.<a> = NumberField(f)
+            sage: easy = [2,3,5,7,11,83,5443,3548737,108743131120471]
+            sage: OK = K.maximal_order(v=easy, assume_maximal=True)
+            sage: K.maximal_order() == OK
+            True
         """
         v = self._normalize_prime_list(v)
 
@@ -8097,7 +8116,16 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         if assume_maximal == "non-maximal-non-unique":
             deprecation(33386, 'maximal_order(v=[primes], assume_maximal="non-maximal-non-unique") has been deprecated since it can silently produce wrong results and does not play nicely with caching. An order that is maximal at some primes should be created with assume_maximal=None instead to make no assumptions about maximality at other primes.')
 
-        return self._maximal_order(v, assume_maximal=assume_maximal)
+        if assume_maximal is True:
+            try:
+                return self.__maximal_order
+            except AttributeError:
+                OK = self._maximal_order(v, assume_maximal=assume_maximal)
+            self.__maximal_order = OK
+        else:
+            OK = self._maximal_order(v, assume_maximal=assume_maximal)
+
+        return OK
 
 
 class NumberField_absolute(NumberField_generic):
@@ -8500,7 +8528,7 @@ class NumberField_absolute(NumberField_generic):
         for v in cartesian_product([M.base_ring()] * M.dimension()):
             yield f(M(list(v)))
 
-    def is_absolute(self):
+    def is_absolute(self) -> bool:
         r"""
         Return ``True`` since ``self`` is an absolute field.
 
@@ -11539,7 +11567,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         from sage.rings.number_field.homset import CyclotomicFieldHomset
         return CyclotomicFieldHomset(self, codomain, category)
 
-    def is_galois(self):
+    def is_galois(self) -> bool:
         """
         Return ``True`` since all cyclotomic fields are automatically Galois.
 
@@ -11550,7 +11578,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         """
         return True
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return ``True`` since all cyclotomic fields are automatically abelian.
 
@@ -11561,7 +11589,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         """
         return True
 
-    def is_isomorphic(self, other):
+    def is_isomorphic(self, other) -> bool:
         """
         Return ``True`` if the cyclotomic field ``self`` is isomorphic as a number
         field to ``other``.
@@ -11896,18 +11924,17 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         try:
             return self.__multiplicative_order_table
         except AttributeError:
-            t = {}
-            x = self(1)
-            n = self.zeta_order()
-            m = 0
-            zeta = self.zeta(n)
-            # todo: this desperately needs to be optimized!!!
-            for i in range(n):
-                t[x.polynomial()] = n // gcd(m, n)  # multiplicative_order of (zeta_n)**m
-                x *= zeta
-                m += 1
-            self.__multiplicative_order_table = t
-            return t
+            pass
+        t = {}
+        x = self.one()
+        n = self.zeta_order()
+        zeta = self.zeta(n)
+        # todo: this desperately needs to be optimized!!!
+        for m in range(n):
+            t[x.polynomial()] = n // gcd(m, n)  # multiplicative_order of (zeta_n)**m
+            x *= zeta
+        self.__multiplicative_order_table = t
+        return t
 
     def zeta(self, n=None, all=False):
         """

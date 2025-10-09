@@ -686,13 +686,11 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             sage: M._constructed
             True
         """
-        i = 0
         # self._elements is never empty; so we are sure
-        for x in self._elements:
+        for i, x in enumerate(self._elements, 1):
             yield x
             # some other iterator/ method of the semigroup may have
             # been called before we move on to the next line
-            i += 1
             if i == len(self._elements) and not self._constructed:
                 try:
                     next(self._iter)

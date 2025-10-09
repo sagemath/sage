@@ -10,7 +10,6 @@ datadir = fs.expanduser(get_option('datadir'))
 if not fs.is_absolute(datadir)
   datadir = prefix / datadir
 endif
-conf_data.set('SAGE_SHARE', datadir)
 if not fs.exists(datadir / 'cremona')
   message(
     'Warning: The specified datadir does not contain the necessary Cremona database. Either specify a different datadir or specify a correct the correct path via the environment variable SAGE_SHARE during runtime.',
@@ -82,15 +81,6 @@ endforeach
 py.install_sources(
   '__init__.py',
   'all.py',
-  'all__sagemath_bliss.py',
-  'all__sagemath_coxeter3.py',
-  'all__sagemath_environment.py',
-  'all__sagemath_mcqd.py',
-  'all__sagemath_meataxe.py',
-  'all__sagemath_objects.py',
-  'all__sagemath_repl.py',
-  'all__sagemath_sirocco.py',
-  'all__sagemath_tdlib.py',
   'all_cmdline.py',
   'env.py',
   'version.py',
