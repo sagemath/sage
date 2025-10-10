@@ -117,14 +117,16 @@ We can convert from symbolic expressions::
     1
     sage: QQbar((-8)^(1/3))
     1.000000000000000? + 1.732050807568878?*I
-    sage: AA((-8)^(1/3))
-    -2
     sage: QQbar((-4)^(1/4))
     1 + 1*I
+    sage: AA((-8)^(1/3))
+    Traceback (most recent call last):
+    ...
+    ValueError: cannot coerce algebraic number with nonzero imaginary part to algebraic real
     sage: AA((-4)^(1/4))
     Traceback (most recent call last):
     ...
-    ValueError: Cannot coerce algebraic number with nonzero imaginary part to algebraic real
+    ValueError: cannot coerce algebraic number with nonzero imaginary part to algebraic real
 
 The coercion, however, goes in the other direction, since not all
 symbolic expressions are algebraic numbers::
@@ -134,11 +136,10 @@ symbolic expressions are algebraic numbers::
     sage: QQbar(sqrt(2) + QQbar(sqrt(3)))                                               # needs sage.symbolic
     3.146264369941973?
 
-Note the different behavior in taking roots: for ``AA`` we prefer real
-roots if they exist, but for ``QQbar`` we take the principal root::
+Note that both for ``AA`` and ``QQbar``, we take the principal root::
 
     sage: AA(-1)^(1/3)
-    -1
+    0.500000000000000? + 0.866025403784439?*I
     sage: QQbar(-1)^(1/3)
     0.500000000000000? + 0.866025403784439?*I
 
@@ -298,8 +299,8 @@ track of the computation steps used to produce that number::
     sage: n = (rt2 + rt3)^5; n
     308.3018001722975?
     sage: sage_input(n)
-    R.<x> = AA[]
-    v1 = AA.polynomial_root(AA.common_polynomial(x^2 - 2), RIF(RR(1.4142135623730949), RR(1.4142135623730951))) + AA.polynomial_root(AA.common_polynomial(x^2 - 3), RIF(RR(1.7320508075688772), RR(1.7320508075688774)))
+    R.<x> = QQbar[]
+    v1 = QQbar.polynomial_root(AA.common_polynomial(x^2 - 2), CIF(RIF(RR(1.4142135623730949), RR(1.4142135623730951)), RIF(RR(0)))).real() + QQbar.polynomial_root(AA.common_polynomial(x^2 - 3), CIF(RIF(RR(1.7320508075688772), RR(1.7320508075688774)), RIF(RR(0)))).real()
     v2 = v1*v1
     v2*v2*v1
 
@@ -335,8 +336,8 @@ fact that the third output is different than the first::
     sage: n = rt2^2
     sage: sage_input(n, verify=True)
     # Verified
-    R.<x> = AA[]
-    v = AA.polynomial_root(AA.common_polynomial(x^2 - 2), RIF(RR(1.4142135623730949), RR(1.4142135623730951)))
+    R.<x> = QQbar[]
+    v = QQbar.polynomial_root(AA.common_polynomial(x^2 - 2), CIF(RIF(RR(1.4142135623730949), RR(1.4142135623730951)), RIF(RR(0)))).real()
     v*v
     sage: sage_input(n, verify=True)
     # Verified
@@ -1157,7 +1158,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
             if x.imag().is_zero():
                 return x.real()
             else:
-                raise ValueError("Cannot coerce algebraic number with nonzero imaginary part to algebraic real")
+                raise ValueError("cannot coerce algebraic number with nonzero imaginary part to algebraic real")
         elif hasattr(x, '_algebraic_'):
             return x._algebraic_(AA)
         return AlgebraicReal(x)
@@ -4402,9 +4403,8 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         .. WARNING::
 
             Note that for odd `n`, all ``False`` and negative real numbers,
-            ``AlgebraicReal`` and ``AlgebraicNumber`` values give different
-            answers: ``AlgebraicReal`` values prefer real results, and
-            ``AlgebraicNumber`` values return the principal root.
+            ``AlgebraicReal`` and ``AlgebraicNumber`` values return the
+            principal root.
 
         EXAMPLES::
 
@@ -4439,6 +4439,9 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             True
         """
         if not all:
+            if self.parent() is AA and self.sign() < 0:
+                if n % 2:
+                    return -((-self) ** ~ZZ(n))
             return self ** ~ZZ(n)
         else:
             root = QQbar(self) ** ~ZZ(n)
@@ -5198,7 +5201,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
             sage: QQbar.zeta(3)._mpfr_(RR)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot coerce algebraic number with nonzero imaginary part to algebraic real
+            ValueError: cannot coerce algebraic number with nonzero imaginary part to algebraic real
         """
         return AA(self)._mpfr_(field)
 
@@ -5217,7 +5220,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
             sage: float(QQbar.zeta(3))
             Traceback (most recent call last):
             ...
-            ValueError: Cannot coerce algebraic number with nonzero imaginary part to algebraic real
+            ValueError: cannot coerce algebraic number with nonzero imaginary part to algebraic real
         """
         return AA(self).__float__()
 
@@ -5271,13 +5274,13 @@ class AlgebraicNumber(AlgebraicNumber_base):
             sage: QQbar.zeta(6)._integer_()
             Traceback (most recent call last):
             ...
-            ValueError: Cannot coerce algebraic number with nonzero imaginary part to algebraic real
+            ValueError: cannot coerce algebraic number with nonzero imaginary part to algebraic real
 
             sage: # needs sage.symbolic
             sage: QQbar(sqrt(17))._integer_()
             Traceback (most recent call last):
             ...
-            ValueError: Cannot coerce non-integral Algebraic Real 4.123105625617660? to Integer
+            ValueError: cannot coerce non-integral Algebraic Real 4.123105625617660? to Integer
             sage: QQbar(sqrt(16))._integer_()
             4
             sage: v = QQbar(1 + I*sqrt(3))^5 + QQbar(16*sqrt(3)*I); v
@@ -5300,13 +5303,13 @@ class AlgebraicNumber(AlgebraicNumber_base):
             sage: (QQbar.zeta(7)^3)._rational_()
             Traceback (most recent call last):
             ...
-            ValueError: Cannot coerce algebraic number with nonzero imaginary part to algebraic real
+            ValueError: cannot coerce algebraic number with nonzero imaginary part to algebraic real
 
             sage: # needs sage.symbolic
             sage: QQbar(sqrt(2))._rational_()
             Traceback (most recent call last):
             ...
-            ValueError: Cannot coerce irrational Algebraic Real 1.414213562373095? to Rational
+            ValueError: cannot coerce irrational Algebraic Real 1.414213562373095? to Rational
             sage: v1 = QQbar(1/3 + I*sqrt(5))^7
             sage: v2 = QQbar((100336/729*golden_ratio - 50168/729)*I)
             sage: v = v1 + v2; v
@@ -5751,21 +5754,21 @@ class AlgebraicReal(AlgebraicNumber_base):
             sage: AA(golden_ratio)._integer_()                                          # needs sage.symbolic
             Traceback (most recent call last):
             ...
-            ValueError: Cannot coerce non-integral Algebraic Real 1.618033988749895? to Integer
+            ValueError: cannot coerce non-integral Algebraic Real 1.618033988749895? to Integer
             sage: (AA(golden_ratio)^10 + AA(1-golden_ratio)^10)._integer_()             # needs sage.symbolic
             123
             sage: AA(-22/7)._integer_()
             Traceback (most recent call last):
             ...
-            ValueError: Cannot coerce non-integral Algebraic Real -22/7 to Integer
+            ValueError: cannot coerce non-integral Algebraic Real -22/7 to Integer
         """
         if self._value.lower().ceiling() > self._value.upper().floor():
             # The value is known to be non-integral.
-            raise ValueError(lazy_string("Cannot coerce non-integral Algebraic Real %s to Integer", self))
+            raise ValueError(lazy_string("cannot coerce non-integral Algebraic Real %s to Integer", self))
 
         self.exactify()
         if not isinstance(self._descr, ANRational):
-            raise ValueError(lazy_string("Cannot coerce irrational Algebraic Real %s to Integer", self))
+            raise ValueError(lazy_string("cannot coerce irrational Algebraic Real %s to Integer", self))
 
         return ZZ(self._descr._value)
 
@@ -5887,7 +5890,7 @@ class AlgebraicReal(AlgebraicNumber_base):
             sage: AA(sqrt(7))._rational_()                                              # needs sage.symbolic
             Traceback (most recent call last):
             ...
-            ValueError: Cannot coerce irrational Algebraic Real 2.645751311064591? to Rational
+            ValueError: cannot coerce irrational Algebraic Real 2.645751311064591? to Rational
             sage: v = AA(1/2 + sqrt(2))^3 - AA(11/4*sqrt(2)); v                         # needs sage.symbolic
             3.125000000000000?
             sage: v._rational_()                                                        # needs sage.symbolic
@@ -5895,7 +5898,7 @@ class AlgebraicReal(AlgebraicNumber_base):
         """
         self.exactify()
         if not isinstance(self._descr, ANRational):
-            raise ValueError(lazy_string("Cannot coerce irrational Algebraic Real %s to Rational", self))
+            raise ValueError(lazy_string("cannot coerce irrational Algebraic Real %s to Rational", self))
 
         return QQ(self._descr._value)
 
@@ -6470,9 +6473,9 @@ class AlgebraicNumberPowQQAction(Action):
     TESTS::
 
         sage: AA(-8)^(1/3)
-        -2
+        1.000000000000000? + 1.732050807568878?*I
         sage: AA(-8)^(2/3)
-        4
+        -2.000000000000000? + 3.464101615137755?*I
         sage: AA(32)^(3/5)
         8
         sage: AA(-16)^(1/2)
@@ -6495,7 +6498,7 @@ class AlgebraicNumberPowQQAction(Action):
             sage: act = AlgebraicNumberPowQQAction(QQ, AA); act
             Right Rational Powering by Rational Field on Algebraic Real Field
             sage: act(AA(-2), 1/3)
-            -1.259921049894873?
+            0.6299605249474365? + 1.091123635971722?*I
 
         ::
 
@@ -6526,19 +6529,16 @@ class AlgebraicNumberPowQQAction(Action):
 
         # Parent of the result
         S = self.codomain()
-        if S is AA and d % 2 == 0 and x.sign() < 0:
+        if S is AA and x.sign() < 0:
             S = QQbar
 
-        # First, check for exact roots.
+        # First, check for exact roots
         if isinstance(x._descr, ANRational):
             rt = rational_exact_root(abs(x._descr._value), d)
             if rt is not None:
                 if x._descr._value < 0:
-                    if S is AA:
-                        return AlgebraicReal(ANRational((-rt)**n))
-                    else:
-                        z = QQbar.zeta(2 * d)._pow_int(n)
-                        return z * AlgebraicNumber(ANRational(rt**n))
+                    z = QQbar.zeta(2 * d)._pow_int(n)
+                    return z * AlgebraicNumber(ANRational(rt**n))
                 return S(ANRational(rt**n))
 
         if S is AA:
