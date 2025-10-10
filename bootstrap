@@ -63,10 +63,6 @@ AS_VAR_SET_IF([SAGE_ENABLE_$pkgname], [], [AS_VAR_SET([SAGE_ENABLE_$pkgname], [y
     for pkgname in $(sage-package list :optional: :experimental:); do
         eval DIR=\$path_$pkgname pkgtype=\$type_$pkgname pkgsource=\$source_$pkgname
         case "$pkgname:$pkgsource" in
-            *:pip)
-                # Issue #29629: Temporary solution for Sage 9.1: Do not provide
-                # --enable-SPKG options for installing pip packages
-                ;;
             _*:*)
                 # Issue #29124: Do not provide --enable-_recommended and similar
                 ;;
