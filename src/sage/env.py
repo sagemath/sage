@@ -29,6 +29,7 @@ from platformdirs import site_data_dir, user_data_dir
 
 import sage.config
 from sage import version
+from sage.config import get_include_dirs
 
 # All variables set by var() appear in this SAGE_ENV dict
 SAGE_ENV = dict()
@@ -279,6 +280,9 @@ def sage_include_directories(use_sources=False):
 
         sage: import sage.env
         sage: sage.env.sage_include_directories()
+        doctest:warning...
+        DeprecationWarning: use sage.config.get_include_dirs() instead
+        ...
         ['...',
          '.../numpy/...core/include',
          '.../include/python...']
@@ -299,6 +303,9 @@ def sage_include_directories(use_sources=False):
         sage: any(os.path.isfile(os.path.join(d, file)) for d in dirs)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(40765, 'use sage.config.get_include_dirs() instead')
+
     if use_sources:
         dirs = [SAGE_SRC]
     else:
@@ -312,6 +319,8 @@ def sage_include_directories(use_sources=False):
         pass
 
     dirs.append(sysconfig.get_config_var('INCLUDEPY'))
+
+    dirs.extend([dir.as_posix() for dir in get_include_dirs()])
 
     return dirs
 
