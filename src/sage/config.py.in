@@ -103,7 +103,7 @@ def get_editable_root() -> tuple[Path, Path] | None:
     EXAMPLES::
 
         sage: from sage.config import get_editable_root
-        sage: get_editable_root()
+        sage: get_editable_root() # random
         (WindowsPath('<path_to_sage>/sage'), WindowsPath('<path_to_sage>/sage/build/cp312'))
     """
     if (
