@@ -129,10 +129,15 @@ def category(x):
         return Objects()
 
 
-def characteristic_polynomial(x, var='x'):
+def characteristic_polynomial(x, var='x', algorithm=None):
     """
     Return the characteristic polynomial of ``x`` in the given variable.
-
+    
+    Parameters:
+    - `x`: The matrix or element for which the characteristic polynomial is to be computed.
+    - `var`: The variable name for the polynomial (default: 'x').
+    - `algorithm`: The algorithm to use for computation. Supported values: None (default), "pari".
+    
     EXAMPLES::
 
         sage: # needs sage.libs.pari sage.modules
@@ -150,6 +155,29 @@ def characteristic_polynomial(x, var='x'):
         sage: characteristic_polynomial(alpha, 'T')                                     # needs sage.rings.finite_rings
         T^10 + T^6 + T^5 + 4*T^4 + T^3 + 2*T^2 + 3*T + 3
 
+        sage: # Using the PARI algorithm
+        sage: from sage.libs.pari.gen import pari
+        sage: M = MatrixSpace(QQ, 2, 2)
+        sage: A = M([1, 2, 3, 4])
+        sage: characteristic_polynomial(A, algorithm="pari")
+        x^2 - 5*x - 2
+
+        sage: # Testing with different fields
+        sage: R = MatrixSpace(RR, 2)
+        sage: A = R([1.5, 2.5, 3.5, 4.5])
+        sage: characteristic_polynomial(A, algorithm="pari")
+        x^2 - 6.0*x - 1.25
+
+        sage: R = MatrixSpace(ZZ, 2)
+        sage: A = R([1, 2, 3, 4])
+        sage: characteristic_polynomial(A, algorithm="pari")
+        x^2 - 5*x - 2
+
+        sage: R = MatrixSpace(QQ['i'], 2)
+        sage: A = R([1, 2, 3, 4])
+        sage: characteristic_polynomial(A, algorithm="pari")
+        x^2 - 5*x - 2
+
     Ensure the variable name of the polynomial does not conflict with
     variables used within the matrix, and that non-integral powers of
     variables do not confuse the computation (:issue:`14403`)::
@@ -163,6 +191,10 @@ def characteristic_polynomial(x, var='x'):
         sage: charpoly(b).list()
         [sqrt(y), -3*sqrt(y) - 1, 3*sqrt(y) + 3, -sqrt(y) - 3, 1]
     """
+    if algorithm == "pari":
+        from sage.libs.pari.gen import pari
+        pari_poly = pari(x).charpoly(var)
+        return pari_poly.sage()
     try:
         return x.charpoly(var)
     except AttributeError:
