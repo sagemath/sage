@@ -4185,7 +4185,7 @@ class PermutationGroup_generic(FiniteGroup):
 
     def minimal_normal_subgroups(self):
         """
-        Return the nontrivial minimal normal subgroups ``self``.
+        Return the nontrivial minimal normal subgroups of ``self``.
 
         EXAMPLES::
 
