@@ -60,22 +60,23 @@ class GT_Calc_Window(QMainWindow):
         self.edge_textbox.setGeometry(240,125,250,40)
         self.edge_textbox_layout.addWidget(self.edge_textbox)
 
-        """
-        #Create a button to pull info from text boxes to create to graph
-        self.create_graph_button = QPushButton("Finished", self)
-        self.create_graph_button.setGeometry(300, 40, 110, 40)# x, y, width, height
-        self.create_graph_button.clicked.connect(self.on_finished_button)
-        gtimagelayout = QVBoxLayout()
-        gtimagelayout.addWidget(self.create_graph_button)
-        """
-
+        
         # Create a button show graph
         self.display_graph_button = QPushButton("Display Graph", self)
         self.display_graph_button.setGeometry(575, 70, 150, 50)# x, y, width, height
         self.display_graph_button.clicked.connect(self.on_display_button)
         gtimagelayout = QVBoxLayout()
         gtimagelayout.addWidget(self.display_graph_button)
-        
+
+        # Create a button density
+        self.density_button = QPushButton("Density", self)
+        self.density_button.setGeometry(500, 200, 150, 50) # x, y, width, height
+        self.density_button.clicked.connect(self.on_density_button)
+        self.densitylabel = QLabel("",self)
+        self.densitylabel.hide()
+        self.textlayout.addWidget(self.density_button)
+        self.textlayout.addWidget(self.densitylabel)
+
 
         # Create a button degree
         self.degree_button = QPushButton("Degrees", self)
@@ -85,17 +86,6 @@ class GT_Calc_Window(QMainWindow):
         self.degreelabel.hide()
         self.textlayout.addWidget(self.degree_button)
         self.textlayout.addWidget(self.degreelabel)
-        
-
-        """
-        self.button = QPushButton('', self)
-        icon = QIcon(QPixmap('/Users/nicoleschubert/Desktop/CSC 532/Sandbox/plusicon.jpg'))
-        self.button.setIcon(icon)
-        self.button.setIconSize(QSize(64, 64))  # Set to the desired image size
-        self.button.setGeometry(150, 30, 10, 10)  # Adjust size/position
-        self.button.clicked.connect(self.add_vertice_slot)
-        """
-
 
         # Create a button planar
         self.planar_button = QPushButton("Planar", self)
@@ -123,23 +113,7 @@ class GT_Calc_Window(QMainWindow):
         self.hamiltonianlabel.hide()
         self.textlayout.addWidget(self.hamiltonian_button)
         self.textlayout.addWidget(self.hamiltonianlabel)
-        
-        # Create a button density
-        self.density_button = QPushButton("Density", self)
-        self.density_button.setGeometry(500, 200, 150, 50) # x, y, width, height
-        self.density_button.clicked.connect(self.on_density_button)
-        self.densitylabel = QLabel("",self)
-        self.densitylabel.hide()
-        self.textlayout.addWidget(self.density_button)
-        self.textlayout.addWidget(self.densitylabel)
-    """   
-    def on_finished_button(self): #pulls info from textboxes to create graph
-        vert_text = self.vert_textbox.text()
-        edge_text = self.edge_textbox.text()
-        G = Graph()
-        G.add_vertices([vert_text])
-        G.add_edges([edge_text])
-    """   
+    
 
     def on_display_button(self): #creates pop up window of graph picture
          # Get vertices
@@ -191,11 +165,7 @@ class GT_Calc_Window(QMainWindow):
         self.degreelabel.setWordWrap(True)
         self.degreelabel.show()
 
-    """
-    def add_vertice_slot(self):
-        self.image_window = GT("/Users/nicoleschubert/Desktop/CSC 532/Sandbox/IMAGENAMEHERE") ########testing
-        self.image_window.show()
-    """
+   
     def on_planar_button(self):
         vert_text = self.vert_textbox.text()
         vertices = [v.strip() for v in vert_text.split(',') if v.strip()]
