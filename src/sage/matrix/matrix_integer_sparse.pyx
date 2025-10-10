@@ -912,7 +912,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
                 fmpz_poly_set_coeff_mpz(g._poly, i, tmp)
             _fmpz_poly_set_length(g._poly, p.size())
 
-            if g.lc() == 1:
+            if g.lc() == 1 and g.degree() == self._nrows:
                 break
 
         del M

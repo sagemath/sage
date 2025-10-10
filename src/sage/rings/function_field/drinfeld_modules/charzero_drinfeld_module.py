@@ -638,11 +638,10 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
         # as an Fq-linear map (encoded in the matrix N)
         dim = V.rank()
         pivots = V.pivots()
-        j = ip = 0
-        for i in range(dim, s):
+        j = 0
+        for ip, i in enumerate(range(dim, s)):
             while ip < dim and j == pivots[ip]:
                 j += 1
-            ip += 1
             V[i, j] = 1
         N = (V * M * ~V).submatrix(dim, dim)
 
