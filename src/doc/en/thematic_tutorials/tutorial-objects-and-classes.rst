@@ -207,7 +207,7 @@ basis is indexed by permutations, and a particular element in it:
 ::
 
     sage: F = CombinatorialFreeModule(QQ, Permutations())
-    sage: el = 3*F([1,3,2])+ F([1,2,3])
+    sage: el = 3*F.monomial(Permutation([1,3,2])) + F.monomial(Permutation([1,2,3]))
     sage: el
     B[[1, 2, 3]] + 3*B[[1, 3, 2]]
 
@@ -261,7 +261,7 @@ through operators are fixed by the Python language and are of the form
 ``__mult__`` for operators ``+`` and ``*``.  See
 http://docs.python.org/library/ for a complete list. ::
 
-    sage: el.__eq__(F([1,3,2]))
+    sage: el.__eq__(F.monomial(Permutation([1,3,2])))
     False
     sage: el.__repr__()
     'B[[1, 2, 3]] + 3*B[[1, 3, 2]] + 1/2*B[[3, 2, 1]]'
