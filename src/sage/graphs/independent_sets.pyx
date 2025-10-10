@@ -3,20 +3,32 @@ Independent sets
 
 This module implements the :class:`IndependentSets` class which can be used to :
 
-- List the independent sets (or cliques) of a graph
+- List the independent sets (or cliques) of a graph, or just their sizes
 - Count them (which is obviously faster)
 - Test whether a set of vertices is an independent set
 
 It can also be restricted to focus on (inclusionwise) maximal independent
 sets. See the documentation of :class:`IndependentSets` for actual examples.
 
+Building on the IndependentSets class, there is also the method :meth:`independence_polynomial` 
+which computes independence polynomial of a given graph.
+
 Classes and methods
 -------------------
 """
-
 from sage.data_structures.binary_matrix cimport *
-from sage.misc.cachefunc import cached_method
+
 from sage.graphs.base.static_dense_graph cimport dense_graph_init
+
+from sage.libs.flint.fmpz cimport *
+from sage.libs.flint.fmpz_poly cimport *
+from sage.libs.flint.fmpz_poly_sage cimport *
+
+from sage.misc.cachefunc import cached_method
+
+from sage.rings.polynomial.polynomial_ring import polygen
+from sage.rings.integer_ring import ZZ
+from sage.rings.integer cimport Integer
 
 
 cdef inline int ismaximal(binary_matrix_t g, int n, bitset_t s) noexcept:
@@ -44,6 +56,9 @@ cdef class IndependentSets:
 
     - ``complement`` -- boolean (default: ``False``); whether to consider the
       graph's complement (i.e. cliques instead of independent sets)
+
+    - ``size_only`` -- boolean (default: ``False``); whether to only yield
+        the size of the independent sets instead of the independent sets themselves
 
     ALGORITHM:
 
@@ -101,6 +116,16 @@ cdef class IndependentSets:
         sage: number_of
         [1, 10, 30, 30, 5, 0, 0, 0, 0, 0]
 
+    Though there is a slight optimization available in the case that you only need the
+    cardinalities::
+
+        sage: g = graphs.PetersenGraph()
+        sage: number_of = [0] * g.order()
+        sage: for i in IndependentSets(g, size_only=True):
+        ....:     number_of[i] += 1
+        sage: number_of
+        [1, 10, 30, 30, 5, 0, 0, 0, 0, 0]
+
     It is also possible to define an iterator over all independent sets of a
     given cardinality. Note, however, that Sage will generate them *all*, to
     return only those that satisfy the cardinality constraints. Getting the list
@@ -127,7 +152,7 @@ cdef class IndependentSets:
         ...
         ValueError: a is not a vertex of the graph
     """
-    def __init__(self, G, maximal=False, complement=False):
+    def __init__(self, G, maximal=False, complement=False, size_only=False):
         r"""
         Constructor for this class.
 
@@ -179,6 +204,7 @@ cdef class IndependentSets:
         self.vertex_to_int = {v: i for i, v in enumerate(self.vertices)}
         self.n = G.order()
         self.maximal = maximal
+        self.size_only = size_only
         dense_graph_init(self.g, G, translation=self.vertex_to_int)
 
         # If we must consider the graph's complement instead
@@ -209,7 +235,10 @@ cdef class IndependentSets:
             [0, 2]
         """
         if not self.n:
-            yield []
+            if self.size_only:
+                yield 0
+            else:
+                yield []
             return
 
         cdef int i = 0
@@ -255,7 +284,10 @@ cdef class IndependentSets:
                         count += 1
 
                         if not self.count_only:
-                            yield [self.vertices[j] for j in range(i + 1) if bitset_in(tmp, j)]
+                            if self.size_only:
+                                yield sum(1 for j in range(i + 1) if bitset_in(tmp, j))
+                            else:
+                                yield [self.vertices[j] for j in range(i + 1) if bitset_in(tmp, j)]
                             continue
 
                     else:
@@ -282,7 +314,10 @@ cdef class IndependentSets:
             if not self.maximal:
                 count += 1
                 if not self.count_only:
-                    yield []
+                    if self.size_only:
+                        yield 0
+                    else:
+                        yield []
 
             if self.count_only:
                 yield count
@@ -325,7 +360,6 @@ cdef class IndependentSets:
 
         self.count_only = 0
 
-        from sage.rings.integer import Integer
         return Integer(i)
 
     def __contains__(self, S):
@@ -399,3 +433,87 @@ cdef class IndependentSets:
 
         finally:
             bitset_free(s)
+
+
+def independence_polynomial(G, complement=False, name=None):
+    r"""
+    Compute the independence polynomial of the graph `G`.
+
+    If `i(G, k)` denotes the number of independent sets of size `k` in `G`, 
+    then the independence polynomial is defined as [GH1983]_:
+
+    .. MATH::
+
+        I(G,x)=\sum_{k \geq 0} (-1)^k i(G,k) x^{k}
+
+    INPUT:
+
+    - ``complement`` -- boolean (default: ``False``); whether to compute the independence
+      polynomial of the graph's complement (i.e. compute the clique polynomial of `G` instead)
+
+    - ``name`` -- (optional) string for the variable name in the polynomial, the default value 
+      of `x` is used if `None` is supplied.
+
+    EXAMPLES::
+
+        sage: # needs sage.libs.flint
+        sage: from sage.graphs.independent_sets import independence_polynomial
+        sage: g = graphs.PetersenGraph()
+        sage: independence_polynomial(g)
+        5*x^4 + 30*x^3 + 30*x^2 + 10*x + 1
+        sage: independence_polynomial(g, complement=True)
+        15*x^2 + 10*x + 1
+        sage: independence_polynomial(g, name='lambda')
+        5*lambda^4 + 30*lambda^3 + 30*lambda^2 + 10*lambda + 1
+
+    ::
+        sage: # needs sage.libs.flint
+        sage: from sage.graphs.independent_sets import independence_polynomial
+        sage: independence_polynomial(graphs.CompleteGraph(0))
+        1
+        sage: independence_polynomial(graphs.CompleteGraph(1))
+        x + 1
+        sage: independence_polynomial(graphs.CompleteGraph(2))
+        2*x + 1
+        sage: independence_polynomial(graphs.CompleteGraph(3))
+        3*x + 1
+        sage: independence_polynomial(graphs.CompleteGraph(4))
+        4*x + 1
+        sage: independence_polynomial(graphs.CompleteGraph(5))
+        5*x + 1
+
+    ::
+        sage: # needs sage.libs.flint
+        sage: from sage.graphs.independent_sets import independence_polynomial
+        sage: g = Graph()
+        sage: g.add_vertices(['a', 'b', 'c'])
+        sage: g.add_edges([('a', 'b'), ('b', 'c')])
+        sage: independence_polynomial(g)
+        x^2 + 3*x + 1
+    """
+    if G.has_multiple_edges():
+        raise NotImplementedError
+
+    cdef fmpz_poly_t pol
+    cdef int i, k
+
+    fmpz_poly_init(pol)  # sets to zero
+
+    for i in IndependentSets(G, maximal=False, complement=complement, size_only=True):
+        k = fmpz_poly_get_coeff_si(pol, i)
+        fmpz_poly_set_coeff_si(pol, i, k + 1)
+
+    # Building the actual matching polynomial
+
+    cdef list coeffs_ZZ = []
+    cdef Integer c_ZZ
+    for i in range(G.order() + 1):
+        c_ZZ = Integer(0)
+        fmpz_poly_get_coeff_mpz(c_ZZ.value, pol, i) 
+        coeffs_ZZ.append(c_ZZ)
+    
+    var = polygen(ZZ, name or 'x')
+    f = var.parent()(coeffs_ZZ)
+    fmpz_poly_clear(pol)
+    return f
+    
