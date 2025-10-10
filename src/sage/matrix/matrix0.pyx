@@ -2177,12 +2177,19 @@ cdef class Matrix(sage.structure.element.Matrix):
         else:
             bottom_count = 0
 
-        width = max(map(len, S))
+        maxwidth = max(map(len, S))
+        if (maxwidth + 1)*nc - 1 <= 78:
+            width = [maxwidth]*nc
+        else:
+            width = [max(len(S[(r + top_count) * nc + c])
+                         for r in range(nr))
+                     for c in range(nc)]
+
         left = []
         rows = []
         right = []
 
-        hline = cl.join(hl * ((width + 1)*(b - a) - 1)
+        hline = cl.join(hl * (sum(width[j] + 1 for j in range(a, b)) - 1)
                         for a,b in zip([0] + col_divs, col_divs + [nc]))
 
         # compute rows
@@ -2209,7 +2216,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                 else:
                     sep = " "
                 entry = S[(r + top_count) * nc + c]
-                entry = " " * (width - len(entry)) + entry
+                entry = " " * (width[c] - len(entry)) + entry
                 s = s + sep + entry
             else:
                 if 0 <= r < nr:
@@ -2250,11 +2257,11 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         if character_art:
             breakpoints = []
-            idx = len(tlb) + (col_div_counts[0] if nc > 0 else 0) + width
+            idx = len(tlb) + (col_div_counts[0] if nc > 0 else 0) + width[0]
             for c from 1 <= c < nc:
                 breakpoints.append(idx)
                 len_sep = max(col_div_counts[c], 1)
-                idx += len_sep + width
+                idx += len_sep + width[c]
             return CharacterArt(rows, breakpoints=breakpoints)
         else:
             return "\n".join(rows)
