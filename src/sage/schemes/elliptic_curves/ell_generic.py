@@ -311,11 +311,11 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
             sage: E = EllipticCurve(QQ, [1,1])
             sage: E._latex_()
-            'y^2 = x^{3} + x + 1 '
+            'y^2 = x^{3} + x + 1'
 
             sage: E = EllipticCurve(QQ, [1,2,3,4,5])
             sage: E._latex_()
-            'y^2 + x y + 3 y = x^{3} + 2 x^{2} + 4 x + 5 '
+            'y^2 + x y + 3 y = x^{3} + 2 x^{2} + 4 x + 5'
 
         Check that :issue:`12524` is solved::
 
@@ -323,7 +323,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: K.<phi> = NumberField(x^2 - x - 1)                                    # needs sage.rings.number_field
             sage: E = EllipticCurve([0, 0, phi, 27*phi - 43, -80*phi + 128])            # needs sage.rings.number_field
             sage: E._latex_()                                                           # needs sage.rings.number_field
-            'y^2 + \\phi y = x^{3} + \\left(27 \\phi - 43\\right) x - 80 \\phi + 128 '
+            'y^2 + \\phi y = x^{3} + \\left(27 \\phi - 43\\right) x - 80 \\phi + 128'
         """
         from sage.rings.polynomial.polynomial_ring import polygen
         a = self.ainvs()
@@ -333,7 +333,6 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             s += " + " + (a[0]*x*y + a[2]*y)._latex_()
         s += " = "
         s += (x**3 + a[1]*x**2 + a[3]*x + a[4])._latex_()
-        s += " "
         s = s.replace("+ -","- ")
         return s
 
