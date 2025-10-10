@@ -1,0 +1,6 @@
+{
+    "project_name": "my-sage-project",
+    "__prompts__": {
+        "project_name": "Name of the project (directory name to create)"
+    }
+}
