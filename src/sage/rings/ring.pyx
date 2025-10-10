@@ -111,7 +111,7 @@ This is to test a deprecation::
 from sage.misc.superseded import deprecation
 
 from sage.structure.parent cimport Parent
-from sage.structure.category_object cimport check_default_category
+from sage.structure.category_object cimport CategoryObject, check_default_category
 from sage.categories.rings import Rings
 from sage.categories.algebras import Algebras
 from sage.categories.commutative_algebras import CommutativeAlgebras
@@ -258,18 +258,23 @@ cdef class Ring(ParentWithGens):
                         category=category)
 
     def __iter__(self):
-        r"""
-        Return an iterator through the elements of ``self``.
-        Not implemented in general.
-
-        EXAMPLES::
-
-            sage: sage.rings.ring.Ring.__iter__(ZZ)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: object does not support iteration
         """
-        raise NotImplementedError("object does not support iteration")
+        This method is provided so that if ``ParentMethods`` or ``ElementMethods``
+        provides ``__iter__``, it is usable from ``iter()``.
+        To avoid metaclass confusion, Python only lookups special methods
+        from type objects.
+
+        This should be in ``CategoryObject``, but it does not work for unknown reasons.
+
+        TESTS::
+
+            sage: R.<x,y> = ZZ[]
+            sage: next(iter(R))
+            1
+        """
+        cdef CategoryObject c = <CategoryObject?>self
+        if c:
+            return self.getattr_from_category('__iter__')()
 
     def __len__(self):
         r"""

@@ -209,6 +209,39 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
         super().__init__(facade=facade, category=category,
                          names=names, normalize=False)  # names already normalized by classcall
 
+    def is_finite(self):
+        """
+        Return whether ``self`` is finite.
+
+        TESTS::
+
+            sage: ConditionSet(DisjointUnionEnumeratedSets(Family(ZZ, lambda x: Set([x]))), lambda x: 1 < x < 5,
+            ....:              category=Sets().Finite()).is_finite()
+            True
+        """
+        category = self.category()
+        if category.is_subcategory(Sets().Finite()):
+            return True
+        if category.is_subcategory(Sets().Infinite()):
+            return False
+        if self._universe.is_finite():
+            self._refine_category_(self.category().Finite())
+            return True
+        raise NotImplementedError(
+                'cannot determine finiteness of ConditionSet over an infinite universe, '
+                'specify category in constructor if you know')
+
+    def cardinality(self):
+        """
+        Return the cardinality of ``self``.
+        """
+        if self.is_finite():
+            # .is_finite() might have refined the category of this
+            return super().cardinality()
+        else:
+            from sage.rings.infinity import Infinity
+            return Infinity
+
     def _first_ngens(self, n):
         r"""
         Return the list of variables.
@@ -520,5 +553,5 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
             [1, -1, 3, -3, 5, -5]
         """
         for x in self._universe:
-            if x in self:
+            if all(self._call_predicate(predicate, x) for predicate in self._predicates):
                 yield x
