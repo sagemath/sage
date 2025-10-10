@@ -6,11 +6,6 @@ import sys
 # Ideally, we do not have to make one for each subject and can just import the appropriate content for the glossary (will talk to the group about this)
 # Will need to look into finding a way to import math typesetting for this
 
-
-
-    # Start an instance of the application
-    
-
 class GlossaryWidget(QtWidgets.QWidget):
     def __init__(self, subject, parent=None):
         super().__init__(parent)
@@ -69,10 +64,3 @@ class GlossaryWidget(QtWidgets.QWidget):
                 box.hide()
 
 
-# Stuff here to use the wigdet for testing purposes
-#application = QtWidgets.QApplication(sys.argv)
-#glossaryWindow,listOfContentBoxes=glossary("GT")
-#glossaryWindow.resize(1024, 768)
-#glossaryWindow.show()
-
-#sys.exit(application.exec_())

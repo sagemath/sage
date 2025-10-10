@@ -10,7 +10,7 @@ def outputContent(topic):
                 "Walk":"A <b>walk</b> is an alternating sequence of vertices and edges.",
                 "Path":"A <b>path</b> is a walk where all vertices are distinct.",
                 "Trail":"If the edges in a walk are distinct, the walk is called a <b>trail</b>.",
-                "Curcuit":"A closed trail where end vertices coincide, is called a <b>circuit</b>.",
+                "Circuit":"A closed trail where end vertices coincide, is called a <b>circuit</b>.",
                 "Hamiltonian":"A graph is <b>Hamiltonian</b> if there is a cycle that traverses ever vertex exactly once.",
                 "Eularian":"A graph is <b>Eularian</b> if there is a circuit that contains all the edges of G.",
                 "Planar":"A graph is <b>planar</b> if it can be drawn on the plane with no edge crossings.",

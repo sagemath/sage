@@ -45,7 +45,6 @@ class MyTableWidget(QWidget):
         self.tabs.addTab(GraphTheoryTab(self), "Graph Theory Learning") # We would use the learner one
         self.tabs.addTab(LinearAlgebraTab(self), "Linear Algebra")
         self.tabs.addTab(LinearAlgebraTab(self), "Linear Algebra Learning") # ^^^
-        self.tabs.addTab(GlossaryWidget(self), "Glossary") # Temporary, would need to modify glossary to work as a tab
         
         # Add tabs to widget
         self.layout.addWidget(self.tabs)
