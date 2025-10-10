@@ -5,7 +5,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
 
 # Import custom tabs
-from graph_theory import GraphTheoryTab
+from gtguiadditions.GT_Calc_Window import GT_Calc_Window
 from linear_algebra import LinearAlgebraTab
 
 class App(QMainWindow):
@@ -39,8 +39,8 @@ class MyTableWidget(QWidget):
         self.laLearnTab = QWidget()
         
         # Add tabs
-        self.tabs.addTab(GraphTheoryTab(self), "Graph Theory")
-        self.tabs.addTab(GraphTheoryTab(self), "Graph Theory Learning") # We would use the learner one
+        self.tabs.addTab(GT_Calc_Window(self), "Graph Theory")
+        self.tabs.addTab(GT_Calc_Window(self), "Graph Theory Learning") # We would use the learner one
         self.tabs.addTab(LinearAlgebraTab(self), "Linear Algebra")
         self.tabs.addTab(LinearAlgebraTab(self), "Linear Algebra Learning") # ^^^
         

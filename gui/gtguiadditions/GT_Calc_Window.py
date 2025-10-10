@@ -25,9 +25,9 @@ class GTImageWindow(QWidget):
 
         
 
-class GT_Calc_Window(QMainWindow):
-    def __init__(self):
-        super().__init__()
+class GT_Calc_Window(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
         self.textlayout = QHBoxLayout()
         self.setWindowTitle("Testing")
