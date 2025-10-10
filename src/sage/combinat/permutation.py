@@ -243,7 +243,7 @@ import itertools
 import operator
 from typing import TYPE_CHECKING
 
-from sage.arith.misc import factorial, multinomial
+from sage.arith.misc import factorial, multinomial, falling_factorial
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.finite_permutation_groups import FinitePermutationGroups
 from sage.categories.finite_weyl_groups import FiniteWeylGroups
@@ -2144,7 +2144,7 @@ class Permutation(CombinatorialElement):
         Return the ``i``-shift of ``self``. If an ``i``-shift of ``self``
         can't be performed, then ``self`` is returned.
 
-        An `i`-shift can be applied when `i` is not inbetween `i-1` and
+        An `i`-shift can be applied when `i` is not between `i-1` and
         `i+1`. The `i`-shift moves `i` to the other side, and leaves the
         relative positions of `i-1` and `i+1` in place. All other entries
         of the permutations are also left in place.
@@ -6243,7 +6243,7 @@ class Permutations_nk(Permutations):
         """
         TESTS::
 
-            sage: P = Permutations(3,2)
+            sage: P = Permutations(5, 3)
             sage: TestSuite(P).run()
         """
         self.n = ZZ(n)
@@ -6334,7 +6334,7 @@ class Permutations_nk(Permutations):
             0
         """
         if 0 <= self._k <= self.n:
-            return factorial(self.n) // factorial(self.n - self._k)
+            return falling_factorial(self.n, self._k)
         return ZZ.zero()
 
     def random_element(self):
@@ -6409,7 +6409,7 @@ class Permutations_mset(Permutations):
         """
         TESTS::
 
-            sage: S = Permutations(['c','a','c'])
+            sage: S = Permutations(['c','a','c','d'])
             sage: TestSuite(S).run()
         """
         self.mset = mset
@@ -6898,7 +6898,7 @@ class Permutations_msetk(Permutations_mset):
         """
         TESTS::
 
-            sage: P = Permutations([1,2,2],2)
+            sage: P = Permutations([1,2,2,3], 2)
             sage: TestSuite(P).run()                                                    # needs sage.libs.gap
         """
         Permutations_mset.__init__(self, mset)
@@ -7014,11 +7014,23 @@ class Permutations_setk(Permutations_set):
         """
         TESTS::
 
-            sage: P = Permutations([1,2,4],2)
+            sage: P = Permutations([1,2,4,5], 2)
             sage: TestSuite(P).run()
         """
         Permutations_set.__init__(self, s)
         self._k = k
+
+    def cardinality(self) -> Integer:
+        """
+        EXAMPLES::
+
+            sage: Permutations([1,2,4,5], 2).cardinality()
+            12
+        """
+        n = len(self._set)
+        if 0 <= self._k <= n:
+            return falling_factorial(n, self._k)
+        return ZZ.zero()
 
     def __contains__(self, x):
         """
