@@ -154,6 +154,7 @@ from sage.misc.unknown import Unknown
 from sage.misc.verbose import verbose
 from sage.repl.preparse import preparse
 from sage.rings.integer import Integer
+from sage.rings.infinity import infinity
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -1210,10 +1211,11 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``number`` -- integer, ``True`` or ``None`` (default); the
-          number of terms returned (if less than the number of
-          available terms).  When set to ``True``, fetches the
-          b-file.  When set to ``None``, returns all the known terms.
+        - ``number`` -- integer, ``infinity`` or ``None`` (default);
+          the number of terms returned.  When set to ``None``,
+          returns all the known terms.  When set to an integer larger
+          than the number of terms in the internal format, or to
+          ``infinity``, the b-file is fetched.
 
         OUTPUT: tuple of integers
 
@@ -1238,6 +1240,10 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: s.first_terms(5)
             (1, 1, 1, 1, 2)
 
+            sage: len(oeis(45).first_terms())          # optional -- internet
+            41
+            sage: len(oeis(45).first_terms(oo))        # optional -- internet
+            2001
         """
         def fetch_b_file():
             url = oeis_url + f"b{self.id(format='int')}.txt"
@@ -1255,7 +1261,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             self._first_terms = True, first_terms
 
         # self._first_terms is a pair (all?, first_terms)
-        if number is True:
+        if number is infinity:
             if not hasattr(self, "_first_terms") or not self._first_terms[0]:
                 fetch_b_file()
             return self._first_terms[1]
