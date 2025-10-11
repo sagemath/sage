@@ -204,7 +204,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
     Element = SplittingAlgebraElement
 
     def __init__(self, monic_polynomial, names='X',
-                 iterate=True, warning=None) -> None:
+                 iterate=True, warning=True) -> None:
         r"""
         Python constructor.
 
@@ -220,8 +220,6 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
         # ---------------------------------------------------------------
         # checking input parameters
         # ---------------------------------------------------------------
-        if warning is None:
-            warning = True
         base_ring = monic_polynomial.base_ring()
         if not monic_polynomial.is_monic():
             raise ValueError("given polynomial must be monic")
@@ -683,7 +681,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
 # ----------------------------------------------------------------------
 
 def solve_with_extension(monic_polynomial, root_names=None, var='x',
-                         flatten=False, warning=None) -> list[tuple]:
+                         flatten=False, warning=True) -> list[tuple]:
     r"""
     Return all roots of a monic polynomial in its base ring or in an
     appropriate extension ring, as far as possible.
