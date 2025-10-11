@@ -6320,6 +6320,8 @@ class Permutations_nk(Permutations):
 
     def cardinality(self) -> Integer:
         """
+        Return the cardinality of the set.
+
         EXAMPLES::
 
             sage: Permutations(3,0).cardinality()
@@ -7022,6 +7024,8 @@ class Permutations_setk(Permutations_set):
 
     def cardinality(self) -> Integer:
         """
+        Return the cardinality of the set.
+
         EXAMPLES::
 
             sage: Permutations([1,2,4,5], 2).cardinality()
@@ -9853,6 +9857,8 @@ class StandardPermutations_avoiding_132(StandardPermutations_avoiding_generic):
 
     def cardinality(self):
         """
+        Return the cardinality of the set.
+
         EXAMPLES::
 
             sage: Permutations(5, avoiding=[1, 3, 2]).cardinality()
@@ -9930,6 +9936,8 @@ class StandardPermutations_avoiding_123(StandardPermutations_avoiding_generic):
 
     def cardinality(self) -> Integer:
         """
+        Return the cardinality of the set.
+
         EXAMPLES::
 
             sage: Permutations(5, avoiding=[1, 2, 3]).cardinality()
@@ -10002,6 +10010,8 @@ class StandardPermutations_avoiding_321(StandardPermutations_avoiding_generic):
 
     def cardinality(self):
         """
+        Return the cardinality of the set.
+
         EXAMPLES::
 
             sage: Permutations(5, avoiding=[3, 2, 1]).cardinality()
@@ -10034,6 +10044,8 @@ class StandardPermutations_avoiding_231(StandardPermutations_avoiding_generic):
 
     def cardinality(self):
         """
+        Return the cardinality of the set.
+
         EXAMPLES::
 
             sage: Permutations(5, avoiding=[2, 3, 1]).cardinality()
@@ -10066,6 +10078,8 @@ class StandardPermutations_avoiding_312(StandardPermutations_avoiding_generic):
 
     def cardinality(self):
         """
+        Return the cardinality of the set.
+
         EXAMPLES::
 
             sage: Permutations(5, avoiding=[3, 1, 2]).cardinality()
@@ -10098,6 +10112,8 @@ class StandardPermutations_avoiding_213(StandardPermutations_avoiding_generic):
 
     def cardinality(self):
         """
+        Return the cardinality of the set.
+
         EXAMPLES::
 
             sage: Permutations(5, avoiding=[2, 1, 3]).cardinality()
