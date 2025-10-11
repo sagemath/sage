@@ -220,7 +220,10 @@ def _get_exithandlers():
             return exithandlers
         # callbacks is a list of tuples: [(func, args, kwargs), ...]
         # Normalize kwargs to ensure it's always a dict (not None)
-        for item in callbacks_list:
+        # Note: In Python 3.14+, atexit stores callbacks in LIFO order
+        # (most recently registered first), but we return them in FIFO
+        # order (registration order) for consistency with earlier versions
+        for item in reversed(callbacks_list):
             func, args, kwargs = item
             if kwargs is None:
                 kwargs = {}
@@ -251,6 +254,9 @@ def _set_exithandlers(exithandlers):
 
     # We could do this more efficiently by directly rebuilding the array
     # of atexit_callbacks, but this is much simpler
+    # Note: exithandlers is in registration order (FIFO).
+    # In Python 3.14+, atexit.register prepends to the list (LIFO),
+    # so registering in forward order gives us the correct execution order.
     for callback in exithandlers:
         atexit.register(callback[0], *callback[1], **callback[2])
 
