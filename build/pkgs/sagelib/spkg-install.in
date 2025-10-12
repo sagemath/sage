@@ -44,7 +44,10 @@ SITEPACKAGESDIR=$(python3 -c 'import sysconfig; print(sysconfig.get_paths()["pur
 # does not shadow the namespace package sage during the build.
 (cd "$SITEPACKAGESDIR" && rm -f sage/__init__.py)
 if [ "$SAGE_EDITABLE" = yes ]; then
-    sdh_pip_editable_install . --config-settings=build-dir="build/sage-distro" --config-settings=setup-args="-DSAGE_LOCAL=$SAGE_LOCAL"
+    sdh_pip_editable_install . \
+        --config-settings=build-dir="build/sage-distro" \
+        --config-settings=setup-args="--native-file=$SAGE_PKGS/../platform/meson/sage-configure-native-file.ini" \
+        --config-settings=setup-args="-DSAGE_LOCAL=$SAGE_LOCAL"
 
     if [ "$SAGE_WHEELS" = yes ]; then
         # Additionally build a wheel (for use in other venvs)
