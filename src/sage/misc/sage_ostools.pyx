@@ -9,7 +9,7 @@ import os
 import contextlib
 
 
-def have_program(program, path=None):
+def have_program(program, path=None) -> bool:
     """
     Return ``True`` if a ``program`` executable is found in the path
     given by ``path``.

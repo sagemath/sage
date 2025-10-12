@@ -6,11 +6,17 @@ py.install_sources(
   'expr.py',
   'functional.py',
   'functions.py',
+  'integration.pyx',
   'interpolation.pxd',
+  'interpolation.pyx',
+  'interpolators.pyx',
   'ode.pxd',
+  'ode.pyx',
   'predefined.py',
+  'riemann.pyx',
   'test_sympy.py',
   'tests.py',
+  'var.pyx',
   'wester.py',
   subdir: 'sage/calculus',
 )
@@ -30,8 +36,7 @@ foreach name, pyx : extension_data
     sources: pyx,
     subdir: 'sage/calculus',
     install: true,
-    include_directories: [inc_numpy],
-    dependencies: [py_dep, cysignals, gmp, gsl, interpreters_dep],
+    dependencies: [py_dep, cysignals, gmp, gsl, interpreters_dep, numpy],
   )
 endforeach
 

@@ -164,7 +164,7 @@ cdef class FrozenBitset:
 
     Try a random bitset::
 
-        sage: a = Bitset(randint(0, 1) for n in range(1, randint(1, 10^4)))
+        sage: a = Bitset(randint(0, 1) for n in range(randint(1, 10^4)))
         sage: b = FrozenBitset(a); c = FrozenBitset(b)
         sage: bitcmp(a, b, c)
         True
@@ -239,7 +239,7 @@ cdef class FrozenBitset:
 
     A random iterable, with all duplicate elements removed::
 
-        sage: L = [randint(0, 100) for n in range(1, randint(1, 10^4))]
+        sage: L = [randint(0, 100) for n in range(randint(1, 10^4))]
         sage: FrozenBitset(L) == FrozenBitset(list(set(L)))
         True
         sage: FrozenBitset(tuple(L)) == FrozenBitset(tuple(set(L)))

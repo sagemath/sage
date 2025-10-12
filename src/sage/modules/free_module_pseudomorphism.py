@@ -22,7 +22,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.morphism import Morphism
-from sage.structure.richcmp import rich_to_bool, richcmp
+from sage.structure.richcmp import richcmp
 from sage.modules.free_module_morphism import FreeModuleMorphism
 
 
@@ -463,7 +463,7 @@ class FreeModulePseudoMorphism(Morphism):
     def __nonzero__(self):
         return not (self._derivation is None and self._matrix)
 
-    def __eq__(self, other):
+    def _richcmp_(self, other, op):
         r"""
         Compare this morphism with ``other``.
 
@@ -472,7 +472,7 @@ class FreeModulePseudoMorphism(Morphism):
             sage: Fq.<z> = GF(7^3)
             sage: Frob = Fq.frobenius_endomorphism()
             sage: V = Fq^2
-            sage: m = random_matrix(Fq, 2)
+            sage: m = matrix(2, 2, [z, z^3, z^5, z^7])
 
             sage: f = V.pseudohom(m, Frob)
             sage: g = V.pseudohom(m.transpose(), Frob, side="right")
@@ -482,6 +482,12 @@ class FreeModulePseudoMorphism(Morphism):
             sage: g = V.pseudohom(m.transpose(), Frob)
             sage: f == g
             False
+            sage: f < g
+            True
+            sage: f > g
+            False
+
+        ::
 
             sage: g = V.pseudohom(m, Frob^2)
             sage: f == g
@@ -491,14 +497,157 @@ class FreeModulePseudoMorphism(Morphism):
             sage: h = V.hom(m)
             sage: g == h
             True
+
+        ::
+
+            sage: f < V
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for <: 'Set of Pseudoendomorphisms (twisted by z |--> z^7) of Vector space of dimension 2 over Finite Field in z of size 7^3' and '<class 'sage.modules.free_module.FreeModule_ambient_field_with_category'>'
         """
-        if isinstance(other, FreeModuleMorphism):
-            try:
-                other = self.parent()(other)
-            except ValueError:
-                return False
-        if isinstance(other, FreeModulePseudoMorphism):
-            return self.parent() is other.parent() and self._matrix == other._matrix
+        return richcmp(self._matrix, other._matrix, op)
+
+    def _composition_(self, right, homset):
+        r"""
+        Return the composition of ``self`` and ``right``.
+
+        EXAMPLES:
+
+        When there is no twisting derivation, the composite is still
+        a pseudomorphism and it is computed as such::
+
+            sage: Fq.<z> = GF(7^3)
+            sage: Frob = Fq.frobenius_endomorphism()
+            sage: V = Fq^2
+            sage: mat = matrix(2, [1, z, z^2, z^3])
+            sage: f = V.pseudohom(mat, Frob)
+            sage: f * f
+            Free module pseudomorphism (twisted by z |--> z^(7^2)) defined by the matrix
+            [  z^2 + 2*z + 4 3*z^2 + 4*z + 3]
+            [2*z^2 + 2*z + 5 4*z^2 + 5*z + 6]
+            Domain: Vector space of dimension 2 over Finite Field in z of size 7^3
+            Codomain: Vector space of dimension 2 over Finite Field in z of size 7^3
+
+        We note that the side is preserved::
+
+            sage: fr = f.side_switch()
+            sage: fr
+            Free module pseudomorphism (twisted by z |--> z^7) defined as left-multiplication by the matrix
+            [      1     z^2]
+            [      z z^2 + 3]
+            Domain: Vector space of dimension 2 over Finite Field in z of size 7^3
+            Codomain: Vector space of dimension 2 over Finite Field in z of size 7^3
+            sage: fr * fr
+            Free module pseudomorphism (twisted by z |--> z^(7^2)) defined as left-multiplication by the matrix
+            [  z^2 + 2*z + 4 2*z^2 + 2*z + 5]
+            [3*z^2 + 4*z + 3 4*z^2 + 5*z + 6]
+            Domain: Vector space of dimension 2 over Finite Field in z of size 7^3
+            Codomain: Vector space of dimension 2 over Finite Field in z of size 7^3
+
+        For general pseudomorphisms, a formal composed map is returned::
+
+            sage: P.<x> = ZZ[]
+            sage: d = P.derivation()
+            sage: M = P^2
+            sage: f = M.pseudohom([[1, 2*x], [x, 1]], d)
+            sage: f * f
+            Composite map:
+              From: Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring
+              To:   Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring
+              Defn:   Free module pseudomorphism (twisted by d/dx) defined by the matrix
+                    [  1 2*x]
+                    [  x   1]
+                    Domain: Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring
+                    Codomain: Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring
+                    then
+                      Free module pseudomorphism (twisted by d/dx) defined by the matrix
+                    [  1 2*x]
+                    [  x   1]
+                    Domain: Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring
+                    Codomain: Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring
+        """
+        if (isinstance(right, FreeModulePseudoMorphism)
+        and self._derivation is None and right._derivation is None):
+            if self._morphism is None:
+                morphism = right._morphism
+                mat = right._matrix * self._matrix
+            else:
+                if right._morphism is None:
+                    morphism = self._morphism
+                else:
+                    morphism = self._morphism * right._morphism
+                mat = right._matrix.apply_map(self._morphism) * self._matrix
+            parent = right.domain().pseudoHom(morphism, codomain=self.codomain())
+            f = FreeModulePseudoMorphism(parent, mat, "left")
+            if self.side() == 'right' and right.side() == 'right':
+                f._side = "right"
+            return f
+        return super()._composition_(right, homset)
+
+    def ore_module(self, names=None):
+        r"""
+        Return the Ore module over which the Ore variable acts
+        through this pseudomorphism.
+
+        INPUT:
+
+        - ``names`` -- a string, a list of strings or ``None``,
+          the names of the vector of the canonical basis of the
+          Ore module; if ``None``, elements are represented as
+          vectors in `K^d` (where `K` is the base ring)
+
+        EXAMPLES::
+
+            sage: Fq.<z> = GF(7^3)
+            sage: Frob = Fq.frobenius_endomorphism()
+            sage: V = Fq^2
+            sage: mat = matrix(2, [1, z, z^2, z^3])
+            sage: f = V.pseudohom(mat, Frob)
+
+            sage: M = f.ore_module()
+            sage: M
+            Ore module of rank 2 over Finite Field in z of size 7^3 twisted by z |--> z^7
+
+        Here `M` is a module over the Ore ring `\mathbb F_q[X; \text{Frob}]`
+        and the variable `X` acts on `M` through `f`::
+
+            sage: S.<X> = M.ore_ring()
+            sage: S
+            Ore Polynomial Ring in X over Finite Field in z of size 7^3 twisted by z |--> z^7
+            sage: v = M((1,0))
+            sage: X*v
+            (1, z)
+
+        The argument ``names`` can be used to give chosen names
+        to the vectors in the canonical basis::
+
+            sage: M = f.ore_module(names=('v', 'w'))
+            sage: M.basis()
+            [v, w]
+
+        or even::
+
+            sage: M = f.ore_module(names='e')
+            sage: M.basis()
+            [e0, e1]
+
+        Note that the bracket construction also works::
+
+            sage: M.<v,w> = f.ore_module()
+            sage: M.basis()
+            [v, w]
+            sage: v + w
+            v + w
+
+        We refer to :mod:`sage.modules.ore_module` for a
+        tutorial on Ore modules in SageMath.
+
+        .. SEEALSO::
+
+            :mod:`sage.modules.ore_module`
+        """
+        from sage.modules.ore_module import OreModule
+        return OreModule(self._matrix, self.parent()._ore, names=names)
 
     def _test_nonzero_equal(self, tester):
         pass

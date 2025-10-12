@@ -375,7 +375,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
             I = P.index_set()
             return P.sum((-c/dep[0]) * h[I[i]] for i,c in dep[1:].items())
 
-        def has_descent(self, i, positive=False):
+        def has_descent(self, i, positive=False) -> bool:
             """
             Test if ``self`` has a descent at position `i`, that is
             if ``self`` is on the strict negative side of the `i`-th
@@ -414,7 +414,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
             else:
                 return s < 0
 
-        def is_dominant_weight(self):
+        def is_dominant_weight(self) -> bool:
             """
             Test whether ``self`` is a dominant element of the weight lattice.
 
@@ -508,7 +508,7 @@ class CartanType(SuperCartanType_standard):
 
     AmbientSpace = AmbientSpace
 
-    def is_irreducible(self):
+    def is_irreducible(self) -> bool:
         """
         Return whether ``self`` is irreducible, which is ``True``.
 
@@ -521,7 +521,7 @@ class CartanType(SuperCartanType_standard):
 
     # A lot of these methods should be implemented by the ABCs of CartanType
 
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         Return whether ``self`` is affine or not.
 
@@ -532,7 +532,7 @@ class CartanType(SuperCartanType_standard):
         """
         return False
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return whether ``self`` is finite or not.
 

@@ -356,9 +356,9 @@ REFERENCES:
 - :wikipedia:`Chebyshev_polynomials`
 - :wikipedia:`Legendre_polynomials`
 - :wikipedia:`Hermite_polynomials`
-- http://mathworld.wolfram.com/GegenbauerPolynomial.html
+- https://mathworld.wolfram.com/GegenbauerPolynomial.html
 - :wikipedia:`Jacobi_polynomials`
-- :wikipedia:`Laguerre_polynomia`
+- :wikipedia:`Laguerre_polynomials`
 - :wikipedia:`Associated_Legendre_polynomials`
 - :wikipedia:`Kravchuk_polynomials`
 - :wikipedia:`Meixner_polynomials`
@@ -455,8 +455,8 @@ class OrthogonalFunction(BuiltinFunction):
             except KeyError:
                 pass
         super().__init__(name=name, nargs=nargs,
-                                                 latex_name=latex_name,
-                                                 conversions=conversions)
+                         latex_name=latex_name,
+                         conversions=conversions)
 
     def eval_formula(self, *args):
         """
@@ -502,9 +502,11 @@ class OrthogonalFunction(BuiltinFunction):
 
     def __call__(self, *args, **kwds):
         """
-        This overides the call method from SageObject to avoid problems with coercions,
-        since the _eval_ method is able to handle more data types than symbolic functions
-        would normally allow.
+        This overrides the call method from SageObject to avoid
+        problems with coercions, since the _eval_ method is able to
+        handle more data types than symbolic functions would normally
+        allow.
+
         Thus we have the distinction between algebraic objects (if n is an integer),
         and else as symbolic function.
 
@@ -543,9 +545,11 @@ class ChebyshevFunction(OrthogonalFunction):
     """
     def __call__(self, n, *args, **kwds):
         """
-        This overides the call method from :class:`SageObject` to avoid problems with coercions,
-        since the ``_eval_`` method is able to handle more data types than symbolic functions
-        would normally allow.
+        This overrides the call method from :class:`SageObject` to
+        avoid problems with coercions, since the ``_eval_`` method is
+        able to handle more data types than symbolic functions would
+        normally allow.
+
         Thus we have the distinction between algebraic objects (if n is an integer),
         and else as symbolic function.
 
@@ -1372,9 +1376,9 @@ class Func_legendre_Q(BuiltinFunction):
             -29113619535/131072*log(-(x + 1)/(x - 1))
         """
         BuiltinFunction.__init__(self, "legendre_Q", nargs=2, latex_name=r"Q",
-                conversions={'maxima': 'legendre_q',
-                             'mathematica': 'LegendreQ',
-                             'maple': 'LegendreQ'})
+                                 conversions={'maxima': 'legendre_q',
+                                              'mathematica': 'LegendreQ',
+                                              'maple': 'LegendreQ'})
 
     def _eval_(self, n, x, *args, **kwds):
         r"""
@@ -1879,9 +1883,6 @@ class Func_assoc_legendre_P(BuiltinFunction):
         ex2 = sum(b * arg**a for a, b in enumerate(p))
         return (-1)**(m+n)*ex1*ex2
 
-    from sage.misc.superseded import deprecated_function_alias
-    eval_poly = deprecated_function_alias(25034, eval_gen_poly)
-
     def _derivative_(self, n, m, x, *args, **kwds):
         """
         Return the derivative of ``gen_legendre_P(n,m,x)``.
@@ -2117,11 +2118,12 @@ class Func_hermite(GinacFunction):
             32 x  - 160 x  + 120 x
         """
         GinacFunction.__init__(self, "hermite", nargs=2, latex_name=r"H",
-                conversions={'maxima': 'hermite',
-                             'mathematica': 'HermiteH',
-                             'maple': 'HermiteH',
-                             'fricas': 'hermiteH',
-                             'sympy': 'hermite'}, preserved_arg=2)
+                               conversions={'maxima': 'hermite',
+                                            'mathematica': 'HermiteH',
+                                            'maple': 'HermiteH',
+                                            'fricas': 'hermiteH',
+                                            'sympy': 'hermite'},
+                               preserved_arg=2)
 
 
 hermite = Func_hermite()
@@ -2175,11 +2177,11 @@ class Func_jacobi_P(OrthogonalFunction):
                2
         """
         OrthogonalFunction.__init__(self, "jacobi_P", nargs=4, latex_name=r"P",
-                conversions={'maxima': 'jacobi_p',
-                             'mathematica': 'JacobiP',
-                             'maple': 'JacobiP',
-                             'fricas': 'jacobiP',
-                             'sympy': 'jacobi'})
+                                    conversions={'maxima': 'jacobi_p',
+                                                 'mathematica': 'JacobiP',
+                                                 'maple': 'JacobiP',
+                                                 'fricas': 'jacobiP',
+                                                 'sympy': 'jacobi'})
 
     def _eval_(self, n, a, b, x):
         """
@@ -2416,11 +2418,11 @@ class Func_laguerre(OrthogonalFunction):
             laguerre
         """
         OrthogonalFunction.__init__(self, "laguerre", nargs=2, latex_name=r"L",
-                conversions={'maxima': 'laguerre',
-                             'mathematica': 'LaguerreL',
-                             # 'fricas': 'laguerreL',  3 arguments ?
-                             'maple': 'LaguerreL',
-                             'sympy': 'laguerre'})
+                                    conversions={'maxima': 'laguerre',
+                                                 'mathematica': 'LaguerreL',
+                                                 # 'fricas': 'laguerreL',  3 arguments ?
+                                                 'maple': 'LaguerreL',
+                                                 'sympy': 'laguerre'})
 
     def _eval_(self, n, x, *args, **kwds):
         r"""

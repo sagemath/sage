@@ -237,22 +237,19 @@ def is_twograph(T) -> bool:
         return False
 
     # A structure for a fast triple existence check
-    v_to_blocks = {v: set() for v in range(T.num_points())}
+    v_to_blocks = {v: set() for v in range(T.n_points())}
     for B in T._blocks:
         B = frozenset(B)
         for x in B:
             v_to_blocks[x].add(B)
 
-    def has_triple(x_y_z):
+    def has_triple(x_y_z) -> bool:
         x, y, z = x_y_z
         return bool(v_to_blocks[x] & v_to_blocks[y] & v_to_blocks[z])
 
     # Check that every quadruple contains an even number of triples
-    for quad in combinations(range(T.num_points()), 4):
-        if sum(map(has_triple, combinations(quad, 3))) % 2 == 1:
-            return False
-
-    return True
+    return not any(sum(map(has_triple, combinations(quad, 3))) % 2
+                   for quad in combinations(range(T.n_points()), 4))
 
 
 def twograph_descendant(G, v, name=None):

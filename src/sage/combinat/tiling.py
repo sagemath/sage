@@ -1,8 +1,8 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Tiling Solver
+Tiling solver
 
-Tiling a n-dimensional polyomino with n-dimensional polyominoes.
+Tiling a `n`-dimensional polyomino with n-dimensional polyominoes.
 
 This module defines two classes:
 
@@ -1066,9 +1066,8 @@ class Polyomino(SageObject):
         minxyz, maxxyz = vector(minxyz), vector(maxxyz)
         size = maxxyz - minxyz
         boxminxyz, boxmaxxyz = box.bounding_box()
-        ranges = [range(a, b-c+1) for (a,b,c) in zip(boxminxyz,
-                                                   boxmaxxyz,
-                                                   size)]
+        ranges = [range(a, b - c + 1)
+                  for a, b, c in zip(boxminxyz, boxmaxxyz, size)]
         cano = self.canonical()
         for v in itertools.product(*ranges):
             translated = cano + v
@@ -1120,9 +1119,8 @@ class Polyomino(SageObject):
         minxyz, maxxyz = vector(minxyz), vector(maxxyz)
         size = maxxyz - minxyz
         boxminxyz, boxmaxxyz = box.bounding_box()
-        ranges = [range(a-c, b+1) for (a,b,c) in zip(boxminxyz,
-                                                   boxmaxxyz,
-                                                   size)]
+        ranges = [range(a - c, b + 1)
+                  for a, b, c in zip(boxminxyz, boxmaxxyz, size)]
         S = set()
         cano = self.canonical()
         for v in itertools.product(*ranges):
@@ -1133,7 +1131,7 @@ class Polyomino(SageObject):
         return S
 
     def isometric_copies(self, box, orientation_preserving=True,
-            mod_box_isometries=False):
+                         mod_box_isometries=False):
         r"""
         Return the translated and isometric images of ``self`` that lies in the box.
 

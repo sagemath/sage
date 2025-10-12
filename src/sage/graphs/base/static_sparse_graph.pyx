@@ -1,4 +1,3 @@
-# cython: binding=True
 # distutils: language = c++
 r"""
 Static sparse graphs
@@ -280,10 +279,9 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False,
     g.m = G.size()
 
     cdef int isdigraph = G.is_directed()
-    cdef uint32_t i, v_id, j
+    cdef uint32_t i, j
     cdef list vertices = vertex_list if vertex_list is not None else list(G)
     cdef dict v_to_id = {v: i for i, v in enumerate(vertices)}
-    cdef list neighbor_label
     cdef list edge_labels
     # Loops are not stored twice for undirected graphs
     cdef int n_edges = g.m if isdigraph else 2*g.m - G.number_of_loops()
@@ -1252,8 +1250,8 @@ def spectral_radius(G, prec=1e-10):
 
     cdef double e_min, e_max
 
-    if G.num_verts() == 1:
-        e_min = e_max = G.num_edges()
+    if G.n_vertices() == 1:
+        e_min = e_max = G.n_edges()
         return (e_min, e_max)
 
     is_bipartite, colors = G.is_bipartite(certificate=True)

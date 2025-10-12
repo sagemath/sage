@@ -108,10 +108,10 @@ cdef class MPolynomialRing_base(CommutativeRing):
             category = categories.rings.Rings().Finite()
         else:
             category = polynomial_default_category(base_ring.category(), n)
-        # Ring.__init__ assigns the names.
-        Ring.__init__(self, base_ring, names, category=category)
         from sage.combinat.integer_vector import IntegerVectors
         self._indices = IntegerVectors(length=self._ngens)
+        # Ring.__init__ assigns the names.
+        Ring.__init__(self, base_ring, names, category=category)
 
     def is_integral_domain(self, proof=True):
         """
@@ -561,7 +561,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
             sage: T = PolynomialRing(QQ, []); T
             Multivariate Polynomial Ring in no variables over Rational Field
             sage: T.coerce_map_from(QQ)
-            Call morphism:
+            Coercion map:
               From: Rational Field
               To:   Multivariate Polynomial Ring in no variables over Rational Field
         """
@@ -571,25 +571,28 @@ cdef class MPolynomialRing_base(CommutativeRing):
         else:
             return self._generic_coerce_map(self.base_ring())
 
-    cdef _coerce_c_impl(self, x):
+    cpdef _coerce_map_from_(self, other):
         """
-        Return the canonical coercion of x to this multivariate
-        polynomial ring, if one is defined, or raise a :exc:`TypeError`.
+        Return whether there is canonical coercion map
+        from the ring ``other`` to this multivariate polynomial ring `R`.
 
-        The rings that canonically coerce to this polynomial ring are:
+        The rings that canonically coerce to the polynomial ring `R` are:
 
-        - this ring itself
-        - polynomial rings in the same variables over any base ring that
-          canonically coerces to the base ring of this ring
-        - polynomial rings in a subset of the variables over any base ring that
-          canonically coerces to the base ring of this ring
-        - any ring that canonically coerces to the base ring of this polynomial
-          ring.
+        - the ring `R` itself,
+
+        - the base ring of `R`,
+
+        - any ring that canonically coerces to the base ring of `R`.
+
+        - polynomial rings in an initial subset of the variables of `R`
+          over any base ring that canonically coerces to the base ring of `R`,
+
+        - polynomial rings in one of the variables of `R`
+          over any base ring that canonically coerces to the base ring of `R`,
 
         TESTS:
 
-        This fairly complicated code (from Michel Vandenbergh) ends up
-        implicitly calling ``_coerce_c_impl``::
+        Fairly complicated code (from Michel Vandenbergh)::
 
             sage: # needs sage.rings.number_field
             sage: z = polygen(QQ, 'z')
@@ -602,27 +605,40 @@ cdef class MPolynomialRing_base(CommutativeRing):
             sage: x + 1/u
             x + 1/u
         """
-        try:
-            P = x.parent()
-            # polynomial rings in the same variable over the any base
-            # that coerces in:
-            if isinstance(P, MPolynomialRing_base):
-                if P.variable_names() == self.variable_names():
-                    if self.has_coerce_map_from(P.base_ring()):
-                        return self(x)
-                elif self.base_ring().has_coerce_map_from(P._mpoly_base_ring(self.variable_names())):
-                    return self(x)
+        base_ring = self.base_ring()
+        if other is base_ring:
+            # Because this parent class is a Cython class, the method
+            # UnitalAlgebras.ParentMethods.__init_extra__(), which normally
+            # registers the coercion map from the base ring, is called only
+            # when inheriting from this class in Python (cf. Issue #26958).
+            return self._coerce_map_from_base_ring()
 
-            elif isinstance(P, polynomial_ring.PolynomialRing_generic):
-                if P.variable_name() in self.variable_names():
-                    if self.has_coerce_map_from(P.base_ring()):
-                        return self(x)
+        f = self._coerce_map_via([base_ring], other)
+        if f is not None:
+            return f
 
-        except AttributeError:
-            pass
+        # polynomial rings in an initial subset of variables
+        # over the any base that coerces in
+        if isinstance(other, MPolynomialRing_base):
+            if self is other:
+                return True
+            n = other.ngens()
+            check = (self.ngens() >= n and
+                     self.variable_names()[:n] == other.variable_names())
+            if other.base_ring is base_ring and check:
+                return True
+            elif base_ring.has_coerce_map_from(other._mpoly_base_ring(self.variable_names())):
+                return True
 
-        # any ring that coerces to the base ring of this polynomial ring.
-        return self(self.base_ring().coerce(x))
+        # polynomial rings in one of the variables
+        # over the any base that coerces in
+        elif isinstance(other, polynomial_ring.PolynomialRing_generic):
+            if other.variable_name() in self.variable_names():
+                if self.has_coerce_map_from(other.base_ring()):
+                    return True
+
+        # any ring that coerces to the base ring of this polynomial ring
+        return self.base_ring().has_coerce_map_from(other)
 
     def _extract_polydict(self, x):
         """
@@ -797,20 +813,9 @@ cdef class MPolynomialRing_base(CommutativeRing):
                                           self.term_order().magma_str())
         return magma._with_names(s, self.variable_names())
 
-    def _gap_init_(self, gap=None):
+    def _gap_init_(self) -> str:
         """
         Return a string that yields a representation of ``self`` in GAP.
-
-        INPUT:
-
-        - ``gap`` -- (optional GAP instance) interface to which the
-          string is addressed
-
-        NOTE:
-
-        - If the optional argument ``gap`` is provided, the base ring
-          of ``self`` will be represented as ``gap(self.base_ring()).name()``.
-        - The result of applying the GAP interface to ``self`` is cached.
 
         EXAMPLES::
 
@@ -822,10 +827,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
             sage: libgap(P)
             <field in characteristic 0>[x,y]
         """
-        L = ['"%s"' % t for t in self.variable_names()]
-        if gap is not None:
-            return 'PolynomialRing(%s,[%s])' % (gap(self.base_ring()).name(),
-                                                ','.join(L))
+        L = ('"%s"' % t for t in self.variable_names())
         return 'PolynomialRing(%s,[%s])' % (self.base_ring()._gap_init_(),
                                             ','.join(L))
 

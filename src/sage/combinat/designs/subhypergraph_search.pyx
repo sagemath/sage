@@ -114,7 +114,7 @@ Methods
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from libc.stdlib cimport qsort
@@ -133,7 +133,7 @@ cdef inline int bs_get(uint64_t * bitset, int index) noexcept:
     r"""
     Return a bit of a bitset
     """
-    return (bitset[index//64]>>(index%64))&1
+    return (bitset[index // 64] >> (index % 64)) & 1
 
 cdef inline void bs_set(uint64_t * bitset, int index, int bit) noexcept:
     r"""
@@ -142,8 +142,8 @@ cdef inline void bs_set(uint64_t * bitset, int index, int bit) noexcept:
     "bit" *MUST* be equal to either 0 or to 1. The code does not involve any
     "if".
     """
-    bitset[index//64] &= ~((<uint64_t> 1)<<index%64)
-    bitset[index//64] |= (<uint64_t> bit)<<index%64
+    bitset[index // 64] &= ~((<uint64_t> 1) << index % 64)
+    bitset[index // 64] |= (<uint64_t> bit) << index % 64
 
 cdef inline int bs_issubset64(uint64_t * b1, uint64_t b2, int limbs) noexcept:
     r"""
@@ -360,16 +360,16 @@ cdef class SubHypergraphSearch:
         self.points1 = H1._points
         self.points2 = H2._points
         self.induced = induced
-        cdef int n1 = H1.num_points()
-        cdef int n2 = H2.num_points()
+        cdef int n1 = H1.n_points()
+        cdef int n2 = H2.n_points()
 
-        if n2>64:
-            raise RuntimeError("H2 has {}>64 points".format(n2))
+        if n2 > 64:
+            raise RuntimeError(f"H2 has {n2}>64 points")
 
-        self.h1   = h_init(n1,H1._blocks)
-        self.h2   = h_init(n2,H2._blocks)
-        self.tmp1 = h_init(n1,H1._blocks) # No actual need to fill them,
-        self.tmp2 = h_init(n2,H2._blocks) # only allocate the memory
+        self.h1   = h_init(n1, H1._blocks)
+        self.h2   = h_init(n2, H2._blocks)
+        self.tmp1 = h_init(n1, H1._blocks)  # No actual need to fill them,
+        self.tmp2 = h_init(n2, H2._blocks)  # only allocate the memory
 
         self.step = <int *> sig_malloc((n2+1)*sizeof(int))
 

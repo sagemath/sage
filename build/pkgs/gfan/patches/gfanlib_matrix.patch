@@ -1,0 +1,20 @@
+diff --git a/gfanlib/gfanlib_matrix.h b/gfanlib/gfanlib_matrix.h
+index cb5c35de8..fa5b82092 100644
+--- a/src/gfanlib_matrix.h
++++ b/src/gfanlib_matrix.h
+@@ -115,6 +115,7 @@ public:
+                   p[i][j]=s*(q[i][j]);
+       return p;
+     }
++  /*
+   friend Matrix operator*(const Matrix& a, const Matrix& b)
+     {
+       assert(a.width==b.height);
+@@ -123,6 +124,7 @@ public:
+         ret[i]=a.vectormultiply(b.column(i));
+       return ret.transposed();
+     }
++  */
+   /*  template<class T>
+     Matrix<T>(const Matrix<T>& c):v(c.size()){
+     for(int i=0;i<size();i++)v[i]=typ(c[i]);}

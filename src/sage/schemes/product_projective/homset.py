@@ -195,7 +195,7 @@ class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_pr
                 points = set()
                 # find points from all possible affine patches
                 for I in xmrange([n + 1 for n in X.ambient_space().dimension_relative_components()]):
-                    [Y,phi] = X.affine_patch(I, True)
+                    Y, phi = X.affine_patch(I, True)
                     aff_points = Y.rational_points()
                     for PP in aff_points:
                         points.add(phi(PP))

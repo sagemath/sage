@@ -237,7 +237,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         cdef Py_ssize_t i, j, t, r = skew_ring._order
         cdef Polynomial dd, xx, yy, zz
         cdef Integer exp
-        cdef list lM, lV
+        cdef list lM
         cdef bint char2
 
         center = parent(N)
@@ -754,13 +754,12 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             del a[0]
             val += 1
 
-        cdef Py_ssize_t degQ, degrandom, m, mP, i
+        cdef Py_ssize_t degrandom, m, mP, i
         cdef N
         cdef list factors = [ (skew_ring.gen(), val) ]
         cdef SkewPolynomial_finite_field_dense P, Q, P1, NS, g, right, Pn
         cdef unit = self.leading_coefficient()
         cdef Polynomial gencenter = skew_ring._working_center.gen()
-        cdef Py_ssize_t p = skew_ring.characteristic()
         cdef F = self._reduced_norm_factored()
 
         for N, m in F:
@@ -946,7 +945,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             (x + t^2 + 4) * (x + t + 3) * (x + t)
 
         However, the algorithm is probabilistic. Hence if we first
-        reinitialiaze `a`, we may get a different answer::
+        reinitialize `a`, we may get a different answer::
 
             sage: a = x^3 + (t^2 + 4*t + 2)*x^2 + (3*t + 3)*x + t^2 + 1
             sage: F = a.factor(); F   # random

@@ -661,7 +661,7 @@ cdef class IndexFaceSet(PrimitiveObject):
                  for j in range(self._faces[i].n)]
                 for i in range(self.fcount)]
 
-    def has_local_colors(self):
+    def has_local_colors(self) -> bool:
         """
         Return ``True`` if and only if every face has an individual color.
 
@@ -682,7 +682,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: S.has_local_colors()
             False
         """
-        return not(self.global_texture)
+        return not self.global_texture
 
     def index_faces_with_colors(self):
         """
@@ -963,7 +963,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             count[0] += 1
             count[1] += face.n
         all = {}
-        for part, count in part_counts.iteritems():
+        for part, count in part_counts.items():
             face_set = IndexFaceSet([])
             face_set.realloc(self.vcount, count[0], count[1])
             memcpy(face_set.vs, self.vs, sizeof(point_c) * self.vcount)

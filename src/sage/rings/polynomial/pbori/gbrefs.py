@@ -1,9 +1,11 @@
-import gzip
-from io import StringIO
 import base64 as uu
+import gzip
 import re
+from io import StringIO
 from types import ModuleType
-from .PyPolyBoRi import Polynomial
+
+from sage.rings.polynomial.pbori.PyPolyBoRi import Polynomial
+
 AUTO = "auto"
 SINGLE = "single"
 

@@ -494,19 +494,20 @@ Test that the output is parseable (:issue:`31796`)::
 
 import os
 import re
-import pexpect
 import shlex
-
 from random import randrange
 
+import pexpect
+
 from sage.env import MAXIMA
-
-from .expect import (Expect, ExpectElement, gc_disabled)
-
-from .maxima_abstract import (MaximaAbstract, MaximaAbstractFunction,
-                              MaximaAbstractElement,
-                              MaximaAbstractFunctionElement,
-                              MaximaAbstractElementFunction)
+from sage.interfaces.expect import Expect, ExpectElement, gc_disabled
+from sage.interfaces.maxima_abstract import (
+    MaximaAbstract,
+    MaximaAbstractElement,
+    MaximaAbstractElementFunction,
+    MaximaAbstractFunction,
+    MaximaAbstractFunctionElement,
+)
 from sage.misc.instancedoc import instancedoc
 
 
@@ -529,6 +530,7 @@ class Maxima(MaximaAbstract, Expect):
 
         TESTS::
 
+            sage:: from sage.interfaces.maxima import Maxima, maxima
             sage: Maxima == loads(dumps(Maxima))
             True
             sage: maxima == loads(dumps(maxima))
@@ -1116,27 +1118,6 @@ class Maxima(MaximaAbstract, Expect):
 
 #    def sr_tlimit(self, ex, *args):
 #        return ex._maxima_().tlimit(*args)
-
-
-def is_MaximaElement(x):
-    """
-    Return ``True`` if ``x`` is of type :class:`MaximaElement`.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.maxima import is_MaximaElement
-        sage: is_MaximaElement(1)
-        doctest:...: DeprecationWarning: the function is_MaximaElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: m = maxima(1)
-        sage: is_MaximaElement(m)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_MaximaElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaElement) instead")
-
-    return isinstance(x, MaximaElement)
 
 
 @instancedoc

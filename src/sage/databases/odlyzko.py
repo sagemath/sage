@@ -15,7 +15,7 @@ AUTHORS:
   package
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004 William Stein <wstein@gmail.com>
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
@@ -23,13 +23,13 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 
 from sage.misc.persist import load
-from sage.env import SAGE_SHARE
+from sage.env import sage_data_paths
 
 
 def zeta_zeros():
@@ -54,6 +54,9 @@ def zeta_zeros():
         2001052
     """
     from sage.misc.verbose import verbose
-    sobj = os.path.join(SAGE_SHARE, 'odlyzko', 'zeros.sobj')
-    verbose("Loading Odlyzko database from " + sobj)
-    return load(sobj)
+    for path in sage_data_paths('odlyzko'):
+        sobj = os.path.join(path, 'zeros.sobj')
+        if os.path.exists(sobj):
+            verbose("Loading Odlyzko database from " + sobj)
+            return load(sobj)
+    raise FileNotFoundError('Could not find the odlyzko database')

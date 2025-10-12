@@ -361,7 +361,7 @@ class Magma(ExtraTabCompletion, Expect):
         self.__ref = 0
         self.__available_var = []
         self.__cache = {}
-        self._preparse_colon_equals = False  # if set to try, all "=" become ":=" (some users really appreciate this)
+        self._preparse_colon_equals = False  # if set to True, all "=" become ":=" (some users really appreciate this)
         self._seed = seed
 
     def set_seed(self, seed=None):
@@ -1775,35 +1775,9 @@ class MagmaFunction(ExpectFunction):
         return s
 
 
-def is_MagmaElement(x):
-    """
-    Return ``True`` if ``x`` is of type :class:`MagmaElement`, and ``False``
-    otherwise.
-
-    INPUT:
-
-    - ``x`` -- any object
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.magma import is_MagmaElement
-        sage: is_MagmaElement(2)
-        doctest:...: DeprecationWarning: the function is_MagmaElement is deprecated; use isinstance(x, sage.interfaces.abc.MagmaElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: is_MagmaElement(magma(2))                    # optional - magma
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_MagmaElement is deprecated; use isinstance(x, sage.interfaces.abc.MagmaElement) instead")
-
-    return isinstance(x, MagmaElement)
-
-
 @instancedoc
-class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaElement):
+class MagmaElement(ExtraTabCompletion, ExpectElement,
+                   sage.interfaces.abc.MagmaElement):
     def _ref(self):
         """
         Return a variable name that is a new reference to this particular
