@@ -1,0 +1,6 @@
+# These meson settings are from Sage ./configure
+
+[properties]
+
+# Forwarded path from ./configure --with-boost=/path/to/boost
+boost_root = '@SAGE_BOOST_PREFIX@'
