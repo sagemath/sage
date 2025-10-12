@@ -820,6 +820,32 @@ class SageArgSpecVisitor(ast.NodeVisitor):
         if op == 'USub':
             return -self.visit(node.operand)
 
+    def visit_Constant(self, node):
+        """
+        Visit a Python AST :class:`ast.Constant` node.
+
+        Starting from Python 3.8, constants like numbers, strings, booleans,
+        None, and ellipsis are all represented as Constant nodes instead of
+        separate node types (Num, Str, NameConstant, etc.).
+
+        INPUT:
+
+        - ``node`` -- the node instance to visit
+
+        OUTPUT: the constant value the ``node`` represents
+
+        EXAMPLES::
+
+            sage: import ast, sage.misc.sageinspect as sms
+            sage: visitor = sms.SageArgSpecVisitor()
+            sage: vis = lambda x: visitor.visit_Constant(ast.parse(x).body[0].value)
+            sage: [vis(n) for n in ['123', '0', '3.14', '"hello"', 'True', 'False', 'None']]
+            [123, 0, 3.14, 'hello', True, False, None]
+            sage: [type(vis(n)) for n in ['123', '0', '3.14', '"hello"', 'True', 'False', 'None']]
+            [<class 'int'>, <class 'int'>, <class 'float'>, <class 'str'>, <class 'bool'>, <class 'bool'>, <class 'NoneType'>]
+        """
+        return node.value
+
 
 def _grep_first_pair_of_parentheses(s):
     r"""
