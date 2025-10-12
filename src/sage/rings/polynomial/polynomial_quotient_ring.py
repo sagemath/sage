@@ -1375,13 +1375,10 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         fields = []
         isos = []
         iso_classes = []
-        i = 0
-        for f, _ in F:
-            D = K.extension(f, 'x'+str(i))
+        for i, (f, _) in enumerate(F):
+            D = K.extension(f, f'x{i}')
             fields.append(D)
-            D_abs = D.absolute_field('y'+str(i))
-            i += 1
-
+            D_abs = D.absolute_field(f'y{i}')
             seen_before = False
             j = 0
             for D_iso, _ in iso_classes:

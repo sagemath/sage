@@ -236,15 +236,18 @@ can be applied on both. Here is what it can do:
     :widths: 30, 70
     :delim: |
 
-    :meth:`~GenericGraph.is_connected` | Test whether the (di)graph is connected.
+    :meth:`~GenericGraph.is_connected` | Check whether the (di)graph is connected.
     :meth:`~GenericGraph.connected_components` | Return the list of connected components
-    :meth:`~GenericGraph.connected_components_number` | Return the number of connected components.
+    :meth:`~GenericGraph.number_of_connected_components` | Return the number of connected components.
     :meth:`~GenericGraph.connected_components_subgraphs` | Return a list of connected components as graph objects.
     :meth:`~GenericGraph.connected_component_containing_vertex` | Return a list of the vertices connected to vertex.
     :meth:`~GenericGraph.connected_components_sizes` | Return the sizes of the connected components as a list.
     :meth:`~GenericGraph.blocks_and_cut_vertices` | Compute the blocks and cut vertices of the graph.
     :meth:`~GenericGraph.blocks_and_cuts_tree` | Compute the blocks-and-cuts tree of the graph.
+    :meth:`~GenericGraph.is_biconnected` | Check whether the graph is biconnected.
+    :meth:`~GenericGraph.biconnected_components` | Return the list of biconnected components.
     :meth:`~GenericGraph.biconnected_components_subgraphs` | Return a list of biconnected components as graph objects.
+    :meth:`~GenericGraph.number_of_biconnected_components` | Return the number of biconnected components.
     :meth:`~GenericGraph.is_cut_edge` | Check whether the input edge is a cut-edge or a bridge.
     :meth:`~GenericGraph.is_edge_cut` | Check whether the input edges form an edge cut.
     :meth:`~GenericGraph.is_cut_vertex` | Check whether the input vertex is a cut-vertex.
@@ -872,7 +875,7 @@ class GenericGraph(GenericGraph_pyx):
             '101001100110000010000001001000010110000010110'
             sage: len([a for a in G._bit_vector() if a == '1'])
             15
-            sage: G.num_edges()
+            sage: G.n_edges()
             15
 
         TESTS:
@@ -2028,7 +2031,7 @@ class GenericGraph(GenericGraph_pyx):
 
         igraph_feature().require()
         import igraph
-        return igraph.Graph(n=self.num_verts(),
+        return igraph.Graph(n=self.n_vertices(),
                             edges=edges,
                             directed=self.is_directed(),
                             vertex_attrs=vertex_attrs,
@@ -2715,7 +2718,7 @@ class GenericGraph(GenericGraph_pyx):
         if base_ring is None:
             base_ring = ZZ
         immutable = kwds.pop('immutable', False)
-        m = matrix(base_ring, self.num_verts(), self.num_edges(), sparse=sparse, **kwds)
+        m = matrix(base_ring, self.n_vertices(), self.n_edges(), sparse=sparse, **kwds)
 
         if oriented:
             for i, e in enumerate(edges):
@@ -3032,9 +3035,9 @@ class GenericGraph(GenericGraph_pyx):
 
         from sage.matrix.constructor import matrix
         if base_ring is None:
-            M = matrix(self.num_verts(), D, sparse=sparse, **kwds)
+            M = matrix(self.n_vertices(), D, sparse=sparse, **kwds)
         else:
-            M = matrix(base_ring, self.num_verts(), D, sparse=sparse, **kwds)
+            M = matrix(base_ring, self.n_vertices(), D, sparse=sparse, **kwds)
         return M
 
     def kirchhoff_matrix(self, weighted=None, indegree=True, normalized=False, signless=False, **kwds):
@@ -4801,8 +4804,8 @@ class GenericGraph(GenericGraph_pyx):
         """
         Return the number of vertices.
 
-        Note that ``len(G)`` and :meth:`num_verts` also return the number of
-        vertices in `G`.
+        Note that ``len(G)`` and :meth:`n_vertices` also return the
+        number of vertices in `G`.
 
         EXAMPLES::
 
@@ -4815,28 +4818,34 @@ class GenericGraph(GenericGraph_pyx):
             sage: G = graphs.TetrahedralGraph()
             sage: len(G)
             4
+
         """
-        return self._backend.num_verts()
+        return self._backend.n_vertices()
 
     __len__ = order
 
     num_verts = order
 
+    n_vertices = order
+
     def size(self):
         """
         Return the number of edges.
 
-        Note that :meth:`num_edges` also returns the number of edges in `G`.
+        Note that :meth:`n_edges` also returns the number of edges in `G`.
 
         EXAMPLES::
 
             sage: G = graphs.PetersenGraph()
             sage: G.size()
             15
+
         """
-        return self._backend.num_edges(self._directed)
+        return self._backend.n_edges(self._directed)
 
     num_edges = size
+
+    n_edges = size
 
     def eulerian_circuit(self, return_vertices=False, labels=True, path=False):
         r"""
@@ -6941,6 +6950,15 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: graphs.PathGraph(3).faces()
             [[(0, 1), (1, 2), (2, 1), (1, 0)]]
+
+        Check that :issue:`40885` is fixed::
+
+            sage: g = graphs.CycleGraph(3)
+            sage: hasattr(g, '_embedding')
+            False
+            sage: F = g.faces()
+            sage: hasattr(g, '_embedding')
+            False
         """
         if not self.order() or not self.size():
             return []
@@ -6951,9 +6969,13 @@ class GenericGraph(GenericGraph_pyx):
         else:
             embedding = self.get_embedding()
             if embedding is None:
+                has_attribute = hasattr(self, '_embedding')
                 if self.is_planar(set_embedding=True):
                     embedding = self._embedding
-                    self._embedding = None
+                    if has_attribute:
+                        self._embedding = None
+                    else:
+                        del self._embedding
                 else:
                     raise ValueError("no embedding is provided and the graph is not planar")
 
@@ -6987,7 +7009,7 @@ class GenericGraph(GenericGraph_pyx):
             faces.append(path)
         return faces
 
-    def num_faces(self, embedding=None):
+    def n_faces(self, embedding=None):
         """
         Return the number of faces of an embedded graph.
 
@@ -7015,35 +7037,35 @@ class GenericGraph(GenericGraph_pyx):
         EXAMPLES::
 
             sage: T = graphs.TetrahedralGraph()
-            sage: T.num_faces()
+            sage: T.n_faces()
             4
 
         The external face of a disconnected graph is counted only once::
 
-            sage: (T + T).num_faces()
+            sage: (T + T).n_faces()
             7
-            sage: (T + T + T).num_faces()
+            sage: (T + T + T).n_faces()
             10
 
         Trees and forests have a single face::
 
             sage: T = graphs.RandomTree(10)
-            sage: T.num_faces()
+            sage: T.n_faces()
             1
-            sage: (T + T).num_faces()
+            sage: (T + T).n_faces()
             1
 
         TESTS::
 
             sage: G = graphs.CompleteBipartiteGraph(3, 3)
-            sage: G.num_faces()
+            sage: G.n_faces()
             Traceback (most recent call last):
             ...
             ValueError: no embedding is provided and the graph is not planar
 
         Issue :issue:`22003` is fixed::
 
-            sage: Graph(1).num_faces()
+            sage: Graph(1).n_faces()
             1
         """
         if not self:
@@ -7059,7 +7081,7 @@ class GenericGraph(GenericGraph_pyx):
             if embedding is None:
                 if self.is_planar():
                     # We use Euler's formula: V-E+F-C=1
-                    C = self.connected_components_number()
+                    C = self.number_of_connected_components()
                     return self.size() - self.order() + C + 1
                 else:
                     raise ValueError("no embedding is provided and the graph is not planar")
@@ -7071,8 +7093,10 @@ class GenericGraph(GenericGraph_pyx):
         F = 1
         for g in self.connected_components_subgraphs():
             emb = None if embedding is None else {v: embedding[v] for v in g}
-            F += g.num_faces(emb) - 1
+            F += g.n_faces(emb) - 1
         return F
+
+    num_faces = n_faces
 
     def planar_dual(self, embedding=None):
         """
@@ -13285,10 +13309,10 @@ class GenericGraph(GenericGraph_pyx):
         ::
 
             sage: G = Graph({0: {1: 1}}, sparse=True)
-            sage: G.num_edges()
+            sage: G.n_edges()
             1
             sage: G.set_edge_label(0, 1, 1)
-            sage: G.num_edges()
+            sage: G.n_edges()
             1
         """
         if self.allows_multiple_edges():
@@ -15239,7 +15263,7 @@ class GenericGraph(GenericGraph_pyx):
             multiedges using allow_multiple_edges().
         """
         # number of edges of H must divide the number of edges of self
-        if self.num_edges() % H.num_edges():
+        if self.n_edges() % H.n_edges():
             return
 
         from sage.combinat.matrices.dancing_links import dlx_solver
@@ -16231,7 +16255,7 @@ class GenericGraph(GenericGraph_pyx):
         if isinstance(self, DiGraph) and not isinstance(other, DiGraph):
             raise ValueError('the input parameter must be a DiGraph')
 
-        if self.num_verts() > other.num_verts() or self.num_edges() > other.num_edges():
+        if self.n_vertices() > other.n_vertices() or self.n_edges() > other.n_edges():
             return False
 
         if up_to_isomorphism:
@@ -17062,7 +17086,7 @@ class GenericGraph(GenericGraph_pyx):
             * :meth:`~GenericGraph.girth` -- return the girth of the graph.
             * :meth:`~GenericGraph.odd_girth` -- return the odd girth of the graph.
         """
-        n = self.num_verts()
+        n = self.n_vertices()
         best = n + 1
         seen = set()
         for w in self:
@@ -17495,7 +17519,7 @@ class GenericGraph(GenericGraph_pyx):
             else:
                 distv = distances[v]
             try:
-                closeness[v] = float(len(distv) - 1) * (len(distv) - 1) / (float(sum(distv.values())) * (self.num_verts() - 1))
+                closeness[v] = float(len(distv) - 1) * (len(distv) - 1) / (float(sum(distv.values())) * (self.n_vertices() - 1))
             except ZeroDivisionError:
                 pass
         if onlyone:
@@ -18498,7 +18522,7 @@ class GenericGraph(GenericGraph_pyx):
         elif algorithm == 'Dijkstra_NetworkX':
             import networkx
             # If this is not present, an error might be raised by NetworkX
-            if self.num_verts() == 1 and next(self.vertex_iterator()) == u:
+            if self.n_vertices() == 1 and next(self.vertex_iterator()) == u:
                 return {u: [u]}
             if by_weight:
                 if self.is_directed():
@@ -20245,7 +20269,7 @@ class GenericGraph(GenericGraph_pyx):
              ((1, 'ab'), (1, 'ba')), ((1, 'ab'), (1, 'bb')),
              ((1, 'ba'), (1, 'aa')), ((1, 'ba'), (1, 'ab')),
              ((1, 'bb'), (1, 'ba')), ((1, 'bb'), (1, 'bb'))]
-            sage: Q.strongly_connected_components_digraph().num_verts()                 # needs sage.combinat
+            sage: Q.strongly_connected_components_digraph().n_vertices()                # needs sage.combinat
             2
             sage: V = Q.strongly_connected_component_containing_vertex((0, 'aa'))       # needs sage.combinat
             sage: B.is_isomorphic(Q.subgraph(V))                                        # needs sage.combinat
@@ -21692,7 +21716,7 @@ class GenericGraph(GenericGraph_pyx):
         # obstruction[y] is the smallest value of x to which a vertex at height
         # y can be assigned. All vertices at height y which have already been
         # assigned are on the left of (x-1,y).
-        obstruction = [0.0] * self.num_verts()
+        obstruction = [0.0] * self.n_vertices()
 
         if tree_orientation in ['down', 'left']:
             o = -1
@@ -22230,7 +22254,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: dm.preferences.supplemental_plot = 'never'
         """
         prefs = display_manager.preferences
-        is_small = (0 < self.num_verts() < 20)
+        is_small = (0 < self.n_vertices() < 20)
         can_plot = (prefs.supplemental_plot != 'never')
         plot_graph = can_plot and (prefs.supplemental_plot == 'always' or is_small)
         # Under certain circumstances we display the plot as graphics
@@ -24957,7 +24981,7 @@ class GenericGraph(GenericGraph_pyx):
         if orbits:
             G_from = {G_to[v]: v for v in G_to}
             from sage.groups.perm_gps.partn_ref.refinement_graphs import get_orbits
-            output.append([[G_from[v] for v in W] for W in get_orbits(a, self.num_verts())])
+            output.append([[G_from[v] for v in W] for W in get_orbits(a, self.n_vertices())])
 
         if len(output) == 1:
             return output[0]
@@ -25991,20 +26015,24 @@ class GenericGraph(GenericGraph_pyx):
     from sage.graphs.base.static_dense_graph import connected_subgraph_iterator
     from sage.graphs.base.static_sparse_graph import spectral_radius
     from sage.graphs.connectivity import (
+        biconnected_components,
         biconnected_components_subgraphs,
         blocks_and_cut_vertices,
         blocks_and_cuts_tree,
         connected_component_containing_vertex,
         connected_components,
         connected_components_number,
+        number_of_connected_components,
         connected_components_sizes,
         connected_components_subgraphs,
         edge_connectivity,
+        is_biconnected,
         is_connected,
         is_cut_edge,
         is_cut_vertex,
         is_edge_cut,
         is_vertex_cut,
+        number_of_biconnected_components,
         vertex_connectivity,
     )
     from sage.graphs.distances_all_pairs import distances_distribution, szeged_index
@@ -26334,7 +26362,7 @@ class GenericGraph(GenericGraph_pyx):
         """
         from sage.geometry.polyhedron.parent import Polyhedra
         from sage.matrix.special import identity_matrix
-        dim = self.num_verts()
+        dim = self.n_vertices()
         e = identity_matrix(dim).rows()
         dic = {v: e[i] for i, v in enumerate(self)}
         vertices = ((dic[i] + dic[j]) for i, j in self.edge_iterator(sort_vertices=False, labels=False))
@@ -26378,12 +26406,12 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: n = randint(5, 12)
             sage: G = Graph()
-            sage: while not G.num_edges():                                              # needs networkx
+            sage: while not G.n_edges():                                                # needs networkx
             ....:     G = graphs.RandomGNP(n, 0.2)
             sage: P = G.symmetric_edge_polytope()                                       # needs networkx sage.geometry.polyhedron
             sage: P.ambient_dim() == n                                                  # needs networkx sage.geometry.polyhedron
             True
-            sage: P.dim() == n - G.connected_components_number()                        # needs networkx sage.geometry.polyhedron
+            sage: P.dim() == n - G.number_of_connected_components()                     # needs networkx sage.geometry.polyhedron
             True
 
         The SEP of a graph is isomorphic to the subdirect sum of
@@ -26466,7 +26494,7 @@ class GenericGraph(GenericGraph_pyx):
 
         from sage.geometry.polyhedron.parent import Polyhedra
         from sage.matrix.special import identity_matrix
-        dim = self.num_verts()
+        dim = self.n_vertices()
         e = identity_matrix(dim).rows()
         dic = {v: e[i] for i, v in enumerate(self)}
         vertices = chain(((dic[i] - dic[j]) for i, j in self.edge_iterator(sort_vertices=False, labels=False)),
