@@ -154,7 +154,9 @@ from sage.misc.unknown import Unknown
 from sage.misc.verbose import verbose
 from sage.repl.preparse import preparse
 from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
+from sage.structure.global_options import GlobalOptions
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -246,7 +248,7 @@ class OEIS:
       - a list representing a sequence of integers.
       - a string, representing a text search.
 
-    - ``max_results`` -- integer (default: 30); the maximum number of
+    - ``max_results`` -- integer (default: 3); the maximum number of
       results to return, they are sorted according to their relevance. In
       any cases, the OEIS website will never provide more than 100 results.
 
@@ -254,6 +256,8 @@ class OEIS:
       ``first_result`` first results in the search, to go further.
       This is useful if you are looking for a sequence that may appear
       after the 100 first found sequences.
+
+    ``max_results`` can also be set using :meth:`options`.
 
     OUTPUT:
 
@@ -361,8 +365,7 @@ class OEIS:
         sage: oeis('A000045')  # optional -- internet
         A000045: Fibonacci numbers: F(n) = F(n-1) + F(n-2) with F(0) = 0 and F(1) = 1.
     """
-
-    def __call__(self, query, max_results=3, first_result=0):
+    def __call__(self, query, max_results=None, first_result=0):
         r"""
         See the documentation of :class:`OEIS`.
 
@@ -382,6 +385,46 @@ class OEIS:
             return self.find_by_id(query)
         elif isinstance(query, (list, tuple)):
             return self.find_by_subsequence(query, max_results, first_result)
+
+    class options(GlobalOptions):
+        r"""
+        Set and display the options for the OEIS.
+
+        If no parameters are set, then the function returns a copy of
+        the options dictionary.
+
+        The ``options`` can be accessed as using
+        :class:`oeis.options`.
+
+        @OPTIONS@
+
+        EXAMPLES::
+
+            sage: oeis.options
+            Current options for OEIS
+              - fetch_b_file: False
+              - max_results:  3
+
+            sage: oeis.options.max_results = 5
+            sage: oeis('beaver')                        # optional -- internet
+            0: A...: ...eaver...
+            1: A...: ...eaver...
+            2: A...: ...eaver...
+            3: A...: ...eaver...
+            4: A...: ...eaver...
+
+            sage: oeis.options._reset()
+            sage: oeis.options.max_results
+            3
+        """
+        NAME = 'OEIS'
+        module = 'sage.databases.oeis'
+        max_results = dict(default=3,
+                           description='the maximum number of results to return',
+                           checker=lambda x: x in ZZ and x > 0)
+        fetch_b_file = dict(default=False,
+                            description='whether to fetch terms from the b-file by default',
+                            checker=lambda x: isinstance(x, bool))
 
     def __repr__(self) -> str:
         r"""
@@ -440,7 +483,7 @@ class OEIS:
         sequence._raw = entry
         return sequence
 
-    def find_by_description(self, description, max_results=3, first_result=0):
+    def find_by_description(self, description, max_results=None, first_result=0):
         r"""
         Search for OEIS sequences corresponding to the description.
 
@@ -483,7 +526,19 @@ class OEIS:
             1: A...: ...eaver...
             2: A...: ...eaver...
             3: A...: ...eaver...
+
+        Alternatively, we can also set the global option `max_results`::
+
+            sage: oeis.options.max_results = 5
+            sage: oeis('beaver')                        # optional -- internet
+            0: A...: ...eaver...
+            1: A...: ...eaver...
+            2: A...: ...eaver...
+            3: A...: ...eaver...
+            4: A...: ...eaver...
         """
+        if max_results is None:
+            max_results = self.options['max_results']
         options = {'q': description,
                    'n': str(max_results),
                    'fmt': 'text',
@@ -493,7 +548,7 @@ class OEIS:
         T = [self.find_by_entry(entry=s) for s in sequence_list]
         return FancyTuple([s for s in T if not s.is_dead()])
 
-    def find_by_subsequence(self, subsequence, max_results=3, first_result=0):
+    def find_by_subsequence(self, subsequence, max_results=None, first_result=0):
         r"""
         Search for OEIS sequences containing the given subsequence.
 
@@ -1244,6 +1299,14 @@ class OEISSequence(SageObject, UniqueRepresentation):
             41
             sage: len(oeis(45).first_terms(oo))        # optional -- internet
             2001
+
+            sage: len(oeis(1).first_terms())           # optional -- internet
+            94
+
+            sage: oeis.options.fetch_b_file = True
+            sage: len(oeis(1).first_terms())           # optional -- internet
+            2048
+            sage: oeis.options._reset()
         """
         def fetch_b_file():
             url = oeis_url + f"b{self.id(format='int')}.txt"
@@ -1260,8 +1323,9 @@ class OEISSequence(SageObject, UniqueRepresentation):
                 first_terms += (v,)
             self._first_terms = True, first_terms
 
-        # self._first_terms is a pair (all?, first_terms)
-        if number is infinity:
+        if ((number is infinity or oeis.options['fetch_b_file'])
+            and self is not oeis._imaginary_sequence()):  # all other sequences have a b-file
+            # self._first_terms is a pair (all?, first_terms)
             if not hasattr(self, "_first_terms") or not self._first_terms[0]:
                 fetch_b_file()
             return self._first_terms[1]
