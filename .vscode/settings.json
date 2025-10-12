@@ -43,6 +43,7 @@
         "Cython",
         "d'Alembertian",
         "dalembertian",
+        "devcontainers",
         "disp",
         "doctest",
         "doctests",
