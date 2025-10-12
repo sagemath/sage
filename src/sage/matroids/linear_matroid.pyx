@@ -2954,7 +2954,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         OUTPUT:
 
-        The function as a ``tuple``.
+        The function as a ``dict``.
         """
         cdef int size
         if not self._zonotopal_rho:
@@ -3137,7 +3137,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         .. SEEALSO::
 
-            :meth:`zonotopal_algebra`
+            - :meth:`zonotopal_algebra`
+            - :meth:`internal_zonotopal_algebra`
 
         EXAMPLES:
 
@@ -3191,7 +3192,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         .. SEEALSO::
 
-            :meth:`zonotopal_algebra`
+            - :meth:`zonotopal_algebra`
+            - :meth:`central_zonotopal_algebra`
 
         EXAMPLES:
 
