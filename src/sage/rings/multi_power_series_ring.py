@@ -672,8 +672,8 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             if set(P.variable_names()).issubset(set(self.variable_names())):
                 if self.has_coerce_map_from(P.base_ring()):
                     return self(f)
-
-        return self(self.base_ring().coerce(f))
+        else:
+            return self(self.base_ring().coerce(f))
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None) -> bool:
         """
