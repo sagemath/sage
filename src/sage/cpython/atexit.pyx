@@ -1,5 +1,4 @@
 # sage_setup: distribution = sagemath-objects
-# distutils: define_macros=Py_BUILD_CORE=1
 
 """Utilities for interfacing with the standard library's atexit module."""
 
