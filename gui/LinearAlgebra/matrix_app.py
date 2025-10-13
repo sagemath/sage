@@ -3,7 +3,9 @@ import sys
 import numpy as np
 
 # from ui_matrix_gui import Ui_MatrixGui
-from Matrix_gui import Ui_MatrixGui
+# Use a package-qualified import so Python can find Matrix_gui when
+# `gui/app.py` is executed (working directory is the `gui/` folder).
+from LinearAlgebra.Matrix_gui import Ui_MatrixGui
 from PyQt5 import QtWidgets
 
 

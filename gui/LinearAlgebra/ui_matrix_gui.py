@@ -1,7 +1,7 @@
 # Converted matrix_gui.ui to python code for implementation
 # Created by: Radhakrishnan Ramanujam
 
-from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_MatrixGui(object):
