@@ -21,8 +21,19 @@ def outputContent(topic):
                 "Bipartite Graph":"A graph is <b>bipartite</b> if the vertex set can be partitioned into two disjoint sets A and B and for every edge e={x,y}, we have that x is in A and y is in B.",
                 "Kuratowski's Theorem":"<i>A graph is planar if and only if it has no subgraph that is a subdivision of K(5) or K(3,3)</i>"}
     elif topic == "LA":
-        return {"Linear Map": "",
-                 "Vector space": "",
-                 "Orthogonality":""}
+        return {"Vector": "A <b>vector</b> is a quantity that has both direction and magnitude.",
+                 "Matrix": "Let a(i,j) be a real number where 1≤i≤n and 1≤j≤m. A n×m <b>(real) matrix</b> A a function such that A=(a(i,j)) for i=1,...,n and j=1,...,m. We say a matrix is <b>square</b> if n=m.",
+                 "Linearly independent":"A set of vectors {x,y,z} are <b>linearly independent</b> if for all real numbers a,b, and c we have that ax+by+cz=0" ,
+                 "Basis":"The <b>basis</b> of a vector space X is the set of all linearly independent vectors that form all linear combinations of vectors in X",
+                 "Dimenseion":"The dimension of a space X, is the size of basis.",
+                 "Eigenvalue":"Let A be an n×m matrix and let v be an m-dimensional column vector. The eigenvalue of a matrix A is a real number k such that Av=kv.",
+                 "Eigenvector":"Let A be an n×m matrix and let k be an eigenvalue of A. The <b>eigenvector</b> is the vector v such that Av=kv.",
+                 "Identity matrix":"The <b>identity matrix</b>, denoted I, is a matrix such that a(i,j)=1 for i=j and a(i,j)=0 otherwise.",
+                 "Inverse matrix":"The <b>inverse matrix</b> of a matrix A is denoted A⁻¹ and is a matrix such that AA⁻¹=A⁻¹A=I.",
+                 "Diagonal matrix": "A <b>diagonal matrix</b> is a matrix D such that a(i,j)=0 for all i≠j.",
+                 "Diagonalizable": "A square matrix A is <b>diagonalizable</b> fi there exists an invertible matrix P and a diagonal matrix D such that P⁻¹AP=D.",
+                 "Matrix transpose":"The <b>transpose</b> of a matrix A is a matrix Aᵀ such that aᵀ(i,j)=a(j,i).",
+                 "Dot product":"Let u=ax+by+cz and v=dx+ey+fz, the <b>dot product</b> of u and v, denoted u•v, is given by u•v=ad+be+cf.",
+                 "Orthogonal matrix":"An <b>orthogonal matrix</b> Q is a matrix such that QᵀQ=QQᵀ=I." }
     else:
         return {f"key_{i}": f"value_{i}" for i in range(1000)}
