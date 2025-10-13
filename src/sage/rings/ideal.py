@@ -1459,7 +1459,7 @@ class Ideal_principal(Ideal_generic):
             if d1 or d2:
                 return rich_to_bool(op, d1 - d2)
             return op == op_NE
-        except NotImplementedError:
+        except (NotImplementedError, AttributeError):
             # If we do not know if the other is principal or not,
             # then we fall back to the generic implementation
             pass
