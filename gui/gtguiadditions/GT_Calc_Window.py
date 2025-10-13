@@ -120,7 +120,7 @@ class GT_Calc_Window(QWidget):
 
         # New stuff for glossary
         self.glossary_button = QPushButton("Glossary", self)
-        self.glossary_button.setGeometry(400, 250, 80, 40)
+        self.glossary_button.setGeometry(400, 550, 80, 40)
         self.glossary_button.clicked.connect(self.show_glossary)
 
     

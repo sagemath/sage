@@ -121,8 +121,8 @@ class MatrixApp(QtWidgets.QWidget,Ui_MatrixGui):
     def show_glossary(self):
         if self.glossary_window is None:
             self.glossary_window = QMainWindow()
-            self.glossary_window.setWindowTitle("Graph Theory Glossary")
-            self.glossary_window.setCentralWidget(GlossaryWidget("GT"))
+            self.glossary_window.setWindowTitle("Linear Algebra Glossary")
+            self.glossary_window.setCentralWidget(GlossaryWidget("LA"))
         self.glossary_window.show()
         self.glossary_window.raise_()
         self.glossary_window.activateWindow()
