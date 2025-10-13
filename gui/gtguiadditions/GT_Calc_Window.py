@@ -29,37 +29,15 @@ class GTImageWindow(QWidget):
 class GT_Calc_Window(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        self.textlayout = QHBoxLayout()
         self.setWindowTitle("Testing")
         self.setGeometry(100, 100, 900, 700)  # x, y, width, height
-        self.glossary_window = None
 
-        main_layout = QVBoxLayout()
-        self.setLayout(main_layout)
-
-        # Vertex input
-        self.vert_label = QLabel("Input Vertice Names:")
-        main_layout.addWidget(self.vert_label)
-        self.vert_sublabel = QLabel("(seperated by commas)")
-        main_layout.addWidget(self.vert_sublabel)
-
-        self.vert_textbox = QLineEdit()
-        self.vert_textbox.setPlaceholderText("ex: 1, 2, 3, 4")
-        main_layout.addWidget(self.vert_textbox)
-
-        # Edge input
-        self.edge_label = QLabel("Input Edges:")
-        main_layout.addWidget(self.edge_label)
-        self.edge_sublabel = QLabel("(ordered pairs seperated by commas)")
-        self.edge_sublabel.setWordWrap(True)
-        main_layout.addWidget(self.edge_sublabel)
-
-        self.edge_textbox = QLineEdit()
-        self.edge_textbox.setPlaceholderText("ex: (1,2), (2,3), (1,4)")
-        main_layout.addWidget(self.edge_textbox)
-
-        # Buttons and labels layout
-        self.textlayout = QHBoxLayout()
-        main_layout.addLayout(self.textlayout)
+        self.vert_label = QLabel("Input Vertice Names:", self) #create label for vertice inputs
+        self.vert_label.setGeometry(52,30,125,40)
+        self.vert_sublabel = QLabel ("(seperated by commas)", self)
+        self.vert_sublabel.setGeometry(45,55,160,20)
         
 
         self.vert_textbox_layout = QHBoxLayout()
@@ -85,53 +63,61 @@ class GT_Calc_Window(QWidget):
 
         
         # Create a button show graph
-        self.display_graph_button = QPushButton("Display Graph")
+        self.display_graph_button = QPushButton("Display Graph", self)
+        self.display_graph_button.setGeometry(575, 70, 150, 50)# x, y, width, height
         self.display_graph_button.clicked.connect(self.on_display_button)
-        main_layout.addWidget(self.display_graph_button)
+        gtimagelayout = QVBoxLayout()
+        gtimagelayout.addWidget(self.display_graph_button)
 
         # Create a button density
-        self.density_button = QPushButton("Density")
+        self.density_button = QPushButton("Density", self)
+        self.density_button.setGeometry(500, 200, 150, 50) # x, y, width, height
         self.density_button.clicked.connect(self.on_density_button)
-        self.densitylabel = QLabel("")
+        self.densitylabel = QLabel("",self)
         self.densitylabel.hide()
         self.textlayout.addWidget(self.density_button)
         self.textlayout.addWidget(self.densitylabel)
 
+
         # Create a button degree
-        self.degree_button = QPushButton("Degrees")
+        self.degree_button = QPushButton("Degrees", self)
+        self.degree_button.setGeometry(200, 200, 150, 50) # x, y, width, height
         self.degree_button.clicked.connect(self.on_degree_button)
-        self.degreelabel = QLabel("")
+        self.degreelabel = QLabel("",self)
         self.degreelabel.hide()
         self.textlayout.addWidget(self.degree_button)
         self.textlayout.addWidget(self.degreelabel)
 
         # Create a button planar
-        self.planar_button = QPushButton("Planar")
+        self.planar_button = QPushButton("Planar", self)
+        self.planar_button.setGeometry(52, 400, 150, 50) # x, y, width, height
         self.planar_button.clicked.connect(self.on_planar_button)
-        self.planarlabel = QLabel("")
+        self.planarlabel = QLabel("",self)
         self.planarlabel.hide()
         self.textlayout.addWidget(self.planar_button)
         self.textlayout.addWidget(self.planarlabel)
-
+        
         # Create a button eulerian
-        self.eulerian_button = QPushButton("Eulerian")
+        self.eulerian_button = QPushButton("Eulerian", self)
+        self.eulerian_button.setGeometry(350, 400, 150, 50) # x, y, width, height
         self.eulerian_button.clicked.connect(self.on_eulerian_button)
-        self.eulerianlabel = QLabel("")
+        self.eulerianlabel = QLabel("",self)
         self.eulerianlabel.hide()
         self.textlayout.addWidget(self.eulerian_button)
         self.textlayout.addWidget(self.eulerianlabel)
-
-        # Create a button hamiltonian
-        self.hamiltonian_button = QPushButton("Hamiltonian")
+     
+        # Create a button hamiltonian 
+        self.hamiltonian_button = QPushButton("Hamiltonian", self)
+        self.hamiltonian_button.setGeometry(650, 400, 150, 50) # x, y, width, height
         self.hamiltonian_button.clicked.connect(self.on_hamiltonian_button)
-        self.hamiltonianlabel = QLabel("")
+        self.hamiltonianlabel = QLabel("",self)
         self.hamiltonianlabel.hide()
         self.textlayout.addWidget(self.hamiltonian_button)
         self.textlayout.addWidget(self.hamiltonianlabel)
 
         # New stuff for glossary
         self.glossary_button = QPushButton("Glossary")
-        main_layout.addWidget(self.glossary_button)
+        self.layout().addWidget(self.glossary_button)  # or add to your specific layout
         self.glossary_button.clicked.connect(self.show_glossary)
 
     
