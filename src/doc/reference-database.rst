@@ -4391,6 +4391,11 @@
              Journal of Discrete Algorithms 2(4):439-452, Dec. 2004,
              :doi:`10.1016/j.jda.2004.04.005`.
 
+.. [KLPT2014] David Kohel, Kristin Lauter, Christophe Petit, and Jean-Pierre Tignol:
+              *On the quaternion `\ell`-isogeny path problem*.
+              LMS Journal of Computation and Mathematics 17, pp. 418-432, 2014.
+              https://ia.cr/2014/505
+
 .. [Koh2007] \A. Kohnert, *Constructing two-weight codes with prescribed
              groups of automorphisms*, Discrete applied mathematics 155,
              no. 11 (2007):

@@ -23,7 +23,8 @@ AUTHORS:
 
 - Lorenz Panny (2026): :meth:`QuaternionOrder.random_ideal`,
   :meth:`QuaternionFractionalIdeal_rational.reduce_equiv`,
-  :meth:`QuaternionFractionalIdeal_rational.gens_two`
+  :meth:`QuaternionFractionalIdeal_rational.gens_two`,
+  :meth:`QuaternionOrder.represent_integer`
 
 - Lorenz Panny (2026): :meth:`QuaternionOrder.commutator_ideal`,
   :meth:`QuaternionOrder.two_sided_prime_ideals`
@@ -3298,6 +3299,78 @@ class QuaternionOrder(Parent):
 
         # Otherwise, there might be other unknown alpha's giving isomorphism. If so we can't find them.
         raise NotImplementedError("isomorphism_to was not able to recognize the given orders as isomorphic")
+
+    def represent_integer(self, n):
+        r"""
+        Given a positive integer `n`, attempt to compute a quaternion in this order
+        whose (reduced) norm equals `n`.
+
+        .. WARNING::
+
+            This method does not guarantee success: If it does not *find* a solution,
+            that does **not** imply that there does not *exist* a solution.
+
+        .. NOTE::
+
+            This method currently only works for orders containing `1,i,j,k`
+            in definite quaternion algebras.
+
+        .. NOTE::
+
+            This method requires `q = -i^2` to be "small" in order to have
+            any chance at succeeding before the heat death of the universe.
+            (The complexity scales approximately linearly with the class
+            number of `\ZZ[\sqrt{-q}]`.)
+
+        EXAMPLES::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -419)
+            sage: O = B.maximal_order(); O
+            Order of Quaternion Algebra (-1, -419) with base ring Rational Field with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
+            sage: O.represent_integer(5)
+            2 + i
+            sage: O.represent_integer(1019)
+            10 + 9*i + j + k
+
+        ALGORITHM: [KLPT2014]_, §3.2
+        """
+        n = ZZ(n)
+
+        B = self.quaternion_algebra()
+        ii, jj, kk = B.gens()
+        if ii not in self or jj not in self:
+            raise NotImplementedError('only implemented for orders containing 1,i,j,k')
+
+        from sage.quadratic_forms.binary_qf import BinaryQF
+        if not all(v in ZZ for v in B.invariants()):
+            raise NotImplementedError('only implemented for integral algebra invariants')
+        q, p = (-ZZ(v) for v in B.invariants())
+        if q <= 0 or p <= 0:
+            raise NotImplementedError('only implemented for definite quaternion algebras')
+        nf = BinaryQF(1, 0, q)
+
+        from sage.misc.functional import isqrt
+        cbnd = isqrt(n / 2 / p)
+        dbnd = isqrt(n / 2 / p / q)
+
+        from sage.misc.mrange import cantor_product
+
+        for c,d in cantor_product(range(cbnd + 1), range(dbnd + 1)):
+            n1 = n - p * nf(c,d)
+            if not n1.is_pseudoprime():  # or otherwise "Cornacchia-friendly"
+                continue
+
+            sol = nf.solve_integer(n1, algorithm='cornacchia')
+            if sol is not None:
+                a, b = sol
+                break
+        else:
+            return
+
+        elt = B([a, b, c, d])
+        assert elt in self
+        assert elt.reduced_norm() == n
+        return elt
 
 
 class QuaternionFractionalIdeal(Ideal_fractional):
