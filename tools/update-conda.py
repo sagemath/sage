@@ -2,12 +2,11 @@
 # See README.md for more details
 
 import argparse
-import os
 import subprocess
-import sys
-import tomllib
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+import tomllib
 from grayskull.config import Configuration
 from grayskull.strategy.py_base import merge_setup_toml_metadata
 from grayskull.strategy.py_toml import get_all_toml_info
@@ -91,61 +90,60 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
         print(f"pyproject.toml not found in {pyproject_toml}")
         return
 
-    for platform_key, platform_value in platforms.items():
-        if systems and platform_key not in systems:
-            continue
+    def process_platform_python(platform_key, platform_value, python):
+        dependencies = get_dependencies(pyproject_toml, python, platform_key)
+        for tag in tags:
+            # Pin Python version
+            pinned_dependencies = {
+                f"python={python}" if dep == "python" else dep
+                for dep in dependencies
+            }
+            pinned_dependencies = sorted(pinned_dependencies)
 
-        for python in pythons:
-            dependencies = get_dependencies(pyproject_toml, python, platform_key)
-            for tag in tags:
-                # Pin Python version
-                pinned_dependencies = {
-                    f"python={python}" if dep == "python" else dep
-                    for dep in dependencies
-                }
-                pinned_dependencies = sorted(pinned_dependencies)
+            env_file = source_dir / f"environment{tag}-{python}.yml"
+            write_env_file(env_file, pinned_dependencies)
+            lock_file = source_dir / f"environment{tag}-{python}-{platform_value}"
+            lock_file_gen = (
+                source_dir / f"environment{tag}-{python}-{platform_value}.yml"
+            )
+            print(
+                f"Updating lock file for {env_file} at {lock_file_gen}", flush=True
+            )
+            subprocess.run(
+                [
+                    "conda-lock",
+                    "--mamba",
+                    "--channel",
+                    "conda-forge",
+                    "--kind",
+                    "env",
+                    "--platform",
+                    platform_key,
+                    "--file",
+                    str(env_file),
+                    "--lockfile",
+                    str(lock_file),
+                    "--filename-template",
+                    str(lock_file),
+                ],
+                check=True,
+            )
 
-                env_file = source_dir / f"environment{tag}-{python}.yml"
-                write_env_file(env_file, pinned_dependencies)
-                lock_file = source_dir / f"environment{tag}-{python}-{platform_value}"
-                lock_file_gen = (
-                    source_dir / f"environment{tag}-{python}-{platform_value}.yml"
-                )
-                print(
-                    f"Updating lock file for {env_file} at {lock_file_gen}", flush=True
-                )
-                
-                # Find conda-lock in the same environment as this script
-                conda_lock_bin = Path(sys.executable).parent / "conda-lock"
-                if not conda_lock_bin.exists():
-                    conda_lock_bin = "conda-lock"  # Fall back to PATH
-                
-                subprocess.run(
-                    [
-                        str(conda_lock_bin),
-                        "--mamba",
-                        "--channel",
-                        "conda-forge",
-                        "--kind",
-                        "env",
-                        "--platform",
-                        platform_key,
-                        "--file",
-                        str(env_file),
-                        "--lockfile",
-                        str(lock_file),
-                        "--filename-template",
-                        str(lock_file),
-                    ],
-                    check=True,
-                )
+            # Add conda env name to lock file at beginning
+            with open(lock_file_gen, "r+") as f:
+                content = f.read()
+                f.seek(0, 0)
+                f.write(f"name: sage{tag or '-dev'}\n{content}")
 
-                # Add conda env name to lock file at beginning
-                with open(lock_file_gen, "r+") as f:
-                    content = f.read()
-                    f.seek(0, 0)
-                    f.write(f"name: sage{tag or '-dev'}\n{content}")
-
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        futures = [
+            executor.submit(process_platform_python, platform_key, platform_value, python)
+            for platform_key, platform_value in platforms.items()
+            for python in pythons
+            if not (systems and platform_key not in systems)
+        ]
+        for future in futures:
+            future.result()
 
 def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[str]:
     grayskull_config = Configuration("sagemath")
@@ -172,6 +170,11 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         .replace("memory_allocator", "memory-allocator")
         .replace("pkg:generic/r-lattice", "r-lattice")
         .replace("pkg:generic/latexmk", "latexmk")
+        .replace("pkg:generic/sagemath-elliptic-curves", "sagemath-db-elliptic-curves")
+        .replace("pkg:generic/sagemath-graphs", "sagemath-db-graphs")
+        .replace("pkg:generic/sagemath-polytopes-db", "sagemath-db-polytopes")
+        .replace("pkg:generic/tachyon", "tachyon")
+        .replace("brial", "libbrial") # on Conda, 'brial' refers to the Python package
         for req in all_requirements
     }
     # Exclude requirements not available on conda (for a given platform)
@@ -192,7 +195,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         exclude_packages |= {
             "4ti2",
             "bc",
-            "brial",
+            "libbrial",
             "bliss",
             "cddlib",
             "cliquer",
@@ -276,16 +279,6 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     else:
         all_requirements.add("c-compiler")
         all_requirements.add("cxx-compiler")
-    
-    # Lock maxima to version 5.47.0 (avoid issues with newer versions)
-    all_requirements.discard("maxima")
-    all_requirements.add("maxima=5.47.0")
-    
-    # Lock clang to version 18 on macOS (avoid issues with clang 19)
-    if platform in ("osx-64", "osx-arm64"):
-        all_requirements.add("clang=18.*")
-        all_requirements.add("clang-18")
-        all_requirements.add("clangxx=18.*")
 
     # Add additional dependencies based on platform
     if platform == "win-64":
@@ -300,6 +293,13 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         all_requirements.add("m4")
     # Needed to fix a bug on Macos with broken pkg-config
     all_requirements.add("expat")
+
+    # Packages with version constraints
+    # https://github.com/sagemath/sage/pull/40679
+    if platform != "win-64":
+        all_requirements.remove("maxima")
+        all_requirements.add("maxima < 5.48.0")
+
     return all_requirements
 
 
@@ -313,10 +313,6 @@ def get_dev_dependencies(pyproject: dict) -> list[str]:
     )
     # Remove dependencies that are not available on conda
     dev_dependencies.remove("relint")
-    # Remove tools used only for generating conda environments (not needed in the environments themselves)
-    for tool in ["conda-lock", "grayskull"]:
-        if tool in dev_dependencies:
-            dev_dependencies.remove(tool)
     return dev_dependencies
 
 
