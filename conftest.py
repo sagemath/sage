@@ -116,14 +116,33 @@ class SageDoctestModule(DoctestModule):
                     pytest.skip("unable to import module %r" % self.path)
                 else:
                     if isinstance(exception, ModuleNotFoundError):
-                        # Ignore some missing features/modules for now
-                        # TODO: Remove this once all optional things are using Features
-                        if exception.name in (
-                            "valgrind",
-                            "rpy2",
-                            "sage.libs.coxeter3.coxeter",
-                            "sagemath_giac",
-                        ):
+                        # Ignore some missing features/modules for
+                        # now. Many of these are using custom
+                        # "sage.doctest" headers that only our doctest
+                        # runner (i.e. not pytest) can understand.
+                        #
+                        # TODO: we should remove this once all
+                        # optional things are using Features. It
+                        # wouldn't be too hard to move the
+                        # "sage.doctest" header into pytest (as
+                        # explicit ignore lists based on feature
+                        # tests), but that would require duplication
+                        # for as long as `sage -t` is still used.
+                        from sage.features.coxeter3 import Coxeter3
+                        from sage.features.sagemath import sage__libs__giac
+                        from sage.features.standard import PythonModule
+
+                        exc_list = ["valgrind"]
+                        if not PythonModule("rpy2").is_present():
+                            exc_list.append("rpy2")
+                        if not Coxeter3().is_present():
+                            exc_list.append("sage.libs.coxeter3.coxeter")
+                        if not sage__libs__giac().is_present():
+                            exc_list.append("sagemath_giac")
+
+                        # Ignore import errors, but only when the associated
+                        # feature is actually disabled.
+                        if exception.name in exc_list:
                             pytest.skip(
                                 f"unable to import module {self.path} due to missing feature {exception.name}"
                             )
