@@ -3159,7 +3159,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: from sage.doctest.util import ensure_interruptible_after
             sage: n = prod(primes_first_n(25))                                          # needs sage.libs.pari
             sage: for i in range(20):           # long time                             # needs sage.libs.pari
-            ....:     with ensure_interruptible_after(RDF.random_element(1e-3, 0.5)):
+            ....:     with ensure_interruptible_after(RDF.random_element(1e-3, 0.5), max_wait_after_interrupt=0.5):
             ....:         _ = n.divisors()
 
         Test a strange method::
@@ -3298,6 +3298,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                                 sorted_c[sorted_len] = all_c[tip]
                                 sorted_len += 1
                                 tip += 1
+                                if (tip & 0x1f) == 0: sig_check()
                             sorted_c[sorted_len] = apn_c
                             sorted_len += 1
 
@@ -3323,6 +3324,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                                     break
                                 sorted.append(all_tip)
                                 tip += 1
+                                if (tip & 0x1f) == 0: sig_check()
                             sorted.append(apn)
 
             if fits_c:
