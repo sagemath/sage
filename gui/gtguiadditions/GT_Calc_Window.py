@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QMessageBox,
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import QSize
 from Glossary.Glossary import GlossaryWidget
-from sage.all import Graph
+#from sage.all import Graph
 
 
 class GTImageWindow(QWidget):
@@ -29,6 +29,9 @@ class GTImageWindow(QWidget):
 class GT_Calc_Window(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        # Ensure glossary_window attribute exists
+        self.glossary_window = None
 
         self.textlayout = QHBoxLayout()
         self.setWindowTitle("Testing")
@@ -117,7 +120,7 @@ class GT_Calc_Window(QWidget):
 
         # New stuff for glossary
         self.glossary_button = QPushButton("Glossary", self)
-        self.glossary_button.setGeometry(800, 600, 80, 40)
+        self.glossary_button.setGeometry(400, 250, 80, 40)
         self.glossary_button.clicked.connect(self.show_glossary)
 
     
