@@ -520,9 +520,8 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             sage: M = PowerSeriesRing(QQ, 4, 'f'); M
             Multivariate Power Series Ring in f0, f1, f2, f3 over Rational Field
 
-            sage: (c,R) = M.construction(); (c,R)
-            (Completion[('f0', 'f1', 'f2', 'f3'), prec=12],
-             Multivariate Polynomial Ring in f0, f1, f2, f3 over Rational Field)
+            sage: c, R = M.construction(); R
+            Multivariate Polynomial Ring in f0, f1, f2, f3 over Rational Field
             sage: c
             Completion[('f0', 'f1', 'f2', 'f3'), prec=12]
             sage: c(R)
@@ -535,8 +534,8 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             sage: M2 = PowerSeriesRing(QQ,4,'f', sparse=True)
             sage: M == M2
             False
-            sage: c,R = M2.construction()
-            sage: c(R)==M2
+            sage: c, R = M2.construction()
+            sage: c(R) == M2
             True
             sage: M3 = PowerSeriesRing(QQ,4,'f', order='degrevlex')
             sage: M3 == M

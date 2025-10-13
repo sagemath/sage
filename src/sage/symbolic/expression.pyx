@@ -6575,7 +6575,7 @@ cdef class Expression(Expression_abc):
 
         Symbolic sums with definite endpoints are expanded (:issue:`9424`)::
 
-            sage: (k,n) = var('k,n')
+            sage: k, n = var('k,n')
             sage: f(n) = sum(abs(-k*k+n),k,1,n)
             sage: ex = f(n=8); ex
             sum(abs(-k^2 + 8), k, 1, 8)
@@ -11201,7 +11201,7 @@ cdef class Expression(Expression_abc):
 
         EXAMPLES::
 
-            sage: (k,n) = var('k,n')
+            sage: k, n = var('k,n')
             sage: ex = sum(abs(-k*k+n),k,1,n)(n=8); ex
             sum(abs(-k^2 + 8), k, 1, 8)
             sage: ex.expand_sum()
@@ -11214,8 +11214,8 @@ cdef class Expression(Expression_abc):
 
         We can use this to do floating-point approximation as well::
 
-            sage: (k,n) = var('k,n')
-            sage: f(n)=sum(sqrt(abs(-k*k+n)),k,1,n)
+            sage: k, n = var('k,n')
+            sage: f(n) = sum(sqrt(abs(-k*k+n)),k,1,n)
             sage: f(n=8)
             sum(sqrt(abs(-k^2 + 8)), k, 1, 8)
             sage: f(8).expand_sum()
