@@ -276,6 +276,16 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     else:
         all_requirements.add("c-compiler")
         all_requirements.add("cxx-compiler")
+    
+    # Lock maxima to version 5.47.0 (avoid issues with newer versions)
+    all_requirements.discard("maxima")
+    all_requirements.add("maxima=5.47.0")
+    
+    # Lock clang to version 18 on macOS (avoid issues with clang 19)
+    if platform in ("osx-64", "osx-arm64"):
+        all_requirements.add("clang=18.*")
+        all_requirements.add("clang-18")
+        all_requirements.add("clangxx=18.*")
 
     # Add additional dependencies based on platform
     if platform == "win-64":
