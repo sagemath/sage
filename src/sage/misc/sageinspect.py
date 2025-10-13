@@ -755,11 +755,6 @@ class SageArgSpecVisitor(ast.NodeVisitor):
         """
         Visit a Python AST :class:`ast.Constant` node.
 
-        Note: While :class:`ast.Constant` was introduced in Python 3.8, the legacy node types
-        (:class:`ast.Num`, :class:`ast.Str`, :class:`ast.NameConstant`, etc.) continued to be
-        generated for backward compatibility until Python 3.14. Only from Python 3.14 onwards
-        are all constants represented as :class:`ast.Constant` nodes.
-
         INPUT:
 
         - ``node`` -- the node instance to visit
