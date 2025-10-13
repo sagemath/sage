@@ -214,7 +214,16 @@ extra = [
 # ]
 
 [dependency-groups]
-dev = ["conda-lock", "grayskull", "meson", "pygithub", "toml", "tqdm", "uv"]
+dev = [
+  "conda-lock",
+  "grayskull",
+  "meson",
+  "pygithub",
+  "python-build",
+  "toml",
+  "tqdm",
+  "uv",
+]
 docs = [
   "furo",
   "jupyter-sphinx",
