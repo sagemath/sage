@@ -3,6 +3,7 @@ import tempfile
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QMessageBox, QLabel, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import QSize
+from Glossary.Glossary import GlossaryWidget
 from sage.all import Graph
 
 
@@ -113,6 +114,12 @@ class GT_Calc_Window(QWidget):
         self.hamiltonianlabel.hide()
         self.textlayout.addWidget(self.hamiltonian_button)
         self.textlayout.addWidget(self.hamiltonianlabel)
+
+        # New stuff for glossary
+        self.glossary_button = QPushButton("Glossary")
+        self.setGeometry(100, 100, 900, 700)  # x, y, width, height
+        self.glossary_button.clicked.connect(self.show_glossary)
+
     
 
     def on_display_button(self): #creates pop up window of graph picture
@@ -239,7 +246,15 @@ class GT_Calc_Window(QWidget):
             self.hamiltonianlabel.setGeometry(720, 475, 150, 50)
         self.hamiltonianlabel.show()
     
-    
+    def show_glossary(self):
+        if self.glossary_window is None:
+            self.glossary_window = QMainWindow()
+            self.glossary_window.setWindowTitle("Graph Theory Glossary")
+            self.glossary_window.setCentralWidget(GlossaryWidget("GT"))
+        self.glossary_window.show()
+        self.glossary_window.raise_()
+        self.glossary_window.activateWindow()
+
     def on_density_button(self):
         try:
             vert_text = self.vert_textbox.text()
