@@ -3022,18 +3022,25 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             raise ArithmeticError("self must be nonzero")
         if not isinstance(m, Integer):
             m = Integer(m)
-        if not m:
+        cdef Integer m_ = <Integer> m
+        if m_.is_zero():
             return one
+        if m_.is_unit():
+            return self
 
         cdef mpz_t mm, n
         mpz_init(mm)
-        mpz_init(n)
-        mpz_set(n, self.value)
-        mpz_set(mm, (<Integer>m).value)
         sig_on()
-        while mpz_cmp_ui(mm, 1):
-            mpz_gcd(mm, n, mm)
-            mpz_divexact(n, n, mm)
+        mpz_gcd(mm, self.value, m_.value)
+        if mpz_cmp_ui(mm, 1) == 0:
+            sig_off()
+            return self
+        else:
+            mpz_init(n)
+            mpz_divexact(n, self.value, mm)
+            while mpz_cmp_ui(mm, 1):
+                mpz_gcd(mm, n, mm)
+                mpz_divexact(n, n, mm)
         sig_off()
         mpz_clear(mm)
         return move_integer_from_mpz(n)
@@ -3352,6 +3359,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: abs(z) == abs(1)
             True
         """
+        if mpz_sgn(self.value) >= 0:
+            return self
         cdef Integer x = PY_NEW(Integer)
         mpz_abs(x.value, self.value)
         return x
