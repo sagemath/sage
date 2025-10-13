@@ -3170,7 +3170,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         r"""
         Return the internal zonotopal algebra of ``self`` over ``base_ring``.
 
-        We use the presentation given in Section 5.1 of [HR0211]_. Let `M` be
+        We use the presentation given in Section 5.1 of [HR2011]_. Let `M` be
         a linear matroid, and define
 
         .. MATH::
