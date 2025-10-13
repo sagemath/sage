@@ -1,0 +1,171 @@
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QMessageBox, QLabel, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit
+from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtCore import QSize
+
+
+class ImageWindow(QWidget):
+    def __init__(self, image_path):
+        super().__init__()
+        self.setWindowTitle("Graph")
+        self.setGeometry(400, 200, 200, 200)
+
+        imagelayout = QVBoxLayout()
+        imagelabel = QLabel(self)
+        pixmap = QPixmap(image_path)
+
+        imagelabel.setPixmap(pixmap)
+        imagelabel.setScaledContents(True)  # Scales the image to fit the window
+
+        imagelayout.addWidget(imagelabel)
+        self.setLayout(imagelayout)
+        self.layout = QHBoxLayout
+
+        
+
+class MyWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        self.textlayout = QHBoxLayout()
+
+
+        self.setWindowTitle("Testing")
+        self.setGeometry(100, 100, 400, 300)  # x, y, width, height
+
+        self.label = QLabel("Input Vertice Names:", self) #create label for vertice inputs
+        self.label.setGeometry(30,20,125,40)
+        self.label = QLabel ("(up to 8 vertices)", self)
+        self.label.setGeometry(35,45,110,20)
+
+        self.vtextlayout = QHBoxLayout()
+        self.textbox = QLineEdit(self)
+        self.textbox.setPlaceholderText("ex: 1, 2, 3, 4")
+        self.textbox.setGeometry(160,20,125,40)
+        self.vtextlayout.addWidget(self.textbox)
+        self.setLayout(self.vtextlayout)
+
+        self.label = QLabel("Input Edges:", self) #create label for vertice inputs
+        self.label.setGeometry(45,60,125,40)
+        self.label = QLabel ("(as ordered pairs)", self)
+        self.label.setGeometry(30,85,110,20)
+
+        self.etextlayout = QHBoxLayout()
+        self.textbox = QLineEdit(self)
+        self.textbox.setPlaceholderText("ex: (1,2), (2,3), (1,4)")
+        self.textbox.setGeometry(160,60,125,40)
+        self.etextlayout.addWidget(self.textbox)
+        self.setLayout(self.etextlayout)
+
+
+        # Create a button show graph
+        self.button = QPushButton("Display Graph", self)
+        self.button.setGeometry(30, 120, 110, 40)# x, y, width, height
+        self.button.clicked.connect(self.on_display_button)
+        imagelayout = QVBoxLayout()
+        imagelayout.addWidget(self.button)
+        self.setLayout(imagelayout)
+        # Create a button degree
+        self.button = QPushButton("Degrees", self)
+        self.button.setGeometry(150, 120, 110, 40) # x, y, width, height
+        self.button.clicked.connect(self.on_degree_button)
+        self.degreelabel = QLabel("",self)
+        self.degreelabel.hide()
+        self.textlayout.addWidget(self.button)
+        self.textlayout.addWidget(self.degreelabel)
+        self.setLayout(self.textlayout)
+
+        self.button = QPushButton('', self)
+        icon = QIcon(QPixmap('/Users/nicoleschubert/Desktop/CSC 532/Sandbox/plusicon.jpg'))
+        self.button.setIcon(icon)
+        self.button.setIconSize(QSize(64, 64))  # Set to the desired image size
+        self.button.setGeometry(150, 30, 10, 10)  # Adjust size/position
+        self.button.clicked.connect(self.add_vertice_slot)
+
+
+        # Create a button planar
+        self.button = QPushButton("Planar", self)
+        self.button.setGeometry(270, 120, 110, 40) # x, y, width, height
+        self.button.clicked.connect(self.on_planar_button)
+        self.planarlabel = QLabel("",self)
+        self.planarlabel.hide()
+        self.textlayout.addWidget(self.button)
+        self.textlayout.addWidget(self.planarlabel)
+        self.setLayout(self.textlayout)
+        # Create a button eulerian
+        self.button = QPushButton("Eulerian", self)
+        self.button.setGeometry(30, 220, 110, 40) # x, y, width, height
+        self.button.clicked.connect(self.on_eulerian_button)
+        self.eulerianlabel = QLabel("",self)
+        self.eulerianlabel.hide()
+        self.textlayout.addWidget(self.button)
+        self.textlayout.addWidget(self.eulerianlabel)
+        self.setLayout(self.textlayout)
+        # Create a button hamiltonian 
+        self.button = QPushButton("Hamiltonian", self)
+        self.button.setGeometry(150, 220, 110, 40) # x, y, width, height
+        self.button.clicked.connect(self.on_hamiltonian_button)
+        self.hamiltonianlabel = QLabel("",self)
+        self.hamiltonianlabel.hide()
+        self.textlayout.addWidget(self.button)
+        self.textlayout.addWidget(self.hamiltonianlabel)
+        self.setLayout(self.textlayout)
+        # Create a button density
+        self.button = QPushButton("Density", self)
+        self.button.setGeometry(270, 220, 110, 40) # x, y, width, height
+        self.button.clicked.connect(self.on_density_button)
+        self.densitylabel = QLabel("",self)
+        self.densitylabel.hide()
+        self.textlayout.addWidget(self.button)
+        self.textlayout.addWidget(self.densitylabel)
+        self.setLayout(self.textlayout)
+
+    def on_button_clicked(self):
+        # Create and show a message box
+        msg_box = QMessageBox()
+        msg_box.setText("You clicked the button!")
+        msg_box.setWindowTitle("Message")
+        msg_box.exec_()
+    
+    def on_display_button(self):
+        #creates pop up window of graph picture
+        self.image_window = ImageWindow("/Users/nicoleschubert/Desktop/CSC 532/Sandbox/testimage.png")
+        self.image_window.show()
+
+    def on_degree_button(self):
+        self.degreelabel.setText("testing degree")
+        self.degreelabel.setGeometry(180, 150, 110, 40)
+        self.degreelabel.show()
+
+    def add_vertice_slot(self):
+        self.image_window = ImageWindow("/Users/nicoleschubert/Desktop/CSC 532/Sandbox/testimage.png") ########testing
+        self.image_window.show()
+
+    def on_planar_button(self):
+        self.planarlabel.setText("testing planar")
+        self.planarlabel.setGeometry(270, 150, 110, 40)
+        self.planarlabel.show()
+
+    def on_eulerian_button(self):
+        self.eulerianlabel.setText("testing eulerian")
+        self.eulerianlabel.setGeometry(30, 250, 110, 40)
+        self.eulerianlabel.show()
+
+    def on_hamiltonian_button(self):
+        self.hamiltonianlabel.setText("testing hamiltonian")
+        self.hamiltonianlabel.setGeometry(150, 250, 110, 40)
+        self.hamiltonianlabel.show()
+    
+    def on_density_button(self):
+        self.densitylabel.setText("testing density")
+        self.densitylabel.setGeometry(270, 250, 110, 40)
+        self.densitylabel.show()
+     
+       
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MyWindow()
+    window.show()
+    sys.exit(app.exec_())

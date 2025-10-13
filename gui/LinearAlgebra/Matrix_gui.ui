@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MatrixGui</class>
+ <widget class="QWidget" name="MatrixGui">
+  <property name="windowTitle">
+   <string>Matrix Diagonalization and Orthogonality Checker</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QGroupBox" name="inputGroupBox">
+     <property name="title">
+      <string>Matrix Input</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelRows">
+        <property name="text">
+         <string>Rows:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="rowSpinBox"/>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="labelCols">
+        <property name="text">
+         <string>Columns:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QSpinBox" name="colSpinBox"/>
+      </item>
+      <item row="1" column="0" colspan="4">
+       <widget class="QTableWidget" name="matrixTable"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QPushButton" name="computeButton">
+        <property name="text">
+         <string>Compute Diagonalization</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="orthogonalityButton">
+        <property name="text">
+         <string>Check Orthogonality</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QPushButton" name="svdButton">
+        <property name="text">
+         <string>Compute SVD</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTabWidget" name="resultsTabs">
+     <widget class="QWidget" name="tabDiagonalization">
+      <attribute name="title">
+       <string>Diagonalization Result</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayoutTab1">
+       <item>
+        <widget class="QLabel" name="diagStatusLabel">
+         <property name="text">
+          <string>Diagonalization Status</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelDiagMatrix">
+         <property name="text">
+          <string>Diagonalized Matrix:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTableWidget" name="diagMatrixTable"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelTransformMatrix">
+         <property name="text">
+          <string>Transformation Matrix:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTableWidget" name="transformMatrixTable"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabOrthogonality">
+      <attribute name="title">
+       <string>Orthogonality Check</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayoutTab2">
+       <item>
+        <widget class="QLabel" name="orthoStatusLabel">
+         <property name="text">
+          <string>Orthogonality Status</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelOrthoProduct">
+         <property name="text">
+          <string>Matrix × Transpose:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTableWidget" name="orthoProductTable"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabSVD">
+      <attribute name="title">
+       <string>SVD Result</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayoutTab3">
+       <item>
+        <widget class="QLabel" name="svdULabel">
+         <property name="text">
+          <string>Matrix U:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTableWidget" name="svdUTable"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="svdSLabel">
+         <property name="text">
+          <string>Singular Values (S):</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTableWidget" name="svdSTable"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="svdVTLabel">
+         <property name="text">
+          <string>Matrix V^T:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTableWidget" name="svdVTTable"/>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="bottomButtonLayout">
+     <item>
+      <widget class="QPushButton" name="clearButton">
+       <property name="text">
+        <string>Clear</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="exportButton">
+       <property name="text">
+        <string>Export Results</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="exitButton">
+       <property name="text">
+        <string>Exit</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
