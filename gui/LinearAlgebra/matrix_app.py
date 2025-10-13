@@ -20,7 +20,7 @@ class MatrixApp(QtWidgets.QWidget,Ui_MatrixGui):
         self.computeButton.clicked.connect(self.compute_diagonalization)
         self.orthogonalityButton.clicked.connect(self.check_orthogonality)
         self.clearButton.clicked.connect(self.clear_all)
-        self.exitButton.clicked.connect(self.close)
+        self.glossaryButton.clicked.connect(self.close)  # Change this to make the glossary button be a glossary button!
         #  Add SVD button connection
         self.svdButton.clicked.connect(self.compute_svd)
         # Create and add SVD Tab

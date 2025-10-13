@@ -88,9 +88,9 @@ class Ui_MatrixGui(object):
         self.exportButton = QtWidgets.QPushButton(parent=MatrixGui)
         self.exportButton.setObjectName("exportButton")
         self.bottomButtonLayout.addWidget(self.exportButton)
-        self.exitButton = QtWidgets.QPushButton(parent=MatrixGui)
-        self.exitButton.setObjectName("exitButton")
-        self.bottomButtonLayout.addWidget(self.exitButton)
+        self.glossaryButton = QtWidgets.QPushButton(parent=MatrixGui) # Change this to glossary button!
+        self.glossaryButton.setObjectName("glossaryButton")
+        self.bottomButtonLayout.addWidget(self.glossaryButton)
         self.verticalLayout.addLayout(self.bottomButtonLayout)
 
         self.retranslateUi(MatrixGui)
@@ -113,7 +113,7 @@ class Ui_MatrixGui(object):
         self.resultsTabs.setTabText(self.resultsTabs.indexOf(self.tabOrthogonality), _translate("MatrixGui", "Orthogonality Check"))
         self.clearButton.setText(_translate("MatrixGui", "Clear"))
         self.exportButton.setText(_translate("MatrixGui", "Export Results"))
-        self.exitButton.setText(_translate("MatrixGui", "Exit"))
+        self.glossaryButton.setText(_translate("MatrixGui", "Glossary"))
 
 
 if __name__ == "__main__":
