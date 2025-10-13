@@ -129,10 +129,13 @@ class SageDoctestModule(DoctestModule):
                         # tests), but that would require duplication
                         # for as long as `sage -t` is still used.
                         from sage.features.coxeter3 import Coxeter3
-                        from sage.features.sagemath import sage__libs__giac
+                        from sage.features.sagemath import (sage__libs__eclib,
+                                                            sage__libs__giac)
                         from sage.features.standard import PythonModule
 
                         exc_list = ["valgrind"]
+                        if not sage__libs__eclib().is_present():
+                            exc_list.append("sage.libs.eclib")
                         if not PythonModule("rpy2").is_present():
                             exc_list.append("rpy2")
                         if not Coxeter3().is_present():
@@ -141,8 +144,9 @@ class SageDoctestModule(DoctestModule):
                             exc_list.append("sagemath_giac")
 
                         # Ignore import errors, but only when the associated
-                        # feature is actually disabled.
-                        if exception.name in exc_list:
+                        # feature is actually disabled. Use startswith() so
+                        # that sage.libs.foo matches all of sage.libs.foo.*
+                        if any(exception.name.startswith(e) for e in exc_list):
                             pytest.skip(
                                 f"unable to import module {self.path} due to missing feature {exception.name}"
                             )
