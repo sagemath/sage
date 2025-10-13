@@ -367,6 +367,20 @@ class Ideal_generic(MonoidElement):
             sage: J = ZZ*(-2)
             sage: I == J
             True
+
+        TESTS:
+
+        Check that the example from :issue:`37409` raises an error
+        rather than silently returning an incorrect result::
+
+            sage: R.<x> = ZZ[]
+            sage: I = R.ideal(1-2*x,2)
+            sage: I.is_trivial()  # not implemented -- see #37409
+            True
+            sage: I.is_trivial()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: ideal comparison in Univariate Polynomial Ring in x over Integer Ring is not implemented
         """
         if self.is_zero():
             return rich_to_bool(op, other.is_zero() - 1)
@@ -380,7 +394,7 @@ class Ideal_generic(MonoidElement):
             return rich_to_bool(op, -1)
         if S > T:
             return rich_to_bool(op, +1)
-        raise NotImplementedError(f'ideal comparison between {self} and {other} is not implemented')
+        raise NotImplementedError(f'ideal comparison in {self.ring()} is not implemented')
 
     def __contains__(self, x):
         """
