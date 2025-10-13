@@ -249,6 +249,11 @@ class InterfaceMagic:
             Traceback (most recent call last):
             ...
             SyntaxError: Interface magics have no options, got "foo"
+            sage: try:
+            ....:     cell_magic('foo', '1+1;')
+            ....: except SyntaxError as e:
+            ....:     print(f"text attribute: {e.text!r}")
+            text attribute: '%%gap foo'
 
         This is how the built cell magic is used in practice::
 
@@ -289,7 +294,9 @@ class InterfaceMagic:
             options.
             """
             if line:
-                raise SyntaxError('Interface magics have no options, got "{0}"'.format(line))
+                err = SyntaxError('Interface magics have no options, got "{0}"'.format(line))
+                err.text = '%%{0} {1}'.format(self._name, line)
+                raise err
             output = self._interface.eval(cell)
             print(output)
         cell_magic.__doc__ = CELL_DOCSTRING.format(name=self._name)
