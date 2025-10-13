@@ -3494,6 +3494,7 @@ cdef class Matrix(Matrix1):
                 for k in range(p):
                     s = s - A[k] * F[p-k-1]
                 F[p] = s - A[p]
+                sig_check()
 
         X = S.gen(0)
         f = X**n + S(list(reversed(F)))
