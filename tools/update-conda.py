@@ -2,10 +2,12 @@
 # See README.md for more details
 
 import argparse
+import os
 import subprocess
+import sys
+import tomllib
 from pathlib import Path
 
-import toml as tomllib
 from grayskull.config import Configuration
 from grayskull.strategy.py_base import merge_setup_toml_metadata
 from grayskull.strategy.py_toml import get_all_toml_info
@@ -94,12 +96,6 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
             continue
 
         for python in pythons:
-            if python == "3.13" and platform_key != "win-64":
-                print(
-                    f"Skipping Python {python} for platform {platform_key} as it is not supported yet."
-                )
-                continue
-
             dependencies = get_dependencies(pyproject_toml, python, platform_key)
             for tag in tags:
                 # Pin Python version
@@ -118,9 +114,15 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
                 print(
                     f"Updating lock file for {env_file} at {lock_file_gen}", flush=True
                 )
+                
+                # Find conda-lock in the same environment as this script
+                conda_lock_bin = Path(sys.executable).parent / "conda-lock"
+                if not conda_lock_bin.exists():
+                    conda_lock_bin = "conda-lock"  # Fall back to PATH
+                
                 subprocess.run(
                     [
-                        "conda-lock",
+                        str(conda_lock_bin),
                         "--mamba",
                         "--channel",
                         "conda-forge",
@@ -147,7 +149,8 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
 
 def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[str]:
     grayskull_config = Configuration("sagemath")
-    pyproject = tomllib.load(pyproject_toml)
+    with open(pyproject_toml, "rb") as f:
+        pyproject = tomllib.load(f)
     pyproject_metadata = merge_setup_toml_metadata(
         {}, get_all_toml_info(pyproject_toml)
     )
@@ -300,6 +303,10 @@ def get_dev_dependencies(pyproject: dict) -> list[str]:
     )
     # Remove dependencies that are not available on conda
     dev_dependencies.remove("relint")
+    # Remove tools used only for generating conda environments (not needed in the environments themselves)
+    for tool in ["conda-lock", "grayskull"]:
+        if tool in dev_dependencies:
+            dev_dependencies.remove(tool)
     return dev_dependencies
 
 
