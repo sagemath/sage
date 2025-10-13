@@ -399,6 +399,14 @@ def line_graph(g, labels=True, return_labels=False, immutable=None):
         sage: C.line_graph().is_isomorphic(g.line_graph())
         True
 
+    :issue:`40953`::
+
+        sage: G = Graph([(0,0)],loops=True)
+        sage: G.line_graph()
+        Graph on 1 vertex
+        sage: G.to_directed().line_graph()
+        Looped digraph on 1 vertex
+
     Check the behavior of parameter ``immutable``::
 
         sage: G = Graph([(0, 1), (1, 2)])
@@ -431,6 +439,7 @@ def line_graph(g, labels=True, return_labels=False, immutable=None):
     cdef dict origlabels_dic = {}  # stores original labels of edges in case of multiple edges
 
     multiple = g.has_multiple_edges()
+    loops = g.has_loops()
 
     if immutable is None:
         immutable = g.is_immutable()
@@ -442,7 +451,8 @@ def line_graph(g, labels=True, return_labels=False, immutable=None):
         labels = True
         origlabels_dic = {(u, v, id): (u, v, label)
                           for id, (u, v, label) in enumerate(g.edge_iterator())}
-        g = parent(g)([g, origlabels_dic.keys()], format='vertices_and_edges', multiedges=True)
+        g = parent(g)([g, origlabels_dic.keys()], format='vertices_and_edges',
+                      multiedges=True, loops=loops)
 
     if g._directed:
         from sage.graphs.digraph import DiGraph
@@ -451,7 +461,8 @@ def line_graph(g, labels=True, return_labels=False, immutable=None):
                 for e in g.incoming_edge_iterator(v, labels=labels)
                 for f in g.outgoing_edge_iterator(v, labels=labels))
         G = DiGraph([g.edge_iterator(labels=labels), arcs],
-                    format='vertices_and_edges', immutable=immutable)
+                    format='vertices_and_edges', immutable=immutable,
+                    multiedges=multiple, loops=loops)
         if return_labels and multiple:
             return [G, origlabels_dic]
         return G
