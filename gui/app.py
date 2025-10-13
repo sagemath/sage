@@ -4,11 +4,12 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QWidget, QAc
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
 
-# Import custom tabs
+# Import tabs
 from gtguiadditions.GT_Calc_Window import GT_Calc_Window
 from linear_algebra import LinearAlgebraTab
 from Glossary.Glossary import *
 from Glossary.CollapsibleBox import CollapsibleBox
+from LinearAlgebra.matrix_app import MatrixApp
 
 class App(QMainWindow):
 
@@ -43,8 +44,8 @@ class MyTableWidget(QWidget):
         # Add tabs
         self.tabs.addTab(GT_Calc_Window(self), "Graph Theory")
         self.tabs.addTab(GT_Calc_Window(self), "Graph Theory Learning") # We would use the learner one
-        self.tabs.addTab(LinearAlgebraTab(self), "Linear Algebra")
-        self.tabs.addTab(LinearAlgebraTab(self), "Linear Algebra Learning") # ^^^
+        self.tabs.addTab(MatrixApp(self), "Linear Algebra")
+        self.tabs.addTab(MatrixApp(self), "Linear Algebra Learning") # ^^^
         
         # Add tabs to widget
         self.layout.addWidget(self.tabs)

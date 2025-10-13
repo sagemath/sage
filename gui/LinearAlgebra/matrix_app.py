@@ -3,8 +3,12 @@ import sys
 import numpy as np
 
 # from ui_matrix_gui import Ui_MatrixGui
-from Matrix_gui import Ui_MatrixGui
+# Use a package-qualified import so Python can find Matrix_gui when
+# `gui/app.py` is executed (working directory is the `gui/` folder).
+from LinearAlgebra.Matrix_gui import Ui_MatrixGui
 from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QMainWindow
+from Glossary.Glossary import GlossaryWidget
 
 
 class MatrixApp(QtWidgets.QWidget,Ui_MatrixGui):
@@ -18,7 +22,8 @@ class MatrixApp(QtWidgets.QWidget,Ui_MatrixGui):
         self.computeButton.clicked.connect(self.compute_diagonalization)
         self.orthogonalityButton.clicked.connect(self.check_orthogonality)
         self.clearButton.clicked.connect(self.clear_all)
-        self.exitButton.clicked.connect(self.close)
+        self.glossary_window = None
+        self.glossaryButton.clicked.connect(self.show_glossary)
         #  Add SVD button connection
         self.svdButton.clicked.connect(self.compute_svd)
         # Create and add SVD Tab
@@ -112,6 +117,15 @@ class MatrixApp(QtWidgets.QWidget,Ui_MatrixGui):
             self.display_matrix(self.svdVTTable, VT)
         except Exception as e:
             QtWidgets.QMessageBox.warning(self, "SVD Error", str(e))
+
+    def show_glossary(self):
+        if self.glossary_window is None:
+            self.glossary_window = QMainWindow()
+            self.glossary_window.setWindowTitle("Graph Theory Glossary")
+            self.glossary_window.setCentralWidget(GlossaryWidget("GT"))
+        self.glossary_window.show()
+        self.glossary_window.raise_()
+        self.glossary_window.activateWindow()
 
     def clear_all(self):
         """Clears all input and output fields"""
