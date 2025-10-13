@@ -317,7 +317,6 @@ dependencies:
   - tk=8.6.13=h2c6b04d_2
   - tktable=2.10=h7e9e0db_7
   - toml=0.10.2=pyhd8ed1ab_1
-  - tomli=2.2.1=pyhd8ed1ab_1
   - tomli-w=1.2.0=pyhd8ed1ab_0
   - tomlkit=0.13.3=pyha770c72_0
   - tornado=6.5.1=py312h4389bb4_0

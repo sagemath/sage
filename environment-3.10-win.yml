@@ -243,7 +243,6 @@ dependencies:
   - sympy=1.13.3=pyh04b8f61_5
   - tk=8.6.13=h5226925_1
   - toml=0.10.2=pyhd8ed1ab_1
-  - tomli=2.2.1=pyhd8ed1ab_1
   - tomli-w=1.2.0=pyhd8ed1ab_0
   - tomlkit=0.13.2=pyha770c72_1
   - toolz=0.12.1=pyhd8ed1ab_0
