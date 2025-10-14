@@ -177,10 +177,6 @@ cdef extern from *:
     }
     #else
     // Python < 3.14: atexit uses C array
-    #if PY_VERSION_HEX >= 0x030c0000
-    #define atexit_callback atexit_py_callback
-    #endif
-    
     static atexit_callback_struct** get_atexit_callbacks_array(PyObject *self) {
         PyInterpreterState *interp = _PyInterpreterState_GET();
         struct atexit_state state = interp->atexit;
