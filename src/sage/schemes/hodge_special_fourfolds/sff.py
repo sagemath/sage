@@ -56,7 +56,8 @@ _minbase = singular_function('minbase')
 
 __VERBOSE__ = False
 def verbosity(b):
-    r"""Change the default verbosity for some functions of this module.
+    r"""
+    Change the default verbosity for some functions of this module.
 
     Use ``verbosity(True)`` to produce output messages by default. Verbosity can be disabled in the specific function you use.
 
@@ -71,7 +72,8 @@ def verbosity(b):
     __VERBOSE__ = b
 
 class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
-    r"""The class of closed subvarieties of projective spaces.
+    r"""
+    The class of closed subvarieties of projective spaces.
 
     This is a subclass of the class :class:`AlgebraicScheme_subscheme_projective`.
     It is designed to provide better support for projective surfaces and fourfolds.
@@ -158,9 +160,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         EmbeddedProjectiveVariety
         <BLANKLINE>
         Type
-
     """
-    def __init__(self, PP, polys=[]):
+    def __init__(self, PP, polys=[]) -> None:
         r"""See :class:`Embedded_projective_variety` for documentation."""
         if not _is_embedded_projective_variety(PP):
             raise TypeError("cannot interpret input as a projective variety")
@@ -176,8 +177,9 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             super().__init__(PP.ambient_space(),PP.defining_polynomials())
         self._homogeneous_components_ideal = {}
 
-    def _repr_(self):
-        r"""Return a string representation of the variety
+    def _repr_(self) -> str:
+        r"""
+        Return a string representation of the variety.
 
         OUTPUT:
 
@@ -187,12 +189,12 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
 
             sage: PP(3).empty().random(2,2)._repr_()
             'curve of degree 4 and arithmetic genus 1 in PP^3 cut out by 2 hypersurfaces of degree 2'
-
         """
         return _expr_var_1(self)[0]
 
-    def _latex_(self):
-        r"""Return the LaTeX representation of ``self``.
+    def _latex_(self) -> str:
+        r"""
+        Return the LaTeX representation of ``self``.
 
         OUTPUT:
 
@@ -203,12 +205,12 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             sage: X = PP(3).empty().random(2,2)
             sage: latex(X)
             \mbox{curve of degree } 4 \mbox{ and arithmetic genus } 1 \mbox{ in }\mathbb{P}^{ 3 } \mbox{ cut out by } 2 \mbox{ hypersurfaces of degree } 2
-
         """
         return _expr_var_1(self)[1]
 
     def dimension(self):
-        r"""Return the dimension of the variety
+        r"""
+        Return the dimension of the variety.
 
         OUTPUT:
 
@@ -220,16 +222,16 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             cubic curve of arithmetic genus 0 in PP^3 cut out by 3 hypersurfaces of degree 2
             sage: X.dimension()
             1
-
         """
         try:
             return self._dimension
         except AttributeError:
-            self._dimension = max(super().dimension(),-1)
+            self._dimension = max(super().dimension(), -1)
             return self._dimension
 
     def codimension(self):
-        r"""Return the codimension of the variety
+        r"""
+        Return the codimension of the variety
 
         OUTPUT:
 
@@ -241,7 +243,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             cubic curve of arithmetic genus 0 in PP^3 cut out by 3 hypersurfaces of degree 2
             sage: X.codimension()
             2
-
         """
         try:
             return self._codimension
@@ -250,7 +251,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             return self._codimension
 
     def ambient(self):
-        r"""Return the ambient projective space of the variety
+        r"""
+        Return the ambient projective space of the variety
 
         This is mathematically equal to the output of the :meth:`ambient_space` method.
 
@@ -262,7 +264,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             PP^3
             sage: type(P) is type(X)
             True
-
         """
         try:
             return self._ambient
@@ -274,7 +275,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             return self._ambient
 
     def degree(self):
-        r"""Return the degree of the projective variety.
+        r"""
+        Return the degree of the projective variety.
 
         OUTPUT:
 
@@ -286,7 +288,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             cubic curve of arithmetic genus 0 in PP^3 cut out by 3 hypersurfaces of degree 2
             sage: X.degree()
             3
-
         """
         try:
             return self._degree
@@ -295,7 +296,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             return self._degree
 
     def irreducible_components(self):
-        r"""Return the irreducible components of the projective scheme ``self``.
+        r"""
+        Return the irreducible components of the projective scheme ``self``.
 
         OUTPUT:
 
@@ -308,19 +310,20 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             sage: X = L + C
             sage: X.irreducible_components()
             [line in PP^4, conic curve in PP^4]
-
         """
         try:
             return self._list_of_irreducible_components
         except AttributeError:
-            C = [Embedded_projective_variety(Y) for Y in super().irreducible_components()]
-            if len(C) == 1 and C[0] == self:
-                C = [self]
-            self._list_of_irreducible_components = C
-            return self._list_of_irreducible_components
+            pass
+        C = [Embedded_projective_variety(Y) for Y in super().irreducible_components()]
+        if len(C) == 1 and C[0] == self:
+            C = [self]
+        self._list_of_irreducible_components = C
+        return self._list_of_irreducible_components
 
     def hilbert_polynomial(self):
-        r"""Return the Hilbert polynomial of the projective variety.
+        r"""
+        Return the Hilbert polynomial of the projective variety.
 
         OUTPUT:
 
@@ -332,7 +335,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             cubic curve of arithmetic genus 0 in PP^3 cut out by 3 hypersurfaces of degree 2
             sage: X.hilbert_polynomial()
             3*t + 1
-
         """
         try:
             return self._hilbert_polynomial
@@ -341,7 +343,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             return self._hilbert_polynomial
 
     def sectional_genus(self):
-        r"""Return the arithmetic genus of the sectional curve of the variety.
+        r"""
+        Return the arithmetic genus of the sectional curve of the variety.
 
         OUTPUT:
 
@@ -353,7 +356,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2
             sage: X.sectional_genus()
             0
-
         """
         try:
             return self._sectional_genus
@@ -368,7 +370,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             return self._sectional_genus
 
     def topological_euler_characteristic(self, verbose=None, algorithm=None):
-        r"""Return the topological Euler characteristic of the variety.
+        r"""
+        Return the topological Euler characteristic of the variety.
 
         .. WARNING::
 
@@ -387,7 +390,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2
             sage: X.topological_euler_characteristic()
             3
-
         """
         try:
             return self._topological_euler_characteristic
@@ -455,7 +457,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             raise RuntimeError("function _raw_point() failed: reached maximum number of 10 attempts to find rational point")
 
     def point(self, verbose=None, algorithm='sage'):
-        r"""Pick a random point on the variety defined over a finite field.
+        r"""
+        Pick a random point on the variety defined over a finite field.
 
         EXAMPLES::
 
@@ -466,7 +469,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             True
 
         With the input ``algorithm='macaulay2'`` the computation is transferred to ``Macaulay2``
-
         """
         if verbose is None:
             verbose = __VERBOSE__
@@ -526,8 +528,9 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             self._coordinate_list = c
             return self._coordinate_list
 
-    def _describe(self, verbose=None):
-        r"""Return a brief description of the variety, see :meth:`describe`.
+    def _describe(self, verbose=None) -> str:
+        r"""
+        Return a brief description of the variety, see :meth:`describe`.
 
         OUTPUT:
 
@@ -582,7 +585,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         return(sf)
 
     def describe(self):
-        r"""Print a brief description of the variety.
+        r"""
+        Print a brief description of the variety.
 
         EXAMPLES::
 
@@ -594,12 +598,12 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             sectional genus:...... 0
             generators:........... (2, 2, 2, 2, 2, 2)
             dim sing. l.:......... -1
-
         """
         self._describe(verbose=True)
 
-    def degrees_generators(self):
-        r"""Return the degrees of a minimal set of generators for the defining ideal of the variety.
+    def degrees_generators(self) -> tuple:
+        r"""
+        Return the degrees of a minimal set of generators for the defining ideal of the variety.
 
         OUTPUT:
 
@@ -610,7 +614,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             sage: X = PP(4).empty().random(1,2,3,1)
             sage: X.degrees_generators()
             (1, 1, 2, 3)
-
         """
         try:
             return self._degrees_generators
@@ -619,7 +622,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             return self._degrees_generators
 
     def singular_locus(self):
-        r"""Return the singular locus of the variety.
+        r"""
+        Return the singular locus of the variety.
 
         OUTPUT:
 
@@ -636,7 +640,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             rational 1-nodal surface in PP^5 of degree 6 and sectional genus 1 cut out by 5 hypersurfaces of degrees (2, 2, 2, 3, 3)
             sage: Y.singular_locus()
             0-dimensional subscheme of degree 5 in PP^5
-
         """
         try:
             return self._singular_locus
@@ -645,7 +648,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             return self._singular_locus
 
     def to_built_in_variety(self):
-        r"""Return the same mathematical object but in the parent class.
+        r"""
+        Return the same mathematical object but in the parent class.
 
         OUTPUT:
 
@@ -660,7 +664,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             x2^2 - x1*x3,
             x1*x2 - x0*x3,
             x1^2 - x0*x2
-
         """
         try:
             return self._to_built_in_variety
@@ -669,7 +672,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             return self._to_built_in_variety
 
     def embedding_morphism(self, codomain=None):
-        r"""Return the embedding morphism of the variety in its ambient space.
+        r"""
+        Return the embedding morphism of the variety in its ambient space.
 
         OUTPUT:
 
@@ -683,7 +687,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             source: conic curve in PP^2
             target: PP^2
             image: conic curve in PP^2
-
         """
         if codomain is not None:
             if not self.is_subset(codomain):
@@ -699,7 +702,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             return self._embedding_morphism
 
     def _homogeneous_component(self, n, trim=True):
-        r"""Return a basis for the homogeneous component of degree ``n`` of the defining ideal of the variety.
+        r"""
+        Return a basis for the homogeneous component of degree ``n`` of the defining ideal of the variety.
 
         TESTS::
 
@@ -707,7 +711,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             sage: F = C._homogeneous_component(2); F
             [x2^2 - x1*x3, x1*x2 - x0*x3, x1^2 - x0*x2]
             sage: assert(C._homogeneous_component(2) is F)
-
         """
         if n in self._homogeneous_components_ideal:
             return self._homogeneous_components_ideal[n]
@@ -728,7 +731,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         return(B)
 
     def linear_span(self):
-        r"""Return the linear span of the variety.
+        r"""
+        Return the linear span of the variety.
 
         OUTPUT:
 
@@ -741,7 +745,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             linear 3-dimensional subspace of PP^5
             sage: X.is_subset(_)
             True
-
         """
         L = self._homogeneous_component(1, trim=True)
         if len(L) == 0:
@@ -749,7 +752,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         return Embedded_projective_variety(self.ambient_space(),L)
 
     def random(self, *args):
-        r"""Return a random complete intersection containing the variety.
+        r"""
+        Return a random complete intersection containing the variety.
 
         INPUT:
 
@@ -757,7 +761,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
 
         OUTPUT:
 
-        :class:`Embedded_projective_variety`, a random complete intersection of type ``(a,b,c,...)`` containing the variety.
+        :class:`Embedded_projective_variety`, a random complete intersection
+        of type ``(a,b,c,...)`` containing the variety.
 
         An exception is raised if such a complete intersection does not exist.
 
@@ -768,7 +773,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             complete intersection of type (2, 3) in PP^5
             sage: X.is_subset(_)
             True
-
         """
         if len(args) == 0:
             return self.ambient()
@@ -787,23 +791,23 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         X = Embedded_projective_variety(self.ambient_space(),L)
         if X.codimension() != len(args):
             raise ValueError("unable to construct complete intersection containing the variety, maybe too many degrees are given")
-        else:
-            return(X)
+        return X
 
     def empty(self):
-        r"""Return the empty subscheme of the variety (and of its ambient space)
+        r"""
+        Return the empty subscheme of the variety (and of its ambient space)
 
         EXAMPLES::
 
             sage: X = PP(3)
             sage: X.empty()
             empty subscheme of PP^3
-
         """
-        return(Embedded_projective_variety(self.ambient_space(),[self.ambient_space().coordinate_ring().one()]))
+        return (Embedded_projective_variety(self.ambient_space(), [self.ambient_space().coordinate_ring().one()]))
 
     def random_coordinate_change(self):
-        r"""Apply a random coordinate change on the ambient projective space of ``self``.
+        r"""
+        Apply a random coordinate change on the ambient projective space of ``self``.
 
         EXAMPLES::
 
@@ -821,7 +825,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             sage: h = D._from_random_coordinate_change
             sage: assert(h.source() is C and h.target() is D)
             sage: assert(h(C.point()).is_subset(D))
-
         """
         K = self.base_ring()
         n = self.ambient().dimension()
@@ -841,35 +844,33 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         return Y
 
     def is_subset(self,Y):
-        r"""Return ``True`` if ``self`` is contained in ``Y``, ``False`` otherwise.
+        r"""
+        Return ``True`` if ``self`` is contained in ``Y``, ``False`` otherwise.
 
         OUTPUT:
 
         :class:`bool`
 
-        TESTS::
+        EXAMPLES::
 
             sage: X = surface(3,4)
             sage: Y = X.intersection(X.empty().random(2)); Y
             curve of degree 10 and arithmetic genus 6 in PP^5 cut out by 6 hypersurfaces of degree 2
             sage: assert(Y.is_subset(X) and (not X.is_subset(Y)) and X.is_subset(X.ambient()) and (not X.ambient().is_subset(X)))
             sage: assert(not(X.is_subset(PP(2))))
-
         """
         Y = _check_type_embedded_projective_variety(Y)
         if self is Y:
             return True
         I = self.defining_ideal()
         J = Y.defining_ideal()
-        if I.ring() is not J.ring():
+        if I.ring() != J.ring():
             return False
-        for g in J.gens():
-            if not(g in I):
-                return False
-        return True
+        return all(g in I for g in J.gens())
 
     def __eq__(self, Y):
-        r"""Return ``True`` if ``self`` is mathematically equal to ``Y``, ``False`` otherwise.
+        r"""
+        Return ``True`` if ``self`` is mathematically equal to ``Y``, ``False`` otherwise.
 
         OUTPUT:
 
@@ -909,7 +910,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             return self._macaulay2_object
 
     def parametrize(self, verbose=None):
-        r"""Try to return a rational parameterization of the variety.
+        r"""
+        Try to return a rational parameterization of the variety.
 
         OUTPUT:
 
@@ -955,7 +957,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             rational map defined by forms of degree 4
             source: PP^1
             target: curve of degree 4 and arithmetic genus 0 in PP^5 cut out by 7 hypersurfaces of degrees (1, 2, 2, 2, 2, 2, 2)
-
         """
         if verbose is None:
             verbose = __VERBOSE__
@@ -991,7 +992,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             return psi
 
     def intersection(self, other):
-        r"""Return the scheme-theoretic intersection of ``self`` and ``other`` in their common ambient space.
+        r"""
+        Return the scheme-theoretic intersection of ``self`` and ``other`` in their common ambient space.
 
         EXAMPLES::
 
@@ -1000,7 +1002,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             sage: Y = o.random(1,3)
             sage: X.intersection(Y)
             curve of degree 12 and arithmetic genus 13 in PP^5 cut out by 4 hypersurfaces of degrees (1, 2, 2, 3)
-
         """
         other = _check_type_embedded_projective_variety(other)
         if self.ambient() != other.ambient():
@@ -1010,7 +1011,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         return Embedded_projective_variety(self.ambient_space(),_minbase(I))
 
     def union(self, other):
-        r"""Return the scheme-theoretic union of ``self`` and ``other`` in their common ambient space.
+        r"""
+        Return the scheme-theoretic union of ``self`` and ``other`` in their common ambient space.
 
         EXAMPLES::
 
@@ -1021,7 +1023,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             0-dimensional subscheme of degree 2 in PP^5
             sage: X.union(Y) == X + Y
             True
-
         """
         other = _check_type_embedded_projective_variety(other)
         if self.ambient() != other.ambient():
@@ -1033,7 +1034,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         return self.union(other)
 
     def difference(self, other):
-        r"""Return the Zariski closure of the difference of ``self`` by ``other``.
+        r"""
+        Return the Zariski closure of the difference of ``self`` by ``other``.
 
         EXAMPLES::
 
@@ -1044,7 +1046,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             True
             sage: Z - Y == X and Z - X == Y
             True
-
         """
         other = _check_type_embedded_projective_variety(other)
         if self.ambient() != other.ambient():
@@ -1056,7 +1057,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         return self.difference(other)
 
     def hyperplane_section(self, cache=True):
-        r"""Return a random hyperplane section of the variety.
+        r"""
+        Return a random hyperplane section of the variety.
 
         OUTPUT:
 
@@ -1075,7 +1077,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             True
             sage: j.image()
             curve of degree 4 and arithmetic genus 0 in PP^5 cut out by 7 hypersurfaces of degrees (1, 2, 2, 2, 2, 2, 2)
-
         """
         if cache and hasattr(self,"_random_hyperplane_section"):
             return self._random_hyperplane_section
@@ -1088,7 +1089,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         return X
 
     def _change_of_coordinates_first_fundamental_point(self):
-        r"""Take an automorphism of the ambient projective space that sends the point ``self``
+        r"""
+        Take an automorphism of the ambient projective space that sends the point ``self``
         to the point ``(1,0,...,0)``. This is an auxiliary function for :meth:`cone_of_lines`.
         """
         a = self._coordinates() # expected a point
@@ -1101,10 +1103,12 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         f = rational_map(self.ambient(), self.ambient(), (matrix(self.ambient().coordinate_ring().gens()) * A).list())
         g = rational_map(self.ambient(), self.ambient(), (matrix(self.ambient().coordinate_ring().gens()) * B).list())
         # assert(f.compose(g) == 1 and g(self)._coordinates() == [1]+[0 for i in range(n)])
-        return (f,g)
+        return (f, g)
 
     def cone_of_lines(self, point=None):
-        r"""Return the union of the lines contained in ``self`` and passing through the point ``point``.
+        r"""
+        Return the union of the lines contained in ``self`` and passing through the point ``point``.
+
         If ``point`` is not given, a random point on ``self`` is used.
 
         EXAMPLES::
@@ -1116,7 +1120,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             sage: p = Q.point()
             sage: Q.cone_of_lines(p).irreducible_components()
             [line in PP^3, line in PP^3]
-
         """
         if point is None:
             point = self.point()
@@ -1163,7 +1166,8 @@ def _check_type_embedded_projective_variety(X):
 
 @cached_function
 def PP(n, KK=33331, var='x'):
-    r"""Projective space of dimension ``n`` over ``KK``.
+    r"""
+    Projective space of dimension ``n`` over ``KK``.
 
     EXAMPLES::
 
@@ -1173,7 +1177,6 @@ def PP(n, KK=33331, var='x'):
         Multivariate Polynomial Ring in t0, t1, t2, t3, t4, t5 over Finite Field of size 33331
         sage: PP(5,33331,var='t') is PP(5,GF(33331),var='t')
         True
-
     """
     if isinstance(KK,(int,Integer)):
         KK = GF(KK) if KK > 0 else QQ
@@ -1181,7 +1184,8 @@ def PP(n, KK=33331, var='x'):
     return projective_variety(ProjectiveSpace(n, KK, var))
 
 def projective_variety(I, PP=None):
-    r"""Construct a projective variety.
+    r"""
+    Construct a projective variety.
 
     INPUT:
 
@@ -1213,7 +1217,6 @@ def projective_variety(I, PP=None):
         curve of degree 6 and arithmetic genus 4 in PP^3 cut out by 2 hypersurfaces of degrees (2, 3)
         sage: _ == X
         True
-
     """
     if PP is None:
         if isinstance(I,Embedded_projective_variety):
@@ -1231,8 +1234,10 @@ def projective_variety(I, PP=None):
             return Embedded_projective_variety(PP, I.defining_polynomials())
     raise TypeError
 
+    
 class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomial_projective_space_field):
-    r"""The class of rational maps between closed subvarieties of projective spaces.
+    r"""
+    The class of rational maps between closed subvarieties of projective spaces.
 
     This is a subclass of the class :class:`SchemeMorphism_polynomial_projective_space_field`.
     It is designed to provide better support for maps related to Hodge-special fourfolds.
@@ -1291,9 +1296,8 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         degree: 1
         <BLANKLINE>
         MultirationalMap (birational map from hypersurface in PP^5 to 4-dimensional subvariety of PP^4 x PP^5)
-
     """
-    def __init__(self, X, Y, polys):
+    def __init__(self, X, Y, polys) -> None:
         r"""See :class:`Rational_map_between_embedded_projective_varieties` for documentation."""
         if Y is None:
             if len(polys) > 0:
@@ -1331,8 +1335,9 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         self._is_dominant = True if self.target().dimension() < 0 else None
         self._is_morphism = None
 
-    def _repr_(self):
-        r"""Return a string representation of the rational map
+    def _repr_(self) -> str:
+        r"""
+        Return a string representation of the rational map
 
         OUTPUT:
 
@@ -1342,7 +1347,6 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
 
             sage: veronese(1,4)._repr_()
             'rational map defined by forms of degree 4\nsource: PP^1\ntarget: PP^4'
-
         """
         if self.target().dimension() < 0:
             return("empty rational map" + "\nsource: " + self.source()._repr_() + "\ntarget: " + self.target()._repr_())
@@ -1376,8 +1380,9 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             M = M + "\nimage: " + self.image()._repr_()
         return M
 
-    def _latex_(self):
-        r"""Return the LaTeX representation of ``self``.
+    def _latex_(self) -> str:
+        r"""
+        Return the LaTeX representation of ``self``.
 
         OUTPUT:
 
@@ -1387,7 +1392,6 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
 
             sage: latex(veronese(1,4))
             \mbox{rational map defined by forms of degree } 4 \newline \mbox{source: } \mathbb{P}^{ 1 } \newline \mbox{target: } \mathbb{P}^{ 4 }
-
         """
         if self.target().dimension() < 0:
             return("\\mbox{empty rational map}" + "\\newline \\mbox{source: }" + latex(self.source()) + "\\newline \\mbox{target: }" + latex(self.target()))
@@ -1422,7 +1426,8 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         return M
 
     def source(self):
-        r"""Return the source of the rational map
+        r"""
+        Return the source of the rational map
 
         OUTPUT:
 
@@ -1433,12 +1438,12 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             sage: f = veronese(1,4)
             sage: f.source()
             PP^1
-
         """
-        return(self._source)
+        return self._source
 
     def target(self):
-        r"""Return the target of the rational map
+        r"""
+        Return the target of the rational map
 
         OUTPUT:
 
@@ -1449,16 +1454,16 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             sage: f = veronese(1,4)
             sage: f.target()
             PP^4
-
         """
-        return(self._target)
+        return self._target
 
     def _degree_forms(self):
         r"""Return the common degree of the polynomials defining the map"""
         return(self.__degree_Forms)
 
     def super(self):
-        r"""Return the composition of ``self`` with the embedding of the target in the ambient space.
+        r"""
+        Return the composition of ``self`` with the embedding of the target in the ambient space.
 
         :class:`Rational_map_between_embedded_projective_varieties`
 
@@ -1475,7 +1480,6 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             image: curve of degree 4 and arithmetic genus 0 in PP^4 cut out by 6 hypersurfaces of degree 2
             sage: g.super() is g
             True
-
         """
         try:
             return self._super_map
@@ -1502,7 +1506,8 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             return self.__to_ring_map
 
     def image(self, algorithm=None):
-        r"""Return the (closure of the) image of the rational map.
+        r"""
+        Return the (closure of the) image of the rational map.
 
         OUTPUT:
 
@@ -1519,10 +1524,9 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             sage: f = f.restriction(f.source().point())
             sage: p = f.image(algorithm="built-in_kernel_ring_map")
             sage: assert(p._is_point())
-
         """
         if self._is_dominant is True:
-            return(self.target())
+            return self.target()
         try:
             return self._closure_of_image
         except AttributeError:
@@ -1552,7 +1556,8 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             return self._closure_of_image
 
     def __call__(self,Z):
-        r"""Return the (closure of the) image of the variety ``Z`` via the rational map ``self``.
+        r"""
+        Return the (closure of the) image of the variety ``Z`` via the rational map ``self``.
 
         INPUT:
 
@@ -1572,7 +1577,6 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             degree:............... 1
             sage: f.inverse_image(f(p)) == p
             True
-
         """
         Z = _check_type_embedded_projective_variety(Z)
         if not Z.is_subset(self.source()):
@@ -1580,7 +1584,8 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         return self.restriction(Z).image()
 
     def inverse_image(self, Z, trim=True):
-        r"""Return the (closure of the) inverse image of the variety ``Z`` via the rational map ``self``.
+        r"""
+        Return the (closure of the) inverse image of the variety ``Z`` via the rational map ``self``.
 
         INPUT:
 
@@ -1618,7 +1623,6 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             target: surface in PP^3 of degree 4 and sectional genus 3
             sage: q = f.inverse_image(f.target().point())          # optional - macaulay2
             sage: assert(q._is_point() and q.ambient() == P)       # optional - macaulay2
-
         """
         Z = _check_type_embedded_projective_variety(Z)
         if not Z.is_subset(self.super().target()):
@@ -1657,7 +1661,8 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         return F.degree()
 
     def _restriction_to_general_hyperplane(self):
-        r"""Return the restriction of the rational map to a random hyperplane section of the source variety (for internal use only).
+        r"""
+        Return the restriction of the rational map to a random hyperplane section of the source variety (for internal use only).
 
         TESTS::
 
@@ -1670,7 +1675,6 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             rational map defined by forms of degree 2
             source: quadric hypersurface in PP^4
             target: PP^4
-
         """
         j = self.source().empty().random(1).parametrize().super()
         if self.source().codimension() == 0:
@@ -1679,7 +1683,8 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         return j.compose(self)
 
     def projective_degrees(self):
-        r"""Return the projective degrees of the rational map
+        r"""
+        Return the projective degrees of the rational map
 
         .. WARNING::
 
@@ -1712,7 +1717,6 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             base locus: 4-dimensional variety of degree 24 in PP^9 cut out by 12 hypersurfaces of degrees (2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3)
             sage: g.projective_degrees()
             [5, 15, 21, 17, 9, 3, 1]
-
         """
         try:
             return self._projective_degrees_list
@@ -1726,8 +1730,9 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             self._projective_degrees_list.reverse()
             return self._projective_degrees_list
 
-    def is_dominant(self):
-        r"""Return ``True`` if ``self`` is a dominant rational map, ``False`` otherwise.
+    def is_dominant(self) -> bool:
+        r"""
+        Return ``True`` if ``self`` is a dominant rational map, ``False`` otherwise.
 
         OUTPUT:
 
@@ -1741,14 +1746,14 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             sage: g = f.make_dominant()
             sage: g.is_dominant()
             True
-
         """
         if self._is_dominant is None:
             self._is_dominant = self.image() == self.target()
         return self._is_dominant
 
     def make_dominant(self):
-        r"""Return a new rational map with the same source variety and same defining polynomials but with ``self.target()`` replaced by ``self.image()``
+        r"""
+        Return a new rational map with the same source variety and same defining polynomials but with ``self.target()`` replaced by ``self.image()``
 
         EXAMPLES::
 
@@ -1760,7 +1765,6 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             dominant rational map defined by forms of degree 4
             source: PP^1
             target: curve of degree 4 and arithmetic genus 0 in PP^4 cut out by 6 hypersurfaces of degree 2
-
         """
         try:
             return self._dominant_map
@@ -1773,7 +1777,8 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             return self._dominant_map
 
     def compose(self,f):
-        r"""Return the composition of ``self`` with the rational map ``f``.
+        r"""
+        Return the composition of ``self`` with the rational map ``f``.
 
         INPUT:
 
@@ -1793,7 +1798,6 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             target: PP^4
             sage: _.projective_degrees()
             [1, 2, 4, 4, 2]
-
         """
         g = f * self
         assert(g.domain() is self.domain() and g.codomain() is f.codomain())
@@ -1814,7 +1818,8 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         return g
 
     def restriction(self,X):
-        r"""Return the restriction of ``self`` to the variety ``X``.
+        r"""
+        Return the restriction of ``self`` to the variety ``X``.
 
         INPUT:
 
@@ -1835,14 +1840,14 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             rational map defined by forms of degree 1
             source: complete intersection of type (2, 2) in PP^7
             target: PP^4
-
         """
         Y = None if self.source().codimension() == 0 else self.source()
         j = X.embedding_morphism(Y)
         return(j.compose(self))
 
     def restriction_from_target(self,Y):
-        r"""Return the restriction of ``self`` to the inverse image of the variety ``Y``.
+        r"""
+        Return the restriction of ``self`` to the inverse image of the variety ``Y``.
 
         INPUT:
 
@@ -1862,7 +1867,6 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             rational map defined by forms of degree 2
             source: conic curve in PP^2
             target: hyperplane in PP^5
-
         """
         if Y is self.target():
             return self
@@ -1870,7 +1874,8 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         return Rational_map_between_embedded_projective_varieties(X, Y, self.defining_polynomials())
 
     def _macaulay2_init_(self, macaulay2=None):
-        r"""Get the corresponding rational map in Macaulay2.
+        r"""
+        Get the corresponding rational map in Macaulay2.
 
         TESTS::
 
@@ -1881,7 +1886,6 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             target variety: PP^4
             <BLANKLINE>
             MultirationalMap (rational map from PP^1 to PP^4)
-
         """
         if macaulay2 is None:
             from sage.interfaces.macaulay2 import macaulay2 as m2_default
@@ -1901,13 +1905,13 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             self._macaulay2_object._sage_object = self
             return self._macaulay2_object
 
-    def __eq__(self,other):
-        r"""Return ``True`` if ``self`` is mathematically equal to ``other``, ``False`` otherwise.
+    def __eq__(self, other) -> bool:
+        r"""
+        Return ``True`` if ``self`` is mathematically equal to ``other``, ``False`` otherwise.
 
         OUTPUT:
 
         :class:`bool`
-
         """
         if isinstance(other,(int,Integer)) and other == 1:
             if self.source() is not self.target():
@@ -1938,10 +1942,11 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             return True
 
     def __ne__(self,other):
-        return(not(self.__eq__(other)))
+        return not self.__eq__(other)
 
     def inverse(self, check=True, verbose=None, algorithm='macaulay2'):
-        r"""Return the inverse of the birational map.
+        r"""
+        Return the inverse of the birational map.
 
         OUTPUT:
 
@@ -1959,7 +1964,6 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             True
 
         With the input ``algorithm='macaulay2'`` the computation is transferred to ``Macaulay2`` (this is currently the only option).
-
         """
         if hasattr(self,"_inverse_rational_map"):
             return self._inverse_rational_map
@@ -1996,7 +2000,8 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         return g
 
     def _representatives(self, verbose=None, algorithm='macaulay2'):
-        r"""Return a minimal set of generators for the module of representatives of the rational map ``self``.
+        r"""
+        Return a minimal set of generators for the module of representatives of the rational map ``self``.
 
         This is used internally by the functions :meth:`base_locus` and :meth:`is_morphism`.
         """
@@ -2024,7 +2029,8 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             return self._list_of_representatives_of_map
 
     def base_locus(self, verbose=None, algorithm='macaulay2'):
-        r"""Return the base locus of the rational map ``self``.
+        r"""
+        Return the base locus of the rational map ``self``.
 
         OUTPUT:
 
@@ -2056,19 +2062,20 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             return self._base_locus
 
     def is_morphism(self, verbose=None, algorithm='macaulay2'):
-        r"""Return ``True`` if ``self`` is a morphism, ``False`` otherwise.
+        r"""
+        Return ``True`` if ``self`` is a morphism, ``False`` otherwise.
 
         OUTPUT:
 
         :class:`bool`, whether ``self.base_locus().dimension() == -1``
-
         """
         if self._is_morphism is None:
             self._is_morphism = self.base_locus(verbose=verbose,algorithm=algorithm).dimension() < 0
         return self._is_morphism
 
     def to_built_in_map(self):
-        r"""Return the same mathematical object but in the parent class.
+        r"""
+        Return the same mathematical object but in the parent class.
 
         OUTPUT:
 
@@ -2088,7 +2095,6 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
               0
               Defn: Defined on coordinates by sending (x0 : x1 : x2 : x3) to
                     (x2^2 - x1*x3 : x1*x2 - x0*x3 : x1^2 - x0*x2)
-
         """
         try:
             return self._to_built_in_map
@@ -2097,7 +2103,8 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             return self._to_built_in_map
 
     def random_coordinate_change(self):
-        r"""Apply random coordinate changes on the ambient projective spaces of the source and target of ``self``.
+        r"""
+        Apply random coordinate changes on the ambient projective spaces of the source and target of ``self``.
 
         EXAMPLES::
 
@@ -2118,14 +2125,15 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             5*t0^3 - 4*t0^2*t1 - 5*t0*t1^2 - 2*t1^3,
             4*t0^3 + 4*t0^2*t1 + t0*t1^2 + 4*t1^3,
             -t0^3 + 3*t0^2*t1 + 4*t0*t1^2 - t1^3)
-
         """
         f = self.source().random_coordinate_change()._from_random_coordinate_change.inverse()
         g = self.target().random_coordinate_change()._from_random_coordinate_change
         return f.compose(self).compose(g)
 
+
 def rational_map(*args, **kwargs):
-    r"""Construct a rational map from a projective variety to another.
+    r"""
+    Construct a rational map from a projective variety to another.
 
     INPUT:
 
@@ -2197,8 +2205,10 @@ def rational_map(*args, **kwargs):
         return rational_map(args[0],args[1],args[2].defining_polynomials())
     raise NotImplementedError
 
+
 def veronese(n, d, KK=33331, var='x'):
-    r"""Return the Veronese embedding.
+    r"""
+    Return the Veronese embedding.
 
     OUTPUT:
 
@@ -2210,7 +2220,6 @@ def veronese(n, d, KK=33331, var='x'):
         rational map defined by forms of degree 3
         source: PP^2
         target: PP^9
-
     """
     if isinstance(KK,(int,Integer)):
         KK = GF(KK) if KK > 0 else QQ
@@ -2218,7 +2227,8 @@ def veronese(n, d, KK=33331, var='x'):
     return Rational_map_between_embedded_projective_varieties(PP(n,KK=KK,var='t'), PP(binomial(n+d,n)-1,KK=KK,var=var), PP(n,KK=KK,var='t').empty()._homogeneous_component(d))
 
 def Veronese(n, d, KK=33331, var='x'):
-    r"""Return the image of the Veronese embedding.
+    r"""
+    Return the image of the Veronese embedding.
 
     OUTPUT:
 
@@ -2228,15 +2238,16 @@ def Veronese(n, d, KK=33331, var='x'):
 
         sage: Veronese(2,2)
         surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2
-
     """
     f = veronese(n, d, KK=KK, var='x')
     X = f.image()
     X._parametrization = f  #f.make_dominant()
     return X
 
+
 class _Rational_projective_surface(Embedded_projective_variety):
-    r"""The class of objects created by the function ``surface``, see :meth:`surface`.
+    r"""
+    The class of objects created by the function ``surface``, see :meth:`surface`.
 
     .. WARNING::
 
@@ -2245,7 +2256,7 @@ class _Rational_projective_surface(Embedded_projective_variety):
         :meth:`surface`.
 
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""Return a string representation of the surface"""
         s = _expr_var_1(super())[0]
         if s[0:7] == "surface":
@@ -2255,17 +2266,17 @@ class _Rational_projective_surface(Embedded_projective_variety):
                 s = s + " (the image of the plane via the linear system " + str(self._linear_system) + ")"
         return s
 
-    def _latex_(self):
-        r"""Return the LaTeX representation of ``self``.
+    def _latex_(self) -> str:
+        r"""
+        Return the LaTeX representation of ``self``.
 
         EXAMPLES::
 
             sage: S = surface(3,1,1)
             sage: latex(S)
             \mbox{rational } \mbox{surface in }\mathbb{P}^{ 5 } \mbox{ of degree } 4 \mbox{ and sectional genus } 0 \mbox{ cut out by } 6 \mbox{ hypersurfaces of degree } 2 \mbox{ (the image of the plane via the linear system } \left[3, 1, 1\right] \mbox{)}
-
         """
-        (s,s_l) = _expr_var_1(super())
+        s, s_l = _expr_var_1(super())
         if s[0:7] == "surface":
             nodes = latex(self._finite_number_of_nodes) + "\\mbox{-nodal } " if hasattr(self,"_finite_number_of_nodes") and self._finite_number_of_nodes > 0 else ""
             s_l = "\\mbox{rational }" + nodes + s_l
@@ -2273,8 +2284,10 @@ class _Rational_projective_surface(Embedded_projective_variety):
                 s_l = s_l + "\\mbox{ (the image of the plane via the linear system }" + latex(self._linear_system) + "\\mbox{)}"
         return s_l
 
+
 def surface(*args, KK=33331, ambient=None, nodes=None, virtual=False, class_surfaces='rational'):
-    r"""Return a surface in a projective space of dimension ``ambient`` over the field ``KK``.
+    r"""
+    Return a surface in a projective space of dimension ``ambient`` over the field ``KK``.
 
     The typical usage is as follows:
 
@@ -2324,7 +2337,6 @@ def surface(*args, KK=33331, ambient=None, nodes=None, virtual=False, class_surf
         virtual K3 surface in PP^32 of degree 62 and sectional genus 32 cut out by at least 435 hypersurfaces of degree 2
         sage: S.projection(4,0,1,0,1)    # four simple projections + one 3rd projection + one 5th projection
         virtual K3 surface in PP^7 of degree 24 and sectional genus 19 cut out by at least 28 hypersurfaces of degree 3
-
     """
     v = args
     for i in v:
@@ -2402,8 +2414,10 @@ def surface(*args, KK=33331, ambient=None, nodes=None, virtual=False, class_surf
     S._parametrization = f  #f.make_dominant()
     return S
 
+
 class _Virtual_projective_surface(Embedded_projective_variety):
-    r"""The class of virtual projective surfaces.
+    r"""
+    The class of virtual projective surfaces.
 
     TESTS::
 
@@ -2411,7 +2425,6 @@ class _Virtual_projective_surface(Embedded_projective_variety):
         virtual K3 surface in PP^32 of degree 62 and sectional genus 32 cut out by at least 435 hypersurfaces of degree 2
         sage: S.projection(4,0,2,1)
         virtual K3 surface in PP^6 of degree 24 and sectional genus 20 cut out by at least 44 hypersurfaces of degree 4
-
     """
     def __init__(self, ambient=None, degree=None, sectional_genus=None, constant_coefficient_hilbert_polynomial=None, topological_euler_characteristic=None, KK=33331):
         if not all([isinstance(i,(int,Integer)) for i in [ambient, degree, sectional_genus, constant_coefficient_hilbert_polynomial, topological_euler_characteristic]]):
@@ -2429,7 +2442,7 @@ class _Virtual_projective_surface(Embedded_projective_variety):
         self._constant_coefficient_hilbert_polynomial = constant_coefficient_hilbert_polynomial
         self._topological_euler_characteristic = topological_euler_characteristic
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""Return a string representation of the virtual surface."""
         class_surfaces = self._class_surfaces + " " if hasattr(self, "_class_surfaces") else ""
         s = "virtual " + class_surfaces + "surface in PP^" + str(self.ambient().dimension()) + " of degree " + str(self.degree()) + " and sectional genus " + str(self.sectional_genus())
@@ -2459,7 +2472,8 @@ class _Virtual_projective_surface(Embedded_projective_variety):
         return max(Integer(binomial(self.ambient().dimension()+n,n) - self.hilbert_polynomial()(n)), 0)
 
     def projection(self, *args):
-        r"""Return a general projection of the virtual surface.
+        r"""
+        Return a general projection of the virtual surface.
 
         INPUT:
 
@@ -2469,7 +2483,6 @@ class _Virtual_projective_surface(Embedded_projective_variety):
 
         :class:`_Virtual_projective_surface`, the projection of ``self`` from ``i`` general points of multiplicity 1, ``j`` general
         points of multiplicity 2, ``k`` general points of multiplicity 3, and so on until the last integer in the given tuple.
-
         """
         v = args
         for i in v:
@@ -2491,7 +2504,8 @@ class _Virtual_projective_surface(Embedded_projective_variety):
         return S
 
     def materialize(self):
-        r"""Return a surface with the same invariants as the virtual surface.
+        r"""
+        Return a surface with the same invariants as the virtual surface.
 
         EXAMPLES::
 
@@ -2503,7 +2517,6 @@ class _Virtual_projective_surface(Embedded_projective_variety):
             virtual K3 surface in PP^5 of degree 10 and sectional genus 7 cut out by at least one hypersurface of degree 2
             sage: S.materialize()        # optional - macaulay2
             surface in PP^5 of degree 10 and sectional genus 7 cut out by 7 hypersurfaces of degrees (2, 3, 3, 3, 3, 3, 3)
-
         """
         if hasattr(self, "_materialization"):
             return self._materialization
@@ -2528,8 +2541,10 @@ class _Virtual_projective_surface(Embedded_projective_variety):
         self._materialization = S
         return S
 
+
 class Hodge_special_fourfold(Embedded_projective_variety):
-    r"""The class of Hodge-special fourfolds
+    r"""
+    The class of Hodge-special fourfolds
 
     This is a subclass of the class :class:`Embedded_projective_variety`.
     An object of this class is just a (smooth) projective variety of dimension 4,
@@ -2585,7 +2600,6 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         surface in PP^5 cut out by 5 hypersurfaces of degree 2
         <BLANKLINE>
         ProjectiveVariety, surface in PP^5
-
     """
     def __init__(self, S, X, V=None, check=True):
         r"""See :class:`Hodge_special_fourfold` for documentation."""
@@ -2614,12 +2628,13 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             raise ValueError("the fourfold is not smooth")
         self._surface = S
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""Return a string representation of the fourfold """
         return("Hodge-special fourfold of degree " + str(self.degree()) + " in PP^" + str(self.ambient().dimension()) + " containing a " + str(self.surface()))
 
-    def _latex_(self):
-        r"""Return the LaTeX representation of ``self``.
+    def _latex_(self) -> str:
+        r"""
+        Return the LaTeX representation of ``self``.
 
         OUTPUT:
 
@@ -2636,7 +2651,8 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         return("\\mbox{Hodge-special fourfold of degree }" + latex(self.degree()) + "\\mbox{ in }" + latex(self.ambient()) + "\\mbox{ containing a }" + latex(self.surface()))
 
     def surface(self):
-        r"""Return the special surface contained in the fourfold.
+        r"""
+        Return the special surface contained in the fourfold.
 
         OUTPUT:
 
@@ -2648,12 +2664,12 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             sage: X = fourfold(S)
             sage: X.surface() is S
             True
-
         """
-        return(self._surface)
+        return self._surface
 
     def ambient_fivefold(self):
-        r"""Return the ambient fivefold of the fourfold.
+        r"""
+        Return the ambient fivefold of the fourfold.
 
         OUTPUT:
 
@@ -2665,7 +2681,6 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             sage: X = fourfold(S)
             sage: X.ambient_fivefold()
             PP^5
-
         """
         try:
             return self._ambient_fivefold
@@ -2693,7 +2708,8 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             return self.__lattice_intersection_Matrix
 
     def discriminant(self, verbose=None):
-        r"""Return the discriminant of the special fourfold.
+        r"""
+        Return the discriminant of the special fourfold.
 
         OUTPUT:
 
@@ -2711,7 +2727,6 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             sage: X = fourfold(S)
             sage: X.discriminant()
             14
-
         """
         if verbose is None:
             verbose = __VERBOSE__
@@ -2788,7 +2803,8 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             raise ValueError("keyword algorithm must be 'macaulay2' or 'sage'")
 
     def congruence(self, degree=None, num_checks=3, point=None, verbose=None, algorithm_for_image='sage', algorithm_for_point='sage', macaulay2_detectCongruence=False):
-        r"""Detect and return a congruence of secant curves for the surface of ``self`` in the ambient fivefold of ``self``.
+        r"""
+        Detect and return a congruence of secant curves for the surface of ``self`` in the ambient fivefold of ``self``.
 
         This function works similar to the ``Macaulay2`` function ``detectCongruence``, documented at
         https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/SpecialFanoFourfolds/html/_detect__Congruence.html.
@@ -2851,7 +2867,6 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             Congruence of 5-secant conics
             to: surface in PP^5 of degree 7 and sectional genus 0 cut out by 13 hypersurfaces of degree 3
             in: PP^5
-
         """
         if macaulay2_detectCongruence:
             return self._detect_congruence_using_macaulay2(Degree=degree, verbose=verbose).check(num_checks,algorithm_for_point=algorithm_for_point,verbose=verbose)
@@ -2930,7 +2945,8 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         return congr
 
     def fano_map(self, verbose=None):
-        r"""Return the Fano map from the ambient fivefold.
+        r"""
+        Return the Fano map from the ambient fivefold.
 
         The surface contained in the fourfold ``self`` must admit
         a congruence of secant curves inside the ambient fivefold.
@@ -2960,7 +2976,8 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         return F
 
     def random_coordinate_change(self):
-        r"""Apply a random coordinate change on the ambient projective space of ``self``.
+        r"""
+        Apply a random coordinate change on the ambient projective space of ``self``.
 
         EXAMPLES::
 
@@ -2984,15 +3001,15 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             x1^2 - 11*x0*x3 + 44*x1*x3 + 30*x2*x3 + 26*x3^2 + 45*x0*x4 + 41*x1*x4 + 9*x2*x4 + 19*x3*x4 + 13*x4^2 - 15*x0*x5 - 8*x1*x5 + 31*x2*x5 - 43*x3*x5 - 23*x5^2,
             x0*x1 - 14*x0*x3 + 9*x1*x3 - 27*x2*x3 + 31*x3^2 + 48*x0*x4 + 28*x1*x4 - 9*x2*x4 - 41*x3*x4 - 12*x4^2 + 48*x0*x5 - 25*x1*x5 + 28*x2*x5 - 35*x3*x5 - 28*x4*x5 - 40*x5^2,
             x0^2 - 26*x0*x3 - x1*x3 - 6*x2*x3 + x3^2 - 4*x0*x4 + 9*x1*x4 - 9*x2*x4 + 17*x3*x4 - 24*x4^2 + 46*x0*x5 + 16*x1*x5 - 5*x2*x5 + 13*x3*x5 + 8*x4*x5 + 26*x5^2)
-
         """
         V = self.ambient_fivefold().random_coordinate_change()
         S = V._from_random_coordinate_change(self.surface())
         X = V._from_random_coordinate_change(self)
-        return fourfold(S,X,V,check=False)
+        return fourfold(S, X, V, check=False)
 
     def parameter_count(self, verbose=None):
-        r"""Count of parameters.
+        r"""
+        Count of parameters.
 
         This just runs the ``Macaulay2`` function ``parameterCount``, documented at
         https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/SpecialFanoFourfolds/html/_parameter__Count.html.
@@ -3041,7 +3058,6 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             codim{[X] : S ⊂ X ⊂ Y} <= 1
             -- function parameterCount() has terminated. --
             (1, (31, 8, 0))
-
         """
         if verbose is None:
             verbose = __VERBOSE__
@@ -3121,6 +3137,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
                 print("-- function detectCongruence() has terminated. --")
             return g
 
+
 class _Congruence_of_secant_curves_to_surface(SageObject):
     r"""The class of objects created by the function :meth:`congruence`."""
     def __init__(self, f_s, f, deg_congr, X):
@@ -3128,6 +3145,7 @@ class _Congruence_of_secant_curves_to_surface(SageObject):
         self._macaulay2_object = f
         self._degree = deg_congr
         self._fourfold = X
+
     def _repr_(self):
         curves_word = {
             1:"lines",
@@ -3143,13 +3161,16 @@ class _Congruence_of_secant_curves_to_surface(SageObject):
         d = self._degree
         a = self._fourfold._degree_as_hypersurface
         return "Congruence of " + str(a*d - 1) + "-secant " + (curves_word[d] if d <= 9 else "curves of degree " + str(d)) + "\nto: " + self._fourfold.surface()._repr_() + "\nin: " + self._fourfold.ambient_fivefold()._repr_()
+
     def __call__(self, p):
         return self._function_on_points(p)
+
     def _macaulay2_init_(self, macaulay2=None):
         if macaulay2 is None:
             from sage.interfaces.macaulay2 import macaulay2 as m2_default
             macaulay2 = m2_default
         return self._macaulay2_object
+
     def check(self, i=1, verbose=None, algorithm_for_point=None):
         if verbose is None:
             verbose = __VERBOSE__
@@ -3162,19 +3183,21 @@ class _Congruence_of_secant_curves_to_surface(SageObject):
             self(V.point(verbose=False, algorithm=algorithm_for_point))
         return self
 
+
 class _Intersection_of_three_quadrics_in_P7(Hodge_special_fourfold):
     r"""The class of Hodge-special complete intersections of three quadrics in ``PP^7``."""
     def __init__(self, S, X, V=None, check=True):
-        super().__init__(S,X,V,check=check)
+        super().__init__(S, X, V, check=check)
         if not(self.degrees_generators() == (2,2,2) and self.ambient_fivefold().degrees_generators() == (2,2)):
             raise ValueError("something went wrong in constructing complete intersections of three quadrics in PP^7")
         self._degree_as_hypersurface = 2
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return("Complete intersection of 3 quadrics in PP^7 of discriminant " + str(self.discriminant(verbose=False)) + " = 8*" + str(self._lattice_intersection_matrix()[1,1]) + "-" + str(self._lattice_intersection_matrix()[0,1]) + "^2" + " containing a " + str(self.surface()))
 
-    def _latex_(self):
-        r"""Return the LaTeX representation of the fourfold.
+    def _latex_(self) -> str:
+        r"""
+        Return the LaTeX representation of the fourfold.
 
         OUTPUT:
 
@@ -3188,7 +3211,6 @@ class _Intersection_of_three_quadrics_in_P7(Hodge_special_fourfold):
             8 & 1 \\
             1 & 4
             \end{array}\right) \mbox{ containing a } \mbox{plane in }\mathbb{P}^{ 7 }
-
         """
         return("\\mbox{Complete intersection of }" + latex(3) + "\\mbox{ quadrics in }" + latex(self.ambient()) + "\\mbox{ of discriminant }" + latex(self.discriminant(verbose=False)) + " = \\det " + latex(self._lattice_intersection_matrix()) + "\\mbox{ containing a }" + latex(self.surface()))
 
@@ -3201,7 +3223,8 @@ class _Intersection_of_three_quadrics_in_P7(Hodge_special_fourfold):
             return self._ambient_fivefold
 
     def Castelnuovo(self, verbose=None):
-        r"""Associated Castelnuovo surfaces.
+        r"""
+        Associated Castelnuovo surfaces.
 
         This function works similar to :meth:`K3`.
 
@@ -3216,23 +3239,25 @@ class _Intersection_of_three_quadrics_in_P7(Hodge_special_fourfold):
             dominant rational map defined by forms of degree 1
             source: complete intersection of type (2, 2) in PP^7
             target: PP^4
-
         """
         self._associated_surface_construction(verbose=verbose)
         T = self._macaulay2_associated_surface_construction[3].image()
         T.building = lambda : self._macaulay2_associated_surface_construction
         return T
 
+
 class _Virtual_intersection_of_three_quadrics_in_P7(_Intersection_of_three_quadrics_in_P7):
-    r"""The class of virtual Hodge-special complete intersections of three quadrics in ``PP^7``.
+    r"""
+    The class of virtual Hodge-special complete intersections of three quadrics in ``PP^7``.
 
     TESTS::
 
         sage: S = surface(5,7,0,1, virtual=True); S
-        virtual rational surface in PP^7 of degree 9 and sectional genus 3 cut out by at least 12 hypersurfaces of degree 2
+        virtual rational surface in PP^7 of degree 9 and sectional genus 3
+        cut out by at least 12 hypersurfaces of degree 2
         sage: X = fourfold(S); X
-        Complete intersection of 3 quadrics in PP^7 of discriminant 47 = 8*16-9^2 containing a virtual rational surface in PP^7 of degree 9 and sectional genus 3 cut out by at least 12 hypersurfaces of degree 2
-
+        Complete intersection of 3 quadrics in PP^7 of discriminant 47 = 8*16-9^2
+        containing a virtual rational surface in PP^7 of degree 9 and sectional genus 3 cut out by at least 12 hypersurfaces of degree 2
     """
     def __init__(self, S, check=True):
         if not isinstance(S,_Virtual_projective_surface):
@@ -3253,19 +3278,21 @@ class _Virtual_intersection_of_three_quadrics_in_P7(_Intersection_of_three_quadr
     def Castelnuovo(self, verbose=None):
         raise NotImplementedError
 
+
 class Cubic_fourfold(Hodge_special_fourfold):
     r"""The class of Hodge-special cubic fourfolds in ``PP^5``."""
     def __init__(self, S, X, V=None, check=True):
-        super().__init__(S,X,V,check=check)
+        super().__init__(S, X, V, check=check)
         if not(self.degree() == 3 and self.codimension() == 1 and len(self.degrees_generators()) == 1):
             raise ValueError("something went wrong in constructing cubic fourfold in PP^5")
         self._degree_as_hypersurface = 3
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return("Cubic fourfold of discriminant " + str(self.discriminant(verbose=False)) + " = 3*" + str(self._lattice_intersection_matrix()[1,1]) + "-" + str(self._lattice_intersection_matrix()[0,1]) + "^2" + " containing a " + str(self.surface()))
 
-    def _latex_(self):
-        r"""Return the LaTeX representation of the cubic fourfold.
+    def _latex_(self) -> str:
+        r"""
+        Return the LaTeX representation of the cubic fourfold.
 
         OUTPUT:
 
@@ -3279,12 +3306,12 @@ class Cubic_fourfold(Hodge_special_fourfold):
             3 & 5 \\
             5 & 13
             \end{array}\right) \mbox{ containing a } \mbox{rational } \mbox{surface in }\mathbb{P}^{ 5 } \mbox{ of degree } 5 \mbox{ and sectional genus } 1 \mbox{ cut out by } 5 \mbox{ hypersurfaces of degree } 2 \mbox{ (the image of the plane via the linear system } \left[3, 4\right] \mbox{)}
-
         """
         return("\\mbox{Cubic fourfold of discriminant }" + latex(self.discriminant(verbose=False)) + " = \\det " + latex(self._lattice_intersection_matrix()) + "\\mbox{ containing a }" + latex(self.surface()))
 
     def K3(self, verbose=None):
-        r"""Associated K3 surfaces to rational cubic fourfolds.
+        r"""
+        Associated K3 surfaces to rational cubic fourfolds.
 
         This just runs the ``Macaulay2`` function ``associatedK3surface``, documented at
         https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/SpecialFanoFourfolds/html/_associated__K3surface_lp__Special__Cubic__Fourfold_rp.html.
@@ -3306,12 +3333,12 @@ class Cubic_fourfold(Hodge_special_fourfold):
             dominant rational map defined by forms of degree 2
             source: PP^5
             target: quadric hypersurface in PP^5
-
         """
         self._associated_surface_construction(verbose=verbose)
         T = self._macaulay2_associated_surface_construction[3].image()
         T.building = lambda : self._macaulay2_associated_surface_construction
         return T
+
 
 class _Virtual_cubic_fourfold(Cubic_fourfold):
     r"""The class of virtual Hodge-special cubic fourfolds in ``PP^5``.
@@ -3319,12 +3346,13 @@ class _Virtual_cubic_fourfold(Cubic_fourfold):
     TESTS::
 
         sage: S = surface(10,0,0,10, virtual=True); S
-        virtual rational surface in PP^5 of degree 10 and sectional genus 6 cut out by at least 10 hypersurfaces of degree 3
+        virtual rational surface in PP^5 of degree 10 and sectional genus 6
+        cut out by at least 10 hypersurfaces of degree 3
         sage: X = fourfold(S); X
-        Cubic fourfold of discriminant 38 = 3*46-10^2 containing a virtual rational surface in PP^5 of degree 10 and sectional genus 6 cut out by at least 10 hypersurfaces of degree 3
-
+        Cubic fourfold of discriminant 38 = 3*46-10^2 containing a virtual rational surface in PP^5
+        of degree 10 and sectional genus 6 cut out by at least 10 hypersurfaces of degree 3
     """
-    def __init__(self, S, check=True):
+    def __init__(self, S, check=True) -> None:
         if not isinstance(S,_Virtual_projective_surface):
             raise TypeError("expected a virtual surface")
         if S.ambient().dimension() != 5:
@@ -3340,6 +3368,7 @@ class _Virtual_cubic_fourfold(Cubic_fourfold):
     def K3(self, verbose=None):
         raise NotImplementedError
 
+
 class GushelMukai_fourfold(Hodge_special_fourfold):
     r"""The class of Hodge-special Gushel-Mukai fourfolds in ``PP^8``
 
@@ -3350,13 +3379,13 @@ class GushelMukai_fourfold(Hodge_special_fourfold):
         sage: assert(X.base_ring().characteristic() == 33331)   # optional - macaulay2
 
     """
-    def __init__(self, S, X, V=None, check=True):
-        super().__init__(S,X,V,check=check)
+    def __init__(self, S, X, V=None, check=True) -> None:
+        super().__init__(S, X, V, check=check)
         if not(self.ambient().dimension() == 8 and self.degrees_generators() == (2,2,2,2,2,2) and self.degree() == 10 and self.sectional_genus() == 6):
             raise ValueError("something went wrong in constructing Gushel-Mukai fourfold in PP^8")
         self._degree_as_hypersurface = 2
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         d = self.discriminant(verbose=False)
         (a,b) = self._class_of_surface_in_the_Grass
         e = ""
@@ -3369,12 +3398,13 @@ class GushelMukai_fourfold(Hodge_special_fourfold):
                 raise RuntimeError("Internal error encountered.")
         return("Gushel-Mukai fourfold of discriminant " + str(d) + e + " containing a " + str(self.surface()) + ", class of the surface in GG(1,4): " + str((a,b)))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""Return the LaTeX representation of the Gushel-Mukai fourfold."""
         return("\\mbox{Gushel-Mukai fourfold of discriminant }" + latex(self.discriminant(verbose=False)) + "\\mbox{ containing a }" + latex(self.surface()))
 
     def K3(self, verbose=None):
-        r"""Associated K3 surfaces to rational Gushel-Mukai fourfolds.
+        r"""
+        Associated K3 surfaces to rational Gushel-Mukai fourfolds.
 
         This just runs the ``Macaulay2`` function ``associatedK3surface``, documented at
         https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/SpecialFanoFourfolds/html/_associated__K3surface_lp__Special__Gushel__Mukai__Fourfold_rp.html.
@@ -3397,12 +3427,12 @@ class GushelMukai_fourfold(Hodge_special_fourfold):
             dominant rational map defined by forms of degree 1
             source: 5-dimensional variety of degree 5 in PP^8 cut out by 5 hypersurfaces of degree 2
             target: quadric hypersurface in PP^5
-
         """
         self._associated_surface_construction(verbose=verbose)
         T = self._macaulay2_associated_surface_construction[3].image()
         T.building = lambda : self._macaulay2_associated_surface_construction
         return T
+
 
 def fourfold(S, X=None, V=None, check=True):
     r"""Construct Hodge-special fourfolds.
@@ -3465,11 +3495,11 @@ def fourfold(S, X=None, V=None, check=True):
         Cubic fourfold of discriminant 26 = 3*49-11^2 containing a virtual K3 surface in PP^5 of degree 11 and sectional genus 8 cut out by at least 9 hypersurfaces of degree 3
 
     """
-    if isinstance(S,str):
+    if isinstance(S, str):
         if not(V is None and check is True and (X is None or isinstance(X,(int,Integer)) or X in Fields())):
             raise TypeError
         return _special_fourfold_from_m2(S, i=X)
-    if isinstance(S,sage.interfaces.abc.Macaulay2Element) and S.instance(macaulay2('HodgeSpecialFourfold')).sage():
+    if isinstance(S, sage.interfaces.abc.Macaulay2Element) and S.instance(macaulay2('HodgeSpecialFourfold')).sage():
         if not(X is None and V is None and check is True):
             raise TypeError
         Z = S.removeUnderscores()
@@ -3509,6 +3539,7 @@ def fourfold(S, X=None, V=None, check=True):
         return GushelMukai_fourfold(S,X,V,check)
     return Hodge_special_fourfold(S,X,V,check)
 
+
 def _special_fourfold_from_m2(s, i=None):
     r"""Special fourfolds constructed with Macaulay2."""
     if not isinstance(s,str):
@@ -3519,6 +3550,7 @@ def _special_fourfold_from_m2(s, i=None):
     XinM2 = macaulay2('specialFourfold("' + s + '"' + t).removeUnderscores()
     V = ProjectiveSpace(XinM2.ambient().ring().sage())
     return(_from_macaulay2_to_sage(XinM2,V))
+
 
 def _expr_var_0(Dim, DimAmbient):
     if DimAmbient < 0:
@@ -3538,6 +3570,7 @@ def _expr_var_0(Dim, DimAmbient):
     if Dim == 3:
         return("threefold in PP^" + str(DimAmbient), "\\mbox{threefold in }" + "\\mathbb{P}^{" + latex(DimAmbient) + "}")
     return(str(Dim) + "-dimensional subvariety of PP^" + str(DimAmbient), latex(Dim) + "\\mbox{-dimensional subvariety of }" + "\\mathbb{P}^{" + latex(DimAmbient) + "}")
+
 
 def _expr_var_1(X):
     k = X.dimension()
@@ -3594,11 +3627,14 @@ def _expr_var_1(X):
         return("complete intersection of type " + str(tuple(degs)) + " in PP^" + str(n), "\\mbox{complete intersection of type }" + latex(tuple(degs)) + "\\mbox{ in }\\mathbb{P}^{" + latex(n) + "}")
     return(str(k) + "-dimensional variety of degree " + str(X.degree()) + " in PP^" + str(n) + cutOut, latex(k) + "\\mbox{-dimensional variety of degree }" + latex(X.degree()) + "\\mbox{ in }\\mathbb{P}^{" + latex(n) + "}" + cutOut_l)
 
+
 def _random1(R):
     return(sum([R.random_element(degree=0) * x for x in R.gens()]))
 
+
 def _from_macaulay2_to_sage(X, Sage_Ambient_Space):
-    r"""Convert varieties and special fourfolds from Macaulay2 to Sage.
+    r"""
+    Convert varieties and special fourfolds from Macaulay2 to Sage.
 
     TESTS::
 
@@ -3619,7 +3655,7 @@ def _from_macaulay2_to_sage(X, Sage_Ambient_Space):
         sage: assert(macaulay2(X_sage.ambient_fivefold()) == X_m2.ambientFivefold())   # optional - macaulay2
 
     """
-    if not isinstance(X,sage.interfaces.abc.Macaulay2Element):
+    if not isinstance(X, sage.interfaces.abc.Macaulay2Element):
         raise TypeError("expected a Macaulay2 object")
     try:
         return X._sage_object
@@ -3643,8 +3679,10 @@ def _from_macaulay2_to_sage(X, Sage_Ambient_Space):
             return X._sage_object
         raise NotImplementedError
 
+
 def _from_macaulay2map_to_sagemap(f, Sage_Source=None, Sage_Target=None):
-    r"""Convert rational maps from Macaulay2 to Sage.
+    r"""
+    Convert rational maps from Macaulay2 to Sage.
 
     TESTS::
 
@@ -3656,7 +3694,6 @@ def _from_macaulay2map_to_sagemap(f, Sage_Source=None, Sage_Target=None):
         source: curve of degree 4 and arithmetic genus 0 in PP^4 cut out by 6 hypersurfaces of degree 2
         target: PP^1
         sage: assert(macaulay2(g) is f)
-
     """
     if not isinstance(f,sage.interfaces.abc.Macaulay2Element):
         raise TypeError("expected a Macaulay2 object")
@@ -3693,6 +3730,7 @@ def _from_macaulay2map_to_sagemap(f, Sage_Source=None, Sage_Target=None):
             assert(hasattr(f._sage_object,"_list_of_representatives_of_map"))
         return f._sage_object
 
+
 def _print_partial_M2_output(m2_str):
     w = str(macaulay2.eval(m2_str))
     lineNumber = int(str(macaulay2.eval('lineNumber')))-1
@@ -3703,6 +3741,7 @@ def _print_partial_M2_output(m2_str):
     while w[-1] == "\n":
         w = w[:len(w)-1]
     print(w)
+
 
 def update_macaulay2_packages():
     r"""Update some ``Macaulay2`` packages to their latest version.
@@ -3728,6 +3767,7 @@ def update_macaulay2_packages():
     else:
         raise FileNotFoundError("something went wrong")
     print('## You should restart Sage and reload this module.')
+
 
 def _set_macaulay2_():
     r"""Setting of ``Macaulay2``."""
