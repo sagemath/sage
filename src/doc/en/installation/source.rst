@@ -155,24 +155,17 @@ Depending on your distribution, install the following packages:
 In the case that you want to install some dependencies manually, set the
 correct environment variables to point to the installed libraries:
 
-..   .. literalinclude:: debian-develop.txt
-      :language: console
   .. code-block:: console
 
     $ export C_INCLUDE_PATH=$C_INCLUDE_PATH:/your/path/to/include
     $ export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/your/path/to/include
     $ export LIBRARY_PATH=$LIBRARY_PATH:/your/path/to/lib
 
-..   .. literalinclude:: fedora-develop.txt
-      :language: console
-
 We also recommend to install the Python package manager
 `uv <https://docs.astral.sh/uv/getting-started/installation/>`_.
 
 To compile and install Sage in editable install, then just use:
 
-..   .. literalinclude:: arch-develop.txt
-      :language: console
   .. code-block:: console
 
     $ uv venv
@@ -188,17 +181,11 @@ To compile and install Sage in editable install, then just use:
         setuptools
     $ uv sync --frozen --inexact --no-build-isolation
 
-..   .. literalinclude:: opensuse-develop.txt
-      :language: console
-
 You can then start Sage from the command line with ``./sage``
 or run the tests with ``./sage -t``.
 
 Remarks
 ~~~~~~~
-
-..   .. literalinclude:: void-develop.txt
-      :language: console
 
 .. note::
 
@@ -211,17 +198,11 @@ Remarks
 
 .. note::
 
-  ..   .. literalinclude:: debian-recommended.txt
-      :language: console
-
   Note that ``make`` is not used at all, nor is ``configure``.
   This means that any Sage-the-distribution commands such as ``sage -i``
   will not work.
 
 .. note::
-
- ..   .. literalinclude:: fedora-recommended.txt
-      :language: console
 
   By default, Meson will automatically determine the number of jobs to
   run in parallel based on the number of CPU available. This can be adjusted
@@ -230,22 +211,14 @@ Remarks
   ``--verbose`` can be passed to ``pip install``, then the meson commands
   internally used by pip will be printed out.
 
-..   .. literalinclude:: arch-recommended.txt
-      :language: console
-
 .. note::
 
   To build the documentation, use:
 
-..   .. literalinclude:: opensuse-recommended.txt
-      :language: console
   .. code-block:: console
 
     $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-docbuild
     $ sage --docbuild all html
-
-..   .. literalinclude:: void-recommended.txt
-      :language: console
 
 .. note::
 
@@ -258,22 +231,14 @@ Remarks
 Background information
 ======================
 
-..   .. literalinclude:: fedora-optional.txt
-      :language: console
-
 Under the hood, pip invokes meson to configure and build the project.
 We can also use meson directly as follows.
 
 To configure the project, we need to run the following command:
 
-..   .. literalinclude:: arch-optional.txt
-      :language: console
-  .. code-block:: console
+.. code-block:: console
 
     $ meson setup builddir
-
-..   .. literalinclude:: opensuse-optional.txt
-      :language: console
 
 This will create a build directory ``builddir`` that will hold the
 build artifacts. Certain options are configurable at build time. The
