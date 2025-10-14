@@ -955,26 +955,6 @@ class PanAxiomExpectFunction(ExpectFunction):
 AxiomExpectFunction = PanAxiomExpectFunction
 
 
-def is_AxiomElement(x):
-    """
-    Return ``True`` if ``x`` is of type :class:`AxiomElement`.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.axiom import is_AxiomElement
-        sage: is_AxiomElement(2)
-        doctest:...: DeprecationWarning: the function is_AxiomElement is deprecated; use isinstance(x, sage.interfaces.abc.AxiomElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: is_AxiomElement(axiom(2))  # optional - axiom
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_AxiomElement is deprecated; use isinstance(x, sage.interfaces.abc.AxiomElement) instead")
-
-    return isinstance(x, AxiomElement)
-
-
 # Instances
 axiom = Axiom(name='axiom')
 
@@ -1011,5 +991,6 @@ def axiom_console():
     """
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():
-        raise RuntimeError('Can use the console only in the terminal. Try %%axiom magics instead.')
+        raise RuntimeError('Can use the console only in the terminal. '
+                           'Try %%axiom magics instead.')
     os.system('axiom -nox')
