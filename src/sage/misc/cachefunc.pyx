@@ -1671,7 +1671,7 @@ class CachedMethodPickle():
             if isinstance(CM, CachedMethodCallerNoArgs):
                 CM.cache = self._cache
             else:
-                for k, v in self._cache:
+                for k, v in self._cache.items():
                     CM.cache[k] = v
         return CM(*args, **kwds)
 
@@ -1709,7 +1709,7 @@ class CachedMethodPickle():
             if isinstance(CM, CachedMethodCallerNoArgs):
                 CM.cache = self._cache
             else:
-                for k, v in self._cache:
+                for k, v in self._cache.items():
                     CM.cache[k] = v
         return getattr(CM, s)
 
@@ -1823,10 +1823,9 @@ cdef class CachedMethodCaller(CachedFunction):
             sage: J.groebner_basis
             Cached version of <function ...groebner_basis at 0x...>
         """
-        if isinstance(self._cachedmethod, CachedInParentMethod) or hasattr(self._instance, self._cachedmethod._cache_name):
-            return CachedMethodPickle, (self._instance, self.__name__)
-        else:
+        if self.do_pickle:
             return CachedMethodPickle, (self._instance, self.__name__, self.cache)
+        return CachedMethodPickle, (self._instance, self.__name__)
 
     def _instance_call(self, *args, **kwds):
         """
