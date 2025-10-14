@@ -422,11 +422,13 @@ cdef class UniqueFactory(SageObject):
                     self._cache[version, _cache_key(key)] = obj
             obj._factory_data = self, version, key, extra_args
 
-            # Install a custom __reduce_ex__ method (that overrides __reduce__
-            # method) on the instance obj that we just created. We only do this
-            # if the class of obj has a generic object.__reduce__ method.
+            # Install a custom __reduce__ method on the instance "obj"
+            # that we just created. We only do this if the class of
+            # "obj" has a generic __reduce__ method, which is either
+            # object.__reduce__ or __reduce_cython__, the
+            # auto-generated pickling function for Cython.
             f = obj.__class__.__reduce__
-            if f.__objclass__ is object:
+            if f.__objclass__ is object or f.__name__ == "__reduce_cython__":
                 obj.__reduce_ex__ = types.MethodType(generic_factory_reduce, obj)
         except AttributeError:
             pass
