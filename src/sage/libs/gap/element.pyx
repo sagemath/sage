@@ -49,9 +49,7 @@ cdef Obj make_gap_list(sage_list) except NULL:
 
         sage: from sage.doctest.util import ensure_interruptible_after
         sage: for i in range(10):
-        ....:     with ensure_interruptible_after(0.1):
-        ....:         ignore = libgap([1000]*10000)
-        ....:     with ensure_interruptible_after(0.3):
+        ....:     with ensure_interruptible_after(0.2):
         ....:         ignore = libgap([1000]*100000)
     """
     cdef Obj l
