@@ -30,6 +30,7 @@ def magma_free_eval(code: str, strip=True, columns=0):
 
         The code must evaluate in at most 120 seconds
         and there is a limitation on the amount of RAM.
+        Otherwise, some :exc:`TimeoutError` will be raised.
 
     EXAMPLES::
 
@@ -54,7 +55,7 @@ def magma_free_eval(code: str, strip=True, columns=0):
     results = response.read()
     conn.close()
 
-    if b"Gateway Timeout" in results:
+    if b"Timeout" in results:
         raise TimeoutError('timeout from the server')
 
     xmlDoc = parseString(results)
