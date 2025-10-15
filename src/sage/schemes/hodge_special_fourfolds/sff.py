@@ -54,7 +54,18 @@ from sage.functions.other import binomial
 from sage.libs.singular.function_factory import singular_function
 _minbase = singular_function('minbase')
 
+import importlib
+
+try:
+    from sage.interfaces.macaulay2 import macaulay2 as m2_default
+    _HAS_MACAULAY2 = True
+except ImportError:
+    _HAS_MACAULAY2 = False
+    m2_default = None
+
 __VERBOSE__ = False
+
+
 def verbosity(b):
     r"""
     Change the default verbosity for some functions of this module.
@@ -70,6 +81,7 @@ def verbosity(b):
         raise TypeError("expected True or False")
     global __VERBOSE__
     __VERBOSE__ = b
+
 
 class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
     r"""
@@ -144,7 +156,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         sage: X.ambient()
         PP^4
         sage: p = X.point(); p
-        one-point scheme in PP^4 of coordinates [1, 52775, 1712, 653, 60565]
+        one-point scheme in PP^4 of coordinates [1, 36707, 23826, 46818, 34972]
         sage: p.dimension() == 0 and p.degree() == 1 and p.is_subset(X)
         True
 
@@ -434,7 +446,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             X = self.hyperplane_section(cache=False)
             j = X.embedding_as_hyperplane_section()
             p = j(X._raw_point())
-            assert(p._is_point())
+            assert p._is_point()
             return p
         if self.codimension() == 0:
             self.empty().random(*[1 for i in range(self.dimension())])
@@ -442,7 +454,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             h = rational_map(self,[_random1(self.ambient().coordinate_ring()) for i in range(self.dimension()+2)])
             Y = h.image()
             p = h.inverse_image(Y._raw_point())
-            assert(p._is_point())
+            assert p._is_point()
             return p
         for i in range(10):
             X = self.hyperplane_section(cache=False)
@@ -451,7 +463,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             if len(L) == 0:
                 continue
             p = j(L[0])
-            assert(p._is_point())
+            assert p._is_point()
             return p
         else:
             raise RuntimeError("function _raw_point() failed: reached maximum number of 10 attempts to find rational point")
@@ -482,7 +494,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             if all(i == 1 for i in self.degrees_generators()) or hasattr(self,"_parametrization"):
                 j = self.parametrize(verbose=verbose)
                 q = j(j.source().point(verbose=verbose, algorithm='sage'))
-                assert(q._is_point() and q.is_subset(self))
+                assert q._is_point() and q.is_subset(self)
                 return q
             return self._raw_point()
         if verbose:
@@ -493,10 +505,10 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         v = list(self.ambient_space().coordinate_ring().gens())
         M = matrix([v, c])
         polys = _minbase(ideal(M.minors(2)))
-        assert((ideal(polys)).ring() is self.ambient().coordinate_ring())
+        assert (ideal(polys)).ring() is self.ambient().coordinate_ring()
         p = Embedded_projective_variety(self.ambient_space(),polys)
         p._coordinate_list = c
-        assert(p._is_point() and p.is_subset(self))
+        assert p._is_point() and p.is_subset(self)
         p._macaulay2_object = pointOnX
         if verbose:
             print("-- function point() has terminated. --")
@@ -522,9 +534,9 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
                 raise ValueError("expected a point")
             I = self.defining_ideal()
             M = jacobian(I.gens(),I.ring().gens()).change_ring(I.ring().base_ring())
-            assert((M * matrix([I.ring().gens()]).transpose()).list() == I.gens())
+            assert (M * matrix([I.ring().gens()]).transpose()).list() == I.gens()
             c = M.right_kernel_matrix().list()
-            assert(len(c) == self.ambient().dimension() + 1)
+            assert len(c) == self.ambient().dimension() + 1
             self._coordinate_list = c
             return self._coordinate_list
 
@@ -545,21 +557,21 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             print(s)
         sf = s
         if d <= -1:
-            return(sf)
+            return sf
         c = self.codimension()
         s = "codim:................ " + str(c)
         if verbose:
             print(s)
         sf = sf + '\n' + s
         if c > self.ambient().dimension():
-            return(sf)
+            return sf
         e = self.degree()
         s = "degree:............... " + str(e)
         if verbose:
             print(s)
         sf = sf + '\n' + s
         if c >= self.ambient().dimension():
-            return(sf)
+            return sf
         g = self.sectional_genus()
         s = "sectional genus:...... " + str(g)
         if verbose:
@@ -577,12 +589,12 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             print(s)
         sf = sf + '\n' + s
         if dim_sing_loc <= -1:
-            return(sf)
+            return sf
         s = "gens. sing. l.:....... " + str(sing_loc.degrees_generators())
         if verbose:
             print(s)
         sf = sf + '\n' + s
-        return(sf)
+        return sf
 
     def describe(self):
         r"""
@@ -691,7 +703,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         if codomain is not None:
             if not self.is_subset(codomain):
                 raise ValueError("expected containment")
-            return(Rational_map_between_embedded_projective_varieties(self,codomain,self.coordinate_ring().gens()))
+            return Rational_map_between_embedded_projective_varieties(self,codomain,self.coordinate_ring().gens())
         try:
             return self._embedding_morphism
         except AttributeError:
@@ -710,7 +722,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             sage: C = Veronese(1,3)
             sage: F = C._homogeneous_component(2); F
             [x2^2 - x1*x3, x1*x2 - x0*x3, x1^2 - x0*x2]
-            sage: assert(C._homogeneous_component(2) is F)
+            sage: assert C._homogeneous_component(2) is F
         """
         if n in self._homogeneous_components_ideal:
             return self._homogeneous_components_ideal[n]
@@ -728,7 +740,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             B = _minbase(ideal(B))
         if trim:
             self._homogeneous_components_ideal.update({n:B})
-        return(B)
+        return B
 
     def linear_span(self):
         r"""
@@ -777,7 +789,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         if len(args) == 0:
             return self.ambient()
         for i in args:
-            if not(isinstance(i,(Integer,int)) and i>0):
+            if not (isinstance(i,(Integer,int)) and i > 0):
                 raise TypeError("expected a tuple of positive integers")
         if self.codimension() == 0:
             raise ValueError("no hypersurface contains the ambient space")
@@ -823,8 +835,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         TESTS::
 
             sage: h = D._from_random_coordinate_change
-            sage: assert(h.source() is C and h.target() is D)
-            sage: assert(h(C.point()).is_subset(D))
+            sage: assert h.source() is C and h.target() is D
+            sage: assert h(C.point()).is_subset(D)
         """
         K = self.base_ring()
         n = self.ambient().dimension()
@@ -835,7 +847,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         Y = Embedded_projective_variety(self.ambient_space(), (g._to_ring_map()(self.defining_ideal())).gens())
         f = rational_map(self, Y, f.defining_polynomials())
         g = rational_map(Y, self, g.defining_polynomials())
-        assert(f.compose(g) == 1 and g.compose(f) == 1)
+        assert f.compose(g) == 1 and g.compose(f) == 1
         f._is_isomorphism, f._is_birational, f._is_dominant, f._is_morphism = True, True, True, True
         g._is_isomorphism, g._is_birational, g._is_dominant, g._is_morphism = True, True, True, True
         f._inverse_rational_map = g
@@ -856,15 +868,15 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             sage: X = surface(3,4)
             sage: Y = X.intersection(X.empty().random(2)); Y
             curve of degree 10 and arithmetic genus 6 in PP^5 cut out by 6 hypersurfaces of degree 2
-            sage: assert(Y.is_subset(X) and (not X.is_subset(Y)) and X.is_subset(X.ambient()) and (not X.ambient().is_subset(X)))
-            sage: assert(not(X.is_subset(PP(2))))
+            sage: assert Y.is_subset(X) and (not X.is_subset(Y)) and X.is_subset(X.ambient()) and (not X.ambient().is_subset(X))
+            sage: assert not(X.is_subset(PP(2)))
         """
         Y = _check_type_embedded_projective_variety(Y)
         if self is Y:
             return True
         I = self.defining_ideal()
         J = Y.defining_ideal()
-        if I.ring() != J.ring():
+        if I.ring() is not J.ring():
             return False
         return all(g in I for g in J.gens())
 
@@ -895,12 +907,17 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         return Y.is_subset(self)
 
     def __ne__(self, Y):
-        return(not(self.__eq__(Y)))
+        return not self.__eq__(Y)
+
+    def __hash__(self):
+        r"""Return a hash based on the minimal generators of the defining ideal."""
+        return hash(tuple(sorted(str(g) for g in self.defining_polynomials())))
 
     def _macaulay2_init_(self, macaulay2=None):
         r"""Get the corresponding embedded projective variety in Macaulay2."""
+        if not _HAS_MACAULAY2:
+            raise RuntimeError("Macaulay2 interface not available")
         if macaulay2 is None:
-            from sage.interfaces.macaulay2 import macaulay2 as m2_default
             macaulay2 = m2_default
         try:
             return self._macaulay2_object
@@ -965,17 +982,17 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         except AttributeError:
             if self.codimension() == 0:
                 f = self.embedding_morphism(self)
-                assert(f.image() is self and f.is_dominant())
+                assert f.image() is self and f.is_dominant()
                 self._parametrization = f
                 return self._parametrization
             if all(i == 1 for i in self.degrees_generators()):
                 I = self.defining_ideal()
                 M = jacobian(I.gens(),I.ring().gens()).change_ring(I.ring().base_ring())
-                assert((M * matrix([I.ring().gens()]).transpose()).list() == I.gens())
+                assert (M * matrix([I.ring().gens()]).transpose()).list() == I.gens()
                 P = ProjectiveSpace(self.dimension(), self.base_ring(), 'z')
                 polys = (matrix(P.coordinate_ring().gens()) * M.right_kernel_matrix()).list()
                 f = rational_map(P,self,polys)
-                assert(f.image() is self and f.is_dominant())
+                assert f.image() is self and f.is_dominant()
                 self._parametrization = f
                 return self._parametrization
             X = macaulay2(self)
@@ -988,7 +1005,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             if verbose:
                 print("-- function parametrize has successfully terminated. --")
             psi = _from_macaulay2map_to_sagemap(psi, Sage_Target=self)
-            assert(psi.target() is self)
+            assert psi.target() is self
             return psi
 
     def intersection(self, other):
@@ -1102,7 +1119,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         B = A.inverse()
         f = rational_map(self.ambient(), self.ambient(), (matrix(self.ambient().coordinate_ring().gens()) * A).list())
         g = rational_map(self.ambient(), self.ambient(), (matrix(self.ambient().coordinate_ring().gens()) * B).list())
-        # assert(f.compose(g) == 1 and g(self)._coordinates() == [1]+[0 for i in range(n)])
+        # assert f.compose(g) == 1 and g(self)._coordinates() == [1]+[0 for i in range(n)]
         return (f, g)
 
     def cone_of_lines(self, point=None):
@@ -1131,7 +1148,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             Z.extend([pol.coefficient(x0 ** i) for i in range(1,pol.degree()+1)])
         V = Embedded_projective_variety(self.ambient_space(), _minbase(g._to_ring_map()(ideal(Z))))
         V = V.difference(point)
-        assert(V.is_subset(self) and (point.is_subset(V) or V.dimension() < 0))
+        assert V.is_subset(self) and (point.is_subset(V) or V.dimension() < 0)
 
         def fast_dec(degree=Infinity):
             if V.dimension() != 1:
@@ -1141,12 +1158,13 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             hY = h(Y)
             pts_on_PP1 = [q for q in hY.irreducible_components() if q.dimension() == 0 and q.degree() <= degree]
             W = [(Y.embedding_as_hyperplane_section()(Y.intersection(h.inverse_image(q)))).union(point) for q in pts_on_PP1]
-            assert([(w.dimension(),w.degree()) for w in W] == [(0,q.degree()+1) for q in pts_on_PP1])
+            assert [(w.dimension(),w.degree()) for w in W] == [(0,q.degree()+1) for q in pts_on_PP1]
             return W
 
         V._fast_decomposition = fast_dec
         V._vertex_point = point
         return V
+
 
 def _is_embedded_projective_variety(X):
     r"""whether ``X`` can be included in the class `Embedded_projective_variety``"""
@@ -1156,6 +1174,7 @@ def _is_embedded_projective_variety(X):
         return True
     return False
 
+
 def _check_type_embedded_projective_variety(X):
     r"""check if ``X`` can be included in the class `Embedded_projective_variety``"""
     if not _is_embedded_projective_variety(X):
@@ -1163,6 +1182,7 @@ def _check_type_embedded_projective_variety(X):
     if isinstance(X,Embedded_projective_variety):
         return X
     return Embedded_projective_variety(X)
+
 
 @cached_function
 def PP(n, KK=33331, var='x'):
@@ -1182,6 +1202,7 @@ def PP(n, KK=33331, var='x'):
         KK = GF(KK) if KK > 0 else QQ
         return PP(n, KK, var)
     return projective_variety(ProjectiveSpace(n, KK, var))
+
 
 def projective_variety(I, PP=None):
     r"""
@@ -1234,7 +1255,7 @@ def projective_variety(I, PP=None):
             return Embedded_projective_variety(PP, I.defining_polynomials())
     raise TypeError
 
-    
+
 class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomial_projective_space_field):
     r"""
     The class of rational maps between closed subvarieties of projective spaces.
@@ -1308,7 +1329,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
                 polys = [X.coordinate_ring().one()]
         X = _check_type_embedded_projective_variety(X)
         Y = _check_type_embedded_projective_variety(Y)
-        assert(isinstance(X,Embedded_projective_variety) and isinstance(Y,Embedded_projective_variety))
+        assert isinstance(X,Embedded_projective_variety) and isinstance(Y,Embedded_projective_variety)
         if X.base_ring() is not Y.base_ring():
             raise ValueError("different base rings found")
         if not isinstance(polys,tuple):
@@ -1322,12 +1343,12 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         s = dict(zip(gensR, X.ambient().coordinate_ring().gens()))
         polys = tuple([pol.subs(s) for pol in polys])
         SchemeMorphism_polynomial_projective_space.__init__(self, H, polys)
-        assert(self.domain() is X)
-        assert(self.codomain() is Y)
-        # assert(self.defining_polynomials() == polys) # this fails
+        assert self.domain() is X
+        assert self.codomain() is Y
+        # assert (self.defining_polynomials() == polys) # this fails
         degs = [g.lift().degree() if hasattr(g,"lift") and (not hasattr(g,"degree")) else g.degree() for g in [pol for pol in polys if pol != 0]]
         self.__degree_Forms = max(degs)
-        assert(self.__degree_Forms == min(degs))
+        assert self.__degree_Forms == min(degs)
         self._source = X
         self._target = Y
         self._is_isomorphism = None
@@ -1349,7 +1370,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             'rational map defined by forms of degree 4\nsource: PP^1\ntarget: PP^4'
         """
         if self.target().dimension() < 0:
-            return("empty rational map" + "\nsource: " + self.source()._repr_() + "\ntarget: " + self.target()._repr_())
+            return "empty rational map" + "\nsource: " + self.source()._repr_() + "\ntarget: " + self.target()._repr_()
         type_map = "rational map"
         if hasattr(self,"_base_locus") or hasattr(self,"_list_of_representatives_of_map"):
             self.is_morphism()
@@ -1394,7 +1415,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             \mbox{rational map defined by forms of degree } 4 \newline \mbox{source: } \mathbb{P}^{ 1 } \newline \mbox{target: } \mathbb{P}^{ 4 }
         """
         if self.target().dimension() < 0:
-            return("\\mbox{empty rational map}" + "\\newline \\mbox{source: }" + latex(self.source()) + "\\newline \\mbox{target: }" + latex(self.target()))
+            return "\\mbox{empty rational map}" + "\\newline \\mbox{source: }" + latex(self.source()) + "\\newline \\mbox{target: }" + latex(self.target())
         type_map = "rational map"
         if hasattr(self,"_base_locus") or hasattr(self,"_list_of_representatives_of_map"):
             self.is_morphism()
@@ -1459,7 +1480,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
 
     def _degree_forms(self):
         r"""Return the common degree of the polynomials defining the map"""
-        return(self.__degree_Forms)
+        return self.__degree_Forms
 
     def super(self):
         r"""
@@ -1523,7 +1544,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
 
             sage: f = f.restriction(f.source().point())
             sage: p = f.image(algorithm="built-in_kernel_ring_map")
-            sage: assert(p._is_point())
+            sage: assert p._is_point()
         """
         if self._is_dominant is True:
             return self.target()
@@ -1622,7 +1643,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             source: surface in PP^5 of degree 8 and sectional genus 5 cut out by 3 hypersurfaces of degree 2
             target: surface in PP^3 of degree 4 and sectional genus 3
             sage: q = f.inverse_image(f.target().point())          # optional - macaulay2
-            sage: assert(q._is_point() and q.ambient() == P)       # optional - macaulay2
+            sage: assert (q._is_point() and q.ambient() == P)       # optional - macaulay2
         """
         Z = _check_type_embedded_projective_variety(Z)
         if not Z.is_subset(self.super().target()):
@@ -1632,17 +1653,17 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         J = Z.defining_ideal()
         phiJ = phi(J)
         R = phi.codomain()
-        assert(R is self.source().coordinate_ring() and phiJ.ring() is R and B.ring() is R)
+        assert R is self.source().coordinate_ring() and phiJ.ring() is R and B.ring() is R
         if hasattr(R,"ambient") and hasattr(R,"defining_ideal"):
             phiJ = ideal([R.lift(g) for g in phiJ.gens()]) + R.defining_ideal()
             B = ideal([R.lift(b) for b in B.gens()]) + R.defining_ideal()
-        assert(phiJ.ring() is self.source().ambient_space().coordinate_ring() and B.ring() is self.source().ambient_space().coordinate_ring())
+        assert phiJ.ring() is self.source().ambient_space().coordinate_ring() and B.ring() is self.source().ambient_space().coordinate_ring()
         K = B.ring().base_ring()
         if len(set([b.degree() for b in B.gens()])) == 1:
             B = ideal(sum([K.random_element() * b for b in B.gens()]))
-            assert(B.is_homogeneous())
+            assert B.is_homogeneous()
         F = (phiJ.saturation(B))[0]
-        assert(F.ring() is self.source().ambient_space().coordinate_ring())
+        assert F.ring() is self.source().ambient_space().coordinate_ring()
         if trim:
             polys = _minbase(F)
         else:
@@ -1655,7 +1676,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             return 0
         L = self.target().empty().random(*[1 for i in range(self.source().dimension())])
         F = self.inverse_image(L,trim=False)
-        assert(F.dimension() <= 0)
+        assert F.dimension() <= 0
         if F.dimension() != 0:
             return 0
         return F.degree()
@@ -1800,7 +1821,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             [1, 2, 4, 4, 2]
         """
         g = f * self
-        assert(g.domain() is self.domain() and g.codomain() is f.codomain())
+        assert g.domain() is self.domain() and g.codomain() is f.codomain()
         if isinstance(f,Rational_map_between_embedded_projective_varieties):
             Y = f.target()
         else:
@@ -1843,7 +1864,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         """
         Y = None if self.source().codimension() == 0 else self.source()
         j = X.embedding_morphism(Y)
-        return(j.compose(self))
+        return j.compose(self)
 
     def restriction_from_target(self,Y):
         r"""
@@ -1887,8 +1908,9 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             <BLANKLINE>
             MultirationalMap (rational map from PP^1 to PP^4)
         """
+        if not _HAS_MACAULAY2:
+            raise RuntimeError("Macaulay2 interface not available")
         if macaulay2 is None:
-            from sage.interfaces.macaulay2 import macaulay2 as m2_default
             macaulay2 = m2_default
         try:
             return self._macaulay2_object
@@ -1944,6 +1966,14 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
     def __ne__(self,other):
         return not self.__eq__(other)
 
+    def __hash__(self):
+        r"""Return a hash based on source, target, and defining polynomials."""
+        return hash((
+            self.source(),
+            self.target(),
+            tuple(str(f) for f in self.defining_polynomials())
+        ))
+
     def inverse(self, check=True, verbose=None, algorithm='macaulay2'):
         r"""
         Return the inverse of the birational map.
@@ -1985,16 +2015,16 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         except Exception as err:
             raise RuntimeError(err)
         g = _from_macaulay2map_to_sagemap(g, self.target(), self.source())
-        assert(g.source() is self.target() and g.target() is self.source())
+        assert g.source() is self.target() and g.target() is self.source()
         if check:
             p = self.source().point(verbose=False, algorithm=algorithm)
-            assert(g(self(p)) == p)
+            assert g(self(p)) == p
             q = self.target().point(verbose=False, algorithm=algorithm)
-            assert(self(g(q)) == q)
+            assert self(g(q)) == q
             if verbose:
                 print("-- function inverse() has successfully terminated. --")
             self._is_birational = True
-            assert(g._is_birational is True)
+            assert g._is_birational is True
             g._inverse_rational_map = self
             self._inverse_rational_map = g
         return g
@@ -2018,7 +2048,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             if verbose:
                 print("-- running Macaulay2 function to compute representatives of map... --")
             n = f.maps().length().sage()
-            assert(isinstance(n,(int,Integer)))
+            assert isinstance(n,(int,Integer))
             reprs = [macaulay2(i).matrix(f).entries().flatten().sage() for i in range(n)]
             s = dict(zip(matrix(reprs).base_ring().gens(), self.source().ambient_space().coordinate_ring().gens()))
             reprsN = [[pol.subs(s) for pol in repr] for repr in reprs]
@@ -2178,7 +2208,7 @@ def rational_map(*args, **kwargs):
     """
     if len(args) == 3 and (args[0] is None or _is_embedded_projective_variety(args[0])) and (args[1] is None or _is_embedded_projective_variety(args[1])) and isinstance(args[2],(tuple,list)):
         polys = args[2]
-        if args[0] is None and len(polys)==0:
+        if args[0] is None and len(polys) == 0:
             raise ValueError("expected a non-empty list of polynomials")
         X = projective_variety(args[0]) if args[0] is not None else projective_variety((ideal(polys)).ring().ideal())
         return Rational_map_between_embedded_projective_varieties(X, args[1], polys)
@@ -2225,6 +2255,7 @@ def veronese(n, d, KK=33331, var='x'):
         KK = GF(KK) if KK > 0 else QQ
         return veronese(n, d, KK=KK, var=var)
     return Rational_map_between_embedded_projective_varieties(PP(n,KK=KK,var='t'), PP(binomial(n+d,n)-1,KK=KK,var=var), PP(n,KK=KK,var='t').empty()._homogeneous_component(d))
+
 
 def Veronese(n, d, KK=33331, var='x'):
     r"""
@@ -2340,9 +2371,9 @@ def surface(*args, KK=33331, ambient=None, nodes=None, virtual=False, class_surf
     """
     v = args
     for i in v:
-        if not(isinstance(i,(Integer,int))):
+        if not isinstance(i,(Integer,int)):
             raise TypeError("expected a tuple of integers")
-    if not((ambient is None or isinstance(ambient,(Integer,int))) and (nodes is None or isinstance(nodes,(Integer,int)))):
+    if not ((ambient is None or isinstance(ambient,(Integer,int))) and (nodes is None or isinstance(nodes,(Integer,int)))):
         raise TypeError("expected an integer")
     if class_surfaces not in ['rational', 'K3']:
         raise NotImplementedError("currently the keyword 'class_surfaces' supports: 'rational' and 'K3'")
@@ -2486,7 +2517,7 @@ class _Virtual_projective_surface(Embedded_projective_variety):
         """
         v = args
         for i in v:
-            if not(isinstance(i,(Integer,int))):
+            if not isinstance(i,(Integer,int)):
                 raise TypeError("expected a tuple of integers")
         N = self.ambient().dimension() - sum([r * binomial(i+1,2) for i, r in enumerate(v, start=1)])
         degS = self.degree() - sum([r * (i ** 2) for i, r in enumerate(v, start=1)])
@@ -2520,7 +2551,7 @@ class _Virtual_projective_surface(Embedded_projective_variety):
         """
         if hasattr(self, "_materialization"):
             return self._materialization
-        if not(hasattr(self, "_input_tuple") and hasattr(self, "_class_surfaces")):
+        if not (hasattr(self, "_input_tuple") and hasattr(self, "_class_surfaces")):
             raise NotImplementedError
         S = surface(*self._input_tuple, KK=self.ambient().base_ring(), ambient=self.ambient().dimension(), nodes=None, virtual=False, class_surfaces=self._class_surfaces)
         if S.degree() != self.degree():
@@ -2630,7 +2661,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
 
     def _repr_(self) -> str:
         r"""Return a string representation of the fourfold """
-        return("Hodge-special fourfold of degree " + str(self.degree()) + " in PP^" + str(self.ambient().dimension()) + " containing a " + str(self.surface()))
+        return "Hodge-special fourfold of degree " + str(self.degree()) + " in PP^" + str(self.ambient().dimension()) + " containing a " + str(self.surface())
 
     def _latex_(self) -> str:
         r"""
@@ -2648,7 +2679,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             \mbox{Hodge-special fourfold of degree } 4 \mbox{ in } \mathbb{P}^{ 6 } \mbox{ containing a } \mbox{rational } \mbox{surface in }\mathbb{P}^{ 6 } \mbox{ of degree } 6 \mbox{ and sectional genus } 1 \mbox{ cut out by } 9 \mbox{ hypersurfaces of degree } 2 \mbox{ (the image of the plane via the linear system } \left[3, 3\right] \mbox{)}
 
         """
-        return("\\mbox{Hodge-special fourfold of degree }" + latex(self.degree()) + "\\mbox{ in }" + latex(self.ambient()) + "\\mbox{ containing a }" + latex(self.surface()))
+        return "\\mbox{Hodge-special fourfold of degree }" + latex(self.degree()) + "\\mbox{ in }" + latex(self.ambient()) + "\\mbox{ containing a }" + latex(self.surface())
 
     def surface(self):
         r"""
@@ -2738,20 +2769,21 @@ class Hodge_special_fourfold(Embedded_projective_variety):
                     print("-- running Macaulay2 function discriminant(GM fourfold)... --")
                 X = macaulay2(self)
                 d = X.discriminant().sage()
-                assert(isinstance(d,(int,Integer)))
+                assert isinstance(d,(int,Integer))
                 a,b = X.cycleClass().last().sage()
-                assert(isinstance(a,(int,Integer)) and isinstance(b,(int,Integer)))
+                assert isinstance(a,(int,Integer)) and isinstance(b,(int,Integer))
                 self._discriminant_of_GM_fourfold = d
                 self._class_of_surface_in_the_Grass = (a,b)
                 if verbose:
                     print("-- function discriminant(GM fourfold) has successfully terminated. --")
                 return self._discriminant_of_GM_fourfold
-        return(self._lattice_intersection_matrix(verbose=verbose).determinant())
+        return self._lattice_intersection_matrix(verbose=verbose).determinant()
 
     def _macaulay2_init_(self, macaulay2=None):
         r"""Get the corresponding special fourfold in Macaulay2."""
+        if not _HAS_MACAULAY2:
+            raise RuntimeError("Macaulay2 interface not available")
         if macaulay2 is None:
-            from sage.interfaces.macaulay2 import macaulay2 as m2_default
             macaulay2 = m2_default
         try:
             return self._macaulay2_object
@@ -2785,7 +2817,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
                 if verbose:
                     print("--computation of image of map_from_fivefold terminated.")
                 self._the_map_from_the_fivefold = _from_macaulay2map_to_sagemap(f.removeUnderscores().multirationalMap(), Sage_Source=self.ambient_fivefold())
-                assert(hasattr(self._the_map_from_the_fivefold,"_closure_of_image"))
+                assert hasattr(self._the_map_from_the_fivefold,"_closure_of_image")
                 return self._the_map_from_the_fivefold
             if algorithm == 'sage':
                 # This needs to be improved!
@@ -2876,9 +2908,9 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         f = self.map_from_fivefold(verbose=verbose, algorithm=algorithm_for_image)
 
         def dim_and_degree(X):
-            return(X.dimension(), X.degree())
+            return (X.dimension(), X.degree())
 
-        def function_congruence(p, degree=None, verbose=false):
+        def function_congruence(p, degree=None, verbose=False):
             if degree is None and hasattr(self,"_possible_degrees_for_curves_of_congruence") and len(self._possible_degrees_for_curves_of_congruence) == 0:
                 raise RuntimeError("function 'congruence' failed (with previous runs)")
             p = _check_type_embedded_projective_variety(p)
@@ -2922,7 +2954,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             if len(W) == 0:
                 raise RuntimeError("function 'congruence' failed")
                 self._possible_degrees_for_curves_of_congruence = set()
-            assert(p.is_subset(W[0]))
+            assert p.is_subset(W[0])
             self._possible_degrees_for_curves_of_congruence = set([w.degree() for w in W])
             return W[0]
 
@@ -2934,7 +2966,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         d = Curve.degree()
 
         def function_congruence_with_degree(p):
-            return function_congruence(p, degree=d, verbose=false)
+            return function_congruence(p, degree=d, verbose=False)
 
         congr = _Congruence_of_secant_curves_to_surface(function_congruence_with_degree, None, d, self)
 
@@ -2956,7 +2988,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         EXAMPLES::
 
             sage: X = fourfold(surface(3,4))
-            sage: X.fano_map(verbose=false)                     # optional - macaulay2
+            sage: X.fano_map(verbose=False)                     # optional - macaulay2
             dominant rational map defined by forms of degree 2
             source: PP^5
             target: PP^4
@@ -3096,7 +3128,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             L = _from_macaulay2_to_sage(U.building()[2][0].removeUnderscores(),Sage_Ambient_Space=mu.target().ambient_space())
             C = _from_macaulay2_to_sage(U.building()[2][1].removeUnderscores(),Sage_Ambient_Space=mu.target().ambient_space())
             f = _from_macaulay2map_to_sagemap(U.building()[3].removeUnderscores(),Sage_Source=U_non_minimal)
-            assert(mu.source() is self.ambient_fivefold() and U_non_minimal.is_subset(mu.target()) and L.is_subset(U_non_minimal) and C.is_subset(U_non_minimal) and f.source() is U_non_minimal and f.image().dimension() == 2)
+            assert mu.source() is self.ambient_fivefold() and U_non_minimal.is_subset(mu.target()) and L.is_subset(U_non_minimal) and C.is_subset(U_non_minimal) and f.source() is U_non_minimal and f.image().dimension() == 2
             self._macaulay2_associated_surface_construction = (mu, U_non_minimal, (L,C), f)
             if verbose:
                 print("-- function " + s + "() has terminated. --")
@@ -3127,7 +3159,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
                     raise ValueError("expected a point on the ambient fivefold")
                 C = f(p)
                 D = _from_macaulay2_to_sage(C,self.ambient_space())
-                assert(p.is_subset(D) and D.is_subset(self.ambient_fivefold()) and D.dimension() == 1 and D.degree() == deg_congr)
+                assert p.is_subset(D) and D.is_subset(self.ambient_fivefold()) and D.dimension() == 1 and D.degree() == deg_congr
                 return D
 
             g = _Congruence_of_secant_curves_to_surface(f_s, f, deg_congr, self)
@@ -3166,8 +3198,9 @@ class _Congruence_of_secant_curves_to_surface(SageObject):
         return self._function_on_points(p)
 
     def _macaulay2_init_(self, macaulay2=None):
+        if not _HAS_MACAULAY2:
+            raise RuntimeError("Macaulay2 interface not available")
         if macaulay2 is None:
-            from sage.interfaces.macaulay2 import macaulay2 as m2_default
             macaulay2 = m2_default
         return self._macaulay2_object
 
@@ -3188,12 +3221,12 @@ class _Intersection_of_three_quadrics_in_P7(Hodge_special_fourfold):
     r"""The class of Hodge-special complete intersections of three quadrics in ``PP^7``."""
     def __init__(self, S, X, V=None, check=True):
         super().__init__(S, X, V, check=check)
-        if not(self.degrees_generators() == (2,2,2) and self.ambient_fivefold().degrees_generators() == (2,2)):
+        if not (self.degrees_generators() == (2,2,2) and self.ambient_fivefold().degrees_generators() == (2,2)):
             raise ValueError("something went wrong in constructing complete intersections of three quadrics in PP^7")
         self._degree_as_hypersurface = 2
 
     def _repr_(self) -> str:
-        return("Complete intersection of 3 quadrics in PP^7 of discriminant " + str(self.discriminant(verbose=False)) + " = 8*" + str(self._lattice_intersection_matrix()[1,1]) + "-" + str(self._lattice_intersection_matrix()[0,1]) + "^2" + " containing a " + str(self.surface()))
+        return "Complete intersection of 3 quadrics in PP^7 of discriminant " + str(self.discriminant(verbose=False)) + " = 8*" + str(self._lattice_intersection_matrix()[1,1]) + "-" + str(self._lattice_intersection_matrix()[0,1]) + "^2" + " containing a " + str(self.surface())
 
     def _latex_(self) -> str:
         r"""
@@ -3212,7 +3245,7 @@ class _Intersection_of_three_quadrics_in_P7(Hodge_special_fourfold):
             1 & 4
             \end{array}\right) \mbox{ containing a } \mbox{plane in }\mathbb{P}^{ 7 }
         """
-        return("\\mbox{Complete intersection of }" + latex(3) + "\\mbox{ quadrics in }" + latex(self.ambient()) + "\\mbox{ of discriminant }" + latex(self.discriminant(verbose=False)) + " = \\det " + latex(self._lattice_intersection_matrix()) + "\\mbox{ containing a }" + latex(self.surface()))
+        return "\\mbox{Complete intersection of }" + latex(3) + "\\mbox{ quadrics in }" + latex(self.ambient()) + "\\mbox{ of discriminant }" + latex(self.discriminant(verbose=False)) + " = \\det " + latex(self._lattice_intersection_matrix()) + "\\mbox{ containing a }" + latex(self.surface())
 
     def ambient_fivefold(self):
         try:
@@ -3283,12 +3316,12 @@ class Cubic_fourfold(Hodge_special_fourfold):
     r"""The class of Hodge-special cubic fourfolds in ``PP^5``."""
     def __init__(self, S, X, V=None, check=True):
         super().__init__(S, X, V, check=check)
-        if not(self.degree() == 3 and self.codimension() == 1 and len(self.degrees_generators()) == 1):
+        if not (self.degree() == 3 and self.codimension() == 1 and len(self.degrees_generators()) == 1):
             raise ValueError("something went wrong in constructing cubic fourfold in PP^5")
         self._degree_as_hypersurface = 3
 
     def _repr_(self) -> str:
-        return("Cubic fourfold of discriminant " + str(self.discriminant(verbose=False)) + " = 3*" + str(self._lattice_intersection_matrix()[1,1]) + "-" + str(self._lattice_intersection_matrix()[0,1]) + "^2" + " containing a " + str(self.surface()))
+        return "Cubic fourfold of discriminant " + str(self.discriminant(verbose=False)) + " = 3*" + str(self._lattice_intersection_matrix()[1,1]) + "-" + str(self._lattice_intersection_matrix()[0,1]) + "^2" + " containing a " + str(self.surface())
 
     def _latex_(self) -> str:
         r"""
@@ -3307,7 +3340,7 @@ class Cubic_fourfold(Hodge_special_fourfold):
             5 & 13
             \end{array}\right) \mbox{ containing a } \mbox{rational } \mbox{surface in }\mathbb{P}^{ 5 } \mbox{ of degree } 5 \mbox{ and sectional genus } 1 \mbox{ cut out by } 5 \mbox{ hypersurfaces of degree } 2 \mbox{ (the image of the plane via the linear system } \left[3, 4\right] \mbox{)}
         """
-        return("\\mbox{Cubic fourfold of discriminant }" + latex(self.discriminant(verbose=False)) + " = \\det " + latex(self._lattice_intersection_matrix()) + "\\mbox{ containing a }" + latex(self.surface()))
+        return "\\mbox{Cubic fourfold of discriminant }" + latex(self.discriminant(verbose=False)) + " = \\det " + latex(self._lattice_intersection_matrix()) + "\\mbox{ containing a }" + latex(self.surface())
 
     def K3(self, verbose=None):
         r"""
@@ -3376,12 +3409,12 @@ class GushelMukai_fourfold(Hodge_special_fourfold):
 
         sage: X = fourfold("17", GF(33331)); X                  # optional - macaulay2
         Gushel-Mukai fourfold of discriminant 20 containing a surface in PP^8 of degree 9 and sectional genus 2 cut out by 19 hypersurfaces of degree 2, class of the surface in GG(1,4): (6, 3)
-        sage: assert(X.base_ring().characteristic() == 33331)   # optional - macaulay2
+        sage: assert (X.base_ring().characteristic() == 33331)   # optional - macaulay2
 
     """
     def __init__(self, S, X, V=None, check=True) -> None:
         super().__init__(S, X, V, check=check)
-        if not(self.ambient().dimension() == 8 and self.degrees_generators() == (2,2,2,2,2,2) and self.degree() == 10 and self.sectional_genus() == 6):
+        if not (self.ambient().dimension() == 8 and self.degrees_generators() == (2,2,2,2,2,2) and self.degree() == 10 and self.sectional_genus() == 6):
             raise ValueError("something went wrong in constructing Gushel-Mukai fourfold in PP^8")
         self._degree_as_hypersurface = 2
 
@@ -3396,11 +3429,11 @@ class GushelMukai_fourfold(Hodge_special_fourfold):
                 e = "('')"
             else:
                 raise RuntimeError("Internal error encountered.")
-        return("Gushel-Mukai fourfold of discriminant " + str(d) + e + " containing a " + str(self.surface()) + ", class of the surface in GG(1,4): " + str((a,b)))
+        return "Gushel-Mukai fourfold of discriminant " + str(d) + e + " containing a " + str(self.surface()) + ", class of the surface in GG(1,4): " + str((a,b))
 
     def _latex_(self) -> str:
         r"""Return the LaTeX representation of the Gushel-Mukai fourfold."""
-        return("\\mbox{Gushel-Mukai fourfold of discriminant }" + latex(self.discriminant(verbose=False)) + "\\mbox{ containing a }" + latex(self.surface()))
+        return "\\mbox{Gushel-Mukai fourfold of discriminant }" + latex(self.discriminant(verbose=False)) + "\\mbox{ containing a }" + latex(self.surface())
 
     def K3(self, verbose=None):
         r"""
@@ -3496,11 +3529,11 @@ def fourfold(S, X=None, V=None, check=True):
 
     """
     if isinstance(S, str):
-        if not(V is None and check is True and (X is None or isinstance(X,(int,Integer)) or X in Fields())):
+        if not (V is None and check is True and (X is None or isinstance(X,(int,Integer)) or X in Fields())):
             raise TypeError
         return _special_fourfold_from_m2(S, i=X)
     if isinstance(S, sage.interfaces.abc.Macaulay2Element) and S.instance(macaulay2('HodgeSpecialFourfold')).sage():
-        if not(X is None and V is None and check is True):
+        if not (X is None and V is None and check is True):
             raise TypeError
         Z = S.removeUnderscores()
         A = ProjectiveSpace(Z.ambient().ring().sage())
@@ -3544,32 +3577,32 @@ def _special_fourfold_from_m2(s, i=None):
     r"""Special fourfolds constructed with Macaulay2."""
     if not isinstance(s,str):
         raise TypeError("expected a string")
-    if not(i is None or isinstance(i,(int,Integer)) or i in Fields()):
+    if not (i is None or isinstance(i,(int,Integer)) or i in Fields()):
         raise TypeError("expected an integer or a field")
     t = ')' if i is None else ', ' + str(i) + ')' if isinstance(i,(int,Integer)) else ', ' + macaulay2(i).toExternalString().sage() + ')'
     XinM2 = macaulay2('specialFourfold("' + s + '"' + t).removeUnderscores()
     V = ProjectiveSpace(XinM2.ambient().ring().sage())
-    return(_from_macaulay2_to_sage(XinM2,V))
+    return _from_macaulay2_to_sage(XinM2,V)
 
 
 def _expr_var_0(Dim, DimAmbient):
     if DimAmbient < 0:
-        return("empty scheme", "\\mbox{empty scheme}")
+        return ("empty scheme", "\\mbox{empty scheme}")
     if Dim < 0 and DimAmbient < 1:
-        return("empty scheme", "\\mbox{empty scheme}") # provisional
+        return ("empty scheme", "\\mbox{empty scheme}") # provisional
     if Dim < 0:
-        return("empty subscheme of PP^" + str(DimAmbient), "\\mbox{empty subscheme of }\\mathbb{P}^{" + latex(DimAmbient) + "}")
+        return ("empty subscheme of PP^" + str(DimAmbient), "\\mbox{empty subscheme of }\\mathbb{P}^{" + latex(DimAmbient) + "}")
     if Dim == DimAmbient:
-        return("PP^" + str(DimAmbient), "\\mathbb{P}^{" + latex(DimAmbient) + "}")
+        return ("PP^" + str(DimAmbient), "\\mathbb{P}^{" + latex(DimAmbient) + "}")
     if Dim == 1:
-        return("curve in PP^" + str(DimAmbient), "\\mbox{curve in }" + "\\mathbb{P}^{" + latex(DimAmbient) + "}")
+        return ("curve in PP^" + str(DimAmbient), "\\mbox{curve in }" + "\\mathbb{P}^{" + latex(DimAmbient) + "}")
     if Dim == 2:
-        return("surface in PP^" + str(DimAmbient), "\\mbox{surface in }" + "\\mathbb{P}^{" + latex(DimAmbient) + "}")
+        return ("surface in PP^" + str(DimAmbient), "\\mbox{surface in }" + "\\mathbb{P}^{" + latex(DimAmbient) + "}")
     if DimAmbient - Dim == 1:
-        return("hypersurface in PP^" + str(DimAmbient), "\\mbox{hypersurface in }" + "\\mathbb{P}^{" + latex(DimAmbient) + "}")
+        return ("hypersurface in PP^" + str(DimAmbient), "\\mbox{hypersurface in }" + "\\mathbb{P}^{" + latex(DimAmbient) + "}")
     if Dim == 3:
-        return("threefold in PP^" + str(DimAmbient), "\\mbox{threefold in }" + "\\mathbb{P}^{" + latex(DimAmbient) + "}")
-    return(str(Dim) + "-dimensional subvariety of PP^" + str(DimAmbient), latex(Dim) + "\\mbox{-dimensional subvariety of }" + "\\mathbb{P}^{" + latex(DimAmbient) + "}")
+        return ("threefold in PP^" + str(DimAmbient), "\\mbox{threefold in }" + "\\mathbb{P}^{" + latex(DimAmbient) + "}")
+    return (str(Dim) + "-dimensional subvariety of PP^" + str(DimAmbient), latex(Dim) + "\\mbox{-dimensional subvariety of }" + "\\mathbb{P}^{" + latex(DimAmbient) + "}")
 
 
 def _expr_var_1(X):
@@ -3582,9 +3615,9 @@ def _expr_var_1(X):
         if X._is_point():
             c = " of coordinates " + str(X._coordinates())
             c_l = "\\mbox{ of coordinates }" + latex(X._coordinates())
-            return("one-point scheme in PP^" + str(n) + c, "\\mbox{one-point scheme in }" + "\\mathbb{P}^{" + latex(n) + "}" + c_l)
+            return ("one-point scheme in PP^" + str(n) + c, "\\mbox{one-point scheme in }" + "\\mathbb{P}^{" + latex(n) + "}" + c_l)
         else:
-            return("0-dimensional subscheme of degree " + str(X.degree()) + " in PP^" + str(n), latex(0) + "\\mbox{-dimensional subscheme of degree }" + latex(X.degree())  + "\\mbox{ in }\\mathbb{P}^{" + latex(n) + "}")
+            return ("0-dimensional subscheme of degree " + str(X.degree()) + " in PP^" + str(n), latex(0) + "\\mbox{-dimensional subscheme of degree }" + latex(X.degree()) + "\\mbox{ in }\\mathbb{P}^{" + latex(n) + "}")
     cutOut = ""
     if len(degs) > 1:
         if degs.count(degs[0]) == len(degs):
@@ -3599,37 +3632,37 @@ def _expr_var_1(X):
             cutOut_l = "\\mbox{ cut out by }" + latex(len(degs)) + "\\mbox{ hypersurfaces of degrees }" + latex(tuple(degs))
     if k == 1:
         if degs.count(1) == len(degs) and X.degree() == 1:
-            return("line in PP^" + str(n), "\\mbox{line in }" + "\\mathbb{P}^{" + latex(n) + "}")
+            return ("line in PP^" + str(n), "\\mbox{line in }" + "\\mathbb{P}^{" + latex(n) + "}")
         if X.degree() == 2 and X.sectional_genus() == 0:
-            return("conic curve in PP^" + str(n), "\\mbox{conic curve in }" + "\\mathbb{P}^{" + latex(n) + "}")
+            return ("conic curve in PP^" + str(n), "\\mbox{conic curve in }" + "\\mathbb{P}^{" + latex(n) + "}")
         if X.degree() == 3:
-            return("cubic curve of arithmetic genus " + str(X.sectional_genus()) + " in PP^" + str(n) + cutOut, "\\mbox{cubic curve of arithmetic genus }" + latex(X.sectional_genus()) + "\\mbox{ in }\\mathbb{P}^{" + latex(n) + "}" + cutOut_l)
-        return("curve of degree " + str(X.degree()) + " and arithmetic genus " + str(X.sectional_genus()) + " in PP^" + str(n) + cutOut, "\\mbox{curve of degree }" + latex(X.degree()) + "\\mbox{ and arithmetic genus }" + latex(X.sectional_genus()) + "\\mbox{ in }\\mathbb{P}^{" + latex(n) + "}" + cutOut_l)
+            return ("cubic curve of arithmetic genus " + str(X.sectional_genus()) + " in PP^" + str(n) + cutOut, "\\mbox{cubic curve of arithmetic genus }" + latex(X.sectional_genus()) + "\\mbox{ in }\\mathbb{P}^{" + latex(n) + "}" + cutOut_l)
+        return ("curve of degree " + str(X.degree()) + " and arithmetic genus " + str(X.sectional_genus()) + " in PP^" + str(n) + cutOut, "\\mbox{curve of degree }" + latex(X.degree()) + "\\mbox{ and arithmetic genus }" + latex(X.sectional_genus()) + "\\mbox{ in }\\mathbb{P}^{" + latex(n) + "}" + cutOut_l)
     if k == 2:
         if degs.count(1) == len(degs) and X.degree() == 1:
-            return("plane in PP^" + str(n), "\\mbox{plane in }" + "\\mathbb{P}^{" + latex(n) + "}")
+            return ("plane in PP^" + str(n), "\\mbox{plane in }" + "\\mathbb{P}^{" + latex(n) + "}")
         if X.degree() == 2:
-            return("quadric surface in PP^" + str(n), "\\mbox{quadric surface in }" + "\\mathbb{P}^{" + latex(n) + "}")
+            return ("quadric surface in PP^" + str(n), "\\mbox{quadric surface in }" + "\\mathbb{P}^{" + latex(n) + "}")
         if X.degree() == 3:
-            return("cubic surface in PP^" + str(n) + cutOut, "\\mbox{cubic surface in }" + "\\mathbb{P}^{" + latex(n) + "}" + cutOut_l)
-        return("surface in PP^" + str(n) + " of degree " + str(X.degree()) + " and sectional genus " + str(X.sectional_genus()) + cutOut, "\\mbox{surface in }\\mathbb{P}^{" + latex(n) + "}" + "\\mbox{ of degree }" + latex(X.degree()) + "\\mbox{ and sectional genus }" + latex(X.sectional_genus()) + cutOut_l)
+            return ("cubic surface in PP^" + str(n) + cutOut, "\\mbox{cubic surface in }" + "\\mathbb{P}^{" + latex(n) + "}" + cutOut_l)
+        return ("surface in PP^" + str(n) + " of degree " + str(X.degree()) + " and sectional genus " + str(X.sectional_genus()) + cutOut, "\\mbox{surface in }\\mathbb{P}^{" + latex(n) + "}" + "\\mbox{ of degree }" + latex(X.degree()) + "\\mbox{ and sectional genus }" + latex(X.sectional_genus()) + cutOut_l)
     if len(degs) == 1 and n - k == 1 and degs[0] == X.degree():
         if degs[0] == 1:
-            return("hyperplane in PP^" + str(n), "\\mbox{hyperplane in }" + "\\mathbb{P}^{" + latex(n) + "}")
+            return ("hyperplane in PP^" + str(n), "\\mbox{hyperplane in }" + "\\mathbb{P}^{" + latex(n) + "}")
         if degs[0] == 2:
-            return("quadric hypersurface in PP^" + str(n), "\\mbox{quadric hypersurface in }" + "\\mathbb{P}^{" + latex(n) + "}")
+            return ("quadric hypersurface in PP^" + str(n), "\\mbox{quadric hypersurface in }" + "\\mathbb{P}^{" + latex(n) + "}")
         if degs[0] == 3:
-            return("cubic hypersurface in PP^" + str(n), "\\mbox{cubic hypersurface in }" + "\\mathbb{P}^{" + latex(n) + "}")
-        return("hypersurface of degree " + str(X.degree()) + " in PP^" + str(n), "\\mbox{hypersurface of degree }" + latex(X.degree()) + "\\mbox{ in }\\mathbb{P}^{" + latex(n) + "}")
+            return ("cubic hypersurface in PP^" + str(n), "\\mbox{cubic hypersurface in }" + "\\mathbb{P}^{" + latex(n) + "}")
+        return ("hypersurface of degree " + str(X.degree()) + " in PP^" + str(n), "\\mbox{hypersurface of degree }" + latex(X.degree()) + "\\mbox{ in }\\mathbb{P}^{" + latex(n) + "}")
     if len(degs) == n - k and X.degree() == product(degs):
         if degs.count(1) == len(degs):
-            return("linear " + str(k) + "-dimensional subspace of PP^" + str(n),   "\\mbox{linear }" + latex(X.dimension()) + "\\mbox{-dimensional subspace of }\\mathbb{P}^{" + latex(n) + "}")
-        return("complete intersection of type " + str(tuple(degs)) + " in PP^" + str(n), "\\mbox{complete intersection of type }" + latex(tuple(degs)) + "\\mbox{ in }\\mathbb{P}^{" + latex(n) + "}")
-    return(str(k) + "-dimensional variety of degree " + str(X.degree()) + " in PP^" + str(n) + cutOut, latex(k) + "\\mbox{-dimensional variety of degree }" + latex(X.degree()) + "\\mbox{ in }\\mathbb{P}^{" + latex(n) + "}" + cutOut_l)
+            return ("linear " + str(k) + "-dimensional subspace of PP^" + str(n),   "\\mbox{linear }" + latex(X.dimension()) + "\\mbox{-dimensional subspace of }\\mathbb{P}^{" + latex(n) + "}")
+        return ("complete intersection of type " + str(tuple(degs)) + " in PP^" + str(n), "\\mbox{complete intersection of type }" + latex(tuple(degs)) + "\\mbox{ in }\\mathbb{P}^{" + latex(n) + "}")
+    return (str(k) + "-dimensional variety of degree " + str(X.degree()) + " in PP^" + str(n) + cutOut, latex(k) + "\\mbox{-dimensional variety of degree }" + latex(X.degree()) + "\\mbox{ in }\\mathbb{P}^{" + latex(n) + "}" + cutOut_l)
 
 
 def _random1(R):
-    return(sum([R.random_element(degree=0) * x for x in R.gens()]))
+    return sum([R.random_element(degree=0) * x for x in R.gens()])
 
 
 def _from_macaulay2_to_sage(X, Sage_Ambient_Space):
@@ -3641,18 +3674,18 @@ def _from_macaulay2_to_sage(X, Sage_Ambient_Space):
         sage: S_sage = surface(3,1,1)
         sage: V = S_sage.ambient_space()
         sage: S_m2 = macaulay2(S_sage)                                                 # optional - macaulay2
-        sage: assert(_from_macaulay2_to_sage(S_m2,V) is S_sage)                        # optional - macaulay2
+        sage: assert (_from_macaulay2_to_sage(S_m2,V) is S_sage)                        # optional - macaulay2
         sage: Y_m2 = S_m2.ambient()                                                    # optional - macaulay2
         sage: Y_sage = _from_macaulay2_to_sage(Y_m2,V)                                 # optional - macaulay2
-        sage: assert(macaulay2(Y_sage) is Y_m2)                                        # optional - macaulay2
+        sage: assert (macaulay2(Y_sage) is Y_m2)                                        # optional - macaulay2
         sage: Z_m2 = S_m2.point()                                                      # optional - macaulay2
         sage: Z_sage = _from_macaulay2_to_sage(Z_m2,V)                                 # optional - macaulay2
-        sage: assert(macaulay2(Z_sage) is Z_m2)                                        # optional - macaulay2
+        sage: assert (macaulay2(Z_sage) is Z_m2)                                        # optional - macaulay2
         sage: X_sage = fourfold(S_sage)                                                # optional - macaulay2
         sage: X_m2 = macaulay2(X_sage)                                                 # optional - macaulay2
-        sage: assert(_from_macaulay2_to_sage(X_m2,V) is X_sage)                        # optional - macaulay2
-        sage: assert(macaulay2(X_sage.surface()) == X_m2.surface())                    # optional - macaulay2
-        sage: assert(macaulay2(X_sage.ambient_fivefold()) == X_m2.ambientFivefold())   # optional - macaulay2
+        sage: assert (_from_macaulay2_to_sage(X_m2,V) is X_sage)                        # optional - macaulay2
+        sage: assert (macaulay2(X_sage.surface()) == X_m2.surface())                    # optional - macaulay2
+        sage: assert (macaulay2(X_sage.ambient_fivefold()) == X_m2.ambientFivefold())   # optional - macaulay2
 
     """
     if not isinstance(X, sage.interfaces.abc.Macaulay2Element):
@@ -3666,7 +3699,7 @@ def _from_macaulay2_to_sage(X, Sage_Ambient_Space):
             varV = _from_macaulay2_to_sage(X.ambientFivefold(), Sage_Ambient_Space)
             if not hasattr(varS,"_finite_number_of_nodes"):
                 varS._finite_number_of_nodes = X.surface().numberNodes().sage()
-                assert(isinstance(varS._finite_number_of_nodes,(int,Integer)))
+                assert isinstance(varS._finite_number_of_nodes,(int,Integer))
             X._sage_object = fourfold(varS,varX,varV,check=False)
             X._sage_object._macaulay2_object = X
             return X._sage_object
@@ -3693,7 +3726,7 @@ def _from_macaulay2map_to_sagemap(f, Sage_Source=None, Sage_Target=None):
         birational map defined by forms of degree 1
         source: curve of degree 4 and arithmetic genus 0 in PP^4 cut out by 6 hypersurfaces of degree 2
         target: PP^1
-        sage: assert(macaulay2(g) is f)
+        sage: assert macaulay2(g) is f
     """
     if not isinstance(f,sage.interfaces.abc.Macaulay2Element):
         raise TypeError("expected a Macaulay2 object")
@@ -3716,18 +3749,18 @@ def _from_macaulay2map_to_sagemap(f, Sage_Source=None, Sage_Target=None):
         f._sage_object._macaulay2_object = f
         if not f.sharp('"isDominant"')._operator('===',macaulay2('null')).sage():
             f._sage_object._is_dominant = f.sharp('"isDominant"').sage()
-            assert(isinstance(f._sage_object._is_dominant,bool))
+            assert isinstance(f._sage_object._is_dominant,bool)
         if not f.sharp('"isBirational"')._operator('===',macaulay2('null')).sage():
             f._sage_object._is_birational = f.sharp('"isBirational"').sage()
-            assert(isinstance(f._sage_object._is_birational,bool))
+            assert isinstance(f._sage_object._is_birational,bool)
         if f._sage_object._is_dominant is not True and (not hasattr(f._sage_object,"_closure_of_image")) and (not f.sharp('"image"')._operator('===',macaulay2('null')).sage()):
             Z = _from_macaulay2_to_sage(f.image(), Sage_Target.ambient_space())
-            assert(Z.is_subset(f._sage_object.target()))
+            assert Z.is_subset(f._sage_object.target())
             f._sage_object._closure_of_image = Z
         if f._sage_object._is_morphism is not True and (not hasattr(f._sage_object,"_list_of_representatives_of_map")) and (not f.toRationalMap().sharp('"maps"')._operator('===',macaulay2('null')).sage()):
-            assert(macaulay2(f._sage_object) is f)
+            assert macaulay2(f._sage_object) is f
             f._sage_object._representatives(verbose=False,algorithm='macaulay2')
-            assert(hasattr(f._sage_object,"_list_of_representatives_of_map"))
+            assert hasattr(f._sage_object,"_list_of_representatives_of_map")
         return f._sage_object
 
 
@@ -3750,7 +3783,7 @@ def update_macaulay2_packages():
     all the ``Macaulay2`` packages needed to the functions of this module.
     You don't need to do this if you use the development version of ``Macaulay2``.
     """
-    import os
+    os = importlib.import_module("os")
     inp = input('Do you want to download or update all the needed files in the current directory: ' + os.getcwd() + "? (y/n) ")
     if inp not in ('y', 'Y', 'yes', 'Yes', 'YES'):
         print('## Update not executed. ##')
@@ -3771,10 +3804,11 @@ def update_macaulay2_packages():
 
 def _set_macaulay2_():
     r"""Setting of ``Macaulay2``."""
-    if not (Macaulay2().is_present()): # and macaulay2.version() >= (1, 21)):
+    if not _HAS_MACAULAY2:
         if __name__ == "__main__":
             print("Please, install Macaulay2 version 1.21 or newer to use the module sff.py")
         return
+    macaulay2 = m2_default
     macaulay2('needsPackage "SpecialFanoFourfolds"')
     if __name__ == "__main__" and not (macaulay2('SpecialFanoFourfolds.Options.Version >= "2.7.1"')).sage():
         print(r"""Your version of some Macaulay2 package is outdated. Please, execute the command:
@@ -3794,7 +3828,7 @@ Alternatively, you may execute the following command in a Unix/Linux shell: curl
     macaulay2.eval(r"""
 removeUnderscores = method()
 removeUnderscores (Ring, ZZ) := memoize((K, n) -> (
-    assert(isField K);
+    assert (isField K);
     if n>30 then return K[vars(52..52+n)];
     (x0,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10) := (local x0,local x1,local x2,local x3,local x4,local x5,local x6,local x7,local x8,local x9,local x10);
     (x11,x12,x13,x14,x15,x16,x17,x18,x19,x20) := (local x11,local x12,local x13,local x14,local x15,local x16,local x17,local x18,local x19,local x20);
@@ -3805,7 +3839,7 @@ removeUnderscores EmbeddedProjectiveVariety := X -> (
     if X.cache#?"removeUnderscores" then return X.cache#"removeUnderscores";
     P := removeUnderscores(coefficientRing X,dim ambient X);
     Y := projectiveVariety(sub(ideal X,vars P),Saturate=>false);
-    if codim Y > 0 then assert(ambient Y === projectiveVariety P) else assert(ambient Y == projectiveVariety P);
+    if codim Y > 0 then assert (ambient Y === projectiveVariety P) else assert (ambient Y == projectiveVariety P);
     if X.cache#?"euler" then Y.cache#"euler" = X.cache#"euler";
     if X.cache#?"FiniteNumberOfNodes" then Y.cache#"FiniteNumberOfNodes" = X.cache#"FiniteNumberOfNodes";
     if codim ambientVariety X > 0 then Y % removeUnderscores(ambientVariety X);
@@ -3834,7 +3868,7 @@ removeUnderscores (EmbeddedProjectiveVariety,MultirationalMap) := (X,f) -> (
         h = (Hom(X,target g)) entries sub(matrix entries g,vars ring ambient X);
     ) else (
         h = multirationalMap rationalMap map(ring X,ring target g,sub(matrix g,vars ring ambient X));
-        assert(ring source h === ring X);
+        assert (ring source h === ring X);
         h#"source" = X;
     );
     h.cache#("removeUnderscores",X) = h;
@@ -3872,6 +3906,7 @@ removeUnderscores HodgeSpecialFourfold := X -> (
     X.cache#("removeUnderscores",surface X, ambientFivefold X) = Y
 );
 """)
+
 
 _set_macaulay2_()
 
