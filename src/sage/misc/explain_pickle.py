@@ -426,8 +426,14 @@ class PickleExplainer:
     symbolically and constructs :class:`SageInputExpression` objects instead of
     directly constructing values.
     """
-    def __init__(self, sib, in_current_sage=False, default_assumptions=False,
-                 pedantic=False):
+
+    def __init__(
+        self,
+        sib: SageInputBuilder,
+        in_current_sage=False,
+        default_assumptions=False,
+        pedantic=False,
+    ):
         r"""
         Initialize a PickleExplainer interpreter for the pickle virtual machine.
 

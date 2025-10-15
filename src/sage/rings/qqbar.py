@@ -6664,7 +6664,7 @@ class ANRational(ANDescr):
         """
         return repr(self._value)
 
-    def handle_sage_input(self, sib, coerce, is_qqbar):
+    def handle_sage_input(self, sib: SageInputBuilder, coerce: CoercionMode, is_qqbar):
         r"""
         Produce an expression which will reproduce this value when evaluated,
         and an indication of whether this value is worth sharing (always
@@ -7231,7 +7231,7 @@ class ANRoot(ANDescr):
         """
         return 'Root %s of %s' % (self._interval, self._poly)
 
-    def handle_sage_input(self, sib, coerce, is_qqbar):
+    def handle_sage_input(self, sib: SageInputBuilder, coerce: CoercionMode, is_qqbar):
         r"""
         Produce an expression which will reproduce this value when evaluated,
         and an indication of whether this value is worth sharing (always ``True``
@@ -7908,7 +7908,7 @@ class ANExtensionElement(ANDescr):
                                                  sgen,
                                                  self._generator._interval_fast(53))
 
-    def handle_sage_input(self, sib, coerce, is_qqbar):
+    def handle_sage_input(self, sib: SageInputBuilder, coerce: CoercionMode, is_qqbar):
         r"""
         Produce an expression which will reproduce this value when evaluated,
         and an indication of whether this value is worth sharing (always ``True``
@@ -8359,7 +8359,7 @@ class ANUnaryExpr(ANDescr):
         """
         return (ANUnaryExpr, (self._arg, self._op))
 
-    def handle_sage_input(self, sib, coerce, is_qqbar):
+    def handle_sage_input(self, sib: SageInputBuilder, coerce: CoercionMode, is_qqbar):
         r"""
         Produce an expression which will reproduce this value when evaluated,
         and an indication of whether this value is worth sharing (always
@@ -8617,7 +8617,7 @@ class ANBinaryExpr(ANDescr):
         """
         return (ANBinaryExpr, (self._left, self._right, self._op))
 
-    def handle_sage_input(self, sib, coerce, is_qqbar):
+    def handle_sage_input(self, sib: SageInputBuilder, coerce: CoercionMode, is_qqbar):
         r"""
         Produce an expression which will reproduce this value when evaluated,
         and an indication of whether this value is worth sharing (always
