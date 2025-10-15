@@ -129,7 +129,7 @@ from copyreg import constructor as copyreg_constructor
 from functools import reduce
 from io import IOBase, StringIO
 from subprocess import PIPE, Popen
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING
 
 import sage.geometry.abc
 from sage.arith.misc import GCD as gcd
@@ -168,7 +168,7 @@ lazy_import('ppl', 'point', as_='PPL_point',
             feature=PythonModule("ppl", spkg='pplpy', type='standard'))
 
 if TYPE_CHECKING:
-    from sage.misc.sage_input import SageInputBuilder, SageInputExpression
+    from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 
 class SetOfAllLatticePolytopesClass(Set_generic):
@@ -573,7 +573,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             self._ambient_facet_indices = tuple(ambient_facet_indices)
             self._vertices = ambient.vertices(self._ambient_vertex_indices)
 
-    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         """
         Return Sage command to reconstruct ``self``.
 

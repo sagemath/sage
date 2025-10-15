@@ -161,7 +161,6 @@ import sys
 import types
 import zlib as comp
 from pickletools import genops
-from typing import Literal
 
 from sage.misc.persist import (
     SageUnpickler,
@@ -171,7 +170,7 @@ from sage.misc.persist import (
     unpickle_override,
 )
 from sage.misc.sage_eval import sage_eval
-from sage.misc.sage_input import SageInputBuilder, SageInputExpression
+from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 # Python 3 does not have a "ClassType". Instead, we ensure that
 # isinstance(foo, ClassType) will always return False.
@@ -361,7 +360,7 @@ class PickleObject:
         self.expression = expression
         self.immutable = False
 
-    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Extracts the expression from a PickleObject, and sets the immutable
         flag.

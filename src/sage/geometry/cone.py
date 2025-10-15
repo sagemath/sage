@@ -244,7 +244,7 @@ lazy_import('ppl', ['ray', 'point'], as_=['PPL_ray', 'PPL_point'],
                     feature=PythonModule("ppl", spkg='pplpy', type='standard'))
 
 if TYPE_CHECKING:
-    from sage.misc.sage_input import SageInputBuilder, SageInputExpression
+    from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 
 def is_Cone(x):
@@ -1505,7 +1505,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         if PPL is not None:
             self._PPL_C_Polyhedron = PPL
 
-    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         """
         Return Sage command to reconstruct ``self``.
 
@@ -4323,8 +4323,9 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         # recursively
         N = self.lattice()
         if not self.is_simplicial():
-            from sage.geometry.triangulation.point_configuration \
-                    import PointConfiguration
+            from sage.geometry.triangulation.point_configuration import (
+                PointConfiguration,
+            )
             origin = self.nrays() # last one in pc
             pc = PointConfiguration(tuple(self.rays()) + (N(0),), star=origin)
             triangulation = pc.triangulate()

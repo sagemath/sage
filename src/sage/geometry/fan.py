@@ -237,12 +237,10 @@ from __future__ import annotations
 
 from collections.abc import Callable, Container
 from copy import copy
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING
 from warnings import warn
 
 import sage.geometry.abc
-
-from sage.structure.richcmp import richcmp_method, richcmp
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.combinat.combination', 'Combinations')
 lazy_import('sage.combinat.posets.posets', 'FinitePoset')
@@ -265,7 +263,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 if TYPE_CHECKING:
-    from sage.misc.sage_input import SageInputBuilder, SageInputExpression
+    from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 
 def is_Fan(x) -> bool:
@@ -1222,7 +1220,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         if virtual_rays is not None:
             self._virtual_rays = PointCollection(virtual_rays, self.lattice())
 
-    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         """
         Return Sage command to reconstruct ``self``.
 
@@ -2492,8 +2490,8 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         """
         if not self.is_complete():
             raise ValueError('to be polytopal, the fan should be complete')
-        from sage.geometry.triangulation.point_configuration import PointConfiguration
         from sage.geometry.polyhedron.constructor import Polyhedron
+        from sage.geometry.triangulation.point_configuration import PointConfiguration
         pc = PointConfiguration(self.rays())
         v_pc = [tuple(p) for p in pc]
         pc_to_indices = {tuple(p):i for i, p in enumerate(pc)}
@@ -2762,8 +2760,10 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             sage: fan1.is_isomorphic(fan1)
             True
         """
-        from sage.geometry.fan_isomorphism import \
-            fan_isomorphic_necessary_conditions, fan_isomorphism_generator
+        from sage.geometry.fan_isomorphism import (
+            fan_isomorphic_necessary_conditions,
+            fan_isomorphism_generator,
+        )
         if not fan_isomorphic_necessary_conditions(self, other):
             return False
         if self.lattice_dim() == 2:

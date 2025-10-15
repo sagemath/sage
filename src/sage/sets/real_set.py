@@ -99,7 +99,7 @@ AUTHORS:
 from __future__ import annotations
 
 from heapq import merge
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING
 
 from sage.categories.sets_cat import EmptySetError
 from sage.categories.topological_spaces import TopologicalSpaces
@@ -112,7 +112,7 @@ from sage.structure.richcmp import richcmp, richcmp_method
 from sage.structure.unique_representation import UniqueRepresentation
 
 if TYPE_CHECKING:
-    from sage.misc.sage_input import SageInputBuilder, SageInputExpression
+    from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 
 @richcmp_method
@@ -2637,7 +2637,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         overlap_generator = RealSet._scan_to_intervals(scan, lambda i: i > 1)
         return next(overlap_generator, None) is None
 
-    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         """
         Produce an expression which will reproduce this value when evaluated.
 

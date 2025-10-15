@@ -308,7 +308,7 @@ import operator
 from sage.cpython.string cimport char_to_str, bytes_to_str
 
 from sage.misc.superseded import deprecation
-from sage.misc.sage_input import SageInputBuilder, SageInputExpression
+from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 import sage.rings.infinity
 
 # ****************************************************************************
@@ -656,7 +656,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
         """
         return "\\Bold{I} \\Bold{R}"
 
-    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 
@@ -1393,7 +1393,7 @@ cdef class RealIntervalFieldElement(RingElement):
         """
         raise TypeError
 
-    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 

@@ -128,7 +128,7 @@ from sage.rings.abc import RealDoubleField, ComplexDoubleField
 
 from sage.rings.integer cimport Integer, smallInteger
 from sage.arith.numerical_approx cimport digits_to_bits
-from sage.misc.sage_input import SageInputBuilder, SageInputExpression
+from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 # For the norm function, we cache Sage integers 1 and 2
 __one__ = smallInteger(1)
@@ -1259,7 +1259,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             return self
         return self.change_ring(R)
 
-    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 

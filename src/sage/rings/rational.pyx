@@ -77,7 +77,7 @@ from sage.structure.coerce cimport coercion_model, is_numpy_type
 from sage.structure.element cimport Element
 from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport rich_to_bool_sgn
-from sage.misc.sage_input import SageInputBuilder, SageInputExpression
+from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 RealNumber_classes = ()
 
@@ -3845,7 +3845,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         """
         return '%s/%s' % (self.numerator(), self.denominator())
 
-    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 

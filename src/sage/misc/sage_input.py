@@ -181,6 +181,7 @@ from sage.misc.lazy_import import lazy_import
 lazy_import('sage.rings.real_mpfi', 'RealIntervalFieldElement')
 lazy_import('sage.rings.complex_interval', 'ComplexIntervalFieldElement')
 
+CoercionMode = bool | Literal[2]
 
 def sage_input(x, preparse=True, verify=False, allow_locals=False):
     r"""
@@ -346,7 +347,7 @@ class SageInputBuilder:
         self._next_local = 1
         self._locals = {}
 
-    def __call__(self, x, coerced: bool | Literal[2] = False):
+    def __call__(self, x, coerced: CoercionMode = False):
         r"""
         Try to convert an arbitrary value ``x`` into a
         :class:`SageInputExpression` (an SIE).

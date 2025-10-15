@@ -110,7 +110,7 @@ from sage.categories.morphism cimport Morphism
 from sage.categories.map cimport Map
 
 from sage.misc.persist import register_unpickle_override
-from sage.misc.sage_input import SageInputBuilder, SageInputExpression
+from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 from sage.structure.parent cimport Parent
 
@@ -612,7 +612,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
     _fricas_init_ = _axiom_init_
 
-    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when
         evaluated.
