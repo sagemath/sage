@@ -48,20 +48,19 @@ AC_DEFUN([AX_BOOST_BASE],
 AC_ARG_WITH([boost],
   [AS_HELP_STRING([--with-boost@<:@=ARG@:>@],
     [use Boost library from a standard location (ARG=yes),
-     from the specified location (ARG=<path>),
-     or disable it (ARG=no)
+     or from the specified location (ARG=<path>),
      @<:@ARG=yes@:>@ ])],
     [
      AS_CASE([$withval],
-       [no],[want_boost="no";_AX_BOOST_BASE_boost_path=""],
        [yes],[want_boost="yes";_AX_BOOST_BASE_boost_path=""],
+       [no],[AC_MSG_ERROR([Boost is a prerequisite and cannot be turned off])],
        [want_boost="yes";_AX_BOOST_BASE_boost_path="$withval"])
     ],
     [want_boost="yes"])
 
 
 AC_ARG_WITH([boost-libdir],
-  [AS_HELP_STRING([--with-boost-libdir=LIB_DIR],
+  [AS_HELP_STRING([--with-boost-libdir=LIB_DIR (unmaintained, do not use!)],
     [Force given directory for boost libraries.
      Note that this will override library path detection,
      so use this parameter only if default library detection fails
