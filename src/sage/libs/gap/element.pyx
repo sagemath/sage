@@ -84,30 +84,10 @@ cdef Obj make_gap_matrix(sage_list, gap_ring) except NULL:
 
     The list of the elements in ``sage_list`` as a Gap ``Obj``.
     """
-    cdef Obj l
-    cdef GapElement elem
-    cdef GapElement one
-    cdef int i
-    if gap_ring is not None:
-        one = <GapElement>gap_ring.One()
-    else:
-        one = <GapElement>libgap(1)
-
-    try:
-        GAP_Enter()
-        l = GAP_NewPlist(0)
-
-        for i, x in enumerate(sage_list):
-            if not isinstance(x, GapElement):
-                elem = <GapElement>libgap(x)
-                elem = elem * one
-            else:
-                elem = <GapElement>x
-
-            GAP_AssList(l, i + 1, elem.value)
-        return l
-    finally:
-        GAP_Leave()
+    cdef GapElement one = gap_ring.One() if gap_ring is not None else libgap(1)
+    return make_gap_list([
+        x if isinstance(x, GapElement) else <GapElement>libgap(x) * one
+        for x in sage_list])
 
 
 cdef char *capture_stdout(Obj func, Obj obj) noexcept:
