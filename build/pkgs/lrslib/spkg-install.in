@@ -1,4 +1,10 @@
 cd src/
+# Copy arithmetic header files from lrsarith-011 subdirectory to root
+# (lrslib-073 has them in subdirectory, but autotools expects them in root)
+cp lrsarith-011/lrslong.h lrsarith-011/lrslong.c .
+cp lrsarith-011/lrsgmp.h lrsarith-011/lrsgmp.c .
+cp lrsarith-011/lrsmp.h lrsarith-011/lrsmp.c .
+autoreconf -fiv
 sdh_configure
 sdh_make
 sdh_make_install

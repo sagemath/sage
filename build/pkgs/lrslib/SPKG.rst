@@ -9,8 +9,10 @@ Fukuda.
 
 See the homepage (http://cgm.cs.mcgill.ca/~avis/C/lrs.html) for details.
 
-We use an autotoolized version from
-https://github.com/mkoeppe/lrslib/tree/autoconfiscation
+We apply autotools patches from
+https://github.com/passagemath/upstream-lrslib/tree/autoconfiscation
+to the upstream version 073 from
+http://cgm.cs.mcgill.ca/~avis/C/lrslib/archive/lrslib-073.tar.gz
 
 License
 -------

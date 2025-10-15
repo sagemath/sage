@@ -1,0 +1,1030 @@
+diff -Naur -X /tmp/excludes.txt lrslib-073-orig/Makefile.am lrslib-073-autotools/Makefile.am
+--- lrslib-073-orig/Makefile.am	1970-01-01 08:00:00.000000000 +0800
++++ lrslib-073-autotools/Makefile.am	2025-10-15 22:24:26.355603841 +0800
+@@ -0,0 +1,250 @@
++ACLOCAL_AMFLAGS = -I m4
++AUTOMAKE_OPTIONS = subdir-objects
++
++SUBDIRS = . mplrs
++
++# Add -DLRS_QUIET to CPPFLAGS to get no error  messages, warnings etc.
++# These flags should *not* include the arithmetic selecting define.
++AM_CPPFLAGS = -DTIMES -DSIGNALS
++
++bin_PROGRAMS = 2nash lrs lrs1 lrsnash redund redund1 setupnash setupnash2
++noinst_PROGRAMS = nashdemo
++
++# No arithmetic
++## original makefile (version 062) target 'lrsnash' builds without a library,
++## whereas 'all' would build it with 2nash_LIBADD = liblrsgmp.la
++2nash_SOURCES = 2nash.c
++
++# Long arithmetic
++lrs1_SOURCES = lrs.c lrslib.c lrslong.c lrsdriver.c
++lrs1_CPPFLAGS = -DLRSLONG
++redund1_SOURCES = lrs.c lrslib.c lrslong.c lrsdriver.c
++redund1_CPPFLAGS = -DLRSLONG
++
++# Home-grown multi-precision arithmetic
++setupnash_SOURCES = setupnash.c lrslib.c lrsmp.c lrsdriver.c
++setupnash2_SOURCES = setupnash2.c lrslib.c lrsmp.c lrsdriver.c
++## original makefile (version 062) target 'allmp' builds redund, lrs with home-grown mp;
++## whereas 'all' builds it with GMP; see below.
++#redund_SOURCES = redund.c lrslib.c lrsmp.c
++#lrs_SOURCES = lrs.c lrslib.c lrsmp.c
++
++
++# Libtool convenience libraries
++noinst_LTLIBRARIES = liblrs1.la liblrs2.la liblrsgmp.la
++
++liblrs1_la_SOURCES = lrslib.c lrslong.c
++liblrs1_la_CPPFLAGS = -DMA -DSAFE -DLRSLONG
++
++liblrs2_la_SOURCES = lrslib.c lrslong.c
++liblrs2_la_CPPFLAGS = -DMA -DSAFE -DB128 -DLRSLONG
++
++liblrsgmp_la_SOURCES = lrslib.c lrsgmp.c
++liblrsgmp_la_CPPFLAGS = -DMA -DGMP $(GMP_CFLAGS)
++liblrsgmp_la_LIBADD = $(GMP_LDFLAGS) -lgmp
++
++
++# Installed library (shared and/or static) -- all arithmetics
++lib_LTLIBRARIES = liblrs.la
++liblrs_la_SOURCES = lrsdriver.c
++liblrs_la_CPPFLAGS = $(AM_CPPFLAGS)
++liblrs_la_LDFLAGS = -version-info 0:0:0 -no-undefined
++liblrs_la_LIBADD = $(noinst_LTLIBRARIES)
++
++# Binaries using the shared library
++# Upstream makefile calls these binaries "lrs-shared", "lrsnash-shared"
++lrsnash_SOURCES = lrsnash.c lrsnashlib.c
++# note original makefile (version 062) builds lrsnash with -DLRS_QUIET
++lrsnash_CPPFLAGS = -DGMP -DMA $(GMP_CFLAGS)
++lrsnash_LDADD = liblrs.la $(GMP_LDFLAGS) -lgmp
++
++redund_SOURCES = lrs.c
++redund_CPPFLAGS = -DMA $(GMP_CFLAGS)
++redund_LDADD = liblrs.la $(GMP_LDFLAGS) -lgmp
++
++lrs_SOURCES = lrs.c
++lrs_CPPFLAGS = -DMA $(GMP_CFLAGS)
++lrs_LDADD = liblrs.la $(GMP_LDFLAGS) -lgmp
++
++nashdemo_SOURCES = nashdemo.c lrsnashlib.c
++nashdemo_CPPFLAGS = -DGMP -DMA $(GMP_CFLAGS)
++nashdemo_LDADD = liblrs.la $(GMP_LDFLAGS) -lgmp
++
++
++include_HEADERS = lrslib.h lrsdriver.h lrsgmp.h lrslong.h lrsmp.h lrsrestart.h
++noinst_HEADERS = lrsnashlib.h mplrs.h
++
++examplesdir = $(pkgdatadir)/doc/examples
++nobase_dist_examples_DATA =			\
++	games/g					\
++	games/g1				\
++	games/g2				\
++	games/game				\
++	games/game_22				\
++	games/game1				\
++	games/game2				\
++	games/gamec				\
++	games/gamem				\
++	games/gamem.2				\
++	games/gamem.gmp				\
++	games/gamemp				\
++	games/h					\
++	games/h1				\
++	games/h2				\
++	cube.ext				\
++	cube.ine				\
++	mit.ine					\
++	mp5.ine					\
++	ext/metric/c6.ext			\
++	ext/metric/c6.ine			\
++	ext/metric/c7.ext			\
++	ext/metric/c7.ine			\
++	ext/metric/cp4.ext			\
++	ext/metric/cp5.ext			\
++	ext/metric/cp6.ext			\
++	ext/metric/cp6.ine			\
++	ext/metric/cp7.ext			\
++	ext/test/cut16_11.ext			\
++	ext/test/cut32_16.ext			\
++	ext/test/cyclic25_13.ext		\
++	ext/test/tsp5.ext			\
++	ine/metric/cp4.ine			\
++	ine/metric/cp5.ine			\
++	ine/metric/cp6.ine			\
++	ine/metric/mp5.ine			\
++	ine/metric/mp6.ine			\
++	ine/mit/mit.ine				\
++	ine/mit/mit288-281.ine			\
++	ine/mit/mit31-20.ine			\
++	ine/mit/mit41-16.ine			\
++	ine/mit/mit708-9.ine			\
++	ine/mit/mit71-61.ine			\
++	ine/mit/mit90-86.ine			\
++	ine/redund/c4.ine			\
++	ine/redund/cube.ine			\
++	ine/redund/metric80_16.ine		\
++	ine/redund/mp5a.ine			\
++	ine/redund/mp5c.ine			\
++	ine/redund/r20_5.ine			\
++	ine/redund/r2000_5.redund		\
++	ine/redund/r35_5.ine			\
++	ine/redund/r500_5.ine			\
++	ine/redund/c4a.ine 			\
++	ine/redund/mit.ine			\
++	ine/redund/mp5b.ine			\
++	ine/redund/r100_5.ine			\
++	ine/redund/r2000_5.ine			\
++	ine/redund/r2000_5.redundc		\
++	ine/redund/r4000_5.ine			\
++	ine/redund/hidden/c1.ine		\
++	ine/redund/hidden/c2.ine		\
++	ine/redund/hidden/c2a.ine		\
++	ine/redund/hidden/cp4.ine		\
++	ine/redund/hidden/metric80_16.ine	\
++	ine/redund/hidden/rcube.ine		\
++	ine/redund/hidden/s0.ine		\
++	ine/test/cross4.ine			\
++	ine/test/cyclic17_8.ine			\
++	ine/test/diamond.ine			\
++	ine/test/in0.ine			\
++	ine/test/in1.ine			\
++	ine/test/in2.ine			\
++	ine/test/in3.ine			\
++	ine/test/in4.ine			\
++	ine/test/in5.ine			\
++	ine/test/in6.ine			\
++	ine/test/in7.ine			\
++	ine/test/inf.ine			\
++	ine/test/kkd38_6.ine			\
++	ine/test/kq20_11.ine			\
++	ine/test/kq20_11a.ine			\
++	ine/test/metric40_11.ine		\
++	ine/test/metric80_16.ine		\
++	ine/test/mit31_20.ine			\
++	ine/test/trunc10.ine			\
++	ine/test/trunc7.ine			\
++	ine/test/truss2.ine			\
++	ine/test/tsp5.ine			\
++	ine/test-062/bv7.ine			\
++	ine/test-062/c30-15.ext			\
++	ine/test-062/c40-20.ext			\
++	ine/test-062/fq48-19.ine		\
++	ine/test-062/m6.ine			\
++	ine/test-062/mit.ine			\
++	ine/test-062/mit71-61.ine		\
++	ine/test-062/normaliz/bv7.in		\
++	ine/test-062/normaliz/c30-15.ext.in	\
++	ine/test-062/normaliz/c40-20.ext.in	\
++	ine/test-062/normaliz/cp6.in		\
++	ine/test-062/normaliz/fq48-19.in	\
++	ine/test-062/normaliz/m6.in		\
++	ine/test-062/normaliz/mit.in		\
++	ine/test-062/normaliz/mit71-61.in	\
++	ine/test-062/normaliz/perm10.in		\
++	ine/test-062/normaliz/zfw91.in		\
++	ine/test-062/perm10.ine			\
++	ine/test-062/porta/bv7.ine.ieq		\
++	ine/test-062/porta/c30-15.ext.poi	\
++	ine/test-062/porta/c40-20.ext.poi	\
++	ine/test-062/porta/cp6.ine.ieq		\
++	ine/test-062/porta/fq48-19.ine.ieq	\
++	ine/test-062/porta/m6.ine.ieq		\
++	ine/test-062/porta/mit.ine.ieq		\
++	ine/test-062/porta/mit71-61.ine.ieq	\
++	ine/test-062/porta/perm10.ine.ieq	\
++	ine/test-062/porta/zfw91.ine.ieq	\
++	ine/test-062/zfw91.ine			\
++	ine/test-062/zfw91nn.ine
++
++EXTRA_DIST =					\
++	chdemo.c				\
++	float2rat.c				\
++	fourier.c				\
++	lpdemo.c				\
++	lpdemo1.c				\
++	lpdemo2.c				\
++	lrsgmp.cpp				\
++	lrslib.cpp				\
++	lrslong.cpp				\
++	lrsmp.cpp				\
++	plotD.gp				\
++	plotL.gp				\
++	rat2float.c				\
++	readme					\
++	setupnash.c				\
++	setupnash2.c				\
++	vedemo.c
++
++# From Sage package:
++check-local-lrs:
++	cat ${srcdir}/ext/test/cut16_11.ext > testin
++	echo "volume" >> testin
++	${builddir}/lrs testin > testout1
++	echo `grep -G Volume testout1` > testout1
++	echo "*Volume=32768/14175" > testout2
++	diff testout1 testout2
++	cat ${srcdir}/ine/test/cyclic17_8.ine > testin
++	${builddir}/lrs testin > testout1
++	echo `grep -G Totals testout1` > testout1
++	echo "*Totals: vertices=935 rays=0 bases=935 integer_vertices=0" > testout2
++	diff testout1 testout2
++	rm -f testin
++	rm -f testout1
++	rm -f testout2
++
++check-local-games:
++	${builddir}/lrsnash ${srcdir}/games/game
++	${builddir}/lrsnash ${srcdir}/games/gamec
++
++# not tested automatically
++check-local-games-long:
++	${builddir}/lrsnash ${srcdir}/games/gamem
++	${builddir}/lrsnash ${srcdir}/games/gamemp
++
++# ignore errors -- known to crash as of 071a
++check-local-games-legacy-format:
++	-${builddir}/lrsnash ${srcdir}/games/game1 ${srcdir}/games/game2
++
++check-local: check-local-lrs check-local-games check-local-games-legacy-format
++
++CLEANFILES = testout1 testout2
+diff -Naur -X /tmp/excludes.txt lrslib-073-orig/configure.ac lrslib-073-autotools/configure.ac
+--- lrslib-073-orig/configure.ac	1970-01-01 08:00:00.000000000 +0800
++++ lrslib-073-autotools/configure.ac	2025-10-15 22:24:26.355603841 +0800
+@@ -0,0 +1,45 @@
++#                                               -*- Autoconf -*-
++# Process this file with autoconf to produce a configure script.
++
++AC_PREREQ(2.59)
++AC_INIT(lrslib, 071b+autotools-2021-07-13)
++AM_INIT_AUTOMAKE(foreign)
++AC_CONFIG_FILES([Makefile mplrs/Makefile])
++AC_CONFIG_MACRO_DIRS([m4])
++AC_PROG_CC
++AC_PROG_LIBTOOL
++
++AC_CHECK_SIZEOF([long])
++case $ac_cv_sizeof_long in
++    8)
++        ;;
++    4)
++	AC_DEFINE(B32)
++	;;
++    *)
++	AC_MSG_ERROR([lrslib can only be built if sizeof(long) is 4 or 8; found $ac_cv_sizeof_long])
++	;;
++esac
++
++dnl mplrs -- requires MPI.
++AC_ARG_ENABLE([mplrs],
++    [AS_HELP_STRING([--enable-mplrs@<:@=ARG@:>@],
++      [enable building mplrs @<:@default=check@:>@])],
++    [:],
++    [enable_mplrs=check])
++AS_IF([test "x$enable_mplrs" != xno],
++  [AX_MPI(
++      [enable_mplrs=yes],
++      [AS_IF([test "x$enable_mplrs" == xyes],
++          [AC_MSG_ERROR([mplrs requires MPI C compiler])],
++          [AC_MSG_NOTICE([Will not build mplrs because MPI C compiler was not found])
++           enable_mplrs=no])])
++  ])
++AM_CONDITIONAL([MPLRS], [test x$enable_mplrs = xyes])
++
++ACX_PTHREAD
++LIBS="$PTHREAD_LIBS $LIBS"
++CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
++CC="$PTHREAD_CC"
++
++AC_OUTPUT
+diff -Naur -X /tmp/excludes.txt lrslib-073-orig/m4/ax_mpi.m4 lrslib-073-autotools/m4/ax_mpi.m4
+--- lrslib-073-orig/m4/ax_mpi.m4	1970-01-01 08:00:00.000000000 +0800
++++ lrslib-073-autotools/m4/ax_mpi.m4	2025-10-15 22:24:26.371603840 +0800
+@@ -0,0 +1,176 @@
++# ===========================================================================
++#          http://www.gnu.org/software/autoconf-archive/ax_mpi.html
++# ===========================================================================
++#
++# SYNOPSIS
++#
++#   AX_MPI([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
++#
++# DESCRIPTION
++#
++#   This macro tries to find out how to compile programs that use MPI
++#   (Message Passing Interface), a standard API for parallel process
++#   communication (see http://www-unix.mcs.anl.gov/mpi/)
++#
++#   On success, it sets the MPICC, MPICXX, MPIF77, or MPIFC output variable
++#   to the name of the MPI compiler, depending upon the current language.
++#   (This may just be $CC/$CXX/$F77/$FC, but is more often something like
++#   mpicc/mpiCC/mpif77/mpif90.) It also sets MPILIBS to any libraries that
++#   are needed for linking MPI (e.g. -lmpi or -lfmpi, if a special
++#   MPICC/MPICXX/MPIF77/MPIFC was not found).
++#
++#   Note that this macro should be used only if you just have a few source
++#   files that need to be compiled using MPI. In particular, you should
++#   neither overwrite CC/CXX/F77/FC with the values of
++#   MPICC/MPICXX/MPIF77/MPIFC, nor assume that you can use the same flags
++#   etc. as the standard compilers. If you want to compile a whole program
++#   using the MPI compiler commands, use one of the macros
++#   AX_PROG_{CC,CXX,FC}_MPI.
++#
++#   ACTION-IF-FOUND is a list of shell commands to run if an MPI library is
++#   found, and ACTION-IF-NOT-FOUND is a list of commands to run if it is not
++#   found. If ACTION-IF-FOUND is not specified, the default action will
++#   define HAVE_MPI.
++#
++# LICENSE
++#
++#   Copyright (c) 2008 Steven G. Johnson <stevenj@alum.mit.edu>
++#   Copyright (c) 2008 Julian C. Cummings <cummings@cacr.caltech.edu>
++#
++#   This program is free software: you can redistribute it and/or modify it
++#   under the terms of the GNU General Public License as published by the
++#   Free Software Foundation, either version 3 of the License, or (at your
++#   option) any later version.
++#
++#   This program is distributed in the hope that it will be useful, but
++#   WITHOUT ANY WARRANTY; without even the implied warranty of
++#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
++#   Public License for more details.
++#
++#   You should have received a copy of the GNU General Public License along
++#   with this program. If not, see <http://www.gnu.org/licenses/>.
++#
++#   As a special exception, the respective Autoconf Macro's copyright owner
++#   gives unlimited permission to copy, distribute and modify the configure
++#   scripts that are the output of Autoconf when processing the Macro. You
++#   need not follow the terms of the GNU General Public License when using
++#   or distributing such scripts, even though portions of the text of the
++#   Macro appear in them. The GNU General Public License (GPL) does govern
++#   all other use of the material that constitutes the Autoconf Macro.
++#
++#   This special exception to the GPL applies to versions of the Autoconf
++#   Macro released by the Autoconf Archive. When you make and distribute a
++#   modified version of the Autoconf Macro, you may extend this special
++#   exception to the GPL to apply to your modified version as well.
++
++#serial 8
++
++AU_ALIAS([ACX_MPI], [AX_MPI])
++AC_DEFUN([AX_MPI], [
++AC_PREREQ(2.50) dnl for AC_LANG_CASE
++
++AC_LANG_CASE([C], [
++	AC_REQUIRE([AC_PROG_CC])
++	AC_ARG_VAR(MPICC,[MPI C compiler command])
++	AC_CHECK_PROGS(MPICC, mpicc hcc mpxlc_r mpxlc mpcc cmpicc, $CC)
++	ax_mpi_save_CC="$CC"
++	CC="$MPICC"
++	AC_SUBST(MPICC)
++],
++[C++], [
++	AC_REQUIRE([AC_PROG_CXX])
++	AC_ARG_VAR(MPICXX,[MPI C++ compiler command])
++	AC_CHECK_PROGS(MPICXX, mpic++ mpicxx mpiCC hcp mpxlC_r mpxlC mpCC cmpic++, $CXX)
++	ax_mpi_save_CXX="$CXX"
++	CXX="$MPICXX"
++	AC_SUBST(MPICXX)
++],
++[Fortran 77], [
++	AC_REQUIRE([AC_PROG_F77])
++	AC_ARG_VAR(MPIF77,[MPI Fortran 77 compiler command])
++	AC_CHECK_PROGS(MPIF77, mpif77 hf77 mpxlf_r mpxlf mpf77 cmpifc, $F77)
++	ax_mpi_save_F77="$F77"
++	F77="$MPIF77"
++	AC_SUBST(MPIF77)
++],
++[Fortran], [
++	AC_REQUIRE([AC_PROG_FC])
++	AC_ARG_VAR(MPIFC,[MPI Fortran compiler command])
++	AC_CHECK_PROGS(MPIFC, mpif90 mpxlf95_r mpxlf90_r mpxlf95 mpxlf90 mpf90 cmpif90c, $FC)
++	ax_mpi_save_FC="$FC"
++	FC="$MPIFC"
++	AC_SUBST(MPIFC)
++])
++
++if test x = x"$MPILIBS"; then
++	AC_LANG_CASE([C], [AC_CHECK_FUNC(MPI_Init, [MPILIBS=" "])],
++		[C++], [AC_CHECK_FUNC(MPI_Init, [MPILIBS=" "])],
++		[Fortran 77], [AC_MSG_CHECKING([for MPI_Init])
++			AC_LINK_IFELSE([AC_LANG_PROGRAM([],[      call MPI_Init])],[MPILIBS=" "
++				AC_MSG_RESULT(yes)], [AC_MSG_RESULT(no)])],
++		[Fortran], [AC_MSG_CHECKING([for MPI_Init])
++			AC_LINK_IFELSE([AC_LANG_PROGRAM([],[      call MPI_Init])],[MPILIBS=" "
++				AC_MSG_RESULT(yes)], [AC_MSG_RESULT(no)])])
++fi
++AC_LANG_CASE([Fortran 77], [
++	if test x = x"$MPILIBS"; then
++		AC_CHECK_LIB(fmpi, MPI_Init, [MPILIBS="-lfmpi"])
++	fi
++	if test x = x"$MPILIBS"; then
++		AC_CHECK_LIB(fmpich, MPI_Init, [MPILIBS="-lfmpich"])
++	fi
++],
++[Fortran], [
++	if test x = x"$MPILIBS"; then
++		AC_CHECK_LIB(fmpi, MPI_Init, [MPILIBS="-lfmpi"])
++	fi
++	if test x = x"$MPILIBS"; then
++		AC_CHECK_LIB(mpichf90, MPI_Init, [MPILIBS="-lmpichf90"])
++	fi
++])
++if test x = x"$MPILIBS"; then
++	AC_CHECK_LIB(mpi, MPI_Init, [MPILIBS="-lmpi"])
++fi
++if test x = x"$MPILIBS"; then
++	AC_CHECK_LIB(mpich, MPI_Init, [MPILIBS="-lmpich"])
++fi
++
++dnl We have to use AC_TRY_COMPILE and not AC_CHECK_HEADER because the
++dnl latter uses $CPP, not $CC (which may be mpicc).
++AC_LANG_CASE([C], [if test x != x"$MPILIBS"; then
++	AC_MSG_CHECKING([for mpi.h])
++	AC_TRY_COMPILE([#include <mpi.h>],[],[AC_MSG_RESULT(yes)], [MPILIBS=""
++		AC_MSG_RESULT(no)])
++fi],
++[C++], [if test x != x"$MPILIBS"; then
++	AC_MSG_CHECKING([for mpi.h])
++	AC_TRY_COMPILE([#include <mpi.h>],[],[AC_MSG_RESULT(yes)], [MPILIBS=""
++		AC_MSG_RESULT(no)])
++fi],
++[Fortran 77], [if test x != x"$MPILIBS"; then
++	AC_MSG_CHECKING([for mpif.h])
++	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([],[      include 'mpif.h'])],[AC_MSG_RESULT(yes)], [MPILIBS=""
++		AC_MSG_RESULT(no)])
++fi],
++[Fortran], [if test x != x"$MPILIBS"; then
++	AC_MSG_CHECKING([for mpif.h])
++	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([],[      include 'mpif.h'])],[AC_MSG_RESULT(yes)], [MPILIBS=""
++		AC_MSG_RESULT(no)])
++fi])
++
++AC_LANG_CASE([C], [CC="$ax_mpi_save_CC"],
++	[C++], [CXX="$ax_mpi_save_CXX"],
++	[Fortran 77], [F77="$ax_mpi_save_F77"],
++	[Fortran], [FC="$ax_mpi_save_FC"])
++
++AC_SUBST(MPILIBS)
++
++# Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
++if test x = x"$MPILIBS"; then
++        $2
++        :
++else
++        ifelse([$1],,[AC_DEFINE(HAVE_MPI,1,[Define if you have the MPI library.])],[$1])
++        :
++fi
++])dnl AX_MPI
+diff -Naur -X /tmp/excludes.txt lrslib-073-orig/m4/ax_pthread.m4 lrslib-073-autotools/m4/ax_pthread.m4
+--- lrslib-073-orig/m4/ax_pthread.m4	1970-01-01 08:00:00.000000000 +0800
++++ lrslib-073-autotools/m4/ax_pthread.m4	2025-10-15 22:24:26.371603840 +0800
+@@ -0,0 +1,507 @@
++# ===========================================================================
++#        https://www.gnu.org/software/autoconf-archive/ax_pthread.html
++# ===========================================================================
++#
++# SYNOPSIS
++#
++#   AX_PTHREAD([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
++#
++# DESCRIPTION
++#
++#   This macro figures out how to build C programs using POSIX threads. It
++#   sets the PTHREAD_LIBS output variable to the threads library and linker
++#   flags, and the PTHREAD_CFLAGS output variable to any special C compiler
++#   flags that are needed. (The user can also force certain compiler
++#   flags/libs to be tested by setting these environment variables.)
++#
++#   Also sets PTHREAD_CC to any special C compiler that is needed for
++#   multi-threaded programs (defaults to the value of CC otherwise). (This
++#   is necessary on AIX to use the special cc_r compiler alias.)
++#
++#   NOTE: You are assumed to not only compile your program with these flags,
++#   but also to link with them as well. For example, you might link with
++#   $PTHREAD_CC $CFLAGS $PTHREAD_CFLAGS $LDFLAGS ... $PTHREAD_LIBS $LIBS
++#
++#   If you are only building threaded programs, you may wish to use these
++#   variables in your default LIBS, CFLAGS, and CC:
++#
++#     LIBS="$PTHREAD_LIBS $LIBS"
++#     CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
++#     CC="$PTHREAD_CC"
++#
++#   In addition, if the PTHREAD_CREATE_JOINABLE thread-attribute constant
++#   has a nonstandard name, this macro defines PTHREAD_CREATE_JOINABLE to
++#   that name (e.g. PTHREAD_CREATE_UNDETACHED on AIX).
++#
++#   Also HAVE_PTHREAD_PRIO_INHERIT is defined if pthread is found and the
++#   PTHREAD_PRIO_INHERIT symbol is defined when compiling with
++#   PTHREAD_CFLAGS.
++#
++#   ACTION-IF-FOUND is a list of shell commands to run if a threads library
++#   is found, and ACTION-IF-NOT-FOUND is a list of commands to run it if it
++#   is not found. If ACTION-IF-FOUND is not specified, the default action
++#   will define HAVE_PTHREAD.
++#
++#   Please let the authors know if this macro fails on any platform, or if
++#   you have any other suggestions or comments. This macro was based on work
++#   by SGJ on autoconf scripts for FFTW (http://www.fftw.org/) (with help
++#   from M. Frigo), as well as ac_pthread and hb_pthread macros posted by
++#   Alejandro Forero Cuervo to the autoconf macro repository. We are also
++#   grateful for the helpful feedback of numerous users.
++#
++#   Updated for Autoconf 2.68 by Daniel Richard G.
++#
++# LICENSE
++#
++#   Copyright (c) 2008 Steven G. Johnson <stevenj@alum.mit.edu>
++#   Copyright (c) 2011 Daniel Richard G. <skunk@iSKUNK.ORG>
++#   Copyright (c) 2019 Marc Stevens <marc.stevens@cwi.nl>
++#
++#   This program is free software: you can redistribute it and/or modify it
++#   under the terms of the GNU General Public License as published by the
++#   Free Software Foundation, either version 3 of the License, or (at your
++#   option) any later version.
++#
++#   This program is distributed in the hope that it will be useful, but
++#   WITHOUT ANY WARRANTY; without even the implied warranty of
++#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
++#   Public License for more details.
++#
++#   You should have received a copy of the GNU General Public License along
++#   with this program. If not, see <https://www.gnu.org/licenses/>.
++#
++#   As a special exception, the respective Autoconf Macro's copyright owner
++#   gives unlimited permission to copy, distribute and modify the configure
++#   scripts that are the output of Autoconf when processing the Macro. You
++#   need not follow the terms of the GNU General Public License when using
++#   or distributing such scripts, even though portions of the text of the
++#   Macro appear in them. The GNU General Public License (GPL) does govern
++#   all other use of the material that constitutes the Autoconf Macro.
++#
++#   This special exception to the GPL applies to versions of the Autoconf
++#   Macro released by the Autoconf Archive. When you make and distribute a
++#   modified version of the Autoconf Macro, you may extend this special
++#   exception to the GPL to apply to your modified version as well.
++
++#serial 27
++
++AU_ALIAS([ACX_PTHREAD], [AX_PTHREAD])
++AC_DEFUN([AX_PTHREAD], [
++AC_REQUIRE([AC_CANONICAL_HOST])
++AC_REQUIRE([AC_PROG_CC])
++AC_REQUIRE([AC_PROG_SED])
++AC_LANG_PUSH([C])
++ax_pthread_ok=no
++
++# We used to check for pthread.h first, but this fails if pthread.h
++# requires special compiler flags (e.g. on Tru64 or Sequent).
++# It gets checked for in the link test anyway.
++
++# First of all, check if the user has set any of the PTHREAD_LIBS,
++# etcetera environment variables, and if threads linking works using
++# them:
++if test "x$PTHREAD_CFLAGS$PTHREAD_LIBS" != "x"; then
++        ax_pthread_save_CC="$CC"
++        ax_pthread_save_CFLAGS="$CFLAGS"
++        ax_pthread_save_LIBS="$LIBS"
++        AS_IF([test "x$PTHREAD_CC" != "x"], [CC="$PTHREAD_CC"])
++        CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
++        LIBS="$PTHREAD_LIBS $LIBS"
++        AC_MSG_CHECKING([for pthread_join using $CC $PTHREAD_CFLAGS $PTHREAD_LIBS])
++        AC_LINK_IFELSE([AC_LANG_CALL([], [pthread_join])], [ax_pthread_ok=yes])
++        AC_MSG_RESULT([$ax_pthread_ok])
++        if test "x$ax_pthread_ok" = "xno"; then
++                PTHREAD_LIBS=""
++                PTHREAD_CFLAGS=""
++        fi
++        CC="$ax_pthread_save_CC"
++        CFLAGS="$ax_pthread_save_CFLAGS"
++        LIBS="$ax_pthread_save_LIBS"
++fi
++
++# We must check for the threads library under a number of different
++# names; the ordering is very important because some systems
++# (e.g. DEC) have both -lpthread and -lpthreads, where one of the
++# libraries is broken (non-POSIX).
++
++# Create a list of thread flags to try. Items with a "," contain both
++# C compiler flags (before ",") and linker flags (after ","). Other items
++# starting with a "-" are C compiler flags, and remaining items are
++# library names, except for "none" which indicates that we try without
++# any flags at all, and "pthread-config" which is a program returning
++# the flags for the Pth emulation library.
++
++ax_pthread_flags="pthreads none -Kthread -pthread -pthreads -mthreads pthread --thread-safe -mt pthread-config"
++
++# The ordering *is* (sometimes) important.  Some notes on the
++# individual items follow:
++
++# pthreads: AIX (must check this before -lpthread)
++# none: in case threads are in libc; should be tried before -Kthread and
++#       other compiler flags to prevent continual compiler warnings
++# -Kthread: Sequent (threads in libc, but -Kthread needed for pthread.h)
++# -pthread: Linux/gcc (kernel threads), BSD/gcc (userland threads), Tru64
++#           (Note: HP C rejects this with "bad form for `-t' option")
++# -pthreads: Solaris/gcc (Note: HP C also rejects)
++# -mt: Sun Workshop C (may only link SunOS threads [-lthread], but it
++#      doesn't hurt to check since this sometimes defines pthreads and
++#      -D_REENTRANT too), HP C (must be checked before -lpthread, which
++#      is present but should not be used directly; and before -mthreads,
++#      because the compiler interprets this as "-mt" + "-hreads")
++# -mthreads: Mingw32/gcc, Lynx/gcc
++# pthread: Linux, etcetera
++# --thread-safe: KAI C++
++# pthread-config: use pthread-config program (for GNU Pth library)
++
++case $host_os in
++
++        freebsd*)
++
++        # -kthread: FreeBSD kernel threads (preferred to -pthread since SMP-able)
++        # lthread: LinuxThreads port on FreeBSD (also preferred to -pthread)
++
++        ax_pthread_flags="-kthread lthread $ax_pthread_flags"
++        ;;
++
++        hpux*)
++
++        # From the cc(1) man page: "[-mt] Sets various -D flags to enable
++        # multi-threading and also sets -lpthread."
++
++        ax_pthread_flags="-mt -pthread pthread $ax_pthread_flags"
++        ;;
++
++        openedition*)
++
++        # IBM z/OS requires a feature-test macro to be defined in order to
++        # enable POSIX threads at all, so give the user a hint if this is
++        # not set. (We don't define these ourselves, as they can affect
++        # other portions of the system API in unpredictable ways.)
++
++        AC_EGREP_CPP([AX_PTHREAD_ZOS_MISSING],
++            [
++#            if !defined(_OPEN_THREADS) && !defined(_UNIX03_THREADS)
++             AX_PTHREAD_ZOS_MISSING
++#            endif
++            ],
++            [AC_MSG_WARN([IBM z/OS requires -D_OPEN_THREADS or -D_UNIX03_THREADS to enable pthreads support.])])
++        ;;
++
++        solaris*)
++
++        # On Solaris (at least, for some versions), libc contains stubbed
++        # (non-functional) versions of the pthreads routines, so link-based
++        # tests will erroneously succeed. (N.B.: The stubs are missing
++        # pthread_cleanup_push, or rather a function called by this macro,
++        # so we could check for that, but who knows whether they'll stub
++        # that too in a future libc.)  So we'll check first for the
++        # standard Solaris way of linking pthreads (-mt -lpthread).
++
++        ax_pthread_flags="-mt,-lpthread pthread $ax_pthread_flags"
++        ;;
++esac
++
++# Are we compiling with Clang?
++
++AC_CACHE_CHECK([whether $CC is Clang],
++    [ax_cv_PTHREAD_CLANG],
++    [ax_cv_PTHREAD_CLANG=no
++     # Note that Autoconf sets GCC=yes for Clang as well as GCC
++     if test "x$GCC" = "xyes"; then
++        AC_EGREP_CPP([AX_PTHREAD_CC_IS_CLANG],
++            [/* Note: Clang 2.7 lacks __clang_[a-z]+__ */
++#            if defined(__clang__) && defined(__llvm__)
++             AX_PTHREAD_CC_IS_CLANG
++#            endif
++            ],
++            [ax_cv_PTHREAD_CLANG=yes])
++     fi
++    ])
++ax_pthread_clang="$ax_cv_PTHREAD_CLANG"
++
++
++# GCC generally uses -pthread, or -pthreads on some platforms (e.g. SPARC)
++
++# Note that for GCC and Clang -pthread generally implies -lpthread,
++# except when -nostdlib is passed.
++# This is problematic using libtool to build C++ shared libraries with pthread:
++# [1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=25460
++# [2] https://bugzilla.redhat.com/show_bug.cgi?id=661333
++# [3] https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=468555
++# To solve this, first try -pthread together with -lpthread for GCC
++
++AS_IF([test "x$GCC" = "xyes"],
++      [ax_pthread_flags="-pthread,-lpthread -pthread -pthreads $ax_pthread_flags"])
++
++# Clang takes -pthread (never supported any other flag), but we'll try with -lpthread first
++
++AS_IF([test "x$ax_pthread_clang" = "xyes"],
++      [ax_pthread_flags="-pthread,-lpthread -pthread"])
++
++
++# The presence of a feature test macro requesting re-entrant function
++# definitions is, on some systems, a strong hint that pthreads support is
++# correctly enabled
++
++case $host_os in
++        darwin* | hpux* | linux* | osf* | solaris*)
++        ax_pthread_check_macro="_REENTRANT"
++        ;;
++
++        aix*)
++        ax_pthread_check_macro="_THREAD_SAFE"
++        ;;
++
++        *)
++        ax_pthread_check_macro="--"
++        ;;
++esac
++AS_IF([test "x$ax_pthread_check_macro" = "x--"],
++      [ax_pthread_check_cond=0],
++      [ax_pthread_check_cond="!defined($ax_pthread_check_macro)"])
++
++
++if test "x$ax_pthread_ok" = "xno"; then
++for ax_pthread_try_flag in $ax_pthread_flags; do
++
++        case $ax_pthread_try_flag in
++                none)
++                AC_MSG_CHECKING([whether pthreads work without any flags])
++                ;;
++
++                *,*)
++                PTHREAD_CFLAGS=`echo $ax_pthread_try_flag | sed "s/^\(.*\),\(.*\)$/\1/"`
++                PTHREAD_LIBS=`echo $ax_pthread_try_flag | sed "s/^\(.*\),\(.*\)$/\2/"`
++                AC_MSG_CHECKING([whether pthreads work with "$PTHREAD_CFLAGS" and "$PTHREAD_LIBS"])
++                ;;
++
++                -*)
++                AC_MSG_CHECKING([whether pthreads work with $ax_pthread_try_flag])
++                PTHREAD_CFLAGS="$ax_pthread_try_flag"
++                ;;
++
++                pthread-config)
++                AC_CHECK_PROG([ax_pthread_config], [pthread-config], [yes], [no])
++                AS_IF([test "x$ax_pthread_config" = "xno"], [continue])
++                PTHREAD_CFLAGS="`pthread-config --cflags`"
++                PTHREAD_LIBS="`pthread-config --ldflags` `pthread-config --libs`"
++                ;;
++
++                *)
++                AC_MSG_CHECKING([for the pthreads library -l$ax_pthread_try_flag])
++                PTHREAD_LIBS="-l$ax_pthread_try_flag"
++                ;;
++        esac
++
++        ax_pthread_save_CFLAGS="$CFLAGS"
++        ax_pthread_save_LIBS="$LIBS"
++        CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
++        LIBS="$PTHREAD_LIBS $LIBS"
++
++        # Check for various functions.  We must include pthread.h,
++        # since some functions may be macros.  (On the Sequent, we
++        # need a special flag -Kthread to make this header compile.)
++        # We check for pthread_join because it is in -lpthread on IRIX
++        # while pthread_create is in libc.  We check for pthread_attr_init
++        # due to DEC craziness with -lpthreads.  We check for
++        # pthread_cleanup_push because it is one of the few pthread
++        # functions on Solaris that doesn't have a non-functional libc stub.
++        # We try pthread_create on general principles.
++
++        AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <pthread.h>
++#                       if $ax_pthread_check_cond
++#                        error "$ax_pthread_check_macro must be defined"
++#                       endif
++                        static void *some_global = NULL;
++                        static void routine(void *a)
++                          {
++                             /* To avoid any unused-parameter or
++                                unused-but-set-parameter warning.  */
++                             some_global = a;
++                          }
++                        static void *start_routine(void *a) { return a; }],
++                       [pthread_t th; pthread_attr_t attr;
++                        pthread_create(&th, 0, start_routine, 0);
++                        pthread_join(th, 0);
++                        pthread_attr_init(&attr);
++                        pthread_cleanup_push(routine, 0);
++                        pthread_cleanup_pop(0) /* ; */])],
++            [ax_pthread_ok=yes],
++            [])
++
++        CFLAGS="$ax_pthread_save_CFLAGS"
++        LIBS="$ax_pthread_save_LIBS"
++
++        AC_MSG_RESULT([$ax_pthread_ok])
++        AS_IF([test "x$ax_pthread_ok" = "xyes"], [break])
++
++        PTHREAD_LIBS=""
++        PTHREAD_CFLAGS=""
++done
++fi
++
++
++# Clang needs special handling, because older versions handle the -pthread
++# option in a rather... idiosyncratic way
++
++if test "x$ax_pthread_clang" = "xyes"; then
++
++        # Clang takes -pthread; it has never supported any other flag
++
++        # (Note 1: This will need to be revisited if a system that Clang
++        # supports has POSIX threads in a separate library.  This tends not
++        # to be the way of modern systems, but it's conceivable.)
++
++        # (Note 2: On some systems, notably Darwin, -pthread is not needed
++        # to get POSIX threads support; the API is always present and
++        # active.  We could reasonably leave PTHREAD_CFLAGS empty.  But
++        # -pthread does define _REENTRANT, and while the Darwin headers
++        # ignore this macro, third-party headers might not.)
++
++        # However, older versions of Clang make a point of warning the user
++        # that, in an invocation where only linking and no compilation is
++        # taking place, the -pthread option has no effect ("argument unused
++        # during compilation").  They expect -pthread to be passed in only
++        # when source code is being compiled.
++        #
++        # Problem is, this is at odds with the way Automake and most other
++        # C build frameworks function, which is that the same flags used in
++        # compilation (CFLAGS) are also used in linking.  Many systems
++        # supported by AX_PTHREAD require exactly this for POSIX threads
++        # support, and in fact it is often not straightforward to specify a
++        # flag that is used only in the compilation phase and not in
++        # linking.  Such a scenario is extremely rare in practice.
++        #
++        # Even though use of the -pthread flag in linking would only print
++        # a warning, this can be a nuisance for well-run software projects
++        # that build with -Werror.  So if the active version of Clang has
++        # this misfeature, we search for an option to squash it.
++
++        AC_CACHE_CHECK([whether Clang needs flag to prevent "argument unused" warning when linking with -pthread],
++            [ax_cv_PTHREAD_CLANG_NO_WARN_FLAG],
++            [ax_cv_PTHREAD_CLANG_NO_WARN_FLAG=unknown
++             # Create an alternate version of $ac_link that compiles and
++             # links in two steps (.c -> .o, .o -> exe) instead of one
++             # (.c -> exe), because the warning occurs only in the second
++             # step
++             ax_pthread_save_ac_link="$ac_link"
++             ax_pthread_sed='s/conftest\.\$ac_ext/conftest.$ac_objext/g'
++             ax_pthread_link_step=`$as_echo "$ac_link" | sed "$ax_pthread_sed"`
++             ax_pthread_2step_ac_link="($ac_compile) && (echo ==== >&5) && ($ax_pthread_link_step)"
++             ax_pthread_save_CFLAGS="$CFLAGS"
++             for ax_pthread_try in '' -Qunused-arguments -Wno-unused-command-line-argument unknown; do
++                AS_IF([test "x$ax_pthread_try" = "xunknown"], [break])
++                CFLAGS="-Werror -Wunknown-warning-option $ax_pthread_try -pthread $ax_pthread_save_CFLAGS"
++                ac_link="$ax_pthread_save_ac_link"
++                AC_LINK_IFELSE([AC_LANG_SOURCE([[int main(void){return 0;}]])],
++                    [ac_link="$ax_pthread_2step_ac_link"
++                     AC_LINK_IFELSE([AC_LANG_SOURCE([[int main(void){return 0;}]])],
++                         [break])
++                    ])
++             done
++             ac_link="$ax_pthread_save_ac_link"
++             CFLAGS="$ax_pthread_save_CFLAGS"
++             AS_IF([test "x$ax_pthread_try" = "x"], [ax_pthread_try=no])
++             ax_cv_PTHREAD_CLANG_NO_WARN_FLAG="$ax_pthread_try"
++            ])
++
++        case "$ax_cv_PTHREAD_CLANG_NO_WARN_FLAG" in
++                no | unknown) ;;
++                *) PTHREAD_CFLAGS="$ax_cv_PTHREAD_CLANG_NO_WARN_FLAG $PTHREAD_CFLAGS" ;;
++        esac
++
++fi # $ax_pthread_clang = yes
++
++
++
++# Various other checks:
++if test "x$ax_pthread_ok" = "xyes"; then
++        ax_pthread_save_CFLAGS="$CFLAGS"
++        ax_pthread_save_LIBS="$LIBS"
++        CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
++        LIBS="$PTHREAD_LIBS $LIBS"
++
++        # Detect AIX lossage: JOINABLE attribute is called UNDETACHED.
++        AC_CACHE_CHECK([for joinable pthread attribute],
++            [ax_cv_PTHREAD_JOINABLE_ATTR],
++            [ax_cv_PTHREAD_JOINABLE_ATTR=unknown
++             for ax_pthread_attr in PTHREAD_CREATE_JOINABLE PTHREAD_CREATE_UNDETACHED; do
++                 AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <pthread.h>],
++                                                 [int attr = $ax_pthread_attr; return attr /* ; */])],
++                                [ax_cv_PTHREAD_JOINABLE_ATTR=$ax_pthread_attr; break],
++                                [])
++             done
++            ])
++        AS_IF([test "x$ax_cv_PTHREAD_JOINABLE_ATTR" != "xunknown" && \
++               test "x$ax_cv_PTHREAD_JOINABLE_ATTR" != "xPTHREAD_CREATE_JOINABLE" && \
++               test "x$ax_pthread_joinable_attr_defined" != "xyes"],
++              [AC_DEFINE_UNQUOTED([PTHREAD_CREATE_JOINABLE],
++                                  [$ax_cv_PTHREAD_JOINABLE_ATTR],
++                                  [Define to necessary symbol if this constant
++                                   uses a non-standard name on your system.])
++               ax_pthread_joinable_attr_defined=yes
++              ])
++
++        AC_CACHE_CHECK([whether more special flags are required for pthreads],
++            [ax_cv_PTHREAD_SPECIAL_FLAGS],
++            [ax_cv_PTHREAD_SPECIAL_FLAGS=no
++             case $host_os in
++             solaris*)
++             ax_cv_PTHREAD_SPECIAL_FLAGS="-D_POSIX_PTHREAD_SEMANTICS"
++             ;;
++             esac
++            ])
++        AS_IF([test "x$ax_cv_PTHREAD_SPECIAL_FLAGS" != "xno" && \
++               test "x$ax_pthread_special_flags_added" != "xyes"],
++              [PTHREAD_CFLAGS="$ax_cv_PTHREAD_SPECIAL_FLAGS $PTHREAD_CFLAGS"
++               ax_pthread_special_flags_added=yes])
++
++        AC_CACHE_CHECK([for PTHREAD_PRIO_INHERIT],
++            [ax_cv_PTHREAD_PRIO_INHERIT],
++            [AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <pthread.h>]],
++                                             [[int i = PTHREAD_PRIO_INHERIT;
++                                               return i;]])],
++                            [ax_cv_PTHREAD_PRIO_INHERIT=yes],
++                            [ax_cv_PTHREAD_PRIO_INHERIT=no])
++            ])
++        AS_IF([test "x$ax_cv_PTHREAD_PRIO_INHERIT" = "xyes" && \
++               test "x$ax_pthread_prio_inherit_defined" != "xyes"],
++              [AC_DEFINE([HAVE_PTHREAD_PRIO_INHERIT], [1], [Have PTHREAD_PRIO_INHERIT.])
++               ax_pthread_prio_inherit_defined=yes
++              ])
++
++        CFLAGS="$ax_pthread_save_CFLAGS"
++        LIBS="$ax_pthread_save_LIBS"
++
++        # More AIX lossage: compile with *_r variant
++        if test "x$GCC" != "xyes"; then
++            case $host_os in
++                aix*)
++                AS_CASE(["x/$CC"],
++                    [x*/c89|x*/c89_128|x*/c99|x*/c99_128|x*/cc|x*/cc128|x*/xlc|x*/xlc_v6|x*/xlc128|x*/xlc128_v6],
++                    [#handle absolute path differently from PATH based program lookup
++                     AS_CASE(["x$CC"],
++                         [x/*],
++                         [AS_IF([AS_EXECUTABLE_P([${CC}_r])],[PTHREAD_CC="${CC}_r"])],
++                         [AC_CHECK_PROGS([PTHREAD_CC],[${CC}_r],[$CC])])])
++                ;;
++            esac
++        fi
++fi
++
++test -n "$PTHREAD_CC" || PTHREAD_CC="$CC"
++
++AC_SUBST([PTHREAD_LIBS])
++AC_SUBST([PTHREAD_CFLAGS])
++AC_SUBST([PTHREAD_CC])
++
++# Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
++if test "x$ax_pthread_ok" = "xyes"; then
++        ifelse([$1],,[AC_DEFINE([HAVE_PTHREAD],[1],[Define if you have POSIX threads libraries and header files.])],[$1])
++        :
++else
++        ax_pthread_ok=no
++        $2
++fi
++AC_LANG_POP
++])dnl AX_PTHREAD
+diff -Naur -X /tmp/excludes.txt lrslib-073-orig/mplrs/Makefile.am lrslib-073-autotools/mplrs/Makefile.am
+--- lrslib-073-orig/mplrs/Makefile.am	1970-01-01 08:00:00.000000000 +0800
++++ lrslib-073-autotools/mplrs/Makefile.am	2025-10-15 22:24:26.371603840 +0800
+@@ -0,0 +1,32 @@
++# mplrs -- requires MPI.
++AUTOMAKE_OPTIONS = subdir-objects
++
++# Use of subdir is needed so we can switch out the C compiler.
++# See also http://stackoverflow.com/questions/3968656/how-to-compile-mpi-and-non-mpi-version-of-the-same-program-with-automake
++CC = $(MPICC)
++
++bin_PROGRAMS =
++noinst_HEADERS = 
++
++if MPLRS
++bin_PROGRAMS += mplrs
++
++AM_CPPFLAGS = -DTIMES -DSIGNALS -DPLRS
++
++# Libtool convenience libraries
++noinst_LTLIBRARIES = libmplrs1.la libmplrs2.la libmplrsgmp.la
++
++libmplrs1_la_SOURCES = ../lrslib.c ../lrslong.c
++libmplrs1_la_CPPFLAGS = $(AM_CPPFLAGS) -DMA -DSAFE -DLRSLONG
++
++libmplrs2_la_SOURCES = ../lrslib.c ../lrslong.c
++libmplrs2_la_CPPFLAGS = $(AM_CPPFLAGS) -DMA -DSAFE -DB128 -DLRSLONG
++
++libmplrsgmp_la_SOURCES = ../lrslib.c ../lrsgmp.c
++libmplrsgmp_la_CPPFLAGS = $(AM_CPPFLAGS) -DMA -DGMP $(GMP_CFLAGS)
++libmplrsgmp_la_LIBADD = $(GMP_LDFLAGS) -lgmp
++
++mplrs_SOURCES = ../mplrs.c ../lrsdriver.c
++mplrs_CPPFLAGS = $(AM_CPPFLAGS) -D_WITH_GETLINE -DMA -DB128
++mplrs_LDADD = $(noinst_LTLIBRARIES)
++endif

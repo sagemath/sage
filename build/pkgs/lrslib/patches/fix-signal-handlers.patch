@@ -1,0 +1,41 @@
+--- a/lrslib.c
++++ b/lrslib.c
+@@ -84,9 +84,9 @@ static long lrs_degencount (lrs_dic * P, lrs_dat * Q);
+ /* signals handling            */
+ /*******************************/
+ #ifndef SIGNALS
+-static void checkpoint ();
+-static void die_gracefully ();
++static void checkpoint (int sig);
++static void die_gracefully (int sig);
+ static void setup_signals (void);
+-static void timecheck ();
++static void timecheck (int sig);
+ #endif
+ 
+@@ -6366,7 +6366,7 @@ setup_signals ()
+ }
+ 
+ static void
+-timecheck ()
++timecheck (int sig)
+ {
+   lrs_dump_state ();
+   errcheck ("signal", signal (SIGALRM, timecheck));
+@@ -6374,14 +6374,14 @@ timecheck ()
+ }
+ 
+ static void
+-checkpoint ()
++checkpoint (int sig)
+ {
+   lrs_dump_state ();
+   errcheck ("signal", signal (SIGUSR1, checkpoint));
+ }
+ 
+ static void
+-die_gracefully ()
++die_gracefully (int sig)
+ {
+   lrs_dump_state ();
+ 
