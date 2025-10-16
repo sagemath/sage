@@ -56,7 +56,10 @@ It can also be installed using the Boost's project `installer B2
 After downloading and untarring the archive, and changing to the directory with the sources,
 ``./bootstrap.sh && ./b2 && ./b2 install --prefix=/usr/local`` will
 install Boost in ``/usr/local``; this takes around 5 minutes of wall clock time
-on a moderately fast M1 Apple Mac.
+on a moderately fast M1 Apple Mac. Instead of ``/usr/local`` one may choose another location,
+say ``/opt/foo``,which then might have to be passed (in case the location is not known
+to the toolchain) to Sage via its ``./configure``,
+with ``--with-boost=/opt/foo`` option.
 
 On Redhat-derived systems not all perl components are installed by
 default and you might have to install the ``perl-ExtUtils-MakeMaker``
