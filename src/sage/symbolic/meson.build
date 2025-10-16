@@ -17,6 +17,7 @@ py.install_sources(
   'function.pxd',
   'function.pyx',
   'function_factory.py',
+  'maxima_wrapper.py',
   'operators.py',
   'pynac_wrap.h',
   'random_tests.py',

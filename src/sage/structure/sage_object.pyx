@@ -549,6 +549,14 @@ cdef class SageObject:
     def parent(self):
         """
         Return the type of ``self`` to support the coercion framework.
+
+        EXAMPLES::
+
+            sage: t = log(sqrt(2) - 1) + log(sqrt(2) + 1); t                            # needs sage.symbolic
+            log(sqrt(2) + 1) + log(sqrt(2) - 1)
+            sage: u = t.maxima_methods()                                                # needs sage.symbolic
+            sage: u.parent()                                                            # needs sage.symbolic
+            <class 'sage.symbolic.maxima_wrapper.MaximaWrapper'>
         """
         return type(self)
 
