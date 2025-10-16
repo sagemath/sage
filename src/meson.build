@@ -86,7 +86,10 @@ except Exception:
   # Cannot be found via pkg-config
   # We need to link against libpari directly to avoid runtime issues, so use pari as dependency of cypari2
   pari = cc.find_library('pari', required: not is_windows, disabler: true)
-  cypari2 = declare_dependency(include_directories: inc_cypari2, dependencies: pari)
+  cypari2 = declare_dependency(
+    include_directories: inc_cypari2,
+    dependencies: pari,
+  )
 endif
 
 mpfr = dependency('mpfr')
