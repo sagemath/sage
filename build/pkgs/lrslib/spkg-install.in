@@ -4,6 +4,8 @@ cd src/
 cp lrsarith-011/lrslong.h lrsarith-011/lrslong.c .
 cp lrsarith-011/lrsgmp.h lrsarith-011/lrsgmp.c .
 cp lrsarith-011/lrsmp.h lrsarith-011/lrsmp.c .
+# Rename the original makefile to prevent it from being used
+mv makefile makefile.orig
 autoreconf -fiv
 sdh_configure
 sdh_make
