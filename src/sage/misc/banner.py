@@ -34,7 +34,7 @@ def version():
     """
     from sage.misc.superseded import deprecation
 
-    deprecation(39015, "Use sage.version instead.")
+    deprecation(39015, "Use sage.version.version instead.")
     return sage_banner
 
 
