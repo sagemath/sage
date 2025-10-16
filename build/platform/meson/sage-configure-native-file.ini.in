@@ -3,4 +3,4 @@
 [properties]
 
 # Forwarded path from ./configure --with-boost=/path/to/boost
-boost_root = '@SAGE_BOOST_PREFIX@'
+@SAGE_SET_BOOST_PREFIX@
