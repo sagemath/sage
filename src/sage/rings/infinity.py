@@ -214,8 +214,10 @@ We check that :issue:`17990` is fixed::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 
 from sys import maxsize
+from typing import TYPE_CHECKING
 
 import sage.rings.abc
 
