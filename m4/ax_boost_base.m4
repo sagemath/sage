@@ -78,7 +78,11 @@ AS_IF([test "x$want_boost" = "xyes"],
       [_AX_BOOST_BASE_RUNDETECT([$1],[$2],[$3])])
 AC_SUBST(BOOST_CPPFLAGS)
 AC_SUBST(BOOST_LDFLAGS)
-AC_SUBST(SAGE_BOOST_PREFIX,[$_AX_BOOST_BASE_boost_path])
+AS_IF([test "x$_AX_BOOST_BASE_boost_path" = "x"],
+    [AC_SUBST(SAGE_SET_BOOST_PREFIX,[])
+     AC_SUBST(SAGE_BOOST_PREFIX,[])],
+    [AC_SUBST(SAGE_SET_BOOST_PREFIX,['boost_root = '"'"$_AX_BOOST_BASE_boost_path"'"])
+     AC_SUBST(SAGE_BOOST_PREFIX,[$_AX_BOOST_BASE_boost_path])])
 ])
 
 
