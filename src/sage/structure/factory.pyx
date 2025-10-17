@@ -770,6 +770,7 @@ def generic_factory_getstate(obj):
         sage: K.<x> = FunctionField(QQ); R.<y> = K[]
         sage: F = K.extension(y^5 - x^3 - 3*x + x*y)
         sage: F.genus()
+        4
         sage: F.genus.cache
         4
         sage: s = dumps(F)
@@ -813,7 +814,7 @@ def generic_factory_setstate(self, d):
         sage: Fp is F
         True
         sage: Fp.genus()
-        10
+        4
     """
     self.__dict__.update(d)
 
