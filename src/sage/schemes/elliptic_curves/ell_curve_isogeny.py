@@ -3125,7 +3125,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             True
             sage: phi_hat.codomain() == phi.domain()
             True
-            sage: (X, Y) = phi.rational_maps()
+            sage: X, Y = phi.rational_maps()
             sage: (Xhat, Yhat) = phi_hat.rational_maps()
             sage: Xm = Xhat.subs(x=X, y=Y)
             sage: Ym = Yhat.subs(x=X, y=Y)
@@ -3141,7 +3141,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             True
             sage: phi_hat.domain() == phi.codomain()
             True
-            sage: (X, Y) = phi.rational_maps()
+            sage: X, Y = phi.rational_maps()
             sage: (Xhat, Yhat) = phi_hat.rational_maps()
             sage: Xm = Xhat.subs(x=X, y=Y)
             sage: Ym = Yhat.subs(x=X, y=Y)
@@ -3157,7 +3157,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             True
             sage: phi_hat.domain() == phi.codomain()
             True
-            sage: (X, Y) = phi.rational_maps()
+            sage: X, Y = phi.rational_maps()
             sage: (Xhat, Yhat) = phi_hat.rational_maps()
             sage: Xm = Xhat.subs(x=X, y=Y)
             sage: Ym = Yhat.subs(x=X, y=Y)

@@ -90,6 +90,7 @@ py.install_sources(
   'permutation_cython.pxd',
   'permutation_cython.pyx',
   'plane_partition.py',
+  'positive_integer_semigroup_test.py',
   'q_analogues.py',
   'q_bernoulli.pyx',
   'quickref.py',

@@ -1054,7 +1054,7 @@ def get_orbits(list gens, int n):
     OP_dealloc(OP)
     sig_free(perm_ints)
 
-    return list(orbit_dict.itervalues())
+    return list(orbit_dict.values())
 
 
 # Canonical augmentation

@@ -1406,8 +1406,9 @@ def possible_isogeny_degrees(E, algorithm='Billerey', max_l=None,
 
     Over an extension field::
 
+        sage: # long time
         sage: E3 = E.change_ring(CyclotomicField(3))
-        sage: possible_isogeny_degrees(E3)                                              # long time (5s)
+        sage: possible_isogeny_degrees(E3)
         [5]
         sage: [phi.degree() for phi in E3.isogenies_prime_degree()]
         [5, 5]

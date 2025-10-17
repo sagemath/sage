@@ -949,7 +949,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             EXAMPLES::
 
                 sage: S = NonCommutativeSymmetricFunctions(QQ).S()
-                sage: (x, y) = (S[2], S[3])
+                sage: x, y = S[2], S[3]
                 sage: x.degree()
                 2
                 sage: (x^3 + 4*y^2).degree()
@@ -960,7 +960,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             ::
 
                 sage: F = QuasiSymmetricFunctions(QQ).F()
-                sage: (x, y) = (F[2], F[3])
+                sage: x, y = F[2], F[3]
                 sage: x.degree()
                 2
                 sage: (x^3 + 4*y^2).degree()

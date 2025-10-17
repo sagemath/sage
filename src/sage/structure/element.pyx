@@ -625,7 +625,7 @@ cdef class Element(SageObject):
             D = self.__dict__
         except AttributeError:
             return res
-        for k, v in D.iteritems():
+        for k, v in D.items():
             try:
                 setattr(res, k, v)
             except AttributeError:

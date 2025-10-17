@@ -1679,7 +1679,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             if face.n == 0: # skip unused vertices
                 continue
             face.vertices = &dual.face_indices[ix]
-            ff, next_ = next(iter(dd.itervalues()))
+            ff, next_ = next(iter(dd.values()))
             face.vertices[0] = ff
             for j in range(1, face.n):
                 ff, next_ = dd[next_]

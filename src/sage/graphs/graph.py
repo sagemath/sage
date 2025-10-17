@@ -428,6 +428,7 @@ from sage.graphs.views import EdgesView
 from sage.parallel.decorate import parallel
 from sage.misc.lazy_import import lazy_import, LazyImport
 from sage.features.mcqd import Mcqd
+from sage.misc.cachefunc import cached_method
 
 lazy_import('sage.graphs.mcqd', ['mcqd'],
             feature=Mcqd())
@@ -9501,6 +9502,7 @@ class Graph(GenericGraph):
         G.name("%sBipartite Double of %s" % (prefix, self.name()))
         return G
 
+    @cached_method
     @doc_index("Graph properties")
     def is_projective_planar(self, return_map=False):
         r"""
@@ -9528,7 +9530,7 @@ class Graph(GenericGraph):
         The Petersen graph is a known projective planar graph::
 
             sage: P = graphs.PetersenGraph()
-            sage: P.is_projective_planar()  # long time
+            sage: P.is_projective_planar()
             True
 
         `K_{4,4}` has a projective plane crossing number of 2. One of the
