@@ -8,7 +8,7 @@ requires = [
   'cysignals >=1.11.2, != 1.12.0',
   # Exclude 3.0.3 because of https://github.com/cython/cython/issues/5748
   'cython >=3.0, != 3.0.3',
-  'gmpy2 ~=2.1.b999',
+  'gmpy2 >=2.1.5',
   'jinja2',
   'memory_allocator',
   'numpy >=2.2.4',
@@ -50,7 +50,7 @@ dependencies = [
   'cysignals >=1.11.2, != 1.12.0',
   'cython >=3.0, != 3.0.3',
   'fpylll >=0.5.9; sys_platform != "win32"',
-  'gmpy2 ~=2.1.b999',
+  'gmpy2 >=2.1.5',
   'ipykernel >=5.2.1',
   'ipython >=8.9.0',
   'ipywidgets >=7.5.1',
@@ -109,7 +109,7 @@ sage = "sage.cli:main"
 platforms = ['linux-64', 'linux-aarch64', 'osx-64', 'osx-arm64']
 
 [tool.pytest.ini_options]
-norecursedirs = "local prefix venv build builddir pkgs .git src/doc src/bin src/sage_setup/autogen/flint tools"
+norecursedirs = "local prefix venv build builddir pkgs .git src/doc src/bin src/sage_setup/autogen/flint tools subprojects"
 python_files = "*_test.py"
 # The "no:warnings" is to stop pytest from capturing warnings so that they are printed to the output of the doctest
 addopts = "--import-mode importlib -p no:warnings"
@@ -214,7 +214,16 @@ extra = [
 # ]
 
 [dependency-groups]
-dev = ["conda-lock", "grayskull", "meson", "pygithub", "toml", "tqdm", "uv"]
+dev = [
+  "conda-lock",
+  "grayskull",
+  "meson",
+  "pygithub",
+  "python-build",
+  "toml",
+  "tqdm",
+  "uv",
+]
 docs = [
   "furo",
   "jupyter-sphinx",

@@ -296,9 +296,10 @@ class DocBuilder():
         # Move generated PDFs
         for pdf in tex_dir.glob("*.pdf"):
             try:
-                shutil.move(str(pdf), pdf_dir)
+                dst_pdf = os.path.join(pdf_dir, os.path.basename(pdf))
+                shutil.move(str(pdf), dst_pdf)
             except Exception as e:
-                logger.error(f"Failed moving {pdf} to {pdf_dir}: {e}")
+                logger.error(f"Failed moving {pdf} to {dst_pdf}: {e}")
                 raise
 
         logger.info(f"Build finished. The built documents can be found in {pdf_dir}.")
@@ -1179,7 +1180,8 @@ def get_all_documents(source: Path) -> list[Path]:
     EXAMPLES::
 
         sage: from sage_docbuild.builders import get_all_documents
-        sage: documents = get_all_documents(Path('src/doc'))
+        sage: from sage.env import SAGE_DOC_SRC
+        sage: documents = get_all_documents(Path(SAGE_DOC_SRC))
         sage: Path('en/tutorial') in documents
         True
     """
@@ -1212,7 +1214,8 @@ def get_all_reference_documents(source: Path) -> list[Path]:
     EXAMPLES::
 
         sage: from sage_docbuild.builders import get_all_reference_documents
-        sage: documents = get_all_reference_documents(Path('src/doc/en'))
+        sage: from sage.env import SAGE_DOC_SRC
+        sage: documents = get_all_reference_documents(Path(SAGE_DOC_SRC) / 'en')
         sage: Path('reference/algebras') in documents
         True
     """
