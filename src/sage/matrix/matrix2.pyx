@@ -3018,7 +3018,7 @@ cdef class Matrix(Matrix1):
                 return self.dense_matrix()
 
         if self.is_sparse():
-            values = {ij: phi(v) for ij, v in self.dict().iteritems()}
+            values = {ij: phi(v) for ij, v in self.dict().items()}
             if R is None:
                 R = sage.structure.sequence.Sequence(values.values()).universe()
         else:
@@ -3494,6 +3494,7 @@ cdef class Matrix(Matrix1):
                 for k in range(p):
                     s = s - A[k] * F[p-k-1]
                 F[p] = s - A[p]
+                sig_check()
 
         X = S.gen(0)
         f = X**n + S(list(reversed(F)))

@@ -731,7 +731,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
                 sage: # needs sage.combinat sage.modules
                 sage: S = NonCommutativeSymmetricFunctions(QQ).S()
-                sage: (x, y) = (S[2], S[3])
+                sage: x, y = S[2], S[3]
                 sage: (3*x).is_homogeneous()
                 True
                 sage: (x^3 - y^2).is_homogeneous()
@@ -814,7 +814,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
                 sage: # needs sage.combinat sage.modules
                 sage: S = NonCommutativeSymmetricFunctions(QQ).S()
-                sage: (x, y) = (S[2], S[3])
+                sage: x, y = S[2], S[3]
                 sage: x.homogeneous_degree()
                 2
                 sage: (x^3 + 4*y^2).homogeneous_degree()
@@ -887,7 +887,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
                 sage: # needs sage.combinat sage.modules
                 sage: S = NonCommutativeSymmetricFunctions(QQ).S()
-                sage: (x, y) = (S[2], S[3])
+                sage: x, y = S[2], S[3]
                 sage: x.maximal_degree()
                 2
                 sage: (x^3 + 4*y^2).maximal_degree()

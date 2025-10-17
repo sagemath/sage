@@ -39,6 +39,7 @@ py.install_sources(
   'padic_generic_element.pxd',
   'padic_generic_element.pyx',
   'padic_lattice_element.py',
+  'padic_lattice_element_test.py',
   'padic_printing.pxd',
   'padic_printing.pyx',
   'padic_relaxed_element.pxd',
