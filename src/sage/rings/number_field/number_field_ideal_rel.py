@@ -59,7 +59,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         Number Field in a0 with defining polynomial x^2 + 1 over its base field
         sage: i = K.ideal([a0+1]); i # random
         Fractional ideal (-a1*a0)
-        sage: (g, ) = i.gens_reduced(); g # random
+        sage: (g,) = i.gens_reduced(); g # random
         -a1*a0
         sage: (g / (a0 + 1)).is_integral()
         True
@@ -68,7 +68,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
     TESTS:
 
-    One test fails, because ideals aren't fully integrated into the
+    One test fails, because ideals are not fully integrated into the
     categories framework yet::
 
         sage: TestSuite(i).run()

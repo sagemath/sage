@@ -2313,29 +2313,6 @@ class SingularFunctionElement(FunctionElement):
         return get_docstring(self._name, code=True)
 
 
-def is_SingularElement(x):
-    r"""
-    Return ``True`` if ``x`` is of type :class:`SingularElement`.
-
-    This function is deprecated; use :func:`isinstance`
-    (of :class:`sage.interfaces.abc.SingularElement`) instead.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.singular import is_SingularElement
-        sage: is_SingularElement(singular(2))
-        doctest:...: DeprecationWarning: the function is_SingularElement is deprecated; use isinstance(x, sage.interfaces.abc.SingularElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        True
-        sage: is_SingularElement(2)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_SingularElement is deprecated; use isinstance(x, sage.interfaces.abc.SingularElement) instead")
-
-    return isinstance(x, SingularElement)
-
-
 def get_docstring(name, prefix=False, code=False):
     """
     Return the docstring for the function ``name``.

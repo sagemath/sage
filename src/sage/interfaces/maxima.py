@@ -1120,27 +1120,6 @@ class Maxima(MaximaAbstract, Expect):
 #        return ex._maxima_().tlimit(*args)
 
 
-def is_MaximaElement(x):
-    """
-    Return ``True`` if ``x`` is of type :class:`MaximaElement`.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.maxima import is_MaximaElement
-        sage: is_MaximaElement(1)
-        doctest:...: DeprecationWarning: the function is_MaximaElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: m = maxima(1)
-        sage: is_MaximaElement(m)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_MaximaElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaElement) instead")
-
-    return isinstance(x, MaximaElement)
-
-
 @instancedoc
 class MaximaElement(MaximaAbstractElement, ExpectElement):
     """

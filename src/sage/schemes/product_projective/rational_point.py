@@ -132,7 +132,7 @@ def enum_product_projective_rational_field(X, B):
             raise TypeError("codomain must be product of projective space over the rational field")
 
     R = X.codomain().ambient_space()
-    m = R.num_components()
+    m = R.n_components()
     iters = [R[i].points_of_bounded_height(bound=B) for i in range(m)]
     dim = [R[i].dimension_relative() + 1 for i in range(m)]
 
@@ -356,7 +356,7 @@ def sieve(X, bound):
     N = P.ngens()
     dim_scheme = X.dimension()
 
-    num_comp = P.num_components()
+    num_comp = P.n_components()
     comp_dim_relative = [P[i].dimension_relative() + 1 for i in range(num_comp)]
 
     dim_prefix = [0, comp_dim_relative[0]] # prefixes dim list
