@@ -2,10 +2,6 @@
 r"""
 Factory for cached representations
 
-.. SEEALSO::
-
-    :mod:`sage.structure.unique_representation`
-
 Using a :class:`UniqueFactory` is one way of implementing a *cached
 representation behaviour*. In spite of its name, using a
 :class:`UniqueFactory` is not enough to ensure the *unique representation
@@ -36,13 +32,16 @@ sophisticated, then generally
 :class:`~sage.structure.unique_representation.CachedRepresentation` is much
 easier to use than a factory.
 
+.. SEEALSO::
+
+    :mod:`sage.structure.unique_representation`
+
 AUTHORS:
 
-- Robert Bradshaw (2008): initial version.
-- Simon King (2013): extended documentation.
+- Robert Bradshaw (2008): initial version
+- Simon King (2013): extended documentation
 - Julian Rueth (2014-05-09): use ``_cache_key`` if parameters are unhashable
 """
-
 #*****************************************************************************
 #  Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
 #                2014 Julian Rueth <julian.rueth@fsfe.org>
@@ -739,6 +738,10 @@ def generic_factory_setstate(obj, d):
 def generic_factory_reduce(self, proto):
     """
     Used to provide a ``__reduce__`` method if one does not already exist.
+
+    INPUT:
+
+    - ``proto`` -- positive integer; protocol number
 
     EXAMPLES::
 
