@@ -252,7 +252,7 @@ class EllipticCurvePoint(AdditiveGroupElement,
         prime divisors, for which the result is computed using the "old",
         much simpler formulas for fields.) ::
 
-            sage: N = ZZ(randrange(2, 10**5))
+            sage: N = randrange(10**4) * 6 + choice([5, 7])  # coprime to 6
             sage: E = None
             sage: while True:
             ....:     try:
@@ -277,17 +277,13 @@ class EllipticCurvePoint(AdditiveGroupElement,
             ....:     if d > 1:
             ....:         assert R.change_ring(Zmod(d)) == P.change_ring(Zmod(d)) + Q.change_ring(Zmod(d))
         """
-        # Not using these shortcuts seems to prevent the test failures from
-        # :issue:`39191`, but this doesn't seem to address the root cause of
-        # the problem: Over some choices of ZZ/N, the elliptic-curve points
-        # do not even seem to define a group. See comments in :issue:`39191`.
-#        if self.is_zero():
-#            return other
-#        if other.is_zero():
-#            return self
-
         E = self.curve()
         R = E.base_ring()
+
+        # According to https://cr.yp.to/bib/1987/lenstra-ecnta.pdf, §3,
+        # the formulas require 6 to be a unit. See #39191 for details.
+        if not R(6).is_unit():
+            raise NotImplementedError('addition of elliptic-curve points over non-fields is only supported when 6 is a unit')
 
         # We handle Euclidean domains modulo principal ideals separately.
         # Important special cases of this include quotient rings of the
