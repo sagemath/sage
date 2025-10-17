@@ -8,6 +8,7 @@ py.install_sources(
   'bezier_path.py',
   'circle.py',
   'colors.py',
+  'complex_plot.pyx',
   'contour_plot.py',
   'density_plot.py',
   'disk.py',

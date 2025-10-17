@@ -15,7 +15,6 @@ dynamic = ["version"]
 include(`pyproject_toml_metadata.m4')dnl'
 
 [project.optional-dependencies]
-conf      = [SPKG_INSTALL_REQUIRES_sage_conf]           # sage.env can optionally use sage_conf
 docbuild  = [SPKG_INSTALL_REQUIRES_sage_docbuild]       # For "sage --docbuild"
 sage      = [SPKG_INSTALL_REQUIRES_sagelib]             # For "sage", "sage -t", ...
 cython    = [SPKG_INSTALL_REQUIRES_cython]              # For "sage --cython"
@@ -48,7 +47,6 @@ script-files = [
     "bin/sage-venv-config",
     "bin/sage-version.sh",
     # Not included:
-    # - bin/sage-env-config                  -- installed by sage_conf
     # - bin/sage-env-config.in               -- not to be installed
     # - bin/sage-run, bin/sage-runtests, ... -- installed by sagemath-repl
     # - bin/sage-ipython  -- uses sage.repl, so installed by sagemath-repl

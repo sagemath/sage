@@ -580,7 +580,7 @@ case "$SAGE_NUM_THREADS,$SAGE_NUM_THREADS_PARALLEL" in
         # First, figure out the right values for SAGE_NUM_THREADS (default
         # number of threads) and SAGE_NUM_THREADS_PARALLEL (default number of
         # threads when parallel execution is asked explicitly).
-        sage_num_threads_array=$(sage-num-threads.py 2>/dev/null || echo 1 2 1)
+        sage_num_threads_array=$("$(dirname "$0")"/sage-num-threads.py 2>/dev/null || echo 1 2 1)
         sage_num_threads_array="${sage_num_threads_array% *}" # strip third item
         SAGE_NUM_THREADS="${sage_num_threads_array% *}" # keep first item
         SAGE_NUM_THREADS_PARALLEL="${sage_num_threads_array#* }" # keep second item
