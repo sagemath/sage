@@ -48,24 +48,30 @@ and library interfaces to Maxima.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from itertools import islice
+import operator
 import os
 import re
-import sys
 import subprocess
-
-from sage.env import DOT_SAGE, MAXIMA
-COMMANDS_CACHE = '%s/maxima_commandlist_cache.sobj' % DOT_SAGE
+import sys
 
 from sage.cpython.string import bytes_to_str
-
-from sage.misc.cachefunc import cached_method
-from sage.misc.multireplace import multiple_replace
-from sage.structure.richcmp import richcmp, rich_to_bool
-
-from .interface import (Interface, InterfaceElement, InterfaceFunctionElement,
-                        InterfaceFunction, AsciiArtString)
+from sage.env import DOT_SAGE, MAXIMA
 from sage.interfaces.tab_completion import ExtraTabCompletion
+from sage.misc.cachefunc import cached_method
 from sage.misc.instancedoc import instancedoc
+from sage.misc.multireplace import multiple_replace
+from sage.structure.richcmp import rich_to_bool, richcmp
+
+from .interface import (
+    AsciiArtString,
+    Interface,
+    InterfaceElement,
+    InterfaceFunction,
+    InterfaceFunctionElement,
+)
+COMMANDS_CACHE = '%s/maxima_commandlist_cache.sobj' % DOT_SAGE
+
 
 # The Maxima "apropos" command, e.g., apropos(det) gives a list
 # of all identifiers that begin in a certain way.  This could
@@ -1632,13 +1638,13 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         Q = P(other)
         return P('%s . %s' % (self.name(), Q.name()))
 
-    def __getitem__(self, n):
+    def __getitem__(self, i):
         r"""
-        Return the `n`-th element of this list.
+        Return the `i`-th element of this list.
 
         INPUT:
 
-        - ``n`` -- integer
+        - ``i`` -- integer or slice
 
         OUTPUT: Maxima object
 
@@ -1658,13 +1664,30 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: v[10]
             Traceback (most recent call last):
             ...
-            IndexError: n = (10) must be between 0 and 5
+            IndexError: i = (10) must be between 0 and 5
+            sage: v[2:]
+            [2*x^2, 3*x^3, 4*x^4, 5*x^5]
+            sage: v[:3]
+            [0, x, 2*x^2]
+            sage: v[1:4]
+            [x, 2*x^2, 3*x^3]
+            sage: v[3::-1]
+            [3*x^3, 2*x^2, x, 0]
         """
-        n = int(n)
-        if n < 0 or n >= len(self):
-            raise IndexError("n = (%s) must be between %s and %s" % (n, 0, len(self)-1))
-        # If you change the n+1 to n below, better change __iter__ as well.
-        return InterfaceElement.__getitem__(self, n+1)
+        # Handle slices as well
+        if isinstance(i, slice):
+            start, stop, step = i.start or 0, i.stop or len(self), i.step or 1
+            if start >= 0 and stop >= 0 and step >= 0:
+                return list(islice(self, start, stop, step))
+            else:
+                # Hard to tackle slices esp with negative step
+                return list(self)[i]
+        else:
+            i = operator.index(i)
+            if i < 0 or i >= len(self):
+                raise IndexError("i = (%s) must be between %s and %s" % (i, 0, len(self)-1))
+            # If you change the i+1 to i below, better change __iter__ as well.
+            return InterfaceElement.__getitem__(self, i+1)
 
     def __iter__(self):
         """
@@ -1679,8 +1702,9 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: [e._sage_() for e in L]
             [0, x, 2*x^2, 3*x^3, 4*x^4, 5*x^5]
         """
-        for i in range(len(self)):
-            yield self[i]
+        z = self.copy()
+        for _ in range(len(z)):
+            yield z.pop()
 
     def subst(self, val):
         """
@@ -2108,7 +2132,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
     integrate = integral
 
-    def _operation(self, operation, f=None):
+    def _operation(self, operation, other=None):
         r"""
         This is a utility function which factors out much of the
         commonality used in the arithmetic operations for
@@ -2119,7 +2143,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
         - ``operation`` -- string representing the operation
           being performed. For example, '\*', or '1/'
 
-        - ``f`` -- the other operand; if ``f`` is
+        - ``other`` -- the other operand; if ``other`` is
           ``None``, then the operation is assumed to be unary
           rather than binary
 
@@ -2136,16 +2160,16 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
             1/sin(y+x)
         """
         P = self._check_valid()
-        if isinstance(f, P._object_function_class()):
-            tmp = sorted(set(self.arguments() + f.arguments()))
+        if isinstance(other, P._object_function_class()):
+            tmp = sorted(set(self.arguments() + other.arguments()))
             args = ','.join(tmp)
-            defn = "(%s)%s(%s)" % (self.definition(), operation, f.definition())
-        elif f is None:
+            defn = "(%s)%s(%s)" % (self.definition(), operation, other.definition())
+        elif other is None:
             args = self.arguments(split=False)
             defn = "%s(%s)" % (operation, self.definition())
         else:
             args = self.arguments(split=False)
-            defn = "(%s)%s(%s)" % (self.definition(), operation, repr(f))
+            defn = "(%s)%s(%s)" % (self.definition(), operation, repr(other))
 
         return P.function(args, P.eval(defn))
 

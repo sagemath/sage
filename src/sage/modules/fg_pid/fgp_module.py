@@ -1198,21 +1198,20 @@ class FGP_Module_class(Module):
 
         We create a derived class and overwrite :meth:`gens`::
 
-             sage: from sage.modules.fg_pid.fgp_module import FGP_Module_class
-             sage: W = ZZ^3
-             sage: V = W.span(matrix.diagonal([1/6, 1/3, 1/12]))
-             sage: class FGP_with_gens(FGP_Module_class):
-             ....:     def __init__(self, V, W, gens):
-             ....:         FGP_Module_class.__init__(self, V, W)
-             ....:         self._gens = tuple([self(g) for g in gens])
-             ....:     def gens(self):
-             ....:         return self._gens
-             sage: gens = [(1/2, 0, 0), (0, 0, 1/4), (1/3, 0, 0), (0, 1/3, 0), (0, 0, 2/3)]
-             sage: gens = [V(g) for g in gens]
-             sage: D = FGP_with_gens(V, W, gens)
-             sage: D.gens()
-             ((0, 3, 0), (0, 0, 3), (0, 4, 0), (1, 2, 0), (0, 0, 8))
-
+            sage: from sage.modules.fg_pid.fgp_module import FGP_Module_class
+            sage: W = ZZ^3
+            sage: V = W.span(matrix.diagonal([1/6, 1/3, 1/12]))
+            sage: class FGP_with_gens(FGP_Module_class):
+            ....:     def __init__(self, V, W, gens):
+            ....:         FGP_Module_class.__init__(self, V, W)
+            ....:         self._gens = tuple([self(g) for g in gens])
+            ....:     def gens(self) -> tuple:
+            ....:         return self._gens
+            sage: gens = [(1/2, 0, 0), (0, 0, 1/4), (1/3, 0, 0), (0, 1/3, 0), (0, 0, 2/3)]
+            sage: gens = [V(g) for g in gens]
+            sage: D = FGP_with_gens(V, W, gens)
+            sage: D.gens()
+            ((0, 3, 0), (0, 0, 3), (0, 4, 0), (1, 2, 0), (0, 0, 8))
 
         We create some element of ``D``::
 
@@ -1620,7 +1619,7 @@ class FGP_Module_class(Module):
         EXAMPLES::
 
             sage: class SillyModule(sage.modules.fg_pid.fgp_module.FGP_Module_class):
-            ....:     def gens(self):
+            ....:     def gens(self) -> tuple:
             ....:         return tuple(flatten([[x,x] for x in self.smith_form_gens()]))
             sage: A = SillyModule(ZZ**1, span([[3]], ZZ))
             sage: A.gen(0)
@@ -1662,7 +1661,7 @@ class FGP_Module_class(Module):
         EXAMPLES::
 
             sage: class SillyModule(sage.modules.fg_pid.fgp_module.FGP_Module_class):
-            ....:     def gens(self):
+            ....:     def gens(self) -> tuple:
             ....:         return tuple(flatten([[x,x] for x in self.smith_form_gens()]))
             sage: A = SillyModule(ZZ**1, span([[3]], ZZ))
             sage: A.gen(0)

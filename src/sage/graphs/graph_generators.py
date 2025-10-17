@@ -17,9 +17,7 @@ build by typing ``graphs.`` in Sage and then hitting :kbd:`Tab`.
 
 import subprocess
 
-
 # This method appends a list of methods to the doc as a 3xN table.
-
 # Here's the point :
 #
 # we just have to insert the method's name in this file to add it to
@@ -27,6 +25,7 @@ import subprocess
 # all methods listed, so that the reading order is Column1, then
 # Column2, then Column3. Doing this by hand is hell with Sphinx when
 # you need to insert a new method inside of the list !
+
 
 def __append_to_doc(methods):
     global __doc__
@@ -493,7 +492,7 @@ Functions and methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import graph
+from sage.graphs import graph
 
 
 class GraphGenerators:
@@ -798,7 +797,7 @@ class GraphGenerators:
         ::
 
             sage: for g in graphs():
-            ....:    if g.num_verts() > 3: break
+            ....:    if g.n_vertices() > 3: break
             ....:    print(g)
             Graph on 0 vertices
             Graph on 1 vertex
@@ -846,11 +845,11 @@ class GraphGenerators:
                     return degree_sequence == sorted(x.degree())
             else:
                 def property(x):
-                    D = sorted(x.degree() + [0] * (vertices - x.num_verts()))
+                    D = sorted(x.degree() + [0] * (vertices - x.n_vertices()))
                     return all(degree_sequence[i] >= d for i, d in enumerate(D))
 
                 def extra_property(x):
-                    if x.num_verts() != vertices:
+                    if x.n_vertices() != vertices:
                         return False
                     return degree_sequence == sorted(x.degree())
         elif size is not None:
@@ -1014,6 +1013,7 @@ class GraphGenerators:
             ['>A ...geng -cd1D2 n=3 e=2-3\n', Graph on 3 vertices, Graph on 3 vertices]
         """
         import shlex
+
         from sage.features.nauty import NautyExecutable
         geng_path = NautyExecutable("geng").absolute_filename()
         sp = subprocess.Popen(shlex.quote(geng_path) + " {0}".format(options), shell=True,
@@ -1200,6 +1200,7 @@ class GraphGenerators:
             '>E Usage: ...genbg... [-c -ugs -vq -lzF] [-Z#] [-D#] [-A] [-d#|-d#:#] [-D#|-D#:#] n1 n2...
         """
         import shlex
+
         from sage.features.nauty import NautyExecutable
         genbg_path = NautyExecutable("genbgL").absolute_filename()
         sp = subprocess.Popen(shlex.quote(genbg_path) + " {0}".format(options), shell=True,
@@ -1335,6 +1336,7 @@ class GraphGenerators:
             ValueError: wrong format of parameter option
         """
         import shlex
+
         from sage.features.nauty import NautyExecutable
         geng_path = NautyExecutable("genktreeg").absolute_filename()
         sp = subprocess.Popen(shlex.quote(geng_path) + " {0}".format(options), shell=True,
@@ -2177,12 +2179,11 @@ class GraphGenerators:
                 minimum_connectivity = min(3, minimum_degree)
             elif minimum_degree is None:
                 minimum_degree, minimum_connectivity = 1, 1
-        else:
-            if minimum_degree is None:
-                minimum_degree = minimum_connectivity
-            elif (minimum_degree < minimum_connectivity and
-                  minimum_degree > 0):
-                raise ValueError("Minimum connectivity can be at most the minimum degree.")
+        elif minimum_degree is None:
+            minimum_degree = minimum_connectivity
+        elif (minimum_degree < minimum_connectivity and
+              minimum_degree > 0):
+            raise ValueError("Minimum connectivity can be at most the minimum degree.")
 
         # exact connectivity is not implemented for minimum connectivity 3
         if exact_connectivity and minimum_connectivity == 3:
@@ -2403,11 +2404,10 @@ class GraphGenerators:
                 minimum_connectivity = min(3, minimum_degree)
             else:
                 minimum_degree, minimum_connectivity = 3, 3
-        else:
-            if minimum_degree is None:
-                minimum_degree = minimum_connectivity
-            elif minimum_degree < minimum_connectivity:
-                raise ValueError("Minimum connectivity can be at most the minimum degree.")
+        elif minimum_degree is None:
+            minimum_degree = minimum_connectivity
+        elif minimum_degree < minimum_connectivity:
+            raise ValueError("Minimum connectivity can be at most the minimum degree.")
 
         # exact connectivity is not implemented for minimum connectivity equal
         # to minimum degree
@@ -2548,11 +2548,10 @@ class GraphGenerators:
                 minimum_connectivity = min(2, minimum_degree)
             else:
                 minimum_degree, minimum_connectivity = 2, 2
-        else:
-            if minimum_degree is None:
-                minimum_degree = minimum_connectivity
-            elif minimum_degree < minimum_connectivity:
-                raise ValueError("Minimum connectivity can be at most the minimum degree.")
+        elif minimum_degree is None:
+            minimum_degree = minimum_connectivity
+        elif minimum_degree < minimum_connectivity:
+            raise ValueError("Minimum connectivity can be at most the minimum degree.")
 
         minimum_order = {2: 4, 3: 8}[minimum_degree]
 
@@ -2574,7 +2573,7 @@ class GraphGenerators:
 ###########################################################################
 # Basic Graphs
 ###########################################################################
-    from .generators import basic
+    from sage.graphs.generators import basic
     BullGraph = staticmethod(basic.BullGraph)
     ButterflyGraph = staticmethod(basic.ButterflyGraph)
     CircularLadderGraph = staticmethod(basic.CircularLadderGraph)
@@ -2603,7 +2602,7 @@ class GraphGenerators:
 ###########################################################################
 # Small Graphs
 ###########################################################################
-    from .generators import smallgraphs, distance_regular
+    from sage.graphs.generators import distance_regular, smallgraphs
     Balaban10Cage = staticmethod(smallgraphs.Balaban10Cage)
     Balaban11Cage = staticmethod(smallgraphs.Balaban11Cage)
     BidiakisCube = staticmethod(smallgraphs.BidiakisCube)
@@ -2717,7 +2716,7 @@ class GraphGenerators:
 ###########################################################################
 # Platonic Solids
 ###########################################################################
-    from .generators import platonic_solids
+    from sage.graphs.generators import platonic_solids
     DodecahedralGraph = staticmethod(platonic_solids.DodecahedralGraph)
     HexahedralGraph = staticmethod(platonic_solids.HexahedralGraph)
     IcosahedralGraph = staticmethod(platonic_solids.IcosahedralGraph)
@@ -2727,9 +2726,9 @@ class GraphGenerators:
 ###########################################################################
 # Families
 ###########################################################################
-    from . import cographs as cographs_module
-    from .generators import families
-    from . import strongly_regular_db
+    from sage.graphs import cographs as cographs_module
+    from sage.graphs import strongly_regular_db
+    from sage.graphs.generators import families
     AlternatingFormsGraph = staticmethod(distance_regular.AlternatingFormsGraph)
     AztecDiamondGraph = staticmethod(families.AztecDiamondGraph)
     BarbellGraph = staticmethod(families.BarbellGraph)
@@ -2802,7 +2801,7 @@ class GraphGenerators:
 ###########################################################################
 # Graphs from classical geometries over `F_q`
 ###########################################################################
-    from .generators import classical_geometries
+    from sage.graphs.generators import classical_geometries
     AffineOrthogonalPolarGraph = staticmethod(classical_geometries.AffineOrthogonalPolarGraph)
     AhrensSzekeresGeneralizedQuadrangleGraph = staticmethod(classical_geometries.AhrensSzekeresGeneralizedQuadrangleGraph)
     NonisotropicOrthogonalPolarGraph = staticmethod(classical_geometries.NonisotropicOrthogonalPolarGraph)
@@ -2823,7 +2822,7 @@ class GraphGenerators:
 ###########################################################################
 # Chessboard Graphs
 ###########################################################################
-    from .generators import chessboard
+    from sage.graphs.generators import chessboard
     ChessboardGraphGenerator = staticmethod(chessboard.ChessboardGraphGenerator)
     BishopGraph = staticmethod(chessboard.BishopGraph)
     KingGraph = staticmethod(chessboard.KingGraph)
@@ -2834,7 +2833,7 @@ class GraphGenerators:
 ###########################################################################
 # Intersection graphs
 ###########################################################################
-    from .generators import intersection
+    from sage.graphs.generators import intersection
     IntervalGraph = staticmethod(intersection.IntervalGraph)
     IntersectionGraph = staticmethod(intersection.IntersectionGraph)
     PermutationGraph = staticmethod(intersection.PermutationGraph)
@@ -2844,7 +2843,7 @@ class GraphGenerators:
 ###########################################################################
 # Random Graphs
 ###########################################################################
-    from .generators import random
+    from sage.graphs.generators import random
     RandomBarabasiAlbert = staticmethod(random.RandomBarabasiAlbert)
     RandomBipartite = staticmethod(random.RandomBipartite)
     RandomRegularBipartite = staticmethod(random.RandomRegularBipartite)
@@ -2869,7 +2868,7 @@ class GraphGenerators:
 ###########################################################################
 # Trees
 ###########################################################################
-    from .generators import trees as gen_trees
+    from sage.graphs.generators import trees as gen_trees
     BalancedTree = staticmethod(gen_trees.BalancedTree)
     FibonacciTree = staticmethod(gen_trees.FibonacciTree)
     nauty_gentreeg = staticmethod(gen_trees.nauty_gentreeg)
@@ -2881,7 +2880,7 @@ class GraphGenerators:
 ###########################################################################
 # Maps
 ###########################################################################
-    from .generators import world_map
+    from sage.graphs.generators import world_map
     WorldMap = staticmethod(world_map.WorldMap)
     EuropeMap = staticmethod(world_map.EuropeMap)
     AfricaMap = staticmethod(world_map.AfricaMap)
@@ -2890,7 +2889,7 @@ class GraphGenerators:
 ###########################################################################
 # Degree Sequence
 ###########################################################################
-    from .generators import degree_sequence
+    from sage.graphs.generators import degree_sequence
     DegreeSequence = staticmethod(degree_sequence.DegreeSequence)
     DegreeSequenceBipartite = staticmethod(degree_sequence.DegreeSequenceBipartite)
     DegreeSequenceConfigurationModel = staticmethod(degree_sequence.DegreeSequenceConfigurationModel)
