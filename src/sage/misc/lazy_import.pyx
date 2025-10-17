@@ -1007,25 +1007,39 @@ cdef class LazyImport():
         EXAMPLES::
 
             sage: from sage.misc.lazy_import import LazyImport
-            sage: lazy_ZZ = LazyImport('sage.rings.integer_ring', 'ZZ')
             sage: from pickle import loads, dumps
+            sage: lazy_ZZ = LazyImport('sage.rings.integer_ring', 'ZZ')
             sage: restored = loads(dumps(lazy_ZZ))
             sage: type(restored)
             <class 'sage.misc.lazy_import.LazyImport'>
-            sage: restored._module
-            'sage.rings.integer_ring'
-            sage: restored._name
-            'ZZ'
 
         The restored LazyImport can still be used normally::
 
             sage: restored(42)
             42
-
-        When used, it resolves to the same object::
-
             sage: restored._get_object() is ZZ
             True
+
+        Test equality after unpickling::
+
+            sage: lazy_QQ = LazyImport('sage.rings.rational_field', 'QQ')
+            sage: restored_QQ = loads(dumps(lazy_QQ))
+            sage: lazy_QQ == restored_QQ
+            True
+            sage: lazy_QQ._get_object() is restored_QQ._get_object()
+            True
+
+        Pickling works even after the lazy import has been used::
+
+            sage: lazy_Integer = LazyImport('sage.rings.integer', 'Integer')
+            sage: val = lazy_Integer(5)
+            sage: type(lazy_Integer)
+            <class 'sage.misc.lazy_import.LazyImport'>
+            sage: restored_Integer = loads(dumps(lazy_Integer))
+            sage: type(restored_Integer)
+            <class 'sage.misc.lazy_import.LazyImport'>
+            sage: restored_Integer(10)
+            10
         """
         # Pickle the LazyImport itself, preserving the lazy behavior
         # We exclude namespace since it may reference unpicklable objects
