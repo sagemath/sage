@@ -3347,7 +3347,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             De = self.__disc
         except AttributeError:
             De = self.polynomial().discriminant()
-            A = De.numerator().prime_factors()+De.denominator().prime_factors()
+            A = De.numerator().prime_factors() + De.denominator().prime_factors()
         else:
             A = De.prime_factors()
 
@@ -3356,16 +3356,16 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             e = R.fractional_ideal(p).prime_factors()[0].ramification_index()
             if e != 1:
                 if p == 2:
-                    m *= e*2
+                    m *= e * 2
                     c = R.discriminant().valuation(2)
-                    c /= self.polynomial().degree()/e
+                    c /= self.polynomial().degree() / e
                     if is_odd(c):
                         m *= 2
                 else:
-                    m *= p**(e.valuation(p)+1)
+                    m *= p**(e.valuation(p) + 1)
         return m
 
-    def dirichlet_group(self):
+    def dirichlet_group(self) -> list:
         r"""
         Given a abelian field `K`, compute and return the
         set of all Dirichlet characters corresponding to the
@@ -12442,31 +12442,6 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         if f <= 0:
             raise ValueError('conductor must be a positive integer')
         return self.order([f * g for g in self.maximal_order().gens()])
-
-
-def is_fundamental_discriminant(D):
-    r"""
-    Return ``True`` if the integer `D` is a fundamental
-    discriminant, i.e., if `D \cong 0,1\pmod{4}`, and
-    `D\neq 0, 1` and either (1) `D` is square free or
-    (2) we have `D\cong 0\pmod{4}` with
-    `D/4 \cong 2,3\pmod{4}` and `D/4` square free. These
-    are exactly the discriminants of quadratic fields.
-
-    EXAMPLES::
-
-        sage: [D for D in range(-15,15) if is_fundamental_discriminant(D)]
-        ...
-        DeprecationWarning: is_fundamental_discriminant(D) is deprecated;
-        please use D.is_fundamental_discriminant()
-        ...
-        [-15, -11, -8, -7, -4, -3, 5, 8, 12, 13]
-        sage: [D for D in range(-15,15)
-        ....:  if not is_square(D) and QuadraticField(D,'a').disc() == D]
-        [-15, -11, -8, -7, -4, -3, 5, 8, 12, 13]
-    """
-    deprecation(35147, "is_fundamental_discriminant(D) is deprecated; please use D.is_fundamental_discriminant()")
-    return Integer(D).is_fundamental_discriminant()
 
 
 ###################
