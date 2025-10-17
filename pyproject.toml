@@ -220,7 +220,6 @@ dev = [
   "meson",
   "pygithub",
   "python-build",
-  "toml",
   "tqdm",
   "uv",
 ]
