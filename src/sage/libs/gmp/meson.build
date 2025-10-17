@@ -8,6 +8,7 @@ py.install_sources(
   'mpq.pxd',
   'mpz.pxd',
   'pylong.pxd',
+  'pylong.pyx',
   'random.pxd',
   'randomize.pxd',
   'types.pxd',

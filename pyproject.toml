@@ -8,10 +8,10 @@ requires = [
   'cysignals >=1.11.2, != 1.12.0',
   # Exclude 3.0.3 because of https://github.com/cython/cython/issues/5748
   'cython >=3.0, != 3.0.3',
-  'gmpy2 ~=2.1.b999',
+  'gmpy2 >=2.1.5',
   'jinja2',
   'memory_allocator',
-  'numpy >=1.25',
+  'numpy >=2.2.4',
 ]
 [tool.meson-python.args]
 # Prevent meson from trying to install the autoconf subprojects
@@ -50,7 +50,7 @@ dependencies = [
   'cysignals >=1.11.2, != 1.12.0',
   'cython >=3.0, != 3.0.3',
   'fpylll >=0.5.9; sys_platform != "win32"',
-  'gmpy2 ~=2.1.b999',
+  'gmpy2 >=2.1.5',
   'ipykernel >=5.2.1',
   'ipython >=8.9.0',
   'ipywidgets >=7.5.1',
@@ -69,7 +69,7 @@ dependencies = [
   'ptyprocess > 0.5',
   'requests >=2.13.0',
   'scipy >=1.11',
-  'sphinx >=5.2, <9',
+  'sphinx >=6.2, <9',
   'sympy >=1.6, <2.0',
   # According to https://github.com/python/typing_extensions/blob/main/CHANGELOG.md,
   # version 4.4.0 adds another Python 3.11 typing backport
@@ -90,13 +90,13 @@ R = ['rpy2 >=3.3']
 extra = [
   'igraph',
   'lrcalc ~=2.1; sys_platform != "win32"',
-  'p_group_cohomology >=3.3', # Only used in tests
+  #'p_group_cohomology >=3.3', # Only used in tests, not available on PyPI
   'pycosat >=0.6.3',
   'pynormaliz >=2.18; platform_machine != "aarch64" and platform_machine != "arm64"', # Not yet available for Linux aarch64
   'sage_numerical_backends_coin',
   'symengine >= 0.6.1', # Only used in tests
 ]
-giac = ['sagemath_giac']
+#giac = ['sagemath_giac'] # Not yet available on PyPI (https://github.com/sagemath/sagemath-giac/issues/3)
 
 [project.readme]
 content-type = "text/markdown"
@@ -109,7 +109,7 @@ sage = "sage.cli:main"
 platforms = ['linux-64', 'linux-aarch64', 'osx-64', 'osx-arm64']
 
 [tool.pytest.ini_options]
-norecursedirs = "local prefix venv build builddir pkgs .git src/doc src/bin src/sage_setup/autogen/flint tools"
+norecursedirs = "local prefix venv build builddir pkgs .git src/doc src/bin src/sage_setup/autogen/flint tools subprojects"
 python_files = "*_test.py"
 # The "no:warnings" is to stop pytest from capturing warnings so that they are printed to the output of the doctest
 addopts = "--import-mode importlib -p no:warnings"
@@ -214,7 +214,16 @@ extra = [
 # ]
 
 [dependency-groups]
-dev = ["conda-lock", "grayskull", "meson", "pygithub", "toml", "tqdm", "uv"]
+dev = [
+  "conda-lock",
+  "grayskull",
+  "meson",
+  "pygithub",
+  "python-build",
+  "toml",
+  "tqdm",
+  "uv",
+]
 docs = [
   "furo",
   "jupyter-sphinx",
@@ -241,6 +250,7 @@ select = [
   "F", # pyflakes - https://docs.astral.sh/ruff/rules/#pyflakes-f
   "I", # isort - https://docs.astral.sh/ruff/rules/#isort-i
   "PL", # pylint - https://docs.astral.sh/ruff/rules/#pylint-pl
+  "TC", # flake8-type-checking - https://docs.astral.sh/ruff/rules/#flake8-type-checking-tc
 ]
 
 [tool.ruff.lint.per-file-ignores]

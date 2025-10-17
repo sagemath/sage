@@ -65,6 +65,8 @@ class HighestWeightCrystals(Category_singleton):
         running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
+        running ._test_random() . . . pass
+        running ._test_rank() . . . pass
         running ._test_some_elements() . . . pass
         running ._test_stembridge_local_axioms() . . . pass
     """
@@ -112,7 +114,7 @@ class HighestWeightCrystals(Category_singleton):
     class ParentMethods:
 
         @cached_method
-        def highest_weight_vectors(self):
+        def highest_weight_vectors(self) -> tuple:
             r"""
             Return the highest weight vectors of ``self``.
 
@@ -672,7 +674,7 @@ class HighestWeightCrystals(Category_singleton):
             Implement operations on tensor products of crystals.
             """
             @cached_method
-            def highest_weight_vectors(self):
+            def highest_weight_vectors(self) -> tuple:
                 r"""
                 Return the highest weight vectors of ``self``.
 

@@ -189,7 +189,7 @@ dnl This will save users from running into build errors later.
 AC_MSG_CHECKING([the symbolic links in the source tree])
 AS_IF([test -L build/pkgs/liblzma/package-version.txt], [dnl OK
     AC_MSG_RESULT([intact])
-], [dnl Either replaced by a copy (OK, as done in the sage-conf_pypi sdist)
+], [dnl Either replaced by a copy (OK)
     dnl  or replaced by the name of the link target (BAD, misconfigured git clone in WSL)
     AS_IF([test ! -e build/pkgs/sagelib/src], [dnl
         AC_MSG_RESULT([intact (with links to embedded source trees pruned)])
@@ -218,6 +218,14 @@ then
     AC_MSG_NOTICE([On some systems it can be found in /usr/ccs/bin ])
     AC_MSG_NOTICE(['ar' is also part of the GNU 'binutils' package.])
     AC_MSG_ERROR([Exiting, as the archiver 'ar' can not be found.])
+fi
+
+AC_CHECK_PROG(found_patch, patch, yes, no)
+if test x$found_patch != xyes
+then
+    AC_MSG_NOTICE([Sorry, the 'patch' command must be in the path to build AC_PACKAGE_NAME])
+    AC_MSG_NOTICE([See e.g. https://www.gnu.org/software/patch/])
+    AC_MSG_ERROR([Exiting, as the utility 'patch' can not be found.])
 fi
 
 AC_CHECK_PROG(found_m4, m4, yes, no)
@@ -482,14 +490,6 @@ AS_IF([test "x$enable_download_from_upstream_url" = "xyes"], [
 ])
 AC_SUBST([SAGE_SPKG_OPTIONS])
 
-AC_ARG_ENABLE([sage_conf],
-  AS_HELP_STRING([--disable-sage_conf],
-                 [disable build of the sage_conf package]), [
-    for pkg in sage_conf; do
-      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
-    done
-  ])
-
 AC_ARG_ENABLE([cvxopt],
   AS_HELP_STRING([--disable-cvxopt],
                  [disable build of the cvxopt package and its prerequisite suitesparse]), [
@@ -572,8 +572,6 @@ AC_SUBST(SAGE_PKG_CONFIG_PATH, [$SAGE_DARWIN_PKG_CONFIG_PATH'$SAGE_LOCAL/lib/pkg
 
 AC_CONFIG_FILES([build/make/Makefile-auto build/make/Makefile])
 AC_CONFIG_FILES([src/bin/sage-env-config src/bin/sage-src-env-config build/bin/sage-build-env-config])
-
-AC_CONFIG_FILES([pkgs/sage-conf/_sage_conf/_conf.py])
 
 dnl Create basic directories needed for Sage
 AC_CONFIG_COMMANDS(mkdirs,

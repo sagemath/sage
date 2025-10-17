@@ -36,7 +36,7 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
         sage: elt = ((x^3-z)*x + y)^2
         sage: TestSuite(elt).run()
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -442,18 +442,14 @@ cdef class ExteriorAlgebraElement(CliffordAlgebraElement):
             4*a*b*c*d + 4*a*b*c + 4*a*b*d + 4*a*c*d + 4*b*c*d
              + 2*a*b + 2*a*c + 2*a*d + 2*b*c + 2*b*d + 2*c*d
              + 2*a + 2*b + 2*c + 2*d + 1
-             
-             TESTS::
 
-            Check that multiplication with symbolic coefficients is handled correctly (gh-40738)::
-
-                sage: from sage.all import ExteriorAlgebra, SR, var
-                sage: L.<a, b> = ExteriorAlgebra(SR)
-                sage: x, y = var('x y')
-                sage: x * (y * b)
-                x*y*b
-                sage: (x * a) * (y * b)
-                x*y*a*b
+            sage: from sage.all import ExteriorAlgebra, SR, var
+            sage: L.<a, b> = ExteriorAlgebra(SR)
+            sage: x, y = var('x y')
+            sage: x * (y * b)
+            x*y*b
+            sage: (x * a) * (y * b)
+            x*y*a*b
         """
         cdef Parent P = self._parent
         cdef R = P.base_ring()
