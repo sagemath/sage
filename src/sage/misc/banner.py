@@ -28,7 +28,7 @@ def version():
        sage: version()
        doctest:warning
        ...
-       DeprecationWarning: Use sage.version instead.
+       DeprecationWarning: Use sage.version.version instead.
        ...
        'SageMath version ..., Release Date: ...'
     """
