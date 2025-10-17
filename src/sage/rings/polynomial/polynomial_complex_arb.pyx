@@ -184,7 +184,7 @@ cdef class Polynomial_complex_arb(Polynomial):
                     sig_on()
                     acb_poly_fit_length(self._poly, length)
                     sig_off()
-                    for i, c in dct.iteritems():
+                    for i, c in dct.items():
                         ball = Coeff(c)
                         acb_poly_set_coeff_acb(self._poly, i, ball.value)
             else:

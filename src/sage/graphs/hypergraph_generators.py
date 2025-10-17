@@ -304,9 +304,9 @@ class HypergraphGenerators:
 
         EXAMPLES::
 
-            sage: hypergraphs.BinomialRandomUniform(50, 3, 1).num_blocks()              # needs numpy, long time
+            sage: hypergraphs.BinomialRandomUniform(50, 3, 1).n_blocks()              # needs numpy, long time
             19600
-            sage: hypergraphs.BinomialRandomUniform(50, 3, 0).num_blocks()              # needs numpy
+            sage: hypergraphs.BinomialRandomUniform(50, 3, 0).n_blocks()              # needs numpy
             0
 
         TESTS::

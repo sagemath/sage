@@ -35,8 +35,8 @@ Any graph backend must redefine the following methods (for which
     :meth:`~GenericGraphBackend.loops` | Get/set whether or not ``self`` allows loops.
     :meth:`~GenericGraphBackend.multiple_edges` | Get/set whether or not ``self`` allows multiple edges.
     :meth:`~GenericGraphBackend.name` | Get/set name of ``self``.
-    :meth:`~GenericGraphBackend.num_edges` | The number of edges in ``self``
-    :meth:`~GenericGraphBackend.num_verts` | The number of vertices in ``self``
+    :meth:`~GenericGraphBackend.n_edges` | The number of edges in ``self``
+    :meth:`~GenericGraphBackend.n_vertices` | The number of vertices in ``self``
     :meth:`~GenericGraphBackend.relabel` | Relabel the vertices of ``self`` by a permutation.
     :meth:`~GenericGraphBackend.set_edge_label` | Label the edge `(u,v)` by `l`.
 
@@ -583,7 +583,7 @@ cdef class GenericGraphBackend(SageObject):
         """
         raise NotImplementedError()
 
-    def num_edges(self, directed):
+    def n_edges(self, directed):
         """
         Return the number of edges in ``self``.
 
@@ -594,30 +594,34 @@ cdef class GenericGraphBackend(SageObject):
         TESTS::
 
             sage: G = sage.graphs.base.graph_backends.GenericGraphBackend()
-            sage: G.num_edges(True)
+            sage: G.n_edges(True)
             Traceback (most recent call last):
             ...
             NotImplementedError
-            sage: G.num_edges(False)
+            sage: G.n_edges(False)
             Traceback (most recent call last):
             ...
             NotImplementedError
         """
         raise NotImplementedError()
 
-    def num_verts(self):
+    num_edges = n_edges
+
+    def n_vertices(self):
         """
         Return the number of vertices in ``self``.
 
         TESTS::
 
             sage: G = sage.graphs.base.graph_backends.GenericGraphBackend()
-            sage: G.num_verts()
+            sage: G.n_vertices()
             Traceback (most recent call last):
             ...
             NotImplementedError
         """
         raise NotImplementedError()
+
+    num_verts = n_vertices
 
     def relabel(self, perm, directed):
         """
