@@ -22,7 +22,7 @@ from sage.libs.gap.libgap import libgap
 from sage.libs.gap.util cimport *
 from sage.libs.gap.util import GAPError, gap_sig_on, gap_sig_off
 from sage.libs.gmp.mpz cimport *
-from sage.libs.gmp.pylong cimport mpz_get_pylong
+from sage.libs.gmp.pylong cimport mpz_get_pylong, mpz_set_pylong
 from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -218,7 +218,7 @@ cdef Obj make_gap_integer(sage_int) except NULL:
 
     INPUT:
 
-    - ``sage_int`` -- Sage integer
+    - ``sage_int`` -- Sage integer or Python int
 
     OUTPUT: the integer as a GAP ``Obj``
 
@@ -226,8 +226,33 @@ cdef Obj make_gap_integer(sage_int) except NULL:
 
         sage: libgap(1)   # indirect doctest
         1
+        sage: libgap(int(10**30))  # indirect doctest
+        1000000000000000000000000000000
+        sage: libgap(-int(10**30))  # indirect doctest
+        -1000000000000000000000000000000
     """
-    return GAP_NewObjIntFromInt(<int>sage_int)
+    cdef mpz_t temp
+    cdef Obj result
+    cdef Int size
+    
+    # Try the fast path for small integers
+    try:
+        return GAP_NewObjIntFromInt(<int>sage_int)
+    except OverflowError:
+        # For large Python int, we need to convert via GMP
+        # and use GAP_MakeObjInt
+        mpz_init(temp)
+        try:
+            mpz_set_pylong(temp, sage_int)
+            size = mpz_size(temp)
+            if mpz_sgn(temp) < 0:
+                size = -size
+            # Access the limbs directly from the mpz_t structure
+            # temp[0]._mp_d gives us the pointer to the limbs
+            result = GAP_MakeObjInt(<const UInt*>temp[0]._mp_d, size)
+            return result
+        finally:
+            mpz_clear(temp)
 
 
 cdef Obj make_gap_string(sage_string) except NULL:
