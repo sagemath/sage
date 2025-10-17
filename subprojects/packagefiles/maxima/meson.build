@@ -24,6 +24,7 @@ proj = mod.add_project('configure',
   configure_options : [
                         '--enable-ecl',
                         '--with-ecl=' + ecl,
+                        '--prefix=' + meson.current_build_dir() + '/dist/usr/local',
                         '--infodir=' + meson.current_build_dir() + '/dist/usr/local/share/maxima/5.47.0/share/info',
                         # Maxima configure checks for git and, if it finds it, uses
                         # versions information from the repo. See #15529. We disable this.
