@@ -20,6 +20,7 @@ import tarfile
 import stat
 import subprocess
 import time
+import inspect
 
 from io import BytesIO
 
@@ -96,9 +97,10 @@ class SageBaseTarFile(tarfile.TarFile):
             members = [m if isinstance(m, tarfile.TarInfo)
                        else name_to_member[m]
                        for m in members]
-        return super(SageBaseTarFile, self).extractall(path=path,
-                                                       members=members,
-                                                       **kwargs)
+        tfile = super(SageBaseTarFile, self)
+        if 'filter' in inspect.signature(tfile.extractall).parameters:
+            kwargs['filter'] = 'fully_trusted'
+        return tfile.extractall(path=path, members=members, **kwargs)
 
     def extractbytes(self, member):
         """
