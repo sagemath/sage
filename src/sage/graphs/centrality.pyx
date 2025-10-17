@@ -939,7 +939,7 @@ def centrality_closeness_random_k(G, int k=1):
         sage: from sage.graphs.centrality import centrality_closeness_random_k
         sage: while True:
         ....:     G = graphs.RandomGNP(10, .7)
-        ....:     if G.is_connected(): # graph should be connected
+        ....:     if G.is_connected():  # graph should be connected
         ....:         break
         sage: G._backend
         <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
