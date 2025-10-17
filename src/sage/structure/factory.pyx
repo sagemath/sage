@@ -564,7 +564,7 @@ cdef class UniqueFactory(SageObject):
         Note that the ellipsis ``(...)`` here stands for the Sage
         version.
         """
-        return generic_factory_unpickle, obj._factory_data
+        return generic_factory_unpickle, obj._factory_data, generic_factory_getstate(obj)
 
 # This is used to handle old UniqueFactory pickles
 factory_unpickles = {}
@@ -727,7 +727,13 @@ def generic_factory_unpickle(factory, *args):
     #
     # The first argument of a UniqueFactory pickle is a version number. We
     # strip this.
-    return factory(*args[1], **args[2])
+    obj = factory(*args[1], **args[2])
+    d = args[3]
+    generic_factory_setstate(obj, d)
+    return obj
+
+def generic_factory_setstate(obj, d):
+    d.__dict__.update(d)
 
 
 def generic_factory_reduce(self, proto):
@@ -744,6 +750,17 @@ def generic_factory_reduce(self, proto):
         raise NotImplementedError("__reduce__ not implemented for %s" % type(self))
     else:
         return self._factory_data[0].reduce_data(self)
+
+def generic_factory_getstate(obj):
+    from sage.misc.cachefunc import CachedFunction
+    d = {}
+    try:
+        for key, value in obj.__dict__.items():
+            if isinstance(value, CachedFunction) and value.is_pickled_with_cache():
+                d[key] = value
+    except AttributeError:
+        pass
+    return d
 
 
 def lookup_global(name):
