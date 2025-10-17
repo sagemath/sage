@@ -96,18 +96,17 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from heapq import merge
 
-from sage.structure.richcmp import richcmp, richcmp_method
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.topological_spaces import TopologicalSpaces
 from sage.categories.sets_cat import EmptySetError
-from sage.sets.set import Set_base, Set_boolean_operators, Set_add_sub_operators
+from sage.categories.topological_spaces import TopologicalSpaces
+from sage.rings.infinity import infinity, minus_infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_lazy import LazyFieldElement, RLF
-from sage.rings.infinity import infinity, minus_infinity
-from sage.misc.superseded import deprecated_function_alias
-from heapq import merge
+from sage.sets.set import Set_base, Set_boolean_operators, Set_add_sub_operators
+from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp, richcmp_method
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 @richcmp_method
@@ -2354,8 +2353,6 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         """
         return RealSet(*other).intersection(self) == self
 
-    is_included_in = deprecated_function_alias(31927, is_subset)
-
     def _an_element_(self):
         """
         Return a point of the set.
@@ -2600,8 +2597,6 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         """
         other = RealSet(*other)
         return self.are_pairwise_disjoint(self, other)
-
-    is_disjoint_from = deprecated_function_alias(31927, is_disjoint)
 
     @staticmethod
     def are_pairwise_disjoint(*real_set_collection):

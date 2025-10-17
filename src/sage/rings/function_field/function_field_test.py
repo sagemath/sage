@@ -18,23 +18,23 @@ def J():
 
 @pytest.fixture
 def K():
-    return FunctionField(FiniteField(5**2,'a'), 'x')
+    return FunctionField(FiniteField(5**2, 'a'), 'x')
 
 
 @pytest.fixture
 def L(F):
     x = F.gen()
     Y = PolynomialRing(F, 'Y').gen()
-    return F.extension(Y**2 + Y + x + 1/x, 'y')
+    return F.extension(Y**2 + Y + x + 1 / x, 'y')
 
 
 @pytest.fixture
 def M(K, R, S):
     x = K.gen()
     y = R.gen()
-    L = K.extension(y**3 - (x**3 + 2*x*y + 1/x))
+    L = K.extension(y**3 - (x**3 + 2 * x * y + 1 / x))
     t = S.gen()
-    return L.extension(t**2 - x*y)
+    return L.extension(t**2 - x * y)
 
 
 @pytest.fixture
@@ -56,7 +56,7 @@ def R(K):
 def S(K, R):
     x = K.gen()
     y = R.gen()
-    L = K.extension(y**3 - (x**3 + 2*x*y + 1/x))
+    L = K.extension(y**3 - (x**3 + 2 * x * y + 1 / x))
     return PolynomialRing(L, 't')
 
 
@@ -72,18 +72,18 @@ def T(F):
 #
 #   https://github.com/pytest-dev/pytest/issues/349
 #
-pairs = [ ("J", None),
+pairs = [("J", None),
           ("K", 16),
           ("L", 2),
           ("M", 1),
           ("N", 1),
           ("O", None),
           ("T", None),
-          ("S", 8) ]
+          ("S", 8)]
 
 
 @pytest.mark.parametrize("ff,max_runs", pairs)
-def test_function_field_testsuite(ff, max_runs, request):
+def test_function_field_testsuite(ff, max_runs, request) -> None:
     r"""
     Run the TestSuite() on some function fields that are
     constructed in the documentation. They are slow, random, and not
@@ -109,7 +109,7 @@ def test_function_field_testsuite(ff, max_runs, request):
     ff = request.getfixturevalue(ff)
 
     # Pass max_runs only if it's not None; otherwise use the default
-    run_args = { "verbose": True, "raise_on_failure": True }
+    run_args = {"verbose": True, "raise_on_failure": True}
     if max_runs:
         run_args["max_runs"] = max_runs
 

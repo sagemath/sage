@@ -158,26 +158,23 @@ cdef class ParentWithGens(ParentWithBase):
             raise TypeError("names must be a tuple of strings")
         self._names = names
 
-    #################################################################################
+    ###########################################################################
     # Give all objects with generators a dictionary, so that attribute setting
     # works.   It would be nice if this functionality were standard in Pyrex,
     # i.e., just define __dict__ as an attribute and all this code gets generated.
-    #################################################################################
+    ###########################################################################
     def __getstate__(self):
         if self._element_constructor is not None:
             return parent.Parent.__getstate__(self)
-        d = []
         try:
-            d = list(self.__dict__.copy().iteritems()) # so we can add elements
+            d = dict(self.__dict__.items())   # so we can add elements
         except AttributeError:
-            pass
-        d = dict(d)
+            d = {}
         d['_base'] = self._base
         d['_gens'] = self._gens
         d['_list'] = self._list
         d['_names'] = self._names
         d['_latex_names'] = self._latex_names
-
         return d
 
     def __setstate__(self, d):
@@ -185,7 +182,7 @@ cdef class ParentWithGens(ParentWithBase):
             return parent.Parent.__setstate__(self, d)
         try:
             self.__dict__.update(d)
-        except (AttributeError,KeyError):
+        except (AttributeError, KeyError):
             pass
         self._base = d['_base']
         self._gens = d['_gens']
@@ -303,7 +300,7 @@ cdef class ParentWithGens(ParentWithBase):
         if isinstance(im_gens, parent.Parent):
             return self.Hom(im_gens).natural_map()
         if codomain is None:
-            from sage.structure.all import Sequence
+            from sage.structure.sequence import Sequence
             im_gens = Sequence(im_gens)
             codomain = im_gens.universe()
         kwds = {}

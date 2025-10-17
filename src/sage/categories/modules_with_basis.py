@@ -178,7 +178,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             raise TypeError("%s\nunable to coerce x (=%s) into %s" % (msg, x, self))
         return M
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return whether this category is abelian.
 
@@ -2608,7 +2608,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     B[()] + B[(1,2)] + 3*B[(1,2,3)] + 2*B[(1,3,2)]
                     sage: ABA = cartesian_product((A, B, A))
                     sage: ABA.an_element()  # indirect doctest
-                    2*B[(0, word: )] + 2*B[(0, word: a)] + 3*B[(0, word: b)]
+                    2*B[(0, word: )] + 2*B[(1, ())] + 3*B[(1, (1,3,2))]
                 """
                 from .cartesian_product import cartesian_product
                 return cartesian_product([module.an_element() for module in self.modules])

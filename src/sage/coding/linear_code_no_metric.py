@@ -794,7 +794,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         # list(self)[i] and self[i] both return the same element.
 
         F = self.base_ring()
-        maxindex = F.order()**self.dimension()-1
+        maxindex = F.order()**self.dimension() - 1
         if i < 0 or i > maxindex:
             raise IndexError("The value of the index 'i' (={}) must be between "
                              "0 and 'q^k -1' (={}), inclusive, where 'q' is "
@@ -806,14 +806,12 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         p = F.prime_subfield().order()
         A = [a ** k for k in range(m)]
         G = self.generator_matrix()
-        N = self.dimension()*F.degree() # the total length of p-adic vector
+        N = self.dimension() * F.degree()  # the total length of p-adic vector
         ivec = Integer(i).digits(p, padto=N)
 
         codeword = 0
-        row = 0
-        for g in G:
-            codeword += sum(ivec[j+row*m]*A[j] for j in range(m)) * g
-            row += 1
+        for row, g in enumerate(G):
+            codeword += sum(ivec[j + row * m] * A[j] for j in range(m)) * g
 
         # The codewords for a specific code can not change. So, we set them
         # to be immutable.

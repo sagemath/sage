@@ -613,7 +613,6 @@ cdef class RingExtension_generic(Parent):
         self.register_coercion(RingExtensionBackendIsomorphism(ring.Hom(self)))
         ring.register_conversion(RingExtensionBackendReverseIsomorphism(self.Hom(ring)))
 
-    @cython.binding(True)
     def __getattr__(self, name):
         """
         If this extension was created with ``import_methods = True``,

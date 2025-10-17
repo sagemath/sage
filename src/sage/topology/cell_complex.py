@@ -732,7 +732,7 @@ class GenericCellComplex(SageObject):
         else:
             return dic
 
-    def is_acyclic(self, base_ring=ZZ):
+    def is_acyclic(self, base_ring=ZZ) -> bool:
         """
         Return ``True`` if the reduced homology with coefficients in
         ``base_ring`` of this cell complex is zero.
@@ -1115,7 +1115,7 @@ class GenericCellComplex(SageObject):
         """
         raise NotImplementedError
 
-    def is_connected(self):
+    def is_connected(self) -> bool:
         """
         Return ``True`` if this cell complex is connected.
 

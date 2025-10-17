@@ -428,7 +428,7 @@ class KleshchevPartition(Partition):
         KP = mu.parent()
         return KP.element_class(KP, mu.add_cell(*mu.cogood_cells( r-c-self.parent()._multicharge[0]) ))
 
-    def is_regular(self):
+    def is_regular(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a `e`-regular partition tuple.
 
@@ -454,7 +454,7 @@ class KleshchevPartition(Partition):
         KP = self.parent()
         return super().is_regular(KP._e, KP._multicharge)
 
-    def is_restricted(self):
+    def is_restricted(self) -> bool:
         r"""
         Return ``True`` if ``self`` is an `e`-restricted partition tuple.
 
@@ -811,7 +811,7 @@ class KleshchevPartitionTuple(PartitionTuple):
         KP = mu.parent()
         return KP.element_class(KP, mu.add_cell(*mu.cogood_cells( r-c-self.parent()._multicharge[k])))
 
-    def is_regular(self):
+    def is_regular(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a `e`-regular partition tuple.
 
@@ -835,7 +835,7 @@ class KleshchevPartitionTuple(PartitionTuple):
         KP = self.parent()
         return _is_regular(self.to_list(), KP._multicharge, KP._convention)
 
-    def is_restricted(self):
+    def is_restricted(self) -> bool:
         r"""
         Return ``True`` if ``self`` is an `e`-restricted partition tuple.
 

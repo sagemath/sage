@@ -1537,9 +1537,9 @@ class DiGraphGenerators:
 
             sage: # needs networkx
             sage: D = digraphs.RandomDirectedGN(25)
-            sage: D.num_verts()
+            sage: D.n_vertices()
             25
-            sage: D.num_edges()
+            sage: D.n_edges()
             24
             sage: D.is_connected()
             True
@@ -1619,7 +1619,7 @@ class DiGraphGenerators:
         EXAMPLES::
 
             sage: D = digraphs.RandomDirectedGNP(10, .2)
-            sage: D.num_verts()
+            sage: D.n_vertices()
             10
             sage: D.parent() is DiGraph
             True
@@ -1655,15 +1655,15 @@ class DiGraphGenerators:
         EXAMPLES::
 
             sage: D = digraphs.RandomDirectedGNM(10, 5)
-            sage: D.num_verts()
+            sage: D.n_vertices()
             10
-            sage: D.num_edges()
+            sage: D.n_edges()
             5
 
         With loops::
 
             sage: D = digraphs.RandomDirectedGNM(10, 100, loops = True)
-            sage: D.num_verts()
+            sage: D.n_vertices()
             10
             sage: D.loops()
             [(0, 0, None), (1, 1, None), (2, 2, None), (3, 3, None),

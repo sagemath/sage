@@ -608,7 +608,7 @@ def simple_connected_graph_genus(G, set_embedding=False, check=True, minimal=Tru
         cutoff = 1
     else:
         style = 2
-        cutoff = 1 + (G.num_edges() - G.num_verts()) / 2  # rounding here is ok
+        cutoff = 1 + (G.n_edges() - G.n_vertices()) / 2  # rounding here is ok
 
     g = GG.genus(style=style, cutoff=cutoff, record_embedding=set_embedding)
     if set_embedding:

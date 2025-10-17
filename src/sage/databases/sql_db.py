@@ -336,10 +336,9 @@ def _create_print_table(cur, col_titles, **kwds):
             pcol_map.append(kwds['plot_cols'][col])
             pcol_index.append(col_titles.index(col))
 
-    max_field_size = kwds['max_field_size'] if 'max_field_size' in kwds \
-                    else 20
+    max_field_size = kwds.get('max_field_size', 20)
     id_col_index = col_titles.index(kwds['id_col']) if 'id_col' in kwds \
-                   else None
+        else None
 
     if 'relabel_cols' in kwds:
         relabel_cols = kwds['relabel_cols']
