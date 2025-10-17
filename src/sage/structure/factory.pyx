@@ -41,6 +41,7 @@ AUTHORS:
 - Robert Bradshaw (2008): initial version
 - Simon King (2013): extended documentation
 - Julian Rueth (2014-05-09): use ``_cache_key`` if parameters are unhashable
+- Kwankyu Lee (2025-10-17): improved pickling for cached method
 """
 #*****************************************************************************
 #  Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
@@ -430,6 +431,8 @@ cdef class UniqueFactory(SageObject):
             f = obj.__class__.__reduce__
             if f.__objclass__ is object or f.__name__ == "__reduce_cython__":
                 obj.__reduce_ex__ = types.MethodType(generic_factory_reduce, obj)
+                # Install a custom __setstate__ method to reinstate unpickled state data
+                obj.__setstate__ = types.MethodType(generic_factory_setstate, obj)
         except AttributeError:
             pass
         return obj
@@ -563,7 +566,12 @@ cdef class UniqueFactory(SageObject):
         Note that the ellipsis ``(...)`` here stands for the Sage
         version.
         """
-        return generic_factory_unpickle, obj._factory_data, generic_factory_getstate(obj)
+        d = generic_factory_getstate(obj)
+        if d:
+            return generic_factory_unpickle, obj._factory_data, d
+        else:
+            return generic_factory_unpickle, obj._factory_data
+
 
 # This is used to handle old UniqueFactory pickles
 factory_unpickles = {}
@@ -628,7 +636,7 @@ def register_factory_unpickle(name, callable):
         sage: loads(s)
         Multivariate Polynomial Ring in x0, x1, x2 over Rational Field
     """
-    #global factory_unpickles
+    global factory_unpickles
     factory_unpickles[name] = callable
 
 
@@ -726,13 +734,7 @@ def generic_factory_unpickle(factory, *args):
     #
     # The first argument of a UniqueFactory pickle is a version number. We
     # strip this.
-    obj = factory(*args[1], **args[2])
-    d = args[3]
-    generic_factory_setstate(obj, d)
-    return obj
-
-def generic_factory_setstate(obj, d):
-    d.__dict__.update(d)
+    return factory(*args[1], **args[2])
 
 
 def generic_factory_reduce(self, proto):
@@ -745,7 +747,7 @@ def generic_factory_reduce(self, proto):
 
     EXAMPLES::
 
-        sage: V = QQ^6                                                                  # needs sage.modules
+        sage: V = QQ^6                                                                              # needs sage.modules
         sage: sage.structure.factory.generic_factory_reduce(V, 1) == V.__reduce_ex__(1)             # needs sage.modules
         True
     """
@@ -754,7 +756,31 @@ def generic_factory_reduce(self, proto):
     else:
         return self._factory_data[0].reduce_data(self)
 
+
 def generic_factory_getstate(obj):
+    """
+    Used for pickling :class:`UniqueFactory` objects.
+
+    The cached value of the method decorated with ``@cached_method(do_pickle=True)``
+    is put into the state with which the object is pickled.
+
+    TESTS::
+
+        sage: # needs sage.rings.function_field
+        sage: K.<x> = FunctionField(QQ); R.<y> = K[]
+        sage: F = K.extension(y^5 - x^3 - 3*x + x*y)
+        sage: F.genus()
+        sage: F.genus.cache
+        4
+        sage: s = dumps(F)
+        sage: F.genus.clear_cache()
+        sage: F.genus.cache
+        sage: Fp = loads(s)
+        sage: Fp is F
+        True
+        sage: Fp.genus.cache
+        4
+    """
     from sage.misc.cachefunc import CachedFunction
     d = {}
     try:
@@ -764,6 +790,32 @@ def generic_factory_getstate(obj):
     except AttributeError:
         pass
     return d
+
+
+def generic_factory_setstate(self, d):
+    """
+    Used for unpickling :class:`UniqueFactory` objects.
+
+    TESTS:
+
+    Unpickled value overrides cached value::
+
+        sage: # needs sage.rings.function_field
+        sage: K.<x> = FunctionField(QQ); R.<y> = K[]
+        sage: F = K.extension(y^5 - x^3 - 3*x + x*y)
+        sage: F.genus()
+        4
+        sage: s = dumps(F)
+        sage: F.genus.set_cache(10)
+        sage: F.genus()
+        10
+        sage: Fp = loads(s)
+        sage: Fp is F
+        True
+        sage: Fp.genus()
+        10
+    """
+    self.__dict__.update(d)
 
 
 def lookup_global(name):
