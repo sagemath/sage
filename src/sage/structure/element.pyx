@@ -625,7 +625,7 @@ cdef class Element(SageObject):
             D = self.__dict__
         except AttributeError:
             return res
-        for k, v in D.iteritems():
+        for k, v in D.items():
             try:
                 setattr(res, k, v)
             except AttributeError:
@@ -1158,13 +1158,6 @@ cdef class Element(SageObject):
         if op == Py_NE:
             return True
         return NotImplemented
-
-    cpdef int _cmp_(left, right) except -2:
-        """
-        This was the old comparison framework. Now deprecated. Do not use.
-        """
-        deprecation(30130, "please use _richcmp_ for comparison methods")
-        raise NotImplementedError("__cmp__ and _cmp_ are deprecated")
 
     ##################################################
     # Arithmetic using the coercion model
@@ -3215,7 +3208,7 @@ cdef class CommutativeRingElement(RingElement):
         return I.reduce(self)
 
 
-    ##############################################
+##############################################
 
 cdef class Expression(CommutativeRingElement):
 
