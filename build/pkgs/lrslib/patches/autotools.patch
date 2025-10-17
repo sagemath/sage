@@ -368,7 +368,7 @@ diff -Naur -X /tmp/excludes.txt lrslib-073-orig/configure.ac lrslib-073-autotool
 +# Process this file with autoconf to produce a configure script.
 +
 +AC_PREREQ(2.59)
-+AC_INIT(lrslib, 071b+autotools-2021-07-13)
++AC_INIT(lrslib, 073)
 +AM_INIT_AUTOMAKE(foreign)
 +AC_CONFIG_FILES([Makefile mplrs/Makefile])
 +AC_CONFIG_MACRO_DIRS([m4])
