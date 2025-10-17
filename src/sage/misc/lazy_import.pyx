@@ -996,6 +996,43 @@ cdef class LazyImport():
         except ImportError:
             return False
 
+    def __reduce__(self):
+        """
+        Support pickling by preserving the LazyImport wrapper.
+
+        When a LazyImport is pickled, we preserve it as a LazyImport so that
+        it remains lazy after unpickling. We exclude the namespace parameter
+        since it may not be picklable.
+
+        EXAMPLES::
+
+            sage: from sage.misc.lazy_import import LazyImport
+            sage: lazy_ZZ = LazyImport('sage.rings.integer_ring', 'ZZ')
+            sage: from pickle import loads, dumps
+            sage: restored = loads(dumps(lazy_ZZ))
+            sage: type(restored)
+            <class 'sage.misc.lazy_import.LazyImport'>
+            sage: restored._module
+            'sage.rings.integer_ring'
+            sage: restored._name
+            'ZZ'
+
+        The restored LazyImport can still be used normally::
+
+            sage: restored(42)
+            42
+
+        When used, it resolves to the same object::
+
+            sage: restored._get_object() is ZZ
+            True
+        """
+        # Pickle the LazyImport itself, preserving the lazy behavior
+        # We exclude namespace since it may reference unpicklable objects
+        return (self.__class__, 
+                (self._module, self._name, self._as_name, self._at_startup,
+                 None, self._deprecation, self._feature))
+
 
 def lazy_import(module, names, as_=None, *,
                 at_startup=False, namespace=None,
