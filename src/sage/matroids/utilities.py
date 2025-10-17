@@ -272,16 +272,8 @@ def make_regular_matroid_from_matroid(matroid):
     # First create a reduced 0-1 matrix
     B = list(M.basis())
     NB = list(M.groundset().difference(B))
-    dB = {}
-    i = 0
-    for e in B:
-        dB[e] = i
-        i += 1
-    dNB = {}
-    i = 0
-    for e in NB:
-        dNB[e] = i
-        i += 1
+    dB = {e: i for i, e in enumerate(B)}
+    dNB = {e: i for i, e in enumerate(NB)}
     A = Matrix(ZZ, len(B), len(NB), 0)
     G = BipartiteGraph(A.transpose())  # Sage's BipartiteGraph uses the column set as first color class. This is an edgeless graph.
     for e in NB:

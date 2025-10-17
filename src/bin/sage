@@ -158,11 +158,6 @@ usage() {
 
 # Determine SAGE_ROOT, SAGE_LOCAL, and SAGE_VENV.
 unset SAGE_VENV
-if [ -x "${SELF}-config" ]; then
-    # optional sage-config console script, installed by sage_conf
-    export SAGE_ROOT=$("${SELF}-config" SAGE_ROOT)
-    export SAGE_LOCAL=$("${SELF}-config" SAGE_LOCAL)
-fi
 if [ -f "${SELF}-src-env-config" ]; then
     # Not installed script, present only in src/bin/
     . "${SELF}-src-env-config" >&2

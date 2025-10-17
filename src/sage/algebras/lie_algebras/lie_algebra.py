@@ -1329,7 +1329,7 @@ class LieAlgebraFromAssociative(LieAlgebraWithGenerators):
         """
         return self.element_class(self, self._assoc.zero())
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return ``True`` if ``self`` is abelian.
 
