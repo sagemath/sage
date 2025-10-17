@@ -174,7 +174,7 @@ To compile and install Sage in editable install, then just use:
         "cypari2 >=2.2.1" \
         "cython >=3.0, != 3.0.3, != 3.1.0" \
         "cython >=3.0, != 3.0.3" \
-        "gmpy2 ~=2.1.b999" \
+        "gmpy2 >=2.1.5" \
         memory_allocator \
         "numpy >=1.25" \
         jinja2 \
