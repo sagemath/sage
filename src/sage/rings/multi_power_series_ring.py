@@ -1039,9 +1039,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
 
     def bigoh(self, prec):
         """
-        Return big oh with precision ``prec``.
-
-        The function ``O`` does the same thing.
+        Return big oh with precision ``prec``.  The methods :meth:`bigoh` and :meth:`O` are equivalent.
 
         EXAMPLES::
 
@@ -1054,22 +1052,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         """
         return self.zero().O(prec)
 
-    def O(self, prec):
-        """
-        Return big oh with precision ``prec``.
-
-        This function is an alias for ``bigoh``.
-
-        EXAMPLES::
-
-            sage: T.<a,b> = PowerSeriesRing(ZZ,2); T
-            Multivariate Power Series Ring in a, b over Integer Ring
-            sage: T.O(10)
-            0 + O(a, b)^10
-            sage: T.bigoh(10)
-            0 + O(a, b)^10
-        """
-        return self.bigoh(prec)
+    O = bigoh
 
     def _send_to_bg(self, f):
         """
