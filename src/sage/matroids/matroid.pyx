@@ -6160,7 +6160,7 @@ cdef class Matroid(SageObject):
         if not G.is_connected():
             return False
         # Step 4: Apply algorithm recursively
-        for B, M in Y_components.iteritems():
+        for B, M in Y_components.items():
             N = M.simplify()
             new_basis = basis & (B | Y)
             # the set of fundamental cocircuit that might be separating for N
@@ -7672,7 +7672,7 @@ cdef class Matroid(SageObject):
             dist += 1
             X3 = X2.intersection(w)
 
-        for x, y in layers.iteritems():
+        for x, y in layers.items():
             for z in y:
                 d[z] = x
         if not X3:                 # if no path from X1 to X2, then no augmenting set exists
