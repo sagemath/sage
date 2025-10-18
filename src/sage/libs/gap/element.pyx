@@ -272,7 +272,7 @@ cdef Obj make_gap_integer(sage_int) except NULL:
     cdef mpz_t temp
     cdef Obj result
     cdef Int size
-    cdef int sign
+    cdef Int sign
     cdef UInt* limbs = NULL
     cdef size_t limb_count
     cdef size_t i
@@ -289,7 +289,7 @@ cdef Obj make_gap_integer(sage_int) except NULL:
             return GAP_NewObjIntFromInt(0)
         
         # Get the sign: mpz_sgn returns -1, 0, or 1
-        sign = mpz_sgn(temp)
+        sign = <Int>mpz_sgn(temp)
         
         # Allocate limb buffer for export
         # sizeof(mp_limb_t) may differ from sizeof(UInt), so we need to handle this
