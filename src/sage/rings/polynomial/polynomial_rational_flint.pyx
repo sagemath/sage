@@ -263,7 +263,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 #               deg += 1
 
         elif isinstance(x, dict):
-            for deg, e in x.iteritems():
+            for deg, e in x.items():
                 c = Rational(e)
                 fmpq_poly_set_coeff_mpq(self._poly, deg, c.value)
 

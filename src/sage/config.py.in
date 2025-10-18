@@ -1,0 +1,149 @@
+# @configure_input@
+from pathlib import Path
+
+import sage
+
+VERSION = "@PACKAGE_VERSION@"
+
+# The following must not be used during build to determine source or installation
+# location of sagelib.  See comments in SAGE_ROOT/src/Makefile.in
+# These variables come first so that other substituted variable values can refer
+# to it.
+SAGE_LOCAL = "@prefix@"
+SAGE_ROOT = "@SAGE_ROOT@"
+
+# The semicolon-separated list of GAP root paths. This is the list of
+# locations that are searched for GAP packages. This is passed directly
+# to GAP via the -l flag.
+GAP_ROOT_PATHS = "@GAP_ROOT_PATHS@".replace("${prefix}", SAGE_LOCAL)
+
+# The path to the standalone maxima executable.
+MAXIMA = "@SAGE_MAXIMA@".replace("${prefix}", SAGE_LOCAL)
+
+# Set this to the empty string if your ECL can load maxima without
+# further prodding.
+MAXIMA_FAS = "@SAGE_MAXIMA_FAS@".replace("${prefix}", SAGE_LOCAL)
+MAXIMA_SHARE = "@SAGE_MAXIMA_SHARE@".replace("${prefix}", SAGE_LOCAL)
+
+# Delete this line if your ECL can load Kenzo without further prodding.
+KENZO_FAS = "@SAGE_KENZO_FAS@".replace("${prefix}", SAGE_LOCAL)
+
+NTL_INCDIR = "@NTL_INCDIR@"
+NTL_LIBDIR = "@NTL_LIBDIR@"
+
+# Path to the ecl-config script
+ECL_CONFIG = "@SAGE_ECL_CONFIG@".replace("${prefix}", SAGE_LOCAL)
+
+# Path to the nauty binaries; of the form "/path/to/" or "/path/to/nauty-" 
+SAGE_NAUTY_BINS_PREFIX = "@SAGE_NAUTY_BINS_PREFIX@"
+
+SAGE_ECMBIN = "@SAGE_ECMBIN@"
+
+# Names or paths of the 4ti2 executables
+FOURTITWO_HILBERT = "@FOURTITWO_HILBERT@"
+FOURTITWO_MARKOV = "@FOURTITWO_MARKOV@"
+FOURTITWO_GRAVER = "@FOURTITWO_GRAVER@"
+FOURTITWO_ZSOLVE = "@FOURTITWO_ZSOLVE@"
+FOURTITWO_QSOLVE = "@FOURTITWO_QSOLVE@"
+FOURTITWO_RAYS = "@FOURTITWO_RAYS@"
+FOURTITWO_PPI = "@FOURTITWO_PPI@"
+FOURTITWO_CIRCUITS = "@FOURTITWO_CIRCUITS@"
+FOURTITWO_GROEBNER = "@FOURTITWO_GROEBNER@"
+
+# Colon-separated list of pkg-config modules to search for cblas functionality.
+# We hard-code it here as cblas because configure (build/pkgs/openblas/spkg-configure.m4)
+# always provides cblas.pc, if necessary by creating a facade pc file for a system BLAS.
+CBLAS_PC_MODULES = "cblas"
+
+# for sage_setup.setenv
+SAGE_ARCHFLAGS = "@SAGE_ARCHFLAGS@"
+SAGE_PKG_CONFIG_PATH = "@SAGE_PKG_CONFIG_PATH@".replace("$SAGE_LOCAL", SAGE_LOCAL)
+
+# Used in sage.repl.ipython_kernel.install
+MATHJAX_DIR = "@SAGE_MATHJAX_DIR@".replace("${prefix}", SAGE_LOCAL)
+THREEJS_DIR = SAGE_LOCAL + "/share/threejs-sage"
+
+# OpenMP flags, if available.
+OPENMP_CFLAGS = "@OPENMP_CFLAGS@"
+OPENMP_CXXFLAGS = "@OPENMP_CXXFLAGS@"
+
+# Installation location of wheels. This is determined at configuration time
+# and does not depend on the installation location of sage-conf.
+SAGE_SPKG_WHEELS = (
+    "@SAGE_VENV@".replace("${SAGE_LOCAL}", SAGE_LOCAL) + "/var/lib/sage/wheels"
+)
+
+
+def is_editable_install() -> bool:
+    """
+    Check whether this is an editable install of Sage.
+
+    EXAMPLES::
+
+        sage: from sage.config import is_editable_install
+        sage: is_editable_install()
+        False
+    """
+    # This function relies on the fact that meson-python sets up a custom
+    # loader for editable installs
+    # Alternatively, one could use the distribution metadata as in:
+    #  https://github.com/scientific-python/spin/blob/89e581c7201d0f6597ffc92c3e84894f99fc133b/spin/cmds/meson.py#L39
+    return type(sage.__loader__).__module__ == "_sagemath_editable_loader"
+
+
+def get_editable_root() -> tuple[Path, Path] | None:
+    """
+    Return the path to the Sage directory when using an editable
+    install.
+    Both the actual source directory and the build directory are returned, and are
+    guaranteed to exist.
+    If not using an editable install, or if the source/build directories do not
+    exist, return None.
+
+    EXAMPLES::
+
+        sage: from sage.config import get_editable_root
+        sage: get_editable_root() # random
+        (WindowsPath('<path_to_sage>/sage'), WindowsPath('<path_to_sage>/sage/build/cp312'))
+    """
+    if (
+        not is_editable_install()
+        or r"@EDITABLE_SRC@" == ""
+        or r"@EDITABLE_BUILD@" == ""
+    ):
+        return None
+
+    src = Path(r"@EDITABLE_SRC@").resolve()
+    build = Path(r"@EDITABLE_BUILD@").resolve()
+    if src.is_dir() and build.is_dir():
+        return src, build
+    return None
+
+
+def get_include_dirs() -> list[Path]:
+    """
+    Return a list of directories to be used as include directories
+    when compiling Cython extensions that depend on Sage.
+
+    Headers should be included with the prefix "sage/", e.g.,
+    ``#include <sage/cpython/cython_metaclass.h>``.
+
+    EXAMPLES::
+
+        sage: from sage.config import get_include_dirs
+        sage: dirs = get_include_dirs()
+        sage: dirs # random
+        [
+            WindowsPath('<python>/site-packages'),
+            WindowsPath('<path_to_sage>/src'),
+            WindowsPath('<path_to_sage>/build/cp312/src'),
+            WindowsPath('<python>/site-packages/numpy/core/include')
+        ]
+    """
+    dirs: list[Path] = [Path(dir).parent for dir in sage.__path__]
+    editable_root = get_editable_root()
+    if editable_root is not None:
+        # We return both the source and build directory,
+        # because some headers are generated in the build directory.
+        dirs.extend([root / "src" for root in editable_root])
+    return [dir for dir in dirs if dir.is_dir()]
