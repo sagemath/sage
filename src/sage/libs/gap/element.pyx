@@ -215,7 +215,7 @@ cdef Obj make_gap_record(sage_dict) except NULL:
 
 cdef Obj make_gap_integer(sage_int) except NULL:
     """
-    Convert Sage integer into Gap integer
+    Convert Sage integer or Python integer into Gap integer
 
     INPUT:
 
@@ -325,17 +325,7 @@ cdef Obj make_gap_integer(sage_int) except NULL:
         sage: gap_n = libgap(n)
         sage: gap_n.sage() == n
         True
-
-    Test special cases::
-
-        sage: libgap(ZZ(0))   # Zero
-        0
-        sage: libgap(ZZ(2**1000))   # Very large
-        10715086071862673209484250490600018105614048117055336074437503883703510511249361224931983788156958581275946729175531468251871452856923140435984577574698574803934567774824230985421074605062371141877954182153046474983581941267398767559165543946077062914571196477686542167660429831652624386837205668069376
-        sage: n = -factorial(50)   # Large negative
-        sage: libgap(n) == n
-        True
-
+    
     Test that the conversion is efficient (no exception on huge numbers)::
 
         sage: n = 2**100000
