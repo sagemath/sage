@@ -786,6 +786,7 @@ Kks3[] # Kks3[3, 1] - Kks3[1] # Kks3[2] + Kks3[1] # Kks3[2, 1]
 
 Sage example in ./kschurnotes/notes-mike-anne.tex, line 5588::
 
+sage: # long time
 sage: SymQ3 = Sym.kBoundedQuotient(3,t=1)
 sage: G1 = SymQ3.AffineGrothendieckPolynomial([1],6)
 sage: G2 = SymQ3.AffineGrothendieckPolynomial([2],6)

@@ -527,7 +527,7 @@ def _point_outside_subgroup(P):
         sage: P = E(4, 35)
         sage: Q = _point_outside_subgroup(P); Q     # random
         (14 : 11 : 1)
-        sage: Q.curve()(P).discrete_log(Q)
+        sage: Q.log(P)
         Traceback (most recent call last):
         ...
         ValueError: ECDLog problem has no solution (...)
@@ -539,7 +539,7 @@ def _point_outside_subgroup(P):
         True
         sage: Q = _point_outside_subgroup(P); Q     # random
         (35*z2 + 7 : 24*z2 + 7 : 1)
-        sage: Q.curve()(P).discrete_log(Q)
+        sage: Q.log(Q.curve()(P))
         Traceback (most recent call last):
         ...
         ValueError: ECDLog problem has no solution (...)
@@ -554,7 +554,7 @@ def _point_outside_subgroup(P):
         (18*z2 + 46 : 58*z2 + 61 : 1)
         sage: Q in E
         True
-        sage: P.discrete_log(Q)
+        sage: Q.log(P)
         Traceback (most recent call last):
         ...
         ValueError: ECDLog problem has no solution (...)
