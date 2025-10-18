@@ -489,9 +489,6 @@ SAGE_ROOT                 Root directory (create by git clone)
 │   ├── sage-docbuild
 │   │   ├── sage_docbuild/
 │   │   └── setup.py
-│   ├── sage-setup
-│   │   ├── sage_setup/
-│   │   └── setup.py
 │   └── sagemath-standard
 │       ├── bin/
 │       ├── sage -> ../../src/sage
