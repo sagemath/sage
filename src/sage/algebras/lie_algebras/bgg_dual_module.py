@@ -746,10 +746,10 @@ class SimpleModuleIndices(IndexedFreeAbelianMonoid):
                 mat = matrix(R, [[b[s] for s in supp] for b in wt_basis])
                 mat.echelonize()
                 for i, k in enumerate(self._weight_space_bases[mu]):
-                    data = {supp[ind]: R(c) for ind, c in mat[i].iteritems() if c}
+                    data = {supp[ind]: R(c) for ind, c in mat[i].items() if c}
                     self._basis[k] = ambient.element_class(ambient, data)
                 i = mat.nrows() - 1
-                data = {supp[ind]: R(c) for ind, c in mat[i].iteritems() if c}
+                data = {supp[ind]: R(c) for ind, c in mat[i].items() if c}
                 if data:
                     next_level[key] = ambient.element_class(ambient, data)
                     self._basis[key] = next_level[key]

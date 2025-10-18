@@ -144,7 +144,7 @@ Predefined classes
 
    * - Biconnected
 
-     - :meth:`~sage.graphs.graph.Graph.is_biconnected`,
+     - :meth:`~sage.graphs.generic_graph.GenericGraph.is_biconnected`,
        :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cut_vertices`,
        :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cuts_tree`
 

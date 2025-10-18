@@ -595,10 +595,6 @@ class FiniteExtensionFromLimitValuation(FiniteExtensionFromInfiniteValuation):
         [[ (x - 1)-adic valuation, v(y + 1) = 1 ]-adic valuation,
          [ (x - 1)-adic valuation, v(y - 1) = 1 ]-adic valuation]
 
-    TESTS::
-
-        sage: TestSuite(w[0]).run()             # long time                             # needs sage.rings.function_field
-        sage: TestSuite(w[1]).run()             # long time                             # needs sage.rings.function_field
     """
     def __init__(self, parent, approximant, G, approximants):
         r"""

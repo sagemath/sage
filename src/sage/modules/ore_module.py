@@ -185,9 +185,11 @@ import operator
 
 from sage.misc.latex import latex
 from sage.misc.latex import latex_variable_name
+from sage.structure.factorization import Factorization
 from sage.structure.sequence import Sequence
 from sage.structure.unique_representation import UniqueRepresentation
 
+from sage.categories.fields import Fields
 from sage.categories.action import Action
 from sage.categories.ore_modules import OreModules
 
@@ -322,16 +324,21 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
     """
     Element = OreModuleElement
 
-    def __classcall_private__(cls, mat, twist, names=None, category=None):
+    def __classcall_private__(cls, mat, twist, denominator=None, names=None, category=None):
         r"""
         Normalize the input before passing it to the init function
         (useful to ensure the uniqueness assumption).
 
         INPUT:
 
-        - ``mat`` -- the matrix defining the action of the Ore variable
+        - ``mat`` -- a matrix; the matrix defining the action of the Ore
+          variable is ``mat``/``denominator``
 
         - ``twist`` -- the twisting morphism/derivation
+
+        - ``denominator`` (default: ``None``) -- an element in the base
+          ring or a :class:`sage.structure.factorization.Factorization`
+          object; if ``None``, the default denominator is `1`
 
         - ``names`` (default: ``None``) -- a string of a list of strings,
           the names of the vector of the canonical basis; if ``None``,
@@ -339,6 +346,17 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
 
         - ``category`` (default: ``None``) -- the category of this
           Ore module
+
+        .. NOTE::
+
+            When specifying a nontrivial denominator, the Ore module
+            continues to be defined over the base ring of ``mat``;
+            however, the Ore action is only defined after extending
+            scalars to the fraction field. We underline in particular
+            that morphisms such Ore modules continue to be defined
+            over the base ring (and not the fraction field).
+            This construction is useful in the theory of Anderson
+            motives and in `p`-adic Hodge theory.
 
         TESTS::
 
@@ -354,25 +372,47 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             False
             sage: M2 is M3
             True
+
+        ::
+
+            sage: from sage.modules.ore_module import OreModule
+            sage: mat = matrix(K, [[1, z], [z^2, z^3]])
+            sage: den = z + 1
+            sage: OreModule(mat, S, den)
+            Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
+            sage: OreModule(mat, S, Factorization([(den, 10)]))
+            Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
         """
         base = mat.base_ring()
+        if denominator is None:
+            pass
+        elif isinstance(denominator, Factorization):
+            denominator = denominator.base_change(base)
+        else:
+            denominator = Factorization([(base(denominator), 1)])
         if category is None:
             category = OreModules(base, twist)
         rank = mat.nrows()
         if mat.ncols() != rank:
             raise ValueError("matrix must be square")
         names = normalize_names(names, rank)
-        return cls.__classcall__(cls, mat, category._ore, names, category)
+        return cls.__classcall__(cls, mat, category._ore, denominator, names, category)
 
-    def __init__(self, mat, ore, names, category) -> None:
+    def __init__(self, mat, ore, denominator, names, category) -> None:
         r"""
         Initialize this Ore module.
 
         INPUT:
 
-        - ``mat`` -- the matrix defining the action of the Ore variable
+        - ``mat`` -- a matrix; the matrix defining the action of the Ore
+          variable is ``mat``/``denominator``
 
         - ``ore`` -- the underlying Ore polynomial ring
+
+        - ``denominator`` -- either ``None`` or an instance of
+          :class:`sage.structure.factorization.Factorization`;
+          ``None`` is understood as the empty factorization with
+          value `1`
 
         - ``names`` -- a string of a list of strings,
           the names of the vector of the canonical basis; if ``None``,
@@ -399,9 +439,11 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         self._names = names
         if names is not None:
             self._latex_names = [latex_variable_name(name) for name in names]
+        self._general_class = OreModule
         self._submodule_class = OreSubmodule
         self._quotientModule_class = OreQuotientModule
         self._pseudohom = FreeModule_ambient.pseudohom(self, mat, ore, codomain=self)
+        self._denominator = denominator
 
     def _element_constructor_(self, x):
         r"""
@@ -653,8 +695,8 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         rank = self.rank()
         names = normalize_names(names, rank)
         cls = self.__class__
-        M = cls.__classcall__(cls, self._pseudohom._matrix,
-                              self._ore, names, self._ore_category)
+        M = cls.__classcall__(cls, self._pseudohom._matrix, self._ore,
+                              self._denominator, names, self._ore_category)
         if coerce:
             mat = identity_matrix(self.base_ring(), rank)
             id = self.hom(mat, codomain=M)
@@ -681,11 +723,32 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             Domain: Ore module of rank 3 over Finite Field in z of size 5^3 twisted by z |--> z^5
             Codomain: Ore module of rank 3 over Finite Field in z of size 5^3 twisted by z |--> z^5
 
+        TESTS:
+
+        When the Ore module `M` has a nontrivial denominator, the
+        pseudomorphism of the extension of `M` to the fraction field
+        is returned::
+
+            sage: from sage.modules.ore_module import OreModule
+            sage: A.<t> = QQ[]
+            sage: d = A.derivation()
+            sage: mat = matrix(A, [[1, t], [t^2, t^3]])
+            sage: M = OreModule(mat, d, denominator=t-1)
+            sage: M.pseudohom()
+            Free module pseudomorphism (twisted by d/dt) defined by the matrix
+            [  1/(t - 1)   t/(t - 1)]
+            [t^2/(t - 1) t^3/(t - 1)]
+            Domain: Ore module of rank 2 over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+            Codomain: Ore module of rank 2 over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+
         .. SEEALSO::
 
             :meth:`matrix`
         """
-        return self._pseudohom
+        if self._denominator is None:
+            return self._pseudohom
+        else:
+            return self.over_fraction_field().pseudohom()
 
     def ore_ring(self, names='x', action=True):
         r"""
@@ -814,11 +877,86 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         polynomial `P`. This is of course not a coincidence given
         that the pseudomorphism corresponds to the left multiplication
 
+        TESTS:
+
+        When the Ore module has a nontrivial denominator, a matrix over
+        the fraction field is returned::
+
+            sage: from sage.modules.ore_module import OreModule
+            sage: A.<t> = QQ[]
+            sage: d = A.derivation()
+            sage: mat = matrix(A, [[1, t], [t^2, t^3]])
+            sage: M = OreModule(mat, d, denominator=t-1)
+            sage: M.matrix()
+            [  1/(t - 1)   t/(t - 1)]
+            [t^2/(t - 1) t^3/(t - 1)]
+
         .. SEEALSO::
 
             :meth:`pseudohom`
         """
-        return self._pseudohom.matrix()
+        mat = self._pseudohom.matrix()
+        if self._denominator is not None:
+            mat /= self._denominator.value()
+        return mat
+
+    def over_fraction_field(self):
+        r"""
+        Return the scalar extension of this Ore module to
+        the fraction field.
+
+        EXAMPLES::
+
+            sage: A.<t> = QQ[]
+            sage: d = A.derivation()
+            sage: S.<X> = OrePolynomialRing(A, d)
+            sage: M = S.quotient_module(X^2 + t*X + t)
+            sage: M
+            Ore module of rank 2 over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+            sage: M.over_fraction_field()
+            Ore module of rank 2 over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+
+        If given, the variable names are preserved in this operation::
+
+            sage: N.<u,v> = S.quotient_module(X^2 + t*X + t)
+            sage: N
+            Ore module <u, v> over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+            sage: N.over_fraction_field()
+            Ore module <u, v> over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+
+        When the base ring is already a field, the same module is returned::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z*X + z)
+            sage: M.over_fraction_field() is M
+            True
+
+        TESTS::
+
+            sage: from sage.modules.ore_module import OreModule
+            sage: A.<t> = QQ[]
+            sage: d = A.derivation()
+            sage: mat = matrix(A, [[1, t], [t^2, t^3]])
+            sage: M = OreModule(mat, d, denominator=t-1)
+            sage: MM = M.over_fraction_field()
+            sage: MM
+            Ore module of rank 2 over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+            sage: MM.matrix()
+            [  1/(t - 1)   t/(t - 1)]
+            [t^2/(t - 1) t^3/(t - 1)]
+        """
+        base = self._base
+        if base in Fields():
+            return self
+        field = base.fraction_field()
+        mat = self.matrix().change_ring(field)
+        twist = self._ore.twisting_derivation()
+        if twist is None:
+            twist = self._ore.twisting_morphism()
+        if twist is not None:
+            twist = twist.extend_to_fraction_field()
+        return self._general_class(mat, twist, None, names=self._names)
 
     def basis(self) -> list:
         r"""
@@ -1883,10 +2021,12 @@ class OreSubmodule(OreModule):
         self._ambient = ambient
         self._submodule = submodule
         C = submodule.coordinates.matrix_from_columns(range(submodule.rank))
-        rows = [ambient(x).image() * C for x in submodule.basis.rows()]
-        OreModule.__init__(self, matrix(base, rows),
-                           ambient.ore_ring(action=False),
-                           names, ambient._ore_category)
+        f = ambient._pseudohom
+        rows = [f(x) * C for x in submodule.basis.rows()]
+        ambient._general_class.__init__(
+            self, matrix(base, rows),
+            ambient.ore_ring(action=False),
+            ambient._denominator, names, ambient._ore_category)
         coerce = self.hom(submodule.basis, codomain=ambient)
         ambient.register_coercion(coerce)
         self._inject = coerce.__copy__()
@@ -2021,6 +2161,53 @@ class OreSubmodule(OreModule):
             ambient = ambient._ambient
             ambients.append(ambient)
         return ambients
+
+    def over_fraction_field(self):
+        r"""
+        Return the scalar extension of this Ore module to
+        the fraction field.
+
+        EXAMPLES::
+
+            sage: A.<t> = QQ[]
+            sage: d = A.derivation()
+            sage: S.<X> = OrePolynomialRing(A, d)
+            sage: M = S.quotient_module(X^2 + t*X + t)
+            sage: M
+            Ore module of rank 2 over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+            sage: M.over_fraction_field()
+            Ore module of rank 2 over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+
+        If given, the variable names are preserved in this operation::
+
+            sage: N.<u,v> = S.quotient_module(X^2 + t*X + t)
+            sage: N
+            Ore module <u, v> over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+            sage: N.over_fraction_field()
+            Ore module <u, v> over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+
+        When the base ring is already a field, the same module is returned::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z*X + z)
+            sage: M.over_fraction_field() is M
+            True
+
+        TESTS:
+
+        We check that the ambient module is correctly set up::
+
+            sage: S.<X> = OrePolynomialRing(A, d)
+            sage: M.<u,v> = S.quotient_module((X+t)^2)
+            sage: N = M.span([(X+t)*u])
+            sage: MM = M.over_fraction_field()
+            sage: NN = N.over_fraction_field()
+            sage: NN.ambient_module() is MM
+            True
+        """
+        ambient = self._ambient.over_fraction_field()
+        return ambient._submodule_class(ambient, self._submodule.basis, False, self._names)
 
     def saturate(self, names=None, coerce=False):
         r"""
@@ -2393,10 +2580,12 @@ class OreQuotientModule(OreModule):
         self._submodule = submodule
         rank = submodule.rank
         coerce = submodule.coordinates.matrix_from_columns(range(rank, d))
-        images = [cover(x).image() for x in submodule.complement.rows()]
-        OreModule.__init__(self, matrix(base, d-rank, d, images) * coerce,
-                           cover.ore_ring(action=False),
-                           names, cover._ore_category)
+        f = cover._pseudohom
+        images = [f(x) for x in submodule.complement.rows()]
+        cover._general_class.__init__(
+            self, matrix(base, d-rank, d, images) * coerce,
+            cover.ore_ring(action=False),
+            cover._denominator, names, cover._ore_category)
         self._project = coerce = cover.hom(coerce, codomain=self)
         self.register_coercion(coerce)
         section = self._section = OreModuleSection(self, cover)
@@ -2463,6 +2652,53 @@ class OreQuotientModule(OreModule):
         """
         M = self._cover
         return "\\overline{%s}" % M(x)._latex_()
+
+    def over_fraction_field(self):
+        r"""
+        Return the scalar extension of this Ore module to
+        the fraction field.
+
+        EXAMPLES::
+
+            sage: A.<t> = QQ[]
+            sage: d = A.derivation()
+            sage: S.<X> = OrePolynomialRing(A, d)
+            sage: M = S.quotient_module(X^2 + t*X + t)
+            sage: M
+            Ore module of rank 2 over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+            sage: M.over_fraction_field()
+            Ore module of rank 2 over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+
+        If given, the variable names are preserved in this operation::
+
+            sage: N.<u,v> = S.quotient_module(X^2 + t*X + t)
+            sage: N
+            Ore module <u, v> over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+            sage: N.over_fraction_field()
+            Ore module <u, v> over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+
+        When the base ring is already a field, the same module is returned::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z*X + z)
+            sage: M.over_fraction_field() is M
+            True
+
+        TESTS:
+
+        We check that the cover module is correctly set up::
+
+            sage: S.<X> = OrePolynomialRing(A, d)
+            sage: M.<u,v> = S.quotient_module((X+t)^2)
+            sage: N = M.quo([(X+t)*u])
+            sage: MM = M.over_fraction_field()
+            sage: NN = N.over_fraction_field()
+            sage: NN.cover() is MM
+            True
+        """
+        cover = self._cover.over_fraction_field()
+        return cover._quotientModule_class(cover, self._submodule.basis, False, self._names)
 
     def cover(self):
         r"""

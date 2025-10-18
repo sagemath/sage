@@ -977,7 +977,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         if args:
             if len(args) == 1 and isinstance(args[0], dict):
-                kwargs = {repr(x): vx for x, vx in args[0].iteritems()}
+                kwargs = {repr(x): vx for x, vx in args[0].items()}
             else:
                 raise ValueError('use named arguments, like EXPR(x=..., y=...)')
 

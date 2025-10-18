@@ -44,9 +44,9 @@ def fan_isomorphic_necessary_conditions(fan1, fan2):
         return False
     if fan1.dim() != fan2.dim():
         return False
-    if fan1.nrays() != fan2.nrays():
+    if fan1.n_rays() != fan2.n_rays():
         return False
-    if fan1.ngenerating_cones() != fan2.ngenerating_cones():
+    if fan1.n_generating_cones() != fan2.n_generating_cones():
         return False
     return fan1.is_complete() == fan2.is_complete()
 
@@ -348,7 +348,7 @@ def fan_2d_echelon_forms(fan):
         sage: parent(list(_)[0])
         Full MatrixSpace of 2 by 0 dense matrices over Integer Ring
     """
-    if fan.nrays() == 0:
+    if fan.n_rays() == 0:
         return frozenset([fan_2d_echelon_form(fan)])
     rays = list(fan_2d_cyclically_ordered_rays(fan))
     echelon_forms = []

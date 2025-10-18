@@ -1352,7 +1352,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: M(DihedralGroup(4)) < M(CyclicPermutationGroup(4))
                 True
 
-            We create the lattice of molecular species of degree four::
+            We create the poset of molecular species of degree four::
 
                 sage: P = Poset([M.subset(4), lambda b, c: b <= c])
                 sage: len(P.cover_relations())

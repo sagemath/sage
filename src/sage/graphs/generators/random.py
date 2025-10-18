@@ -2170,8 +2170,8 @@ def RandomTriangulation(n, set_position=False, k=3, seed=None):
     graph.add_edges(edges)
     graph.set_embedding(embedding)
     graph.relabel({0: -2, 1: -1})
-    assert graph.num_edges() == 3*n - 3 - k
-    assert graph.num_verts() == n
+    assert graph.n_edges() == 3*n - 3 - k
+    assert graph.n_vertices() == n
     if set_position:
         graph.layout(layout='planar', save_pos=True)
     return graph

@@ -10,13 +10,6 @@ if not sphinx_check.found()
   subdir_done()
 endif
 
-# TODO: Migrate this completely to meson
-doc_bootstrap = custom_target(
-  'bootstrap',
-  output: ['autogen'],
-  command: [files('bootstrap'), meson.current_build_dir()],
-  env: {'SAGE_ROOT': root},
-)
 doc_src = []
 subdir('el')
 subdir('ca')
@@ -33,6 +26,17 @@ subdir('es')
 subdir('fr')
 subdir('ja')
 
+# TODO: Migrate this completely to meson
+doc_bootstrap = custom_target(
+  'bootstrap',
+  output: ['autogen'],
+  command: [files('bootstrap'), meson.current_build_dir()],
+  env: {'SAGE_ROOT': root},
+  # doc_src is not really a dependency of the bootstrap, but we want to make sure
+  # that all the source files are present before running the actual doc build
+  # so let's collect all source-related targets here.
+  depends: doc_src,
+)
 
 references = run_command(
   py,
@@ -79,7 +83,6 @@ foreach type : ['inventory', 'html', 'pdf']
     endif
     target = custom_target(
       'doc-' + type + '-reference-' + short_ref,
-      #input: doc_src,
       output: [type + short_ref],
       command: [
         py,

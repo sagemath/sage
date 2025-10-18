@@ -74,7 +74,7 @@ class MyGroupAlgebra(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: A = HopfAlgebrasWithBasis(QQ).example()
-            sage: (a, b) = A._group.gens()
+            sage: a, b = A._group.gens()
             sage: a*b
             (1,2)
             sage: A.product_on_basis(a, b)
@@ -107,7 +107,7 @@ class MyGroupAlgebra(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: A = HopfAlgebrasWithBasis(QQ).example()
-            sage: (a, b) = A._group.gens()
+            sage: a, b = A._group.gens()
             sage: A.coproduct_on_basis(a)
             B[(1,2,3)] # B[(1,2,3)]
         """
@@ -123,7 +123,7 @@ class MyGroupAlgebra(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: A = HopfAlgebrasWithBasis(QQ).example()
-            sage: (a, b) = A._group.gens()
+            sage: a, b = A._group.gens()
             sage: A.counit_on_basis(a)
             1
         """
@@ -138,7 +138,7 @@ class MyGroupAlgebra(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: A = HopfAlgebrasWithBasis(QQ).example()
-            sage: (a, b) = A._group.gens()
+            sage: a, b = A._group.gens()
             sage: A.antipode_on_basis(a)
             B[(1,3,2)]
         """

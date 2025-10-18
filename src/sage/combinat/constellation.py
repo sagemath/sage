@@ -885,9 +885,9 @@ class Constellation_class(Element):
             g1 (0)(1,4)(2)(3)
             g2 (0,1,3,2,4)
             sage: G = c.braid_group_orbit()
-            sage: G.num_verts()
+            sage: G.n_vertices()
             4
-            sage: G.num_edges()
+            sage: G.n_edges()
             12
         """
         G = DiGraph(multiedges=True, loops=True)

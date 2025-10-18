@@ -360,16 +360,16 @@ cdef class SubHypergraphSearch:
         self.points1 = H1._points
         self.points2 = H2._points
         self.induced = induced
-        cdef int n1 = H1.num_points()
-        cdef int n2 = H2.num_points()
+        cdef int n1 = H1.n_points()
+        cdef int n2 = H2.n_points()
 
-        if n2>64:
-            raise RuntimeError("H2 has {}>64 points".format(n2))
+        if n2 > 64:
+            raise RuntimeError(f"H2 has {n2}>64 points")
 
-        self.h1   = h_init(n1,H1._blocks)
-        self.h2   = h_init(n2,H2._blocks)
-        self.tmp1 = h_init(n1,H1._blocks) # No actual need to fill them,
-        self.tmp2 = h_init(n2,H2._blocks) # only allocate the memory
+        self.h1   = h_init(n1, H1._blocks)
+        self.h2   = h_init(n2, H2._blocks)
+        self.tmp1 = h_init(n1, H1._blocks)  # No actual need to fill them,
+        self.tmp2 = h_init(n2, H2._blocks)  # only allocate the memory
 
         self.step = <int *> sig_malloc((n2+1)*sizeof(int))
 
