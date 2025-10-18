@@ -990,7 +990,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             ....:           (-511, 608), (493, 880), (105, -709), (-213, 530),
             ....:           (97, 745)]
             sage: all(QuaternionAlgebra(a, b).maximal_order().is_maximal()
-            ....:     for (a, b) in invars)
+            ....:     for a, b in invars)
             True
         """
         if self.base_ring() != QQ:
@@ -1071,7 +1071,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
                 e_n = []
                 x_rows = A.solve_left(matrix([V(vec.coefficient_tuple())
-                                              for (vec, val) in f]),
+                                              for vec, val in f]),
                                       check=False).rows()
                 denoms = [x.denominator() for x in x_rows]
                 for i in range(4):
@@ -1199,7 +1199,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         fact = M1.factor()
         B = O.basis()
 
-        for (p, r) in fact:
+        for p, r in fact:
             a = int(-p) // 2
             for v in GF(p)**4:
                 x = sum([int(v[i] + a) * B[i] for i in range(4)])
@@ -4584,10 +4584,9 @@ def normalize_basis_at_p(e, p, B=QuaternionAlgebraElement_abstract.pair):
         sage: e = [A(1), k, j, 1/2 + 1/2*i + 1/2*j + 1/2*k]
         sage: e_norm = normalize_basis_at_p(e, 2)
         sage: V = QQ**4
-        sage: V.span([V(x.coefficient_tuple()) for (x,_) in e_norm]).dimension()
+        sage: V.span([V(x.coefficient_tuple()) for x, _ in e_norm]).dimension()
         4
     """
-
     N = len(e)
     if N == 0:
         return []

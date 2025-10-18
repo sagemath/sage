@@ -156,7 +156,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         cdef long h = 0, k, l
         cdef Py_ssize_t i, j
-        for ij, x in D.iteritems():
+        for ij, x in D.items():
             sig_check()
             i = (<tuple>ij)[0]
             j = (<tuple>ij)[1]
@@ -362,7 +362,7 @@ cdef class Matrix_sparse(matrix.Matrix):
     def _unpickle_generic(self, data, int version):
         cdef Py_ssize_t i, j
         if version == -1:
-            for (i, j), x in data.iteritems():
+            for (i, j), x in data.items():
                 self.set_unsafe(i, j, x)
         else:
             raise RuntimeError("unknown matrix version (=%s)" % version)
@@ -643,7 +643,7 @@ cdef class Matrix_sparse(matrix.Matrix):
         R = phi.codomain()
         M = sage.matrix.matrix_space.MatrixSpace(R, self._nrows,
                                                  self._ncols, sparse=True)
-        return M({ij: phi(z) for ij, z in self.dict().iteritems()})
+        return M({ij: phi(z) for ij, z in self.dict().items()})
 
     def apply_map(self, phi, R=None, sparse=True):
         r"""
@@ -768,7 +768,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             zero_res = phi(self.base_ring()(0))
         else:
             zero_res = None
-        v = [(ij, phi(z)) for ij,z in self_dict.iteritems()]
+        v = [(ij, phi(z)) for ij,z in self_dict.items()]
         if R is None:
             w = [x for _, x in v]
             if zero_res is not None:
@@ -826,7 +826,8 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         if self._nrows==0 or self._ncols==0:
             return self.__copy__()
-        v = [(ij, sage.calculus.functional.derivative(z, var)) for ij, z in self.dict().iteritems()]
+        v = [(ij, sage.calculus.functional.derivative(z, var))
+             for ij, z in self.dict().items()]
         if R is None:
             w = [x for _, x in v]
             w = sage.structure.sequence.Sequence(w)
@@ -1154,7 +1155,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             raise ArithmeticError("number of rows of matrix must equal degree of vector")
         parent = self.row_ambient_module(base_ring=None, sparse=v.is_sparse_c())
         s = parent.zero_vector()
-        for (i, j), a in self._dict().iteritems():
+        for (i, j), a in self._dict().items():
             s[j] += v[i] * a
         return s
 
@@ -1207,7 +1208,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             raise ArithmeticError("number of columns of matrix must equal degree of vector")
         parent = self.column_ambient_module(base_ring=None, sparse=v.is_sparse_c())
         s = parent.zero_vector()
-        for (i, j), a in self._dict().iteritems():
+        for (i, j), a in self._dict().items():
             s[i] += a * v[j]
         return s
 

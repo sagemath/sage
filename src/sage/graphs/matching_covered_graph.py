@@ -388,7 +388,7 @@ class MatchingCoveredGraph(Graph):
 
         sage: G = graphs.CycleGraph(4)
         sage: G += graphs.CycleGraph(6)
-        sage: G.connected_components_number()
+        sage: G.number_of_connected_components()
         2
         sage: H = MatchingCoveredGraph(G)
         Traceback (most recent call last):
@@ -2387,8 +2387,8 @@ class MatchingCoveredGraph(Graph):
         .. NOTE::
 
             This method overwrites the
-            :meth:`~sage.graphs.graph.Graph.is_biconnected` method
-            in order to return ``True`` as matching covered graphs are
+            :meth:`~sage.graphs.generic_graph.GenericGraph.is_biconnected`
+            method in order to return ``True`` as matching covered graphs are
             biconnected.
 
         EXAMPLES:

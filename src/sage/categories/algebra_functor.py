@@ -32,7 +32,7 @@ In particular, the product of two basis elements is induced by the
 product of the corresponding elements of the group, and the unit of
 the group algebra is indexed by the unit of the group::
 
-    sage: (s, t) = A.algebra_generators()
+    sage: s, t = A.algebra_generators()
     sage: s*t
     (1,2)
     sage: A.one_basis()

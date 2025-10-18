@@ -142,7 +142,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
             [[1, 2, 4], [1, 2, 4], [1, 2, 4]]
         """
         if self.degree() == 1:
-            return self._gaps_rational() # faster for rational places
+            return self._gaps_rational()  # faster for rational places
         else:
             return self._gaps_wronskian()
 
@@ -182,7 +182,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
         # Hess' Riemann-Roch basis algorithm stripped down for gaps computation
         def dim_RR(M):
             den = lcm([e.denominator() for e in M.list()])
-            mat = matrix(R, M.nrows(), [(den*e).numerator() for e in M.list()])
+            mat = matrix(R, M.nrows(), [(den * e).numerator() for e in M.list()])
 
             # initialise pivot_row and conflicts list
             pivot_row = [[] for i in range(n)]
@@ -191,13 +191,13 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
                 bestp = -1
                 best = -1
                 for c in range(n):
-                    d = mat[i,c].degree()
+                    d = mat[i, c].degree()
                     if d >= best:
                         bestp = c
                         best = d
 
                 if best >= 0:
-                    pivot_row[bestp].append((i,best))
+                    pivot_row[bestp].append((i, best))
                     if len(pivot_row[bestp]) > 1:
                         conflicts.append(bestp)
 
@@ -205,42 +205,42 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
             while conflicts:
                 c = conflicts.pop()
                 row = pivot_row[c]
-                i,ideg = row.pop()
-                j,jdeg = row.pop()
+                i, ideg = row.pop()
+                j, jdeg = row.pop()
 
                 if jdeg > ideg:
-                    i,j = j,i
-                    ideg,jdeg = jdeg,ideg
+                    i, j = j, i
+                    ideg, jdeg = jdeg, ideg
 
-                coeff = - mat[i,c].lc() / mat[j,c].lc()
+                coeff = - mat[i, c].lc() / mat[j, c].lc()
                 s = coeff * one.shift(ideg - jdeg)
 
                 mat.add_multiple_of_row(i, j, s)
 
-                row.append((j,jdeg))
+                row.append((j, jdeg))
 
                 bestp = -1
                 best = -1
                 for c in range(n):
-                    d = mat[i,c].degree()
+                    d = mat[i, c].degree()
                     if d >= best:
                         bestp = c
                         best = d
 
                 if best >= 0:
-                    pivot_row[bestp].append((i,best))
+                    pivot_row[bestp].append((i, best))
                     if len(pivot_row[bestp]) > 1:
                         conflicts.append(bestp)
 
             dim = 0
             for j in range(n):
-                i,ideg = pivot_row[j][0]
+                i, ideg = pivot_row[j][0]
                 k = den.degree() - ideg + 1
                 if k > 0:
                     dim += k
             return dim
 
-        V,fr,to = F.vector_space()
+        V, fr, to = F.vector_space()
 
         prime_inv = ~ self.prime_ideal()
         I = O.ideal(1)
@@ -264,7 +264,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
                 else:
                     prev = dim
                 i += 1
-        else: # self is a finite place
+        else:  # self is a finite place
             Binv = B.inverse()
             while g:
                 I = I * prime_inv
@@ -305,7 +305,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
         from sage.modules.free_module_element import vector
 
         F = self.function_field()
-        R,fr_R,to_R = self._residue_field()
+        R, fr_R, to_R = self._residue_field()
         der = F.higher_derivation()
 
         sep = self.local_uniformizer()
@@ -480,8 +480,8 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
         Obasis = O.basis()
 
         M = prime.hnf()
-        R = M.base_ring() # univariate polynomial ring
-        n = M.nrows() # extension degree of the function field
+        R = M.base_ring()  # univariate polynomial ring
+        n = M.nrows()  # extension degree of the function field
 
         # Step 1: construct a vector space representing the residue field
         #
@@ -492,8 +492,8 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
         # coefficients of the polynomials. V is the space of these vectors.
 
         k = F.constant_base_field()
-        degs = [M[i,i].degree() for i in range(n)]
-        deg = sum(degs) # degree of the place
+        degs = [M[i, i].degree() for i in range(n)]
+        deg = sum(degs)  # degree of the place
 
         # Let V = k**deg
 
@@ -540,7 +540,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
             # over k (as there are finite number of intermediate fields).
             a = O._kummer_gen
             if a is not None:
-                K,fr_K,_ = self.place_below().residue_field()
+                K, fr_K, _ = self.place_below().residue_field()
                 b = fr_K(K.gen())
                 if isinstance(k, (NumberField, sage.rings.abc.AlgebraicField)):
                     kk = ZZ
@@ -559,9 +559,9 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
             # Trial 3: exhaustive search in O using only polynomials
             # with coefficients 0 or 1
             for d in range(deg):
-                G = itertools.product(itertools.product([0,1],repeat=d+1), repeat=n)
+                G = itertools.product(itertools.product([0, 1], repeat=d + 1), repeat=n)
                 for g in G:
-                    gen = sum([R(c1)*c2 for c1,c2 in zip(g, Obasis)])
+                    gen = sum([R(c1) * c2 for c1, c2 in zip(g, Obasis)])
                     yield gen
 
             # Trial 4: exhaustive search in O using all polynomials
@@ -577,7 +577,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
                     if g[j].leading_coefficient() != 1:
                         continue
 
-                    gen = sum([c1*c2 for c1,c2 in zip(g, Obasis)])
+                    gen = sum([c1 * c2 for c1, c2 in zip(g, Obasis)])
                     yield gen
 
         # Search for a primitive element. It is such an element g of O
@@ -616,7 +616,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
                 prim = min_poly.roots(K)[0][0]
 
                 W, from_W, to_W = K.vector_space(k, basis=[prim**i for i in range(deg)], map=True)
-        else: # deg == 1
+        else:  # deg == 1
             K = k
 
             def from_W(e):
@@ -638,7 +638,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
         # at this place and no other poles at finite places.
         p = prime.prime_below().gen().numerator()
         beta = prime._beta
-        alpha = ~p * sum(c1*c2 for c1,c2 in zip(beta, Obasis))
+        alpha = ~p * sum(c1 * c2 for c1, c2 in zip(beta, Obasis))
         alpha_powered_by_ramification_index = alpha ** prime._ramification_index
 
         def to_K(f):
@@ -648,8 +648,8 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
                 # s powered by the valuation of den at the prime
                 alpha_power = alpha_powered_by_ramification_index ** den.valuation(p)
-                rn = num * alpha_power # in O
-                rd = den * alpha_power # in O but not in prime
+                rn = num * alpha_power  # in O
+                rd = den * alpha_power  # in O but not in prime
 
                 # Note that rn is not in O if and only if f is
                 # not in the valuation ring. Hence f is in the

@@ -894,7 +894,7 @@ def detect_dynkin_quiver(quiver):
             return None
         G = Q.to_undirected()
         if G.is_path():
-            dynkin_type.append(['A', Q.num_verts()])
+            dynkin_type.append(['A', Q.n_vertices()])
             continue
         degthree = G.vertices(degree=3)
         if len(degthree) != 1:
@@ -905,9 +905,9 @@ def detect_dynkin_quiver(quiver):
         if len(path_lengths) != 3:
             return None
         if path_lengths[:2] == [1, 1]:
-            dynkin_type.append(['D', G.num_verts() + 1])
+            dynkin_type.append(['D', G.n_vertices() + 1])
         elif path_lengths[:2] == [1, 2] and path_lengths[2] in [2, 3, 4]:
-            dynkin_type.append(['E', G.num_verts() + 1])
+            dynkin_type.append(['E', G.n_vertices() + 1])
         else:
             return None
     if len(dynkin_type) == 1:

@@ -3306,7 +3306,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: A = matrix(pR, 2, 2,
             ....:     [[5*x^3 + 2*x^2 + 4*x + 1,           x^3 + 4*x + 4],
             ....:      [2*x^3 + 5*x^2 + 2*x + 4,         2*x^3 + 3*x + 2]])
-            sage: (Q,R) = A.reduce(B,row_wise=False, return_quotient=True); R
+            sage: Q, R = A.reduce(B, row_wise=False, return_quotient=True); R
             [0 3]
             [0 0]
             sage: A == B*Q + R

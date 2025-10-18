@@ -275,8 +275,12 @@ def find_objects_from_name(name, module_name=None, include_lazy_imports=False):
     """
     from sage.misc.lazy_import import LazyImport
 
+    # Create a copy to avoid errors if the sys.modules dict changes
+    # while we are iterating over it.
+    mods = sys.modules.copy()
+
     obj = []
-    for smodule_name, smodule in sys.modules.items():
+    for smodule_name, smodule in mods.items():
         if module_name and not smodule_name.startswith(module_name):
             continue
         if hasattr(smodule, '__dict__') and name in smodule.__dict__:

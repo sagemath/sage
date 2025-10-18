@@ -91,6 +91,7 @@ py.install_sources(
   subdir: 'sage/graphs',
 )
 
+
 extension_data = {
   'asteroidal_triples' : files('asteroidal_triples.pyx'),
   'centrality' : files('centrality.pyx'),
@@ -178,3 +179,4 @@ py.extension_module(
 subdir('base')
 subdir('generators')
 subdir('graph_decompositions')
+subdir('tests')

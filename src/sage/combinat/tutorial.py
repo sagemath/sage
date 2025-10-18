@@ -1635,7 +1635,7 @@ iterator or non-naive counting::
     M(4, 2, 3),
     M(5, 2, 3)
     in 3-d lattice M
-    sage: L.npoints()                                 # random
+    sage: L.n_points()                                 # random
     11
 
 This polytope can be visualized in 3D with ``L.plot3d()`` (see
