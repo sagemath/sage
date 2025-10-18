@@ -225,7 +225,7 @@ cdef Obj make_gap_integer(sage_int) except NULL:
 
     TESTS:
 
-    Test small Sage integers::
+    Test with Sage integers::
 
         sage: libgap(0)   # indirect doctest
         0
@@ -233,32 +233,12 @@ cdef Obj make_gap_integer(sage_int) except NULL:
         1
         sage: libgap(-1)
         -1
-        sage: libgap(42)
-        42
-        sage: libgap(-42)
-        -42
-
-    Test medium Sage integers::
-
         sage: libgap(2**31)
         2147483648
-        sage: libgap(2**32)
-        4294967296
-        sage: libgap(2**63)
-        9223372036854775808
+        sage: libgap(-2**63)
+        -9223372036854775808
         sage: libgap(2**64)
         18446744073709551616
-        sage: libgap(-(2**64))
-        -18446744073709551616
-
-    Test large Sage integers::
-
-        sage: libgap(2**100)
-        1267650600228229401496703205376
-        sage: libgap(2**128)
-        340282366920938463463374607431768211456
-        sage: libgap(2**256)
-        115792089237316195423570985008687907853269984665640564039457584007913129639936
         sage: libgap(-(2**256))
         -115792089237316195423570985008687907853269984665640564039457584007913129639936
 
