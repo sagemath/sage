@@ -1,1 +1,1 @@
-from .sff import Embedded_projective_variety, projective_variety, PP, Rational_map_between_embedded_projective_varieties, rational_map, veronese, Veronese, surface, Hodge_special_fourfold, Cubic_fourfold, GushelMukai_fourfold, fourfold, verbosity, update_macaulay2_packages
+from .sff import Embedded_projective_variety, projective_variety, Rational_map_between_embedded_projective_varieties, rational_map, surface, Hodge_special_fourfold, fourfold
