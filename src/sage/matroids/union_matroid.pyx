@@ -226,7 +226,7 @@ cdef class MatroidSum(Matroid):
                 partition[i] = set()
             partition[i].add(x)
         r = 0
-        for (i, Xi) in partition.iteritems():
+        for i, Xi in partition.items():
             r += self.summands[i]._rank(frozenset(Xi))
         return r
 
