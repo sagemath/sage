@@ -1263,7 +1263,10 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         return self.__ring
 
     def free_module(self, base=None, basis=None, map=True):
-        """
+        r"""
+        Return a free module `V` over the specified subring together with
+        maps to and from `V`.
+
         See :meth:`sage.categories.rings.Rings.ParentMethods.free_module`.
 
         TESTS::
