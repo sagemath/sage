@@ -578,7 +578,7 @@ class CubicHeckeElement(CombinatorialFreeModule.Element):
             mtcf = [M.from_vector(cf.to_vector()) for cf in mtcf]
 
         R = M.base_ring()
-        return M.linear_combination((mtcf[i], R(val)) for i, val in vs.iteritems())
+        return M.linear_combination((mtcf[i], R(val)) for i, val in vs.items())
 
 
 class CubicHeckeAlgebra(CombinatorialFreeModule):

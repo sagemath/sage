@@ -262,11 +262,11 @@ AUTHOR:
 
 from sage.misc.latex import latex
 from sage.structure.element import Element
+from sage.structure.factorization import Factorization
 from sage.matrix.matrix0 import Matrix
 from sage.matrix.constructor import matrix
 from sage.categories.map import Map
 from sage.categories.morphism import Morphism
-from sage.modules.ore_module import OreSubmodule, OreQuotientModule
 
 
 class OreModuleMorphism(Morphism):
@@ -299,12 +299,42 @@ class OreModuleMorphism(Morphism):
             <class 'sage.modules.ore_module_homspace.OreModule_homspace_with_category.element_class'>
 
             sage: TestSuite(f).run()
+
+        An example with a nontrivial denominator::
+
+            sage: from sage.modules.ore_module import OreModule
+            sage: A.<t> = QQ[]
+            sage: d = A.derivation()
+            sage: M.<u> = OreModule(matrix([t^2 + 1]), d, denominator=t)
+            sage: N.<v> = OreModule(matrix([t]), d)
+            sage: M.hom({u: t*v})
+            Ore module morphism:
+              From: Ore module <u> over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+              To:   Ore module <v> over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+            sage: N.hom({v: t*u})
+            Traceback (most recent call last):
+            ...
+            ValueError: does not define a morphism of Ore modules
         """
         Morphism.__init__(self, parent)
         domain = parent.domain()
         codomain = parent.codomain()
         base = domain.base_ring()
+        fd = domain._pseudohom
+        fc = codomain._pseudohom
         MS = parent.matrix_space()
+
+        # Handle denominators
+        dd = domain._denominator
+        if dd is None:
+            dd = Factorization([])
+        dc = codomain._denominator
+        if dc is None:
+            dc = Factorization([])
+        den = dd.lcm(dc)
+        sd = den / dd
+        sc = den / dc
+
         if (isinstance(im_gens, Element)
             and base.has_coerce_map_from(im_gens.parent())):
             self._matrix = MS(im_gens)
@@ -335,16 +365,16 @@ class OreModuleMorphism(Morphism):
             oldr = 0
             r = M.rank()
             iter = 1
-            fd = domain._pseudohom
-            fc = codomain._pseudohom
+            sd = base(sd.value())
+            sc = base(sc.value())
             while r > oldr:
                 for i in range(r):
                     row = M.row(i).list()
                     x = row[:dimd]
                     y = row[dimd:]
                     for _ in range(iter):
-                        x = fd(x)
-                        y = fc(y)
+                        x = sd * fd(x)
+                        y = sc * fc(y)
                     v = x.list() + y.list()
                     for j in range(d):
                         M[i+r,j] = v[j]
@@ -358,8 +388,14 @@ class OreModuleMorphism(Morphism):
         else:
             raise ValueError("cannot construct a morphism from the given data")
         if check:
+            if isinstance(sd, Factorization):
+                sd = base(sd.value())
+                sc = base(sc.value())
             for x in parent.domain().basis():
-                if self._call_(x.image()) != self._call_(x).image():
+                y = self._call_(x)
+                fx = sd * fd(x)
+                fy = sc * fc(y)
+                if self._call_(fx) != fy:
                     raise ValueError("does not define a morphism of Ore modules")
 
     def _repr_type(self):
@@ -767,7 +803,8 @@ class OreModuleMorphism(Morphism):
             ker = mat.minimal_kernel_matrix()
         else:
             ker = mat.left_kernel_matrix()
-        return OreSubmodule(self.domain(), ker, False, names)
+        domain = self.domain()
+        return domain._submodule_class(domain, ker, False, names)
 
     def image(self, saturate=False, names=None):
         r"""
@@ -804,7 +841,8 @@ class OreModuleMorphism(Morphism):
              m1 + (z+3)*m3 + (z^2+z+4)*m4,
              m2 + (2*z^2+4*z+2)*m4 + (2*z^2+z+1)*m5]
         """
-        return OreSubmodule(self.codomain(), self._matrix, saturate, names)
+        codomain = self.codomain()
+        return codomain._submodule_class(codomain, self._matrix, saturate, names)
 
     def cokernel(self, remove_torsion=False, names=None):
         r"""
@@ -838,7 +876,8 @@ class OreModuleMorphism(Morphism):
             sage: coker.basis()
             [m3, m4, m5]
         """
-        return OreQuotientModule(self.codomain(), self._matrix, remove_torsion, names)
+        codomain = self.codomain()
+        return codomain._quotientModule_class(codomain, self._matrix, remove_torsion, names)
 
     def coimage(self, names=None):
         r"""
@@ -874,7 +913,8 @@ class OreModuleMorphism(Morphism):
             ker = mat.minimal_kernel_matrix()
         else:
             ker = mat.left_kernel_matrix()
-        return OreQuotientModule(self.domain(), ker, False, names)
+        domain = self.domain()
+        return domain._quotientModule_class(domain, ker, False, names)
 
     def determinant(self):
         r"""

@@ -4555,9 +4555,9 @@ _SupportedFindStatCollections = {
     _SupportedFindStatCollection(lambda x: (lambda E, V: Graph([list(range(V)),
                                                                 lambda i,j: (i,j) in E or (j,i) in E],
                                                                immutable=True))(*literal_eval(x)),
-                                 lambda X: str((X.edges(labels=False, sort=True), X.num_verts())),
+                                 lambda X: str((X.edges(labels=False, sort=True), X.n_vertices())),
                                  lambda x: (g.copy(immutable=True) for g in graphs(x, copy=False)),
-                                 lambda x: x.num_verts(),
+                                 lambda x: x.n_vertices(),
                                  lambda x: isinstance(x, Graph)),
     "IntegerPartitions":
     _SupportedFindStatCollection(lambda x: Partition(literal_eval(x)),

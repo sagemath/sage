@@ -1057,27 +1057,6 @@ class MaximaLib(MaximaAbstract):
         raise ValueError(outstr)
 
 
-def is_MaximaLibElement(x):
-    r"""
-    Return ``True`` if ``x`` is of type :class:`MaximaLibElement`.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.maxima_lib import maxima_lib, is_MaximaLibElement
-        sage: is_MaximaLibElement(1)
-        doctest:...: DeprecationWarning: the function is_MaximaLibElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaLibElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: m = maxima_lib(1)
-        sage: is_MaximaLibElement(m)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_MaximaLibElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaLibElement) instead")
-
-    return isinstance(x, MaximaLibElement)
-
-
 @instancedoc
 class MaximaLibElement(MaximaAbstractElement):
     r"""

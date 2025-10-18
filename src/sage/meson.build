@@ -2,6 +2,8 @@ sage_install_dir = py.get_install_dir() / 'sage'
 
 # Generate the configuration file
 conf_data = configuration_data()
+conf_data.set('EDITABLE_SRC', root)
+conf_data.set('EDITABLE_BUILD', root_build)
 conf_data.set('PACKAGE_VERSION', '1.2.3')
 # We use Python's prefix here to make it work with conda
 prefix = fs.as_posix(py.get_variable('prefix', ''))
@@ -10,7 +12,6 @@ datadir = fs.expanduser(get_option('datadir'))
 if not fs.is_absolute(datadir)
   datadir = prefix / datadir
 endif
-conf_data.set('SAGE_SHARE', datadir)
 if not fs.exists(datadir / 'cremona')
   message(
     'Warning: The specified datadir does not contain the necessary Cremona database. Either specify a different datadir or specify a correct the correct path via the environment variable SAGE_SHARE during runtime.',
@@ -46,7 +47,6 @@ if gap_exe.found()
     check: true,
   )
   gap_root_paths = gaprun.stdout().strip()
-  gap_root_paths = '${prefix}/lib/gap;${prefix}/share/gap;' + gaprun.stdout().strip()
   conf_data.set('GAP_ROOT_PATHS', gap_root_paths)
 endif
 ecm_bin = find_program(
@@ -55,7 +55,34 @@ ecm_bin = find_program(
   disabler: true,
 )
 conf_data.set('SAGE_ECMBIN', ecm_bin.full_path())
-
+nauty_bins_prefix = ''
+nauty_progs = [
+  'directg',
+  'gentourng',
+  'geng',
+  'genbg',
+  'gentreeg',
+  'genktreeg',
+  'genposetg',
+]
+extra_bin_paths = []
+if get_option('SAGE_LOCAL') != ''
+  extra_bin_paths += [join_paths(get_option('SAGE_LOCAL'), 'bin')]
+endif
+foreach prog : nauty_progs
+  nauty_check = find_program(prog, dirs: extra_bin_paths, required: false)
+  if not nauty_check.found()
+    nauty_check = find_program(
+      'nauty-' + prog,
+      dirs: extra_bin_paths,
+      required: false,
+    )
+  endif
+  if nauty_check.found()
+    nauty_bins_prefix = nauty_check.full_path().replace(prog, '')
+  endif
+endforeach
+conf_data.set('SAGE_NAUTY_BINS_PREFIX', nauty_bins_prefix)
 # Packages that need no processing and can be installed directly
 no_processing = [
   'cli',
@@ -83,6 +110,8 @@ py.install_sources(
   '__init__.py',
   'all.py',
   'all_cmdline.py',
+  'all_test.py',
+  'config_test.py',
   'env.py',
   'version.py',
   subdir: 'sage',
@@ -147,7 +176,7 @@ configure_file(
 # Write config file
 # Should be last so that subdir calls can modify the config data
 config_file = configure_file(
-  input: '../../pkgs/sage-conf/_sage_conf/_conf.py.in',
+  input: 'config.py.in',
   output: 'config.py',
   install_dir: sage_install_dir,
   install: true,

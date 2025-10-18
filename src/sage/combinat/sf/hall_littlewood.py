@@ -233,7 +233,7 @@ class HallLittlewood(UniqueRepresentation):
         Transitions between bases with the parameter `t` specialized::
 
             sage: Sym = SymmetricFunctions(FractionField(QQ['y','z']))
-            sage: (y,z) = Sym.base_ring().gens()
+            sage: y, z = Sym.base_ring().gens()
             sage: HLy = Sym.hall_littlewood(t=y)
             sage: HLz = Sym.hall_littlewood(t=z)
             sage: Qpy = HLy.Qp()

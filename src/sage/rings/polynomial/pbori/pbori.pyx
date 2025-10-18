@@ -2356,7 +2356,7 @@ cdef class BooleanMonomial(MonoidElement):
         elif kwds:
             d = list(self._parent.gens())
             gd = dict(zip(self._parent.variable_names(), range(len(d))))
-            for var, val in kwds.iteritems():
+            for var, val in kwds.items():
                 d[gd[var]] = val
         res = self._parent._one_element
         for var in self.iterindex():
@@ -3933,12 +3933,12 @@ cdef class BooleanPolynomial(MPolynomial):
                         d[i] = arg
                 except TypeError:
                     d[i] = arg
-            if not len(d):
+            if not d:
                 return self
         elif kwds:
             d = dict(zip(range(P.ngens()), P.gens()))
             gd = dict(zip(P.variable_names(), range(P.ngens())))
-            for var, val in kwds.iteritems():
+            for var, val in kwds.items():
                 d[gd[var]] = val
 
         res = 0
@@ -4014,7 +4014,7 @@ cdef class BooleanPolynomial(MPolynomial):
         if kwds:
             gdict = P._monom_monoid.gens_dict()
 
-        for var, val in kwds.iteritems():
+        for var, val in kwds.items():
             var = gdict[var]
             try:
                 v = P(val)
@@ -4025,7 +4025,7 @@ cdef class BooleanPolynomial(MPolynomial):
             except TypeError:
                 fixed[var.index()] = val
 
-        if not len(fixed):
+        if not fixed:
             return self
         res = 0
         for m in self:

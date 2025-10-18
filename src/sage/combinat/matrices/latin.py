@@ -87,7 +87,7 @@ EXAMPLES::
     [-1  0  2  1]
     [ 2  1  3 -1]
     [ 0  3 -1  2]
-    sage: T1.nr_filled_cells()
+    sage: T1.n_filled_cells()
     12
     sage: genus(T1, T2)
     1
@@ -148,7 +148,7 @@ from functools import reduce
 
 
 class LatinSquare:
-    def __init__(self, *args):
+    def __init__(self, *args) -> None:
         """
         Latin squares.
 
@@ -203,7 +203,7 @@ class LatinSquare:
         from sage.misc.persist import dumps
         return dumps(self.square)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         The string representation of a latin square is the same as the
         underlying matrix.
@@ -216,7 +216,7 @@ class LatinSquare:
         """
         return str(self.square)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         The representation of a latin square is the same as the underlying
         matrix.
@@ -241,13 +241,9 @@ class LatinSquare:
             sage: B[1, 1]
             2
         """
+        return self.square[*rc]
 
-        r = rc[0]
-        c = rc[1]
-
-        return self.square[r, c]
-
-    def __setitem__(self, rc, val):
+    def __setitem__(self, rc, val) -> None:
         """
         If L is a LatinSquare then this method allows us to set L[r, c].
 
@@ -259,13 +255,9 @@ class LatinSquare:
             sage: B[1, 1]
             10
         """
+        self.square[*rc] = val
 
-        r = rc[0]
-        c = rc[1]
-
-        self.square[r, c] = val
-
-    def set_immutable(self):
+    def set_immutable(self) -> None:
         """
         A latin square is immutable if the underlying matrix is immutable.
 
@@ -277,10 +269,9 @@ class LatinSquare:
             {[0 1]
             [2 3]: 0}
         """
-
         self.square.set_immutable()
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         The hash of a latin square is precisely the hash of the underlying
         matrix.
@@ -295,7 +286,7 @@ class LatinSquare:
         """
         return hash(self.square)
 
-    def __eq__(self, Q):
+    def __eq__(self, Q) -> bool:
         """
         Two latin squares are equal if the underlying matrices are equal.
 
@@ -309,7 +300,6 @@ class LatinSquare:
             sage: A == B
             True
         """
-
         return self.square == Q.square
 
     def __copy__(self):
@@ -329,7 +319,7 @@ class LatinSquare:
         C.square = copy(self.square)
         return C
 
-    def clear_cells(self):
+    def clear_cells(self) -> None:
         """
         Mark every cell in ``self`` as being empty.
 
@@ -391,7 +381,7 @@ class LatinSquare:
         """
         return self.square.column(x)
 
-    def list(self):
+    def list(self) -> list:
         """
         Convert the latin square into a list, in a row-wise manner.
 
@@ -403,7 +393,7 @@ class LatinSquare:
         """
         return self.square.list()
 
-    def nr_filled_cells(self):
+    def n_filled_cells(self) -> int:
         """
         Return the number of filled cells (i.e. cells with a positive
         value) in the partial latin square ``self``.
@@ -411,17 +401,15 @@ class LatinSquare:
         EXAMPLES::
 
             sage: from sage.combinat.matrices.latin import *
-            sage: LatinSquare(matrix([[0, -1], [-1, 0]])).nr_filled_cells()
+            sage: LatinSquare(matrix([[0, -1], [-1, 0]])).n_filled_cells()
             2
         """
-        s = 0
-        for r in range(self.nrows()):
-            for c in range(self.ncols()):
-                if self[r, c] >= 0:
-                    s += 1
-        return s
+        return sum(1 for r in range(self.nrows()) for c in range(self.ncols())
+                   if self[r, c] >= 0)
 
-    def actual_row_col_sym_sizes(self):
+    nr_filled_cells = n_filled_cells
+
+    def actual_row_col_sym_sizes(self) -> tuple:
         """
         Bitrades sometimes end up in partial latin squares with unused
         rows, columns, or symbols. This function works out the actual
@@ -448,7 +436,7 @@ class LatinSquare:
         """
         row_max = self.nrows()
         col_max = self.ncols()
-        sym_max = self.nr_distinct_symbols()
+        sym_max = self.n_distinct_symbols()
 
         while self.is_empty_row(row_max-1):
             row_max -= 1
@@ -457,7 +445,7 @@ class LatinSquare:
 
         return row_max, col_max, sym_max
 
-    def is_empty_column(self, c):
+    def is_empty_column(self, c) -> bool:
         """
         Check if column c of the partial latin square ``self`` is empty.
 
@@ -471,9 +459,9 @@ class LatinSquare:
             sage: L.is_empty_column(0)
             True
         """
-        return list(set(self.column(c))) == [-1]
+        return all(cf == -1 for cf in self.column(c))
 
-    def is_empty_row(self, r):
+    def is_empty_row(self, r) -> bool:
         """
         Check if row r of the partial latin square ``self`` is empty.
 
@@ -487,9 +475,9 @@ class LatinSquare:
             sage: L.is_empty_row(0)
             True
         """
-        return list(set(self.row(r))) == [-1]
+        return all(cf == -1 for cf in self.row(r))
 
-    def nr_distinct_symbols(self):
+    def n_distinct_symbols(self) -> int:
         """
         Return the number of distinct symbols in the partial latin square
         ``self``.
@@ -497,18 +485,20 @@ class LatinSquare:
         EXAMPLES::
 
             sage: from sage.combinat.matrices.latin import *
-            sage: back_circulant(5).nr_distinct_symbols()
+            sage: back_circulant(5).n_distinct_symbols()
             5
             sage: L = LatinSquare(10)
-            sage: L.nr_distinct_symbols()
+            sage: L.n_distinct_symbols()
             0
             sage: L[0, 0] = 0
             sage: L[0, 1] = 1
-            sage: L.nr_distinct_symbols()
+            sage: L.n_distinct_symbols()
             2
         """
         symbols = set(flatten([list(x) for x in list(self.square)]))
         return sum(1 for x in symbols if x >= 0)
+
+    nr_distinct_symbols = n_distinct_symbols
 
     def apply_isotopism(self, row_perm, col_perm, sym_perm):
         """
@@ -641,7 +631,7 @@ class LatinSquare:
 
         return None
 
-    def is_partial_latin_square(self):
+    def is_partial_latin_square(self) -> bool:
         """
         ``self`` is a partial latin square if it is an n by n matrix, and each
         symbol in [0, 1, ..., n-1] appears at most once in each row, and at
@@ -702,7 +692,7 @@ class LatinSquare:
 
         return True
 
-    def is_latin_square(self):
+    def is_latin_square(self) -> bool:
         """
         ``self`` is a latin square if it is an n by n matrix, and each symbol
         in [0, 1, ..., n-1] appears exactly once in each row, and exactly
@@ -817,7 +807,7 @@ class LatinSquare:
 
         return [rc[0], rc[1]]
 
-    def is_uniquely_completable(self):
+    def is_uniquely_completable(self) -> bool:
         """
         Return ``True`` if the partial latin square ``self`` has exactly one
         completion to a latin square. This is just a wrapper for the
@@ -842,10 +832,9 @@ class LatinSquare:
             sage: G.is_uniquely_completable()
             False
         """
-
         return self.dlxcpp_has_unique_completion()
 
-    def is_completable(self):
+    def is_completable(self) -> bool:
         """
         Return ``True`` if the partial latin square can be completed to a
         latin square.
@@ -913,7 +902,6 @@ class LatinSquare:
             [ 6 -1  4 -1  2 -1  0 -1]
             [-1 -1 -1 -1 -1 -1 -1 -1]
         """
-
         n = self.nrows()
 
         from copy import copy
@@ -929,7 +917,7 @@ class LatinSquare:
 
         return G
 
-    def dlxcpp_has_unique_completion(self):
+    def dlxcpp_has_unique_completion(self) -> bool:
         """
         Check if the partial latin square ``self`` of order n can be embedded
         in precisely one latin square of order n.
@@ -948,7 +936,7 @@ class LatinSquare:
         """
         return len(dlxcpp_find_completions(self, nr_to_find=2)) == 1
 
-    def vals_in_row(self, r):
+    def vals_in_row(self, r) -> dict:
         """
         Return a dictionary with key e if and only if row r of ``self`` has
         the symbol e.
@@ -961,7 +949,6 @@ class LatinSquare:
             sage: back_circulant(3).vals_in_row(0)
             {0: True, 1: True, 2: True}
         """
-
         n = self.ncols()
         vals_in_row = {}
 
@@ -972,7 +959,7 @@ class LatinSquare:
 
         return vals_in_row
 
-    def vals_in_col(self, c):
+    def vals_in_col(self, c) -> dict:
         """
         Return a dictionary with key e if and only if column c of ``self`` has
         the symbol e.
@@ -995,7 +982,7 @@ class LatinSquare:
 
         return vals_in_col
 
-    def latex(self):
+    def latex(self) -> str:
         r"""
         Return LaTeX code for the latin square.
 
@@ -1163,7 +1150,6 @@ class LatinSquare:
               (15, 27, 43): (2, 3, 3),
               (15, 31, 47): (3, 3, 3)})
         """
-
         assert self.nrows() == self.ncols()
 
         n = self.nrows()
@@ -1254,10 +1240,10 @@ class LatinSquare:
 
         dlx_rows, cmap = self.disjoint_mate_dlxcpp_rows_and_map(allow_subtrade)
 
-        nr_found = 0
+        n_found = 0
 
         for x in DLXCPP(dlx_rows):
-            nr_found += 1
+            n_found += 1
 
             from copy import deepcopy
             Q = deepcopy(self)
@@ -1270,10 +1256,10 @@ class LatinSquare:
 
             yield Q
 
-            if nr_to_find is not None and nr_found >= nr_to_find:
+            if nr_to_find is not None and n_found >= nr_to_find:
                 return
 
-    def contained_in(self, Q):
+    def contained_in(self, Q) -> bool:
         r"""
         Return ``True`` if ``self`` is a subset of `Q`.
 
@@ -1324,7 +1310,7 @@ def genus(T1, T2):
         3
     """
     cells_map, t1, t2, t3 = tau123(T1, T2)
-    return (len(t1.to_cycles()) + len(t2.to_cycles()) + len(t3.to_cycles()) - T1.nr_filled_cells() - 2) // (-2)
+    return (len(t1.to_cycles()) + len(t2.to_cycles()) + len(t3.to_cycles()) - T1.n_filled_cells() - 2) // (-2)
 
 
 def tau123(T1, T2):
@@ -1434,7 +1420,7 @@ def tau123(T1, T2):
 
     The product t1\*t2\*t3 is the identity, i.e. it fixes every point::
 
-        sage: len((t1*t2*t3).fixed_points()) == T1.nr_filled_cells()
+        sage: len((t1*t2*t3).fixed_points()) == T1.n_filled_cells()
         True
     """
     assert is_bitrade(T1, T2)
@@ -2592,11 +2578,11 @@ def tau_to_bitrade(t1, t2, t3):
     for r in range(len(c1)):
         for c in range(len(c2)):
             for s in range(len(c3)):
-                nr_common = len(reduce(set.intersection,
+                n_common = len(reduce(set.intersection,
                                        [set(c1[r]), set(c2[c]), set(c3[s])]))
-                assert nr_common in [0, 1]
+                assert n_common in [0, 1]
 
-                if nr_common == 1:
+                if n_common == 1:
                     T1[r, c] = s
 
     for cycle in c1:

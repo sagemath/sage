@@ -2897,7 +2897,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         d = {}
         for v in L:
-            for id, coeff in v.iteritems():
+            for id, coeff in v.items():
                 d[id] = coeff + d.get(id, 0)
         return self.linear_functions_parent()(d)
 

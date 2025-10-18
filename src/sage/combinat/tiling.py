@@ -1450,6 +1450,7 @@ class Polyomino(SageObject):
 
         ::
 
+            sage: # long time
             sage: solution = H.self_surrounding(8, remove_incomplete_copies=False)
             sage: G = sum([p.show2d() for p in solution], Graphics())                   # needs sage.plot
         """

@@ -195,6 +195,7 @@ file_paths = [
   'src/sage/graphs/generators/__init__.py',
   'src/sage/graphs/__init__.py',
   'src/sage/graphs/base/__init__.py',
+  'src/sage/graphs/tests/__init__.py',
   'src/sage/databases/__init__.py',
   'src/sage/stats/hmm/__init__.py',
   'src/sage/stats/__init__.py',
@@ -217,5 +218,6 @@ for path in file_paths:
 run_command(create_files_command, check: true)
 
 root = meson.current_source_dir()
+root_build = meson.current_build_dir()
 
 subdir('src')

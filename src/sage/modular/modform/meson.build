@@ -13,7 +13,6 @@ py.install_sources(
   'eis_series_cython.pyx',
   'eisenstein_submodule.py',
   'element.py',
-  'find_generators.py',
   'half_integral.py',
   'hecke_operator_on_qexp.py',
   'j_invariant.py',

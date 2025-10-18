@@ -172,6 +172,8 @@ AUTHORS:
 
 from warnings import warn
 
+from libc.limits cimport INT_MAX
+
 from cpython.object cimport Py_NE
 from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
@@ -661,6 +663,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         Coercion from boolean polynomials, also by index::
 
+            sage: # needs sage.rings.polynomial.pbori
             sage: B.<x,y,z> = BooleanPolynomialRing(3)
             sage: P.<x,y,z> = QQ[]
             sage: P(B.gen(0))
@@ -2261,8 +2264,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: (x^2^32) * x^2^32
             Traceback (most recent call last):
             ...
-            OverflowError: Python int too large to convert to C unsigned long  # 32-bit
-            OverflowError: exponent overflow (...)  # 64-bit
+            OverflowError: exponent overflow (...)
         """
         # all currently implemented rings are commutative
         cdef poly *_p
@@ -2386,8 +2388,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: (x+y^2^32)^10
             Traceback (most recent call last):
             ....
-            OverflowError: Python int too large to convert to C unsigned long  # 32-bit
-            OverflowError: exponent overflow (...)  # 64-bit
+            OverflowError: exponent overflow (...)
 
         Test fractional powers (:issue:`22329`)::
 
@@ -2425,6 +2426,78 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             Traceback (most recent call last):
             ...
             NotImplementedError: pow() with a modulus is not implemented for this ring
+
+        Check handling of large exponents (:issue:`40442`).
+        The internal representation of a Singular polynomial supports each exponent
+        up to roughly ``2^(bitness//n_var)`` where ``bitness`` is the number of bits in a word,
+        typically either 32 or 64, and ``n_var`` is the number of variables,
+        typically between 1 and 4.
+        However, the ``pPower`` Singular function requires the exponent to fit in an ``int``.
+        As such, the case of univariate and bivariate polynomial ring on 64-bit machine,
+        where the maximum allowed exponent is larger than ``INT_MAX`` is of main interest::
+
+            sage: P.<x> = PolynomialRing(ZZ, implementation="singular")
+            sage: x^(2^31-1)
+            x^2147483647
+
+            sage: # needs !32_bit
+            sage: P.<x> = PolynomialRing(ZZ, implementation="singular")
+            sage: x^(2^31)
+            x^2147483648
+            sage: x^(2^32-1)
+            x^4294967295
+            sage: x^(2^32)
+            x^4294967296
+            sage: x^(2^63-1)
+            x^9223372036854775807
+            sage: x^(2^63)
+            Traceback (most recent call last):
+            ...
+            OverflowError: exponent overflow (9223372036854775808)
+            sage: x^(2^64-1)
+            Traceback (most recent call last):
+            ...
+            OverflowError: exponent overflow (18446744056529682436)
+            sage: x^(2^64)
+            Traceback (most recent call last):
+            ...
+            OverflowError: exponent overflow (18446744056529682436)
+            sage: P(1)^(2^64)
+            1
+
+            sage: # needs !32_bit
+            sage: P.<x,y> = ZZ[]
+            sage: y^(2^32-1)
+            y^4294967295
+            sage: y^(2^32)
+            Traceback (most recent call last):
+            ...
+            OverflowError: exponent overflow (4294967296)
+            sage: P(1)^(2^32)
+            1
+
+        The following isn't affected by :issue:`40442`, but we test for it anyway::
+
+            sage: P.<x,y,z,t> = ZZ[]
+            sage: y^(2^16-1)
+            y^65535
+            sage: y^(2^16)
+            Traceback (most recent call last):
+            ...
+            OverflowError: exponent overflow (65536)
+
+        The following behaviors are known bugs (Singular complains even though
+        the exponentiation result is perfectly representable), and may be changed any time::
+
+            sage: # needs 32_bit
+            sage: P.<x,y> = ZZ[]
+            sage: P(1)^(2^32)  # known bug
+            ...UserWarning: error in Singular ignored: exponent 2147483647 is too large, max. is 65535...
+
+            sage: # needs !32_bit
+            sage: P.<x,y,z,t> = ZZ[]
+            sage: P(1)^(2^16)  # known bug
+            ...UserWarning: error in Singular ignored: exponent 65536 is too large, max. is 65535...
         """
         if mod is not None:
             raise NotImplementedError(
@@ -2451,6 +2524,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             return self._parent._one_element / (self**(-exp))
         elif exp == 0:
             return self._parent._one_element
+        elif exp > INT_MAX:
+            return (self ** INT_MAX) ** (exp // INT_MAX) * self ** (exp % INT_MAX)
 
         cdef ring *_ring = self._parent_ring
         cdef poly *_p
@@ -4588,6 +4663,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                 sig_off()
             finally:
                 if check_error():
+                    if len(self.variables()) == 1:
+                        return Factorization([(self._parent(p), e) for p, e in self.univariate_polynomial().factor()])
                     raise NotImplementedError("Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
 
             ivv = iv.ivGetVec()
@@ -4671,6 +4748,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         Ensure interrupt does not make the internal state inconsistent::
 
+            sage: # long time
             sage: R.<x,y> = QQ[]
             sage: n = 17  # chosen so that the computation takes > 1 second but not excessively long.
             ....: # when Singular improves the algorithm or hardware gets faster, increase n.

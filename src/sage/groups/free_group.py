@@ -398,7 +398,7 @@ class FreeGroupElement(ElementLibGAP):
 
         OUTPUT:
 
-        The fox derivative of ``self`` with respect to ``gen``
+        The Fox derivative of ``self`` with respect to ``gen``
         (induced by ``im_gens``).
         By default, it is an element of the group algebra with
         integer coefficients.
@@ -898,7 +898,7 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
         except AttributeError:
             return self.element_class(self, x, **kwds)
         if isinstance(P, FreeGroup_class):
-            names = {P._gen_names[abs(i)-1] for i in x.Tietze()}
+            names = {P._gen_names[abs(i) - 1] for i in x.Tietze()}
             if names.issubset(self._gen_names):
                 return self([i.sign()*(self._gen_names.index(P._gen_names[abs(i)-1])+1)
                              for i in x.Tietze()])

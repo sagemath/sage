@@ -817,7 +817,7 @@ cdef class FreeAlgebra_letterplace(Parent):
         cdef dict out = {}
         self.set_degbound(l // self._ngens)
         cdef Py_ssize_t n = self._current_ring.ngens()
-        for e, c in D.iteritems():
+        for e, c in D.items():
             out[tuple(e) + (0,) * (n - l)] = c
         return FreeAlgebraElement_letterplace(self, self._current_ring(out),
                                               check=check)

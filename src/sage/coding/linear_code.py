@@ -231,7 +231,6 @@ from sage.rings.rational_field import QQ
 
 lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
 lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
-lazy_import('sage.interfaces.gap', 'gap')
 
 
 # *****************************************************************************
