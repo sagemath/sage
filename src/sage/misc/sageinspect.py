@@ -1345,7 +1345,8 @@ def sage_getfile(obj):
     # No go? fall back to inspect.
     try:
         sourcefile = inspect.getabsfile(obj)
-    except TypeError:  # this happens for Python builtins
+    except (TypeError, OSError):  # TypeError happens for Python builtins,
+        # OSError happens for objects defined in the shell (having ``__module__ == '__main__'``)
         return ''
     for suffix in import_machinery.EXTENSION_SUFFIXES:
         if sourcefile.endswith(suffix):
@@ -2166,7 +2167,8 @@ def sage_getdoc(obj, obj_name='', embedded=False):
         sage: sage_getdoc(identity_matrix)[87:124]                                      # needs sage.modules
         '...the n x n identity matrix...'
         sage: def f(a, b, c, d=1): return a+b+c+d
-        ...
+        sage: sage_getdoc(f)
+        ''
         sage: import functools
         sage: f1 = functools.partial(f, 1,c=2)
         sage: f.__doc__ = "original documentation"
@@ -2175,6 +2177,27 @@ def sage_getdoc(obj, obj_name='', embedded=False):
         'original documentation\n'
         sage: sage_getdoc(f1)
         'specialised documentation\n'
+
+    TESTS::
+
+        sage: class C:
+        ....:     '''
+        ....:     docs
+        ....:     '''
+        sage: sage_getdoc(C)
+        '   docs\n'
+
+        sage: from sage.repl.interpreter import get_test_shell
+        sage: shell = get_test_shell()
+        sage: shell.run_cell('''
+        ....: class C:
+        ....:     \'\'\'
+        ....:     documentation of my class
+        ....:     \'\'\'
+        ....:     pass
+        ....: ''')
+        sage: shell.run_cell('C?')
+        ...documentation of my class...
     """
     import sage.misc.sagedoc
     if obj is None:
