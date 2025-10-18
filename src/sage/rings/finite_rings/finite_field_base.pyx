@@ -2218,30 +2218,3 @@ def unpickle_FiniteField_prm(_type, order, variable_name, kwargs):
 
 register_unpickle_override(
     'sage.rings.ring', 'unpickle_FiniteField_prm', unpickle_FiniteField_prm)
-
-
-def is_FiniteField(R):
-    r"""
-    Return whether the implementation of ``R`` has the interface provided by
-    the standard finite field implementation.
-
-    This function is deprecated.
-
-    EXAMPLES::
-
-        sage: from sage.rings.finite_rings.finite_field_base import is_FiniteField
-        sage: is_FiniteField(GF(9,'a'))
-        doctest:...: DeprecationWarning: the function is_FiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) instead
-        See https://github.com/sagemath/sage/issues/32664 for details.
-        True
-        sage: is_FiniteField(GF(next_prime(10^10)))
-        True
-
-    Note that the integers modulo n are not backed by the finite field type::
-
-        sage: is_FiniteField(Integers(7))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32664, "the function is_FiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) instead")
-    return isinstance(R, FiniteField)
