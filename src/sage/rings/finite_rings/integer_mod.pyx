@@ -3229,7 +3229,7 @@ cdef int_fast32_t mod_pow_int(int_fast32_t base, int_fast32_t exp, int_fast32_t 
 
 cdef int jacobi_int(int_fast32_t a, int_fast32_t m) except -2:
     """
-    Calculate the jacobi symbol (a/n).
+    Calculate the Jacobi symbol (a/n).
 
     For use in ``IntegerMod_int``.
 
@@ -3244,7 +3244,7 @@ cdef int jacobi_int(int_fast32_t a, int_fast32_t m) except -2:
 
     while True:
         if a == 0:
-            return 0 # gcd was nontrivial
+            return 0  # gcd was nontrivial
         elif a == 1:
             return jacobi
         s = 0
@@ -3893,7 +3893,7 @@ cdef int_fast64_t mod_pow_int64(int_fast64_t base, int_fast64_t exp, int_fast64_
 
 cdef int jacobi_int64(int_fast64_t a, int_fast64_t m) except -2:
     """
-    Calculate the jacobi symbol (a/n).
+    Calculate the Jacobi symbol (a/n).
 
     For use in ``IntegerMod_int64``.
 
@@ -3908,7 +3908,7 @@ cdef int jacobi_int64(int_fast64_t a, int_fast64_t m) except -2:
 
     while True:
         if a == 0:
-            return 0 # gcd was nontrivial
+            return 0  # gcd was nontrivial
         elif a == 1:
             return jacobi
         s = 0
