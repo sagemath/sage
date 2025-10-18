@@ -844,6 +844,8 @@ def ensure_interruptible_after(seconds: float, max_wait_after_interrupt: float =
         ....:         if start_time.tv_sec > target_time.tv_sec or (start_time.tv_sec == target_time.tv_sec and start_time.tv_nsec >= target_time.tv_nsec):
         ....:             break
         ....: ''')
+        sage: import gc
+        sage: gc.disable()
         sage: with ensure_interruptible_after(2) as data: interruptible_sleep(1r)
         Traceback (most recent call last):
         ...
@@ -860,6 +862,7 @@ def ensure_interruptible_after(seconds: float, max_wait_after_interrupt: float =
         RuntimeError: Function is not interruptible within 1.0000 seconds, only after 2.00... seconds
         sage: data  # abs tol 0.01
         {'alarm_raised': True, 'elapsed': 2.0}
+        sage: gc.enable()
 
     ::
 
