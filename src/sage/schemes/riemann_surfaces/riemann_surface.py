@@ -4016,7 +4016,7 @@ def poincare_form(M, transformation=False):
     r"""
     Compute the Poincare normal form of a matrix.
 
-    We follow the method described by Martens in [Mar1992]_. Given a matrix M,
+    We follow the method described by Martens in [Mar1992]_. Given a matrix ``M``,
     we first check the GCD of the subdeterminants of ``M``. If it is 1, we can use the
     we proceed otherwise we factor out a matrix on the left to make the GCD 1.
     We then proceed with the reduction algorithm.
@@ -4026,7 +4026,7 @@ def poincare_form(M, transformation=False):
 
     INPUT:
 
-    - ``M`` -- matrix with integer entries of size 2m * 2g, (m < g)
+    - ``M`` -- matrix with integer entries of size ``2m * 2g`` (``m < g``)
     - ``transformation`` -- boolean (default: ``False``); if ``True``,
     return transformation matrix ``S`` and ``T``
 
@@ -4585,8 +4585,8 @@ def reduce_riemann_matrix(M, Z):
     `Z'` represents the effect of a symplectic change of homology basis, often
     defined by a matrix `T` (e.g., from `poincare_form(M)`) which transforms
     the homology basis such that the reduction encoded by `M` corresponds to
-    a projection onto the first 2m basis elements of the new lattice, where
-    2m is the dimension of the reduced Jacobian factor.
+    a projection onto the first `2m` basis elements of the new lattice, where
+    `2m` is the dimension of the reduced Jacobian factor.
 
     INPUT:
 

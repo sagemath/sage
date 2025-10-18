@@ -28,8 +28,8 @@ def skew_form(M, transformation=False):
 
     OUTPUT:
 
-    - ``M'`` -- integer n x n matrix in skew Smith normal form
-    - ``S``  -- integer n x n unimodular matrix with `S^T M S = M'`
+    - ``M'`` -- integer ``n x n`` matrix in skew Smith normal form
+    - ``S``  -- integer ``n x n`` unimodular matrix with ``S^T M S = M'``
       (if ``transformation`` is True)
 
     ALGORITHM:
