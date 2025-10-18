@@ -81,7 +81,7 @@ class DrinfeldModuleAction(Action):
         True
     """
 
-    def __init__(self, drinfeld_module):
+    def __init__(self, drinfeld_module) -> None:
         """
         Initialize ``self``.
 
@@ -140,7 +140,7 @@ class DrinfeldModuleAction(Action):
             raise TypeError('second input must be in the field acted upon')
         return self._drinfeld_module(pol)(x)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of the action.
 
@@ -160,7 +160,7 @@ class DrinfeldModuleAction(Action):
                f'{latex(self._base)}\\text{{{{ }}' \
                f'induced{{ }}by{{ }}}}{latex(self._drinfeld_module)}'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of the action.
 

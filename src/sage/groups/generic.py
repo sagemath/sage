@@ -596,12 +596,23 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     AUTHOR:
 
     - John Cremona (2008-03-15)
+
+    TESTS:
+
+    Ensures Python integers work::
+
+        sage: from sage.groups.generic import bsgs
+        sage: b = Mod(2,37);  a = b^20
+        sage: bsgs(b, a, (0r, 36r))
+        20
     """
     Z = integer_ring.ZZ
 
     operation, identity, inverse, op = _parse_group_def(parent(a), operation, identity, inverse, op)
 
     lb, ub = bounds
+    lb = Z(lb)
+    ub = Z(ub)
     if lb < 0 or ub < lb:
         raise ValueError("bsgs() requires 0<=lb<=ub")
 
@@ -1474,7 +1485,9 @@ def order_from_bounds(P, bounds, d=None, operation='+',
     - ``P`` -- a Sage object which is a group element
 
     - ``bounds`` -- a 2-tuple ``(lb,ub)`` such that ``m*P=0`` (or
-      ``P**m=1``) for some ``m`` with ``lb<=m<=ub``
+      ``P**m=1``) for some ``m`` with ``lb<=m<=ub``. If ``None``,
+      gradually increasing bounds will be tried (might loop infinitely
+      if the element has no torsion).
 
     - ``d`` -- (optional) a positive integer; only ``m`` which are
       multiples of this will be considered
@@ -1503,6 +1516,8 @@ def order_from_bounds(P, bounds, d=None, operation='+',
         sage: b = a^4
         sage: order_from_bounds(b, (5^4, 5^5), operation='*')
         781
+        sage: order_from_bounds(b, None, operation='*')
+        781
 
         sage: # needs sage.rings.finite_rings sage.schemes
         sage: E = EllipticCurve(k, [2,4])
@@ -1521,6 +1536,15 @@ def order_from_bounds(P, bounds, d=None, operation='+',
         23
     """
     operation, identity, inverse, op = _parse_group_def(parent(P), operation, identity, inverse, op)
+    if bounds is None:
+        lb = 1
+        ub = 256
+        while True:
+            try:
+                return order_from_bounds(P, (lb, ub), d, operation, identity, inverse, op)
+            except ValueError:
+                lb = ub + 1
+                ub *= 16
 
     Q = P
     if d is None:
