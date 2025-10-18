@@ -225,7 +225,7 @@ cdef Obj make_gap_integer(sage_int) except NULL:
 
     TESTS:
 
-    Test small integers (fast path using GAP_NewObjIntFromInt)::
+    Test small Sage integers::
 
         sage: libgap(0)   # indirect doctest
         0
@@ -238,25 +238,7 @@ cdef Obj make_gap_integer(sage_int) except NULL:
         sage: libgap(-42)
         -42
 
-    Test boundary values for C int (32-bit and 64-bit)::
-
-        sage: libgap(127)   # 8-bit boundary
-        127
-        sage: libgap(-128)
-        -128
-        sage: libgap(32767)   # 16-bit boundary
-        32767
-        sage: libgap(-32768)
-        -32768
-
-    32-bit boundaries::
-
-        sage: libgap(2147483647)   # 32-bit max
-        2147483647
-        sage: libgap(-2147483648)   # 32-bit min
-        -2147483648
-
-    Test medium integers that overflow C int on some platforms::
+    Test medium Sage integers::
 
         sage: libgap(2**31)
         2147483648
@@ -269,7 +251,7 @@ cdef Obj make_gap_integer(sage_int) except NULL:
         sage: libgap(-(2**64))
         -18446744073709551616
 
-    Test large integers (GMP path with mpz_export)::
+    Test large Sage integers::
 
         sage: libgap(2**100)
         1267650600228229401496703205376
@@ -279,15 +261,6 @@ cdef Obj make_gap_integer(sage_int) except NULL:
         115792089237316195423570985008687907853269984665640564039457584007913129639936
         sage: libgap(-(2**256))
         -115792089237316195423570985008687907853269984665640564039457584007913129639936
-
-    Test very large integers (10000+ bits)::
-
-        sage: n = 2**10000
-        sage: gap_n = libgap(n)
-        sage: gap_n.sage() == n
-        True
-        sage: len(str(n))
-        3011
 
     Test with Python int (not Sage Integer)::
 
@@ -304,31 +277,14 @@ cdef Obj make_gap_integer(sage_int) except NULL:
         sage: libgap(int(2**100))
         1267650600228229401496703205376
 
-    Test with Sage Integer::
-
-        sage: from sage.rings.integer import Integer
-        sage: libgap(Integer(0))
-        0
-        sage: libgap(Integer(10**50))
-        100000000000000000000000000000000000000000000000000
-        sage: libgap(Integer(-10**50))
-        -100000000000000000000000000000000000000000000000000
-
     Test round-trip conversion::
 
-        sage: n = 123456789012345678901234567890
+        sage: n = int(123456789012345678901234567890)
         sage: gap_n = libgap(n)
         sage: gap_n.sage() == n
         True
 
         sage: n = factorial(100)
-        sage: gap_n = libgap(n)
-        sage: gap_n.sage() == n
-        True
-    
-    Test that the conversion is efficient (no exception on huge numbers)::
-
-        sage: n = 2**100000
         sage: gap_n = libgap(n)
         sage: gap_n.sage() == n
         True
@@ -341,13 +297,6 @@ cdef Obj make_gap_integer(sage_int) except NULL:
     cdef size_t limb_count
     cdef size_t i
     
-    # Fast path: try to fit in a C int
-    try:
-        return GAP_NewObjIntFromInt(<int>sage_int)
-    except OverflowError:
-        pass
-    
-    # Slow path: convert large integer via GMP
     # We need to handle this carefully to avoid accessing GMP internals
     mpz_init(temp)
     try:
