@@ -72,6 +72,7 @@ jobs:
           ./configure --enable-download-from-upstream-url
           make build V=0
         env:
+          CXXFLAGS: '-Wno-error=invalid-specialization'
           MAKE: 'make -j6'
       
       - name: Test
