@@ -526,7 +526,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: # needs sage.rings.number_field
             sage: i = GF(7)(3)
             sage: G = MatrixGroup([[i^3,0, 0,-i^3], [i^2,0, 0,-i^2]])
-            sage: chi = G.character(G.character_table()[4])
+            sage: chi = G.character(sorted(G.character_table())[3])
             sage: G.molien_series(chi)
             3*t^5 + 6*t^11 + 9*t^17 + 12*t^23 + O(t^25)
         """

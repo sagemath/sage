@@ -3516,12 +3516,14 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3,4)]])
             sage: G.order()
             8
-            sage: G.character_table()                                                   # needs sage.rings.number_field
+            sage: Gct = G.character_table(); Gct                                        # random, needs sage.rings.number_field
             [ 1  1  1  1  1]
             [ 1 -1 -1  1  1]
             [ 1 -1  1 -1  1]
             [ 1  1 -1 -1  1]
             [ 2  0  0  0 -2]
+            sage: sorted(Gct)                                                           # needs sage.rings.number_field
+            [(1, 1, 1, 1, 1), (1, -1, 1, -1, 1), (1, 1, -1, -1, 1), (1, -1, -1, 1, 1), (2, 0, 0, 0, -2)]
             sage: CT = gap(G).CharacterTable()
 
         Again, type ``CT.Display()`` to display this nicely.

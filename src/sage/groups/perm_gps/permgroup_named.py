@@ -3517,13 +3517,15 @@ class SmallPermutationGroup(PermutationGroup_generic):
         Group of order 12 and GAP Id 4 as a permutation group
         sage: G.gens()
         ((4,5), (1,2), (3,4,5))
-        sage: G.character_table()  # needs sage.rings.number_field
+        sage: Gct = G.character_table(); Gct  # random, needs sage.rings.number_field
         [ 1  1  1  1  1  1]
         [ 1 -1  1 -1  1 -1]
         [ 1 -1  1  1 -1  1]
         [ 1  1  1 -1 -1 -1]
         [ 2  0 -1 -2  0  1]
         [ 2  0 -1  2  0 -1]
+        sage: sorted(Gct)  # needs sage.rings.number_field
+        [(1, 1, 1, 1, 1, 1), (1, 1, 1, -1, -1, -1), (1, -1, 1, 1, -1, 1), (1, -1, 1, -1, 1, -1), (2, 0, -1, 2, 0, -1), (2, 0, -1, -2, 0, 1)]
         sage: def numgps(n): return ZZ(libgap.NumberSmallGroups(n))
         sage: # verify at most five n and k, randomly, to save time
         sage: from random import sample
