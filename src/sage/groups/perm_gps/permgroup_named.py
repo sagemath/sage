@@ -834,7 +834,7 @@ class CyclicPermutationGroup(PermutationGroup_unique):
         """
         return "Cyclic group of order %s as a permutation group" % self.order()
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         Return ``True`` if this group is commutative.
 
@@ -846,7 +846,7 @@ class CyclicPermutationGroup(PermutationGroup_unique):
         """
         return True
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return ``True`` if this group is abelian.
 
@@ -1042,7 +1042,7 @@ class DiCyclicGroup(PermutationGroup_unique):
         """
         return "Dicyclic group of order %s as a permutation group" % self.order()
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         r"""
         Return ``True`` if this group is commutative.
 
@@ -1054,7 +1054,7 @@ class DiCyclicGroup(PermutationGroup_unique):
         """
         return False
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         r"""
         Return ``True`` if this group is abelian.
 

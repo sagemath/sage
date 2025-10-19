@@ -29,7 +29,7 @@ def TetrahedralGraph():
 
     PLOTTING: The Tetrahedral graph should be viewed in 3 dimensions. We choose
     to use a planar embedding of the graph. We hope to add rotatable,
-    3-dimensional viewing in the future. In such a case, a argument will be
+    3-dimensional viewing in the future. In such a case, an argument will be
     added to select the desired layout.
 
     EXAMPLES:
@@ -79,7 +79,7 @@ def HexahedralGraph():
 
     PLOTTING: The Hexahedral graph should be viewed in 3 dimensions. We choose
     to use a planar embedding of the graph. We hope to add rotatable,
-    3-dimensional viewing in the future. In such a case, a argument will be
+    3-dimensional viewing in the future. In such a case, an argument will be
     added to select the desired layout.
 
     EXAMPLES:
@@ -132,7 +132,7 @@ def OctahedralGraph():
 
     PLOTTING: The Octahedral graph should be viewed in 3 dimensions. We choose
     to use a planar embedding of the graph. We hope to add rotatable,
-    3-dimensional viewing in the future. In such a case, a argument will be
+    3-dimensional viewing in the future. In such a case, an argument will be
     added to select the desired layout.
 
     EXAMPLES:
@@ -177,7 +177,7 @@ def IcosahedralGraph():
 
     PLOTTING: The Icosahedral graph should be viewed in 3 dimensions. We choose
     to use a planar embedding of the graph. We hope to add rotatable,
-    3-dimensional viewing in the future. In such a case, a argument will be
+    3-dimensional viewing in the future. In such a case, an argument will be
     added to select the desired layout.
 
     EXAMPLES:
@@ -222,7 +222,7 @@ def DodecahedralGraph():
 
     PLOTTING: The Dodecahedral graph should be viewed in 3 dimensions. We
     choose to use a planar embedding of the graph. We hope to add rotatable,
-    3-dimensional viewing in the future. In such a case, a argument will be
+    3-dimensional viewing in the future. In such a case, an argument will be
     added to select the desired layout.
 
     EXAMPLES:
