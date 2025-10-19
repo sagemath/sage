@@ -3522,8 +3522,8 @@ class PermutationGroup_generic(FiniteGroup):
             [ 1 -1  1 -1  1]
             [ 1  1 -1 -1  1]
             [ 2  0  0  0 -2]
-            sage: sorted(Gct)                                                           # needs sage.rings.number_field
-            [(1, 1, 1, 1, 1), (1, -1, 1, -1, 1), (1, 1, -1, -1, 1), (1, -1, -1, 1, 1), (2, 0, 0, 0, -2)]
+            sage: sorted(Gct, key=str)                                                           # needs sage.rings.number_field
+            [(1, -1, -1, 1, 1), (1, -1, 1, -1, 1), (1, 1, -1, -1, 1), (1, 1, 1, 1, 1), (2, 0, 0, 0, -2)]
             sage: CT = gap(G).CharacterTable()
 
         Again, type ``CT.Display()`` to display this nicely.

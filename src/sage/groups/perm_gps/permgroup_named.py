@@ -3524,8 +3524,8 @@ class SmallPermutationGroup(PermutationGroup_generic):
         [ 1  1  1 -1 -1 -1]
         [ 2  0 -1 -2  0  1]
         [ 2  0 -1  2  0 -1]
-        sage: sorted(Gct)  # needs sage.rings.number_field
-        [(1, 1, 1, 1, 1, 1), (1, 1, 1, -1, -1, -1), (1, -1, 1, 1, -1, 1), (1, -1, 1, -1, 1, -1), (2, 0, -1, 2, 0, -1), (2, 0, -1, -2, 0, 1)]
+        sage: sorted(Gct, key=str)  # needs sage.rings.number_field
+        [(1, -1, 1, -1, 1, -1), (1, -1, 1, 1, -1, 1), (1, 1, 1, -1, -1, -1), (1, 1, 1, 1, 1, 1), (2, 0, -1, -2, 0, 1), (2, 0, -1, 2, 0, -1)]
         sage: def numgps(n): return ZZ(libgap.NumberSmallGroups(n))
         sage: # verify at most five n and k, randomly, to save time
         sage: from random import sample

@@ -62,26 +62,26 @@ class FusionDouble(CombinatorialFreeModule):
         s1 : s0
         s2 : s0 + s1 + s3
         s3 : s0 + s1 + s2
-        s4 : s0 + s2 + s3 + s6 + s7 + s8 + s9 + s10 + s11 + s12 + s13 + s14 + s15
-        s5 : s0 + s2 + s3 + s6 + s7 + s8 + s9 + s10 + s11 + s12 + s13 + s14 + s15
-        s6 : s0 + s1 + s11
-        s7 : s0 + s1 + s15
-        s8 : s0 + s1 + s14
-        s9 : s0 + s1 + s13
-        s10 : s0 + s1 + s12
-        s11 : s0 + s1 + s6
-        s12 : s0 + s1 + s10
-        s13 : s0 + s1 + s9
-        s14 : s0 + s1 + s8
-        s15 : s0 + s1 + s7
+        s4 : s0 + s1 + s9
+        s5 : s0 + s1 + s13
+        s6 : s0 + s1 + s12
+        s7 : s0 + s1 + s11
+        s8 : s0 + s1 + s10
+        s9 : s0 + s1 + s4
+        s10 : s0 + s1 + s8
+        s11 : s0 + s1 + s7
+        s12 : s0 + s1 + s6
+        s13 : s0 + s1 + s5
+        s14 : s0 + s2 + s3 + s4 + s5 + s6 + s7 + s8 + s9 + s10 + s11 + s12 + s13
+        s15 : s0 + s2 + s3 + s4 + s5 + s6 + s7 + s8 + s9 + s10 + s11 + s12 + s13
         sage: s4*s5
-        s1 + s2 + s3 + s6 + s7 + s8 + s9 + s10 + s11 + s12 + s13 + s14 + s15
+        s2 + s11
         sage: s4.ribbon()
         1
         sage: s5.ribbon()
-        -1
+        zeta5
         sage: s8.ribbon()
-        zeta5^2
+        -zeta5^3 - zeta5^2 - zeta5 - 1
 
     If the fusion double is multiplicity-free, meaning that the fusion
     coefficients `N_k^{ij}` are bounded by `1`, then the F-matrix may be
@@ -131,7 +131,7 @@ class FusionDouble(CombinatorialFreeModule):
         sage: G = SmallPermutationGroup(16,9)
         sage: F = FusionDouble(G, prefix='b', inject_variables=True)
         sage: b13^2 # long time (4s)
-        b0 + b3 + b4
+        b0 + b3 + b33
     """
     @staticmethod
     def __classcall_private__(cls, G, prefix='s', inject_variables=False):
@@ -175,8 +175,8 @@ class FusionDouble(CombinatorialFreeModule):
         self._chi = {}
         self._unit_index = None  # index of the unit element
         count = ZZ.zero()
-        for g in sorted(G.conjugacy_classes_representatives()):
-            for chi in sorted(G.centralizer(g).irreducible_characters()):
+        for g in sorted(G.conjugacy_classes_representatives(), key=str):
+            for chi in sorted(G.centralizer(g).irreducible_characters(), key=str):
                 # NOTE: the trivial char is not necessarily the first one
                 self._names[count] = "%s%s" % (prefix, count)
                 self._elt[count] = g
@@ -314,18 +314,18 @@ class FusionDouble(CombinatorialFreeModule):
             [ 2  2  4  0  0 -2 -2 -2]
             [ 3 -3  0  3 -3  0  0  0]
             [ 3 -3  0 -3  3  0  0  0]
-            [ 2  2 -2  0  0 -2  4 -2]
             [ 2  2 -2  0  0  4 -2 -2]
             [ 2  2 -2  0  0 -2 -2  4]
+            [ 2  2 -2  0  0 -2  4 -2]
             sage: FusionDouble(SymmetricGroup(3)).s_matrix(unitary=True)
             [ 1/6  1/6  1/3  1/2  1/2  1/3  1/3  1/3]
             [ 1/6  1/6  1/3 -1/2 -1/2  1/3  1/3  1/3]
             [ 1/3  1/3  2/3    0    0 -1/3 -1/3 -1/3]
             [ 1/2 -1/2    0  1/2 -1/2    0    0    0]
             [ 1/2 -1/2    0 -1/2  1/2    0    0    0]
-            [ 1/3  1/3 -1/3    0    0 -1/3  2/3 -1/3]
             [ 1/3  1/3 -1/3    0    0  2/3 -1/3 -1/3]
             [ 1/3  1/3 -1/3    0    0 -1/3 -1/3  2/3]
+            [ 1/3  1/3 -1/3    0    0 -1/3  2/3 -1/3]
         """
         b = self.basis()
         return matrix([[self.s_ij(b[x], b[y], unitary=unitary,
@@ -351,7 +351,7 @@ class FusionDouble(CombinatorialFreeModule):
 
             sage: A = FusionDouble(AlternatingGroup(4),prefix='a',inject_variables=True)
             sage: [A.N_ijk(a10,a11,x) for x in A.basis()]
-            [0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0]
+            [0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0]
 
         TESTS::
 
@@ -546,7 +546,7 @@ class FusionDouble(CombinatorialFreeModule):
             sage: c4*c5
             c3 + c4
             sage: [C.r_matrix(c4,c5,k) for k in [c3,c4]]
-            [zeta24^6 - zeta24^2, -zeta24^4]
+            [-zeta24^6, 1]
             sage: c6^2
             c0 + c1 + c6
             sage: [C.r_matrix(c6,c6,k) for k in [c0,c1,c6]]
@@ -667,15 +667,15 @@ class FusionDouble(CombinatorialFreeModule):
 
             sage: K = FusionDouble(CyclicPermutationGroup(3),prefix='k')
             sage: [(x,K.dual(x)) for x in K.basis()]
-            [(k0, k1),
-             (k1, k0),
-             (k2, k2),
-             (k3, k7),
-             (k4, k6),
-             (k5, k8),
-             (k6, k4),
-             (k7, k3),
-             (k8, k5)]
+            [(k0, k0),
+             (k1, k2),
+             (k2, k1),
+             (k3, k6),
+             (k4, k8),
+             (k5, k7),
+             (k6, k3),
+             (k7, k5),
+             (k8, k4)]
             sage: all(K.dual(x)==x.dual() for x in K.basis())
             True
         """
@@ -785,9 +785,9 @@ class FusionDouble(CombinatorialFreeModule):
                 sage: G = DihedralGroup(5)
                 sage: H = FusionDouble(G, prefix='f', inject_variables=True)
                 sage: f10.g()
-                (1,2,3,4,5)
+                (1,3,5,2,4)
                 sage: f10.char()
-                Character of Subgroup generated by [(1,2,3,4,5)] of
+                Character of Subgroup generated by [(1,3,5,2,4), (1,2,3,4,5)] of
                     (Dihedral group of order 10 as a permutation group)
             """
             return self.parent()._chi[self.support_of_term()]
@@ -800,7 +800,7 @@ class FusionDouble(CombinatorialFreeModule):
 
                 sage: H = FusionDouble(CyclicPermutationGroup(3))
                 sage: [i.ribbon() for i in H.basis()]
-                [1, 1, 1, -zeta3 - 1, zeta3, 1, zeta3, -zeta3 - 1, 1]
+                [1, 1, 1, 1, zeta3, -zeta3 - 1, 1, -zeta3 - 1, zeta3]
             """
             i = self.support_of_term()
             P = self.parent()
@@ -822,9 +822,9 @@ class FusionDouble(CombinatorialFreeModule):
 
                 sage: Q = FusionDouble(CyclicPermutationGroup(3))
                 sage: [x.twist() for x in Q.basis()]
-                [0, 0, 0, 4/3, 2/3, 0, 2/3, 4/3, 0]
+                [0, 0, 0, 0, 2/3, 4/3, 0, 4/3, 2/3]
                 sage: [x.ribbon() for x in Q.basis()]
-                [1, 1, 1, -zeta3 - 1, zeta3, 1, zeta3, -zeta3 - 1, 1]
+                [1, 1, 1, 1, zeta3, -zeta3 - 1, 1, -zeta3 - 1, zeta3]
 
             TESTS::
 
@@ -855,7 +855,7 @@ class FusionDouble(CombinatorialFreeModule):
                 sage: G = CyclicPermutationGroup(4)
                 sage: H = FusionDouble(G, prefix='j')
                 sage: [x for x in H.basis() if x == x.dual()]
-                [j1, j2, j9, j10]
+                [j0, j1, j8, j9]
 
             TESTS::
 
