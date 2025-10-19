@@ -1,1 +1,5 @@
+# Force C++14 standard to allow std::mem_fun_ref (removed in C++17)
+# which is used by PPL headers
+export CXXFLAGS="${CXXFLAGS} -std=c++14"
+
 cd src && sdh_pip_install .
