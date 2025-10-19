@@ -1,6 +1,9 @@
 # Make sure that we prefer Sage's gmp library over system-wide gmp installs
 export CXXFLAGS="$CXXFLAGS -I$SAGE_LOCAL/include"
 
+# Force gnu++14 standard to allow std::mem_fun_ref (removed in C++17)
+export CXXFLAGS="${CXXFLAGS} -std=gnu++14"
+
 cd src
 
 cp "$SAGE_ROOT"/config/config.* .
