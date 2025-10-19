@@ -2,6 +2,9 @@
 # Set up environment variables: #
 #################################
 
+# Ignore invalid-specialization errors with newer clang compilers
+export CXXFLAGS="${CXXFLAGS} -Wno-error=invalid-specialization"
+
 cd src
 
 # When SAGE_FAT_BINARY is set, disable processor-specific optimizations

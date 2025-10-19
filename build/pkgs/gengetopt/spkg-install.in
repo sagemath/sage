@@ -1,3 +1,6 @@
+# Force gnu++14 standard for compatibility
+export CXXFLAGS="${CXXFLAGS} -std=gnu++14"
+
 cd src
 
 # Only run "make install" in the src directory to avoid the
