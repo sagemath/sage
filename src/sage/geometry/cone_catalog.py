@@ -717,7 +717,7 @@ def schur(ambient_dim=None, lattice=None):
         ....:     x = rearrange(x)
         ....:     y = rearrange(y)
         ....:     return (all(sum(x[0:i]) <= sum(y[0:i])
-        ....:                 for i in range(x.degree()-1))
+        ....:                 for i in range(1,x.degree()))
         ....:             and sum(x) == sum(y))
         sage: S = cones.schur(ambient_dim)
         sage: majorized_by(V.zero(), S.random_element())
