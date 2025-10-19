@@ -60,6 +60,7 @@ jobs:
         run: |
           sudo DEBIAN_FRONTEND=noninteractive sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian texlive texlive_luatex free_fonts xindy)
+          luaotfload-tool --update --force
           meson compile -C builddir doc-pdf
 
       - name: Build live doc
