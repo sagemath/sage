@@ -88,6 +88,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
 
     EXAMPLES::
 
+        sage: from sage.schemes.hodge_special_fourfolds.sff import projective_variety
         sage: P, (x0,x1,x2,x3) = ProjectiveSpace(3, GF(101), 'x').objgens()
         sage: X = projective_variety([x0^2-x1*x2, x1^3+x2^3+x3^3], P); X     # the input P is optional
         curve of degree 6 and arithmetic genus 4 in PP^3 cut out by 2 hypersurfaces of degrees (2, 3)
@@ -1235,6 +1236,7 @@ def projective_variety(I, PP=None):
 
     EXAMPLES::
 
+        sage: from sage.schemes.hodge_special_fourfolds.sff import projective_variety
         sage: (x0,x1,x2,x3) = ProjectiveSpace(3, GF(101), 'x').gens()
         sage: I = [x0^2-x1*x2, x1^3+x2^3+x3^3]
         sage: X = projective_variety(I); X
@@ -1302,7 +1304,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
 
     EXAMPLES::
 
-        sage: from sage.schemes.hodge_special_fourfolds.sff import PP
+        sage: from sage.schemes.hodge_special_fourfolds.sff import rational_map, PP
         sage: X = PP(4,GF(33331))
         sage: Y = PP(5,GF(33331))
         sage: x0, x1, x2, x3, x4 = X.coordinate_ring().gens()
@@ -1641,7 +1643,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
 
         EXAMPLES::
 
-            sage: from sage.schemes.hodge_special_fourfolds.sff import Veronese
+            sage: from sage.schemes.hodge_special_fourfolds.sff import rational_map, Veronese
             sage: f = rational_map(Veronese(1,4)).make_dominant(); f
             dominant rational map defined by forms of degree 2
             source: PP^4
@@ -1660,7 +1662,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             codim:................ 5
             degree:............... 1
 
-            sage: from sage.schemes.hodge_special_fourfolds.sff import PP
+            sage: from sage.schemes.hodge_special_fourfolds.sff import PP, projective_variety
             sage: P = PP(5)
             sage: L = projective_variety(P.point().union(P.point())).random(1,1,1,1)
             sage: f = rational_map(L).restriction(L.random(2,2,2)).make_dominant(); f
@@ -1712,7 +1714,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
 
         TESTS::
 
-            sage: from sage.schemes.hodge_special_fourfolds.sff import Veronese
+            sage: from sage.schemes.hodge_special_fourfolds.sff import rational_map, Veronese
             sage: f = rational_map(Veronese(1,4)).make_dominant()
             sage: f._restriction_to_general_hyperplane()
             rational map defined by forms of degree 2
@@ -1744,7 +1746,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
 
         EXAMPLES::
 
-            sage: from sage.schemes.hodge_special_fourfolds.sff import PP
+            sage: from sage.schemes.hodge_special_fourfolds.sff import rational_map, PP
             sage: (t0,t1,t2,t3,t4,t5,t6) = PP(6).coordinate_ring().gens()
             sage: f = rational_map(matrix([[t0,t1,t2,t3,t4],[t1,t2,t3,t4,t5],[t2,t3,t4,t5,t6]]).minors(3)); f
             rational map defined by forms of degree 3
@@ -1840,7 +1842,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
 
         EXAMPLES::
 
-            sage: from sage.schemes.hodge_special_fourfolds.sff import Veronese
+            sage: from sage.schemes.hodge_special_fourfolds.sff import rational_map, Veronese
             sage: f = rational_map(Veronese(1,4))
             sage: g = rational_map(f.target().point())
             sage: f.compose(g)
@@ -1882,6 +1884,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
 
         TESTS::
 
+            sage: from sage.schemes.hodge_special_fourfolds.sff import rational_map
             sage: X = fourfold(surface(1,ambient=7,KK=GF(3331)))
             sage: f = rational_map(X.surface(),1); f
             rational map defined by forms of degree 1
@@ -2096,7 +2099,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
 
         EXAMPLES::
 
-            sage: from sage.schemes.hodge_special_fourfolds.sff import Veronese
+            sage: from sage.schemes.hodge_special_fourfolds.sff import rational_map, Veronese
             sage: f = rational_map(Veronese(1,3),Veronese(1,3).point().defining_polynomials()).make_dominant(); f
             dominant rational map defined by forms of degree 1
             source: cubic curve of arithmetic genus 0 in PP^3 cut out by 3 hypersurfaces of degree 2
@@ -2142,7 +2145,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
 
         EXAMPLES::
 
-            sage: from sage.schemes.hodge_special_fourfolds.sff import Veronese
+            sage: from sage.schemes.hodge_special_fourfolds.sff import rational_map, Veronese
             sage: rational_map(Veronese(1,3))
             rational map defined by forms of degree 2
             source: PP^3
@@ -2208,7 +2211,7 @@ def rational_map(*args, **kwargs):
 
     EXAMPLES::
 
-        sage: from sage.schemes.hodge_special_fourfolds.sff import PP
+        sage: from sage.schemes.hodge_special_fourfolds.sff import rational_map, PP
         sage: x0, x1, x2, x3, x4 = PP(4,GF(33331)).coordinate_ring().gens()
         sage: rational_map([x3^2-x2*x4, x2*x3-x1*x4, x1*x3-x0*x4, x2^2-x0*x4, x1*x2-x0*x3, x1^2-x0*x2])
         rational map defined by forms of degree 2
@@ -2271,7 +2274,7 @@ def rational_map(*args, **kwargs):
 
 def veronese(n, d, KK=33331, var='x'):
     r"""
-    Return the Veronese embedding.
+    Return the Veronese embedding. See also the :meth:`Veronese` function.
 
     OUTPUT:
 
@@ -2284,10 +2287,6 @@ def veronese(n, d, KK=33331, var='x'):
         rational map defined by forms of degree 3
         source: PP^2
         target: PP^9
-
-    SEEALSO::
-
-        :meth:`Veronese`
     """
     if isinstance(KK,(int,Integer)):
         KK = GF(KK) if KK > 0 else QQ
@@ -2297,7 +2296,7 @@ def veronese(n, d, KK=33331, var='x'):
 
 def Veronese(n, d, KK=33331, var='x'):
     r"""
-    Return the image of the Veronese embedding.
+    Return the image of the Veronese embedding. See also the :meth:`veronese` function.
 
     OUTPUT:
 
@@ -2308,10 +2307,6 @@ def Veronese(n, d, KK=33331, var='x'):
         sage: from sage.schemes.hodge_special_fourfolds.sff import Veronese
         sage: Veronese(2,2)
         surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2
-
-    SEEALSO::
-
-        :meth:`veronese`
     """
     f = veronese(n, d, KK=KK, var='x')
     X = f.image()
