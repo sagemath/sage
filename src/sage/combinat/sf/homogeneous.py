@@ -304,6 +304,9 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
                 sage: s = x.principal_specialization(3); s
                 0
             """
+            if n == 1:
+                return self.base_ring().sum(self.coefficients(sort=False))
+
             from sage.combinat.q_analogues import q_binomial
 
             def get_variable(ring, name):

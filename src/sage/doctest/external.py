@@ -37,8 +37,9 @@ import platform
 # With OS X, Python 3.8 defaults to use 'spawn' instead of 'fork' in
 # multiprocessing, and Sage doctesting doesn't work with 'spawn'. See
 # trac #27754.
-if platform.system() == 'Darwin':
-    multiprocessing.set_start_method('fork', force=True)
+# With Python 3.14, the default changed to 'forkserver' on Linux as well.
+# Sage doctesting requires 'fork' method.
+multiprocessing.set_start_method('fork', force=True)
 Array = multiprocessing.Array
 
 # Functions in this module whose name is of the form 'has_xxx' tests if the
@@ -384,7 +385,7 @@ def external_features():
     yield from sage.features.ffmpeg.all_features()
     import sage.features.interfaces
     for feature in sage.features.interfaces.all_features():
-        if feature.name != 'mathics':
+        if feature.name not in ('mathics', 'regina'):
             yield feature
     from sage.features.mip_backends import CPLEX, Gurobi
     yield CPLEX()
@@ -507,10 +508,7 @@ class AvailableSoftware:
             sage: available_software.issuperset(set(['internet','latex','magma'])) # random, optional - internet latex magma
             True
         """
-        for item in other:
-            if item not in self:
-                return False
-        return True
+        return all(item in self for item in other)
 
     def detectable(self):
         """

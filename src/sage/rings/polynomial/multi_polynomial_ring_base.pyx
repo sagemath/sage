@@ -108,10 +108,10 @@ cdef class MPolynomialRing_base(CommutativeRing):
             category = categories.rings.Rings().Finite()
         else:
             category = polynomial_default_category(base_ring.category(), n)
-        # Ring.__init__ assigns the names.
-        Ring.__init__(self, base_ring, names, category=category)
         from sage.combinat.integer_vector import IntegerVectors
         self._indices = IntegerVectors(length=self._ngens)
+        # Ring.__init__ assigns the names.
+        Ring.__init__(self, base_ring, names, category=category)
 
     def is_integral_domain(self, proof=True):
         """
@@ -561,7 +561,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
             sage: T = PolynomialRing(QQ, []); T
             Multivariate Polynomial Ring in no variables over Rational Field
             sage: T.coerce_map_from(QQ)
-            Call morphism:
+            Coercion map:
               From: Rational Field
               To:   Multivariate Polynomial Ring in no variables over Rational Field
         """
@@ -813,20 +813,9 @@ cdef class MPolynomialRing_base(CommutativeRing):
                                           self.term_order().magma_str())
         return magma._with_names(s, self.variable_names())
 
-    def _gap_init_(self, gap=None):
+    def _gap_init_(self) -> str:
         """
         Return a string that yields a representation of ``self`` in GAP.
-
-        INPUT:
-
-        - ``gap`` -- (optional GAP instance) interface to which the
-          string is addressed
-
-        NOTE:
-
-        - If the optional argument ``gap`` is provided, the base ring
-          of ``self`` will be represented as ``gap(self.base_ring()).name()``.
-        - The result of applying the GAP interface to ``self`` is cached.
 
         EXAMPLES::
 
@@ -838,10 +827,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
             sage: libgap(P)
             <field in characteristic 0>[x,y]
         """
-        L = ['"%s"' % t for t in self.variable_names()]
-        if gap is not None:
-            return 'PolynomialRing(%s,[%s])' % (gap(self.base_ring()).name(),
-                                                ','.join(L))
+        L = ('"%s"' % t for t in self.variable_names())
         return 'PolynomialRing(%s,[%s])' % (self.base_ring()._gap_init_(),
                                             ','.join(L))
 

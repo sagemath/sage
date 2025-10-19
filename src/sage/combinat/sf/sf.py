@@ -776,7 +776,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
     Here is an example of its use::
 
         sage: QQqt = QQ['q','t'].fraction_field()
-        sage: (q,t) = QQqt.gens()
+        sage: q, t = QQqt.gens()
         sage: st = SFA_st(SymmetricFunctions(QQqt),t)
         sage: st
         Symmetric Functions over Fraction Field of Multivariate Polynomial
@@ -797,32 +797,32 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-        .. [FD06] Francois Descouens, Making research on symmetric functions using MuPAD-Combinat.
-                 In Andres Iglesias and Nobuki Takayama, editors, 2nd International Congress on Mathematical Software (ICMS'06),
-                 volume 4151 of LNCS, pages 407-418, Castro Urdiales, Spain, September 2006. Springer-Verlag.
-                 :arxiv:`0806.1873`
+    .. [FD06] Francois Descouens, Making research on symmetric functions using MuPAD-Combinat.
+             In Andres Iglesias and Nobuki Takayama, editors, 2nd International Congress on Mathematical Software (ICMS'06),
+             volume 4151 of LNCS, pages 407-418, Castro Urdiales, Spain, September 2006. Springer-Verlag.
+             :arxiv:`0806.1873`
 
-        .. [HT04] Florent Hivert and Nicolas M. Thiery,
-                 MuPAD-Combinat, an open-source package for research in algebraic combinatorics.
-                 Sem. Lothar. Combin., 51 :Art. B51z, 70 pp. (electronic), 2004.
-                 http://mupad-combinat.sf.net/.
+    .. [HT04] Florent Hivert and Nicolas M. Thiery,
+             MuPAD-Combinat, an open-source package for research in algebraic combinatorics.
+             Sem. Lothar. Combin., 51 :Art. B51z, 70 pp. (electronic), 2004.
+             http://mupad-combinat.sf.net/.
 
-        .. [MAC] Ian Macdonald, Symmetric Functions and Orthogonal Polynomials,
-                 Second edition. With contributions by A. Zelevinsky. Oxford Mathematical Monographs.
-                 Oxford Science Publications. The Clarendon Press, Oxford University Press, New York, 1995. x+475 pp.
-                 ISBN: 0-19-853489-2
+    .. [MAC] Ian Macdonald, Symmetric Functions and Orthogonal Polynomials,
+             Second edition. With contributions by A. Zelevinsky. Oxford Mathematical Monographs.
+             Oxford Science Publications. The Clarendon Press, Oxford University Press, New York, 1995. x+475 pp.
+             ISBN: 0-19-853489-2
 
-        .. [STA] Richard Stanley, Enumerative combinatorics. Vol. 2.
-                 With a foreword by Gian-Carlo Rota and appendix 1 by Sergey Fomin.
-                 Cambridge Studies in Advanced Mathematics, 62. Cambridge University Press, Cambridge, 1999. xii+581 pp.
-                 ISBN: 0-521-56069-1; 0-521-78987-7
+    .. [STA] Richard Stanley, Enumerative combinatorics. Vol. 2.
+             With a foreword by Gian-Carlo Rota and appendix 1 by Sergey Fomin.
+             Cambridge Studies in Advanced Mathematics, 62. Cambridge University Press, Cambridge, 1999. xii+581 pp.
+             ISBN: 0-521-56069-1; 0-521-78987-7
 
-        .. [ST94]  Scharf, Thomas, Thibon, Jean-Yves,
-                 A Hopf-algebra approach to inner plethysm.
-                 Adv. Math.  104  (1994),  no. 1, 30-58.
-                 :doi:`10.1006/aima.1994.1019`
+    .. [ST94]  Scharf, Thomas, Thibon, Jean-Yves,
+             A Hopf-algebra approach to inner plethysm.
+             Adv. Math.  104  (1994),  no. 1, 30-58.
+             :doi:`10.1006/aima.1994.1019`
 
-    .. rubric:: Further tests
+    .. RUBRIC:: Further tests
 
     TESTS::
 
@@ -1253,7 +1253,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             q^2*s[1, 1, 1, 1] + (q^2*t+q*t+q)*s[2, 1, 1] + (q^2*t^2+1)*s[2, 2] + (q*t^2+q*t+t)*s[3, 1] + t^2*s[4]
 
             sage: Sym = SymmetricFunctions(QQ['z','q'].fraction_field())
-            sage: (z,q) = Sym.base_ring().gens()
+            sage: z, q = Sym.base_ring().gens()
             sage: Hzq = Sym.macdonald(q=z,t=q).H()
             sage: H1z = Sym.macdonald(q=1,t=z).H()
             sage: s = Sym.schur()

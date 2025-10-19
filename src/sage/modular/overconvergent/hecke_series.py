@@ -922,7 +922,7 @@ def katz_expansions(k0, p, ellp, mdash, n):
     # deal of time). The effect is that Ep1mi = Ep1 ** (-i).
     Ep1m1 = ~Ep1
     Ep1mi = 1
-    for i in range(0,n + 1):
+    for i in range(n + 1):
         Wi,hj = compute_Wi(k0 + i * (p - 1), p, h, hj, E4, E6)
         for bis in Wi:
             eis = p ** floor(i / (p + 1)) * Ep1mi * bis
@@ -1002,7 +1002,7 @@ def level1_UpGj(p, klist, m, extra_data=False):
         kdiv = k // (p - 1)
         Gkdiv = G ** kdiv
         u = []
-        for i in range(0, ell):
+        for i in range(ell):
             ei = e[i]
             ui = Gkdiv * ei
             u.append(ui)
@@ -1014,8 +1014,8 @@ def level1_UpGj(p, klist, m, extra_data=False):
         S = e[0][0].parent()
         T = matrix(S, ell, ell)
 
-        for i in range(0, ell):
-            for j in range(0, ell):
+        for i in range(ell):
+            for j in range(ell):
                 T[i, j] = u[i][p * j]
 
         verbose("done step 5", t)
@@ -1028,10 +1028,10 @@ def level1_UpGj(p, klist, m, extra_data=False):
         A = matrix(S, ell, ell)
         verbose("solving a square matrix problem of dimension %s" % ell, t)
 
-        for i in range(0, ell):
+        for i in range(ell):
             Ti = T[i]
-            for j in range(0,ell):
-                ej = Ti.parent()([e[j][l] for l in range(0, ell)])
+            for j in range(ell):
+                ej = Ti.parent()([e[j][l] for l in range(ell)])
                 lj = ZZ(ej[j])
                 A[i, j] = S(ZZ(Ti[j]) / lj)
                 Ti = Ti - A[i, j] * ej

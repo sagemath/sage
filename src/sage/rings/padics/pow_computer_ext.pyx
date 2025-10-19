@@ -635,7 +635,8 @@ cdef class PowComputer_ext(PowComputer_class):
             78125
         """
         cdef Integer _n = Integer(n)
-        if _n < 0: raise ValueError
+        if _n < 0:
+            raise ValueError
         cdef ntl_ZZ ans = ntl_ZZ.__new__(ntl_ZZ)
         ans.x = self.pow_ZZ_tmp(mpz_get_ui(_n.value))[0]
         return ans

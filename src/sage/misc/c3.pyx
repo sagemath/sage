@@ -203,11 +203,11 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
     cdef list tail_list
 
     while nbheads:
-        for i from 0 <= i < nbheads:
+        for i in range(nbheads):
             O = heads[i]
             # Does O appear in none of the tails?  ``all(O not in tail for tail in tailsets)``
             next_item_found = True
-            for j from 0 <= j < nbheads:
+            for j in range(nbheads):
                 if j == i:
                     continue
                 if <size_t><void *>O in <set>tailsets[j]:
@@ -218,7 +218,7 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
                 # Clear O from other heads, removing the line altogether
                 # if the tail is already empty.
                 # j goes down so that ``del heads[j]`` does not screw up the numbering
-                for j from nbheads > j >= 0:
+                for j in range(nbheads - 1, -1, -1):
                     if heads[j] is O:
                         tail_list = tails[j]
                         if tail_list:

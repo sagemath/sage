@@ -17,15 +17,11 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #########################################################################
 
+from sage.misc.cachefunc import cached_method
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor
 from sage.rings.rational_field import Q as QQ
 
-import sage.modular.arithgroup.all as arithgroup
-
-from . import ambient
-from . import cuspidal_submodule
-from . import eisenstein_submodule
-
-from sage.misc.cachefunc import cached_method
+from . import ambient, cuspidal_submodule, eisenstein_submodule
 
 
 class ModularFormsAmbient_g0_Q(ambient.ModularFormsAmbient):
@@ -45,7 +41,7 @@ class ModularFormsAmbient_g0_Q(ambient.ModularFormsAmbient):
             sage: type(m)
             <class 'sage.modular.modform.ambient_g0.ModularFormsAmbient_g0_Q_with_category'>
         """
-        ambient.ModularFormsAmbient.__init__(self, arithgroup.Gamma0(level), weight, QQ)
+        ambient.ModularFormsAmbient.__init__(self, Gamma0_constructor(level), weight, QQ)
 
     def _pari_init_(self):
         """

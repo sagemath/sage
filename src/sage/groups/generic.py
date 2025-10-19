@@ -385,6 +385,13 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     arguments are provided automatically; otherwise they must be
     provided by the caller.
 
+    .. SEEALSO::
+
+        - :func:`discrete_log` for a potentially faster algorithm by combining
+          Pohlig-Hellman with baby-step adjacent-step;
+        - :func:`order_from_bounds` to find the exact order instead of just some
+          multiple of the order.
+
     INPUT:
 
     - ``a`` -- group element
@@ -451,6 +458,15 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     AUTHOR:
 
     - John Cremona (2008-03-15)
+
+    TESTS:
+
+    Ensures Python integers work::
+
+        sage: from sage.groups.generic import bsgs
+        sage: b = Mod(2,37);  a = b^20
+        sage: bsgs(b, a, (0r, 36r))
+        20
     """
     Z = integer_ring.ZZ
 
@@ -470,6 +486,8 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
             raise ValueError("identity, inverse and operation must be given")
 
     lb, ub = bounds
+    lb = Z(lb)
+    ub = Z(ub)
     if lb < 0 or ub < lb:
         raise ValueError("bsgs() requires 0<=lb<=ub")
 
@@ -694,7 +712,10 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
 
     - ``a`` -- group element
     - ``base`` -- group element (the base)
-    - ``ord`` -- integer (multiple of order of base, or ``None``)
+    - ``ord`` -- integer (multiple of order of base, ``None``, or
+      :mod:`oo <sage.rings.infinity>``); if this is
+      :mod:`oo <sage.rings.infinity>`, then it explicitly does
+      not use this, for example when factorizing the order is difficult
     - ``bounds`` -- a priori bounds on the log
     - ``operation`` -- string: ``'*'``, ``'+'``, other
     - ``identity`` -- the group's identity
@@ -864,6 +885,14 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         sage: discrete_log(u, g, algorithm='rho')
         123456789
 
+    Pass ``ord=oo`` to avoid attempts to factorize the group order::
+
+        sage: p, q = next_prime(2^128), next_prime(2^129)
+        sage: a = mod(2, p*q*124+1)
+        sage: discrete_log(a^100, a, bounds=(1, 500))  # not tested (takes very long, but pari.addprimes(p) makes it faster)
+        sage: discrete_log(a^100, a, ord=oo, bounds=(1, 500))
+        100
+
     TESTS:
 
     Random testing::
@@ -917,6 +946,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         lb, ub = map(integer_ring.ZZ, bounds)
     if (op is None or identity is None or inverse is None or ord is None) and operation not in addition_names + multiplication_names:
         raise ValueError("ord, op, identity, and inverse must all be specified for this operation")
+    from sage.rings.infinity import Infinity
     if ord is None:
         if operation in multiplication_names:
             try:
@@ -928,12 +958,18 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
                 ord = base.additive_order()
             except Exception:
                 ord = base.order()
-    else:
+    elif ord != Infinity:
         ord = integer_ring.ZZ(ord)
     try:
-        from sage.rings.infinity import Infinity
-        if ord == +Infinity:
-            return bsgs(base, a, bounds, identity=identity, inverse=inverse, op=op, operation=operation)
+        if ord == Infinity:
+            if algorithm == 'bsgs':
+                return bsgs(base, a, bounds, identity=identity, inverse=inverse, op=op, operation=operation)
+            elif algorithm == 'lambda':
+                return discrete_log_lambda(base, a, bounds, inverse=inverse, identity=identity, op=op, operation=operation)
+            elif algorithm == 'rho':
+                raise ValueError('pollard rho algorithm does not work with infinite order elements')
+            else:
+                raise ValueError(f"unknown algorithm {algorithm}")
         if base == power(base, 0) and a != base:
             raise ValueError
         f = ord.factor()
@@ -966,6 +1002,8 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
                     c = discrete_log_rho(h, gamma, ord=pi, inverse=inverse, identity=identity, op=op, operation=operation)
                 elif algorithm == 'lambda':
                     c = discrete_log_lambda(h, gamma, (0, temp_bound), inverse=inverse, identity=identity, op=op, operation=operation)
+                else:
+                    raise ValueError(f"unknown algorithm {algorithm}")
                 l[i] += c * (pi**j)
                 running_bound //= pi
                 running_mod *= pi
@@ -1082,14 +1120,14 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
             c += r
         if mut:
             H.set_immutable()
-        mem = {H}
+        mem = H
         # second random walk
         H = a
         d = 0
         while c - d >= lb:
             if mut:
                 H.set_immutable()
-            if ub >= c - d and H in mem:
+            if ub >= c - d and H == mem:
                 return c - d
             r, e = M[hash_function(H) % k]
             H = mult(H, e)
@@ -1378,7 +1416,9 @@ def order_from_bounds(P, bounds, d=None, operation='+',
     - ``P`` -- a Sage object which is a group element
 
     - ``bounds`` -- a 2-tuple ``(lb,ub)`` such that ``m*P=0`` (or
-      ``P**m=1``) for some ``m`` with ``lb<=m<=ub``
+      ``P**m=1``) for some ``m`` with ``lb<=m<=ub``. If ``None``,
+      gradually increasing bounds will be tried (might loop infinitely
+      if the element has no torsion).
 
     - ``d`` -- (optional) a positive integer; only ``m`` which are
       multiples of this will be considered
@@ -1407,6 +1447,8 @@ def order_from_bounds(P, bounds, d=None, operation='+',
         sage: b = a^4
         sage: order_from_bounds(b, (5^4, 5^5), operation='*')
         781
+        sage: order_from_bounds(b, None, operation='*')
+        781
 
         sage: # needs sage.rings.finite_rings sage.schemes
         sage: E = EllipticCurve(k, [2,4])
@@ -1424,6 +1466,15 @@ def order_from_bounds(P, bounds, d=None, operation='+',
         sage: order_from_bounds(w, (200, 250), operation='*')
         23
     """
+    if bounds is None:
+        lb = 1
+        ub = 256
+        while True:
+            try:
+                return order_from_bounds(P, (lb, ub), d, operation, identity, inverse, op)
+            except ValueError:
+                lb = ub + 1
+                ub *= 16
     from operator import mul, add
 
     if operation in multiplication_names:

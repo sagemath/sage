@@ -1232,9 +1232,7 @@ cdef class MPolynomial(CommutativePolynomial):
             ((0, 2), (1, 1), (2, 0))
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
-        e = self.exponents()
-        P = Polyhedron(vertices=e, base_ring=ZZ)
-        return P
+        return Polyhedron(vertices=self.exponents(), base_ring=ZZ)
 
     def __iter__(self):
         r"""
@@ -2948,7 +2946,7 @@ cdef class MPolynomial(CommutativePolynomial):
             (2*x^2 - 3*x - 5*y, -1)
         """
         lc = self.leading_coefficient()
-        n, u = lc.canonical_associate()
+        _, u = lc.canonical_associate()
         return (u.inverse_of_unit() * self, u)
 
 

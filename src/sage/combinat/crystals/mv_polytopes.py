@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Crystal Of Mirković-Vilonen (MV) Polytopes
+Crystal of Mirković-Vilonen polytopes
 
 AUTHORS:
 

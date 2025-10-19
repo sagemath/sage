@@ -1,5 +1,5 @@
 r"""
-Skew Tableaux
+Skew tableaux
 
 AUTHORS:
 
@@ -1811,11 +1811,7 @@ class SkewTableau(ClonableList,
                 v += 1
 
         # Check if lam[i]==mu[i] for all i >= v
-        for i in range(v, l_out):
-            if lam[i] != mu[i]:
-                return False
-
-        return True
+        return all(lam[i] == mu[i] for i in range(v, l_out))
 
     def to_ribbon(self, check_input=True):
         """

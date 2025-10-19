@@ -1,8 +1,8 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Tiling Solver
+Tiling solver
 
-Tiling a n-dimensional polyomino with n-dimensional polyominoes.
+Tiling a `n`-dimensional polyomino with n-dimensional polyominoes.
 
 This module defines two classes:
 
@@ -1450,6 +1450,7 @@ class Polyomino(SageObject):
 
         ::
 
+            sage: # long time
             sage: solution = H.self_surrounding(8, remove_incomplete_copies=False)
             sage: G = sum([p.show2d() for p in solution], Graphics())                   # needs sage.plot
         """

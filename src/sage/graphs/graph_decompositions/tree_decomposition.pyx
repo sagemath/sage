@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Tree decompositions
 
@@ -1547,7 +1546,7 @@ cdef class TreelengthConnected:
             cdef frozenset reduced_cut
 
             if len(cc) == 1:
-                [v] = cc
+                v, = cc
                 # We identify the neighbors of v in cut
                 reduced_cut = cut.intersection(g.neighbor_iterator(v))
                 # We can form a new bag with its closed neighborhood, and this

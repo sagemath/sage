@@ -49,14 +49,6 @@ Example:
   from the packages :mod:`sage.structure`, :mod:`sage.categories`, and
   :mod:`sage.misc`.
 
-Other distributions should not use the prefix **sagemath-** in the
-distribution name. Example:
-
-- The distribution `sage-sws2rst <https://pypi.org/project/sage-sws2rst/>`_
-  provides the Python package :mod:`sage_sws2rst`, so it does not fill
-  the :mod:`sage.*` namespace and therefore does not use the prefix
-  **sagemath-**.
-
 A distribution that provides functionality that does not need to
 import anything from the :mod:`sage` namespace should not use the
 :mod:`sage` namespace for its own packages/modules. It should be
@@ -532,10 +524,6 @@ Solid arrows indicate ``install_requires``, i.e., a declared runtime dependency.
 Dashed arrows indicate ``extras_require``, i.e., a declared optional runtime dependency.
 Not shown in the diagram are build dependencies and optional dependencies for testing.
 
-- `sage_conf <https://pypi.org/project/sage-conf/>`_ is a configuration
-  module. It provides the configuration variable settings determined by the
-  ``configure`` script.
-
 - `sagemath-environment <https://pypi.org/project/sagemath-environment/>`_
   provides the connection to the system and software environment. It includes
   :mod:`sage.env`, :mod:`sage.features`, :mod:`sage.misc.package_dir`, etc.
@@ -649,10 +637,6 @@ To create these wheels, use the command ``make wheels``::
 
 (You can also use ``./configure --enable-wheels`` to ensure that
 these wheels are always available and up to date.)
-
-Note in particular the wheel for **sage-conf**, which provides
-configuration variable settings and the connection to the non-Python
-packages installed in ``SAGE_LOCAL``.
 
 We can now set up a separate virtual environment, in which we install
 these wheels and our distribution to be tested.  This is where

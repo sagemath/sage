@@ -1,10 +1,10 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-Symmetric Functions in Non-Commuting Variables
+Symmetric functions in non-commuting variables
 
 AUTHORS:
 
-- Travis Scrimshaw (08-04-2013): Initial version
+- Travis Scrimshaw (08-04-2013): initial version
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
@@ -399,10 +399,8 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             def lt(s, t):
                 if s == t:
                     return False
-                for p in s:
-                    if len([z for z in t if z.intersection(p)]) != 1:
-                        return False
-                return True
+                return all(len([1 for z in t if z.intersection(p)]) == 1
+                           for p in s)
 
             p = self.realization_of().p()
             P = Poset((A.coarsenings(), lt))
@@ -1733,10 +1731,8 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             def lt(s, t):
                 if s == t:
                     return False
-                for p in s:
-                    if len([z for z in t if z.intersection(p)]) != 1:
-                        return False
-                return True
+                return all(len([1 for z in t if z.intersection(p)]) == 1
+                           for p in s)
 
             p = self.realization_of().p()
             P_refine = Poset((A.refinements(), lt))
