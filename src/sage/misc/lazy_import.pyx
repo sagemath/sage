@@ -1000,9 +1000,9 @@ cdef class LazyImport():
         """
         Support pickling by forcing resolution of the LazyImport.
 
-        When a LazyImport is pickled, we force resolution and pickle the
-        actual imported object instead of the LazyImport wrapper. This
-        ensures that unpickling returns the actual object.
+        When a LazyImport is pickled, we force resolution and return the
+        actual imported object for pickling instead of the LazyImport wrapper.
+        This ensures that unpickling returns the actual object.
 
         EXAMPLES::
 
@@ -1034,15 +1034,34 @@ cdef class LazyImport():
             sage: type(lazy_Integer)
             <class 'sage.misc.lazy_import.LazyImport'>
             sage: restored_Integer = loads(dumps(lazy_Integer))
-            sage: type(restored_Integer)
-            <type 'type'>
+            sage: type(restored_Integer).__name__
+            'InheritComparisonMetaclass'
             sage: restored_Integer is Integer
             True
             sage: restored_Integer(10)
             10
         """
-        # Force resolution and pickle the actual object
-        return self.get_object().__reduce__()
+        # Force resolution and return a function that reconstructs the actual object
+        # We use a simple approach: return the actual object's reduction
+        obj = self.get_object()
+        # For most objects, we can use pickle's default mechanism
+        # by returning a function that will retrieve the object
+        return (_restore_lazy_import, (self._module, self._name))
+
+
+def _restore_lazy_import(module, name):
+    """
+    Helper function to restore a lazy import during unpickling.
+    
+    This retrieves the actual object from the module.
+    
+    EXAMPLES::
+    
+        sage: from sage.misc.lazy_import import _restore_lazy_import
+        sage: _restore_lazy_import('sage.rings.integer_ring', 'ZZ')
+        Integer Ring
+    """
+    return getattr(__import__(module, {}, {}, [name]), name)
 
 
 def lazy_import(module, names, as_=None, *,
