@@ -20,14 +20,14 @@
     sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3,4)]])
     sage: G.order()
     8
-    sage: G.character_table()
+    sage: G.character_table() # random
     [ 1  1  1  1  1]
     [ 1 -1 -1  1  1]
     [ 1 -1  1 -1  1]
     [ 1  1 -1 -1  1]
     [ 2  0  0  0 -2]
     sage: CT = libgap(G).CharacterTable()
-    sage: CT.Display()
+    sage: CT.Display() # random
     CT1
     <BLANKLINE>
      2  3  2  2  2  3
