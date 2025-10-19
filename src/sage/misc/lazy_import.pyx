@@ -998,11 +998,11 @@ cdef class LazyImport():
 
     def __reduce__(self):
         """
-        Support pickling by preserving the LazyImport wrapper.
+        Support pickling by forcing resolution of the LazyImport.
 
-        When a LazyImport is pickled, we preserve it as a LazyImport so that
-        it remains lazy after unpickling. We exclude the namespace parameter
-        since it may not be picklable.
+        When a LazyImport is pickled, we force resolution and pickle the
+        actual imported object instead of the LazyImport wrapper. This
+        ensures that unpickling returns the actual object.
 
         EXAMPLES::
 
@@ -1011,22 +1011,20 @@ cdef class LazyImport():
             sage: lazy_ZZ = LazyImport('sage.rings.integer_ring', 'ZZ')
             sage: restored = loads(dumps(lazy_ZZ))
             sage: type(restored)
-            <class 'sage.misc.lazy_import.LazyImport'>
+            <class 'sage.rings.integer_ring.IntegerRing_class'>
 
-        The restored LazyImport can still be used normally::
+        The restored object is the actual imported object::
 
+            sage: restored is ZZ
+            True
             sage: restored(42)
             42
-            sage: restored._get_object() is ZZ
-            True
 
         Test equality after unpickling::
 
             sage: lazy_QQ = LazyImport('sage.rings.rational_field', 'QQ')
             sage: restored_QQ = loads(dumps(lazy_QQ))
-            sage: lazy_QQ == restored_QQ
-            True
-            sage: lazy_QQ._get_object() is restored_QQ._get_object()
+            sage: restored_QQ is QQ
             True
 
         Pickling works even after the lazy import has been used::
@@ -1037,15 +1035,14 @@ cdef class LazyImport():
             <class 'sage.misc.lazy_import.LazyImport'>
             sage: restored_Integer = loads(dumps(lazy_Integer))
             sage: type(restored_Integer)
-            <class 'sage.misc.lazy_import.LazyImport'>
+            <type 'type'>
+            sage: restored_Integer is Integer
+            True
             sage: restored_Integer(10)
             10
         """
-        # Pickle the LazyImport itself, preserving the lazy behavior
-        # We exclude namespace since it may reference unpicklable objects
-        return (self.__class__, 
-                (self._module, self._name, self._as_name, self._at_startup,
-                 None, self._deprecation, self._feature))
+        # Force resolution and pickle the actual object
+        return self.get_object().__reduce__()
 
 
 def lazy_import(module, names, as_=None, *,
