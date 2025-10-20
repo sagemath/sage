@@ -473,7 +473,8 @@ cdef class FiniteField(Field):
             sage: k.hom([c]) # indirect doctest
             Traceback (most recent call last):
             ...
-            TypeError: images do not define a valid homomorphism
+            ValueError: relations do not all (canonically) map to 0
+            under map determined by images of generators
 
             sage: k.hom([c^(73*73+1)])
             Ring morphism:
@@ -484,7 +485,7 @@ cdef class FiniteField(Field):
             sage: k.hom([b])
             Traceback (most recent call last):
             ...
-            TypeError: images do not define a valid homomorphism
+            ValueError: No embedding of Finite Field in a of size 73^2 into Finite Field in b of size 73^3
         """
         #if self.characteristic() != codomain.characteristic():
         #    raise ValueError("no map from %s to %s" % (self, codomain))
