@@ -190,26 +190,10 @@ cdef class UniqueFactory(SageObject):
         sage: loads(dumps(F)) is F
         True
 
-    Now we create three classes ``C``, ``D`` and ``E``. The first is a Cython
+    Now we create two classes ``C`` and ``D``. The first is a Cython
     extension-type class that does not allow weak references nor attribute
-    assignment. The second is a Python class that is not derived from
-    :class:`object`. The third allows attribute assignment and is derived
-    from :class:`object`.  ::
-
-        sage: cython("cdef class C: pass")                                              # needs sage.misc.cython
-        sage: class D:
-        ....:     def __init__(self, *args):
-        ....:         self.t = args
-        ....:     def __repr__(self):
-        ....:         return "D%s"%repr(self.t)
-        ....:
-        sage: class E(D, object): pass
-
-    Again, being in a doctest, we need to put the class ``D`` into the
-    ``__main__`` module, so that Python can find it::
-
-        sage: import __main__
-        sage: __main__.D = D
+    assignment. The second is a Python class that is derived from
+    :class:`object`.
 
     It is impossible to create an instance of ``C`` with our factory, since it
     does not allow weak references::
@@ -250,40 +234,44 @@ cdef class UniqueFactory(SageObject):
         False
 
     We have already seen that our factory will only take the requested
-    implementation into account if the arguments used as key have not been
-    used yet. So, we use other arguments to create an instance of class
-    ``D``::
+    implementation into account if the arguments used as key have not been used
+    yet. So, we use other arguments to create an instance of class ``D``. As
+    the class can be weak-referenced and allows for attribute assignment,
+    everything works::
 
         sage: d = F(2, impl='D')
         sage: isinstance(d, D)
         True
-
-    The factory only knows about the pickling protocol used by new style
-    classes. Hence, again, pickling and unpickling fails to use the cache,
-    even though the "factory data" are now available (this is not the case
-    on Python 3 which *only* has new style classes)::
-
         sage: loads(dumps(d)) is d
         True
         sage: d._factory_data
         (<__main__.MyFactory object at ...>,
          (...),
          (2,),
-         {'impl': 'D'})
-
-    Only when we have a new style class that can be weak referenced and allows
-    for attribute assignment, everything works::
-
-        sage: e = F(3)
-        sage: isinstance(e, E)
-        True
-        sage: loads(dumps(e)) is e
-        True
-        sage: e._factory_data
-        (<__main__.MyFactory object at ...>,
-         (...),
-         (3,),
          {'impl': None})
+
+    When an object constructed by a factory is pickled, the content of
+    ``__dict__`` is not put into the pickle since unpickling either restores
+    the object from the cache or reconstructs the object afresh. This defeats
+    methods decorated with ``@cached_method(do_pickle=True)``. Hence
+    ``UniquFactory``makes exceptions to the placeholders for such methods::
+
+        sage: # needs sage.rings.function_field
+        sage: K.<x> = FunctionField(QQ); R.<y> = K[]
+        sage: F = K.extension(y^5 - x^3 - 3*x + x*y)
+        sage: F.genus()
+        4
+        sage: type(F.genus)
+        <class 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
+        sage: F.genus.is_pickled_with_cache()
+        True
+        sage: s = dumps(F)
+        sage: F.genus.clear_cache()
+        sage: Fp = loads(s)
+        sage: Fp is F
+        True
+        sage: Fp.genus.cache
+        4
     """
     cdef readonly _name
     cdef readonly _cache
@@ -761,8 +749,8 @@ def generic_factory_getstate(obj):
     """
     Used for pickling :class:`UniqueFactory` objects.
 
-    The cached value of the method decorated with ``@cached_method(do_pickle=True)``
-    is put into the state with which the object is pickled.
+    The cached value of the method with ``do_pickle=True`` is put into the
+    state with which the object is pickled.
 
     TESTS::
 

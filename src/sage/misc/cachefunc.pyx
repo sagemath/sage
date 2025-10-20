@@ -884,11 +884,10 @@ cdef class CachedFunction():
         """
         return self.do_pickle
 
-    #########
-    #  Introspection
+    # Introspection
     #
-    # We provide some methods explicitly, and
-    # forward other questions to the cached function.
+    # We provide some methods explicitly, and forward
+    # other questions to the cached function.
 
     def _instancedoc_(self):
         """

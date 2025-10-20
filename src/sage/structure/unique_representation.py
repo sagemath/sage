@@ -2,7 +2,8 @@
 r"""
 Unique Representation
 
-This modules defines abstract classes for cached and unique representation behavior.
+This modules defines abstract classes for cached and unique representation
+behavior.
 
 What is a cached representation?
 ================================
@@ -651,8 +652,9 @@ class WithPicklingByInitArgs(metaclass=ClasscallMetaclass):
         """
         Used for pickling.
 
-        An object of :class:`WithPicklingByInitArgs` does not keep its dictionary
-        when pickled, because the object is constructed anew upon unpickling.
+        An object of :class:`WithPicklingByInitArgs` does not keep its
+        dictionary when pickled, because the object is restored from the cache
+        or reconstructed afresh upon unpickling.
 
         Here we make some exceptions so that cached functions with
         ``do_pickle=True`` attached to an object are kept in the pickle.
