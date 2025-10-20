@@ -1044,7 +1044,21 @@ cdef class LazyImport():
         # Force resolution and return a function that reconstructs the actual object
         # We use a simple approach: return the actual object's reduction
         obj = self.get_object()
-        # For most objects, we can use pickle's default mechanism
+        reduce_ex=getattr(obj, '__reduce_ex__', None)
+        if callable(reduce_ex):
+            try:
+                return reduce_ex(pickle.HIGHEST_PROTOCOL)
+            except Exception:
+                pass
+        reduce_fn = getattr(obj, '__reduce__', None)
+        if reduce_fn is not None:
+            try:
+                result = reduce_fn()
+                if isinstance(result,tuple):
+                    return result
+            except Exception:
+                pass
+        # (Fall back) For most objects, we can use pickle's default mechanism
         # by returning a function that will retrieve the object
         return (_restore_lazy_import, (self._module, self._name))
 
