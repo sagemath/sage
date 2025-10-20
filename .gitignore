@@ -391,3 +391,8 @@ src/sage/calculus/__init__.py
 # ci-meson.yml runs a `./tools/test-git-no-uncommitted-changes` step)
 /.ccache
 /setup-miniconda-patched-environment-*.yml
+
+# bootstrap-time generated docs
+/src/doc/en/installation/*.txt
+/src/doc/en/reference/spkg/*.rst
+!/src/doc/en/reference/spkg/index.rst
