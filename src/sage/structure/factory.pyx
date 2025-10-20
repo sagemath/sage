@@ -192,8 +192,15 @@ cdef class UniqueFactory(SageObject):
 
     Now we create two classes ``C`` and ``D``. The first is a Cython
     extension-type class that does not allow weak references nor attribute
-    assignment. The second is a Python class that is derived from
-    :class:`object`.
+    assignment. The second is a Python class, that is derived from
+    :class:`object`. ::
+
+        sage: cython("cdef class C: pass")                                              # needs sage.misc.cython
+        sage: class D:
+        ....:     def __init__(self, *args):
+        ....:         self.t = args
+        ....:     def __repr__(self):
+        ....:         return "D%s"%repr(self.t)
 
     It is impossible to create an instance of ``C`` with our factory, since it
     does not allow weak references::
@@ -248,7 +255,7 @@ cdef class UniqueFactory(SageObject):
         (<__main__.MyFactory object at ...>,
          (...),
          (2,),
-         {'impl': None})
+         {'impl': 'D'})
 
     When an object constructed by a factory is pickled, the content of
     ``__dict__`` is not put into the pickle since unpickling either restores
