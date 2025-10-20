@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Spanning trees
 
@@ -337,8 +336,7 @@ def kruskal_iterator(G, by_weight=True, weight_function=None, check_weight=False
         if not G.is_connected():
             return
         # G is now assumed to be a nonempty connected graph
-        if G.num_verts() == G.num_edges() + 1:
-            # G is a tree
+        if G.is_tree():
             yield from G.edge_iterator()
             return
 
@@ -828,8 +826,7 @@ def boruvka(G, by_weight=True, weight_function=None, check_weight=True, check=Fa
         if not G.is_connected():
             return []
         # G is now assumed to be a nonempty connected graph
-        if G.num_verts() == G.num_edges() + 1:
-            # G is a tree
+        if G.is_tree():
             return G.edges(sort=False)
 
     by_weight, weight_function = G._get_weight_function(by_weight=by_weight,

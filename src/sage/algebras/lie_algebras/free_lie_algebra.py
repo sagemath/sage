@@ -206,7 +206,7 @@ class FreeLieBasis_abstract(FinitelyGeneratedLieAlgebra, IndexedGenerators, Bind
         """
         return FreeAlgebra(self.base_ring(), len(self._names), self._names)
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return ``True`` if this is an abelian Lie algebra.
 
