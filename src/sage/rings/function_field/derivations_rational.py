@@ -31,7 +31,7 @@ class FunctionFieldDerivation_rational(FunctionFieldDerivation):
         sage: K.derivation()
         d/dx
     """
-    def __init__(self, parent, u=None):
+    def __init__(self, parent, u=None) -> None:
         """
         Initialize a derivation.
 

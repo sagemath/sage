@@ -273,7 +273,7 @@ cdef boost_clustering_coeff(BoostGenGraph *g, vertices):
             result_d = g[0].clustering_coeff(vi)
             sig_off()
             clust_of_v[v] = result_d
-        return ((sum(clust_of_v.itervalues()) / len(clust_of_v)), clust_of_v)
+        return ((sum(clust_of_v.values()) / len(clust_of_v)), clust_of_v)
 
 
 cpdef clustering_coeff(g, vertices=None):

@@ -663,6 +663,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         Coercion from boolean polynomials, also by index::
 
+            sage: # needs sage.rings.polynomial.pbori
             sage: B.<x,y,z> = BooleanPolynomialRing(3)
             sage: P.<x,y,z> = QQ[]
             sage: P(B.gen(0))
@@ -4662,6 +4663,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                 sig_off()
             finally:
                 if check_error():
+                    if len(self.variables()) == 1:
+                        return Factorization([(self._parent(p), e) for p, e in self.univariate_polynomial().factor()])
                     raise NotImplementedError("Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
 
             ivv = iv.ivGetVec()
@@ -4745,6 +4748,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         Ensure interrupt does not make the internal state inconsistent::
 
+            sage: # long time
             sage: R.<x,y> = QQ[]
             sage: n = 17  # chosen so that the computation takes > 1 second but not excessively long.
             ....: # when Singular improves the algorithm or hardware gets faster, increase n.
