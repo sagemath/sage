@@ -161,7 +161,7 @@ cdef class qAdicCappedRelativeElement(CRElement):
             sage: hash(a)
             Traceback (most recent call last):
             ...
-            TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'
+            TypeError: ...unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'...
         """
         # Eventually, hashing will be disabled for all (non-fixed-mod) p-adic
         # elements (#11895), until then, we only to this for types which did

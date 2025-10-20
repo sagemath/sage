@@ -409,7 +409,7 @@ cdef class SageObject:
             sage: hash(b)
             Traceback (most recent call last):
             ...
-            TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'
+            TypeError: ...unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'...
             sage: @cached_method
             ....: def f(x): return x==a
             sage: f(b)

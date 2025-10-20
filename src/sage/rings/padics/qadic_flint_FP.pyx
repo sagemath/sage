@@ -155,7 +155,7 @@ cdef class qAdicFloatingPointElement(FPElement):
             sage: hash(a)
             Traceback (most recent call last):
             ...
-            TypeError: unhashable type: 'sage.rings.padics.qadic_flint_FP.qAdicFloatingPointElement'
+            TypeError: ...unhashable type: 'sage.rings.padics.qadic_flint_FP.qAdicFloatingPointElement'...
         """
         # Eventually, hashing will be disabled for all (non-fixed-mod) p-adic
         # elements (#11895), until then, we only to this for types which did

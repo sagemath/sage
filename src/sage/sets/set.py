@@ -1027,7 +1027,7 @@ class Set_object_enumerated(Set_object):
             sage: hash(s)
             Traceback (most recent call last):
             ...
-            TypeError: unhashable type: 'set'
+            TypeError: ...unhashable type: 'set'...
             sage: s = X.frozenset(); s
             frozenset({0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1})
 

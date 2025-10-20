@@ -372,7 +372,7 @@ class Simplex(SageObject):
         sage: Simplex([[1,2], [3,4]])
         Traceback (most recent call last):
         ...
-        TypeError: unhashable type: 'list'
+        TypeError: ...unhashable type: 'list'...
     """
 
     def __init__(self, X) -> None:
