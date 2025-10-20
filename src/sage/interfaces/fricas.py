@@ -2111,26 +2111,6 @@ class FriCASExpectFunction(ExpectFunction):
         ExpectFunction.__init__(self, parent, name)
 
 
-def is_FriCASElement(x):
-    """
-    Return ``True`` if ``x`` is of type :class:`FriCASElement`.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.fricas import is_FriCASElement
-        sage: is_FriCASElement(2)
-        doctest:...: DeprecationWarning: the function is_FriCASElement is deprecated; use isinstance(x, sage.interfaces.abc.FriCASElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: is_FriCASElement(fricas(2))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_FriCASElement is deprecated; use isinstance(x, sage.interfaces.abc.FriCASElement) instead")
-
-    return isinstance(x, FriCASElement)
-
-
 fricas = FriCAS()
 
 

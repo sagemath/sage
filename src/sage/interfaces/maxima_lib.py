@@ -218,7 +218,7 @@ if MAXIMA_SHARE:
 
 init_code = ['besselexpand : true', 'display2d : false', 'domain : complex', 'keepfloat : true',
              'load(to_poly_solve)', 'load(simplify_sum)',
-             'load(diag)']
+             'load(diag)', 'load(abs_integrate)']
 
 
 # Turn off the prompt labels, since computing them *very
@@ -726,58 +726,21 @@ class MaximaLib(MaximaAbstract):
             sage: assumptions()  # Check the assumptions really were forgotten
             []
 
-        Make sure the abs_integrate package is being used,
-        :issue:`11483`. The following are examples from the Maxima
-        abs_integrate documentation::
+        An example from the maxima documentation involving the
+        absolute value::
 
-            sage: integrate(abs(x), x)
-            1/2*x*abs(x)
-
-        ::
-
-            sage: integrate(sgn(x) - sgn(1-x), x)  # known bug
+            sage: integrate(sgn(x) - sgn(1-x), x)
             abs(x - 1) + abs(x)
 
-        This is a known bug in Sage symbolic limits code, see
+        This is a fixed bug in Sage symbolic limits code, see
         :issue:`17892` and https://sourceforge.net/p/maxima/bugs/3237/ ::
 
-            sage: integrate(1 / (1 + abs(x-5)), x, -5, 6) # not tested -- known bug
+            sage: integrate(1 / (1 + abs(x-5)), x, -5, 6)
             log(11) + log(2)
-
-        ::
-
-            sage: integrate(1/(1 + abs(x)), x)  # known bug
-            1/2*(log(x + 1) + log(-x + 1))*sgn(x) + 1/2*log(x + 1) - 1/2*log(-x + 1)
-
-        ::
-
-            sage: integrate(cos(x + abs(x)), x)  # known bug
-            -1/2*x*sgn(x) + 1/4*(sgn(x) + 1)*sin(2*x) + 1/2*x
-
-        The last example relies on the following simplification::
-
-            sage: maxima("realpart(signum(x))")
-            signum(x)
-
-        An example from sage-support thread e641001f8b8d1129::
-
-            sage: f = e^(-x^2/2)/sqrt(2*pi) * sgn(x-1)
-            sage: integrate(f, x, -Infinity, Infinity)  # known bug
-            -erf(1/2*sqrt(2))
-
-        From :issue:`8624`::
-
-            sage: integral(abs(cos(x))*sin(x),(x,pi/2,pi))
-            1/2
-
-        ::
-
-            sage: integrate(sqrt(x + sqrt(x)), x).canonicalize_radical()  # known bug
-            1/12*((8*x - 3)*x^(1/4) + 2*x^(3/4))*sqrt(sqrt(x) + 1) + 1/8*log(sqrt(sqrt(x) + 1) + x^(1/4)) - 1/8*log(sqrt(sqrt(x) + 1) - x^(1/4))
 
         And :issue:`11594`::
 
-            sage: integrate(abs(x^2 - 1), x, -2, 2)  # known bug
+            sage: integrate(abs(x^2 - 1), x, -2, 2)
             4
 
         This definite integral returned zero (incorrectly) in at least
@@ -795,6 +758,45 @@ class MaximaLib(MaximaAbstract):
             0.124756040961038
             sage: a.imag().abs() < 3e-17
             True
+
+        The following examples require Maxima's ``abs_integrate``
+        package. Enabling ``abs_integrate`` globally caused several
+        bugs (catalogued in :issue:`12731`) but most of these have
+        been fixed, and ``abs_integrate`` has been re-enabled::
+
+            sage: integrate(1/(abs(x) + 1), x, algorithm="maxima")
+            1/2*(log(x + 1) + log(-x + 1))*sgn(x) + 1/2*log(x + 1) - 1/2*log(-x + 1)
+            sage: integrate(cos(x + abs(x)), x, algorithm="maxima")
+            -1/4*(2*x - sin(2*x))*sgn(x) + 1/2*x + 1/4*sin(2*x)
+
+        Several examples where ``abs_integrate`` previously lead to
+        incorrect results. This was once reported to be divergent in
+        :issue:`13733`, and only in maxima-5.48 does it give the
+        correct answer::
+
+            sage: # long time, not tested until maxima-5.48 is widespread
+            sage: integral(log(cot(x)-1), x, 0, pi/4, algorithm="maxima")
+            catalan + 1/2*I*dilog(1/2*I + 1/2) - 1/2*I*dilog(-1/2*I + 1/2)
+
+        This used to return ``1/2`` in :issue:`11590`::
+
+            sage: integrate(x * sgn(x^2 - 1/4), x, -1, 0, algorithm="maxima")
+            -1/4
+
+        In :issue:`14591`, this incorrectly simplified to ``cosh(x)``::
+
+            sage: integrate(sqrt(1-1/4*cosh(x)^2), x, algorithm="maxima")
+            integrate(sqrt(-1/4*cosh(x)^2 + 1), x)
+
+        In :issue:`17468`, this integral hangs::
+
+            sage: integral(log(abs(2*sin(x))), x, 0, pi/3, algorithm="maxima")
+            1/36*I*pi^2 + I*dilog(1/2*I*sqrt(3) + 1/2) + I*dilog(-1/2*I*sqrt(3) - 1/2)
+
+        This used to return a *negative* answer in :issue:`17511`::
+
+            sage: integrate(abs(cos(x)), x, 0, pi, algorithm="maxima")
+            2
         """
         try:
             return max_to_sr(maxima_eval(([max_integrate],
@@ -1053,27 +1055,6 @@ class MaximaLib(MaximaAbstract):
             + errstr[jj + 1:k] + ">0)', see `assume?` for more details)\n" + errstr
         outstr = outstr.replace('_SAGE_VAR_', '')
         raise ValueError(outstr)
-
-
-def is_MaximaLibElement(x):
-    r"""
-    Return ``True`` if ``x`` is of type :class:`MaximaLibElement`.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.maxima_lib import maxima_lib, is_MaximaLibElement
-        sage: is_MaximaLibElement(1)
-        doctest:...: DeprecationWarning: the function is_MaximaLibElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaLibElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: m = maxima_lib(1)
-        sage: is_MaximaLibElement(m)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_MaximaLibElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaLibElement) instead")
-
-    return isinstance(x, MaximaLibElement)
 
 
 @instancedoc

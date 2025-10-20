@@ -35,11 +35,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 from sage.arith.misc import factor
 from sage.arith.srange import srange
-from sage.calculus.all import symbolic_expression
+from sage.calculus.expr import symbolic_expression
 from sage.calculus.functional import derivative
 from sage.calculus.integration import numerical_integral as integral_numerical
 from sage.ext.fast_callable import fast_callable

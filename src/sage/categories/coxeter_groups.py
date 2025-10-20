@@ -9,9 +9,11 @@ Coxeter Groups
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-# With contributions from Dan Bump, Steve Pon, Qiang Wang, Anne Schilling, Christian Stump, Mark Shimozono
+# With contributions from Dan Bump, Steve Pon, Qiang Wang, Anne
+# Schilling, Christian Stump, Mark Shimozono
 from copy import copy
 from collections import deque
+from itertools import combinations
 
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.enumerated_sets import EnumeratedSets
@@ -436,6 +438,30 @@ class CoxeterGroups(Category_singleton):
                     #    because of an incompatible index
                     pass
             return self.element_class(self, x, **args)
+
+        def is_commutative(self) -> bool:
+            """
+            Return whether this Coxeter group is commutative.
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroup(['B', 3])
+                sage: W.is_commutative()
+                False
+
+            TESTS::
+
+                sage: # optional - coxeter3
+                sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
+                sage: W.is_commutative()
+                False
+                sage: W = CoxeterGroup(['A', 1], implementation='coxeter3')
+                sage: W.is_commutative()
+                True
+            """
+            M = self.coxeter_matrix()
+            Idx = M.index_set()
+            return all(M[i, j] == 2 for i, j in combinations(Idx, 2))
 
         def weak_order_ideal(self, predicate, side='right', category=None):
             """
@@ -1859,11 +1885,11 @@ class CoxeterGroups(Category_singleton):
                 sage: W = WeylGroup(['A', 3], prefix='s')
                 sage: w0 = W.long_element()
                 sage: G = w0.reduced_word_graph()
-                sage: G.num_verts()
+                sage: G.n_vertices()
                 16
                 sage: len(w0.reduced_words())
                 16
-                sage: G.num_edges()
+                sage: G.n_edges()
                 18
                 sage: len([e for e in G.edges(sort=False) if e[2] == 2])
                 10
@@ -1880,9 +1906,9 @@ class CoxeterGroups(Category_singleton):
                 sage: # needs sage.combinat sage.graphs sage.groups
                 sage: w1 = W.one()
                 sage: G = w1.reduced_word_graph()
-                sage: G.num_verts()
+                sage: G.n_vertices()
                 1
-                sage: G.num_edges()
+                sage: G.n_edges()
                 0
 
             .. SEEALSO::
@@ -1898,10 +1924,10 @@ class CoxeterGroups(Category_singleton):
 
             P = self.parent()
             edges = []
-            for i, x in enumerate(R):
-                x = tuple(x)
-                for y in R[i:]:
-                    y = tuple(y)
+            for i, _x in enumerate(R):
+                x = tuple(_x)
+                for _y in R[i:]:
+                    y = tuple(_y)
                     # Check that the reduced expressions differ by only
                     #   a single braid move
                     j = 0
