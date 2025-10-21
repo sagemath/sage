@@ -5,6 +5,7 @@
 /local
 /logs
 /upstream
+/sagemath.egg-info
 
 # Autotools generated files
 /aclocal.m4
@@ -203,16 +204,6 @@ build/pkgs/wheel/version_requirements.txt
 /pkgs/*/.tox
 /pkgs/*/venv*
 /pkgs/*/.venv*
-
-/pkgs/sage-conf_pypi/sage_root/config.log
-/pkgs/sage-conf_pypi/sage_root/config.status
-/pkgs/sage-conf_pypi/sage_root/local/
-/pkgs/sage-conf_pypi/sage_root/logs/
-/pkgs/sage-conf_pypi/sage_root/prefix
-/pkgs/sage-conf_pypi/sage_root/src/bin/sage-env-config
-/pkgs/sage-conf_pypi/sage_root/src/bin/sage-src-env-config
-/pkgs/sage-conf_pypi/sage_root/upstream/
-/pkgs/sage-conf_pypi/sage_root/venv
 
 /pkgs/sagemath-objects/setup.cfg
 /pkgs/sagemath-bliss/setup.cfg
@@ -461,6 +452,7 @@ src/sage/graphs/graph_decompositions/__init__.py
 src/sage/graphs/generators/__init__.py
 src/sage/graphs/__init__.py
 src/sage/graphs/base/__init__.py
+src/sage/graphs/tests/__init__.py
 src/sage/databases/__init__.py
 src/sage/stats/hmm/__init__.py
 src/sage/stats/__init__.py

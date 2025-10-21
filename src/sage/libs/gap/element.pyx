@@ -193,11 +193,12 @@ cdef Obj make_gap_record(sage_dict) except NULL:
         sage: libgap({'a': 1, 'b':123})   # indirect doctest
         rec( a := 1, b := 123 )
     """
-    data = [ (str(key), libgap(value)) for key, value in sage_dict.iteritems() ]
-
+    cdef list data
     cdef Obj rec
     cdef GapElement val
     cdef UInt rnam
+
+    data = [(str(key), libgap(value)) for key, value in sage_dict.items()]
 
     try:
         GAP_Enter()
@@ -1006,7 +1007,6 @@ cdef class GapElement(RingElement):
             GAP_Leave()
             gap_sig_off()
 
-
     cdef bint _compare_less(self, Element other) except -2:
         """
         Compare ``self`` with ``other``.
@@ -1029,7 +1029,6 @@ cdef class GapElement(RingElement):
         finally:
             GAP_Leave()
             gap_sig_off()
-
 
     cpdef _add_(self, right):
         r"""

@@ -552,7 +552,7 @@ class VermaModule(ModulePrinting, CombinatorialFreeModule):
         wt, w = (self._weight + P.rho()).to_dominant_chamber(reduced_word=True)
         return (wt - P.rho(), w)
 
-    def is_singular(self):
+    def is_singular(self) -> bool:
         r"""
         Return if ``self`` is a singular Verma module.
 
@@ -582,7 +582,7 @@ class VermaModule(ModulePrinting, CombinatorialFreeModule):
         """
         return not self._dominant_data[0].is_dominant()
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Return if ``self`` is a simple module.
 
@@ -1083,7 +1083,7 @@ class VermaModuleMorphism(Morphism):
             return homset.element_class(homset, right._scalar * self._scalar)
         return super()._composition_(right, homset)
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         r"""
         Return if ``self`` is injective or not.
 
@@ -1112,7 +1112,7 @@ class VermaModuleMorphism(Morphism):
             return False
         return bool(self._scalar)
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         r"""
         Return if ``self`` is surjective or not.
 
@@ -1490,7 +1490,8 @@ class VermaModuleHomset(Homset):
                             continue
                         M = matrix(pbw.base_ring(), [[v[s] for v in image] for s in supp])
                         ker = M.right_kernel_matrix()
-                        basis = [C.linear_combination((basis[j], c) for j, c in kv.iteritems())
+                        basis = [C.linear_combination((basis[j], c)
+                                                      for j, c in kv.items())
                                  for kv in ker.rows()]
 
                     assert len(basis) == 1
