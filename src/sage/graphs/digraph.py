@@ -1494,7 +1494,7 @@ class DiGraph(GenericGraph):
 
         .. SEEALSO::
 
-            :meth:`num_verts` for the value at `(x, y) = (1, 1)`
+            :meth:`n_vertices` for the value at `(x, y) = (1, 1)`
 
         EXAMPLES::
 
@@ -1611,7 +1611,7 @@ class DiGraph(GenericGraph):
         `vu` is in the returned feedback arc set::
 
            sage: g = graphs.RandomGNP(5,.3)
-           sage: while not g.num_edges():
+           sage: while not g.n_edges():
            ....:     g = graphs.RandomGNP(5,.3)
            sage: dg = DiGraph(g)
            sage: feedback = dg.feedback_edge_set()                                      # needs sage.numerical.mip
@@ -2389,7 +2389,7 @@ class DiGraph(GenericGraph):
                                                     weight_function=weight_function,
                                                     check_weight=False)
 
-            if len(length) != self.num_verts():
+            if len(length) != self.n_vertices():
                 ecc[u] = Infinity
             else:
                 ecc[u] = max(length.values())
@@ -3478,7 +3478,7 @@ class DiGraph(GenericGraph):
             * :meth:`~sage.graphs.GenericGraph.odd_girth` -- return the odd
               girth of the graph
         """
-        n = self.num_verts()
+        n = self.n_vertices()
         best = n + 1
         seen = set()
         for w in self:

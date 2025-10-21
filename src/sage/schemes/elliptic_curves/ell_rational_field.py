@@ -6925,13 +6925,12 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         mw_base_p_log = []
         beta = []
         mp = []
-        tmp = 0
-        for p in S:
+        for tmp, p in enumerate(S):
             Np = E.Np(p)
             cp = E.tamagawa_exponent(p)
             mp_temp = Z(len_tors).lcm(cp*Np)
             mp.append(mp_temp)  # only necessary because of verbose below
-            p_prec = 30+E.discriminant().valuation(p)
+            p_prec = 30 + E.discriminant().valuation(p)
             p_prec_ok = False
             while not p_prec_ok:
                 if verbose:
@@ -6957,7 +6956,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             except ValueError:
                 # e.g. mw_base_p_log[tmp]==[0]:  can occur e.g. [?]'172c6, S=[2]
                 beta.append([0] for j in range(r))
-            tmp += 1
 
         if verbose:
             print('mw_base', mw_base)

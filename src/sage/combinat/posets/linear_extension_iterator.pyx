@@ -37,7 +37,7 @@ def _linear_extension_prepare(D):
     # the preprocessing routine found in Figure 7 of
     # "Generating Linear Extensions Fast" by
     # Pruesse and Ruskey
-    while dag_copy.num_verts() != 0:
+    while dag_copy.n_vertices() != 0:
         # find all the minimal elements of dag_copy
         minimal_elements = dag_copy.sources()
         if not minimal_elements:
