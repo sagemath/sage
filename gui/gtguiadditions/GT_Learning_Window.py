@@ -26,6 +26,8 @@ class GT_Learning_Window(QWidget):
         self.setWindowTitle("Learning Graph")
         self.setGeometry(100, 100, 900, 700)
 
+        self.glossary_window = None
+
         main_layout = QVBoxLayout()
         main_layout.setSpacing(15)
 
@@ -68,6 +70,11 @@ class GT_Learning_Window(QWidget):
         degree_layout.addWidget(self.degree_textbox)
         main_layout.addLayout(degree_layout)
 
+        self.degree_check_button = QPushButton("Check Degrees")
+        #self.degree_check_button.clicked.connect(self.on_degree_check)
+        degree_layout.addWidget(self.degree_check_button)
+
+
         # density input box
         density_layout = QHBoxLayout()
         density_label_box = QVBoxLayout()
@@ -80,29 +87,49 @@ class GT_Learning_Window(QWidget):
         density_layout.addWidget(QLabel("%"))
         main_layout.addLayout(density_layout)
 
+        self.density_check_button = QPushButton("Check Density")
+        #self.density_check_button.clicked.connect(self.on_density_check)
+        density_layout.addWidget(self.density_check_button)
+
         # plannar yes/no
         planar_layout = QHBoxLayout()
         planar_layout.addWidget(QLabel("Planar:"))
         self.planar_select = QComboBox()
-        self.planar_select.addItems(["Yes", "No"])
+        self.planar_select.addItems(["Select","Yes", "No"])
         planar_layout.addWidget(self.planar_select)
         main_layout.addLayout(planar_layout)
+
+        self.planar_check_button = QPushButton("Check Planar")
+        #self.planar_check_button.clicked.connect(self.on_planar_check)
+        planar_layout.addWidget(self.planar_check_button)
 
         # eulerian yes/no
         euler_layout = QHBoxLayout()
         euler_layout.addWidget(QLabel("Eulerian:"))
         self.euler_select = QComboBox()
-        self.euler_select.addItems(["Yes", "No"])
+        self.euler_select.addItems(["Select","Yes", "No"])
         euler_layout.addWidget(self.euler_select)
         main_layout.addLayout(euler_layout)
+
+        self.euler_check_button = QPushButton("Check Eulerian")
+        #self.euler_check_button.clicked.connect(self.on_euler_check)
+        euler_layout.addWidget(self.euler_check_button)
 
         # hamiltonian yes/no
         hamilton_layout = QHBoxLayout()
         hamilton_layout.addWidget(QLabel("Hamiltonian:"))
         self.hamilton_select = QComboBox()
-        self.hamilton_select.addItems(["Yes", "No"])
+        self.hamilton_select.addItems(["Select","Yes", "No"])
         hamilton_layout.addWidget(self.hamilton_select)
         main_layout.addLayout(hamilton_layout)
+
+        self.hamilton_check_button = QPushButton("Check Hamiltonian")
+        #self.hamilton_check_button.clicked.connect(self.on_hamilton_check)
+        hamilton_layout.addWidget(self.hamilton_check_button)
+
+        self.glossary_button = QPushButton("Glossary")
+        self.glossary_button.clicked.connect(self.show_glossary)
+        main_layout.addWidget(self.glossary_button)
 
         # main layout
         self.setLayout(main_layout)
@@ -131,3 +158,12 @@ class GT_Learning_Window(QWidget):
         G.plot().save(tmp_file.name) #saves png to temp location
         self.image_window = GTImageWindow(tmp_file.name)
         self.image_window.show()
+
+    def show_glossary(self):
+        if self.glossary_window is None:
+            self.glossary_window = QMainWindow()
+            self.glossary_window.setWindowTitle("Graph Theory Glossary")
+            self.glossary_window.setCentralWidget(GlossaryWidget("GT"))
+        self.glossary_window.show()
+        self.glossary_window.raise_()
+        self.glossary_window.activateWindow()
