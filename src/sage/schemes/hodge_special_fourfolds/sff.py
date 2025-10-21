@@ -321,6 +321,34 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         self._list_of_irreducible_components = C
         return self._list_of_irreducible_components
 
+    def topological_support(self):
+        """
+        Return the reduced projective variety defined by the radical of the defining ideal of ``self``.
+
+        OUTPUT:
+
+        :class:`Embedded_projective_variety`
+
+        EXAMPLES::
+
+            sage: from sage.schemes.hodge_special_fourfolds.sff import projective_variety
+            sage: (x0,x1,x2) = ProjectiveSpace(2, GF(101), 'x').gens()
+            sage: X = projective_variety([x1^2, x1*x2, x1*x2, x2^2]); X
+            0-dimensional subscheme of degree 3 in PP^2
+            sage: X.topological_support()
+            one-point scheme in PP^2 of coordinates [1, 0, 0]
+        """
+        try:
+            return self._topological_support
+        except AttributeError:
+            pass
+        Supp = Embedded_projective_variety(self.ambient_space(), self.defining_ideal().radical().gens())
+        if Supp == self:
+            Supp = self
+        self._topological_support = Supp
+        self._topological_support._topological_support = self._topological_support
+        return self._topological_support
+
     def hilbert_polynomial(self):
         r"""
         Return the Hilbert polynomial of the projective variety.
@@ -916,6 +944,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         return Y.is_subset(self)
 
     def __ne__(self, Y):
+        r"""Logical negation of :meth:`__eq__`."""
         return not self.__eq__(Y)
 
     def __hash__(self):
@@ -1060,6 +1089,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         return Embedded_projective_variety(self.ambient_space(),_minbase(I))
 
     def __add__(self, other):
+        r"""Alias for :meth:`union`."""
         return self.union(other)
 
     def difference(self, other):
@@ -1084,6 +1114,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         return Embedded_projective_variety(self.ambient_space(), _minbase(I))
 
     def __sub__(self, other):
+        r"""Alias for :meth:`difference`."""
         return self.difference(other)
 
     def hyperplane_section(self, cache=True):
@@ -1299,7 +1330,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
     The rational map from ``X`` to ``Y`` defined by ``polys``.
 
     If ``X`` and ``Y`` are not objects of the class :class:`Embedded_projective_variety`,
-    they will be replaced by ``projective_variety(X)`` and ``projective_variety(Y)`` (if any exception occurs),
+    they will be replaced by ``projective_variety(X)`` and ``projective_variety(Y)`` (if no exception occurs),
     see :meth:`projective_variety`.
 
     EXAMPLES::
@@ -1507,6 +1538,8 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
     def super(self):
         r"""
         Return the composition of ``self`` with the embedding of the target in the ambient space.
+
+        OUTPUT:
 
         :class:`Rational_map_between_embedded_projective_varieties`
 
@@ -1994,6 +2027,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             return True
 
     def __ne__(self,other):
+        r"""Logical negation of :meth:`__eq__`."""
         return not self.__eq__(other)
 
     def __hash__(self):
@@ -2377,8 +2411,12 @@ def surface(*args, KK=33331, ambient=None, nodes=None, virtual=False, class_surf
 
         sage: surface(3,1,1)
         rational surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
+        sage: surface(3,2, KK=GF(65521), ambient=5, nodes=1)
+        rational 1-nodal surface in PP^5 of degree 7 and sectional genus 1 cut out by 14 hypersurfaces of degree 3
 
-    We can construct virtually the surface by passing the keyword argument ``virtual=True``.
+    We can construct the surface in virtual mode by passing the keyword argument ``virtual=True``.
+    This creates a placeholder object without performing explicit computations.
+    The surface can later be materialized, if possible, by calling the ``materialize()`` method.
 
     ::
 
@@ -2406,6 +2444,15 @@ def surface(*args, KK=33331, ambient=None, nodes=None, virtual=False, class_surf
         virtual K3 surface in PP^32 of degree 62 and sectional genus 32 cut out by at least 435 hypersurfaces of degree 2
         sage: S.projection(4,0,1,0,1)    # four simple projections + one 3rd projection + one 5th projection
         virtual K3 surface in PP^7 of degree 24 and sectional genus 19 cut out by at least 28 hypersurfaces of degree 3
+
+    Materialization of virtual K3 surfaces depends on whether the ``K3Surfaces`` package in Macaulay2 can construct a general surface with the specified invariants.
+
+    ::
+
+        sage: S = surface(8,1, virtual=True, class_surfaces='K3'); S    # internal projection of K3 surface of genus 8
+        virtual K3 surface in PP^7 of degree 13 and sectional genus 8 cut out by at least 9 hypersurfaces of degree 2
+        sage: S.materialize()                                           # optional - macaulay2
+        surface in PP^7 of degree 13 and sectional genus 8 cut out by 9 hypersurfaces of degree 2
     """
     v = args
     for i in v:
@@ -2497,6 +2544,7 @@ class _Virtual_projective_surface(Embedded_projective_variety):
         virtual K3 surface in PP^6 of degree 24 and sectional genus 20 cut out by at least 44 hypersurfaces of degree 4
     """
     def __init__(self, ambient=None, degree=None, sectional_genus=None, constant_coefficient_hilbert_polynomial=None, topological_euler_characteristic=None, KK=33331):
+        r"""See :class:`_Virtual_projective_surface` for documentation."""
         if not all([isinstance(i,(int,Integer)) for i in [ambient, degree, sectional_genus, constant_coefficient_hilbert_polynomial, topological_euler_characteristic]]):
             raise TypeError("expected integer numbers")
         if ambient < 3:
@@ -2697,7 +2745,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         source: 5-dimensional variety of degree 5 in PP^8 cut out by 5 hypersurfaces of degree 2
         target: quadric hypersurface in PP^5
 
-    Analogously, we can compute Hodge-associated Castelnuovo surfaces for rational complete intersections of three quadrics in PP^7.
+    Analogously, we can compute Hodge-associated Castelnuovo surfaces for rational complete intersections of three quadrics in ``PP^7``.
 
     ::
 
@@ -2787,10 +2835,14 @@ class Hodge_special_fourfold(Embedded_projective_variety):
 
         EXAMPLES::
 
-            sage: S = surface(3,4)
-            sage: X = fourfold(S)
+            sage: X = fourfold(surface(1,ambient=5)); X
+            Cubic fourfold of discriminant 8 = 3*3-1^2 containing a plane in PP^5
             sage: X.ambient_fivefold()
             PP^5
+            sage: X = fourfold(surface(1,ambient=7)); X
+            Complete intersection of 3 quadrics in PP^7 of discriminant 31 = 8*4-1^2 containing a plane in PP^7
+            sage: X.ambient_fivefold()
+            complete intersection of type (2, 2) in PP^7
         """
         try:
             return self._ambient_fivefold
@@ -2917,8 +2969,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         Detect and return a congruence of secant curves for the surface of ``self`` in the ambient fivefold of ``self``.
 
         This function works similar to the ``Macaulay2`` function ``detectCongruence``, documented at https://macaulay2.com/doc/Macaulay2/share/doc/Macaulay2/SpecialFanoFourfolds/html/_detect__Congruence.html.
-        See also the paper at https://www.tandfonline.com/doi/abs/10.1080/10586458.2023.2184882
-        for more computational details.
+        See also the paper at https://www.tandfonline.com/doi/abs/10.1080/10586458.2023.2184882 for more computational details.
 
         INPUT:
 
@@ -2953,10 +3004,16 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             sage: f(p)                                                                                            # optional - macaulay2
             line in PP^5
 
-            sage: # optional - macaulay2
-            sage: X = fourfold("GM 4-fold of discriminant 26('')",GF(65521)); X
+            sage: X = fourfold(surface(5,7,0,1,KK=GF(65521))); X
+            Complete intersection of 3 quadrics in PP^7 of discriminant 47 = 8*16-9^2 containing a rational surface in PP^7 of degree 9 and sectional genus 3 cut out by 12 hypersurfaces of degree 2 (the image of the plane via the linear system [5, 7, 0, 1])
+            sage: f = X.congruence(algorithm_for_image='macaulay2', algorithm_for_point='sage', num_checks=2); f  # optional - macaulay2
+            Congruence of 5-secant cubic curves
+            to: rational surface in PP^7 of degree 9 and sectional genus 3 cut out by 12 hypersurfaces of degree 2 (the image of the plane via the linear system [5, 7, 0, 1])
+            in: complete intersection of type (2, 2) in PP^7
+
+            sage: X = fourfold("GM 4-fold of discriminant 26('')",GF(65521)); X                                   # optional - macaulay2
             Gushel-Mukai fourfold of discriminant 26('') containing a surface in PP^8 of degree 9 and sectional genus 2 cut out by 19 hypersurfaces of degree 2, class of the surface in GG(1,4): (5, 4)
-            sage: f = X.congruence(macaulay2_detectCongruence=True, num_checks=1, verbose=True); f
+            sage: f = X.congruence(macaulay2_detectCongruence=True, num_checks=1, verbose=True); f                # optional - macaulay2
             -- running Macaulay2 function detectCongruence()... --
             number lines contained in the image of the quadratic map and passing through a general point: 6
             number 1-secant lines = 5
@@ -2966,13 +3023,13 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             Congruence of 3-secant conics
             to: surface in PP^8 of degree 9 and sectional genus 2 cut out by 19 hypersurfaces of degree 2
             in: 5-dimensional variety of degree 5 in PP^8 cut out by 5 hypersurfaces of degree 2
-            sage: p = X.ambient_fivefold().point()
-            sage: f(p)
+            sage: p = X.ambient_fivefold().point()                                                               # optional - macaulay2
+            sage: f(p)                                                                                           # optional - macaulay2
             conic curve in PP^8
 
-            sage: X = fourfold("3-nodal septic scroll", GF(61001)); X                                             # optional - macaulay2
+            sage: X = fourfold("3-nodal septic scroll", GF(61001)); X                                            # optional - macaulay2
             Cubic fourfold of discriminant 26 = 3*25-7^2 containing a surface in PP^5 of degree 7 and sectional genus 0 cut out by 13 hypersurfaces of degree 3
-            sage: X.congruence(algorithm_for_image='macaulay2', num_checks=2)                                     # optional - macaulay2
+            sage: X.congruence(algorithm_for_image='macaulay2', num_checks=2)                                    # optional - macaulay2
             Congruence of 5-secant conics
             to: surface in PP^5 of degree 7 and sectional genus 0 cut out by 13 hypersurfaces of degree 3
             in: PP^5
@@ -3250,12 +3307,14 @@ class Hodge_special_fourfold(Embedded_projective_variety):
 class _Congruence_of_secant_curves_to_surface(SageObject):
     r"""The class of objects created by the function :meth:`congruence`."""
     def __init__(self, f_s, f, deg_congr, X):
+        r"""See :class:`_Congruence_of_secant_curves_to_surface` for documentation."""
         self._function_on_points = f_s
         self._macaulay2_object = f
         self._degree = deg_congr
         self._fourfold = X
 
     def _repr_(self):
+        r"""Return a string representation of the congruence."""
         curves_word = {
             1:"lines",
             2:"conics",
@@ -3272,6 +3331,7 @@ class _Congruence_of_secant_curves_to_surface(SageObject):
         return "Congruence of " + str(a*d - 1) + "-secant " + (curves_word[d] if d <= 9 else "curves of degree " + str(d)) + "\nto: " + self._fourfold.surface()._repr_() + "\nin: " + self._fourfold.ambient_fivefold()._repr_()
 
     def __call__(self, p):
+        r"""Return the unique curve of the congruence passing through the given point."""
         return self._function_on_points(p)
 
     def _macaulay2_init_(self, macaulay2=None):
@@ -3282,6 +3342,7 @@ class _Congruence_of_secant_curves_to_surface(SageObject):
         return self._macaulay2_object
 
     def check(self, i=1, verbose=None, algorithm_for_point=None):
+        r"""Check the congruence on a number of points, specified by the parameter `i`."""
         if verbose is None:
             verbose = get_verbose() >= 1
         if algorithm_for_point is None:
@@ -3297,12 +3358,14 @@ class _Congruence_of_secant_curves_to_surface(SageObject):
 class _Intersection_of_three_quadrics_in_P7(Hodge_special_fourfold):
     r"""The class of Hodge-special complete intersections of three quadrics in ``PP^7``."""
     def __init__(self, S, X, V=None, check=True):
+        r"""See :class:`_Intersection_of_three_quadrics_in_P7` for documentation."""
         super().__init__(S, X, V, check=check)
         if not (self.degrees_generators() == (2,2,2) and self.ambient_fivefold().degrees_generators() == (2,2)):
             raise ValueError("something went wrong in constructing complete intersections of three quadrics in PP^7")
         self._degree_as_hypersurface = 2
 
     def _repr_(self) -> str:
+        r"""Return a string representation of the fourfold."""
         return "Complete intersection of 3 quadrics in PP^7 of discriminant " + str(self.discriminant(verbose=False)) + " = 8*" + str(self._lattice_intersection_matrix()[1,1]) + "-" + str(self._lattice_intersection_matrix()[0,1]) + "^2" + " containing a " + str(self.surface())
 
     def _latex_(self) -> str:
@@ -3325,6 +3388,7 @@ class _Intersection_of_three_quadrics_in_P7(Hodge_special_fourfold):
         return "\\mbox{Complete intersection of }" + latex(3) + "\\mbox{ quadrics in }" + latex(self.ambient()) + "\\mbox{ of discriminant }" + latex(self.discriminant(verbose=False)) + " = \\det " + latex(self._lattice_intersection_matrix()) + "\\mbox{ containing a }" + latex(self.surface())
 
     def ambient_fivefold(self):
+        r"""See :meth:`Hodge_special_fourfold.ambient_fivefold`."""
         try:
             return self._ambient_fivefold
         except AttributeError:
@@ -3353,14 +3417,13 @@ class _Virtual_intersection_of_three_quadrics_in_P7(_Intersection_of_three_quadr
 
     TESTS::
 
-        sage: S = surface(5,7,0,1, virtual=True); S
-        virtual rational surface in PP^7 of degree 9 and sectional genus 3
-        cut out by at least 12 hypersurfaces of degree 2
+        sage: S = surface(7,1,9, virtual=True); S
+        virtual rational surface in PP^7 of degree 12 and sectional genus 6 cut out by at least 9 hypersurfaces of degree 2
         sage: X = fourfold(S); X
-        Complete intersection of 3 quadrics in PP^7 of discriminant 47 = 8*16-9^2
-        containing a virtual rational surface in PP^7 of degree 9 and sectional genus 3 cut out by at least 12 hypersurfaces of degree 2
+        Complete intersection of 3 quadrics in PP^7 of discriminant 96 = 8*30-12^2 containing a virtual rational surface in PP^7 of degree 12 and sectional genus 6 cut out by at least 9 hypersurfaces of degree 2
     """
     def __init__(self, S, check=True):
+        r"""See :class:`_Virtual_intersection_of_three_quadrics_in_P7` for documentation."""
         if not isinstance(S,_Virtual_projective_surface):
             raise TypeError("expected a virtual surface")
         if S.ambient().dimension() != 7:
@@ -3374,21 +3437,40 @@ class _Virtual_intersection_of_three_quadrics_in_P7(_Intersection_of_three_quadr
         self._surface = S
 
     def ambient_fivefold(self):
+        r"""Not implemented."""
         raise NotImplementedError
 
     def Castelnuovo(self, verbose=None):
+        r"""Not implemented."""
         raise NotImplementedError
+
+    def materialize(self):
+        r"""
+        Return a fourfold with the same invariants as the virtual fourfold.
+
+        EXAMPLES::
+
+            sage: X = fourfold(surface(5,7,0,1, virtual=True)); X
+            Complete intersection of 3 quadrics in PP^7 of discriminant 47 = 8*16-9^2 containing a virtual rational surface in PP^7 of degree 9 and sectional genus 3 cut out by at least 12 hypersurfaces of degree 2
+            sage: X.materialize()
+            Complete intersection of 3 quadrics in PP^7 of discriminant 47 = 8*16-9^2 containing a rational surface in PP^7 of degree 9 and sectional genus 3 cut out by 12 hypersurfaces of degree 2 (the image of the plane via the linear system [5, 7, 0, 1])
+        """
+        if not hasattr(self, "_materialization"):
+            self._materialization = fourfold(self.surface().materialize(), check=True)
+        return self._materialization
 
 
 class _Cubic_fourfold(Hodge_special_fourfold):
     r"""The class of Hodge-special cubic fourfolds in ``PP^5``."""
     def __init__(self, S, X, V=None, check=True):
+        r"""See :class:`_Cubic_fourfold` for documentation."""
         super().__init__(S, X, V, check=check)
         if not (self.degree() == 3 and self.codimension() == 1 and len(self.degrees_generators()) == 1):
             raise ValueError("something went wrong in constructing cubic fourfold in PP^5")
         self._degree_as_hypersurface = 3
 
     def _repr_(self) -> str:
+        r"""Return a string representation of the fourfold."""
         return "Cubic fourfold of discriminant " + str(self.discriminant(verbose=False)) + " = 3*" + str(self._lattice_intersection_matrix()[1,1]) + "-" + str(self._lattice_intersection_matrix()[0,1]) + "^2" + " containing a " + str(self.surface())
 
     def _latex_(self) -> str:
@@ -3438,6 +3520,7 @@ class _Virtual_cubic_fourfold(_Cubic_fourfold):
         of degree 10 and sectional genus 6 cut out by at least 10 hypersurfaces of degree 3
     """
     def __init__(self, S, check=True) -> None:
+        r"""See :class:`_Virtual_cubic_fourfold` for documentation."""
         if not isinstance(S,_Virtual_projective_surface):
             raise TypeError("expected a virtual surface")
         if S.ambient().dimension() != 5:
@@ -3451,7 +3534,23 @@ class _Virtual_cubic_fourfold(_Cubic_fourfold):
         self._surface = S
 
     def K3(self, verbose=None):
+        r"""Not implemented."""
         raise NotImplementedError
+
+    def materialize(self):
+        r"""
+        Return a fourfold with the same invariants as the virtual fourfold.
+
+        EXAMPLES::
+
+            sage: X = fourfold(surface(3,4, ambient=5, virtual=True)); X
+            Cubic fourfold of discriminant 14 = 3*13-5^2 containing a virtual rational surface in PP^5 of degree 5 and sectional genus 1 cut out by at least 5 hypersurfaces of degree 2
+            sage: X.materialize()
+            Cubic fourfold of discriminant 14 = 3*13-5^2 containing a rational surface in PP^5 of degree 5 and sectional genus 1 cut out by 5 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 4])
+        """
+        if not hasattr(self, "_materialization"):
+            self._materialization = fourfold(self.surface().materialize(), check=True)
+        return self._materialization
 
 
 class _GushelMukai_fourfold(Hodge_special_fourfold):
@@ -3465,12 +3564,14 @@ class _GushelMukai_fourfold(Hodge_special_fourfold):
 
     """
     def __init__(self, S, X, V=None, check=True) -> None:
+        r"""See :class:`_GushelMukai_fourfold` for documentation."""
         super().__init__(S, X, V, check=check)
         if not (self.ambient().dimension() == 8 and self.degrees_generators() == (2,2,2,2,2,2) and self.degree() == 10 and self.sectional_genus() == 6):
             raise ValueError("something went wrong in constructing Gushel-Mukai fourfold in PP^8")
         self._degree_as_hypersurface = 2
 
     def _repr_(self) -> str:
+        r"""Return a string representation of the fourfold."""
         d = self.discriminant(verbose=False)
         (a,b) = self._class_of_surface_in_the_Grass
         e = ""
@@ -3549,11 +3650,11 @@ def fourfold(S, X=None, V=None, check=True):
         sage: fourfold('general cubic 4-fold of discriminant 38',GF(65521))                                               # optional - macaulay2
         Cubic fourfold of discriminant 38 = 3*46-10^2 containing a surface in PP^5 of degree 10 and sectional genus 6 cut out by 10 hypersurfaces of degree 3
 
-    Some calculations can be performed very fast using virtual fourfolds (although this may provide meaningless answers).
+    Some calculations can be performed very quickly using virtual fourfolds, although the results may not always be meaningful.
 
     ::
 
-        sage: S = surface(4,8,ambient=5,virtual=True); S
+        sage: S = surface(4,8, ambient=5, virtual=True); S
         virtual rational surface in PP^5 of degree 8 and sectional genus 3 cut out by at least 13 hypersurfaces of degree 3
         sage: X = fourfold(S); X
         Cubic fourfold of discriminant 14 = 3*26-8^2 containing a virtual rational surface in PP^5 of degree 8 and sectional genus 3 cut out by at least 13 hypersurfaces of degree 3
@@ -3623,6 +3724,7 @@ def _special_fourfold_from_m2(s, i=None):
 
 
 def _expr_var_0(Dim, DimAmbient):
+    r"""Intermediate result used to build the `_repr_` and `_latex_` of :class:`Embedded_projective_variety`."""
     if DimAmbient < 0:
         return ("empty scheme", "\\mbox{empty scheme}")
     if Dim < 0 and DimAmbient < 1:
@@ -3643,6 +3745,7 @@ def _expr_var_0(Dim, DimAmbient):
 
 
 def _expr_var_1(X):
+    r"""Intermediate result used to build the `_repr_` and `_latex_` of :class:`Embedded_projective_variety`."""
     k = X.dimension()
     n = X.ambient().dimension()
     if k < 0 or k >= n:
@@ -3699,6 +3802,7 @@ def _expr_var_1(X):
 
 
 def _random1(R):
+    r"""Return a random linear form in the polynomial ring `R`."""
     return sum([R.random_element(degree=0) * x for x in R.gens()])
 
 
@@ -3800,6 +3904,7 @@ def _from_macaulay2map_to_sagemap(f, Sage_Source=None, Sage_Target=None):
 
 
 def _print_partial_M2_output(m2_str):
+    r"""Print partial output of a Macaulay2 evaluation."""
     w = str(macaulay2.eval(m2_str))
     lineNumber = int(str(macaulay2.eval('lineNumber')))-1
     lineNumber = str(macaulay2.eval('concatenate(interpreterDepth:"o") | toString(' + str(lineNumber) + ')'))
@@ -3811,12 +3916,12 @@ def _print_partial_M2_output(m2_str):
     print(w)
 
 
-def update_macaulay2_packages():
+def _update_macaulay2_packages():
     r"""Update some ``Macaulay2`` packages to their latest version.
 
-    Execute the command ``update_macaulay2_packages()`` to download in your current directory
+    Execute the command ``_update_macaulay2_packages()`` to download in your current directory
     all the ``Macaulay2`` packages needed to the functions of this module.
-    You don't need to do this if you use the development version of ``Macaulay2``.
+    You don't need to do this if you are using a recent version of ``Macaulay2``.
     """
     os = importlib.import_module("os")
     inp = input('Do you want to download or update all the needed files in the current directory: ' + os.getcwd() + "? (y/n) ")
