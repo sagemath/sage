@@ -2836,7 +2836,7 @@ requires-dist = [
     { name = "cysignals", specifier = ">=1.11.2,!=1.12.0" },
     { name = "cython", specifier = ">=3.0,!=3.0.3" },
     { name = "fpylll", marker = "sys_platform != 'win32'", specifier = ">=0.5.9" },
-    { name = "gmpy2", specifier = "~=2.1b999" },
+    { name = "gmpy2", specifier = ">=2.1.5" },
     { name = "igraph", marker = "extra == 'extra'" },
     { name = "ipykernel", specifier = ">=5.2.1" },
     { name = "ipython", specifier = ">=8.9.0" },
@@ -2862,7 +2862,7 @@ requires-dist = [
     { name = "sage-numerical-backends-coin", marker = "extra == 'extra'" },
     { name = "scipy", specifier = ">=1.11" },
     { name = "six", specifier = ">=1.15.0" },
-    { name = "sphinx", specifier = ">=5.2,<9" },
+    { name = "sphinx", specifier = ">=6.2,<9" },
     { name = "symengine", marker = "extra == 'extra'", specifier = ">=0.6.1" },
     { name = "sympy", specifier = ">=1.6,<2.0" },
     { name = "traitlets" },
@@ -3170,6 +3170,12 @@ version = "0.14.1"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/eb/ae/051d3e2ffd128f4a8fa67d380bb7be45637d39e206b4c3737c087a3d4b71/symengine-0.14.1.tar.gz", hash = "sha256:4e9e4b4ec56371c2151803ae0403dab07dd1c74ce88e9abca433bebeb6e2f0f0", size = 938282, upload-time = "2025-04-21T04:03:04.916Z" }
 wheels = [
+    { url = "https://files.pythonhosted.org/packages/65/eb/875243e2856ef203f102cfefe54b81f4a08daed2c7b2ad929e8b82282d93/symengine-0.14.1-cp311-abi3-macosx_10_13_x86_64.whl", hash = "sha256:182d7ca746622764e50af4f926eb9733bd4d1fddb9526faa67bc6ca88b333e23", size = 26038565, upload-time = "2025-09-14T15:23:14.361Z" },
+    { url = "https://files.pythonhosted.org/packages/13/85/58acf0f28ae556205044bce9228a4e0e3bb532e0d4a81f3af84e0c45d95b/symengine-0.14.1-cp311-abi3-macosx_11_0_arm64.whl", hash = "sha256:6fbe25be42ba2040f09d464c06a7812f8e8d04c8087abbad914be561deac2141", size = 23108837, upload-time = "2025-09-14T15:23:17.395Z" },
+    { url = "https://files.pythonhosted.org/packages/a2/00/0355f1a261d608b1eaa972071e73070bc415cd1932e90574354e98f46254/symengine-0.14.1-cp311-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:78ac61effb97f63eca70bb4ececb2cb329b09f1d587cfab51768bd3c04543010", size = 61943252, upload-time = "2025-09-14T15:23:21.076Z" },
+    { url = "https://files.pythonhosted.org/packages/47/b4/41374adf5f7e60576862e4b4df1519225001fe2f230a3d15c67aa273ea48/symengine-0.14.1-cp311-abi3-manylinux2014_ppc64le.manylinux_2_17_ppc64le.whl", hash = "sha256:5ee52a0aaacafc032dbe5ca57c0b3d87a228e9ef6e88676a4ecc0111fb647b9e", size = 94027577, upload-time = "2025-09-14T15:23:26.165Z" },
+    { url = "https://files.pythonhosted.org/packages/52/af/0de548738de262f2288cdefc02df35aaa8c398369643619f59a9c2b5a0b0/symengine-0.14.1-cp311-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:577dd78b33f29e7713443588c576013ede4757cb8aedc36bcc405cf85844d7f9", size = 51085045, upload-time = "2025-09-14T15:23:30.185Z" },
+    { url = "https://files.pythonhosted.org/packages/e2/d3/fb148c2a2fdefa8f1630f3a0da0170d77ee8e1ac3baf7804504ddc9baacd/symengine-0.14.1-cp311-abi3-win_amd64.whl", hash = "sha256:c1142fd44cc952025185521c1f8a756af8625955f41ad7b947df2b81a14ce7f3", size = 18739305, upload-time = "2025-09-14T15:23:33.031Z" },
     { url = "https://files.pythonhosted.org/packages/ee/f8/689900a258a68b121d7c61a6705b5332969dd95517f9be1d66a4937a17e1/symengine-0.14.1-cp311-cp311-macosx_10_13_x86_64.whl", hash = "sha256:43a394acef2355bbcbed089c8f83a7dbdac28f4f979e094b549f571fc411dea6", size = 25992552, upload-time = "2025-04-21T04:01:07.102Z" },
     { url = "https://files.pythonhosted.org/packages/6e/10/82291c78d6dbc17b2e4371559a3945920ecc536ec36b6c8dde28165064f9/symengine-0.14.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:e7eb37cd5a9eb0c1c5e35c515139fd1221d937b269aef3569b92c7bb4e251be4", size = 23052876, upload-time = "2025-04-21T04:01:09.679Z" },
     { url = "https://files.pythonhosted.org/packages/30/1a/2199515b7d4f3aa74262e3eb31916a593c4daa7da53bb2c9cbd2cc13fad8/symengine-0.14.1-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:7657663cfb0d87d66848f7cacda0b2447e127584bc9ec65120e75ce68b21b809", size = 60873086, upload-time = "2025-04-21T04:01:14.285Z" },

@@ -132,7 +132,7 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
         sage: F.maximal_order()
         Maximal order of Rational function field in y over Rational Field
     """
-    def __init__(self, field, ideal_class=FunctionFieldIdeal, category=None):
+    def __init__(self, field, ideal_class=FunctionFieldIdeal, category=None) -> None:
         """
         Initialize.
 
@@ -148,7 +148,7 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
         self._ideal_class_ = ideal_class  # element class for parent ideal monoid
         self._field = field
 
-    def is_field(self, proof=True):
+    def is_field(self, proof: bool = True) -> bool:
         """
         Return ``False`` since orders are never fields.
 
@@ -159,7 +159,7 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
         """
         return False
 
-    def is_noetherian(self):
+    def is_noetherian(self) -> bool:
         """
         Return ``True`` since orders in function fields are Noetherian.
 
@@ -183,7 +183,7 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
 
     fraction_field = function_field
 
-    def is_subring(self, other):
+    def is_subring(self, other) -> bool:
         """
         Return ``True`` if the order is a subring of the other order.
 
@@ -219,7 +219,7 @@ class FunctionFieldOrder(FunctionFieldOrder_base):
     """
     Base class for orders in function fields.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation.
 
@@ -235,7 +235,7 @@ class FunctionFieldOrderInfinite(FunctionFieldOrder_base):
     """
     Base class for infinite orders in function fields.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -249,7 +249,7 @@ class FunctionFieldMaximalOrder(UniqueRepresentation, FunctionFieldOrder):
     """
     Base class of maximal orders of function fields.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the order.
 
@@ -265,7 +265,7 @@ class FunctionFieldMaximalOrderInfinite(FunctionFieldMaximalOrder, FunctionField
     """
     Base class of maximal infinite orders of function fields.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

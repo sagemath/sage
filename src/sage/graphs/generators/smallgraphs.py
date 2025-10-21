@@ -4189,6 +4189,7 @@ def PetersenGraph():
     from sage.graphs.generators.families import GeneralizedPetersenGraph
     P = GeneralizedPetersenGraph(5, 2)
     P.name("Petersen graph")
+    P.is_projective_planar.set_cache(True)
     return P
 
 
