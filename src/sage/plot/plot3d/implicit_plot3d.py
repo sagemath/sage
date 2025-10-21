@@ -2,7 +2,7 @@
 """
 Implicit plots
 """
-from .implicit_surface import ImplicitSurface
+from sage.plot.plot3d.implicit_surface import ImplicitSurface
 
 
 def implicit_plot3d(f, xrange, yrange, zrange, **kwds):

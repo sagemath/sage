@@ -2,15 +2,14 @@
 r"""
 Metric Spaces
 """
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2015 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import deprecated_function_alias
 from sage.categories.category import Category
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.cartesian_product import CartesianProductsCategory
@@ -161,9 +160,7 @@ class MetricSpaces(MetricSpacesCategory):
                 sage: m(p1, p2)
                 2.23230104635820
             """
-            return lambda a,b: a.dist(b)
-
-        metric = deprecated_function_alias(30062, metric_function)
+            return lambda a, b: a.dist(b)
 
         def dist(self, a, b):
             """
