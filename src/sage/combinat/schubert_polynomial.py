@@ -461,7 +461,7 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
 
         Check the round trip from atom polynomials::
 
-            sage:a = AtomPolynomials(ZZ)
+            sage: a = AtomPolynomials(ZZ)
             sage: X = SchubertPolynomialRing(ZZ)
             sage: it = iter(Permutations())
             sage: for _ in range(50):
