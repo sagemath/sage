@@ -15,7 +15,8 @@ from sage.libs.singular.decl cimport ring
 
 
 cdef class FreeAlgebra_letterplace_libsingular():
-    cdef ring* _lp_ring
+    cdef ring *_lp_ring
+    cdef int *_lp_ring_ref
     cdef MPolynomialRing_libsingular _commutative_ring
     cdef MPolynomialRing_libsingular _lp_ring_internal
     cdef object _ngens

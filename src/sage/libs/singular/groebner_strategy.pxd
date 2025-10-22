@@ -8,6 +8,7 @@ from sage.rings.polynomial.plural cimport NCPolynomialRing_plural, NCPolynomial_
 cdef class GroebnerStrategy(SageObject):
     cdef skStrategy *_strat
     cdef ring *_parent_ring
+    cdef int *_parent_ring_ref
     cdef MPolynomialRing_libsingular _parent
     cdef object _ideal
 
@@ -15,6 +16,8 @@ cdef class GroebnerStrategy(SageObject):
 
 cdef class NCGroebnerStrategy(SageObject):
     cdef skStrategy *_strat
+    cdef ring *_parent_ring
+    cdef int *_parent_ring_ref
     cdef NCPolynomialRing_plural _parent
     cdef object _ideal
 
