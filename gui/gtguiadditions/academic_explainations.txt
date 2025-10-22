@@ -1,0 +1,5 @@
+For degrees: For each vertex, count the number of edges incident. This is the degree of the vertex
+For Density: To find density of a graph with N vertices and E edges as a percentage, calculate [2(sum of the edges)]/[N(N-1)]*100
+For Planar: For a graph to be planar, you must be able to draw the graph in the plane with no crossing edges. It must also have no K5 or K33 subgraphs.
+For Eulerian: For a graph to be eulerian, it must be connected, and every vertex must have even degree
+For Hamiltonian: If the graph has atleast three vertices and the minimum degree is greater than or equal to half of the number of vertices, then the graph is Hamiltonian

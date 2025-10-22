@@ -6,6 +6,7 @@ from PyQt5.QtCore import pyqtSlot
 
 # Import tabs
 from gtguiadditions.GT_Calc_Window import GT_Calc_Window
+from gtguiadditions.GT_Learning_Window import GT_Learning_Window
 from linear_algebra import LinearAlgebraTab
 from Glossary.Glossary import *
 from Glossary.CollapsibleBox import CollapsibleBox
@@ -43,7 +44,7 @@ class MyTableWidget(QWidget):
         
         # Add tabs
         self.tabs.addTab(GT_Calc_Window(self), "Graph Theory")
-        self.tabs.addTab(GT_Calc_Window(self), "Graph Theory Learning") # We would use the learner one
+        self.tabs.addTab(GT_Learning_Window(self), "Graph Theory Learning") # We would use the learner one
         self.tabs.addTab(MatrixApp(self), "Linear Algebra")
         self.tabs.addTab(MatrixApp(self), "Linear Algebra Learning")
         self.tabs.addTab(SetTheoryTab(self),"Set Theory") # ^^^
