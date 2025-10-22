@@ -37,23 +37,17 @@ jobs:
         version:
           - '14'
           - '15'
+          - '26'
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
-        
-      - name: Install test prerequisites
-        run: python -m pip install tox
-
       - name: Install dependencies
         run: |
-          brew uninstall --force cmake || true
           eval $(build/bin/sage-print-system-package-command homebrew update)
           eval $(build/bin/sage-print-system-package-command homebrew --yes --ignore-missing install $(build/bin/sage-get-system-packages homebrew _bootstrap _prereq $(build/bin/sage-package list :standard:)))
+          brew uninstall --force singular flint ntl || true
 
       - name: Build
         run: |
