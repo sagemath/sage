@@ -81,7 +81,7 @@ class FunctionFieldPlace(Element):
         sage: L.places_finite()[0]                                                      # needs sage.rings.function_field
         Place (x, y)
     """
-    def __init__(self, parent, prime):
+    def __init__(self, parent, prime) -> None:
         """
         Initialize the place.
 
@@ -96,7 +96,7 @@ class FunctionFieldPlace(Element):
 
         self._prime = prime
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of the place.
 
@@ -110,7 +110,7 @@ class FunctionFieldPlace(Element):
         """
         return hash((self.function_field(), self._prime))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the place.
 
@@ -129,7 +129,7 @@ class FunctionFieldPlace(Element):
         gens_str = ', '.join(repr(g) for g in gens)
         return "Place ({})".format(gens_str)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the LaTeX representation of the place.
 
@@ -335,7 +335,7 @@ class PlaceSet(UniqueRepresentation, Parent):
     """
     Element = FunctionFieldPlace
 
-    def __init__(self, field):
+    def __init__(self, field) -> None:
         """
         Initialize the set of places of the function ``field``.
 
@@ -351,7 +351,7 @@ class PlaceSet(UniqueRepresentation, Parent):
 
         self._field = field
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the place.
 
