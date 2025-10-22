@@ -690,7 +690,6 @@ class WithPicklingByInitArgs(metaclass=ClasscallMetaclass):
                     d[key] = value
         except AttributeError:
             pass
-
         return d
 
     def __setstate__(self, d):
