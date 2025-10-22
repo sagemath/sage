@@ -1,5 +1,5 @@
 r"""
-Skew Tableaux
+Skew tableaux
 
 AUTHORS:
 

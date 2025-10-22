@@ -172,7 +172,7 @@ available, start a Jupyter notebook and look for the kernel named
 Alternatively, you can use the following command to check which kernels are
 available:
 
-.. code-block:: shell-session
+.. code-block:: console
 
     $ jupyter kernelspec list
     Available kernels:
@@ -313,7 +313,7 @@ Here are steps to use SageMath in a Jupyter notebook in VS Code:
 
 * Click the "Extension" icon on the left (or press :kbd:`Ctrl` +
   :kbd:`Shift` + :kbd:`X`) to open a list of extensions. Install the
-  "Remote - WSL" and "Jupyter" extensions.
+  "WSL" and "Jupyter" extensions.
 
 * In the command palette (:kbd:`Ctrl` + :kbd:`Shift` + :kbd:`P`),
   enter "Remote-WSL: New Window", and hit :kbd:`Enter`.

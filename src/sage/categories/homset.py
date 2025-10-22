@@ -401,7 +401,7 @@ def Hom(X, Y, category=None, check=True):
     # at some point, it somehow broke the coercion (see e.g. sage -t
     # sage.rings.real_mpfr). To be investigated.
     global _cache
-    key = (X,Y,category)
+    key = (X, Y, category)
     try:
         H = _cache[key]
     except KeyError:
@@ -442,7 +442,7 @@ def Hom(X, Y, category=None, check=True):
                     raise ValueError("{} is not in {}".format(O, category))
 
         # Construct H
-        try: # _Hom_ hook from the parent
+        try:  # _Hom_ hook from the parent
             H = X._Hom_(Y, category)
         except (AttributeError, TypeError):
             # Workaround in case the above fails, but the category
@@ -474,7 +474,7 @@ def Hom(X, Y, category=None, check=True):
     if isinstance(X, UniqueRepresentation) and isinstance(Y, UniqueRepresentation):
         if not isinstance(H, WithEqualityById):
             try:
-                H.__class__ = dynamic_class(H.__class__.__name__+"_with_equality_by_id", (WithEqualityById, H.__class__), doccls=H.__class__)
+                H.__class__ = dynamic_class(H.__class__.__name__ + "_with_equality_by_id", (WithEqualityById, H.__class__), doccls=H.__class__)
             except Exception:
                 pass
     return H
@@ -492,7 +492,7 @@ def hom(X, Y, f):
         sage: phi(x^2 + 3)
         7
     """
-    return Hom(X,Y)(f)
+    return Hom(X, Y)(f)
 
 
 def End(X, category=None):
@@ -556,7 +556,7 @@ def End(X, category=None):
         sage: H.category()
         Category of endsets of unital magmas and additive unital additive magmas
     """
-    return Hom(X,X, category)
+    return Hom(X, X, category)
 
 
 def end(X, f):
@@ -741,8 +741,8 @@ class Homset(Set_generic):
             sage: Hom(ZZ^2, QQ, category=Sets())._repr_()                               # needs sage.modules
             'Set of Morphisms from Ambient free module of rank 2 over the principal ideal domain Integer Ring to Rational Field in Category of sets'
         """
-        return "Set of Morphisms from {} to {} in {}".format(self._domain,
-            self._codomain, self.__category)
+        return "Set of Morphisms from {} to {} in {}".format(
+            self._domain, self._codomain, self.__category)
 
     def __hash__(self):
         """
@@ -957,12 +957,12 @@ class Homset(Set_generic):
             if x.domain() != self.domain():
                 mor = x.domain()._internal_coerce_map_from(self.domain())
                 if mor is None:
-                    raise TypeError("Incompatible domains: x (=%s) cannot be an element of %s" % (x,self))
+                    raise TypeError("Incompatible domains: x (=%s) cannot be an element of %s" % (x, self))
                 x = x * mor
             if x.codomain() != self.codomain():
                 mor = self.codomain()._internal_coerce_map_from(x.codomain())
                 if mor is None:
-                    raise TypeError("Incompatible codomains: x (=%s) cannot be an element of %s" % (x,self))
+                    raise TypeError("Incompatible codomains: x (=%s) cannot be an element of %s" % (x, self))
                 x = mor * x
             return x
 

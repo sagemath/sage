@@ -1,14 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Crystals of Generalized Young Walls
-
-AUTHORS:
-
-- Lucas David-Roesler: Initial version
-
-- Ben Salisbury: Initial version
-
-- Travis Scrimshaw: Initial version
+Crystals of generalized Young walls
 
 Generalized Young walls are certain generalizations of Young tableaux
 introduced in [KS2010]_ and designed to be a realization of the crystals
@@ -18,6 +10,12 @@ REFERENCES:
 
 - [KLRS2016]_
 - [KS2010]_
+
+AUTHORS:
+
+- Lucas David-Roesler: initial version
+- Ben Salisbury: initial version
+- Travis Scrimshaw: initial version
 """
 
 # *****************************************************************************

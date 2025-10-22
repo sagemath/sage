@@ -980,7 +980,7 @@ cdef class StaticSparseBackend(CGraphBackend):
                 yield x
         return
 
-    def num_verts(self):
+    def n_vertices(self):
         r"""
         Return the number of vertices.
 
@@ -988,10 +988,12 @@ cdef class StaticSparseBackend(CGraphBackend):
 
             sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
             sage: g = StaticSparseBackend(graphs.PetersenGraph())
-            sage: g.num_verts()
+            sage: g.n_vertices()
             10
         """
         return self._order
+
+    num_verts = n_vertices
 
     def allows_loops(self, value=None):
         r"""
@@ -1043,7 +1045,7 @@ cdef class StaticSparseBackend(CGraphBackend):
         else:
             raise ValueError("the graph is immutable and cannot be changed in any way")
 
-    def num_edges(self, directed):
+    def n_edges(self, directed):
         r"""
         Return the number of edges.
 
@@ -1056,13 +1058,13 @@ cdef class StaticSparseBackend(CGraphBackend):
 
             sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
             sage: g = StaticSparseBackend(graphs.PetersenGraph())
-            sage: g.num_edges(False)
+            sage: g.n_edges(False)
             15
 
         Testing the exception::
 
             sage: g = StaticSparseBackend(digraphs.Circuit(4))
-            sage: g.num_edges(False)
+            sage: g.n_edges(False)
             Traceback (most recent call last):
             ...
             NotImplementedError: Sorry, I have no idea what is expected in this situation. I don't think that it is well-defined either, especially for multigraphs.
@@ -1094,6 +1096,8 @@ cdef class StaticSparseBackend(CGraphBackend):
             else:
                 # Returns the number of edges
                 return int(cg.g.m)
+
+    num_edges = n_edges
 
     def iterator_edges(self, vertices, bint labels):
         r"""
@@ -1509,44 +1513,7 @@ cdef class StaticSparseBackend(CGraphBackend):
                     yield self._vertex_to_labels[u]
                     seen.add(u)
 
-    def add_vertex(self, v):
-        r"""
-        Addition of vertices is not available on an immutable graph.
 
-        EXAMPLES::
-
-            sage: g = DiGraph(graphs.PetersenGraph(), data_structure='static_sparse')
-            sage: g.add_vertex(1)
-            Traceback (most recent call last):
-            ...
-            TypeError: this graph is immutable and so cannot be changed
-            sage: g.add_vertices([1,2,3])
-            Traceback (most recent call last):
-            ...
-            TypeError: this graph is immutable and so cannot be changed
-        """
-        (<StaticSparseCGraph> self._cg).add_vertex(v)
-
-    def del_vertex(self, v):
-        r"""
-        Removal of vertices is not available on an immutable graph.
-
-        EXAMPLES::
-
-            sage: g = DiGraph(graphs.PetersenGraph(), data_structure='static_sparse')
-            sage: g.delete_vertex(1)
-            Traceback (most recent call last):
-            ...
-            TypeError: this graph is immutable and so cannot be changed
-            sage: g.delete_vertices([1,2,3])
-            Traceback (most recent call last):
-            ...
-            TypeError: this graph is immutable and so cannot be changed
-        """
-        (<StaticSparseCGraph> self._cg).del_vertex(v)
-
-
-@cython.binding(True)
 def _run_it_on_static_instead(f):
     r"""
     A decorator function to force the (Di)Graph functions to compute from a

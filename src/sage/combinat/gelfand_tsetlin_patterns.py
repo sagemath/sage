@@ -1,9 +1,5 @@
 r"""
-Gelfand-Tsetlin Patterns
-
-AUTHORS:
-
-- Travis Scrimshaw (2013-15-03): Initial version
+Gelfand-Tsetlin patterns
 
 REFERENCES:
 
@@ -19,6 +15,10 @@ REFERENCES:
    A Generating Function of Strict Gelfand Patterns and Some Formulas on
    Characters of General Linear Groups.
    J. Math. Soc. Japan **40** (4), pp. 671--685, 1988.
+
+AUTHORS:
+
+- Travis Scrimshaw (2013-15-03): initial version
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim@ucdavis.edu>
@@ -1180,7 +1180,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             elif self._k < 0:
                 raise ValueError('cannot sample from empty set')
             else:
-                return self._cftp(0)
+                return self.element_class(self, self._cftp(0))
         else:
             raise ValueError('cannot sample from infinite set')
 
