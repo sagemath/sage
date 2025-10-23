@@ -17,5 +17,4 @@ cdef class HiGHSBackend(GenericBackend):
     cdef dict row_name_var
     cdef int numcols
     cdef int numrows
-    cdef double obj_constant_term
     cpdef __copy__(self)
