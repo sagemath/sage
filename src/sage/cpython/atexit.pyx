@@ -173,6 +173,7 @@ cdef extern from *:
     
     // Dummy function for Python 3.14+ (never called)
     static atexit_callback_struct** get_atexit_callbacks_array(PyObject *self) {
+        PyErr_SetString(PyExc_RuntimeError, "Python >= 3.14 has no atexit array");
         return NULL;
     }
     #else
@@ -186,6 +187,7 @@ cdef extern from *:
     
     // Dummy function for Python < 3.14 (never called)
     static PyObject* get_atexit_callbacks_list(PyObject *self) {
+        PyErr_SetString(PyExc_RuntimeError, "Python < 3.14 has no atexit list");
         return NULL;
     }
     #endif
