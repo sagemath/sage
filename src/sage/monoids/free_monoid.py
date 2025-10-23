@@ -196,8 +196,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
         if n < 0:
             raise ValueError("n (=%s) must be nonnegative" % n)
         self.__ngens = int(n)
-        if names:
-            cat = Monoids().Infinite()
+        cat = Monoids().Infinite() if names else None
         Monoid_class.__init__(self, names, category=cat)
 
     def _repr_(self):
