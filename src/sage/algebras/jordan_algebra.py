@@ -360,7 +360,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
             NotImplementedError: infinite set
         """
         F = self.algebra_generators()
-        if self.is_finite():
+        if F.is_finite():
             return tuple(F)
         raise NotImplementedError('infinite set')
 
