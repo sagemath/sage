@@ -871,7 +871,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
         """
         Return the term order of ``self``.
 
-        OUTPUT: a :class:`sage.rings.polynomial.term_order.TermOrder` of the
+        OUTPUT: a :class:`~sage.rings.polynomial.term_order.TermOrder` of the
         variables of ``self``.
 
         EXAMPLES::
@@ -906,22 +906,23 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         INPUT:
 
-        - ``n`` -- integer (default: ``0``) number of the generator
+        - ``n`` -- integer (default: ``0``); number of the generator
 
         EXAMPLES::
 
-            sage: R = ZZ['x,y,z']
+            sage: R = CC['x,y,z']
             sage: x = R.gen()
             sage: x
             x
             sage: parent(x)
-            Multivariate Polynomial Ring in x, y, z over Integer Ring
+            Multivariate Polynomial Ring in x, y, z over Complex Field with 53
+            bits of precision
             sage: R.gen(2)
             z
             sage: R.gen(23)
             Traceback (most recent call last):
             ...
-            ValueError: Generator not defined.
+            ValueError: generator not defined
         """
         if n < 0 or n >= self._ngens:
             raise ValueError("generator not defined")
