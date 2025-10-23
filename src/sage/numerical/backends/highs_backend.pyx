@@ -54,7 +54,7 @@ cdef class HiGHSBackend(GenericBackend):
         self.row_name_var = {}
         self.numcols = 0
         self.numrows = 0
-        self.obj_constant_term = [0.0]
+        self.obj_constant_term = 0.0
         
         if maximization:
             self.set_sense(+1)
@@ -328,7 +328,7 @@ cdef class HiGHSBackend(GenericBackend):
             if i < self.numcols:
                 self.objective_coefficient(i, coeff[i])
         
-        self.obj_constant_term[0] = d
+        self.obj_constant_term = d
     
     cpdef set_verbosity(self, int level):
         """
@@ -481,7 +481,7 @@ cdef class HiGHSBackend(GenericBackend):
             2.0
         """
         info = self.highs_model.getInfo()
-        return info.objective_function_value + self.obj_constant_term[0]
+        return info.objective_function_value + self.obj_constant_term
     
     cpdef get_variable_value(self, int variable):
         """
@@ -597,7 +597,7 @@ cdef class HiGHSBackend(GenericBackend):
         p.row_name_var = copy(self.row_name_var)
         p.numcols = self.numcols
         p.numrows = self.numrows
-        p.obj_constant_term = copy(self.obj_constant_term)
+        p.obj_constant_term = self.obj_constant_term
         return p
     
     cpdef variable_upper_bound(self, int index, value=None):
