@@ -1,0 +1,4 @@
+$(PYTHON) numpy scikit_build_core pybind11 cmake | $(PYTHON_TOOLCHAIN)
+
+----------
+All lines of this file are ignored except the first.

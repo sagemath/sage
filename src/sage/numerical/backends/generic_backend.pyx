@@ -1712,8 +1712,15 @@ def default_mip_solver(solver=None):
         except ImportError:
             raise ValueError("SCIP is not available. Please refer to the documentation to install it.")
 
+    elif solver == "Highs":
+        try:
+            from sage.numerical.backends.highs_backend import HiGHSBackend
+            default_solver = solver
+        except ImportError:
+            raise ValueError("HiGHS is not available. Please refer to the documentation to install it.")
+
     else:
-        raise ValueError("'solver' should be set to 'GLPK', 'Coin', 'CPLEX', 'CVXOPT', 'CVXPY', 'Gurobi', 'PPL', 'SCIP', 'InteractiveLP', a callable, or None.")
+        raise ValueError("'solver' should be set to 'GLPK', 'Coin', 'CPLEX', 'CVXOPT', 'CVXPY', 'Gurobi', 'PPL', 'SCIP', 'HiGHS', 'InteractiveLP', a callable, or None.")
 
 
 cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_ring=None):
@@ -1883,5 +1890,9 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
         from sage.numerical.backends.scip_backend import SCIPBackend
         return SCIPBackend()
 
+    elif solver == "Highs":
+        from sage.numerical.backends.highs_backend import HiGHSBackend
+        return HiGHSBackend()
+
     else:
-        raise ValueError("'solver' should be set to 'GLPK', 'GLPK/exact', 'Coin', 'CPLEX', 'CVXOPT', 'CVXPY', 'Gurobi', 'PPL', 'SCIP', 'InteractiveLP', None (in which case the default one is used), or a callable.")
+        raise ValueError("'solver' should be set to 'GLPK', 'GLPK/exact', 'Coin', 'CPLEX', 'CVXOPT', 'CVXPY', 'Gurobi', 'PPL', 'SCIP', 'HiGHS', 'InteractiveLP', None (in which case the default one is used), or a callable.")
