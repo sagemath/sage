@@ -1011,7 +1011,7 @@ class KeyPolynomialBasis(OperatorPolynomialBasis):
     The key polynomial basis for a polynomial ring.
 
     For a full definition, see
-    `SymmetricFunctions.com <https://www.symmetricfunctions.com/key.htm>`_.
+    `SymmetricFunctions.com <https://www.symmetricfunctions.com/key.htm>`__.
     Key polynomials are indexed by weak compositions with no trailing zeros,
     and `\sigma` is the permutation of shortest length which sorts the
     indexing composition into a partition.
@@ -1252,7 +1252,7 @@ class AtomPolynomialBasis(OperatorPolynomialBasis):
     The atom polynomial basis for a polynomial ring.
 
     For a full definition, see
-    `SymmetricFunctions.com <https://www.symmetricfunctions.com/key.htm#atom>`_.
+    `SymmetricFunctions.com <https://www.symmetricfunctions.com/key.htm#atom>`__.
     Atom polynomials are indexed by weak compositions `\alpha` with no
     trailing zeros. A basis element is given by
 
@@ -1377,6 +1377,7 @@ class AtomPolynomialBasis(OperatorPolynomialBasis):
             raise ValueError('not a key polynomial')
 
         from sage.combinat.permutation import Permutations
+
         def on_basis(m):
             w, mu = sorting_word(m)
             if self._k and len(mu) < self._k:
