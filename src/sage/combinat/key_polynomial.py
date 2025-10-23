@@ -205,7 +205,7 @@ def isobaric_divided_difference_bar(f, w):
     Apply the isobaric divided difference operator `\bar{\pi}_w` to the
     polynomial `f`.
 
-    This map is defined by `\var{\pi}_i := \pi_i - 1`.
+    This map is defined by `\bar{\pi}_i := \pi_i - 1`.
 
     ``w`` may be either a single index or a list of
     indices of simple transpositions.
