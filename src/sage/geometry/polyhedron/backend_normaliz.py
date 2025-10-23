@@ -684,6 +684,9 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             ....:     P.vertices(), P.rays(), P.lines(),
             ....:     P.inequalities(), P.equations())
             sage: import PyNormaliz
+            sage: PyNormaliz.NmzCompute(cone, ["VerticesOfPolyhedron", "ExtremeRays",
+            ....:                               "MaximalSubspace", "SupportHyperplanes"])
+            True
             sage: PyNormaliz.NmzIsComputed(cone, "VerticesOfPolyhedron")
             True
             sage: PyNormaliz.NmzIsComputed(cone, "ExtremeRays")
