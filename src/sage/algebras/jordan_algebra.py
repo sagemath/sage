@@ -172,6 +172,8 @@ class JordanAlgebra(UniqueRepresentation, Parent):
         In this case, the following syntactic sugar works::
 
             sage: J2.<a,b,c> = JordanAlgebra(C)
+            sage: J1 is J2
+            True
 
         We check with passing in a symmetric bilinear form::
 
