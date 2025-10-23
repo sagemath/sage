@@ -1,5 +1,5 @@
 cd src
-CURL_CONFIGURE="--with-openssl $CURL_CONFIGURE"
+CURL_CONFIGURE="--with-openssl --without-libpsl $CURL_CONFIGURE"
 
 if [ "$SAGE_FAT_BINARY" = yes ]; then
     # Let's disable a bunch of stuff which might get linked.
