@@ -17,7 +17,7 @@ import os
 import time
 import hashlib
 import subprocess
-from sage.env import DOT_SAGE, HOSTNAME, GAP_ROOT_PATHS
+from sage.env import DOT_SAGE, HOSTNAME
 
 
 def gap_workspace_file(system='gap', name='workspace', dir=None):
@@ -60,15 +60,23 @@ def gap_workspace_file(system='gap', name='workspace', dir=None):
     if dir is None:
         dir = os.path.join(DOT_SAGE, 'gap')
 
-    data = f'{GAP_ROOT_PATHS}'
-    for path in GAP_ROOT_PATHS.split(";"):
-        if not path:
-            # If GAP_ROOT_PATHS begins or ends with a semicolon,
-            # we'll get one empty path.
-            continue
-        sysinfo = os.path.join(path, "sysinfo.gap")
-        if os.path.exists(sysinfo):
-            data += subprocess.getoutput(f'. "{sysinfo}" && echo ":$GAP_VERSION:$GAParch"')
+    # Use gap executable to get version and architecture info for workspace filename
+    data = ''
+    try:
+        import shutil
+        gap_exe = shutil.which('gap')
+        if gap_exe:
+            result = subprocess.run(
+                [gap_exe, '-r', '-q', '--bare', '--nointeract', '-c',
+                 'Display(Concatenation(GAPInfo.Version, ":", GAPInfo.Architecture));'],
+                capture_output=True, text=True, timeout=5
+            )
+            if result.returncode == 0:
+                data = result.stdout.strip()
+    except Exception:
+        # If we can't get GAP info, just use empty string
+        pass
+    
     h = hashlib.sha1(data.encode('utf-8')).hexdigest()
     return os.path.join(dir, f'{system}-{name}-{HOSTNAME}-{h}')
 

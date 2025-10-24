@@ -35,20 +35,6 @@ if openmp.found()
   conf_data.set('OPENMP_CXXFLAGS', '-fopenmp')
 endif
 gap_exe = find_program('gap', required: not is_windows, disabler: true)
-if gap_exe.found()
-  gaprun = run_command(
-    gap_exe,
-    '-r',
-    '-q',
-    '--bare',
-    '--nointeract',
-    '-c',
-    'Display(JoinStringsWithSeparator(GAPInfo.RootPaths,";"));',
-    check: true,
-  )
-  gap_root_paths = gaprun.stdout().strip()
-  conf_data.set('GAP_ROOT_PATHS', gap_root_paths)
-endif
 ecm_bin = find_program(
   ['ecm', 'gmp-ecm'],
   required: not is_windows,

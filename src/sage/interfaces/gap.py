@@ -203,7 +203,7 @@ import pexpect
 
 import sage.interfaces.abc
 from sage.cpython.string import bytes_to_str
-from sage.env import GAP_ROOT_PATHS, SAGE_EXTCODE, SAGE_GAP_COMMAND, SAGE_GAP_MEMORY
+from sage.env import SAGE_EXTCODE, SAGE_GAP_COMMAND, SAGE_GAP_MEMORY
 from sage.interfaces.expect import (
     Expect,
     ExpectElement,
@@ -225,7 +225,7 @@ if SAGE_GAP_COMMAND is None:
     # Passing -A allows us to use a minimal GAP installation without
     # producing errors at start-up. The files sage.g and sage.gaprc are
     # used to load any additional packages that may be available.
-    gap_cmd = f'gap -A -l "{GAP_ROOT_PATHS}"'
+    gap_cmd = 'gap -A'
     if SAGE_GAP_MEMORY is not None:
         gap_cmd += " -s " + SAGE_GAP_MEMORY + " -o " + SAGE_GAP_MEMORY
 else:

@@ -244,12 +244,6 @@ SAGE_IMPORTALL = var("SAGE_IMPORTALL", "yes")
 SAGE_GAP_MEMORY = var('SAGE_GAP_MEMORY', None)
 SAGE_GAP_COMMAND = var('SAGE_GAP_COMMAND', None)
 
-# The semicolon-separated search path for GAP packages. It is passed
-# directly to GAP via the -l flag.
-GAP_ROOT_PATHS = var("GAP_ROOT_PATHS",
-                     ";".join([join(SAGE_LOCAL, "lib", "gap"),
-                               join(SAGE_LOCAL, "share", "gap")]))
-
 # post process
 if DOT_SAGE is not None and ' ' in DOT_SAGE:
     print("Your home directory has a space in it.  This")
