@@ -752,13 +752,16 @@ class Hypergeometric(BuiltinFunction):
 
 _hypergeometric = Hypergeometric()
 
-def hypergeometric(a, b, x):
-    from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
-    from sage.rings.power_series_ring import PowerSeriesRing_generic
-    if isinstance(x.parent(), (PolynomialRing_generic, PowerSeriesRing_generic)):
-        from sage.functions.hypergeometric_algebraic import HypergeometricAlgebraic
-        return HypergeometricAlgebraic(a, b, x)
+def hypergeometric(a, b, x, scalar=None):
+    from sage.rings.polynomial.polynomial_element import Polynomial
+    from sage.rings.power_series_ring_element import PowerSeries
+    if isinstance(x, (Polynomial, PowerSeries)):
+        from sage.functions.hypergeometric_algebraic import Parameters, HypergeometricAlgebraic
+        parameters = Parameters(a, b)
+        return HypergeometricAlgebraic(parameters, x, scalar)
     else:
+        if scalar is not None:
+            raise ValueError
         return _hypergeometric(a, b, x)
 
 
