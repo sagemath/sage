@@ -182,7 +182,7 @@ cdef class UniqueFactory(SageObject):
     name ``'F'`` in the ``__main__`` module. Note that in an interactive
     session, ``F`` would automatically be in the ``__main__`` module. Hence,
     the second and third of the following four lines are only needed in
-    doctests.  ::
+    doctests. ::
 
         sage: F = MyFactory("__main__.F")
         sage: import __main__
@@ -261,7 +261,7 @@ cdef class UniqueFactory(SageObject):
     ``__dict__`` is not put into the pickle since unpickling either restores
     the object from the cache or reconstructs the object afresh. This defeats
     methods decorated with ``@cached_method(do_pickle=True)``. Hence
-    ``UniquFactory``makes exceptions to the placeholders for such methods::
+    ``UniquFactory`` makes exceptions to the placeholders for such methods::
 
         sage: # needs sage.rings.function_field
         sage: K.<x> = FunctionField(QQ); R.<y> = K[]
