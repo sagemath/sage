@@ -199,7 +199,7 @@ cdef extern from *:
         PyObject* func
         PyObject* args
         PyObject* kwargs
-    atexit_callback_struct** get_atexit_callbacks_array(object module)
+    atexit_callback_struct** get_atexit_callbacks_array(object module) except NULL
 
 
 def _get_exithandlers():
