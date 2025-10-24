@@ -212,7 +212,7 @@ def _get_exithandlers():
     
     # Python 3.14+ uses a PyList directly
     if sys.version_info >= (3, 14):
-        callbacks_list = <object>get_atexit_callbacks_list(atexit)
+        callbacks_list = get_atexit_callbacks_list(atexit)
         if callbacks_list is None:
             return exithandlers
         # callbacks is a list of tuples: [(func, args, kwargs), ...]
