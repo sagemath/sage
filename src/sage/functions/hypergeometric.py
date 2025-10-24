@@ -750,8 +750,16 @@ class Hypergeometric(BuiltinFunction):
                         return terms
             return ((1, new),)
 
+_hypergeometric = Hypergeometric()
 
-hypergeometric = Hypergeometric()
+def hypergeometric(a, b, x):
+    from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+    from sage.rings.power_series_ring import PowerSeriesRing_generic
+    if isinstance(x.parent(), (PolynomialRing_generic, PowerSeriesRing_generic)):
+        from sage.functions.hypergeometric_algebraic import HypergeometricAlgebraic
+        return HypergeometricAlgebraic(a, b, x)
+    else:
+        return _hypergeometric(a, b, x)
 
 
 def closed_form(hyp):
