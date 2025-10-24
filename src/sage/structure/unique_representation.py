@@ -615,9 +615,13 @@ class WithPicklingByInitArgs(metaclass=ClasscallMetaclass):
 
             sage: x = UniqueRepresentation()
             sage: x.__reduce__()          # indirect doctest
-            (<function unreduce at ...>, (<class 'sage.structure.unique_representation.UniqueRepresentation'>, (), {}), {})
+            (<function unreduce at ...>,
+             (<class 'sage.structure.unique_representation.UniqueRepresentation'>, (), {}))
         """
-        return (unreduce, self._reduction, self.__getstate__())
+        d = self.__getstate__()
+        if d:
+            return (unreduce, self._reduction, d)
+        return (unreduce, self._reduction)
 
     def __copy__(self):
         """
@@ -1030,7 +1034,7 @@ class CachedRepresentation(WithPicklingByInitArgs):
 
         sage: x = MyClass(value = 1)
         sage: x.__reduce__()
-        (<function unreduce at ...>, (<class '__main__.MyClass'>, (), {'value': 1}), {})
+        (<function unreduce at ...>, (<class '__main__.MyClass'>, (), {'value': 1}))
         sage: x is loads(dumps(x))
         True
 
