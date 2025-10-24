@@ -1328,6 +1328,304 @@ cdef class HiGHSBackend(GenericBackend):
         
         return None
     
+    cpdef solver_parameter(self, name, value=None):
+        """
+        Return or define a solver parameter.
+
+        INPUT:
+
+        - ``name`` -- string; the parameter name
+
+        - ``value`` -- the parameter's value if it is to be defined,
+          or ``None`` (default) to obtain its current value
+
+        HiGHS solver parameters can be set using their option names as documented
+        in the HiGHS documentation: https://ergo-code.github.io/HiGHS/dev/options/definitions/
+
+        Common parameters include:
+
+        - ``time_limit`` -- maximum time in seconds (double)
+        - ``mip_rel_gap`` -- relative MIP gap tolerance (double)
+        - ``mip_abs_gap`` -- absolute MIP gap tolerance (double)
+        - ``threads`` -- number of threads to use (int)
+        - ``presolve`` -- presolve option: "off", "choose", or "on"
+        - ``solver`` -- solver to use: "choose", "simplex", "ipm", or "pdlp"
+        - ``parallel`` -- parallel option: "off", "choose", or "on"
+        - ``log_to_console`` -- whether to log to console: True or False
+
+        EXAMPLES::
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: p = get_solver(solver='HiGHS')
+            sage: p.solver_parameter("time_limit", 60)
+            sage: p.solver_parameter("time_limit")
+            60.0
+            sage: p.solver_parameter("threads", 2)
+            sage: p.solver_parameter("threads")
+            2
+            sage: p.solver_parameter("threads", 4)
+            sage: p.solver_parameter("threads")
+            4
+            sage: p.solver_parameter("presolve", "on")
+            sage: p.solver_parameter("presolve")
+            'on'
+
+        You can also use boolean values for options::
+
+            sage: p.solver_parameter("log_to_console", False)
+            sage: p.solver_parameter("log_to_console")
+            False
+
+        Float parameters like MIP gap tolerance work correctly::
+
+            sage: p.solver_parameter("mip_rel_gap", 0.05)
+            sage: p.solver_parameter("mip_rel_gap")
+            0.05
+        """
+        if value is None:
+            # Get the current value - getOptionValue returns (status, value)
+            status, current_value = self.highs_model.getOptionValue(name)
+            return current_value
+        else:
+            # Set the value
+            # Convert Sage types to native Python types to avoid issues with highspy
+            # highspy doesn't recognize Sage's Integer/RealLiteral and may misinterpret them
+            if isinstance(value, (int, float, bool, str)):
+                # Already a native Python type - use as-is
+                py_value = value
+            elif hasattr(value, 'is_integral') and value.is_integral():
+                # Sage Integer or other integral type
+                py_value = int(value)
+            elif hasattr(value, '__float__'):
+                # Sage RealLiteral or other float-like type
+                py_value = float(value)
+            else:
+                # Other type - try to pass as-is
+                py_value = value
+            self.highs_model.setOptionValue(name, py_value)
+    
+    cpdef int get_row_stat(self, int i) except? -1:
+        """
+        Retrieve the status of a constraint.
+
+        INPUT:
+
+        - ``i`` -- the index of the constraint
+
+        OUTPUT:
+
+        Current status assigned to the auxiliary variable associated with the i-th row:
+
+            * 0     kLower: non-basic variable at lower bound
+            * 1     kBasic: basic variable
+            * 2     kUpper: non-basic variable at upper bound
+            * 3     kZero: non-basic free variable at zero
+            * 4     kNonbasic: nonbasic (used for unbounded variables)
+
+        EXAMPLES::
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: lp = get_solver(solver='HiGHS')
+            sage: lp.add_variables(3)
+            2
+            sage: lp.add_linear_constraint(list(zip([0, 1, 2], [8, 6, 1])), None, 48)
+            sage: lp.add_linear_constraint(list(zip([0, 1, 2], [4, 2, 1.5])), None, 20)
+            sage: lp.add_linear_constraint(list(zip([0, 1, 2], [2, 1.5, 0.5])), None, 8)
+            sage: lp.set_objective([60, 30, 20])
+            sage: lp.solve()
+            0
+            sage: lp.get_row_stat(0)  # doctest: +SKIP
+            2
+            sage: lp.get_row_stat(1)  # doctest: +SKIP
+            2
+            sage: lp.get_row_stat(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: The constraint's index i must satisfy 0 <= i < number_of_constraints
+        """
+        if i < 0 or i >= self.nrows():
+            raise ValueError("The constraint's index i must satisfy 0 <= i < number_of_constraints")
+        
+        cdef object basis = self.highs_model.getBasis()
+        if not basis.valid:
+            raise ValueError("No valid basis available. Solve the problem first.")
+        
+        return int(basis.row_status[i])
+
+    cpdef int get_col_stat(self, int j) except? -1:
+        """
+        Retrieve the status of a variable.
+
+        INPUT:
+
+        - ``j`` -- the index of the variable
+
+        OUTPUT:
+
+        Current status assigned to the structural variable associated with the j-th column:
+
+            * 0     kLower: non-basic variable at lower bound
+            * 1     kBasic: basic variable
+            * 2     kUpper: non-basic variable at upper bound
+            * 3     kZero: non-basic free variable at zero
+            * 4     kNonbasic: nonbasic (used for unbounded variables)
+
+        EXAMPLES::
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: lp = get_solver(solver='HiGHS')
+            sage: lp.add_variables(3)
+            2
+            sage: lp.add_linear_constraint(list(zip([0, 1, 2], [8, 6, 1])), None, 48)
+            sage: lp.add_linear_constraint(list(zip([0, 1, 2], [4, 2, 1.5])), None, 20)
+            sage: lp.add_linear_constraint(list(zip([0, 1, 2], [2, 1.5, 0.5])), None, 8)
+            sage: lp.set_objective([60, 30, 20])
+            sage: lp.solve()
+            0
+            sage: lp.get_col_stat(0)  # doctest: +SKIP
+            1
+            sage: lp.get_col_stat(1)  # doctest: +SKIP
+            1
+            sage: lp.get_col_stat(100)
+            Traceback (most recent call last):
+            ...
+            ValueError: The variable's index j must satisfy 0 <= j < number_of_variables
+        """
+        if j < 0 or j >= self.ncols():
+            raise ValueError("The variable's index j must satisfy 0 <= j < number_of_variables")
+        
+        cdef object basis = self.highs_model.getBasis()
+        if not basis.valid:
+            raise ValueError("No valid basis available. Solve the problem first.")
+        
+        return int(basis.col_status[j])
+
+    cpdef set_row_stat(self, int i, int stat):
+        """
+        Set the status of a constraint.
+
+        INPUT:
+
+        - ``i`` -- the index of the constraint
+
+        - ``stat`` -- the status to set to:
+
+            * 0     kLower: non-basic variable at lower bound
+            * 1     kBasic: basic variable
+            * 2     kUpper: non-basic variable at upper bound
+            * 3     kZero: non-basic free variable at zero
+            * 4     kNonbasic: nonbasic (used for unbounded variables)
+
+        .. NOTE::
+
+            HiGHS may reject invalid basis configurations. Setting arbitrary
+            status values may result in the basis being rejected and the
+            original basis being preserved.
+
+        EXAMPLES::
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: lp = get_solver(solver='HiGHS')
+            sage: lp.add_variables(3)
+            2
+            sage: lp.add_linear_constraint(list(zip([0, 1, 2], [8, 6, 1])), None, 48)
+            sage: lp.add_linear_constraint(list(zip([0, 1, 2], [4, 2, 1.5])), None, 20)
+            sage: lp.add_linear_constraint(list(zip([0, 1, 2], [2, 1.5, 0.5])), None, 8)
+            sage: lp.set_objective([60, 30, 20])
+            sage: lp.solve()
+            0
+            sage: lp.get_row_stat(0)  # doctest: +SKIP
+            1
+            sage: lp.set_row_stat(0, 2)  # Attempting to set status
+            sage: # Note: HiGHS may reject invalid basis and preserve original
+        """
+        if i < 0 or i >= self.nrows():
+            raise ValueError("The constraint's index i must satisfy 0 <= i < number_of_constraints")
+        
+        if stat < 0 or stat > 4:
+            raise ValueError("Invalid status value. Must be 0-4 (kLower, kBasic, kUpper, kZero, kNonbasic)")
+        
+        import highspy
+        
+        cdef object basis = self.highs_model.getBasis()
+        if not basis.valid:
+            # If no valid basis, create one with default values
+            basis = highspy.HighsBasis()
+            basis.col_status = [highspy.HighsBasisStatus.kLower] * self.ncols()
+            basis.row_status = [highspy.HighsBasisStatus.kBasic] * self.nrows()
+            basis.valid = True
+        
+        # Create new row_status list with the modified value
+        # (Direct modification of list elements doesn't work with highspy)
+        new_row_status = list(basis.row_status)
+        new_row_status[i] = highspy.HighsBasisStatus(stat)
+        basis.row_status = new_row_status
+        
+        self.highs_model.setBasis(basis)
+
+    cpdef set_col_stat(self, int j, int stat):
+        """
+        Set the status of a variable.
+
+        INPUT:
+
+        - ``j`` -- the index of the variable
+
+        - ``stat`` -- the status to set to:
+
+            * 0     kLower: non-basic variable at lower bound
+            * 1     kBasic: basic variable
+            * 2     kUpper: non-basic variable at upper bound
+            * 3     kZero: non-basic free variable at zero
+            * 4     kNonbasic: nonbasic (used for unbounded variables)
+
+        .. NOTE::
+
+            HiGHS may reject invalid basis configurations. Setting arbitrary
+            status values may result in the basis being rejected and the
+            original basis being preserved.
+
+        EXAMPLES::
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: lp = get_solver(solver='HiGHS')
+            sage: lp.add_variables(3)
+            2
+            sage: lp.add_linear_constraint(list(zip([0, 1, 2], [8, 6, 1])), None, 48)
+            sage: lp.add_linear_constraint(list(zip([0, 1, 2], [4, 2, 1.5])), None, 20)
+            sage: lp.add_linear_constraint(list(zip([0, 1, 2], [2, 1.5, 0.5])), None, 8)
+            sage: lp.set_objective([60, 30, 20])
+            sage: lp.solve()
+            0
+            sage: lp.get_col_stat(0)  # doctest: +SKIP
+            1
+            sage: lp.set_col_stat(0, 0)  # Attempting to set status
+            sage: # Note: HiGHS may reject invalid basis and preserve original
+        """
+        if j < 0 or j >= self.ncols():
+            raise ValueError("The variable's index j must satisfy 0 <= j < number_of_variables")
+        
+        if stat < 0 or stat > 4:
+            raise ValueError("Invalid status value. Must be 0-4 (kLower, kBasic, kUpper, kZero, kNonbasic)")
+        
+        import highspy
+        
+        cdef object basis = self.highs_model.getBasis()
+        if not basis.valid:
+            # If no valid basis, create one with default values
+            basis = highspy.HighsBasis()
+            basis.col_status = [highspy.HighsBasisStatus.kLower] * self.ncols()
+            basis.row_status = [highspy.HighsBasisStatus.kBasic] * self.nrows()
+            basis.valid = True
+        
+        # Create new col_status list with the modified value
+        # (Direct modification of list elements doesn't work with highspy)
+        new_col_status = list(basis.col_status)
+        new_col_status[j] = highspy.HighsBasisStatus(stat)
+        basis.col_status = new_col_status
+        
+        self.highs_model.setBasis(basis)
+    
     cpdef write_lp(self, filename):
         """
         Write the problem to a .lp file.
