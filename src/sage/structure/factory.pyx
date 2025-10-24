@@ -756,8 +756,8 @@ def generic_factory_getstate(obj):
     """
     Used for pickling :class:`UniqueFactory` objects.
 
-    The cached value of the method with ``do_pickle=True`` is put into the
-    state with which the object is pickled.
+    The cached value of the method with ``do_pickle=True`` is pickled
+    along with the object.
 
     TESTS::
 
@@ -777,6 +777,10 @@ def generic_factory_getstate(obj):
         sage: Fp.genus.cache
         4
     """
+    # We filter out cached-method placeholders (CachedFunction) with
+    # do_pickle=True in __dict__ to keep them as the state of the pickled object.
+    #
+    # Note that the same code is used to get the state of UniqueRepresentation objects.
     from sage.misc.cachefunc import CachedFunction
     d = {}
     try:

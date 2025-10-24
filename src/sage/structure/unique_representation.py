@@ -656,8 +656,8 @@ class WithPicklingByInitArgs(metaclass=ClasscallMetaclass):
         dictionary when pickled, because the object is restored from the cache
         or reconstructed afresh upon unpickling.
 
-        Here we make some exceptions so that cached functions with
-        ``do_pickle=True`` attached to an object are kept in the pickle.
+        Cached-methods with ``do_pickle=True`` are exceptions and included to
+        the state of the pickled object.
 
         EXAMPLES::
 
@@ -682,6 +682,10 @@ class WithPicklingByInitArgs(metaclass=ClasscallMetaclass):
             sage: b.genus.cache
             3
         """
+        # We filter out cached-method placeholders (CachedFunction) with
+        # do_pickle=True in __dict__ to keep them as the state of the pickled object.
+        #
+        # Note that the same code is used to get the state of UniqueFactory objects.
         from sage.misc.cachefunc import CachedFunction
         d = {}
         try:
