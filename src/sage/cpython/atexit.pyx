@@ -193,7 +193,7 @@ cdef extern from *:
     #endif
     """
     # Declare both functions - they exist in all Python versions (one is dummy)
-    PyObject* get_atexit_callbacks_list(object module)
+    object get_atexit_callbacks_list(object module)
     
     ctypedef struct atexit_callback_struct:
         PyObject* func
