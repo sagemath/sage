@@ -337,7 +337,7 @@ cdef class HiGHSBackend(GenericBackend):
 
         INPUT:
 
-        - ``level`` -- integer; from 0 (no verbosity) to 3
+        - ``level`` -- integer; from 0 (no verbosity) to 1
 
         EXAMPLES::
 
@@ -346,9 +346,12 @@ cdef class HiGHSBackend(GenericBackend):
             sage: p.set_verbosity(0)            
         """
         # HiGHS uses different verbosity levels
-        self.highs_model.setOptionValue("log_to_console", False)
-        if level > 0:
+        if int(level) == 0:
+            self.highs_model.setOptionValue("log_to_console", False)
+        elif int(level) == 1:
             self.highs_model.setOptionValue("log_to_console", True)
+        else:
+            raise ValueError("HiGHS supports verbosity levels 0 and 1 only.")
     
     cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name=None):
         """
@@ -453,6 +456,117 @@ cdef class HiGHSBackend(GenericBackend):
                     self.row_name_var[name] = self.numrows
             
             self.numrows += 1
+    
+    cpdef remove_constraint(self, int i):
+        r"""
+        Remove a constraint from ``self``.
+
+        INPUT:
+
+        - ``i`` -- index of the constraint to remove
+
+        EXAMPLES::
+
+            sage: p = MixedIntegerLinearProgram(solver='HiGHS')
+            sage: x, y = p['x'], p['y']
+            sage: p.add_constraint(2*x + 3*y <= 6)
+            sage: p.add_constraint(3*x + 2*y <= 6)
+            sage: p.add_constraint(x >= 0)
+            sage: p.set_objective(x + y + 7)
+            sage: p.set_integer(x); p.set_integer(y)
+            sage: p.solve()
+            9.0
+            sage: p.remove_constraint(0)
+            sage: p.solve()
+            10.0
+
+        Removing fancy constraints does not make Sage crash::
+
+            sage: MixedIntegerLinearProgram(solver = "HiGHS").remove_constraint(-2)
+            Traceback (most recent call last):
+            ...
+            ValueError: The constraint's index i must satisfy 0 <= i < number_of_constraints
+        """
+        if i < 0 or i >= self.nrows():
+            raise ValueError("The constraint's index i must satisfy 0 <= i < number_of_constraints")
+
+        import numpy as np
+        # HiGHS deleteRows expects num_rows and an array of row indices
+        rows_to_delete = np.array([i], dtype=np.int32)
+        self.highs_model.deleteRows(1, rows_to_delete)
+        
+        # Update the number of rows
+        self.numrows -= 1
+        
+        # Update the row_data_cache: shift all rows after i down by one
+        new_cache = {}
+        for row_idx, data in self.row_data_cache.items():
+            if row_idx < i:
+                new_cache[row_idx] = data
+            elif row_idx > i:
+                new_cache[row_idx - 1] = data
+            # row_idx == i is removed, don't add to new_cache
+        self.row_data_cache = new_cache
+        
+        # Update the row_name_var mapping
+        names_to_update = {}
+        names_to_remove = []
+        for name, row_idx in self.row_name_var.items():
+            if row_idx < i:
+                names_to_update[name] = row_idx
+            elif row_idx > i:
+                names_to_update[name] = row_idx - 1
+            else:  # row_idx == i
+                names_to_remove.append(name)
+        
+        for name in names_to_remove:
+            del self.row_name_var[name]
+        self.row_name_var.update(names_to_update)
+
+    cpdef remove_constraints(self, constraints):
+        r"""
+        Remove several constraints.
+
+        INPUT:
+
+        - ``constraints`` -- an iterable containing the indices of the rows to remove
+
+        EXAMPLES::
+
+            sage: p = MixedIntegerLinearProgram(solver='HiGHS')
+            sage: x, y = p['x'], p['y']
+            sage: p.add_constraint(2*x + 3*y <= 6)
+            sage: p.add_constraint(3*x + 2*y <= 6)
+            sage: p.add_constraint(x >= 0)
+            sage: p.set_objective(x + y + 7)
+            sage: p.set_integer(x); p.set_integer(y)
+            sage: p.solve()
+            9.0
+            sage: p.remove_constraints([0])
+            sage: p.solve()
+            10.0
+            sage: p.get_values([x,y])
+            [-0.0, 3.0]
+
+        TESTS:
+
+        Removing fancy constraints does not make Sage crash::
+
+            sage: MixedIntegerLinearProgram(solver="HiGHS").remove_constraints([0, -2])
+            Traceback (most recent call last):
+            ...
+            ValueError: The constraint's index i must satisfy 0 <= i < number_of_constraints
+        """
+        if isinstance(constraints, int):
+            self.remove_constraint(constraints)
+            return
+
+        cdef int last = self.nrows() + 1
+
+        for c in sorted(constraints, reverse=True):
+            if c != last:
+                self.remove_constraint(c)
+                last = c
     
     cpdef int solve(self) except -1:
         """
@@ -587,6 +701,22 @@ cdef class HiGHSBackend(GenericBackend):
             0
             sage: p.best_known_objective_bound()
             2.0
+
+        TESTS::
+            sage: # needs sage.graphs
+            sage: g = graphs.CubeGraph(9)
+            sage: p = MixedIntegerLinearProgram(solver='HiGHS')
+            sage: p.solver_parameter("mip_rel_gap",100)
+            sage: b = p.new_variable(binary=True)
+            sage: p.set_objective(p.sum(b[v] for v in g))
+            sage: for v in g:
+            ....:     p.add_constraint(b[v]+p.sum(b[u] for u in g.neighbors(v)) <= 1)
+            sage: p.add_constraint(b[v] == 1) # Force an easy non-0 solution
+            sage: p.solve() # rel tol 100
+            2.0
+            sage: backend = p.get_backend()
+            sage: backend.best_known_objective_bound()
+            48.0
         """
         import highspy
         info = self.highs_model.getInfo()
@@ -1482,10 +1612,10 @@ cdef class HiGHSBackend(GenericBackend):
             sage: lp.set_objective([60, 30, 20])
             sage: lp.solve()
             0
-            sage: lp.get_col_stat(0)  # doctest: +SKIP
+            sage: lp.get_col_stat(0)
             1
-            sage: lp.get_col_stat(1)  # doctest: +SKIP
-            1
+            sage: lp.get_col_stat(1)
+            0
             sage: lp.get_col_stat(100)
             Traceback (most recent call last):
             ...
@@ -1534,10 +1664,14 @@ cdef class HiGHSBackend(GenericBackend):
             sage: lp.set_objective([60, 30, 20])
             sage: lp.solve()
             0
-            sage: lp.get_row_stat(0)  # doctest: +SKIP
+            sage: lp.get_row_stat(0)  
             1
-            sage: lp.set_row_stat(0, 2)  # Attempting to set status
-            sage: # Note: HiGHS may reject invalid basis and preserve original
+            sage: lp.set_col_stat(0, 2)
+            sage: lp.get_col_stat(0)
+            2
+            sage: lp.set_row_stat(0, 3)  
+            sage: lp.get_row_stat(0)  
+            3
         """
         if i < 0 or i >= self.nrows():
             raise ValueError("The constraint's index i must satisfy 0 <= i < number_of_constraints")
@@ -1547,21 +1681,34 @@ cdef class HiGHSBackend(GenericBackend):
         
         import highspy
         
-        cdef object basis = self.highs_model.getBasis()
-        if not basis.valid:
-            # If no valid basis, create one with default values
-            basis = highspy.HighsBasis()
-            basis.col_status = [highspy.HighsBasisStatus.kLower] * self.ncols()
-            basis.row_status = [highspy.HighsBasisStatus.kBasic] * self.nrows()
-            basis.valid = True
+        cdef object old_basis = self.highs_model.getBasis()
         
-        # Create new row_status list with the modified value
-        # (Direct modification of list elements doesn't work with highspy)
-        new_row_status = list(basis.row_status)
-        new_row_status[i] = highspy.HighsBasisStatus(stat)
-        basis.row_status = new_row_status
+        # Create a fresh HighsBasis object to avoid issues with modifying retrieved basis
+        cdef object new_basis = highspy.HighsBasis()
+        new_basis.valid = True
         
-        self.highs_model.setBasis(basis)
+        # Build new status lists - must create the complete list first before assigning
+        # because modifying individual elements after assignment doesn't work with highspy
+        cdef list new_row_status
+        cdef list new_col_status
+        
+        if old_basis.valid:
+            # Copy existing statuses and modify the specific row
+            new_col_status = [s for s in old_basis.col_status]
+            new_row_status = [highspy.HighsBasisStatus(s) if j != i else highspy.HighsBasisStatus(stat)
+                             for j, s in enumerate(old_basis.row_status)]
+        else:
+            # If no valid basis exists, create default values
+            new_col_status = [highspy.HighsBasisStatus.kLower for _ in range(self.ncols())]
+            new_row_status = [highspy.HighsBasisStatus.kBasic if j != i else highspy.HighsBasisStatus(stat)
+                             for j in range(self.nrows())]
+        
+        # Assign the complete lists to the new basis
+        new_basis.col_status = new_col_status
+        new_basis.row_status = new_row_status
+        
+        # Set the new basis
+        self.highs_model.setBasis(new_basis)
 
     cpdef set_col_stat(self, int j, int stat):
         """
@@ -1597,10 +1744,11 @@ cdef class HiGHSBackend(GenericBackend):
             sage: lp.set_objective([60, 30, 20])
             sage: lp.solve()
             0
-            sage: lp.get_col_stat(0)  # doctest: +SKIP
+            sage: lp.get_col_stat(0)  
             1
-            sage: lp.set_col_stat(0, 0)  # Attempting to set status
-            sage: # Note: HiGHS may reject invalid basis and preserve original
+            sage: lp.set_col_stat(0, 2)  
+            sage: lp.get_col_stat(0)  
+            2
         """
         if j < 0 or j >= self.ncols():
             raise ValueError("The variable's index j must satisfy 0 <= j < number_of_variables")
@@ -1610,21 +1758,79 @@ cdef class HiGHSBackend(GenericBackend):
         
         import highspy
         
+        cdef object old_basis = self.highs_model.getBasis()
+        
+        # Create a fresh HighsBasis object to avoid issues with modifying retrieved basis
+        cdef object new_basis = highspy.HighsBasis()
+        new_basis.valid = True
+        
+        # Build new status lists - must create the complete list first before assigning
+        # because modifying individual elements after assignment doesn't work with highspy
+        cdef list new_col_status
+        cdef list new_row_status
+        
+        if old_basis.valid:
+            # Copy existing statuses and modify the specific column
+            new_col_status = [highspy.HighsBasisStatus(s) if k != j else highspy.HighsBasisStatus(stat)
+                             for k, s in enumerate(old_basis.col_status)]
+            new_row_status = [s for s in old_basis.row_status]
+        else:
+            # If no valid basis exists, create default values
+            new_col_status = [highspy.HighsBasisStatus.kLower if k != j else highspy.HighsBasisStatus(stat)
+                             for k in range(self.ncols())]
+            new_row_status = [highspy.HighsBasisStatus.kBasic for _ in range(self.nrows())]
+        
+        # Assign the complete lists to the new basis
+        new_basis.col_status = new_col_status
+        new_basis.row_status = new_row_status
+        
+        # Set the new basis
+        self.highs_model.setBasis(new_basis)
+    
+    cpdef int warm_up(self) noexcept:
+        r"""
+        Warm up the basis using current statuses assigned to rows and cols.
+
+        This method attempts to validate and use the currently set basis.
+        In HiGHS, setting a basis automatically attempts to factorize it,
+        so this method checks if the current basis is valid.
+
+        OUTPUT: the warming up status
+
+            * 0             The operation has been successfully performed.
+            * -1            The basis is invalid or could not be factorized.
+
+        EXAMPLES::
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: lp = get_solver(solver = "HiGHS")
+            sage: lp.add_variables(3)
+            2
+            sage: lp.add_linear_constraint(list(zip([0, 1, 2], [8, 6, 1])), None, 48)
+            sage: lp.add_linear_constraint(list(zip([0, 1, 2], [4, 2, 1.5])), None, 20)
+            sage: lp.add_linear_constraint(list(zip([0, 1, 2], [2, 1.5, 0.5])), None, 8)
+            sage: lp.set_objective([60, 30, 20])
+            sage: lp.solve()
+            0
+            sage: lp.get_objective_value()
+            280.0
+            sage: lp.set_row_stat(0, 3)
+            sage: lp.set_col_stat(1, 1)
+            sage: lp.warm_up()
+            0
+        """
+        import highspy
+        
+        # Get the current basis
         cdef object basis = self.highs_model.getBasis()
+        
+        # Check if the basis is valid
         if not basis.valid:
-            # If no valid basis, create one with default values
-            basis = highspy.HighsBasis()
-            basis.col_status = [highspy.HighsBasisStatus.kLower] * self.ncols()
-            basis.row_status = [highspy.HighsBasisStatus.kBasic] * self.nrows()
-            basis.valid = True
+            return -1
         
-        # Create new col_status list with the modified value
-        # (Direct modification of list elements doesn't work with highspy)
-        new_col_status = list(basis.col_status)
-        new_col_status[j] = highspy.HighsBasisStatus(stat)
-        basis.col_status = new_col_status
-        
-        self.highs_model.setBasis(basis)
+        # In HiGHS, setting a basis already validates it
+        # So if we have a valid basis, we're good
+        return 0
     
     cpdef write_lp(self, filename):
         """
