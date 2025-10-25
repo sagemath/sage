@@ -831,6 +831,114 @@ cdef class HiGHSBackend(GenericBackend):
         solution = self.highs_model.getSolution()
         return solution.row_value[i]
     
+    cpdef double get_row_dual(self, int i) except? -1:
+        r"""
+        Return the dual value of a constraint.
+
+        The dual value of the i-th row is also the value of the i-th variable
+        of the dual problem.
+
+        The dual value of a constraint is the shadow price of the constraint.
+        The shadow price is the amount by which the objective value will change
+        if the constraint's bounds change by one unit under the precondition
+        that the basis remains the same.
+
+        INPUT:
+
+        - ``i`` -- the index of the constraint
+
+        .. NOTE::
+
+           Behaviour is undefined unless ``solve`` has been called before.
+
+        EXAMPLES::
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: lp = get_solver(solver='HiGHS')
+            sage: lp.add_variables(3)
+            2
+            sage: lp.add_linear_constraint(list(zip([0, 1, 2], [8, 6, 1])), None, 48)
+            sage: lp.add_linear_constraint(list(zip([0, 1, 2], [4, 2, 1.5])), None, 20)
+            sage: lp.add_linear_constraint(list(zip([0, 1, 2], [2, 1.5, 0.5])), None, 8)
+            sage: lp.set_objective([60, 30, 20])
+            sage: lp.solve()
+            0
+            sage: lp.get_row_dual(0)   # tol 1e-6
+            0.0
+            sage: lp.get_row_dual(1)   # tol 1e-6
+            10.0
+            sage: lp.get_row_dual(2)   # tol 1e-6
+            10.0
+
+        TESTS:
+
+        We sanity check the input::
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: p = get_solver(solver='HiGHS')
+            sage: p.get_row_dual(2)
+            Traceback (most recent call last):
+            ...
+            ValueError: invalid row index 2
+        """
+        if i < 0 or i >= self.nrows():
+            raise ValueError(f"invalid row index {i}")
+        
+        solution = self.highs_model.getSolution()
+        return solution.row_dual[i]
+    
+    cpdef double get_col_dual(self, int j) except? -1:
+        """
+        Return the dual value (reduced cost) of a variable.
+
+        The dual value is the reduced cost of a variable.
+        The reduced cost is the amount by which the objective coefficient
+        of a non-basic variable has to change to become a basic variable.
+
+        INPUT:
+
+        - ``j`` -- the index of the variable
+
+        .. NOTE::
+
+           Behaviour is undefined unless ``solve`` has been called before.
+
+        EXAMPLES::
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: p = get_solver(solver='HiGHS')
+            sage: p.add_variables(3)
+            2
+            sage: p.add_linear_constraint(list(zip([0, 1, 2], [8, 6, 1])), None, 48)
+            sage: p.add_linear_constraint(list(zip([0, 1, 2], [4, 2, 1.5])), None, 20)
+            sage: p.add_linear_constraint(list(zip([0, 1, 2], [2, 1.5, 0.5])), None, 8)
+            sage: p.set_objective([60, 30, 20])
+            sage: p.solve()
+            0
+            sage: p.get_col_dual(0)    # tol 1e-6
+            0.0
+            sage: p.get_col_dual(1)    # tol 1e-6
+            -5.0
+            sage: p.get_col_dual(2)    # tol 1e-6
+            0.0
+
+        TESTS:
+
+        We sanity check the input::
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: p = get_solver(solver='HiGHS')
+            sage: p.get_col_dual(2)
+            Traceback (most recent call last):
+            ...
+            ValueError: invalid column index 2
+        """
+        if j < 0 or j >= self.ncols():
+            raise ValueError(f"invalid column index {j}")
+        
+        solution = self.highs_model.getSolution()
+        return solution.col_dual[j]
+    
     cpdef int ncols(self) noexcept:
         """
         Return the number of columns/variables.
