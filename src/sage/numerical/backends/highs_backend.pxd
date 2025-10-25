@@ -24,3 +24,4 @@ cdef class HiGHSBackend(GenericBackend):
     cpdef int get_col_stat(self, int j) except? -1
     cpdef set_row_stat(self, int i, int stat)
     cpdef set_col_stat(self, int j, int stat)
+    cpdef int warm_up(self) noexcept
