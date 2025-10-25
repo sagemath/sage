@@ -20,6 +20,8 @@ cdef class HiGHSBackend(GenericBackend):
     cdef int numrows
     cpdef __copy__(self)
     cpdef get_row_prim(self, int i)
+    cpdef double get_row_dual(self, int i) except? -1
+    cpdef double get_col_dual(self, int j) except? -1
     cpdef int get_row_stat(self, int i) except? -1
     cpdef int get_col_stat(self, int j) except? -1
     cpdef set_row_stat(self, int i, int stat)
