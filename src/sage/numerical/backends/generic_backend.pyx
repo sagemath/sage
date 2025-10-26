@@ -1633,7 +1633,7 @@ def default_mip_solver(solver=None):
             return default_solver
 
         else:
-            for s in ["Cplex", "Gurobi", "Cvxpy/cbc", "Coin", "Glpk", "SCIP"]:
+            for s in ["Cplex", "Gurobi", "Cvxpy/cbc", "Coin", "Glpk", "Highs", "SCIP"]:
                 try:
                     default_mip_solver(s)
                     return s
@@ -1684,6 +1684,13 @@ def default_mip_solver(solver=None):
     elif solver == "Glpk" or solver == "Glpk/exact":
         default_solver = solver
 
+    elif solver == "Highs":
+        try:
+            from sage.numerical.backends.highs_backend import HiGHSBackend
+            default_solver = solver
+        except ImportError:
+            raise ValueError("HiGHS is not available. Please refer to the documentation to install it.")
+
     elif solver == "Interactivelp":
         default_solver = solver
 
@@ -1713,7 +1720,7 @@ def default_mip_solver(solver=None):
             raise ValueError("SCIP is not available. Please refer to the documentation to install it.")
 
     else:
-        raise ValueError("'solver' should be set to 'GLPK', 'Coin', 'CPLEX', 'CVXOPT', 'CVXPY', 'Gurobi', 'PPL', 'SCIP', 'InteractiveLP', a callable, or None.")
+        raise ValueError("'solver' should be set to 'GLPK', 'HiGHS', 'Coin', 'CPLEX', 'CVXOPT', 'CVXPY', 'Gurobi', 'PPL', 'SCIP', 'InteractiveLP', a callable, or None.")
 
 
 cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_ring=None):
@@ -1852,6 +1859,10 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
         from sage.numerical.backends.glpk_exact_backend import GLPKExactBackend
         return GLPKExactBackend()
 
+    elif solver == "Highs":
+        from sage.numerical.backends.highs_backend import HiGHSBackend
+        return HiGHSBackend()
+
     elif solver == "Cplex":
         from sage_numerical_backends_cplex.cplex_backend import CPLEXBackend
         return CPLEXBackend()
@@ -1884,4 +1895,4 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
         return SCIPBackend()
 
     else:
-        raise ValueError("'solver' should be set to 'GLPK', 'GLPK/exact', 'Coin', 'CPLEX', 'CVXOPT', 'CVXPY', 'Gurobi', 'PPL', 'SCIP', 'InteractiveLP', None (in which case the default one is used), or a callable.")
+        raise ValueError("'solver' should be set to 'GLPK', 'GLPK/exact', 'Coin', 'CPLEX', 'CVXOPT', 'CVXPY', 'Gurobi', 'HiGHS', 'PPL', 'SCIP', 'InteractiveLP', None (in which case the default one is used), or a callable.")
