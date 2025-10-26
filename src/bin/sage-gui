@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Sage GUI startup script.
+"""
+
+# Display startup banner
+from sage.misc.banner import banner
+banner()
+
+# Import and start the GUI
+from sage.gui.app import main
+
+if __name__ == "__main__":
+    main()
