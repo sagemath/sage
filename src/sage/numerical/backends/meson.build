@@ -64,7 +64,7 @@ foreach name, pyx : extension_data
     sources: pyx,
     subdir: 'sage/numerical/backends',
     install: true,
-    include_directories: [inc_cpython, inc_rings],
+    include_directories: [inc_cpython, inc_rings, highs_inc],
     dependencies: [py_dep, cysignals, glpk, highs, gmp],
   )
 endforeach
