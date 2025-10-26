@@ -459,8 +459,9 @@ class SageArgSpecVisitor(ast.NodeVisitor):
         sage: v = visitor.visit(ast.parse("{'a':('e',2,[None,({False:True},'pi')]), 37.0:'temp'}").body[0].value)
         sage: sorted(v.items(), key=lambda x: str(x[0]))
         [(37.0, 'temp'), ('a', ('e', 2, [None, ({False: True}, 'pi')]))]
-        sage: v = ast.parse("jc = ['veni', 'vidi', 'vici']").body[0]; v
-        <...ast.Assign object at ...>
+        sage: v = ast.parse("jc = ['veni', 'vidi', 'vici']").body[0]
+        sage: isinstance(v, ast.Assign)
+        True
         sage: attrs = [x for x in dir(v) if not x.startswith('__')]
         sage: '_attributes' in attrs and '_fields' in attrs and 'col_offset' in attrs
         True
@@ -491,31 +492,6 @@ class SageArgSpecVisitor(ast.NodeVisitor):
         """
         return node.id
 
-    def visit_NameConstant(self, node):
-        """
-        Visit a Python AST :class:`ast.NameConstant` node.
-
-        This is an optimization added in Python 3.4 for the special cases
-        of True, False, and None.
-
-        INPUT:
-
-        - ``node`` -- the node instance to visit
-
-        OUTPUT: ``None``, ``True``, ``False``
-
-        EXAMPLES::
-
-            sage: import ast, sage.misc.sageinspect as sms
-            sage: visitor = sms.SageArgSpecVisitor()
-            sage: vis = lambda x: visitor.visit_NameConstant(ast.parse(x).body[0].value)
-            sage: [vis(n) for n in ['True', 'False', 'None']]
-            [True, False, None]
-            sage: [type(vis(n)) for n in ['True', 'False', 'None']]
-            [<class 'bool'>, <class 'bool'>, <class 'NoneType'>]
-        """
-        return node.value
-
     def visit_arg(self, node):
         r"""
         Visit a Python AST :class:`ast.arg` node.
@@ -542,51 +518,6 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             ['a', 'b', 'c', 'd']
         """
         return node.arg
-
-    def visit_Num(self, node):
-        """
-        Visit a Python AST :class:`ast.Num` node.
-
-        INPUT:
-
-        - ``node`` -- the node instance to visit
-
-        OUTPUT: the number the ``node`` represents
-
-        EXAMPLES::
-
-            sage: import ast, sage.misc.sageinspect as sms
-            sage: visitor = sms.SageArgSpecVisitor()
-            sage: vis = lambda x: visitor.visit_Num(ast.parse(x).body[0].value)
-            sage: [vis(n) for n in ['123', '0.0']]
-            [123, 0.0]
-
-        .. NOTE::
-
-            On Python 3 negative numbers are parsed first, for some reason, as
-            a UnaryOp node.
-        """
-        return node.value
-
-    def visit_Str(self, node):
-        r"""
-        Visit a Python AST :class:`ast.Str` node.
-
-        INPUT:
-
-        - ``node`` -- the node instance to visit
-
-        OUTPUT: the string the ``node`` represents
-
-        EXAMPLES::
-
-            sage: import ast, sage.misc.sageinspect as sms
-            sage: visitor = sms.SageArgSpecVisitor()
-            sage: vis = lambda x: visitor.visit_Str(ast.parse(x).body[0].value)
-            sage: [vis(s) for s in ['"abstract"', "'syntax'", r'''r"tr\ee"''']]
-            ['abstract', 'syntax', 'tr\\ee']
-        """
-        return node.value
 
     def visit_List(self, node):
         """
@@ -818,6 +749,28 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             return self.visit(node.operand)
         if op == 'USub':
             return -self.visit(node.operand)
+
+    def visit_Constant(self, node):
+        """
+        Visit a Python AST :class:`ast.Constant` node.
+
+        INPUT:
+
+        - ``node`` -- the node instance to visit
+
+        OUTPUT: the constant value the ``node`` represents
+
+        EXAMPLES::
+
+            sage: import ast, sage.misc.sageinspect as sms
+            sage: visitor = sms.SageArgSpecVisitor()
+            sage: vis = lambda x: visitor.visit_Constant(ast.parse(x).body[0].value)
+            sage: [vis(n) for n in ['123', '0', '3.14', '"hello"', 'True', 'False', 'None']]
+            [123, 0, 3.14, 'hello', True, False, None]
+            sage: [type(vis(n)) for n in ['123', '0', '3.14', '"hello"', 'True', 'False', 'None']]
+            [<class 'int'>, <class 'int'>, <class 'float'>, <class 'str'>, <class 'bool'>, <class 'bool'>, <class 'NoneType'>]
+        """
+        return node.value
 
 
 def _grep_first_pair_of_parentheses(s):
