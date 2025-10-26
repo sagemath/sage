@@ -199,6 +199,12 @@ cdef class FiniteField(Field):
         Return string that initializes the GAP version of
         this finite field.
 
+        Note that for non-prime finite fields, the result is likely **unintended**,
+        it always use GAP's default-constructed finite field,
+        which means the ``DefiningPolynomial`` of the GAP field is often not the same as the
+        ``.modulus()`` of the Sage field. They are isomorphic, but the isomorphism may be
+        difficult to compute.
+
         EXAMPLES::
 
             sage: GF(9,'a')._gap_init_()

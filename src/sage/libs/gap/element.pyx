@@ -2168,7 +2168,9 @@ cdef class GapElement_Ring(GapElement):
         """
         Construct the Sage integers.
 
-        EXAMPLES::
+        This method is not meant to be called directly, use :meth:`sage` instead.
+
+        TESTS::
 
             sage: libgap.eval('Integers').ring_integer()
             Integer Ring
@@ -2179,7 +2181,9 @@ cdef class GapElement_Ring(GapElement):
         """
         Construct the Sage rationals.
 
-        EXAMPLES::
+        This method is not meant to be called directly, use :meth:`sage` instead.
+
+        TESTS::
 
             sage: libgap.eval('Rationals').ring_rational()
             Rational Field
@@ -2190,7 +2194,9 @@ cdef class GapElement_Ring(GapElement):
         """
         Construct a Sage integer mod ring.
 
-        EXAMPLES::
+        This method is not meant to be called directly, use :meth:`sage` instead.
+
+        TESTS::
 
             sage: libgap.eval('ZmodnZ(15)').ring_integer_mod()
             Ring of integers modulo 15
@@ -2200,9 +2206,21 @@ cdef class GapElement_Ring(GapElement):
 
     def ring_finite_field(self, var='a'):
         """
-        Construct an integer ring.
+        Construct a finite field.
 
-        EXAMPLES::
+        This method is not meant to be called directly, use :meth:`sage` instead.
+
+        Note that for non-prime finite fields, this method is likely **unintended**,
+        it always use the default-constructed finite field with ``var`` provided,
+        which means the ``DefiningPolynomial`` of the GAP field is often not the same as the
+        ``.modulus()`` of the Sage field. They are isomorphic, but the isomorphism may be
+        difficult to compute.
+
+        INPUT:
+
+        - ``var`` -- string (default: 'a'); name of the generator of the finite field
+
+        TESTS::
 
             sage: libgap.GF(3,2).ring_finite_field(var='A')
             Finite Field in A of size 3^2
@@ -2213,9 +2231,11 @@ cdef class GapElement_Ring(GapElement):
 
     def ring_cyclotomic(self):
         """
-        Construct an integer ring.
+        Construct a cyclotomic field.
 
-        EXAMPLES::
+        This method is not meant to be called directly, use :meth:`sage` instead.
+
+        TESTS::
 
             sage: libgap.CyclotomicField(6).ring_cyclotomic()
             Cyclotomic Field of order 3 and degree 2
@@ -2228,7 +2248,9 @@ cdef class GapElement_Ring(GapElement):
         """
         Construct a polynomial ring.
 
-        EXAMPLES::
+        This method is not meant to be called directly, use :meth:`sage` instead.
+
+        TESTS::
 
             sage: B = libgap(QQ['x'])
             sage: B.ring_polynomial()
