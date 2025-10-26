@@ -178,10 +178,6 @@ from sage.structure.category_object import normalize_names, certify_names
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.integer import Integer
 
-# the import below is just a redirection
-from sage.rings.finite_rings.finite_field_base import is_FiniteField
-assert is_FiniteField  # just to silent pyflakes
-
 try:
     # We don't late import this because this means trouble with the Givaro library
     # On a Macbook Pro OSX 10.5.8, this manifests as a Bus Error on exiting Sage.
@@ -866,36 +862,6 @@ class FiniteFieldFactory(UniqueFactory):
 
 
 GF = FiniteField = FiniteFieldFactory("FiniteField")
-
-
-def is_PrimeFiniteField(x):
-    """
-    Return ``True`` if ``x`` is a prime finite field.
-
-    This function is deprecated.
-
-    EXAMPLES::
-
-        sage: from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
-        sage: is_PrimeFiniteField(QQ)
-        doctest:...: DeprecationWarning: the function is_PrimeFiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) and x.is_prime_field() instead
-        See https://github.com/sagemath/sage/issues/32664 for details.
-        False
-        sage: is_PrimeFiniteField(GF(7))
-        True
-        sage: is_PrimeFiniteField(GF(7^2, 'a'))
-        False
-        sage: is_PrimeFiniteField(GF(next_prime(10^90, proof=False)))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32664, "the function is_PrimeFiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) and x.is_prime_field() instead")
-
-    from .finite_field_prime_modn import FiniteField_prime_modn
-    from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
-
-    return isinstance(x, FiniteField_prime_modn) or \
-           (isinstance(x, FiniteField_generic) and x.degree() == 1)
 
 
 zech_log_bound = 2**16
