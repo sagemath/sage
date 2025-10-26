@@ -1,6 +1,9 @@
 # Cannot be found via pkg-config
 glpk = cc.find_library('glpk', required: not is_windows, disabler: true)
 highs = cc.find_library('highs', required: not is_windows, disabler: true)
+highs_inc = include_directories(
+  join_paths(get_option('prefix'), 'include')
+)
 
 py.install_sources(
   '__init__.py',
@@ -75,7 +78,7 @@ foreach name, pyx : extension_data_cpp
     subdir: 'sage/numerical/backends',
     install: true,
     override_options: ['cython_language=cpp'],
-    include_directories: [inc_cpython, inc_rings],
+    include_directories: [inc_cpython, inc_rings, highs_inc],
     dependencies: [py_dep, cysignals, gmp],
   )
 endforeach
