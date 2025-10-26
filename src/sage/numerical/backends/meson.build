@@ -1,5 +1,6 @@
 # Cannot be found via pkg-config
 glpk = cc.find_library('glpk', required: not is_windows, disabler: true)
+highs = cc.find_library('highs', required: not is_windows, disabler: true)
 
 py.install_sources(
   '__init__.py',
@@ -23,6 +24,8 @@ py.install_sources(
   'glpk_exact_backend_test.py',
   'glpk_graph_backend.pxd',
   'glpk_graph_backend.pyx',
+  'highs_backend.pxd',
+  'highs_backend.pyx',
   'interactivelp_backend.pxd',
   'interactivelp_backend.pyx',
   'interactivelp_backend_test.py',
@@ -45,6 +48,7 @@ extension_data = {
   'generic_sdp_backend' : files('generic_sdp_backend.pyx'),
   'glpk_backend' : files('glpk_backend.pyx'),
   'glpk_exact_backend' : files('glpk_exact_backend.pyx'),
+  'highs_backend' : files('highs_backend.pyx'),
   'glpk_graph_backend' : files('glpk_graph_backend.pyx'),
   'interactivelp_backend' : files('interactivelp_backend.pyx'),
   'matrix_sdp_backend' : files('matrix_sdp_backend.pyx'),
@@ -58,7 +62,7 @@ foreach name, pyx : extension_data
     subdir: 'sage/numerical/backends',
     install: true,
     include_directories: [inc_cpython, inc_rings],
-    dependencies: [py_dep, cysignals, glpk, gmp],
+    dependencies: [py_dep, cysignals, glpk, highs, gmp],
   )
 endforeach
 
