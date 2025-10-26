@@ -1,13 +1,46 @@
 # Cannot be found via pkg-config
 glpk = cc.find_library('glpk', required: not is_windows, disabler: true)
-highs = cc.find_library('highs', required: not is_windows, disabler: true)
-# Add HiGHS include path as compiler argument
+highs = dependency('highs', required: false, disabler: true)
+if not highs.found()
+  highs = cc.find_library('highs', required: not is_windows, disabler: true)
+endif
+# HiGHS headers use relative includes like #include "lp_data/HighsCallbackStruct.h"
+# so we need to add the highs subdirectory to the include path.
+# Check multiple locations in order: SAGE_LOCAL, Python prefix (conda), system paths
+highs_compile_args = []
+
+# 1. Check SAGE_LOCAL
 sage_local = get_option('SAGE_LOCAL')
 if sage_local == ''
   sage_local = meson.project_source_root() / '..' / 'local'
 endif
-highs_compile_args = ['-I' + sage_local + '/include/highs']
+highs_local_include = sage_local / 'include' / 'highs'
+if fs.is_dir(highs_local_include)
+  highs_compile_args += ['-I' + highs_local_include]
+endif
 
+# 2. Check Python prefix (for conda environments) - this is the most common case for CI
+python_prefix = run_command(
+  py,
+  ['-c', 'import sys; print(sys.prefix)'],
+  check: false
+).stdout().strip()
+
+if python_prefix != ''
+  highs_prefix_include = python_prefix / 'include' / 'highs'
+  if fs.is_dir(highs_prefix_include)
+    highs_compile_args += ['-I' + highs_prefix_include]
+  endif
+endif
+
+# 3. Check common system paths
+foreach include_base : ['/usr/include', '/usr/local/include', get_option('prefix') / 'include']
+  highs_system_include = include_base / 'highs'
+  if fs.is_dir(highs_system_include)
+    highs_compile_args += ['-I' + highs_system_include]
+    break
+  endif
+endforeach
 py.install_sources(
   '__init__.py',
   'all.py',
