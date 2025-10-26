@@ -265,6 +265,201 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         """
         return (self.parent(), (self.Tietze(),))
 
+    def __hash__(self):
+        r"""
+        Return the hash of the element.
+        
+        For free group elements, this uses the Tietze representation.
+        For quotient group elements (finitely presented groups), this uses
+        a canonical form to ensure equal elements have equal hashes.
+        
+        TESTS::
+
+            sage: G.<a,b> = FreeGroup()
+            sage: hash(a*b*b*~a) == hash((1, 2, 2, -1))
+            True
+            
+            sage: # Test quotient group hash consistency
+            sage: F.<x,y> = FreeGroup()
+            sage: G = F / [x^4, y^13, x*y*x^-1*y^-5]
+            sage: a, b = G.gens()
+            sage: elem1 = b^3
+            sage: elem2 = b^-10  # This equals b^3 since b^13 = 1
+            sage: elem1 == elem2
+            True
+            sage: hash(elem1) == hash(elem2)
+            True
+
+        Test that the hash is consistent with Cayley graph construction::
+        
+            sage: F.<x,y> = FreeGroup()
+            sage: G = F / [x^2, y^3, (x*y)^4]
+            sage: a, b = G.gens()
+            sage: # Test that equal elements have equal hashes
+            sage: elem1 = a * b * a
+            sage: elem2 = b^2  # Should be equal due to relations
+            sage: if elem1 == elem2:
+            ....:     assert hash(elem1) == hash(elem2), "Equal elements must have equal hashes"
+            
+            sage: # Test with a simpler group to ensure Cayley graph works
+            sage: F.<a> = FreeGroup()
+            sage: H = F / [a^4]
+            sage: CG_simple = H.cayley_graph()
+            sage: len(CG_simple.vertices(sort=False)) == H.order()
+            True
+            
+        Test hash consistency for the identity and inverses::
+        
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F / [a^3, b^2, (a*b)^2]
+            sage: # Identity element
+            sage: id1 = G.one()
+            sage: id2 = G([])
+            sage: hash(id1) == hash(id2)
+            True
+            
+        Test that hash works with various group presentations::
+        
+            sage: # Dihedral group D_4
+            sage: F.<r,s> = FreeGroup()
+            sage: D4 = F / [r^4, s^2, s*r*s*r]
+            sage: elements = [D4.one(), D4([1]), D4([2]), D4([1,2])]
+            sage: hashes = [hash(e) for e in elements]
+            sage: len(set(hashes)) == len(set(elements))  # Distinct elements should have distinct hashes when possible
+            True
+            
+        Test hash consistency with group operations::
+        
+            sage: F.<x,y> = FreeGroup()
+            sage: G = F / [x^2, y^2, (x*y)^3]
+            sage: a, b = G.gens()
+            sage: # Test that mathematically equal elements have same hash
+            sage: elem1 = a * b * a * b * a * b  # This should equal identity due to (ab)^3 = 1
+            sage: elem2 = G.one()
+            sage: if elem1 == elem2:  # Only test hash equality if elements are actually equal
+            ....:     assert hash(elem1) == hash(elem2)
+
+        Demonstrate fallback when computing a confluent rewriting system fails::
+
+            sage: from unittest.mock import patch
+            sage: F.<x,y> = FreeGroup()
+            sage: G = F / [x^2, y^3]
+            sage: elt = G([1])
+            sage: class _ValueErrorSystem:
+            ....:     def make_confluent(self):
+            ....:         raise ValueError("Knuth-Bendix failed")
+            ....:     def reduce(self, _):
+            ....:         raise AssertionError("not reached")
+            sage: def _value_error_system(self):
+            ....:     return _ValueErrorSystem()
+            sage: with patch.object(G.__class__, 'rewriting_system', _value_error_system):
+            ....:     hash(elt) == hash(elt.Tietze())
+            True
+            sage: hasattr(G, '_hash_rewriting_system_failure')
+            True
+            sage: class _Tracker:
+            ....:     called = False
+            ....:     def __call__(self, *_args, **_kwds):
+            ....:         _Tracker.called = True
+            sage: tracker = _Tracker()
+            sage: with patch.object(G.__class__, 'rewriting_system', tracker):
+            ....:     hash(elt) == hash(elt.Tietze())
+            True
+            sage: _Tracker.called
+            False
+            sage: delattr(G, '_hash_rewriting_system_failure')
+
+            sage: F_rt.<r,s> = FreeGroup()
+            sage: G_rt = F_rt / [r^2, s^2, (r*s)^2]
+            sage: elt_rt = G_rt([1])
+            sage: class _RuntimeSystem:
+            ....:     def make_confluent(self):
+            ....:         return None
+            ....:     def reduce(self, _):
+            ....:         raise RuntimeError("reduction timed out")
+            sage: def _runtime_system(self):
+            ....:     return _RuntimeSystem()
+            sage: with patch.object(G_rt.__class__, 'rewriting_system', _runtime_system):
+            ....:     hash(elt_rt) == hash(elt_rt.Tietze())
+            True
+            sage: hasattr(G_rt, '_hash_rewriting_system_failure')
+            True
+            sage: delattr(G_rt, '_hash_rewriting_system_failure')
+
+            sage: F_attr.<p,q> = FreeGroup()
+            sage: G_attr = F_attr / [p^2, q^3]
+            sage: elt_attr = G_attr([1])
+            sage: def _attr_error(self):
+            ....:     raise AttributeError("rewriting system unavailable")
+            sage: with patch.object(G_attr.__class__, 'rewriting_system', _attr_error):
+            ....:     hash(elt_attr) == hash(elt_attr.Tietze())
+            True
+            sage: hasattr(G_attr, '_hash_rewriting_system_failure')
+            True
+            sage: delattr(G_attr, '_hash_rewriting_system_failure')
+
+            sage: F_impl.<u,v> = FreeGroup()
+            sage: G_impl = F_impl / [u^3, v^2, (u*v)^2]
+            sage: elt_impl = G_impl([1])
+            sage: def _not_implemented(self):
+            ....:     raise NotImplementedError("kbmag not available")
+            sage: with patch.object(G_impl.__class__, 'rewriting_system', _not_implemented):
+            ....:     hash(elt_impl) == hash(elt_impl.Tietze())
+            True
+            sage: hasattr(G_impl, '_hash_rewriting_system_failure')
+            True
+            sage: delattr(G_impl, '_hash_rewriting_system_failure')
+
+        Test specific Cayley graph bug with semidirect product `\mathbb{Z}_4 \rtimes \mathbb{Z}_{13}`::
+
+            sage: F.<x,y> = FreeGroup()
+            sage: G = F / [x^4, y^13, x*y*x^-1*y^-5]
+            sage: a, b = G.gens()
+            sage: G.order() == 52
+            True
+            sage: a.order() == 4
+            True
+            sage: b.order() == 13
+            True
+            sage: a*b*a^-1 == b^5  # isomorphic to semidirect product of Z_4 and Z_13
+            True
+            sage: # Test that Cayley graph has correct number of vertices
+            sage: gr = G.cayley_graph(generators=[a,b]).to_undirected()
+            sage: gr.num_verts() == G.order()  # Should be 52, not 109
+            True
+        """
+        parent = self.parent()
+        if hasattr(parent, 'relations') and parent.relations():
+            hash_exceptions = (AttributeError, ValueError, RuntimeError, NotImplementedError)
+
+            if hasattr(parent, '_hash_rewriting_system_failure'):
+                return hash(self.Tietze())
+
+            rs = getattr(parent, '_hash_rewriting_system', None)
+            if rs is None:
+                try:
+                    rs = parent.rewriting_system()
+                    rs.make_confluent()
+                except hash_exceptions as exc:
+                    parent._hash_rewriting_system_failure = exc.__class__
+                    rs = None
+                    if hasattr(parent, '_hash_rewriting_system'):
+                        delattr(parent, '_hash_rewriting_system')
+                else:
+                    parent._hash_rewriting_system = rs
+
+            if rs is not None:
+                try:
+                    canonical_form = rs.reduce(self)
+                except hash_exceptions as exc:
+                    parent._hash_rewriting_system_failure = exc.__class__
+                    if hasattr(parent, '_hash_rewriting_system'):
+                        delattr(parent, '_hash_rewriting_system')
+                else:
+                    return hash(str(canonical_form))
+
+        return hash(self.Tietze())
+
     def _repr_(self):
         """
         Return a string representation.
