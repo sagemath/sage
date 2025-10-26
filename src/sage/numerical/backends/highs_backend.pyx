@@ -1,4 +1,3 @@
-# sage.doctest: optional - highs
 """
 HiGHS Backend
 
