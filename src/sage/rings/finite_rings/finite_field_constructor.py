@@ -597,7 +597,7 @@ class FiniteFieldFactory(UniqueFactory):
             sage: GF((5, 1), 3)
             Traceback (most recent call last):
             ...
-            TypeError: variable name 3 must be a string, not <class 'sage.rings.integer.Integer'>
+            TypeError: 'sage.rings.integer.Integer' object is not iterable
             sage: GF((5, 2), 3)
             Traceback (most recent call last):
             ...
@@ -610,6 +610,35 @@ class FiniteFieldFactory(UniqueFactory):
             Traceback (most recent call last):
             ...
             ValueError: the order of a finite field must be a prime power
+
+        We expect ``name`` to be a string (if it is a single name) and ``names`` to be
+        a tuple of strings, but for backwards compatibility this is not enforced.
+        This behavior might change in the future. ::
+
+            sage: GF(7, name='aa')
+            Finite Field of size 7
+            sage: GF(7^2, name='aa')
+            Finite Field in aa of size 7^2
+            sage: GF(7, name=('aa',))
+            Finite Field of size 7
+            sage: GF(7^2, name=('aa',))
+            Finite Field in aa of size 7^2
+            sage: GF(7, name=['aa'])
+            Finite Field of size 7
+            sage: GF(7^2, name=['aa'])
+            Finite Field in aa of size 7^2
+            sage: GF(7, names='aa')
+            Finite Field of size 7
+            sage: GF(7^2, names='aa')
+            Finite Field in aa of size 7^2
+            sage: GF(7, names=('aa',))
+            Finite Field of size 7
+            sage: GF(7^2, names=('aa',))
+            Finite Field in aa of size 7^2
+            sage: GF(7, names=['aa'])
+            Finite Field of size 7
+            sage: GF(7^2, names=['aa'])
+            Finite Field in aa of size 7^2
         """
         for key, val in kwds.items():
             if key not in ['structure', 'implementation', 'prec', 'embedding', 'latex_names']:
@@ -646,7 +675,7 @@ class FiniteFieldFactory(UniqueFactory):
                 if impl is None:
                     impl = 'modn'
                 if name is not None:
-                    certify_names((name,))
+                    certify_names((name,) if isinstance(name, str) else name)
                 name = ('x',)  # Ignore name
                 # Every polynomial of degree 1 is irreducible
                 check_irreducible = False

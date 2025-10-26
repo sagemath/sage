@@ -1421,6 +1421,21 @@ cdef class FiniteField(Field):
             sage: L.<v> = K.extension(b)
             sage: L(u).minpoly() == u.minpoly()
             True
+
+        Check the test above when `a=b=1`, see :issue:`40926`.
+        While in general it doesn't make much sense to talk about the generator
+        of a prime finite field (:meth:`gen` returns 1), generic code may find
+        it convenient to always specify the variable name when it is not known
+        in advance whether the exponent is 1.
+
+        The reason why one may want to specify ``name`` is :issue:`38376`.
+
+        ::
+
+            sage: K.<u> = GF((random_prime(10^100), 1))
+            sage: L.<v> = K.extension(1)
+            sage: L(u).minpoly() == u.minpoly()
+            True
         """
         from sage.rings.finite_rings.finite_field_constructor import GF
         from sage.rings.polynomial.polynomial_element import Polynomial
