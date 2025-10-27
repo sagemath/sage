@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout, QHBoxLayout, QLineEdit, QSizePolicy, QComboBox
 )
 from Glossary.Glossary import GlossaryWidget
-#from sage.all import Set  # ← restored Sage Set
+from sage.all import Set  # ← restored Sage Set
 
 
 class SetTheoryTab(QWidget):
@@ -185,21 +185,38 @@ class SetTheoryTab(QWidget):
                 widget.deleteLater()
 
     def checkIfPartition(self, setFamily, setX):
-        union_all = set()
+        # Use Sage Set operations. Note: Set.union returns a new Set.
+        union_all = Set([])
         for part in setFamily:
-            union_all |= part
+            # Ensure part is a Sage Set (assumed elsewhere) and union it
+            union_all = union_all.union(part)
+
+        # Check that the union equals the target set
         if union_all != setX:
             return False
-        # no empty parts
+
+        # No empty parts (use Sage's cardinality)
         for part in setFamily:
-            if len(part) == 0:
-                return False
-        # pairwise disjoint
+            try:
+                if part.cardinality() == 0:
+                    return False
+            except Exception:
+                # Fallback: try Python len() if cardinality() is unavailable
+                if len(part) == 0:
+                    return False
+
+        # Pairwise disjoint: intersection should have cardinality 0
         n = len(setFamily)
         for i in range(n):
             for j in range(i + 1, n):
-                if not setFamily[i].isdisjoint(setFamily[j]):
-                    return False
+                try:
+                    if setFamily[i].intersection(setFamily[j]).cardinality() != 0:
+                        return False
+                except Exception:
+                    # Fallback: convert to Python sets and test
+                    if len(set(setFamily[i]).intersection(set(setFamily[j]))) != 0:
+                        return False
+
         return True
     
     def onCheckPartition(self):
