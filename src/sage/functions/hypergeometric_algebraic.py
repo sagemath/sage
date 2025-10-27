@@ -198,9 +198,43 @@ class Parameters():
         return Parameters(top, bottom, add_one=False)
 
     def has_negative_integer_differences(self):
+        r"""
+        Returns ``True`` if there exists a pair of a top parameter and a bottom
+        parameter, such that the top one minus the bottom one is a negative integer.
+        Returns ``False`` otherwise.
+        EXAMPLES::
+
+            sage: from sage.functions.hypergeometric_algebraic import Parameters
+            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: p
+            ([1/4, 1/3, 1/2], [2/5, 3/5, 1])
+            sage: p.has_negative_integer_differences()
+            False
+
+        ::
+
+            sage: from sage.functions.hypergeometric_algebraic import Parameters
+            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/2])
+            sage: p
+            ([1/4, 1/3, 1/2], [2/5, 3/2, 1])
+            sage: p.has_negative_integer_differences()
+            True
+        """
         return any(a - b in ZZ and a < b for a in self.top for b in self.bottom)
 
     def shift(self):
+        r"""
+        Return the parameters obtained by adding one to each of them. Is used to 
+        define the derivative of the hypergeometric function with these parameters.
+	EXAMPLES::
+
+            sage: from sage.functions.hypergeometric_algebraic import Parameters
+            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: p
+            ([1/4, 1/3, 1/2], [2/5, 3/5, 1])
+            sage: p.shift()
+            ([5/4, 4/3, 3/2], [7/5, 8/5, 1])
+        """
         top = [a+1 for a in self.top]
         bottom = [b+1 for b in self.bottom]
         return Parameters(top, bottom)
@@ -251,7 +285,7 @@ class HypergeometricAlgebraic(Element):
         return tuple(self._parameters.top)
 
     def bottom(self):
-        return tuple(self._parameters.bottom)[:-1]
+        return tuple(self._parameters.bottom[:-1])
 
     def denominator(self):
         return self._parameters.d
@@ -273,9 +307,10 @@ class HypergeometricAlgebraic(Element):
         return D([ c//x for c in L.list() ])
 
     def derivative(self):
-        parameters = self._parameters.shift()
-        scalar = self._base(self._parameters.scalar()) * self._scalar
-        return HypergeometricAlgebraic(parameters, scalar=scalar)
+        parameters = Parameters(self.top(), self.bottom(), add_one=False).shift()
+        scalar = self.base_ring()(self._parameters.scalar()) * self._scalar
+        H = HypergeometricFunctions(self.base_ring(), self.parent().variable_name())
+        return H(parameters, scalar=scalar) #in the output the tuple of bottom parameters has an extra comma, 
 
 
 class HypergeometricAlgebraic_charzero(HypergeometricAlgebraic):
