@@ -1,4 +1,4 @@
-from typing import Type, Union, Callable, Dict, List
+from typing import Union, Callable
 
 def abc(f: Callable = None, optional: bool = False) -> Callable:
     ...

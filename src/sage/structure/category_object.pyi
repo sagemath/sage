@@ -1,4 +1,4 @@
-from typing import Any, Tuple, Dict
+from typing import Any
 
 class CategoryObject:
     def __init__(self, category: Any = None, base: Any = None) -> None: ...

@@ -1,4 +1,3 @@
-from typing import List
 
 def verify_bernoulli_mod_p(data: list[int]) -> bool:
     ...

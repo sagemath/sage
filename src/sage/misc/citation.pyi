@@ -1,4 +1,3 @@
-from typing import List
 
 def get_systems(cmd: str) -> list[str]:
     ...

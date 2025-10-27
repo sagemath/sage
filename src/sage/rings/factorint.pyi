@@ -1,4 +1,3 @@
-from typing import List, Tuple
 
 def aurifeuillian(n: int, m: int, F: int = None, check: bool = True) -> list[int]:
     ...

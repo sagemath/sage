@@ -1,4 +1,4 @@
-from typing import Any, Tuple
+from typing import Any
 
 def number_field_base(x: Any) -> bool:
     ...

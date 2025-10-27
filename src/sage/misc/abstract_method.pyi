@@ -1,4 +1,4 @@
-from typing import Callable, Dict, List, Type, Union
+from typing import Callable, Union
 
 def abstract_method(f: Callable = None, optional: bool = False) -> Callable:
     ...

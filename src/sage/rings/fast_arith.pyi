@@ -1,4 +1,3 @@
-from typing import List, Tuple
 
 def prime_range(start: int, stop: int = None, algorithm: str = None, py_ints: bool = False) -> list[int]:
     ...

@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional
 
 class binary_tree_node:
     key: int
