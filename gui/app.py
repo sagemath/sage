@@ -121,7 +121,7 @@ from linear_algebra import LinearAlgebraTab
 from Glossary.Glossary import *
 from Glossary.CollapsibleBox import CollapsibleBox
 from LinearAlgebra.matrix_app import MatrixApp
-from SetTheory.SetTheory import SetTheoryTabfrom 
+from SetTheory.SetTheory import SetTheoryTab 
 from LinearAlgebra.matrixAppLearning import TeachingMatrixApp
 class App(QMainWindow):
 
@@ -157,9 +157,9 @@ class MyTableWidget(QWidget):
         self.tabs.addTab(GT_Calc_Window(self), "Graph Theory")
         self.tabs.addTab(GT_Learning_Window(self), "Graph Theory Learning")
         self.tabs.addTab(MatrixApp(self), "Linear Algebra")
-        self.tabs.addTab(MatrixApp(self), "Linear Algebra Learning")
-        self.tabs.addTab(SetTheoryTab(self),"Set Theory") # ^^^
         self.tabs.addTab(TeachingMatrixApp(self), "Linear Algebra Learning")
+        self.tabs.addTab(SetTheoryTab(self),"Set Theory") # ^^^
+        
 
         # Add tabs to widget
         self.layout.addWidget(self.tabs)
