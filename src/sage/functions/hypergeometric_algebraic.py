@@ -192,6 +192,19 @@ class Parameters():
         return Parameters(alpha, beta)
 
     def scalar(self):
+	r"""
+	Return the scalar of the derivative of the hypergeometric function with
+	this set of parameters.
+
+	EXAMPLES::
+
+	    sage: from sage.functions.hypergeometric_algebraic import Parameters
+            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: p
+            ([1/4, 1/3, 1/2], [2/5, 3/5, 1])
+            sage: p.scalar()
+            25/144
+	"""
         return prod(self.alpha) / prod(self.beta)
 
 
