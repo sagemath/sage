@@ -10,7 +10,7 @@ from linear_algebra import LinearAlgebraTab
 from Glossary.Glossary import *
 from Glossary.CollapsibleBox import CollapsibleBox
 from LinearAlgebra.matrix_app import MatrixApp
-
+from LinearAlgebra.matrixAppLearning import TeachingMatrixApp
 class App(QMainWindow):
 
     def __init__(self):
@@ -46,7 +46,8 @@ class MyTableWidget(QWidget):
         self.tabs.addTab(GT_Calc_Window(self), "Graph Theory Learning") # We would use the learner one
         self.tabs.addTab(MatrixApp(self), "Linear Algebra")
         self.tabs.addTab(MatrixApp(self), "Linear Algebra Learning") # ^^^
-        
+        self.tabs.addTab(TeachingMatrixApp(self), "Linear Algebra Learning")
+
         # Add tabs to widget
         self.layout.addWidget(self.tabs)
         self.setLayout(self.layout)
