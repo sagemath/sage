@@ -164,10 +164,6 @@ cdef extern from "highs/interfaces/highs_c_api.h":
     HighsInt Highs_getColName(const void* highs, HighsInt col, char* name)
     HighsInt Highs_getRowName(const void* highs, HighsInt row, char* name)
     
-    # Column/row deletion
-    HighsInt Highs_deleteColsByRange(void* highs, HighsInt from_col, HighsInt to_col) nogil
-    HighsInt Highs_deleteRowsByRange(void* highs, HighsInt from_row, HighsInt to_row) nogil
-
 
 cdef class HiGHSBackend(GenericBackend):
     """
