@@ -48,7 +48,7 @@ jobs:
             tests: 'all'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Merge CI fixes from sagemath/sage
         run: |
