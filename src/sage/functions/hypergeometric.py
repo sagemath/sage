@@ -756,13 +756,11 @@ def hypergeometric(a, b, x):
     from sage.rings.polynomial.polynomial_element import Polynomial
     from sage.rings.power_series_ring_element import PowerSeries
     if isinstance(x, (Polynomial, PowerSeries)):
-        from sage.functions.hypergeometric_algebraic import Parameters, HypergeometricFunctions
         if not x.is_gen():
             raise NotImplementedError("the argument must be the generator of the polynomial ring")
         S = x.parent()
-        H = HypergeometricFunctions(S.base_ring(), S.variable_name())
-        parameters = Parameters(a, b)
-        return H(parameters)
+        from sage.functions.hypergeometric_algebraic import HypergeometricFunctions
+        return HypergeometricFunctions(S.base_ring(), S.variable_name())(a, b)
     else:
         return _hypergeometric(a, b, x)
 

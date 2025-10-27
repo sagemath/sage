@@ -19,12 +19,15 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
+import operator
+
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.structure.sequence import Sequence
 from sage.structure.category_object import normalize_names
 
+from sage.categories.action import Action
 from sage.categories.pushout import pushout
 from sage.categories.map import Map
 from sage.categories.finite_fields import FiniteFields
@@ -127,6 +130,10 @@ class Parameters():
         """
         return "(%s, %s)" % (self.top, self.bottom)
 
+    def __eq__(self, other):
+        return (isinstance(other, Parameters)
+            and self.top == other.top and self.bottom == other.bottom)
+
     def is_balanced(self):
         r"""
         Return ``True`` if there are as many top parameters as bottom
@@ -199,9 +206,10 @@ class Parameters():
 
     def has_negative_integer_differences(self):
         r"""
-        Returns ``True`` if there exists a pair of a top parameter and a bottom
-        parameter, such that the top one minus the bottom one is a negative integer.
-        Returns ``False`` otherwise.
+        Return ``True`` if there exists a pair of a top parameter and a bottom
+        parameter, such that the top one minus the bottom one is a negative integer;
+        return ``False`` otherwise.
+
         EXAMPLES::
 
             sage: from sage.functions.hypergeometric_algebraic import Parameters
@@ -213,7 +221,6 @@ class Parameters():
 
         ::
 
-            sage: from sage.functions.hypergeometric_algebraic import Parameters
             sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/2])
             sage: p
             ([1/4, 1/3, 1/2], [2/5, 3/2, 1])
@@ -222,45 +229,12 @@ class Parameters():
         """
         return any(a - b in ZZ and a < b for a in self.top for b in self.bottom)
 
-    def shift(self):
-        r"""
-        Return the parameters obtained by adding one to each of them. Is used to 
-        define the derivative of the hypergeometric function with these parameters.
-	EXAMPLES::
-
-            sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: p
-            ([1/4, 1/3, 1/2], [2/5, 3/5, 1])
-            sage: p.shift()
-            ([5/4, 4/3, 3/2], [7/5, 8/5, 1])
-        """
-        top = [a+1 for a in self.top]
-        bottom = [b+1 for b in self.bottom]
-        return Parameters(top, bottom)
-
-    def scalar(self):
-        r"""
-        Return the scalar of the derivative of the hypergeometric function with
-        this set of parameters.
-
-        EXAMPLES::
-
-            sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: p
-            ([1/4, 1/3, 1/2], [2/5, 3/5, 1])
-            sage: p.scalar()
-            25/144
-        """
-        return prod(self.top) / prod(self.bottom)
-
 
 # Hypergeometric functions
 ##########################
 
 class HypergeometricAlgebraic(Element):
-    def __init__(self, parent, parameters, scalar=None):
+    def __init__(self, parent, arg1, arg2=None, scalar=None):
         Element.__init__(self, parent)
         base = parent.base_ring()
         if scalar is None:
@@ -269,14 +243,32 @@ class HypergeometricAlgebraic(Element):
             self._scalar = base(scalar)
         if self._scalar == 0:
             self._parameters = None
+        elif isinstance(arg1, HypergeometricAlgebraic):
+            self._parameters = arg1._parameters
+            self._scalar *= base(arg1._scalar)
+        elif isinstance(arg1, Parameters):
+            self._parameters = arg1
         else:
-            self._parameters = parameters
+            self._parameters = Parameters(arg1, arg2)
 
     def _repr_(self):
+        if self._parameters is None:
+            return "0"
         s = "hypergeometric(%s, %s, %s)" % (self.top(), self.bottom(), self.parent().variable_name())
-        if self._scalar != 1:
-            s = str(self._scalar) + "*" + s
+        scalar = self._scalar
+        if scalar == 1:
+            pass
+        elif scalar._is_atomic():
+            scalar = str(scalar)
+            if scalar == "-1":
+                s = "-" + s
+            else:
+                s = scalar + "*" + s
+        else:
+            s = "(%s)*%s" % (scalar, s)
         return s
+
+    # def _latex_(self):
 
     def base_ring(self):
         return self.parent().base_ring()
@@ -286,6 +278,47 @@ class HypergeometricAlgebraic(Element):
 
     def bottom(self):
         return tuple(self._parameters.bottom[:-1])
+
+    def scalar(self):
+        return self._scalar
+
+    def _add_(self, other):
+        if self._parameters is None:
+            return other
+        if isinstance(other, HypergeometricAlgebraic):
+            if other._parameters is None:
+                return self
+            if self._parameters == other._parameters:
+                scalar = self._scalar + other._scalar
+                return self.parent()(self._parameters, scalar=scalar)
+        return SR(self) + SR(other)
+
+    def _neg_(self):
+        if self._parameters is None:
+            return self
+        return self.parent()(self._parameters, scalar=-self._scalar)
+
+    def _sub_(self, other):
+        if self._parameters is None:
+            return other
+        if isinstance(other, HypergeometricAlgebraic):
+            if other._parameters is None:
+                return self
+            if self._parameters == other._parameters:
+                scalar = self._scalar - other._scalar
+                return self.parent()(self._parameters, scalar=scalar)
+        return SR(self) + SR(other)
+
+    def _mul_(self, other):
+        return SR(self) * SR(other)
+
+    def _lmul_(self, scalar):
+        print("lmul")
+    def _rmul_(self, scalar):
+        print("rmul")
+
+    def _div_(self, other):
+        return SR(self) / SR(other)
 
     def denominator(self):
         return self._parameters.d
@@ -298,19 +331,20 @@ class HypergeometricAlgebraic(Element):
             return D.one()
         t = x * D.gen()
         A = D.one()
-        for a in self.top():
+        for a in self._parameters.top:
             A *= t + S(a)
         B = D.one()
-        for b in self.bottom():
+        for b in self._parameters._bottom:
             B *= t + S(b-1)
-        L = t*B - x*A
+        L = B - x*A
         return D([ c//x for c in L.list() ])
 
     def derivative(self):
-        parameters = Parameters(self.top(), self.bottom(), add_one=False).shift()
-        scalar = self.base_ring()(self._parameters.scalar()) * self._scalar
-        H = HypergeometricFunctions(self.base_ring(), self.parent().variable_name())
-        return H(parameters, scalar=scalar) #in the output the tuple of bottom parameters has an extra comma, 
+        top = [a+1 for a in self.top()]
+        bottom = [b+1 for b in self.bottom()]
+        scalar = prod(self._parameters.top) / prod(self._parameters.bottom)
+        scalar = self.base_ring()(scalar) * self._scalar
+        return self.parent()(top, bottom, scalar)
 
 
 class HypergeometricAlgebraic_charzero(HypergeometricAlgebraic):
@@ -318,15 +352,14 @@ class HypergeometricAlgebraic_charzero(HypergeometricAlgebraic):
         return not any(b in ZZ and b < 0 for b in self._bottom)
 
     def series(self, prec):
-        S = PowerSeriesRing(self._base, name=self._variable_name)
+        S = self.parent().power_series_ring(prec)
         c = self._scalar
         coeffs = [c]
         for i in range(prec):
-            for a in self.top():
+            for a in self._parameters.top:
                 c *= a + i
-            for b in self.bottom():
+            for b in self._parameters.bottom:
                 c /= b + i
-            c /= i + 1
             coeffs.append(c)
         return S(coeffs, prec=prec)
 
@@ -334,7 +367,7 @@ class HypergeometricAlgebraic_charzero(HypergeometricAlgebraic):
 class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic_charzero):
     def mod(self, p):
         H = HypergeometricFunctions(FiniteField(p), self.parent().variable_name())
-        return H(self._parameters, self._scalar)
+        return H(self._parameters, None, self._scalar)
 
     __mod__ = mod
 
@@ -366,8 +399,8 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic_charzero):
 
 
 class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
-    def __init__(self, parent, parameters, scalar=None):
-        HypergeometricAlgebraic.__init__(self, parent, parameters, scalar)
+    def __init__(self, parent, arg1, arg2=None, scalar=None):
+        HypergeometricAlgebraic.__init__(self, parent, arg1, arg2, scalar)
         self._p = self.base_ring().cardinality()
 
     def is_defined(self):
@@ -394,18 +427,17 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         return True
 
     def series(self, prec):
-        S = self.parent().polynomial_ring()
+        S = self.parent().power_series_ring(prec)
         p = self._p
         pprec = max(1, (len(self.bottom()) + 1) * ceil(log(prec, p)))
         K = QpFP(p, pprec)
         c = K(self._scalar)
         coeffs = [c]
         for i in range(prec-1):
-            for a in self.top():
+            for a in self._parameters.top:
                 c *= a + i
-            for b in self.bottom():
+            for b in self._parameters.bottom:
                 c /= b + i
-            c /= i + 1
             if c.valuation() < 0:
                 raise ValueError("denominator appears in the series at the required precision")
             coeffs.append(c)
@@ -439,23 +471,26 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         if not self.is_defined():
             raise ValueError("this hypergeometric function is not defined")
 
-        # We compute the series expansion up to x^p
+        H = self.parent()
         p = self._p
-        S = self.parent().polynomial_ring()
+
+        # We compute the series expansion up to x^p
         cs = self.series(p).list()
 
-        # We compute the relevant exponents
+        # We compute the relevant exponents and associated coefficients
+        S = self.parent().polynomial_ring()
         exponents = sorted([(1-b) % p for b in self._parameters.bottom])
         exponents.append(p)
         Ps = []
         for i in range(len(exponents) - 1):
-            e = exponents[i]
-            if e < len(cs) and cs[e]:
-                P = S(cs[e:exponents[i+1]]) << e
-                Ps.append((e, P))
+            ei = exponents[i]
+            ej = exponents[i+1]
+            P = S(cs[ei:ej])
+            if P:
+                Ps.append((ei, P << ei))
 
         # We compute the hypergeometric series
-        Hs = [ ]
+        pairs = [ ]
         for r, P in Ps:
             top = [ ]
             for a in self.top():
@@ -473,10 +508,9 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
                     bottom.append(bp + 1)
                 else:
                     bottom.append(bp)
-            parameters = Parameters(top, bottom)
-            Hs.append((P, HypergeometricAlgebraic_GFp(parameters, self._x)))
+            pairs.append((P, H(top, bottom)))
 
-        return Hs
+        return pairs
 
 
 # Parent
@@ -485,7 +519,12 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
 class HypergeometricToSR(Map):
     def _call_(self, h):
         from sage.functions.hypergeometric import _hypergeometric
-        return _hypergeometric(h.top(), h.bottom(), SR.var(h.parent().variable_name()))
+        return h.scalar() * _hypergeometric(h.top(), h.bottom(), SR.var(h.parent().variable_name()))
+
+class ScalarMultiplication(Action):
+    def _act_(self, scalar, h):
+        return h.parent()(h, scalar=scalar)
+
 
 class HypergeometricFunctions(Parent, UniqueRepresentation):
     def __init__(self, base, name, category=None):
@@ -502,6 +541,8 @@ class HypergeometricFunctions(Parent, UniqueRepresentation):
         else:
             raise NotImplementedError("hypergeometric functions are only implemented over finite field and bases of characteristic zero")
         Parent.__init__(self, base, category=category)
+        self.register_action(ScalarMultiplication(base, self, False, operator.mul))
+        self.register_action(ScalarMultiplication(base, self, True, operator.mul))
         if char == 0:
             SR.register_coercion(HypergeometricToSR(self.Hom(SR)))
 
@@ -510,6 +551,19 @@ class HypergeometricFunctions(Parent, UniqueRepresentation):
 
     def _element_constructor_(self, *args, **kwds):
         return self.element_class(self, *args, **kwds)
+
+    def _coerce_map_from_(self, other):
+        if (isinstance(other, HypergeometricFunctions)
+        and other.has_coerce_map_from(self)):
+            return True
+
+    def _pushout_(self, other):
+        if isinstance(other, HypergeometricFunctions) and self._name == other._name:
+            base = pushout(self.base_ring(), other.base_ring())
+            if base is not None:
+                return HypergeometricFunctions(base, self._name)
+        if SR.has_coerce_map_from(other):
+            return SR
 
     def base_ring(self):
         return self._base
@@ -521,4 +575,4 @@ class HypergeometricFunctions(Parent, UniqueRepresentation):
         return PolynomialRing(self.base_ring(), self._name)
 
     def power_series_ring(self, default_prec=None):
-        return PowerSeriesRing(self.base_ring(), self._name, default_prec=prec)
+        return PowerSeriesRing(self.base_ring(), self._name, default_prec=default_prec)
