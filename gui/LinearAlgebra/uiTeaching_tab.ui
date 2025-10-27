@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MatrixTeachingUI</class>
+ <widget class="QWidget" name="MatrixTeachingUI">
+  <property name="windowTitle">
+   <string>Matrix Teaching Interface</string>
+  </property>
+  <layout class="QVBoxLayout" name="mainLayout">
+   <item>
+    <widget class="QGroupBox" name="matrixGroup">
+     <property name="title">
+      <string>Matrix Input</string>
+     </property>
+     <layout class="QVBoxLayout" name="matrixLayout">
+      <item>
+       <widget class="QLabel" name="labelRows">
+        <property name="text">
+         <string>Rows:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="rowSpinBox"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelCols">
+        <property name="text">
+         <string>Columns:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="colSpinBox"/>
+      </item>
+      <item>
+       <widget class="QTableWidget" name="matrixTable"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="teachingGroup">
+     <property name="title">
+      <string>Teaching Questions</string>
+     </property>
+     <layout class="QVBoxLayout" name="teachingLayout">
+      <item>
+       <widget class="QLabel" name="labelDeterminant">
+        <property name="text">
+         <string>What is the determinant?</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="determinantInput"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="helpDeterminantButton">
+        <property name="text">
+         <string>Help</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelEigenvalues">
+        <property name="text">
+         <string>What are the eigenvalues?</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="eigenvaluesInput"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="helpEigenvaluesButton">
+        <property name="text">
+         <string>Help</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelInverse">
+        <property name="text">
+         <string>Is the matrix invertible?</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="inverseInput"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="helpInverseButton">
+        <property name="text">
+         <string>Help</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="bottomButtons">
+     <item>
+      <widget class="QPushButton" name="checkAnswerButton">
+       <property name="text">
+        <string>Check Answer</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="clearButton">
+       <property name="text">
+        <string>Clear</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="exitButton">
+       <property name="text">
+        <string>Exit</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

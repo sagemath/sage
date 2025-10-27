@@ -1,8 +1,11 @@
 import sys
 import tempfile
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QMessageBox, QLabel, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QComboBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QMessageBox, QLabel, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QComboBox, QDialog
+from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
+from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtGui import QPixmap, QIcon
-from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QSize, QUrl
 from Glossary.Glossary import GlossaryWidget
 from sage.all import Graph
 
@@ -64,14 +67,14 @@ class GT_Learning_Window(QWidget):
 
         # degree input box
         degree_layout = QHBoxLayout()
-        degree_layout.addWidget(QLabel("Degrees:"))
+        degree_layout.addWidget(QLabel("Degrees (list in order seperated by commas):"))
         self.degree_textbox = QLineEdit()
-        self.degree_textbox.setPlaceholderText("ex: 1:2, 2:1, etc")
+        self.degree_textbox.setPlaceholderText("ex: 2,4,1,2 etc")
         degree_layout.addWidget(self.degree_textbox)
         main_layout.addLayout(degree_layout)
 
         self.degree_check_button = QPushButton("Check Degrees")
-        #self.degree_check_button.clicked.connect(self.on_degree_check)
+        self.degree_check_button.clicked.connect(self.on_degree_check)
         degree_layout.addWidget(self.degree_check_button)
 
 
@@ -88,7 +91,7 @@ class GT_Learning_Window(QWidget):
         main_layout.addLayout(density_layout)
 
         self.density_check_button = QPushButton("Check Density")
-        #self.density_check_button.clicked.connect(self.on_density_check)
+        self.density_check_button.clicked.connect(self.on_density_check)
         density_layout.addWidget(self.density_check_button)
 
         # plannar yes/no
@@ -100,7 +103,7 @@ class GT_Learning_Window(QWidget):
         main_layout.addLayout(planar_layout)
 
         self.planar_check_button = QPushButton("Check Planar")
-        #self.planar_check_button.clicked.connect(self.on_planar_check)
+        self.planar_check_button.clicked.connect(self.on_planar_check)
         planar_layout.addWidget(self.planar_check_button)
 
         # eulerian yes/no
@@ -112,7 +115,7 @@ class GT_Learning_Window(QWidget):
         main_layout.addLayout(euler_layout)
 
         self.euler_check_button = QPushButton("Check Eulerian")
-        #self.euler_check_button.clicked.connect(self.on_euler_check)
+        self.euler_check_button.clicked.connect(self.on_euler_check)
         euler_layout.addWidget(self.euler_check_button)
 
         # hamiltonian yes/no
@@ -124,7 +127,7 @@ class GT_Learning_Window(QWidget):
         main_layout.addLayout(hamilton_layout)
 
         self.hamilton_check_button = QPushButton("Check Hamiltonian")
-        #self.hamilton_check_button.clicked.connect(self.on_hamilton_check)
+        self.hamilton_check_button.clicked.connect(self.on_hamilton_check)
         hamilton_layout.addWidget(self.hamilton_check_button)
 
         self.glossary_button = QPushButton("Glossary")
@@ -158,6 +161,123 @@ class GT_Learning_Window(QWidget):
         G.plot().save(tmp_file.name) #saves png to temp location
         self.image_window = GTImageWindow(tmp_file.name)
         self.image_window.show()
+
+    def show_youtube_hint(self, youtube_url):
+        #shows pop up of youtube video
+        dialog = QDialog(self)
+        dialog.setWindowTitle("INCORRECT Here's a Video to Help")
+
+        layout = QVBoxLayout(dialog)
+
+        view = QWebEngineView()
+        layout.addWidget(view)
+
+        view.load(QUrl(youtube_url))
+
+        dialog.resize(800, 450)
+        dialog.exec_()
+
+
+    def on_degree_check(self):
+        if not hasattr(self, "incorrect_attempts"):
+            self.incorrect_attempts = 0
+
+        G, _ = self.get_graph()
+        actual_degree = G.degree() 
+        input_degree_text = self.degree_textbox.text()
+        # Messages for first and second incorrect attempts
+        messages = [
+            "Incorrect. Recall to find the degree of a vertex, count how many edges are incident to it.",
+            "Still not quite right. Make sure you aren't double counting any edges."
+        ]
+
+        # change input text to integers
+        try:
+            input_degree = [int(x.strip()) for x in input_degree_text.split(",")]
+        except ValueError:
+            QMessageBox.warning(self, "Invalid Input", "Please enter degrees as comma-separated integers.")
+            return
+        # Compare input to actual degrees
+        if input_degree == actual_degree:
+            QMessageBox.information(self, "Correct", f"Correct! The Graph degrees are {actual_degree}")
+            self.incorrect_attempts = 0  # reset on correct
+        else:
+            if self.incorrect_attempts == 0:
+                QMessageBox.information(self, "Incorrect", messages[0])
+            elif self.incorrect_attempts == 1:
+                QMessageBox.information(self, "Incorrect", messages[1])
+            elif self.incorrect_attempts == 2:
+            # Third attempt — show the video instead of a message
+                self.show_youtube_hint("https://youtu.be/C4s5j2-Hos4?si=rXe2XdMMF09sl0hQ") 
+            else:
+            # for anymore inocrrect answers
+                QMessageBox.information(self, "Incorrect", "Keep trying!")
+
+        self.incorrect_attempts += 1
+
+    
+    def on_density_check(self):
+        if not hasattr(self, "incorrect_attempts"):
+            self.incorrect_attempts = 0
+
+        G, _ = self.get_graph()
+        actual_density = float(G.density()) * 100
+        input_density = float(self.density_textbox.text())
+        #messages for the first and second attempts
+        messages = [
+            "Incorrect. Recall to find density, you divide the number of edges present by all possible edges (aka edges in the complete graph)",
+            "Still not quite right. Make sure you are multiplying by 100 to express density as a percentage."
+        ]
+
+        if abs(actual_density - input_density) < 0.001:
+            QMessageBox.information(self, "Correct", f"Correct! The Graph density is {actual_density:.2f}%")
+            self.incorrect_attempts = 0  # reset on correct
+        else:
+            if self.incorrect_attempts == 0:
+                QMessageBox.information(self, "Incorrect", messages[0])
+            elif self.incorrect_attempts == 1:
+                QMessageBox.information(self, "Incorrect", messages[1])
+            elif self.incorrect_attempts == 2:
+            # Third attempt — show the video instead of a message
+                self.show_youtube_hint("https://youtu.be/42ZYhknJhwM?si=JaCxvluQrXUKb1yB")
+            else:
+            # If they keep getting it wrong after the third time
+                QMessageBox.information(self, "Incorrect", "Keep trying!")
+
+            self.incorrect_attempts += 1
+
+    def on_planar_check(self):
+        G, _ = self.get_graph()
+        actual_planar = G.is_planar()
+        input_planar = self.planar_select.currentText()
+        if (actual_planar and input_planar == "Yes") or (not actual_planar and input_planar == "No"):
+            QMessageBox.information(self, "Correct", "Correct! Your planar answer is right.")
+        elif input_planar == "Select":
+            QMessageBox.warning(self, "Incomplete", "Please select 'Yes' or 'No'.")
+        else:
+            self.show_youtube_hint("https://youtu.be/LSkB6jR44aE?si=v_6A-kfw9r8PMBpw")
+
+    def on_euler_check(self):
+        G, _ = self.get_graph()
+        actual_euler = G.is_eulerian()
+        input_euler = self.euler_select.currentText()
+        if (actual_euler and input_euler == "Yes") or (not actual_euler and input_euler == "No"):
+            QMessageBox.information(self, "Correct", "Correct! Your Eulerian answer is right.")
+        elif input_euler == "Select":
+            QMessageBox.warning(self, "Incomplete", "Please select 'Yes' or 'No'.")
+        else:
+            self.show_youtube_hint("https://youtu.be/sw79Z34v0dQ?si=m6Nzq3J8BBUb2Byk")
+
+    def on_hamilton_check(self):
+        G, _ = self.get_graph()
+        actual_hamilton = G.is_hamiltonian()
+        input_hamilton = self.hamilton_select.currentText()
+        if (actual_hamilton and input_hamilton == "Yes") or (not actual_hamilton and input_hamilton == "No"):
+            QMessageBox.information(self, "Correct", "Correct! Your Hamiltonian answer is right.")
+        elif input_hamilton == "Select":
+            QMessageBox.warning(self, "Incomplete", "Please select 'Yes' or 'No'.")
+        else:
+            self.show_youtube_hint("https://youtu.be/2UczS2hQLsI?si=WbEqbrLVXjjw4wlG")
 
     def show_glossary(self):
         if self.glossary_window is None:
