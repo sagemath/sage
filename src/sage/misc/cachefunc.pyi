@@ -41,7 +41,7 @@ class CachedMethod:
     def __call__(self, inst: Any, *args: Any, **kwds: Any) -> Any:
         ...
 
-    def _get_instance_cache(self, inst: Any) -> Dict:
+    def _get_instance_cache(self, inst: Any) -> dict:
         ...
 
     def __get__(self, inst: Any, cls: Any) -> Any:
@@ -54,14 +54,14 @@ class CachedInParentMethod(CachedMethod):
     def __init__(self, f: Callable, name: str = None, key: Callable = None, do_pickle: bool = None) -> None:
         ...
 
-    def _get_instance_cache(self, inst: Any) -> Dict:
+    def _get_instance_cache(self, inst: Any) -> dict:
         ...
 
     def __get__(self, inst: Any, cls: Any) -> Any:
         ...
 
 class CachedMethodCaller(CachedFunction):
-    def __init__(self, cachedmethod: CachedMethod, inst: Any, cache: Dict = None, name: str = None, key: Callable = None, do_pickle: bool = None) -> None:
+    def __init__(self, cachedmethod: CachedMethod, inst: Any, cache: dict = None, name: str = None, key: Callable = None, do_pickle: bool = None) -> None:
         ...
 
     def _instance_call(self, *args: Any, **kwds: Any) -> Any:
@@ -102,5 +102,5 @@ class CachedMethodCallerNoArgs(CachedFunction):
         ...
 
 class GloballyCachedMethodCaller(CachedMethodCaller):
-    def get_key_args_kwds(self, args: Tuple, kwds: Dict) -> Any:
+    def get_key_args_kwds(self, args: tuple, kwds: dict) -> Any:
         ...

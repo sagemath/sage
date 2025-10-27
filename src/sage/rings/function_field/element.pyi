@@ -59,10 +59,10 @@ class FunctionFieldElement(FieldElement):
     def divisor_of_poles(self) -> Any:
         ...
 
-    def zeros(self) -> List[Any]:
+    def zeros(self) -> list[Any]:
         ...
 
-    def poles(self) -> List[Any]:
+    def poles(self) -> list[Any]:
         ...
 
     def valuation(self, place: Any) -> int:

@@ -19,7 +19,7 @@ class NumberFieldBase:
     def is_absolute(self) -> bool:
         ...
 
-    def signature(self) -> Tuple[int, int]:
+    def signature(self) -> tuple[int, int]:
         ...
 
     def degree(self) -> int:
