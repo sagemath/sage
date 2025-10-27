@@ -1,4 +1,4 @@
-# There is likely a better solution to this, but for now this is how content will be stored
+ # There is likely a better solution to this, but for now this is how content will be stored
 def outputContent(topic):
     if topic == "GT":
         return {"Graph" : "A <b>graph</b> G is a pair of sets (V,E) where the members of V are called <b>vertices</b>"
@@ -37,7 +37,8 @@ def outputContent(topic):
                  "Dot product":"Let u=ax+by+cz and v=dx+ey+fz, the <b>dot product</b> of u and v, denoted u•v, is given by u•v=ad+be+cf.",
                  "Orthogonal matrix":"An <b>orthogonal matrix</b> Q is a matrix such that QᵀQ=QQᵀ=I." }
     elif topic == "ST":
-        return {"Set": "A <b>set</b> is a collection of distinct objects, considered as an object in its own right. Sets are typically denoted using curly brackets, e.g., {1, 2, 3}.",
+        return {"Set": "A <b>set</b> is a collection of distinct objects, considered as an object in its own right. Sets are typically denoted using curly brackets, e.g., {1, 2, 3}. We say that an object x is an <b>element</b> of a set A if x is contained in A, denoted x ∈ A.",
+                "Empty Set":"The <b>empty set</b>, denoted ∅, is the unique set that contains no elements.",
                 "Subset":"A set A is a <b>subset</b> of a set B if every element of A is also an element of B. This is denoted as A ⊆ B.",
                 "Union":"The <b>union</b> of two sets A and B, denoted A ∪ B, is the set of elements that are in A, in B, or in both.",
                 "Intersection":"The <b>intersection</b> of two sets A and B, denoted A ∩ B, is the set of elements that are in both A and B.",
