@@ -7,7 +7,9 @@ def cache_key(o: Any) -> Any:
     ...
 
 class CachedFunction:
-    def __init__(self, f: Callable, classmethod: bool = False, name: str = None, key: Callable = None, do_pickle: bool = None) -> None:
+    def __init__(self, f: Callable, classmethod: bool = False,
+                 name: str | None = None, key: Callable | None = None,
+                 do_pickle: bool | None = None) -> None:
         ...
 
     def __call__(self, *args: Any, **kwds: Any) -> Any:
@@ -35,7 +37,9 @@ class CachedFunction:
         ...
 
 class CachedMethod:
-    def __init__(self, f: Callable, name: str = None, key: Callable = None, do_pickle: bool = None) -> None:
+    def __init__(self, f: Callable, name: str | None = None,
+                 key: Callable | None = None,
+                 do_pickle: bool | None = None) -> None:
         ...
 
     def __call__(self, inst: Any, *args: Any, **kwds: Any) -> Any:
@@ -51,7 +55,9 @@ class CacheDict(dict):
     pass
 
 class CachedInParentMethod(CachedMethod):
-    def __init__(self, f: Callable, name: str = None, key: Callable = None, do_pickle: bool = None) -> None:
+    def __init__(self, f: Callable, name: str | None = None,
+                 key: Callable | None = None,
+                 do_pickle: bool | None = None) -> None:
         ...
 
     def _get_instance_cache(self, inst: Any) -> dict:
@@ -61,7 +67,10 @@ class CachedInParentMethod(CachedMethod):
         ...
 
 class CachedMethodCaller(CachedFunction):
-    def __init__(self, cachedmethod: CachedMethod, inst: Any, cache: dict = None, name: str = None, key: Callable = None, do_pickle: bool = None) -> None:
+    def __init__(self, cachedmethod: CachedMethod, inst: Any,
+                 cache: dict | None = None, name: str | None = None,
+                 key: Callable | None = None,
+                 do_pickle: bool | None = None) -> None:
         ...
 
     def _instance_call(self, *args: Any, **kwds: Any) -> Any:
@@ -80,7 +89,9 @@ class CachedMethodCaller(CachedFunction):
         ...
 
 class CachedMethodCallerNoArgs(CachedFunction):
-    def __init__(self, inst: Any, f: Callable, cache: Any = None, name: str = None, do_pickle: bool = None) -> None:
+    def __init__(self, inst: Any, f: Callable, cache: Any = None,
+                 name: str | None = None,
+                 do_pickle: bool | None = None) -> None:
         ...
 
     def _instance_call(self) -> Any:

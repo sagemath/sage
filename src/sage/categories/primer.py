@@ -1,10 +1,5 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Elements, parents, and categories in Sage: a primer
-
-.. contents::
-   :depth: 2
-   :class: this-will-duplicate-information-and-it-is-still-useful-here
 
 Abstract
 ========
