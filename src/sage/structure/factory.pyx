@@ -173,9 +173,7 @@ cdef class UniqueFactory(SageObject):
         ....:         impl = extra_args['impl']
         ....:         if impl == 'C':
         ....:             return C(*key)
-        ....:         if impl == 'D':
-        ....:             return D(*key)
-        ....:         return E(*key)
+        ....:         return D(*key)
         ....:
 
     Now we can create a factory instance. It is supposed to be found under the
@@ -201,6 +199,13 @@ cdef class UniqueFactory(SageObject):
         ....:         self.t = args
         ....:     def __repr__(self):
         ....:         return "D%s"%repr(self.t)
+        ....:
+
+    Again, being in a doctest, we need to put the class ``D`` into the
+    ``__main__`` module, so that Python can find it::
+
+        sage: import __main__
+        sage: __main__.D = D
 
     It is impossible to create an instance of ``C`` with our factory, since it
     does not allow weak references::
