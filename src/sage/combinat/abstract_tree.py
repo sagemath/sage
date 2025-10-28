@@ -1202,14 +1202,28 @@ class AbstractTree:
             sage: T.n_nodes()
             10000
         """
-        count = 0
+        # An attribute _node_number for storing the number of nodes
+        # This is OK as AbstractTree is immutable
+        # If the attribute is not present, we compute it
+        try:
+            return self._node_number
+        except AttributeError:
+            pass
 
-        def incr(node):
-            nonlocal count
-            count += 1
+        if self.is_empty():
+            self._node_number = Integer(0)
+            return self._node_number
 
-        self.iterative_pre_order_traversal(incr)
-        return Integer(count)
+        def count(node):
+            if not node.is_empty():
+                # Using post-order
+                # Thus _node_number is computed for all non-empty subtrees
+                node._node_number = Integer(1)
+                node._node_number += sum(e._node_number for e in node
+                                         if not e.is_empty())
+
+        self.iterative_post_order_traversal(count)
+        return self._node_number
 
     node_number = n_nodes
 
@@ -1524,13 +1538,14 @@ class AbstractTree:
             sage: BinaryTree().canonical_labelling()
             .
         """
-        LTR = self.parent().labelled_trees()
-        liste = []
-        deca = 1
-        for subtree in self:
-            liste += [subtree.canonical_labelling(shift + deca)]
-            deca += subtree.n_nodes()
-        return LTR._element_constructor_(liste, label=shift)
+        def aux(tree, LTR, curlabel):
+            mylabel = curlabel[0]
+            curlabel[0] += 1
+            newtree = LTR([aux(st, LTR, curlabel) for st in tree],
+                          label=mylabel)
+            return newtree
+
+        return aux(self, self.parent().labelled_trees(), [shift])
 
     def to_hexacode(self):
         r"""
@@ -2186,6 +2201,41 @@ class AbstractClonableTree(AbstractTree):
             return res
         else:
             return ClonableArray._getitem(self, i)
+
+    def _require_mutable(self):
+        """
+        Check that ``self`` is mutable and clear the ``_node_number`` parameter.
+
+        The mutation could affect a precomputed ``_node_number``,
+        and so we clear this when this is called, which is done in
+        preparation for mutating the tree.
+
+        Values cleared:
+
+        - ``_node_number`` : number of nodes in the tree
+
+        EXAMPLES::
+
+            sage: T = OrderedTree()
+            sage: T._require_mutable()
+            Traceback (most recent call last):
+            ...
+            ValueError: object is immutable; please change a copy instead.
+
+        ::
+
+            sage: T = LabelledRootedTree([]).clone()
+            sage: T.node_number()
+            1
+            sage: T._require_mutable()
+            sage: hasattr(T, '_node_number')
+            False
+        """
+        super()._require_mutable()
+        try:
+            delattr(self, '_node_number')
+        except AttributeError:
+            pass
 
 
 class AbstractLabelledTree(AbstractTree):

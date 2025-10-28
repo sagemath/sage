@@ -178,10 +178,6 @@ from sage.structure.category_object import normalize_names, certify_names
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.integer import Integer
 
-# the import below is just a redirection
-from sage.rings.finite_rings.finite_field_base import is_FiniteField
-assert is_FiniteField  # just to silent pyflakes
-
 try:
     # We don't late import this because this means trouble with the Givaro library
     # On a Macbook Pro OSX 10.5.8, this manifests as a Bus Error on exiting Sage.
@@ -597,7 +593,7 @@ class FiniteFieldFactory(UniqueFactory):
             sage: GF((5, 1), 3)
             Traceback (most recent call last):
             ...
-            TypeError: variable name 3 must be a string, not <class 'sage.rings.integer.Integer'>
+            TypeError: 'sage.rings.integer.Integer' object is not iterable
             sage: GF((5, 2), 3)
             Traceback (most recent call last):
             ...
@@ -610,6 +606,35 @@ class FiniteFieldFactory(UniqueFactory):
             Traceback (most recent call last):
             ...
             ValueError: the order of a finite field must be a prime power
+
+        We expect ``name`` to be a string (if it is a single name) and ``names`` to be
+        a tuple of strings, but for backwards compatibility this is not enforced.
+        This behavior might change in the future. ::
+
+            sage: GF(7, name='aa')
+            Finite Field of size 7
+            sage: GF(7^2, name='aa')
+            Finite Field in aa of size 7^2
+            sage: GF(7, name=('aa',))
+            Finite Field of size 7
+            sage: GF(7^2, name=('aa',))
+            Finite Field in aa of size 7^2
+            sage: GF(7, name=['aa'])
+            Finite Field of size 7
+            sage: GF(7^2, name=['aa'])
+            Finite Field in aa of size 7^2
+            sage: GF(7, names='aa')
+            Finite Field of size 7
+            sage: GF(7^2, names='aa')
+            Finite Field in aa of size 7^2
+            sage: GF(7, names=('aa',))
+            Finite Field of size 7
+            sage: GF(7^2, names=('aa',))
+            Finite Field in aa of size 7^2
+            sage: GF(7, names=['aa'])
+            Finite Field of size 7
+            sage: GF(7^2, names=['aa'])
+            Finite Field in aa of size 7^2
         """
         for key, val in kwds.items():
             if key not in ['structure', 'implementation', 'prec', 'embedding', 'latex_names']:
@@ -646,7 +671,7 @@ class FiniteFieldFactory(UniqueFactory):
                 if impl is None:
                     impl = 'modn'
                 if name is not None:
-                    certify_names((name,))
+                    certify_names((name,) if isinstance(name, str) else name)
                 name = ('x',)  # Ignore name
                 # Every polynomial of degree 1 is irreducible
                 check_irreducible = False
@@ -837,36 +862,6 @@ class FiniteFieldFactory(UniqueFactory):
 
 
 GF = FiniteField = FiniteFieldFactory("FiniteField")
-
-
-def is_PrimeFiniteField(x):
-    """
-    Return ``True`` if ``x`` is a prime finite field.
-
-    This function is deprecated.
-
-    EXAMPLES::
-
-        sage: from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
-        sage: is_PrimeFiniteField(QQ)
-        doctest:...: DeprecationWarning: the function is_PrimeFiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) and x.is_prime_field() instead
-        See https://github.com/sagemath/sage/issues/32664 for details.
-        False
-        sage: is_PrimeFiniteField(GF(7))
-        True
-        sage: is_PrimeFiniteField(GF(7^2, 'a'))
-        False
-        sage: is_PrimeFiniteField(GF(next_prime(10^90, proof=False)))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32664, "the function is_PrimeFiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) and x.is_prime_field() instead")
-
-    from .finite_field_prime_modn import FiniteField_prime_modn
-    from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
-
-    return isinstance(x, FiniteField_prime_modn) or \
-           (isinstance(x, FiniteField_generic) and x.degree() == 1)
 
 
 zech_log_bound = 2**16

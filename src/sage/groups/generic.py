@@ -4,11 +4,12 @@ Miscellaneous generic functions
 A collection of functions implementing generic algorithms in arbitrary
 groups, including additive and multiplicative groups.
 
-In all cases the group operation is specified by a parameter
-``operation``, which is a string either one of the set of
-``multiplication_names`` or ``addition_names`` specified below, or other.
-In the latter case, the caller must provide an identity, ``inverse()`` and
-``op()`` functions.
+In all cases the group operation is specified by either:
+
+- a parameter ``operation``, which is a string in either one of the sets of
+  ``multiplication_names`` or ``addition_names`` specified below, or
+- passing ``operation='other'``, together with an ``identity`` element
+  as well as ``inverse`` and ``op`` functions.
 
 ::
 
@@ -115,12 +116,14 @@ Some examples in the group of points of an elliptic curve over a finite field:
 # ****************************************************************************
 
 from copy import copy
+import operator
 
 from sage.arith.misc import integer_ceil, integer_floor, xlcm
 from sage.arith.srange import xsrange
 from sage.misc.misc_c import prod
 import sage.rings.integer_ring as integer_ring
 import sage.rings.integer
+from sage.structure.element import parent
 
 #
 # Lists of names (as strings) which the user may use to identify one
@@ -128,6 +131,153 @@ import sage.rings.integer
 #
 multiplication_names = ('multiplication', 'times', 'product', '*')
 addition_names = ('addition', 'plus', 'sum', '+')
+
+
+def _parse_group_def(parent, operation, identity, inverse, op, *, check=True):
+    """
+    Helper function to parse the user input for group operations.
+    Only two possibilities are accepted:
+
+    - either ``operation`` is one of the standard operations
+      (multiplication or addition), and all of ``identity``,
+      ``inverse``, and ``op`` are ``None``;
+    - or ``operation`` is ``'other'``, and all of
+      ``identity``, ``inverse``, and ``op`` are given.
+
+    Refer to the module documentation.
+
+    INPUT:
+
+    - ``parent`` -- a parent object, where identity is fetched from if needed
+    - ``operation`` -- a string, one of the standard operations
+      (multiplication or addition) or ``'other'``
+    - ``identity`` -- the identity element of the group, or ``None``
+    - ``inverse`` -- if not ``None``, a function taking one argument and
+      returning its inverse
+    - ``op`` -- if not ``None``, a function taking two arguments and
+      computing the group operation on these two arguments
+    - ``check`` -- boolean (default: ``True``); ensure that everything are specified.
+      The caller may choose to pass ``check=False`` if it only need some of the
+      group operations, for example, :func:`multiple` wouldn't need ``inverse`` and
+      ``identity`` if the exponent is positive.
+
+    OUTPUT: a tuple ``('other', identity, inverse, op)``
+
+    It is further guaranteed that if the input ``operation`` is
+    either addition or multiplication, then the returned ``op``
+    is ``operator.add`` or ``operator.mul``, respectively.
+
+    TESTS::
+
+        sage: from sage.groups.generic import _parse_group_def
+        sage: import operator
+        sage: _parse_group_def(ZZ, 'other', None, None, None)
+        Traceback (most recent call last):
+        ...
+        ValueError: identity, inverse and operation must all be specified...
+        sage: _parse_group_def(ZZ, '+', None, None, None)
+        ('other', 0, <built-in function neg>, <built-in function add>)
+        sage: _parse_group_def(ZZ, '+', 0, None, None)
+        Traceback (most recent call last):
+        ...
+        ValueError: in order to specify custom identity/inverse/op, operation must be 'other'
+        sage: _parse_group_def(ZZ, '*', None, None, None)
+        ('other', 1, <built-in function inv>, <built-in function mul>)
+        sage: _parse_group_def(ZZ, 'other', 0, operator.neg, operator.add)
+        ('other', 0, <built-in function neg>, <built-in function add>)
+    """
+    from operator import inv, mul, neg, add
+
+    if operation in multiplication_names:
+        if identity is not None or inverse is not None or op is not None:
+            raise ValueError("in order to specify custom identity/inverse/op, "
+                             "operation must be 'other'")
+        try:
+            identity = parent.one()
+        except Exception:
+            if check:
+                raise
+        inverse = inv
+        op = mul
+    elif operation in addition_names:
+        if identity is not None or inverse is not None or op is not None:
+            raise ValueError("in order to specify custom identity/inverse/op, "
+                             "operation must be 'other'")
+        try:
+            identity = parent.zero()
+        except Exception:
+            if check:
+                raise
+        inverse = neg
+        op = add
+    else:
+        if check and (identity is None or inverse is None or op is None):
+            raise ValueError("identity, inverse and operation must all be specified "
+                             "when operation is neither addition nor multiplication")
+    return 'other', identity, inverse, op
+
+
+def _power_func(operation, identity, inverse, op):
+    """
+    Return a function that computes powers using the given binary operation.
+
+    INPUT:
+
+    - ``operation``, ``identity``, ``inverse``, ``op`` -- output of :func:`_parse_group_def`
+
+    OUTPUT: A function that computes powers using the given binary operation.
+
+    TESTS::
+
+        sage: from sage.groups.generic import _power_func
+        sage: import operator
+        sage: _power_func('other', 0, operator.neg, operator.add)
+        <built-in function mul>
+    """
+    if op is operator.add:
+        return operator.mul
+    if op is operator.mul:
+        return operator.pow
+    return lambda x, y: multiple(x, y, operation=operation, identity=identity, inverse=inverse, op=op)
+
+
+def _ord_from_op(x, op, param_name='ord'):
+    """
+    Return the order of ``x`` in a group with binary operation ``op``.
+    This is an internal helper method, only used inside other functions
+    in this file.
+
+    INPUT:
+
+    - ``x`` -- an element of a group
+    - ``op`` -- output of :func:`_parse_group_def`
+    - ``param_name`` -- the parameter name used in the error message
+      raised when the order cannot be determined, see tests below
+
+    OUTPUT: An integer representing the order of ``x`` in the group.
+
+    TESTS::
+
+        sage: from sage.groups.generic import _ord_from_op
+        sage: import operator
+        sage: _ord_from_op(mod(2, 5), operator.add)
+        5
+        sage: _ord_from_op(mod(2, 5), operator.mul)
+        4
+        sage: _ord_from_op(mod(2, 5), operator.xor)
+        Traceback (most recent call last):
+        ...
+        ValueError: ord must be specified when operation is neither addition nor multiplication
+        sage: _ord_from_op(1, operator.xor, 'ord_p')
+        Traceback (most recent call last):
+        ...
+        ValueError: ord_p must be specified when operation is neither addition nor multiplication
+    """
+    if op is operator.add:
+        return x.additive_order()
+    if op is operator.mul:
+        return x.multiplicative_order()
+    raise ValueError(f"{param_name} must be specified when operation is neither addition nor multiplication")
 
 
 def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
@@ -175,19 +325,7 @@ def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
         (645656132358737542773209599489/22817025904944891235367494656 :
          -528978757629498440949529703029165608170166527/3446581505217248068297884384990762467229696 : 1)
     """
-    from operator import inv, mul, neg, add
-
-    if operation in multiplication_names:
-        identity = a.parent().one()
-        inverse = inv
-        op = mul
-    elif operation in addition_names:
-        identity = a.parent().zero()
-        inverse = neg
-        op = add
-    else:
-        if identity is None or inverse is None or op is None:
-            raise ValueError("identity, inverse and operation must all be specified")
+    operation, identity, inverse, op = _parse_group_def(parent(a), operation, identity, inverse, op)
 
     if n == 0:
         return identity
@@ -452,31 +590,29 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
 
     This will return a multiple of the order of P::
 
-        sage: bsgs(P, P.parent().zero(), Hasse_bounds(F.order()), operation='+')            # needs sage.rings.finite_rings sage.schemes
+        sage: bsgs(P, P.parent().zero(), Hasse_bounds(F.order()), operation='+')        # needs sage.rings.finite_rings sage.schemes
         69327408
 
     AUTHOR:
 
     - John Cremona (2008-03-15)
+
+    TESTS:
+
+    Ensures Python integers work::
+
+        sage: from sage.groups.generic import bsgs
+        sage: b = Mod(2,37);  a = b^20
+        sage: bsgs(b, a, (0r, 36r))
+        20
     """
     Z = integer_ring.ZZ
 
-    from operator import inv, mul, neg, add
-
-    if operation in multiplication_names:
-        identity = a.parent().one()
-        inverse = inv
-        op = mul
-    elif operation in addition_names:
-        # Should this be replaced with .zero()? With an extra AttributeError handler?
-        identity = a.parent().zero()
-        inverse = neg
-        op = add
-    else:
-        if identity is None or inverse is None or op is None:
-            raise ValueError("identity, inverse and operation must be given")
+    operation, identity, inverse, op = _parse_group_def(parent(a), operation, identity, inverse, op)
 
     lb, ub = bounds
+    lb = Z(lb)
+    ub = Z(ub)
     if lb < 0 or ub < lb:
         raise ValueError("bsgs() requires 0<=lb<=ub")
 
@@ -490,7 +626,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
 
     if ran < 30:    # use simple search for small ranges
         d = c
-        # for i,d in multiples(a,ran,c,indexed=True,operation=operation):
+        # for i,d in multiples(a,ran,c,indexed=True,operation=operation,identity=identity,inverse=inverse,op=op):
         for i0 in range(ran):
             i = lb + i0
             if identity == d:        # identity == b^(-1)*a^i, so return i
@@ -610,25 +746,16 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
     """
     from sage.rings.integer import Integer
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-    from operator import mul, add, pow
+
+    operation, identity, inverse, op = _parse_group_def(parent(a), operation, identity, inverse, op)
 
     # should be reasonable choices
     partition_size = 20
     memory_size = 4
     mult = op
-    power = lambda x, y: multiple(x, y, operation=operation, identity=identity, inverse=inverse, op=op)
-    if operation in addition_names:
-        mult = add
-        power = mul
-        if ord is None:
-            ord = base.additive_order()
-    elif operation in multiplication_names:
-        mult = mul
-        power = pow
-        if ord is None:
-            ord = base.multiplicative_order()
-    elif ord is None or inverse is None or identity is None or op is None:
-        raise ValueError
+    power = _power_func(operation, identity, inverse, op)
+    if ord is None:
+        ord = _ord_from_op(base, op)
 
     ord = Integer(ord)
     if not ord.is_prime():
@@ -924,29 +1051,16 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     - John Cremona (2008-02-29) rewrite using ``dict()`` and make generic
     - Julien Grijalva (2022-08-09) rewrite to make more generic, more algorithm options, and more effective use of bounds
     """
-    from operator import mul, add, pow
-    power = mul if operation in addition_names else pow
-    mult = add if operation in addition_names else mul
+    operation, identity, inverse, op = _parse_group_def(parent(a), operation, identity, inverse, op)
+    mult = op
+    power = _power_func(operation, identity, inverse, op)
+
     original_a = a # Store the original value of a so we can verify the answer
-    if op:
-        mult = op
-        power = lambda x, y: multiple(x, y, operation=operation, identity=identity, inverse=inverse, op=op)
     if bounds:
         lb, ub = map(integer_ring.ZZ, bounds)
-    if (op is None or identity is None or inverse is None or ord is None) and operation not in addition_names + multiplication_names:
-        raise ValueError("ord, op, identity, and inverse must all be specified for this operation")
     from sage.rings.infinity import Infinity
     if ord is None:
-        if operation in multiplication_names:
-            try:
-                ord = base.multiplicative_order()
-            except Exception:
-                ord = base.order()
-        else:
-            try:
-                ord = base.additive_order()
-            except Exception:
-                ord = base.order()
+        ord = _ord_from_op(base, op)
     elif ord != Infinity:
         ord = integer_ring.ZZ(ord)
     try:
@@ -1056,7 +1170,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
 
     This will return a multiple of the order of P::
 
-        sage: discrete_log_lambda(P.parent().zero(), P, Hasse_bounds(F.order()),            # needs sage.rings.finite_rings sage.schemes
+        sage: discrete_log_lambda(P.parent().zero(), P, Hasse_bounds(F.order()),        # needs sage.rings.finite_rings sage.schemes
         ....:                     operation='+')
         69327408
 
@@ -1068,17 +1182,12 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
 
     AUTHOR:
 
-        -- Yann Laigle-Chapuy (2009-01-25)
+    - Yann Laigle-Chapuy (2009-01-25)
     """
     from sage.rings.integer import Integer
-    from operator import mul, add
-
+    operation, identity, inverse, op = _parse_group_def(parent(a), operation, identity, inverse, op)
     mult = op
-    if operation in addition_names:
-        mult = add
-    elif operation in multiplication_names:
-        mult = mul
-    power = lambda x, y: multiple(x, y, operation=operation, identity=identity, inverse=inverse, op=op)
+    power = _power_func(operation, identity, inverse, op)
 
     lb, ub = bounds
     if lb < 0 or ub < lb:
@@ -1132,7 +1241,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
 ################################################################
 
 
-def linear_relation(P, Q, operation='+', identity=None, inverse=None, op=None):
+def linear_relation(P, Q, operation='+', identity=None, inverse=None, op=None, *, ord_p=None, ord_q=None):
     r"""
     Function which solves the equation ``a*P=m*Q`` or ``P^a=Q^m``.
 
@@ -1180,40 +1289,23 @@ def linear_relation(P, Q, operation='+', identity=None, inverse=None, op=None):
     """
     Z = integer_ring.ZZ
 
-    if operation in multiplication_names:
-        try:
-            n = P.multiplicative_order()
-            m = Q.multiplicative_order()
-        except Exception:
-            n = P.order()
-            m = Q.order()
-    elif operation in addition_names:
-        try:
-            n = P.additive_order()
-            m = Q.additive_order()
-        except Exception:
-            n = P.order()
-            m = Q.order()
-    else:
-        if op is None:
-            raise ValueError("operation must be specified")
-        n = P.order()
-        m = Q.order()
-
+    operation, identity, inverse, op = _parse_group_def(parent(P), operation, identity, inverse, op)
+    n = ord_p if ord_p is not None else _ord_from_op(P, op, 'ord_p')
+    m = ord_q if ord_q is not None else _ord_from_op(Q, op, 'ord_q')
     g = n.gcd(m)
     if g == 1:
         return (m, Z.zero())
     n1 = n // g
     m1 = m // g
-    P1 = multiple(P, n1, operation=operation)  # has exact order g
-    Q1 = multiple(Q, m1, operation=operation)  # has exact order g
+    P1 = multiple(P, n1, operation=operation, identity=identity, inverse=inverse, op=op)  # has exact order g
+    Q1 = multiple(Q, m1, operation=operation, identity=identity, inverse=inverse, op=op)  # has exact order g
 
     # now see if Q1 is a multiple of P1; the only multiples we
     # need check are h*Q1 where h divides g
     for h in g.divisors():  # positive divisors!
         try:
-            Q2 = multiple(Q1, h, operation=operation)
-            return (n1 * bsgs(P1, Q2, (0, g - 1), operation=operation),
+            Q2 = multiple(Q1, h, operation=operation, identity=identity, inverse=inverse, op=op)
+            return (n1 * bsgs(P1, Q2, (0, g - 1), operation=operation, identity=identity, inverse=inverse, op=op),
                     m1 * h)
         except ValueError:
             pass  # to next h
@@ -1315,21 +1407,9 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
     """
     Z = integer_ring.ZZ
 
-    if operation in multiplication_names:
-        identity = P.parent().one()
-    elif operation in addition_names:
-        identity = P.parent().zero()
-    else:
-        if identity is None or inverse is None or op is None:
-            raise ValueError("identity, inverse and operation must all be specified")
+    operation, identity, inverse, op = _parse_group_def(parent(P), operation, identity, inverse, op)
 
-    def _multiple(A, B):
-        return multiple(A,
-                        B,
-                        operation=operation,
-                        identity=identity,
-                        inverse=inverse,
-                        op=op)
+    _multiple = _power_func(operation, identity, inverse, op)
 
     if P == identity:
         return Z.one()
@@ -1405,7 +1485,9 @@ def order_from_bounds(P, bounds, d=None, operation='+',
     - ``P`` -- a Sage object which is a group element
 
     - ``bounds`` -- a 2-tuple ``(lb,ub)`` such that ``m*P=0`` (or
-      ``P**m=1``) for some ``m`` with ``lb<=m<=ub``
+      ``P**m=1``) for some ``m`` with ``lb<=m<=ub``. If ``None``,
+      gradually increasing bounds will be tried (might loop infinitely
+      if the element has no torsion).
 
     - ``d`` -- (optional) a positive integer; only ``m`` which are
       multiples of this will be considered
@@ -1434,6 +1516,8 @@ def order_from_bounds(P, bounds, d=None, operation='+',
         sage: b = a^4
         sage: order_from_bounds(b, (5^4, 5^5), operation='*')
         781
+        sage: order_from_bounds(b, None, operation='*')
+        781
 
         sage: # needs sage.rings.finite_rings sage.schemes
         sage: E = EllipticCurve(k, [2,4])
@@ -1451,33 +1535,32 @@ def order_from_bounds(P, bounds, d=None, operation='+',
         sage: order_from_bounds(w, (200, 250), operation='*')
         23
     """
-    from operator import mul, add
-
-    if operation in multiplication_names:
-        op = mul
-        identity = P.parent().one()
-    elif operation in addition_names:
-        op = add
-        identity = P.parent().zero()
-    else:
-        if op is None:
-            raise ValueError("operation and identity must be specified")
+    operation, identity, inverse, op = _parse_group_def(parent(P), operation, identity, inverse, op)
+    if bounds is None:
+        lb = 1
+        ub = 256
+        while True:
+            try:
+                return order_from_bounds(P, (lb, ub), d, operation, identity, inverse, op)
+            except ValueError:
+                lb = ub + 1
+                ub *= 16
 
     Q = P
     if d is None:
         d = 1
     if d > 1:
-        Q = multiple(P, d, operation=operation)
+        Q = multiple(P, d, operation=operation, identity=identity, inverse=inverse, op=op)
         lb, ub = bounds
         bounds = (integer_ceil(lb / d), integer_floor(ub / d))
 
     # Use generic bsgs to find  n=d*m with lb<=n<=ub and n*P=0
 
-    m = d * bsgs(Q, identity, bounds, operation=operation)
+    m = d * bsgs(Q, identity, bounds, operation=operation, identity=identity, inverse=inverse, op=op)
 
     # Now use the order_from_multiple() function to finish the job:
 
-    return order_from_multiple(P, m, operation=operation, check=False)
+    return order_from_multiple(P, m, operation=operation, identity=identity, inverse=inverse, op=op, check=False)
 
 
 def has_order(P, n, operation='+') -> bool:
@@ -1644,23 +1727,14 @@ def merge_points(P1, P2, operation='+',
         sage: m == lcm(7,4)
         True
     """
-    from operator import mul, add
-
     g1, n1 = P1
     g2, n2 = P2
 
-    if operation in multiplication_names:
-        op = mul
-        identity = g1.parent().one()
-    elif operation in addition_names:
-        op = add
-        identity = g1.parent().zero()
-    else:
-        if op is None:
-            raise ValueError("operation and identity must be specified")
+    operation, identity, inverse, op = _parse_group_def(parent(g1), operation, identity, inverse, op)
 
     if check:
-        if multiple(g1, n1, operation=operation) != identity or multiple(g2, n2, operation=operation) != identity:
+        if (multiple(g1, n1, operation=operation, identity=identity, inverse=inverse, op=op) != identity or
+            multiple(g2, n2, operation=operation, identity=identity, inverse=inverse, op=op) != identity):
             raise ValueError("the orders provided do not divide the orders of the points provided")
 
     # trivial cases
@@ -1672,8 +1746,8 @@ def merge_points(P1, P2, operation='+',
     m, k1, k2 = xlcm(n1, n2)
     m1 = n1 // k1
     m2 = n2 // k2
-    g1 = multiple(g1, m1, operation=operation)
-    g2 = multiple(g2, m2, operation=operation)
+    g1 = multiple(g1, m1, operation=operation, identity=identity, inverse=inverse, op=op)
+    g2 = multiple(g2, m2, operation=operation, identity=identity, inverse=inverse, op=op)
     return (op(g1, g2), m)
 
 

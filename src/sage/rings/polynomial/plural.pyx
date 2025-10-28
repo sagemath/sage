@@ -2962,8 +2962,9 @@ cpdef MPolynomialRing_libsingular new_CRing(RingWrap rw, base_ring):
     self._term_order = TermOrder(rw.ordering_string(), force=True)
 
     names = tuple(rw.var_names())
-    CommutativeRing.__init__(self, base_ring, names, category=Algebras(base_ring),
-                             normalize=False)
+    Parent.__init__(self, base=base_ring, names=names,
+                    category=Algebras(base_ring).Commutative(),
+                    normalize=False)
 
     self._has_singular = True
 
@@ -3031,7 +3032,8 @@ cpdef NCPolynomialRing_plural new_NRing(RingWrap rw, base_ring):
     self._ngens = rw.ngens()
     self._term_order = TermOrder(rw.ordering_string(), force=True)
 
-    Parent.__init__(self, base=base_ring, names=rw.var_names(), category=Algebras(base_ring))
+    Parent.__init__(self, base=base_ring, names=rw.var_names(),
+                    category=Algebras(base_ring))
 
     self._has_singular = True
     self._relations = self.relations()
