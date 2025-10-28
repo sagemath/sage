@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Detecting external software
 
@@ -37,8 +36,9 @@ import platform
 # With OS X, Python 3.8 defaults to use 'spawn' instead of 'fork' in
 # multiprocessing, and Sage doctesting doesn't work with 'spawn'. See
 # trac #27754.
-if platform.system() == 'Darwin':
-    multiprocessing.set_start_method('fork', force=True)
+# With Python 3.14, the default changed to 'forkserver' on Linux as well.
+# Sage doctesting requires 'fork' method.
+multiprocessing.set_start_method('fork', force=True)
 Array = multiprocessing.Array
 
 # Functions in this module whose name is of the form 'has_xxx' tests if the

@@ -529,7 +529,7 @@ def cm_orders(h, proof=None):
 # WAS extracted this by cutting/pasting from the pdf, and running this program:
 # z = {}
 # for X in open('/Users/wstein/tmp/a.txt').readlines():
-#    if len(X.strip()):
+#    if X.strip():
 #        v = [int(a) for a in X.split()]
 #        for i in range(5):
 #            z[v[3*i]]=(v[3*i+2], v[3*i+1])
@@ -575,7 +575,7 @@ watkins_table = {1: (163, 9), 2: (427, 18), 3: (907, 16), 4: (1555, 54), 5: (268
 
 # klaise_table = {}
 # for X in open('klaise_table.txt').readlines():
-#     if len(X.strip()):
+#     if X.strip():
 #         v = [int(a) for a in X.split()]
 #         for i in range(4):
 #             klaise_table[v[3*i]]=(v[3*i+2], v[3*i+1])
@@ -888,7 +888,8 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
 
 @cached_function
 def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
-    r"""Return whether or not this is a CM `j`-invariant, and the CM discriminant if it is.
+    r"""
+    Return whether or not this is a CM `j`-invariant, and the CM discriminant if it is.
 
     INPUT:
 
@@ -910,7 +911,7 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
     ALGORITHM:
 
     The default algorithm used is to test whether the minimal
-    polynomial of ``j`` is a Hilbert CLass Polynomail, using
+    polynomial of ``j`` is a Hilbert CLass Polynomial, using
     :func:`is_HCP` which implements Algorithm 2 of [CreSuth2023]_ by
     Cremona and Sutherland.
 
