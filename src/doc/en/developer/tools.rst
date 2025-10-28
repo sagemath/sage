@@ -11,13 +11,13 @@ Development and Testing Tools
 uv
 ==
 
-`uv <https://docs.astral.sh/uv/>`_ is a versatile tool for 
-managing and synchronizing project dependencies. 
+`uv <https://docs.astral.sh/uv/>`_ is a versatile tool for
+managing and synchronizing project dependencies.
 
-The lockfile `uv.lock` in the root captures the exact package versions for 
+The lockfile `uv.lock` in the root captures the exact package versions for
 all systems and ensures consistent, reproducible installations.
-It is automatically updated during ``uv`` operations like ``uv add`` 
-and ``uv run``, or explicitly with ``uv lock``. 
+It is automatically updated during ``uv`` operations like ``uv add``
+and ``uv run``, or explicitly with ``uv lock``.
 Moreover, it is periodically updated by `Renovate <https://docs.renovatebot.com/>`_.
 You can also manually update it by running ``uv lock -U``.
 
@@ -52,36 +52,38 @@ you can just type ``tox`` instead.)
 
 This configuration provides an entry point for various testing/linting methods,
 known as "tox environments".  We can type ``./sage --advanced`` to see what is
-available::
+available
 
-  $ ./sage --advanced
-  SageMath version 9.2
-  ...
-  Testing files:
-  ...
-  --tox [options] <files|dirs> -- general entry point for testing
-                                  and linting of the Sage library
-     -e <envlist>     -- run specific test environments; default:
-                         doctest,coverage,startuptime,pycodestyle-minimal,relint,codespell,rst,ruff-minimal
-        doctest                -- run the Sage doctester
-                                  (same as "sage -t")
-        coverage               -- give information about doctest coverage of files
-                                  (same as "sage --coverage[all]")
-        startuptime            -- display how long each component of Sage takes to start up
-                                  (same as "sage --startuptime")
-        pycodestyle-minimal    -- check against Sage's minimal style conventions
-        relint                 -- check whether some forbidden patterns appear
-        codespell              -- check for misspelled words in source code
-        rst                    -- validate Python docstrings markup as reStructuredText
-        ruff-minimal           -- check against Sage's minimal style conventions
-        coverage.py            -- run the Sage doctester with Coverage.py
-        coverage.py-html       -- run the Sage doctester with Coverage.py, generate HTML report
-        pyright                -- run the static typing checker pyright
-        pycodestyle            -- check against the Python style conventions of PEP8
-        cython-lint            -- check Cython files for code style
-        ruff                   -- check against Python style conventions
-     -p auto          -- run test environments in parallel
-     --help           -- show tox help
+.. code-block:: console
+
+    $ ./sage --advanced
+    SageMath version 9.2
+    ...
+    Testing files:
+    ...
+    --tox [options] <files|dirs> -- general entry point for testing
+                                    and linting of the Sage library
+      -e <envlist>     -- run specific test environments; default:
+                          doctest,coverage,startuptime,pycodestyle-minimal,relint,codespell,rst,ruff-minimal
+          doctest                -- run the Sage doctester
+                                    (same as "sage -t")
+          coverage               -- give information about doctest coverage of files
+                                    (same as "sage --coverage[all]")
+          startuptime            -- display how long each component of Sage takes to start up
+                                    (same as "sage --startuptime")
+          pycodestyle-minimal    -- check against Sage's minimal style conventions
+          relint                 -- check whether some forbidden patterns appear
+          codespell              -- check for misspelled words in source code
+          rst                    -- validate Python docstrings markup as reStructuredText
+          ruff-minimal           -- check against Sage's minimal style conventions
+          coverage.py            -- run the Sage doctester with Coverage.py
+          coverage.py-html       -- run the Sage doctester with Coverage.py, generate HTML report
+          pyright                -- run the static typing checker pyright
+          pycodestyle            -- check against the Python style conventions of PEP8
+          cython-lint            -- check Cython files for code style
+          ruff                   -- check against Python style conventions
+      -p auto          -- run test environments in parallel
+      --help           -- show tox help
 
 
 Doctest
@@ -183,52 +185,56 @@ on the first use.
 
 Sage defines two configurations for pycodestyle.  The command ``./sage -tox -e pycodestyle-minimal`` uses
 pycodestyle in a minimal configuration.
-As of Sage 9.5, the entire Sage library conforms to this configuration::
+As of Sage 9.5, the entire Sage library conforms to this configuration
 
-  $ ./sage -tox -e pycodestyle-minimal -- src/sage/
-  pycodestyle-minimal installed: pycodestyle==2.8.0
-  pycodestyle-minimal run-test-pre: PYTHONHASHSEED='28778046'
-  pycodestyle-minimal run-test: commands[0] | pycodestyle --select E401,E70,W605,E711,E712,E721 sage
-  ___________ summary ____________
-    pycodestyle-minimal: commands succeeded
-    congratulations :)
+.. code-block:: console
+
+    $ ./sage -tox -e pycodestyle-minimal -- src/sage/
+    pycodestyle-minimal installed: pycodestyle==2.8.0
+    pycodestyle-minimal run-test-pre: PYTHONHASHSEED='28778046'
+    pycodestyle-minimal run-test: commands[0] | pycodestyle --select E401,E70,W605,E711,E712,E721 sage
+    ___________ summary ____________
+      pycodestyle-minimal: commands succeeded
+      congratulations :)
 
 When preparing a branch for a Sage ticket, developers should verify that ``./sage -tox -e
 pycodestyle-minimal`` passes.
 
 The second configuration is used with the command ``./sage -tox -e pycodestyle`` and runs a
-more thorough check::
+more thorough check
 
-  $ ./sage -tox -e pycodestyle -- src/sage/quadratic_forms/quadratic_form.py
-  pycodestyle installed: pycodestyle==2.8.0
-  pycodestyle run-test-pre: PYTHONHASHSEED='2520226550'
-  pycodestyle run-test: commands[0] | pycodestyle sage/quadratic_forms/quadratic_form.py
-  sage/quadratic_forms/quadratic_form.py:135:9: E225 missing whitespace around operator
-  sage/quadratic_forms/quadratic_form.py:163:64: E225 missing whitespace around operator
-  sage/quadratic_forms/quadratic_form.py:165:52: E225 missing whitespace around operator
-  sage/quadratic_forms/quadratic_form.py:173:42: E228 missing whitespace around modulo operator
-  ...
-  sage/quadratic_forms/quadratic_form.py:1620:9: E266 too many leading '#' for block comment
-  sage/quadratic_forms/quadratic_form.py:1621:9: E266 too many leading '#' for block comment
-  25      E111 indentation is not a multiple of 4
-  2       E117 over-indented
-  129     E127 continuation line over-indented for visual indent
-  1       E128 continuation line under-indented for visual indent
-  4       E201 whitespace after '['
-  4       E202 whitespace before ']'
-  2       E222 multiple spaces after operator
-  7       E225 missing whitespace around operator
-  1       E228 missing whitespace around modulo operator
-  25      E231 missing whitespace after ','
-  1       E262 inline comment should start with '# '
-  3       E265 block comment should start with '# '
-  62      E266 too many leading '#' for block comment
-  2       E272 multiple spaces before keyword
-  2       E301 expected 1 blank line, found 0
-  17      E303 too many blank lines (2)
-  ERROR: InvocationError for command .../pycodestyle sage/quadratic_forms/quadratic_form.py (exited with code 1)
-  ___________ summary ____________
-  ERROR:   pycodestyle: commands failed
+.. code-block:: console
+
+    $ ./sage -tox -e pycodestyle -- src/sage/quadratic_forms/quadratic_form.py
+    pycodestyle installed: pycodestyle==2.8.0
+    pycodestyle run-test-pre: PYTHONHASHSEED='2520226550'
+    pycodestyle run-test: commands[0] | pycodestyle sage/quadratic_forms/quadratic_form.py
+    sage/quadratic_forms/quadratic_form.py:135:9: E225 missing whitespace around operator
+    sage/quadratic_forms/quadratic_form.py:163:64: E225 missing whitespace around operator
+    sage/quadratic_forms/quadratic_form.py:165:52: E225 missing whitespace around operator
+    sage/quadratic_forms/quadratic_form.py:173:42: E228 missing whitespace around modulo operator
+    ...
+    sage/quadratic_forms/quadratic_form.py:1620:9: E266 too many leading '#' for block comment
+    sage/quadratic_forms/quadratic_form.py:1621:9: E266 too many leading '#' for block comment
+    25      E111 indentation is not a multiple of 4
+    2       E117 over-indented
+    129     E127 continuation line over-indented for visual indent
+    1       E128 continuation line under-indented for visual indent
+    4       E201 whitespace after '['
+    4       E202 whitespace before ']'
+    2       E222 multiple spaces after operator
+    7       E225 missing whitespace around operator
+    1       E228 missing whitespace around modulo operator
+    25      E231 missing whitespace after ','
+    1       E262 inline comment should start with '# '
+    3       E265 block comment should start with '# '
+    62      E266 too many leading '#' for block comment
+    2       E272 multiple spaces before keyword
+    2       E301 expected 1 blank line, found 0
+    17      E303 too many blank lines (2)
+    ERROR: InvocationError for command .../pycodestyle sage/quadratic_forms/quadratic_form.py (exited with code 1)
+    ___________ summary ____________
+    ERROR:   pycodestyle: commands failed
 
 When preparing a branch for a PR that adds new code,
 developers should verify that ``./sage -tox -e pycodestyle`` does not
@@ -242,25 +248,27 @@ makes it harder for reviewers to evaluate the changes.
 By passing the options ``--count -qq`` we can reduce the output to
 only show the number of style violation warnings.  This can be helpful
 for planning work on coding-style clean-up PRs that focus on one
-or a few related issues::
+or a few related issues
 
-  $ ./sage -tox -e pycodestyle -- --count -qq src/sage
-  pycodestyle installed: pycodestyle==2.8.0
-  pycodestyle run-test-pre: PYTHONHASHSEED='3166223974'
-  pycodestyle run-test: commands[0] | pycodestyle --count -qq sage
-  557     E111 indentation is not a multiple of 4
-  1       E112 expected an indented block
-  194     E114 indentation is not a multiple of 4 (comment)
-  ...
-  7       E743 ambiguous function definition 'l'
-  335     W291 trailing whitespace
-  4       W292 no newline at end of file
-  229     W293 blank line contains whitespace
-  459     W391 blank line at end of file
-  97797
-  ERROR: InvocationError for command .../pycodestyle --count -qq sage (exited with code 1)
-  ___________ summary ____________
-  ERROR:   pycodestyle: commands failed
+.. code-block:: console
+
+    $ ./sage -tox -e pycodestyle -- --count -qq src/sage
+    pycodestyle installed: pycodestyle==2.8.0
+    pycodestyle run-test-pre: PYTHONHASHSEED='3166223974'
+    pycodestyle run-test: commands[0] | pycodestyle --count -qq sage
+    557     E111 indentation is not a multiple of 4
+    1       E112 expected an indented block
+    194     E114 indentation is not a multiple of 4 (comment)
+    ...
+    7       E743 ambiguous function definition 'l'
+    335     W291 trailing whitespace
+    4       W292 no newline at end of file
+    229     W293 blank line contains whitespace
+    459     W391 blank line at end of file
+    97797
+    ERROR: InvocationError for command .../pycodestyle --count -qq sage (exited with code 1)
+    ___________ summary ____________
+    ERROR:   pycodestyle: commands failed
 
 *Installation:* (for manual use:) ``pip install -U pycodestyle --user``
 
@@ -341,24 +349,26 @@ Codespell
 `Codespell <https://pypi.org/project/codespell/>`_ uses a dictionary to check for
 misspelled words in source code.
 
-Sage defines a configuration for codespell::
+Sage defines a configuration for codespell
 
-  $ ./sage -tox -e codespell -- src/sage/homology/
-  codespell installed: codespell==2.1.0
-  codespell run-test-pre: PYTHONHASHSEED='1285169064'
-  codespell run-test: commands[0] | codespell '--skip=*.png,*.jpg,*.JPG,*.inv,*.dia,*.pdf,*.ico,*#*,*~*,*.bak,*.orig,*.log,*.sobj,*.tar,*.gz,*.pyc,*.o,*.sws,*.so,*.a,.DS_Store' --skip=doc/ca,doc/de,doc/es,doc/hu,doc/ja,doc/ru,doc/fr,doc/it,doc/pt,doc/tr --skip=src/doc/ca,src/doc/de,src/doc/es,src/doc/hu,src/doc/ja,src/doc/ru,src/doc/fr,src/doc/it,src/doc/pt,src/doc/tr '--skip=.git,.tox,worktree*,dist,upstream,logs,local,cythonized,scripts-3,autom4te.cache,tmp,lib.*,*.egg-info' --dictionary=- --dictionary=/Users/mkoeppe/s/sage/sage-rebasing/src/.codespell-dictionary.txt --ignore-words=/Users/mkoeppe/s/sage/sage-rebasing/src/.codespell-ignore.txt sage/homology
-  sage/homology/hochschild_complex.py:271: mone ==> mono, money, none
-  sage/homology/hochschild_complex.py:277: mone ==> mono, money, none
-  sage/homology/hochschild_complex.py:280: mone ==> mono, money, none
-  sage/homology/chain_complex.py:2185: mor ==> more
-  sage/homology/chain_complex.py:2204: mor ==> more
-  sage/homology/chain_complex.py:2210: mor ==> more
-  sage/homology/chain_complex.py:2211: mor ==> more
-  sage/homology/chain_complex.py:2214: mor ==> more
-  sage/homology/chain_complex.py:2215: mor ==> more
-  ERROR: InvocationError for command .../codespell '--skip=*.png,...' --dictionary=- --dictionary=/Users/mkoeppe/s/sage/sage-rebasing/src/.codespell-dictionary.txt --ignore-words=/Users/mkoeppe/s/sage/sage-rebasing/src/.codespell-ignore.txt sage/homology (exited with code 65)
-  ___________ summary ____________
-  ERROR:   codespell: commands failed
+.. code-block:: console
+
+    $./sage -tox -e codespell -- src/sage/homology/
+    codespell installed: codespell==2.1.0
+    codespell run-test-pre: PYTHONHASHSEED='1285169064'
+    codespell run-test: commands[0] | codespell '--skip=*.png,*.jpg,*.JPG,*.inv,*.dia,*.pdf,*.ico,*#*,*~*,*.bak,*.orig,*.log,*.sobj,*.tar,*.gz,*.pyc,*.o,*.sws,*.so,*.a,.DS_Store' --skip=doc/ca,doc/de,doc/es,doc/hu,doc/ja,doc/ru,doc/fr,doc/it,doc/pt,doc/tr --skip=src/doc/ca,src/doc/de,src/doc/es,src/doc/hu,src/doc/ja,src/doc/ru,src/doc/fr,src/doc/it,src/doc/pt,src/doc/tr '--skip=.git,.tox,worktree*,dist,upstream,logs,local,cythonized,scripts-3,autom4te.cache,tmp,lib.*,*.egg-info' --dictionary=- --dictionary=/Users/mkoeppe/s/sage/sage-rebasing/src/.codespell-dictionary.txt --ignore-words=/Users/mkoeppe/s/sage/sage-rebasing/src/.codespell-ignore.txt sage/homology
+    sage/homology/hochschild_complex.py:271: mone ==> mono, money, none
+    sage/homology/hochschild_complex.py:277: mone ==> mono, money, none
+    sage/homology/hochschild_complex.py:280: mone ==> mono, money, none
+    sage/homology/chain_complex.py:2185: mor ==> more
+    sage/homology/chain_complex.py:2204: mor ==> more
+    sage/homology/chain_complex.py:2210: mor ==> more
+    sage/homology/chain_complex.py:2211: mor ==> more
+    sage/homology/chain_complex.py:2214: mor ==> more
+    sage/homology/chain_complex.py:2215: mor ==> more
+    ERROR: InvocationError for command .../codespell '--skip=*.png,...' --dictionary=- --dictionary=/Users/mkoeppe/s/sage/sage-rebasing/src/.codespell-dictionary.txt --ignore-words=/Users/mkoeppe/s/sage/sage-rebasing/src/.codespell-ignore.txt sage/homology (exited with code 65)
+    ___________ summary ____________
+    ERROR:   codespell: commands failed
 
 *Configuration:*
 
@@ -440,34 +450,42 @@ Act
 
 `act <https://github.com/nektos/act>`_ is a tool, written in Go, and using Docker,
 to run GitHub Actions locally; in particular, it speeds up developing Actions.
-We recommend using ``gh extension`` facility to install ``act``. ::
+We recommend using ``gh extension`` facility to install ``act``. :
 
-    [alice@localhost sage]$ gh extension install https://github.com/nektos/gh-act
+.. code-block:: console
+
+    $ gh extension install https://github.com/nektos/gh-act
 
 Extra steps needed for configuration of Docker to run Actions locally can be found on
 `act's GitHub <https://github.com/nektos/act>`_
 
 Here we give a very short sampling of ``act``'s capabilities. If you installed standalone
 ``act``, it should be invoked as ``act``, not as ``gh act``.
-After the set up, one can e.g. list all the available linting actions::
+After the set up, one can e.g. list all the available linting actions
 
-    [alice@localhost sage]$ gh act -l | grep lint
+.. code-block:: console
+
+    $ gh act -l | grep lint
     0      lint-pycodestyle        Code style check with pycodestyle                          Lint                                               lint.yml                push,pull_request
     0      lint-relint             Code style check with relint                               Lint                                               lint.yml                push,pull_request
     0      lint-rst                Validate docstring markup as RST                           Lint                                               lint.yml                push,pull_request
-    [alice@localhost sage]$
+    $
 
-run a particular action ``lint-rst`` ::
+run a particular action ``lint-rst``
 
-    [alice@localhost sage]$ gh act -j lint-rst
+.. code-block:: console
+
+    $ gh act -j lint-rst
     ...
 
 and so on.
 
 By default, ``act`` pulls all the data needed from the next, but it can also cache it,
-speeding up repeated runs quite a lot. The following repeats running of ``lint-rst`` using cached data::
+speeding up repeated runs quite a lot. The following repeats running of ``lint-rst`` using cached data
 
-    [alice@localhost sage]$ gh act -p false -r -j lint-rst
+.. code-block:: console
+
+    $ gh act -p false -r -j lint-rst
     [Lint/Validate docstring markup as RST]   Start image=catthehacker/ubuntu:act-latest
     ...
     | rst: commands[0] /home/alice/work/software/sage/src> flake8 --select=RST

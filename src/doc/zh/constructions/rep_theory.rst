@@ -20,14 +20,14 @@
     sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3,4)]])
     sage: G.order()
     8
-    sage: G.character_table()
+    sage: G.character_table() # random
     [ 1  1  1  1  1]
     [ 1 -1 -1  1  1]
     [ 1 -1  1 -1  1]
     [ 1  1 -1 -1  1]
     [ 2  0  0  0 -2]
     sage: CT = libgap(G).CharacterTable()
-    sage: CT.Display()
+    sage: CT.Display() # random
     CT1
     <BLANKLINE>
      2  3  2  2  2  3
@@ -47,7 +47,7 @@
 ::
 
     sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3)]])
-    sage: G.character_table()
+    sage: G.character_table() # random
     [         1          1          1          1]
     [         1 -zeta3 - 1      zeta3          1]
     [         1      zeta3 -zeta3 - 1          1]
@@ -55,7 +55,7 @@
     sage: G = libgap.eval("Group((1,2)(3,4),(1,2,3))"); G
     Group([ (1,2)(3,4), (1,2,3) ])
     sage: T = G.CharacterTable()
-    sage: T.Display()
+    sage: T.Display() # random
     CT2
     <BLANKLINE>
          2  2  .  .  2
@@ -81,12 +81,12 @@
 
 ::
 
-    sage: irr = G.Irr(); irr
-    [ Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, 1, 1, 1 ] ), 
-      Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, E(3)^2, E(3), 1 ] ), 
-      Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, E(3), E(3)^2, 1 ] ), 
-      Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 3, 0, 0, -1 ] ) ]
-    sage: irr.Display()
+    sage: irr = G.Irr(); sorted(irr)
+    [Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, 1, 1, 1 ] ),
+     Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, E(3)^2, E(3), 1 ] ),
+     Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, E(3), E(3)^2, 1 ] ),
+     Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 3, 0, 0, -1 ] )]
+    sage: irr.Display() # random
     [ [       1,       1,       1,       1 ],
       [       1,  E(3)^2,    E(3),       1 ],
       [       1,    E(3),  E(3)^2,       1 ],
@@ -97,9 +97,9 @@
     (2,4,3)^G
     sage: g = gamma.Representative(); g
     (2,4,3)
-    sage: chi = irr[1]; chi
+    sage: chi = irr[1]; chi # random
     Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, E(3)^2, E(3), 1 ] )
-    sage: g^chi
+    sage: g^chi # random
     E(3)
 
 最后一个量是特征 ``chi`` 在群元素 ``g`` 处的值。
@@ -181,7 +181,7 @@ GAP 中的布劳尔特征标表尚未具有“原生”接口。
       [       1,       1,       1,       1 ],
       [       3,      -1,       0,       0 ] ]
     sage: T = G.CharacterTable()
-    sage: T.Display()
+    sage: T.Display() # random
     CT3
     <BLANKLINE>
          2  2  .  .  2
