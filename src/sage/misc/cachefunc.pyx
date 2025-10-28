@@ -422,14 +422,15 @@ Note that shallow copy of mutable objects may behave unexpectedly::
 AUTHORS:
 
 - William Stein: initial version, (inspired by conversation with Justin Walker)
-- Mike Hansen: added doctests and made it work with class methods.
-- Willem Jan Palenstijn: add CachedMethodCaller for binding cached methods to
-  instances.
-- Tom Boothby: added DiskCachedFunction.
+- Mike Hansen: added doctests and made it work with class methods
+- Willem Jan Palenstijn: added ``CachedMethodCaller`` for binding cached methods to
+  instances
+- Tom Boothby: added ``DiskCachedFunction``
 - Simon King: improved performance, more doctests, cython version,
-  CachedMethodCallerNoArgs, weak cached function, cached special methods.
+  ``CachedMethodCallerNoArgs``, weak cached function, cached special methods
 - Julian Rueth (2014-03-19, 2014-05-09, 2014-05-12): added ``key`` parameter, allow caching
   for unhashable elements, added ``do_pickle`` parameter
+- Kwankyu Lee (2025-10): added ``is_pickled_with_cache`` method
 """
 # ****************************************************************************
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>

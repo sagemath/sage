@@ -537,6 +537,8 @@ AUTHORS:
 - Nicolas M. Thiery (2008): initial version
 - Simon A. King (2013-02): separated cached and unique representation
 - Simon A. King (2013-08): extended documentation
+- Kwankyu Lee (2025-10): added ``__getstate__`` and ``__setstate__`` to support
+  ``do_pickle=True`` for cached methods.
 """
 # ****************************************************************************
 #  Copyright (C) 2008 Nicolas M. Thiery <nthiery at users.sf.net>

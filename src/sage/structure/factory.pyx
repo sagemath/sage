@@ -41,7 +41,7 @@ AUTHORS:
 - Robert Bradshaw (2008): initial version
 - Simon King (2013): extended documentation
 - Julian Rueth (2014-05-09): use ``_cache_key`` if parameters are unhashable
-- Kwankyu Lee (2025-10-17): improved pickling for cached method
+- Kwankyu Lee (2025-10): added support for ``do_pickle=True`` for cached methods
 """
 #*****************************************************************************
 #  Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
@@ -261,7 +261,7 @@ cdef class UniqueFactory(SageObject):
     ``__dict__`` is not put into the pickle since unpickling either restores
     the object from the cache or reconstructs the object afresh. This defeats
     methods decorated with ``@cached_method(do_pickle=True)``. Hence
-    ``UniquFactory`` makes exceptions to the placeholders for such methods::
+    ``UniqueFactory`` makes exceptions to the placeholders for such methods::
 
         sage: # needs sage.rings.function_field
         sage: K.<x> = FunctionField(QQ); R.<y> = K[]
