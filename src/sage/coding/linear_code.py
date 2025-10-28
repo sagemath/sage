@@ -2391,7 +2391,7 @@ class LinearCode(AbstractLinearCode):
         """
         return "[%s, %s]\\textnormal{ Linear code over }%s"\
             % (self.length(), self.dimension(), self.base_ring()._latex_())
-    
+
     def intersection(self, other):
         """
         Return the intersection of this linear code with another.
@@ -2444,7 +2444,7 @@ class LinearCode(AbstractLinearCode):
         sum_of_duals = LinearCode(G_sum)
 
         return sum_of_duals.dual_code()
-    
+
     def generator_matrix(self, encoder_name=None, **kwargs):
         r"""
         Return a generator matrix of ``self``.
