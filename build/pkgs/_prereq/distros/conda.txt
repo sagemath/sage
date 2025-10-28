@@ -19,3 +19,4 @@ bzip2
 pkg-config
 zlib
 zlib-devel
+libboost-devel
