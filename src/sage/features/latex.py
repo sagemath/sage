@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of ``latex`` and equivalent programs
 """
