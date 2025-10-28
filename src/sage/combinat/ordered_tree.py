@@ -411,7 +411,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
             [[0, 0, 1], [1, 0, 0]]
         """
         from sage.combinat.parallelogram_polyomino import ParallelogramPolyomino
-        if self.n_nodes() == 1:
+        if self.number_of_nodes() == 1:
             return ParallelogramPolyomino([[1], [1]])
         upper_nodes = []
         lower_nodes = []
@@ -450,14 +450,14 @@ class OrderedTree(AbstractClonableTree, ClonableList,
             lower_path.append(0)
             lower_path += [1] * (W(lower_nodes[i]) - W(lower_nodes[i - 1]))
         lower_path.append(0)
-        lower_path += [1] * (self.n_nodes() - len(lower_path))
+        lower_path += [1] * (self.number_of_nodes() - len(lower_path))
 
         upper_path = []
         for i in range(1, len(upper_nodes)):
             upper_path.append(1)
             upper_path += [0] * (H(upper_nodes[i]) - H(upper_nodes[i - 1]))
         upper_path.append(1)
-        upper_path += [0] * (self.n_nodes() - len(upper_path))
+        upper_path += [0] * (self.number_of_nodes() - len(upper_path))
 
         return ParallelogramPolyomino([lower_path, upper_path])
 
@@ -1047,7 +1047,7 @@ class OrderedTrees_size(OrderedTrees):
             sage: T([[],[]]) in T
             True
         """
-        return isinstance(x, self.element_class) and x.n_nodes() == self._size
+        return isinstance(x, self.element_class) and x.number_of_nodes() == self._size
 
     def _an_element_(self):
         """
@@ -1177,7 +1177,7 @@ class OrderedTrees_size(OrderedTrees):
             []
         """
         res = self.element_class(self._parent_for, *args, **keywords)
-        if res.n_nodes() != self._size:
+        if res.number_of_nodes() != self._size:
             raise ValueError("wrong number of nodes")
         return res
 

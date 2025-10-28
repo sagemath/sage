@@ -766,7 +766,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
                     emb[idx] = []
                     return
                 else:  # tr is a node.
-                    nbl = 2 * tr[0].n_nodes() + 1
+                    nbl = 2 * tr[0].number_of_nodes() + 1
                     res.add_edges([[idx, idx + 1], [idx, idx + 1 + nbl]])
                     emb[idx] = [idx + 1 + nbl, idx + 1]
                     rec(tr[0], idx + 1)
@@ -785,7 +785,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             # In this case, the general DiGraph construction would
             # falsely yield an empty graph (since it adds nodes only
             # implicitly by adding edges).
-            if self.n_nodes() == 1:
+            if self.number_of_nodes() == 1:
                 res = DiGraph({0: []})
                 res.set_embedding({0: []})
                 return res
@@ -799,14 +799,14 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
                 if not tr:  # tr is a leaf.
                     return
                 else:  # tr is a node.
-                    nbl = tr[0].n_nodes()
+                    nbl = tr[0].number_of_nodes()
                     if nbl > 0:
                         res.add_edge([idx, idx + 1])
                         emb[idx] = [idx + 1]
                         rec(tr[0], idx + 1)
                     else:
                         emb[idx] = []
-                    if tr[1].n_nodes() > 0:
+                    if tr[1].number_of_nodes() > 0:
                         res.add_edge([idx, idx + nbl + 1])
                         emb[idx] = [idx + nbl + 1] + emb[idx]
                         rec(tr[1], idx + nbl + 1)
@@ -1414,7 +1414,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         if not self:
             return []
         left = self[0]._postfix_word(left_first, start)
-        label = start + self[0].n_nodes()
+        label = start + self[0].number_of_nodes()
         right = self[1]._postfix_word(left_first, start=label + 1)
         if left_first:
             left.extend(right)
@@ -1632,7 +1632,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
             sage: w = DyckWord([1,1,1,1,0,1,1,0,0,0,1,1,0,1,0,1,1,0,1,1,0,0,0,0,0,0])   # needs sage.combinat
             sage: t2 = w.to_binary_tree()                                               # needs sage.combinat
-            sage: len(t2.to_tilting()) == t2.n_nodes()                              # needs sage.combinat
+            sage: len(t2.to_tilting()) == t2.number_of_nodes()                          # needs sage.combinat
             True
         """
         if not self:
@@ -2516,8 +2516,8 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         """
         resu = []
         left, right = list(self)
-        L = left.n_nodes()
-        R = right.n_nodes()
+        L = left.number_of_nodes()
+        R = right.number_of_nodes()
         if L:
             resu += [(m + R + 1, i, n)
                      for m, i, n in left.single_edge_cut_shapes()]
@@ -2727,7 +2727,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             [1, 1]
         """
         tn = [0, 0]
-        if self.n_nodes() <= 1:
+        if self.number_of_nodes() <= 1:
             return tn
 
         L = self.comb('left')
@@ -2910,17 +2910,23 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
                     return basering.one()
                 b0 = b[0]
                 b1 = b[1]
-                return q_binomial(b.n_nodes() - 1, b0.n_nodes(), q=q) * \
-                    product_of_subtrees(b0) * product_of_subtrees(b1) * \
-                    q ** (b1.n_nodes())
+                return (q_binomial(b.number_of_nodes() - 1,
+                                   b0.number_of_nodes(),
+                                   q=q)
+                        * product_of_subtrees(b0)
+                        * product_of_subtrees(b1)
+                        * q ** b1.number_of_nodes())
         else:
             def product_of_subtrees(b):
                 if b.is_empty():
                     return basering.one()
                 b0 = b[0]
                 b1 = b[1]
-                return q_binomial(b.n_nodes() - 1, b0.n_nodes(), q=q) * \
-                    product_of_subtrees(b0) * product_of_subtrees(b1)
+                return (q_binomial(b.number_of_nodes() - 1,
+                                   b0.number_of_nodes(),
+                                   q=q)
+                        * product_of_subtrees(b0)
+                        * product_of_subtrees(b1))
 
         return product_of_subtrees(self)
 
@@ -3615,7 +3621,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             def builder(i, p):
                 return list(p) + [i]
 
-        shift = self[0].n_nodes() + 1
+        shift = self[0].number_of_nodes() + 1
         for l, r in product(self[0].sylvester_class(left_to_right=left_to_right),
                             self[1].sylvester_class(left_to_right=left_to_right)):
             for p in shuffle(W(l), W([shift + ri for ri in r])):
@@ -3836,7 +3842,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             [  / \     / \  ]
             [ o   o   o   o ]
         """
-        return 2 ** self.depth() - 1 == self.n_nodes()
+        return 2 ** self.depth() - 1 == self.number_of_nodes()
 
     def is_complete(self):
         r"""
@@ -4225,7 +4231,7 @@ class BinaryTrees_size(BinaryTrees):
             sage: S([[],[]]) in S
             True
         """
-        return isinstance(x, BinaryTree) and x.n_nodes() == self._size
+        return isinstance(x, BinaryTree) and x.number_of_nodes() == self._size
 
     def _an_element_(self):
         """
@@ -4318,7 +4324,7 @@ class BinaryTrees_size(BinaryTrees):
             [., .]
         """
         res = BinaryTree(*args, **keywords)
-        if res.n_nodes() != self._size:
+        if res.number_of_nodes() != self._size:
             raise ValueError("wrong number of nodes")
         return res
 
@@ -4466,7 +4472,7 @@ class FullBinaryTrees_size(BinaryTrees):
             False
         """
         return (isinstance(x, BinaryTree)
-                and x.n_nodes() == self._size
+                and x.number_of_nodes() == self._size
                 and x.is_full())
 
     def _an_element_(self):
@@ -4588,7 +4594,7 @@ class FullBinaryTrees_size(BinaryTrees):
             ValueError: not full
         """
         res = BinaryTree(*args, **keywords)
-        if res.n_nodes() != self._size:
+        if res.number_of_nodes() != self._size:
             raise ValueError("wrong number of nodes")
         if not res.is_full():
             raise ValueError("not full")

@@ -313,7 +313,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
             sage: A.degree_on_basis(u.over(u))
             2
         """
-        return t.n_nodes()
+        return t.number_of_nodes()
 
     def _an_element_(self):
         """
@@ -627,7 +627,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
         """
         B = self.basis()
         Trees = B.keys()
-        if not x.n_nodes():
+        if not x.number_of_nodes():
             return self.one().tensor(self.one())
         L, R = list(x)
         try:
