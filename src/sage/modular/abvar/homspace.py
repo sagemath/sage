@@ -155,6 +155,15 @@ of T in its saturation, which is 1 in this case.
     sage: T.index_in_saturation()
     1
 
+TESTS::
+
+    sage: J = J0(37) ; J.Hom(J)(matrix(ZZ,4,[5..20]))
+    Abelian variety endomorphism of Abelian variety J0(37) of dimension 2
+    sage: K = J0(11) * J0(11) ; J.Hom(K)(matrix(ZZ,4,[5..20]))
+    Abelian variety morphism:
+      From: Abelian variety J0(37) of dimension 2
+      To:   Abelian variety J0(11) x J0(11) of dimension 2
+
 AUTHORS:
 
 - William Stein (2007-03)
@@ -362,24 +371,6 @@ class Homspace(HomsetWithBase):
         else:
             raise TypeError("can only coerce in matrices or morphisms")
         return self.element_class(self, M, side)
-
-    def _coerce_impl(self, x):
-        """
-        Coerce x into self, if possible.
-
-        EXAMPLES::
-
-            sage: J = J0(37) ; J.Hom(J)._coerce_impl(matrix(ZZ,4,[5..20]))
-            Abelian variety endomorphism of Abelian variety J0(37) of dimension 2
-            sage: K = J0(11) * J0(11) ; J.Hom(K)._coerce_impl(matrix(ZZ,4,[5..20]))
-            Abelian variety morphism:
-              From: Abelian variety J0(37) of dimension 2
-              To:   Abelian variety J0(11) x J0(11) of dimension 2
-        """
-        if self.matrix_space().has_coerce_map_from(parent(x)):
-            return self(x)
-        else:
-            return HomsetWithBase._coerce_impl(self, x)
 
     def _repr_(self):
         """

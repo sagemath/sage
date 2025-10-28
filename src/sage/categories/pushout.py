@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Coercion via construction functors
 """
@@ -3936,6 +3935,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         TESTS::
 
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: FG = BlackBoxConstructionFunctor(gap)
             sage: FM = BlackBoxConstructionFunctor(maxima)                              # needs sage.symbolic
             sage: FM == FG                                                              # needs sage.libs.gap sage.symbolic
@@ -3967,6 +3967,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         TESTS::
 
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: FG = BlackBoxConstructionFunctor(gap)
             sage: FM = BlackBoxConstructionFunctor(maxima)                              # needs sage.symbolic
             sage: FM == FG       # indirect doctest                                     # needs sage.libs.gap sage.symbolic
@@ -3986,6 +3987,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         EXAMPLES::
 
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: FG = BlackBoxConstructionFunctor(gap)
             sage: FM = BlackBoxConstructionFunctor(maxima)                              # needs sage.symbolic
             sage: FM != FG       # indirect doctest                                     # needs sage.libs.gap sage.symbolic

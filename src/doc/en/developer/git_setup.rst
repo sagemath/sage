@@ -50,7 +50,7 @@ Assuming your name ``alice`` and email address ``alice@wonderland.com``,
 This will write the settings into your Git configuration file
 ``~/.gitconfig`` with your name and email:
 
-.. CODE-BLOCK:: text
+.. code-block:: text
 
     [user]
         name = Alice Adventure

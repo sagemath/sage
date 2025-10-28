@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Determination of programs for viewing web pages, etc.
 

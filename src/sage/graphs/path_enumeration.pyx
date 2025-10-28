@@ -300,8 +300,8 @@ def shortest_simple_paths(self, source, target, weight_function=None,
     If ``source`` is the same vertex as ``target``, then ``[[source]]`` is
     returned -- a list containing the 1-vertex, 0-edge path ``source``.
 
-    By default ``Yen's`` algorithm [Yen1970]_ is used for undirected graphs and
-    ``Feng's`` algorithm is used for directed graphs [Feng2014]_.
+    By default Postponed Node Classification (``algorithm=PNC``) algorithm
+    [ACN2023]_ is used.
 
     The loops and the multiedges if present in the given graph are ignored and
     only minimum of the edge labels is kept in case of multiedges.
@@ -382,16 +382,16 @@ def shortest_simple_paths(self, source, target, weight_function=None,
         [[1, 6], [1, 2, 5, 6], [1, 3, 5, 6], [1, 4, 5, 6]]
         sage: list(g.shortest_simple_paths(1, 6,
         ....:                              report_edges=True, report_weight=True, labels=True))
-        [(1, [(1, 6, 100)]),
-         (3, [(1, 2, 20), (2, 5, 20), (5, 6, 5)]),
-         (3, [(1, 3, 10), (3, 5, 10), (5, 6, 5)]),
-         (3, [(1, 4, 30), (4, 5, 30), (5, 6, 5)])]
+        [(1.0, [(1, 6, 100)]),
+         (3.0, [(1, 4, 30), (4, 5, 30), (5, 6, 5)]),
+         (3.0, [(1, 3, 10), (3, 5, 10), (5, 6, 5)]),
+         (3.0, [(1, 2, 20), (2, 5, 20), (5, 6, 5)])]
         sage: list(g.shortest_simple_paths(1, 6, by_weight=True,
         ....:                              report_edges=True, report_weight=True, labels=True))
-        [(25, [(1, 3, 10), (3, 5, 10), (5, 6, 5)]),
-         (45, [(1, 2, 20), (2, 5, 20), (5, 6, 5)]),
-         (65, [(1, 4, 30), (4, 5, 30), (5, 6, 5)]),
-         (100, [(1, 6, 100)])]
+        [(25.0, [(1, 3, 10), (3, 5, 10), (5, 6, 5)]),
+         (45.0, [(1, 2, 20), (2, 5, 20), (5, 6, 5)]),
+         (65.0, [(1, 4, 30), (4, 5, 30), (5, 6, 5)]),
+         (100.0, [(1, 6, 100)])]
         sage: list(g.shortest_simple_paths(1, 6, by_weight=True,
         ....:                              report_edges=True, labels=True))
         [[(1, 3, 10), (3, 5, 10), (5, 6, 5)],
@@ -400,9 +400,9 @@ def shortest_simple_paths(self, source, target, weight_function=None,
          [(1, 6, 100)]]
         sage: list(g.shortest_simple_paths(1, 6, report_edges=True, labels=True))
         [[(1, 6, 100)],
-         [(1, 2, 20), (2, 5, 20), (5, 6, 5)],
+         [(1, 4, 30), (4, 5, 30), (5, 6, 5)],
          [(1, 3, 10), (3, 5, 10), (5, 6, 5)],
-         [(1, 4, 30), (4, 5, 30), (5, 6, 5)]]
+         [(1, 2, 20), (2, 5, 20), (5, 6, 5)]]
 
     TESTS::
 
@@ -423,11 +423,11 @@ def shortest_simple_paths(self, source, target, weight_function=None,
          [(1, 2, 1), (2, 3, 1), (3, 8, 5), (8, 9, 2), (9, 11, 10), (11, 6, 8)],
          [(1, 2, 1), (2, 3, 1), (3, 4, 1), (4, 5, 2), (5, 6, 100)]]
         sage: list(g.shortest_simple_paths(1, 6, report_edges=True, labels=True, by_weight=True, report_weight=True))
-        [(10, [(1, 2, 1), (2, 3, 1), (3, 4, 1), (4, 7, 3), (7, 6, 4)]),
-         (11, [(1, 2, 1), (2, 3, 1), (3, 8, 5), (8, 9, 2), (9, 6, 2)]),
-         (18, [(1, 2, 1), (2, 3, 1), (3, 8, 5), (8, 9, 2), (9, 10, 7), (10, 6, 2)]),
-         (27, [(1, 2, 1), (2, 3, 1), (3, 8, 5), (8, 9, 2), (9, 11, 10), (11, 6, 8)]),
-         (105, [(1, 2, 1), (2, 3, 1), (3, 4, 1), (4, 5, 2), (5, 6, 100)])]
+        [(10.0, [(1, 2, 1), (2, 3, 1), (3, 4, 1), (4, 7, 3), (7, 6, 4)]),
+         (11.0, [(1, 2, 1), (2, 3, 1), (3, 8, 5), (8, 9, 2), (9, 6, 2)]),
+         (18.0, [(1, 2, 1), (2, 3, 1), (3, 8, 5), (8, 9, 2), (9, 10, 7), (10, 6, 2)]),
+         (27.0, [(1, 2, 1), (2, 3, 1), (3, 8, 5), (8, 9, 2), (9, 11, 10), (11, 6, 8)]),
+         (105.0, [(1, 2, 1), (2, 3, 1), (3, 4, 1), (4, 5, 2), (5, 6, 100)])]
         sage: list(g.shortest_simple_paths(1, 6, algorithm='Yen'))
         [[1, 2, 3, 4, 5, 6],
          [1, 2, 3, 4, 7, 6],
@@ -574,7 +574,7 @@ def shortest_simple_paths(self, source, target, weight_function=None,
         self = self.to_simple(to_undirected=False, keep_label='min', immutable=False)
 
     if algorithm is None:
-        algorithm = "Feng" if self.is_directed() else "Yen"
+        algorithm = "PNC"
 
     if algorithm in ("Feng", "PNC"):
         yield from nc_k_shortest_simple_paths(self, source=source, target=target,
@@ -897,7 +897,7 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
                                by_weight=False, check_weight=True,
                                report_edges=False,
                                labels=False, report_weight=False,
-                               postponed=False):
+                               postponed=True):
     r"""
     Return an iterator over the simple paths between a pair of vertices in
     increasing order of weights.
@@ -943,7 +943,7 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
       the path between ``source`` and ``target`` is returned. Otherwise a
       tuple of path length and path is returned.
 
-    - ``postponed`` -- boolean (default: ``False``); if ``True``, the postponed
+    - ``postponed`` -- boolean (default: ``True``); if ``True``, the postponed
       node classification algorithm is used, otherwise the node classification
       algorithm is used. See below for details.
 
@@ -1616,7 +1616,7 @@ def _all_paths_iterator(self, vertex, ending_vertices=None,
         sage: list(G._all_paths_iterator(1, ending_vertices=[3], simple=True))
         [[1, 3], [1, 0, 3], [1, 2, 3], [1, 0, 2, 3], [1, 2, 0, 3]]
         sage: list(G.shortest_simple_paths(1, 3))
-        [[1, 3], [1, 0, 3], [1, 2, 3], [1, 2, 0, 3], [1, 0, 2, 3]]
+        [[1, 3], [1, 2, 3], [1, 0, 3], [1, 0, 2, 3], [1, 2, 0, 3]]
         sage: pi = G._all_paths_iterator(1, ending_vertices=[3])
         sage: for _ in range(6):
         ....:     print(next(pi))
@@ -1881,7 +1881,7 @@ def all_paths_iterator(self, starting_vertices=None, ending_vertices=None,
         sage: list(G.all_paths_iterator(starting_vertices=[1], ending_vertices=[3], simple=True))
         [[1, 3], [1, 0, 3], [1, 2, 3], [1, 0, 2, 3], [1, 2, 0, 3]]
         sage: list(G.shortest_simple_paths(1, 3))
-        [[1, 3], [1, 0, 3], [1, 2, 3], [1, 2, 0, 3], [1, 0, 2, 3]]
+        [[1, 3], [1, 2, 3], [1, 0, 3], [1, 0, 2, 3], [1, 2, 0, 3]]
         sage: pi = G.all_paths_iterator(starting_vertices=[1], ending_vertices=[3])
         sage: for _ in range(6):
         ....:     print(next(pi))
@@ -2117,7 +2117,7 @@ def all_simple_paths(self, starting_vertices=None, ending_vertices=None,
         sage: G.all_simple_paths([1], [3])
         [[1, 3], [1, 0, 3], [1, 2, 3], [1, 0, 2, 3], [1, 2, 0, 3]]
         sage: list(G.shortest_simple_paths(1, 3))
-        [[1, 3], [1, 0, 3], [1, 2, 3], [1, 2, 0, 3], [1, 0, 2, 3]]
+        [[1, 3], [1, 2, 3], [1, 0, 3], [1, 0, 2, 3], [1, 2, 0, 3]]
         sage: G.all_simple_paths([0, 1], [2, 3])
         [[1, 2],
          [1, 3],

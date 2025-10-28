@@ -16,13 +16,14 @@ elements. For general information about GAP, you should read the
 # ****************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
+from cpython.mem cimport PyMem_Malloc, PyMem_Free
 
 from sage.libs.gap.gap_includes cimport *
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.util cimport *
 from sage.libs.gap.util import GAPError, gap_sig_on, gap_sig_off
 from sage.libs.gmp.mpz cimport *
-from sage.libs.gmp.pylong cimport mpz_get_pylong
+from sage.libs.gmp.pylong cimport mpz_get_pylong, mpz_set_pylong
 from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -214,20 +215,135 @@ cdef Obj make_gap_record(sage_dict) except NULL:
 
 cdef Obj make_gap_integer(sage_int) except NULL:
     """
-    Convert Sage integer into Gap integer
+    Convert Sage integer or Python integer into Gap integer
 
     INPUT:
 
-    - ``sage_int`` -- Sage integer
+    - ``sage_int`` -- Sage integer or Python int
 
     OUTPUT: the integer as a GAP ``Obj``
 
-    TESTS::
+    TESTS:
 
-        sage: libgap(1)   # indirect doctest
+    Test with Sage integers::
+
+        sage: libgap(0)   # indirect doctest
+        0
+        sage: libgap(1)
         1
+        sage: libgap(-1)
+        -1
+        sage: libgap(2**31)
+        2147483648
+        sage: libgap(-2**63)
+        -9223372036854775808
+        sage: libgap(2**64)
+        18446744073709551616
+        sage: libgap(-(2**256))
+        -115792089237316195423570985008687907853269984665640564039457584007913129639936
+
+    Test with Python int (not Sage Integer)::
+
+        sage: libgap(int(0))
+        0
+        sage: libgap(int(1))
+        1
+        sage: libgap(int(-1))
+        -1
+        sage: libgap(int(10**30))
+        1000000000000000000000000000000
+        sage: libgap(-int(10**30))
+        -1000000000000000000000000000000
+        sage: libgap(int(2**100))
+        1267650600228229401496703205376
+
+    Test round-trip conversion::
+
+        sage: n = int(123456789012345678901234567890)
+        sage: gap_n = libgap(n)
+        sage: gap_n.sage() == n
+        True
+
+        sage: n = factorial(100)
+        sage: gap_n = libgap(n)
+        sage: gap_n.sage() == n
+        True
     """
-    return GAP_NewObjIntFromInt(<int>sage_int)
+    cdef mpz_t temp
+    cdef Obj result
+    cdef Int size
+    cdef Int sign
+    cdef UInt* limbs = NULL
+    cdef size_t limb_count
+    cdef size_t i
+    
+    # We need to handle this carefully to avoid accessing GMP internals
+    mpz_init(temp)
+    try:
+        # Convert Python int to GMP mpz_t
+        mpz_set_pylong(temp, sage_int)
+        
+        # Handle zero specially (mpz_size returns 0 for zero)
+        size = mpz_size(temp)
+        if size == 0:
+            return GAP_NewObjIntFromInt(0)
+        
+        # Get the sign: mpz_sgn returns -1, 0, or 1
+        sign = <Int>mpz_sgn(temp)
+        
+        # Allocate limb buffer for export
+        # sizeof(mp_limb_t) may differ from sizeof(UInt), so we need to handle this
+        if sizeof(mp_limb_t) == sizeof(UInt):
+            # Direct case: limb sizes match, we can use mpz_export directly
+            # into a UInt buffer
+            limbs = <UInt*>PyMem_Malloc(size * sizeof(UInt))
+            if limbs == NULL:
+                raise MemoryError("Failed to allocate limb buffer")
+            
+            # Export limbs: order=-1 (least significant first, native GMP/GAP order),
+            # size=sizeof(UInt), endian=0 (native), nails=0 (use full limbs)
+            mpz_export(limbs, &limb_count, -1, sizeof(UInt), 0, 0, temp)
+            
+            # GAP_MakeObjInt expects signed size (negative for negative numbers)
+            if sign < 0:
+                size = -<Int>limb_count
+            else:
+                size = <Int>limb_count
+            
+            try:
+                GAP_Enter()
+                result = GAP_MakeObjInt(<const UInt*>limbs, size)
+            finally:
+                GAP_Leave()
+                PyMem_Free(limbs)
+            
+            return result
+        else:
+            # Fallback case: limb sizes don't match
+            # We need to copy limb-by-limb using mpz_getlimbn
+            # This is slower but portable
+            limbs = <UInt*>PyMem_Malloc(size * sizeof(UInt))
+            if limbs == NULL:
+                raise MemoryError("Failed to allocate limb buffer")
+            
+            # Copy each limb individually
+            for i in range(size):
+                limbs[i] = <UInt>mpz_getlimbn(temp, i)
+            
+            # GAP_MakeObjInt expects signed size
+            if sign < 0:
+                size = -size
+            
+            try:
+                GAP_Enter()
+                result = GAP_MakeObjInt(<const UInt*>limbs, size)
+            finally:
+                GAP_Leave()
+                PyMem_Free(limbs)
+            
+            return result
+    finally:
+        mpz_clear(temp)
 
 
 cdef Obj make_gap_string(sage_string) except NULL:
@@ -2168,7 +2284,9 @@ cdef class GapElement_Ring(GapElement):
         """
         Construct the Sage integers.
 
-        EXAMPLES::
+        This method is not meant to be called directly, use :meth:`sage` instead.
+
+        TESTS::
 
             sage: libgap.eval('Integers').ring_integer()
             Integer Ring
@@ -2179,7 +2297,9 @@ cdef class GapElement_Ring(GapElement):
         """
         Construct the Sage rationals.
 
-        EXAMPLES::
+        This method is not meant to be called directly, use :meth:`sage` instead.
+
+        TESTS::
 
             sage: libgap.eval('Rationals').ring_rational()
             Rational Field
@@ -2190,7 +2310,9 @@ cdef class GapElement_Ring(GapElement):
         """
         Construct a Sage integer mod ring.
 
-        EXAMPLES::
+        This method is not meant to be called directly, use :meth:`sage` instead.
+
+        TESTS::
 
             sage: libgap.eval('ZmodnZ(15)').ring_integer_mod()
             Ring of integers modulo 15
@@ -2200,9 +2322,21 @@ cdef class GapElement_Ring(GapElement):
 
     def ring_finite_field(self, var='a'):
         """
-        Construct an integer ring.
+        Construct a finite field.
 
-        EXAMPLES::
+        This method is not meant to be called directly, use :meth:`sage` instead.
+
+        Note that for non-prime finite fields, this method is likely **unintended**,
+        it always use the default-constructed finite field with ``var`` provided,
+        which means the ``DefiningPolynomial`` of the GAP field is often not the same as the
+        ``.modulus()`` of the Sage field. They are isomorphic, but the isomorphism may be
+        difficult to compute.
+
+        INPUT:
+
+        - ``var`` -- string (default: 'a'); name of the generator of the finite field
+
+        TESTS::
 
             sage: libgap.GF(3,2).ring_finite_field(var='A')
             Finite Field in A of size 3^2
@@ -2213,9 +2347,11 @@ cdef class GapElement_Ring(GapElement):
 
     def ring_cyclotomic(self):
         """
-        Construct an integer ring.
+        Construct a cyclotomic field.
 
-        EXAMPLES::
+        This method is not meant to be called directly, use :meth:`sage` instead.
+
+        TESTS::
 
             sage: libgap.CyclotomicField(6).ring_cyclotomic()
             Cyclotomic Field of order 3 and degree 2
@@ -2228,7 +2364,9 @@ cdef class GapElement_Ring(GapElement):
         """
         Construct a polynomial ring.
 
-        EXAMPLES::
+        This method is not meant to be called directly, use :meth:`sage` instead.
+
+        TESTS::
 
             sage: B = libgap(QQ['x'])
             sage: B.ring_polynomial()

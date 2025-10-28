@@ -1542,7 +1542,6 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
 
     cdef number *nn
 
-    cdef int64_t _d
     cdef char *_name
     cdef char **_ext_names
 
@@ -1552,8 +1551,14 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
         return n_Init(int(d), _ring.cf)
 
     if _ring.cf.type == n_Z2m:
-        _d = d
-        return nr2mMapZp(<number *>_d, currRing.cf, _ring.cf)
+        if sizeof(number *) >= sizeof(unsigned long):
+            # one may also always choose the second branch,
+            # but the first branch may allow inlining (?)
+            # casting to unsigned long is safe because n_Z2m
+            # is only chosen if the exponent is small, see singular_ring_new
+            return nr2mMapZp(<number *> <unsigned long> d, currRing.cf, _ring.cf)
+        else:
+            return _ring.cf.cfInit(<long> <unsigned long> d, _ring.cf)
     elif _ring.cf.type == n_Zn or _ring.cf.type == n_Znm:
         lift = d.lift()
 

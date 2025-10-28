@@ -5060,7 +5060,7 @@ def _palp(command, polytopes, reduce_dimension=False):
     for p in polytopes:
         if p.dim() == 0:
             raise ValueError(("Cannot run \"%s\" for the zero-dimensional "
-                + "polytope!\nPolytope: %s") % (command, p))
+                              + "polytope!\nPolytope: %s") % (command, p))
         if p.dim() < p.lattice_dim():
             if not reduce_dimension:
                 raise ValueError(("Cannot run PALP for a %d-dimensional polytope " +
@@ -5075,9 +5075,9 @@ def _palp(command, polytopes, reduce_dimension=False):
               stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
     stderr = p.stderr
     err = stderr.read()
-    if len(err):
+    if err:
         raise RuntimeError(("Error executing \"%s\" for a polytope sequence!"
-            + "\nOutput:\n%s") % (command, err))
+                            + "\nOutput:\n%s") % (command, err))
     os.remove(input_file_name)
     try:
         p.terminate()
@@ -5086,7 +5086,7 @@ def _palp(command, polytopes, reduce_dimension=False):
     return output_file_name
 
 
-def _palp_canonical_order(V, PM_max, permutations):
+def _palp_canonical_order(V, PM_max, permutations) -> tuple:
     r"""
     Compute the PALP normal form of the vertices V
     using auxiliary data computed elsewhere.
