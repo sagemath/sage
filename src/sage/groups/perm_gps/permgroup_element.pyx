@@ -1101,7 +1101,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             if not isinstance(i, (list, tuple, str)):
                 raise ValueError("must be in the domain or a list, tuple or string")
 
-            permuted = [i[self.perm[j]] for j from 0 <= j < self.n]
+            permuted = [i[self.perm[j]] for j in range(self.n)]
             if isinstance(i, tuple):
                 permuted = tuple(permuted)
             elif isinstance(i, str):
@@ -1372,7 +1372,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         cdef PermutationGroupElement prod = left._new_c()
         cdef PermutationGroupElement right = <PermutationGroupElement>_right
         cdef int i
-        for i from 0 <= i < left.n:
+        for i in range(left.n):
             prod.perm[i] = right.perm[left.perm[i]]
         return prod
 
@@ -1441,7 +1441,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         """
         cdef PermutationGroupElement inv = self._new_c()
         cdef int i
-        for i from 0 <= i < self.n:
+        for i in range(self.n):
             inv.perm[self.perm[i]] = i
         return inv
 
@@ -1467,7 +1467,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             [2, 3, 1]
         """
         cdef int i
-        return [self.perm[i]+1 for i from 0 <= i < self.n]
+        return [self.perm[i] + 1 for i in range(self.n)]
 
     def _gap_cycle_string(self):
         r"""
@@ -1524,7 +1524,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         cdef int i
         from_gap = self._parent._domain_from_gap
-        return [from_gap[self.perm[i]+1] for i from 0 <= i < self.n]
+        return [from_gap[self.perm[i] + 1] for i in range(self.n)]
 
     def __hash__(self):
         r"""
@@ -1921,9 +1921,8 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         cycle_type.sort(reverse=True)
         if as_list:
             return cycle_type
-        else:
-            from sage.combinat.partition import _Partitions
-            return _Partitions(cycle_type)
+        from sage.combinat.partition import _Partitions
+        return _Partitions(cycle_type)
 
     def has_descent(self, i, side='right', positive=False) -> bool:
         r"""
@@ -2003,7 +2002,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         M = MatrixSpace(ZZ, self.n, self.n, sparse=True)
         cdef int i
         entries = {}
-        for i from 0 <= i < self.n:
+        for i in range(self.n):
             entries[i, self.perm[i]] = 1
         return M(entries)
 
@@ -2171,17 +2170,17 @@ cdef bint is_valid_permutation(int* perm, int n) noexcept:
     """
     cdef int i, ix
     # make everything is in bounds
-    for i from 0 <= i < n:
+    for i in range(n):
         if not 0 <= perm[i] < n:
             return False
     # mark hit points by sign
-    for i from 0 <= i < n:
-        ix = -1-perm[i] if perm[i] < 0 else perm[i]
-        perm[ix] = -1-perm[ix]
+    for i in range(n):
+        ix = -1 - perm[i] if perm[i] < 0 else perm[i]
+        perm[ix] = -1 - perm[ix]
     # make sure everything is hit once, and reset signs
-    for i from 0 <= i < n:
+    for i in range(n):
         if perm[i] >= 0:
             return False
-        perm[i] = -1-perm[i]
+        perm[i] = -1 - perm[i]
 
     return True

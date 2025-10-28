@@ -365,7 +365,7 @@ If
 
 .. skip
 
-.. CODE-BLOCK:: ipycon
+.. code-block:: ipycon
 
    sage: import _tkinter
    sage: import Tkinter
@@ -378,7 +378,7 @@ does not raise an :class:`ImportError`, then it worked.
 Installation steps
 ------------------
 
-.. hint:: 
+.. hint::
 
   The following steps use the classical ``./configure && make`` build
   process. The modern Meson build system is also supported, see
@@ -488,14 +488,14 @@ Installation steps
 
    After Sage has started, try a simple command:
 
-   .. CODE-BLOCK:: ipycon
+   .. code-block:: ipycon
 
        sage: 2 + 2
        4
 
    Or something slightly more complicated:
 
-   .. CODE-BLOCK:: ipycon
+   .. code-block:: ipycon
 
        sage: factor(2005)
        5 * 401
@@ -532,7 +532,7 @@ Installation steps
    script should pass along all of its arguments.
    For example, a ``maple`` script might look like:
 
-   .. CODE-BLOCK:: bash
+   .. code-block:: bash
 
        #!/bin/sh
 
@@ -552,14 +552,14 @@ Installation steps
    - Copy :sage_root:`sage` to a location in your :envvar:`PATH`.
      If you do this, make sure you edit the line:
 
-     .. CODE-BLOCK:: bash
+     .. code-block:: bash
 
          #SAGE_ROOT=/path/to/sage-version
 
      at the beginning of the copied ``sage`` script according to the direction
      given there to something like:
 
-     .. CODE-BLOCK:: bash
+     .. code-block:: bash
 
          SAGE_ROOT=<SAGE_ROOT>
 
@@ -570,7 +570,7 @@ Installation steps
      ``sage`` containing the lines
      (note that you have to change ``<SAGE_ROOT>`` below!):
 
-     .. CODE-BLOCK:: bash
+     .. code-block:: bash
 
          #!/usr/bin/env bash
 
@@ -591,7 +591,7 @@ Installation steps
      For example, put something similar to the following line in your
      :file:`.bashrc` file:
 
-     .. CODE-BLOCK:: bash
+     .. code-block:: bash
 
          alias sage=<SAGE_ROOT>/sage
 
@@ -1048,7 +1048,7 @@ Environment variables controlling the documentation build
     ``SAGE_JUPYTER_SERVER=http://localhost:8889``, run a local Jupyter server
     by
 
-    .. CODE-BLOCK:: bash
+    .. code-block:: bash
 
         ./sage --notebook=jupyterlab \
                --ServerApp.token='secret' \
@@ -1253,14 +1253,14 @@ Start from the directory created when you used ``git clone``, perhaps
 looking at the hidden ``.git`` subdirectory. It will looks like this,
 but the exact contents can vary::
 
-  [alice@localhost sage]$ ls .git
+  $ ls .git
   COMMIT_EDITMSG HEAD           branches       description    gitk.cache
   index          logs           packed-refs    FETCH_HEAD     ORIG_HEAD
   config         hooks          info           objects        refs
 
 Good. Now let's see what worktrees already exist::
 
-  [alice@localhost sage]$ git worktree list
+  $ git worktree list
   /home/alice/sage/sage                     c0ffeefe10 [master]
 
 We see just one line, the directory created when you used ``git clone``.
@@ -1271,7 +1271,7 @@ we're on (``master``).
 To try out a new version of Sage, let's fetch it first from the main
 repository::
 
-  [alice@localhost sage]$ git fetch upstream 10.3.beta8
+  $ git fetch upstream 10.3.beta8
   From https://github.com/sagemath/sage
    * tag                     10.3.beta8 -> FETCH_HEAD
 
@@ -1282,7 +1282,7 @@ directory containing a Sage installation cannot be moved without
 breaking the installation in it, it may be a good idea to choose
 a memorable name without much meaning::
 
-  [alice@localhost sage]$ git worktree add worktree-purple FETCH_HEAD
+  $ git worktree add worktree-purple FETCH_HEAD
   Preparing worktree (detached HEAD 30b3d78fac)
   Updating files: 100% (11191/11191), done.
   HEAD is now at 30b3d78fac Updated SageMath version to 10.3.beta8
@@ -1290,24 +1290,24 @@ a memorable name without much meaning::
 We now have a subdirectory ``worktree-purple``. This is a
 "linked worktree"::
 
-  [alice@localhost sage]$ git worktree list
+  $ git worktree list
   /home/alice/sage/sage                     c0ffeefe10 [master]
   /home/alice/sage/sage/worktree-purple     30b3d78fac (detached HEAD)
-  [alice@localhost sage]$ cd worktree-purple
-  [alice@localhost worktree-purple]$ cat VERSION.txt
+  $ cd worktree-purple
+  $ cat VERSION.txt
   SageMath version 10.3.beta8, Release Date: 2024-02-13
 
 All worktrees created in this way share the same repository,
 so they have access to all branches::
 
-  [alice@localhost worktree-purple]$ git --no-pager branch -v
+  $ git --no-pager branch -v
   * (no branch) 30b3d78fac Updated SageMath version to 10.3.beta8
   + master      2a9a4267f9 Updated SageMath version to 10.2
 
 In fact, ``.git`` here is not a directory, just a hidden
 file::
 
-  [alice@localhost worktree-purple]$ ls -l .git
+  $ ls -l .git
   -rw-r--r--  1 alice  staff  59 Feb 20 18:16 .git
 
 In the new worktree, we now build Sage from scratch. This
@@ -1327,11 +1327,11 @@ share it with the main worktree, let's create a symbolic
 link. This is an optional step that will avoid
 re-downloading files that you already have::
 
-  [alice@localhost worktree-purple]$ ln -s ../upstream/ .
+  $ ln -s ../upstream/ .
 
 Now let's build Sage, starting with the step::
 
-  [alice@localhost worktree-purple]$ make configure
+  $ make configure
 
 Refer to the file `README.md <https://github.com/sagemath/sage/#readme>`_
 for the following steps.

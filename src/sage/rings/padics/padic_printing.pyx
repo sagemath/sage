@@ -1173,7 +1173,7 @@ cdef class pAdicPrinter_class(SageObject):
                     else:
                         pk = Integer(1)
                         integral = True
-                    for i from 0 <= i < len(L):
+                    for i in range(len(L)):
                         if L[i] != "":
                             a = Integer(L[i])
                             if not pos and 2*a > pn:
@@ -1220,7 +1220,7 @@ cdef class pAdicPrinter_class(SageObject):
                     if self.unram_name is None:
                         raise RuntimeError("need to have specified a name for the unramified variable")
                     L, ellipsis = self._truncate_list(L, self.max_ram_terms, [])
-                    for i from 0 <= i < len(L):
+                    for i in range(len(L)):
                         unram_name = self.latex_unram_name if do_latex else self.unram_name
                         term = self._print_unram_term(L[i], do_latex, unram_name, self.max_unram_terms, 0, 0)
                         if len(term) > 0:
@@ -1393,7 +1393,7 @@ cdef class pAdicPrinter_class(SageObject):
         cdef Py_ssize_t j, newj
         cdef long exp, count = 0
         if increasing:
-            for j from 0 <= j < len(L):
+            for j in range(len(L)):
                 exp = j + expshift
                 if L[j] != 0:
                     if max_unram_terms == 0:
@@ -1480,7 +1480,7 @@ cdef class pAdicPrinter_class(SageObject):
         cdef Py_ssize_t j
         cdef long exp
         if increasing:
-            for j from 0 <= j < len(L):
+            for j in range(len(L)):
                 exp = j + expshift
                 s = self._print_term_of_poly(s, L[j], do_latex, polyname, exp)
         else:
