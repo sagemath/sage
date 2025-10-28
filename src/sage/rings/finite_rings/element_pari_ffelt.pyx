@@ -538,8 +538,17 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: k.<c> = GF(3^17, impl='pari_ffelt')
             sage: c^20  # indirect doctest
             c^4 + 2*c^3
+
+        TESTS::
+
+            sage: F.<I> = GF((2^128+51)^2)
+            sage: I
+            I
         """
-        return str(new_gen_noclear(self.val))
+        s = str(new_gen_noclear(self.val))
+        if self._parent._need_replace_varname:
+            s = s.replace("x", self._parent._names[0])  # .variable_name() is slower
+        return s
 
     def __hash__(self):
         """
@@ -1304,7 +1313,17 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: b = a**2 + 2*a + 1
             sage: b.__pari__()
             a^2 + 2*a + 1
+
+        TESTS::
+
+            sage: F.<I> = GF((2^128+51)^2)
+            sage: pari(I)
+            Traceback (most recent call last):
+            ...
+            ValueError: variable name illegal in PARI
         """
+        if self._parent._need_replace_varname:
+            raise ValueError("variable name illegal in PARI")
         return new_gen_noclear(self.val)
 
     def _pari_init_(self):
@@ -1340,7 +1359,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         zero = "%s*a" % self._parent.characteristic()
         return "subst(%s+%s,a,%s)" % (self, zero, ffgen)
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Return a string representing ``self`` in Magma.
 
@@ -1353,7 +1372,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         km = magma(k)
         return str(self).replace(k.variable_name(), km.gen(1).name())
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return the string representing ``self`` in GAP.
 

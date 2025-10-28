@@ -32,6 +32,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import bz2
+import os
 from pathlib import Path
 
 
@@ -52,14 +53,14 @@ def _dbz_to_string(name) -> str:
         sage: _dbz_to_string('PolHeeg/Cls/0000001-0005000/pol.0000003.dbz')
         '0\n1\n'
     """
-    from sage.env import SAGE_SHARE
-    filename = Path(SAGE_SHARE) / 'kohel' / name
-    try:
-        with open(filename, 'rb') as f:
-            data = bz2.decompress(f.read())
-    except OSError:
-        raise FileNotFoundError('file not found in the Kohel database')
-    return data.decode()
+    from sage.env import sage_data_paths
+    for path in sage_data_paths('kohel'):
+        filename = Path(path) / name
+        if os.path.exists(filename):
+            with open(filename, 'rb') as f:
+                data = bz2.decompress(f.read())
+            return data.decode()
+    raise FileNotFoundError('file not found in the Kohel database')
 
 
 def _dbz_to_integer_list(name) -> list[list]:

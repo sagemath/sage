@@ -20,7 +20,10 @@ fi
 cd "$SAGE_ROOT"
 export PATH=build/bin:$PATH
 
-OUTPUT_DIR="src/doc/en/installation"
+# Get target directory from first command-line argument
+TARGET_DIR="${1:-$SAGE_ROOT/src/doc}"
+
+OUTPUT_DIR="$TARGET_DIR/en/installation"
 mkdir -p "$OUTPUT_DIR"
 
 shopt -s extglob
@@ -80,7 +83,7 @@ for SYSTEM in arch debian fedora homebrew opensuse void; do
     echo "$(sage-print-system-package-command $SYSTEM --prompt --wrap --sudo install $(echo $(echo $DEVELOP_SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM-develop.txt
 done
 
-OUTPUT_DIR="src/doc/en/reference/spkg"
+OUTPUT_DIR="$TARGET_DIR/en/reference/spkg"
 mkdir -p "$OUTPUT_DIR"
 if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
     echo >&2 $0:$LINENO: installing "$OUTPUT_DIR"/"*.rst"
@@ -180,4 +183,4 @@ cat <<EOF
 
 EOF
 ) > "$OUTPUT_DIR"/index_alph.rst
-sage-package list --has-file SPKG.rst | OUTPUT_DIR=$OUTPUT_DIR OUTPUT_RST=1 xargs -P 99 -n 1 sage-spkg-info
+sage-package list --has-file SPKG.rst | OUTPUT_DIR=$OUTPUT_DIR OUTPUT_RST=1 xargs -P $(nproc 2> /dev/null || echo 8) -n 1 sage-spkg-info

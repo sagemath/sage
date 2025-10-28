@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Classes involved in doctesting
 
@@ -55,7 +54,6 @@ from sage.doctest.sources import DictAsObject, FileDocTestSource, get_basename
 from sage.doctest.util import Timer, count_noun, dict_difference
 from sage.env import DOT_SAGE, SAGE_EXTCODE, SAGE_LIB, SAGE_SRC
 from sage.misc import randstate
-from sage.misc.temporary_file import tmp_dir
 from sage.structure.sage_object import SageObject
 
 # Optional tags which are always automatically added
@@ -67,9 +65,14 @@ class DocTestDefaults(SageObject):
     """
     This class is used for doctesting the Sage doctest module.
 
+    The interface of this object should be compatible with the ``options`` input
+    to :class:`DocTestController`, that is, the same interface as the
+    argument object parsed by the :class:`argparse.ArgumentParser` in
+    :func:`sage.doctest.__main__._make_parser`.
+
     INPUT:
 
-    - ``runtest_default`` -- (boolean, default ``False``); if ``True``,
+    - ``runtest_default`` -- boolean (default: ``False``); if ``True``,
       fills in attribute to be the same as the defaults defined in
       ``sage-runtests``. If ``False``, change defaults in a few places
       for use in doctests of the doctester, which is mostly to make
@@ -119,6 +122,7 @@ class DocTestDefaults(SageObject):
         self.timeout = -1
         self.die_timeout = -1
         self.all = False
+        self.all_except = None
         self.installed = False
         self.logfile = None
         self.long = False
@@ -411,7 +415,9 @@ class DocTestController(SageObject):
         INPUT:
 
         - ``options`` -- either options generated from the command line by sage-runtests
-          or a DocTestDefaults object (possibly with some entries modified)
+          or a :class:`DocTestDefaults` object (possibly with some entries modified).
+          The attributes available in this object are defined by the :class:`argparse.ArgumentParser`
+          in :func:`sage.doctest.__main__._make_parser`.
         - ``args`` -- list of filenames to doctest
 
         EXAMPLES::
@@ -917,7 +923,7 @@ class DocTestController(SageObject):
             all_installed_modules()
             all_installed_doc()
 
-        elif self.options.all or (self.options.new and not have_git):
+        elif self.options.all or self.options.all_except is not None or (self.options.new and not have_git):
             all_files()
             all_doc_sources()
 
@@ -1011,7 +1017,14 @@ class DocTestController(SageObject):
                                   if_installed=self.options.if_installed,
                                   log=self.log):  # log when directly specified filenames are skipped
                     yield path
-        self.sources = [FileDocTestSource(path, self.options) for path in expand()]
+        paths = list(expand())
+        if self.options.all_except is not None:
+            paths_to_remove = set(os.path.abspath(x) for x in self.options.all_except)
+            if not paths_to_remove.issubset(paths):
+                raise ValueError(f"--all-except includes {paths_to_remove - set(paths)}, "
+                                 f"which are not found in {paths}")
+            paths = [path for path in paths if path not in paths_to_remove]  # keep duplicates
+        self.sources = [FileDocTestSource(path, self.options) for path in paths]
 
     def filter_sources(self):
         """
@@ -1128,7 +1141,7 @@ class DocTestController(SageObject):
             sage: DC.expand_files_into_sources()
             sage: DC.run_doctests()
             Doctesting 1 file.
-            sage -t .../sage/rings/homset.py
+            .../sage/rings/homset.py
                 [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1205,7 +1218,7 @@ class DocTestController(SageObject):
             sage: DC.run()
             Running doctests with ID ...
             Doctesting 1 file.
-            sage -t .../rings/all.py
+            .../rings/all.py
                 [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1371,8 +1384,6 @@ class DocTestController(SageObject):
             return
 
         # Setup signal handlers.
-        # Save crash logs in temporary directory.
-        os.putenv('CYSIGNALS_CRASH_LOGS', tmp_dir("crash_logs_"))
         init_cysignals()
 
         import signal
@@ -1409,7 +1420,7 @@ class DocTestController(SageObject):
             sage: DC.run()
             Running doctests with ID ...
             Doctesting 1 file.
-            sage -t .../sage/sets/non_negative_integers.py
+            .../sage/sets/non_negative_integers.py
                 [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1433,7 +1444,7 @@ class DocTestController(SageObject):
             Using --optional=external,sage
             Features to be detected: ...
             Doctesting 1 file.
-            sage -t ....py
+            ....py
                 [0 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1459,7 +1470,7 @@ class DocTestController(SageObject):
             Using --optional=sage...
             Features to be detected: ...
             Doctesting 1 file.
-            sage -t ....py
+            ....py
                 [4 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1477,7 +1488,7 @@ class DocTestController(SageObject):
             Using --optional=sage
             Features to be detected: ...
             Doctesting 1 file.
-            sage -t ....py
+            ....py
                 [4 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1495,7 +1506,7 @@ class DocTestController(SageObject):
             Using --optional=sage
             Features to be detected: ...
             Doctesting 1 file.
-            sage -t ....py
+            ....py
                 [4 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1603,7 +1614,7 @@ def run_doctests(module, options=None):
         sage: run_doctests(sage.rings.all)
         Running doctests with ID ...
         Doctesting 1 file.
-        sage -t .../sage/rings/all.py
+        .../sage/rings/all.py
             [... tests, ...s wall]
         ----------------------------------------------------------------------
         All tests passed!

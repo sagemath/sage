@@ -1073,7 +1073,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             return poly.change_variable_name(var)
 
         if algorithm is None:
-            algorithm = 'flint' if self._nrows <= 40 else 'linbox'
+            algorithm = 'flint'
 
         if algorithm == 'flint' or algorithm == 'linbox':
             A, denom = self._clear_denom()

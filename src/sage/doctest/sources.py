@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Classes for sources of doctests
 
@@ -28,19 +27,20 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import os
-import sys
-import re
-import random
 import doctest
+import os
+import random
+import re
+
 from sage.cpython.string import bytes_to_str
-from sage.repl.load import load
+from sage.env import SAGE_LIB, SAGE_SRC
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.package_dir import is_package_or_sage_namespace_package_dir
+from sage.repl.load import load
+from sage.structure.dynamic_class import dynamic_class
+
 from .parsing import SageDocTestParser
 from .util import NestedName
-from sage.structure.dynamic_class import dynamic_class
-from sage.env import SAGE_SRC, SAGE_LIB
 
 # Python file parsing
 triple_quotes = re.compile(r"\s*[rRuU]*((''')|(\"\"\"))")
@@ -217,6 +217,7 @@ class DocTestSource:
 
         EXAMPLES::
 
+            sage: # long time
             sage: from sage.doctest.control import DocTestDefaults
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.parsing import SageDocTestParser
@@ -903,6 +904,7 @@ class SourceLanguage:
 
         EXAMPLES::
 
+            sage: # long time
             sage: from sage.doctest.control import DocTestDefaults
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.parsing import SageDocTestParser

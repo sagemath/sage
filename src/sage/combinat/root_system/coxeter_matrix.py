@@ -942,7 +942,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
         """
         return self.coxeter_graph().is_connected()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return if ``self`` is a finite type or ``False`` if unknown.
 
@@ -960,7 +960,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
         """
         return self._is_finite
 
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         Return if ``self`` is an affine type or ``False`` if unknown.
 
@@ -1112,7 +1112,7 @@ def recognize_coxeter_type_from_matrix(coxeter_matrix, index_set):
 
     types = []
     for S in G.connected_components_subgraphs():
-        r = S.num_verts()
+        r = S.n_vertices()
         # Handle the special cases first
         if r == 1:
             types.append(CoxeterType(['A', 1]).relabel({1: S.vertices(sort=True)[0]}))

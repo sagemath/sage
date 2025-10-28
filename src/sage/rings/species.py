@@ -488,13 +488,10 @@ class AtomicSpeciesElement(WithEqualityById,
                                  initial=0))
 
         # gens from self
-        gens = []
-        for gen in G.gens():
-            newgen = []
-            for cyc in gen.cycle_tuples():
-                for k in range(1, sum(Mlist[cyc[0] - 1].grade()) + 1):
-                    newgen.append(tuple([k + starts[i - 1] for i in cyc]))
-            gens.append(newgen)
+        gens = [[tuple([k + starts[i - 1] for i in cyc])
+                 for cyc in gen.cycle_tuples()
+                 for k in range(1, sum(Mlist[cyc[0] - 1].grade()) + 1)]
+                for gen in G.gens()]
 
         # gens from M_i and dompart
         P = args[0].parent()
@@ -503,9 +500,9 @@ class AtomicSpeciesElement(WithEqualityById,
             K, K_dompart = M.permutation_group()
             for i, v in enumerate(K_dompart):
                 pi[i].extend([start + k for k in v])
-            for gen in K.gens():
-                gens.append([tuple([start + k for k in cyc])
-                             for cyc in gen.cycle_tuples()])
+            gens.extend([tuple([start + k for k in cyc])
+                         for cyc in gen.cycle_tuples()]
+                        for gen in K.gens())
 
         H = PermutationGroup(gens, domain=range(1, starts[-1] + 1))
         return P._indices(H, pi, check=False)
@@ -1355,7 +1352,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: M(DihedralGroup(4)) < M(CyclicPermutationGroup(4))
                 True
 
-            We create the lattice of molecular species of degree four::
+            We create the poset of molecular species of degree four::
 
                 sage: P = Poset([M.subset(4), lambda b, c: b <= c])
                 sage: len(P.cover_relations())
