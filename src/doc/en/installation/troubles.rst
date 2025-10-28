@@ -23,9 +23,11 @@ contained in an SPKG; these are stored in ``build/pkgs/``. As each one
 is built, a build log is stored in ``logs/pkgs/``, so you can browse these
 to find error messages. If an SPKG fails to build, the whole build
 process will stop soon after, so check the most recent log files
-first, or run::
+first, or run
 
-       grep -li "^Error" logs/pkgs/*
+.. code-block:: console
+
+    $ grep -li "^Error" logs/pkgs/*
 
 from the top-level Sage directory to find log files with error
 messages in them.  Send the file ``config.log`` as well as the

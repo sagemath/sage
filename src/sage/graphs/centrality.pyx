@@ -937,7 +937,10 @@ def centrality_closeness_random_k(G, int k=1):
     The method is valid for immutable graphs::
 
         sage: from sage.graphs.centrality import centrality_closeness_random_k
-        sage: G = graphs.RandomGNP(10, .7)
+        sage: while True:
+        ....:     G = graphs.RandomGNP(10, .7)
+        ....:     if G.is_connected():  # graph should be connected
+        ....:         break
         sage: G._backend
         <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
         sage: H = Graph(G, immutable=True)
