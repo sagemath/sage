@@ -70,6 +70,7 @@ cdef extern from "gap/libgap-api.h" nogil:
     bint GAP_IsInt(Obj)
     bint GAP_IsSmallInt(Obj)
     Obj GAP_NewObjIntFromInt(Int val)
+    Obj GAP_MakeObjInt(const UInt* limbs, Int size)
     Int GAP_ValueInt(Obj)
     Int GAP_SizeInt(Obj)
     const UInt* GAP_AddrInt(Obj)
