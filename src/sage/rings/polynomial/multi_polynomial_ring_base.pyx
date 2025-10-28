@@ -868,6 +868,21 @@ cdef class MPolynomialRing_base(CommutativeRing):
         return False
 
     def term_order(self):
+        """
+        Return the term order of ``self``.
+
+        OUTPUT: a :class:`~sage.rings.polynomial.term_order.TermOrder` of the
+        variables of ``self``.
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = PolynomialRing(ZZ, 3)
+            sage: R.term_order()
+            Degree reverse lexicographic term order
+            sage: S.<t,u> = PolynomialRing(QQ, 2, order='lex')
+            sage: S.term_order()
+            Lexicographic term order
+        """
         return self._term_order
 
     def characteristic(self):
@@ -886,6 +901,29 @@ cdef class MPolynomialRing_base(CommutativeRing):
         return self.base_ring().characteristic()
 
     def gen(self, n=0):
+        """
+        Return the ``n``-th indeterminate generator of ``self``.
+
+        INPUT:
+
+        - ``n`` -- integer (default: ``0``); number of the generator
+
+        EXAMPLES::
+
+            sage: R = CC['x,y,z']
+            sage: x = R.gen()
+            sage: x
+            x
+            sage: parent(x)
+            Multivariate Polynomial Ring in x, y, z over Complex Field with 53
+            bits of precision
+            sage: R.gen(2)
+            z
+            sage: R.gen(23)
+            Traceback (most recent call last):
+            ...
+            ValueError: generator not defined
+        """
         if n < 0 or n >= self._ngens:
             raise ValueError("generator not defined")
         return self._gens[int(n)]
@@ -943,9 +981,30 @@ cdef class MPolynomialRing_base(CommutativeRing):
                 return self.base_ring()
 
     def krull_dimension(self):
+        """
+        Return the Krull dimension of ``self``.
+
+        EXAMPLES::
+
+            sage: R = ZZ['t,u']
+            sage: R.krull_dimension()
+            3
+            sage: S = QQ['x,y']
+            sage: S.krull_dimension()
+            2
+        """
         return self.base_ring().krull_dimension() + self.ngens()
 
     def ngens(self):
+        """
+        Return the number of indeterminate generators of ``self``.
+
+        EXAMPLES::
+
+            sage: R = RR['x,y']
+            sage: R.ngens()
+            2
+        """
         return self._ngens
 
     def _monomial_order_function(self):

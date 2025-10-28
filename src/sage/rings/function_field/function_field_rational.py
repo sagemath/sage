@@ -430,38 +430,6 @@ class RationalFunctionField(FunctionField):
         from sage.structure.factorization import Factorization
         return Factorization(w, unit=unit)
 
-    def extension(self, f, names=None):
-        """
-        Create an extension `L = K[y]/(f(y))` of the rational function field.
-
-        INPUT:
-
-        - ``f`` -- univariate polynomial over self
-
-        - ``names`` -- string or length-1 tuple
-
-        OUTPUT: a function field
-
-        EXAMPLES::
-
-            sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: K.extension(y^5 - x^3 - 3*x + x*y)                                    # needs sage.rings.function_field
-            Function field in y defined by y^5 + x*y - x^3 - 3*x
-
-        A nonintegral defining polynomial::
-
-            sage: K.<t> = FunctionField(QQ); R.<y> = K[]
-            sage: K.extension(y^3 + (1/t)*y + t^3/(t+1))                                # needs sage.rings.function_field
-            Function field in y defined by y^3 + 1/t*y + t^3/(t + 1)
-
-        The defining polynomial need not be monic or integral::
-
-            sage: K.extension(t*y^3 + (1/t)*y + t^3/(t+1))                              # needs sage.rings.function_field
-            Function field in y defined by t*y^3 + 1/t*y + t^3/(t + 1)
-        """
-        from . import constructor
-        return constructor.FunctionFieldExtension(f, names)
-
     @cached_method
     def polynomial_ring(self, var='x'):
         """

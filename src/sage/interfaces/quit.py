@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Quitting interfaces
 """
@@ -19,7 +18,6 @@ import subprocess
 import sys
 from typing import TYPE_CHECKING
 
-from sage.env import DOT_SAGE, HOSTNAME
 from sage.misc.cachefunc import cached_function
 
 if TYPE_CHECKING:
@@ -146,12 +144,12 @@ def invalidate_all() -> None:
     EXAMPLES::
 
         sage: # needs sage.libs.pari sage.symbolic
-        sage: a = maxima(2); b = gp(3)
+        sage: a = gap(2); b = gp(3)
         sage: a, b
         (2, 3)
         sage: sage.interfaces.quit.invalidate_all()
         sage: a
-        (invalid Maxima object -- The maxima session in which this object was defined is no longer running.)
+        (invalid Gap object -- The gap session in which this object was defined is no longer running.)
         sage: b
         (invalid PARI/GP interpreter object -- The pari session in which this object was defined is no longer running.)
 
