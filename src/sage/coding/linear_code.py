@@ -2408,7 +2408,7 @@ class LinearCode(AbstractLinearCode):
         OUTPUT:
         - a linear code, the intersection of self and other.
 
-        .. EXAMPLES::
+        EXAMPLES::
 
             sage: F = GF(2)
             sage: G1 = matrix(F, [[1,1,0,0], [0,0,1,1]])
