@@ -1224,10 +1224,7 @@ def Bessel(*args, **kwds):
         raise ValueError("inconsistent types given")
     # record the function type
     if _type is None:
-        if 'typ' in kwds:
-            _type = kwds['typ']
-        else:
-            _type = 'J'
+        _type = kwds.get('typ', 'J')
     if _type not in ['I', 'J', 'K', 'Y']:
         raise ValueError("type must be one of I, J, K, Y")
 

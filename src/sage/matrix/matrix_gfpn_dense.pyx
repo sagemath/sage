@@ -1,5 +1,4 @@
 # distutils: libraries = mtx
-# sage_setup: distribution = sagemath-meataxe
 # sage.doctest: optional - meataxe
 
 r"""
@@ -689,6 +688,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         TESTS::
 
+            sage: from sage.matrix.matrix_gfpn_dense import Matrix_gfpn_dense
             sage: K.<z> = GF(59)
             sage: M = MatrixSpace(K, 3, 4, implementation=Matrix_gfpn_dense)(range(12))
             sage: M

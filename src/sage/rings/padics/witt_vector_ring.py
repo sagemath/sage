@@ -22,7 +22,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from itertools import product
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.integral_domains import IntegralDomains

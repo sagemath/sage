@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-coxeter3
 # sage.doctest: optional - coxeter3
 """
 Coxeter Groups implemented with Coxeter3
@@ -35,13 +34,14 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             sage: CoxeterGroup(['B',2])
             Coxeter group of type ['B', 2] implemented by Coxeter3
             sage: CoxeterGroup(CartanType(['B', 3]).relabel({1: 3, 2: 2, 3: 1}))
-            Coxeter group of type ['B', 3] relabelled by {1: 3, 2: 2, 3: 1} implemented by Coxeter3
+            Coxeter group of type ['B', 3] relabelled by {1: 3, 2: 2, 3: 1}
+            implemented by Coxeter3
         """
         from sage.combinat.root_system.cartan_type import CartanType
         ct = CartanType(cartan_type)
         return super().__classcall__(cls, ct, *args, **options)
 
-    def __init__(self, cartan_type):
+    def __init__(self, cartan_type) -> None:
         """
         TESTS::
 
@@ -62,7 +62,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         self._coxgroup = get_CoxGroup(cartan_type)
         self._cartan_type = cartan_type
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -180,7 +180,9 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
     def rank(self):
         """
-        Return the rank of this Coxeter group, that is, the number of generators.
+        Return the rank of this Coxeter group.
+
+        This is the number of generators.
 
         EXAMPLES::
 
@@ -190,7 +192,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         """
         return self._coxgroup.rank()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return ``True`` if this is a finite Coxeter group.
 
@@ -205,6 +207,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
     def length(self, x):
         """
         Return the length of an element ``x`` in this Coxeter group.
+
         This is just the length of a reduced word for ``x``.
 
         EXAMPLES::
@@ -263,23 +266,6 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             []
         """
         return self.element_class(self, [])
-
-    def m(self, i, j):
-        r"""
-        This is deprecated, use ``self.coxeter_matrix()[i,j]`` instead.
-
-        TESTS::
-
-            sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
-            sage: W.m(1, 1)
-            doctest:warning...:
-            DeprecationWarning: the .m(i, j) method has been deprecated; use .coxeter_matrix()[i,j] instead.
-            See https://github.com/sagemath/sage/issues/30237 for details.
-            1
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(30237, "the .m(i, j) method has been deprecated; use .coxeter_matrix()[i,j] instead.")
-        return self.coxeter_matrix()[i, j]
 
     def kazhdan_lusztig_polynomial(self, u, v, constant_term_one=True):
         r"""
@@ -424,7 +410,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
     class Element(ElementWrapper):
         wrapped_class = CoxGroupElement
 
-        def __init__(self, parent, x):
+        def __init__(self, parent, x) -> None:
             """
             TESTS::
 
@@ -461,7 +447,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             """
             return iter(self.value)
 
-        def coatoms(self):
+        def coatoms(self) -> list:
             """
             Return the coatoms (or co-covers) of this element in the Bruhat order.
 
@@ -475,7 +461,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             W = self.parent()
             return [W(w) for w in self.value.coatoms()]
 
-        def _richcmp_(self, other, op):
+        def _richcmp_(self, other, op) -> bool:
             """
             Return lexicographic comparison of ``self`` and ``other``.
 
@@ -499,7 +485,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             """
             return richcmp(list(self), list(other), op)
 
-        def reduced_word(self):
+        def reduced_word(self) -> list:
             """
             Return the reduced word of ``self``.
 
@@ -571,7 +557,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
         length = __len__
 
-        def bruhat_le(self, v):
+        def bruhat_le(self, v) -> bool:
             r"""
             Return whether ``self`` `\le` ``v`` in Bruhat order.
 

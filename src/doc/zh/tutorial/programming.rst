@@ -151,7 +151,7 @@ Cython 代码：``test.spyx``:
 
 为了使用此脚本，``SAGE_ROOT`` 必须包含在 PATH 中。如果将上述脚本命名为 ``factor``，则以下是使用示例：
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ ./factor 2006
     2 * 17 * 59
@@ -707,7 +707,7 @@ Python（以及 Sage）提供了几种性能分析工具和方法，
 
 在系统终端中，输入
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ hotshot2calltree -o cachegrind.out.42 pythongrind.prof
 

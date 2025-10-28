@@ -388,7 +388,7 @@ class MatchingCoveredGraph(Graph):
 
         sage: G = graphs.CycleGraph(4)
         sage: G += graphs.CycleGraph(6)
-        sage: G.connected_components_number()
+        sage: G.number_of_connected_components()
         2
         sage: H = MatchingCoveredGraph(G)
         Traceback (most recent call last):
@@ -2387,8 +2387,8 @@ class MatchingCoveredGraph(Graph):
         .. NOTE::
 
             This method overwrites the
-            :meth:`~sage.graphs.graph.Graph.is_biconnected` method
-            in order to return ``True`` as matching covered graphs are
+            :meth:`~sage.graphs.generic_graph.GenericGraph.is_biconnected`
+            method in order to return ``True`` as matching covered graphs are
             biconnected.
 
         EXAMPLES:
@@ -2617,7 +2617,7 @@ class MatchingCoveredGraph(Graph):
 
         For a brace `G[A, B]` of order six or more, `|N(X)| \geq |X| + 2`, for
         all `X \subset A` such that `0 < |X| <|A| - 1`, where
-        `N(S) := \{b | (a, b) \in E \^ a \in S\}` is called the neighboring set
+        `N(S) := \{b | (a, b) \in E \wedge a \in S\}` is called the neighboring set
         of `S`::
 
             sage: H = graphs.MoebiusLadderGraph(15)

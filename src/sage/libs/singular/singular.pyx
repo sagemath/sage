@@ -1542,7 +1542,6 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
 
     cdef number *nn
 
-    cdef int64_t _d
     cdef char *_name
     cdef char **_ext_names
 
@@ -1552,8 +1551,14 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
         return n_Init(int(d), _ring.cf)
 
     if _ring.cf.type == n_Z2m:
-        _d = d
-        return nr2mMapZp(<number *>_d, currRing.cf, _ring.cf)
+        if sizeof(number *) >= sizeof(unsigned long):
+            # one may also always choose the second branch,
+            # but the first branch may allow inlining (?)
+            # casting to unsigned long is safe because n_Z2m
+            # is only chosen if the exponent is small, see singular_ring_new
+            return nr2mMapZp(<number *> <unsigned long> d, currRing.cf, _ring.cf)
+        else:
+            return _ring.cf.cfInit(<long> <unsigned long> d, _ring.cf)
     elif _ring.cf.type == n_Zn or _ring.cf.type == n_Znm:
         lift = d.lift()
 
@@ -1731,7 +1736,6 @@ cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     - ``_ring`` -- a pointer to some ring
 
     Whether an overflow occurs or not partially depends
-
     on the number of variables in the ring. See github issue
     :issue:`11856`. With Singular 4, it is by default optimized
     for at least 4 variables on 64-bit and 2 variables on 32-bit,
@@ -1749,8 +1753,7 @@ cdef int overflow_check(unsigned long e, ring *_ring) except -1:
         sage: y^2^32
         Traceback (most recent call last):
         ...
-        OverflowError: Python int too large to convert to C unsigned long  # 32-bit
-        OverflowError: exponent overflow (4294967296)  # 64-bit
+        OverflowError: exponent overflow (...)
     """
     if unlikely(e > _ring.bitmask):
         raise OverflowError("exponent overflow (%d)" % (e))

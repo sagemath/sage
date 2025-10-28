@@ -1,10 +1,15 @@
 """
 Baxter permutations
 """
+from typing import Iterator
+
 from sage.combinat.permutation import Permutations
+from sage.combinat.posets.lattices import LatticePoset
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
+from sage.sets.disjoint_union_enumerated_sets import (
+    DisjointUnionEnumeratedSets
+)
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -68,8 +73,7 @@ class BaxterPermutations_size(BaxterPermutations):
         sage: BaxterPermutations_size(5)
         Baxter permutations of size 5
     """
-
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         EXAMPLES::
 
@@ -145,7 +149,7 @@ class BaxterPermutations_size(BaxterPermutations):
                     return False
         return True
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         r"""
         Efficient generation of Baxter permutations.
 
@@ -234,6 +238,24 @@ class BaxterPermutations_size(BaxterPermutations):
                     n.binomial(k + 2)) // (n * n.binomial(2))
                    for k in range(self._n))
 
+    def lattice(self):
+        """
+        Return the lattice of Baxter permutations.
+
+        This is defined by restriction of the weak order.
+
+        EXAMPLES::
+
+            sage: L = BaxterPermutations(4).lattice(); L
+            Finite lattice containing 22 elements
+
+        REFERENCES:
+
+        - [Law2011]_
+        """
+        return LatticePoset([list(self), lambda a, b: a.weak_le(b)],
+                            check=False)
+
 
 class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
     r"""
@@ -248,8 +270,7 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
         sage: BaxterPermutations_all()
         Baxter permutations
     """
-
-    def __init__(self, n=None):
+    def __init__(self, n=None) -> None:
         r"""
         EXAMPLES::
 
@@ -265,7 +286,7 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
                                                     BaxterPermutations_size),
                                              facade=False, keepkey=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -277,7 +298,7 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
         """
         return "Baxter permutations"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if and only if ``x`` is a Baxter permutation.
 
@@ -301,7 +322,7 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
             return False
         return x in BaxterPermutations(len(x))
 
-    def to_pair_of_twin_binary_trees(self, p):
+    def to_pair_of_twin_binary_trees(self, p) -> tuple:
         r"""
         Apply a bijection between Baxter permutations of size ``self._n``
         and the set of pairs of twin binary trees with ``self._n`` nodes.
@@ -327,12 +348,13 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: BP = BaxterPermutations()
-            sage: BP.to_pair_of_twin_binary_trees(Permutation([]))                      # needs sage.graphs
+            sage: BP.to_pair_of_twin_binary_trees(Permutation([]))
             (., .)
-            sage: BP.to_pair_of_twin_binary_trees(Permutation([1, 2, 3]))               # needs sage.graphs
+            sage: BP.to_pair_of_twin_binary_trees(Permutation([1, 2, 3]))
             (1[., 2[., 3[., .]]], 3[2[1[., .], .], .])
-            sage: BP.to_pair_of_twin_binary_trees(Permutation([3, 4, 1, 2]))            # needs sage.graphs
+            sage: BP.to_pair_of_twin_binary_trees(Permutation([3, 4, 1, 2]))
             (3[1[., 2[., .]], 4[., .]], 2[1[., .], 4[3[., .], .]])
         """
         from sage.combinat.binary_tree import LabelledBinaryTree
