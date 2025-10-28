@@ -255,11 +255,11 @@ def milnor_multiplication(r, s):
     M = list(range(rows))
     for i in range(rows):
         M[i] = [0]*cols
-    for j in range(1,cols):
+    for j in range(1, cols):
         M[0][j] = s[j-1]
-    for i in range(1,rows):
+    for i in range(1, rows):
         M[i][0] = r[i-1]
-        for j in range(1,cols):
+        for j in range(1, cols):
             M[i][j] = 0
     found = True
     while found:
@@ -268,7 +268,8 @@ def milnor_multiplication(r, s):
         okay = 1
         diagonal = [0]*diags
         while n <= diags and okay is not None:
-            nth_diagonal = [M[i][n-i] for i in range(max(0,n-cols+1), min(1+n,rows))]
+            nth_diagonal = [M[i][n-i]
+                            for i in range(max(0, n-cols+1), min(1+n, rows))]
             okay = multinomial(nth_diagonal)
             diagonal[n-1] = okay
             n = n + 1
@@ -298,12 +299,12 @@ def milnor_multiplication(r, s):
                         temp_col_sum += M[k][j]
                     if temp_col_sum != 0:
                         found = True
-                        for row in range(1,i):
+                        for row in range(1, i):
                             M[row][0] = r[row-1]
-                            for col in range(1,cols):
+                            for col in range(1, cols):
                                 M[0][col] = M[0][col] + M[row][col]
                                 M[row][col] = 0
-                        for col in range(1,j):
+                        for col in range(1, j):
                             M[0][col] = M[0][col] + M[i][col]
                             M[i][col] = 0
                         M[0][j] = M[0][j] - 1
@@ -441,7 +442,7 @@ def milnor_multiplication_odd(m1, m2, p):
     """
     from sage.rings.finite_rings.finite_field_constructor import GF
     F = GF(p)
-    (f,s) = m2
+    f, s = m2
     # First compute Q_e0 Q_e1 ... P(r1, r2, ...) Q_f0 Q_f1 ...
     # Store results (as dictionary of pairs of tuples) in 'answer'.
     answer = {m1: F(1)}
@@ -452,7 +453,7 @@ def milnor_multiplication_odd(m1, m2, p):
             if k not in mono[0]:
                 q_mono = set(mono[0])
                 if q_mono:
-                    ind = len(q_mono.intersection(range(k,1+max(q_mono))))
+                    ind = len(q_mono.intersection(range(k, 1+max(q_mono))))
                 else:
                     ind = 0
                 coeff = (-1)**ind * old_answer[mono]
@@ -460,15 +461,15 @@ def milnor_multiplication_odd(m1, m2, p):
                 if ind == 0:
                     lst.append(k)
                 else:
-                    lst.insert(-ind,k)
+                    lst.insert(-ind, k)
                 q_mono = tuple(lst)
                 p_mono = mono[1]
                 answer[(q_mono, p_mono)] = F(coeff)
-            for i in range(1,1+len(mono[1])):
+            for i in range(1, 1+len(mono[1])):
                 if (k+i not in mono[0]) and (p**k <= mono[1][i-1]):
                     q_mono = set(mono[0])
                     if q_mono:
-                        ind = len(q_mono.intersection(range(k+i,1+max(q_mono))))
+                        ind = len(q_mono.intersection(range(k+i, 1+max(q_mono))))
                     else:
                         ind = 0
                     coeff = (-1)**ind * old_answer[mono]
@@ -476,7 +477,7 @@ def milnor_multiplication_odd(m1, m2, p):
                     if ind == 0:
                         lst.append(k+i)
                     else:
-                        lst.insert(-ind,k+i)
+                        lst.insert(-ind, k+i)
                     q_mono = tuple(lst)
                     p_mono = list(mono[1])
                     p_mono[i-1] = p_mono[i-1] - p**k
@@ -496,8 +497,8 @@ def milnor_multiplication_odd(m1, m2, p):
         result = answer
     else:
         result = {}
-        for (e, r) in answer:
-            old_coeff = answer[(e,r)]
+        for e, r in answer:
+            old_coeff = answer[(e, r)]
             # Milnor multiplication for r and s
             rows = len(r) + 1
             cols = len(s) + 1
@@ -506,11 +507,11 @@ def milnor_multiplication_odd(m1, m2, p):
             M = list(range(rows))
             for i in range(rows):
                 M[i] = [0]*cols
-            for j in range(1,cols):
+            for j in range(1, cols):
                 M[0][j] = s[j-1]
-            for i in range(1,rows):
+            for i in range(1, rows):
                 M[i][0] = r[i-1]
-                for j in range(1,cols):
+                for j in range(1, cols):
                     M[i][j] = 0
             found = True
             while found:
@@ -519,8 +520,8 @@ def milnor_multiplication_odd(m1, m2, p):
                 coeff = old_coeff
                 diagonal = [0]*diags
                 while n <= diags and coeff != 0:
-                    nth_diagonal = [M[i][n-i] for i in range(max(0,n-cols+1), min(1+n,rows))]
-                    coeff = coeff * multinomial_odd(nth_diagonal,p)
+                    nth_diagonal = [M[i][n-i] for i in range(max(0, n-cols+1), min(1+n, rows))]
+                    coeff = coeff * multinomial_odd(nth_diagonal, p)
                     diagonal[n-1] = sum(nth_diagonal)
                     n = n + 1
                 if F(coeff) != 0:
@@ -528,10 +529,10 @@ def milnor_multiplication_odd(m1, m2, p):
                     while i >= 0 and diagonal[i] == 0:
                         i = i - 1
                     t = tuple(diagonal[:i+1])
-                    if (e,t) in result:
-                        result[(e,t)] = F(coeff + result[(e,t)])
+                    if (e, t) in result:
+                        result[(e, t)] = F(coeff + result[(e, t)])
                     else:
-                        result[(e,t)] = F(coeff)
+                        result[(e, t)] = F(coeff)
                     # now look for new matrices:
                 found = False
                 i = 1
@@ -548,12 +549,12 @@ def milnor_multiplication_odd(m1, m2, p):
                                 temp_col_sum += M[k][j]
                             if temp_col_sum != 0:
                                 found = True
-                                for row in range(1,i):
+                                for row in range(1, i):
                                     M[row][0] = r[row-1]
-                                    for col in range(1,cols):
+                                    for col in range(1, cols):
                                         M[0][col] = M[0][col] + M[row][col]
                                         M[row][col] = 0
-                                for col in range(1,j):
+                                for col in range(1, j):
                                     M[0][col] = M[0][col] + M[i][col]
                                     M[i][col] = 0
                                 M[0][j] = M[0][j] - 1
@@ -773,14 +774,14 @@ def adem(a, b, c=0, p=2, generic=None):
         elif a == 0:
             return {(b,): 1}
         elif a >= 2*b:
-            return {(a,b): 1}
+            return {(a, b): 1}
         result = {}
         for c in range(1 + a//2):
             if binomial_mod2(b-c-1, a-2*c) == 1:
                 if c == 0:
                     result[(a+b,)] = 1
                 else:
-                    result[(a+b-c,c)] = 1
+                    result[(a+b-c, c)] = 1
         return result
     # p odd
     if a == 0 and b == 0:
@@ -792,40 +793,40 @@ def adem(a, b, c=0, p=2, generic=None):
     else:
         A = a
         B = c
-        bockstein = b # should be 0 or 1
+        bockstein = b  # should be 0 or 1
     if A == 0:
         return {(bockstein, B, 0): 1}
     if B == 0:
         return {(0, A, bockstein): 1}
     if bockstein == 0:
-        if A >= p*B: # admissible
-            return {(0,A,0,B,0): 1}
+        if A >= p*B:  # admissible
+            return {(0, A, 0, B, 0): 1}
         result = {}
         for j in range(1 + a//p):
             coeff = (-1)**(A+j) * binomial_modp((B-j) * (p-1) - 1, A - p*j, p)
             if coeff % p != 0:
                 if j == 0:
-                    result[(0,A+B,0)] = coeff
+                    result[(0, A+B, 0)] = coeff
                 else:
-                    result[(0,A+B-j,0,j,0)] = coeff
+                    result[(0, A+B-j, 0, j, 0)] = coeff
     else:
-        if A >= p*B + 1: # admissible
-            return {(0,A,1,B,0): 1}
+        if A >= p*B + 1:  # admissible
+            return {(0, A, 1, B, 0): 1}
         result = {}
         for j in range(1 + a//p):
             coeff = (-1)**(A+j) * binomial_modp((B-j) * (p-1), A - p*j, p)
             if coeff % p != 0:
                 if j == 0:
-                    result[(1,A+B,0)] = coeff
+                    result[(1, A+B, 0)] = coeff
                 else:
-                    result[(1,A+B-j,0,j,0)] = coeff
+                    result[(1, A+B-j, 0, j, 0)] = coeff
         for j in range(1 + (a-1)//p):
             coeff = (-1)**(A+j-1) * binomial_modp((B-j) * (p-1) - 1, A - p*j - 1, p)
             if coeff % p != 0:
                 if j == 0:
-                    result[(0,A+B,1)] = coeff
+                    result[(0, A+B, 1)] = coeff
                 else:
-                    result[(0,A+B-j,1,j,0)] = coeff
+                    result[(0, A+B-j, 1, j, 0)] = coeff
     return result
 
 

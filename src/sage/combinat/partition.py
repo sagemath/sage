@@ -2043,7 +2043,7 @@ class Partition(CombinatorialElement):
                         covers[(i, j)] = [(i, j - 1)]
         return Poset(covers)
 
-    def frobenius_coordinates(self):
+    def frobenius_coordinates(self) -> tuple[list, list]:
         """
         Return a pair of sequences of Frobenius coordinates aka beta numbers
         of the partition.
@@ -2065,11 +2065,11 @@ class Partition(CombinatorialElement):
         mu = self
         muconj = mu.conjugate()     # Naive implementation
         if len(mu) <= len(muconj):
-            a = [x for x in (val-i-1 for i, val in enumerate(mu)) if x >= 0]
-            b = [x for x in (muconj[i]-i-1 for i in range(len(a))) if x >= 0]
+            a = [x for i, val in enumerate(mu) if (x := val - i - 1) >= 0]
+            b = [x for i in range(len(a)) if (x := muconj[i] - i - 1) >= 0]
         else:
-            b = [x for x in (val-i-1 for i, val in enumerate(muconj)) if x >= 0]
-            a = [x for x in (mu[i]-i-1 for i in range(len(b))) if x >= 0]
+            b = [x for i, val in enumerate(muconj) if (x := val - i - 1) >= 0]
+            a = [x for i in range(len(b)) if (x := mu[i] - i - 1) >= 0]
         return (a, b)
 
     def frobenius_rank(self):

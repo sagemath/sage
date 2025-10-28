@@ -42,7 +42,8 @@ from cysignals.signals cimport sig_on, sig_off
 from libcpp.vector cimport vector
 
 from sage.libs.ntl.ntl_ZZ_pContext import ZZ_pContext_factory
-from sage.libs.ntl.all import ZZ, ZZX
+from sage.libs.ntl.ntl_ZZ import ntl_ZZ as ZZ
+from sage.libs.ntl.ntl_ZZX import ntl_ZZX as ZZX
 from sage.matrix.constructor import Matrix
 from sage.rings.padics.factory import Qp
 from sage.rings.big_oh import O as big_oh

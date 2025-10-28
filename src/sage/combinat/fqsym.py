@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Free Quasi-symmetric functions
+Free quasi-symmetric functions
 
 AUTHORS:
 

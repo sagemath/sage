@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Regular Crystals
@@ -82,6 +81,8 @@ class RegularCrystals(Category_singleton):
         running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
+        running ._test_random() . . . pass
+        running ._test_rank() . . . pass
         running ._test_some_elements() . . . pass
         running ._test_stembridge_local_axioms() . . . pass
     """
@@ -309,12 +310,10 @@ class RegularCrystals(Category_singleton):
             """
             tester = self._tester(**options)
             goodness = True
-            i = 0
-            for x in self:
+            for i, x in enumerate(self, start=1):
                 goodness = x._test_stembridge_local_axioms(index_set, verbose)
                 if not goodness and not complete:
                     tester.fail()
-                i += 1
                 if i > tester._max_runs:
                     return
             tester.assertTrue(goodness)

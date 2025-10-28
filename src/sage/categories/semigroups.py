@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Semigroups
 """
@@ -208,7 +207,7 @@ class Semigroups(CategoryWithAxiom):
                 ....:          vertex_colors={(1,1,1): G.vertices(sort=True)},
                 ....:          bgcolor=(0,0,0), color_by_label=True,
                 ....:          xres=700, yres=700, iterations=200)
-                sage: G.num_edges()
+                sage: G.n_edges()
                 120
 
                 sage: # needs sage.combinat sage.graphs sage.groups
@@ -221,7 +220,7 @@ class Semigroups(CategoryWithAxiom):
 
                 sage: # needs sage.graphs sage.groups
                 sage: G = A5.cayley_graph(generators=[A5.gens()[0]])
-                sage: G.num_edges()
+                sage: G.n_edges()
                 60
                 sage: g = PermutationGroup([(i + 1, j + 1)
                 ....:                       for i in range(5)
@@ -242,7 +241,7 @@ class Semigroups(CategoryWithAxiom):
                 ....:             for w in sum((list(Words(M.semigroup_generators(), k))
                 ....:                           for k in range(4)), [])]
                 sage: G = M.cayley_graph(elements=elements)
-                sage: G.num_verts(), G.num_edges()
+                sage: G.n_vertices(), G.n_edges()
                 (85, 84)
                 sage: G.show3d(color_by_label=True, edge_size=0.001, vertex_size=0.01)  # needs sage.plot
 

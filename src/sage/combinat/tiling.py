@@ -1,8 +1,8 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Tiling Solver
+Tiling solver
 
-Tiling a n-dimensional polyomino with n-dimensional polyominoes.
+Tiling a `n`-dimensional polyomino with n-dimensional polyominoes.
 
 This module defines two classes:
 
@@ -312,36 +312,36 @@ def ncube_isometry_group(n, orientation_preserving=True):
     EXAMPLES::
 
         sage: from sage.combinat.tiling import ncube_isometry_group
-        sage: ncube_isometry_group(2)
+        sage: sorted(ncube_isometry_group(2))
         [
-        [1 0]  [ 0  1]  [-1  0]  [ 0 -1]
-        [0 1], [-1  0], [ 0 -1], [ 1  0]
+        [-1  0]  [ 0 -1]  [ 0  1]  [1 0]
+        [ 0 -1], [ 1  0], [-1  0], [0 1]
         ]
-        sage: ncube_isometry_group(2, orientation_preserving=False)
+        sage: sorted(ncube_isometry_group(2, orientation_preserving=False))
         [
-        [1 0]  [ 0 -1]  [ 1  0]  [ 0  1]  [0 1]  [-1  0]  [ 0 -1]  [-1  0]
-        [0 1], [-1  0], [ 0 -1], [-1  0], [1 0], [ 0 -1], [ 1  0], [ 0  1]
+        [-1  0]  [-1  0]  [ 0 -1]  [ 0 -1]  [ 0  1]  [0 1]  [ 1  0]  [1 0]
+        [ 0 -1], [ 0  1], [-1  0], [ 1  0], [-1  0], [1 0], [ 0 -1], [0 1]
         ]
 
     There are 24 orientation preserving isometries of the 3-cube::
 
-        sage: ncube_isometry_group(3)
+        sage: sorted(ncube_isometry_group(3))
         [
-        [1 0 0]  [ 1  0  0]  [ 1  0  0]  [ 0  1  0]  [0 1 0]  [ 0  0  1]
-        [0 1 0]  [ 0  0  1]  [ 0  0 -1]  [-1  0  0]  [0 0 1]  [ 0 -1  0]
-        [0 0 1], [ 0 -1  0], [ 0  1  0], [ 0  0  1], [1 0 0], [ 1  0  0],
+        [-1  0  0]  [-1  0  0]  [-1  0  0]  [-1  0  0]  [ 0 -1  0]  [ 0 -1  0]
+        [ 0 -1  0]  [ 0  0 -1]  [ 0  0  1]  [ 0  1  0]  [-1  0  0]  [ 0  0 -1]
+        [ 0  0  1], [ 0 -1  0], [ 0  1  0], [ 0  0 -1], [ 0  0 -1], [ 1  0  0],
         <BLANKLINE>
-        [-1  0  0]  [ 0 -1  0]  [-1  0  0]  [-1  0  0]  [ 0 -1  0]  [ 0  0 -1]
-        [ 0 -1  0]  [ 0  0 -1]  [ 0  0 -1]  [ 0  1  0]  [ 0  0  1]  [ 1  0  0]
-        [ 0  0  1], [ 1  0  0], [ 0 -1  0], [ 0  0 -1], [-1  0  0], [ 0 -1  0],
+        [ 0 -1  0]  [ 0 -1  0]  [ 0  0 -1]  [ 0  0 -1]  [ 0  0 -1]  [ 0  0 -1]
+        [ 0  0  1]  [ 1  0  0]  [-1  0  0]  [ 0 -1  0]  [ 0  1  0]  [ 1  0  0]
+        [-1  0  0], [ 0  0  1], [ 0  1  0], [-1  0  0], [ 1  0  0], [ 0 -1  0],
         <BLANKLINE>
-        [ 0  1  0]  [ 0  0  1]  [0 0 1]  [ 0 -1  0]  [ 0  0 -1]  [-1  0  0]
-        [ 1  0  0]  [ 0  1  0]  [1 0 0]  [ 1  0  0]  [ 0  1  0]  [ 0  0  1]
-        [ 0  0 -1], [-1  0  0], [0 1 0], [ 0  0  1], [ 1  0  0], [ 0  1  0],
+        [ 0  0  1]  [ 0  0  1]  [ 0  0  1]  [0 0 1]  [ 0  1  0]  [ 0  1  0]
+        [-1  0  0]  [ 0 -1  0]  [ 0  1  0]  [1 0 0]  [-1  0  0]  [ 0  0 -1]
+        [ 0 -1  0], [ 1  0  0], [-1  0  0], [0 1 0], [ 0  0  1], [-1  0  0],
         <BLANKLINE>
-        [ 0 -1  0]  [ 0  0 -1]  [ 0  0  1]  [ 1  0  0]  [ 0  0 -1]  [ 0  1  0]
-        [-1  0  0]  [-1  0  0]  [-1  0  0]  [ 0 -1  0]  [ 0 -1  0]  [ 0  0 -1]
-        [ 0  0 -1], [ 0  1  0], [ 0 -1  0], [ 0  0 -1], [-1  0  0], [-1  0  0]
+        [0 1 0]  [ 0  1  0]  [ 1  0  0]  [ 1  0  0]  [ 1  0  0]  [1 0 0]
+        [0 0 1]  [ 1  0  0]  [ 0 -1  0]  [ 0  0 -1]  [ 0  0  1]  [0 1 0]
+        [1 0 0], [ 0  0 -1], [ 0  0 -1], [ 0  1  0], [ 0 -1  0], [0 0 1]
         ]
 
     TESTS::
@@ -1450,6 +1450,7 @@ class Polyomino(SageObject):
 
         ::
 
+            sage: # long time
             sage: solution = H.self_surrounding(8, remove_incomplete_copies=False)
             sage: G = sum([p.show2d() for p in solution], Graphics())                   # needs sage.plot
         """

@@ -373,6 +373,38 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         return self._prod.poly_repr(self.parent().variable_names(),
                                     atomic_coefficients=atomic, sortkey=key)
 
+    def _regina_(self, regina):
+        r"""
+        Return polynomial as a Regina object.
+
+        EXAMPLES::
+
+            sage: # optional regina
+            sage: R.<u, v> = LaurentPolynomialRing(ZZ)
+            sage: p = u*v^(-3) + 3*v*u^(-1) + 5*u - 7
+            sage: rp = regina(p); (rp, type(rp), type(rp._inst))
+            (<regina.Laurent2: 5 x + x y^-3 - 7 + 3 x^-1 y>,
+            <class 'sage.interfaces.regina.ReginaElement'>,
+            <class 'regina.engine.Laurent2'>)
+            sage: regina(p.change_ring(CC))
+            Traceback (most recent call last):
+            ...
+            TypeError: only integral Laurent polynomials available in Regina
+            sage: R.<u, v, w> = LaurentPolynomialRing(ZZ)
+            sage: regina(R.an_element())
+            Traceback (most recent call last):
+            ...
+            TypeError: only two-variate Laurent polynomials available in Regina
+        """
+        from sage.rings.integer_ring import ZZ
+        if self.parent().ngens() > 2:
+            raise TypeError('only two-variate Laurent polynomials available in Regina')
+        try:
+            pl = [(k[0], k[1], ZZ(v)) for k, v in self.monomial_coefficients().items()]
+        except TypeError:
+            raise TypeError('only integral Laurent polynomials available in Regina')
+        return regina.Laurent2(pl)
+
     def _latex_(self):
         r"""
         EXAMPLES::
@@ -1292,6 +1324,29 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         # Find the minimal valuation of x by checking each term
         return Integer(min(e[i] for e in self.exponents()))
+
+    def newton_polytope(self):
+        r"""
+        Return the Newton polytope of this Laurent polynomial.
+
+        EXAMPLES::
+
+            sage: R.<x, y> = LaurentPolynomialRing(QQ)
+            sage: f = 1 + x*y + y**2 + 33 * x^-3
+            sage: P = f.newton_polytope(); P                                            # needs sage.geometry.polyhedron
+            A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices
+
+        TESTS::
+
+            sage: R.<x,y> = LaurentPolynomialRing(QQ)
+            sage: R(0).newton_polytope()                                                # needs sage.geometry.polyhedron
+            The empty polyhedron in ZZ^0
+            sage: R(1).newton_polytope()                                                # needs sage.geometry.polyhedron
+            A 0-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex
+        """
+        from sage.geometry.polyhedron.constructor import Polyhedron
+        from sage.rings.integer_ring import ZZ
+        return Polyhedron(vertices=self.exponents(), base_ring=ZZ)
 
     def has_inverse_of(self, i):
         """

@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-`k`-Schur Functions
+`k`-Schur functions
 """
 # ****************************************************************************
 #       Copyright (C) 2011 Jason Bandlow <jbandlow@gmail.com>,

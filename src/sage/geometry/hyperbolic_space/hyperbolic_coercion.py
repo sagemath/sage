@@ -298,7 +298,7 @@ class CoercionPDtoUHP(HyperbolicModelCoercion):
             sage: phi.image_coordinates(-I)
             0
 
-        TESTS::
+        TESTS:
 
         Check that the second bug discussed in :issue:`32362` is fixed::
 

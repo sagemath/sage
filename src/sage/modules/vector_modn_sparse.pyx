@@ -176,7 +176,7 @@ cdef int set_entry(c_vector_modint* v, Py_ssize_t n, int_fast64_t x) except -1:
             for i in range(m):
                 v.entries[i] = e[i]
                 v.positions[i] = pos[i]
-            for i from m < i < v.num_nonzero:
+            for i in range(m + 1, v.num_nonzero):
                 v.entries[i-1] = e[i]
                 v.positions[i-1] = pos[i]
             sig_free(e)
@@ -202,7 +202,7 @@ cdef int set_entry(c_vector_modint* v, Py_ssize_t n, int_fast64_t x) except -1:
             v.positions[i] = pos[i]
         v.entries[ins] = x
         v.positions[ins] = n
-        for i from ins < i < v.num_nonzero:
+        for i in range(ins + 1, v.num_nonzero):
             v.entries[i] = e[i-1]
             v.positions[i] = pos[i-1]
         sig_free(e)
@@ -264,7 +264,7 @@ cdef int add_c_vector_modint_init(c_vector_modint* sum, c_vector_modint* v,
             z.entries[k] = v.entries[i]
             i = i + 1
             k = k + 1
-        elif v.positions[i] > w.positions[j]: # copy entry from w in
+        elif v.positions[i] > w.positions[j]:  # copy entry from w in
             s = (multiple * w.entries[j]) % v.p
             if s != 0:
                 z.positions[k] = w.positions[j]

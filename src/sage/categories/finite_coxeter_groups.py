@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.groups
 r"""
 Finite Coxeter Groups
@@ -291,7 +290,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: W = CoxeterGroup(['A',3], base_ring=ZZ)
                 sage: P = W.bhz_poset(); P
                 Finite poset containing 24 elements
-                sage: P.relations_number()
+                sage: P.number_of_relations()
                 103
                 sage: P.chain_polynomial()
                 34*q^4 + 90*q^3 + 79*q^2 + 24*q + 1
@@ -570,6 +569,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: CoxeterGroup(["A",2]).m_cambrian_lattice((1,2),2)
                 Finite lattice containing 12 elements
             """
+            from sage.categories.finite_lattice_posets import FiniteLatticePosets
             from sage.combinat.posets.lattices import LatticePoset
             if hasattr(c, "reduced_word"):
                 c = c.reduced_word()
@@ -627,7 +627,11 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                         if cov_element not in elements:
                             new.add(cov_element)
                         covers.append((new_element, cov_element))
-            return LatticePoset([elements, covers], cover_relations=True)
+            cat = FiniteLatticePosets()
+            if m == 1:
+                cat = cat.CongruenceUniform().Trim()
+            return LatticePoset([elements, covers], cover_relations=True,
+                                category=cat)
 
         def cambrian_lattice(self, c, on_roots=False):
             """

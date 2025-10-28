@@ -2802,7 +2802,7 @@ class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
         FindStatCombinatorialStatistic.__init__(self)
         Element.__init__(self, FindStatStatistics()) # this is not completely correct, but it works
 
-    def _fetch_first_terms_raw(self):
+    def _fetch_first_terms_raw(self) -> list:
         r"""
         Return the first terms of the compound statistic, as ``(string,
         value)`` pairs, fetched from FindStat.
@@ -2817,7 +2817,7 @@ class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
         """
         fields = "Values"
         url = FINDSTAT_API_STATISTICS + self.id_str() + "?fields=" + fields
-        if len(self._maps):
+        if self._maps:
             values = _get_json(url)["included"]["CompoundStatistics"][self.id_str()]["Values"]
         else:
             values = _get_json(url)["included"]["Statistics"][self.id_str()]["Values"]
@@ -2851,7 +2851,7 @@ class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
         """
         return self.statistic()(self.compound_map()(elt))
 
-    def id_str(self):
+    def id_str(self) -> str:
         """
         Return the padded identifier of the compound statistic.
 
@@ -2862,7 +2862,7 @@ class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
         """
         return self._id
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of the compound statistic.
 
@@ -3821,7 +3821,7 @@ class FindStatCompoundMap(Element, FindStatCombinatorialMap):
                 Mp00099: bounce path: Dyck paths -> Dyck paths
         """
         for mp in self:
-                mp.info()
+            mp.info()
 
 
 class FindStatMatchingMap(FindStatCompoundMap):
@@ -4555,9 +4555,9 @@ _SupportedFindStatCollections = {
     _SupportedFindStatCollection(lambda x: (lambda E, V: Graph([list(range(V)),
                                                                 lambda i,j: (i,j) in E or (j,i) in E],
                                                                immutable=True))(*literal_eval(x)),
-                                 lambda X: str((X.edges(labels=False, sort=True), X.num_verts())),
+                                 lambda X: str((X.edges(labels=False, sort=True), X.n_vertices())),
                                  lambda x: (g.copy(immutable=True) for g in graphs(x, copy=False)),
-                                 lambda x: x.num_verts(),
+                                 lambda x: x.n_vertices(),
                                  lambda x: isinstance(x, Graph)),
     "IntegerPartitions":
     _SupportedFindStatCollection(lambda x: Partition(literal_eval(x)),
