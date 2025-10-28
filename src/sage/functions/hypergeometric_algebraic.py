@@ -21,6 +21,16 @@ AUTHORS:
 
 import operator
 
+from sage.misc.latex import latex
+from sage.misc.latex import latex_variable_name
+from sage.misc.cachefunc import cached_method
+
+from sage.misc.misc_c import prod
+from sage.misc.functional import log
+from sage.functions.other import ceil
+from sage.arith.functions import lcm
+from sage.matrix.constructor import matrix
+
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.structure.element import Element
@@ -42,13 +52,6 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 
-from sage.misc.misc_c import prod
-from sage.misc.functional import log
-from sage.functions.other import ceil
-from sage.arith.functions import lcm
-from sage.misc.cachefunc import cached_method
-
-from sage.matrix.constructor import matrix
 
 # Parameters of hypergeometric functions
 ########################################
@@ -254,21 +257,43 @@ class HypergeometricAlgebraic(Element):
     def _repr_(self):
         if self._parameters is None:
             return "0"
-        s = "hypergeometric(%s, %s, %s)" % (self.top(), self.bottom(), self.parent().variable_name())
         scalar = self._scalar
         if scalar == 1:
-            pass
+            s = ""
         elif scalar._is_atomic():
             scalar = str(scalar)
             if scalar == "-1":
-                s = "-" + s
+                s = "-"
             else:
-                s = scalar + "*" + s
+                s = scalar + "*"
         else:
-            s = "(%s)*%s" % (scalar, s)
+            s = "(%s)*" % scalar
+        s += "hypergeometric(%s, %s, %s)" % (self.top(), self.bottom(), self.parent().variable_name())
         return s
 
-    # def _latex_(self):
+    def _latex_(self):
+        if self._parameters is None:
+            return "0"
+        scalar = self._scalar
+        if scalar == 1:
+            s = ""
+        elif scalar._is_atomic():
+            scalar = latex(scalar)
+            if scalar == "-1":
+                s = "-"
+            else:
+                s = scalar
+        else:
+            s = r"\left(%s\right)" % scalar
+        top = self.top()
+        bottom = self.bottom()
+        s += r"\,_{%s} F_{%s} " % (len(top), len(bottom))
+        s += r"\left(\begin{matrix} "
+        s += ",".join(latex(a) for a in top)
+        s += r"\\"
+        s += ",".join(latex(b) for b in bottom)
+        s += r"\end{matrix}; %s \right)" % self.parent().latex_variable_name()
+        return s
 
     def base_ring(self):
         return self.parent().base_ring()
@@ -352,7 +377,7 @@ class HypergeometricAlgebraic_charzero(HypergeometricAlgebraic):
         return not any(b in ZZ and b < 0 for b in self._bottom)
 
     def series(self, prec):
-        S = self.parent().power_series_ring(prec)
+        S = self.parent().power_series_ring()
         c = self._scalar
         coeffs = [c]
         for i in range(prec):
@@ -427,7 +452,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         return True
 
     def series(self, prec):
-        S = self.parent().power_series_ring(prec)
+        S = self.parent().power_series_ring()
         p = self._p
         pprec = max(1, (len(self.bottom()) + 1) * ceil(log(prec, p)))
         K = QpFP(p, pprec)
@@ -529,6 +554,7 @@ class ScalarMultiplication(Action):
 class HypergeometricFunctions(Parent, UniqueRepresentation):
     def __init__(self, base, name, category=None):
         self._name = normalize_names(1, name)[0]
+        self._latex_name = latex_variable_name(self._name)
         char = base.characteristic()
         if base in FiniteFields() and base.is_prime_field():
             self.Element = HypergeometricAlgebraic_GFp
@@ -570,6 +596,9 @@ class HypergeometricFunctions(Parent, UniqueRepresentation):
 
     def variable_name(self):
         return self._name
+
+    def latex_variable_name(self):
+        return self._latex_name
 
     def polynomial_ring(self):
         return PolynomialRing(self.base_ring(), self._name)
