@@ -2450,12 +2450,13 @@ class LinearCode(AbstractLinearCode):
         Return a generator matrix of ``self``.
 
         INPUT:
+
         - ``encoder_name`` -- (default: ``None``) name of the encoder which will be
           used to compute the generator matrix. ``self._generator_matrix``
-          will be returned if default value is kept.
+          will be returned if the default value is kept.
 
-        - ``kwargs`` -- all additional arguments are forwarded to the construction of the
-          encoder that is used
+        - ``kwargs`` -- all additional arguments are forwarded to the construction
+          of the encoder that is used.
 
         EXAMPLES::
 
