@@ -419,7 +419,7 @@ class WeylGroup_gens(UniqueRepresentation,
 
         EXAMPLES::
 
-            sage: WeylGroup(['A',3]).character_table()
+            sage: WeylGroup(['A',3]).character_table() # random
             CT1
             <BLANKLINE>
                  2  3  2  2  .  3

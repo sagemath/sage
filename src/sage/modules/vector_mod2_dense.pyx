@@ -380,7 +380,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         cdef int i
         cdef int res = 0
         cdef m4ri_word *row = mzd_row(self._entries, 0)
-        for i from 0 <= i < self._entries.width:
+        for i in range(self._entries.width):
             res += Integer(row[i]).popcount()
         return res
 
@@ -423,7 +423,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         n.ivalue = 0
         cdef m4ri_word *lrow = mzd_row(self._entries, 0)
         cdef m4ri_word *rrow = mzd_row(r._entries, 0)
-        for i from 0 <= i < self._entries.width:
+        for i in range(self._entries.width):
             tmp ^= lrow[i] & rrow[i]
 
         for i in range(64):
@@ -450,7 +450,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         cdef m4ri_word *lrow = mzd_row(self._entries, 0)
         cdef m4ri_word *rrow = mzd_row(r._entries, 0)
         cdef m4ri_word *zrow = mzd_row(z._entries, 0)
-        for i from 0 <= i < self._entries.width:
+        for i in range(self._entries.width):
             zrow[i] = (lrow[i] & rrow[i])
         return z
 

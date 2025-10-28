@@ -252,6 +252,16 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         //        block   1 : ordering dp
         //                  : names    a b
         //        block   2 : ordering C
+        sage: R(2)^32 == R(0)
+        True
+
+    The following may use ``n_Z2m`` or ``n_Znm`` depends on ``sizeof(unsigned long)``::
+
+        sage: R = PolynomialRing(Zmod(2^64), ("a", "b"), implementation="singular")
+        sage: ZZ(R(3^1000)) == 3^1000 % 2^64
+        True
+        sage: ZZ(R(5^1000)) == 5^1000 % 2^64
+        True
 
     Integer modulo large power of 2::
 
@@ -262,6 +272,10 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         //        block   1 : ordering dp
         //                  : names    a b
         //        block   2 : ordering C
+        sage: ZZ(R(5^1000)) == 5^1000 % 2^1000
+        True
+        sage: R(2)^1000 == R(0)
+        True
 
     Integer modulo large power of odd prime::
 
@@ -516,7 +530,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         else:
             modbase, cexponent = ch.perfect_power()
 
-            if modbase == 2 and cexponent > 1:
+            if modbase == 2 and 1 < cexponent <= 8*sizeof(unsigned long):  # see :issue:`40855`
                 _cf = nInitChar(n_Z2m, <void *>cexponent)
 
             elif modbase.is_prime() and cexponent > 1:
