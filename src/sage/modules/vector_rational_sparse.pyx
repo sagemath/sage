@@ -28,11 +28,11 @@ cdef int allocate_mpq_vector(mpq_vector* v, Py_ssize_t num_nonzero) except -1:
     v.entries = <mpq_t *> sig_malloc(num_nonzero*sizeof(mpq_t))
     if v.entries == NULL:
         raise MemoryError("Error allocating memory")
-    for i from 0 <= i < num_nonzero:
+    for i in range(num_nonzero):
         mpq_init(v.entries[i])
     v.positions = <Py_ssize_t*>sig_malloc(num_nonzero*sizeof(Py_ssize_t))
     if v.positions == NULL:
-        for i from 0 <= i < num_nonzero:
+        for i in range(num_nonzero):
             mpq_clear(v.entries[i])
         sig_free(v.entries)
         v.entries = NULL
@@ -52,7 +52,7 @@ cdef void mpq_vector_clear(mpq_vector* v) noexcept:
     if v.entries == NULL:
         return
     # Free all mpq objects allocated in creating v
-    for i from 0 <= i < v.num_nonzero:
+    for i in range(v.num_nonzero):
         mpq_clear(v.entries[i])
     # Free entries and positions of those entries.
     # These were allocated from the Python heap.
@@ -209,7 +209,7 @@ cdef int mpq_vector_set_entry(mpq_vector* v, Py_ssize_t n, mpq_t x) except -1:
                 v.positions[i] = pos[i]
                 mpq_clear(e[i])
             mpq_clear(e[m])
-            for i from m < i < v.num_nonzero:
+            for i in range(m + 1, v.num_nonzero):
                 # v.entries[i-1] = e[i]
                 mpq_set(v.entries[i-1], e[i])
                 mpq_clear(e[i])
@@ -240,7 +240,7 @@ cdef int mpq_vector_set_entry(mpq_vector* v, Py_ssize_t n, mpq_t x) except -1:
         # v.entries[ins] = x
         mpq_set(v.entries[ins], x)
         v.positions[ins] = n
-        for i from ins < i < v.num_nonzero:
+        for i in range(ins + 1, v.num_nonzero):
             mpq_set(v.entries[i], e[i-1])
             mpq_clear(e[i-1])
             v.positions[i] = pos[i-1]
@@ -353,7 +353,7 @@ cdef int add_mpq_vector_init(mpq_vector* sum,
         # end if
     # end while
     z.num_nonzero = k
-    for i from k <= i < z.num_nonzero:
+    for i in range(k, z.num_nonzero):
         mpq_clear(z.entries[i])
     mpq_clear(tmp)
     return 0
@@ -390,7 +390,7 @@ cdef int mpq_vector_scalar_multiply(mpq_vector* v, mpq_vector* w, mpq_t scalar) 
             raise MemoryError("error allocating rational sparse vector positions")
         v.num_nonzero = w.num_nonzero
         v.degree = w.degree
-        for i from 0 <= i < v.num_nonzero:
+        for i in range(v.num_nonzero):
             mpq_init(v.entries[i])
             mpq_mul(v.entries[i], w.entries[i], scalar)
             v.positions[i] = w.positions[i]
@@ -403,7 +403,7 @@ cdef int mpq_vector_cmp(mpq_vector* v, mpq_vector* w) noexcept:
         return 1
     cdef Py_ssize_t i
     cdef int c
-    for i from 0 <= i < v.num_nonzero:
+    for i in range(v.num_nonzero):
         c = mpq_cmp(v.entries[i], w.entries[i])
         if c < 0:
             return -1

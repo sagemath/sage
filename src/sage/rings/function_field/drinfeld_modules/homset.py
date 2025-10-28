@@ -72,7 +72,7 @@ class DrinfeldModuleMorphismAction(Action):
           To:   Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*τ^2 + (z^2 + 4*z + 3)*τ + z
           Defn: τ + 2
     """
-    def __init__(self, A, H, is_left, op):
+    def __init__(self, A, H, is_left, op) -> None:
         r"""
         Initialize this action.
 
@@ -241,7 +241,7 @@ class DrinfeldModuleHomset(Homset):
     """
     Element = DrinfeldModuleMorphism
 
-    def __init__(self, X, Y, category=None, check=True):
+    def __init__(self, X, Y, category=None, check=True) -> None:
         """
         Initialize ``self``.
 
@@ -289,7 +289,7 @@ class DrinfeldModuleHomset(Homset):
             self.register_coercion(A)
         self._basis = None
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of the homset.
 
@@ -309,7 +309,7 @@ class DrinfeldModuleHomset(Homset):
                f'\\text{{{{ }}to{{ }}(gen){{ }}}}'\
                f'{latex(self.codomain().gen())}'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of the homset.
 
@@ -327,7 +327,7 @@ class DrinfeldModuleHomset(Homset):
         return f'Set of Drinfeld module morphisms from (gen) '\
                f'{self.domain().gen()} to (gen) {self.codomain().gen()}'
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if the input defines a morphism in the homset.
 
@@ -549,7 +549,7 @@ class DrinfeldModuleHomset(Homset):
         where the `g_k` are the coefficients of `\psi_T`
 
         The algorithm consists in solving the above system
-        viewed as a linear system over `\mathbb F_q[T]`.
+        viewed as a linear system over `\GF{q}[T]`.
 
         We refer to [Mus2023]_, Section 7.3 for more details.
 
@@ -586,8 +586,8 @@ class DrinfeldModuleHomset(Homset):
 
         # We compute the tau^i in M(phi)
         lc = ~(phiT[r])
-        xT = [-AF(lc*phiT[i]) for i in range(r)]
-        xT[0] += lc*TF
+        xT = [-AF(lc * phiT[i]) for i in range(r)]
+        xT[0] += lc * TF
         taus = []
         for i in range(r):
             taui = r * [AF.zero()]
@@ -595,14 +595,14 @@ class DrinfeldModuleHomset(Homset):
             taus.append(taui)
         for i in range(r):
             s = FrobT(taui[-1])
-            taui = [s*xT[0]] + [FrobT(taui[j-1]) + s*xT[j] for j in range(1,r)]
+            taui = [s * xT[0]] + [FrobT(taui[j - 1]) + s * xT[j] for j in range(1, r)]
             taus.append(taui)
 
         # We precompute the Frob^k(z^i)
         z = F(Fo.gen())
         zs = []
         zq = z
-        for k in range(r+1):
+        for k in range(r + 1):
             x = F.one()
             for i in range(d):
                 zs.append(x)
@@ -617,17 +617,17 @@ class DrinfeldModuleHomset(Homset):
                 #    sum(g_k*tau^k(x), k=0..r) - T*x
                 #  = sum(g_k*Frob^k(z^i)*tau^(k+j), k=0..r) - T*x
                 row = r * [AF.zero()]
-                for k in range(r+1):
-                    s = psiT[k] * zs[k*d + i]
+                for k in range(r + 1):
+                    s = psiT[k] * zs[k * d + i]
                     for l in range(r):
-                        row[l] += s*taus[k+j][l]
+                        row[l] += s * taus[k + j][l]
                 row[j] -= zs[i] * TF
                 # We write it in the A-basis
                 rowA = []
                 for c in row:
                     c0 = Fo(c[0]).vector()
                     c1 = Fo(c[1]).vector()
-                    rowA += [c0[k] + T*c1[k] for k in range(d)]
+                    rowA += [c0[k] + T * c1[k] for k in range(d)]
                 rows.append(rowA)
         M = Matrix(rows)
 
@@ -642,7 +642,7 @@ class DrinfeldModuleHomset(Homset):
             u = S.zero()
             for i in range(d):
                 for j in range(r):
-                    a = ker[row, i*r + j]
+                    a = ker[row, i * r + j]
                     u += zs[i] * t**j * sum(a[k] * phiT**k for k in range(a.degree() + 1))
             isogenies.append(self(u))
 
@@ -650,7 +650,7 @@ class DrinfeldModuleHomset(Homset):
 
     def _Fq_basis(self, degree):
         r"""
-        Return a `\mathbb{F}_q`-basis of the space of morphisms
+        Return a `\GF{q}`-basis of the space of morphisms
         in this homset of degree at most ``degree``.
 
         Currently, it only works over finite fields.
@@ -711,32 +711,32 @@ class DrinfeldModuleHomset(Homset):
         # the Frobenius of K/Fq
         frob_matrices = [identity_matrix(Fq, n)] + [Matrix(Fq, n) for _ in range(d + r)]
         for i, elem in enumerate(K_basis):
-            for k in range(1, d+r+1):
+            for k in range(1, d + r + 1):
                 elem = elem ** q
                 v = elem.vector()
                 for j in range(n):
-                    frob_matrices[k][i,j] = v[j]
+                    frob_matrices[k][i, j] = v[j]
 
         # We write the linear system and solve it
-        sys = Matrix(Fq, (d + r + 1)*n, (d + 1)*n)
+        sys = Matrix(Fq, (d + r + 1) * n, (d + 1) * n)
         for k in range(0, d + r + 1):
             for i in range(max(0, k - r), min(k, d) + 1):
                 # We represent multiplication and Frobenius
                 # as operators acting on K as a vector space
                 # over Fq
-                oper = K(phiT[k-i] ** (q**i)).matrix() \
-                     - frob_matrices[k-i] * K(psiT[k-i]).matrix()
+                oper = K(phiT[k - i] ** (q**i)).matrix() \
+                     - frob_matrices[k - i] * K(psiT[k - i]).matrix()
                 for j in range(n):
                     for l in range(n):
-                        sys[k*n + j, i*n + l] = oper[l, j]
+                        sys[k * n + j, i * n + l] = oper[l, j]
         sol = sys.right_kernel().basis()
 
         # Reconstruct the Ore polynomial from the coefficients
         basis = []
         tau = domain.ore_polring().gen()
         for basis_elem in sol:
-            ore_poly = sum([sum([K_basis[j].backend() * basis_elem[i*n + j]
-                               for j in range(n)])*(tau**i)
+            ore_poly = sum([sum([K_basis[j].backend() * basis_elem[i * n + j]
+                               for j in range(n)]) * (tau**i)
                                for i in range(d + 1)])
             basis.append(self(ore_poly))
 
@@ -752,13 +752,13 @@ class DrinfeldModuleHomset(Homset):
 
         If ``degree`` is ``None``, a basis over the underlying
         function ring is returned.
-        Otherwise, a `\mathbb F_q`-basis of the set of morphisms of
+        Otherwise, a `\GF{q}`-basis of the set of morphisms of
         degree at most ``degree`` is returned.
 
         ALGORITHM:
 
-        We reformulate the problem as a linear system over `\mathbb F_q`
-        or `A = \mathbb F_q[T]` and solve it.
+        We reformulate the problem as a linear system over `\GF{q}`
+        or `A = \GF{q}[T]` and solve it.
         We refer to [Wes2022]_ and [Mus2023]_, Section 7.3 for more details.
 
         EXAMPLES::
@@ -774,7 +774,7 @@ class DrinfeldModuleHomset(Homset):
              Endomorphism of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
                Defn: 2*τ^4 + z*τ^3 + z]
 
-        If we specify a degree, a basis over `\mathbb F_q` is computed::
+        If we specify a degree, a basis over `\GF{q}` is computed::
 
             sage: End(phi).basis(degree=5)
             [Identity morphism of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z,
@@ -845,8 +845,8 @@ class DrinfeldModuleHomset(Homset):
 
     def basis_over_frobenius(self):
         r"""
-        Return a basis of this homser over `\mathbb F_q[\tau^n]` where
-        `n = [K:\mathbb F_q]` (and thus `\tau^n` is to the Frobenius endomorphism).
+        Return a basis of this homser over `\GF{q}[\tau^n]` where
+        `n = [K:\GF{q}]` (and thus `\tau^n` is to the Frobenius endomorphism).
 
         ALGORITHM:
 
@@ -935,7 +935,7 @@ class DrinfeldModuleHomset(Homset):
         # morphisms from domain to codomain.
         for j in range(n):
             for k in range(n):
-                for i in range(r+1):
+                for i in range(r + 1):
                     # Coefficients of tau^{i + k} coming from the
                     # relation defining morphisms of Drinfeld modules
                     # These are elements of K, expanded in terms of
@@ -943,8 +943,8 @@ class DrinfeldModuleHomset(Homset):
                     poly = K(phiT[i]**(q**k) * K_basis[j]
                            - psiT[i] * K_basis[j]**(q**i)).polynomial()
                     deg = (i + k) // n
-                    row = n * (i + k - n*deg)
-                    col = k*n + j
+                    row = n * (i + k - n * deg)
+                    col = k * n + j
                     for b in range(poly.degree() + 1):
                         sys[row + b, col] += poly[b] * taun**deg
 
@@ -957,7 +957,7 @@ class DrinfeldModuleHomset(Homset):
             basis_poly = 0
             for i in range(n):
                 for j in range(n):
-                    basis_poly += basis_vector[n*i + j].subs(tau**n) * K_basis[j].backend() * tau**i
+                    basis_poly += basis_vector[n * i + j].subs(tau**n) * K_basis[j].backend() * tau**i
             basis.append(self(basis_poly))
 
         return basis

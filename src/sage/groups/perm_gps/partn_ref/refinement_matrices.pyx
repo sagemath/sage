@@ -190,9 +190,9 @@ cdef class MatrixStruct:
         cdef Integer order
         if self.output is NULL:
             self.run()
-        generators = []
-        for i in range(self.output.num_gens):
-            generators.append([self.output.generators[i*self.degree + j] for j from 0 <= j < self.degree])
+        generators = [[self.output.generators[i * self.degree + j]
+                       for j in range(self.degree)]
+                      for i in range(self.output.num_gens)]
         order = Integer()
         SC_order(self.output.group, 0, order.value)
         base = [self.output.group.base_orbits[i][0] for i in range(self.output.group.base_size)]
@@ -344,7 +344,7 @@ def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_ma
         for i in range(perms_per_matrix):
             perm = [a-1 for a in list(S.random_element())]
             NN = matrix(GF(nsymbols), nrows, ncols)
-            for j from 0 <= j < ncols:
+            for j in range(ncols):
                 NN.set_column(perm[j], MM.column(j))
             N = MatrixStruct(NN)
             # now N is a random permutation of M
@@ -356,7 +356,7 @@ def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_ma
             M_C = matrix(GF(nsymbols), nrows, ncols)
             N_C = matrix(GF(nsymbols), nrows, ncols)
 
-            for j from 0 <= j < ncols:
+            for j in range(ncols):
                 M_C.set_column(M_relab[j], MM.column(j))
                 N_C.set_column(N_relab[j], NN.column(j))
 

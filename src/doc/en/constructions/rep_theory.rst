@@ -23,14 +23,14 @@ interface to the GAP command ``CharacterTable``.
     sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3,4)]])
     sage: G.order()
     8
-    sage: G.character_table()
+    sage: G.character_table() # random
     [ 1  1  1  1  1]
     [ 1 -1 -1  1  1]
     [ 1 -1  1 -1  1]
     [ 1  1 -1 -1  1]
     [ 2  0  0  0 -2]
     sage: CT = libgap(G).CharacterTable()
-    sage: CT.Display()
+    sage: CT.Display() # random
     CT1
     <BLANKLINE>
      2  3  2  2  2  3
@@ -50,7 +50,7 @@ Here is another example:
 ::
 
     sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3)]])
-    sage: G.character_table()
+    sage: G.character_table() # random
     [         1          1          1          1]
     [         1 -zeta3 - 1      zeta3          1]
     [         1      zeta3 -zeta3 - 1          1]
@@ -58,7 +58,7 @@ Here is another example:
     sage: G = libgap.eval("Group((1,2)(3,4),(1,2,3))"); G
     Group([ (1,2)(3,4), (1,2,3) ])
     sage: T = G.CharacterTable()
-    sage: T.Display()
+    sage: T.Display() # random
     CT2
     <BLANKLINE>
          2  2  .  .  2
@@ -85,12 +85,12 @@ Python command. This makes the output look much nicer.
 
 ::
 
-    sage: irr = G.Irr(); irr
-    [ Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, 1, 1, 1 ] ), 
-      Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, E(3)^2, E(3), 1 ] ), 
-      Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, E(3), E(3)^2, 1 ] ), 
-      Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 3, 0, 0, -1 ] ) ]
-    sage: irr.Display()
+    sage: irr = G.Irr(); sorted(irr)
+    [Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, 1, 1, 1 ] ),
+     Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, E(3)^2, E(3), 1 ] ),
+     Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, E(3), E(3)^2, 1 ] ),
+     Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 3, 0, 0, -1 ] )]
+    sage: irr.Display() # random
     [ [       1,       1,       1,       1 ],
       [       1,  E(3)^2,    E(3),       1 ],
       [       1,    E(3),  E(3)^2,       1 ],
@@ -101,9 +101,9 @@ Python command. This makes the output look much nicer.
     (2,4,3)^G
     sage: g = gamma.Representative(); g
     (2,4,3)
-    sage: chi = irr[1]; chi
+    sage: chi = irr[1]; chi # random
     Character( CharacterTable( Alt( [ 1 .. 4 ] ) ), [ 1, E(3)^2, E(3), 1 ] )
-    sage: g^chi
+    sage: g^chi # random
     E(3)
 
 This last quantity is the value of the character ``chi`` at the group
@@ -188,7 +188,7 @@ The example below using the GAP interface illustrates the syntax.
       [       1,       1,       1,       1 ],
       [       3,      -1,       0,       0 ] ]
     sage: T = G.CharacterTable()
-    sage: T.Display()
+    sage: T.Display() # random
     CT3
     <BLANKLINE>
          2  2  .  .  2

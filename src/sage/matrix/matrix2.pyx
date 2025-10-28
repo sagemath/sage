@@ -65,6 +65,9 @@ AUTHORS:
 - Moritz Firsching(2020-10-05): added ``quantum_determinant``
 
 - Dima Pasechnik (2022-11-08): fixed ``echelonize`` for inexact matrices
+
+- Nicholas Bell, Xavier Caruso, Vincent Neiger (2025-08-31):
+  added ``krylov_matrix``, ``krylov_basis``, ``krylov_kernel_basis``
 """
 
 # ****************************************************************************
@@ -1604,7 +1607,16 @@ cdef class Matrix(Matrix1):
             sage: A = matrix(R, 2,2, [x, y, x^2, y^2])
             sage: A.permanent()
             x^2*y + x*y^2
+
+        TESTS::
+
+            sage: A = matrix(ZZ, 0, 0, [])
+            sage: A.permanent()
+            1
         """
+        if not self.nrows():
+            return self.base_ring().one()
+
         if algorithm == "Ryser":
             return self._permanent_ryser()
 
@@ -2896,7 +2908,7 @@ cdef class Matrix(Matrix1):
         """
         M = self.parent().change_ring(phi.codomain())
         if self.is_sparse():
-            values = {(i, j): phi(z) for (i, j), z in self.dict()}
+            values = {ij: phi(z) for ij, z in self.dict()}
         else:
             values = [phi(z) for z in self.list()]
         image = M(values)
@@ -3006,7 +3018,7 @@ cdef class Matrix(Matrix1):
                 return self.dense_matrix()
 
         if self.is_sparse():
-            values = {(i, j): phi(v) for (i, j), v in self.dict().iteritems()}
+            values = {ij: phi(v) for ij, v in self.dict().items()}
             if R is None:
                 R = sage.structure.sequence.Sequence(values.values()).universe()
         else:
@@ -3482,6 +3494,7 @@ cdef class Matrix(Matrix1):
                 for k in range(p):
                     s = s - A[k] * F[p-k-1]
                 F[p] = s - A[p]
+                sig_check()
 
         X = S.gen(0)
         f = X**n + S(list(reversed(F)))
@@ -12224,7 +12237,7 @@ cdef class Matrix(Matrix1):
             evals = eigenvalues
         else:
             evals = A.charpoly().roots()
-        if sum(mult for (_, mult) in evals) < n:
+        if sum(mult for _, mult in evals) < n:
             raise RuntimeError("Some eigenvalue does not exist in %s." % (A.base_ring()))
 
         # Compute the block information.  Here, ``blocks`` is a list of pairs,
@@ -12251,7 +12264,7 @@ cdef class Matrix(Matrix1):
         # are ordered firstly by the eigenvalues, in the same order as obeyed
         # by ``.roots()``, and secondly by size from greatest to smallest.
         J = block_diagonal_matrix([jordan_block(eval, size, sparse=sparse)
-                                   for (eval, size) in blocks],
+                                   for eval, size in blocks],
                                   subdivide=subdivide)
 
         if transformation:
@@ -12510,7 +12523,7 @@ cdef class Matrix(Matrix1):
 
         # check if the sum of algebraic multiplicities equals the number of rows
         evals = A.charpoly().roots()
-        if sum(mult for (_, mult) in evals) < self._nrows:
+        if sum(mult for _, mult in evals) < self._nrows:
             raise ValueError('not diagonalizable over {}'.format(A.base_ring()))
 
         # compute diagonalization from the eigenspaces
@@ -12703,7 +12716,7 @@ cdef class Matrix(Matrix1):
 
         # check if the sum of algebraic multiplicities equals to the number of rows
         evals = A.charpoly().roots()
-        if sum(mult for (_, mult) in evals) < self._nrows:
+        if sum(mult for _, mult in evals) < self._nrows:
             return False
 
         # Obtaining a generic minimal polynomial requires much more
@@ -13183,6 +13196,11 @@ cdef class Matrix(Matrix1):
           list is the column index of the pivot column containing its
           lone 1 in row ``i``.
 
+        .. SEEALSO::
+
+            :meth:`krylov_matrix` and :meth:`krylov_basis`, which compute
+            Krylov iterates and Krylov bases for several vectors at a time.
+
         ALGORITHM:
 
         This could be called an "online echelon form" routine.  As each
@@ -13311,6 +13329,11 @@ cdef class Matrix(Matrix1):
 
         For less convenient, but more flexible output, see the
         helper method "_cyclic_subspace" in this module.
+
+        .. SEEALSO::
+
+            :meth:`krylov_matrix` and :meth:`krylov_basis`, which compute
+            Krylov iterates and Krylov bases for several vectors at a time.
 
         EXAMPLES::
 
@@ -17069,9 +17092,9 @@ cdef class Matrix(Matrix1):
             return R.ideal(prod(elemdiv[:rank_minors]))
         except (TypeError, NotImplementedError, ArithmeticError):
             pass
-        for (nr, r) in enumerate(self.rows()):
+        for nr, r in enumerate(self.rows()):
             nz = [e for e in enumerate(r) if e[1]]
-            if len(nz) == 0:
+            if not nz:
                 N = self.delete_rows([nr])
                 return N.fitting_ideal(i)
             elif len(nz) == 1:
@@ -17080,7 +17103,7 @@ cdef class Matrix(Matrix1):
                 N = N.delete_columns([nz[0][0]])
                 F2 = N.fitting_ideal(i)
                 return F1 + nz[0][1]*F2
-        for (nc, c) in enumerate(self.columns()):
+        for nc, c in enumerate(self.columns()):
             nz = [e for e in enumerate(c) if e[1]]
             if len(nz) == 0:
                 N = self.delete_columns([nc])
@@ -18666,7 +18689,7 @@ cdef class Matrix(Matrix1):
             raise ValueError(msg)
 
         return all(s * (self * x) >= 0
-                   for (x, s) in K.discrete_complementarity_set())
+                   for x, s in K.discrete_complementarity_set())
 
     def is_Z_operator_on(self, K):
         r"""
@@ -18942,7 +18965,7 @@ cdef class Matrix(Matrix1):
         # many inequalities as the number of equalities that we're
         # about to check.
         return all(s * (self * x) == 0
-                   for (x, s) in K.discrete_complementarity_set())
+                   for x, s in K.discrete_complementarity_set())
 
     def LLL_gram(self, flag=0):
         """
@@ -19064,6 +19087,1406 @@ cdef class Matrix(Matrix1):
         if U.change_ring(FiniteField(3)).det() != 1:  # p = 3 is enough to decide
             U.rescale_col(n - 1, -1)
         return U
+
+    def _krylov_row_coordinates(self, shifts, degrees, row_pairs=None):
+        r"""
+        Helper function for :meth:`krylov_matrix` and :meth:`krylov_basis`.
+        Return a sorted set of triplets corresponding to row coordinates, for
+        a given set of shifts and degrees.
+
+        INPUT:
+
+        - ``shifts`` -- an integer vector of length ``self.nrows()`` defining
+          the priority given to rows.
+        - ``degrees`` -- an integer vector of length ``self.nrows()`` defining
+          the maximum degree for rows.
+        - ``row_pairs`` (default: ``None``) -- the list of pairs of row indices
+          and associated degrees to be sorted. If ``None``, the default is
+          taken as `[(i, j), 0 \le i < m, 0 \le j \le d_i]` where `m` is
+          ``self.nrows()`` and `d_i` is ``degrees[i]``.
+
+        OUTPUT:
+
+        A list of triplets ``(c, d, i)`` sorted in ascending order, using the
+        lexicographic order on pairs ``(shifts[c] + d, c)``. The entry ``i`` is
+        the index of the triplet after filtering (according to the degree
+        bounds and the presence in ``row_pairs``) but before sorting.
+
+        EXAMPLES::
+
+            sage: R = GF(97)
+            sage: E = matrix.zero(R, 3)
+            sage: shifts = vector(ZZ, [0, 0, 0])
+            sage: degrees = vector(ZZ, [3, 3, 3])
+            sage: E._krylov_row_coordinates(shifts, degrees)
+            [(0, 0, 0),
+             (1, 0, 1),
+             (2, 0, 2),
+             (0, 1, 3),
+             (1, 1, 4),
+             (2, 1, 5),
+             (0, 2, 6),
+             (1, 2, 7),
+             (2, 2, 8),
+             (0, 3, 9),
+             (1, 3, 10),
+             (2, 3, 11)]
+            sage: shifts = vector(ZZ, [3, 0, 2])
+            sage: degrees = vector(ZZ, [1, 3, 2])
+            sage: E._krylov_row_coordinates(shifts, degrees)
+            [(1, 0, 1),
+             (1, 1, 4),
+             (1, 2, 6),
+             (2, 0, 2),
+             (0, 0, 0),
+             (1, 3, 8),
+             (2, 1, 5),
+             (0, 1, 3),
+             (2, 2, 7)]
+            sage: E._krylov_row_coordinates(shifts, degrees, [(2, 2), (1, 4), (1, 2), (1, 1), (0, 2)])
+            [(1, 1, 2), (1, 2, 1), (2, 2, 0)]
+        """
+        # (construct and) filter rows
+        blocks = max(degrees, default=0) + 1
+        if row_pairs is None:
+            rows = [(i, j) for j in range(blocks) for i in range(self.nrows()) if j <= degrees[i]]
+        else:
+            rows = [row for row in row_pairs if row[1] <= degrees[row[0]]]
+        # index rows
+        rows = [(*row, i) for i, row in enumerate(rows)]
+        # sort rows
+        rows.sort(key=lambda x: (shifts[x[0]] + x[1], x[0]))
+        return rows
+
+    def krylov_matrix(self, M, shifts=None, degrees=None):
+        r"""
+        Return the Krylov matrix built from the rows of ``self`` and using
+        multiplication matrix `M`. Here, ``self`` is some `m \times n` matrix
+        `E` with rows denoted by `E_0, \ldots, E_{m-1}`, and `M` is a square `n
+        \times n` matrix; ``degrees`` is a list of `m` nonnegative integers
+        `[d_0, \ldots, d_{m-1}]`. This Krylov matrix has `d_0+\cdots+d_{m-1}+m`
+        rows and `n` columns and is formed by stacking the Krylov iterates
+        `E_{i} \cdot M^j` for all `0 \le i < m` and `0 \le j \le d_i`. These
+        rows are ordered according to a priority defined by ``shifts``.
+
+        By default, ``shifts`` is taken as `[0, \ldots, 0]`, and ``degrees`` is
+        taken as `[n, \ldots, n]`. If a single integer `d` is provided for
+        ``degrees``, then it is interpreted as `[d, \ldots, d]`.
+
+        For example, for the default ``shifts`` equal to `[0, \ldots, 0]` and
+        for ``degrees`` equal to `[d, \ldots, d]`, the returned matrix is equal
+        to
+
+        .. MATH::
+
+            \begin{bmatrix}
+                E \\
+                E M \\
+                \vdots \\
+                E M^d
+            \end{bmatrix} .
+
+        Another classical case is when ``shifts`` is
+        `[0, k, 2k, \ldots, (m-1)k]` for a large `k` such as
+        `k = d_0+\cdots+d_{m-1}`: then the Krylov matrix is
+
+        .. MATH::
+
+            \begin{bmatrix}
+                E_0 \\
+                E_0 M \\
+                \vdots \\
+                E_0 M^{d_0} \\
+                \vdots \\
+                E_{m-1} \\
+                E_{m-1} M \\
+                \vdots \\
+                E_{m-1} M^{d_{m-1}}
+            \end{bmatrix} .
+
+        Other shifts will yield some row permutation of the latter matrix (see
+        [BecLab2000]_ and [JNSV2017]_).
+
+        INPUT:
+
+        - ``M`` -- a square matrix of size equal to the number of columns of
+          ``self``.
+        - ``shifts`` (default: ``None``) -- list of ``self.nrows()`` integers,
+          row priority shifts.  If ``None``, defaults to all zeroes.
+        - ``degrees`` (default: ``None``) -- an integer or a list of
+          ``self.nrows()`` integers. The entry ``degrees[i]`` indicates the
+          number of Krylov iterates to appear in the output (that is,
+          ``self[i, :] * M**j`` will appear for `j` up to ``degrees[i]``,
+          included). If ``None``, defaults to ``self.ncols()`` for all rows.
+          Giving a single integer for ``degrees`` is equivalent to giving a
+          list with this integer repeated ``self.nrows()`` times.
+
+        OUTPUT:
+
+        - The Krylov matrix of ``self`` and ``M``, with respect to degree
+          bounds ``degrees`` and with rows ordered according to ``shifts``.
+
+        .. SEEALSO::
+
+            :meth:`krylov_basis` computes a basis of the row space of the
+            Krylov matrix; whereas :meth:`krylov_kernel_basis` computes a
+            compact representation of its left kernel.
+
+        EXAMPLES::
+
+            sage: R = GF(97)
+            sage: E = matrix(R, [[27, 49, 29], [50, 58, 0], [77, 10, 29]])
+            sage: E
+            [27 49 29]
+            [50 58  0]
+            [77 10 29]
+            sage: M = matrix(R, [[0, 1, 0], [0, 0, 1], [0, 0, 0]])
+            sage: M
+            [0 1 0]
+            [0 0 1]
+            [0 0 0]
+            sage: E.krylov_matrix(M)
+            [27 49 29]
+            [50 58  0]
+            [77 10 29]
+            [ 0 27 49]
+            [ 0 50 58]
+            [ 0 77 10]
+            [ 0  0 27]
+            [ 0  0 50]
+            [ 0  0 77]
+            [ 0  0  0]
+            [ 0  0  0]
+            [ 0  0  0]
+
+        Trying the other above-mentioned classical shift::
+
+            sage: shifts = [0, 3, 6]
+            sage: E.krylov_matrix(M, shifts)
+            [27 49 29]
+            [ 0 27 49]
+            [ 0  0 27]
+            [ 0  0  0]
+            [50 58  0]
+            [ 0 50 58]
+            [ 0  0 50]
+            [ 0  0  0]
+            [77 10 29]
+            [ 0 77 10]
+            [ 0  0 77]
+            [ 0  0  0]
+
+        With another shift::
+
+            sage: shifts = [3, 0, 2]
+            sage: E.krylov_matrix(M, shifts)
+            [50 58  0]
+            [ 0 50 58]
+            [ 0  0 50]
+            [77 10 29]
+            [27 49 29]
+            [ 0  0  0]
+            [ 0 77 10]
+            [ 0 27 49]
+            [ 0  0 77]
+            [ 0  0 27]
+            [ 0  0  0]
+            [ 0  0  0]
+
+        Specifying degree bounds via ``degrees``::
+
+            sage: E.krylov_matrix(M, shifts, degrees=[0, 2, 1])
+            [50 58  0]
+            [ 0 50 58]
+            [ 0  0 50]
+            [77 10 29]
+            [27 49 29]
+            [ 0 77 10]
+
+        TESTS:
+
+        The input `M` must be a matrix::
+
+            sage: R = GF(97)
+            sage: E = matrix(R, [[27, 49, 29], [50, 58, 0], [77, 10, 29]])
+            sage: E.krylov_matrix(20)
+            Traceback (most recent call last):
+            ...
+            TypeError: M must be a matrix
+
+        The matrix `M` must be square and match `E.ncols()`::
+
+            sage: E.krylov_matrix(matrix.zero(R, 3, 4))
+            Traceback (most recent call last):
+            ...
+            ValueError: M does not have correct dimensions
+            sage: E.krylov_matrix(matrix.zero(R, 4, 3))
+            Traceback (most recent call last):
+            ...
+            ValueError: M does not have correct dimensions
+            sage: E.krylov_matrix(matrix.zero(R, 4, 4))
+            Traceback (most recent call last):
+            ...
+            ValueError: M does not have correct dimensions
+            sage: E.krylov_matrix(matrix.zero(R, 3, 3))
+            [27 49 29]
+            [50 58  0]
+            [77 10 29]
+            [ 0  0  0]
+            [ 0  0  0]
+            [ 0  0  0]
+            [ 0  0  0]
+            [ 0  0  0]
+            [ 0  0  0]
+            [ 0  0  0]
+            [ 0  0  0]
+            [ 0  0  0]
+
+        Base ring coercion should be possible in both directions::
+
+            sage: R2.<z> = GF(97^2)
+            sage: M = matrix(R2, [[0, 45*z+67, 0], [0, 0, 20*z], [0, 0, 0]])
+            sage: E.krylov_matrix(M)
+            [       27        49        29]
+            [       50        58         0]
+            [       77        10        29]
+            [        0 51*z + 63      10*z]
+            [        0 19*z + 52      93*z]
+            [        0 70*z + 18       6*z]
+            [        0         0 49*z + 41]
+            [        0         0 62*z + 40]
+            [        0         0 14*z + 81]
+            [        0         0         0]
+            [        0         0         0]
+            [        0         0         0]
+            sage: M.krylov_matrix(E)
+            [        0 45*z + 67         0]
+            [        0         0      20*z]
+            [        0         0         0]
+            [19*z + 52  88*z + 6         0]
+            [     85*z       6*z      95*z]
+            [        0         0         0]
+            [63*z + 55 21*z + 83 66*z + 53]
+            [     16*z      31*z      79*z]
+            [        0         0         0]
+            [73*z + 16 18*z + 85 55*z + 28]
+            [     14*z      74*z      39*z]
+            [        0         0         0]
+
+        But not possible if the base ring has a different characteristic::
+
+            sage: M = matrix(GF(11), [[0, 1, 0], [0, 0, 1], [0, 0, 0]])
+            sage: E.krylov_matrix(M)
+            Traceback (most recent call last):
+            ...
+            TypeError: no common canonical parent for objects with parents: 'Full MatrixSpace of 3 by 3 dense matrices over Finite Field of size 97' and 'Full MatrixSpace of 3 by 3 dense matrices over Finite Field of size 11'
+
+        If shifts is a list, it must have the correct number of elements::
+
+            sage: M = matrix(R, [[0, 1, 0], [0, 0, 1], [0, 0, 0]])
+            sage: E.krylov_matrix(M, shifts=[2, 3])
+            Traceback (most recent call last):
+            ...
+            TypeError: x must be a list of the right length
+
+        It must not contain any elements that cannot be converted to integers::
+
+            sage: E.krylov_matrix(M, shifts=[2, 3, 4.5])
+            Traceback (most recent call last):
+            ...
+            TypeError: Attempt to coerce non-integral RealNumber to Integer
+
+        The same applies to degrees::
+
+            sage: E.krylov_matrix(M, degrees=[2, 3])
+            Traceback (most recent call last):
+            ...
+            TypeError: x must be a list of the right length
+            sage: E.krylov_matrix(M, degrees=[2, 3, 4.5])
+            Traceback (most recent call last):
+            ...
+            TypeError: Attempt to coerce non-integral RealNumber to Integer
+
+        The degree bounds must be non-negative::
+
+            sage: E.krylov_matrix(M, degrees=[2, 3, -1])
+            Traceback (most recent call last):
+            ...
+            ValueError: degrees must not contain a negative bound
+        """
+        from sage.combinat.permutation import Permutation
+        from sage.modules.free_module_element import vector, FreeModuleElement
+
+        E = self
+
+        # INPUT VALIDATION
+        if not isinstance(M, Matrix):
+            raise TypeError("M must be a matrix")
+        if M.nrows() != E.ncols() or M.ncols() != E.ncols():
+            raise ValueError("M does not have correct dimensions")
+        if M.base_ring() != E.base_ring():
+            E, M = coercion_model.canonical_coercion(E, M)
+
+        if shifts is None:
+            shifts = (ZZ**E.nrows()).zero()
+        elif isinstance(shifts, (FreeModuleElement, list, tuple)):
+            shifts = (ZZ**E.nrows())(shifts)
+        else:
+            raise ValueError(f"shifts must be an integer vector of length {E.nrows()}")
+
+        if degrees is None:
+            degrees = vector(ZZ, [E.ncols()] * E.nrows())
+        elif isinstance(degrees, (FreeModuleElement, list, tuple)):
+            degrees = (ZZ**E.nrows())(degrees)
+        else:
+            degrees = (ZZ**E.nrows())([degrees] * E.nrows())
+        if E.nrows() > 0 and min(degrees) < 0:
+            raise ValueError(f"degrees must not contain a negative bound")
+
+        m = E.nrows()
+        iterations = max(degrees, default=ZZ.zero()).nbits()
+
+        # store 2 blocks for the Krylov matrix
+        blocks = [E]
+
+        # keep track of indices
+        indices = [(i, 0) for i in range(m)]
+
+        # for i from 0 to degree (inclusive), merge existing blocks, add E*M^i
+        M_i = None
+        for i in range(iterations):
+            if M_i is None:
+                M_i = M
+            else:
+                M_i = M_i * M_i
+                blocks = [blocks[0].stack(blocks[1], subdivide=False)]
+            new_indices = [(row[0], row[1] + 2**i) for row in indices]
+            blocks.append((blocks[0].matrix_from_rows([i for i, x in enumerate(new_indices) if x[1] <= degrees[x[0]]]) * M_i))
+            indices.extend([x for x in new_indices if x[1] <= degrees[x[0]]])
+
+        # return block matrix permuted according to shifts
+        krylov = blocks[0].stack(blocks[1], subdivide=False) if len(blocks) > 1 else blocks[0]
+
+        permutation = Permutation([x[2] + 1 for x in E._krylov_row_coordinates(shifts, degrees)])
+
+        return krylov.with_permuted_rows(permutation)
+
+    def _krylov_basis_naive(self, M, shifts, degrees, output_rows):
+        r"""
+        See :meth:`krylov_basis` for the description of this method. However,
+        unlike :meth:`krylov_basis`, this method performs no input validation.
+
+        TESTS::
+
+            sage: R = GF(97)
+            sage: E = matrix(R, [[27, 49, 29], [50, 58, 0], [77, 10, 29]])
+            sage: M = matrix(R, [[0, 1, 0], [0, 0, 1], [0, 0, 0]])
+            sage: E._krylov_basis_naive(M, [0, 0, 0], [3, 3, 3], True)
+            (
+            [27 49 29]
+            [50 58  0]
+            [ 0 27 49], ((0, 0, 0), (1, 0, 1), (0, 1, 3))
+            )
+
+            sage: shifts = [0, 3, 6]
+            sage: E._krylov_basis_naive(M, shifts, [3, 3, 3], True)
+            (
+            [27 49 29]
+            [ 0 27 49]
+            [ 0  0 27], ((0, 0, 0), (0, 1, 1), (0, 2, 2))
+            )
+
+            sage: shifts = [3, 0, 2]
+            sage: E._krylov_basis_naive(M, shifts, [3, 3, 3], True)
+            (
+            [50 58  0]
+            [ 0 50 58]
+            [ 0  0 50], ((1, 0, 0), (1, 1, 1), (1, 2, 2))
+            )
+        """
+        m = self.nrows()
+
+        K = self.krylov_matrix(M, shifts, degrees)
+
+        # calculate first independent rows of K
+        row_profile = K.pivot_rows()
+
+        # construct submatrix
+        kmat = K.matrix_from_rows(row_profile)
+
+        if not output_rows:
+            return kmat
+
+        row_coordinates = self._krylov_row_coordinates(shifts, degrees)
+
+        row_profile = tuple([(*row_coordinates[i][:2], i) for i in row_profile])
+
+        return kmat, row_profile
+
+    def _krylov_basis_elimination(self, M, shifts, degrees, output_rows):
+        r"""
+        See :meth:`krylov_basis` for the description of this method. However,
+        unlike :meth:`krylov_basis`, this method performs no input validation.
+
+        TESTS::
+
+            sage: R = GF(97)
+            sage: E = matrix(R, [[27, 49, 29], [50, 58, 0], [77, 10, 29]])
+            sage: M = matrix(R, [[0, 1, 0], [0, 0, 1], [0, 0, 0]])
+            sage: E._krylov_basis_elimination(M, [0, 0, 0], [3, 3, 3], True)
+            (
+            [27 49 29]
+            [50 58  0]
+            [ 0 27 49], ((0, 0, 0), (1, 0, 1), (0, 1, 3))
+            )
+
+            sage: shifts = [0, 3, 6]
+            sage: E._krylov_basis_elimination(M, shifts, [3, 3, 3], True)
+            (
+            [27 49 29]
+            [ 0 27 49]
+            [ 0  0 27], ((0, 0, 0), (0, 1, 1), (0, 2, 2))
+            )
+
+            sage: shifts = [3, 0, 2]
+            sage: E._krylov_basis_elimination(M, shifts, [3, 3, 3], True)
+            (
+            [50 58  0]
+            [ 0 50 58]
+            [ 0  0 50], ((1, 0, 0), (1, 1, 1), (1, 2, 2))
+            )
+        """
+        from sage.matrix.constructor import matrix
+        from sage.combinat.permutation import Permutation
+
+        m = self.nrows()
+        sigma = self.ncols()
+        iterations = max(degrees, default=ZZ.zero()).nbits()
+
+        if m == 0:
+            return (self, ()) if output_rows else self
+
+        # calculate row profile of self, with shifts applied
+        self_rows = [x[2] for x in self._krylov_row_coordinates(shifts, degrees, [(i, 0) for i in range(m)])]
+        self_permutation = Permutation([x + 1 for x in self_rows])
+
+        self_permuted = self.with_permuted_rows(self_permutation)
+        row_profile_self_permuted = self_permuted.pivot_rows()
+        row_profile_self = [(self_rows[i], 0) for i in row_profile_self_permuted]
+
+        exhausted = matrix.zero(self.base_ring(), 0, sigma)
+        row_profile_exhausted = []
+        excluded_rows = set()
+
+        r = len(row_profile_self)
+
+        if r == 0:
+            return (self.matrix_from_rows([]), ()) if output_rows else self.matrix_from_rows([])
+
+        R = self_permuted.matrix_from_rows(row_profile_self_permuted)
+
+        M_L = None
+
+        for l in range(iterations):
+            L = pow(2, l)
+            # adding 2^l to each degree
+            row_extension = [(x[0], x[1] + L) for x in row_profile_self if x[1] + L <= degrees[x[0]]]
+            if len(row_extension) == 0:
+                break
+
+            # concatenate two sequences (order preserved)
+            k = row_profile_exhausted + row_profile_self + row_extension
+
+            # calculate sorting permutation, sort k by (shifts[c]+d, c)
+            k_rows = [x[2] for x in self._krylov_row_coordinates(shifts, degrees, k)]
+            k_perm = Permutation([x + 1 for x in k_rows])
+
+            # fast calculation of rows formed by indices in k
+            if M_L is None:
+                M_L = M
+            else:
+                M_L = M_L * M_L
+
+            rows = [i for i, x in enumerate(row_profile_self) if x[1] + L <= degrees[x[0]]]
+            S = R.matrix_from_rows(rows) * M_L
+            R = matrix.block([[exhausted], [R], [S]], subdivide=False)
+
+            # sort rows of R, find profile, translate to k (indices of full krylov matrix)
+            R.permute_rows(k_perm)
+
+            row_profile_R = R.pivot_rows()
+            r = len(row_profile_R)
+
+            if r == sigma and l < iterations - 1:
+                tail = list(range(row_profile_R[-1]+1, R.nrows()))
+                excluded_rows.update(set([k[k_rows[i]][0] for i in tail if i < len(k)]))
+
+                xmi = [i for i in row_profile_R if k[k_rows[i]][0] in excluded_rows]
+                imi = [i for i in row_profile_R if k[k_rows[i]][0] not in excluded_rows]
+
+                row_profile_exhausted = [k[k_rows[i]] for i in xmi]
+                row_profile_self = [k[k_rows[i]] for i in imi]
+
+                exhausted = R.matrix_from_rows(xmi)
+                R = R.matrix_from_rows(imi)
+            else:
+                if l == iterations - 1:
+                    row_profile_exhausted = []
+                    exhausted = matrix.zero(self.base_ring(), 0, sigma)
+                row_profile_self = [k[k_rows[i]] for i in row_profile_R]
+                # calculate new R for return value or next loop
+                R = R.matrix_from_rows(row_profile_R)
+        if R.nrows() == 0:
+            R = exhausted
+            row_profile_self = row_profile_exhausted
+        elif exhausted.nrows() != 0:
+            k = row_profile_exhausted + row_profile_self
+            R = exhausted.stack(R)
+
+            k_rows = [x[2] for x in self._krylov_row_coordinates(shifts, degrees, k)]
+            k_perm = Permutation([x + 1 for x in k_rows])
+
+            R.permute_rows(k_perm)
+            row_profile_self = [k[k_rows[i]] for i in range(len(k))]
+
+        if not output_rows:
+            return R
+
+        # convert c, d to actual position in Krylov matrix
+        phi = lambda c, d : sum(min(max(shifts[c] - shifts[i] + d + (i < c and shifts[i] <= shifts[c] + d), 0), degrees[i] + 1) for i in range(m))
+        row_profile = tuple([(*row, phi(*row)) for row in row_profile_self])
+
+        return R, row_profile
+
+    def krylov_basis(self, M, shifts=None, degrees=None, output_rows=True, algorithm=None):
+        r"""
+        Return the matrix `B` formed by stacking the first `r` linearly
+        independent row vectors `E_{i} \cdot M^j`, for `0 \le i < m` and `j \ge
+        0` when they are ordered according to ``shifts``. Here `E` is the input
+        `m \times n` matrix ``self``, with rows denoted by `E_0, \ldots,
+        E_{m-1}`, `M` is a square `n \times n` matrix, and `r` is dimension of
+        Krylov subspace of `E` and `M`, that is, the span of all the above row
+        vectors.
+
+        A list ``degrees`` of integers `[d_0, \ldots, d_{m-1}]` can be provided
+        to indicate known maximal exponents, such that `E_{k} \cdot
+        M^{d_k-1}` may appear in the output basis, but `E_{k} \cdot
+        M^{d_k}` will not. In other words, `E_{k} \cdot M^{d_k}` is known to
+        linearly depend on the set of row vectors `E_{i} \cdot M^{j}` that
+        appear before it according to the order defined by ``shifts``. It is
+        always valid to take ``degrees`` as `[d, \ldots, d]` where `d` is the
+        degree of the minimal polynomial of `M`. By default, the implementation
+        takes ``degrees`` as `[n, \ldots, n]`.
+
+        By default, the method also returns information that relate the
+        computed basis rows to the corresponding rows in the Krylov matrix `K`
+        as if built with :meth:`krylov_matrix` with the same parameters.
+        Specifically, for each row of the output, this information gives its
+        position in `K` (thus forming the row rank profile of `K`), as well as
+        pairs `i, j` indicating that the row is `E_{i} \cdot M^{j}`.
+
+        .. WARNING::
+
+            In the case where degrees are provided and do not satisfy the above
+            requirements, no guarantees are provided on the value of the output,
+            including whether it is consistent between the different algorithms.
+
+        INPUT:
+
+        - ``M`` -- a square matrix of size equal to the number of columns of
+          ``self``.
+        - ``shifts`` (default: ``None``) -- list of ``self.nrows()`` integers:
+          row priority shifts. If ``None``, defaults to all zeroes.
+        - ``degrees`` (default: ``None``) -- an integer or a list of
+          ``self.nrows()`` integers. The entry ``degrees[i]`` indicates that
+          ``self[i, :] * M**degrees[i]`` is known to be dependent on rows
+          before it in the ``shifts``-ordered Krylov matrix. If ``None``,
+          defaults to ``self.ncols()`` for all rows. Giving a single integer
+          for ``degrees`` is equivalent to giving a list with this integer
+          repeated ``self.nrows()`` times.
+        - ``output_rows`` (default: ``True``) -- boolean. Determines whether
+          information relating the output rows to their position in the Krylov
+          matrix is also provided.
+        - ``algorithm`` (default: ``None``) -- either ``'naive'``,
+          ``'elimination'``, or ``None`` (let Sage choose).
+
+        OUTPUT:
+
+        - matrix formed by the first `r` independent rows of the Krylov matrix
+          of ``self`` and `M`, with `r` the rank of that matrix
+        - ``row_profile`` (returned if ``output_rows`` is ``True``): list of
+          the ``r`` triplets ``(i, j, k)`` corresponding to the rows of the
+          Krylov basis where ``k`` is the row index of the row in the Krylov
+          matrix, ``i`` is the corresponding row in ``self`` and ``j`` is the
+          corresponding power of ``M``.
+
+        .. SEEALSO::
+
+            :meth:`cyclic_subspace` provides similar functionality for ``self``
+            consisting of a single vector; :meth:`krylov_matrix` computes a
+            Krylov matrix (without discarding linearly redundant rows);
+            :meth:`krylov_kernel_basis` computes a compact representation of
+            the left kernel of a Krylov matrix.
+
+        EXAMPLES::
+
+            sage: R = GF(97)
+            sage: E = matrix(R, [[27, 49, 29], [50, 58, 0], [77, 10, 29]])
+            sage: M = matrix(R, [[0, 1, 0], [0, 0, 1], [0, 0, 0]])
+            sage: K = E.krylov_matrix(M)
+            sage: K[:6, :]
+            [27 49 29]
+            [50 58  0]
+            [77 10 29]
+            [ 0 27 49]
+            [ 0 50 58]
+            [ 0 77 10]
+            sage: E.krylov_basis(M, output_rows=True, algorithm='elimination')
+            (
+            [27 49 29]
+            [50 58  0]
+            [ 0 27 49], ((0, 0, 0), (1, 0, 1), (0, 1, 3))
+            )
+
+        The above matrix `K` indeed has row rank profile `(0, 1, 3)`, meaning
+        here that the third row of `E` is dependent on its two first rows::
+
+            sage: E.pivot_rows() == (0, 1)
+            True
+            sage: K.pivot_rows() == (0, 1, 3)
+            True
+
+        Observe also how the output row information relates the basis to the
+        rows in the Krylov matrix `K`::
+
+            sage: degrees = 3  # default == self.ncols()
+            sage: rows = [(i, j, i+j*E.nrows()) for j in range(degrees+1)
+            ....:                             for i in range(E.nrows())]
+            sage: rows[:6]
+            [(0, 0, 0),
+             (1, 0, 1),
+             (2, 0, 2),
+             (0, 1, 3),
+             (1, 1, 4),
+             (2, 1, 5)]
+
+        Now with another shift, the first three rows of the Krylov matrix are
+        independent and thus form the Krylov basis::
+
+            sage: shifts = [0, 3, 6]
+            sage: E.krylov_matrix(M, shifts=shifts)[:3, :]
+            [27 49 29]
+            [ 0 27 49]
+            [ 0  0 27]
+            sage: E.krylov_basis(M, shifts=shifts, algorithm='naive')
+            (
+            [27 49 29]
+            [ 0 27 49]
+            [ 0  0 27], ((0, 0, 0), (0, 1, 1), (0, 2, 2))
+            )
+            sage: rows.sort(key=lambda x: (x[1] + shifts[x[0]], x[0]))
+            sage: [(i, j) for i, j, k in rows[:3]]
+            [(0, 0),
+             (0, 1),
+             (0, 2)]
+
+        Another shift for which the first three rows of the Krylov matrix are
+        independent::
+
+            sage: shifts = [3, 0, 2]
+            sage: E.krylov_matrix(M, shifts=shifts)[:6, :]
+            [50 58  0]
+            [ 0 50 58]
+            [ 0  0 50]
+            [77 10 29]
+            [27 49 29]
+            [ 0  0  0]
+            sage: E.krylov_basis(M, shifts=shifts, algorithm='elimination')
+            (
+            [50 58  0]
+            [ 0 50 58]
+            [ 0  0 50], ((1, 0, 0), (1, 1, 1), (1, 2, 2))
+            )
+            sage: rows.sort(key=lambda x: (x[1] + shifts[x[0]], x[0]))
+            sage: [(i, j) for i, j, k in rows[:3]]
+            [(1, 0),
+             (1, 1),
+             (1, 2)]
+
+        TESTS:
+
+        The method is currently only implemented over exact fields::
+
+            sage: E = matrix(RR, [[1.5, 1.2, 1.0], [5.6, 7.9, 2.3]])
+            sage: E.krylov_basis(E)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: computing bases of Krylov matrices is currently only implemented over exact fields
+
+        The input `M` must be a matrix::
+
+            sage: R = GF(97)
+            sage: E = matrix(R, [[27, 49, 29], [50, 58, 0], [77, 10, 29]])
+            sage: E.krylov_basis(20)
+            Traceback (most recent call last):
+            ...
+            TypeError: M must be a matrix
+
+        The matrix `M` must be square and match `E.ncols()`::
+
+            sage: E.krylov_basis(matrix.zero(R, 3, 4))
+            Traceback (most recent call last):
+            ...
+            ValueError: M does not have correct dimensions
+            sage: E.krylov_basis(matrix.zero(R, 4, 3))
+            Traceback (most recent call last):
+            ...
+            ValueError: M does not have correct dimensions
+            sage: E.krylov_basis(matrix.zero(R, 4, 4))
+            Traceback (most recent call last):
+            ...
+            ValueError: M does not have correct dimensions
+            sage: E.krylov_basis(matrix.zero(R, 3, 3))
+            (
+            [27 49 29]
+            [50 58  0], ((0, 0, 0), (1, 0, 1))
+            )
+
+        Base ring coercion should be possible in both directions::
+
+            sage: R2.<z> = GF(97^2)
+            sage: M = matrix(R2, [[0, 45*z+67, 0], [0, 0, 20*z], [0, 0, 0]])
+            sage: E.krylov_basis(M)
+            (
+            [       27        49        29]
+            [       50        58         0]
+            [        0 51*z + 63      10*z], ((0, 0, 0), (1, 0, 1), (0, 1, 3))
+            )
+            sage: M.krylov_basis(E)
+            (
+            [        0 45*z + 67         0]
+            [        0         0      20*z]
+            [19*z + 52  88*z + 6         0], ((0, 0, 0), (1, 0, 1), (0, 1, 3))
+            )
+
+        But not possible if the base ring has a different characteristic::
+
+            sage: M = matrix(GF(11), [[0, 1, 0], [0, 0, 1], [0, 0, 0]])
+            sage: E.krylov_basis(M)
+            Traceback (most recent call last):
+            ...
+            TypeError: no common canonical parent for objects with parents: 'Full MatrixSpace of 3 by 3 dense matrices over Finite Field of size 97' and 'Full MatrixSpace of 3 by 3 dense matrices over Finite Field of size 11'
+
+        If shifts is a list, it must have the correct number of elements::
+
+            sage: M = matrix(GF(97), [[0, 1, 0], [0, 0, 1], [0, 0, 0]])
+            sage: E.krylov_basis(M, shifts=[2, 3])
+            Traceback (most recent call last):
+            ...
+            TypeError: x must be a list of the right length
+
+        It must not contain any elements that cannot be converted to integers::
+
+            sage: E.krylov_basis(M, shifts=[2, 3, 4.5])
+            Traceback (most recent call last):
+            ...
+            TypeError: Attempt to coerce non-integral RealNumber to Integer
+
+        The same applies to degrees::
+
+            sage: E.krylov_basis(M, degrees=[2, 3])
+            Traceback (most recent call last):
+            ...
+            TypeError: x must be a list of the right length
+            sage: E.krylov_basis(M, degrees=[2, 3, 4.5])
+            Traceback (most recent call last):
+            ...
+            TypeError: Attempt to coerce non-integral RealNumber to Integer
+
+        The degree bounds must be non-negative::
+
+            sage: E.krylov_basis(M, degrees=[2, 3, -1])
+            Traceback (most recent call last):
+            ...
+            ValueError: degrees must not contain a negative bound
+
+        The algorithm must be valid::
+
+            sage: E = matrix(R, [[27, 49, 29], [50, 58, 0], [77, 10, 29]])
+            sage: E.krylov_basis(M, algorithm="non-existent")
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm must be one of None, "naive" or "elimination"
+        """
+        from sage.modules.free_module_element import vector
+
+        E = self
+
+        # INPUT VALIDATION
+        if not (E.base_ring() in _Fields and E.base_ring().is_exact()):
+            raise NotImplementedError("computing bases of Krylov matrices is currently only implemented over exact fields")
+
+        if not isinstance(M, Matrix):
+            raise TypeError("M must be a matrix")
+        if M.nrows() != E.ncols() or M.ncols() != E.ncols():
+            raise ValueError("M does not have correct dimensions")
+        if M.base_ring() != E.base_ring():
+            E, M = coercion_model.canonical_coercion(E, M)
+
+        if shifts is None:
+            shifts = (ZZ**E.nrows()).zero()
+        elif isinstance(shifts, (FreeModuleElement, list, tuple)):
+            shifts = (ZZ**E.nrows())(shifts)
+        else:
+            raise ValueError(f"shifts must be an integer vector of length {E.nrows()}")
+
+        if degrees is None:
+            degrees = vector(ZZ, [E.ncols()] * E.nrows())
+        elif isinstance(degrees, (FreeModuleElement, list, tuple)):
+            degrees = (ZZ**E.nrows())(degrees)
+        else:
+            degrees = (ZZ**E.nrows())([degrees] * E.nrows())
+        if E.nrows() > 0 and min(degrees) < 0:
+            raise ValueError(f"degrees must not contain a negative bound")
+
+        if algorithm is None:
+            if E.base_ring().cardinality() == 2:
+                if E.nrows() <= 12:
+                    algorithm = 'naive'
+                else:
+                    algorithm = 'elimination'
+            elif E.base_ring().is_prime_field() and E.base_ring().is_finite():
+                if E.nrows() <= 4:
+                    algorithm = 'naive'
+                else:
+                    algorithm = 'elimination'
+            else:
+                if E.nrows() <= 2:
+                    algorithm = 'naive'
+                else:
+                    algorithm = 'elimination'
+        if algorithm == 'naive':
+            return E._krylov_basis_naive(M, shifts, degrees, output_rows)
+        elif algorithm == 'elimination':
+            return E._krylov_basis_elimination(M, shifts, degrees, output_rows)
+        else:
+            raise ValueError("algorithm must be one of None, \"naive\" or \"elimination\"")
+
+    def krylov_kernel_basis(self, M, shifts=None, degrees=None, output_rows=True, var=None, basis_algorithm=None):
+        r"""
+        Return a basis in canonical form for the kernel of the Krylov matrix of
+        ``(self, M)`` with rows ordered according to ``shifts``. In other terms,
+        the rows of the returned matrix form a basis of the kernel of the
+        `\Bold{K}[x]`-linear map `\Bold{K}[x]^n \to \Bold{K}^n` given by the
+        matrix ``self``, where the action of `x` on `\Bold{K}^n` is given by
+        `M`.
+
+        Write `E` for ``self``, of dimensions `m \times n`. Consider the Krylov
+        basis `B` as computed by :meth:`krylov_basis` with the same parameters
+        `M`, ``shifts``, and ``degrees``. Let `[\delta_0, \ldots, \delta_{m-1}]`
+        be the exponents of first linear dependency for each row. That is, if
+        the `i`-th row `E_i` of `E` has not been selected for appearing in `B`
+        then `\delta_i = 0`, and otherwise, `\delta_i` is such that `E_i \cdot
+        M^{\delta_i-1}` has been selected for `B` but `E_i \cdot M^{\delta_i}`
+        has not. (These integers are also easily deduced from the output
+        triplets of :meth:`krylov_basis`.)
+
+        The returned matrix `K` is a basis, in reduced row echelon form (upper
+        echelon, and up to row permutation), of the left kernel of the Krylov
+        matrix `A` built from `E` and `M` with ``shifts`` and ``degrees`` equal
+        to `[\delta_0, \ldots, \delta_{m-1}]`. Recall from :meth:`krylov_matrix`
+        that this matrix `A` is, up to a row permutation deduced from
+        ``shifts``, equal to
+
+        .. MATH::
+
+            \begin{bmatrix}
+                B \\
+                E_0 M^{\delta_0} \\
+                \vdots \\
+                E_{m-1} M^{\delta_{m-1}}
+            \end{bmatrix}.
+
+        Since `B` has full row rank `r` (where `r \le n`), this kernel basis
+        `K` has `m` rows and `m+r` columns, and has rank `m`. This matrix `K`
+        can also be represented as a nonsingular univariate polynomial matrix
+        `P` of size `m \times m` in ``shifts``-Popov form (see
+        :meth:`sage.matrix.matrix_polynomial_dense.Matrix_polynomial_dense.popov_form`
+        for definitions), whose sum of column degrees is `r`, as well as its
+        degree of determinant. This is provided as an option via the input
+        ``var``.
+
+        By default, the method also returns information that relate the
+        computed kernel basis columns to the corresponding rows in the Krylov
+        matrix `A` (see the output specification).
+
+        Note that thanks to the module structure underlying Krylov matrices,
+        from the matrix `K` one can deduce for free (up to copying rows and
+        shifting coefficients to the right) left kernel bases for Krylov
+        matrices that would be built from the same `E`, `M`, and ``shifts``,
+        but with larger degrees, that is `[d_0, \ldots, d_{m-1}]` with `d_i \ge
+        \delta_i` for all `i`.
+
+        .. WARNING::
+
+            The requirements of :meth:`krylov_basis` on the input ``degrees``
+            also apply here: if they are not met, the behaviour of this
+            method is undefined.
+
+        REFERENCES:
+
+        [Kai1980]_ (Section 6.7), [BecLab2000]_ , and [JNSV2017]_ (Section 7).
+
+        INPUT:
+
+        - ``M`` -- a square matrix of size equal to the number of columns of
+          ``self``.
+        - ``shifts`` (default: ``None``) -- list of ``self.nrows()`` integers:
+          row priority shifts. If ``None``, defaults to all zeroes.
+        - ``degrees``  (default: ``None``) -- an integer or a list of
+          ``self.nrows()`` integers. The entry ``degrees[i]`` indicates that
+          ``self[i, :] * M**degrees[i]`` is known to be dependent on rows
+          before it in the ``shifts``-ordered Krylov matrix. If ``None``,
+          defaults to ``self.ncols()`` for all rows. Giving a single integer
+          for ``degrees`` is equivalent to giving a list with this integer
+          repeated ``self.nrows()`` times.
+        - ``output_rows`` (default: ``True``) -- boolean. Determines
+          whether information relating the output columns to the rows of the
+          corresponding Krylov matrix is also provided.
+        - ``var`` (default: ``None``) -- If ``None``, this method
+          returns a constant matrix. If not ``None``, the polynomial matrix
+          representation is used, and ``var`` must be either the generator of
+          a polynomial ring over the base ring of ``self``, or a string which
+          will be used as variable name for building such a polynomial ring.
+        - ``algorithm`` (default: ``None``) -- either ``'naive'``,
+          ``'elimination'``, or ``None`` (let Sage choose).
+
+        OUTPUT:
+
+        - A matrix. If ``var`` is ``None``, this is the `m \times (m+r)`
+          constant matrix `K` described above. Otherwise this is the
+          corresponding `m \times m` univariate polynomial matrix `P` whose
+          variable is ``var``.
+        - ``row_profile`` (returned if ``output_rows`` is ``True``): list of
+          the ``m+r`` triplets ``(i, j, k)`` corresponding to the rows of the
+          Krylov matrix of which the returned matrix is a kernel basis. Here
+          ``k`` is the row index of the row in the Krylov matrix, ``i`` is the
+          corresponding row in ``self`` and ``j`` is the corresponding power of
+          ``M``.
+
+        .. SEEALSO::
+
+            :meth:`krylov_basis` computes a basis of the Krylov subspace of
+            ``self`` and `M`; :meth:`krylov_matrix` computes the Krylov matrix
+            (without discarding linearly redundant rows) of ``self`` and `M`.
+
+        EXAMPLES::
+
+            sage: R = GF(97)
+            sage: E = matrix(R, [[27, 49, 29], [50, 58, 0], [77, 10, 29]])
+            sage: M = matrix(R, [[0, 1, 0], [0, 0, 1], [0, 0, 0]])
+
+        This example corresponds to computing a basis of Hermite-Padé
+        approximants::
+
+            sage: P, row_profile = E.krylov_kernel_basis(M, var='x')
+            sage: P
+            [x^2 + 40*x + 82              76               0]
+            [       3*x + 13          x + 57               0]
+            [             96              96               1]
+            sage: P.is_popov()
+            True
+            sage: x = P.base_ring().gen()
+            sage: F = E * matrix([[1], [x], [x**2]])
+            sage: F
+            [29*x^2 + 49*x + 27]
+            [         58*x + 50]
+            [29*x^2 + 10*x + 77]
+            sage: P == F.minimal_approximant_basis(3, normal_form=True)
+            True
+
+        Instead of a univariate polynomial matrix, one can also obtain a
+        constant matrix representing the same kernel elements::
+
+            sage: K, row_profile_bis = E.krylov_kernel_basis(M)
+            sage: row_profile == row_profile_bis
+            True
+            sage: K, row_profile
+            (
+            [82 76  0 40  0  1]
+            [13 57  0  3  1  0]
+            [96 96  1  0  0  0],
+            ((0, 0, 0), (1, 0, 1), (2, 0, 2), (0, 1, 3), (1, 1, 4), (0, 2, 6))
+            )
+
+        The computed matrix is a basis of the left kernel of the Krylov matrix
+        built with the appropriate degrees; note that the sum of these degrees
+        has to be `r = 3` and the Krylov matrix has `m+r = 6` rows::
+
+            sage: degrees = [max(rp[1] for rp in row_profile if rp[0] == j) 
+            ....:                             for j in range(E.nrows())]
+            sage: degrees
+            [2, 1, 0]
+            sage: A = E.krylov_matrix(M, degrees=degrees)
+            sage: A.left_kernel_matrix(basis="pivot")
+            [96 96  1  0  0  0]
+            [13 57  0  3  1  0]
+            [82 76  0 40  0  1]
+
+        The latter matrix and `K` coincide only up to row permutation, because
+        the order of the rows of `K` is inferred from the shifts, and makes it
+        echelon only up to row permutation. The row profile information also
+        allows one to directly relate the polynomial representation and the
+        constant one::
+
+            sage: all(P[:, j] == sum(K[:, k] * x**(row_profile[k][1])
+            ....:                   for k in range(K.ncols())
+            ....:                   if row_profile[k][0] == j)
+            ....:     for j in range(P.ncols()))
+            True
+
+        Since the shifts impact how the Krylov matrix is constructed, changing
+        shifts will lead to different kernel bases, yet representing the same
+        `\Bold{K}[x]`-module. The next shift yields a triangular polynomial
+        basis (the one in Hermite normal form)::
+
+            sage: shifts = [0, 3, 6]
+            sage: H = E.krylov_kernel_basis(M, shifts=shifts,
+            ....:                           output_rows=False, var=x)
+            sage: H
+            [               x^3                  0                  0]
+            [60*x^2 + 72*x + 70                  1                  0]
+            [60*x^2 + 72*x + 69                  0                  1]
+            sage: H.is_popov(shifts=shifts) and H.is_hermite(lower_echelon=True)
+            True
+            sage: P.popov_form(shifts=shifts) == H  # same K[x]-module
+            True
+
+        We again check the kernel basis property::
+
+            sage: K, row_profile = E.krylov_kernel_basis(M, shifts=shifts)
+            sage: K
+            [ 0  0  0  1  0  0]
+            [70 72 60  0  1  0]
+            [69 72 60  0  0  1]
+            sage: degrees = [max(rp[1] for rp in row_profile if rp[0] == j) 
+            ....:                             for j in range(E.nrows())]
+            sage: degrees
+            [3, 0, 0]
+            sage: A = E.krylov_matrix(M, shifts=shifts, degrees=degrees)
+            sage: K == A.left_kernel_matrix(basis="pivot")
+            True
+
+        Here is another shift. Notice that the variable is allowed to be from a
+        multivariate ring::
+
+            sage: bivring.<X, Y> = R[]
+            sage: shifts = [3, 0, 2]
+            sage: Q, row_profile = E.krylov_kernel_basis(M, shifts=shifts, var=Y)
+            sage: Q
+            [                 1 26*Y^2 + 49*Y + 79                  0]
+            [                 0                Y^3                  0]
+            [                 0 26*Y^2 + 49*Y + 78                  1]
+            sage: Q.base_ring()
+            Univariate Polynomial Ring in Y over Finite Field of size 97
+            sage: Q.is_popov(shifts=shifts)
+            True
+            sage: P.popov_form(shifts=shifts) == Q(x)  # same module
+            True
+
+        If we have a priori degree knowledge, we can use it to compute `K`::
+
+            sage: K, row_profile_bis = E.krylov_kernel_basis(M, shifts=shifts,
+            ....:                          degrees=[0, 3, 0], output_rows=True)
+            sage: K
+            [79 49 26  0  1  0]
+            [ 0  0  0  0  0  1]
+            [78 49 26  1  0  0]
+            sage: row_profile == row_profile_bis
+            True
+
+            sage: row_profile
+            ((1, 0, 0), (1, 1, 1), (1, 2, 2), (2, 0, 3), (0, 0, 4), (1, 3, 5))
+            sage: degrees = [max(rp[1] for rp in row_profile if rp[0] == j) 
+            ....:                             for j in range(E.nrows())]
+            sage: degrees
+            [0, 3, 0]
+            sage: A = E.krylov_matrix(M, shifts=shifts, degrees=degrees)
+            sage: A.left_kernel_matrix(basis="pivot")
+            [78 49 26  1  0  0]
+            [79 49 26  0  1  0]
+            [ 0  0  0  0  0  1]
+
+        If one (or more) of the degree bounds is too low, the output matrix is
+        likely to be incorrect. In the next example, the bounds `3` are large
+        enough (since the minimal polynomial of `M` has degree at most `3`).
+        However we see from the above computation that `1` is strictly smaller
+        than the actual degree (which is 3) for the second row of `E`, when
+        using the given shifts. As a result, we get a different output, with a
+        sum of degrees which is less than `r=3` and therefore only `5` rows in
+        the associated Krylov matrix (which should have `m+r=6` rows), and with
+        a matrix which is not left-equivalent to the correct basis `K` above::
+
+            sage: K2, row_profile2 = E.krylov_kernel_basis(M, shifts=shifts,
+            ....:                                         degrees=[3, 1, 3])
+            sage: K2
+            [ 1  0 96  1  0  0]
+            [ 3 28 56  0  1  0]
+            [47 64 69  0  0  1]
+            sage: 0 == K2 * E.krylov_matrix(M, shifts=shifts, degrees=[0, 3, 0])
+            False
+            sage: degrees = [max(rp[1] for rp in row_profile2 if rp[0] == j) 
+            ....:                             for j in range(E.nrows())]
+            sage: degrees
+            [0, 1, 1]
+            sage: E.krylov_matrix(M, shifts=shifts, degrees=degrees).nrows()
+            5
+
+        TESTS:
+
+        The method is currently only implemented over exact fields::
+
+            sage: E = matrix(RR, [[1.5, 1.2, 1.0], [5.6, 7.9, 2.3]])
+            sage: E.krylov_kernel_basis(E)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: computing kernels of Krylov matrices is currently only implemented over exact fields
+
+        The input `M` must be a matrix::
+
+            sage: R = GF(97)
+            sage: E = matrix(R, [[27, 49, 29], [50, 58, 0], [77, 10, 29]])
+            sage: E.krylov_kernel_basis(20)
+            Traceback (most recent call last):
+            ...
+            TypeError: M must be a matrix
+
+        The matrix `M` must be square and match `E.ncols()`::
+
+            sage: E.krylov_kernel_basis(matrix.zero(R, 3, 4))
+            Traceback (most recent call last):
+            ...
+            ValueError: M does not have correct dimensions
+            sage: E.krylov_kernel_basis(matrix.zero(R, 4, 3))
+            Traceback (most recent call last):
+            ...
+            ValueError: M does not have correct dimensions
+            sage: E.krylov_kernel_basis(matrix.zero(R, 4, 4))
+            Traceback (most recent call last):
+            ...
+            ValueError: M does not have correct dimensions
+            sage: E.krylov_kernel_basis(matrix.zero(R, 3, 3))
+            (
+            [ 0  0  0  1  0]
+            [ 0  0  0  0  1]
+            [96 96  1  0  0],
+            ((0, 0, 0), (1, 0, 1), (2, 0, 2), (0, 1, 3), (1, 1, 4))
+            )
+
+        Base ring coercion should be possible in both directions::
+
+            sage: R2.<z> = GF(97^2)
+            sage: M = matrix(R2, [[0, 45*z+67, 0], [0, 0, 20*z], [0, 0, 0]])
+            sage: E.krylov_kernel_basis(M)
+            (
+            [19*z + 21 46*z + 10         0 13*z + 24         0         1]
+            [60*z + 66 84*z + 73         0 15*z + 83         1         0]
+            [       96        96         1         0         0         0],
+            ((0, 0, 0), (1, 0, 1), (2, 0, 2), (0, 1, 3), (1, 1, 4), (0, 2, 6))
+            )
+            sage: M.krylov_kernel_basis(E)
+            (
+            [       86 50*z + 34         0        12         0         1]
+            [18*z + 59        68         0 29*z + 25         1         0]
+            [        0         0         1         0         0         0],
+            ((0, 0, 0), (1, 0, 1), (2, 0, 2), (0, 1, 3), (1, 1, 4), (0, 2, 6))
+            )
+
+        But not possible if the base ring has a different characteristic::
+
+            sage: M = matrix(GF(11), [[0, 1, 0], [0, 0, 1], [0, 0, 0]])
+            sage: E.krylov_kernel_basis(M)
+            Traceback (most recent call last):
+            ...
+            TypeError: no common canonical parent for objects with parents: 'Full MatrixSpace of 3 by 3 dense matrices over Finite Field of size 97' and 'Full MatrixSpace of 3 by 3 dense matrices over Finite Field of size 11'
+
+        If shifts is a list, it must have the correct number of elements::
+
+            sage: M = matrix(GF(97), [[0, 1, 0], [0, 0, 1], [0, 0, 0]])
+            sage: E.krylov_kernel_basis(M, shifts=[2, 3])
+            Traceback (most recent call last):
+            ...
+            TypeError: x must be a list of the right length
+
+        It must not contain any elements that cannot be converted to integers::
+
+            sage: E.krylov_kernel_basis(M, shifts=[2, 3, 4.5])
+            Traceback (most recent call last):
+            ...
+            TypeError: Attempt to coerce non-integral RealNumber to Integer
+
+        The same applies to degrees::
+
+            sage: E.krylov_kernel_basis(M, degrees=[2, 3])
+            Traceback (most recent call last):
+            ...
+            TypeError: x must be a list of the right length
+            sage: E.krylov_kernel_basis(M, degrees=[2, 3, 4.5])
+            Traceback (most recent call last):
+            ...
+            TypeError: Attempt to coerce non-integral RealNumber to Integer
+
+        The degree bounds must be non-negative::
+
+            sage: E.krylov_kernel_basis(M, degrees=[2, 3, -1])
+            Traceback (most recent call last):
+            ...
+            ValueError: degrees must not contain a negative bound
+
+        The algorithm must be valid::
+
+            sage: E = matrix(R, [[27, 49, 29], [50, 58, 0], [77, 10, 29]])
+            sage: E.krylov_kernel_basis(M, basis_algorithm="non-existent")
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm must be one of None, "naive" or "elimination"
+        """
+        from sage.combinat.permutation import Permutation
+        from sage.matrix.constructor import matrix
+        from sage.modules.free_module_element import vector
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+        E = self
+
+        # INPUT VALIDATION
+        if not (E.base_ring() in _Fields and E.base_ring().is_exact()):
+            raise NotImplementedError("computing kernels of Krylov matrices is currently only implemented over exact fields")
+
+        if not isinstance(M, Matrix):
+            raise TypeError("M must be a matrix")
+        if M.nrows() != E.ncols() or M.ncols() != E.ncols():
+            raise ValueError("M does not have correct dimensions")
+        if M.base_ring() != E.base_ring():
+            E, M = coercion_model.canonical_coercion(E, M)
+
+        if not (var is None or isinstance(var, str)):
+            generator = False
+            try:
+                generator = var.is_gen()
+            except AttributeError:
+                pass
+            if not generator:
+                raise TypeError('polynomial variable must be a string or polynomial ring generator, not {0}'.format(var))
+            elif var.base_ring() != E.base_ring():
+                raise TypeError('polynomial generator must be over the same ring as the matrix entries')
+
+        if shifts is None:
+            shifts = (ZZ**E.nrows()).zero()
+        elif isinstance(shifts, (FreeModuleElement, list, tuple)):
+            shifts = (ZZ**E.nrows())(shifts)
+        else:
+            raise ValueError(f"shifts must be an integer vector of length {E.nrows()}")
+
+        if degrees is None:
+            degrees = vector(ZZ, [E.ncols()] * E.nrows())
+        elif isinstance(degrees, (FreeModuleElement, list, tuple)):
+            degrees = (ZZ**E.nrows())(degrees)
+        else:
+            degrees = (ZZ**E.nrows())([degrees] * E.nrows())
+        if E.nrows() > 0 and min(degrees) < 0:
+            raise ValueError(f"degrees must not contain a negative bound")
+
+        m = E.nrows()
+        sigma = E.ncols()
+        base_ring = E.base_ring()
+
+        # calculate krylov basis and rank profiles
+        krylov_basis, row_profile = E.krylov_basis(M, shifts, degrees, algorithm=basis_algorithm)
+        col_profile = krylov_basis.pivots()
+
+        # method to convert c, d to actual position in Krylov matrix
+        phi = lambda row, deg : sum(min(max(shifts[row] - shifts[i] + deg + (i < row and shifts[i] <= shifts[row] + deg), 0), degrees[i] + 1) for i in range(m))
+
+        # deal with easy case: Krylov rank is zero
+        # -> polynomial kernel basis is the m x m identity
+        # -> constant kernel basis is the m x m identity column-permuted
+        #    according to shifts
+        if len(row_profile) == 0:
+            row_coords_coeff = E._krylov_row_coordinates(shifts, degrees, [(i, 0) for i in range(m)])
+            row_coords_krylov = tuple([(*x[:2], phi(*x[:2])) for x in row_coords_coeff])
+
+            if var is None:
+                kkbasis = matrix.identity(base_ring, m)
+                permutation = Permutation([x[2]+1 for x in row_coords_coeff])
+                kkbasis.permute_columns(permutation)
+
+            else:
+                poly_ring = PolynomialRing(base_ring, var)
+                kkbasis = matrix.identity(poly_ring, m)
+
+            if output_rows:
+                return kkbasis, row_coords_krylov
+            else:
+                return kkbasis
+
+        c, d, _ = zip(*(row for row in row_profile))
+
+        # degree_c = 0 or max d[k] + 1 such that c[k] = c
+        inv_c = [None]*m
+        degree_c = [0]*m
+        for k in range(len(row_profile)):
+            if d[k] >= degree_c[c[k]]:
+                degree_c[c[k]] = d[k] + 1
+                inv_c[c[k]] = k
+
+        T_absent_indices = [i for i in range(m) if inv_c[i] is None]
+        T_present_indices = [inv_c[i] for i in range(m) if inv_c[i] is not None]
+        D_absent = E.matrix_from_rows_and_columns(T_absent_indices, col_profile)
+        D_present = (krylov_basis.matrix_from_rows(T_present_indices)*M).matrix_from_columns(col_profile)
+        D_rows = []
+        idx_p = 0
+        idx_a = 0
+        for i in range(m):
+            if inv_c[i] is None:
+                D_rows.append(D_absent[idx_a])
+                idx_a += 1
+            else:
+                D_rows.append(D_present[idx_p])
+                idx_p += 1
+
+        C = krylov_basis.matrix_from_columns(col_profile)
+        D = matrix(D_rows)
+        relation = D*C.inverse()
+
+        rows = list(zip(c, d)) + list(enumerate(degree_c))
+        row_coords_coeff = E._krylov_row_coordinates(shifts, degrees, rows)
+        row_coords_krylov = tuple([(*x[:2], phi(*x[:2])) for x in row_coords_coeff])
+
+        if var is None:
+            kkbasis = (-relation).augment(matrix.identity(base_ring, m))
+            permutation = Permutation([x[2]+1 for x in row_coords_coeff])
+            kkbasis.permute_columns(permutation)
+
+        else:
+            # construct coefficient map
+            coeffs_map = [[{} for _ in range(m)] for _ in range(m)]
+            # add identity part of kernel basis
+            for i in range(m):
+                coeffs_map[i][i][degree_c[i]] = base_ring.one()
+            # add relation part of kernel basis
+            for col in range(relation.ncols()):
+                for row in range(m):
+                    coeffs_map[row][c[col]][d[col]] = coeffs_map[row][c[col]].get(d[col], base_ring.zero()) - relation[row, col]
+
+            # convert to matrix
+            # TODO slow for extension fields (2025-08-30), see Issue 40667
+            poly_ring = PolynomialRing(base_ring, var)
+            kkbasis = matrix(poly_ring, m, m, coeffs_map)
+
+        if output_rows:
+            return kkbasis, row_coords_krylov
+        else:
+            return kkbasis
 
     # a limited number of access-only properties are provided for matrices
     @property
@@ -19625,6 +21048,24 @@ def _matrix_power_symbolic(A, n):
         sage: B = A^n; B
         [  kronecker_delta(0, n) n*kronecker_delta(1, n)]
         [                      0   kronecker_delta(0, n)]
+
+    Check symbolic power of matrix with repeated eigenvalues (:issue:`40803`)::
+
+        sage: var('k n')
+        (k, n)
+        sage: A = matrix([[k,1,0,1],[1,k,1,0],[0,1,k,1],[1,0,1,k]])^n
+        sage: A
+        [1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n]
+        [          1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n]
+        [1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n]
+        [          1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n]
+        sage: B = matrix([[k,1,0,1],[1,k,1,0],[0,1,k,1],[1,0,1,k]], sparse=True)^n
+        sage: B
+        [1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n]
+        [          1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n]
+        [1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n]
+        [          1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n]
+        
     """
     from sage.rings.qqbar import AlgebraicNumber
     from sage.matrix.constructor import matrix
@@ -19647,13 +21088,13 @@ def _matrix_power_symbolic(A, n):
 
     # Where each Jordan block starts, and number of blocks
     block_start = [0] + J.subdivisions()[0]
-    num_blocks = len(block_start)
+    n_blocks = len(block_start)
 
     # Prepare matrix M to store `J^n`, computed by Jordan block
     M = matrix(SR, J.ncols())
     M.subdivide(J.subdivisions())
 
-    for k in range(num_blocks):
+    for k in range(n_blocks):
 
         # Jordan block Jk, its dimension nk, the eigenvalue m
         Jk = J.subdivision(k, k)
