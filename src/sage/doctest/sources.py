@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Classes for sources of doctests
 
