@@ -610,7 +610,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             sage: from sage.modular.modform_hecketriangle.hecke_triangle_groups import HeckeTriangleGroup
             sage: G = HeckeTriangleGroup(8)
             sage: z = AlgebraicField()(1+i/2)
-            sage: (A, w) = G.get_FD(z)
+            sage: A, w = G.get_FD(z)
             sage: A
             [-lam    1]
             [  -1    0]
@@ -619,7 +619,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
             sage: from sage.modular.modform_hecketriangle.space import ModularForms
             sage: z = (134.12 + 0.22*i).n()
-            sage: (A, w) = G.get_FD(z)
+            sage: A, w = G.get_FD(z)
             sage: A
             [-73*lam^3 + 74*lam       73*lam^2 - 1]
             [        -lam^2 + 1                lam]

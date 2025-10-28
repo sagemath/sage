@@ -888,7 +888,9 @@ class PieriFactors_type_C_affine(PieriFactors_affine_type):
         # The algorithm="delete" is a workaround when the set of
         # vertices is empty, in which case subgraph tries another
         # method which turns out to currently fail with Dynkin diagrams
-        return DiGraph(DynkinDiagram(w.parent().cartan_type())).subgraph(set(w.reduced_word()), algorithm='delete').connected_components_number()
+        D = DiGraph(DynkinDiagram(w.parent().cartan_type()))
+        return D.subgraph(set(w.reduced_word()),
+                          algorithm='delete').number_of_connected_components()
 
 
 class PieriFactors_type_B_affine(PieriFactors_affine_type):
@@ -997,7 +999,8 @@ class PieriFactors_type_B_affine(PieriFactors_affine_type):
             support_complement = set(ct.index_set()).difference(support).difference(set([0, 1]))
         else:
             support_complement = set(ct.index_set()).difference(support).difference(set([0]))
-        return DiGraph(DynkinDiagram(ct)).subgraph(support_complement, algorithm='delete').connected_components_number() - 1
+        D = DiGraph(DynkinDiagram(ct))
+        return D.subgraph(support_complement, algorithm='delete').number_of_connected_components() - 1
 
 
 class PieriFactors_type_D_affine(PieriFactors_affine_type):
@@ -1120,7 +1123,8 @@ class PieriFactors_type_D_affine(PieriFactors_affine_type):
         if n in support or n - 1 in support:
             support = support.union(set([n - 2])).difference(set([n - 1]))
         support_complement = set(range(1, n - 1)).difference(support)
-        return DiGraph(DynkinDiagram(ct)).subgraph(support_complement).connected_components_number() - 1
+        D = DiGraph(DynkinDiagram(ct))
+        return D.subgraph(support_complement).number_of_connected_components() - 1
 
 
 # Inserts those classes in CartanTypes

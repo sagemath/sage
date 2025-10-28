@@ -25,6 +25,8 @@ Function Fields: rational
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
+from typing import Literal
+
 from sage.arith.functions import lcm
 from sage.categories.function_fields import FunctionFields
 from sage.categories.homset import Hom
@@ -125,7 +127,7 @@ class RationalFunctionField(FunctionField):
     """
     Element = FunctionFieldElement_rational
 
-    def __init__(self, constant_field, names, category=None):
+    def __init__(self, constant_field, names, category=None) -> None:
         """
         Initialize.
 
@@ -191,7 +193,7 @@ class RationalFunctionField(FunctionField):
         from .constructor import FunctionField
         return FunctionField, (self._constant_field, self._names)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return hash of the function field.
 
@@ -205,7 +207,7 @@ class RationalFunctionField(FunctionField):
         """
         return self._hash
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of the function field.
 
@@ -218,7 +220,7 @@ class RationalFunctionField(FunctionField):
         return "Rational function field in %s over %s" % (
             self.variable_name(), self._constant_field)
 
-    def _element_constructor_(self, x):
+    def _element_constructor_(self, x) -> FunctionFieldElement_rational:
         r"""
         Coerce ``x`` into an element of the function field, possibly not canonically.
 
@@ -428,38 +430,6 @@ class RationalFunctionField(FunctionField):
         from sage.structure.factorization import Factorization
         return Factorization(w, unit=unit)
 
-    def extension(self, f, names=None):
-        """
-        Create an extension `L = K[y]/(f(y))` of the rational function field.
-
-        INPUT:
-
-        - ``f`` -- univariate polynomial over self
-
-        - ``names`` -- string or length-1 tuple
-
-        OUTPUT: a function field
-
-        EXAMPLES::
-
-            sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: K.extension(y^5 - x^3 - 3*x + x*y)                                    # needs sage.rings.function_field
-            Function field in y defined by y^5 + x*y - x^3 - 3*x
-
-        A nonintegral defining polynomial::
-
-            sage: K.<t> = FunctionField(QQ); R.<y> = K[]
-            sage: K.extension(y^3 + (1/t)*y + t^3/(t+1))                                # needs sage.rings.function_field
-            Function field in y defined by y^3 + 1/t*y + t^3/(t + 1)
-
-        The defining polynomial need not be monic or integral::
-
-            sage: K.extension(t*y^3 + (1/t)*y + t^3/(t+1))                              # needs sage.rings.function_field
-            Function field in y defined by t*y^3 + 1/t*y + t^3/(t + 1)
-        """
-        from . import constructor
-        return constructor.FunctionFieldExtension(f, names)
-
     @cached_method
     def polynomial_ring(self, var='x'):
         """
@@ -480,7 +450,7 @@ class RationalFunctionField(FunctionField):
         return self[var]
 
     @cached_method(key=lambda self, base, basis, map: map)
-    def free_module(self, base=None, basis=None, map=True):
+    def free_module(self, base=None, basis=None, map: bool = True):
         """
         Return a vector space `V` and isomorphisms from the field to `V` and
         from `V` to the field.
@@ -545,7 +515,7 @@ class RationalFunctionField(FunctionField):
         to_V = MapFunctionFieldToVectorSpace(self, V)
         return (V, from_V, to_V)
 
-    def random_element(self, *args, **kwds):
+    def random_element(self, *args, **kwds) -> FunctionFieldElement_rational:
         """
         Create a random element of the rational function field.
 
@@ -559,7 +529,7 @@ class RationalFunctionField(FunctionField):
         """
         return self(self._field.random_element(*args, **kwds))
 
-    def degree(self, base=None):
+    def degree(self, base=None) -> Integer:
         """
         Return the degree over the base field of the rational function
         field.  Since the base field is the rational function field itself, the
@@ -603,7 +573,7 @@ class RationalFunctionField(FunctionField):
             raise IndexError("Only one generator.")
         return self._gen
 
-    def ngens(self):
+    def ngens(self) -> Literal[1]:
         """
         Return the number of generators, which is 1.
 
@@ -770,7 +740,7 @@ class RationalFunctionField(FunctionField):
         """
         return self.divisor_group().zero()
 
-    def genus(self):
+    def genus(self) -> Integer:
         """
         Return the genus of the function field, namely 0.
 

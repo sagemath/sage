@@ -323,7 +323,7 @@ cdef canonical_generator_data *allocate_cgd(int max_depth, int degree) noexcept:
 
     cdef int i
     cgd.allocd_levels = max_depth
-    for i from 0 <= i < max_depth:
+    for i in range(max_depth):
         cgd.agcl_work_spaces[i]    = NULL
         cgd.dc_work_spaces[i]      = NULL
         cgd.aut_gp_stack[i]        = NULL
@@ -347,7 +347,7 @@ cdef void deallocate_cgd(canonical_generator_data *cgd) noexcept:
     if cgd is NULL:
         return
     cdef int i
-    for i from 0 <= i < cgd.allocd_levels:
+    for i in range(cgd.allocd_levels):
         if cgd.agcl_work_spaces[i] is not NULL:
             deallocate_agcl_work_space(cgd.agcl_work_spaces[i])
         if cgd.ps_stack[i] is not NULL:
