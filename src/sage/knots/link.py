@@ -1522,7 +1522,7 @@ class Link(SageObject):
             elif i[1] == -1:
                 cross_number[i[0]] = -i[2]
         edges_graph = DiGraph(edges)
-        d = edges_graph.all_simple_cycles()
+        d = edges_graph.all_simple_cycles(algorithm="A")
         code = []
         for i in d:
             l = [cross_number[j] for j in i]
@@ -1921,7 +1921,7 @@ class Link(SageObject):
         for c in pd:
             G.add_edge(c[0], c[2])
             G.add_edge(c[3], c[1])
-        return G.connected_components_number()
+        return G.number_of_connected_components()
 
     def is_knot(self) -> bool:
         r"""

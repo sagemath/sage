@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 r"""
 Reporting doctest results
 
@@ -41,6 +40,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import os
 import re
 import sys
 from signal import SIGABRT, SIGFPE, SIGILL, SIGINT, SIGSEGV, SIGTERM, Signals
@@ -195,7 +195,7 @@ class DocTestReporter(SageObject):
             sage: print(DTR.report_head(FDS, "Failed by self-sabotage"))
             ... --long .../sage/doctest/reporting.py  # Failed by self-sabotage
         """
-        cmd = "sage-runtests" if "sage-runtests" in argv[0] else "python3 -m sage.doctest"
+        cmd = os.path.relpath(argv[0]).replace("-runtests", " -t") if "sage-runtests" in argv[0] else "python3 -m sage.doctest"
         if self.controller.options.long:
             cmd += " --long"
 
@@ -254,6 +254,14 @@ class DocTestReporter(SageObject):
             Tests run before process (pid=1234) timed out:
             Output so far...
             **********************************************************************
+
+        TESTS:
+
+        Test GitHub output format (used for GitHub Actions annotations)::
+
+            sage: DTR.controller.options.format = 'github'
+            sage: DTR._log_failure(FDS, "Timed out", "process (pid=1234) timed out", "Output so far...")
+            ::error title=Timed out,file=.../sage/doctest/reporting.py::Output so far...
         """
         log = self.controller.log
         format = self.controller.options.format

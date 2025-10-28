@@ -99,16 +99,19 @@ endif
 py.install_sources(
   '__init__.py',
   'all.py',
-  'all__sagemath_coxeter3.py',
-  'all__sagemath_meataxe.py',
-  'all__sagemath_objects.py',
+  'braiding.pyx',
   'ecl.pxd',
+  'ecl.pyx',
   'eclsig.h',
   'gmpxx.pxd',
+  'homfly.pyx',
   'iml.pxd',
+  'libecm.pyx',
   'm4ri.pxd',
   'm4rie.pxd',
   'meataxe.pxd',
+  'meataxe.pyx',
+  'sirocco.pyx',
   subdir: 'sage/libs',
 )
 

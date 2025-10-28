@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Categories
 
@@ -745,7 +744,7 @@ class Category(UniqueRepresentation, SageObject):
             return False
         return any(isinstance(cat, cls) for cat in c)
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return whether this category is abelian.
 
