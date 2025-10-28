@@ -6,7 +6,7 @@ import subprocess
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-import toml as tomllib
+import tomllib
 from grayskull.config import Configuration
 from grayskull.strategy.py_base import merge_setup_toml_metadata
 from grayskull.strategy.py_toml import get_all_toml_info
@@ -147,7 +147,8 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
 
 def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[str]:
     grayskull_config = Configuration("sagemath")
-    pyproject = tomllib.load(pyproject_toml)
+    with open(pyproject_toml, "rb") as f:
+        pyproject = tomllib.load(f)
     pyproject_metadata = merge_setup_toml_metadata(
         {}, get_all_toml_info(pyproject_toml)
     )
@@ -322,6 +323,5 @@ def get_optional_dependencies(pyproject: dict) -> list[str]:
         optional_dependencies.extend(dependencies)
     # print(f"Optional dependencies: {optional_dependencies}")  # Uncommented for debugging
     return optional_dependencies
-
 
 update_conda(options.sourcedir, options.systems)
