@@ -10437,7 +10437,7 @@ cdef class Expression(Expression_abc):
             sage: abs(SR(z).rectform() - (a + b*I))  # abs tol 1e-16
             0.0
         """
-        return self.maxima_methods().rectform()
+        return self._maxima_().rectform()._sage_()
 
     def unhold(self, exclude=None):
         """
