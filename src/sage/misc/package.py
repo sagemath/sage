@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Listing Sage packages
 
@@ -39,18 +38,17 @@ Functions
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from typing import NamedTuple, Optional, Union
-
-import sage.env
-
 import json
 import os
 import subprocess
 import sys
 from pathlib import Path
-from urllib.request import urlopen
-from urllib.error import URLError
 from ssl import create_default_context as default_context
+from typing import NamedTuple, Optional
+from urllib.error import URLError
+from urllib.request import urlopen
+
+import sage.env
 
 DEFAULT_PYPI = 'https://pypi.org/pypi'
 
@@ -274,13 +272,6 @@ def list_packages(*pkg_types: str, pkg_sources: list[str] = ['normal', 'pip', 's
          'babel',
          ...
          'zipp']
-        sage: sage_conf_info = L['sage_conf']
-        sage: sage_conf_info.type
-        'standard'
-        sage: sage_conf_info.is_installed()
-        True
-        sage: sage_conf_info.source
-        'script'
 
         sage: # optional - sage_spkg internet
         sage: L = list_packages(pkg_sources=['pip'], local=True)

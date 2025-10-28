@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.graphs sage.combinat
 r"""
 Crystals
@@ -171,7 +170,7 @@ class Crystals(Category_singleton):
 
             index_set = self._cartan_type.index_set()
             G = self.domain().digraph(index_set=index_set)
-            if self.codomain().cardinality() != G.num_verts():
+            if self.codomain().cardinality() != G.n_vertices():
                 return False
             H = self.codomain().digraph(index_set=index_set)
             return G.is_isomorphic(H, edge_labels=True)
