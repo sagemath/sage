@@ -834,7 +834,7 @@ class CyclicPermutationGroup(PermutationGroup_unique):
         """
         return "Cyclic group of order %s as a permutation group" % self.order()
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         Return ``True`` if this group is commutative.
 
@@ -846,7 +846,7 @@ class CyclicPermutationGroup(PermutationGroup_unique):
         """
         return True
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return ``True`` if this group is abelian.
 
@@ -1042,7 +1042,7 @@ class DiCyclicGroup(PermutationGroup_unique):
         """
         return "Dicyclic group of order %s as a permutation group" % self.order()
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         r"""
         Return ``True`` if this group is commutative.
 
@@ -1054,7 +1054,7 @@ class DiCyclicGroup(PermutationGroup_unique):
         """
         return False
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         r"""
         Return ``True`` if this group is abelian.
 
@@ -2285,7 +2285,7 @@ class PrimitiveGroup(PermutationGroup_unique):
         sage: PrimitiveGroup(2^12,1)
         Traceback (most recent call last):
         ...
-        GAPError: Error, Primitive groups of degree 4096 are not known!
+        GAPError: Error...
     """
 
     def __init__(self, d, n):
@@ -2375,10 +2375,10 @@ def PrimitiveGroups(d=None):
 
     The database is currently limited::
 
-         sage: PrimitiveGroups(2^12).cardinality()
+         sage: PrimitiveGroups(2^13).cardinality()
          Traceback (most recent call last):
          ...
-         GAPError: Error, Primitive groups of degree 4096 are not known!
+         GAPError: Error...
 
     .. TODO::
 
@@ -2606,10 +2606,10 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
 
             sage: PrimitiveGroups(2500).cardinality()
             34
-            sage: PrimitiveGroups(2^12).cardinality()
+            sage: PrimitiveGroups(2^13).cardinality()
             Traceback (most recent call last):
             ...
-            GAPError: Error, Primitive groups of degree 4096 are not known!
+            GAPError: Error...
         """
         if self._degree <= 1:
             # gap.NrPrimitiveGroups(0) fails, so Sage needs to handle this
@@ -3517,13 +3517,15 @@ class SmallPermutationGroup(PermutationGroup_generic):
         Group of order 12 and GAP Id 4 as a permutation group
         sage: G.gens()
         ((4,5), (1,2), (3,4,5))
-        sage: G.character_table()  # needs sage.rings.number_field
+        sage: Gct = G.character_table(); Gct  # random, needs sage.rings.number_field
         [ 1  1  1  1  1  1]
         [ 1 -1  1 -1  1 -1]
         [ 1 -1  1  1 -1  1]
         [ 1  1  1 -1 -1 -1]
         [ 2  0 -1 -2  0  1]
         [ 2  0 -1  2  0 -1]
+        sage: sorted(Gct, key=str)  # needs sage.rings.number_field
+        [(1, -1, 1, -1, 1, -1), (1, -1, 1, 1, -1, 1), (1, 1, 1, -1, -1, -1), (1, 1, 1, 1, 1, 1), (2, 0, -1, -2, 0, 1), (2, 0, -1, 2, 0, -1)]
         sage: def numgps(n): return ZZ(libgap.NumberSmallGroups(n))
         sage: # verify at most five n and k, randomly, to save time
         sage: from random import sample

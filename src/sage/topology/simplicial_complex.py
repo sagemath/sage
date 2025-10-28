@@ -2198,7 +2198,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 # nonzero via a dictionary.
                 matrix_data = {}
                 col = 0
-                if len(old) and len(current):
+                if old and current:
                     for simplex in current:
                         for i in range(n + 1):
                             face_i = simplex.face(i)

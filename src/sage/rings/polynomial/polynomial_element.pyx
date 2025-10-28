@@ -10024,8 +10024,6 @@ cdef class Polynomial(CommutativePolynomial):
         t1 = t1 / c
         return t1, t0
 
-    rational_reconstruct = deprecated_function_alias(12696, rational_reconstruction)
-
     def variables(self):
         """
         Return the tuple of variables occurring in this polynomial.

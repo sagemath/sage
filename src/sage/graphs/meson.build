@@ -74,6 +74,7 @@ py.install_sources(
   'matchpoly.pyx',
   'mcqd.pxd',
   'mcqd.pyx',
+  'morphisms.py',
   'orientations.py',
   'partial_cube.py',
   'path_enumeration.pyx',
@@ -90,6 +91,7 @@ py.install_sources(
   'weakly_chordal.pyx',
   subdir: 'sage/graphs',
 )
+
 
 extension_data = {
   'asteroidal_triples' : files('asteroidal_triples.pyx'),
@@ -178,3 +180,4 @@ py.extension_module(
 subdir('base')
 subdir('generators')
 subdir('graph_decompositions')
+subdir('tests')

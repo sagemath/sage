@@ -776,7 +776,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
     Here is an example of its use::
 
         sage: QQqt = QQ['q','t'].fraction_field()
-        sage: (q,t) = QQqt.gens()
+        sage: q, t = QQqt.gens()
         sage: st = SFA_st(SymmetricFunctions(QQqt),t)
         sage: st
         Symmetric Functions over Fraction Field of Multivariate Polynomial
@@ -1253,7 +1253,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             q^2*s[1, 1, 1, 1] + (q^2*t+q*t+q)*s[2, 1, 1] + (q^2*t^2+1)*s[2, 2] + (q*t^2+q*t+t)*s[3, 1] + t^2*s[4]
 
             sage: Sym = SymmetricFunctions(QQ['z','q'].fraction_field())
-            sage: (z,q) = Sym.base_ring().gens()
+            sage: z, q = Sym.base_ring().gens()
             sage: Hzq = Sym.macdonald(q=z,t=q).H()
             sage: H1z = Sym.macdonald(q=1,t=z).H()
             sage: s = Sym.schur()

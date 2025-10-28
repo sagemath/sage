@@ -797,7 +797,7 @@ class GraphGenerators:
         ::
 
             sage: for g in graphs():
-            ....:    if g.num_verts() > 3: break
+            ....:    if g.n_vertices() > 3: break
             ....:    print(g)
             Graph on 0 vertices
             Graph on 1 vertex
@@ -845,11 +845,11 @@ class GraphGenerators:
                     return degree_sequence == sorted(x.degree())
             else:
                 def property(x):
-                    D = sorted(x.degree() + [0] * (vertices - x.num_verts()))
+                    D = sorted(x.degree() + [0] * (vertices - x.n_vertices()))
                     return all(degree_sequence[i] >= d for i, d in enumerate(D))
 
                 def extra_property(x):
-                    if x.num_verts() != vertices:
+                    if x.n_vertices() != vertices:
                         return False
                     return degree_sequence == sorted(x.degree())
         elif size is not None:
