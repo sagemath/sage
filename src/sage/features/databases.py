@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of various databases
 """
@@ -180,8 +179,8 @@ class DatabaseKnotInfo(PythonModule):
     :ref:`package providing the KnotInfo and LinkInfo databases <spkg_database_knotinfo>`.
 
     The homes of these databases are the
-    web-pages `KnotInfo <https://knotinfo.math.indiana.edu/>`__ and
-    `LinkInfo <https://linkinfo.sitehost.iu.edu>`__.
+    web-pages `KnotInfo <https://knotinfo.org/>`__ and
+    `LinkInfo <https://link-info-repo.onrender.com/>`__.
 
     EXAMPLES::
 

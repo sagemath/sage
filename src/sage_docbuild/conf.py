@@ -368,6 +368,7 @@ multidocs_is_master = True
 
 # https://sphinx-copybutton.readthedocs.io/en/latest/use.html
 copybutton_prompt_text = r"sage: |[.][.][.][.]: |>>> |[.][.][.] |\$ "
+copybutton_line_continuation_character = "\\"
 copybutton_prompt_is_regexp = True
 copybutton_exclude = '.linenos, .c1'  # exclude single comments (in particular, # optional!)
 copybutton_only_copy_prompt_lines = True
@@ -1078,13 +1079,14 @@ def setup(app):
     app.connect('autodoc-process-docstring', process_docstring_module_title)
     app.connect('autodoc-process-docstring', process_dollars)
     app.connect('autodoc-process-docstring', process_inherited)
+    app.connect('autodoc-process-docstring', process_docstring_aliases)
     if os.environ.get('SAGE_SKIP_TESTS_BLOCKS', False):
         app.connect('autodoc-process-docstring', skip_TESTS_block)
     app.connect('autodoc-skip-member', skip_member)
     app.add_transform(SagemathTransform)
     if SAGE_LIVE_DOC == 'yes' or SAGE_PREPARSED_DOC == 'yes':
         app.add_transform(SagecodeTransform)
-    if not JupyterSphinx().is_present():
+    else:
         app.add_directive("jupyter-execute", Ignore)
         app.add_directive("jupyter-kernel", Ignore)
         app.add_directive("jupyter-input", Ignore)

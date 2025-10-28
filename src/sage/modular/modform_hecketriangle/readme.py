@@ -176,7 +176,7 @@ Hecke triangle groups and elements:
       sage: z = AlgebraicField()(4 + 1/7*i)
       sage: G.in_FD(z)
       False
-      sage: (A, w) = G.get_FD(z)
+      sage: A, w = G.get_FD(z)
       sage: A
       T^2*S*T^(-1)*S
       sage: w

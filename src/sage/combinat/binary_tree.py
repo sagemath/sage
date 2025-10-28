@@ -38,11 +38,10 @@ from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import deprecated_function_alias
 
 
 class BinaryTree(AbstractClonableTree, ClonableArray,
-        metaclass=InheritComparisonClasscallMetaclass):
+                 metaclass=InheritComparisonClasscallMetaclass):
     """
     Binary trees.
 
@@ -823,12 +822,23 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         r"""
         Return a labelled version of ``self``.
 
-        The canonical labelling of a binary tree is a certain labelling of the
-        nodes (not the leaves) of the tree.
-        The actual canonical labelling is currently unspecified. However, it
-        is guaranteed to have labels in `1...n` where `n` is the number of
-        nodes of the tree. Moreover, two (unlabelled) trees compare as equal if
-        and only if their canonical labelled trees compare as equal.
+        The actual canonical labelling is currently unspecified. However,
+        currently we use the labelling of the internal nodes (not the leaves)
+        of the tree given by the in-order, i.e., the order defined recursively
+        using the rule that, for each node `u`, its descendants in the left
+        (resp. right) subtree comes before (resp. after) `u`.
+
+        Under any future changes, we guarantee that the labels by default is
+        from `1` to `n`, with `n` the number of nodes of the tree. The smallest
+        labeling is adjustable using the parameter ``shift``. Moreover, we
+        guarantee that two (unlabelled) trees compare as equal if and only if
+        their canonical labelled trees compare as equal.
+
+        The runtime of this method is linear in the number of nodes.
+
+        INPUT:
+
+        - ``shift`` -- integer (optional); the smallest label in the tree labelling
 
         EXAMPLES::
 
@@ -839,14 +849,17 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             sage: BinaryTree([[[], [[], None]], [[], []]]).canonical_labelling()
             5[2[1[., .], 4[3[., .], .]], 7[6[., .], 8[., .]]]
         """
-        LTR = self.parent().labelled_trees()
-        if self:
-            sz0 = self[0].node_number()
-            return LTR([self[0].canonical_labelling(shift),
-                        self[1].canonical_labelling(shift + 1 + sz0)],
-                       label=shift + sz0)
-        else:
-            return LTR(None)
+        def aux(tree, LTR, curlabel):
+            if not tree:
+                return LTR(None)
+            ltree = aux(tree[0], LTR, curlabel)
+            mylabel = curlabel[0]
+            curlabel[0] += 1
+            rtree = aux(tree[1], LTR, curlabel)
+            newtree = LTR([ltree, rtree], label=mylabel)
+            return newtree
+
+        return aux(self, self.parent().labelled_trees(), [shift])
 
     def show(self, with_leaves=False):
         """
@@ -3271,8 +3284,6 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             return B([self.under(bt[0]), bt[1]], lab)
         else:
             return B([self.under(bt[0]), bt[1]])
-
-    _backslash_ = deprecated_function_alias(36394, under)
 
     def under_decomposition(self):
         r"""

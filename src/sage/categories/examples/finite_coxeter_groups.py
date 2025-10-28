@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.groups
 r"""
 Examples of finite Coxeter groups
@@ -129,7 +128,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
 
         (also tested by :meth:`test_an_element` :meth:`test_some_elements`)
         """
-        from sage.structure.all import parent
+        from sage.structure.element import parent
         return parent(x) is self
 
     @cached_method

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 from sage.misc.lazy_import import lazy_import
 
 from sage.repl.preparse import preparse, implicit_multiplication

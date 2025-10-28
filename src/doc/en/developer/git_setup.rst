@@ -42,15 +42,15 @@ Configuring Git
 
 Assuming your name ``alice`` and email address ``alice@wonderland.com``,
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
-    [alice@localhost ~]$ git config --global user.name "Alice Adventure"
-    [alice@localhost ~]$ git config --global user.email alice@wonderland.com
+    $ git config --global user.name "Alice Adventure"
+    $ git config --global user.email alice@wonderland.com
 
 This will write the settings into your Git configuration file
 ``~/.gitconfig`` with your name and email:
 
-.. CODE-BLOCK:: text
+.. code-block:: text
 
     [user]
         name = Alice Adventure

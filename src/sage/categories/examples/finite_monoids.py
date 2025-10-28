@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Examples of finite monoids
 """
@@ -62,6 +61,8 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
         running ._test_one() . . . pass
         running ._test_pickling() . . . pass
         running ._test_prod() . . . pass
+        running ._test_random() . . . pass
+        running ._test_rank() . . . pass
         running ._test_some_elements() . . . pass
     """
 

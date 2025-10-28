@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 from sage.structure.sage_object cimport SageObject
 from sage.structure.parent cimport Parent
 from sage.misc.inherit_comparison cimport InheritComparisonMetaclass
@@ -151,7 +150,6 @@ cdef bin_op_exception(op, x, y)
 cdef class Element(SageObject):
     cdef Parent _parent
     cpdef _richcmp_(left, right, int op)
-    cpdef int _cmp_(left, right) except -2
     cpdef base_extend(self, R)
 
     cdef getattr_from_category(self, name)

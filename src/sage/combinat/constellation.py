@@ -19,7 +19,7 @@ EXAMPLES::
     g2 (1,3,2)
     sage: C = Constellations(3,4); C
     Connected constellations of length 3 and degree 4 on {1, 2, 3, 4}
-    sage: C.cardinality()  # long time
+    sage: C.cardinality()
     426
 
     sage: C = Constellations(3, 4, domain=('a', 'b', 'c', 'd'))
@@ -58,10 +58,12 @@ from sage.structure.richcmp import (op_NE, op_EQ, richcmp_not_equal,
                                     rich_to_bool)
 
 from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.combinat.partition import Partition
 from sage.misc.misc_c import prod
 from sage.misc.lazy_import import lazy_import
 from sage.categories.groups import Groups
+from sage.functions.other import factorial
 
 lazy_import('sage.graphs.graph', 'Graph')
 lazy_import('sage.graphs.digraph', 'DiGraph')
@@ -883,9 +885,9 @@ class Constellation_class(Element):
             g1 (0)(1,4)(2)(3)
             g2 (0,1,3,2,4)
             sage: G = c.braid_group_orbit()
-            sage: G.num_verts()
+            sage: G.n_vertices()
             4
-            sage: G.num_edges()
+            sage: G.n_edges()
             12
         """
         G = DiGraph(multiedges=True, loops=True)
@@ -925,7 +927,11 @@ class Constellations_ld(UniqueRepresentation, Parent):
         """
         TESTS::
 
-            sage: TestSuite(Constellations(length=6,degree=4)).run(skip='_test_cardinality')
+            sage: TestSuite(Constellations(length=6, degree=4)).run()
+
+            sage: TestSuite(Constellations(2, 3, connected=False)).run()
+
+            sage: TestSuite(Constellations(3, 4, domain='abcd')).run()
         """
         from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
         Parent.__init__(self, category=FiniteEnumeratedSets())
@@ -1022,17 +1028,6 @@ class Constellations_ld(UniqueRepresentation, Parent):
             Connected constellations of length 3 and degree 3 on {1, 2, 3}
             sage: len([v for v in const])
             26
-
-        One can check the first few terms of sequence :oeis:`220754`::
-
-            sage: Constellations(4,1).cardinality()
-            1
-            sage: Constellations(4,2).cardinality()
-            7
-            sage: Constellations(4,3).cardinality()
-            194
-            sage: Constellations(4,4).cardinality()  # long time
-            12858
         """
         from itertools import product
 
@@ -1047,6 +1042,37 @@ class Constellations_ld(UniqueRepresentation, Parent):
                 continue
             yield self(list(p) + [None], check=False)
 
+    def cardinality(self):
+        r"""
+        Return the cardinality of ``self``.
+
+        EXAMPLES:
+
+        One can check the first few terms of sequence :oeis:`A220754`::
+
+            sage: [Constellations(4, d).cardinality() for d in range(1, 6)]
+            [1, 7, 194, 12858, 1647384]
+
+            sage: [Constellations(3, d, connected=False).cardinality() for d in range(1, 6)]
+            [1, 4, 36, 576, 14400]
+        """
+        k = self._length
+        if not k:
+            return ZZ.one()
+
+        if not self._connected:
+            return factorial(self._degree) ** (k-1)
+
+        # recurrence from :oeis:`A220754`
+        a = []
+        for n in range(self._degree):
+            n = ZZ(n)
+            a.append(factorial(n+1) ** (k-1)
+                     - (factorial(n)
+                        * ZZ.sum(a[i] * factorial(n-i) ** (k-2) // factorial(i)
+                                 for i in range(n))))
+        return a[-1]
+
     def random_element(self, mutable=False):
         r"""
         Return a random element.
@@ -1056,7 +1082,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: const = Constellations(3,3)
+            sage: const = Constellations(3, 3)
             sage: const.random_element()
             Constellation of length 3 and degree 3
             ...
@@ -1069,15 +1095,17 @@ class Constellations_ld(UniqueRepresentation, Parent):
         from sage.groups.perm_gps.permgroup import PermutationGroup
 
         l = self._length
-        d = self._degree
         Sd = self._sym
 
-        g = [Sd.random_element() for _ in range(l - 1)]
-        G = PermutationGroup(g)
-        while not G.degree() == d or (self._connected and
-                                      not G.is_transitive()):
+        if self._connected:
+            d = self._degree
+            while True:
+                g = [Sd.random_element() for _ in range(l - 1)]
+                G = PermutationGroup(g)
+                if G.degree() == d and G.is_transitive():
+                    break
+        else:
             g = [Sd.random_element() for _ in range(l - 1)]
-            G = PermutationGroup(g)
 
         return self([sigma.domain() for sigma in g] + [None], mutable=mutable)
 
