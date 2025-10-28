@@ -110,8 +110,16 @@ class Parameters():
                 i += 1
         if add_one:
             bottom.append(QQ(1))
-        self.top = top
-        self.bottom = bottom
+        else:
+            i = bottom.index(QQ(1))
+            bottom.append(QQ(1))
+            if i < 0:
+                top.append(QQ(1))
+                top.sort()
+            else:
+                del bottom[i]
+        self.top = tuple(top)
+        self.bottom = tuple(bottom)
         if len(top) == 0 and len(bottom) == 0:
             self.d = 1
             self.bound = 1
@@ -132,6 +140,9 @@ class Parameters():
             ([1/4, 1/3, 1/2], [2/5, 3/5, 1])
         """
         return "(%s, %s)" % (self.top, self.bottom)
+
+    def __hash__(self):
+        return hash((self.top, self.bottom))
 
     def __eq__(self, other):
         return (isinstance(other, Parameters)
@@ -232,6 +243,28 @@ class Parameters():
         """
         return any(a - b in ZZ and a < b for a in self.top for b in self.bottom)
 
+    def dwork_image(self, p):
+        try:
+            top = [(a + (-a) % p) / p for a in self.top]
+            bottom = [(b + (-b) % p) / p for b in self.bottom]
+        except ZeroDivisionError:
+            raise ValueError("denominators of parameters are not coprime to p")
+        return Parameters(top, bottom, add_one=False)
+
+    def decimal_part(self):
+        top = [1 + a - ceil(a) for a in self.top]
+        bottom = [1 + b - ceil(b) for b in self.bottom]
+        return Parameters(top, bottom, add_one=False)
+
+    def frobenius_order(self, p):
+        param = self.decimal_part()
+        iter = param.dwork_image(p)
+        i = 1
+        while param != iter:
+            iter = iter.dwork_image(p)
+            i += 1
+        return i
+
 
 # Hypergeometric functions
 ##########################
@@ -253,6 +286,15 @@ class HypergeometricAlgebraic(Element):
             self._parameters = arg1
         else:
             self._parameters = Parameters(arg1, arg2)
+
+    def __hash__(self):
+        return hash((self.base_ring(), self._parameters, self._scalar))
+
+    def __eq__(self, other):
+        return (isinstance(other, HypergeometricAlgebraic)
+            and self.base_ring() is other.base_ring()
+            and self._parameters == other._parameters
+            and self._scalar == other._scalar)
 
     def _repr_(self):
         if self._parameters is None:
@@ -299,10 +341,10 @@ class HypergeometricAlgebraic(Element):
         return self.parent().base_ring()
 
     def top(self):
-        return tuple(self._parameters.top)
+        return self._parameters.top
 
     def bottom(self):
-        return tuple(self._parameters.bottom[:-1])
+        return self._parameters.bottom[:-1]
 
     def scalar(self):
         return self._scalar
@@ -537,6 +579,61 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
 
         return pairs
 
+    def annihilating_ore_polynomial(self, var='Frob'):
+        # We remove the scalar
+        self = self.parent()(self._parameters)
+
+        K = self.base_ring()
+        zero = K.zero()
+        S = self.parent().polynomial_ring()
+        Frob = S.frobenius_endomorphism()
+        Ore = OrePolynomialRing(S, Frob, names=var)
+
+        p = self._p
+        order = self._parameters.frobenius_order(p)
+
+        columns = {self: None}
+        rows = [{self: K.one()}]
+        # If row is the i-th item of rows, we have:
+        #   self = sum_g row[g] * g**(p**i)
+        q = 1
+        while True:
+            row = {}
+            previous_row = rows[-1]
+            for _ in range(order):
+                row = {}
+                for g, P in previous_row.items():
+                    for Q, h in g.dwork_relation():
+                        # here g = sum(Q * h^p)
+                        if h in row:
+                            row[h] += P * Q**q
+                        else:
+                            row[h] = P * Q**q
+                previous_row = row
+                q *= p  # q = p**i
+            for h in row:
+                if h not in columns:
+                    columns[h] = None
+            rows.append(row)
+
+            i = len(rows)
+            Mrows = []
+            Mqo = 1
+            for j in range(i-1, -1, -1):
+                Mrow = []
+                for col in columns:
+                    Mrow.append(rows[j].get(col, zero) ** Mqo)
+                Mrows.append(Mrow)
+                Mqo *= p ** order
+            M = matrix(Mrows)
+
+            ker = M.minimal_kernel_basis()
+            if ker.nrows() > 0:
+                cs = ker.row(0).list()
+                coeffs = order * len(cs) * [S.zero()]
+                for i in range(len(cs)):
+                    coeffs[order*i] = cs[i]
+                return Ore(coeffs)
 
 # Parent
 ########
