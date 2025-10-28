@@ -92,7 +92,8 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
     EXAMPLES:
 
     This class should not be instantiated directly,
-    but through its subclass MaximaLib (which is a singleton)::
+    but should be used through its subclass MaximaLib (which is a singleton), or through
+    the Pexpect interface Maxima.
 
         sage: from sage.interfaces.maxima_abstract import MaximaAbstract
         sage: from sage.interfaces.maxima_lib import maxima

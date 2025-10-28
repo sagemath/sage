@@ -2265,8 +2265,8 @@ def dummy_integrate(*args):
 
 def dummy_laplace(*args):
     """
-    This function is called to create formal wrappers of laplace transforms
-    that Maxima can't compute:
+    This function is called to create formal wrappers of Laplace transforms
+    that Maxima cannot compute:
 
     EXAMPLES::
 
@@ -2508,7 +2508,7 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
     maxima.set('_tmp_', x)
 
     # This is inefficient since it so rarely is needed:
-    #r = maxima._eval_line('listofvars(_tmp_);')[1:-1]
+    # r = maxima._eval_line('listofvars(_tmp_);')[1:-1]
 
     s = maxima._eval_line('_tmp_;')
 
@@ -2520,10 +2520,10 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
     # there is a potential very subtle bug if 'foo is in a string
     # literal -- but string literals should *never* ever be part of a
     # symbolic expression.
-    s = s.replace("'","")
+    s = s.replace("'", "")
 
     delayed_functions = maxima_qp.findall(s)
-    if len(delayed_functions):
+    if delayed_functions:
         for X in delayed_functions:
             if X == '?%at':  # we will replace Maxima's "at" with symbolic evaluation, not a SymbolicFunction
                 pass
@@ -2548,8 +2548,8 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
     s = s.replace("%","")
 
     s = s.replace("#","!=")  # a lot of this code should be refactored somewhere...
-    #we apply the square-bracket replacing patterns repeatedly
-    #to ensure that nested brackets get handled (from inside to out)
+    # we apply the square-bracket replacing patterns repeatedly
+    # to ensure that nested brackets get handled (from inside to out)
     while True:
         olds = s
         s = polylog_ex.sub('polylog(\\1,', s)

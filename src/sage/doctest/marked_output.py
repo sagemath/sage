@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Helper for attaching metadata to doctest output.
 """

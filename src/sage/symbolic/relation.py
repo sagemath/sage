@@ -1418,7 +1418,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         return any(isinstance(a, GenericDeclaration) and a.has(v) and
                    a._assumption in ['even', 'odd', 'integer', 'integervalued']
                    for a in alist)
-    if len(f.variables()) and all(has_integer_assumption(var) for var in f.variables()):
+    if f.variables() and all(has_integer_assumption(var) for var in f.variables()):
         return f.solve_diophantine(x, solution_dict=solution_dict)
 
     if algorithm == 'sympy':

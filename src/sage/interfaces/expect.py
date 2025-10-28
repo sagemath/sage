@@ -13,7 +13,8 @@ AUTHORS:
 - William Stein (2006-03-01): got rid of infinite loop on startup if
   client system missing
 
-- Felix Lawrence (2009-08-21): edited ._sage_() to support lists and float exponents in foreign notation.
+- Felix Lawrence (2009-08-21): edited ._sage_() to support
+  lists and float exponents in foreign notation.
 
 - Simon King (2010-09-25): Expect._local_tmpfile() depends on
   Expect.pid() and is cached; Expect.quit() clears that cache,
@@ -1471,27 +1472,6 @@ class FunctionElement(InterfaceFunctionElement):
     Expect function element.
     """
     pass
-
-
-def is_ExpectElement(x):
-    """
-    Return ``True`` if ``x`` is of type :class:`ExpectElement`.
-
-    This function is deprecated; use :func:`isinstance`
-    (of :class:`sage.interfaces.abc.ExpectElement`) instead.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.expect import is_ExpectElement
-        sage: is_ExpectElement(2)
-        doctest:...: DeprecationWarning: the function is_ExpectElement is deprecated; use isinstance(x, sage.interfaces.abc.ExpectElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_ExpectElement is deprecated; use isinstance(x, sage.interfaces.abc.ExpectElement) instead")
-
-    return isinstance(x, ExpectElement)
 
 
 @instancedoc
