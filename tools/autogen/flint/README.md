@@ -21,7 +21,7 @@ autogeneration
 5. Set the environment variable `FLINT_GIT_DIR`
 
 6. Run the `flint_autogen.py` script e.g. `python
-   $SAGE_ROOT/src/sage_setup/autogen/flint_autogen.py`. The script writes down
+   tools/autogen/flint_autogen.py`. The script writes down
    the headers in the sage source tree `$SAGE_ROOT/src/sage/libs/flint/`
 
 
@@ -31,5 +31,5 @@ Additional notes
 - macros in flint documentation are not converted into cython declarations
   (because they lack a signature). The cython signature of flint macros must be
   manually written down in the files contained
-  `SAGE_SRC/sage/src/sage_setup/autogen/flint/macros`
+  `tools/autogen/flint/macros`
   See https://github.com/flintlib/flint/issues/1529.

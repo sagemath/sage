@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Usage: python -m sage_setup.autogen.interpreters <output_dir>
+# Usage: python tools/autogen/interpreters <output_dir>
 
 import argparse
 

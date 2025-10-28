@@ -131,9 +131,6 @@ sagelib-clean:
 sage_docbuild-clean:
 	(cd "$(SAGE_ROOT)/build/pkgs/sage_docbuild/src" && rm -rf build)
 
-sage_setup-clean:
-	(cd "$(SAGE_ROOT)/build/pkgs/sage_setup/src" && rm -rf build)
-
 build-clean: clean doc-clean sagelib-clean sage_docbuild-clean
 
 doc-clean:

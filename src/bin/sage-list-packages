@@ -4,10 +4,10 @@ Script to list the Sage packages
 
 This is script can be called with one argument which might be either
 "all", "standard", "optional", or "experimental". It is mostly a
-script interface to sage_setup.packages.list_packages.
+script interface to sage.misc.package.list_packages.
 """
-import os
 import argparse
+import os
 
 if "SAGE_ROOT" not in os.environ:
     raise RuntimeError("The environment variable SAGE_ROOT must be set.")

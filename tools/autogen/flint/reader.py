@@ -12,8 +12,6 @@ Extraction of function, macros, types from flint documentation.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import os
-from .env import FLINT_INCLUDE_DIR, FLINT_DOC_DIR
 
 
 class Extractor:
@@ -39,7 +37,7 @@ class Extractor:
         self.signatures = []      # current list of function/macro/type signatures
         self.doc = []             # current function documentation
 
-        with open(filename) as f:
+        with open(filename, encoding='utf-8') as f:
             text = f.read()
         self.lines = text.splitlines()
         self.i = 0

@@ -1,6 +1,6 @@
 import os
 
-from sage_setup.autogen.interpreters.internal import rebuild
+from .interpreters.internal import rebuild
 
 
 def autogen_all():
