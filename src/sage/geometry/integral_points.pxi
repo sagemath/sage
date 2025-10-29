@@ -535,6 +535,7 @@ cpdef rectangular_box_points(list box_min, list box_max,
         sage: with ensure_interruptible_after(0.5): P.integral_points()
     """
     assert len(box_min) == len(box_max)
+    assert box_min
     assert not (count_only and return_saturated)
     cdef int d = len(box_min)
     cdef int i, j
