@@ -1,7 +1,7 @@
 r"""
 Algebraic properties of hypergeometric functions.
 
-[Tutorial]
+[Tutorial... coming soon]
 
 AUTHORS:
 
