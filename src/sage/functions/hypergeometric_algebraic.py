@@ -42,6 +42,7 @@ from sage.categories.action import Action
 from sage.categories.pushout import pushout
 from sage.categories.map import Map
 from sage.categories.finite_fields import FiniteFields
+from sage.sets.primes import Primes
 
 from sage.symbolic.ring import SR
 from sage.combinat.subset import Subsets
@@ -237,7 +238,7 @@ class Parameters():
     def q_parenthesis_criterion(self, q):
         parenthesis = 0
         previous_paren = -1
-        for _, _, paren in self.q_christol_sorting(q):
+        for _, paren in self.q_christol_sorting(q):
             parenthesis += paren
             if parenthesis < 0:
                 return False
@@ -515,7 +516,7 @@ class HypergeometricAlgebraic(Element):
         for b in self._parameters.bottom:
             B *= t + S(b-1)
         L = B - x*A
-        return D([ c//x for c in L.list() ])
+        return D([c//x for c in L.list()])
 
     def derivative(self):
         top = [a+1 for a in self.top()]
@@ -552,6 +553,62 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic_charzero):
     def has_good_reduction(self, p):
         h = self.reduce(p)
         return h.is_defined()
+
+    def good_reduction_primes(self):
+        r"""
+        Return
+
+        (modulus, congruence_classes, exceptionnal_primes)
+
+        ALGORITHM:
+
+        We rely on Christol's criterion ([CF2025]_)
+        """
+        params = self._parameters
+        d = params.d
+
+        # We check the parenthesis criterion for c=1
+        if not params.parenthesis_criterion(1):
+            return d, [], []
+
+        # We check the parenthesis criterion for other c
+        # and derive congruence classes with good reduction
+        goods = {c: None for c in range(d) if d.gcd(c) == 1}
+        goods[1] = True
+        for c in goods:
+            if goods[c] is not None:
+                continue
+            cc = c
+            goods[c] = True
+            while cc != 1:
+                if goods[cc] is False or not params.parenthesis_criterion(cc):
+                    goods[c] = False
+                    break
+                cc = (cc * c) % d
+            if goods[c]:
+                cc = c
+                while cc != 1:
+                    goods[cc] = True
+                    cc = (cc * c) % d
+
+        # We treat exceptionnal primes
+        bound = params.bound
+        exceptions = []
+        for p in Primes():
+            if p > bound:
+                break
+            if d % p == 0 or not goods[p % d]:
+                continue
+            q = p
+            while q <= bound:
+                if not self._parameters.q_parenthesis_criterion(q):
+                    exceptions.append(p)
+                    break
+                q *= p
+
+        goods = [c for c, v in goods.items() if v]
+        return d, goods, exceptions
+
 
     def is_algebraic(self):
         if any(a in ZZ and a <= 0 for a in self.top()):
