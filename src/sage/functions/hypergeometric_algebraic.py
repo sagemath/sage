@@ -120,7 +120,7 @@ class Parameters():
             sage: from sage.functions.hypergeometric_algebraic import Parameters
             sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
             sage: p
-            ([1/4, 1/3, 1/2], [2/5, 3/5, 1])
+            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
             sage: type(p)
             <class 'sage.functions.hypergeometric_algebraic.Parameters'>
 
@@ -128,12 +128,12 @@ class Parameters():
         a trailing `1` is added to the bottom parameters::
 
             sage: Parameters([1/2, 1/3, 2/3], [2/3])
-            ([1/3, 1/2], [1])
+            ((1/3, 1/2), (1,))
 
         We can avoid adding the trailing `1` by passing ``add_one=False``)::
 
             sage: Parameters([1/2, 1/3, 2/3], [2/3], add_one=False)
-            ([1/3, 1/2], [])
+            ((1/3, 1/2, 1), (1,))
         """
         try:
             top = sorted([QQ(a) for a in top if a is not None])
@@ -152,13 +152,14 @@ class Parameters():
         if add_one:
             bottom.append(QQ(1))
         else:
-            i = bottom.index(QQ(1))
-            bottom.append(QQ(1))
-            if i < 0:
+            try:
+                i = bottom.index(QQ(1))
+                bottom.append(QQ(1))
+                del bottom[i]
+            except ValueError:
+                bottom.append(QQ(1))
                 top.append(QQ(1))
                 top.sort()
-            else:
-                del bottom[i]
         self.top = tuple(top)
         self.bottom = tuple(bottom)
         if len(top) == 0 and len(bottom) == 0:
@@ -178,7 +179,7 @@ class Parameters():
             sage: from sage.functions.hypergeometric_algebraic import Parameters
             sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
             sage: p  # indirect doctest
-            ([1/4, 1/3, 1/2], [2/5, 3/5, 1])
+            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
         """
         return "(%s, %s)" % (self.top, self.bottom)
 
@@ -199,7 +200,7 @@ class Parameters():
             sage: from sage.functions.hypergeometric_algebraic import Parameters
             sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
             sage: p
-            ([1/4, 1/3, 1/2], [2/5, 3/5, 1])
+            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
             sage: p.is_balanced()
             True
 
@@ -207,7 +208,7 @@ class Parameters():
 
             sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5], add_one=False)
             sage: p
-            ([1/4, 1/3, 1/2], [2/5, 3/5])
+            ((1/4, 1/3, 1/2, 1), (2/5, 3/5, 1))
             sage: p.is_balanced()
             False
         """
@@ -277,7 +278,7 @@ class Parameters():
             sage: from sage.functions.hypergeometric_algebraic import Parameters
             sage: p = Parameters([1/3, 2/3], [1/2])
             sage: p
-            ([1/3, 2/3], [1/2, 1])
+            ((1/3, 2/3), (1/2, 1))
             sage: p.interlacing_criterion(1)
             True
             sage: p.interlacing_criterion(5)
@@ -288,7 +289,7 @@ class Parameters():
             sage: from sage.functions.hypergeometric_algebraic import Parameters
             sage: p = Parameters([1/8, 3/8, 5/8], [1/4, 1/2])
             sage: p
-            ([1/8, 3/8, 5/8], [1/4, 1/2, 1])
+            ((1/8, 3/8, 5/8), (1/4, 1/2, 1))
             sage: p.interlacing_criterion(1)
             True
             sage: p.interlacing_criterion(3)
@@ -313,18 +314,18 @@ class Parameters():
             sage: from sage.functions.hypergeometric_algebraic import Parameters
             sage: p = Parameters([5/2, -1/2, 5/3], [3/2, 1/3])
             sage: p
-            ([-1/2, 5/3, 5/2], [1/3, 3/2, 1])
+            ((-1/2, 5/3, 5/2), (1/3, 3/2, 1))
             sage: p.remove_positive_integer_differences()
-            ([-1/2, 5/3], [1/3, 1])
+            ((-1/2, 5/3), (1/3, 1))
 
         The choice of which pair with integer differences to remove first
         is important::
 
             sage: p = Parameters([4, 2, 1/2], [1, 3])
             sage: p
-            ([1/2, 2, 4], [1, 3, 1])
+            ((1/2, 2, 4), (1, 3, 1))
             sage: p.remove_positive_integer_differences()
-            ([1/2], [1])
+            ((1/2,), (1,))
         """
         differences = []
         top = list(self.top)
@@ -351,7 +352,7 @@ class Parameters():
             sage: from sage.functions.hypergeometric_algebraic import Parameters
             sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
             sage: p
-            ([1/4, 1/3, 1/2], [2/5, 3/5, 1])
+            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
             sage: p.has_negative_integer_differences()
             False
 
@@ -359,7 +360,7 @@ class Parameters():
 
             sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/2])
             sage: p
-            ([1/4, 1/3, 1/2], [2/5, 3/2, 1])
+            ((1/4, 1/3, 1/2), (2/5, 3/2, 1))
             sage: p.has_negative_integer_differences()
             True
         """
