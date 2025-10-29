@@ -219,25 +219,35 @@ class Parameters():
         return sorted(A + B)
 
     def parenthesis_criterion(self, c):
-        AB = self.christol_sorting(c)
         parenthesis = 0
         previous_paren = -1
-        for _, _, paren in AB:
+        for _, _, paren in self.christol_sorting(c):
             parenthesis += paren
             if parenthesis < 0:
                 return False
             previous_paren = paren
         return parenthesis >= 0
 
-    def p_interlacing_number(self, p):
+    def q_christol_sorting(self, q):
         d = self.d
-        A = [(1/2 + (-a) % p, 1) for a in self.top]
-        B = [(1 + (-b) % p, -1) for b in self.bottom]
-        AB = sorted(A + B)
-        s = ""
+        A = [(1/2 + (-a) % q, 1) for a in self.top]
+        B = [(1 + (-b) % q, -1) for b in self.bottom]
+        return sorted(A + B)
+
+    def q_parenthesis_criterion(self, q):
+        parenthesis = 0
+        previous_paren = -1
+        for _, _, paren in self.q_christol_sorting(q):
+            parenthesis += paren
+            if parenthesis < 0:
+                return False
+            previous_paren = paren
+        return parenthesis >= 0
+
+    def q_interlacing_number(self, q):
         interlacing = 0
         previous_paren = -1
-        for _, paren in AB:
+        for _, paren in self.q_christol_sorting(q):
             if paren == -1 and previous_paren == 1:
                 interlacing += 1
             previous_paren = paren
@@ -594,6 +604,27 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
             return False
         return True
 
+    def is_defined_conjectural(self):
+        p = self._p
+        d = self.denominator()
+        if d.gcd(p) > 1:
+            return False
+        u = 1
+        if not self._parameters.parenthesis_criterion(u):
+            return False
+        u = p % d
+        while u != 1:
+            if not self._parameters.parenthesis_criterion(u):
+                return False
+            u = p*u % d
+        bound = self._parameters.bound
+        q = p
+        while q <= bound:
+            if not self._parameters.q_parenthesis_criterion(q):
+                return False
+            q *= p
+        return True
+
     def series(self, prec):
         S = self.parent().power_series_ring()
         p = self._p
@@ -629,7 +660,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         return matrix(rows)
 
     def p_curvature_corank(self):
-        return self._parameters.p_interlacing_number(self._p)
+        return self._parameters.q_interlacing_number(self._p)
 
     def dwork_relation(self):
         r"""
