@@ -452,7 +452,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
       tree-decomposition itself
 
     - ``algorithm`` -- whether to use ``'sage'`` or ``'tdlib'`` (requires the
-      installation of the :ref:`spkg_sagemath_tdlib` package). The default behaviour is to use
+      installation of the :ref:`spkg_tdlib` package). The default behaviour is to use
       'tdlib' if it is available, and Sage's own algorithm when it is not.
 
     - ``nice`` -- boolean (default: ``False``); whether or not to return the
