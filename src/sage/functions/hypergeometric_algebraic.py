@@ -221,8 +221,8 @@ class Parameters():
     @cached_method
     def christol_sorting(self, c=1):
         d = self.d
-        A = [d - (-d*c*a) % d, -a, 1) for a in self.top]
-        B = [d - (-d*c*b) % d, -b, -1) for b in self.bottom]
+        A = [(d - (-d*c*a) % d, -a, 1) for a in self.top]
+        B = [(d - (-d*c*b) % d, -b, -1) for b in self.bottom]
         return sorted(A + B)
 
     def parenthesis_criterion(self, c):
