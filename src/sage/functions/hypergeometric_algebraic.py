@@ -44,12 +44,17 @@ from sage.categories.map import Map
 from sage.categories.finite_fields import FiniteFields
 from sage.sets.primes import Primes
 
+from sage.matrix.special import companion_matrix
+from sage.matrix.special import identity_matrix
+
 from sage.symbolic.ring import SR
 from sage.combinat.subset import Subsets
+from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.rings.padics.factory import QpFP
+from sage.rings.number_field.number_field import CyclotomicField
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
@@ -609,7 +614,6 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic_charzero):
         goods = [c for c, v in goods.items() if v]
         return d, goods, exceptions
 
-
     def is_algebraic(self):
         if any(a in ZZ and a <= 0 for a in self.top()):
             return True
@@ -631,6 +635,35 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic_charzero):
                 if not self._parameters.parenthesis_criterion(c):
                     return False
         return True
+
+    def monodromy(self, x=0, var='z'):
+        params = self._parameters
+        if not params.is_balanced():
+            raise ValueError("hypergeometric equation is not Fuchsian")
+        d = params.d
+        K = CyclotomicField(d, names=var)
+        z = K.gen()
+        S = PolynomialRing(K, names='X')
+        X = S.gen()
+        if x == 0:
+            B = prod(X - z**(b*d) for b in params.bottom)
+            return companion_matrix(B, format='right').inverse()
+        elif x == 1:
+            A = prod(X - z**(a*d) for a in params.top)
+            B = prod(X - z**(b*d) for b in params.bottom)
+            return companion_matrix(A, format='right').inverse() * companion_matrix(B, format='right')
+        elif x is infinity:
+            A = prod(X - z**(a*d) for a in params.top)
+            return companion_matrix(A, format='right')
+        else:
+            n = len(params.top)
+            return identity_matrix(QQ, n)
+
+    def is_maximum_unipotent_monodromy(self):
+        # TODO: check this (maybe ask Daniel)
+        return all(b in ZZ for b in self.bottom())
+
+    is_mum = is_maximum_unipotent_monodromy
 
 
 class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
@@ -772,6 +805,8 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         return pairs
 
     def annihilating_ore_polynomial(self, var='Frob'):
+        # QUESTION: does this method actually return the
+        # minimal Ore polynomial annihilating self?
         if not self._parameters.is_balanced():
             raise NotImplementedError("the hypergeometric function is not a pFq with q = p-1")
 
@@ -828,6 +863,19 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
             ker = kernel(M)
             if ker is not None:
                 return insert_zeroes(Ore(ker), order)
+
+    def is_lucas(self):
+        p = self._p
+        if self._parameters.frobenius_order(p) > 1:
+            # TODO: check this
+            return False
+        S = self.parent().polynomial_ring()
+        K = S.fraction_field()
+        Ore = OrePolynomialRing(K, K.frobenius_endomorphism(), names='F')
+        Z = Ore(self.annihilating_ore_polynomial())
+        Ap = self.series(p).polynomial()
+        F = Ap * Ore.gen() - 1
+        return (Z % F).is_zero()
 
 
 # Parent
