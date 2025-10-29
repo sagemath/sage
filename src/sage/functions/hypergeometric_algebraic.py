@@ -184,6 +184,40 @@ class Parameters():
         return parenthesis >= 0
 
     def interlacing_criterion(self, c):
+        r"""
+        Return ``True`` if the sorted lists of the decimal parts (where integers
+        are assigned 1 instead of 0) of c*a and c*b for a in the top parameters
+        and b in the bottom parameters interlace, i.e., the entries in the sorted
+        union of the two lists alternate between entries from the first and from
+        the second list. Used to determine algebraicity of the hypergeometric
+        function with these parameters with the Beukers-Heckman criterion.
+
+        INPUT:
+
+            - ``c`` -- an integer between 1 and ``self.d``, coprime to ``d``.
+
+        EXAMPLES::
+
+            sage: from sage.functions.hypergeometric_algebraic import Parameters
+            sage: p = Parameters([1/3, 2/3], [1/2])
+            sage: p
+            ([1/3, 2/3], [1/2, 1])
+            sage: p.interlacing_criterion(1)
+            True
+            sage: p.interlacing_criterion(5)
+            True
+
+        ::
+
+            sage: from sage.functions.hypergeometric_algebraic import Parameters
+            sage: p = Parameters([1/8, 3/8, 5/8], [1/4, 1/2])
+            sage: p
+            ([1/8, 3/8, 5/8], [1/4, 1/2, 1])
+            sage: p.interlacing_criterion(1)
+            True
+            sage: p.interlacing_criterion(3)
+            False
+        """
         AB = self.christol_sorting(c)
         previous_paren = -1
         for _, _, paren in AB:
@@ -193,6 +227,29 @@ class Parameters():
         return True
 
     def remove_positive_integer_differences(self):
+        r"""
+        Return parameters, where pairs consisting of a top parameter
+        and a bottom parameter with positive integer differences are
+        removed, starting with pairs of minimal positive integer
+        difference.
+        EXAMPLES::
+
+            sage: from sage.functions.hypergeometric_algebraic import Parameters
+            sage: p = Parameters([5/2, -1/2, 5/3], [3/2, 1/3])
+            sage: p
+            ([-1/2, 5/3, 5/2], [1/3, 3/2, 1])
+            sage: p.remove_positive_integer_differences()
+            ([-1/2, 5/3], [1/3, 1])
+
+        The choice of which pair with integer differences to remove first
+        is important::
+
+            sage: p = Parameters([4, 2, 1/2], [1, 3])
+            sage: p
+            ([1/2, 2, 4], [1, 3, 1])
+            sage: p.remove_positive_integer_differences()
+            ([1/2], [1])
+        """
         differences = []
         top = self.top[:]
         bottom = self.bottom[:]
