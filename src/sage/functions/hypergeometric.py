@@ -306,7 +306,7 @@ class Hypergeometric(BuiltinFunction):
         if isinstance(z, (Polynomial, PowerSeries)):
             if not z.is_gen():
                 raise NotImplementedError("the argument must be the generator of the polynomial ring")
-            S = x.parent()
+            S = z.parent()
             from sage.functions.hypergeometric_algebraic import HypergeometricFunctions
             return HypergeometricFunctions(S.base_ring(), S.variable_name())(a, b)
         else:
@@ -759,7 +759,9 @@ class Hypergeometric(BuiltinFunction):
                         return terms
             return ((1, new),)
 
+
 hypergeometric = Hypergeometric()
+
 
 def closed_form(hyp):
     """

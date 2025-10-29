@@ -61,12 +61,16 @@ from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 
 
+# Helper functions
+##################
+
 def insert_zeroes(P, n):
     cs = P.list()
     coeffs = n * len(cs) * [0]
     for i in range(len(cs)):
         coeffs[n*i] = cs[i]
     return P.parent()(coeffs)
+
 
 def kernel(M, repeat=2):
     n = M.nrows()
@@ -166,8 +170,8 @@ class Parameters():
             self.d = 1
             self.bound = 1
         else:
-            self.d =  lcm([ a.denominator() for a in top ]
-                        + [ b.denominator() for b in bottom ])
+            self.d = lcm([ a.denominator() for a in top ]
+                       + [ b.denominator() for b in bottom ])
             self.bound = 2 * self.d * max(top + bottom) + 1
 
     def __repr__(self):
@@ -216,13 +220,9 @@ class Parameters():
 
     @cached_method
     def christol_sorting(self, c=1):
-        r"""
-        """
         d = self.d
-        def mod2(x):
-            return d - (-x) % d
-        A = [(mod2(d*c*a), -a, 1) for a in self.top]
-        B = [(mod2(d*c*b), -b, -1) for b in self.bottom]
+        A = [d - (-d*c*a) % d, -a, 1) for a in self.top]
+        B = [d - (-d*c*b) % d, -b, -1) for b in self.bottom]
         return sorted(A + B)
 
     def parenthesis_criterion(self, c):
@@ -534,7 +534,7 @@ class HypergeometricAlgebraic(Element):
 
 class HypergeometricAlgebraic_charzero(HypergeometricAlgebraic):
     def is_defined(self):
-        return not any(b in ZZ and b < 0 for b in self._bottom)
+        return not any(b in ZZ and b < 0 for b in self.bottom())
 
     def series(self, prec):
         S = self.parent().power_series_ring()
@@ -886,6 +886,7 @@ class HypergeometricToSR(Map):
     def _call_(self, h):
         from sage.functions.hypergeometric import _hypergeometric
         return h.scalar() * _hypergeometric(h.top(), h.bottom(), SR.var(h.parent().variable_name()))
+
 
 class ScalarMultiplication(Action):
     def _act_(self, scalar, h):
