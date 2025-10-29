@@ -83,7 +83,7 @@ def kernel(M, repeat=2):
         for i in range(1, n):
             minor = MJ.delete_rows([i]).determinant()
             ker.append((-1)**i * minor)
-        g = gcd(ker)
+        g = ker[0].leading_coefficient() * gcd(ker)
         ker = [c//g for c in ker]
         return ker
 
