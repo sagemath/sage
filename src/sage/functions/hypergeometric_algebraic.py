@@ -28,6 +28,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.misc.functional import log
 from sage.functions.other import ceil
+from sage.arith.misc import gcd
 from sage.arith.functions import lcm
 from sage.matrix.constructor import matrix
 
@@ -43,6 +44,7 @@ from sage.categories.map import Map
 from sage.categories.finite_fields import FiniteFields
 
 from sage.symbolic.ring import SR
+from sage.combinat.subset import Subsets
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -51,6 +53,39 @@ from sage.rings.padics.factory import QpFP
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
+
+
+def insert_zeroes(P, n):
+    cs = P.list()
+    coeffs = n * len(cs) * [0]
+    for i in range(len(cs)):
+        coeffs[n*i] = cs[i]
+    return P.parent()(coeffs)
+
+def kernel(M, repeat=2):
+    n = M.nrows()
+    m = M.ncols()
+    if n > m + 1:
+        raise RuntimeError
+    if n <= m:
+        K = M.base_ring().base_ring()
+        for _ in range(repeat):
+            a = K.random_element()
+            Me = matrix(n, m, [f(a) for f in M.list()])
+            if Me.rank() == n:
+                return
+    for J in Subsets(range(m), n-1):
+        MJ = M.matrix_from_columns(J)
+        minor = MJ.delete_rows([0]).determinant()
+        if minor.is_zero():
+            continue
+        ker = [minor]
+        for i in range(1, n):
+            minor = MJ.delete_rows([i]).determinant()
+            ker.append((-1)**i * minor)
+        g = gcd(ker)
+        ker = [c//g for c in ker]
+        return ker
 
 
 # Parameters of hypergeometric functions
@@ -194,6 +229,20 @@ class Parameters():
             previous_paren = paren
         return parenthesis >= 0
 
+    def p_interlacing_number(self, p):
+        d = self.d
+        A = [(1/2 + (-a) % p, 1) for a in self.top]
+        B = [(1 + (-b) % p, -1) for b in self.bottom]
+        AB = sorted(A + B)
+        s = ""
+        interlacing = 0
+        previous_paren = -1
+        for _, paren in AB:
+            if paren == -1 and previous_paren == 1:
+                interlacing += 1
+            previous_paren = paren
+        return interlacing
+
     def interlacing_criterion(self, c):
         AB = self.christol_sorting(c)
         previous_paren = -1
@@ -205,8 +254,8 @@ class Parameters():
 
     def remove_positive_integer_differences(self):
         differences = []
-        top = self.top[:]
-        bottom = self.bottom[:]
+        top = list(self.top)
+        bottom = list(self.bottom)
         for i in range(len(top)):
             for j in range(len(bottom)):
                 diff = top[i] - bottom[j]
@@ -379,11 +428,6 @@ class HypergeometricAlgebraic(Element):
     def _mul_(self, other):
         return SR(self) * SR(other)
 
-    def _lmul_(self, scalar):
-        print("lmul")
-    def _rmul_(self, scalar):
-        print("rmul")
-
     def _div_(self, other):
         return SR(self) / SR(other)
 
@@ -391,7 +435,7 @@ class HypergeometricAlgebraic(Element):
         return self._parameters.d
 
     def differential_operator(self, var='d'):
-        S = PolynomialRing(self._base, self._variable_name)
+        S = self.parent().polynomial_ring()
         x = S.gen()
         D = OrePolynomialRing(S, S.derivation(), names=var)
         if self._scalar == 0:
@@ -401,7 +445,7 @@ class HypergeometricAlgebraic(Element):
         for a in self._parameters.top:
             A *= t + S(a)
         B = D.one()
-        for b in self._parameters._bottom:
+        for b in self._parameters.bottom:
             B *= t + S(b-1)
         L = B - x*A
         return D([ c//x for c in L.list() ])
@@ -527,11 +571,14 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
             rows.append([Li[j] for j in range(n)])
         return matrix(rows)
 
+    def p_curvature_corank(self):
+        return self._parameters.p_interlacing_number(self._p)
+
     def dwork_relation(self):
         r"""
-        Return (P1, g1), ..., (Ps, gs) such that
+        Return (P1, h1), ..., (Ps, hs) such that
 
-            h = P1*g1^p + ... + Ps*gs^p
+            self = P1*h1^p + ... + Ps*hs^p
         """
         if not self._parameters.is_balanced():
             raise ValueError("the hypergeometric function must be a pFq with q = p-1")
@@ -580,20 +627,25 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         return pairs
 
     def annihilating_ore_polynomial(self, var='Frob'):
-        # We remove the scalar
-        self = self.parent()(self._parameters)
+        if not self._parameters.is_balanced():
+            raise NotImplementedError("the hypergeometric function is not a pFq with q = p-1")
 
         K = self.base_ring()
-        zero = K.zero()
+        p = self._p
         S = self.parent().polynomial_ring()
+        zero = S.zero()
         Frob = S.frobenius_endomorphism()
         Ore = OrePolynomialRing(S, Frob, names=var)
 
-        p = self._p
-        order = self._parameters.frobenius_order(p)
+        # We remove the scalar
+        if self._scalar == 0:
+            return Ore.one()
+        self = self.parent()(self._parameters)
 
-        columns = {self: None}
-        rows = [{self: K.one()}]
+        order = self._parameters.frobenius_order(p)
+        bound = self.p_curvature_corank()
+
+        rows = [{self: S.one()}]
         # If row is the i-th item of rows, we have:
         #   self = sum_g row[g] * g**(p**i)
         q = 1
@@ -606,34 +658,32 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
                     for Q, h in g.dwork_relation():
                         # here g = sum(Q * h^p)
                         if h in row:
-                            row[h] += P * Q**q
+                            row[h] += P * insert_zeroes(Q, q)
                         else:
-                            row[h] = P * Q**q
+                            row[h] = P * insert_zeroes(Q, q)
                 previous_row = row
                 q *= p  # q = p**i
-            for h in row:
-                if h not in columns:
-                    columns[h] = None
             rows.append(row)
 
             i = len(rows)
             Mrows = []
             Mqo = 1
-            for j in range(i-1, -1, -1):
+            columns = {}
+            for j in range(i-1, max(-1, i-2-bound), -1):
+                for col in rows[j]:
+                    columns[col] = None
+            for j in range(i-1, max(-1, i-2-bound), -1):
                 Mrow = []
                 for col in columns:
-                    Mrow.append(rows[j].get(col, zero) ** Mqo)
+                    Mrow.append(insert_zeroes(rows[j].get(col, zero), Mqo))
                 Mrows.append(Mrow)
                 Mqo *= p ** order
-            M = matrix(Mrows)
+            M = matrix(S, Mrows)
 
-            ker = M.minimal_kernel_basis()
-            if ker.nrows() > 0:
-                cs = ker.row(0).list()
-                coeffs = order * len(cs) * [S.zero()]
-                for i in range(len(cs)):
-                    coeffs[order*i] = cs[i]
-                return Ore(coeffs)
+            ker = kernel(M)
+            if ker is not None:
+                return insert_zeroes(Ore(ker), order)
+
 
 # Parent
 ########
