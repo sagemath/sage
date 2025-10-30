@@ -1,24 +1,24 @@
---- src/support/shobj-conf	2014-02-24 03:06:29.000000000 +0100
-+++ new/support/shobj-conf	2014-06-15 14:04:15.561786158 +0200
+--- a/support/shobj-conf	2025-10-29 21:46:37.876265377 +0800
++++ b/support/shobj-conf	2025-10-29 21:46:46.400261991 +0800
 @@ -39,10 +39,10 @@
  SHOBJ_LD=
  SHOBJ_LDFLAGS=
  SHOBJ_XLDFLAGS=
 -SHOBJ_LIBS=
-+SHOBJ_LIBS='$(TERMCAP_LIB)'
++SHOBJ_LIBS='-Wl,--no-as-needed -lncursesw -Wl,--as-needed'
  
  SHLIB_XLDFLAGS=
 -SHLIB_LIBS=
-+SHLIB_LIBS='$(TERMCAP_LIB)'
++SHLIB_LIBS='-Wl,--no-as-needed -lncursesw -Wl,--as-needed'
  
  SHLIB_DOT='.'
  SHLIB_LIBPREF='lib'
-@@ -209,7 +209,7 @@
+@@ -171,7 +171,7 @@
  		;;
  	esac
  
 -	SHLIB_LIBS='-lncurses'	# see if -lcurses works on MacOS X 10.1 
-+	SHLIB_LIBS='$(TERMCAP_LIB)'
++	SHLIB_LIBS='-Wl,--no-as-needed -lncursesw -Wl,--as-needed'
  	;;
  
  openbsd*|netbsd*|mirbsd*)

@@ -7,38 +7,9 @@ fi
 
 cd src
 
-# Ncurses cannot build narrow and wide (unicode, --enable-widec)
-# versions in one go. Need to compile twice. Note that Python's curses
-# module will want the wide version, and readline the narrow version.
-
-###################################################
-mkdir narrow
-cd narrow
-ln -s ../configure .
-
-echo "Configuring ncurses (narrow)..."
-sdh_configure --with-termlib \
-              --with-shared \
-              --without-normal \
-              --without-ada \
-              --disable-rpath-hack \
-              --enable-overwrite \
-              --with-pkg-config-libdir="$SAGE_LOCAL/lib/pkgconfig" \
-              --enable-pc-files \
-              "$DEBUG_CONFIGURE_FLAG"
-
-echo "Building ncurses (narrow)..."
-sdh_make
-
-echo "Installing ncurses (narrow)..."
-sdh_make_install
-
-cd ..  # leave narrow
-
-###################################################
-mkdir wide
-cd wide
-ln -s ../configure .
+# Build only the wide (unicode, --enable-widec) version of ncurses.
+# Python's curses module wants the wide version.
+# Readline should also work with wide version via compatibility symlinks.
 
 echo "Configuring ncurses (wide)..."
 sdh_configure --with-termlib \
@@ -50,6 +21,8 @@ sdh_configure --with-termlib \
               --enable-overwrite \
               --with-pkg-config-libdir="$SAGE_LOCAL/lib/pkgconfig" \
               --enable-pc-files \
+              --without-cxx \
+              --without-cxx-binding \
               "$DEBUG_CONFIGURE_FLAG"
 
 echo "Building ncurses (wide)..."
@@ -58,4 +31,4 @@ sdh_make
 echo "Installing ncurses (wide)..."
 sdh_make_install
 
-cd ..  # leave wide
+# Note: Symbolic links for compatibility are created in spkg-postinst
