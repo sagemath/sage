@@ -35,6 +35,7 @@ from sage.matrix.constructor import matrix
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.structure.element import Element
+from sage.structure.element import coerce_binop
 from sage.structure.sequence import Sequence
 from sage.structure.category_object import normalize_names
 
@@ -235,31 +236,6 @@ class Parameters():
             previous_paren = paren
         return parenthesis >= 0
 
-    def q_christol_sorting(self, q):
-        d = self.d
-        A = [(1/2 + (-a) % q, 1) for a in self.top]
-        B = [(1 + (-b) % q, -1) for b in self.bottom]
-        return sorted(A + B)
-
-    def q_parenthesis_criterion(self, q):
-        parenthesis = 0
-        previous_paren = -1
-        for _, paren in self.q_christol_sorting(q):
-            parenthesis += paren
-            if parenthesis < 0:
-                return False
-            previous_paren = paren
-        return parenthesis >= 0
-
-    def q_interlacing_number(self, q):
-        interlacing = 0
-        previous_paren = -1
-        for _, paren in self.q_christol_sorting(q):
-            if paren == -1 and previous_paren == 1:
-                interlacing += 1
-            previous_paren = paren
-        return interlacing
-
     def interlacing_criterion(self, c):
         r"""
         Return ``True`` if the sorted lists of the decimal parts (where integers
@@ -295,13 +271,37 @@ class Parameters():
             sage: p.interlacing_criterion(3)
             False
         """
-        AB = self.christol_sorting(c)
         previous_paren = -1
-        for _, _, paren in AB:
+        for _, _, paren in self.christol_sorting(c):
             if paren == previous_paren:
                 return False
             previous_paren = paren
         return True
+
+    def q_christol_sorting(self, q):
+        d = self.d
+        A = [(1/2 + (-a) % q, 1) for a in self.top]
+        B = [(1 + (-b) % q, -1) for b in self.bottom]
+        return sorted(A + B)
+
+    def q_parenthesis_criterion(self, q):
+        parenthesis = 0
+        previous_paren = -1
+        for _, paren in self.q_christol_sorting(q):
+            parenthesis += paren
+            if parenthesis < 0:
+                return False
+            previous_paren = paren
+        return parenthesis >= 0
+
+    def q_interlacing_number(self, q):
+        interlacing = 0
+        previous_paren = -1
+        for _, paren in self.q_christol_sorting(q):
+            if paren == -1 and previous_paren == 1:
+                interlacing += 1
+            previous_paren = paren
+        return interlacing
 
     def remove_positive_integer_differences(self):
         r"""
@@ -366,17 +366,17 @@ class Parameters():
         """
         return any(a - b in ZZ and a < b for a in self.top for b in self.bottom)
 
+    def decimal_part(self):
+        top = [1 + a - ceil(a) for a in self.top]
+        bottom = [1 + b - ceil(b) for b in self.bottom]
+        return Parameters(top, bottom, add_one=False)
+
     def dwork_image(self, p):
         try:
             top = [(a + (-a) % p) / p for a in self.top]
             bottom = [(b + (-b) % p) / p for b in self.bottom]
         except ZeroDivisionError:
             raise ValueError("denominators of parameters are not coprime to p")
-        return Parameters(top, bottom, add_one=False)
-
-    def decimal_part(self):
-        top = [1 + a - ceil(a) for a in self.top]
-        bottom = [1 + b - ceil(b) for b in self.bottom]
         return Parameters(top, bottom, add_one=False)
 
     def frobenius_order(self, p):
@@ -502,6 +502,17 @@ class HypergeometricAlgebraic(Element):
     def _mul_(self, other):
         return SR(self) * SR(other)
 
+    @coerce_binop
+    def hadamard_product(self, other):
+        if self._scalar == 0:
+            return self
+        if other._scalar == 0:
+            return other
+        top = self.top() + other.top()
+        bottom = self._parameters.bottom + other.bottom()
+        scalar = self._scalar * other._scalar
+        return self.parent()(top, bottom, scalar=scalar)
+
     def _div_(self, other):
         return SR(self) / SR(other)
 
@@ -597,7 +608,7 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic_charzero):
                     goods[cc] = True
                     cc = (cc * c) % d
 
-        # We treat exceptionnal primes
+        # We treat exceptional primes
         bound = params.bound
         exceptions = []
         for p in Primes():
@@ -719,6 +730,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
     def series(self, prec):
         S = self.parent().power_series_ring()
         p = self._p
+        # TODO: check that the precision is correct
         pprec = max(1, (len(self.bottom()) + 1) * ceil(log(prec, p)))
         K = QpFP(p, pprec)
         c = K(self._scalar)
