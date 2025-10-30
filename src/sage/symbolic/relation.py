@@ -230,6 +230,7 @@ Miscellaneous
 
 Conversion to Maxima::
 
+    sage: from sage.interfaces.maxima_lib import maxima
     sage: x = var('x')
     sage: eq = (x^(3/5) >= pi^2 + e^i)
     sage: eq._maxima_init_()
@@ -239,10 +240,10 @@ Conversion to Maxima::
     sage: z.parent() is sage.calculus.calculus.maxima
     True
     sage: z = e1._maxima_(maxima)
-    sage: z.parent() is maxima
+    sage: z.parent() is sage.interfaces.maxima_lib.maxima
     True
     sage: z = maxima(e1)
-    sage: z.parent() is maxima
+    sage: z.parent() is sage.interfaces.maxima_lib.maxima
     True
 
 Conversion to Maple::
@@ -356,8 +357,8 @@ AUTHORS:
 
 - William Stein (2007-07-16): added arithmetic with symbolic equations
 """
-from itertools import product
 import operator
+from itertools import product
 
 
 def check_relation_maxima(relation):
@@ -570,9 +571,9 @@ def string_to_list_of_solutions(s):
         sage: sage.symbolic.relation.string_to_list_of_solutions(s)
          [x == -1/2*a - 1/2*sqrt(a^2 - 4*b), x == -1/2*a + 1/2*sqrt(a^2 - 4*b)]
     """
+    from sage.calculus.calculus import symbolic_expression_from_maxima_string
     from sage.categories.objects import Objects
     from sage.structure.sequence import Sequence
-    from sage.calculus.calculus import symbolic_expression_from_maxima_string
     v = symbolic_expression_from_maxima_string(s, equals_sub=True)
     return Sequence(v, universe=Objects(), cr_str=True)
 
@@ -1202,6 +1203,7 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
 
     if algorithm == 'sympy':
         from sympy import solve as ssolve
+
         from sage.interfaces.sympy import sympy_set_to_list
         sympy_f = [s._sympy_() for s in f]
         sympy_vars = tuple([v._sympy_() for v in x])
@@ -1383,6 +1385,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         if f.operator() is not operator.eq:
             if algorithm == 'sympy':
                 from sympy import S, solveset
+
                 from sage.interfaces.sympy import sympy_set_to_list
                 if isinstance(x, Expression) and x.is_symbol():
                     sympy_vars = (x._sympy_(),)
@@ -1410,16 +1413,17 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
     # if so, we have a Diophantine
 
     def has_integer_assumption(v) -> bool:
-        from sage.symbolic.assumptions import assumptions, GenericDeclaration
+        from sage.symbolic.assumptions import GenericDeclaration, assumptions
         alist = assumptions()
         return any(isinstance(a, GenericDeclaration) and a.has(v) and
                    a._assumption in ['even', 'odd', 'integer', 'integervalued']
                    for a in alist)
-    if len(f.variables()) and all(has_integer_assumption(var) for var in f.variables()):
+    if f.variables() and all(has_integer_assumption(var) for var in f.variables()):
         return f.solve_diophantine(x, solution_dict=solution_dict)
 
     if algorithm == 'sympy':
         from sympy import S, solveset
+
         from sage.interfaces.sympy import sympy_set_to_list
         if isinstance(x, Expression) and x.is_symbol():
             sympy_vars = (x._sympy_(),)
@@ -1681,12 +1685,12 @@ def solve_mod(eqns, modulus, solution_dict=False):
         sage: solve_mod([2*x^2+x*y, -x*y+2*y^2+x-2*y, -2*x^2+2*x*y-y^2-x-y], 1)
         [(0, 0)]
     """
+    from sage.matrix.constructor import matrix
+    from sage.modules.free_module_element import vector
     from sage.rings.finite_rings.integer_mod_ring import Integers
     from sage.rings.integer import Integer
     from sage.rings.integer_ring import crt_basis
     from sage.structure.element import Expression
-    from sage.modules.free_module_element import vector
-    from sage.matrix.constructor import matrix
 
     if not isinstance(eqns, (list, tuple)):
         eqns = [eqns]
@@ -1793,9 +1797,9 @@ def _solve_mod_prime_power(eqns, p, m, vars):
         [1, 21, 71, 1179, 2429, 47571, 1296179, 8703821, 26452429, 526452429,
         13241296179, 19473547571, 2263241296179]
     """
+    from sage.modules.free_module_element import vector
     from sage.rings.finite_rings.integer_mod_ring import Integers
     from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-    from sage.modules.free_module_element import vector
 
     mrunning = 1
     ans = []

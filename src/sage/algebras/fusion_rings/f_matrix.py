@@ -1717,7 +1717,7 @@ class FMatrix(SageObject):
         for eq_tup in eqns:
             partition[tuple(graph.connected_component_containing_vertex(variables(eq_tup)[0], sort=True))].append(eq_tup)
         if verbose:
-            print("Partitioned {} equations into {} components of size:".format(len(eqns), graph.connected_components_number()))
+            print("Partitioned {} equations into {} components of size:".format(len(eqns), graph.number_of_connected_components()))
             print(graph.connected_components_sizes())
         return partition
 

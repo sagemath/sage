@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Coxeter Groups
 """
@@ -1885,11 +1884,11 @@ class CoxeterGroups(Category_singleton):
                 sage: W = WeylGroup(['A', 3], prefix='s')
                 sage: w0 = W.long_element()
                 sage: G = w0.reduced_word_graph()
-                sage: G.num_verts()
+                sage: G.n_vertices()
                 16
                 sage: len(w0.reduced_words())
                 16
-                sage: G.num_edges()
+                sage: G.n_edges()
                 18
                 sage: len([e for e in G.edges(sort=False) if e[2] == 2])
                 10
@@ -1906,9 +1905,9 @@ class CoxeterGroups(Category_singleton):
                 sage: # needs sage.combinat sage.graphs sage.groups
                 sage: w1 = W.one()
                 sage: G = w1.reduced_word_graph()
-                sage: G.num_verts()
+                sage: G.n_vertices()
                 1
-                sage: G.num_edges()
+                sage: G.n_edges()
                 0
 
             .. SEEALSO::

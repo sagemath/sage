@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.groups
 r"""
 Finite Coxeter Groups
@@ -291,7 +290,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: W = CoxeterGroup(['A',3], base_ring=ZZ)
                 sage: P = W.bhz_poset(); P
                 Finite poset containing 24 elements
-                sage: P.relations_number()
+                sage: P.number_of_relations()
                 103
                 sage: P.chain_polynomial()
                 34*q^4 + 90*q^3 + 79*q^2 + 24*q + 1
