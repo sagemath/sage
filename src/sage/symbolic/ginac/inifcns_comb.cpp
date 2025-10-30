@@ -105,7 +105,7 @@ static ex binomial_evalf(const ex & x, const ex & y, PyObject* parent)
 	return binomial(x, y).hold();
 }
 
-// At the moment the numeric evaluation of a binomail function always
+// At the moment the numeric evaluation of a binomial function always
 // gives a real number, but if this would be implemented using the gamma
 // function, also complex conjugation should be changed (or rather, deleted).
 static ex binomial_conjugate(const ex & x, const ex & y)
