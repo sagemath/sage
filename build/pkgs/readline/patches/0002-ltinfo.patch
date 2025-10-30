@@ -1,24 +1,22 @@
---- a/support/shobj-conf	2025-10-29 21:46:37.876265377 +0800
-+++ b/support/shobj-conf	2025-10-29 21:46:46.400261991 +0800
-@@ -39,10 +39,10 @@
- SHOBJ_LD=
- SHOBJ_LDFLAGS=
- SHOBJ_XLDFLAGS=
--SHOBJ_LIBS=
-+SHOBJ_LIBS='-Wl,--no-as-needed -lncursesw -Wl,--as-needed'
+--- a/support/shobj-conf
++++ b/support/shobj-conf
+@@ -127,8 +127,10 @@
+ 	SHOBJ_CFLAGS=-fPIC
+ 	SHOBJ_LD='${CC}'
+ 	SHOBJ_LDFLAGS='-shared -Wl,-soname,$@'
++	SHOBJ_LIBS='-Wl,--no-as-needed -lncursesw -Wl,--as-needed'
  
- SHLIB_XLDFLAGS=
--SHLIB_LIBS=
-+SHLIB_LIBS='-Wl,--no-as-needed -lncursesw -Wl,--as-needed'
+ 	SHLIB_XLDFLAGS='-Wl,-rpath,$(libdir) -Wl,-soname,`basename $@ $(SHLIB_MINOR)`'
++	SHLIB_LIBS='-Wl,--no-as-needed -lncursesw -Wl,--as-needed'
+ 	SHLIB_LIBVERSION='$(SHLIB_LIBSUFF).$(SHLIB_MAJOR)$(SHLIB_MINOR)'
+ 	;;
  
- SHLIB_DOT='.'
- SHLIB_LIBPREF='lib'
-@@ -171,7 +171,7 @@
+@@ -171,7 +173,7 @@
  		;;
  	esac
  
 -	SHLIB_LIBS='-lncurses'	# see if -lcurses works on MacOS X 10.1 
-+	SHLIB_LIBS='-Wl,--no-as-needed -lncursesw -Wl,--as-needed'
++	SHLIB_LIBS='-lncursesw'	# see if -lcurses works on MacOS X 10.1 
  	;;
  
  openbsd*|netbsd*|mirbsd*)
