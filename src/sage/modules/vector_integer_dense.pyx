@@ -116,7 +116,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
         if isinstance(x, (list, tuple)):
             if len(x) != self._degree:
                 raise TypeError("x must be a list of the right length")
-            for i from 0 <= i < self._degree:
+            for i in range(self._degree):
                 z = Integer(x[i])
                 mpz_set(self._entries[i], z.value)
             return

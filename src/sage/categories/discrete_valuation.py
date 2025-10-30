@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Discrete Valuation Rings (DVR) and Fields (DVF)
 """

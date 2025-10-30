@@ -21,8 +21,7 @@ Path Algebras
 
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.misc.cachefunc import cached_method
-
-from .algebra_elements import PathAlgebraElement
+from sage.quivers.algebra_elements import PathAlgebraElement
 
 
 class PathAlgebra(CombinatorialFreeModule):

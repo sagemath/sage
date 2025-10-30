@@ -1,4 +1,3 @@
-# cython: binding=True
 # distutils: libraries = rw
 r"""
 Rank Decompositions of graphs
