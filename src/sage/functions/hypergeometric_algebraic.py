@@ -54,7 +54,7 @@ from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
-from sage.rings.padics.factory import QpFP
+from sage.rings.padics.factory import Qp
 from sage.rings.number_field.number_field import CyclotomicField
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -730,9 +730,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
     def series(self, prec):
         S = self.parent().power_series_ring()
         p = self._p
-        # TODO: check that the precision is correct
-        pprec = max(1, (len(self.bottom()) + 1) * ceil(log(prec, p)))
-        K = QpFP(p, pprec)
+        K = Qp(p, 1)
         c = K(self._scalar)
         coeffs = [c]
         for i in range(prec-1):
