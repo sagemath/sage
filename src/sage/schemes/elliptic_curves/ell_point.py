@@ -2418,6 +2418,24 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             ...
             NotImplementedError: Reduced Tate pairing is currently only implemented for finite fields
 
+        Test Issue #40764 is solved::
+
+            sage: p = 886368969471450739924935101400677
+            sage: a = 26392827536965106777121445123290
+            sage: b = 372325368096095544195525883520589
+            sage: n = 886368969471450710152985728350703
+            sage: K = GF(p)
+            sage: K3.<u> = K.extension(K['x']([4, 1, 0, 1]))
+            sage: K6.<t> = K3.extension(K3['x']([2, 0, 1]))
+            sage: E = EllipticCurve(K, [a, b])
+            sage: E6 = EllipticCurve(K6, [a, b])
+            sage: xs =  [365236101742748463929673543888206, 858097895593939865996182272259769, 148438159087534462792506738986740]
+            sage: ys = [776418047571862972603801173382237, 873677028107508092012208744232957, 622138327043805563266794621920098]
+            sage: G6 = E6(K3(xs) * t^-2, K3(ys) * t^-3)
+            sage: G = E6((260732037218904468999251391282274, 269397224242388526901257227817926))
+            sage: G6.tate_pairing(G, n, 6, q=p)
+            (265866953933808765410855411775197*u^2 + 70840727177606736287176107019990*u + 564974538044254187432914971954649)*t + 277110391100948289129710841920822*u^2 + 854033999039359627943594217781184*u + 866734209507928074923908713252876
+
         ALGORITHM:
 
         - :pari:`elltatepairing` computes the
