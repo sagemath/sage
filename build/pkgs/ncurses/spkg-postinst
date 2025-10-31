@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+#
+# Create compatibility symbolic links for narrow ncurses libraries
+# These link libncurses.so -> libncursesw.so if libncurses.so doesn't exist
+#
+# This is needed because some packages (like readline) need narrow version,
+# but we only build wide version. Other packages (like Python's curses module)
+# work better with wide version.
+
+cd "$SAGE_LOCAL/lib" || exit 1
+
+echo "Creating compatibility symbolic links..."
+
+# Create symlinks for libraries (only if narrow version doesn't exist)
+if [ ! -e libncurses.so ] && [ -e libncursesw.so ]; then
+    ln -sf libncursesw.so libncurses.so
+    echo "Created libncurses.so -> libncursesw.so"
+fi
+
+if [ ! -e libtinfo.so ] && [ -e libtinfow.so ]; then
+    ln -sf libtinfow.so libtinfo.so
+    echo "Created libtinfo.so -> libtinfow.so"
+fi
+
+# Create versioned symlinks
+for ver in 6 5; do
+    if [ ! -e libncurses.so.$ver ] && [ -e libncursesw.so.$ver ]; then
+        ln -sf libncursesw.so.$ver libncurses.so.$ver
+        echo "Created libncurses.so.$ver -> libncursesw.so.$ver"
+    fi
+    
+    if [ ! -e libtinfo.so.$ver ] && [ -e libtinfow.so.$ver ]; then
+        ln -sf libtinfow.so.$ver libtinfo.so.$ver
+        echo "Created libtinfo.so.$ver -> libtinfow.so.$ver"
+    fi
+done
+
+# Create symlinks for pkg-config files
+cd "$SAGE_LOCAL/lib/pkgconfig" || exit 1
+
+if [ ! -e ncurses.pc ] && [ -e ncursesw.pc ]; then
+    ln -sf ncursesw.pc ncurses.pc
+    echo "Created ncurses.pc -> ncursesw.pc"
+fi
+
+if [ ! -e tinfo.pc ] && [ -e tinfow.pc ]; then
+    ln -sf tinfow.pc tinfo.pc
+    echo "Created tinfo.pc -> tinfow.pc"
+fi
+
+echo "Symbolic links created successfully."
