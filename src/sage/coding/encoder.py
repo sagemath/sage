@@ -239,12 +239,14 @@ class Encoder(SageObject):
             ...
             EncodingError: Given word is not in the code
 
-        Note that since :issue:`21326`, codes cannot be of length zero::
+        Note that codes of length zero are now allowed (see :issue:`21326` and :issue:`40513`)::
 
             sage: G = matrix(GF(2), 0, 0)
             sage: C = LinearCode(G)
             sage: C
             [0, 0] linear code over GF(2)
+            sage: C.generator_matrix()
+            []
         """
         if not nocheck and c not in self.code():
             raise EncodingError("Given word is not in the code")
