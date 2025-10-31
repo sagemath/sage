@@ -19,7 +19,7 @@ Configuration tips
 Your personal Git configurations are saved in the ``~/.gitconfig``
 file in your home directory. Here is an example:
 
-.. CODE-BLOCK:: text
+.. code-block:: text
 
     [user]
         name = Alice Adventure
@@ -29,11 +29,13 @@ file in your home directory. Here is an example:
         editor = emacs
 
 You can edit this file directly or you can use Git to make changes for
-you::
+you
 
-    [alice@localhost ~]$ git config --global user.name "Alice Adventure"
-    [alice@localhost ~]$ git config --global user.email alice@wonderland.com
-    [alice@localhost ~]$ git config --global core.editor vim
+.. code-block:: console
+
+    $ git config --global user.name "Alice Adventure"
+    $ git config --global user.email alice@wonderland.com
+    $ git config --global core.editor vim
 
 
 Aliases
@@ -42,19 +44,21 @@ Aliases
 Aliases are personal shortcuts for Git commands. For example, you
 might want to be able to shorten ``git checkout`` to ``git co``.  Or
 you may want to alias ``git diff --color-words`` (which gives a nicely
-formatted output of the diff) to ``git wdiff``. You can do this with::
+formatted output of the diff) to ``git wdiff``. You can do this with
 
-    [alice@localhost ~]$ git config --global alias.ci "commit -a"
-    [alice@localhost ~]$ git config --global alias.co checkout
-    [alice@localhost ~]$ git config --global alias.st "status -a"
-    [alice@localhost ~]$ git config --global alias.stat "status -a"
-    [alice@localhost ~]$ git config --global alias.br branch
-    [alice@localhost ~]$ git config --global alias.wdiff "diff --color-words"
+.. code-block:: console
+
+    $ git config --global alias.ci "commit -a"
+    $ git config --global alias.co checkout
+    $ git config --global alias.st "status -a"
+    $ git config --global alias.stat "status -a"
+    $ git config --global alias.br branch
+    $ git config --global alias.wdiff "diff --color-words"
 
 The above commands will create an ``alias`` section in your ``.gitconfig``
 file with contents like this:
 
-.. CODE-BLOCK:: text
+.. code-block:: text
 
     [alias]
         ci = commit -a
@@ -68,9 +72,11 @@ file with contents like this:
 Editor
 ------
 
-To set the editor to use for editing commit messages, you can use::
+To set the editor to use for editing commit messages, you can use
 
-    [alice@localhost ~]$ git config --global core.editor vim
+.. code-block:: console
+
+    $ git config --global core.editor vim
 
 or set the ``EDITOR`` environment variable.
 
@@ -80,14 +86,16 @@ Merging
 
 To enforce summaries when doing merges (``~/.gitconfig`` file again):
 
-.. CODE-BLOCK:: text
+.. code-block:: text
 
     [merge]
         log = true
 
-Or from the command line::
+Or from the command line
 
-    [alice@localhost ~]$ git config --global merge.log true
+.. code-block:: console
+
+    $ git config --global merge.log true
 
 
 .. _section-fancy-log:
@@ -98,13 +106,15 @@ Fancy log output
 Here is an alias to get a fancy log output. It should go in the
 ``alias`` section of your ``.gitconfig`` file:
 
-.. CODE-BLOCK:: text
+.. code-block:: text
 
     lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)[%an]%Creset' --abbrev-commit --date=relative
 
-Using this ``lg`` alias gives you the changelog with a colored ASCII graph::
+Using this ``lg`` alias gives you the changelog with a colored ASCII graph
 
-    [alice@localhost ~]$ git lg
+.. code-block:: console
+
+    $ git lg
     * 6d8e1ee - (HEAD, origin/my-fancy-feature, my-fancy-feature) NF - a fancy file (45 minutes ago) [Matthew Brett]
     *   d304a73 - (origin/placeholder, placeholder) Merge pull request #48 from hhuuggoo/master (2 weeks ago) [Jonathan Terhorst]
     |\

@@ -1,2 +1,0 @@
-echo "Copying over new boost headers"
-sdh_install src/boost "$SAGE_LOCAL/include"

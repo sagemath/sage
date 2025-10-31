@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 # cython: old_style_globals=True
 # The old_style_globals directive is important for load() to work correctly.
 # However, this should be removed in favor of user_globals; see
@@ -160,6 +159,16 @@ def load(*filename, compress=True, verbose=True, **kwargs):
         sage: load(t)                                                                   # needs numpy
         sage: hello                                                                     # needs numpy
         <fortran ...>
+
+    Path objects are supported::
+
+        sage: from pathlib import Path
+        sage: import tempfile
+        sage: with tempfile.TemporaryDirectory() as d:
+        ....:     p = Path(d) / "test_path"
+        ....:     save(1, p)
+        ....:     load(p)
+        1
     """
     import sage.repl.load
     if len(filename) != 1:
@@ -172,6 +181,9 @@ def load(*filename, compress=True, verbose=True, **kwargs):
         return
 
     filename = filename[0]
+    # ensure that filename is a string
+    if not isinstance(filename, str):
+        filename = os.fspath(filename)
 
     if sage.repl.load.is_loadable_filename(filename):
         sage.repl.load.load(filename, globals())
@@ -213,7 +225,9 @@ def _base_save(obj, filename, compress=True):
     Otherwise this is equivalent to :func:`_base_dumps` just with the resulting
     pickle data saved to a ``.sobj`` file.
     """
-
+    # ensure that filename is a string
+    if not isinstance(filename, str):
+        filename = os.fspath(filename)
     filename = _normalize_filename(filename)
 
     with open(filename, 'wb') as fobj:
@@ -278,7 +292,20 @@ def save(obj, filename, compress=True, **kwargs):
         ....:     save((1,1), f.name)
         ....:     load(f.name)
         (1, 1)
+
+    Check that Path objects work::
+
+        sage: from pathlib import Path
+        sage: import tempfile
+        sage: with tempfile.TemporaryDirectory() as d:
+        ....:     p = Path(d) / "test_path"
+        ....:     save(1, p)
+        ....:     load(p)
+        1
     """
+    # ensure that filename is a string
+    if not isinstance(filename, str):
+        filename = os.fspath(filename)
 
     if not os.path.splitext(filename)[1] or not hasattr(obj, 'save'):
         filename = _normalize_filename(filename)
