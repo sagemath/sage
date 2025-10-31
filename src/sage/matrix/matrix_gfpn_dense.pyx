@@ -1,5 +1,4 @@
 # distutils: libraries = mtx
-# sage_setup: distribution = sagemath-meataxe
 # sage.doctest: optional - meataxe
 
 r"""

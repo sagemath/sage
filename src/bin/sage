@@ -482,9 +482,6 @@ usage_advanced() {
         echo "  --fixdoctests file.py"
         echo "                      -- Run doctests and replace output of failing doctests"
         echo "                         with actual output."
-        echo "  --fixdistributions <files|dirs>"
-        echo "                      -- Check or update '# sage_setup: distribution'"
-        echo "                         directives in source files"
     fi
     echo "  --sh [...]         -- run a shell with Sage environment variables"
     echo "                        as they are set in the runtime of Sage"
