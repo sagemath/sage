@@ -2422,7 +2422,7 @@ class LinearCode(AbstractLinearCode):
             sage: c in C_int
             True
 
-            # Test intersection with the zero code::
+        Test intersection with the zero code::
 
                 sage: C_zero = LinearCode(matrix(F, [[0,0,0,0]]))
                 sage: C1.intersection(C_zero)
