@@ -38,14 +38,14 @@ class Primes(Set_generic, UniqueRepresentation):
         sage: P = Primes(); P
         Set of all prime numbers: 2, 3, 5, 7, ...
 
-    The arguments `modulus` and `classes` allows for constructing
+    The arguments ``modulus`` and ``classes`` allows for constructing
     subsets given by congruence conditions::
 
         sage: Primes(modulus=4)
         Set of prime numbers congruent to 1 modulo 4: 5, 13, 17, 29, ...
 
-    We see that, by default, Sagemath selects to congruence class `1`.
-    The user can user pass in explicitely other classes::
+    We see that, by default, Sagemath selects the congruence class `1`.
+    The user can however pass in explicitely other classes::
 
         sage: Primes(modulus=4, classes=[3])
         Set of prime numbers congruent to 3 modulo 4: 3, 7, 11, 19, ...
@@ -57,7 +57,7 @@ class Primes(Set_generic, UniqueRepresentation):
         sage: Primes(modulus=8, classes=[1, 5])
         Set of prime numbers congruent to 1 modulo 4: 5, 13, 17, 29, ...
 
-    We show various operations::
+    We show various operations that can be performed on these sets::
 
         sage: P = Primes(modulus=4); P
         Set of prime numbers congruent to 1 modulo 4: 5, 13, 17, 29, ...
@@ -465,7 +465,7 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: P.is_empty()
             False
 
-       ::
+        ::
 
             sage: P = Primes(modulus=6, classes=[6]); P
             Empty set of prime numbers
@@ -489,7 +489,7 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: P.is_finite()
             False
 
-       ::
+        ::
 
             sage: P = Primes(modulus=10, classes=[2, 5]); P
             Finite set of prime numbers: 2, 5
@@ -514,7 +514,7 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: P.is_cofinite()
             False
 
-       ::
+        ::
 
             sage: P = Primes(modulus=4, classes=[1, 3]); P
             Set of all prime numbers with 2 excluded: 3, 5, 7, 11, ...
