@@ -21,15 +21,7 @@ log = logging.getLogger()
 
 from sage_bootstrap.stdio import flush
 import urllib
-from urllib.request import build_opener, install_opener, urlretrieve, HTTPSHandler
-import ssl
-
-# Configure SSL context to use certifi certificates if available
-try:
-    import certifi
-    _ssl_context = ssl.create_default_context(cafile=certifi.where())
-except ImportError:
-    _ssl_context = None
+from urllib.request import build_opener, install_opener, urlretrieve
 
 
 class ProgressBar(object):
@@ -129,11 +121,7 @@ class Download(object):
             self.progress_bar.error_stop()
     
     def run(self):
-        if _ssl_context:
-            https_handler = HTTPSHandler(context=_ssl_context)
-            opener = build_opener(https_handler)
-        else:
-            opener = build_opener()
+        opener = build_opener()
         install_opener(opener)
 
         opener.http_error_default = self.http_error_default
