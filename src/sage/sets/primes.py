@@ -25,6 +25,7 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.arith.misc import euler_phi
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.categories.sets_cat import EmptySetError
 
 
 class Primes(Set_generic, UniqueRepresentation):
@@ -57,6 +58,11 @@ class Primes(Set_generic, UniqueRepresentation):
         sage: Primes(modulus=8, classes=[1, 5])
         Set of prime numbers congruent to 1 modulo 4: 5, 13, 17, 29, ...
 
+    We can create a finite set of primes by passing in ``modulus=0``::
+
+        sage: Primes(modulus=0, classes=[2, 3, 5, 11])
+        Finite set of prime numbers: 2, 3, 5, 11
+
     We show various operations that can be performed on these sets::
 
         sage: P = Primes(modulus=4); P
@@ -84,6 +90,19 @@ class Primes(Set_generic, UniqueRepresentation):
         """
         Normalize the input.
 
+        INPUT:
+
+        - ``modulus`` -- an integer (default: ``1``)
+
+        - ``classes`` -- a list of integers (default: ``[1]``), the
+          congruence classes (modulo ``modulus``) included in this
+          set
+
+        - ``exceptions`` -- a dictionary with items of the form
+          ``c: v`` where ``c`` is an integer and ``v`` is a boolean;
+          if ``v`` is ``True`` (resp. ``False``) and ``c`` is added
+          to (resp. removed from) this set
+
         TESTS::
 
             sage: Primes(modulus=10)
@@ -96,15 +115,8 @@ class Primes(Set_generic, UniqueRepresentation):
 
             sage: Primes(modulus=5, exceptions={7: True, 11: False})
             Set of prime numbers congruent to 1 modulo 5 with 7 included and 11 excluded: 7, 31, 41, 61, ...
-
-            sage: Primes(modulus=0)
-            Traceback (most recent call last):
-            ...
-            ValueError: modulus must be nonzero
         """
         modulus = ZZ(modulus)
-        if modulus == 0:
-            raise ValueError("modulus must be nonzero")
         if modulus < 0:
             modulus = -modulus
         if classes is None:
@@ -113,6 +125,12 @@ class Primes(Set_generic, UniqueRepresentation):
             exceptions = {}
         if isinstance(exceptions, (tuple, list)):
             exceptions = {c: v for c, v in exceptions}
+
+        if modulus == 0:
+            for c in classes:
+                exceptions[c] = True
+            modulus = ZZ(1)
+            classes = []
 
         # We replace congruences of the form
         #   p = a (mod n) with gcd(a, n) > 1
@@ -205,8 +223,11 @@ class Primes(Set_generic, UniqueRepresentation):
         self._modulus = modulus
         self._classes = set(classes)
         self._exceptions = dict(exceptions)
-        self._elements = [c for c, v in exceptions if v and not classes]
-        self._elements.sort()
+        if classes:
+            self._elements = []
+        else:
+            self._elements = [c for c, v in exceptions if v]
+            self._elements.sort()
 
     def _repr_(self):
         r"""
@@ -322,7 +343,7 @@ class Primes(Set_generic, UniqueRepresentation):
             11
         """
         if self.is_empty():
-            return
+            raise EmptySetError
         return self.next(1)
 
     def next(self, x):
@@ -344,7 +365,7 @@ class Primes(Set_generic, UniqueRepresentation):
         If there is no element greater than the given bound, an
         error is raised::
 
-            sage: P = Primes(modulus=10, classes=[2, 5]); P
+            sage: P = Primes(modulus=0, classes=[2, 5]); P
             Finite set of prime numbers: 2, 5
             sage: P.next(10)
             Traceback (most recent call last):
@@ -414,7 +435,7 @@ class Primes(Set_generic, UniqueRepresentation):
         If there is less than `n` elements in this set, an error
         is raised::
 
-            sage: P = Primes(modulus=10, classes=[2, 5]); P
+            sage: P = Primes(modulus=0, classes=[2, 5]); P
             Finite set of prime numbers: 2, 5
             sage: P[1]
             5
@@ -482,7 +503,7 @@ class Primes(Set_generic, UniqueRepresentation):
 
         ::
 
-            sage: P = Primes(modulus=10, classes=[2, 5]); P
+            sage: P = Primes(modulus=0, classes=[2, 5]); P
             Finite set of prime numbers: 2, 5
             sage: P.is_finite()
             True
