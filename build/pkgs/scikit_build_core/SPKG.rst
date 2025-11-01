@@ -1,10 +1,27 @@
-scikit-build-core
-===================
+scikit-build-core: Build backend for CMake based projects
+=========================================================
 
-A modern, PEP 517 build backend for CMake-based Python packages.
+Description
+-----------
 
-- Home: https://github.com/scikit-build/scikit-build-core
-- PyPI: https://pypi.org/project/scikit-build-core/
+Build backend for CMake based projects
 
-This package provides the PEP 517 backend used by projects like pyzmq to build wheels.
-It is a pure-Python wheel; no build steps are required.
+This package provides a modern, PEP 517 build backend for CMake-based
+Python packages. It is used by projects like pyzmq to build wheels.
+
+License
+-------
+
+Apache-2.0
+
+
+Upstream Contact
+----------------
+
+- Home page: https://github.com/scikit-build/scikit-build-core
+- Documentation: https://scikit-build-core.readthedocs.io
+
+Dependencies
+------------
+
+Python, packaging, pathspec
