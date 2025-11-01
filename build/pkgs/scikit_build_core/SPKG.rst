@@ -7,7 +7,8 @@ Description
 Build backend for CMake based projects
 
 This package provides a modern, PEP 517 build backend for CMake-based
-Python packages. It is used by projects like pyzmq to build wheels.
+Python packages.
+
 
 License
 -------
