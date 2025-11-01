@@ -2144,6 +2144,9 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Return an embedding of the definite quaternion algebra
         into the algebra of 2x2 matrices with coefficients in `\QQ_p`.
 
+        It returns an optimal embedding for the maximal order: the image
+        of the maximal order lies inside `M_2(\ZZ_p)`
+
         INPUT:
 
         - ``prec`` -- integer; the precision of the splitting
@@ -2171,6 +2174,9 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Find an embedding of the definite quaternion algebra
         into the algebra of 2x2 matrices with coefficients in `\QQ_p`.
 
+        It returns an optimal embedding for the maximal order: the image
+        of the maximal order lies inside `M_2(\ZZ_p)`
+
         INPUT:
 
         - ``prec`` -- integer; the precision of the splitting
@@ -2184,6 +2190,14 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             sage: B.<i,j,k> = QuaternionAlgebra(3)
             sage: phi(i)**2 == QQ(i**2)*phi(B(1))
             True
+
+        TESTS:
+
+        Check that :issue:`40209` is solved::
+
+            sage: X = BruhatTitsQuotient(7, 5*17*13)
+            sage: X.genus_no_formula()
+            385 
         """
         assert not self._use_magma
         if prec <= self._prec:
@@ -2192,6 +2206,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         A = self.get_quaternion_algebra()
 
         ZZp = Zp(self._p, prec)
+        QQp = Qp(self._p, prec)
         v = A.invariants()
         a = ZZp(v[0])
         b = ZZp(v[1])
@@ -2199,7 +2214,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             raise ValueError("must be rational quaternion algebra")
         if (A.discriminant() % self._p == 0):
             raise ValueError("p (=%s) must be an unramified prime" % self._p)
-        M = MatrixSpace(ZZp, 2)
+        M = MatrixSpace(QQp, 2)
 
         if a.is_square():
             alpha = a.sqrt()
@@ -2217,6 +2232,53 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                 else:
                     z += 1
         self._KK = self._II * self._JJ
+
+        def phi(q):
+            v = q.coefficient_tuple()
+            return M(v[0] + self._II * v[1] + self._JJ * v[2] + self._KK * v[3])
+
+        # Get basis of the maximal order and compute their action on vector (1, 0)
+        B = self.get_maximal_order().basis()
+        col_vectors = [phi(b).column(0) for b in B]
+        mat = column_matrix(col_vectors)
+
+        def select_best_basis(mat):
+            """
+            Given a 2x4 matrix over Qp, return a pair of linearly independent columns
+            whose determinant has minimal p-adic valuation.
+            """
+            best_val = None
+            best_pair = None
+
+            for i in range(4):
+                for j in range(i + 1, 4):
+                    u = mat.column(i)
+                    v = mat.column(j)
+                    det = u[0] * v[1] - u[1] * v[0]
+                    if det != 0:
+                        val = det.valuation()
+                        if best_val is None or val < best_val:
+                            best_val = val
+                            best_pair = (u, v)
+
+            if best_pair is None:
+                raise ValueError("No linearly independent pair found")
+
+            return column_matrix(best_pair)
+
+        m =select_best_basis(mat)
+
+        # Normalize m so that it lies in GL_2(Z_p)
+        min_val = min(x.valuation() for x in m.list())
+        m = (self._p ** (-min_val)) * m
+
+        # Conjugate to ensure the image of the maximal order lies in M_2(Z_p)
+        g = self._BT.vertex(m)
+        g_inv = g.inverse()
+        self._II = M(g_inv * self._II * g)
+        self._JJ = M(g_inv * self._JJ * g)
+        self._KK = self._II * self._JJ
+
         return self._II, self._JJ, self._KK
 
     def _compute_embedding_matrix(self, prec, force_computation=False):
