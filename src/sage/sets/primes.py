@@ -100,7 +100,7 @@ class Primes(Set_generic, UniqueRepresentation):
 
         - ``exceptions`` -- a dictionary with items of the form
           ``c: v`` where ``c`` is an integer and ``v`` is a boolean;
-          if ``v`` is ``True`` (resp. ``False``) and ``c`` is added
+          if ``v`` is ``True`` (resp. ``False``) then ``c`` is added
           to (resp. removed from) this set
 
         TESTS::
