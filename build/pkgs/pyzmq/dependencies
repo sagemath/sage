@@ -1,4 +1,4 @@
- cython zeromq | $(PYTHON_TOOLCHAIN) $(PYTHON)
+ cython scikit_build_core zeromq | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.
