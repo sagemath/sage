@@ -43,7 +43,6 @@ from sage.categories.action import Action
 from sage.categories.pushout import pushout
 from sage.categories.map import Map
 from sage.categories.finite_fields import FiniteFields
-from sage.sets.primes import Primes
 
 from sage.matrix.special import companion_matrix
 from sage.matrix.special import identity_matrix
@@ -51,6 +50,7 @@ from sage.matrix.special import identity_matrix
 from sage.symbolic.ring import SR
 from sage.combinat.subset import Subsets
 from sage.rings.infinity import infinity
+from sage.sets.primes import Primes
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -610,7 +610,7 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic_charzero):
 
         # We treat exceptional primes
         bound = params.bound
-        exceptions = []
+        exceptions = {}
         for p in Primes():
             if p > bound:
                 break
@@ -619,12 +619,12 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic_charzero):
             q = p
             while q <= bound:
                 if not self._parameters.q_parenthesis_criterion(q):
-                    exceptions.append(p)
+                    exceptions[p] = False
                     break
                 q *= p
 
         goods = [c for c, v in goods.items() if v]
-        return d, goods, exceptions
+        return Primes(modulus=d, classes=goods, exceptions=exceptions)
 
     def is_algebraic(self):
         if any(a in ZZ and a <= 0 for a in self.top()):
@@ -818,6 +818,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
     def annihilating_ore_polynomial(self, var='Frob'):
         # QUESTION: does this method actually return the
         # minimal Ore polynomial annihilating self?
+        # Probably not :-(
         if not self._parameters.is_balanced():
             raise NotImplementedError("the hypergeometric function is not a pFq with q = p-1")
 
@@ -894,8 +895,8 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
 
 class HypergeometricToSR(Map):
     def _call_(self, h):
-        from sage.functions.hypergeometric import _hypergeometric
-        return h.scalar() * _hypergeometric(h.top(), h.bottom(), SR.var(h.parent().variable_name()))
+        from sage.functions.hypergeometric import hypergeometric
+        return h.scalar() * hypergeometric(h.top(), h.bottom(), SR.var(h.parent().variable_name()))
 
 
 class ScalarMultiplication(Action):
