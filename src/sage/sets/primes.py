@@ -44,15 +44,15 @@ class Primes(Set_generic, UniqueRepresentation):
         sage: Primes(modulus=4)
         Set of prime numbers congruent to 1 modulo 4: 5, 13, 17, 29, ...
 
-    We see that, by default, Sagemath selects the congruence class `1`.
-    The user can however pass in explicitely other classes::
+    By default the congruence class `1` is selected, but we can specify any
+    subset of congruence classes::
 
         sage: Primes(modulus=4, classes=[3])
         Set of prime numbers congruent to 3 modulo 4: 3, 7, 11, 19, ...
         sage: Primes(modulus=8, classes=[1, 3])
         Set of prime numbers congruent to 1, 3 modulo 8: 3, 11, 17, 19, ...
 
-    When possible, the congruence conditions are simplified::
+    If possible, the congruence conditions are simplified::
 
         sage: Primes(modulus=8, classes=[1, 5])
         Set of prime numbers congruent to 1 modulo 4: 5, 13, 17, 29, ...
@@ -117,20 +117,19 @@ class Primes(Set_generic, UniqueRepresentation):
         # We replace congruences of the form
         #   p = a (mod n) with gcd(a, n) > 1
         # (which only includes a finite number of primes)
-        # by exceptions
+        # with exceptions
         indic = modulus * [False]
         for c in classes:
             indic[ZZ(c) % modulus] = True
         for c in range(modulus):
-            g = modulus.gcd(c)
-            if g > 1:
+            if modulus.gcd(c) > 1:
                 if indic[c]:
                     if c == 0:
                         if modulus not in exceptions:
                             exceptions[modulus] = True
                     else:
                         if c not in exceptions:
-                            exceptions[c] = True
+                            exceptions[ZZ(c)] = True
                 indic[c] = None
 
         # We normalize the congruence conditions
@@ -174,11 +173,8 @@ class Primes(Set_generic, UniqueRepresentation):
 
         # We format the final result
         classes = tuple([c for c in range(modulus) if indic[c] is True])
-        exceptions_list = []
-        for c, v in exceptions.items():
-            c = ZZ(c)
-            if c.is_prime() and (v != (indic[c % modulus] is True)):
-                exceptions_list.append((c, v))
+        exceptions_list = [(c, v) for c, v in exceptions.items()
+                           if c.is_prime() and (v != (indic[c % modulus] is True))]
         exceptions_list.sort()
 
         return super().__classcall__(cls, modulus, classes, tuple(exceptions_list))
@@ -208,12 +204,8 @@ class Primes(Set_generic, UniqueRepresentation):
         super().__init__(facade=ZZ, category=category)
         self._modulus = modulus
         self._classes = set(classes)
-        self._exceptions = {}
-        self._elements = []
-        for c, v in exceptions:
-            self._exceptions[c] = v
-            if v and not classes:
-                self._elements.append(c)
+        self._exceptions = dict(exceptions)
+        self._elements = [c for c, v in exceptions if v and not classes]
         self._elements.sort()
 
     def _repr_(self):
@@ -316,8 +308,7 @@ class Primes(Set_generic, UniqueRepresentation):
         """
         if self.is_finite():
             return ZZ(len(self._elements))
-        else:
-            return infinity
+        return infinity
 
     def first(self, n=None):
         r"""
