@@ -120,7 +120,7 @@ class Primes(Set_generic, UniqueRepresentation):
         if modulus < 0:
             modulus = -modulus
         if classes is None:
-            classes = [1]
+            classes = [ZZ(1)]
         if exceptions is None:
             exceptions = {}
         if isinstance(exceptions, (tuple, list)):
@@ -210,7 +210,7 @@ class Primes(Set_generic, UniqueRepresentation):
 
         ::
 
-            sage: Q = Primes(classes=[]).include([2, 3, 5])
+            sage: Q = Primes(modulus=0, classes=[2, 3, 5])
             sage: Q.category()
             Category of facade finite enumerated sets
             sage: TestSuite(Q).run()
@@ -238,7 +238,7 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: Primes(modulus=4).include(2).exclude(5)  # indirect doctest
             Set of prime numbers congruent to 1 modulo 4 with 2 included and 5 excluded: 2, 13, 17, 29, ...
 
-            sage: E = Primes(classes=[])
+            sage: E = Primes(modulus=0)
             sage: E  # indirect doctest
             Empty set of prime numbers
 
