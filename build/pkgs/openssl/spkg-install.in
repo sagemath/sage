@@ -28,3 +28,37 @@ $MAKE || sdh_die "Error building openssl."
 echo "Installing openssl..."
 # installing the docs fails often, skip
 $MAKE install_sw || sdh_die "Error installing openssl."
+
+# Set up SSL certificate paths by linking to system certificates
+# OpenSSL looks for certificates in $SAGE_LOCAL/openssl/cert.pem and certs/
+echo "Setting up SSL certificate paths..."
+mkdir -p "$SAGE_LOCAL/openssl"
+
+# Link to system certificate bundle if it exists
+if [ -f "/etc/ssl/certs/ca-certificates.crt" ]; then
+    # Debian/Ubuntu/Gentoo/Arch Linux
+    echo "Linking to /etc/ssl/certs/ca-certificates.crt"
+    ln -sf /etc/ssl/certs/ca-certificates.crt "$SAGE_LOCAL/openssl/cert.pem"
+elif [ -f "/etc/pki/tls/certs/ca-bundle.crt" ]; then
+    # RHEL/CentOS/Fedora
+    echo "Linking to /etc/pki/tls/certs/ca-bundle.crt"
+    ln -sf /etc/pki/tls/certs/ca-bundle.crt "$SAGE_LOCAL/openssl/cert.pem"
+elif [ -f "/etc/ssl/cert.pem" ]; then
+    # BSD/macOS
+    echo "Linking to /etc/ssl/cert.pem"
+    ln -sf /etc/ssl/cert.pem "$SAGE_LOCAL/openssl/cert.pem"
+else
+    echo "Warning: System CA certificate bundle not found. SSL certificate verification may fail."
+fi
+
+# Link to system certs directory if it exists
+if [ -d "/etc/ssl/certs" ]; then
+    echo "Linking to /etc/ssl/certs directory"
+    ln -sf /etc/ssl/certs "$SAGE_LOCAL/openssl/certs"
+elif [ -d "/etc/pki/tls/certs" ]; then
+    # RHEL/CentOS/Fedora
+    echo "Linking to /etc/pki/tls/certs directory"
+    ln -sf /etc/pki/tls/certs "$SAGE_LOCAL/openssl/certs"
+else
+    echo "Warning: System CA certificates directory not found."
+fi
