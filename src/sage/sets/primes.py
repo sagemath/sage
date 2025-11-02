@@ -29,7 +29,31 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.sets_cat import EmptySetError
 
 
-def repr_list(items, left=4, right=2):
+def _repr_items(items, left=4, right=2):
+    r"""
+    Return a string representation of the items in ``items``
+    with possible ellipsis.
+
+    INPUT:
+
+    - ``items`` -- a list
+
+    - ``left`` -- an integer (default: ``4``), the maximum
+      number of items listed at the beginning
+
+    - ``right`` -- an integer (default: ``2``), the maximum
+      number of items listed at the end
+
+    EXAMPLES::
+
+        sage: from sage.sets.primes import _repr_items
+        sage: _repr_items(range(5))
+        '0, 1, 2, 3, 4'
+        sage: _repr_items(range(10))
+        '0, 1, 2, 3, ..., 8, 9'
+        sage: _repr_items(range(10), left=3, right=3)
+        '0, 1, 2, ..., 7, 8, 9'
+    """
     if len(items) <= left + right + 1:
         s = [str(item) for item in items]
     else:
@@ -367,18 +391,18 @@ class Primes(Set_generic, UniqueRepresentation):
             if not included:
                 return "Empty set of prime numbers"
             else:
-                return "Finite set of prime numbers: %s" % repr_list(included)
+                return "Finite set of prime numbers: %s" % _repr_items(included)
         if self._modulus == 1:
             s = "Set of all prime numbers"
         else:
-            s = "Set of prime numbers congruent to %s modulo %s" % (repr_list(classes), self._modulus)
+            s = "Set of prime numbers congruent to %s modulo %s" % (_repr_items(classes), self._modulus)
         if included:
-            s += " with %s included" % repr_list(included)
+            s += " with %s included" % _repr_items(included)
         if excluded:
             if not included:
-                s += " with %s excluded" % repr_list(excluded)
+                s += " with %s excluded" % _repr_items(excluded)
             else:
-                s += " and %s excluded" % repr_list(excluded)
+                s += " and %s excluded" % _repr_items(excluded)
         s += ": %s, ..." % (", ".join([str(n) for n in self[:4]]))
         return s
 
