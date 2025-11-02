@@ -714,17 +714,10 @@ class Primes(Set_generic, UniqueRepresentation):
         classes = [c for c in range(modulus)
                    if (c % self._modulus in self._classes
                    and c % other._modulus in other._classes)]
-        exceptions = {}
-        for c, v in self._exceptions.items():
-            if v and c in other:
-                exceptions[c] = True
-            if not v:
-                exceptions[c] = False
-        for c, v in other._exceptions.items():
-            if v and c in self:
-                exceptions[c] = True
-            if not v:
-                exceptions[c] = False
+        exceptions = {c: v for c, v in self._exceptions.items()
+                      if not v or c in other}
+        exceptions.update((c, v) for c, v in other._exceptions.items()
+                          if not v or c in self)
         return Primes(modulus, classes, exceptions)
 
     def union(self, other):
