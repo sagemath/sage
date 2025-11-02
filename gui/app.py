@@ -1,8 +1,9 @@
 # General imports
 import sys
-from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QWidget, QAction, QTabWidget, QVBoxLayout
-from PyQt5.QtGui import QIcon, QPalette, QColor
-from PyQt5.QtCore import pyqtSlot, Qt
+from PyQt5.QtWidgets import (QMainWindow, QApplication, QPushButton, QWidget, 
+                          QAction, QTabWidget, QVBoxLayout, QLabel, QStackedWidget)
+from PyQt5.QtGui import QIcon, QPalette, QColor, QPixmap
+from PyQt5.QtCore import pyqtSlot, Qt, QSize, QtMsgType
 
 # Define the application style sheet
 STYLE_SHEET = """
@@ -130,40 +131,88 @@ class App(QMainWindow):
         self.title = 'SageMath GUI'
         self.left = 0
         self.top = 0
-        self.width = 1100
-        self.height = 900
+        self._window_width = 1100
+        self._window_height = 900
         self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.width, self.height)
+        self.setGeometry(self.left, self.top, self._window_width, self._window_height)
         
         self.table_widget = MyTableWidget(self)
         self.setCentralWidget(self.table_widget)
         
         self.show()
     
+class WelcomeWidget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        layout = QVBoxLayout(self)
+        
+        # Create logo label
+        logo_label = QLabel()
+        pixmap = QPixmap("c:/CodingStuff/GradSoftwareDev/SageMath-CSC5323-Extension/gui/SageGUI.png")
+        scaled_pixmap = pixmap.scaled(700, 300)  # Adjust size as needed
+        logo_label.setPixmap(scaled_pixmap)
+        logo_label.setAlignment(Qt.AlignCenter)
+        
+        # Create welcome label
+        welcome_label = QLabel("Welcome")
+        welcome_label.setAlignment(Qt.AlignCenter)
+        # Make the font larger
+        font = welcome_label.font()
+        font.setPointSize(48)  # Large font size
+        font.setBold(True)     # Make it bold
+        welcome_label.setFont(font)
+        
+        # Add widgets to layout with proper spacing
+        layout.addStretch(1)
+        layout.addWidget(welcome_label)
+        layout.addSpacing(20)  # Add some space between text and logo
+        layout.addWidget(logo_label)
+        layout.addStretch(1)
+        
+        self.setLayout(layout)
+
 class MyTableWidget(QWidget):
-    
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
-        self.layout = QVBoxLayout(self)
+        self._main_layout = QVBoxLayout(self)
         
-        # Initialize tab screen
+        # Create welcome screen
+        self.welcome = WelcomeWidget(self)
+        
+        # Create and set up tab widget
         self.tabs = QTabWidget()
-        self.gtTab = QWidget()
-        self.gtLearnTab = QWidget()
-        self.laTab = QWidget()
-        self.laLearnTab = QWidget()
+        self.tabs.setDocumentMode(True)  # Cleaner tab appearance
         
-        # Add tabs
+        # Add content tabs
         self.tabs.addTab(GT_Calc_Window(self), "Graph Theory")
         self.tabs.addTab(GT_Learning_Window(self), "Graph Theory Learning")
         self.tabs.addTab(MatrixApp(self), "Linear Algebra")
         self.tabs.addTab(TeachingMatrixApp(self), "Linear Algebra Learning")
-        self.tabs.addTab(SetTheoryTab(self),"Set Theory") # ^^^
+        self.tabs.addTab(SetTheoryTab(self), "Set Theory")
         
-
-        # Add tabs to widget
-        self.layout.addWidget(self.tabs)
-        self.setLayout(self.layout)
+        # Create stacked widget for main content
+        self.stack = QStackedWidget()
+        
+        # Add pages to stack
+        self.stack.addWidget(self.welcome)
+        self.stack.addWidget(self.tabs)
+        
+        # Initially show welcome screen
+        self.stack.setCurrentIndex(0)
+        
+        # Add tab bar and stack to layout
+        self._main_layout.addWidget(self.tabs.tabBar())
+        self._main_layout.addWidget(self.stack)
+        self.setLayout(self._main_layout)
+        
+        # Connect tab selection
+        self.tabs.tabBarClicked.connect(self.on_tab_clicked)
+    
+    def on_tab_clicked(self, index):
+        # Show tabs content and switch to selected tab
+        if self.stack.currentIndex() == 0:  # If on welcome screen
+            self.stack.setCurrentIndex(1)    # Switch to tabs
+        self.tabs.setCurrentIndex(index)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

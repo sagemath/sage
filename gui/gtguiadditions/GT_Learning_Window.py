@@ -7,7 +7,7 @@ from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import QSize, QUrl
 from Glossary.Glossary import GlossaryWidget
-from sage.all import Graph
+#from sage.all import Graph
 
 class GTImageWindow(QWidget):
     def __init__(self, image_path):

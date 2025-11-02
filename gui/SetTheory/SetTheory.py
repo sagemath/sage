@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout, QHBoxLayout, QLineEdit, QSizePolicy, QComboBox
 )
 from Glossary.Glossary import GlossaryWidget
-from sage.all import Set  # ← restored Sage Set
+#from sage.all import Set  # ← restored Sage Set
 
 
 class SetTheoryTab(QWidget):
