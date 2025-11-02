@@ -547,6 +547,35 @@ class Primes(Set_generic, UniqueRepresentation):
             raise ValueError("this set is empty")
         return self.next(42)
 
+    def in_range(self, start, stop=None):
+        r"""
+        Return the list of the elements of this set which are
+        in the given range.
+
+        EXAMPLES::
+
+            sage: P = Primes(modulus=3); P
+            Set of prime numbers congruent to 1 modulo 3: 7, 13, 19, 31, ...
+            sage: P.in_range(50, 100)
+            [61, 67, 73, 79, 97]
+
+        When a unique integer is passed, it is interpreted as the
+        upper bound::
+
+            sage: P.in_range(50)
+            [7, 13, 19, 31, 37, 43]
+        """
+        if stop is None:
+            stop = start
+            start = 1
+        elements = []
+        x = start - 1
+        while True:
+            x = self.next(x)
+            if x >= stop:
+                return elements
+            elements.append(x)
+
     def unrank(self, n):
         r"""
         Return the ``n``-th element of this set.
