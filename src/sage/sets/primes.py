@@ -124,8 +124,8 @@ class Primes(Set_generic, UniqueRepresentation):
             classes = [ZZ(1)]
         if exceptions is None:
             exceptions = {}
-        if isinstance(exceptions, (tuple, list)):
-            exceptions = {x: b for x, b in exceptions}
+        if not isinstance(exceptions, dict):
+            exceptions = dict(exceptions)
 
         if modulus == 0:
             for c in classes:
