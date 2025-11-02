@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 """
 The set of prime numbers and its subsets defined by congruence conditions
 
