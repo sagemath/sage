@@ -559,7 +559,7 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: P.in_range(50, 100)
             [61, 67, 73, 79, 97]
 
-        When a unique integer is passed, it is interpreted as the
+        When a single integer is passed, it is interpreted as the
         upper bound::
 
             sage: P.in_range(50)
@@ -1016,8 +1016,7 @@ class Primes(Set_generic, UniqueRepresentation):
 
     def is_superset(self, other, almost=False):
         r"""
-        Return ``True`` if this set of is supset of ``other``;
-        ``False`` otherwise.
+        Return whether this set contains the set ``other`` as a subset.
 
         INPUT:
 
