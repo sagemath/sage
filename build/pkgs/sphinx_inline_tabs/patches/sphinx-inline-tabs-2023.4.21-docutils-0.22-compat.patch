@@ -1,0 +1,22 @@
+From 4c7ee22af241e0511350948217dfd29ee1b12b7b Mon Sep 17 00:00:00 2001
+From: Chris Mayo <aklhfex@gmail.com>
+Date: Tue, 30 Sep 2025 19:31:25 +0100
+Subject: [PATCH] Docutils 0.22 compatibility
+
+backrefs attribute no longer used.
+
+Upstream-PR: https://github.com/pradyunsg/sphinx-inline-tabs/pull/51
+
+diff --git a/src/sphinx_inline_tabs/_impl.py b/src/sphinx_inline_tabs/_impl.py
+index 48e9537..f23ca28 100644
+--- a/src/sphinx_inline_tabs/_impl.py
++++ b/src/sphinx_inline_tabs/_impl.py
+@@ -23,7 +23,7 @@ def visit(translator, node):
+         attributes.pop("classes")
+         attributes.pop("names")
+         attributes.pop("dupnames")
+-        attributes.pop("backrefs")
++        attributes.pop("backrefs", None)
+ 
+         if node._endtag:
+             text = translator.starttag(node, node._tagname, **attributes)
