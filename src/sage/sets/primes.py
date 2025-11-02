@@ -1006,7 +1006,7 @@ class Primes(Set_generic, UniqueRepresentation):
 
         .. SEEALSO::
 
-            :meth:`is_supset`, :meth:`is_disjoint`, :meth:`is_almost_equal`
+            :meth:`is_superset`, :meth:`is_disjoint`, :meth:`is_almost_equal`
         """
         P = self.intersection(other)
         if almost:
@@ -1014,7 +1014,7 @@ class Primes(Set_generic, UniqueRepresentation):
         else:
             return P == self
 
-    def is_supset(self, other, almost=False):
+    def is_superset(self, other, almost=False):
         r"""
         Return ``True`` if this set of is supset of ``other``;
         ``False`` otherwise.
@@ -1032,9 +1032,9 @@ class Primes(Set_generic, UniqueRepresentation):
             Set of prime numbers congruent to 1 modulo 4: 5, 13, 17, 29, ...
             sage: Q = Primes(modulus=8); Q
             Set of prime numbers congruent to 1 modulo 8: 17, 41, 73, 89, ...
-            sage: P.is_supset(Q)
+            sage: P.is_superset(Q)
             True
-            sage: Q.is_supset(P)
+            sage: Q.is_superset(P)
             False
 
         When ``almost=True``, the inclusion is only checked up to a
@@ -1042,9 +1042,9 @@ class Primes(Set_generic, UniqueRepresentation):
 
             sage: Q2 = Q.include(2); Q2
             Set of prime numbers congruent to 1 modulo 8 with 2 included: 2, 17, 41, 73, ...
-            sage: P.is_supset(Q2)
+            sage: P.is_superset(Q2)
             False
-            sage: P.is_supset(Q2, almost=True)
+            sage: P.is_superset(Q2, almost=True)
             True
 
         .. SEEALSO::
