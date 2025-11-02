@@ -1016,8 +1016,7 @@ class Primes(Set_generic, UniqueRepresentation):
 
     def is_supset(self, other, almost=False):
         r"""
-        Return ``True`` if this set of is supset of ``other``;
-        ``False`` otherwise.
+        Return whether this set contains the set ``other`` as a subset.
 
         INPUT:
 
