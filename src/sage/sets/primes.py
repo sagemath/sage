@@ -695,6 +695,15 @@ class Primes(Set_generic, UniqueRepresentation):
 
         TESTS::
 
+            sage: P = Primes(modulus=5, exceptions={5: True, 11: False}); P
+            Set of prime numbers congruent to 1 modulo 5 with 5 included and 11 excluded: 5, 31, 41, 61, ...
+            sage: Q = Primes(modulus=4, exceptions={13: False, 11: True}); Q
+            Set of prime numbers congruent to 1 modulo 4 with 11 included and 13 excluded: 5, 11, 17, 29, ...
+            sage: P.intersection(Q)
+            Set of prime numbers congruent to 1 modulo 20 with 5 included: 5, 41, 61, 101, ...
+
+        ::
+
             sage: P.intersection(ZZ) == P
             True
             sage: P.intersection(RR)
@@ -738,12 +747,15 @@ class Primes(Set_generic, UniqueRepresentation):
             Set of prime numbers congruent to 1, 2, 8, 11, 14 modulo 15 with 5 included: 2, 5, 11, 17, ...
 
         TESTS::
+
             sage: P = Primes(modulus=5, exceptions={5: True, 11: False}); P
             Set of prime numbers congruent to 1 modulo 5 with 5 included and 11 excluded: 5, 31, 41, 61, ...
             sage: Q = Primes(modulus=4, exceptions={13: False, 11: True}); Q
             Set of prime numbers congruent to 1 modulo 4 with 11 included and 13 excluded: 5, 11, 17, 29, ...
             sage: P.union(Q)
             Set of prime numbers congruent to 1, 9, 11, 13, 17 modulo 20 with 5 included and 13 excluded: 5, 11, 17, 29, ...
+
+        ::
 
             sage: P.union(ZZ) == ZZ
             True
@@ -764,17 +776,10 @@ class Primes(Set_generic, UniqueRepresentation):
         classes = [c for c in range(modulus)
                    if (c % self._modulus in self._classes
                     or c % other._modulus in other._classes)]
-        exceptions = {}
-        for c, v in self._exceptions.items():
-            if v:
-                exceptions[c] = True
-            if not v and c not in other:
-                exceptions[c] = False
-        for c, v in other._exceptions.items():
-            if v:
-                exceptions[c] = True
-            if not v and c not in self:
-                exceptions[c] = False
+        exceptions = {c: v for c, v in self._exceptions.items()
+                      if v or c not in other}
+        exceptions.update((c, v) for c, v in other._exceptions.items()
+                          if v or c not in self)
         return Primes(modulus, classes, exceptions)
 
     def is_subset(self, other):
