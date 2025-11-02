@@ -290,7 +290,7 @@ class Primes(Set_generic, UniqueRepresentation):
             (5, [1, 3])
 
         If this subset is finite, the output of this method is always `(1, [])`.
-        The elements of the subset can be retreived using the method :meth:`list`
+        The elements of the subset can be retrieved using the method :meth:`list`
         or :meth:`included`::
 
             sage: P = Primes(modulus=0, classes=range(50))
@@ -838,7 +838,7 @@ class Primes(Set_generic, UniqueRepresentation):
 
     def intersection(self, other):
         r"""
-        Return the intesection of this set with ``other``.
+        Return the intersection of this set with ``other``.
 
         INPUT:
 
@@ -891,7 +891,7 @@ class Primes(Set_generic, UniqueRepresentation):
 
     def union(self, other):
         r"""
-        Return the intesection of this set with ``other``.
+        Return the union of this set and ``other``.
 
         INPUT:
 
@@ -1058,9 +1058,8 @@ class Primes(Set_generic, UniqueRepresentation):
 
     def is_disjoint(self, other, almost=False):
         r"""
-        Return ``True`` if the intersection of this set with ``other``
-        is empty (resp. finite) if ``almost`` is ``False`` (resp. ``True``);
-        return ``False`` otherwise.
+        Return whether the intersection of this set with ``other``
+        is empty (or finite, if ``almost`` is ``True``).
 
         INPUT:
 
