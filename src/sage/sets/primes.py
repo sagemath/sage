@@ -1,5 +1,6 @@
+# sage.doctest: needs sage.libs.pari
 """
-The set of prime numbers and its subsets defined by congruence conditions
+Set and subsets of prime numbers
 
 AUTHORS:
 
@@ -25,6 +26,41 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.arith.misc import euler_phi
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.categories.sets_cat import EmptySetError
+
+
+def _repr_items(items, left=4, right=2):
+    r"""
+    Return a string representation of the items in ``items``
+    with possible ellipsis.
+
+    INPUT:
+
+    - ``items`` -- a list
+
+    - ``left`` -- an integer (default: ``4``), the maximum
+      number of items listed at the beginning
+
+    - ``right`` -- an integer (default: ``2``), the maximum
+      number of items listed at the end
+
+    EXAMPLES::
+
+        sage: from sage.sets.primes import _repr_items
+        sage: _repr_items(range(5))
+        '0, 1, 2, 3, 4'
+        sage: _repr_items(range(10))
+        '0, 1, 2, 3, ..., 8, 9'
+        sage: _repr_items(range(10), left=3, right=3)
+        '0, 1, 2, ..., 7, 8, 9'
+    """
+    if len(items) <= left + right + 1:
+        s = [str(item) for item in items]
+    else:
+        s = [str(item) for item in items[:left]]
+        s += ["..."]
+        s += [str(item) for item in items[-right:]]
+    return ", ".join(s)
 
 
 class Primes(Set_generic, UniqueRepresentation):
@@ -44,18 +80,23 @@ class Primes(Set_generic, UniqueRepresentation):
         sage: Primes(modulus=4)
         Set of prime numbers congruent to 1 modulo 4: 5, 13, 17, 29, ...
 
-    We see that, by default, Sagemath selects the congruence class `1`.
-    The user can however pass in explicitely other classes::
+    By default the congruence class `1` is selected, but we can specify any
+    subset of congruence classes::
 
         sage: Primes(modulus=4, classes=[3])
         Set of prime numbers congruent to 3 modulo 4: 3, 7, 11, 19, ...
         sage: Primes(modulus=8, classes=[1, 3])
         Set of prime numbers congruent to 1, 3 modulo 8: 3, 11, 17, 19, ...
 
-    When possible, the congruence conditions are simplified::
+    If possible, the congruence conditions are simplified::
 
         sage: Primes(modulus=8, classes=[1, 5])
         Set of prime numbers congruent to 1 modulo 4: 5, 13, 17, 29, ...
+
+    We can create a finite set of primes by passing in ``modulus=0``::
+
+        sage: Primes(modulus=0, classes=[2, 3, 5, 11])
+        Finite set of prime numbers: 2, 3, 5, 11
 
     We show various operations that can be performed on these sets::
 
@@ -84,6 +125,19 @@ class Primes(Set_generic, UniqueRepresentation):
         """
         Normalize the input.
 
+        INPUT:
+
+        - ``modulus`` -- an integer (default: ``1``)
+
+        - ``classes`` -- a list of integers (default: ``[1]``), the
+          congruence classes (modulo ``modulus``) included in this
+          set
+
+        - ``exceptions`` -- a dictionary with items of the form
+          ``x: b`` where ``x`` is an integer and ``b`` is a boolean;
+          if ``b`` is ``True`` (resp. ``False``) then ``x`` is added
+          to (resp. removed from) this set
+
         TESTS::
 
             sage: Primes(modulus=10)
@@ -96,41 +150,38 @@ class Primes(Set_generic, UniqueRepresentation):
 
             sage: Primes(modulus=5, exceptions={7: True, 11: False})
             Set of prime numbers congruent to 1 modulo 5 with 7 included and 11 excluded: 7, 31, 41, 61, ...
-
-            sage: Primes(modulus=0)
-            Traceback (most recent call last):
-            ...
-            ValueError: modulus must be nonzero
         """
         modulus = ZZ(modulus)
-        if modulus == 0:
-            raise ValueError("modulus must be nonzero")
         if modulus < 0:
             modulus = -modulus
         if classes is None:
-            classes = [1]
+            classes = [ZZ(1)]
         if exceptions is None:
             exceptions = {}
-        if isinstance(exceptions, (tuple, list)):
-            exceptions = {c: v for c, v in exceptions}
+        if not isinstance(exceptions, dict):
+            exceptions = dict(exceptions)
 
-        # We replace congruences of the form
+        if modulus == 0:
+            for c in classes:
+                exceptions[ZZ(c)] = True
+            modulus = ZZ(1)
+            classes = []
+
+        # We replace each congruence of the form
         #   p = a (mod n) with gcd(a, n) > 1
-        # (which only includes a finite number of primes)
-        # by exceptions
+        # (which includes at most one prime number)
+        # with an exception
         indic = modulus * [False]
         for c in classes:
             indic[ZZ(c) % modulus] = True
         for c in range(modulus):
-            g = modulus.gcd(c)
-            if g > 1:
+            if modulus.gcd(c) > 1:
                 if indic[c]:
                     if c == 0:
                         if modulus not in exceptions:
                             exceptions[modulus] = True
-                    else:
-                        if c not in exceptions:
-                            exceptions[c] = True
+                    elif c not in exceptions:
+                        exceptions[ZZ(c)] = True
                 indic[c] = None
 
         # We normalize the congruence conditions
@@ -166,22 +217,20 @@ class Primes(Set_generic, UniqueRepresentation):
                         indic[c] = True
                     for c in add_false:
                         indic[c] = False
-                    for c in add_excluded:
-                        if c not in exceptions:
-                            exceptions[c] = False
+                    for x in add_excluded:
+                        if x not in exceptions:
+                            exceptions[x] = False
                     modulus = m
                     mult -= 1
 
-        # We format the final result
+        # We format the final result and make it hashable
         classes = tuple([c for c in range(modulus) if indic[c] is True])
-        exceptions_list = []
-        for c, v in exceptions.items():
-            c = ZZ(c)
-            if c.is_prime() and (v != (indic[c % modulus] is True)):
-                exceptions_list.append((c, v))
-        exceptions_list.sort()
+        exceptions = [(x, b) for x, b in exceptions.items()
+                      if x.is_prime() and (b != (indic[x % modulus] is True))]
+        exceptions.sort()
+        exceptions = tuple(exceptions)
 
-        return super().__classcall__(cls, modulus, classes, tuple(exceptions_list))
+        return super().__classcall__(cls, modulus, classes, exceptions)
 
     def __init__(self, modulus, classes, exceptions):
         r"""
@@ -196,7 +245,7 @@ class Primes(Set_generic, UniqueRepresentation):
 
         ::
 
-            sage: Q = Primes(classes=[]).include([2, 3, 5])
+            sage: Q = Primes(modulus=0, classes=[2, 3, 5])
             sage: Q.category()
             Category of facade finite enumerated sets
             sage: TestSuite(Q).run()
@@ -208,13 +257,116 @@ class Primes(Set_generic, UniqueRepresentation):
         super().__init__(facade=ZZ, category=category)
         self._modulus = modulus
         self._classes = set(classes)
-        self._exceptions = {}
-        self._elements = []
-        for c, v in exceptions:
-            self._exceptions[c] = v
-            if v and not classes:
-                self._elements.append(c)
-        self._elements.sort()
+        self._exceptions = dict(exceptions)
+        if classes:
+            self._elements = []
+        else:
+            self._elements = [x for x, _ in exceptions]
+            self._elements.sort()
+
+    def congruence_classes(self):
+        r"""
+        Return the congruence classes selected in the subset
+        of prime numbers.
+
+        OUTPUT:
+
+        A pair ``(modulus, list of classes)``
+
+        EXAMPLES::
+
+            sage: P = Primes(modulus=4)
+            sage: P
+            Set of prime numbers congruent to 1 modulo 4: 5, 13, 17, 29, ...
+            sage: P.congruence_classes()
+            (4, [1])
+
+        If possible, the congruence classes are simplified::
+
+            sage: P = Primes(modulus=10, classes=[1, 3])
+            sage: P
+            Set of prime numbers congruent to 1, 3 modulo 5: 3, 11, 13, 23, ...
+            sage: P.congruence_classes()
+            (5, [1, 3])
+
+        If this subset is finite, the output of this method is always `(1, [])`.
+        The elements of the subset can be retreived using the method :meth:`list`
+        or :meth:`included`::
+
+            sage: P = Primes(modulus=0, classes=range(50))
+            sage: P
+            Finite set of prime numbers: 2, 3, 5, 7, ..., 43, 47
+            sage: P.congruence_classes()
+            (1, [])
+            sage: list(P)
+            [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]
+
+        .. SEEALSO::
+
+            :meth:`included`, :meth:`excluded`
+        """
+        classes = list(self._classes)
+        classes.sort()
+        return (self._modulus, classes)
+
+    def included(self):
+        r"""
+        Return the list of elements which are additionally included
+        (that are, outside the congruence classes) to this set.
+
+        EXAMPLES::
+
+            sage: P = Primes(modulus=4)
+            sage: P
+            Set of prime numbers congruent to 1 modulo 4: 5, 13, 17, 29, ...
+            sage: P.included()
+            []
+
+        ::
+
+            sage: Q = P.include(2)
+            sage: Q
+            Set of prime numbers congruent to 1 modulo 4 with 2 included: 2, 5, 13, 17, ...
+            sage: Q.included()
+            [2]
+
+        .. SEEALSO::
+
+            :meth:`excluded`, :meth:`congruence_classes`
+        """
+        included = [x for x, b in self._exceptions.items() if b]
+        included.sort()
+        return included
+
+    def excluded(self):
+        r"""
+        Return the list of elements which are excluded, that are the
+        elements in the congruence classes defining this subset but
+        not in this subset.
+
+        EXAMPLES::
+
+            sage: P = Primes(modulus=4)
+            sage: P
+            Set of prime numbers congruent to 1 modulo 4: 5, 13, 17, 29, ...
+            sage: P.excluded()
+            []
+
+        ::
+
+            sage: Q = P.exclude(5)
+            sage: Q
+            Set of prime numbers congruent to 1 modulo 4 with 5 excluded: 13, 17, 29, 37, ...
+            sage: Q.excluded()
+            [5]
+
+        .. SEEALSO::
+
+            :meth:`included`, :meth:`congruence_classes`
+        """
+        excluded = [x for x, b in self._exceptions.items() if not b]
+        excluded.sort()
+        return excluded
 
     def _repr_(self):
         r"""
@@ -225,41 +377,33 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: Primes(modulus=4).include(2).exclude(5)  # indirect doctest
             Set of prime numbers congruent to 1 modulo 4 with 2 included and 5 excluded: 2, 13, 17, 29, ...
 
-            sage: E = Primes(classes=[])
+            sage: E = Primes(modulus=0)
             sage: E  # indirect doctest
             Empty set of prime numbers
 
             sage: E.include(range(50), check=False)  # indirect doctest
-            Finite set of prime numbers: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47
+            Finite set of prime numbers: 2, 3, 5, 7, ..., 43, 47
         """
-        classes = sorted(list(self._classes))
-        sc = ", ".join([str(c) for c in classes])
-        included = []
-        excluded = []
-        for c, v in self._exceptions.items():
-            if v:
-                included.append(c)
-            else:
-                excluded.append(c)
-        si = ", ".join([str(i) for i in sorted(included)])
-        se = ", ".join([str(e) for e in sorted(excluded)])
+        _, classes = self.congruence_classes()
+        included = self.included()
+        excluded = self.excluded()
         if not classes:
             if not included:
                 return "Empty set of prime numbers"
             else:
-                return "Finite set of prime numbers: %s" % si
+                return "Finite set of prime numbers: %s" % _repr_items(included)
         if self._modulus == 1:
             s = "Set of all prime numbers"
         else:
-            s = "Set of prime numbers congruent to %s modulo %s" % (sc, self._modulus)
+            s = "Set of prime numbers congruent to %s modulo %s" % (_repr_items(classes), self._modulus)
         if included:
-            s += " with %s included" % si
+            s += " with %s included" % _repr_items(included)
         if excluded:
             if not included:
-                s += " with %s excluded" % se
+                s += " with %s excluded" % _repr_items(excluded)
             else:
-                s += " and %s excluded" % se
-        s += ": %s, ..." % (", ".join([str(c) for c in self[:4]]))
+                s += " and %s excluded" % _repr_items(excluded)
+        s += ": %s, ..." % (", ".join([str(n) for n in self[:4]]))
         return s
 
     def __contains__(self, x):
@@ -316,8 +460,7 @@ class Primes(Set_generic, UniqueRepresentation):
         """
         if self.is_finite():
             return ZZ(len(self._elements))
-        else:
-            return infinity
+        return infinity
 
     def first(self, n=None):
         r"""
@@ -331,7 +474,7 @@ class Primes(Set_generic, UniqueRepresentation):
             11
         """
         if self.is_empty():
-            return
+            raise EmptySetError
         return self.next(1)
 
     def next(self, x):
@@ -353,7 +496,7 @@ class Primes(Set_generic, UniqueRepresentation):
         If there is no element greater than the given bound, an
         error is raised::
 
-            sage: P = Primes(modulus=10, classes=[2, 5]); P
+            sage: P = Primes(modulus=0, classes=[2, 5]); P
             Finite set of prime numbers: 2, 5
             sage: P.next(10)
             Traceback (most recent call last):
@@ -361,23 +504,24 @@ class Primes(Set_generic, UniqueRepresentation):
             ValueError: no element greater that 10 in this set
         """
         x = ZZ(x)
-        if not self._classes:
-            if not (self._elements and x < self._elements[-1]):
-                raise ValueError("no element greater that %s in this set" % x)
-            min = 0
-            max = len(self._elements)
-            while min < max:
-                i = (min + max) // 2
-                if self._elements[i] <= x:
-                    min = i + 1
-                if self._elements[i] > x:
-                    max = i
-            return self._elements[min]
-        while True:
-            x = x.next_prime()
-            e = self._exceptions.get(x, None)
-            if (e is True) or (e is None and x % self._modulus in self._classes):
-                return x
+        if self._classes:
+            while True:
+                x = x.next_prime()
+                e = self._exceptions.get(x, None)
+                if (e is True) or (e is None and x % self._modulus in self._classes):
+                    return x
+
+        if not self._elements or x >= self._elements[-1]:
+            raise ValueError("no element greater that %s in this set" % x)
+        min = 0
+        max = len(self._elements)
+        while min < max:
+            i = (min + max) // 2
+            if self._elements[i] <= x:
+                min = i + 1
+            if self._elements[i] > x:
+                max = i
+        return self._elements[min]
 
     def _an_element_(self):
         r"""
@@ -403,6 +547,35 @@ class Primes(Set_generic, UniqueRepresentation):
             raise ValueError("this set is empty")
         return self.next(42)
 
+    def in_range(self, start, stop=None):
+        r"""
+        Return the list of the elements of this set which are
+        in the given range.
+
+        EXAMPLES::
+
+            sage: P = Primes(modulus=3); P
+            Set of prime numbers congruent to 1 modulo 3: 7, 13, 19, 31, ...
+            sage: P.in_range(50, 100)
+            [61, 67, 73, 79, 97]
+
+        When a unique integer is passed, it is interpreted as the
+        upper bound::
+
+            sage: P.in_range(50)
+            [7, 13, 19, 31, 37, 43]
+        """
+        if stop is None:
+            stop = start
+            start = 1
+        elements = []
+        x = start - 1
+        while True:
+            x = self.next(x)
+            if x >= stop:
+                return elements
+            elements.append(x)
+
     def unrank(self, n):
         r"""
         Return the ``n``-th element of this set.
@@ -423,7 +596,7 @@ class Primes(Set_generic, UniqueRepresentation):
         If there is less than `n` elements in this set, an error
         is raised::
 
-            sage: P = Primes(modulus=10, classes=[2, 5]); P
+            sage: P = Primes(modulus=0, classes=[2, 5]); P
             Finite set of prime numbers: 2, 5
             sage: P[1]
             5
@@ -491,7 +664,7 @@ class Primes(Set_generic, UniqueRepresentation):
 
         ::
 
-            sage: P = Primes(modulus=10, classes=[2, 5]); P
+            sage: P = Primes(modulus=0, classes=[2, 5]); P
             Finite set of prime numbers: 2, 5
             sage: P.is_finite()
             True
@@ -660,7 +833,7 @@ class Primes(Set_generic, UniqueRepresentation):
         modulus = self._modulus
         classes = [c for c in range(modulus)
                    if c % self._modulus not in self._classes]
-        exceptions = {c: not v for c, v in self._exceptions.items()}
+        exceptions = {x: not b for x, b in self._exceptions.items()}
         return Primes(modulus, classes, exceptions)
 
     def intersection(self, other):
@@ -682,6 +855,15 @@ class Primes(Set_generic, UniqueRepresentation):
 
         TESTS::
 
+            sage: P = Primes(modulus=5, exceptions={5: True, 11: False}); P
+            Set of prime numbers congruent to 1 modulo 5 with 5 included and 11 excluded: 5, 31, 41, 61, ...
+            sage: Q = Primes(modulus=4, exceptions={13: False, 11: True}); Q
+            Set of prime numbers congruent to 1 modulo 4 with 11 included and 13 excluded: 5, 11, 17, 29, ...
+            sage: P.intersection(Q)
+            Set of prime numbers congruent to 1 modulo 20 with 5 included: 5, 41, 61, 101, ...
+
+        ::
+
             sage: P.intersection(ZZ) == P
             True
             sage: P.intersection(RR)
@@ -701,17 +883,10 @@ class Primes(Set_generic, UniqueRepresentation):
         classes = [c for c in range(modulus)
                    if (c % self._modulus in self._classes
                    and c % other._modulus in other._classes)]
-        exceptions = {}
-        for c, v in self._exceptions.items():
-            if v and c in other:
-                exceptions[c] = True
-            if not v:
-                exceptions[c] = False
-        for c, v in other._exceptions.items():
-            if v and c in self:
-                exceptions[c] = True
-            if not v:
-                exceptions[c] = False
+        exceptions = {x: b for x, b in self._exceptions.items()
+                      if not b or x in other}
+        exceptions.update((x, b) for x, b in other._exceptions.items()
+                          if not b or x in self)
         return Primes(modulus, classes, exceptions)
 
     def union(self, other):
@@ -733,6 +908,15 @@ class Primes(Set_generic, UniqueRepresentation):
 
         TESTS::
 
+            sage: P = Primes(modulus=5, exceptions={5: True, 11: False}); P
+            Set of prime numbers congruent to 1 modulo 5 with 5 included and 11 excluded: 5, 31, 41, 61, ...
+            sage: Q = Primes(modulus=4, exceptions={13: False, 11: True}); Q
+            Set of prime numbers congruent to 1 modulo 4 with 11 included and 13 excluded: 5, 11, 17, 29, ...
+            sage: P.union(Q)
+            Set of prime numbers congruent to 1, 9, 11, 13, 17 modulo 20 with 5 included and 13 excluded: 5, 11, 17, 29, ...
+
+        ::
+
             sage: P.union(ZZ) == ZZ
             True
             sage: P.union(RR)
@@ -752,23 +936,52 @@ class Primes(Set_generic, UniqueRepresentation):
         classes = [c for c in range(modulus)
                    if (c % self._modulus in self._classes
                     or c % other._modulus in other._classes)]
-        exceptions = {}
-        for c, v in self._exceptions.items():
-            if v:
-                exceptions[c] = True
-            if not v and c not in other:
-                exceptions[c] = False
-        for c, v in other._exceptions.items():
-            if v:
-                exceptions[c] = True
-            if not v and c not in self:
-                exceptions[c] = False
+        exceptions = {x: b for x, b in self._exceptions.items()
+                      if b or x not in other}
+        exceptions.update((x, b) for x, b in other._exceptions.items()
+                          if b or x not in self)
         return Primes(modulus, classes, exceptions)
 
-    def is_subset(self, other):
+    def is_almost_equal(self, other):
         r"""
-        Return ``True`` is this set of is subset of ``other``;
+        Return ``True`` if this set only differs from ``other``
+        by a finite set; return ``False`` otherwise.
+
+        INPUT:
+
+        - ``other`` -- a subset of the set of prime numbers
+
+        EXAMPLES::
+
+            sage: P = Primes(modulus=20, classes=[1, 2]); P
+            Set of prime numbers congruent to 1 modulo 20 with 2 included: 2, 41, 61, 101, ...
+            sage: Q = Primes(modulus=20, classes=[1, 5]); Q
+            Set of prime numbers congruent to 1 modulo 20 with 5 included: 5, 41, 61, 101, ...
+            sage: P.is_almost_equal(Q)
+            True
+
+        ::
+
+            sage: R = Primes(modulus=10); R
+            Set of prime numbers congruent to 1 modulo 5: 11, 31, 41, 61, ...
+            sage: P.is_almost_equal(R)
+            False
+        """
+        if not isinstance(other, Primes):
+            return False  # or raise an error?
+        return self._modulus == other._modulus and self._classes == other._classes
+
+    def is_subset(self, other, almost=False):
+        r"""
+        Return ``True`` if this set of is subset of ``other``;
         ``False`` otherwise.
+
+        INPUT:
+
+        - ``other`` -- a subset of the set of prime numbers
+
+        - ``almost`` -- a boolean (default: ``False``); if ``True``,
+          the inclusion is only checked up to a finite set
 
         EXAMPLES::
 
@@ -781,16 +994,37 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: Q.is_subset(P)
             True
 
+        When ``almost=True``, the inclusion is only checked up to a
+        finite set::
+
+            sage: Q2 = Q.include(2); Q2
+            Set of prime numbers congruent to 1 modulo 8 with 2 included: 2, 17, 41, 73, ...
+            sage: Q2.is_subset(P)
+            False
+            sage: Q2.is_subset(P, almost=True)
+            True
+
         .. SEEALSO::
 
-            :meth:`is_supset`, :meth:`is_disjoint`
+            :meth:`is_supset`, :meth:`is_disjoint`, :meth:`is_almost_equal`
         """
-        return self.intersection(other) == self
+        P = self.intersection(other)
+        if almost:
+            return P.is_almost_equal(self)
+        else:
+            return P == self
 
-    def is_supset(self, other):
+    def is_supset(self, other, almost=False):
         r"""
-        Return ``True`` is this set of is supset of ``other``;
+        Return ``True`` if this set of is supset of ``other``;
         ``False`` otherwise.
+
+        INPUT:
+
+        - ``other`` -- a subset of the set of prime numbers
+
+        - ``almost`` -- a boolean (default: ``False``); if ``True``,
+          the inclusion is only checked up to a finite set
 
         EXAMPLES::
 
@@ -803,16 +1037,37 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: Q.is_supset(P)
             False
 
+        When ``almost=True``, the inclusion is only checked up to a
+        finite set::
+
+            sage: Q2 = Q.include(2); Q2
+            Set of prime numbers congruent to 1 modulo 8 with 2 included: 2, 17, 41, 73, ...
+            sage: P.is_supset(Q2)
+            False
+            sage: P.is_supset(Q2, almost=True)
+            True
+
         .. SEEALSO::
 
-            :meth:`is_subset`, :meth:`is_disjoint`
+            :meth:`is_subset`, :meth:`is_disjoint`, :meth:`is_almost_equal`
         """
-        return self.intersection(other) == other
+        P = self.intersection(other)
+        if almost:
+            return P.is_almost_equal(other)
+        else:
+            return P == other
 
-    def is_disjoint(self, other):
+    def is_disjoint(self, other, almost=False):
         r"""
-        Return ``True`` is this set of is disjoint from ``other``;
-        ``False`` otherwise.
+        Return ``True`` if the intersection of this set with ``other``
+        is empty (resp. finite) if ``almost`` is ``False`` (resp. ``True``);
+        return ``False`` otherwise.
+
+        INPUT:
+
+        - ``other`` -- a subset of the set of prime numbers
+
+        - ``almost`` -- a boolean (default: ``False``)
 
         EXAMPLES::
 
@@ -832,8 +1087,21 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: Q.is_disjoint(R)
             False
 
+        We illustrate the behavior when ``almost=True``::
+
+            sage: Q5 = Q.include(5); Q5
+            Set of prime numbers congruent to 3 modulo 4 with 5 included: 3, 5, 7, 11, ...
+            sage: P.is_disjoint(Q5)
+            False
+            sage: P.is_disjoint(Q5, almost=True)
+            True
+
         .. SEEALSO::
 
-            :meth:`is_subset`, :meth:`is_disjoint`
+            :meth:`is_subset`, :meth:`is_disjoint`, :meth:`is_almost_equal`
         """
-        return self.intersection(other).is_empty()
+        P = self.intersection(other)
+        if almost:
+            return P.is_finite()
+        else:
+            return P.is_empty()
