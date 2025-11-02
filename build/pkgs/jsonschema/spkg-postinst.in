@@ -1,0 +1,63 @@
+## Install rpds-py wheel from PyPI so jsonschema can use it
+## This post-install script downloads the matching prebuilt wheel for the
+## current Python and platform, stores it under $SAGE_SPKG_WHEELS, and
+## installs it into the Sage venv using the standard helpers.
+
+set -euo pipefail
+
+echo "[jsonschema] Ensuring rpds-py wheel is available and installed"
+
+# Unset the proxy poisoning from the standard build path to allow network access here
+unset http_proxy https_proxy ftp_proxy rsync_proxy all_proxy no_proxy || true
+
+# Guard: if rpds-py is already importable, skip unless FORCE is set
+if python3 - "$@" <<'PY'
+import sys
+try:
+    import rpds  # type: ignore
+except Exception:
+    sys.exit(1)
+else:
+    sys.exit(0)
+PY
+then
+    echo "[jsonschema] rpds-py already installed (rpds importable); skipping download."
+    exit 0
+fi
+
+# Destination for wheels; ensure it exists
+mkdir -p "$SAGE_SPKG_WHEELS"
+
+# Optionally allow pinning via environment or future package metadata
+RPDS_PY_VERSION="${RPDS_PY_VERSION:-}"
+
+echo "[jsonschema] Downloading rpds-py ${RPDS_PY_VERSION:+==}${RPDS_PY_VERSION} wheel from PyPI"
+
+# Use pip to resolve and download the correct wheel for this interpreter and platform
+# We do not use the sage-pip-install wrapper for the download step because it disables the index.
+PYTHON=python3
+
+# Clean out any stale rpds_py wheels to avoid ambiguity
+find "$SAGE_SPKG_WHEELS" -maxdepth 1 -type f -name 'rpds_py-*.whl' -print -delete 2>/dev/null || true
+
+if [ -n "$RPDS_PY_VERSION" ]; then
+    $PYTHON -m pip download --only-binary=:all: --no-deps -d "$SAGE_SPKG_WHEELS" "rpds-py==${RPDS_PY_VERSION}" || sdh_die "Failed to download rpds-py==${RPDS_PY_VERSION} wheel"
+else
+    $PYTHON -m pip download --only-binary=:all: --no-deps -d "$SAGE_SPKG_WHEELS" rpds-py || sdh_die "Failed to download rpds-py wheel"
+fi
+
+# Identify the downloaded wheel
+wheel="$(ls -1t "$SAGE_SPKG_WHEELS"/rpds_py-*.whl 2>/dev/null | head -n1 || true)"
+if [ -z "$wheel" ]; then
+    sdh_die "rpds-py: No downloaded wheel found under $SAGE_SPKG_WHEELS"
+fi
+echo "[jsonschema] Downloaded wheel: ${wheel##*/}"
+
+# Install the wheel into the Sage venv; this uses --no-index and --find-links pointing at $SAGE_SPKG_WHEELS
+sage-pip-install "$wheel"
+
+# Ensure uninstall script removes rpds-py on package removal
+mkdir -p "$SAGE_SPKG_SCRIPTS/$PKG_BASE" || true
+echo "sdh_pip_uninstall rpds-py" >> "$SAGE_SPKG_SCRIPTS/$PKG_BASE/spkg-piprm"
+
+echo "[jsonschema] rpds-py installed successfully"

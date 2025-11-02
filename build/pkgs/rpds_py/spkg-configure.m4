@@ -1,3 +1,0 @@
-SAGE_SPKG_CONFIGURE([rpds_py], [
-    SAGE_PYTHON_PACKAGE_CHECK([rpds_py])
-])
