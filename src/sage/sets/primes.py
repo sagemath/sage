@@ -373,23 +373,24 @@ class Primes(Set_generic, UniqueRepresentation):
             ValueError: no element greater that 10 in this set
         """
         x = ZZ(x)
-        if not self._classes:
-            if not (self._elements and x < self._elements[-1]):
-                raise ValueError("no element greater that %s in this set" % x)
-            min = 0
-            max = len(self._elements)
-            while min < max:
-                i = (min + max) // 2
-                if self._elements[i] <= x:
-                    min = i + 1
-                if self._elements[i] > x:
-                    max = i
-            return self._elements[min]
-        while True:
-            x = x.next_prime()
-            e = self._exceptions.get(x, None)
-            if (e is True) or (e is None and x % self._modulus in self._classes):
-                return x
+        if self._classes:
+            while True:
+                x = x.next_prime()
+                e = self._exceptions.get(x, None)
+                if (e is True) or (e is None and x % self._modulus in self._classes):
+                    return x
+
+        if not self._elements or x >= self._elements[-1]:
+            raise ValueError("no element greater that %s in this set" % x)
+        min = 0
+        max = len(self._elements)
+        while min < max:
+            i = (min + max) // 2
+            if self._elements[i] <= x:
+                min = i + 1
+            if self._elements[i] > x:
+                max = i
+        return self._elements[min]
 
     def _an_element_(self):
         r"""
