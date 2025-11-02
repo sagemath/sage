@@ -14367,6 +14367,14 @@ class GenericGraph(GenericGraph_pyx):
             sage: g.subgraph(list(range(10)))  # uses the 'add' algorithm
             Subgraph of (Path graph): Graph on 10 vertices
 
+        The vertices and edges can be specified using generator expressions
+        (see :issue:`41130`)::
+
+            sage: g = graphs.CompleteGraph(5)
+            sage: h = g.subgraph(vertices=(v for v in range(4)), edges=((0, v) for v in range(5)))
+            sage: h.edges(labels=False)
+            [(0, 1), (0, 2), (0, 3)]
+
         TESTS:
 
         The appropriate properties are preserved::
@@ -14519,8 +14527,13 @@ class GenericGraph(GenericGraph_pyx):
             G.add_vertices(self if vertices is None else vertices)
 
             if edges is not None:
-                edges_to_keep_labeled = frozenset(e for e in edges if len(e) == 3)
-                edges_to_keep_unlabeled = frozenset(e for e in edges if len(e) == 2)
+                edges_to_keep_labeled = set()
+                edges_to_keep_unlabeled = set()
+                for e in edges:
+                    if len(e) == 3:
+                        edges_to_keep_labeled.add(e)
+                    elif len(e) == 2:
+                        edges_to_keep_unlabeled.add(e)
 
                 edges_to_keep = []
                 if self._directed:
@@ -14701,8 +14714,13 @@ class GenericGraph(GenericGraph_pyx):
 
         edges_to_delete = []
         if edges is not None:
-            edges_to_keep_labeled = frozenset(e for e in edges if len(e) == 3)
-            edges_to_keep_unlabeled = frozenset(e for e in edges if len(e) == 2)
+            edges_to_keep_labeled = set()
+            edges_to_keep_unlabeled = set()
+            for e in edges:
+                if len(e) == 3:
+                    edges_to_keep_labeled.add(e)
+                elif len(e) == 2:
+                    edges_to_keep_unlabeled.add(e)
             edges_to_delete = []
             if G._directed:
                 for e in G.edge_iterator():
