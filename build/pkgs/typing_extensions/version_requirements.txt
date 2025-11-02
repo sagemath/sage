@@ -1,3 +1,0 @@
-# According to https://github.com/python/typing_extensions/blob/main/CHANGELOG.md,
-# version 4.4.0 adds another Python 3.11 typing backport
-# Now beautifulsoup4 requires typing_extensions >= 4.4.0 on Python 3.11+
