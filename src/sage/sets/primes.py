@@ -99,8 +99,8 @@ class Primes(Set_generic, UniqueRepresentation):
           set
 
         - ``exceptions`` -- a dictionary with items of the form
-          ``c: v`` where ``c`` is an integer and ``v`` is a boolean;
-          if ``v`` is ``True`` (resp. ``False``) then ``c`` is added
+          ``x: b`` where ``x`` is an integer and ``b`` is a boolean;
+          if ``b`` is ``True`` (resp. ``False``) then ``x`` is added
           to (resp. removed from) this set
 
         TESTS::
@@ -124,7 +124,7 @@ class Primes(Set_generic, UniqueRepresentation):
         if exceptions is None:
             exceptions = {}
         if isinstance(exceptions, (tuple, list)):
-            exceptions = {c: v for c, v in exceptions}
+            exceptions = {x: b for x, b in exceptions}
 
         if modulus == 0:
             for c in classes:
@@ -132,10 +132,10 @@ class Primes(Set_generic, UniqueRepresentation):
             modulus = ZZ(1)
             classes = []
 
-        # We replace congruences of the form
+        # We replace each congruence of the form
         #   p = a (mod n) with gcd(a, n) > 1
-        # (which only includes a finite number of primes)
-        # with exceptions
+        # (which includes at most one prime number)
+        # with an exception
         indic = modulus * [False]
         for c in classes:
             indic[ZZ(c) % modulus] = True
@@ -145,9 +145,8 @@ class Primes(Set_generic, UniqueRepresentation):
                     if c == 0:
                         if modulus not in exceptions:
                             exceptions[modulus] = True
-                    else:
-                        if c not in exceptions:
-                            exceptions[ZZ(c)] = True
+                    elif c not in exceptions:
+                        exceptions[ZZ(c)] = True
                 indic[c] = None
 
         # We normalize the congruence conditions
@@ -183,16 +182,16 @@ class Primes(Set_generic, UniqueRepresentation):
                         indic[c] = True
                     for c in add_false:
                         indic[c] = False
-                    for c in add_excluded:
-                        if c not in exceptions:
-                            exceptions[c] = False
+                    for x in add_excluded:
+                        if x not in exceptions:
+                            exceptions[x] = False
                     modulus = m
                     mult -= 1
 
         # We format the final result and make it hashable
         classes = tuple([c for c in range(modulus) if indic[c] is True])
-        exceptions = [(c, v) for c, v in exceptions.items()
-                      if c.is_prime() and (v != (indic[c % modulus] is True))]
+        exceptions = [(x, b) for x, b in exceptions.items()
+                      if x.is_prime() and (b != (indic[x % modulus] is True))]
         exceptions.sort()
         exceptions = tuple(exceptions)
 
@@ -227,7 +226,7 @@ class Primes(Set_generic, UniqueRepresentation):
         if classes:
             self._elements = []
         else:
-            self._elements = [c for c, v in exceptions if v]
+            self._elements = [x for x, _ in exceptions]
             self._elements.sort()
 
     def _repr_(self):
@@ -250,11 +249,11 @@ class Primes(Set_generic, UniqueRepresentation):
         sc = ", ".join([str(c) for c in classes])
         included = []
         excluded = []
-        for c, v in self._exceptions.items():
-            if v:
-                included.append(c)
+        for x, b in self._exceptions.items():
+            if b:
+                included.append(x)
             else:
-                excluded.append(c)
+                excluded.append(x)
         si = ", ".join([str(i) for i in sorted(included)])
         se = ", ".join([str(e) for e in sorted(excluded)])
         if not classes:
@@ -273,7 +272,7 @@ class Primes(Set_generic, UniqueRepresentation):
                 s += " with %s excluded" % se
             else:
                 s += " and %s excluded" % se
-        s += ": %s, ..." % (", ".join([str(c) for c in self[:4]]))
+        s += ": %s, ..." % (", ".join([str(n) for n in self[:4]]))
         return s
 
     def __contains__(self, x):
@@ -674,7 +673,7 @@ class Primes(Set_generic, UniqueRepresentation):
         modulus = self._modulus
         classes = [c for c in range(modulus)
                    if c % self._modulus not in self._classes]
-        exceptions = {c: not v for c, v in self._exceptions.items()}
+        exceptions = {x: not b for x, b in self._exceptions.items()}
         return Primes(modulus, classes, exceptions)
 
     def intersection(self, other):
@@ -724,10 +723,10 @@ class Primes(Set_generic, UniqueRepresentation):
         classes = [c for c in range(modulus)
                    if (c % self._modulus in self._classes
                    and c % other._modulus in other._classes)]
-        exceptions = {c: v for c, v in self._exceptions.items()
-                      if not v or c in other}
-        exceptions.update((c, v) for c, v in other._exceptions.items()
-                          if not v or c in self)
+        exceptions = {x: b for x, b in self._exceptions.items()
+                      if not b or x in other}
+        exceptions.update((x, b) for x, b in other._exceptions.items()
+                          if not b or x in self)
         return Primes(modulus, classes, exceptions)
 
     def union(self, other):
@@ -777,10 +776,10 @@ class Primes(Set_generic, UniqueRepresentation):
         classes = [c for c in range(modulus)
                    if (c % self._modulus in self._classes
                     or c % other._modulus in other._classes)]
-        exceptions = {c: v for c, v in self._exceptions.items()
-                      if v or c not in other}
-        exceptions.update((c, v) for c, v in other._exceptions.items()
-                          if v or c not in self)
+        exceptions = {x: b for x, b in self._exceptions.items()
+                      if b or x not in other}
+        exceptions.update((x, b) for x, b in other._exceptions.items()
+                          if b or x not in self)
         return Primes(modulus, classes, exceptions)
 
     def is_almost_equal(self, other):
