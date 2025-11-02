@@ -189,13 +189,14 @@ class Primes(Set_generic, UniqueRepresentation):
                     modulus = m
                     mult -= 1
 
-        # We format the final result
+        # We format the final result and make it hashable
         classes = tuple([c for c in range(modulus) if indic[c] is True])
-        exceptions_list = [(c, v) for c, v in exceptions.items()
-                           if c.is_prime() and (v != (indic[c % modulus] is True))]
-        exceptions_list.sort()
+        exceptions = [(c, v) for c, v in exceptions.items()
+                      if c.is_prime() and (v != (indic[c % modulus] is True))]
+        exceptions.sort()
+        exceptions = tuple(exceptions)
 
-        return super().__classcall__(cls, modulus, classes, tuple(exceptions_list))
+        return super().__classcall__(cls, modulus, classes, exceptions)
 
     def __init__(self, modulus, classes, exceptions):
         r"""
@@ -782,10 +783,46 @@ class Primes(Set_generic, UniqueRepresentation):
                           if v or c not in self)
         return Primes(modulus, classes, exceptions)
 
-    def is_subset(self, other):
+    def is_almost_equal(self, other):
         r"""
-        Return ``True`` is this set of is subset of ``other``;
+        Return ``True`` if this set only differs from ``other``
+        by a finite set; return ``False`` otherwise.
+
+        INPUT:
+
+        - ``other`` -- a subset of the set of prime numbers
+
+        EXAMPLES::
+
+            sage: P = Primes(modulus=20, classes=[1, 2]); P
+            Set of prime numbers congruent to 1 modulo 20 with 2 included: 2, 41, 61, 101, ...
+            sage: Q = Primes(modulus=20, classes=[1, 5]); Q
+            Set of prime numbers congruent to 1 modulo 20 with 5 included: 5, 41, 61, 101, ...
+            sage: P.is_almost_equal(Q)
+            True
+
+        ::
+
+            sage: R = Primes(modulus=10); R
+            Set of prime numbers congruent to 1 modulo 5: 11, 31, 41, 61, ...
+            sage: P.is_almost_equal(R)
+            False
+        """
+        if not isinstance(other, Primes):
+            return False  # or raise an error?
+        return self._modulus == other._modulus and self._classes == other._classes
+
+    def is_subset(self, other, almost=False):
+        r"""
+        Return ``True`` if this set of is subset of ``other``;
         ``False`` otherwise.
+
+        INPUT:
+
+        - ``other`` -- a subset of the set of prime numbers
+
+        - ``almost`` -- a boolean (default: ``False``); if ``True``,
+          the inclusion is only checked up to a finite set
 
         EXAMPLES::
 
@@ -798,16 +835,37 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: Q.is_subset(P)
             True
 
+        When ``almost=True``, the inclusion is only checked up to a
+        finite set::
+
+            sage: Q2 = Q.include(2); Q2
+            Set of prime numbers congruent to 1 modulo 8 with 2 included: 2, 17, 41, 73, ...
+            sage: Q2.is_subset(P)
+            False
+            sage: Q2.is_subset(P, almost=True)
+            True
+
         .. SEEALSO::
 
-            :meth:`is_supset`, :meth:`is_disjoint`
+            :meth:`is_supset`, :meth:`is_disjoint`, :meth:`is_almost_equal`
         """
-        return self.intersection(other) == self
+        P = self.intersection(other)
+        if almost:
+            return P.is_almost_equal(self)
+        else:
+            return P == self
 
-    def is_supset(self, other):
+    def is_supset(self, other, almost=False):
         r"""
-        Return ``True`` is this set of is supset of ``other``;
+        Return ``True`` if this set of is supset of ``other``;
         ``False`` otherwise.
+
+        INPUT:
+
+        - ``other`` -- a subset of the set of prime numbers
+
+        - ``almost`` -- a boolean (default: ``False``); if ``True``,
+          the inclusion is only checked up to a finite set
 
         EXAMPLES::
 
@@ -820,16 +878,37 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: Q.is_supset(P)
             False
 
+        When ``almost=True``, the inclusion is only checked up to a
+        finite set::
+
+            sage: Q2 = Q.include(2); Q2
+            Set of prime numbers congruent to 1 modulo 8 with 2 included: 2, 17, 41, 73, ...
+            sage: P.is_supset(Q2)
+            False
+            sage: P.is_supset(Q2, almost=True)
+            True
+
         .. SEEALSO::
 
-            :meth:`is_subset`, :meth:`is_disjoint`
+            :meth:`is_subset`, :meth:`is_disjoint`, :meth:`is_almost_equal`
         """
-        return self.intersection(other) == other
+        P = self.intersection(other)
+        if almost:
+            return P.is_almost_equal(other)
+        else:
+            return P == other
 
-    def is_disjoint(self, other):
+    def is_disjoint(self, other, almost=False):
         r"""
-        Return ``True`` is this set of is disjoint from ``other``;
-        ``False`` otherwise.
+        Return ``True`` if the intersection of this set with ``other``
+        is empty (resp. finite) if ``almost`` is ``False`` (resp. ``True``);
+        return ``False`` otherwise.
+
+        INPUT:
+
+        - ``other`` -- a subset of the set of prime numbers
+
+        - ``almost`` -- a boolean (default: ``False``)
 
         EXAMPLES::
 
@@ -849,8 +928,21 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: Q.is_disjoint(R)
             False
 
+        We illustrate the behavior when ``almost=True``::
+
+            sage: Q5 = Q.include(5); Q5
+            Set of prime numbers congruent to 3 modulo 4 with 5 included: 3, 5, 7, 11, ...
+            sage: P.is_disjoint(Q5)
+            False
+            sage: P.is_disjoint(Q5, almost=True)
+            True
+
         .. SEEALSO::
 
-            :meth:`is_subset`, :meth:`is_disjoint`
+            :meth:`is_subset`, :meth:`is_disjoint`, :meth:`is_almost_equal`
         """
-        return self.intersection(other).is_empty()
+        P = self.intersection(other)
+        if almost:
+            return P.is_finite()
+        else:
+            return P.is_empty()
