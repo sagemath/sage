@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.libs.pari
 """
-The set of prime numbers and its subsets defined by congruence conditions
+Set and subsets of prime numbers
 
 AUTHORS:
 
@@ -27,6 +27,16 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.arith.misc import euler_phi
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.sets_cat import EmptySetError
+
+
+def repr_list(items, left=4, right=2):
+    if len(items) <= left + right + 1:
+        s = [str(item) for item in items]
+    else:
+        s = [str(item) for item in items[:left]]
+        s += ["..."]
+        s += [str(item) for item in items[-right:]]
+    return ", ".join(s)
 
 
 class Primes(Set_generic, UniqueRepresentation):
@@ -129,7 +139,7 @@ class Primes(Set_generic, UniqueRepresentation):
 
         if modulus == 0:
             for c in classes:
-                exceptions[c] = True
+                exceptions[ZZ(c)] = True
             modulus = ZZ(1)
             classes = []
 
@@ -230,6 +240,110 @@ class Primes(Set_generic, UniqueRepresentation):
             self._elements = [x for x, _ in exceptions]
             self._elements.sort()
 
+    def congruence_classes(self):
+        r"""
+        Return the congruence classes selected in the subset
+        of prime numbers.
+
+        OUTPUT:
+
+        A pair ``(modulus, list of classes)``
+
+        EXAMPLES::
+
+            sage: P = Primes(modulus=4)
+            sage: P
+            Set of prime numbers congruent to 1 modulo 4: 5, 13, 17, 29, ...
+            sage: P.congruence_classes()
+            (4, [1])
+
+        If possible, the congruence classes are simplified::
+
+            sage: P = Primes(modulus=10, classes=[1, 3])
+            sage: P
+            Set of prime numbers congruent to 1, 3 modulo 5: 3, 11, 13, 23, ...
+            sage: P.congruence_classes()
+            (5, [1, 3])
+
+        If this subset is finite, the output of this method is always `(1, [])`.
+        The elements of the subset can be retreived using the method :meth:`list`
+        or :meth:`included`::
+
+            sage: P = Primes(modulus=0, classes=range(50))
+            sage: P
+            Finite set of prime numbers: 2, 3, 5, 7, ..., 43, 47
+            sage: P.congruence_classes()
+            (1, [])
+            sage: list(P)
+            [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]
+
+        .. SEEALSO::
+
+            :meth:`included`, :meth:`excluded`
+        """
+        classes = list(self._classes)
+        classes.sort()
+        return (self._modulus, classes)
+
+    def included(self):
+        r"""
+        Return the list of elements which are additionally included
+        (that are, outside the congruence classes) to this set.
+
+        EXAMPLES::
+
+            sage: P = Primes(modulus=4)
+            sage: P
+            Set of prime numbers congruent to 1 modulo 4: 5, 13, 17, 29, ...
+            sage: P.included()
+            []
+
+        ::
+
+            sage: Q = P.include(2)
+            sage: Q
+            Set of prime numbers congruent to 1 modulo 4 with 2 included: 2, 5, 13, 17, ...
+            sage: Q.included()
+            [2]
+
+        .. SEEALSO::
+
+            :meth:`excluded`, :meth:`congruence_classes`
+        """
+        included = [x for x, b in self._exceptions.items() if b]
+        included.sort()
+        return included
+
+    def excluded(self):
+        r"""
+        Return the list of elements which are excluded, that are the
+        elements in the congruence classes defining this subset but
+        not in this subset.
+
+        EXAMPLES::
+
+            sage: P = Primes(modulus=4)
+            sage: P
+            Set of prime numbers congruent to 1 modulo 4: 5, 13, 17, 29, ...
+            sage: P.excluded()
+            []
+
+        ::
+
+            sage: Q = P.exclude(5)
+            sage: Q
+            Set of prime numbers congruent to 1 modulo 4 with 5 excluded: 13, 17, 29, 37, ...
+            sage: Q.excluded()
+            [5]
+
+        .. SEEALSO::
+
+            :meth:`included`, :meth:`congruence_classes`
+        """
+        excluded = [x for x, b in self._exceptions.items() if not b]
+        excluded.sort()
+        return excluded
+
     def _repr_(self):
         r"""
         Return a string representation of this subset.
@@ -244,35 +358,27 @@ class Primes(Set_generic, UniqueRepresentation):
             Empty set of prime numbers
 
             sage: E.include(range(50), check=False)  # indirect doctest
-            Finite set of prime numbers: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47
+            Finite set of prime numbers: 2, 3, 5, 7, ..., 43, 47
         """
-        classes = sorted(list(self._classes))
-        sc = ", ".join([str(c) for c in classes])
-        included = []
-        excluded = []
-        for x, b in self._exceptions.items():
-            if b:
-                included.append(x)
-            else:
-                excluded.append(x)
-        si = ", ".join([str(i) for i in sorted(included)])
-        se = ", ".join([str(e) for e in sorted(excluded)])
+        _, classes = self.congruence_classes()
+        included = self.included()
+        excluded = self.excluded()
         if not classes:
             if not included:
                 return "Empty set of prime numbers"
             else:
-                return "Finite set of prime numbers: %s" % si
+                return "Finite set of prime numbers: %s" % repr_list(included)
         if self._modulus == 1:
             s = "Set of all prime numbers"
         else:
-            s = "Set of prime numbers congruent to %s modulo %s" % (sc, self._modulus)
+            s = "Set of prime numbers congruent to %s modulo %s" % (repr_list(classes), self._modulus)
         if included:
-            s += " with %s included" % si
+            s += " with %s included" % repr_list(included)
         if excluded:
             if not included:
-                s += " with %s excluded" % se
+                s += " with %s excluded" % repr_list(excluded)
             else:
-                s += " and %s excluded" % se
+                s += " and %s excluded" % repr_list(excluded)
         s += ": %s, ..." % (", ".join([str(n) for n in self[:4]]))
         return s
 
