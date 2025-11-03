@@ -225,8 +225,8 @@ class Primes(Set_generic, UniqueRepresentation):
 
         # We format the final result and make it hashable
         classes = tuple([c for c in range(modulus) if indic[c] is True])
-        exceptions = [(x, b) for x, b in exceptions.items()
-                      if x.is_prime() and (b != (indic[x % modulus] is True))]
+        exceptions = [(ZZ(x), b) for x, b in exceptions.items()
+                      if ZZ(x).is_prime() and (b != (indic[x % modulus] is True))]
         exceptions.sort()
         exceptions = tuple(exceptions)
 
@@ -547,35 +547,6 @@ class Primes(Set_generic, UniqueRepresentation):
             raise ValueError("this set is empty")
         return self.next(42)
 
-    def in_range(self, start, stop=None):
-        r"""
-        Return the list of the elements of this set which are
-        in the given range.
-
-        EXAMPLES::
-
-            sage: P = Primes(modulus=3); P
-            Set of prime numbers congruent to 1 modulo 3: 7, 13, 19, 31, ...
-            sage: P.in_range(50, 100)
-            [61, 67, 73, 79, 97]
-
-        When a single integer is passed, it is interpreted as the
-        upper bound::
-
-            sage: P.in_range(50)
-            [7, 13, 19, 31, 37, 43]
-        """
-        if stop is None:
-            stop = start
-            start = 1
-        elements = []
-        x = start - 1
-        while True:
-            x = self.next(x)
-            if x >= stop:
-                return elements
-            elements.append(x)
-
     def unrank(self, n):
         r"""
         Return the ``n``-th element of this set.
@@ -853,6 +824,11 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: P.intersection(Q)
             Set of prime numbers congruent to 11 modulo 15: 11, 41, 71, 101, ...
 
+        It is also possible to take the intersection with a range::
+
+            sage: P.intersection(range(100))
+            Finite set of prime numbers: 11, 31, 41, 61, 71
+
         TESTS::
 
             sage: P = Primes(modulus=5, exceptions={5: True, 11: False}); P
@@ -869,7 +845,7 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: P.intersection(RR)
             Traceback (most recent call last):
             ...
-            NotImplementedError: boolean operations are only implemented with other sets of prime numbers
+            NotImplementedError: object does not support iteration
 
         .. SEEALSO::
 
@@ -877,16 +853,24 @@ class Primes(Set_generic, UniqueRepresentation):
         """
         if other is ZZ:
             return self
-        if not isinstance(other, Primes):
-            raise NotImplementedError("boolean operations are only implemented with other sets of prime numbers")
-        modulus = self._modulus.lcm(other._modulus)
-        classes = [c for c in range(modulus)
-                   if (c % self._modulus in self._classes
-                   and c % other._modulus in other._classes)]
-        exceptions = {x: b for x, b in self._exceptions.items()
-                      if not b or x in other}
-        exceptions.update((x, b) for x, b in other._exceptions.items()
-                          if not b or x in self)
+        if isinstance(other, Primes):
+            modulus = self._modulus.lcm(other._modulus)
+            classes = [c for c in range(modulus)
+                       if (c % self._modulus in self._classes
+                       and c % other._modulus in other._classes)]
+            exceptions = {x: b for x, b in self._exceptions.items()
+                          if not b or x in other}
+            exceptions.update((x, b) for x, b in other._exceptions.items()
+                              if not b or x in self)
+        elif self.is_finite():
+            modulus = 1
+            classes = []
+            exceptions = {x: True for x in self if x in other}
+        else:
+            # we try to enumerate the elements of "other"
+            modulus = 1
+            classes = []
+            exceptions = {x: True for x in list(other) if x in self}
         return Primes(modulus, classes, exceptions)
 
     def union(self, other):
@@ -922,7 +906,7 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: P.union(RR)
             Traceback (most recent call last):
             ...
-            NotImplementedError: boolean operations are only implemented with other sets of prime numbers
+            NotImplementedError: object does not support iteration
 
         .. SEEALSO::
 
@@ -930,22 +914,32 @@ class Primes(Set_generic, UniqueRepresentation):
         """
         if other is ZZ:
             return ZZ
-        if not isinstance(other, Primes):
-            raise NotImplementedError("boolean operations are only implemented with other sets of prime numbers")
-        modulus = self._modulus.lcm(other._modulus)
-        classes = [c for c in range(modulus)
-                   if (c % self._modulus in self._classes
-                    or c % other._modulus in other._classes)]
-        exceptions = {x: b for x, b in self._exceptions.items()
-                      if b or x not in other}
-        exceptions.update((x, b) for x, b in other._exceptions.items()
-                          if b or x not in self)
+        if isinstance(other, Primes):
+            modulus = self._modulus.lcm(other._modulus)
+            classes = [c for c in range(modulus)
+                       if (c % self._modulus in self._classes
+                        or c % other._modulus in other._classes)]
+            exceptions = {x: b for x, b in self._exceptions.items()
+                          if b or x not in other}
+            exceptions.update((x, b) for x, b in other._exceptions.items()
+                              if b or x not in self)
+        else:
+            # we try to enumerate the elements of "other"
+            modulus = self._modulus
+            classes = self._classes
+            exceptions = self._exceptions.copy()
+            for x in list(other):
+                x = ZZ(x)
+                if x.is_prime():
+                    exceptions[x] = True
+                else:
+                    raise NotImplementedError("the result of the union is a subset of the set of prime numbers")
         return Primes(modulus, classes, exceptions)
 
     def is_almost_equal(self, other):
         r"""
-        Return ``True`` if this set only differs from ``other``
-        by a finite set; return ``False`` otherwise.
+        Return whether this set only differs from ``other``
+        by a finite set.
 
         INPUT:
 
@@ -973,8 +967,7 @@ class Primes(Set_generic, UniqueRepresentation):
 
     def is_subset(self, other, almost=False):
         r"""
-        Return ``True`` if this set of is subset of ``other``;
-        ``False`` otherwise.
+        Return whether this set is a subset of ``other``.
 
         INPUT:
 
@@ -1004,10 +997,17 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: Q2.is_subset(P, almost=True)
             True
 
+        TESTS::
+
+            sage: P.is_subset(ZZ)
+            True
+
         .. SEEALSO::
 
             :meth:`is_superset`, :meth:`is_disjoint`, :meth:`is_almost_equal`
         """
+        if other is ZZ:
+            return True
         P = self.intersection(other)
         if almost:
             return P.is_almost_equal(self)
@@ -1046,10 +1046,17 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: P.is_superset(Q2, almost=True)
             True
 
+        TESTS::
+
+            sage: P.is_superset(ZZ)
+            False
+
         .. SEEALSO::
 
             :meth:`is_subset`, :meth:`is_disjoint`, :meth:`is_almost_equal`
         """
+        if other is ZZ:
+            return False
         P = self.intersection(other)
         if almost:
             return P.is_almost_equal(other)
