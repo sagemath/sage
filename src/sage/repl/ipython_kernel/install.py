@@ -261,7 +261,8 @@ class SageKernelSpec:
                           'check your Jupyter configuration '
                           '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html)')
         else:
-            import sys, shutil
+            import sys
+            import shutil
             from pathlib import Path
             if Path(shutil.which(spec.argv[0])).resolve() != Path(sys.executable).resolve():
                 warnings.warn(f'The kernel named {ident} does not seem to correspond to this '
