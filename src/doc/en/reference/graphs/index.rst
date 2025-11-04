@@ -90,6 +90,7 @@ Libraries of algorithms
    sage/graphs/pq_trees
    sage/graphs/matching
    sage/graphs/matchpoly
+   sage/graphs/morphisms
    sage/graphs/genus
    sage/graphs/lovasz_theta
    sage/graphs/schnyder
@@ -126,5 +127,3 @@ Libraries of algorithms
    sage/graphs/cycle_enumeration
 
 .. include:: ../footer.txt
-
-        

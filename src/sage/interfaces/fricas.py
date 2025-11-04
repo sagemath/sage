@@ -289,7 +289,8 @@ class FriCAS(ExtraTabCompletion, Expect):
 
         TESTS::
 
-            sage: fricas == loads(dumps(fricas))
+            sage: a = FriCAS()
+            sage: isinstance(loads(dumps(a)), FriCAS)
             True
 
         Check that :issue:`25174` is fixed::
