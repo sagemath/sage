@@ -2210,13 +2210,13 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
             sage: R.<n> = AsymptoticRing('n^ZZ', QQ)
             sage: ex = 2*n^2 + n + O(1/n)
-            sage: (m, x) = ex._main_term_relative_error_()
+            sage: m, x = ex._main_term_relative_error_()
             sage: m
             2*n^2
             sage: x
             1/2*n^(-1) + O(n^(-3))
             sage: ex = 2*n^2 + n
-            sage: (m, x) = ex._main_term_relative_error_()
+            sage: m, x = ex._main_term_relative_error_()
             sage: m
             2*n^2
             sage: x

@@ -801,7 +801,7 @@ class GenericCombinatorialSpecies(SageObject):
         Qz = QQ['z'].fraction_field()
 
         # Generate the variable names and the corresponding polynomial rings
-        var_names = ["node%s" % i for i in range(d.num_verts())]
+        var_names = ["node%s" % i for i in range(d.n_vertices())]
         R = Qz[", ".join(var_names)]
         R_gens_dict = R.gens_dict()
 

@@ -408,76 +408,6 @@ include "pynac_impl.pxi"
 from sage.symbolic.symbols import symbol_table, register_symbol  # used to be defined in pynac_impl
 
 
-cpdef bint is_SymbolicEquation(x) noexcept:
-    """
-    Return ``True`` if ``x`` is a symbolic equation.
-
-    This function is deprecated.
-
-    EXAMPLES:
-
-    The following two examples are symbolic equations::
-
-        sage: from sage.symbolic.expression import is_SymbolicEquation
-        sage: is_SymbolicEquation(sin(x) == x)
-        doctest:warning...
-        DeprecationWarning: is_SymbolicEquation is deprecated; use
-        'isinstance(x, sage.structure.element.Expression) and x.is_relational()' instead
-        See https://github.com/sagemath/sage/issues/35505 for details.
-        True
-        sage: is_SymbolicEquation(sin(x) < x)
-        True
-        sage: is_SymbolicEquation(x)
-        False
-
-    This is not, since ``2==3`` evaluates to the boolean
-    ``False``::
-
-        sage: is_SymbolicEquation(2 == 3)
-        False
-
-    However here since both 2 and 3 are coerced to be symbolic, we
-    obtain a symbolic equation::
-
-        sage: is_SymbolicEquation(SR(2) == SR(3))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(35505,
-                "is_SymbolicEquation is deprecated; use "
-                "'isinstance(x, sage.structure.element.Expression) and x.is_relational()' instead")
-    return isinstance(x, Expression) and is_a_relational((<Expression>x)._gobj)
-
-
-# Defined here but exported by sage.symbolic.ring
-cpdef bint _is_SymbolicVariable(x) noexcept:
-    """
-    Return ``True`` if ``x`` is a variable.
-
-    EXAMPLES::
-
-        sage: from sage.symbolic.ring import is_SymbolicVariable
-        sage: is_SymbolicVariable(x)
-        doctest:warning...
-        DeprecationWarning: is_SymbolicVariable is deprecated; use
-        'isinstance(x, sage.structure.element.Expression) and x.is_symbol()' instead
-        See https://github.com/sagemath/sage/issues/35505 for details.
-        True
-        sage: is_SymbolicVariable(x + 2)
-        False
-
-    TESTS::
-
-        sage: ZZ['x']
-        Univariate Polynomial Ring in x over Integer Ring
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(35505,
-                "is_SymbolicVariable is deprecated; use "
-                "'isinstance(x, sage.structure.element.Expression) and x.is_symbol()' instead")
-    return isinstance(x, Expression) and is_a_symbol((<Expression>x)._gobj)
-
-
 def _dict_update_check_duplicate(dict d1, dict d2):
     r"""
     Merge the dictionary ``d2`` into ``d1`` and check for duplicates.
@@ -1253,7 +1183,7 @@ cdef class Expression(Expression_abc):
         from sage.symbolic.expression_conversions import InterfaceInit
         return InterfaceInit(I)(self)
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
         Convert symbolic object to GAP string.
 
@@ -1262,9 +1192,9 @@ cdef class Expression(Expression_abc):
             sage: gap(e + pi^2 + x^3)                                                   # needs sage.libs.gap
             x^3 + pi^2 + e
         """
-        return '"%s"' % repr(self)
+        return f'"{repr(self)}"'
 
-    def _singular_init_(self):
+    def _singular_init_(self) -> str:
         """
         Conversion of a symbolic object to Singular string.
 
@@ -1273,9 +1203,9 @@ cdef class Expression(Expression_abc):
             sage: singular(e + pi^2 + x^3)                                              # needs sage.libs.singular
             x^3 + pi^2 + e
         """
-        return '"%s"' % repr(self)
+        return f'"{repr(self)}"'
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Return string representation in Magma of this symbolic expression.
 
@@ -4540,7 +4470,7 @@ cdef class Expression(Expression_abc):
             sage: f.derivative(2)
             x |--> 6*x - sin(x)
 
-        Some expressions can't be cleanly differentiated by the
+        Some expressions cannot be cleanly differentiated by the
         chain rule::
 
             sage: _ = var('x', domain='real')
@@ -6645,7 +6575,7 @@ cdef class Expression(Expression_abc):
 
         Symbolic sums with definite endpoints are expanded (:issue:`9424`)::
 
-            sage: (k,n) = var('k,n')
+            sage: k, n = var('k,n')
             sage: f(n) = sum(abs(-k*k+n),k,1,n)
             sage: ex = f(n=8); ex
             sum(abs(-k^2 + 8), k, 1, 8)
@@ -6809,7 +6739,7 @@ cdef class Expression(Expression_abc):
     # Basic arithmetic wrappers
     # which allow disabling automatic evaluation with the hold parameter
     ############################################################################
-    def power(self, exp, hold=False):
+    def power(self, exp, bint hold=False):
         """
         Return the current expression to the power ``exp``.
 
@@ -6832,7 +6762,7 @@ cdef class Expression(Expression_abc):
                 g_hold2_wrapper(g_power_construct, self._gobj, nexp._gobj,
                     hold))
 
-    def add(self, *args, hold=False):
+    def add(self, *args, bint hold=False):
         """
         Return the sum of the current expression and the given arguments.
 
@@ -6864,7 +6794,7 @@ cdef class Expression(Expression_abc):
             vec.push_back((<Expression>nargs[i])._gobj)
         return new_Expression_from_GEx(self._parent, g_add_construct(vec, hold))
 
-    def mul(self, *args, hold=False):
+    def mul(self, *args, bint hold=False):
         """
         Return the product of the current expression and the given arguments.
 
@@ -8367,7 +8297,7 @@ cdef class Expression(Expression_abc):
             sig_off()
         return new_Expression_from_GEx(self._parent, r)
 
-    def abs(self, hold=False):
+    def abs(self, bint hold=False):
         """
         Return the absolute value of this expression.
 
@@ -8403,7 +8333,7 @@ cdef class Expression(Expression_abc):
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_abs, self._gobj, hold))
 
-    def step(self, hold=False):
+    def step(self, bint hold=False):
         """
         Return the value of the unit step function, which is 0 for
         negative x, 1 for 0, and 1 for positive x.
@@ -8435,7 +8365,7 @@ cdef class Expression(Expression_abc):
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_step, self._gobj, hold))
 
-    def csgn(self, hold=False):
+    def csgn(self, bint hold=False):
         """
         Return the sign of ``self``, which is -1 if ``self < 0``, 0 if
         ``self == 0``, and 1 if ``self > 0``, or unevaluated when ``self`` is a
@@ -8480,7 +8410,7 @@ cdef class Expression(Expression_abc):
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_csgn, self._gobj, hold))
 
-    def conjugate(self, hold=False):
+    def conjugate(self, bint hold=False):
         """
         Return the complex conjugate of this symbolic expression.
 
@@ -8571,7 +8501,7 @@ cdef class Expression(Expression_abc):
         """
         return (self*self.conjugate()).expand()
 
-    def real_part(self, hold=False):
+    def real_part(self, bint hold=False):
         """
         Return the real part of this symbolic expression.
 
@@ -8638,7 +8568,7 @@ cdef class Expression(Expression_abc):
 
     real = real_part
 
-    def imag_part(self, hold=False):
+    def imag_part(self, bint hold=False):
         r"""
         Return the imaginary part of this symbolic expression.
 
@@ -8705,7 +8635,7 @@ cdef class Expression(Expression_abc):
 
     imag = imag_part
 
-    def sqrt(self, hold=False):
+    def sqrt(self, bint hold=False):
         """
         Return the square root of this expression.
 
@@ -8773,7 +8703,7 @@ cdef class Expression(Expression_abc):
         return new_Expression_from_GEx(self._parent,
                 g_hold2_wrapper(g_power_construct, self._gobj, g_ex1_2, hold))
 
-    def sin(self, hold=False):
+    def sin(self, bint hold=False):
         """
         EXAMPLES::
 
@@ -8826,7 +8756,7 @@ cdef class Expression(Expression_abc):
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_sin, self._gobj, hold))
 
-    def cos(self, hold=False):
+    def cos(self, bint hold=False):
         """
         Return the cosine of ``self``.
 
@@ -8887,7 +8817,7 @@ cdef class Expression(Expression_abc):
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_cos, self._gobj, hold))
 
-    def tan(self, hold=False):
+    def tan(self, bint hold=False):
         """
         EXAMPLES::
 
@@ -8939,7 +8869,7 @@ cdef class Expression(Expression_abc):
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_tan, self._gobj, hold))
 
-    def arcsin(self, hold=False):
+    def arcsin(self, bint hold=False):
         """
         Return the arcsin of x, i.e., the number y between -pi and pi
         such that sin(y) == x.
@@ -8992,7 +8922,7 @@ cdef class Expression(Expression_abc):
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_asin, self._gobj, hold))
 
-    def arccos(self, hold=False):
+    def arccos(self, bint hold=False):
         """
         Return the arc cosine of ``self``.
 
@@ -9042,7 +8972,7 @@ cdef class Expression(Expression_abc):
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_acos, self._gobj, hold))
 
-    def arctan(self, hold=False):
+    def arctan(self, bint hold=False):
         """
         Return the arc tangent of ``self``.
 
@@ -9091,7 +9021,7 @@ cdef class Expression(Expression_abc):
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_atan, self._gobj, hold))
 
-    def arctan2(self, x, hold=False):
+    def arctan2(self, x, bint hold=False):
         """
         Return the inverse of the 2-variable tan function on ``self`` and ``x``.
 
@@ -9195,7 +9125,7 @@ cdef class Expression(Expression_abc):
         return new_Expression_from_GEx(self._parent,
                 g_hold2_wrapper(g_atan2, self._gobj, nexp._gobj, hold))
 
-    def sinh(self, hold=False):
+    def sinh(self, bint hold=False):
         r"""
         Return sinh of ``self``.
 
@@ -9253,7 +9183,7 @@ cdef class Expression(Expression_abc):
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_sinh, self._gobj, hold))
 
-    def cosh(self, hold=False):
+    def cosh(self, bint hold=False):
         r"""
         Return cosh of ``self``.
 
@@ -9309,7 +9239,7 @@ cdef class Expression(Expression_abc):
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_cosh, self._gobj, hold))
 
-    def tanh(self, hold=False):
+    def tanh(self, bint hold=False):
         r"""
         Return tanh of ``self``.
 
@@ -9363,7 +9293,7 @@ cdef class Expression(Expression_abc):
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_tanh, self._gobj, hold))
 
-    def arcsinh(self, hold=False):
+    def arcsinh(self, bint hold=False):
         """
         Return the inverse hyperbolic sine of ``self``.
 
@@ -9416,7 +9346,7 @@ cdef class Expression(Expression_abc):
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_asinh, self._gobj, hold))
 
-    def arccosh(self, hold=False):
+    def arccosh(self, bint hold=False):
         """
         Return the inverse hyperbolic cosine of ``self``.
 
@@ -9465,7 +9395,7 @@ cdef class Expression(Expression_abc):
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_acosh, self._gobj, hold))
 
-    def arctanh(self, hold=False):
+    def arctanh(self, bint hold=False):
         """
         Return the inverse hyperbolic tangent of ``self``.
 
@@ -9522,7 +9452,7 @@ cdef class Expression(Expression_abc):
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_atanh, self._gobj, hold))
 
-    def exp(self, hold=False):
+    def exp(self, bint hold=False):
         r"""
         Return exponential function of ``self``, i.e., `e` to the
         power of ``self``.
@@ -9578,7 +9508,7 @@ cdef class Expression(Expression_abc):
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_exp, self._gobj, hold))
 
-    def log(self, b=None, hold=False):
+    def log(self, b=None, bint hold=False):
         """
         Return the logarithm of ``self``.
 
@@ -9641,7 +9571,7 @@ cdef class Expression(Expression_abc):
         else:
             return res/self.coerce_in(b).log(hold=hold)
 
-    def zeta(self, hold=False):
+    def zeta(self, bint hold=False):
         """
         EXAMPLES::
 
@@ -9683,7 +9613,7 @@ cdef class Expression(Expression_abc):
         cdef GEx x = g_hold_wrapper(g_zeta, self._gobj, hold)
         return new_Expression_from_GEx(self._parent, x)
 
-    def factorial(self, hold=False):
+    def factorial(self, bint hold=False):
         """
         Return the factorial of ``self``.
 
@@ -9725,7 +9655,7 @@ cdef class Expression(Expression_abc):
             sig_off()
         return new_Expression_from_GEx(self._parent, x)
 
-    def binomial(self, k, hold=False):
+    def binomial(self, k, bint hold=False):
         """
         Return binomial coefficient "self choose k".
 
@@ -9777,7 +9707,7 @@ cdef class Expression(Expression_abc):
             sig_off()
         return new_Expression_from_GEx(self._parent, x)
 
-    def Order(self, hold=False):
+    def Order(self, bint hold=False):
         """
         Return the order of the expression, as in big oh notation.
 
@@ -9799,7 +9729,7 @@ cdef class Expression(Expression_abc):
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_Order, self._gobj, hold))
 
-    def gamma(self, *, hold=False):
+    def gamma(self, *, bint hold=False):
         """
         Return the Gamma function evaluated at ``self``.
 
@@ -9864,7 +9794,7 @@ cdef class Expression(Expression_abc):
             sig_off()
         return new_Expression_from_GEx(self._parent, x)
 
-    def log_gamma(self, hold=False):
+    def log_gamma(self, bint hold=False):
         """
         Return the log gamma function evaluated at ``self``.
         This is the logarithm of gamma of ``self``, where
@@ -10507,7 +10437,7 @@ cdef class Expression(Expression_abc):
             sage: abs(SR(z).rectform() - (a + b*I))  # abs tol 1e-16
             0.0
         """
-        return self.maxima_methods().rectform()
+        return self._maxima_().rectform()._sage_()
 
     def unhold(self, exclude=None):
         """
@@ -11271,7 +11201,7 @@ cdef class Expression(Expression_abc):
 
         EXAMPLES::
 
-            sage: (k,n) = var('k,n')
+            sage: k, n = var('k,n')
             sage: ex = sum(abs(-k*k+n),k,1,n)(n=8); ex
             sum(abs(-k^2 + 8), k, 1, 8)
             sage: ex.expand_sum()
@@ -11284,8 +11214,8 @@ cdef class Expression(Expression_abc):
 
         We can use this to do floating-point approximation as well::
 
-            sage: (k,n) = var('k,n')
-            sage: f(n)=sum(sqrt(abs(-k*k+n)),k,1,n)
+            sage: k, n = var('k,n')
+            sage: f(n) = sum(sqrt(abs(-k*k+n)),k,1,n)
             sage: f(n=8)
             sum(sqrt(abs(-k^2 + 8)), k, 1, 8)
             sage: f(8).expand_sum()
@@ -13672,7 +13602,6 @@ def _eval_on_operands(f):
         Some documentation.
     """
     @sage_wraps(f)
-    @cython.binding(True)
     def new_f(ex, *args, **kwds):
         new_args = list(ex._unpack_operands())
         new_args.extend(args)

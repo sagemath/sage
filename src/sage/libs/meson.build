@@ -1,8 +1,12 @@
-sirocco = cc.find_library(
-  'sirocco',
-  required: get_option('sirocco'),
-  disabler: true,
-)
+sirocco = dependency('libsirocco', required: false, disabler: true)
+if not sirocco.found()
+  # fallback for older versions without pkg-config
+  sirocco = cc.find_library(
+    'sirocco',
+    required: get_option('sirocco'),
+    disabler: true,
+  )
+endif
 # cannot be found via pkg-config
 ecl = cc.find_library('ecl', required: false, disabler: true)
 if not ecl.found() and not is_windows
@@ -81,27 +85,33 @@ gc = dependency(
   required: not is_windows,
   disabler: true,
 )
-homfly = cc.find_library(
-  'homfly',
-  has_headers: ['homfly.h'],
-  required: false,
-  disabler: true,
-)
+homfly = dependency('libhomfly', required: false, disabler: true)
+if not homfly.found()
+  # fallback for older versions without pkg-config
+  homfly = cc.find_library(
+    'homfly',
+    has_headers: ['homfly.h'],
+    required: false,
+    disabler: true,
+  )
+endif
 
 py.install_sources(
   '__init__.py',
   'all.py',
-  'all__sagemath_coxeter3.py',
-  'all__sagemath_meataxe.py',
-  'all__sagemath_objects.py',
-  'all__sagemath_sirocco.py',
+  'braiding.pyx',
   'ecl.pxd',
+  'ecl.pyx',
   'eclsig.h',
   'gmpxx.pxd',
+  'homfly.pyx',
   'iml.pxd',
+  'libecm.pyx',
   'm4ri.pxd',
   'm4rie.pxd',
   'meataxe.pxd',
+  'meataxe.pyx',
+  'sirocco.pyx',
   subdir: 'sage/libs',
 )
 

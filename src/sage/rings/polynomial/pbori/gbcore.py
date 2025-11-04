@@ -26,7 +26,7 @@ from sage.rings.polynomial.pbori.statistics import used_vars_set
 
 
 def get_options_from_function(f):
-    (argnames, varargs, varopts, defaults) = getargspec(f)[:4]
+    argnames, varargs, varopts, defaults = getargspec(f)[:4]
     return dict(zip(argnames[-len(defaults):], defaults))
 
 
@@ -221,8 +221,8 @@ def gb_with_pre_post_option(option, pre=None,
                     print("preprocessing for option:", option)
 
                 local_symbols = copy(locals())
-                (I, state) = pre(**{k: v for (k, v) in local_symbols.items()
-                                    if k in pre_args})
+                I, state = pre(**{k: v for (k, v) in local_symbols.items()
+                                  if k in pre_args})
             I = f(I, **kwds)
             if option_set and post:
                 post_args = getargspec(post)[0]
@@ -271,7 +271,7 @@ def invert_all_post(I, state):
 
 
 def llfirst_pre(I, prot):
-    (eliminated, llnf, I) = eliminate(I, on_the_fly=False, prot=prot)
+    eliminated, llnf, I = eliminate(I, on_the_fly=False, prot=prot)
     return (I, eliminated)
 
 
@@ -396,7 +396,7 @@ def other_ordering_pre(I, option_set, kwds):
 
 
 def llfirstonthefly_pre(I, prot):
-    (eliminated, llnf, I) = eliminate(I, on_the_fly=True)
+    eliminated, llnf, I = eliminate(I, on_the_fly=True)
     return (I, eliminated)
 
 

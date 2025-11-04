@@ -5,6 +5,7 @@ py.install_sources(
   'givaro.pxd',
   'linbox.pxd',
   'linbox_flint_interface.pxd',
+  'linbox_flint_interface.pyx',
   subdir: 'sage/libs/linbox',
 )
 

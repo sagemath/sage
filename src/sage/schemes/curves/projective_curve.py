@@ -817,7 +817,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         C = Curve(self.affine_patch(patch))
         return C.plot(*args, **kwds)
 
-    def is_singular(self, P=None):
+    def is_singular(self, P=None) -> bool:
         r"""
         Return whether this curve is singular or not, or if a point ``P`` is
         provided, whether ``P`` is a singular point of this curve.
@@ -992,7 +992,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         phi = H(G)
         return [phi(g).homogenize(x) for g in L]
 
-    def is_ordinary_singularity(self, P):
+    def is_ordinary_singularity(self, P) -> bool:
         r"""
         Return whether the singular point ``P`` of this projective plane curve is an ordinary singularity.
 
@@ -1523,7 +1523,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                         pts.append(pt)
         return phi
 
-    def is_transverse(self, C, P):
+    def is_transverse(self, C, P) -> bool:
         r"""
         Return whether the intersection of this curve with the curve ``C`` at the point ``P`` is transverse.
 
@@ -1652,7 +1652,7 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
         """
         return 1 - self.defining_ideal().hilbert_polynomial()(0)
 
-    def is_complete_intersection(self):
+    def is_complete_intersection(self) -> bool:
         r"""
         Return whether this projective curve is a complete intersection.
 
@@ -2862,14 +2862,11 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         phi = self._map_to_function_field
         denom = self._coordinate_functions[i]
-        gs = [phi(f)/denom**f.degree() for f in prime.gens()]
+        gs = [phi(f) / denom**f.degree() for f in prime.gens()]
         fs = [g for g in gs if not g.is_zero()]
         f = fs.pop()
-        places = []
-        for p in f.zeros():
-            if all(f.valuation(p) > 0 for f in fs):
-                places.append(p)
-        return places
+        return [p for p in f.zeros()
+                if all(f.valuation(p) > 0 for f in fs)]
 
     def jacobian(self, model, base_div=None):
         """
