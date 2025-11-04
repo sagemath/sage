@@ -5,7 +5,7 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtGui import QPixmap, QIcon
-from PyQt5.QtCore import QSize, QUrl
+from PyQt5.QtCore import QSize, QUrl, Qt
 from Glossary.Glossary import GlossaryWidget
 from sage.all import Graph
 
@@ -15,13 +15,37 @@ class GTImageWindow(QWidget):
         self.setWindowTitle("Learning Graph")
         self.resize(400, 400)
 
-        layout = QVBoxLayout()
-        label = QLabel()
-        pixmap = QPixmap(image_path)
-        label.setPixmap(pixmap)
-        label.setScaledContents(True)
-        layout.addWidget(label)
-        self.setLayout(layout)
+        self.label = QLabel(alignment=Qt.AlignCenter)
+        self.layout = QVBoxLayout(self)
+        self.layout.addWidget(self.label)
+
+        # Load the pixmap once
+        self.original_pixmap = QPixmap(image_path)
+        self.update_scaled_pixmap()
+
+    def resizeEvent(self, event):
+        # Smoothly rescale the image when window size changes
+        self.update_scaled_pixmap()
+        super().resizeEvent(event)
+
+    def update_scaled_pixmap(self):
+        if not self.original_pixmap.isNull():
+        # Find how much space we actually have inside the label
+            available_size = self.label.size()
+            original_size = self.original_pixmap.size()
+
+        # Only scale down (never up)
+            target_width = min(available_size.width(), original_size.width())
+            target_height = min(available_size.height(), original_size.height())
+
+            scaled = self.original_pixmap.scaled(
+                target_width,
+                target_height,
+                Qt.KeepAspectRatio,
+                Qt.SmoothTransformation
+        )
+        self.label.setPixmap(scaled)
+
 
 class GT_Learning_Window(QWidget):
     def __init__(self, parent=None):
@@ -73,6 +97,10 @@ class GT_Learning_Window(QWidget):
         degree_layout.addWidget(self.degree_textbox)
         main_layout.addLayout(degree_layout)
 
+        self.degree_help_button = QPushButton("Degree Example")
+        self.degree_help_button.clicked.connect(self.on_degree_help)
+        degree_layout.addWidget(self.degree_help_button)
+
         self.degree_check_button = QPushButton("Check Degrees")
         self.degree_check_button.clicked.connect(self.on_degree_check)
         degree_layout.addWidget(self.degree_check_button)
@@ -90,6 +118,10 @@ class GT_Learning_Window(QWidget):
         density_layout.addWidget(QLabel("%"))
         main_layout.addLayout(density_layout)
 
+        self.density_help_button = QPushButton("Density Example")
+        self.density_help_button.clicked.connect(self.on_density_help)
+        density_layout.addWidget(self.density_help_button)
+
         self.density_check_button = QPushButton("Check Density")
         self.density_check_button.clicked.connect(self.on_density_check)
         density_layout.addWidget(self.density_check_button)
@@ -101,6 +133,10 @@ class GT_Learning_Window(QWidget):
         self.planar_select.addItems(["Select","Yes", "No"])
         planar_layout.addWidget(self.planar_select)
         main_layout.addLayout(planar_layout)
+
+        self.planar_help_button = QPushButton("Planar Example")
+        self.planar_help_button.clicked.connect(self.on_planar_help)
+        planar_layout.addWidget(self.planar_help_button)
 
         self.planar_check_button = QPushButton("Check Planar")
         self.planar_check_button.clicked.connect(self.on_planar_check)
@@ -114,6 +150,10 @@ class GT_Learning_Window(QWidget):
         euler_layout.addWidget(self.euler_select)
         main_layout.addLayout(euler_layout)
 
+        self.eulerian_help_button = QPushButton("Eulerian Example")
+        self.eulerian_help_button.clicked.connect(self.on_eulerian_help)
+        euler_layout.addWidget(self.eulerian_help_button)
+
         self.euler_check_button = QPushButton("Check Eulerian")
         self.euler_check_button.clicked.connect(self.on_euler_check)
         euler_layout.addWidget(self.euler_check_button)
@@ -125,6 +165,10 @@ class GT_Learning_Window(QWidget):
         self.hamilton_select.addItems(["Select","Yes", "No"])
         hamilton_layout.addWidget(self.hamilton_select)
         main_layout.addLayout(hamilton_layout)
+
+        self.hamilton_help_button = QPushButton("Hamiltonian Example")
+        self.hamilton_help_button.clicked.connect(self.on_hamilton_help)
+        hamilton_layout.addWidget(self.hamilton_help_button)
 
         self.hamilton_check_button = QPushButton("Check Hamiltonian")
         self.hamilton_check_button.clicked.connect(self.on_hamilton_check)
@@ -287,3 +331,42 @@ class GT_Learning_Window(QWidget):
         self.glossary_window.show()
         self.glossary_window.raise_()
         self.glossary_window.activateWindow()
+
+    def on_degree_help(self):
+        QMessageBox.information (self, "Degree Help", 
+        "Ex:\n" 
+        "Given the edges (1,2), (2,3), (1,4), (2,4)\n\n" 
+        "count the number of times each vertex appears in an edge. \n\n" 
+        "The degrees are then: 2,3,1,2\n\n"
+        "Given a picture of the graph, simply count the number of edges attached to each vertex")
+
+    def on_density_help(self):
+        QMessageBox.information (self, "Density Help", 
+        "Ex:\n" 
+        "Given the edges (1,2), (2,3), (1,4), (2,4)\n\n" 
+        "To find the density as a percentage, we use the formula:\n\n"
+        "D=(2 x # of edges)/[(# of vertices)(# of vertices -1)]*100\n\n"
+        "for our graph, we have: \n\n"
+        "D=(2*4)/[(4)(3)]*100\n\n"
+        "D=(8)/(12)*100\n\n"
+        "D= 66.67%")
+
+    def on_planar_help(self):
+        QMessageBox.information (self, "Planar Help", "There are several methods that can be used to check planarity\n"
+        "1: For smaller graphs, try drawing the graph with no edges crossing, then the graph IS planar\n\n"
+        "2: if # of vertices is atleast 3 and # of edges < 3 x # of vertices - 6, then the graph is NOT planar\n\n"
+        "3: if # of vertices is atleast 3 and there are no 3 cycles and # of edges < 2 x # of vertices - 4 then the graph is NOT planar\n\n")
+
+    def on_eulerian_help(self):
+        QMessageBox.information (self, "Eulerian",        
+        "Ex:\n" 
+        "Given the edges (1,2), (2,3), (1,4), (2,4)\n\n" 
+        "To be eulerian, the degree of each vertex must be even\n\n"
+        "Since the degree of both vertex 2 and 3 are odd, the graph is not eulerian")
+
+    def on_hamilton_help(self):
+        QMessageBox.information (self, "Hamiltonian Help",         
+        "Ex:\n" 
+        "Given the edges (1,2), (2,3), (1,4), (2,4)\n\n"
+        "If each vertex does not have degree atleast (# of vertices)/2, then the graph is NOT hamiltonian\n\n"
+        "Since vertex 3 has degree of 1, this graph is not hamiltonian")
