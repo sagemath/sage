@@ -951,7 +951,7 @@ class Primes(Set_generic, UniqueRepresentation):
             exceptions.update((x, b) for x, b in other._exceptions.items()
                               if b or x not in self)
         else:
-            # we try to enumerate the elements of "other
+            # we try to enumerate the elements of "other"
             if hasattr(other, "is_finite") and not other.is_finite():
                 raise NotImplementedError("union with general infinite sets is not implemented")
             modulus = self._modulus
