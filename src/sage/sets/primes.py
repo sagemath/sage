@@ -19,6 +19,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
 from .set import Set_generic
@@ -840,18 +841,20 @@ class Primes(Set_generic, UniqueRepresentation):
 
         ::
 
+            sage: P.intersection(NN) == P
+            True
             sage: P.intersection(ZZ) == P
             True
             sage: P.intersection(RR)
             Traceback (most recent call last):
             ...
-            NotImplementedError: object does not support iteration
+            NotImplementedError: intersection with general infinite sets is not implemented
 
         .. SEEALSO::
 
             :meth:`complement_in_primes`, :meth:`union`
         """
-        if other is ZZ:
+        if other is NN or other is ZZ:
             return self
         if isinstance(other, Primes):
             modulus = self._modulus.lcm(other._modulus)
@@ -862,15 +865,30 @@ class Primes(Set_generic, UniqueRepresentation):
                           if not b or x in other}
             exceptions.update((x, b) for x, b in other._exceptions.items()
                               if not b or x in self)
-        elif self.is_finite():
-            modulus = 1
-            classes = []
-            exceptions = {x: True for x in self if x in other}
         else:
-            # we try to enumerate the elements of "other"
             modulus = 1
             classes = []
-            exceptions = {x: True for x in list(other) if x in self}
+            if isinstance(other, range) and other.step == 1:
+                exceptions = {}
+                x = other.start - 1
+                while True:
+                    try:
+                        x = self.next(x)
+                    except ValueError:
+                        break
+                    if x >= other.stop:
+                        break
+                    exceptions[x] = True
+            elif self.is_finite() and hasattr(other, "__contains__"):
+                # this would not work reliably if ``other`` does not
+                # implement ``__contains__``, because ``x in other``
+                # then consumes ``other``
+                exceptions = {x: True for x in self if x in other}
+            else:
+                if hasattr(other, "is_finite") and not other.is_finite():
+                    raise NotImplementedError("intersection with general infinite sets is not implemented")
+                # if other is infinite but does not know it, this will loop forever
+                exceptions = {x: True for x in other if x in self}
         return Primes(modulus, classes, exceptions)
 
     def union(self, other):
@@ -901,17 +919,21 @@ class Primes(Set_generic, UniqueRepresentation):
 
         ::
 
+            sage: P.union(NN) == NN
+            True
             sage: P.union(ZZ) == ZZ
             True
             sage: P.union(RR)
             Traceback (most recent call last):
             ...
-            NotImplementedError: object does not support iteration
+            NotImplementedError: union with general infinite sets is not implemented
 
         .. SEEALSO::
 
             :meth:`complement_in_primes`, :meth:`intersection`
         """
+        if other is NN:
+            return NN
         if other is ZZ:
             return ZZ
         if isinstance(other, Primes):
@@ -924,11 +946,13 @@ class Primes(Set_generic, UniqueRepresentation):
             exceptions.update((x, b) for x, b in other._exceptions.items()
                               if b or x not in self)
         else:
-            # we try to enumerate the elements of "other"
+            # we try to enumerate the elements of "other
+            if hasattr(other, "is_finite") and not other.is_finite():
+                raise NotImplementedError("union with general infinite sets is not implemented")
             modulus = self._modulus
             classes = self._classes
             exceptions = self._exceptions.copy()
-            for x in list(other):
+            for x in other:
                 x = ZZ(x)
                 if x.is_prime():
                     exceptions[x] = True
