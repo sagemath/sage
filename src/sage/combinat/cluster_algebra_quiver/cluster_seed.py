@@ -4895,7 +4895,7 @@ def is_LeeLiZel_allowable(T, n, m, b, c) -> bool:
     return True
 
 
-def get_green_vertices(C) -> list:
+def get_green_vertices(C) -> list[int]:
     r"""
     Get the green vertices from a matrix.
 
@@ -4916,7 +4916,7 @@ def get_green_vertices(C) -> list:
     return [i for i, v in enumerate(C.columns()) if any(x > 0 for x in v)]
 
 
-def get_red_vertices(C) -> list:
+def get_red_vertices(C) -> list[int]:
     r"""
     Get the red vertices from a matrix.
 
