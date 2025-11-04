@@ -850,6 +850,11 @@ class Primes(Set_generic, UniqueRepresentation):
             ...
             NotImplementedError: intersection with general infinite sets is not implemented
 
+            sage: P = Primes(modulus=0, classes=range(30))
+            sage: P.intersection(reversed([13, 7, 11, 37]))
+            Finite set of prime numbers: 7, 11, 13
+
+
         .. SEEALSO::
 
             :meth:`complement_in_primes`, :meth:`union`
