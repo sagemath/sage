@@ -4431,6 +4431,11 @@ REFERENCES:
              modular forms*, LMS J. of Comput. Math. 14 (2011),
              214-231.
 
+.. [Law2011] Shirley Law and Nathan Reading,
+             *The Hopf algebra of diagonal rectangulations*,
+             \J. Comb. Theory, Ser. A 119, No. 3, 788-824 (2012).
+             :doi:`10.1016/j.jcta.2011.09.006`
+
 .. [Law2014] Shirley Law, *Combinatorial realization of the Hopf algebra
              of sashes*, Proceedings of FPSAC 2014, DMTCS, :arxiv:`1407.4073`
 

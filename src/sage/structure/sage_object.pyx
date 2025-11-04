@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Abstract base class for Sage objects
 """
@@ -877,18 +876,16 @@ cdef class SageObject:
 
     def _maxima_(self, G=None):
         if G is None:
-            import sage.interfaces.maxima
-            G = sage.interfaces.maxima.maxima
+            from sage.interfaces.maxima_lib import maxima
+            G = maxima
         return self._interface_(G)
 
     def _maxima_init_(self):
-        import sage.interfaces.maxima
-        I = sage.interfaces.maxima.maxima
-        return self._interface_init_(I)
+        from sage.interfaces.maxima_lib import maxima
+        return self._interface_init_(maxima)
 
     def _maxima_lib_(self, G=None):
-        from sage.interfaces.maxima_lib import maxima_lib
-        return self._interface_(maxima_lib)
+        return self._maxima_(G)
 
     def _maxima_lib_init_(self):
         return self._maxima_init_()
