@@ -644,7 +644,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         t_repr._baseline = t_repr._h - 1
         return t_repr
 
-    def _sort_key(self):
+    def _sort_key(self) -> tuple:
         """
         Return a tuple of nonnegative integers encoding the binary
         tree ``self``.
@@ -673,7 +673,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         resu = [l] + [u for t in self for u in t._sort_key()]
         return tuple(resu)
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         """
         Return whether ``self`` is empty.
 
@@ -3619,7 +3619,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             for p in shuffle(W(l), W([shift + ri for ri in r])):
                 yield builder(shift, p)
 
-    def is_full(self):
+    def is_full(self) -> bool:
         r"""
         Return ``True`` if ``self`` is full, else return ``False``.
 
@@ -3789,7 +3789,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             return BinaryTree()
         return BinaryTree([self[0].prune(), self[1].prune()])
 
-    def is_perfect(self):
+    def is_perfect(self) -> bool:
         r"""
         Return ``True`` if ``self`` is perfect, else return ``False``.
 
@@ -3836,7 +3836,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         """
         return 2 ** self.depth() - 1 == self.node_number()
 
-    def is_complete(self):
+    def is_complete(self) -> bool:
         r"""
         Return ``True`` if ``self`` is complete, else return ``False``.
 

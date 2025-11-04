@@ -199,7 +199,7 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
         for row in self:
             for i in row:
                 w[i] += 1
-        return Composition([w[i] for i in range(1, self.size()+1)])
+        return Composition([w[i] for i in range(1, self.size() + 1)])
 
     def descent_set(self):
         r"""
@@ -253,7 +253,7 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
         """
         return Partition(sorted((len(row) for row in self), reverse=True))
 
-    def is_standard(self):
+    def is_standard(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a standard composition tableau and
         ``False`` otherwise.
