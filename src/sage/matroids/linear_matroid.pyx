@@ -3162,8 +3162,9 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         P = PolynomialRing(base_ring, self.representation().nrows(), 'e')
         cdef dict vecs = self.representation_vectors()
         cdef tuple e = P.gens()
+        bases = self.bases()
         I = P.ideal([P.prod(P.sum(base_ring(c) * e[i] for i, c in vecs[y].items()) for y in Y)
-                     for Y in powerset(elts) if all(any(y in B for y in Y) for B in self.bases())])
+                     for Y in powerset(elts) if all(any(yp in B for yp in Y) for B in bases)])
         return P.quotient(I)
 
     def internal_zonotopal_algebra(self, base_ring=None):
@@ -3217,10 +3218,10 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         P = PolynomialRing(base_ring, self.representation().nrows(), 'e')
         cdef dict vecs = self.representation_vectors()
         cdef tuple e = P.gens()
+        cdef tuple noninternal_bases = tuple([B for B in self.bases() if not self._internal(B)])
         I = P.ideal([P.prod(P.sum(base_ring(c) * e[i] for i, c in vecs[y].items()) for y in Y)
-                     for Y in powerset(elts) if all(any(y in B for y in Y)
-                                                    for B in self.bases()
-                                                    if not self._internal(B))])
+                     for Y in powerset(elts) if all(any(yp in B for yp in Y)
+                                                    for B in noninternal_bases)])
         return P.quotient(I)
 
     # copying, loading, saving
