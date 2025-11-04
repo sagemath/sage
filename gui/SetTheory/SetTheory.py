@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout, QHBoxLayout, QLineEdit, QSizePolicy, QComboBox
 )
 from Glossary.Glossary import GlossaryWidget
-#from sage.all import Set
+from sage.all import Set
 
 
 class SetTheoryTab(QWidget):
@@ -14,6 +14,7 @@ class SetTheoryTab(QWidget):
         self.maxBoxes = 8
         self.rightBoxes = []  
         
+        # Left side
         self.leftLabel = QLabel("Set A")
         self.leftLabel.setStyleSheet("font-weight: bold;")
         self.leftTextbox = QLineEdit()
@@ -24,6 +25,7 @@ class SetTheoryTab(QWidget):
         leftLayout.addWidget(self.leftTextbox)
         leftLayout.addStretch()
         
+        # Right side
         self.rightLabel = QLabel("Proposed partition of A")
         self.rightLabel.setStyleSheet("font-weight: bold;")
         self.rightBoxesLayout = QVBoxLayout()
@@ -59,10 +61,18 @@ class SetTheoryTab(QWidget):
         diffRow, self.diffABox, self.differenceButton, self.diffBBox, self.diffResult = self.makeOperationRow("\\", "Difference")
         symRow, self.symABox, self.symmetricDiffButton, self.symBBox, self.symResult = self.makeOperationRow("Δ", "Symmetric Difference")
 
+        # Button connections
         self.unionButton.clicked.connect(lambda: self.performSetOperation("union"))
         self.intersectionButton.clicked.connect(lambda: self.performSetOperation("intersection"))
         self.differenceButton.clicked.connect(lambda: self.performSetOperation("difference"))
         self.symmetricDiffButton.clicked.connect(lambda: self.performSetOperation("symmetric_difference"))
+
+        # Logical operation rows (converted to button style)
+        logicalSubsetRow, self.subsetABox, self.subsetButton, self.subsetBBox, self.subsetResult = self.makeOperationRow("⊆", "Subset")
+        logicalEqualRow, self.equalABox, self.equalButton, self.equalBBox, self.equalResult = self.makeOperationRow("=", "Equality")
+
+        self.subsetButton.clicked.connect(lambda: self.performLogicalOperation("subset"))
+        self.equalButton.clicked.connect(lambda: self.performLogicalOperation("equal"))
 
         operationLayout = QVBoxLayout()
         operationLayout.setSpacing(4)
@@ -71,40 +81,15 @@ class SetTheoryTab(QWidget):
         operationLayout.addLayout(interRow)
         operationLayout.addLayout(diffRow)
         operationLayout.addLayout(symRow)
+        operationLayout.addSpacing(10)
+        operationLayout.addLayout(logicalSubsetRow)
+        operationLayout.addLayout(logicalEqualRow)
 
         self.resultLabel = QLabel("")
         self.resultLabel.setStyleSheet("font-weight: bold; margin-top: 10px;")
         operationLayout.addWidget(self.resultLabel)
-
-        self.logicalDropdown = QComboBox()
-        self.logicalDropdown.addItems([
-            "⊆  (Subset)",
-            "=  (Equality)"
-        ])
-        self.logicalDropdown.setMaximumWidth(130)
-
-        self.logicalABox = QLineEdit()
-        self.logicalABox.setPlaceholderText("Set A")
-        self.logicalABox.setMaximumWidth(200)
-
-        self.logicalBBox = QLineEdit()
-        self.logicalBBox.setPlaceholderText("Set B")
-        self.logicalBBox.setMaximumWidth(200)
-
-        self.logicalEqualButton = QPushButton("≡")
-        self.logicalEqualButton.setFixedWidth(40)
-        self.logicalEqualButton.clicked.connect(self.performLogicalOperation)
-
-        self.logicalResultLabel = QLabel("")
-        self.logicalResultLabel.setStyleSheet("font-weight: bold; padding-left: 8px;")
-
-        logicalRow = QHBoxLayout()
-        logicalRow.addWidget(self.logicalABox)
-        logicalRow.addWidget(self.logicalDropdown)
-        logicalRow.addWidget(self.logicalBBox)
-        logicalRow.addWidget(self.logicalEqualButton)
-        logicalRow.addWidget(self.logicalResultLabel)
         
+        # Glossary button
         self.glossaryButton = QPushButton("Glossary")
         self.glossaryButton.clicked.connect(self.showGlossary)
         self.glossaryButton.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
@@ -113,7 +98,6 @@ class SetTheoryTab(QWidget):
         outerLayout.addLayout(mainLayout)
         outerLayout.addSpacing(20)
         outerLayout.addLayout(operationLayout)
-        outerLayout.addLayout(logicalRow)
         outerLayout.addSpacing(20)
         outerLayout.addStretch()
 
@@ -122,6 +106,7 @@ class SetTheoryTab(QWidget):
 
         self.setLayout(outerLayout)
        
+        # Check partition button
         self.checkPartitionButton = QPushButton("Check Partition")
         self.checkPartitionButton.setFixedWidth(150)
         self.checkPartitionButton.clicked.connect(self.onCheckPartition)
@@ -255,14 +240,18 @@ class SetTheoryTab(QWidget):
         elements = [item.strip() for item in stringStripped.split(",") if item.strip()]
         return Set(elements)
 
-    def performLogicalOperation(self):
-        setA = self.parseSetInput(self.logicalABox.text())
-        setB = self.parseSetInput(self.logicalBBox.text())
-        operation = self.logicalDropdown.currentText()
-        if operation == "⊆  (Subset)":
-            self.logicalResultLabel.setText(str(setA.issubset(setB)))
-        elif operation == "=  (Equality)":
-            self.logicalResultLabel.setText(str(setA == setB))
+    def performLogicalOperation(self, operation):
+        try:
+            if operation == "subset":
+                setA = self.parseSetInput(self.subsetABox.text())
+                setB = self.parseSetInput(self.subsetBBox.text())
+                self.subsetResult.setText(str(setA.issubset(setB)))
+            elif operation == "equal":
+                setA = self.parseSetInput(self.equalABox.text())
+                setB = self.parseSetInput(self.equalBBox.text())
+                self.equalResult.setText(str(setA == setB))
+        except Exception:
+            QMessageBox.warning(self, "Error", "Invalid set format.")
 
     def showGlossary(self):
         if self.glossaryWindow is None:
