@@ -787,7 +787,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         """
         if not self._parameters.is_balanced():
             raise ValueError("the hypergeometric function must be a pFq with q = p-1")
-        if not self.is_defined():
+        if not self.is_defined_conjectural():
             raise ValueError("this hypergeometric function is not defined")
 
         p = self._p
@@ -798,7 +798,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         for r in range(p):
             h = self.dwork_image(r)
             e = r
-            while not h.is_defined():
+            while not h.is_defined_conjectural():
                 h = h.shift(1)
                 e += p
             if e >= s.prec():
