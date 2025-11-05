@@ -259,7 +259,7 @@ class SageKernelSpec:
         except NoSuchKernel:
             warnings.warn(f'No kernel named {ident} is accessible; '
                           'check your Jupyter configuration '
-                          '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html)')
+                          '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html).')
         else:
             import sys
             import shutil
@@ -267,7 +267,7 @@ class SageKernelSpec:
             if Path(shutil.which(spec.argv[0])).resolve() != Path(sys.executable).resolve():
                 warnings.warn(f'The kernel named {ident} does not seem to correspond to this '
                               'installation of SageMath; check your Jupyter configuration '
-                              '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html)')
+                              '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html).')
 
 
 def have_prerequisites(debug=True) -> bool:
