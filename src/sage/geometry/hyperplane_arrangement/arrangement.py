@@ -3476,15 +3476,12 @@ class HyperplaneArrangementElement(Element):
             # Check if the last element is trivial and exclude it from the count.
             resolution_length = len(mres)
             if resolution_length > 0:
-                try:
-                    sing = mres.parent()
-                    last_elem = mres[resolution_length]
-                    # Check if this element is the zero module using size()
-                    size_val = int(sing.eval(f"size({last_elem.name()})"))
-                    if size_val == 0:  # Trailing zero module
-                        resolution_length -= 1
-                except:
-                    pass
+                sing = mres.parent()
+                last_elem = mres[resolution_length]
+                # Check if this element is the zero module using size()
+                size_val = int(sing.eval(f"size({last_elem.name()})"))
+                if size_val == 0:  # Trailing zero module
+                    resolution_length -= 1
             return resolution_length <= 2
         elif algorithm == "BC":
             return self.derivation_module_free_chain() is not None
