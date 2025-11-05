@@ -138,7 +138,7 @@ class Parameters():
             sage: Parameters([1/2, 1/3, 2/3], [2/3])
             ((1/3, 1/2), (1,))
 
-        We can avoid adding the trailing `1` by passing ``add_one=False``)::
+        We can avoid adding the trailing `1` by passing ``add_one=False``::
 
             sage: Parameters([1/2, 1/3, 2/3], [2/3], add_one=False)
             ((1/3, 1/2, 1), (1,))
@@ -282,7 +282,6 @@ class Parameters():
         return True
 
     def q_christol_sorting(self, q):
-        d = self.d
         A = [(1/2 + (-a) % q, -1) for a in self.top]
         B = [(1 + (-b) % q, 1) for b in self.bottom]
         return sorted(A + B)
@@ -292,10 +291,10 @@ class Parameters():
         previous_paren = 1
         for _, paren in self.q_christol_sorting(q):
             parenthesis += paren
-            if parenthesis < 0:
+            if parenthesis > 0:
                 return False
             previous_paren = paren
-        return parenthesis >= 0
+        return parenthesis <= 0
 
     def q_interlacing_number(self, q):
         interlacing = 0
