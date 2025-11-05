@@ -27,7 +27,7 @@ from sage.misc.cachefunc import cached_method
 
 from sage.misc.misc_c import prod
 from sage.misc.functional import log
-from sage.functions.other import ceil
+from sage.functions.other import floor, ceil
 from sage.arith.misc import gcd
 from sage.arith.functions import lcm
 from sage.matrix.constructor import matrix
@@ -225,19 +225,19 @@ class Parameters():
     @cached_method
     def christol_sorting(self, c=1):
         d = self.d
-        A = [(d - (-d*c*a) % d, -a, 1) for a in self.top]
-        B = [(d - (-d*c*b) % d, -b, -1) for b in self.bottom]
+        A = [(d - (-d*c*a) % d, -a, -1) for a in self.top]
+        B = [(d - (-d*c*b) % d, -b, 1) for b in self.bottom]
         return sorted(A + B)
 
     def parenthesis_criterion(self, c):
         parenthesis = 0
-        previous_paren = -1
+        previous_paren = 1
         for _, _, paren in self.christol_sorting(c):
             parenthesis += paren
-            if parenthesis < 0:
+            if parenthesis > 0:
                 return False
             previous_paren = paren
-        return parenthesis >= 0
+        return parenthesis <= 0
 
     def interlacing_criterion(self, c):
         r"""
@@ -274,7 +274,7 @@ class Parameters():
             sage: p.interlacing_criterion(3)
             False
         """
-        previous_paren = -1
+        previous_paren = 1
         for _, _, paren in self.christol_sorting(c):
             if paren == previous_paren:
                 return False
@@ -283,13 +283,13 @@ class Parameters():
 
     def q_christol_sorting(self, q):
         d = self.d
-        A = [(1/2 + (-a) % q, 1) for a in self.top]
-        B = [(1 + (-b) % q, -1) for b in self.bottom]
+        A = [(1/2 + (-a) % q, -1) for a in self.top]
+        B = [(1 + (-b) % q, 1) for b in self.bottom]
         return sorted(A + B)
 
     def q_parenthesis_criterion(self, q):
         parenthesis = 0
-        previous_paren = -1
+        previous_paren = 1
         for _, paren in self.q_christol_sorting(q):
             parenthesis += paren
             if parenthesis < 0:
@@ -299,9 +299,9 @@ class Parameters():
 
     def q_interlacing_number(self, q):
         interlacing = 0
-        previous_paren = -1
+        previous_paren = 1
         for _, paren in self.q_christol_sorting(q):
-            if paren == -1 and previous_paren == 1:
+            if paren == 1 and previous_paren == -1:
                 interlacing += 1
             previous_paren = paren
         return interlacing
@@ -369,6 +369,11 @@ class Parameters():
         """
         return any(a - b in ZZ and a < b for a in self.top for b in self.bottom)
 
+    def shift(self, s):
+        top = [a+s for a in self.top]
+        bottom = [b+s for b in self.bottom]
+        return Parameters(top, bottom, add_one=False)
+
     def decimal_part(self):
         top = [1 + a - ceil(a) for a in self.top]
         bottom = [1 + b - ceil(b) for b in self.bottom]
@@ -412,6 +417,7 @@ class HypergeometricAlgebraic(Element):
             self._parameters = arg1
         else:
             self._parameters = Parameters(arg1, arg2)
+        self._coeffs = [self._scalar]
 
     def __hash__(self):
         return hash((self.base_ring(), self._parameters, self._scalar))
@@ -505,6 +511,22 @@ class HypergeometricAlgebraic(Element):
     def _mul_(self, other):
         return SR(self) * SR(other)
 
+    def series(self, prec):
+        S = self.parent().power_series_ring()
+        coeffs = self._coeffs
+        start = len(coeffs) - 1
+        c = coeffs[-1]
+        for i in range(start, prec - 1):
+            for a in self._parameters.top:
+                c *= a + i
+            for b in self._parameters.bottom:
+                c /= b + i
+            coeffs.append(c)
+        return S(coeffs, prec=prec)
+
+    def shift(self, s):
+        return self.parent()(self._parameters.shift(s), scalar=self._scalar)
+
     @coerce_binop
     def hadamard_product(self, other):
         if self._scalar == 0:
@@ -549,18 +571,6 @@ class HypergeometricAlgebraic(Element):
 class HypergeometricAlgebraic_charzero(HypergeometricAlgebraic):
     def is_defined(self):
         return not any(b in ZZ and b < 0 for b in self.bottom())
-
-    def series(self, prec):
-        S = self.parent().power_series_ring()
-        c = self._scalar
-        coeffs = [c]
-        for i in range(prec):
-            for a in self._parameters.top:
-                c *= a + i
-            for b in self._parameters.bottom:
-                c /= b + i
-            coeffs.append(c)
-        return S(coeffs, prec=prec)
 
 
 class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic_charzero):
@@ -684,7 +694,23 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic_charzero):
 class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
     def __init__(self, parent, arg1, arg2=None, scalar=None):
         HypergeometricAlgebraic.__init__(self, parent, arg1, arg2, scalar)
-        self._p = self.base_ring().cardinality()
+        self._p = p = self.base_ring().cardinality()
+        self._coeffs = [Qp(p, 1)(self._scalar)]
+
+    def series(self, prec):
+        S = self.parent().power_series_ring()
+        coeffs = self._coeffs
+        start = len(coeffs) - 1
+        c = coeffs[-1]
+        for i in range(start, prec - 1):
+            for a in self._parameters.top:
+                c *= a + i
+            for b in self._parameters.bottom:
+                c /= b + i
+            if c.valuation() < 0:
+                raise ValueError("denominator appears in the series at the required precision")
+            coeffs.append(c)
+        return S(coeffs, prec=prec)
 
     def is_defined(self):
         p = self._p
@@ -730,22 +756,6 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
             q *= p
         return True
 
-    def series(self, prec):
-        S = self.parent().power_series_ring()
-        p = self._p
-        K = Qp(p, 1)
-        c = K(self._scalar)
-        coeffs = [c]
-        for i in range(prec-1):
-            for a in self._parameters.top:
-                c *= a + i
-            for b in self._parameters.bottom:
-                c /= b + i
-            if c.valuation() < 0:
-                raise ValueError("denominator appears in the series at the required precision")
-            coeffs.append(c)
-        return S(coeffs, prec=prec)
-
     def is_algebraic(self):
         return self.is_defined()
 
@@ -766,6 +776,10 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
     def p_curvature_corank(self):
         return self._parameters.q_interlacing_number(self._p)
 
+    def dwork_image(self, r=0):
+        parameters = self._parameters.shift(r).dwork_image(self._p)
+        return self.parent()(parameters, scalar=self._scalar)
+
     def dwork_relation(self):
         r"""
         Return (P1, h1), ..., (Ps, hs) such that
@@ -777,46 +791,25 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         if not self.is_defined():
             raise ValueError("this hypergeometric function is not defined")
 
-        H = self.parent()
         p = self._p
-
-        # We compute the series expansion up to x^p
-        cs = self.series(p).list()
-
-        # We compute the relevant exponents and associated coefficients
         S = self.parent().polynomial_ring()
-        exponents = sorted([(1-b) % p for b in self._parameters.bottom])
-        exponents.append(p)
-        Ps = []
-        for i in range(len(exponents) - 1):
-            ei = exponents[i]
-            ej = exponents[i+1]
-            P = S(cs[ei:ej])
-            if P:
-                Ps.append((ei, P << ei))
-
-        # We compute the hypergeometric series
-        pairs = [ ]
-        for r, P in Ps:
-            top = [ ]
-            for a in self.top():
-                ap = (a + (-a) % p) / p  # Dwork map
-                ar = prod(a + i for i in range(r))
-                if ar % p == 0:
-                    top.append(ap + 1)
+        x = S.gen()
+        Ps = {}
+        s = self.series(p)
+        for r in range(p):
+            h = self.dwork_image(r)
+            e = r
+            while not h.is_defined():
+                h = h.shift(1)
+                e += p
+            if e >= s.prec():
+                s = self.series(e + p)
+            if s[e]:
+                if h in Ps:
+                    Ps[h] += s[e] * x**e
                 else:
-                    top.append(ap)
-            bottom = [ ]
-            for b in self.bottom():
-                bp = (b + (-b) % p) / p  # Dwork map
-                br = prod(b + i for i in range(r))
-                if br % p == 0:
-                    bottom.append(bp + 1)
-                else:
-                    bottom.append(bp)
-            pairs.append((P, H(top, bottom)))
-
-        return pairs
+                    Ps[h] = s[e] * x**e
+        return Ps
 
     def annihilating_ore_polynomial(self, var='Frob'):
         # QUESTION: does this method actually return the
@@ -850,7 +843,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
             for _ in range(order):
                 row = {}
                 for g, P in previous_row.items():
-                    for Q, h in g.dwork_relation():
+                    for h, Q in g.dwork_relation().items():
                         # here g = sum(Q * h^p)
                         if h in row:
                             row[h] += P * insert_zeroes(Q, q)
