@@ -243,7 +243,6 @@ target-version = "py311"
 [tool.ruff.lint]
 ignore = [
   "E501", # Line too long - hard to avoid in doctests, and better handled by black.
-  "UP045", # non-pep604-annotation-optional - Whether `Optional[T]` or `T | None` is better is subjective.
 ]
 select = [
   "E", # pycodestyle errors - https://docs.astral.sh/ruff/rules/#error-e

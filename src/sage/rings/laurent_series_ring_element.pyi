@@ -1,5 +1,4 @@
 from typing import Any, Optional, Union
-import builtins
 
 class LaurentSeriesRingElement:
     def __init__(self, parent: Any, f: Any, n: int = 0) -> None:
@@ -23,7 +22,7 @@ class LaurentSeriesRingElement:
     def __bool__(self) -> bool:
         ...
 
-    def _im_gens_(self, codomain: Any, im_gens: builtins.list[Any], base_map: Optional[Any] = None) -> 'LaurentSeriesRingElement':
+    def _im_gens_(self, codomain: Any, im_gens: list[Any], base_map: Optional[Any] = None) -> 'LaurentSeriesRingElement':
         ...
 
     def _normalize(self) -> None:
@@ -49,16 +48,16 @@ class LaurentSeriesRingElement:
     def __iter__(self) -> Any:
         ...
 
-    def list(self) -> builtins.list[Any]:
+    def list(self) -> list[Any]:
         ...
 
-    def coefficients(self) -> builtins.list[Any]:
+    def coefficients(self) -> list[Any]:
         ...
 
     def residue(self) -> Any:
         ...
 
-    def exponents(self) -> builtins.list[int]:
+    def exponents(self) -> list[int]:
         ...
 
     def laurent_polynomial(self) -> Any:

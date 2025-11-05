@@ -1,6 +1,5 @@
 from typing import Any
 from sage.rings.function_field.element import FunctionFieldElement
-import builtins
 
 class FunctionFieldElement_rational(FunctionFieldElement):
     def __init__(self, parent: Any, x: Any, reduce: bool = True) -> None:
@@ -12,7 +11,7 @@ class FunctionFieldElement_rational(FunctionFieldElement):
     def element(self) -> Any:
         ...
 
-    def list(self) -> builtins.list:
+    def list(self) -> list:
         ...
 
     def _repr_(self) -> str:
