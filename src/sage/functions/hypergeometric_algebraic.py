@@ -711,7 +711,9 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
             coeffs.append(c)
         return S(coeffs, prec=prec)
 
-    def is_defined(self):
+    
+
+    def is_almost_defined(self):
         p = self._p
         d = self.denominator()
         if d.gcd(p) > 1:
@@ -724,6 +726,13 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
             if not self._parameters.parenthesis_criterion(u):
                 return False
             u = p*u % d
+        return True
+
+    def is_defined(self):
+        p = self._p
+        d = self.denominator()
+        if not self.is_almost_defined():
+            return False
         bound = self._parameters.bound
         if bound < p:
             return True
@@ -737,16 +746,8 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
     def is_defined_conjectural(self):
         p = self._p
         d = self.denominator()
-        if d.gcd(p) > 1:
+        if not self.is_almost_defined():
             return False
-        u = 1
-        if not self._parameters.parenthesis_criterion(u):
-            return False
-        u = p % d
-        while u != 1:
-            if not self._parameters.parenthesis_criterion(u):
-                return False
-            u = p*u % d
         bound = self._parameters.bound
         q = p
         while q <= bound:
