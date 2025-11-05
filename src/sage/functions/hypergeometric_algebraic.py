@@ -54,6 +54,7 @@ from sage.sets.primes import Primes
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
+from sage.rings.padics.padic_generic import pAdicGeneric
 from sage.rings.padics.factory import Qp
 from sage.rings.number_field.number_field import CyclotomicField
 
@@ -286,14 +287,21 @@ class Parameters():
         B = [(1 + (-b) % q, 1) for b in self.bottom]
         return sorted(A + B)
 
+    def q_parenthesis(self, q):
+        parenthesis = maximum = shift = 0
+        for s, paren in self.q_christol_sorting(q):
+            parenthesis += paren
+            if parenthesis > maximum:
+                maximum = parenthesis
+                shift = s
+        return shift, maximum
+
     def q_parenthesis_criterion(self, q):
         parenthesis = 0
-        previous_paren = 1
         for _, paren in self.q_christol_sorting(q):
             parenthesis += paren
             if parenthesis > 0:
                 return False
-            previous_paren = paren
         return parenthesis <= 0
 
     def q_interlacing_number(self, q):
@@ -404,19 +412,46 @@ class HypergeometricAlgebraic(Element):
         Element.__init__(self, parent)
         base = parent.base_ring()
         if scalar is None:
-            self._scalar = base.one()
+            scalar = base.one()
         else:
-            self._scalar = base(scalar)
-        if self._scalar == 0:
-            self._parameters = None
+            scalar = base(scalar)
+        if scalar == 0:
+            parameters = None
         elif isinstance(arg1, HypergeometricAlgebraic):
-            self._parameters = arg1._parameters
-            self._scalar *= base(arg1._scalar)
+            parameters = arg1._parameters
+            scalar *= base(arg1._scalar)
         elif isinstance(arg1, Parameters):
-            self._parameters = arg1
+            parameters = arg1
         else:
-            self._parameters = Parameters(arg1, arg2)
-        self._coeffs = [self._scalar]
+            parameters = Parameters(arg1, arg2)
+        char = self.parent()._char
+        if char == 0:
+            if any(b in ZZ and b < 0 for b in parameters.bottom):
+                raise ValueError("the parameters %s does not define a hypergeometric function" % parameters)
+        else:
+            error = ValueError("the parameters %s does not define a hypergeometric function in characteristic %s" % (parameters, char))
+            d = parameters.d
+            if d.gcd(char) > 1:
+                raise error
+            u = 1
+            while True:
+                if not parameters.parenthesis_criterion(u):
+                    raise error
+                u = char*u % d
+                if u == 1:
+                    break
+            # Xavier's conjecture:
+            if not parameters.q_parenthesis_criterion(char):
+                raise error
+            # q = char
+            # while q <= parameters.bound:
+            #     if not parameters.q_parenthesis_criterion(q):
+            #         raise error
+            #     q *= char
+        self._scalar = scalar
+        self._parameters = parameters
+        self._coeffs = [scalar]
+        self._char = char
 
     def __hash__(self):
         return hash((self.base_ring(), self._parameters, self._scalar))
@@ -480,6 +515,14 @@ class HypergeometricAlgebraic(Element):
     def scalar(self):
         return self._scalar
 
+    def change_ring(self, R):
+        H = self.parent().change_ring(R)
+        return H(self._parameters, None, self._scalar)
+
+    def change_variable_name(self, name):
+        H = self.parent().change_variable_name(name)
+        return H(self._parameters, None, self._scalar)
+
     def _add_(self, other):
         if self._parameters is None:
             return other
@@ -510,8 +553,7 @@ class HypergeometricAlgebraic(Element):
     def _mul_(self, other):
         return SR(self) * SR(other)
 
-    def series(self, prec):
-        S = self.parent().power_series_ring()
+    def _compute_coeffs(self, prec):
         coeffs = self._coeffs
         start = len(coeffs) - 1
         c = coeffs[-1]
@@ -521,7 +563,11 @@ class HypergeometricAlgebraic(Element):
             for b in self._parameters.bottom:
                 c /= b + i
             coeffs.append(c)
-        return S(coeffs, prec=prec)
+
+    def series(self, prec):
+        S = self.parent().power_series_ring()
+        self._compute_coeffs(prec)
+        return S(self._coeffs, prec=prec)
 
     def shift(self, s):
         return self.parent()(self._parameters.shift(s), scalar=self._scalar)
@@ -567,28 +613,25 @@ class HypergeometricAlgebraic(Element):
         return self.parent()(top, bottom, scalar)
 
 
-class HypergeometricAlgebraic_charzero(HypergeometricAlgebraic):
-    def is_defined(self):
-        return not any(b in ZZ and b < 0 for b in self.bottom())
+# Over the rationals
 
+class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
+    def __mod__(self, p):
+        k = FiniteField(p)
+        val = self._scalar.valuation(p)
+        if val == 0:
+            return self.change_ring(k)
+        h = self.change_ring(Qp(p, 1))
+        return h.residue()
 
-class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic_charzero):
-    def mod(self, p):
-        H = HypergeometricFunctions(FiniteField(p), self.parent().variable_name())
-        return H(self._parameters, None, self._scalar)
-
-    __mod__ = mod
+    def valuation(self, p):
+        return self.change_ring(Qp(p, 1)).valuation()
 
     def has_good_reduction(self, p):
-        h = self.reduce(p)
-        return h.is_defined()
+        return self.valuation(p) >= 0
 
     def good_reduction_primes(self):
         r"""
-        Return
-
-        (modulus, congruence_classes, exceptionnal_primes)
-
         ALGORITHM:
 
         We rely on Christol's criterion ([CF2025]_)
@@ -628,12 +671,8 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic_charzero):
                 break
             if d % p == 0 or not goods[p % d]:
                 continue
-            q = p
-            while q <= bound:
-                if not self._parameters.q_parenthesis_criterion(q):
-                    exceptions[p] = False
-                    break
-                q *= p
+            if self.valuation(p) < 0:
+                exceptions[p] = False
 
         goods = [c for c, v in goods.items() if v]
         return Primes(modulus=d, classes=goods, exceptions=exceptions)
@@ -684,11 +723,71 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic_charzero):
             return identity_matrix(QQ, n)
 
     def is_maximum_unipotent_monodromy(self):
-        # TODO: check this (maybe ask Daniel)
         return all(b in ZZ for b in self.bottom())
 
     is_mum = is_maximum_unipotent_monodromy
 
+
+# Over the p-adics
+
+class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
+    def __init__(self, parent, arg1, arg2=None, scalar=None):
+        HypergeometricAlgebraic.__init__(self, parent, arg1, arg2, scalar)
+        K = self.base_ring()
+        self._p = K.prime()
+        self._e = K.e()
+
+    def residue(self):
+        k = self.base_ring().residue_field()
+        if self._scalar.valuation() == 0:
+            return self.change_base(k)
+        val, shift = self._val_pos()
+        if val < 0:
+            raise ValueError("bad reduction")
+        if val > 0:
+            H = HypergeometricFunctions(k, self.parent().variable_name())
+        raise NotImplementedError("the reduction is not a hypergeometric function")
+        # In fact, it is x^s * h[s] * h, with
+        # . s = shift
+        # . h = self.shift(s)
+
+    def _val_pos(self):
+        p = self._p
+        d = self.denominator()
+        parameters = self._parameters
+        if d.gcd(p) > 1:
+            return -infinity, None
+        u = 1
+        if not parameters.parenthesis_criterion(u):
+            return -infinity, None
+        u = p % d
+        while u != 1:
+            if not parameters.parenthesis_criterion(u):
+                return -infinity, None
+            u = p*u % d
+        # From here, it is absolutely conjectural!
+        val = self._scalar.valuation()
+        pos = 0
+        q = 1
+        while True:
+            s, v = parameters.q_parenthesis(p)
+            if v == 0:
+                break
+            val -= self._e * v
+            pos += q*s
+            q *= p
+            parameters = parameters.shift(s).dwork_image(p)
+        return val, pos
+
+    def valuation(self):
+        val, _ = self._val_pos()
+        return val
+
+    def log_radius(self):
+        raise NotImplementedError
+
+
+# Over prime finite fields
 
 class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
     def __init__(self, parent, arg1, arg2=None, scalar=None):
@@ -698,23 +797,15 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
 
     def series(self, prec):
         S = self.parent().power_series_ring()
-        coeffs = self._coeffs
-        start = len(coeffs) - 1
-        c = coeffs[-1]
-        for i in range(start, prec - 1):
-            for a in self._parameters.top:
-                c *= a + i
-            for b in self._parameters.bottom:
-                c /= b + i
-            if c.valuation() < 0:
-                raise ValueError("denominator appears in the series at the required precision")
-            coeffs.append(c)
-        return S(coeffs, prec=prec)
-
-    
+        self._compute_coeffs(prec)
+        try:
+            f = S(self._coeffs, prec=prec)
+        except ValueError:
+            raise ValueError("denominator appears in the series at the required precision")
+        return f
 
     def is_almost_defined(self):
-        p = self._p
+        p = self._char
         d = self.denominator()
         if d.gcd(p) > 1:
             return False
@@ -729,7 +820,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         return True
 
     def is_defined(self):
-        p = self._p
+        p = self._char
         d = self.denominator()
         if not self.is_almost_defined():
             return False
@@ -744,7 +835,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         return True
 
     def is_defined_conjectural(self):
-        p = self._p
+        p = self._char
         d = self.denominator()
         if not self.is_almost_defined():
             return False
@@ -757,7 +848,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         return True
 
     def is_algebraic(self):
-        return self.is_defined()
+        return True
 
     def p_curvature(self):
         L = self.differential_operator()
@@ -765,7 +856,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         S = OrePolynomialRing(K, L.parent().twisting_derivation().extend_to_fraction_field(), names='d')
         L = S(L.list())
         d = S.gen()
-        p = self._p
+        p = self._char
         rows = [ ]
         n = L.degree()
         for i in range(p, p + n):
@@ -774,11 +865,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         return matrix(rows)
 
     def p_curvature_corank(self):
-        return self._parameters.q_interlacing_number(self._p)
-
-    def dwork_image(self, r=0):
-        parameters = self._parameters.shift(r).dwork_image(self._p)
-        return self.parent()(parameters, scalar=self._scalar)
+        return self._parameters.q_interlacing_number(self._char)
 
     def dwork_relation(self):
         r"""
@@ -786,40 +873,41 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
 
             self = P1*h1^p + ... + Ps*hs^p
         """
-        if not self._parameters.is_balanced():
+        parameters = self._parameters
+        if not parameters.is_balanced():
             raise ValueError("the hypergeometric function must be a pFq with q = p-1")
-        if not self.is_defined_conjectural():
-            raise ValueError("this hypergeometric function is not defined")
-
-        p = self._p
-        S = self.parent().polynomial_ring()
-        x = S.gen()
+        p = self._char
+        H = self.parent()
+        F = H.base_ring()
+        Hp = H.change_ring(Qp(p, 1))
+        x = H.polynomial_ring().gen()
+        coeffs = self._coeffs
         Ps = {}
-        s = self.series(p)
         for r in range(p):
-            h = self.dwork_image(r)
-            e = r
-            while not h.is_defined_conjectural():
-                h = h.shift(1)
-                e += p
-            if e >= s.prec():
-                s = self.series(e + p)
-            if s[e]:
+            params = parameters.shift(r).dwork_image(p)
+            _, s = Hp(params)._val_pos()
+            h = H(params.shift(s))
+            e = s*p + r
+            if e >= len(coeffs):
+                self._compute_coeffs(e + 1)
+            c = F(coeffs[e])
+            if c:
                 if h in Ps:
-                    Ps[h] += s[e] * x**e
+                    Ps[h] += c * x**e
                 else:
-                    Ps[h] = s[e] * x**e
+                    Ps[h] = c * x**e
         return Ps
 
     def annihilating_ore_polynomial(self, var='Frob'):
         # QUESTION: does this method actually return the
         # minimal Ore polynomial annihilating self?
         # Probably not :-(
-        if not self._parameters.is_balanced():
+        parameters = self._parameters
+        if not parameters.is_balanced():
             raise NotImplementedError("the hypergeometric function is not a pFq with q = p-1")
 
         K = self.base_ring()
-        p = self._p
+        p = self._char
         S = self.parent().polynomial_ring()
         zero = S.zero()
         Frob = S.frobenius_endomorphism()
@@ -828,9 +916,9 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         # We remove the scalar
         if self._scalar == 0:
             return Ore.one()
-        self = self.parent()(self._parameters)
+        self = self.parent()(parameters)
 
-        order = self._parameters.frobenius_order(p)
+        order = parameters.frobenius_order(p)
         bound = self.p_curvature_corank()
 
         rows = [{self: S.one()}]
@@ -873,7 +961,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
                 return insert_zeroes(Ore(ker), order)
 
     def is_lucas(self):
-        p = self._p
+        p = self._char
         if self._parameters.frobenius_order(p) > 1:
             # TODO: check this
             return False
@@ -904,17 +992,17 @@ class HypergeometricFunctions(Parent, UniqueRepresentation):
     def __init__(self, base, name, category=None):
         self._name = normalize_names(1, name)[0]
         self._latex_name = latex_variable_name(self._name)
-        char = base.characteristic()
+        self._char = char = base.characteristic()
+        if char == 0:
+            base = pushout(base, QQ)
         if base in FiniteFields() and base.is_prime_field():
             self.Element = HypergeometricAlgebraic_GFp
-        elif char == 0:
-            base = pushout(base, QQ)
-            if base is QQ:
-                self.Element = HypergeometricAlgebraic_QQ
-            else:
-                self.Element = HypergeometricAlgebraic_charzero
+        elif base is QQ:
+            self.Element = HypergeometricAlgebraic_QQ
+        elif isinstance(base, pAdicGeneric):
+            self.Element = HypergeometricAlgebraic_padic
         else:
-            raise NotImplementedError("hypergeometric functions are only implemented over finite field and bases of characteristic zero")
+            self.Element = HypergeometricAlgebraic
         Parent.__init__(self, base, category=category)
         self.register_action(ScalarMultiplication(base, self, False, operator.mul))
         self.register_action(ScalarMultiplication(base, self, True, operator.mul))
@@ -948,6 +1036,12 @@ class HypergeometricFunctions(Parent, UniqueRepresentation):
 
     def latex_variable_name(self):
         return self._latex_name
+
+    def change_ring(self, R):
+        return HypergeometricFunctions(R, self._name)
+
+    def change_variable_name(self, name):
+        return HypergeometricFunctions(self._base, name)
 
     def polynomial_ring(self):
         return PolynomialRing(self.base_ring(), self._name)
