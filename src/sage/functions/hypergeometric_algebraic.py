@@ -311,6 +311,7 @@ class Parameters():
         and a bottom parameter with positive integer differences are
         removed, starting with pairs of minimal positive integer
         difference.
+
         EXAMPLES::
 
             sage: from sage.functions.hypergeometric_algebraic import Parameters
@@ -369,16 +370,66 @@ class Parameters():
         return any(a - b in ZZ and a < b for a in self.top for b in self.bottom)
 
     def shift(self, s):
+        r"""
+        Return the parameters obtained by adding s to each of them.
+
+        INPUT:
+
+            - ``s`` -- a rational number.
+
+        EXAMPLES::
+
+            sage: from sage.functions.hypergeometric_algebraic import Parameters
+            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: p
+            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
+            sage: p.shift(2)
+            ((1, 9/4, 7/3, 5/2), (12/5, 13/5, 3, 1))
+        """
         top = [a+s for a in self.top]
         bottom = [b+s for b in self.bottom]
         return Parameters(top, bottom, add_one=False)
 
     def decimal_part(self):
+        r"""
+        Return the parameters obtained by taking the decimal part of each of
+        the parameters, where integers are assigned 1 instead of 0.
+
+        EXAMPLES::
+
+            sage: from sage.functions.hypergeometric_algebraic import Parameters
+            sage: p = Parameters([5/4, 1/3, 2], [2/5, -2/5])
+            sage: p
+            ((1/3, 5/4, 2), (-2/5, 2/5, 1))
+            sage: p.decimal_part()
+            ((1/4, 1/3, 1), (2/5, 3/5, 1))
+        """
         top = [1 + a - ceil(a) for a in self.top]
         bottom = [1 + b - ceil(b) for b in self.bottom]
         return Parameters(top, bottom, add_one=False)
 
     def dwork_image(self, p):
+        r"""
+        Return the parameters obtained by applying the Dwork map to each of
+        the parameters. The Dwork map D_p(x) of a p-adic integer x is defined 
+        as the unique p-adic integer such that p*D_p(x) - x is a nonnegative
+        integer smaller than p. Raise a ValuError in case the prime is not 
+        coprime to the common denominators of the parameters.
+
+        INPUT:
+
+            - ``p`` -- a prime number.
+
+        EXAMPLE::
+
+            sage: from sage.functions.hypergeometric_algebraic import Parameters
+            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: p
+            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))           
+            sage: p.dwork_image(7)
+            ((1/3, 1/2, 3/4), (1/5, 4/5, 1))
+        """
+        # Maybe add doctest for ValueError
         try:
             top = [(a + (-a) % p) / p for a in self.top]
             bottom = [(b + (-b) % p) / p for b in self.bottom]
@@ -387,6 +438,20 @@ class Parameters():
         return Parameters(top, bottom, add_one=False)
 
     def frobenius_order(self, p):
+        r"""
+        Return the Frobenius order of the hypergeometric function with this set
+        of parameters, that is the order of the Dwork map acting on the decimal
+        parts of the parameters.
+
+        INPUT:
+
+            - ``p`` -- a prime number.
+
+        EXAMPLES::
+
+            sage: 
+      
+        """
         param = self.decimal_part()
         iter = param.dwork_image(p)
         i = 1
@@ -710,8 +775,6 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
                 raise ValueError("denominator appears in the series at the required precision")
             coeffs.append(c)
         return S(coeffs, prec=prec)
-
-    
 
     def is_almost_defined(self):
         p = self._p
