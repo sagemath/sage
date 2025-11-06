@@ -15,6 +15,8 @@ automorphism
 
 where `\tau^\star M = K \otimes_{K, \text{Frob}} M`.
 
+.. RUBRIC:: Anderson motives attached to Drinfeld modules
+
 Any Drinfeld module `phi` over `(A, \gamma)` with `gamma : A \to K,
 T \mapsto z` gives rise to an Anderson motive. By definition, it is
 `M(\phi) := K\{\tau\}` (the ring of Ore polynomials with commutation
@@ -83,6 +85,8 @@ basic operations with them::
     sage: w.image()  # image by tau_M
     ((z^2 + 3*z)*T + 2*z^2 + 3*z + 3, 3*z^2 + 2*z + 4, 2*z^2 + 1)
 
+.. RUBRIC:: More Anderson motives
+
 Some basic constructions on Anderson modules are also available.
 For example, one can form the dual::
 
@@ -104,9 +108,68 @@ or Carlitz twists::
     [                                    0                                     0                 1/(T^2 + 3*z*T + z^2)]
     [                (z^2 + 3*z)/(T + 4*z) (3*z^2 + 2*z + 4)/(T^2 + 3*z*T + z^2)       (2*z^2 + 1)/(T^2 + 3*z*T + z^2)]
 
-We observe that the entries of the previous matrices have denominators which are
-`T-z` or powers of it. This corresponds to the fact that `\tau_M` is only defined
-after inverting `T-z` in full generality.
+We observe that the entries of the previous matrices have denominators
+which are `T-z` or powers of it. This corresponds to the fact that
+`\tau_M` is only defined after inverting `T-z` in full generality.
+
+SageMath also provides a general constructor :func:`AndersonMotive`
+which allows in particular to explicitely provide the matrix of `tau_M`::
+
+    sage: mat = matrix(2, 2, [[T, z], [1, 1]])
+    sage: N = AndersonMotive(A, mat)
+    sage: N
+    Anderson motive of rank 2 over Univariate Polynomial Ring in T over Finite Field in z of size 5^3
+    sage: N.matrix()
+    [T z]
+    [1 1]
+
+.. RUBRIC:: Morphisms between Anderson motives
+
+One important class of morphisms between Anderson motives are those
+which comes from isogenies between Drinfeld modules.
+Such morphisms can be built easily as follows::
+
+    sage: u = phi.hom(tau + z)
+    sage: u
+    Drinfeld Module morphism:
+      From: Drinfeld module defined by T |--> (2*z^2 + 2*z)*τ^3 + (2*z + 2)*τ^2 + z^2*τ + z
+      To:   Drinfeld module defined by T |--> (4*z^2 + 2*z + 4)*τ^3 + (4*z^2 + 1)*τ^2 + (z^2 + 2)*τ + z
+      Defn: τ + z
+    sage: Mu = u.anderson_motive()
+    sage: Mu
+    Anderson motive morphism:
+      From: Anderson motive of rank 3 over Univariate Polynomial Ring in T over Finite Field in z of size 5^3
+      To:   Anderson motive of rank 3 over Univariate Polynomial Ring in T over Finite Field in z of size 5^3
+    sage: Mu.matrix()
+    [                              z                               1                               0]
+    [                              0                 2*z^2 + 4*z + 4                               1]
+    [(z^2 + 3*z)*T + 2*z^2 + 3*z + 3                 3*z^2 + 2*z + 4                               2]
+
+Standard methods of linear algebra are available::
+
+    sage: Mu.is_injective()
+    True
+    sage: Mu.is_surjective()
+    False
+    sage: Mu.image().basis()
+    [(T + 3, 0, 0), (z, 1, 0), (z^2 + 2*z + 1, 0, 1)]
+
+We check below that the characteristic polynomial of the Frobenius of
+`\phi` is equal to the characteristic polynomial of the action of the
+Frobenius on the motive::
+
+    sage: f = phi.frobenius_endomorphism()
+    sage: f
+    Endomorphism of Drinfeld module defined by T |--> (2*z^2 + 2*z)*τ^3 + (2*z + 2)*τ^2 + z^2*τ + z
+      Defn: τ^3
+    sage: Mf = f.anderson_motive()
+    sage: Mf.characteristic_polynomial()
+    X^3 + (T + 4)*X^2 + 3*T^2*X + 4*T^3 + 2*T + 2
+
+::
+
+    sage: phi.frobenius_charpoly()
+    X^3 + (T + 4)*X^2 + 3*T^2*X + 4*T^3 + 2*T + 2
 
 AUTHOR:
 
@@ -270,7 +333,6 @@ class AndersonMotive_general(OreModule):
         return AndersonMotive_general(self._category, tau, twist, names, normalize=True)
 
     def _Hom_(self, codomain, category):
-        from sage.rings.function_field.drinfeld_modules.anderson_motive_morphism import AndersonMotive_homspace
         return AndersonMotive_homspace(self, codomain)
 
     def hodge_pink_weights(self):
