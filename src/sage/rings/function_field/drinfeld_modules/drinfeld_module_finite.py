@@ -3,7 +3,7 @@ r"""
 Finite Drinfeld modules
 
 This module provides the class
-:class:`sage.rings.function_fields.drinfeld_module.finite_drinfeld_module.DrinfeldModule_finite`,
+:class:`sage.rings.function_fields.drinfeld_module.drinfeld_module_finite.DrinfeldModule_finite`,
 which inherits
 :class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
 
@@ -64,7 +64,7 @@ class DrinfeldModule_finite(DrinfeldModule):
 
         sage: isinstance(phi, DrinfeldModule)
         True
-        sage: from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import DrinfeldModule_finite
+        sage: from sage.rings.function_field.drinfeld_modules.drinfeld_module_finite import DrinfeldModule_finite
         sage: isinstance(phi, DrinfeldModule_finite)
         True
 

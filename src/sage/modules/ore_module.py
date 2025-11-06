@@ -2350,8 +2350,7 @@ class OreSubmodule(OreModule):
         """
         rank = self.rank()
         names = normalize_names(names, rank)
-        cls = self.__class__
-        M = cls.__classcall__(cls, self._ambient, self._submodule, names)
+        M = super().__classcall__(self.__class__, self._ambient, self._submodule, names)
         if coerce:
             mat = identity_matrix(self.base_ring(), rank)
             id = self.hom(mat, codomain=M)
@@ -2896,8 +2895,7 @@ class OreQuotientModule(OreModule):
         """
         rank = self.rank()
         names = normalize_names(names, rank)
-        cls = self.__class__
-        M = cls.__classcall__(cls, self._cover, self._submodule, names)
+        M = super().__classcall__(self.__class__, self._cover, self._submodule, names)
         if coerce:
             mat = identity_matrix(self.base_ring(), rank)
             id = self.hom(mat, codomain=M)

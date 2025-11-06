@@ -3,8 +3,8 @@ r"""
 Drinfeld modules over rings of characteristic zero
 
 This module provides the classes
-:class:`sage.rings.function_fields.drinfeld_module.charzero_drinfeld_module.DrinfeldModule_charzero` and
-:class:`sage.rings.function_fields.drinfeld_module.charzero_drinfeld_module.DrinfeldModule_rational`,
+:class:`sage.rings.function_fields.drinfeld_module.drinfeld_module_charzero.DrinfeldModule_charzero` and
+:class:`sage.rings.function_fields.drinfeld_module.drinfeld_module_charzero.DrinfeldModule_rational`,
 which both inherit
 :class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
 
@@ -65,7 +65,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
 
         sage: isinstance(phi, DrinfeldModule)
         True
-        sage: from sage.rings.function_field.drinfeld_modules.charzero_drinfeld_module import DrinfeldModule_charzero
+        sage: from sage.rings.function_field.drinfeld_modules.drinfeld_module_charzero import DrinfeldModule_charzero
         sage: isinstance(phi, DrinfeldModule_charzero)
         True
 
@@ -450,7 +450,7 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
         sage: C = DrinfeldModule(A, [T, 1]); C
         Drinfeld module defined by T |--> τ + T
         sage: type(C)
-        <class 'sage.rings.function_field.drinfeld_modules.charzero_drinfeld_module.DrinfeldModule_rational_with_category'>
+        <class 'sage.rings.function_field.drinfeld_modules.drinfeld_module_charzero.DrinfeldModule_rational_with_category'>
     """
     def coefficient_in_function_ring(self, n):
         r"""

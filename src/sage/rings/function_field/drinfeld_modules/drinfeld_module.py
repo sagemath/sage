@@ -7,7 +7,7 @@ This module provides the class
 
 For finite Drinfeld modules and their theory of complex multiplication, see
 class
-:class:`sage.rings.function_field.drinfeld_module.finite_drinfeld_module.DrinfeldModule`.
+:class:`sage.rings.function_field.drinfeld_module.drinfeld_module_finite.DrinfeldModule`.
 
 AUTHORS:
 
@@ -106,7 +106,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     .. NOTE::
 
         Finite Drinfeld modules are implemented in the class
-        :class:`sage.rings.function_field.drinfeld_modules.finite_drinfeld_module`.
+        :class:`sage.rings.function_field.drinfeld_modules.drinfeld_module_finite`.
 
     Classical references on Drinfeld modules include [Gos1998]_,
     [Rosen2002]_, [VS06]_ and [Gek1991]_.
@@ -533,7 +533,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         TESTS::
 
-            sage: from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import DrinfeldModule_finite
+            sage: from sage.rings.function_field.drinfeld_modules.drinfeld_module_finite import DrinfeldModule_finite
             sage: Fq = GF(25)
             sage: A.<T> = Fq[]
             sage: K.<z12> = Fq.extension(6)
@@ -608,17 +608,17 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         # Instantiate the appropriate class:
         if A_field.is_finite():
-            from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import DrinfeldModule_finite
+            from sage.rings.function_field.drinfeld_modules.drinfeld_module_finite import DrinfeldModule_finite
             return DrinfeldModule_finite(gen, category)
         if isinstance(A_field, FractionField_generic):
             ring = A_field.ring()
             if (isinstance(ring, PolynomialRing_generic)
             and ring.base_ring() is function_ring_base
             and base_morphism(T) == ring.gen()):
-                from .charzero_drinfeld_module import DrinfeldModule_rational
+                from .drinfeld_module_charzero import DrinfeldModule_rational
                 return DrinfeldModule_rational(gen, category)
         if not category._characteristic:
-            from .charzero_drinfeld_module import DrinfeldModule_charzero
+            from .drinfeld_module_charzero import DrinfeldModule_charzero
             return DrinfeldModule_charzero(gen, category)
         return cls.__classcall__(cls, gen, category)
 
@@ -1474,7 +1474,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: psi.is_finite()
             False
         """
-        from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import DrinfeldModule_finite
+        from sage.rings.function_field.drinfeld_modules.drinfeld_module_finite import DrinfeldModule_finite
         return isinstance(self, DrinfeldModule_finite)
 
     def j_invariant(self, parameter=None, check=True):
@@ -2085,6 +2085,58 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         return self.Hom(self)(x)
 
     def anderson_motive(self, names=None):
+        r"""
+        Return the Anderson motive attached to this Drinfeld module.
+
+        By definition, the Anderson motive of a Drinfeld module
+        `\phi : A \to K\{\tau\}` is `K\{\tau\}` endowed by:
+
+        - the structure of `A`-module where `a \in A` acts by
+          right multiplication by `phi_a`
+
+        - the structure of `K`-vector space given by standard
+          left multiplication
+
+        INPUT:
+
+        - ``names`` - a string of a list of strings (default: ``None``),
+          the names of the vector of the canonical basis; if ``None``,
+          elements are represented as vectors in `K^d`
+
+        EXAMPLES::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [z, 0, 1, z])
+            sage: M = phi.anderson_motive()
+            sage: M
+            Anderson motive of rank 3 over Univariate Polynomial Ring in T over Finite Field in z of size 5^3
+
+        Here the rank of the Anderson motive should be understood as its
+        rank over `A \otimes K`; it is also the rank `r` of the underlying
+        Drinfeld module. More precisely, `M` has a canonical basis, which
+        is formed by the Ore polynomials `1, \ldots, \tau^{r-1}`.
+
+            sage: tau = phi.ore_variable()
+            sage: [M(tau^i) for i in range(phi.rank())]
+            [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
+
+        Setting the argument ``names`` allows to give names to the vectors
+        of the aforementionned canonical basis::
+
+            sage: M = phi.anderson_motive(names='e')
+            sage: M
+            Anderson motive <e0, e1, e2> over Univariate Polynomial Ring in T over Finite Field in z of size 5^3
+            sage: M.basis()
+            [e0, e1, e2]
+
+        .. SEEALSO::
+
+            :mod:`sage.rings.function_field.drinfeld_modules.anderson_motive`
+            for more documentation on the implementation of Anderson motives
+            in SageMath.
+        """
         from sage.rings.function_field.drinfeld_modules.anderson_motive import AndersonMotive_drinfeld
         return AndersonMotive_drinfeld(self, names=names)
 
