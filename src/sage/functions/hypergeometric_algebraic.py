@@ -425,29 +425,30 @@ class HypergeometricAlgebraic(Element):
         else:
             parameters = Parameters(arg1, arg2)
         char = self.parent()._char
-        if char == 0:
-            if any(b in ZZ and b < 0 for b in parameters.bottom):
-                raise ValueError("the parameters %s does not define a hypergeometric function" % parameters)
-        else:
-            error = ValueError("the parameters %s does not define a hypergeometric function in characteristic %s" % (parameters, char))
-            d = parameters.d
-            if d.gcd(char) > 1:
-                raise error
-            u = 1
-            while True:
-                if not parameters.parenthesis_criterion(u):
+        if scalar:
+            if char == 0:
+                if any(b in ZZ and b < 0 for b in parameters.bottom):
+                    raise ValueError("the parameters %s does not define a hypergeometric function" % parameters)
+            else:
+                error = ValueError("the parameters %s does not define a hypergeometric function in characteristic %s" % (parameters, char))
+                d = parameters.d
+                if d.gcd(char) > 1:
                     raise error
-                u = char*u % d
-                if u == 1:
-                    break
-            # Xavier's conjecture:
-            if not parameters.q_parenthesis_criterion(char):
-                raise error
-            # q = char
-            # while q <= parameters.bound:
-            #     if not parameters.q_parenthesis_criterion(q):
-            #         raise error
-            #     q *= char
+                u = 1
+                while True:
+                    if not parameters.parenthesis_criterion(u):
+                        raise error
+                    u = char*u % d
+                    if u == 1:
+                        break
+                # Xavier's conjecture:
+                if not parameters.q_parenthesis_criterion(char):
+                    raise error
+                # q = char
+                # while q <= parameters.bound:
+                #     if not parameters.q_parenthesis_criterion(q):
+                #         raise error
+                #     q *= char
         self._scalar = scalar
         self._parameters = parameters
         self._coeffs = [scalar]
@@ -741,15 +742,17 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
         k = self.base_ring().residue_field()
         if self._scalar.valuation() == 0:
             return self.change_base(k)
-        val, shift = self._val_pos()
+        val, pos = self._val_pos()
         if val < 0:
             raise ValueError("bad reduction")
         if val > 0:
-            H = HypergeometricFunctions(k, self.parent().variable_name())
+            H = self.parent().change_ring(k)
+            return H(self._parameters, scalar=0)
         raise NotImplementedError("the reduction is not a hypergeometric function")
         # In fact, it is x^s * h[s] * h, with
-        # . s = shift
+        # . s = pos
         # . h = self.shift(s)
+        # Do we want to implement polynomial linear combinaison of hypergeometric functions?
 
     def _val_pos(self):
         p = self._p
