@@ -16,6 +16,7 @@ from sage.misc.functional import log
 
 from sage.categories.homset import Homset
 from sage.categories.anderson_motives import AndersonMotives
+from sage.structure.factorization import Factorization
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import Infinity
@@ -72,7 +73,7 @@ class AndersonMotive_general(OreModule):
 
     def __init__(self, category, tau, twist, names):
         self._twist = twist
-        self._anderson_category = category
+        self._category = category
         self._A = A = category.function_ring()
         self._t_name = A.variable_name()
         self._Fq = Fq = A.base_ring()
@@ -84,10 +85,9 @@ class AndersonMotive_general(OreModule):
         self._t = base.gen()
         self._tau = tau
         ore = category._ore_polring
-        mat = ((self._t - self._theta) ** (-twist)) * tau  # Would be better if we can avoid this computation
-        mat = mat.change_ring(ore.base_ring())
-        names = normalize_names(names, mat.nrows())
-        OreModule.__init__(self, mat, ore, None, names, category)
+        names = normalize_names(names, tau.nrows())
+        denominator = Factorization([(self._t - self._theta, twist)])
+        OreModule.__init__(self, tau, ore, denominator, names, category)
         self.register_action(OreAction(ore, self, True, operator.mul))
 
     def _set_dettau(self, disc, degree, twist):
@@ -132,30 +132,22 @@ class AndersonMotive_general(OreModule):
         return self._twist <= 0
 
     def ore_variable(self):
-        return self._anderson_category._ore_polring.gen()
+        return self._category._ore_polring.gen()
 
     def ore_polring(self, names=None, action=True):
         if names is None:
-            names = self._anderson_category._ore_variable_name
+            names = self._category._ore_variable_name
         S = self._ore_category.ore_ring(names)
         if action:
             self._unset_coercions_used()
             self.register_action(OreAction(S, self, True, operator.mul))
         return S
 
-    def random_element(self, *args, **kwds):
-        AK = self.base_ring().ring()
-        r = self.rank()
-        vs = [AK.random_element(*args, **kwds) for _ in range(r)]
-        return self(vs)
-
 
 class AndersonMotive_drinfeld(AndersonMotive_general):
     def __init__(self, phi, names):
         category = AndersonMotives(phi.category())
-        A = category.function_ring()
-        K = category._base_field
-        AK = A.change_ring(K)
+        AK = category.base_combined()
         r = phi.rank()
         tau = matrix(AK, r)
         P = phi.gen()
