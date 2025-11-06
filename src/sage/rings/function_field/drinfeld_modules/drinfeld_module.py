@@ -2084,6 +2084,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             raise ValueError("%s is not element of the function ring" % x)
         return self.Hom(self)(x)
 
+    def anderson_motive(self, names=None):
+        from sage.rings.function_field.drinfeld_modules.anderson_motive import AndersonMotive_drinfeld
+        return AndersonMotive_drinfeld(self, names=names)
+
     def frobenius_relative(self, n=1):
         r"""
         Return the `n`-th iterate relative Frobenius of this Drinfeld module.

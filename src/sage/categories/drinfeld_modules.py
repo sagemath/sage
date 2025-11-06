@@ -260,6 +260,7 @@ class DrinfeldModules(Category_over_base_ring):
         tau = K.frobenius_endomorphism(d)
         self._ore_polring = OrePolynomialRing(K, tau, names=name,
                                               polcast=False)
+        self._ore_variable_name = name
         # Create constant coefficient
         self._constant_coefficient = base_morphism(T)
         # Create characteristic

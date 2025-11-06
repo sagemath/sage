@@ -13,6 +13,7 @@ py.install_sources(
   'algebras.py',
   'algebras_with_basis.py',
   'all.py',
+  'anderson_motives.py',
   'aperiodic_semigroups.py',
   'associative_algebras.py',
   'basic.py',
