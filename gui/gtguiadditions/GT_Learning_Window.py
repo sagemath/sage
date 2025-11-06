@@ -84,13 +84,15 @@ class GT_Learning_Window(QWidget):
         edge_layout.addWidget(self.edge_textbox)
         main_layout.addLayout(edge_layout)
 
+        quiz_layout = QHBoxLayout()
         self.quiz_vert_edge_button = QPushButton ("Quiz Me with Vertices and Edges")
-        self.quiz_vert_edge_button.clicked.connect(self.on_quiz_vert_edge)
-        main_layout.addWidget(self.quiz_vert_edge_button)
+        #self.quiz_vert_edge_button.clicked.connect(self.on_quiz_vert_edge)
+        quiz_layout.addWidget(self.quiz_vert_edge_button)
 
         self.quiz_graph_button = QPushButton ("Quiz Me with a Graph")
-        self.quiz_graph_button.clicked.connect(self.on_quiz_graph)
-        main_layout.addWidget(self.quiz_graph_button)
+        #self.quiz_graph_button.clicked.connect(self.on_quiz_graph)
+        quiz_layout.addWidget(self.quiz_graph_button)
+        main_layout.addLayout(quiz_layout)
 
 
         #button to display graph
@@ -208,10 +210,10 @@ class GT_Learning_Window(QWidget):
         return G, vertices
     
 
-    def on_quiz_vert_edge(self):
-
-    def on_quiz_graph(self):
-
+    #def on_quiz_vert_edge(self):
+        
+    #def on_quiz_graph(self):
+        
     # displays graph
     def on_display_button(self):
         G, _ = self.get_graph()
