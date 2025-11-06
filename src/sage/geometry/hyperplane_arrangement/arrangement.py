@@ -3479,7 +3479,7 @@ class HyperplaneArrangementElement(Element):
                 sing = mres.parent()
                 last_elem = mres[resolution_length]
                 # Check if this element is the zero module using size()
-                size_val = int(sing.eval(f"size({last_elem.name()})"))
+                size_val = sing.size(last_elem)
                 if size_val == 0:  # Trailing zero module
                     resolution_length -= 1
             return resolution_length <= 2
