@@ -1,9 +1,120 @@
 r"""
 Anderson motives
+
+Let `\GF{q}[T]` be a polynomial ring with coefficients in a finite
+field `\GF{q}` and let `K` be an extension of `\GF{q}` equipped
+with a distinguished element `z`.
+
+By definition, an Anderson motive attached to these data is a free
+module of finite rank `M` over `K[T]`, equipped with a linear
+automorphism
+
+.. MATH::
+
+    tau_M : \tau^\star M \left[\frac 1[T-z]\right] \to M \left[\frac 1[T-z]\right]
+
+where `\tau^\star M = K \otimes_{K, \text{Frob}} M`.
+
+Any Drinfeld module `phi` over `(A, \gamma)` with `gamma : A \to K,
+T \mapsto z` gives rise to an Anderson motive. By definition, it is
+`M(\phi) := K\{\tau\}` (the ring of Ore polynomials with commutation
+rule `\tau \lambda = \lambda^q \tau` for `\lambda \in K`) where
+
+- the structure of `\GF{q}[T]`-module is given by right multiplication
+  by `phi_a` (`a \in \GF{q}[T]`),
+
+- the structure of `K`-module is given by left multiplication,
+
+- the automorphism `\tau_{M(\phi)}` is the left multiplication
+  by `tau` in the Ore polynomial ring.
+
+Anderson motives are nevertheless much more general than Drinfeld
+modules. Besides, their linear nature allows for importing many
+interesting construction of linear and bilinear algebra.
+
+In SageMath, one can create the Anderson motive corresponding to
+a Drinfeld module as follows::
+
+    sage: k = GF(5)
+    sage: A.<T> = k[]
+    sage: K.<z> = k.extension(3)
+    sage: phi = DrinfeldModule(A, [z, z^2, z^3, z^4])
+    sage: M = phi.anderson_motive()
+    sage: M
+    Anderson motive of rank 3 over Univariate Polynomial Ring in T over Finite Field in z of size 5^3
+
+We see that `M` has rank `3`; it is actually a general fact that
+the Anderson motive attached a Drinfeld module has the same rank
+than the underlying Drinfeld module.
+
+The canonical basis corresponds to the vectors `tau^i` for `i`
+varying between `0` and `r-1` where `r` is the rank::
+
+    sage: tau = phi.ore_variable()
+    sage: M(tau^0)
+    (1, 0, 0)
+    sage: M(tau^1)
+    (0, 1, 0)
+    sage: M(tau^2)
+    (0, 0, 1)
+
+Higher powers of `\tau` can be rewritten as linear combinations
+(over `K[T]`!) of those three ones::
+
+    sage: M(tau^3)
+    ((z^2 + 3*z)*T + 2*z^2 + 3*z + 3, 3*z^2 + 2*z + 4, 2*z^2 + 1)
+    sage: M(tau^4)
+    ((4*z^2 + 4*z + 3)*T + z^2 + 4*z + 2, (z^2 + 4*z)*T + 3, 3*z^2 + 4*z + 4)
+
+The matrix of the operator `\tau_M` can be obtained using the method
+:meth:`matrix`::
+
+    sage: M.matrix()
+    [                              0                               1                               0]
+    [                              0                               0                               1]
+    [(z^2 + 3*z)*T + 2*z^2 + 3*z + 3                 3*z^2 + 2*z + 4                       2*z^2 + 1]
+
+SageMath provides facilities to pick elements in `M` and perform
+basic operations with them::
+
+    sage: u, v, w = M.basis()
+    sage: T*u + z*w
+    (T, 0, z)
+    sage: w.image()  # image by tau_M
+    ((z^2 + 3*z)*T + 2*z^2 + 3*z + 3, 3*z^2 + 2*z + 4, 2*z^2 + 1)
+
+Some basic constructions on Anderson modules are also available.
+For example, one can form the dual::
+
+    sage: Md = M.dual()
+    sage: Md
+    Anderson motive of rank 3 over Univariate Polynomial Ring in T over Finite Field in z of size 5^3
+    sage: Md.matrix()
+    [          z^2/(T + 4*z)                       1                       0]
+    [    (2*z + 2)/(T + 4*z)                       0                       1]
+    [(2*z^2 + 2*z)/(T + 4*z)                       0                       0]
+
+or Carlitz twists::
+
+    sage: M2 = M.carlitz_twist(2)
+    sage: M2
+    Anderson motive of rank 3 over Univariate Polynomial Ring in T over Finite Field in z of size 5^3
+    sage: M2.matrix()
+    [                                    0                 1/(T^2 + 3*z*T + z^2)                                     0]
+    [                                    0                                     0                 1/(T^2 + 3*z*T + z^2)]
+    [                (z^2 + 3*z)/(T + 4*z) (3*z^2 + 2*z + 4)/(T^2 + 3*z*T + z^2)       (2*z^2 + 1)/(T^2 + 3*z*T + z^2)]
+
+We observe that the entries of the previous matrices have denominators which are
+`T-z` or powers of it. This corresponds to the fact that `\tau_M` is only defined
+after inverting `T-z` in full generality.
+
+AUTHOR:
+
+- Xavier Caruso (2025-11): initial version
 """
 
 # *****************************************************************************
-#        Copyright (C) 2024 Xavier Caruso <xavier.caruso@normalesup.org>
+#        Copyright (C) 2025 Xavier Caruso <xavier.caruso@normalesup.org>
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -147,9 +258,16 @@ class AndersonMotive_general(OreModule):
             s += "_{%s}" % latex(self._AK)
         return s
 
-    def twist(self, n, names):
+    def carlitz_twist(self, n, names=None):
         return AndersonMotive_general(self._category, self._tau, self._twist + ZZ(n),
                                       names, normalize=False)
+
+    def dual(self, names=None):
+        disc, deg = self._dettau
+        scalar = self._K(~disc)
+        tau = scalar * self._tau.adjugate().transpose()
+        twist = deg - self._twist
+        return AndersonMotive_general(self._category, tau, twist, names, normalize=True)
 
     def _Hom_(self, codomain, category):
         from sage.rings.function_field.drinfeld_modules.anderson_motive_morphism import AndersonMotive_homspace
@@ -368,7 +486,7 @@ def AndersonMotive(arg1, tau=None, names=None):
         if R:
             raise ValueError("tau does not define an Anderson motive")
         M = AndersonMotive_general(category, tau, names=names)
-        M._set_dettau(disc[0], h, 0)
+        #M._set_dettau(disc[0], h, 0)
         return M
 
     # arg1 is the function ring
@@ -384,16 +502,19 @@ def AndersonMotive(arg1, tau=None, names=None):
     if isinstance(tau, RingHomomorphism) and tau.domain() is A:
         K = tau.codomain()
         gamma = tau
-    elif isinstance(tau, CommutativeRing):
+    elif isinstance(tau, CommutativeRing) and tau.has_coerce_map_from(A):
         K = tau
-        gamma = A
+        gamma = K.coerce_map_from(A)
+    elif hasattr(tau, 'parent') and isinstance(tau.parent(), CommutativeRing):
+        K = tau.parent()
+        gamma = A.hom([tau])
     if K is not None:
         try:
             if K.variable_name() == A.variable_name():
                 K = K.base_ring()
         except (AttributeError, ValueError):
             pass
-        category = AndersonMotives(K.over(gamma))
+        category = AndersonMotives(gamma)
         AK = category.base_combined()
         tau = identity_matrix(AK, 1)
         return AndersonMotive_general(category, tau, names=names)
@@ -416,12 +537,12 @@ def AndersonMotive(arg1, tau=None, names=None):
             else:
                 raise NotImplementedError("cannot determine the structure of A-field")
             gamma = A.hom([theta])
-        category = AndersonMotives(K.over(gamma))
+        category = AndersonMotives(gamma)
         disc, R = det.quo_rem(category.divisor() ** h)
         if R:
             raise ValueError("tau does not define an Anderson motive")
         M = AndersonMotive_general(category, tau, names=names)
-        M._set_dettau(disc[0], h, 0)
+        #M._set_dettau(disc[0], h, 0)
         return M
 
     raise ValueError("unable to parse arguments")

@@ -7,4 +7,4 @@ lazy_import("sage.rings.function_field.drinfeld_modules.carlitz_module", "Carlit
 lazy_import("sage.rings.function_field.drinfeld_modules.carlitz_module", "carlitz_exponential")
 lazy_import("sage.rings.function_field.drinfeld_modules.carlitz_module", "carlitz_logarithm")
 
-lazy_import("sage.rings.function_field.drinfeld_modules.anderson_motive_constructor", "AndersonMotive")
+lazy_import("sage.rings.function_field.drinfeld_modules.anderson_motive", "AndersonMotive")
