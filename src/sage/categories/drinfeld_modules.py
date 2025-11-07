@@ -205,7 +205,6 @@ class DrinfeldModules(Category_over_base_ring):
         ...
         TypeError: function ring base must be a finite field
     """
-
     def __init__(self, base_morphism, name='τ'):
         r"""
         Initialize ``self``.
