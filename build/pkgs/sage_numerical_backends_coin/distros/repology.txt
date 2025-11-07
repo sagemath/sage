@@ -1,2 +1,0 @@
-sage-numerical-backends-coin
-python:sage-numerical-backends-coin
