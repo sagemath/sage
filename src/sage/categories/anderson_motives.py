@@ -133,3 +133,10 @@ class AndersonMotives(OreModules):
 
         def constant_coefficient(self):
             return self._category.constant_coefficient()
+
+        def ore_polring(self):
+            return self._category._ore_polring
+
+        def ore_variable(self):
+            return self._category._ore_polring.gen()
+

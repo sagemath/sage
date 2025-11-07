@@ -2101,7 +2101,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         - ``names`` - a string of a list of strings (default: ``None``),
           the names of the vector of the canonical basis; if ``None``,
-          elements are represented as vectors in `K^d`
+          elements are represented as row vectors
 
         EXAMPLES::
 

@@ -211,7 +211,6 @@ from sage.matrix.constructor import matrix
 from sage.matrix.special import identity_matrix, block_diagonal_matrix
 
 from sage.modules.ore_module import OreModule, OreSubmodule, OreQuotientModule
-from sage.modules.ore_module import OreAction
 from sage.modules.ore_module import normalize_names
 from sage.modules.ore_module_element import OreModuleElement
 from sage.modules.ore_module_homspace import OreModule_homspace
@@ -237,6 +236,24 @@ class AndersonMotive_general(OreModule):
     """
     @staticmethod
     def __classcall_private__(self, category, tau, twist=0, names=None, normalize=True):
+        r"""
+        Normalize the input and return an instance of the appropriate class.
+
+        TESTS::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^3)
+            sage: M = AndersonMotive(A, K)
+            sage: type(M)
+            <class 'sage.rings.function_field.drinfeld_modules.anderson_motive.AndersonMotive_general_with_category'>
+
+        ::
+
+            sage: M1 = M.carlitz_twist(-2)
+            sage: M2 = AndersonMotive(A, M1.matrix())
+            sage: M1 is M2
+            True
+        """
         K = category.base()
         AK = category.base_combined()
 
@@ -277,20 +294,21 @@ class AndersonMotive_general(OreModule):
         return cls.__classcall__(cls, tau, ore, denominator, names, category)
 
     def __init__(self, mat, ore, denominator, names, category) -> None:
+        r"""
+        Initialize this Anderson motive.
+        """
         OreModule.__init__(self, mat, ore, denominator, names, category)
         self._initialize_attributes()
 
     def _initialize_attributes(self):
-        category = self._category
-        self._A = A = category.function_ring()
-        self._t_name = A.variable_name()
-        self._Fq = Fq = A.base_ring()
-        self._q = Fq.cardinality()
-        self._deg = ZZ(log(self._q, Fq.characteristic()))
-        self._K = self._base = K = category.base()
-        self._theta = category.constant_coefficient()
-        self._AK = base = category.base_combined()
-        self._t = base.gen()
+        r"""
+        Set the main attributes to this Anderson motive.
+
+        .. NOTE::
+
+            Separating this method from `__init__` makes it easier
+            to call it in subclasses.
+        """
         self._tau = self._pseudohom.matrix()
         if self._denominator:
             self._twist = self._denominator[0][1]
@@ -301,6 +319,24 @@ class AndersonMotive_general(OreModule):
         self._quotientModule_class = AndersonQuotientMotive
 
     def __reduce__(self):
+        r"""
+        Return the necessary arguments to construct this object,
+        as per the pickle protocol.
+
+        EXAMPLES::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^3)
+            sage: M = AndersonMotive(A, K)
+            sage: loads(dumps(M)) is M
+            True
+
+        ::
+
+            sage: N = M.carlitz_twist(5)
+            sage: loads(dumps(N)) is N
+            True
+        """
         return self._general_class, (self._category, self._tau, self._twist, self._names, False)
 
     @lazy_attribute
@@ -309,31 +345,124 @@ class AndersonMotive_general(OreModule):
         return det.leading_coefficient(), det.degree()
 
     def _repr_(self):
+        r"""
+        Return a string representation of this Anderson motive.
+
+        EXAMPLES::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^3)
+            sage: M = AndersonMotive(A, K)
+            sage: M  # indirect doctest
+            Anderson motive of rank 1 over Univariate Polynomial Ring in T over Finite Field in z of size 5^3
+
+        ::
+
+            sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+            sage: M.<u, v> = phi.anderson_motive()
+            sage: M  # indirect doctest
+            Anderson motive <u, v> over Univariate Polynomial Ring in T over Finite Field in z of size 5^3
+        """
         s = "Anderson motive "
         if self._names is None:
             s += "of rank %s " % self.rank()
         else:
             s += "<" + ", ".join(self._names) + "> "
-        s += "over %s" % self._AK
+        s += "over %s" % self.base_combined()
         return s
 
     def _latex_(self):
+        r"""
+        Return a string representation of this Anderson motive.
+
+        EXAMPLES::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^3)
+            sage: M = AndersonMotive(A, K)
+            sage: latex(M)  # indirect doctest
+            \texttt{Anderson motive of rank } 1\texttt{ over } \Bold{F}_{5^{3}}[T]
+
+        ::
+
+            sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+            sage: M.<u, v> = phi.anderson_motive()
+            sage: latex(M)  # indirect doctest
+            \left<u, v\right>_{\Bold{F}_{5^{3}}[T]}
+        """
+        AK = self.base_combined()
         if self._names is None:
             s = "\\texttt{Anderson motive of rank } %s" % self.rank()
-            s += "\\texttt{ over } %s" % latex(self._AK)
+            s += "\\texttt{ over } %s" % latex(AK)
         else:
             s = "\\left<" + ", ".join(self._latex_names) + "\\right>"
-            s += "_{%s}" % latex(self._AK)
+            s += "_{%s}" % latex(AK)
         return s
 
-    def carlitz_twist(self, n, names=None):
+    def carlitz_twist(self, n=1, names=None):
+        r"""
+        Return this Anderson motive twisted `n` times.
+
+        INPUT:
+
+        - ``n`` -- an integer (default: ``1``)
+
+        - ``names`` - a string of a list of strings (default: ``None``),
+          the names of the vector of the canonical basis; if ``None``,
+          elements are represented as row vectors
+
+        EXAMPLES::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^3)
+            sage: M = AndersonMotive(A, K)
+            sage: M.matrix()
+            [1]
+            sage: N = M.carlitz_twist()
+            sage: N.matrix()
+            [1/(T + 4*z)]
+
+        Negative twist are also permitted::
+
+            sage: N = M.carlitz_twist(-1)
+            sage: N.matrix()
+            [T + 4*z]
+        """
         return AndersonMotive_general(self._category, self._tau, self._twist + ZZ(n),
                                       names, normalize=False)
 
     def dual(self, names=None):
+        r"""
+        Return the dual of this Anderson motive.
+
+        INPUT:
+
+        - ``n`` -- an integer (default: ``1``)
+
+        - ``names`` - a string of a list of strings (default: ``None``),
+          the names of the vector of the canonical basis; if ``None``,
+          elements are represented as row vectors
+
+        EXAMPLES::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^4)
+            sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+            sage: M = phi.anderson_motive()
+            sage: N = M.dual()
+            sage: N.matrix()
+            [z^2/(T + 4*z)             1]
+            [z^3/(T + 4*z)             0]
+
+        We check that the matrix of `\tau_M` is the transpose of the
+        inverse of the matrix of `\tau_N`::
+
+            sage: M.matrix() * N.matrix().transpose()
+            [1 0]
+            [0 1]
+        """
         disc, deg = self._dettau
-        scalar = self._K(~disc)
-        tau = scalar * self._tau.adjugate().transpose()
+        tau = disc.inverse() * self._tau.adjugate().transpose()
         twist = deg - self._twist
         return AndersonMotive_general(self._category, tau, twist, names, normalize=True)
 
@@ -341,23 +470,59 @@ class AndersonMotive_general(OreModule):
         return AndersonMotive_homspace(self, codomain)
 
     def hodge_pink_weights(self):
+        r"""
+        Return the Hodge-Pink weights of this Anderson motive,
+        sorted by increasing order.
+
+        EXAMPLES::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^4)
+            sage: phi = DrinfeldModule(A, [z, z^2, z^3, z^4])
+            sage: M = phi.anderson_motive()
+            sage: M.hodge_pink_weights()
+            [0, 0, 1]
+
+        We check that the Hodge-Pink weights of the dual are the opposite
+        of the Hodge-Pink weights of the initial Anderson motive::
+
+            sage: N = M.dual()
+            sage: N.hodge_pink_weights()
+            [-1, 0, 0]
+
+        Similarly, we check that Hodge-Pink weights are all shifted by `-1`
+        after a Carlitz twist::
+
+            sage: N = M.carlitz_twist()
+            sage: N.hodge_pink_weights()
+            [-1, -1, 0]
+        """
         S = self._tau.smith_form(transformation=False)
         return [-self._twist + S[i,i].degree() for i in range(self.rank())]
 
     def is_effective(self):
+        r"""
+        Return whether this Anderson module is effective, that is,
+        whether the action of `\tau` stabilizes it.
+        This is also equivalent to the fact that all Hodge-Pink weights
+        are nonnegative.
+
+        EXAMPLES::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^4)
+            sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+            sage: M = phi.anderson_motive()
+            sage: M.is_effective()
+            True
+
+        ::
+
+            sage: N = M.dual()
+            sage: N.is_effective()
+            False
+        """
         return self._twist <= 0
-
-    def ore_variable(self):
-        return self._category._ore_polring.gen()
-
-    def ore_polring(self, names=None, action=True):
-        if names is None:
-            names = self._category._ore_variable_name
-        S = self._ore_category.ore_ring(names)
-        if action:
-            self._unset_coercions_used()
-            self.register_action(OreAction(S, self, True, operator.mul))
-        return S
 
 
 class AndersonMotive_drinfeld(AndersonMotive_general):
@@ -373,6 +538,24 @@ class AndersonMotive_drinfeld(AndersonMotive_general):
         sage: TestSuite(M).run()
     """
     def __classcall_private__(cls, phi, names):
+        r"""
+        Normalize the input and construct this Anderson motive.
+
+        TESTS::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^3)
+            sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+            sage: M = phi.anderson_motive(names='e')
+            sage: type(M)
+            <class 'sage.rings.function_field.drinfeld_modules.anderson_motive.AndersonMotive_drinfeld_with_category'>
+
+        ::
+
+            sage: N.<e0, e1> = phi.anderson_motive()
+            sage: M is N
+            True
+        """
         category = AndersonMotives(phi.category())
         AK = category.base_combined()
         r = phi.rank()
@@ -387,6 +570,19 @@ class AndersonMotive_drinfeld(AndersonMotive_general):
         return cls.__classcall__(cls, tau, category._ore_polring, denominator, names, category, phi)
 
     def __init__(self, mat, ore, denominator, names, category, phi) -> None:
+        r"""
+        Initialize this Anderson motive.
+
+        TESTS::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^3)
+            sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+            sage: tau = phi.ore_variable()
+            sage: M = phi.anderson_motive()
+            sage: M(tau)
+            (0, 1)
+        """
         super().__init__(mat, ore, denominator, names, category)
         Ktau = phi.ore_polring()
         self.register_coercion(DrinfeldToAnderson(Homset(Ktau, self), phi))
@@ -396,11 +592,39 @@ class AndersonMotive_drinfeld(AndersonMotive_general):
             pass
         self._drinfeld_module = phi
 
-    def drinfeld_module(self):
-        return self._drinfeld_module
-
     def __reduce__(self):
+        r"""
+        Return the necessary arguments to construct this object,
+        as per the pickle protocol.
+
+        EXAMPLES::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^3)
+            sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+            sage: M = phi.anderson_motive()
+            sage: loads(dumps(M)) is M
+            True
+        """
         return AndersonMotive_drinfeld, (self._drinfeld_module, self._names)
+
+    def drinfeld_module(self):
+        r"""
+        Return the Drinfeld module from which this Anderson motive
+        was constructed.
+
+        EXAMPLES::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^5)
+            sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+            sage: M = phi.anderson_motive()
+            sage: M.drinfeld_module()
+            Drinfeld module defined by T |--> z^3*τ^2 + z^2*τ + z
+            sage: M.drinfeld_module() is phi
+            True
+        """
+        return self._drinfeld_module
 
 
 class AndersonSubMotive(AndersonMotive_general, OreSubmodule):
@@ -418,10 +642,42 @@ class AndersonSubMotive(AndersonMotive_general, OreSubmodule):
         sage: TestSuite(N).run()
     """
     def __init__(self, ambient, submodule, names):
+        r"""
+        Initialize this Anderson motive.
+
+        TESTS::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^3)
+            sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+            sage: M.<u, v> = phi.anderson_motive()
+            sage: N = M.span(v)
+            sage: N.ambient_module() is M
+            True
+
+        ::
+
+            sage: type(N)
+            <class 'sage.rings.function_field.drinfeld_modules.anderson_motive.AndersonSubMotive_with_category'>
+        """
         OreSubmodule.__init__(self, ambient, submodule, names)
         self._initialize_attributes()
 
     def __reduce__(self):
+        r"""
+        Return the necessary arguments to construct this object,
+        as per the pickle protocol.
+
+        EXAMPLES::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^3)
+            sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+            sage: M.<u, v> = phi.anderson_motive()
+            sage: N = M.span(v)
+            sage: loads(dumps(N)) is N
+            True
+        """
         return OreSubmodule.__reduce__(self)
 
 
@@ -440,10 +696,37 @@ class AndersonQuotientMotive(AndersonMotive_general, OreQuotientModule):
         sage: TestSuite(Q).run()
     """
     def __init__(self, cover, submodule, names):
+        r"""
+        Initialize this Anderson motive.
+
+        TESTS::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^3)
+            sage: M.<u, v> = AndersonMotive(A, diagonal_matrix([1, T - z]))
+            sage: Q = M.quo(u)
+            sage: Q.cover() is M
+            True
+            sage: type(Q)
+            <class 'sage.rings.function_field.drinfeld_modules.anderson_motive.AndersonQuotientMotive_with_category'>
+        """
         OreQuotientModule.__init__(self, cover, submodule, names)
         self._initialize_attributes()
 
     def __reduce__(self):
+        r"""
+        Return the necessary arguments to construct this object,
+        as per the pickle protocol.
+
+        EXAMPLES::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^3)
+            sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+            sage: M = phi.anderson_motive()
+            sage: loads(dumps(M)) is M
+            True
+        """
         return OreQuotientModule.__reduce__(self)
 
 
@@ -453,10 +736,49 @@ class AndersonQuotientMotive(AndersonMotive_general, OreQuotientModule):
 # Morphisms between Anderson modules
 
 class AndersonMotiveMorphism(OreModuleMorphism):
+    r"""
+    A class for morphisms betweeen Anderson motives.
+
+    TESTS::
+
+        sage: A.<T> = GF(5)[]
+        sage: K.<z> = GF(5^3)
+        sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+        sage: u = phi.scalar_multiplication(T)
+        sage: f = u.anderson_motive()
+        sage: TestSuite(f).run()
+    """
     def _repr_type(self):
+        r"""
+        Return a string representation of the type of this morphism.
+
+        EXAMPLES::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^3)
+            sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+            sage: u = phi.scalar_multiplication(T)
+            sage: u.anderson_motive()  # indirect doctest
+            Anderson motive endomorphism of Anderson motive of rank 2 over
+            Univariate Polynomial Ring in T over Finite Field in z of size 5^3
+        """
         return "Anderson motive"
 
     def __init__(self, parent, im_gens, check=True):
+        r"""
+        Initialize this morphism.
+
+        EXAMPLES::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^3)
+            sage: M = AndersonMotive(A, K)
+            sage: E = End(M)
+            sage: f = E(matrix(1, 1, [T]))
+            sage: f
+            Anderson motive endomorphism of Anderson motive of rank 1 over
+            Univariate Polynomial Ring in T over Finite Field in z of size 5^3
+        """
         from sage.rings.function_field.drinfeld_modules.anderson_motive import AndersonMotive_drinfeld
         if isinstance(im_gens, DrinfeldModuleMorphism):
             domain = parent.domain()
@@ -473,6 +795,35 @@ class AndersonMotiveMorphism(OreModuleMorphism):
         OreModuleMorphism.__init__(self, parent, im_gens, check)
 
     def characteristic_polynomial(self, var='X'):
+        r"""
+        Return the characteristic polynomial of this morphism.
+
+        INPUT:
+
+        - ``var`` -- a string (default: ``X``), the name of the variable
+
+        EXAMPLES::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^3)
+            sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+            sage: f = phi.scalar_multiplication(T).anderson_motive()
+            sage: chi = f.characteristic_polynomial()
+            sage: chi
+            X^2 + 3*T*X + T^2
+            sage: chi.factor()
+            (4*X + T)^2
+
+        We compute the characteristic polynomial of the Frobenius and
+        compare the result with the output of the method
+        :meth:`frobenius_charpoly`::
+
+            sage: Frob = phi.frobenius_endomorphism().anderson_motive()
+            sage: Frob.characteristic_polynomial()
+            X^2 + X + 3*T^3 + 4*T + 4
+            sage: phi.frobenius_charpoly()
+            X^2 + X + 3*T^3 + 4*T + 4
+        """
         chi = OreModuleMorphism.characteristic_polynomial(self, var)
         A = self.domain().function_ring()
         return chi.change_ring(A)
@@ -487,13 +838,49 @@ class AndersonMotive_homspace(OreModule_homspace):
 # Coercion maps
 
 class DrinfeldToAnderson(Map):
+    r"""
+    The canonical isomorphism `K\{\tau\} \to M(\phi)`
+    for a Drinfeld module `\phi : A \to K\{\tau\}`.
+    """
     def __init__(self, parent, phi):
+        r"""
+        Initialize this map.
+
+        TESTS::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^3)
+            sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+            sage: Ktau = phi.ore_polring()
+            sage: M = phi.anderson_motive()
+            sage: f = Ktau.convert_map_from(M)
+            sage: type(f)
+            <class 'sage.rings.function_field.drinfeld_modules.anderson_motive.AndersonToDrinfeld'>
+            sage: # TestSuite(f).run()
+        """
         Map.__init__(self, parent)
         self._phi = phi
         self._motive = parent.codomain()
         self._AK = self._motive.base_combined()
 
     def _call_(self, f):
+        r"""
+        Return the image of `f` in the Anderson motive.
+
+        INPUT:
+
+        - ``f`` -- a Ore polynomial
+
+        TESTS::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^3)
+            sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+            sage: M = phi.anderson_motive()
+            sage: tau = phi.ore_variable()
+            sage: M(tau)  # indirect doctest
+            (0, 1)
+        """
         phi = self._phi
         r = phi.rank()
         phiT = phi.gen()
@@ -508,12 +895,44 @@ class DrinfeldToAnderson(Map):
         return self._motive(coords)
 
 class AndersonToDrinfeld(Map):
+    r"""
+    The canonical isomorphism `M(\phi) \to K\{\tau\}`
+    for a Drinfeld module `\phi : A \to K\{\tau\}`.
+    """
     def __init__(self, parent, phi):
+        r"""
+        Initialize this map.
+
+        TESTS::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^3)
+            sage: phi = DrinfeldModule(A, [z, z^2, z^4])
+            sage: Ktau = phi.ore_polring()
+            sage: M = phi.anderson_motive()
+            sage: f = M.coerce_map_from(Ktau)
+            sage: type(f)
+            <class 'sage.rings.function_field.drinfeld_modules.anderson_motive.DrinfeldToAnderson'>
+            sage: # TestSuite(f).run()
+        """
         Map.__init__(self, parent)
         self._phi = phi
         self._Ktau = parent.codomain()
 
     def _call_(self, x):
+        r"""
+        Initialize this map.
+
+        TESTS::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^3)
+            sage: phi = DrinfeldModule(A, [z, z^2, z^4])
+            sage: tau = phi.ore_variable()
+            sage: M.<u, v> = phi.anderson_motive()
+            sage: u + tau
+            u + v
+        """
         phi = self._phi
         r = phi.rank()
         phiT = phi.gen()

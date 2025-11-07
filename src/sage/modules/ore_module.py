@@ -905,7 +905,12 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         """
         mat = self._pseudohom.matrix()
         if self._denominator is not None:
-            mat /= self._denominator.value()
+            base = self.base_ring()
+            scalar = self._denominator.value().inverse()
+            scalar = base.fraction_field()(scalar)
+            if scalar in base:
+                scalar = base(scalar)
+            mat *= scalar
         return mat
 
     def over_fraction_field(self):
