@@ -242,6 +242,194 @@ class Package(object):
             return None
 
     @property
+    def tarballs_info(self):
+        """
+        Return information about all tarballs for this package.
+        
+        This supports packages with multiple platform-specific wheels.
+        
+        OUTPUT:
+        
+        List of dictionaries, each containing:
+        - 'tarball': tarball filename pattern
+        - 'sha256': SHA256 checksum
+        - 'sha1': SHA1 checksum (optional)
+        - 'upstream_url': upstream URL pattern
+        """
+        return self.__tarballs_info
+    
+    def find_tarball_for_platform(self, python_version=None):
+        """
+        Find the appropriate tarball for the current platform.
+        
+        For packages with multiple platform-specific wheels, this selects
+        the one matching the current platform and Python version.
+        
+        Properly handles wheel ABI tags:
+        - cp313 (CPython 3.13 specific)
+        - cp313t (CPython 3.13 free-threaded/nogil)
+        - abi3 (stable ABI, forward compatible)
+        - pp39 (PyPy 3.9)
+        
+        INPUT:
+        
+        - ``python_version`` -- Python version string (e.g., '3.11'), or None to auto-detect
+        
+        OUTPUT:
+        
+        Dictionary with tarball info, or None if no suitable tarball found.
+        The dictionary contains the same fields as tarballs_info entries.
+        """
+        import sys
+        import platform
+        
+        if not self.__tarballs_info:
+            return None
+        
+        # If only one tarball, return it
+        if len(self.__tarballs_info) == 1:
+            return self.__tarballs_info[0]
+        
+        # Auto-detect Python version if not provided
+        if python_version is None:
+            python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
+        
+        py_ver_tuple = tuple(int(x) for x in python_version.split('.'))
+        
+        # Check if running free-threaded Python (Python 3.13+)
+        is_free_threaded = False
+        try:
+            # Python 3.13+ has sys._is_gil_enabled() to check free-threading mode
+            if hasattr(sys, '_is_gil_enabled'):
+                is_free_threaded = not sys._is_gil_enabled()
+        except Exception:
+            pass
+        
+        # Get platform info
+        system = platform.system().lower()
+        machine = platform.machine().lower()
+        
+        # Build platform tags to match against
+        platform_tags = []
+        exclude_tags = []  # Tags that should NOT be in the platform string
+        if system == 'linux':
+            if machine == 'x86_64':
+                platform_tags = ['manylinux', 'musllinux', 'linux_x86_64', 'x86_64']
+                exclude_tags = ['aarch64', 'arm64', 'armv7l', 'ppc64', 's390x', 'i686', 'riscv64', 'macosx', 'win']
+            elif machine in ['aarch64', 'arm64']:
+                platform_tags = ['manylinux', 'musllinux', 'linux_aarch64', 'aarch64', 'arm64']
+                exclude_tags = ['x86_64', 'armv7l', 'ppc64', 's390x', 'i686', 'riscv64', 'macosx', 'win']
+        elif system == 'darwin':
+            if machine in ['arm64', 'aarch64']:
+                platform_tags = ['macosx_', 'arm64']
+                exclude_tags = ['x86_64', 'i386', 'manylinux', 'musllinux', 'win']
+            else:
+                platform_tags = ['macosx_', 'x86_64']
+                exclude_tags = ['arm64', 'i386', 'manylinux', 'musllinux', 'win']
+        elif system == 'windows':
+            if machine == 'amd64' or machine == 'x86_64':
+                platform_tags = ['win_amd64']
+                exclude_tags = ['win32', 'win_arm64', 'manylinux', 'musllinux', 'macosx']
+            elif machine == 'arm64':
+                platform_tags = ['win_arm64']
+                exclude_tags = ['win32', 'win_amd64', 'manylinux', 'musllinux', 'macosx']
+            else:
+                platform_tags = ['win32']
+                exclude_tags = ['win_amd64', 'win_arm64', 'manylinux', 'musllinux', 'macosx']
+        
+        # Python version tag (e.g., 'cp311' for CPython 3.11)
+        py_ver_tag = f"cp{python_version.replace('.', '')}"
+        # Free-threaded ABI tag has 't' suffix (e.g., cp313t in cp313-cp313t)
+        if is_free_threaded:
+            abi_tag_free_threaded = py_ver_tag + 't'  # e.g., cp313t
+        else:
+            abi_tag_free_threaded = None
+        
+        # Collect compatible wheels
+        compatible_wheels = []
+        
+        for tarball_info in self.__tarballs_info:
+            tarball = tarball_info['tarball']
+            
+            # Check if platform-independent wheel (-none-any.whl)
+            if tarball.endswith('-none-any.whl'):
+                compatible_wheels.append((tarball_info, 1000))  # Highest priority
+                continue
+            
+            # Check if not a wheel - use for non-wheel tarballs
+            if not tarball.endswith('.whl'):
+                matches_platform = any(tag in tarball.lower() for tag in platform_tags)
+                if matches_platform or not platform_tags:
+                    compatible_wheels.append((tarball_info, 500))
+                continue
+            
+            # Parse wheel filename: {name}-{version}-{python}-{abi}-{platform}.whl
+            # Extract tags from the wheel filename
+            parts = tarball.rsplit('-', 3)
+            if len(parts) != 4:
+                continue
+            
+            _, python_tag, abi_tag, platform_tag = parts
+            platform_tag = platform_tag[:-4]  # Remove .whl extension
+            
+            # Check if matches current platform (must have a matching tag AND not have any excluded tags)
+            matches_platform = any(tag in platform_tag.lower() for tag in platform_tags)
+            has_excluded = any(tag in platform_tag.lower() for tag in exclude_tags)
+            if not matches_platform or has_excluded:
+                continue
+            
+            # Check Python/ABI compatibility
+            priority = 0
+            
+            # Free-threaded wheel: python_tag=cp313, abi_tag=cp313t
+            if is_free_threaded and abi_tag_free_threaded and python_tag == py_ver_tag and abi_tag == abi_tag_free_threaded:
+                priority = 110  # Highest priority for free-threaded wheels on free-threaded Python
+            # Reject free-threaded ABI on standard Python
+            elif not is_free_threaded and abi_tag_free_threaded and abi_tag == abi_tag_free_threaded:
+                priority = 0  # Incompatible - free-threaded wheel on standard Python
+            # Exact Python version match (e.g., cp313-cp313)
+            elif py_ver_tag == python_tag and py_ver_tag == abi_tag:
+                # Standard Python wheel on free-threaded Python - lower priority
+                if is_free_threaded:
+                    priority = 95  # Can work but prefer free-threaded wheels
+                else:
+                    priority = 100
+            # abi3 wheels - stable ABI, forward compatible
+            elif 'abi3' in abi_tag:
+                # Extract minimum Python version from abi3 wheel
+                # E.g., cp37-abi3 means Python 3.7+
+                if python_tag.startswith('cp'):
+                    min_version_str = python_tag[2:]  # Remove 'cp' prefix
+                    if len(min_version_str) >= 2:
+                        min_major = int(min_version_str[0])
+                        min_minor = int(min_version_str[1:])
+                        min_version = (min_major, min_minor)
+                        
+                        # Check if current Python >= minimum required
+                        if py_ver_tuple >= min_version:
+                            # Lower priority than exact match, but still compatible
+                            priority = 90 - (py_ver_tuple[1] - min_version[1])  # Prefer closer versions
+            # PyPy wheels (pp39, pp310, etc.)
+            elif python_tag.startswith('pp') and sys.implementation.name == 'pypy':
+                if python_tag == f"pp{python_version.replace('.', '')}":
+                    priority = 100
+            
+            if priority > 0:
+                compatible_wheels.append((tarball_info, priority))
+        
+        # Sort by priority (highest first) and return the best match
+        if compatible_wheels:
+            compatible_wheels.sort(key=lambda x: x[1], reverse=True)
+            best_match = compatible_wheels[0][0]
+            threading_mode = "free-threaded" if is_free_threaded else "standard"
+            log.debug(f'Selected {best_match["tarball"]} for platform ({threading_mode} Python, priority: {compatible_wheels[0][1]})')
+            return best_match
+        
+        # If no match found, return the first one (backward compatibility)
+        log.warning(f'No exact platform match found for {self.name}, using first tarball')
+        return self.__tarballs_info[0]
+
+    @property
     def tarball_package(self):
         """
         Return the canonical package for the tarball
@@ -355,6 +543,23 @@ class Package(object):
         if self.has_file('spkg-install') or self.has_file('spkg-install.in'):
             return 'script'
         return 'none'
+
+    def is_platform_specific_wheel(self):
+        """
+        Check if this package uses a platform-specific wheel.
+        
+        Platform-specific wheels need special handling during download
+        as they contain platform tags in the filename.
+        
+        Returns True if this is a wheel package with platform-specific binaries,
+        False otherwise.
+        """
+        if self.source != 'wheel':
+            return False
+        if not self.tarball_filename:
+            return False
+        # Platform-independent wheels end with -none-any.whl
+        return not self.tarball_filename.endswith('-none-any.whl')
 
     @property
     def trees(self):
@@ -507,10 +712,24 @@ class Package(object):
     def _init_checksum(self):
         """
         Load the checksums from the appropriate ``checksums.ini`` file
+        
+        Supports multiple tarballs with format:
+        tarball=package-VERSION-cp311-cp311-manylinux_2_17_x86_64.whl
+        sha256=abc123...
+        upstream_url=https://...
+        tarball=package-VERSION-cp311-cp311-macosx_11_0_arm64.whl
+        sha256=def456...
+        upstream_url=https://...
         """
         checksums_ini = os.path.join(self.path, 'checksums.ini')
         assignment = re.compile('(?P<var>[a-zA-Z0-9_]*)=(?P<value>.*)')
-        result = dict()
+        
+        # Store all entries, supporting multiple values for tarball, sha256, upstream_url
+        tarballs = []
+        sha256s = []
+        sha1s = []
+        upstream_urls = []
+        
         try:
             with open(checksums_ini, 'rt') as f:
                 for line in f.readlines():
@@ -518,13 +737,36 @@ class Package(object):
                     if match is None:
                         continue
                     var, value = match.groups()
-                    result[var] = value
+                    
+                    # Collect multiple entries
+                    if var == 'tarball':
+                        tarballs.append(value)
+                    elif var == 'sha256':
+                        sha256s.append(value)
+                    elif var == 'sha1':
+                        sha1s.append(value)
+                    elif var == 'upstream_url':
+                        upstream_urls.append(value)
         except IOError:
             pass
-        self.__sha1 = result.get('sha1', None)
-        self.__sha256 = result.get('sha256', None)
-        self.__tarball_pattern = result.get('tarball', None)
-        self.__tarball_upstream_url_pattern = result.get('upstream_url', None)
+        
+        # Store all tarballs info
+        self.__tarballs_info = []
+        for i, tarball in enumerate(tarballs):
+            info = {
+                'tarball': tarball,
+                'sha256': sha256s[i] if i < len(sha256s) else None,
+                'sha1': sha1s[i] if i < len(sha1s) else None,
+                'upstream_url': upstream_urls[i] if i < len(upstream_urls) else None,
+            }
+            self.__tarballs_info.append(info)
+        
+        # For backward compatibility, set the first tarball as primary
+        self.__sha1 = sha1s[0] if sha1s else None
+        self.__sha256 = sha256s[0] if sha256s else None
+        self.__tarball_pattern = tarballs[0] if tarballs else None
+        self.__tarball_upstream_url_pattern = upstream_urls[0] if upstream_urls else None
+        
         # Name of the directory containing the checksums.ini file
         self.__tarball_package_name = os.path.realpath(checksums_ini).split(os.sep)[-2]
 
