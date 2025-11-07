@@ -176,96 +176,6 @@ class Tarball(object):
     def is_distributable(self):
         return 'do-not-distribute' not in self.filename
 
-    def is_platform_specific_wheel(self):
-        """
-        Check if this is a platform-specific wheel.
-        
-        Platform-specific wheels have platform tags like:
-        - manylinux_2_17_x86_64
-        - macosx_11_0_arm64
-        - win_amd64
-        
-        Platform-independent wheels end with -none-any.whl
-        """
-        if not self.filename or not self.filename.endswith('.whl'):
-            return False
-        return not self.filename.endswith('-none-any.whl')
-
-    def _find_cached_wheel_for_platform(self):
-        """
-        Find a cached wheel file that matches the current platform.
-        
-        Looks in SAGE_DISTFILES for any wheel matching the package name,
-        version, and current platform/Python version.
-        
-        Returns the path to the cached wheel if found, None otherwise.
-        """
-        import platform
-        
-        # Get platform info
-        python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
-        py_tag = f"cp{python_version.replace('.', '')}"
-        
-        system = platform.system().lower()
-        machine = platform.machine().lower()
-        
-        # Build possible platform tags
-        platform_patterns = []
-        if system == 'linux':
-            if machine == 'x86_64':
-                platform_patterns = ['manylinux', 'linux_x86_64']
-            elif machine in ['aarch64', 'arm64']:
-                platform_patterns = ['manylinux', 'linux_aarch64']
-        elif system == 'darwin':
-            if machine in ['arm64', 'aarch64']:
-                platform_patterns = ['macosx', 'arm64']
-            else:
-                platform_patterns = ['macosx', 'x86_64']
-        
-        # Look for matching wheel files in upstream directory
-        # Note: Wheel filenames use underscores, not dashes
-        pkg_name_wheel = self.package.name.replace('-', '_').lower()
-        pkg_name_pypi = self.package.name.replace('_', '-').lower()
-        pkg_version = self.package.version
-        
-        log.debug(f'Looking for cached wheel: pkg_name_wheel={pkg_name_wheel}, pkg_name_pypi={pkg_name_pypi}, version={pkg_version}, py_tag={py_tag}')
-        log.debug(f'Platform patterns: {platform_patterns}')
-        
-        try:
-            for filename in os.listdir(SAGE_DISTFILES):
-                if not filename.endswith('.whl'):
-                    continue
-                
-                filename_lower = filename.lower()
-                
-                log.debug(f'Checking file: {filename}')
-                
-                # Check if matches package name and version
-                # Wheel filenames use underscores, not dashes
-                if not (filename_lower.startswith(pkg_name_wheel) or filename_lower.startswith(pkg_name_pypi)):
-                    log.debug(f'  Does not start with {pkg_name_wheel} or {pkg_name_pypi}')
-                    continue
-                if pkg_version not in filename:
-                    log.debug(f'  Does not contain version {pkg_version}')
-                    continue
-                
-                # Check if matches current platform
-                matches_platform = any(p in filename_lower for p in platform_patterns)
-                matches_python = py_tag in filename
-                
-                log.debug(f'  matches_platform={matches_platform}, matches_python={matches_python}')
-                
-                if matches_platform and matches_python:
-                    wheel_path = os.path.join(SAGE_DISTFILES, filename)
-                    log.info(f'Found cached wheel for platform: {filename}')
-                    return wheel_path
-        except OSError as e:
-            log.warning(f'Error listing directory {SAGE_DISTFILES}: {e}')
-            pass
-        
-        log.warning(f'No cached wheel found for {pkg_name_wheel}/{pkg_name_pypi}-{pkg_version} (py_tag={py_tag}, platform={platform_patterns})')
-        return None
-
     def download(self, allow_upstream=False):
         """
         Download the tarball to the upstream directory.
@@ -338,9 +248,9 @@ class Tarball(object):
         Handle download for packages with multiple platform-specific wheels.
         
         Strategy:
-        1. Check if already cached with valid checksum
-        2. If not cached, try pip download (auto-detects platform/Python version)
-        3. If pip fails (offline/error), fall back to traditional download from mirrors/upstream
+        1. Use find_tarball_for_platform() to get the exact filename for this platform
+        2. Check if file is already cached with valid checksum
+        3. If not cached, download from mirrors/upstream
         """
         # Find the appropriate tarball for this platform from checksums.ini
         tarball_info = self.package.find_tarball_for_platform()
@@ -354,29 +264,27 @@ class Tarball(object):
         
         log.info(f'Selected tarball for platform: {tarball_filename}')
         
-        # Step 1: Check cache first
-        cached_wheel = self._find_cached_wheel_for_platform()
-        if cached_wheel:
-            # Verify checksum of cached wheel
+        # Check if file already exists in cache
+        destination = os.path.join(SAGE_DISTFILES, tarball_filename)
+        
+        if os.path.isfile(destination):
+            # Verify checksum of cached file
             try:
-                cached_tarball = Tarball(os.path.basename(cached_wheel), 
+                cached_tarball = Tarball(tarball_filename, 
                                         package=self.package, 
                                         tarball_info=tarball_info)
                 if cached_tarball.checksum_verifies():
-                    log.info(f'Using cached wheel with valid checksum: {os.path.basename(cached_wheel)}')
+                    log.info(f'Using cached file with valid checksum: {tarball_filename}')
                     # Update self to point to the cached wheel
-                    self.__filename = os.path.basename(cached_wheel)
+                    self.__filename = tarball_filename
                     return
                 else:
-                    log.warning('Cached wheel has invalid checksum, will re-download')
+                    log.warning(f'Cached file {tarball_filename} has invalid checksum, will re-download')
             except Exception as e:
-                log.warning(f'Error checking cached wheel: {e}')
+                log.warning(f'Error checking cached file: {e}')
         
-        dest_dir = SAGE_DISTFILES
-
-        # Step 2: Try to download from mirrors/upstream
-        log.info(f'Downloading {tarball_filename} using traditional method (mirrors/upstream)...')
-        destination = os.path.join(dest_dir, tarball_filename)
+        # Download from mirrors/upstream
+        log.info(f'Downloading {tarball_filename} from mirrors/upstream...')
         upstream_url_pattern = tarball_info.get('upstream_url')
         
         if upstream_url_pattern:

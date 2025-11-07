@@ -486,23 +486,6 @@ class Package(object):
             return 'script'
         return 'none'
 
-    def is_platform_specific_wheel(self):
-        """
-        Check if this package uses a platform-specific wheel.
-        
-        Platform-specific wheels need special handling during download
-        as they contain platform tags in the filename.
-        
-        Returns True if this is a wheel package with platform-specific binaries,
-        False otherwise.
-        """
-        if self.source != 'wheel':
-            return False
-        if not self.tarball_filename:
-            return False
-        # Platform-independent wheels end with -none-any.whl
-        return not self.tarball_filename.endswith('-none-any.whl')
-
     @property
     def trees(self):
         """
