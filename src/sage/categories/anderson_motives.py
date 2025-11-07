@@ -68,13 +68,11 @@ class AndersonMotives(OreModules):
     def Endsets(self):
         return Homsets().Endsets()
 
-    def base_morphism(self):
-        return self._base_morphism
+    def A_field(self):
+        f = self._base_morphism
+        return f.codomain().over(f)
 
-    def base_over_constants_field(self):
-        return self._base_over_constants_field
-
-    def base_combined(self):
+    def base(self):
         return self._base_combined
 
     def divisor(self):
@@ -113,17 +111,11 @@ class AndersonMotives(OreModules):
 
     class ParentMethods:
 
+        def A_field(self):
+            return self._category.A_field()
+
         def base(self):
             return self._category.base()
-
-        def base_morphism(self):
-            return self._category.base_morphism()
-
-        def base_combined(self):
-            return self._category.base_combined()
-
-        def base_over_constants_field(self):
-            return self._category.base_over_constants_field()
 
         def characteristic(self):
             return self._category.characteristic()
@@ -139,4 +131,3 @@ class AndersonMotives(OreModules):
 
         def ore_variable(self):
             return self._category._ore_polring.gen()
-

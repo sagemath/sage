@@ -254,8 +254,8 @@ class AndersonMotive_general(OreModule):
             sage: M1 is M2
             True
         """
-        K = category.base()
-        AK = category.base_combined()
+        AK = category.base()
+        K = AK.base_ring()
 
         # We normalize the inputs
         twist = ZZ(twist)
@@ -341,6 +341,21 @@ class AndersonMotive_general(OreModule):
 
     @lazy_attribute
     def _dettau(self):
+        r"""
+        Return the leading coefficient of the determinant of `tau`
+        and its degree.
+
+        Only for internal use.
+
+        TESTS::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^3)
+            sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+            sage: M = phi.anderson_motive()
+            sage: M._dettau
+            (2*z^2 + 3*z + 3, 1)
+        """
         det = self._tau.det()
         return det.leading_coefficient(), det.degree()
 
@@ -368,7 +383,7 @@ class AndersonMotive_general(OreModule):
             s += "of rank %s " % self.rank()
         else:
             s += "<" + ", ".join(self._names) + "> "
-        s += "over %s" % self.base_combined()
+        s += "over %s" % self.base()
         return s
 
     def _latex_(self):
@@ -390,7 +405,7 @@ class AndersonMotive_general(OreModule):
             sage: latex(M)  # indirect doctest
             \left<u, v\right>_{\Bold{F}_{5^{3}}[T]}
         """
-        AK = self.base_combined()
+        AK = self.base()
         if self._names is None:
             s = "\\texttt{Anderson motive of rank } %s" % self.rank()
             s += "\\texttt{ over } %s" % latex(AK)
@@ -466,8 +481,33 @@ class AndersonMotive_general(OreModule):
         twist = deg - self._twist
         return AndersonMotive_general(self._category, tau, twist, names, normalize=True)
 
-    def _Hom_(self, codomain, category):
-        return AndersonMotive_homspace(self, codomain)
+    def _Hom_(self, other, category):
+        r"""
+        Return the set of morphisms from ``self`` to ``other``.
+
+        INPUT:
+
+        - ``other`` -- the codomain of the homset
+
+        - ``category`` -- the category in which we consider the
+          morphisms, usually ``self.category()``
+
+        EXAMPLES::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<z> = GF(5^4)
+            sage: phi = DrinfeldModule(A, [z, z^2, z^3, z^4])
+            sage: M = phi.anderson_motive()
+            sage: End(M)  # indirect doctest
+            Set of Morphisms
+            from Anderson motive of rank 3 over Univariate Polynomial Ring in T over Finite Field in z of size 5^4
+            to Anderson motive of rank 3 over Univariate Polynomial Ring in T over Finite Field in z of size 5^4
+            in Category of finite dimensional Ore modules with basis
+            over Univariate Polynomial Ring in T over Finite Field in z of size 5^4 twisted by T |--> T, with map of base ring
+        """
+        if category is None:
+            category = self._category
+        return AndersonMotive_homspace(self, other, category)
 
     def hodge_pink_weights(self):
         r"""
@@ -557,7 +597,7 @@ class AndersonMotive_drinfeld(AndersonMotive_general):
             True
         """
         category = AndersonMotives(phi.category())
-        AK = category.base_combined()
+        AK = category.base()
         r = phi.rank()
         tau = matrix(AK, r)
         P = phi.gen()
@@ -856,12 +896,11 @@ class DrinfeldToAnderson(Map):
             sage: f = Ktau.convert_map_from(M)
             sage: type(f)
             <class 'sage.rings.function_field.drinfeld_modules.anderson_motive.AndersonToDrinfeld'>
-            sage: # TestSuite(f).run()
         """
         Map.__init__(self, parent)
         self._phi = phi
         self._motive = parent.codomain()
-        self._AK = self._motive.base_combined()
+        self._AK = self._motive.base()
 
     def _call_(self, f):
         r"""
@@ -913,7 +952,6 @@ class AndersonToDrinfeld(Map):
             sage: f = M.coerce_map_from(Ktau)
             sage: type(f)
             <class 'sage.rings.function_field.drinfeld_modules.anderson_motive.DrinfeldToAnderson'>
-            sage: # TestSuite(f).run()
         """
         Map.__init__(self, parent)
         self._phi = phi
@@ -960,7 +998,15 @@ def AndersonMotive(arg1, tau=None, names=None):
 
     The input can be one of the followings:
 
-    - a Drinfeld module
+    - a pair '(A, K)` where `A = \FF_q[t]` is the function
+      base ring and `K` is the coefficient `A`-field; these
+      parameters correspond to the trivial Anderson motive
+      over `A \otimes K`
+
+    - a pair '(A, z)` where `A = \FF_q[t]` is the function
+      base ring and `z` is an element; the `A`-field is then
+      then parent `K` of `z` viewed as an algebra over `A`
+      through `A \mapsto K, T \mapsto z`.
 
     - a pair `(A, \tau)` where
 
@@ -970,18 +1016,89 @@ def AndersonMotive(arg1, tau=None, names=None):
 
       - `\tau` is the matrix defining the Anderson motive
 
-    - a pair '(A, K)` where `A = \FF_q[t]` is the function
-      base ring and `K` is the coefficient `A`-field; these
-      parameters correspond to the trivial Anderson motive
-      over `A \otimes K`
+    - a Drinfeld module
 
-    OUTPUT:
+    EXAMPLES:
 
-    An anderson motive
+        sage: A.<T> = GF(7)[]
+        sage: K.<z> = GF(7^3)
 
-    EXAMPLES::
+    We first construct the trivial Anderson motive over `K`::
 
+        sage: M = AndersonMotive(A, K)
+        sage: M
+        Anderson motive of rank 1 over Univariate Polynomial Ring in T over Finite Field in z of size 7^3
+        sage: M.matrix()
+        [1]
 
+    Here the structure of `A`-field on `K` is given by the map
+    that takes `T` to the canonical generator of `K`, namely `z`::
+
+        sage: M.A_field()
+        Finite Field in z of size 7^3 over its base
+        sage: M.A_field().defining_morphism()
+        Ring morphism:
+          From: Univariate Polynomial Ring in T over Finite Field of size 7
+          To:   Finite Field in z of size 7^3 over its base
+          Defn: T |--> z
+
+    Specifying another element in `K` leads to a different
+    structure of `A`-field::
+
+        sage: N = AndersonMotive(A, z^2)
+        sage: N.A_field().defining_morphism()
+        Ring morphism:
+          From: Univariate Polynomial Ring in T over Finite Field of size 7
+          To:   Finite Field in z of size 7^3 over its base
+          Defn: T |--> z^2
+
+    One can also directly construct the Anderson motive attached
+    to a Drinfeld module as follows::
+
+        sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+        sage: AndersonMotive(phi)
+        Anderson motive of rank 2 over Univariate Polynomial Ring in T over Finite Field in z of size 7^3
+
+    Finally, another possibility is to give the matrix of `\tau` as an
+    argument::
+
+        sage: tau = matrix(2, 2, [[T, z], [z+1, 1]])
+        sage: tau
+        [    T     z]
+        [z + 1     1]
+        sage: M = AndersonMotive(A, tau)
+        sage: M
+        Anderson motive of rank 2 over Univariate Polynomial Ring in T over Finite Field in z of size 7^3
+        sage: M.matrix()
+        [    T     z]
+        [z + 1     1]
+
+    In this case, the structure of `A`-field is automatically inferred::
+
+        sage: M.A_field().defining_morphism()
+        Ring morphism:
+          From: Univariate Polynomial Ring in T over Finite Field of size 7
+          To:   Finite Field in z of size 7^3 over its base
+          Defn: T |--> z^2 + z
+
+    TESTS::
+
+        sage: AndersonMotive(ZZ, K)
+        Traceback (most recent call last):
+        ...
+        TypeError: the first argument must be a Drinfeld module or a polynomial ring
+
+    ::
+
+        sage: tau = matrix(2, 2, [[T^2, z], [z+1, 1]])
+        sage: AndersonMotive(A, tau)
+        Traceback (most recent call last):
+        ...
+        ValueError: tau does not define an Anderson motive
+
+    .. SEEALSO::
+
+        :mod:`sage.rings.function_field.drinfeld_modules.anderson_motive`
     """
     # Options for *args:
     #  . a Drinfeld module
@@ -993,9 +1110,7 @@ def AndersonMotive(arg1, tau=None, names=None):
         if tau is not None:
             raise ValueError("")
         category = AndersonMotives(arg1.category())
-        A = category.function_ring()
-        K = category._base_field
-        AK = A.change_ring(K)
+        AK = category.base()
         r = arg1.rank()
         tau = matrix(AK, r)
         P = arg1.gen()
@@ -1013,7 +1128,7 @@ def AndersonMotive(arg1, tau=None, names=None):
         category = arg1
     if category is not None:
         if tau is None:
-            tau = identity_matrix(category.base_combined(), 1)
+            tau = identity_matrix(category.base(), 1)
         det = tau.determinant()
         if det == 0:
             raise ValueError("tau does not define an Anderson motive")
@@ -1026,12 +1141,9 @@ def AndersonMotive(arg1, tau=None, names=None):
         return M
 
     # arg1 is the function ring
-    if isinstance(arg1, CommutativeRing):
-        A = arg1
-        if not isinstance(A, PolynomialRing_general):
-            raise NotImplementedError("Anderson motives over arbitrary Dedekind domain are not supported")
-    else:
-        raise ValueError("first argument must be the function ring")
+    A = arg1
+    if not isinstance(A, PolynomialRing_general):
+        raise TypeError("the first argument must be a Drinfeld module or a polynomial ring")
 
     # tau is the base ring
     K = None
@@ -1054,7 +1166,7 @@ def AndersonMotive(arg1, tau=None, names=None):
         except (AttributeError, ValueError):
             pass
         category = AndersonMotives(gamma)
-        AK = category.base_combined()
+        AK = category.base()
         tau = identity_matrix(AK, 1)
         return AndersonMotive_general(category, tau, names=names)
 
@@ -1062,7 +1174,7 @@ def AndersonMotive(arg1, tau=None, names=None):
     if isinstance(tau, Matrix):
         AK = tau.base_ring()
         if not isinstance(AK, PolynomialRing_general) or AK.variable_name() != A.variable_name():
-            raise ValueError("incompatible base rings")
+            raise TypeError("incompatible base rings")
         det = tau.determinant()
         if det == 0:
             raise ValueError("tau does not define an Anderson motive")
