@@ -282,6 +282,7 @@ class Package(object):
         """
         import sys
         import platform
+        import subprocess
         
         if not self.__tarballs_info:
             return None
@@ -292,18 +293,54 @@ class Package(object):
         
         # Auto-detect Python version if not provided
         if python_version is None:
-            python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
+            # Fetch from Sage's Python using ./sage -python
+            from sage_bootstrap.env import SAGE_ROOT
+            sage_script = os.path.join(SAGE_ROOT, 'sage')
+            if not os.path.exists(sage_script):
+                raise RuntimeError('Sage script not found at: {0}'.format(sage_script))
+            
+            try:
+                result = subprocess.run(
+                    [sage_script, '-python', '-c', 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")'],
+                    capture_output=True,
+                    text=True,
+                    timeout=5,
+                    cwd=SAGE_ROOT
+                )
+                if result.returncode != 0:
+                    raise RuntimeError('Failed to get Python version from sage -python: {0}'.format(result.stderr))
+                python_version = result.stdout.strip()
+            except subprocess.TimeoutExpired:
+                raise RuntimeError('Timeout while querying Sage Python via ./sage -python')
+            except Exception as e:
+                raise RuntimeError('Error querying Sage Python via ./sage -python: {0}'.format(str(e)))
         
         py_ver_tuple = tuple(int(x) for x in python_version.split('.'))
         
         # Check if running free-threaded Python (Python 3.13+)
         is_free_threaded = False
         try:
-            # Python 3.13+ has sys._is_gil_enabled() to check free-threading mode
-            if hasattr(sys, '_is_gil_enabled'):
-                is_free_threaded = not sys._is_gil_enabled()
-        except Exception:
-            pass
+            # Get free-threading status from Sage's Python via ./sage -python
+            from sage_bootstrap.env import SAGE_ROOT
+            sage_script = os.path.join(SAGE_ROOT, 'sage')
+            if not os.path.exists(sage_script):
+                raise RuntimeError('Sage script not found for free-threading check')
+            
+            try:
+                result = subprocess.run(
+                    [sage_script, '-python', '-c', 'import sys; print(hasattr(sys, "_is_gil_enabled") and not sys._is_gil_enabled())'],
+                    capture_output=True,
+                    text=True,
+                    timeout=5,
+                    cwd=SAGE_ROOT
+                )
+                if result.returncode != 0:
+                    raise RuntimeError('Failed to check free-threading status: {0}'.format(result.stderr))
+                is_free_threaded = result.stdout.strip().lower() == 'true'
+            except subprocess.TimeoutExpired:
+                raise RuntimeError('Timeout while checking free-threading status via ./sage -python')
+        except Exception as e:
+            raise RuntimeError('Error checking free-threading status: {0}'.format(str(e)))
         
         # Get platform info
         system = platform.system().lower()

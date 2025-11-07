@@ -191,67 +191,6 @@ class Tarball(object):
             return False
         return not self.filename.endswith('-none-any.whl')
 
-    def _download_wheel_with_pip(self, dest_dir):
-        """
-        Download a platform-specific wheel using pip.
-        
-        This uses pip's built-in logic to automatically select the appropriate 
-        wheel for the current platform and Python version.
-        
-        Returns True on success, False on failure (e.g., offline mode).
-        """
-        try:
-            import subprocess
-            import sys
-            
-            log.info('Using pip to auto-detect and download wheel for {0}'.format(self.package.name))
-            
-            # Extract package name and version from the package
-            package_name = self.package.name.replace('_', '-')  # PyPI uses dashes
-            version = self.package.version
-            package_spec = f"{package_name}=={version}"
-            
-            # Let pip automatically detect platform and Python version
-            cmd = [
-                sys.executable, '-m', 'pip', 'download',
-                package_spec,
-                '-d', dest_dir,
-                '--no-deps',
-                '--only-binary', ':all:'
-            ]
-            
-            log.info(f"Running pip command: {' '.join(cmd)}")
-            
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                timeout=60  # 60 second timeout
-            )
-            
-            if result.returncode == 0:
-                # Find the downloaded wheel file
-                wheel_files = [f for f in os.listdir(dest_dir) 
-                              if f.endswith('.whl') and package_name.replace('-', '_') in f.lower()]
-                
-                if wheel_files:
-                    wheel_path = os.path.join(dest_dir, wheel_files[0])
-                    log.info(f'Successfully downloaded wheel using pip: {wheel_path}')
-                    return True
-                else:
-                    log.warning('pip command succeeded but no wheel file found')
-                    return False
-            else:
-                log.info(f'pip download failed (possibly offline): {result.stderr}')
-                return False
-                
-        except subprocess.TimeoutExpired:
-            log.warning('pip download timed out (possibly offline or slow connection)')
-            return False
-        except Exception as e:
-            log.info(f'pip download failed: {e}')
-            return False
-
     def _find_cached_wheel_for_platform(self):
         """
         Find a cached wheel file that matches the current platform.
@@ -365,35 +304,7 @@ class Tarball(object):
                 # update the checksum (Issue #23972).
                 log.warning('Invalid checksum; ignoring cached file {destination}'
                             .format(destination=destination))
-        
-        # For platform-specific wheels, try pip download first
-        if self.is_platform_specific_wheel():
-            log.info('Detected platform-specific wheel: {0}'.format(self.filename))
-            dest_dir = os.path.dirname(destination)
-            
-            if self._download_wheel_with_pip(dest_dir):
-                # pip download succeeded, but it may have downloaded a different
-                # wheel filename (different platform). Find the downloaded wheel.
-                wheel_files = [f for f in os.listdir(dest_dir) 
-                              if f.endswith('.whl') and f.startswith(self.package.name.replace('_', '-'))]
                 
-                if wheel_files:
-                    actual_wheel = os.path.join(dest_dir, wheel_files[0])
-                    if actual_wheel != destination:
-                        # Rename or link to expected filename
-                        log.info('Downloaded wheel: {0}'.format(wheel_files[0]))
-                        log.info('Expected filename: {0}'.format(self.filename))
-                        # For now, just use the downloaded wheel as-is
-                        # The build system should be flexible about the exact filename
-                    # Note: Skip checksum verification for pip-downloaded wheels
-                    # as pip verifies integrity internally
-                    return
-                else:
-                    log.warning('pip download succeeded but no wheel file found')
-            
-            # If pip download failed, fall through to traditional download methods
-            log.info('Falling back to traditional download methods')
-        
         # Traditional download logic for tarballs and platform-independent wheels
         successful_download = False
         log.info('Attempting to download package {0} from mirrors'.format(self.filename))
@@ -462,38 +373,8 @@ class Tarball(object):
                 log.warning(f'Error checking cached wheel: {e}')
         
         dest_dir = SAGE_DISTFILES
-        
-        # Step 2: Try pip download (auto-detection) for platform-specific wheels
-        if not tarball_filename.endswith('-none-any.whl'):
-            log.info('Trying pip to auto-detect and download correct wheel...')
-            if self._download_wheel_with_pip(dest_dir):
-                # Verify what pip downloaded
-                cached_wheel = self._find_cached_wheel_for_platform()
-                if cached_wheel:
-                    try:
-                        downloaded_tarball = Tarball(os.path.basename(cached_wheel),
-                                                     package=self.package,
-                                                     tarball_info=tarball_info)
-                        if downloaded_tarball.checksum_verifies():
-                            log.info(f'Successfully downloaded and verified wheel via pip: {os.path.basename(cached_wheel)}')
-                            # Update self to point to the actually downloaded wheel
-                            self.__filename = os.path.basename(cached_wheel)
-                            return
-                        else:
-                            log.warning('pip-downloaded wheel checksum mismatch, falling back to traditional download')
-                    except Exception as e:
-                        log.warning(f'Error verifying pip-downloaded wheel: {e}')
-                        # pip has its own integrity checks, so we can trust it
-                        log.info('Trusting pip integrity verification')
-                        # Update self to point to the actually downloaded wheel
-                        self.__filename = os.path.basename(cached_wheel)
-                        return
-                else:
-                    log.warning('pip succeeded but could not find wheel, falling back to traditional download')
-            else:
-                log.info('pip download failed (possibly offline), falling back to traditional download')
-        
-        # Step 3: Fall back to traditional download from mirrors/upstream
+
+        # Step 2: Try to download from mirrors/upstream
         log.info(f'Downloading {tarball_filename} using traditional method (mirrors/upstream)...')
         destination = os.path.join(dest_dir, tarball_filename)
         upstream_url_pattern = tarball_info.get('upstream_url')
