@@ -263,13 +263,15 @@ class Package(object):
         Find the appropriate tarball for the current platform.
         
         For packages with multiple platform-specific wheels, this selects
-        the one matching the current platform and Python version.
+        the one matching the current platform and Python version using
+        the packaging.tags module to ensure compatibility.
         
         Properly handles wheel ABI tags:
-        - cp313 (CPython 3.13 specific)
-        - cp313t (CPython 3.13 free-threaded/nogil)
-        - abi3 (stable ABI, forward compatible)
-        - pp39 (PyPy 3.9)
+        - cp313-cp313 (CPython 3.13 specific)
+        - cp313-cp313t (CPython 3.13 free-threaded/nogil)
+        - cp313-abi3 (stable ABI, forward compatible)
+        - py3-none-any (universal pure Python wheel)
+        - pp39-pypy39_pp73 (PyPy wheels)
         
         INPUT:
         
@@ -280,8 +282,6 @@ class Package(object):
         Dictionary with tarball info, or None if no suitable tarball found.
         The dictionary contains the same fields as tarballs_info entries.
         """
-        import sys
-        import platform
         import subprocess
         
         if not self.__tarballs_info:
@@ -291,175 +291,80 @@ class Package(object):
         if len(self.__tarballs_info) == 1:
             return self.__tarballs_info[0]
         
-        # Auto-detect Python version if not provided
-        if python_version is None:
-            # Fetch from Sage's Python using ./sage -python
-            from sage_bootstrap.env import SAGE_ROOT
-            sage_script = os.path.join(SAGE_ROOT, 'sage')
-            if not os.path.exists(sage_script):
-                raise RuntimeError('Sage script not found at: {0}'.format(sage_script))
-            
-            try:
-                result = subprocess.run(
-                    [sage_script, '-python', '-c', 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")'],
-                    capture_output=True,
-                    text=True,
-                    timeout=5,
-                    cwd=SAGE_ROOT
-                )
-                if result.returncode != 0:
-                    raise RuntimeError('Failed to get Python version from sage -python: {0}'.format(result.stderr))
-                python_version = result.stdout.strip()
-            except subprocess.TimeoutExpired:
-                raise RuntimeError('Timeout while querying Sage Python via ./sage -python')
-            except Exception as e:
-                raise RuntimeError('Error querying Sage Python via ./sage -python: {0}'.format(str(e)))
+        # Get compatible tags from Sage's Python using packaging.tags
+        from sage_bootstrap.env import SAGE_ROOT
+        sage_script = os.path.join(SAGE_ROOT, 'sage')
+        if not os.path.exists(sage_script):
+            raise RuntimeError('Sage script not found at: {0}'.format(sage_script))
         
-        py_ver_tuple = tuple(int(x) for x in python_version.split('.'))
-        
-        # Check if running free-threaded Python (Python 3.13+)
-        is_free_threaded = False
         try:
-            # Get free-threading status from Sage's Python via ./sage -python
-            from sage_bootstrap.env import SAGE_ROOT
-            sage_script = os.path.join(SAGE_ROOT, 'sage')
-            if not os.path.exists(sage_script):
-                raise RuntimeError('Sage script not found for free-threading check')
+            # Get all compatible tags from Sage's Python
+            result = subprocess.run(
+                [sage_script, '-python', '-c', 
+                 'import packaging.tags; import json; tags = [str(t) for t in packaging.tags.sys_tags()]; print(json.dumps(tags))'],
+                capture_output=True,
+                text=True,
+                timeout=10,
+                cwd=SAGE_ROOT
+            )
+            if result.returncode != 0:
+                raise RuntimeError('Failed to get compatible tags from sage -python: {0}'.format(result.stderr))
             
-            try:
-                result = subprocess.run(
-                    [sage_script, '-python', '-c', 'import sys; print(hasattr(sys, "_is_gil_enabled") and not sys._is_gil_enabled())'],
-                    capture_output=True,
-                    text=True,
-                    timeout=5,
-                    cwd=SAGE_ROOT
-                )
-                if result.returncode != 0:
-                    raise RuntimeError('Failed to check free-threading status: {0}'.format(result.stderr))
-                is_free_threaded = result.stdout.strip().lower() == 'true'
-            except subprocess.TimeoutExpired:
-                raise RuntimeError('Timeout while checking free-threading status via ./sage -python')
+            import json
+            compatible_tags = json.loads(result.stdout.strip())
+            
+        except subprocess.TimeoutExpired:
+            raise RuntimeError('Timeout while querying compatible tags via ./sage -python')
         except Exception as e:
-            raise RuntimeError('Error checking free-threading status: {0}'.format(str(e)))
+            raise RuntimeError('Error querying compatible tags via ./sage -python: {0}'.format(str(e)))
         
-        # Get platform info
-        system = platform.system().lower()
-        machine = platform.machine().lower()
+        # Convert tags list to a set for fast lookup with priority
+        # Lower index = higher priority
+        tag_priority = {tag: idx for idx, tag in enumerate(compatible_tags)}
         
-        # Build platform tags to match against
-        platform_tags = []
-        exclude_tags = []  # Tags that should NOT be in the platform string
-        if system == 'linux':
-            if machine == 'x86_64':
-                platform_tags = ['manylinux', 'musllinux', 'linux_x86_64', 'x86_64']
-                exclude_tags = ['aarch64', 'arm64', 'armv7l', 'ppc64', 's390x', 'i686', 'riscv64', 'macosx', 'win']
-            elif machine in ['aarch64', 'arm64']:
-                platform_tags = ['manylinux', 'musllinux', 'linux_aarch64', 'aarch64', 'arm64']
-                exclude_tags = ['x86_64', 'armv7l', 'ppc64', 's390x', 'i686', 'riscv64', 'macosx', 'win']
-        elif system == 'darwin':
-            if machine in ['arm64', 'aarch64']:
-                platform_tags = ['macosx_', 'arm64']
-                exclude_tags = ['x86_64', 'i386', 'manylinux', 'musllinux', 'win']
-            else:
-                platform_tags = ['macosx_', 'x86_64']
-                exclude_tags = ['arm64', 'i386', 'manylinux', 'musllinux', 'win']
-        elif system == 'windows':
-            if machine == 'amd64' or machine == 'x86_64':
-                platform_tags = ['win_amd64']
-                exclude_tags = ['win32', 'win_arm64', 'manylinux', 'musllinux', 'macosx']
-            elif machine == 'arm64':
-                platform_tags = ['win_arm64']
-                exclude_tags = ['win32', 'win_amd64', 'manylinux', 'musllinux', 'macosx']
-            else:
-                platform_tags = ['win32']
-                exclude_tags = ['win_amd64', 'win_arm64', 'manylinux', 'musllinux', 'macosx']
+        # Import packaging utilities for parsing wheel filenames
+        try:
+            import packaging.utils
+        except ImportError:
+            raise RuntimeError('packaging module not available')
         
-        # Python version tag (e.g., 'cp311' for CPython 3.11)
-        py_ver_tag = f"cp{python_version.replace('.', '')}"
-        # Free-threaded ABI tag has 't' suffix (e.g., cp313t in cp313-cp313t)
-        if is_free_threaded:
-            abi_tag_free_threaded = py_ver_tag + 't'  # e.g., cp313t
-        else:
-            abi_tag_free_threaded = None
-        
-        # Collect compatible wheels
-        compatible_wheels = []
+        # Find the best matching tarball
+        best_match = None
+        best_priority = float('inf')
         
         for tarball_info in self.__tarballs_info:
             tarball = tarball_info['tarball']
             
-            # Check if platform-independent wheel (-none-any.whl)
-            if tarball.endswith('-none-any.whl'):
-                compatible_wheels.append((tarball_info, 1000))  # Highest priority
-                continue
-            
-            # Check if not a wheel - use for non-wheel tarballs
+            # Handle non-wheel tarballs (source distributions)
             if not tarball.endswith('.whl'):
-                matches_platform = any(tag in tarball.lower() for tag in platform_tags)
-                if matches_platform or not platform_tags:
-                    compatible_wheels.append((tarball_info, 500))
+                # Source distributions have lowest priority
+                if best_priority > len(compatible_tags) + 1000:
+                    best_match = tarball_info
+                    best_priority = len(compatible_tags) + 1000
                 continue
             
-            # Parse wheel filename: {name}-{version}-{python}-{abi}-{platform}.whl
-            # Extract tags from the wheel filename
-            parts = tarball.rsplit('-', 3)
-            if len(parts) != 4:
+            # Parse wheel filename using packaging.utils
+            # This properly handles multi-platform wheels like:
+            # rpds_py-0.28.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+            try:
+                _, _, _, wheel_tags = packaging.utils.parse_wheel_filename(tarball)
+            except Exception as e:
+                log.warning(f'Could not parse wheel filename {tarball}: {e}')
                 continue
             
-            _, python_tag, abi_tag, platform_tag = parts
-            platform_tag = platform_tag[:-4]  # Remove .whl extension
-            
-            # Check if matches current platform (must have a matching tag AND not have any excluded tags)
-            matches_platform = any(tag in platform_tag.lower() for tag in platform_tags)
-            has_excluded = any(tag in platform_tag.lower() for tag in exclude_tags)
-            if not matches_platform or has_excluded:
-                continue
-            
-            # Check Python/ABI compatibility
-            priority = 0
-            
-            # Free-threaded wheel: python_tag=cp313, abi_tag=cp313t
-            if is_free_threaded and abi_tag_free_threaded and python_tag == py_ver_tag and abi_tag == abi_tag_free_threaded:
-                priority = 110  # Highest priority for free-threaded wheels on free-threaded Python
-            # Reject free-threaded ABI on standard Python
-            elif not is_free_threaded and abi_tag_free_threaded and abi_tag == abi_tag_free_threaded:
-                priority = 0  # Incompatible - free-threaded wheel on standard Python
-            # Exact Python version match (e.g., cp313-cp313)
-            elif py_ver_tag == python_tag and py_ver_tag == abi_tag:
-                # Standard Python wheel on free-threaded Python - lower priority
-                if is_free_threaded:
-                    priority = 95  # Can work but prefer free-threaded wheels
-                else:
-                    priority = 100
-            # abi3 wheels - stable ABI, forward compatible
-            elif 'abi3' in abi_tag:
-                # Extract minimum Python version from abi3 wheel
-                # E.g., cp37-abi3 means Python 3.7+
-                if python_tag.startswith('cp'):
-                    min_version_str = python_tag[2:]  # Remove 'cp' prefix
-                    if len(min_version_str) >= 2:
-                        min_major = int(min_version_str[0])
-                        min_minor = int(min_version_str[1:])
-                        min_version = (min_major, min_minor)
-                        
-                        # Check if current Python >= minimum required
-                        if py_ver_tuple >= min_version:
-                            # Lower priority than exact match, but still compatible
-                            priority = 90 - (py_ver_tuple[1] - min_version[1])  # Prefer closer versions
-            # PyPy wheels (pp39, pp310, etc.)
-            elif python_tag.startswith('pp') and sys.implementation.name == 'pypy':
-                if python_tag == f"pp{python_version.replace('.', '')}":
-                    priority = 100
-            
-            if priority > 0:
-                compatible_wheels.append((tarball_info, priority))
+            # Check each tag in the wheel (multi-platform wheels have multiple tags)
+            for wheel_tag in wheel_tags:
+                wheel_tag_str = str(wheel_tag)
+                if wheel_tag_str in tag_priority:
+                    priority = tag_priority[wheel_tag_str]
+                    if priority < best_priority:
+                        best_match = tarball_info
+                        best_priority = priority
+                        log.debug(f'Found compatible wheel: {tarball} with tag {wheel_tag_str} (priority: {priority})')
+                    break  # Found a match, no need to check other tags for this wheel
         
-        # Sort by priority (highest first) and return the best match
-        if compatible_wheels:
-            compatible_wheels.sort(key=lambda x: x[1], reverse=True)
-            best_match = compatible_wheels[0][0]
-            threading_mode = "free-threaded" if is_free_threaded else "standard"
-            log.debug(f'Selected {best_match["tarball"]} for platform ({threading_mode} Python, priority: {compatible_wheels[0][1]})')
+        if best_match:
+            log.debug(f'Selected {best_match["tarball"]} with priority {best_priority}')
             return best_match
         
         # If no match found, return the first one (backward compatibility)
