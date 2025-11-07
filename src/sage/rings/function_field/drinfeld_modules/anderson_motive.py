@@ -239,6 +239,25 @@ class AndersonMotive_general(OreModule):
         r"""
         Normalize the input and return an instance of the appropriate class.
 
+        INPUT:
+
+        - ``category`` -- the category of Anderson motives where this
+          Anderson motive leaves
+
+        - ``tau`` -- a matrix
+
+        - ``twist`` -- an integer (default: ``0``)
+
+        - ``names`` -- a string of a list of strings (default: ``None``),
+          the names of the vector of the canonical basis; if ``None``,
+          elements will be represented as row vectors
+
+        - ``normalize`` -- a boolean (default: ``True``)
+
+        The action of `\tau` on the Anderson motive will be given by
+        the matrix ``tau * (T - z)**(-twist)`` where `T` is the variable
+        of the function ring and `z` is its image in the `A`-field.
+
         TESTS::
 
             sage: A.<T> = GF(5)[]
@@ -580,6 +599,14 @@ class AndersonMotive_drinfeld(AndersonMotive_general):
     def __classcall_private__(cls, phi, names):
         r"""
         Normalize the input and construct this Anderson motive.
+
+        INPUT:
+
+        - ``phi`` -- a Drinfeld module
+
+        - ``names`` -- a string of a list of strings (default: ``None``),
+          the names of the vector of the canonical basis; if ``None``,
+          elements will be represented as row vectors
 
         TESTS::
 
