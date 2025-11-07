@@ -789,8 +789,8 @@ cdef class CoinBackend(GenericBackend):
         model.setLogLevel(old_logLevel)
 
         # multithreading
-        import multiprocessing
-        model.setNumberThreads(ncpus())
+        # import multiprocessing
+        # model.setNumberThreads(ncpus())
 
         model.branchAndBound()
 
@@ -1423,8 +1423,8 @@ cdef class CoinBackend(GenericBackend):
         model.setLogLevel(old_logLevel)
 
         # multithreading
-        import multiprocessing
-        model.setNumberThreads(ncpus())
+        # import multiprocessing
+        # model.setNumberThreads(ncpus())
         
         if n != self.model.solver().getNumCols() or m != self.model.solver().getNumRows():
             raise ValueError("Must provide the status of every column and row variables")
