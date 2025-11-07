@@ -932,6 +932,59 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         return self.characteristic_polynomial(var)
 
     def anderson_motive(self, names_domain=None, names_codomain=None):
+        r"""
+        Return the morphism giving the action of this isogeny on
+        the Anderson motives.
+
+        INPUT:
+
+        - ``names_domain`` -- a string of a list of strings (default:
+          ``None``), the names of the vector of the canonical basis
+          of the Anderson motive of the domain of this isogeny; if
+          ``None``, elements are represented as row vectors
+
+        - ``names_codomain`` -- a string of a list of strings (default:
+          ``None``), the same with the codomain
+
+        EXAMPLES::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [z, 0, 1, z])
+            sage: tau = phi.ore_variable()
+            sage: u = phi.hom(tau + 1)
+            sage: f = u.anderson_motive()
+            sage: f
+            Anderson motive morphism:
+              From: Anderson motive of rank 3 over Univariate Polynomial Ring in T over Finite Field in z of size 5^3
+              To:   Anderson motive of rank 3 over Univariate Polynomial Ring in T over Finite Field in z of size 5^3
+            sage: f.matrix()
+            [                1                 1                 0]
+            [                0                 1                 1]
+            [(3*z^2 + 4)*T + 4                 0         2*z^2 + 2]
+
+        We underline that this construction is contravariant: the domain
+        of `f` is the Anderson motive of the codomain of `u` and vice versa::
+
+            sage: psi = u.codomain()
+            sage: f.domain() is psi.anderson_motive()
+            True
+            sage: f.codomain() is phi.anderson_motive()
+            True
+
+        An example with given names::
+
+            sage: f = u.anderson_motive(names_domain='a', names_codomain='b')
+            sage: f
+            Anderson motive morphism:
+              From: Anderson motive <b0, b1, b2> over Univariate Polynomial Ring in T over Finite Field in z of size 5^3
+              To:   Anderson motive <a0, a1, a2> over Univariate Polynomial Ring in T over Finite Field in z of size 5^3
+
+        .. SEEALSO::
+
+            :mod:`sage.rings.function_field.drinfeld_modules.anderson_motive`
+        """
         M = self.domain().anderson_motive(names=names_domain)
         N = self.codomain().anderson_motive(names=names_codomain)
         H = N.Hom(M)

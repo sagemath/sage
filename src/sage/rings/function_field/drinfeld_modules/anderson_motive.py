@@ -422,7 +422,7 @@ class AndersonMotive_general(OreModule):
 
         - ``n`` -- an integer (default: ``1``)
 
-        - ``names`` - a string of a list of strings (default: ``None``),
+        - ``names`` -- a string of a list of strings (default: ``None``),
           the names of the vector of the canonical basis; if ``None``,
           elements are represented as row vectors
 
@@ -856,7 +856,7 @@ class AndersonMotiveMorphism(OreModuleMorphism):
 
         We compute the characteristic polynomial of the Frobenius and
         compare the result with the output of the method
-        :meth:`frobenius_charpoly`::
+        :meth:`sage.rings.function_field.drinfeld_modules.drinfeld_module_finite.frobenius_charpoly`::
 
             sage: Frob = phi.frobenius_endomorphism().anderson_motive()
             sage: Frob.characteristic_polynomial()
