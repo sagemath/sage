@@ -960,6 +960,7 @@ class DrinfeldToAnderson(Map):
         coords = [self._AK(c) for c in coords]
         return self._motive(coords)
 
+
 class AndersonToDrinfeld(Map):
     r"""
     The canonical isomorphism `M(\phi) \to K\{\tau\}`
