@@ -261,7 +261,6 @@ class Tarball(object):
         
         Returns the path to the cached wheel if found, None otherwise.
         """
-        import sys
         import platform
         
         # Get platform info
@@ -458,7 +457,7 @@ class Tarball(object):
                     self.__filename = os.path.basename(cached_wheel)
                     return
                 else:
-                    log.warning(f'Cached wheel has invalid checksum, will re-download')
+                    log.warning('Cached wheel has invalid checksum, will re-download')
             except Exception as e:
                 log.warning(f'Error checking cached wheel: {e}')
         
@@ -542,6 +541,8 @@ class Tarball(object):
             if not downloaded_tarball.checksum_verifies():
                 raise ChecksumError(f'Checksum verification failed for {tarball_filename}')
             log.info(f'Successfully downloaded and verified: {tarball_filename}')
+            # Update self to point to the actually downloaded file
+            self.__filename = tarball_filename
         except Exception as e:
             log.error(f'Error verifying downloaded tarball: {e}')
             raise
