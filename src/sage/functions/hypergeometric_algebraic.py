@@ -258,6 +258,41 @@ class Parameters():
         return sorted(A + B)
 
     def parenthesis_criterion(self, c):
+        r"""
+        Return ``True`` if in each prefix of the list
+        ``self.christol_sorting(c)`` there are at least as many triples with
+        third entry -1 as triples with third entry +1. Return ``False``
+        otherwise.
+
+        INPUT:
+
+            - ``c`` -- an integer
+
+        EXAMPLES::
+
+            sage: from sage.functions.hypergeometric_algebraic import Parameters
+            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: p
+            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
+            sage: p.christol_sorting(7)
+            [(12, -3/5, 1),
+             (20, -1/3, -1),
+             (30, -1/2, -1),
+             (45, -1/4, -1),
+             (48, -2/5, 1),
+             (60, -1, 1)]
+            sage: p.parenthesis_criterion(7)
+            False
+            sage: p.christol_sorting(1)
+            [(15, -1/4, -1),
+             (20, -1/3, -1),
+             (24, -2/5, 1),
+             (30, -1/2, -1),
+             (36, -3/5, 1),
+             (60, -1, 1)]
+            sage: p.parenthesis_criterion(1)
+            True
+        """
         parenthesis = 0
         previous_paren = 1
         for _, _, paren in self.christol_sorting(c):
@@ -310,11 +345,50 @@ class Parameters():
         return True
 
     def q_christol_sorting(self, q):
+        r"""
+        Return a sorted list of pairs, one associated to each top parameter a,
+        and one associated to each bottom parameter b where the pair is either
+        (1/2 + (-a) % q, -1) or (1 + (-b) % q, 1).
+
+        INPUT:
+
+            - ``q`` -- integer
+
+        EXAMPLES::
+
+            sage: from sage.functions.hypergeometric_algebraic import Parameters
+            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: p
+            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
+            sage: p.q_christol_sorting(7)
+            [(2, 1), (2.5, -1), (3.5, -1), (5.5, -1), (6, 1), (7, 1)]
+        """
         A = [(1/2 + (-a) % q, -1) for a in self.top]
         B = [(1 + (-b) % q, 1) for b in self.bottom]
         return sorted(A + B)
 
     def q_parenthesis(self, q):
+        r"""
+        Return maximal value of the sum of all the second entries of the pairs
+        in a prefix of ``self.q_christol_sorting(q)`` and the first entry of 
+        the last pair in the prefix of smallest length where this value is
+        attained.
+
+        INPUT:
+
+            - ``q`` -- integer.
+
+        EXAMPLES::
+
+            sage: from sage.functions.hypergeometric_algebraic import Parameters
+            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: p
+            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
+            sage: p.q_christol_sorting(7)
+            [(2, 1), (2.5, -1), (3.5, -1), (5.5, -1), (6, 1), (7, 1)]
+            sage: p.q_parenthesis(7)
+            (2, 1)
+        """
         parenthesis = maximum = shift = 0
         for s, paren in self.q_christol_sorting(q):
             parenthesis += paren
@@ -324,6 +398,31 @@ class Parameters():
         return shift, maximum
 
     def q_parenthesis_criterion(self, q):
+        r"""
+        Return ``True`` if in each prefix of the list
+        ``self.q_christol_sorting(q)`` there are at least as many pairs with
+        second entry -1 as pairs with second entry +1. Return ``False``
+        otherwise.
+
+        INPUT:
+
+            - ``q`` -- integer
+
+        EXAMPLES::
+
+            sage: from sage.functions.hypergeometric_algebraic import Parameters
+            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: p
+            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
+            sage: p.q_christol_sorting(7)
+            [(2, 1), (2.5, -1), (3.5, -1), (5.5, -1), (6, 1), (7, 1)]
+            sage: p.q_parenthesis_criterion(7)
+            False
+            sage: p.q_christol_sorting(61)
+            [(15.5, -1), (20.5, -1), (25, 1), (30.5, -1), (37, 1), (61, 1)]
+            sage: p.q_parenthesis_criterion(61)
+            True
+        """
         parenthesis = 0
         for _, paren in self.q_christol_sorting(q):
             parenthesis += paren
@@ -332,6 +431,26 @@ class Parameters():
         return parenthesis <= 0
 
     def q_interlacing_number(self, q):
+        r"""
+        Return the number of pairs in the list ``self.q_christol_sorting(q)``
+        with second entry 1, that were preceded by a pair with second entry
+        -1.
+
+        INPUT:
+
+            - ``q`` -- integer.
+
+        EXAMPLES::
+
+            sage: from sage.functions.hypergeometric_algebraic import Parameters
+            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: p
+            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
+            sage: p.q_christol_sorting(7)
+            [(2, 1), (2.5, -1), (3.5, -1), (5.5, -1), (6, 1), (7, 1)]
+            sage: p.q_interlacing_number(7)
+            1
+        """
         interlacing = 0
         previous_paren = 1
         for _, paren in self.q_christol_sorting(q):
@@ -525,9 +644,9 @@ class HypergeometricAlgebraic(Element):
         if scalar:
             if char == 0:
                 if any(b in ZZ and b < 0 for b in parameters.bottom):
-                    raise ValueError("the parameters %s does not define a hypergeometric function" % parameters)
+                    raise ValueError("the parameters %s do not define a hypergeometric function" % parameters)
             else:
-                error = ValueError("the parameters %s does not define a hypergeometric function in characteristic %s" % (parameters, char))
+                error = ValueError("the parameters %s do not define a hypergeometric function in characteristic %s" % (parameters, char))
                 d = parameters.d
                 if d.gcd(char) > 1:
                     raise error
