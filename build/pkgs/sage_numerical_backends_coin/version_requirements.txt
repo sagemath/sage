@@ -1,1 +1,0 @@
-sage_numerical_backends_coin >=9.0b12

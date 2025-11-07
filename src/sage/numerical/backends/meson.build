@@ -1,9 +1,12 @@
 # Cannot be found via pkg-config
 glpk = cc.find_library('glpk', required: not is_windows, disabler: true)
+cbc = dependency('cbc', required: false, disabler: true)
 
 py.install_sources(
   '__init__.py',
   'all.py',
+  'coin_backend.pxd',
+  'coin_backend.pyx',
   'cvxopt_backend.pyx',
   'cvxopt_backend_test.py',
   'cvxopt_sdp_backend.pyx',
@@ -62,7 +65,10 @@ foreach name, pyx : extension_data
   )
 endforeach
 
-extension_data_cpp = {'scip_backend': files('scip_backend.pyx')}
+extension_data_cpp = {
+  'coin_backend' : files('coin_backend.pyx'),
+  'scip_backend': files('scip_backend.pyx'),
+}
 
 foreach name, pyx : extension_data_cpp
   py.extension_module(
@@ -72,7 +78,7 @@ foreach name, pyx : extension_data_cpp
     install: true,
     override_options: ['cython_language=cpp'],
     include_directories: [inc_cpython, inc_rings],
-    dependencies: [py_dep, cysignals, gmp],
+    dependencies: [py_dep, cysignals, gmp, cbc],
   )
 endforeach
 
