@@ -36,6 +36,7 @@ class AndersonMotives(OreModules):
         return AndersonMotives.__classcall__(cls, category)
 
     def __init__(self, category):
+        self._drinfeld_category = category
         self._base_morphism = category.base_morphism()
         self._base_field = category.base()
         self._function_ring = A = category.function_ring()
@@ -54,6 +55,9 @@ class AndersonMotives(OreModules):
     def _latex_(self):
         return f'\\text{{Category{{ }}of{{ }}Anderson{{ }}motives{{ }}' \
                f'over{{ }}{latex(self._base_field)}'
+
+    def __reduce__(self):
+        return AndersonMotives, (self._drinfeld_category,)
 
     def _repr_(self):
         return f'Category of Anderson motives over {self._base_field}'

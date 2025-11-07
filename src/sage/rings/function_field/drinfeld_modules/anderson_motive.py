@@ -224,16 +224,17 @@ from sage.rings.function_field.drinfeld_modules.morphism import DrinfeldModuleMo
 # Classes for Anderson motives
 ##############################
 
-class AndersonMotiveElement(OreModuleElement):
-    def image(self, integral=None):
-        if integral is None:
-            integral = self.parent().is_effective()
-        return super().image(integral=integral)
-
-
 class AndersonMotive_general(OreModule):
-    Element = AndersonMotiveElement
+    r"""
+    General class for Anderson motives.
 
+    TESTS::
+
+        sage: A.<T> = GF(5)[]
+        sage: K.<z> = GF(5^3)
+        sage: M = AndersonMotive(A, K)
+        sage: TestSuite(M).run()
+    """
     @staticmethod
     def __classcall_private__(self, category, tau, twist=0, names=None, normalize=True):
         K = category.base()
@@ -295,8 +296,12 @@ class AndersonMotive_general(OreModule):
             self._twist = self._denominator[0][1]
         else:
             self._twist = 0
+        self._general_class = AndersonMotive_general
         self._submodule_class = AndersonSubMotive
         self._quotientModule_class = AndersonQuotientMotive
+
+    def __reduce__(self):
+        return self._general_class, (self._category, self._tau, self._twist, self._names, False)
 
     @lazy_attribute
     def _dettau(self):
@@ -356,7 +361,18 @@ class AndersonMotive_general(OreModule):
 
 
 class AndersonMotive_drinfeld(AndersonMotive_general):
-    def __init__(self, phi, names):
+    r"""
+    A class for Anderson motives coming from Drinfeld modules.
+
+    TESTS::
+
+        sage: A.<T> = GF(5)[]
+        sage: K.<z> = GF(5^3)
+        sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+        sage: M = phi.anderson_motive()
+        sage: TestSuite(M).run()
+    """
+    def __classcall_private__(cls, phi, names):
         category = AndersonMotives(phi.category())
         AK = category.base_combined()
         r = phi.rank()
@@ -367,7 +383,11 @@ class AndersonMotive_drinfeld(AndersonMotive_general):
             tau[i-1, i] = 1
             tau[r-1, i] = -P[i]/P[r]
         names = normalize_names(names, r)
-        AndersonMotive_general.__init__(self, tau, category._ore_polring, None, names, category)
+        denominator = Factorization([])
+        return cls.__classcall__(cls, tau, category._ore_polring, denominator, names, category, phi)
+
+    def __init__(self, mat, ore, denominator, names, category, phi) -> None:
+        super().__init__(mat, ore, denominator, names, category)
         Ktau = phi.ore_polring()
         self.register_coercion(DrinfeldToAnderson(Homset(Ktau, self), phi))
         try:
@@ -379,17 +399,52 @@ class AndersonMotive_drinfeld(AndersonMotive_general):
     def drinfeld_module(self):
         return self._drinfeld_module
 
+    def __reduce__(self):
+        return AndersonMotive_drinfeld, (self._drinfeld_module, self._names)
+
 
 class AndersonSubMotive(AndersonMotive_general, OreSubmodule):
+    r"""
+    A class for Anderson motives defined as submodules of an
+    other Anderson motive.
+
+    TESTS::
+
+        sage: A.<T> = GF(5)[]
+        sage: K.<z> = GF(5^3)
+        sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+        sage: M.<u, v> = phi.anderson_motive()
+        sage: N = M.span(v)
+        sage: TestSuite(N).run()
+    """
     def __init__(self, ambient, submodule, names):
         OreSubmodule.__init__(self, ambient, submodule, names)
         self._initialize_attributes()
 
+    def __reduce__(self):
+        return OreSubmodule.__reduce__(self)
+
 
 class AndersonQuotientMotive(AndersonMotive_general, OreQuotientModule):
+    r"""
+    A class for Anderson motives defined as quotients of an
+    other Anderson motive.
+
+    TESTS::
+
+        sage: A.<T> = GF(5)[]
+        sage: K.<z> = GF(5^3)
+        sage: phi = DrinfeldModule(A, [z, z^2, z^3])
+        sage: M.<u, v> = phi.anderson_motive()
+        sage: Q = M.quo(u)
+        sage: TestSuite(Q).run()
+    """
     def __init__(self, cover, submodule, names):
         OreQuotientModule.__init__(self, cover, submodule, names)
         self._initialize_attributes()
+
+    def __reduce__(self):
+        return OreQuotientModule.__reduce__(self)
 
 
 # Morphisms
@@ -564,9 +619,12 @@ def AndersonMotive(arg1, tau=None, names=None):
     if isinstance(tau, RingHomomorphism) and tau.domain() is A:
         K = tau.codomain()
         gamma = tau
-    elif isinstance(tau, CommutativeRing) and tau.has_coerce_map_from(A):
+    elif isinstance(tau, CommutativeRing):
         K = tau
-        gamma = K.coerce_map_from(A)
+        if K.has_coerce_map_from(A):
+            gamma = K.coerce_map_from(A)
+        else:
+            gamma = A.hom([K.gen()])
     elif hasattr(tau, 'parent') and isinstance(tau.parent(), CommutativeRing):
         K = tau.parent()
         gamma = A.hom([tau])
