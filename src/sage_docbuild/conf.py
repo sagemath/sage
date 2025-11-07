@@ -39,7 +39,6 @@ from sage.misc.sagedoc_conf import *  # Load configuration shared with sage.misc
 # ---------------------
 
 SAGE_LIVE_DOC = os.environ.get('SAGE_LIVE_DOC', 'no')
-SAGE_PREPARSED_DOC = os.environ.get('SAGE_PREPARSED_DOC', 'yes')
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
@@ -993,40 +992,40 @@ class SagecodeTransform(SphinxTransform):
                     if isinstance(prev_node, nodes.paragraph):
                         prev_node['classes'].append('with-sage-tab')
 
-                    if SAGE_PREPARSED_DOC == 'yes':
-                        # Tab for preparsed version
-                        from sage.repl.preparse import preparse
-                        container = TabContainer("", type="tab", new_set=False)
-                        textnodes = [Text('Python')]
-                        label = Label("", "", *textnodes)
-                        container += label
-                        content = Container("", is_div=True, classes=["tab-content"])
-                        example_lines = []
-                        preparsed_lines = ['>>> from sage.all import *']
-                        for line in node.rawsource.splitlines() + ['']:  # one extra to process last example
-                            newline = line.lstrip()
-                            if newline.startswith('....: '):
+                    # Tab for preparsed version
+                    from sage.repl.preparse import preparse
+                    container = TabContainer("", type="tab", new_set=False)
+                    textnodes = [Text('Python')]
+                    label = Label("", "", *textnodes)
+                    container += label
+                    content = Container("", is_div=True, classes=["tab-content"])
+                    example_lines = []
+                    preparsed_lines = ['>>> from sage.all import *']
+                    for line in node.rawsource.splitlines() + ['']:  # one extra to process last example
+                        newline = line.lstrip()
+                        if newline.startswith('....: '):
+                            example_lines.append(newline[6:])
+                        else:
+                            if example_lines:
+                                preparsed_example = preparse('\n'.join(example_lines))
+                                prompt = '>>> '
+                                for preparsed_line in preparsed_example.splitlines():
+                                    preparsed_lines.append(prompt + preparsed_line)
+                                    prompt = '... '
+                                example_lines = []
+                            if newline.startswith('sage: '):
                                 example_lines.append(newline[6:])
                             else:
-                                if example_lines:
-                                    preparsed_example = preparse('\n'.join(example_lines))
-                                    prompt = '>>> '
-                                    for preparsed_line in preparsed_example.splitlines():
-                                        preparsed_lines.append(prompt + preparsed_line)
-                                        prompt = '... '
-                                    example_lines = []
-                                if newline.startswith('sage: '):
-                                    example_lines.append(newline[6:])
-                                else:
-                                    preparsed_lines.append(line)
-                        preparsed = '\n'.join(preparsed_lines)
-                        preparsed_node = LiteralBlock(preparsed, preparsed, language='ipycon')
-                        content += preparsed_node
-                        container += content
-                        parent.insert(index, container)
-                        index += 1
-                        if isinstance(prev_node, nodes.paragraph):
-                            prev_node['classes'].append('with-python-tab')
+                                preparsed_lines.append(line)
+                    preparsed = '\n'.join(preparsed_lines)
+                    preparsed_node = LiteralBlock(preparsed, preparsed, language='ipycon')
+                    content += preparsed_node
+                    container += content
+                    parent.insert(index, container)
+                    index += 1
+                    if isinstance(prev_node, nodes.paragraph):
+                        prev_node['classes'].append('with-python-tab')
+
                     if SAGE_LIVE_DOC == 'yes':
                         # Tab for Jupyter-sphinx cell
                         from jupyter_sphinx.ast import CellInputNode, JupyterCellNode
@@ -1084,9 +1083,8 @@ def setup(app):
         app.connect('autodoc-process-docstring', skip_TESTS_block)
     app.connect('autodoc-skip-member', skip_member)
     app.add_transform(SagemathTransform)
-    if SAGE_LIVE_DOC == 'yes' or SAGE_PREPARSED_DOC == 'yes':
-        app.add_transform(SagecodeTransform)
-    else:
+    app.add_transform(SagecodeTransform)
+    if SAGE_LIVE_DOC != 'yes':
         app.add_directive("jupyter-execute", Ignore)
         app.add_directive("jupyter-kernel", Ignore)
         app.add_directive("jupyter-input", Ignore)
