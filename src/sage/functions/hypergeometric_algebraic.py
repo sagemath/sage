@@ -225,6 +225,33 @@ class Parameters():
 
     @cached_method
     def christol_sorting(self, c=1):
+        r"""
+        Return a sorted list of triples, where each triple is associated to one
+        of the parameters a, and consists of the decimal part of d*c*a (where
+        integers are assigned 1 instead of 0), the negative value of a, and a
+        sign (plus or minus 1), where top parameters are assigned -1 and bottom
+        parameters +1. Sorting the list lexecographically according to the
+        first two entries of the tuples sorts the corresponing parameters
+        according to the total ordering << defined on p.6 in ([Chr1986]_).
+
+        INPUT:
+
+            - ``c`` -- integer (default: ``1``)
+
+        EXAMPLES::
+
+            sage: from sage.functions.hypergeometric_algebraic import Parameters
+            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: p
+            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
+            sage: p.christol_sorting(7)
+            [(12, -3/5, 1),
+             (20, -1/3, -1),
+             (30, -1/2, -1),
+             (45, -1/4, -1),
+             (48, -2/5, 1),
+             (60, -1, 1)]
+            """
         d = self.d
         A = [(d - (-d*c*a) % d, -a, -1) for a in self.top]
         B = [(d - (-d*c*b) % d, -b, 1) for b in self.bottom]
@@ -251,7 +278,7 @@ class Parameters():
 
         INPUT:
 
-            - ``c`` -- an integer between 1 and ``self.d``, coprime to ``d``.
+            - ``c`` -- integer.
 
         EXAMPLES::
 
@@ -383,7 +410,7 @@ class Parameters():
 
         INPUT:
 
-            - ``s`` -- a rational number.
+            - ``s`` -- rational number.
 
         EXAMPLES::
 
@@ -419,21 +446,21 @@ class Parameters():
     def dwork_image(self, p):
         r"""
         Return the parameters obtained by applying the Dwork map to each of
-        the parameters. The Dwork map D_p(x) of a p-adic integer x is defined 
+        the parameters. The Dwork map D_p(x) of a p-adic integer x is defined
         as the unique p-adic integer such that p*D_p(x) - x is a nonnegative
-        integer smaller than p. Raise a ValuError in case the prime is not 
+        integer smaller than p. Raise a ValuError in case the prime is not
         coprime to the common denominators of the parameters.
 
         INPUT:
 
-            - ``p`` -- a prime number.
+            - ``p`` -- prime number.
 
         EXAMPLE::
 
             sage: from sage.functions.hypergeometric_algebraic import Parameters
             sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
             sage: p
-            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))           
+            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
             sage: p.dwork_image(7)
             ((1/3, 1/2, 3/4), (1/5, 4/5, 1))
         """
@@ -453,12 +480,17 @@ class Parameters():
 
         INPUT:
 
-            - ``p`` -- a prime number.
+            - ``p`` -- prime number.
 
         EXAMPLES::
 
-            sage: 
-      
+            sage: from sage.functions.hypergeometric_algebraic import Parameters
+            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: p
+            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
+            sage: p.frobenius_order(7)
+            2
+
         """
         param = self.decimal_part()
         iter = param.dwork_image(p)
