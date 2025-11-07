@@ -138,7 +138,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, base_field, length, default_encoder_name, default_decoder_name, metric='Hamming'):
+    def __init__(self, base_field, length, default_encoder_name,
+                 default_decoder_name, metric='Hamming') -> None:
         """
         Initialize mandatory parameters that any linear code shares.
 
@@ -244,7 +245,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         E = self.encoder(encoder_name, **kwargs)
         return E.generator_matrix()
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Test equality between two linear codes.
 
@@ -280,7 +281,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         # the worst case does only one system solving.
         return all(c in self for c in other.gens())
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Test inequality of ``self`` and ``other``.
 
@@ -490,7 +491,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         """
         return self.parity_check_matrix()*r
 
-    def __contains__(self, v):
+    def __contains__(self, v) -> bool:
         r"""
         Return ``True`` if `v` can be coerced into ``self``.
         Otherwise, return ``False``.
@@ -818,7 +819,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         codeword.set_immutable()
         return codeword
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return the hash value of ``self``.
 
@@ -1112,7 +1113,7 @@ class LinearCodeSystematicEncoder(Encoder):
         if LinearCodeSystematicEncoder is the default encoder
     """
 
-    def __init__(self, code, systematic_positions=None):
+    def __init__(self, code, systematic_positions=None) -> None:
         r"""
         EXAMPLES::
 
@@ -1134,7 +1135,7 @@ class LinearCodeSystematicEncoder(Encoder):
             # Test that the systematic positions are an information set
             self.generator_matrix()
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Test equality between LinearCodeSystematicEncoder objects.
 
