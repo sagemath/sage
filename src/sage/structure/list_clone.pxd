@@ -1,9 +1,9 @@
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2009-2010 Florent Hivert <Florent.Hivert@univ-rouen.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.structure.element cimport Element
 

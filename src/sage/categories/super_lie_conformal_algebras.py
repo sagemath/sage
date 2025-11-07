@@ -21,6 +21,7 @@ from sage.categories.super_modules import SuperModulesCategory
 from sage.misc.abstract_method import abstract_method
 from sage.categories.lambda_bracket_algebras import LambdaBracketAlgebras
 
+
 class SuperLieConformalAlgebras(SuperModulesCategory):
     r"""
     The category of super Lie conformal algebras.

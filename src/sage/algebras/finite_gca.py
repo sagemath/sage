@@ -5,7 +5,6 @@ Finite dimensional graded commutative algebras
 AUTHORS:
 
 - Michael Jung (2021): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2021 Michael Jung <m.jung at vu.nl>
@@ -79,12 +78,12 @@ class FiniteGCAlgebra(CombinatorialFreeModule):
     - ``degrees`` -- (optional) a tuple or list specifying the degrees
       of the generators; if omitted, each generator is given degree
       1, and if both ``names`` and ``degrees`` are omitted, an error is
-      raised.
-    - ``max_degree`` -- the maximal degree of the graded algebra.
-    - ``mul_symbol`` -- (optional) symbol used for multiplication. If omitted,
-      the string "*" is used.
-    - ``mul_latex_symbol`` -- (optional) latex symbol used for multiplication.
-      If omitted, the empty string is used.
+      raised
+    - ``max_degree`` -- the maximal degree of the graded algebra
+    - ``mul_symbol`` -- (optional) symbol used for multiplication; if omitted,
+      the string "*" is used
+    - ``mul_latex_symbol`` -- (optional) latex symbol used for multiplication;
+      if omitted, the empty string is used
 
     EXAMPLES::
 
@@ -133,7 +132,6 @@ class FiniteGCAlgebra(CombinatorialFreeModule):
             sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1,2,6,6))
             sage: type(A)
             <class 'sage.algebras.commutative_dga.GCAlgebra_with_category'>
-
     """
     @staticmethod
     def __classcall_private__(cls, base, names=None, degrees=None,
@@ -147,7 +145,7 @@ class FiniteGCAlgebra(CombinatorialFreeModule):
         - ``base`` -- the base ring of the algebra
         - ``max_degree`` -- the maximal degree of the algebra
         - ``names`` -- the names of the variables; by default, set to ``x1``,
-          ``x2``, etc.
+          ``x2``, etc
         - ``degrees`` -- the degrees of the generators; by default, set to 1
 
         TESTS::
@@ -156,15 +154,13 @@ class FiniteGCAlgebra(CombinatorialFreeModule):
             sage: A2 = GradedCommutativeAlgebra(GF(2), ['x', 'y'], [3, 6], max_degree=12)
             sage: A1 is A2
             True
-
         """
         if max_degree is None:
             raise TypeError("max_degree must be specified")
         if names is None:
             if degrees is None:
-                raise ValueError("You must specify names or degrees")
-            else:
-                n = len(degrees)
+                raise ValueError("you must specify names or degrees")
+            n = len(degrees)
             names = tuple(f'x{i}' for i in range(n))
         elif isinstance(names, str):
             names = tuple(names.split(','))
@@ -400,13 +396,13 @@ class FiniteGCAlgebra(CombinatorialFreeModule):
             return '1'
         # Non-trivial case:
         terms = []
-        for i in range(len(w)):
-            if w[i] == 0:
+        for i, wi in enumerate(w):
+            if wi == 0:
                 continue
-            elif w[i] == 1:
+            if wi == 1:
                 terms.append(self._names[i])
             else:
-                terms.append(self._names[i] + f'^{w[i]}')
+                terms.append(self._names[i] + f'^{wi}')
         return self._mul_symbol.join(terms)
 
     def _latex_term(self, w) -> str:
@@ -435,13 +431,13 @@ class FiniteGCAlgebra(CombinatorialFreeModule):
             return '1'
         # Non-trivial case:
         terms = []
-        for i in range(len(w)):
-            if w[i] == 0:
+        for i, wi in enumerate(w):
+            if wi == 0:
                 continue
-            elif w[i] == 1:
+            if wi == 1:
                 terms.append(self._names[i])
             else:
-                terms.append(self._names[i] + '^{' + str(w[i]) + '}')
+                terms.append(self._names[i] + '^{' + str(wi) + '}')
         latex_mul = self._mul_latex_symbol + ' '  # add whitespace
         return latex_mul.join(terms)
 

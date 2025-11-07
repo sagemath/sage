@@ -14,7 +14,7 @@ class License:
         return "Type license() to see the full license text."
 
     def __str__(self):
-        with open(os.path.join(SAGE_ROOT,'COPYING.txt')) as f:
+        with open(os.path.join(SAGE_ROOT, 'COPYING.txt')) as f:
             return f.read()
 
 

@@ -1,1 +1,1 @@
-texlive-collection-luatex
+texlive-luatex

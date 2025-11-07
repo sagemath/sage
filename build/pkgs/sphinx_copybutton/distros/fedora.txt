@@ -1,1 +1,1 @@
-python-sphinx-copybutton
+python3-sphinx-copybutton

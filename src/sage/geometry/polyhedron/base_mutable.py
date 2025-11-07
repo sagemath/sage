@@ -136,7 +136,7 @@ class Polyhedron_mutable(Polyhedron_base):
 
     def is_mutable(self):
         r"""
-        Return True if the polyhedron is mutable, i.e. it can be modified in place.
+        Return ``True`` if the polyhedron is mutable, i.e. it can be modified in place.
 
         EXAMPLES::
 
@@ -151,7 +151,7 @@ class Polyhedron_mutable(Polyhedron_base):
 
     def is_immutable(self):
         r"""
-        Return True if the polyhedron is immutable, i.e. it cannot be modified in place.
+        Return ``True`` if the polyhedron is immutable, i.e. it cannot be modified in place.
 
         EXAMPLES::
 

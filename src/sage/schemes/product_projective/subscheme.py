@@ -23,6 +23,7 @@ from sage.schemes.affine.affine_space import AffineSpace
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
 from sage.schemes.projective.projective_space import ProjectiveSpace
 
+
 class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_projective):
     r"""
     Construct an algebraic subscheme of a product of projective spaces.
@@ -38,10 +39,10 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
     INPUT:
 
     - ``A`` -- ambient :class:`Product of Projective Spaces
-      <sage.schemes.product_projective.space.ProductProjectiveSpaces_ring>`.
+      <sage.schemes.product_projective.space.ProductProjectiveSpaces_ring>`
 
     - ``polynomials`` -- single polynomial, ideal or iterable of
-      defining multi-homogeneous polynomials.
+      defining multi-homogeneous polynomials
 
     EXAMPLES::
 
@@ -54,7 +55,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
     TESTS::
 
         sage: from sage.schemes.product_projective.subscheme \
-              import AlgebraicScheme_subscheme_product_projective
+        ....: import AlgebraicScheme_subscheme_product_projective
         sage: AlgebraicScheme_subscheme_product_projective(P, [u*x^2 - v*y*x])
         Closed subscheme of Product of projective spaces P^1 x P^1
          over Rational Field defined by:
@@ -70,11 +71,9 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         INPUT:
 
         - ``PP`` -- (default: ``None``) ambient image projective space;
-          this is constructed if it is not given.
+          this is constructed if it is not given
 
-        OUTPUT:
-
-        Hom from this subscheme to the appropriate subscheme of projective space
+        OUTPUT: hom from this subscheme to the appropriate subscheme of projective space
 
         EXAMPLES::
 
@@ -135,7 +134,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         #set-up the elimination for the segre embedding
         mapping = []
         k = AS.ngens()
-        index = AS.num_components()*[0]
+        index = AS.n_components()*[0]
         for count in range(M + 1):
             mapping.append(R.gen(k+count)-prod([CR(AS[i].gen(index[i])) for i in range(len(index))]))
             for i in range(len(index)-1, -1, -1):
@@ -169,7 +168,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
 
         #create embedding for points
         mapping = []
-        index = AS.num_components()*[0]
+        index = AS.n_components()*[0]
         for count in range(M + 1):
             mapping.append(prod([CR(AS[i].gen(index[i])) for i in range(len(index))]))
             for i in range(len(index)-1, -1, -1):
@@ -186,7 +185,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         r"""
         Return the dimension of the algebraic subscheme.
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -237,13 +236,13 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
                        for PS in PP.components()):
                     self.__dimension = -1
                 else:
-                    self.__dimension = I.dimension() - PP.num_components()
+                    self.__dimension = I.dimension() - PP.n_components()
             except TypeError:  #cannot compute radical for this base ring
                 phi = self.segre_embedding()
                 self.__dimension = phi.codomain().defining_ideal().dimension() - 1
             return self.__dimension
 
-    def is_smooth(self, point=None):
+    def is_smooth(self, point=None) -> bool:
         r"""
         Test whether the algebraic subscheme is smooth.
 
@@ -263,14 +262,15 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
 
     def affine_patch(self, I, return_embedding=False):
         r"""
-        Return the `I^{th}` affine patch of this projective scheme
+        Return the `I`-th affine patch of this projective scheme
         where `I` is a multi-index.
 
         INPUT:
 
-        - ``I`` -- a list or tuple of positive integers
+        - ``I`` -- list or tuple of positive integers
 
-        - ``return_embedding`` -- Boolean, if true the projective embedding is also returned
+        - ``return_embedding`` -- boolean; if ``True`` the projective embedding
+          is also returned
 
         OUTPUT:
 
@@ -336,18 +336,19 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
 
     def intersection_multiplicity(self, X, P):
         r"""
-        Return the intersection multiplicity of this subscheme and the subscheme ``X`` at the point ``P``.
+        Return the intersection multiplicity of this subscheme and the
+        subscheme ``X`` at the point ``P``.
 
-        This uses the intersection_multiplicity function for affine subschemes on affine patches of this subscheme
-        and ``X`` that contain ``P``.
+        This uses the intersection_multiplicity function for affine subschemes
+        on affine patches of this subscheme and ``X`` that contain ``P``.
 
         INPUT:
 
-        - ``X`` -- subscheme in the same ambient space as this subscheme.
+        - ``X`` -- subscheme in the same ambient space as this subscheme
 
-        - ``P`` -- a point in the intersection of this subscheme with ``X``.
+        - ``P`` -- a point in the intersection of this subscheme with ``X``
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES:
 
@@ -393,7 +394,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         # find an affine chart of the ambient space of this subscheme that contains P
         indices = []
         aff_pt = []
-        for i in range(PP.num_components()):
+        for i in range(PP.n_components()):
             Q = P[i]
             j = 0
             while Q[j] == 0:
@@ -416,9 +417,9 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
 
         INPUT:
 
-        - ``P`` -- a point on this subscheme.
+        - ``P`` -- a point on this subscheme
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -451,7 +452,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         # find an affine chart of the ambient space of this subscheme that contains P
         indices = []
         aff_pt = []
-        for i in range(PP.num_components()):
+        for i in range(PP.n_components()):
             Q = P[i]
             j = 0
             while Q[j] == 0:

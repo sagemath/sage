@@ -1,1 +1,1 @@
-python-sphinxcontrib-devhelp
+python3-sphinxcontrib-devhelp

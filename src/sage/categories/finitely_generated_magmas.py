@@ -12,6 +12,7 @@ from sage.misc.abstract_method import abstract_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.magmas import Magmas
 
+
 class FinitelyGeneratedMagmas(CategoryWithAxiom):
     r"""
     The category of finitely generated (multiplicative) magmas.

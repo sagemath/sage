@@ -12,6 +12,7 @@ Commutative additive monoids
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.additive_monoids import AdditiveMonoids
 
+
 class CommutativeAdditiveMonoids(CategoryWithAxiom):
     """
     The category of commutative additive monoids, that is abelian

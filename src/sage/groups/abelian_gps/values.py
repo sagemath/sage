@@ -84,19 +84,19 @@ def AbelianGroupWithValues(values, n, gens_orders=None, names='f', check=False, 
 
     INPUT:
 
-    - ``values`` -- a list/tuple/iterable of values that you want to
+    - ``values`` -- list/tuple/iterable of values that you want to
       associate to the generators
 
-    - ``n`` -- integer (optional). If not specified, will be derived
-       from ``gens_orders``
+    - ``n`` -- integer (optional); if not specified, will be derived
+      from ``gens_orders``
 
-    - ``gens_orders`` -- a list of non-negative integers in the form
+    - ``gens_orders`` -- list of nonnegative integers in the form
        `[a_0, a_1, \dots, a_{n-1}]`, typically written in increasing
        order. This list is padded with zeros if it has length less
        than n. The orders of the commuting generators, with `0`
        denoting an infinite cyclic factor.
 
-    -  ``names`` -- (optional) names of generators
+    - ``names`` -- (optional) names of generators
 
     - ``values_group`` -- a parent or ``None`` (default). The common
       parent of the values. This might be a group, but can also just
@@ -142,9 +142,9 @@ def AbelianGroupWithValues(values, n, gens_orders=None, names='f', check=False, 
     if values_group is None:
         from sage.structure.sequence import Sequence
         values_group = Sequence(values).universe()
-    values = tuple( values_group(val) for val in values )
-    M = AbelianGroupWithValues_class(gens_orders, names, values, values_group)
-    return M
+    values = tuple(values_group(val) for val in values)
+    return AbelianGroupWithValues_class(gens_orders, names,
+                                        values, values_group)
 
 
 class AbelianGroupWithValuesEmbedding(Morphism):
@@ -264,7 +264,7 @@ class AbelianGroupWithValuesElement(AbelianGroupElement):
         """
         if self._value is None:
             values = self.parent().gens_values()
-            self._value = prod( v**e for v,e in zip(values, self.exponents()) )
+            self._value = prod(v**e for v, e in zip(values, self.exponents()))
         return self._value
 
     def _div_(left, right):
@@ -358,12 +358,12 @@ class AbelianGroupWithValues_class(AbelianGroup_class):
     INPUT:
 
     - ``generator_orders`` -- tuple of integers; the orders of the
-      generators.
+      generators
 
     - ``names`` -- string or list of strings; the names for the generators
 
     - ``values`` -- tuple the same length as the number of
-      generators; the values assigned to the generators.
+      generators; the values assigned to the generators
 
     - ``values_group`` -- the common parent of the values
 

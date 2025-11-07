@@ -24,7 +24,6 @@ AUTHORS:
 - David Joyner (2005-12-17): added examples
 
 - Robert Bradshaw (2007-06-25): Pyrexification
-
 """
 
 # ****************************************************************************
@@ -39,14 +38,14 @@ AUTHORS:
 
 from cpython.object cimport *
 
-from sage.misc.constant_function import ConstantFunction
-
 from sage.structure.element cimport Element, ModuleElement
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 from sage.structure.parent cimport Parent
 
 
 def is_Morphism(x):
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38103, "The function is_Morphism is deprecated; use 'isinstance(..., Morphism)' instead.")
     return isinstance(x, Morphism)
 
 
@@ -90,6 +89,8 @@ cdef class Morphism(Map):
             sage: phi
             Defunct morphism
         """
+        from sage.misc.constant_function import ConstantFunction
+
         D = self.domain()
         if D is None:
             return "Defunct morphism"
@@ -295,13 +296,12 @@ cdef class Morphism(Map):
             AssertionError: coercion from Univariate Polynomial Ring in x over Integer Ring
             to Univariate Polynomial Ring in z over Integer Ring
             already registered or discovered
-
         """
         self._codomain.register_coercion(self)
 
     def register_as_conversion(self):
         r"""
-        Register this morphism as a conversion to Sage's coercion model
+        Register this morphism as a conversion to Sage's coercion model.
 
         (see :mod:`sage.structure.coerce`).
 
@@ -440,7 +440,6 @@ cdef class Morphism(Map):
             sage: f = Hom(ZZ,Zmod(1)).an_element()
             sage: bool(f) # indirect doctest
             False
-
         """
         try:
             return self._is_nonzero()
@@ -573,7 +572,7 @@ cdef class SetMorphism(Morphism):
 
         - ``parent`` -- a Homset
         - ``function`` -- a Python function that takes elements
-          of the domain as input and returns elements of the codomain.
+          of the domain as input and returns elements of the codomain
 
         EXAMPLES::
 
@@ -619,14 +618,13 @@ cdef class SetMorphism(Morphism):
 
             sage: from sage.categories.morphism import SetMorphism
             sage: R.<x> = QQ[]
-            sage: def foo(x,*args,**kwds):
+            sage: def foo(x, *args, **kwds):
             ....:     print('foo called with {} {}'.format(args, kwds))
             ....:     return x
             sage: f = SetMorphism(Hom(R,R,Rings()), foo)
             sage: f(2,'hello world',test=1)     # indirect doctest
             foo called with ('hello world',) {'test': 1}
             2
-
         """
         try:
             return self._function(x, *args, **kwds)
@@ -635,11 +633,11 @@ cdef class SetMorphism(Morphism):
 
     cdef dict _extra_slots(self):
         """
+        Extend the dictionary with extra slots for this class.
+
         INPUT:
 
-        - ``_slots`` -- a dictionary
-
-        Extends the dictionary with extra slots for this class.
+        - ``_slots`` -- dictionary
 
         EXAMPLES::
 
@@ -659,7 +657,7 @@ cdef class SetMorphism(Morphism):
         """
         INPUT:
 
-        - ``_slots`` -- a dictionary
+        - ``_slots`` -- dictionary
 
         Updates the slots of ``self`` from the data in the dictionary
 
@@ -686,7 +684,7 @@ cdef class SetMorphism(Morphism):
 
     cpdef bint _eq_c_impl(self, Element other) noexcept:
         """
-        Equality test
+        Equality test.
 
         EXAMPLES::
 
@@ -702,7 +700,6 @@ cdef class SetMorphism(Morphism):
             False
             sage: f._eq_c_impl(1)
             False
-
         """
         return isinstance(other, SetMorphism) and self.parent() == other.parent() and self._function == (<SetMorphism>other)._function
 
@@ -710,9 +707,9 @@ cdef class SetMorphism(Morphism):
         """
         INPUT:
 
-        - ``self``  -- SetMorphism
+        - ``self`` -- SetMorphism
         - ``right`` -- any object
-        - ``op``    -- integer
+        - ``op`` -- integer
 
         EXAMPLES::
 
@@ -749,7 +746,7 @@ cdef class SetIsomorphism(SetMorphism):
 
     - ``parent`` -- a Homset
     - ``function`` -- a Python function that takes elements
-      of the domain as input and returns elements of the codomain.
+      of the domain as input and returns elements of the codomain
 
     EXAMPLES::
 
@@ -800,13 +797,13 @@ cdef class SetIsomorphism(SetMorphism):
             raise RuntimeError('inverse morphism has not been set')
         return self._inverse
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Extend the dictionary with extra slots for this class.
 
         INPUT:
 
-        - ``_slots`` -- a dictionary
+        - ``_slots`` -- dictionary
 
         EXAMPLES::
 
@@ -825,13 +822,13 @@ cdef class SetIsomorphism(SetMorphism):
         slots['_inverse'] = self._inverse
         return slots
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Update the slots of ``self`` from the data in the dictionary.
 
         INPUT:
 
-        - ``_slots`` -- a dictionary
+        - ``_slots`` -- dictionary
 
         EXAMPLES::
 

@@ -22,15 +22,15 @@ AUTHORS:
        Vector_double_dense class
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2008 Jason Grout <jason-sage@creativetrax.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.rings.real_double import RDF
 
@@ -62,7 +62,7 @@ cdef class Vector_real_double_dense(Vector_double_dense):
 
     def stats_skew(self):
         """
-        Computes the skewness of a data set.
+        Compute the skewness of a data set.
 
         For normally distributed data, the skewness should be about
         0. A skewness value > 0 means that there is more weight in the
@@ -78,10 +78,9 @@ cdef class Vector_real_double_dense(Vector_double_dense):
         import scipy.stats
         return self._sage_dtype(scipy.stats.skew(self._vector_numpy))
 
-
     def __reduce__(self):
         """
-        Pickling
+        Pickling.
 
         EXAMPLES::
 

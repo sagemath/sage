@@ -1,1 +1,1 @@
-$(BLAS) gfortran mpfr $(MP_LIBRARY)
+$(BLAS) gfortran mpfr $(MP_LIBRARY) | cmake

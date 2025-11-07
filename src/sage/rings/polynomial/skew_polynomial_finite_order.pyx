@@ -65,7 +65,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
             sage: x.parent() is S
             True
         """
-        SkewPolynomial_generic_dense.__init__ (self, parent, x, check, construct, **kwds)
+        SkewPolynomial_generic_dense.__init__(self, parent, x, check, construct, **kwds)
         self._norm = None
         self._charpoly = None
         self._optbound = None
@@ -94,7 +94,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         else:
             col = 0
             exp = r
-        cdef SkewPolynomial_finite_order_dense powx = <SkewPolynomial_finite_order_dense>self._new_c([zero,one], parent)
+        cdef SkewPolynomial_finite_order_dense powx = <SkewPolynomial_finite_order_dense>self._new_c([zero, one], parent)
         cdef SkewPolynomial_finite_order_dense v
         if (exp % 2 == 1):
             v = <SkewPolynomial_finite_order_dense>self._new_c([zero,one], parent)
@@ -131,7 +131,6 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         cdef Py_ssize_t i, j, deb, k, r = self.parent()._order
         cdef Py_ssize_t d = self.degree ()
         cdef Parent base_ring = <Parent?>self.parent().base_ring()
-        cdef RingElement minusone = <RingElement?>base_ring(-1)
         cdef RingElement zero = <RingElement?>base_ring(0)
         cdef Polk = PolynomialRing (base_ring, 'xr')
         cdef list M = []
@@ -157,8 +156,8 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
 
         INPUT:
 
-        - ``var`` -- a string or ``False`` or ``None`` (default: ``None``);
-          the variable name; if ``False``, return the list of coefficients
+        - ``var`` -- string or ``False`` or ``None`` (default: ``None``);
+          the variable name. If ``False``, return the list of coefficients.
 
         EXAMPLES::
 
@@ -228,8 +227,8 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
 
         INPUT:
 
-        - ``var`` -- a string or ``False`` or ``None`` (default: ``None``);
-          the variable name; if ``False``, return the list of coefficients
+        - ``var`` -- string or ``False`` or ``None`` (default: ``None``);
+          the variable name. If ``False``, return the list of coefficients.
 
         .. NOTE::
 
@@ -341,7 +340,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
 
         INPUT:
 
-        - ``var`` -- a string, a pair of strings or ``None``
+        - ``var`` -- string, a pair of strings or ``None``
           (default: ``None``); the variable names used for the
           characteristic polynomial and the center
 
@@ -382,9 +381,9 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         polynomial is ``x`` and the name of central variable is usually ``z``
         (see :meth:`~sage.rings.polynomial.skew_polynomial_ring.SkewPolynomialRing_finite_order.center`
         for more details about this).
-        The user can speciify different names if desired::
+        The user can specify different names if desired::
 
-            sage: a.reduced_charpoly(var='T')  # variable name for the caracteristic polynomial
+            sage: a.reduced_charpoly(var='T')  # variable name for the characteristic polynomial
             T^3 + (2*z + 1)*T^2 + (3*z^2 + 4*z)*T + 4*z^3 + z^2 + 1
 
             sage: a.reduced_charpoly(var=('T', 'c'))
@@ -393,20 +392,33 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         .. SEEALSO::
 
             :meth:`reduced_trace`, :meth:`reduced_norm`
+
+        TESTS:
+
+        We test that the cache works correctly (see :issue:`39883`)::
+
+            sage: f = u^5 + t*u^4 + t^2*u^3 + t^3*u^2 + t^4*u + t^5
+            sage: f.reduced_norm()
+            z^5 + 2*z^4 + 4*z^3 + z^2 + 4*z + 2
+            sage: f.reduced_charpoly()
+            x^3 + z*x^2 + (2*z + 3)*x + 4*z^5 + 3*z^4 + z^3 + 4*z^2 + z + 3
+            sage: f.reduced_norm()
+            z^5 + 2*z^4 + 4*z^3 + z^2 + 4*z + 2
         """
         if self._charpoly is None:
-            parent = self._parent
-            section = parent._embed_constants.section()
             M = self._matmul_c()
             chi = M.charpoly()
             self._charpoly = [tuple(c.list()) for c in chi.list()]
-            if self._norm is not None:
-                self._norm = self._charpoly[-1]
+            if self._norm is None:
+                if len(self._charpoly) % 2:
+                    self._norm = self._charpoly[0]
+                else:
+                    self._norm = tuple((-chi[0]).list())
         varcenter = None
         if var is None:
             varcharpoly = 'x'
         elif isinstance(var, (tuple, list)) and len(var) == 2:
-            (varcharpoly, varcenter) = var
+            varcharpoly, varcenter = var
         else:
             varcharpoly = var
         center = self.parent().center(name=varcenter)
@@ -449,7 +461,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
 
         ALGORITHM:
 
-        #. Sage first checks whether ``self`` is itself in the
+        #. Sage first checks whether self is itself in the
            center. It if is, it returns ``self``
 
         #. If an optimal bound was previously computed and
@@ -517,7 +529,6 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         if self._optbound is not None:
             return center(self._optbound)
         return self.reduced_norm()
-
 
     def optimal_bound(self):
         r"""

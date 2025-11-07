@@ -39,17 +39,18 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ######################################################################
-from sage.rings.integer_ring import ZZ
-from sage.rings.padics.factory import Qp
-from sage.structure.sage_object import SageObject
-from sage.structure.richcmp import richcmp, richcmp_method
 from sage.arith.functions import lcm as LCM
-from sage.modular.modform.constructor import EisensteinForms, CuspForms
-from sage.schemes.elliptic_curves.constructor import EllipticCurve
-from sage.functions.log import log
-from sage.misc.functional import denominator
-from sage.misc.misc_c import prod
 from sage.matrix.constructor import matrix
+from sage.misc.functional import denominator, log
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
+from sage.modular.modform.constructor import EisensteinForms, CuspForms
+from sage.rings.integer_ring import ZZ
+from sage.schemes.elliptic_curves.constructor import EllipticCurve
+from sage.structure.richcmp import richcmp, richcmp_method
+from sage.structure.sage_object import SageObject
+
+lazy_import('sage.rings.padics.factory', 'Qp')
 
 
 @richcmp_method
@@ -81,7 +82,7 @@ class TateCurve(SageObject):
         - ``E`` -- an elliptic curve over the rational numbers
 
         - ``p`` -- a prime where `E` has multiplicative reduction,
-                 i.e., such that `j(E)` has negative valuation.
+          i.e., such that `j(E)` has negative valuation
 
         EXAMPLES::
 
@@ -166,7 +167,7 @@ class TateCurve(SageObject):
 
         INPUT:
 
-        - ``prec`` -- the `p`-adic precision, default is 20.
+        - ``prec`` -- the `p`-adic precision (default: 20)
 
         EXAMPLES::
 
@@ -208,7 +209,7 @@ class TateCurve(SageObject):
 
         INPUT:
 
-        - ``prec`` -- the `p`-adic precision, default is 20.
+        - ``prec`` -- the `p`-adic precision (default: 20)
 
         EXAMPLES::
 
@@ -243,7 +244,7 @@ class TateCurve(SageObject):
 
         INPUT:
 
-        - ``prec`` -- the `p`-adic precision, default is 20.
+        - ``prec`` -- the `p`-adic precision (default: 20)
 
         EXAMPLES::
 
@@ -268,7 +269,7 @@ class TateCurve(SageObject):
 
         INPUT:
 
-        - ``prec`` -- the `p`-adic precision, default is 20.
+        - ``prec`` -- the `p`-adic precision (default: 20)
 
         EXAMPLES::
 
@@ -312,10 +313,10 @@ class TateCurve(SageObject):
 
         INPUT:
 
-        - ``u`` -- a non-zero `p`-adic number.
+        - ``u`` -- a nonzero `p`-adic number
 
-        - ``prec`` -- the `p`-adic precision, default is the relative precision of ``u``
-          otherwise 20.
+        - ``prec`` -- the `p`-adic precision; default is the relative precision
+          of ``u``, otherwise 20
 
         EXAMPLES::
 
@@ -374,7 +375,7 @@ class TateCurve(SageObject):
 
         INPUT:
 
-        - ``prec`` -- the `p`-adic precision, default is 20.
+        - ``prec`` -- the `p`-adic precision (default: 20)
 
         EXAMPLES::
 
@@ -405,7 +406,7 @@ class TateCurve(SageObject):
 
         INPUT:
 
-        - ``prec`` -- the `p`-adic precision, default is 20.
+        - ``prec`` -- the `p`-adic precision (default: 20)
 
         EXAMPLES::
 
@@ -442,7 +443,7 @@ class TateCurve(SageObject):
 
         INPUT:
 
-        - ``prec`` -- the `p`-adic precision, default is 20.
+        - ``prec`` -- the `p`-adic precision (default: 20)
 
         EXAMPLES::
 
@@ -465,9 +466,9 @@ class TateCurve(SageObject):
 
         INPUT:
 
-        - ``P`` -- a point on the elliptic curve.
+        - ``P`` -- a point on the elliptic curve
 
-        - ``prec`` -- the `p`-adic precision, default is 20.
+        - ``prec`` -- the `p`-adic precision (default: 20)
 
         EXAMPLES::
 
@@ -521,10 +522,10 @@ class TateCurve(SageObject):
 
         INPUT:
 
-        - ``u`` -- a non-zero `p`-adic number.
+        - ``u`` -- a nonzero `p`-adic number
 
-        - ``prec`` -- the `p`-adic precision, default is the relative precision of ``u``
-          otherwise 20.
+        - ``prec`` -- the `p`-adic precision; default is the relative precision
+          of ``u``, otherwise 20
 
         EXAMPLES::
 
@@ -577,11 +578,9 @@ class TateCurve(SageObject):
 
         INPUT:
 
-        - ``prec`` -- the `p`-adic precision, default is 20.
+        - ``prec`` -- the `p`-adic precision (default: 20)
 
-        OUTPUT:
-
-        - A function that can be evaluated on rational points of `E`.
+        OUTPUT: a function that can be evaluated on rational points of `E`
 
         EXAMPLES::
 
@@ -634,11 +633,11 @@ class TateCurve(SageObject):
 
         The `p`-adic Birch and Swinnerton-Dyer conjecture predicts
         that this value appears in the formula for the leading term of
-        the `p`-adic L-function.
+        the `p`-adic `L`-function.
 
         INPUT:
 
-        - ``prec`` -- the `p`-adic precision, default is 20.
+        - ``prec`` -- the `p`-adic precision (default: 20)
 
         EXAMPLES::
 

@@ -10,7 +10,6 @@ Compute invariants of quintics and sextics via 'Ueberschiebung'
 AUTHOR:
 
 - Nick Alexander
-
 """
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -19,7 +18,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 def diffxy(f, x, xtimes, y, ytimes):
     r"""
     Differentiate a polynomial ``f``, ``xtimes`` with respect to ``x``, and
-    ```ytimes`` with respect to ``y``.
+    ``ytimes`` with respect to ``y``.
 
     EXAMPLES::
 

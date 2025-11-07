@@ -23,7 +23,7 @@ def AdditiveAbelianGroup(invs, remember_generators=True):
 
     - ``remember_generators`` -- boolean (default: ``True``); whether or not
       to fix a set of generators (corresponding to the given invariants, which
-      need not be in Smith form).
+      need not be in Smith form)
 
     OUTPUT: the abelian group `\bigoplus_i \ZZ / n_i \ZZ`, where `n_i` are the
     invariants
@@ -363,7 +363,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class):
 
     def is_multiplicative(self):
         r"""
-        Return False since this is an additive group.
+        Return ``False`` since this is an additive group.
 
         EXAMPLES::
 
@@ -409,7 +409,7 @@ class AdditiveAbelianGroup_fixed_gens(AdditiveAbelianGroup_class):
     """
     def __init__(self, cover, rels, gens):
         r"""
-        Standard initialisation function
+        Standard initialisation function.
 
         EXAMPLES::
 

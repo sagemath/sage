@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 r"""
 Abstract base class for Sage objects
 """
@@ -67,7 +66,7 @@ cdef class SageObject:
 
     def rename(self, x=None):
         r"""
-        Change self so it prints as x, where x is a string.
+        Change ``self`` so it prints as x, where x is a string.
 
         If x is ``None``, the existing custom name is removed.
 
@@ -362,7 +361,7 @@ cdef class SageObject:
 
     def __hash__(self):
         r"""
-        Not implemented: mutable objects inherit from this class
+        Not implemented: mutable objects inherit from this class.
 
         EXAMPLES::
 
@@ -431,7 +430,6 @@ cdef class SageObject:
             sage: d = a + O(2)                                                          # needs sage.rings.padics
             sage: b._cache_key() == d._cache_key()  # this would be True if the parents were not included               # needs sage.rings.padics
             False
-
         """
         try:
             hash(self)
@@ -446,7 +444,7 @@ cdef class SageObject:
 
     def save(self, filename=None, compress=True):
         """
-        Save self to the given filename.
+        Save ``self`` to the given filename.
 
         EXAMPLES::
 
@@ -454,7 +452,7 @@ cdef class SageObject:
             sage: x = SR.var("x")
             sage: f = x^3 + 5
             sage: from tempfile import NamedTemporaryFile
-            sage: with NamedTemporaryFile(suffix=".sobj") as t:
+            sage: with NamedTemporaryFile(suffix='.sobj') as t:
             ....:     f.save(t.name)
             ....:     load(t.name)
             x^3 + 5
@@ -606,7 +604,7 @@ cdef class SageObject:
 
     def _test_not_implemented_methods(self, **options):
         """
-        Checks that all required methods for this object are implemented
+        Check that all required methods for this object are implemented.
 
         TESTS::
 
@@ -653,7 +651,7 @@ cdef class SageObject:
 
     def _test_pickling(self, **options):
         """
-        Checks that this object can be pickled and unpickled properly.
+        Check that this object can be pickled and unpickled properly.
 
         EXAMPLES::
 
@@ -689,11 +687,10 @@ cdef class SageObject:
 
     def _interface_(self, I):
         """
-        Return coercion of self to an object of the interface I.
+        Return coercion of ``self`` to an object of the interface I.
 
-        The result of coercion is cached, unless self is a C
-        extension class or ``self._interface_is_cached_()`` returns
-        False.
+        The result of coercion is cached, unless ``self`` is a C extension
+        class or ``self._interface_is_cached_()`` returns ``False``.
         """
         c = self._interface_is_cached_()
         if c:
@@ -721,7 +718,7 @@ cdef class SageObject:
             try:
                 s = self._interface_init_(I)
             except Exception:
-                raise NotImplementedError("coercion of object %s to %s not implemented:\n%s\n%s" % (repr(self), I))
+                raise NotImplementedError("coercion of object %s to %s not implemented" % (repr(self), I))
         X = I(s)
         if c:
             try:
@@ -735,7 +732,7 @@ cdef class SageObject:
 
     def _interface_is_cached_(self):
         """
-        Return True if the interface objects are cached.
+        Return ``True`` if the interface objects are cached.
 
         If you have an object x and do gp(x), the result is cached if
         this function returns True.
@@ -743,17 +740,84 @@ cdef class SageObject:
         return True
 
     def _gap_(self, G=None):
+        """
+        Return a Gap object.
+
+        Unlike :meth:`_libgap_`, this method returns an instance of
+        :class:`sage.interfaces.gap.GapElement`, which wraps an object
+        in the GAP interpreter spawned as a subprocess of Sage.
+
+        Typically you should not need to call this method directly,
+        instead just call :mod:`~sage.interfaces.gap`
+        on the object. See example below.
+
+        EXAMPLES::
+
+            sage: a = gap(2/3); a
+            2/3
+            sage: type(a)
+            <class 'sage.interfaces.gap.GapElement'>
+
+            sage: a = (2/3)._gap_(); a
+            2/3
+            sage: type(a)
+            <class 'sage.interfaces.gap.GapElement'>
+        """
         if G is None:
             import sage.interfaces.gap
             G = sage.interfaces.gap.gap
         return self._interface_(G)
 
     def _gap_init_(self):
+        """
+        Return a string that provides a representation of ``self`` in GAP.
+
+        This method is indirectly used by :meth:`_libgap_` and :meth:`_gap_`
+        by essentially passing their output to
+        :meth:`libgap.eval <sage.libs.gap.libgap.Gap.eval>`
+        and :mod:`~sage.interfaces.gap` respectively,
+        unless the subclass overrides them with more efficient variants.
+
+        EXAMPLES::
+
+            sage: (2/3)._gap_init_()
+            '2/3'
+            sage: Zmod(4)._gap_init_()
+            'ZmodnZ(4)'
+        """
         import sage.interfaces.gap
         I = sage.interfaces.gap.gap
         return self._interface_init_(I)
 
     def _libgap_(self):
+        """
+        Return a libgap object.
+
+        Unlike :meth:`_gap_`, this method returns an instance of
+        :class:`sage.libs.gap.libgap.GapElement`, which wraps an object
+        in libgap embedded in Sage. As explained in
+        :mod:`sage.libs.gap.libgap`, this is much faster.
+
+        Typically you should not need to call this method directly,
+        instead use :mod:`~sage.libs.gap.libgap`. See example below.
+
+        By default, this method makes use of :meth:`_gap_init_`.
+        Subclasses could override this method to provide a more efficient
+        implementation.
+
+        EXAMPLES::
+
+            sage: a = libgap(2/3); a
+            2/3
+            sage: type(a)
+            <class 'sage.libs.gap.element.GapElement_Rational'>
+
+        TESTS::
+
+            sage: from sage.libs.gap.element import GapElement
+            sage: isinstance(a, GapElement)
+            True
+        """
         from sage.libs.gap.libgap import libgap
         return libgap.eval(self)
 
@@ -812,18 +876,16 @@ cdef class SageObject:
 
     def _maxima_(self, G=None):
         if G is None:
-            import sage.interfaces.maxima
-            G = sage.interfaces.maxima.maxima
+            from sage.interfaces.maxima_lib import maxima
+            G = maxima
         return self._interface_(G)
 
     def _maxima_init_(self):
-        import sage.interfaces.maxima
-        I = sage.interfaces.maxima.maxima
-        return self._interface_init_(I)
+        from sage.interfaces.maxima_lib import maxima
+        return self._interface_init_(maxima)
 
     def _maxima_lib_(self, G=None):
-        from sage.interfaces.maxima_lib import maxima_lib
-        return self._interface_(maxima_lib)
+        return self._maxima_(G)
 
     def _maxima_lib_init_(self):
         return self._maxima_init_()
@@ -831,16 +893,14 @@ cdef class SageObject:
     def _magma_init_(self, magma):
         """
         Given a Magma interpreter M, return a string that evaluates in
-        that interpreter to the Magma object corresponding to self.
+        that interpreter to the Magma object corresponding to ``self``.
         This function may call the magma interpreter when it runs.
 
         INPUT:
 
         - ``magma`` -- a Magma interface
 
-        OUTPUT:
-
-        - string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -946,9 +1006,7 @@ cdef class SageObject:
         Return default string expression that evaluates in R to this
         object.
 
-        OUTPUT:
-
-        - string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -978,7 +1036,7 @@ cdef class SageObject:
                 return self.__pari
             except AttributeError:
                 pass
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         x = pari(self._pari_init_())
         if self._interface_is_cached_():
             try:
@@ -991,3 +1049,35 @@ cdef class SageObject:
     def _pari_init_(self):
         from sage.interfaces.gp import gp
         return self._interface_init_(gp)
+
+    def _regina_(self, G=None):
+        r"""
+        Convert ``self`` to an interface element for Regina.
+
+        EXAMPLES::
+
+            sage: type(1.2._regina_()._inst)   # optional regina
+            <class 'float'>
+        """
+        if G is None:
+            import sage.interfaces.regina
+            G = sage.interfaces.regina.regina
+        return self._interface_(G)
+
+    def _regina_init_(self):
+        r"""
+        Convert ``self`` to a string representation for the Regina
+        interface.
+
+        EXAMPLES::
+
+            sage: # optional regina
+            sage: (~7)._regina_init_()
+            '1/7'
+            sage: t = regina((~7)._regina_init_()); t
+            0.14285714285714285
+            sage: type(t), type(t._inst)
+            (<class 'sage.interfaces.regina.ReginaElement'>, <class 'float'>)
+        """
+        from sage.interfaces.regina import regina
+        return self._interface_init_(regina)

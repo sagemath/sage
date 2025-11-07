@@ -46,7 +46,7 @@ The ``gen`` class is defined in
 :sage_root:`src/sage/libs/cypari2/gen.pyx`, and this is where we
 add the method ``matfrobenius``:
 
-.. CODE-BLOCK:: cython
+.. code-block:: cython
 
     def matfrobenius(self, flag=0):
         r"""
@@ -102,7 +102,7 @@ class where we call the ``matfrobenius()`` method on the PARI object
 associated to the matrix after doing some sanity checking. Then we
 convert output from PARI to Sage objects:
 
-.. CODE-BLOCK:: cython
+.. code-block:: cython
 
     def frobenius_form(self, flag=0, var='x'):
         """
@@ -156,22 +156,22 @@ convert output from PARI to Sage objects:
             return F, B
 
 
-
 .. _section-gap:
 
 GAP
 ===
 
-Wrapping a GAP function in Sage is a matter of writing a program in
-Python that uses the pexpect interface to pipe various commands to GAP
-and read back the input into Sage. This is sometimes easy, sometimes
-hard.
+Wrapping a GAP function in Sage can be done in two different ways. The
+first one uses the ``pexpect`` interface to pipe various commands to
+GAP and read back the input into Sage. The second way is to access GAP
+through its library interface ``libgap``. We recommend the second one
+for the sake of efficiency.
 
 For example, suppose we want to make a wrapper for the computation of
 the Cartan matrix of a simple Lie algebra. The Cartan matrix of `G_2`
 is available in GAP using the commands:
 
-.. CODE-BLOCK:: gap
+.. code-block:: gap
 
     gap> L:= SimpleLieAlgebra( "G", 2, Rationals );
     <Lie algebra of dimension 14 over Rationals>
@@ -181,15 +181,12 @@ is available in GAP using the commands:
 
 In Sage, one can access these commands by typing::
 
-    sage: L = gap.SimpleLieAlgebra('"G"', 2, 'Rationals'); L
-    Algebra( Rationals, [ v.1, v.2, v.3, v.4, v.5, v.6, v.7, v.8, v.9, v.10,
-      v.11, v.12, v.13, v.14 ] )
+    sage: L = libgap.SimpleLieAlgebra("G", 2, QQ); L
+    <Lie algebra of dimension 14 over Rationals>
     sage: R = L.RootSystem(); R
     <root system of rank 2>
     sage: R.CartanMatrix()
     [ [ 2, -1 ], [ -3, 2 ] ]
-
-Note the ``'"G"'`` which is evaluated in GAP as the string ``"G"``.
 
 The purpose of this section is to use this example to show how one
 might write a Python/Sage program whose input is, say, ``('G',2)`` and
@@ -197,16 +194,17 @@ whose output is the matrix above (but as a Sage Matrix---see the code
 in the directory :sage_root:`src/sage/matrix/` and the
 corresponding parts of the Sage reference manual).
 
-First, the input must be converted into strings consisting of legal
-GAP commands. Then the GAP output, which is also a string, must be
-parsed and converted if possible to a corresponding Sage/Python
-object.
+First, the input must be converted into a libgap object, either by
+applying ``libgap.eval`` on a string, or by using a GAP command
+``CMD`` as a ``libgap.CMD`` method. Then one can work with these
+object using other GAP commands as ``libgap`` methods. At the end, one
+can convert back to sage using the method ``sage`` if it works.
 
 .. skip
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
-    def cartan_matrix(type, rank):
+    def cartan_matrix(typ, rank):
         """
         Return the Cartan matrix of given Chevalley type and rank.
 
@@ -214,7 +212,7 @@ object.
 
         - type -- a Chevalley letter name, as a string, for
           a family type of simple Lie algebras
-        - rank -- an integer (legal for that type).
+        - rank -- an integer (legal for that type)
 
         EXAMPLES::
 
@@ -228,22 +226,15 @@ object.
             [ 2 -1]
             [-3  2]
         """
-        L = gap.SimpleLieAlgebra('"%s"' % type, rank, 'Rationals')
+        L = libgap.SimpleLieAlgebra(typ, rank, libgap.Rationals)
         R = L.RootSystem()
         sM = R.CartanMatrix()
-        ans = eval(str(sM))
+        ans = sM.sage()
         MS = MatrixSpace(QQ, rank)
         return MS(ans)
 
 The output ``ans`` is a Python list. The last two lines convert that
 list to an instance of the Sage class ``Matrix``.
-
-Alternatively, one could replace the first line of the above function
-with this:
-
-.. CODE-BLOCK:: python
-
-        L = gap.new('SimpleLieAlgebra("%s", %s, Rationals);'%(type, rank))
 
 Defining "easy" and "hard" is subjective, but here is one definition.
 Wrapping a GAP function is "easy" if there is already a corresponding
@@ -335,7 +326,7 @@ to carry this out.
 
 Here is an example on how to use this command in Singular:
 
-.. CODE-BLOCK:: text
+.. code-block:: text
 
      A Computer Algebra System for Polynomial Computations   /   version 3-0-0
                                                            0<
@@ -412,8 +403,8 @@ interface to Singular::
     sage: singular.LIB("brnoeth.lib")
     sage: singular.ring(5,'(x,y)','lp')
         polynomial ring, over a field, global ordering
-        //   coefficients: ZZ/5
-        //   number of vars : 2
+        // coefficients: ZZ/5...
+        // number of vars : 2
         //        block   1 : ordering lp
         //                  : names    x y
         //        block   2 : ordering C
@@ -458,7 +449,7 @@ just that.
 
 .. skip
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
     def points_parser(string_points, F):
         """
@@ -518,7 +509,7 @@ ourselves to points of degree one.
 
 .. skip
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
     def places_on_curve(f, F):
         """
@@ -602,7 +593,7 @@ Next, we implement the general function (for brevity we omit the
 docstring, which is the same as above). Note that the ``point_parser``
 function is not required:
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
     def places_on_curve(f, F):
         p = F.characteristic()
@@ -643,7 +634,7 @@ For example, here is part of the file
 defines an interface between Sage and Octave, an open source program
 for doing numerical computations, among other things:
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
     import os
     from expect import Expect, ExpectElement
@@ -657,7 +648,7 @@ basic class for interfaces. The third line defines the class
 ``Octave``; it derives from ``Expect`` as well. After this comes a
 docstring, which we omit here (see the file for details). Next comes:
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
         def __init__(self, script_subdirectory="", logfile=None,
                      server=None, server_tmpdir=None):
@@ -675,7 +666,7 @@ docstring, which we omit here (see the file for details). Next comes:
 
 This uses the class ``Expect`` to set up the Octave interface:
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
         def set(self, var, value):
             """
@@ -701,7 +692,7 @@ These let users type ``octave.set('x', 3)``, after which
 ``octave.get('x')`` returns ``' 3'``. Running ``octave.console()``
 dumps the user into an Octave interactive shell:
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
         def solve_linear_system(self, A, b):
             """

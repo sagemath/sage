@@ -46,9 +46,11 @@ Named associative algebras
    sage/algebras/askey_wilson
    sage/combinat/diagram_algebras
    sage/algebras/clifford_algebra
+   sage/algebras/clifford_algebra_element
    sage/algebras/cluster_algebra
    sage/combinat/descent_algebra
    sage/algebras/down_up_algebra
+   sage/algebras/exterior_algebra_groebner
    fusion_rings
    sage/algebras/hall_algebra
    sage/combinat/posets/incidence_algebras
@@ -79,6 +81,7 @@ Hecke algebras
    :maxdepth: 1
 
    sage/algebras/hecke_algebras/ariki_koike_algebra
+   sage/algebras/hecke_algebras/ariki_koike_specht_modules
    sage/algebras/iwahori_hecke_algebra
    sage/algebras/nil_coxeter_algebra
    sage/algebras/yokonuma_hecke_algebra

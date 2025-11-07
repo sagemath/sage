@@ -14,8 +14,8 @@ to the intrinsic and extrinsic geometries of a hyperbolic slicing of the
 
 We start by declaring the ambient manifold `M` and the submanifold `N`::
 
-    sage: M = Manifold(3, 'M', structure="Lorentzian")
-    sage: N = Manifold(2, 'N', ambient=M, structure="Riemannian", start_index=1)
+    sage: M = Manifold(3, 'M', structure='Lorentzian')
+    sage: N = Manifold(2, 'N', ambient=M, structure='Riemannian', start_index=1)
 
 The considered slices being spacelike hypersurfaces, they are Riemannian
 manifolds.
@@ -176,7 +176,6 @@ REFERENCES:
 
 - \B. O'Neill : *Semi-Riemannian Geometry* [ONe1983]_
 - \J. M. Lee : *Riemannian Manifolds* [Lee1997]_
-
 """
 
 # *****************************************************************************
@@ -191,19 +190,19 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.manifolds.differentiable.pseudo_riemannian import \
-    PseudoRiemannianManifold
-from sage.manifolds.differentiable.degenerate import \
-    DegenerateManifold
-from sage.manifolds.differentiable.differentiable_submanifold import \
-    DifferentiableSubmanifold
-from sage.rings.infinity import infinity
-from sage.matrix.constructor import matrix
-from sage.functions.other import factorial
-from sage.symbolic.ring import SR
-from sage.misc.cachefunc import cached_method
-from sage.rings.integer import Integer
 from queue import Queue
+
+from sage.functions.other import factorial
+from sage.manifolds.differentiable.degenerate import DegenerateManifold
+from sage.manifolds.differentiable.differentiable_submanifold import (
+    DifferentiableSubmanifold,
+)
+from sage.manifolds.differentiable.pseudo_riemannian import PseudoRiemannianManifold
+from sage.matrix.constructor import matrix
+from sage.misc.cachefunc import cached_method
+from sage.rings.infinity import infinity
+from sage.rings.integer import Integer
+from sage.symbolic.ring import SR
 
 
 class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
@@ -264,8 +263,8 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
     Let `N` be a 2-dimensional submanifold of a 3-dimensional Riemannian
     manifold `M`::
 
-        sage: M = Manifold(3, 'M', structure ="Riemannian")
-        sage: N = Manifold(2, 'N', ambient=M, structure="Riemannian")
+        sage: M = Manifold(3, 'M', structure ='Riemannian')
+        sage: N = Manifold(2, 'N', ambient=M, structure='Riemannian')
         sage: N
         2-dimensional Riemannian submanifold N immersed in the 3-dimensional
          Riemannian manifold M
@@ -302,7 +301,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
 
         :mod:`~sage.manifolds.manifold` and
         :mod:`~sage.manifolds.differentiable.differentiable_submanifold`
-
     """
     def __init__(self, n, name, ambient=None, metric_name=None,
                  signature=None, base_manifold=None, diff_degree=infinity,
@@ -324,7 +322,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             2-dimensional Riemannian submanifold N embedded in the
              3-dimensional Lorentzian manifold M
             sage: S = Manifold(2, 'S', latex_name=r"\Sigma", ambient=M,
-            ....:              structure="Riemannian", start_index=1)
+            ....:              structure='Riemannian', start_index=1)
             sage: latex(S)
             \Sigma
             sage: S.start_index()
@@ -339,7 +337,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             sage: N
             4-dimensional pseudo-Riemannian submanifold N immersed in the
              5-dimensional pseudo-Riemannian manifold M
-
         """
         if metric_name is None:
             metric_name = 'gamma'
@@ -384,8 +381,8 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
 
         TESTS::
 
-            sage: M = Manifold(3, 'M', structure="Lorentzian")
-            sage: N = Manifold(2, 'N', ambient=M, structure="Riemannian")
+            sage: M = Manifold(3, 'M', structure='Lorentzian')
+            sage: N = Manifold(2, 'N', ambient=M, structure='Riemannian')
             sage: N
             2-dimensional Riemannian submanifold N immersed in the
              3-dimensional Lorentzian manifold M
@@ -394,7 +391,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             sage: N
             2-dimensional Riemannian submanifold N embedded in the
              3-dimensional Lorentzian manifold M
-
         """
         if self is not self._manifold:
             return "Open subset {} of the {}".format(self._name, self._manifold)
@@ -423,7 +419,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         INPUT:
 
         - ``name`` -- name given to the open subset
-        - ``latex_name`` --  (default: ``None``) LaTeX symbol to denote the
+        - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
           subset; if none is provided, it is set to ``name``
         - ``coord_def`` -- (default: {}) definition of the subset in
           terms of coordinates; ``coord_def`` must a be dictionary with keys
@@ -439,8 +435,8 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
 
         EXAMPLES::
 
-            sage: M = Manifold(3, 'M', structure="Riemannian")
-            sage: N = Manifold(2, 'N', ambient=M, structure="Riemannian"); N
+            sage: M = Manifold(3, 'M', structure='Riemannian')
+            sage: N = Manifold(2, 'N', ambient=M, structure='Riemannian'); N
             2-dimensional Riemannian submanifold N immersed in the
              3-dimensional Riemannian manifold M
             sage: S = N.subset('S'); S
@@ -465,7 +461,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             Open subset O of the
              2-dimensional Riemannian submanifold N embedded in the
               3-dimensional Riemannian manifold M
-
         """
         resu = PseudoRiemannianSubmanifold(self._dim, name,
                                            ambient=self._ambient,
@@ -486,21 +481,18 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         r"""
         Return the metric of the ambient manifold.
 
-        OUTPUT:
-
-        - the metric of the ambient manifold
+        OUTPUT: the metric of the ambient manifold
 
         EXAMPLES::
 
             sage: M.<x,y,z> = EuclideanSpace()
-            sage: N = Manifold(2, 'N', ambient=M, structure="Riemannian")
+            sage: N = Manifold(2, 'N', ambient=M, structure='Riemannian')
             sage: N.ambient_metric()
             Riemannian metric g on the Euclidean space E^3
             sage: N.ambient_metric().display()
             g = dx⊗dx + dy⊗dy + dz⊗dz
             sage: N.ambient_metric() is M.metric()
             True
-
         """
         if self._ambient_metric is None:
             self._ambient_metric = self._ambient.metric()
@@ -559,7 +551,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
              embedded in the Euclidean space E^3
             sage: P.induced_metric().display()
             g = 14 dt⊗dt
-
         """
         if self._first_fundamental_form is None:
             self._first_fundamental_form = super().metric()
@@ -623,7 +614,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             gamma = 5 dt⊗dt
 
         Setting the argument ``name`` to that declared while constructing
-        the submanifold (default = ``'gamma'``) yields the same result::
+        the submanifold (default: ``'gamma'``) yields the same result::
 
             sage: N.metric(name='gamma') is N.metric()
             True
@@ -637,7 +628,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             sage: h[0, 0] = 1  # initialization
             sage: h.display()
             h = dt⊗dt
-
         """
         if name is None or name == self._metric_name:
             return self.first_fundamental_form()
@@ -654,9 +644,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         The result is cached, so calling this method multiple times always
         returns the same result at no additional cost.
 
-        OUTPUT:
-
-        - 1-form field on the ambient manifold
+        OUTPUT: 1-form field on the ambient manifold
 
         EXAMPLES:
 
@@ -664,7 +652,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         radii::
 
             sage: M.<x,y,z> = EuclideanSpace()
-            sage: N = Manifold(2, 'N', ambient=M, structure="Riemannian")
+            sage: N = Manifold(2, 'N', ambient=M, structure='Riemannian')
             sage: C.<th,ph> = N.chart(r'th:(0,pi):\theta ph:(-pi,pi):\phi')
             sage: r = var('r', domain='real')
             sage: assume(r>0)
@@ -681,7 +669,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             sage: N.difft().display()
             dr = x/sqrt(x^2 + y^2 + z^2) dx + y/sqrt(x^2 + y^2 + z^2) dy +
              z/sqrt(x^2 + y^2 + z^2) dz
-
         """
         if self._dim_foliation == 0:
             raise ValueError("A foliation is needed to "
@@ -701,9 +688,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         The result is cached, so calling this method multiple times always
         returns the same result at no additional cost.
 
-        OUTPUT:
-
-        - vector field on the ambient manifold
+        OUTPUT: vector field on the ambient manifold
 
         EXAMPLES:
 
@@ -711,7 +696,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         radii::
 
             sage: M.<x,y,z> = EuclideanSpace()
-            sage: N = Manifold(2, 'N', ambient=M, structure="Riemannian")
+            sage: N = Manifold(2, 'N', ambient=M, structure='Riemannian')
             sage: C.<th,ph> = N.chart(r'th:(0,pi):\theta ph:(-pi,pi):\phi')
             sage: r = var('r', domain='real')
             sage: assume(r>0)
@@ -728,7 +713,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             sage: N.gradt().display()
             grad(r) = x/sqrt(x^2 + y^2 + z^2) e_x + y/sqrt(x^2 + y^2 + z^2) e_y
              + z/sqrt(x^2 + y^2 + z^2) e_z
-
         """
         if self._dim_foliation == 0:
             raise ValueError("A foliation is needed to perform "
@@ -781,7 +765,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         radii::
 
             sage: M.<x,y,z> = EuclideanSpace()
-            sage: N = Manifold(2, 'N', ambient=M, structure="Riemannian")
+            sage: N = Manifold(2, 'N', ambient=M, structure='Riemannian')
             sage: C.<th,ph> = N.chart(r'th:(0,pi):\theta ph:(-pi,pi):\phi')
             sage: r = var('r', domain='real') # foliation parameter
             sage: assume(r>0)
@@ -809,7 +793,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         part of a foliation, in stereographic coordinates::
 
             sage: M.<X,Y,Z> = EuclideanSpace()
-            sage: N = Manifold(2, 'N', ambient=M, structure="Riemannian")
+            sage: N = Manifold(2, 'N', ambient=M, structure='Riemannian')
             sage: U = N.open_subset('U')
             sage: V = N.open_subset('V')
             sage: N.declare_union(U, V)
@@ -869,7 +853,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             n = -cos(phi)*sin(the) e_X - sin(phi)*sin(the) e_Y - cos(the) e_Z
             sage: n.restrict(U).display(format_spec=spher)  # long time
             n = -cos(phi)*sin(the) e_X - sin(phi)*sin(the) e_Y - cos(the) e_Z
-
         """
         if self._dim_foliation != 0:    # case of a foliation
             self._normal = self._sgn * self.lapse() * self.gradt()
@@ -878,7 +861,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         # case of no foliation:
         max_frame = self._ambient.default_frame().along(self._immersion)
         self._normal = self.multivector_field(self._ambient._dim - self._dim,
-                                              name="n",
+                                              name='n',
                                               dest_map=self._immersion)
 
         # an auxiliary function:
@@ -968,7 +951,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         A unit circle embedded in the Euclidean plane::
 
             sage: M.<X,Y> = EuclideanSpace()
-            sage: N = Manifold(1, 'N', ambient=M, structure="Riemannian")
+            sage: N = Manifold(1, 'N', ambient=M, structure='Riemannian')
             sage: U = N.open_subset('U')
             sage: V = N.open_subset('V')
             sage: N.declare_union(U,V)
@@ -996,7 +979,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             sage: N.ambient_induced_metric()[:]
             [ x^2/(x^2 + 4) -2*x/(x^2 + 4)]
             [-2*x/(x^2 + 4)    4/(x^2 + 4)]
-
         """
         if self._ambient._dim - self._dim != 1:
             raise NotImplementedError("ambient_first_fundamental_form() is "
@@ -1020,9 +1002,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         The result is cached, so calling this method multiple times always
         returns the same result at no additional cost.
 
-        OUTPUT:
-
-        - the lapse function, as a scalar field on the ambient manifold
+        OUTPUT: the lapse function, as a scalar field on the ambient manifold
 
         EXAMPLES:
 
@@ -1030,7 +1010,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         radii::
 
             sage: M.<x,y,z> = EuclideanSpace()
-            sage: N = Manifold(2, 'N', ambient=M, structure="Riemannian")
+            sage: N = Manifold(2, 'N', ambient=M, structure='Riemannian')
             sage: C.<th,ph> = N.chart(r'th:(0,pi):\theta ph:(-pi,pi):\phi')
             sage: r = var('r', domain='real') # foliation parameter
             sage: assume(r>0)
@@ -1049,7 +1029,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             N: E^3 → ℝ
                (x, y, z) ↦ 1
                (th_E3, ph_E3, r_E3) ↦ 1
-
         """
         if self._dim_foliation == 0:
             raise ValueError("A foliation is needed "
@@ -1068,9 +1047,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         The result is cached, so calling this method multiple times always
         returns the same result at no additional cost.
 
-        OUTPUT:
-
-        - shift vector field on the ambient manifold
+        OUTPUT: shift vector field on the ambient manifold
 
         EXAMPLES:
 
@@ -1078,7 +1055,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         radii::
 
             sage: M.<x,y,z> = EuclideanSpace()
-            sage: N = Manifold(2, 'N', ambient=M, structure="Riemannian")
+            sage: N = Manifold(2, 'N', ambient=M, structure='Riemannian')
             sage: C.<th,ph> = N.chart(r'th:(0,pi):\theta ph:(-pi,pi):\phi')
             sage: r = var('r', domain='real') # foliation parameter
             sage: assume(r>0)
@@ -1095,7 +1072,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             Vector field beta on the Euclidean space E^3
             sage: N.shift().display()  # long time
             beta = 0
-
         """
         if self._dim_foliation == 0:
             raise ValueError("A foliation is needed "
@@ -1124,7 +1100,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         A unit circle embedded in the Euclidean plane::
 
             sage: M.<X,Y> = EuclideanSpace()
-            sage: N = Manifold(1, 'N', ambient=M, structure="Riemannian")
+            sage: N = Manifold(1, 'N', ambient=M, structure='Riemannian')
             sage: U = N.open_subset('U')
             sage: V = N.open_subset('V')
             sage: N.declare_union(U,V)
@@ -1152,7 +1128,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             sage: N.ambient_extrinsic_curvature()[:]  # long time
             [-x^2/(x^2 + 4)  2*x/(x^2 + 4)]
             [ 2*x/(x^2 + 4)   -4/(x^2 + 4)]
-
         """
         if self._ambient._dim - self._dim != 1:
             raise ValueError("ambient_second_fundamental_form is defined only "
@@ -1212,7 +1187,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         A unit circle embedded in the Euclidean plane::
 
             sage: M.<X,Y> = EuclideanSpace()
-            sage: N = Manifold(1, 'N', ambient=M, structure="Riemannian")
+            sage: N = Manifold(1, 'N', ambient=M, structure='Riemannian')
             sage: U = N.open_subset('U')
             sage: V = N.open_subset('V')
             sage: N.declare_union(U,V)
@@ -1254,7 +1229,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
              submanifold N embedded in the 2-dimensional Riemannian manifold M
             sage: N.second_fundamental_form().display()
             K = 2*sqrt(u^4 + 2*u^2 + 2)*u/(u^6 + 3*u^4 + 4*u^2 + 2) du⊗du
-
         """
         if self._ambient._dim - self._dim != 1:
             raise ValueError("second_fundamental_form is defined only for"
@@ -1331,7 +1305,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         radii::
 
             sage: M.<x,y,z> = EuclideanSpace()
-            sage: N = Manifold(2, 'N', ambient=M, structure="Riemannian")
+            sage: N = Manifold(2, 'N', ambient=M, structure='Riemannian')
             sage: C.<th,ph> = N.chart(r'th:(0,pi):\theta ph:(-pi,pi):\phi')
             sage: r = var('r', domain='real') # foliation parameter
             sage: assume(r>0)
@@ -1356,7 +1330,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
 
             sage: N.projector().contract(N.normal()).display()  # long time
             0
-
         """
         if self._ambient._dim - self._dim != 1:
             raise NotImplementedError("projector() is implemented only for "
@@ -1390,7 +1363,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         radii::
 
             sage: M.<x,y,z> = EuclideanSpace()
-            sage: N = Manifold(2, 'N', ambient=M, structure="Riemannian")
+            sage: N = Manifold(2, 'N', ambient=M, structure='Riemannian')
             sage: C.<th,ph> = N.chart(r'th:(0,pi):\theta ph:(-pi,pi):\phi')
             sage: r = var('r', domain='real') # foliation parameter
             sage: assume(r>0)
@@ -1413,7 +1386,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             True
 
         Note that the output of ``project()`` is not cached.
-
         """
         if self._ambient._dim - self._dim != 1:
             raise NotImplementedError("project() is implemented only for "
@@ -1440,7 +1412,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         INPUT:
 
         - ``tensor`` -- any tensor field, eventually along the submanifold if
-          no foliation is provided.
+          no foliation is provided
         - ``indices`` -- (default: ``0``) list of integers containing the
           indices on which the projection is made on the normal vector.
           By default, all projections are made on the submanifold. If
@@ -1448,9 +1420,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
           the normal vector, all the other ones with the orthogonal projection
           operator.
 
-        OUTPUT:
-
-        - tensor field of rank `k`-``len(indices)``
+        OUTPUT: tensor field of rank `k`-``len(indices)``
 
         EXAMPLES:
 
@@ -1458,7 +1428,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         radii::
 
             sage: M.<x,y,z> = EuclideanSpace()
-            sage: N = Manifold(2, 'N', ambient=M, structure="Riemannian")
+            sage: N = Manifold(2, 'N', ambient=M, structure='Riemannian')
             sage: C.<th,ph> = N.chart(r'th:(0,pi):\theta ph:(-pi,pi):\phi')
             sage: r = var('r', domain='real') # foliation parameter
             sage: assume(r>0)
@@ -1497,7 +1467,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             E^3 → ℝ
             (x, y, z) ↦ 1
             (th_E3, ph_E3, r_E3) ↦ 1
-
         """
         if self._ambient._dim - self._dim != 1:
             raise NotImplementedError("mixed_projection() is implemented only "
@@ -1540,16 +1509,14 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         The result is cached, so calling this method multiple times always
         returns the same result at no additional cost.
 
-        OUTPUT:
-
-        - the Gauss curvature as a scalar field on the submanifold
+        OUTPUT: the Gauss curvature as a scalar field on the submanifold
 
         EXAMPLES:
 
         A unit circle embedded in the Euclidean plane::
 
             sage: M.<X,Y> = EuclideanSpace()
-            sage: N = Manifold(1, 'N', ambient=M, structure="Riemannian")
+            sage: N = Manifold(1, 'N', ambient=M, structure='Riemannian')
             sage: U = N.open_subset('U')
             sage: V = N.open_subset('V')
             sage: N.declare_union(U,V)
@@ -1571,7 +1538,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             N → ℝ
             on U: x ↦ -1
             on V: y ↦ -1
-
         """
         if self._ambient._dim - self._dim != 1:
             raise ValueError("gauss_curvature is defined only for "
@@ -1596,7 +1562,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
 
         INPUT:
 
-        - ``chart`` --  chart in which the principal directions are to be
+        - ``chart`` -- chart in which the principal directions are to be
           computed
 
         OUTPUT:
@@ -1609,7 +1575,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         A unit circle embedded in the Euclidean plane::
 
             sage: M.<X,Y> = EuclideanSpace()
-            sage: N = Manifold(1, 'N', ambient=M, structure="Riemannian")
+            sage: N = Manifold(1, 'N', ambient=M, structure='Riemannian')
             sage: U = N.open_subset('U')
             sage: V = N.open_subset('V')
             sage: N.declare_union(U,V)
@@ -1629,7 +1595,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
               embedded in the Euclidean plane E^2, -1)]
             sage: N.principal_directions(stereoN)[0][0].display()  # long time
             e_0 = ∂/∂x
-
         """
         if self._ambient._dim - self._dim != 1:
             raise ValueError("principal directions is defined only for "
@@ -1663,7 +1628,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
 
         INPUT:
 
-        - ``chart`` --  chart in which the principal curvatures are to be
+        - ``chart`` -- chart in which the principal curvatures are to be
           computed
 
         OUTPUT:
@@ -1676,7 +1641,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         A unit circle embedded in the Euclidean plane::
 
             sage: M.<X,Y> = EuclideanSpace()
-            sage: N = Manifold(1, 'N', ambient=M, structure="Riemannian")
+            sage: N = Manifold(1, 'N', ambient=M, structure='Riemannian')
             sage: U = N.open_subset('U')
             sage: V = N.open_subset('V')
             sage: N.declare_union(U,V)
@@ -1698,7 +1663,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             k_0: N → ℝ
             on U: x ↦ -1
             on W: y ↦ -1
-
         """
         if self._ambient._dim - self._dim != 1:
             raise ValueError("principal_curvatures is defined only for "
@@ -1725,16 +1689,14 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         The result is cached, so calling this method multiple times always
         returns the same result at no additional cost.
 
-        OUTPUT:
-
-        - the mean curvature, as a scalar field on the submanifold
+        OUTPUT: the mean curvature, as a scalar field on the submanifold
 
         EXAMPLES:
 
         A unit circle embedded in the Euclidean plane::
 
             sage: M.<X,Y> = EuclideanSpace()
-            sage: N = Manifold(1, 'N', ambient=M, structure="Riemannian")
+            sage: N = Manifold(1, 'N', ambient=M, structure='Riemannian')
             sage: U = N.open_subset('U')
             sage: V = N.open_subset('V')
             sage: N.declare_union(U,V)
@@ -1756,7 +1718,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             N → ℝ
             on U: x ↦ -1
             on V: y ↦ -1
-
         """
         if self._ambient._dim - self._dim != 1:
             raise ValueError("mean_curvature is defined only for "
@@ -1788,7 +1749,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         A unit circle embedded in the Euclidean plane::
 
             sage: M.<X,Y> = EuclideanSpace()
-            sage: N = Manifold(1, 'N', ambient=M, structure="Riemannian")
+            sage: N = Manifold(1, 'N', ambient=M, structure='Riemannian')
             sage: U = N.open_subset('U')
             sage: V = N.open_subset('V')
             sage: N.declare_union(U,V)
@@ -1808,7 +1769,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
              submanifold N embedded in the Euclidean plane E^2
             sage: N.shape_operator().display()  # long time
             -∂/∂x⊗dx
-
         """
         if self._ambient._dim - self._dim != 1:
             raise ValueError("shape_operator is defined only for "
@@ -1828,7 +1788,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         EXAMPLES::
 
             sage: M.<x,y,z> = EuclideanSpace()
-            sage: N = Manifold(2, 'N', ambient=M, structure="Riemannian")
+            sage: N = Manifold(2, 'N', ambient=M, structure='Riemannian')
             sage: C.<th,ph> = N.chart(r'th:(0,pi):\theta ph:(-pi,pi):\phi')
             sage: r = var('r', domain='real') # foliation parameter
             sage: assume(r>0)
@@ -1849,7 +1809,6 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             False
             sage: n == N.normal()
             True
-
         """
         self.difft.clear_cache()
         self.gradt.clear_cache()

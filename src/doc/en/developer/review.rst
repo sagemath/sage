@@ -17,8 +17,6 @@ Anybody (e.g. you) can do this job for somebody else's PR. This document
 lists things that the reviewer must check before deciding that a PR is
 ready for inclusion into Sage.
 
-You can now begin the review by reading the diff code.
-
 **Check the GitHub checks:** We require all checks have passed.
 
 **Read the diff:** Click "Files changed" tab of the PR. Read through the
@@ -26,10 +24,9 @@ changes of all modified files. We use `pull request reviews
 <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/about-pull-request-reviews>`_.
 You can add comments directly to changed lines.
 
-**Build the code:** (This is optional if the **build and test** check has passed.)
-While you read the code, you can :ref:`rebuild Sage with the new code
-<section-walkthrough-make>`. If you do not know how to **download the code**,
-:ref:`see here <section-workflows-pr-checkout>`.
+**Test the code:** (This is optional if the **build and test** check has passed.)
+Checkout the **code of the PR** following :ref:`see here <section-workflows-pr-checkout>`
+and run the relevant tests.
 
 The following should generally be checked while reading and testing the code:
 
@@ -75,6 +72,13 @@ The following should generally be checked while reading and testing the code:
   including "long" doctests (this can be done with ``make ptestlong``) and any
   optional doctests related to the functionality. See :ref:`chapter-doctesting`
   for more information.
+
+For changes that affect the **user interface**, in particular, upgrades to
+IPython and Jupyter component packages, manual testing is crucial because
+our automatic tests do not cover the user interface. We recommend to use
+a `Jupyter notebook with comprehensive tests of graphics and typesetting
+<https://github.com/egourgoulhon/SageMathTest/blob/master/Notebooks/test_display.ipynb>`_,
+some of which is Sage-specific.
 
 You are now ready to change the PR's status (see
 :ref:`section-github-pr-status`):

@@ -803,9 +803,9 @@
     "sage.cpython.type": {
         "ntests": 7
     },
-    "sage.cpython.wrapperdescr": {
+    "sage.doctest.check_tolerance": {
         "failed": true,
-        "ntests": 0
+        "ntests": 19
     },
     "sage.doctest.control": {
         "failed": true,
@@ -821,12 +821,20 @@
         "failed": true,
         "ntests": 413
     },
+    "sage.doctest.marked_output": {
+        "failed": true,
+        "ntests": 21
+    },
     "sage.doctest.parsing": {
         "failed": true,
-        "ntests": 313
+        "ntests": 275
     },
     "sage.doctest.reporting": {
         "ntests": 115
+    },
+    "sage.doctest.rif_tol": {
+        "failed": true,
+        "ntests": 18
     },
     "sage.doctest.sources": {
         "failed": true,

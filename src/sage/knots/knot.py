@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.graphs sage.groups
 r"""
 Knots
 
@@ -30,6 +30,8 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.categories.monoids import Monoids
 
 # We need Link to be first in the MRO in order to use its equality, hash, etc.
+
+
 class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A knot.
@@ -47,7 +49,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
     INPUT:
 
     - ``data`` -- see :class:`Link` for the allowable inputs
-    - ``check`` -- optional, default ``True``. If ``True``, make sure
+    - ``check`` -- boolean (default: ``True``); if ``True``, make sure
       that the data define a knot, not a link
 
     EXAMPLES:
@@ -148,14 +150,6 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
         """
         Return unicode art for the knot.
 
-        INPUT:
-
-        - a knot
-
-        OUTPUT:
-
-        - unicode art for the knot
-
         EXAMPLES::
 
             sage: W = Knots()
@@ -208,14 +202,14 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
                 x, y, xx, yy = xx, yy, x, y
             if y < b:
                 if xx < a:
-                    M[a][b] = u"╯"
+                    M[a][b] = "╯"
                 else:
-                    M[a][b] = u"╮"
+                    M[a][b] = "╮"
             else:
                 if xx < a:
-                    M[a][b] = u"╰"
+                    M[a][b] = "╰"
                 else:
-                    M[a][b] = u"╭"
+                    M[a][b] = "╭"
 
         for ab, cd in graphe.edge_iterator(labels=False):
             a, b = ab
@@ -223,21 +217,21 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
             if a == c:
                 b, d = sorted((b, d))
                 for i in range(b + 1, d):
-                    M[a][i] = u"─"
+                    M[a][i] = "─"
             else:
                 a, c = sorted((a, c))
                 for i in range(a + 1, c):
-                    M[i][b] = u"│"
+                    M[i][b] = "│"
 
         if style == 0:
-            H = u"┿"
-            V = u"╂"
+            H = "┿"
+            V = "╂"
         elif style == 1:
-            H = u"━"
-            V = u"┃"
+            H = "━"
+            V = "┃"
         elif style == 2:
-            H = u"─"
-            V = u"│"
+            H = "─"
+            V = "│"
 
         for x, y in hori:
             M[x][y] = H
@@ -272,10 +266,12 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
             sage: K = Knot([[1,5,2,4],[5,3,6,2],[3,1,4,6]])
             sage: K.dt_code()
             [4, 6, 2]
+
             sage: B = BraidGroup(4)
             sage: K = Knot(B([1, 2, 1, 2]))
             sage: K.dt_code()
             [4, -6, 8, -2]
+
             sage: K = Knot([[[1, -2, 3, -4, 5, -1, 2, -3, 4, -5]],
             ....:          [1, 1, 1, 1, 1]])
             sage: K.dt_code()
@@ -296,7 +292,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
                     crossing = i
                     break
             if not string_found:
-                for i in range(0, crossing):
+                for i in range(crossing):
                     if abs(b[i]) == string or abs(b[i]) == string - 1:
                         string_found = True
                         crossing = i
@@ -402,9 +398,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
 
         - ``other`` -- a knot
 
-        OUTPUT:
-
-        A knot equivalent to the connected sum of ``self`` and ``other``.
+        OUTPUT: a knot equivalent to the connected sum of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -543,11 +537,9 @@ class Knots(Singleton, Parent):
 
         INPUT:
 
-        - a signed Gauss code
+        - ``gauss`` -- a signed Gauss code
 
-        OUTPUT:
-
-        - a knot
+        OUTPUT: a knot
 
         EXAMPLES::
 
@@ -579,11 +571,10 @@ class Knots(Singleton, Parent):
 
         INPUT:
 
-        a list of signed even numbers, the Dowker-Thistlethwaite code of a knot
+        - ``code`` -- list of signed even numbers; the Dowker-Thistlethwaite
+          code of a knot
 
-        OUTPUT:
-
-        a knot
+        OUTPUT: a knot
 
         .. WARNING::
 
@@ -631,11 +622,9 @@ class Knots(Singleton, Parent):
         INPUT:
 
         - ``n`` -- the crossing number
-        - ``k`` -- a positive integer
+        - ``k`` -- positive integer
 
-        OUTPUT:
-
-        the knot `K_{n,k}` in the Rolfsen table
+        OUTPUT: the knot `K_{n,k}` in the Rolfsen table
 
         EXAMPLES::
 
@@ -679,9 +668,11 @@ class Knots(Singleton, Parent):
         """
         if n > 10:
             raise ValueError('more than 10 crossings, not in the knot table')
-        from sage.groups.braid import BraidGroup
         if (n, k) in small_knots_table:
             m, word = small_knots_table[(n, k)]
+
+            from sage.groups.braid import BraidGroup
+
             G = BraidGroup(m)
             return Knot(G(word))
         else:

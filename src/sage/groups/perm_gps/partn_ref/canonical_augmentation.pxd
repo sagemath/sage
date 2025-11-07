@@ -4,7 +4,6 @@ Declaration file for canonical augmentation
 AUTHORS:
 
 - Robert Miller (2011--2013): initial version
-
 """
 
 #*****************************************************************************
@@ -83,4 +82,3 @@ cdef iterator *setup_canonical_generator(int degree,
     iterator *cangen_prealloc) except NULL
 
 cdef iterator *start_canonical_generator(StabilizerChain *, void *, int, iterator *) except NULL
-

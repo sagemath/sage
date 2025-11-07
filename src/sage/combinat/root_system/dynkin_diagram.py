@@ -30,7 +30,7 @@ AUTHORS:
 # ****************************************************************************
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.graphs.digraph import DiGraph
 from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract
 
@@ -160,7 +160,7 @@ def DynkinDiagram(*args, **kwds):
 
     TESTS:
 
-    Check that :issue:`15277` is fixed by not having edges from 0's::
+    Check that :issue:`15277` is fixed by not having edges from 0s::
 
         sage: CM = CartanMatrix([[2,-1,0,0],[-3,2,-2,-2],[0,-1,2,-1],[0,-1,-1,2]])
         sage: CM
@@ -181,7 +181,7 @@ def DynkinDiagram(*args, **kwds):
     if len(args) == 0:
         return DynkinDiagram_class()
     mat = args[0]
-    if is_Matrix(mat):
+    if isinstance(mat, Matrix):
         mat = CartanMatrix(*args)
     if isinstance(mat, CartanMatrix):
         if mat.cartan_type() is not mat:
@@ -299,7 +299,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
     def _rich_repr_(self, display_manager, **kwds):
         """
-        Rich Output Magic Method
+        Rich Output Magic Method.
 
         Override rich output because :meth:`_repr_` outputs ascii
         art. The proper fix will be in :issue:`18328`.
@@ -323,7 +323,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
     def _latex_(self, scale=0.5):
         r"""
-        Return a latex representation of this Dynkin diagram
+        Return a latex representation of this Dynkin diagram.
 
         EXAMPLES::
 
@@ -403,7 +403,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
     @staticmethod
     def an_instance():
         """
-        Returns an example of Dynkin diagram
+        Return an example of Dynkin diagram.
 
         EXAMPLES::
 
@@ -415,7 +415,6 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
             [ 2 -1 -1]
             [-2  2 -1]
             [-1 -1  2]
-
         """
         # hyperbolic Dynkin diagram of Exercise 4.9 p. 57 of Kac Infinite Dimensional Lie Algebras.
         g = DynkinDiagram()
@@ -451,7 +450,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
     def rank(self):
         r"""
-        Returns the index set for this Dynkin diagram
+        Return the index set for this Dynkin diagram.
 
         EXAMPLES::
 
@@ -460,7 +459,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
             sage: DynkinDiagram("A2","B2","F4").rank()
             8
         """
-        return self.num_verts()
+        return self.n_vertices()
 
     def dynkin_diagram(self):
         """
@@ -476,7 +475,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
     @cached_method
     def cartan_matrix(self):
         r"""
-        Returns the Cartan matrix for this Dynkin diagram
+        Return the Cartan matrix for this Dynkin diagram.
 
         EXAMPLES::
 
@@ -489,7 +488,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
     def dual(self):
         r"""
-        Returns the dual Dynkin diagram, obtained by reversing all edges.
+        Return the dual Dynkin diagram, obtained by reversing all edges.
 
         EXAMPLES::
 
@@ -631,7 +630,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
         """
         return self.cartan_matrix().subtype(index_set).dynkin_diagram()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Check if ``self`` corresponds to a finite root system.
 
@@ -647,7 +646,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
             return self._cartan_type.is_finite()
         return self.cartan_matrix().is_finite()
 
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         Check if ``self`` corresponds to an affine root system.
 
@@ -663,7 +662,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
             return self._cartan_type.is_affine()
         return self.cartan_matrix().is_affine()
 
-    def is_irreducible(self):
+    def is_irreducible(self) -> bool:
         """
         Check if ``self`` corresponds to an irreducible root system.
 
@@ -682,11 +681,11 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
         """
         if self._cartan_type is not None:
             return self._cartan_type.is_irreducible()
-        return self.connected_components_number() == 1
+        return self.number_of_connected_components() == 1
 
-    def is_crystallographic(self):
+    def is_crystallographic(self) -> bool:
         """
-        Implements :meth:`CartanType_abstract.is_crystallographic`
+        Implement :meth:`CartanType_abstract.is_crystallographic`.
 
         A Dynkin diagram always corresponds to a crystallographic root system.
 
@@ -771,8 +770,8 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
             [[2], [1, 3], [2, 4], [3]]
         """
         if not isinstance(i, tuple):
-            return DiGraph.__getitem__(self,i)
-        [i,j] = i
+            return DiGraph.__getitem__(self, i)
+        i, j = i
         if i == j:
             if i in self._odd_isotropic_roots:
                 return 0
@@ -784,9 +783,9 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
     def column(self, j):
         """
-        Returns the `j^{th}` column `(a_{i,j})_i` of the
+        Return the `j`-th column `(a_{i,j})_i` of the
         Cartan matrix corresponding to this Dynkin diagram, as a container
-        (or iterator) of tuples `(i, a_{i,j})`
+        (or iterator) of tuples `(i, a_{i,j})`.
 
         EXAMPLES::
 
@@ -799,9 +798,9 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
     def row(self, i):
         """
-        Returns the `i^{th}` row `(a_{i,j})_j` of the
+        Return the `i`-th row `(a_{i,j})_j` of the
         Cartan matrix corresponding to this Dynkin diagram, as a container
-        (or iterator) of tuples `(j, a_{i,j})`
+        (or iterator) of tuples `(j, a_{i,j})`.
 
         EXAMPLES::
 
@@ -835,7 +834,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
             True
         """
         from sage.rings.infinity import infinity
-        scalarproducts_to_order = {0: 2,  1: 3,  2: 4,  3: 6}
+        scalarproducts_to_order = {0: 2, 1: 3, 2: 4, 3: 6}
         from sage.graphs.graph import Graph
         coxeter_diagram = Graph(multiedges=False)
         I = self.index_set()

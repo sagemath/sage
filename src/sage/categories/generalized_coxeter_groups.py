@@ -16,6 +16,7 @@ from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.complex_reflection_or_generalized_coxeter_groups import ComplexReflectionOrGeneralizedCoxeterGroups
 
+
 class GeneralizedCoxeterGroups(Category_singleton):
     r"""
     The category of generalized Coxeter groups.

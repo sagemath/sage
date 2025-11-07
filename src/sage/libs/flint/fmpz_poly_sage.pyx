@@ -51,7 +51,6 @@ cdef class Fmpz_poly(SageObject):
             3  3 5 7
         """
         cdef Py_ssize_t i
-        cdef long c
         cdef Integer w
         if isinstance(v, str):
             if not fmpz_poly_set_str(self.poly, str_to_bytes(v)):
@@ -87,9 +86,9 @@ cdef class Fmpz_poly(SageObject):
             sage: f[2] == 10**100000
             True
         """
-        if isinstance(value, Integer) :
+        if isinstance(value, Integer):
             fmpz_poly_set_coeff_mpz(self.poly, i, (<Integer>value).value)
-        else :
+        else:
             fmpz_poly_set_coeff_si(self.poly, i, value)
 
     def __getitem__(self, i):
@@ -111,7 +110,7 @@ cdef class Fmpz_poly(SageObject):
 
     def __repr__(self):
         """
-        Print self according to the native FLINT format.
+        Print ``self`` according to the native FLINT format.
 
         EXAMPLES::
 
@@ -126,7 +125,7 @@ cdef class Fmpz_poly(SageObject):
 
     def degree(self):
         """
-        The degree of self.
+        The degree of ``self``.
 
         EXAMPLES::
 
@@ -144,7 +143,7 @@ cdef class Fmpz_poly(SageObject):
 
     def list(self):
         """
-        Return self as a list of coefficients, lowest terms first.
+        Return ``self`` as a list of coefficients, lowest terms first.
 
         EXAMPLES::
 
@@ -189,7 +188,7 @@ cdef class Fmpz_poly(SageObject):
 
     def __neg__(self):
         """
-        Return the negative of self.
+        Return the negative of ``self``.
 
         EXAMPLES::
 
@@ -239,7 +238,7 @@ cdef class Fmpz_poly(SageObject):
 
     def __pow__(self, n, dummy):
         """
-        Return self raised to the power of n.
+        Return ``self`` raised to the power of `n`.
 
         EXAMPLES::
 
@@ -267,7 +266,7 @@ cdef class Fmpz_poly(SageObject):
 
     def pow_truncate(self, exp, n):
         """
-        Return self raised to the power of exp mod x^n.
+        Return ``self`` raised to the power of ``exp`` mod `x^n`.
 
         EXAMPLES::
 
@@ -310,7 +309,7 @@ cdef class Fmpz_poly(SageObject):
 
     def div_rem(self, Fmpz_poly other):
         """
-        Return self / other, self, % other.
+        Return ``self / other, self % other``.
 
         EXAMPLES::
 
@@ -336,9 +335,9 @@ cdef class Fmpz_poly(SageObject):
         fmpz_poly_divrem(Q.poly, R.poly, self.poly, other.poly)
         return Q, R
 
-    def left_shift(self, unsigned long n) :
+    def left_shift(self, unsigned long n):
         """
-        Left shift self by n.
+        Left shift ``self`` by `n`.
 
         EXAMPLES::
 
@@ -353,9 +352,9 @@ cdef class Fmpz_poly(SageObject):
 
         return res
 
-    def right_shift(self, unsigned long n) :
+    def right_shift(self, unsigned long n):
         """
-        Right shift self by n.
+        Right shift ``self`` by `n`.
 
         EXAMPLES::
 
@@ -383,9 +382,9 @@ cdef class Fmpz_poly(SageObject):
         fmpz_poly_pseudo_divrem(Q.poly, R.poly, &d, self.poly, other.poly)
         return Q, R, d
 
-    def derivative(self) :
+    def derivative(self):
         """
-        Return the derivative of self.
+        Return the derivative of ``self``.
 
         EXAMPLES::
 
@@ -407,7 +406,7 @@ cdef class Fmpz_poly(SageObject):
 
     def truncate(self, n):
         """
-        Return the truncation of self at degree n.
+        Return the truncation of ``self`` at degree `n`.
 
         EXAMPLES::
 
@@ -424,7 +423,7 @@ cdef class Fmpz_poly(SageObject):
 
     def _unsafe_mutate_truncate(self, n):
         """
-        Return the truncation of self at degree n.
+        Return the truncation of ``self`` at degree `n`.
 
         Don't do this unless you know there are no other references to
         this polynomial!!!!!
@@ -443,7 +442,7 @@ cdef class Fmpz_poly(SageObject):
 
     def _sage_(self, var='x'):
         """
-        Return self as an element of the sage ZZ[var].
+        Return ``self`` as an element of the sage ``ZZ[var]``.
 
         EXAMPLES::
 

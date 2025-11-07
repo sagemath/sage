@@ -10,6 +10,7 @@ Affine factorization crystal of type `A`
 #******************************************************************************
 
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.unique_representation import UniqueRepresentation
@@ -18,8 +19,9 @@ from sage.categories.crystals import CrystalMorphism
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.homset import Hom
 from sage.combinat.root_system.cartan_type import CartanType
-from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.rsk import RSK
+
+lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
 
 
 class AffineFactorizationCrystal(UniqueRepresentation, Parent):
@@ -364,7 +366,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
 
 def affine_factorizations(w, l, weight=None):
     r"""
-    Return all factorizations of ``w`` into ``l`` factors or of weight ``weight``.
+    Return all factorizations of `w` into `l` factors or of weight ``weight``.
 
     INPUT:
 
@@ -372,7 +374,8 @@ def affine_factorizations(w, l, weight=None):
 
     - ``l`` -- nonnegative integer
 
-    - ``weight`` -- (default: None) tuple of nonnegative integers specifying the length of the factors
+    - ``weight`` -- (default: ``None``) tuple of nonnegative integers
+      specifying the length of the factors
 
     EXAMPLES::
 
@@ -435,7 +438,8 @@ def affine_factorizations(w, l, weight=None):
             else:
                 return []
         else:
-            return [[u]+p for (u,v) in w.left_pieri_factorizations() for p in affine_factorizations(v,l-1) ]
+            return [[u] + p for u, v in w.left_pieri_factorizations()
+                    for p in affine_factorizations(v, l - 1)]
     else:
         if l != len(weight):
             return []
@@ -445,11 +449,11 @@ def affine_factorizations(w, l, weight=None):
             else:
                 return []
         else:
-            return [[u]+p for (u,v) in w.left_pieri_factorizations(max_length=weight[0]) if u.length() == weight[0]
-                    for p in affine_factorizations(v,l-1,weight[1:]) ]
+            return [[u] + p for u, v in w.left_pieri_factorizations(max_length=weight[0]) if u.length() == weight[0]
+                    for p in affine_factorizations(v, l - 1, weight[1:])]
 
 #####################################################################
-## Crystal isomorphisms
+#  Crystal isomorphisms
 
 
 class FactorizationToTableaux(CrystalMorphism):

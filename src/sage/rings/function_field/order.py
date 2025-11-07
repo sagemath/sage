@@ -96,7 +96,6 @@ AUTHORS:
 - Kwankyu Lee (2017-04-30): added maximal orders of global function fields
 
 - Brent Baccala (2019-12-20): support orders in characteristic zero
-
 """
 
 # ****************************************************************************
@@ -133,7 +132,7 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
         sage: F.maximal_order()
         Maximal order of Rational function field in y over Rational Field
     """
-    def __init__(self, field, ideal_class=FunctionFieldIdeal, category=None):
+    def __init__(self, field, ideal_class=FunctionFieldIdeal, category=None) -> None:
         """
         Initialize.
 
@@ -146,10 +145,10 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
         category = IntegralDomains().or_subcategory(category).Infinite()
         Parent.__init__(self, category=category, facade=field)
 
-        self._ideal_class = ideal_class # element class for parent ideal monoid
+        self._ideal_class_ = ideal_class  # element class for parent ideal monoid
         self._field = field
 
-    def is_field(self, proof=True):
+    def is_field(self, proof: bool = True) -> bool:
         """
         Return ``False`` since orders are never fields.
 
@@ -160,7 +159,7 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
         """
         return False
 
-    def is_noetherian(self):
+    def is_noetherian(self) -> bool:
         """
         Return ``True`` since orders in function fields are Noetherian.
 
@@ -184,7 +183,7 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
 
     fraction_field = function_field
 
-    def is_subring(self, other):
+    def is_subring(self, other) -> bool:
         """
         Return ``True`` if the order is a subring of the other order.
 
@@ -220,7 +219,7 @@ class FunctionFieldOrder(FunctionFieldOrder_base):
     """
     Base class for orders in function fields.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation.
 
@@ -236,7 +235,7 @@ class FunctionFieldOrderInfinite(FunctionFieldOrder_base):
     """
     Base class for infinite orders in function fields.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -250,7 +249,7 @@ class FunctionFieldMaximalOrder(UniqueRepresentation, FunctionFieldOrder):
     """
     Base class of maximal orders of function fields.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the order.
 
@@ -266,7 +265,7 @@ class FunctionFieldMaximalOrderInfinite(FunctionFieldMaximalOrder, FunctionField
     """
     Base class of maximal infinite orders of function fields.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -275,7 +274,7 @@ class FunctionFieldMaximalOrderInfinite(FunctionFieldMaximalOrder, FunctionField
 
             sage: K.<x> = FunctionField(GF(2)); R.<t> = PolynomialRing(K)
             sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)                            # needs sage.rings.function_field
-            sage: F.maximal_order_infinite()                                            # needs sage.modules sage.rings.function_field
+            sage: F.maximal_order_infinite()                                            # needs sage.rings.function_field
             Maximal infinite order of Function field in y defined by y^3 + x^6 + x^4 + x^2
         """
         return "Maximal infinite order of %s" % (self.function_field(),)

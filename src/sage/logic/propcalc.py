@@ -154,11 +154,9 @@ def formula(s):
 
     INPUT:
 
-    - ``s`` -- a string that contains a logical expression
+    - ``s`` -- string that contains a logical expression
 
-    OUTPUT:
-
-    An instance of :class:`BooleanFormula`.
+    OUTPUT: an instance of :class:`BooleanFormula`
 
     EXAMPLES:
 
@@ -201,9 +199,7 @@ def get_formulas(*statements):
       full syntax parse tree of a formula, and a string must
       be a string representation of a formula
 
-    OUTPUT:
-
-    The converted formulas in a list.
+    OUTPUT: the converted formulas in a list
 
     EXAMPLES:
 
@@ -271,13 +267,11 @@ def consistent(*formulas):
 
     - ``*formulas`` -- instances of :class:`BooleanFormula`
 
-    OUTPUT:
+    OUTPUT: a boolean value to be determined as follows:
 
-    A boolean value to be determined as follows:
+    - ``True`` -- if the formulas are logically consistent
 
-    - ``True`` - if the formulas are logically consistent
-
-    - ``False`` - if the formulas are not logically consistent
+    - ``False`` -- if the formulas are not logically consistent
 
     EXAMPLES:
 

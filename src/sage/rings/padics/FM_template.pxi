@@ -47,7 +47,7 @@ from sage.categories.homset import Hom
 cdef class FMElement(pAdicTemplateElement):
     cdef int _set(self, x, long val, long xprec, absprec, relprec) except -1:
         """
-        Sets the value of this element from given defining data.
+        Set the value of this element from given defining data.
 
         This function is intended for use in conversion, and should
         not be called on an element created with :meth:`_new_c`.
@@ -91,7 +91,7 @@ cdef class FMElement(pAdicTemplateElement):
 
     cdef FMElement _new_c(self):
         """
-        Creates a new element with the same basic info.
+        Create a new element with the same basic info.
 
         TESTS::
 
@@ -110,7 +110,7 @@ cdef class FMElement(pAdicTemplateElement):
 
     cdef pAdicTemplateElement _new_with_value(self, celement value, long absprec):
         """
-        Creates a new element with a given value and absolute precision.
+        Create a new element with a given value and absolute precision.
 
         Used by code that doesn't know the precision type.
         """
@@ -120,7 +120,7 @@ cdef class FMElement(pAdicTemplateElement):
 
     cdef int _get_unit(self, celement value) except -1:
         """
-        Sets ``value`` to the unit of this p-adic element.
+        Set ``value`` to the unit of this `p`-adic element.
         """
         cremove(value, self.value, self.prime_pow.ram_prec_cap, self.prime_pow)
 
@@ -236,7 +236,7 @@ cdef class FMElement(pAdicTemplateElement):
 
     def __invert__(self):
         r"""
-        Returns multiplicative inverse of this element. The valuation
+        Return multiplicative inverse of this element. The valuation
         of ``self`` must be zero.
 
         EXAMPLES::
@@ -381,7 +381,7 @@ cdef class FMElement(pAdicTemplateElement):
 
     cdef pAdicTemplateElement _lshift_c(self, long shift):
         r"""
-        Multiplies self by `\pi^{shift}`.
+        Multiply ``self`` by `\pi^{shift}`.
 
         If shift < -self.valuation(), digits will be truncated.  See
         :meth:`__rshift__` for details.
@@ -428,7 +428,7 @@ cdef class FMElement(pAdicTemplateElement):
 
     cdef pAdicTemplateElement _rshift_c(self, long shift):
         r"""
-        Divides by `\pi^{shift}`, and truncates.
+        Divide by `\pi^{shift}`, and truncate.
 
         Note that this operation will insert arbitrary digits (in
         practice, currently all zero) in the least significant digits.
@@ -466,11 +466,9 @@ cdef class FMElement(pAdicTemplateElement):
 
         INPUT:
 
-        - ``absprec`` -- an integer or infinity
+        - ``absprec`` -- integer or infinity
 
-        OUTPUT:
-
-        a new element truncated modulo `\pi^{\mbox{absprec}}`.
+        OUTPUT: a new element truncated modulo `\pi^{\mbox{absprec}}`
 
         EXAMPLES::
 
@@ -486,7 +484,6 @@ cdef class FMElement(pAdicTemplateElement):
             7
             sage: a.add_bigoh(-2^1000)
             0
-
         """
         cdef long aprec
         if absprec is infinity:
@@ -512,7 +509,7 @@ cdef class FMElement(pAdicTemplateElement):
 
     cpdef bint _is_exact_zero(self) except -1:
         """
-        Tests whether this element is an exact zero, which is always
+        Test whether this element is an exact zero, which is always
         False for fixed modulus elements.
 
         EXAMPLES::
@@ -524,7 +521,7 @@ cdef class FMElement(pAdicTemplateElement):
 
     cpdef bint _is_inexact_zero(self) except -1:
         """
-        Return ``True`` if self is indistinguishable from zero.
+        Return ``True`` if ``self`` is indistinguishable from zero.
 
         EXAMPLES::
 
@@ -536,13 +533,13 @@ cdef class FMElement(pAdicTemplateElement):
         """
         return ciszero(self.value, self.prime_pow)
 
-    def is_zero(self, absprec = None):
+    def is_zero(self, absprec=None):
         r"""
-        Returns whether ``self`` is zero modulo `\pi^{\mbox{absprec}}`.
+        Return whether ``self`` is zero modulo `\pi^{\mbox{absprec}}`.
 
         INPUT:
 
-        - ``absprec`` -- an integer
+        - ``absprec`` -- integer
 
         EXAMPLES::
 
@@ -588,7 +585,7 @@ cdef class FMElement(pAdicTemplateElement):
         INPUT:
 
         - ``right`` -- a `p`-adic element with the same parent
-        - ``absprec`` -- a positive integer or ``None`` (default: ``None``)
+        - ``absprec`` -- positive integer or ``None`` (default: ``None``)
 
         EXAMPLES::
 
@@ -666,7 +663,7 @@ cdef class FMElement(pAdicTemplateElement):
 
     def _teichmuller_set_unsafe(self):
         """
-        Sets this element to the Teichmuller representative with the
+        Set this element to the Teichmuller representative with the
         same residue.
 
         .. WARNING::
@@ -882,7 +879,6 @@ cdef class pAdicCoercion_ZZ_FM(RingHomomorphism):
     TESTS::
 
         sage: TestSuite(f).run()
-
     """
     def __init__(self, R):
         """
@@ -963,7 +959,7 @@ cdef class pAdicCoercion_ZZ_FM(RingHomomorphism):
         - ``x`` -- an Integer
 
         - ``absprec``, or the first positional argument -- the maximum
-          absolute precision (unused for fixed modulus elements).
+          absolute precision (unused for fixed modulus elements)
 
         - ``relprec``, or the second positional argument -- the
           maximum relative precision (unused for fixed modulus
@@ -995,7 +991,7 @@ cdef class pAdicCoercion_ZZ_FM(RingHomomorphism):
 
     def section(self):
         r"""
-        Returns a map back to `\ZZ` that approximates an element of this
+        Return a map back to `\ZZ` that approximates an element of this
         `p`-adic ring by an integer.
 
         EXAMPLES::
@@ -1013,9 +1009,9 @@ cdef class pAdicCoercion_ZZ_FM(RingHomomorphism):
 cdef class pAdicConvert_FM_ZZ(RingMap):
     r"""
     The map from a fixed modulus ring back to `\ZZ` that returns the smallest
-    non-negative integer approximation to its input which is accurate up to the precision.
+    nonnegative integer approximation to its input which is accurate up to the precision.
 
-    If the input is not in the closure of the image of `\ZZ`, raises a :class:`ValueError`.
+    If the input is not in the closure of the image of `\ZZ`, raises a :exc:`ValueError`.
 
     EXAMPLES::
 
@@ -1060,7 +1056,7 @@ cdef class pAdicConvert_FM_ZZ(RingMap):
 cdef class pAdicConvert_QQ_FM(Morphism):
     r"""
     The inclusion map from `\QQ` to a fixed modulus ring that is defined
-    on all elements with non-negative `p`-adic valuation.
+    on all elements with nonnegative `p`-adic valuation.
 
     EXAMPLES::
 
@@ -1145,7 +1141,7 @@ cdef class pAdicConvert_QQ_FM(Morphism):
         - ``x`` -- a Rational
 
         - ``absprec``, or the first positional argument -- the maximum
-          absolute precision (unused for fixed modulus elements).
+          absolute precision (unused for fixed modulus elements)
 
         - ``relprec``, or the second positional argument -- the
           maximum relative precision (unused for fixed modulus
@@ -1192,7 +1188,6 @@ cdef class pAdicCoercion_FM_frac_field(RingHomomorphism):
     TESTS::
 
         sage: TestSuite(f).run()                                                        # needs sage.libs.flint
-
     """
     def __init__(self, R, K):
         """
@@ -1288,7 +1283,7 @@ cdef class pAdicCoercion_FM_frac_field(RingHomomorphism):
     def section(self):
         """
         Return a map back to the ring that converts elements of
-        non-negative valuation.
+        nonnegative valuation.
 
         EXAMPLES::
 
@@ -1357,7 +1352,6 @@ cdef class pAdicCoercion_FM_frac_field(RingHomomorphism):
             a
             sage: g(a) == f(a)
             True
-
         """
         self._zero = _slots['_zero']
         self._section = _slots['_section']
@@ -1375,7 +1369,6 @@ cdef class pAdicCoercion_FM_frac_field(RingHomomorphism):
             sage: f = K.coerce_map_from(R)
             sage: f.is_injective()
             True
-
         """
         return True
 
@@ -1391,7 +1384,6 @@ cdef class pAdicCoercion_FM_frac_field(RingHomomorphism):
             sage: f = K.coerce_map_from(R)
             sage: f.is_surjective()
             False
-
         """
         return False
 
@@ -1553,7 +1545,6 @@ cdef class pAdicConvert_FM_frac_field(Morphism):
             a
             sage: g(a) == f(a)
             True
-
         """
         self._zero = _slots['_zero']
         Morphism._update_slots(self, _slots)

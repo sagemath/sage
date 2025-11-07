@@ -121,7 +121,7 @@ class Algebras(AlgebrasCategory):
             """
             L = self.basis().keys()
             return self.sum_of_terms((L.from_vector(vector(t)), c)
-                                     for (t,c) in p.dict().items())
+                                     for t, c in p.monomial_coefficients().items())
 
         @cached_method
         def divided_difference_on_basis(self, weight, i):
@@ -295,7 +295,7 @@ class Algebras(AlgebrasCategory):
                     ...
                     ValueError: the weight does not have an integral scalar product with the coroot
             """
-            return HeckeAlgebraRepresentation(self, self.isobaric_divided_difference_on_basis, self.cartan_type(), 0, 1, side="left")
+            return HeckeAlgebraRepresentation(self, self.isobaric_divided_difference_on_basis, self.cartan_type(), 0, 1, side='left')
 
         def _test_demazure_operators(self, **options):
             """
@@ -325,7 +325,7 @@ class Algebras(AlgebrasCategory):
             except ImportError:
                 pass
 
-        def demazure_lusztig_operator_on_basis(self, weight, i, q1, q2, convention="antidominant"):
+        def demazure_lusztig_operator_on_basis(self, weight, i, q1, q2, convention='antidominant'):
             r"""
             Return the result of applying the `i`-th Demazure-Lusztig operator on ``weight``.
 
@@ -334,7 +334,7 @@ class Algebras(AlgebrasCategory):
             - ``weight`` -- an element `\lambda` of the weight lattice
             - ``i`` -- an element of the index set
             - ``q1``, ``q2`` -- two elements of the ground ring
-            - ``convention`` -- ``"antidominant"``, ``"bar"``, or ``"dominant"`` (default: ``"antidominant"``)
+            - ``convention`` -- ``'antidominant'``, ``'bar'``, or ``'dominant'`` (default: ``'antidominant'``)
 
             See :meth:`demazure_lusztig_operators` for the details.
 
@@ -349,7 +349,7 @@ class Algebras(AlgebrasCategory):
                 sage: KL.demazure_lusztig_operator_on_basis(L((3,0)), 1, q1, q2)
                 (q1+q2)*B[(1, 2)] + (q1+q2)*B[(2, 1)] + (q1+q2)*B[(3, 0)] + q1*B[(0, 3)]
                 sage: KL.demazure_lusztig_operator_on_basis(L((0,3)), 1, q1, q2)
-                (-q1-q2)*B[(1, 2)] + (-q1-q2)*B[(2, 1)] + (-q2)*B[(3, 0)]
+                -(q1+q2)*B[(1, 2)] - (q1+q2)*B[(2, 1)] - q2*B[(3, 0)]
 
             At `q_1=1` and `q_2=0` we recover the action of the isobaric divided differences `\pi_i`::
 
@@ -362,11 +362,11 @@ class Algebras(AlgebrasCategory):
 
             Or `1-\pi_i` for ``bar=True``::
 
-                sage: KL.demazure_lusztig_operator_on_basis(L((2,2)), 1, 1, 0, convention="bar")
+                sage: KL.demazure_lusztig_operator_on_basis(L((2,2)), 1, 1, 0, convention='bar')
                 0
-                sage: KL.demazure_lusztig_operator_on_basis(L((3,0)), 1, 1, 0, convention="bar")
+                sage: KL.demazure_lusztig_operator_on_basis(L((3,0)), 1, 1, 0, convention='bar')
                 -B[(1, 2)] - B[(2, 1)] - B[(0, 3)]
-                sage: KL.demazure_lusztig_operator_on_basis(L((0,3)), 1, 1, 0, convention="bar")
+                sage: KL.demazure_lusztig_operator_on_basis(L((0,3)), 1, 1, 0, convention='bar')
                 B[(1, 2)] + B[(2, 1)] + B[(0, 3)]
 
             At `q_1=1` and `q_2=-1` we recover the action of the simple reflection `s_i`::
@@ -389,14 +389,14 @@ class Algebras(AlgebrasCategory):
             else:
                 return result
 
-        def demazure_lusztig_operators(self, q1, q2, convention="antidominant"):
+        def demazure_lusztig_operators(self, q1, q2, convention='antidominant'):
             r"""
             Return the Demazure-Lusztig operators acting on ``self``.
 
             INPUT:
 
-            - ``q1,q2`` -- two elements of the ground ring
-            - ``convention`` -- "antidominant", "bar", or "dominant" (default: "antidominant")
+            - ``q1``, ``q2`` -- two elements of the ground ring
+            - ``convention`` -- "antidominant", "bar", or "dominant" (default: ``'antidominant'``)
 
             If `R` is the parent weight ring, the Demazure-Lusztig
             operator `T_i` is the linear map `R\rightarrow R` obtained
@@ -448,21 +448,21 @@ class Algebras(AlgebrasCategory):
                 sage: q1, q2 = K.gens()
                 sage: KL = L.algebra(K)
                 sage: T = KL.demazure_lusztig_operators(q1, q2)
-                sage: Tbar = KL.demazure_lusztig_operators(q1, q2, convention="bar")
+                sage: Tbar = KL.demazure_lusztig_operators(q1, q2, convention='bar')
                 sage: Tdominant = KL.demazure_lusztig_operators(q1, q2,
-                ....:                                           convention="dominant")
+                ....:                                           convention='dominant')
                 sage: x = KL.monomial(L((3,0)))
                 sage: T[1](x)
                 (q1+q2)*B[(1, 2)] + (q1+q2)*B[(2, 1)] + (q1+q2)*B[(3, 0)] + q1*B[(0, 3)]
                 sage: Tbar[1](x)
-                (-q1-q2)*B[(1, 2)] + (-q1-q2)*B[(2, 1)] + (-q1-2*q2)*B[(0, 3)]
+                -(q1+q2)*B[(1, 2)] - (q1+q2)*B[(2, 1)] - (q1+2*q2)*B[(0, 3)]
                 sage: Tbar[1](x) + T[1](x)
-                (q1+q2)*B[(3, 0)] + (-2*q2)*B[(0, 3)]
+                (q1+q2)*B[(3, 0)] - 2*q2*B[(0, 3)]
                 sage: Tdominant[1](x)
-                (-q1-q2)*B[(1, 2)] + (-q1-q2)*B[(2, 1)] + (-q2)*B[(0, 3)]
+                -(q1+q2)*B[(1, 2)] - (q1+q2)*B[(2, 1)] - q2*B[(0, 3)]
 
                 sage: Tdominant.Tw_inverse(1)(KL.monomial(-L.simple_root(1)))
-                ((-q1-q2)/(q1*q2))*B[(0, 0)] - 1/q2*B[(1, -1)]
+                -((q1+q2)/(q1*q2))*B[(0, 0)] - 1/q2*B[(1, -1)]
 
             We repeat similar computation in the affine setting::
 
@@ -471,23 +471,22 @@ class Algebras(AlgebrasCategory):
                 sage: q1, q2 = K.gens()
                 sage: KL = L.algebra(K)
                 sage: T = KL.demazure_lusztig_operators(q1, q2)
-                sage: Tbar = KL.demazure_lusztig_operators(q1, q2, convention="bar")
+                sage: Tbar = KL.demazure_lusztig_operators(q1, q2, convention='bar')
                 sage: Tdominant = KL.demazure_lusztig_operators(q1, q2,
-                ....:                                           convention="dominant")
+                ....:                                           convention='dominant')
                 sage: e = L.basis()
                 sage: x = KL.monomial(3*e[0])
                 sage: T[1](x)
                 (q1+q2)*B[e[0] + 2*e[1]] + (q1+q2)*B[2*e[0] + e[1]]
                  + (q1+q2)*B[3*e[0]] + q1*B[3*e[1]]
                 sage: Tbar[1](x)
-                (-q1-q2)*B[e[0] + 2*e[1]] + (-q1-q2)*B[2*e[0] + e[1]]
-                 + (-q1-2*q2)*B[3*e[1]]
+                -(q1+q2)*B[e[0] + 2*e[1]] - (q1+q2)*B[2*e[0] + e[1]] - (q1+2*q2)*B[3*e[1]]
                 sage: Tbar[1](x) + T[1](x)
-                (q1+q2)*B[3*e[0]] + (-2*q2)*B[3*e[1]]
+                (q1+q2)*B[3*e[0]] - 2*q2*B[3*e[1]]
                 sage: Tdominant[1](x)
-                (-q1-q2)*B[e[0] + 2*e[1]] + (-q1-q2)*B[2*e[0] + e[1]] + (-q2)*B[3*e[1]]
+                -(q1+q2)*B[e[0] + 2*e[1]] - (q1+q2)*B[2*e[0] + e[1]] - q2*B[3*e[1]]
                 sage: Tdominant.Tw_inverse(1)(KL.monomial(-L.simple_root(1)))
-                ((-q1-q2)/(q1*q2))*B[0] - 1/q2*B[e[0] - e[1]]
+                -((q1+q2)/(q1*q2))*B[0] - 1/q2*B[e[0] - e[1]]
 
             One can obtain iterated operators by passing a reduced
             word or an element of the Weyl group::
@@ -515,7 +514,7 @@ class Algebras(AlgebrasCategory):
             And the `\bar{T}` are basically the inverses of the `T` s::
 
                 sage: Tinv = KL.demazure_lusztig_operators(2/q1 + 1/q2, -1/q1,
-                ....:                                      convention="bar")
+                ....:                                      convention='bar')
                 sage: [Tinv[1](T[1](x)) - x for x in KL.some_elements()]                # needs sage.graphs
                 [0, 0, 0, 0, 0, 0, 0]
 
@@ -529,7 +528,7 @@ class Algebras(AlgebrasCategory):
                 sage: Lambda = L.fundamental_weights()                                  # needs sage.graphs
                 sage: alphacheck = L0.simple_coroots()
                 sage: KL = L.algebra(K)
-                sage: T = KL.demazure_lusztig_operators(q1, q2, convention="dominant")
+                sage: T = KL.demazure_lusztig_operators(q1, q2, convention='dominant')
                 sage: Y = T.Y()
                 sage: alphacheck = Y.keys().alpha()  # alpha of coroot lattice is alphacheck
                 sage: alphacheck
@@ -544,19 +543,19 @@ class Algebras(AlgebrasCategory):
                 sage: Y[alphacheck[0]](KL.one())
                 q2^2/q1^2*B[0]
                 sage: Y[alphacheck[1]](x)
-                ((-q2^2)/(-q1^2))*B[e[0] - e['delta']]
+                -(q2^2/(-q1^2))*B[e[0] - e['delta']]
                 sage: Y[alphacheck[2]](x)
                 (q1/(-q2))*B[e[0]]
                 sage: KL.q_project(Y[alphacheck[1]](x),q)
-                ((-q2^2)/(-q*q1^2))*B[(1, 0, 0)]
+                -(q2^2/(-q*q1^2))*B[(1, 0, 0)]
 
                 sage: # needs sage.graphs
                 sage: KL.q_project(x, q)
                 B[(1, 0, 0)]
                 sage: KL.q_project(Y[alphacheck[0]](x),q)
-                ((-q*q1)/q2)*B[(1, 0, 0)]
+                -q*q1/q2*B[(1, 0, 0)]
                 sage: KL.q_project(Y[alphacheck[1]](x),q)
-                ((-q2^2)/(-q*q1^2))*B[(1, 0, 0)]
+                -(q2^2/(-q*q1^2))*B[(1, 0, 0)]
                 sage: KL.q_project(Y[alphacheck[2]](x),q)
                 (q1/(-q2))*B[(1, 0, 0)]
 
@@ -566,13 +565,13 @@ class Algebras(AlgebrasCategory):
 
                 sage: K = QQ['q1,q2']
                 sage: q1, q2 = K.gens()
-                sage: for cartan_type in CartanType.samples(crystallographic=True): # long time 12s
+                sage: for cartan_type in CartanType.samples(crystallographic=True):  # long time (12s)
                 ....:    L = RootSystem(cartan_type).root_lattice()
                 ....:    KL = L.algebra(K)
                 ....:    T = KL.demazure_lusztig_operators(q1,q2)
                 ....:    T._test_relations()
 
-                sage: for cartan_type in CartanType.samples(crystallographic=True): # long time 12s
+                sage: for cartan_type in CartanType.samples(crystallographic=True):  # long time (12s)
                 ....:    L = RootSystem(cartan_type).weight_lattice()
                 ....:    KL = L.algebra(K)
                 ....:    T = KL.demazure_lusztig_operators(q1,q2)
@@ -584,7 +583,7 @@ class Algebras(AlgebrasCategory):
             to specify explicitly the elements on which to run the
             tests::
 
-                sage: for cartan_type in CartanType.samples(crystallographic=True): # long time 12s
+                sage: for cartan_type in CartanType.samples(crystallographic=True):  # long time (12s)
                 ....:    L = RootSystem(cartan_type).ambient_space()
                 ....:    KL = L.algebra(K)
                 ....:    weight_lattice = RootSystem(cartan_type).weight_lattice(extended=L.is_extended())
@@ -594,9 +593,9 @@ class Algebras(AlgebrasCategory):
             """
             T_on_basis = functools.partial(self.demazure_lusztig_operator_on_basis,
                                            q1=q1, q2=q2, convention=convention)
-            return HeckeAlgebraRepresentation(self, T_on_basis, self.cartan_type(), q1, q2, side="left")
+            return HeckeAlgebraRepresentation(self, T_on_basis, self.cartan_type(), q1, q2, side='left')
 
-        def demazure_lusztig_operator_on_classical_on_basis(self, weight, i, q, q1, q2, convention="antidominant"):
+        def demazure_lusztig_operator_on_classical_on_basis(self, weight, i, q, q1, q2, convention='antidominant'):
             r"""
             Return the result of applying the `i`-th Demazure-Lusztig operator on the classical weight ``weight`` embedded at level 0.
 
@@ -604,8 +603,8 @@ class Algebras(AlgebrasCategory):
 
             - ``weight`` -- a classical weight `\lambda`
             - ``i`` -- an element of the index set
-            - ``q1,q2`` -- two elements of the ground ring
-            - ``convention`` -- ``"antidominant"``, ``"bar"``, or ``"dominant"`` (default: ``"antidominant"``)
+            - ``q1``, ``q2`` -- two elements of the ground ring
+            - ``convention`` -- ``'antidominant'``, ``'bar'``, or ``'dominant'`` (default: ``'antidominant'``)
 
             See :meth:`demazure_lusztig_operators` for the details.
 
@@ -646,20 +645,20 @@ class Algebras(AlgebrasCategory):
                 q1*B[(2, 2)]
                 sage: KL.demazure_lusztig_operator_on_classical_on_basis(L0((3,0)),     # needs sage.graphs
                 ....:                                                    0, q, q1, q2)
-                (-q^2*q1-q^2*q2)*B[(1, 2)] + (-q*q1-q*q2)*B[(2, 1)] + (-q^3*q2)*B[(0, 3)]
+                -(q^2*q1+q^2*q2)*B[(1, 2)] - (q*q1+q*q2)*B[(2, 1)] - q^3*q2*B[(0, 3)]
             """
             L = self.basis().keys()
             weight = L.embed_at_level(weight, 0)
             return self.q_project(self.demazure_lusztig_operator_on_basis(weight, i, q1, q2, convention=convention), q)
 
-        def demazure_lusztig_operators_on_classical(self, q, q1, q2, convention="antidominant"):
+        def demazure_lusztig_operators_on_classical(self, q, q1, q2, convention='antidominant'):
             r"""
             Return the Demazure-Lusztig operators acting at level 1 on ``self.classical()``.
 
             INPUT:
 
-            - ``q,q1,q2`` -- three elements of the ground ring
-            - ``convention`` -- ``"antidominant"``, ``"bar"``, or ``"dominant"`` (default: ``"antidominant"``)
+            - ``q``, ``q1``, ``q2`` -- three elements of the ground ring
+            - ``convention`` -- ``'antidominant'``, ``'bar'``, or ``'dominant'`` (default: ``'antidominant'``)
 
             Let `KL` be the group algebra of an affine weight lattice
             realization `L`. The Demazure-Lusztig operators for `KL`
@@ -695,7 +694,7 @@ class Algebras(AlgebrasCategory):
             is mapped to `q`::
 
                 sage: T[0](x)                                                           # needs sage.graphs
-                (-q^2*q1-q^2*q2)*B[(1, 2)] + (-q*q1-q*q2)*B[(2, 1)] + (-q^3*q2)*B[(0, 3)]
+                -(q^2*q1+q^2*q2)*B[(1, 2)] - (q*q1+q*q2)*B[(2, 1)] - q^3*q2*B[(0, 3)]
 
             Note that there is no translation part, and in particular
             1 is an eigenvector for all `T_i`'s::
@@ -708,7 +707,7 @@ class Algebras(AlgebrasCategory):
                 sage: Y = T.Y()
                 sage: alphacheck = Y.keys().simple_roots()
                 sage: Y[alphacheck[0]](KL0.one())
-                ((-q2)/(q*q1))*B[(0, 0)]
+                -q2/(q*q1)*B[(0, 0)]
 
             Matching with Ion Bogdan's hand calculations from 3/15/2013::
 
@@ -722,7 +721,7 @@ class Algebras(AlgebrasCategory):
 
                 sage: # needs sage.graphs
                 sage: T = KL.demazure_lusztig_operators_on_classical(q, u, -1/u,
-                ....:                                                convention="dominant")
+                ....:                                                convention='dominant')
                 sage: Y = T.Y()
                 sage: alphacheck = Y.keys().simple_roots()
                 sage: Ydelta = Y[Y.keys().null_root()]
@@ -746,8 +745,7 @@ class Algebras(AlgebrasCategory):
                 sage: T0(KL0.monomial(-omega[1]))
                 1/(q*u)*B[Lambda[1]]
                 sage: T0(KL0.monomial(-2*omega[1]))
-                ((-u^2+1)/(q*u))*B[0] + 1/(q^2*u)*B[2*Lambda[1]]
-
+                -((u^2-1)/(q*u))*B[0] + 1/(q^2*u)*B[2*Lambda[1]]
             """
             # In type BC dual we used q^2 and q elsewhere
             # Not sure this is the right thing to do or just a workaround ...
@@ -760,10 +758,10 @@ class Algebras(AlgebrasCategory):
             a0check = ct.acheck()[ct.special_node()]
             T_on_basis = functools.partial(self.demazure_lusztig_operator_on_classical_on_basis,
                                            q1=q1, q2=q2, q=q**a0check, convention=convention)
-            return HeckeAlgebraRepresentation(self.classical(), T_on_basis, self.cartan_type(), q1=q1, q2=q2, q=q, side="left")
+            return HeckeAlgebraRepresentation(self.classical(), T_on_basis, self.cartan_type(), q1=q1, q2=q2, q=q, side='left')
 
         @cached_method
-        def T0_check_on_basis(self, q1, q2, convention="antidominant"):
+        def T0_check_on_basis(self, q1, q2, convention='antidominant'):
             r"""
             Return the `T_0^\vee` operator acting on the basis.
 
@@ -787,7 +785,7 @@ class Algebras(AlgebrasCategory):
                 sage: L0 = L.classical()
                 sage: KL = L.algebra(K)
                 sage: some_weights = L.fundamental_weights()                            # needs sage.graphs
-                sage: f = KL.T0_check_on_basis(q1,q2, convention="dominant")            # needs sage.graphs
+                sage: f = KL.T0_check_on_basis(q1,q2, convention='dominant')            # needs sage.graphs
                 sage: f(L0.zero())                                                      # needs sage.graphs
                 (q1+q2)*B[(0, 0)] + q1*B[(1, -1)]
 
@@ -795,7 +793,7 @@ class Algebras(AlgebrasCategory):
                 sage: L0 = L.classical()
                 sage: KL = L.algebra(K)
                 sage: some_weights = L0.fundamental_weights()
-                sage: f = KL.T0_check_on_basis(q1,q2, convention="dominant")            # needs sage.graphs
+                sage: f = KL.T0_check_on_basis(q1,q2, convention='dominant')            # needs sage.graphs
                 sage: f(L0.zero())       # not checked                                  # needs sage.graphs
                 (q1+q2)*B[(0, 0, 0, 0)] + q1^3/q2^2*B[(1, 0, 0, -1)]
 
@@ -818,14 +816,14 @@ class Algebras(AlgebrasCategory):
                 sage: q2 = -1/u
                 sage: KL = L.algebra(K)
                 sage: KL0 = KL.classical()
-                sage: f = KL.T0_check_on_basis(q1,q2, convention="dominant")            # needs sage.graphs
-                sage: T = KL.twisted_demazure_lusztig_operators(q1,q2, convention="dominant")
+                sage: f = KL.T0_check_on_basis(q1,q2, convention='dominant')            # needs sage.graphs
+                sage: T = KL.twisted_demazure_lusztig_operators(q1,q2, convention='dominant')
 
             Direct calculation::
 
                 sage: T.Tw(0)(KL0.monomial(L0([0,0])))                                  # needs sage.graphs
                 ((u^2-1)/u)*B[(0, 0)] + u^3*B[(1, 1)]
-                sage: KL.T0_check_on_basis(q1,q2, convention="dominant")(L0([0,0]))     # needs sage.graphs
+                sage: KL.T0_check_on_basis(q1,q2, convention='dominant')(L0([0,0]))     # needs sage.graphs
                 ((u^2-1)/u)*B[(0, 0)] + u^3*B[(1, 1)]
 
             Step by step calculation, comparing by hand with Mark Shimozono::
@@ -970,7 +968,7 @@ class Algebras(AlgebrasCategory):
             L0 = self.classical()
             return L0.linear_combination( (self.q_project_on_basis(l, q), c) for l,c in x )
 
-        def twisted_demazure_lusztig_operator_on_basis(self, weight, i, q1, q2, convention="antidominant"):
+        def twisted_demazure_lusztig_operator_on_basis(self, weight, i, q1, q2, convention='antidominant'):
             r"""
             Return the twisted Demazure-Lusztig operator acting on the basis.
 
@@ -978,8 +976,8 @@ class Algebras(AlgebrasCategory):
 
             - ``weight`` -- an element `\lambda` of the weight lattice
             - ``i`` -- an element of the index set
-            - ``q1,q2`` -- two elements of the ground ring
-            - ``convention`` -- ``"antidominant"``, ``"bar"``, or ``"dominant"`` (default: ``"antidominant"``)
+            - ``q1``, ``q2`` -- two elements of the ground ring
+            - ``convention`` -- ``'antidominant'``, ``'bar'``, or ``'dominant'`` (default: ``'antidominant'``)
 
             .. SEEALSO:: :meth:`twisted_demazure_lusztig_operators`
 
@@ -992,16 +990,16 @@ class Algebras(AlgebrasCategory):
                 sage: KL = L.algebra(K)
                 sage: Lambda = L.classical().fundamental_weights()
                 sage: KL.twisted_demazure_lusztig_operator_on_basis(
-                ....:     Lambda[1] + 2*Lambda[2], 1, q1, q2, convention="dominant")
-                (-q2)*B[(2, 3, 0, 0)]
+                ....:     Lambda[1] + 2*Lambda[2], 1, q1, q2, convention='dominant')
+                -q2*B[(2, 3, 0, 0)]
                 sage: KL.twisted_demazure_lusztig_operator_on_basis(
-                ....:     Lambda[1] + 2*Lambda[2], 2, q1, q2, convention="dominant")
-                (-q1-q2)*B[(3, 1, 1, 0)] + (-q2)*B[(3, 0, 2, 0)]
+                ....:     Lambda[1] + 2*Lambda[2], 2, q1, q2, convention='dominant')
+                -(q1+q2)*B[(3, 1, 1, 0)] - q2*B[(3, 0, 2, 0)]
                 sage: KL.twisted_demazure_lusztig_operator_on_basis(
-                ....:     Lambda[1] + 2*Lambda[2], 3, q1, q2, convention="dominant")
+                ....:     Lambda[1] + 2*Lambda[2], 3, q1, q2, convention='dominant')
                 q1*B[(3, 2, 0, 0)]
                 sage: KL.twisted_demazure_lusztig_operator_on_basis(                    # needs sage.graphs
-                ....:     Lambda[1]+2*Lambda[2], 0, q1, q2, convention="dominant")
+                ....:     Lambda[1]+2*Lambda[2], 0, q1, q2, convention='dominant')
                 ((q1*q2+q2^2)/q1)*B[(1, 2, 1, 1)] + ((q1*q2+q2^2)/q1)*B[(1, 2, 2, 0)]
                  + q2^2/q1*B[(1, 2, 0, 2)] + ((q1^2+2*q1*q2+q2^2)/q1)*B[(2, 1, 1, 1)]
                  + ((q1^2+2*q1*q2+q2^2)/q1)*B[(2, 1, 2, 0)]
@@ -1017,19 +1015,19 @@ class Algebras(AlgebrasCategory):
                 L = self.classical()
                 return L.demazure_lusztig_operators(q1, q2, convention=convention)[i](L.monomial(weight))
 
-        def twisted_demazure_lusztig_operators(self, q1, q2, convention="antidominant"):
+        def twisted_demazure_lusztig_operators(self, q1, q2, convention='antidominant'):
             r"""
             Return the twisted Demazure-Lusztig operators acting on ``self``.
 
             INPUT:
 
-            - ``q1,q2`` -- two elements of the ground ring
-            - ``convention`` -- ``"antidominant"``, ``"bar"``, or ``"dominant"`` (default: ``"antidominant"``)
+            - ``q1``, ``q2`` -- two elements of the ground ring
+            - ``convention`` -- ``'antidominant'``, ``'bar'``, or ``'dominant'`` (default: ``'antidominant'``)
 
             .. WARNING::
 
                 - the code is currently only tested for `q_1q_2=-1`
-                - only the ``"dominant"`` convention is functional for `i=0`
+                - only the ``'dominant'`` convention is functional for `i=0`
 
             For `T_1,\ldots,T_n`, these operators are the usual
             Demazure-Lusztig operators. On the other hand, the
@@ -1040,7 +1038,7 @@ class Algebras(AlgebrasCategory):
                 sage: K = QQ['q1,q2'].fraction_field()
                 sage: q1, q2 = K.gens()
                 sage: KL = L.algebra(K)
-                sage: T = KL.twisted_demazure_lusztig_operators(q1, q2, convention="dominant")
+                sage: T = KL.twisted_demazure_lusztig_operators(q1, q2, convention='dominant')
                 sage: T._test_relations()
 
             TESTS:
@@ -1052,7 +1050,7 @@ class Algebras(AlgebrasCategory):
                 sage: K = QQ['q1,q2'].fraction_field()
                 sage: q1,q2 = K.gens()
                 sage: KL = L.algebra(K)
-                sage: T = KL.twisted_demazure_lusztig_operators(q1, q2, convention="dominant")
+                sage: T = KL.twisted_demazure_lusztig_operators(q1, q2, convention='dominant')
                 sage: T._test_relations()
                 sage: L0 = L.classical()
                 sage: alpha = L0.simple_roots()
@@ -1061,7 +1059,7 @@ class Algebras(AlgebrasCategory):
                 sage: T.Ti_inverse_on_basis(L0.zero(), 1)
                 1/q1*B[(0, 0)]
                 sage: T.Ti_on_basis(alpha[1], 1)
-                (-q1-q2)*B[(0, 0)] + (-q2)*B[(-1, 1)]
+                -(q1+q2)*B[(0, 0)] - q2*B[(-1, 1)]
                 sage: T.Ti_inverse_on_basis(alpha[1], 1)
                 ((q1+q2)/(q1*q2))*B[(0, 0)] + 1/q1*B[(-1, 1)] + ((q1+q2)/(q1*q2))*B[(1, -1)]
                 sage: T.Ti_on_basis(L0.zero(), 0)                                       # needs sage.graphs
@@ -1074,7 +1072,7 @@ class Algebras(AlgebrasCategory):
                 sage: K = QQ['u'].fraction_field()
                 sage: u = K.gen()
                 sage: KL = L.algebra(K)
-                sage: T = KL.twisted_demazure_lusztig_operators(u, -~u, convention="dominant")
+                sage: T = KL.twisted_demazure_lusztig_operators(u, -~u, convention='dominant')
                 sage: T._test_relations()
                 sage: L0 = L.classical()
                 sage: KL0 = L0.algebra(K)
@@ -1103,11 +1101,11 @@ class Algebras(AlgebrasCategory):
 
                 sage: K = QQ['q1,q2'].fraction_field()
                 sage: q1, q2 = K.gens()
-                sage: for cartan_type in CartanType.samples(affine=True, crystallographic=True): # long time 12s
+                sage: for cartan_type in CartanType.samples(affine=True, crystallographic=True):  # long time (12s)
                 ....:     if cartan_type.rank() > 4: continue
                 ....:     if cartan_type.type() == 'BC': continue
                 ....:     KL = RootSystem(cartan_type).weight_lattice().algebra(K)
-                ....:     T = KL.twisted_demazure_lusztig_operators(q1, q2, convention="dominant")
+                ....:     T = KL.twisted_demazure_lusztig_operators(q1, q2, convention='dominant')
                 ....:     T._test_relations()
 
             .. TODO::
@@ -1119,7 +1117,7 @@ class Algebras(AlgebrasCategory):
 
                     sage: cartan_type = CartanType(["BC",1,2])
                     sage: KL = RootSystem(cartan_type).weight_lattice().algebra(K)
-                    sage: T = KL.twisted_demazure_lusztig_operators(q1,q2, convention="dominant")
+                    sage: T = KL.twisted_demazure_lusztig_operators(q1,q2, convention='dominant')
                     sage: T._test_relations()                                           # needs sage.graphs
                     Traceback (most recent call last):
                     ... tester.assertTrue(Ti(Ti(x,i,-q2),i,-q1).is_zero()) ...
@@ -1135,14 +1133,14 @@ class Algebras(AlgebrasCategory):
                 sage: q2 = -1
                 sage: KL = L.algebra(K)
                 sage: L0 = L.classical()
-                sage: T = KL.demazure_lusztig_operators(q1,q2, convention="dominant")
+                sage: T = KL.demazure_lusztig_operators(q1,q2, convention='dominant')
                 sage: def T0(*l0): return KL.q_project(T[0].on_basis()(L.embed_at_level(L0(l0), 1)), q)
                 sage: T0_check_on_basis = KL.T0_check_on_basis(q1, q2,                  # needs sage.graphs
-                ....:                                          convention="dominant")
+                ....:                                          convention='dominant')
                 sage: def T0c(*l0): return T0_check_on_basis(L0(l0))
 
                 sage: T0(0,0,1)                                 # not double checked    # needs sage.graphs
-                ((-t+1)/q)*B[(1, 0, 0)] + 1/q^2*B[(2, 0, -1)]
+                -((t-1)/q)*B[(1, 0, 0)] + 1/q^2*B[(2, 0, -1)]
                 sage: T0c(0,0,1)                                                        # needs sage.graphs
                 (t^2-t)*B[(1, 0, 0)] + (t^2-t)*B[(1, 1, -1)] + t^2*B[(2, 0, -1)] + (t-1)*B[(0, 0, 1)]
             """
@@ -1152,13 +1150,13 @@ class Algebras(AlgebrasCategory):
                                               T_on_basis,
                                               self.cartan_type().classical().dual().affine().dual(),
                                               q1, q2,
-                                              side="left")
+                                              side='left')
 
     class ElementMethods:
 
         def acted_upon(self, w):
             """
-            Implements the action of ``w`` on ``self``.
+            Implement the action of ``w`` on ``self``.
 
             INPUT:
 

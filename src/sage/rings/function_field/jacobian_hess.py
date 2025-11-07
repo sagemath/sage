@@ -48,7 +48,6 @@ divisor. Hence a point of the Jacobian group is represented by `D`.
 AUTHORS:
 
 - Kwankyu Lee (2022-01-24): initial version
-
 """
 
 # ****************************************************************************
@@ -119,7 +118,7 @@ class JacobianPoint(JacobianPoint_base):
         sage: -(dS.divisor() + ds.divisor()) == pl
         True
     """
-    def __init__(self, parent, dS, ds):
+    def __init__(self, parent, dS, ds) -> None:
         """
         Initialize.
 
@@ -136,7 +135,7 @@ class JacobianPoint(JacobianPoint_base):
         super().__init__(parent)
         self._data = (dS, ds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -153,7 +152,7 @@ class JacobianPoint(JacobianPoint_base):
         divisor = (~dS).divisor() + (~ds).divisor()
         return f'[{divisor}]'
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of ``self``.
 
@@ -289,7 +288,7 @@ class JacobianPoint(JacobianPoint_base):
         for i in range(len(bits)):
             b = bits.pop()
             if b > 0:
-                dS, ds = G._normalize(dS * dS * idSbdS2 , ds * ds * idsbds2)
+                dS, ds = G._normalize(dS * dS * idSbdS2, ds * ds * idsbds2)
             else:
                 dS, ds = G._normalize(dS * dS * bdS, ds * ds * bds)
         if n < 0:
@@ -381,7 +380,7 @@ class JacobianPoint(JacobianPoint_base):
             g = g + self
 
         # giant steps
-        g0 = (-q)*(self)
+        g0 = (-q) * self
         g = g0
         for i in range(q - 1):
             for r in range(q):
@@ -446,7 +445,7 @@ class JacobianGroupEmbedding(Map):
           To:   Group of rational points of Jacobian
            over Finite Field in z3 of size 17^3 (Hess model)
     """
-    def __init__(self, base_group, extension_group):
+    def __init__(self, base_group, extension_group) -> None:
         """
         Initialize.
 
@@ -485,7 +484,7 @@ class JacobianGroupEmbedding(Map):
 
         Map.__init__(self, Hom(base_group, extension_group, CommutativeAdditiveGroups()))
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         Return string representation of ``self``.
 
@@ -529,7 +528,7 @@ class JacobianGroupEmbedding(Map):
         O_ext = self._O_ext
         Oinf_ext = self._Oinf_ext
 
-        idS,ids = x._data
+        idS, ids = x._data
         dS = O_ext.ideal([embedF(g) for g in idS.gens()])
         ds = Oinf_ext.ideal([embedF(g) for g in ids.gens()])
         return self.codomain().element_class(self.codomain(), dS, ds)
@@ -560,7 +559,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
     Element = JacobianPoint
     _embedding_map_class = JacobianGroupEmbedding
 
-    def __init__(self, parent, function_field, base_div):
+    def __init__(self, parent, function_field, base_div) -> None:
         """
         Initialize.
 
@@ -586,7 +585,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
         self._base_place = None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -607,7 +606,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         """
         Construct an element of ``self`` from ``x``.
 
-        If ``x`` is an effective divisor, then it is assumed to of
+        If ``x`` is an effective divisor, then it must be of
         degree `g`, the genus of the function field.
 
         EXAMPLES::
@@ -635,9 +634,11 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             if x.degree() == 0:
                 return self.point(x)
             if x.is_effective():
+                if x.degree() != self._genus:
+                    raise ValueError(f"effective divisor is not of degree {self._genus}")
                 return self.element_class(self, *self._get_dS_ds(x))
 
-        raise ValueError(f"Cannot construct a point from {x}")
+        raise ValueError(f"cannot construct a point from {x}")
 
     def _get_dS_ds(self, divisor):
         """
@@ -713,16 +714,16 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
         # Step 1: construct matrix M of rational functions in x such that
         # M * B == C where B = [b1,b1,...,bn], C =[v1,v2,...,vn]
-        V,fr,to = F.free_module(map=True)
+        V, fr, to = F.free_module(map=True)
         B = matrix([to(b) for b in J.gens_over_base()])
         C = matrix([to(v) for v in I.gens_over_base()])
         M = C * B.inverse()
 
         # Step 2: get the denominator d of M and set mat = d * M
         den = lcm([e.denominator() for e in M.list()])
-        R = den.parent() # polynomial ring
+        R = den.parent()  # polynomial ring
         one = R.one()
-        mat = matrix(R, n, [e.numerator() for e in (den*M).list()])
+        mat = matrix(R, n, [e.numerator() for e in (den * M).list()])
         gens = list(I.gens_over_base())
 
         # Step 3: transform mat to a weak Popov form, together with gens
@@ -735,7 +736,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             bestp = -1
             best = -1
             for c in range(n):
-                d = mat[i,c].degree()
+                d = mat[i, c].degree()
                 if d >= best:
                     bestp = c
                     best = d
@@ -745,7 +746,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
                 break
 
             if best >= 0:
-                pivot_row[bestp].append((i,best))
+                pivot_row[bestp].append((i, best))
                 if len(pivot_row[bestp]) > 1:
                     conflicts.append(bestp)
 
@@ -754,25 +755,25 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             while conflicts:
                 c = conflicts.pop()
                 row = pivot_row[c]
-                i,ideg = row.pop()
-                j,jdeg = row.pop()
+                i, ideg = row.pop()
+                j, jdeg = row.pop()
 
                 if jdeg > ideg:
-                    i,j = j,i
-                    ideg,jdeg = jdeg,ideg
+                    i, j = j, i
+                    ideg, jdeg = jdeg, ideg
 
-                coeff = - mat[i,c].lc() / mat[j,c].lc()
+                coeff = - mat[i, c].lc() / mat[j, c].lc()
                 s = coeff * one.shift(ideg - jdeg)
 
                 mat.add_multiple_of_row(i, j, s)
                 gens[i] += s * gens[j]
 
-                row.append((j,jdeg))
+                row.append((j, jdeg))
 
                 bestp = -1
                 best = -1
                 for c in range(n):
-                    d = mat[i,c].degree()
+                    d = mat[i, c].degree()
                     if d >= best:
                         bestp = c
                         best = d
@@ -782,7 +783,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
                     break
 
                 if best >= 0:
-                    pivot_row[bestp].append((i,best))
+                    pivot_row[bestp].append((i, best))
                     if len(pivot_row[bestp]) > 1:
                         conflicts.append(bestp)
             else:
@@ -806,6 +807,8 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             sage: G.point(p - b)
             [Place (y + 2, z + 1)]
         """
+        if divisor.degree() != 0:
+            raise ValueError('divisor not of degree zero')
         c = divisor + self._base_div
         f = c.basis_function_space()[0]
         d = f.divisor() + c
@@ -827,13 +830,13 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             sage: G.zero()
             [Place (1/y, 1/y*z)]
         """
-        bdS,bds = self._base_point
+        bdS, bds = self._base_point
         return self.element_class(self, ~bdS, ~bds)
 
 
 class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base):
     """
-    Jacobian groups of function fields over finite fields
+    Jacobian groups of function fields over finite fields.
 
     INPUT:
 
@@ -862,7 +865,7 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
     """
     Element = JacobianPoint_finite_field
 
-    def __init__(self, parent, function_field, base_div):
+    def __init__(self, parent, function_field, base_div) -> None:
         """
         Initialize.
 
@@ -929,7 +932,7 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
                         return
                     generators.append(F._places_finite(deg))
                     deg += 1
-            multiples.append((g + 1)*[None])
+            multiples.append((g + 1) * [None])
             P = ~new_pl.prime_ideal()
             dn = new_pl.degree()
             I0 = O.ideal(1)
@@ -989,7 +992,7 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
         O = F.maximal_order()
         Oinf = F.maximal_order_infinite()
 
-        idS,ids = pt._data
+        idS, ids = pt._data
         dS = O.ideal([frob_F(g) for g in idS.gens()])
         ds = Oinf.ideal([frob_F(g) for g in ids.gens()])
         return self.element_class(self, dS, ds)
@@ -1009,7 +1012,7 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
         Jacobian of Projective Plane Curve over Finite Field of size 17
          defined by x^3 - y^2*z + 5*z^3 (Hess model)
     """
-    def __init__(self, function_field, base_div, **kwds):
+    def __init__(self, function_field, base_div, **kwds) -> None:
         """
         Initialize.
 
@@ -1029,7 +1032,7 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
         else:
             self._group_class = JacobianGroup
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 

@@ -31,14 +31,14 @@ an end-user would run. Breaking somewhat with tradition, only those
 methods have been prefixed with an underscore.
 """
 
-from sage.functions.trig import arccos, cos
+from sage.functions.trig import arccos
 from sage.matrix.constructor import matrix
-from sage.misc.misc import powerset
 from sage.rings.integer_ring import ZZ
 from sage.rings.qqbar import AA
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
 from sage.symbolic.constants import pi
+
 
 def _normalize_gevp_solution(gevp_solution):
     r"""
@@ -128,7 +128,7 @@ def _random_admissible_cone(ambient_dim):
 
     INPUT:
 
-    - ``ambient_dim`` -- a positive integer representing the dimension
+    - ``ambient_dim`` -- positive integer representing the dimension
       of the ambient lattice in which the returned cone lives
 
     OUTPUT:
@@ -136,7 +136,7 @@ def _random_admissible_cone(ambient_dim):
     A "random" nontrivial closed convex cone in a lattice of dimension
     ``ambient_dim``.
 
-    A :class:`ValueError` is raised if ``ambient_dim`` is not
+    A :exc:`ValueError` is raised if ``ambient_dim`` is not
     positive.
 
     EXAMPLES:
@@ -231,7 +231,7 @@ def gevp_licis(G):
         sage: from sage.geometry.cone_critical_angles import gevp_licis
         sage: K = cones.nonnegative_orthant(3)
         sage: G = matrix.column(K.rays())
-        sage: len(list(gevp_licis(G))) == 2^(K.nrays()) - 1
+        sage: len(list(gevp_licis(G))) == 2^(K.n_rays()) - 1
         True
 
     TESTS:
@@ -458,7 +458,7 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
     ALGORITHM:
 
     According to Proposition 5 [Or2020]_, the solutions corresponding
-    to non-zero eigenvalues can be found by solving a smaller
+    to nonzero eigenvalues can be found by solving a smaller
     eigenvalue problem in only the variable `\xi`. So, we do that, and
     then solve for `\eta` in terms of `\xi` as described in the
     proposition.
@@ -626,9 +626,7 @@ def compute_gevp_M(gs, hs):
     - ``hs`` -- a linearly independent list of unit-norm generators
       for the cone `Q`
 
-    OUTPUT:
-
-    A tuple containing four elements, in order:
+    OUTPUT: a tuple containing four elements, in order:
 
     - The matrix `M` described in Proposition 6
 
@@ -649,8 +647,8 @@ def compute_gevp_M(gs, hs):
         sage: hs = [h.change_ring(QQ) for h in Q]
         sage: M = compute_gevp_M(gs, hs)[0]
         sage: all( M[i][j] == gs[i].inner_product(hs[j])
-        ....:       for i in range(P.nrays())
-        ....:       for j in range(Q.nrays()) )
+        ....:       for i in range(P.n_rays())
+        ....:       for j in range(Q.n_rays()) )
         True
 
     TESTS:
@@ -672,12 +670,12 @@ def compute_gevp_M(gs, hs):
         sage: hs = [h.change_ring(QQ) for h in Q]
         sage: M = compute_gevp_M(gs,hs)[0]
         sage: f = lambda i,j: gs[i].inner_product(hs[j])
-        sage: expected_M = matrix(QQ, P.nrays(), Q.nrays(), f)
+        sage: expected_M = matrix(QQ, P.n_rays(), Q.n_rays(), f)
         sage: M == expected_M
         True
         sage: G = matrix.column(gs)
         sage: H = matrix.column(hs)
-        sage: def _test_indexing(I,J):
+        sage: def _test_indexing(I, J):
         ....:      G_I = G.matrix_from_columns(I)
         ....:      H_J = H.matrix_from_columns(J)
         ....:      return (G_I.transpose()*H_J == M[I,J]
@@ -956,11 +954,11 @@ def max_angle(P, Q, exact, epsilon):
 
     for I in G_index_sets:
         G_I = G.matrix_from_columns(I)
-        I_complement = [i for i in range(P.nrays()) if i not in I]
+        I_complement = [i for i in range(P.n_rays()) if i not in I]
         G_I_c_T = G.matrix_from_columns(I_complement).transpose()
 
         for J in H_index_sets:
-            J_complement = [j for j in range(Q.nrays()) if j not in J]
+            J_complement = [j for j in range(Q.n_rays()) if j not in J]
             H_J = H.matrix_from_columns(J)
             H_J_c_T = H.matrix_from_columns(J_complement).transpose()
 

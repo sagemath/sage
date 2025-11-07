@@ -42,7 +42,7 @@ def classical_modular_polynomial(l, j=None):
 
     INPUT:
 
-    - ``l`` -- positive integer.
+    - ``l`` -- positive integer
     - ``j`` -- either ``None`` or a ring element:
 
       * if ``None`` is given, the original modular polynomial
@@ -118,12 +118,13 @@ def classical_modular_polynomial(l, j=None):
 
         try:
             Phi = ZZ['X,Y'](_db[l])
-        except ValueError:
+        except (FileNotFoundError, ValueError):
             try:
                 pari_Phi = pari.polmodular(l)
             except PariError:
                 raise NotImplementedError('modular polynomial is not in database and computing it on the fly is not yet implemented')
-            d = {(i, j): c for i,f in enumerate(pari_Phi) for j, c in enumerate(f)}
+            d = {(i, j): c for i, f in enumerate(pari_Phi)
+                 for j, c in enumerate(f)}
             Phi = ZZ['X,Y'](d)
 
         if l <= _cache_bound:
@@ -136,11 +137,11 @@ def classical_modular_polynomial(l, j=None):
 
     # If the generic polynomial is in the cache or the database, evaluating
     # it directly should always be faster than recomputing it from scratch.
-    if l  in _cache:
+    if l in _cache:
         return _cache[l](j, Y)
     try:
         Phi = _db[l]
-    except ValueError:
+    except (ValueError, FileNotFoundError):
         pass
     else:
         if l <= _cache_bound:

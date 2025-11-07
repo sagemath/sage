@@ -31,8 +31,6 @@ TESTS::
     sage: f(u,v,w) = (2*u+v,u-w,w^2+u)
     sage: loads(dumps(f)) == f
     True
-
-
 """
 
 # ****************************************************************************
@@ -57,7 +55,7 @@ from sage.symbolic.ring import SR
 class Vector_callable_symbolic_dense(free_module_element.FreeModuleElement_generic_dense):
     def _repr_(self):
         """
-        Returns the string representation of the vector
+        Return the string representation of the vector.
 
         EXAMPLES::
 

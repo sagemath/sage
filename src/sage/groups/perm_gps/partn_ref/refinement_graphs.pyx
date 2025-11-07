@@ -84,8 +84,8 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
             if G_in.has_loops():
                 loops = 1
             if n == -1:
-                n = G_in.num_verts()
-            elif n != G_in.num_verts():
+                n = G_in.n_vertices()
+            elif n != G_in.n_vertices():
                 return False
             if G_in.vertices(sort=True) != list(range(n)):
                 G_in = copy(G_in)
@@ -186,18 +186,18 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     INPUT:
 
     - ``G_in`` -- a Sage graph
-    - ``partition`` -- a list of lists representing a partition of the vertices
-    - ``lab`` -- if True, compute and return the canonical label in addition to the
+    - ``partition`` -- list of lists representing a partition of the vertices
+    - ``lab`` -- if ``True``, compute and return the canonical label in addition to the
       automorphism group
-    - ``dig`` -- set to True for digraphs and graphs with loops.  If True, does not
+    - ``dig`` -- set to ``True`` for digraphs and graphs with loops;  if ``True``, does not
       use optimizations based on Lemma 2.25 in [1] that are valid only for
-      simple graphs.
+      simple graphs
     - ``dict_rep`` -- if ``True``, return a dictionary with keys the vertices of the
       input graph G_in and values elements of the set the permutation group
       acts on.  (The point is that graphs are arbitrarily labelled, often
       0..n-1, and permutation groups always act on 1..n.  This dictionary
       maps vertex labels (such as 0..n-1) to the domain of the permutations.)
-    - ``certificate`` -- if ``True``, return the permutation from G to its canonical label.
+    - ``certificate`` -- if ``True``, return the permutation from G to its canonical label
     - ``verbosity`` -- currently ignored
     - ``use_indicator_function`` -- option to turn off indicator function
       (``True`` is generally faster)
@@ -362,18 +362,18 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     Certain border cases need to be tested as well::
 
         sage: G = Graph('Fll^G')
-        sage: a,b,c = st(G, [range(G.num_verts())], order=True); b
+        sage: a,b,c = st(G, [range(G.n_vertices())], order=True); b
         Graph on 7 vertices
         sage: c
         48
         sage: G = Graph(21)
-        sage: st(G, [range(G.num_verts())], order=True)[2] == factorial(21)
+        sage: st(G, [range(G.n_vertices())], order=True)[2] == factorial(21)
         True
 
         sage: G = Graph('^????????????????????{??N??@w??FaGa?PCO@CP?AGa?_QO?Q@G?CcA??cc????Bo????{????F_')
         sage: perm = {3:15, 15:3}
         sage: H = G.relabel(perm, inplace=False)
-        sage: st(G, [range(G.num_verts())])[1] == st(H, [range(H.num_verts())])[1]
+        sage: st(G, [range(G.n_vertices())])[1] == st(H, [range(H.n_vertices())])[1]
         True
 
         sage: st(Graph(':Dkw'), [range(5)], lab=False, dig=True)
@@ -390,7 +390,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     from copy import copy
     if isinstance(G_in, GenericGraph):
         loops = G_in.has_loops()
-        n = G_in.num_verts()
+        n = G_in.n_vertices()
         if G_in.vertices(sort=False) != list(range(n)):
             G_in = copy(G_in)
             to = G_in.relabel(return_map=True)
@@ -506,6 +506,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     else:
         return tuple(return_tuple)
 
+
 cdef int refine_by_degree(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len) noexcept:
     r"""
     Refine the input partition by checking degrees of vertices to the given
@@ -517,7 +518,7 @@ cdef int refine_by_degree(PartitionStack *PS, void *S, int *cells_to_refine_by, 
       refined
     - ``S`` -- a graph struct object, which contains scratch space, the graph in
       question, and some flags
-    - ``cells_to_refine_by`` -- a list of pointers to cells to check degrees against
+    - ``cells_to_refine_by`` -- list of pointers to cells to check degrees against
       in refining the other cells (updated in place). Must be allocated to
       length at least the degree of PS, since the array may grow
     - ``ctrb_len`` -- how many cells in cells_to_refine_by
@@ -746,6 +747,7 @@ cdef inline int degree(PartitionStack *PS, CGraph G, int entry, int cell_index, 
                 break
     return num_arcs
 
+
 def all_labeled_graphs(n):
     """
     Return all labeled graphs on n vertices {0,1,...,n-1}.
@@ -777,7 +779,6 @@ def all_labeled_graphs(n):
         3 4
         4 11
         5 34
-
     """
     from sage.graphs.graph import Graph
     TE = []
@@ -799,7 +800,7 @@ def all_labeled_graphs(n):
 
 def random_tests(num=10, n_max=60, perms_per_graph=5):
     """
-    Tests to make sure that C(gamma(G)) == C(G) for random permutations gamma
+    Test to make sure that C(gamma(G)) == C(G) for random permutations gamma
     and random graphs G, and that isomorphic returns an isomorphism.
 
     INPUT:
@@ -898,7 +899,7 @@ def orbit_partition(gamma, list_perm=False):
 
     INPUT:
 
-    - ``list_perm`` - if ``True``, assumes
+    - ``list_perm`` -- if ``True``, assumes
       ``gamma`` is a list representing the map
       `i \mapsto ``gamma``[i]`
 
@@ -947,6 +948,7 @@ def orbit_partition(gamma, list_perm=False):
                 if i[j] == n:
                     i[j] = 0
         return l
+
 
 def coarsest_equitable_refinement(CGraph G, list partition, bint directed):
     """
@@ -1012,6 +1014,7 @@ def coarsest_equitable_refinement(CGraph G, list partition, bint directed):
 
     return eq_part
 
+
 def get_orbits(list gens, int n):
     """
     Compute orbits given a list of generators of a permutation group, in list
@@ -1051,9 +1054,7 @@ def get_orbits(list gens, int n):
     OP_dealloc(OP)
     sig_free(perm_ints)
 
-    return list(orbit_dict.itervalues())
-
-
+    return list(orbit_dict.values())
 
 
 # Canonical augmentation
@@ -1298,7 +1299,6 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G=None, depth=None,
         1044
         sage: generate_dense_graphs_edge_addition(8,0)  # long time (about 14 seconds at 2.4 GHz)
         12346
-
     """
     from sage.graphs.graph import Graph
     cdef iterator *graph_iterator
@@ -1384,7 +1384,6 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G=None, depth=None,
         return out_list
     else:
         return number
-
 
 
 # Dense graphs: adding vertices
@@ -1572,7 +1571,6 @@ def generate_dense_graphs_vert_addition(int n, base_G=None,
         sage: from sage.groups.perm_gps.partn_ref.refinement_graphs import generate_dense_graphs_vert_addition
         sage: generate_dense_graphs_vert_addition(10, base_G=Graph('HEhf^rs'))
         11
-
     """
     from sage.graphs.graph import Graph
     cdef iterator *graph_iterator
@@ -1596,7 +1594,7 @@ def generate_dense_graphs_vert_addition(int n, base_G=None,
                 return Integer(1)
             return Integer(2)
 
-    cdef int start_deg = 1 if base_G is None else base_G.num_verts()
+    cdef int start_deg = 1 if base_G is None else base_G.n_vertices()
     graph_iterator = allocate_dg_vert_gen(start_deg, n+1-start_deg)
     if graph_iterator is NULL:
         raise MemoryError

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.function_field
+# sage.doctest: needs sage.rings.function_field
 r"""
 Ideals of function fields: extension
 """
@@ -30,7 +30,7 @@ from .ideal import FunctionFieldIdeal, FunctionFieldIdealInfinite
 
 class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
     """
-    Fractional ideals of algebraic function fields
+    Fractional ideals of algebraic function fields.
 
     INPUT:
 
@@ -52,7 +52,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         sage: O.ideal(y)
         Ideal (y) of Maximal order of Function field in y defined by y^2 + x^3*y + x
     """
-    def __init__(self, ring, hnf, denominator=1):
+    def __init__(self, ring, hnf, denominator=1) -> None:
         """
         Initialize.
 
@@ -93,7 +93,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         # if the second gen is zero, the tuple has only the first gen.
         self._gens_two_vecs = None
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Test if this ideal is zero.
 
@@ -128,7 +128,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         """
         return self._hnf.nrows() != 0
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of this ideal.
 
@@ -151,7 +151,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         """
         return hash((self._ring, self._hnf, self._denominator))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is in this ideal.
 
@@ -468,7 +468,6 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             sage: J = O.ideal(x)
             sage: I.intersect(J) == I * J * (I + J)^-1
             True
-
         """
         from sage.matrix.special import block_matrix
         from .hermite_form_polynomial import reversed_hermite_form
@@ -580,7 +579,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         return V.span([to(g) for g in self.gens_over_base()], base_ring=O)
 
     @cached_method
-    def gens_over_base(self):
+    def gens_over_base(self) -> tuple:
         """
         Return the generators of this ideal as a module over the maximal order
         of the base rational function field.
@@ -625,7 +624,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
                 for row in self._hnf]
         return gens, self._denominator
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a set of generators of this ideal.
 
@@ -834,7 +833,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         return n
 
     @cached_method
-    def is_prime(self):
+    def is_prime(self) -> bool:
         """
         Return ``True`` if this ideal is a prime ideal.
 
@@ -1025,7 +1024,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
 
 class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
     """
-    Fractional ideals of canonical function fields
+    Fractional ideals of canonical function fields.
 
     INPUT:
 
@@ -1047,7 +1046,7 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
         sage: O.ideal(y)
         Ideal (y) of Maximal order of Function field in y defined by y^2 + x^3*y + x
     """
-    def __init__(self, ring, hnf, denominator=1):
+    def __init__(self, ring, hnf, denominator=1) -> None:
         """
         Initialize.
 
@@ -1109,7 +1108,7 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
 
         return generic_power(self, mod)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a set of generators of this ideal.
 
@@ -1135,10 +1134,9 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
         """
         if self._gens_two.is_in_cache():
             return self._gens_two.cache
-        else:
-            return self.gens_over_base()
+        return self.gens_over_base()
 
-    def gens_two(self):
+    def gens_two(self) -> tuple:
         r"""
         Return two generators of this fractional ideal.
 
@@ -1174,7 +1172,7 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
         return tuple(e / d for e in self._gens_two())
 
     @cached_method
-    def _gens_two(self):
+    def _gens_two(self) -> tuple:
         r"""
         Return a set of two generators of the integral ideal, that is
         the denominator times this fractional ideal.
@@ -1253,9 +1251,8 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
 
         R = hnf.base_ring()
 
-        basis = []
-        for row in hnf:
-            basis.append(sum([c1 * c2 for c1, c2 in zip(row, O.basis())]))
+        basis = [sum(c1 * c2 for c1, c2 in zip(row, O.basis()))
+                 for row in hnf]
 
         n = len(basis)
         alpha = None
@@ -1322,7 +1319,7 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
         Ideal (1/x^4*y^2) of Maximal infinite order of Function field
         in y defined by y^3 + y^2 + 2*x^4
     """
-    def __init__(self, ring, ideal):
+    def __init__(self, ring, ideal) -> None:
         """
         Initialize this ideal.
 
@@ -1338,7 +1335,7 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
         FunctionFieldIdealInfinite.__init__(self, ring)
         self._ideal = ideal
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of this ideal.
 
@@ -1360,7 +1357,7 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
         """
         return hash((self.ring(), self._ideal))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is in this ideal.
 
@@ -1557,7 +1554,7 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
 
         return self._ideal._relative_degree
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a set of generators of this ideal.
 
@@ -1583,7 +1580,7 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
         iF, from_iF, to_iF = F._inversion_isomorphism()
         return tuple(from_iF(b) for b in self._ideal.gens())
 
-    def gens_two(self):
+    def gens_two(self) -> tuple:
         """
         Return a set of at most two generators of this ideal.
 
@@ -1609,7 +1606,7 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
         iF, from_iF, to_iF = F._inversion_isomorphism()
         return tuple(from_iF(b) for b in self._ideal.gens_two())
 
-    def gens_over_base(self):
+    def gens_over_base(self) -> tuple:
         """
         Return a set of generators of this ideal.
 

@@ -66,7 +66,6 @@ space associated with certain multiple of `B` (depending on the model). This
 allows representing points of Jacobian as matrices once we fix a basis of the
 Riemann-Roch space.
 
-
 EXAMPLES::
 
     sage: P2.<x,y,z> = ProjectiveSpace(GF(17), 2)
@@ -108,7 +107,6 @@ EXAMPLES::
 AUTHORS:
 
 - Kwankyu Lee (2022-01-24): initial version
-
 """
 
 # ****************************************************************************
@@ -171,9 +169,8 @@ class JacobianPoint(JacobianPoint_base):
         [0 0 0 1 0 0 0 0 5]
         [0 0 0 0 0 1 0 0 5]
         [0 0 0 0 0 0 1 0 4]
-
     """
-    def __init__(self, parent, w):
+    def __init__(self, parent, w) -> None:
         """
         Initialize.
 
@@ -193,7 +190,7 @@ class JacobianPoint(JacobianPoint_base):
         w.set_immutable()
         self._w = w
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -215,7 +212,7 @@ class JacobianPoint(JacobianPoint_base):
         """
         return f'Point of Jacobian determined by \n{self._w}'
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of ``self``.
 
@@ -339,7 +336,7 @@ class JacobianPoint(JacobianPoint_base):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -362,7 +359,7 @@ class JacobianPoint(JacobianPoint_base):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -511,7 +508,7 @@ class JacobianGroupEmbedding(Map):
           To:   Group of rational points of Jacobian
                 over Finite Field in z2 of size 5^2 (Khuri-Makdisi large model)
     """
-    def __init__(self, base_group, extension_group):
+    def __init__(self, base_group, extension_group) -> None:
         """
         Initialize.
 
@@ -535,7 +532,7 @@ class JacobianGroupEmbedding(Map):
 
         Map.__init__(self, Hom(base_group, extension_group, CommutativeAdditiveGroups()))
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         Return string representation of ``self``.
 
@@ -606,7 +603,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
     Element = JacobianPoint
     _embedding_map_class = JacobianGroupEmbedding
 
-    def __init__(self, parent, function_field, base_div):
+    def __init__(self, parent, function_field, base_div) -> None:
         """
         Initialize.
 
@@ -622,18 +619,15 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
         D0 = base_div
 
-        self._V_cache = 10*[None]
-
-        V_cache = self._V_cache
+        self._base_div_degree = base_div.degree()
+        self._V_cache = dict()
 
         def V(n):
-            if n in V_cache:
-                return V_cache[n]
+            if n in self._V_cache:
+                return self._V_cache[n]
 
-            Vn, from_Vn, to_Vn = (n * D0).function_space()
-            V_cache[n] = (Vn, from_Vn, to_Vn)
-
-            return Vn, from_Vn, to_Vn
+            self._V_cache[n] = (n * D0).function_space()
+            return self._V_cache[n]
 
         def mu(n, m, i, j):
             Vn, from_Vn, to_Vn = V(n)
@@ -669,7 +663,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
         self._base_place = None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -763,10 +757,12 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             if x.degree() == 0:
                 return self.point(x)
             if x.is_effective():
+                if x.degree() != self._base_div_degree:
+                    raise ValueError(f"effective divisor is not of degree {self._base_div_degree}")
                 wd = self._wd_from_divisor(x)
                 return self.element_class(self, wd)
 
-        raise ValueError(f"Cannot construct a point from {x}")
+        raise ValueError(f"cannot construct a point from {x}")
 
     def point(self, divisor):
         """
@@ -859,7 +855,7 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
     """
     Element = JacobianPoint_finite_field
 
-    def __init__(self, parent, function_field, base_div):
+    def __init__(self, parent, function_field, base_div) -> None:
         """
         Initialize.
 
@@ -920,7 +916,7 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
                         return
                     generators.append(F._places_finite(deg))
                     deg += 1
-            multiples.append((d0 + 1)*[None])
+            multiples.append((d0 + 1) * [None])
             wn = self._wd_from_divisor(new_pl.divisor())
             dn = new_pl.degree()
             wr = zero_divisor
@@ -983,7 +979,7 @@ class Jacobian(UniqueRepresentation, Jacobian_base):
         Jacobian of Projective Plane Curve over Finite Field of size 7
          defined by x^3 - y^2*z - 2*z^3 (Khuri-Makdisi large model)
     """
-    def __init__(self, function_field, base_div, model, **kwds):
+    def __init__(self, function_field, base_div, model, **kwds) -> None:
         """
         Initialize.
 
@@ -1013,7 +1009,7 @@ class Jacobian(UniqueRepresentation, Jacobian_base):
         else:
             self._group_class = JacobianGroup
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 

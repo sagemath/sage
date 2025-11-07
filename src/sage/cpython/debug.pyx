@@ -18,9 +18,6 @@ cdef extern from "Python.h":
     # Helper to get a pointer to an object's __dict__ slot, if any
     PyObject** _PyObject_GetDictPtr(obj)
 
-cdef extern from "debugimpl.c":
-    void _type_debug(PyTypeObject*)
-
 from sage.cpython.getattr cimport AttributeErrorMessage
 
 
@@ -72,7 +69,7 @@ def getattr_debug(obj, name, default=_no_default):
 
     - ``obj`` -- the object whose attribute is requested
 
-    - ``name`` -- (string) the name of the attribute
+    - ``name`` -- string; the name of the attribute
 
     - ``default`` -- default value to return if attribute was not found
 
@@ -219,7 +216,7 @@ def getattr_debug(obj, name, default=_no_default):
 
 def type_debug(cls):
     """
-    Print all internals of the type ``cls``
+    Print all internals of the type ``cls``.
 
     EXAMPLES::
 
@@ -302,5 +299,3 @@ def type_debug(cls):
     """
     if not isinstance(cls, type):
         raise TypeError(f"{cls!r} is not a type")
-
-    _type_debug(<PyTypeObject*>cls)

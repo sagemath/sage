@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 The module action induced by a Drinfeld module
 
@@ -28,9 +28,9 @@ from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldM
 class DrinfeldModuleAction(Action):
     r"""
     This class implements the module action induced by a Drinfeld
-    `\mathbb{F}_q[T]`-module.
+    `\GF{q}[T]`-module.
 
-    Let `\phi` be a Drinfeld `\mathbb{F}_q[T]`-module over a field `K`
+    Let `\phi` be a Drinfeld `\GF{q}[T]`-module over a field `K`
     and let `L/K` be a field extension. Let `x \in L` and let `a` be a
     function ring element; the action is defined as `(a, x) \mapsto
     \phi_a(x)`.
@@ -42,12 +42,12 @@ class DrinfeldModuleAction(Action):
     .. NOTE::
 
         The user should never explicitly instantiate the class
-        `DrinfeldModuleAction`.
+        :class:`DrinfeldModuleAction`.
 
     .. WARNING::
 
-        This class may be replaced later on. See issues #34833 and
-        #34834.
+        This class may be replaced later on. See issues
+        :issue:`34833` and :issue:`34834`.
 
     INPUT: the Drinfeld module
 
@@ -60,7 +60,7 @@ class DrinfeldModuleAction(Action):
         sage: action = phi.action()
         sage: action
         Action on Finite Field in z of size 11^2 over its base
-         induced by Drinfeld module defined by T |--> t^3 + z
+         induced by Drinfeld module defined by T |--> τ^3 + z
 
     The action on elements is computed as follows::
 
@@ -81,11 +81,13 @@ class DrinfeldModuleAction(Action):
         True
     """
 
-    def __init__(self, drinfeld_module):
+    def __init__(self, drinfeld_module) -> None:
         """
         Initialize ``self``.
 
-        INPUT: the Drinfeld module
+        INPUT:
+
+        - ``drinfeld_module`` -- the Drinfeld module
 
         TESTS::
 
@@ -138,11 +140,11 @@ class DrinfeldModuleAction(Action):
             raise TypeError('second input must be in the field acted upon')
         return self._drinfeld_module(pol)(x)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of the action.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -152,17 +154,17 @@ class DrinfeldModuleAction(Action):
             sage: phi = DrinfeldModule(A, [z, 0, 0, 1])
             sage: action = phi.action()
             sage: latex(action)
-            \text{Action{ }on{ }}\Bold{F}_{11^{2}}\text{{ }induced{ }by{ }}\phi: T \mapsto t^{3} + z
+            \text{Action{ }on{ }}\Bold{F}_{11^{2}}\text{{ }induced{ }by{ }}\phi: T \mapsto τ^{3} + z
         """
         return f'\\text{{Action{{ }}on{{ }}}}' \
                f'{latex(self._base)}\\text{{{{ }}' \
                f'induced{{ }}by{{ }}}}{latex(self._drinfeld_module)}'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of the action.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -172,7 +174,7 @@ class DrinfeldModuleAction(Action):
             sage: phi = DrinfeldModule(A, [z, 0, 0, 1])
             sage: action = phi.action()
             sage: action
-            Action on Finite Field in z of size 11^2 over its base induced by Drinfeld module defined by T |--> t^3 + z
+            Action on Finite Field in z of size 11^2 over its base induced by Drinfeld module defined by T |--> τ^3 + z
         """
         return f'Action on {self._base} induced by ' \
                f'{self._drinfeld_module}'

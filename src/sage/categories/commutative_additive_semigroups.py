@@ -11,6 +11,7 @@ Commutative additive semigroups
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.additive_semigroups import AdditiveSemigroups
 
+
 class CommutativeAdditiveSemigroups(CategoryWithAxiom):
     """
     The category of additive abelian semigroups, i.e. sets with an

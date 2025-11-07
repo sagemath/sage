@@ -65,7 +65,7 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 An example of Hopf algebra with basis:
                  the group algebra of the Dihedral group of order 6
                   as a permutation group over Rational Field
-                sage: (a, b) = A._group.gens()                                          # needs sage.groups sage.modules
+                sage: a, b = A._group.gens()                                          # needs sage.groups sage.modules
                 sage: A.coproduct_on_basis(a)                                           # needs sage.groups sage.modules
                 B[(1,2,3)] # B[(1,2,3)]
             """
@@ -91,7 +91,6 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 (B[(1,2,3)], B[(1,2,3)] # B[(1,2,3)])
                 sage: b, A.coproduct(b)
                 (B[(1,3)], B[(1,3)] # B[(1,3)])
-
             """
             if self.coproduct_on_basis is not NotImplemented:
                 # TODO: if self is a Hopf algebra, then one would want
@@ -120,7 +119,7 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 An example of Hopf algebra with basis:
                  the group algebra of the Dihedral group of order 6
                   as a permutation group over Rational Field
-                sage: (a, b) = A._group.gens()                                          # needs sage.groups sage.modules
+                sage: a, b = A._group.gens()                                          # needs sage.groups sage.modules
                 sage: A.counit_on_basis(a)                                              # needs sage.groups sage.modules
                 1
             """
@@ -144,7 +143,6 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 (B[(1,2,3)], 1)
                 sage: b, A.counit(b)
                 (B[(1,3)], 1)
-
             """
             if self.counit_on_basis is not NotImplemented:
                 return self.module_morphism(self.counit_on_basis,codomain=self.base_ring())
@@ -193,14 +191,15 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: m = SymmetricFunctionsNonCommutingVariables(QQ).m()               # needs sage.combinat sage.modules
-                sage: m[[1,3],[2]].coproduct_iterated(2)                                # needs sage.combinat sage.modules
+                sage: # needs sage.combinat sage.graphs sage.modules
+                sage: m = SymmetricFunctionsNonCommutingVariables(QQ).m()
+                sage: m[[1,3],[2]].coproduct_iterated(2)
                 m{} # m{} # m{{1, 3}, {2}} + m{} # m{{1}} # m{{1, 2}}
                  + m{} # m{{1, 2}} # m{{1}} + m{} # m{{1, 3}, {2}} # m{}
                  + m{{1}} # m{} # m{{1, 2}} + m{{1}} # m{{1, 2}} # m{}
                  + m{{1, 2}} # m{} # m{{1}} + m{{1, 2}} # m{{1}} # m{}
                  + m{{1, 3}, {2}} # m{} # m{}
-                sage: m[[]].coproduct_iterated(3), m[[1,3],[2]].coproduct_iterated(0)   # needs sage.combinat sage.modules
+                sage: m[[]].coproduct_iterated(3), m[[1,3],[2]].coproduct_iterated(0)
                 (m{} # m{} # m{} # m{}, m{{1, 3}, {2}})
             """
             if n < 0:

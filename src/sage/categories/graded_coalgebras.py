@@ -13,9 +13,10 @@ from sage.categories.graded_modules import GradedModulesCategory
 from sage.categories.signed_tensor import SignedTensorProductsCategory
 from sage.misc.cachefunc import cached_method
 
+
 class GradedCoalgebras(GradedModulesCategory):
     """
-    The category of graded coalgebras
+    The category of graded coalgebras.
 
     EXAMPLES::
 

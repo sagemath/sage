@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Feature for testing the presence of ``csdp``
 """
@@ -41,8 +40,8 @@ class CSDP(Executable):
             sage: isinstance(CSDP(), CSDP)
             True
         """
-        Executable.__init__(self, name="csdp", spkg="csdp", executable="theta",
-                                url="https://github.com/dimpase/csdp")
+        Executable.__init__(self, name='csdp', spkg='csdp', executable='theta',
+                                url='https://github.com/dimpase/csdp')
 
     def is_functional(self):
         r"""

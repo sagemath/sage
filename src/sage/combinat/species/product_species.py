@@ -27,6 +27,9 @@ class ProductSpeciesStructure(GenericSpeciesStructure):
         TESTS::
 
             sage: S = species.SetSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
             sage: F = S * S
             sage: a = F.structures(['a','b','c']).random_element()
             sage: a == loads(dumps(a))
@@ -123,11 +126,11 @@ class ProductSpeciesStructure(GenericSpeciesStructure):
 
         INPUT:
 
-        - ``labels``, a list of labels.
+        - ``labels`` -- list of labels
 
         OUTPUT:
 
-        A structure with the i-th label of self replaced with the i-th
+        A structure with the `i`-th label of ``self`` replaced with the `i`-th
         label of the list.
 
         EXAMPLES::
@@ -235,7 +238,7 @@ class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def left_factor(self):
         """
-        Returns the left factor of this product.
+        Return the left factor of this product.
 
         EXAMPLES::
 
@@ -249,7 +252,7 @@ class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def right_factor(self):
         """
-        Returns the right factor of this product.
+        Return the right factor of this product.
 
         EXAMPLES::
 
@@ -372,7 +375,7 @@ class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def weight_ring(self):
         """
-        Returns the weight ring for this species. This is determined by
+        Return the weight ring for this species. This is determined by
         asking Sage's coercion model what the result is when you multiply
         (and add) elements of the weight rings for each of the operands.
 
@@ -403,7 +406,7 @@ class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def _equation(self, var_mapping):
         """
-        Returns the right hand side of an algebraic equation satisfied by
+        Return the right hand side of an algebraic equation satisfied by
         this species. This is a utility function called by the
         algebraic_equation_system method.
 

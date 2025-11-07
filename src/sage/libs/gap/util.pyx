@@ -12,13 +12,13 @@ Utility functions for GAP
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from libc.signal cimport signal, SIGCHLD, SIG_DFL
+from libc.signal cimport signal, SIGALRM, SIGCHLD, SIG_DFL, SIGINT
 from posix.dlfcn cimport dlopen, dlclose, dlerror, RTLD_LAZY, RTLD_GLOBAL
+from posix.signal cimport sigaction, sigaction_t, sigemptyset
 
 from cpython.exc cimport PyErr_Fetch, PyErr_Restore
-from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
+from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE, Py_TYPE
 from cpython.ref cimport PyObject, Py_XINCREF, Py_XDECREF
-from cysignals.signals cimport sig_on, sig_off
 
 import os
 import warnings
@@ -38,7 +38,7 @@ from sage.interfaces.gap_workspace import prepare_workspace_dir
 
 cdef class ObjWrapper():
     """
-    Wrapper for GAP master pointers
+    Wrapper for GAP master pointers.
 
     EXAMPLES::
 
@@ -55,13 +55,11 @@ cdef class ObjWrapper():
 
         INPUT:
 
-        - ``lhs``, ``rhs`` -- :class:`ObjWrapper`.
+        - ``lhs``, ``rhs`` -- :class:`ObjWrapper`
 
-        - ``op`` -- integer. The comparison operation to be performed.
+        - ``op`` -- integer; the comparison operation to be performed
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -71,7 +69,6 @@ cdef class ObjWrapper():
             sage: x == y
             True
         """
-        cdef result
         cdef Obj self_value = self.value
         cdef Obj other_value = other.value
         if op == Py_LT:
@@ -91,7 +88,7 @@ cdef class ObjWrapper():
 
     def __hash__(self):
         """
-        Return a hash value
+        Return a hash value.
 
         EXAMPLES::
 
@@ -133,7 +130,6 @@ cdef void reference_obj(Obj obj) noexcept:
     """
     cdef ObjWrapper wrapped = wrap_obj(obj)
     global owned_objects_refcount
-#    print("reference_obj called "+ crepr(obj) +"\n")
     if wrapped in owned_objects_refcount:
         owned_objects_refcount[wrapped] += 1
     else:
@@ -182,6 +178,23 @@ ERROR_OUTPUT := "*errout*";
 MakeReadOnlyGlobal("ERROR_OUTPUT");
 MakeImmutable(libgap_errout);
 """
+
+
+# "Global" signal handler info structs. The GAP one we enable/disable
+# before/after GAP code. The Sage ones we use to store the existing
+# handlers before we do that.
+cdef sigaction_t gap_sigint_sa
+cdef sigaction_t sage_sigint_sa
+cdef sigaction_t sage_sigalrm_sa
+cdef int last_signum = 0
+
+
+cdef void gap_interrupt_asap(int signum) noexcept:
+    # A wrapper around InterruptExecStat(). This tells GAP to raise an
+    # error at the next opportunity.
+    global last_signum
+    last_signum = signum
+    InterruptExecStat()
 
 
 cdef initialize():
@@ -261,11 +274,21 @@ cdef initialize():
 
     argv[argc] = NULL
 
-    sig_on()
-    # Initialize GAP but disable their SIGINT handler
+    # Initialize GAP but disable its signal handlers: we only want
+    # them to be invoked while libgap code is executing, whereas the
+    # default would enable them globally. We will explicitly wrap GAP
+    # computations in gap_sig_on() and gap_sig_off() instead.
     GAP_Initialize(argc, argv, gasman_callback, error_handler,
                    handleSignals=False)
-    sig_off()
+
+    # Configure a SIGINT handler (which can be enabled by calling
+    # gap_sig_on) to run InterruptExecStat. This is essentially GAP's
+    # own SIGINT handler (but without the double-Ctrl-C behavior), and
+    # is less crashy than when we mix cysignals with GAP code.
+    global gap_sigint_sa
+    gap_sigint_sa.sa_handler = gap_interrupt_asap
+    sigemptyset(&(gap_sigint_sa.sa_mask))
+    gap_sigint_sa.sa_flags = 0;
 
     # Disable GAP's SIGCHLD handler ChildStatusChanged(), which calls
     # waitpid() on random child processes.
@@ -287,6 +310,26 @@ cdef initialize():
             gap_eval('SaveWorkspace("{0}")'.format(f.name))
 
 
+cpdef void gap_sig_on() noexcept:
+    # Install GAP's own SIGINT handler, typically for the duration of
+    # some libgap commands. We install it for SIGALRM too so that the
+    # doctest runner can use alarm() to interrupt it.
+    global gap_sigint_sa
+    global sage_sigint_sa
+    global sage_sigalrm_sa
+    sigaction(SIGINT, &gap_sigint_sa, &sage_sigint_sa)
+    sigaction(SIGALRM, &gap_sigint_sa, &sage_sigalrm_sa)
+
+
+cpdef void gap_sig_off() noexcept:
+    # Restore the Sage handlers that were saved & overwritten in
+    # gap_sig_on(). Better make sure the two are paired correctly!
+    global sage_sigint_sa
+    global sage_sigalrm_sa
+    sigaction(SIGINT, &sage_sigint_sa, NULL)
+    sigaction(SIGALRM, &sage_sigalrm_sa, NULL)
+
+
 ############################################################################
 ### Evaluate string in GAP #################################################
 ############################################################################
@@ -295,9 +338,13 @@ cdef Obj gap_eval(str gap_string) except? NULL:
     r"""
     Evaluate a string in GAP.
 
+    This function cannot be used directly from Python, use
+    :meth:`~sage.libs.gap.libgap.Gap.eval` method on global ``libgap``
+    variable instead.
+
     INPUT:
 
-    - ``gap_string`` -- string. A valid statement in GAP.
+    - ``gap_string`` -- string; a valid statement in GAP
 
     OUTPUT:
 
@@ -352,14 +399,15 @@ cdef Obj gap_eval(str gap_string) except? NULL:
     """
     initialize()
     cdef Obj result
-    cdef int i, j, nresults
+    cdef int nresults
 
     # Careful: We need to keep a reference to the bytes object here
     # so that Cython doesn't deallocate it before GAP is done with
     # its contents.
     cmd = str_to_bytes(gap_string + ';\n')
-    sig_on()
+
     try:
+        gap_sig_on()
         GAP_Enter()
         result = GAP_EvalString(cmd)
         # We can assume that the result object is a GAP PList (plain list)
@@ -370,7 +418,7 @@ cdef Obj gap_eval(str gap_string) except? NULL:
         # here if the error handler was set; but in case it wasn't
         # let's still check the result...
         nresults = GAP_LenList(result)
-        if nresults > 1:  # to mimick the old libGAP
+        if nresults > 1:  # to mimic the old libGAP
             # TODO: Get rid of this restriction eventually?
             raise GAPError("can only evaluate a single statement")
 
@@ -392,12 +440,13 @@ cdef Obj gap_eval(str gap_string) except? NULL:
         return GAP_ElmList(result, 2)
     finally:
         GAP_Leave()
-        sig_off()
+        gap_sig_off()
 
 
 ############################################################################
 ### Error handler ##########################################################
 ############################################################################
+
 
 class GAPError(ValueError):  # ValueError for historical reasons
     """
@@ -433,7 +482,7 @@ cdef void error_handler() noexcept with gil:
     """
     The libgap error handler.
 
-    If an error occurred, we raise a ``GAPError``; when the original
+    If an error occurred, we raise a :exc:`GAPError`; when the original
     ``GAP_EvalString`` returns, this exception will be seen.
 
     TODO: We should probably prevent re-entering this function if we
@@ -443,6 +492,7 @@ cdef void error_handler() noexcept with gil:
     cdef PyObject* exc_type = NULL
     cdef PyObject* exc_val = NULL
     cdef PyObject* exc_tb = NULL
+    global last_signum
 
     try:
         GAP_EnterStack()
@@ -468,16 +518,36 @@ cdef void error_handler() noexcept with gil:
         elif not msg:
             msg = "an unknown error occurred in GAP"
 
+        # PyErr_Fetch gives us a reference to the object, we need to free them
+        Py_XDECREF(exc_type)
+        Py_XDECREF(exc_val)
+
         # Raise an exception using PyErr_Restore().
         # This way, we can keep any existing traceback object.
         # Note that we manually need to deal with refcounts here.
-        Py_XDECREF(exc_type)
-        Py_XDECREF(exc_val)
-        exc_type = <PyObject*>GAPError
-        exc_val = <PyObject*>msg
+        if last_signum:
+            if last_signum == SIGINT:
+                exc_type = <PyObject*>KeyboardInterrupt
+                exc_val_python = KeyboardInterrupt()
+                exc_val = <PyObject*>exc_val_python
+            elif last_signum == SIGALRM:
+                from cysignals.signals import AlarmInterrupt
+                exc_type = <PyObject*>AlarmInterrupt
+                exc_val_python = AlarmInterrupt()
+                exc_val = <PyObject*>exc_val_python
+            else:
+                msg = f'{msg}\nunexpected signal value {last_signum} handled, this cannot happen'
+                exc_type = <PyObject*>GAPError
+                exc_val = <PyObject*>msg
+            last_signum = 0
+        else:
+            exc_type = <PyObject*>GAPError
+            exc_val = <PyObject*>msg
+
         Py_XINCREF(exc_type)
         Py_XINCREF(exc_val)
         PyErr_Restore(exc_type, exc_val, exc_tb)
+        # as explained in libgap.pyx, this is handled because GAP_Enter's declaration has "except 0"
     finally:
         # Reset ERROR_OUTPUT with a new text string stream
         GAP_EvalStringNoExcept(_reset_error_output_cmd)

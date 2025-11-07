@@ -50,7 +50,7 @@ List all fields in the database ramified at 101::
      Number Field in a with defining polynomial x^5 - x^4 - 40*x^3 - 93*x^2 - 21*x + 17]
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -64,8 +64,8 @@ List all fields in the database ramified at 101::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 
@@ -73,7 +73,6 @@ from sage.rings.number_field.number_field import NumberField
 from sage.rings.rational_field import RationalField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.combinat.subset import powerset
-from sage.env import SAGE_SHARE
 
 from sage.misc.persist import load, save
 
@@ -129,12 +128,10 @@ class JonesDatabase:
 
         INPUT:
 
-
-        -  ``path`` - (default works on William Stein install.)
-           path must be the path to Jones's Number_Fields directory
-           http://hobbes.la.asu.edu/Number_Fields These files should have
-           been downloaded using wget.
-
+        - ``path`` -- (default: works on William Stein install)
+          path must be the path to Jones's Number_Fields directory
+          (http://hobbes.la.asu.edu/Number_Fields); these files should have
+          been downloaded using wget
 
         EXAMPLES: This is how to create the database from scratch, assuming
         that the number fields are in the default directory above: From a
@@ -171,12 +168,12 @@ class JonesDatabase:
 
         INPUT:
 
-        -  ``S`` - list or set of primes, or a single prime
+        - ``S`` -- list or set of primes, or a single prime
 
-        -  ``d`` - None (default, in which case all fields of degree <= 6 are returned)
-           or a positive integer giving the degree of the number fields returned.
+        - ``d`` -- ``None`` (default, in which case all fields of degree <= 6 are returned)
+          or a positive integer giving the degree of the number fields returned
 
-        -  ``var`` - the name used for the generator of the number fields (default 'a').
+        - ``var`` -- the name used for the generator of the number fields (default: ``'a'``)
 
         EXAMPLES::
 
@@ -211,9 +208,9 @@ class JonesDatabase:
 
         INPUT:
 
-        -  ``S`` - list or set of primes, or a single prime
+        - ``S`` -- list or set of primes, or a single prime
 
-        -  ``var`` - the name used for the generator of the number fields (default 'a').
+        - ``var`` -- the name used for the generator of the number fields (default: ``'a'``)
 
         EXAMPLES::
 
@@ -248,12 +245,12 @@ class JonesDatabase:
 
         INPUT:
 
-        -  ``S`` - list or set of primes
+        - ``S`` -- list or set of primes
 
-        -  ``d`` - None (default, in which case all fields of degree <= 6 are returned)
-           or a positive integer giving the degree of the number fields returned.
+        - ``d`` -- ``None`` (default, in which case all fields of degree <= 6 are returned)
+          or a positive integer giving the degree of the number fields returned
 
-        -  ``var`` - the name used for the generator of the number fields (default 'a').
+        - ``var`` -- the name used for the generator of the number fields (default: ``'a'``)
 
         EXAMPLES::
 

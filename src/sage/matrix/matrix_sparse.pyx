@@ -156,7 +156,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         cdef long h = 0, k, l
         cdef Py_ssize_t i, j
-        for ij, x in D.iteritems():
+        for ij, x in D.items():
             sig_check()
             i = (<tuple>ij)[0]
             j = (<tuple>ij)[1]
@@ -228,7 +228,7 @@ cdef class Matrix_sparse(matrix.Matrix):
     def _multiply_classical_with_cache(Matrix_sparse left, Matrix_sparse right):
         """
         This function computes the locations of the end of the rows/columns
-        in the non-zero entries list once O(rows+cols) time and space, then
+        in the nonzero entries list once O(rows+cols) time and space, then
         uses these values in the inner loops. For large matrices this can
         be a 2x or more speedup, but the matrices can no longer be
         arbitrarily large as the runtime and space requirements are no
@@ -307,12 +307,10 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         INPUT:
 
-        - `right` -- a ring element which must already be in the basering
-          of ``self`` (no coercion done here).
+        - ``right`` -- a ring element which must already be in the base ring
+          of ``self`` (no coercion done here)
 
-        OUTPUT:
-
-        the matrix ``self * right``
+        OUTPUT: the matrix ``self * right``
 
         EXAMPLES::
 
@@ -349,9 +347,8 @@ cdef class Matrix_sparse(matrix.Matrix):
             r = get_ij(nz, k, 0)
             c = get_ij(nz, k, 1)
             entry = self.get_unsafe(r,c)*right
-            M.set_unsafe(r,c,entry)
+            M.set_unsafe(r, c, entry)
         return M
-
 
     cdef bint _will_use_strassen(self, matrix0.Matrix right) except -2:
         # never use Strassen for sparse matrix multiply
@@ -365,7 +362,7 @@ cdef class Matrix_sparse(matrix.Matrix):
     def _unpickle_generic(self, data, int version):
         cdef Py_ssize_t i, j
         if version == -1:
-            for (i, j), x in data.iteritems():
+            for (i, j), x in data.items():
                 self.set_unsafe(i, j, x)
         else:
             raise RuntimeError("unknown matrix version (=%s)" % version)
@@ -435,7 +432,7 @@ cdef class Matrix_sparse(matrix.Matrix):
         for k from 0 <= k < len(nz):
             i = get_ij(nz, k, 0)
             j = get_ij(nz, k, 1)
-            A.set_unsafe(j,i,self.get_unsafe(i,j))
+            A.copy_from_unsafe(j, i, self, i, j)
         if self._subdivisions is not None:
             row_divs, col_divs = self.subdivisions()
             A.subdivide(col_divs, row_divs)
@@ -467,13 +464,12 @@ cdef class Matrix_sparse(matrix.Matrix):
         for k from 0 <= k < len(nz):
             i = get_ij(nz, k, 0)
             j = get_ij(nz, k, 1)
-            A.set_unsafe(self._ncols-j-1, self._nrows-i-1,self.get_unsafe(i,j))
+            A.copy_from_unsafe(self._ncols-j-1, self._nrows-i-1, self, i, j)
         if self._subdivisions is not None:
             row_divs, col_divs = self.subdivisions()
             A.subdivide(list(reversed([self._ncols - t for t in col_divs])),
                             list(reversed([self._nrows - t for t in row_divs])))
         return A
-
 
     def _reverse_unsafe(self):
         r"""
@@ -647,7 +643,7 @@ cdef class Matrix_sparse(matrix.Matrix):
         R = phi.codomain()
         M = sage.matrix.matrix_space.MatrixSpace(R, self._nrows,
                                                  self._ncols, sparse=True)
-        return M({ij: phi(z) for ij, z in self.dict().iteritems()})
+        return M({ij: phi(z) for ij, z in self.dict().items()})
 
     def apply_map(self, phi, R=None, sparse=True):
         r"""
@@ -661,9 +657,9 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         - ``phi`` -- arbitrary Python function or callable object
 
-        -  ``R`` -- (optional) ring
+        - ``R`` -- (optional) ring
 
-        - ``sparse`` -- (optional, default ``True``) whether to return
+        - ``sparse`` -- boolean (default: ``True``); whether to return
           a sparse or a dense matrix
 
         OUTPUT: a matrix over ``R``
@@ -702,7 +698,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: n[1, 2]
             2
 
-        If self is subdivided, the result will be as well::
+        If ``self`` is subdivided, the result will be as well::
 
             sage: m = matrix(2, 2, [0, 0, 3, 0])
             sage: m.subdivide(None, 1); m
@@ -712,7 +708,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             [0|0]
             [9|0]
 
-        If the map sends zero to a non-zero value, then it may be useful to
+        If the map sends zero to a nonzero value, then it may be useful to
         get the result as a dense matrix.
 
         ::
@@ -746,7 +742,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             [  1 1/2]
             [1/3 1/4]
 
-        Test subdivisions when phi maps 0 to non-zero::
+        Test subdivisions when phi maps 0 to nonzero::
 
             sage: m = matrix(2, 2, [0, 0, 3, 0])
             sage: m.subdivide(None, 1); m
@@ -772,7 +768,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             zero_res = phi(self.base_ring()(0))
         else:
             zero_res = None
-        v = [(ij, phi(z)) for ij,z in self_dict.iteritems()]
+        v = [(ij, phi(z)) for ij,z in self_dict.items()]
         if R is None:
             w = [x for _, x in v]
             if zero_res is not None:
@@ -814,13 +810,24 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: m._derivative(x)                                                      # needs sage.symbolic
             [    0     1]
             [  2*x 3*x^2]
+
+        TESTS:
+
+        Verify that :issue:`15067` is fixed::
+
+            sage: m = matrix(3, 3, {(1, 1): 2, (0,2): 5})
+            sage: derivative(m, x)
+            [0 0 0]
+            [0 0 0]
+            [0 0 0]
         """
         # We would just use apply_map, except that Cython does not
         # allow lambda functions
 
         if self._nrows==0 or self._ncols==0:
             return self.__copy__()
-        v = [(ij, z.derivative(var)) for ij, z in self.dict().iteritems()]
+        v = [(ij, sage.calculus.functional.derivative(z, var))
+             for ij, z in self.dict().items()]
         if R is None:
             w = [x for _, x in v]
             w = sage.structure.sequence.Sequence(w)
@@ -931,7 +938,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         ncols = PyList_GET_SIZE(columns)
         nrows = PyList_GET_SIZE(rows)
-        cdef Matrix_sparse A = self.new_matrix(nrows = nrows, ncols = ncols)
+        cdef Matrix_sparse A = self.new_matrix(nrows=nrows, ncols=ncols)
 
         tmp = [el for el in columns if 0 <= el < self._ncols]
         columns = tmp
@@ -1125,7 +1132,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         INPUT:
 
-        -  ``v`` -- a free module element
+        - ``v`` -- a free module element
 
         OUTPUT: the vector times matrix product ``v*A``
 
@@ -1143,12 +1150,12 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: (v * m).parent() is m.row(0).parent()
             True
             """
-        cdef int i, j
+        cdef Py_ssize_t i, j
         if self._nrows != v._degree:
             raise ArithmeticError("number of rows of matrix must equal degree of vector")
         parent = self.row_ambient_module(base_ring=None, sparse=v.is_sparse_c())
         s = parent.zero_vector()
-        for (i, j), a in self._dict().iteritems():
+        for (i, j), a in self._dict().items():
             s[j] += v[i] * a
         return s
 
@@ -1196,12 +1203,12 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: M*w
             (x*y)
         """
-        cdef int i, j
+        cdef Py_ssize_t i, j
         if self._ncols != v._degree:
             raise ArithmeticError("number of columns of matrix must equal degree of vector")
         parent = self.column_ambient_module(base_ring=None, sparse=v.is_sparse_c())
         s = parent.zero_vector()
-        for (i, j), a in self._dict().iteritems():
+        for (i, j), a in self._dict().items():
             s[i] += a * v[j]
         return s
 

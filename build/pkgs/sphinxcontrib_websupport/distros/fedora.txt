@@ -1,1 +1,1 @@
-python-sphinxcontrib-websupport
+python3-sphinxcontrib-websupport

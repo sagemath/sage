@@ -90,34 +90,22 @@ cimport sage.libs.linbox.linbox as linbox
 
 from sage.arith.misc import is_prime
 from sage.data_structures.binary_search cimport *
-from sage.ext.stdsage cimport PY_NEW
-from sage.libs.flint.fmpz cimport fmpz_get_mpz, fmpz_set_mpz
-from sage.libs.flint.fmpz_mat cimport fmpz_mat_entry
-from sage.libs.gmp.mpz cimport mpz_set
-from sage.libs.linbox.conversion cimport (get_method,
-                                          METHOD_DEFAULT,
+from sage.libs.linbox.conversion cimport (METHOD_DEFAULT,
                                           METHOD_DENSE_ELIMINATION,
                                           METHOD_SPARSE_ELIMINATION,
                                           METHOD_BLACKBOX,
                                           METHOD_WIEDEMANN,
-                                          new_linbox_matrix_modn_sparse,
-                                          new_linbox_matrix_integer_sparse,
-                                          new_linbox_vector_integer_dense,
-                                          new_sage_vector_integer_dense)
+                                          new_linbox_matrix_modn_sparse)
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 from sage.matrix.matrix2 import Matrix as Matrix2
 from sage.matrix.matrix_dense cimport Matrix_dense
-from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.matrix.matrix_sparse cimport Matrix_sparse
 from sage.misc.verbose import verbose, get_verbose
-from sage.modules.vector_integer_dense cimport Vector_integer_dense
 from sage.modules.vector_integer_sparse cimport *
 from sage.modules.vector_modn_sparse cimport *
 from sage.rings.fast_arith cimport arith_int
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int, IntegerMod_abstract
-from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
 from sage.structure.element cimport Matrix
 
 ################
@@ -130,6 +118,7 @@ ai = arith_int()
 # int's, even on 64-bit computers.  Improving this is
 # Github Issue #12679.
 MAX_MODULUS = 46341
+
 
 cdef class Matrix_modn_sparse(Matrix_sparse):
     def __cinit__(self):
@@ -163,7 +152,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
+        - ``coerce`` -- if ``False``, assume without checking that the
           entries lie in the base ring
         """
         ma = MatrixArgs_init(parent, entries)
@@ -178,10 +167,50 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         cdef IntegerMod_int n
-        n =  IntegerMod_int.__new__(IntegerMod_int)
+        n = IntegerMod_int.__new__(IntegerMod_int)
         IntegerMod_abstract.__init__(n, self._base_ring)
         n.ivalue = get_entry(&self.rows[i], j)
         return n
+
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_modn_sparse
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: m = matrix(GF(257),3,4,[i if is_prime(i) else 0 for i in range(12)],sparse=True)
+            sage: m
+            [ 0  0  2  3]
+            [ 0  5  0  7]
+            [ 0  0  0 11]
+            sage: m.transpose()
+            [ 0  0  0]
+            [ 0  5  0]
+            [ 2  0  0]
+            [ 3  7 11]
+            sage: m.matrix_from_rows([0,2])
+            [ 0  0  2  3]
+            [ 0  0  0 11]
+            sage: m.matrix_from_columns([1,3])
+            [ 0  3]
+            [ 5  7]
+            [ 0 11]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [ 0  7]
+            [ 0 11]
+        """
+        cdef Matrix_modn_sparse _src = <Matrix_modn_sparse>src
+        set_entry(&self.rows[iDst], jDst, get_entry(&_src.rows[iSrc], jSrc))
 
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
@@ -257,7 +286,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
     cdef Matrix _matrix_times_matrix_(self, Matrix _right):
         """
-        This code is implicitly called for multiplying self by another
+        This code is implicitly called for multiplying ``self`` by another
         sparse matrix.
 
         EXAMPLES::
@@ -332,7 +361,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
     def _matrix_times_matrix_dense(self, Matrix _right):
         """
-        Multiply self by the sparse matrix _right, and return the
+        Multiply ``self`` by the sparse matrix ``_right``, and return the
         result as a dense matrix.
 
         EXAMPLES::
@@ -361,7 +390,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         cdef c_vector_modint* v
 
         # Build a table that gives the nonzero positions in each column of right
-        nonzero_positions_in_columns = [set([]) for _ in range(right._ncols)]
+        nonzero_positions_in_columns = [set() for _ in range(right._ncols)]
         cdef Py_ssize_t i, j, k
         for i from 0 <= i < right._nrows:
             v = &(right.rows[i])
@@ -382,7 +411,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
                     if v.positions[k] in c:
                         y = get_entry(&right.rows[v.positions[k]], j)
                         x = v.entries[k] * y
-                        s = (s + x)%self.p
+                        s = (s + x) % self.p
                 ans.set_unsafe_int(i, j, s)
                 #ans._matrix[i][j] = s
         return ans
@@ -403,7 +432,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
     cpdef _echelon_in_place(self, str algorithm):
         """
-        Replace self by its reduction to reduced row echelon form.
+        Replace ``self`` by its reduction to reduced row echelon form.
 
         ALGORITHM: We use Gauss elimination, in a slightly intelligent way,
         in that we clear each column using a row with the minimum number of
@@ -429,7 +458,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
         for c from 0 <= c < self._ncols:
             if do_verb and (c % fifth == 0 and c>0):
-                tm = verbose('on column %s of %s'%(c, self._ncols),
+                tm = verbose('on column %s of %s' % (c, self._ncols),
                              level = 2,
                              caller_name = 'matrix_modn_sparse echelon')
             #end if
@@ -470,9 +499,8 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
                 sig_off()
                 start_row = start_row + 1
 
-
-        self.cache('pivots',tuple(pivots))
-        self.cache('in_echelon_form',True)
+        self.cache('pivots', tuple(pivots))
+        self.cache('in_echelon_form', True)
 
     def _nonzero_positions_by_row(self, copy=True):
         """
@@ -505,9 +533,8 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
     def density(self):
         """
-        Return the density of self, i.e., the ratio of the number of
-        nonzero entries of self to the total size of self.
-
+        Return the density of ``self``, i.e., the ratio of the number of
+        nonzero entries of ``self`` to the total size of ``self``.
 
         EXAMPLES::
 
@@ -541,7 +568,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
     def transpose(self):
         """
-        Return the transpose of self.
+        Return the transpose of ``self``.
 
         EXAMPLES::
 
@@ -562,7 +589,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             [1 0 0]
             [0 0 0]
         """
-        cdef int i, j
+        cdef Py_ssize_t i, j
         cdef c_vector_modint row
         cdef Matrix_modn_sparse B
 
@@ -578,14 +605,12 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
     def matrix_from_rows(self, rows):
         """
-        Return the matrix constructed from self using rows with indices in
+        Return the matrix constructed from ``self`` using rows with indices in
         the rows list.
 
         INPUT:
 
-
-        -  ``rows`` - list or tuple of row indices
-
+        - ``rows`` -- list or tuple of row indices
 
         EXAMPLES::
 
@@ -598,7 +623,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             [6 7 8]
             [3 4 5]
         """
-        cdef int i,k
+        cdef Py_ssize_t i,k
         cdef Matrix_modn_sparse A
         cdef c_vector_modint row
 
@@ -619,10 +644,9 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             k += 1
         return A
 
-
     def matrix_from_columns(self, cols):
         """
-        Return the matrix constructed from self using columns with indices
+        Return the matrix constructed from ``self`` using columns with indices
         in the columns list.
 
         EXAMPLES::
@@ -637,7 +661,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             [5 4]
             [8 7]
         """
-        cdef int i,j
+        cdef Py_ssize_t i,j
         cdef Matrix_modn_sparse A
         cdef c_vector_modint row
 
@@ -724,8 +748,8 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
         INPUT:
 
-        - ``algorithm`` - either ``"linbox"`` (only available for
-          matrices over prime fields) or ``"generic"``
+        - ``algorithm`` -- either ``'linbox'`` (only available for
+          matrices over prime fields) or ``'generic'``
 
         EXAMPLES::
 
@@ -738,19 +762,19 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             2
 
             sage: A._clear_cache()
-            sage: A.rank(algorithm="generic")
+            sage: A.rank(algorithm='generic')
             2
             sage: A._clear_cache()
-            sage: A.rank(algorithm="hey")
+            sage: A.rank(algorithm='hey')
             Traceback (most recent call last):
             ...
             ValueError: no algorithm 'hey'
 
         TESTS::
 
-            sage: matrix(GF(3), 0, sparse=True).rank(algorithm="generic")
+            sage: matrix(GF(3), 0, sparse=True).rank(algorithm='generic')
             0
-            sage: matrix(GF(3), 0, sparse=True).rank(algorithm="linbox")
+            sage: matrix(GF(3), 0, sparse=True).rank(algorithm='linbox')
             0
 
             sage: for _ in range(50):
@@ -759,8 +783,8 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             ....:     p = random_prime(10000)
             ....:     M = MatrixSpace(GF(p), nrows, ncols, sparse=True)
             ....:     m = M.random_element()
-            ....:     rank_linbox = m.rank(algorithm="linbox")
-            ....:     rank_generic = m.rank(algorithm="generic")
+            ....:     rank_linbox = m.rank(algorithm='linbox')
+            ....:     rank_generic = m.rank(algorithm='generic')
             ....:     if rank_linbox != rank_generic:
             ....:         print(m)
             ....:         raise RuntimeError
@@ -800,7 +824,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             return Matrix2.rank(self)
 
         else:
-            raise ValueError("no algorithm '%s'"%algorithm)
+            raise ValueError("no algorithm '%s'" % algorithm)
 
     def determinant(self, algorithm=None):
         r"""
@@ -808,7 +832,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
         INPUT:
 
-        - ``algorithm`` - either ``"linbox"`` (default) or ``"generic"``.
+        - ``algorithm`` -- either ``'linbox'`` (default) or ``'generic'``
 
         EXAMPLES::
 
@@ -816,11 +840,11 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             sage: B = identity_matrix(GF(3), 4, sparse=True)
             sage: (A + B).det()
             2
-            sage: (A + B).det(algorithm="linbox")
+            sage: (A + B).det(algorithm='linbox')
             2
-            sage: (A + B).det(algorithm="generic")
+            sage: (A + B).det(algorithm='generic')
             2
-            sage: (A + B).det(algorithm="hey")
+            sage: (A + B).det(algorithm='hey')
             Traceback (most recent call last):
             ...
             ValueError: no algorithm 'hey'
@@ -832,9 +856,9 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
         TESTS::
 
-            sage: matrix(GF(3), 0, sparse=True).det(algorithm="generic")
+            sage: matrix(GF(3), 0, sparse=True).det(algorithm='generic')
             1
-            sage: matrix(GF(3), 0, sparse=True).det(algorithm="linbox")
+            sage: matrix(GF(3), 0, sparse=True).det(algorithm='linbox')
             1
 
             sage: for _ in range(100):
@@ -842,8 +866,8 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             ....:     p = random_prime(10000)
             ....:     M = MatrixSpace(GF(p), dim, sparse=True)
             ....:     m = M.random_element()
-            ....:     det_linbox = m.det(algorithm="linbox")
-            ....:     det_generic = m.det(algorithm="generic")
+            ....:     det_linbox = m.det(algorithm='linbox')
+            ....:     det_generic = m.det(algorithm='generic')
             ....:     assert parent(det_linbox) == m.base_ring()
             ....:     assert parent(det_generic) == m.base_ring()
             ....:     if det_linbox != det_generic:
@@ -852,6 +876,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         """
         if self._nrows != self._ncols:
             raise ValueError("self must be a square matrix")
+
         if self._nrows == 0:
             return self.base_ring().one()
 
@@ -864,9 +889,10 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             self.cache('rank', r)
             self.cache('det', d)
             return d
-        elif algorithm == 'generic':
+
+        if algorithm == 'generic':
             d = Matrix_sparse.determinant(self)
             self.cache('det', d)
             return d
-        else:
-            raise ValueError("no algorithm '%s'"%algorithm)
+
+        raise ValueError("no algorithm '%s'" % algorithm)

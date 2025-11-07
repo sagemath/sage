@@ -1,5 +1,4 @@
 # distutils: language = c++
-# sage_setup: distribution = sagemath-mcqd
 
 from cysignals.signals cimport sig_on, sig_off
 from memory_allocator cimport MemoryAllocator
@@ -7,11 +6,11 @@ from memory_allocator cimport MemoryAllocator
 
 def mcqd(G):
     """
-    Computes the max clique using MCQD
+    Compute the max clique using MCQD.
 
     INPUT:
 
-    - ``G`` -- A graph
+    - ``G`` -- a graph
 
     TESTS::
 

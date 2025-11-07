@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Feature for testing the presence of ``lrslib``
 """
@@ -41,8 +40,8 @@ class Lrs(Executable):
             sage: isinstance(Lrs(), Lrs)
             True
         """
-        Executable.__init__(self, "lrs", executable="lrs", spkg="lrslib",
-                            url="http://cgm.cs.mcgill.ca/~avis/C/lrs.html")
+        Executable.__init__(self, "lrs", executable='lrs', spkg='lrslib',
+                            url='http://cgm.cs.mcgill.ca/~avis/C/lrs.html')
 
     def is_functional(self):
         r"""
@@ -100,8 +99,8 @@ class LrsNash(Executable):
             sage: isinstance(LrsNash(), LrsNash)
             True
         """
-        Executable.__init__(self, "lrsnash", executable="lrsnash", spkg="lrslib",
-                            url="http://cgm.cs.mcgill.ca/~avis/C/lrs.html")
+        Executable.__init__(self, "lrsnash", executable='lrsnash', spkg='lrslib',
+                            url='http://cgm.cs.mcgill.ca/~avis/C/lrs.html')
 
     def is_functional(self):
         r"""
@@ -128,7 +127,7 @@ class LrsNash(Executable):
                         'raised an OSError "{}" '.format(' '.join(command), e))
         if result.returncode:
             return FeatureTestResult(self, False, reason='Running command "{}" '
-                        'returned non-zero exit status "{}" with stderr '
+                        'returned nonzero exit status "{}" with stderr '
                         '"{}" and stdout "{}".'.format(' '.join(result.args),
                                                         result.returncode,
                                                         result.stderr.strip(),

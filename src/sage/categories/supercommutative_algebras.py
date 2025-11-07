@@ -13,6 +13,7 @@ from sage.categories.super_algebras import SuperAlgebras
 from sage.categories.signed_tensor import SignedTensorProductsCategory
 from sage.misc.cachefunc import cached_method
 
+
 class SupercommutativeAlgebras(CategoryWithAxiom_over_base_ring):
     r"""
     The category of supercommutative algebras.

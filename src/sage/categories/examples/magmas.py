@@ -48,14 +48,13 @@ class FreeMagma(UniqueRepresentation, Parent):
 
         sage: TestSuite(M).run()
     """
-
     def __init__(self, alphabet=('a', 'b', 'c', 'd')):
         r"""
         The free magma.
 
         INPUT:
 
-        - ``alphabet`` -- a tuple of strings; the generators of the magma
+        - ``alphabet`` -- tuple of strings; the generators of the magma
 
         EXAMPLES::
 
@@ -71,8 +70,12 @@ class FreeMagma(UniqueRepresentation, Parent):
         if any('(' in x or ')' in x or '*' in x for x in alphabet):
             raise ValueError("alphabet must not contain characters "
                              "'(', ')' or '*'")
+        if not alphabet:
+            raise NotImplementedError("free magma must have at least one generator")
+
         self.alphabet = alphabet
-        Parent.__init__(self, category=Magmas().FinitelyGenerated())
+
+        Parent.__init__(self, category=Magmas().FinitelyGenerated().Infinite())
 
     def _repr_(self):
         r"""
@@ -135,7 +138,7 @@ class FreeMagma(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``x`` -- a string
+        - ``x`` -- string
 
         EXAMPLES::
 

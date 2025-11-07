@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 An element in an indexed free module
 
@@ -32,7 +31,7 @@ from sage.categories.modules import _Fields
 
 cdef class IndexedFreeModuleElement(ModuleElement):
     r"""
-    Element class for :class:`~sage.combinat.free_module.CombinatorialFreeModule`
+    Element class for :class:`~sage.combinat.free_module.CombinatorialFreeModule`.
 
     TESTS::
 
@@ -236,10 +235,10 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         INPUT:
 
-        - ``copy`` -- (default: ``True``) if ``self`` is internally
-          represented by a dictionary ``d``, then make a copy of ``d``;
-          if ``False``, then this can cause undesired behavior by
-          mutating ``d``
+        - ``copy`` -- boolean (default: ``True``); if ``self`` is internally
+          represented by a dictionary ``d``, then make a copy of ``d``.
+          If ``False``, then this can cause undesired behavior by
+          mutating ``d``.
 
         EXAMPLES::
 
@@ -299,13 +298,14 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         v = list(self._monomial_coefficients.items())
         try:
             v.sort(key=lambda monomial_coeff:
-                        print_options['sorting_key'](monomial_coeff[0]),
+                   print_options['sorting_key'](monomial_coeff[0]),
                    reverse=print_options['sorting_reverse'])
-        except Exception: # Sorting the output is a plus, but if we can't, no big deal
+        except Exception:
+            # Sorting the output is a plus, but if we cannot, no big deal
             pass
         return v
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -406,7 +406,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             pass
 
         for monomial, c in terms:
-            b = repr_monomial(monomial) # PCR
+            b = repr_monomial(monomial)  # PCR
             if c != 0:
                 break_points = []
                 coeff = coeff_repr(c, False)
@@ -417,17 +417,17 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                         coeff = "-"
                     elif b._l > 0:
                         if one_basis is not None and len(coeff) > 0 and monomial == one_basis and strip_one:
-                            b = empty_ascii_art # ""
+                            b = empty_ascii_art  # ""
                         else:
                             b = AsciiArt([scalar_mult]) + b
                     if not first:
                         if len(coeff) > 0 and coeff[0] == "-":
-                            coeff = " - %s"%coeff[1:]
+                            coeff = " - %s" % coeff[1:]
                         else:
-                            coeff = " + %s"%coeff
+                            coeff = " + %s" % coeff
                         break_points = [2]
                     else:
-                        coeff = "%s"%coeff
+                        coeff = "%s" % coeff
                 if coeff:
                     chunks.append(AsciiArt([coeff], break_points))
                 if b._l:
@@ -436,10 +436,9 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         s = ascii_art(*chunks)
         if first:
             return AsciiArt(["0"])
-        elif s == empty_ascii_art:
+        if s == empty_ascii_art:
             return AsciiArt(["1"])
-        else:
-            return s
+        return s
 
     def _unicode_art_(self):
         r"""
@@ -578,7 +577,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             3 B_{ba} + 2 B_{cb} + B_{ac}
         """
         return repr_lincomb(self._sorted_items_for_printing(),
-                            scalar_mult       = self._parent._print_options['scalar_mult'],
+                            scalar_mult = self._parent._print_options['scalar_mult'],
                             latex_scalar_mult = self._parent._print_options['latex_scalar_mult'],
                             repr_monomial = self._parent._latex_term,
                             is_latex=True, strip_one=True)
@@ -787,7 +786,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         - ``new_base_ring`` -- a ring (default: ``None``)
         - ``order`` -- (optional) an ordering of the support of ``self``
-        - ``sparse`` -- (default: ``False``) whether to return a sparse
+        - ``sparse`` -- boolean (default: ``False``); whether to return a sparse
           vector or a dense vector
 
         OUTPUT: a :func:`FreeModule` vector
@@ -860,7 +859,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         zero = free_module.base_ring().zero()
         if sparse:
             if order is None:
-                order = {k: i for i,k in enumerate(self._parent.get_order())}
+                order = {k: i for i, k in enumerate(self._parent.get_order())}
             return free_module.element_class(free_module,
                                              {order[k]: c for k, c in d.items()},
                                              coerce=True, copy=False)
@@ -939,7 +938,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         if isinstance(scalar, Element) and parent(scalar) is not self.base_ring():
             # Temporary needed by coercion (see Polynomial/FractionField tests).
             if self.base_ring().has_coerce_map_from(parent(scalar)):
-                scalar = self.base_ring()( scalar )
+                scalar = self.base_ring()(scalar)
             else:
                 return None
 
@@ -1022,6 +1021,16 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         x_inv = B(x) ** -1
         return type(self)(F, scal(x_inv, D))
 
+    def _magma_init_(self, magma):
+        r"""
+        Convert ``self`` to Magma.
+        """
+        # Get a reference to Magma version of parent.
+        R = magma(self.parent()).name()
+        # use dict {key: coefficient}.
+        return '+'.join(f"({c._magma_init_(magma)})*{R}.{m._magma_init_(magma)}"
+                        for m, c in self.monomial_coefficients().items())
+
 
 def _unpickle_element(C, d):
     """
@@ -1035,6 +1044,7 @@ def _unpickle_element(C, d):
         -2*B[1] - 12*B[3]
     """
     return C._from_dict(d, coerce=False, remove_zeros=False)
+
 
 # Handle old CombinatorialFreeModuleElement pickles, see Issue #22632
 from sage.misc.persist import register_unpickle_override

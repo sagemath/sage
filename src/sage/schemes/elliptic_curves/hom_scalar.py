@@ -396,8 +396,7 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
             sage: u = phi.scaling_factor()
             sage: u == phi.formal()[1]
             True
-            sage: u == E.multiplication_by_m_isogeny(5).scaling_factor()
-            doctest:warning ... DeprecationWarning: ...
+            sage: u == 5
             True
 
         The scaling factor lives in the base ring::

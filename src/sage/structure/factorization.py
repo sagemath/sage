@@ -5,7 +5,7 @@ The :class:`Factorization` class provides a structure for holding quite
 general lists of objects with integer multiplicities.  These may hold
 the results of an arithmetic or algebraic factorization, where the
 objects may be primes or irreducible polynomials and the
-multiplicities are the (non-zero) exponents in the factorization.  For
+multiplicities are the (nonzero) exponents in the factorization.  For
 other types of examples, see below.
 
 :class:`Factorization` class objects contain a ``list``, so can be
@@ -142,17 +142,17 @@ Factorizations can involve fairly abstract mathematical objects::
     sage: K.<a> = NumberField(x^2 + 3); K
     Number Field in a with defining polynomial x^2 + 3
     sage: f = K.factor(15); f
-    (Fractional ideal (1/2*a + 3/2))^2 * (Fractional ideal (5))
+    (Fractional ideal (-a))^2 * (Fractional ideal (5))
     sage: f.universe()
     Monoid of ideals of Number Field in a with defining polynomial x^2 + 3
     sage: f.unit()
     Fractional ideal (1)
     sage: g = K.factor(9); g
-    (Fractional ideal (1/2*a + 3/2))^4
+    (Fractional ideal (-a))^4
     sage: f.lcm(g)
-    (Fractional ideal (1/2*a + 3/2))^4 * (Fractional ideal (5))
+    (Fractional ideal (-a))^4 * (Fractional ideal (5))
     sage: f.gcd(g)
-    (Fractional ideal (1/2*a + 3/2))^2
+    (Fractional ideal (-a))^2
     sage: f.is_integral()
     True
 
@@ -226,25 +226,23 @@ class Factorization(SageObject):
 
         INPUT:
 
-        - ``x`` -- a list of pairs (p, e) with e an integer;
-          otherwise a :class:`TypeError` is raised
+        - ``x`` -- list of pairs (p, e) with e an integer
+          otherwise a :exc:`TypeError` is raised
 
-        - ``unit`` -- (default: 1); the unit part of the factorization.
+        - ``unit`` -- (default: 1) the unit part of the factorization
 
-        - ``cr`` -- (default: ``False``); if ``True``, print the factorization
-          with carriage returns between factors.
+        - ``cr`` -- (default: ``False``) if ``True``, print the factorization
+          with carriage returns between factors
 
-        - ``sort`` - (default: ``True``); if ``True``, sort the factors by
+        - ``sort`` -- (default: ``True``) if ``True``, sort the factors by
           calling the sort function ``self.sort()`` after creating
           the factorization
 
-        - ``simplify`` -- (default: ``True``); if ``True``, remove duplicate
+        - ``simplify`` -- (default: ``True``) if ``True``, remove duplicate
           factors from the factorization.  See the documentation for
           self.simplify.
 
-        OUTPUT:
-
-        a Factorization object
+        OUTPUT: a Factorization object
 
         EXAMPLES:
 
@@ -327,7 +325,7 @@ class Factorization(SageObject):
 
     def __getitem__(self, i):
         """
-        Return `i^{th}` factor of ``self``.
+        Return `i`-th factor of ``self``.
 
         EXAMPLES::
 
@@ -348,7 +346,7 @@ class Factorization(SageObject):
 
     def __setitem__(self, i, v):
         """
-        Set the `i^{th}` factor of ``self``.
+        Set the `i`-th factor of ``self``.
 
         .. warning::
 
@@ -441,6 +439,19 @@ class Factorization(SageObject):
 
         return richcmp(self.__x, other.__x, op)
 
+    def __hash__(self):
+        r"""
+        Return a hash of this factorization.
+
+        EXAMPLES::
+
+            sage: F = factor(2025); F
+            3^4 * 5^2
+            sage: hash(F)  # random
+            -3439993427179649882
+        """
+        return hash((self.__unit, tuple(self.__x)))
+
     def __copy__(self):
         r"""
         Return a copy of ``self``.
@@ -519,7 +530,7 @@ class Factorization(SageObject):
         r"""
         Return the parent structure of my factors.
 
-        .. note::
+        .. NOTE::
 
            This used to be called ``base_ring``, but the universe
            of a factorization need not be a ring.
@@ -557,7 +568,7 @@ class Factorization(SageObject):
             sage: F.base_change(P).universe()
             Univariate Polynomial Ring in x over Integer Ring
 
-        This method will return a :class:`TypeError` if the coercion is not
+        This method will return a :exc:`TypeError` if the coercion is not
         possible::
 
             sage: g = x^2 - 1
@@ -663,11 +674,9 @@ class Factorization(SageObject):
 
         INPUT:
 
-        - ``key`` -- (default: ``None``); comparison key
+        - ``key`` -- (default: ``None``) comparison key
 
-        OUTPUT:
-
-        - changes this factorization to be sorted (inplace)
+        OUTPUT: changes this factorization to be sorted (inplace)
 
         If ``key`` is ``None``, we determine the comparison key as
         follows:
@@ -920,9 +929,8 @@ class Factorization(SageObject):
             sage: g = factor(x^10 - 1)                                                  # needs sage.libs.pari
             sage: pari(g)                                                               # needs sage.libs.pari
             [x - 1, 1; x + 1, 1; x^4 - x^3 + x^2 - x + 1, 1; x^4 + x^3 + x^2 + x + 1, 1]
-
         """
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         from itertools import chain
 
         n = len(self)
@@ -1041,7 +1049,7 @@ class Factorization(SageObject):
 
         If the two factorizations have different universes, this
         method will attempt to find a common universe for the
-        product.  A :class:`TypeError` is raised if this is impossible.
+        product.  A :exc:`TypeError` is raised if this is impossible.
 
         EXAMPLES::
 
@@ -1101,7 +1109,7 @@ class Factorization(SageObject):
 
     def __pow__(self, n):
         """
-        Return the `n^{th}` power of a factorization, which is got by
+        Return the `n`-th power of a factorization, which is got by
         combining together like factors.
 
         EXAMPLES::
@@ -1205,7 +1213,7 @@ class Factorization(SageObject):
             sage: R.<x,y> = FreeAlgebra(QQ, 2)
             sage: F = Factorization([(x,3), (y, 2), (x,1)])
             sage: F(x=4)
-            (1) * 4^3 * y^2 * 4
+            4^3 * y^2 * 4
             sage: F.subs({y:2})
             x^3 * 2^2 * x
 
@@ -1248,6 +1256,7 @@ class Factorization(SageObject):
 
     subs = __call__
 
+    @cached_method
     def value(self):
         """
         Return the product of the factors in the factorization, multiplied out.
@@ -1278,7 +1287,7 @@ class Factorization(SageObject):
 
         If the two factorizations have different universes, this
         method will attempt to find a common universe for the
-        gcd.  A :class:`TypeError` is raised if this is impossible.
+        gcd.  A :exc:`TypeError` is raised if this is impossible.
 
         EXAMPLES::
 
@@ -1320,7 +1329,7 @@ class Factorization(SageObject):
 
         If the two factorizations have different universes, this
         method will attempt to find a common universe for the
-        lcm.  A :class:`TypeError` is raised if this is impossible.
+        lcm.  A :exc:`TypeError` is raised if this is impossible.
 
         EXAMPLES::
 
@@ -1358,7 +1367,7 @@ class Factorization(SageObject):
 
     def is_integral(self) -> bool:
         r"""
-        Return whether all exponents of this Factorization are non-negative.
+        Return whether all exponents of this Factorization are nonnegative.
 
         EXAMPLES::
 
@@ -1379,7 +1388,7 @@ class Factorization(SageObject):
         Return the factorization of the radical of the value of ``self``.
 
         First, check that all exponents in the factorization are
-        positive, raise :class:`ValueError` otherwise.  If all exponents are
+        positive, raise :exc:`ValueError` otherwise.  If all exponents are
         positive, return ``self`` with all exponents set to 1 and with the
         unit set to 1.
 
@@ -1404,7 +1413,7 @@ class Factorization(SageObject):
         Return the product of the prime factors in ``self``.
 
         First, check that all exponents in the factorization are
-        positive, raise :class:`ValueError` otherwise.  If all exponents are
+        positive, raise :exc:`ValueError` otherwise.  If all exponents are
         positive, return the product of the prime factors in ``self``.
         This should be functionally equivalent to
         ``self.radical().value()``.
@@ -1424,3 +1433,24 @@ class Factorization(SageObject):
             raise ValueError("all exponents in the factorization must be positive")
         from sage.misc.misc_c import prod
         return prod([p for p, _ in self.__x])
+
+    def is_complete_factorization(self):
+        """
+        Return whether this factorization is a complete rather than
+        a partial factorization, i.e., whether all the bases
+        are irreducible.
+
+        EXAMPLES::
+
+            sage: F = 143.factor(limit=9); F
+            143
+            sage: F.is_complete_factorization()
+            False
+            sage: F = 143.factor(limit=12); F
+            11 * 13
+            sage: F.is_complete_factorization()
+            True
+            sage: factor(-2006).is_complete_factorization()
+            True
+        """
+        return all(p.is_irreducible() or p.is_unit() for p, _ in self.__x)

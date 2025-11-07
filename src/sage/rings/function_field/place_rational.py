@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings       (because all doctests use finite fields)
+# sage.doctest: needs sage.rings.finite_rings       (because all doctests use finite fields)
 """
 Places of function fields: rational
 """
@@ -102,6 +102,7 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: F.<x> = FunctionField(GF(2))
             sage: O = F.maximal_order()
             sage: i = O.ideal(x^2 + x + 1)
@@ -141,7 +142,7 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
             K, from_K, _to_K = O._residue_field(prime, name=name)
 
             def to_K(f):
-                if f in O: # f.denominator() is 1
+                if f in O:  # f.denominator() is 1
                     return _to_K(f.numerator())
                 else:
                     d = F(f.denominator())
@@ -156,8 +157,8 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
                         raise TypeError("not in the valuation ring")
 
                     s = ~prime.gen()
-                    rd = d * s**dv # in O but not in prime
-                    rn = n * s**nv # in O but not in prime
+                    rd = d * s**dv  # in O but not in prime
+                    rn = n * s**nv  # in O but not in prime
                     return to_K(rn) / to_K(rd)
 
         return K, from_K, to_K

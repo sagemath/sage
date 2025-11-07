@@ -135,6 +135,7 @@ from .constructor import EllipticCurve
 from .ell_finite_field import EllipticCurve_finite_field
 from .hom import EllipticCurveHom, compare_via_evaluation
 
+
 class _VeluBoundObj:
     """
     Helper object to define the point in which isogeny
@@ -164,6 +165,7 @@ class _VeluBoundObj:
 
 
 _velu_sqrt_bound = _VeluBoundObj()
+
 
 def _choose_IJK(n):
     r"""
@@ -200,6 +202,7 @@ def _choose_IJK(n):
     J = range(1, 2*b, 2)
     K = range(4*b*c+1, n, 2)
     return I, J, K
+
 
 def _points_range(rr, P, Q=None):
     r"""
@@ -524,7 +527,7 @@ def _point_outside_subgroup(P):
         sage: P = E(4, 35)
         sage: Q = _point_outside_subgroup(P); Q     # random
         (14 : 11 : 1)
-        sage: Q.curve()(P).discrete_log(Q)
+        sage: Q.log(P)
         Traceback (most recent call last):
         ...
         ValueError: ECDLog problem has no solution (...)
@@ -536,7 +539,7 @@ def _point_outside_subgroup(P):
         True
         sage: Q = _point_outside_subgroup(P); Q     # random
         (35*z2 + 7 : 24*z2 + 7 : 1)
-        sage: Q.curve()(P).discrete_log(Q)
+        sage: Q.log(Q.curve()(P))
         Traceback (most recent call last):
         ...
         ValueError: ECDLog problem has no solution (...)
@@ -551,7 +554,7 @@ def _point_outside_subgroup(P):
         (18*z2 + 46 : 58*z2 + 61 : 1)
         sage: Q in E
         True
-        sage: P.discrete_log(Q)
+        sage: Q.log(P)
         Traceback (most recent call last):
         ...
         ValueError: ECDLog problem has no solution (...)
@@ -578,8 +581,7 @@ def _point_outside_subgroup(P):
         Q = E.random_point()
         if n*Q or not P.weil_pairing(Q,n).is_one():
             return Q
-    else:
-        raise NotImplementedError('could not find a point outside the kernel')
+    raise NotImplementedError('could not find a point outside the kernel')
 
 
 class EllipticCurveHom_velusqrt(EllipticCurveHom):
@@ -699,7 +701,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             Elliptic-curve isogeny (using square-root Vélu) of degree 105:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 6*x^2 + 385*x + 42 over Finite Field of size 419
-            sage: EllipticCurveHom_velusqrt(E, K, model="montgomery")
+            sage: EllipticCurveHom_velusqrt(E, K, model='montgomery')
             Elliptic-curve isogeny (using square-root Vélu) of degree 105:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 6*x^2 + x over Finite Field of size 419
@@ -1012,7 +1014,8 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
 
         INPUT:
 
-        - ``left, right`` -- :class:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom` objects
+        - ``left``, ``right`` -- :class:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom`
+          objects
 
         ALGORITHM:
 

@@ -16,6 +16,7 @@ AUTHORS:
 
 from sage.categories.covariant_functorial_construction import CovariantFunctorialConstruction, CovariantConstructionCategory
 
+
 class DualFunctor(CovariantFunctorialConstruction):
     """
     A singleton class for the dual functor
@@ -23,6 +24,7 @@ class DualFunctor(CovariantFunctorialConstruction):
     _functor_name = "dual"
     _functor_category = "DualObjects"
     symbol = "^*"
+
 
 class DualObjectsCategory(CovariantConstructionCategory):
 

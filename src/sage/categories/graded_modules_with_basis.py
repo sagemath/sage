@@ -12,6 +12,7 @@ Graded modules with basis
 from sage.categories.graded_modules import GradedModulesCategory
 from sage.categories.quotients import QuotientsCategory
 
+
 class GradedModulesWithBasis(GradedModulesCategory):
     """
     The category of graded modules with a distinguished basis.
@@ -76,13 +77,13 @@ class GradedModulesWithBasis(GradedModulesCategory):
 
             INPUT:
 
-            - ``gens`` -- a list or family of elements of ``self``
-            - ``check`` -- (default: ``True``) whether to verify that the
-               elements of ``gens`` are in ``self``
-            - ``already_echelonized`` -- (default: ``False``) whether
+            - ``gens`` -- list or family of elements of ``self``
+            - ``check`` -- boolean (default: ``True``); whether to verify that
+              the elements of ``gens`` are in ``self``
+            - ``already_echelonized`` -- boolean (default: ``False``); whether
                the elements of ``gens`` are already in (not necessarily
                reduced) echelon form
-            - ``unitriangular`` -- (default: ``False``) whether
+            - ``unitriangular`` -- boolean (default: ``False``); whether
               the lift morphism is unitriangular
             - ``support_order`` -- (optional) either something that can
               be converted into a tuple or a key function

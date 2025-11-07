@@ -59,7 +59,7 @@ AUTHORS:
 
 from sage.categories.groups import Groups
 from sage.categories.rings import Rings
-from sage.rings.integer import is_Integer
+from sage.rings.integer import Integer
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.latex import latex
 from sage.structure.richcmp import (richcmp_not_equal, rich_to_bool,
@@ -134,10 +134,10 @@ class MatrixGroup_base(Group):
         - ``x`` -- a Sage matrix in the correct matrix space (degree
           and base ring)
 
-        - ``*args`` -- optional other representations of ``x``,
+        - ``*args`` -- (optional) other representations of ``x``,
           depending on the group implementation. Ignored by default
 
-        OUTPUT: a :class:`TypeError` must be raised if ``x`` is invalid
+        OUTPUT: a :exc:`TypeError` must be raised if ``x`` is invalid
 
         EXAMPLES::
 
@@ -189,7 +189,7 @@ class MatrixGroup_base(Group):
 
         INPUT:
 
-        - ``generators`` -- a list/tuple/iterable of group elements of ``self``
+        - ``generators`` -- list/tuple/iterable of group elements of ``self``
         - ``check`` -- boolean (default: ``True``); whether to check that each
           matrix is invertible
 
@@ -345,19 +345,14 @@ class MatrixGroup_base(Group):
         gens = ', '.join(latex(x) for x in self.gens())
         return '\\left\\langle %s \\right\\rangle' % gens
 
-    def sign_representation(self, base_ring=None, side="twosided"):
+    def sign_representation(self, base_ring=None):
         r"""
         Return the sign representation of ``self`` over ``base_ring``.
 
-        .. WARNING::
-
-            Assumes ``self`` is a matrix group over a field which has
-            embedding over real numbers.
-
         INPUT:
 
-        - ``base_ring`` -- (optional) the base ring; the default is `\ZZ`
-        - ``side`` -- ignored
+        - ``base_ring`` -- (optional) the base ring; the default is the base
+          ring of ``self``
 
         EXAMPLES::
 
@@ -367,8 +362,6 @@ class MatrixGroup_base(Group):
             sage: e
             [1 0]
             [0 1]
-            sage: V._default_sign(e)
-            1
             sage: m2 = V.an_element()
             sage: m2
             2*B['v']
@@ -376,12 +369,57 @@ class MatrixGroup_base(Group):
             2*B['v']
             sage: m2*e*e
             2*B['v']
+
+            sage: W = WeylGroup(["A", 1, 1])
+            sage: W.sign_representation()
+            Sign representation of
+             Weyl Group of type ['A', 1, 1] (as a matrix group acting on the root space)
+             over Rational Field
+
+            sage: G = GL(4, 2)
+            sage: G.sign_representation() == G.trivial_representation()
+            True
         """
         if base_ring is None:
-            from sage.rings.integer_ring import ZZ
-            base_ring = ZZ
+            base_ring = self.base_ring()
+        if base_ring.characteristic() == 2:  # characteristic 2
+            return self.trivial_representation()
         from sage.modules.with_basis.representation import SignRepresentationMatrixGroup
         return SignRepresentationMatrixGroup(self, base_ring)
+
+    def natural_representation(self, base_ring=None):
+        r"""
+        Return the natural representation of ``self`` over ``base_ring``.
+
+        INPUT:
+
+        - ``base_ring`` -- (optional) the base ring; the default is the base
+          ring of ``self``
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.SL(6, 3)
+            sage: V = G.natural_representation()
+            sage: V
+            Natural representation of Special Linear Group of degree 6
+             over Finite Field of size 3
+            sage: e = prod(G.gens())
+            sage: e
+            [2 0 0 0 0 1]
+            [2 0 0 0 0 0]
+            [0 2 0 0 0 0]
+            [0 0 2 0 0 0]
+            [0 0 0 2 0 0]
+            [0 0 0 0 2 0]
+            sage: v = V.an_element()
+            sage: v
+            2*e[0] + 2*e[1]
+            sage: e * v
+            e[0] + e[1] + e[2]
+        """
+        from sage.modules.with_basis.representation import NaturalMatrixRepresentation
+        return NaturalMatrixRepresentation(self, base_ring)
+
 
 ###################################################################
 #
@@ -417,7 +455,7 @@ class MatrixGroup_generic(MatrixGroup_base):
             True
         """
         assert base_ring in Rings
-        assert is_Integer(degree)
+        assert isinstance(degree, Integer)
 
         self._deg = degree
         if self._deg <= 0:
@@ -558,12 +596,12 @@ class MatrixGroup_generic(MatrixGroup_base):
             True
             sage: SL(2, ZZ).is_trivial()
             False
-            sage: CoxeterGroup(['B',3], implementation="matrix").is_trivial()
+            sage: CoxeterGroup(['B',3], implementation='matrix').is_trivial()
             False
 
         TESTS::
 
-            sage: CoxeterGroup(['A',0], implementation="matrix").is_trivial()
+            sage: CoxeterGroup(['A',0], implementation='matrix').is_trivial()
             True
             sage: MatrixGroup([matrix(SR, [[1,x], [0,1]])]).is_trivial()
             False

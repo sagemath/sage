@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Hecke Character Basis
+Hecke character basis
 
 The basis of symmetric functions given by characters of the
 Hecke algebra (of type `A`).
@@ -24,7 +24,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.combinat.partition import _Partitions, Partitions
+from sage.combinat.partition import Partitions, _Partitions
 from sage.combinat.sf.multiplicative import SymmetricFunctionAlgebra_multiplicative
 
 
@@ -176,7 +176,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
         self.q = q
         SymmetricFunctionAlgebra_multiplicative.__init__(self, sym,
             basis_name="Hecke character with q={}".format(self.q),
-            prefix="qbar")
+            prefix='qbar')
         self._p = sym.power()
 
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
@@ -206,11 +206,11 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
 
     def _p_to_qbar_on_generator(self, n):
         r"""
-        Convert `p_n` to ``self``
+        Convert `p_n` to ``self``.
 
         INPUT:
 
-        - ``n`` -- a non-negative integer
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -238,7 +238,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
 
         INPUT:
 
-        - ``mu`` -- a partition or a list of non-negative integers
+        - ``mu`` -- a partition or a list of nonnegative integers
 
         EXAMPLES::
 
@@ -260,7 +260,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
 
         INPUT:
 
-        - ``n`` -- a non-negative integer
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -290,7 +290,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
 
         INPUT:
 
-        - ``mu`` -- a partition or a list of non-negative integers
+        - ``mu`` -- a partition or a list of nonnegative integers
 
         EXAMPLES::
 

@@ -6,22 +6,22 @@ AUTHORS:
 - Travis Scrimshaw (2024-01-02): Initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2024 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-#from sage.structure.unique_representation import UniqueRepresentation
-#from sage.structure.parent import Parent
+# from sage.structure.unique_representation import UniqueRepresentation
+# from sage.structure.parent import Parent
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.integer_lists.invlex import IntegerListsLex
 from sage.matrix.constructor import matrix
-from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid #, IndexedFreeAbelianMonoidElement
+from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
 from sage.monoids.indexed_free_monoid import IndexedMonoid
 from sage.combinat.root_system.coxeter_group import CoxeterGroup
 from sage.combinat.integer_vector_weighted import iterator_fast as intvecwt_iterator
@@ -225,8 +225,7 @@ class CenterIndices(IndexedFreeAbelianMonoid):
         ret = set(gens)
         ret.update([self.prod(gens), gens[1] * gens[3]**4, gens[1]**4 * gens[2]**3])
         # Sort the output for uniqueness
-        ret = sorted(ret, key=lambda m: (self.degree(m), m.to_word_list()))
-        return ret
+        return sorted(ret, key=lambda m: (self.degree(m), m.to_word_list()))
 
     def degree(self, m):
         r"""
@@ -310,7 +309,7 @@ class CenterIndices(IndexedFreeAbelianMonoid):
                 continue
             M = matrix(R, [[v[s] for v in ad] for s in supp])
             ker = M.right_kernel_matrix()
-            vecs = [self._reduce(UEA.linear_combination((vecs[i], c) for i, c in kv.iteritems()))
+            vecs = [self._reduce(UEA.linear_combination((vecs[i], c) for i, c in kv.items()))
                     for kv in ker.rows()]
 
         # Lastly, update the appropriate data
@@ -419,7 +418,6 @@ class SimpleLieCenterIndices(CenterIndices):
         n = len(self._gen_degrees)
         wts = sorted(self._gen_degrees.values(), reverse=True)
         while True:
-            total = 0
             for exps in intvecwt_iterator(deg, wts):
                 yield self.element_class(self, {n-1-i: e for i, e in enumerate(exps) if e})
             deg += 1
@@ -742,7 +740,7 @@ class CenterUEA(CombinatorialFreeModule):
             True
         """
         # This should work except it needs the monomials of the PBW basis to be
-        # compariable. However, this does not work for, e.g., Lie algebras
+        # comparable. However, this does not work for, e.g., Lie algebras
         # in the Chevalley basis as ee are unable to pass a key for the
         # module morphism. Additionally, the implementation below does more
         # operations in-place than the module morphism.

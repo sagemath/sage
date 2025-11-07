@@ -17,7 +17,6 @@ using LiE (and get the result back as a string).
 
 To access the LiE interpreter directly, run lie_console().
 
-
 EXAMPLES::
 
     sage: a4 = lie('A4')             # optional - lie
@@ -172,9 +171,10 @@ You can call LiE's built-in functions using ``lie.functionname``. ::
     E8
 
 
-You can define your own functions in LiE using lie.eval .  Once you've defined
-a function (say f), you can call it using lie.f ; however, user-defined functions
-do not show up when using tab-completion. ::
+You can define your own functions in ``LiE`` using ``lie.eval``.  Once
+you have defined a function (say ``f``), you can call it using
+``lie.f`` ; however, user-defined functions do not show up when using
+tab-completion. ::
 
     sage: # optional - lie
     sage: lie.eval('f(int x) = 2*x')
@@ -189,7 +189,6 @@ do not show up when using tab-completion. ::
     5765224
 
 
-
 LiE's help can be accessed through lie.help('functionname') where
 functionname is the function you want to receive help for. ::
 
@@ -202,7 +201,6 @@ functionname is the function you want to receive help for. ::
       the order of the coordinates of root- and weight vectors used in LiE.
 
 This can also be accessed with lie.functionname? .
-
 
 
 With the exception of groups, all LiE data types can be converted into
@@ -272,8 +270,6 @@ translation of that program into Python / Sage. ::
     sage: eval_pol(a, b2)
     18
 
-
-
 AUTHORS:
 
 - Mike Hansen 2007-08-27
@@ -290,16 +286,21 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 #
 ##########################################################################
+import os
+from itertools import chain
 
-from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
-from sage.interfaces.interface import AsciiArtString
-from sage.misc.misc_c import prod
 from sage.env import DOT_SAGE, LIE_INFO_DIR
-from sage.misc.sage_eval import sage_eval
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+)
+from sage.interfaces.interface import AsciiArtString
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
-import os
-
+from sage.misc.misc_c import prod
+from sage.misc.sage_eval import sage_eval
 
 COMMANDS_CACHE = '%s/lie_commandlist_cache.sobj' % DOT_SAGE
 HELP_CACHE = '%s/lie_helpdict_cache.sobj' % DOT_SAGE
@@ -323,6 +324,7 @@ class LiE(ExtraTabCompletion, Expect):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.lie import lie
             sage: lie == loads(dumps(lie))
             True
         """
@@ -453,9 +455,7 @@ class LiE(ExtraTabCompletion, Expect):
         info.close()
 
         # Build the list of all possible command completions
-        l = []
-        for key in commands:
-            l += commands[key]
+        l = list(chain(*commands.values()))
 
         # Save the data
         self._tab_completion_dict = commands
@@ -579,7 +579,7 @@ class LiE(ExtraTabCompletion, Expect):
         EXAMPLES::
 
             sage: lie.version() # optional - lie
-            '2.2'
+            '2...'
         """
         return lie_version()
 
@@ -809,7 +809,6 @@ class LiEElement(ExtraTabCompletion, ExpectElement):
             [ 3 -5 -2  9]
             sage: lie('-1X[1,1]').sage() # optional - lie
             -x0*x1
-
         """
         t = self.type()
         if t == 'grp':
@@ -890,25 +889,6 @@ class LiEFunction(ExpectFunction):
         return M.help(self._name)
 
 
-def is_LiEElement(x) -> bool:
-    """
-    EXAMPLES::
-
-        sage: from sage.interfaces.lie import is_LiEElement
-        sage: is_LiEElement(2)
-        doctest:...: DeprecationWarning: the function is_LiEElement is deprecated; use isinstance(x, sage.interfaces.abc.LiEElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: l = lie(2) # optional - lie
-        sage: is_LiEElement(l) # optional - lie
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_LiEElement is deprecated; use isinstance(x, sage.interfaces.abc.LiEElement) instead")
-
-    return isinstance(x, LiEElement)
-
-
 # An instance
 lie = LiE()
 
@@ -949,7 +929,7 @@ def lie_version():
 
         sage: from sage.interfaces.lie import lie_version
         sage: lie_version() # optional - lie
-        '2.2'
+        '2...'
     """
     with open(os.path.join(LIE_INFO_DIR, 'INFO.0')) as f:
         lines = f.readlines()

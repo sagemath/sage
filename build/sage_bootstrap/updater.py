@@ -45,8 +45,7 @@ class ChecksumUpdater(object):
         result = [
             'tarball=' + self.package.tarball_pattern,
             'sha1=' + tarball._compute_sha1(),
-            'md5=' + tarball._compute_md5(),
-            'cksum=' + tarball._compute_cksum()
+            'sha256=' + tarball._compute_sha256()
         ]
         if self.package.tarball_upstream_url_pattern:
             result.append('upstream_url=' + self.package.tarball_upstream_url_pattern)

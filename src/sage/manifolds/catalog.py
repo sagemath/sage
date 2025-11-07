@@ -34,6 +34,7 @@ AUTHORS:
 
 # Lazy import from examples folders:
 from sage.misc.lazy_import import lazy_import as _lazy_import
+
 _lazy_import('sage.manifolds.differentiable.examples.real_line', 'OpenInterval')
 _lazy_import('sage.manifolds.differentiable.examples.real_line', 'RealLine')
 _lazy_import('sage.manifolds.differentiable.examples.euclidean', 'EuclideanSpace')
@@ -54,7 +55,7 @@ def Minkowski(positive_spacelike=True, names=None):
 
     INPUT:
 
-    - ``positive_spacelike`` -- (default: ``True``) if ``False``, then
+    - ``positive_spacelike`` -- boolean (default: ``True``); if ``False``, then
       the spacelike vectors yield a negative sign (i.e., the signature
       is `(+ - - - )`)
     - ``names`` -- (default: ``None``) name of the coordinates,
@@ -81,6 +82,7 @@ def Minkowski(positive_spacelike=True, names=None):
         [ 0  0  0 -1]
     """
     from sage.manifolds.manifold import Manifold
+
     M = Manifold(4, 'M', structure='Lorentzian')
     if names is None:
         names = ("t", "x", "y", "z")
@@ -89,11 +91,12 @@ def Minkowski(positive_spacelike=True, names=None):
 
     g = M.metric('g')
     sgn = 1 if positive_spacelike else -1
-    g[0,0] = -sgn
-    g[1,1], g[2,2], g[3,3] = sgn, sgn, sgn
+    g[0, 0] = -sgn
+    g[1, 1], g[2, 2], g[3, 3] = sgn, sgn, sgn
     return M
 
-def Kerr(m=1, a=0, coordinates="BL", names=None):
+
+def Kerr(m=1, a=0, coordinates='BL', names=None):
     """
     Generate a Kerr spacetime.
 
@@ -109,15 +112,13 @@ def Kerr(m=1, a=0, coordinates="BL", names=None):
       (`c=1`, `G=1`)
     - ``a`` -- (default: ``0``) angular momentum in natural units; if set to
       ``0``, the resulting spacetime corresponds to a Schwarzschild black hole
-    - ``coordinates`` -- (default: ``"BL"``) either ``"BL"`` for
-      Boyer-Lindquist coordinates or ``"Kerr"`` for Kerr coordinates (3+1
+    - ``coordinates`` -- (default: ``'BL'``) either ``'BL'`` for
+      Boyer-Lindquist coordinates or ``'Kerr'`` for Kerr coordinates (3+1
       version)
     - ``names`` -- (default: ``None``) name of the coordinates,
       automatically set by the shortcut operator
 
-    OUTPUT:
-
-    - Lorentzian manifold
+    OUTPUT: Lorentzian manifold
 
     EXAMPLES::
 
@@ -153,7 +154,7 @@ def Kerr(m=1, a=0, coordinates="BL", names=None):
     The Kerr spacetime in Kerr coordinates::
 
         sage: m, a = var('m, a')
-        sage: K.<t, r, th, ph> = manifolds.Kerr(m, a, coordinates="Kerr")
+        sage: K.<t, r, th, ph> = manifolds.Kerr(m, a, coordinates='Kerr')
         sage: K
         4-dimensional Lorentzian manifold M
         sage: K.atlas()
@@ -173,51 +174,75 @@ def Kerr(m=1, a=0, coordinates="BL", names=None):
         sage: K.default_chart().coord_range()
         t: (-oo, +oo); r: (0, +oo); th: (0, pi); ph: [-pi, pi] (periodic)
     """
-    from sage.misc.functional import sqrt
     from sage.functions.trig import cos, sin
     from sage.manifolds.manifold import Manifold
-    M = Manifold(4, 'M', structure="Lorentzian")
+    from sage.misc.functional import sqrt
+
+    M = Manifold(4, 'M', structure='Lorentzian')
     if coordinates == "Kerr":
         if names is None:
-            names = (r't:(-oo,+oo)', r'r:(0,+oo)', r'th:(0,pi):\theta',
-                     r'ph:(-pi,pi):periodic:\phi')
+            names = (
+                r't:(-oo,+oo)',
+                r'r:(0,+oo)',
+                r'th:(0,pi):\theta',
+                r'ph:(-pi,pi):periodic:\phi',
+            )
         else:
-            names = (names[0]+r':(-oo,+oo)', names[1]+r':(0,+oo)',
-                     names[2]+r':(0,pi):\theta',
-                     names[3]+r':(-pi,pi):periodic:\phi')
+            names = (
+                names[0] + r':(-oo,+oo)',
+                names[1] + r':(0,+oo)',
+                names[2] + r':(0,pi):\theta',
+                names[3] + r':(-pi,pi):periodic:\phi',
+            )
         C = M.chart(names=names)
         M._first_ngens = C._first_ngens
         g = M.metric('g')
         t, r, th, ph = C[:]
-        rho = sqrt(r**2+a**2*cos(th)**2)
-        g[0, 0], g[1, 1], g[2, 2], g[3, 3] = -(1-2*m*r/rho**2), 1+2*m*r/rho**2,\
-                rho**2, (r**2+a**2+2*a**2*m*r*sin(th)**2/rho**2)*sin(th)**2
-        g[0, 1] = 2*m*r/rho**2
-        g[0, 3] = -2*a*m*r/rho**2*sin(th)**2
-        g[1, 3] = -a*sin(th)**2*(1+2*m*r/rho**2)
+        rho = sqrt(r**2 + a**2 * cos(th)**2)
+        g[0, 0], g[1, 1], g[2, 2], g[3, 3] = (
+            -(1 - 2 * m * r / rho**2),
+            1 + 2 * m * r / rho**2,
+            rho**2,
+            (r**2 + a**2 + 2 * a**2 * m * r * sin(th)**2 / rho**2) * sin(th)**2,
+        )
+        g[0, 1] = 2 * m * r / rho**2
+        g[0, 3] = -2 * a * m * r / rho**2 * sin(th)**2
+        g[1, 3] = -a * sin(th)**2 * (1 + 2 * m * r / rho**2)
         return M
 
     if coordinates == "BL":
         if names is None:
-            names = (r't:(-oo,+oo)', r'r:(0,+oo)', r'th:(0,pi):\theta',
-                     r'ph:(-pi,pi):periodic:\phi')
+            names = (
+                r't:(-oo,+oo)',
+                r'r:(0,+oo)',
+                r'th:(0,pi):\theta',
+                r'ph:(-pi,pi):periodic:\phi',
+            )
         else:
-            names = (names[0]+r':(-oo,+oo)', names[1]+r':(0,+oo)',
-                     names[2]+r':(0,pi):\theta',
-                     names[3]+r':(-pi,pi):periodic:\phi')
+            names = (
+                names[0] + r':(-oo,+oo)',
+                names[1] + r':(0,+oo)',
+                names[2] + r':(0,pi):\theta',
+                names[3] + r':(-pi,pi):periodic:\phi',
+            )
         C = M.chart(names=names)
         M._first_ngens = C._first_ngens
         g = M.metric('g')
         t, r, th, ph = C[:]
-        rho = sqrt(r**2+a**2*cos(th)**2)
-        g[0, 0], g[1, 1], g[2, 2], g[3, 3] = -(1-2*m*r/rho**2), \
-            rho**2/(r**2-2*m*r+a**2), rho**2, \
-            (r**2+a**2+2*m*r*a**2/rho**2*sin(th)**2)*sin(th)**2
-        g[0, 3] = -2*m*r*a*sin(th)**2/rho**2
+        rho = sqrt(r**2 + a**2 * cos(th)**2)
+        g[0, 0], g[1, 1], g[2, 2], g[3, 3] = (
+            -(1 - 2 * m * r / rho**2),
+            rho**2 / (r**2 - 2 * m * r + a**2),
+            rho**2,
+            (r**2 + a**2 + 2 * m * r * a**2 / rho**2 * sin(th)**2) * sin(th)**2,
+        )
+        g[0, 3] = -2 * m * r * a * sin(th)**2 / rho**2
         return M
 
-    raise NotImplementedError("coordinates system not implemented, see help"
-                              " for details")
+    raise NotImplementedError(
+        "coordinates system not implemented, see help for details"
+    )
+
 
 def Torus(R=2, r=1, names=None):
     """
@@ -233,9 +258,7 @@ def Torus(R=2, r=1, names=None):
     - ``names`` -- (default: ``None``) name of the coordinates,
       automatically set by the shortcut operator
 
-    OUTPUT:
-
-    - Riemannian manifold
+    OUTPUT: Riemannian manifold
 
     EXAMPLES::
 
@@ -254,17 +277,18 @@ def Torus(R=2, r=1, names=None):
         gamma = dtheta⊗dtheta + (cos(theta)^2 + 6*cos(theta) + 9) dphi⊗dphi
     """
     from sage.functions.trig import cos, sin
-    from sage.manifolds.manifold import Manifold
     from sage.manifolds.differentiable.examples.euclidean import EuclideanSpace
+    from sage.manifolds.manifold import Manifold
+
     E = EuclideanSpace(3, symbols='X Y Z')
-    M = Manifold(2, 'T', ambient=E, structure="Riemannian")
+    M = Manifold(2, 'T', ambient=E, structure='Riemannian')
     if names is None:
         names = ("th", "ph")
     names = tuple([names[i] + ":(-pi,pi):periodic" for i in range(2)])
     C = M.chart(names=names)
     M._first_ngens = C._first_ngens
     th, ph = C[:]
-    coordfunc = [(R+r*cos(th))*cos(ph), (R+r*cos(th))*sin(ph), r*sin(th)]
+    coordfunc = [(R + r * cos(th)) * cos(ph), (R + r * cos(th)) * sin(ph), r * sin(th)]
     imm = M.diff_map(E, coordfunc)
     M.set_embedding(imm)
     M.induced_metric()
@@ -278,16 +302,14 @@ def RealProjectiveSpace(dim=2):
     This is the topological space of lines through the origin in
     `\RR^{d+1}`. The standard atlas consists of `d+2` charts, which sends
     the set `U_i = \{[x_1, x_2, \ldots, x_{d+1}] : x_i \neq 0 \}` to
-    `k^{d}` by dividing by `x_i` and omitting the `i`th coordinate
+    `k^{d}` by dividing by `x_i` and omitting the `i`-th coordinate
     `x_i/x_i = 1`.
 
     INPUT:
 
     - ``dim`` -- (default: ``2``) the dimension of projective space
 
-    OUTPUT:
-
-    - ``P`` -- the projective space `\Bold{RP}^d` where `d =` ``dim``.
+    OUTPUT: ``P`` -- the projective space `\Bold{RP}^d` where `d =` ``dim``
 
     EXAMPLES::
 
@@ -356,14 +378,16 @@ def RealProjectiveSpace(dim=2):
         False
         sage: C0(p)
         (1/3,)
-
     """
 
     from sage.manifolds.manifold import Manifold
 
-    P = Manifold(dim, f"RP{dim}",
-                 structure='topological',
-                 latex_name=r"\mathbb{{RP}}^{{{}}}".format(dim))
+    P = Manifold(
+        dim,
+        f"RP{dim}",
+        structure='topological',
+        latex_name=r"\mathbb{{RP}}^{{{}}}".format(dim),
+    )
 
     # the trailing whitespace in the string is intentional for defining charts
     names = [f'x_{i} ' for i in range(dim + 1)]
@@ -377,13 +401,12 @@ def RealProjectiveSpace(dim=2):
         U = P.open_subset(name=f'U{j}', latex_name=f'U_{j}')
 
         # The chart where we assert that x_i == 1
-        Cj = U.chart(''.join(names[:j] + names[j+1:]))
+        Cj = U.chart(''.join(names[:j] + names[j + 1 :]))
         gj = Cj[:]
 
         charts[j] = Cj
 
         for i in range(j):
-
             Ci = charts[i]
             gi = Ci[:]
 
@@ -391,15 +414,19 @@ def RealProjectiveSpace(dim=2):
             xj = gi[j - 1]  # use index j - 1 because i < j and xi is omitted in gi
 
             # the corresponding coordinates in R^{dim+1}
-            d_plus_one_coords = [g/xj for g in gi[:i]] + [1/xj] + [g/xj for g in gi[i:]]
-            cj_new_coords = d_plus_one_coords[:j] + d_plus_one_coords[j+1:]
+            d_plus_one_coords = (
+                [g / xj for g in gi[:i]] + [1 / xj] + [g / xj for g in gi[i:]]
+            )
+            cj_new_coords = d_plus_one_coords[:j] + d_plus_one_coords[j + 1 :]
 
-            Ci_to_Cj = Ci.transition_map(Cj, cj_new_coords,
-                                         restrictions1=xj != 0,
-                                         restrictions2=xi != 0)
+            Ci_to_Cj = Ci.transition_map(
+                Cj, cj_new_coords, restrictions1=xj != 0, restrictions2=xi != 0
+            )
 
-            d_plus_one_coords = [g/xi for g in gj[:j]] + [1/xi] + [g/xi for g in gj[j:]]
-            ci_new_coords = d_plus_one_coords[:i] + d_plus_one_coords[i+1:]
+            d_plus_one_coords = (
+                [g / xi for g in gj[:j]] + [1 / xi] + [g / xi for g in gj[j:]]
+            )
+            ci_new_coords = d_plus_one_coords[:i] + d_plus_one_coords[i + 1 :]
 
             Cj_to_Ci = Ci_to_Cj.set_inverse(*ci_new_coords, check=False)
 

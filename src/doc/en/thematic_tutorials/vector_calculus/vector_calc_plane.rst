@@ -56,7 +56,6 @@ Each of the Cartesian coordinates spans the entire real line::
     x: (-oo, +oo); y: (-oo, +oo)
 
 
-
 2. Vector fields
 ----------------
 
@@ -216,7 +215,6 @@ see :ref:`vector_fields_as_derivations_plane` below)::
     sage: s = v.at(p) + pi*w.at(p)
     sage: s.display()
     (pi*w_x(-2, 3) - 3) e_x + (pi*w_y(-2, 3) - 2) e_y
-
 
 
 3. Differential operators

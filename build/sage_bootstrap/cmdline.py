@@ -40,7 +40,6 @@ SageMath Bootstrap Library
 Provides scripts to manage the packages of Sage-the-distribution,
 including SageMath's database of equivalent system packages,
 and to download and upload tarballs from/to SageMath servers.
-
 """
 
 
@@ -73,12 +72,12 @@ EXAMPLE:
     $ sage --package list
     4ti2
     [...]
-    zlib
+    zipp
 
     $ sage --package list :standard:
     _prereq
     [...]
-    zlib
+    zipp
 """
 
 

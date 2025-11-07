@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-meataxe
 
 #*****************************************************************************
 #       Copyright (C) 2015 Simon King <simon.king@uni-jena.de>
@@ -112,7 +111,6 @@ cdef extern from "meataxe.h":
     Matrix_t *MatId(int fl, int nor) except NULL
     Matrix_t *MatLoad(char *fn) except? NULL
     int MatSave(Matrix_t *mat, char *fn) except -1
-
 
     ## Basic Arithmetic  ## general rule: dest is changed, src/mat are unchanged!
     Matrix_t *MatTransposed(Matrix_t *src) except NULL

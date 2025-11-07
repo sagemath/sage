@@ -72,7 +72,7 @@ corresponding Sage datatype:
 
 #. GAP booleans ``true`` / ``false`` to Sage booleans ``True`` /
    ``False``. The third GAP boolean value ``fail`` raises a
-   ``ValueError``.
+   :exc:`ValueError`.
 
 #. GAP integers to Sage integers.
 
@@ -134,7 +134,7 @@ convert the entries into Sage objects, you should use the
 
 Now ``rec['a']`` is a Sage integer. We have not implemented the
 conversion of the GAP symmetric group to the Sage symmetric group yet,
-so you end up with a ``NotImplementedError`` exception object. The
+so you end up with a :exc:`NotImplementedError` exception object. The
 exception is returned and not raised so that you can work with the
 partial result.
 
@@ -160,20 +160,124 @@ using the recursive expansion of the
 Using the GAP C library from Cython
 ===================================
 
-.. TODO:: Expand the following text
+We are using the GAP API provided by the GAP project since GAP 4.10.
 
-   We are using the GAP API provided by the GAP project since
-   GAP 4.10.
+Calls to the GAP C library (functions declared in ``libgap-api.h``)
+should be sandwiched between calls to ``GAP_Enter()`` and
+``GAP_Leave()``. These are macros defined in ``libgap-api.h`` and must
+be used carefully because ``GAP_Enter()`` is defined as two function
+calls in succession without braces. The first thing that
+``GAP_Enter()`` does is a ``setjmp()`` which plays an important role
+in handling errors. The return value from ``GAP_Enter()`` is non-zero
+(success) the first time around, and if an error occurs, execution
+"jumps" back to ``GAP_Enter()``, this time with a return value of zero
+(failure). Due to these quirks, naive attempts to handle the return
+value of ``GAP_Enter()`` are doomed to fail.  The correct pattern to
+use is::
+
+    try:
+        GAP_Enter()
+        # further calls to libgap
+    finally:
+        GAP_Leave()
+
+How this works is subtle. When GAP is initialized, we install an
+``error_handler()`` callback that GAP invokes on error. This function
+sets a python exception using ``PyErr_Restore()``, but so long as we
+remain in C, this exception will not actually be raised. When
+``error_handler()`` finishes executing, control returns to GAP which
+then jumps back to the previous ``GAP_Enter()``. It is at this point
+that we need to raise the (already set) exception, to prevent
+re-executing the code that caused an error. To facilitate this,
+``GAP_Enter()`` is wrapped by Cython, and the wrapper is qualified
+with ``except 0``. This tells Cython to treat a return value of zero
+as an error, and raise an exception if an exception is set. (One will
+be set if there was an error because our ``error_handler()`` sets
+it). Here is a real example::
+
+    cpdef void crash_and_burn() except *:
+        x = libgap({'a': 1, 'b': 2})
+        cdef unsigned int xlen
+        try:
+            GAP_Enter()
+            xlen = GAP_LenList((<GapElement>x).value)
+        finally:
+            GAP_Leave()
+        print(xlen)
+
+The call to ``GAP_LenList()`` is an error in this case, because
+``x.value`` is a GAP record, not a GAP list. In any case, what happens
+is,
+
+#. We call the ``GAP_Enter()`` Cython wrapper, which invokes the
+   macro, and additionally generates some C code to raise an
+   exception if that return value is zero (error). But this is the
+   first pass, so for now the macro returns a non-zero (success)
+   value.
+#. We call ``GAP_LenList(x.value)``, which is an error.
+#. GAP invokes our ``error_handler()``, which creates a
+   :exc:`sage.libs.gap.util.GAPError`, and sets it active.
+#. Control returns to GAP.
+#. GAP jumps back to ``GAP_Enter()``.
+#. The error branch of ``GAP_Enter()`` is executed. In other words
+   we proceed from ``GAP_Enter()`` as if it returned zero (error).
+#. An exception is raised, because the ``except 0`` qualifier on the
+   Cython wrapper for ``GAP_Enter()`` specifically checks for zero
+   and raises any exceptions in that case.
+#. Finally, ``GAP_Leave()`` is called to clean up. In a more
+   realistic example where failure is not guaranteed, this would
+   also have been run to clean up if no errors were raised.
+
+Another unusual aspect of the libgap interface is its signal
+handling. Typically, cysignals' ``sig_on()`` and ``sig_off()``
+functions are used to wrap code that may take a long time, and as a
+result, may need to be interrupted with Ctrl-C. However, it is
+possible that interrupting a function execution at an arbitrary
+location will lead to inconsistent state. Internally, GAP provides a
+mechanism using ``InterruptExecStat``, which sets a flag that tells
+GAP to gracefully exit with an error as early as possible. We make use
+of this internal mechanism to prevent segmentation faults when GAP
+functions are interrupted.
+
+Specifically, we install GAP's own ``SIGINT`` handler (to catch
+Ctrl-C) before executing any long-running GAP code, and then later
+reinstall the original handler when the GAP code has finished. This is
+accomplished using the suggestively-named ``gap_sig_on()`` and
+``gap_sig_off()`` functions. After you have called ``gap_sig_on()``,
+if GAP receives Ctrl-C, it will invoke our custom ``error_handler()``
+that will set a :exc:`KeyboardInterrupt` containing the phrase "user
+interrupt". Eventually (as explained in the preceding paragraphs),
+control will jump back to the Cython wrapper for ``GAP_Enter()``, and
+this exception will be raised.
+
+The safest pattern to use for interruptible libgap code is::
+
+    try:
+        gap_sig_on()
+        GAP_Enter()
+        # further calls to libgap
+    finally:
+        GAP_Leave()
+        gap_sig_off()
+
+Before you attempt to change any of this, please make sure that
+you understand the issues that it is intended to fix, e.g.
+
+* https://github.com/sagemath/sage/issues/37026
+* https://trofi.github.io/posts/312-the-sagemath-saga.html
+* https://github.com/sagemath/sage/pull/40585
+* https://github.com/sagemath/sage/pull/40594
+* https://github.com/sagemath/sage/issues/40598
 
 AUTHORS:
 
-  - William Stein, Robert Miller (2009-06-23): first version
-  - Volker Braun, Dmitrii Pasechnik, Ivan Andrus (2011-03-25, Sage Days 29):
-    almost complete rewrite; first usable version.
-  - Volker Braun (2012-08-28, GAP/Singular workshop): update to
-    gap-4.5.5, make it ready for public consumption.
-  - Dima Pasechnik (2018-09-18, GAP Days): started the port to native
-    libgap API
+- William Stein, Robert Miller (2009-06-23): first version
+- Volker Braun, Dmitrii Pasechnik, Ivan Andrus (2011-03-25, Sage Days 29):
+  almost complete rewrite; first usable version.
+- Volker Braun (2012-08-28, GAP/Singular workshop): update to
+  gap-4.5.5, make it ready for public consumption.
+- Dima Pasechnik (2018-09-18, GAP Days): started the port to native
+  libgap API
 """
 
 ###############################################################################
@@ -257,9 +361,7 @@ class Gap(Parent):
         """
         Whether a coercion from `S` exists.
 
-        INPUT / OUTPUT:
-
-        See :mod:`sage.structure.parent`.
+        INPUT / OUTPUT: see :mod:`sage.structure.parent`
 
         EXAMPLES::
 
@@ -276,11 +378,9 @@ class Gap(Parent):
 
         INPUT:
 
-        - ``x`` -- anything that defines a GAP object.
+        - ``x`` -- anything that defines a GAP object
 
-        OUTPUT:
-
-        A :class:`GapElement`.
+        OUTPUT: a :class:`GapElement`
 
         EXAMPLES::
 
@@ -296,7 +396,6 @@ class Gap(Parent):
             [ 1/3, 2/3, 4/5 ]
             sage: libgap(vector((1/3, 0.8, 3)))
             [ 0.333333, 0.8, 3. ]
-
         """
         initialize()
         if isinstance(x, GapElement):
@@ -328,7 +427,7 @@ class Gap(Parent):
 
         INPUT:
 
-        - ``M`` -- a matrix.
+        - ``M`` -- a matrix
 
         OUTPUT:
 
@@ -362,7 +461,7 @@ class Gap(Parent):
 
         We gracefully handle the case that the conversion fails (:issue:`18039`)::
 
-            sage: F.<a> = GF(9, modulus="first_lexicographic")                          # needs sage.rings.finite_rings
+            sage: F.<a> = GF(9, modulus='first_lexicographic')                          # needs sage.rings.finite_rings
             sage: libgap(Matrix(F, [[a]]))                                              # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
@@ -383,12 +482,10 @@ class Gap(Parent):
 
         INPUT:
 
-        - ``gap_command`` -- a string containing a valid gap command
-          without the trailing semicolon.
+        - ``gap_command`` -- string containing a valid gap command
+          without the trailing semicolon
 
-        OUTPUT:
-
-        A :class:`GapElement`.
+        OUTPUT: a :class:`GapElement`
 
         EXAMPLES::
 
@@ -413,7 +510,7 @@ class Gap(Parent):
 
     def load_package(self, pkg):
         """
-        If loading fails, raise a :class:`RuntimeError` exception.
+        If loading fails, raise a :exc:`RuntimeError` exception.
 
         TESTS::
 
@@ -438,7 +535,7 @@ class Gap(Parent):
     @cached_method
     def function_factory(self, function_name):
         """
-        Return a GAP function wrapper
+        Return a GAP function wrapper.
 
         This is almost the same as calling
         ``libgap.eval(function_name)``, but faster and makes it
@@ -446,7 +543,7 @@ class Gap(Parent):
 
         INPUT:
 
-        - ``function_name`` -- string. The name of a GAP function.
+        - ``function_name`` -- string; the name of a GAP function
 
         OUTPUT:
 
@@ -465,13 +562,13 @@ class Gap(Parent):
 
     def set_global(self, variable, value):
         """
-        Set a GAP global variable
+        Set a GAP global variable.
 
         INPUT:
 
-        - ``variable`` -- string. The variable name.
+        - ``variable`` -- string; the variable name
 
-        - ``value`` -- anything that defines a GAP object.
+        - ``value`` -- anything that defines a GAP object
 
         EXAMPLES::
 
@@ -490,11 +587,11 @@ class Gap(Parent):
 
     def unset_global(self, variable):
         """
-        Remove a GAP global variable
+        Remove a GAP global variable.
 
         INPUT:
 
-        - ``variable`` -- string. The variable name.
+        - ``variable`` -- string; the variable name
 
         EXAMPLES::
 
@@ -514,16 +611,16 @@ class Gap(Parent):
 
     def get_global(self, variable):
         """
-        Get a GAP global variable
+        Get a GAP global variable.
 
         INPUT:
 
-        - ``variable`` -- string. The variable name.
+        - ``variable`` -- string; the variable name
 
         OUTPUT:
 
         A :class:`~sage.libs.gap.element.GapElement` wrapping the GAP
-        output. A ``ValueError`` is raised if there is no such
+        output. A :exc:`ValueError` is raised if there is no such
         variable in GAP.
 
         EXAMPLES::
@@ -539,17 +636,15 @@ class Gap(Parent):
 
     def global_context(self, variable, value):
         """
-        Temporarily change a global variable
+        Temporarily change a global variable.
 
         INPUT:
 
-        - ``variable`` -- string. The variable name.
+        - ``variable`` -- string; the variable name
 
-        - ``value`` -- anything that defines a GAP object.
+        - ``value`` -- anything that defines a GAP object
 
-        OUTPUT:
-
-        A context manager that sets/reverts the given global variable.
+        OUTPUT: a context manager that sets/reverts the given global variable
 
         EXAMPLES::
 
@@ -590,9 +685,7 @@ class Gap(Parent):
         r"""
         Return a :class:`GapElement`.
 
-        OUTPUT:
-
-        A :class:`GapElement`.
+        OUTPUT: a :class:`GapElement`
 
         EXAMPLES::
 
@@ -605,9 +698,7 @@ class Gap(Parent):
         """
         Return (integer) zero in GAP.
 
-        OUTPUT:
-
-        A :class:`GapElement`.
+        OUTPUT: a :class:`GapElement`
 
         EXAMPLES::
 
@@ -646,9 +737,7 @@ class Gap(Parent):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -660,7 +749,7 @@ class Gap(Parent):
     @cached_method
     def __dir__(self):
         """
-        Customize tab completion
+        Customize tab completion.
 
         EXAMPLES::
 
@@ -677,12 +766,12 @@ class Gap(Parent):
 
         INPUT:
 
-        - ``name`` -- string. The name of the GAP function you want to
-          call.
+        - ``name`` -- string; the name of the GAP function you want to
+          call
 
         OUTPUT:
 
-        A :class:`GapElement`. A ``AttributeError`` is raised
+        A :class:`GapElement`. A :exc:`AttributeError` is raised
         if there is no such function or global variable.
 
         EXAMPLES::
@@ -705,7 +794,7 @@ class Gap(Parent):
 
     def show(self):
         """
-        Return statistics about the GAP owned object list
+        Return statistics about the GAP owned object list.
 
         This includes the total memory allocated by GAP as returned by
         ``libgap.eval('TotalMemoryAllocated()'), as well as garbage collection
@@ -718,7 +807,7 @@ class Gap(Parent):
         allocated for GAP objects (see
         ``libgap.eval('TotalMemoryAllocated()')``).
 
-        .. note::
+        .. NOTE::
 
             Slight complication is that we want to do it without accessing
             libgap objects, so we don't create new GapElements as a side
@@ -755,9 +844,7 @@ class Gap(Parent):
         Return the number of GAP objects that are being tracked by
         GAP.
 
-        OUTPUT:
-
-        An integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -768,7 +855,7 @@ class Gap(Parent):
 
     def collect(self):
         """
-        Manually run the garbage collector
+        Manually run the garbage collector.
 
         EXAMPLES::
 

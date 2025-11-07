@@ -1,6 +1,4 @@
-# sage_setup: distribution = sagemath-coxeter3
 # sage.doctest: optional - coxeter3
-
 """
 Coxeter Groups implemented with Coxeter3
 """
@@ -36,14 +34,14 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             sage: CoxeterGroup(['B',2])
             Coxeter group of type ['B', 2] implemented by Coxeter3
             sage: CoxeterGroup(CartanType(['B', 3]).relabel({1: 3, 2: 2, 3: 1}))
-            Coxeter group of type ['B', 3] relabelled by {1: 3, 2: 2, 3: 1} implemented by Coxeter3
-
+            Coxeter group of type ['B', 3] relabelled by {1: 3, 2: 2, 3: 1}
+            implemented by Coxeter3
         """
         from sage.combinat.root_system.cartan_type import CartanType
         ct = CartanType(cartan_type)
         return super().__classcall__(cls, ct, *args, **options)
 
-    def __init__(self, cartan_type):
+    def __init__(self, cartan_type) -> None:
         """
         TESTS::
 
@@ -64,7 +62,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         self._coxgroup = get_CoxGroup(cartan_type)
         self._cartan_type = cartan_type
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -147,7 +145,6 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
             sage: W.one()
             []
-
         """
         return self.element_class(self, [])
 
@@ -183,7 +180,9 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
     def rank(self):
         """
-        Return the rank of this Coxeter group, that is, the number of generators.
+        Return the rank of this Coxeter group.
+
+        This is the number of generators.
 
         EXAMPLES::
 
@@ -193,9 +192,9 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         """
         return self._coxgroup.rank()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
-        Return True if this is a finite Coxeter group.
+        Return ``True`` if this is a finite Coxeter group.
 
         EXAMPLES::
 
@@ -208,6 +207,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
     def length(self, x):
         """
         Return the length of an element ``x`` in this Coxeter group.
+
         This is just the length of a reduced word for ``x``.
 
         EXAMPLES::
@@ -217,7 +217,6 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             2
             sage: W.length(W([1,1]))
             0
-
         """
         return x.length()
 
@@ -238,7 +237,6 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             [2 3 1]
             sage: m.index_set() == W.index_set()
             True
-
         """
         return CoxeterMatrix(self._coxgroup.coxeter_matrix(), self.index_set())
 
@@ -266,26 +264,8 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
             sage: W._an_element_()
             []
-
         """
         return self.element_class(self, [])
-
-    def m(self, i, j):
-        r"""
-        This is deprecated, use ``self.coxeter_matrix()[i,j]`` instead.
-
-        TESTS::
-
-            sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
-            sage: W.m(1, 1)
-            doctest:warning...:
-            DeprecationWarning: the .m(i, j) method has been deprecated; use .coxeter_matrix()[i,j] instead.
-            See https://github.com/sagemath/sage/issues/30237 for details.
-            1
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(30237, "the .m(i, j) method has been deprecated; use .coxeter_matrix()[i,j] instead.")
-        return self.coxeter_matrix()[i,j]
 
     def kazhdan_lusztig_polynomial(self, u, v, constant_term_one=True):
         r"""
@@ -294,8 +274,9 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         INPUT:
 
         - ``u``, ``v`` -- elements of the underlying Coxeter group
-        - ``constant_term_one`` -- (default: True) True uses the constant equals one convention,
-           False uses the Leclerc-Thibon convention
+        - ``constant_term_one`` -- boolean (default: ``True``); ``True`` uses
+          the constant equals one convention, ``False`` uses the Leclerc-Thibon
+          convention
 
         .. SEEALSO::
 
@@ -346,7 +327,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         We check that Coxeter3 and Sage's implementation give the same results::
 
             sage: C = CoxeterGroup(['B', 3], implementation='coxeter3')
-            sage: W = WeylGroup("B3",prefix="s")
+            sage: W = WeylGroup("B3",prefix='s')
             sage: [s1,s2,s3] = W.simple_reflections()
             sage: R.<q> = LaurentPolynomialRing(QQ)
             sage: KL = KazhdanLusztigPolynomial(W,q)
@@ -359,8 +340,9 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             return p
         ZZq = PolynomialRing(ZZ, 'q', sparse=True)
         # This is the same as q**len_diff * p(q**(-2))
-        len_diff = v.length()-u.length()
-        d = {-2*deg+len_diff: coeff for deg,coeff in enumerate(p) if coeff != 0}
+        len_diff = v.length() - u.length()
+        d = {-2 * deg + len_diff: coeff for deg, coeff in enumerate(p)
+             if coeff != 0}
         return ZZq(d)
 
     def parabolic_kazhdan_lusztig_polynomial(self, u, v, J, constant_term_one=True):
@@ -419,16 +401,16 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         WOI = self.weak_order_ideal(lambda x: J_set.issuperset(x.descents()))
         if constant_term_one:
             P = PolynomialRing(ZZ, 'q')
-            return P.sum((-1)**(z.length()) * self.kazhdan_lusztig_polynomial(u*z,v)
-                         for z in WOI if (u*z).bruhat_le(v))
+            return P.sum((-1)**(z.length()) * self.kazhdan_lusztig_polynomial(u * z, v)
+                         for z in WOI if (u * z).bruhat_le(v))
         P = PolynomialRing(ZZ, 'q', sparse=True)
-        return P.sum((-1)**(z.length()) * self.kazhdan_lusztig_polynomial(u*z,v, constant_term_one=False).shift(z.length())
-                     for z in WOI if (u*z).bruhat_le(v))
+        return P.sum((-1)**(z.length()) * self.kazhdan_lusztig_polynomial(u * z, v, constant_term_one=False).shift(z.length())
+                     for z in WOI if (u * z).bruhat_le(v))
 
     class Element(ElementWrapper):
         wrapped_class = CoxGroupElement
 
-        def __init__(self, parent, x):
+        def __init__(self, parent, x) -> None:
             """
             TESTS::
 
@@ -465,7 +447,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             """
             return iter(self.value)
 
-        def coatoms(self):
+        def coatoms(self) -> list:
             """
             Return the coatoms (or co-covers) of this element in the Bruhat order.
 
@@ -479,7 +461,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             W = self.parent()
             return [W(w) for w in self.value.coatoms()]
 
-        def _richcmp_(self, other, op):
+        def _richcmp_(self, other, op) -> bool:
             """
             Return lexicographic comparison of ``self`` and ``other``.
 
@@ -503,7 +485,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             """
             return richcmp(list(self), list(other), op)
 
-        def reduced_word(self):
+        def reduced_word(self) -> list:
             """
             Return the reduced word of ``self``.
 
@@ -541,7 +523,6 @@ class CoxeterGroup(UniqueRepresentation, Parent):
                 1
                 sage: w0[1]
                 2
-
             """
             # Allow the error message to be raised by the underlying element
             return self.value[i]
@@ -576,7 +557,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
         length = __len__
 
-        def bruhat_le(self, v):
+        def bruhat_le(self, v) -> bool:
             r"""
             Return whether ``self`` `\le` ``v`` in Bruhat order.
 
@@ -610,7 +591,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             """
             return self.value.poincare_polynomial()
 
-        def has_right_descent(self, i):
+        def has_right_descent(self, i) -> bool:
             """
             Return whether ``i`` is a right descent of this element.
 
@@ -624,9 +605,9 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             """
             return i in self.value.right_descents()
 
-        def has_left_descent(self, i):
+        def has_left_descent(self, i) -> bool:
             """
-            Return True if ``i`` is a left descent of this element.
+            Return ``True`` if ``i`` is a left descent of this element.
 
             EXAMPLES::
 
@@ -707,7 +688,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
                 for exponent in exponents:
                     # Construct something in the root lattice from the exponent vector
-                    exponent = sum(e*b for e, b in zip(exponent, basis_elements))
+                    exponent = sum(e * b for e, b in zip(exponent, basis_elements))
                     exponent = self.action(exponent)
 
                     monomial = 1

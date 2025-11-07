@@ -25,7 +25,7 @@ command inside Sage::
     ['4ti2',
      'alabaster',
      ...
-     'zlib']
+     'zipp']
 
 Functions
 ---------
@@ -38,18 +38,17 @@ Functions
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from typing import Dict, List, NamedTuple, Optional, Union
-
-import sage.env
-
 import json
 import os
 import subprocess
 import sys
 from pathlib import Path
-from urllib.request import urlopen
-from urllib.error import URLError
 from ssl import create_default_context as default_context
+from typing import NamedTuple, Optional
+from urllib.error import URLError
+from urllib.request import urlopen
+
+import sage.env
 
 DEFAULT_PYPI = 'https://pypi.org/pypi'
 
@@ -66,7 +65,7 @@ def pkgname_split(name):
         sage: pkgname_split('hello_world-1.2')
         ['hello_world', '1.2']
     """
-    return (name.split('-',1) + [''])[:2]
+    return (name.split('-', 1) + [''])[:2]
 
 
 def pip_remote_version(pkg, pypi_url=DEFAULT_PYPI, ignore_URLError=False):
@@ -77,10 +76,10 @@ def pip_remote_version(pkg, pypi_url=DEFAULT_PYPI, ignore_URLError=False):
 
     - ``pkg`` -- the package
 
-    - ``pypi_url`` -- (string, default: standard PyPI url) an optional Python
+    - ``pypi_url`` -- string (default: standard PyPI url) an optional Python
       package repository to use
 
-    - ``ignore_URLError`` -- (default: ``False``) if set to ``True`` then no
+    - ``ignore_URLError`` -- boolean (default: ``False``); if set to ``True`` then no
       error is raised if the connection fails and the function returns ``None``
 
     EXAMPLES:
@@ -143,7 +142,7 @@ def spkg_type(name):
 
     The type as a string in ``('base', 'standard', 'optional', 'experimental')``.
     If no ``SPKG`` exists with the given name (or the directory ``SAGE_PKGS`` is
-    not avaialble), ``None`` is returned.
+    not available), ``None`` is returned.
     """
     spkg_type = None
     from sage.env import SAGE_PKGS
@@ -168,7 +167,7 @@ def pip_installed_packages(normalization=None):
 
     INPUT:
 
-    - ``normalization`` -- (optional, default: ``None``) according to which rule to
+    - ``normalization`` -- (default: ``None``) according to which rule to
       normalize the package name, either ``None`` (as is) or ``'spkg'`` (format
       as in the Sage distribution in ``build/pkgs/``), i.e., lowercased and
       dots and dashes replaced by underscores.
@@ -229,18 +228,18 @@ class PackageInfo(NamedTuple):
         return self.installed_version is not None
 
 
-def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 'script'],
-                  local: bool = False, ignore_URLError: bool = False, exclude_pip: bool = False) -> Dict[str, PackageInfo]:
+def list_packages(*pkg_types: str, pkg_sources: list[str] = ['normal', 'pip', 'script'],
+                  local: bool = False, ignore_URLError: bool = False, exclude_pip: bool = False) -> dict[str, PackageInfo]:
     r"""
     Return a dictionary of information about each package.
 
     The keys are package names and values are named tuples with the following keys:
 
-    - ``'type'``: either ``'base``, ``'standard'``, ``'optional'``, or ``'experimental'``
-    - ``'source'``: either ``'normal', ``'pip'``, or ``'script'``
-    - ``'installed'``: boolean
-    - ``'installed_version'``: ``None`` or a string
-    - ``'remote_version'``: string
+    - ``'type'`` -- either ``'base``, ``'standard'``, ``'optional'``, or ``'experimental'``
+    - ``'source'`` -- either ``'normal', ``'pip'``, or ``'script'``
+    - ``'installed'`` -- boolean
+    - ``'installed_version'`` -- ``None`` or a string
+    - ``'remote_version'`` -- string
 
     INPUT:
 
@@ -252,15 +251,15 @@ def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 's
       If provided, list only the packages with the given source(s), otherwise list all
       packages.
 
-    - ``local`` -- (optional, default: ``False``) if set to ``True``, then do not
+    - ``local`` -- boolean (default: ``False``); if set to ``True``, then do not
       consult remote (PyPI) repositories for package versions (only applicable for
       ``'pip'`` type)
 
-    - ``exclude_pip`` -- (optional, default: ``False``) if set to ``True``, then
+    - ``exclude_pip`` -- boolean (default: ``False``); if set to ``True``, then
       pip packages are not considered.  This is the same as removing ``'pip'``
-      from ``pkg_sources``.
+      from ``pkg_sources``
 
-    - ``ignore_URLError`` -- (default: ``False``) if set to ``True``, then
+    - ``ignore_URLError`` -- boolean (default: ``False``); if set to ``True``, then
       connection errors will be ignored
 
     EXAMPLES::
@@ -272,14 +271,7 @@ def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 's
         ['alabaster',
          'babel',
          ...
-         'zlib']
-        sage: sage_conf_info = L['sage_conf']
-        sage: sage_conf_info.type
-        'standard'
-        sage: sage_conf_info.is_installed()
-        True
-        sage: sage_conf_info.source
-        'script'
+         'zipp']
 
         sage: # optional - sage_spkg internet
         sage: L = list_packages(pkg_sources=['pip'], local=True)
@@ -356,6 +348,7 @@ def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 's
 
     return pkgs
 
+
 def _spkg_inst_dirs():
     """
     Generator for the installation manifest directories as resolved paths.
@@ -369,7 +362,6 @@ def _spkg_inst_dirs():
         sage: from sage.misc.package import _spkg_inst_dirs
         sage: list(_spkg_inst_dirs())
         [...]
-
     """
     last_inst_dir = None
     for inst_dir in (sage.env.SAGE_LOCAL_SPKG_INST, sage.env.SAGE_VENV_SPKG_INST):
@@ -379,13 +371,14 @@ def _spkg_inst_dirs():
                 yield inst_dir
                 last_inst_dir = inst_dir
 
+
 def installed_packages(exclude_pip=True):
     """
     Return a dictionary of all installed packages, with version numbers.
 
     INPUT:
 
-    - ``exclude_pip`` -- (optional, default: ``True``) whether "pip" packages
+    - ``exclude_pip`` -- boolean (default: ``True``); whether "pip" packages
       are excluded from the list
 
     EXAMPLES:
@@ -400,9 +393,9 @@ def installed_packages(exclude_pip=True):
         sage: # optional - sage_spkg
         sage: from sage.misc.package import installed_packages
         sage: sorted(installed_packages().keys())
-        [...'conway_polynomials', ...]
-        sage: installed_packages()['conway_polynomials']  # random
-        '0.5'
+        [...'gnulib', ...]
+        sage: installed_packages()['gnulib']  # random
+        'f9b39c4e337f1dc0dd07c4f3985c476fb875d799'
 
     .. SEEALSO::
 
@@ -431,14 +424,13 @@ def is_package_installed(package, exclude_pip=True):
 
     - ``package`` -- the name of the package
 
-    - ``exclude_pip`` -- (optional, default: ``True``) whether to consider pip
+    - ``exclude_pip`` -- boolean (default: ``True``); whether to consider pip
       type packages
-
 
     EXAMPLES::
 
         sage: from sage.misc.package import is_package_installed
-        sage: is_package_installed('conway_polynomials')  # optional - sage_spkg
+        sage: is_package_installed('gnulib')  # optional - sage_spkg
         True
 
     Giving just the beginning of the package name is not good enough::
@@ -467,7 +459,7 @@ def is_package_installed_and_updated(package: str) -> bool:
 
     INPUT:
 
-    - ``package`` -- the name of the package.
+    - ``package`` -- the name of the package
 
     EXAMPLES::
 
@@ -490,10 +482,10 @@ def package_versions(package_type, local=False):
 
     INPUT:
 
-    - ``package_type`` -- (string) one of ``"standard"``, ``"optional"`` or
-      ``"experimental"``
+    - ``package_type`` -- string; one of ``'standard'``, ``'optional'`` or
+      ``'experimental'``
 
-    - ``local`` -- (boolean, default: ``False``) only query local data (no internet needed)
+    - ``local`` -- boolean (default: ``False``); only query local data (no internet needed)
 
     For packages of the given type, return a dictionary whose entries
     are of the form ``'package': (installed, latest)``, where
@@ -513,8 +505,8 @@ def package_versions(package_type, local=False):
         sage: std = package_versions('standard', local=True)
         sage: 'gap' in std
         True
-        sage: std['zlib']  # random
-        ('1.2.11.p0', '1.2.11.p0')
+        sage: std['zipp']  # random
+        ('3.19.0', '3.19.0')
     """
     return {pkg.name: (pkg.installed_version, pkg.remote_version) for pkg in list_packages(package_type, local=local).values()}
 
@@ -536,8 +528,8 @@ def package_manifest(package):
 
         sage: # optional - sage_spkg
         sage: from sage.misc.package import package_manifest
-        sage: manifest = package_manifest('conway_polynomials')
-        sage: manifest['package_name'] == 'conway_polynomials'
+        sage: manifest = package_manifest('gnulib')
+        sage: manifest['package_name'] == 'gnulib'
         True
         sage: 'files' in manifest
         True

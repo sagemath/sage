@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Asteroidal triples
 
@@ -65,12 +64,14 @@ from cysignals.signals cimport sig_on, sig_off
 from memory_allocator cimport MemoryAllocator
 
 from sage.data_structures.bitset_base cimport *
+from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
+from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
 from sage.graphs.base.static_sparse_graph cimport short_digraph, init_short_digraph, free_short_digraph
 
 
 def is_asteroidal_triple_free(G, certificate=False):
     """
-    Test if the input graph is asteroidal triple-free
+    Test if the input graph is asteroidal triple-free.
 
     An independent set of three vertices such that each pair is joined by a path
     that avoids the neighborhood of the third one is called an *asteroidal
@@ -78,7 +79,7 @@ def is_asteroidal_triple_free(G, certificate=False):
     asteroidal triples. See the :mod:`module's documentation
     <sage.graphs.asteroidal_triples>` for more details.
 
-    This method returns ``True`` is the graph is AT-free and ``False`` otherwise.
+    This method returns ``True`` if the graph is AT-free and ``False`` otherwise.
 
     INPUT:
 
@@ -124,6 +125,17 @@ def is_asteroidal_triple_free(G, certificate=False):
         Traceback (most recent call last):
         ...
         ValueError: The first parameter must be a Graph.
+
+    The method is valid for immutable graphs::
+
+        sage: G = graphs.RandomGNP(10, .7)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: G.is_asteroidal_triple_free() == H.is_asteroidal_triple_free()
+        True
     """
     from sage.graphs.graph import Graph
     if not isinstance(G, Graph):
@@ -145,9 +157,16 @@ def is_asteroidal_triple_free(G, certificate=False):
     # Copying the whole graph to obtain the list of neighbors quicker than by
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
-    cdef list int_to_vertex = list(G)
+    cdef list int_to_vertex
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        sd = <short_digraph> cg.g
+        int_to_vertex = cg._vertex_to_labels
+    else:
+        int_to_vertex = list(G)
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
 
     cdef bitset_t seen
     bitset_init(seen, n)
@@ -168,7 +187,8 @@ def is_asteroidal_triple_free(G, certificate=False):
     finally:
         # Release memory
         bitset_free(seen)
-        free_short_digraph(sd)
+        if not isinstance(G, StaticSparseBackend):
+            free_short_digraph(sd)
 
     # ==> We return the result
 

@@ -142,7 +142,7 @@ We illustrate arithmetic with integers and rationals in KASH.
       ext1 := 1,
       ext2 := Unassign
 
-.. note::
+.. NOTE::
 
    For some very large numbers KASH's integer factorization seems much
    faster than PARI's (which is the default in Sage).
@@ -405,7 +405,7 @@ Long Input
 The KASH interface reads in even very long input (using files) in a
 robust manner, as long as you are creating a new object.
 
-.. note::
+.. NOTE::
 
    Using ``kash.eval`` for long input is much less robust, and is not
    recommended.
@@ -460,11 +460,12 @@ class Kash(Expect):
                  server_tmpdir=None):
         """
         INPUT:
-            max_workspace_size -- (default: None)
-                    set maximal workspace memory usage to <mem>
-                    <mem> stands for byte-wise allocation
-                    <mem>k stands for kilobyte-wise allocation
-                    <mem>m stands for megabyte-wise allocation
+
+        - ``max_workspace_size`` -- (default: ``None``)
+          set maximal workspace memory usage to <mem>
+          <mem> stands for byte-wise allocation
+          <mem>k stands for kilobyte-wise allocation
+          <mem>m stands for megabyte-wise allocation
         """
         cmd = "kash3 -b -c -d  "
         if max_workspace_size is not None:
@@ -541,14 +542,12 @@ class Kash(Expect):
 
         INPUT:
 
+        - ``s`` -- string containing Kash code
 
-        -  ``s`` - string containing Kash code.
+        - ``newlines`` -- boolean (default: ``True``); if ``False``,
+          remove all backslash-newlines inserted by the Kash output formatter
 
-        -  ``newlines`` - bool (default: True); if False,
-           remove all backslash-newlines inserted by the Kash output
-           formatter.
-
-        -  ``strip`` - ignored
+        - ``strip`` -- ignored
         """
         x = str(x)
         x = x.rstrip()
@@ -763,7 +762,6 @@ class KashElement(ExpectElement):
             sage541.1^2 + sage541.1
             sage: ka.sage({kR.1: x})                    # optional -- kash
             x^2 + x
-
         """
 
         string = self._sage_repr()
@@ -783,34 +781,10 @@ class KashElement(ExpectElement):
 
 
 class KashDocumentation(list):
-    def __repr__(self):
+    def __repr__(self) -> str:
         if len(self) == 0:
             return "No matches."
         return '\n'.join(self)
-
-
-def is_KashElement(x):
-    """
-    Returns True if ``x`` is of type :class:`KashElement`.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.kash import is_KashElement
-        sage: is_KashElement(2)
-        doctest:...: DeprecationWarning: the function is_KashElement is deprecated; use isinstance(x, sage.interfaces.abc.KashElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: is_KashElement(kash(2))  # optional - kash
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_KashElement is deprecated; use isinstance(x, sage.interfaces.abc.KashElement) instead")
-
-    return isinstance(x, KashElement)
-
-######
-
-######
 
 
 kash = Kash()
@@ -823,7 +797,8 @@ def reduce_load_Kash():
 def kash_console():
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():
-        raise RuntimeError('Can use the console only in the terminal. Try %%kash magics instead.')
+        raise RuntimeError('Can use the console only in the terminal. '
+                           'Try %%kash magics instead.')
     os.system("kash3 ")
 
 

@@ -18,3 +18,8 @@ gcc
 g++
 ca-certificates
 coreutils
+patch
+bzip2
+pkgconf
+zlib-dev
+boost

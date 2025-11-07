@@ -18,14 +18,15 @@ Creation of the fixed point of a morphism::
     sage: w.length()
     +Infinity
 
-Computing the n-th letter of a fixed point is fast as it is using the
+Computing the `n`-th letter of a fixed point is fast as it is using the
 abstract numeration system associated to the morphism and the starting
 letter, see chapter 3 of the book [BR2010b]_::
 
     sage: w[10000000]                                                                   # needs sage.modules
     'b'
-
 """
+from typing import Iterator
+from itertools import chain
 
 from sage.combinat.words.word_infinite_datatypes import WordDatatype_callable
 from sage.misc.lazy_import import lazy_import
@@ -39,16 +40,17 @@ class WordDatatype_morphic(WordDatatype_callable):
     Datatype for a morphic word defined by a morphism, a starting letter
     and a coding.
     """
-    def __init__(self, parent, morphism, letter, coding=None, length=Infinity):
+    def __init__(self, parent, morphism, letter,
+                 coding=None, length=Infinity) -> None:
         r"""
         INPUT:
 
-        - ``parent`` - a parent
-        - ``morphism`` - a word morphism
-        - ``letter`` - a starting letter
-        - ``coding`` - dict (default: ``None``), if ``None``
+        - ``parent`` -- a parent
+        - ``morphism`` -- a word morphism
+        - ``letter`` -- a starting letter
+        - ``coding`` -- dictionary (default: ``None``); if ``None``
           the identity map is used for the coding
-        - ``length`` - integer or ``'finite'`` or ``Infinity`` or
+        - ``length`` -- integer or ``'finite'`` or ``Infinity`` or
           ``'unknown'`` (default: ``Infinity``) the length of the word
 
         EXAMPLES::
@@ -107,7 +109,6 @@ class WordDatatype_morphic(WordDatatype_callable):
             word: dddcdddcba
             sage: list(w[10000:10010]) == L                                             # needs sage.modules
             True
-
         """
         self._parent = parent
         # self._func = callable
@@ -129,7 +130,7 @@ class WordDatatype_morphic(WordDatatype_callable):
         else:
             self._coding = coding
 
-    def __reduce__(self):
+    def __reduce__(self) -> tuple:
         r"""
         EXAMPLES::
 
@@ -154,12 +155,11 @@ class WordDatatype_morphic(WordDatatype_callable):
               'a',
               {'a': 'a', 'b': 'b'},
               2))
-
         """
         return self.__class__, (self._parent, self._morphism, self._letter,
                                 self._coding, self._len)
 
-    def representation(self, n):
+    def representation(self, n) -> list:
         r"""
         Return the representation of the integer n in the numeration system
         associated to the morphism.
@@ -168,9 +168,7 @@ class WordDatatype_morphic(WordDatatype_callable):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        list
+        OUTPUT: list
 
         EXAMPLES::
 
@@ -206,16 +204,16 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: w.representation(5)                                                   # needs sage.modules
             [1, 0, 0, 0]
         """
-        letters_to_int = {a:i for (i,a) in enumerate(self._alphabet)}
+        letters_to_int = {a: i for i, a in enumerate(self._alphabet)}
         position = letters_to_int[self._letter]
         M = self._morphism.incidence_matrix()
-        vMk = vector([1]*len(self._alphabet))
+        vMk = vector([1] * len(self._alphabet))
         length_of_images = []
         while vMk[position] <= n:
             length_of_images.append(vMk)
-            vMk_next = vMk*M
+            vMk_next = vMk * M
             if vMk[position] == vMk_next[position]:
-                raise IndexError('index (={}) out of range, the fixed point is finite and has length {}'.format(n,vMk[position]))
+                raise IndexError(f'index (={n}) out of range, the fixed point is finite and has length {vMk[position]}')
             vMk = vMk_next
         k = len(length_of_images)
         letter_k = self._letter
@@ -228,10 +226,10 @@ class WordDatatype_morphic(WordDatatype_callable):
             while S <= n_k:
                 a = m_letter_k[j]
                 i = letters_to_int[a]
-                pile_length = length_of_images[k-1][i]
+                pile_length = length_of_images[k - 1][i]
                 S += pile_length
                 j += 1
-            path.append(j-1)
+            path.append(j - 1)
             n_k -= S - pile_length
             letter_k = a
             k -= 1
@@ -243,12 +241,10 @@ class WordDatatype_morphic(WordDatatype_callable):
 
         INPUT:
 
-        - ``self`` - a fixed point of a morphism
-        - ``key`` - an integer, the position
+        - ``self`` -- a fixed point of a morphism
+        - ``key`` -- integer; the position
 
-        OUTPUT:
-
-        - a letter
+        OUTPUT: a letter
 
         EXAMPLES::
 
@@ -272,16 +268,13 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: w = WordDatatype_morphic(W, m, 'a')
             sage: w._func(5)                                                            # needs sage.modules
             'a'
-
         """
         letter = self._letter
         for a in self.representation(key):
             letter = (self._morphism(letter))[a]
-        if key == 0:
-            return self._coding[letter]
         return self._coding[letter]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         r"""
         Return an iterator of the letters of the fixed point of ``self``
         starting with ``letter``.
@@ -291,14 +284,12 @@ class WordDatatype_morphic(WordDatatype_callable):
 
         INPUT:
 
-        - ``self`` - an endomorphism, must be prolongable on
-           letter
+        - ``self`` -- an endomorphism, must be prolongable on
+          letter
 
-        - ``letter`` - a letter in the domain of ``self``
+        - ``letter`` -- a letter in the domain of ``self``
 
-        OUTPUT:
-
-        - iterator of the fixed point
+        OUTPUT: iterator of the fixed point
 
         EXAMPLES::
 
@@ -348,14 +339,12 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: (s^7).reversal().fixed_points()
             []
         """
-        from itertools import chain
         w = iter(self._morphism.image(self._letter))
         while True:
             try:
                 for a in self._morphism.image(next(w)):
                     yield self._coding[a]
-                else:
-                    next_w = next(w)
-                    w = chain([next_w], w, self._morphism.image(next_w))
+                next_w = next(w)
+                w = chain([next_w], w, self._morphism.image(next_w))
             except StopIteration:
                 return

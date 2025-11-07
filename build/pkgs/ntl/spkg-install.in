@@ -21,6 +21,8 @@ ntl_configure()
 
     cd "$SRC"
 
+    cp "$SAGE_ROOT"/config/config.* src/libtool-origin/
+
     # Run the configure script, setting CC, CXX, CFLAGS etc as needed.
     # This ensures that they get written by DoConfig into 'makefile'.
     CFLAGS="-O2 -g $CFLAGS"

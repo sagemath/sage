@@ -21,6 +21,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.crystals import Crystals
 from sage.categories.tensor import TensorProductsCategory
 
+
 class SuperCrystals(Category_singleton):
     def super_categories(self):
         r"""
@@ -52,7 +53,7 @@ class SuperCrystals(Category_singleton):
                   Crystal of BKK tableaux of shape [2, 1] of gl(2|3)]
                 sage: G = T.digraph()
                 sage: H = S.digraph()
-                sage: G.is_isomorphic(H, edge_labels= True)
+                sage: G.is_isomorphic(H, edge_labels=True)
                 True
             """
             cartan_type = self.cartan_type()
@@ -119,7 +120,7 @@ class SuperCrystals(Category_singleton):
                         edge_opts['label'] = LatexExpr(str(l))
                     return edge_opts
 
-                G.set_latex_options(format="dot2tex", edge_labels=True, edge_options=edge_options)
+                G.set_latex_options(format='dot2tex', edge_labels=True, edge_options=edge_options)
                 return G
 
             def genuine_highest_weight_vectors(self):
@@ -144,7 +145,7 @@ class SuperCrystals(Category_singleton):
 
             connected_components_generators = genuine_highest_weight_vectors
 
-            def connected_components(self):
+            def connected_components(self) -> list:
                 r"""
                 Return the connected components of ``self`` as subcrystals.
 
@@ -172,9 +173,7 @@ class SuperCrystals(Category_singleton):
                 CCs = []
 
                 for mg in self.connected_components_generators():
-                    if not isinstance(mg, tuple):
-                        mg = (mg,)
-                    subcrystal = self.subcrystal(generators=mg,
+                    subcrystal = self.subcrystal(generators=(mg,),
                                                  index_set=index_set,
                                                  cartan_type=cartan_type,
                                                  category=category)
@@ -182,7 +181,7 @@ class SuperCrystals(Category_singleton):
 
                 return CCs
 
-            def genuine_lowest_weight_vectors(self):
+            def genuine_lowest_weight_vectors(self) -> tuple:
                 r"""
                 Return the tuple of genuine lowest weight elements of ``self``.
 
@@ -203,7 +202,7 @@ class SuperCrystals(Category_singleton):
                 return tuple([x[1] for x in self._genuine_highest_lowest_weight_vectors()])
 
             @cached_method
-            def _genuine_highest_lowest_weight_vectors(self):
+            def _genuine_highest_lowest_weight_vectors(self) -> tuple:
                 r"""
                 Return the genuine lowest and highest weight elements of ``self``.
 
@@ -265,7 +264,7 @@ class SuperCrystals(Category_singleton):
                 return A.sum(A(x.weight()) for x in self)
 
             @cached_method
-            def highest_weight_vectors(self):
+            def highest_weight_vectors(self) -> tuple:
                 """
                 Return the highest weight vectors of ``self``.
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Puiseux Series Ring Element
 
@@ -134,12 +133,12 @@ cdef class PuiseuxSeries(AlgebraElement):
 
     - ``parent`` -- the parent ring
 
-    - ``f``  -- one of the following types of inputs:
+    - ``f`` -- one of the following types of inputs:
 
       * instance of :class:`PuiseuxSeries`
       * instance that can be coerced into the Laurent series ring of the parent
 
-    - ``e`` -- integer (default: 1) the ramification index
+    - ``e`` -- integer (default: 1); the ramification index
 
     EXAMPLES::
 
@@ -202,7 +201,7 @@ cdef class PuiseuxSeries(AlgebraElement):
                 l = l.add_bigoh(prec / d)
 
         self._l = l
-        self._e = long(abs(e))
+        self._e = int(abs(e))
 
     def __reduce__(self):
         """
@@ -336,8 +335,10 @@ cdef class PuiseuxSeries(AlgebraElement):
 
         OUTPUT:
 
-        - ``g`` -- int; a ramification index common to self and right
-        - ``M, N`` -- int, int; scaling factors on self and right, respectively
+        - ``g`` -- integer; a ramification index common to ``self`` and
+          ``right``
+        - ``M``, ``N`` -- integers; scaling factors on ``self`` and ``right``,
+          respectively
 
         EXAMPLES::
 
@@ -853,7 +854,7 @@ cdef class PuiseuxSeries(AlgebraElement):
             sage: p.exponents()
             [3/4, 4/5, 5/6]
         """
-        return [QQ(n) /  self._e for n in self._l.exponents()]
+        return [QQ(n) / self._e for n in self._l.exponents()]
 
     def __setitem__(self, n, value):
         """

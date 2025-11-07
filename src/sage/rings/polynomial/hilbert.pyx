@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Compute Hilbert series of monomial ideals
 
@@ -94,7 +93,7 @@ cdef inline list interred(list L):
 
     INPUT:
 
-    - ``L`` -- a list of :class:`~sage.rings.polynomial.polydict.ETuple`
+    - ``L`` -- list of :class:`~sage.rings.polynomial.polydict.ETuple`
 
     OUTPUT:
 
@@ -132,7 +131,6 @@ cdef list quotient_by_var(list L, size_t index):
     Return the quotient of the ideal represented by ``L`` and the
     variable number ``index``.
     """
-    cdef ETuple m_j
     cdef list result = L[:len(L)] # creates a copy
     cdef size_t i
     for i in range(len(L)):
@@ -167,7 +165,6 @@ cdef bint HilbertBaseCase(Polynomial_integer_dense_flint fhs, Node D, tuple w) n
     Otherwiese, ``False`` is returned.
     """
     cdef size_t i, j, exp
-    cdef int e
     # First, the easiest cases:
     if not D.Id: # The zero ideal
         fmpz_poly_set_coeff_si(fhs._poly, 0, 1) # = PR(1)
@@ -228,7 +225,6 @@ cdef bint HilbertBaseCase(Polynomial_integer_dense_flint fhs, Node D, tuple w) n
 
     easy = True
     cdef ETuple m2
-    cdef list v
     for j in range(i+1, len(D.Id)):
         if (<ETuple>PyList_GET_ITEM(D.Id,j))._nonzero > 1:
             # i.e., another generator contains more than a single var
@@ -297,7 +293,7 @@ cdef make_children(Node D, tuple w):
     if ``D.Right`` is not ``None``.
     """
     cdef size_t j, m
-    cdef int i, ii
+    cdef int i
     # Determine the variable that appears most often in the monomials.
     # If "most often" means "only once", then instead we choose a variable that is
     # guaranteed to appear in a composed monomial.
@@ -422,6 +418,7 @@ cdef make_children(Node D, tuple w):
      #    It may be a good idea to form the product of some of the most
      #    frequent variables. But this isn't implemented yet. TODO?
 
+
 def first_hilbert_series(I, grading=None, return_grading=False):
     """
     Return the first Hilbert series of the given monomial ideal.
@@ -431,7 +428,8 @@ def first_hilbert_series(I, grading=None, return_grading=False):
     - ``I`` -- a monomial ideal (possibly defined in singular)
     - ``grading`` -- (optional) a list or tuple of integers used as
       degree weights
-    - ``return_grading`` -- (default: ``False``) whether to return the grading
+    - ``return_grading`` -- boolean (default: ``False``); whether to return the
+      grading
 
     OUTPUT:
 
@@ -489,9 +487,9 @@ def first_hilbert_series(I, grading=None, return_grading=False):
         br = S('basering')
         if S.eval('isQuotientRing(basering)')=='1':
             L = S('ringlist(basering)')
-            R = S('ring(list(%s[1..3],ideal(0)))'%L.name())
+            R = S('ring(list(%s[1..3],ideal(0)))' % L.name())
             R.set_ring()
-            I = S('fetch(%s,%s)+ideal(%s)'%(br.name(),I.name(),br.name()))
+            I = S('fetch(%s,%s)+ideal(%s)' % (br.name(), I.name(), br.name()))
 
         I = [ETuple([int(x) for x in S.eval('string(leadexp({}[{}]))'.format(I.name(), i)).split(',')])
               for i in range(1,int(S.eval('size({})'.format(I.name())))+1)]
@@ -550,6 +548,7 @@ def first_hilbert_series(I, grading=None, return_grading=False):
                 fmpz_poly_mul(AN.RMult, AN.RMult, fhs._poly)
                 fmpz_poly_add(fhs._poly, AN.LMult, AN.RMult)
                 got_result = True
+
 
 def hilbert_poincare_series(I, grading=None):
     r"""

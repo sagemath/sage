@@ -1,5 +1,4 @@
 from sage.data_structures.bitset cimport bitset_t
-from sage.matroids.matroid cimport Matroid
 from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
 from sage.matroids.set_system cimport SetSystem
 
@@ -16,11 +15,11 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
     cdef reset_current_basis(self)
 
-    cpdef _is_basis(self, X)
+    cpdef bint _is_basis(self, frozenset X) noexcept
 
     cpdef bases_count(self)
-    cpdef bases(self)
-    cpdef nonbases(self)
+    cpdef SetSystem bases(self)
+    cpdef SetSystem nonbases(self)
 
     cpdef truncation(self)
     cpdef _extension(self, e, H)
@@ -39,7 +38,6 @@ cdef class BasisMatroid(BasisExchangeMatroid):
     cpdef _is_isomorphism(self, M, morphism)
     cpdef _isomorphism(self, other)
     cpdef _is_isomorphic(self, other, certificate=*)
-
 
 cdef  binom_init(long n, long k)
 cdef  long set_to_index(bitset_t S) noexcept

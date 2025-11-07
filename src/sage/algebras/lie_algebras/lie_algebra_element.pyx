@@ -22,7 +22,6 @@ from cpython.object cimport Py_EQ, Py_NE, Py_GT, Py_GE
 from sage.misc.repr import repr_lincomb
 from sage.structure.element cimport have_same_parent, parent
 from sage.structure.coerce cimport coercion_model
-from sage.cpython.wrapperdescr cimport wrapperdescr_fastcall
 from sage.structure.element_wrapper cimport ElementWrapper
 from sage.structure.richcmp cimport richcmp, richcmp_not_equal
 from sage.data_structures.blas_dict cimport axpy, add, negate, scal
@@ -35,7 +34,7 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
     # Need to bypass the coercion model
     def __mul__(left, right):
         """
-        If we are multiplying two non-zero elements, automatically
+        If we are multiplying two nonzero elements, automatically
         lift up to the universal enveloping algebra.
 
         EXAMPLES::
@@ -66,9 +65,26 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
         """
         try:
             # Try the normal coercion first
-            return wrapperdescr_fastcall(IndexedFreeModuleElement.__mul__,
-                                         left, (right,), <object>NULL)
+            return IndexedFreeModuleElement.__mul__(left, right)
         except TypeError:
+            pass
+
+        try:
+            # Handle the case of right multiplication by scalar
+            if isinstance(left, IndexedFreeModuleElement):
+                R = (<IndexedFreeModuleElement>left)._parent._base
+                x = R.coerce(right)
+                return IndexedFreeModuleElement.__mul__(left, x)
+        except (TypeError, KeyError):
+            pass
+
+        try:
+            # Handle the case of left multiplication by scalar
+            if isinstance(right, IndexedFreeModuleElement):
+                R = (<IndexedFreeModuleElement>right)._parent._base
+                x = R.coerce(left)
+                return IndexedFreeModuleElement.__mul__(x, right)
+        except (TypeError, KeyError):
             pass
 
         # Lift up to the UEA and try multiplication there
@@ -116,7 +132,7 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
         s = codomain.zero()
         if not self:  # If we are 0
             return s
-        names = self.parent().variable_names()
+        names = self._parent.variable_names()
         if base_map is None:
             def base_map(x):
                 return x
@@ -263,7 +279,7 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
     """
     def __bool__(self):
         """
-        Return if ``self`` is non-zero.
+        Return if ``self`` is nonzero.
 
         EXAMPLES::
 
@@ -305,7 +321,7 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
     # Need to bypass the coercion model
     def __mul__(left, right):
         """
-        If we are multiplying two non-zero elements, automatically
+        If we are multiplying two nonzero elements, automatically
         lift up to the universal enveloping algebra.
 
         .. TODO::
@@ -349,9 +365,26 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
         """
         try:
             # Try the normal coercion first
-            return wrapperdescr_fastcall(ElementWrapper.__mul__,
-                                         left, (right,), <object>NULL)
+            return ElementWrapper.__mul__(left, right)
         except TypeError:
+            pass
+
+        try:
+            # Handle the case of right multiplication by scalar
+            if isinstance(left, LieAlgebraElementWrapper):
+                R = (<LieAlgebraElementWrapper>left)._parent._base
+                x = R.coerce(right)
+                return ElementWrapper.__mul__(left, x)
+        except (TypeError, KeyError):
+            pass
+
+        try:
+            # Handle the case of left multiplication by scalar
+            if isinstance(right, LieAlgebraElementWrapper):
+                R = (<LieAlgebraElementWrapper>right)._parent._base
+                x = R.coerce(left)
+                return ElementWrapper.__mul__(x, right)
+        except (TypeError, KeyError):
             pass
 
         # Lift up to the UEA and try multiplication there
@@ -475,7 +508,7 @@ cdef class LieAlgebraMatrixWrapper(LieAlgebraElementWrapper):
 
         EXAMPLES::
 
-            sage: L = lie_algebras.Heisenberg(QQ, 1, representation="matrix")
+            sage: L = lie_algebras.Heisenberg(QQ, 1, representation='matrix')
             sage: z = L.z()
             sage: z.value.is_immutable()
             True
@@ -509,10 +542,12 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
 
             sage: L.<X,Y,Z> = LieAlgebra(QQ, {('X','Y'): {'Z': 1}})
             sage: S = L.subalgebra([X, Y])
+            sage: S.indices()
+            {'X', 'Y', 'Z'}
             sage: el = S(2*Y + 9*Z)
-            sage: el[1]
+            sage: el['Y']
             2
-            sage: el[2]
+            sage: el['Z']
             9
         """
         if self._monomial_coefficients is None:
@@ -521,7 +556,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
         try:
             return self._monomial_coefficients[i]
         except KeyError:
-            return self.parent().base_ring().zero()
+            return self._parent.base_ring().zero()
 
     def _bracket_(self, x):
         """
@@ -543,7 +578,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
         x_lift = (<LieSubalgebraElementWrapper> x).value
         return type(self)(self._parent, self.value._bracket_(x_lift))
 
-    def to_vector(self, order=None, sparse=False):
+    def _vector_(self, sparse=False, order=None):
         r"""
         Return the vector in ``g.module()`` corresponding to the
         element ``self`` of ``g`` (where ``g`` is the parent of ``self``).
@@ -553,12 +588,12 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
             sage: L.<X,Y,Z> = LieAlgebra(ZZ, {('X','Y'): {'Z': 3}})
             sage: S = L.subalgebra([X, Y])
             sage: S.basis()
-            Family (X, Y, 3*Z)
+            Finite family {'X': X, 'Y': Y, 'Z': 3*Z}
             sage: S(2*Y + 9*Z).to_vector()
             (0, 2, 9)
             sage: S2 = L.subalgebra([Y, Z])
             sage: S2.basis()
-            Family (Y, Z)
+            Finite family {'Y': Y, 'Z': Z}
             sage: S2(2*Y + 9*Z).to_vector()
             (0, 2, 9)
 
@@ -573,6 +608,8 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
         """
         return self._parent.module()(self.value.to_vector(sparse=sparse))
 
+    to_vector = _vector_
+
     cpdef dict monomial_coefficients(self, bint copy=True):
         r"""
         Return a dictionary whose keys are indices of basis elements
@@ -581,7 +618,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
 
         INPUT:
 
-        - ``copy`` -- (default: ``True``) if ``self`` is internally
+        - ``copy`` -- boolean (default: ``True``); if ``self`` is internally
           represented by a dictionary ``d``, then make a copy of ``d``;
           if ``False``, then this can cause undesired behavior by
           mutating ``d``
@@ -591,17 +628,18 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
             sage: L.<X,Y,Z> = LieAlgebra(ZZ, {('X','Y'): {'Z': 3}})
             sage: S = L.subalgebra([X, Y])
             sage: S(2*Y + 9*Z).monomial_coefficients()
-            {1: 2, 2: 3}
+            {'Y': 2, 'Z': 3}
             sage: S2 = L.subalgebra([Y, Z])
             sage: S2(2*Y + 9*Z).monomial_coefficients()
-            {0: 2, 1: 9}
+            {'Y': 2, 'Z': 9}
         """
         cdef Py_ssize_t k
+        indices = self._parent._indices
         if self._monomial_coefficients is None:
-            sm = self.parent().module()
+            sm = self._parent.module()
             v = sm.coordinate_vector(self.to_vector())
-            self._monomial_coefficients = {k: v[k] for k in range(len(v))
-                                           if v[k]}
+            self._monomial_coefficients = {indices[k]: v[k]
+                                           for k in range(len(v)) if v[k]}
         if copy:
             return dict(self._monomial_coefficients)
         return self._monomial_coefficients
@@ -617,13 +655,13 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
             sage: a = S(2*Y + 12*Z)
             sage: b = S(X + 2*Y)
             sage: (a + b).monomial_coefficients()
-            {0: 1, 1: 4, 2: 4}
+            {'X': 1, 'Y': 4, 'Z': 4}
             sage: a.monomial_coefficients()        # We set a._monomial_coefficients
-            {1: 2, 2: 4}
+            {'Y': 2, 'Z': 4}
             sage: b.monomial_coefficients()        # We set b._monomial_coefficients
-            {0: 1, 1: 2}
+            {'X': 1, 'Y': 2}
             sage: (a + b).monomial_coefficients()  # This is now computed from a and b
-            {0: 1, 1: 4, 2: 4}
+            {'X': 1, 'Y': 4, 'Z': 4}
         """
         cdef LieSubalgebraElementWrapper ret, other = <LieSubalgebraElementWrapper> right
         ret = type(self)(self._parent, self.value + other.value)
@@ -643,13 +681,13 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
             sage: a = S(2*Y + 12*Z)
             sage: b = S(X + 2*Y)
             sage: (a - b).monomial_coefficients()
-            {0: -1, 2: 4}
+            {'X': -1, 'Z': 4}
             sage: a.monomial_coefficients()        # We set a._monomial_coefficients
-            {1: 2, 2: 4}
+            {'Y': 2, 'Z': 4}
             sage: b.monomial_coefficients()        # We set b._monomial_coefficients
-            {0: 1, 1: 2}
+            {'X': 1, 'Y': 2}
             sage: (a - b).monomial_coefficients()  # This is now computed from a and b
-            {0: -1, 2: 4}
+            {'X': -1, 'Z': 4}
         """
         cdef LieSubalgebraElementWrapper ret, other = <LieSubalgebraElementWrapper> right
         ret = type(self)(self._parent, self.value - other.value)
@@ -668,11 +706,11 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
             sage: S = L.subalgebra([X, Y])
             sage: a = S(2*Y + 12*Z)
             sage: (2*a).monomial_coefficients()
-            {1: 4, 2: 8}
+            {'Y': 4, 'Z': 8}
             sage: a.monomial_coefficients()      # We set a._monomial_coefficients
-            {1: 2, 2: 4}
+            {'Y': 2, 'Z': 4}
             sage: (2*a).monomial_coefficients()  # This is now computed from a
-            {1: 4, 2: 8}
+            {'Y': 4, 'Z': 8}
         """
         # This was copied and IDK if it still applies (TCS):
         # With the current design, the coercion model does not have
@@ -833,7 +871,22 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
             if v != zero:
                 yield (I[i], v)
 
-    cpdef to_vector(self, bint sparse=False):
+    cpdef _vector_(self, bint sparse=False, order=None):
+        """
+        Return ``self`` as a vector.
+
+        EXAMPLES::
+
+            sage: L.<x,y,z> = LieAlgebra(QQ, {('x','y'): {'z':1}})
+            sage: a = x + 3*y - z/5
+            sage: vector(a)
+            (1, 3, -1/5)
+        """
+        if sparse:
+            return self.value.sparse_vector()
+        return self.value
+
+    cpdef to_vector(self, bint sparse=False, order=None):
         """
         Return ``self`` as a vector.
 
@@ -844,9 +897,7 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
             sage: a.to_vector()
             (1, 3, -1/2)
         """
-        if sparse:
-            return self.value.sparse_vector()
-        return self.value
+        return self._vector_(sparse=sparse)
 
     def lift(self):
         """

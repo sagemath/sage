@@ -22,6 +22,7 @@ Subspace of ambient spaces of modular symbols
 import sage.modular.hecke.all as hecke
 import sage.structure.factorization
 import sage.modular.modsym.space
+from sage.misc.cachefunc import cached_method
 
 
 class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, hecke.HeckeSubmodule):
@@ -36,19 +37,17 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
         """
         INPUT:
 
+        - ``ambient_hecke_module`` -- the ambient space of
+          modular symbols in which we're constructing a submodule
 
-        -  ``ambient_hecke_module`` - the ambient space of
-           modular symbols in which we're constructing a submodule
+        - ``submodule`` -- the underlying free module of the
+          submodule
 
-        -  ``submodule`` - the underlying free module of the
-           submodule
+        - ``dual_free_module`` -- underlying free module of
+          the dual of the submodule (optional)
 
-        -  ``dual_free_module`` - underlying free module of
-           the dual of the submodule (optional)
-
-        -  ``check`` - (default: False) whether to check that
-           the submodule is invariant under all Hecke operators T_p.
-
+        - ``check`` -- boolean (default: ``False``); whether to check that
+          the submodule is invariant under all Hecke operators `T_p`
 
         EXAMPLES::
 
@@ -77,7 +76,7 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -228,7 +227,7 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
     def factorization(self):
         """
         Return a list of pairs `(S,e)` where `S` is simple
-        spaces of modular symbols and self is isomorphic to the direct sum
+        spaces of modular symbols and ``self`` is isomorphic to the direct sum
         of the `S^e` as a module over the *anemic* Hecke algebra
         adjoin the star involution.
 
@@ -238,7 +237,7 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
         The factors are sorted by dimension - don't depend on much more for
         now.
 
-        ASSUMPTION: self is a module over the anemic Hecke algebra.
+        ASSUMPTION: ``self`` is a module over the anemic Hecke algebra.
 
         EXAMPLES: Note that if the sign is 1 then the cuspidal factors
         occur twice, one with each star eigenvalue.
@@ -325,7 +324,7 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
 
     def is_cuspidal(self) -> bool:
         """
-        Return True if self is cuspidal.
+        Return ``True`` if ``self`` is cuspidal.
 
         EXAMPLES::
 
@@ -355,9 +354,10 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
         """
         self.__is_cuspidal = t
 
-    def is_eisenstein(self):
+    @cached_method
+    def is_eisenstein(self) -> bool:
         """
-        Return True if self is an Eisenstein subspace.
+        Return ``True`` if ``self`` is an Eisenstein subspace.
 
         EXAMPLES::
 
@@ -366,12 +366,8 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
             sage: ModularSymbols(22,6).eisenstein_submodule().is_eisenstein()
             True
         """
-        try:
-            return self.__is_eisenstien
-        except AttributeError:
-            C = self.ambient_hecke_module().eisenstein_subspace()
-            self.__is_eisenstein = self.is_submodule(C)
-            return self.__is_eisenstein
+        C = self.ambient_hecke_module().eisenstein_subspace()
+        return self.is_submodule(C)
 
     def _compute_sign_subspace(self, sign, compute_dual=True):
         """
@@ -380,10 +376,10 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
 
         INPUT:
 
-        -  ``sign`` - int (either -1 or +1)
+        - ``sign`` -- integer (either -1 or +1)
 
-        -  ``compute_dual`` - bool (default: True) also
-           compute dual subspace. This are useful for many algorithms.
+        - ``compute_dual`` -- boolean (default: ``True``); also
+          compute dual subspace. This is useful for many algorithms.
 
         OUTPUT: subspace of modular symbols
 

@@ -34,11 +34,12 @@ The default domain of a symbolic variable is the complex plane::
 
 Here is the list of acceptable features::
 
+    sage: from sage.interfaces.maxima_lib import maxima
     sage: ", ".join(map(str, maxima("features")._sage_()))
     'integer, noninteger, even, odd, rational, irrational, real, imaginary,
     complex, analytic, increasing, decreasing, oddfun, evenfun, posfun,
     constant, commutative, lassociative, rassociative, symmetric,
-    antisymmetric, integervalued'
+    antisymmetric, integervalued, one_to_one'
 
 Set positive domain using a relation::
 
@@ -71,10 +72,10 @@ Assumptions are added and in some cases checked for consistency::
     ValueError: Assumption is inconsistent
     sage: forget()
 """
+from sage.rings.cc import CC
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RR
-from sage.rings.cc import CC
 from sage.structure.element import Expression
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -96,11 +97,10 @@ class GenericDeclaration(UniqueRepresentation):
 
     INPUT:
 
-    -  ``var`` -- the variable about which assumptions are
-       being made
+    - ``var`` -- the variable about which assumptions are being made
 
-    -  ``assumption`` -- a string containing a Maxima feature, either user
-       defined or in the list given by ``maxima('features')``
+    - ``assumption`` -- string containing a Maxima feature, either user
+      defined or in the list given by ``maxima('features')``
 
     EXAMPLES::
 
@@ -117,17 +117,17 @@ class GenericDeclaration(UniqueRepresentation):
 
     Here is the list of acceptable features::
 
+        sage: from sage.interfaces.maxima_lib import maxima
         sage: ", ".join(map(str, maxima("features")._sage_()))
         'integer, noninteger, even, odd, rational, irrational, real, imaginary,
         complex, analytic, increasing, decreasing, oddfun, evenfun, posfun,
         constant, commutative, lassociative, rassociative, symmetric,
-        antisymmetric, integervalued'
+        antisymmetric, integervalued, one_to_one'
 
     Test unique representation behavior::
 
         sage: GenericDeclaration(x, 'integer') is GenericDeclaration(SR.var("x"), 'integer')
         True
-
     """
 
     def __init__(self, var, assumption):
@@ -139,11 +139,10 @@ class GenericDeclaration(UniqueRepresentation):
 
         INPUT:
 
-        -  ``var`` -- the variable about which assumptions are
-           being made
+        - ``var`` -- the variable about which assumptions are being made
 
-        -  ``assumption`` -- a Maxima feature, either user
-           defined or in the list given by ``maxima('features')``
+        - ``assumption`` -- a Maxima feature, either user
+          defined or in the list given by ``maxima('features')``
 
         EXAMPLES::
 
@@ -158,11 +157,12 @@ class GenericDeclaration(UniqueRepresentation):
 
         Here is the list of acceptable features::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: ", ".join(map(str, maxima("features")._sage_()))
             'integer, noninteger, even, odd, rational, irrational, real,
             imaginary, complex, analytic, increasing, decreasing, oddfun,
             evenfun, posfun, constant, commutative, lassociative, rassociative,
-            symmetric, antisymmetric, integervalued'
+            symmetric, antisymmetric, integervalued, one_to_one'
         """
         self._var = var
         self._assumption = assumption
@@ -197,7 +197,7 @@ class GenericDeclaration(UniqueRepresentation):
 
     def _validate_feature(self):
         """
-        Check if this assumption is a known maxima feature, raise an error otherwise
+        Check if this assumption is a known maxima feature, raise an error otherwise.
 
         EXAMPLES::
 
@@ -330,8 +330,8 @@ class GenericDeclaration(UniqueRepresentation):
 
         INPUT:
 
-        - ``soln`` -- Either a dictionary with variables as keys or a symbolic
-          relation with a variable on the left hand side.
+        - ``soln`` -- either a dictionary with variables as keys or a symbolic
+          relation with a variable on the left hand side
 
         EXAMPLES::
 
@@ -456,16 +456,14 @@ def assume(*args):
       The two types can be combined, but a symbolic inequality cannot
       appear in the middle of a list of variables.
 
-    OUTPUT:
-
-    If everything goes as planned, there is no output.
+    OUTPUT: if everything goes as planned, there is no output
 
     If you assume something that is not one of the two forms above, then
-    an ``AttributeError`` is raised as we try to call its ``assume``
+    an :exc:`AttributeError` is raised as we try to call its ``assume``
     method.
 
     If you make inconsistent assumptions (for example, that ``x`` is
-    both even and odd), then a ``ValueError`` is raised.
+    both even and odd), then a :exc:`ValueError` is raised.
 
     .. WARNING::
 
@@ -630,7 +628,7 @@ def assume(*args):
         True
         sage: forget()
 
-    Ensure that an ``AttributeError`` is raised if we are given junk::
+    Ensure that an :exc:`AttributeError` is raised if we are given junk::
 
         sage: assume(3)
         Traceback (most recent call last):
@@ -686,8 +684,7 @@ def forget(*args):
 
     INPUT:
 
-    -  ``*args`` -- assumptions (default: forget all
-       assumptions)
+    - ``*args`` -- assumptions (default: forget all assumptions)
 
     EXAMPLES:
 
@@ -735,11 +732,9 @@ def assumptions(*args):
 
     INPUT:
 
-    - ``args`` -- list of variables which can be empty.
+    - ``args`` -- list of variables which can be empty
 
-    OUTPUT:
-
-    - list of assumptions on variables. If args is empty it returns all
+    OUTPUT: list of assumptions on variables; if ``args`` is empty it returns all
       assumptions
 
     EXAMPLES::
@@ -861,11 +856,11 @@ class assuming:
 
     INPUT:
 
-    - ``*args`` -- assumptions (same format as for :func:`assume`).
+    - ``*args`` -- assumptions (same format as for :func:`assume`)
 
-    - ``replace`` -- a boolean (default : ``False``).
-        Specifies whether the new assumptions are added to (default)
-        or replace (if ``replace=True``) the current assumption set.
+    - ``replace`` -- boolean (default: ``False``); specifies whether the new
+      assumptions are added to (default) or replace (if ``replace=True``) the
+      current assumption set
 
     OUTPUT:
 
@@ -987,6 +982,5 @@ class assuming:
         if self.replace:
             forget(assumptions())
             assume(self.OldAss)
-        else:
-            if len(self.Ass) > 0:
-                forget(self.Ass)
+        elif len(self.Ass) > 0:
+            forget(self.Ass)

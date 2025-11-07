@@ -18,6 +18,7 @@ for these two notions.
 
 from sage.categories.filtered_modules import FilteredModulesCategory
 
+
 class FilteredAlgebrasWithBasis(FilteredModulesCategory):
     """
     The category of filtered algebras with a distinguished
@@ -239,9 +240,7 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
             - ``f`` -- a filtration-preserving linear map from ``self``
               to ``other`` (can be given as a morphism or as a function)
 
-            OUTPUT:
-
-            The graded linear map `\operatorname{gr} f`.
+            OUTPUT: the graded linear map `\operatorname{gr} f`
 
             EXAMPLES:
 

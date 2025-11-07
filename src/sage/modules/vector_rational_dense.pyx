@@ -146,7 +146,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
         if isinstance(x, (list, tuple)):
             if len(x) != self._degree:
                 raise TypeError("entries must be a list of length %s" % self._degree)
-            for i from 0 <= i < self._degree:
+            for i in range(self._degree):
                 z = Rational(x[i])
                 mpq_set(self._entries[i], z.value)
             return
@@ -234,7 +234,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
 
         INPUT:
 
-        - ``copy``, ignored optional argument.
+        - ``copy`` -- ignored optional argument
 
         EXAMPLES::
 
@@ -290,7 +290,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
         mpq_init(t)
         mpq_set_si(z.value, 0, 1)
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
+        for i in range(self._degree):
             mpq_mul(t, self._entries[i], r._entries[i])
             mpq_add(z.value, z.value, t)
         mpq_clear(t)
@@ -308,7 +308,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
         r = right
         z = self._new_c()
         cdef Py_ssize_t i
-        for i  in range(self._degree):
+        for i in range(self._degree):
             mpq_mul(z._entries[i], self._entries[i], r._entries[i])
         return z
 

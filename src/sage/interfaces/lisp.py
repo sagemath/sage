@@ -53,9 +53,15 @@ AUTHORS:
 import os
 import random
 
-from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement, gc_disabled
-from sage.structure.element import RingElement, parent
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+    gc_disabled,
+)
 from sage.misc.instancedoc import instancedoc
+from sage.structure.element import RingElement, parent
 from sage.structure.richcmp import rich_to_bool
 
 
@@ -68,6 +74,7 @@ class Lisp(Expect):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.lisp import lisp
             sage: lisp == loads(dumps(lisp))
             True
         """
@@ -76,13 +83,14 @@ class Lisp(Expect):
                         # The capitalized version of this is used for printing.
                         name='Lisp',
 
-                        # This is regexp of the input prompt.  If you can change
-                        # it to be very obfuscated that would be better.   Even
-                        # better is to use sequence numbers.
+                        # This is regexp of the input prompt.  If you
+                        # can change it to be very obfuscated that
+                        # would be better.  Even better is to use
+                        # sequence numbers.
                         prompt='> ',
 
                         # This is the command that starts up your program
-                        command="ecl",
+                        command='ecl',
 
                         server=server,
                         server_tmpdir=server_tmpdir,
@@ -291,7 +299,7 @@ class Lisp(Expect):
 
     def version(self):
         """
-        Returns the version of Lisp being used.
+        Return the version of Lisp being used.
 
         EXAMPLES::
 
@@ -342,9 +350,9 @@ class Lisp(Expect):
 
     def _equality_symbol(self):
         """
-        We raise a NotImplementedError when _equality_symbol is called since
-        equality testing in Lisp does not use infix notation and cannot be
-        done the same way as in the other interfaces.
+        We raise a :exc:`NotImplementedError` when ``_equality_symbol`` is
+        called since equality testing in Lisp does not use infix notation and
+        cannot be done the same way as in the other interfaces.
 
         EXAMPLES::
 
@@ -369,8 +377,8 @@ class Lisp(Expect):
 
     def function_call(self, function, args=None, kwds=None):
         """
-        Calls the Lisp function with given args and kwds.
-        For Lisp functions, the kwds are ignored.
+        Call the Lisp function with given ``args`` and ``kwds``.
+        For Lisp functions, the ``kwds`` are ignored.
 
         EXAMPLES::
 
@@ -404,7 +412,6 @@ class LispElement(RingElement, ExpectElement):
             False
             sage: two == 2
             True
-
         """
         P = self._check_valid()
         if parent(other) is not P:
@@ -518,24 +525,6 @@ class LispFunction(ExpectFunction):
         """
         M = self._parent
         return M.help(self._name)
-
-
-def is_LispElement(x):
-    """
-    EXAMPLES::
-
-        sage: from sage.interfaces.lisp import is_LispElement
-        sage: is_LispElement(2)
-        doctest:...: DeprecationWarning: the function is_LispElement is deprecated; use isinstance(x, sage.interfaces.abc.LispElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: is_LispElement(lisp(2))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_LispElement is deprecated; use isinstance(x, sage.interfaces.abc.LispElement) instead")
-
-    return isinstance(x, LispElement)
 
 
 # An instance

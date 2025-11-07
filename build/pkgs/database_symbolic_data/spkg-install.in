@@ -15,6 +15,3 @@ if [ $? -ne 0 ]; then
     echo >&2 "Error installing symbolic data."
     exit 1
 fi
-
-
-

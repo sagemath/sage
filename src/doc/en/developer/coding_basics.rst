@@ -6,7 +6,6 @@
 General Conventions
 ===================
 
-
 There are many ways to contribute to Sage, including sharing scripts
 and Jupyter notebooks that implement new functionality using Sage,
 improving to the Sage library, or to working on the many underlying
@@ -83,6 +82,19 @@ In particular,
        def SomeIdentityValue(x):
            return SomeValue(1)
 
+.. _section-python-version:
+
+Python Version
+=================
+
+In order to reduce the technical debt of maintaining the project, Sage follows
+the time window-based support policy
+`SPEC 0 — Minimum Supported Dependencies <https://scientific-python.org/specs/spec-0000/>`_
+for Python versions. Accordingly, support for Python versions will be dropped 
+3 years after their initial release.
+For the drop schedule of Python versions, see the 
+`SPEC 0 <https://scientific-python.org/specs/spec-0000/#drop-schedule>`_
+document.
 
 .. _chapter-directory-structure:
 
@@ -174,14 +186,6 @@ included in one of the following places:
   :func:`importlib.resources.as_file`. It should be imported in the
   same way as shown above.
 
-- Older code in the Sage library accesses
-  the package data in more direct ways. For example,
-  :sage_root:`src/sage/interfaces/maxima.py` uses the file
-  :sage_root:`src/sage/interfaces/maxima.lisp` at runtime, so it
-  refers to it as::
-
-    os.path.join(os.path.dirname(__file__), 'sage-maxima.lisp')
-
 - In an appropriate subdirectory of :sage_root:`src/sage/ext_data/`.
   (At runtime, it is then available in the directory indicated by
   ``SAGE_EXTCODE``).  For example, if ``file`` is placed in
@@ -254,14 +258,14 @@ The top of each Sage code file should follow this format::
 
     AUTHORS:
 
-    - YOUR NAME (2005-01-03): initial version
-
-    - person (date in ISO year-month-day format): short desc
+    - Your Name (2024-01-13): initial version
+    - Alice Liddell (2024-05-31): added a method; cleaned docstrings
+    - Full name (YYYY-MM-DD): short description
 
     """
 
     # ****************************************************************************
-    #       Copyright (C) 2013 YOUR NAME <your email>
+    #       Copyright (C) 2024 Your Name <your email>
     #
     # This program is free software: you can redistribute it and/or modify
     # it under the terms of the GNU General Public License as published by
@@ -341,9 +345,9 @@ information. You can use the existing functions of Sage as templates.
 
    The INPUT block describes all arguments that the function accepts.
 
-   1. The type names should be descriptive, but do not have to represent
-      the exact Sage/Python types. For example, use "integer" for
-      anything that behaves like an integer, rather than ``int``.
+   1. The type names should be descriptive, but do not have to represent the
+      exact Sage/Python types. For example, use "integer" for anything that
+      behaves like an integer, rather than "int" or "Integer".
 
    2. Mention the default values of the input arguments when applicable.
 
@@ -353,7 +357,13 @@ information. You can use the existing functions of Sage as templates.
 
        - ``n`` -- integer
 
-       - ``p`` -- prime integer (default: `2`); coprime with ``n``
+       - ``p`` -- prime integer (default: `2`); coprime with `n`
+
+       - ``var`` -- string (default: ``'lambda'``)
+
+       - ``check`` -- boolean (default: ``True``); specifies whether to check for primality
+
+       - ``algorithm`` -- (default: ``None``) the name of the algorithm to use
 
    The OUTPUT block describes the expected output. This is required if the
    one-sentence description of the function needs more explanation.
@@ -649,7 +659,7 @@ indentation:
 
     def point(self, x=1, y=2):
         r"""
-        Return the point `(x^5,y)`.
+        Return the point `(x^5, y)`.
 
         INPUT:
 
@@ -661,32 +671,32 @@ indentation:
         - ``y`` -- integer (default: `2`); the description of the
           argument ``y``
 
-        OUTPUT: the point as a tuple
+        OUTPUT: tuple; further description of the output
 
         EXAMPLES:
 
         This example illustrates ... ::
 
-            sage: A = ModuliSpace()
-            sage: A.point(2,3)
-            xxx
+            sage: A = EuclideanSpace(2)
+            sage: A.point(2, 3)
+            (2, 3)
 
         We now ... ::
 
-            sage: B = A.point(5,6)
-            sage: xxx
+            sage: B = A.point(5, 6)
+            sage: ...
 
         It is an error to ... ::
 
-            sage: C = A.point('x',7)
+            sage: C = A.point('x', 7)
             Traceback (most recent call last):
             ...
-            TypeError: unable to convert 'r' to an integer
+            TypeError: unable to convert 'x' to an integer
 
         .. NOTE::
 
-            This function uses the algorithm of [BCDT2001]_ to determine
-            whether an elliptic curve `E` over `Q` is modular.
+            This function uses :func:`pow` to determine the fifth
+            power of `x`.
 
         ...
 
@@ -696,8 +706,8 @@ indentation:
 
         TESTS::
 
-            sage: A.point(42, 0)  # Check for corner case y=0
-            xxx
+            sage: A.point(42, 0)  # check for corner case y = 0
+            ...
         """
         <body of the function>
 
@@ -883,7 +893,7 @@ in particular, it is turned into ``\begin{gather} block
 ``align``) which in ordinary LaTeX would not be wrapped like this, you
 must add a **:nowrap:** flag to the MATH mode. See also `Sphinx's
 documentation for math blocks
-<http://sphinx-doc.org/latest/ext/math.html?highlight=nowrap#directive-math>`_. :
+<https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-math>`_. :
 
 .. CODE-BLOCK:: rest
 
@@ -960,6 +970,14 @@ written.
   set, or a null matrix, or a null function, ... All corner cases should be
   checked, as they are the most likely to be broken, now or in the future. This
   probably belongs to the TESTS block (see :ref:`section-docstring-function`).
+
+- **Interruption:** if the function might take a very long time, use
+  :func:`~sage.doctest.util.ensure_interruptible_after` to check that the user
+  can interrupt it. For example, the following tests ``sleep(3)`` can be
+  interrupted after 1 second::
+
+    sage: from sage.doctest.util import ensure_interruptible_after
+    sage: with ensure_interruptible_after(1) as data: sleep(3)
 
 - **Systematic tests** of all small-sized inputs, or tests of **random**
   instances if possible.
@@ -1088,12 +1106,10 @@ written.
     The :ref:`doctest fixer <section-fixdoctests-optional-needs>` uses
     tab stops at columns 48, 56, 64, ... for these tags.
 
-- **Split long lines:** You may want to split long lines of code with a
-  backslash. Note: this syntax is non-standard and may be removed in the
-  future::
+- **Split long lines:** Standard Python rules apply. For example::
 
-      sage: n = 123456789123456789123456789\
-      ....:     123456789123456789123456789
+      sage: n = (123456789123456789123456789 +
+      ....:      123456789123456789123456789)
       sage: n.is_prime()
       False
 
@@ -1250,22 +1266,41 @@ framework. Here is a comprehensive list:
      Neither of this applies to files or directories which are explicitly given
      as command line arguments: those are always tested.
 
-- **optional/needs:** A line tagged with ``optional - FEATURE``
-  or ``needs FEATURE`` is not tested unless the ``--optional=KEYWORD`` flag
-  is passed to ``sage -t`` (see
-  :ref:`section-optional-doctest-flag`). The main applications are:
+- **optional** or **needs:** A line tagged with ``optional - FEATURE`` or
+  ``needs FEATURE`` is tested if the feature is available in Sage. If
+  ``FEATURE`` starts with an exclamation point ``!``, then the condition is
+  negated, that is, the doctest runs only if the feature is not available.
+
+  If the feature is included in the ``--optional=KEYWORD`` flag passed to
+  ``sage -t`` (see :ref:`section-optional-doctest-flag`), then the line is
+  tested regardless of the feature availability.
+
+  The main applications are:
 
   - **optional packages:** When a line requires an optional package to be
-    installed (e.g. the ``sloane_database`` package)::
+    installed (e.g. the ``rubiks`` package)::
+
+      sage: C = RubiksCube("R*L")
+      sage: C.solve()                    # optional - rubiks (a hybrid algorithm is used)
+      'L R'
+      sage: C.solve()                    # optional - !rubiks (GAP is used)
+      'L*R'
+
+  - **features:** When a line requires a feature to be present::
 
       sage: SloaneEncyclopedia[60843]    # optional - sloane_database
+      [1, 6, 21, 107, 47176870]
 
-  - **internet:** For lines that require an internet connection::
+      sage: SloaneEncyclopedia[60843]    # optional - !sloane_database
+      Traceback (most recent call last):
+      ...
+      OSError: The Sloane Encyclopedia database must be installed. Use e.g.
+      'SloaneEncyclopedia.install()' to download and install it.
+
+    For lines that require an internet connection::
 
        sage: oeis(60843)                 # optional - internet
-       A060843: Busy Beaver problem: a(n) = maximal number of steps that an
-       n-state Turing machine can make on an initially blank tape before
-       eventually halting.
+       A060843: ...
 
   - **known bugs:** For lines that describe known bugs, you can use ``# optional - bug``,
     although ``# known bug`` is preferred.
@@ -1398,7 +1433,7 @@ Run ``sage -t <filename.py>`` to test all code examples in
 ``filename.py``. Similar remarks apply to ``.sage`` and ``.pyx``
 files:
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
       $ sage -t [--verbose] [--optional]  [files and directories ... ]
 

@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Spanning trees
 
@@ -53,7 +52,7 @@ def kruskal(G, by_weight=True, weight_function=None, check_weight=False, check=F
     - ``G`` -- an undirected graph
 
     - ``by_weight`` -- boolean (default: ``True``); if ``True``, the edges in
-      the graph are weighted; if ``False``, all edges have weight 1.
+      the graph are weighted. If ``False``, all edges have weight 1.
 
     - ``weight_function`` -- function (default: ``None``); a function that takes
       as input an edge ``(u, v, l)`` and outputs its weight. If not ``None``,
@@ -262,7 +261,7 @@ def kruskal_iterator(G, by_weight=True, weight_function=None, check_weight=False
     - ``G`` -- an undirected graph
 
     - ``by_weight`` -- boolean (default: ``True``); if ``True``, the edges in
-      the graph are weighted; if ``False``, all edges have weight 1.
+      the graph are weighted. If ``False``, all edges have weight 1.
 
     - ``weight_function`` -- function (default: ``None``); a function that takes
       as input an edge ``(u, v, l)`` and outputs its weight. If not ``None``,
@@ -294,9 +293,7 @@ def kruskal_iterator(G, by_weight=True, weight_function=None, check_weight=False
       it directly instead of using it indirectly via
       :meth:`sage.graphs.generic_graph.GenericGraph.min_spanning_tree`.
 
-    OUTPUT:
-
-    The edges of a minimum spanning tree of ``G``, one by one.
+    OUTPUT: the edges of a minimum spanning tree of ``G``, one by one
 
     .. SEEALSO:: :func:`kruskal`
 
@@ -339,8 +336,7 @@ def kruskal_iterator(G, by_weight=True, weight_function=None, check_weight=False
         if not G.is_connected():
             return
         # G is now assumed to be a nonempty connected graph
-        if G.num_verts() == G.num_edges() + 1:
-            # G is a tree
+        if G.is_tree():
             yield from G.edge_iterator()
             return
 
@@ -367,8 +363,8 @@ def kruskal_iterator_from_edges(edges, union_find, by_weight=True,
       :class:`~sage.sets.disjoint_set.DisjointSet_of_hashables` encoding a
       forest
 
-    - ``by_weight`` - boolean (default: ``True``); if ``True``, the edges in
-      the graph are weighted; if ``False``, all edges have weight 1.
+    - ``by_weight`` -- boolean (default: ``True``); if ``True``, the edges in
+      the graph are weighted. If ``False``, all edges have weight 1.
 
     - ``weight_function`` -- function (default: ``None``); a function that takes
       as input an edge ``(u, v, l)`` and outputs its weight. If not ``None``,
@@ -379,9 +375,7 @@ def kruskal_iterator_from_edges(edges, union_find, by_weight=True,
     - ``check_weight`` -- boolean (default: ``False``); whether to check that
       the ``weight_function`` outputs a number for each edge
 
-    OUTPUT:
-
-    The edges of a minimum spanning tree of ``G``, one by one.
+    OUTPUT: the edges of a minimum spanning tree of ``G``, one by one
 
     .. SEEALSO::
 
@@ -446,11 +440,11 @@ def filter_kruskal(G, threshold=10000, by_weight=True, weight_function=None,
     - ``G`` -- an undirected graph
 
     - ``threshold`` -- integer (default: 10000); maximum number of edges on
-       which to run kruskal algorithm. Above that value, edges are partitioned
-       into sets of size at most ``threshold``
+      which to run kruskal algorithm. Above that value, edges are partitioned
+      into sets of size at most ``threshold``
 
     - ``by_weight`` -- boolean (default: ``True``); if ``True``, the edges in
-      the graph are weighted; if ``False``, all edges have weight 1.
+      the graph are weighted. If ``False``, all edges have weight 1.
 
     - ``weight_function`` -- function (default: ``None``); a function that takes
       as input an edge ``(u, v, l)`` and outputs its weight. If not ``None``,
@@ -519,11 +513,11 @@ def filter_kruskal_iterator(G, threshold=10000, by_weight=True, weight_function=
     - ``G`` -- an undirected graph
 
     - ``threshold`` -- integer (default: 10000); maximum number of edges on
-       which to run kruskal algorithm. Above that value, edges are partitioned
-       into sets of size at most ``threshold``
+      which to run kruskal algorithm. Above that value, edges are partitioned
+      into sets of size at most ``threshold``
 
     - ``by_weight`` -- boolean (default: ``True``); if ``True``, the edges in
-      the graph are weighted; if ``False``, all edges have weight 1.
+      the graph are weighted. If ``False``, all edges have weight 1.
 
     - ``weight_function`` -- function (default: ``None``); a function that takes
       as input an edge ``(u, v, l)`` and outputs its weight. If not ``None``,
@@ -545,9 +539,7 @@ def filter_kruskal_iterator(G, threshold=10000, by_weight=True, weight_function=
       - Does ``G`` have self-loops?
       - Does ``G`` have multiple edges?
 
-    OUTPUT:
-
-    The edges of a minimum spanning tree of ``G``, one by one.
+    OUTPUT: the edges of a minimum spanning tree of ``G``, one by one
 
     .. SEEALSO::
 
@@ -718,10 +710,10 @@ def boruvka(G, by_weight=True, weight_function=None, check_weight=True, check=Fa
 
     INPUT:
 
-    - ``G`` -- an undirected graph.
+    - ``G`` -- an undirected graph
 
     - ``by_weight`` -- boolean (default: ``True``); if ``True``, the edges in
-      the graph are weighted; if ``False``, all edges have weight 1.
+      the graph are weighted. If ``False``, all edges have weight 1
 
     - ``weight_function`` -- function (default: ``None``); a function that takes
       as input an edge ``(u, v, l)`` and outputs its weight. If not ``None``,
@@ -834,8 +826,7 @@ def boruvka(G, by_weight=True, weight_function=None, check_weight=True, check=Fa
         if not G.is_connected():
             return []
         # G is now assumed to be a nonempty connected graph
-        if G.num_verts() == G.num_edges() + 1:
-            # G is a tree
+        if G.is_tree():
             return G.edges(sort=False)
 
     by_weight, weight_function = G._get_weight_function(by_weight=by_weight,
@@ -952,7 +943,7 @@ def random_spanning_tree(G, output_as_graph=False, by_weight=False, weight_funct
       not convertible to a float, an error is raised)
 
     - ``check_weight`` -- boolean (default: ``True``); whether to check that
-      the ``weight_function`` outputs a number for each edge.
+      the ``weight_function`` outputs a number for each edge
 
     .. SEEALSO::
 
@@ -1303,7 +1294,7 @@ def edge_disjoint_spanning_trees(G, k, by_weight=False, weight_function=None, ch
         sage: edge_disjoint_spanning_trees(G, -1)
         Traceback (most recent call last):
         ...
-        ValueError: parameter k must be a non-negative integer
+        ValueError: parameter k must be a nonnegative integer
         sage: edge_disjoint_spanning_trees(G, 0)
         []
         sage: edge_disjoint_spanning_trees(G, 1)
@@ -1332,14 +1323,14 @@ def edge_disjoint_spanning_trees(G, k, by_weight=False, weight_function=None, ch
     from sage.graphs.graph import Graph
     msg_no_solution = "this graph does not contain the required number of trees/arborescences"
     if k < 0:
-        raise ValueError("parameter k must be a non-negative integer")
+        raise ValueError("parameter k must be a nonnegative integer")
     elif not k:
         return []
     elif k == 1:
         E = G.min_spanning_tree()
         if not E and G.order() != 1:
             raise EmptySetError(msg_no_solution)
-        return [Graph([G, E], format="vertices_and_edges")]
+        return [Graph([G, E], format='vertices_and_edges')]
     elif k > 1 + min(G.degree()) // 2:
         raise EmptySetError(msg_no_solution)
 
@@ -1359,7 +1350,7 @@ def edge_disjoint_spanning_trees(G, k, by_weight=False, weight_function=None, ch
     # This is not a requirement of the algorithm as we can use the mapping
     # edge_index. However, it is convenient to maintain the forest as graphs to
     # simplify some operations.
-    H = Graph([G, []], format="vertices_and_edges")
+    H = Graph([G, []], format='vertices_and_edges')
     F = [H.copy() for _ in range(k + 1)]
 
     # We consider the edges by increasing weight

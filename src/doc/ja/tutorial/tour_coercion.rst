@@ -126,7 +126,6 @@ Sageにおけるペアレント構造は，Pythonオブジェクトとして唯�
     True
 
 
-
 型とペアレント
 --------------------
 
@@ -199,7 +198,6 @@ Sageにも *型変換* と *型強制* の考えは取り込まれている．
 と考える立場もありうる．
 
 
-
 Sageが宗とするのは歩み寄りだ．
 ``P1`` と ``P2`` がペアレント構造で ``p1`` が ``P1`` の元であるとき， ``p1`` が ``P2`` に帰属するとする解釈をユーザが明示的に求めることがあるかもしれない．
 この解釈があらゆる状況で有意であるとは限らないし， ``P1`` の全ての元に対して適用可能とも言えない．
@@ -254,6 +252,8 @@ Sageが宗とするのは歩み寄りだ．
     x
     sage: R2(y)
     y
+    sage: R2.coerce(y)
+    y
 
 
 変数名を維持する環準同形写像が定義できなければ，型強制も成立しない．
@@ -270,6 +270,12 @@ Sageが宗とするのは歩み寄りだ．
     z
     sage: R3(y)
     x
+    sage: R3.coerce(y)
+    Traceback (most recent call last):
+    ...
+    TypeError: no canonical coercion
+    from Multivariate Polynomial Ring in x, y over Integer Ring
+    to Multivariate Polynomial Ring in z, x over Integer Ring
 
 ところが，そうした順序依存の変換は型強制としては満足すべきものにならない．
 ``ZZ['x','y']`` から ``ZZ['y','x']`` への変数名維持写像と ``ZZ['y','x']`` から ``ZZ['a','b']`` への順序依存写像を合成すると，結果は変数名も順序も保存しない写像となって無矛盾性が破れてしまうからである．

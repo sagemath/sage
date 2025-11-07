@@ -11,6 +11,7 @@ Gcd domains
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.integral_domains import IntegralDomains
 
+
 class GcdDomains(Category_singleton):
     """
     The category of gcd domains

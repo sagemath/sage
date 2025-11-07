@@ -21,6 +21,7 @@ from sage.categories.graded_lie_conformal_algebras import GradedLieConformalAlge
 from sage.categories.graded_modules import GradedModulesCategory
 from sage.categories.super_modules import SuperModulesCategory
 
+
 class LieConformalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     """
     The category of Lie conformal algebras with basis.

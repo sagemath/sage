@@ -28,7 +28,14 @@ Functions, Classes and Methods
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.structure.sage_object import SageObject
+
+lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
+lazy_import('sage.rings.multi_power_series_ring', 'MPowerSeriesRing_generic')
+lazy_import('sage.rings.polynomial.multi_polynomial_ring_base', 'MPolynomialRing_base')
+lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_generic')
+lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing_generic')
 
 
 def repr_short_to_parent(s):
@@ -38,11 +45,9 @@ def repr_short_to_parent(s):
 
     INPUT:
 
-    - ``s`` -- a string, short representation of a parent.
+    - ``s`` -- string; short representation of a parent
 
-    OUTPUT:
-
-    A parent.
+    OUTPUT: a parent
 
     The possible short representations are shown in the examples below.
 
@@ -95,8 +100,8 @@ def repr_short_to_parent(s):
     if type(P) is LazyImport:
         P = P._get_object()
 
-    from sage.structure.parent import is_Parent
-    if not is_Parent(P):
+    from sage.structure.parent import Parent
+    if not isinstance(P, Parent):
         raise ValueError("'%s' does not describe a parent." % (s,))
     return P
 
@@ -108,11 +113,9 @@ def parent_to_repr_short(P):
 
     INPUT:
 
-    - ``P`` -- a parent.
+    - ``P`` -- a parent
 
-    OUTPUT:
-
-    A string.
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -149,9 +152,6 @@ def parent_to_repr_short(P):
     from sage.rings.real_mpfi import RIF
     from sage.rings.real_mpfr import RR
     from sage.symbolic.ring import SR
-    from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-    from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
-    from sage.rings.power_series_ring import is_PowerSeriesRing
 
     def abbreviate(P):
         try:
@@ -168,10 +168,8 @@ def parent_to_repr_short(P):
             pass
         raise ValueError('Cannot abbreviate %s.' % (P,))
 
-    poly = is_PolynomialRing(P) or is_MPolynomialRing(P)
-    from sage.rings import multi_power_series_ring
-    power = is_PowerSeriesRing(P) or \
-            multi_power_series_ring.is_MPowerSeriesRing(P)
+    poly = isinstance(P, (PolynomialRing_generic, MPolynomialRing_base))
+    power = isinstance(P, (PowerSeriesRing_generic, MPowerSeriesRing_generic, LazyPowerSeriesRing))
 
     if poly or power:
         if poly:
@@ -198,18 +196,16 @@ def split_str_by_op(string, op, strip_parentheses=True):
 
     INPUT:
 
-    - ``string`` -- a string.
+    - ``string`` -- string
 
-    - ``op`` -- a string. This is used by
+    - ``op`` -- string; this is used by
       :python:`str.split <library/stdtypes.html#str.split>`.
       Thus, if this is ``None``, then any whitespace string is a
       separator and empty strings are removed from the result.
 
-    - ``strip_parentheses`` -- (default: ``True``) a boolean.
+    - ``strip_parentheses`` -- boolean (default: ``True``)
 
-    OUTPUT:
-
-    A tuple of strings.
+    OUTPUT: a tuple of strings
 
     TESTS::
 
@@ -309,18 +305,16 @@ def repr_op(left, op, right=None, latex=False):
 
     INPUT:
 
-    - ``left`` -- an element.
+    - ``left`` -- an element
 
-    - ``op`` -- a string.
+    - ``op`` -- string
 
-    - ``right`` -- an element.
+    - ``right`` -- an element
 
-    - ``latex`` -- (default: ``False``) a boolean. If set, then
-      LaTeX-output is returned.
+    - ``latex`` -- boolean (default: ``False``); if set, then
+      LaTeX-output is returned
 
-    OUTPUT:
-
-    A string.
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -368,13 +362,11 @@ def combine_exceptions(e, *f):
 
     INPUT:
 
-    - ``e`` -- an exception.
+    - ``e`` -- an exception
 
-    - ``*f`` -- exceptions.
+    - ``*f`` -- exceptions
 
-    OUTPUT:
-
-    An exception.
+    OUTPUT: an exception
 
     EXAMPLES::
 
@@ -416,14 +408,11 @@ def substitute_raise_exception(element, e):
 
     INPUT:
 
-    - ``element`` -- an element.
+    - ``element`` -- an element
 
-    - ``e`` -- an exception which is included in the raised error
-      message.
+    - ``e`` -- an exception which is included in the raised error message
 
-    OUTPUT:
-
-    Raise an exception of the same type as ``e``.
+    OUTPUT: raise an exception of the same type as ``e``
 
     TESTS::
 
@@ -445,9 +434,9 @@ def bidirectional_merge_overlapping(A, B, key=None):
 
     INPUT:
 
-    - ``A`` -- a list or tuple (type has to coincide with type of ``B``).
+    - ``A`` -- list or tuple (type has to coincide with type of ``B``)
 
-    - ``B`` -- a list or tuple (type has to coincide with type of ``A``).
+    - ``B`` -- list or tuple (type has to coincide with type of ``A``)
 
     - ``key`` -- (default: ``None``) a function. If ``None``, then the
       identity is used.  This ``key``-function applied on an element
@@ -578,9 +567,9 @@ def bidirectional_merge_sorted(A, B, key=None):
 
     INPUT:
 
-    - ``A`` -- a list or tuple (type has to coincide with type of ``B``).
+    - ``A`` -- list or tuple (type has to coincide with type of ``B``)
 
-    - ``B`` -- a list or tuple (type has to coincide with type of ``A``).
+    - ``B`` -- list or tuple (type has to coincide with type of ``A``)
 
     - ``key`` -- (default: ``None``) a function. If ``None``, then the
       identity is used.  This ``key``-function applied on an element
@@ -715,13 +704,11 @@ def log_string(element, base=None):
 
     INPUT:
 
-    - ``element`` -- an object.
+    - ``element`` -- an object
 
-    - ``base`` -- an object or ``None``.
+    - ``base`` -- an object or ``None``
 
-    OUTPUT:
-
-    A string.
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -746,9 +733,7 @@ def strip_symbolic(expression):
 
     - ``expression`` -- an object
 
-    OUTPUT:
-
-    An object.
+    OUTPUT: an object
 
     EXAMPLES::
 
@@ -790,9 +775,10 @@ class NotImplementedOZero(NotImplementedError):
         r"""
         INPUT:
 
-        - ``asymptotic_ring`` -- (default: ``None``) an :class:`AsymptoticRing` or ``None``.
+        - ``asymptotic_ring`` -- (default: ``None``) an :class:`AsymptoticRing`
+          or ``None``
 
-        - ``var`` -- (default: ``None``) a string.
+        - ``var`` -- (default: ``None``) a string
 
         Either ``asymptotic_ring`` or ``var`` has to be specified.
 
@@ -853,9 +839,10 @@ class NotImplementedBZero(NotImplementedError):
         r"""
         INPUT:
 
-        - ``asymptotic_ring`` -- (default: ``None``) an :class:`AsymptoticRing` or ``None``.
+        - ``asymptotic_ring`` -- (default: ``None``) an :class:`AsymptoticRing`
+          or ``None``
 
-        - ``var`` -- (default: ``None``) a string.
+        - ``var`` -- (default: ``None``) string
 
         Either ``asymptotic_ring`` or ``var`` has to be specified.
 
@@ -922,15 +909,15 @@ def transform_category(category,
 
     INPUT:
 
-    - ``category`` -- a category.
+    - ``category`` -- a category
 
-    - ``subcategory_mapping`` -- a list (or other iterable) of triples
+    - ``subcategory_mapping`` -- list (or other iterable) of triples
       ``(from, to, mandatory)``, where
 
       - ``from`` and ``to`` are categories and
       - ``mandatory`` is a boolean.
 
-    - ``axiom_mapping`` -- a list (or other iterable) of triples
+    - ``axiom_mapping`` -- list (or other iterable) of triples
       ``(from, to, mandatory)``, where
 
       - ``from`` and ``to`` are strings describing axioms and
@@ -944,9 +931,7 @@ def transform_category(category,
       :class:`category of objects <sage.categories.objects.Objects>`
       is used.
 
-    OUTPUT:
-
-    A category.
+    OUTPUT: a category
 
     .. NOTE::
 
@@ -1136,9 +1121,7 @@ class Locals(dict):
         Return the default locals used in
         the :class:`~sage.rings.asymptotic.asymptotic_ring.AsymptoticRing`.
 
-        OUTPUT:
-
-        A dictionary.
+        OUTPUT: a dictionary
 
         EXAMPLES::
 
@@ -1202,9 +1185,7 @@ class WithLocals(SageObject):
           the default values)
           :class:`Locals` object is created and returned.
 
-        OUTPUT:
-
-        A :class:`Locals` object.
+        OUTPUT: a :class:`Locals` object
 
         TESTS::
 

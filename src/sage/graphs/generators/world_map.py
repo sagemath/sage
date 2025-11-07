@@ -30,7 +30,7 @@ def AfricaMap(continental=False, year=2018):
     - ``continental`` -- boolean (default: ``False``); whether to only return
       states in the continental Africa or all African states
 
-    - ``year`` -- integer (default: ``2018``); reserved for future use
+    - ``year`` -- integer (default: 2018); reserved for future use
 
     EXAMPLES::
 
@@ -116,7 +116,7 @@ def EuropeMap(continental=False, year=2018):
     - ``continental`` -- boolean (default: ``False``); whether to only return
       states in the continental Europe or all European states
 
-    - ``year`` -- integer (default: ``2018``); reserved for future use
+    - ``year`` -- integer (default: 2018); reserved for future use
 
     EXAMPLES::
 

@@ -2,15 +2,15 @@
 Transformations
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from libc.math cimport sin, cos, sqrt
 
@@ -104,7 +104,6 @@ cdef class Transformation:
             point_c_upper_bound(&upper, upper, res)
         return (lower.x, lower.y, lower.z), (upper.x, upper.y, upper.z)
 
-
     cdef void transform_point_c(self, point_c* res, point_c P) noexcept:
         point_c_transform(res, self._matrix_data, P)
 
@@ -138,7 +137,7 @@ def rotate_arbitrary(v, double theta):
 
     INPUT:
 
-    - ``theta`` - real number, the angle
+    - ``theta`` -- real number, the angle
 
     EXAMPLES::
 

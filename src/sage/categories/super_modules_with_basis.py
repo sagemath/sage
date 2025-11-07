@@ -10,6 +10,7 @@ Super modules with basis
 
 from sage.categories.super_modules import SuperModulesCategory
 
+
 class SuperModulesWithBasis(SuperModulesCategory):
     """
     The category of super modules with a distinguished basis.

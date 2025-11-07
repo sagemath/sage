@@ -13,7 +13,6 @@ REFERENCE:
     [2] Leon, Jeffrey. Permutation Group Algorithms Based on Partitions, I:
         Theory and Algorithms. J. Symbolic Computation, Vol. 12 (1991), pp.
         533-583.
-
 """
 
 #*****************************************************************************
@@ -136,7 +135,6 @@ def set_stab_py(generators, sett, relab=False):
         ([], [7, 8, 6, 3, 4, 5, 2, 0, 1])
         sage: set_stab_py([[0,2,1,4,3,5,8,7,6],[8,7,6,3,5,4,2,1,0]], [0,3,5,6,8], True)
         ([], [2, 1, 0, 5, 4, 3, 7, 6, 8])
-
     """
     if len(generators) == 0:
         return []
@@ -152,8 +150,8 @@ def set_stab_py(generators, sett, relab=False):
         raise MemoryError
     bitset_init(&subset_sett.bits, n)
     subset_sett.scratch = <int *> sig_malloc((3*n+1) * sizeof(int))
-    for i from 0 <= i < len(generators):
-        for j from 0 <= j < n:
+    for i in range(len(generators)):
+        for j in range(n):
             gens[n*i + j] = generators[i][j]
     if SC_insert(supergroup, 0, gens, n_gens):
         SC_dealloc(supergroup)
@@ -172,14 +170,15 @@ def set_stab_py(generators, sett, relab=False):
     if stabilizer is NULL:
         raise MemoryError
     stab_gens = []
-    for i from 0 <= i < stabilizer.num_gens:
-        stab_gens.append([stabilizer.generators[i*n+j] for j from 0 <= j < n])
+    for i in range(stabilizer.num_gens):
+        stab_gens.append([stabilizer.generators[i*n+j] for j in range(n)])
     if relab:
-        relabeling = [stabilizer.relabeling[j] for j from 0 <= j < n]
+        relabeling = [stabilizer.relabeling[j] for j in range(n)]
     deallocate_agcl_output(stabilizer)
     if relab:
         return stab_gens, relabeling
     return stab_gens
+
 
 cdef aut_gp_and_can_lab *set_stab(StabilizerChain *supergroup, subset *sett, bint relab) noexcept:
     r"""
@@ -199,6 +198,7 @@ cdef aut_gp_and_can_lab *set_stab(StabilizerChain *supergroup, subset *sett, bin
     if output is NULL:
         return NULL
     return output
+
 
 def sets_isom_py(generators, set1, set2):
     r"""
@@ -397,9 +397,9 @@ def sets_isom_py(generators, set1, set2):
     bitset_init(&subset_sett2.bits, n)
     subset_sett1.scratch = <int *> sig_malloc((3*n+1) * sizeof(int))
     subset_sett2.scratch = <int *> sig_malloc((3*n+1) * sizeof(int))
-    for i from 0 <= i < len(generators):
-        for j from 0 <= j < n:
-            gens[n*i + j] = generators[i][j]
+    for i in range(len(generators)):
+        for j in range(n):
+            gens[n * i + j] = generators[i][j]
     if SC_insert(supergroup, 0, gens, n_gens):
         raise MemoryError
     sig_free(gens)
@@ -418,11 +418,12 @@ def sets_isom_py(generators, set1, set2):
     sig_free(subset_sett1)
     sig_free(subset_sett2)
     if isomorphic:
-        output_py = [isom[i] for i from 0 <= i < n]
+        output_py = [isom[i] for i in range(n)]
     else:
         output_py = False
     sig_free(isom)
     return output_py
+
 
 cdef int sets_isom(StabilizerChain *supergroup, subset *set1, subset *set2, int *isom) except -1:
     r"""
@@ -636,15 +637,15 @@ cdef int allocate_subset_gen_2(int degree, int max_size, iterator *it) noexcept:
     if cgd is NULL:
         return 1
     cdef int i, j
-    for i from 0 <= i < max_size + 1:
+    for i in range(max_size + 1):
         cgd.object_stack[i] = allocate_subset(degree)
         cgd.parent_stack[i] = allocate_subset(degree)
         cgd.iterator_stack[i].data = allocate_sgd(degree)
         cgd.iterator_stack[i].next = &subset_generator_next
         if cgd.iterator_stack[i].data is NULL or \
-           cgd.object_stack[i]        is NULL or \
-           cgd.parent_stack[i]        is NULL:
-            for j from 0 <= j <= i:
+           cgd.object_stack[i] is NULL or \
+           cgd.parent_stack[i] is NULL:
+            for j in range(i + 1):
                 deallocate_sgd(cgd.iterator_stack[i].data)
                 free_subset(cgd.object_stack[i])
                 free_subset(cgd.parent_stack[i])
@@ -694,11 +695,11 @@ def sets_modulo_perm_group(list generators, int max_size,
 
     INPUT:
 
-    - ``generators`` -- (list of lists) list of generators in list form
-    - ``max_size`` -- (int) maximum size of subsets to be generated
-    - ``indicate_mem_err`` -- (bool) whether to raise an error
-        if we run out of memory, or simply append a :class:`MemoryError`
-        instance to the end of the output
+    - ``generators`` -- list of generators in list form
+    - ``max_size`` -- integer; maximum size of subsets to be generated
+    - ``indicate_mem_err`` -- boolean; whether to raise an error.
+      If we run out of memory, or simply append a :exc:`MemoryError`
+      instance to the end of the output.
 
     EXAMPLES::
 
@@ -820,9 +821,9 @@ def sets_modulo_perm_group(list generators, int max_size,
         SC_dealloc(group)
         sig_free(gens)
         raise MemoryError
-    for i from 0 <= i < len(generators):
-        for j from 0 <= j < n:
-            gens[n*i + j] = generators[i][j]
+    for i in range(len(generators)):
+        for j in range(n):
+            gens[n * i + j] = generators[i][j]
     if SC_insert(group, 0, gens, n_gens):
         SC_dealloc(group)
         sig_free(gens)

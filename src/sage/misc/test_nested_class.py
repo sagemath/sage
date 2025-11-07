@@ -36,14 +36,13 @@ alternative is to use ClasscallMetaclass as metaclass::
 
     sage: P = TestParent4()
     sage: TestSuite(P).run()
-
 """
-#*****************************************************************************
+# *****************************************************************************
 #  Copyright (C) 2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
-#******************************************************************************
+# ******************************************************************************
 
 __all__ = []  # Don't document any parents
 
@@ -160,8 +159,8 @@ class B:
 class ABB:
     class B:
         """
-        This class is broken and can't be pickled.
-        A warning is emmited during compilation.
+        This class is broken and cannot be pickled.
+        A warning is emitted during compilation.
         """
         pass
 

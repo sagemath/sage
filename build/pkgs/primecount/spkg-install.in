@@ -1,3 +1,7 @@
+if [ "$UNAME" = "Darwin" ]; then
+    LDFLAGS="${LDFLAGS} -Wl,-rpath,${SAGE_LOCAL}/lib"
+    export LDFLAGS
+fi
 cd src
 
 # Issue #33054: primecount needs "-std=gnu++..."
@@ -32,6 +36,7 @@ sdh_cmake -DCMAKE_VERBOSE_MAKEFILE=ON \
           -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH \
           -DCMAKE_INSTALL_PREFIX=$SAGE_LOCAL \
           -DWITH_POPCNT=OFF \
+          . \
           && sdh_make_install
 }
 

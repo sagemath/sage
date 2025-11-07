@@ -29,9 +29,9 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
     INPUT:
 
-    - ``ring`` -- the maximal order of the rational function field.
+    - ``ring`` -- the maximal order of the rational function field
 
-    - ``gen`` -- generator of the ideal, an element of the function field.
+    - ``gen`` -- generator of the ideal, an element of the function field
 
     EXAMPLES::
 
@@ -40,7 +40,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
         sage: I = O.ideal(1/(x^2+x)); I
         Ideal (1/(x^2 + x)) of Maximal order of Rational function field in x over Rational Field
     """
-    def __init__(self, ring, gen):
+    def __init__(self, ring, gen) -> None:
         """
         Initialize.
 
@@ -54,7 +54,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
         FunctionFieldIdeal.__init__(self, ring)
         self._gen = gen
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash computed from the data.
 
@@ -65,9 +65,9 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
             sage: I = O.ideal(1/(x^2+x))
             sage: d = { I: 1, I^2: 2 }
         """
-        return hash( (self._ring, self._gen) )
+        return hash((self._ring, self._gen))
 
-    def __contains__(self, element):
+    def __contains__(self, element) -> bool:
         """
         Test if ``element`` is in this ideal.
 
@@ -252,7 +252,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
         """
         return self._gen
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the tuple of the unique generator of this ideal.
 
@@ -267,7 +267,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
         """
         return (self._gen,)
 
-    def gens_over_base(self):
+    def gens_over_base(self) -> tuple:
         """
         Return the generator of this ideal as a rank one module over the maximal
         order.
@@ -304,7 +304,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
         O = self.ring()
         d = ideal.denominator()
-        return self._valuation(d*ideal) - self._valuation(O.ideal(d))
+        return self._valuation(d * ideal) - self._valuation(O.ideal(d))
 
     def _valuation(self, ideal):
         """
@@ -358,7 +358,7 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
     - ``ring`` -- infinite maximal order
 
-    - ``gen``-- generator
+    - ``gen`` -- generator
 
     Note that the infinite maximal order is a principal ideal domain.
 
@@ -369,7 +369,7 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
         sage: Oinf.ideal(x)
         Ideal (x) of Maximal infinite order of Rational function field in x over Finite Field of size 2
     """
-    def __init__(self, ring, gen):
+    def __init__(self, ring, gen) -> None:
         """
         Initialize.
 
@@ -384,7 +384,7 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
         FunctionFieldIdealInfinite.__init__(self, ring)
         self._gen = gen
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of this fractional ideal.
 
@@ -397,9 +397,9 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
             sage: J = Oinf.ideal(1/x)
             sage: d = { I: 1, J: 2 }
         """
-        return hash( (self.ring(), self._gen) )
+        return hash((self.ring(), self._gen))
 
-    def __contains__(self, element):
+    def __contains__(self, element) -> bool:
         """
         Test if ``element`` is in this ideal.
 
@@ -531,7 +531,7 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
             True
         """
         x = self._ring.fraction_field().gen()
-        return self._gen == 1/x
+        return self._gen == 1 / x
 
     def gen(self):
         """
@@ -548,7 +548,7 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
         """
         return self._gen
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generator of this principal ideal.
 
@@ -563,7 +563,7 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
         """
         return (self._gen,)
 
-    def gens_over_base(self):
+    def gens_over_base(self) -> tuple:
         """
         Return the generator of this ideal as a rank one module
         over the infinite maximal order.

@@ -1,5 +1,5 @@
-# sage.doctest: optional - sage.rings.finite_rings               (because all doctests use finite fields)
-# sage.doctest: optional - sage.rings.function_field    (because almost all doctests use function field extensions)
+# sage.doctest: needs sage.rings.finite_rings               (because all doctests use finite fields)
+# sage.doctest: needs sage.rings.function_field    (because almost all doctests use function field extensions)
 """
 Divisors of function fields
 
@@ -37,7 +37,6 @@ We verify the Riemann-Roch theorem::
 AUTHORS:
 
 - Kwankyu Lee (2017-04-30): initial version
-
 """
 
 # ****************************************************************************
@@ -75,6 +74,7 @@ from sage.rings.integer import Integer
 
 from .place import PlaceSet
 
+
 def divisor(field, data):
     """
     Construct a divisor from the data.
@@ -98,6 +98,7 @@ def divisor(field, data):
     """
     divisor_group = field.divisor_group()
     return divisor_group.element_class(divisor_group, data)
+
 
 def prime_divisor(field, place, m=1):
     """
@@ -133,7 +134,7 @@ class FunctionFieldDivisor(ModuleElement):
 
     - ``parent`` -- divisor group
 
-    - ``data`` -- dict of place and multiplicity pairs
+    - ``data`` -- dictionary of place and multiplicity pairs
 
     EXAMPLES::
 
@@ -146,7 +147,7 @@ class FunctionFieldDivisor(ModuleElement):
          + 3*Place (x, (1/(x^3 + x^2 + x))*y^2)
          - 6*Place (x + 1, y + 1)
     """
-    def __init__(self, parent, data):
+    def __init__(self, parent, data) -> None:
         """
         Initialize.
 
@@ -160,7 +161,7 @@ class FunctionFieldDivisor(ModuleElement):
         ModuleElement.__init__(self, parent)
         self._data = data
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of the divisor.
 
@@ -213,8 +214,8 @@ class FunctionFieldDivisor(ModuleElement):
         if m == 1:
             r = formatter(p)
         elif m == -1:
-            r = '- ' + formatter(p) # seems more readable than `-`
-        else: # nonzero
+            r = '- ' + formatter(p)  # seems more readable than `-`
+        else:  # nonzero
             r = formatter(m) + mul + formatter(p)
         for p in places:
             m = self._data[p]
@@ -228,7 +229,7 @@ class FunctionFieldDivisor(ModuleElement):
                 r += cr + minus + formatter(-m) + mul + formatter(p)
         return r
 
-    def _repr_(self, split=True):
+    def _repr_(self, split: bool = True) -> str:
         """
         Return a string representation of the divisor.
 
@@ -248,7 +249,7 @@ class FunctionFieldDivisor(ModuleElement):
         """
         return self._format(repr, '*', '\n' if split else '')
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the LaTeX representation of the divisor.
 
@@ -354,7 +355,7 @@ class FunctionFieldDivisor(ModuleElement):
             True
         """
         divisor_group = self.parent()
-        places = set(self.support()).union( set(other.support()))
+        places = set(self.support()).union(set(other.support()))
         data = {}
         for place in places:
             m = self.multiplicity(place) + other.multiplicity(place)
@@ -468,7 +469,7 @@ class FunctionFieldDivisor(ModuleElement):
 
     def is_effective(self):
         """
-        Return ``True`` if this divisor has non-negative multiplicity at all
+        Return ``True`` if this divisor has nonnegative multiplicity at all
         places.
 
         EXAMPLES::
@@ -582,7 +583,7 @@ class FunctionFieldDivisor(ModuleElement):
             sage: D.basis_function_space()
             [x/(x + 3), 1/(x + 3)]
         """
-        basis,_ = self._function_space()
+        basis, _ = self._function_space()
         return basis
 
     @cached_method
@@ -623,8 +624,8 @@ class FunctionFieldDivisor(ModuleElement):
         from sage.rings.function_field.maps import (
             FunctionFieldLinearMap, FunctionFieldLinearMapSection)
 
-        mor_from_V = FunctionFieldLinearMap(Hom(V,F), from_V)
-        mor_to_V = FunctionFieldLinearMapSection(Hom(F,V), to_V)
+        mor_from_V = FunctionFieldLinearMap(Hom(V, F), from_V)
+        mor_to_V = FunctionFieldLinearMapSection(Hom(F, V), to_V)
 
         return V, mor_from_V, mor_to_V
 
@@ -727,8 +728,8 @@ class FunctionFieldDivisor(ModuleElement):
         from sage.rings.function_field.maps import (
             FunctionFieldLinearMap, FunctionFieldLinearMapSection)
 
-        mor_from_V = FunctionFieldLinearMap(Hom(V,W), from_V)
-        mor_to_V = FunctionFieldLinearMapSection(Hom(W,V), to_V)
+        mor_from_V = FunctionFieldLinearMap(Hom(V, W), from_V)
+        mor_to_V = FunctionFieldLinearMapSection(Hom(W, V), to_V)
 
         return V, mor_from_V, mor_to_V
 
@@ -803,16 +804,16 @@ class FunctionFieldDivisor(ModuleElement):
 
         # Step 2: construct matrix M of rational functions in x such that
         # M * B == C where B = [b1,b1,...,bn], C =[v1,v2,...,vn]
-        V,fr,to = F.free_module(map=True)
+        V, fr, to = F.free_module(map=True)
         B = matrix([to(b) for b in J.gens_over_base()])
         C = matrix([to(v) for v in I.gens_over_base()])
         M = C * B.inverse()
 
         # Step 2.5: get the denominator d of M and set mat = d * M
         den = lcm([e.denominator() for e in M.list()])
-        R = den.parent() # polynomial ring
+        R = den.parent()  # polynomial ring
         one = R.one()
-        mat = matrix(R, n, [e.numerator() for e in (den*M).list()])
+        mat = matrix(R, n, [e.numerator() for e in (den * M).list()])
         gens = list(I.gens_over_base())
 
         # Step 3: transform mat to a weak Popov form, together with gens
@@ -824,13 +825,13 @@ class FunctionFieldDivisor(ModuleElement):
             bestp = -1
             best = -1
             for c in range(n):
-                d = mat[i,c].degree()
+                d = mat[i, c].degree()
                 if d >= best:
                     bestp = c
                     best = d
 
             if best >= 0:
-                pivot_row[bestp].append((i,best))
+                pivot_row[bestp].append((i, best))
                 if len(pivot_row[bestp]) > 1:
                     conflicts.append(bestp)
 
@@ -838,31 +839,31 @@ class FunctionFieldDivisor(ModuleElement):
         while conflicts:
             c = conflicts.pop()
             row = pivot_row[c]
-            i,ideg = row.pop()
-            j,jdeg = row.pop()
+            i, ideg = row.pop()
+            j, jdeg = row.pop()
 
             if jdeg > ideg:
-                i,j = j,i
-                ideg,jdeg = jdeg,ideg
+                i, j = j, i
+                ideg, jdeg = jdeg, ideg
 
-            coeff = - mat[i,c].lc() / mat[j,c].lc()
+            coeff = - mat[i, c].lc() / mat[j, c].lc()
             s = coeff * one.shift(ideg - jdeg)
 
             mat.add_multiple_of_row(i, j, s)
             gens[i] += s * gens[j]
 
-            row.append((j,jdeg))
+            row.append((j, jdeg))
 
             bestp = -1
             best = -1
             for c in range(n):
-                d = mat[i,c].degree()
+                d = mat[i, c].degree()
                 if d >= best:
                     bestp = c
                     best = d
 
             if best >= 0:
-                pivot_row[bestp].append((i,best))
+                pivot_row[bestp].append((i, best))
                 if len(pivot_row[bestp]) > 1:
                     conflicts.append(bestp)
 
@@ -919,9 +920,9 @@ class FunctionFieldDivisor(ModuleElement):
             for i in range(n):
                 e = v[i]
                 if e != 0:
-                    return (i,e.numerator().degree() - e.denominator().degree())
+                    return (i, e.numerator().degree() - e.denominator().degree())
 
-        def greater(v,w): # v and w are not equal
+        def greater(v, w):  # v and w are not equal
             return v[0] < w[0] or v[0] == w[0] and v[1] > w[1]
 
         # collate rows by their pivot position
@@ -941,7 +942,7 @@ class FunctionFieldDivisor(ModuleElement):
 
             head = pivots[0]
             for p in pivots[1:]:
-                if not greater(head,p):
+                if not greater(head, p):
                     head = p
 
             rows = pivot_rows[head]
@@ -952,7 +953,7 @@ class FunctionFieldDivisor(ModuleElement):
                 for i in rows[1:]:
                     vi = vbasis[i][head[0]]
                     ci = vi.numerator().lc() / vi.denominator().lc()
-                    vbasis[i] -= ci/cr * vbasis[r]
+                    vbasis[i] -= ci / cr * vbasis[r]
                     p = pivot(vbasis[i])
                     if p in pivot_rows:
                         pivot_rows[p].append(i)
@@ -967,11 +968,11 @@ class FunctionFieldDivisor(ModuleElement):
             coords = [k(0) for i in range(m)]
             while v != 0:
                 p = pivot(v)
-                ind = npivots.index(p) # an exception implies x is not in the domain
+                ind = npivots.index(p)  # an exception implies x is not in the domain
                 w = nbasis[ind]
                 cv = v[p[0]].numerator().lc() / v[p[0]].denominator().lc()
                 cw = w[p[0]].numerator().lc() / w[p[0]].denominator().lc()
-                c = cv/cw
+                c = cv / cw
                 v -= c * w
                 coords[ind] = c
             return coords
@@ -998,7 +999,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
     """
     Element = FunctionFieldDivisor
 
-    def __init__(self, field):
+    def __init__(self, field) -> None:
         """
         Initialize.
 
@@ -1011,9 +1012,9 @@ class DivisorGroup(UniqueRepresentation, Parent):
         """
         Parent.__init__(self, base=IntegerRing(), category=CommutativeAdditiveGroups())
 
-        self._field = field # function field
+        self._field = field  # function field
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the group of divisors.
 
@@ -1062,7 +1063,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
         """
         if isinstance(S, PlaceSet):
             func = lambda place: prime_divisor(self._field, place)
-            return SetMorphism(Hom(S,self), func)
+            return SetMorphism(Hom(S, self), func)
 
     def function_field(self):
         """
@@ -1096,10 +1097,10 @@ class DivisorGroup(UniqueRepresentation, Parent):
         N = 10
         d = 1
         places = []
-        while len(places) <= N: # collect at least N places
+        while len(places) <= N:  # collect at least N places
             places += self._field.places(d)
             d += 1
         e = self.element_class(self, {})
-        for i in range(random.randint(0,N)):
+        for i in range(random.randint(0, N)):
             e += random.choice(places)
         return e

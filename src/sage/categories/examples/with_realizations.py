@@ -21,9 +21,10 @@ from sage.sets.set import Set
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.subset import Subsets
 
+
 class SubsetAlgebra(UniqueRepresentation, Parent):
     r"""
-    An example of parent endowed with several realizations
+    An example of parent endowed with several realizations.
 
     We consider an algebra `A(S)` whose bases are indexed by the
     subsets `s` of a given set `S`. We consider three natural basis of
@@ -119,7 +120,6 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
 
         sage: (1 + Out[1]) * In[2,3]
         Out[{}] + 2*Out[{1}] + 2*Out[{2}] + 2*Out[{3}] + 2*Out[{1, 2}] + 2*Out[{1, 3}] + 4*Out[{2, 3}] + 4*Out[{1, 2, 3}]
-
     """
 
     def __init__(self, R, S):
@@ -196,11 +196,11 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
         F_to_Out   .register_as_coercion()
         (~F_to_Out).register_as_coercion()
 
-    _shorthands = ["F", "In", "Out"]
+    _shorthands = ("F", "In", "Out")
 
     def a_realization(self):
         r"""
-        Returns the default realization of ``self``
+        Return the default realization of ``self``.
 
         EXAMPLES::
 
@@ -255,7 +255,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
 
     def supsets(self, set):
         r"""
-        Returns all the subsets of `S` containing ``set``
+        Return all the subsets of `S` containing ``set``.
 
         INPUT:
 
@@ -361,7 +361,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
             @cached_method
             def one(self):
                 r"""
-                Returns the unit of this algebra.
+                Return the unit of this algebra.
 
                 This default implementation takes the unit in the
                 fundamental basis, and coerces it in ``self``.
@@ -380,7 +380,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
 
     class Fundamental(CombinatorialFreeModule, BindableClass):
         r"""
-        The Subset algebra, in the fundamental basis
+        The Subset algebra, in the fundamental basis.
 
         INPUT:
 
@@ -434,7 +434,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
 
         def one_basis(self):
             r"""
-            Returns the index of the basis element which is equal to '1'.
+            Return the index of the basis element which is equal to '1'.
 
             EXAMPLES::
 
@@ -456,7 +456,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
 
     class In(CombinatorialFreeModule, BindableClass):
         r"""
-        The Subset Algebra, in the ``In`` basis
+        The Subset Algebra, in the ``In`` basis.
 
         INPUT:
 
@@ -499,7 +499,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
 
     class Out(CombinatorialFreeModule, BindableClass):
         r"""
-        The Subset Algebra, in the `Out` basis
+        The Subset Algebra, in the `Out` basis.
 
         INPUT:
 

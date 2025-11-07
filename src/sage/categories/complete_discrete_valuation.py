@@ -9,6 +9,8 @@ Complete Discrete Valuation Rings (CDVR) and Fields (CDVF)
 #**************************************************************************
 
 
+from typing import Self
+
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.discrete_valuation import (
     DiscreteValuationFields,
@@ -21,7 +23,7 @@ from sage.misc.abstract_method import abstract_method
 
 class CompleteDiscreteValuationRings(Category_singleton):
     """
-    The category of complete discrete valuation rings
+    The category of complete discrete valuation rings.
 
     EXAMPLES::
 
@@ -96,7 +98,7 @@ class CompleteDiscreteValuationRings(Category_singleton):
             """
             return self.parent()(1)
 
-        def numerator(self):
+        def numerator(self) -> Self:
             """
             Return the numerator of this element, normalized in such a
             way that `x = x.numerator() / x.denominator()` always holds
@@ -137,7 +139,7 @@ class CompleteDiscreteValuationRings(Category_singleton):
 
             INPUT:
 
-            - ``absprec`` -- an integer or ``None`` (default: ``None``), the
+            - ``absprec`` -- integer or ``None`` (default: ``None``); the
               absolute precision of the result. If ``None``, lifts to the maximum
               precision allowed.
 
@@ -167,12 +169,12 @@ class CompleteDiscreteValuationRings(Category_singleton):
                 2 + 3*5 + O(5^8)
                 sage: c.lift_to_precision().precision_relative() == R.precision_cap()   # needs sage.rings.padics
                 True
-
             """
+
 
 class CompleteDiscreteValuationFields(Category_singleton):
     """
-    The category of complete discrete valuation fields
+    The category of complete discrete valuation fields.
 
     EXAMPLES::
 

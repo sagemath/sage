@@ -22,7 +22,7 @@ from sage.structure.element import AlgebraElement
 from sage.structure.richcmp import richcmp
 from sage.categories.magmatic_algebras import MagmaticAlgebras
 from sage.misc.cachefunc import cached_method
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.modules.free_module import FreeModule
 from sage.matrix.constructor import matrix
 from sage.sets.family import Family
@@ -194,7 +194,7 @@ class JordanAlgebra(UniqueRepresentation, Parent):
             names = tuple(names)
 
         if arg1 is None:
-            if not is_Matrix(arg0):
+            if not isinstance(arg0, Matrix):
                 from sage.algebras.octonion_algebra import OctonionAlgebra
                 if isinstance(arg0, OctonionAlgebra):
                     return ExceptionalJordanAlgebra(arg0)
@@ -202,7 +202,7 @@ class JordanAlgebra(UniqueRepresentation, Parent):
                     raise ValueError("the base ring cannot have characteristic 2")
                 return SpecialJordanAlgebra(arg0, names)
             arg0, arg1 = arg0.base_ring(), arg0
-        elif is_Matrix(arg0):
+        elif isinstance(arg0, Matrix):
             arg0, arg1 = arg1, arg0
 
         # arg0 is the base ring and arg1 is a matrix
@@ -268,7 +268,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
 
         Parent.__init__(self, base=R, names=names, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -328,7 +328,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
     algebra_generators = basis
 
     # TODO: Keep this until we can better handle R.<...> shorthand
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -395,7 +395,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
             self._x = x
             AlgebraElement.__init__(self, parent)
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Return a string representation of ``self``.
 
@@ -409,7 +409,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
             """
             return repr(self._x)
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             """
             Return a latex representation of ``self``.
 
@@ -426,7 +426,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
 
         def __bool__(self) -> bool:
             """
-            Return if ``self`` is non-zero.
+            Return if ``self`` is nonzero.
 
             EXAMPLES::
 
@@ -583,9 +583,9 @@ class SpecialJordanAlgebra(JordanAlgebra):
 
             INPUT:
 
-            - ``copy`` -- (default: ``True``) if ``self`` is internally
-              represented by a dictionary ``d``, then make a copy of ``d``;
-              if ``False``, then this can cause undesired behavior by
+            - ``copy`` -- boolean (default: ``True``); if ``self`` is
+              internally represented by a dictionary ``d``, then make a copy of
+              ``d``; if ``False``, then this can cause undesired behavior by
               mutating ``d``
 
             EXAMPLES::
@@ -619,7 +619,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
         cat = MagmaticAlgebras(R).Commutative().Unital().FiniteDimensional().WithBasis()
         Parent.__init__(self, base=R, names=names, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -763,7 +763,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
 
     algebra_generators = basis
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -822,7 +822,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
             self._v = v
             AlgebraElement.__init__(self, parent)
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Return a string representation of ``self``.
 
@@ -835,7 +835,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
             """
             return "{} + {}".format(self._s, self._v)
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             r"""
             Return a latex representation of ``self``.
 
@@ -851,7 +851,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
 
         def __bool__(self) -> bool:
             """
-            Return if ``self`` is non-zero.
+            Return if ``self`` is nonzero.
 
             TESTS::
 
@@ -1190,7 +1190,7 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
         cat = MagmaticAlgebras(R).Unital().FiniteDimensional().WithBasis()
         Parent.__init__(self, base=R, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1298,7 +1298,6 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
             sage: len(B)
             27
         """
-        import itertools
         R = self.base_ring()
         OB = self._O.basis()
         base = [R.zero()] * 3 + [self._O.zero()] * 3
@@ -1316,7 +1315,7 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
 
     algebra_generators = basis
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -1504,7 +1503,7 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
                         for i in range(3))
             return matrix(PR, [[data[0], data[3], data[4]], [data[6], data[1], data[5]], [data[7], data[8], data[2]]])
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             r"""
             Return a string representation of ``self``.
 
@@ -1519,7 +1518,7 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
             """
             return repr(self._to_print_matrix())
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             r"""
             Return a latex representation of ``self``.
 
@@ -1571,7 +1570,7 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
 
         def __bool__(self) -> bool:
             """
-            Return if ``self`` is non-zero.
+            Return if ``self`` is nonzero.
 
             TESTS::
 

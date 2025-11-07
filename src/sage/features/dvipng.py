@@ -13,9 +13,10 @@ Feature for testing the presence of ``dvipng``
 
 from . import Executable
 
+
 class dvipng(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``dvipng``
+    A :class:`~sage.features.Feature` describing the presence of ``dvipng``.
 
     EXAMPLES::
 
@@ -31,8 +32,8 @@ class dvipng(Executable):
             sage: isinstance(dvipng(), dvipng)
             True
         """
-        Executable.__init__(self, "dvipng", executable="dvipng",
-                            url="https://savannah.nongnu.org/projects/dvipng/")
+        Executable.__init__(self, 'dvipng', executable='dvipng',
+                            url='https://savannah.nongnu.org/projects/dvipng/')
 
 
 def all_features():

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Drinfeld module morphisms
 
@@ -32,12 +32,12 @@ from sage.matrix.constructor import matrix
 class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
                              metaclass=InheritComparisonClasscallMetaclass):
     r"""
-    This class represents Drinfeld `\mathbb{F}_q[T]`-module morphisms.
+    This class represents Drinfeld `\GF{q}[T]`-module morphisms.
 
-    Let `\phi` and `\psi` be two Drinfeld `\mathbb{F}_q[T]`-modules over
+    Let `\phi` and `\psi` be two Drinfeld `\GF{q}[T]`-modules over
     a field `K`. A *morphism of Drinfeld modules* `\phi \to \psi` is an
     Ore polynomial `f \in K\{\tau\}` such that `f \phi_a = \psi_a f` for
-    every `a \in \mathbb{F}_q[T]`. In our case, this is equivalent to `f
+    every `a \in \GF{q}[T]`. In our case, this is equivalent to `f
     \phi_T = \psi_T f`. An *isogeny* is a nonzero morphism.
 
     To create a morphism object, the user should never explicitly
@@ -48,15 +48,15 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         sage: A.<T> = Fq[]
         sage: K.<z> = Fq.extension(3)
         sage: phi = DrinfeldModule(A, [z, z^2 + z, z^2 + z])
-        sage: t = phi.ore_polring().gen()
-        sage: ore_pol = t + z^5 + z^3 + z + 1
+        sage: tau = phi.ore_variable()
+        sage: ore_pol = tau + z^5 + z^3 + z + 1
         sage: psi = phi.velu(ore_pol)
         sage: morphism = Hom(phi, psi)(ore_pol)
         sage: morphism
         Drinfeld Module morphism:
-          From: Drinfeld module defined by T |--> (z^2 + z)*t^2 + (z^2 + z)*t + z
-          To:   Drinfeld module defined by T |--> (z^5 + z^2 + z + 1)*t^2 + (z^4 + z + 1)*t + z
-          Defn: t + z^5 + z^3 + z + 1
+          From: Drinfeld module defined by T |--> (z^2 + z)*τ^2 + (z^2 + z)*τ + z
+          To:   Drinfeld module defined by T |--> (z^5 + z^2 + z + 1)*τ^2 + (z^4 + z + 1)*τ + z
+          Defn: τ + z^5 + z^3 + z + 1
 
 
     The given Ore polynomial must indeed define a morphism::
@@ -69,19 +69,19 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
     One can get basic data on the morphism::
 
         sage: morphism.domain()
-        Drinfeld module defined by T |--> (z^2 + z)*t^2 + (z^2 + z)*t + z
+        Drinfeld module defined by T |--> (z^2 + z)*τ^2 + (z^2 + z)*τ + z
         sage: morphism.domain() is phi
         True
 
         sage: morphism.codomain()
-        Drinfeld module defined by T |--> (z^5 + z^2 + z + 1)*t^2 + (z^4 + z + 1)*t + z
+        Drinfeld module defined by T |--> (z^5 + z^2 + z + 1)*τ^2 + (z^4 + z + 1)*τ + z
         sage: morphism.codomain() is psi
         True
 
     ::
 
         sage: morphism.ore_polynomial()
-        t + z^5 + z^3 + z + 1
+        τ + z^5 + z^3 + z + 1
         sage: morphism.ore_polynomial() is ore_pol
         True
 
@@ -117,12 +117,11 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         sage: from sage.rings.function_field.drinfeld_modules.morphism import DrinfeldModuleMorphism
         sage: DrinfeldModuleMorphism(Hom(phi, psi), ore_pol)
         Drinfeld Module morphism:
-          From: Drinfeld module defined by T |--> (z^2 + z)*t^2 + (z^2 + z)*t + z
-          To:   Drinfeld module defined by T |--> (z^5 + z^2 + z + 1)*t^2 + (z^4 + z + 1)*t + z
-          Defn: t + z^5 + z^3 + z + 1
+          From: Drinfeld module defined by T |--> (z^2 + z)*τ^2 + (z^2 + z)*τ + z
+          To:   Drinfeld module defined by T |--> (z^5 + z^2 + z + 1)*τ^2 + (z^4 + z + 1)*τ + z
+          Defn: τ + z^5 + z^3 + z + 1
         sage: DrinfeldModuleMorphism(Hom(phi, psi), ore_pol) is morphism
         True
-
     """
     @staticmethod
     def __classcall_private__(cls, parent, x):
@@ -146,21 +145,21 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: K.<z6> = Fq.extension(6)
             sage: phi = DrinfeldModule(A, [z6, 1, 1])
             sage: End(phi)(T + 1)
-            Endomorphism of Drinfeld module defined by T |--> t^2 + t + z6
-              Defn: t^2 + t + z6 + 1
+            Endomorphism of Drinfeld module defined by T |--> τ^2 + τ + z6
+              Defn: τ^2 + τ + z6 + 1
 
         ::
 
-            sage: t = phi.ore_polring().gen()
+            sage: tau = phi.ore_variable()
             sage: psi = DrinfeldModule(A, [z6, z6^4 + z6^2 + 1, 1])
-            sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
+            sage: morphism = Hom(phi, psi)(tau + z6^5 + z6^2 + 1)
             sage: morphism is Hom(phi, psi)(morphism)
             True
 
         ::
 
             sage: from sage.rings.function_field.drinfeld_modules.morphism import DrinfeldModuleMorphism
-            sage: morphism = DrinfeldModuleMorphism(Sets(), t + 1)
+            sage: morphism = DrinfeldModuleMorphism(Sets(), tau + 1)
             Traceback (most recent call last):
             ...
             TypeError: parent should be a DrinfeldModuleHomset
@@ -187,7 +186,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             raise ValueError('Ore polynomial does not define a morphism')
         return cls.__classcall__(cls, parent, ore_pol)
 
-    def __init__(self, parent, ore_pol):
+    def __init__(self, parent, ore_pol) -> None:
         r"""
         Initialize ``self``.
 
@@ -204,13 +203,13 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: K.<z6> = Fq.extension(6)
             sage: phi = DrinfeldModule(A, [z6, 1, 1])
             sage: psi = DrinfeldModule(A, [z6, z6^4 + z6^2 + 1, 1])
-            sage: t = phi.ore_polring().gen()
-            sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
+            sage: tau = phi.ore_variable()
+            sage: morphism = Hom(phi, psi)(tau + z6^5 + z6^2 + 1)
             sage: morphism._domain is phi
             True
             sage: morphism._codomain is psi
             True
-            sage: morphism._ore_polynomial == t + z6^5 + z6^2 + 1
+            sage: morphism._ore_polynomial == tau + z6^5 + z6^2 + 1
             True
         """
         super().__init__(parent)
@@ -218,7 +217,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         self._codomain = parent.codomain()
         self._ore_polynomial = ore_pol
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of the morphism.
 
@@ -229,14 +228,14 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: K.<z6> = Fq.extension(6)
             sage: phi = DrinfeldModule(A, [z6, 1, 1])
             sage: psi = DrinfeldModule(A, [z6, z6^4 + z6^2 + 1, 1])
-            sage: t = phi.ore_polring().gen()
-            sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
+            sage: tau = phi.ore_variable()
+            sage: morphism = Hom(phi, psi)(tau + z6^5 + z6^2 + 1)
             sage: latex(morphism)
-            t + z_{6}^{5} + z_{6}^{2} + 1
+            τ + z_{6}^{5} + z_{6}^{2} + 1
         """
         return f'{latex(self._ore_polynomial)}'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of the morphism.
 
@@ -247,13 +246,13 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: K.<z6> = Fq.extension(6)
             sage: phi = DrinfeldModule(A, [z6, 1, 1])
             sage: psi = DrinfeldModule(A, [z6, z6^4 + z6^2 + 1, 1])
-            sage: t = phi.ore_polring().gen()
-            sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
+            sage: tau = phi.ore_variable()
+            sage: morphism = Hom(phi, psi)(tau + z6^5 + z6^2 + 1)
             sage: morphism
             Drinfeld Module morphism:
-              From: Drinfeld module defined by T |--> t^2 + t + z6
-              To:   Drinfeld module defined by T |--> t^2 + (z6^4 + z6^2 + 1)*t + z6
-              Defn: t + z6^5 + z6^2 + 1
+              From: Drinfeld module defined by T |--> τ^2 + τ + z6
+              To:   Drinfeld module defined by T |--> τ^2 + (z6^4 + z6^2 + 1)*τ + z6
+              Defn: τ + z6^5 + z6^2 + 1
         """
         if self.is_identity():
             return f'Identity morphism of {self._domain}'
@@ -266,7 +265,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
                    f'  To:   {self._codomain}\n' \
                    f'  Defn: {self._ore_polynomial}'
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return a hash of ``self``.
 
@@ -277,8 +276,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: K.<z6> = Fq.extension(6)
             sage: phi = DrinfeldModule(A, [z6, 1, 1])
             sage: psi = DrinfeldModule(A, [z6, z6^4 + z6^2 + 1, 1])
-            sage: t = phi.ore_polring().gen()
-            sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
+            sage: tau = phi.ore_variable()
+            sage: morphism = Hom(phi, psi)(tau + z6^5 + z6^2 + 1)
             sage: hash(morphism)  # random
             -4214883752078138009
         """
@@ -295,8 +294,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: K.<z6> = Fq.extension(6)
             sage: phi = DrinfeldModule(A, [z6, 1, 1])
             sage: psi = DrinfeldModule(A, [z6, z6^4 + z6^2 + 1, 1])
-            sage: t = phi.ore_polring().gen()
-            sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
+            sage: tau = phi.ore_variable()
+            sage: morphism = Hom(phi, psi)(tau + z6^5 + z6^2 + 1)
             sage: morphism.is_zero()
             False
 
@@ -325,14 +324,14 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         ::
 
             sage: psi = DrinfeldModule(A, [z6, z6^4 + z6^2 + 1, 1])
-            sage: t = phi.ore_polring().gen()
-            sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
+            sage: tau = phi.ore_variable()
+            sage: morphism = Hom(phi, psi)(tau + z6^5 + z6^2 + 1)
             sage: morphism.is_identity()
             False
         """
         return self._ore_polynomial == 1
 
-    def is_isogeny(self):
+    def is_isogeny(self) -> bool:
         r"""
         Return ``True`` whether the morphism is an isogeny.
 
@@ -343,8 +342,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: K.<z6> = Fq.extension(6)
             sage: phi = DrinfeldModule(A, [z6, 1, 1])
             sage: psi = DrinfeldModule(A, [z6, z6^4 + z6^2 + 1, 1])
-            sage: t = phi.ore_polring().gen()
-            sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
+            sage: tau = phi.ore_variable()
+            sage: morphism = Hom(phi, psi)(tau + z6^5 + z6^2 + 1)
             sage: morphism.is_isogeny()
             True
 
@@ -379,8 +378,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: K.<z6> = Fq.extension(6)
             sage: phi = DrinfeldModule(A, [z6, 1, 1])
             sage: psi = DrinfeldModule(A, [z6, z6^4 + z6^2 + 1, 1])
-            sage: t = phi.ore_polring().gen()
-            sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
+            sage: tau = phi.ore_variable()
+            sage: morphism = Hom(phi, psi)(tau + z6^5 + z6^2 + 1)
             sage: morphism.is_isomorphism()
             False
 
@@ -415,11 +414,11 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: K.<z6> = Fq.extension(6)
             sage: phi = DrinfeldModule(A, [z6, 1, 1])
             sage: psi = DrinfeldModule(A, [z6, z6^4 + z6^2 + 1, 1])
-            sage: t = phi.ore_polring().gen()
-            sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
+            sage: tau = phi.ore_variable()
+            sage: morphism = Hom(phi, psi)(tau + z6^5 + z6^2 + 1)
             sage: ore_pol = morphism.ore_polynomial()
             sage: ore_pol
-            t + z6^5 + z6^2 + 1
+            τ + z6^5 + z6^2 + 1
 
         ::
 
@@ -427,6 +426,26 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             True
         """
         return self._ore_polynomial
+
+    def degree(self):
+        r"""
+        Return the degree of this isogeny, that is, by definition,
+        the `\tau`-degree of its defining Ore polynomial.
+
+        EXAMPLES::
+
+            sage: Fq = GF(2)
+            sage: A.<T> = Fq[]
+            sage: K.<z6> = Fq.extension(6)
+            sage: phi = DrinfeldModule(A, [z6, 1, 1])
+            sage: f = phi.frobenius_endomorphism()
+            sage: f
+            Endomorphism of Drinfeld module defined by T |--> τ^2 + τ + z6
+              Defn: τ^6
+            sage: f.degree()
+            6
+        """
+        return self._ore_polynomial.degree()
 
     @coerce_binop
     def __add__(self, other):
@@ -444,22 +463,21 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: A.<T> = Fq[]
             sage: K.<z> = Fq.extension(3)
             sage: phi = DrinfeldModule(A, [z, 0, 1, z])
-            sage: t = phi.ore_variable()
-            sage: f = phi.hom(t + 1)
+            sage: tau = phi.ore_variable()
+            sage: f = phi.hom(tau + 1)
             sage: g = T * f
             sage: f + g  # indirect doctest
             Drinfeld Module morphism:
-              From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
-              To:   Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*t^3 + (3*z^2 + 2*z + 2)*t^2 + (2*z^2 + 3*z + 4)*t + z
-              Defn: (2*z^2 + 4*z + 4)*t^4 + (z + 1)*t^3 + t^2 + (2*z^2 + 4*z)*t + z + 1
+              From: Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+              To:   Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*τ^3 + (3*z^2 + 2*z + 2)*τ^2 + (2*z^2 + 3*z + 4)*τ + z
+              Defn: (2*z^2 + 4*z + 4)*τ^4 + (z + 1)*τ^3 + τ^2 + (2*z^2 + 4*z)*τ + z + 1
 
         We check that coercion from the function ring works::
 
             sage: F = phi.frobenius_endomorphism()
             sage: F + T
-            Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
-              Defn: (z + 1)*t^3 + t^2 + z
-
+            Endomorphism of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+              Defn: (z + 1)*τ^3 + τ^2 + z
         """
         return self.parent()(self.ore_polynomial() + other.ore_polynomial())
 
@@ -475,12 +493,11 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: phi = DrinfeldModule(A, [z, 1, z, z^2])
             sage: f = phi.frobenius_endomorphism()
             sage: f
-            Endomorphism of Drinfeld module defined by T |--> z^2*t^3 + z*t^2 + t + z
-              Defn: t^3
+            Endomorphism of Drinfeld module defined by T |--> z^2*τ^3 + z*τ^2 + τ + z
+              Defn: τ^3
             sage: f * f  # indirect doctest
-            Endomorphism of Drinfeld module defined by T |--> z^2*t^3 + z*t^2 + t + z
-              Defn: t^6
-
+            Endomorphism of Drinfeld module defined by T |--> z^2*τ^3 + z*τ^2 + τ + z
+              Defn: τ^6
         """
         return H(self.ore_polynomial() * other.ore_polynomial())
 
@@ -498,10 +515,10 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: K.<z> = Fq.extension(3)
             sage: phi = DrinfeldModule(A, [z, 1, z, z^2])
             sage: f = phi.hom(2); f
-            Endomorphism of Drinfeld module defined by T |--> z^2*t^3 + z*t^2 + t + z
+            Endomorphism of Drinfeld module defined by T |--> z^2*τ^3 + z*τ^2 + τ + z
               Defn: 2
             sage: f.inverse()
-            Endomorphism of Drinfeld module defined by T |--> z^2*t^3 + z*t^2 + t + z
+            Endomorphism of Drinfeld module defined by T |--> z^2*τ^3 + z*τ^2 + τ + z
               Defn: 3
 
         Inversion of general isomorphisms between different Drinfeld modules
@@ -509,13 +526,13 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
             sage: g = phi.hom(z); g
             Drinfeld Module morphism:
-              From: Drinfeld module defined by T |--> z^2*t^3 + z*t^2 + t + z
-              To:   Drinfeld module defined by T |--> z^2*t^3 + (z^2 + 2*z + 3)*t^2 + (z^2 + 3*z)*t + z
+              From: Drinfeld module defined by T |--> z^2*τ^3 + z*τ^2 + τ + z
+              To:   Drinfeld module defined by T |--> z^2*τ^3 + (z^2 + 2*z + 3)*τ^2 + (z^2 + 3*z)*τ + z
               Defn: z
             sage: g.inverse()
             Drinfeld Module morphism:
-              From: Drinfeld module defined by T |--> z^2*t^3 + (z^2 + 2*z + 3)*t^2 + (z^2 + 3*z)*t + z
-              To:   Drinfeld module defined by T |--> z^2*t^3 + z*t^2 + t + z
+              From: Drinfeld module defined by T |--> z^2*τ^3 + (z^2 + 2*z + 3)*τ^2 + (z^2 + 3*z)*τ + z
+              To:   Drinfeld module defined by T |--> z^2*τ^3 + z*τ^2 + τ + z
               Defn: 3*z^2 + 4
 
         When the morphism is not invertible, an error is raised::
@@ -525,7 +542,6 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             Traceback (most recent call last):
             ...
             ZeroDivisionError: this morphism is not invertible
-
         """
         return self.__invert__()
 
@@ -540,19 +556,113 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: K.<z> = Fq.extension(3)
             sage: coeffs = [z] + [K.random_element() for _ in range(10)]
             sage: phi = DrinfeldModule(A, coeffs)
-            sage: f = phi.hom(K.random_element())
+            sage: a = K.random_element()
+            sage: while a.is_zero():
+            ....:     a = K.random_element()
+            sage: f = phi.hom(a)
             sage: g = ~f
-
             sage: (f*g).is_identity()
             True
             sage: (g*f).is_identity()
             True
-
         """
         if not self.is_isomorphism():
             raise ZeroDivisionError("this morphism is not invertible")
         H = self.codomain().Hom(self.domain())
         return H(~(self.ore_polynomial()[0]))
+
+    def right_gcd(self, other):
+        r"""
+        Return the right gcd of this morphism and ``other``.
+
+        If `u` and `v` are separable isogenies with the same domain,
+        their right gcd is the separable isogeny whose kernel is
+        `\ker u \cap \ker v`.
+
+        INPUT:
+
+        - ``other`` -- a morphism of Drinfeld modules with the
+          same domain
+
+        EXAMPLES::
+
+            sage: Fq = GF(7)
+            sage: A.<T> = Fq[]
+            sage: F.<z> = Fq.extension(2)
+            sage: phi = DrinfeldModule(A, [z, z, z, 1])
+            sage: tau = phi.ore_variable()
+            sage: u = phi.hom(tau + 3)
+            sage: v = phi.hom(tau + 5)
+            sage: u.right_gcd(v)
+            Identity morphism of Drinfeld module defined by T |--> τ^3 + z*τ^2 + z*τ + z
+
+        We underline that the right gcd of isogenies does not make sense
+        when the isogenies have different domains::
+
+            sage: psi = DrinfeldModule(A, [z, z, 1, 1])
+            sage: w = psi.hom(tau + 1)
+            sage: u.right_gcd(w)
+            Traceback (most recent call last):
+            ...
+            ValueError: the two morphisms must have the same domain
+
+        SEEALSO::
+
+            :meth:`left_lcm`
+        """
+        if (not isinstance(other, DrinfeldModuleMorphism)
+         or other.domain() is not self.domain()):
+            raise ValueError("the two morphisms must have the same domain")
+        u = self.ore_polynomial().right_gcd(other.ore_polynomial())
+        return self.domain().hom(u)
+
+    def left_lcm(self, other):
+        r"""
+        Return the left lcm of this morphism and ``other``.
+
+        If `u` and `v` are separable isogenies with the same domain,
+        their right gcd is the separable isogeny whose kernel is
+        `\ker u + \ker v`.
+
+        INPUT:
+
+        - ``other`` -- a morphism of Drinfeld modules with the
+          same domain
+
+        EXAMPLES::
+
+            sage: Fq = GF(7)
+            sage: A.<T> = Fq[]
+            sage: F.<z> = Fq.extension(2)
+            sage: phi = DrinfeldModule(A, [z, z, z, 1])
+            sage: tau = phi.ore_variable()
+            sage: u = phi.hom(tau + 3)
+            sage: v = phi.hom(tau + 5)
+            sage: u.left_lcm(v)
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by T |--> τ^3 + z*τ^2 + z*τ + z
+              To:   Drinfeld module defined by T |--> τ^3 + z*τ^2 + (6*z + 1)*τ + z
+              Defn: τ^2 + τ + 1
+
+        We underline that the left lcm of isogenies does not make sense
+        when the isogenies have different domains::
+
+            sage: psi = DrinfeldModule(A, [z, z, 1, 1])
+            sage: w = psi.hom(tau + 1)
+            sage: v.left_lcm(w)
+            Traceback (most recent call last):
+            ...
+            ValueError: the two morphisms must have the same domain
+
+        SEEALSO::
+
+            :meth:`right_gcd`
+        """
+        if (not isinstance(other, DrinfeldModuleMorphism)
+         or other.domain() is not self.domain()):
+            raise ValueError("the two morphisms must have the same domain")
+        u = self._ore_polynomial.left_lcm(other._ore_polynomial)
+        return self.domain().hom(u)
 
     def _motive_matrix(self):
         r"""
@@ -567,13 +677,12 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: A.<T> = Fq[]
             sage: K.<z> = Fq.extension(3)
             sage: phi = DrinfeldModule(A, [z, 0, 1])
-            sage: t = phi.ore_variable()
-            sage: u = t^2 + (2*z^2 + 3*z + 3)*t + (2*z + 3)
+            sage: tau = phi.ore_variable()
+            sage: u = tau^2 + (2*z^2 + 3*z + 3)*tau + (2*z + 3)
             sage: f = phi.hom(u)
             sage: f._motive_matrix()
             [                      T + 3 + z                 3 + 3*z + 2*z^2]
             [(1 + z + z^2)*T + 3 + 2*z - z^2               T + 2 - z + 2*z^2]
-
         """
         phi = self.domain()
         phiT = phi.gen()
@@ -586,7 +695,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         # The first row:
         # we write u = u0 + u1*phiT + u2*phiT^2 + ...
         u = self.ore_polynomial()
-        us = [ ]
+        us = []
         while not u.is_zero():
             u, ui = u.right_quo_rem(phiT)
             us.append(ui)
@@ -597,13 +706,13 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         # The next rows:
         # each row is obtained from the previous one by
         # applying the semi-linear transformation f |-> t*f
-        inv = K(phiT[r]).inverse()
+        inv = ~phiT[r]
         B = inv * phiT
         T = KT.gen()
         for i in range(1, r):
             twist = [c.map_coefficients(Frob) for c in row]
-            row = [(inv*T - B[0]) * twist[-1]]
-            row += [twist[j-1] - B[j]*twist[-1] for j in range(1, r)]
+            row = [(inv * T - B[0]) * twist[-1]]
+            row += [twist[j - 1] - B[j] * twist[-1] for j in range(1, r)]
             rows.append(row)
 
         return matrix(KT, rows)
@@ -614,10 +723,10 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
         INPUT:
 
-        - ``ideal`` -- a boolean (default: ``True``); if ``True``,
-          return the norm as an ideal in the function ring of the Drinfeld
-          modules; if ``False``, return the norm as an element in this
-          function ring (only relevant for endomorphisms)
+        - ``ideal`` -- boolean (default: ``True``); if ``True``, return the
+          norm as an ideal in the function ring of the Drinfeld modules; if
+          ``False``, return the norm as an element in this function ring (only
+          relevant for endomorphisms)
 
         EXAMPLES::
 
@@ -625,8 +734,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: A.<T> = Fq[]
             sage: K.<z> = Fq.extension(3)
             sage: phi = DrinfeldModule(A, [z, 0, 1, z])
-            sage: t = phi.ore_variable()
-            sage: f = phi.hom(t + 1)
+            sage: tau = phi.ore_variable()
+            sage: f = phi.hom(tau + 1)
             sage: f.norm()
             Principal ideal (T + 4) of Univariate Polynomial Ring in T over Finite Field of size 5
 
@@ -660,7 +769,6 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             Traceback (most recent call last):
             ...
             ValueError: norm is defined as an actual element only for endomorphisms
-
         """
         nu = self._motive_matrix().det()
         # We cast to A
@@ -687,19 +795,19 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: A.<T> = Fq[]
             sage: K.<z> = Fq.extension(3)
             sage: phi = DrinfeldModule(A, [z, 0, 1, z])
-            sage: t = phi.ore_variable()
-            sage: f = phi.hom(t + 1)
+            sage: tau = phi.ore_variable()
+            sage: f = phi.hom(tau + 1)
             sage: f
             Drinfeld Module morphism:
-              From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
-              To:   Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*t^3 + (3*z^2 + 2*z + 2)*t^2 + (2*z^2 + 3*z + 4)*t + z
-              Defn: t + 1
+              From: Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+              To:   Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*τ^3 + (3*z^2 + 2*z + 2)*τ^2 + (2*z^2 + 3*z + 4)*τ + z
+              Defn: τ + 1
             sage: g = f.dual_isogeny()
             sage: g
             Drinfeld Module morphism:
-              From: Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*t^3 + (3*z^2 + 2*z + 2)*t^2 + (2*z^2 + 3*z + 4)*t + z
-              To:   Drinfeld module defined by T |--> z*t^3 + t^2 + z
-              Defn: z*t^2 + (4*z + 1)*t + z + 4
+              From: Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*τ^3 + (3*z^2 + 2*z + 2)*τ^2 + (2*z^2 + 3*z + 4)*τ + z
+              To:   Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+              Defn: z*τ^2 + (4*z + 1)*τ + z + 4
 
         We check that `f \circ g` (resp. `g \circ f`) is the multiplication
         by the norm of `f`::
@@ -720,7 +828,6 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             Traceback (most recent call last):
             ...
             ValueError: the dual isogeny of the zero morphism is not defined
-
         """
         if not self.is_isogeny():
             raise ValueError("the dual isogeny of the zero morphism is not defined")
@@ -736,7 +843,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
         INPUT:
 
-        - ``var`` -- a string (default: ``X``), the name of the
+        - ``var`` -- string (default: ``X``), the name of the
           variable of the characteristic polynomial
 
         EXAMPLES::
@@ -750,7 +857,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: f.characteristic_polynomial()
             X^3 + (T + 1)*X^2 + (2*T + 3)*X + 2*T^3 + T + 1
 
-        We verify, on an example, that the caracteristic polynomial
+        We verify, on an example, that the characteristic polynomial
         of a morphism corresponding to `\phi_a` is `(X-a)^r` where `r`
         is the rank::
 
@@ -766,13 +873,12 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
         TESTS::
 
-            sage: t = phi.ore_variable()
-            sage: isog = phi.hom(t + 1)
+            sage: tau = phi.ore_variable()
+            sage: isog = phi.hom(tau + 1)
             sage: isog.characteristic_polynomial()
             Traceback (most recent call last):
             ...
             ValueError: characteristic polynomial is only defined for endomorphisms
-
         """
         if self.domain() is not self.codomain():
             raise ValueError("characteristic polynomial is only defined for endomorphisms")
@@ -788,7 +894,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
         INPUT:
 
-        - ``var`` -- a string (default: ``X``), the name of the
+        - ``var`` -- string (default: ``'X'``); the name of the
           variable of the characteristic polynomial
 
         EXAMPLES::
@@ -807,10 +913,10 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         morphism (Cayley-Hamilton's theorem)::
 
             sage: chi(f)
-            Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
+            Endomorphism of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
               Defn: 0
 
-        We verify, on an example, that the caracteristic polynomial
+        We verify, on an example, that the characteristic polynomial
         of the morphism corresponding to `\phi_a` is `(X-a)^r` where `r`
         is the rank::
 
@@ -822,6 +928,5 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
             sage: f.charpoly(var='Y')
             Y^3 + (T + 1)*Y^2 + (2*T + 3)*Y + 2*T^3 + T + 1
-
         """
         return self.characteristic_polynomial(var)

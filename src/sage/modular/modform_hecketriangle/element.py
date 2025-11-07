@@ -5,7 +5,6 @@ Elements of Hecke modular forms spaces
 AUTHORS:
 
 - Jonas Jermann (2013): initial version
-
 """
 
 # ****************************************************************************
@@ -183,24 +182,24 @@ class FormsElement(FormsRingElement):
 
     def lseries(self, num_prec=None, max_imaginary_part=0, max_asymp_coeffs=40):
         r"""
-        Return the L-series of ``self`` if ``self`` is modular and holomorphic.
+        Return the `L`-series of ``self`` if ``self`` is modular and holomorphic.
 
         This relies on the (pari) based function ``Dokchitser``.
 
         INPUT:
 
-        - ``num_prec`` -- An integer denoting the to-be-used numerical precision.
+        - ``num_prec`` -- integer denoting the to-be-used numerical precision.
           If integer ``num_prec=None`` (default) the default
           numerical precision of the parent of ``self`` is used.
 
-        - ``max_imaginary_part`` -- A real number (default: 0), indicating up to which
-          imaginary part the L-series is going to be studied.
+        - ``max_imaginary_part`` -- a real number (default: 0), indicating up
+          to which imaginary part the `L`-series is going to be studied
 
-        - ``max_asymp_coeffs`` -- An integer (default: 40).
+        - ``max_asymp_coeffs`` -- integer (default: 40)
 
         OUTPUT:
 
-        An interface to Tim Dokchitser's program for computing L-series, namely
+        An interface to Tim Dokchitser's program for computing `L`-series, namely
         the series given by the Fourier coefficients of ``self``.
 
         EXAMPLES::

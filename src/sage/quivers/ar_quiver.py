@@ -9,21 +9,21 @@ Auslander-Reiten Quivers
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.structure.element import Element
-from sage.structure.richcmp import richcmp
-from sage.structure.global_options import GlobalOptions
 from sage.categories.sets_cat import Sets
-from sage.sets.family import Family
-from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.rings.integer_ring import ZZ
-from sage.misc.cachefunc import cached_method
+from sage.combinat.root_system.cartan_type import CartanType
 from sage.graphs.digraph import DiGraph
+from sage.misc.cachefunc import cached_method
+from sage.rings.integer_ring import ZZ
+from sage.sets.family import Family
+from sage.structure.element import Element
+from sage.structure.global_options import GlobalOptions
+from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class AuslanderReitenQuiver(UniqueRepresentation, Parent):
@@ -190,9 +190,9 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
             self._cartan_type = dynkin_type
         self._is_finite = dynkin_type is not None
         cat = Sets().Enumerated().Finite() if self._is_finite else Sets().Infinite()
-        super().__init__(self, category=cat)
+        super().__init__(category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -213,7 +213,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
     # add options to class
     class options(GlobalOptions):
         r"""
-        Sets and displays the global options for Auslander-Reiten quivers.
+        Set and display the global options for Auslander-Reiten quivers.
         If no parameters are set, then the function returns a copy of the
         options dictionary.
 
@@ -240,7 +240,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
         """
         NAME = 'AuslanderReitenQuiver'
         module = 'sage.quivers.ar_quiver'
-        latex = dict(default="node",
+        latex = dict(default='node',
                      description='Specifies how nodes of the AR quiver should be latexed',
                      values=dict(node='latex as the node description',
                                  dimension_vector='latex as the dimension vector',
@@ -356,12 +356,12 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
                     edge_opts["label"] = LatexExpr(r"\tau")
                 return edge_opts
 
-            G.set_latex_options(format="dot2tex", edge_options=edge_options)
+            G.set_latex_options(format='dot2tex', edge_options=edge_options)
         return G
 
     def digraph_preprojectives(self, max_depth, with_translations=False):
         r"""
-        Return the diagraph of preprojectives of ``self`` up to ``max_depth``.
+        Return the digraph of preprojectives of ``self`` up to ``max_depth``.
 
         EXAMPLES::
 
@@ -395,12 +395,12 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
             prev = cur
             cur = self._dim_vecs_level(k)
 
-        G = DiGraph([verts, edges], format="vertices_and_edges", multiedges=True, immutable=True)
+        G = DiGraph([verts, edges], format='vertices_and_edges', multiedges=True, immutable=True)
         return self._digraph_set_latex_options(G)
 
     def digraph_postinjectives(self, max_depth, with_translations=False):
         """
-        Return the diagraph of postinjectives of ``self`` up to ``max_depth``.
+        Return the digraph of postinjectives of ``self`` up to ``max_depth``.
 
         EXAMPLES::
 
@@ -434,18 +434,18 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
             prev = cur
             cur = self._dim_vecs_level(-k)
 
-        G = DiGraph([verts, edges], format="vertices_and_edges", multiedges=True, immutable=True)
+        G = DiGraph([verts, edges], format='vertices_and_edges', multiedges=True, immutable=True)
         return self._digraph_set_latex_options(G)
 
     @cached_method
     def digraph(self, with_translations=False):
         r"""
-        Return the diagraph of ``self``.
+        Return the digraph of ``self``.
 
         INPUT:
 
-        - ``with_translations`` -- (default: ``False``) if ``True``, then
-          include the arrows corresponding to the translations.
+        - ``with_translations`` -- boolean (default: ``False``); if ``True``,
+          then include the arrows corresponding to the translations
 
         EXAMPLES::
 
@@ -491,7 +491,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
                 cur = self._dim_vecs_level(k)
 
             self._injectives = Family(injectives)
-            G = DiGraph([verts, edges], format="vertices_and_edges", immutable=True)
+            G = DiGraph([verts, edges], format='vertices_and_edges', immutable=True)
 
         return self._digraph_set_latex_options(G)
 
@@ -600,7 +600,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
         elif k > 1:
             if k > self._max_level:
                 return {}
-            prev = self._dim_vecs_level(k-1)
+            prev = self._dim_vecs_level(k - 1)
             if k > self._max_level:  # this might get set on the recursive call
                 return {}
             ret = {}
@@ -624,7 +624,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
                    for v in Q.vertex_iterator()}
 
         elif k < -1:
-            prev = self._dim_vecs_level(k+1)
+            prev = self._dim_vecs_level(k + 1)
             ret = {}
             for v in self._top_sort:
                 if v not in prev:  # assumption: this vertex will never reappear
@@ -697,7 +697,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
             self._level = ZZ(level)
             Element.__init__(self, parent)
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             r"""
             Return a string representation of ``self``.
 
@@ -710,7 +710,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
             """
             return f"<{self._vertex}, {self._level}>"
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             r"""
             Return a latex representation of ``self``.
 
@@ -739,7 +739,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
                 return dim_vec
             return r"\begin{{gathered}} {} \\ {} \end{{gathered}}".format(node, dim_vec)
 
-        def _richcmp_(self, other, op):
+        def _richcmp_(self, other, op) -> bool:
             r"""
             Rich comparison of ``self`` to ``other`` by ``op``.
 
@@ -752,7 +752,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
             """
             return richcmp((self._level, self._vertex), (other._level, other._vertex), op)
 
-        def __hash__(self):
+        def __hash__(self) -> int:
             r"""
             Return the hash of ``self``.
 
@@ -894,7 +894,7 @@ def detect_dynkin_quiver(quiver):
             return None
         G = Q.to_undirected()
         if G.is_path():
-            dynkin_type.append(['A', Q.num_verts()])
+            dynkin_type.append(['A', Q.n_vertices()])
             continue
         degthree = G.vertices(degree=3)
         if len(degthree) != 1:
@@ -905,9 +905,9 @@ def detect_dynkin_quiver(quiver):
         if len(path_lengths) != 3:
             return None
         if path_lengths[:2] == [1, 1]:
-            dynkin_type.append(['D', G.num_verts() + 1])
+            dynkin_type.append(['D', G.n_vertices() + 1])
         elif path_lengths[:2] == [1, 2] and path_lengths[2] in [2, 3, 4]:
-            dynkin_type.append(['E', G.num_verts() + 1])
+            dynkin_type.append(['E', G.n_vertices() + 1])
         else:
             return None
     if len(dynkin_type) == 1:

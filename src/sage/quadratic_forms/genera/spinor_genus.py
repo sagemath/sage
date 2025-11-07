@@ -37,7 +37,7 @@ class SpinorOperator(AbelianGroupElement_gap):
     A spinor operator seen as a tuple of square classes.
 
     For `2` the square class is represented as one of `1,3,5,7` and for
-    `p` odd it is `1` for a p-adic unit square and `-1` for a non-square.
+    `p` odd it is `1` for a `p`-adic unit square and `-1` for a non-square.
 
     EXAMPLES::
 
@@ -149,7 +149,7 @@ class SpinorOperators(AbelianGroupGap):
 
         - ``p`` -- a prime
 
-        - ``x```-- a non zero rational number
+        - ``x`` -- nonzero rational number
 
         EXAMPLES::
 
@@ -166,7 +166,7 @@ class SpinorOperators(AbelianGroupGap):
         """
         x = QQ(x)
         if x == 0:
-            raise ValueError("x must be non zero")
+            raise ValueError("x must be nonzero")
         if p not in self._primes:
             raise ValueError("not a coordinate prime")
         v, u = x.val_unit(p)
@@ -194,11 +194,10 @@ class SpinorOperators(AbelianGroupGap):
 
         INPUT:
 
-        - ``r`` -- a non zero integer;
-          if ``prime`` is ``None``, ``r`` must not be divisible
-          by the defining primes of ``self``
+        - ``r`` -- a nonzero integer; if ``prime`` is ``None``, ``r`` must not
+          be divisible by the defining primes of ``self``
 
-        - ``prime`` --(default:``None``) a prime or `-1`
+        - ``prime`` -- (default: ``None``) a prime or `-1`
 
         OUTPUT:
 

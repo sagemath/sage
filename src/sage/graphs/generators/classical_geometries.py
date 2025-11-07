@@ -3,11 +3,10 @@ r"""
 Families of graphs derived from classical geometries over finite fields
 
 These include graphs of polar spaces, affine polar graphs, graphs
-related to Hermitean unitals, graphs on nonisotropic points, etc
+related to Hermitean unitals, graphs on nonisotropic points, etc.
 
 The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 """
-
 # ****************************************************************************
 #           Copyright (C) 2015 Sagemath project
 #
@@ -17,6 +16,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from itertools import combinations
 
 from sage.graphs.graph import Graph
 from sage.arith.misc import is_prime_power
@@ -36,8 +36,8 @@ def SymplecticPolarGraph(d, q, algorithm=None):
 
     INPUT:
 
-    - ``d,q`` -- integers; note that only even values of `d` are accepted by the
-      function.
+    - ``d``, ``q`` -- integers; note that only even values of `d` are accepted
+      by the function
 
     - ``algorithm`` -- string (default: ``None``); if set to ``'gap'``, then the
       computation is carried via GAP library interface, computing totally
@@ -67,17 +67,17 @@ def SymplecticPolarGraph(d, q, algorithm=None):
         (40, 12, 2, 4)
         sage: O.is_isomorphic(G)
         False
-        sage: S = graphs.SymplecticPolarGraph(6, 4, algorithm="gap")    # not tested (long time)
+        sage: S = graphs.SymplecticPolarGraph(6, 4, algorithm='gap')    # not tested (long time)
         sage: S.is_strongly_regular(parameters=True)                    # not tested (long time)
         (1365, 340, 83, 85)
 
     TESTS::
 
-        sage: graphs.SymplecticPolarGraph(4,4,algorithm="gap").is_strongly_regular(parameters=True)                     # needs sage.libs.gap
+        sage: graphs.SymplecticPolarGraph(4,4,algorithm='gap').is_strongly_regular(parameters=True)                     # needs sage.libs.gap
         (85, 20, 3, 5)
         sage: graphs.SymplecticPolarGraph(4,4).is_strongly_regular(parameters=True)     # needs sage.libs.pari
         (85, 20, 3, 5)
-        sage: graphs.SymplecticPolarGraph(4,4,algorithm="blah")
+        sage: graphs.SymplecticPolarGraph(4,4,algorithm='blah')
         Traceback (most recent call last):
         ...
         ValueError: unknown algorithm!
@@ -113,7 +113,7 @@ def SymplecticPolarGraph(d, q, algorithm=None):
     return G
 
 
-def AffineOrthogonalPolarGraph(d, q, sign="+"):
+def AffineOrthogonalPolarGraph(d, q, sign='+'):
     r"""
     Return the affine polar graph `VO^+(d,q),VO^-(d,q)` or `VO(d,q)`.
 
@@ -134,7 +134,7 @@ def AffineOrthogonalPolarGraph(d, q, sign="+"):
 
     - ``q`` -- integer; a power of a prime number, as `F_q` must exist
 
-    - ``sign`` -- string (default: ``"+"``); must be equal to ``"+"``, ``"-"``,
+    - ``sign`` -- string (default: ``'+'``); must be equal to ``'+'``, ``'-'``,
       or ``None`` to compute (respectively) `VO^+(d,q),VO^-(d,q)` or
       `VO(d,q)`
 
@@ -190,7 +190,6 @@ def AffineOrthogonalPolarGraph(d, q, sign="+"):
     from sage.modules.free_module import VectorSpace
     from sage.matrix.constructor import Matrix
     from sage.libs.gap.libgap import libgap
-    from itertools import combinations
 
     M = Matrix(libgap.InvariantQuadraticForm(libgap.GeneralOrthogonalGroup(s, d, q))['matrix'])
     F = libgap.GF(q).sage()
@@ -207,7 +206,7 @@ def AffineOrthogonalPolarGraph(d, q, sign="+"):
     return G
 
 
-def _orthogonal_polar_graph(m, q, sign="+", point_type=[0]):
+def _orthogonal_polar_graph(m, q, sign='+', point_type=[0]):
     r"""
     A helper function to build ``OrthogonalPolarGraph`` and ``NO2,3,5`` graphs.
 
@@ -216,12 +215,12 @@ def _orthogonal_polar_graph(m, q, sign="+", point_type=[0]):
 
     INPUT:
 
-    - ``m,q`` -- integers; `q` must be a prime power
+    - ``m``, ``q`` -- integers; `q` must be a prime power
 
-    - ``sign`` -- string (default: ``"+"``); must be ``"+"`` or ``"-"`` if `m`
-      is even, ``"+"`` (default) otherwise
+    - ``sign`` -- string (default: ``'+'``); must be ``'+'`` or ``'-'`` if `m`
+      is even, ``'+'`` (default) otherwise
 
-    - ``point_type`` -- a list of elements from `F_q`
+    - ``point_type`` -- list of elements from `F_q`
 
     EXAMPLES:
 
@@ -285,7 +284,6 @@ def _orthogonal_polar_graph(m, q, sign="+", point_type=[0]):
         sage: g = _orthogonal_polar_graph(5,3,point_type=[1])
         sage: g.is_strongly_regular(parameters=True)
         (36, 15, 6, 6)
-
     """
     from sage.schemes.projective.projective_space import ProjectiveSpace
     from sage.modules.free_module_element import free_module_element as vector
@@ -331,7 +329,7 @@ def _orthogonal_polar_graph(m, q, sign="+", point_type=[0]):
     return G
 
 
-def OrthogonalPolarGraph(m, q, sign="+"):
+def OrthogonalPolarGraph(m, q, sign='+'):
     r"""
     Return the Orthogonal Polar Graph `O^{\epsilon}(m,q)`.
 
@@ -340,10 +338,10 @@ def OrthogonalPolarGraph(m, q, sign="+"):
 
     INPUT:
 
-    - ``m,q`` -- integers; `q` must be a prime power
+    - ``m``, ``q`` -- integers; `q` must be a prime power
 
-    - ``sign`` -- string (default: ``"+"``); must be ``"+"`` or ``"-"`` if `m`
-      is even, ``"+"`` (default) otherwise
+    - ``sign`` -- string (default: ``'+'``); must be ``'+'`` or ``'-'`` if `m`
+      is even, ``'+'`` (default) otherwise
 
     EXAMPLES::
 
@@ -387,9 +385,9 @@ def OrthogonalPolarGraph(m, q, sign="+"):
     return G
 
 
-def NonisotropicOrthogonalPolarGraph(m, q, sign="+", perp=None):
+def NonisotropicOrthogonalPolarGraph(m, q, sign='+', perp=None):
     r"""
-    Return the Graph `NO^{\epsilon,\perp}_{m}(q)`
+    Return the Graph `NO^{\epsilon,\perp}_{m}(q)`.
 
     Let the vectorspace of dimension `m` over `F_q` be endowed with a
     nondegenerate quadratic form `F`, of type ``sign`` for `m` even.
@@ -417,7 +415,7 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign="+", perp=None):
 
     - ``q`` -- a power of a prime number, the size of the underlying field
 
-    - ``sign`` -- string (default: ``"+"``); must be either ``"+"`` or ``"-"``
+    - ``sign`` -- string (default: ``'+'``); must be either ``'+'`` or ``'-'``
 
     EXAMPLES:
 
@@ -551,7 +549,7 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign="+", perp=None):
 
 def _polar_graph(m, q, g, intersection_size=None):
     r"""
-    The helper function to build graphs `(D)U(m,q)` and `(D)Sp(m,q)`
+    The helper function to build graphs `(D)U(m,q)` and `(D)Sp(m,q)`.
 
     Building a graph on an orbit of a group `g` of `m\times m` matrices over
     `GF(q)` on the points (or subspaces of dimension ``m//2``) isotropic
@@ -570,7 +568,7 @@ def _polar_graph(m, q, g, intersection_size=None):
 
     - ``g`` -- the group acting
 
-    - ``intersection_size`` -- (default: ``None``); if ``None``, build the graph
+    - ``intersection_size`` -- (default: ``None``) if ``None``, build the graph
       on the isotropic points, with adjacency being orthogonality w.r.t. `F`.
       Otherwise, build the graph on the maximal totally isotropic subspaces,
       with adjacency specified by ``intersection_size`` being as given.
@@ -584,7 +582,6 @@ def _polar_graph(m, q, g, intersection_size=None):
         Graph on 27 vertices
     """
     from sage.libs.gap.libgap import libgap
-    from itertools import combinations
     W = libgap.FullRowSpace(libgap.GF(q), m)   # F_q^m
     B = libgap.Elements(libgap.Basis(W))       # the standard basis of W
     V = libgap.Orbit(g, B[0], libgap.OnLines)  # orbit on isotropic points
@@ -604,7 +601,7 @@ def _polar_graph(m, q, g, intersection_size=None):
                      loops=False)
 
 
-def UnitaryPolarGraph(m, q, algorithm="gap"):
+def UnitaryPolarGraph(m, q, algorithm='gap'):
     r"""
     Return the Unitary Polar Graph `U(m,q)`.
 
@@ -613,9 +610,9 @@ def UnitaryPolarGraph(m, q, algorithm="gap"):
 
     INPUT:
 
-    - ``m,q`` -- integers; `q` must be a prime power
+    - ``m``, ``q`` -- integers; `q` must be a prime power
 
-    - ``algorithm`` -- string (default: ``"gap"``); if set to 'gap' then the
+    - ``algorithm`` -- string (default: ``'gap'``); if set to ``'gap'`` then the
       computation is carried via GAP library interface, computing totally
       singular subspaces, which is faster for large examples (especially with
       `q>2`). Otherwise it is done directly.
@@ -634,11 +631,11 @@ def UnitaryPolarGraph(m, q, algorithm="gap"):
 
     TESTS::
 
-        sage: graphs.UnitaryPolarGraph(4,3, algorithm="gap").is_strongly_regular(parameters=True)   # needs sage.libs.gap
+        sage: graphs.UnitaryPolarGraph(4,3, algorithm='gap').is_strongly_regular(parameters=True)   # needs sage.libs.gap
         (280, 36, 8, 4)
         sage: graphs.UnitaryPolarGraph(4,3).is_strongly_regular(parameters=True)                    # needs sage.libs.gap
         (280, 36, 8, 4)
-        sage: graphs.UnitaryPolarGraph(4,3, algorithm="foo")
+        sage: graphs.UnitaryPolarGraph(4,3, algorithm='foo')
         Traceback (most recent call last):
         ...
         ValueError: unknown algorithm!
@@ -686,7 +683,7 @@ def NonisotropicUnitaryPolarGraph(m, q):
 
     INPUT:
 
-    - ``m,q`` -- integers; `q` must be a prime power
+    - ``m``, ``q`` -- integers; `q` must be a prime power
 
     EXAMPLES::
 
@@ -710,7 +707,6 @@ def NonisotropicUnitaryPolarGraph(m, q):
     if not k:
         raise ValueError('q must be a prime power')
     from sage.libs.gap.libgap import libgap
-    from itertools import combinations
     F = libgap.GF(q**2)  # F_{q^2}
     W = libgap.FullRowSpace(F, m)  # F_{q^2}^m
     B = libgap.Elements(libgap.Basis(W))  # the standard basis of W
@@ -749,7 +745,7 @@ def UnitaryDualPolarGraph(m, q):
 
     INPUT:
 
-    - ``m,q`` -- integers; `q` must be a prime power
+    - ``m``, ``q`` -- integers; `q` must be a prime power
 
     EXAMPLES:
 
@@ -803,7 +799,7 @@ def SymplecticDualPolarGraph(m, q):
 
     INPUT:
 
-    - ``m,q`` -- integers; `q` must be a prime power, and `m` must be even
+    - ``m``, ``q`` -- integers; `q` must be a prime power, and `m` must be even
 
     EXAMPLES::
 
@@ -1108,11 +1104,11 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
                 raise RuntimeError("incorrect hyperoval size")
             for L in Theta.blocks():
                 if set(L).issubset(Pi):
-                    if not len(HO.intersection(L)) in [0, 2]:
+                    if len(HO.intersection(L)) not in [0, 2]:
                         raise RuntimeError("incorrect hyperoval")
 
     L = [[y for y in z if y not in HO]
-         for z in [x for x in Theta.blocks() if len(HO.intersection(x)) == 1]]
+         for z in Theta.blocks() if len(HO.intersection(z)) == 1]
 
     if dual:
         G = IncidenceStructure(L).intersection_graph()
@@ -1125,7 +1121,7 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
 
 def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_hyperoval=True):
     r"""
-    Return the Haemers graph obtained from `T_2^*(q)^*`
+    Return the Haemers graph obtained from `T_2^*(q)^*`.
 
     Let `q` be a power of 2. In Sect. 8.A of [BL1984]_ one finds a construction
     of a strongly regular graph with parameters `(q^2(q+2),q^2+q-1,q-2,q)` from
@@ -1201,11 +1197,9 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
         Haemers(8): Graph on 640 vertices
         sage: g.is_strongly_regular(parameters=True)    # not tested (long time)        # needs sage.rings.finite_rings
         (640, 71, 6, 8)
-
     """
     from sage.modules.free_module_element import free_module_element as vector
     from sage.rings.finite_rings.finite_field_constructor import GF
-    from itertools import combinations
 
     p, k = is_prime_power(q, get_data=True)
     if not k or p != 2:
@@ -1280,7 +1274,7 @@ def CossidentePenttilaGraph(q):
 
     INPUT:
 
-    - ``q`` -- an odd prime power.
+    - ``q`` -- an odd prime power
 
     EXAMPLES:
 
@@ -1311,11 +1305,11 @@ def CossidentePenttilaGraph(q):
         raise ValueError('q(={}) must be an odd prime power'.format(q))
 
     from sage.features.gap import GapPackage
-    GapPackage("grape", spkg="gap_packages").require()
+    GapPackage("grape", spkg='gap_packages').require()
 
     from sage.libs.gap.libgap import libgap
     adj_list = libgap.function_factory("""function(q)
-        local z, e, so, G, nu, G1, G0, B, T, s, O1, O2, x;
+        local z, e, so, G, nu, G1, G0, B, T, s, O1, O2, x, sqo;
         LoadPackage("grape");
         G0:=SO(3,q^2);
         so:=GeneratorsOfGroup(G0);
@@ -1380,8 +1374,8 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
       particular, ``hyperoval`` we build is the classical one, i.e. a conic with
       the point of intersection of its tangent lines.
 
-    - ``field`` -- an instance of a finite field of order `q`, must be provided
-      if ``hyperoval`` is provided.
+    - ``field`` -- an instance of a finite field of order `q`; must be provided
+      if ``hyperoval`` is provided
 
     - ``check_hyperoval`` -- boolean (default: ``True``); whether to check
       ``hyperoval`` for correctness or not
@@ -1483,7 +1477,7 @@ def OrthogonalDualPolarGraph(e, d, q):
     INPUT:
 
     - ``e`` -- integer; type of the orthogonal polar space to consider;
-      must be `-1, 0` or  `1`.
+      must be `-1, 0` or  `1`
 
     - ``d`` -- integer; diameter of the graph
 
@@ -1526,7 +1520,6 @@ def OrthogonalDualPolarGraph(e, d, q):
     from sage.matrix.constructor import Matrix
     from sage.modules.free_module import VectorSpace
     from sage.rings.finite_rings.finite_field_constructor import GF
-    import itertools
 
     def hashable(v):
         v.set_immutable()
@@ -1597,16 +1590,14 @@ def OrthogonalDualPolarGraph(e, d, q):
     allIsoSubspaces = libgap.Orbit(permutation, isoSPointsInt, libgap.OnSets)
 
     # number of projective points in a (d-1)-subspace
-    intersection_size = (q**(d-1) - 1) // (q-1)
+    intersection_size = (q**(d - 1) - 1) // (q - 1)
 
-    edges = []
     n = len(allIsoSubspaces)
-    for i, j in itertools.combinations(range(n), 2):
-        if libgap.Size(libgap.Intersection(allIsoSubspaces[i],
-                                           allIsoSubspaces[j])) \
-                                           == intersection_size:
-            edges.append((i, j))
+    edges = [(i, j) for i, j in combinations(range(n), 2)
+             if libgap.Size(libgap.Intersection(allIsoSubspaces[i],
+                                                allIsoSubspaces[j]))
+             == intersection_size]
 
-    G = Graph(edges, format="list_of_edges")
+    G = Graph(edges, format='list_of_edges')
     G.name("Dual Polar Graph on Orthogonal group (%d, %d, %d)" % (e, m, q))
     return G

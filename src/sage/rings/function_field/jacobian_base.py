@@ -67,7 +67,6 @@ We can get the corresponding point in the Jacobian in a different model. ::
 AUTHORS:
 
 - Kwankyu Lee (2022-01-24): initial version
-
 """
 
 # ****************************************************************************
@@ -196,7 +195,7 @@ class JacobianGroupFunctor(ConstructionFunctor):
     """
     rank = 20
 
-    def __init__(self, base_field, field):
+    def __init__(self, base_field, field) -> None:
         """
         Initialize.
 
@@ -239,7 +238,7 @@ class JacobianGroupFunctor(ConstructionFunctor):
 
     def merge(self, other):
         """
-        Return the functor merging ``self`` and ``other``
+        Return the functor merging ``self`` and ``other``.
 
         INPUT:
 
@@ -288,7 +287,7 @@ class JacobianGroup_base(Parent):
     """
     _embedding_map_class = None
 
-    def __init__(self, parent, function_field, base_div):
+    def __init__(self, parent, function_field, base_div) -> None:
         """
         Initialize.
 
@@ -307,7 +306,7 @@ class JacobianGroup_base(Parent):
         self._genus = parent._function_field.genus()  # equals function_field.genus()
         self._base_div = base_div
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -463,8 +462,8 @@ class JacobianGroup_finite_field_base(JacobianGroup_base):
         q = F.constant_base_field().order()
         g = self._genus
 
-        c = 2*g/(q.sqrt() - 1)
-        return integer_floor(math.exp(c)*q**g)
+        c = 2 * g / (q.sqrt() - 1)
+        return integer_floor(math.exp(c) * q**g)
 
     def order(self, algorithm='numeric'):
         """
@@ -493,55 +492,55 @@ class JacobianGroup_finite_field_base(JacobianGroup_base):
         if algorithm == 'numeric':
             # numeric method - fast but might be inaccurate by numerical noise
             from sage.rings.qqbar import AlgebraicField
-            h = Integer(math.prod([(1-a**(-b))**m for a, m in f.change_ring(AlgebraicField()).roots()]))
+            h = Integer(math.prod([(1 - a**(-b))**m for a, m in f.change_ring(AlgebraicField()).roots()]))
             return h
 
         # algebraic method - slow
 
         es = []
         s = -1
-        for i in range(1, 2*g + 1):
-            es.append(s*f[i])
+        for i in range(1, 2 * g + 1):
+            es.append(s * f[i])
             s = -s
         es
 
         ps = [es[0]]
-        for i in range(1, 2*g):
+        for i in range(1, 2 * g):
             p = 0
             s = 1
             for j in range(i):
-                p = p + s*es[j]*ps[-j-1]
+                p = p + s * es[j] * ps[-j - 1]
                 s = -s
-            ps.append(p + s*(i + 1)*es[i])
+            ps.append(p + s * (i + 1) * es[i])
 
-        while len(ps) < b*2*g:
+        while len(ps) < b * 2 * g:
             p = 0
             s = 1
-            for j in range(2*g):
-                p = p + s*es[j]*ps[-j-1]
+            for j in range(2 * g):
+                p = p + s * es[j] * ps[-j - 1]
                 s = -s
             ps.append(p)
 
-        qs = [ps[b*(i + 1) - 1] for i in range(2*g)]
+        qs = [ps[b * (i + 1) - 1] for i in range(2 * g)]
 
         fs = [qs[0]]
-        for i in range(1, 2*g):
+        for i in range(1, 2 * g):
             k = qs[i]
             s = -1
             for j in range(i):
-                k = k + s*fs[j]*qs[i - j - 1]
+                k = k + s * fs[j] * qs[i - j - 1]
                 s = -s
-            fs.append(-s*k // (i + 1))
+            fs.append(-s * k // (i + 1))
 
         bs = [1]
         s = -1
-        for i in range(2*g):
-            bs.append(s*fs[i])
+        for i in range(2 * g):
+            bs.append(s * fs[i])
             s = -s
 
         return sum(bs)
 
-    def get_points(self, n):
+    def get_points(self, n) -> list:
         """
         Return `n` points of the Jacobian group.
 
@@ -550,7 +549,7 @@ class JacobianGroup_finite_field_base(JacobianGroup_base):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -585,7 +584,7 @@ class Jacobian_base(Parent):
         sage: F.jacobian()
         Jacobian of Function field in y defined by y^2 + y + (x^2 + 1)/x (Hess model)
     """
-    def __init__(self, function_field, base_div, **kwds):
+    def __init__(self, function_field, base_div, **kwds) -> None:
         """
         Initialize.
 
@@ -605,7 +604,7 @@ class Jacobian_base(Parent):
                          base=function_field.constant_base_field(),
                          facade=True)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -634,7 +633,7 @@ class Jacobian_base(Parent):
 
     def __call__(self, x):
         """
-        Return the point of ``self`` constructed from ``x``
+        Return the point of ``self`` constructed from ``x``.
 
         It is assumed that ``self`` and ``x`` are points of the Jacobians
         attached to the same function field.
@@ -652,6 +651,26 @@ class Jacobian_base(Parent):
             True
             sage: J_hess(q) == p
             True
+
+        If ``x`` is an effective divisor, it is checked that the degree
+        is equal to the degree of the base divisor. See :issue:`38623`.
+
+            sage: K.<x> = FunctionField(GF(7))
+            sage: _.<t> = K[]
+            sage: F.<y> = K.extension(t^2 - x^6 - 3)
+            sage: O = F.maximal_order()
+            sage: D1 = (O.ideal(x + 1, y + 2) * O.ideal(x + 2, y + 2)).divisor()
+            sage: I = O.ideal(x + 3, y+5) * O.ideal(x + 4, y + 5) * O.ideal(x + 5, y + 5)
+            sage: D2 = I.divisor()
+            sage: J = F.jacobian(model='hess')
+            sage: J(D1)
+            [Place (x + 1, y + 2) + Place (x + 2, y + 2)]
+            sage: J(D2)
+            Traceback (most recent call last):
+            ...
+            ValueError: effective divisor is not of degree 2
+            sage: J.base_divisor().degree()
+            2
         """
         F = self._function_field
         if isinstance(x, JacobianPoint_base):
@@ -663,13 +682,12 @@ class Jacobian_base(Parent):
                 K = G._function_field
                 return G.point(K.divisor_group()(x.divisor()))
         if x in F.place_set():
-            return self(x - x.degree()*self._base_place)
+            return self(x - x.degree() * self._base_place)
         if x == 0:
             return self.group().zero()
         if x in F.divisor_group():
-            G = self.group()
-            return G.point(x)
-        raise ValueError(f"Cannot create a point of the Jacobian from {x}")
+            return self.group()(x)
+        raise ValueError(f"cannot create a point of the Jacobian from {x}")
 
     def curve(self):
         """
@@ -719,7 +737,7 @@ class Jacobian_base(Parent):
         """
         if not self._system:
             return [self.group()]
-        return list(self.group(k) for k in self._system)
+        return [self.group(k) for k in self._system]
 
     def base_divisor(self):
         """
@@ -771,13 +789,13 @@ class Jacobian_base(Parent):
 
         return grp
 
-    def set_base_place(self, place):
+    def set_base_place(self, place) -> None:
         """
         Set ``place`` as the base place.
 
         INPUT:
 
-        - ``place`` -- a rational place of the function field.
+        - ``place`` -- a rational place of the function field
 
         The base place `B` is used to map a rational place `P` of the function
         field to the point of the Jacobian defined by the divisor `P - B`.

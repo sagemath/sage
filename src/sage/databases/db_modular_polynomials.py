@@ -20,7 +20,6 @@ EXAMPLES::
 AUTHORS:
 
 - David Kohel (2006-08-04): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -34,10 +33,10 @@ AUTHORS:
 # ****************************************************************************
 import bz2
 import os
-from sage.cpython.string import bytes_to_str
+from pathlib import Path
 
 
-def _dbz_to_string(name):
+def _dbz_to_string(name) -> str:
     r"""
     TESTS::
 
@@ -54,18 +53,17 @@ def _dbz_to_string(name):
         sage: _dbz_to_string('PolHeeg/Cls/0000001-0005000/pol.0000003.dbz')
         '0\n1\n'
     """
-    from sage.env import SAGE_SHARE
-    dblocation = os.path.join(SAGE_SHARE, 'kohel')
-    filename = os.path.join(dblocation, name)
-    try:
-        with open(filename, 'rb') as f:
-            data = bz2.decompress(f.read())
-    except OSError:
-        raise ValueError('file not found in the Kohel database')
-    return bytes_to_str(data)
+    from sage.env import sage_data_paths
+    for path in sage_data_paths('kohel'):
+        filename = Path(path) / name
+        if os.path.exists(filename):
+            with open(filename, 'rb') as f:
+                data = bz2.decompress(f.read())
+            return data.decode()
+    raise FileNotFoundError('file not found in the Kohel database')
 
 
-def _dbz_to_integer_list(name):
+def _dbz_to_integer_list(name) -> list[list]:
     r"""
     TESTS::
 
@@ -91,7 +89,7 @@ def _dbz_to_integer_list(name):
             for row in data.split("\n")[:-1]]
 
 
-def _dbz_to_integers(name):
+def _dbz_to_integers(name) -> list:
     r"""
     TESTS::
 
@@ -104,19 +102,20 @@ def _dbz_to_integers(name):
 
 
 class ModularPolynomialDatabase:
-    def _dbpath(self, level):
+    def _dbpath(self, level) -> Path:
         r"""
         TESTS::
 
             sage: C = ClassicalModularPolynomialDatabase()
             sage: C._dbpath(3)
-            'PolMod/Cls/pol.003.dbz'
+            PosixPath('PolMod/Cls/pol.003.dbz')
             sage: C._dbpath(8)
-            'PolMod/Cls/pol.008.dbz'
+            PosixPath('PolMod/Cls/pol.008.dbz')
         """
-        return "PolMod/%s/pol.%03d.dbz" % (self.model, level)
+        path = Path("PolMod")
+        return path / self.model / ("pol.%03d.dbz" % level)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         EXAMPLES::
 
@@ -162,7 +161,7 @@ class ModularPolynomialDatabase:
             sage: DBMP[50]
             Traceback (most recent call last):
             ...
-            ValueError: file not found in the Kohel database
+            FileNotFoundError: file not found in the Kohel database
         """
         from sage.rings.integer import Integer
         from sage.rings.integer_ring import IntegerRing
@@ -199,16 +198,16 @@ class ModularPolynomialDatabase:
 
 
 class ModularCorrespondenceDatabase(ModularPolynomialDatabase):
-    def _dbpath(self, level):
+    def _dbpath(self, level) -> Path:
         r"""
         TESTS::
 
             sage: DB = DedekindEtaModularCorrespondenceDatabase()
             sage: DB._dbpath((2,4))
-            'PolMod/EtaCrr/crr.02.004.dbz'
+            PosixPath('PolMod/EtaCrr/crr.02.004.dbz')
         """
-        (Nlevel, crrlevel) = level
-        return "PolMod/%s/crr.%02d.%03d.dbz" % (self.model, Nlevel, crrlevel)
+        path = Path("PolMod")
+        return path / self.model / ("crr.%02d.%03d.dbz" % level)
 
 
 class ClassicalModularPolynomialDatabase(ModularPolynomialDatabase):

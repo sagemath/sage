@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Feature for testing the presence of msolve
 
@@ -22,6 +21,7 @@ import subprocess
 from . import Executable
 from . import FeatureTestResult
 
+
 class msolve(Executable):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :ref:`msolve <spkg_msolve>`.
@@ -40,8 +40,8 @@ class msolve(Executable):
             sage: isinstance(msolve(), msolve)
             True
         """
-        Executable.__init__(self, "msolve", executable="msolve",
-                            url="https://msolve.lip6.fr/")
+        Executable.__init__(self, "msolve", executable='msolve',
+                            url='https://msolve.lip6.fr/')
 
     def is_functional(self):
         r"""
@@ -57,12 +57,13 @@ class msolve(Executable):
 
 #        if msolve_out.returncode != 0:
 #            return FeatureTestResult(self, False, reason="msolve -h returned "
-#                                f"non-zero exit status {msolve_out.returncode}")
-        if (msolve_out.stdout[:46] !=
-              b'\nmsolve library for polynomial system solving\n'):
+#                                f"nonzero exit status {msolve_out.returncode}")
+        if (msolve_out.stdout[:45] !=
+              b'\nmsolve library for polynomial system solving'):
             return FeatureTestResult(self, False,
                                      reason="output of msolve -h not recognized")
         return FeatureTestResult(self, True)
+
 
 def all_features():
     return [msolve()]

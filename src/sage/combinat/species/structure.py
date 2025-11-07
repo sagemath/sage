@@ -13,6 +13,9 @@ BB = o + o\*BB + o\*|\*BB
 Here we define this species using the default structures::
 
     sage: ball = species.SingletonSpecies()
+    doctest:warning...
+    DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+    See https://github.com/sagemath/sage/issues/38544 for details.
     sage: bar = species.EmptySetSpecies()
     sage: BB = CombinatorialSpecies()
     sage: BB.define(ball + ball*BB + ball*bar*BB)
@@ -66,7 +69,7 @@ class GenericSpeciesStructure(CombinatorialObject):
 
     def parent(self):
         """
-        Returns the species that this structure is associated with.
+        Return the species that this structure is associated with.
 
         EXAMPLES::
 
@@ -127,9 +130,9 @@ class GenericSpeciesStructure(CombinatorialObject):
 
     def labels(self):
         """
-        Returns the labels used for this structure.
+        Return the labels used for this structure.
 
-        .. note::
+        .. NOTE::
 
             This includes labels which may not "appear" in this
             particular structure.
@@ -149,11 +152,11 @@ class GenericSpeciesStructure(CombinatorialObject):
 
         INPUT:
 
-        - ``labels``, a list of labels.
+        - ``labels`` -- list of labels
 
         OUTPUT:
 
-        A structure with the i-th label of self replaced with the i-th
+        A structure with the `i`-th label of ``self`` replaced with the `i`-th
         label of the list.
 
         EXAMPLES::
@@ -179,11 +182,10 @@ class GenericSpeciesStructure(CombinatorialObject):
             [1, 2, 3]
         """
         if isinstance(i, (int, Integer)):
-            return self._labels[i-1]
-        else:
-            return i
+            return self._labels[i - 1]
+        return i
 
-    def is_isomorphic(self, x):
+    def is_isomorphic(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -200,11 +202,8 @@ class GenericSpeciesStructure(CombinatorialObject):
         if self.parent() != x.parent():
             return False
 
-        #We don't care about the labels for isomorphism testing
-        if self.canonical_label()._list == x.canonical_label()._list:
-            return True
-        else:
-            return False
+        # We don't care about the labels for isomorphism testing
+        return self.canonical_label()._list == x.canonical_label()._list
 
 
 #For backward compatibility.  This should be removed in the near
@@ -264,7 +263,7 @@ class SpeciesStructureWrapper(GenericSpeciesStructure):
 
     def __repr__(self):
         """
-        Returns the repr of the object which this one wraps.
+        Return the repr of the object which this one wraps.
 
         EXAMPLES::
 
@@ -304,11 +303,11 @@ class SpeciesStructureWrapper(GenericSpeciesStructure):
 
         INPUT:
 
-        - ``labels``, a list of labels.
+        - ``labels`` -- list of labels
 
         OUTPUT:
 
-        A structure with the i-th label of self replaced with the i-th
+        A structure with the `i`-th label of ``self`` replaced with the `i`-th
         label of the list.
 
         EXAMPLES::
@@ -334,7 +333,7 @@ class SpeciesWrapper(Parent):
         This is a abstract base class for the set of structures of a
         species as well as the set of isotypes of the species.
 
-        .. note::
+        .. NOTE::
 
             One typically does not use :class:`SpeciesWrapper`
             directly, but instead instantiates one of its subclasses:
@@ -402,7 +401,7 @@ class SpeciesWrapper(Parent):
 
     def labels(self):
         """
-        Returns the labels used on these structures.  If `X` is the
+        Return the labels used on these structures.  If `X` is the
         species, then :meth:`labels` returns the preimage of these
         structures under the functor `X`.
 
@@ -443,7 +442,7 @@ class SpeciesWrapper(Parent):
 
     def cardinality(self):
         """
-        Returns the number of structures in this set.
+        Return the number of structures in this set.
 
         EXAMPLES::
 

@@ -13,6 +13,7 @@ from sage.categories.category import Category
 from sage.categories.groups import Groups
 from sage.misc.lazy_import import LazyImport
 
+
 class PermutationGroups(Category):
     r"""
     The category of permutation groups.

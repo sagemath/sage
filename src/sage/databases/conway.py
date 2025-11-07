@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Frank Lübeck's tables of Conway polynomials over finite fields
 """
@@ -15,6 +14,7 @@ Frank Lübeck's tables of Conway polynomials over finite fields
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from collections.abc import Mapping
+
 
 class DictInMapping(Mapping):
     def __init__(self, dict):
@@ -174,7 +174,7 @@ class ConwayPolynomials(Mapping):
     def polynomial(self, p, n):
         """
         Return the Conway polynomial of degree ``n`` over ``GF(p)``,
-        or raise a :class:`RuntimeError` if this polynomial is not in the
+        or raise a :exc:`RuntimeError` if this polynomial is not in the
         database.
 
         .. NOTE::
@@ -208,9 +208,9 @@ class ConwayPolynomials(Mapping):
         except KeyError:
             raise RuntimeError("Conway polynomial over F_%s of degree %s not in database." % (p, n))
 
-    def has_polynomial(self, p, n):
+    def has_polynomial(self, p, n) -> bool:
         """
-        Return True if the database of Conway polynomials contains the
+        Return ``True`` if the database of Conway polynomials contains the
         polynomial of degree ``n`` over ``GF(p)``.
 
         INPUT:
@@ -227,7 +227,7 @@ class ConwayPolynomials(Mapping):
             sage: c.has_polynomial(60821, 5)
             False
         """
-        return (p,n) in self
+        return (p, n) in self
 
     def primes(self):
         """

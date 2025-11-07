@@ -24,7 +24,6 @@ AUTHORS:
 REFERENCES:
 
 - \J. M. Lee:  *Introduction to Smooth Manifolds* [Lee2013]_
-
 """
 
 # *****************************************************************************
@@ -159,7 +158,6 @@ class DifferentiableSubmanifold(DifferentiableManifold, TopologicalSubmanifold):
 
         :mod:`~sage.manifolds.manifold` and
         :mod:`~sage.manifolds.topological_submanifold`
-
     """
     def __init__(self, n, name, field, structure, ambient=None,
                  base_manifold=None, diff_degree=infinity,
@@ -181,7 +179,6 @@ class DifferentiableSubmanifold(DifferentiableManifold, TopologicalSubmanifold):
             \Sigma
             sage: S.start_index()
             1
-
         """
         DifferentiableManifold.__init__(self, n, name, field, structure,
                                         base_manifold=base_manifold,
@@ -213,7 +210,6 @@ class DifferentiableSubmanifold(DifferentiableManifold, TopologicalSubmanifold):
             sage: N
             2-dimensional differentiable submanifold N embedded in the
              3-dimensional differentiable manifold M
-
         """
         if self is not self._manifold:
             return "Open subset {} of the {}".format(self._name, self._manifold)
@@ -241,7 +237,7 @@ class DifferentiableSubmanifold(DifferentiableManifold, TopologicalSubmanifold):
         INPUT:
 
         - ``name`` -- name given to the open subset
-        - ``latex_name`` --  (default: ``None``) LaTeX symbol to denote the
+        - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
           subset; if none is provided, it is set to ``name``
         - ``coord_def`` -- (default: {}) definition of the subset in
           terms of coordinates; ``coord_def`` must a be dictionary with keys
@@ -250,14 +246,12 @@ class DifferentiableSubmanifold(DifferentiableManifold, TopologicalSubmanifold):
         - ``supersets`` -- (default: only ``self``) list of sets that the
           new open subset is a subset of
 
-        OUTPUT:
-
-        - the open subset, as an instance of :class:`DifferentiableSubmanifold`
+        OUTPUT: the open subset, as an instance of :class:`DifferentiableSubmanifold`
 
         EXAMPLES::
 
-            sage: M = Manifold(3, 'M', structure="differentiable")
-            sage: N = Manifold(2, 'N', ambient=M, structure="differentiable"); N
+            sage: M = Manifold(3, 'M', structure='differentiable')
+            sage: N = Manifold(2, 'N', ambient=M, structure='differentiable'); N
             2-dimensional differentiable submanifold N immersed in the
              3-dimensional differentiable manifold M
             sage: S = N.subset('S'); S
@@ -282,7 +276,6 @@ class DifferentiableSubmanifold(DifferentiableManifold, TopologicalSubmanifold):
             Open subset O of the
              2-dimensional differentiable submanifold N embedded in the
               3-dimensional differentiable manifold M
-
         """
         resu = DifferentiableSubmanifold(self._dim, name, self._field,
                                          self._structure, ambient=self._ambient,

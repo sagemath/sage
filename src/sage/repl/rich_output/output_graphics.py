@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 r"""
 Graphics Output Types
 
@@ -26,7 +25,7 @@ class OutputImagePng(OutputBase):
 
     def __init__(self, png):
         """
-        PNG Image
+        PNG Image.
 
         .. NOTE::
 
@@ -53,14 +52,12 @@ class OutputImagePng(OutputBase):
     @classmethod
     def example(cls):
         r"""
-        Construct a sample PNG output container
+        Construct a sample PNG output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputImagePng`.
+        OUTPUT: an instance of :class:`OutputImagePng`
 
         EXAMPLES::
 
@@ -79,7 +76,7 @@ class OutputImageGif(OutputBase):
 
     def __init__(self, gif):
         """
-        GIF Image (possibly animated)
+        GIF Image (possibly animated).
 
         INPUT:
 
@@ -101,14 +98,12 @@ class OutputImageGif(OutputBase):
     @classmethod
     def example(cls):
         r"""
-        Construct a sample GIF output container
+        Construct a sample GIF output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputImageGif`.
+        OUTPUT: an instance of :class:`OutputImageGif`
 
         EXAMPLES::
 
@@ -124,13 +119,11 @@ class OutputImageGif(OutputBase):
 
     def html_fragment(self):
         """
-        Return a self-contained HTML fragment displaying the image
+        Return a self-contained HTML fragment displaying the image.
 
         This is a workaround for the Jupyter notebook which doesn't support GIF directly.
 
-        OUTPUT:
-
-        String. HTML fragment for displaying the GIF image.
+        OUTPUT: string. HTML fragment for displaying the GIF image
 
         EXAMPLES::
 
@@ -146,7 +139,7 @@ class OutputImageJpg(OutputBase):
 
     def __init__(self, jpg):
         """
-        JPEG Image
+        JPEG Image.
 
         INPUT:
 
@@ -168,14 +161,12 @@ class OutputImageJpg(OutputBase):
     @classmethod
     def example(cls):
         r"""
-        Construct a sample JPEG output container
+        Construct a sample JPEG output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputImageJpg`.
+        OUTPUT: an instance of :class:`OutputImageJpg`
 
         EXAMPLES::
 
@@ -194,7 +185,7 @@ class OutputImageSvg(OutputBase):
 
     def __init__(self, svg):
         """
-        SVG Image
+        SVG Image.
 
         INPUT:
 
@@ -216,14 +207,12 @@ class OutputImageSvg(OutputBase):
     @classmethod
     def example(cls):
         r"""
-        Construct a sample SVG output container
+        Construct a sample SVG output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputImageSvg`.
+        OUTPUT: an instance of :class:`OutputImageSvg`
 
         EXAMPLES::
 
@@ -242,7 +231,7 @@ class OutputImagePdf(OutputBase):
 
     def __init__(self, pdf):
         """
-        PDF Image
+        PDF Image.
 
         INPUT:
 
@@ -264,14 +253,12 @@ class OutputImagePdf(OutputBase):
     @classmethod
     def example(cls):
         r"""
-        Construct a sample PDF output container
+        Construct a sample PDF output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputImagePdf`.
+        OUTPUT: an instance of :class:`OutputImagePdf`
 
         EXAMPLES::
 
@@ -290,7 +277,7 @@ class OutputImageDvi(OutputBase):
 
     def __init__(self, dvi):
         """
-        DVI Image
+        DVI Image.
 
         INPUT:
 
@@ -312,14 +299,12 @@ class OutputImageDvi(OutputBase):
     @classmethod
     def example(cls):
         r"""
-        Construct a sample DVI output container
+        Construct a sample DVI output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputImageDvi`.
+        OUTPUT: an instance of :class:`OutputImageDvi`
 
         EXAMPLES::
 

@@ -14,6 +14,7 @@ from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.additive_groups import AdditiveGroups
 
+
 class CommutativeAdditiveGroups(CategoryWithAxiom, AbelianCategory):
     """
     The category of abelian groups, i.e. additive abelian monoids

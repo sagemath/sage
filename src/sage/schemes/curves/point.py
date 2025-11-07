@@ -23,7 +23,6 @@ or on affine curves::
 AUTHORS:
 
 - Grayson Jorgenson (2016-6): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -43,7 +42,7 @@ class ProjectiveCurvePoint_field(SchemeMorphism_point_projective_field):
     """
     Point of a projective curve over a field.
     """
-    def is_singular(self):
+    def is_singular(self) -> bool:
         r"""
         Return whether this point is a singular point of the projective curve it is on.
 
@@ -99,7 +98,7 @@ class ProjectivePlaneCurvePoint_field(ProjectiveCurvePoint_field):
         """
         return self.codomain().tangents(self)
 
-    def is_ordinary_singularity(self):
+    def is_ordinary_singularity(self) -> bool:
         r"""
         Return whether this point is an ordinary singularity of the projective
         plane curve it is on.
@@ -128,7 +127,7 @@ class ProjectivePlaneCurvePoint_field(ProjectiveCurvePoint_field):
         """
         return self.codomain().is_ordinary_singularity(self)
 
-    def is_transverse(self, D):
+    def is_transverse(self, D) -> bool:
         r"""
         Return whether the intersection of the curve ``D`` at this point with
         the curve this point is on is transverse or not.
@@ -251,7 +250,7 @@ class IntegralProjectivePlaneCurvePoint_finite_field(ProjectivePlaneCurvePoint_f
 
 class AffineCurvePoint_field(SchemeMorphism_point_affine_field):
 
-    def is_singular(self):
+    def is_singular(self) -> bool:
         r"""
         Return whether this point is a singular point of the affine curve it is on.
 
@@ -297,8 +296,8 @@ class AffinePlaneCurvePoint_field(AffineCurvePoint_field):
         r"""
         Return the tangents at this point of the affine plane curve this point is on.
 
-        OUTPUT: a list of polynomials in the coordinate ring of the ambient
-        space of the curve this point is on.
+        OUTPUT: list of polynomials in the coordinate ring of the ambient
+        space of the curve this point is on
 
         EXAMPLES::
 
@@ -308,11 +307,11 @@ class AffinePlaneCurvePoint_field(AffineCurvePoint_field):
             ....: 5*x - y + 1])
             sage: Q = C([-1,0])
             sage: Q.tangents()
-            [y, x + 1, x - y + 1, x + y + 1]
+            [y, x - y + 1, x + 1, x + y + 1]
         """
         return self.codomain().tangents(self)
 
-    def is_ordinary_singularity(self):
+    def is_ordinary_singularity(self) -> bool:
         r"""
         Return whether this point is an ordinary singularity of the affine
         plane curve it is on.
@@ -337,14 +336,14 @@ class AffinePlaneCurvePoint_field(AffineCurvePoint_field):
         """
         return self.codomain().is_ordinary_singularity(self)
 
-    def is_transverse(self, D):
+    def is_transverse(self, D) -> bool:
         r"""
         Return whether the intersection of the curve ``D`` at this point with
         the curve this point is on is transverse or not.
 
         INPUT:
 
-        - ``D`` -- a curve in the same ambient space as the curve this point is on.
+        - ``D`` -- a curve in the same ambient space as the curve this point is on
 
         EXAMPLES::
 

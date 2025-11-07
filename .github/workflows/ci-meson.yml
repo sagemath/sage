@@ -1,0 +1,210 @@
+name: Build & Test using Meson
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+  workflow_dispatch:
+    # Allow to run manually
+
+concurrency:
+  # Cancel previous runs of this workflow for the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Conda (${{ matrix.os }}, Python ${{ matrix.python }}, ${{ matrix.tests }}${{ matrix.editable && ', editable' || '' }})
+    runs-on: ${{ matrix.os }}-latest
+    env:
+      SEPARATELY_TESTED_FLAKY_FILES: "src/sage/libs/singular/function.pyx src/sage/rings/polynomial/plural.pyx"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['ubuntu', 'macos', 'windows']
+        python: ['3.12', '3.13']
+        tests: ['all']
+        editable:
+          ${{ fromJson(github.event_name == 'pull_request' && '[false]' || '[false, true]') }}
+        include:
+          # One run for oldest supported Python
+          - os: 'ubuntu'
+            python: '3.11'
+            tests: 'all'
+          # Test only changed files
+          - os: 'ubuntu'
+            python: '3.12'
+            tests: 'new'
+          # One additional editable run in pull_request, this has no effect if not pull_request
+          - os: 'ubuntu'
+            python: '3.12'
+            editable: true
+            tests: 'all'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Merge CI fixes from sagemath/sage
+        run: |
+          .github/workflows/merge-fixes.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Mark new files as uncommited
+        if: matrix.tests == 'new' 
+        run: |
+          # List remotes (for debugging)
+          git remote -v
+          # Reset the branch to develop
+          git fetch origin develop
+          git reset --soft origin/develop
+          # Show uncommitted changes
+          git status
+
+      - name: Cache conda packages
+        uses: actions/cache@v4
+        with:
+          path: ~/conda_pkgs_dir
+          key:
+            ${{ runner.os }}-conda-${{ hashFiles('environment-3.11-linux.yml') }}
+      
+      - name: Setup MSVC environment
+        if: runner.os == 'windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Remove Git link.exe
+        if: runner.os == 'windows'
+        # It conflicts with the vs linker 
+        # So we delete it, following the advice on https://github.com/ilammy/msvc-dev-cmd?tab=readme-ov-file#name-conflicts-with-shell-bash 
+        run: rm -f "C:/Program Files/Git/usr/bin/link.exe"
+        shell: bash
+
+      - name: Compiler cache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ runner.os }}-meson-${{ matrix.python }}
+
+      - name: Setup Conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        continue-on-error: true
+        id: conda1
+        with:
+          python-version: ${{ matrix.python }}
+          # Disabled for now due to
+          # https://github.com/conda-incubator/setup-miniconda/issues/379
+          # miniforge-version: latest
+          use-mamba: true
+          channels: conda-forge
+          channel-priority: true
+          activate-environment: sage-dev
+          environment-file: environment-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || startsWith(matrix.os, 'ubuntu') && 'linux' || 'win' }}.yml
+
+      # Sometimes the conda setup fails due to network issues.
+      # This is a workaround to retry the setup step if it fails.
+      # Workaround for https://github.com/conda-incubator/setup-miniconda/issues/129
+      - name: Setup Conda environment (2nd time)
+        uses: conda-incubator/setup-miniconda@v3
+        if: steps.conda1.outcome == 'failure'
+        with:
+          python-version: ${{ matrix.python }}
+          miniforge-version: latest
+          use-mamba: true
+          channels: conda-forge
+          channel-priority: true
+          activate-environment: sage-dev
+          environment-file: environment-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || 'linux' }}.yml
+
+
+      - name: Print Conda environment
+        shell: bash -l {0}
+        run: |
+          conda info
+          conda list
+
+      - name: Build
+        shell: bash -l {0}
+        run: |
+          if [[ "$RUNNER_OS" != "Windows" ]]; then
+            export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+            export CC="ccache $CC"
+            export CXX="ccache $CXX"
+          else
+            export LIB="$LIB;$CONDA_PREFIX\\Library\\lib"
+            export INCLUDE="$INCLUDE;$CONDA_PREFIX\\Library\\include"
+          fi
+
+          # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda
+          pip install --no-build-isolation --no-deps --config-settings=builddir=builddir ${{ matrix.editable && '--editable' || '' }} . -v
+
+      - name: Check update-meson
+        # this step must be after build, because meson.build creates a number of __init__.py files
+        # that is needed to make tools/update-meson.py run correctly
+        shell: bash -l {0}
+        if: matrix.tests == 'all' && matrix.python == '3.12'
+        run: |
+          python tools/update-meson.py
+          if ! ./tools/test-git-no-uncommitted-changes; then
+            git add --intent-to-add .  # also show newly created files in git diff
+            git status
+            git diff
+            false
+          fi
+
+      - name: Verify dependencies
+        shell: bash -l {0}
+        run: pip check
+
+      - name: Test
+        shell: bash -l {0}
+        run: |
+          # We don't install sage_setup, so don't try to test it
+          # If editable then deleting the directory will cause sage to detect rebuild, which will cause ninja to fail
+          # so we don't delete the directory in this case
+          ${{ matrix.editable && 'true' || 'rm -R ./src/sage_setup/' }}
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            # Ignore errors on Windows, for now
+            pytest --doctest-ignore-import-errors --doctest -rfEs -s src || true
+          else
+            pytest -rfEs -s src
+            ./sage -t ${{
+              matrix.tests == 'all' &&
+              '--all-except="$SEPARATELY_TESTED_FLAKY_FILES"' ||
+              '--new --long' }} -p4 --format github
+          fi
+
+      - name: Test flaky files
+        # unknown issues with plural.pyx causes sporadic failure: https://github.com/sagemath/sage/issues/29528
+        # we rerun a few times, this step succeeds if any of the 5 runs succeed
+        if: runner.os != 'windows' && matrix.tests == 'all'
+        shell: bash -l {0}
+        run: |
+          for i in {1..5}; do
+            ./sage -t -p4 --format github $SEPARATELY_TESTED_FLAKY_FILES && break
+          done
+
+      - name: Check that all modules can be imported
+        shell: bash -l {0}
+        run: |
+          # Increase the length of the lines in the "short summary"
+          export COLUMNS=120
+          # The following command checks that all modules can be imported.
+          # The output also includes a long list of modules together with the number of tests in each module.
+          # This can be ignored.
+          if [[ "${{ matrix.os }}" == "windows" ]]; then
+            pytest -qq --doctest --collect-only || true
+          else
+            pytest -qq --doctest --collect-only
+          fi
+
+      - name: Upload log
+        uses: actions/upload-artifact@v4.5.0
+        if: failure()
+        with:
+          name: ${{ runner.os }}-meson-${{ matrix.python }}${{ matrix.editable && '-editable' || '' }}${{ matrix.tests == 'new' && '-new' || '' }}-log
+          path: builddir/meson-logs/

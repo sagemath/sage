@@ -8,7 +8,6 @@ AUTHOR:
 
 - Josh Kantor (2006-10-07)  - initial version
 - David Joyner (2006-10-09) - minor changes to docstrings and examples.
-
 """
 
 # ****************************************************************************
@@ -29,7 +28,7 @@ def WaveletTransform(n, wavelet_type, wavelet_k):
 
     INPUT:
 
-    - ``n`` --  a power of 2
+    - ``n`` -- a power of 2
     - ``T`` -- the data in the GSLDoubleArray must be real
     - ``wavelet_type`` -- the name of the type of wavelet, valid choices are:
 
@@ -94,7 +93,7 @@ def WaveletTransform(n, wavelet_type, wavelet_k):
     _k = int(wavelet_k)
     if not is2pow(_n):
         raise NotImplementedError("discrete wavelet transform only implemented when n is a 2-power")
-    return DiscreteWaveletTransform(_n,1,wavelet_type,_k)
+    return DiscreteWaveletTransform(_n, 1, wavelet_type, _k)
 
 
 DWT = WaveletTransform
@@ -104,26 +103,26 @@ cdef class DiscreteWaveletTransform(GSLDoubleArray):
     """
     Discrete wavelet transform class.
     """
-    def __cinit__(self,size_t n,size_t stride, wavelet_type, size_t wavelet_k):
+    def __cinit__(self, size_t n, size_t stride, wavelet_type, size_t wavelet_k):
         self.wavelet = NULL
         self.workspace = NULL
 
-    def __init__(self,size_t n,size_t stride, wavelet_type, size_t wavelet_k):
+    def __init__(self, size_t n, size_t stride, wavelet_type, size_t wavelet_k):
         if not is2pow(n):
             raise NotImplementedError("discrete wavelet transform only implemented when n is a 2-power")
-        GSLDoubleArray.__init__(self,n,stride)
+        GSLDoubleArray.__init__(self, n, stride)
         if wavelet_type=="daubechies":
             self.wavelet = <gsl_wavelet*> gsl_wavelet_alloc(gsl_wavelet_daubechies, wavelet_k)
         elif wavelet_type == "daubechies_centered":
-            self.wavelet = <gsl_wavelet*> gsl_wavelet_alloc(gsl_wavelet_daubechies_centered,wavelet_k)
+            self.wavelet = <gsl_wavelet*> gsl_wavelet_alloc(gsl_wavelet_daubechies_centered, wavelet_k)
         elif wavelet_type == "haar":
-            self.wavelet = <gsl_wavelet *> gsl_wavelet_alloc(gsl_wavelet_haar,wavelet_k)
+            self.wavelet = <gsl_wavelet *> gsl_wavelet_alloc(gsl_wavelet_haar, wavelet_k)
         elif wavelet_type == "haar_centered":
-            self.wavelet = <gsl_wavelet*> gsl_wavelet_alloc(gsl_wavelet_haar_centered,wavelet_k)
+            self.wavelet = <gsl_wavelet*> gsl_wavelet_alloc(gsl_wavelet_haar_centered, wavelet_k)
         elif wavelet_type == "bspline":
-            self.wavelet = <gsl_wavelet*> gsl_wavelet_alloc(gsl_wavelet_bspline,wavelet_k)
+            self.wavelet = <gsl_wavelet*> gsl_wavelet_alloc(gsl_wavelet_bspline, wavelet_k)
         elif wavelet_type == "bspline_centered":
-            self.wavelet = <gsl_wavelet*> gsl_wavelet_alloc(gsl_wavelet_bspline_centered,wavelet_k)
+            self.wavelet = <gsl_wavelet*> gsl_wavelet_alloc(gsl_wavelet_bspline_centered, wavelet_k)
         self.workspace = <gsl_wavelet_workspace*> gsl_wavelet_workspace_alloc(n)
 
     def __dealloc__(self):
@@ -132,10 +131,12 @@ cdef class DiscreteWaveletTransform(GSLDoubleArray):
             gsl_wavelet_workspace_free(self.workspace)
 
     def forward_transform(self):
-        gsl_wavelet_transform_forward(self.wavelet,self.data,self.stride,self.n,self.workspace)
+        gsl_wavelet_transform_forward(self.wavelet, self.data,
+                                      self.stride, self.n, self.workspace)
 
     def backward_transform(self):
-        gsl_wavelet_transform_inverse(self.wavelet,self.data,self.stride,self.n,self.workspace)
+        gsl_wavelet_transform_inverse(self.wavelet, self.data,
+                                      self.stride, self.n, self.workspace)
 
     def plot(self, xmin=None, xmax=None, **args):
         from sage.plot.point import point

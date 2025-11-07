@@ -9,7 +9,7 @@ the Tutte polynomial as described in the paper [HPR2010]_.
     :widths: 30, 70
     :delim: |
 
-    :func:`tutte_polynomial` | Computes the Tutte polynomial of the input graph
+    :func:`tutte_polynomial` | Compute the Tutte polynomial of the input graph
 
 Authors:
 
@@ -250,7 +250,7 @@ class Ear:
     @property
     def s(self):
         """
-        Returns the number of distinct edges in this ear.
+        Return the number of distinct edges in this ear.
 
         EXAMPLES::
 
@@ -266,7 +266,7 @@ class Ear:
     @property
     def vertices(self):
         """
-        Returns the vertices of this ear.
+        Return the vertices of this ear.
 
         EXAMPLES::
 
@@ -282,7 +282,7 @@ class Ear:
     @lazy_attribute
     def unlabeled_edges(self):
         """
-        Returns the edges in this ear.
+        Return the edges in this ear.
 
         EXAMPLES::
 
@@ -468,7 +468,7 @@ class MaximizeDegree(EdgeSelection):
 
 def _cache_key(G):
     """
-    Return the key used to cache the result for the graph G
+    Return the key used to cache the result for the graph G.
 
     This is used by the decorator :func:`_cached`.
 
@@ -484,7 +484,7 @@ def _cache_key(G):
 
 def _cached(func):
     """
-    Wrapper used to cache results of the function `func`
+    Wrapper used to cache results of the function `func`.
 
     This uses the function :func:`_cache_key`.
 
@@ -520,11 +520,11 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
 
     INPUT:
 
-    - ``edge_selector`` (optional; method) this argument allows the user
+    - ``edge_selector`` -- method (optional); this argument allows the user
       to specify his own heuristic for selecting edges used in the deletion
       contraction recurrence
 
-    - ``cache`` -- (optional; dict) a dictionary to cache the Tutte
+    - ``cache`` -- (optional) dictionary to cache the Tutte
       polynomials generated in the recursive process.  One will be
       created automatically if not provided.
 
@@ -584,7 +584,7 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
         52
     """
     R = ZZ['x, y']
-    if G.num_edges() == 0:
+    if not G.n_edges():
         return R.one()
 
     G = G.relabel(inplace=False, immutable=False)  # making sure the vertices are integers
@@ -600,12 +600,12 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
 @_cached
 def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
     """
-    Does the recursive computation of the Tutte polynomial.
+    Do the recursive computation of the Tutte polynomial.
 
     INPUT:
 
     - ``G`` -- the graph
-    - ``x,y`` -- the variables `x,y` respectively
+    - ``x``, ``y`` -- the variables `x`, `y` respectively
     - ``edge_selector`` -- the heuristic for selecting edges used in the
       deletion contraction recurrence
 
@@ -615,7 +615,7 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
         sage: P.tutte_polynomial() # indirect doctest
         x^4 + x^3 + x^2 + x + y
     """
-    if not G.num_edges():
+    if not G.n_edges():
         return x.parent().one()
 
     def recursive_tp(graph=None):
@@ -648,12 +648,12 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
     if len(blocks) > 1:
         return prod([recursive_tp(G.subgraph(block)) for block in blocks])
 
-    components = G.connected_components_number()
+    components = G.number_of_connected_components()
     edge = edge_selector(G)
     unlabeled_edge = edge[:2]
 
     with removed_edge(G, edge):
-        if G.connected_components_number() > components:
+        if G.number_of_connected_components() > components:
             with contracted_edge(G, unlabeled_edge):
                 return x*recursive_tp()
 
@@ -662,12 +662,12 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
     ##################################
 
     # Theorem 4: from Haggard, Pearce, and Royle Note that the formula
-    # at http://homepages.ecs.vuw.ac.nz/~djp/files/TOMS10.pdf is
+    # at https://web.archive.org/web/20110401195911/http://homepages.ecs.vuw.ac.nz/~djp/files/TOMS10.pdf is
     # slightly incorrect.  The initial sum should only go to n-2
     # instead of n (allowing for the last part of the recursion).
     # Additionally, the first operand of the final product should be
     # (x+y^{1...(d_n+d_{n-1}-1)}) instead of just (x+y^(d_n+d_{n-1}-1)
-    if uG.num_verts() == uG.num_edges():  # G is a multi-cycle
+    if uG.n_vertices() == uG.n_edges():  # G is a multi-cycle
         n = len(d)
         result = 0
         for i in range(n - 2):

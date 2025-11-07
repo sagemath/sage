@@ -25,7 +25,7 @@ from sage.rings.integer_ring import ZZ
 
 
 # TO DO -- Add second argument
-#  def __call__(self,v,w=None):
+#  def __call__(self, v, w=None):
 #    if w is None:
 #        return half(v * self._matrix_() * v)
 #    else:
@@ -53,7 +53,6 @@ def disc(self):
         4
         sage: DiagonalQuadraticForm(ZZ, [1,1,1,1]).disc()
         16
-
     """
     if is_odd(self.dim()):
         # This is not so good for characteristic 2.
@@ -89,7 +88,7 @@ def content(self):
 
 
 # in quadratic_form.py
-# def is_primitive(self):
+# def is_primitive(self) -> bool:
 #     """
 #     Checks if the form is a multiple of another form... only over ZZ for now.
 #     """
@@ -110,7 +109,7 @@ def content(self):
 
 def adjoint(self):
     """
-    This gives the adjoint (integral) quadratic form associated to the
+    Return the adjoint (integral) quadratic form associated to the
     given form, essentially defined by taking the adjoint of the matrix.
 
     EXAMPLES::
@@ -129,10 +128,8 @@ def adjoint(self):
         [ 39 2 8 ]
         [ * 19 4 ]
         [ * * 8 ]
-
     """
-    from sage.quadratic_forms.quadratic_form import QuadraticForm as QuadraticForm
-
+    from sage.quadratic_forms.quadratic_form import QuadraticForm
     if is_odd(self.dim()):
         return QuadraticForm(self.matrix().adjoint_classical() * 2)
     return QuadraticForm(self.matrix().adjoint_classical())
@@ -539,7 +536,7 @@ def representation_number_list(self, B):
         sage: Q.representation_number_list(10)                                          # needs sage.libs.pari
         [1, 16, 112, 448, 1136, 2016, 3136, 5504, 9328, 12112]
     """
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
 
     ans = pari(1).concat(self.__pari__().qfrep(B - 1, 1) * 2)
     return ans.sage()

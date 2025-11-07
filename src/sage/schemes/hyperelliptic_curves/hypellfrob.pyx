@@ -42,7 +42,8 @@ from cysignals.signals cimport sig_on, sig_off
 from libcpp.vector cimport vector
 
 from sage.libs.ntl.ntl_ZZ_pContext import ZZ_pContext_factory
-from sage.libs.ntl.all import ZZ, ZZX
+from sage.libs.ntl.ntl_ZZ import ntl_ZZ as ZZ
+from sage.libs.ntl.ntl_ZZX import ntl_ZZX as ZZX
 from sage.matrix.constructor import Matrix
 from sage.rings.padics.factory import Qp
 from sage.rings.big_oh import O as big_oh
@@ -78,7 +79,7 @@ def interval_products(M0, M1, target):
     INPUT:
 
     - ``M0``, ``M1`` -- matrices over `\ZZ/N\ZZ`, so that `M(t) = M_0 + M_1t`
-    - ``target`` -- a list of integers `a_0, b_0, \dots, a_n, b_n`
+    - ``target`` -- list of integers `a_0, b_0, \dots, a_n, b_n`
 
     ALGORITHM:
 
@@ -116,7 +117,6 @@ def interval_products(M0, M1, target):
         [[20]]
         sage: [prod(Matrix(Integers(3^18), 1, 1, [t + 1]) for t in range(3,5))]
         [[20]]
-
     """
     # Sage objects that wrap the NTL objects
     cdef mat_ZZ_p_c mm0, mm1
@@ -124,12 +124,14 @@ def interval_products(M0, M1, target):
     cdef vector[ZZ_c] targ
     cdef ntl_ZZ_pContext_class c = \
         (<ntl_ZZ_pContext_factory>ZZ_pContext_factory).make_c(
-        ntl_ZZ(M0.base_ring().characteristic()))
+            ntl_ZZ(M0.base_ring().characteristic()))
     cdef long dim = M0.nrows()
     sig_on()
     c.restore_c()
+    sig_off()
     set_ntl_matrix_modn_dense(mm0, c, M0)
     set_ntl_matrix_modn_dense(mm1, c, M1)
+    sig_on()
     for t in target:
         targ.push_back(ntl_ZZ(t).x)
     numintervals = len(target)/2
@@ -163,7 +165,7 @@ def hypellfrob(p, N, Q):
 
     - ``p`` -- a prime
     - ``Q`` -- a monic polynomial in `\ZZ[x]` of odd degree; must have no
-      multiple roots mod `p`.
+      multiple roots mod `p`
     - ``N`` -- precision parameter; the output matrix will be correct modulo `p^N`
 
     The prime `p` should satisfy `p > (2g+1)(2N-1)`, where `g =
@@ -200,7 +202,6 @@ def hypellfrob(p, N, Q):
 
         Remove the restriction on `p`. Probably by merging in Robert's code,
         which eventually needs a fast C++/NTL implementation.
-
     """
     # Sage objects that wrap the NTL objects
     cdef ntl_ZZ pp
@@ -244,7 +245,7 @@ def hypellfrob(p, N, Q):
         raise ValueError("Could not compute frobenius matrix"
                          ", because the curve is singular at p.")
 
-    R = Qp(p, N, print_mode="terse")
+    R = Qp(p, N, print_mode='terse')
     prec = big_oh(p**N)
     data = [[mm[j, i]._integer_() + prec for i in range(2 * g)]
             for j in range(2 * g)]
