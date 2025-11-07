@@ -4625,6 +4625,8 @@ REFERENCES:
              dual Leibniz algebras*. Math. Scand., pp. 189--196
              (1995). https://web.archive.org/web/20080706173654/http://www.math.uiuc.edu/K-theory/0015/cup_product.pdf
 
+.. [Lod2001] Jean-Louis Loday, *Dialgebras* in Lect. Notes Math. 1763, pp. 7--66 (2001).
+
 .. [Loe2007] David Loeffler, *Spectral expansions of overconvergent
              modular functions*, Int. Math. Res. Not 2007 (050).
              :arxiv:`math/0701168`.
