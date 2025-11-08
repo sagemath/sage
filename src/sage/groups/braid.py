@@ -2101,9 +2101,10 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: B = BraidGroup(4)
             sage: b = B([1, 2, -3, -2, 3, 1])
             sage: db = b.deformed_burau_matrix(); db
-            [                                ap_0*ap_5 ... bp_0*ap_1*cm_3*bp_4]
-            ...
-            [                           bm_2*bm_3*cp_5 ...      bm_2*am_3*bp_4]
+            [     ap_0*ap_5 ap_0*bp_5 bp_0*bp_1*cm_2*cp_4 + bp_0*ap_1*cm_3*ap_4 bp_0*ap_1*cm_3*bp_4]
+            [     cp_0*ap_5 cp_0*bp_5                                         0                   0]
+            [             0         0                            cp_1*cm_3*ap_4      cp_1*cm_3*bp_4]
+            [bm_2*bm_3*cp_5         0                am_2*cp_4 + bm_2*am_3*ap_4      bm_2*am_3*bp_4]
 
         We check how this relates to the nondeformed Burau matrix::
 

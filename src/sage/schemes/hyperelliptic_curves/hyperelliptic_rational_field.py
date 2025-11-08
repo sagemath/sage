@@ -43,10 +43,10 @@ class HyperellipticCurve_rational_field(hyperelliptic_generic.HyperellipticCurve
             sage: R.<x> = QQ['x']
             sage: H = HyperellipticCurve(x^5 - 2*x + 3)
             sage: H.matrix_of_frobenius(K)
-            [            4*5 + O(5^3)       5 + 2*5^2 + O(5^3) 2 + 3*5 + 2*5^2 + O(5^3)     2 + 5 + 5^2 + O(5^3)]
-            [      3*5 + 5^2 + O(5^3)             3*5 + O(5^3)             4*5 + O(5^3)         2 + 5^2 + O(5^3)]
-            [    4*5 + 4*5^2 + O(5^3)     3*5 + 2*5^2 + O(5^3)       5 + 3*5^2 + O(5^3)     2*5 + 2*5^2 + O(5^3)]
-            [            5^2 + O(5^3)       5 + 4*5^2 + O(5^3)     4*5 + 3*5^2 + O(5^3)             2*5 + O(5^3)]
+            [        4*5 + O(5^3)   5 + 2*5^2 + O(5^3) 2 + 3*5 + 2*5^2 + O(5^3) 2 + 5 + 5^2 + O(5^3)]
+            [  3*5 + 5^2 + O(5^3)         3*5 + O(5^3)             4*5 + O(5^3)     2 + 5^2 + O(5^3)]
+            [4*5 + 4*5^2 + O(5^3) 3*5 + 2*5^2 + O(5^3)       5 + 3*5^2 + O(5^3) 2*5 + 2*5^2 + O(5^3)]
+            [        5^2 + O(5^3)   5 + 4*5^2 + O(5^3)     4*5 + 3*5^2 + O(5^3)         2*5 + O(5^3)]
 
         You can also pass directly a prime `p` with to construct a pAdic field with precision
         ``prec``::

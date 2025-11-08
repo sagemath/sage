@@ -1037,9 +1037,9 @@ class OverconvergentModularFormsSpace(Module):
             [                 0       2^4 + O(2^6) 2^7 + 2^8 + O(2^9)]
             sage: o = OverconvergentModularForms(2, 12, 1/2, base_ring=pAdicField(2))
             sage: o.hecke_matrix(2, 3, exact_arith=True)
-            [                             1                              0                              0]
-            [                             0               33881928/1414477                             64]
-            [                             0 -192898739923312/2000745183529             1626332544/1414477]
+            [1                              0                  0]
+            [0               33881928/1414477                 64]
+            [0 -192898739923312/2000745183529 1626332544/1414477]
 
         Side switch::
 

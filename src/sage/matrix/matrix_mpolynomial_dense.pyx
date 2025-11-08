@@ -238,8 +238,8 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             ....:                [  -1/3*x*y - 3, x*y - x]])
             sage: E = C.echelon_form('bareiss')     # indirect doctest
             sage: E
-            [ -1/3*x*y - 3                                                          x*y - x]
-            [            0 6/5*x^2*y^2 + 3*x*y^3 - 6/5*x^2*y - 11/12*x*y^2 + 18*y^2 + 3/4*y]
+            [-1/3*x*y - 3                                                          x*y - x]
+            [           0 6/5*x^2*y^2 + 3*x*y^3 - 6/5*x^2*y - 11/12*x*y^2 + 18*y^2 + 3/4*y]
             sage: E.swapped_columns()
             (0, 1)
 
@@ -354,15 +354,15 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             sage: A = Matrix(P, 9, 5, l)
             sage: B = A.__copy__()
             sage: B.echelonize('row_reduction'); B
-            [                 1                  0                  0                  0     x0*y0 + x1 + 1]
-            [                 0                  1                  0                  0              x0*y0]
-            [                 0                  0                  1                  0    x0*y0 + x0 + x1]
-            [                 0                  0                  0                  1         x0*y0 + x0]
-            [                 0                  0                  0                  0            x0 + y1]
-            [                 0                  0                  0                  0        x1 + y0 + 1]
-            [                 0                  0                  0                  0         x0*y1 + x0]
-            [                 0                  0                  0                  0              x1*y0]
-            [                 0                  0                  0                  0 x0*y0 + x1*y1 + x0]
+            [1 0 0 0     x0*y0 + x1 + 1]
+            [0 1 0 0              x0*y0]
+            [0 0 1 0    x0*y0 + x0 + x1]
+            [0 0 0 1         x0*y0 + x0]
+            [0 0 0 0            x0 + y1]
+            [0 0 0 0        x1 + y0 + 1]
+            [0 0 0 0         x0*y1 + x0]
+            [0 0 0 0              x1*y0]
+            [0 0 0 0 x0*y0 + x1*y1 + x0]
 
         This is the same result as SINGULAR's ``rowred`` command which
         returns::

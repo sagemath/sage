@@ -700,8 +700,8 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
             sage: pi = AW.loop_representation()
             sage: A,B,C,a,b,g = [pi(gen) for gen in AW.algebra_generators()]
             sage: A
-            [                1/q*lambda^-1 + q*lambda ((-q^2 + 1)/q)*lambda^-1 + ((q^2 - 1)/q)]
-            [                                       0                 q*lambda^-1 + 1/q*lambda]
+            [1/q*lambda^-1 + q*lambda ((-q^2 + 1)/q)*lambda^-1 + ((q^2 - 1)/q)]
+            [                       0                 q*lambda^-1 + 1/q*lambda]
             sage: B
             [             q*lambda^-1 + 1/q*lambda                                     0]
             [((-q^2 + 1)/q) + ((q^2 - 1)/q)*lambda              1/q*lambda^-1 + q*lambda]

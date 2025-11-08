@@ -960,9 +960,9 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
             sage: S = DiGraph({0:{1:['a'], 2:['b']}, 1:{0:['c'], 1:['d']}, 2:{0:['e'],2:['f']}}).path_semigroup()
             sage: S._poincare_series
-            [             (-t + 1)/(-2*t^2 - t + 1)                     t/(-2*t^2 - t + 1)                     t/(-2*t^2 - t + 1)]
-            [                    t/(-2*t^2 - t + 1) (t^2 + t - 1)/(-2*t^3 + t^2 + 2*t - 1)          -t^2/(-2*t^3 + t^2 + 2*t - 1)]
-            [                    t/(-2*t^2 - t + 1)          -t^2/(-2*t^3 + t^2 + 2*t - 1) (-t^2 - t + 1)/(2*t^3 - t^2 - 2*t + 1)]
+            [(-t + 1)/(-2*t^2 - t + 1)                     t/(-2*t^2 - t + 1)                     t/(-2*t^2 - t + 1)]
+            [       t/(-2*t^2 - t + 1) (t^2 + t - 1)/(-2*t^3 + t^2 + 2*t - 1)          -t^2/(-2*t^3 + t^2 + 2*t - 1)]
+            [       t/(-2*t^2 - t + 1)          -t^2/(-2*t^3 + t^2 + 2*t - 1) (-t^2 - t + 1)/(2*t^3 - t^2 - 2*t + 1)]
 
         Let us check that the result is plausible. We study the paths from
         vertex `1` to vertex `2`. The number of paths sorted by length are

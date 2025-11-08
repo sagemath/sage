@@ -155,9 +155,9 @@ The extrinsic curvature (or second fundamental form) as a tensor field on the
 ambient manifold::
 
     sage: N.ambient_extrinsic_curvature()[:] # long time
-    [                                 -(x^2 + y^2)/b^3 (b^2*x + x^3 + x*y^2)/(sqrt(b^2 + x^2 + y^2)*b^3) (y^3 + (b^2 + x^2)*y)/(sqrt(b^2 + x^2 + y^2)*b^3)]
-    [                      sqrt(b^2 + x^2 + y^2)*x/b^3                                  -(b^2 + x^2)/b^3                                          -x*y/b^3]
-    [                      sqrt(b^2 + x^2 + y^2)*y/b^3                                          -x*y/b^3                                  -(b^2 + y^2)/b^3]
+    [           -(x^2 + y^2)/b^3 (b^2*x + x^3 + x*y^2)/(sqrt(b^2 + x^2 + y^2)*b^3) (y^3 + (b^2 + x^2)*y)/(sqrt(b^2 + x^2 + y^2)*b^3)]
+    [sqrt(b^2 + x^2 + y^2)*x/b^3                                  -(b^2 + x^2)/b^3                                          -x*y/b^3]
+    [sqrt(b^2 + x^2 + y^2)*y/b^3                                          -x*y/b^3                                  -(b^2 + y^2)/b^3]
 
 The extrinsic curvature as a tensor field on the submanifold::
 

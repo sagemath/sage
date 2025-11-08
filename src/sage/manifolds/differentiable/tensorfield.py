@@ -3766,8 +3766,8 @@ class TensorField(ModuleElementWithMutability):
             Tensor field of type (1,1) on the 2-dimensional differentiable
              manifold M
             sage: tu0[:]
-            [  ((3*x + 1)*y - 1)/(x^2*y^2 + (x + 1)*y - x - 1) 2*((2*x + 1)*y - 1)/(x^2*y^2 + (x + 1)*y - x - 1)]
-            [    (x*y - 3*x - 3)/(x^2*y^2 + (x + 1)*y - x - 1)   2*(x*y - 2*x - 2)/(x^2*y^2 + (x + 1)*y - x - 1)]
+            [((3*x + 1)*y - 1)/(x^2*y^2 + (x + 1)*y - x - 1) 2*((2*x + 1)*y - 1)/(x^2*y^2 + (x + 1)*y - x - 1)]
+            [  (x*y - 3*x - 3)/(x^2*y^2 + (x + 1)*y - x - 1)   2*(x*y - 2*x - 2)/(x^2*y^2 + (x + 1)*y - x - 1)]
             sage: tu0 == ig['^ac']*t['_cb'] # the same operation in index notation
             True
             sage: tuu0 = tu0.up(g) ; tuu0 # the two indices have been raised, starting from the first one

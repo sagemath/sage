@@ -2164,8 +2164,8 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
                           Defn: x |--> 2*z
                                 y |--> 3*z
         sage: MPf(M)
-        [                    z*t^2 + 58*t - 6*z^2 (-6/7*z^2 - 1/20*z)*t^2 + 29*z^2*t + 6*z]
-        [    (-z + 1)*t^2 + 11*z^2 + 15/2*z + 1/4                           (20*z + 1)*t^2]
+        [                z*t^2 + 58*t - 6*z^2 (-6/7*z^2 - 1/20*z)*t^2 + 29*z^2*t + 6*z]
+        [(-z + 1)*t^2 + 11*z^2 + 15/2*z + 1/4                           (20*z + 1)*t^2]
     """
     def __init__(self, parent, underlying):
         """

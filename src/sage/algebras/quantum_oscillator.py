@@ -111,9 +111,9 @@ class QuantumOscillatorAlgebra(CombinatorialFreeModule):
         sage: quantum_det(pi121)
         1 # 1 # 1
         sage: pi212 = build_repr([2,1,2], [pi1, pi2]); pi212
-        [                   1 # a- # 1                    1 # k # a-                     1 # k # k]
-        [                -q*a- # k # 1    a- # a+ # a- - q*k # 1 # k      a- # a+ # k + k # 1 # a+]
-        [                q^2*k # k # 1 -q*k # a+ # a- - q*a+ # 1 # k   -q*k # a+ # k + a+ # 1 # a+]
+        [   1 # a- # 1                    1 # k # a-                   1 # k # k]
+        [-q*a- # k # 1    a- # a+ # a- - q*k # 1 # k    a- # a+ # k + k # 1 # a+]
+        [q^2*k # k # 1 -q*k # a+ # a- - q*a+ # 1 # k -q*k # a+ # k + a+ # 1 # a+]
         sage: quantum_det(pi212)
         1 # 1 # 1
 

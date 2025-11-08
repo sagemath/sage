@@ -1364,8 +1364,8 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             Defining e0, e1, e2, e3, e4
 
             sage: M._span([Q*e0])
-            [                      1                       0 a^4 + 5*a^3 + 6*a^2 + a                       1                   6*a^2]
-            [                      0                       1 2*a^4 + 6*a^2 + 2*a + 3                       0                       1]
+            [1 0 a^4 + 5*a^3 + 6*a^2 + a 1 6*a^2]
+            [0 1 2*a^4 + 6*a^2 + 2*a + 3 0     1]
 
             sage: M._span([Q*e0, e1])
             [1 0 0 0 0]

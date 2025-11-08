@@ -496,9 +496,9 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
             [             0              0              0              0              1]
             sage: HLQ = Sym.hall_littlewood().Q()
             sage: HLQ.transition_matrix(s,3)
-            [                        -t + 1                        t^2 - t                     -t^3 + t^2]
-            [                             0                  t^2 - 2*t + 1           -t^4 + t^3 + t^2 - t]
-            [                             0                              0 -t^6 + t^5 + t^4 - t^2 - t + 1]
+            [-t + 1       t^2 - t                     -t^3 + t^2]
+            [     0 t^2 - 2*t + 1           -t^4 + t^3 + t^2 - t]
+            [     0             0 -t^6 + t^5 + t^4 - t^2 - t + 1]
             sage: HLQp = Sym.hall_littlewood().Qp()
             sage: HLQp.transition_matrix(s,3)
             [      1       0       0]

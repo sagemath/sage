@@ -2722,11 +2722,11 @@ class Func_krawtchouk(OrthogonalFunction):
         ....:              * krawtchouk(i,m,n,p) * krawtchouk(j,m,n,p)
         ....:              for m in range(n+1)).expand().factor()
         ....:          for i in range(n+1)] for j in range(n+1)])
-        [               1                0                0                0                0]
-        [               0     -4*(p - 1)*p                0                0                0]
-        [               0                0  6*(p - 1)^2*p^2                0                0]
-        [               0                0                0 -4*(p - 1)^3*p^3                0]
-        [               0                0                0                0    (p - 1)^4*p^4]
+        [1            0               0                0             0]
+        [0 -4*(p - 1)*p               0                0             0]
+        [0            0 6*(p - 1)^2*p^2                0             0]
+        [0            0               0 -4*(p - 1)^3*p^3             0]
+        [0            0               0                0 (p - 1)^4*p^4]
 
     We verify the relationship between the Krawtchouk implementations::
 

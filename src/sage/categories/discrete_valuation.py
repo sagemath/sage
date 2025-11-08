@@ -288,10 +288,10 @@ class DiscreteValuationFields(Category_singleton):
                 [t^3 + O(t^10) t^4 + O(t^10) t^5 + O(t^10) t^6 + O(t^10)]
                 sage: H.hessenbergize()
                 sage: H
-                [              1 + O(t^10)   t + t^3 + t^5 + O(t^10)             t^2 + O(t^10)             t^3 + O(t^10)]
-                [              t + O(t^10) t^2 + t^4 + t^6 + O(t^10)             t^3 + O(t^10)             t^4 + O(t^10)]
-                [                  O(t^10)                   O(t^10)                   O(t^10)                   O(t^10)]
-                [                  O(t^10)                   O(t^10)                   O(t^10)                   O(t^10)]
+                [1 + O(t^10)   t + t^3 + t^5 + O(t^10) t^2 + O(t^10) t^3 + O(t^10)]
+                [t + O(t^10) t^2 + t^4 + t^6 + O(t^10) t^3 + O(t^10) t^4 + O(t^10)]
+                [    O(t^10)                   O(t^10)       O(t^10)       O(t^10)]
+                [    O(t^10)                   O(t^10)       O(t^10)       O(t^10)]
 
             Another example over the `p`-adics::
 
