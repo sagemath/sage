@@ -2,12 +2,6 @@
 r"""
 Drinfeld modules over rings of characteristic zero
 
-This module provides the classes
-:class:`sage.rings.function_field.drinfeld_modules.drinfeld_module_charzero.DrinfeldModule_charzero` and
-:class:`sage.rings.function_field.drinfeld_modules.drinfeld_module_charzero.DrinfeldModule_rational`,
-which both inherit
-:class:`sage.rings.function_field.drinfeld_modules.drinfeld_module.DrinfeldModule`.
-
 AUTHORS:
 
 - David Ayotte (2023-09)

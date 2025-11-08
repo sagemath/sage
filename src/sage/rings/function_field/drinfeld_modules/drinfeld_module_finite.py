@@ -2,11 +2,6 @@
 r"""
 Finite Drinfeld modules
 
-This module provides the class
-:class:`sage.rings.function_field.drinfeld_modules.drinfeld_module_finite.DrinfeldModule_finite`,
-which inherits
-:class:`sage.rings.function_field.drinfeld_modules.drinfeld_module.DrinfeldModule`.
-
 AUTHORS:
 
 - Antoine Leudière (2022-04)
@@ -69,7 +64,8 @@ class DrinfeldModule_finite(DrinfeldModule):
         True
 
     The user should never use ``DrinfeldModule_finite`` to test if a
-    Drinfeld module is finite, but rather the ``is_finite`` method::
+    Drinfeld module is finite, but rather the
+    :meth:`sage.rings.function_field.drinfeld_modules.DrinfeldModule.is_finite`` method::
 
         sage: phi.is_finite()
         True
@@ -309,8 +305,8 @@ class DrinfeldModule_finite(DrinfeldModule):
           Anderson motive (see Chapter 2 of [CL2023]_).
 
         If the user specifies an algorithm, then the characteristic
-        polynomial is computed according to the user's input (see
-        the note above), even if it had already been computed.
+        polynomial is computed according to the user's input, even
+        if it had already been computed.
 
         If no algorithm is given, then the function either returns a
         cached value, or if no cached value is available, the
@@ -777,7 +773,7 @@ class DrinfeldModule_finite(DrinfeldModule):
           on the crystalline cohomology (see [MS2023]_).
 
         If the user specifies an algorithm, then the trace is
-        computed according to the user's input (see the note above),
+        computed according to the user's input,
         even if the Frobenius trace or the Frobenius characteristic
         polynomial had already been computed.
 
@@ -1022,6 +1018,15 @@ class DrinfeldModule_finite(DrinfeldModule):
         If the Drinfeld modules do not belong to the same category, an
         exception is raised.
 
+        ALGORITHM:
+
+        Two Drinfeld `A`-modules of equal characteristic are isogenous
+        if and only if:
+
+        - they have the same rank
+        - the characteristic polynomial of the Frobenius endomorphism
+          for both Drinfeld modules are equal.
+
         EXAMPLES::
 
             sage: Fq = GF(2)
@@ -1053,15 +1058,6 @@ class DrinfeldModule_finite(DrinfeldModule):
             Traceback (most recent call last):
             ...
             TypeError: input must be a Drinfeld module
-
-        ALGORITHM:
-
-        Two Drinfeld A-modules of equal characteristic are isogenous
-        if and only if:
-
-        - they have the same rank
-        - the characteristic polynomial of the Frobenius endomorphism
-          for both Drinfeld modules are equal.
         """
         if not isinstance(psi, DrinfeldModule):
             raise TypeError("input must be a Drinfeld module")
