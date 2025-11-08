@@ -1084,9 +1084,10 @@ class Module_free_ambient(Module):
             ((),)
         """
         yield self.an_element()
-        if not self.rank():
+        gens = self.gens()
+        if not gens:
             return
-        yield self.base().an_element() * sum(self.gens())
+        yield self.base().an_element() * sum(gens)
         some_elements_base = iter(self.base().some_elements())
         n = self.degree()
         while True:

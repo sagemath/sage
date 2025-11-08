@@ -11,24 +11,24 @@ automorphism
 
 .. MATH::
 
-    tau_M : \tau^\star M \left[\frac 1[T-z]\right] \to M \left[\frac 1[T-z]\right]
+    \tau_M : \tau^\star M \left[\frac 1{T-z}\right] \to M \left[\frac 1{T-z}\right]
 
 where `\tau^\star M = K \otimes_{K, \text{Frob}} M`.
 
 .. RUBRIC:: Anderson motives attached to Drinfeld modules
 
-Any Drinfeld module `phi` over `(A, \gamma)` with `gamma : A \to K,
+Any Drinfeld module `\phi` over `(A, \gamma)` with `\gamma : A \to K,
 T \mapsto z` gives rise to an Anderson motive. By definition, it is
 `M(\phi) := K\{\tau\}` (the ring of Ore polynomials with commutation
 rule `\tau \lambda = \lambda^q \tau` for `\lambda \in K`) where
 
 - the structure of `\GF{q}[T]`-module is given by right multiplication
-  by `phi_a` (`a \in \GF{q}[T]`),
+  by `\phi_a` (`a \in \GF{q}[T]`),
 
 - the structure of `K`-module is given by left multiplication,
 
 - the automorphism `\tau_{M(\phi)}` is the left multiplication
-  by `tau` in the Ore polynomial ring.
+  by `\tau` in the Ore polynomial ring.
 
 Anderson motives are nevertheless much more general than Drinfeld
 modules. Besides, their linear nature allows for importing many
@@ -49,7 +49,7 @@ We see that `M` has rank `3`; it is actually a general fact that
 the Anderson motive attached a Drinfeld module has the same rank
 than the underlying Drinfeld module.
 
-The canonical basis corresponds to the vectors `tau^i` for `i`
+The canonical basis corresponds to the vectors `\tau^i` for `i`
 varying between `0` and `r-1` where `r` is the rank::
 
     sage: tau = phi.ore_variable()
@@ -113,7 +113,7 @@ which are `T-z` or powers of it. This corresponds to the fact that
 `\tau_M` is only defined after inverting `T-z` in full generality.
 
 SageMath also provides a general constructor :func:`AndersonMotive`
-which allows in particular to explicitely provide the matrix of `tau_M`::
+which allows in particular to explicitely provide the matrix of `\tau_M`::
 
     sage: mat = matrix(2, 2, [[T, z], [1, 1]])
     sage: N = AndersonMotive(A, mat)
@@ -361,7 +361,7 @@ class AndersonMotive_general(OreModule):
     @lazy_attribute
     def _dettau(self):
         r"""
-        Return the leading coefficient of the determinant of `tau`
+        Return the leading coefficient of the determinant of `\tau`
         and its degree.
 
         Only for internal use.
@@ -1026,12 +1026,12 @@ def AndersonMotive(arg1, tau=None, names=None):
 
     The input can be one of the followings:
 
-    - a pair '(A, K)` where `A = \FF_q[t]` is the function
+    - a pair '(A, K)` where `A = \GF{q}[t]` is the function
       base ring and `K` is the coefficient `A`-field; these
       parameters correspond to the trivial Anderson motive
       over `A \otimes K`
 
-    - a pair '(A, z)` where `A = \FF_q[t]` is the function
+    - a pair '(A, z)` where `A = \GF{q}[t]` is the function
       base ring and `z` is an element; the `A`-field is then
       then parent `K` of `z` viewed as an algebra over `A`
       through `A \mapsto K, T \mapsto z`.
@@ -1039,14 +1039,14 @@ def AndersonMotive(arg1, tau=None, names=None):
     - a pair `(A, \tau)` where
 
       - `A` is either the underlying function ring (which
-        currently needs to be of the form `\FF_q[t]`) or
+        currently needs to be of the form `\GF{q}[t]`) or
         a category (of Drinfeld modules or Anderson motives)
 
       - `\tau` is the matrix defining the Anderson motive
 
     - a Drinfeld module
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: A.<T> = GF(7)[]
         sage: K.<z> = GF(7^3)

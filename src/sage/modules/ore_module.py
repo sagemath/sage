@@ -476,9 +476,9 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         TESTS::
 
             sage: M(0)
-            0
+            (0, 0)
             sage: N(0)
-            0
+            (0, 0)
         """
         if isinstance(x, OreModuleElement):
             M = x.parent()._pushout_(self)
