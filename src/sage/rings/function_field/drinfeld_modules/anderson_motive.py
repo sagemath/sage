@@ -1026,21 +1026,20 @@ def AndersonMotive(arg1, tau=None, names=None):
 
     The input can be one of the followings:
 
-    - a pair '(A, K)` where `A = \GF{q}[t]` is the function
-      base ring and `K` is the coefficient `A`-field; these
-      parameters correspond to the trivial Anderson motive
-      over `A \otimes K`
+    - a pair `(A, K)` where `A` is the underlying function
+      ring (which currently needs to be of the form \GF{q}[t]`)
+      and `K` is the `A`-field; these parameters correspond to
+      the trivial Anderson motive over `A \otimes K`
 
-    - a pair '(A, z)` where `A = \GF{q}[t]` is the function
+    - a pair `(A, z)` where `A = \GF{q}[t]` is the function
       base ring and `z` is an element; the `A`-field is then
       then parent `K` of `z` viewed as an algebra over `A`
       through `A \mapsto K, T \mapsto z`.
 
     - a pair `(A, \tau)` where
 
-      - `A` is either the underlying function ring (which
-        currently needs to be of the form `\GF{q}[t]`) or
-        a category (of Drinfeld modules or Anderson motives)
+      - `A` is either `\GF{q}[t]` or a category (of Drinfeld
+        modules or Anderson motives)
 
       - `\tau` is the matrix defining the Anderson motive
 

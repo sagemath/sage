@@ -3,9 +3,9 @@ r"""
 Finite Drinfeld modules
 
 This module provides the class
-:class:`sage.rings.function_fields.drinfeld_module.drinfeld_module_finite.DrinfeldModule_finite`,
+:class:`sage.rings.function_field.drinfeld_modules.drinfeld_module_finite.DrinfeldModule_finite`,
 which inherits
-:class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
+:class:`sage.rings.function_field.drinfeld_modules.drinfeld_module.DrinfeldModule`.
 
 AUTHORS:
 
@@ -234,7 +234,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         Return the Frobenius endomorphism of the Drinfeld module.
 
         The *Frobenius endomorphism* is defined by the Ore polynomial
-        `tau^n`, where `n` is the degree of the base field `K` over
+        `\tau^n`, where `n` is the degree of the base field `K` over
         `\mathbb F_q`.
 
         EXAMPLES::
@@ -294,21 +294,30 @@ class DrinfeldModule_finite(DrinfeldModule):
         - ``algorithm`` (default: ``None``) -- the algorithm
           used to compute the characteristic polynomial
 
-        .. NOTE:
-
         Available algorithms are:
 
-            - ``'CSA'`` -- it exploits the fact that `K\{\tau\}` is a
-              central simple algebra (CSA) over
-              `\GF{q}[\text{Frob}_\phi]` (see Chapter 4 of [CL2023]_).
-            - ``'crystalline'`` -- it uses the action of the Frobenius
-              on the crystalline cohomology (see [MS2023]_).
-            - ``'gekeler'`` -- it tries to identify coefficients by
-              writing that the characteristic polynomial annihilates the
-              Frobenius endomorphism; this algorithm may fail is some
-              cases (see [Gek2008]_).
-            - ``'motive'`` -- it uses the action of the Frobenius on the
-              Anderson motive (see Chapter 2 of [CL2023]_).
+        - ``'CSA'`` -- it exploits the fact that `K\{\tau\}` is a
+          central simple algebra (CSA) over
+          `\GF{q}[\text{Frob}_\phi]` (see Chapter 4 of [CL2023]_).
+        - ``'crystalline'`` -- it uses the action of the Frobenius
+          on the crystalline cohomology (see [MS2023]_).
+        - ``'gekeler'`` -- it tries to identify coefficients by
+          writing that the characteristic polynomial annihilates the
+          Frobenius endomorphism; this algorithm may fail is some
+          cases (see [Gek2008]_).
+        - ``'motive'`` -- it uses the action of the Frobenius on the
+          Anderson motive (see Chapter 2 of [CL2023]_).
+
+        If the user specifies an algorithm, then the characteristic
+        polynomial is computed according to the user's input (see
+        the note above), even if it had already been computed.
+
+        If no algorithm is given, then the function either returns a
+        cached value, or if no cached value is available, the
+        function computes the Frobenius characteristic polynomial
+        from scratch. In that case, if the rank `r` is less than the
+        extension degree `n`, then the ``crystalline`` algorithm is
+        used, while the ``CSA`` algorithm is used otherwise.
 
         The method raises an exception if the user asks for an
         unimplemented algorithm, even if the characteristic polynomial
@@ -349,19 +358,6 @@ class DrinfeldModule_finite(DrinfeldModule):
             Traceback (most recent call last):
             ...
             NotImplementedError: algorithm "NotImplemented" not implemented
-
-        ALGORITHM:
-
-            If the user specifies an algorithm, then the characteristic
-            polynomial is computed according to the user's input (see
-            the note above), even if it had already been computed.
-
-            If no algorithm is given, then the function either returns a
-            cached value, or if no cached value is available, the
-            function computes the Frobenius characteristic polynomial
-            from scratch. In that case, if the rank `r` is less than the
-            extension degree `n`, then the ``crystalline`` algorithm is
-            used, while the ``CSA`` algorithm is used otherwise.
 
         TESTS::
 
@@ -701,7 +697,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         where `K` is the ground field, which as degree `n` over
         `\GF{q}`, `r` is the rank of the Drinfeld module,
         and `\Delta` is the leading coefficient of the generator.
-        This formula is given in Theorem~4.2.7 of [Pap2023]_.
+        This formula is given in Theorem 4.2.7 of [Pap2023]_.
 
         Note that the Frobenius norm computed by this method may be
         different than what is computed as the isogeny norm of the
@@ -709,6 +705,11 @@ class DrinfeldModule_finite(DrinfeldModule):
         endomorphism), which is an ideal defined of the function ring
         given by its monic generator; the Frobenius norm may not be
         monic.
+
+        ALGORITHM:
+
+            The Frobenius norm is computed using the formula, by
+            Gekeler, given in [MS2019]_, Section 4, Proposition 3.
 
         EXAMPLES::
 
@@ -739,11 +740,6 @@ class DrinfeldModule_finite(DrinfeldModule):
             True
             sage: A.ideal(frobenius_norm) == isogeny_norm
             True
-
-        ALGORITHM:
-
-            The Frobenius norm is computed using the formula, by
-            Gekeler, given in [MS2019]_, Section 4, Proposition 3.
         """
         if self._frobenius_norm is not None:
             return self._frobenius_norm
@@ -772,15 +768,25 @@ class DrinfeldModule_finite(DrinfeldModule):
         - ``algorithm`` (default: ``None``) -- the algorithm
           used to compute the characteristic polynomial
 
-        .. NOTE:
-
         Available algorithms are:
 
-            - ``'CSA'`` -- it exploits the fact that `K\{\tau\}` is a
-              central simple algebra (CSA) over
-              `\GF{q}[\text{Frob}_\phi]` (see Chapter 4 of [CL2023]_).
-            - ``'crystalline'`` -- it uses the action of the Frobenius
-              on the crystalline cohomology (see [MS2023]_).
+        - ``'CSA'`` -- it exploits the fact that `K\{\tau\}` is a
+          central simple algebra (CSA) over
+          `\GF{q}[\text{Frob}_\phi]` (see Chapter 4 of [CL2023]_).
+        - ``'crystalline'`` -- it uses the action of the Frobenius
+          on the crystalline cohomology (see [MS2023]_).
+
+        If the user specifies an algorithm, then the trace is
+        computed according to the user's input (see the note above),
+        even if the Frobenius trace or the Frobenius characteristic
+        polynomial had already been computed.
+
+        If no algorithm is given, then the function either returns a
+        cached value, or if no cached value is available, the
+        function computes the Frobenius trace from scratch. In that
+        case, if the rank `r` is less than the extension degree `n`,
+        then the ``crystalline`` algorithm is used, while the
+        ``CSA`` algorithm is used otherwise.
 
         The method raises an exception if the user asks for an
         unimplemented algorithm, even if the characteristic has already
@@ -817,17 +823,6 @@ class DrinfeldModule_finite(DrinfeldModule):
 
         ALGORITHM:
 
-            If the user specifies an algorithm, then the trace is
-            computed according to the user's input (see the note above),
-            even if the Frobenius trace or the Frobenius characteristic
-            polynomial had already been computed.
-
-            If no algorithm is given, then the function either returns a
-            cached value, or if no cached value is available, the
-            function computes the Frobenius trace from scratch. In that
-            case, if the rank `r` is less than the extension degree `n`,
-            then the ``crystalline`` algorithm is used, while the
-            ``CSA`` algorithm is used otherwise.
 
         TESTS:
 

@@ -3,10 +3,10 @@ r"""
 Drinfeld modules over rings of characteristic zero
 
 This module provides the classes
-:class:`sage.rings.function_fields.drinfeld_module.drinfeld_module_charzero.DrinfeldModule_charzero` and
-:class:`sage.rings.function_fields.drinfeld_module.drinfeld_module_charzero.DrinfeldModule_rational`,
+:class:`sage.rings.function_field.drinfeld_modules.drinfeld_module_charzero.DrinfeldModule_charzero` and
+:class:`sage.rings.function_field.drinfeld_modules.drinfeld_module_charzero.DrinfeldModule_rational`,
 which both inherit
-:class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
+:class:`sage.rings.function_field.drinfeld_modules.drinfeld_module.DrinfeldModule`.
 
 AUTHORS:
 
@@ -47,7 +47,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
     Recall that the `\GF{q}[T]`-*characteristic* is defined as the
     kernel of the underlying structure morphism. For general definitions
     and help on Drinfeld modules, see class
-    :class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
+    :class:`sage.rings.function_field.drinfeld_modules.drinfeld_module.DrinfeldModule`.
 
     .. RUBRIC:: Construction:
 

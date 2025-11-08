@@ -3,7 +3,7 @@ r"""
 Drinfeld module morphisms
 
 This module provides the class
-:class:`sage.rings.function_fields.drinfeld_module.morphism.DrinfeldModuleMorphism`.
+:class:`sage.rings.function_field.drinfeld_modules.morphism.DrinfeldModuleMorphism`.
 
 AUTHORS:
 - Antoine Leudière (2022-04)
@@ -606,7 +606,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             ...
             ValueError: the two morphisms must have the same domain
 
-        SEEALSO::
+        .. SEEALSO::
 
             :meth:`left_lcm`
         """
@@ -654,7 +654,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             ...
             ValueError: the two morphisms must have the same domain
 
-        SEEALSO::
+        .. SEEALSO::
 
             :meth:`right_gcd`
         """

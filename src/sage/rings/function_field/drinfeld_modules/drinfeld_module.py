@@ -3,11 +3,11 @@ r"""
 Drinfeld modules
 
 This module provides the class
-:class:`sage.rings.function_field.drinfeld_module.drinfeld_module.DrinfeldModule`.
+:class:`sage.rings.function_field.drinfeld_modules.drinfeld_module.DrinfeldModule`.
 
 For finite Drinfeld modules and their theory of complex multiplication, see
 class
-:class:`sage.rings.function_field.drinfeld_module.drinfeld_module_finite.DrinfeldModule`.
+:class:`sage.rings.function_field.drinfeld_modules.drinfeld_module_finite.DrinfeldModule`.
 
 AUTHORS:
 
@@ -71,7 +71,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     .. NOTE::
 
-        See also :class:`sage.categories.drinfeld_modules`.
+        See also :mod:`sage.categories.drinfeld_modules`.
 
     The *base morphism* is the morphism `\gamma: \GF{q}[T] \to K`.
     The monic polynomial that generates the kernel of `\gamma` is called
@@ -225,7 +225,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     Note that the base field is *not* the field `K`. Rather, it is a
     ring extension
-    (see :class:`sage.rings.ring_extension.RingExtension`) whose
+    (see :mod:`sage.rings.ring_extension`) whose
     underlying ring is `K` and whose base is the base morphism::
 
         sage: phi.base() is K
@@ -338,7 +338,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
           Defn: 0
 
     The underlying Ore polynomial is retrieved with the method
-    :meth:`ore_polynomial`::
+    :meth:`sage.rings.function_field.drinfeld_modules.morphism.DrinfeldModuleMorphism.ore_polynomial`::
 
         sage: frobenius_endomorphism.ore_polynomial()
         τ^6
@@ -394,7 +394,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     `\GF{q}[T]`-module structure on any field extension `L/K`. Let
     `x \in L` and `a` be in the function ring; the action is defined as
     `(a, x) \mapsto \phi_a(x)`. The method :meth:`action` returns a
-    :class:`sage.rings.function_field.drinfeld_modules.action.Action`
+    :class:`sage.rings.function_field.drinfeld_modules.action.DrinfeldModuleAction`
     object representing the Drinfeld module action.
 
     .. NOTE::
@@ -844,7 +844,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     def action(self):
         r"""
         Return the action object
-        (:class:`sage.rings.function_field.drinfeld_modules.action.Action`)
+        (:class:`sage.rings.function_field.drinfeld_modules.action.DrinfeldModuleAction`)
         that represents the module action, on the base codomain, that is
         induced by the Drinfeld module.
 
@@ -1192,7 +1192,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         INPUT:
 
         - ``A_field`` -- a field or an instance of
-          class:`sage.rings.ring_extension.RingExtension`
+          :class:`sage.rings.ring_extension.RingExtension_generic`
 
         EXAMPLES::
 
