@@ -175,6 +175,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         .replace("pkg:generic/sagemath-polytopes-db", "sagemath-db-polytopes")
         .replace("pkg:generic/tachyon", "tachyon")
         .replace("brial", "libbrial") # on Conda, 'brial' refers to the Python package
+        .replace("pkg:generic/cbc", "coin-or-cbc") # on Conda, 'cbc' has a longer name
         for req in all_requirements
     }
     # Exclude requirements not available on conda (for a given platform)
