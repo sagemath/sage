@@ -2092,7 +2092,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         `\phi : A \to K\{\tau\}` is `K\{\tau\}` endowed by:
 
         - the structure of `A`-module where `a \in A` acts by
-          right multiplication by `phi_a`
+          right multiplication by `\phi_a`
 
         - the structure of `K`-vector space given by standard
           left multiplication
@@ -2116,7 +2116,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         Here the rank of the Anderson motive should be understood as its
         rank over `A \otimes K`; it is also the rank `r` of the underlying
         Drinfeld module. More precisely, `M` has a canonical basis, which
-        is formed by the Ore polynomials `1, \ldots, \tau^{r-1}`.
+        is formed by the Ore polynomials `1, \ldots, \tau^{r-1}`::
 
             sage: tau = phi.ore_variable()
             sage: [M(tau^i) for i in range(phi.rank())]
