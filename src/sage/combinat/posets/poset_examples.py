@@ -102,7 +102,7 @@ from sage.misc.classcall_metaclass import ClasscallMetaclass
 import sage.categories.posets
 from sage.combinat.permutation import Permutations, Permutation, to_standard
 from sage.combinat.posets.posets import Poset, FinitePoset, FinitePosets_n
-from sage.combinat.posets import bubble_shuffle, hochschild_lattice
+from sage.combinat.posets import bubble_shuffle, hochschild_lattice, chute_move
 from sage.combinat.posets.d_complete import DCompletePoset
 from sage.combinat.posets.mobile import MobilePoset as Mobile
 from sage.combinat.posets.lattices import (LatticePoset, MeetSemilattice,
@@ -289,6 +289,8 @@ class Posets(metaclass=ClasscallMetaclass):
     ShufflePoset = staticmethod(bubble_shuffle.ShufflePoset)
 
     HochschildLattice = staticmethod(hochschild_lattice.hochschild_lattice)
+
+    ChuteMoveLattice = staticmethod(chute_move.ChuteMoveLattice)
 
     @staticmethod
     def ChainPoset(n, facade=None):
