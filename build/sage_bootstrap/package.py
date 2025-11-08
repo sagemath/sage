@@ -322,12 +322,6 @@ class Package(object):
         # Lower index = higher priority
         tag_priority = {tag: idx for idx, tag in enumerate(compatible_tags)}
         
-        # Import packaging utilities for parsing wheel filenames
-        try:
-            import packaging.utils
-        except ImportError:
-            raise RuntimeError('packaging module not available')
-        
         # Find the best matching tarball
         best_match = None
         best_priority = float('inf')
@@ -343,18 +337,33 @@ class Package(object):
                     best_priority = len(compatible_tags) + 1000
                 continue
             
-            # Parse wheel filename using packaging.utils
+            # Parse wheel filename using packaging.utils via Sage's Python
             # This properly handles multi-platform wheels like:
             # rpds_py-0.28.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
             try:
-                _, _, _, wheel_tags = packaging.utils.parse_wheel_filename(tarball)
+                python_code = 'import packaging.utils, json, sys; _, _, _, tags = packaging.utils.parse_wheel_filename(sys.argv[1]); print(json.dumps([str(t) for t in tags]))'
+                result = subprocess.run(
+                    [sage_script, '-python', '-c', python_code, tarball],
+                    capture_output=True,
+                    text=True,
+                    timeout=10,
+                    cwd=SAGE_ROOT
+                )
+                if result.returncode != 0:
+                    log.warning(f'Could not parse wheel filename {tarball}')
+                    continue
+                
+                wheel_tags_str = json.loads(result.stdout.strip())
+                
+            except subprocess.TimeoutExpired:
+                log.warning(f'Timeout while parsing wheel filename {tarball}')
+                continue
             except Exception as e:
                 log.warning(f'Could not parse wheel filename {tarball}: {e}')
                 continue
             
             # Check each tag in the wheel (multi-platform wheels have multiple tags)
-            for wheel_tag in wheel_tags:
-                wheel_tag_str = str(wheel_tag)
+            for wheel_tag_str in wheel_tags_str:
                 if wheel_tag_str in tag_priority:
                     priority = tag_priority[wheel_tag_str]
                     if priority < best_priority:
