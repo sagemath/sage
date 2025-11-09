@@ -628,6 +628,14 @@ class Parameters():
 # Hypergeometric functions
 ##########################
 
+# Do we want to implement polynomial linear combinaison
+# of hypergeometric functions?
+# Advantages:
+#  . reductions mod p of hypergeometric functions have this form in general
+#  . many methods can be extended to this context
+# Difficulty:
+#  . not sure we can handle easily simplifications!
+
 class HypergeometricAlgebraic(Element):
     def __init__(self, parent, arg1, arg2=None, scalar=None):
         Element.__init__(self, parent)
@@ -775,6 +783,9 @@ class HypergeometricAlgebraic(Element):
     def _mul_(self, other):
         return SR(self) * SR(other)
 
+    def __call__(self, x):
+        return SR(self)(x)
+
     def _compute_coeffs(self, prec):
         coeffs = self._coeffs
         start = len(coeffs) - 1
@@ -921,6 +932,9 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
                     return False
         return True
 
+    def p_curvature_ranks(self):
+        raise NotImplementedError
+
     def monodromy(self, x=0, var='z'):
         params = self._parameters
         if not params.is_balanced():
@@ -973,7 +987,6 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
         # In fact, it is x^s * h[s] * h, with
         # . s = pos
         # . h = self.shift(s)
-        # Do we want to implement polynomial linear combinaison of hypergeometric functions?
 
     def _val_pos(self):
         p = self._p
@@ -1007,7 +1020,13 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
         val, _ = self._val_pos()
         return val
 
-    def log_radius(self):
+    def radius_of_convergence(self):
+        raise NotImplementedError
+
+    def newton_polygon(self):
+        raise NotImplementedError
+
+    def __call__(self, x):
         raise NotImplementedError
 
 
@@ -1015,6 +1034,8 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
 
 class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
     def __init__(self, parent, arg1, arg2=None, scalar=None):
+        # TODO: do we want to simplify automatically if the
+        # hypergeometric series is a polynomial?
         HypergeometricAlgebraic.__init__(self, parent, arg1, arg2, scalar)
         self._p = p = self.base_ring().cardinality()
         self._coeffs = [Qp(p, 1)(self._scalar)]
@@ -1071,6 +1092,18 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
             q *= p
         return True
 
+    def __call__(self, x):
+        return self.polynomial()(x)
+
+    def is_polynomial(self):
+        raise NotImplementedError
+
+    def degree(self):
+        raise NotImplementedError
+
+    def polynomial(self):
+        raise NotImplementedError
+
     def is_algebraic(self):
         return True
 
@@ -1088,7 +1121,8 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
             rows.append([Li[j] for j in range(n)])
         return matrix(rows)
 
-    def p_curvature_corank(self):
+    def p_curvature_corank(self):  # maybe p_curvature_rank is preferable?
+        # TODO: check if it is also correct when the parameters are not balanced
         return self._parameters.q_interlacing_number(self._char)
 
     def dwork_relation(self):
