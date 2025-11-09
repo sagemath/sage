@@ -264,7 +264,12 @@ class SageKernelSpec:
             import sys
             import shutil
             from pathlib import Path
-            if Path(shutil.which(spec.argv[0])).resolve() != Path(sys.executable).resolve():
+            kernel_executable = shutil.which(spec.argv[0])
+            if not kernel_executable:
+                warnings.warn(f'The kernel named {ident} does not seem to be runnable; '
+                              'check your Jupyter configuration '
+                              '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html).')
+            if Path(kernel_executable).resolve() != Path(sys.executable).resolve():
                 warnings.warn(f'The kernel named {ident} does not seem to correspond to this '
                               'installation of SageMath; check your Jupyter configuration '
                               '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html).')
