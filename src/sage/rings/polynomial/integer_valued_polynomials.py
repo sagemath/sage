@@ -552,10 +552,9 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             d = len(h) - 1
             m = matrix(QQ, d + 1, d + 1,
                        lambda j, i: (-1)**(d - j) * binomial(d - i, d - j))
-            v = vector(QQ, [h[i] for i in range(d + 1)])
             R = self.base_ring()
-            return self._from_dict({i: R(c)
-                                    for i, c in enumerate(m * v)})
+            v = vector(R, [h[i] for i in range(d + 1)])
+            return self._from_dict(dict(enumerate(m * v)))
 
         def _element_constructor_(self, x):
             r"""
