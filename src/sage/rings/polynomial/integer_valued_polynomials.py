@@ -824,7 +824,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     sage: ex.h_vector()
                     (0, 1, 4, 1)
                 """
-                d = max(self.support(), default=-1)
+                d = ZZ(max(self.support(), default=-1))
                 m = matrix(QQ, d + 1, d + 1,
                            lambda j, i: (-1)**(d - j) * (d - i).binomial(d - j))
                 v = vector(self.base_ring(),
