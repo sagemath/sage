@@ -127,10 +127,10 @@ class Parameters():
         EXAMPLES::
 
             sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: p
+            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: pa
             ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: type(p)
+            sage: type(pa)
             <class 'sage.functions.hypergeometric_algebraic.Parameters'>
 
         By default, parameters are sorted, duplicates are removed and
@@ -186,8 +186,8 @@ class Parameters():
         EXAMPLES::
 
             sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: p  # indirect doctest
+            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: pa  # indirect doctest
             ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
         """
         return "(%s, %s)" % (self.top, self.bottom)
@@ -207,18 +207,18 @@ class Parameters():
         EXAMPLES::
 
             sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: p
+            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: pa
             ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: p.is_balanced()
+            sage: pa.is_balanced()
             True
 
         ::
 
-            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5], add_one=False)
-            sage: p
+            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5], add_one=False)
+            sage: pa
             ((1/4, 1/3, 1/2, 1), (2/5, 3/5, 1))
-            sage: p.is_balanced()
+            sage: pa.is_balanced()
             False
         """
         return len(self.top) == len(self.bottom)
@@ -232,26 +232,26 @@ class Parameters():
         sign (plus or minus 1), where top parameters are assigned -1 and bottom
         parameters +1. Sorting the list lexecographically according to the
         first two entries of the tuples sorts the corresponing parameters
-        according to the total ordering << defined on p.6 in ([Chr1986]_).
+        according to the total ordering (defined on p.6 in [Chr1986]_).
 
         INPUT:
 
-            - ``c`` -- integer (default: ``1``)
+        - ``c`` -- an integer (default: ``1``)
 
         EXAMPLES::
 
             sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: p
+            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: pa
             ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: p.christol_sorting(7)
+            sage: pa.christol_sorting(7)
             [(12, -3/5, 1),
              (20, -1/3, -1),
              (30, -1/2, -1),
              (45, -1/4, -1),
              (48, -2/5, 1),
              (60, -1, 1)]
-            """
+        """
         d = self.d
         A = [(d - (-d*c*a) % d, -a, -1) for a in self.top]
         B = [(d - (-d*c*b) % d, -b, 1) for b in self.bottom]
@@ -266,31 +266,31 @@ class Parameters():
 
         INPUT:
 
-            - ``c`` -- an integer
+        - ``c`` -- an integer
 
         EXAMPLES::
 
             sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: p
+            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: pa
             ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: p.christol_sorting(7)
+            sage: pa.christol_sorting(7)
             [(12, -3/5, 1),
              (20, -1/3, -1),
              (30, -1/2, -1),
              (45, -1/4, -1),
              (48, -2/5, 1),
              (60, -1, 1)]
-            sage: p.parenthesis_criterion(7)
+            sage: pa.parenthesis_criterion(7)
             False
-            sage: p.christol_sorting(1)
+            sage: pa.christol_sorting(1)
             [(15, -1/4, -1),
              (20, -1/3, -1),
              (24, -2/5, 1),
              (30, -1/2, -1),
              (36, -3/5, 1),
              (60, -1, 1)]
-            sage: p.parenthesis_criterion(1)
+            sage: pa.parenthesis_criterion(1)
             True
         """
         parenthesis = 0
@@ -313,28 +313,28 @@ class Parameters():
 
         INPUT:
 
-            - ``c`` -- integer.
+        - ``c`` -- an integer
 
         EXAMPLES::
 
             sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: p = Parameters([1/3, 2/3], [1/2])
-            sage: p
+            sage: pa = Parameters([1/3, 2/3], [1/2])
+            sage: pa
             ((1/3, 2/3), (1/2, 1))
-            sage: p.interlacing_criterion(1)
+            sage: pa.interlacing_criterion(1)
             True
-            sage: p.interlacing_criterion(5)
+            sage: pa.interlacing_criterion(5)
             True
 
         ::
 
             sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: p = Parameters([1/8, 3/8, 5/8], [1/4, 1/2])
-            sage: p
+            sage: pa = Parameters([1/8, 3/8, 5/8], [1/4, 1/2])
+            sage: pa
             ((1/8, 3/8, 5/8), (1/4, 1/2, 1))
-            sage: p.interlacing_criterion(1)
+            sage: pa.interlacing_criterion(1)
             True
-            sage: p.interlacing_criterion(3)
+            sage: pa.interlacing_criterion(3)
             False
         """
         previous_paren = 1
@@ -352,15 +352,15 @@ class Parameters():
 
         INPUT:
 
-            - ``q`` -- integer
+        - ``q`` -- an integer
 
         EXAMPLES::
 
             sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: p
+            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: pa
             ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: p.q_christol_sorting(7)
+            sage: pa.q_christol_sorting(7)
             [(2, 1), (2.5, -1), (3.5, -1), (5.5, -1), (6, 1), (7, 1)]
         """
         A = [(1/2 + (-a) % q, -1) for a in self.top]
@@ -370,23 +370,23 @@ class Parameters():
     def q_parenthesis(self, q):
         r"""
         Return maximal value of the sum of all the second entries of the pairs
-        in a prefix of ``self.q_christol_sorting(q)`` and the first entry of 
+        in a prefix of ``self.q_christol_sorting(q)`` and the first entry of
         the last pair in the prefix of smallest length where this value is
         attained.
 
         INPUT:
 
-            - ``q`` -- integer.
+        - ``q`` -- an integer
 
         EXAMPLES::
 
             sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: p
+            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: pa
             ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: p.q_christol_sorting(7)
+            sage: pa.q_christol_sorting(7)
             [(2, 1), (2.5, -1), (3.5, -1), (5.5, -1), (6, 1), (7, 1)]
-            sage: p.q_parenthesis(7)
+            sage: pa.q_parenthesis(7)
             (2, 1)
         """
         parenthesis = maximum = shift = 0
@@ -406,21 +406,21 @@ class Parameters():
 
         INPUT:
 
-            - ``q`` -- integer
+        - ``q`` -- an integer
 
         EXAMPLES::
 
             sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: p
+            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: pa
             ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: p.q_christol_sorting(7)
+            sage: pa.q_christol_sorting(7)
             [(2, 1), (2.5, -1), (3.5, -1), (5.5, -1), (6, 1), (7, 1)]
-            sage: p.q_parenthesis_criterion(7)
+            sage: pa.q_parenthesis_criterion(7)
             False
-            sage: p.q_christol_sorting(61)
+            sage: pa.q_christol_sorting(61)
             [(15.5, -1), (20.5, -1), (25, 1), (30.5, -1), (37, 1), (61, 1)]
-            sage: p.q_parenthesis_criterion(61)
+            sage: pa.q_parenthesis_criterion(61)
             True
         """
         parenthesis = 0
@@ -438,17 +438,17 @@ class Parameters():
 
         INPUT:
 
-            - ``q`` -- integer.
+        - ``q`` -- an integer.
 
         EXAMPLES::
 
             sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: p
+            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: pa
             ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: p.q_christol_sorting(7)
+            sage: pa.q_christol_sorting(7)
             [(2, 1), (2.5, -1), (3.5, -1), (5.5, -1), (6, 1), (7, 1)]
-            sage: p.q_interlacing_number(7)
+            sage: pa.q_interlacing_number(7)
             1
         """
         interlacing = 0
@@ -469,19 +469,19 @@ class Parameters():
         EXAMPLES::
 
             sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: p = Parameters([5/2, -1/2, 5/3], [3/2, 1/3])
-            sage: p
+            sage: pa = Parameters([5/2, -1/2, 5/3], [3/2, 1/3])
+            sage: pa
             ((-1/2, 5/3, 5/2), (1/3, 3/2, 1))
-            sage: p.remove_positive_integer_differences()
+            sage: pa.remove_positive_integer_differences()
             ((-1/2, 5/3), (1/3, 1))
 
         The choice of which pair with integer differences to remove first
         is important::
 
-            sage: p = Parameters([4, 2, 1/2], [1, 3])
-            sage: p
+            sage: pa = Parameters([4, 2, 1/2], [1, 3])
+            sage: pa
             ((1/2, 2, 4), (1, 3, 1))
-            sage: p.remove_positive_integer_differences()
+            sage: pa.remove_positive_integer_differences()
             ((1/2,), (1,))
         """
         differences = []
@@ -507,18 +507,18 @@ class Parameters():
         EXAMPLES::
 
             sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: p
+            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: pa
             ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: p.has_negative_integer_differences()
+            sage: pa.has_negative_integer_differences()
             False
 
         ::
 
-            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/2])
-            sage: p
+            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/2])
+            sage: pa
             ((1/4, 1/3, 1/2), (2/5, 3/2, 1))
-            sage: p.has_negative_integer_differences()
+            sage: pa.has_negative_integer_differences()
             True
         """
         return any(a - b in ZZ and a < b for a in self.top for b in self.bottom)
@@ -529,15 +529,15 @@ class Parameters():
 
         INPUT:
 
-            - ``s`` -- rational number.
+        - ``s`` -- a rational number
 
         EXAMPLES::
 
             sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: p
+            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: pa
             ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: p.shift(2)
+            sage: pa.shift(2)
             ((1, 9/4, 7/3, 5/2), (12/5, 13/5, 3, 1))
         """
         top = [a+s for a in self.top]
@@ -552,10 +552,10 @@ class Parameters():
         EXAMPLES::
 
             sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: p = Parameters([5/4, 1/3, 2], [2/5, -2/5])
-            sage: p
+            sage: pa = Parameters([5/4, 1/3, 2], [2/5, -2/5])
+            sage: pa
             ((1/3, 5/4, 2), (-2/5, 2/5, 1))
-            sage: p.decimal_part()
+            sage: pa.decimal_part()
             ((1/4, 1/3, 1), (2/5, 3/5, 1))
         """
         top = [1 + a - ceil(a) for a in self.top]
@@ -565,25 +565,31 @@ class Parameters():
     def dwork_image(self, p):
         r"""
         Return the parameters obtained by applying the Dwork map to each of
-        the parameters. The Dwork map D_p(x) of a p-adic integer x is defined
-        as the unique p-adic integer such that p*D_p(x) - x is a nonnegative
-        integer smaller than p. Raise a ValuError in case the prime is not
-        coprime to the common denominators of the parameters.
+        the parameters. The Dwork map `D_p(x)` of a p-adic integer x is defined
+        as the unique p-adic integer such that `p D_p(x) - x` is a nonnegative
+        integer smaller than p.
 
         INPUT:
 
-            - ``p`` -- prime number.
+        - ``p`` -- a prime number
 
         EXAMPLE::
 
             sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: p
+            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: pa
             ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: p.dwork_image(7)
+            sage: pa.dwork_image(7)
             ((1/3, 1/2, 3/4), (1/5, 4/5, 1))
+
+        If `p` is not coprime to the common denominators of the parameters,
+        a ``ValueError`` is raised::
+
+            sage: pa.dwork_image(3)
+            Traceback (most recent call last):
+            ...
+            ValueError: denominators of parameters are not coprime to p
         """
-        # Maybe add doctest for ValueError
         try:
             top = [(a + (-a) % p) / p for a in self.top]
             bottom = [(b + (-b) % p) / p for b in self.bottom]
@@ -599,17 +605,16 @@ class Parameters():
 
         INPUT:
 
-            - ``p`` -- prime number.
+        - ``p`` -- a prime number
 
         EXAMPLES::
 
             sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: p = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: p
+            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: pa
             ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: p.frobenius_order(7)
+            sage: pa.frobenius_order(7)
             2
-
         """
         param = self.decimal_part()
         iter = param.dwork_image(p)
