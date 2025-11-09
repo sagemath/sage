@@ -266,7 +266,7 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.transitive_closure` | Compute the transitive closure of a graph and returns it.
     :meth:`~GenericGraph.transitive_reduction` | Return a transitive reduction of a graph.
     :meth:`~GenericGraph.min_spanning_tree` | Return the edges of a minimum spanning tree.
-    :meth:`~GenericGraph.spanning_trees_count` | Return the number of spanning trees in a graph.
+    :meth:`~GenericGraph.number_of_spanning_trees` | Return the number of spanning trees in a graph.
     :meth:`~GenericGraph.dominator_tree`    | Return a dominator tree of the graph.
     :meth:`~GenericGraph.connected_subgraph_iterator` | Iterator over the induced connected subgraphs of order at most `k`
 
@@ -5359,7 +5359,7 @@ class GenericGraph(GenericGraph_pyx):
                     for u, v in E]
         raise NotImplementedError("minimum spanning tree algorithm '%s' is not implemented" % algorithm)
 
-    def spanning_trees_count(self, root_vertex=None):
+    def number_of_spanning_trees(self, root_vertex=None):
         r"""
         Return the number of spanning trees in a graph.
 
@@ -5402,14 +5402,14 @@ class GenericGraph(GenericGraph_pyx):
         EXAMPLES::
 
             sage: G = graphs.PetersenGraph()
-            sage: G.spanning_trees_count()                                              # needs sage.modules
+            sage: G.number_of_spanning_trees()                                          # needs sage.modules
             2000
 
         ::
 
             sage: n = 11
             sage: G = graphs.CompleteGraph(n)
-            sage: ST = G.spanning_trees_count()                                         # needs sage.modules
+            sage: ST = G.number_of_spanning_trees()                                     # needs sage.modules
             sage: ST == n ^ (n - 2)                                                     # needs sage.modules
             True
 
@@ -5418,11 +5418,11 @@ class GenericGraph(GenericGraph_pyx):
             sage: # needs sage.modules
             sage: M = matrix(3, 3, [0, 1, 0, 0, 0, 1, 1, 1, 0])
             sage: D = DiGraph(M)
-            sage: D.spanning_trees_count()
+            sage: D.number_of_spanning_trees()
             1
-            sage: D.spanning_trees_count(0)
+            sage: D.number_of_spanning_trees(0)
             1
-            sage: D.spanning_trees_count(2)
+            sage: D.number_of_spanning_trees(2)
             2
         """
         if not self.order():
@@ -5447,6 +5447,8 @@ class GenericGraph(GenericGraph_pyx):
         M[index, index] += 1
         return abs(M.determinant())
 
+    spanning_trees_count = number_of_spanning_trees
+    
     def cycle_basis(self, output='vertex'):
         r"""
         Return a list of cycles which form a basis of the cycle space of
