@@ -5448,7 +5448,7 @@ class GenericGraph(GenericGraph_pyx):
         return abs(M.determinant())
 
     spanning_trees_count = number_of_spanning_trees
-    
+
     def cycle_basis(self, output='vertex'):
         r"""
         Return a list of cycles which form a basis of the cycle space of
