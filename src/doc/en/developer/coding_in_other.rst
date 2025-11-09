@@ -46,7 +46,7 @@ The ``gen`` class is defined in
 :sage_root:`src/sage/libs/cypari2/gen.pyx`, and this is where we
 add the method ``matfrobenius``:
 
-.. CODE-BLOCK:: cython
+.. code-block:: cython
 
     def matfrobenius(self, flag=0):
         r"""
@@ -102,7 +102,7 @@ class where we call the ``matfrobenius()`` method on the PARI object
 associated to the matrix after doing some sanity checking. Then we
 convert output from PARI to Sage objects:
 
-.. CODE-BLOCK:: cython
+.. code-block:: cython
 
     def frobenius_form(self, flag=0, var='x'):
         """
@@ -171,7 +171,7 @@ For example, suppose we want to make a wrapper for the computation of
 the Cartan matrix of a simple Lie algebra. The Cartan matrix of `G_2`
 is available in GAP using the commands:
 
-.. CODE-BLOCK:: gap
+.. code-block:: gap
 
     gap> L:= SimpleLieAlgebra( "G", 2, Rationals );
     <Lie algebra of dimension 14 over Rationals>
@@ -202,7 +202,7 @@ can convert back to sage using the method ``sage`` if it works.
 
 .. skip
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
     def cartan_matrix(typ, rank):
         """
@@ -326,7 +326,7 @@ to carry this out.
 
 Here is an example on how to use this command in Singular:
 
-.. CODE-BLOCK:: text
+.. code-block:: text
 
      A Computer Algebra System for Polynomial Computations   /   version 3-0-0
                                                            0<
@@ -449,7 +449,7 @@ just that.
 
 .. skip
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
     def points_parser(string_points, F):
         """
@@ -509,7 +509,7 @@ ourselves to points of degree one.
 
 .. skip
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
     def places_on_curve(f, F):
         """
@@ -593,7 +593,7 @@ Next, we implement the general function (for brevity we omit the
 docstring, which is the same as above). Note that the ``point_parser``
 function is not required:
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
     def places_on_curve(f, F):
         p = F.characteristic()
@@ -634,7 +634,7 @@ For example, here is part of the file
 defines an interface between Sage and Octave, an open source program
 for doing numerical computations, among other things:
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
     import os
     from expect import Expect, ExpectElement
@@ -648,7 +648,7 @@ basic class for interfaces. The third line defines the class
 ``Octave``; it derives from ``Expect`` as well. After this comes a
 docstring, which we omit here (see the file for details). Next comes:
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
         def __init__(self, script_subdirectory="", logfile=None,
                      server=None, server_tmpdir=None):
@@ -666,7 +666,7 @@ docstring, which we omit here (see the file for details). Next comes:
 
 This uses the class ``Expect`` to set up the Octave interface:
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
         def set(self, var, value):
             """
@@ -692,7 +692,7 @@ These let users type ``octave.set('x', 3)``, after which
 ``octave.get('x')`` returns ``' 3'``. Running ``octave.console()``
 dumps the user into an Octave interactive shell:
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
         def solve_linear_system(self, A, b):
             """

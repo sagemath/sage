@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Processes for running doctests
 
@@ -516,6 +515,7 @@ class SageSpoofInOut(SageObject):
 
 
 from collections import namedtuple
+
 TestResults = namedtuple('TestResults', 'failed attempted')
 
 
@@ -1225,7 +1225,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: ex = doctests[0].examples[0]
             sage: print(DTR._failure_header(doctests[0], ex))
             **********************************************************************
-            File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
+            File ".../sage/doctest/forker.py", line ..., in sage.doctest.forker
             Failed example:
                 doctest_var = 42; doctest_var^2
             <BLANKLINE>
@@ -1235,7 +1235,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: import doctest
             sage: print(doctest.DocTestRunner._failure_header(DTR, doctests[0], ex))
             **********************************************************************
-            File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
+            File ".../sage/doctest/forker.py", line ..., in sage.doctest.forker
             Failed example:
                 doctest_var = Integer(42); doctest_var**Integer(2)
             <BLANKLINE>
@@ -1244,7 +1244,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
             sage: print(DTR._failure_header(doctests[0], ex, message='Hello there!'))
             **********************************************************************
-            File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
+            File ".../sage/doctest/forker.py", line ..., in sage.doctest.forker
             Hello there!
                 doctest_var = 42; doctest_var^2
             <BLANKLINE>
@@ -1256,7 +1256,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: DTR.options.format = 'github'
             sage: print(DTR._failure_header(doctests[0], ex))
             **********************************************************************
-            ::error title=Failed example:,file=.../sage/doctest/forker.py,line=12::Failed example:
+            ::error title=Failed example:,file=.../sage/doctest/forker.py,line=...::Failed example:
                 doctest_var = 42; doctest_var^2
             <BLANKLINE>
         """
@@ -1346,7 +1346,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
             sage: DTR.report_start(sys.stdout.write, doctests[0], ex)
-            Trying (line 12):    doctest_var = 42; doctest_var^2
+            Trying (line ...):    doctest_var = 42; doctest_var^2
             Expecting:
                 1764
         """
@@ -1443,7 +1443,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: DTR.no_failure_yet = True
             sage: DTR.report_failure(sys.stdout.write, doctests[0], ex, 'BAD ANSWER\n', {})
             **********************************************************************
-            File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
+            File ".../sage/doctest/forker.py", line ..., in sage.doctest.forker
             Failed example:
                 doctest_var = 42; doctest_var^2
             Expected:
@@ -1513,8 +1513,9 @@ class SageDocTestRunner(doctest.DocTestRunner):
                         print(src)
                         if ex.want:
                             print(doctest._indent(ex.want[:-1]))
-                    from sage.repl.configuration import sage_ipython_config
                     from IPython.terminal.embed import InteractiveShellEmbed
+
+                    from sage.repl.configuration import sage_ipython_config
                     cfg = sage_ipython_config.default()
                     cfg.InteractiveShell.enable_tip = False
                     # Currently this doesn't work: prompts only work in pty
@@ -1580,7 +1581,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: check.walltime = 3.12
             sage: DTR.report_overtime(sys.stdout.write, doctests[0], ex, 'BAD ANSWER\n', check_timer=check)
             **********************************************************************
-            File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
+            File ".../sage/doctest/forker.py", line ..., in sage.doctest.forker
             Warning: slow doctest:
                 doctest_var = 42; doctest_var^2
             Test ran for 1.23s cpu, 2.50s wall

@@ -4427,6 +4427,11 @@ REFERENCES:
              modular forms*, LMS J. of Comput. Math. 14 (2011),
              214-231.
 
+.. [Law2011] Shirley Law and Nathan Reading,
+             *The Hopf algebra of diagonal rectangulations*,
+             \J. Comb. Theory, Ser. A 119, No. 3, 788-824 (2012).
+             :doi:`10.1016/j.jcta.2011.09.006`
+
 .. [Laz1992] Daniel Lazard, *Solving Zero-dimensional Algebraic
              Systems*, in Journal of Symbolic Computation (1992)
              vol\. 13, pp\. 117-131
