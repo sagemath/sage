@@ -1,10 +1,12 @@
 r"""
 Chute move lattices
 
-Chute move posets were defined by Rubey in [Rub2011]_.  They were
-shown to be lattices independently by Sara C. Billey, Connor
-McCausland, Clare Minnerath in [Bil2025]_ and by Ilani Axelrod-Freed,
-Colin Defant, Hanna Mularczyk, Son Nguyen, Katherine Tung [Axe2025]_.
+Chute move posets were defined by Rubey in [Rub2011]_ as a
+generalization of the chute and ladder posets of Bergeron and Billey
+[BB1993]_.  They were shown to be lattices independently by Sara
+Billey, Connor McCausland and Clare Minnerath in [BMM2025]_ and by
+Ilani Axelrod-Freed, Colin Defant, Hanna Mularczyk, Son Nguyen and
+Katherine Tung in [ADMNT2025]_.
 """
 from sage.categories.finite_lattice_posets import FiniteLatticePosets
 from sage.combinat.permutation import Permutation
@@ -60,34 +62,19 @@ class PolyominoFilling(SageObject):
         # Build TikZ code
         tikz_lines = []
         tikz_lines.append(r"\begin{tikzpicture}[x=%scm,y=%scm]" % (cell_size, cell_size))
-
-        # Optionally draw a faint background rectangle for the whole bounding box
-        tikz_lines.append(r"  % bounding box (for reference, not stroked)")
         tikz_lines.append(r"  \path[use as bounding box] (0,0) rectangle (%d,%d);" % (width, height))
-        tikz_lines.append("")
-
         # Draw each cell as a unit square at shifted coordinates
         if draw_grid_lines:
-            tikz_lines.append(r"  % draw cells")
             for (x, y) in self._P:
                 sx, sy = x + shift_x, y + shift_y
                 tikz_lines.append(f"  \\draw[{stroke_width}] ({sx},{sy}) rectangle ({sx+1},{sy+1});")
         else:
-            tikz_lines.append(r"  % no grid lines; draw filled white squares to define shape")
             for (x, y) in self._P:
                 sx, sy = x + shift_x, y + shift_y
                 tikz_lines.append(f"  \\fill[white] ({sx},{sy}) rectangle ({sx+1},{sy+1});")
 
-        tikz_lines.append("")
-
-        # Place bullets (or arbitrary TeX) at the center of cells F
-        tikz_lines.append(r"  % bullets in selected cells")
         for (x, y) in self._F:
-            if (x, y) not in self._P:
-                # skip or optionally raise error: here we skip invalid bullets
-                continue
             sx, sy = x + shift_x, y + shift_y
-            # place a node at the center; use baseline to center math mode bullet nicely
             tikz_lines.append(f"  \\node at ({sx+0.5},{sy+0.5}) {{${bullet_tex}$}};")
 
         tikz_lines.append(r"\end{tikzpicture}")
