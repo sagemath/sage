@@ -224,6 +224,7 @@ class GT_Learning_Window(QWidget):
             self.clear_layout(layout)
             self.main_layout.removeItem(layout)
             layout.deleteLater()
+        self.quiz_vert_edge_layout = QHBoxLayout()
         
     def on_quiz_graph(self):
         for layout in [self.vert_layout, self.edge_layout]:
