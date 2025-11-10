@@ -269,6 +269,7 @@ class SageKernelSpec:
                 warnings.warn(f'The kernel named {ident} does not seem to be runnable; '
                               'check your Jupyter configuration '
                               '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html).')
+                return
             if Path(kernel_executable).resolve() != Path(sys.executable).resolve():
                 warnings.warn(f'The kernel named {ident} does not seem to correspond to this '
                               'installation of SageMath; check your Jupyter configuration '
