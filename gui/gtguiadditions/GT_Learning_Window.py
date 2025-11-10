@@ -1,5 +1,6 @@
 import sys
 import tempfile
+import random
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QMessageBox, QLabel, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QComboBox, QDialog
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
@@ -85,7 +86,7 @@ class GT_Learning_Window(QWidget):
         self.main_layout.addLayout(self.edge_layout)
 
         quiz_layout = QHBoxLayout()
-        self.quiz_vert_edge_button = QPushButton ("Quiz Me with Vertices and Edges")
+        self.quiz_vert_edge_button = QPushButton ("Quiz Me with Edge List")
         self.quiz_vert_edge_button.clicked.connect(self.on_quiz_vert_edge)
         quiz_layout.addWidget(self.quiz_vert_edge_button)
 
@@ -94,6 +95,10 @@ class GT_Learning_Window(QWidget):
         quiz_layout.addWidget(self.quiz_graph_button)
         self.main_layout.addLayout(quiz_layout)
 
+        self.reset_button = QPushButton("Reset Quiz")
+        self.reset_button.clicked.connect(self.on_reset_quiz)
+        self.reset_button.hide() 
+        self.main_layout.addWidget(self.reset_button)
 
         #button to display graph
         self.display_graph_button = QPushButton("Display Graph")
@@ -189,49 +194,187 @@ class GT_Learning_Window(QWidget):
         self.glossary_button.clicked.connect(self.show_glossary)
         self.main_layout.addWidget(self.glossary_button)
 
-        # main layout
         self.setLayout(self.main_layout)
 
-    #create graph from vertices and edges to use in other functions
     def get_graph(self):
+        if hasattr(self, "current_quiz_graph") and self.current_quiz_graph is not None:
+            return self.current_quiz_graph, list(self.current_quiz_graph.vertices())
+
         vert_text = self.vert_textbox.text()
-        vertices = [v.strip() for v in vert_text.split(',') if v.strip()] #takes input and puts it in correct form for graph
+        vertices = [v.strip() for v in vert_text.split(',') if v.strip()]
+    
         edge_text = self.edge_textbox.text()
         edge_pairs = []
-        for e in edge_text.split('),'): #takes input and puts it in correct form for graph
+        for e in edge_text.split('),'):
             e = e.replace('(', '').replace(')', '').strip()
             if e:
                 parts = e.split(',')
                 if len(parts) == 2:
                     edge_pairs.append((parts[0].strip(), parts[1].strip()))
+    
         G = Graph()
         G.add_vertices(vertices)
         G.add_edges(edge_pairs)
         return G, vertices
+
     
     def clear_layout(self, layout):
-     while layout.count():
-        item = layout.takeAt(0)
-        widget = item.widget()
-        if widget:
-            widget.deleteLater()
-        elif item.layout():
-            self.clear_layout(item.layout())
-            item.layout().deleteLater()
+    # removes widgets and nested layouts from a layout, but does not delete the layout itself
+        if layout is None:
+            return
+        while layout.count():
+            item = layout.takeAt(0)
+            if item is None:
+                continue
+            w = item.widget()
+            if w:
+                w.setParent(None)
+                w.deleteLater()
+            else:
+                sub = item.layout()
+                if sub:
+                    self.clear_layout(sub)
 
     def on_quiz_vert_edge(self):
+        self.saved_vert_layout = self.vert_layout
+        self.saved_edge_layout = self.edge_layout
+        self.vert_index_saved = self.main_layout.indexOf(self.vert_layout)
+        self.edge_index_saved = self.main_layout.indexOf(self.edge_layout)
         for layout in [self.vert_layout, self.edge_layout]:
             self.clear_layout(layout)
             self.main_layout.removeItem(layout)
-            layout.deleteLater()
-        self.quiz_vert_edge_layout = QHBoxLayout()
-        
+
+        self.edge_list_bank = [
+            [(1,2),(1,3),(1,4)], [(1,3),(2,3),(3,3),(2,4)], [(1,4),(1,2),(2,3),(2,4),(1,5),(2,5),(3,5)], 
+            [(1,2),(1,3),(1,4),(1,5),(2,3),(2,4),(2,5),(3,4),(3,5),(4,5)], [(1,3),(2,3),(1,4)]
+        ]
+
+        edge_list = random.choice(self.edge_list_bank)
+        self.current_quiz_graph = Graph()
+        edge_text = ", ".join([f"({u},{v})" for u,v in edge_list])
+
+        vertices = set()
+        for u, v in edge_list:
+            vertices.add(str(u))
+            vertices.add(str(v))
+        self.current_quiz_graph.add_vertices(list(vertices))
+        self.current_quiz_graph.add_edges([(str(u), str(v)) for u, v in edge_list])
+
+        self.quiz_area = QWidget()
+        self.quiz_area.setMaximumHeight(50)
+        quiz_layout = QVBoxLayout(self.quiz_area)
+        label = QLabel(f"Given the following edge list, answer the questions below: \n{edge_text}")
+        label.setAlignment(Qt.AlignCenter)
+        quiz_layout.addWidget(label)
+        insert_index = min(self.vert_index_saved, self.edge_index_saved)
+        self.main_layout.insertWidget(insert_index, self.quiz_area)
+        self.reset_button.show()
+        self.updateGeometry()
+        self.repaint()
+
     def on_quiz_graph(self):
+    # Remove previous quiz area if exists
+        if hasattr(self, "quiz_area"):
+            self.main_layout.removeWidget(self.quiz_area)
+            self.quiz_area.deleteLater()
+            del self.quiz_area
+
+    # Hide/remove the vertex and edge input layouts
         for layout in [self.vert_layout, self.edge_layout]:
             self.clear_layout(layout)
             self.main_layout.removeItem(layout)
-            layout.deleteLater()
-        
+
+    # Random graph selection
+        self.quiz_graph_bank = [
+            Graph({1:[2,3,4], 2:[3], 3:[4]}),
+            Graph({1:[2], 2:[3,4], 3:[5], 4:[5]}),
+            Graph({1:[2,3,4,5], 2:[3,4,5],3:[4,5],4:[5]})
+        ]
+        self.current_quiz_graph = random.choice(self.quiz_graph_bank)
+
+    # Save graph as image
+        tmp_file = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
+        self.current_quiz_graph.plot().save(tmp_file.name)
+
+    # Display image in quiz_area
+        self.quiz_area = QWidget()
+        self.quiz_area.setMinimumHeight(200)
+        self.quiz_area.setMaximumHeight(400)
+        quiz_layout = QVBoxLayout(self.quiz_area)
+
+        self.img_label = QLabel()
+        self.img_label.setAlignment(Qt.AlignCenter)
+        quiz_layout.addWidget(self.img_label)
+
+        self.pixmap = QPixmap(tmp_file.name)
+        self.img_label.setPixmap(self.pixmap.scaled(
+            self.img_label.size(),
+            Qt.KeepAspectRatio,
+            Qt.SmoothTransformation
+        ))
+
+    # Update the pixmap when the widget is resized
+        def resize_event(event):
+            if hasattr(self, "pixmap"):
+                self.img_label.setPixmap(self.pixmap.scaled(
+                    self.img_label.size(),
+                    Qt.KeepAspectRatio,
+                    Qt.SmoothTransformation
+                ))
+            QWidget.resizeEvent(self.quiz_area, event)
+
+        self.quiz_area.resizeEvent = resize_event
+
+    # Insert at the top
+        self.main_layout.insertWidget(0, self.quiz_area)
+
+        self.reset_button.show()
+        self.updateGeometry()
+        self.repaint()
+
+
+    def on_reset_quiz(self):
+        if hasattr(self, "quiz_area"):
+            self.main_layout.removeWidget(self.quiz_area)
+            self.quiz_area.deleteLater()
+            del self.quiz_area
+        self.current_quiz_graph = None
+
+        if hasattr(self, "vert_layout"):
+            self.clear_layout(self.vert_layout)
+            self.main_layout.removeItem(self.vert_layout)
+        if hasattr(self, "edge_layout"):
+            self.clear_layout(self.edge_layout)
+            self.main_layout.removeItem(self.edge_layout)
+
+        self.vert_layout = QHBoxLayout()
+        self.vert_label_box = QVBoxLayout()
+        self.vert_label_box.addWidget(QLabel("Input Vertice Names:"))
+        self.vert_label_box.addWidget(QLabel("(separated by commas)"))
+        self.vert_layout.addLayout(self.vert_label_box)
+        self.vert_textbox = QLineEdit()
+        self.vert_textbox.setPlaceholderText("ex: 1, 2, 3, 4")
+        self.vert_layout.addWidget(self.vert_textbox)
+
+        self.edge_layout = QHBoxLayout()
+        self.edge_label_box = QVBoxLayout()
+        self.edge_label_box.addWidget(QLabel("Input Edges:"))
+        self.edge_sub = QLabel("(ordered pairs separated by commas)")
+        self.edge_sub.setWordWrap(True)
+        self.edge_label_box.addWidget(self.edge_sub)
+        self.edge_layout.addLayout(self.edge_label_box)
+        self.edge_textbox = QLineEdit()
+        self.edge_textbox.setPlaceholderText("ex: (1,2), (2,3), (1,4)")
+        self.edge_layout.addWidget(self.edge_textbox)
+
+        self.main_layout.insertLayout(0, self.edge_layout)
+        self.main_layout.insertLayout(0, self.vert_layout)
+        self.reset_button.hide()
+
+        self.updateGeometry()
+        self.repaint()
+
+
     # displays graph
     def on_display_button(self):
         G, _ = self.get_graph()
