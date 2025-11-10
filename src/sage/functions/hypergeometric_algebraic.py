@@ -637,7 +637,24 @@ class Parameters():
 #  . not sure we can handle easily simplifications!
 
 class HypergeometricAlgebraic(Element):
+    r"""
+    Class for hypergeometric functions over arbitrary base rings.
+    """
     def __init__(self, parent, arg1, arg2=None, scalar=None):
+        r"""
+        Initialize the hypergeometric function.
+
+        INPUT:
+
+        - ``parent`` -- 
+
+        - ``arg1`` -- 
+
+        - ``arg 2`` -- 
+        
+        - ``scalar`` -- 
+      
+        """
         Element.__init__(self, parent)
         base = parent.base_ring()
         if scalar is None:
@@ -734,26 +751,134 @@ class HypergeometricAlgebraic(Element):
         return s
 
     def base_ring(self):
+        r"""
+        Return the ring over which the hypergeometric function is defined.
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: T.<y> = Qp(5)[]
+            sage: U.<z> = GF(5)[]
+            sage: V.<w> = CC[]
+            sage: f, g, h, k = hypergeometric([1/3, 2/3], [1/2], x), hypergeometric([1/3, 2/3], [1/2], y), hypergeometric([1/3, 2/3], [1/2], z), hypergeometric([1/3, 2/3], [1/2], w)
+            sage: f.base_ring()
+            Rational Field
+            sage: g.base_ring()
+            5-adic Field with capped relative precision 20
+            sage: h.base_ring()
+            Finite Field of size 5
+            sage: k.base_ring()
+            Complex Field with 53 bits of precision
+        """
         return self.parent().base_ring()
 
     def top(self):
+        r"""
+        Return the top parameters of the hypergeometric function
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f.top()
+            (1/3, 2/3)
+        """
         return self._parameters.top
 
     def bottom(self):
+        r"""
+        Return the bottom parameters of the hypergeometric function (excluding
+        the extra ``1``)
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f.bottom()
+            (1/2,)
+        """
         return self._parameters.bottom[:-1]
 
     def scalar(self):
+        r"""
+        Return the scalar of the hypergeometric function
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f.scalar()
+            1
+            sage: g = 4*f
+            sage: g.scalar()
+            4
+        """
         return self._scalar
 
     def change_ring(self, R):
+        r"""
+        Return the hypergeometric function with changed base ring
+
+        INPUT:
+
+            - ``R`` -- a ring
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f.base_ring()
+            Rational Field
+            sage: g = f.change_ring(Qp(5))
+            sage: g.base_ring()
+            5-adic Field with capped relative precision 20
+        """
         H = self.parent().change_ring(R)
         return H(self._parameters, None, self._scalar)
 
     def change_variable_name(self, name):
+        r"""
+        Return the hypergeometric function with changed variable name
+
+        INPUT:
+
+            - ``name`` -- string containing the new variable name
+
+        EXAMPLES::
+
+            sage: S.<x> = Qp(5)[]
+            sage: T.<y> = Qp(5)[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f
+            hypergeometric((1/3, 2/3), (1/2,), x)
+            sage: g = f.change_variable_name('y')
+            sage: g
+            hypergeometric((1/3, 2/3), (1/2,), y)
+        """
         H = self.parent().change_variable_name(name)
         return H(self._parameters, None, self._scalar)
 
     def _add_(self, other):
+        r"""
+        Return the (formal) sum of the hypergeometric function and another, 
+        defined over the same ring.
+
+        INPUT:
+
+            - ``other`` -- a hypergeometric function defined over the same
+            ring.
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: g = 1/2 * hypergeometric([1/3, 2/3], [1/2], x)
+            sage: h = hypergeometric([1/5, 2/5], [3/5], x)
+            sage: f + g
+            3/2*hypergeometric((1/3, 2/3), (1/2,), x)
+            sage: f + h
+            hypergeometric((1/3, 2/3), (1/2,), x) + hypergeometric((1/5, 2/5), (3/5,), x)
+        """
         if self._parameters is None:
             return other
         if isinstance(other, HypergeometricAlgebraic):
@@ -765,11 +890,41 @@ class HypergeometricAlgebraic(Element):
         return SR(self) + SR(other)
 
     def _neg_(self):
+        r"""
+        Return the negative of the hypergeometric function.
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: f = 2*hypergeometric([1/3, 2/3], [1/2], x)
+            sage: -f
+            -2*hypergeometric((1/3, 2/3), (1/2,), x)
+        """
         if self._parameters is None:
             return self
         return self.parent()(self._parameters, scalar=-self._scalar)
 
     def _sub_(self, other):
+        r"""
+        Return the (formal) difference of the hypergeometric function with 
+        another, defined over the same ring.
+
+        INPUT:
+
+            - ``other`` -- a hypergeometric function defined over the same
+            ring.
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: g = 1/2 * hypergeometric([1/3, 2/3], [1/2], x)
+            sage: h = hypergeometric([1/5, 2/5], [3/5], x)
+            sage: f - g
+            1/2*hypergeometric((1/3, 2/3), (1/2,), x)
+            sage: f - h
+            hypergeometric((1/3, 2/3), (1/2,), x) - hypergeometric((1/5, 2/5), (3/5,), x)
+        """
         if self._parameters is None:
             return other
         if isinstance(other, HypergeometricAlgebraic):
@@ -778,15 +933,54 @@ class HypergeometricAlgebraic(Element):
             if self._parameters == other._parameters:
                 scalar = self._scalar - other._scalar
                 return self.parent()(self._parameters, scalar=scalar)
-        return SR(self) + SR(other)
+        return SR(self) - SR(other)
 
     def _mul_(self, other):
+        r"""
+        Return the (formal) product of the hypergeometric function and 
+        another, defined over the same ring.
+
+        INPUT:
+
+            - ``other`` -- a hypergeometric function defined over the same
+            ring.
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: g = 1/2 * hypergeometric([1/3, 2/3], [1/2], x)
+            sage: h = hypergeometric([1/5, 2/5], [3/5], x)
+            sage: f*g
+            1/2*hypergeometric((1/3, 2/3), (1/2,), x)^2
+            sage: f*h
+            hypergeometric((1/3, 2/3), (1/2,), x)*hypergeometric((1/5, 2/5), (3/5,), x)
+        """
         return SR(self) * SR(other)
 
     def __call__(self, x):
         return SR(self)(x)
 
     def _compute_coeffs(self, prec):
+        r"""
+        Compute the coefficients of the series representation of the 
+        hypergeometric function up to a given precision, and append them to
+        ``self._coeffs``.
+
+        INPUT:
+
+            - ``prec`` -- a positive integer.
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f._coeffs
+            [1]
+            sage: f._compute_coeffs(3)
+            sage: f._coeffs
+            [1, 4/9, 80/243]
+        """
         coeffs = self._coeffs
         start = len(coeffs) - 1
         c = coeffs[-1]
@@ -798,11 +992,42 @@ class HypergeometricAlgebraic(Element):
             coeffs.append(c)
 
     def series(self, prec):
+        r"""
+        Return the power series representation of the hypergeometric function
+        up to a given precision.
+
+        INPUT:
+
+            - ``prec`` -- a positive integer.
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f.series(3)
+            1 + 4/9*x + 80/243*x^2 + O(x^3) 
+        """
         S = self.parent().power_series_ring()
         self._compute_coeffs(prec)
         return S(self._coeffs, prec=prec)
 
     def shift(self, s):
+        r"""
+        Return the hypergeometric function, where each parameter (including the
+        addional ``1`` as a bottom parameter) is increased by ``s``.
+
+        INPUT:
+
+             - ``s`` -- a rational number.
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: g = f.shift(3/2)
+            sage: g
+            hypergeometric((1, 11/6, 13/6), (2, 5/2), x)
+        """
         return self.parent()(self._parameters.shift(s), scalar=self._scalar)
 
     @coerce_binop
@@ -850,6 +1075,33 @@ class HypergeometricAlgebraic(Element):
 
 class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
     def __mod__(self, p):
+        r"""
+        Return the reduction of the hypergeometric function modulo ``p``.
+
+        INPUT:
+
+            - ``p`` -- a prime number.
+
+        EXAMPLES::
+
+            sage: from sage.functions.hypergeometric_algebraic import HypergeometricAlgebraic_QQ
+            sage: from sage.functions.hypergeometric_algebraic import HypergeometricAlgebraic_padic
+            sage: from sage.functions.hypergeometric_algebraic import HypergeometricAlgebraic_GFp
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f
+            hypergeometric((1/3, 2/3), (1/2,), x)
+            sage: f.parent()
+            Hypergeometric functions in x over Rational Field
+            sage: g = f % 5
+            sage: g
+            hypergeometric((1/3, 2/3), (1/2,), x)
+            sage: g.parent()
+            Hypergeometric functions in x over Finite Field of size 5
+            sage: h = f.__mod__(5)
+            sage: h == g
+            True
+        """
         k = FiniteField(p)
         val = self._scalar.valuation(p)
         if val == 0:
