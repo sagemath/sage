@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Sequence
 
 # So that Python can find the sage_bootstrap package
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "build"))
+sys.path.insert(0, str(Path(__file__).parent.parent / "build"))
 
 from sage_bootstrap.expand_class import PackageClass
 from sage_bootstrap.package import Package
