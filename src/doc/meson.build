@@ -30,7 +30,11 @@ subdir('ja')
 doc_bootstrap = custom_target(
   'bootstrap',
   output: ['autogen'],
-  command: [py, files('../../tools/bootstrap-docs.py'), meson.current_build_dir()],
+  command: [
+    py,
+    files('../../tools/bootstrap-docs.py'),
+    meson.current_build_dir(),
+  ],
   env: {'SAGE_ROOT': root},
   # doc_src is not really a dependency of the bootstrap, but we want to make sure
   # that all the source files are present before running the actual doc build
