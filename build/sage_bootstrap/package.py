@@ -302,7 +302,9 @@ class Package(object):
             result = subprocess.run(
                 [sage_script, '-python', '-c', 
                  'import packaging.tags; import json; tags = [str(t) for t in packaging.tags.sys_tags()]; print(json.dumps(tags))'],
-                capture_output=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                universal_newlines=True,
                 text=True,
                 timeout=10,
                 cwd=SAGE_ROOT
@@ -344,7 +346,9 @@ class Package(object):
                 python_code = 'import packaging.utils, json, sys; _, _, _, tags = packaging.utils.parse_wheel_filename(sys.argv[1]); print(json.dumps([str(t) for t in tags]))'
                 result = subprocess.run(
                     [sage_script, '-python', '-c', python_code, tarball],
-                    capture_output=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    universal_newlines=True,
                     text=True,
                     timeout=10,
                     cwd=SAGE_ROOT
