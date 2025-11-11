@@ -124,6 +124,7 @@ from Glossary.CollapsibleBox import CollapsibleBox
 from LinearAlgebra.matrix_app import MatrixApp
 from SetTheory.SetTheory import SetTheoryTab 
 from LinearAlgebra.matrixAppLearning import TeachingMatrixApp
+from SetTheory.SetTheoryLearning import SetTheoryLearningTab
 class App(QMainWindow):
 
     def __init__(self):
@@ -148,7 +149,7 @@ class WelcomeWidget(QWidget):
         
         # Create logo label
         logo_label = QLabel()
-        pixmap = QPixmap("c:/CodingStuff/GradSoftwareDev/SageMath-CSC5323-Extension/gui/SageGUI.png")
+        pixmap = QPixmap("gui/SageGUI.png")
         scaled_pixmap = pixmap.scaled(700, 300)  # Adjust size as needed
         logo_label.setPixmap(scaled_pixmap)
         logo_label.setAlignment(Qt.AlignCenter)
@@ -189,6 +190,7 @@ class MyTableWidget(QWidget):
         self.tabs.addTab(MatrixApp(self), "Linear Algebra")
         self.tabs.addTab(TeachingMatrixApp(self), "Linear Algebra Learning")
         self.tabs.addTab(SetTheoryTab(self), "Set Theory")
+        self.tabs.addTab(SetTheoryLearningTab(self), "Set Theory Learning")
         
         # Create stacked widget for main content
         self.stack = QStackedWidget()
