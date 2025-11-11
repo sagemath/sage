@@ -181,7 +181,7 @@ class Application(object):
                             # Dependencies like $(BLAS)
                             print(indent2 + "- {0}".format(dep))
                         elif format == 'rst' and Package(dep).has_file('SPKG.rst'):
-                            # This RST label is set in src/doc/bootstrap.py
+                            # This RST label is set in tools/bootstrap-docs.py
                             print(indent2 + "- :ref:`spkg_{0}`".format(dep))
                         else:
                             print(indent2 + "- {0}".format(dep))
