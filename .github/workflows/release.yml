@@ -1,4 +1,4 @@
-name: Prepare source distributions and wheels
+name: Release distributions and wheels
 
 on:
   push:
