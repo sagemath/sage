@@ -1,8 +1,7 @@
-from SetQuestionFiller import SetQuestionFiller
-from SetTheoryQuestions import randomQuestion
+from SetTheory.SetQuestionFiller import SetQuestionFiller
+from SetTheory.SetTheoryQuestions import randomQuestion
 import re
 from sage.all import Set
-import random
 
 
 def generateQuestion():

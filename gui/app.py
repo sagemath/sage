@@ -118,7 +118,6 @@ QLabel {
 # Import tabs
 from gtguiadditions.GT_Calc_Window import GT_Calc_Window
 from gtguiadditions.GT_Learning_Window import GT_Learning_Window
-from linear_algebra import LinearAlgebraTab
 from Glossary.Glossary import *
 from Glossary.CollapsibleBox import CollapsibleBox
 from LinearAlgebra.matrix_app import MatrixApp
