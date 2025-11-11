@@ -4,8 +4,8 @@ from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout
 import math
 
 class Algebra_calc(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
         self.setWindowTitle("Algebra Calculator")
         self.setGeometry(100, 100, 400, 250)
 
