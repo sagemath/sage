@@ -305,7 +305,6 @@ class Package(object):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 universal_newlines=True,
-                text=True,
                 timeout=10,
                 cwd=SAGE_ROOT
             )
@@ -349,7 +348,6 @@ class Package(object):
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     universal_newlines=True,
-                    text=True,
                     timeout=10,
                     cwd=SAGE_ROOT
                 )
