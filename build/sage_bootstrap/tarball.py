@@ -187,8 +187,7 @@ class Tarball(object):
         For platform-specific wheels, this method:
         1. Checks for a cached wheel matching the current platform
         2. If cached and checksum valid, uses it
-        3. Otherwise, uses pip download to get the correct wheel
-        4. Falls back to traditional download if pip fails
+        3. Otherwise, download from upstream
         """
         if not self.filename:
             raise ValueError('non-normal package does define a tarball, so cannot download')
