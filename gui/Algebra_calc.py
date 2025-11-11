@@ -73,7 +73,7 @@ class Algebra_calc(QWidget):
 
         except ValueError:
             QMessageBox.warning(self, "Input Error", "Please enter valid numbers for all coefficients.")
-def initUI(self):
+    def initUI(self):
         # --- Input fields for two points ---
         self.label_intro = QLabel("Enter two points (x₁, y₁) and (x₂, y₂):")
 
@@ -122,7 +122,7 @@ def initUI(self):
 
         self.setLayout(layout)
 
-def compute_slope(self):
+    def compute_slope(self):
         """Compute slope from two points"""
         try:
             x1 = float(self.x1_input.text())
