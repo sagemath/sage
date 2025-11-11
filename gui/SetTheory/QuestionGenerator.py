@@ -34,7 +34,9 @@ def generateQuestion():
                 sets_dict[ph] = str(rand_set)
 
     # Replace placeholders in the template
+    sets_list = []
     for ph, s in sets_dict.items():
         template = template.replace(ph, str(s))
+        sets_list.append(s)
 
-    return q_num, template, sets_dict
+    return q_num, template, sets_list
