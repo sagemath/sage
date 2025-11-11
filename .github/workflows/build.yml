@@ -289,7 +289,7 @@ jobs:
 
       - name: Download coverage artifacts
         if: (success() || failure()) && steps.container.outcome == 'success'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: .coverage
           pattern: coverage-*

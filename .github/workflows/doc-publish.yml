@@ -41,7 +41,7 @@ jobs:
 
       - name: Download doc
         id: download-doc
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: doc
           github-token: ${{ secrets.GITHUB_TOKEN }}
