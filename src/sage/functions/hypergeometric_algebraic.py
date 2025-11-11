@@ -903,7 +903,7 @@ class HypergeometricAlgebraic(Element):
         ::
 
             sage: f + cos(x)
-            hypergeometric((1/3, 2/3), (1/2,), x) + cos(x)
+            cos(x) + hypergeometric((1/3, 2/3), (1/2,), x)
         """
         if self._parameters is None:
             return other
