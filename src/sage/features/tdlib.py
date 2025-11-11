@@ -30,7 +30,7 @@ class Tdlib(JoinFeature):
         """
         JoinFeature.__init__(self, 'tdlib',
                              [PythonModule('sage.graphs.graph_decompositions.tdlib',
-                                           spkg='sagemath_tdlib')])
+                                           spkg='tdlib')])
 
 
 def all_features():

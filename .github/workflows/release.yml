@@ -1,4 +1,4 @@
-name: Prepare source distributions and wheels
+name: Release distributions and wheels
 
 on:
   push:
@@ -246,25 +246,6 @@ jobs:
           for sdist in dist/$pkg*.tar.gz; do
               (cd unpacked && tar xfz - ) < $sdist
           done
-
-      - name: sagemath-bliss
-        run: |
-          "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*bliss*
-
-      - name: sagemath-coxeter3
-        run: |
-          "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*coxeter3*
-
-      - name: sagemath-mcqd
-        run: |
-          "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*mcqd*
-
-      - name: sagemath-tdlib
-        run: |
-          case "${{ matrix.arch }}" in
-              i686) ;;  # broken - boost-related
-              *) "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*tdlib*
-          esac
 
       - uses: actions/upload-artifact@v4
         with:

@@ -2937,7 +2937,7 @@ class Graph(GenericGraph):
           (:meth:`~sage.graphs.bipartite_graph.BipartiteGraph.reduced_adjacency_matrix`)
           of a bipartite graph has no cycle submatrix if and only if the graph is
           chordal bipartite, where cycle submatrix is 0-1 `n \times n` matrix `n \geq 3`
-          with exactly two 1's in each row and column and no proper submatrix satsify
+          with exactly two 1's in each row and column and no proper submatrix satisfy
           this property.
 
         * A doubly lexical ordering

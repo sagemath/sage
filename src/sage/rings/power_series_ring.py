@@ -496,7 +496,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
     """
 
     def __init__(self, base_ring, name=None, default_prec=None, sparse=False,
-                 implementation=None, category=None):
+                 implementation=None, category=None) -> None:
         """
         Initialize a power series ring.
 
@@ -1239,7 +1239,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
             prec = self.default_prec()
         return self(self.__poly_ring.random_element(prec-1, *args, **kwds), prec)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> None:
         """
         Return ``True`` if x is an element of this power series ring or
         canonically coerces to this ring.

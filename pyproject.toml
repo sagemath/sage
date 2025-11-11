@@ -250,6 +250,7 @@ select = [
   "I", # isort - https://docs.astral.sh/ruff/rules/#isort-i
   "PL", # pylint - https://docs.astral.sh/ruff/rules/#pylint-pl
   "TC", # flake8-type-checking - https://docs.astral.sh/ruff/rules/#flake8-type-checking-tc
+  "UP006", # pyupgrade -- https://docs.astral.sh/ruff/rules/#pyupgrade-up
 ]
 
 [tool.ruff.lint.per-file-ignores]

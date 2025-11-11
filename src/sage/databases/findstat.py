@@ -4522,7 +4522,7 @@ _SupportedFindStatCollections = {
     _SupportedFindStatCollection(lambda x: BinaryTree(str(x)),
                                  str,
                                  BinaryTrees,
-                                 lambda x: x.node_number(),
+                                 lambda x: x.number_of_nodes(),
                                  lambda x: isinstance(x, BinaryTree)),
     "Cores":
     _SupportedFindStatCollection(lambda x: Core(*literal_eval(x)),
@@ -4575,7 +4575,7 @@ _SupportedFindStatCollections = {
     _SupportedFindStatCollection(lambda x: OrderedTree(literal_eval(x)),
                                  str,
                                  OrderedTrees,
-                                 lambda x: x.node_number(),
+                                 lambda x: x.number_of_nodes(),
                                  lambda x: isinstance(x, OrderedTree)),
     "ParkingFunctions":
     _SupportedFindStatCollection(lambda x: ParkingFunction(literal_eval(x)),
