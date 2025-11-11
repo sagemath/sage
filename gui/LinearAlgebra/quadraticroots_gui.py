@@ -9,7 +9,7 @@ class QuadraticRootCalculator(QWidget):
         self.setWindowTitle("Quadratic Root Calculator")
         self.setGeometry(100, 100, 400, 250)
         self.initUI()
-
+    
     def initUI(self):
         # Intro label
         self.label_intro = QLabel("Enter coefficients of quadratic equation ax² + bx + c = 0:")
@@ -61,9 +61,11 @@ class QuadraticRootCalculator(QWidget):
             discriminant = b**2 - 4*a*c
 
             if discriminant < 0:
-                root1 = complex(-b/(2*a), math.sqrt(-discriminant)/(2*a))
-                root2 = complex(-b/(2*a), -math.sqrt(-discriminant)/(2*a))
-                self.result_label.setText(f"Roots are complex:\n{root1:.4f}, {root2:.4f}")
+                real_part = -b / (2 * a)
+                imag_part = math.sqrt(-discriminant) / (2 * a)
+                root1 = f"{real_part:.4f} + {imag_part:.4f}i"
+                root2 = f"{real_part:.4f} - {imag_part:.4f}i"
+                self.result_label.setText(f"Roots are complex:\n{root1}, {root2}")
             else:
                 root1 = (-b + math.sqrt(discriminant)) / (2*a)
                 root2 = (-b - math.sqrt(discriminant)) / (2*a)
