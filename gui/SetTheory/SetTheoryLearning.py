@@ -63,8 +63,8 @@ class SetTheoryLearningTab(QWidget):
         self.input_box.setLayout(input_layout)
 
         # Assemble
-        main_layout.addWidget(self.display_box, stretch=3)
-        main_layout.addWidget(self.input_box, stretch=0)
+        main_layout.addWidget(self.display_box, stretch=2)
+        main_layout.addWidget(self.input_box, stretch=1)
         self.setLayout(main_layout)
 
         # Connections
@@ -80,7 +80,7 @@ class SetTheoryLearningTab(QWidget):
         correct = self.answerCheck(text)
         if not correct:
             if self.missCounter == 0:
-                QMessageBox.warning(self, "Incorrect", "That answer is incorrect.")
+                QMessageBox.warning(self, "Incorrect", "That answer is incorrect.\n(If you are trying to input an empty set, try { })")
                 self.missCounter += 1
             else:
                 self.incorrectBuzzer()
@@ -177,29 +177,53 @@ class SetTheoryLearningTab(QWidget):
             return answer == self.subsetResult
 
     def setAnswerCheck(self, text):
-        if self.unionResult != "":
-            answer = self.parseSetInput(text)
-            return answer == self.unionResult
-        elif self.interResult != "":
-            answer = self.parseSetInput(text)
-            return answer == self.interResult
-        elif self.symResult != "":
-            answer = self.parseSetInput(text)
-            return answer == self.symResult
-        elif self.diffResult != "":
-            answer = self.parseSetInput(text)
-            return answer == self.diffResult
+        if text == "" or "{}" or ";" or "{};{}":
+            answer = Set([])
+            if self.unionResult != "":
+                return answer == self.unionResult
+            elif self.interResult != "":
+                return answer == self.interResult
+            elif self.symResult != "":
+                return answer == self.symResult
+            elif self.diffResult != "":
+                return answer == self.diffResult
+            else:
+                return (answer == self.complimentResultOne and answer == self.complimentResultTwo)
         else:
-            answerList = text.split(';')
-            answerOne = self.parseSetInput(answerList[0])
-            answerTwo = self.parseSetInput(answerList[1])
-            return (answerOne == self.complimentResultOne and answerTwo == self.complimentResultTwo)
+            if self.unionResult != "":
+                answer = self.parseSetInput(text)
+                return answer == self.unionResult
+            elif self.interResult != "":
+                answer = self.parseSetInput(text)
+                return answer == self.interResult
+            elif self.symResult != "":
+                answer = self.parseSetInput(text)
+                return answer == self.symResult
+            elif self.diffResult != "":
+                answer = self.parseSetInput(text)
+                return answer == self.diffResult
+            else:
+                answerList = text.split(';')
+                if answerList[0] == '' or answerList[1] == '':
+                    if answerList[0] == '':
+                        answerOne = Set([])
+                    else:
+                        answerOne = self.parseSetInput(answerList[0])
+                    if answerList[1] == '':
+                        answerTwo = Set([])
+                    else:
+                        answerTwo = self.parseSetInput(answerList[1])
+                    return (answerOne == self.complimentResultOne and answerTwo == self.complimentResultTwo)
+                else:
+                    answerOne = self.parseSetInput(answerList[0])
+                    answerTwo = self.parseSetInput(answerList[1])
+                    return (answerOne == self.complimentResultOne and answerTwo == self.complimentResultTwo)
 
     def incorrectBuzzer(self):
         hint = "Please review the glossary definition of "
         if self.missCounter < 3:
             glossaryRec = self.fetchQuestion()
-            hint = hint + glossaryRec + "."
+            hint = hint + glossaryRec + ".\n (If you are trying to input an empty set, try { })"
             QMessageBox.warning(self, "Incorrect", hint)
         else:
             self.showYoutubeHint("https://www.youtube.com/watch?v=iTZfATpm0Yk")
@@ -223,7 +247,7 @@ class SetTheoryLearningTab(QWidget):
     def showYoutubeHint(self, youtube_url):
         #shows pop up of youtube video
         dialog = QDialog(self)
-        dialog.setWindowTitle("INCORRECT\n Here's a video to help!")
+        dialog.setWindowTitle("INCORRECT: Here's a video to help!")
 
         layout = QVBoxLayout(dialog)
 
