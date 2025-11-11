@@ -300,7 +300,7 @@ class RootedTree(AbstractClonableTree, NormalizedClonableList,
         # ensure unique representation
         self.set_immutable()
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         r"""
         Return if ``self`` is the empty tree.
 
