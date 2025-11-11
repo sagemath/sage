@@ -394,7 +394,7 @@ def build_additional_sections(pkg: Package) -> str:
     if dependencies:
         for dep in sorted(dependencies):
             if dep:
-                if dep.startswith("$"):
+                if dep.startswith("$") or dep.startswith("sage"):
                     lines.append(f"- {dep}")
                 else:
                     lines.append(f"- :ref:`spkg_{dep}`")
