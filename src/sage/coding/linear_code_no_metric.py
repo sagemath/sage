@@ -238,8 +238,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             sage: G = matrix(GF(3), 2, [1,-1,1,-1,1,1])
             sage: code = LinearCode(G)
             sage: code.generator_matrix()
-            [1 2 1]
-            [2 1 1]
+            [1 2 0]
+            [0 0 1]
         """
         E = self.encoder(encoder_name, **kwargs)
         return E.generator_matrix()
@@ -528,8 +528,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             ....:                    [ 2, 1, 1, 1]])
             sage: C = LinearCode(G)
             sage: C.generator_matrix()
-            [1 2 1 0]
-            [2 1 1 1]
+            [1 2 0 1]
+            [0 0 1 2]
             sage: C.systematic_generator_matrix()
             [1 2 0 1]
             [0 0 1 2]
@@ -762,7 +762,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             sage: G = Matrix(GF(3), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: C[24]
-            (2, 2, 0, 1, 2, 2, 0)
+            (0, 2, 2, 0, 0, 2, 1)
             sage: C[24] == C.list()[24]
             True
 
