@@ -25,7 +25,7 @@ class GTImageWindow(QWidget):
         self.update_scaled_pixmap()
 
     def resizeEvent(self, event):
-        # Smoothly rescale the image when window size changes
+        #rescale the image when window size changes
         self.update_scaled_pixmap()
         super().resizeEvent(event)
 
@@ -34,8 +34,7 @@ class GTImageWindow(QWidget):
         # Find how much space we actually have inside the label
             available_size = self.label.size()
             original_size = self.original_pixmap.size()
-
-        # Only scale down (never up)
+        # Only scale down
             target_width = min(available_size.width(), original_size.width())
             target_height = min(available_size.height(), original_size.height())
 
@@ -85,6 +84,7 @@ class GT_Learning_Window(QWidget):
         self.edge_layout.addWidget(self.edge_textbox)
         self.main_layout.addLayout(self.edge_layout)
 
+        # set quiz buttons
         quiz_layout = QHBoxLayout()
         self.quiz_vert_edge_button = QPushButton ("Quiz Me with Edge List")
         self.quiz_vert_edge_button.clicked.connect(self.on_quiz_vert_edge)
@@ -95,6 +95,7 @@ class GT_Learning_Window(QWidget):
         quiz_layout.addWidget(self.quiz_graph_button)
         self.main_layout.addLayout(quiz_layout)
 
+        # button to put back the edge and vertex list
         self.reset_button = QPushButton("Reset Quiz")
         self.reset_button.clicked.connect(self.on_reset_quiz)
         self.reset_button.hide() 
@@ -196,10 +197,10 @@ class GT_Learning_Window(QWidget):
 
         self.setLayout(self.main_layout)
 
-    def get_graph(self):
-        if hasattr(self, "current_quiz_graph") and self.current_quiz_graph is not None:
-            return self.current_quiz_graph, list(self.current_quiz_graph.vertices())
-
+    def get_graph(self): # creates graph with edge/vert inputs or quiz quesion
+        if hasattr(self, "current_quiz_graph") and self.current_quiz_graph is not None: # checks if in quiz mode
+            return self.current_quiz_graph, list(self.current_quiz_graph.vertices()) # if yes it creates graph with quiz info
+    #takes info from edge/vert input boxes and creates graph
         vert_text = self.vert_textbox.text()
         vertices = [v.strip() for v in vert_text.split(',') if v.strip()]
     
@@ -219,7 +220,7 @@ class GT_Learning_Window(QWidget):
 
     
     def clear_layout(self, layout):
-    # removes widgets and nested layouts from a layout, but does not delete the layout itself
+    # removes the edge/vert input boxes from layout, but does not delete the layout itself
         if layout is None:
             return
         while layout.count():
@@ -236,23 +237,22 @@ class GT_Learning_Window(QWidget):
                     self.clear_layout(sub)
 
     def on_quiz_vert_edge(self):
-        self.saved_vert_layout = self.vert_layout
+        self.saved_vert_layout = self.vert_layout #saves layout position from before
         self.saved_edge_layout = self.edge_layout
         self.vert_index_saved = self.main_layout.indexOf(self.vert_layout)
         self.edge_index_saved = self.main_layout.indexOf(self.edge_layout)
-        for layout in [self.vert_layout, self.edge_layout]:
+        for layout in [self.vert_layout, self.edge_layout]: #on quiz button it removes the edge/vert boxes
             self.clear_layout(layout)
             self.main_layout.removeItem(layout)
-
+    #bank of quiz questions with edge list
         self.edge_list_bank = [
             [(1,2),(1,3),(1,4)], [(1,3),(2,3),(3,3),(2,4)], [(1,4),(1,2),(2,3),(2,4),(1,5),(2,5),(3,5)], 
             [(1,2),(1,3),(1,4),(1,5),(2,3),(2,4),(2,5),(3,4),(3,5),(4,5)], [(1,3),(2,3),(1,4)]
         ]
-
+    #pulls random edge list from edge_list_bank
         edge_list = random.choice(self.edge_list_bank)
-        self.current_quiz_graph = Graph()
-        edge_text = ", ".join([f"({u},{v})" for u,v in edge_list])
-
+        self.current_quiz_graph = Graph() #will make graph with current quiz graph
+        edge_text = ", ".join([f"({u},{v})" for u,v in edge_list]) #pulls edge list in and puts in correct form to create graph
         vertices = set()
         for u, v in edge_list:
             vertices.add(str(u))
@@ -261,14 +261,14 @@ class GT_Learning_Window(QWidget):
         self.current_quiz_graph.add_edges([(str(u), str(v)) for u, v in edge_list])
 
         self.quiz_area = QWidget()
-        self.quiz_area.setMaximumHeight(50)
+        self.quiz_area.setMaximumHeight(50) #restrict quiz area so it isnt too big
         quiz_layout = QVBoxLayout(self.quiz_area)
-        label = QLabel(f"Given the following edge list, answer the questions below: \n{edge_text}")
+        label = QLabel(f"Given the following edge list, answer the questions below: \n{edge_text}") #dummy text that will pull in random selection from edge list bank
         label.setAlignment(Qt.AlignCenter)
         quiz_layout.addWidget(label)
         insert_index = min(self.vert_index_saved, self.edge_index_saved)
         self.main_layout.insertWidget(insert_index, self.quiz_area)
-        self.reset_button.show()
+        self.reset_button.show() #rest button only shows in quiz mode
         self.updateGeometry()
         self.repaint()
 
@@ -284,7 +284,7 @@ class GT_Learning_Window(QWidget):
             self.clear_layout(layout)
             self.main_layout.removeItem(layout)
 
-    # Random graph selection
+    # bank of vertex/edges to be made into pictures
         self.quiz_graph_bank = [
             Graph({1:[2,3,4], 2:[3], 3:[4]}),
             Graph({1:[2], 2:[3,4], 3:[5], 4:[5]}),
@@ -292,13 +292,13 @@ class GT_Learning_Window(QWidget):
         ]
         self.current_quiz_graph = random.choice(self.quiz_graph_bank)
 
-    # Save graph as image
+    # Save graph as temp image
         tmp_file = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
         self.current_quiz_graph.plot().save(tmp_file.name)
 
-    # Display image in quiz_area
+    # Display temp image in quiz area
         self.quiz_area = QWidget()
-        self.quiz_area.setMinimumHeight(200)
+        self.quiz_area.setMinimumHeight(200) #keeps picture decent size
         self.quiz_area.setMaximumHeight(400)
         quiz_layout = QVBoxLayout(self.quiz_area)
 
@@ -334,7 +334,7 @@ class GT_Learning_Window(QWidget):
 
 
     def on_reset_quiz(self):
-        if hasattr(self, "quiz_area"):
+        if hasattr(self, "quiz_area"): #if in quiz mode, remove the quiz area
             self.main_layout.removeWidget(self.quiz_area)
             self.quiz_area.deleteLater()
             del self.quiz_area
@@ -347,7 +347,7 @@ class GT_Learning_Window(QWidget):
             self.clear_layout(self.edge_layout)
             self.main_layout.removeItem(self.edge_layout)
 
-        self.vert_layout = QHBoxLayout()
+        self.vert_layout = QHBoxLayout() #add back in the edge/vert input boxes
         self.vert_label_box = QVBoxLayout()
         self.vert_label_box.addWidget(QLabel("Input Vertice Names:"))
         self.vert_label_box.addWidget(QLabel("(separated by commas)"))
