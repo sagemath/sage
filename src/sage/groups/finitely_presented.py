@@ -268,17 +268,17 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
     def __hash__(self):
         r"""
         Return the hash of the element.
-        
+
         For free group elements, this uses the Tietze representation.
         For quotient group elements (finitely presented groups), this uses
         a canonical form to ensure equal elements have equal hashes.
-        
+
         TESTS::
 
             sage: G.<a,b> = FreeGroup()
             sage: hash(a*b*b*~a) == hash((1, 2, 2, -1))
             True
-            
+
             sage: # Test quotient group hash consistency
             sage: F.<x,y> = FreeGroup()
             sage: G = F / [x^4, y^13, x*y*x^-1*y^-5]
@@ -291,7 +291,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
             True
 
         Test that the hash is consistent with Cayley graph construction::
-        
+
             sage: F.<x,y> = FreeGroup()
             sage: G = F / [x^2, y^3, (x*y)^4]
             sage: a, b = G.gens()
@@ -300,16 +300,16 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
             sage: elem2 = b^2  # Should be equal due to relations
             sage: if elem1 == elem2:
             ....:     assert hash(elem1) == hash(elem2), "Equal elements must have equal hashes"
-            
+
             sage: # Test with a simpler group to ensure Cayley graph works
             sage: F.<a> = FreeGroup()
             sage: H = F / [a^4]
             sage: CG_simple = H.cayley_graph()
             sage: len(CG_simple.vertices(sort=False)) == H.order()
             True
-            
+
         Test hash consistency for the identity and inverses::
-        
+
             sage: F.<a,b> = FreeGroup()
             sage: G = F / [a^3, b^2, (a*b)^2]
             sage: # Identity element
@@ -317,9 +317,9 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
             sage: id2 = G([])
             sage: hash(id1) == hash(id2)
             True
-            
+
         Test that hash works with various group presentations::
-        
+
             sage: # Dihedral group D_4
             sage: F.<r,s> = FreeGroup()
             sage: D4 = F / [r^4, s^2, s*r*s*r]
@@ -327,9 +327,9 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
             sage: hashes = [hash(e) for e in elements]
             sage: len(set(hashes)) == len(set(elements))  # Distinct elements should have distinct hashes when possible
             True
-            
+
         Test hash consistency with group operations::
-        
+
             sage: F.<x,y> = FreeGroup()
             sage: G = F / [x^2, y^2, (x*y)^3]
             sage: a, b = G.gens()
@@ -549,12 +549,19 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
             2
         """
         values = list(values)
+        if len(values) == 1:
+            try:
+                values = list(values[0])
+            except TypeError:
+                pass
+        parent = self.parent()
         if kwds.get('check', True):
-            for rel in self.parent().relations():
+            for rel in parent.relations():
                 rel = rel(values)
                 if rel != 1:
                     raise ValueError('the values do not satisfy all relations of the group')
-        return super().__call__(values)
+        free_word = parent.free_group()(self.Tietze())
+        return free_word.__call__(*values)
 
 
 class RewritingSystem:
