@@ -135,7 +135,7 @@ class Algebra_calc(QWidget):
                 return
 
             slope = (y2 - y1) / (x2 - x1)
-            self.result_label.setText(f"Slope (m): {slope:.4f}")
+            self.slope_result_label.setText(f"Slope (m): {slope:.4f}")
 
         except ValueError:
             QMessageBox.warning(self, "Input Error", "Please enter valid numbers for all fields.")
