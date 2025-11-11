@@ -98,7 +98,7 @@ cdef class PolyDict:
     Data structure for multivariate polynomials.
 
     A PolyDict holds a dictionary all of whose keys are :class:`ETuple` and
-    whose values are coefficients on which it is implicitely assumed that
+    whose values are coefficients on which it is implicitly assumed that
     arithmetic operations can be performed.
 
     No arithmetic operation on :class:`PolyDict` clear zero coefficients as of
