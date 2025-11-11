@@ -23,22 +23,22 @@ AUTHORS:
 # ****************************************************************************
 
 
+import logging
 import os
 import re
-import logging
+
 log = logging.getLogger()
 
 from collections import defaultdict
 
-from sage_bootstrap.package import Package
-from sage_bootstrap.tarball import Tarball, FileNotMirroredError
-from sage_bootstrap.updater import ChecksumUpdater, PackageUpdater
 from sage_bootstrap.creator import PackageCreator
-from sage_bootstrap.pypi import PyPiVersion, PyPiNotFound, PyPiError
-from sage_bootstrap.fileserver import FileServer
-from sage_bootstrap.expand_class import PackageClass
 from sage_bootstrap.env import SAGE_DISTFILES
-
+from sage_bootstrap.expand_class import PackageClass
+from sage_bootstrap.fileserver import FileServer
+from sage_bootstrap.package import Package
+from sage_bootstrap.pypi import PyPiError, PyPiNotFound, PyPiVersion
+from sage_bootstrap.tarball import FileNotMirroredError, Tarball
+from sage_bootstrap.updater import ChecksumUpdater, PackageUpdater
 
 # Approximation of https://peps.python.org/pep-0508/#names dependency specification
 dep_re = re.compile('^ *([-A-Z0-9._]+)', re.IGNORECASE)
@@ -181,7 +181,7 @@ class Application(object):
                             # Dependencies like $(BLAS)
                             print(indent2 + "- {0}".format(dep))
                         elif format == 'rst' and Package(dep).has_file('SPKG.rst'):
-                            # This RST label is set in src/doc/bootstrap
+                            # This RST label is set in src/doc/bootstrap.py
                             print(indent2 + "- :ref:`spkg_{0}`".format(dep))
                         else:
                             print(indent2 + "- {0}".format(dep))
@@ -220,7 +220,7 @@ class Application(object):
         Did you mean: cython, ipython, python2, python3, patch?
         """
         log.debug('Apropos for %s', incorrect_name)
-        from sage_bootstrap.levenshtein import Levenshtein, DistanceExceeded
+        from sage_bootstrap.levenshtein import DistanceExceeded, Levenshtein
         levenshtein = Levenshtein(5)
         names = []
         for pkg in Package.all():
