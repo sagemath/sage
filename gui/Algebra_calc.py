@@ -90,8 +90,8 @@ class Algebra_calc(QWidget):
         row2.addWidget(self.y2_input)
         main_layout.addLayout(row2)
 
-        layout.addWidget(self.compute_button)
-        layout.addWidget(self.result_label)
+        main_layout.addWidget(self.compute_button)
+        main_layout.addWidget(self.result_label)
         
         self.setLayout(layout)
     def compute_roots(self):
