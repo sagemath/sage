@@ -67,7 +67,7 @@ class Algebra_calc(QWidget):
         self.compute_button.clicked.connect(self.compute_slope)
 
         # Label to show result
-        self.result_label = QLabel("Slope (m): ---")
+        self.slope_result_label = QLabel("Slope (m): ---")
 
         # --- Layout setup ---
         layout = QVBoxLayout()
@@ -91,7 +91,7 @@ class Algebra_calc(QWidget):
         main_layout.addLayout(row2)
 
         main_layout.addWidget(self.compute_button)
-        main_layout.addWidget(self.result_label)
+        main_layout.addWidget(self.slope_result_label)
         
         self.setLayout(layout)
     def compute_roots(self):
