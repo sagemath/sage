@@ -259,7 +259,7 @@ select = [
   "UP015",
   "UP022",
   "UP034",
-  "UP035", 
+  "UP035",
 ]
 
 [tool.ruff.lint.per-file-ignores]
