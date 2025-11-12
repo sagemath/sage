@@ -637,12 +637,19 @@ cdef class Matroid(SageObject):
             True
             sage: all(M.is_dependent(X.union([y])) for y in M.groundset() if y not in X)
             True
+
+        TESTS::
+
+            sage: M = matroids.catalog.R10()
+            sage: M1M = M.direct_sum(M)
+            sage: Matroid(M1M, regular=True)  # indirect doctest
+            Regular matroid of rank 10 on 20 elements with 26244 bases
         """
         cdef list res = []
         cdef int r = 0
         for e in X:
             res.append(e)
-            if self._rank(res) > r:
+            if self._rank(frozenset(res)) > r:
                 r += 1
             else:
                 res.pop()
