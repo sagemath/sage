@@ -149,7 +149,13 @@ class WelcomeWidget(QWidget):
         # Create logo label
         logo_label = QLabel()
         pixmap = QPixmap("gui/SageGUI.png")
-        print("Pixmap loaded:", not pixmap.isNull())
+        
+        import os
+
+        print("Current working directory:", os.getcwd())
+        print("File exists:", os.path.exists("gui/SageGUI.png"))
+
+
         scaled_pixmap = pixmap.scaled(700, 300)  # Adjust size as needed
         logo_label.setPixmap(scaled_pixmap)
         logo_label.setAlignment(Qt.AlignCenter)
