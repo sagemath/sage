@@ -249,8 +249,8 @@ select = [
   "F", # pyflakes - https://docs.astral.sh/ruff/rules/#pyflakes-f
   "I", # isort - https://docs.astral.sh/ruff/rules/#isort-i
   "PL", # pylint - https://docs.astral.sh/ruff/rules/#pylint-pl
-  "TC", # flake8-type-checking - https://docs.astral.sh/ruff/rules/#flake8-type-checking-tc
   "RUF013", # ruff-specific rules -- https://docs.astral.sh/ruff/rules/#ruff-specific-rules-ruf
+  "TC", # flake8-type-checking - https://docs.astral.sh/ruff/rules/#flake8-type-checking-tc
   # pyupgrade -- https://docs.astral.sh/ruff/rules/#pyupgrade-up
   "UP004",
   "UP006",
