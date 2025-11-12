@@ -18,7 +18,6 @@ import textwrap
 from jinja2 import Environment
 from jinja2.runtime import StrictUndefined
 
-
 # We share a single jinja2 environment among all templating in this
 # file.  We use trim_blocks=True (which means that we ignore white
 # space after "%}" jinja2 command endings), and set undefined to

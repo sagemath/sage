@@ -8,13 +8,18 @@
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .base import StackInterpreter
-from .python import MemoryChunkPyConstant
-from ..instructions import (params_gen, instr_funcall_1arg_mpc,
-                            instr_funcall_2args_mpc, InstrSpec)
+from ..instructions import (
+    InstrSpec,
+    instr_funcall_1arg_mpc,
+    instr_funcall_2args_mpc,
+    params_gen,
+)
 from ..memory import MemoryChunk, MemoryChunkConstants
 from ..storage import ty_mpc, ty_python
-from ..utils import je, reindent_lines as ri
+from ..utils import je
+from ..utils import reindent_lines as ri
+from .base import StackInterpreter
+from .python import MemoryChunkPyConstant
 
 
 class MemoryChunkCCRetval(MemoryChunk):

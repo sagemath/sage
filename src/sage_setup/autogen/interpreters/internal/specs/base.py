@@ -12,8 +12,7 @@
 """Base classes for interpreter specs."""
 
 
-from ..memory import (MemoryChunkConstants, MemoryChunkArguments,
-                      MemoryChunkScratch)
+from ..memory import MemoryChunkArguments, MemoryChunkConstants, MemoryChunkScratch
 from ..storage import StorageTypeAssignable, ty_int
 
 

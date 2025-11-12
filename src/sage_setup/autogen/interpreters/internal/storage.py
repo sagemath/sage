@@ -12,7 +12,8 @@
 """Implements different data storage types."""
 
 
-from .utils import je, reindent_lines as ri
+from .utils import je
+from .utils import reindent_lines as ri
 
 
 class StorageType:

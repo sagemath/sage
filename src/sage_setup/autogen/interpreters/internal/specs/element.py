@@ -10,11 +10,10 @@
 #*****************************************************************************
 
 
-from .base import StackInterpreter
-from .python import (MemoryChunkPyConstant, MemoryChunkPythonArguments,
-                     PythonInterpreter)
 from ..storage import ty_python
 from ..utils import reindent_lines as ri
+from .base import StackInterpreter
+from .python import MemoryChunkPyConstant, MemoryChunkPythonArguments, PythonInterpreter
 
 
 class MemoryChunkElementArguments(MemoryChunkPythonArguments):

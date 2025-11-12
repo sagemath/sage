@@ -12,7 +12,8 @@
 """General purpose MemoryChunk types and related utilities"""
 
 
-from .utils import je, reindent_lines as ri
+from .utils import je
+from .utils import reindent_lines as ri
 
 
 def string_of_addr(a):

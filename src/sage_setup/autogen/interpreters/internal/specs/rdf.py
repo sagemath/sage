@@ -10,12 +10,17 @@
 #*****************************************************************************
 
 
-from .base import StackInterpreter
-from ..instructions import (params_gen, instr_infix, instr_funcall_2args,
-                            instr_unary, InstrSpec)
+from ..instructions import (
+    InstrSpec,
+    instr_funcall_2args,
+    instr_infix,
+    instr_unary,
+    params_gen,
+)
 from ..memory import MemoryChunkConstants
 from ..storage import ty_double, ty_python
 from ..utils import reindent_lines as ri
+from .base import StackInterpreter
 
 
 class RDFInterpreter(StackInterpreter):

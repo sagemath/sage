@@ -242,8 +242,8 @@ In case of symmetries, only non-redundant components are stored::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from operator import itemgetter
 from collections.abc import Iterator
+from operator import itemgetter
 
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
@@ -836,9 +836,9 @@ class Components(SageObject):
                 for i in range(si, nsi)]
         if self._nid == 2:
             # 2-dim case: convert to matrix for a nicer output
+            from sage.categories.rings import Rings
             from sage.matrix.constructor import matrix
             from sage.structure.element import parent
-            from sage.categories.rings import Rings
             if parent(resu[0][0]) in Rings():
                 return matrix(resu)
         return resu

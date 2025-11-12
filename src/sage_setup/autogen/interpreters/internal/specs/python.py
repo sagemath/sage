@@ -8,12 +8,12 @@
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .base import StackInterpreter
-from ..instructions import (params_gen, instr_funcall_2args, instr_unary,
-                            InstrSpec)
+from ..instructions import InstrSpec, instr_funcall_2args, instr_unary, params_gen
 from ..memory import MemoryChunk
 from ..storage import ty_python
-from ..utils import je, reindent_lines as ri
+from ..utils import je
+from ..utils import reindent_lines as ri
+from .base import StackInterpreter
 
 
 class MemoryChunkPythonArguments(MemoryChunk):
