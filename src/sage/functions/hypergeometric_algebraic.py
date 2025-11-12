@@ -839,7 +839,7 @@ class HypergeometricAlgebraic(Element):
 
     def change_ring(self, R):
         r"""
-        Return this hypergeometric function with changed base ring
+        Return this hypergeometric function with changed base ring.
 
         INPUT:
 
@@ -1179,12 +1179,24 @@ class HypergeometricAlgebraic(Element):
             
         Note that this does not necessarily give the minimal differential operator
         annihilating this hypergeometric function.::
-
-            sage: g = hypergeometric([1/3, 2/3, 6/5], [1/5, 1/2])
-            sage: g.differential_operator()
-            sage: 
-
-
+          
+            sage: S = FractionField(PolynomialRing(QQ, 'x'))
+            sage: D = OrePolynomialRing(S, S.derivation(), names='d')
+            sage: g = hypergeometric([1/3, 2/3, 6/5], [1/5, 1/2], x)
+            sage: g
+            hypergeometric((1/3, 2/3, 6/5), (1/5, 1/2), x)
+            sage: L = D(g.differential_operator())
+            sage: L.degree()
+            3
+            sage: d = L.parent('d')
+            sage: M = L.parent((72*x^3 - 234*x^2 + 162*x)*d^2 + (144*x^2 - 450*x + 81)*d + 16*x - 216)
+            sage: M.degree()
+            2
+            sage: M.right_divides(L)
+            True
+            sage: gs = g.power_series(100)
+            sage: (72*x^3 - 234*x^2 + 162*x)*gs.derivative(2) + (144*x^2 - 450*x + 81)*gs.derivative() + (16*x - 216)*gs
+            O(x^99)
         """
         S = self.parent().polynomial_ring()
         x = S.gen()
@@ -1202,6 +1214,16 @@ class HypergeometricAlgebraic(Element):
         return D([c//x for c in L.list()])
 
     def derivative(self):
+        r"""
+        Return the derivative of this hypergeometric function.
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f.derivative()
+            4/9*hypergeometric((4/3, 5/3), (3/2,), x)
+        """
         top = [a+1 for a in self.top()]
         bottom = [b+1 for b in self.bottom()]
         scalar = prod(self._parameters.top) / prod(self._parameters.bottom)
@@ -1238,16 +1260,68 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         return h.residue()
 
     def valuation(self, p):
+        r"""
+        Return the p-adic valuation of this hypergeometric function, i.e., the
+        maximal s, such that p^(-s) times this hypergeometric function has
+        p-integral coefficients.
+
+        INPUT:
+
+        - ``p`` -- a prime number
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[x]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f.valuation(5)
+            0
+            sage: g = 5*f
+            sage: g.valuation(5)
+            1
+        """
         return self.change_ring(Qp(p, 1)).valuation()
 
     def has_good_reduction(self, p):
+        r"""
+        Return ``True`` if the p-adic valuation of this hypergeometric function
+        is non-negative, i.e., if its reduction modulo ``p`` is well-defined.pAdicGeneric
+
+        INPUT:
+
+        - ``p`` -- a prime number
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[x]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f.valuation(5)
+            0
+            sage: f.has_good_reduction(5)
+            True
+            sage: g = 1/5*f
+            sage: g.has_good_reduction(5)
+            1
+        """
         return self.valuation(p) >= 0
 
     def good_reduction_primes(self):
         r"""
+        Return the set of prime numbers modulo which this hypergeometric
+        function can be reduced, i.e., the p-adic valuation is positive.
+
+        EXAMPLE::
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f.good_reduction_primes()
+
         ALGORITHM:
 
-        We rely on Christol's criterion ([CF2025]_)
+        We rely on Christol's criterion ([Chr1986]_, Prop. 1) for globally
+        bounded hypergeometric function, from which a criterion can be deduced
+        modulo which primes a hypergeometric function can be reduced. 
+        ([CFV2025]_, Thm. 3.1.3). For small primes p we compute the p-adic
+        valuation of the hypergeometric function individually.
         """
         params = self._parameters
         d = params.d
@@ -1373,7 +1447,26 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
         d = self.denominator()
         parameters = self._parameters
         if d.gcd(p) > 1:
-            return -infinity, None
+            T = []
+            B = []
+            difference = 0
+            for j in self.top():
+                d = j.denominator().valuation(p)
+                difference += d
+                if not d:
+                    T += [j]
+            for j in self.bottom():
+                d = j.denominator().valuation(p)
+                difference -= d
+                if not d:
+                    B += [j]
+            if difference > 0:
+                return -infinity, None
+            if difference < 0:
+                # the valuation of the coefficients goes to infinity, but what is its minimum?
+                raise NotImplementedError('The hypergeometric function has bounded valuation, but value and position are not implemented.')
+            if difference == 0:
+                return self.parent()(T, B, self.scalar())._val_pos()
         u = 1
         if not parameters.parenthesis_criterion(u):
             return -infinity, None
