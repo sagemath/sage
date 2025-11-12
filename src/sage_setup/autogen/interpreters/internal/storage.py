@@ -11,7 +11,6 @@
 
 """Implements different data storage types."""
 
-from __future__ import print_function, absolute_import
 
 from .utils import je, reindent_lines as ri
 
