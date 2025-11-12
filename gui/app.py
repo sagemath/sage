@@ -125,6 +125,8 @@ from LinearAlgebra.matrix_app import MatrixApp
 from SetTheory.SetTheory import SetTheoryTab 
 from LinearAlgebra.matrixAppLearning import TeachingMatrixApp
 from SetTheory.SetTheoryLearning import SetTheoryLearningTab
+from Algebra.Algebra_calc import Algebra_calc
+
 class App(QMainWindow):
 
     def __init__(self):
@@ -193,6 +195,7 @@ class MyTableWidget(QWidget):
         self.tabs.addTab(TeachingMatrixApp(self), "Linear Algebra Learning")
         self.tabs.addTab(SetTheoryTab(self), "Set Theory")
         self.tabs.addTab(SetTheoryLearningTab(self), "Set Theory Learning")
+        self.tabs.addTab(Algebra_calc(self), "Algebra Calculator")
         
         # Create stacked widget for main content
         self.stack = QStackedWidget()
