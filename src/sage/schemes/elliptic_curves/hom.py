@@ -397,8 +397,7 @@ class EllipticCurveHom(Morphism):
         """
         F = self.domain().base_field()
         if F.characteristic().is_zero():
-            E = phi.domain()
-            if phi.codomain() != E:
+            if self.domain() != self.codomain():
                 raise ValueError('trace only makes sense for endomorphisms')
             d = self.degree()
             s = self.scaling_factor()
