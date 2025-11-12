@@ -1257,6 +1257,72 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         """
         return self.__ring
 
+    def free_module(self, base=None, basis=None, map=True):
+        r"""
+        Return a free module `V` over the specified subring together with
+        maps to and from `V`.
+
+        See :meth:`sage.categories.rings.Rings.ParentMethods.free_module`.
+
+        TESTS::
+
+            sage: R.<x> = QQ[]
+            sage: S.<y> = R.quotient(x^2+x+1)[]
+            sage: T = S.quotient(y^3-2)
+            sage: V, from_V, to_V = S.base_ring().free_module(QQ)
+            sage: from_V(V([1, 2]))
+            2*xbar + 1
+            sage: to_V(from_V(V([1, 2])))
+            (1, 2)
+            sage: V, from_V, to_V = T.free_module(QQ)
+            sage: V
+            Vector space of dimension 6 over Rational Field
+            sage: from_V(V([1, 2, 3, 4, 5, 6]))
+            (6*xbar + 5)*ybar^2 + (4*xbar + 3)*ybar + 2*xbar + 1
+            sage: to_V(from_V(V([1, 2, 3, 4, 5, 6])))
+            (1, 2, 3, 4, 5, 6)
+            sage: V, from_V, to_V = T.free_module(S.base_ring())
+            sage: V
+            Vector space of dimension 3 over Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x^2 + x + 1
+            sage: from_V(V([1*x+2, 3*x+4, 5*x+6]))
+            (5*xbar + 6)*ybar^2 + (3*xbar + 4)*ybar + xbar + 2
+            sage: to_V(from_V(V([1*x+2, 3*x+4, 5*x+6])))
+            (xbar + 2, 3*xbar + 4, 5*xbar + 6)
+        """
+        if basis is not None:
+            raise NotImplementedError
+        if base is None:
+            base = self.base_ring()
+        if base != self.base_ring():
+            V1, from_V1, to_V1 = self.base_ring().free_module(base=base, basis=None, map=True)
+            assert V1.base_ring() == base
+            d = self.degree()
+            V1_degree = V1.degree()
+            V = base ** (V1_degree * d)
+
+            def from_V(v):
+                assert len(v) == V1_degree * d
+                return self([from_V1(V1(v[i*V1_degree:(i+1)*V1_degree])) for i in range(d)])
+
+            def to_V(f):
+                list_f = list(f)
+                return V([c for coefficient in f for c in to_V1(coefficient)])
+
+        else:
+            V = base ** self.degree()
+
+            def from_V(v):
+                return self(list(v))
+
+            def to_V(f):
+                return V(list(f))
+
+        if not map:
+            return V
+        from sage.categories.morphism import SetMorphism
+        from sage.categories.homset import Hom
+        return V, SetMorphism(Hom(V, self), from_V), SetMorphism(Hom(self, V), to_V)
+
     cover_ring = polynomial_ring
 
     def random_element(self, degree=None, *args, **kwds):

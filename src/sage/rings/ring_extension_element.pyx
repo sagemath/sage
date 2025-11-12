@@ -113,6 +113,20 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             True
             sage: a.continued_fraction()
             [1; (2)*]
+
+        TESTS::
+
+            sage: p = 886368969471450739924935101400677
+            sage: K = GF(p)
+            sage: Kx.<x> = K[]
+            sage: K3.<u> = K.extension(Kx([4, 1, 0, 1]))
+            sage: K3y.<y> = K3[]
+            sage: K6.<t> = K3.extension(K3y([2, 0, 1]))
+            sage: K6t = K6.over(K)
+            sage: K6t(t).minpoly()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: expected a minimal polynomial over Finite Field of size ...
         """
         try:
             return self.getattr_from_category(name)
@@ -124,9 +138,27 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         if not callable(method):
             raise AttributeError(AttributeErrorMessage(self, name))
 
-        def wrapper(*args, **kwargs):
-            output = method(*to_backend(args), **to_backend(kwargs))
-            return from_backend(output, self._parent)
+        if name == 'minpoly':
+            def wrapper(*args, **kwargs):
+                output = method(*to_backend(args), **to_backend(kwargs))
+                # output is a polynomial, so no need for from_backend
+                # nonetheless we check if the output is sane
+                expected_base_ring = (<RingExtension_generic>self._parent)._base
+                # we guess the signature of 'method', e.g. (self, base=None)
+                # to see what base the user likely want
+                if args and isinstance(args[0], Parent):
+                    expected_base_ring = args[0]
+                elif 'base' in kwargs:
+                    expected_base_ring = kwargs['base']
+                if output.base_ring() is not expected_base_ring:
+                    raise NotImplementedError(f'expected a minimal polynomial over {expected_base_ring}, '
+                                              f'got a minimal polynomial over {output.base_ring()}. '
+                                              f'Passing explicit generator/basis of the ring extension might help')
+                return output
+        else:
+            def wrapper(*args, **kwargs):
+                output = method(*to_backend(args), **to_backend(kwargs))
+                return from_backend(output, self._parent)
         wrapper.__doc__ = method.__doc__
         return wrapper
 
