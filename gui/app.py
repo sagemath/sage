@@ -1,5 +1,6 @@
 # General imports
 import sys
+import os
 from PyQt5.QtWidgets import (QMainWindow, QApplication, QPushButton, QWidget, 
                           QAction, QTabWidget, QVBoxLayout, QLabel, QStackedWidget)
 from PyQt5.QtGui import QIcon, QPalette, QColor, QPixmap
@@ -148,25 +149,9 @@ class WelcomeWidget(QWidget):
         
         # Create logo label
         logo_label = QLabel()
-        #pixmap = QPixmap("gui/SageGUI.png")
-        
-        import os
-
-        # Get the absolute directory path of the current Python file
         base_dir = os.path.dirname(os.path.abspath(__file__))
-
-        # Build the full path to your image
         img_path = os.path.join(base_dir, "SageGUI.png")
-
-        # Load the image
         pixmap = QPixmap(img_path)
-
-        if pixmap.isNull():
-            print(f"Failed to load image: {img_path}")
-        else:
-            print("Image loaded successfully!")
-
-
         scaled_pixmap = pixmap.scaled(700, 300)  # Adjust size as needed
         logo_label.setPixmap(scaled_pixmap)
         logo_label.setAlignment(Qt.AlignCenter)
