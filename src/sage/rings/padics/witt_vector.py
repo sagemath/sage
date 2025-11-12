@@ -266,7 +266,7 @@ class WittVector(CommutativeRingElement):
             if p == 2:
                 vec_k = (
                     parent(vec_k)
-                    * parent((tuple(-1 for _ in range(self._prec))))
+                    * parent(tuple(-1 for _ in range(self._prec)))
                 ).coordinates()
             else:
                 vec_k = (-x for x in vec_k)
