@@ -16,7 +16,7 @@ from __future__ import print_function, absolute_import
 from .utils import je, reindent_lines as ri
 
 
-class StorageType(object):
+class StorageType:
     r"""
     A StorageType specifies the C types used to deal with values of a
     given type.

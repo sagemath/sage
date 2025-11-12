@@ -40,7 +40,7 @@ def string_of_addr(a):
     return '*%s++' % a.name
 
 
-class MemoryChunk(object):
+class MemoryChunk:
     r"""
     Memory chunks control allocation, deallocation, initialization,
     etc.  of the vectors and objects in the interpreter.  Basically,
