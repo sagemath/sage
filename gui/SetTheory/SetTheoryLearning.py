@@ -20,9 +20,12 @@ class SetTheoryLearningTab(QWidget):
         self.unionResult = ""
         self.interResult = ""
         self.subsetResult = ""
-        self.symResult = ""
+        self.symResultOne = ""
+        self.symResultTwo = ""
+        self.symResultThree = ""
         self.partitionResult = ""
-        self.diffResult = ""
+        self.diffResultOne = ""
+        self.diffResultTwo = ""
         self.complimentResultOne = ""
         self.complimentResultTwo = ""
 
@@ -122,7 +125,10 @@ class SetTheoryLearningTab(QWidget):
             elif opNum == 4: # symmetric difference
                 setA = self.parseSetInput(setsDict[0])
                 setB = self.parseSetInput(setsDict[1])
-                self.symResult = (str(setA.difference(setB).union(setB.difference(setA))))
+                setC = self.parseSetInput(setsDict[2])
+                self.symResultOne = (str(setA.difference(setB).union(setB.difference(setA))))
+                self.symResultTwo = (str(setA.union(setB.intersection(setC))))
+                self.symResultThree = (str(setA.intersection(setB.union(setC))))
             elif opNum == 5: # partition
                 setA = self.parseSetInput(setsDict[0])
                 setB = self.parseSetInput(setsDict[1])
@@ -132,7 +138,8 @@ class SetTheoryLearningTab(QWidget):
             elif opNum == 6: # difference
                 setA = self.parseSetInput(setsDict[0])
                 setB = self.parseSetInput(setsDict[1])
-                self.diffResult = (str(setA.difference(setB)))
+                self.diffResultOne = (str(setA.difference(setB)))
+                self.diffResultTwo = (str(setB.difference(setA)))
             elif opNum == 7: # B compliment and C compliment
                 setA = self.parseSetInput(setsDict[0])
                 setB = self.parseSetInput(setsDict[1])
@@ -177,47 +184,66 @@ class SetTheoryLearningTab(QWidget):
             return answer == self.subsetResult
 
     def setAnswerCheck(self, text):
-        if text == "" or "{}" or ";" or "{};{}":
+        if text in ["", "{}"]:
             answer = Set([])
             if self.unionResult != "":
                 return answer == self.unionResult
             elif self.interResult != "":
                 return answer == self.interResult
-            elif self.symResult != "":
-                return answer == self.symResult
-            elif self.diffResult != "":
-                return answer == self.diffResult
+        if text in [";;", "{};{};{}"]:
+            answer = Set([])
+            if self.symResultOne != "":
+                return (answer == self.symResultOne and answer == self.symResultTwo and answer == self.symResultThree)
+        if text in [";", "{};{}"]:
+            answer = Set([])
+            if self.diffResultOne != "":
+                return (answer == self.diffResultOne and answer == self.diffResultTwo)
             else:
                 return (answer == self.complimentResultOne and answer == self.complimentResultTwo)
-        else:
-            if self.unionResult != "":
-                answer = self.parseSetInput(text)
-                return answer == self.unionResult
-            elif self.interResult != "":
-                answer = self.parseSetInput(text)
-                return answer == self.interResult
-            elif self.symResult != "":
-                answer = self.parseSetInput(text)
-                return answer == self.symResult
-            elif self.diffResult != "":
-                answer = self.parseSetInput(text)
-                return answer == self.diffResult
+        # Otherwise (empty sets handled)
+        if self.unionResult != "":
+            answer = self.parseSetInput(text)
+            return answer == self.unionResult
+        elif self.interResult != "":
+            answer = self.parseSetInput(text)
+            return answer == self.interResult
+        elif self.symResultOne != "":
+            answerList = text.split(';')
+            if answerList[0] == '':
+                answerOne = Set([])
             else:
-                answerList = text.split(';')
-                if answerList[0] == '' or answerList[1] == '':
-                    if answerList[0] == '':
-                        answerOne = Set([])
-                    else:
-                        answerOne = self.parseSetInput(answerList[0])
-                    if answerList[1] == '':
-                        answerTwo = Set([])
-                    else:
-                        answerTwo = self.parseSetInput(answerList[1])
-                    return (answerOne == self.complimentResultOne and answerTwo == self.complimentResultTwo)
-                else:
-                    answerOne = self.parseSetInput(answerList[0])
-                    answerTwo = self.parseSetInput(answerList[1])
-                    return (answerOne == self.complimentResultOne and answerTwo == self.complimentResultTwo)
+                answerOne = self.parseSetInput(answerList[0])
+            if answerList[1] == '':
+                answerTwo = Set([])
+            else:
+                answerTwo = self.parseSetInput(answerList[1])
+            if answerList[2] == '':
+                answerThree = Set([])
+            else:
+                answerThree = self.parseSetInput(answerList[2])
+            return (answerOne == self.symResultOne and answerTwo == self.symResultTwo and answerThree == self.symResultThree)
+        elif self.diffResultOne != "":
+            answerList = text.split(';')
+            if answerList[0] == '':
+                answerOne = Set([])
+            else:
+                answerOne = self.parseSetInput(answerList[0])
+            if answerList[1] == '':
+                answerTwo = Set([])
+            else:
+                answerTwo = self.parseSetInput(answerList[1])
+            return (answerOne == self.diffResultOne and answerTwo == self.diffResultTwo)
+        else:
+            answerList = text.split(';')
+            if answerList[0] == '':
+                answerOne = Set([])
+            else:
+                answerOne = self.parseSetInput(answerList[0])
+            if answerList[1] == '':
+                answerTwo = Set([])
+            else:
+                answerTwo = self.parseSetInput(answerList[1])
+            return (answerOne == self.complimentResultOne and answerTwo == self.complimentResultTwo)
 
     def incorrectBuzzer(self):
         hint = "Please review the glossary definition of "
@@ -233,9 +259,9 @@ class SetTheoryLearningTab(QWidget):
             return "Unions"
         elif self.interResult != "":
             return "Intersections"
-        elif self.symResult != "":
+        elif self.symResultOne != "":
             return "Symmetric Differences"
-        elif self.diffResult != "":
+        elif self.diffResultOne != "":
             return "Difference"
         elif self.subsetResult != "":
             return "Subsets"
@@ -263,8 +289,11 @@ class SetTheoryLearningTab(QWidget):
         self.unionResult = ""
         self.interResult = ""
         self.subsetResult = ""
-        self.symResult = ""
+        self.symResultOne = ""
+        self.symResultTwo = ""
+        self.symResultThree = ""
         self.partitionResult = ""
-        self.diffResult = ""
+        self.diffResultOne = ""
+        self.diffResultTwo = ""
         self.complimentResultOne = ""
         self.complimentResultTwo = ""
