@@ -1,11 +1,12 @@
 import sys
 import tempfile
+import random
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QMessageBox, QLabel, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QComboBox, QDialog
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtGui import QPixmap, QIcon
-from PyQt5.QtCore import QSize, QUrl
+from PyQt5.QtCore import QSize, QUrl, Qt
 from Glossary.Glossary import GlossaryWidget
 from sage.all import Graph
 
@@ -15,13 +16,36 @@ class GTImageWindow(QWidget):
         self.setWindowTitle("Learning Graph")
         self.resize(400, 400)
 
-        layout = QVBoxLayout()
-        label = QLabel()
-        pixmap = QPixmap(image_path)
-        label.setPixmap(pixmap)
-        label.setScaledContents(True)
-        layout.addWidget(label)
-        self.setLayout(layout)
+        self.label = QLabel(alignment=Qt.AlignCenter)
+        self.layout = QVBoxLayout(self)
+        self.layout.addWidget(self.label)
+
+        # Load the pixmap once
+        self.original_pixmap = QPixmap(image_path)
+        self.update_scaled_pixmap()
+
+    def resizeEvent(self, event):
+        #rescale the image when window size changes
+        self.update_scaled_pixmap()
+        super().resizeEvent(event)
+
+    def update_scaled_pixmap(self):
+        if not self.original_pixmap.isNull():
+        # Find how much space we actually have inside the label
+            available_size = self.label.size()
+            original_size = self.original_pixmap.size()
+        # Only scale down
+            target_width = min(available_size.width(), original_size.width())
+            target_height = min(available_size.height(), original_size.height())
+
+            scaled = self.original_pixmap.scaled(
+                target_width,
+                target_height,
+                Qt.KeepAspectRatio,
+                Qt.SmoothTransformation
+        )
+        self.label.setPixmap(scaled)
+
 
 class GT_Learning_Window(QWidget):
     def __init__(self, parent=None):
@@ -31,39 +55,56 @@ class GT_Learning_Window(QWidget):
 
         self.glossary_window = None
 
-        main_layout = QVBoxLayout()
-        main_layout.setSpacing(15)
+        self.main_layout = QVBoxLayout()
+        self.main_layout.setSpacing(15)
 
         # vertex input box
-        vert_layout = QHBoxLayout()
-        vert_label_box = QVBoxLayout()
-        vert_label_box.addWidget(QLabel("Input Vertice Names:"))
-        vert_label_box.addWidget(QLabel("(separated by commas)"))
-        vert_layout.addLayout(vert_label_box)
+        self.vert_layout = QHBoxLayout()
+        self.vert_label_box = QVBoxLayout()
+        self.vert_label_box.addWidget(QLabel("Input Vertice Names:"))
+        self.vert_label_box.addWidget(QLabel("(separated by commas)"))
+        self.vert_layout.addLayout(self.vert_label_box)
 
         self.vert_textbox = QLineEdit()
         self.vert_textbox.setPlaceholderText("ex: 1, 2, 3, 4")
-        vert_layout.addWidget(self.vert_textbox)
-        main_layout.addLayout(vert_layout)
+        self.vert_layout.addWidget(self.vert_textbox)
+        self.main_layout.addLayout(self.vert_layout)
 
         # edge input box
-        edge_layout = QHBoxLayout()
-        edge_label_box = QVBoxLayout()
-        edge_label_box.addWidget(QLabel("Input Edges:"))
-        edge_sub = QLabel("(ordered pairs separated by commas)")
-        edge_sub.setWordWrap(True)
-        edge_label_box.addWidget(edge_sub)
-        edge_layout.addLayout(edge_label_box)
+        self.edge_layout = QHBoxLayout()
+        self.edge_label_box = QVBoxLayout()
+        self.edge_label_box.addWidget(QLabel("Input Edges:"))
+        self.edge_sub = QLabel("(ordered pairs separated by commas)")
+        self.edge_sub.setWordWrap(True)
+        self.edge_label_box.addWidget(self.edge_sub)
+        self.edge_layout.addLayout(self.edge_label_box)
 
         self.edge_textbox = QLineEdit()
         self.edge_textbox.setPlaceholderText("ex: (1,2), (2,3), (1,4)")
-        edge_layout.addWidget(self.edge_textbox)
-        main_layout.addLayout(edge_layout)
+        self.edge_layout.addWidget(self.edge_textbox)
+        self.main_layout.addLayout(self.edge_layout)
+
+        # set quiz buttons
+        quiz_layout = QHBoxLayout()
+        self.quiz_vert_edge_button = QPushButton ("Quiz Me with Edge List")
+        self.quiz_vert_edge_button.clicked.connect(self.on_quiz_vert_edge)
+        quiz_layout.addWidget(self.quiz_vert_edge_button)
+
+        self.quiz_graph_button = QPushButton ("Quiz Me with a Graph")
+        self.quiz_graph_button.clicked.connect(self.on_quiz_graph)
+        quiz_layout.addWidget(self.quiz_graph_button)
+        self.main_layout.addLayout(quiz_layout)
+
+        # button to put back the edge and vertex list
+        self.reset_button = QPushButton("Reset Quiz")
+        self.reset_button.clicked.connect(self.on_reset_quiz)
+        self.reset_button.hide() 
+        self.main_layout.addWidget(self.reset_button)
 
         #button to display graph
         self.display_graph_button = QPushButton("Display Graph")
         self.display_graph_button.clicked.connect(self.on_display_button)
-        main_layout.addWidget(self.display_graph_button)
+        self.main_layout.addWidget(self.display_graph_button)
 
         # degree input box
         degree_layout = QHBoxLayout()
@@ -71,7 +112,11 @@ class GT_Learning_Window(QWidget):
         self.degree_textbox = QLineEdit()
         self.degree_textbox.setPlaceholderText("ex: 2,4,1,2 etc")
         degree_layout.addWidget(self.degree_textbox)
-        main_layout.addLayout(degree_layout)
+        self.main_layout.addLayout(degree_layout)
+
+        self.degree_help_button = QPushButton("Degree Example")
+        self.degree_help_button.clicked.connect(self.on_degree_help)
+        degree_layout.addWidget(self.degree_help_button)
 
         self.degree_check_button = QPushButton("Check Degrees")
         self.degree_check_button.clicked.connect(self.on_degree_check)
@@ -88,7 +133,11 @@ class GT_Learning_Window(QWidget):
         self.density_textbox.setPlaceholderText("ex: 50.00")
         density_layout.addWidget(self.density_textbox)
         density_layout.addWidget(QLabel("%"))
-        main_layout.addLayout(density_layout)
+        self.main_layout.addLayout(density_layout)
+
+        self.density_help_button = QPushButton("Density Example")
+        self.density_help_button.clicked.connect(self.on_density_help)
+        density_layout.addWidget(self.density_help_button)
 
         self.density_check_button = QPushButton("Check Density")
         self.density_check_button.clicked.connect(self.on_density_check)
@@ -100,7 +149,11 @@ class GT_Learning_Window(QWidget):
         self.planar_select = QComboBox()
         self.planar_select.addItems(["Select","Yes", "No"])
         planar_layout.addWidget(self.planar_select)
-        main_layout.addLayout(planar_layout)
+        self.main_layout.addLayout(planar_layout)
+
+        self.planar_help_button = QPushButton("Planar Example")
+        self.planar_help_button.clicked.connect(self.on_planar_help)
+        planar_layout.addWidget(self.planar_help_button)
 
         self.planar_check_button = QPushButton("Check Planar")
         self.planar_check_button.clicked.connect(self.on_planar_check)
@@ -112,7 +165,11 @@ class GT_Learning_Window(QWidget):
         self.euler_select = QComboBox()
         self.euler_select.addItems(["Select","Yes", "No"])
         euler_layout.addWidget(self.euler_select)
-        main_layout.addLayout(euler_layout)
+        self.main_layout.addLayout(euler_layout)
+
+        self.eulerian_help_button = QPushButton("Eulerian Example")
+        self.eulerian_help_button.clicked.connect(self.on_eulerian_help)
+        euler_layout.addWidget(self.eulerian_help_button)
 
         self.euler_check_button = QPushButton("Check Eulerian")
         self.euler_check_button.clicked.connect(self.on_euler_check)
@@ -124,7 +181,11 @@ class GT_Learning_Window(QWidget):
         self.hamilton_select = QComboBox()
         self.hamilton_select.addItems(["Select","Yes", "No"])
         hamilton_layout.addWidget(self.hamilton_select)
-        main_layout.addLayout(hamilton_layout)
+        self.main_layout.addLayout(hamilton_layout)
+
+        self.hamilton_help_button = QPushButton("Hamiltonian Example")
+        self.hamilton_help_button.clicked.connect(self.on_hamilton_help)
+        hamilton_layout.addWidget(self.hamilton_help_button)
 
         self.hamilton_check_button = QPushButton("Check Hamiltonian")
         self.hamilton_check_button.clicked.connect(self.on_hamilton_check)
@@ -132,27 +193,187 @@ class GT_Learning_Window(QWidget):
 
         self.glossary_button = QPushButton("Glossary")
         self.glossary_button.clicked.connect(self.show_glossary)
-        main_layout.addWidget(self.glossary_button)
+        self.main_layout.addWidget(self.glossary_button)
 
-        # main layout
-        self.setLayout(main_layout)
+        self.setLayout(self.main_layout)
 
-    #create graph from vertices and edges to use in other functions
-    def get_graph(self):
+    def get_graph(self): # creates graph with edge/vert inputs or quiz quesion
+        if hasattr(self, "current_quiz_graph") and self.current_quiz_graph is not None: # checks if in quiz mode
+            return self.current_quiz_graph, list(self.current_quiz_graph.vertices()) # if yes it creates graph with quiz info
+    #takes info from edge/vert input boxes and creates graph
         vert_text = self.vert_textbox.text()
-        vertices = [v.strip() for v in vert_text.split(',') if v.strip()] #takes input and puts it in correct form for graph
+        vertices = [v.strip() for v in vert_text.split(',') if v.strip()]
+    
         edge_text = self.edge_textbox.text()
         edge_pairs = []
-        for e in edge_text.split('),'): #takes input and puts it in correct form for graph
+        for e in edge_text.split('),'):
             e = e.replace('(', '').replace(')', '').strip()
             if e:
                 parts = e.split(',')
                 if len(parts) == 2:
                     edge_pairs.append((parts[0].strip(), parts[1].strip()))
+    
         G = Graph()
         G.add_vertices(vertices)
         G.add_edges(edge_pairs)
         return G, vertices
+
+    
+    def clear_layout(self, layout):
+    # removes the edge/vert input boxes from layout, but does not delete the layout itself
+        if layout is None:
+            return
+        while layout.count():
+            item = layout.takeAt(0)
+            if item is None:
+                continue
+            w = item.widget()
+            if w:
+                w.setParent(None)
+                w.deleteLater()
+            else:
+                sub = item.layout()
+                if sub:
+                    self.clear_layout(sub)
+
+    def on_quiz_vert_edge(self):
+        self.saved_vert_layout = self.vert_layout #saves layout position from before
+        self.saved_edge_layout = self.edge_layout
+        self.vert_index_saved = self.main_layout.indexOf(self.vert_layout)
+        self.edge_index_saved = self.main_layout.indexOf(self.edge_layout)
+        for layout in [self.vert_layout, self.edge_layout]: #on quiz button it removes the edge/vert boxes
+            self.clear_layout(layout)
+            self.main_layout.removeItem(layout)
+    #bank of quiz questions with edge list
+        self.edge_list_bank = [
+            [(1,2),(1,3),(1,4)], [(1,3),(2,3),(3,3),(2,4)], [(1,4),(1,2),(2,3),(2,4),(1,5),(2,5),(3,5)], 
+            [(1,2),(1,3),(1,4),(1,5),(2,3),(2,4),(2,5),(3,4),(3,5),(4,5)], [(1,3),(2,3),(1,4)]
+        ]
+    #pulls random edge list from edge_list_bank
+        edge_list = random.choice(self.edge_list_bank)
+        self.current_quiz_graph = Graph() #will make graph with current quiz graph
+        edge_text = ", ".join([f"({u},{v})" for u,v in edge_list]) #pulls edge list in and puts in correct form to create graph
+        vertices = set()
+        for u, v in edge_list:
+            vertices.add(str(u))
+            vertices.add(str(v))
+        self.current_quiz_graph.add_vertices(list(vertices))
+        self.current_quiz_graph.add_edges([(str(u), str(v)) for u, v in edge_list])
+
+        self.quiz_area = QWidget()
+        self.quiz_area.setMaximumHeight(50) #restrict quiz area so it isnt too big
+        quiz_layout = QVBoxLayout(self.quiz_area)
+        label = QLabel(f"Given the following edge list, answer the questions below: \n{edge_text}") #dummy text that will pull in random selection from edge list bank
+        label.setAlignment(Qt.AlignCenter)
+        quiz_layout.addWidget(label)
+        insert_index = min(self.vert_index_saved, self.edge_index_saved)
+        self.main_layout.insertWidget(insert_index, self.quiz_area)
+        self.reset_button.show() #rest button only shows in quiz mode
+        self.updateGeometry()
+        self.repaint()
+
+    def on_quiz_graph(self):
+    # Remove previous quiz area if exists
+        if hasattr(self, "quiz_area"):
+            self.main_layout.removeWidget(self.quiz_area)
+            self.quiz_area.deleteLater()
+            del self.quiz_area
+
+    # Hide/remove the vertex and edge input layouts
+        for layout in [self.vert_layout, self.edge_layout]:
+            self.clear_layout(layout)
+            self.main_layout.removeItem(layout)
+
+    # bank of vertex/edges to be made into pictures
+        self.quiz_graph_bank = [
+            Graph({1:[2,3,4], 2:[3], 3:[4]}),
+            Graph({1:[2], 2:[3,4], 3:[5], 4:[5]}),
+            Graph({1:[2,3,4,5], 2:[3,4,5],3:[4,5],4:[5]})
+        ]
+        self.current_quiz_graph = random.choice(self.quiz_graph_bank)
+
+    # Save graph as temp image
+        tmp_file = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
+        self.current_quiz_graph.plot().save(tmp_file.name)
+
+    # Display temp image in quiz area
+        self.quiz_area = QWidget()
+        self.quiz_area.setMinimumHeight(200) #keeps picture decent size
+        self.quiz_area.setMaximumHeight(400)
+        quiz_layout = QVBoxLayout(self.quiz_area)
+
+        self.img_label = QLabel()
+        self.img_label.setAlignment(Qt.AlignCenter)
+        quiz_layout.addWidget(self.img_label)
+
+        self.pixmap = QPixmap(tmp_file.name)
+        self.img_label.setPixmap(self.pixmap.scaled(
+            self.img_label.size(),
+            Qt.KeepAspectRatio,
+            Qt.SmoothTransformation
+        ))
+
+    # Update the pixmap when the widget is resized
+        def resize_event(event):
+            if hasattr(self, "pixmap"):
+                self.img_label.setPixmap(self.pixmap.scaled(
+                    self.img_label.size(),
+                    Qt.KeepAspectRatio,
+                    Qt.SmoothTransformation
+                ))
+            QWidget.resizeEvent(self.quiz_area, event)
+
+        self.quiz_area.resizeEvent = resize_event
+
+    # Insert at the top
+        self.main_layout.insertWidget(0, self.quiz_area)
+
+        self.reset_button.show()
+        self.updateGeometry()
+        self.repaint()
+
+
+    def on_reset_quiz(self):
+        if hasattr(self, "quiz_area"): #if in quiz mode, remove the quiz area
+            self.main_layout.removeWidget(self.quiz_area)
+            self.quiz_area.deleteLater()
+            del self.quiz_area
+        self.current_quiz_graph = None
+
+        if hasattr(self, "vert_layout"):
+            self.clear_layout(self.vert_layout)
+            self.main_layout.removeItem(self.vert_layout)
+        if hasattr(self, "edge_layout"):
+            self.clear_layout(self.edge_layout)
+            self.main_layout.removeItem(self.edge_layout)
+
+        self.vert_layout = QHBoxLayout() #add back in the edge/vert input boxes
+        self.vert_label_box = QVBoxLayout()
+        self.vert_label_box.addWidget(QLabel("Input Vertice Names:"))
+        self.vert_label_box.addWidget(QLabel("(separated by commas)"))
+        self.vert_layout.addLayout(self.vert_label_box)
+        self.vert_textbox = QLineEdit()
+        self.vert_textbox.setPlaceholderText("ex: 1, 2, 3, 4")
+        self.vert_layout.addWidget(self.vert_textbox)
+
+        self.edge_layout = QHBoxLayout()
+        self.edge_label_box = QVBoxLayout()
+        self.edge_label_box.addWidget(QLabel("Input Edges:"))
+        self.edge_sub = QLabel("(ordered pairs separated by commas)")
+        self.edge_sub.setWordWrap(True)
+        self.edge_label_box.addWidget(self.edge_sub)
+        self.edge_layout.addLayout(self.edge_label_box)
+        self.edge_textbox = QLineEdit()
+        self.edge_textbox.setPlaceholderText("ex: (1,2), (2,3), (1,4)")
+        self.edge_layout.addWidget(self.edge_textbox)
+
+        self.main_layout.insertLayout(0, self.edge_layout)
+        self.main_layout.insertLayout(0, self.vert_layout)
+        self.reset_button.hide()
+
+        self.updateGeometry()
+        self.repaint()
+
 
     # displays graph
     def on_display_button(self):
@@ -287,3 +508,42 @@ class GT_Learning_Window(QWidget):
         self.glossary_window.show()
         self.glossary_window.raise_()
         self.glossary_window.activateWindow()
+
+    def on_degree_help(self):
+        QMessageBox.information (self, "Degree Help", 
+        "Ex:\n" 
+        "Given the edges (1,2), (2,3), (1,4), (2,4)\n\n" 
+        "count the number of times each vertex appears in an edge. \n\n" 
+        "The degrees are then: 2,3,1,2\n\n"
+        "Given a picture of the graph, simply count the number of edges attached to each vertex")
+
+    def on_density_help(self):
+        QMessageBox.information (self, "Density Help", 
+        "Ex:\n" 
+        "Given the edges (1,2), (2,3), (1,4), (2,4)\n\n" 
+        "To find the density as a percentage, we use the formula:\n\n"
+        "D=(2 x # of edges)/[(# of vertices)(# of vertices -1)]*100\n\n"
+        "for our graph, we have: \n\n"
+        "D=(2*4)/[(4)(3)]*100\n\n"
+        "D=(8)/(12)*100\n\n"
+        "D= 66.67%")
+
+    def on_planar_help(self):
+        QMessageBox.information (self, "Planar Help", "There are several methods that can be used to check planarity\n"
+        "1: For smaller graphs, try drawing the graph with no edges crossing, then the graph IS planar\n\n"
+        "2: if # of vertices is atleast 3 and # of edges < 3 x # of vertices - 6, then the graph is NOT planar\n\n"
+        "3: if # of vertices is atleast 3 and there are no 3 cycles and # of edges < 2 x # of vertices - 4 then the graph is NOT planar\n\n")
+
+    def on_eulerian_help(self):
+        QMessageBox.information (self, "Eulerian",        
+        "Ex:\n" 
+        "Given the edges (1,2), (2,3), (1,4), (2,4)\n\n" 
+        "To be eulerian, the degree of each vertex must be even\n\n"
+        "Since the degree of both vertex 2 and 3 are odd, the graph is not eulerian")
+
+    def on_hamilton_help(self):
+        QMessageBox.information (self, "Hamiltonian Help",         
+        "Ex:\n" 
+        "Given the edges (1,2), (2,3), (1,4), (2,4)\n\n"
+        "If each vertex does not have degree atleast (# of vertices)/2, then the graph is NOT hamiltonian\n\n"
+        "Since vertex 3 has degree of 1, this graph is not hamiltonian")
