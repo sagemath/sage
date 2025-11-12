@@ -1,6 +1,6 @@
 from typing import Callable, Union
 
-def abstract_method(f: Callable = None, optional: bool = False) -> Callable:
+def abstract_method(f: Callable | None = None, optional: bool = False) -> Callable:
     ...
 
 class AbstractMethod:

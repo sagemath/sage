@@ -82,7 +82,7 @@ from sage.repl.ipython_kernel.all_jupyter import (interact, checkbox,
 
 
 def library_interact(
-    decorator_target: Callable[..., Any] = None, **widgets: Callable[..., Any]
+    decorator_target: Callable[..., Any] | None = None, **widgets: Callable[..., Any]
 ):
     r"""
     This is a decorator for using interacts in the Sage library.

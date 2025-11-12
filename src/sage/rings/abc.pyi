@@ -1,6 +1,6 @@
 from typing import Union, Callable
 
-def abc(f: Callable = None, optional: bool = False) -> Callable:
+def abc(f: Callable | None = None, optional: bool = False) -> Callable:
     ...
 
 class ABC:
