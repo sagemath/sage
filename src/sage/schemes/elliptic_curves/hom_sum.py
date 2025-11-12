@@ -269,8 +269,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
                     ker.append(P)
                 continue
 
-#            F = self.domain().division_field(l**m)  #FIXME this can be used once #35936 is done; workaround below
-            F = self.domain().division_polynomial(l**m).splitting_field('X').extension(2,'Y')
+            F = self.domain().division_field(l**m)
 
             P,Q = self.domain().change_ring(F).torsion_basis(l**m)
             if self.is_endomorphism():
