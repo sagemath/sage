@@ -8,7 +8,8 @@ from __future__ import annotations
 
 from os import path
 from pathlib import Path
-from typing import Any, Iterable, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
+from collections.abc import Iterable
 from urllib.parse import quote
 
 from sphinx.builders.dummy import DummyBuilder

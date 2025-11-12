@@ -1,4 +1,5 @@
-from typing import Callable, Union
+from typing import Union
+from collections.abc import Callable
 
 def abstract_method(f: Callable | None = None, optional: bool = False) -> Callable:
     ...

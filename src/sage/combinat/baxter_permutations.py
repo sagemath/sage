@@ -1,7 +1,7 @@
 """
 Baxter permutations
 """
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.combinat.permutation import Permutations
 from sage.combinat.posets.lattices import LatticePoset
