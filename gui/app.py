@@ -129,7 +129,7 @@ class App(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.title = 'SageMath GUI'
+        self.title = 'Sage Tutor'
         self.left = 0
         self.top = 0
         self._window_width = 1100
@@ -150,7 +150,7 @@ class WelcomeWidget(QWidget):
         # Create logo label
         logo_label = QLabel()
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        img_path = os.path.join(base_dir, "SageGUI.png")
+        img_path = os.path.join(base_dir, "sage_tutor.png")
         pixmap = QPixmap(img_path)
         scaled_pixmap = pixmap.scaled(700, 300)  # Adjust size as needed
         logo_label.setPixmap(scaled_pixmap)
