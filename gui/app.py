@@ -148,12 +148,23 @@ class WelcomeWidget(QWidget):
         
         # Create logo label
         logo_label = QLabel()
-        pixmap = QPixmap("gui/SageGUI.png")
+        #pixmap = QPixmap("gui/SageGUI.png")
         
         import os
 
-        print("Current working directory:", os.getcwd())
-        print("File exists:", os.path.exists("gui/SageGUI.png"))
+        # Get the absolute directory path of the current Python file
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+
+        # Build the full path to your image
+        img_path = os.path.join(base_dir, "gui", "SageGUI.png")
+
+        # Load the image
+        pixmap = QPixmap(img_path)
+
+        if pixmap.isNull():
+            print(f"Failed to load image: {img_path}")
+        else:
+            print("Image loaded successfully!")
 
 
         scaled_pixmap = pixmap.scaled(700, 300)  # Adjust size as needed
