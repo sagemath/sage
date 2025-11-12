@@ -157,7 +157,7 @@ class CCInterpreter(StackInterpreter):
         """
 
         mc_retval = MemoryChunkCCRetval('retval', ty_mpc)
-        super(CCInterpreter, self).__init__(ty_mpc, mc_retval=mc_retval)
+        super().__init__(ty_mpc, mc_retval=mc_retval)
         self.err_return = '0'
         self.mc_py_constants = MemoryChunkConstants('py_constants', ty_python)
         self.mc_domain = MemoryChunkPyConstant('domain')

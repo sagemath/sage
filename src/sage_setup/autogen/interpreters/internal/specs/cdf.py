@@ -70,7 +70,7 @@ class CDFInterpreter(StackInterpreter):
             13.0 + 26.0*I
         """
 
-        super(CDFInterpreter, self).__init__(ty_double_complex)
+        super().__init__(ty_double_complex)
         self.mc_py_constants = MemoryChunkConstants('py_constants', ty_python)
         # See comment for RDFInterpreter
         self.err_return = '-1094648119105371'

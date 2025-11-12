@@ -458,7 +458,7 @@ class MemoryChunkScratch(MemoryChunkLonglivedArray):
             True
         """
 
-        super(MemoryChunkScratch, self).__init__(name, storage_type)
+        super().__init__(name, storage_type)
         self._is_stack = is_stack
 
     def is_stack(self):

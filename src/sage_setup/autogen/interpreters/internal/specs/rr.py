@@ -172,7 +172,7 @@ class RRInterpreter(StackInterpreter):
         """
 
         mc_retval = MemoryChunkRRRetval('retval', ty_mpfr)
-        super(RRInterpreter, self).__init__(ty_mpfr, mc_retval=mc_retval)
+        super().__init__(ty_mpfr, mc_retval=mc_retval)
         self.err_return = '0'
         self.mc_py_constants = MemoryChunkConstants('py_constants', ty_python)
         self.mc_domain = MemoryChunkPyConstant('domain')

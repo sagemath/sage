@@ -75,7 +75,7 @@ class RDFInterpreter(StackInterpreter):
             ValueError: negative number to a fractional power not real
         """
 
-        super(RDFInterpreter, self).__init__(ty_double)
+        super().__init__(ty_double)
         self.mc_py_constants = MemoryChunkConstants('py_constants', ty_python)
         # This is a randomly chosen number.  Whenever this number is
         # returned, the wrapper has to check whether an exception actually

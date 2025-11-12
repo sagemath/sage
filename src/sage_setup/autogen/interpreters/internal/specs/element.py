@@ -96,7 +96,7 @@ class ElementInterpreter(PythonInterpreter):
             py_call: *->S = '\nPyObject *py_args...CREF(py_args);\n'
         """
 
-        super(ElementInterpreter, self).__init__()
+        super().__init__()
         # PythonInterpreter.__init__ gave us a MemoryChunkPythonArguments.
         # Override with MemoryChunkElementArguments.
         self.mc_args = MemoryChunkElementArguments('args', ty_python)

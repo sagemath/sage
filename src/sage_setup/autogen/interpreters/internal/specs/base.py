@@ -153,7 +153,7 @@ class StackInterpreter(InterpreterSpec):
             sage: el.implement_call_c
             False
         """
-        super(StackInterpreter, self).__init__()
+        super().__init__()
         self.mc_args = MemoryChunkArguments('args', type)
         self.mc_constants = MemoryChunkConstants('constants', type)
         self.mc_stack = MemoryChunkScratch('stack', type, is_stack=True)

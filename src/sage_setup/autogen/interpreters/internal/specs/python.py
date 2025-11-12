@@ -108,7 +108,7 @@ class MemoryChunkPyConstant(MemoryChunk):
             sage: mc.storage_type is ty_python
             True
         """
-        super(MemoryChunkPyConstant, self).__init__(name, ty_python)
+        super().__init__(name, ty_python)
 
     def declare_class_members(self):
         r"""
@@ -228,7 +228,7 @@ class PythonInterpreter(StackInterpreter):
             py_call: *->S = '\nPyObject *py_args...CREF(py_args);\n'
         """
 
-        super(PythonInterpreter, self).__init__(ty_python)
+        super().__init__(ty_python)
         # StackInterpreter.__init__ gave us a MemoryChunkArguments.
         # Override with MemoryChunkPythonArguments.
         self.mc_args = MemoryChunkPythonArguments('args', ty_python)
