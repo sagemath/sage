@@ -233,7 +233,7 @@ class SetTheoryLearningTab(QWidget):
             else:
                 answerTwo = self.parseSetInput(answerList[1])
             return (answerOne == self.diffResultOne and answerTwo == self.diffResultTwo)
-        else:
+        elif self.complimentResultOne != "":
             answerList = text.split(';')
             if answerList[0] == '':
                 answerOne = Set([])
@@ -244,6 +244,8 @@ class SetTheoryLearningTab(QWidget):
             else:
                 answerTwo = self.parseSetInput(answerList[1])
             return (answerOne == self.complimentResultOne and answerTwo == self.complimentResultTwo)
+        else:
+            return False
 
     def incorrectBuzzer(self):
         hint = "Please review the glossary definition of "
