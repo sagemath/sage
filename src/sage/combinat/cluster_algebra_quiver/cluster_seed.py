@@ -4765,10 +4765,10 @@ def coeff_recurs(p, q, a1, a2, b, c):
         return 0
     if c * a1 * q <= b * a2 * p:
         return sum((-1)**(k - 1) * coeff_recurs(p - k, q, a1, a2, b, c)
-                   *_bino(a2 - c * q + k - 1, k)
+                   * _bino(a2 - c * q + k - 1, k)
                    for k in range(1, p + 1))
     return sum((-1)**(k - 1) * coeff_recurs(p, q - k, a1, a2, b, c)
-               *_bino(a1 - b * p + k - 1, k)
+               * _bino(a1 - b * p + k - 1, k)
                for k in range(1, q + 1))
 
 
@@ -4833,7 +4833,7 @@ def SetToPath(T):
     return ans
 
 
-def is_LeeLiZel_allowable(T, n, m, b, c):
+def is_LeeLiZel_allowable(T, n, m, b, c) -> bool:
     """
     Check if the subset `T` contributes to the computation of the greedy element `x[m,n]` in the rank two `(b,c)`-cluster algebra.
 
@@ -4848,52 +4848,54 @@ def is_LeeLiZel_allowable(T, n, m, b, c):
         True
     """
     horiz = set(T).intersection(PathSubset(n, 0))
+    if not horiz:
+        return True
     vert = set(T).symmetric_difference(horiz)
-    if len(horiz) == 0 or len(vert) == 0:
-        return True
-    else:
-        Latt = SetToPath(PathSubset(n, m))
-        for u in horiz:
-            from sage.combinat.words.word import Word
-            from sage.modules.free_module_element import vector
-            WW = Word(Latt)
-            LattCycled = vector(WW.conjugate(Latt.index(u))).list()
-            for v in vert:
-                uv_okay = False
-                for A in range(LattCycled.index(v)):
-                    EA = []
-                    AF = copy(LattCycled)
-                    for i in range(LattCycled.index(v), len(LattCycled)-1):
-                        AF.pop()
-                    AF.reverse()
-                    for i in range(A+1):
-                        EA.append(LattCycled[i])
-                        AF.pop()
-                    AF.reverse()
-                    nAF1 = 0
-                    for i in range(len(AF)):
-                        if AF[i] % 2 == 1:
-                            nAF1 += 1
-                    nAF2 = 0
-                    for i in range(len(AF)):
-                        if AF[i] % 2 == 0 and AF[i] in vert:
-                            nAF2 += 1
-                    nEA2 = 0
-                    for i in range(len(EA)):
-                        if EA[i] % 2 == 0:
-                            nEA2 += 1
-                    nEA1 = 0
-                    for i in range(len(EA)):
-                        if EA[i] % 2 == 1 and EA[i] in horiz:
-                            nEA1 += 1
-                    if nAF1 == b*nAF2 or nEA2 == c*nEA1:
-                        uv_okay = True
-                if not uv_okay:
-                    return False
+    if not vert:
         return True
 
+    Latt = SetToPath(PathSubset(n, m))
+    for u in horiz:
+        from sage.combinat.words.word import Word
+        from sage.modules.free_module_element import vector
+        WW = Word(Latt)
+        LattCycled = vector(WW.conjugate(Latt.index(u))).list()
+        for v in vert:
+            uv_okay = False
+            for A in range(LattCycled.index(v)):
+                EA = []
+                AF = copy(LattCycled)
+                for i in range(LattCycled.index(v), len(LattCycled) - 1):
+                    AF.pop()
+                AF.reverse()
+                for i in range(A + 1):
+                    EA.append(LattCycled[i])
+                    AF.pop()
+                AF.reverse()
+                nAF1 = 0
+                for i in range(len(AF)):
+                    if AF[i] % 2 == 1:
+                        nAF1 += 1
+                nAF2 = 0
+                for i in range(len(AF)):
+                    if AF[i] % 2 == 0 and AF[i] in vert:
+                        nAF2 += 1
+                nEA2 = 0
+                for i in range(len(EA)):
+                    if EA[i] % 2 == 0:
+                        nEA2 += 1
+                nEA1 = 0
+                for i in range(len(EA)):
+                    if EA[i] % 2 == 1 and EA[i] in horiz:
+                        nEA1 += 1
+                if nAF1 == b * nAF2 or nEA2 == c * nEA1:
+                    uv_okay = True
+            if not uv_okay:
+                return False
+    return True
 
-def get_green_vertices(C):
+
+def get_green_vertices(C) -> list[int]:
     r"""
     Get the green vertices from a matrix.
 
@@ -4914,7 +4916,7 @@ def get_green_vertices(C):
     return [i for i, v in enumerate(C.columns()) if any(x > 0 for x in v)]
 
 
-def get_red_vertices(C):
+def get_red_vertices(C) -> list[int]:
     r"""
     Get the red vertices from a matrix.
 

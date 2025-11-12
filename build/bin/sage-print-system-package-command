@@ -33,8 +33,8 @@ do
             PROMPT="${1#--prompt=}"
             ;;
         --prompt)
-            PROMPT='  $ '
-            CONTINUATION='        '
+            PROMPT='$ '
+            CONTINUATION='      '
             ;;
         --continuation=*)
             CONTINUATION="${1#--continuation=}"
@@ -172,7 +172,7 @@ case $system:$command in
         fi
         ;;
     void*:update)
-        print_shell_command "${SUDO}xbps-install -Su"
+        print_shell_command "${SUDO}xbps-install -Suy"
         ;;
     void*:install)
         [ "$YES" = yes ] && options="$options --yes"

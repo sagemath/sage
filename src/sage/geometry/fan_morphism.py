@@ -176,7 +176,7 @@ class FanMorphism(FreeModuleMorphism):
         sage: fm = FanMorphism(phi, normal, face, subdivide=True)
         sage: fm.domain_fan() is normal
         False
-        sage: fm.domain_fan().ngenerating_cones()
+        sage: fm.domain_fan().n_generating_cones()
         6
 
     We had to subdivide two of the four cones of the normal fan, since
@@ -532,13 +532,13 @@ class FanMorphism(FreeModuleMorphism):
             ValueError: ray #1 is mapped into a 2-d cone!
         """
         Sigma = self.domain_fan()
-        ray_index_map = [-1] * Sigma.nrays()
+        ray_index_map = [-1] * Sigma.n_rays()
         for i, rho in enumerate(Sigma(1)):
             sigma_p = self.image_cone(rho)
-            if sigma_p.nrays() > 1:
+            if sigma_p.n_rays() > 1:
                 raise ValueError("ray #%d is mapped into a %d-d cone!" %
                                  (i, sigma_p.dim()))
-            elif sigma_p.nrays() == 1:
+            elif sigma_p.n_rays() == 1:
                 ray_index_map[i] = sigma_p.ambient_ray_indices()[0]
         return tuple(ray_index_map)
 
@@ -693,7 +693,7 @@ class FanMorphism(FreeModuleMorphism):
                     print("(%.3f ms)" % walltime(start))
                     print("Number of domain cones: %d.\n"
                           "Number of chambers: %d." %
-                          (domain_fan.ngenerating_cones(), len(chambers)))
+                          (domain_fan.n_generating_cones(), len(chambers)))
             # Subdivide domain_cone.
             if verbose:
                 start = walltime()
@@ -735,7 +735,7 @@ class FanMorphism(FreeModuleMorphism):
             new_cones.extend(parts)
             if verbose:
                 print("(%.3f ms)" % walltime(start))
-        if len(new_cones) > domain_fan.ngenerating_cones():
+        if len(new_cones) > domain_fan.n_generating_cones():
             # Construct a new fan keeping old rays in the same order
             new_rays = list(domain_fan.rays())
             for cone in new_cones:
@@ -1194,8 +1194,8 @@ class FanMorphism(FreeModuleMorphism):
         Sigma = self.domain_fan()
         Sigma_p = self.codomain_fan()
         Sigma_0 = self.kernel_fan()
-        if (Sigma.ngenerating_cones() !=
-            Sigma_0.ngenerating_cones() * Sigma_p.ngenerating_cones()):
+        if (Sigma.n_generating_cones() !=
+            Sigma_0.n_generating_cones() * Sigma_p.n_generating_cones()):
             return False    # Definitely no splitting.
         try:
             ray_index_map = self._ray_index_map()
@@ -1560,7 +1560,7 @@ class FanMorphism(FreeModuleMorphism):
             CSGI = cone.star_generator_indices()
             RISGIS = self._RISGIS()
             domain_fan = self._domain_fan
-            possible_rays = frozenset(i for i in range(domain_fan.nrays())
+            possible_rays = frozenset(i for i in range(domain_fan.n_rays())
                                       if RISGIS[i].issuperset(CSGI))
             preimage_cones = []
             for dcones in domain_fan.cones():
@@ -1602,7 +1602,7 @@ class FanMorphism(FreeModuleMorphism):
             sage: fm.preimage_fan(Cone([(1,0)])).cones()
             ((0-d cone of Rational polyhedral fan in 2-d lattice N,),
              (1-d cone of Rational polyhedral fan in 2-d lattice N,))
-            sage: fm.preimage_fan(quadrant_cone).ngenerating_cones()
+            sage: fm.preimage_fan(quadrant_cone).n_generating_cones()
             2
             sage: len(fm.preimage_cones(quadrant_cone))
             3

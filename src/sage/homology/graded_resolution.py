@@ -86,7 +86,6 @@ from sage.rings.ideal import Ideal_generic
 from sage.homology.free_resolution import (FiniteFreeResolution,
                                            FiniteFreeResolution_free_module,
                                            FiniteFreeResolution_singular)
-from sage.misc.superseded import deprecated_function_alias
 
 
 class GradedFiniteFreeResolution(FiniteFreeResolution):
@@ -107,7 +106,8 @@ class GradedFiniteFreeResolution(FiniteFreeResolution):
 
     - ``name`` -- string; name of the base ring
     """
-    def __init__(self, module, degrees=None, shifts=None, name='S', **kwds):
+    def __init__(self, module, degrees=None, shifts=None, name='S',
+                 **kwds) -> None:
         r"""
         Initialize ``self``.
 
@@ -162,7 +162,7 @@ class GradedFiniteFreeResolution(FiniteFreeResolution):
         self._multigrade = multigrade
         self._zero_deg = zero_deg
 
-    def _repr_module(self, i):
+    def _repr_module(self, i) -> str:
         """
         EXAMPLES::
 
@@ -262,14 +262,12 @@ class GradedFiniteFreeResolution(FiniteFreeResolution):
         else:
             degrees = [a]
 
-        betti = {}
-        for s in degrees:
-            betti[s] = len([d for d in shifts if d == s])
+        betti = {s: len([d for d in shifts if d == s]) for s in degrees}
 
         if a is None:
             return betti
         else:
-            return betti[a] if a in betti else 0
+            return betti.get(a, 0)
 
     def K_polynomial(self, names=None):
         r"""
@@ -325,7 +323,7 @@ class GradedFiniteFreeResolution_free_module(GradedFiniteFreeResolution, FiniteF
         sage: res = FreeResolution(M, graded=True); res
         S(0)⊕S(0)⊕S(0) <-- S(-3)⊕S(-1) <-- 0
     """
-    def __init__(self, module, degrees=None, *args, **kwds):
+    def __init__(self, module, degrees=None, *args, **kwds) -> None:
         """
         Initialize ``self``.
 
@@ -408,7 +406,8 @@ class GradedFiniteFreeResolution_free_module(GradedFiniteFreeResolution, FiniteF
         return [M]
 
 
-class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFreeResolution_singular):
+class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution,
+                                          FiniteFreeResolution_singular):
     r"""
     Graded free resolutions of submodules and ideals of multivariate
     polynomial rings implemented using Singular.
@@ -471,7 +470,8 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
         sage: r = I.graded_free_resolution(); r
         S(0) <-- S(-1)⊕S(-2)⊕S(-2) <-- S(-3)⊕S(-3)⊕S(-4) <-- S(-5) <-- 0
     """
-    def __init__(self, module, degrees=None, shifts=None, name='S', algorithm='heuristic', **kwds):
+    def __init__(self, module, degrees=None, shifts=None, name='S',
+                 algorithm='heuristic', **kwds) -> None:
         """
         Initialize.
 
@@ -561,6 +561,3 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
 
         self._res_shifts = res_shifts
         return res_mats
-
-
-GradedFreeResolution = deprecated_function_alias(34873, GradedFiniteFreeResolution_singular)

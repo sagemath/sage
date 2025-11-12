@@ -2116,7 +2116,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         ::
 
             sage: E = EllipticCurve(GF(next_prime(2^32)), j=1728)
-            sage: sorted([phi.codomain().j_invariant() for phi in E.isogenies_degree(11 * 17 * 19^2)])
+            sage: sorted([phi.codomain().j_invariant() for phi in E.isogenies_degree(11 * 17 * 19^2)])  # long time (:issue:`39569`)
             [1348157279, 1348157279, 1713365879, 1713365879, 3153894341, 3153894341,
              3225140514, 3225140514, 3673460198, 3673460198, 3994312564, 3994312564]
             sage: it = E.isogenies_degree(2^2); it
@@ -2187,7 +2187,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                To:   Elliptic Curve defined by y^2 = x^3 + 4294967267*x + 112 over Finite Field of size 4294967311]
             sage: all(isog.domain() is E for isog in _)
             True
-            sage: all(isog.domain() is E for isog in E.isogenies_degree(2^5, _intermediate=True))
+            sage: all(isog.domain() is E for isog in E.isogenies_degree(2^5, _intermediate=True))  # long time (:issue:`39569`)
             True
 
         The following curve has no degree-`53` isogenies, so the code is quick::
@@ -2594,7 +2594,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 curve_max = 0
 
             r = [0] * len(Es)  # adjacency matrix row
-            for C in [I.codomain() for I in E.isogenies_prime_degree(l)]:
+            for I in E.isogenies_prime_degree(l):
+                C = I.codomain()
                 j = next((k for k, F in enumerate(Es) if C.is_isomorphic(F)),
                          -1)  # index of curve isomorphic to codomain of isogeny
                 if j >= 0:

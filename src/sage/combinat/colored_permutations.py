@@ -7,7 +7,7 @@ Colored permutations
     generalized to `G \wr S_n`
 """
 import itertools
-from random import choice
+from sage.misc.prandom import choice
 
 from sage.structure.element import MultiplicativeGroupElement, parent
 from sage.structure.parent import Parent
@@ -22,7 +22,7 @@ from sage.arith.functions import lcm
 from sage.combinat.permutation import Permutations
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.specht_module import SpechtModule as SymGroupSpechtModule
-from sage.combinat.partition_tuple import PartitionTuples, PartitionTuple
+from sage.combinat.partition_tuple import PartitionTuples
 from sage.groups.conjugacy_classes import ConjugacyClass
 from sage.modules.with_basis.subquotient import SubmoduleWithBasis, QuotientModuleWithBasis
 from sage.modules.with_basis.representation import Representation_abstract
@@ -280,7 +280,7 @@ class ColoredPermutation(MultiplicativeGroupElement):
         """
         Cp = CyclotomicField(self.parent()._m)
         g = Cp.gen()
-        D = diagonal_matrix(Cp, [g ** i for i in self._colors])
+        D = diagonal_matrix(Cp, [g**i for i in self._colors])
         return self._perm.to_matrix() * D
 
     def has_left_descent(self, i) -> bool:
@@ -478,7 +478,7 @@ class ShephardToddFamilyGroup(UniqueRepresentation, Parent):
             return ColoredPermutations(m, n)
         return super().__classcall__(cls, m, p, n)
 
-    def __init__(self, m, p, n):
+    def __init__(self, m, p, n) -> None:
         r"""
         Initialize ``self``.
 
@@ -509,9 +509,7 @@ class ShephardToddFamilyGroup(UniqueRepresentation, Parent):
         self._C = IntegerModRing(self._m)
         self._P = Permutations(self._n)
 
-        if (self._p == 1 and (self._m == 1 or self._m == 2)
-            or (self._p == 2 and self._m == 2)
-            or (self._n == 2 and self._p == self._m)):
+        if self._p <= self._m <= 2 or (self._n == 2 and self._p == self._m):
             from sage.categories.finite_coxeter_groups import FiniteCoxeterGroups
             category = FiniteCoxeterGroups()
             if not (self._n == self._m == self._p == 2):  # special case of type D_2
@@ -523,7 +521,7 @@ class ShephardToddFamilyGroup(UniqueRepresentation, Parent):
                 category = category.WellGenerated()
         Parent.__init__(self, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -743,8 +741,8 @@ class ShephardToddFamilyGroup(UniqueRepresentation, Parent):
         if i == self._n + 1 or self._n == 1:
             return sn ** self._p
 
-        snm = self.simple_reflection(self._n-1)
-        return sn**(self._m-1) * snm * sn
+        snm = self.simple_reflection(self._n - 1)
+        return sn**(self._m - 1) * snm * sn
 
     @cached_method
     def _inverse_simple_reflections(self):
@@ -1128,7 +1126,7 @@ class ShephardToddFamilyGroup(UniqueRepresentation, Parent):
             q = PolynomialRing(ZZ, 'q').gen(0)
         return prod(q + d - 1 for d in self.degrees())
 
-    def is_well_generated(self):
+    def is_well_generated(self) -> bool:
         r"""
         Return if ``self`` is a well-generated complex reflection group.
 
@@ -2227,7 +2225,7 @@ class TabloidModule(Representation_abstract, CombinatorialFreeModule):
         data = [cartesian_product([OrderedSetPartitions([val * x for x, val in zip(sorted(X), signs)], la),
                                    OrderedSetPartitions(sorted(Y), mu)])
                 for (X, Y) in OrderedSetPartitions(G._n, [sum(la), sum(mu)])
-                for signs in product([1,-1], repeat=sum(la))]
+                for signs in product([1, -1], repeat=sum(la))]
         tabloids = DisjointUnionEnumeratedSets(data)
         tabloids.rename(f"Tabloids of shape {self._diagram}")
 
@@ -2527,8 +2525,8 @@ class SpechtModule(Representation_abstract, SubmoduleWithBasis):
                 n = T.size()
                 for sigma in T.column_stabilizer():
                     sigma = sigma.tuple()
-                    for signs in product(*[[1,-1] if i not in mu_vals else [1]
-                                           for i in range(1,n+1)]):
+                    for signs in product(*[[1, -1] if i not in mu_vals else [1]
+                                           for i in range(1, n+1)]):
                         yield self._semigroup([s * val for s, val in zip(signs, sigma)])
 
             return ambient.sum_of_terms((ambient._semigroup_basis_action(elt, tab),
@@ -2922,7 +2920,7 @@ class SimpleModule(Representation_abstract, QuotientModuleWithBasis):
         [0 0 0 0 0 0 1 0]
         [0 0 0 0 0 0 0 1]
     """
-    def __init__(self, specht_module):
+    def __init__(self, specht_module) -> None:
         r"""
         Initialize ``self``.
 
@@ -2932,18 +2930,19 @@ class SimpleModule(Representation_abstract, QuotientModuleWithBasis):
             sage: D = B4.simple_module([[2,1], [1]], GF(3))
             sage: TestSuite(D).run()
         """
-        self._diagram = specht_module._diagram
         p = specht_module.base_ring().characteristic()
-        if (not all(la.is_regular(p) for la in specht_module._diagram)
-            or (p == 2 and specht_module._diagram[0])):
+        d = self._diagram = specht_module._diagram
+        if (p == 2 and d[0]) or not all(la.is_regular(p) for la in d):
             raise ValueError(f"the partition must be {p}-regular")
-        Representation_abstract.__init__(self, specht_module._semigroup, specht_module._side,
+        Representation_abstract.__init__(self, specht_module._semigroup,
+                                         specht_module._side,
                                          algebra=specht_module._semigroup_algebra)
         cat = specht_module.category()
-        QuotientModuleWithBasis.__init__(self, specht_module.maximal_submodule(),
+        QuotientModuleWithBasis.__init__(self,
+                                         specht_module.maximal_submodule(),
                                          cat, prefix='D', bracket='')
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -2955,7 +2954,7 @@ class SimpleModule(Representation_abstract, QuotientModuleWithBasis):
         """
         return f"Simple module of {self._diagram} over {self.base_ring()}"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

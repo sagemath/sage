@@ -456,7 +456,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         if R not in Fields():
             return typecall(cls, polys, domain)
         if isinstance(R, FiniteField):
-                return DynamicalSystem_projective_finite_field(polys, domain)
+            return DynamicalSystem_projective_finite_field(polys, domain)
         return DynamicalSystem_projective_field(polys, domain)
 
     def __init__(self, polys, domain):
@@ -4895,7 +4895,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             if R in FiniteFields():
                 g = f.cyclegraph()
                 points = []
-                for cycle in g.all_simple_cycles():
+                for cycle in g.all_simple_cycles(algorithm="A"):
                     m = len(cycle)-1
                     if minimal:
                         if m == n:
@@ -6749,7 +6749,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         # the function `is_postcrtically_finite` to work
         if self.base_ring() is not QQbar:
             if self.base_ring() not in NumberFields():
-                    raise NotImplementedError("Base ring must be a number field")
+                raise NotImplementedError("Base ring must be a number field")
 
         if self.domain().dimension() != 1:
             return False
@@ -6978,7 +6978,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         """
         if self.base_ring() is not QQbar:
             if self.base_ring() not in NumberFields():
-                    raise NotImplementedError("Base ring must be a number field")
+                raise NotImplementedError("Base ring must be a number field")
     #The Complex case is hard to implement and needs to be done later
         if sqrt(self.degree()) != int(sqrt(self.degree())):
             raise NotImplementedError("Map is not Lattes or is Complex Lattes")

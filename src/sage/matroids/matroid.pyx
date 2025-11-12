@@ -348,7 +348,7 @@ from itertools import combinations, product
 from sage.matrix.constructor import matrix
 from sage.misc.lazy_import import LazyImport
 from sage.misc.prandom import shuffle
-from sage.misc.superseded import deprecation, deprecated_function_alias
+from sage.misc.superseded import deprecated_function_alias
 from sage.rings.integer_ring import ZZ
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.structure.sage_object cimport SageObject
@@ -637,12 +637,19 @@ cdef class Matroid(SageObject):
             True
             sage: all(M.is_dependent(X.union([y])) for y in M.groundset() if y not in X)
             True
+
+        TESTS::
+
+            sage: M = matroids.catalog.R10()
+            sage: M1M = M.direct_sum(M)
+            sage: Matroid(M1M, regular=True)  # indirect doctest
+            Regular matroid of rank 10 on 20 elements with 26244 bases
         """
         cdef list res = []
         cdef int r = 0
         for e in X:
             res.append(e)
-            if self._rank(res) > r:
+            if self._rank(frozenset(res)) > r:
                 r += 1
             else:
                 res.pop()
@@ -4217,9 +4224,6 @@ cdef class Matroid(SageObject):
         one. It can be shown that the resulting matroid does not depend on the
         order of the deletions.
 
-        DEPRECATED: Sage supports the shortcut notation ``M \ X`` for
-        ``M.delete(X)``.
-
         INPUT:
 
         - ``X`` -- either a single element of the groundset, or a collection
@@ -4267,23 +4271,6 @@ cdef class Matroid(SageObject):
             ['a', 'b', 'c']
         """
         return self.minor(deletions=X)
-
-    cpdef _backslash_(self, X):
-        r"""
-        Shorthand for ``self.delete(X)``.
-
-        Deprecated.
-
-        EXAMPLES::
-
-            sage: M = matroids.CompleteGraphic(4)                                       # needs sage.graphs
-            sage: M.delete(1) == M \ 1  # indirect doctest                              # needs sage.graphs
-            doctest:...: DeprecationWarning: the backslash operator has been deprecated; use M.delete(X) instead
-            See https://github.com/sagemath/sage/issues/36394 for details.
-            True
-        """
-        deprecation(36394, 'the backslash operator has been deprecated; use M.delete(X) instead')
-        return self.delete(X)
 
     cpdef dual(self):
         r"""
@@ -6180,7 +6167,7 @@ cdef class Matroid(SageObject):
         if not G.is_connected():
             return False
         # Step 4: Apply algorithm recursively
-        for B, M in Y_components.iteritems():
+        for B, M in Y_components.items():
             N = M.simplify()
             new_basis = basis & (B | Y)
             # the set of fundamental cocircuit that might be separating for N
@@ -7692,7 +7679,7 @@ cdef class Matroid(SageObject):
             dist += 1
             X3 = X2.intersection(w)
 
-        for x, y in layers.iteritems():
+        for x, y in layers.items():
             for z in y:
                 d[z] = x
         if not X3:                 # if no path from X1 to X2, then no augmenting set exists
