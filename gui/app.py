@@ -156,7 +156,7 @@ class WelcomeWidget(QWidget):
         base_dir = os.path.dirname(os.path.abspath(__file__))
 
         # Build the full path to your image
-        img_path = os.path.join(base_dir, "gui", "SageGUI.png")
+        img_path = os.path.join(base_dir, "SageGUI.png")
 
         # Load the image
         pixmap = QPixmap(img_path)
