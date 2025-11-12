@@ -1,7 +1,8 @@
-tdlib = disabler()
 if cc.has_header('treedec/combinations.hpp', required: get_option('tdlib'))
   # tdlib is a header-only library
   tdlib = declare_dependency()
+else
+  tdlib = disabler()
 endif
 # Cannot be found via pkg-config
 rw = cc.find_library('rw', required: get_option('rankwidth'), disabler: true)

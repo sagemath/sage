@@ -73,13 +73,13 @@ def T(F):
 #   https://github.com/pytest-dev/pytest/issues/349
 #
 pairs = [("J", None),
-          ("K", 16),
-          ("L", 2),
-          ("M", 1),
-          ("N", 1),
-          ("O", None),
-          ("T", None),
-          ("S", 8)]
+         ("K", 16),
+         ("L", 2),
+         ("M", 1),
+         ("N", 1),
+         ("O", None),
+         ("T", None),
+         ("S", 8)]
 
 
 @pytest.mark.parametrize("ff,max_runs", pairs)
@@ -95,7 +95,7 @@ def test_function_field_testsuite(ff, max_runs, request) -> None:
     The inputs are essentially all fixtures.
 
     - ``ff`` -- string; a function field fixture name
-    - ``max_runs`` -- integer; the maxmimum number of times to
+    - ``max_runs`` -- integer; the maximum number of times to
       repeat the test suite
     - ``request`` -- fixture; a pytest built-in
 
