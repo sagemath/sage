@@ -393,7 +393,10 @@ class EllipticCurveHom(Morphism):
             sage: E = EllipticCurve([17,42])
             sage: phi =  E.isogenies_prime_degree()[0]
             sage: phi.trace()
-            
+            Traceback (most recent call last):
+            ...
+            ValueError: trace only makes sense for endomorphisms
+
         """
         F = self.domain().base_field()
         if F.characteristic().is_zero():
