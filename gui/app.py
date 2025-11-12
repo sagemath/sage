@@ -152,7 +152,7 @@ class WelcomeWidget(QWidget):
         base_dir = os.path.dirname(os.path.abspath(__file__))
         img_path = os.path.join(base_dir, "sage_tutor.png")
         pixmap = QPixmap(img_path)
-        scaled_pixmap = pixmap.scaled(700, 300)  # Adjust size as needed
+        scaled_pixmap = pixmap.scaled(500, 300)  # Adjust size as needed
         logo_label.setPixmap(scaled_pixmap)
         logo_label.setAlignment(Qt.AlignCenter)
         
