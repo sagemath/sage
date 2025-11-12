@@ -1095,6 +1095,22 @@ class HypergeometricAlgebraic(Element):
 
     @coerce_binop
     def hadamard_product(self, other):
+        r"""
+        Return the hadamard product of the hypergeometric function
+        and ``other``
+
+        INPUT:
+
+        - ``other`` -- a hypergeometric function
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: h = 1/2*hypergeometric([1/5, 2/5], [3/5], x)
+            sage: f.hadamard_product(h)
+            1/2*hypergeometric((1/5, 1/3, 2/5, 2/3), (1/2, 3/5, 1), x)
+            """
         if self._scalar == 0:
             return self
         if other._scalar == 0:
@@ -1105,12 +1121,71 @@ class HypergeometricAlgebraic(Element):
         return self.parent()(top, bottom, scalar=scalar)
 
     def _div_(self, other):
+        r"""
+        Return the (formal) quotient of the hypergeometric function
+        and ``other``
+
+        INPUT:
+
+        - ``other`` -- a hypergeometric function or a formal expression
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: g = 1/2 * hypergeometric([1/3, 2/3], [1/2], x)
+            sage: h = hypergeometric([1/5, 2/5], [3/5], x)
+            sage: f/g
+            2
+            sage: f/h
+            hypergeometric((1/3, 2/3), (1/2,), x)/hypergeometric((1/5, 2/5), (3/5,), x)
+
+        ::
+
+            sage: f/sin(x) + x
+            x + hypergeometric((1/3, 2/3), (1/2,), x)/sin(x)
+        """
         return SR(self) / SR(other)
 
     def denominator(self):
+        r"""
+        Return the smallest common denominator of the parameters.
+
+        EXAMPLES::
+
+        sage: S.<x> = QQ[]
+        sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+        sage: f.denominator()
+        6
+        """
         return self._parameters.d
 
     def differential_operator(self, var='d'):
+        r"""
+        Return the hypergeometric differential operator that annihilates this
+        hypergeometric function as an Ore polynomial in the varable ``var``.
+
+        INPUT:
+
+        - ``var`` -- a string, the variable name of the derivation 
+        (default: ``d``)
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f.differential_operator(var='D')
+            (-x^2 + x)*D^2 + (-2*x + 1/2)*D - 2/9
+            
+        Note that this does not necessarily give the minimal differential operator
+        annihilating this hypergeometric function.::
+
+            sage: g = hypergeometric([1/3, 2/3, 6/5], [1/5, 1/2])
+            sage: g.differential_operator()
+            sage: 
+
+
+        """
         S = self.parent().polynomial_ring()
         x = S.gen()
         D = OrePolynomialRing(S, S.derivation(), names=var)
