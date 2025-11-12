@@ -115,37 +115,37 @@ class SetTheoryLearningTab(QWidget):
             if opNum == 1: # union
                 setA = self.parseSetInput(setsDict[0])
                 setB = self.parseSetInput(setsDict[1])
-                self.unionResult = (str(setA.union(setB)))
+                self.unionResult = (setA.union(setB))
             elif opNum == 2: # intersection
                 setA = self.parseSetInput(setsDict[0])
                 setB = self.parseSetInput(setsDict[1])
-                self.interResult = (str(setA.intersection(setB)))
+                self.interResult = (setA.intersection(setB))
             elif opNum == 3: # subset
                 self.subsetResult = ("true")
             elif opNum == 4: # symmetric difference
                 setA = self.parseSetInput(setsDict[0])
                 setB = self.parseSetInput(setsDict[1])
                 setC = self.parseSetInput(setsDict[2])
-                self.symResultOne = (str(setA.difference(setB).union(setB.difference(setA))))
-                self.symResultTwo = (str(setA.union(setB.intersection(setC))))
-                self.symResultThree = (str(setA.intersection(setB.union(setC))))
+                self.symResultOne = (setA.difference(setB).union(setB.difference(setA)))
+                self.symResultTwo = (setA.union(setB.intersection(setC)))
+                self.symResultThree = (setA.intersection(setB.union(setC)))
             elif opNum == 5: # partition
                 setA = self.parseSetInput(setsDict[0])
                 setB = self.parseSetInput(setsDict[1])
                 setC = self.parseSetInput(setsDict[2])
                 setD = self.parseSetInput(setsDict[3])
-                self.partitionResult = (self.checkIfPartition([setB, setC, setD], setA))
+                self.partitionResult = ("true" if self.checkIfPartition([setB, setC, setD], setA) else "false")
             elif opNum == 6: # difference
                 setA = self.parseSetInput(setsDict[0])
                 setB = self.parseSetInput(setsDict[1])
-                self.diffResultOne = (str(setA.difference(setB)))
-                self.diffResultTwo = (str(setB.difference(setA)))
+                self.diffResultOne = (setA.difference(setB))
+                self.diffResultTwo = (setB.difference(setA))
             elif opNum == 7: # B compliment and C compliment
                 setA = self.parseSetInput(setsDict[0])
                 setB = self.parseSetInput(setsDict[1])
                 setC = self.parseSetInput(setsDict[2])
-                self.complimentResultOne = (str(setA.difference(setB)))
-                self.complimentResultTwo = (str(setA.difference(setC)))
+                self.complimentResultOne = (setA.difference(setB))
+                self.complimentResultTwo = (setA.difference(setC))
         except Exception:
             QMessageBox.warning(self, "Error", "Invalid set format.")
 
