@@ -208,42 +208,54 @@ class SetTheoryLearningTab(QWidget):
             answer = self.parseSetInput(text)
             return answer == self.interResult
         elif self.symResultOne != "":
-            answerList = text.split(';')
-            if answerList[0] == '':
-                answerOne = Set([])
-            else:
-                answerOne = self.parseSetInput(answerList[0])
-            if answerList[1] == '':
-                answerTwo = Set([])
-            else:
-                answerTwo = self.parseSetInput(answerList[1])
-            if answerList[2] == '':
-                answerThree = Set([])
-            else:
-                answerThree = self.parseSetInput(answerList[2])
-            return (answerOne == self.symResultOne and answerTwo == self.symResultTwo and answerThree == self.symResultThree)
+            try:
+                answerList = text.split(';')
+                if answerList[0] == '':
+                    answerOne = Set([])
+                else:
+                    answerOne = self.parseSetInput(answerList[0])
+                if answerList[1] == '':
+                    answerTwo = Set([])
+                else:
+                    answerTwo = self.parseSetInput(answerList[1])
+                if answerList[2] == '':
+                    answerThree = Set([])
+                else:
+                    answerThree = self.parseSetInput(answerList[2])
+                return (answerOne == self.symResultOne and answerTwo == self.symResultTwo and answerThree == self.symResultThree)
+            except:
+                QMessageBox.warning(self, "Incorrect Format", "Please enter the correct number of sets, separated by a ';'.")
+                return False
         elif self.diffResultOne != "":
-            answerList = text.split(';')
-            if answerList[0] == '':
-                answerOne = Set([])
-            else:
-                answerOne = self.parseSetInput(answerList[0])
-            if answerList[1] == '':
-                answerTwo = Set([])
-            else:
-                answerTwo = self.parseSetInput(answerList[1])
-            return (answerOne == self.diffResultOne and answerTwo == self.diffResultTwo)
+            try:
+                answerList = text.split(';')
+                if answerList[0] == '':
+                    answerOne = Set([])
+                else:
+                    answerOne = self.parseSetInput(answerList[0])
+                if answerList[1] == '':
+                    answerTwo = Set([])
+                else:
+                    answerTwo = self.parseSetInput(answerList[1])
+                return (answerOne == self.diffResultOne and answerTwo == self.diffResultTwo)
+            except:
+                QMessageBox.warning(self, "Incorrect Format", "Please enter the correct number of sets, separated by a ';'.")
+                return False
         elif self.complimentResultOne != "":
-            answerList = text.split(';')
-            if answerList[0] == '':
-                answerOne = Set([])
-            else:
-                answerOne = self.parseSetInput(answerList[0])
-            if answerList[1] == '':
-                answerTwo = Set([])
-            else:
-                answerTwo = self.parseSetInput(answerList[1])
-            return (answerOne == self.complimentResultOne and answerTwo == self.complimentResultTwo)
+            try:
+                answerList = text.split(';')
+                if answerList[0] == '':
+                    answerOne = Set([])
+                else:
+                    answerOne = self.parseSetInput(answerList[0])
+                if answerList[1] == '':
+                    answerTwo = Set([])
+                else:
+                    answerTwo = self.parseSetInput(answerList[1])
+                return (answerOne == self.complimentResultOne and answerTwo == self.complimentResultTwo)
+            except:
+                QMessageBox.warning(self, "Incorrect Format", "Please enter the correct number of sets, separated by a ';'.")
+                return False
         else:
             return False
 
