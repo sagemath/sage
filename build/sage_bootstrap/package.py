@@ -282,8 +282,10 @@ class Package(object):
         Dictionary with tarball info, or None if no suitable tarball found.
         The dictionary contains the same fields as tarballs_info entries.
         """
-        import subprocess
         import json
+        import subprocess
+
+        from sage_bootstrap.env import SAGE_ROOT
         
         if not self.__tarballs_info:
             return None
@@ -293,7 +295,6 @@ class Package(object):
             return self.__tarballs_info[0]
         
         # Get compatible tags from Sage's Python using packaging.tags
-        from sage_bootstrap.env import SAGE_ROOT
         sage_script = os.path.join(SAGE_ROOT, 'sage')
         if not os.path.exists(sage_script):
             raise RuntimeError('Sage script not found at: {0}'.format(sage_script))
