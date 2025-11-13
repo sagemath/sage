@@ -234,7 +234,7 @@ def barker_foran(lattice=None):
            ( zero,  one,  one),
            (-one,   zero, one),
            ( zero, -one,  one),
-           ( one,  -one,  one)]
+           ( one,  -one,  one)]  # noqa: E221
 
     return Cone(ext, lattice)
 
