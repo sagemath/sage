@@ -387,8 +387,10 @@ class EllipticCurveHom(Morphism):
             sage: (-tau).trace()
             1
 
-        The trace is only defined for endomorphisms. The isogeny phi
-        of degree 2 on a non-CM elliptic curve hence it is not an endomorphism.
+        The trace is only defined for endomorphisms. If this method is called 
+        on an isogeny that is not an endomorphism a ``ValueError`` will be raised.
+        The elliptic curve below does not have CM and the isogeny phi is of 
+        degree 2, hence it is not an endomorphism::
 
             sage: E = EllipticCurve([17,42])
             sage: phi =  E.isogenies_prime_degree()[0]
