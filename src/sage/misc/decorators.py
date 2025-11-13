@@ -25,14 +25,14 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
+from copy import copy
 from functools import (partial, update_wrapper, WRAPPER_ASSIGNMENTS,
                        WRAPPER_UPDATES)
-from copy import copy
+from inspect import FullArgSpec
 
 from sage.misc.sageinspect import (sage_getsource, sage_getsourcelines,
                                    sage_getargspec)
 
-from inspect import FullArgSpec
 
 
 def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):

@@ -449,12 +449,17 @@ cdef extern from "methodobject.h":
     cdef int METH_NOARGS, METH_O
     cdef int PyCFunction_GetFlags(object op) except -1
 
-import os
-from sage.misc.sageinspect import sage_getfile_relative, sage_getsourcelines, sage_getargspec
 from inspect import isfunction
+import os
+from typing import Callable, TypeVar, ParamSpec
+
+from sage.misc.sageinspect import sage_getfile_relative, sage_getsourcelines, sage_getargspec
 
 from sage.misc.weak_dict cimport CachedWeakValueDictionary
 from sage.misc.decorators import decorator_keywords
+
+P = ParamSpec('P')
+T = TypeVar('T')
 
 cdef frozenset special_method_names = frozenset(
     ['__abs__', '__add__',
@@ -696,7 +701,7 @@ cdef class CachedFunction():
         sage: mul(1,1,algorithm='default') is mul(1,1,algorithm='algorithm') is mul(1,1) is mul(1,1,'default')
         True
     """
-    def __init__(self, f, *, classmethod=False, name=None, key=None, do_pickle=None):
+    def __init__(self, f, *, classmethod=False, name=None, key=None, do_pickle=False):
         """
         Create a cached version of a function, which only recomputes
         values it hasn't already computed. A custom name can be
@@ -769,7 +774,7 @@ cdef class CachedFunction():
         self._common_init(f, None, name=name, key=key, do_pickle=do_pickle)
         self.cache = {} if do_pickle else NonpicklingDict()
 
-    def _common_init(self, f, argument_fixer, name=None, key=None, do_pickle=None):
+    def _common_init(self, f, argument_fixer, name=None, key=None, do_pickle=False):
         """
         Perform initialization common to CachedFunction and CachedMethodCaller.
 
@@ -1767,7 +1772,7 @@ cdef class CachedMethodCaller(CachedFunction):
         sage: len(b.bar.cache)
         1
     """
-    def __init__(self, CachedMethod cachedmethod, inst, *, cache=None, name=None, key=None, do_pickle=None):
+    def __init__(self, CachedMethod cachedmethod, inst, *, cache=None, name=None, key=None, do_pickle=False):
         """
         EXAMPLES::
 
@@ -2244,7 +2249,7 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
 
     - Simon King (2011-04)
     """
-    def __init__(self, inst, f, cache=None, name=None, do_pickle=None):
+    def __init__(self, inst, f, cache=None, name=None, do_pickle=False):
         """
         EXAMPLES::
 
@@ -2657,7 +2662,7 @@ cdef class CachedMethod():
         sage: b.f()
         1
     """
-    def __init__(self, f, name=None, key=None, do_pickle=None):
+    def __init__(self, f, name=None, key=None, do_pickle=False):
         """
         EXAMPLES::
 
@@ -3065,9 +3070,8 @@ cdef class CachedSpecialMethod(CachedMethod):
             D[name] = Caller
         return Caller
 
-
 @decorator_keywords
-def cached_method(f, name=None, key=None, do_pickle=None):
+def cached_method(f: Callable[P, T], name=None, key=None, do_pickle=False) -> Callable[P, T]:
     """
     A decorator for cached methods.
 
@@ -3193,7 +3197,7 @@ cdef class CachedInParentMethod(CachedMethod):
     Examples can be found at :mod:`~sage.misc.cachefunc`.
     """
 
-    def __init__(self, f, name=None, key=None, do_pickle=None):
+    def __init__(self, f, name=None, key=None, do_pickle=False):
         """
         Construct a new method with cache stored in the parent of the instance.
 

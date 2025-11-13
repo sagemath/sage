@@ -6,6 +6,12 @@ def dict_key(o: Any) -> Any:
 def cache_key(o: Any) -> Any:
     ...
 
+def cached_method(f, name: str | None = None, key=None, do_pickle: bool | None = None) -> CachedMethod:
+    ...
+
+def cached_function(f, name: str | None = None, key=None, do_pickle: bool | None = None) -> CachedMethod:
+    ...
+
 class CachedFunction:
     def __init__(self, f: Callable, classmethod: bool = False,
                  name: str | None = None, key: Callable | None = None,
