@@ -40,6 +40,8 @@ from sage.schemes.affine.all import *
 
 from sage.schemes.projective.all import *
 
+from sage.schemes.hodge_special_fourfolds.all import *
+
 from sage.schemes.product_projective.all import *
 
 from sage.schemes.cyclic_covers.all import *

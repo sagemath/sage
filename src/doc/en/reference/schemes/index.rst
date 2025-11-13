@@ -47,6 +47,14 @@ Projective Schemes
    sage/schemes/projective/projective_homset
    sage/schemes/projective/proj_bdd_height
 
+Hodge Special Fourfolds
+-----------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/schemes/hodge_special_fourfolds/sff
+
 Products of Projective Spaces
 -----------------------------
 
