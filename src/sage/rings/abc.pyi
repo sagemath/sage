@@ -1,4 +1,4 @@
-from typing import Type, Union, Callable, Dict, List
+from typing import Union, Callable
 
 def abc(f: Callable = None, optional: bool = False) -> Callable:
     ...
@@ -13,11 +13,11 @@ class ABC:
     def _sage_src_lines_(self) -> Union[str, int]:
         ...
 
-    def __get__(self, instance: object, cls: Type) -> Union[Callable, NotImplementedError]:
+    def __get__(self, instance: object, cls: type) -> Union[Callable, NotImplementedError]:
         ...
 
     def is_optional(self) -> bool:
         ...
 
-def abstract_methods_of_class(cls: Type) -> Dict[str, List[str]]:
+def abstract_methods_of_class(cls: type) -> dict[str, list[str]]:
     ...

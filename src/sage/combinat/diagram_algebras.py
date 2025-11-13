@@ -565,7 +565,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
         """
         return self.parent().order
 
-    def is_planar(self):
+    def is_planar(self) -> bool:
         r"""
         Test if the diagram ``self`` is planar.
 
@@ -1108,7 +1108,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
                 std[short_form.index(i)] = j
         return std
 
-    def is_elementary_symmetric(self):
+    def is_elementary_symmetric(self) -> bool:
         r"""
         Check if is elementary symmetric.
 
@@ -5575,7 +5575,7 @@ class PottsRepresentation(CombinatorialFreeModule):
 #########################################################################
 
 
-def is_planar(sp):
+def is_planar(sp) -> bool:
     r"""
     Return ``True`` if the diagram corresponding to the set partition ``sp``
     is planar; otherwise, return ``False``.

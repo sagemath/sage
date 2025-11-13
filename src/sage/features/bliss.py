@@ -76,7 +76,7 @@ class Bliss(JoinFeature):
             Feature('bliss')
         """
         JoinFeature.__init__(self, "bliss",
-                             [PythonModule("sage.graphs.bliss", spkg='sagemath_bliss',
+                             [PythonModule("sage.graphs.bliss", spkg='bliss',
                                            url='http://www.tcs.hut.fi/Software/bliss/')])
 
 

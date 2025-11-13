@@ -155,7 +155,7 @@ class LetterplaceIdeal(Ideal_nc):
         sage: (z*I.0-x*y*z).normal_form(I)
         -y*x*z + z*z
     """
-    def __init__(self, ring, gens, coerce=True, side='twosided'):
+    def __init__(self, ring, gens, coerce=True, side='twosided') -> None:
         """
         INPUT:
 
@@ -334,7 +334,7 @@ class LetterplaceIdeal(Ideal_nc):
         self.__GB.__uptodeg = degbound
         return self.__GB
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         The containment test is based on a normal form computation.
 
