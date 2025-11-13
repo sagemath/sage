@@ -283,6 +283,7 @@ class Package(object):
         The dictionary contains the same fields as tarballs_info entries.
         """
         import subprocess
+        import json
         
         if not self.__tarballs_info:
             return None
@@ -311,7 +312,6 @@ class Package(object):
             if result.returncode != 0:
                 raise RuntimeError('Failed to get compatible tags from sage -python: {0}'.format(result.stderr))
             
-            import json
             compatible_tags = json.loads(result.stdout.strip())
             
         except subprocess.TimeoutExpired:
