@@ -247,16 +247,40 @@ class Tarball(object):
         Handle download for packages with multiple platform-specific wheels.
         
         Strategy:
-        1. Use find_tarball_for_platform() to get the exact filename for this platform
-        2. Check if file is already cached with valid checksum
-        3. If not cached, download from mirrors/upstream
+        1. If SAGE_DOWNLOAD_ALL_WHEELS is set, download all wheels (for make dist)
+        2. Otherwise, use find_tarball_for_platform() to get the exact filename for this platform
+        3. Check if file is already cached with valid checksum
+        4. If not cached, download from mirrors/upstream
         """
+        download_all = os.environ.get('SAGE_DOWNLOAD_ALL_WHEELS', '').lower() in ['yes', '1', 'true']
+        
+        if download_all:
+            # Download all wheels for distribution
+            log.info(f'Downloading all {len(self.package.tarballs_info)} wheels for {self.package.name}')
+            for tarball_info in self.package.tarballs_info:
+                self._download_single_wheel(tarball_info, allow_upstream)
+            # Keep self.__filename pointing to the first one for compatibility
+            tarball_pattern = self.package.tarballs_info[0]['tarball']
+            self.__filename = self.package._substitute_variables(tarball_pattern)
+            return
+        
         # Find the appropriate tarball for this platform from checksums.ini
         tarball_info = self.package.find_tarball_for_platform()
         
         if not tarball_info:
             raise ValueError(f'No suitable tarball found for {self.package.name} on current platform')
         
+        # Download the single platform-specific wheel
+        self._download_single_wheel(tarball_info, allow_upstream)
+    
+    def _download_single_wheel(self, tarball_info, allow_upstream=False):
+        """
+        Download a single wheel given its tarball info.
+        
+        INPUT:
+        - ``tarball_info`` - dict with tarball, sha256, sha1, upstream_url
+        - ``allow_upstream`` - whether to allow downloading from upstream
+        """
         # Get the actual filename with version substituted
         tarball_pattern = tarball_info['tarball']
         tarball_filename = self.package._substitute_variables(tarball_pattern)
