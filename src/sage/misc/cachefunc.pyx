@@ -3428,7 +3428,7 @@ class FileCache():
         else:
             self._cache = None
 
-    def file_list(self) -> list:
+    def file_list(self) -> list[str]:
         """
         Return the list of files corresponding to ``self``.
 
