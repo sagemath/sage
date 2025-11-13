@@ -26,13 +26,10 @@ AUTHORS:
 # *****************************************************************************
 
 from copy import copy
-from functools import (partial, update_wrapper, WRAPPER_ASSIGNMENTS,
-                       WRAPPER_UPDATES)
+from functools import WRAPPER_ASSIGNMENTS, WRAPPER_UPDATES, partial, update_wrapper
 from inspect import FullArgSpec
 
-from sage.misc.sageinspect import (sage_getsource, sage_getsourcelines,
-                                   sage_getargspec)
-
+from sage.misc.sageinspect import sage_getargspec, sage_getsource, sage_getsourcelines
 
 
 def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
