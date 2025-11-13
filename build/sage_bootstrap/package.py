@@ -258,7 +258,7 @@ class Package(object):
         """
         return self.__tarballs_info
     
-    def find_tarball_for_platform(self, python_version=None):
+    def find_tarball_for_platform(self):
         """
         Find the appropriate tarball for the current platform.
         
