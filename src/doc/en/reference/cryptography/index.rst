@@ -33,6 +33,7 @@ Cryptography
 
    sage/crypto/lattice
    sage/crypto/lwe
+   sage/crypto/historical/enigma
 
    sage/crypto/key_exchange/catalog
    sage/crypto/key_exchange/key_exchange_scheme
