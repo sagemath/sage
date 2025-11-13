@@ -451,15 +451,12 @@ cdef extern from "methodobject.h":
 
 from inspect import isfunction
 import os
-from typing import Callable, TypeVar, ParamSpec
+from typing import Iterable
 
 from sage.misc.sageinspect import sage_getfile_relative, sage_getsourcelines, sage_getargspec
 
 from sage.misc.weak_dict cimport CachedWeakValueDictionary
 from sage.misc.decorators import decorator_keywords
-
-P = ParamSpec('P')
-T = TypeVar('T')
 
 cdef frozenset special_method_names = frozenset(
     ['__abs__', '__add__',
@@ -701,7 +698,7 @@ cdef class CachedFunction():
         sage: mul(1,1,algorithm='default') is mul(1,1,algorithm='algorithm') is mul(1,1) is mul(1,1,'default')
         True
     """
-    def __init__(self, f, *, classmethod=False, name=None, key=None, do_pickle=False):
+    def __init__(self, f, *, classmethod=False, name: str | None = None, key=None, do_pickle: bool = False) -> None:
         """
         Create a cached version of a function, which only recomputes
         values it hasn't already computed. A custom name can be
@@ -774,7 +771,7 @@ cdef class CachedFunction():
         self._common_init(f, None, name=name, key=key, do_pickle=do_pickle)
         self.cache = {} if do_pickle else NonpicklingDict()
 
-    def _common_init(self, f, argument_fixer, name=None, key=None, do_pickle=False):
+    def _common_init(self, f, argument_fixer, name: str | None = None, key=None, do_pickle: bool = False) -> None:
         """
         Perform initialization common to CachedFunction and CachedMethodCaller.
 
@@ -803,7 +800,7 @@ cdef class CachedFunction():
             self._argument_fixer = argument_fixer
 
     @property
-    def __module__(self):
+    def __module__(self) -> str:
         return self.__cached_module__
 
     cdef get_key_args_kwds(self, tuple args, dict kwds):
@@ -1456,7 +1453,7 @@ cdef class WeakCachedFunction(CachedFunction):
         sage: f.is_in_cache(t)
         True
     """
-    def __init__(self, f, *, classmethod=False, name=None, key=None, **kwds):
+    def __init__(self, f, *, classmethod=False, name: str | None = None, key=None, **kwds) -> None:
         """
         The inputs to the function must be hashable or they must define
         :meth:`sage.structure.sage_object.SageObject._cache_key`.
@@ -1585,7 +1582,7 @@ class CachedMethodPickle():
 
     - Simon King (2011-01)
     """
-    def __init__(self, inst, name, cache=None):
+    def __init__(self, inst, name, cache=None) -> None:
         """
         INPUT:
 
@@ -1772,7 +1769,7 @@ cdef class CachedMethodCaller(CachedFunction):
         sage: len(b.bar.cache)
         1
     """
-    def __init__(self, CachedMethod cachedmethod, inst, *, cache=None, name=None, key=None, do_pickle=False):
+    def __init__(self, CachedMethod cachedmethod, inst, *, cache=None, name: str | None = None, key=None, do_pickle: bool = False) -> None:
         """
         EXAMPLES::
 
@@ -2249,7 +2246,7 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
 
     - Simon King (2011-04)
     """
-    def __init__(self, inst, f, cache=None, name=None, do_pickle=False):
+    def __init__(self, inst, f, cache=None, name: str | None = None, do_pickle: bool = False):
         """
         EXAMPLES::
 
@@ -2662,7 +2659,7 @@ cdef class CachedMethod():
         sage: b.f()
         1
     """
-    def __init__(self, f, name=None, key=None, do_pickle=False):
+    def __init__(self, f, name: str | None = None, key=None, do_pickle: bool = False) -> None:
         """
         EXAMPLES::
 
@@ -2733,7 +2730,7 @@ cdef class CachedMethod():
         self.__cached_module__ = self._cachedfunc.__module__
 
     @property
-    def __module__(self):
+    def __module__(self) -> str:
         return self.__cached_module__
 
     def __call__(self, inst, *args, **kwds):
@@ -3071,7 +3068,7 @@ cdef class CachedSpecialMethod(CachedMethod):
         return Caller
 
 @decorator_keywords
-def cached_method(f: Callable[P, T], name=None, key=None, do_pickle=False) -> Callable[P, T]:
+def cached_method(f, name: str | None = None, key=None, do_pickle: bool = False) -> CachedMethod:
     """
     A decorator for cached methods.
 
@@ -3197,7 +3194,7 @@ cdef class CachedInParentMethod(CachedMethod):
     Examples can be found at :mod:`~sage.misc.cachefunc`.
     """
 
-    def __init__(self, f, name=None, key=None, do_pickle=False):
+    def __init__(self, f, name: str | None = None, key=None, do_pickle: bool = False) -> None:
         """
         Construct a new method with cache stored in the parent of the instance.
 
@@ -3363,7 +3360,7 @@ cdef class CachedInParentMethod(CachedMethod):
             P._cached_methods = {}
         return (<dict>P._cached_methods).setdefault(self._cache_name, default)
 
-    def __get__(self, inst, cls):
+    def __get__(self, inst, cls) -> GloballyCachedMethodCaller:
         """
         Get a CachedMethodCaller bound to this specific instance of
         the class of the cached-in-parent method.
@@ -3407,7 +3404,7 @@ class FileCache():
         We assume that each :class:`FileCache` lives in its own directory.
         Use **extreme** caution if you wish to break that assumption.
     """
-    def __init__(self, dir, prefix='', memory_cache=False):
+    def __init__(self, dir, prefix='', memory_cache=False) -> None:
         """
         EXAMPLES::
 
@@ -3431,7 +3428,7 @@ class FileCache():
         else:
             self._cache = None
 
-    def file_list(self):
+    def file_list(self) -> list:
         """
         Return the list of files corresponding to ``self``.
 
@@ -3460,7 +3457,7 @@ class FileCache():
                 files.append(dir + f)
         return files
 
-    def items(self):
+    def items(self) -> list[tuple[Any, Any]]:
         """
         Return a list of tuples ``(k,v)`` where ``self[k] = v``.
 
@@ -3478,7 +3475,7 @@ class FileCache():
         """
         return [(k, self[k]) for k in self]
 
-    def values(self):
+    def values(self) -> list:
         """
         Return a list of values that are stored in ``self``.
 
@@ -3497,7 +3494,7 @@ class FileCache():
         """
         return [self[k] for k in self]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterable:
         """
         Return a list of keys of ``self``.
 
@@ -3516,7 +3513,7 @@ class FileCache():
         """
         return iter(self.keys())
 
-    def keys(self):
+    def keys(self) -> list:
         """
         Return a list of keys ``k`` where ``self[k]`` is defined.
 
@@ -3539,7 +3536,7 @@ class FileCache():
                 K.append(load(f))
         return K
 
-    def clear(self):
+    def clear(self) -> None:
         """
         Clear all key, value pairs from ``self`` and unlink the associated files
         from the file cache.
@@ -3565,7 +3562,7 @@ class FileCache():
         for k in self:
             del self[k]
 
-    def _filename(self, key):
+    def _filename(self, key) -> str:
         """
         Compute the filename associated with a certain key.
 
@@ -3593,7 +3590,7 @@ class FileCache():
             keystr = kwdstr + argstr
         return self._dir + self._prefix + keystr
 
-    def __contains__(self, key):
+    def __contains__(self, key) -> bool:
         """
         Return ``True`` if ``self[key]`` is defined and ``False`` otherwise.
 
@@ -3651,7 +3648,7 @@ class FileCache():
             cache[key] = v
         return v
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value) -> None:
         """
         Set ``self[key] = value`` and stores both key and value on
         disk.
@@ -3680,7 +3677,7 @@ class FileCache():
         if self._cache is not None:
             self._cache[key] = value
 
-    def __delitem__(self, key):
+    def __delitem__(self, key) -> None:
         """
         Delete the ``key, value`` pair from ``self`` and unlink the associated
         files from the file cache.
@@ -3723,7 +3720,7 @@ class DiskCachedFunction(CachedFunction):
         sage: f is factor(2775)
         True
     """
-    def __init__(self, f, dir, memory_cache=False, key=None):
+    def __init__(self, f, dir, memory_cache=False, key=None) -> None:
         """
         EXAMPLES::
 
@@ -3760,7 +3757,7 @@ class disk_cached_function:
         sage: foo(200)
         1/200
     """
-    def __init__(self, dir, memory_cache=False, key=None):
+    def __init__(self, dir, memory_cache=False, key=None) -> None:
         """
         EXAMPLES::
 
@@ -3779,7 +3776,7 @@ class disk_cached_function:
         self._memory_cache = memory_cache
         self._key = key
 
-    def __call__(self, f):
+    def __call__(self, f) -> DiskCachedFunction:
         """
         EXAMPLES::
 
