@@ -323,45 +323,51 @@ class Package(object):
         # Lower index = higher priority
         tag_priority = {tag: idx for idx, tag in enumerate(compatible_tags)}
         
+        # Separate wheels from non-wheel tarballs
+        wheel_tarballs = []
+        source_tarballs = []
+        for tarball_info in self.__tarballs_info:
+            if tarball_info['tarball'].endswith('.whl'):
+                wheel_tarballs.append(tarball_info)
+            else:
+                source_tarballs.append(tarball_info)
+        
+        # Batch parse all wheel filenames in a single subprocess call
+        # This avoids subprocess overhead for packages with many wheels
+        wheel_tags_map = {}
+        if wheel_tarballs:
+            try:
+                wheel_filenames = [info['tarball'] for info in wheel_tarballs]
+                python_code = 'import packaging.utils as pu,json,sys;d={};[exec(f"try: d[f]=[str(t)for t in pu.parse_wheel_filename(f)[3]]\\nexcept: d[f]=None",{"f":f,"d":d,"pu":pu})for f in sys.argv[1:]];print(json.dumps(d))'
+                result = subprocess.run(
+                    [sage_script, '-python', '-c', python_code] + wheel_filenames,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    universal_newlines=True,
+                    timeout=30,
+                    cwd=SAGE_ROOT
+                )
+                if result.returncode != 0:
+                    log.warning(f'Failed to parse wheel filenames: {result.stderr}')
+                else:
+                    wheel_tags_map = json.loads(result.stdout.strip())
+                    
+            except subprocess.TimeoutExpired:
+                log.warning('Timeout while parsing wheel filenames')
+            except Exception as e:
+                log.warning(f'Error parsing wheel filenames: {e}')
+        
         # Find the best matching tarball
         best_match = None
         best_priority = float('inf')
         
-        for tarball_info in self.__tarballs_info:
+        # Check wheel tarballs first (they have higher priority than source)
+        for tarball_info in wheel_tarballs:
             tarball = tarball_info['tarball']
+            wheel_tags_str = wheel_tags_map.get(tarball)
             
-            # Handle non-wheel tarballs (source distributions)
-            if not tarball.endswith('.whl'):
-                # Source distributions have lowest priority
-                if best_priority > len(compatible_tags) + 1000:
-                    best_match = tarball_info
-                    best_priority = len(compatible_tags) + 1000
-                continue
-            
-            # Parse wheel filename using packaging.utils via Sage's Python
-            # This properly handles multi-platform wheels like:
-            # rpds_py-0.28.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-            try:
-                python_code = 'import packaging.utils, json, sys; _, _, _, tags = packaging.utils.parse_wheel_filename(sys.argv[1]); print(json.dumps([str(t) for t in tags]))'
-                result = subprocess.run(
-                    [sage_script, '-python', '-c', python_code, tarball],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    universal_newlines=True,
-                    timeout=10,
-                    cwd=SAGE_ROOT
-                )
-                if result.returncode != 0:
-                    log.warning(f'Could not parse wheel filename {tarball}')
-                    continue
-                
-                wheel_tags_str = json.loads(result.stdout.strip())
-                
-            except subprocess.TimeoutExpired:
-                log.warning(f'Timeout while parsing wheel filename {tarball}')
-                continue
-            except Exception as e:
-                log.warning(f'Could not parse wheel filename {tarball}: {e}')
+            if wheel_tags_str is None:
+                log.debug(f'Could not parse wheel filename {tarball}')
                 continue
             
             # Check each tag in the wheel (multi-platform wheels have multiple tags)
@@ -373,6 +379,11 @@ class Package(object):
                         best_priority = priority
                         log.debug(f'Found compatible wheel: {tarball} with tag {wheel_tag_str} (priority: {priority})')
                     break  # Found a match, no need to check other tags for this wheel
+        
+        # If no wheel matched, consider source distributions
+        if best_match is None and source_tarballs:
+            best_match = source_tarballs[0]
+            best_priority = len(compatible_tags) + 1000
         
         if best_match:
             log.debug(f'Selected {best_match["tarball"]} with priority {best_priority}')
