@@ -16,8 +16,7 @@ Third-Party Tarballs
 # ****************************************************************************
 
 import os
-import sys
-import subprocess
+
 import logging
 log = logging.getLogger()
 
@@ -60,7 +59,7 @@ class Tarball(object):
         """
         self.__filename = tarball_name
         self.__tarball_info = tarball_info
-        
+
         if package is None:
             self.__package = None
             for pkg in Package.all():
@@ -343,7 +342,7 @@ class Tarball(object):
                 log.debug('File not at upstream URL')
         
         if not successful_download:
-            raise FileNotMirroredError(f'Could not download {tarball_filename} from pip, mirrors, or upstream')
+            raise FileNotMirroredError(f'Could not download {tarball_filename} from mirrors or upstream')
         
         # Verify checksum of traditionally-downloaded file
         try:
@@ -355,7 +354,7 @@ class Tarball(object):
             log.info(f'Successfully downloaded and verified: {tarball_filename}')
             # Update self to point to the actually downloaded file
             self.__filename = tarball_filename
-        except Exception as e:
+        except (ChecksumError, IOError, ValueError) as e:
             log.error(f'Error verifying downloaded tarball: {e}')
             raise
 

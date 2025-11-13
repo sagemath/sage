@@ -43,7 +43,8 @@ jobs:
           make configure
           ./configure
       - name: make dist (--enable-download-from-upstream-url)
-        if: (success() || failure()) && steps.make_dist.outcome != 'success'
+        id: make_dist
+        if: success() || failure()
         run: |
           make dist
         env:
