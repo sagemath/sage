@@ -168,6 +168,9 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.is_isomorphic` | Test for isomorphism between ``self`` and ``other``.
     :meth:`~GenericGraph.canonical_label` | Return the canonical graph.
     :meth:`~GenericGraph.is_cayley` | Check whether the graph is a Cayley graph.
+    :meth:`~GenericGraph.is_homeomorphic` | Check whether ``G`` and ``H`` are homeomorphic.
+    :meth:`~GenericGraph.reduced_homeomorphic_graph` | Return the smallest graph homeomorphic to `G`.
+    :meth:`~GenericGraph.has_homomorphism_to` | Check whether there is a homomorphism between two graphs.
 
 **Graph properties:**
 
@@ -263,7 +266,7 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.transitive_closure` | Compute the transitive closure of a graph and returns it.
     :meth:`~GenericGraph.transitive_reduction` | Return a transitive reduction of a graph.
     :meth:`~GenericGraph.min_spanning_tree` | Return the edges of a minimum spanning tree.
-    :meth:`~GenericGraph.spanning_trees_count` | Return the number of spanning trees in a graph.
+    :meth:`~GenericGraph.number_of_spanning_trees` | Return the number of spanning trees in a graph.
     :meth:`~GenericGraph.dominator_tree`    | Return a dominator tree of the graph.
     :meth:`~GenericGraph.connected_subgraph_iterator` | Iterator over the induced connected subgraphs of order at most `k`
 
@@ -5356,7 +5359,7 @@ class GenericGraph(GenericGraph_pyx):
                     for u, v in E]
         raise NotImplementedError("minimum spanning tree algorithm '%s' is not implemented" % algorithm)
 
-    def spanning_trees_count(self, root_vertex=None):
+    def number_of_spanning_trees(self, root_vertex=None):
         r"""
         Return the number of spanning trees in a graph.
 
@@ -5399,14 +5402,14 @@ class GenericGraph(GenericGraph_pyx):
         EXAMPLES::
 
             sage: G = graphs.PetersenGraph()
-            sage: G.spanning_trees_count()                                              # needs sage.modules
+            sage: G.number_of_spanning_trees()                                          # needs sage.modules
             2000
 
         ::
 
             sage: n = 11
             sage: G = graphs.CompleteGraph(n)
-            sage: ST = G.spanning_trees_count()                                         # needs sage.modules
+            sage: ST = G.number_of_spanning_trees()                                     # needs sage.modules
             sage: ST == n ^ (n - 2)                                                     # needs sage.modules
             True
 
@@ -5415,11 +5418,11 @@ class GenericGraph(GenericGraph_pyx):
             sage: # needs sage.modules
             sage: M = matrix(3, 3, [0, 1, 0, 0, 0, 1, 1, 1, 0])
             sage: D = DiGraph(M)
-            sage: D.spanning_trees_count()
+            sage: D.number_of_spanning_trees()
             1
-            sage: D.spanning_trees_count(0)
+            sage: D.number_of_spanning_trees(0)
             1
-            sage: D.spanning_trees_count(2)
+            sage: D.number_of_spanning_trees(2)
             2
         """
         if not self.order():
@@ -5443,6 +5446,8 @@ class GenericGraph(GenericGraph_pyx):
         M = self.kirchhoff_matrix(vertices=vertices)
         M[index, index] += 1
         return abs(M.determinant())
+
+    spanning_trees_count = number_of_spanning_trees
 
     def cycle_basis(self, output='vertex'):
         r"""
@@ -14375,6 +14380,14 @@ class GenericGraph(GenericGraph_pyx):
             sage: g.subgraph(list(range(10)))  # uses the 'add' algorithm
             Subgraph of (Path graph): Graph on 10 vertices
 
+        The vertices and edges can be specified using generator expressions
+        (see :issue:`41130`)::
+
+            sage: g = graphs.CompleteGraph(5)
+            sage: h = g.subgraph(vertices=(v for v in range(4)), edges=((0, v) for v in range(5)))
+            sage: h.edges(labels=False)
+            [(0, 1), (0, 2), (0, 3)]
+
         TESTS:
 
         The appropriate properties are preserved::
@@ -14527,8 +14540,13 @@ class GenericGraph(GenericGraph_pyx):
             G.add_vertices(self if vertices is None else vertices)
 
             if edges is not None:
-                edges_to_keep_labeled = frozenset(e for e in edges if len(e) == 3)
-                edges_to_keep_unlabeled = frozenset(e for e in edges if len(e) == 2)
+                edges_to_keep_labeled = set()
+                edges_to_keep_unlabeled = set()
+                for e in edges:
+                    if len(e) == 3:
+                        edges_to_keep_labeled.add(e)
+                    elif len(e) == 2:
+                        edges_to_keep_unlabeled.add(e)
 
                 edges_to_keep = []
                 if self._directed:
@@ -14709,8 +14727,13 @@ class GenericGraph(GenericGraph_pyx):
 
         edges_to_delete = []
         if edges is not None:
-            edges_to_keep_labeled = frozenset(e for e in edges if len(e) == 3)
-            edges_to_keep_unlabeled = frozenset(e for e in edges if len(e) == 2)
+            edges_to_keep_labeled = set()
+            edges_to_keep_unlabeled = set()
+            for e in edges:
+                if len(e) == 3:
+                    edges_to_keep_labeled.add(e)
+                elif len(e) == 2:
+                    edges_to_keep_unlabeled.add(e)
             edges_to_delete = []
             if G._directed:
                 for e in G.edge_iterator():
@@ -26044,6 +26067,11 @@ class GenericGraph(GenericGraph_pyx):
     )
     from sage.graphs.line_graph import line_graph
     rooted_product = LazyImport('sage.graphs.graph_decompositions.graph_products', 'rooted_product')
+    from sage.graphs.morphisms import (
+        has_homomorphism_to,
+        is_homeomorphic,
+        reduced_homeomorphic_graph,
+    )
     from sage.graphs.path_enumeration import (
         _all_paths_iterator,
         all_paths,
