@@ -18,7 +18,7 @@ the additional constraints that:
 * the last element of `X` is -1
 * the last element of `U` is 1
 
-The nonperiodic autocorrelation of a familiy of sequences
+The nonperiodic autocorrelation of a family of sequences
 `X=\{A_1, A_2, ..., A_n\}` is defined as (see Definition 7.2 of [Seb2017]_):
 
 .. MATH::
@@ -45,7 +45,7 @@ from sage.structure.sequence import Sequence
 
 def _nonperiodic_autocorrelation(sequences, j):
     r"""
-    Compute the nonperiodic autocorrelation of a familiy of sequences.
+    Compute the nonperiodic autocorrelation of a family of sequences.
 
     Namely, given a family of sequences `X` it computes:
 
@@ -356,15 +356,15 @@ def T_sequences_construction_from_base_sequences(base_sequences, check=True):
 
     A, B, C, D = base_sequences
     n = len(C)
-    p = len(A)-n
+    p = len(A) - n
 
-    assert len(A) == len(B) == len(C)+p == len(D)+p
+    assert len(A) == len(B) == len(C) + p == len(D) + p
 
     def seq_sum(seq1, seq2):
-        return [(a+b)//2 for (a, b) in zip(seq1, seq2)]
+        return [(a + b) // 2 for a, b in zip(seq1, seq2)]
 
     def seq_subtract(seq1, seq2):
-        return [(a-b)//2 for (a, b) in zip(seq1, seq2)]
+        return [(a - b) // 2 for a, b in zip(seq1, seq2)]
 
     def zero_seq(n):
         return [0 for _ in range(n)]

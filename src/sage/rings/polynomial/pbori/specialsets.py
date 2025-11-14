@@ -1,6 +1,13 @@
-from .pbori import (top_index, if_then_else,
-                    mod_mon_set, BooleSet, BooleConstant)
-from .PyPolyBoRi import (Polynomial, Monomial, Variable)
+from sage.rings.polynomial.pbori.pbori import (
+    BooleConstant,
+    BooleSet,
+    Monomial,
+    Polynomial,
+    Variable,
+    if_then_else,
+    mod_mon_set,
+    top_index,
+)
 
 
 def all_monomials_of_degree_d_old(d, variables):
@@ -76,7 +83,7 @@ def power_set(variables):
 
 
 if __name__ == '__main__':
-    from .blocks import declare_ring, Block
+    from .blocks import Block, declare_ring
     r = declare_ring([Block("x", 10000)], globals())
     print(list(all_monomials_of_degree_d(0, [Variable(i) for i in range(100)])))
     print(list(all_monomials_of_degree_d(1, [Variable(i) for i in range(10)])))

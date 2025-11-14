@@ -40,14 +40,14 @@ Kronecker delta function::
     kronecker_delta(m, n)
 """
 
-##############################################################################
+# ############################################################################
 #
 #       Copyright (C) 2009 Golam Mortuza Hossain <gmhossain@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL v2+)
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
-##############################################################################
+# ############################################################################
 
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ

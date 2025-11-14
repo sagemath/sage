@@ -26,6 +26,7 @@ from cpython.object cimport Py_LE, Py_EQ, Py_NE, Py_GE
 from sage.misc.constant_function import ConstantFunction
 from sage.structure.element cimport RingElement
 from sage.rings.integer cimport Integer
+from sage.rings.integer_ring import ZZ
 
 Infinity = float('+inf')
 MInfinity = float('-inf')
@@ -202,8 +203,18 @@ cdef class IntegerListsBackend():
             sage: C = IntegerListsLex(n=2, max_length=3, min_slope=0)
             sage: all(l in C for l in C)  # indirect doctest
             True
+
+        TESTS::
+
+            sage: [None, 2] in C
+            False
+
+            sage: [1/2, 3/2] in C
+            False
         """
         if len(comp) < self.min_length or len(comp) > self.max_length:
+            return False
+        if not all(e in ZZ for e in comp):
             return False
         n = sum(comp)
         if n < self.min_sum or n > self.max_sum:
@@ -659,7 +670,8 @@ cdef class Envelope():
             return self
         m *= self.sign
         m = m - j * self.max_slope
-        return lambda i: self.sign * min(m + i*self.max_slope, self.sign*self(i) )
+        return lambda i: self.sign * min(m + i * self.max_slope,
+                                         self.sign*self(i))
 
     def __reduce__(self):
         """

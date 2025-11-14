@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Kostka-Foulkes Polynomials
+Kostka-Foulkes polynomials
 
 Based on the algorithms in John Stembridge's SF package for Maple
 which can be found at http://www.math.lsa.umich.edu/~jrs/maple.html
@@ -26,8 +26,8 @@ from sage.combinat.partition import _Partitions
 from sage.combinat.partitions import ZS1_iterator
 from sage.combinat.skew_partition import SkewPartitions
 from sage.combinat.skew_tableau import SemistandardSkewTableaux
-from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring import polygen
 
 
 def KostkaFoulkesPolynomial(mu, nu, t=None):
@@ -143,6 +143,7 @@ def kfpoly(mu, nu, t=None):
 
     return sum(f(rg) for rg in riggings(mu))
 
+
 def kfpoly_skew(lamu, nu, t=None):
     r"""
     Return the Kostka-Foulkes polynomial `K_{\lambda / \mu, \nu}(t)`
@@ -182,8 +183,9 @@ def kfpoly_skew(lamu, nu, t=None):
     if t is None:
         t = polygen(ZZ, 't')
 
-    return t.parent().sum(t ** (T.to_word().charge())
+    return t.parent().sum(t ** T.to_word().charge()
                           for T in SemistandardSkewTableaux(lamu, nu))
+
 
 def schur_to_hl(mu, t=None):
     r"""

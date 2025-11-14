@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.modules
 r"""
-Incidence Algebras
+Incidence algebras
 """
 # ****************************************************************************
 #       Copyright (C) 2014 Travis Scrimshaw <tscrim at ucdavis.edu>
@@ -69,7 +69,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, R, map(tuple, P.relations()),
                                          prefix=prefix, category=cat)
 
-    def _repr_term(self, A):
+    def _repr_term(self, A) -> str:
         """
         Return a string representation of the term labeled by ``A``.
 
@@ -82,7 +82,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
         """
         return self.prefix() + str(list(A))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -147,7 +147,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
         """
         return self._poset
 
-    def some_elements(self):
+    def some_elements(self) -> list:
         """
         Return a list of elements of ``self``.
 
@@ -278,7 +278,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
         return self.monomial(A)
 
     @lazy_attribute
-    def _linear_extension(self):
+    def _linear_extension(self) -> tuple:
         """
         Return a fixed linear extension of the defining poset of ``self``.
 
@@ -361,7 +361,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
             M.set_immutable()
             return M
 
-        def is_unit(self):
+        def is_unit(self) -> bool:
             """
             Return if ``self`` is a unit.
 
@@ -470,7 +470,7 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
                                          sorted(self._equiv_classes.keys()),
                                          prefix=prefix, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -499,7 +499,7 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
         """
         return self._ambient._poset
 
-    def some_elements(self):
+    def some_elements(self) -> list:
         """
         Return a list of elements of ``self``.
 
@@ -526,9 +526,7 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
             sage: R.one_basis()
             (0, 0)
         """
-        for A in self.basis().keys():
-            if A[0] == A[1]:
-                return A
+        return next(A for A in self.basis().keys() if A[0] == A[1])
 
     def delta(self):
         """
@@ -643,7 +641,7 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
             sage: R[3, 11]
             R[(0, 1)]
 
-        TESTS:
+        TESTS::
 
             sage: R[2, 5]
             Traceback (most recent call last):
@@ -659,10 +657,10 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
             if A not in self._ambient._poset.list():
                 raise ValueError("not an element of the poset")
             return self.one()
-        else:
-            A = tuple(A)
-            if len(A) != 2:
-                raise ValueError("not an interval")
+
+        A = tuple(A)
+        if len(A) != 2:
+            raise ValueError("not an interval")
         for k in self._equiv_classes:
             if A in self._equiv_classes[k]:
                 return self.monomial(k)
@@ -747,7 +745,7 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
             """
             return self.parent().lift(self).to_matrix()
 
-        def is_unit(self):
+        def is_unit(self) -> bool:
             """
             Return if ``self`` is a unit.
 

@@ -208,9 +208,9 @@ cdef class LeanMatrix:
             sage: A.base_ring()
             Traceback (most recent call last):
             ...
-            NotImplementedError: subclasses need to implement this.
+            NotImplementedError: subclasses need to implement this
         """
-        raise NotImplementedError("subclasses need to implement this.")
+        raise NotImplementedError("subclasses need to implement this")
 
     cpdef characteristic(self):
         """
@@ -357,7 +357,7 @@ cdef class LeanMatrix:
         and compatible dimensions.
         """
         cdef LeanMatrix A = type(self)(self.nrows(), other.ncols())
-        cdef i, j, k
+        cdef long i, j, k
         for i in range(self.nrows()):
             for j in range(other.ncols()):
                 for k in range(self.ncols()):
@@ -487,9 +487,9 @@ cdef class LeanMatrix:
             sage: A == loads(dumps(A))  # indirect doctest
             Traceback (most recent call last):
             ...
-            NotImplementedError: subclasses need to implement this.
+            NotImplementedError: subclasses need to implement this
         """
-        raise NotImplementedError("subclasses need to implement this.")
+        raise NotImplementedError("subclasses need to implement this")
 
     cdef shifting_all(self, P_rows, P_cols, Q_rows, Q_cols, int m):
         r"""

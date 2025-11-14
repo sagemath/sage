@@ -12,12 +12,12 @@ AUTHOR:
 - William Stein, 2010-03
 """
 
-#############################################################################
+# ##########################################################################
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
-#############################################################################
+#                  https://www.gnu.org/licenses/
+# ##########################################################################
 
 from cpython.object cimport PyObject_RichCompare
 
@@ -130,7 +130,7 @@ cdef class Distribution:
             sage: P.plot(-10,30)                                                        # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
-        from sage.plot.all import plot
+        from sage.plot.plot import plot
         return plot(self.prob, *args, **kwds)
 
 cdef class GaussianMixtureDistribution(Distribution):

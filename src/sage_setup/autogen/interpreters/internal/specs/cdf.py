@@ -191,27 +191,26 @@ class CDFInterpreter(StackInterpreter):
                     result = CDF(py_result)
                 retval[0] = CDE_to_dz(result)
                 return 1
-
             """[1:])
 
         instrs = [
             InstrSpec('load_arg', pg('A[D]', 'S'),
-                       code='o0 = i0;'),
+                      code='o0 = i0;'),
             InstrSpec('load_const', pg('C[D]', 'S'),
-                       code='o0 = i0;'),
+                      code='o0 = i0;'),
             InstrSpec('return', pg('S', ''),
-                       code='return i0;'),
+                      code='return i0;'),
             InstrSpec('py_call', pg('P[D]S@D', 'S'),
-                       uses_error_handler=True,
-                       code="""
+                      uses_error_handler=True,
+                      code="""
 if (!cdf_py_call_helper(i0, n_i1, i1, &o0)) {
   goto error;
 }
 """)
             ]
-        for (name, op) in [('add', '+'), ('sub', '-'),
-                           ('mul', '*'), ('div', '/'),
-                           ('truediv', '/')]:
+        for name, op in [('add', '+'), ('sub', '-'),
+                         ('mul', '*'), ('div', '/'),
+                         ('truediv', '/')]:
             instrs.append(instr_infix(name, pg('SS', 'S'), op))
         instrs.append(instr_funcall_2args('pow', pg('SS', 'S'), 'cpow'))
         instrs.append(instr_funcall_2args('ipow', pg('SD', 'S'), 'cpow_int'))
@@ -221,8 +220,8 @@ if (!cdf_py_call_helper(i0, n_i1, i1, &o0)) {
         for name in ['sqrt', 'sin', 'cos', 'tan',
                      'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh',
                      'asinh', 'acosh', 'atanh', 'exp', 'log']:
-            instrs.append(instr_unary(name, pg('S',  'S'), "c%s(i0)" % name))
+            instrs.append(instr_unary(name, pg('S', 'S'), "c%s(i0)" % name))
         self.instr_descs = instrs
         self._set_opcodes()
         # supported for exponents that fit in an int
-        self.ipow_range = (int(-2**31), int(2**31-1))
+        self.ipow_range = (int(-2**31), int(2**31 - 1))

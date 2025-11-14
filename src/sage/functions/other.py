@@ -1715,6 +1715,17 @@ class Function_binomial(GinacFunction):
         from sage.misc.misc_c import prod
         return prod(n - i for i in range(k)) / factorial(k)
 
+    def _method_arguments(self, n, k):
+        """
+        See :meth:`sage.symbolic.function.BuiltinFunction._method_arguments`.
+
+        TESTS::
+
+            sage: binomial._method_arguments(10, 5)
+            (10, 5)
+        """
+        return (n, k)
+
     def _eval_(self, n, k):
         """
         EXAMPLES::

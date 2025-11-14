@@ -187,12 +187,12 @@ cdef class PathAlgebraElement(RingElement):
         RingElement.__init__(self, S)
         cdef dict homog = {}
         cdef list L
-        for tmp, c in data.iteritems():
+        for tmp, c in data.items():
             sig_check()
             homog.setdefault((tmp.initial_vertex(),
                               tmp.terminal_vertex()), []).append((tmp, c))
         cdef path_homog_poly_t *HP
-        for (s, e), L in sorted(homog.iteritems(), reverse=True):
+        for (s, e), L in sorted(homog.items(), reverse=True):
             sig_check()
             HP = homog_poly_init_list(s, e, L, self.cmp_terms, -1)
             HP.nxt = self.data
@@ -369,9 +369,9 @@ cdef class PathAlgebraElement(RingElement):
             return -1
         return deg
 
-    def is_homogeneous(self):
+    def is_homogeneous(self) -> bool:
         """
-        Tells whether this element is homogeneous.
+        Tell whether this element is homogeneous.
 
         EXAMPLES::
 

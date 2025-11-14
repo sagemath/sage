@@ -292,9 +292,9 @@ cpdef find_construction_3_3(int k, int n):
         (11, 11, 16, 1)
         sage: find_construction_3_3(12,11)
     """
-    cdef int mm,nn,i
+    cdef int mm, nn, i
     for mm in range(k-1, n//2+1):
-        if not(is_available(k, mm) and is_available(k, mm + 1)):
+        if not (is_available(k, mm) and is_available(k, mm + 1)):
             continue
 
         for nn in range(2, n//mm+1):
@@ -799,7 +799,7 @@ cpdef find_brouwer_separable_design(int k, int n):
 from sage.combinat.designs.database import QDM as __QDM
 cdef dict _QDM = __QDM
 cdef dict ioa_indexed_by_n_minus_x = {}
-for x in _QDM.itervalues():
+for x in _QDM.values():
     for (n, _, _, u), (k, _) in x.items():
         if u > 1:
             if n not in ioa_indexed_by_n_minus_x:

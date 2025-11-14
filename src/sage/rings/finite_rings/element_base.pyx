@@ -24,30 +24,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 
 
-def is_FiniteFieldElement(x):
-    """
-    Return ``True`` if ``x`` is a finite field element.
-
-    This function is deprecated.
-
-    EXAMPLES::
-
-        sage: from sage.rings.finite_rings.element_base import is_FiniteFieldElement
-        sage: is_FiniteFieldElement(1)
-        doctest:...: DeprecationWarning: the function is_FiniteFieldElement is deprecated; use isinstance(x, sage.structure.element.FieldElement) and x.parent().is_finite() instead
-        See https://github.com/sagemath/sage/issues/32664 for details.
-        False
-        sage: is_FiniteFieldElement(IntegerRing())
-        False
-        sage: is_FiniteFieldElement(GF(5)(2))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32664, "the function is_FiniteFieldElement is deprecated; use isinstance(x, sage.structure.element.FieldElement) and x.parent().is_finite() instead")
-
-    from sage.rings.finite_rings.finite_field_base import FiniteField
-    return isinstance(x, Element) and isinstance(x.parent(), FiniteField)
-
 
 cdef class FiniteRingElement(CommutativeRingElement):
     def _nth_root_common(self, n, all, algorithm, cunningham):
@@ -164,6 +140,31 @@ cdef class FiniteRingElement(CommutativeRingElement):
         """
         length = (self.parent().order().nbits() + 7) // 8
         return int(self).to_bytes(length=length, byteorder=byteorder)
+
+    def canonical_associate(self):
+        """
+        Return a canonical associate.
+
+        Implemented here because not all finite field elements inherit from FieldElement.
+
+        EXAMPLES::
+
+            sage: GF(7)(1).canonical_associate()
+            (1, 1)
+            sage: GF(7)(3).canonical_associate()
+            (1, 3)
+            sage: GF(7)(0).canonical_associate()
+            (0, 1)
+            sage: IntegerModRing(15)(7).canonical_associate()
+            NotImplemented
+        """
+        R = self.parent()
+        if R.is_field():
+            if self.is_zero():
+                return (R.zero(), R.one())
+            return (R.one(), self)
+        return NotImplemented
+
 
 cdef class FinitePolyExtElement(FiniteRingElement):
     """
@@ -698,7 +699,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             sage: S(0).multiplicative_order()
             Traceback (most recent call last):
             ...
-            ArithmeticError: Multiplicative order of 0 not defined.
+            ArithmeticError: multiplicative order of 0 not defined
         """
         if self.is_zero():
             raise ArithmeticError("Multiplicative order of 0 not defined.")

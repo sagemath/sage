@@ -15,26 +15,24 @@ behavior.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-# Load configuration shared with sage.misc.sphinxify
-from sage.misc.sagedoc_conf import *
-
-import sys
+import importlib
 import os
 import re
-import importlib
+import sys
+
 import dateutil.parser
-import sphinx
-import sphinx.ext.intersphinx as intersphinx
+from IPython.lib.lexers import IPyLexer, IPythonConsoleLexer
 from sphinx import highlighting
+from sphinx.ext import intersphinx
 from sphinx.transforms import SphinxTransform
 from sphinx.util.docutils import SphinxDirective
-from IPython.lib.lexers import IPythonConsoleLexer, IPyLexer
-from sage.misc.sagedoc import extlinks
-from sage.env import SAGE_DOC_SRC, SAGE_DOC, PPLPY_DOCS, MATHJAX_DIR
-from sage.misc.latex_macros import sage_mathjax_macros
-from sage.features.sphinx import JupyterSphinx
-from sage.features.all import all_features
+
 import sage.version
+from sage.env import MATHJAX_DIR, PPLPY_DOCS, SAGE_DOC, SAGE_DOC_SRC
+from sage.features.sphinx import JupyterSphinx
+from sage.misc.latex_macros import sage_mathjax_macros
+from sage.misc.sagedoc import extlinks as extlinks  # noqa: PLC0414
+from sage.misc.sagedoc_conf import *  # Load configuration shared with sage.misc.sphinxify
 
 # ---------------------
 # General configuration
@@ -370,6 +368,7 @@ multidocs_is_master = True
 
 # https://sphinx-copybutton.readthedocs.io/en/latest/use.html
 copybutton_prompt_text = r"sage: |[.][.][.][.]: |>>> |[.][.][.] |\$ "
+copybutton_line_continuation_character = "\\"
 copybutton_prompt_is_regexp = True
 copybutton_exclude = '.linenos, .c1'  # exclude single comments (in particular, # optional!)
 copybutton_only_copy_prompt_lines = True
@@ -377,8 +376,8 @@ copybutton_only_copy_prompt_lines = True
 
 # https://www.sphinx-doc.org/en/master/usage/extensions/linkcode.html
 def linkcode_resolve(domain, info):
-    import inspect
     from urllib.parse import quote
+
     from sage.misc.sageinspect import sage_getsourcelines
     if domain != 'py':
         return None
@@ -967,7 +966,10 @@ class SagecodeTransform(SphinxTransform):
         if self.app.builder.tags.has('html') or self.app.builder.tags.has('inventory'):
             for node in list(self.document.findall(nodes.literal_block)):
                 if node.get('language') is None and node.astext().startswith('sage:'):
-                    from docutils.nodes import container as Container, label as Label, literal_block as LiteralBlock, Text
+                    from docutils.nodes import Text
+                    from docutils.nodes import container as Container
+                    from docutils.nodes import label as Label
+                    from docutils.nodes import literal_block as LiteralBlock
                     from sphinx_inline_tabs._impl import TabContainer
                     parent = node.parent
                     index = parent.index(node)
@@ -1027,7 +1029,7 @@ class SagecodeTransform(SphinxTransform):
                             prev_node['classes'].append('with-python-tab')
                     if SAGE_LIVE_DOC == 'yes':
                         # Tab for Jupyter-sphinx cell
-                        from jupyter_sphinx.ast import JupyterCellNode, CellInputNode
+                        from jupyter_sphinx.ast import CellInputNode, JupyterCellNode
                         source = node.rawsource
                         lines = []
                         for line in source.splitlines():
@@ -1077,13 +1079,14 @@ def setup(app):
     app.connect('autodoc-process-docstring', process_docstring_module_title)
     app.connect('autodoc-process-docstring', process_dollars)
     app.connect('autodoc-process-docstring', process_inherited)
+    app.connect('autodoc-process-docstring', process_docstring_aliases)
     if os.environ.get('SAGE_SKIP_TESTS_BLOCKS', False):
         app.connect('autodoc-process-docstring', skip_TESTS_block)
     app.connect('autodoc-skip-member', skip_member)
     app.add_transform(SagemathTransform)
     if SAGE_LIVE_DOC == 'yes' or SAGE_PREPARSED_DOC == 'yes':
         app.add_transform(SagecodeTransform)
-    if not JupyterSphinx().is_present():
+    else:
         app.add_directive("jupyter-execute", Ignore)
         app.add_directive("jupyter-kernel", Ignore)
         app.add_directive("jupyter-input", Ignore)
@@ -1093,6 +1096,7 @@ def setup(app):
     # When building the standard docs, app.srcdir is set to SAGE_DOC_SRC +
     # 'LANGUAGE/DOCNAME'.
     if app.srcdir.is_relative_to(SAGE_DOC_SRC):
+        app.add_config_value('intersphinx_resolve_self', 'sagemath', False)
         app.add_config_value('intersphinx_mapping', {}, False)
         app.add_config_value('intersphinx_cache_limit', 5, False)
         app.add_config_value('intersphinx_disabled_reftypes', [], False)
@@ -1104,13 +1108,3 @@ def setup(app):
         #   app.connect('missing-reference', missing_reference)
         app.connect('missing-reference', find_sage_dangling_links)
         app.connect('html-page-context', add_page_context)
-
-
-# Conditional content
-# https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#tags
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#conf-tags
-# https://github.com/readthedocs/readthedocs.org/issues/4603#issuecomment-1411594800
-def feature_tags():
-    for feature in all_features():
-        if feature.is_present():
-            yield 'feature_' + feature.name.replace('.', '_')

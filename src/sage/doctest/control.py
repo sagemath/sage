@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Classes involved in doctesting
 
@@ -55,7 +54,6 @@ from sage.doctest.sources import DictAsObject, FileDocTestSource, get_basename
 from sage.doctest.util import Timer, count_noun, dict_difference
 from sage.env import DOT_SAGE, SAGE_EXTCODE, SAGE_LIB, SAGE_SRC
 from sage.misc import randstate
-from sage.misc.temporary_file import tmp_dir
 from sage.structure.sage_object import SageObject
 
 # Optional tags which are always automatically added
@@ -67,9 +65,14 @@ class DocTestDefaults(SageObject):
     """
     This class is used for doctesting the Sage doctest module.
 
+    The interface of this object should be compatible with the ``options`` input
+    to :class:`DocTestController`, that is, the same interface as the
+    argument object parsed by the :class:`argparse.ArgumentParser` in
+    :func:`sage.doctest.__main__._make_parser`.
+
     INPUT:
 
-    - ``runtest_default`` -- (boolean, default ``False``); if ``True``,
+    - ``runtest_default`` -- boolean (default: ``False``); if ``True``,
       fills in attribute to be the same as the defaults defined in
       ``sage-runtests``. If ``False``, change defaults in a few places
       for use in doctests of the doctester, which is mostly to make
@@ -119,6 +122,7 @@ class DocTestDefaults(SageObject):
         self.timeout = -1
         self.die_timeout = -1
         self.all = False
+        self.all_except = None
         self.installed = False
         self.logfile = None
         self.long = False
@@ -220,7 +224,7 @@ class DocTestDefaults(SageObject):
         return not (self == other)
 
 
-def skipdir(dirname):
+def skipdir(dirname) -> bool:
     """
     Return ``True`` if and only if the directory ``dirname`` should not be
     doctested.
@@ -233,9 +237,8 @@ def skipdir(dirname):
         sage: skipdir(os.path.join(sage.env.SAGE_SRC, "sage", "doctest", "tests"))
         True
     """
-    if os.path.exists(os.path.join(dirname, "nodoctest.py")) or os.path.exists(os.path.join(dirname, "nodoctest")):
-        return True
-    return False
+    return (os.path.exists(os.path.join(dirname, "nodoctest.py")) or
+            os.path.exists(os.path.join(dirname, "nodoctest")))
 
 
 def skipfile(filename, tested_optional_tags=False, *,
@@ -293,7 +296,7 @@ def skipfile(filename, tested_optional_tags=False, *,
     if filename.endswith('.rst.txt'):
         ext = '.rst.txt'
     else:
-        _ , ext = os.path.splitext(filename)
+        _, ext = os.path.splitext(filename)
     # .rst.txt appear in the installed documentation in subdirectories named "_sources"
     if ext not in ('.py', '.pyx', '.pxd', '.pxi', '.sage', '.spyx', '.rst', '.tex', '.rst.txt'):
         if log:
@@ -412,7 +415,9 @@ class DocTestController(SageObject):
         INPUT:
 
         - ``options`` -- either options generated from the command line by sage-runtests
-          or a DocTestDefaults object (possibly with some entries modified)
+          or a :class:`DocTestDefaults` object (possibly with some entries modified).
+          The attributes available in this object are defined by the :class:`argparse.ArgumentParser`
+          in :func:`sage.doctest.__main__._make_parser`.
         - ``args`` -- list of filenames to doctest
 
         EXAMPLES::
@@ -629,44 +634,7 @@ class DocTestController(SageObject):
         if self.options.long:
             self.options.warn_long = 30.0
 
-    def second_on_modern_computer(self):
-        """
-        Return the wall time equivalent of a second on a modern computer.
-
-        OUTPUT:
-
-        Float. The wall time on your computer that would be equivalent
-        to one second on a modern computer. Unless you have kick-ass
-        hardware this should always be >= 1.0. This raises a
-        :exc:`RuntimeError` if there are no stored timings to use as
-        benchmark.
-
-        EXAMPLES::
-
-            sage: from sage.doctest.control import DocTestDefaults, DocTestController
-            sage: DC = DocTestController(DocTestDefaults(), [])
-            sage: DC.second_on_modern_computer()   # not tested
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(32981, "this method is no longer used by the sage library and will eventually be removed")
-
-        if len(self.stats) == 0:
-            raise RuntimeError('no stored timings available')
-        success = []
-        failed = []
-        for mod in self.stats.values():
-            if mod.get('failed', False):
-                failed.append(mod['walltime'])
-            else:
-                success.append(mod['walltime'])
-        if len(success) < 2500:
-            raise RuntimeError('too few successful tests, not using stored timings')
-        if len(failed) > 20:
-            raise RuntimeError('too many failed tests, not using stored timings')
-        expected = 12800.0       # Core i7 Quad-Core 2014
-        return sum(success) / expected
-
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation.
 
@@ -952,7 +920,7 @@ class DocTestController(SageObject):
             all_installed_modules()
             all_installed_doc()
 
-        elif self.options.all or (self.options.new and not have_git):
+        elif self.options.all or self.options.all_except is not None or (self.options.new and not have_git):
             all_files()
             all_doc_sources()
 
@@ -1043,9 +1011,17 @@ class DocTestController(SageObject):
                                             if_installed=self.options.if_installed):
                                 yield os.path.join(root, file)
                 elif not skipfile(path, bool(self.options.optional),
-                                if_installed=self.options.if_installed, log=self.log):  # log when directly specified filenames are skipped
+                                  if_installed=self.options.if_installed,
+                                  log=self.log):  # log when directly specified filenames are skipped
                     yield path
-        self.sources = [FileDocTestSource(path, self.options) for path in expand()]
+        paths = list(expand())
+        if self.options.all_except is not None:
+            paths_to_remove = set(os.path.abspath(x) for x in self.options.all_except)
+            if not paths_to_remove.issubset(paths):
+                raise ValueError(f"--all-except includes {paths_to_remove - set(paths)}, "
+                                 f"which are not found in {paths}")
+            paths = [path for path in paths if path not in paths_to_remove]  # keep duplicates
+        self.sources = [FileDocTestSource(path, self.options) for path in paths]
 
     def filter_sources(self):
         """
@@ -1162,7 +1138,7 @@ class DocTestController(SageObject):
             sage: DC.expand_files_into_sources()
             sage: DC.run_doctests()
             Doctesting 1 file.
-            sage -t .../sage/rings/homset.py
+            .../sage/rings/homset.py
                 [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1239,7 +1215,7 @@ class DocTestController(SageObject):
             sage: DC.run()
             Running doctests with ID ...
             Doctesting 1 file.
-            sage -t .../rings/all.py
+            .../rings/all.py
                 [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1405,8 +1381,6 @@ class DocTestController(SageObject):
             return
 
         # Setup signal handlers.
-        # Save crash logs in temporary directory.
-        os.putenv('CYSIGNALS_CRASH_LOGS', tmp_dir("crash_logs_"))
         init_cysignals()
 
         import signal
@@ -1443,7 +1417,7 @@ class DocTestController(SageObject):
             sage: DC.run()
             Running doctests with ID ...
             Doctesting 1 file.
-            sage -t .../sage/sets/non_negative_integers.py
+            .../sage/sets/non_negative_integers.py
                 [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1467,7 +1441,7 @@ class DocTestController(SageObject):
             Using --optional=external,sage
             Features to be detected: ...
             Doctesting 1 file.
-            sage -t ....py
+            ....py
                 [0 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1493,7 +1467,7 @@ class DocTestController(SageObject):
             Using --optional=sage...
             Features to be detected: ...
             Doctesting 1 file.
-            sage -t ....py
+            ....py
                 [4 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1511,7 +1485,7 @@ class DocTestController(SageObject):
             Using --optional=sage
             Features to be detected: ...
             Doctesting 1 file.
-            sage -t ....py
+            ....py
                 [4 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1529,7 +1503,7 @@ class DocTestController(SageObject):
             Using --optional=sage
             Features to be detected: ...
             Doctesting 1 file.
-            sage -t ....py
+            ....py
                 [4 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1637,7 +1611,7 @@ def run_doctests(module, options=None):
         sage: run_doctests(sage.rings.all)
         Running doctests with ID ...
         Doctesting 1 file.
-        sage -t .../sage/rings/all.py
+        .../sage/rings/all.py
             [... tests, ...s wall]
         ----------------------------------------------------------------------
         All tests passed!

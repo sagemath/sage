@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.graphs sage.modules
 r"""
-Free Pre-Lie Algebras
+Free pre-Lie algebras
 
 AUTHORS:
 
@@ -373,10 +373,9 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
             sage: A.degree_on_basis(RT([RT([])]))
             2
         """
-        return t.node_number()
+        return t.number_of_nodes()
 
-    @cached_method
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an element of ``self``.
 
@@ -610,7 +609,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
         resu = self.zero()
         for k in range(min_deg, N + 1):   # total degree of (x ; y, y, y, y)
             for mx, coef_x in xx:
-                dx = mx.node_number()
+                dx = mx.number_of_nodes()
                 step = self.zero()
                 for pi in IntegerVectors(k - dx, n, min_part=vy, max_part=max_y):
                     for ly in product(*[y_homog[part] for part in pi]):

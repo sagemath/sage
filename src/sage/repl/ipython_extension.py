@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 r"""
 Sage's IPython Extension
 
@@ -617,10 +616,7 @@ class SageCustomizations:
             sage: SageCustomizations.all_globals()
             <module 'sage.all_cmdline' ...>
         """
-        try:
-            from sage import all_cmdline
-        except ImportError:
-            from sage import all__sagemath_repl as all_cmdline
+        from sage import all_cmdline
         return all_cmdline
 
     def init_environment(self):
@@ -652,6 +648,7 @@ class SageCustomizations:
         IPython.core.oinspect.getsource = LazyImport("sage.misc.sagedoc", "my_getsource")
         IPython.core.oinspect.find_file = LazyImport("sage.misc.sageinspect", "sage_getfile")
         IPython.core.oinspect.getargspec = LazyImport("sage.misc.sageinspect", "sage_getargspec")
+        IPython.core.oinspect.signature = LazyImport("sage.misc.sageinspect", "sage_signature")  # pyright: ignore [reportPrivateImportUsage]
 
     def init_line_transforms(self):
         """

@@ -138,7 +138,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, base_field, length, default_encoder_name, default_decoder_name, metric='Hamming'):
+    def __init__(self, base_field, length, default_encoder_name,
+                 default_decoder_name, metric='Hamming') -> None:
         """
         Initialize mandatory parameters that any linear code shares.
 
@@ -238,13 +239,13 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             sage: G = matrix(GF(3), 2, [1,-1,1,-1,1,1])
             sage: code = LinearCode(G)
             sage: code.generator_matrix()
-            [1 2 1]
-            [2 1 1]
+            [1 2 0]
+            [0 0 1]
         """
         E = self.encoder(encoder_name, **kwargs)
         return E.generator_matrix()
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Test equality between two linear codes.
 
@@ -280,7 +281,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         # the worst case does only one system solving.
         return all(c in self for c in other.gens())
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Test inequality of ``self`` and ``other``.
 
@@ -374,18 +375,18 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         return self.dimension() / self.length()
 
     @cached_method
-    def gens(self) -> list:
+    def gens(self) -> tuple:
         r"""
-        Return the generators of this code as a list of vectors.
+        Return the generators of this code as a tuple of vectors.
 
         EXAMPLES::
 
             sage: C = codes.HammingCode(GF(2), 3)
             sage: C.gens()
-             [(1, 0, 0, 0, 0, 1, 1), (0, 1, 0, 0, 1, 0, 1),
-              (0, 0, 1, 0, 1, 1, 0), (0, 0, 0, 1, 1, 1, 1)]
+             ((1, 0, 0, 0, 0, 1, 1), (0, 1, 0, 0, 1, 0, 1),
+              (0, 0, 1, 0, 1, 1, 0), (0, 0, 0, 1, 1, 1, 1))
         """
-        return self.generator_matrix().rows()
+        return tuple(self.generator_matrix().rows())
 
     def basis(self):
         r"""
@@ -490,7 +491,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         """
         return self.parity_check_matrix()*r
 
-    def __contains__(self, v):
+    def __contains__(self, v) -> bool:
         r"""
         Return ``True`` if `v` can be coerced into ``self``.
         Otherwise, return ``False``.
@@ -528,8 +529,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             ....:                    [ 2, 1, 1, 1]])
             sage: C = LinearCode(G)
             sage: C.generator_matrix()
-            [1 2 1 0]
-            [2 1 1 1]
+            [1 2 0 1]
+            [0 0 1 2]
             sage: C.systematic_generator_matrix()
             [1 2 0 1]
             [0 0 1 2]
@@ -762,7 +763,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             sage: G = Matrix(GF(3), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: C[24]
-            (2, 2, 0, 1, 2, 2, 0)
+            (0, 2, 2, 0, 0, 2, 1)
             sage: C[24] == C.list()[24]
             True
 
@@ -794,7 +795,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         # list(self)[i] and self[i] both return the same element.
 
         F = self.base_ring()
-        maxindex = F.order()**self.dimension()-1
+        maxindex = F.order()**self.dimension() - 1
         if i < 0 or i > maxindex:
             raise IndexError("The value of the index 'i' (={}) must be between "
                              "0 and 'q^k -1' (={}), inclusive, where 'q' is "
@@ -806,21 +807,19 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         p = F.prime_subfield().order()
         A = [a ** k for k in range(m)]
         G = self.generator_matrix()
-        N = self.dimension()*F.degree() # the total length of p-adic vector
+        N = self.dimension() * F.degree()  # the total length of p-adic vector
         ivec = Integer(i).digits(p, padto=N)
 
         codeword = 0
-        row = 0
-        for g in G:
-            codeword += sum(ivec[j+row*m]*A[j] for j in range(m)) * g
-            row += 1
+        for row, g in enumerate(G):
+            codeword += sum(ivec[j + row * m] * A[j] for j in range(m)) * g
 
         # The codewords for a specific code can not change. So, we set them
         # to be immutable.
         codeword.set_immutable()
         return codeword
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return the hash value of ``self``.
 
@@ -847,7 +846,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         G = self.generator_matrix()
         return hash((Str, G)) ^ hash(Str) ^ hash(G)
 
-    def is_subcode(self, other):
+    def is_subcode(self, other) -> bool:
         """
         Return ``True`` if ``self`` is a subcode of ``other``.
 
@@ -880,7 +879,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         G = self.generator_matrix()
         return all(r in other for r in G.rows())
 
-    def is_permutation_automorphism(self, g):
+    def is_permutation_automorphism(self, g) -> bool:
         r"""
         Return `1` if `g` is an element of `S_n` (`n` = length of ``self``) and
         if `g` is an automorphism of ``self``.
@@ -907,11 +906,9 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         basis = self.generator_matrix().rows()
         H = self.parity_check_matrix()
         V = H.column_space()
-        HGm = H*g.matrix()
-        for c in basis:
-            if HGm*c != V(0):
-                return False
-        return True
+        HGm = H * g.matrix()
+        V0 = V.zero()
+        return all(HGm * c == V0 for c in basis)
 
     def permuted_code(self, p):
         r"""
@@ -1116,7 +1113,7 @@ class LinearCodeSystematicEncoder(Encoder):
         if LinearCodeSystematicEncoder is the default encoder
     """
 
-    def __init__(self, code, systematic_positions=None):
+    def __init__(self, code, systematic_positions=None) -> None:
         r"""
         EXAMPLES::
 
@@ -1138,7 +1135,7 @@ class LinearCodeSystematicEncoder(Encoder):
             # Test that the systematic positions are an information set
             self.generator_matrix()
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Test equality between LinearCodeSystematicEncoder objects.
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Inspect Python, Sage, and Cython objects
 
@@ -25,7 +24,7 @@ Python modules::
     '.../sageinspect.py'
     sage: print(sage_getdoc(sage.misc.sageinspect).lstrip()[:40])
     Inspect Python, Sage, and Cython objects
-    sage: sage_getsource(sage.misc.sageinspect).lstrip()[51:-1]
+    sage: sage_getsource(sage.misc.sageinspect).lstrip()[5:-1]
     'Inspect Python, Sage, and Cython objects...'
 
 Test introspection of classes defined in Python and Cython files:
@@ -59,7 +58,7 @@ Cython functions::
     sage: sage_getdoc(sage.rings.rational.make_rational).lstrip()
     'Make a rational number ...'
     sage: sage_getsource(sage.rings.rational.make_rational)
-    '@cython.binding(True)\ndef make_rational(s):...'
+    'def make_rational(s):...'
 
 Python functions::
 
@@ -109,12 +108,13 @@ AUTHORS:
 """
 
 import ast
-import inspect
 import functools
+import inspect
 import os
+import re
 import sys
 import tokenize
-import re
+from inspect import Parameter, Signature
 
 try:
     import importlib.machinery as import_machinery
@@ -148,7 +148,7 @@ def is_function_or_cython_function(obj):
         sage: is_function_or_cython_function(_mul_parent)
         True
         sage: is_function_or_cython_function(Integer.digits)     # unbound method
-        False
+        True
         sage: is_function_or_cython_function(Integer(1).digits)  # bound method
         False
 
@@ -201,7 +201,9 @@ def isclassinstance(obj):
             # Starting with Cython 3, Cython's builtin types have __module__ set
             # to the shared module names like _cython_3_0_0.
             not (isinstance(obj.__class__.__module__, str) and
-                 obj.__class__.__module__.startswith('_cython_')))
+                 obj.__class__.__module__.startswith('_cython_')) and
+            # In Cython 3.1, they have 'member_descriptor' type
+            'cython_function_or_method' not in str(obj.__class__.__module__))
 
 
 # Parse strings of form "File: sage/rings/rational.pyx (starting at line 1080)"
@@ -457,8 +459,9 @@ class SageArgSpecVisitor(ast.NodeVisitor):
         sage: v = visitor.visit(ast.parse("{'a':('e',2,[None,({False:True},'pi')]), 37.0:'temp'}").body[0].value)
         sage: sorted(v.items(), key=lambda x: str(x[0]))
         [(37.0, 'temp'), ('a', ('e', 2, [None, ({False: True}, 'pi')]))]
-        sage: v = ast.parse("jc = ['veni', 'vidi', 'vici']").body[0]; v
-        <...ast.Assign object at ...>
+        sage: v = ast.parse("jc = ['veni', 'vidi', 'vici']").body[0]
+        sage: isinstance(v, ast.Assign)
+        True
         sage: attrs = [x for x in dir(v) if not x.startswith('__')]
         sage: '_attributes' in attrs and '_fields' in attrs and 'col_offset' in attrs
         True
@@ -489,31 +492,6 @@ class SageArgSpecVisitor(ast.NodeVisitor):
         """
         return node.id
 
-    def visit_NameConstant(self, node):
-        """
-        Visit a Python AST :class:`ast.NameConstant` node.
-
-        This is an optimization added in Python 3.4 for the special cases
-        of True, False, and None.
-
-        INPUT:
-
-        - ``node`` -- the node instance to visit
-
-        OUTPUT: ``None``, ``True``, ``False``
-
-        EXAMPLES::
-
-            sage: import ast, sage.misc.sageinspect as sms
-            sage: visitor = sms.SageArgSpecVisitor()
-            sage: vis = lambda x: visitor.visit_NameConstant(ast.parse(x).body[0].value)
-            sage: [vis(n) for n in ['True', 'False', 'None']]
-            [True, False, None]
-            sage: [type(vis(n)) for n in ['True', 'False', 'None']]
-            [<class 'bool'>, <class 'bool'>, <class 'NoneType'>]
-        """
-        return node.value
-
     def visit_arg(self, node):
         r"""
         Visit a Python AST :class:`ast.arg` node.
@@ -540,51 +518,6 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             ['a', 'b', 'c', 'd']
         """
         return node.arg
-
-    def visit_Num(self, node):
-        """
-        Visit a Python AST :class:`ast.Num` node.
-
-        INPUT:
-
-        - ``node`` -- the node instance to visit
-
-        OUTPUT: the number the ``node`` represents
-
-        EXAMPLES::
-
-            sage: import ast, sage.misc.sageinspect as sms
-            sage: visitor = sms.SageArgSpecVisitor()
-            sage: vis = lambda x: visitor.visit_Num(ast.parse(x).body[0].value)
-            sage: [vis(n) for n in ['123', '0.0']]
-            [123, 0.0]
-
-        .. NOTE::
-
-            On Python 3 negative numbers are parsed first, for some reason, as
-            a UnaryOp node.
-        """
-        return node.value
-
-    def visit_Str(self, node):
-        r"""
-        Visit a Python AST :class:`ast.Str` node.
-
-        INPUT:
-
-        - ``node`` -- the node instance to visit
-
-        OUTPUT: the string the ``node`` represents
-
-        EXAMPLES::
-
-            sage: import ast, sage.misc.sageinspect as sms
-            sage: visitor = sms.SageArgSpecVisitor()
-            sage: vis = lambda x: visitor.visit_Str(ast.parse(x).body[0].value)
-            sage: [vis(s) for s in ['"abstract"', "'syntax'", r'''r"tr\ee"''']]
-            ['abstract', 'syntax', 'tr\\ee']
-        """
-        return node.value
 
     def visit_List(self, node):
         """
@@ -816,6 +749,28 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             return self.visit(node.operand)
         if op == 'USub':
             return -self.visit(node.operand)
+
+    def visit_Constant(self, node):
+        """
+        Visit a Python AST :class:`ast.Constant` node.
+
+        INPUT:
+
+        - ``node`` -- the node instance to visit
+
+        OUTPUT: the constant value the ``node`` represents
+
+        EXAMPLES::
+
+            sage: import ast, sage.misc.sageinspect as sms
+            sage: visitor = sms.SageArgSpecVisitor()
+            sage: vis = lambda x: visitor.visit_Constant(ast.parse(x).body[0].value)
+            sage: [vis(n) for n in ['123', '0', '3.14', '"hello"', 'True', 'False', 'None']]
+            [123, 0, 3.14, 'hello', True, False, None]
+            sage: [type(vis(n)) for n in ['123', '0', '3.14', '"hello"', 'True', 'False', 'None']]
+            [<class 'int'>, <class 'int'>, <class 'float'>, <class 'str'>, <class 'bool'>, <class 'bool'>, <class 'NoneType'>]
+        """
+        return node.value
 
 
 def _grep_first_pair_of_parentheses(s):
@@ -1333,17 +1288,17 @@ def sage_getfile(obj):
         if isinstance(obj, functools.partial):
             return sage_getfile(obj.func)
         return sage_getfile(obj.__class__)  # inspect.getabsfile(obj.__class__)
-    else:
-        if hasattr(obj, '__init__'):
-            pos = _extract_embedded_position(_sage_getdoc_unformatted(obj.__init__))
-            if pos is not None:
-                (_, filename, _) = pos
-                return filename
+    elif hasattr(obj, '__init__'):
+        pos = _extract_embedded_position(_sage_getdoc_unformatted(obj.__init__))
+        if pos is not None:
+            (_, filename, _) = pos
+            return filename
 
     # No go? fall back to inspect.
     try:
         sourcefile = inspect.getabsfile(obj)
-    except TypeError:  # this happens for Python builtins
+    except (TypeError, OSError):  # TypeError happens for Python builtins,
+        # OSError happens for objects defined in the shell (having ``__module__ == '__main__'``)
         return ''
     for suffix in import_machinery.EXTENSION_SUFFIXES:
         if sourcefile.endswith(suffix):
@@ -1385,7 +1340,7 @@ def sage_getfile_relative(obj):
     if not filename:
         return filename
 
-    from os.path import relpath, normpath, commonprefix
+    from os.path import commonprefix, normpath, relpath
 
     def directories():
         try:
@@ -1437,7 +1392,7 @@ def sage_getargspec(obj):
         FullArgSpec(args=['x', 'y', 'z', 't'], varargs='args', varkw='keywords',
                     defaults=(1, 2), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-    We now run sage_getargspec on some functions from the Sage library::
+    We now run :func:`sage_getargspec` on some functions from the Sage library::
 
         sage: sage_getargspec(identity_matrix)                                          # needs sage.modules
         FullArgSpec(args=['ring', 'n', 'sparse'], varargs=None, varkw=None,
@@ -1445,7 +1400,7 @@ def sage_getargspec(obj):
                     annotations={})
         sage: sage_getargspec(factor)
         FullArgSpec(args=['n', 'proof', 'int_', 'algorithm', 'verbose'],
-                    varargs=None, varkw='kwds', defaults=(None, False, 'pari', 0),
+                    varargs=None, varkw='kwds', defaults=(None, False, None, 0),
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     In the case of a class or a class instance, the :class:`FullArgSpec` of the
@@ -1606,8 +1561,8 @@ def sage_getargspec(obj):
         sage: shell.run_cell('f??')
         ...the source code string...
     """
-    from sage.misc.lazy_attribute import lazy_attribute
     from sage.misc.abstract_method import AbstractMethod
+    from sage.misc.lazy_attribute import lazy_attribute
     if inspect.isclass(obj):
         return sage_getargspec(obj.__call__)
     if isinstance(obj, (lazy_attribute, AbstractMethod)):
@@ -1696,6 +1651,153 @@ def sage_getargspec(obj):
         defaults = None
     return inspect.FullArgSpec(args, varargs, varkw, defaults,
                                kwonlyargs=[], kwonlydefaults=None, annotations={})
+
+
+def _fullargspec_to_signature(fullargspec):
+    """
+    Converts a :class:`FullArgSpec` instance to a :class:`Signature` instance by best effort.
+    The opposite conversion is implemented in the source code of :func:`inspect.getfullargspec`.
+
+    EXAMPLES::
+
+        sage: from sage.misc.sageinspect import _fullargspec_to_signature
+        sage: from inspect import FullArgSpec
+        sage: fullargspec = FullArgSpec(args=['self', 'x', 'base'], varargs=None, varkw=None, defaults=(None, 0), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (self, x=None, base=0)>
+
+    TESTS::
+
+        sage: fullargspec = FullArgSpec(args=['p', 'r'], varargs='q', varkw='s', defaults=({},), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (p, r={}, *q, **s)>
+        sage: fullargspec = FullArgSpec(args=['r'], varargs=None, varkw=None, defaults=((None, 'u:doing?'),), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (r=(None, 'u:doing?'))>
+        sage: fullargspec = FullArgSpec(args=['x'], varargs=None, varkw=None, defaults=('):',), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (x='):')>
+        sage: fullargspec = FullArgSpec(args=['z'], varargs=None, varkw=None, defaults=({(1, 2, 3): True},), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (z={(1, 2, 3): True})>
+        sage: fullargspec = FullArgSpec(args=['x', 'z'], varargs=None, varkw=None, defaults=({(1, 2, 3): True},), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (x, z={(1, 2, 3): True})>
+        sage: fullargspec = FullArgSpec(args=[], varargs='args', varkw=None, defaults=None, kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (*args)>
+        sage: fullargspec = FullArgSpec(args=[], varargs=None, varkw='args', defaults=None, kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (**args)>
+        sage: fullargspec = FullArgSpec(args=['self', 'x'], varargs='args', varkw=None, defaults=(1,), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (self, x=1, *args)>
+        sage: fullargspec = FullArgSpec(args=['self', 'x'], varargs='args', varkw=None, defaults=(1,), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (self, x=1, *args)>
+        sage: fullargspec = FullArgSpec(args=['x', 'z'], varargs=None, varkw=None, defaults=('a string', {(1, 2, 3): True}), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (x='a string', z={(1, 2, 3): True})>
+        sage: _fullargspec_to_signature(FullArgSpec(args=['a'], varargs=None, varkw=None, defaults=None, kwonlyargs=['b', 'c'], kwonlydefaults={'b': 1}, annotations={}))
+        <Signature (a, *, b=1, c)>
+        sage: _fullargspec_to_signature(FullArgSpec(args=['a', 'b'], varargs=None, varkw=None, defaults=(1,), kwonlyargs=['c'], kwonlydefaults=None, annotations={}))
+        <Signature (a, b=1, *, c)>
+    """
+    parameters = []
+    defaults_start = len(fullargspec.args) - len(fullargspec.defaults) if fullargspec.defaults else None
+
+    for i, arg in enumerate(fullargspec.args):
+        default = fullargspec.defaults[i - defaults_start] if defaults_start is not None and i >= defaults_start else Parameter.empty
+        param = Parameter(arg, Parameter.POSITIONAL_OR_KEYWORD, default=default)
+        parameters.append(param)
+
+    if fullargspec.varargs:
+        param = Parameter(fullargspec.varargs, Parameter.VAR_POSITIONAL)
+        parameters.append(param)
+
+    if fullargspec.varkw:
+        param = Parameter(fullargspec.varkw, Parameter.VAR_KEYWORD)
+        parameters.append(param)
+
+    for arg in fullargspec.kwonlyargs:
+        param = Parameter(arg, Parameter.KEYWORD_ONLY, default=Parameter.empty if fullargspec.kwonlydefaults is None else
+                          fullargspec.kwonlydefaults.get(arg, Parameter.empty))
+        parameters.append(param)
+
+    return Signature(parameters)
+
+
+def sage_signature(obj):
+    r"""
+    Return the names and default values of a function's arguments.
+
+    INPUT:
+
+    - ``obj`` -- any callable object
+
+    OUTPUT:
+
+    A :class:`Signature` is returned, as specified by the
+    Python library function :func:`inspect.signature`.
+
+
+    .. NOTE::
+
+        Currently the type information is not returned, because the output
+        is converted from the return value of :func:`sage_getargspec`.
+        This should be changed in the future.
+
+    EXAMPLES::
+
+        sage: from sage.misc.sageinspect import sage_signature
+        sage: def f(x, y, z=1, t=2, *args, **keywords):
+        ....:     pass
+        sage: sage_signature(f)
+        <Signature (x, y, z=1, t=2, *args, **keywords)>
+
+    We now run :func:`sage_signature` on some functions from the Sage library::
+
+        sage: sage_signature(identity_matrix)                                          # needs sage.modules
+        <Signature (ring, n=0, sparse=False)>
+        sage: sage_signature(factor)
+        <Signature (n, proof=None, int_=False, algorithm=None, verbose=0, **kwds)>
+
+    In the case of a class or a class instance, the :class:`Signature` of the
+    ``__new__``, ``__init__`` or ``__call__`` method is returned::
+
+        sage: P.<x,y> = QQ[]
+        sage: sage_signature(P)                                                        # needs sage.libs.singular
+        <Signature (base_ring, n, names, order='degrevlex')>
+        sage: sage_signature(P.__class__)                                              # needs sage.libs.singular
+        <Signature (self, x=0, *args, **kwds)>
+
+    The following tests against various bugs that were fixed in
+    :issue:`9976`::
+
+        sage: from sage.rings.polynomial.real_roots import bernstein_polynomial_factory_ratlist     # needs sage.modules
+        sage: sage_signature(bernstein_polynomial_factory_ratlist.coeffs_bitsize)                  # needs sage.modules
+        <Signature (self)>
+        sage: from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid       # needs sage.rings.polynomial.pbori
+        sage: sage_signature(BooleanMonomialMonoid.gen)                                # needs sage.rings.polynomial.pbori
+        <Signature (self, i=0)>
+        sage: I = P*[x,y]
+        sage: sage_signature(I.groebner_basis)                                         # needs sage.libs.singular
+        <Signature (self, algorithm='', deg_bound=None, mult_bound=None, prot=False, *args, **kwds)>
+        sage: cython("cpdef int foo(x,y) except -1: return 1")                          # needs sage.misc.cython
+        sage: sage_signature(foo)                                                      # needs sage.misc.cython
+        <Signature (x, y)>
+
+    If a :func:`functools.partial` instance is involved, we see no other meaningful solution
+    than to return the signature of the underlying function::
+
+        sage: def f(a, b, c, d=1):
+        ....:     return a + b + c + d
+        sage: import functools
+        sage: f1 = functools.partial(f, 1, c=2)
+        sage: sage_signature(f1)
+        <Signature (a, b, c, d=1)>
+    """
+    return _fullargspec_to_signature(sage_getargspec(obj))
 
 
 def formatannotation(annotation, base_module=None):
@@ -1805,9 +1907,8 @@ def sage_formatargspec(args, varargs=None, varkw=None, defaults=None,
         specs.append(spec)
     if varargs is not None:
         specs.append(formatvarargs(formatargandannotation(varargs)))
-    else:
-        if kwonlyargs:
-            specs.append('*')
+    elif kwonlyargs:
+        specs.append('*')
     if kwonlyargs:
         for kwonlyarg in kwonlyargs:
             spec = formatargandannotation(kwonlyarg)
@@ -2018,7 +2119,8 @@ def sage_getdoc(obj, obj_name='', embedded=False):
         sage: sage_getdoc(identity_matrix)[87:124]                                      # needs sage.modules
         '...the n x n identity matrix...'
         sage: def f(a, b, c, d=1): return a+b+c+d
-        ...
+        sage: sage_getdoc(f)
+        ''
         sage: import functools
         sage: f1 = functools.partial(f, 1,c=2)
         sage: f.__doc__ = "original documentation"
@@ -2027,6 +2129,30 @@ def sage_getdoc(obj, obj_name='', embedded=False):
         'original documentation\n'
         sage: sage_getdoc(f1)
         'specialised documentation\n'
+
+    TESTS::
+
+        sage: class C:
+        ....:     '''
+        ....:     docs
+        ....:     '''
+        sage: import sys
+        sage: if sys.version_info >= (3, 13):
+        ....:     assert sage_getdoc(C) == 'docs\n', sage_getdoc(C)
+        ....: else:
+        ....:     assert sage_getdoc(C) == '   docs\n', sage_getdoc(C)
+
+        sage: from sage.repl.interpreter import get_test_shell
+        sage: shell = get_test_shell()
+        sage: shell.run_cell('''
+        ....: class C:
+        ....:     \'\'\'
+        ....:     documentation of my class
+        ....:     \'\'\'
+        ....:     pass
+        ....: ''')
+        sage: shell.run_cell('C?')
+        ...documentation of my class...
     """
     import sage.misc.sagedoc
     if obj is None:
@@ -2238,7 +2364,7 @@ def sage_getsourcelines(obj):
 
         sage: # needs sage.modules
         sage: sage_getsourcelines(matrix)[1]
-        21
+        20
         sage: sage_getsourcelines(matrix)[0][0]
         'def matrix(*args, **kwds):\n'
 
@@ -2515,14 +2641,10 @@ def __internal_tests():
         sage: sage_getdoc(None)
         ''
 
-        sage: import sage.all__sagemath_objects
-        sage: sage_getsource(sage.all__sagemath_objects)
-        '...all...'
-
     A cython function with default arguments (one of which is a string)::
 
-        sage: sage_getdef(sage.rings.integer.Integer.factor, obj_name='factor')
-        "factor(algorithm='pari', proof=None, limit=None, int_=False, verbose=0)"
+        sage: sage_getdef(sage.rings.integer.Integer.binomial, obj_name='binomial')
+        "binomial(m, algorithm='gmp')"
 
     This used to be problematic, but was fixed in :issue:`10094`::
 

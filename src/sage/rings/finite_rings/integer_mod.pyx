@@ -546,12 +546,12 @@ cdef class IntegerMod_abstract(FiniteRingElement):
     # Interfaces
     #################################################################
     def _pari_init_(self):
-        return 'Mod(%s,%s)'%(str(self), self._modulus.sageInteger)
+        return 'Mod(%s,%s)' % (str(self), self._modulus.sageInteger)
 
     def __pari__(self):
         return self.lift().__pari__().Mod(self._modulus.sageInteger)
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return string representation of corresponding GAP object.
 
@@ -570,7 +570,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         """
         return '%s*One(ZmodnZ(%s))' % (self, self._modulus.sageInteger)
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Coercion to Magma.
 
@@ -584,9 +584,9 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: b^2
             1
         """
-        return '%s!%s'%(self.parent()._magma_init_(magma), self)
+        return '%s!%s' % (self.parent()._magma_init_(magma), self)
 
-    def _axiom_init_(self):
+    def _axiom_init_(self) -> str:
         """
         Return a string representation of the corresponding to
         (Pan)Axiom object.
@@ -607,7 +607,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: aa.typeOf()                   # optional - fricas
             IntegerMod(15)
         """
-        return '%s :: %s'%(self, self.parent()._axiom_init_())
+        return '%s :: %s' % (self, self.parent()._axiom_init_())
 
     _fricas_init_ = _axiom_init_
 
@@ -1174,6 +1174,19 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: Mod(1/25, next_prime(2^90)).sqrt()^(-2)
             25
 
+        Error message as requested in :issue:`38802`::
+
+            sage: sqrt(Mod(2, 101010), all=True)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Finding all square roots in extensions is not implemented; try extend=False to find only roots in the base ring Zmod(n).
+
+        Using the suggested ``extend=False`` works and returns an empty list
+        as expected::
+
+            sage: sqrt(Mod(2, 101010), all=True, extend=False)
+            []
+
         ::
 
             sage: a = Mod(3, 5); a
@@ -1260,7 +1273,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                 z = Q.gen()
                 if all:
                     # TODO
-                    raise NotImplementedError
+                    raise NotImplementedError("Finding all square roots in extensions is not implemented; try extend=False to find only roots in the base ring Zmod(n).")
                 return z
             if all:
                 return []
@@ -1771,9 +1784,9 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         n = self._modulus.sageInteger
         return sage.rings.integer.Integer(n // self.lift().gcd(n))
 
-    def is_primitive_root(self):
+    def is_primitive_root(self) -> bool:
         """
-        Determines whether this element generates the group of units modulo n.
+        Determine whether this element generates the group of units modulo n.
 
         This is only possible if the group of units is cyclic, which occurs if
         n is 2, 4, a power of an odd prime or twice a power of an odd prime.
@@ -1881,7 +1894,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         try:
             return sage.rings.integer.Integer(self.__pari__().znorder())
         except PariError:
-            raise ArithmeticError("multiplicative order of %s not defined since it is not a unit modulo %s"%(
+            raise ArithmeticError("multiplicative order of %s not defined since it is not a unit modulo %s" % (
                 self, self._modulus.sageInteger))
 
     def valuation(self, p):
@@ -3216,7 +3229,7 @@ cdef int_fast32_t mod_pow_int(int_fast32_t base, int_fast32_t exp, int_fast32_t 
 
 cdef int jacobi_int(int_fast32_t a, int_fast32_t m) except -2:
     """
-    Calculate the jacobi symbol (a/n).
+    Calculate the Jacobi symbol (a/n).
 
     For use in ``IntegerMod_int``.
 
@@ -3231,7 +3244,7 @@ cdef int jacobi_int(int_fast32_t a, int_fast32_t m) except -2:
 
     while True:
         if a == 0:
-            return 0 # gcd was nontrivial
+            return 0  # gcd was nontrivial
         elif a == 1:
             return jacobi
         s = 0
@@ -3880,7 +3893,7 @@ cdef int_fast64_t mod_pow_int64(int_fast64_t base, int_fast64_t exp, int_fast64_
 
 cdef int jacobi_int64(int_fast64_t a, int_fast64_t m) except -2:
     """
-    Calculate the jacobi symbol (a/n).
+    Calculate the Jacobi symbol (a/n).
 
     For use in ``IntegerMod_int64``.
 
@@ -3895,7 +3908,7 @@ cdef int jacobi_int64(int_fast64_t a, int_fast64_t m) except -2:
 
     while True:
         if a == 0:
-            return 0 # gcd was nontrivial
+            return 0  # gcd was nontrivial
         elif a == 1:
             return jacobi
         s = 0

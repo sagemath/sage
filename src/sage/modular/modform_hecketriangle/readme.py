@@ -176,7 +176,7 @@ Hecke triangle groups and elements:
       sage: z = AlgebraicField()(4 + 1/7*i)
       sage: G.in_FD(z)
       False
-      sage: (A, w) = G.get_FD(z)
+      sage: A, w = G.get_FD(z)
       sage: A
       T^2*S*T^(-1)*S
       sage: w
@@ -403,12 +403,10 @@ Hecke triangle groups and elements:
       sage: S = G.S()
       sage: U = G.U()
 
-      sage: def is_rpf(f, k=None):
+      sage: def is_rpf(f, k=None) -> bool:
       ....:     if not f + S.slash(f, k=k) == 0:
       ....:         return False
-      ....:     if not sum([(U^m).slash(f, k=k) for m in range(G.n())]) == 0:
-      ....:         return False
-      ....:     return True
+      ....:     return sum((U^m).slash(f, k=k) for m in range(G.n())) == 0
 
       sage: z = PolynomialRing(G.base_ring(), 'z').gen()
       sage: [is_rpf(1 - z^(-k), k=k) for k in range(-6, 6, 2)]  # long time

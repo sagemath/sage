@@ -17,9 +17,7 @@ build by typing ``graphs.`` in Sage and then hitting :kbd:`Tab`.
 
 import subprocess
 
-
 # This method appends a list of methods to the doc as a 3xN table.
-
 # Here's the point :
 #
 # we just have to insert the method's name in this file to add it to
@@ -28,6 +26,7 @@ import subprocess
 # Column2, then Column3. Doing this by hand is hell with Sphinx when
 # you need to insert a new method inside of the list !
 
+
 def __append_to_doc(methods):
     global __doc__
     __doc__ += ("\n.. csv-table::\n"
@@ -35,11 +34,11 @@ def __append_to_doc(methods):
                 "    :widths: 33, 33, 33\n"
                 "    :delim: |\n\n")
 
-    h = (len(methods)+2)//3
+    h = (len(methods) + 2) // 3
     # Reorders the list of methods for horizontal reading, the only one Sphinx understands
-    reordered_methods = [0]*3*h
+    reordered_methods = [0] * (3 * h)
     for i, m in enumerate(methods):
-        reordered_methods[3*(i % h) + (i//h)] = m
+        reordered_methods[3 * (i % h) + (i // h)] = m
     methods = reordered_methods
 
     # Adding the list to the __doc__ string
@@ -221,7 +220,7 @@ __append_to_doc(
 __doc__ += """
 **Families of graphs**
 
-A family of graph is an infinite set of graphs which can be indexed by fixed
+A family of graphs is a set of graphs, which can be indexed by fixed
 number of parameters, e.g. two integer parameters. (A method whose name starts
 with a small letter does not return a single graph object but a graph iterator
 or a list of graphs or ...)
@@ -230,7 +229,6 @@ or a list of graphs or ...)
 __append_to_doc(
     ["AlternatingFormsGraph",
      "AztecDiamondGraph",
-     "BalancedTree",
      "BarbellGraph",
      "BilinearFormsGraph",
      "BiwheelGraph",
@@ -247,7 +245,6 @@ __append_to_doc(
      "DoubleGrassmannGraph",
      "DoubleOddGraph",
      "EgawaGraph",
-     "FibonacciTree",
      "FoldedCubeGraph",
      "FriendshipGraph",
      "fullerenes",
@@ -284,6 +281,7 @@ __append_to_doc(
      "PaleyGraph",
      "PasechnikGraph",
      "petersen_family",
+     "p2_forbidden_minors",
      "planar_graphs",
      "plantri_gen",
      "quadrangulations",
@@ -293,9 +291,7 @@ __append_to_doc(
      "SwitchedSquaredSkewHadamardMatrixGraph",
      "StaircaseGraph",
      "strongly_regular_graph",
-     "trees",
      "TruncatedBiwheelGraph",
-     "nauty_gentreeg",
      "triangulations",
      "TuranGraph",
      "UstimenkoGraph",
@@ -365,23 +361,33 @@ __append_to_doc(
      "RandomRegularBipartite",
      "RandomBlockGraph",
      "RandomBoundedToleranceGraph",
+     "RandomChordalGraph",
      "RandomGNM",
      "RandomGNP",
      "RandomHolmeKim",
-     "RandomChordalGraph",
      "RandomIntervalGraph",
      "RandomKTree",
      "RandomPartialKTree",
-     "RandomLobster",
      "RandomNewmanWattsStrogatz",
      "RandomProperIntervalGraph",
      "RandomRegular",
      "RandomShell",
      "RandomToleranceGraph",
-     "RandomTree",
-     "RandomTreePowerlaw",
      "RandomTriangulation",
      "RandomUnitDiskGraph"])
+
+__doc__ += """
+**Trees**
+"""
+
+__append_to_doc(
+    ["BalancedTree",
+     "FibonacciTree",
+     "RandomLobster",
+     "RandomTree",
+     "RandomTreePowerlaw",
+     "trees",
+     "nauty_gentreeg"])
 
 __doc__ += """
 **Graphs with a given degree sequence**
@@ -486,7 +492,7 @@ Functions and methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import graph
+from sage.graphs import graph
 
 
 class GraphGenerators:
@@ -746,14 +752,14 @@ class GraphGenerators:
         sage: G.delete_vertex(0)
         Traceback (most recent call last):
         ...
-        ValueError: graph is immutable; please change a copy instead (use function copy())
+        TypeError: this graph is immutable and so cannot be changed
         sage: G = next(graphs(4, degree_sequence=[3]*4))
         sage: G.delete_vertex(0)
         sage: G = next(graphs(4, degree_sequence=[3]*4, immutable=True))
         sage: G.delete_vertex(0)
         Traceback (most recent call last):
         ...
-        ValueError: graph is immutable; please change a copy instead (use function copy())
+        TypeError: this graph is immutable and so cannot be changed
 
     REFERENCE:
 
@@ -791,7 +797,7 @@ class GraphGenerators:
         ::
 
             sage: for g in graphs():
-            ....:    if g.num_verts() > 3: break
+            ....:    if g.n_vertices() > 3: break
             ....:    print(g)
             Graph on 0 vertices
             Graph on 1 vertex
@@ -827,7 +833,7 @@ class GraphGenerators:
             if vertices is None:
                 raise NotImplementedError
             if (len(degree_sequence) != vertices or sum(degree_sequence) % 2
-                    or sum(degree_sequence) > vertices*(vertices - 1)):
+                    or sum(degree_sequence) > vertices * (vertices - 1)):
                 raise ValueError("Invalid degree sequence.")
             degree_sequence = sorted(degree_sequence)
             if augment == 'edges':
@@ -839,11 +845,11 @@ class GraphGenerators:
                     return degree_sequence == sorted(x.degree())
             else:
                 def property(x):
-                    D = sorted(x.degree() + [0] * (vertices - x.num_verts()))
+                    D = sorted(x.degree() + [0] * (vertices - x.n_vertices()))
                     return all(degree_sequence[i] >= d for i, d in enumerate(D))
 
                 def extra_property(x):
-                    if x.num_verts() != vertices:
+                    if x.n_vertices() != vertices:
                         return False
                     return degree_sequence == sorted(x.degree())
         elif size is not None:
@@ -1007,6 +1013,7 @@ class GraphGenerators:
             ['>A ...geng -cd1D2 n=3 e=2-3\n', Graph on 3 vertices, Graph on 3 vertices]
         """
         import shlex
+
         from sage.features.nauty import NautyExecutable
         geng_path = NautyExecutable("geng").absolute_filename()
         sp = subprocess.Popen(shlex.quote(geng_path) + " {0}".format(options), shell=True,
@@ -1102,7 +1109,7 @@ class GraphGenerators:
 
         EXAMPLES:
 
-        The generator can be used to construct biparrtite graphs for testing,
+        The generator can be used to construct bipartite graphs for testing,
         one at a time (usually inside a loop).  Or it can be used to
         create an entire list all at once if there is sufficient memory
         to contain it::
@@ -1193,6 +1200,7 @@ class GraphGenerators:
             '>E Usage: ...genbg... [-c -ugs -vq -lzF] [-Z#] [-D#] [-A] [-d#|-d#:#] [-D#|-D#:#] n1 n2...
         """
         import shlex
+
         from sage.features.nauty import NautyExecutable
         genbg_path = NautyExecutable("genbgL").absolute_filename()
         sp = subprocess.Popen(shlex.quote(genbg_path) + " {0}".format(options), shell=True,
@@ -1328,6 +1336,7 @@ class GraphGenerators:
             ValueError: wrong format of parameter option
         """
         import shlex
+
         from sage.features.nauty import NautyExecutable
         geng_path = NautyExecutable("genktreeg").absolute_filename()
         sp = subprocess.Popen(shlex.quote(geng_path) + " {0}".format(options), shell=True,
@@ -1479,7 +1488,7 @@ class GraphGenerators:
     def _read_planar_code(self, code_input, immutable=False):
         r"""
         Return a generator for the plane graphs in planar code format in
-        the file code_input (see [BM2016]_).
+        the binary file ``code_input`` (see [BM2016]_).
 
         A file with planar code starts with a header ``>>planar_code<<``.
         After the header each graph is stored in the following way :
@@ -1493,7 +1502,7 @@ class GraphGenerators:
 
         INPUT:
 
-        - ``code_input`` -- a file containing valid planar code data
+        - ``code_input`` -- a binary file containing valid planar code data
 
         - ``immutable`` -- boolean (default: ``False``); whether to return
           immutable or mutable graphs
@@ -1513,18 +1522,17 @@ class GraphGenerators:
 
         EXAMPLES:
 
-        The following example creates a small planar code file in memory and
-        reads it using the ``_read_planar_code`` method::
+        The following example creates a small planar code binary
+        file in memory and reads it using the ``_read_planar_code`` method::
 
-            sage: from io import StringIO
-            sage: code_input = StringIO('>>planar_code<<')
-            sage: _ = code_input.write('>>planar_code<<')
+            sage: from io import BytesIO
+            sage: code_input = BytesIO()
+            sage: n = code_input.write(b'>>planar_code<<')
             sage: for c in [4,2,3,4,0,1,4,3,0,1,2,4,0,1,3,2,0]:
-            ....:     _ = code_input.write('{:c}'.format(c))
-            sage: _ = code_input.seek(0)
+            ....:     n = code_input.write(bytes('{:c}'.format(c),'ascii'))
+            sage: n = code_input.seek(0)
             sage: gen = graphs._read_planar_code(code_input)
-            sage: l = list(gen)
-            sage: l
+            sage: l = list(gen); l
             [Graph on 4 vertices]
             sage: l[0].is_isomorphic(graphs.CompleteGraph(4))
             True
@@ -1533,10 +1541,33 @@ class GraphGenerators:
              2: [1, 4, 3],
              3: [1, 2, 4],
              4: [1, 3, 2]}
+
+        TESTS::
+
+            sage: from io import StringIO
+            sage: code_input = StringIO()
+            sage: n = code_input.write('>>planar_code<<')
+            sage: n = code_input.seek(0)
+            sage: list(graphs._read_planar_code(code_input))
+            Traceback (most recent call last):
+            ...
+            TypeError: not a binary file
+
+            sage: from io import BytesIO
+            sage: code_input = BytesIO()
+            sage: n = code_input.write(b'>>wrong header<<')
+            sage: n = code_input.seek(0)
+            sage: list(graphs._read_planar_code(code_input))
+            Traceback (most recent call last):
+            ...
+            TypeError: file has no valid planar code header
         """
         # start of code to read planar code
         header = code_input.read(15)
-        assert header == '>>planar_code<<', 'Not a valid planar code header'
+        if not isinstance(header, bytes):
+            raise TypeError('not a binary file')
+        if header != b'>>planar_code<<':
+            raise TypeError('file has no valid planar code header')
 
         # read graph per graph
         while True:
@@ -1689,10 +1720,7 @@ class GraphGenerators:
 
         sp = subprocess.Popen(command, shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE, close_fds=True,
-                              encoding='latin-1')
-
-        sp.stdout.reconfigure(newline='')
+                              stderr=subprocess.PIPE, close_fds=True)
 
         yield from graphs._read_planar_code(sp.stdout, immutable=immutable)
 
@@ -1780,10 +1808,7 @@ class GraphGenerators:
 
         sp = subprocess.Popen(command, shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE, close_fds=True,
-                              encoding='latin-1')
-
-        sp.stdout.reconfigure(newline='')
+                              stderr=subprocess.PIPE, close_fds=True)
 
         yield from graphs._read_planar_code(sp.stdout, immutable=immutable)
 
@@ -1968,14 +1993,11 @@ class GraphGenerators:
                                  options)
         sp = subprocess.Popen(command, shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE, close_fds=True,
-                              encoding='latin-1')
-
-        sp.stdout.reconfigure(newline='')
+                              stderr=subprocess.PIPE, close_fds=True)
 
         try:
             yield from graphs._read_planar_code(sp.stdout, immutable=immutable)
-        except AssertionError:
+        except (TypeError, AssertionError):
             raise AttributeError("invalid options '{}'".format(options))
 
     def planar_graphs(self, order, minimum_degree=None,
@@ -2157,12 +2179,11 @@ class GraphGenerators:
                 minimum_connectivity = min(3, minimum_degree)
             elif minimum_degree is None:
                 minimum_degree, minimum_connectivity = 1, 1
-        else:
-            if minimum_degree is None:
-                minimum_degree = minimum_connectivity
-            elif (minimum_degree < minimum_connectivity and
-                  minimum_degree > 0):
-                raise ValueError("Minimum connectivity can be at most the minimum degree.")
+        elif minimum_degree is None:
+            minimum_degree = minimum_connectivity
+        elif (minimum_degree < minimum_connectivity and
+              minimum_degree > 0):
+            raise ValueError("Minimum connectivity can be at most the minimum degree.")
 
         # exact connectivity is not implemented for minimum connectivity 3
         if exact_connectivity and minimum_connectivity == 3:
@@ -2178,7 +2199,7 @@ class GraphGenerators:
                     raise ValueError("the number of edges cannot be less than order - 1")
                 edges = '-e:{}'.format(maximum_edges)
         else:
-            if minimum_edges > 3*order - 6:
+            if minimum_edges > 3 * order - 6:
                 raise ValueError("the number of edges cannot be more than 3*order - 6")
             if maximum_edges is None:
                 edges = '-e{}:'.format(minimum_edges)
@@ -2383,11 +2404,10 @@ class GraphGenerators:
                 minimum_connectivity = min(3, minimum_degree)
             else:
                 minimum_degree, minimum_connectivity = 3, 3
-        else:
-            if minimum_degree is None:
-                minimum_degree = minimum_connectivity
-            elif minimum_degree < minimum_connectivity:
-                raise ValueError("Minimum connectivity can be at most the minimum degree.")
+        elif minimum_degree is None:
+            minimum_degree = minimum_connectivity
+        elif minimum_degree < minimum_connectivity:
+            raise ValueError("Minimum connectivity can be at most the minimum degree.")
 
         # exact connectivity is not implemented for minimum connectivity equal
         # to minimum degree
@@ -2528,11 +2548,10 @@ class GraphGenerators:
                 minimum_connectivity = min(2, minimum_degree)
             else:
                 minimum_degree, minimum_connectivity = 2, 2
-        else:
-            if minimum_degree is None:
-                minimum_degree = minimum_connectivity
-            elif minimum_degree < minimum_connectivity:
-                raise ValueError("Minimum connectivity can be at most the minimum degree.")
+        elif minimum_degree is None:
+            minimum_degree = minimum_connectivity
+        elif minimum_degree < minimum_connectivity:
+            raise ValueError("Minimum connectivity can be at most the minimum degree.")
 
         minimum_order = {2: 4, 3: 8}[minimum_degree]
 
@@ -2554,7 +2573,7 @@ class GraphGenerators:
 ###########################################################################
 # Basic Graphs
 ###########################################################################
-    from .generators import basic
+    from sage.graphs.generators import basic
     BullGraph = staticmethod(basic.BullGraph)
     ButterflyGraph = staticmethod(basic.ButterflyGraph)
     CircularLadderGraph = staticmethod(basic.CircularLadderGraph)
@@ -2583,7 +2602,7 @@ class GraphGenerators:
 ###########################################################################
 # Small Graphs
 ###########################################################################
-    from .generators import smallgraphs, distance_regular
+    from sage.graphs.generators import distance_regular, smallgraphs
     Balaban10Cage = staticmethod(smallgraphs.Balaban10Cage)
     Balaban11Cage = staticmethod(smallgraphs.Balaban11Cage)
     BidiakisCube = staticmethod(smallgraphs.BidiakisCube)
@@ -2697,7 +2716,7 @@ class GraphGenerators:
 ###########################################################################
 # Platonic Solids
 ###########################################################################
-    from .generators import platonic_solids
+    from sage.graphs.generators import platonic_solids
     DodecahedralGraph = staticmethod(platonic_solids.DodecahedralGraph)
     HexahedralGraph = staticmethod(platonic_solids.HexahedralGraph)
     IcosahedralGraph = staticmethod(platonic_solids.IcosahedralGraph)
@@ -2707,12 +2726,11 @@ class GraphGenerators:
 ###########################################################################
 # Families
 ###########################################################################
-    from . import cographs as cographs_module
-    from .generators import families
-    from . import strongly_regular_db
+    from sage.graphs import cographs as cographs_module
+    from sage.graphs import strongly_regular_db
+    from sage.graphs.generators import families
     AlternatingFormsGraph = staticmethod(distance_regular.AlternatingFormsGraph)
     AztecDiamondGraph = staticmethod(families.AztecDiamondGraph)
-    BalancedTree = staticmethod(families.BalancedTree)
     BarbellGraph = staticmethod(families.BarbellGraph)
     BilinearFormsGraph = staticmethod(distance_regular.BilinearFormsGraph)
     BiwheelGraph = staticmethod(families.BiwheelGraph)
@@ -2730,7 +2748,6 @@ class GraphGenerators:
     DoubleGrassmannGraph = staticmethod(distance_regular.DoubleGrassmannGraph)
     DoubleOddGraph = staticmethod(distance_regular.DoubleOddGraph)
     EgawaGraph = staticmethod(families.EgawaGraph)
-    FibonacciTree = staticmethod(families.FibonacciTree)
     FoldedCubeGraph = staticmethod(families.FoldedCubeGraph)
     FriendshipGraph = staticmethod(families.FriendshipGraph)
     FurerGadget = staticmethod(families.FurerGadget)
@@ -2762,6 +2779,7 @@ class GraphGenerators:
     NKStarGraph = staticmethod(families.NKStarGraph)
     NStarGraph = staticmethod(families.NStarGraph)
     OddGraph = staticmethod(families.OddGraph)
+    p2_forbidden_minors = staticmethod(families.p2_forbidden_minors)
     PaleyGraph = staticmethod(families.PaleyGraph)
     PasechnikGraph = staticmethod(families.PasechnikGraph)
     petersen_family = staticmethod(families.petersen_family)
@@ -2774,9 +2792,7 @@ class GraphGenerators:
     strongly_regular_graph = staticmethod(strongly_regular_db.strongly_regular_graph)
     TabacjnGraph = staticmethod(families.TabacjnGraph)
     TadpoleGraph = staticmethod(families.TadpoleGraph)
-    trees = staticmethod(families.trees)
     TruncatedBiwheelGraph = staticmethod(families.TruncatedBiwheelGraph)
-    nauty_gentreeg = staticmethod(families.nauty_gentreeg)
     TuranGraph = staticmethod(families.TuranGraph)
     UstimenkoGraph = staticmethod(distance_regular.UstimenkoGraph)
     WheelGraph = staticmethod(families.WheelGraph)
@@ -2785,7 +2801,7 @@ class GraphGenerators:
 ###########################################################################
 # Graphs from classical geometries over `F_q`
 ###########################################################################
-    from .generators import classical_geometries
+    from sage.graphs.generators import classical_geometries
     AffineOrthogonalPolarGraph = staticmethod(classical_geometries.AffineOrthogonalPolarGraph)
     AhrensSzekeresGeneralizedQuadrangleGraph = staticmethod(classical_geometries.AhrensSzekeresGeneralizedQuadrangleGraph)
     NonisotropicOrthogonalPolarGraph = staticmethod(classical_geometries.NonisotropicOrthogonalPolarGraph)
@@ -2806,7 +2822,7 @@ class GraphGenerators:
 ###########################################################################
 # Chessboard Graphs
 ###########################################################################
-    from .generators import chessboard
+    from sage.graphs.generators import chessboard
     ChessboardGraphGenerator = staticmethod(chessboard.ChessboardGraphGenerator)
     BishopGraph = staticmethod(chessboard.BishopGraph)
     KingGraph = staticmethod(chessboard.KingGraph)
@@ -2817,7 +2833,7 @@ class GraphGenerators:
 ###########################################################################
 # Intersection graphs
 ###########################################################################
-    from .generators import intersection
+    from sage.graphs.generators import intersection
     IntervalGraph = staticmethod(intersection.IntervalGraph)
     IntersectionGraph = staticmethod(intersection.IntersectionGraph)
     PermutationGraph = staticmethod(intersection.PermutationGraph)
@@ -2827,7 +2843,7 @@ class GraphGenerators:
 ###########################################################################
 # Random Graphs
 ###########################################################################
-    from .generators import random
+    from sage.graphs.generators import random
     RandomBarabasiAlbert = staticmethod(random.RandomBarabasiAlbert)
     RandomBipartite = staticmethod(random.RandomBipartite)
     RandomRegularBipartite = staticmethod(random.RandomRegularBipartite)
@@ -2839,7 +2855,6 @@ class GraphGenerators:
     RandomGNP = staticmethod(random.RandomGNP)
     RandomHolmeKim = staticmethod(random.RandomHolmeKim)
     RandomIntervalGraph = staticmethod(random.RandomIntervalGraph)
-    RandomLobster = staticmethod(random.RandomLobster)
     RandomNewmanWattsStrogatz = staticmethod(random.RandomNewmanWattsStrogatz)
     RandomProperIntervalGraph = staticmethod(random.RandomProperIntervalGraph)
     RandomRegular = staticmethod(random.RandomRegular)
@@ -2847,15 +2862,25 @@ class GraphGenerators:
     RandomKTree = staticmethod(random.RandomKTree)
     RandomPartialKTree = staticmethod(random.RandomPartialKTree)
     RandomToleranceGraph = staticmethod(random.RandomToleranceGraph)
-    RandomTreePowerlaw = staticmethod(random.RandomTreePowerlaw)
-    RandomTree = staticmethod(random.RandomTree)
     RandomTriangulation = staticmethod(random.RandomTriangulation)
     RandomUnitDiskGraph = staticmethod(random.RandomUnitDiskGraph)
 
 ###########################################################################
+# Trees
+###########################################################################
+    from sage.graphs.generators import trees as gen_trees
+    BalancedTree = staticmethod(gen_trees.BalancedTree)
+    FibonacciTree = staticmethod(gen_trees.FibonacciTree)
+    nauty_gentreeg = staticmethod(gen_trees.nauty_gentreeg)
+    RandomLobster = staticmethod(gen_trees.RandomLobster)
+    RandomTreePowerlaw = staticmethod(gen_trees.RandomTreePowerlaw)
+    RandomTree = staticmethod(gen_trees.RandomTree)
+    trees = staticmethod(gen_trees.trees)
+
+###########################################################################
 # Maps
 ###########################################################################
-    from .generators import world_map
+    from sage.graphs.generators import world_map
     WorldMap = staticmethod(world_map.WorldMap)
     EuropeMap = staticmethod(world_map.EuropeMap)
     AfricaMap = staticmethod(world_map.AfricaMap)
@@ -2864,7 +2889,7 @@ class GraphGenerators:
 ###########################################################################
 # Degree Sequence
 ###########################################################################
-    from .generators import degree_sequence
+    from sage.graphs.generators import degree_sequence
     DegreeSequence = staticmethod(degree_sequence.DegreeSequence)
     DegreeSequenceBipartite = staticmethod(degree_sequence.DegreeSequenceBipartite)
     DegreeSequenceConfigurationModel = staticmethod(degree_sequence.DegreeSequenceConfigurationModel)
@@ -2939,7 +2964,7 @@ def canaug_traverse_vert(g, aut_gens, max_verts, property, dig=False, loops=Fals
         # in the case of graphs, there are n possibilities,
         # and in the case of digraphs, there are 2*n.
         if dig:
-            possibilities = 2*n
+            possibilities = 2 * n
         else:
             possibilities = n
         num_roots = 2**possibilities

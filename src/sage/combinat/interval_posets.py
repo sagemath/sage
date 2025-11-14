@@ -30,7 +30,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from collections.abc import Iterator
 
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -58,6 +57,10 @@ from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.graphs.digraph import DiGraph
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 lazy_import('sage.combinat.dyck_word', 'DyckWords')
 
@@ -1256,9 +1259,9 @@ class TamariIntervalPoset(Element,
                 return u + 1
             return u
         rels = [(add1(a), add1(b))
-                for (a, b) in self.decreasing_cover_relations()]
+                for a, b in self.decreasing_cover_relations()]
         rels += [(add1(a), add1(b))
-                 for (a, b) in self.increasing_cover_relations()]
+                 for a, b in self.increasing_cover_relations()]
         rels += [(k, k - 1) for k in [i] if i > 1]
         rels += [(k, k + 1) for k in [i] if i <= n]
         return TamariIntervalPoset(n + 1, rels)
@@ -1531,7 +1534,7 @@ class TamariIntervalPoset(Element,
         """
         if other.size() != self.size():
             return False
-        return all(other.le(i, j) for (i, j) in self._cover_relations)
+        return all(other.le(i, j) for i, j in self._cover_relations)
 
     def lower_contains_interval(self, other) -> bool:
         r"""
@@ -1572,7 +1575,7 @@ class TamariIntervalPoset(Element,
         if not self.contains_interval(other):
             return False
         return all(self.le(i, j)
-                   for (i, j) in other.decreasing_cover_relations())
+                   for i, j in other.decreasing_cover_relations())
 
     def upper_contains_interval(self, other) -> bool:
         r"""
@@ -1613,7 +1616,7 @@ class TamariIntervalPoset(Element,
         if not self.contains_interval(other):
             return False
         return all(self.le(i, j)
-                   for (i, j) in other.increasing_cover_relations())
+                   for i, j in other.increasing_cover_relations())
 
     def is_linear_extension(self, perm) -> bool:
         r"""
@@ -1979,10 +1982,10 @@ class TamariIntervalPoset(Element,
         if start == end:
             return TamariIntervalPoset(0, [])
         relations = [(i - start + 1, j - start + 1)
-                     for (i, j) in self.increasing_cover_relations()
+                     for i, j in self.increasing_cover_relations()
                      if i >= start and j < end]
         relations.extend((j - start + 1, i - start + 1)
-                         for (j, i) in self.decreasing_cover_relations()
+                         for j, i in self.decreasing_cover_relations()
                          if i >= start and j < end)
         return TamariIntervalPoset(end - start, relations, check=False)
 
@@ -3712,7 +3715,13 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
 
             sage: S = TamariIntervalPosets(3)
             sage: assert S is TamariIntervalPosets(3)
-            sage: for i in range(5): TestSuite(TamariIntervalPosets(i)).run()
+
+        We currently have to skip checking that elements are produced
+        uniformly at random by :meth:`random_element`. This is not
+        the case because of :issue:`40693`::
+
+            sage: for i in range(5):
+            ....:     TestSuite(TamariIntervalPosets(i)).run(skip="_test_random")
         """
         # there is a natural order on interval-posets through inclusions
         # that is why we use the FinitePosets category

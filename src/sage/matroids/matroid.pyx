@@ -348,7 +348,7 @@ from itertools import combinations, product
 from sage.matrix.constructor import matrix
 from sage.misc.lazy_import import LazyImport
 from sage.misc.prandom import shuffle
-from sage.misc.superseded import deprecation, deprecated_function_alias
+from sage.misc.superseded import deprecated_function_alias
 from sage.rings.integer_ring import ZZ
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.structure.sage_object cimport SageObject
@@ -637,12 +637,19 @@ cdef class Matroid(SageObject):
             True
             sage: all(M.is_dependent(X.union([y])) for y in M.groundset() if y not in X)
             True
+
+        TESTS::
+
+            sage: M = matroids.catalog.R10()
+            sage: M1M = M.direct_sum(M)
+            sage: Matroid(M1M, regular=True)  # indirect doctest
+            Regular matroid of rank 10 on 20 elements with 26244 bases
         """
         cdef list res = []
         cdef int r = 0
         for e in X:
             res.append(e)
-            if self._rank(res) > r:
+            if self._rank(frozenset(res)) > r:
                 r += 1
             else:
                 res.pop()
@@ -2695,8 +2702,6 @@ cdef class Matroid(SageObject):
             if not self._is_independent(X):
                 yield X
 
-    dependent_r_sets = deprecated_function_alias(38057, dependent_sets)
-
     cpdef SetSystem dependent_sets(self, long k):
         r"""
         Return the dependent sets of fixed size.
@@ -4219,9 +4224,6 @@ cdef class Matroid(SageObject):
         one. It can be shown that the resulting matroid does not depend on the
         order of the deletions.
 
-        DEPRECATED: Sage supports the shortcut notation ``M \ X`` for
-        ``M.delete(X)``.
-
         INPUT:
 
         - ``X`` -- either a single element of the groundset, or a collection
@@ -4269,23 +4271,6 @@ cdef class Matroid(SageObject):
             ['a', 'b', 'c']
         """
         return self.minor(deletions=X)
-
-    cpdef _backslash_(self, X):
-        r"""
-        Shorthand for ``self.delete(X)``.
-
-        Deprecated.
-
-        EXAMPLES::
-
-            sage: M = matroids.CompleteGraphic(4)                                       # needs sage.graphs
-            sage: M.delete(1) == M \ 1  # indirect doctest                              # needs sage.graphs
-            doctest:...: DeprecationWarning: the backslash operator has been deprecated; use M.delete(X) instead
-            See https://github.com/sagemath/sage/issues/36394 for details.
-            True
-        """
-        deprecation(36394, 'the backslash operator has been deprecated; use M.delete(X) instead')
-        return self.delete(X)
 
     cpdef dual(self):
         r"""
@@ -6182,7 +6167,7 @@ cdef class Matroid(SageObject):
         if not G.is_connected():
             return False
         # Step 4: Apply algorithm recursively
-        for B, M in Y_components.iteritems():
+        for B, M in Y_components.items():
             N = M.simplify()
             new_basis = basis & (B | Y)
             # the set of fundamental cocircuit that might be separating for N
@@ -7694,7 +7679,7 @@ cdef class Matroid(SageObject):
             dist += 1
             X3 = X2.intersection(w)
 
-        for x, y in layers.iteritems():
+        for x, y in layers.items():
             for z in y:
                 d[z] = x
         if not X3:                 # if no path from X1 to X2, then no augmenting set exists
@@ -7933,8 +7918,8 @@ cdef class Matroid(SageObject):
         a = x
         b = y
         R = ZZ['x, y']
-        x, y = R._first_ngens(2)
-        T = R(0)
+        x, y = R.gens()
+        T = R.zero()
         for B in self.bases_iterator():
             T += x ** len(self._internal(B)) * y ** len(self._external(B))
         if a is not None and b is not None:
@@ -8069,18 +8054,18 @@ cdef class Matroid(SageObject):
         - ``augmented`` -- boolean (default: ``False``); when ``True``, this
           is the augmented Chow ring and if ``False``, this is the
           non-augmented Chow ring
-        - ``presentation`` -- string; if ``augmented=True``, then this
-          must be one of the following (ignored if ``augmented=False``):
+        - ``presentation`` -- string; one of the following:
 
           * ``"fy"`` - the Feitchner-Yuzvinsky presentation
           * ``"atom-free"`` - the atom-free presentation
+          * ``"simplicial"`` - the simplicial presentation
 
         EXAMPLES::
 
             sage: M = matroids.Wheel(2)
-            sage: A = M.chow_ring(R=ZZ, augmented=False); A
+            sage: A = M.chow_ring(R=ZZ, augmented=False, presentation='fy'); A
             Chow ring of Wheel(2): Regular matroid of rank 2 on 4 elements with
-            5 bases over Integer Ring
+            5 bases in Feitchner-Yuzvinsky presentation over Integer Ring
             sage: A.defining_ideal()._gens_constructor(A.defining_ideal().ring())
             [A0*A1, A0*A23, A1*A23, A0 + A0123, A1 + A0123, A23 + A0123]
             sage: A23 = A.gen(0)
@@ -8090,9 +8075,9 @@ cdef class Matroid(SageObject):
         We construct a more interesting example using the Fano matroid::
 
             sage: M = matroids.catalog.Fano()
-            sage: A = M.chow_ring(QQ); A
-            Chow ring of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
-            over Rational Field
+            sage: A = M.chow_ring(QQ, False, 'fy'); A
+            Chow ring of Fano: Binary matroid of rank 3 on 7 elements,
+            type (3, 0) in Feitchner-Yuzvinsky presentation over Rational Field
 
         Next we get the non-trivial generators and do some computations::
 
