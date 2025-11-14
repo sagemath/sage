@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Utility functions
 
@@ -182,7 +181,7 @@ class Timer:
 
         """
         try:
-            with open(path, "r") as statfile:
+            with open(path) as statfile:
                 stats = statfile.read().split()
         except (FileNotFoundError, PermissionError) as e:
             # FileNotFoundError: bad PID, or no /proc support

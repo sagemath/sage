@@ -360,7 +360,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
         """
         return super().__classcall__(cls, precision)
 
-    def __init__(self, long precision=53):
+    def __init__(self, long precision=53) -> None:
         r"""
         Initialize the complex ball field.
 
@@ -1399,7 +1399,7 @@ cdef class ComplexBall(RingElement):
         """
         acb_clear(self.value)
 
-    def __init__(self, parent, x=None, y=None):
+    def __init__(self, parent, x=None, y=None) -> None:
         """
         Initialize the :class:`ComplexBall`.
 
@@ -1529,7 +1529,7 @@ cdef class ComplexBall(RingElement):
         else:
             raise TypeError("unsupported initializer")
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         TESTS::
 
@@ -2333,7 +2333,7 @@ cdef class ComplexBall(RingElement):
         return (arb_is_nonzero(acb_realref(self.value))
                 or arb_is_nonzero(acb_imagref(self.value)))
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``True`` iff this complex ball is not the zero ball, i.e. if the
         midpoint and radius of its real and imaginary parts are not all zero.
@@ -2590,7 +2590,7 @@ cdef class ComplexBall(RingElement):
             if _do_sig(prec(self)): sig_off()
         return res
 
-    def __contains__(self, other):
+    def __contains__(self, other) -> bool:
         """
         Return ``True`` if ``other`` can be verified to be contained in ``self``.
 

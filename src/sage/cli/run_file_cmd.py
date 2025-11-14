@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 from sage.cli.options import CliOptions
 from sage.repl.preparse import preparse_file_named
@@ -33,7 +34,6 @@ class RunFileCmd:
         """
         self.options = options
         # shift sys.argv for compatibility with the old sage bash script and python command when consuming arguments from the command line
-        import sys
         del sys.argv[0]
 
     def run(self) -> int:

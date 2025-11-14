@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 from cpython.longintrepr cimport py_long, digit
 
 cdef extern from "pycore_long.h":

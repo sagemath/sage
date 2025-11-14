@@ -1126,7 +1126,7 @@ class ShephardToddFamilyGroup(UniqueRepresentation, Parent):
             q = PolynomialRing(ZZ, 'q').gen(0)
         return prod(q + d - 1 for d in self.degrees())
 
-    def is_well_generated(self):
+    def is_well_generated(self) -> bool:
         r"""
         Return if ``self`` is a well-generated complex reflection group.
 

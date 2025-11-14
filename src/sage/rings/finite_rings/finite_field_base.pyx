@@ -199,6 +199,12 @@ cdef class FiniteField(Field):
         Return string that initializes the GAP version of
         this finite field.
 
+        Note that for non-prime finite fields, the result is likely **unintended**,
+        it always use GAP's default-constructed finite field,
+        which means the ``DefiningPolynomial`` of the GAP field is often not the same as the
+        ``.modulus()`` of the Sage field. They are isomorphic, but the isomorphism may be
+        difficult to compute.
+
         EXAMPLES::
 
             sage: GF(9,'a')._gap_init_()
@@ -473,7 +479,8 @@ cdef class FiniteField(Field):
             sage: k.hom([c]) # indirect doctest
             Traceback (most recent call last):
             ...
-            TypeError: images do not define a valid homomorphism
+            ValueError: relations do not all (canonically) map to 0
+            under map determined by images of generators
 
             sage: k.hom([c^(73*73+1)])
             Ring morphism:
@@ -484,7 +491,7 @@ cdef class FiniteField(Field):
             sage: k.hom([b])
             Traceback (most recent call last):
             ...
-            TypeError: images do not define a valid homomorphism
+            ValueError: No embedding of Finite Field in a of size 73^2 into Finite Field in b of size 73^3
         """
         #if self.characteristic() != codomain.characteristic():
         #    raise ValueError("no map from %s to %s" % (self, codomain))
@@ -1421,6 +1428,21 @@ cdef class FiniteField(Field):
             sage: L.<v> = K.extension(b)
             sage: L(u).minpoly() == u.minpoly()
             True
+
+        Check the test above when `a=b=1`, see :issue:`40926`.
+        While in general it doesn't make much sense to talk about the generator
+        of a prime finite field (:meth:`gen` returns 1), generic code may find
+        it convenient to always specify the variable name when it is not known
+        in advance whether the exponent is 1.
+
+        The reason why one may want to specify ``name`` is :issue:`38376`.
+
+        ::
+
+            sage: K.<u> = GF((random_prime(10^100), 1))
+            sage: L.<v> = K.extension(1)
+            sage: L(u).minpoly() == u.minpoly()
+            True
         """
         from sage.rings.finite_rings.finite_field_constructor import GF
         from sage.rings.polynomial.polynomial_element import Polynomial
@@ -2218,30 +2240,3 @@ def unpickle_FiniteField_prm(_type, order, variable_name, kwargs):
 
 register_unpickle_override(
     'sage.rings.ring', 'unpickle_FiniteField_prm', unpickle_FiniteField_prm)
-
-
-def is_FiniteField(R):
-    r"""
-    Return whether the implementation of ``R`` has the interface provided by
-    the standard finite field implementation.
-
-    This function is deprecated.
-
-    EXAMPLES::
-
-        sage: from sage.rings.finite_rings.finite_field_base import is_FiniteField
-        sage: is_FiniteField(GF(9,'a'))
-        doctest:...: DeprecationWarning: the function is_FiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) instead
-        See https://github.com/sagemath/sage/issues/32664 for details.
-        True
-        sage: is_FiniteField(GF(next_prime(10^10)))
-        True
-
-    Note that the integers modulo n are not backed by the finite field type::
-
-        sage: is_FiniteField(Integers(7))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32664, "the function is_FiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) instead")
-    return isinstance(R, FiniteField)

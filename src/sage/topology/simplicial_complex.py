@@ -1763,10 +1763,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
         if d == 0:
             return len(self.facets()) == 2
         F = self.facets()
-        X = self.faces()[d-1]
+        X = self.faces()[d - 1]
         # is each (d-1)-simplex is the face of exactly two facets?
         for s in X:
-            if len([a for a in [s.is_face(f) for f in F] if a]) != 2:
+            if len([1 for f in F if s.is_face(f)]) != 2:
                 return False
         # construct a graph with one vertex for each facet, one edge
         # when two facets intersect in a (d-1)-simplex, and see
@@ -2198,7 +2198,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 # nonzero via a dictionary.
                 matrix_data = {}
                 col = 0
-                if len(old) and len(current):
+                if old and current:
                     for simplex in current:
                         for i in range(n + 1):
                             face_i = simplex.face(i)

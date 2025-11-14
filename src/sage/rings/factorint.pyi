@@ -1,9 +1,8 @@
-from typing import List, Tuple
 
-def aurifeuillian(n: int, m: int, F: int = None, check: bool = True) -> List[int]:
+def aurifeuillian(n: int, m: int, F: int = None, check: bool = True) -> list[int]:
     ...
 
-def factor_aurifeuillian(n: int, check: bool = True) -> List[int]:
+def factor_aurifeuillian(n: int, check: bool = True) -> list[int]:
     ...
 
 def factor_cunningham(m: int, proof: bool = None) -> int:

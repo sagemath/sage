@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Delete item from PyDict by exact value and hash
 
@@ -148,7 +147,7 @@ def test_del_dictitem_by_exact_value(D, value, h):
     - ``h`` -- the hash of the key under which to find ``value`` in ``D``
 
     The underlying cdef function deletes an item from ``D`` that is in the
-    hash bucket determined by ``h`` and whose value is identic with
+    hash bucket determined by ``h`` and whose value is identical with
     ``value``. Of course, this only makes sense if the pairs ``(h, value)``
     corresponding to items in ``D`` are pair-wise distinct.
 

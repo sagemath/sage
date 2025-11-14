@@ -1,6 +1,5 @@
-from typing import List, Tuple
 
-def prime_range(start: int, stop: int = None, algorithm: str = None, py_ints: bool = False) -> List[int]:
+def prime_range(start: int, stop: int = None, algorithm: str = None, py_ints: bool = False) -> list[int]:
     ...
 
 class arith_int:
@@ -16,10 +15,10 @@ class arith_int:
     def gcd_int(self, a: int, b: int) -> int:
         ...
 
-    def c_xgcd_int(self, a: int, b: int) -> Tuple[int, int, int]:
+    def c_xgcd_int(self, a: int, b: int) -> tuple[int, int, int]:
         ...
 
-    def xgcd_int(self, a: int, b: int) -> Tuple[int, int, int]:
+    def xgcd_int(self, a: int, b: int) -> tuple[int, int, int]:
         ...
 
     def c_inverse_mod_int(self, a: int, m: int) -> int:
@@ -28,10 +27,10 @@ class arith_int:
     def inverse_mod_int(self, a: int, m: int) -> int:
         ...
 
-    def c_rational_recon_int(self, a: int, m: int) -> Tuple[int, int]:
+    def c_rational_recon_int(self, a: int, m: int) -> tuple[int, int]:
         ...
 
-    def rational_recon_int(self, a: int, m: int) -> Tuple[int, int]:
+    def rational_recon_int(self, a: int, m: int) -> tuple[int, int]:
         ...
 
 class arith_llong:
@@ -47,10 +46,10 @@ class arith_llong:
     def gcd_longlong(self, a: int, b: int) -> int:
         ...
 
-    def c_xgcd_longlong(self, a: int, b: int) -> Tuple[int, int, int]:
+    def c_xgcd_longlong(self, a: int, b: int) -> tuple[int, int, int]:
         ...
 
-    def xgcd_longlong(self, a: int, b: int) -> Tuple[int, int, int]:
+    def xgcd_longlong(self, a: int, b: int) -> tuple[int, int, int]:
         ...
 
     def c_inverse_mod_longlong(self, a: int, m: int) -> int:
@@ -59,8 +58,8 @@ class arith_llong:
     def inverse_mod_longlong(self, a: int, m: int) -> int:
         ...
 
-    def c_rational_recon_longlong(self, a: int, m: int) -> Tuple[int, int]:
+    def c_rational_recon_longlong(self, a: int, m: int) -> tuple[int, int]:
         ...
 
-    def rational_recon_longlong(self, a: int, m: int) -> Tuple[int, int]:
+    def rational_recon_longlong(self, a: int, m: int) -> tuple[int, int]:
         ...

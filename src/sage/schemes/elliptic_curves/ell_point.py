@@ -252,7 +252,7 @@ class EllipticCurvePoint(AdditiveGroupElement,
         prime divisors, for which the result is computed using the "old",
         much simpler formulas for fields.) ::
 
-            sage: N = ZZ(randrange(2, 10**5))
+            sage: N = randrange(10**4) * 6 + choice([5, 7])  # coprime to 6
             sage: E = None
             sage: while True:
             ....:     try:
@@ -272,18 +272,18 @@ class EllipticCurvePoint(AdditiveGroupElement,
             ....:     if xs:
             ....:         pts.append(E(choice(xs), y, z))
             sage: P, Q = pts
-            sage: R = P + Q  # not tested (:issue:`39191`)
-            sage: for d in N.divisors():  # not tested (:issue:`39191`)
+            sage: R = P + Q
+            sage: for d in N.divisors():
             ....:     if d > 1:
             ....:         assert R.change_ring(Zmod(d)) == P.change_ring(Zmod(d)) + Q.change_ring(Zmod(d))
         """
-        if self.is_zero():
-            return other
-        if other.is_zero():
-            return self
-
         E = self.curve()
         R = E.base_ring()
+
+        # According to https://cr.yp.to/bib/1987/lenstra-ecnta.pdf, §3,
+        # the formulas require 6 to be a unit. See #39191 for details.
+        if not R(6).is_unit():
+            raise NotImplementedError('addition of elliptic-curve points over non-fields is only supported when 6 is a unit')
 
         # We handle Euclidean domains modulo principal ideals separately.
         # Important special cases of this include quotient rings of the
@@ -360,6 +360,9 @@ class EllipticCurvePoint(AdditiveGroupElement,
         # Below, we simply try random linear combinations until we
         # find a good choice. Is there a general method that doesn't
         # involve guessing?
+        # Answer: Yes.
+        # See pages 7-8 of Lenstra's "Elliptic Curves and Number-Theoretic Algorithms".
+        # https://cr.yp.to/bib/1987/lenstra-ecnta.pdf
 
         pts = [vector(R, pt) for pt in pts]
         for _ in range(1000):
@@ -2415,6 +2418,24 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             ...
             NotImplementedError: Reduced Tate pairing is currently only implemented for finite fields
 
+        Test Issue #40764 is solved::
+
+            sage: p = 886368969471450739924935101400677
+            sage: a = 26392827536965106777121445123290
+            sage: b = 372325368096095544195525883520589
+            sage: n = 886368969471450710152985728350703
+            sage: K = GF(p)
+            sage: K3.<u> = K.extension(K['x']([4, 1, 0, 1]))
+            sage: K6.<t> = K3.extension(K3['x']([2, 0, 1]))
+            sage: E = EllipticCurve(K, [a, b])
+            sage: E6 = EllipticCurve(K6, [a, b])
+            sage: xs =  [856868015088199526146278020391084, 443540958770895237304916133834125, 394350320674188950754967186520706]
+            sage: ys = [132025069108007720916581753555587, 11656262681159388373035244637826, 697338684369558801829591141320120]
+            sage: G6 = E6(K3(xs) * t^-2, K3(ys) * t^-3)
+            sage: G = E6((211525223196641227957134531065457, 59355916731390463777191161722550))
+            sage: G.tate_pairing(G6, n, 6, q=p)
+            (699432283102586243018242179516873*u^2 + 265571225406900742458432149860962*u + 701042518368651902930590425782509)*t + 802059826004050667481466713086225*u^2 + 178851543248946074944443141484182*u + 242940802691096077821709859741616
+
         ALGORITHM:
 
         - :pari:`elltatepairing` computes the
@@ -2451,12 +2472,26 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         if pari.ellmul(E, P, n) != [0]:
             raise ValueError("The point P must be n-torsion")
 
-        # NOTE: Pari returns the non-reduced Tate pairing, so we
-        # must perform the exponentiation ourselves using the supplied
-        # k value
-        ePQ = pari.elltatepairing(E, P, Q, n)
+        # NOTE: Pari `elltatepairing` only works with curves with
+        # `ell_get_type()` equal to `t_ELL_Fp` or `t_ELL_Fq`, which
+        # correspond to `EllipticCurve_finite_field`.
+        if isinstance(E, sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field):
+            # The value returned by `elltatepairing` is the raw Miller loop
+            # output, so we still need to do the final exponentiation.
+            ePQ = K(pari.elltatepairing(E, P, Q, n)) # Cast the PARI type back to the base ring
+        else:
+            # In small cases, or in the case of pairing an element with
+            # itself, Q could be on one of the lines in the Miller
+            # algorithm. If this happens we try again, with an offset of a
+            # random point.
+            try:
+                ePQ = P._miller_(Q, n)
+            except (ZeroDivisionError, ValueError):
+                R = E.random_point()
+                return self.tate_pairing(Q + R, n, k) / self.tate_pairing(R, n, k)
+
         exp = Integer((q**k - 1)/n)
-        return K(ePQ**exp)  # Cast the PARI type back to the base ring
+        return ePQ**exp
 
     def ate_pairing(self, Q, n, k, t, q=None):
         r"""

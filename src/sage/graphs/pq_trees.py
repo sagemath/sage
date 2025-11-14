@@ -285,7 +285,7 @@ class PQ:
     AUTHOR : Nathann Cohen
     """
 
-    def __init__(self, seq):
+    def __init__(self, seq) -> None:
         r"""
         Construction of a PQ-Tree.
 
@@ -329,7 +329,7 @@ class PQ:
 
         self._children.reverse()
 
-    def __contains__(self, v):
+    def __contains__(self, v) -> bool:
         r"""
         Test whether there exists an element of ``self`` containing
         an element ``v``.
@@ -378,7 +378,7 @@ class PQ:
         """
         return len(self._children)
 
-    def ordering(self):
+    def ordering(self) -> list:
         r"""
         Return the current ordering given by listing the leaves from
         left to right.

@@ -295,7 +295,7 @@ def orient_circuit(circuit, convex=False, precision=53, verbose=False):
     OUTPUT:
 
     The same circuit if it goes counterclockwise, and its reversed otherwise,
-    given as the ordered list of vertices with identic extremities.
+    given as the ordered list of vertices with identical extremities.
 
     EXAMPLES::
 
@@ -1036,7 +1036,7 @@ def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions={}) -> list:
     for i, v in enumerate(cutpath):
         if i > 0 and v in EC:
             r = v
-            cutpath = cutpath[:i+1]
+            cutpath = cutpath[:i + 1]
             break
     qi = EC.index(q)
     ri = EC.index(r)

@@ -2,7 +2,7 @@
 
 ====================
 Building from source
-====================    
+====================
 
 This is a short guide on how to build the Sage from source using Meson.
 
@@ -100,7 +100,7 @@ Using Conda
     desired version.
 
 - To compile and install Sage in editable install, just use:
-  
+
   .. code-block:: console
 
       $ pip install --no-build-isolation --editable .
@@ -129,8 +129,6 @@ Depending on your distribution, install the following packages:
 
     Not yet supported.
 
-   .. .. literalinclude:: debian.txt
-
 .. tab:: Fedora
 
     At least Fedora 41 is required.
@@ -143,6 +141,11 @@ Depending on your distribution, install the following packages:
    .. literalinclude:: arch.txt
       :language: console
 
+.. tab:: OpenSUSE
+
+   .. literalinclude:: opensuse.txt
+      :language: console
+
 .. tab:: Void Linux
 
    .. literalinclude:: void.txt
@@ -152,7 +155,7 @@ Depending on your distribution, install the following packages:
 In the case that you want to install some dependencies manually, set the
 correct environment variables to point to the installed libraries:
 
-.. code-block:: console
+  .. code-block:: console
 
     $ export C_INCLUDE_PATH=$C_INCLUDE_PATH:/your/path/to/include
     $ export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/your/path/to/include
@@ -163,7 +166,7 @@ We also recommend to install the Python package manager
 
 To compile and install Sage in editable install, then just use:
 
-.. code-block:: console
+  .. code-block:: console
 
     $ uv venv
     $ uv pip install \
@@ -195,27 +198,27 @@ Remarks
 
 .. note::
 
-    Note that ``make`` is not used at all, nor is ``configure``.
-    This means that any Sage-the-distribution commands such as ``sage -i``
-    will not work.
+  Note that ``make`` is not used at all, nor is ``configure``.
+  This means that any Sage-the-distribution commands such as ``sage -i``
+  will not work.
 
 .. note::
 
-    By default, Meson will automatically determine the number of jobs to
-    run in parallel based on the number of CPU available. This can be adjusted
-    by passing ``--config-settings=compile-args=-jN`` to ``pip install``.
+  By default, Meson will automatically determine the number of jobs to
+  run in parallel based on the number of CPU available. This can be adjusted
+  by passing ``--config-settings=compile-args=-jN`` to ``pip install``.
 
-    ``--verbose`` can be passed to ``pip install``, then the meson commands
-    internally used by pip will be printed out.
+  ``--verbose`` can be passed to ``pip install``, then the meson commands
+  internally used by pip will be printed out.
 
 .. note::
 
-    To build the documentation, use:
+  To build the documentation, use:
 
-    .. code-block:: console
+  .. code-block:: console
 
-        $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-docbuild
-        $ sage --docbuild all html
+    $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-docbuild
+    $ sage --docbuild all html
 
 .. note::
 
@@ -242,9 +245,9 @@ build artifacts. Certain options are configurable at build time. The
 easiest way to obtain an overview of these options is by using ``meson
 configure``:
 
-.. code-block:: console
+  .. code-block:: console
 
-    $ meson configure builddir
+      $ meson configure builddir
 
 This command should display the available options and their associated
 values. The section titled "Project options" contains the options that
@@ -285,33 +288,36 @@ compilation.
 
 .. note::
 
-    If you want to install the project to a different directory, you can specify
-    the ``--prefix`` option when running the ``meson setup`` command:
+  If you want to install the project to a different directory, you can specify
+  the ``--prefix`` option when running the ``meson setup`` command:
 
-    .. code-block:: console
+  .. code-block:: console
 
-        $ meson setup builddir --prefix=/desired/install/path -Dpython.install_env=prefix
+      $ meson setup builddir --prefix=/desired/install/path -Dpython.install_env=prefix
 
-    This will then install in the directory specified by ``--prefix``,
-    in particular the root folder will be be installed to
-    ``/desired/install/path/lib/python3.12/site-packages/sage``.
-    Usually, this directory is not on your Python path, so you have to use:
+  This will then install in the directory specified by ``--prefix``,
+  in particular the root folder will be be installed to
+  ``/desired/install/path/lib/python3.12/site-packages/sage``.
+  Usually, this directory is not on your Python path, so you have to use:
 
-    .. code-block:: console
+  .. code-block:: console
 
-        $ PYTHONPATH=/desired/install/path ./sage
+          $ PYTHONPATH=/desired/install/path ./sage
 
-Alternatively, we can still use pip to install:
+  Alternatively, we can still use pip to install:
 
-.. code-block:: console
+  .. code-block:: console
 
     $ pip install --no-build-isolation --config-settings=builddir=builddir --editable .
 
+.. literalinclude:: homebrew-optional.txt
+   :language: console
+
 .. tip::
 
-    Package maintainers may want to specify further build options or need
-    to install to a different directory than the install prefix.
-    Both are supported naturally by Meson:
+  Package maintainers may want to specify further build options or need
+  to install to a different directory than the install prefix.
+  Both are supported naturally by Meson:
 
     .. code-block:: console
 
@@ -319,28 +325,28 @@ Alternatively, we can still use pip to install:
         $ meson compile -C builddir
         $ DESTDIR=/path/to/staging/root meson install -C builddir
 
-    SageMath's automatic feature detection (based on the packages that
-    happen to be installed at build time) can be disabled in favor of
-    explicit configuration by passing ``-Dauto_features=disabled`` to
-    ``meson setup``. Afterwards, individual features must be enabled
-    explicitly. You can obtain a list of valid feature names through
-    ``meson configure``.
+  SageMath's automatic feature detection (based on the packages that
+  happen to be installed at build time) can be disabled in favor of
+  explicit configuration by passing ``-Dauto_features=disabled`` to
+  ``meson setup``. Afterwards, individual features must be enabled
+  explicitly. You can obtain a list of valid feature names through
+  ``meson configure``.
 
-    By default, meson may fall back to bundled versions of certain
-    subprojects known as `wrap dependencies
-    <https://mesonbuild.com/Wrap-dependency-system-manual.html>`_.
-    Maintainers will typically want to disable this behavior as well
-    to ensure that the system dependencies are used. This can be
-    achieved with the `--wrap-mode flag
-    <https://mesonbuild.com/Subprojects.html#commandline-options>`_
+  By default, meson may fall back to bundled versions of certain
+  subprojects known as `wrap dependencies
+  <https://mesonbuild.com/Wrap-dependency-system-manual.html>`_.
+  Maintainers will typically want to disable this behavior as well
+  to ensure that the system dependencies are used. This can be
+  achieved with the `--wrap-mode flag
+  <https://mesonbuild.com/Subprojects.html#commandline-options>`_
 
-    With the `default <https://mesonbuild.com/Running-Meson.html#installing>`_ prefix
-    being ``/usr/local``, it may then install to
-    ``$DESTDIR/usr/local/lib/python3.12/site-packages/sage``.
+  With the `default <https://mesonbuild.com/Running-Meson.html#installing>`_ prefix
+  being ``/usr/local``, it may then install to
+  ``$DESTDIR/usr/local/lib/python3.12/site-packages/sage``.
 
-    See `Meson's quick guide <https://mesonbuild.com/Quick-guide.html#using-meson-as-a-distro-packager>`_
-    and `Meson's install guide <https://mesonbuild.com/Installing.html#destdir-support>`_
-    for more information.
+  See `Meson's quick guide <https://mesonbuild.com/Quick-guide.html#using-meson-as-a-distro-packager>`_
+  and `Meson's install guide <https://mesonbuild.com/Installing.html#destdir-support>`_
+  for more information.
 
 Miscellaneous tips
 ==================

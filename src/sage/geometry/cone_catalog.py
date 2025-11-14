@@ -630,10 +630,10 @@ def schur(ambient_dim=None, lattice=None):
     in ``lattice``.
 
     The Schur cone in `n` dimensions induces the majorization
-    preordering on the ambient space. If `\left\{e_{1}, e_{2}, \ldots,
-    e_{n}\right\}` is the standard basis for the space, then its
-    generators are `\left\{e_{i} - e_{i+1}\ |\ 1 \le i \le
-    n-1\right\}`. Its dual is the downward monotone cone.
+    preordering on the :func:`downward_monotone` cone. If
+    `\left\{e_{1}, e_{2}, \ldots, e_{n}\right\}` is the standard basis
+    for the space, then its generators are `\left\{e_{i} - e_{i+1}\ |\
+    1 \le i \le n-1\right\}`. Its dual is the downward monotone cone.
 
     INPUT:
 
@@ -706,9 +706,9 @@ def schur(ambient_dim=None, lattice=None):
         sage: cones.schur(0).is_trivial()
         True
 
-    The Schur cone induces the majorization preordering, as in Iusem
-    and Seeger's [IS2005]_ Example 7.3 or Niezgoda's [Niez1998]_
-    Example 2.2::
+    The Schur cone induces the majorization preordering on the
+    downard-monotone cone, as in Iusem and Seeger's [IS2005]_ Example
+    7.3 or Niezgoda's [Niez1998]_ Example 2.2::
 
         sage: ambient_dim = ZZ.random_element(10)
         sage: V = VectorSpace(QQ, ambient_dim)
@@ -717,7 +717,7 @@ def schur(ambient_dim=None, lattice=None):
         ....:     x = rearrange(x)
         ....:     y = rearrange(y)
         ....:     return (all(sum(x[0:i]) <= sum(y[0:i])
-        ....:                 for i in range(x.degree()-1))
+        ....:                 for i in range(1,x.degree()))
         ....:             and sum(x) == sum(y))
         sage: S = cones.schur(ambient_dim)
         sage: majorized_by(V.zero(), S.random_element())

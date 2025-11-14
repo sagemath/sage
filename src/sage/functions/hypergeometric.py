@@ -947,7 +947,7 @@ class Hypergeometric_M(BuiltinFunction):
         zy'' + (b-z)y' - ay = 0.
 
     This is not the same as Kummer's `U`-hypergeometric function, though it
-    satisfies the same DE that `M` does.
+    satisfies the same differential equation that `M` does.
 
     .. warning::
 

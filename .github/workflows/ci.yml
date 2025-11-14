@@ -23,6 +23,7 @@ jobs:
         container:
           - fedora:41
           - fedora:42
+          - debian:forky
           - ghcr.io/void-linux/void-glibc-full
           - archlinux
           #- ubuntu:22.04 - fails due to issue with cypari2

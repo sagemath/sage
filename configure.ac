@@ -320,6 +320,11 @@ fi
 
 m4_pushdef([SAGE_PREREQ_URL],[See https://doc.sagemath.org/html/en/reference/spkg/_prereq.html])
 
+# check for boost, hopefully supporting c++17
+  AX_BOOST_BASE([1.66.0], [], [
+    AC_MSG_ERROR([could not find boost library installation. $SAGE_PREREQ_URL])
+  ])
+
 # Check for bzip2 and libbz2 
    AC_CHECK_HEADER(bzlib.h, [
       AC_SEARCH_LIBS([BZ2_bzCompress], [bz2], [
@@ -572,6 +577,7 @@ AC_SUBST(SAGE_PKG_CONFIG_PATH, [$SAGE_DARWIN_PKG_CONFIG_PATH'$SAGE_LOCAL/lib/pkg
 
 AC_CONFIG_FILES([build/make/Makefile-auto build/make/Makefile])
 AC_CONFIG_FILES([src/bin/sage-env-config src/bin/sage-src-env-config build/bin/sage-build-env-config])
+AC_CONFIG_FILES([build/platform/meson/sage-configure-native-file.ini])
 
 dnl Create basic directories needed for Sage
 AC_CONFIG_COMMANDS(mkdirs,

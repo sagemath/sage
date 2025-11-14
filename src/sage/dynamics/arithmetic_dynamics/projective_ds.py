@@ -4895,7 +4895,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             if R in FiniteFields():
                 g = f.cyclegraph()
                 points = []
-                for cycle in g.all_simple_cycles():
+                for cycle in g.all_simple_cycles(algorithm="A"):
                     m = len(cycle)-1
                     if minimal:
                         if m == n:

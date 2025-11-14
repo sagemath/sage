@@ -396,13 +396,12 @@ Willis of the University of Nebraska at Kearney.
 import warnings
 
 import sage.rings.abc
-
 from sage.arith.misc import rising_factorial
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.symbolic.function import BuiltinFunction, GinacFunction
 from sage.structure.element import Expression, parent
+from sage.symbolic.function import BuiltinFunction, GinacFunction
 
 lazy_import('sage.functions.other', ['factorial', 'binomial'])
 
@@ -2444,8 +2443,8 @@ class Func_laguerre(OrthogonalFunction):
             sage: laguerre(-9,2)                                                        # needs sage.symbolic
             66769/315*e^2
         """
-        from sage.rings.integer import Integer
         from sage.functions.log import exp
+        from sage.rings.integer import Integer
         ret = self._eval_special_values_(n, x)
         if ret is not None:
             return ret
@@ -2558,6 +2557,7 @@ class Func_gen_laguerre(OrthogonalFunction):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: # needs sage.symbolic
             sage: a, n, x = var('a, n, x')
             sage: gen_laguerre(x, x, x)._sympy_()                                       # needs sympy
@@ -2565,7 +2565,7 @@ class Func_gen_laguerre(OrthogonalFunction):
             sage: maxima(gen_laguerre(1, 2, x, hold=True))
             3*(1-_SAGE_VAR_x/3)
             sage: maxima(gen_laguerre(n, a, gen_laguerre(n, a, x)))
-            gen_laguerre(_SAGE_VAR_n,_SAGE_VAR_a, gen_laguerre(_SAGE_VAR_n,_SAGE_VAR_a,_SAGE_VAR_x))
+            gen_laguerre(_SAGE_VAR_n,_SAGE_VAR_a,gen_laguerre(_SAGE_VAR_n,_SAGE_VAR_a,_SAGE_VAR_x))
 
         TESTS::
 
@@ -2914,8 +2914,8 @@ class Func_meixner(OrthogonalFunction):
         if kwds.get('hold', False):
             return None
         if n not in ZZ or n < 0:
-            from sage.functions.hypergeometric import hypergeometric
             from sage.functions.gamma import gamma
+            from sage.functions.hypergeometric import hypergeometric
             return gamma(b + n) / gamma(b) * hypergeometric([-n, -x], [b], 1 - 1/c)
         try:
             return self.eval_formula(n, x, b, c)
