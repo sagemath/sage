@@ -77,7 +77,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
             sage: P == WP(1, 3 / 2, 1, 1)
             True
         """
-        SchemeMorphism.__init__(self, X)
+        super().__init__(X)
 
         self._normalized = False
 
