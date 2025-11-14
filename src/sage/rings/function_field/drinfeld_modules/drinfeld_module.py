@@ -2111,7 +2111,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi = DrinfeldModule(A, [z, 0, 1, z])
             sage: M = phi.anderson_motive()
             sage: M
-            Anderson motive of rank 3 over Univariate Polynomial Ring in T over Finite Field in z of size 5^3
+            Anderson motive of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
 
         Here the rank of the Anderson motive should be understood as its
         rank over `A \otimes K`; it is also the rank `r` of the underlying
@@ -2127,7 +2127,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
             sage: M = phi.anderson_motive(names='e')
             sage: M
-            Anderson motive <e0, e1, e2> over Univariate Polynomial Ring in T over Finite Field in z of size 5^3
+            Anderson motive <e0, e1, e2> of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
             sage: M.basis()
             [e0, e1, e2]
 

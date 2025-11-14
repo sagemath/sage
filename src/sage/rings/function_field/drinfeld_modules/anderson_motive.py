@@ -226,7 +226,6 @@ from sage.rings.morphism import RingHomomorphism
 
 from sage.matrix.matrix0 import Matrix
 from sage.matrix.constructor import matrix
-from sage.matrix.special import identity_matrix
 
 from sage.modules.ore_module import OreModule, OreSubmodule, OreQuotientModule
 from sage.modules.ore_module import normalize_names
@@ -1035,13 +1034,13 @@ class AndersonToDrinfeld(Map):
 # Constructor
 #############
 
-def AndersonMotive(arg1, tau=None, names=None):
+def AndersonMotive(arg1, arg2=None, names=None):
     r"""
     Construct an Anderson motive.
 
     INPUT:
 
-    The input can be one of the followings:
+    The two first arguments can be one of the followings:
 
     - a pair `(A, K)` where `A` is the underlying function
       ring (which currently needs to be of the form `\GF{q}[t]`)
@@ -1101,7 +1100,7 @@ def AndersonMotive(arg1, tau=None, names=None):
 
         sage: phi = DrinfeldModule(A, [z, z^2, z^3])
         sage: AndersonMotive(phi)
-        Anderson motive of rank 2 over Univariate Polynomial Ring in T over Finite Field in z of size 7^3
+        Anderson motive of Drinfeld module defined by T |--> (z^2 + 3)*τ^2 + z^2*τ + z
 
     Finally, another possibility is to give the matrix of `\tau` as an
     argument::
@@ -1137,7 +1136,7 @@ def AndersonMotive(arg1, tau=None, names=None):
         sage: AndersonMotive(ZZ, K)
         Traceback (most recent call last):
         ...
-        TypeError: the first argument must be a Drinfeld module or a polynomial ring
+        ValueError: unable to parse arguments
 
     ::
 
@@ -1145,7 +1144,7 @@ def AndersonMotive(arg1, tau=None, names=None):
         sage: AndersonMotive(A, tau)
         Traceback (most recent call last):
         ...
-        ValueError: tau does not define an Anderson motive
+        ValueError: the given matrix does not define an Anderson motive in this category
 
     .. SEEALSO::
 
@@ -1156,64 +1155,56 @@ def AndersonMotive(arg1, tau=None, names=None):
     #  . a category (of Drinfeld modules or AndersonMotives)
     #  . a ring, a matrix
     #  . a ring, a A-field
-    # arg1 is a Drinfeld module
+
+    # We first try to parse the first argument
+    # We have several cases:
+    # (1) arg1 is a Drinfeld module
     if isinstance(arg1, DrinfeldModule):
-        if tau is not None:
+        if arg2 is not None:
             raise ValueError("too many arguments")
         return AndersonMotive_drinfeld(arg1, names=names)
 
-    # arg1 is a category
+    # (2) arg1 is a category
     category = None
     if isinstance(arg1, DrinfeldModules):
         category = AndersonMotives(arg1)
     if isinstance(arg1, AndersonMotives):
         category = arg1
     if category is not None:
-        if tau is None:
-            tau = identity_matrix(category.base(), 1)
-        det = tau.determinant()
-        if det == 0:
-            raise ValueError("tau does not define an Anderson motive")
-        h = det.degree()
-        disc, R = det.quo_rem(category.divisor() ** h)
-        if R:
-            raise ValueError("tau does not define an Anderson motive")
-        M = AndersonMotive_general(category, tau, names=names)
-        #M._set_dettau(disc[0], h, 0)
-        return M
+        return category.object(arg2, names=names)
 
-    # arg1 is the function ring
+    # (3) arg1 is the function ring
+    if not isinstance(arg1, PolynomialRing_general):
+        raise ValueError("unable to parse arguments")
     A = arg1
-    if not isinstance(A, PolynomialRing_general):
-        raise TypeError("the first argument must be a Drinfeld module or a polynomial ring")
-
-    # tau is the base ring
+    # This case requires to parse the second argument
+    # Again we have several cases:
+    # (3a) arg2 encodes the base field
     K = None
-    if isinstance(tau, RingHomomorphism) and tau.domain() is A:
-        K = tau.codomain()
-        gamma = tau
-    elif isinstance(tau, CommutativeRing):
-        K = tau
+    if isinstance(arg2, RingHomomorphism) and arg2.domain() is A:
+        # (3a-i) arg2 is the morphism of the form A -> K
+        K = arg2.codomain()
+        gamma = arg2
+    elif isinstance(arg2, CommutativeRing):
+        # (3a-ii) arg2 is the A-field K
+        K = arg2
         if K.has_coerce_map_from(A):
             gamma = K.coerce_map_from(A)
         else:
             gamma = A.hom([K.gen()])
-    elif hasattr(tau, 'parent') and isinstance(tau.parent(), CommutativeRing):
-        K = tau.parent()
-        gamma = A.hom([tau])
+    elif hasattr(arg2, 'parent') and isinstance(arg2.parent(), CommutativeRing):
+        # (3a-iii) arg2 is an element in K
+        K = arg2.parent()
+        gamma = A.hom([arg2])
     if K is not None:
-        try:
-            if K.variable_name() == A.variable_name():
-                K = K.base_ring()
-        except (AttributeError, ValueError):
-            pass
+        # The case (3a) was successful:
+        # We construct and return the Anderson motive
         category = AndersonMotives(gamma)
-        AK = category.base()
-        tau = identity_matrix(AK, 1)
-        return AndersonMotive_general(category, tau, names=names)
+        return category.object(names=names)
 
-    # tau is a matrix
-    if isinstance(tau, Matrix):
+    # (3b) arg2 is a matrix given the action of tau
+    if isinstance(arg2, Matrix):
+        tau = arg2
         AK = tau.base_ring()
         if not isinstance(AK, PolynomialRing_general) or AK.variable_name() != A.variable_name():
             raise TypeError("incompatible base rings")
@@ -1231,11 +1222,6 @@ def AndersonMotive(arg1, tau=None, names=None):
                 raise NotImplementedError("cannot determine the structure of A-field")
             gamma = A.hom([theta])
         category = AndersonMotives(gamma)
-        disc, R = det.quo_rem(category.divisor() ** h)
-        if R:
-            raise ValueError("tau does not define an Anderson motive")
-        M = AndersonMotive_general(category, tau, names=names)
-        #M._set_dettau(disc[0], h, 0)
-        return M
+        return category.object(tau, names=names)
 
     raise ValueError("unable to parse arguments")

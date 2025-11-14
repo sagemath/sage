@@ -18,6 +18,7 @@ AUTHOR:
 
 
 from sage.misc.latex import latex
+from sage.matrix.special import identity_matrix
 
 from sage.categories.modules import Modules
 from sage.categories.ore_modules import OreModules
@@ -277,7 +278,7 @@ class AndersonMotives(OreModules):
         """
         return self._function_ring
 
-    def object(self, tau=None):
+    def object(self, tau=None, names=None):
         r"""
         Return the object in this category with `\tau`-action
         given by the matrix ``tau``.
@@ -285,6 +286,10 @@ class AndersonMotives(OreModules):
         INPUT:
 
         - ``tau`` -- a matrix or ``None`` (default: ``None``);
+          if ``None``, return the trivial Anderson module in this
+          category
+
+        - ``names`` -- a matrix or ``None`` (default: ``None``);
           if ``None``, return the trivial Anderson module in this
           category
 
@@ -310,8 +315,17 @@ class AndersonMotives(OreModules):
             [T 1]
             [z 1]
         """
-        from sage.rings.function_field.drinfeld_modules.anderson_motive import AndersonMotive
-        return AndersonMotive(self, tau)
+        from sage.rings.function_field.drinfeld_modules.anderson_motive import AndersonMotive_general
+        if tau is None:
+            tau = identity_matrix(self._base_combined, 1)
+        det = tau.determinant()
+        if det == 0:
+            raise ValueError("the given matrix does not define an Anderson motive in this category")
+        h = det.degree()
+        disc, R = det.quo_rem(self._divisor ** h)
+        if R:
+            raise ValueError("the given matrix does not define an Anderson motive in this category")
+        return AndersonMotive_general(self, tau, names=names)
 
     def super_categories(self):
         """
