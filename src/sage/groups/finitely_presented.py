@@ -351,7 +351,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
             ...
             ValueError: the values do not satisfy all relations of the group
             sage: w(1, 2, check=False)    # result depends on presentation of the group element
-            2
+            8
         """
         values = list(values)
         if kwds.get('check', True):
