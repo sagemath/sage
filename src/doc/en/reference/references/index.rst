@@ -1729,7 +1729,7 @@ REFERENCES:
             http://moodle.tec.hkr.se/~chen/research/2-weight-codes/search.php
 
 .. [Chr1986] Gilles Christol, *Fonctions hypergéométriques bornées*. 
-           Groupe de travail d’analyse ultramétrique 14 (1986-87), exp. no 8, p. 1-16
+             Groupe de travail d’analyse ultramétrique 14 (1986-87), exp. no 8, p. 1-16
 
 .. [CHK2001] Keith D. Cooper, Timothy J. Harvey and Ken Kennedy. *A
              Simple, Fast Dominance Algorithm*, Software practice and

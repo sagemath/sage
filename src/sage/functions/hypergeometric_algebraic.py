@@ -1356,6 +1356,8 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         for p in Primes():
             if p > bound:
                 break
+            if d % p == 0 and self.valuation(p) > 0:
+                exceptions[p] = True                
             if d % p == 0 or not goods[p % d]:
                 continue
             if self.valuation(p) < 0:
@@ -1463,8 +1465,24 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
             if difference > 0:
                 return -infinity, None
             if difference < 0:
-                # the valuation of the coefficients goes to infinity, but what is its minimum?
-                raise NotImplementedError('The hypergeometric function has bounded valuation, but value and position are not implemented.')
+                _, prec = self.parent()(T, B, self.scalar())._val_pos()
+                #This is the case when the p-adic valuation of the coefficients
+                #goes to +infinity, but if you remove all the coefficients with p
+                #in the denominator it goes to -infinity.
+                #The following claim is almost surely wrong.
+                if prec == None:
+                    prec = self._parameters.bound
+                #Here I just check the valuation of the first few coefficients.
+                #There should be something better using q_g:parenthesis.
+                L = self.change_ring(Qp(p, 1)).power_series(prec+1).coefficients()
+                val = + infinity
+                pos = 0
+                for j in range(len(L)):
+                    v = L[j].valuation()
+                    if v < val:
+                        val = v
+                        pos = j
+                return val, pos
             if difference == 0:
                 return self.parent()(T, B, self.scalar())._val_pos()
         u = 1
