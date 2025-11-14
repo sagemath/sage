@@ -1097,7 +1097,7 @@ class HypergeometricAlgebraic(Element):
     def hadamard_product(self, other):
         r"""
         Return the hadamard product of the hypergeometric function
-        and ``other``
+        and ``other``.
 
         INPUT:
 
@@ -1110,7 +1110,7 @@ class HypergeometricAlgebraic(Element):
             sage: h = 1/2*hypergeometric([1/5, 2/5], [3/5], x)
             sage: f.hadamard_product(h)
             1/2*hypergeometric((1/5, 1/3, 2/5, 2/3), (1/2, 3/5, 1), x)
-            """
+        """
         if self._scalar == 0:
             return self
         if other._scalar == 0:
@@ -1162,13 +1162,14 @@ class HypergeometricAlgebraic(Element):
 
     def differential_operator(self, var='d'):
         r"""
-        Return the hypergeometric differential operator that annihilates this
-        hypergeometric function as an Ore polynomial in the varable ``var``.
+        Return the hypergeometric differential operator that annihilates
+        this hypergeometric function as an Ore polynomial in the variable
+        ``var``.
 
         INPUT:
 
-        - ``var`` -- a string, the variable name of the derivation 
-        (default: ``d``)
+        - ``var`` -- a string (default: ``d``), the variable name of
+          the derivation
 
         EXAMPLES::
 
@@ -1176,24 +1177,16 @@ class HypergeometricAlgebraic(Element):
             sage: f = hypergeometric([1/3, 2/3], [1/2], x)
             sage: f.differential_operator(var='D')
             (-x^2 + x)*D^2 + (-2*x + 1/2)*D - 2/9
-            
-        Note that this does not necessarily give the minimal differential operator
-        annihilating this hypergeometric function.::
-          
-            sage: S = FractionField(PolynomialRing(QQ, 'x'))
-            sage: D = OrePolynomialRing(S, S.derivation(), names='d')
+
+        Note that this does not necessarily give the minimal differential
+        operator annihilating this hypergeometric function: in the example
+        below, this method returns an operator of order `3` where `g` is
+        solution of a differential equation of order `2`::
+
             sage: g = hypergeometric([1/3, 2/3, 6/5], [1/5, 1/2], x)
-            sage: g
-            hypergeometric((1/3, 2/3, 6/5), (1/5, 1/2), x)
-            sage: L = D(g.differential_operator())
+            sage: L = g.differential_operator()
             sage: L.degree()
             3
-            sage: d = L.parent('d')
-            sage: M = L.parent((72*x^3 - 234*x^2 + 162*x)*d^2 + (144*x^2 - 450*x + 81)*d + 16*x - 216)
-            sage: M.degree()
-            2
-            sage: M.right_divides(L)
-            True
             sage: gs = g.power_series(100)
             sage: (72*x^3 - 234*x^2 + 162*x)*gs.derivative(2) + (144*x^2 - 450*x + 81)*gs.derivative() + (16*x - 216)*gs
             O(x^99)
@@ -1300,7 +1293,7 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
             True
             sage: g = 1/5*f
             sage: g.has_good_reduction(5)
-            1
+            False
         """
         return self.valuation(p) >= 0
 
@@ -1309,18 +1302,19 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         Return the set of prime numbers modulo which this hypergeometric
         function can be reduced, i.e., the p-adic valuation is positive.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: S.<x> = QQ[]
             sage: f = hypergeometric([1/3, 2/3], [1/2], x)
             sage: f.good_reduction_primes()
+            Set of all prime numbers with 2, 3 excluded: 5, 7, 11, 13, ...
 
         ALGORITHM:
 
         We rely on Christol's criterion ([Chr1986]_, Prop. 1) for globally
         bounded hypergeometric function, from which a criterion can be deduced
-        modulo which primes a hypergeometric function can be reduced. 
-        ([CFV2025]_, Thm. 3.1.3). For small primes p we compute the p-adic
+        modulo which primes a hypergeometric function can be reduced
+        ([CFV2025]_, Thm. 3.1.3). For small primes `p`, we compute the `p`-adic
         valuation of the hypergeometric function individually.
         """
         params = self._parameters
@@ -1357,7 +1351,7 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
             if p > bound:
                 break
             if d % p == 0 and self.valuation(p) > 0:
-                exceptions[p] = True                
+                exceptions[p] = True
             if d % p == 0 or not goods[p % d]:
                 continue
             if self.valuation(p) < 0:
