@@ -2802,7 +2802,7 @@ class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
         FindStatCombinatorialStatistic.__init__(self)
         Element.__init__(self, FindStatStatistics()) # this is not completely correct, but it works
 
-    def _fetch_first_terms_raw(self):
+    def _fetch_first_terms_raw(self) -> list:
         r"""
         Return the first terms of the compound statistic, as ``(string,
         value)`` pairs, fetched from FindStat.
@@ -2817,7 +2817,7 @@ class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
         """
         fields = "Values"
         url = FINDSTAT_API_STATISTICS + self.id_str() + "?fields=" + fields
-        if len(self._maps):
+        if self._maps:
             values = _get_json(url)["included"]["CompoundStatistics"][self.id_str()]["Values"]
         else:
             values = _get_json(url)["included"]["Statistics"][self.id_str()]["Values"]
@@ -2851,7 +2851,7 @@ class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
         """
         return self.statistic()(self.compound_map()(elt))
 
-    def id_str(self):
+    def id_str(self) -> str:
         """
         Return the padded identifier of the compound statistic.
 
@@ -2862,7 +2862,7 @@ class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
         """
         return self._id
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of the compound statistic.
 
@@ -4522,7 +4522,7 @@ _SupportedFindStatCollections = {
     _SupportedFindStatCollection(lambda x: BinaryTree(str(x)),
                                  str,
                                  BinaryTrees,
-                                 lambda x: x.node_number(),
+                                 lambda x: x.number_of_nodes(),
                                  lambda x: isinstance(x, BinaryTree)),
     "Cores":
     _SupportedFindStatCollection(lambda x: Core(*literal_eval(x)),
@@ -4575,7 +4575,7 @@ _SupportedFindStatCollections = {
     _SupportedFindStatCollection(lambda x: OrderedTree(literal_eval(x)),
                                  str,
                                  OrderedTrees,
-                                 lambda x: x.node_number(),
+                                 lambda x: x.number_of_nodes(),
                                  lambda x: isinstance(x, OrderedTree)),
     "ParkingFunctions":
     _SupportedFindStatCollection(lambda x: ParkingFunction(literal_eval(x)),
