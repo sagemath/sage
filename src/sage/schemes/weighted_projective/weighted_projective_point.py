@@ -45,7 +45,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
 
     - ``v`` -- a list or tuple of coordinates in `R`.
 
-    - ``check`` -- boolean (default: ``True``). Whether to check the input for consistency.
+    - ``check`` -- boolean (default: ``True``); Whether to check the input for consistency.
 
     EXAMPLES::
 
