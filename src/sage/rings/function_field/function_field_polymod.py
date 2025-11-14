@@ -1845,7 +1845,7 @@ class FunctionField_simple(FunctionField_polymod):
 
         return k_ext, embedding
 
-    @cached_method
+    @cached_method(do_pickle=True)
     def genus(self) -> Integer:
         """
         Return the genus of the function field.

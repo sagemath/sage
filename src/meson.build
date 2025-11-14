@@ -225,7 +225,7 @@ boost = dependency(
   'boost',
   version: '>=1.83.0',
   required: false,
-  modules: ['graph', 'tuple'],
+  modules: ['graph'],
 )
 if boost.found()
   # Need at least v1.83.0 (https://github.com/boostorg/functional/commit/6a573e4b8333ee63ee62ce95558c3667348db233)
@@ -236,7 +236,7 @@ else
     'boost',
     version: '>=1.66.0',
     required: false,
-    modules: ['graph', 'tuple'],
+    modules: ['graph'],
   )
 endif
 

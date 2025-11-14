@@ -89,34 +89,8 @@ class FiniteFieldHomset(RingHomset_generic):
             sage: H = Hom(GF(9, 'a'), GF(81, 'b'))
             sage: H == loads(dumps(H))
             True
-        """
-        if isinstance(im_gens, FiniteFieldHomomorphism_generic):
-            if base_map is not None:
-                raise ValueError("Cannot specify base map when providing morphism")
-            return self._coerce_impl(im_gens)
-        try:
-            if self.domain().degree() == 1:
-                from sage.rings.finite_rings.hom_prime_finite_field import FiniteFieldHomomorphism_prime
-                return FiniteFieldHomomorphism_prime(self, im_gens, base_map=base_map, check=check)
-            if isinstance(self.codomain(), FiniteField):
-                return FiniteFieldHomomorphism_generic(self, im_gens, base_map=base_map, check=check)
-            # Currently, FiniteFieldHomomorphism_generic does not work if
-            # the codomain is not derived from the finite field base class;
-            # in that case, we have to fall back to the generic
-            # implementation for rings
-            else:
-                return RingHomomorphism_im_gens(self, im_gens, base_map=base_map, check=check)
-        except (NotImplementedError, ValueError):
-            try:
-                return self._coerce_impl(im_gens)
-            except TypeError:
-                raise TypeError("images do not define a valid homomorphism")
 
-    def _coerce_impl(self, x):
-        """
-        Coercion of other morphisms.
-
-        EXAMPLES::
+        TESTS::
 
             sage: k.<a> = GF(25)
             sage: l.<b> = GF(625)
@@ -130,13 +104,28 @@ class FiniteFieldHomset(RingHomset_generic):
               To:   Finite Field in b of size 5^4
               Defn: a |--> 4*b^3 + 4*b^2 + 4*b + 3
         """
-        if not isinstance(x, FiniteFieldHomomorphism_generic):
-            raise TypeError
-        if x.parent() is self:
-            return x
-        if x.parent() == self:
-            return FiniteFieldHomomorphism_generic(self, x.im_gens())
-        raise TypeError
+        if isinstance(im_gens, FiniteFieldHomomorphism_generic):
+            phi = im_gens
+            if base_map is not None:
+                raise ValueError("cannot specify base map when providing morphism")
+            if phi.parent() is self:
+                return phi
+            if phi.parent() == self:
+                return FiniteFieldHomomorphism_generic(self, phi.im_gens())
+
+        if self.domain().degree() == 1:
+            from sage.rings.finite_rings.hom_prime_finite_field import FiniteFieldHomomorphism_prime
+            return FiniteFieldHomomorphism_prime(self, im_gens,
+                                                 base_map=base_map, check=check)
+        if isinstance(self.codomain(), FiniteField):
+            return FiniteFieldHomomorphism_generic(self, im_gens,
+                                                   base_map=base_map, check=check)
+        # Currently, FiniteFieldHomomorphism_generic does not work if
+        # the codomain is not derived from the finite field base class;
+        # in that case, we have to fall back to the generic
+        # implementation for rings
+        return RingHomomorphism_im_gens(self, im_gens,
+                                        base_map=base_map, check=check)
 
     def _repr_(self):
         """

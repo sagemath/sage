@@ -232,10 +232,10 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
         [4, 1] linear code over GF(2)
         [1 1 1 1]
         [6, 2] linear code over GF(2)
-        [1 1 1 1 0 0]
+        [1 0 1 0 1 1]
         [0 1 0 1 1 1]
         [7, 3] linear code over GF(2)
-        [1 0 1 1 0 1 0]
+        [1 0 0 1 1 0 1]
         [0 1 0 1 1 1 0]
         [0 0 1 0 1 1 1]
 
@@ -248,7 +248,7 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
         [4, 1] linear code over GF(2)
         [1 1 1 1]
         [6, 2] linear code over GF(2)
-        [1 1 1 1 0 0]
+        [1 0 1 0 1 1]
         [0 1 0 1 1 1]
 
     Generate all self-orthogonal codes of length equal to 8 and
@@ -263,8 +263,8 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
         [0 0 1 0 0 1 0 0]
         [0 0 0 0 0 0 1 1]
         [8, 4] linear code over GF(2)
-        [1 0 0 1 1 0 1 0]
-        [0 1 0 1 1 1 0 0]
+        [1 0 0 0 1 1 0 1]
+        [0 1 0 0 1 0 1 1]
         [0 0 1 0 1 1 1 0]
         [0 0 0 1 0 1 1 1]
 

@@ -892,7 +892,7 @@ class AlternatingSignMatrix(Element,
 
     number_negative_ones = number_of_negative_ones
 
-    def is_permutation(self):
+    def is_permutation(self) -> bool:
         """
         Return ``True`` if ``self`` is a permutation matrix
         and ``False`` otherwise.

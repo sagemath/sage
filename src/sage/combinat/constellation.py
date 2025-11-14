@@ -232,7 +232,7 @@ class Constellation_class(Element):
             raise ValueError("cannot hash mutable constellation")
         return hash(tuple(self._g))
 
-    def set_immutable(self):
+    def set_immutable(self) -> None:
         r"""
         Do nothing, as ``self`` is already immutable.
 
@@ -245,7 +245,7 @@ class Constellation_class(Element):
         """
         self._mutable = False
 
-    def is_mutable(self):
+    def is_mutable(self) -> bool:
         r"""
         Return ``False`` as ``self`` is immutable.
 
@@ -429,7 +429,7 @@ class Constellation_class(Element):
 
     # GENERAL PROPERTIES
 
-    def is_connected(self):
+    def is_connected(self) -> bool:
         r"""
         Test of connectedness.
 
@@ -444,10 +444,9 @@ class Constellation_class(Element):
         """
         if self._connected:
             return True
-        else:
-            return perms_are_connected(self._g, self.degree())
+        return perms_are_connected(self._g, self.degree())
 
-    def connected_components(self):
+    def connected_components(self) -> list:
         """
         Return the connected components.
 
@@ -946,7 +945,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
 
         self._connected = bool(connected)
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         r"""
         Return whether this set of constellations is empty.
 
@@ -961,7 +960,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
         """
         return self._connected and self._length == 1 and self._degree > 1
 
-    def __contains__(self, elt):
+    def __contains__(self, elt) -> bool:
         r"""
         TESTS::
 
