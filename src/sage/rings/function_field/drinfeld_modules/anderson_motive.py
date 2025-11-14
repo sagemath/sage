@@ -441,7 +441,10 @@ class AndersonMotive_general(OreModule):
 
     def carlitz_twist(self, n=1, names=None):
         r"""
-        Return this Anderson motive twisted `n` times.
+        Return this Anderson motive twisted `n` times, that is the
+        tensor product of this Anderson motive with the `n`-th power
+        of the dual of the Carlitz motive (the Anderson motive
+        attached to the Carlitz module).
 
         INPUT:
 
@@ -657,10 +660,7 @@ class AndersonMotive_drinfeld(AndersonMotive_general):
         super().__init__(mat, ore, denominator, names, category)
         Ktau = phi.ore_polring()
         self.register_coercion(DrinfeldToAnderson(Homset(Ktau, self), phi))
-        try:
-            Ktau.register_conversion(AndersonToDrinfeld(Homset(self, Ktau), phi))
-        except AssertionError:
-            pass
+        Ktau.register_conversion(AndersonToDrinfeld(Homset(self, Ktau), phi))
         self._drinfeld_module = phi
 
     def __reduce__(self):
@@ -1125,6 +1125,12 @@ def AndersonMotive(arg1, arg2=None, names=None):
           Defn: T |--> z^2 + z
 
     TESTS::
+
+        sage: gamma = A.hom([z+1])
+        sage: AndersonMotive(A, gamma)
+        Anderson motive of rank 1 over Univariate Polynomial Ring in T over Finite Field in z of size 7^3
+
+    ::
 
         sage: AndersonMotive(phi, tau)
         Traceback (most recent call last):
