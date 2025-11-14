@@ -94,10 +94,17 @@ cdef class Morphism(Map):
         D = self.domain()
         if D is None:
             return "Defunct morphism"
+        t = self._repr_type()
         if self.is_endomorphism():
-            s = "{} endomorphism of {}".format(self._repr_type(), self.domain())
+            if t is None:
+                s = "Endomorphism of {}".format(self.domain())
+            else:
+                s = t + " endomorphism of {}".format(self.domain())
         else:
-            s = "{} morphism:".format(self._repr_type())
+            if t is None:
+                s = "Morphism:"
+            else:
+                s = t + " morphism:"
             s += "\n  From: {}".format(self.domain())
             s += "\n  To:   {}".format(self._codomain)
         if isinstance(self.domain, ConstantFunction):

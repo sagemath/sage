@@ -933,7 +933,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
     def anderson_motive(self, names_domain=None, names_codomain=None):
         r"""
-        Return the morphism giving the action of this isogeny on
+        Return the morphism giving the action of this morphism on
         the Anderson motives.
 
         INPUT:

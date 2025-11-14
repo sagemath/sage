@@ -115,7 +115,7 @@ Number Fields, Function Fields, and Valuations
 * :doc:`Number Fields <number_fields/index>`
 * :doc:`Function Fields <function_fields/index>`
 * :doc:`Discrete Valuations <valuations/index>`
-* :doc:`Drinfeld Modules <drinfeld_modules/index>`
+* :doc:`Drinfeld Modules and Anderson motives <drinfeld_modules/index>`
 
 Number Theory
 -------------

@@ -3,7 +3,7 @@ Anderson motives
 
 AUTHOR:
 
-- Xavier Caruso (2025-11): initial version
+- Xavier Caruso, Antoine Leudière (2025-11): initial version
 """
 
 # *****************************************************************************
@@ -92,7 +92,7 @@ class AndersonMotives(OreModules):
         """
         self._drinfeld_category = category
         self._base_morphism = category.base_morphism()
-        self._base_field = category.base()
+        self._A_field = category.base()
         self._function_ring = A = category.function_ring()
         self._base_over_constants_field = category.base_over_constants_field()
         self._ore_variable_name = category._ore_variable_name
@@ -206,8 +206,7 @@ class AndersonMotives(OreModules):
             sage: C.A_field()
             Finite Field in z of size 3^3 over its base
         """
-        f = self._base_morphism
-        return f.codomain().over(f)
+        return self._A_field
 
     def base(self):
         r"""
@@ -326,8 +325,8 @@ class AndersonMotives(OreModules):
             sage: C.super_categories()
             [Category of Ore modules over Univariate Polynomial Ring in T over Finite Field in z of size 3^3 twisted by T |--> T, with map of base ring]
         """
-        S = self._ore_polring
-        return [OreModules(S.base(), S)]
+        AKtau = self._ore_polring
+        return [OreModules(AKtau.base(), AKtau)]
 
     class ParentMethods:
 
