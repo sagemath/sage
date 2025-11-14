@@ -125,10 +125,10 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
         else:
             self._coords = tuple(v)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "({})".format(" : ".join(map(repr, self._coords)))
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Test the weighted projective equality of two points.
 
@@ -225,7 +225,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
         # if there is no good way to normalize return a constant value
         return hash(self.codomain())
 
-    def scale_by(self, t):
+    def scale_by(self, t) -> None:
         """
         Scale the coordinates of the point by ``t``.
 
@@ -256,7 +256,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
         self._coords = tuple([R(u * t**w) for u, w in zip(self._coords, self.codomain()._weights)])
         self._normalized = False
 
-    def normalize_coordinates(self):
+    def normalize_coordinates(self) -> None:
         """
         Normalise coordinates of this weighted projective point if possible.
 
