@@ -191,7 +191,15 @@ fi
 # build/bin/sage-site. See #29111; but OTOH #34627.
 
 build_sage() {
-    ( cd "$SAGE_ROOT" && make sagelib-no-deps ) || exit $?
+    # Check for the expected editable meson build directory
+    if [ -f "build/build.ninja" ]; then
+        echo "Building Sage with ninja..."
+        ( cd "$SAGE_ROOT" && ninja -C build ) || exit $?
+    else
+        echo "Error: 'sage -b' is for editable meson-based developer builds." >&2
+        echo "Please use 'make' or 'meson' directly for other builds." >&2
+        exit 1
+    fi
 }
 
 # Check for '-i' etc. before sourcing sage-env: running "make"
@@ -212,8 +220,10 @@ case "$1" in
         exit 0
         ;;
     -br|--br)
+        echo "Warning: 'sage -br' is deprecated." >&2
+        echo "In an editable install, just run './sage' to use the latest built code." >&2
         build_sage
-        shift; set -- -r "$@"  # delegate to handling of "-r" below, after sourcing sage-env
+        shift; set -- -r "$@"
         ;;
     -bn|--build-and-notebook)
         build_sage
