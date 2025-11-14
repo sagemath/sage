@@ -357,7 +357,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: K = QQ['q1,q2'].fraction_field()
             sage: q1, q2 = K.gens()
             sage: KW = W.algebra(K)
-            sage: x = KW.an_element(); x
+            sage: x = KW.an_element(); x # random
             123 + 3*2312 + 2*31 + e
 
             sage: T = KW.demazure_lusztig_operators(q1,q2)
@@ -752,16 +752,15 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
 
         Now we can compute all eigenvectors::
 
-            sage: [E[w] for w in W]
-            [2121 - 121 - 212 + 12 + 21 - 1 - 2 + ,
+            sage: [E[w] for w in sorted(W)]
+            [2121,
+             -2121 + 121,
              -2121 + 212,
-             (q2/(q1-q2))*2121 + (q2/(-q1+q2))*121 + (q2/(-q1+q2))*212 - 12 - (q2/(-q1+q2))*21 + 2,
-             -(q2^2/(-q1^2+q1*q2-q2^2))*2121 - 121 + (q2^2/(-q1^2+q1*q2-q2^2))*212 + 21,
-             -((q1^2+q2^2)/(q1^2-q1*q2+q2^2))*2121 - ((q1^2+q2^2)/(-q1^2+q1*q2-q2^2))*121
-             - (q2^2/(-q1^2+q1*q2-q2^2))*212 + (q2^2/(-q1^2+q1*q2-q2^2))*12 - 21 + 1,
-             2121,
              (q2/(-q1+q2))*2121 - (q2/(-q1+q2))*121 - 212 + 12,
-             -2121 + 121]
+             -(q2^2/(-q1^2+q1*q2-q2^2))*2121 - 121 + (q2^2/(-q1^2+q1*q2-q2^2))*212 + 21,
+             -((q1^2+q2^2)/(q1^2-q1*q2+q2^2))*2121 - ((q1^2+q2^2)/(-q1^2+q1*q2-q2^2))*121 - (q2^2/(-q1^2+q1*q2-q2^2))*212 + (q2^2/(-q1^2+q1*q2-q2^2))*12 - 21 + 1,
+             (q2/(q1-q2))*2121 + (q2/(-q1+q2))*121 + (q2/(-q1+q2))*212 - 12 - (q2/(-q1+q2))*21 + 2,
+             2121 - 121 - 212 + 12 + 21 - 1 - 2 + ]
         """
         if not self.cartan_type().is_affine():
             raise ValueError("The Cherednik operators are only defined for representations of affine Hecke algebra")

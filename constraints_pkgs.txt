@@ -24,14 +24,8 @@
 #
 sage_docbuild        @ file://${SAGE_ROOT}/pkgs/sage-docbuild
 sage_setup           @ file://${SAGE_ROOT}/pkgs/sage-setup
-sagemath-bliss       @ file://${SAGE_ROOT}/pkgs/sagemath-bliss
 sagemath-categories  @ file://${SAGE_ROOT}/pkgs/sagemath-categories
-sagemath-coxeter3    @ file://${SAGE_ROOT}/pkgs/sagemath-coxeter3
 sagemath-environment @ file://${SAGE_ROOT}/pkgs/sagemath-environment
-sagemath-mcqd        @ file://${SAGE_ROOT}/pkgs/sagemath-mcqd
-sagemath-meataxe     @ file://${SAGE_ROOT}/pkgs/sagemath-meataxe
 sagemath-objects     @ file://${SAGE_ROOT}/pkgs/sagemath-objects
 sagemath-repl        @ file://${SAGE_ROOT}/pkgs/sagemath-repl
-sagemath-sirocco     @ file://${SAGE_ROOT}/pkgs/sagemath-sirocco
 sagemath-standard    @ file://${SAGE_ROOT}/pkgs/sagemath-standard
-sagemath-tdlib       @ file://${SAGE_ROOT}/pkgs/sagemath-tdlib

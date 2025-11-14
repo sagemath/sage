@@ -156,6 +156,7 @@ misc-clean:
 	rm -f aclocal.m4 config.log confcache
 	rm -rf autom4te.cache
 	rm -f build/make/Makefile build/make/Makefile-auto
+	rm -f build/platform/meson/sage-configure-native-file.ini
 	rm -rf src/lib
 
 bdist-clean: clean

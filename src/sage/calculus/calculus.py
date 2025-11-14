@@ -349,6 +349,10 @@ But this still uses Maxima::
 Note that ``x`` is still ``x``, since the
 maxima used by the calculus package is different than the one in
 the interactive interpreter.
+Clear the maxima variables to avoid interference with other tests::
+
+    sage: maxima('kill(x,y)')
+    done
 
 Check to see that the problem with the variables method mentioned
 in :issue:`3779` is actually fixed::
@@ -395,7 +399,7 @@ the giac version, we simplify it (see :issue:`34037`)::
 Check if maxima has redundant variables defined after initialization,
 see :issue:`9538`::
 
-    sage: maxima = sage.interfaces.maxima.maxima
+    sage: maxima = sage.interfaces.maxima_lib.maxima
     sage: maxima('f1')
     f1
     sage: sage.calculus.calculus.maxima('f1')
@@ -419,26 +423,23 @@ To check that :issue:`27092` is fixed::
 """
 
 import re
+from types import FunctionType
+
 from sage.arith.misc import algebraic_dependency
+from sage.interfaces.maxima_lib import maxima
+from sage.misc.latex import latex
+from sage.misc.parser import LookupNameMaker, Parser
+from sage.rings.cc import CC
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RealDoubleElement
 from sage.rings.real_mpfr import RR, create_RealNumber
-from sage.rings.cc import CC
-
-from sage.misc.latex import latex
-from sage.misc.parser import Parser, LookupNameMaker
 from sage.structure.element import Expression
-from sage.symbolic.ring import var, SR
-from sage.symbolic.symbols import symbol_table
 from sage.symbolic.function import Function
 from sage.symbolic.function_factory import function_factory
-from sage.symbolic.integration.integral import (indefinite_integral,
-        definite_integral)
-
-from sage.misc.lazy_import import lazy_import
-lazy_import('sage.interfaces.maxima_lib', 'maxima')
-from types import FunctionType
+from sage.symbolic.integration.integral import definite_integral, indefinite_integral
+from sage.symbolic.ring import SR, var
+from sage.symbolic.symbols import symbol_table
 
 
 ########################################################
@@ -667,6 +668,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
     elif algorithm == 'sympy':
         expression,v,a,b = (expr._sympy_() for expr in (expression, v, a, b))
         from sympy import summation
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         result = summation(expression, (v, a, b))
@@ -920,6 +922,7 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
     elif algorithm == 'sympy':
         expression,v,a,b = (expr._sympy_() for expr in (expression, v, a, b))
         from sympy import product as sproduct
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         result = sproduct(expression, (v, a, b))
@@ -1674,7 +1677,11 @@ def mma_free_limit(expression, v, a, dir=None):
         sage: mma_free_limit(e^(-x), x, a=oo) # optional - internet
         0
     """
-    from sage.interfaces.mathematica import request_wolfram_alpha, parse_moutput_from_json, symbolic_expression_from_mathematica_string
+    from sage.interfaces.mathematica import (
+        parse_moutput_from_json,
+        request_wolfram_alpha,
+        symbolic_expression_from_mathematica_string,
+    )
     dir_plus = ['plus', '+', 'above', 'right']
     dir_minus = ['minus', '-', 'below', 'left']
     math_expr = expression._mathematica_init_()
@@ -1915,6 +1922,7 @@ def laplace(ex, t, s, algorithm='maxima'):
     elif algorithm == 'sympy':
         ex_sy, t, s = (expr._sympy_() for expr in (ex, t, s))
         from sympy import laplace_transform
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         result = laplace_transform(ex_sy, t, s)
@@ -2100,6 +2108,7 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
     elif algorithm == 'sympy':
         ex_sy, s, t = (expr._sympy_() for expr in (ex, s, t))
         from sympy import inverse_laplace_transform
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         result = inverse_laplace_transform(ex_sy, s, t)
@@ -2460,10 +2469,12 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
 
     Make sure that we don't accidentally pick up variables in the maxima namespace (:issue:`8734`)::
 
-        sage: sage.calculus.calculus.maxima('my_new_var : 2')
+        sage: maxima('my_new_var : 2')
         2
         sage: var('my_new_var').full_simplify()
         my_new_var
+        sage: maxima('kill(my_new_var)')
+        done
 
     ODE solution constants are treated differently (:issue:`16007`)::
 
@@ -2497,7 +2508,7 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
     maxima.set('_tmp_', x)
 
     # This is inefficient since it so rarely is needed:
-    #r = maxima._eval_line('listofvars(_tmp_);')[1:-1]
+    # r = maxima._eval_line('listofvars(_tmp_);')[1:-1]
 
     s = maxima._eval_line('_tmp_;')
 
@@ -2509,10 +2520,10 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
     # there is a potential very subtle bug if 'foo is in a string
     # literal -- but string literals should *never* ever be part of a
     # symbolic expression.
-    s = s.replace("'","")
+    s = s.replace("'", "")
 
     delayed_functions = maxima_qp.findall(s)
-    if len(delayed_functions):
+    if delayed_functions:
         for X in delayed_functions:
             if X == '?%at':  # we will replace Maxima's "at" with symbolic evaluation, not a SymbolicFunction
                 pass
@@ -2537,8 +2548,8 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
     s = s.replace("%","")
 
     s = s.replace("#","!=")  # a lot of this code should be refactored somewhere...
-    #we apply the square-bracket replacing patterns repeatedly
-    #to ensure that nested brackets get handled (from inside to out)
+    # we apply the square-bracket replacing patterns repeatedly
+    # to ensure that nested brackets get handled (from inside to out)
     while True:
         olds = s
         s = polylog_ex.sub('polylog(\\1,', s)

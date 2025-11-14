@@ -2544,7 +2544,7 @@ class HasseDiagram(DiGraph):
             return True
         return False
 
-    def diamonds(self) -> tuple[list[tuple[int]], bool]:
+    def diamonds(self) -> tuple[list[tuple[int, int, int, int]], bool]:
         r"""
         Return the list of diamonds of ``self``.
 

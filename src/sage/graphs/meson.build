@@ -74,6 +74,7 @@ py.install_sources(
   'matchpoly.pyx',
   'mcqd.pxd',
   'mcqd.pyx',
+  'morphisms.py',
   'orientations.py',
   'partial_cube.py',
   'path_enumeration.pyx',
