@@ -45,21 +45,23 @@ cdef Obj make_gap_list(sage_list) except NULL:
     - ``a`` -- list of :class:`GapElement`
 
     OUTPUT: list of the elements in ``a`` as a Gap ``Obj``
+
+    TESTS::
+
+        sage: from sage.doctest.util import ensure_interruptible_after
+        sage: for i in range(10):
+        ....:     with ensure_interruptible_after(0.2):
+        ....:         ignore = libgap([1000]*100000)
     """
     cdef Obj l
-    cdef GapElement elem
-    cdef int i
+    cdef tuple gap_elements = tuple(x if isinstance(x, GapElement) else libgap(x) for x in sage_list)
+    cdef Py_ssize_t n = len(gap_elements), i
+
     try:
         GAP_Enter()
-        l = GAP_NewPlist(0)
-
-        for i, x in enumerate(sage_list):
-            if not isinstance(x, GapElement):
-                elem = <GapElement>libgap(x)
-            else:
-                elem = <GapElement>x
-
-            GAP_AssList(l, i + 1, elem.value)
+        l = GAP_NewPlist(n)
+        for i in range(n):
+            GAP_AssList(l, i + 1, (<GapElement> gap_elements[i]).value)
         return l
     finally:
         GAP_Leave()
@@ -83,30 +85,10 @@ cdef Obj make_gap_matrix(sage_list, gap_ring) except NULL:
 
     The list of the elements in ``sage_list`` as a Gap ``Obj``.
     """
-    cdef Obj l
-    cdef GapElement elem
-    cdef GapElement one
-    cdef int i
-    if gap_ring is not None:
-        one = <GapElement>gap_ring.One()
-    else:
-        one = <GapElement>libgap(1)
-
-    try:
-        GAP_Enter()
-        l = GAP_NewPlist(0)
-
-        for i, x in enumerate(sage_list):
-            if not isinstance(x, GapElement):
-                elem = <GapElement>libgap(x)
-                elem = elem * one
-            else:
-                elem = <GapElement>x
-
-            GAP_AssList(l, i + 1, elem.value)
-        return l
-    finally:
-        GAP_Leave()
+    cdef GapElement one = gap_ring.One() if gap_ring is not None else libgap(1)
+    return make_gap_list([
+        x if isinstance(x, GapElement) else <GapElement>libgap(x) * one
+        for x in sage_list])
 
 
 cdef char *capture_stdout(Obj func, Obj obj) noexcept:
