@@ -361,6 +361,57 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
                     raise ValueError('the values do not satisfy all relations of the group')
         return super().__call__(values)
 
+    def _normal_form_by_gap_nffunction(self) -> GapElement:
+        """
+        Internal method that calls ``FpElementNFFunction`` to compute some normal form
+        for this group element.
+        Note that this is not guaranteed to terminate.
+
+        .. SEEALSO::
+
+            Another way to compute a normal form is to use
+            :meth:`FinitelyPresentedGroup.confluent_rewriting_system`.
+
+        OUTPUT:
+
+        A :class:`~GapElement` such that if ``x == y``
+        then ``x._normal_form_by_gap_nffunction()`` is
+        determined only by the value of this group element,
+        and not the Tietze list.
+
+        TESTS::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F / [a*b/a/b]
+            sage: G(a*b) == G(b*a)
+            True
+            sage: G(a*b).Tietze() == G(b*a).Tietze()
+            False
+            sage: G(a*b)._normal_form_by_gap_nffunction() == G(b*a)._normal_form_by_gap_nffunction()
+            True
+        """
+        x = self.gap()
+        return x.FamilyObj().FpElementNFFunction()(x.UnderlyingElement())
+
+    def __hash__(self) -> int:
+        """
+        Return some hash value, such that if ``x == y``
+        then ``hash(x) == hash(y)``.
+        Note that this is not guaranteed to terminate.
+
+        TESTS::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F / [a*b/a/b]
+            sage: G(a*b) == G(b*a)
+            True
+            sage: G(a*b).Tietze() == G(b*a).Tietze()
+            False
+            sage: hash(G(a*b)) == hash(G(b*a))
+            True
+        """
+        return hash(self._normal_form_by_gap_nffunction())
+
 
 class RewritingSystem:
     """
@@ -536,12 +587,23 @@ class RewritingSystem:
     def gap(self):
         """
         The gap representation of the rewriting system.
+        Prefer to use ``libgap(k)`` for consistency.
+        The returned object should not be mutated, otherwise with the current implementation,
+        ``self`` will be mutated as well.
 
         EXAMPLES::
 
             sage: F.<a,b> = FreeGroup()
             sage: G = F/[a*a,b*b]
             sage: k = G.rewriting_system()
+            sage: libgap(k)
+            Knuth Bendix Rewriting System for Monoid( [ a, A, b, B ] ) with rules
+            [ [ a*A, <identity ...> ], [ A*a, <identity ...> ],
+              [ b*B, <identity ...> ], [ B*b, <identity ...> ],
+              [ a^2, <identity ...> ], [ b^2, <identity ...> ] ]
+
+        TESTS::
+
             sage: k.gap()
             Knuth Bendix Rewriting System for Monoid( [ a, A, b, B ] ) with rules
             [ [ a*A, <identity ...> ], [ A*a, <identity ...> ],
@@ -549,6 +611,8 @@ class RewritingSystem:
               [ a^2, <identity ...> ], [ b^2, <identity ...> ] ]
         """
         return self._gap
+
+    _libgap_ = gap
 
     def rules(self):
         """
@@ -647,7 +711,7 @@ class RewritingSystem:
 
         .. WARNING::
 
-            This algorithm is not granted to finish. Although it may be useful
+            This algorithm is not guaranteed to finish. Although it may be useful
             in some occasions to run it, interrupt it manually after some time
             and use then the transformed rewriting system. Even if it is not
             confluent, it could be used to reduce some words.
@@ -680,10 +744,7 @@ class RewritingSystem:
                 b*a    --->    a*b^-1
                 b^2    --->    b^-1
         """
-        try:
-            self._gap.MakeConfluent()
-        except ValueError:
-            raise ValueError('could not make the system confluent')
+        self._gap.MakeConfluent()
 
 
 @richcmp_method
@@ -1873,7 +1934,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
             j += 1
         return char_var
 
-    def rewriting_system(self):
+    def rewriting_system(self) -> RewritingSystem:
         """
         Return the rewriting system corresponding to the finitely presented
         group. This rewriting system can be used to reduce words with respect
@@ -1907,5 +1968,36 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
             a*b
         """
         return RewritingSystem(self)
+
+    @cached_method
+    def confluent_rewriting_system(self) -> RewritingSystem:
+        """
+        Return some confluent rewriting system for this group.
+
+        .. NOTE::
+
+            - The returned rewriting system should not be mutated.
+
+            - The returned rewriting system may be different when Sage is restarted,
+              or for a different (but equal) group. For the same group object,
+              it is guaranteed to be the same.
+
+            - This function is not guaranteed to terminate.
+
+        EXAMPLES::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F/[a*a,b*b]
+            sage: G.confluent_rewriting_system()
+            Rewriting system of Finitely presented group < a, b | a^2, b^2 >
+            with rules:
+                a^-1    --->    a
+                b^-1    --->    b
+                a^2    --->    1
+                b^2    --->    1
+        """
+        r = RewritingSystem(self)
+        r.make_confluent()
+        return r
 
     from sage.groups.generic import structure_description
