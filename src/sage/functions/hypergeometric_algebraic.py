@@ -1307,7 +1307,7 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
             sage: S.<x> = QQ[]
             sage: f = hypergeometric([1/3, 2/3], [1/2], x)
             sage: f.good_reduction_primes()
-            Set of all prime numbers with 2, 3 excluded: 5, 7, 11, 13, ...
+            Set of all prime numbers with 3 excluded: 2, 5, 7, 11, ...
 
         ALGORITHM:
 
@@ -1350,7 +1350,7 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         for p in Primes():
             if p > bound:
                 break
-            if d % p == 0 and self.valuation(p) > 0:
+            if d % p == 0 and self.valuation(p) >= 0:
                 exceptions[p] = True
             if d % p == 0 or not goods[p % d]:
                 continue
