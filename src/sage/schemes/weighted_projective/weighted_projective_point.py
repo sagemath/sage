@@ -54,7 +54,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
         (2 : 3 : 4)
     """
 
-    def __init__(self, X, v, check=True):
+    def __init__(self, X, v, check: bool = True):
         """
         The Python constructor.
 
@@ -168,13 +168,12 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
         if space is not other.codomain():
             return op == op_NE
 
-        if op in [op_EQ, op_NE]:
+        if op in (op_EQ, op_NE):
             weights = space._weights
             # (other[i] / self[i])^(1 / weight[i]) all equal
             prod_weights = prod(weights)
             # check weights
-            bw = weights == other.codomain()._weights
-            if bw != (op == op_EQ):
+            if (weights == other.codomain()._weights) != (op == op_EQ):
                 return False
 
             # check zeros

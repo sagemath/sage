@@ -39,7 +39,7 @@ class WeightedProjectiveCurve(Curve_generic):
             raise TypeError(f"A(={A}) is not a weighted projective space")
         super().__init__(A, X, *kwargs)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return a string representation of the type of this curve.
 
