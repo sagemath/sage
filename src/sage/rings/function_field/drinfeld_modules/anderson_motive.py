@@ -103,35 +103,23 @@ basis and then use when printing::
 
 .. RUBRIC:: More Anderson motives
 
-Some basic constructions on Anderson modules are also available.
-For example, one can form the dual using the method
-:meth:`AndersonMotive_general.dual`::
+One can also build the dual of the Anderson motive attached to
+a Drinfeld simply by setting the attribute ``dual=True``::
 
-    sage: Md = M.dual()
+    sage: Md = phi.anderson_motive(dual=True)
     sage: Md
-    Anderson motive of rank 3 over Univariate Polynomial Ring in T over Finite Field in z of size 5^3
+    Dual Anderson motive of Drinfeld module defined by T |--> (2*z^2 + 2*z)*τ^3 + (2*z + 2)*τ^2 + z^2*τ + z
     sage: Md.matrix()
     [          z^2/(T + 4*z)                       1                       0]
     [    (2*z + 2)/(T + 4*z)                       0                       1]
     [(2*z^2 + 2*z)/(T + 4*z)                       0                       0]
 
-or Carlitz twists (using :meth:`AndersonMotive_general.carlitz_twist`)::
+We observe that some entries of the previous matrix have denominator
+`T-z`. This corresponds to the fact that `\tau_M` is only defined
+after inverting `T-z` in full generality, and it implies in particular
+that ``Md`` does not come itself from a Drinfeld module.
 
-    sage: M2 = M.carlitz_twist(2)
-    sage: M2
-    Anderson motive of rank 3 over Univariate Polynomial Ring in T over Finite Field in z of size 5^3
-    sage: M2.matrix()
-    [                                    0                 1/(T^2 + 3*z*T + z^2)                                     0]
-    [                                    0                                     0                 1/(T^2 + 3*z*T + z^2)]
-    [                (z^2 + 3*z)/(T + 4*z) (3*z^2 + 2*z + 4)/(T^2 + 3*z*T + z^2)       (2*z^2 + 1)/(T^2 + 3*z*T + z^2)]
-
-We observe that the entries of the previous matrices have denominators
-which are `T-z` or powers of it. This corresponds to the fact that
-`\tau_M` is only defined after inverting `T-z` in full generality.
-We underline that the previous observation also implies that `M_2`
-does not come from a Drinfeld module.
-
-SageMath also provides a general constructor :func:`AndersonMotive`
+Finally, SageMath also provides a general constructor :func:`AndersonMotive`
 which allows in particular to explicitly provide the matrix of `\tau_M`::
 
     sage: mat = matrix(2, 2, [[T, z], [1, 1]])
@@ -281,13 +269,6 @@ class AndersonMotive_general(OreModule):
             sage: M = AndersonMotive(A, K)
             sage: type(M)
             <class 'sage.rings.function_field.drinfeld_modules.anderson_motive.AndersonMotive_general_with_category'>
-
-        ::
-
-            sage: M1 = M.carlitz_twist(-2)
-            sage: M2 = AndersonMotive(A, M1.matrix())
-            sage: M1 is M2
-            True
         """
         AK = category.base()
 
@@ -362,12 +343,6 @@ class AndersonMotive_general(OreModule):
             sage: M = AndersonMotive(A, K)
             sage: loads(dumps(M)) is M
             True
-
-        ::
-
-            sage: N = M.carlitz_twist(5)
-            sage: loads(dumps(N)) is N
-            True
         """
         return self._general_class, (self._category, self._tau, self._twist, self._names, False)
 
@@ -439,74 +414,6 @@ class AndersonMotive_general(OreModule):
             s += "_{%s}" % latex(AK)
         return s
 
-    def carlitz_twist(self, n=1, names=None):
-        r"""
-        Return this Anderson motive twisted `n` times, that is the
-        tensor product of this Anderson motive with the `n`-th power
-        of the dual of the Carlitz motive (the Anderson motive
-        attached to the Carlitz module).
-
-        INPUT:
-
-        - ``n`` -- an integer (default: ``1``)
-
-        - ``names`` -- a string or a list of strings (default: ``None``),
-          the names of the vector of the canonical basis; if ``None``,
-          elements are represented as row vectors
-
-        EXAMPLES::
-
-            sage: A.<T> = GF(5)[]
-            sage: K.<z> = GF(5^3)
-            sage: M = AndersonMotive(A, K)
-            sage: M.matrix()
-            [1]
-            sage: N = M.carlitz_twist()
-            sage: N.matrix()
-            [1/(T + 4*z)]
-
-        Negative twist are also permitted::
-
-            sage: N = M.carlitz_twist(-1)
-            sage: N.matrix()
-            [T + 4*z]
-        """
-        return AndersonMotive_general(self._category, self._tau, self._twist + ZZ(n),
-                                      names, normalize=False)
-
-    def dual(self, names=None):
-        r"""
-        Return the dual of this Anderson motive.
-
-        INPUT:
-
-        - ``names`` - a string or a list of strings (default: ``None``),
-          the names of the vector of the canonical basis; if ``None``,
-          elements are represented as row vectors
-
-        EXAMPLES::
-
-            sage: A.<T> = GF(5)[]
-            sage: K.<z> = GF(5^4)
-            sage: phi = DrinfeldModule(A, [z, z^2, z^3])
-            sage: M = phi.anderson_motive()
-            sage: N = M.dual()
-            sage: N.matrix()
-            [z^2/(T + 4*z)             1]
-            [z^3/(T + 4*z)             0]
-
-        We check that the matrix of `\tau_M` is the transpose of the
-        inverse of the matrix of `\tau_N`::
-
-            sage: M.matrix() * N.matrix().transpose()
-            [1 0]
-            [0 1]
-        """
-        disc, deg = self._dettau
-        tau = disc.inverse() * self._tau.adjugate().transpose()
-        twist = deg - self._twist
-        return AndersonMotive_general(self._category, tau, twist, names, normalize=True)
-
     def _Hom_(self, other, category):
         r"""
         Return the set of morphisms from ``self`` to ``other``.
@@ -552,16 +459,9 @@ class AndersonMotive_general(OreModule):
         We check that the Hodge-Pink weights of the dual are the opposite
         of the Hodge-Pink weights of the initial Anderson motive::
 
-            sage: N = M.dual()
+            sage: N = phi.anderson_motive(dual=True)
             sage: N.hodge_pink_weights()
             [-1, 0, 0]
-
-        Similarly, we check that Hodge-Pink weights are all shifted by `-1`
-        after a Carlitz twist::
-
-            sage: N = M.carlitz_twist()
-            sage: N.hodge_pink_weights()
-            [-1, -1, 0]
         """
         S = self._tau.smith_form(transformation=False)
         return [-self._twist + S[i,i].degree() for i in range(self.rank())]
@@ -584,7 +484,7 @@ class AndersonMotive_general(OreModule):
 
         ::
 
-            sage: N = M.dual()
+            sage: N = phi.anderson_motive(dual=True)
             sage: N.is_effective()
             False
         """
@@ -603,13 +503,15 @@ class AndersonMotive_drinfeld(AndersonMotive_general):
         sage: M = phi.anderson_motive()
         sage: TestSuite(M).run()
     """
-    def __classcall_private__(cls, phi, names):
+    def __classcall_private__(cls, phi, dual, names):
         r"""
         Normalize the input and construct this Anderson motive.
 
         INPUT:
 
         - ``phi`` -- a Drinfeld module
+
+        - ``dual`` -- a boolean
 
         - ``names`` -- a string or a list of strings (default: ``None``),
           the names of the vector of the canonical basis; if ``None``,
@@ -635,15 +537,23 @@ class AndersonMotive_drinfeld(AndersonMotive_general):
         r = phi.rank()
         tau = matrix(AK, r)
         P = phi.gen()
-        tau[r-1, 0] = (AK.gen() - P[0]) / P[r]
-        for i in range(1, r):
-            tau[i-1, i] = 1
-            tau[r-1, i] = -P[i]/P[r]
+        if dual:
+            divisor = category.divisor()
+            for i in range(1, r):
+                tau[i-1, i] = divisor
+                tau[i-1, 0] = P[i]
+            tau[r-1, 0] = P[r]
+            denominator = Factorization([(divisor, 1)])
+        else:
+            tau[r-1, 0] = (AK.gen() - P[0]) / P[r]
+            for i in range(1, r):
+                tau[i-1, i] = 1
+                tau[r-1, i] = -P[i]/P[r]
+            denominator = Factorization([])
         names = normalize_names(names, r)
-        denominator = Factorization([])
-        return cls.__classcall__(cls, tau, category._ore_polring, denominator, names, category, phi)
+        return cls.__classcall__(cls, tau, category._ore_polring, denominator, names, category, phi, dual)
 
-    def __init__(self, mat, ore, denominator, names, category, phi) -> None:
+    def __init__(self, mat, ore, denominator, names, category, phi, dual) -> None:
         r"""
         Initialize this Anderson motive.
 
@@ -658,10 +568,12 @@ class AndersonMotive_drinfeld(AndersonMotive_general):
             (0, 1)
         """
         super().__init__(mat, ore, denominator, names, category)
-        Ktau = phi.ore_polring()
-        self.register_coercion(DrinfeldToAnderson(Homset(Ktau, self), phi))
-        Ktau.register_conversion(AndersonToDrinfeld(Homset(self, Ktau), phi))
+        if not dual:
+            Ktau = phi.ore_polring()
+            self.register_coercion(DrinfeldToAnderson(Homset(Ktau, self), phi))
+            Ktau.register_conversion(AndersonToDrinfeld(Homset(self, Ktau), phi))
         self._drinfeld_module = phi
+        self._dual = dual
 
     def __reduce__(self):
         r"""
@@ -676,8 +588,14 @@ class AndersonMotive_drinfeld(AndersonMotive_general):
             sage: M = phi.anderson_motive()
             sage: loads(dumps(M)) is M
             True
+
+        ::
+
+            sage: Md = phi.anderson_motive(dual=True)
+            sage: loads(dumps(Md)) is Md
+            True
         """
-        return AndersonMotive_drinfeld, (self._drinfeld_module, self._names)
+        return AndersonMotive_drinfeld, (self._drinfeld_module, self._dual, self._names)
 
     def _repr_(self):
         r"""
@@ -691,8 +609,17 @@ class AndersonMotive_drinfeld(AndersonMotive_general):
             sage: M.<u, v> = phi.anderson_motive()
             sage: M  # indirect doctest
             Anderson motive <u, v> of Drinfeld module defined by T |--> (2*z + 2)*τ^2 + z^2*τ + z
+
+        ::
+
+            sage: Md = phi.anderson_motive(dual=True)
+            sage: Md  # indirect doctest
+            Dual Anderson motive of Drinfeld module defined by T |--> (2*z + 2)*τ^2 + z^2*τ + z
         """
-        s = "Anderson motive "
+        if self._dual:
+            s = "Dual Anderson motive "
+        else:
+            s = "Anderson motive "
         if self._names is not None:
             s += "<" + ", ".join(self._names) + "> "
         s += "of %s" % self._drinfeld_module
@@ -1168,7 +1095,7 @@ def AndersonMotive(arg1, arg2=None, names=None):
     if isinstance(arg1, DrinfeldModule):
         if arg2 is not None:
             raise ValueError("too many arguments")
-        return AndersonMotive_drinfeld(arg1, names=names)
+        return AndersonMotive_drinfeld(arg1, False, names=names)
 
     # (2) arg1 is a category
     category = None

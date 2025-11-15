@@ -2084,9 +2084,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             raise ValueError("%s is not element of the function ring" % x)
         return self.Hom(self)(x)
 
-    def anderson_motive(self, names=None):
+    def anderson_motive(self, dual=False, names=None):
         r"""
-        Return the Anderson motive attached to this Drinfeld module.
+        Return the Anderson motive, or its dual depending on the
+        attribute ``dual``, attached to this Drinfeld module.
 
         By definition, the Anderson motive of a Drinfeld module
         `\phi : A \to K\{\tau\}` is `K\{\tau\}` endowed by:
@@ -2098,6 +2099,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
           left multiplication
 
         INPUT:
+
+        - ``dual`` - a boolean (default: ``False``)
 
         - ``names`` - a string of a list of strings (default: ``None``),
           the names of the vector of the canonical basis; if ``None``,
@@ -2138,7 +2141,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             in SageMath.
         """
         from sage.rings.function_field.drinfeld_modules.anderson_motive import AndersonMotive_drinfeld
-        return AndersonMotive_drinfeld(self, names=names)
+        return AndersonMotive_drinfeld(self, dual, names=names)
 
     def frobenius_relative(self, n=1):
         r"""
