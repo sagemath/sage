@@ -1153,10 +1153,10 @@ class HypergeometricAlgebraic(Element):
 
         EXAMPLES::
 
-        sage: S.<x> = QQ[]
-        sage: f = hypergeometric([1/3, 2/3], [1/2], x)
-        sage: f.denominator()
-        6
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f.denominator()
+            6
         """
         return self._parameters.d
 
