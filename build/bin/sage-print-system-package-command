@@ -154,8 +154,16 @@ case $system:$command in
         ;;
     @(fedora*|redhat*|centos*):install)
         [ "$YES" = yes ] && options="$options -y"
-        [ "$IGNORE_MISSING" = yes ] && options="$options --skip-unavailable"
-        [ -n "$system_packages" ] && print_shell_command ${SUDO}dnf install $options $system_packages
+        if [ "$IGNORE_MISSING" = yes ]; then
+            if dnf install --help 2>&1 | grep -q -- --skip-unavailable; then
+                options="$options --skip-unavailable"
+                [ -n "$system_packages" ] && print_shell_command ${SUDO}dnf install $options $system_packages
+            else
+                [ -n "$system_packages" ] && echo "for pkg in $system_packages; do ${SUDO}dnf install $options \$pkg || true; done"
+            fi
+        else
+            [ -n "$system_packages" ] && print_shell_command ${SUDO}dnf install $options $system_packages
+        fi
         ;;
     gentoo*:install)
         [ -n "$system_packages" ] && print_shell_command ${SUDO}emerge $system_packages
