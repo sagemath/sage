@@ -253,7 +253,7 @@ class AndersonMotive_general(OreModule):
         - ``twist`` -- an integer (default: ``0``)
 
         - ``names`` -- a string or a list of strings (default: ``None``),
-          the names of the vector of the canonical basis; if ``None``,
+          the names of the vectors of the canonical basis; if ``None``,
           elements will be represented as row vectors
 
         - ``normalize`` -- a boolean (default: ``True``)
@@ -514,7 +514,7 @@ class AndersonMotive_drinfeld(AndersonMotive_general):
         - ``dual`` -- a boolean
 
         - ``names`` -- a string or a list of strings (default: ``None``),
-          the names of the vector of the canonical basis; if ``None``,
+          the names of the vectors of the canonical basis; if ``None``,
           elements will be represented as row vectors
 
         TESTS::
@@ -967,26 +967,30 @@ def AndersonMotive(arg1, arg2=None, names=None):
 
     INPUT:
 
-    The two first arguments can be one of the followings:
+    - ``arg1``, ``arg2`` -- arguments defining the Anderson
+      motive, they can be:
 
-    - a pair `(A, K)` where `A` is the underlying function
-      ring (which currently needs to be of the form `\GF{q}[t]`)
-      and `K` is the `A`-field; these parameters correspond to
-      the trivial Anderson motive over `A \otimes K`
+      - a Drinfeld module and ``None``
 
-    - a pair `(A, z)` where `A = \GF{q}[t]` is the function
-      base ring and `z` is an element; the `A`-field is then
-      then parent `K` of `z` viewed as an algebra over `A`
-      through `A \mapsto K, T \mapsto z`.
+      - the underlying function ring `A` (which currently needs
+        to be of the form `\GF{q}[t]`) and a `A`-field `K`; these
+        parameters correspond to the trivial Anderson motive over
+        `A \otimes K`
 
-    - a pair `(A, \tau)` where
+      - the underlying function ring `A` and an element `z` in it;
+        the `A`-field is then the parent `K` of `z` viewed as an
+        algebra over `A` through `A \mapsto K, T \mapsto z`, and
+        the returned Anderson motive is again the trivial one over
+        `A \otimes K`
 
-      - `A` is either `\GF{q}[t]` or a category (of Drinfeld
-        modules or Anderson motives)
+      - `A` and `\tau` where
+        - `A` is either `\GF{q}[t]` or a category (of Drinfeld
+          modules or Anderson motives)
+        - `\tau` is the matrix defining the Anderson motive
 
-      - `\tau` is the matrix defining the Anderson motive
-
-    - a Drinfeld module
+    - ``names`` -- a string or a list of strings (default: ``None``),
+      the names of the vectors of the canonical basis; if ``None``,
+      elements will be represented as row vectors
 
     EXAMPLES::
 
