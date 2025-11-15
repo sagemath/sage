@@ -21,6 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         container:
+          - alpine:3.22
           - fedora:41
           - fedora:42
           - debian:forky
@@ -45,6 +46,9 @@ jobs:
             # The archlinux container is configured to not install docs by default
             # but we need the maxima help to be in place
             sed -i '/^NoExtract/d' /etc/pacman.conf
+          fi
+          if [[ "${{ matrix.container }}" == alpine* ]]; then
+            apk add --no-cache bash
           fi
 
       - name: Checkout code
