@@ -983,9 +983,11 @@ def AndersonMotive(arg1, arg2=None, names=None):
         the returned Anderson motive is again the trivial one over
         `A \otimes K`
 
-      - `A` and `\tau` where
+      - `A` and `\tau` where:
+
         - `A` is either `\GF{q}[t]` or a category (of Drinfeld
           modules or Anderson motives)
+
         - `\tau` is the matrix defining the Anderson motive
 
     - ``names`` -- a string or a list of strings (default: ``None``),
