@@ -27,7 +27,8 @@ from sage.misc.cachefunc import cached_method
 
 from sage.misc.misc_c import prod
 from sage.misc.functional import log
-from sage.functions.other import floor, ceil
+from sage.functions.other import ceil
+from sage.functions.hypergeometric import hypergeometric
 from sage.arith.misc import gcd
 from sage.arith.functions import lcm
 from sage.matrix.constructor import matrix
@@ -36,7 +37,6 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.structure.element import coerce_binop
-from sage.structure.sequence import Sequence
 from sage.structure.category_object import normalize_names
 
 from sage.categories.action import Action
@@ -53,6 +53,7 @@ from sage.rings.infinity import infinity
 from sage.sets.primes import Primes
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.rings.padics.padic_generic import pAdicGeneric
 from sage.rings.padics.factory import Qp
@@ -294,12 +295,10 @@ class Parameters():
             True
         """
         parenthesis = 0
-        previous_paren = 1
         for _, _, paren in self.christol_sorting(c):
             parenthesis += paren
             if parenthesis > 0:
                 return False
-            previous_paren = paren
         return parenthesis <= 0
 
     def interlacing_criterion(self, c):
@@ -562,6 +561,92 @@ class Parameters():
         bottom = [1 + b - ceil(b) for b in self.bottom]
         return Parameters(top, bottom, add_one=False)
 
+    def valuation_position(self, p, drift=0):
+        top = []
+        for a in self.top:
+            v = a.valuation(p)
+            if v < 0:
+                drift += v
+            else:
+                top.append(a)
+        bottom = []
+        for b in self.bottom:
+            v = b.valuation(p)
+            if v < 0:
+                drift -= v
+            else:
+                bottom.append(b)
+        diff = len(top) - len(bottom)
+        if ((p-1)*drift + diff, drift) < (0, 0):
+            return -infinity, None
+
+        parameters = Parameters(top, bottom)
+        order = IntegerModRing(parameters.d)(p).multiplicative_order()
+        q = 1
+        valuation = position = 0
+        breaks = [(0, 0, 0)]
+        indices = None
+        count = 0
+        while True:
+            pq = p * q
+            A = [(1 + (-a) % pq, -1, a) for a in top]
+            B = [(1 + (-b) % pq, 1, b) for b in bottom]
+            AB = [(0, 0, 0)] + sorted(A + B) + [(pq, None, None)]
+            new_breaks = []
+            new_indices = {}
+            w = 0
+            for i in range(len(AB) - 1):
+                x, dw, param = AB[i]
+                y, _, right = AB[i+1]
+                w -= dw
+                new_indices[param] = len(new_breaks)
+                complete = (y - x >= q)
+                if complete and drift < 0:
+                    interval = (y // q) - 1
+                else:
+                    interval = x // q
+                if x == y:
+                    val = infinity
+                    pos = x
+                elif indices is None:
+                    val = drift * interval
+                    pos = q * interval
+                else:
+                    val = infinity
+                    if complete and drift < 0:
+                        j = j0 = indices[right]
+                    else:
+                        j = j0 = indices[param]
+                    while True:
+                        valj, posj, paramj = breaks[j]
+                        valj += drift * interval
+                        if valj < val:
+                            val = valj
+                            pos = posj + q * interval
+                        j += 1
+                        if j >= len(breaks):
+                            if right is None:
+                                break
+                            j = 0
+                            interval += 1
+                        if (not complete and paramj == right) or (complete and j == j0):
+                            break
+                new_breaks.append((val + w, pos, param))
+            breaks = new_breaks
+            indices = new_indices
+            minimum = min(breaks)
+            if drift >= 0 and q > parameters.bound:
+                # Not sure at all about this criterion
+                if minimum == breaks[0] and minimum[0] == valuation and minimum[1] == position:
+                    count += 1
+                    if count >= order:
+                        return valuation, position
+                else:
+                    return -infinity, None
+            q = pq
+            drift = p*drift + diff
+            valuation, position, _ = minimum
+
     def dwork_image(self, p):
         r"""
         Return the parameters obtained by applying the Dwork map to each of
@@ -682,29 +767,12 @@ class HypergeometricAlgebraic(Element):
             parameters = Parameters(arg1, arg2)
         char = self.parent()._char
         if scalar:
-            if char == 0:
-                if any(b in ZZ and b < 0 for b in parameters.bottom):
-                    raise ValueError("the parameters %s do not define a hypergeometric function" % parameters)
-            else:
-                error = ValueError("the parameters %s do not define a hypergeometric function in characteristic %s" % (parameters, char))
-                d = parameters.d
-                if d.gcd(char) > 1:
-                    raise error
-                u = 1
-                while True:
-                    if not parameters.parenthesis_criterion(u):
-                        raise error
-                    u = char*u % d
-                    if u == 1:
-                        break
-                # Xavier's conjecture:
-                if not parameters.q_parenthesis_criterion(char):
-                    raise error
-                # q = char
-                # while q <= parameters.bound:
-                #     if not parameters.q_parenthesis_criterion(q):
-                #         raise error
-                #     q *= char
+            if any(b in ZZ and b < 0 for b in parameters.bottom):
+                raise ValueError("the parameters %s do not define a hypergeometric function" % parameters)
+            if char > 0:
+                val, _ = parameters.valuation_position(char)
+                if val < 0:
+                    raise ValueError("the parameters %s do not define a hypergeometric function in characteristic %s" % (parameters, char))
         self._scalar = scalar
         self._parameters = parameters
         self._coeffs = [scalar]
@@ -1016,7 +1084,6 @@ class HypergeometricAlgebraic(Element):
         scalar = self._scalar
         if scalar == 0:
             return self.base_ring().zero()
-        from sage.functions.hypergeometric import hypergeometric
         X = SR('X')
         h = hypergeometric(self.top(), self.bottom(), X)
         if scalar != 1:
@@ -1272,7 +1339,8 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
             sage: g.valuation(5)
             1
         """
-        return self.change_ring(Qp(p, 1)).valuation()
+        val, _ = self._parameters.valuation_position(p)
+        return val + self._scalar.valuation(p)
 
     def has_good_reduction(self, p):
         r"""
@@ -1322,13 +1390,13 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
 
         # We check the parenthesis criterion for c=1
         if not params.parenthesis_criterion(1):
-            return d, [], []
+            return Primes(modulus=0)
 
         # We check the parenthesis criterion for other c
         # and derive congruence classes with good reduction
         goods = {c: None for c in range(d) if d.gcd(c) == 1}
         goods[1] = True
-        for c in goods:
+        for c in goods.keys():
             if goods[c] is not None:
                 continue
             cc = c
@@ -1427,7 +1495,7 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
         k = self.base_ring().residue_field()
         if self._scalar.valuation() == 0:
             return self.change_base(k)
-        val, pos = self._val_pos()
+        val, pos = self._parameters.valuation_position(self._p)
         if val < 0:
             raise ValueError("bad reduction")
         if val > 0:
@@ -1464,7 +1532,7 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
                 #goes to +infinity, but if you remove all the coefficients with p
                 #in the denominator it goes to -infinity.
                 #The following claim is almost surely wrong.
-                if prec == None:
+                if prec is None:
                     prec = self._parameters.bound
                 #Here I just check the valuation of the first few coefficients.
                 #There should be something better using q_g:parenthesis.
@@ -1503,16 +1571,30 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
         return val, pos
 
     def log_radius_of_convergence(self):
-        raise NotImplementedError
+        p = self._p
+        step = self._e / (p - 1)
+        log_radius = 0
+        for a in self._parameters.top:
+            v = a.valuation(p)
+            if v < 0:
+                log_radius += v
+            else:
+                log_radius += step
+        for b in self._parameters.bottom:
+            v = b.valuation(p)
+            if v < 0:
+                log_radius -= v
+            else:
+                log_radius -= step
+        return log_radius
+
+    def valuation(self, log_radius=0):
+        drift = -log_radius / self._e
+        val, _ = self._parameters.valuation_position(self._p, drift)
+        return val
 
     def newton_polygon(self, log_radius):
         raise NotImplementedError
-
-    def valuation(self, log_radius=0):
-        if log_radius != 0:
-            raise NotImplementedError
-        val, _ = self._val_pos()
-        return val
 
     def tate_series(self):
         raise NotImplementedError
@@ -1557,7 +1639,6 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
 
     def is_defined(self):
         p = self._char
-        d = self.denominator()
         if not self.is_almost_defined():
             return False
         bound = self._parameters.bound
@@ -1572,7 +1653,6 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
 
     def is_defined_conjectural(self):
         p = self._char
-        d = self.denominator()
         if not self.is_almost_defined():
             return False
         bound = self._parameters.bound
@@ -1655,7 +1735,6 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         if not parameters.is_balanced():
             raise NotImplementedError("the hypergeometric function is not a pFq with q = p-1")
 
-        K = self.base_ring()
         p = self._char
         S = self.parent().polynomial_ring()
         zero = S.zero()
@@ -1728,7 +1807,6 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
 
 class HypergeometricToSR(Map):
     def _call_(self, h):
-        from sage.functions.hypergeometric import hypergeometric
         return h.scalar() * hypergeometric(h.top(), h.bottom(), SR.var(h.parent().variable_name()))
 
 
