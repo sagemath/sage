@@ -635,7 +635,7 @@ class Fields(CategoryWithAxiom):
 
             INPUT:
 
-            - an element or a list/tuple/sequence of elements, the generators
+            - ``gens`` -- an element or a list/tuple/sequence of elements, the generators
 
             Any named arguments are ignored.
 

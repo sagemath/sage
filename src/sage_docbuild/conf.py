@@ -47,15 +47,24 @@ extensions = [
     'sage_docbuild.ext.inventory_builder',
     'sage_docbuild.ext.multidocs',
     'sage_docbuild.ext.sage_autodoc',
+    'sage_docbuild.ext.sage_syntax',
     'sphinx.ext.todo',
     'sphinx.ext.extlinks',
     'sphinx.ext.mathjax',
     'sphinx.ext.linkcode',
     'sphinx_copybutton',
     'sphinx_inline_tabs',
+    'sphinx_autodoc_typehints',
     'IPython.sphinxext.ipython_directive',
     'matplotlib.sphinxext.plot_directive',
 ]
+
+# Add stub documentation for undocumented parameters to be able to add type info
+always_document_param_types = True 
+# Display Union's using the | operator 
+always_use_bars_union = True
+# Adds ", default: ..." after the type hints for parameters
+# typehints_defaults = 'comma'
 
 if JupyterSphinx().is_present():
     extensions.append('jupyter_sphinx')

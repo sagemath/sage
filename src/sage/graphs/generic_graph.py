@@ -11888,7 +11888,7 @@ class GenericGraph(GenericGraph_pyx):
 
         INPUT:
 
-        - ``*args`` and ``**kwds`` -- arguments to be passed down to the
+        - ``*args``, ``**kwds`` -- arguments to be passed down to the
           :meth:`vertex_iterator` method
 
         EXAMPLES:
@@ -11969,7 +11969,7 @@ class GenericGraph(GenericGraph_pyx):
 
         INPUT:
 
-        - ``*args`` and ``**kwds`` -- arguments to be passed down to the
+        - ``*args``, ``**kwds`` -- arguments to be passed down to the
           :meth:`edge_iterator` method
 
         EXAMPLES:

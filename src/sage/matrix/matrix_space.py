@@ -446,10 +446,10 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
     - ``base_ring`` -- a ring
 
-    - ``nrows`` or ``row_keys`` -- nonnegative integer; the number of rows, or
+    - ``nrows``, ``row_keys`` -- nonnegative integer; the number of rows, or
       a finite family of arbitrary objects that index the rows of the matrix
 
-    - ``ncols`` or ``column_keys`` -- nonnegative integer (default: ``nrows``);
+    - ``ncols``, ``column_keys`` -- nonnegative integer (default: ``nrows``);
       the number of columns, or a finite family of arbitrary objects that index
       the columns of the matrix
 

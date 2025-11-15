@@ -206,7 +206,7 @@ cdef class GenericSDPBackend:
 
         INPUT:
 
-        - ``coefficients`` an iterable with ``(c,v)`` pairs where ``c``
+        - ``coefficients`` -- an iterable with ``(c,v)`` pairs where ``c``
           is a variable index (integer) and ``v`` is a value (real
           value).
 

@@ -167,7 +167,7 @@ class PolyhedralComplex(GenericCellComplex):
       if ``True``, then the constructor checks whether the cells
       are face-to-face, and it raises a :exc:`ValueError` if they are not
 
-    - ``is_mutable`` and ``is_immutable`` -- boolean (default: ``True`` and
+    - ``is_mutable``, ``is_immutable`` -- boolean (default: ``True`` and
       ``False`` respectively); set ``is_mutable=False`` or ``is_immutable=True``
       to make this polyhedral complex immutable
 

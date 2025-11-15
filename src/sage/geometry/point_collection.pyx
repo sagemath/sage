@@ -790,14 +790,15 @@ cdef class PointCollection(SageObject):
         INPUT:
 
         - ``format`` -- (optional) if given, must be one of the strings
-            * "default" -- output one point per line with vertical alignment of
-              coordinates in text mode, same as "tuple" for LaTeX;
-            * "tuple" -- output ``tuple(self)`` with lattice information;
-            * "matrix" -- output :meth:`matrix` with lattice information;
-            * "column matrix" -- output :meth:`column_matrix` with lattice
-              information;
-            * "separated column matrix" -- same as "column matrix" for text
-              mode, for LaTeX separate columns by lines (not shown by jsMath).
+
+          * "default" -- output one point per line with vertical alignment of
+            coordinates in text mode, same as "tuple" for LaTeX;
+          * "tuple" -- output ``tuple(self)`` with lattice information;
+          * "matrix" -- output :meth:`matrix` with lattice information;
+          * "column matrix" -- output :meth:`column_matrix` with lattice
+            information;
+          * "separated column matrix" -- same as "column matrix" for text
+            mode, for LaTeX separate columns by lines (not shown by jsMath).
 
         OUTPUT:
 

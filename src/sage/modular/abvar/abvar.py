@@ -1181,7 +1181,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
         - ``other`` -- a finite subgroup or subvariety
-        - further named arguments, that are currently ignored
+        - ``kwds`` -- further named arguments, that are currently ignored
 
         OUTPUT: a pair (A, phi) with phi the quotient map from ``self`` to A
 

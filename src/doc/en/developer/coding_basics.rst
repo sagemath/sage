@@ -345,9 +345,25 @@ information. You can use the existing functions of Sage as templates.
 
    The INPUT block describes all arguments that the function accepts.
 
-   1. The type names should be descriptive, but do not have to represent the
-      exact Sage/Python types. For example, use "integer" for anything that
-      behaves like an integer, rather than "int" or "Integer".
+  1. Put type information first and foremost in the function signature
+     (Python / Cython annotations). Treat the signature as the single
+     authoritative place for ordinary type declarations. The INPUT
+     block must not restate obvious types already conveyed there.
+     Instead, use the INPUT block to document the *semantic constraints*
+     and any *non‑obvious* accepted forms:
+
+     - State mathematical or structural conditions: e.g. "prime integer",
+       "nonnegative", "an iterable of vertices", "a square matrix", etc.
+     - Mention coercion behavior, mutability expectations, or protocol
+       requirements ("must implement ``.degree()``", "anything with a
+       ``.parent()``").
+     - Only include explicit type names if they add information not present
+       in the annotation (e.g. symbolic vs numeric, sparse vs dense).
+
+     Avoid redundant phrases like "``n`` -- integer" when the signature reads
+     ``def f(n: int, ...)``; write instead "``n`` -- nonnegative" or
+     "``n`` -- number of iterations (>= 1)". Legacy docstrings may still show
+     the old style; new and updated code should follow this convention.
 
    2. Mention the default values of the input arguments when applicable.
 
@@ -393,6 +409,13 @@ information. You can use the existing functions of Sage as templates.
        this matrix acts irreducibly on each factor. The factors are guaranteed
        to be sorted in the same way as the corresponding factors of the
        characteristic polynomial.
+
+    As for INPUT, do not repeat trivial typing information in the OUTPUT
+    block. Treat the function's return annotation (or an obviously implied
+    type) as authoritative. Do NOT write just ``OUTPUT: integer`` or
+    ``OUTPUT: list`` when the signature already makes this clear (e.g.,
+    ``def rank(self) -> int``). Instead, explain the semantic meaning,
+    constraints, structure, and any subtleties.
 
 -  An **EXAMPLES** block for examples. This is not optional.
 

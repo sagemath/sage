@@ -189,8 +189,8 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
 
         INPUT:
 
-        - ``_parent`` : the parent space of harmonic cocycles.
-        - ``vec`` : a list of elements in the coefficient module.
+        - ``_parent`` -- the parent space of harmonic cocycles.
+        - ``vec`` -- a list of elements in the coefficient module.
 
         EXAMPLES::
 

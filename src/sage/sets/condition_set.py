@@ -34,7 +34,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
 
     - ``*predicates`` -- callables
 
-    - ``vars`` or ``names`` -- (default: inferred from ``predicates`` if any predicate is
+    - ``vars``, ``names`` -- (default: inferred from ``predicates`` if any predicate is
       an element of a :class:`~sage.symbolic.callable.CallableSymbolicExpressionRing_class`)
       variables or names of variables
 

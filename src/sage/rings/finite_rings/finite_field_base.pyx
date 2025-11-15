@@ -1350,10 +1350,10 @@ cdef class FiniteField(Field):
         - ``modulus`` -- a polynomial with coefficients in ``self``,
           or an integer
 
-        - ``name`` or ``names`` -- string; the name of the generator
+        - ``name``, ``names`` -- string; the name of the generator
           in the new extension
 
-        - ``latex_name`` or ``latex_names`` -- string; latex name of
+        - ``latex_name``, ``latex_names`` -- string; latex name of
           the generator in the new extension
 
         - ``map`` -- boolean (default: ``False``); if ``False``,

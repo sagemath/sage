@@ -228,6 +228,7 @@ docs = [
   "jupyter-sphinx",
   "python-dateutil",
   "sphinx",
+  "sphinx-autodoc-typehints",
   "sphinx-copybutton",
   "sphinx-inline-tabs",
 ]
