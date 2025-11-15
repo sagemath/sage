@@ -205,6 +205,7 @@ new_gen_from_integer = None
 
 
 cdef extern from *:
+    int likely(int) nogil
     int unlikely(int) nogil  # Defined by Cython
 
 cdef object numpy_long_interface = {'typestr': '=i4' if sizeof(long) == 4 else '=i8'}
@@ -430,11 +431,41 @@ cdef inline Integer move_integer_from_mpz(mpz_t x):
       ``x`` will not be cleared;
 
     - if ``sig_on()`` does not throw, :func:`move_integer_from_mpz` will call ``mpz_clear(x)``.
+
+    Note that this is in fact slightly slower than ::
+
+        cdef Integer x = <Integer>PY_NEW(Integer)
+        mpz_SOMETHING_MUTATE_X(x.value, ...)
+        return x
+
+    because with ``move_integer_from_mpz``, one need to allocate a new ``mpz_t``, even if
+    the ``x`` returned by ``PY_NEW`` already have an allocated buffer (see :func:`fast_tp_new`).
+    Only use this when interruptibility is required.
     """
     cdef Integer y = <Integer>PY_NEW(Integer)
     mpz_swap(y.value, x)
     mpz_clear(x)
     return y
+
+
+cdef Integer integer_add_python_int(Integer left, right):
+    """
+    Internal helper method. Return ``left + right``, where ``right`` must be an ``int``.
+    """
+    cdef Integer x
+    cdef int overflow
+    cdef long tmp
+    x = <Integer>PY_NEW(Integer)
+    tmp = PyLong_AsLongAndOverflow(right, &overflow)
+    if overflow == 0:
+        if tmp >= 0:
+            mpz_add_ui(x.value, left.value, tmp)
+        else:
+            mpz_sub_ui(x.value, left.value, -<unsigned long>tmp)
+    else:
+        mpz_set_pylong(x.value, right)
+        mpz_add(x.value, left.value, x.value)
+    return x
 
 
 cdef class Integer(sage.structure.element.EuclideanDomainElement):
@@ -1822,16 +1853,19 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: 1 + (-2/3)
             1/3
         """
+        # because of c_api_binop_methods, either left or right is Integer
         cdef Integer x
         cdef Rational y
-        if type(left) is type(right):
-            x = <Integer>PY_NEW(Integer)
-            mpz_add(x.value, (<Integer>left).value, (<Integer>right).value)
-            return x
+        if likely(type(left) is type(right)):
+            return (<Integer> left)._add_(right)
         elif type(right) is Rational:
             y = <Rational>PY_NEW(Rational)
             mpq_add_z(y.value, (<Rational>right).value, (<Integer>left).value)
             return y
+        elif type(right) is int:
+            return integer_add_python_int(<Integer>left, right)
+        elif type(left) is int:
+            return integer_add_python_int(<Integer>right, left)
 
         return coercion_model.bin_op(left, right, operator.add)
 
