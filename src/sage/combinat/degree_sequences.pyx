@@ -266,7 +266,6 @@ Checking the consistency of enumeration and test::
 # ****************************************************************************
 
 from cysignals.memory cimport check_calloc, sig_free
-from cysignals.signals cimport sig_on, sig_off
 
 
 cdef unsigned char * seq
