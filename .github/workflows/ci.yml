@@ -23,6 +23,7 @@ jobs:
         container:
           - fedora:41
           - fedora:42
+          - fedora:43
           - debian:forky
           - ghcr.io/void-linux/void-glibc-full
           - archlinux
