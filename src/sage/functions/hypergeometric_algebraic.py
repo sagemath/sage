@@ -562,6 +562,43 @@ class Parameters():
         return Parameters(top, bottom, add_one=False)
 
     def valuation_position(self, p, drift=0):
+        r"""
+        If `h_k`s denote the coefficients of the hypergeometric
+        series corresponding to these parameters, return the smallest
+        value of
+
+        .. MATH::
+
+            \text{val}_p(h_k) + k \cdot \text{drift}
+
+        and the first position where this minimum is reached.
+
+        INPUT:
+
+        - ``p`` -- a prime number
+
+        - ``drift`` -- a rational number (default: ``0``)
+
+        EXAMPLES::
+
+            sage: from sage.functions.hypergeometric_algebraic import Parameters
+            sage: pa = Parameters([1/5, 1/5, 1/5], [1/3, 3^10/5])
+            sage: pa.valuation_position(3)
+            (-9, 1)
+
+        When the relevant sequence is not bounded from below, the
+        tuple ``(-Infinity, None)`` is returned::
+
+            sage: pa.valuation_position(5)
+            (-Infinity, None)
+
+        An example with a drift::
+
+            sage: pa.valuation_position(3, drift=-7/5)
+            (-54/5, 7)
+        """
+        # We treat the case of parameters having p in the denominator
+        # When it happens, we remove the parameter and update the drift accordingly
         top = []
         for a in self.top:
             v = a.valuation(p)
@@ -576,47 +613,80 @@ class Parameters():
                 drift -= v
             else:
                 bottom.append(b)
+
+        # We check that we are inside the disk of convergence
         diff = len(top) - len(bottom)
         if ((p-1)*drift + diff, drift) < (0, 0):
             return -infinity, None
 
+        # Main part: computation of the valuation
+        # We use Christol's formula (see Lemma 3.1.10 of [CFVM2025])
+        # with modification in order to take the drift into account
         parameters = Parameters(top, bottom)
         order = IntegerModRing(parameters.d)(p).multiplicative_order()
-        q = 1
         valuation = position = 0
-        breaks = [(0, 0, 0)]
-        indices = None
+        breaks = None
+        indices = {}
         count = 0
+        q = 1
         while True:
+            # We take into account the contribution of V({k/p^r}, p^r).
+            # We represent the partial sum until r by the table new_breaks.
+            # Its entries are triples (valuation, position, parameter):
+            # - parameter is the parameter corresponding to a point of
+            #   discontinuity of the last summand V({k/p^r}, p^r)
+            # - valuation is the minimum of the partial sum on the
+            #   range starting at this discontinuity point (included)
+            #   and ending at the next one (excluded)
+            # - position is the first position the minimum is reached
+            # (The dictionary new_indices allows for finding rapidly
+            # an entry in new_breaks with a given parameter.)
+            # The table breaks and the dictionary indices correspond
+            # to the same data for r-1.
+
             pq = p * q
+
+            # We compute the point of discontinuity of V({k/p^r}, p^r)
+            # and store them in AB
+            # Each entry of AB has the form (x, dw, parameter) where:
+            # - x is the position of the discontinuity point
+            # - dw is the *opposite* of the jump of V({k/p^r}, p^r)
+            #   at this point
+            #   (taking the opposite is useful for sorting reasons)
+            # - parameter is the corresponding parameter
             A = [(1 + (-a) % pq, -1, a) for a in top]
             B = [(1 + (-b) % pq, 1, b) for b in bottom]
-            AB = [(0, 0, 0)] + sorted(A + B) + [(pq, None, None)]
+            AB = [(0, 0, 0)] + sorted(A + B) + [(pq, None, 0)]
+
+            # We compute new_breaks
             new_breaks = []
             new_indices = {}
             w = 0
             for i in range(len(AB) - 1):
-                x, dw, param = AB[i]
-                y, _, right = AB[i+1]
-                w -= dw
+                x, dw, param = AB[i]    # discontinuity point
+                y, _, right = AB[i+1]   # next discontinuity point
+                w -= dw   # the value of V({k/p^r}, p^r) on this interval
                 new_indices[param] = len(new_breaks)
+                if x == y:
+                    # Case of empty interval
+                    new_breaks.append((infinity, None, param))
+                    continue
+                # The variable complete stores whether the interval
+                # [x,y] covers all [0, p^(r-1)) modulo p^(r-1)
                 complete = (y - x >= q)
                 if complete and drift < 0:
                     interval = (y // q) - 1
+                    j = j0 = indices.get(right, 0)
                 else:
                     interval = x // q
-                if x == y:
-                    val = infinity
-                    pos = x
-                elif indices is None:
+                    j = j0 = indices.get(param, 0)
+                if breaks is None:
+                    # Case r = 1
                     val = drift * interval
                     pos = q * interval
                 else:
+                    # Case r > 1
                     val = infinity
-                    if complete and drift < 0:
-                        j = j0 = indices[right]
-                    else:
-                        j = j0 = indices[param]
                     while True:
                         valj, posj, paramj = breaks[j]
                         valj += drift * interval
@@ -625,26 +695,29 @@ class Parameters():
                             pos = posj + q * interval
                         j += 1
                         if j >= len(breaks):
-                            if right is None:
-                                break
                             j = 0
                             interval += 1
                         if (not complete and paramj == right) or (complete and j == j0):
                             break
                 new_breaks.append((val + w, pos, param))
-            breaks = new_breaks
-            indices = new_indices
-            minimum = min(breaks)
+
+            # Now comes the halting criterion
+            # I'm not sure at all about it and I actually suspect that it is wrong
+            # I will rework it
+            minimum = min(new_breaks)
             if drift >= 0 and q > parameters.bound:
-                # Not sure at all about this criterion
-                if minimum == breaks[0] and minimum[0] == valuation and minimum[1] == position:
+                if minimum == new_breaks[0] and minimum[0] == valuation and minimum[1] == position:
                     count += 1
                     if count >= order:
                         return valuation, position
                 else:
                     return -infinity, None
+
+            # We update the values for the next r
             q = pq
             drift = p*drift + diff
+            breaks = new_breaks
+            indices = new_indices
             valuation, position, _ = minimum
 
     def dwork_image(self, p):
@@ -1394,9 +1467,10 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
 
         # We check the parenthesis criterion for other c
         # and derive congruence classes with good reduction
-        goods = {c: None for c in range(d) if d.gcd(c) == 1}
+        cs = [c for c in range(d) if d.gcd(c) == 1]
+        goods = {c: None for c in cs}
         goods[1] = True
-        for c in goods.keys():
+        for c in cs:
             if goods[c] is not None:
                 continue
             cc = c
@@ -1528,14 +1602,14 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
                 return -infinity, None
             if difference < 0:
                 _, prec = self.parent()(T, B, self.scalar())._val_pos()
-                #This is the case when the p-adic valuation of the coefficients
-                #goes to +infinity, but if you remove all the coefficients with p
-                #in the denominator it goes to -infinity.
-                #The following claim is almost surely wrong.
+                # This is the case when the p-adic valuation of the coefficients
+                # goes to +infinity, but if you remove all the coefficients with p
+                # in the denominator it goes to -infinity.
+                # The following claim is almost surely wrong.
                 if prec is None:
                     prec = self._parameters.bound
-                #Here I just check the valuation of the first few coefficients.
-                #There should be something better using q_g:parenthesis.
+                # Here I just check the valuation of the first few coefficients.
+                # There should be something better using q_g:parenthesis.
                 L = self.change_ring(Qp(p, 1)).power_series(prec+1).coefficients()
                 val = + infinity
                 pos = 0
@@ -1570,11 +1644,17 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
             parameters = parameters.shift(s).dwork_image(p)
         return val, pos
 
+    def dwork_image(self):
+        parameters = self._parameters.dwork_image(self._p)
+        return self.parent()(parameters, scalar=self._scalar)
+
     def log_radius_of_convergence(self):
         p = self._p
         step = self._e / (p - 1)
         log_radius = 0
         for a in self._parameters.top:
+            if a in ZZ and a <= 0:
+                return infinity
             v = a.valuation(p)
             if v < 0:
                 log_radius += v
