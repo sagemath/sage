@@ -4861,6 +4861,23 @@ cdef class NumberFieldElement_absolute(NumberFieldElement):
         z = sage.rings.rational.Rational(0)
         return v + [z]*(n - len(v))
 
+    def _sage_input_(self, sib, coerced):
+        """
+        TESTS::
+
+            sage: R.<x> = QQ[]
+            sage: K.<a> = NumberField(x^3 + 2)
+            sage: sage_input(a)
+            R.<x> = QQ[]
+            NumberField(x^3 + 2, 'a')([QQ(0), QQ(1), QQ(0)])
+            sage: sage_input(I)
+            I
+        """
+        from sage.rings.imaginary_unit import I
+        if self is I:
+            return sib.name('I')
+        return sib(self.parent())(self.list())
+
     def lift(self, var='x'):
         r"""
         Return an element of `\QQ[x]`, where this number field element

@@ -19,8 +19,8 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.rational_field import QQ
 from sage.categories.algebras import Algebras
 from sage.categories.rings import Rings
@@ -54,10 +54,11 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
             True
         """
         if q is None:
-            q = LaurentPolynomialRing(QQ, 'q').gen()
+            q = YokonumaHeckeAlgebra._default_q_param
         if R is None:
             R = q.parent()
-        q = R(q)
+        else:
+            q = R(q)
         if R not in Rings().Commutative():
             raise TypeError("base ring must be a commutative ring")
         if n not in ZZ:
@@ -65,6 +66,41 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
             n = CartanType(n)
             return YokonumaHeckeAlgebraWeyl(d, n, q, R)
         return YokonumaHeckeAlgebraGL(d, n, q, R)
+
+    @lazy_class_attribute
+    def _default_q_param(cls):
+        """
+        The default ``q`` parameter to ``YokonumaHecke`` constructor if none is provided.
+        Only computed on first usage.
+
+        TESTS::
+
+            sage: algebras.YokonumaHecke(5, 3).q() is algebras.YokonumaHecke._default_q_param
+            True
+        """
+        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+        return LaurentPolynomialRing(QQ, 'q').gen()
+
+    def _sage_input_(self, sib, coerced):
+        """
+        TESTS::
+
+            sage: sage_input(algebras.YokonumaHecke(5, 3))
+            algebras.YokonumaHecke(5, 3)
+            sage: sage_input(algebras.YokonumaHecke(5, 3, LaurentPolynomialRing(QQ[I], 'q').0), verify=True)
+            # Verified
+            ...
+            sage: sage_input(algebras.YokonumaHecke(5, 3, LaurentPolynomialRing(QQ[I], 'q').0), verify=True)
+            # Verified
+            ...
+        """
+        if self.base_ring() is self._q.parent():
+            if self._q is YokonumaHeckeAlgebra._default_q_param:
+                return sib.name('algebras.YokonumaHecke')(self._d, self._n)
+            else:
+                return sib.name('algebras.YokonumaHecke')(self._d, self._n, self._q)
+        else:
+            return sib.name('algebras.YokonumaHecke')(self._d, self._n, self._q, self.base_ring())
 
     def __init__(self, d, W, q, R, indices, category=None):
         """
