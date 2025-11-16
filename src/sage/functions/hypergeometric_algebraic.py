@@ -624,7 +624,7 @@ class Parameters():
         # with modification in order to take the drift into account
         parameters = Parameters(top, bottom)
         order = IntegerModRing(parameters.d)(p).multiplicative_order()
-        valuation = position = 0
+        valuation = position = ZZ(0)
         breaks = None
         indices = {}
         count = 0
@@ -662,6 +662,7 @@ class Parameters():
             new_breaks = []
             new_indices = {}
             w = 0
+            cont = True
             for i in range(len(AB) - 1):
                 x, dw, param = AB[i]    # discontinuity point
                 y, _, right = AB[i+1]   # next discontinuity point
@@ -680,6 +681,8 @@ class Parameters():
                 else:
                     interval = x // q
                     j = j0 = indices.get(param, 0)
+                if (interval + 1) * drift + w < 0:
+                    cont = False
                 if breaks is None:
                     # Case r = 1
                     val = drift * interval
@@ -701,15 +704,13 @@ class Parameters():
                             break
                 new_breaks.append((val + w, pos, param))
 
-            # Now comes the halting criterion
-            # I'm not sure at all about it and I actually suspect that it is wrong
-            # I will rework it
+            # The halting criterion
             minimum = min(new_breaks)
-            if drift >= 0 and q > parameters.bound:
-                if minimum == new_breaks[0] and minimum[0] == valuation and minimum[1] == position:
-                    count += 1
+            if drift >= 0 and q > parameters.bound and minimum == new_breaks[0]:
+                if cont:
                     if count >= order:
                         return valuation, position
+                    count += 1
                 else:
                     return -infinity, None
 
