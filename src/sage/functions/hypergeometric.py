@@ -4,6 +4,10 @@ Hypergeometric functions
 This module implements manipulation of infinite hypergeometric series
 represented in standard parametric form (as `\,_pF_q` functions).
 
+For a more algebraic treatment of hypergeometric functions
+(including reduction modulo primes and `p`-adic properties),
+we refer to :mod:`sage.functions.hypergeometric_algebraic`.
+
 AUTHORS:
 
 - Fredrik Johansson (2010): initial version
