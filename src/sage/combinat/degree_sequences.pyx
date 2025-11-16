@@ -253,15 +253,6 @@ Checking the consistency of enumeration and test::
     sage: DS = DegreeSequences(6)
     sage: all(seq in DS for seq in DS)
     True
-
-.. WARNING::
-
-    For the moment, iterating over all degree sequences involves building the
-    list of them first, then iterate on this list.  This is obviously bad,
-    as it requires uselessly a **lot** of memory for large values of `n`.
-
-    This should be changed. Updating the code does not require more
-    than a couple of minutes.
 """
 
 # ****************************************************************************
@@ -279,7 +270,6 @@ from cysignals.signals cimport sig_on, sig_off
 
 
 cdef unsigned char * seq
-cdef list sequences
 
 
 class DegreeSequences:
@@ -414,38 +404,11 @@ class DegreeSequences:
         sig_free(seq)
 
 
-cdef init(int n):
+cdef build_current_seq():
     """
-    Initialize the memory and starts the enumeration algorithm.
-    """
-    global seq
-    global N
-    global sequences
-
-    if n == 0:
-        return [[]]
-    elif n == 1:
-        return [[0]]
-
-    seq = <unsigned char *>check_calloc(n + 1, sizeof(unsigned char))
-
-    # We begin with one vertex of degree 0
-    seq[0] = 1
-
-    N = n
-    sequences = []
-    enum(1, 0)
-    sig_free(seq)
-    return sequences
-
-cdef inline add_seq():
-    """
-    This function is called whenever a sequence is found.
-
     Build the degree sequence corresponding to the current state of the
-    algorithm and adds it to the sequences list.
+    algorithm.
     """
-    global sequences
     global N
     global seq
 
@@ -456,10 +419,39 @@ cdef inline add_seq():
         for 0 <= j < seq[i]:
             s.append(i)
 
-    sequences.append(s)
+    return s
 
 
-cdef void enum(int k, int M) noexcept:
+def init(int n):
+    """
+    Initialize the memory and starts the enumeration algorithm.
+    
+    This is a generator that yields degree sequences one at a time.
+    """
+    global seq
+    global N
+
+    if n == 0:
+        yield []
+        return
+    elif n == 1:
+        yield [0]
+        return
+
+    seq = <unsigned char *>check_calloc(n + 1, sizeof(unsigned char))
+
+    # We begin with one vertex of degree 0
+    seq[0] = 1
+
+    N = n
+    
+    try:
+        yield from enum(1, 0)
+    finally:
+        sig_free(seq)
+
+
+def enum(int k, int M):
     r"""
     Main function; for an explanation of the algorithm please refer to the
     :mod:`sage.combinat.degree_sequences` documentation.
@@ -468,6 +460,8 @@ cdef void enum(int k, int M) noexcept:
 
     - ``k`` -- depth of the partial degree sequence
     - ``M`` -- value of a maximum element in the partial degree sequence
+    
+    This is a generator that yields degree sequences.
     """
     cdef int i, j
     global seq
@@ -479,10 +473,8 @@ cdef void enum(int k, int M) noexcept:
 
     # Have we found a new degree sequence ? End of recursion !
     if k == N:
-        add_seq()
+        yield build_current_seq()
         return
-
-    sig_on()
 
     #############################################
     # Creating vertices of Vertices of degree M #
@@ -493,7 +485,7 @@ cdef void enum(int k, int M) noexcept:
     if M == 0:
 
         seq[0] += 1
-        enum(k + 1, M)
+        yield from enum(k + 1, M)
         seq[0] -= 1
 
     # We need not automatically increase the degree at each step. In this case,
@@ -504,7 +496,7 @@ cdef void enum(int k, int M) noexcept:
         seq[M] += M + 1
         seq[M - 1] -= M
 
-        enum(k + 1, M)
+        yield from enum(k + 1, M)
 
         seq[M] -= M + 1
         seq[M - 1] += M
@@ -550,7 +542,7 @@ cdef void enum(int k, int M) noexcept:
 
                 new_vertex = taken + i + j
                 seq[new_vertex] += 1
-                enum(k+1, new_vertex)
+                yield from enum(k+1, new_vertex)
                 seq[new_vertex] -= 1
 
                 seq[current_box-1] += j
@@ -574,7 +566,7 @@ cdef void enum(int k, int M) noexcept:
         seq[0] -= i
         seq[taken+i] += 1
 
-        enum(k+1, taken+i)
+        yield from enum(k+1, taken+i)
 
         seq[taken+i] -= 1
         seq[1] -= i
@@ -583,5 +575,3 @@ cdef void enum(int k, int M) noexcept:
     # Shift everything back to normal ! ( cell N is always equal to 0)
     for 1 <= i < N:
         seq[i] = seq[i+1]
-
-    sig_off()
