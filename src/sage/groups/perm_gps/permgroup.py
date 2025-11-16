@@ -1582,7 +1582,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         Counting the number of "connected" permutation groups of degree `n`::
 
-            sage: seq = [sum(1 for G in SymmetricGroup(n).conjugacy_classes_subgroups() if len(G.disjoint_direct_product_decomposition()) == 1) for n in range(1,8)]; seq
+            sage: seq = [sum(1 for G in SymmetricGroup(n).conjugacy_classes_subgroups() if len(G.disjoint_direct_product_decomposition()) == 1) for n in range(1,8)]; seq  # optional - internet
             [1, 1, 2, 6, 6, 27, 20]
             sage: oeis(seq) # optional -- internet
             0: A005226: Number of atomic species of degree n; also number of connected permutation groups of degree n.
@@ -3162,7 +3162,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: A = AlternatingGroup(5).as_finitely_presented_group().gap()
             sage: ctab = A.CosetTable(A.Subgroup([]))
             sage: gen_ls = gap.List(ctab, gap.PermList)
-            sage: PermutationGroup(gen_ls).is_isomorphic(AlternatingGroup(5))
+            sage: PermutationGroup(gen_ls).is_isomorphic(AlternatingGroup(5))  # optional - internet
             True
 
         AUTHORS:
@@ -3252,7 +3252,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = SymmetricGroup(5)
             sage: H = CyclicPermutationGroup(5)
             sage: C = G.commutator(H)
-            sage: C.is_isomorphic(AlternatingGroup(5))
+            sage: C.is_isomorphic(AlternatingGroup(5))  # optional - internet
             True
 
         An abelian group will have a trivial commutator.  ::
@@ -4925,6 +4925,8 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PSL(2,7)
             sage: D = G.direct_product(G)
             sage: H = D[0]
+
+            sage: # optional - internet
             sage: NH = H.normal_subgroups()
             sage: len(NH)
             4

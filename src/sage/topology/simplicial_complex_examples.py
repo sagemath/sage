@@ -583,7 +583,7 @@ def QuaternionicProjectivePlane():
 
     Checking its automorphism group::
 
-        sage: HP2.automorphism_group().is_isomorphic(AlternatingGroup(5))               # needs sage.groups
+        sage: HP2.automorphism_group().is_isomorphic(AlternatingGroup(5))               # needs sage.groups  # optional - internet
         True
     """
     from sage.groups.perm_gps.permgroup import PermutationGroup

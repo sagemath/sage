@@ -752,7 +752,7 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True) noexcept:
         sage: G = graphs.HeawoodGraph()
         sage: p = G.bipartite_sets()
         sage: A = G.automorphism_group(partition=[list(p[0]), list(p[1])])
-        sage: automorphism_group(G, partition=p).is_isomorphic(A)
+        sage: automorphism_group(G, partition=p).is_isomorphic(A)  # optional - internet
         True
 
         sage: G = graphs.CompleteMultipartiteGraph([5, 7, 11])

@@ -24700,7 +24700,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: A5 = AlternatingGroup(5)
             sage: Z2 = CyclicPermutationGroup(2)
             sage: H = A5.direct_product(Z2)[0] #see documentation for direct_product to explain the [0]
-            sage: G.is_isomorphic(H)
+            sage: G.is_isomorphic(H)  # optional - internet
             True
 
         Multigraphs::

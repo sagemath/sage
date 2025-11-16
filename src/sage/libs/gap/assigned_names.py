@@ -124,7 +124,7 @@ def list_functions():
         sage: 'SubdirectProduct' in FUNCTIONS    # indirect doctest
         True
     """
-    fnames = set(GLOBALS).difference(KEYWORDS)
+    fnames = set(GLOBALS) - {*KEYWORDS, 'AtlasOfGroupRepresentationsInfo'}  # accessing the AtlasOfGroupRepresentationsInfo global variable requires internet access and will timeout if the server is down
     documented = Filtered(list(fnames), IsDocumentedWord)
     return tuple(sorted(documented.sage()))
 
