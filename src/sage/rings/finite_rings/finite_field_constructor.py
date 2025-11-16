@@ -174,6 +174,7 @@ AUTHORS:
 # ****************************************************************************
 
 from collections import defaultdict
+from typing import Optional
 from sage.structure.category_object import normalize_names, certify_names
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.integer import Integer
@@ -227,7 +228,7 @@ class FiniteFieldFactory(UniqueFactory):
       ``modulus="primitive"`` to get a primitive polynomial.  You
       may not specify a modulus if you do not specify a variable name.
 
-    - ``impl`` -- (optional) a string specifying the implementation of
+    - ``implementation`` -- (optional) a string specifying the implementation of
       the finite field. Possible values are:
 
       - ``'modn'`` -- ring of integers modulo `p` (only for prime fields)
@@ -241,9 +242,12 @@ class FiniteFieldFactory(UniqueFactory):
         for extension fields)
 
     - ``elem_cache`` -- (default: order < 500) cache all elements to
-      avoid creation time; ignored unless ``impl='givaro'``
+      avoid creation time; ignored unless ``implementation='givaro'``
 
-    - ``repr`` -- (default: ``'poly'``) ignored unless ``impl='givaro'``;
+    - ``impl`` -- (deprecated, use ``implementation`` instead) for backwards
+      compatibility, accepts the same values as ``implementation``
+
+    - ``repr`` -- (default: ``'poly'``) ignored unless ``implementation='givaro'``;
       controls the way elements are printed to the user:
 
       - 'log': repr is
@@ -465,9 +469,9 @@ class FiniteFieldFactory(UniqueFactory):
 
     Check that :issue:`16934` has been fixed::
 
-        sage: k1.<a> = GF(17^14, impl='pari')
+        sage: k1.<a> = GF(17^14, implementation='pari')
         sage: _ = a/2
-        sage: k2.<a> = GF(17^14, impl='pari')
+        sage: k2.<a> = GF(17^14, implementation='pari')
         sage: k1 is k2
         True
 
@@ -511,8 +515,8 @@ class FiniteFieldFactory(UniqueFactory):
         super().__init__(*args, **kwds)
 
     def create_key_and_extra_args(self, order, name=None, modulus=None, names=None,
-                                  impl=None, proof=None,
-                                  check_prime=True, check_irreducible=True,
+                                  implementation: Optional[str] = None, proof=None,
+                                  check_prime: bool = True, check_irreducible: bool = True,
                                   prefix=None, repr=None, elem_cache=None,
                                   **kwds):
         """
@@ -537,21 +541,21 @@ class FiniteFieldFactory(UniqueFactory):
         Moreover, ``repr`` and ``elem_cache`` are ignored when not
         using givaro::
 
-            sage: GF.create_key_and_extra_args(16, 'a', impl='ntl', repr='poly')        # needs sage.libs.ntl
+            sage: GF.create_key_and_extra_args(16, 'a', implementation='ntl', repr='poly')        # needs sage.libs.ntl
             ((16, ('a',), x^4 + x + 1, 'ntl', 2, 4, True, None, None, None, True, True), {})
-            sage: GF.create_key_and_extra_args(16, 'a', impl='ntl', elem_cache=False)   # needs sage.libs.ntl
+            sage: GF.create_key_and_extra_args(16, 'a', implementation='ntl', elem_cache=False)   # needs sage.libs.ntl
             ((16, ('a',), x^4 + x + 1, 'ntl', 2, 4, True, None, None, None, True, True), {})
-            sage: GF(16, impl='ntl') is GF(16, impl='ntl', repr='foo')                  # needs sage.libs.ntl
+            sage: GF(16, implementation='ntl') is GF(16, implementation='ntl', repr='foo')                  # needs sage.libs.ntl
             True
 
         We handle extra arguments for the givaro finite field and
         create unique objects for their defaults::
 
-            sage: GF(25, impl='givaro') is GF(25, impl='givaro', repr='poly')           # needs sage.libs.linbox
+            sage: GF(25, implementation='givaro') is GF(25, implementation='givaro', repr='poly')           # needs sage.libs.linbox
             True
-            sage: GF(25, impl='givaro') is GF(25, impl='givaro', elem_cache=True)       # needs sage.libs.linbox
+            sage: GF(25, implementation='givaro') is GF(25, implementation='givaro', elem_cache=True)       # needs sage.libs.linbox
             True
-            sage: GF(625, impl='givaro') is GF(625, impl='givaro', elem_cache=False)    # needs sage.libs.linbox
+            sage: GF(625, implementation='givaro') is GF(625, implementation='givaro', elem_cache=False)    # needs sage.libs.linbox
             True
 
         We explicitly take ``structure``, ``implementation`` and ``prec`` attributes
@@ -559,6 +563,16 @@ class FiniteFieldFactory(UniqueFactory):
         but we ignore them as they are not used, see :issue:`21433`::
 
             sage: GF.create_key_and_extra_args(9, 'a', structure=None)                  # needs sage.libs.linbox
+            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
+
+        The ``implementation`` parameter is preferred, but ``impl`` is accepted
+        for backwards compatibility::
+
+            sage: GF.create_key_and_extra_args(9, 'a', implementation='givaro')          # needs sage.libs.linbox
+            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
+            sage: GF.create_key_and_extra_args(9, 'a', impl='givaro')                   # needs sage.libs.linbox
+            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
+            sage: GF.create_key_and_extra_args(9, 'a', implementation='givaro', impl='ntl')  # needs sage.libs.linbox
             ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
 
         TESTS::
@@ -637,10 +651,19 @@ class FiniteFieldFactory(UniqueFactory):
             Finite Field in aa of size 7^2
         """
         for key, val in kwds.items():
-            if key not in ['structure', 'implementation', 'prec', 'embedding', 'latex_names']:
+            if key not in ['structure', 'implementation', 'prec', 'embedding', 'latex_names', 'impl']:
                 raise TypeError("create_key_and_extra_args() got an unexpected keyword argument '%s'" % key)
             if not (val is None or isinstance(val, list) and all(c is None for c in val)):
                 raise NotImplementedError("ring extension with prescribed %s is not implemented" % key)
+
+        # Accept both 'implementation' (preferred) and 'impl' (for backwards compatibility)
+        # Priority: 'implementation' takes precedence over 'impl' if both are provided
+        impl = kwds.get('impl')
+        if implementation is not None:
+            impl = implementation
+        elif impl is None:
+            # Keep impl as None, will be set to default later
+            pass
 
         from sage.structure.proof.proof import WithProof
         from sage.structure.proof.all import arithmetic
@@ -752,37 +775,37 @@ class FiniteFieldFactory(UniqueFactory):
 
         We try to create finite fields with various implementations::
 
-            sage: k = GF(2, impl='modn')
-            sage: k = GF(2, impl='givaro')                                              # needs sage.libs.linbox
-            sage: k = GF(2, impl='ntl')                                                 # needs sage.libs.ntl
-            sage: k = GF(2, impl='pari')
+            sage: k = GF(2, implementation='modn')
+            sage: k = GF(2, implementation='givaro')                                              # needs sage.libs.linbox
+            sage: k = GF(2, implementation='ntl')                                                 # needs sage.libs.ntl
+            sage: k = GF(2, implementation='pari')
             Traceback (most recent call last):
             ...
             ValueError: the degree must be at least 2
-            sage: k = GF(2, impl='supercalifragilisticexpialidocious')
+            sage: k = GF(2, implementation='supercalifragilisticexpialidocious')
             Traceback (most recent call last):
             ...
             ValueError: no such finite field implementation: 'supercalifragilisticexpialidocious'
-            sage: k.<a> = GF(2^15, impl='modn')
+            sage: k.<a> = GF(2^15, implementation='modn')
             Traceback (most recent call last):
             ...
             ValueError: the 'modn' implementation requires a prime order
-            sage: k.<a> = GF(2^15, impl='givaro')                                       # needs sage.libs.linbox
-            sage: k.<a> = GF(2^15, impl='ntl')                                          # needs sage.libs.ntl
-            sage: k.<a> = GF(2^15, impl='pari')
-            sage: k.<a> = GF(3^60, impl='modn')
+            sage: k.<a> = GF(2^15, implementation='givaro')                                       # needs sage.libs.linbox
+            sage: k.<a> = GF(2^15, implementation='ntl')                                          # needs sage.libs.ntl
+            sage: k.<a> = GF(2^15, implementation='pari')
+            sage: k.<a> = GF(3^60, implementation='modn')
             Traceback (most recent call last):
             ...
             ValueError: the 'modn' implementation requires a prime order
-            sage: k.<a> = GF(3^60, impl='givaro')                                       # needs sage.libs.linbox
+            sage: k.<a> = GF(3^60, implementation='givaro')                                       # needs sage.libs.linbox
             Traceback (most recent call last):
             ...
             ValueError: q must be < 2^16
-            sage: k.<a> = GF(3^60, impl='ntl')                                          # needs sage.libs.ntl
+            sage: k.<a> = GF(3^60, implementation='ntl')                                          # needs sage.libs.ntl
             Traceback (most recent call last):
             ...
             ValueError: q must be a 2-power
-            sage: k.<a> = GF(3^60, impl='pari')
+            sage: k.<a> = GF(3^60, implementation='pari')
         """
         # IMPORTANT!  If you add a new class to the list of classes
         # that get cached by this factor object, then you *must* add
