@@ -934,29 +934,6 @@ class EnumeratedSets(CategoryWithAxiom):
 
         some_elements = _some_elements_from_iterator
 
-        def random_element(self):
-            """
-            Return a random element in ``self``.
-
-            Unless otherwise stated, and for finite enumerated sets,
-            the probability is uniform.
-
-            This is a generic implementation from the category
-            ``EnumeratedSets()``. It raises a :exc:`NotImplementedError`
-            since one does not know whether the set is finite.
-
-            EXAMPLES::
-
-                sage: class broken(UniqueRepresentation, Parent):
-                ....:  def __init__(self):
-                ....:      Parent.__init__(self, category = EnumeratedSets())
-                sage: broken().random_element()
-                Traceback (most recent call last):
-                ...
-                NotImplementedError: unknown cardinality
-            """
-            raise NotImplementedError("unknown cardinality")
-
         def map(self, f, name=None, *, is_injective=True):
             r"""
             Return the image `\{f(x) | x \in \text{self}\}` of this
