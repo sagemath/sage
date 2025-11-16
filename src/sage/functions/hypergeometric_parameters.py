@@ -487,15 +487,15 @@ class HypergeometricParameters():
 
     def valuation_position(self, p, drift=0):
         r"""
-        If `h_k`s denote the coefficients of the hypergeometric
-        series corresponding to these parameters, return the smallest
-        value of
+        If the `h_k`s are the coefficients of the hypergeometric
+        series corresponding to these parameters and `\delta` is
+        the drift, return the smallest value of
 
         .. MATH::
 
-            \text{val}_p(h_k) + k \cdot \text{drift}
+            \text{val}_p(h_k) + \delta k
 
-        and the first position where this minimum is reached.
+        and the first index `k` where this minimum is reached.
 
         INPUT:
 
