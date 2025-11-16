@@ -1,5 +1,5 @@
 r"""
-Algebraic properties of hypergeometric functions
+Hypergeometric functions over arbitrary rings
 
 [Tutorial]
 
@@ -688,7 +688,16 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
             sage: g = 5*f
             sage: g.valuation(5)
             1
+
+        TESTS::
+
+            sage: g.valuation(9)
+            Traceback (most recent call last):
+            ...
+            ValueError: p must be a prime number
         """
+        if not p.is_prime():
+            raise ValueError("p must be a prime number")
         val, _ = self._parameters.valuation_position(p)
         return val + self._scalar.valuation(p)
 

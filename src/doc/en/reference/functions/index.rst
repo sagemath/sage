@@ -21,6 +21,7 @@ Built-in Functions
    sage/functions/other
    sage/functions/special
    sage/functions/hypergeometric
+   sage/functions/hypergeometric_algebraic
    sage/functions/jacobi
    sage/functions/airy
    sage/functions/bessel
