@@ -540,7 +540,8 @@ class HypergeometricParameters():
 
         # We check that we are inside the disk of convergence
         diff = len(top) - len(bottom)
-        if ((p-1)*drift + diff, drift) < (0, 0):
+        growth = (p-1)*drift + diff
+        if (growth, drift) < (0, 0):
             return -infinity, None
 
         # Main part: computation of the valuation
@@ -605,7 +606,7 @@ class HypergeometricParameters():
                 else:
                     interval = x // q
                     j = j0 = indices.get(param, 0)
-                if (interval + 1) * drift + w < 0:
+                if growth == 0 and (interval+1)*drift + w < 0:
                     cont = False
                 if breaks is None:
                     # Case r = 1
@@ -630,7 +631,7 @@ class HypergeometricParameters():
 
             # The halting criterion
             minimum = min(new_breaks)
-            if drift >= 0 and q > parameters.bound and minimum == new_breaks[0]:
+            if drift >= 0 and q > parameters.bound:
                 if cont:
                     if count >= order:
                         return valuation, position
