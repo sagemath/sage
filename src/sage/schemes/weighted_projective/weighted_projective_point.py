@@ -128,6 +128,10 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
     def _repr_(self) -> str:
         return "({})".format(" : ".join(map(repr, self._coords)))
 
+    def _latex_(self) -> str:
+        from sage.misc.latex import latex
+        return r"\left({}\right)".format(" : ".join(map(latex, self._coords)))
+
     def _richcmp_(self, other, op) -> bool:
         """
         Test the weighted projective equality of two points.
@@ -171,7 +175,6 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
         if op in (op_EQ, op_NE):
             weights = space._weights
             # (other[i] / self[i])^(1 / weight[i]) all equal
-            prod_weights = prod(weights)
             # check weights
             if (weights == other.codomain()._weights) != (op == op_EQ):
                 return False
@@ -184,6 +187,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
                 return False
 
             # check nonzeros
+            prod_weights = prod(weights)
             ratio = [(c1 / c2) ** (prod_weights // w)
                      for c1, c2, w in zip(self._coords, other._coords, weights)
                      if c1 != 0 and c2 != 0]

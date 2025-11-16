@@ -7,9 +7,9 @@ AUTHORS:
 """
 
 # *****************************************************************************
-#        Copyright (C) 2024 Gareth Ma <grhkm21@gmail.com>
-#        Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #        Copyright (C) 2006 William Stein <wstein@gmail.com>
+#        Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
+#        Copyright (C) 2024 Gareth Ma <grhkm21@gmail.com>
 #
 #   Distributed under the terms of the GNU General Public License (GPL)
 #   as published by the Free Software Foundation; either version 2 of
