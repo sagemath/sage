@@ -165,6 +165,12 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
             False
             sage: P >= Q
             False
+
+        In the current implementation, points over different base rings
+        are never equal (this may change later)::
+
+            sage: WP(2, 3, 4) == WeightedProjectiveSpace([3, 4, 5], ZZ)(2, 3, 4)
+            False
         """
         assert isinstance(other, SchemeMorphism_point)
 
