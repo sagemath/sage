@@ -109,20 +109,14 @@ from sage.structure.unique_representation import CachedRepresentation
 
 class PermutationGroup_unique(CachedRepresentation, PermutationGroup_generic):
     """
-    .. TODO::
-
-        Fix the broken hash. ::
-
-            sage: G = SymmetricGroup(6)
-            sage: G3 = G.subgroup([G((1,2,3,4,5,6)),G((1,2))])
-            sage: hash(G) == hash(G3)  # todo: Should be True!
-            False
-
     TESTS::
 
         sage: G = SymmetricGroup(6)
         sage: G3 = G.subgroup([G((1,2,3,4,5,6)),G((1,2))])
         sage: G == G3
+        True
+
+        sage: hash(G) == hash(G3)
         True
     """
     @weak_cached_function

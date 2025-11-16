@@ -751,6 +751,22 @@ class PermutationGroup_generic(FiniteGroup):
         g = ', '.join([g._gap_cycle_string() for g in self.gens()])
         return 'PermutationGroup<%s | %s>' % (self.degree(), g)
 
+    def __hash__(self):
+        r"""
+        Return a hash value for ``self``.
+
+        TESTS::
+
+            sage: G = PermutationGroup([(1,2,3), (1,3)])
+            sage: G == SymmetricGroup(3)
+            True
+            sage: G.gens() == SymmetricGroup(3).gens()
+            False
+            sage: G in set([SymmetricGroup(3)])
+            True
+        """
+        return hash(self.cardinality())
+
     def __richcmp__(self, right, op):
         """
         Compare ``self`` and ``right``.
@@ -2300,7 +2316,8 @@ class PermutationGroup_generic(FiniteGroup):
         # Compute the order.
         return Integer(len(unique)).factorial()
 
-    def order(self):
+    @cached_method
+    def cardinality(self):
         """
         Return the number of elements of this group.
 
@@ -2318,7 +2335,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G.order()
             1
 
-        :meth:`cardinality` is just an alias::
+        :meth:`cardinality` is an alias::
 
             sage: PermutationGroup([(1,2,3)]).cardinality()
             3
@@ -2335,8 +2352,6 @@ class PermutationGroup_generic(FiniteGroup):
             return subgroup_order
 
         return Integer(self.gap().Size())
-
-    cardinality = order
 
     def random_element(self):
         """
