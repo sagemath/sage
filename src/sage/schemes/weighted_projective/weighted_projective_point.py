@@ -132,7 +132,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
         from sage.misc.latex import latex
         return r"\left({}\right)".format(" : ".join(map(latex, self._coords)))
 
-    def _richcmp_(self, other, op) -> bool:
+    def _richcmp_(self, other: SchemeMorphism_point, op) -> bool:
         """
         Test the weighted projective equality of two points.
 
@@ -172,8 +172,6 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
             sage: WP(2, 3, 4) == WeightedProjectiveSpace([3, 4, 5], ZZ)(2, 3, 4)
             False
         """
-        assert isinstance(other, SchemeMorphism_point)
-
         space = self.codomain()
         if space is not other.codomain():
             return op == op_NE

@@ -348,7 +348,8 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         - ``R`` -- commutative ring or morphism
 
-        OUTPUT: weighted projective space over ``R``
+        OUTPUT: weighted projective space over ``R``.
+        If ``R`` is a morphism, return a weighted projective space over its codomain.
 
         .. NOTE::
 
