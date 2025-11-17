@@ -21,17 +21,17 @@ With the object ``DegreeSequences(n)``, one can:
 
     sage: for seq in DegreeSequences(4):
     ....:     print(seq)
-    [0, 0, 0, 0]
-    [1, 1, 0, 0]
-    [2, 1, 1, 0]
-    [3, 1, 1, 1]
-    [1, 1, 1, 1]
-    [2, 2, 1, 1]
-    [2, 2, 2, 0]
-    [3, 2, 2, 1]
-    [2, 2, 2, 2]
-    [3, 3, 2, 2]
-    [3, 3, 3, 3]
+    (0, 0, 0, 0)
+    (1, 1, 0, 0)
+    (2, 1, 1, 0)
+    (3, 1, 1, 1)
+    (1, 1, 1, 1)
+    (2, 2, 1, 1)
+    (2, 2, 2, 0)
+    (3, 2, 2, 1)
+    (2, 2, 2, 2)
+    (3, 3, 2, 2)
+    (3, 3, 3, 3)
 
 .. NOTE::
 
@@ -323,13 +323,13 @@ class DegreeSequences:
         :issue:`21824`::
 
             sage: [d for d in DegreeSequences(0)]
-            [[]]
+            [()]
             sage: [d for d in DegreeSequences(1)]
-            [[0]]
+            [(0,)]
             sage: [d for d in DegreeSequences(3)]
-            [[0, 0, 0], [1, 1, 0], [2, 1, 1], [2, 2, 2]]
+            [(0, 0, 0), (1, 1, 0), (2, 1, 1), (2, 2, 2)]
             sage: [d for d in DegreeSequences(1)]
-            [[0]]
+            [(0,)]
         """
         cdef int n = self._n
         if len(seq) != n:
@@ -418,7 +418,7 @@ cdef build_current_seq():
         for 0 <= j < seq[i]:
             s.append(i)
 
-    return s
+    return tuple(s)
 
 
 def init(int n):
@@ -431,10 +431,10 @@ def init(int n):
     global N
 
     if n == 0:
-        yield []
+        yield ()
         return
     elif n == 1:
-        yield [0]
+        yield (0,)
         return
 
     seq = <unsigned char *>check_calloc(n + 1, sizeof(unsigned char))
