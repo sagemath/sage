@@ -1,5 +1,5 @@
 r"""
-Algebraic properties of hypergeometric functions.
+Hypergeometric functions over arbitrary rings
 
 [Tutorial]
 
@@ -23,20 +23,18 @@ import operator
 
 from sage.misc.latex import latex
 from sage.misc.latex import latex_variable_name
-from sage.misc.cachefunc import cached_method
 
 from sage.misc.misc_c import prod
 from sage.misc.functional import log
-from sage.functions.other import floor, ceil
+from sage.functions.other import ceil
+from sage.functions.hypergeometric import hypergeometric
 from sage.arith.misc import gcd
-from sage.arith.functions import lcm
 from sage.matrix.constructor import matrix
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.structure.element import coerce_binop
-from sage.structure.sequence import Sequence
 from sage.structure.category_object import normalize_names
 
 from sage.categories.action import Action
@@ -46,10 +44,10 @@ from sage.categories.finite_fields import FiniteFields
 
 from sage.matrix.special import companion_matrix
 from sage.matrix.special import identity_matrix
-
-from sage.symbolic.ring import SR
 from sage.combinat.subset import Subsets
+
 from sage.rings.infinity import infinity
+from sage.symbolic.ring import SR
 from sage.sets.primes import Primes
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -62,571 +60,8 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 
+from sage.functions.hypergeometric_parameters import HypergeometricParameters
 
-# Helper functions
-##################
-
-def insert_zeroes(P, n):
-    cs = P.list()
-    coeffs = n * len(cs) * [0]
-    for i in range(len(cs)):
-        coeffs[n*i] = cs[i]
-    return P.parent()(coeffs)
-
-
-def kernel(M, repeat=2):
-    n = M.nrows()
-    m = M.ncols()
-    if n > m + 1:
-        raise RuntimeError
-    if n <= m:
-        K = M.base_ring().base_ring()
-        for _ in range(repeat):
-            a = K.random_element()
-            Me = matrix(n, m, [f(a) for f in M.list()])
-            if Me.rank() == n:
-                return
-    for J in Subsets(range(m), n-1):
-        MJ = M.matrix_from_columns(J)
-        minor = MJ.delete_rows([0]).determinant()
-        if minor.is_zero():
-            continue
-        ker = [minor]
-        for i in range(1, n):
-            minor = MJ.delete_rows([i]).determinant()
-            ker.append((-1)**i * minor)
-        Z = matrix(ker) * M
-        if not Z.is_zero():
-            return
-        g = ker[0].leading_coefficient() * gcd(ker)
-        ker = [c//g for c in ker]
-        return ker
-
-
-# Parameters of hypergeometric functions
-########################################
-
-class Parameters():
-    r"""
-    Class for parameters of hypergeometric functions.
-    """
-    def __init__(self, top, bottom, add_one=True):
-        r"""
-        Initialize this set of parameters.
-
-        INPUT:
-
-        - ``top`` -- list of top parameters
-
-        - ``bottom`` -- list of bottom parameters
-
-        - ``add_one`` -- boolean (default: ``True``),
-          if ``True``, add an additional one to the bottom
-          parameters.
-
-        EXAMPLES::
-
-            sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: pa
-            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: type(pa)
-            <class 'sage.functions.hypergeometric_algebraic.Parameters'>
-
-        By default, parameters are sorted, duplicates are removed and
-        a trailing `1` is added to the bottom parameters::
-
-            sage: Parameters([1/2, 1/3, 2/3], [2/3])
-            ((1/3, 1/2), (1,))
-
-        We can avoid adding the trailing `1` by passing ``add_one=False``::
-
-            sage: Parameters([1/2, 1/3, 2/3], [2/3], add_one=False)
-            ((1/3, 1/2, 1), (1,))
-        """
-        try:
-            top = sorted([QQ(a) for a in top if a is not None])
-            bottom = sorted([QQ(b) for b in bottom if b is not None])
-        except TypeError:
-            raise NotImplementedError("parameters must be rational numbers")
-        i = j = 0
-        while i < len(top) and j < len(bottom):
-            if top[i] == bottom[j]:
-                del top[i]
-                del bottom[j]
-            elif top[i] > bottom[j]:
-                j += 1
-            else:
-                i += 1
-        if add_one:
-            bottom.append(QQ(1))
-        else:
-            try:
-                i = bottom.index(QQ(1))
-                bottom.append(QQ(1))
-                del bottom[i]
-            except ValueError:
-                bottom.append(QQ(1))
-                top.append(QQ(1))
-                top.sort()
-        self.top = tuple(top)
-        self.bottom = tuple(bottom)
-        if len(top) == 0 and len(bottom) == 0:
-            self.d = 1
-            self.bound = 1
-        else:
-            self.d = lcm([ a.denominator() for a in top ]
-                       + [ b.denominator() for b in bottom ])
-            self.bound = 2 * self.d * max(top + bottom) + 1
-
-    def __repr__(self):
-        r"""
-        Return a string representation of these parameters.
-
-        EXAMPLES::
-
-            sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: pa  # indirect doctest
-            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-        """
-        return "(%s, %s)" % (self.top, self.bottom)
-
-    def __hash__(self):
-        return hash((self.top, self.bottom))
-
-    def __eq__(self, other):
-        return (isinstance(other, Parameters)
-            and self.top == other.top and self.bottom == other.bottom)
-
-    def is_balanced(self):
-        r"""
-        Return ``True`` if there are as many top parameters as bottom
-        parameters; ``False`` otherwise.
-
-        EXAMPLES::
-
-            sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: pa
-            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: pa.is_balanced()
-            True
-
-        ::
-
-            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5], add_one=False)
-            sage: pa
-            ((1/4, 1/3, 1/2, 1), (2/5, 3/5, 1))
-            sage: pa.is_balanced()
-            False
-        """
-        return len(self.top) == len(self.bottom)
-
-    @cached_method
-    def christol_sorting(self, c=1):
-        r"""
-        Return a sorted list of triples, where each triple is associated to one
-        of the parameters a, and consists of the decimal part of d*c*a (where
-        integers are assigned 1 instead of 0), the negative value of a, and a
-        sign (plus or minus 1), where top parameters are assigned -1 and bottom
-        parameters +1. Sorting the list lexecographically according to the
-        first two entries of the tuples sorts the corresponing parameters
-        according to the total ordering (defined on p.6 in [Chr1986]_).
-
-        INPUT:
-
-        - ``c`` -- an integer (default: ``1``)
-
-        EXAMPLES::
-
-            sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: pa
-            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: pa.christol_sorting(7)
-            [(12, -3/5, 1),
-             (20, -1/3, -1),
-             (30, -1/2, -1),
-             (45, -1/4, -1),
-             (48, -2/5, 1),
-             (60, -1, 1)]
-        """
-        d = self.d
-        A = [(d - (-d*c*a) % d, -a, -1) for a in self.top]
-        B = [(d - (-d*c*b) % d, -b, 1) for b in self.bottom]
-        return sorted(A + B)
-
-    def parenthesis_criterion(self, c):
-        r"""
-        Return ``True`` if in each prefix of the list
-        ``self.christol_sorting(c)`` there are at least as many triples with
-        third entry -1 as triples with third entry +1. Return ``False``
-        otherwise.
-
-        INPUT:
-
-        - ``c`` -- an integer
-
-        EXAMPLES::
-
-            sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: pa
-            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: pa.christol_sorting(7)
-            [(12, -3/5, 1),
-             (20, -1/3, -1),
-             (30, -1/2, -1),
-             (45, -1/4, -1),
-             (48, -2/5, 1),
-             (60, -1, 1)]
-            sage: pa.parenthesis_criterion(7)
-            False
-            sage: pa.christol_sorting(1)
-            [(15, -1/4, -1),
-             (20, -1/3, -1),
-             (24, -2/5, 1),
-             (30, -1/2, -1),
-             (36, -3/5, 1),
-             (60, -1, 1)]
-            sage: pa.parenthesis_criterion(1)
-            True
-        """
-        parenthesis = 0
-        previous_paren = 1
-        for _, _, paren in self.christol_sorting(c):
-            parenthesis += paren
-            if parenthesis > 0:
-                return False
-            previous_paren = paren
-        return parenthesis <= 0
-
-    def interlacing_criterion(self, c):
-        r"""
-        Return ``True`` if the sorted lists of the decimal parts (where integers
-        are assigned 1 instead of 0) of c*a and c*b for a in the top parameters
-        and b in the bottom parameters interlace, i.e., the entries in the sorted
-        union of the two lists alternate between entries from the first and from
-        the second list. Used to determine algebraicity of the hypergeometric
-        function with these parameters with the Beukers-Heckman criterion.
-
-        INPUT:
-
-        - ``c`` -- an integer
-
-        EXAMPLES::
-
-            sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: pa = Parameters([1/3, 2/3], [1/2])
-            sage: pa
-            ((1/3, 2/3), (1/2, 1))
-            sage: pa.interlacing_criterion(1)
-            True
-            sage: pa.interlacing_criterion(5)
-            True
-
-        ::
-
-            sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: pa = Parameters([1/8, 3/8, 5/8], [1/4, 1/2])
-            sage: pa
-            ((1/8, 3/8, 5/8), (1/4, 1/2, 1))
-            sage: pa.interlacing_criterion(1)
-            True
-            sage: pa.interlacing_criterion(3)
-            False
-        """
-        previous_paren = 1
-        for _, _, paren in self.christol_sorting(c):
-            if paren == previous_paren:
-                return False
-            previous_paren = paren
-        return True
-
-    def q_christol_sorting(self, q):
-        r"""
-        Return a sorted list of pairs, one associated to each top parameter a,
-        and one associated to each bottom parameter b where the pair is either
-        (1/2 + (-a) % q, -1) or (1 + (-b) % q, 1).
-
-        INPUT:
-
-        - ``q`` -- an integer
-
-        EXAMPLES::
-
-            sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: pa
-            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: pa.q_christol_sorting(7)
-            [(2, 1), (2.5, -1), (3.5, -1), (5.5, -1), (6, 1), (7, 1)]
-        """
-        A = [(1/2 + (-a) % q, -1) for a in self.top]
-        B = [(1 + (-b) % q, 1) for b in self.bottom]
-        return sorted(A + B)
-
-    def q_parenthesis(self, q):
-        r"""
-        Return maximal value of the sum of all the second entries of the pairs
-        in a prefix of ``self.q_christol_sorting(q)`` and the first entry of
-        the last pair in the prefix of smallest length where this value is
-        attained.
-
-        INPUT:
-
-        - ``q`` -- an integer
-
-        EXAMPLES::
-
-            sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: pa
-            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: pa.q_christol_sorting(7)
-            [(2, 1), (2.5, -1), (3.5, -1), (5.5, -1), (6, 1), (7, 1)]
-            sage: pa.q_parenthesis(7)
-            (2, 1)
-        """
-        parenthesis = maximum = shift = 0
-        for s, paren in self.q_christol_sorting(q):
-            parenthesis += paren
-            if parenthesis > maximum:
-                maximum = parenthesis
-                shift = s
-        return shift, maximum
-
-    def q_parenthesis_criterion(self, q):
-        r"""
-        Return ``True`` if in each prefix of the list
-        ``self.q_christol_sorting(q)`` there are at least as many pairs with
-        second entry -1 as pairs with second entry +1. Return ``False``
-        otherwise.
-
-        INPUT:
-
-        - ``q`` -- an integer
-
-        EXAMPLES::
-
-            sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: pa
-            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: pa.q_christol_sorting(7)
-            [(2, 1), (2.5, -1), (3.5, -1), (5.5, -1), (6, 1), (7, 1)]
-            sage: pa.q_parenthesis_criterion(7)
-            False
-            sage: pa.q_christol_sorting(61)
-            [(15.5, -1), (20.5, -1), (25, 1), (30.5, -1), (37, 1), (61, 1)]
-            sage: pa.q_parenthesis_criterion(61)
-            True
-        """
-        parenthesis = 0
-        for _, paren in self.q_christol_sorting(q):
-            parenthesis += paren
-            if parenthesis > 0:
-                return False
-        return parenthesis <= 0
-
-    def q_interlacing_number(self, q):
-        r"""
-        Return the number of pairs in the list ``self.q_christol_sorting(q)``
-        with second entry 1, that were preceded by a pair with second entry
-        -1.
-
-        INPUT:
-
-        - ``q`` -- an integer.
-
-        EXAMPLES::
-
-            sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: pa
-            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: pa.q_christol_sorting(7)
-            [(2, 1), (2.5, -1), (3.5, -1), (5.5, -1), (6, 1), (7, 1)]
-            sage: pa.q_interlacing_number(7)
-            1
-        """
-        interlacing = 0
-        previous_paren = 1
-        for _, paren in self.q_christol_sorting(q):
-            if paren == 1 and previous_paren == -1:
-                interlacing += 1
-            previous_paren = paren
-        return interlacing
-
-    def remove_positive_integer_differences(self):
-        r"""
-        Return parameters, where pairs consisting of a top parameter
-        and a bottom parameter with positive integer differences are
-        removed, starting with pairs of minimal positive integer
-        difference.
-
-        EXAMPLES::
-
-            sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: pa = Parameters([5/2, -1/2, 5/3], [3/2, 1/3])
-            sage: pa
-            ((-1/2, 5/3, 5/2), (1/3, 3/2, 1))
-            sage: pa.remove_positive_integer_differences()
-            ((-1/2, 5/3), (1/3, 1))
-
-        The choice of which pair with integer differences to remove first
-        is important::
-
-            sage: pa = Parameters([4, 2, 1/2], [1, 3])
-            sage: pa
-            ((1/2, 2, 4), (1, 3, 1))
-            sage: pa.remove_positive_integer_differences()
-            ((1/2,), (1,))
-        """
-        differences = []
-        top = list(self.top)
-        bottom = list(self.bottom)
-        for i in range(len(top)):
-            for j in range(len(bottom)):
-                diff = top[i] - bottom[j]
-                if diff in ZZ and diff > 0:
-                    differences.append((diff, i, j))
-        for _, i, j in sorted(differences):
-            if top[i] is not None and bottom[j] is not None:
-                top[i] = None
-                bottom[j] = None
-        return Parameters(top, bottom, add_one=False)
-
-    def has_negative_integer_differences(self):
-        r"""
-        Return ``True`` if there exists a pair of a top parameter and a bottom
-        parameter, such that the top one minus the bottom one is a negative integer;
-        return ``False`` otherwise.
-
-        EXAMPLES::
-
-            sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: pa
-            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: pa.has_negative_integer_differences()
-            False
-
-        ::
-
-            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/2])
-            sage: pa
-            ((1/4, 1/3, 1/2), (2/5, 3/2, 1))
-            sage: pa.has_negative_integer_differences()
-            True
-        """
-        return any(a - b in ZZ and a < b for a in self.top for b in self.bottom)
-
-    def shift(self, s):
-        r"""
-        Return the parameters obtained by adding s to each of them.
-
-        INPUT:
-
-        - ``s`` -- a rational number
-
-        EXAMPLES::
-
-            sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: pa
-            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: pa.shift(2)
-            ((1, 9/4, 7/3, 5/2), (12/5, 13/5, 3, 1))
-        """
-        top = [a+s for a in self.top]
-        bottom = [b+s for b in self.bottom]
-        return Parameters(top, bottom, add_one=False)
-
-    def decimal_part(self):
-        r"""
-        Return the parameters obtained by taking the decimal part of each of
-        the parameters, where integers are assigned 1 instead of 0.
-
-        EXAMPLES::
-
-            sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: pa = Parameters([5/4, 1/3, 2], [2/5, -2/5])
-            sage: pa
-            ((1/3, 5/4, 2), (-2/5, 2/5, 1))
-            sage: pa.decimal_part()
-            ((1/4, 1/3, 1), (2/5, 3/5, 1))
-        """
-        top = [1 + a - ceil(a) for a in self.top]
-        bottom = [1 + b - ceil(b) for b in self.bottom]
-        return Parameters(top, bottom, add_one=False)
-
-    def dwork_image(self, p):
-        r"""
-        Return the parameters obtained by applying the Dwork map to each of
-        the parameters. The Dwork map `D_p(x)` of a p-adic integer x is defined
-        as the unique p-adic integer such that `p D_p(x) - x` is a nonnegative
-        integer smaller than p.
-
-        INPUT:
-
-        - ``p`` -- a prime number
-
-        EXAMPLE::
-
-            sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: pa
-            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: pa.dwork_image(7)
-            ((1/3, 1/2, 3/4), (1/5, 4/5, 1))
-
-        If `p` is not coprime to the common denominators of the parameters,
-        a ``ValueError`` is raised::
-
-            sage: pa.dwork_image(3)
-            Traceback (most recent call last):
-            ...
-            ValueError: denominators of parameters are not coprime to p
-        """
-        try:
-            top = [(a + (-a) % p) / p for a in self.top]
-            bottom = [(b + (-b) % p) / p for b in self.bottom]
-        except ZeroDivisionError:
-            raise ValueError("denominators of parameters are not coprime to p")
-        return Parameters(top, bottom, add_one=False)
-
-    def frobenius_order(self, p):
-        r"""
-        Return the Frobenius order of the hypergeometric function with this set
-        of parameters, that is the order of the Dwork map acting on the decimal
-        parts of the parameters.
-
-        INPUT:
-
-        - ``p`` -- a prime number
-
-        EXAMPLES::
-
-            sage: from sage.functions.hypergeometric_algebraic import Parameters
-            sage: pa = Parameters([1/4, 1/3, 1/2], [2/5, 3/5])
-            sage: pa
-            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
-            sage: pa.frobenius_order(7)
-            2
-        """
-        param = self.decimal_part()
-        iter = param.dwork_image(p)
-        i = 1
-        while param != iter:
-            iter = iter.dwork_image(p)
-            i += 1
-        return i
-
-
-# Hypergeometric functions
-##########################
 
 # Do we want to implement polynomial linear combinaison
 # of hypergeometric functions?
@@ -652,7 +87,7 @@ class HypergeometricAlgebraic(Element):
           function, they can be:
           - the top and bottom paramters
           - a hypergeometric function and ``None``
-          - an instance of the class :class:`Parameters` and ``None``
+          - an instance of the class :class:`HypergeometricParameters` and ``None``
 
         - ``scalar`` -- an element in the base ring, the scalar by
           which the hypergeometric function is multiplied
@@ -676,35 +111,18 @@ class HypergeometricAlgebraic(Element):
         elif isinstance(arg1, HypergeometricAlgebraic):
             parameters = arg1._parameters
             scalar *= base(arg1._scalar)
-        elif isinstance(arg1, Parameters):
+        elif isinstance(arg1, HypergeometricParameters):
             parameters = arg1
         else:
-            parameters = Parameters(arg1, arg2)
+            parameters = HypergeometricParameters(arg1, arg2)
         char = self.parent()._char
         if scalar:
-            if char == 0:
-                if any(b in ZZ and b < 0 for b in parameters.bottom):
-                    raise ValueError("the parameters %s do not define a hypergeometric function" % parameters)
-            else:
-                error = ValueError("the parameters %s do not define a hypergeometric function in characteristic %s" % (parameters, char))
-                d = parameters.d
-                if d.gcd(char) > 1:
-                    raise error
-                u = 1
-                while True:
-                    if not parameters.parenthesis_criterion(u):
-                        raise error
-                    u = char*u % d
-                    if u == 1:
-                        break
-                # Xavier's conjecture:
-                if not parameters.q_parenthesis_criterion(char):
-                    raise error
-                # q = char
-                # while q <= parameters.bound:
-                #     if not parameters.q_parenthesis_criterion(q):
-                #         raise error
-                #     q *= char
+            if any(b in ZZ and b < 0 for b in parameters.bottom):
+                raise ValueError("the parameters %s do not define a hypergeometric function" % parameters)
+            if char > 0:
+                val, _ = parameters.valuation_position(char)
+                if val < 0:
+                    raise ValueError("the parameters %s do not define a hypergeometric function in characteristic %s" % (parameters, char))
         self._scalar = scalar
         self._parameters = parameters
         self._coeffs = [scalar]
@@ -1016,7 +434,6 @@ class HypergeometricAlgebraic(Element):
         scalar = self._scalar
         if scalar == 0:
             return self.base_ring().zero()
-        from sage.functions.hypergeometric import hypergeometric
         X = SR('X')
         h = hypergeometric(self.top(), self.bottom(), X)
         if scalar != 1:
@@ -1053,7 +470,7 @@ class HypergeometricAlgebraic(Element):
                 c /= b + i
             coeffs.append(c)
 
-    def power_series(self, prec):
+    def power_series(self, prec=20):
         r"""
         Return the power series representation of this hypergeometric
         function up to a given precision.
@@ -1252,7 +669,7 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         h = self.change_ring(Qp(p, 1))
         return h.residue()
 
-    def valuation(self, p):
+    def valuation(self, p, position=False):
         r"""
         Return the p-adic valuation of this hypergeometric function, i.e., the
         maximal s, such that p^(-s) times this hypergeometric function has
@@ -1261,6 +678,10 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         INPUT:
 
         - ``p`` -- a prime number
+
+        - ``position`` -- a boolean (default: ``False``); if ``True``, return
+          also the first index in the series expansion at which the valuation
+          is attained.
 
         EXAMPLES::
 
@@ -1271,8 +692,37 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
             sage: g = 5*f
             sage: g.valuation(5)
             1
+
+        An example where we ask for the position::
+
+            sage: h = hypergeometric([1/5, 1/5, 1/5], [1/3, 9/5], x)
+            sage: h.valuation(3, position=True)
+            (-1, 1)
+
+        We can check that the coefficient in `x` in the series expansion
+        has indeed valuation `-1`::
+
+            sage: s = h.power_series()
+            sage: s
+            1 + 1/75*x + 27/8750*x^2 + ... + O(x^20)
+            sage: s[1].valuation(3)
+            -1
+
+        TESTS::
+
+            sage: g.valuation(9)
+            Traceback (most recent call last):
+            ...
+            ValueError: p must be a prime number
         """
-        return self.change_ring(Qp(p, 1)).valuation()
+        if not p.is_prime():
+            raise ValueError("p must be a prime number")
+        val, pos = self._parameters.valuation_position(p)
+        val += self._scalar.valuation(p)
+        if position:
+            return val, pos
+        else:
+            return val
 
     def has_good_reduction(self, p):
         r"""
@@ -1322,13 +772,14 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
 
         # We check the parenthesis criterion for c=1
         if not params.parenthesis_criterion(1):
-            return d, [], []
+            return Primes(modulus=0)
 
         # We check the parenthesis criterion for other c
         # and derive congruence classes with good reduction
-        goods = {c: None for c in range(d) if d.gcd(c) == 1}
+        cs = [c for c in range(d) if d.gcd(c) == 1]
+        goods = {c: None for c in cs}
         goods[1] = True
-        for c in goods:
+        for c in cs:
             if goods[c] is not None:
                 continue
             cc = c
@@ -1427,7 +878,7 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
         k = self.base_ring().residue_field()
         if self._scalar.valuation() == 0:
             return self.change_base(k)
-        val, pos = self._val_pos()
+        val, pos = self._parameters.valuation_position(self._p)
         if val < 0:
             raise ValueError("bad reduction")
         if val > 0:
@@ -1438,81 +889,40 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
         # . s = pos
         # . h = self.shift(s)
 
-    def _val_pos(self):
-        p = self._p
-        d = self.denominator()
-        parameters = self._parameters
-        if d.gcd(p) > 1:
-            T = []
-            B = []
-            difference = 0
-            for j in self.top():
-                d = j.denominator().valuation(p)
-                difference += d
-                if not d:
-                    T += [j]
-            for j in self.bottom():
-                d = j.denominator().valuation(p)
-                difference -= d
-                if not d:
-                    B += [j]
-            if difference > 0:
-                return -infinity, None
-            if difference < 0:
-                _, prec = self.parent()(T, B, self.scalar())._val_pos()
-                #This is the case when the p-adic valuation of the coefficients
-                #goes to +infinity, but if you remove all the coefficients with p
-                #in the denominator it goes to -infinity.
-                #The following claim is almost surely wrong.
-                if prec == None:
-                    prec = self._parameters.bound
-                #Here I just check the valuation of the first few coefficients.
-                #There should be something better using q_g:parenthesis.
-                L = self.change_ring(Qp(p, 1)).power_series(prec+1).coefficients()
-                val = + infinity
-                pos = 0
-                for j in range(len(L)):
-                    v = L[j].valuation()
-                    if v < val:
-                        val = v
-                        pos = j
-                return val, pos
-            if difference == 0:
-                return self.parent()(T, B, self.scalar())._val_pos()
-        u = 1
-        if not parameters.parenthesis_criterion(u):
-            return -infinity, None
-        u = p % d
-        while u != 1:
-            if not parameters.parenthesis_criterion(u):
-                return -infinity, None
-            u = p*u % d
-        # From here, it is absolutely conjectural!
-        # ... and probably not quite correct
-        val = self._scalar.valuation()
-        pos = 0
-        q = 1
-        while True:
-            s, v = parameters.q_parenthesis(p)
-            if v == 0:
-                break
-            val -= self._e * v
-            pos += q*s
-            q *= p
-            parameters = parameters.shift(s).dwork_image(p)
-        return val, pos
+    def dwork_image(self):
+        parameters = self._parameters.dwork_image(self._p)
+        return self.parent()(parameters, scalar=self._scalar)
 
     def log_radius_of_convergence(self):
-        raise NotImplementedError
+        p = self._p
+        step = self._e / (p - 1)
+        log_radius = 0
+        for a in self._parameters.top:
+            if a in ZZ and a <= 0:
+                return infinity
+            v = a.valuation(p)
+            if v < 0:
+                log_radius += v
+            else:
+                log_radius += step
+        for b in self._parameters.bottom:
+            v = b.valuation(p)
+            if v < 0:
+                log_radius -= v
+            else:
+                log_radius -= step
+        return log_radius
+
+    def valuation(self, log_radius=0, position=False):
+        drift = -log_radius / self._e
+        val, pos = self._parameters.valuation_position(self._p, drift)
+        if position:
+            return val, pos
+        else:
+            return val
 
     def newton_polygon(self, log_radius):
         raise NotImplementedError
-
-    def valuation(self, log_radius=0):
-        if log_radius != 0:
-            raise NotImplementedError
-        val, _ = self._val_pos()
-        return val
 
     def tate_series(self):
         raise NotImplementedError
@@ -1531,7 +941,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         self._p = p = self.base_ring().cardinality()
         self._coeffs = [Qp(p, 1)(self._scalar)]
 
-    def power_series(self, prec):
+    def power_series(self, prec=20):
         S = self.parent().power_series_ring()
         self._compute_coeffs(prec)
         try:
@@ -1557,7 +967,6 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
 
     def is_defined(self):
         p = self._char
-        d = self.denominator()
         if not self.is_almost_defined():
             return False
         bound = self._parameters.bound
@@ -1572,7 +981,6 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
 
     def is_defined_conjectural(self):
         p = self._char
-        d = self.denominator()
         if not self.is_almost_defined():
             return False
         bound = self._parameters.bound
@@ -1634,7 +1042,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         Ps = {}
         for r in range(p):
             params = parameters.shift(r).dwork_image(p)
-            _, s = Hp(params)._val_pos()
+            _, s = params.valuation_position(p)
             h = H(params.shift(s))
             e = s*p + r
             if e >= len(coeffs):
@@ -1655,7 +1063,6 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         if not parameters.is_balanced():
             raise NotImplementedError("the hypergeometric function is not a pFq with q = p-1")
 
-        K = self.base_ring()
         p = self._char
         S = self.parent().polynomial_ring()
         zero = S.zero()
@@ -1728,7 +1135,6 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
 
 class HypergeometricToSR(Map):
     def _call_(self, h):
-        from sage.functions.hypergeometric import hypergeometric
         return h.scalar() * hypergeometric(h.top(), h.bottom(), SR.var(h.parent().variable_name()))
 
 
@@ -1797,3 +1203,43 @@ class HypergeometricFunctions(Parent, UniqueRepresentation):
 
     def power_series_ring(self, default_prec=None):
         return PowerSeriesRing(self.base_ring(), self._name, default_prec=default_prec)
+
+
+# Helper functions
+##################
+
+def insert_zeroes(P, n):
+    cs = P.list()
+    coeffs = n * len(cs) * [0]
+    for i in range(len(cs)):
+        coeffs[n*i] = cs[i]
+    return P.parent()(coeffs)
+
+
+def kernel(M, repeat=2):
+    n = M.nrows()
+    m = M.ncols()
+    if n > m + 1:
+        raise RuntimeError
+    if n <= m:
+        K = M.base_ring().base_ring()
+        for _ in range(repeat):
+            a = K.random_element()
+            Me = matrix(n, m, [f(a) for f in M.list()])
+            if Me.rank() == n:
+                return
+    for J in Subsets(range(m), n-1):
+        MJ = M.matrix_from_columns(J)
+        minor = MJ.delete_rows([0]).determinant()
+        if minor.is_zero():
+            continue
+        ker = [minor]
+        for i in range(1, n):
+            minor = MJ.delete_rows([i]).determinant()
+            ker.append((-1)**i * minor)
+        Z = matrix(ker) * M
+        if not Z.is_zero():
+            return
+        g = ker[0].leading_coefficient() * gcd(ker)
+        ker = [c//g for c in ker]
+        return ker

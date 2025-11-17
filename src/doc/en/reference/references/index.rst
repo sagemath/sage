@@ -1650,7 +1650,7 @@ REFERENCES:
              IV. The quotient groups of the lower central series, Ann. of Math.
              68 (1958) 81--95.
 
-.. [CFV2025] Xavier Caruso, Florian Fürnsinn, Daniel Vargas-Montoya, 
+.. [CFV2025] Xavier Caruso, Florian Fürnsinn, Daniel Vargas-Montoya,
            *Galois groups of reductions modulo p of D-finite series*,
            :arxiv:`2504.09429`, 2025.
 
@@ -1728,7 +1728,7 @@ REFERENCES:
 .. [ChenDB] Eric Chen, Online database of two-weight codes,
             http://moodle.tec.hkr.se/~chen/research/2-weight-codes/search.php
 
-.. [Chr1986] Gilles Christol, *Fonctions hypergéométriques bornées*. 
+.. [Chr1986] Gilles Christol, *Fonctions hypergéométriques bornées*.
              Groupe de travail d’analyse ultramétrique 14 (1986-87), exp. no 8, p. 1-16
 
 .. [CHK2001] Keith D. Cooper, Timothy J. Harvey and Ken Kennedy. *A
