@@ -339,6 +339,17 @@ def torsion_bound(E, number_of_places=20):
         16
         sage: E.torsion_subgroup().invariants()
         (4, 4)
+
+    TESTS:
+
+    Verify that :issue:`39580` is fixed:: # need a better example !
+
+        sage: # needs sage.rings.number_field
+        sage: t = var('t')
+        sage: K.<a> = NumberField(20*t^4 + 40*t^3 + 28*t^2 + 8*t + 1)
+        sage: E = EllipticCurve(K, [0, -3/2 ,0, 1/2, 0])
+        sage: E.torsion_subgroup()
+        Torsion Subgroup isomorphic to Z/2 + Z/2 ...
     """
     from sage.rings.integer_ring import ZZ
     from sage.rings.finite_rings.finite_field_constructor import GF
@@ -370,23 +381,14 @@ def torsion_bound(E, number_of_places=20):
     # In case K is a relative extension we absolutize:
 
     absK = K.absolute_field('a_')
-    f = absK.defining_polynomial()
     abs_map = absK.structure()[1]
-
-    # Ensure f is monic and in ZZ[x]
-
-    f = f.monic()
-    den = f.denominator()
-    if den != 1:
-        x = f.parent().gen()
-        n = f.degree()
-        f = den**n * f(x/den)
-    disc_f = f.discriminant()
     d = K.absolute_degree()
 
-    # Now f is monic in ZZ[x] of degree d and defines the extension K = Q(a)
+    f = absK.defining_polynomial().monic()
+    den = f.denominator()
+    disc_f = f.discriminant()
 
-    # Make sure that we have a model for E with coefficients in ZZ[a]
+    # Make sure that we have a model for E with integral coefficients
 
     E = E.integral_model()
     disc_E = E.discriminant().norm()
@@ -400,7 +402,8 @@ def torsion_bound(E, number_of_places=20):
         ainvs = [ZZ(ai) for ai in ainvs]
         while k < number_of_places:
             p = p.next_prime()
-            if p.divides(disc_E) or p.divides(disc_f):
+            if (p.divides(disc_E) or p.divides(disc_f.numerator())
+                                  or p.divides(den)):
                 continue
             k += 1
             for fi, ei in f.factor_mod(p):
@@ -418,7 +421,7 @@ def torsion_bound(E, number_of_places=20):
 
     while k < number_of_places:
         p = p.next_prime()
-        if p.divides(disc_E) or p.divides(disc_f):
+        if p.divides(disc_E) or p.divides(disc_f.numerator()) or p.divides(den):
             continue
         k += 1
         for fi, ei in f.factor_mod(p):
