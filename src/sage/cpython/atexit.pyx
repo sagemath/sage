@@ -154,17 +154,9 @@ cdef extern from *:
     #undef _PyGC_FINALIZED
     #include "internal/pycore_interp.h"
     #include "internal/pycore_pystate.h"
-    
-    // Always define this struct for Cython's use
-    typedef struct {
-        PyObject *func;
-        PyObject *args;
-        PyObject *kwargs;
-    } atexit_callback_struct;
-    
-    #if PY_VERSION_HEX >= 0x030e0000
-    // Python 3.14+: atexit uses a PyList
-    static PyObject* get_atexit_callbacks_list(PyObject *self) {
+    // struct atexit_callback was renamed in 3.12 to atexit_py_callback
+    #define atexit_callback atexit_py_callback
+    static atexit_callback ** _atexit_callbacks(PyObject *self) {
         PyInterpreterState *interp = _PyInterpreterState_GET();
         struct atexit_state state = interp->atexit;
         return state.callbacks;

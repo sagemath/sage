@@ -625,7 +625,7 @@ int numeric::compare_same_type(const numeric& right) const {
         }
 }
 
-#if PY_MAJOR_VERSION < 3 || defined(PYPY_VERSION)
+#if defined(PYPY_VERSION)
 #define hash_bits (8 * sizeof(void*))
 #else
 #define hash_bits _PyHASH_BITS

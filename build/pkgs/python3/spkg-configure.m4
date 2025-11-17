@@ -1,6 +1,6 @@
 SAGE_SPKG_CONFIGURE([python3], [
-   m4_pushdef([MIN_VERSION],               [3.11.0])
-   m4_pushdef([MIN_NONDEPRECATED_VERSION], [3.11.0])
+   m4_pushdef([MIN_VERSION],               [3.12.0])
+   m4_pushdef([MIN_NONDEPRECATED_VERSION], [3.12.0])
    m4_pushdef([LT_STABLE_VERSION],         [3.14.0])
    m4_pushdef([LT_VERSION],                [3.14.0])
    AC_ARG_WITH([python],

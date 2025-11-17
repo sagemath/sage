@@ -72,7 +72,7 @@ jobs:
         with:
           path: ~/conda_pkgs_dir
           key:
-            ${{ runner.os }}-conda-${{ hashFiles('environment-3.11-linux.yml') }}
+            ${{ runner.os }}-conda-${{ hashFiles('environment-3.12-linux.yml') }}
       
       - name: Setup MSVC environment
         if: runner.os == 'windows'
