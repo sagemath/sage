@@ -525,6 +525,8 @@ class HypergeometricParameters():
         # When it happens, we remove the parameter and update the drift accordingly
         top = []
         for a in self.top:
+            if a in ZZ and a <= 0:
+                raise NotImplementedError  # TODO
             v = a.valuation(p)
             if v < 0:
                 drift += v
@@ -547,6 +549,7 @@ class HypergeometricParameters():
         # Main part: computation of the valuation
         # We use Christol's formula (see Lemma 3.1.10 of [CFVM2025])
         # with modification in order to take the drift into account
+        n = len(top) + len(bottom) + 1
         parameters = HypergeometricParameters(top, bottom)
         order = IntegerModRing(parameters.d)(p).multiplicative_order()
         valuation = position = ZZ(0)
@@ -587,33 +590,36 @@ class HypergeometricParameters():
             new_breaks = []
             new_indices = {}
             w = 0
-            cont = True
-            for i in range(len(AB) - 1):
+            unbounded = False
+            for i in range(n):
                 x, dw, param = AB[i]    # discontinuity point
                 y, _, right = AB[i+1]   # next discontinuity point
                 w -= dw   # the value of V({k/p^r}, p^r) on this interval
                 new_indices[param] = len(new_breaks)
                 if x == y:
                     # Case of empty interval
-                    new_breaks.append((infinity, None, param))
-                    continue
-                # The variable complete stores whether the interval
-                # [x,y] covers all [0, p^(r-1)) modulo p^(r-1)
-                complete = (y - x >= q)
-                if complete and drift < 0:
-                    interval = (y // q) - 1
-                    j = j0 = indices.get(right, 0)
-                else:
-                    interval = x // q
-                    j = j0 = indices.get(param, 0)
-                if growth == 0 and (interval+1)*drift + w < 0:
-                    cont = False
-                if breaks is None:
+                    val = infinity
+                    pos = None
+                elif breaks is None:
                     # Case r = 1
-                    val = drift * interval
-                    pos = q * interval
+                    if drift < 0:
+                        pos = y - 1
+                    else:
+                        pos = x
+                    val = drift * pos
                 else:
                     # Case r > 1
+                    # The variable complete stores whether the interval
+                    # [x,y] covers all [0, p^(r-1)) modulo p^(r-1)
+                    complete = (y - x >= q)
+                    if complete and drift < 0:
+                        interval = ((y-1) // q) - 1
+                        j = j0 = indices[right]
+                    else:
+                        interval = max(0, (x-1) // q)
+                        j = j0 = indices[param]
+                    if growth == 0 and interval*drift + w < 0:
+                        unbounded = True
                     val = infinity
                     while True:
                         valj, posj, paramj = breaks[j]
@@ -625,26 +631,31 @@ class HypergeometricParameters():
                         if j >= len(breaks):
                             j = 0
                             interval += 1
-                        if (not complete and paramj == right) or (complete and j == j0):
+                        if j == j0 or (not complete and breaks[j][2] == right):
                             break
                 new_breaks.append((val + w, pos, param))
 
             # The halting criterion
             minimum = min(new_breaks)
+            valuation, position, _ = minimum
             if drift >= 0 and q > parameters.bound:
-                if cont:
-                    if count >= order:
-                        return valuation, position
-                    count += 1
-                else:
-                    return -infinity, None
+                if growth == 0:
+                    if unbounded:
+                        return -infinity, None
+                    if all(new_breaks[j][0] >= breaks[j][0] for j in range(n)):
+                        if count >= order:
+                            return valuation, position
+                        count += 1
+                    else:
+                        count = 0
+                elif drift >= len(top) and minimum == new_breaks[0]:
+                    return valuation, position
 
             # We update the values for the next r
             q = pq
             drift = p*drift + diff
             breaks = new_breaks
             indices = new_indices
-            valuation, position, _ = minimum
 
     def dwork_image(self, p):
         r"""

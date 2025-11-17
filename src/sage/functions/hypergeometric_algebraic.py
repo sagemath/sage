@@ -470,7 +470,7 @@ class HypergeometricAlgebraic(Element):
                 c /= b + i
             coeffs.append(c)
 
-    def power_series(self, prec):
+    def power_series(self, prec=20):
         r"""
         Return the power series representation of this hypergeometric
         function up to a given precision.
@@ -669,7 +669,7 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         h = self.change_ring(Qp(p, 1))
         return h.residue()
 
-    def valuation(self, p):
+    def valuation(self, p, position=False):
         r"""
         Return the p-adic valuation of this hypergeometric function, i.e., the
         maximal s, such that p^(-s) times this hypergeometric function has
@@ -678,6 +678,10 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         INPUT:
 
         - ``p`` -- a prime number
+
+        - ``position`` -- a boolean (default: ``False``); if ``True``, return
+          also the first index in the series expansion at which the valuation
+          is attained.
 
         EXAMPLES::
 
@@ -689,6 +693,21 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
             sage: g.valuation(5)
             1
 
+        An example where we ask for the position::
+
+            sage: h = hypergeometric([1/5, 1/5, 1/5], [1/3, 9/5], x)
+            sage: h.valuation(3, position=True)
+            (-1, 1)
+
+        We can check that the coefficient in `x` in the series expansion
+        has indeed valuation `-1`::
+
+            sage: s = h.power_series()
+            sage: s
+            1 + 1/75*x + 27/8750*x^2 + ... + O(x^20)
+            sage: s[1].valuation(3)
+            -1
+
         TESTS::
 
             sage: g.valuation(9)
@@ -698,8 +717,12 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         """
         if not p.is_prime():
             raise ValueError("p must be a prime number")
-        val, _ = self._parameters.valuation_position(p)
-        return val + self._scalar.valuation(p)
+        val, pos = self._parameters.valuation_position(p)
+        val += self._scalar.valuation(p)
+        if position:
+            return val, pos
+        else:
+            return val
 
     def has_good_reduction(self, p):
         r"""
@@ -890,10 +913,13 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
                 log_radius -= step
         return log_radius
 
-    def valuation(self, log_radius=0):
+    def valuation(self, log_radius=0, position=False):
         drift = -log_radius / self._e
-        val, _ = self._parameters.valuation_position(self._p, drift)
-        return val
+        val, pos = self._parameters.valuation_position(self._p, drift)
+        if position:
+            return val, pos
+        else:
+            return val
 
     def newton_polygon(self, log_radius):
         raise NotImplementedError
@@ -915,7 +941,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         self._p = p = self.base_ring().cardinality()
         self._coeffs = [Qp(p, 1)(self._scalar)]
 
-    def power_series(self, prec):
+    def power_series(self, prec=20):
         S = self.parent().power_series_ring()
         self._compute_coeffs(prec)
         try:
@@ -1016,7 +1042,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         Ps = {}
         for r in range(p):
             params = parameters.shift(r).dwork_image(p)
-            _, s = Hp(params)._val_pos()
+            _, s = params.valuation_position(p)
             h = H(params.shift(s))
             e = s*p + r
             if e >= len(coeffs):
