@@ -1,12 +1,9 @@
-hatch_vcs: Hatch plugin for versioning with VCS
-================================================
+hatchling: Modern, extensible Python build backend
 
 Description
 -----------
 
-Hatch plugin for versioning with your preferred VCS (Version Control System).
-This plugin provides a way to automatically determine the version of a package
-from VCS tags.
+Provides a plugin for Hatch that uses your VCS (like Git) to determine project versions.
 
 License
 -------
@@ -17,4 +14,4 @@ Upstream Contact
 ----------------
 
 https://pypi.org/project/hatch-vcs/
-https://github.com/ofek/hatch-vcs
+
