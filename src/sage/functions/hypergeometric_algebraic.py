@@ -26,7 +26,7 @@ from sage.misc.latex import latex_variable_name
 
 from sage.misc.misc_c import prod
 from sage.misc.functional import log
-from sage.functions.other import ceil
+from sage.functions.other import floor, ceil
 from sage.functions.hypergeometric import hypergeometric
 from sage.arith.misc import gcd
 from sage.matrix.constructor import matrix
@@ -58,6 +58,7 @@ from sage.rings.number_field.number_field import CyclotomicField
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.tate_algebra import TateAlgebra
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 
 from sage.functions.hypergeometric_parameters import HypergeometricParameters
@@ -924,11 +925,49 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
     def newton_polygon(self, log_radius):
         raise NotImplementedError
 
-    def tate_series(self):
-        raise NotImplementedError
+    def _truncation_bound(self, log_radius, prec):
+        convergence = self.log_radius_of_convergence()
+        margin = convergence - log_radius
+        if margin <= 0:
+            raise ValueError("outside the domain of convergence")
+        # We choose an intermediate log_radius
+        # It can be anything between convergence and log_radius
+        # but it seems that the following works well (in the sense
+        # that it gives good bounds at the end).
+        lr = convergence - margin / max(prec, 2)
+        val = self.valuation(lr)
+        # Now, we know that
+        #   val(h_k) >= -lr*k + val
+        # and we want to find k such that
+        #   val(h_k) >= -log_radius*k + prec
+        # So we just solve the equation.
+        k = (prec - val) / (lr - log_radius)
+        return 1 + max(0, floor(k))
+
+    def tate_series(self, log_radius, prec=None):
+        K = self.base_ring()
+        name = self.parent().variable_name()
+        S = TateAlgebra(K, log_radii=[log_radius], names=name)
+        if prec is None:
+            prec = self.base_ring().precision_cap()
+        trunc = self._truncation_bound(log_radius, prec)
+        self._compute_coeffs(trunc)
+        coeffs = {(i,): self._coeffs[i] for i in range(trunc)}
+        return self._scalar * S(coeffs, prec)
 
     def __call__(self, x):
-        raise NotImplementedError
+        K = self.base_ring()
+        x = K(x)
+        val = min(x.valuation(), x.precision_absolute())
+        if val is infinity:
+            return K.one()
+        w = self.valuation(-val)
+        prec = w + K.precision_cap()
+        trunc = self._truncation_bound(-val, prec)
+        self._compute_coeffs(trunc)
+        ans = sum(self._coeffs[i] * x**i for i in range(trunc))
+        ans = ans.add_bigoh(prec)
+        return self._scalar * ans
 
 
 # Over prime finite fields
