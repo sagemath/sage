@@ -1961,7 +1961,7 @@ class TransducerGenerators:
                 "Missing initial values for %s." %
                 sorted(missing_initial_values))
 
-        for cycle in recursion_digraph.all_simple_cycles():
+        for cycle in recursion_digraph.all_simple_cycles(algorithm="A"):
             assert cycle[0] is cycle[-1]
             cycle_set = set(cycle)
             intersection = cycle_set.intersection(initial_values_set)

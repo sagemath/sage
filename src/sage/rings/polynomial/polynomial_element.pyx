@@ -2260,7 +2260,7 @@ cdef class Polynomial(CommutativePolynomial):
             else:
                 # Compute the trace of T with field of order 2^k
                 # sum T^(2^i) for i in range (degree * k)
-                # We use repeated squaring to avoid redundent multiplications
+                # We use repeated squaring to avoid redundant multiplications
                 C, TT = T, T
                 for _ in range(degree * self.base_ring().degree() - 1):
                     TT = TT * TT % self
@@ -10023,8 +10023,6 @@ cdef class Polynomial(CommutativePolynomial):
         t0 = t0.monic()
         t1 = t1 / c
         return t1, t0
-
-    rational_reconstruct = deprecated_function_alias(12696, rational_reconstruction)
 
     def variables(self):
         """

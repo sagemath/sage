@@ -186,7 +186,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             raise ValueError('Ore polynomial does not define a morphism')
         return cls.__classcall__(cls, parent, ore_pol)
 
-    def __init__(self, parent, ore_pol):
+    def __init__(self, parent, ore_pol) -> None:
         r"""
         Initialize ``self``.
 
@@ -217,7 +217,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         self._codomain = parent.codomain()
         self._ore_polynomial = ore_pol
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of the morphism.
 
@@ -235,7 +235,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         return f'{latex(self._ore_polynomial)}'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of the morphism.
 
@@ -265,7 +265,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
                    f'  To:   {self._codomain}\n' \
                    f'  Defn: {self._ore_polynomial}'
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return a hash of ``self``.
 
@@ -331,7 +331,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         return self._ore_polynomial == 1
 
-    def is_isogeny(self):
+    def is_isogeny(self) -> bool:
         r"""
         Return ``True`` whether the morphism is an isogeny.
 
@@ -695,7 +695,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         # The first row:
         # we write u = u0 + u1*phiT + u2*phiT^2 + ...
         u = self.ore_polynomial()
-        us = [ ]
+        us = []
         while not u.is_zero():
             u, ui = u.right_quo_rem(phiT)
             us.append(ui)
@@ -711,8 +711,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         T = KT.gen()
         for i in range(1, r):
             twist = [c.map_coefficients(Frob) for c in row]
-            row = [(inv*T - B[0]) * twist[-1]]
-            row += [twist[j-1] - B[j]*twist[-1] for j in range(1, r)]
+            row = [(inv * T - B[0]) * twist[-1]]
+            row += [twist[j - 1] - B[j] * twist[-1] for j in range(1, r)]
             rows.append(row)
 
         return matrix(KT, rows)

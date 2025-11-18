@@ -1086,7 +1086,7 @@ class GroebnerFan(SageObject):
 
         return mod
 
-    def gfan(self, cmd='bases', I=None, format=None):
+    def gfan(self, cmd='bases', I=None) -> str:
         r"""
         Return the ``gfan`` output as a string given an input ``cmd``.
 
@@ -1097,7 +1097,6 @@ class GroebnerFan(SageObject):
 
         - ``cmd`` -- string (default: ``'bases'``); GFan command
         - ``I`` -- ideal (default: ``None``)
-        - ``format`` -- boolean (default: ``None``); deprecated
 
         EXAMPLES::
 
@@ -1106,13 +1105,6 @@ class GroebnerFan(SageObject):
             sage: gf.gfan()
             'Q[x,y]\n{{\ny^9-1-y+3*y^3-3*y^6,\nx+1-y^3}\n,\n{\nx^3-y,\ny^3-1-x}\n,\n{\nx^9-1-x,\ny-x^3}\n}\n'
         """
-        if format is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(33468, 'argument `format` is ignored in the code: '
-                               'it is now deprecated. Please update your code '
-                               'without this argument as it will be removed in a later '
-                               'version of SageMath.')
-
         if I is None:
             I = self._gfan_ideal()
         # todo -- put something in here (?) when self.__symmetry isn't None...
@@ -1700,7 +1692,7 @@ class GroebnerFan(SageObject):
         pf._gfan_output = f
         return pf
 
-    def mixed_volume(self):
+    def mixed_volume(self) -> Integer:
         """
         Return the mixed volume of the generators of this ideal.
 
@@ -1772,7 +1764,7 @@ class ReducedGroebnerBasis(SageObject, list):
         """
         return list.__repr__(self)
 
-    def _gfan_gens(self):
+    def _gfan_gens(self) -> str:
         """
         Return the reduced Groebner basis as a string in ``gfan`` format.
 

@@ -3175,7 +3175,7 @@ class FreeModule_generic(Module_free_ambient):
 
         - ``twist`` -- the twisting morphism or the twisting derivation
           (if a derivation is given, the corresponding morphism `\theta`
-          is automatically infered;
+          is automatically inferred;
           see also :class:`sage.rings.polynomial.ore_polynomial_ring.OrePolynomialRing`)
 
         - ``codomain`` -- (default: ``None``) the codomain of the pseudo
