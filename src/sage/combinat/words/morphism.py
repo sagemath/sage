@@ -943,7 +943,7 @@ class WordMorphism(SageObject):
             sage: s * s
             Traceback (most recent call last):
             ...
-            ValueError: the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism
+            ValueError: the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism (order mismatch)
 
         TESTS::
 
@@ -963,8 +963,8 @@ class WordMorphism(SageObject):
         # Check equality first (exact match of alphabets including ordering)
         if Adom_self != Acodom_other:
             # If not equal, check containment
-            if Adom_self.cardinality() < Acodom_other.cardinality():
-                raise ValueError("the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism")
+            if set(Adom_self) == set(Acodom_other):
+                raise ValueError("the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism (order mismatch)")
             if Adom_self.cardinality() == Infinity:
                 raise NotImplementedError("composition with infinite alphabets not yet fully supported")
             if not all(a in Adom_self for a in Acodom_other):
