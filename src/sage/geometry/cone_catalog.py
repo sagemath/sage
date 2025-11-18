@@ -236,7 +236,7 @@ def barker_foran(lattice=None):
            ( zero, -one,  one),
            ( one,  -one,  one)]  # noqa: E221
 
-    return Cone(ext, lattice)
+    return Cone(ext, lattice, check=False)
 
 
 def downward_monotone(ambient_dim=None, lattice=None):
