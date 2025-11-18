@@ -969,10 +969,6 @@ class WordMorphism(SageObject):
                 raise NotImplementedError("composition with infinite alphabets not yet fully supported")
             if not all(a in Adom_self for a in Acodom_other):
                 raise ValueError("the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism")
-            # Even if all elements are present, if alphabets have same cardinality but different order,
-            # this indicates a potential ordering mismatch that should be rejected
-            if Adom_self.cardinality() == Acodom_other.cardinality():
-                raise ValueError("the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism")
 
         return WordMorphism({key: self(w) for key, w in other._morph.items()},
                             domain=other.domain(),
