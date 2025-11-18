@@ -894,6 +894,9 @@ class WordMorphism(SageObject):
         r"""
         Return the morphism ``self``\*``other``.
 
+        The composition is valid only if the codomain alphabet of ``other``
+        is contained in the domain alphabet of ``self``.
+
         EXAMPLES::
 
             sage: m = WordMorphism('a->ab,b->ba')
@@ -934,17 +937,45 @@ class WordMorphism(SageObject):
             sage: p.codomain()
             Finite words over {'a', 'b', 'c', 'd', 'e'}
 
+        The composition checks domain/codomain compatibility::
+
+            sage: s = WordMorphism('a->ba,b->a', domain=Words('ab'), codomain=Words('ba'))
+            sage: s * s
+            Traceback (most recent call last):
+            ...
+            ValueError: the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism
+
         TESTS::
 
             sage: m = WordMorphism('a->b,b->c,c->a')
             sage: WordMorphism('')*m
             Traceback (most recent call last):
             ...
-            KeyError: 'b'
+            ValueError: the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism
             sage: m * WordMorphism('')
             WordMorphism:
         """
+        # Check that composition is valid: codomain(other) must equal domain(self)
+        # or at least be compatible (contained with same ordering)
+        Adom_self = self.domain().alphabet()
+        Acodom_other = other.codomain().alphabet()
+        
+        # Check equality first (handles same ordering requirement)
+        if Adom_self != Acodom_other:
+            # If not equal, check containment
+            if Adom_self.cardinality() < Acodom_other.cardinality():
+                raise ValueError("the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism")
+            if Adom_self.cardinality() == Infinity:
+                raise NotImplementedError("composition with infinite alphabets not yet fully supported")
+            if not all(a in Adom_self for a in Acodom_other):
+                raise ValueError("the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism")
+            # Even if all elements are present, if alphabets have same cardinality but different order,
+            # this indicates a potential ordering mismatch that should be rejected
+            if Adom_self.cardinality() == Acodom_other.cardinality():
+                raise ValueError("the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism")
+        
         return WordMorphism({key: self(w) for key, w in other._morph.items()},
+                            domain=other.domain(),
                             codomain=self.codomain())
 
     def __pow__(self, exp):
@@ -982,7 +1013,7 @@ class WordMorphism(SageObject):
             sage: n^2
             Traceback (most recent call last):
             ...
-            KeyError: 'c'
+            ValueError: the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism
         """
         # If exp is not an integer
         if not isinstance(exp, (int, Integer)):
