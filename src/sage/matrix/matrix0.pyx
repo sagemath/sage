@@ -1942,13 +1942,13 @@ cdef class Matrix(sage.structure.element.Matrix):
 
             sage: set_random_seed(0)
             sage: matrix.random(RDF, 3, 5).str(unicode=True, character_art=True)
-            ⎛ -0.27440062056807446    0.5031965950979831 -0.001975438590219314
-            ⎜ -0.05461130074681608 -0.033673314214051286   -0.9401270875197381
-            ⎝  0.19906256610645512    0.3242250183948632    0.6026443545751128
+            ⎛-0.27440062056807446    0.5031965950979831 -0.001975438590219314
+            ⎜-0.05461130074681608 -0.033673314214051286   -0.9401270875197381
+            ⎝ 0.19906256610645512    0.3242250183948632    0.6026443545751128
             <BLANKLINE>
-               -0.9467802263760512    0.5056889961514748⎞
-              -0.35104242112828943    0.5084492941557279⎟
-               -0.9541798283979341   -0.8948790563276592⎠
+              -0.9467802263760512  0.5056889961514748⎞
+             -0.35104242112828943  0.5084492941557279⎟
+              -0.9541798283979341 -0.8948790563276592⎠
 
         The number of floating point digits to display is controlled by
         :obj:`matrix.options.precision <.constructor.options>` and can also be
@@ -1994,7 +1994,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: K = (A - e).kernel()
             sage: P = K.basis_matrix()
             sage: P.str()
-            '[              1.000000000000000? + 0.?e-17*I  -2.116651487479748? + 0.0255565807096352?*I -0.2585224251020429? + 0.2886023409047535?*I  -0.4847545623533090? - 1.871890760086142?*I]'
+            '[1.000000000000000? + 0.?e-17*I -2.116651487479748? + 0.0255565807096352?*I -0.2585224251020429? + 0.2886023409047535?*I -0.4847545623533090? - 1.871890760086142?*I]'
 
         Use single-row delimiters where appropriate::
 
@@ -2177,12 +2177,19 @@ cdef class Matrix(sage.structure.element.Matrix):
         else:
             bottom_count = 0
 
-        width = max(map(len, S))
+        maxwidth = max(map(len, S))
+        if (maxwidth + 1)*nc - 1 <= 78:
+            width = [maxwidth]*nc
+        else:
+            width = [max(len(S[(r + top_count) * nc + c])
+                         for r in range(nr))
+                     for c in range(nc)]
+
         left = []
         rows = []
         right = []
 
-        hline = cl.join(hl * ((width + 1)*(b - a) - 1)
+        hline = cl.join(hl * (sum(width[j] + 1 for j in range(a, b)) - 1)
                         for a,b in zip([0] + col_divs, col_divs + [nc]))
 
         # compute rows
@@ -2209,7 +2216,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                 else:
                     sep = " "
                 entry = S[(r + top_count) * nc + c]
-                entry = " " * (width - len(entry)) + entry
+                entry = " " * (width[c] - len(entry)) + entry
                 s = s + sep + entry
             else:
                 if 0 <= r < nr:
@@ -2250,11 +2257,11 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         if character_art:
             breakpoints = []
-            idx = len(tlb) + (col_div_counts[0] if nc > 0 else 0) + width
+            idx = len(tlb) + (col_div_counts[0] if nc > 0 else 0) + width[0]
             for c from 1 <= c < nc:
                 breakpoints.append(idx)
                 len_sep = max(col_div_counts[c], 1)
-                idx += len_sep + width
+                idx += len_sep + width[c]
             return CharacterArt(rows, breakpoints=breakpoints)
         else:
             return "\n".join(rows)
@@ -2267,13 +2274,13 @@ cdef class Matrix(sage.structure.element.Matrix):
 
             sage: set_random_seed(0)
             sage: ascii_art(matrix.random(RDF, 3, 5))  # indirect doctest
-            [ -0.27440062056807446    0.5031965950979831 -0.001975438590219314
-            [ -0.05461130074681608 -0.033673314214051286   -0.9401270875197381
-            [  0.19906256610645512    0.3242250183948632    0.6026443545751128
+            [-0.27440062056807446    0.5031965950979831 -0.001975438590219314
+            [-0.05461130074681608 -0.033673314214051286   -0.9401270875197381
+            [ 0.19906256610645512    0.3242250183948632    0.6026443545751128
             <BLANKLINE>
-               -0.9467802263760512    0.5056889961514748]
-              -0.35104242112828943    0.5084492941557279]
-               -0.9541798283979341   -0.8948790563276592]
+              -0.9467802263760512  0.5056889961514748]
+             -0.35104242112828943  0.5084492941557279]
+              -0.9541798283979341 -0.8948790563276592]
         """
         from sage.matrix.constructor import options
         if self._nrows <= options.max_rows() and self._ncols <= options.max_cols():

@@ -2095,8 +2095,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         Demonstrating shifts::
 
             sage: P = M.weak_popov_form(shifts=[0,2,4]); P
-            [            6*x^2 + 6*x + 4 5*x^4 + 4*x^3 + 5*x^2 + 5*x                     2*x + 2]
-            [                          2             4*x^2 + 2*x + 4                           5]
+            [6*x^2 + 6*x + 4 5*x^4 + 4*x^3 + 5*x^2 + 5*x 2*x + 2]
+            [              2             4*x^2 + 2*x + 4       5]
             sage: P == M.weak_popov_form(shifts=[-10,-8,-6])
             True
 
@@ -2387,8 +2387,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
             sage: # needs sage.combinat
             sage: P = M.popov_form(shifts=[0,2,4]); P
-            [              4*x^2 + 3*x + 4 x^4 + 3*x^3 + 5*x^2 + 5*x + 5                             0]
-            [                            6               5*x^2 + 6*x + 5                             1]
+            [4*x^2 + 3*x + 4 x^4 + 3*x^3 + 5*x^2 + 5*x + 5 0]
+            [              6               5*x^2 + 6*x + 5 1]
             sage: P.is_popov(shifts=[0,2,4])
             True
             sage: P == M.popov_form(shifts=[-6,-4,-2])

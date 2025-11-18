@@ -1644,11 +1644,11 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
             sage: G.<a,b,c,d,e> = FreeGroup()
             sage: H = G.quotient([a*b/a/b, a*c/a/c, a*d/a/d, b*c*d/(c*d*b), b*c*d/(d*b*c)])
             sage: H.alexander_matrix()
-            [              1 - a*b*a^-1          a - a*b*a^-1*b^-1                          0                          0                          0]
-            [              1 - a*c*a^-1                          0          a - a*c*a^-1*c^-1                          0                          0]
-            [              1 - a*d*a^-1                          0                          0          a - a*d*a^-1*d^-1                          0]
-            [                         0             1 - b*c*d*b^-1   b - b*c*d*b^-1*d^-1*c^-1      b*c - b*c*d*b^-1*d^-1                          0]
-            [                         0        1 - b*c*d*c^-1*b^-1             b - b*c*d*c^-1 b*c - b*c*d*c^-1*b^-1*d^-1                          0]
+            [1 - a*b*a^-1   a - a*b*a^-1*b^-1                        0                          0 0]
+            [1 - a*c*a^-1                   0        a - a*c*a^-1*c^-1                          0 0]
+            [1 - a*d*a^-1                   0                        0          a - a*d*a^-1*d^-1 0]
+            [           0      1 - b*c*d*b^-1 b - b*c*d*b^-1*d^-1*c^-1      b*c - b*c*d*b^-1*d^-1 0]
+            [           0 1 - b*c*d*c^-1*b^-1           b - b*c*d*c^-1 b*c - b*c*d*c^-1*b^-1*d^-1 0]
             sage: R.<t1,t2,t3,t4> = LaurentPolynomialRing(ZZ)
             sage: H.alexander_matrix([t1,t2,t3,t4])
             [    -t2 + 1      t1 - 1           0           0           0]

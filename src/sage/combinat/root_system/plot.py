@@ -1557,9 +1557,9 @@ def barycentric_projection_matrix(n, angle=0):
     Four vectors in dimension 3::
 
         sage: m = barycentric_projection_matrix(3); m
-        [ 1/3*sqrt(3)*sqrt(2) -1/3*sqrt(3)*sqrt(2)                    0                    0]
-        [         1/3*sqrt(2)          1/3*sqrt(2)         -2/3*sqrt(2)                    0]
-        [                 1/3                  1/3                  1/3                   -1]
+        [1/3*sqrt(3)*sqrt(2) -1/3*sqrt(3)*sqrt(2)            0  0]
+        [        1/3*sqrt(2)          1/3*sqrt(2) -2/3*sqrt(2)  0]
+        [                1/3                  1/3          1/3 -1]
 
     The columns give four vectors that sum up to zero::
 

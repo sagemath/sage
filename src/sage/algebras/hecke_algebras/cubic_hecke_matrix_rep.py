@@ -937,18 +937,18 @@ class CubicHeckeMatrixSpace(MatrixSpace):
             sage: CHA3.<c1, c2> = algebras.CubicHecke(3)
             sage: MS = chmr.CubicHeckeMatrixSpace(CHA3, original=True)
             sage: MS._image_on_basis(c1)
-            [        a         0         0         0         0         0         0         0         0         0         0         0]
-            [        0         c         0         0         0         0         0         0         0         0         0         0]
-            [        0         0         b         0         0         0         0         0         0         0         0         0]
-            [        0         0         0         b         0         0         0         0         0         0         0         0]
-            [        0         0         0       b*c         c         0         0         0         0         0         0         0]
-            [        0         0         0         0         0         a         0         0         0         0         0         0]
-            [        0         0         0         0         0       a*b         b         0         0         0         0         0]
-            [        0         0         0         0         0         0         0         a         0         0         0         0]
-            [        0         0         0         0         0         0         0       a*c         c         0         0         0]
-            [        0         0         0         0         0         0         0         0         0         c         0         0]
-            [        0         0         0         0         0         0         0         0         0 b^2 + a*c         b         0]
-            [        0         0         0         0         0         0         0         0         0         b         1         a]
+            [a 0 0   0 0   0 0   0 0         0 0 0]
+            [0 c 0   0 0   0 0   0 0         0 0 0]
+            [0 0 b   0 0   0 0   0 0         0 0 0]
+            [0 0 0   b 0   0 0   0 0         0 0 0]
+            [0 0 0 b*c c   0 0   0 0         0 0 0]
+            [0 0 0   0 0   a 0   0 0         0 0 0]
+            [0 0 0   0 0 a*b b   0 0         0 0 0]
+            [0 0 0   0 0   0 0   a 0         0 0 0]
+            [0 0 0   0 0   0 0 a*c c         0 0 0]
+            [0 0 0   0 0   0 0   0 0         c 0 0]
+            [0 0 0   0 0   0 0   0 0 b^2 + a*c b 0]
+            [0 0 0   0 0   0 0   0 0         b 1 a]
         """
         representation_type = self._representation_type
         ch_algebra = self._cubic_hecke_algebra
