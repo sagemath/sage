@@ -3494,7 +3494,7 @@ class FileCache():
         """
         return [self[k] for k in self]
 
-    def __iter__(self) -> Iterable:
+    def __iter__(self) -> Iterator:
         """
         Return a list of keys of ``self``.
 
