@@ -289,74 +289,60 @@ class Tarball(object):
         # Check if file already exists in cache
         destination = os.path.join(SAGE_DISTFILES, tarball_filename)
         
+        # Create a temporary Tarball object for this specific wheel
+        wheel_tarball = Tarball(tarball_filename, 
+                               package=self.package, 
+                               tarball_info=tarball_info)
+        
+        # Check if file already exists and is valid
         if os.path.isfile(destination):
-            # Verify checksum of cached file
-            try:
-                cached_tarball = Tarball(tarball_filename, 
-                                        package=self.package, 
-                                        tarball_info=tarball_info)
-                if cached_tarball.checksum_verifies():
-                    log.info(f'Using cached file with valid checksum: {tarball_filename}')
-                    # Update self to point to the cached wheel
-                    self.__filename = tarball_filename
-                    return
-                else:
-                    log.warning(f'Cached file {tarball_filename} has invalid checksum, will re-download')
-            except Exception as e:
-                log.warning(f'Error checking cached file: {e}')
+            if wheel_tarball.checksum_verifies():
+                log.info('Using cached file {destination}'.format(destination=destination))
+                # Update self to point to the cached wheel
+                self.__filename = tarball_filename
+                self.__tarball_info = tarball_info
+                return
+            else:
+                # Garbage in the upstream directory? Ignore it.
+                # Don't delete it because maybe somebody just forgot to
+                # update the checksum (Issue #23972).
+                log.warning('Invalid checksum; ignoring cached file {destination}'
+                            .format(destination=destination))
         
-        # Download from mirrors/upstream
-        log.info(f'Downloading {tarball_filename} from mirrors/upstream...')
-        upstream_url_pattern = tarball_info.get('upstream_url')
-        
-        if upstream_url_pattern:
-            upstream_url = self.package._substitute_variables(upstream_url_pattern)
-        else:
-            upstream_url = None
-        
+        # Download logic for platform-specific wheels
         successful_download = False
-        
-        # Try mirrors first
+        log.info('Attempting to download package {0} from mirrors'.format(tarball_filename))
         for mirror in MirrorList():
             url = mirror.replace('${SPKG}', self.package.name)
             if not url.endswith('/'):
                 url += '/'
             url += tarball_filename
-            log.debug(f'Trying mirror: {url}')
+            log.info(url)
             try:
                 Download(url, destination).run()
                 successful_download = True
-                log.info(f'Downloaded from mirror: {url}')
                 break
             except IOError:
                 log.debug('File not on mirror')
         
-        # Try upstream if mirrors failed
-        if not successful_download and upstream_url and allow_upstream:
-            log.info(f'Trying upstream: {upstream_url}')
-            try:
-                Download(upstream_url, destination).run()
-                successful_download = True
-                log.info(f'Downloaded from upstream: {upstream_url}')
-            except IOError:
-                log.debug('File not at upstream URL')
-        
         if not successful_download:
-            raise FileNotMirroredError(f'Could not download {tarball_filename} from mirrors or upstream')
+            upstream_url_pattern = tarball_info.get('upstream_url')
+            url = self.package._substitute_variables(upstream_url_pattern) if upstream_url_pattern else None
+            if allow_upstream and url:
+                log.info('Attempting to download from {}'.format(url))
+                try:
+                    Download(url, destination).run()
+                except IOError:
+                    raise FileNotMirroredError('tarball does not exist on mirror network and neither at the upstream URL')
+            else:
+                raise FileNotMirroredError('tarball does not exist on mirror network')
         
-        # Verify checksum of traditionally-downloaded file
-        try:
-            downloaded_tarball = Tarball(tarball_filename,
-                                        package=self.package,
-                                        tarball_info=tarball_info)
-            if not downloaded_tarball.checksum_verifies():
-                raise ChecksumError(f'Checksum verification failed for {tarball_filename}')
-            log.info(f'Successfully downloaded and verified: {tarball_filename}')
-            # Update self to point to the actually downloaded file
-            self.__filename = tarball_filename
-        except (ChecksumError, IOError, ValueError) as e:
-            log.error(f'Error verifying downloaded tarball: {e}')
-            raise
+        if not wheel_tarball.checksum_verifies():
+            raise ChecksumError('checksum does not match')
+        
+        # Update self to point to the successfully downloaded wheel
+        self.__filename = tarball_filename
+        self.__tarball_info = tarball_info
 
     def save_as(self, destination):
         """
