@@ -963,10 +963,10 @@ class WordMorphism(SageObject):
         # Check equality first (exact match of alphabets including ordering)
         if Adom_self != Acodom_other:
             # If not equal, check containment
-            if set(Adom_self) == set(Acodom_other):
-                raise ValueError("the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism (order mismatch)")
             if Adom_self.cardinality() == Infinity:
                 raise NotImplementedError("composition with infinite alphabets not yet fully supported")
+            if set(Adom_self) == set(Acodom_other):
+                raise ValueError("the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism (order mismatch)")
             if not all(a in Adom_self for a in Acodom_other):
                 raise ValueError("the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism")
 
@@ -1244,12 +1244,12 @@ class WordMorphism(SageObject):
         """
         Adom = self.domain().alphabet()
         Acodom = self.codomain().alphabet()
-        if Adom == Acodom:
-            return True
-        if Adom.cardinality() < Acodom.cardinality():
-            return False
         if Adom.cardinality() == Infinity:
             raise NotImplementedError
+        if Adom == Acodom:
+            return True
+        elif Adom.cardinality() <= Acodom.cardinality():
+            return False
         return all(a in Adom for a in Acodom)
 
     def image(self, letter):
