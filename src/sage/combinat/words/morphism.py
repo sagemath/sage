@@ -956,7 +956,7 @@ class WordMorphism(SageObject):
             WordMorphism:
         """
         # Check that composition is valid: codomain(other) must equal domain(self)
-        # or at least be compatible (contained with same ordering)
+        # Either the alphabets must be exactly equal (including ordering), or the codomain alphabet must be a proper subset of the domain alphabet (with smaller cardinality)
         Adom_self = self.domain().alphabet()
         Acodom_other = other.codomain().alphabet()
 
