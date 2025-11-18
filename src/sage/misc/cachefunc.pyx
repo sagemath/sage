@@ -449,9 +449,9 @@ cdef extern from "methodobject.h":
     cdef int METH_NOARGS, METH_O
     cdef int PyCFunction_GetFlags(object op) except -1
 
+from collections.abc import Iterator
 from inspect import isfunction
 import os
-from typing import Iterable
 
 from sage.misc.sageinspect import sage_getfile_relative, sage_getsourcelines, sage_getargspec
 
