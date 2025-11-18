@@ -960,7 +960,7 @@ class WordMorphism(SageObject):
         Adom_self = self.domain().alphabet()
         Acodom_other = other.codomain().alphabet()
 
-        # Check equality first (handles same ordering requirement)
+        # Check equality first (exact match of alphabets including ordering)
         if Adom_self != Acodom_other:
             # If not equal, check containment
             if Adom_self.cardinality() < Acodom_other.cardinality():
