@@ -959,7 +959,7 @@ class WordMorphism(SageObject):
         # or at least be compatible (contained with same ordering)
         Adom_self = self.domain().alphabet()
         Acodom_other = other.codomain().alphabet()
-        
+
         # Check equality first (handles same ordering requirement)
         if Adom_self != Acodom_other:
             # If not equal, check containment
@@ -973,7 +973,7 @@ class WordMorphism(SageObject):
             # this indicates a potential ordering mismatch that should be rejected
             if Adom_self.cardinality() == Acodom_other.cardinality():
                 raise ValueError("the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism")
-        
+
         return WordMorphism({key: self(w) for key, w in other._morph.items()},
                             domain=other.domain(),
                             codomain=self.codomain())
