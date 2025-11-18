@@ -813,6 +813,28 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         return Primes(modulus=d, classes=goods, exceptions=exceptions)
 
     def is_algebraic(self):
+        r"""
+        Return ``True`` if this hypergeometric function is algebraic over 
+        the rational functions, return ``False`` otherwise.
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f.is_algebraic()
+            True
+            sage: g = hypergeometric([1/3, 2/3, 1/4], [5/4, 1/2], x)
+            sage: g.is_algebraic()
+            False
+
+        ALGORITHM:
+
+        We rely on the (Christol-)Beukers-Heckmann interlacing criterion 
+        (see [Chr1986]_, p.15, Cor.; [BeukersHeckman]_, Thm. 4.5). For integer
+        differences between parameters we follow the flowchart in 
+        [FY2024]_, Fig. 1.
+
+        """
         if any(a in ZZ and a <= 0 for a in self.top()):
             return True
         if not self._parameters.is_balanced():
