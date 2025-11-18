@@ -414,8 +414,8 @@ cdef build_current_seq():
     cdef list s = []
     cdef int i, j
 
-    for i in range(N-1, -1, -1):
-        for j in range(seq[i]):
+    for N > i >= 0:
+        for 0 <= j < seq[i]:
             s.append(i)
 
     return tuple(s)
