@@ -169,7 +169,7 @@ class PlumbingGraph(SageObject):
         - ``mb`` -- a list of integers, the Euler numbers
         - ``g`` -- a list of integers, the genera
         - ``r`` -- a list of nonnegative integers, the number of
-          boundary comonents on the correpsonding base surface
+          boundary components on the correpsonding base surface
         - ``p_edges`` -- a list of one or two- element sets of integers
         - ``n_edges`` -- a list of one or two- element sets of integers
         
@@ -512,7 +512,7 @@ class PlumbingGraph(SageObject):
         The central vertex of the star shaped component has Euler
         number ``mb``, genus ``g`` and number of boundary components ``r``.
         The bamboos of the star shaped graph have Euler numbers given
-        by the negative continued fractin expansion of the elements
+        by the negative continued fraction expansion of the elements
         of the list ``X``.
         
         
@@ -1142,7 +1142,7 @@ class PlumbingGraph(SageObject):
         Check whether the maximal chain on which the vertex ``i``
         lies is a cycle.
 
-        INTPUT:
+        INPUT:
 
         - ``i`` -- a vertex
 
@@ -1240,9 +1240,9 @@ class PlumbingGraph(SageObject):
         if R == 3:
             self.zero_chain_absorb(i)
         if R == 4:
-            self.unoriented_hanldle_absorb(i)
+            self.unoriented_handle_absorb(i)
         if R == 5:
-            self.oriented_hanldle_absorb(j,i)
+            self.oriented_handle_absorb(j,i)
         if R == 6:
             self.split(i)
         if R == 7:
@@ -1934,7 +1934,7 @@ class PlumbingGraph(SageObject):
 
         Apply unoriented handle absorption to the vertex ``j``.
 
-        INTPUT:
+        INPUT:
 
         - ``j`` -- a vertex
 
@@ -2161,7 +2161,7 @@ class PlumbingGraph(SageObject):
         r"""
         R6 in [Neu1981]_.
 
-        Apply splitting to he graph.
+        Apply splitting to the graph.
         ``j`` is the vertex with Euler number zero in the picture on
         page 305 of [Neu1981]_.
 
@@ -2807,7 +2807,7 @@ class PlumbingGraph(SageObject):
 
         INPUT:
         
-        -``j`` -- a vertex
+        - ``j`` -- a vertex
 
         OUTPUT:
 
@@ -2866,7 +2866,7 @@ class PlumbingGraph(SageObject):
 
         INPUT:
         
-        -``j`` -- a vertex
+        - ``j`` -- a vertex
 
         OUTPUT:
 
@@ -3246,7 +3246,7 @@ class PlumbingGraph(SageObject):
 
     def N6_f_find_candidate(self):
         r"""
-        Return some vertex which is forms the second-last graph on
+        Return some vertex which forms the second-last graph on
         p. 312 of [Neu1981]_, otherwise returns ``-1``.
         
         OUTPUT:
