@@ -2,6 +2,7 @@ py.install_sources(
   '__init__.py',
   'all.py',
   'non_negative_integer_semiring.py',
+  'tropical_matrix.py',
   'tropical_mpolynomial.py',
   'tropical_polynomial.py',
   'tropical_semiring.pyx',
