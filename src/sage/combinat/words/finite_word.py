@@ -3893,11 +3893,11 @@ class FiniteWord_class(Word_class):
             sage: Word('010010010001000').lyndon_factorization()
             (01, 001, 001, 0001, 0, 0, 0)
             sage: Words('10')('010010010001000').lyndon_factorization()
-            (0, 10010010001000)
+            (01, 001, 001, 0001, 0, 0, 0)
             sage: Word('abbababbaababba').lyndon_factorization()
             (abb, ababb, aababb, a)
             sage: Words('ba')('abbababbaababba').lyndon_factorization()
-            (a, bbababbaaba, bba)
+            (abb, ababb, aababb, a)
             sage: Word([1,2,1,3,1,2,1]).lyndon_factorization()
             (1213, 12, 1)
 
@@ -3908,13 +3908,13 @@ class FiniteWord_class(Word_class):
             sage: Word('01').lyndon_factorization()
             (01)
             sage: Words('10')('01').lyndon_factorization()
-            (0, 1)
+            (01)
             sage: lynfac = Word('abbababbaababba').lyndon_factorization()
             sage: [x.is_lyndon() for x in lynfac]
             [True, True, True, True]
             sage: lynfac = Words('ba')('abbababbaababba').lyndon_factorization()
             sage: [x.is_lyndon() for x in lynfac]
-            [True, True, True]
+            [True, True, True, True]
             sage: w = words.ThueMorseWord()[:1000]
             sage: w == prod(w.lyndon_factorization())
             True

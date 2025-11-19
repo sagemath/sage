@@ -137,7 +137,7 @@ class AbstractLanguage(Parent):
             sage: Words('abc').sortkey_letters
             <bound method AbstractLanguage._sortkey_trivial of ...>
             sage: Words('bac').sortkey_letters
-            <bound method AbstractLanguage._sortkey_letters of ...>
+            <bound method AbstractLanguage._sortkey_trivial of ...>
         """
         if isinstance(alphabet, (int, Integer)):
             from sage.sets.integer_range import IntegerRange
@@ -151,20 +151,27 @@ class AbstractLanguage(Parent):
 
         self._alphabet = alphabet
 
-        # Default sorting key: use rank()
-        self.sortkey_letters = self._sortkey_letters
-
-        # Check if we should use the trivial sorting key
+        # Since build_alphabet now sorts finite alphabets, we can use
+        # the trivial sorting key (direct comparison) for most cases.
+        # This is more efficient than using rank().
         N = alphabet.cardinality()
         if N == Infinity:
+            # For infinite alphabets, use trivial comparison
             self.sortkey_letters = self._sortkey_trivial
-        elif N < 36:
+        else:
+            # For finite alphabets, try to use trivial comparison if possible
+            # build_alphabet creates sorted alphabets, so this should work
             try:
-                if all(alphabet.unrank(i) > alphabet.unrank(j)
-                       for i in range(N) for j in range(i)):
+                # Quick check: if alphabet is already sorted, use trivial key
+                if N < 36 and all(alphabet.unrank(i) > alphabet.unrank(j)
+                                  for i in range(N) for j in range(i)):
                     self.sortkey_letters = self._sortkey_trivial
-            except TypeError:
-                pass
+                else:
+                    # Fallback to rank-based comparison
+                    self.sortkey_letters = self._sortkey_letters
+            except (TypeError, AttributeError):
+                # If unrank doesn't work, use rank-based comparison
+                self.sortkey_letters = self._sortkey_letters
 
         if category is None:
             category = Sets()

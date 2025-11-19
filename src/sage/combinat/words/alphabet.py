@@ -235,7 +235,19 @@ def build_alphabet(data=None, names=None, name=None):
             return Family(data, lambda i: names + str(i), name=names)
         if data in Sets():
             return data
-        return TotallyOrderedFiniteSet(data)
+        # Sort the data to ensure consistent alphabet ordering
+        # This makes Words("ab") equal to Words("ba")
+        try:
+            sorted_data = sorted(set(data))
+        except TypeError:
+            # If elements are not comparable, keep original order but remove duplicates
+            seen = set()
+            sorted_data = []
+            for x in data:
+                if x not in seen:
+                    sorted_data.append(x)
+                    seen.add(x)
+        return TotallyOrderedFiniteSet(sorted_data)
 
     # Alphabet defined from a name
     if name is not None:
