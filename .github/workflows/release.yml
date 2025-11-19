@@ -38,7 +38,7 @@ jobs:
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap _prereq)
-      - name: Reconfigure with --enable-download-from-upstream-url
+      - name: Configure with --enable-download-from-upstream-url
         run: |
           make configure
           ./configure
