@@ -2136,7 +2136,7 @@ class WordMorphism(SageObject):
             w = im[v[0]] + im[v[1]]
             for k in range(len(w) - n + 1):
                 L.add(w[k:k + n])
-        
+
         # Also add factors from the axiom and early iterations
         # to handle non-extendable elements in the D0L-language
         v = u
@@ -2144,7 +2144,7 @@ class WordMorphism(SageObject):
             for k in range(len(v) - n + 1):
                 L.add(v[k:k + n])
             v = self(v)
-        
+
         return L
 
     def conjugate(self, pos):
