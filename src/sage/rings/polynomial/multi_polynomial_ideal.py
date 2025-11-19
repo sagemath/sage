@@ -2617,7 +2617,7 @@ class MPolynomialIdeal_singular_repr(
             sage: I = Ideal([x^2 - 1, y^2 - 1])                                         # needs sage.rings.finite_rings
             sage: sorted(I.variety(algorithm='msolve',          # optional - msolve, needs sage.rings.finite_rings
             ....:                  proof=False),
-            ....:        key=str)
+            ....:        key=lambda d: str(sorted(d.items()))
             [{y: 1, x: 1},
              {y: 1, x: 536870908},
              {y: 536870908, x: 1},
