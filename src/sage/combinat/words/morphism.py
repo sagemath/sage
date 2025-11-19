@@ -894,9 +894,6 @@ class WordMorphism(SageObject):
         r"""
         Return the morphism ``self``\*``other``.
 
-        The composition is valid only if the codomain alphabet of ``other``
-        is contained in the domain alphabet of ``self``.
-
         EXAMPLES::
 
             sage: m = WordMorphism('a->ab,b->ba')
@@ -937,41 +934,30 @@ class WordMorphism(SageObject):
             sage: p.codomain()
             Finite words over {'a', 'b', 'c', 'd', 'e'}
 
-        The composition checks domain/codomain compatibility::
-
-            sage: s = WordMorphism('a->ba,b->a', domain=Words('ab'), codomain=Words('ba'))
-            sage: s * s
-            Traceback (most recent call last):
-            ...
-            ValueError: the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism (order mismatch)
-
         TESTS::
 
             sage: m = WordMorphism('a->b,b->c,c->a')
             sage: WordMorphism('')*m
             Traceback (most recent call last):
             ...
-            ValueError: the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism
+            KeyError: 'b'
             sage: m * WordMorphism('')
             WordMorphism:
+            sage: s = WordMorphism('a->ba,b->a', domain=Words('ab'), codomain=Words('ba'))
+            sage: s * s
+            Traceback (most recent call last):
+            ...
+            ValueError: the codomain alphabet of the second morphism must be included in the domain alphabet of the first morphism with the same ordering
         """
-        # Check that composition is valid: codomain(other) must equal domain(self)
-        # Either the alphabets must be exactly equal (including ordering), or the codomain alphabet must be a proper subset of the domain alphabet (with smaller cardinality)
-        Adom_self = self.domain().alphabet()
-        Acodom_other = other.codomain().alphabet()
-
-        # Check equality first (exact match of alphabets including ordering)
-        if Adom_self != Acodom_other:
-            # If not equal, check containment
-            if Adom_self.cardinality() == Infinity:
-                raise NotImplementedError("composition with infinite alphabets not yet fully supported")
-            if set(Adom_self) == set(Acodom_other):
-                raise ValueError("the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism (order mismatch)")
-            if not all(a in Adom_self for a in Acodom_other):
-                raise ValueError("the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism")
-
+        # Check that other's codomain alphabet is included in self's domain alphabet
+        # with the correct ordering
+        if not self._is_alphabet_included_with_order(
+                other.codomain().alphabet(), self.domain().alphabet()):
+            raise ValueError("the codomain alphabet of the second morphism must be "
+                           "included in the domain alphabet of the first morphism "
+                           "with the same ordering")
+        
         return WordMorphism({key: self(w) for key, w in other._morph.items()},
-                            domain=other.domain(),
                             codomain=self.codomain())
 
     def __pow__(self, exp):
@@ -1009,7 +995,7 @@ class WordMorphism(SageObject):
             sage: n^2
             Traceback (most recent call last):
             ...
-            ValueError: the codomain alphabet of the second morphism must be contained in the domain alphabet of the first morphism
+            KeyError: 'c'
         """
         # If exp is not an integer
         if not isinstance(exp, (int, Integer)):
@@ -1230,9 +1216,86 @@ class WordMorphism(SageObject):
         """
         return self.codomain() == self.domain()
 
+    def _is_alphabet_included_with_order(self, source_alphabet, target_alphabet):
+        r"""
+        Check if ``source_alphabet`` is included in ``target_alphabet`` 
+        with the correct ordering.
+
+        This is a helper function for checking composition validity.
+        For composition ``self * other`` to preserve the incidence matrix
+        property, we need ``other.codomain().alphabet()`` to be included
+        in ``self.domain().alphabet()`` with matching order.
+
+        INPUT:
+
+        - ``source_alphabet`` -- the alphabet to check for inclusion
+        - ``target_alphabet`` -- the alphabet to check inclusion into
+
+        OUTPUT:
+
+        ``True`` if all letters of ``source_alphabet`` appear in 
+        ``target_alphabet`` in the same relative order, ``False`` otherwise.
+
+        EXAMPLES::
+
+            sage: m = WordMorphism('a->ab,b->a')
+            sage: m._is_alphabet_included_with_order(
+            ....:     Words('ab').alphabet(), Words('ab').alphabet())
+            True
+            sage: m._is_alphabet_included_with_order(
+            ....:     Words('ab').alphabet(), Words('abc').alphabet())
+            True
+            sage: m._is_alphabet_included_with_order(
+            ....:     Words('ba').alphabet(), Words('ab').alphabet())
+            False
+            sage: m._is_alphabet_included_with_order(
+            ....:     Words('ba').alphabet(), Words('abc').alphabet())
+            False
+            sage: m._is_alphabet_included_with_order(
+            ....:     Words('ac').alphabet(), Words('abc').alphabet())
+            True
+            sage: m._is_alphabet_included_with_order(
+            ....:     Words('abc').alphabet(), Words('abc').alphabet())
+            True
+            sage: m._is_alphabet_included_with_order(
+            ....:     Words('abc').alphabet(), Words('ab').alphabet())
+            False
+        """
+        # Check if alphabets are equal first (fast path)
+        if source_alphabet == target_alphabet:
+            return True
+        
+        # Check cardinality constraints
+        if target_alphabet.cardinality() < source_alphabet.cardinality():
+            return False
+        
+        if target_alphabet.cardinality() == Infinity:
+            raise NotImplementedError("cannot check alphabet inclusion for infinite alphabets")
+        
+        # Check that all letters in source_alphabet are in target_alphabet
+        source_list = list(source_alphabet)
+        target_list = list(target_alphabet)
+        
+        if not all(a in target_alphabet for a in source_list):
+            return False
+        
+        # Check that the relative order is preserved
+        # Find positions of source letters in target
+        target_positions = {letter: i for i, letter in enumerate(target_list)}
+        source_positions = [target_positions[letter] for letter in source_list]
+        
+        # Check if positions are in increasing order
+        return all(source_positions[i] < source_positions[i+1] 
+                   for i in range(len(source_positions)-1))
+
     def is_self_composable(self):
         r"""
-        Return whether the codomain of ``self`` is contained in the domain.
+        Return whether the codomain of ``self`` is contained in the domain
+        with the correct ordering.
+
+        For a morphism to be self-composable (i.e., ``self * self`` to be valid),
+        the codomain alphabet must be included in the domain alphabet with the
+        same relative ordering of letters.
 
         EXAMPLES::
 
@@ -1241,16 +1304,16 @@ class WordMorphism(SageObject):
             False
             sage: f.is_self_composable()
             True
+
+        Check that alphabet ordering matters::
+
+            sage: s = WordMorphism('a->ba,b->a', domain=Words('ab'), codomain=Words('ba'))
+            sage: s.is_self_composable()
+            False
         """
         Adom = self.domain().alphabet()
         Acodom = self.codomain().alphabet()
-        if Adom.cardinality() == Infinity:
-            raise NotImplementedError
-        if Adom == Acodom:
-            return True
-        elif Adom.cardinality() <= Acodom.cardinality():
-            return False
-        return all(a in Adom for a in Acodom)
+        return self._is_alphabet_included_with_order(Acodom, Adom)
 
     def image(self, letter):
         r"""
