@@ -1216,7 +1216,7 @@ class WordMorphism(SageObject):
         return self.codomain() == self.domain()
 
     def _is_alphabet_included_with_order(self, source_alphabet, target_alphabet):
-        r"""
+        """
         Check if ``source_alphabet`` is included in ``target_alphabet`` with the correct ordering.
 
         This is a helper function for checking composition validity.
