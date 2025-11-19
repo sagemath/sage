@@ -75,6 +75,25 @@ def cocliques_HoffmannSingleton(immutable=False):
         sage: G.is_distance_regular(True)
         ([15, 14, 10, 3, None], [None, 1, 5, 12, 15])
 
+    TESTS:
+
+    Check the behavior of parameter `ìmmutable``::
+
+        sage: G = graphs.cocliques_HoffmannSingleton()
+        sage: G.is_immutable()
+        False
+        sage: G.copy().is_immutable()
+        False
+        sage: G.copy(immutable=True).is_immutable()
+        True
+        sage: G = graphs.cocliques_HoffmannSingleton(immutable=True)
+        sage: G.is_immutable()
+        True
+        sage: G.copy().is_immutable()
+        True
+        sage: G.copy(immutable=False).is_immutable()
+        False
+
     REFERENCES:
 
     The construction of this graph can be found in [BCN1989]_ p. 392.
