@@ -174,7 +174,6 @@ AUTHORS:
 # ****************************************************************************
 
 from collections import defaultdict
-from typing import Optional
 from sage.structure.category_object import normalize_names, certify_names
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.integer import Integer
@@ -515,7 +514,7 @@ class FiniteFieldFactory(UniqueFactory):
         super().__init__(*args, **kwds)
 
     def create_key_and_extra_args(self, order, name=None, modulus=None, names=None,
-                                  implementation: Optional[str] = None, proof=None,
+                                  implementation=None, proof=None,
                                   check_prime: bool = True, check_irreducible: bool = True,
                                   prefix=None, repr=None, elem_cache=None,
                                   **kwds):
@@ -651,7 +650,7 @@ class FiniteFieldFactory(UniqueFactory):
             Finite Field in aa of size 7^2
         """
         for key, val in kwds.items():
-            if key not in ['structure', 'implementation', 'prec', 'embedding', 'latex_names', 'impl']:
+            if key not in ['structure', 'prec', 'embedding', 'latex_names', 'impl']:
                 raise TypeError("create_key_and_extra_args() got an unexpected keyword argument '%s'" % key)
             if not (val is None or isinstance(val, list) and all(c is None for c in val)):
                 raise NotImplementedError("ring extension with prescribed %s is not implemented" % key)
