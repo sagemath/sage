@@ -940,7 +940,7 @@ class WordMorphism(SageObject):
             sage: WordMorphism('')*m
             Traceback (most recent call last):
             ...
-            KeyError: 'b'
+            ValueError: the codomain alphabet of the second morphism must be included in the domain alphabet of the first morphism with the same ordering
             sage: m * WordMorphism('')
             WordMorphism:
             sage: s = WordMorphism('a->ba,b->a', domain=Words('ab'), codomain=Words('ba'))
@@ -955,8 +955,7 @@ class WordMorphism(SageObject):
                 other.codomain().alphabet(), self.domain().alphabet()):
             raise ValueError("the codomain alphabet of the second morphism must be "
                            "included in the domain alphabet of the first morphism "
-                           "with the same ordering")
-        
+                           "with the same ordering") 
         return WordMorphism({key: self(w) for key, w in other._morph.items()},
                             codomain=self.codomain())
 
@@ -995,7 +994,7 @@ class WordMorphism(SageObject):
             sage: n^2
             Traceback (most recent call last):
             ...
-            KeyError: 'c'
+            ValueError: the codomain alphabet of the second morphism must be included in the domain alphabet of the first morphism with the same ordering
         """
         # If exp is not an integer
         if not isinstance(exp, (int, Integer)):
@@ -1218,8 +1217,7 @@ class WordMorphism(SageObject):
 
     def _is_alphabet_included_with_order(self, source_alphabet, target_alphabet):
         r"""
-        Check if ``source_alphabet`` is included in ``target_alphabet`` 
-        with the correct ordering.
+        Check if ``source_alphabet`` is included in ``target_alphabet`` with the correct ordering.
 
         This is a helper function for checking composition validity.
         For composition ``self * other`` to preserve the incidence matrix
@@ -1233,7 +1231,7 @@ class WordMorphism(SageObject):
 
         OUTPUT:
 
-        ``True`` if all letters of ``source_alphabet`` appear in 
+        ``True`` if all letters of ``source_alphabet`` appear in
         ``target_alphabet`` in the same relative order, ``False`` otherwise.
 
         EXAMPLES::
@@ -1264,28 +1262,28 @@ class WordMorphism(SageObject):
         # Check if alphabets are equal first (fast path)
         if source_alphabet == target_alphabet:
             return True
-        
+
         # Check cardinality constraints
         if target_alphabet.cardinality() < source_alphabet.cardinality():
             return False
-        
+
         if target_alphabet.cardinality() == Infinity:
             raise NotImplementedError("cannot check alphabet inclusion for infinite alphabets")
-        
+
         # Check that all letters in source_alphabet are in target_alphabet
         source_list = list(source_alphabet)
         target_list = list(target_alphabet)
-        
+
         if not all(a in target_alphabet for a in source_list):
             return False
-        
+
         # Check that the relative order is preserved
         # Find positions of source letters in target
         target_positions = {letter: i for i, letter in enumerate(target_list)}
         source_positions = [target_positions[letter] for letter in source_list]
-        
+
         # Check if positions are in increasing order
-        return all(source_positions[i] < source_positions[i+1] 
+        return all(source_positions[i] < source_positions[i+1]
                    for i in range(len(source_positions)-1))
 
     def is_self_composable(self):
