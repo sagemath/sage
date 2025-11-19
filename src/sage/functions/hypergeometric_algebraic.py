@@ -814,7 +814,7 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
 
     def is_algebraic(self):
         r"""
-        Return ``True`` if this hypergeometric function is algebraic over 
+        Return ``True`` if this hypergeometric function is algebraic over
         the rational functions, return ``False`` otherwise.
 
         EXAMPLES::
@@ -829,9 +829,9 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
 
         ALGORITHM:
 
-        We rely on the (Christol-)Beukers-Heckmann interlacing criterion 
+        We rely on the (Christol-)Beukers-Heckmann interlacing criterion
         (see [Chr1986]_, p.15, Cor.; [BeukersHeckman]_, Thm. 4.5). For integer
-        differences between parameters we follow the flowchart in 
+        differences between parameters we follow the flowchart in
         [FY2024]_, Fig. 1.
 
         """
@@ -847,6 +847,32 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
                    for c in range(d) if d.gcd(c) == 1)
 
     def is_globally_bounded(self, include_infinity=True):
+        r"""
+        Return ``True`` when this hypergeometric function is globally bounded
+        (if ``include_infinity`` is ``False`` it is noct checked whether the
+        radius of convergence is finite) and ``False`` otherwise.
+
+        INPUT:
+
+        - ``include_infinity`` -- Boolean (default: ``True``)
+
+        EXAMPLES:
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/9, 4/9, 5/9], [1/3, 1], x)
+            sage: f.is_globally_bounded()
+            True
+            sage: g = hypergeometric([1/9, 4/9, 5/9], [1/3], x)
+            sage: g.is_globally_bounded()
+            False
+            sage: g.is_globally_bounded(include_infinity=False)
+            True
+
+        ALGORITHM:
+
+        We rely on Christol's classification of globally bounded hypergeometric
+        functions (see [Chr1986]_, Prop. 1).
+        """
         if include_infinity and len(self.top()) > len(self.bottom()) + 1:
             return False
         d = self.denominator()
@@ -857,9 +883,50 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         return True
 
     def p_curvature_ranks(self):
+        # Should this return the coranks of the p-curvature depending on the
+        congruence class of a prime?
         raise NotImplementedError
 
     def monodromy(self, x=0, var='z'):
+        r'''
+        Return a local monodromy matrix of the hypergeometric differential
+        equation associated to this hypergeoemtric function at the popint 
+        ``x``, where ``var`` represents a d-th root of unity for d being the
+        least common multiple of the parameters.
+
+        INPUT:
+
+        - ``x`` -- a complex number (default: ``0``)
+        - ``var`` -- a string (default: ``z``), the name of a d-trh root of unity
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f.monodromy()
+            [0 1]
+            [1 0]
+            sage: f.monodromy()
+
+        ::
+
+        The bases of the solution space are chosen in a compatible way
+        across the three singularities of the differential equation:
+
+            sage: g = hypergeometric([1/9, 4/9, 5/9], [1/3, 1], x)
+            sage: g.monodromy(var='a')
+            [ -a^3 + 1         1         0]
+            [2*a^3 + 1         0         1]
+            [ -a^3 - 1         0         0]
+            sage: g.monodromy(x=Infinity) * g.monodromy(x=1) * g.monodromy()
+            [1 0 0]
+            [0 1 0]
+            [0 0 1]
+
+        ALGORITHM:
+        We use the explicit formulas for the monodromy matrices presented in 
+        [BeukersHeckman]_, Thm. 3.5, attributed to Levelt.
+        '''
         params = self._parameters
         if not params.is_balanced():
             raise ValueError("hypergeometric equation is not Fuchsian")
