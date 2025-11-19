@@ -952,12 +952,16 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
         margin = convergence - log_radius
         if margin <= 0:
             raise ValueError("outside the domain of convergence")
-        # We choose an intermediate log_radius
-        # It can be anything between convergence and log_radius
-        # but it seems that the following works well (in the sense
-        # that it gives good bounds at the end).
-        lr = convergence - margin / max(prec, 2)
-        val = self.valuation(lr)
+        val = self.valuation(convergence)
+        if val is not -infinity:
+            lr = convergence
+        else:
+            # We choose an intermediate log_radius
+            # It can be anything between convergence and log_radius
+            # but it seems that the following works well (in the sense
+            # that it gives good bounds at the end).
+            lr = convergence - margin / max(prec, 2)
+            val = self.valuation(lr)
         # Now, we know that
         #   val(h_k) >= -lr*k + val
         # and we want to find k such that
