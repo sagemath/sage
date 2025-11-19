@@ -1258,6 +1258,9 @@ class WordMorphism(SageObject):
             sage: m._is_alphabet_included_with_order(
             ....:     Words('abc').alphabet(), Words('ab').alphabet())
             False
+            sage: m._is_alphabet_included_with_order(
+            ....:     Words('').alphabet(), Words('ab').alphabet())
+            True
         """
         # Check if alphabets are equal first (fast path)
         if source_alphabet == target_alphabet:
