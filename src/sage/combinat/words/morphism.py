@@ -955,7 +955,7 @@ class WordMorphism(SageObject):
                 other.codomain().alphabet(), self.domain().alphabet()):
             raise ValueError("the codomain alphabet of the second morphism must be "
                            "included in the domain alphabet of the first morphism "
-                           "with the same ordering") 
+                           "with the same ordering")
         return WordMorphism({key: self(w) for key, w in other._morph.items()},
                             codomain=self.codomain())
 
