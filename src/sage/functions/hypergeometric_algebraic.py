@@ -884,7 +884,8 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
 
     def p_curvature_ranks(self):
         # Should this return the coranks of the p-curvature depending on the
-        congruence class of a prime?
+        # congruence class of a prime?
+        # YES!
         raise NotImplementedError
 
     def monodromy(self, x=0, var='z'):
