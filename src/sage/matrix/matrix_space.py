@@ -2039,8 +2039,9 @@ class MatrixSpace(UniqueRepresentation, Parent):
         if self.__nrows != self.__ncols:
             raise TypeError("identity matrix must be square")
         A = self.zero_matrix().__copy__()
+        one = self.base_ring().one()
         for i in range(self.__nrows):
-            A[i, i] = 1
+            A[i, i] = one
         A.set_immutable()
         return A
 
