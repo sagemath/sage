@@ -559,9 +559,9 @@ cdef class TreeIterator:
         sig_free(self.l)
         sig_free(self.current_level_sequence)
 
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
-        Return a string representaiton of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
