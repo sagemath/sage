@@ -513,8 +513,14 @@ class FiniteFieldFactory(UniqueFactory):
     def create_key_and_extra_args(self, order, name=None, modulus=None, names=None,
                                   impl=None, proof=None,
                                   check_prime=True, check_irreducible=True,
-                                  prefix=None, repr=None, elem_cache=None,
+                                  prefix=None, repr=None, elem_cache=None,implementation=None,
                                   **kwds):
+        # --- START OF FIX ---
+        if implementation is not None:
+            if impl is not None:
+                raise ValueError("Cannot specify both 'impl' and 'implementation'")
+            impl = implementation
+        # --- END OF FIX ---
         """
         EXAMPLES::
 
@@ -606,6 +612,10 @@ class FiniteFieldFactory(UniqueFactory):
             Traceback (most recent call last):
             ...
             ValueError: the order of a finite field must be a prime power
+            sage: GF(25, impl='givaro', implementation='givaro')
+            Traceback (most recent call last):
+            ...
+            ValueError: Cannot specify both 'impl' and 'implementation'
 
         We expect ``name`` to be a string (if it is a single name) and ``names`` to be
         a tuple of strings, but for backwards compatibility this is not enforced.
