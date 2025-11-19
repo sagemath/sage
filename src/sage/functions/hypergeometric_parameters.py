@@ -26,6 +26,10 @@ from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.semirings.tropical_semiring import TropicalSemiring
+
+from sage.matrix.constructor import matrix
+from sage.matrix.special import identity_matrix
 
 
 # HypergeometricParameters of hypergeometric functions
@@ -549,14 +553,16 @@ class HypergeometricParameters():
         # Main part: computation of the valuation
         # We use Christol's formula (see Lemma 3.1.10 of [CFVM2025])
         # with modification in order to take the drift into account
+        TSR = TropicalSemiring(QQ)
         n = len(top) + len(bottom) + 1
         parameters = HypergeometricParameters(top, bottom)
         order = IntegerModRing(parameters.d)(p).multiplicative_order()
         valuation = position = ZZ(0)
-        breaks = None
+        valfinal = breaks = None
         indices = {}
         count = 0
         q = 1
+        TM = identity_matrix(TSR, n)
         while True:
             # We take into account the contribution of V({k/p^r}, p^r).
             # We represent the partial sum until r by the table new_breaks.
@@ -590,7 +596,7 @@ class HypergeometricParameters():
             new_breaks = []
             new_indices = {}
             w = 0
-            unbounded = False
+            TMstep = matrix(TSR, n)
             for i in range(n):
                 x, dw, param = AB[i]    # discontinuity point
                 y, _, right = AB[i+1]   # next discontinuity point
@@ -618,12 +624,11 @@ class HypergeometricParameters():
                     else:
                         interval = max(0, (x-1) // q)
                         j = j0 = indices[param]
-                    if growth == 0 and interval*drift + w < 0:
-                        unbounded = True
                     val = infinity
                     while True:
                         valj, posj, paramj = breaks[j]
                         valj += drift * interval
+                        TMstep[i,j] = TSR(drift*interval + w)
                         if valj < val:
                             val = valj
                             pos = posj + q * interval
@@ -640,14 +645,18 @@ class HypergeometricParameters():
             valuation, position, _ = minimum
             if drift >= 0 and q > parameters.bound:
                 if growth == 0:
-                    if unbounded:
-                        return -infinity, None
-                    if all(new_breaks[j][0] >= breaks[j][0] for j in range(n)):
-                        if count >= order:
-                            return valuation, position
-                        count += 1
-                    else:
-                        count = 0
+                    if count < order:
+                        TM = TMstep * TM
+                    count += 1
+                    if count == order:
+                        try:
+                            TM = TM.weak_transitive_closure()
+                        except ValueError:
+                            return -infinity, None
+                        valfinal = min(TM[i,j].lift() + new_breaks[j][0]
+                                       for i in range(n) for j in range(n))
+                    if valuation == valfinal:
+                        return valuation, position
                 elif drift >= len(top) and minimum == new_breaks[0]:
                     return valuation, position
 
