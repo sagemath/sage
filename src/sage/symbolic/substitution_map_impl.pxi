@@ -86,7 +86,7 @@ cpdef SubstitutionMap make_map(subs_dict):
         SubsMap
     """
     cdef GExMap smap
-    for k, v in subs_dict.iteritems():
+    for k, v in subs_dict.items():
         smap.insert(make_pair((<Expression>k)._gobj,
                               (<Expression>v)._gobj))
     return new_SubstitutionMap_from_GExMap(smap)

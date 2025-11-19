@@ -309,7 +309,7 @@ class CenterIndices(IndexedFreeAbelianMonoid):
                 continue
             M = matrix(R, [[v[s] for v in ad] for s in supp])
             ker = M.right_kernel_matrix()
-            vecs = [self._reduce(UEA.linear_combination((vecs[i], c) for i, c in kv.iteritems()))
+            vecs = [self._reduce(UEA.linear_combination((vecs[i], c) for i, c in kv.items()))
                     for kv in ker.rows()]
 
         # Lastly, update the appropriate data

@@ -147,7 +147,7 @@ def restore(vars=None):
 
 def _restore(G, D, vars):
     if vars is None:
-        for k, v in D.iteritems():
+        for k, v in D.items():
             G[k] = v
     else:
         if isinstance(vars, str):

@@ -162,7 +162,7 @@ class RightAngledArtinGroup(ArtinGroup):
             G = Graph(G, immutable=True)
         else:
             G = G.copy(immutable=True)
-        if G.num_verts() == 0:
+        if not G.n_vertices():
             raise ValueError("the graph must not be empty")
         if names is None:
             names = 'v'
@@ -172,7 +172,7 @@ class RightAngledArtinGroup(ArtinGroup):
             else:
                 names = [names + str(v) for v in G.vertices(sort=False)]
         names = tuple(names)
-        if len(names) != G.num_verts():
+        if len(names) != G.n_vertices():
             raise ValueError("the number of generators must match the"
                              " number of vertices of the defining graph")
         return super().__classcall__(cls, G, names)
@@ -192,8 +192,8 @@ class RightAngledArtinGroup(ArtinGroup):
         F = FreeGroup(names=names)
         CG = Graph(G).complement()  # Make sure it's mutable
         CG.relabel()  # Standardize the labels
-        cm = [[-1] * CG.num_verts() for _ in range(CG.num_verts())]
-        for i in range(CG.num_verts()):
+        cm = [[-1] * CG.n_vertices() for _ in range(CG.n_vertices())]
+        for i in range(CG.n_vertices()):
             cm[i][i] = 1
         for u, v in CG.edge_iterator(labels=False):
             cm[u][v] = 2
@@ -243,7 +243,7 @@ class RightAngledArtinGroup(ArtinGroup):
             sage: G.gens()
             (vx, vy, vzeta)
         """
-        return tuple(self.gen(i) for i in range(self._graph.num_verts()))
+        return tuple(self.gen(i) for i in range(self._graph.n_vertices()))
 
     def ngens(self):
         """
@@ -256,7 +256,7 @@ class RightAngledArtinGroup(ArtinGroup):
             sage: G.ngens()
             5
         """
-        return self._graph.num_verts()
+        return self._graph.n_vertices()
 
     def graph(self):
         """
@@ -843,7 +843,7 @@ class CohomologyRAAG(CombinatorialFreeModule):
             sage: H.ngens()
             4
         """
-        return self._group._graph.num_verts()
+        return self._group._graph.n_vertices()
 
     def degree_on_basis(self, I):
         """

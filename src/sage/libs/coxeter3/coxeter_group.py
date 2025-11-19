@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-coxeter3
 # sage.doctest: optional - coxeter3
 """
 Coxeter Groups implemented with Coxeter3
@@ -181,7 +180,9 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
     def rank(self):
         """
-        Return the rank of this Coxeter group, that is, the number of generators.
+        Return the rank of this Coxeter group.
+
+        This is the number of generators.
 
         EXAMPLES::
 
@@ -206,6 +207,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
     def length(self, x):
         """
         Return the length of an element ``x`` in this Coxeter group.
+
         This is just the length of a reduced word for ``x``.
 
         EXAMPLES::

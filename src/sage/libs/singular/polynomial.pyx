@@ -284,12 +284,19 @@ cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r) noexcept:
         sage: P(0) > P(-1)
         True
     """
+    # similar to p_Compare in p_polys.h
     cdef int tmp
 
     if r != currRing:
         rChangeCurrRing(r)
 
     while True:
+        # workaround for https://github.com/Singular/Singular/issues/1293
+        while p != NULL and r.cf.cfIsZero(p_GetCoeff(p, r), r.cf):
+            p = pNext(p)
+        while q != NULL and r.cf.cfIsZero(p_GetCoeff(q, r), r.cf):
+            q = pNext(q)
+
         if p == NULL:
             if q == NULL:
                 return 0
@@ -374,7 +381,7 @@ cdef int singular_polynomial_div_coeff(poly** ret, poly *p, poly *q, ring *r) ex
     sig_off()
     return 0
 
-cdef int singular_polynomial_pow(poly **ret, poly *p, unsigned long exp, ring *r) except -1:
+cdef int singular_polynomial_pow(poly **ret, poly *p, int exp, ring *r) except -1:
     """
     ``ret[0] = p**exp`` where ``p`` in ``r`` and ``exp`` > 0.
 
