@@ -3406,6 +3406,8 @@ REFERENCES:
               International Algorithmic Number Theory Symposium (pp. 357-371).
               Springer Berlin Heidelberg, 2002.
 
+.. [HH2011] Jürgen Herzog, Takayuki Hibi, *Monomial Ideals*.  Springer GTM 260, 2011.
+
 .. [HH2012] Victoria Horan and Glenn Hurlbert,
             *Overlap Cycles for Steiner Quadruple Systems*,
             2012, :arxiv:`1204.3215`
@@ -3908,8 +3910,11 @@ REFERENCES:
              *The MD2 message-digest algorithm*; in
              RFS 1319, (1992).
 
-.. [Ka1993] Masaki Kashiwara, *The crystal base and Littelmann's
-            refined Demazure character formula*, Duke Math. J. 71
+.. [Kal2001] Gil Kalai. *Algebraic Shifting*. Computational Commutative
+             Algebra and Combinatorics. (2001). 121--163.
+
+.. [Kas1993] Masaki Kashiwara, The crystal base and Littelmann's
+            refined Demazure character formula, Duke Math. J. 71
             (1993), no. 3, 839--858.
 
 .. [Ka2003] \M. Kashiwara.

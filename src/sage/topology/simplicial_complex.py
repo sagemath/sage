@@ -3576,6 +3576,243 @@ class SimplicialComplex(Parent, GenericCellComplex):
             products.append(prod)
         return R.quotient(products)
 
+    def algebraic_shift(self, form="exterior", iterations=5, certificate=False, check_shift=False, **random_mat_options):
+        r"""
+        Returns the algebraically shifted complex of this simplicial complex.
+
+        Given a total order on the vertices of ``self``, define the partial
+        order on `k`-faces as `f\leq g` if and only if `f_1\leq g_1, \dots, f_k\leq
+        g_k`. A `k`-family is called `\emph{shifted}` if it is a lower ideal of
+        this partially ordered set. There the ``exterior`` and ``symmetric``
+        shifting are two operations giving shifted complex from the original
+        simplicial complex.
+
+        INPUT:
+
+        - ``form`` -- string (default: ``'exterior'``); the type of shifting to
+          do. Can be either ``'exterior'`` or ``'symmetric'``.
+
+        - ``iterations`` -- integer (default: `5`); the number of iterations to be
+          used to certify the output.
+
+        - ``certificate`` - boolean: whether to return the number of occurences
+          of the different candidates.
+
+        - ``check_shift`` - boolean: whether to check if the output is a
+          shifted complex.
+
+        - ``random_mat_options`` - a dictionary; the options to create the
+          random matrix used. If set to ``None``, the algorithm uses the
+          default options of ``random_matrix``.
+
+        OUTPUT:
+
+        A shifted simplicial complex.
+
+        EXAMPLES::
+
+            sage: G = graphs.CompleteBipartiteGraph(3,3)
+            sage: K33 = SimplicialComplex([e[:2] for e in G.edges()])
+            sage: shifted_K33 = K33.algebraic_shift()
+            sage: sorted(shifted_K33.facets())
+            [(0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (1, 2), (1, 3), (1, 4), (2, 3)]
+
+            sage: octahedron = SimplicialComplex([[0,1,2],[0,1,5],[0,2,4],[0,4,5],[1,2,3],[1,3,5],[2,3,4],[3,4,5]])
+            sage: shifted_octahedron = octahedron.algebraic_shift()
+            sage: shifted_octahedron.f_vector()
+            [1, 6, 12, 8]
+            sage: shifted_octahedron.homology()
+            {0: 0, 1: 0, 2: Z}
+            sage: print(sorted(shifted_octahedron.facets()))
+            [(0, 1, 2), (0, 1, 3), (0, 1, 4), (0, 1, 5), (0, 2, 3), (0, 2, 4), (0, 2, 5), (1, 2, 3)]
+
+            sage: K4 = graphs.CompleteGraph(4)
+            sage: complement_K44 = SimplicialComplex([e[:2] for e in K4.disjoint_union(K4).edges()])
+            sage: shifted_complement_K44 = complement_K44.algebraic_shift()
+            sage: shifted_complement_K44.f_vector()
+            [1, 8, 12]
+            sage: shifted_complement_K44.homology()
+            {0: Z, 1: Z^6}
+            sage: print(sorted(shifted_complement_K44.facets())[-4:])
+            [((0, 1), (1, 1)), ((0, 2), (0, 3)), ((0, 2), (1, 0)), ((1, 3),)]
+
+            sage: cp = polytopes.cyclic_polytope(4,10)
+            sage: sc_cp = SimplicialComplex([tuple([cp.vertices().index(v) for v in f.vertices()]) for f in cp.faces(3)])
+            sage: shifted_sc_cp = sc_cp.algebraic_shift()
+            sage: shifted_sc_cp.f_vector()
+            [1, 10, 45, 70, 35]
+            sage: shifted_sc_cp.homology()
+            {0: 0, 1: 0, 2: 0, 3: Z}
+            sage: sorted(shifted_sc_cp.facets())[-5:]
+            [(0, 2, 3, 6), (0, 2, 3, 7), (0, 2, 3, 8), (0, 2, 3, 9), (1, 2, 3, 4)]
+
+        .. WARNING::
+
+            This method uses random matrices and is not guaranteed to give 
+            the correct output. The higher the parameter `iterations` is, the 
+            higher the probability of the output to be correct.
+
+        .. SEEALSO::
+
+            :meth:`sage.homology.examples.ShiftedComplex`
+
+        .. REFERENCES:
+
+        - [HH2011]_
+        - [Kal2001]_
+
+        TODO:
+
+        - implement symmetric shift
+        - put more example with certificate and different random matrices and
+          check shift
+        """
+        if form == "exterior":
+            outputs = [ self._ksets_exterior_shift(size, iterations, certificate,
+                                                   check_shift, **random_mat_options) 
+                        for size in range(1,self.dimension()+2) ]
+            if certificate:
+                shifted_sets, certifs = zip(*outputs)
+                faces = reduce(lambda x,y: x + y, shifted_sets)
+                shifted_complex = SimplicialComplex(faces)
+                return shifted_complex, certifs 
+            else:
+                shifted_sets = outputs
+                faces = reduce(lambda x,y: x + y, shifted_sets)
+                shifted_complex = SimplicialComplex(faces)
+                return shifted_complex
+
+    def _ksets_exterior_shift(self, k, iterations, certificate, check_shift, **random_mat_options):
+        """
+        Returns a shifted `k`-set family obtained from the `k-1`-dim. faces of the
+        simplicial complex.
+
+        INPUT:
+
+        - ``k`` - positive integer; the size of the faces of ``self`` to shift.
+
+        - ``iterations`` - positive integer; the required number of iterations
+          giving the same result before giving the output.
+
+        - ``certificate`` - boolean: whether to return the
+          number of occurences of the different candidates.
+
+        - ``check_shift`` - boolean: whether to check if
+          the output is a shifted complex.
+
+        - ``random_mat_options`` - a dictionary; the options to create the
+          random matrix used. If set to ``None``, the algorithm uses the
+          default options of ``random_matrix``.
+
+        OUTPUT:
+
+        If ``certificate`` is true, returns a tuple containing:
+
+        1. A shifted `k`-set family.
+        2. A tuple giving the number of appearances of candidates, ordered
+        lexicographically.
+
+        If ``certificate`` is false:
+
+        - A shifted `k`-set family.
+
+        EXAMPLES:
+
+        .. WARNING::
+
+            This function is using a probabilistic algorithm. There is a (very)
+            small probability of returning a wrong output.
+
+        .. SEEALSO::
+
+            :meth:`algebraic_shift`
+            :meth:`sage.homology.examples.ShiftedComplex`
+        """
+        from sage.matrix.special import random_matrix
+        from sage.misc.flatten import flatten
+        from sage.homology.examples import ShiftedComplex
+
+        def is_shifted(kset_fam):
+            if 0 in Set(flatten(kset_fam)):  # Shifting operation does not like 0's
+                kset_fam = Set([tuple([i+1 for i in kset]) for kset in kset_fam])
+            shifted_sc = SimplicialComplex(kset_fam)
+            new_shifted = ShiftedComplex(kset_fam)
+            if new_shifted != shifted_sc:
+                return False
+            else:
+                return True
+
+        kset_family = sorted(self.faces()[k-1])
+        size = len(kset_family)
+        vertices = self.vertices()
+        n_vertices = len(vertices)
+        kset_as_indices = [tuple(vertices.index(i) for i in kset) for kset in kset_family]
+
+        try:
+            ring = random_mat_options.pop("ring")
+        except KeyError:
+            ring = ZZ
+
+        found_candidate = False
+        candidates = {}
+        candidate = None
+        sorted_candidate = None
+        value_candidate = 0
+
+        while not found_candidate:
+            M = random_matrix(ring=ring, nrows=n_vertices, **random_mat_options)
+
+            found_rank = 0
+            compound_matrix = matrix(size, 0)
+            iter_cols = combinations(range(n_vertices), k)
+            shifted_ksets = Set()
+            while found_rank < size:
+                index_cols = iter_cols.next()
+                new_column = matrix(size, 1, [M.matrix_from_rows_and_columns(row_indices, index_cols).det()
+                                              for row_indices in kset_as_indices])
+                compound_matrix = compound_matrix.augment(new_column)
+                new_rank = compound_matrix.rank()
+                if new_rank > found_rank:
+                    shifted_ksets += Set([tuple(vertices[i] for i in index_cols)])
+                found_rank = new_rank
+
+            if candidate is not None:
+                shifted = True
+                if check_shift:
+                    shifted = is_shifted(shifted_ksets)
+                if shifted:
+                    sorted_ksets = sorted(shifted_ksets)
+                    if sorted_ksets < sorted_candidate:  # Found a new candidate
+                        candidate = shifted_ksets
+                        sorted_candidate = sorted_ksets
+                        candidates[candidate] = 1
+                        value_candidate = 1
+                    elif sorted_ksets == sorted_candidate:  # found the same candidate
+                        candidates[candidate] += 1
+                        value_candidate = candidates[candidate]
+                    else:  # is a bad candidate
+                        if shifted_ksets in candidates.keys():
+                            candidates[shifted_ksets] += 1
+                        else:
+                            candidates[shifted_ksets] = 1
+            else:
+                shifted = True
+                if check_shift:
+                    shifted = is_shifted(shifted_ksets)
+                if shifted:
+                    candidate = shifted_ksets
+                    sorted_candidate = sorted(shifted_ksets)
+                    candidates[candidate] = 1
+                    value_candidate = 1
+
+            if value_candidate == iterations:
+                found_candidate = True
+
+        if certificate:
+            return candidate, sorted(candidates.values(), reverse=True)
+        else:
+            return candidate
+
     def alexander_dual(self, is_mutable=True):
         """
         The Alexander dual of this simplicial complex: according to
