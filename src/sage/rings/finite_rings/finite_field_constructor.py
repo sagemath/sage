@@ -563,7 +563,8 @@ class FiniteFieldFactory(UniqueFactory):
             sage: GF.create_key_and_extra_args(9, 'a', structure=None)                  # needs sage.libs.linbox
             ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
 
-        We do not allow giving both ``implementation`` and ``impl``::
+        We do not allow giving both ``implementation`` and ``impl``,
+        but we do allow ``impl`` for backwards compatibility::
 
             sage: GF.create_key_and_extra_args(9, 'a', implementation='givaro')          # needs sage.libs.linbox
             ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
