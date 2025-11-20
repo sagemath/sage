@@ -3805,6 +3805,14 @@ cdef class RealNumber(sage.structure.element.RingElement):
             Traceback (most recent call last):
             ...
             ValueError: cannot convert NaN or infinity to rational number
+
+        Check :issue:`40280`::
+
+            sage: x = RealField(500)(pi)
+            sage: abs(x.nearby_rational(max_error=1e-100) - x) <= 1e-100
+            True
+            sage: abs(x.nearby_rational(max_error=1e-100r) - x) <= 1e-100
+            True
         """
 
         if not mpfr_number_p(self.value):
@@ -3818,7 +3826,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             from sage.rings.real_mpfi import RealIntervalField
 
             intv_field = RealIntervalField(self.prec())
-            intv = intv_field(self - max_error, self + max_error)
+            intv = intv_field(self).add_error(max_error)
 
             return intv.simplest_rational()
 
