@@ -195,6 +195,7 @@ except ImportError:
 from sage.structure.factory import UniqueFactory
 from sage.misc.decorators import rename_keyword
 
+
 class FiniteFieldFactory(UniqueFactory):
     """
     Return the globally unique finite field of given order with
