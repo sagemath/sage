@@ -193,7 +193,7 @@ except ImportError:
 
 
 from sage.structure.factory import UniqueFactory
-
+from sage.misc.decorators import rename_keyword
 
 class FiniteFieldFactory(UniqueFactory):
     """
@@ -513,6 +513,7 @@ class FiniteFieldFactory(UniqueFactory):
         self._modulus_cache = defaultdict(dict)
         super().__init__(*args, **kwds)
 
+    @rename_keyword(impl='implementation')
     def create_key_and_extra_args(self, order, name=None, modulus=None, names=None,
                                   implementation=None, proof=None,
                                   check_prime: bool = True, check_irreducible: bool = True,
@@ -564,15 +565,16 @@ class FiniteFieldFactory(UniqueFactory):
             sage: GF.create_key_and_extra_args(9, 'a', structure=None)                  # needs sage.libs.linbox
             ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
 
-        The ``implementation`` parameter is preferred, but ``impl`` is accepted
-        for backwards compatibility::
+        We do not allow giving both ``implementation`` and ``impl``::
 
             sage: GF.create_key_and_extra_args(9, 'a', implementation='givaro')          # needs sage.libs.linbox
             ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
             sage: GF.create_key_and_extra_args(9, 'a', impl='givaro')                   # needs sage.libs.linbox
             ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
             sage: GF.create_key_and_extra_args(9, 'a', implementation='givaro', impl='ntl')  # needs sage.libs.linbox
-            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
+            Traceback (most recent call last):
+            ...
+            TypeError: create_key_and_extra_args() got an unexpected keyword argument 'impl'
 
         TESTS::
 
@@ -650,19 +652,10 @@ class FiniteFieldFactory(UniqueFactory):
             Finite Field in aa of size 7^2
         """
         for key, val in kwds.items():
-            if key not in ['structure', 'prec', 'embedding', 'latex_names', 'impl']:
+            if key not in ['structure', 'prec', 'embedding', 'latex_names']:
                 raise TypeError("create_key_and_extra_args() got an unexpected keyword argument '%s'" % key)
             if not (val is None or isinstance(val, list) and all(c is None for c in val)):
                 raise NotImplementedError("ring extension with prescribed %s is not implemented" % key)
-
-        # Accept both 'implementation' (preferred) and 'impl' (for backwards compatibility)
-        # Priority: 'implementation' takes precedence over 'impl' if both are provided
-        impl = kwds.get('impl')
-        if implementation is not None:
-            impl = implementation
-        elif impl is None:
-            # Keep impl as None, will be set to default later
-            pass
 
         from sage.structure.proof.proof import WithProof
         from sage.structure.proof.all import arithmetic
@@ -690,8 +683,8 @@ class FiniteFieldFactory(UniqueFactory):
             # note that we haven't tested p for primality
 
             if n == 1:
-                if impl is None:
-                    impl = 'modn'
+                if implementation is None:
+                    implementation = 'modn'
                 if name is not None:
                     certify_names((name,) if isinstance(name, str) else name)
                 name = ('x',)  # Ignore name
@@ -715,19 +708,19 @@ class FiniteFieldFactory(UniqueFactory):
                     check_irreducible = False
                 name = normalize_names(1, name)
 
-                if impl is None:
+                if implementation is None:
                     if order < zech_log_bound and FiniteField_givaro is not None:
-                        impl = 'givaro'
+                        implementation = 'givaro'
                     elif p == 2 and FiniteField_ntl_gf2e is not None:
-                        impl = 'ntl'
+                        implementation = 'ntl'
                     else:
-                        impl = 'pari_ffelt'
+                        implementation = 'pari_ffelt'
 
             # Determine modulus.
             # For the 'modn' implementation, we use the following
             # optimization which we also need to avoid an infinite loop:
             # a modulus of None is a shorthand for x-1.
-            if modulus is not None or impl != 'modn':
+            if modulus is not None or implementation != 'modn':
                 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
                 R = PolynomialRing(FiniteField(p), 'x')
                 if modulus is None:
@@ -745,15 +738,15 @@ class FiniteFieldFactory(UniqueFactory):
 
                     if modulus.degree() != n:
                         raise ValueError("the degree of the modulus does not equal the degree of the field")
-                # If modulus is x - 1 for impl="modn", set it to None
-                if impl == 'modn' and modulus.list() == [-1,1]:
+                # If modulus is x - 1 for implementation="modn", set it to None
+                if implementation == 'modn' and modulus.list() == [-1,1]:
                     modulus = None
             if modulus is None:
                 check_irreducible = False
 
             # Check extra arguments for givaro and setup their defaults
             # TODO: ntl takes a repr, but ignores it
-            if impl == 'givaro':
+            if implementation == 'givaro':
                 if repr is None:
                     repr = 'poly'
                 if elem_cache is None:
@@ -763,7 +756,7 @@ class FiniteFieldFactory(UniqueFactory):
                 repr = None
                 elem_cache = None
 
-            return (order, name, modulus, impl, p, n, proof, prefix, repr, elem_cache, check_prime, check_irreducible), {}
+            return (order, name, modulus, implementation, p, n, proof, prefix, repr, elem_cache, check_prime, check_irreducible), {}
 
     def create_object(self, version, key, **kwds):
         """
