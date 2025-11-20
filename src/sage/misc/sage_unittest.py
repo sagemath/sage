@@ -217,7 +217,7 @@ class TestSuite:
             ....:     def _test_b(self, tester): tester.fail()
             ....:     def _test_c(self, tester): pass
             ....:     def _test_d(self, tester): tester.fail()
-            ....:     def _test_pickling(self, tester):
+            ....:     def _test_pickling_fails(self, tester):
             ....:         from _pickle import PicklingError
             ....:         from sage.misc.persist import dumps
             ....:         try:
@@ -255,7 +255,7 @@ class TestSuite:
             ------------------------------------------------------------
             running ._test_new() . . . pass
             running ._test_not_implemented_methods() . . . pass
-            running ._test_pickling() . . . pass
+            running ._test_pickling_fails() . . . pass
             The following tests failed: _test_b, _test_d
 
             File "/opt/sage/local/lib/python/site-packages/sage/misc/sage_unittest.py", line 183, in run
