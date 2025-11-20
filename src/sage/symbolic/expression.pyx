@@ -3374,6 +3374,25 @@ cdef class Expression(Expression_abc):
             sage: expr = reduce(lambda u, v: 1/u -v, [1/pi] + list(continued_fraction(pi)[:20]))
             sage: expr.is_zero()
             False
+
+        Check that ``!=`` is consistent with ``is_zero()`` for variables with domain constraints::
+
+            sage: x12 = var('x12', domain='real')
+            sage: bool(x12 != 0)
+            True
+            sage: bool(x12 != 0) == (not x12.is_zero())
+            True
+            sage: bool(0 != x12)
+            True
+            sage: bool(0 != x12) == (not x12.is_zero())
+            True
+
+        This also fixes the matrix symmetry issue::
+
+            sage: x11, x12, x22 = SR.var('x11, x12, x21', domain='real')
+            sage: X = matrix(SR, [[x11,x12],[0,x22]])
+            sage: X.is_symmetric()
+            False
         """
         if self.is_relational():
             # constants are wrappers around Sage objects, compare directly
@@ -3417,10 +3436,17 @@ cdef class Expression(Expression_abc):
                     if set(vars).intersection(assumption_vars):
                         need_assumptions = True
 
+            # Use is_zero() for != 0 when pynac can't decide
+            # This ensures consistency between x != 0 and not x.is_zero()
+            if (pynac_result == relational_notimplemented and 
+                self.operator() == operator.ne):
+                if self.rhs().is_zero():
+                    return not self.lhs().is_zero()
+                elif self.lhs().is_zero():
+                    return not self.rhs().is_zero()
+
             # Use interval fields to try and falsify the relation
             if not need_assumptions:
-                if pynac_result == relational_notimplemented and self.operator() == operator.ne:
-                    return not (self.lhs()-self.rhs()).is_zero()
                 res = self.test_relation()
                 if res in (True, False):
                     return res
