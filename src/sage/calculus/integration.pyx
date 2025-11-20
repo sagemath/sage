@@ -430,8 +430,8 @@ cdef double c_monte_carlo_f(double *t, size_t dim, void *params) noexcept:
             value = wrapper.the_function(*wrapper.lx, *wrapper.the_parameters)
         else:
             value = wrapper.the_function(*wrapper.lx)
-    except Exception as msg:
-        print(msg)
+    except Exception as e:
+        print(e)
         value=0
 
     sig_unblock()
