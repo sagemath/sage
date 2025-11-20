@@ -937,7 +937,7 @@ def identity_matrix(ring, n=0, sparse=False):
         sage: M.is_mutable()
         True
 
-    TESTS::
+    ::
 
         sage: T = TropicalSemiring(QQ)
         sage: identity_matrix(T, 3)
