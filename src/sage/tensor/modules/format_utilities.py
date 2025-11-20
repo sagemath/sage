@@ -72,7 +72,7 @@ def is_atomic(expr, sep=['+', '-']):
         True
     """
     if not isinstance(expr, str):
-        raise TypeError("The argument must be a string")
+        raise TypeError("the argument must be a string")
     if not isinstance(sep, list):
         raise TypeError("the argument 'sep' must be a list")
     elif any(not isinstance(s, str) for s in sep):
@@ -91,7 +91,7 @@ def is_atomic(expr, sep=['+', '-']):
     return True
 
 
-def is_atomic_wedge_txt(expression):
+def is_atomic_wedge_txt(expression) -> bool:
     r"""
     Helper function to check whether some text-formatted expression is atomic
     in terms of wedge products.

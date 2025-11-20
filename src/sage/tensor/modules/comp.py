@@ -5456,10 +5456,10 @@ class CompFullyAntiSym(CompWithSym):
             raise TypeError("{} is not a fully antisymmetric ".format(other) +
                             "set of components")
         if other._frame != self._frame:
-            raise ValueError("The {} are not defined on the ".format(other) +
+            raise ValueError("the {} are not defined on the ".format(other) +
                              "same frame as the {}".format(self))
         if other._nid < self._nid:
-            raise ValueError("The {} have less indices than ".format(other) +
+            raise ValueError("the {} have less indices than ".format(other) +
                              "the {}".format(self))
         # Number of indices of the result:
         res_nid = other._nid - self._nid
