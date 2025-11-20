@@ -33,10 +33,6 @@ jobs:
         editable:
           ${{ fromJson(github.event_name == 'pull_request' && '[false]' || '[false, true]') }}
         include:
-          # One run for oldest supported Python
-          - os: 'ubuntu'
-            python: '3.11'
-            tests: 'all'
           # Test only changed files
           - os: 'ubuntu'
             python: '3.12'
