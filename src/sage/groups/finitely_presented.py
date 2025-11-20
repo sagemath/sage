@@ -363,9 +363,11 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
 
     def _normal_form_by_gap_nffunction(self) -> GapElement:
         """
-        Internal method that calls ``FpElementNFFunction`` to compute some normal form
-        for this group element.
-        Note that this is not guaranteed to terminate.
+        Call ``FpElementNFFunction`` to compute some normal form for ``self``.
+
+        .. WARNING::
+
+            Note that this is not guaranteed to terminate.
 
         .. SEEALSO::
 
@@ -395,9 +397,11 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
 
     def __hash__(self) -> int:
         """
-        Return some hash value, such that if ``x == y``
-        then ``hash(x) == hash(y)``.
-        Note that this is not guaranteed to terminate.
+        Return the hash of ``self`` based on a normal form.
+
+        .. WARNING::
+
+            Note that this is not guaranteed to terminate.
 
         TESTS::
 
@@ -1982,7 +1986,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
               or for a different (but equal) group. For the same group object,
               it is guaranteed to be the same.
 
-            - This function is not guaranteed to terminate.
+        .. WARNING::
+
+            This function is not guaranteed to terminate.
 
         EXAMPLES::
 
