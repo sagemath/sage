@@ -27,7 +27,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from cysignals.signals cimport sig_on, sig_off
+from cysignals.signals cimport sig_on, sig_off, sig_block, sig_unblock
 from memory_allocator cimport MemoryAllocator
 
 from sage.rings.real_double import RDF
@@ -53,21 +53,30 @@ cdef double c_f(double t, void *params) noexcept:
     cdef double value
     cdef PyFunctionWrapper wrapper
     wrapper = <PyFunctionWrapper> params
+    
+    # Block signal handling while calling Python code
+    # This is necessary because the Python function may call PARI or other
+    # libraries that manage their own stack and conflict with sig_on()
+    sig_block()
+    
     try:
         if len(wrapper.the_parameters) != 0:
             value = wrapper.the_function(t, wrapper.the_parameters)
         else:
             value = wrapper.the_function(t)
-    except Exception as msg:
+    except Exception as e:
+        sig_unblock()  # Unblock before returning
         try:
-            if str(msg).strip():
-                print(msg)
+            if str(e).strip():
+                print(e)
             else:
                 print(f"Unable to evaluate function at {t}")
         except Exception:
             pass
         return 0
-
+    
+    # Unblock signal handling before returning to GSL
+    sig_unblock()
     return value
 
 
@@ -264,6 +273,15 @@ def numerical_integral(func, a, b=None,
         sage: h(x) = x
         sage: numerical_integral(h,0,1)[0] # abs tol 1e-8
         0.5
+
+    Integration works correctly with functions that use PARI, such as
+    ``gamma_inc`` (see :issue:`30379`)::
+
+        sage: g(x) = gamma_inc(2, 11/5) * x
+        sage: numerical_integral(g(x), 2, 5)[0]  # abs tol 1e-10
+        3.722986120974418
+        sage: g(x).integrate(x, 2, 5).n()
+        3.72298612097441
     """
     cdef double abs_err  # step size
     cdef double result
@@ -418,27 +436,41 @@ def numerical_integral(func, a, b=None,
 
 cdef double c_monte_carlo_f(double *t, size_t dim, void *params) noexcept:
     cdef double value
+    cdef size_t i
     cdef PyFunctionWrapper wrapper
     wrapper = <PyFunctionWrapper> params
 
     for i in range(dim):
         wrapper.lx[i] = t[i]
 
+    # Block signal handling while calling Python code
+    # This is necessary because the Python function may call PARI or other
+    # libraries that manage their own stack and conflict with sig_on()
+    sig_block()
+    
     try:
         if len(wrapper.the_parameters) != 0:
             value = wrapper.the_function(*wrapper.lx, *wrapper.the_parameters)
         else:
             value = wrapper.the_function(*wrapper.lx)
-    except Exception as msg:
-        print(msg)
+    except Exception as e:
+        sig_unblock()  # Unblock before returning
+        print(e)
         return 0
-
+    
+    # Unblock signal handling before returning to GSL
+    sig_unblock()
     return value
 
 
 cdef double c_monte_carlo_ff(double *x, size_t dim, void *params) noexcept:
     cdef double result
+    # Block signal handling while calling fast_callable
+    # This is necessary because the fast_callable may call PARI or other
+    # libraries that manage their own stack and conflict with sig_on()
+    sig_block()
     (<Wrapper_rdf> params).call_c(x, &result)
+    sig_unblock()
     return result
 
 
@@ -558,6 +590,14 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
         and so cannot be integrated in 1 dimensions. Please add more items in
         upper and lower limits
 
+    Integration works correctly with functions that use PARI, such as
+    ``gamma_inc`` (see :issue:`30379`)::
+
+        sage: f(x, y) = gamma_inc(2, 11/5) * x * y
+        sage: result = monte_carlo_integral(f(x,y), [0, 0], [1, 1], 50000)
+        sage: abs(result[0] - 0.0886425266898670) < 0.001  # Check within tolerance
+        True
+
     AUTHORS:
 
     - Vincent Delecroix
@@ -570,7 +610,7 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
     cdef gsl_monte_plain_state* state_plain = NULL
     cdef gsl_monte_miser_state* state_miser = NULL
     cdef gsl_monte_vegas_state* state_vegas = NULL
-    cdef gsl_rng_type *type_rng
+    cdef const gsl_rng_type *type_rng
     cdef gsl_rng *_rng
     cdef size_t dim
     cdef double *_xl
