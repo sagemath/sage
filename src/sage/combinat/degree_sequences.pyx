@@ -443,7 +443,7 @@ def init(int n):
     seq[0] = 1
 
     N = n
-    
+
     try:
         yield from enum(1, 0)
     finally:
@@ -459,7 +459,7 @@ def enum(int k, int M):
 
     - ``k`` -- depth of the partial degree sequence
     - ``M`` -- value of a maximum element in the partial degree sequence
-    
+
     This is a generator that yields degree sequences.
     """
     cdef int i, j
