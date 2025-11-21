@@ -103,6 +103,9 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
                 raise TypeError("v (=%s) must have %s components" % (v, d))
 
             R = X.value_ring()
+            if not R.is_integral_domain():
+                raise ValueError("cannot validate point over a ring that is not an integral domain, "
+                                 "pass check=False to construct the point")
             v = Sequence(v, R)
             if len(v) == d-1:     # very common special case
                 v.append(R.one())
@@ -112,9 +115,6 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
                 raise ValueError(f"{v} does not define a valid projective "
                                  "point since all entries are zero")
 
-            # over other rings, we do not have a generic method to check
-            # whether the given coordinates is a multiple of a zero divisor
-            # so we just let it pass.
             X.extended_codomain()._check_satisfies_equations(v)
 
             self._coords = tuple(v)
