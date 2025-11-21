@@ -261,7 +261,7 @@ you don't want to build the HTML documentation, you might use
 
 If pip is used as above with ``--editable``, ``builddir`` is set to be
 ``build/cp[Python major version][Python minor version]``, such as
-``build/cp311``.
+``build/cp312``.
 
 To compile the project, run the following command:
 
