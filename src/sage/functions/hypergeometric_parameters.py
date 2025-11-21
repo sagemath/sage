@@ -183,7 +183,7 @@ class HypergeometricParameters():
         else:
             self.d = lcm([ a.denominator() for a in top ]
                        + [ b.denominator() for b in bottom ])
-            self.bound = 2 * self.d * max(top + bottom) + 1
+            self.bound = 2 * self.d * max(abs(a) for a in top + bottom) + 1
 
     def __repr__(self):
         r"""
@@ -347,6 +347,41 @@ class HypergeometricParameters():
                 return False
             previous_paren = paren
         return True
+
+    def interlacing_number(self, c):
+        r"""
+        Return the number of triples in the list ``self.christol_sorting(c)``
+        with third entry 1, that were preceded by a triple with third entry
+        -1.
+
+        INPUT:
+
+        - ``c`` -- an integer
+
+        EXAMPLES::
+
+            sage: from sage.functions.hypergeometric_algebraic import HypergeometricParameters
+            sage: pa = HypergeometricParameters([1/4, 1/3, 1/2], [2/5, 3/5])
+            sage: pa
+            ((1/4, 1/3, 1/2), (2/5, 3/5, 1))
+            sage: pa.christol_sorting(7)
+            [(12, -3/5, 1),
+             (20, -1/3, -1),
+             (30, -1/2, -1),
+             (45, -1/4, -1),
+             (48, -2/5, 1),
+             (60, -1, 1)]
+            sage: pa.interlacing_number(7)
+            1
+        """
+        interlacing = 0
+        previous_paren = 1
+        for _, _, paren in self.christol_sorting(c):
+            if paren == 1 and previous_paren == -1:
+                interlacing += 1
+            previous_paren = paren            
+        return interlacing
+
 
     def q_christol_sorting(self, q):
         r"""
