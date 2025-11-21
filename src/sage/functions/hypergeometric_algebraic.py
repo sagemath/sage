@@ -471,7 +471,7 @@ class HypergeometricAlgebraic(Element):
                 c /= b + i
             coeffs.append(c)
 
-    def nth_coefficient(self, n):
+    def coefficient(self, n):
         r"""
         Return the ``n``-th coefficient of the series representation of this
         hypergeoimetric function.
@@ -484,10 +484,10 @@ class HypergeometricAlgebraic(Element):
 
             sage: S.<x> = QQ[]
             sage: f = hypergeometric([1/3, 2/3], [1/2], x)
-            sage: f.nth_coefficient(9)
+            sage: f.coefficient(9)
             409541017600/2541865828329
             sage: g = f % 5
-            sage: g.nth_coefficient(9)
+            sage: g.coefficient(9)
             0
         """
         self._compute_coeffs(n+1)
@@ -602,6 +602,11 @@ class HypergeometricAlgebraic(Element):
         return self._parameters.d
 
     def differential_operator(self, var='d'):
+        # Differential equation might not be defined in positive characteristic
+        # sage: f = hypergeometric([1/5, 1/5, 1/5], [1/3, 3/5], x)
+        # sage: g = f % 3
+        # sage: g.differential_operator()
+        # Gives error message
         r"""
         Return the hypergeometric differential operator that annihilates
         this hypergeometric function as an Ore polynomial in the variable
@@ -905,16 +910,52 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
                     return False
         return True
 
-    def p_curvature_ranks(self):
-        # Should this return the coranks of the p-curvature depending on the
-        # congruence class of a prime?
-        # YES!
-        raise NotImplementedError
+    def p_curvature_coranks(self):
+        r"""
+        Return a dictonary, where the integers from ``1`` to the number of
+        parameters of this hypergeometric function, are assigned the set of
+        prime numbers for which the ``p``-curvature has this given corank.
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: g = hypergeometric([1/8, 3/8, 1/2], [1/4, 5/8], x)
+            sage: g.p_curvature_coranks()
+            {1: Set of prime numbers congruent to 3, 5 modulo 8: 3, 5, 11, 13, ...,
+             2: Set of prime numbers congruent to 1, 7 modulo 8: 7, 17, 23, 31, ...,
+             3: Empty set of prime numbers}
+
+        """
+        # Do we have an example with exceptional primes?
+        if not self._parameters.is_balanced():
+            raise NotImplementedError("Only implemented for nFn-1")
+        d = ZZ(self.denominator())
+        classes = dict.fromkeys(range(1, len(self.top())+1), Primes(modulus = 0))
+        for c in range(d):
+            if gcd(c, d) == 1:
+                Delta = QQ(1/c) % d
+                j = self._parameters.interlacing_number(Delta)
+                classes[j] = classes[j].union(Primes(modulus = d, classes = [c]))
+        for p in Primes():
+            # I am sure one can avoid computing the interlacing number again for
+            # all primes here.
+            if p > self._parameters.bound:
+                break
+            if gcd(p, d) > 1:
+                # Do we exclude too many primes here? For which p is the
+                # hypergeometric differential equation defined?
+                continue
+            qinterlacing = self._parameters.q_interlacing_number(p)
+            cinterlacing = self._parameters.interlacing_number(QQ(1/p) % d)
+            if qinterlacing != cinterlacing:
+                classes[qinterlacing].include(p)
+                classes[cinterlacing].exclude(p)
+        return classes
 
     def monodromy(self, x=0, var='z'):
         r"""
         Return a local monodromy matrix of the hypergeometric differential
-        equation associated to this hypergeoemtric function at the point
+        equation associated to this hypergeometric function at the point
         ``x``.
 
         INPUT:
@@ -922,8 +963,8 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         - ``x`` -- a complex number (default: ``0``)
 
         - ``var`` -- a string (default: ``z``), the name of the variable
-          representing a `d`-th root of unity for `d` being least common
-          multiple of the parameters.
+          representing a `d`-th root of unity for `d` being the least
+          common multiple of the parameters.
 
         EXAMPLES::
 
