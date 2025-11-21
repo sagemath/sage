@@ -424,7 +424,7 @@ cdef build_current_seq():
 def init(int n):
     """
     Initialize the memory and starts the enumeration algorithm.
-    
+
     This is a generator that yields degree sequences one at a time.
     """
     global seq
