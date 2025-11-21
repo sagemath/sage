@@ -3375,19 +3375,28 @@ cdef class Expression(Expression_abc):
             sage: expr.is_zero()
             False
 
-        Check that :issue:`16031` is fixed::
+        Check that domain declarations (real/complex/integer) don't incorrectly
+        affect inequality testing::
 
             sage: y = SR.var("y")
             sage: bool(y != 0)
             True
+            sage: bool(y != 1)
+            True
             sage: y = SR.var("y", domain="real")
             sage: bool(y != 0)
+            True
+            sage: bool(y != 1)
             True
             sage: z = SR.var("z", domain="complex")
             sage: bool(z != 0)
             True
-            sage: z = SR.var("z", domain="integer")
-            sage: bool(z != 0)
+            sage: bool(z != 1)
+            True    
+            sage: w = SR.var("w", domain="integer")
+            sage: bool(w != 0)
+            True
+            sage: bool(w != 1)
             True
         """
         if self.is_relational():
@@ -3423,17 +3432,30 @@ cdef class Expression(Expression_abc):
                 vars = self.variables()
                 if vars:
                     assumption_var_list = []
+                    has_integer_assumption = False
                     for eqn in assumption_list:
                         try:
                             assumption_var_list.append(eqn.variables())
                         except AttributeError:  # if we have a GenericDeclaration
-                            # Skip domain declarations (real/complex/integer) as they don't
-                            # provide information about whether a variable is zero
-                            if eqn._assumption not in ('real', 'complex', 'integer'):
+                            # Skip pure domain declarations (real/complex) that don't
+                            # provide information about whether a variable is zero.
+                            if eqn._assumption not in ('real', 'complex'):
                                 assumption_var_list.append((eqn._var,))
+                            # Track if we have integer assumptions
+                            if eqn._assumption == 'integer':
+                                has_integer_assumption = True
                     assumption_vars = set(sum(assumption_var_list, ()))
                     if set(vars).intersection(assumption_vars):
                         need_assumptions = True
+                        # Special case: for simple variable inequalities with integer/real/complex
+                        # domain assumptions, don't use Maxima (it incorrectly returns False)
+                        if has_integer_assumption and self.operator() == operator.ne:
+                            # Check if this is a simple case like "x != c" where c is a constant
+                            lhs = self.lhs()
+                            rhs = self.rhs()
+                            if ((lhs.is_symbol() and not rhs.has(lhs)) or 
+                                (rhs.is_symbol() and not lhs.has(rhs))):
+                                need_assumptions = False
 
             # Use interval fields to try and falsify the relation
             if not need_assumptions:
