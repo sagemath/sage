@@ -262,7 +262,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 return self.algebra_generators()[0]
 
             @cached_method
-            def algebra_generators(self):
+            def algebra_generators(self) -> Family:
                 r"""
                 Return the generators of this algebra.
 
@@ -456,7 +456,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             sage: 1 - S[2] * S[2] / 2
             S[0] - 1/2*S[2] + 3*S[3] - 3*S[4]
         """
-        def __init__(self, A):
+        def __init__(self, A) -> None:
             r"""
             Initialize ``self``.
 
@@ -552,10 +552,9 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             d = len(h) - 1
             m = matrix(QQ, d + 1, d + 1,
                        lambda j, i: (-1)**(d - j) * binomial(d - i, d - j))
-            v = vector(QQ, [h[i] for i in range(d + 1)])
             R = self.base_ring()
-            return self._from_dict({i: R(c)
-                                    for i, c in enumerate(m * v)})
+            v = vector(R, [h[i] for i in range(d + 1)])
+            return self._from_dict(dict(enumerate(m * v)))
 
         def _element_constructor_(self, x):
             r"""
@@ -700,7 +699,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 sage: F._poly(4)
                 1/24*x^4 + 5/12*x^3 + 35/24*x^2 + 25/12*x + 1
             """
-            x = polygen(QQ, 'x')
+            x = polygen(self.base_ring(), 'x')
             return binomial(x + i, i)
 
         class Element(CombinatorialFreeModule.Element):
@@ -809,7 +808,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 """
                 return QQ.sum(c / QQ(i) for i, c in self if i)
 
-            def h_vector(self):
+            def h_vector(self) -> vector:
                 """
                 Return the numerator of the generating series of values.
 
@@ -825,10 +824,11 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     sage: ex.h_vector()
                     (0, 1, 4, 1)
                 """
-                d = max(self.support(), default=-1)
+                d = ZZ(max(self.support(), default=-1))
                 m = matrix(QQ, d + 1, d + 1,
                            lambda j, i: (-1)**(d - j) * (d - i).binomial(d - j))
-                v = vector(QQ, [self.coefficient(i) for i in range(d + 1)])
+                v = vector(self.base_ring(),
+                           [self.coefficient(i) for i in range(d + 1)])
                 return m * v
 
             def h_polynomial(self):

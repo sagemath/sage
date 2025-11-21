@@ -565,7 +565,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
         """
         return self.parent().order
 
-    def is_planar(self):
+    def is_planar(self) -> bool:
         r"""
         Test if the diagram ``self`` is planar.
 
@@ -1108,7 +1108,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
                 std[short_form.index(i)] = j
         return std
 
-    def is_elementary_symmetric(self):
+    def is_elementary_symmetric(self) -> bool:
         r"""
         Check if is elementary symmetric.
 
@@ -1328,9 +1328,8 @@ class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
                 return False
         if obj.base_diagram():
             tst = sorted(flatten(obj.base_diagram()))
-            if len(tst) % 2 or tst != list(range(-len(tst)//2,0)) + list(range(1,len(tst)//2+1)):
-                return False
-            return True
+            ell = len(tst)
+            return not ell % 2 and tst == list(range(-ell // 2, 0)) + list(range(1, ell // 2 + 1))
         return self.order == 0
 
     def _element_constructor_(self, d):
@@ -4492,7 +4491,6 @@ class TemperleyLiebAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
                o o o o      o o o o       o o o o
         """
         M = x.monomial_coefficients(copy=False)
-        I = self._indices
         return self._from_dict({d.dual(): c for d, c in M.items()},
                                remove_zeros=False)
 
@@ -5577,7 +5575,7 @@ class PottsRepresentation(CombinatorialFreeModule):
 #########################################################################
 
 
-def is_planar(sp):
+def is_planar(sp) -> bool:
     r"""
     Return ``True`` if the diagram corresponding to the set partition ``sp``
     is planar; otherwise, return ``False``.

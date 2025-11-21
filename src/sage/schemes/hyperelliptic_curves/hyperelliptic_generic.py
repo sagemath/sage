@@ -227,7 +227,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             P = PolynomialRing(K, var)
             return (P(f), P(h))
 
-    def is_singular(self):
+    def is_singular(self) -> bool:
         r"""
         Return ``False``, because hyperelliptic curves are smooth projective
         curves, as checked on construction.
@@ -255,7 +255,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         """
         return False
 
-    def is_smooth(self):
+    def is_smooth(self) -> bool:
         r"""
         Return ``True``, because hyperelliptic curves are smooth projective
         curves, as checked on construction.

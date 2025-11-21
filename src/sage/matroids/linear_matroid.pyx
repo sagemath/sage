@@ -2200,14 +2200,14 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                         while todo:
                             r = todo.pop()
                             cocirc = self.fundamental_cocycle(B, r)
-                            for s, v in cocirc.iteritems():
+                            for s, v in cocirc.items():
                                 if s != r and s not in mult2:
                                     mult2[s] = mult[r] * v
                                     todo2.add(s)
                         while todo2:
                             s = todo2.pop()
                             circ = self.fundamental_cycle(B, s)
-                            for t, w in circ.iteritems():
+                            for t, w in circ.items():
                                 if t != s and t not in mult:
                                     mult[t] = mult2[s] / w
                                     if t not in T:
@@ -2398,7 +2398,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                         parallel = True
                         e = min(p)
                         ratio = c[e] / p[e]
-                        for f, w in p.iteritems():
+                        for f, w in p.items():
                             if c[f] / w != ratio:
                                 parallel = False
                                 break

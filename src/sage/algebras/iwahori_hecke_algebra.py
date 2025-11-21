@@ -524,7 +524,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         except TypeError:
             self._inverse_base_ring_generators = {}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -539,7 +539,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         return "Iwahori-Hecke algebra of type {} in {},{} over {}".format(
             ct, self._q1, self._q2, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -686,7 +686,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             """
             return [Realizations(self.base()), self.base()._category]
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             r"""
             Return the representation of ``self``.
 
@@ -704,7 +704,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             cases, these are just default implementations that will get
             specialized in a basis.
             """
-            def _repr_(self):
+            def _repr_(self) -> str:
                 """
                 Text representation of this basis of Iwahori-Hecke algebra.
 
@@ -1259,7 +1259,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         #   specialize_to() to work
         _basis_name = 'B'
 
-        def _repr_term(self, t):
+        def _repr_term(self, t) -> str:
             r"""
             Return the string representation of the term indexed by ``t``.
 
@@ -1276,7 +1276,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 return "1"
             return self._print_options['prefix'] + '[%s]' % ','.join('%d' % i for i in redword)
 
-        def _latex_term(self, t):
+        def _latex_term(self, t) -> str:
             r"""
             Return latex for the term indexed by ``t``.
 
@@ -2796,7 +2796,7 @@ class IwahoriHeckeAlgebra_nonstandard(IwahoriHeckeAlgebra):
         Parent.__init__(self, base=base_ring, category=self._category.WithRealizations())
         self._is_generic = True  # needed for initialising _KLHeckeBasis
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -2809,7 +2809,7 @@ class IwahoriHeckeAlgebra_nonstandard(IwahoriHeckeAlgebra):
         except TypeError:
             ct = repr(self._coxeter_type)
         return "A generic Iwahori-Hecke algebra of type {} in {},{} over {}".format(
-                ct, self._q1, self._q2, self.base_ring())
+            ct, self._q1, self._q2, self.base_ring())
 
     def _bar_on_coefficients(self, c):
         r"""

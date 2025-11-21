@@ -1,18 +1,5 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Cached Functions and Methods
-
-AUTHORS:
-
-- William Stein: initial version, (inspired by conversation with Justin Walker)
-- Mike Hansen: added doctests and made it work with class methods.
-- Willem Jan Palenstijn: add CachedMethodCaller for binding cached methods to
-  instances.
-- Tom Boothby: added DiskCachedFunction.
-- Simon King: improved performance, more doctests, cython version,
-  CachedMethodCallerNoArgs, weak cached function, cached special methods.
-- Julian Rueth (2014-03-19, 2014-05-09, 2014-05-12): added ``key`` parameter, allow caching
-  for unhashable elements, added ``do_pickle`` parameter
 
 EXAMPLES:
 
@@ -430,8 +417,20 @@ Note that shallow copy of mutable objects may behave unexpectedly::
     2
     sage: b.f is a.f
     False
-"""
 
+AUTHORS:
+
+- William Stein: initial version, (inspired by conversation with Justin Walker)
+- Mike Hansen: added doctests and made it work with class methods
+- Willem Jan Palenstijn: added ``CachedMethodCaller`` for binding cached methods to
+  instances
+- Tom Boothby: added ``DiskCachedFunction``
+- Simon King: improved performance, more doctests, cython version,
+  ``CachedMethodCallerNoArgs``, weak cached function, cached special methods
+- Julian Rueth (2014-03-19, 2014-05-09, 2014-05-12): added ``key`` parameter, allow caching
+  for unhashable elements, added ``do_pickle`` parameter
+- Kwankyu Lee (2025-10): added ``is_pickled_with_cache`` method
+"""
 # ****************************************************************************
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>
 #                          Mike Hansen <mhansen@gmail.com>
@@ -864,11 +863,31 @@ cdef class CachedFunction():
         """
         return _cached_function_unpickle, (self.__cached_module__, self.__name__, self.cache)
 
-    #########
-    #  Introspection
+    def is_pickled_with_cache(self):
+        """
+        Return ``True`` if this cached function is pickled with the cache.
+
+        EXAMPLES::
+
+            sage: @cached_function
+            ....: def f(x):
+            ....:     return x
+            ....:
+            sage: f.is_pickled_with_cache()
+            False
+            sage: @cached_function(do_pickle=True)
+            ....: def f(x):
+            ....:     return x
+            ....:
+            sage: f.is_pickled_with_cache()
+            True
+        """
+        return self.do_pickle
+
+    # Introspection
     #
-    # We provide some methods explicitly, and
-    # forward other questions to the cached function.
+    # We provide some methods explicitly, and forward
+    # other questions to the cached function.
 
     def _instancedoc_(self):
         """
@@ -1651,7 +1670,7 @@ class CachedMethodPickle():
             if isinstance(CM, CachedMethodCallerNoArgs):
                 CM.cache = self._cache
             else:
-                for k, v in self._cache:
+                for k, v in self._cache.items():
                     CM.cache[k] = v
         return CM(*args, **kwds)
 
@@ -1689,7 +1708,7 @@ class CachedMethodPickle():
             if isinstance(CM, CachedMethodCallerNoArgs):
                 CM.cache = self._cache
             else:
-                for k, v in self._cache:
+                for k, v in self._cache.items():
                     CM.cache[k] = v
         return getattr(CM, s)
 
@@ -1803,10 +1822,9 @@ cdef class CachedMethodCaller(CachedFunction):
             sage: J.groebner_basis
             Cached version of <function ...groebner_basis at 0x...>
         """
-        if isinstance(self._cachedmethod, CachedInParentMethod) or hasattr(self._instance, self._cachedmethod._cache_name):
-            return CachedMethodPickle, (self._instance, self.__name__)
-        else:
+        if self.do_pickle:
             return CachedMethodPickle, (self._instance, self.__name__, self.cache)
+        return CachedMethodPickle, (self._instance, self.__name__)
 
     def _instance_call(self, *args, **kwds):
         """
