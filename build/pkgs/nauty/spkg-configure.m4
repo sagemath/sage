@@ -14,7 +14,10 @@ SAGE_SPKG_CONFIGURE([nauty], [
   AS_IF([test x$GENGCHECK = x], [
     AC_PATH_PROG([GENGnautyCHECK],[nauty-geng])
      AS_IF([test x$GENGnautyCHECK = x], [sage_spkg_install_nauty=yes],
-       [SAGE_TEST_NAUTY_PROGS(nauty-,nau)])
+       [SAGE_TEST_NAUTY_PROGS(nauty-,nau)
+        dnl check that libnauty is available
+        PKG_CHECK_MODULES([LIBNAUTY], [libnauty >= 2.8.8], [], [sage_spkg_install_nauty=yes])
+       ])
     ], [SAGE_TEST_NAUTY_PROGS(,foo)])
  ], [], [], [
  AS_IF([test x$sage_spkg_install_nauty = xyes], [
