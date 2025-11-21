@@ -7,8 +7,6 @@ class FiniteFieldDH(KeyExchange):
         self._field = GF(p, impl='modn')
         self.p = p
         self.generator = self._field(generator)
-        # self.alice_key = randint(2, self.p - 2)
-        # self.bob_key = randint(2, self.p - 2)
 
     def alice_secret_key(self):
         return randint(2, self.p - 2)
