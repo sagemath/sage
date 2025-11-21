@@ -9,6 +9,8 @@ Finite lattice posets
 # *****************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
+from sage.categories.posets import Posets
+from sage.misc.cachefunc import cached_method
 
 
 class FiniteLatticePosets(CategoryWithAxiom):
@@ -19,9 +21,11 @@ class FiniteLatticePosets(CategoryWithAxiom):
     EXAMPLES::
 
         sage: FiniteLatticePosets()
-        Category of finite lattice posets
+        Category of finite bounded lattice posets
         sage: FiniteLatticePosets().super_categories()
-        [Category of lattice posets, Category of finite posets]
+        [Category of lattice posets,
+         Category of finite posets,
+         Category of bounded posets]
         sage: FiniteLatticePosets().example()
         NotImplemented
 
@@ -37,6 +41,20 @@ class FiniteLatticePosets(CategoryWithAxiom):
         True
         sage: TestSuite(C).run()
     """
+    @cached_method
+    def extra_super_categories(self):
+        r"""
+        Return a list of the (immediate) super categories of
+        ``self``, as per :meth:`Category.super_categories`.
+
+        EXAMPLES::
+
+            sage: FiniteLatticePosets().super_categories()
+            [Category of lattice posets,
+             Category of finite posets,
+             Category of bounded posets]
+        """
+        return [Posets().Bounded()]
 
     class ParentMethods:
 

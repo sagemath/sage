@@ -713,7 +713,7 @@ def LatticePoset(data=None, *args, **options):
 
         sage: L = LatticePoset([[1,2],[3],[3]], facade = True)
         sage: L.category()
-        Category of facade finite enumerated lattice posets
+        Category of facade finite enumerated bounded lattice posets
         sage: parent(L[0])
         Integer Ring
         sage: TestSuite(L).run(skip = ['_test_an_element']) # is_parent_of is not yet implemented

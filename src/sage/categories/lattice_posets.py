@@ -201,10 +201,10 @@ class LatticePosets(Category):
         EXAMPLES::
 
             sage: cat = FiniteLatticePosets().Extremal(); cat
-            Category of finite extremal lattice posets
+            Category of finite bounded extremal lattice posets
 
             sage: cat.super_categories()
-            [Category of finite lattice posets,
+            [Category of finite bounded lattice posets,
              Category of extremal lattice posets]
         """
         class ParentMethods:
@@ -226,9 +226,9 @@ class LatticePosets(Category):
         EXAMPLES::
 
             sage: cat = FiniteLatticePosets().Trim(); cat
-            Category of finite trim lattice posets
+            Category of finite bounded trim lattice posets
             sage: cat.super_categories()
-            [Category of finite lattice posets,
+            [Category of finite bounded lattice posets,
              Category of trim lattice posets]
         """
         @cached_method
@@ -241,7 +241,7 @@ class LatticePosets(Category):
             EXAMPLES::
 
                 sage: FiniteLatticePosets().Trim().super_categories()
-                [Category of finite lattice posets,
+                [Category of finite bounded lattice posets,
                  Category of trim lattice posets]
             """
             return [LatticePosets().Extremal()]
@@ -265,10 +265,10 @@ class LatticePosets(Category):
         EXAMPLES::
 
             sage: cat = FiniteLatticePosets().Semidistributive(); cat
-            Category of finite semidistributive lattice posets
+            Category of finite bounded semidistributive lattice posets
 
             sage: cat.super_categories()
-            [Category of finite lattice posets,
+            [Category of finite bounded lattice posets,
              Category of semidistributive lattice posets]
         """
         class ParentMethods:
@@ -290,9 +290,9 @@ class LatticePosets(Category):
         EXAMPLES::
 
             sage: cat = FiniteLatticePosets().CongruenceUniform(); cat
-            Category of finite congruence uniform lattice posets
+            Category of finite bounded congruence uniform lattice posets
             sage: cat.super_categories()
-            [Category of finite lattice posets,
+            [Category of finite bounded lattice posets,
              Category of congruence uniform lattice posets]
         """
         @cached_method
@@ -305,7 +305,7 @@ class LatticePosets(Category):
             EXAMPLES::
 
                 sage: FiniteLatticePosets().CongruenceUniform().super_categories()
-                [Category of finite lattice posets,
+                [Category of finite bounded lattice posets,
                  Category of congruence uniform lattice posets]
             """
             return [LatticePosets().Semidistributive()]
@@ -329,10 +329,10 @@ class LatticePosets(Category):
         EXAMPLES::
 
             sage: cat = FiniteLatticePosets().Distributive(); cat
-            Category of finite distributive lattice posets
+            Category of finite bounded distributive lattice posets
 
             sage: cat.super_categories()
-            [Category of finite lattice posets,
+            [Category of finite bounded lattice posets,
              Category of distributive lattice posets]
         """
         @cached_method
@@ -345,7 +345,7 @@ class LatticePosets(Category):
             EXAMPLES::
 
                 sage: FiniteLatticePosets().Distributive().super_categories()
-                [Category of finite lattice posets,
+                [Category of finite bounded lattice posets,
                  Category of distributive lattice posets]
             """
             return [LatticePosets().Trim(),
@@ -371,10 +371,10 @@ class LatticePosets(Category):
         EXAMPLES::
 
             sage: cat = FiniteLatticePosets().Stone(); cat
-            Category of finite stone lattice posets
+            Category of finite bounded stone lattice posets
 
             sage: cat.super_categories()
-            [Category of finite lattice posets,
+            [Category of finite bounded lattice posets,
              Category of stone lattice posets]
         """
         @cached_method
@@ -387,7 +387,7 @@ class LatticePosets(Category):
             EXAMPLES::
 
                 sage: FiniteLatticePosets().Stone().super_categories()
-                [Category of finite lattice posets,
+                [Category of finite bounded lattice posets,
                  Category of stone lattice posets]
             """
             return [LatticePosets().Distributive()]
