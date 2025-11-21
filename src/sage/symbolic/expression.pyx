@@ -3392,7 +3392,7 @@ cdef class Expression(Expression_abc):
             sage: bool(z != 0)
             True
             sage: bool(z != 1)
-            True    
+            True
             sage: w = SR.var("w", domain="integer")
             sage: bool(w != 0)
             True
