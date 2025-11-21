@@ -527,7 +527,7 @@ class HypergeometricParameters():
         """
         # We treat the case of parameters having p in the denominator
         # When it happens, we remove the parameter and update the drift accordingly
-        top = []
+        params = {}
         for a in self.top:
             if a in ZZ and a <= 0:
                 raise NotImplementedError  # TODO
@@ -535,78 +535,79 @@ class HypergeometricParameters():
             if v < 0:
                 drift += v
             else:
-                top.append(a)
-        bottom = []
+                params[a] = params.get(a, 0) + 1
         for b in self.bottom:
             v = b.valuation(p)
             if v < 0:
                 drift -= v
             else:
-                bottom.append(b)
+                params[b] = params.get(b, 0) - 1
+        params = [(pa, dw) for pa, dw in params.items() if dw != 0]
 
         # We check that we are inside the disk of convergence
-        diff = len(top) - len(bottom)
+        diff = sum(dw for _, dw in params)
         growth = (p-1)*drift + diff
-        if (growth, drift) < (0, 0):
+        if growth < 0:
             return -infinity, None
 
         # Main part: computation of the valuation
         # We use Christol's formula (see Lemma 3.1.10 of [CFVM2025])
         # with modification in order to take the drift into account
+        n = len(params) + 1
         TSR = TropicalSemiring(QQ)
-        n = len(top) + len(bottom) + 1
-        parameters = HypergeometricParameters(top, bottom)
-        order = IntegerModRing(parameters.d)(p).multiplicative_order()
+        TM = identity_matrix(TSR, n)
+
+        d = lcm(pa.denominator() for pa, _ in params)
+        order = IntegerModRing(d)(p).multiplicative_order()
+        bound = 1 + max(pa.abs() for pa, _ in params)
+        thresold = d * sum(dw for _, dw in params if dw > 0)
+
         valuation = position = ZZ(0)
-        valfinal = breaks = None
+        valfinal = signature_prev = None
         indices = {}
         count = 0
         q = 1
-        TM = identity_matrix(TSR, n)
         while True:
             # We take into account the contribution of V({k/p^r}, p^r).
-            # We represent the partial sum until r by the table new_breaks.
+            # We represent the partial sum until r by the list signature.
             # Its entries are triples (valuation, position, parameter):
             # - parameter is the parameter corresponding to a point of
             #   discontinuity of the last summand V({k/p^r}, p^r)
             # - valuation is the minimum of the partial sum on the
             #   range starting at this discontinuity point (included)
             #   and ending at the next one (excluded)
-            # - position is the first position the minimum is reached
-            # (The dictionary new_indices allows for finding rapidly
-            # an entry in new_breaks with a given parameter.)
-            # The table breaks and the dictionary indices correspond
-            # to the same data for r-1.
+            # - position is the first position where the minimum is reached
+            # (The dictionary indices allows for finding rapidly
+            # an entry in signature with a given parameter.)
+            # The list signature_prev and the dictionary indices_prev
+            # correspond to the same data for r-1.
 
             pq = p * q
 
-            # We compute the point of discontinuity of V({k/p^r}, p^r)
-            # and store them in AB
-            # Each entry of AB has the form (x, dw, parameter) where:
+            # We compute the points of discontinuity of V({k/p^r}, p^r)
+            # and store them in the list jumps
+            # Each entry of jumps has the form (x, dw, parameter) where:
             # - x is the position of the discontinuity point
-            # - dw is the *opposite* of the jump of V({k/p^r}, p^r)
-            #   at this point
-            #   (taking the opposite is useful for sorting reasons)
+            # - dw is the jump of V({k/p^r}, p^r) at this point
             # - parameter is the corresponding parameter
-            A = [(1 + (-a) % pq, -1, a) for a in top]
-            B = [(1 + (-b) % pq, 1, b) for b in bottom]
-            AB = [(0, 0, 0)] + sorted(A + B) + [(pq, None, 0)]
+            jumps = [(1 + (-pa) % pq, dw, pa) for pa, dw in params]
+            jumps = [(0, 0, 0)] + sorted(jumps) + [(pq, None, 0)]
 
-            # We compute new_breaks
-            new_breaks = []
-            new_indices = {}
+            # We compute the signature
+            signature = []
+            indices = {}
             w = 0
             TMstep = matrix(TSR, n)
             for i in range(n):
-                x, dw, param = AB[i]    # discontinuity point
-                y, _, right = AB[i+1]   # next discontinuity point
-                w -= dw   # the value of V({k/p^r}, p^r) on this interval
-                new_indices[param] = len(new_breaks)
+                x, dw, param = jumps[i]    # discontinuity point
+                y, _, right = jumps[i+1]   # next discontinuity point
+                w += dw   # the value of V({k/p^r}, p^r) on this interval
+                indices[param] = len(signature)
                 if x == y:
                     # Case of empty interval
                     val = infinity
                     pos = None
-                elif breaks is None:
+                elif signature_prev is None:
                     # Case r = 1
                     if drift < 0:
                         pos = y - 1
@@ -620,30 +621,32 @@ class HypergeometricParameters():
                     complete = (y - x >= q)
                     if complete and drift < 0:
                         interval = ((y-1) // q) - 1
-                        j = j0 = indices[right]
+                        j = j0 = indices_prev[right]
                     else:
                         interval = max(0, (x-1) // q)
-                        j = j0 = indices[param]
+                        j = j0 = indices_prev[param]
                     val = infinity
                     while True:
-                        valj, posj, paramj = breaks[j]
+                        valj, posj, paramj = signature_prev[j]
                         valj += drift * interval
                         TMstep[i,j] = TSR(drift*interval + w)
                         if valj < val:
                             val = valj
                             pos = posj + q * interval
                         j += 1
-                        if j >= len(breaks):
+                        if j >= n:
                             j = 0
                             interval += 1
-                        if j == j0 or (not complete and breaks[j][2] == right):
+                        if j == j0 or (not complete and signature_prev[j][2] == right):
                             break
-                new_breaks.append((val + w, pos, param))
+                signature.append((val + w, pos, param))
 
             # The halting criterion
-            minimum = min(new_breaks)
+            minimum = min(signature)
             valuation, position, _ = minimum
-            if drift >= 0 and q > parameters.bound:
+            if q > bound:
+                if drift > 2*thresold and all(signature[i][0] > valuation + thresold for i in range(1, n)):
+                    return valuation, position
                 if growth == 0:
                     if count < order:
                         TM = TMstep * TM
@@ -653,18 +656,16 @@ class HypergeometricParameters():
                             TM = TM.weak_transitive_closure()
                         except ValueError:
                             return -infinity, None
-                        valfinal = min(TM[i,j].lift() + new_breaks[j][0]
+                        valfinal = min(TM[i,j].lift() + signature[j][0]
                                        for i in range(n) for j in range(n))
                     if valuation == valfinal:
                         return valuation, position
-                elif drift >= len(top) and minimum == new_breaks[0]:
-                    return valuation, position
 
             # We update the values for the next r
             q = pq
             drift = p*drift + diff
-            breaks = new_breaks
-            indices = new_indices
+            signature_prev = signature
+            indices_prev = indices
 
     def dwork_image(self, p):
         r"""
