@@ -3386,6 +3386,9 @@ cdef class Expression(Expression_abc):
             sage: z = SR.var("z", domain="complex")
             sage: bool(z != 0)
             True
+            sage: z = SR.var("z", domain="integer")
+            sage: bool(z != 0)
+            True
         """
         if self.is_relational():
             # constants are wrappers around Sage objects, compare directly
@@ -3424,9 +3427,9 @@ cdef class Expression(Expression_abc):
                         try:
                             assumption_var_list.append(eqn.variables())
                         except AttributeError:  # if we have a GenericDeclaration
-                            # Skip domain declarations (real/complex) as they don't
+                            # Skip domain declarations (real/complex/integer) as they don't
                             # provide information about whether a variable is zero
-                            if eqn._assumption not in ('real', 'complex'):
+                            if eqn._assumption not in ('real', 'complex', 'integer'):
                                 assumption_var_list.append((eqn._var,))
                     assumption_vars = set(sum(assumption_var_list, ()))
                     if set(vars).intersection(assumption_vars):
