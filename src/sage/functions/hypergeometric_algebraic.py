@@ -45,6 +45,7 @@ from sage.categories.finite_fields import FiniteFields
 from sage.matrix.special import companion_matrix
 from sage.matrix.special import identity_matrix
 from sage.combinat.subset import Subsets
+from sage.geometry.newton_polygon import NewtonPolygon
 
 from sage.rings.infinity import infinity
 from sage.symbolic.ring import SR
@@ -121,7 +122,7 @@ class HypergeometricAlgebraic(Element):
             if any(b in ZZ and b < 0 for b in parameters.bottom):
                 raise ValueError("the parameters %s do not define a hypergeometric function" % parameters)
             if char > 0:
-                val, _ = parameters.valuation_position(char)
+                val, _, _ = parameters.valuation_position(char)
                 if val < 0:
                     raise ValueError("the parameters %s do not define a hypergeometric function in characteristic %s" % (parameters, char))
         self._scalar = scalar
@@ -741,7 +742,7 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         """
         if not p.is_prime():
             raise ValueError("p must be a prime number")
-        val, pos = self._parameters.valuation_position(p)
+        val, pos, _ = self._parameters.valuation_position(p)
         val += self._scalar.valuation(p)
         if position:
             return val, pos
@@ -1048,7 +1049,7 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
         k = self.base_ring().residue_field()
         if self._scalar.valuation() == 0:
             return self.change_ring(k)
-        val, pos = self._parameters.valuation_position(self._p)
+        val, pos, _ = self._parameters.valuation_position(self._p)
         if val < 0:
             raise ValueError("bad reduction")
         if val > 0:
@@ -1138,14 +1139,23 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
            (-2, 1)
         """
         drift = -log_radius / self._e
-        val, pos = self._parameters.valuation_position(self._p, drift)
+        val, pos, _ = self._parameters.valuation_position(self._p, drift)
         if position:
             return val, pos
         else:
             return val
 
-    def newton_polygon(self, log_radius):
-        raise NotImplementedError
+    def newton_polygon(self, log_radius=None):
+        convergence = self.log_radius_of_convergence()
+        if log_radius is None:
+            log_radius = convergence
+        start = -log_radius / self._e
+        try:
+            val = self._parameters.valuation_function(self._p, start)
+        except ValueError:
+            raise ValueError("infinite Newton polygon; try to truncate it by giving a log radius less than %s" % convergence)
+        vertices, _ = val.defn()
+        return NewtonPolygon(vertices, last_slope=log_radius)
 
     def _truncation_bound(self, log_radius, prec):
         convergence = self.log_radius_of_convergence()
@@ -1307,7 +1317,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         Ps = {}
         for r in range(p):
             params = parameters.shift(r).dwork_image(p)
-            _, s = params.valuation_position(p)
+            _, s, _ = params.valuation_position(p)
             h = H(params.shift(s))
             e = s*p + r
             if e >= len(coeffs):

@@ -19,20 +19,97 @@ AUTHORS:
 
 from sage.misc.cachefunc import cached_method
 
-from sage.functions.other import ceil
+from sage.functions.other import floor, ceil
 from sage.arith.functions import lcm
 
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.semirings.tropical_semiring import TropicalSemiring
+
+from sage.geometry.polyhedron.constructor import Polyhedron
+from sage.geometry.polyhedron.base0 import Polyhedron_base0
 
 from sage.matrix.constructor import matrix
 from sage.matrix.special import identity_matrix
 
 
-# HypergeometricParameters of hypergeometric functions
+# Functions defined as min of affine functions
+##############################################
+
+class MinFunction():
+    def __init__(self, subgraph=None, start=None):
+        if subgraph is None:
+            subgraph = Polyhedron(ieqs=[[0, 0, 0]])
+        if start is not None:
+            P = Polyhedron(ieqs=[[-start, 1, 0]])
+            subgraph = subgraph.intersection(P)
+        self._subgraph = subgraph
+
+    def defn(self):
+        affine = []
+        start = None
+        for u, v, w in self._subgraph.inequalities_list():
+            if w == 0:
+                start = -u/v
+            else:
+                affine.append((-v/w, -u/w))
+        return affine, start
+
+    def __repr__(self):
+        affine, start = self.defn()
+        S = PolynomialRing(QQ, 'x')
+        fs = [str(a*S.gen() + b) for a, b, in affine]
+        if len(fs) == 0:
+            s = "+infinity"
+        elif len(fs) == 1:
+            s = fs[0]
+        else:
+            s = "min(" + ", ".join(fs) + ")"
+        if start is not None:
+            s += " on [%s, +infty)" % start
+        return s
+
+    def inf(self, gs):
+        subgraph = self._subgraph.intersection(gs._subgraph)
+        return MinFunction(subgraph)
+
+    def __mul__(self, c):
+        if c in QQ and c >= 0:
+            ieqs = [(c*u, c*v, w) for u, v, w in self._subgraph.inequalities_list()]
+        return MinFunction(Polyhedron(ieqs=ieqs))
+
+    def __add__(self, other):
+        if other in QQ:
+            ieqs = [(u - other*w, v, w) for u, v, w in self._subgraph.inequalities_list()]
+        if isinstance(other, MinFunction):
+            ieqs = [(-u*wp - up*w, -v*wp - vp*w, -w*wp)
+                    for u, v, w in self._subgraph.inequalities_list()
+                    for up, vp, wp in other._subgraph.inequalities_list()]
+        return MinFunction(Polyhedron(ieqs=ieqs))
+
+    def __call__(self, x):
+        L = Polyhedron(eqns=[[-x, 1, 0]]).intersection(self._subgraph)
+        if L.is_empty():
+            raise ValueError("not defined")
+        v = L.inequalities_list()
+        if not v:
+            return infinity
+        return -v[0][0] / v[0][2]
+
+
+def affine_function(a=None, b=None, start=None):
+    ieqs = []
+    if a is not None:
+        ieqs.append([b, a, -1])
+    if start is not None:
+        ieqs.append([-start, 1, 0])
+    return MinFunction(Polyhedron(ieqs=ieqs))
+
+
+# Parameters of hypergeometric functions
 ########################################
 
 class HypergeometricParameters():
@@ -489,6 +566,26 @@ class HypergeometricParameters():
         bottom = [1 + b - ceil(b) for b in self.bottom]
         return HypergeometricParameters(top, bottom, add_one=False)
 
+    def prepare_parameters(self, p):
+        params = {}
+        shift = 0
+        for a in self.top:
+            if a in ZZ and a <= 0:
+                raise NotImplementedError
+            v = a.valuation(p)
+            if v < 0:
+                shift += v
+            else:
+                params[a] = params.get(a, 0) + 1
+        for b in self.bottom:
+            v = b.valuation(p)
+            if v < 0:
+                shift -= v
+            else:
+                params[b] = params.get(b, 0) - 1
+        params = [(pa, dw) for pa, dw in params.items() if dw != 0]
+        return params, shift
+
     def valuation_position(self, p, drift=0):
         r"""
         If the `h_k`s are the coefficients of the hypergeometric
@@ -525,30 +622,13 @@ class HypergeometricParameters():
             sage: pa.valuation_position(3, drift=-7/5)
             (-54/5, 7)
         """
-        # We treat the case of parameters having p in the denominator
-        # When it happens, we remove the parameter and update the drift accordingly
-        params = {}
-        for a in self.top:
-            if a in ZZ and a <= 0:
-                raise NotImplementedError  # TODO
-            v = a.valuation(p)
-            if v < 0:
-                drift += v
-            else:
-                params[a] = params.get(a, 0) + 1
-        for b in self.bottom:
-            v = b.valuation(p)
-            if v < 0:
-                drift -= v
-            else:
-                params[b] = params.get(b, 0) - 1
-        params = [(pa, dw) for pa, dw in params.items() if dw != 0]
-
         # We check that we are inside the disk of convergence
+        params, shift = self.prepare_parameters(p)
+        drift += shift
         diff = sum(dw for _, dw in params)
         growth = (p-1)*drift + diff
         if growth < 0:
-            return -infinity, None
+            return -infinity, None, 0
 
         # Main part: computation of the valuation
         # We use Christol's formula (see Lemma 3.1.10 of [CFVM2025])
@@ -565,7 +645,7 @@ class HypergeometricParameters():
         valuation = position = ZZ(0)
         valfinal = signature_prev = None
         indices = {}
-        count = 0
+        count = step = 0
         q = 1
         while True:
             # We take into account the contribution of V({k/p^r}, p^r).
@@ -582,6 +662,7 @@ class HypergeometricParameters():
             # The list signature_prev and the dictionary indices_prev
             # correspond to the same data for r-1.
 
+            step += 1
             pq = p * q
 
             # We compute the points of discontinuity of V({k/p^r}, p^r)
@@ -646,7 +727,7 @@ class HypergeometricParameters():
             valuation, position, _ = minimum
             if q > bound:
                 if drift > 2*thresold and all(signature[i][0] > valuation + thresold for i in range(1, n)):
-                    return valuation, position
+                    return valuation, position, step
                 if growth == 0:
                     if count < order:
                         TM = TMstep * TM
@@ -655,17 +736,83 @@ class HypergeometricParameters():
                         try:
                             TM = TM.weak_transitive_closure()
                         except ValueError:
-                            return -infinity, None
+                            return -infinity, None, step
                         valfinal = min(TM[i,j].lift() + signature[j][0]
                                        for i in range(n) for j in range(n))
                     if valuation == valfinal:
-                        return valuation, position
+                        return valuation, position, step
 
             # We update the values for the next r
             q = pq
             drift = p*drift + diff
             signature_prev = signature
             indices_prev = indices
+
+    def valuation_function(self, p, start=0):
+        valstart, _, step = self.valuation_position(p, start)
+        if valstart is -infinity:
+            raise ValueError
+
+        params, shift = self.prepare_parameters(p)
+        diff = sum(dw for _, dw in params)
+        n = len(params) + 1
+        infty = affine_function(start=start)
+        drift = affine_function(1, shift, start)
+        signature_prev = None
+        indices = {}
+        count = 0
+        q = 1
+        for _ in range(step):
+            pq = p * q
+
+            jumps = [(1 + (-pa) % pq, dw, pa) for pa, dw in params]
+            jumps = [(0, 0, 0)] + sorted(jumps) + [(pq, None, 0)]
+
+            signature = []
+            indices = {}
+            w = 0
+            for i in range(n):
+                x, dw, param = jumps[i]    # discontinuity point
+                y, _, right = jumps[i+1]   # next discontinuity point
+                w += dw   # the value of V({k/p^r}, p^r) on this interval
+                indices[param] = len(signature)
+                if x == y:
+                    # Case of empty interval
+                    val = infty
+                elif signature_prev is None:
+                    # Case r = 1
+                    val = (drift * x).inf(drift * (y - 1))
+                else:
+                    # Case r > 1
+                    val = infty
+                    for j in range(n):
+                        valj, left, paramj = signature_prev[j]
+                        left_interval = max(0, ceil((x - left) / q))
+                        right_interval = max(0, floor((y - 1 - left) / q))
+                        if left_interval > right_interval:
+                            continue
+                        val = val.inf(drift * left_interval + valj)
+                        if left_interval < right_interval:
+                            val = val.inf(drift * right_interval + valj)
+                val = val + w
+                signature.append((val, x, param))
+                #valuation = valuation.inf(val)
+
+            # The halting criterion
+            # if q > bound:
+            #     valthresold = valuation + thresold
+            #     if drift > thresold*2 and all(signature[i][0] > valthresold for i in range(1, n)):
+            #         return valuation
+
+            q = pq
+            drift = drift * p + diff
+            signature_prev = signature
+            indices_prev = indices
+
+        valuation = affine_function(0, 0, start)
+        for val, _, _ in signature:
+            valuation = valuation.inf(val)
+        return valuation
 
     def dwork_image(self, p):
         r"""
