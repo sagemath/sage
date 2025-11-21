@@ -49,9 +49,9 @@ class FiniteSets(CategoryWithAxiom):
                 sage: P.Infinite()
                 Traceback (most recent call last):
                 ...
-                TypeError: incompatible axioms
+                TypeError: incompatible axioms: finite and infinite
             """
-            raise TypeError("incompatible axioms")
+            raise TypeError("incompatible axioms: finite and infinite")
 
     class ParentMethods:
 

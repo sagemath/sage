@@ -1900,9 +1900,9 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: C.Finite()
                     Traceback (most recent call last):
                     ...
-                    TypeError: incompatible axioms
+                    TypeError: incompatible axioms: finite and infinite
                 """
-                raise TypeError("incompatible axioms")
+                raise TypeError("incompatible axioms: finite and infinite")
 
         class ParentMethods:
 
