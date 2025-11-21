@@ -83,14 +83,14 @@ class IndefiniteIntegral(BuiltinFunction):
         # The automatic evaluation routine will try these integrators
         # in the given order. This is an attribute of the class instead of
         # a global variable in this module to enable customization by
-        # creating a subclasses which define a different set of integrators
-        #
-        # The libgiac integrator may immediately return a symbolic
-        # (unevaluated) answer if libgiac is unavailable. This essentially
-        # causes it to be skipped.
-        self.integrators = [external.maxima_integrator,
-                            external.libgiac_integrator,
-                            external.sympy_integrator]
+        # creating a subclasses which define a different set of integrators.
+        self.integrators = [external.maxima_integrator]
+        from sage.features.sagemath import sage__libs__giac
+        if sage__libs__giac().is_present():
+            # Only try Giac if sagemath-giac is installed; it raises
+            # a FeatureNotPresentError otherwise.
+            self.integrators.append(external.libgiac_integrator)
+        self.integrators.append(external.sympy_integrator)
 
         BuiltinFunction.__init__(self, "integrate", nargs=2, conversions={'sympy': 'Integral',
                                                                           'giac': 'integrate'})
@@ -221,9 +221,13 @@ class DefiniteIntegral(BuiltinFunction):
         # in the given order. This is an attribute of the class instead of
         # a global variable in this module to enable customization by
         # creating a subclasses which define a different set of integrators
-        self.integrators = [external.maxima_integrator,
-                            external.libgiac_integrator,
-                            external.sympy_integrator]
+        self.integrators = [external.maxima_integrator]
+        from sage.features.sagemath import sage__libs__giac
+        if sage__libs__giac().is_present():
+            # Only try Giac if sagemath-giac is installed; it raises
+            # a FeatureNotPresentError otherwise.
+            self.integrators.append(external.libgiac_integrator)
+        self.integrators.append(external.sympy_integrator)
 
         BuiltinFunction.__init__(self, "integrate", nargs=4, conversions={'sympy': 'Integral',
                                                                           'giac': 'integrate'})
@@ -468,7 +472,10 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
     - ``b`` -- (optional) upper endpoint of definite integral
 
-    - ``algorithm`` -- (default: ``'maxima'``, ``'libgiac'`` and ``'sympy'``) one of
+    - ``algorithm`` -- string (default: None); one of
+
+      - ``None`` -- try all of ``'maxima'``, ``'giac'`` (if available),
+        and ``'sympy'``, in order
 
       - ``'maxima'`` -- use maxima
 
@@ -478,9 +485,11 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
       - ``'fricas'`` -- use FriCAS (the optional fricas spkg has to be installed)
 
-      - ``'giac'`` -- use libgiac
+      - ``'giac'`` -- use libgiac (needs the optional sagemath-giac package
+        to be installed)
 
-      - ``'libgiac'`` -- use libgiac (alias for ``'giac'``)
+      - ``'libgiac'`` -- use libgiac (alias for ``'giac'``, needs the
+        optional sagemath-giac package to be installed)
 
     To prevent automatic evaluation, use the ``hold`` argument.
 
@@ -646,17 +655,12 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: g.integrate(x).sort()          # optional - maple
         x*y^z+1/2*2^(1/2)*Pi^(1/2)*FresnelS(2^(1/2)/Pi^(1/2)*x)
 
-    We next integrate a function with no closed form integral. Notice
-    that the answer comes back as an expression that contains an
-    integral itself. ::
+    We next integrate a function with no closed-form integral. The
+    integral has been evaluated to some extent, but the answer itself
+    contains an integration. We specify the maxima backend because the
+    other implementations can produce slightly different results::
 
-        sage: A = integral(1/ ((x-4) * (x^4+x+1)), x); A
-        integrate(1/((x^4 + x + 1)*(x - 4)), x)
-
-    Sometimes, in this situation, using the algorithm "maxima"
-    gives instead a partially integrated answer::
-
-        sage: integral(1/(x**7-1),x,algorithm='maxima')
+        sage: integral(1/(x**7-1), x, algorithm='maxima')
         -1/7*integrate((x^5 + 2*x^4 + 3*x^3 + 4*x^2 + 5*x + 6)/(x^6 + x^5 + x^4 + x^3 + x^2 + x + 1), x) + 1/7*log(x - 1)
 
     We now show that floats are not converted to rationals
@@ -1064,7 +1068,14 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         integrator = available_integrators.get(algorithm)
         if not integrator:
             raise ValueError("Unknown algorithm: %s" % algorithm)
-        return integrator(expression, v, a, b)
+        from sage.features import FeatureNotPresentError
+        try:
+            return integrator(expression, v, a, b)
+        except FeatureNotPresentError as e:
+            # Try to be more helpful if the algorithm was valid but
+            # the backend is not installed.
+            e.reason = f"Optional backend for {algorithm} integration not installed."
+            raise e
     if a is None:
         return indefinite_integral(expression, v, hold=hold)
     else:
