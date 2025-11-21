@@ -3447,8 +3447,9 @@ cdef class Expression(Expression_abc):
                     assumption_vars = set(sum(assumption_var_list, ()))
                     if set(vars).intersection(assumption_vars):
                         need_assumptions = True
-                        # Special case: for simple variable inequalities with integer/real/complex
-                        # domain assumptions, don't use Maxima (it incorrectly returns False)
+                        # Special case: for simple variable inequalities with integer assumptions,
+                        # don't use Maxima (it incorrectly returns False). The real/complex cases are
+                        # already handled above by not adding them to assumption_var_list.
                         if has_integer_assumption and self.operator() == operator.ne:
                             # Check if this is a simple case like "x != c" where c is a constant
                             lhs = self.lhs()
