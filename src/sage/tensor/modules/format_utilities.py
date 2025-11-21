@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from sage.misc.latex import LatexExpr
 
 
-def is_atomic(expr, sep=['+', '-']):
+def is_atomic(expr, sep=['+', '-']) -> bool:
     r"""
     Helper function to check whether some LaTeX expression is atomic.
 
@@ -70,6 +70,21 @@ def is_atomic(expr, sep=['+', '-']):
         False
         sage: is_atomic("(a mod b)", sep=['mod'])
         True
+
+    TESTS::
+
+        sage: is_atomic(1, sep=['*'])
+        Traceback (most recent call last):
+        ...
+        TypeError: the argument must be a string
+        sage: is_atomic("a*b", sep='*')
+        Traceback (most recent call last):
+        ...
+        TypeError: the argument 'sep' must be a list
+        sage: is_atomic("a*b", sep=[1])
+        Traceback (most recent call last):
+        ...
+        TypeError: the argument 'sep' must consist of strings
     """
     if not isinstance(expr, str):
         raise TypeError("the argument must be a string")
