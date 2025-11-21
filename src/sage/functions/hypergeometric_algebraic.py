@@ -537,7 +537,7 @@ class HypergeometricAlgebraic(Element):
     @coerce_binop
     def hadamard_product(self, other):
         r"""
-        Return the hadamard product of the hypergeometric function
+        Return the hadamard product of this hypergeometric function
         and ``other``.
 
         INPUT:
@@ -564,7 +564,7 @@ class HypergeometricAlgebraic(Element):
     def _div_(self, other):
         r"""
         Return the (formal) quotient of the hypergeometric function
-        and ``other``
+        and ``other``.
 
         INPUT:
 
@@ -695,8 +695,8 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
 
     def valuation(self, p, position=False):
         r"""
-        Return the p-adic valuation of this hypergeometric function, i.e., the
-        maximal s, such that p^(-s) times this hypergeometric function has
+        Return the `p`-adic valuation of this hypergeometric function, i.e., the
+        maximal `s`, such that `p^{-s}` times this hypergeometric function has
         p-integral coefficients.
 
         INPUT:
@@ -750,8 +750,9 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
 
     def has_good_reduction(self, p):
         r"""
-        Return ``True`` if the p-adic valuation of this hypergeometric function
-        is non-negative, i.e., if its reduction modulo ``p`` is well-defined.pAdicGeneric
+        Return whether the `p`-adic valuation of this hypergeometric
+        function is nonnegative, i.e., if its reduction modulo ``p``
+        is well-defined.
 
         INPUT:
 
@@ -774,7 +775,7 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
     def good_reduction_primes(self):
         r"""
         Return the set of prime numbers modulo which this hypergeometric
-        function can be reduced, i.e., the p-adic valuation is positive.
+        function can be reduced, i.e., the p-adic valuation is nonnegative.
 
         EXAMPLES::
 
@@ -856,7 +857,6 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         (see [Chr1986]_, p.15, Cor.; [BeukersHeckman]_, Thm. 4.5). For integer
         differences between parameters we follow the flowchart in
         [FY2024]_, Fig. 1.
-
         """
         if any(a in ZZ and a <= 0 for a in self.top()):
             return True
@@ -871,9 +871,9 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
 
     def is_globally_bounded(self, include_infinity=True):
         r"""
-        Return ``True`` when this hypergeometric function is globally bounded
-        (if ``include_infinity`` is ``False`` it is noct checked whether the
-        radius of convergence is finite) and ``False`` otherwise.
+        Return whether this hypergeometric function is globally bounded
+        (if ``include_infinity`` is ``False`` it is not checked whether
+        the radius of convergence is finite).
 
         INPUT:
 
@@ -912,17 +912,18 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         raise NotImplementedError
 
     def monodromy(self, x=0, var='z'):
-        r'''
+        r"""
         Return a local monodromy matrix of the hypergeometric differential
-        equation associated to this hypergeoemtric function at the popint
-        ``x``, where ``var`` represents a d-th root of unity for d being the
-        least common multiple of the parameters.
+        equation associated to this hypergeoemtric function at the point
+        ``x``.
 
         INPUT:
 
         - ``x`` -- a complex number (default: ``0``)
 
-        - ``var`` -- a string (default: ``z``), the name of a d-trh root of unity
+        - ``var`` -- a string (default: ``z``), the name of the variable
+          representing a `d`-th root of unity for `d` being least common
+          multiple of the parameters.
 
         EXAMPLES::
 
@@ -948,9 +949,10 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
             [0 0 1]
 
         ALGORITHM:
+
         We use the explicit formulas for the monodromy matrices presented in
         [BeukersHeckman]_, Thm. 3.5, attributed to Levelt.
-        '''
+        """
         params = self._parameters
         if not params.is_balanced():
             raise ValueError("hypergeometric equation is not Fuchsian")
@@ -975,7 +977,7 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
 
     def is_maximum_unipotent_monodromy(self):
         r"""
-        Return ``True`` if the hypergeometric differential operator associated
+        Return whether the hypergeometric differential operator associated
         to this hypergeometric function has maximal unipotent monodromy (MUM).
 
         EXAMPLES::
@@ -1028,7 +1030,7 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
         self._e = K.e()
 
     def residue(self):
-        r'''
+        r"""
         Return the reduction of this hypergeometric function in the residue
         field of the p-adics over which this hypergeometric function is
         defined.
@@ -1042,8 +1044,7 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
             sage: g = f.residue()
             sage: g.parent()
             Hypergeometric functions in x over Finite Field of size 5
-
-        '''
+        """
         k = self.base_ring().residue_field()
         if self._scalar.valuation() == 0:
             return self.change_ring(k)
@@ -1060,8 +1061,8 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
 
     def dwork_image(self):
         r"""
-        Return the hypergeometric function obtained from this one by applying
-        the Dwork map to each of its parameters.
+        Return the hypergeometric function obtained from this one
+        by applying the Dwork map to each of its parameters.
 
         EXAMPLES::
 
@@ -1069,13 +1070,12 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
             sage: f = hypergeometric([1/4, 1/3, 1/2], [2/5, 3/5, 1], x)
             sage: f.dwork_image()
             hypergeometric((1/3, 1/2, 3/4), (1/5, 4/5, 1), x)
-
         """
         parameters = self._parameters.dwork_image(self._p)
         return self.parent()(parameters, scalar=self._scalar)
 
     def log_radius_of_convergence(self):
-        r'''
+        r"""
         Return the logarithmic p-adic radius of convergence of this
         hypergeometric function.
 
@@ -1088,7 +1088,7 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
             sage: g = hypergeometric([1/3, 2/3], [1/5], x)
             sage: g.log_radius_of_convergence()
             5/4
-        '''
+        """
         p = self._p
         step = self._e / (p - 1)
         log_radius = 0
@@ -1109,7 +1109,7 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
         return log_radius
 
     def valuation(self, log_radius=0, position=False):
-        r'''
+        r"""
         Return the p-adic valuation of this hypergeometric function on the
         disk of logarithmic radius ``log_radius``, and, if ``position`` is
         ``True`` the index of the first coefficient of the series that
@@ -1119,8 +1119,9 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
 
         - ``log_radius`` -- a rational number
 
-        - ``position`` -- a boolean (default: ``False``), if ``True`` the index
-        of the first coefficient attaining the valuation is also returned
+        - ``position`` -- a boolean (default: ``False``), if ``True`` the
+          index of the first coefficient attaining the valuation is also
+          returned
 
         EXAMPLES::
 
@@ -1128,14 +1129,14 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
             sage: f = hypergeometric([1/3, 2/3], [1/2], x)
             sage: f.valuation()
             0
-        
+
         ::
 
            sage: S.<x> = Qp(5)[]
            sage: g = 1/5 * hypergeometric([1/3, 2/3], [5^3/3], x)
-           sage: g.valuation(-1, position = True)
+           sage: g.valuation(-1, position=True)
            (-2, 1)
-        '''
+        """
         drift = -log_radius / self._e
         val, pos = self._parameters.valuation_position(self._p, drift)
         if position:
