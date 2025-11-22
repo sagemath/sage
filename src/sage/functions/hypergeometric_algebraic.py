@@ -931,12 +931,12 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         if not self._parameters.is_balanced():
             raise NotImplementedError("Only implemented for nFn-1")
         d = ZZ(self.denominator())
-        classes = dict.fromkeys(range(1, len(self.top())+1), Primes(modulus = 0))
+        classes = dict.fromkeys(range(1, len(self.top())+1), Primes(modulus=0))
         for c in range(d):
             if gcd(c, d) == 1:
                 Delta = QQ(1/c) % d
                 j = self._parameters.interlacing_number(Delta)
-                classes[j] = classes[j].union(Primes(modulus = d, classes = [c]))
+                classes[j] = classes[j].union(Primes(modulus=d, classes=[c]))
         for p in Primes():
             # I am sure one can avoid computing the interlacing number again for
             # all primes here.
@@ -975,10 +975,8 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
             [0 1]
             [1 0]
 
-        ::
-
         The bases of the solution space are chosen in a compatible way
-        across the three singularities of the differential equation:
+        across the three singularities of the differential equation::
 
             sage: g = hypergeometric([1/9, 4/9, 5/9], [1/3, 1], x)
             sage: g.monodromy(var='a')
@@ -1051,8 +1049,11 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
 
         - ``arg1``, ``arg2`` -- arguments defining this hypergeometric
           function, they can be:
+
           - the top and bottom paramters
+
           - a hypergeometric function and ``None``
+
           - an instance of the class :class:`HypergeometricParameters` and ``None``
 
         - ``scalar`` -- an element in the base ring, the scalar by
@@ -1108,7 +1109,7 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
 
         EXAMPLES::
 
-            sage: S.<x> = QQ[]
+            sage: S.<x> = Qp(7)[]
             sage: f = hypergeometric([1/4, 1/3, 1/2], [2/5, 3/5, 1], x)
             sage: f.dwork_image()
             hypergeometric((1/3, 1/2, 3/4), (1/5, 4/5, 1), x)
@@ -1328,7 +1329,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         L = S(L.list())
         d = S.gen()
         p = self._char
-        rows = [ ]
+        rows = []
         n = L.degree()
         for i in range(p, p + n):
             Li = d**i % L
@@ -1351,7 +1352,6 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         p = self._char
         H = self.parent()
         F = H.base_ring()
-        Hp = H.change_ring(Qp(p, 1))
         x = H.polynomial_ring().gen()
         coeffs = self._coeffs
         Ps = {}

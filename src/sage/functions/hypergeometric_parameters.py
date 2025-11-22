@@ -26,12 +26,9 @@ from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.semirings.tropical_semiring import TropicalSemiring
 
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.geometry.polyhedron.base0 import Polyhedron_base0
-
 from sage.matrix.constructor import matrix
 from sage.matrix.special import identity_matrix
 
@@ -108,8 +105,8 @@ class HypergeometricParameters():
             self.d = 1
             self.bound = 1
         else:
-            self.d = lcm([ a.denominator() for a in top ]
-                       + [ b.denominator() for b in bottom ])
+            self.d = lcm([a.denominator() for a in top]
+                       + [b.denominator() for b in bottom])
             self.bound = 2 * self.d * max(abs(a) for a in top + bottom) + 1
 
     def __repr__(self):
@@ -308,7 +305,6 @@ class HypergeometricParameters():
                 interlacing += 1
             previous_paren = paren
         return interlacing
-
 
     def q_christol_sorting(self, q):
         r"""
@@ -559,6 +555,9 @@ class HypergeometricParameters():
             \text{val}_p(h_k) + \delta k
 
         and the first index `k` where this minimum is reached.
+        Return in addition (for internal use), the number of summands
+        in Christol's formula which was taken into account in order to
+        compute the result.
 
         INPUT:
 
@@ -571,18 +570,18 @@ class HypergeometricParameters():
             sage: from sage.functions.hypergeometric_algebraic import HypergeometricParameters
             sage: pa = HypergeometricParameters([1/5, 1/5, 1/5], [1/3, 3^10/5])
             sage: pa.valuation_position(3)
-            (-9, 1)
+            (-9, 1, 11)
 
         When the relevant sequence is not bounded from below, the
         tuple ``(-Infinity, None)`` is returned::
 
             sage: pa.valuation_position(5)
-            (-Infinity, None)
+            (-Infinity, None, 0)
 
         An example with a drift::
 
             sage: pa.valuation_position(3, drift=-7/5)
-            (-54/5, 7)
+            (-54/5, 7, 11)
         """
         # We check that we are inside the disk of convergence
         params, shift = self.prepare_parameters(p)
@@ -605,9 +604,10 @@ class HypergeometricParameters():
         thresold = d * sum(dw for _, dw in params if dw > 0)
 
         valuation = position = ZZ(0)
-        valfinal = signature_prev = None
+        valfinal = None
+        signature_prev = indices_prev = None
         indices = {}
-        count = step = 0
+        count = r = 0
         q = 1
         while True:
             # We take into account the contribution of V({k/p^r}, p^r).
@@ -624,7 +624,7 @@ class HypergeometricParameters():
             # The list signature_prev and the dictionary indices_prev
             # correspond to the same data for r-1.
 
-            step += 1
+            r += 1
             pq = p * q
 
             # We compute the points of discontinuity of V({k/p^r}, p^r)
@@ -640,7 +640,7 @@ class HypergeometricParameters():
             signature = []
             indices = {}
             w = 0
-            TMstep = matrix(TSR, n)
+            TMr = matrix(TSR, n)
             for i in range(n):
                 x, dw, param = jumps[i]    # discontinuity point
                 y, _, right = jumps[i+1]   # next discontinuity point
@@ -672,7 +672,7 @@ class HypergeometricParameters():
                     while True:
                         valj, posj, paramj = signature_prev[j]
                         valj += drift * interval
-                        TMstep[i,j] = TSR(drift*interval + w)
+                        TMr[i, j] = TSR(drift*interval + w)
                         if valj < val:
                             val = valj
                             pos = posj + q * interval
@@ -689,20 +689,20 @@ class HypergeometricParameters():
             valuation, position, _ = minimum
             if q > bound:
                 if drift > 2*thresold and all(signature[i][0] > valuation + thresold for i in range(1, n)):
-                    return valuation, position, step
+                    return valuation, position, r
                 if growth == 0:
                     if count < order:
-                        TM = TMstep * TM
+                        TM = TMr * TM
                     count += 1
                     if count == order:
                         try:
                             TM = TM.weak_transitive_closure()
                         except ValueError:
-                            return -infinity, None, step
-                        valfinal = min(TM[i,j].lift() + signature[j][0]
+                            return -infinity, None, r
+                        valfinal = min(TM[i, j].lift() + signature[j][0]
                                        for i in range(n) for j in range(n))
                     if valuation == valfinal:
-                        return valuation, position, step
+                        return valuation, position, r
 
             # We update the values for the next r
             q = pq
@@ -711,7 +711,7 @@ class HypergeometricParameters():
             indices_prev = indices
 
     def valuation_function(self, p, start=0):
-        valstart, _, step = self.valuation_position(p, start)
+        valstart, _, r = self.valuation_position(p, start)
         if valstart is -infinity:
             raise ValueError
 
@@ -724,9 +724,8 @@ class HypergeometricParameters():
         drift = Polyhedron(vertices=[[1, shift]], rays=rays)
 
         signature_prev = None
-        count = 0
         q = 1
-        for _ in range(step):
+        for _ in range(r):
             pq = p * q
 
             jumps = [(1 + (-pa) % pq, dw, pa) for pa, dw in params]
@@ -751,10 +750,12 @@ class HypergeometricParameters():
                         valj, left, paramj = signature_prev[j]
                         left_interval = max(0, ceil((x - left) / q))
                         right_interval = max(0, floor((y - 1 - left) / q))
-                        if left_interval <= right_interval:
-                            val = val.convex_hull(left_interval * drift + valj)
+                        if left_interval > right_interval:
+                            continue
+                        drift_scaled = left_interval * drift
                         if left_interval < right_interval:
-                            val = val.convex_hull(right_interval * drift)
+                            drift_scaled = drift_scaled.convex_hull(right_interval * drift)
+                        val = val.convex_hull(drift_scaled + valj)
                 val = val.translation((0, w))
                 signature.append((val, x, param))
                 # valuation = valuation.convex_hull(val)
@@ -766,13 +767,10 @@ class HypergeometricParameters():
             #         return valuation
 
             q = pq
-            drift = drift * p + diff
+            drift = (p*drift).translation((0, diff))
             signature_prev = signature
 
-        valuation = Polyhedron(rays=rays)
-        for val, _, _ in signature:
-            valuation = valuation.convex_hull(val)
-        return valuation.vertices_list()
+        return signature[0][0].vertices_list()
 
     def dwork_image(self, p):
         r"""
