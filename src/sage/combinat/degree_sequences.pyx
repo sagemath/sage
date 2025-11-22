@@ -312,7 +312,7 @@ class DegreeSequences:
         if n < 0:
             raise ValueError("the input parameter must be >= 0")
 
-        self._n = int(n)
+        self._n = n
 
     def __contains__(self, seq):
         """
