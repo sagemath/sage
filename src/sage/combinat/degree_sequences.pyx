@@ -341,7 +341,6 @@ class DegreeSequences:
             [(0, 0, 0), (1, 1, 0), (2, 1, 1), (2, 2, 2)]
             sage: [d for d in DegreeSequences(1)]
             [(0,)]
-        
         For lists we can also check containment::
             sage: [3,3,2,2,2,2,2,2] in DegreeSequences(8)
             True
