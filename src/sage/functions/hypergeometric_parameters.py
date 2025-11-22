@@ -36,79 +36,6 @@ from sage.matrix.constructor import matrix
 from sage.matrix.special import identity_matrix
 
 
-# Functions defined as min of affine functions
-##############################################
-
-class MinFunction():
-    def __init__(self, subgraph=None, start=None):
-        if subgraph is None:
-            subgraph = Polyhedron(ieqs=[[0, 0, 0]])
-        if start is not None:
-            P = Polyhedron(ieqs=[[-start, 1, 0]])
-            subgraph = subgraph.intersection(P)
-        self._subgraph = subgraph
-
-    def defn(self):
-        affine = []
-        start = None
-        for u, v, w in self._subgraph.inequalities_list():
-            if w == 0:
-                start = -u/v
-            else:
-                affine.append((-v/w, -u/w))
-        return affine, start
-
-    def __repr__(self):
-        affine, start = self.defn()
-        S = PolynomialRing(QQ, 'x')
-        fs = [str(a*S.gen() + b) for a, b, in affine]
-        if len(fs) == 0:
-            s = "+infinity"
-        elif len(fs) == 1:
-            s = fs[0]
-        else:
-            s = "min(" + ", ".join(fs) + ")"
-        if start is not None:
-            s += " on [%s, +infty)" % start
-        return s
-
-    def inf(self, gs):
-        subgraph = self._subgraph.intersection(gs._subgraph)
-        return MinFunction(subgraph)
-
-    def __mul__(self, c):
-        if c in QQ and c >= 0:
-            ieqs = [(c*u, c*v, w) for u, v, w in self._subgraph.inequalities_list()]
-        return MinFunction(Polyhedron(ieqs=ieqs))
-
-    def __add__(self, other):
-        if other in QQ:
-            ieqs = [(u - other*w, v, w) for u, v, w in self._subgraph.inequalities_list()]
-        if isinstance(other, MinFunction):
-            ieqs = [(-u*wp - up*w, -v*wp - vp*w, -w*wp)
-                    for u, v, w in self._subgraph.inequalities_list()
-                    for up, vp, wp in other._subgraph.inequalities_list()]
-        return MinFunction(Polyhedron(ieqs=ieqs))
-
-    def __call__(self, x):
-        L = Polyhedron(eqns=[[-x, 1, 0]]).intersection(self._subgraph)
-        if L.is_empty():
-            raise ValueError("not defined")
-        v = L.inequalities_list()
-        if not v:
-            return infinity
-        return -v[0][0] / v[0][2]
-
-
-def affine_function(a=None, b=None, start=None):
-    ieqs = []
-    if a is not None:
-        ieqs.append([b, a, -1])
-    if start is not None:
-        ieqs.append([-start, 1, 0])
-    return MinFunction(Polyhedron(ieqs=ieqs))
-
-
 # Parameters of hypergeometric functions
 ########################################
 
@@ -379,7 +306,7 @@ class HypergeometricParameters():
         for _, _, paren in self.christol_sorting(c):
             if paren == 1 and previous_paren == -1:
                 interlacing += 1
-            previous_paren = paren            
+            previous_paren = paren
         return interlacing
 
 
@@ -791,10 +718,12 @@ class HypergeometricParameters():
         params, shift = self.prepare_parameters(p)
         diff = sum(dw for _, dw in params)
         n = len(params) + 1
-        infty = affine_function(start=start)
-        drift = affine_function(1, shift, start)
+
+        rays = [[0, 1], [1, -start]]
+        infty = Polyhedron(ambient_dim=2)
+        drift = Polyhedron(vertices=[[1, shift]], rays=rays)
+
         signature_prev = None
-        indices = {}
         count = 0
         q = 1
         for _ in range(step):
@@ -804,19 +733,17 @@ class HypergeometricParameters():
             jumps = [(0, 0, 0)] + sorted(jumps) + [(pq, None, 0)]
 
             signature = []
-            indices = {}
             w = 0
             for i in range(n):
                 x, dw, param = jumps[i]    # discontinuity point
                 y, _, right = jumps[i+1]   # next discontinuity point
                 w += dw   # the value of V({k/p^r}, p^r) on this interval
-                indices[param] = len(signature)
                 if x == y:
                     # Case of empty interval
                     val = infty
                 elif signature_prev is None:
                     # Case r = 1
-                    val = (drift * x).inf(drift * (y - 1))
+                    val = (x * drift).convex_hull((y - 1) * drift)
                 else:
                     # Case r > 1
                     val = infty
@@ -824,14 +751,13 @@ class HypergeometricParameters():
                         valj, left, paramj = signature_prev[j]
                         left_interval = max(0, ceil((x - left) / q))
                         right_interval = max(0, floor((y - 1 - left) / q))
-                        if left_interval > right_interval:
-                            continue
-                        val = val.inf(drift * left_interval + valj)
+                        if left_interval <= right_interval:
+                            val = val.convex_hull(left_interval * drift + valj)
                         if left_interval < right_interval:
-                            val = val.inf(drift * right_interval + valj)
-                val = val + w
+                            val = val.convex_hull(right_interval * drift)
+                val = val.translation((0, w))
                 signature.append((val, x, param))
-                #valuation = valuation.inf(val)
+                # valuation = valuation.convex_hull(val)
 
             # The halting criterion
             # if q > bound:
@@ -842,12 +768,11 @@ class HypergeometricParameters():
             q = pq
             drift = drift * p + diff
             signature_prev = signature
-            indices_prev = indices
 
-        valuation = affine_function(0, 0, start)
+        valuation = Polyhedron(rays=rays)
         for val, _, _ in signature:
-            valuation = valuation.inf(val)
-        return valuation
+            valuation = valuation.convex_hull(val)
+        return valuation.vertices_list()
 
     def dwork_image(self, p):
         r"""

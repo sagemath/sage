@@ -1195,8 +1195,7 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
             val = self._parameters.valuation_function(self._p, start)
         except ValueError:
             raise ValueError("infinite Newton polygon; try to truncate it by giving a log radius less than %s" % convergence)
-        vertices, _ = val.defn()
-        return NewtonPolygon(vertices, last_slope=log_radius)
+        return NewtonPolygon(val, last_slope=log_radius)
 
     def _truncation_bound(self, log_radius, prec):
         convergence = self.log_radius_of_convergence()
