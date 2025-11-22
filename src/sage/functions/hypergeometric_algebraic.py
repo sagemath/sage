@@ -1187,10 +1187,10 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
 
         ::
 
-           sage: S.<x> = Qp(5)[]
-           sage: g = 1/5 * hypergeometric([1/3, 2/3], [5^3/3], x)
-           sage: g.valuation(-1, position=True)
-           (-2, 1)
+            sage: S.<x> = Qp(5)[]
+            sage: g = 1/5 * hypergeometric([1/3, 2/3], [5^3/3], x)
+            sage: g.valuation(-1, position=True)
+            (-3, 1)
         """
         drift = -log_radius / self._e
         val, pos, _ = self._parameters.valuation_position(self._p, drift)
