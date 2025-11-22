@@ -711,7 +711,7 @@ class HypergeometricParameters(SageObject):
             signature_prev = signature
             indices_prev = indices
 
-    def valuation_function(self, p, start=0):
+    def valuation_function(self, p, start):
         valstart, _, r = self.valuation_position(p, start)
         if valstart is -infinity:
             raise ValueError

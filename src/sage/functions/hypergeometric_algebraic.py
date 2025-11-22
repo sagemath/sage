@@ -59,6 +59,7 @@ from sage.rings.number_field.number_field import CyclotomicField
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.lazy_series_ring import LazyPowerSeriesRing
 from sage.rings.tate_algebra import TateAlgebra
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 
@@ -472,6 +473,29 @@ class HypergeometricAlgebraic(Element):
                 c /= b + i
             coeffs.append(c)
 
+    def __getitem__(self, n):
+        r"""
+        Return the ``n``-th coefficient of the series representation of this
+        hypergeoimetric function.
+
+        INPUT:
+
+        - ``n`` -- a non-negative integer
+
+        EXAMPLES:
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f[9]
+            409541017600/2541865828329
+            sage: g = f % 5
+            sage: g[9]
+            0
+        """
+        self._compute_coeffs(n+1)
+        S = self.base_ring()
+        return S(self._coeffs[n])
+
     def coefficient(self, n):
         r"""
         Return the ``n``-th coefficient of the series representation of this
@@ -491,9 +515,7 @@ class HypergeometricAlgebraic(Element):
             sage: g.coefficient(9)
             0
         """
-        self._compute_coeffs(n+1)
-        S = self.base_ring()
-        return S(self._coeffs[n])
+        return self[n]
 
     def power_series(self, prec=20):
         r"""
@@ -511,9 +533,13 @@ class HypergeometricAlgebraic(Element):
             sage: f.power_series(3)
             1 + 4/9*x + 80/243*x^2 + O(x^3)
         """
-        S = self.parent().power_series_ring()
-        self._compute_coeffs(prec)
-        return S(self._coeffs, prec=prec)
+        if prec is infinity:
+            S = self.parent().power_series_ring(infinity)
+            return S(lambda n: self[n])
+        else:
+            S = self.parent().power_series_ring()
+            self._compute_coeffs(prec)
+            return S(self._coeffs, prec=prec)
 
     def shift(self, s):
         r"""
@@ -1287,61 +1313,9 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
 
 class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
     def __init__(self, parent, arg1, arg2=None, scalar=None):
-        # TODO: do we want to simplify automatically if the
-        # hypergeometric series is a polynomial?
         HypergeometricAlgebraic.__init__(self, parent, arg1, arg2, scalar)
         self._p = p = self.base_ring().cardinality()
         self._coeffs = [Qp(p, 1)(self._scalar)]
-
-    def power_series(self, prec=20):
-        S = self.parent().power_series_ring()
-        self._compute_coeffs(prec)
-        try:
-            f = S(self._coeffs, prec=prec)
-        except ValueError:
-            raise ValueError("denominator appears in the series at the required precision")
-        return f
-
-    def is_almost_defined(self):
-        p = self._char
-        d = self.denominator()
-        if d.gcd(p) > 1:
-            return False
-        u = 1
-        if not self._parameters.parenthesis_criterion(u):
-            return False
-        u = p % d
-        while u != 1:
-            if not self._parameters.parenthesis_criterion(u):
-                return False
-            u = p*u % d
-        return True
-
-    def is_defined(self):
-        p = self._char
-        if not self.is_almost_defined():
-            return False
-        bound = self._parameters.bound
-        if bound < p:
-            return True
-        prec = 1 + p ** ceil(log(self._parameters.bound, p))
-        try:
-            self.series(prec)
-        except ValueError:
-            return False
-        return True
-
-    def is_defined_conjectural(self):
-        p = self._char
-        if not self.is_almost_defined():
-            return False
-        bound = self._parameters.bound
-        q = p
-        while q <= bound:
-            if not self._parameters.q_parenthesis_criterion(q):
-                return False
-            q *= p
-        return True
 
     def __call__(self, x):
         return self.polynomial()(x)
@@ -1553,7 +1527,10 @@ class HypergeometricFunctions(Parent, UniqueRepresentation):
         return PolynomialRing(self.base_ring(), self._name)
 
     def power_series_ring(self, default_prec=None):
-        return PowerSeriesRing(self.base_ring(), self._name, default_prec=default_prec)
+        if default_prec is infinity:
+            return LazyPowerSeriesRing(self.base_ring(), self._name)
+        else:
+            return PowerSeriesRing(self.base_ring(), self._name, default_prec=default_prec)
 
 
 # Helper functions
