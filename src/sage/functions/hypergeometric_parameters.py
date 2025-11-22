@@ -18,6 +18,7 @@ AUTHORS:
 # ***************************************************************************
 
 from sage.misc.cachefunc import cached_method
+from sage.structure.sage_object import SageObject
 
 from sage.functions.other import floor, ceil
 from sage.arith.functions import lcm
@@ -36,7 +37,7 @@ from sage.matrix.special import identity_matrix
 # Parameters of hypergeometric functions
 ########################################
 
-class HypergeometricParameters():
+class HypergeometricParameters(SageObject):
     r"""
     Class for parameters of hypergeometric functions.
     """

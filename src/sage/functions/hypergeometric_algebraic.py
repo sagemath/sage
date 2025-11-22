@@ -1044,8 +1044,8 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
 
         INPUT:
 
-        - ``parent`` -- the parent of this function, which has to be defined
-        over the p-adics
+        - ``parent`` -- the parent of this function, which has to be
+          defined over the p-adics
 
         - ``arg1``, ``arg2`` -- arguments defining this hypergeometric
           function, they can be:
@@ -1054,7 +1054,9 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
 
           - a hypergeometric function and ``None``
 
-          - an instance of the class :class:`HypergeometricParameters` and ``None``
+          - an instance of the class
+            :class:`sage.functions.hypergeometric_parameters.HypergeometricParameters`
+            and ``None``
 
         - ``scalar`` -- an element in the base ring, the scalar by
           which the hypergeometric function is multiplied
