@@ -496,7 +496,7 @@ cdef class DegreeSequenceEnumerator:
             seq[M - 1] += M
 
         ###############################################
-        # Creating vertices of Vertices of degree > M #
+        # Creating vertices of degree > M #
         ###############################################
 
         for current_box in range(M, 0, -1):
