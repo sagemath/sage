@@ -797,34 +797,43 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         modulo which primes a hypergeometric function can be reduced
         ([CFV2025]_, Thm. 3.1.3). For small primes `p`, we compute the `p`-adic
         valuation of the hypergeometric function individually.
+
+        TESTS::
+
+            sage: h = hypergeometric([1/5, 2/5, 3/5], [1/2, 1/7, 1/11], x)
+            sage: h.good_reduction_primes()
+            Finite set of prime numbers: 2, 7, 11
         """
         params = self._parameters
         d = params.d
 
-        # We check the parenthesis criterion for c=1
         if not params.parenthesis_criterion(1):
-            return Primes(modulus=0)
+            # Easy case:
+            # the parenthesis criterion is not fulfilled for c=1
+            goods = {}
 
-        # We check the parenthesis criterion for other c
-        # and derive congruence classes with good reduction
-        cs = [c for c in range(d) if d.gcd(c) == 1]
-        goods = {c: None for c in cs}
-        goods[1] = True
-        for c in cs:
-            if goods[c] is not None:
-                continue
-            cc = c
-            goods[c] = True
-            while cc != 1:
-                if goods[cc] is False or not params.parenthesis_criterion(cc):
-                    goods[c] = False
-                    break
-                cc = (cc * c) % d
-            if goods[c]:
+        else:
+
+            # We check the parenthesis criterion for other c
+            # and derive congruence classes with good reduction
+            cs = [c for c in range(d) if d.gcd(c) == 1]
+            goods = {c: None for c in cs}
+            goods[1] = True
+            for c in cs:
+                if goods[c] is not None:
+                    continue
                 cc = c
+                goods[c] = True
                 while cc != 1:
-                    goods[cc] = True
+                    if goods[cc] is False or not params.parenthesis_criterion(cc):
+                        goods[c] = False
+                        break
                     cc = (cc * c) % d
+                if goods[c]:
+                    cc = c
+                    while cc != 1:
+                        goods[cc] = True
+                        cc = (cc * c) % d
 
         # We treat exceptional primes
         bound = params.bound
@@ -832,11 +841,10 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         for p in Primes():
             if p > bound:
                 break
-            if d % p == 0 and self.valuation(p) >= 0:
+            val = self.valuation(p)
+            if val >= 0:
                 exceptions[p] = True
-            if d % p == 0 or not goods[p % d]:
-                continue
-            if self.valuation(p) < 0:
+            elif val < 0 and goods.get(p % d, False):
                 exceptions[p] = False
 
         goods = [c for c, v in goods.items() if v]
@@ -1091,9 +1099,11 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
             Hypergeometric functions in x over Finite Field of size 5
         """
         k = self.base_ring().residue_field()
-        if self._scalar.valuation() == 0:
+        valscalar = self._scalar.valuation()
+        if valscalar == 0:
             return self.change_ring(k)
         val, pos, _ = self._parameters.valuation_position(self._p)
+        val += valscalar
         if val < 0:
             raise ValueError("bad reduction")
         if val > 0:
@@ -1101,7 +1111,7 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
             return H(self._parameters, scalar=0)
         raise NotImplementedError("the reduction is not a hypergeometric function")
         # In fact, it is x^s * h[s] * h, with
-        # . s = pos
+        # . s is pos
         # . h = self.shift(s)
 
     def dwork_image(self):
@@ -1184,21 +1194,39 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
         """
         drift = -log_radius / self._e
         val, pos, _ = self._parameters.valuation_position(self._p, drift)
+        val += self._scalar.valuation()
         if position:
             return val, pos
         else:
             return val
 
     def newton_polygon(self, log_radius=None):
+        r"""
+        TESTS::
+
+            sage: S.<x> = Qp(19)[]
+            sage: h = hypergeometric([1/5, 2/5, 3/5, 1/11], [1/2, 1/7], x)
+            sage: h.newton_polygon()
+            Traceback (most recent call last):
+            ...
+            ValueError: infinite Newton polygon; try to truncate it by giving a log radius less than 1/18
+            sage: h.newton_polygon(1/18 - 1/2^10)
+            Infinite Newton polygon with 4 vertices: (0, 0), (10, -1), (11, -1), (144, 6) ending by an infinite line of slope 503/9216
+        """
+        scalar = self._scalar
+        if scalar == 0:
+            raise ValueError
         convergence = self.log_radius_of_convergence()
         if log_radius is None:
             log_radius = convergence
         start = -log_radius / self._e
         try:
-            val = self._parameters.valuation_function(self._p, start)
+            vertices = self._parameters.valuation_function(self._p, start)
         except ValueError:
             raise ValueError("infinite Newton polygon; try to truncate it by giving a log radius less than %s" % convergence)
-        return NewtonPolygon(val, last_slope=log_radius)
+        valscalar = self._scalar.valuation()
+        vertices = [[k, v + valscalar] for k, v in vertices]
+        return NewtonPolygon(vertices, last_slope=log_radius)
 
     def _truncation_bound(self, log_radius, prec):
         convergence = self.log_radius_of_convergence()
@@ -1227,26 +1255,32 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
         K = self.base_ring()
         name = self.parent().variable_name()
         S = TateAlgebra(K, log_radii=[log_radius], names=name)
+        scalar = self._scalar
+        if scalar == 0:
+            return S.zero()
         if prec is None:
             prec = self.base_ring().precision_cap()
-        trunc = self._truncation_bound(log_radius, prec)
+        trunc = self._truncation_bound(log_radius, prec - scalar.valuation())
         self._compute_coeffs(trunc)
         coeffs = {(i,): self._coeffs[i] for i in range(trunc)}
-        return self._scalar * S(coeffs, prec)
+        return scalar * S(coeffs, prec)
 
     def __call__(self, x):
         K = self.base_ring()
+        scalar = self._scalar
+        if scalar == 0:
+            return K.zero()
         x = K(x)
         val = min(x.valuation(), x.precision_absolute())
         if val is infinity:
             return K.one()
         w = self.valuation(-val)
         prec = w + K.precision_cap()
-        trunc = self._truncation_bound(-val, prec)
+        trunc = self._truncation_bound(-val, prec - scalar.valuation())
         self._compute_coeffs(trunc)
         ans = sum(self._coeffs[i] * x**i for i in range(trunc))
         ans = ans.add_bigoh(prec)
-        return self._scalar * ans
+        return scalar * ans
 
 
 # Over prime finite fields
