@@ -12,9 +12,9 @@ With the object ``DegreeSequences(n)``, one can:
 * Check whether a sequence is indeed a degree sequence::
 
     sage: DS = DegreeSequences(5)
-    sage: [4, 3, 3, 3, 3] in DS
+    sage: (4, 3, 3, 3, 3) in DS
     True
-    sage: [4, 4, 0, 0, 0] in DS
+    sage: (4, 4, 0, 0, 0) in DS
     False
 
 * List all the possible degree sequences of length `n`::
@@ -39,7 +39,7 @@ With the object ``DegreeSequences(n)``, one can:
     :func:`~sage.graphs.generators.degree_sequence.DegreeSequence`.
     For instance::
 
-        sage: ds = [3, 3, 2, 2, 2, 2, 2, 1, 1, 0]
+        sage: ds = (3, 3, 2, 2, 2, 2, 2, 1, 1, 0)
         sage: g = graphs.DegreeSequence(ds)                                             # needs networkx sage.graphs
         sage: g.degree_sequence()                                                       # needs networkx sage.graphs
         [3, 3, 2, 2, 2, 2, 2, 1, 1, 0]
@@ -195,7 +195,8 @@ Indeed, when enumerating all the degree sequences of length `n`, Sage first
 allocates an array ``seq`` of `n+1` integers where ``seq[i]`` is the number of
 elements of value ``i`` in the current sequence. Obviously, ``seq[n]=0`` holds
 in permanence : it is useful to allocate a larger array than necessary to
-simplify the code. The ``seq`` array is a global variable.
+simplify the code. The ``seq`` array lives inside a short-lived enumerator
+object created for each traversal so that no global state leaks between calls.
 
 The recursive function ``enum(depth, maximum)`` is the one building the list of
 sequences. It builds the list of degree sequences of length `n` which *extend*
@@ -266,9 +267,7 @@ Checking the consistency of enumeration and test::
 # ****************************************************************************
 
 from cysignals.memory cimport check_calloc, sig_free
-
-
-cdef unsigned char * seq
+from sage.rings.integer import Integer
 
 
 class DegreeSequences:
@@ -287,21 +286,33 @@ class DegreeSequences:
 
             sage: DegreeSequences(8)
             Degree sequences on 8 elements
-            sage: [3,3,2,2,2,2,2,2] in DegreeSequences(8)
+            sage: DegreeSequences(1)
+            Degree sequences on 1 element
+            sage: (3,3,2,2,2,2,2,2) in DegreeSequences(8)
             True
 
         TESTS:
 
         :issue:`21824`::
 
+            sage: DegreeSequences(RR(1/2))
+            Traceback (most recent call last):
+            ...
+            TypeError: the input parameter must be a non-negative integer
             sage: DegreeSequences(-1)
             Traceback (most recent call last):
             ...
             ValueError: the input parameter must be >= 0
         """
+        try:
+            n = Integer(n)
+        except (TypeError, ValueError):
+            raise TypeError("the input parameter must be a non-negative integer")
+
         if n < 0:
             raise ValueError("the input parameter must be >= 0")
-        self._n = n
+
+        self._n = int(n)
 
     def __contains__(self, seq):
         """
@@ -310,14 +321,14 @@ class DegreeSequences:
 
         EXAMPLES::
 
-            sage: [3,3,2,2,2,2,2,2] in DegreeSequences(8)
+            sage: (3,3,2,2,2,2,2,2) in DegreeSequences(8)
             True
 
         TESTS:
 
         :issue:`15503`::
 
-            sage: [2,2,2,2,1,1,1] in DegreeSequences(7)
+            sage: (2,2,2,2,1,1,1) in DegreeSequences(7)
             False
 
         :issue:`21824`::
@@ -330,6 +341,12 @@ class DegreeSequences:
             [(0, 0, 0), (1, 1, 0), (2, 1, 1), (2, 2, 2)]
             sage: [d for d in DegreeSequences(1)]
             [(0,)]
+        
+        For lists we can also check containment::
+            sage: [3,3,2,2,2,2,2,2] in DegreeSequences(8)
+            True
+            sage: [2,2,2,2,1,1,1] in DegreeSequences(7)
+            False
         """
         cdef int n = self._n
         if len(seq) != n:
@@ -379,14 +396,13 @@ class DegreeSequences:
             sage: DegreeSequences(6)
             Degree sequences on 6 elements
         """
+        if self._n == 1:
+            return "Degree sequences on 1 element"
         return "Degree sequences on "+str(self._n)+" elements"
 
     def __iter__(self):
         """
         Iterate over all the degree sequences.
-
-        TODO: THIS SHOULD BE UPDATED AS SOON AS THE YIELD KEYWORD APPEARS IN
-        CYTHON. See comment in the class' documentation.
 
         EXAMPLES::
 
@@ -396,29 +412,162 @@ class DegreeSequences:
         """
         yield from init(self._n)
 
-    def __dealloc__():
+cdef class DegreeSequenceEnumerator:
+    cdef int N
+    cdef unsigned char * seq
+
+    def __cinit__(self, int n):
+        self.seq = NULL
+        self.N = n
+        self.seq = <unsigned char *>check_calloc(n + 1, sizeof(unsigned char))
+        self.seq[0] = 1
+
+    def __dealloc__(self):
+        if self.seq != NULL:
+            sig_free(self.seq)
+            self.seq = NULL
+
+    cdef tuple build_current_seq(self):
         """
-        Freeing the memory
+        Return the degree sequence represented by the current counts.
         """
-        sig_free(seq)
+        cdef list s = []
+        cdef int i, j, N = self.N
+        cdef unsigned char * seq = self.seq
+        cdef int count
 
+        for i in range(N - 1, -1, -1):
+            count = seq[i]
+            for j in range(count):
+                s.append(i)
 
-cdef build_current_seq():
-    """
-    Build the degree sequence corresponding to the current state of the
-    algorithm.
-    """
-    global N
-    global seq
+        return tuple(s)
 
-    cdef list s = []
-    cdef int i, j
+    def enum(self, int k, int M):
+        r"""
+        Main function; for an explanation of the algorithm please refer to the
+        :mod:`sage.combinat.degree_sequences` documentation.
 
-    for N > i >= 0:
-        for 0 <= j < seq[i]:
-            s.append(i)
+        INPUT:
 
-    return tuple(s)
+        - ``k`` -- depth of the partial degree sequence
+        - ``M`` -- value of a maximum element in the partial degree sequence
+
+        This is a generator that yields degree sequences.
+        """
+        cdef int i, j
+        cdef unsigned char * seq = self.seq
+        cdef int N = self.N
+        cdef int taken = 0
+        cdef int current_box
+        cdef int n_current_box
+        cdef int n_previous_box
+        cdef int new_vertex
+
+        # Have we found a new degree sequence ? End of recursion !
+        if k == N:
+            yield self.build_current_seq()
+            return
+
+        #############################################
+        # Creating vertices of Vertices of degree M #
+        #############################################
+
+        # If 0 is the current maximum degree, we can always extend the degree
+        # sequence with another 0
+        if M == 0:
+
+            seq[0] += 1
+            yield from self.enum(k + 1, M)
+            seq[0] -= 1
+
+        # We need not automatically increase the degree at each step. In this case,
+        # we have no other choice but to link the new vertex of degree M to vertices
+        # of degree M-1, which will become vertices of degree M too.
+        elif seq[M - 1] >= M:
+
+            seq[M] += M + 1
+            seq[M - 1] -= M
+
+            yield from self.enum(k + 1, M)
+
+            seq[M] -= M + 1
+            seq[M - 1] += M
+
+        ###############################################
+        # Creating vertices of Vertices of degree > M #
+        ###############################################
+
+        for current_box in range(M, 0, -1):
+
+            # If there is not enough vertices in the boxes available
+            if taken + (seq[current_box] - 1) + seq[current_box-1] <= M:
+                taken += seq[current_box]
+                seq[current_box+1] += seq[current_box]
+                seq[current_box] = 0
+                continue
+
+            # The degree of the new vertex will be taken + i + j where:
+            #
+            # * i is the number of vertices taken in the *current* box
+            # * j the number of vertices taken in the *previous* one
+
+            n_current_box = seq[current_box]
+            n_previous_box = seq[current_box-1]
+
+            # Note to self, and others:
+            #
+            # In the following lines, there are many incrementation/decrementation
+            # that *may* be replaced by only +1 and -1 and save some
+            # instructions. This would involve adding several "if", and I feared it
+            # would make the code even uglier. If you are willing to give it a try,
+            # **please check the results** ! It is trickier that it seems ! Even
+            # changing the lower bounds in the for loops would require tests
+            # afterwards.
+
+            for i in range(max(0, (M + 1) - n_previous_box - taken), n_current_box):
+                seq[current_box] -= i
+                seq[current_box+1] += i
+
+                for j in range(max(0, (M + 1) - taken - i), n_previous_box + 1):
+                    seq[current_box-1] -= j
+                    seq[current_box] += j
+
+                    new_vertex = taken + i + j
+                    seq[new_vertex] += 1
+                    yield from self.enum(k+1, new_vertex)
+                    seq[new_vertex] -= 1
+
+                    seq[current_box-1] += j
+                    seq[current_box] -= j
+
+                seq[current_box] += i
+                seq[current_box+1] -= i
+
+            taken += n_current_box
+            seq[current_box] = 0
+            seq[current_box+1] += n_current_box
+
+        # Corner case
+        #
+        # Now current_box = 0. All the vertices of nonzero degree are taken, we just
+        # want to know how many vertices of degree 0 will be neighbors of the new
+        # vertex.
+        for i in range(max(0, (M + 1) - taken), seq[0] + 1):
+
+            seq[1] += i
+            seq[0] -= i
+            seq[taken+i] += 1
+
+            yield from self.enum(k+1, taken+i)
+
+            seq[taken+i] -= 1
+            seq[1] -= i
+            seq[0] += i
+
+        # Shift everything back to normal ! ( cell N is always equal to 0)
+        for i in range(1, N):
+            seq[i] = seq[i+1]
 
 
 def init(int n):
@@ -427,9 +576,6 @@ def init(int n):
 
     This is a generator that yields degree sequences one at a time.
     """
-    global seq
-    global N
-
     if n == 0:
         yield ()
         return
@@ -437,140 +583,8 @@ def init(int n):
         yield (0,)
         return
 
-    seq = <unsigned char *>check_calloc(n + 1, sizeof(unsigned char))
-
-    # We begin with one vertex of degree 0
-    seq[0] = 1
-
-    N = n
-
+    cdef DegreeSequenceEnumerator enumerator = DegreeSequenceEnumerator(n)
     try:
-        yield from enum(1, 0)
+        yield from enumerator.enum(1, 0)
     finally:
-        sig_free(seq)
-
-
-def enum(int k, int M):
-    r"""
-    Main function; for an explanation of the algorithm please refer to the
-    :mod:`sage.combinat.degree_sequences` documentation.
-
-    INPUT:
-
-    - ``k`` -- depth of the partial degree sequence
-    - ``M`` -- value of a maximum element in the partial degree sequence
-
-    This is a generator that yields degree sequences.
-    """
-    cdef int i, j
-    global seq
-    cdef int taken = 0
-    cdef int current_box
-    cdef int n_current_box
-    cdef int n_previous_box
-    cdef int new_vertex
-
-    # Have we found a new degree sequence ? End of recursion !
-    if k == N:
-        yield build_current_seq()
-        return
-
-    #############################################
-    # Creating vertices of Vertices of degree M #
-    #############################################
-
-    # If 0 is the current maximum degree, we can always extend the degree
-    # sequence with another 0
-    if M == 0:
-
-        seq[0] += 1
-        yield from enum(k + 1, M)
-        seq[0] -= 1
-
-    # We need not automatically increase the degree at each step. In this case,
-    # we have no other choice but to link the new vertex of degree M to vertices
-    # of degree M-1, which will become vertices of degree M too.
-    elif seq[M - 1] >= M:
-
-        seq[M] += M + 1
-        seq[M - 1] -= M
-
-        yield from enum(k + 1, M)
-
-        seq[M] -= M + 1
-        seq[M - 1] += M
-
-    ###############################################
-    # Creating vertices of Vertices of degree > M #
-    ###############################################
-
-    for M >= current_box > 0:
-
-        # If there is not enough vertices in the boxes available
-        if taken + (seq[current_box] - 1) + seq[current_box-1] <= M:
-            taken += seq[current_box]
-            seq[current_box+1] += seq[current_box]
-            seq[current_box] = 0
-            continue
-
-        # The degree of the new vertex will be taken + i + j where:
-        #
-        # * i is the number of vertices taken in the *current* box
-        # * j the number of vertices taken in the *previous* one
-
-        n_current_box = seq[current_box]
-        n_previous_box = seq[current_box-1]
-
-        # Note to self, and others:
-        #
-        # In the following lines, there are many incrementation/decrementation
-        # that *may* be replaced by only +1 and -1 and save some
-        # instructions. This would involve adding several "if", and I feared it
-        # would make the code even uglier. If you are willing to give it a try,
-        # **please check the results** ! It is trickier that it seems ! Even
-        # changing the lower bounds in the for loops would require tests
-        # afterwards.
-
-        for max(0, (M+1)-n_previous_box-taken) <= i < n_current_box:
-            seq[current_box] -= i
-            seq[current_box+1] += i
-
-            for max(0, ((M+1)-taken-i)) <= j <= n_previous_box:
-                seq[current_box-1] -= j
-                seq[current_box] += j
-
-                new_vertex = taken + i + j
-                seq[new_vertex] += 1
-                yield from enum(k+1, new_vertex)
-                seq[new_vertex] -= 1
-
-                seq[current_box-1] += j
-                seq[current_box] -= j
-
-            seq[current_box] += i
-            seq[current_box+1] -= i
-
-        taken += n_current_box
-        seq[current_box] = 0
-        seq[current_box+1] += n_current_box
-
-    # Corner case
-    #
-    # Now current_box = 0. All the vertices of nonzero degree are taken, we just
-    # want to know how many vertices of degree 0 will be neighbors of the new
-    # vertex.
-    for max(0, ((M+1)-taken)) <= i <= seq[0]:
-
-        seq[1] += i
-        seq[0] -= i
-        seq[taken+i] += 1
-
-        yield from enum(k+1, taken+i)
-
-        seq[taken+i] -= 1
-        seq[1] -= i
-        seq[0] += i
-
-    # Shift everything back to normal ! ( cell N is always equal to 0)
-    for 1 <= i < N:
-        seq[i] = seq[i+1]
+        enumerator = None
