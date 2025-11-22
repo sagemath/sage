@@ -331,3 +331,12 @@ fi
 if [ $SAVE = yes ]; then
     save
 fi
+
+# Add pre-commit hook if none exists
+hooks_dir="$SAGE_ROOT/.git/hooks"
+if [ -d "$hooks_dir" ]; then
+    pre_commit="$hooks_dir/pre-commit"
+    if ! [ -L "$pre_commit" ] && ! [ -e "$pre_commit" ]; then
+        ln -s "$SAGE_ROOT/tools/pre-commit" "$hooks_dir"
+    fi
+fi
