@@ -575,8 +575,6 @@ def init(int n):
 
     This is a generator that yields degree sequences one at a time.
     """
-    cdef DegreeSequenceEnumerator enumerator = DegreeSequenceEnumerator(n)
-
     if n == 0:
         yield ()
         return
@@ -584,6 +582,7 @@ def init(int n):
         yield (0,)
         return
 
+    cdef DegreeSequenceEnumerator enumerator = DegreeSequenceEnumerator(n)
     try:
         yield from enumerator.enum(1, 0)
     finally:
