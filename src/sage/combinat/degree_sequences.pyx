@@ -471,7 +471,7 @@ cdef class DegreeSequenceEnumerator:
             return
 
         #############################################
-        # Creating vertices of Vertices of degree M #
+        # Creating vertices of degree M #
         #############################################
 
         # If 0 is the current maximum degree, we can always extend the degree
