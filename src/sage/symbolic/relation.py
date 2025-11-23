@@ -420,7 +420,7 @@ def check_relation_maxima(relation):
         sage: check_relation_maxima(x!=0)
         True
         sage: check_relation_maxima(x!=1)
-        False
+        True
         sage: forget()
 
     TESTS:
@@ -518,6 +518,16 @@ def check_relation_maxima(relation):
         return True
     elif s == 'false':
         return False  # if neither of these, s=='unknown' and we try a few other tricks
+
+    # Special case for inequality (!=): if Maxima returns 'unknown',
+    # try checking equality (==) instead and return the opposite result.
+    # This preserves semantic consistency with bool(x != y) = not bool(x == y).
+    if relation.operator() == operator.ne:
+        # Check equality using the full check_relation_maxima logic
+        eq_relation = (relation.lhs() == relation.rhs())
+        eq_result = check_relation_maxima(eq_relation)
+        # Return the opposite of the equality result
+        return not eq_result
 
     if relation.operator() != operator.eq:
         return False
