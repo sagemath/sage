@@ -1554,7 +1554,8 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
             matrix_group = base_group.subgroup(gen_list)
         else:
             from sage.groups.matrix_gps.finitely_generated import MatrixGroup
-            matrix_group = MatrixGroup(gen_list, category=self.category())
+            cat = self.category() if self.is_finite() else None
+            matrix_group = MatrixGroup(gen_list, category=cat)
 
         # --------------------------------------------------------------------
         # check if there is a well defined group homomorphism to matrix_group
