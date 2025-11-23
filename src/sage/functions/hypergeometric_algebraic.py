@@ -45,6 +45,7 @@ from sage.categories.finite_fields import FiniteFields
 from sage.matrix.special import companion_matrix
 from sage.matrix.special import identity_matrix
 from sage.combinat.subset import Subsets
+from sage.geometry.newton_polygon import NewtonPolygon
 
 from sage.rings.infinity import infinity
 from sage.symbolic.ring import SR
@@ -58,6 +59,7 @@ from sage.rings.number_field.number_field import CyclotomicField
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.lazy_series_ring import LazyPowerSeriesRing
 from sage.rings.tate_algebra import TateAlgebra
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 
@@ -121,7 +123,7 @@ class HypergeometricAlgebraic(Element):
             if any(b in ZZ and b < 0 for b in parameters.bottom):
                 raise ValueError("the parameters %s do not define a hypergeometric function" % parameters)
             if char > 0:
-                val, _ = parameters.valuation_position(char)
+                val, _, _ = parameters.valuation_position(char)
                 if val < 0:
                     raise ValueError("the parameters %s do not define a hypergeometric function in characteristic %s" % (parameters, char))
         self._scalar = scalar
@@ -471,6 +473,29 @@ class HypergeometricAlgebraic(Element):
                 c /= b + i
             coeffs.append(c)
 
+    def __getitem__(self, n):
+        r"""
+        Return the ``n``-th coefficient of the series representation of this
+        hypergeoimetric function.
+
+        INPUT:
+
+        - ``n`` -- a non-negative integer
+
+        EXAMPLES:
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f[9]
+            409541017600/2541865828329
+            sage: g = f % 5
+            sage: g[9]
+            0
+        """
+        self._compute_coeffs(n+1)
+        S = self.base_ring()
+        return S(self._coeffs[n])
+
     def coefficient(self, n):
         r"""
         Return the ``n``-th coefficient of the series representation of this
@@ -490,9 +515,7 @@ class HypergeometricAlgebraic(Element):
             sage: g.coefficient(9)
             0
         """
-        self._compute_coeffs(n+1)
-        S = self.base_ring()
-        return S(self._coeffs[n])
+        return self[n]
 
     def power_series(self, prec=20):
         r"""
@@ -510,9 +533,13 @@ class HypergeometricAlgebraic(Element):
             sage: f.power_series(3)
             1 + 4/9*x + 80/243*x^2 + O(x^3)
         """
-        S = self.parent().power_series_ring()
-        self._compute_coeffs(prec)
-        return S(self._coeffs, prec=prec)
+        if prec is infinity:
+            S = self.parent().power_series_ring(infinity)
+            return S(lambda n: self[n])
+        else:
+            S = self.parent().power_series_ring()
+            self._compute_coeffs(prec)
+            return S(self._coeffs, prec=prec)
 
     def shift(self, s):
         r"""
@@ -746,7 +773,7 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         """
         if not p.is_prime():
             raise ValueError("p must be a prime number")
-        val, pos = self._parameters.valuation_position(p)
+        val, pos, _ = self._parameters.valuation_position(p)
         val += self._scalar.valuation(p)
         if position:
             return val, pos
@@ -796,34 +823,43 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         modulo which primes a hypergeometric function can be reduced
         ([CFV2025]_, Thm. 3.1.3). For small primes `p`, we compute the `p`-adic
         valuation of the hypergeometric function individually.
+
+        TESTS::
+
+            sage: h = hypergeometric([1/5, 2/5, 3/5], [1/2, 1/7, 1/11], x)
+            sage: h.good_reduction_primes()
+            Finite set of prime numbers: 2, 7, 11
         """
         params = self._parameters
         d = params.d
 
-        # We check the parenthesis criterion for c=1
         if not params.parenthesis_criterion(1):
-            return Primes(modulus=0)
+            # Easy case:
+            # the parenthesis criterion is not fulfilled for c=1
+            goods = {}
 
-        # We check the parenthesis criterion for other c
-        # and derive congruence classes with good reduction
-        cs = [c for c in range(d) if d.gcd(c) == 1]
-        goods = {c: None for c in cs}
-        goods[1] = True
-        for c in cs:
-            if goods[c] is not None:
-                continue
-            cc = c
-            goods[c] = True
-            while cc != 1:
-                if goods[cc] is False or not params.parenthesis_criterion(cc):
-                    goods[c] = False
-                    break
-                cc = (cc * c) % d
-            if goods[c]:
+        else:
+
+            # We check the parenthesis criterion for other c
+            # and derive congruence classes with good reduction
+            cs = [c for c in range(d) if d.gcd(c) == 1]
+            goods = {c: None for c in cs}
+            goods[1] = True
+            for c in cs:
+                if goods[c] is not None:
+                    continue
                 cc = c
+                goods[c] = True
                 while cc != 1:
-                    goods[cc] = True
+                    if goods[cc] is False or not params.parenthesis_criterion(cc):
+                        goods[c] = False
+                        break
                     cc = (cc * c) % d
+                if goods[c]:
+                    cc = c
+                    while cc != 1:
+                        goods[cc] = True
+                        cc = (cc * c) % d
 
         # We treat exceptional primes
         bound = params.bound
@@ -831,11 +867,10 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         for p in Primes():
             if p > bound:
                 break
-            if d % p == 0 and self.valuation(p) >= 0:
+            val = self.valuation(p)
+            if val >= 0:
                 exceptions[p] = True
-            if d % p == 0 or not goods[p % d]:
-                continue
-            if self.valuation(p) < 0:
+            elif val < 0 and goods.get(p % d, False):
                 exceptions[p] = False
 
         goods = [c for c, v in goods.items() if v]
@@ -930,12 +965,12 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         if not self._parameters.is_balanced():
             raise NotImplementedError("Only implemented for nFn-1")
         d = ZZ(self.denominator())
-        classes = dict.fromkeys(range(1, len(self.top())+1), Primes(modulus = 0))
+        classes = dict.fromkeys(range(1, len(self.top())+1), Primes(modulus=0))
         for c in range(d):
             if gcd(c, d) == 1:
                 Delta = QQ(1/c) % d
                 j = self._parameters.interlacing_number(Delta)
-                classes[j] = classes[j].union(Primes(modulus = d, classes = [c]))
+                classes[j] = classes[j].union(Primes(modulus=d, classes=[c]))
         for p in Primes():
             # I am sure one can avoid computing the interlacing number again for
             # all primes here.
@@ -974,10 +1009,8 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
             [0 1]
             [1 0]
 
-        ::
-
         The bases of the solution space are chosen in a compatible way
-        across the three singularities of the differential equation:
+        across the three singularities of the differential equation::
 
             sage: g = hypergeometric([1/9, 4/9, 5/9], [1/3, 1], x)
             sage: g.monodromy(var='a')
@@ -1045,14 +1078,19 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
 
         INPUT:
 
-        - ``parent`` -- the parent of this function, which has to be defined
-        over the p-adics
+        - ``parent`` -- the parent of this function, which has to be
+          defined over the p-adics
 
         - ``arg1``, ``arg2`` -- arguments defining this hypergeometric
           function, they can be:
+
           - the top and bottom paramters
+
           - a hypergeometric function and ``None``
-          - an instance of the class :class:`HypergeometricParameters` and ``None``
+
+          - an instance of the class
+            :class:`sage.functions.hypergeometric_parameters.HypergeometricParameters`
+            and ``None``
 
         - ``scalar`` -- an element in the base ring, the scalar by
           which the hypergeometric function is multiplied
@@ -1087,9 +1125,11 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
             Hypergeometric functions in x over Finite Field of size 5
         """
         k = self.base_ring().residue_field()
-        if self._scalar.valuation() == 0:
+        valscalar = self._scalar.valuation()
+        if valscalar == 0:
             return self.change_ring(k)
-        val, pos = self._parameters.valuation_position(self._p)
+        val, pos, _ = self._parameters.valuation_position(self._p)
+        val += valscalar
         if val < 0:
             raise ValueError("bad reduction")
         if val > 0:
@@ -1097,7 +1137,7 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
             return H(self._parameters, scalar=0)
         raise NotImplementedError("the reduction is not a hypergeometric function")
         # In fact, it is x^s * h[s] * h, with
-        # . s = pos
+        # . s is pos
         # . h = self.shift(s)
 
     def dwork_image(self):
@@ -1107,7 +1147,7 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
 
         EXAMPLES::
 
-            sage: S.<x> = QQ[]
+            sage: S.<x> = Qp(7)[]
             sage: f = hypergeometric([1/4, 1/3, 1/2], [2/5, 3/5, 1], x)
             sage: f.dwork_image()
             hypergeometric((1/3, 1/2, 3/4), (1/5, 4/5, 1), x)
@@ -1173,20 +1213,46 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
 
         ::
 
-           sage: S.<x> = Qp(5)[]
-           sage: g = 1/5 * hypergeometric([1/3, 2/3], [5^3/3], x)
-           sage: g.valuation(-1, position=True)
-           (-2, 1)
+            sage: S.<x> = Qp(5)[]
+            sage: g = 1/5 * hypergeometric([1/3, 2/3], [5^3/3], x)
+            sage: g.valuation(-1, position=True)
+            (-3, 1)
         """
         drift = -log_radius / self._e
-        val, pos = self._parameters.valuation_position(self._p, drift)
+        val, pos, _ = self._parameters.valuation_position(self._p, drift)
+        val += self._scalar.valuation()
         if position:
             return val, pos
         else:
             return val
 
-    def newton_polygon(self, log_radius):
-        raise NotImplementedError
+    def newton_polygon(self, log_radius=None):
+        r"""
+        TESTS::
+
+            sage: S.<x> = Qp(19)[]
+            sage: h = hypergeometric([1/5, 2/5, 3/5, 1/11], [1/2, 1/7], x)
+            sage: h.newton_polygon()
+            Traceback (most recent call last):
+            ...
+            ValueError: infinite Newton polygon; try to truncate it by giving a log radius less than 1/18
+            sage: h.newton_polygon(1/18 - 1/2^10)
+            Infinite Newton polygon with 4 vertices: (0, 0), (10, -1), (11, -1), (144, 6) ending by an infinite line of slope 503/9216
+        """
+        scalar = self._scalar
+        if scalar == 0:
+            raise ValueError
+        convergence = self.log_radius_of_convergence()
+        if log_radius is None:
+            log_radius = convergence
+        start = -log_radius / self._e
+        try:
+            vertices = self._parameters.valuation_function(self._p, start)
+        except ValueError:
+            raise ValueError("infinite Newton polygon; try to truncate it by giving a log radius less than %s" % convergence)
+        valscalar = self._scalar.valuation()
+        vertices = [[k, v + valscalar] for k, v in vertices]
+        return NewtonPolygon(vertices, last_slope=log_radius)
 
     def _truncation_bound(self, log_radius, prec):
         convergence = self.log_radius_of_convergence()
@@ -1215,90 +1281,41 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
         K = self.base_ring()
         name = self.parent().variable_name()
         S = TateAlgebra(K, log_radii=[log_radius], names=name)
+        scalar = self._scalar
+        if scalar == 0:
+            return S.zero()
         if prec is None:
             prec = self.base_ring().precision_cap()
-        trunc = self._truncation_bound(log_radius, prec)
+        trunc = self._truncation_bound(log_radius, prec - scalar.valuation())
         self._compute_coeffs(trunc)
         coeffs = {(i,): self._coeffs[i] for i in range(trunc)}
-        return self._scalar * S(coeffs, prec)
+        return scalar * S(coeffs, prec)
 
     def __call__(self, x):
         K = self.base_ring()
+        scalar = self._scalar
+        if scalar == 0:
+            return K.zero()
         x = K(x)
         val = min(x.valuation(), x.precision_absolute())
         if val is infinity:
             return K.one()
         w = self.valuation(-val)
         prec = w + K.precision_cap()
-        trunc = self._truncation_bound(-val, prec)
+        trunc = self._truncation_bound(-val, prec - scalar.valuation())
         self._compute_coeffs(trunc)
         ans = sum(self._coeffs[i] * x**i for i in range(trunc))
         ans = ans.add_bigoh(prec)
-        return self._scalar * ans
+        return scalar * ans
 
 
 # Over prime finite fields
 
 class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
     def __init__(self, parent, arg1, arg2=None, scalar=None):
-        # TODO: do we want to simplify automatically if the
-        # hypergeometric series is a polynomial?
         HypergeometricAlgebraic.__init__(self, parent, arg1, arg2, scalar)
         self._p = p = self.base_ring().cardinality()
         self._coeffs = [Qp(p, 1)(self._scalar)]
-
-    def power_series(self, prec=20):
-        S = self.parent().power_series_ring()
-        self._compute_coeffs(prec)
-        try:
-            f = S(self._coeffs, prec=prec)
-        except ValueError:
-            raise ValueError("denominator appears in the series at the required precision")
-        return f
-
-    # Obsolete?
-    def is_almost_defined(self):
-        p = self._char
-        d = self.denominator()
-        if d.gcd(p) > 1:
-            return False
-        u = 1
-        if not self._parameters.parenthesis_criterion(u):
-            return False
-        u = p % d
-        while u != 1:
-            if not self._parameters.parenthesis_criterion(u):
-                return False
-            u = p*u % d
-        return True
-
-    # Obsolete?
-    def is_defined(self):
-        p = self._char
-        if not self.is_almost_defined():
-            return False
-        bound = self._parameters.bound
-        if bound < p:
-            return True
-        prec = 1 + p ** ceil(log(self._parameters.bound, p))
-        try:
-            self.series(prec)
-        except ValueError:
-            return False
-        return True
-
-    # Obsolete?
-    def is_defined_conjectural(self):
-        p = self._char
-        if not self.is_almost_defined():
-            return False
-        bound = self._parameters.bound
-        q = p
-        while q <= bound:
-            if not self._parameters.q_parenthesis_criterion(q):
-                return False
-            q *= p
-        return True
 
     def __call__(self, x):
         return self.polynomial()(x)
@@ -1347,7 +1364,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         L = S(L.list())
         d = S.gen()
         p = self._char
-        rows = [ ]
+        rows = []
         n = L.degree()
         for i in range(p, p + n):
             Li = d**i % L
@@ -1370,13 +1387,12 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         p = self._char
         H = self.parent()
         F = H.base_ring()
-        Hp = H.change_ring(Qp(p, 1))
         x = H.polynomial_ring().gen()
         coeffs = self._coeffs
         Ps = {}
         for r in range(p):
             params = parameters.shift(r).dwork_image(p)
-            _, s = params.valuation_position(p)
+            _, s, _ = params.valuation_position(p)
             h = H(params.shift(s))
             e = s*p + r
             if e >= len(coeffs):
@@ -1578,7 +1594,10 @@ class HypergeometricFunctions(Parent, UniqueRepresentation):
         return PolynomialRing(self.base_ring(), self._name)
 
     def power_series_ring(self, default_prec=None):
-        return PowerSeriesRing(self.base_ring(), self._name, default_prec=default_prec)
+        if default_prec is infinity:
+            return LazyPowerSeriesRing(self.base_ring(), self._name)
+        else:
+            return PowerSeriesRing(self.base_ring(), self._name, default_prec=default_prec)
 
 
 # Helper functions
