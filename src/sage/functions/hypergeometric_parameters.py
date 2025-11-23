@@ -604,7 +604,6 @@ class HypergeometricParameters(SageObject):
         bound = 1 + max(pa.abs() for pa, _ in params)
         thresold = d * sum(dw for _, dw in params if dw > 0)
 
-        valuation = position = ZZ(0)
         valfinal = None
         signature_prev = indices_prev = None
         indices = {}
@@ -686,11 +685,10 @@ class HypergeometricParameters(SageObject):
                 signature.append((val + w, pos, param))
 
             # The halting criterion
-            minimum = min(signature)
-            valuation, position, _ = minimum
             if q > bound:
+                valuation, position, _ = signature[0]
                 if drift > 2*thresold and all(signature[i][0] > valuation + thresold for i in range(1, n)):
-                    return valuation, position, r
+                    return ZZ(valuation), ZZ(position), r
                 if growth == 0:
                     if count < order:
                         TM = TMr * TM
@@ -700,10 +698,9 @@ class HypergeometricParameters(SageObject):
                             TM = TM.weak_transitive_closure()
                         except ValueError:
                             return -infinity, None, r
-                        valfinal = min(TM[i, j].lift() + signature[j][0]
-                                       for i in range(n) for j in range(n))
+                        valfinal = min(TM[0, j].lift() + signature[j][0] for i in range(n))
                     if valuation == valfinal:
-                        return valuation, position, r
+                        return ZZ(valuation), ZZ(position), r
 
             # We update the values for the next r
             q = pq
