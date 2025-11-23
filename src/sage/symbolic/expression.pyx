@@ -3372,6 +3372,21 @@ cdef class Expression(Expression_abc):
             sage: expr = reduce(lambda u, v: 1/u -v, [1/pi] + list(continued_fraction(pi)[:20]))
             sage: expr.is_zero()
             False
+
+        Check that :issue:`41125` is fixed::
+
+            sage: y = SR.var("y")
+            sage: bool(y != 0)
+            True
+            sage: y = SR.var("y", domain="real")
+            sage: bool(y != 0)
+            True
+            sage: z = SR.var("z", domain="complex")
+            sage: bool(z != 0)
+            True
+            sage: z = SR.var("z", domain="integer")
+            sage: bool(z != 0)
+            True
         """
         if self.is_relational():
             # constants are wrappers around Sage objects, compare directly
