@@ -969,10 +969,6 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
         MatDEF = self.as_matrix_group()
         self._internal_test_attached_group(MatDEF, tester)
 
-        if not self.is_finite():
-            # infinite groups cannot be embedded into finite rings
-            return
-
         from sage.rings.finite_rings.finite_field_constructor import GF
 
         F3 = GF(3)
