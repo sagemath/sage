@@ -420,7 +420,7 @@ def check_relation_maxima(relation):
         sage: check_relation_maxima(x!=0)
         True
         sage: check_relation_maxima(x!=1)
-        True
+        False
         sage: forget()
 
     TESTS:
@@ -519,16 +519,6 @@ def check_relation_maxima(relation):
     elif s == 'false':
         return False  # if neither of these, s=='unknown' and we try a few other tricks
 
-    # Special case for inequality (!=): if Maxima returns 'unknown',
-    # try checking equality (==) instead and return the opposite result.
-    # This preserves semantic consistency with bool(x != y) = not bool(x == y).
-    if relation.operator() == operator.ne:
-        # Check equality using the full check_relation_maxima logic
-        eq_relation = (relation.lhs() == relation.rhs())
-        eq_result = check_relation_maxima(eq_relation)
-        # Return the opposite of the equality result
-        return not eq_result
-
     if relation.operator() != operator.eq:
         return False
 
@@ -557,6 +547,86 @@ def check_relation_maxima(relation):
             pass
     return False
 
+def check_relation_maxima_neq_as_not_eq(relation):
+    """
+    A variant of :func:`check_relation_maxima` that treats `x != y`
+    as `not (x == y)` for consistency with Python's boolean semantics.
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.relation import check_relation_maxima_neq_as_not_eq
+        sage: x = var('x')
+        sage: check_relation_maxima_neq_as_not_eq(x != x)
+        False
+        sage: check_relation_maxima_neq_as_not_eq(x == x)
+        True
+        sage: check_relation_maxima_neq_as_not_eq(x != 1)
+        True
+        sage: check_relation_maxima_neq_as_not_eq(x == 1)
+        False
+    """
+    m = relation._maxima_()
+
+    # Handle some basic cases first
+    if repr(m) in ['0=0']:
+        return True
+    elif repr(m) in ['0#0', '1#1']:
+        return False
+
+    if relation.operator() == operator.eq:  # operator is equality
+        try:
+            s = m.parent()._eval_line('is (equal(%s,%s))' % (repr(m.lhs()),
+                                                             repr(m.rhs())))
+        except TypeError:
+            raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
+
+    elif relation.operator() == operator.ne:  # operator is not equal
+        try:
+            s = m.parent()._eval_line('is (notequal(%s,%s))' % (repr(m.lhs()),
+                                                                repr(m.rhs())))
+        except TypeError:
+            raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
+
+    else:  # operator is < or > or <= or >=, which Maxima handles fine
+        try:
+            s = m.parent()._eval_line('is (%s)' % repr(m))
+        except TypeError:
+            raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
+
+    if s == 'true':
+        return True
+    elif s == 'false':
+        return False  # if neither of these, s=='unknown' and we try a few other tricks
+
+    # Special case for inequality (!=): if Maxima returns 'unknown',
+    # try checking equality (==) instead and return the opposite result.
+    # This preserves semantic consistency with bool(x != y) = not bool(x == y).
+    if relation.operator() == operator.ne:
+        # Check equality using the full check_relation_maxima logic
+        eq_relation = (relation.lhs() == relation.rhs())
+        eq_result = check_relation_maxima(eq_relation)
+        # Return the opposite of the equality result
+        return not eq_result
+
+    if relation.operator() != operator.eq:
+        return False
+
+    difference = relation.lhs() - relation.rhs()
+    if difference.is_trivial_zero():
+        return True
+
+    simp_list = [difference.simplify_factorial(),
+                 difference.simplify_rational(),
+                 difference.simplify_rectform(),
+                 difference.simplify_trig()]
+    for f in simp_list:
+        try:
+            if f().is_trivial_zero():
+                return True
+                break
+        except Exception:
+            pass
+    return False
 
 def string_to_list_of_solutions(s):
     r"""
