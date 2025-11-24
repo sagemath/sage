@@ -1,4 +1,7 @@
-"""The PolyBoRi package implements a framework for computations with Polynomials in Boolean Ring.
+"""
+PolyBoRi package: Polynomials in Boolean Ring
+
+The PolyBoRi package implements a framework for computations with Polynomials in Boolean Ring.
 
 The core of PolyBoRi is a C++ library, which provides high-level data types for Boolean polynomials and monomials,
 exponent vectors, as well as for the underlying polynomial rings and subsets of the powerset of the Boolean variables.
