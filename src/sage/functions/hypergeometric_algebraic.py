@@ -1495,7 +1495,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         # satisifies the p-Lucas equation, and not just any other root
         # of the annihilating polynomial?
         r"""
-        Returns whether this hypergeometric function has the ``p``-Lucas
+        Return whether this hypergeometric function has the ``p``-Lucas
         property.
 
         EXAMPLES::
@@ -1507,7 +1507,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
             True
             sage: h = f % 17
             sage: h.is_lucas()
-            False 
+            False
         """
         p = self._char
         if self._parameters.frobenius_order(p) > 1:
