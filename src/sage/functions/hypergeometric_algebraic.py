@@ -120,7 +120,7 @@ class HypergeometricAlgebraic(Element):
             parameters = HypergeometricParameters(arg1, arg2)
         char = self.parent()._char
         if scalar:
-            if any(b in ZZ and b < 0 for b in parameters.bottom):
+            if any(b in ZZ and b <= 0 for b in parameters.bottom):
                 raise ValueError("the parameters %s do not define a hypergeometric function" % parameters)
             if char > 0:
                 val, _, _ = parameters.valuation_position(char)

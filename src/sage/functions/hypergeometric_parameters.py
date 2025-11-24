@@ -698,7 +698,7 @@ class HypergeometricParameters(SageObject):
                             TM = TM.weak_transitive_closure()
                         except ValueError:
                             return -infinity, None, r
-                        valfinal = min(TM[0, j].lift() + signature[j][0] for i in range(n))
+                        valfinal = min(TM[0, j].lift() + signature[j][0] for j in range(n))
                     if valuation == valfinal:
                         return ZZ(valuation), ZZ(position), r
 
