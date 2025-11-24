@@ -438,6 +438,12 @@ class PolynomialRing_generic(Ring):
 
             sage: QQ['λ']('λ^2')
             λ^2
+
+        Check conversion from quotient ring::
+
+            sage: R.<x>=QQ[]
+            sage: R(R.quotient(x^2+1).0)
+            x
         """
         C = self.element_class
         if isinstance(x, (list, tuple)):
@@ -447,6 +453,7 @@ class PolynomialRing_generic(Ring):
                      construct=construct)
         if isinstance(x, Element):
             P = x.parent()
+            from sage.rings.quotient_ring import QuotientRing_nc
             if P is self:
                 return x
             elif P is self.base_ring():
@@ -463,6 +470,8 @@ class PolynomialRing_generic(Ring):
             elif P == self.base_ring():
                 return C(self, [x], check=True, is_gen=False,
                          construct=construct)
+            elif isinstance(P, QuotientRing_nc) and P.cover_ring() == self:
+                return x.lift()
         if isinstance(x, sage.interfaces.abc.SingularElement) and self._has_singular:
             self._singular_().set_ring()
             try:
