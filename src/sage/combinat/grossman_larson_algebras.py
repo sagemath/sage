@@ -359,7 +359,7 @@ class GrossmanLarsonAlgebra(CombinatorialFreeModule):
             sage: A.degree_on_basis(RT([RT([])]))
             1
         """
-        return t.node_number() - 1
+        return t.number_of_nodes() - 1
 
     def _an_element_(self):
         """
@@ -508,7 +508,7 @@ class GrossmanLarsonAlgebra(CombinatorialFreeModule):
             sage: A.counit_on_basis(RT([],'#'))
             1
         """
-        if x.node_number() == 1:
+        if x.number_of_nodes() == 1:
             return self.base_ring().one()
         return self.base_ring().zero()
 
