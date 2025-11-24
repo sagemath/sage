@@ -988,6 +988,34 @@ class PolyhedronFace(ConvexSet_closed):
 
         return parent.element_class(parent, None, [locus_ieqs, locus_eqns])
 
+    @cached_method
+    def dual(self):
+        r"""
+        Return the dual face under face duality of polar polytopes.
+
+        This duality extends the correspondence between vertices and facets.
+
+        OUTPUT: a ``PolyhedronFace``
+
+        EXAMPLES::
+
+            sage: # needs sage.graphs
+            sage: o = polytopes.cross_polytope(4)
+            sage: e = o.faces(1)[0]; e
+            A 1-dimensional face of a Polyhedron in ZZ^4 defined
+            as the convex hull of 2 vertices
+            sage: ed = e.dual(); ed
+            A 2-dimensional face of a Polyhedron in ZZ^4 defined
+            as the convex hull of 4 vertices
+            sage: ed.ambient() is e.ambient().polar()
+            True
+        """
+        n = self.ambient_dim()
+        for f in self.polyhedron().polar().faces(n - self.dim() - 1):
+            if f._ambient_Vrepresentation_indices == self._ambient_Hrepresentation_indices:
+                f.dual.set_cache(self)
+                return f
+
 
 def combinatorial_face_to_polyhedral_face(polyhedron, combinatorial_face):
     r"""
