@@ -893,21 +893,21 @@ def nauty_gentreeg(options='', debug=False):
     import subprocess
     from sage.features.nauty import NautyExecutable
     gen_path = NautyExecutable("gentreeg").absolute_filename()
-    sp = subprocess.Popen(shlex.quote(gen_path) + " {0}".format(options), shell=True,
+    with subprocess.Popen(shlex.quote(gen_path) + " {0}".format(options), shell=True,
                           stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                           stderr=subprocess.PIPE, close_fds=True,
-                          encoding='latin-1')
-    msg = sp.stderr.readline()
-    if debug:
-        yield msg
-    elif msg.startswith('>E'):
-        raise ValueError('wrong format of parameter options')
-    gen = sp.stdout
-    while True:
-        try:
-            s = next(gen)
-        except StopIteration:
-            # Exhausted list of graphs from nauty geng
-            return
-        G = Graph(s[:-1], format='sparse6', loops=False, multiedges=False)
-        yield G
+                          encoding='latin-1') as sp:
+        msg = sp.stderr.readline()
+        if debug:
+            yield msg
+        elif msg.startswith('>E'):
+            raise ValueError('wrong format of parameter options')
+        gen = sp.stdout
+        while True:
+            try:
+                s = next(gen)
+            except StopIteration:
+                # Exhausted list of graphs from nauty geng
+                return
+            G = Graph(s[:-1], format='sparse6', loops=False, multiedges=False)
+            yield G
