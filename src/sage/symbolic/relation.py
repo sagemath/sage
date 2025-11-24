@@ -547,6 +547,7 @@ def check_relation_maxima(relation):
             pass
     return False
 
+
 def check_relation_maxima_neq_as_not_eq(relation):
     """
     A variant of :func:`check_relation_maxima` that treats `x != y`
@@ -627,6 +628,7 @@ def check_relation_maxima_neq_as_not_eq(relation):
         except Exception:
             pass
     return False
+
 
 def string_to_list_of_solutions(s):
     r"""
