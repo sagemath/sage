@@ -1333,6 +1333,31 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         return True
 
     def p_curvature(self):
+        r"""
+        Return the matrix of the `p`-curvature of the associated differential
+        operator, in the standard basis.
+
+        EXAMLES::
+
+            sage: S.<x> = GF(5)[]
+            sage: f = hypergeometric ([1/9, 4/9, 5/9], [1/3, 1], x)
+            sage: f.p_curvature()
+            [              0 2/(x^5 + 4*x^4) 1/(x^4 + 4*x^3)]
+            [              0               0               0]
+            [              0               0               0]
+
+        The following example defines an algebraic function over ``QQ``, thus
+        its p-curvature vanishes for almost all of its reductions.::
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f.is_algebraic()
+            True
+            sage: g = f % 5
+            sage: g.p_curvature()
+            [0 0]
+            [0 0]
+        """
         L = self.differential_operator()
         K = L.base_ring().fraction_field()
         S = OrePolynomialRing(K, L.parent().twisting_derivation().extend_to_fraction_field(), names='d')
@@ -1384,6 +1409,30 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         # QUESTION: does this method actually return the
         # minimal Ore polynomial annihilating self?
         # Probably not :-(
+        r"""
+        Return an Ore polynomaial in the Frobenius morphism, that annihilates
+        this hypergeometric function.
+
+        INPUT:
+
+        - ``var`` -- a string (default: ``Frob``), name of the varaiable
+        representing the Frobenius morphism.
+
+        EXAMPLES::
+
+            sage: S.<x> = GF(5)[]
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f.annihilating_ore_polynomial()
+            (4*x^10 + 2*x^5 + 4)*Frob^2 + (4*x^3 + 4*x^2 + 1)*Frob + x^2
+            sage: ps = f.power_series(100)
+            sage: (4*x^10 + 2*x^5 + 4)*ps^(5^2) + (4*x^3 + 4*x^2 + 1)*ps^5 + x^2*ps
+            O(x^100)
+
+        ALGORITHM::
+
+        We follow the method described in [CFV2025]_, Section 3.2.3, that
+        also explain why such a polynomial exists.
+        """
         parameters = self._parameters
         if not parameters.is_balanced():
             raise NotImplementedError("the hypergeometric function is not a pFq with q = p-1")
@@ -1442,6 +1491,24 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
                 return insert_zeroes(Ore(ker), order)
 
     def is_lucas(self):
+        # Is it clear that this is correct? Why do we know that f itself
+        # satisifies the p-Lucas equation, and not just any other root
+        # of the annihilating polynomial?
+        r"""
+        Returns whether this hypergeometric function has the ``p``-Lucas
+        property.
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: f = hypergeom([1/5, 4/5], [1], x)
+            sage: g = f % 19
+            sage: g.is_lucas()
+            True
+            sage: h = f % 17
+            sage: h.is_lucas()
+            False 
+        """
         p = self._char
         if self._parameters.frobenius_order(p) > 1:
             # TODO: check this
@@ -1450,7 +1517,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         K = S.fraction_field()
         Ore = OrePolynomialRing(K, K.frobenius_endomorphism(), names='F')
         Z = Ore(self.annihilating_ore_polynomial())
-        Ap = self.series(p).polynomial()
+        Ap = self.power_series(p).polynomial()
         F = Ap * Ore.gen() - 1
         return (Z % F).is_zero()
 
