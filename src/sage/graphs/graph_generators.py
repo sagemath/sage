@@ -2033,7 +2033,7 @@ class GraphGenerators:
           minimum connectivity is also equal to ``None``, then this is set to 1.
 
         - ``minimum_connectivity`` -- (default: ``None``) a value `\geq 1`
-          and `\leq 3`, or ``None``. This specifies the minimum connectivity of the
+          and `\leq 4`, or ``None``. This specifies the minimum connectivity of the
           generated graphs. If this is ``None`` and the minimum degree is
           specified, then this is set to the minimum of the minimum degree
           and 3. If the minimum degree is also equal to ``None``, then this
@@ -2041,8 +2041,7 @@ class GraphGenerators:
 
         - ``exact_connectivity`` -- (default: ``False``) if ``True`` only
           graphs with exactly the specified connectivity will be generated.
-          This option cannot be used with ``minimum_connectivity=3``, or if
-          the minimum connectivity is not explicitly set.
+          This option requires ``minimum_connectivity`` to be set to 1 or 2.
 
         - ``minimum_edges`` -- integer (default: ``None``); lower bound on the
           number of edges
@@ -2150,6 +2149,15 @@ class GraphGenerators:
             sage: dual_planar_sizes = [g.size() for g in dual_planar]
             sage: planar_sizes == dual_planar_sizes
             True
+
+        Specifying extremal values for minimum connectivity::
+
+            sage: # optional - plantri
+            sage: gen = graphs.planar_graphs(5, minimum_connectivity=1, exact_connectivity=True)
+            sage: all(G.vertex_connectivity() == 1 for G in gen)
+            True
+            sage: len(list(graphs.planar_graphs(8, minimum_connectivity=4)))
+            4
         """
         if order < 0:
             raise ValueError("number of vertices should be nonnegative")
@@ -2161,8 +2169,8 @@ class GraphGenerators:
         if exact_connectivity and minimum_connectivity is None:
             raise ValueError("Minimum connectivity must be specified to use the exact_connectivity option.")
 
-        if minimum_connectivity is not None and not (1 <= minimum_connectivity <= 3):
-            raise ValueError("Minimum connectivity should be a number between 1 and 3.")
+        if minimum_connectivity is not None and not (1 <= minimum_connectivity <= 4):
+            raise ValueError("Minimum connectivity should be a number between 1 and 4.")
 
         # minimum degree should be None or a number between 1 and 5
         if minimum_degree == 0:
@@ -2185,9 +2193,9 @@ class GraphGenerators:
               minimum_degree > 0):
             raise ValueError("Minimum connectivity can be at most the minimum degree.")
 
-        # exact connectivity is not implemented for minimum connectivity 3
-        if exact_connectivity and minimum_connectivity == 3:
-            raise NotImplementedError("Generation of planar graphs with connectivity exactly 3 is not implemented.")
+        # exact connectivity is not implemented for minimum connectivity ≥ 3
+        if exact_connectivity and minimum_connectivity >= 3:
+            raise NotImplementedError(f"Generation of planar graphs with connectivity exactly {minimum_connectivity} is not implemented.")
 
         if only_bipartite and minimum_degree > 3:
             raise NotImplementedError("Generation of bipartite planar graphs with minimum degree 4 or 5 is not implemented.")
