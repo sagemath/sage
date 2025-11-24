@@ -3447,9 +3447,9 @@ cdef class Expression(Expression_abc):
             # associated with different semantics, different
             # precision, etc., that can lead to subtle bugs.  Also, a
             # lot of basic Sage objects can't be put into maxima.
-            from sage.symbolic.relation import check_relation_maxima
+            from sage.symbolic.relation import check_relation_maxima_neq_as_not_eq
             if self.variables():
-                return check_relation_maxima(self)
+                return check_relation_maxima_neq_as_not_eq(self)
             else:
                 return False
 
