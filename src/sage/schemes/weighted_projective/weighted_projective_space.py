@@ -16,7 +16,6 @@ from sage.structure.category_object import normalize_names
 from sage.schemes.weighted_projective.weighted_projective_homset import SchemeHomset_points_weighted_projective_ring
 
 
-
 def WeightedProjectiveSpace(weights, R=None, names=None):
     r"""
     Return a weighted projective space with the given ``weights`` over the ring ``R``.
@@ -416,4 +415,3 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
                                       "rings not implemented")
         from sage.schemes.curves.constructor import Curve
         return Curve(F, self)
-
