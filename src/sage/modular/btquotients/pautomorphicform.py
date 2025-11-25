@@ -36,7 +36,7 @@ Harmonic cocycles, unlike `p`-adic automorphic forms, can be used to compute a b
 
 This can then be lifted to an overconvergent `p`-adic modular form::
 
-    sage: A.lift(a)  # long time                                                        # needs sage.rings.padics
+    sage: A.lift(a)                             # long time                             # needs sage.rings.padics
     p-adic automorphic form of cohomological weight 0
 """
 
