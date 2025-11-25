@@ -101,11 +101,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
     def _point_homset(self, *args, **kwds):
         """
-            Create the Hom-Set of the Jacobian according to the type of `self`.
-
-            TESTS::
-
-
+        Create the Hom-Set of the Jacobian according to the type of `self`.
         """
         # TODO: make a constructor for this??
         H = self.curve()
