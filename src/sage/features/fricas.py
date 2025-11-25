@@ -73,7 +73,7 @@ class FriCAS(Executable):
         command = ['fricas', '-nosman']
         try:
             lines = subprocess.check_output(command, input=b')quit\n',
-                                            stderr=subprocess.STDOUT, timeout=30)
+                                            stderr=subprocess.STDOUT, timeout=1)
         except subprocess.TimeoutExpired:
             return FeatureTestResult(self, False,
                                      reason="Call `{command}` timed out".format(command=" ".join(command)))
