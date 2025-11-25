@@ -45,7 +45,7 @@ class SchemeHomset_points_weighted_projective_ring(SchemeHomset_points):
         sage: R.<x> = QQ[]
         sage: H = HyperellipticCurveSmoothModel(x^6 + x - 17); H
         Hyperelliptic Curve over Rational Field defined by y^2 = x^6 + x - 17
-        Page: P = H(2, -7); P
+        sage: P = H(2, -7); P
         (2 : -7 : 1)
         sage: type(P)
         <class 'sage.schemes.weighted_projective.weighted_projective_point.SchemeMorphism_point_weighted_projective_ring'>

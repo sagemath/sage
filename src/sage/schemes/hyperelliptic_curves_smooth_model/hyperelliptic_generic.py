@@ -193,7 +193,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: H.discriminant()
             -1622970410
             sage: F = 4*f + h^2
-            sage: F.discriminant() / 16^3
+            sage: Delta = F.discriminant() / 16^3; Delta
             -1622970410
             sage: G = f.derivative()^2 - f*h.derivative()^2 + f.derivative()*h.derivative()*h
             sage: F.resultant(G) == Delta^2*F.lc()^2

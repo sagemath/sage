@@ -87,7 +87,7 @@ class HyperellipticCurveSmoothModel_finite_field(
             sage: C.random_point() # random
             (4 : 1 : 1)
             sage: type(C.random_point())
-            <class 'sage.schemes.weighted_projective.weighted_projective_point.SchemeMorphism_point_weighted_projective_field'>
+            <class 'sage.schemes.weighted_projective.weighted_projective_point.SchemeMorphism_point_weighted_projective_ring'>
         """
         k = self.base_ring()
         n = 2 * k.order() + 1

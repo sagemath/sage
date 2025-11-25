@@ -115,8 +115,6 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         """
         Compute the order of the Jacobian.
 
-        TODO: currently using lazy methods by calling sage
-
         EXAMPLES:
 
         We compute the order of a superspecial hyperelliptic curve of genus 3::
@@ -128,7 +126,10 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             True
             sage: J(GF(7^2)).order() == (7+1)^6
             True
-            sage: J(QQ).order()
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurveSmoothModel(x^8 - 1)
+            sage: J = H.jacobian()
+            sage: J.order()
             Traceback (most recent call last):
             ...
             NotImplementedError
