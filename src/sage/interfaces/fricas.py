@@ -357,7 +357,7 @@ class FriCAS(ExtraTabCompletion, Expect):
         # FriCAS compiled with GCL may output function declaration messages
         # asynchronously after the prompt appears. We need to consume any
         # such buffered output to keep the expect interface synchronized.
-        # See https://github.com/sagemath/sage/issues/40569
+        # See :issue:`40569`.
         E = self._expect
         for _ in range(3):
             try:
@@ -920,13 +920,12 @@ http://fricas.sourceforge.net.
         to handle FriCAS compiled with GCL, which may output a double prompt
         after each command due to buffering issues.
 
-        See https://github.com/sagemath/sage/issues/40569
+        See :issue:`40569`.
 
         TESTS::
 
-            sage: fricas.eval('1+1')
-            '\n   2\n'
-
+            sage: fricas(1+1)  # indirect doctest
+            2
         """
         result = Expect._eval_line(self, line, allow_use_file=allow_use_file,
                                    wait_for_prompt=wait_for_prompt,
