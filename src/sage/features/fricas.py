@@ -67,9 +67,16 @@ class FriCAS(Executable):
             sage: FriCAS().is_functional()  # optional - fricas
             FeatureTestResult('fricas', True)
         """
-        command = ['fricas -nosman -eval ")quit"']
+        # Use stdin to pass the quit command instead of -eval because
+        # GCL-compiled FriCAS misinterprets -eval ")quit" as a Lisp expression.
+        # See :issue:`40569`.
+        command = ['fricas', '-nosman']
         try:
-            lines = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
+            lines = subprocess.check_output(command, input=b')quit\n',
+                                            stderr=subprocess.STDOUT, timeout=30)
+        except subprocess.TimeoutExpired:
+            return FeatureTestResult(self, False,
+                                     reason="Call `{command}` timed out".format(command=" ".join(command)))
         except subprocess.CalledProcessError as e:
             return FeatureTestResult(self, False,
                                      reason="Call `{command}` failed with exit code {e.returncode}".format(command=" ".join(command), e=e))
