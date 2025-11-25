@@ -194,7 +194,7 @@ class CommutativeKeyExchangeBase(KeyExchangeBase):
             - A shared secret key between the two parties
         """
         raise NotImplementedError
-    
+
     def alice_secret_key(self) -> Any:
         """
         Generate a valid secret key for Alice

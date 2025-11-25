@@ -17,5 +17,3 @@ class FiniteFieldDH(CommutativeKeyExchangeBase):
 
     def compute_shared_secret(self, sk, pk):
         return pk ** sk
-
-
