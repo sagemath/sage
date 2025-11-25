@@ -3286,6 +3286,7 @@ cdef class Expression(Expression_abc):
 
         ::
 
+            sage: assert(not x == 1)
             sage: forget()
             sage: assume(x>y)
             sage: assert(not x==y)
