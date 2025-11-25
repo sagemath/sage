@@ -3,10 +3,10 @@
 
 import argparse
 import subprocess
+import tomllib
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-import tomllib
 from grayskull.config import Configuration
 from grayskull.strategy.py_base import merge_setup_toml_metadata
 from grayskull.strategy.py_toml import get_all_toml_info
@@ -272,6 +272,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     if platform in ("osx-64", "osx-arm64"):
         all_requirements.add("libblas=*=*_newaccelerate")
     else:
+        all_requirements.add("openblas")
         all_requirements.add("libblas=*=*_openblas")
     all_requirements.add("fortran-compiler")
     if platform == "win-64":
