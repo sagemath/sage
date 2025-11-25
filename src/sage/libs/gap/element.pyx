@@ -1011,17 +1011,6 @@ cdef class GapElement(RingElement):
         if not self._compare_by_id:
             raise ValueError('this requires a GAP object whose comparison is by "id"')
 
-    def __hash__(self):
-        """
-        Make hashable.
-
-        EXAMPLES::
-
-            sage: hash(libgap(123))   # random output
-            163512108404620371
-        """
-        return hash(str(self))
-
     cpdef _richcmp_(self, other, int op):
         """
         Compare ``self`` with ``other``.
@@ -1597,6 +1586,23 @@ cdef class GapElement(RingElement):
         raise NotImplementedError('cannot construct equivalent Sage object')
 
 
+cdef class GapElement_with_hash(GapElement):
+    """
+    A GapElement class that provides a hash via the str
+    representation of the object.
+    """
+    def __hash__(self):
+        """
+        Make hashable.
+
+        EXAMPLES::
+
+            sage: hash(libgap(123))   # random output
+            163512108404620371
+        """
+        return hash(str(self))
+
+
 ############################################################################
 ### GapElement_Integer #####################################################
 ############################################################################
@@ -1617,7 +1623,7 @@ cdef GapElement_Integer make_GapElement_Integer(parent, Obj obj):
     return r
 
 
-cdef class GapElement_Integer(GapElement):
+cdef class GapElement_Integer(GapElement_with_hash):
     r"""
     Derived class of GapElement for GAP integers.
 
@@ -1853,7 +1859,7 @@ cdef GapElement_IntegerMod make_GapElement_IntegerMod(parent, Obj obj):
     r._initialize(parent, obj)
     return r
 
-cdef class GapElement_IntegerMod(GapElement):
+cdef class GapElement_IntegerMod(GapElement_with_hash):
     r"""
     Derived class of GapElement for GAP integers modulo an integer.
 
@@ -1944,7 +1950,7 @@ cdef GapElement_FiniteField make_GapElement_FiniteField(parent, Obj obj):
     return r
 
 
-cdef class GapElement_FiniteField(GapElement):
+cdef class GapElement_FiniteField(GapElement_with_hash):
     r"""
     Derived class of GapElement for GAP finite field elements.
 
@@ -2113,7 +2119,7 @@ cdef GapElement_Cyclotomic make_GapElement_Cyclotomic(parent, Obj obj):
     return r
 
 
-cdef class GapElement_Cyclotomic(GapElement):
+cdef class GapElement_Cyclotomic(GapElement_with_hash):
     r"""
     Derived class of GapElement for GAP universal cyclotomics.
 
@@ -2198,7 +2204,7 @@ cdef GapElement_Rational make_GapElement_Rational(parent, Obj obj):
     return r
 
 
-cdef class GapElement_Rational(GapElement):
+cdef class GapElement_Rational(GapElement_with_hash):
     r"""
     Derived class of GapElement for GAP rational numbers.
 
@@ -2450,7 +2456,7 @@ cdef GapElement_Boolean make_GapElement_Boolean(parent, Obj obj):
     return r
 
 
-cdef class GapElement_Boolean(GapElement):
+cdef class GapElement_Boolean(GapElement_with_hash):
     r"""
     Derived class of GapElement for GAP boolean values.
 
@@ -2540,7 +2546,7 @@ cdef GapElement_String make_GapElement_String(parent, Obj obj):
     return r
 
 
-cdef class GapElement_String(GapElement):
+cdef class GapElement_String(GapElement_with_hash):
     r"""
     Derived class of GapElement for GAP strings.
 
@@ -3204,7 +3210,7 @@ cdef GapElement_Permutation make_GapElement_Permutation(parent, Obj obj):
     return r
 
 
-cdef class GapElement_Permutation(GapElement):
+cdef class GapElement_Permutation(GapElement_with_hash):
     r"""
     Derived class of GapElement for GAP permutations.
 
