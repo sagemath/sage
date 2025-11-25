@@ -350,7 +350,7 @@ def cython_aliases(required_modules=None, optional_modules=None):
         sage: cython_aliases()
         {...}
         sage: sorted(cython_aliases().keys())
-        ['CBLAS_CFLAGS',
+        ['ECL_CFLAGS',
          ...,
          'ZLIB_LIBRARIES']
         sage: cython_aliases(required_modules=('module-that-is-assumed-to-not-exist'))
