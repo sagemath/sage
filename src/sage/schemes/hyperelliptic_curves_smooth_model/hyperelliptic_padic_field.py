@@ -70,7 +70,6 @@ class HyperellipticCurveSmoothModel_padic_field(
         """
         super().__init__(projective_model, f, h, genus)
 
-
     def local_analytic_interpolation(self, P, Q):
         """
         For points ``P``, ``Q`` in the same residue disc,
