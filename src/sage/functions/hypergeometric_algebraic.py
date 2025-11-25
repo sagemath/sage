@@ -1402,7 +1402,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         criticals.sort()
         criticals.append(p)
         Ps = {}
-        for i in range(len(pas))
+        for i in range(len(pas)):
             ci = criticals[i]
             cj = criticals[i+1]
             if cj == ci:
