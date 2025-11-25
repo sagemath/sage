@@ -944,7 +944,7 @@ class Representation_abstract:
                 sage: G = groups.misc.WeylGroup(['B',2], prefix='s')
                 sage: R = G.regular_representation()
                 sage: s1,s2 = G.gens()
-                sage: x = R.an_element(); x
+                sage: x = 2*R(s2*s1*s2) + R(s1*s2) + 3*R(s2) + R(G[0]); x
                 2*s2*s1*s2 + s1*s2 + 3*s2 + 1
                 sage: 2 * x
                 4*s2*s1*s2 + 2*s1*s2 + 6*s2 + 2
@@ -956,7 +956,7 @@ class Representation_abstract:
                 sage: G = groups.misc.WeylGroup(['B',2], prefix='s')
                 sage: R = G.regular_representation(side='right')
                 sage: s1,s2 = G.gens()
-                sage: x = R.an_element(); x
+                sage: x = 2*R(s2*s1*s2) + R(s1*s2) + 3*R(s2) + R(G[0]); x
                 2*s2*s1*s2 + s1*s2 + 3*s2 + 1
                 sage: x * s1
                 2*s2*s1*s2*s1 + s1*s2*s1 + 3*s2*s1 + s1
@@ -969,7 +969,7 @@ class Representation_abstract:
                 Integer Ring
                 sage: A = G.algebra(ZZ)
                 sage: s1,s2 = A.algebra_generators()
-                sage: x = R.an_element(); x
+                sage: x = 2*R(s2*s1*s2) + R(s1*s2) + 3*R(s2) + R(G[0]); x
                 2*s2*s1*s2 + s1*s2 + 3*s2 + 1
                 sage: s1 * x
                 2*s2*s1*s2*s1 + 3*s1*s2 + s1 + s2

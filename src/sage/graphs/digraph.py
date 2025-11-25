@@ -3568,7 +3568,7 @@ class DiGraph(GenericGraph):
               -- iterator over in-branchings rooted at given vertex.
             - :meth:`~sage.graphs.graph.Graph.spanning_trees`
               -- returns all spanning trees.
-            - :meth:`~sage.graphs.generic_graph.GenericGraph.spanning_trees_count`
+            - :meth:`~sage.graphs.generic_graph.GenericGraph.number_of_spanning_trees`
               -- counts the number of spanning trees.
 
         ALGORITHM:
@@ -3784,7 +3784,7 @@ class DiGraph(GenericGraph):
               -- iterator over out-branchings rooted at given vertex.
             - :meth:`~sage.graphs.graph.Graph.spanning_trees`
               -- returns all spanning trees.
-            - :meth:`~sage.graphs.generic_graph.GenericGraph.spanning_trees_count`
+            - :meth:`~sage.graphs.generic_graph.GenericGraph.number_of_spanning_trees`
               -- counts the number of spanning trees.
 
         ALGORITHM:
