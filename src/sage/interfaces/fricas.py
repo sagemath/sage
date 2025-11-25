@@ -197,6 +197,7 @@ FriCAS does some limits right::
 
 import re
 import os
+import pexpect
 
 import sage.interfaces.abc
 
@@ -353,6 +354,16 @@ class FriCAS(ExtraTabCompletion, Expect):
         self.eval(FRICAS_LINENUMBER_OFF_CODE, reformat=False)
         for line in FRICAS_HELPER_CODE:
             self.eval(line, reformat=False)
+        # FriCAS compiled with GCL may output function declaration messages
+        # asynchronously after the prompt appears. We need to consume any
+        # such buffered output to keep the expect interface synchronized.
+        # See https://github.com/sagemath/sage/issues/40569
+        E = self._expect
+        for _ in range(3):
+            try:
+                E.expect(self._prompt, timeout=0.2)
+            except pexpect.TIMEOUT:
+                break
         # register translations between SymbolicRing and FriCAS Expression
         self._register_symbols()
 
@@ -568,6 +579,11 @@ http://fricas.sourceforge.net.
         m = re.search(r"\|startKeyedMsg\|\n(.*)\n\|endOfKeyedMsg\|",
                       output, flags=re.DOTALL)
         if m:
+            # Ignore informational messages about function declarations
+            # being added to workspace (these are not errors)
+            msg_content = m.group(1)
+            if "has been added to" in msg_content and "workspace" in msg_content:
+                return
             replacements = [('|startKeyedMsg|\n', ''),
                             ('|endOfKeyedMsg|', '')]
             for old, new in replacements:
@@ -895,6 +911,33 @@ http://fricas.sourceforge.net.
             FriCAS
         """
         return "FriCAS"
+
+    def _eval_line(self, line, allow_use_file=True, wait_for_prompt=True, restart_if_needed=True):
+        """
+        Evaluate a single line of code.
+
+        This method overrides :meth:`sage.interfaces.expect.Expect._eval_line`
+        to handle FriCAS compiled with GCL, which may output a double prompt
+        after each command due to buffering issues.
+
+        See https://github.com/sagemath/sage/issues/40569
+
+        TESTS::
+
+            sage: fricas.eval('1+1')
+            '\n   2\n'
+        """
+        result = Expect._eval_line(self, line, allow_use_file=allow_use_file,
+                                   wait_for_prompt=wait_for_prompt,
+                                   restart_if_needed=restart_if_needed)
+        # FriCAS compiled with GCL may send an extra prompt after each command.
+        # We try to consume it to keep the interface synchronized.
+        if wait_for_prompt and self._expect is not None:
+            try:
+                self._expect.expect(self._prompt, timeout=0.1)
+            except pexpect.TIMEOUT:
+                pass
+        return result
 
     def __reduce__(self):
         """
