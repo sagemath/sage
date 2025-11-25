@@ -316,6 +316,7 @@ class FriCAS(ExtraTabCompletion, Expect):
         assert max(len(c) for c in FRICAS_INIT_CODE) < eval_using_file_cutoff
         self.__eval_using_file_cutoff = eval_using_file_cutoff
         self._COMMANDS_CACHE = '%s/%s_commandlist_cache.sobj' % (DOT_SAGE, name)
+        self._uses_gcl = None  # will be set in _start()
         # we run the init code in _start to avoid spurious output
         Expect.__init__(self,
                         name=name,
@@ -354,16 +355,28 @@ class FriCAS(ExtraTabCompletion, Expect):
         self.eval(FRICAS_LINENUMBER_OFF_CODE, reformat=False)
         for line in FRICAS_HELPER_CODE:
             self.eval(line, reformat=False)
-        # FriCAS compiled with GCL may output function declaration messages
-        # asynchronously after the prompt appears. We need to consume any
-        # such buffered output to keep the expect interface synchronized.
-        # See :issue:`40569`.
+        # Detect whether FriCAS is compiled with GCL.
+        # GCL-based FriCAS may output function declaration messages
+        # asynchronously after the prompt appears. We need to handle this
+        # to keep the expect interface synchronized. See :issue:`40569`.
         E = self._expect
-        for _ in range(3):
+        # First, consume any buffered output from previous commands
+        # to ensure we get a clean response to the lisp command
+        while True:
             try:
-                E.expect(self._prompt, timeout=0.2)
+                E.expect(self._prompt, timeout=0.1)
             except pexpect.TIMEOUT:
                 break
+        E.sendline(')lisp (lisp-implementation-type)')
+        E.expect(self._prompt)
+        lisp_output = E.before.decode() if isinstance(E.before, bytes) else E.before
+        self._uses_gcl = 'GCL' in lisp_output
+        if self._uses_gcl:
+            for _ in range(3):
+                try:
+                    E.expect(self._prompt, timeout=0.1)
+                except pexpect.TIMEOUT:
+                    break
         # register translations between SymbolicRing and FriCAS Expression
         self._register_symbols()
 
@@ -932,7 +945,8 @@ http://fricas.sourceforge.net.
                                    restart_if_needed=restart_if_needed)
         # FriCAS compiled with GCL may send an extra prompt after each command.
         # We try to consume it to keep the interface synchronized.
-        if wait_for_prompt and self._expect is not None:
+        # Only do this for GCL-based FriCAS to avoid slowdowns with SBCL.
+        if self._uses_gcl and wait_for_prompt and self._expect is not None:
             try:
                 self._expect.expect(self._prompt, timeout=0.1)
             except pexpect.TIMEOUT:
