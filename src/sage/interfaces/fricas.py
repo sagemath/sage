@@ -926,6 +926,7 @@ http://fricas.sourceforge.net.
 
             sage: fricas.eval('1+1')
             '\n   2\n'
+
         """
         result = Expect._eval_line(self, line, allow_use_file=allow_use_file,
                                    wait_for_prompt=wait_for_prompt,
