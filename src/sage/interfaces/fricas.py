@@ -592,11 +592,6 @@ http://fricas.sourceforge.net.
         m = re.search(r"\|startKeyedMsg\|\n(.*)\n\|endOfKeyedMsg\|",
                       output, flags=re.DOTALL)
         if m:
-            # Ignore informational messages about function declarations
-            # being added to workspace (these are not errors)
-            msg_content = m.group(1)
-            if "has been added to" in msg_content and "workspace" in msg_content:
-                return
             replacements = [('|startKeyedMsg|\n', ''),
                             ('|endOfKeyedMsg|', '')]
             for old, new in replacements:
