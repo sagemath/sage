@@ -78,7 +78,7 @@ class HypergeometricAlgebraic(Element):
     r"""
     Class for hypergeometric functions over arbitrary base rings.
     """
-    def __init__(self, parent, arg1, arg2=None, scalar=None):
+    def __init__(self, parent, arg1, arg2=None, scalar=None, check=True):
         r"""
         Initialize this hypergeometric function.
 
@@ -119,7 +119,7 @@ class HypergeometricAlgebraic(Element):
         else:
             parameters = HypergeometricParameters(arg1, arg2)
         char = self.parent()._char
-        if scalar:
+        if check and scalar:
             if any(b in ZZ and b <= 0 for b in parameters.bottom):
                 raise ValueError("the parameters %s do not define a hypergeometric function" % parameters)
             if char > 0:
@@ -1072,7 +1072,7 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
 # Over the p-adics
 
 class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
-    def __init__(self, parent, arg1, arg2=None, scalar=None):
+    def __init__(self, parent, arg1, arg2=None, scalar=None, check=True):
         r"""
         Initialize this hypergeometric function.
 
@@ -1103,7 +1103,7 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
             <class 'sage.functions.hypergeometric_algebraic.HypergeometricFunctions.element_class'>
             sage: TestSuite(h).run()
         """
-        HypergeometricAlgebraic.__init__(self, parent, arg1, arg2, scalar)
+        HypergeometricAlgebraic.__init__(self, parent, arg1, arg2, scalar, check)
         K = self.base_ring()
         self._p = K.prime()
         self._e = K.e()
@@ -1312,8 +1312,8 @@ class HypergeometricAlgebraic_padic(HypergeometricAlgebraic):
 # Over prime finite fields
 
 class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
-    def __init__(self, parent, arg1, arg2=None, scalar=None):
-        HypergeometricAlgebraic.__init__(self, parent, arg1, arg2, scalar)
+    def __init__(self, parent, arg1, arg2=None, scalar=None, check=True):
+        HypergeometricAlgebraic.__init__(self, parent, arg1, arg2, scalar, check)
         self._p = p = self.base_ring().cardinality()
         self._coeffs = [Qp(p, 1)(self._scalar)]
 
@@ -1380,6 +1380,14 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         Return (P1, h1), ..., (Ps, hs) such that
 
             self = P1*h1^p + ... + Ps*hs^p
+
+        TESTS::
+
+            sage: S.<x> = GF(3)[]
+            sage: f = hypergeometric([7/8, 9/8, 11/8], [3/2, 7/4], x)
+            sage: f.dwork_relation()
+            {hypergeometric((3/8, 5/8, 9/8), (1/2, 5/4), x): 1,
+             hypergeometric((1, 21/8, 25/8, 27/8), (3, 13/4, 7/2), x): 2*x^7}
         """
         parameters = self._parameters
         if not parameters.is_balanced():
@@ -1387,22 +1395,27 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         p = self._char
         H = self.parent()
         F = H.base_ring()
-        x = H.polynomial_ring().gen()
+        S = H.polynomial_ring()
         coeffs = self._coeffs
+        pas = parameters.top + parameters.bottom
+        criticals = [(1-pa) % p for pa in pas]
+        criticals.sort()
+        criticals.append(p)
         Ps = {}
-        for r in range(p):
-            params = parameters.shift(r).dwork_image(p)
+        for i in range(len(pas))
+            ci = criticals[i]
+            cj = criticals[i+1]
+            if cj == ci:
+                continue
+            params = parameters.shift(ci).dwork_image(p)
             _, s, _ = params.valuation_position(p)
-            h = H(params.shift(s))
-            e = s*p + r
-            if e >= len(coeffs):
-                self._compute_coeffs(e + 1)
-            c = F(coeffs[e])
-            if c:
-                if h in Ps:
-                    Ps[h] += c * x**e
-                else:
-                    Ps[h] = c * x**e
+            ci += s*p
+            cj += s*p
+            h = H(params.shift(s), check=False)
+            self._compute_coeffs(cj + 1)
+            P = S(self._coeffs[ci:cj])
+            if P:
+                Ps[h] = Ps.get(h, 0) + (P << ci)
         return Ps
 
     def annihilating_ore_polynomial(self, var='Frob'):
