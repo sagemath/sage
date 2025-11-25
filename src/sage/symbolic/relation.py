@@ -486,31 +486,30 @@ def check_relation_maxima(relation):
         sage: assumptions()
         [k is noninteger]
     """
-    m = relation._maxima_()
+    from sage.interfaces.maxima_lib import maxima
 
-    # Handle some basic cases first
-    if repr(m) in ['0=0']:
-        return True
-    elif repr(m) in ['0#0', '1#1']:
-        return False
+    # Use _maxima_init_() to get proper string representation with _SAGE_VAR_ prefixes
+    # This ensures assumptions are properly recognized by Maxima
+    lhs_str = relation.lhs()._maxima_init_()
+    rhs_str = relation.rhs()._maxima_init_()
 
     if relation.operator() == operator.eq:  # operator is equality
         try:
-            s = m.parent()._eval_line('is (equal(%s,%s))' % (repr(m.lhs()),
-                                                             repr(m.rhs())))
+            s = maxima._eval_line('is (equal(%s,%s))' % (lhs_str, rhs_str))
         except TypeError:
             raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
 
     elif relation.operator() == operator.ne:  # operator is not equal
         try:
-            s = m.parent()._eval_line('is (notequal(%s,%s))' % (repr(m.lhs()),
-                                                                repr(m.rhs())))
+            s = maxima._eval_line('is (notequal(%s,%s))' % (lhs_str, rhs_str))
         except TypeError:
             raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
 
     else:  # operator is < or > or <= or >=, which Maxima handles fine
         try:
-            s = m.parent()._eval_line('is (%s)' % repr(m))
+            # For inequalities, use the full relation string
+            relation_str = relation._maxima_init_()
+            s = maxima._eval_line('is (%s)' % relation_str)
         except TypeError:
             raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
 
@@ -526,25 +525,14 @@ def check_relation_maxima(relation):
     if difference.is_trivial_zero():
         return True
 
-    # Try to apply some simplifications to see if left - right == 0.
-    #
-    # TODO: If simplify_log() is ever removed from simplify_full(), we
-    # can replace all of these individual simplifications with a
-    # single call to simplify_full(). That would work in cases where
-    # two simplifications are needed consecutively; the current
-    # approach does not.
-    #
-    simp_list = [difference.simplify_factorial(),
-                 difference.simplify_rational(),
-                 difference.simplify_rectform(),
-                 difference.simplify_trig()]
-    for f in simp_list:
-        try:
-            if f().is_trivial_zero():
-                return True
-                break
-        except Exception:
-            pass
+    # Try simplify_full() to see if left - right == 0.
+    # Note: simplify_full() does not include simplify_log(), which is
+    # unsafe for complex variables, so this is safe to call here.
+    try:
+        if difference.simplify_full().is_trivial_zero():
+            return True
+    except Exception:
+        pass
     return False
 
 
@@ -552,6 +540,10 @@ def check_relation_maxima_neq_as_not_eq(relation):
     """
     A variant of :func:`check_relation_maxima` that treats `x != y`
     as `not (x == y)` for consistency with Python's boolean semantics.
+
+    For inequality relations (!=), this function checks the corresponding
+    equality and returns its logical negation, ensuring that
+    ``bool(x != y) == not bool(x == y)``.
 
     EXAMPLES::
 
@@ -566,68 +558,14 @@ def check_relation_maxima_neq_as_not_eq(relation):
         sage: check_relation_maxima_neq_as_not_eq(x == 1)
         False
     """
-    m = relation._maxima_()
-
-    # Handle some basic cases first
-    if repr(m) in ['0=0']:
-        return True
-    elif repr(m) in ['0#0', '1#1']:
-        return False
-
-    if relation.operator() == operator.eq:  # operator is equality
-        try:
-            s = m.parent()._eval_line('is (equal(%s,%s))' % (repr(m.lhs()),
-                                                             repr(m.rhs())))
-        except TypeError:
-            raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
-
-    elif relation.operator() == operator.ne:  # operator is not equal
-        try:
-            s = m.parent()._eval_line('is (notequal(%s,%s))' % (repr(m.lhs()),
-                                                                repr(m.rhs())))
-        except TypeError:
-            raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
-
-    else:  # operator is < or > or <= or >=, which Maxima handles fine
-        try:
-            s = m.parent()._eval_line('is (%s)' % repr(m))
-        except TypeError:
-            raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
-
-    if s == 'true':
-        return True
-    elif s == 'false':
-        return False  # if neither of these, s=='unknown' and we try a few other tricks
-
-    # Special case for inequality (!=): if Maxima returns 'unknown',
-    # try checking equality (==) instead and return the opposite result.
-    # This preserves semantic consistency with bool(x != y) = not bool(x == y).
+    # For inequality (!=), check equality and return the opposite.
+    # This ensures bool(x != y) == not bool(x == y) for semantic consistency.
     if relation.operator() == operator.ne:
-        # Check equality using the full check_relation_maxima logic
         eq_relation = (relation.lhs() == relation.rhs())
-        eq_result = check_relation_maxima(eq_relation)
-        # Return the opposite of the equality result
-        return not eq_result
+        return not check_relation_maxima(eq_relation)
 
-    if relation.operator() != operator.eq:
-        return False
-
-    difference = relation.lhs() - relation.rhs()
-    if difference.is_trivial_zero():
-        return True
-
-    simp_list = [difference.simplify_factorial(),
-                 difference.simplify_rational(),
-                 difference.simplify_rectform(),
-                 difference.simplify_trig()]
-    for f in simp_list:
-        try:
-            if f().is_trivial_zero():
-                return True
-                break
-        except Exception:
-            pass
-    return False
+    # For all other relations, delegate to check_relation_maxima
+    return check_relation_maxima(relation)
 
 
 def string_to_list_of_solutions(s):

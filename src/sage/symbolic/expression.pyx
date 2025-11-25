@@ -3401,17 +3401,8 @@ cdef class Expression(Expression_abc):
                 return pynac_result == relational_true
 
             if pynac_result == relational_true:
-                if self.operator() == operator.ne:
-                    # this hack is necessary to catch the case where the
-                    # operator is != but is False because of assumptions made
-                    m = self._maxima_()
-                    s = m.parent()._eval_line('is (notequal(%s,%s))' % (repr(m.lhs()),repr(m.rhs())))
-                    if s == 'false':
-                        return False
-                    else:
-                        return True
-                else:
-                    return True
+                #In fact, it will return notimplemented for the unequal cases unknown to be true
+                return True
 
             # If assumptions are involved, falsification is more complicated...
             need_assumptions = False
