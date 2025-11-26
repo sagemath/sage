@@ -1,3 +1,21 @@
+r"""
+Base class for key exchange schemes.
+
+AUTHORS:
+
+- Brian Heckel (2025-11-26): initial version
+"""
+
+# ****************************************************************************
+#       Copyright (C) 2025 Brian Heckel <heckelbri@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 from abc import ABC, abstractmethod
 from typing import Any
 
