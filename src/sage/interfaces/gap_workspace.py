@@ -13,10 +13,12 @@ Support for (lib)GAP workspace files
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import os
-import time
 import hashlib
+import os
 import subprocess
+import time
+
+from sage.config import get_gap_root
 from sage.env import DOT_SAGE, HOSTNAME
 
 
@@ -60,23 +62,10 @@ def gap_workspace_file(system='gap', name='workspace', dir=None):
     if dir is None:
         dir = os.path.join(DOT_SAGE, 'gap')
 
-    # Use gap executable to get version and architecture info for workspace filename
-    data = ''
-    try:
-        import shutil
-        gap_exe = shutil.which('gap')
-        if gap_exe:
-            result = subprocess.run(
-                [gap_exe, '-r', '-q', '--bare', '--nointeract', '-c',
-                 'Display(Concatenation(GAPInfo.Version, ":", GAPInfo.Architecture));'],
-                capture_output=True, text=True, timeout=5
-            )
-            if result.returncode == 0:
-                data = result.stdout.strip()
-    except Exception:
-        # If we can't get GAP info, just use empty string
-        pass
-    
+    data = f'{get_gap_root()}'
+    sysinfo = get_gap_root() / "sysinfo.gap"
+    if os.path.exists(sysinfo):
+        data += subprocess.getoutput(f'. "{sysinfo}" && echo ":$GAP_VERSION:$GAParch"')
     h = hashlib.sha1(data.encode('utf-8')).hexdigest()
     return os.path.join(dir, f'{system}-{name}-{HOSTNAME}-{h}')
 
