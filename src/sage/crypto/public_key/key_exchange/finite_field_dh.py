@@ -1,4 +1,6 @@
-from sage.crypto.public_key.key_exchange.key_exchange_base import CommutativeKeyExchangeBase
+from sage.crypto.public_key.key_exchange.key_exchange_base import (
+    CommutativeKeyExchangeBase,
+)
 from sage.misc.prandom import randint
 from sage.rings.finite_rings.finite_field_constructor import GF
 
