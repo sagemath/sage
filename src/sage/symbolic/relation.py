@@ -485,7 +485,18 @@ def check_relation_maxima(relation):
         [k == 1/2*I*sqrt(3) - 1/2, k == -1/2*I*sqrt(3) - 1/2]
         sage: assumptions()
         [k is noninteger]
+
+    Check that boolean values are handled correctly::
+
+        sage: check_relation_maxima(2 == 2)
+        True
+        sage: check_relation_maxima(2 == 3)
+        False
     """
+    # Handle boolean values directly (e.g., when comparing Python integers)
+    if isinstance(relation, bool):
+        return relation
+
     from sage.interfaces.maxima_lib import maxima
 
     # Use _maxima_init_() to get proper string representation with _SAGE_VAR_ prefixes
