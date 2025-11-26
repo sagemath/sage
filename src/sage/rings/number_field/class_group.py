@@ -267,23 +267,21 @@ class Modulus(SageObject):
                        check=False)
 
     def lcm(self, other) -> "Modulus":
+        """
+        missing documentation
+        """
         inf = tuple(set(self.infinite_part()).union(other.infinite_part()))
-        # Pe_out = []
         self_fact_P, self_fact_e = zip(*self.finite_part().factor())
         self_fact_P = list(self_fact_P)
         self_fact_e = list(self_fact_e)
-        # self_facts = self.finite_part().factor()
-        # of = other.finite_part()
         other_facts = other.finite_part().factor()
         mf = self._number_field.ideal_monoid().one()
         for P, e in other_facts:
             try:
                 i = self_fact_P.index(P)
             except ValueError:
-                # Pe_out.append([P, e])
                 mf *= P**e
                 continue
-            # Pe_out.append([P, max(e, self_fact_e[i])])
             mf *= P**max(e, self_fact_e[i])
             del self_fact_P[i]
             del self_fact_e[i]
@@ -292,6 +290,9 @@ class Modulus(SageObject):
         return Modulus(mf, inf, check=False)
 
     def divides(self, other) -> bool:
+        """
+        missing documentation
+        """
         if not set(self.infinite_part()).issubset(other.infinite_part()):
             return False
         return self.finite_part().divides(other.finite_part())
@@ -323,12 +324,6 @@ class Modulus(SageObject):
         except AttributeError:
             self._finite_factors = self.finite_part().factor()
             return self._finite_factors
-
-    # def _pari_finite_factors(self):
-    #    """
-    #    Return
-    #    """
-    #    return self._number_field.pari_nf().idealfactor(self._finite)
 
     def equivalent_coprime_ideal_multiplier(self, I, other):
         r"""
@@ -394,7 +389,7 @@ class Modulus(SageObject):
         """
         return self.equivalent_coprime_ideal_multiplier(I, other) * I
 
-    def number_is_one_mod_star(self, a):
+    def number_is_one_mod_star(self, a) -> bool:
         """
         missing documentation
         """
@@ -430,7 +425,10 @@ class Modulus(SageObject):
         return t * a
 
     def get_one_mod_star_finite_with_fixed_signs(self, positive, negative):
-        if len(negative) == 0:
+        """
+        missing documentation
+        """
+        if not negative:
             return self.number_field().one()
         negative = tuple(negative)
         try:
@@ -485,10 +483,10 @@ class Modulus(SageObject):
         sigmas = self._number_field.real_places()
         return [ZZ.one() if sigmas[i](b).sign() == -1 else ZZ.zero() for i in self.infinite_part()]
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         return len(self._infinite) == 0
 
-    def is_infinite(self):
+    def is_infinite(self) -> bool:
         return self._finite.is_one()
 
     def __pari__(self):
@@ -518,7 +516,7 @@ class Modulus(SageObject):
             inf_mod[pari_index] = 1
         return pari([self._finite, inf_mod])
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of ``self``.
         """
@@ -676,7 +674,7 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
 
     __invert__ = inverse
 
-    def is_principal(self):
+    def is_principal(self) -> bool:
         r"""
         Return ``True`` iff this ideal class is the trivial (principal) class.
 
@@ -922,10 +920,6 @@ class RayClassGroupElement(AbelianGroupElement):
                     # I = I.reduce_equiv(m)
                     I = R.ideal_reduce(I)
         return I
-
-    # def reduce(self):
-    #    nf = self.parent()._number_field.pari_nf()
-    #    return RayClassGroupElement(self.parent(), self.exponents(), nf.idealred(self.value()))
 
 
 class SFractionalIdealClass(FractionalIdealClass):
@@ -1197,7 +1191,7 @@ class ClassGroup(AbelianGroupWithValues_class):
             i0 = i0 * gk
         return
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return string representation of ``self``.
 
@@ -1238,7 +1232,8 @@ class ClassGroup(AbelianGroupWithValues_class):
 class RayClassGroup(AbelianGroup_class):
     Element = RayClassGroupElement
 
-    def __init__(self, gens_orders, names, modulus, gens, bnr, proof=True):
+    def __init__(self, gens_orders, names, modulus,
+                 gens, bnr, proof=True) -> None:
         r"""
         ``gens`` -- a tuple of pari extended ideals
         """
@@ -1433,6 +1428,7 @@ class RayClassGroup(AbelianGroup_class):
 
     def ideal_reduce(self, ideal):
         """
+        missing documentation
         """
         ideal = pari(ideal)
         try:
@@ -1577,7 +1573,7 @@ class SClassGroup(ClassGroup):
                 raise TypeError("The zero ideal is not a fractional ideal")
             return self.element_class(self, None, I)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return string representation of this S-class group.
 
