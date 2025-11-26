@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Helpers for tolerance checking in doctests
 """
@@ -57,7 +56,7 @@ def RIFtol(*args) -> RealIntervalFieldElement:
     """
     global _RIFtol
     if _RIFtol is None:
-       _RIFtol = RealIntervalField(1044)
+        _RIFtol = RealIntervalField(1044)
     return _RIFtol(*args)
 
 

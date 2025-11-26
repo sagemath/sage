@@ -301,7 +301,7 @@ class FMatrix(SageObject):
     #   Class utilities   #
     #######################
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -582,7 +582,7 @@ class FMatrix(SageObject):
             ret = {}
         id_anyon = self._FR.one()
         for a, b, c, d in product(self._FR.basis(), repeat=4):
-            if a == id_anyon or b == id_anyon or c == id_anyon:
+            if id_anyon in (a, b, c):
                 continue
             for x in self.f_from(a, b, c, d):
                 for y in self.f_to(a, b, c, d):
@@ -1268,7 +1268,7 @@ class FMatrix(SageObject):
             self._reset_solver_state()
         # Set up shared memory resource handlers
         n_proc = cpu_count() if processes is None else processes
-        self._pid_list = shared_memory.ShareableList([0] * (n_proc+1))
+        self._pid_list = shared_memory.ShareableList([0] * (n_proc + 1))
         pids_name = self._pid_list.shm.name
         self._solved = shared_memory.ShareableList(self._solved)
         s_name = self._solved.shm.name
@@ -1379,12 +1379,9 @@ class FMatrix(SageObject):
         else:
             mapped = worker_pool.imap_unordered(executor, input_iter, chunksize=chunksize)
         # Reduce phase
-        results = set()
-        for child_eqns in mapped:
-            if child_eqns is not None:
-                results.update(child_eqns)
-        results = list(results)
-        return results
+        results = {eqn for child_eqns in mapped if child_eqns is not None
+                   for eqn in child_eqns}
+        return list(results)
 
     ########################
     #   Equations set up   #
@@ -1720,7 +1717,7 @@ class FMatrix(SageObject):
         for eq_tup in eqns:
             partition[tuple(graph.connected_component_containing_vertex(variables(eq_tup)[0], sort=True))].append(eq_tup)
         if verbose:
-            print("Partitioned {} equations into {} components of size:".format(len(eqns), graph.connected_components_number()))
+            print("Partitioned {} equations into {} components of size:".format(len(eqns), graph.number_of_connected_components()))
             print(graph.connected_components_sizes())
         return partition
 
@@ -1770,8 +1767,7 @@ class FMatrix(SageObject):
                 small_comps.append(comp_eqns)
         input_iter = zip_longest(small_comps, [], fillvalue=term_order)
         small_comp_gb = self._map_triv_reduce('compute_gb', input_iter, worker_pool=self.pool, chunksize=1, mp_thresh=50)
-        ret = small_comp_gb + temp_eqns
-        return ret
+        return small_comp_gb + temp_eqns
 
     def _get_component_variety(self, var, eqns):
         r"""
@@ -1821,7 +1817,7 @@ class FMatrix(SageObject):
     # TODO: this can probably be improved by constructing a set of defining polynomials
     # and checking, one by one, if it's irreducible over the current field.
     # If it is, we construct an extension. Perhaps it's best to go one by one here...
-    def attempt_number_field_computation(self):
+    def attempt_number_field_computation(self) -> bool:
         r"""
         Based on the ``CartanType`` of ``self`` and data
         known on March 17, 2021, determine whether to attempt
@@ -2324,7 +2320,7 @@ class FMatrix(SageObject):
             []
         """
         if self._poly_ring.ngens() == 0:
-            return
+            return None
         self._reset_solver_state()
         self._var_to_sextuple = {self._poly_ring.gen(i): s for i, s in self._idx_to_sextuple.items()}
 
@@ -2350,7 +2346,7 @@ class FMatrix(SageObject):
     #   Verifications   #
     #####################
 
-    def fmats_are_orthogonal(self):
+    def fmats_are_orthogonal(self) -> bool:
         r"""
         Verify that all F-matrices are orthogonal.
 
@@ -2370,7 +2366,7 @@ class FMatrix(SageObject):
             is_orthog.append(mat.T * mat == matrix.identity(mat.nrows()))
         return all(is_orthog)
 
-    def fvars_are_real(self):
+    def fvars_are_real(self) -> bool:
         r"""
         Test whether all F-symbols are real.
 
@@ -2378,14 +2374,14 @@ class FMatrix(SageObject):
 
             sage: f = FusionRing("A1", 3).get_fmatrix()
             sage: f.find_orthogonal_solution(verbose=False) # long time
-            sage: f.fvars_are_real()                        # not tested (cypari issue in doctesting framework)
+            sage: f.fvars_are_real()  # long time
             True
         """
         try:
             for k, v in self._fvars.items():
                 AA(self._qqbar_embedding(v))
         except ValueError:
-            print("the F-symbol {} (key {}) has a nonzero imaginary part".format(v, k))
+            print(f"the F-symbol {v} (key {k}) has a nonzero imaginary part")
             return False
         return True
 
@@ -2424,7 +2420,7 @@ class FMatrix(SageObject):
             Partitioned 6 equations into 6 components of size:
             [1, 1, 1, 1, 1, 1]
             Computing appropriate NumberField...
-            sage: f.certify_pentagons()  is None      # not tested (cypari issue in doctesting framework), long time (~1.5s)
+            sage: f.certify_pentagons()  is None      # long time (~1.5s)
             True
         """
         fvars_copy = deepcopy(self._fvars)
@@ -2440,8 +2436,7 @@ class FMatrix(SageObject):
             if verbose:
                 print("Found valid F-symbols for {}".format(self._FR))
             pe = None
-        else:
-            if verbose:
-                print("Something went wrong. Pentagons remain.")
+        elif verbose:
+            print("Something went wrong. Pentagons remain.")
         self._fvars = fvars_copy
         return pe

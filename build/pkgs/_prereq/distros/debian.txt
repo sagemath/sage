@@ -30,3 +30,6 @@ g++
 # Needed if we download some packages from a https upstream URL
 ca-certificates
 patch
+pkg-config
+libz-dev
+libboost-dev

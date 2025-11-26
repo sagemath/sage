@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Listing Sage packages
 
@@ -26,7 +25,7 @@ command inside Sage::
     ['4ti2',
      'alabaster',
      ...
-     'zlib']
+     'zipp']
 
 Functions
 ---------
@@ -39,18 +38,17 @@ Functions
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from typing import NamedTuple, Optional, Union
-
-import sage.env
-
 import json
 import os
 import subprocess
 import sys
 from pathlib import Path
-from urllib.request import urlopen
-from urllib.error import URLError
 from ssl import create_default_context as default_context
+from typing import NamedTuple, Optional
+from urllib.error import URLError
+from urllib.request import urlopen
+
+import sage.env
 
 DEFAULT_PYPI = 'https://pypi.org/pypi'
 
@@ -273,14 +271,7 @@ def list_packages(*pkg_types: str, pkg_sources: list[str] = ['normal', 'pip', 's
         ['alabaster',
          'babel',
          ...
-         'zlib']
-        sage: sage_conf_info = L['sage_conf']
-        sage: sage_conf_info.type
-        'standard'
-        sage: sage_conf_info.is_installed()
-        True
-        sage: sage_conf_info.source
-        'script'
+         'zipp']
 
         sage: # optional - sage_spkg internet
         sage: L = list_packages(pkg_sources=['pip'], local=True)
@@ -514,8 +505,8 @@ def package_versions(package_type, local=False):
         sage: std = package_versions('standard', local=True)
         sage: 'gap' in std
         True
-        sage: std['zlib']  # random
-        ('1.2.11.p0', '1.2.11.p0')
+        sage: std['zipp']  # random
+        ('3.19.0', '3.19.0')
     """
     return {pkg.name: (pkg.installed_version, pkg.remote_version) for pkg in list_packages(package_type, local=local).values()}
 

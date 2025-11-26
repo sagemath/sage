@@ -267,7 +267,7 @@ cdef MPF_set_tuple(MPF *x, tuple value):
     """
     #cdef int sign
     cdef Integer man
-    sign, _man, exp, bc = value
+    sign, _man, exp, _ = value
     if isinstance(_man, Integer):
         man = <Integer>_man
     else:

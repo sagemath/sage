@@ -4053,9 +4053,7 @@ class LazyDirichletSeriesRing(LazySeriesRing):
             sage: L.has_coerce_map_from(QQ)
             False
         """
-        if self.base_ring().has_coerce_map_from(S):
-            return True
-        return False
+        return self.base_ring().has_coerce_map_from(S)
 
     def _element_constructor_(self, x=None, valuation=None, degree=None, constant=None, coefficients=None):
         r"""
@@ -4295,6 +4293,7 @@ class LazyDirichletSeriesRing(LazySeriesRing):
         return self(coefficients=lambda n: z ** n)
 
     polylog = polylogarithm
+
 
 def _skip_leading_zeros(iterator):
     """

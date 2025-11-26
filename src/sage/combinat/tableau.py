@@ -7046,6 +7046,8 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
         """
         return symmetrica.kostka_tab(self.shape, self.weight)
 
+    random_element = FiniteEnumeratedSets.ParentMethods._random_element_from_unrank
+
 
 class SemistandardTableaux_size_weight(SemistandardTableaux):
     r"""
@@ -9350,10 +9352,7 @@ class IncreasingTableaux_shape_weight(IncreasingTableaux_shape):
             for i in row:
                 content_list[i-1] = 1
 
-        if tuple(content_list) != self.weight:
-            return False
-
-        return True
+        return tuple(content_list) == self.weight
 
     def __iter__(self):
         """

@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Symmetric Functions
+Symmetric functions
 
 For a comprehensive tutorial on how to use symmetric functions in Sage
 
@@ -1478,9 +1478,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 def check_word(w):
                     if sum(1 for i in range(n-1) if w[i] > w[i+1]) != d:
                         return False
-                    if sum(1 for i in range(n-1) if w[i] == w[i+1]) != s:
-                        return False
-                    return True
+                    return sum(1 for i in range(n - 1) if w[i] == w[i + 1]) == s
             elif comparison == -1:
                 def check_word(w):
                     if sum(1 for i in range(n-1) if w[i] > w[i+1]) != d:
@@ -1672,9 +1670,13 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
                 sage: type(L)
                 <class 'sage.rings.lazy_series_ring.LazySymmetricFunctions_with_category'>
+                sage: s.completion() is s.formal_series_ring()
+                True
             """
             from sage.rings.lazy_series_ring import LazySymmetricFunctions
             return LazySymmetricFunctions(self)
+
+        completion = formal_series_ring
 
 
 class FilteredSymmetricFunctionsBases(Category_realization_of_parent):
@@ -5156,7 +5158,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             -q^3 + 2*q^2 - 2*q + 1
             sage: a.scalar_qt(a,5,7) # q=5 and t=7
             490/1539
-            sage: (x,y) = var('x,y')                                                    # needs sage.symbolic
+            sage: x, y = var('x,y')                                                    # needs sage.symbolic
             sage: a.scalar_qt(a, q=x, t=y)                                              # needs sage.symbolic
             1/3*(x^3 - 1)/(y^3 - 1) + 2/3*(x - 1)^3/(y - 1)^3
             sage: Rn = QQ['q','t','y','z'].fraction_field()

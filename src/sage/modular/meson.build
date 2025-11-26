@@ -11,6 +11,7 @@ py.install_sources(
   'etaproducts.py',
   'hecke_character.py',
   'hypergeometric_misc.pxd',
+  'hypergeometric_misc.pyx',
   'hypergeometric_motive.py',
   'multiple_zeta.py',
   'multiple_zeta_F_algebra.py',

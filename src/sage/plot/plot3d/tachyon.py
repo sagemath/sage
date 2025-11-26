@@ -1751,10 +1751,7 @@ class ParametricPlot:
             return True
 
         r = sqrt(a**2 + b**2 + c**2)
-        if delta < self._e_rel * r:
-            return True
-
-        return False
+        return delta < self._e_rel * r
 
 
 def tostr(s, length=3, out_type=float):

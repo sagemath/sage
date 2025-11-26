@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Miscellaneous functions (Cython)
 
@@ -23,7 +22,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from copy import copy
 
 from cpython.sequence cimport *
 from cpython.list cimport *
@@ -177,7 +175,7 @@ cdef balanced_list_prod(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutof
     cdef Py_ssize_t k
     if count <= cutoff:
         prod = <object>PySequence_Fast_GET_ITEM(L, offset)
-        for k from offset < k < offset + count:
+        for k in range(offset + 1, offset + count):
             prod *= <object>PySequence_Fast_GET_ITEM(L, k)
         return prod
     else:
@@ -243,7 +241,7 @@ cpdef iterator_prod(L, z=None, bint multiply=True):
                 x = sub_prods[tip] * x
             else:
                 x = sub_prods[tip] + x
-            for j from 1 <= j < 64:
+            for j in range(1, 64):
                 if i & (1 << j):
                     break
                 tip -= 1

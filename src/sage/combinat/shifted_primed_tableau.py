@@ -1983,11 +1983,9 @@ class ShiftedPrimedTableaux(UniqueRepresentation, Parent):
                        for j in range(skew[i], len(row)-1)
                        if row[j].is_primed()):
                 return False
-        if not (self._primed_diagonal or all(row[0].is_unprimed()
-                   for i, row in enumerate(T)
-                   if skew[i] == 0)):
-            return False
-        return True
+        return self._primed_diagonal or all(row[0].is_unprimed()
+                                            for i, row in enumerate(T)
+                                            if skew[i] == 0)
 
 
 class ShiftedPrimedTableaux_all(ShiftedPrimedTableaux):

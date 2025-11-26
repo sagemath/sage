@@ -83,10 +83,9 @@ class WittVector(CommutativeRingElement):
         self._prec = parent.precision()
         B = parent.coefficient_ring()
         if vec is not None:
-            if isinstance(vec, int) or isinstance(vec, Integer):
+            if isinstance(vec, (int, Integer)):
                 self._int_to_vector(vec, parent)
-            elif (isinstance(vec, tuple) or isinstance(vec, list)
-                    or isinstance(vec, WittVector)):
+            elif isinstance(vec, (tuple, list, WittVector)):
                 if len(vec) < self._prec:
                     raise ValueError(f"{vec} has not the correct length, "
                                      "expected length has to be at least "
@@ -267,7 +266,7 @@ class WittVector(CommutativeRingElement):
             if p == 2:
                 vec_k = (
                     parent(vec_k)
-                    * parent((tuple(-1 for _ in range(self._prec))))
+                    * parent(tuple(-1 for _ in range(self._prec)))
                 ).coordinates()
             else:
                 vec_k = (-x for x in vec_k)
@@ -420,15 +419,13 @@ class WittVector_phantom(WittVector):
         R = parent.coefficient_ring()
         p = parent.prime()
         base = R
-        if (isinstance(R, PolynomialRing_generic)
-                or isinstance(R, MPolynomialRing_base)):
+        if isinstance(R, (PolynomialRing_generic, MPolynomialRing_base)):
             base = R.base()
         base_lift = QqFP(base.cardinality(), prec=self._prec,
                          modulus=base.modulus(), names=(base.variable_name(),),
                          res_name=base.variable_name())
         lift = base_lift
-        if (isinstance(R, PolynomialRing_generic)
-                or isinstance(R, MPolynomialRing_base)):
+        if isinstance(R, (PolynomialRing_generic, MPolynomialRing_base)):
             lift = R.change_ring(base_lift)
         if phantom is not None:
             self._phantom = phantom
@@ -442,13 +439,12 @@ class WittVector_phantom(WittVector):
             self._coordinates = vec.coordinates()
             self._phantom = vec._phantom
             self._powers = vec._powers
-        elif isinstance(vec, int) or isinstance(vec, Integer):
+        elif isinstance(vec, (int, Integer)):
             self._int_to_vector(vec, parent)
             y = base_lift(vec)
             self._powers = [y]
             self._phantom = self._prec * [y]
-        elif (isinstance(vec, tuple) or isinstance(vec, list)
-                or isinstance(vec, WittVector)):
+        elif isinstance(vec, (tuple, list, WittVector)):
             if len(vec) < self._prec:
                 raise ValueError(f"{vec} has not the correct length, "
                                  "expected length has to be at least "
@@ -719,8 +715,7 @@ class WittVector_finotti(WittVector):
         G = []
         for n in range(self._prec):
             G_n = [self[n], other[n]]
-            for i in range(n):
-                G_n.append(P._eta_bar(G[i], n - i))
+            G_n.extend(P._eta_bar(G[i], n - i) for i in range(n))
             G.append(G_n)
         sum_vec = tuple(sum(G[i]) for i in range(self._prec))
 
@@ -757,8 +752,7 @@ class WittVector_finotti(WittVector):
             G_n.extend(fast_char_p_power(self[i], p**(n - i))
                        * fast_char_p_power(other[n - i], p**i)
                        for i in range(1, n))
-            for i in range(n):
-                G_n.append(P._eta_bar(G[i], n - i))
+            G_n.extend(P._eta_bar(G[i], n - i) for i in range(n))
             G.append(G_n)
         prod_vec = tuple(sum(G[i]) for i in range(self._prec))
 

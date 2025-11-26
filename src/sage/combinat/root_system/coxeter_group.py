@@ -1,5 +1,5 @@
 """
-Coxeter Groups
+Coxeter groups
 """
 # ***************************************************************************
 #       Copyright (C) 2010 Nicolas Thiery <nthiery at users.sf.net>

@@ -51,7 +51,7 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
     A facade parent for the indices of Clifford algebra.
     Users should not create instances of this class directly.
     """
-    def __init__(self, Qdim, degree=None):
+    def __init__(self, Qdim, degree=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -167,7 +167,7 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
 
     __len__ = cardinality
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -197,7 +197,7 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             return "Subsets of {0,1}" + extra
         return f"Subsets of {{0,1,...,{self._nbits-1}}}" + extra
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -271,7 +271,7 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
                 yield FrozenBitset(C)
             k += 1
 
-    def __contains__(self, elt):
+    def __contains__(self, elt) -> bool:
         r"""
         Check containment of ``elt`` in ``self``.
 
@@ -503,7 +503,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
                 raise ValueError("the number of variables does not match the number of generators")
         return super().__classcall__(cls, Q, names)
 
-    def __init__(self, Q, names, category=None):
+    def __init__(self, Q, names, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -528,15 +528,31 @@ class CliffordAlgebra(CombinatorialFreeModule):
             sage: ba = Cl.basis().keys()
             sage: all(FrozenBitset(format(i,'b')[::-1]) in ba for i in range(2**9))
             True
+
+        Check for the category::
+
+            sage: Q = QuadraticForm(ZZ, 3, [1,2,3,4,5,6])
+            sage: Cl.<x,y,z> = CliffordAlgebra(Q)
+            sage: Cl.is_commutative()
+            False
+            sage: Q = QuadraticForm(ZZ, 1, [1])
+            sage: Cl.<x> = CliffordAlgebra(Q)
+            sage: Cl.is_commutative()
+            True
         """
         self._quadratic_form = Q
         R = Q.base_ring()
         category = AlgebrasWithBasis(R.category()).Super().Filtered().FiniteDimensional().or_subcategory(category)
+
+        if self._quadratic_form.dim() < 2:
+            category = category.Commutative()
+
         indices = CliffordAlgebraIndices(Q.dim())
-        CombinatorialFreeModule.__init__(self, R, indices, category=category, sorting_key=tuple)
+        CombinatorialFreeModule.__init__(self, R, indices, category=category,
+                                         sorting_key=tuple)
         self._assign_names(names)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -552,7 +568,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         """
         return "The Clifford algebra of the {}".format(self._quadratic_form)
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         """
         Return a string representation of the basis element indexed by ``m``.
 
@@ -578,7 +594,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
             term += self.variable_names()[i]
         return term
 
-    def _latex_term(self, m):
+    def _latex_term(self, m) -> str:
         r"""
         Return a `\LaTeX` representation of the basis element indexed
         by ``m``.
@@ -843,19 +859,6 @@ class CliffordAlgebra(CombinatorialFreeModule):
             0
         """
         return FrozenBitset()
-
-    def is_commutative(self) -> bool:
-        """
-        Check if ``self`` is a commutative algebra.
-
-        EXAMPLES::
-
-            sage: Q = QuadraticForm(ZZ, 3, [1,2,3,4,5,6])
-            sage: Cl.<x,y,z> = CliffordAlgebra(Q)
-            sage: Cl.is_commutative()
-            False
-        """
-        return self._quadratic_form.dim() < 2
 
     def quadratic_form(self):
         """
@@ -1460,7 +1463,7 @@ class ExteriorAlgebra(CliffordAlgebra):
                 raise ValueError("the number of variables does not match the number of generators")
         return super().__classcall__(cls, R, names)
 
-    def __init__(self, R, names):
+    def __init__(self, R, names) -> None:
         """
         Initialize ``self``.
 
@@ -1477,7 +1480,7 @@ class ExteriorAlgebra(CliffordAlgebra):
         cat = HopfAlgebrasWithBasis(R).FiniteDimensional().Supercommutative().Supercocommutative()
         CliffordAlgebra.__init__(self, QuadraticForm(R, len(names)), names, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1488,7 +1491,7 @@ class ExteriorAlgebra(CliffordAlgebra):
         """
         return "The exterior algebra of rank {} over {}".format(self.ngens(), self.base_ring())
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         """
         Return a string representation of the basis element indexed by
         ``m``.
@@ -1544,7 +1547,7 @@ class ExteriorAlgebra(CliffordAlgebra):
         wedge = unicodedata.lookup('LOGICAL AND')
         return unicode_art(*[self.variable_names()[i] for i in m], sep=wedge)
 
-    def _latex_term(self, m):
+    def _latex_term(self, m) -> str:
         r"""
         Return a `\LaTeX` representation of the basis element indexed
         by ``m``.
@@ -2121,7 +2124,7 @@ class ExteriorAlgebraDifferential(ModuleMorphismByLinearity,
         from sage.sets.family import Family
         return super().__classcall__(cls, E, Family(d))
 
-    def __init__(self, E, s_coeff):
+    def __init__(self, E, s_coeff) -> None:
         """
         Initialize ``self``.
 
@@ -2292,7 +2295,7 @@ class ExteriorAlgebraBoundary(ExteriorAlgebraDifferential):
 
     - :wikipedia:`Exterior_algebra#Lie_algebra_homology`
     """
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         TESTS::
 
@@ -2535,7 +2538,7 @@ class ExteriorAlgebraCoboundary(ExteriorAlgebraDifferential):
 
     - :wikipedia:`Exterior_algebra#Differential_geometry`
     """
-    def __init__(self, E, s_coeff):
+    def __init__(self, E, s_coeff) -> None:
         """
         Initialize ``self``.
 
@@ -2563,7 +2566,7 @@ class ExteriorAlgebraCoboundary(ExteriorAlgebraDifferential):
                 self._cos_coeff[m] = self._cos_coeff.get(m, zero) + c * k
         ExteriorAlgebraDifferential.__init__(self, E, s_coeff)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         TESTS::
 
@@ -2730,7 +2733,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
         sage: xbar * ybar
         0
     """
-    def __init__(self, ring, gens, coerce=True, side='twosided'):
+    def __init__(self, ring, gens, coerce=True, side='twosided') -> None:
         """
         Initialize ``self``.
 
@@ -2812,7 +2815,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
         """
         return not self.reduce(f)
 
-    def __richcmp__(self, other, op):
+    def __richcmp__(self, other, op) -> bool:
         """
         Compare ``self`` and ``other``.
 

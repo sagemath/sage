@@ -852,7 +852,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         return sum(coeffs[i] * mons[i] for i in range(m))
 
     @cached_method
-    def is_crystallographic(self):
+    def is_crystallographic(self) -> bool:
         r"""
         Return ``True`` if ``self`` is crystallographic.
 
@@ -890,9 +890,10 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             sage: W.is_crystallographic()
             False
         """
-        return self.is_real() and all(t.to_matrix().base_ring() is QQ for t in self.simple_reflections())
+        return self.is_real() and all(t.to_matrix().base_ring() is QQ
+                                      for t in self.simple_reflections())
 
-    def number_of_irreducible_components(self):
+    def number_of_irreducible_components(self) -> int:
         r"""
         Return the number of irreducible components of ``self``.
 
@@ -908,7 +909,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         """
         return len(self._type)
 
-    def irreducible_components(self):
+    def irreducible_components(self) -> list:
         r"""
         Return a list containing the irreducible components of ``self``
         as finite reflection groups.

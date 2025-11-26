@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 from sage.misc.function_mangling cimport ArgumentFixer
 
 cpdef dict_key(o)
