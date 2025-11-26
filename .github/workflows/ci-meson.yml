@@ -22,7 +22,36 @@ jobs:
     name: Conda (${{ matrix.os }}, Python ${{ matrix.python }}, ${{ matrix.tests }}${{ matrix.editable && ', editable' || '' }})
     runs-on: ${{ matrix.os }}-latest
     env:
-      SEPARATELY_TESTED_FLAKY_FILES: "src/sage/libs/singular/function.pyx src/sage/rings/polynomial/plural.pyx"
+      # Some tests are flaky, so we run them separately with retries
+      # Tracked in: https://github.com/orgs/sagemath/projects/1
+      # https://github.com/sagemath/sage/issues/29528 -> src/sage/libs/singular/function.pyx
+      # https://github.com/sagemath/sage/issues/29528 -> src/sage/rings/polynomial/plural.pyx
+      # https://github.com/sagemath/sage/issues/41117 -> src/sage/rings/polynomial/polynomial_zmod_flint.pyx
+      # https://github.com/sagemath/sage/issues/41112 -> src/sage/sets/recursively_enumerated_set.pyx
+      # https://github.com/sagemath/sage/issues/41110 -> src/sage/data_structures/bounded_integer_sequences.pyx
+      # https://github.com/sagemath/sage/issues/41091 -> src/sage/modules/filtered_vector_space.py
+      # https://github.com/sagemath/sage/issues/41056 -> src/sage/rings/number_field/number_field_element_quadratic.pyx
+      # https://github.com/sagemath/sage/issues/41049 -> src/sage/matrix/matrix_integer_dense.pyx
+      # https://github.com/sagemath/sage/issues/41008 -> src/sage/graphs/generic_graph.py
+      # https://github.com/sagemath/sage/issues/40988 -> src/sage/rings/polynomial/multi_polynomial_libsingular.pyx
+      # https://github.com/sagemath/sage/issues/37298 -> src/sage/interfaces/gap.py
+      # https://github.com/sagemath/sage/issues/37295 -> src/sage/matrix/matrix_gap.pyx
+      # https://github.com/sagemath/sage/issues/33072 -> src/sage/matrix/matrix_gap.pyx
+      # https://github.com/sagemath/sage/issues/37293 -> src/sage/schemes/elliptic_curves/ell_rational_field.py
+      SEPARATELY_TESTED_FLAKY_FILES: >
+        src/sage/libs/singular/function.pyx
+        src/sage/rings/polynomial/plural.pyx
+        src/sage/rings/polynomial/polynomial_zmod_flint.pyx
+        src/sage/sets/recursively_enumerated_set.pyx
+        src/sage/data_structures/bounded_integer_sequences.pyx
+        src/sage/modules/filtered_vector_space.py
+        src/sage/rings/number_field/number_field_element_quadratic.pyx
+        src/sage/matrix/matrix_integer_dense.pyx
+        src/sage/graphs/generic_graph.py
+        src/sage/rings/polynomial/multi_polynomial_libsingular.pyx
+        src/sage/interfaces/gap.py
+        src/sage/matrix/matrix_gap.pyx
+        src/sage/schemes/elliptic_curves/ell_rational_field.py
 
     strategy:
       fail-fast: false
