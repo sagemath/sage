@@ -125,8 +125,6 @@ from .long_extras cimport *
 from .mag cimport *
 from .mpf_mat cimport *
 from .mpf_vec cimport *
-from .mpfr_mat cimport *
-from .mpfr_vec cimport *
 from .mpn_extras cimport *
 from .mpoly cimport *
 from .nf cimport *

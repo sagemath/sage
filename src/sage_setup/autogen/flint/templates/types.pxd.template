@@ -1164,12 +1164,6 @@ cdef extern from "flint_wrap.h":
     ctypedef mpf_mat_struct mpf_mat_t[1]
 
 
-    # flint/mpfr_mat.h
-    ctypedef struct mpfr_mat_struct:
-        pass
-    ctypedef mpfr_mat_struct mpfr_mat_t[1]
-
-
     # flint/gr.h
     ctypedef int (*gr_funcptr)()
 
