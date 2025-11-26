@@ -144,8 +144,6 @@
 #include <flint/hypgeom.h>
 #include <flint/long_extras.h>
 #include <flint/mag.h>
-#include <flint/mpfr_mat.h>
-#include <flint/mpfr_vec.h>
 #include <flint/mpn_extras.h>
 #include <flint/mpoly.h>
 #include <flint/nf.h>

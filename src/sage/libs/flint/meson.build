@@ -126,8 +126,6 @@ py.install_sources(
   'mag_macros.pxd',
   'mpf_mat.pxd',
   'mpf_vec.pxd',
-  'mpfr_mat.pxd',
-  'mpfr_vec.pxd',
   'mpn_extras.pxd',
   'mpoly.pxd',
   'nf.pxd',
