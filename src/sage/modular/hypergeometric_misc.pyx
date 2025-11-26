@@ -38,8 +38,8 @@ cpdef hgm_coeffs(long long p, unsigned int f,
     from sage.rings.padics.factory import Zp
 
     cdef int gl, j, k, v, gv
-    cdef long long i, l, q1, w, w1, w2, q2, r, r1
-    cdef bint flip, use_longlongs
+    cdef long long i, l, q1, w = 0, w1 = 0, w2, q2 = 0, r, r1
+    cdef bint flip, use_longlongs = False
 
     q1 = p ** f - 1
     gl = len(gamma)

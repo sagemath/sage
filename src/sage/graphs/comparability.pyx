@@ -818,7 +818,7 @@ def is_transitive(g, certificate=False):
     cdef bitset_t seen
     bitset_init(seen, n)
 
-    cdef uint32_t u, v
+    cdef uint32_t u, v = 0
     cdef int i
 
     for u in range(n):

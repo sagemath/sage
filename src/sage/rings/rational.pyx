@@ -4263,7 +4263,7 @@ cdef class int_to_Q(Morphism):
         """
 
         cdef Rational rat
-        cdef long a_long
+        cdef long a_long = 0
         cdef int err = 0
 
         rat = <Rational> Rational.__new__(Rational)

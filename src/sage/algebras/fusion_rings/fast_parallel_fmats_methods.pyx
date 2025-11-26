@@ -316,7 +316,7 @@ cdef get_reduced_pentagons(factory, tuple mp_params):
     # Pre-compute common parameters for speed
     cdef tuple basis = tuple(factory._FR.basis())
     # Handle both cyclotomic and orthogonal solution method
-    cdef bint must_zip_up
+    cdef bint must_zip_up = False
     for k, v in factory._fvars.items():
         must_zip_up = isinstance(v, tuple)
         break

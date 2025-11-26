@@ -115,7 +115,7 @@ cpdef fast_mandelbrot_plot(double x_center, double y_center,
 
     cdef:
         M, pixel, color_list
-        long i, j, col, row, level, iteration
+        long i, j, col, row, level, iteration = 0
         double x_corner, y_corner, step_size, x_coor, y_coor, new_x, new_y
 
     # Make sure image_width is positive

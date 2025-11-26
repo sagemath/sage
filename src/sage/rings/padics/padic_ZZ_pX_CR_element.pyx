@@ -291,7 +291,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         self.relprec = 0
         if empty:
             return
-        cdef long aprec, rprec, ctx_prec, ltmp
+        cdef long aprec = 0, rprec, ctx_prec, ltmp
         if relprec is not infinity and not isinstance(relprec, Integer):
             relprec = Integer(relprec)
         if (relprec is infinity) or (relprec > parent.precision_cap()):
@@ -2462,7 +2462,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         if self.ordp == 0:
             return self._ntl_rep(), Integer(0)
         cdef ntl_ZZ_pContext_class ctx
-        cdef long little_shift, ppow
+        cdef long little_shift = 0, ppow
         if self.ordp > 0:
             ctx = self.prime_pow.get_context_capdiv(self.ordp + self.relprec)
         else:
@@ -2979,7 +2979,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         else:
             v = self._new_c(rp)
         cdef pAdicZZpXCRElement u = self.unit_part()
-        cdef long goal
+        cdef long goal = 0
         if n is not None:
             goal = rp - n + self.ordp
         while u.relprec > 0:

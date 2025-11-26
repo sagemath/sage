@@ -452,8 +452,8 @@ cpdef list enhance_braid_move_chain(braid_move_chain, cartan_type):
         sage: enhanced_chain[7]
         ((3, 6), (-1, -1))
     """
-    cdef int i, j
-    cdef int k, pos, first, last
+    cdef int i = 0, j = 0
+    cdef int k = 0, pos, first = 0, last = 0
     cdef tuple cartan_sub_matrix
     cdef list output_list = []
     output_list.append( (None, None) )

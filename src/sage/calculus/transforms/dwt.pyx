@@ -142,6 +142,8 @@ cdef class DiscreteWaveletTransform(GSLDoubleArray):
         from sage.plot.point import point
 
         cdef int i
+        cdef int x_min = 0
+        cdef int x_max = 0
         cdef double x
         v = []
         if xmin is None:

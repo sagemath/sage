@@ -333,7 +333,7 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
     cdef OrbitPartition *orbits_of_subgroup
     cdef OrbitPartition *orbits_of_supergroup
     cdef int subgroup_primary_orbit_size = 0
-    cdef int minimal_in_primary_orbit
+    cdef int minimal_in_primary_orbit = 0
 
     cdef bitset_t *fixed_points_of_generators # i.e. fp
     cdef bitset_t *minimal_cell_reps_of_generators # i.e. mcr
@@ -347,8 +347,8 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
     cdef int *cells_to_refine_by
     cdef int *vertices_determining_current_stack
     cdef int *perm_stack
-    cdef StabilizerChain *group
-    cdef StabilizerChain *old_group
+    cdef StabilizerChain *group = NULL
+    cdef StabilizerChain *old_group = NULL
     cdef StabilizerChain *tmp_gp
 
     cdef int i, j, k, ell, b

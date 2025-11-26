@@ -122,7 +122,7 @@ cdef class KhuriMakdisi_base(object):
         """
         cdef Matrix mat
         cdef FreeModuleElement v
-        cdef Py_ssize_t n, c, r
+        cdef Py_ssize_t n, c, r = 0
 
         n = we.ncols()
         c = mu_mat.ncols() // n
@@ -153,7 +153,7 @@ cdef class KhuriMakdisi_base(object):
         """
         cdef Matrix mat, perp, vmu
         cdef FreeModuleElement v
-        cdef Py_ssize_t ne, r
+        cdef Py_ssize_t ne, r = 0
 
         ne = we.ncols()
 

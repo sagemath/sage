@@ -107,9 +107,9 @@ vertices vertices_lookup::manual_vertices_to_simplex(const simplex & S) const
   vertices result;
   simplex s=S;
   simplex b;
-  vertex i,j,l=0,k;
+  vertex j,l=0,k;
   for (k=1; k<d; k++) {
-    l++;  i=l;   j=1;
+    l++;  j=1;
     b=binomial(n-l,d-k);
     while (s>b && b>0) {
       j++;  l++;

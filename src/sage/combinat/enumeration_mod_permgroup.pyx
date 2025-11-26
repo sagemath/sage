@@ -72,7 +72,7 @@ cpdef int lex_cmp_partial(ClonableIntArray v1, ClonableIntArray v2, int step) no
         sage: lex_cmp_partial(IA([0,1,2,3]),IA([0,1,2,4]),4)
         -1
     """
-    cdef int i
+    cdef int i = 0
     if step < 0 or step > v1._len or step > v2._len:
         raise IndexError("list index out of range")
 
@@ -271,7 +271,7 @@ cpdef set orbit(list sgs, ClonableIntArray v):
         sage: sorted(orbit(sgs, IA([1,2,3,4])))
         [[1, 2, 3, 4], [2, 3, 4, 1], [3, 4, 1, 2], [4, 1, 2, 3]]
     """
-    cdef i,l
+    cdef i = 0, l = 0
     cdef set to_analyse, new_to_analyse
     cdef ClonableIntArray list_test, child
     cdef PermutationGroupElement x

@@ -256,7 +256,7 @@ cpdef _normalize_coordinates(list point, int prime, int len_points):
         sage: L
         [1, 2, 1]
     """
-    cdef int last_coefficient, coefficient, mod_inverse, val
+    cdef int last_coefficient = 0, coefficient, mod_inverse, val
 
     for coefficient in range(len_points):
         val = ((<int> point[coefficient]) + prime) % prime

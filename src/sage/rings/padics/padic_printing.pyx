@@ -1356,7 +1356,7 @@ cdef class pAdicPrinter_class(SageObject):
         """
         if max_terms == -1 or len(L) == 0:
             return list(L), False
-        cdef Py_ssize_t i, nonzero_index
+        cdef Py_ssize_t i, nonzero_index = 0
         cdef Py_ssize_t count = 0
         ans = []
         for i, c in enumerate(L):

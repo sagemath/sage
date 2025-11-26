@@ -1439,7 +1439,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         """
         cdef long ordp = self.valuation_c()
         cdef long rp = self.prime_pow.ram_prec_cap - ordp
-        cdef long goal
+        cdef long goal = 0
         if n is not None:
             goal = self.ram_prec_cap - n
         cdef pAdicZZpXFMElement v

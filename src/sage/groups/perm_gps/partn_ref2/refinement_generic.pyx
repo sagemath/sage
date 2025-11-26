@@ -721,7 +721,7 @@ cdef class PartitionRefinement_generic:
         `I`) and compute the `(I+J)`-semicanonical representative.
         """
         cdef bint loc_inner_group_changed, reset_allowance_best = False
-        cdef int i, j, best_end, best_ind
+        cdef int i, j, best_end = 0, best_ind = 0
 
         if self._is_candidate_initialized:
             allowance_best = self._allowance_best[self._nr_of_inner_min_unmin_calls]

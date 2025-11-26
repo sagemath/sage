@@ -2081,7 +2081,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         """
         cdef long ordp = self.valuation_c()
         cdef long rp = self.absprec - ordp
-        cdef long goal
+        cdef long goal = 0
         if n is not None:
             goal = self.absprec - n
         cdef pAdicZZpXCAElement v

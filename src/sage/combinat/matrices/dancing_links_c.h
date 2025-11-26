@@ -253,6 +253,8 @@ public:
         current_node = NULL;
         best_col = NULL;
         search_started = false;
+        root = NULL;
+        mode = SEARCH_FORWARD;
     }
 
     ~dancing_links()

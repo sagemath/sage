@@ -150,7 +150,7 @@ cdef class GenericBackend:
             42.0
         """
         cdef int i
-        cdef int value
+        cdef int value = 0
         if lower_bound is False:
             lower_bound = self.zero()
         if obj is None:

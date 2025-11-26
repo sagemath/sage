@@ -326,7 +326,7 @@ cdef int ZZ_pX_eis_shift_p(PowComputer_ZZ_pX self, ZZ_pX_c* x, ZZ_pX_c* a, long 
     cdef ZZ_pX_c highshift
     cdef ZZ_pX_c working, working2
     cdef ntl_ZZ_pContext_class c
-    cdef ZZ_pX_Modulus_c* m
+    cdef ZZ_pX_Modulus_c* m = NULL
     cdef long pshift = n / self.e
     cdef long eis_part = n % self.e
     cdef long two_shift = 1

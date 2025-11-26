@@ -1052,7 +1052,7 @@ def de_casteljau_intvec(Vector_integer_dense c, int c_bitsize, Rational x, int u
 
     cdef mpz_t num, den, diff, tmp, tmp2
 
-    cdef unsigned long num_ui, den_ui, diff_ui
+    cdef unsigned long num_ui = 0, den_ui = 0, diff_ui = 0
     cdef int num_fits_ui, den_fits_ui, diff_fits_ui
     cdef int den_is_pow2, den_log2
     cdef int num_less_diff

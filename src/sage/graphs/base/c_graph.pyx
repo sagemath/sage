@@ -3156,7 +3156,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         cdef FrozenBitset b_vertices
         cdef int n_vertices = len(vertices)
         cdef bint loops = other.loops()
-        cdef bint multiple_edges
+        cdef bint multiple_edges = False
         if modus == 0:
             multiple_edges = self.multiple_edges(None) and other.multiple_edges(None)
         elif 1 <= modus <= 2:
@@ -3893,7 +3893,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         # which defines the shortest path found
         # (of length shortest_path_length).
         cdef int meeting_vertex = -1
-        cdef double shortest_path_length
+        cdef double shortest_path_length = 0
         cdef double f_tmp
 
         if reduced_weight is not None:
@@ -4107,7 +4107,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         # which defines the shortest path found
         # (of length shortest_path_length).
         cdef int meeting_vertex = -1
-        cdef double shortest_path_length
+        cdef double shortest_path_length = 0
         cdef double f_tmp
 
         if weight_function is None:

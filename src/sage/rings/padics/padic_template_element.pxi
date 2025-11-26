@@ -799,7 +799,7 @@ cdef Integer exact_pow_helper(long *ansrelprec, long relprec, _right, PowCompute
     OUTPUT: an Integer congruent to the given exponent
     """
     cdef Integer right, p = prime_pow.prime
-    cdef long exp_val
+    cdef long exp_val = 0
     cdef bint isbase
     if isinstance(_right, int):
         _right = Integer(_right)

@@ -1111,8 +1111,8 @@ cdef class GLPKBackend(GenericBackend):
             1
         """
 
-        cdef int solve_status
-        cdef int solution_status
+        cdef int solve_status = 0
+        cdef int solution_status = 0
         global solve_status_msg
         global solution_status_msg
 

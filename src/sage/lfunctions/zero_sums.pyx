@@ -1154,9 +1154,9 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
         cdef double twopi = npi * 2
         cdef double eg = self._euler_gamma
 
-        cdef double t, u, w, y, z, expt, bound1, logp, logq
-        cdef double thetap, thetaq, sqrtp, sqrtq, p, q
-        cdef int ap, aq
+        cdef double t, u, w, y, z = 0, expt, bound1, logp = 0, logq = 0
+        cdef double thetap = 0, thetaq = 0, sqrtp = 0, sqrtq = 0, p = 0, q
+        cdef int ap = 0, aq
 
         cdef unsigned long n
         cdef double N_double = self._level
@@ -1439,9 +1439,9 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
         cdef double eg = self._euler_gamma
         cdef double N_double = self._level
 
-        cdef double t, u, w, y, z, expt, bound1, logp, logq
-        cdef double thetap, thetaq, sqrtp, sqrtq, p, q
-        cdef int ap, aq
+        cdef double t, u, w, y, z = 0, expt, bound1, logp = 0, logq = 0
+        cdef double thetap = 0, thetaq = 0, sqrtp = 0, sqrtq = 0, p = 0, q
+        cdef int ap = 0, aq
         cdef unsigned long n
 
         # Compute bounds and smooth part of sum

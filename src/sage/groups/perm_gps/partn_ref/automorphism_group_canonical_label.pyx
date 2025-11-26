@@ -450,15 +450,15 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
     """
     cdef PartitionStack *current_ps
     cdef PartitionStack *first_ps
-    cdef PartitionStack *label_ps
+    cdef PartitionStack *label_ps = NULL
     cdef int first_meets_current = -1
-    cdef int label_meets_current
+    cdef int label_meets_current = 0
     cdef int current_kids_are_same = 1
     cdef int first_kids_are_same
 
     cdef int *current_indicators
     cdef int *first_indicators
-    cdef int *label_indicators
+    cdef int *label_indicators = NULL
     cdef int first_and_current_indicator_same
     cdef int label_and_current_indicator_same = -1
     cdef int compared_current_and_label_indicators
@@ -467,7 +467,7 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
     cdef OrbitPartition *orbits_of_permutation
     cdef OrbitPartition *orbits_of_supergroup
     cdef int subgroup_primary_orbit_size = 0
-    cdef int minimal_in_primary_orbit
+    cdef int minimal_in_primary_orbit = 0
 
     cdef bitset_t *fixed_points_of_generators # i.e. fp
     cdef bitset_t *minimal_cell_reps_of_generators # i.e. mcr
@@ -482,7 +482,7 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
     cdef int *vertices_determining_current_stack
     cdef int *perm_stack
     cdef StabilizerChain *group = NULL
-    cdef StabilizerChain *old_group
+    cdef StabilizerChain *old_group = NULL
     cdef StabilizerChain *tmp_gp
 
     cdef int i, j, k, ell, b

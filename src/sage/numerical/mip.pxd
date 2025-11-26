@@ -1,7 +1,7 @@
 cdef extern from *:
-    cdef int BINARY = 1
-    cdef int REAL = -1
-    cdef int INTEGER = 0
+    const int BINARY = 1
+    const int REAL = -1
+    const int INTEGER = 0
 
 from sage.sets.family cimport FiniteFamily
 from sage.structure.sage_object cimport SageObject

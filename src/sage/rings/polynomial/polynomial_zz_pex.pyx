@@ -549,7 +549,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             ZZ_pEX_reverse(r.x, (<Polynomial_ZZ_pEX> self).x)
         return r
 
-    def inverse_series_trunc(self, prec):
+    cpdef Polynomial inverse_series_trunc(self, long prec):
         r"""
         Compute and return the inverse of ``self`` modulo `x^{prec}`.
 

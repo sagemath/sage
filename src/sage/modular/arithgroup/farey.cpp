@@ -452,7 +452,7 @@ void FareySymbol::init_pairing(const is_element_group* group) {
       break;
     } else {
       mpz_class A, B;
-      if( missing_pair+1 == pairing.size() ) {
+      if( static_cast<size_t>(missing_pair+1) == pairing.size() ) {
         A = a[missing_pair-1] + 1;
         B = b[missing_pair-1] + 0;
       } else {
@@ -494,7 +494,7 @@ void FareySymbol::check_pair(const is_element_group* group, const int i) {
   }
   if( pairing[i] == NO ) {
     for(size_t j=0; j<pairing.size(); j++) {
-      if( pairing[j] == NO and i != j ) {
+      if( pairing[j] == NO and static_cast<size_t>(i) != j ) {
         vector<int> p(pairing);
         p[i] = pairing_max+1;
         p[j] = pairing_max+1;
@@ -559,7 +559,7 @@ size_t FareySymbol::paired_side(const vector<int>& p, const size_t n) const {
     return n;
   } else if( p[n] > NO ) {
     vector<int>::const_iterator i = find(p.begin(), p.end(), p[n]);
-    if( i-p.begin() != n ) {
+    if( static_cast<size_t>(i-p.begin()) != n ) {
       return i-p.begin();
     } else {
       vector<int>::const_iterator j = find(i+1, p.end(), p[n]);
@@ -665,7 +665,7 @@ vector<int> FareySymbol::init_cusp_classes() const {
         i = J;
         continue;
       } else if( pairing[I] > NO ) {
-        size_t j;
+        size_t j = 0;
         for(size_t k=0; k<c.size(); k++) {
           if( pairing[k] == pairing[I] and k != I ) j = k;
         }
@@ -696,9 +696,9 @@ vector<int> FareySymbol::init_cusp_classes() const {
 vector<mpq_class> FareySymbol::init_cusps() const {
   // initialize cusps by identifying fractions using the cusp_class number
   vector<mpq_class> c;
-  for(int i=0; i<number_of_cusps(); i++) {
+  for(size_t i=0; i<static_cast<size_t>(number_of_cusps()); i++) {
     for(size_t j=0; j<cusp_classes.size(); j++) {
-      if( cusp_classes[j] == i and cusp_classes[j] != cusp_classes.back() ) {
+      if( cusp_classes[j] == static_cast<int>(i) and cusp_classes[j] != cusp_classes.back() ) {
         c.push_back(x[j]);
         break;
       }
@@ -756,10 +756,10 @@ size_t FareySymbol::level() const {
   A.push_back(1);
   B.push_back(0);
   vector<mpz_class> width;
-  for(size_t i=0; i<number_of_cusps(); i++) {
+  for(size_t i=0; i<static_cast<size_t>(number_of_cusps()); i++) {
     mpq_class cusp_width(0);
     for(size_t j=0; j<cusp_widths.size(); j++) {
-      if( cusp_classes[j] == i ) {
+      if( cusp_classes[j] == static_cast<int>(i) ) {
         cusp_width += cusp_widths[j];
       }
     }
@@ -911,7 +911,7 @@ bool FareySymbol::is_element(const SL2Z& M) const {
     // Is it a free pairing?
       if( pairing[k+1] > NO ) {
 	size_t s = paired_side(pairing, k+1);
-	if ( s == 0 and x[0] == 0 and beta.a()/beta.c() > beta.b()/beta.d() )
+	if ( s == 0 and x[0] == 0 and beta.a()/beta.c() > beta.b()/beta.d() ) {
 	  // paired with (0,infty) at the beginning?
 	  if( even ) {
 	    return true;
@@ -921,6 +921,7 @@ bool FareySymbol::is_element(const SL2Z& M) const {
 	    if ( beta == SL2Z::E ) return true;
 	    else return false;
 	  }
+	}
 
 	if( s == pairing.size() -1 and
 	    x.back() == 0  and
@@ -967,7 +968,6 @@ SL2Z FareySymbol::reduce_to_elementary_cusp(const mpq_class& q) const {
 }
 
 size_t FareySymbol::cusp_class(const mpq_class& q) const {
-  typedef vector<int>::const_iterator const_iterator;
   SL2Z M = FareySymbol::reduce_to_elementary_cusp(q);
   if( M.c()*q + M.d() == 0 ) return cusp_classes.back();
   mpq_class Q = M*q;
@@ -1047,10 +1047,10 @@ PyObject* FareySymbol::get_cusps() const {
 
 PyObject* FareySymbol::get_cusp_widths() const {
   vector<mpz_class> width;
-  for(size_t i=0; i<number_of_cusps(); i++) {
+  for(size_t i=0; i<static_cast<size_t>(number_of_cusps()); i++) {
     mpq_class cusp_width(0);
     for(size_t j=0; j<cusp_widths.size(); j++) {
-      if( cusp_classes[j] == i ) {
+      if( cusp_classes[j] == static_cast<int>(i) ) {
         cusp_width += cusp_widths[j];
       }
     }

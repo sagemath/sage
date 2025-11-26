@@ -1289,7 +1289,7 @@ cdef class Polynomial(CommutativePolynomial):
         cdef long result = 0 # store it in a c-int and just let the overflowing additions wrap
         cdef long result_mon
         cdef long c_hash
-        cdef long var_name_hash
+        cdef long var_name_hash = 0
         cdef int i
         for i from 0<= i <= self.degree():
             if i == 1:

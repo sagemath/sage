@@ -762,7 +762,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             ValueError: invalid string to initialize a permutation
         """
         cdef Py_ssize_t i=0, j
-        cdef int k, m
+        cdef int k = 0, m = 0
         cdef str c
         cdef list cycle
         cdef dict convert_dict = self._parent._domain_to_gap

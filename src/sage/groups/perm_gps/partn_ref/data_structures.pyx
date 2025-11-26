@@ -1769,7 +1769,7 @@ cdef int compute_relabeling(StabilizerChain *group, StabilizerChain *scratch_gro
     """
     Technically, compute the INVERSE of the relabeling
     """
-    cdef int i, j, x, y, m, n = group.degree, orbit_element
+    cdef int i, j, x, y = 0, m, n = group.degree, orbit_element
     cdef int *scratch = group.perm_scratch
     if SC_new_base_nomalloc(scratch_group, group, permutation, n):
         return 1

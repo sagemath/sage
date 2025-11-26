@@ -4573,8 +4573,8 @@ cpdef gauss_table(long long p, int f, int prec, bint use_longs):
     """
     from sage.rings.padics.factory import Zp, Qp
 
-    cdef int i, j, bd
-    cdef long long q, q1, q3, r, r1, r2, s1, s2, k
+    cdef int i, j = 0, bd
+    cdef long long q, q1, q3 = 0, r, r1, r2, s1 = 0, s2, k
     cdef array.array vv, ans1
 
     if (f == 1 and prec == 1):  # Shortcut for this key special case

@@ -830,7 +830,7 @@ cdef class FreeAlgebra_letterplace(Parent):
         """
         if not D:
             return self.zero()
-        cdef Py_ssize_t l
+        cdef Py_ssize_t l = 0
         for e in D:
             l = len(e)
             break

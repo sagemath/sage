@@ -247,7 +247,7 @@ public:
 
          to_return.distances = distances;
 
-         for (int i = 0; i < N; i++) {
+         for (v_index i = 0; i < N; i++) {
              to_return.predecessors.push_back(index[predecessors[i]]);
          }
 
@@ -274,7 +274,7 @@ public:
          }
 
          to_return.distances = distance;
-         for (int i = 0; i < N; i++) {
+         for (v_index i = 0; i < N; i++) {
              to_return.predecessors.push_back(index[predecessors[i]]);
          }
          return to_return;

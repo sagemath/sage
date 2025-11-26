@@ -673,9 +673,9 @@ cdef class GLPKGraphBackend():
         cdef glp_arc* a
         cdef int u
         cdef int v
-        cdef double cost
-        cdef double cap
-        cdef double low
+        cdef double cost = 0
+        cdef double cap = 0
+        cdef double low = 0
         cdef int isdirected = g.is_directed()
 
         for eu, ev, label in g.edges(sort=False):
@@ -936,7 +936,7 @@ cdef class GLPKGraphBackend():
         cdef glp_arc* a = vert_u.out
         cdef glp_arc* a2 = a
 
-        cdef double low, cap, cost, x
+        cdef double low = 0.0, cap = 0.0, cost = 0.0, x = 0.0
 
         if params is not None:
             if "low" in params:

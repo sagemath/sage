@@ -4,6 +4,12 @@
 
 #ifdef __cplusplus
 
+/* Suppress unused-function warnings since this header contains optional utility functions */
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
+#endif
+
 #include <iostream>
 #include <sstream>
 #include <gmp.h>
@@ -736,6 +742,10 @@ static void ZZ_pX_InvMod_newton_ram(struct ZZ_pX &x, const struct ZZ_pX &a, cons
     delete minusa;
     delete xn;
 }
+
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
 
 #endif  /* #ifdef __cplusplus */
 #endif  /* #ifndef  _SAGE_NTLWRAP_CPP */

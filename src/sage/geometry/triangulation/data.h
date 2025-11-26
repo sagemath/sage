@@ -39,7 +39,7 @@ class vertices: public std::set<vertex,std::less<vertex> >
   void set_dimensions(int N, int D);
   friend std::ostream & operator << (std::ostream &, const vertices &);
   friend bool operator==(const vertices &, const vertices &);
-  bool full_set() const { return this->size() == n; }
+  bool full_set() const { return this->size() == static_cast<size_t>(n); }
 };
 
 // tables used by vertices to make computation faster

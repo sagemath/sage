@@ -80,7 +80,7 @@ void triangulations::add_neighbours(const simplices & s)
 
 bool triangulations::have_more_triangulations()
 {
-  while (position != this->size()) {
+  while (position != static_cast<int>(this->size())) {
      // eat all non-star triangulations
     simplices triangulation((*this)[position]);
 

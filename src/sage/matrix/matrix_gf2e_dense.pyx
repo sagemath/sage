@@ -1468,7 +1468,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         from sage.matrix.matrix_space import MatrixSpace
 
         cdef Matrix_mod2_dense A
-        cdef int r,c
+        cdef int r = 0, c = 0
 
         r, c = self.nrows(), self.ncols()
         if r == 0 or c == 0:

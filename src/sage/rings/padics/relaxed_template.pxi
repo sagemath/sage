@@ -1474,7 +1474,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             raise ValueError("unit part of 0 not defined")
         return self >> val
 
-    def val_unit(self, halt=True):
+    cpdef val_unit(self, halt=True):
         r"""
         Return the valuation and the unit part of this element.
 

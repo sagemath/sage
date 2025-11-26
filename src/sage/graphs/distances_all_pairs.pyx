@@ -865,7 +865,7 @@ cdef uint32_t * c_eccentricity_DHV(short_digraph sd) except NULL:
     cdef uint32_t u, ecc_u
     cdef uint32_t antipode, ecc_antipode
     cdef uint32_t v, tmp
-    cdef size_t i, idx
+    cdef size_t i, idx = 0
     cdef bitset_t seen
     bitset_init(seen, n)
 
@@ -1592,7 +1592,7 @@ cdef uint32_t diameter_DHV(short_digraph g) noexcept:
     cdef uint32_t LB = 0
     cdef uint32_t UB = UINT32_MAX
     cdef uint32_t v, tmp
-    cdef size_t i, idx
+    cdef size_t i, idx = 0
     cdef bitset_t seen
     bitset_init(seen, n)
 
