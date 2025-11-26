@@ -86,7 +86,6 @@ AUTHORS:
 - Lorenz Panny (2024)
 """
 
-from sage.structure.richcmp import op_EQ
 from sage.misc.cachefunc import cached_method
 from sage.structure.sequence import Sequence
 

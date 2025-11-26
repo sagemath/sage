@@ -74,7 +74,6 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.rings.rational_field import RationalField
-from sage.rings.real_mpfi import RealIntervalField
 from sage.rings.real_mpfr import RealField, RR
 from sage.structure.coerce import py_scalar_to_element
 from sage.structure.element import Element, RingElement
