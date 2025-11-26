@@ -78,6 +78,7 @@ from __future__ import annotations
 
 from collections import Counter
 from itertools import count
+from warnings import warn
 
 from cypari2.gen import Gen as pari_gen
 
@@ -136,6 +137,9 @@ from sage.rings.number_field.number_field_element_quadratic import (
 from sage.rings.number_field.number_field_ideal import (
     NumberFieldFractionalIdeal,
     NumberFieldIdeal,
+)
+from sage.rings.number_field.class_group import (
+    RayClassGroup
 )
 from sage.rings.polynomial import polynomial_element
 from sage.rings.polynomial.polynomial_element import Polynomial
@@ -1741,7 +1745,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
                 if any(x.poldegree(v) > 0 for v in x.variables()):
                     var = self.absolute_polynomial().variable_name()
                     if check and self.pari_polynomial(var) != self.absolute_polynomial().monic():
-                        from warnings import warn
                         warn("interpreting PARI polynomial %s relative to the defining polynomial %s of the PARI number field"
                              % (x, self.pari_polynomial()))
                     beta = self._pari_absolute_structure()[2]

@@ -22,13 +22,10 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from cypari2.handle_error import PariError
-
 from sage.arith.functions import lcm
 from sage.groups.abelian_gps.dual_abelian_group import DualAbelianGroup_class
 from sage.groups.abelian_gps.dual_abelian_group_element import DualAbelianGroupElement
-from sage.lfunctions.dokchitser import Dokchitser
-from sage.lfunctions.pari import lfun_generic, LFunction
+from sage.lfunctions.pari import LFunction
 from sage.libs.pari import pari
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field import CyclotomicField
@@ -102,7 +99,8 @@ class HeckeCharacter(DualAbelianGroupElement):
             sage: chi = chi1 * chi2; chi
             1
             sage: chi.parent()
-            Group of finite order Hecke characters modulo (Fractional ideal (3)) * ∞_0 * ∞_1
+            Group of finite order Hecke characters modulo
+            (Fractional ideal (3)) * ∞_0 * ∞_1
         """
         if self.parent() is right.parent():
             return DualAbelianGroupElement._mul_(self, right)
@@ -195,10 +193,10 @@ class HeckeCharacter(DualAbelianGroupElement):
         """
         # When a newer version of pari is part of Sage, call
         # bnrisconductor instead.
-        # R = self.parent().group()
-        # bnr = R.pari_bnr()
-        # return bnr.bnrisconductor(self.modulus())  # not correct
-        return self.conductor() == self.modulus()
+        R = self.parent().group()
+        bnr = R.pari_bnr()
+        return bnr.bnrisconductor(self.modulus())  # not correct
+        # return self.conductor() == self.modulus()
 
     def primitive_character(self):
         """
@@ -471,7 +469,8 @@ class HeckeCharacterGroup(DualAbelianGroup_class, UniqueRepresentation):
             sage: F.<a> = NumberField(x^2 - 5)
             sage: mf = F.modulus(F.prime_above(5) * F.prime_above(29), [0,1])
             sage: H = HeckeCharacterGroup(mf); H
-            Group of finite order Hecke characters modulo (Fractional ideal (-11/2*a - 5/2)) * ∞_0 * ∞_1
+            Group of finite order Hecke characters modulo
+            (Fractional ideal (-11/2*a - 5/2)) * ∞_0 * ∞_1
         """
         return f'Group of finite order Hecke characters modulo {self.modulus()}'
 
@@ -509,7 +508,9 @@ class HeckeCharacterGroup(DualAbelianGroup_class, UniqueRepresentation):
 
         cf https://pari.math.u-bordeaux.fr/Events/PARI2024/talks/gchar.pdf
 
-        and https://pari.math.u-bordeaux.fr/dochtml/html/General_number_fields.html
+        and
+
+        https://pari.math.u-bordeaux.fr/dochtml/html/General_number_fields.html
 
         EXAMPLES::
 
@@ -544,16 +545,3 @@ class HeckeCharacterGroup(DualAbelianGroup_class, UniqueRepresentation):
                      if vals[i] != 1 else ZZ.zero()
                      for i in range(len(gens_orders))]
         return self.element_class(self, exponents)
-
-    # def _element_constructor_(self, *args, **kwds):
-    #    if isinstance(args[0], (str,  bytes)):
-    #        raise TypeError("wrong type to coerce into HeckeCharacterGroup")
-    #    try:
-    #        n = len(args[0])
-    #    except TypeError:
-    #        return DualAbelianGroup_class._element_constructor_(self, *args, **kwds)
-    #    gens_orders = self.gens_orders()
-    #    if n != len(gens_orders):
-    #        return DualAbelianGroup_class._element_constructor_(self, *args, **kwds)
-    #    exponents = [gens_orders[i].divide_knowing_divisible_by(args[0][i].multiplicative_order()) for i in range(n)]
-    #    return self.element_class(self, exponents)
