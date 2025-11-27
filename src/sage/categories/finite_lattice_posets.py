@@ -9,7 +9,7 @@ Finite lattice posets
 # *****************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
-from sage.categories.posets import Posets
+from sage.categories.lattice_posets import LatticePosets
 from sage.misc.cachefunc import cached_method
 
 
@@ -44,8 +44,7 @@ class FiniteLatticePosets(CategoryWithAxiom):
     @cached_method
     def extra_super_categories(self):
         r"""
-        Return a list of the (immediate) super categories of
-        ``self``, as per :meth:`Category.super_categories`.
+        Implement the fact that a finite lattice is a bounded poset.
 
         EXAMPLES::
 
@@ -54,7 +53,7 @@ class FiniteLatticePosets(CategoryWithAxiom):
              Category of finite posets,
              Category of bounded posets]
         """
-        return [Posets().Bounded()]
+        return [LatticePosets().Bounded()]
 
     class ParentMethods:
 
