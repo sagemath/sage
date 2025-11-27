@@ -21,7 +21,7 @@ class FiniteLatticePosets(CategoryWithAxiom):
     EXAMPLES::
 
         sage: FiniteLatticePosets()
-        Category of finite bounded lattice posets
+        Category of finite lattice posets
         sage: FiniteLatticePosets().super_categories()
         [Category of lattice posets,
          Category of finite posets,
