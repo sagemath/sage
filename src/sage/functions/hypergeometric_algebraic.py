@@ -158,6 +158,14 @@ class HypergeometricAlgebraic(Element):
         return s
 
     def _latex_(self):
+        r"""
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]+
+            sage: f = hypergeometric([1/3, 2/3], [1/2], x)
+            sage: f._latex_()
+            '\\,_{2} F_{1} \\left(\\begin{matrix} \\frac{1}{3},\\frac{2}{3}\\\\\\frac{1}{2}\\end{matrix}; x \\right)'
+        """
         if self._parameters is None:
             return "0"
         scalar = self._scalar
@@ -1330,6 +1338,23 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         raise NotImplementedError
 
     def is_algebraic(self):
+        # I am convinced that this is true, but strictly speaking we only have
+        # a statement for almost all primes in the literature.
+        r"""
+        Return whether this hypergeometric function is algebraic.
+
+        EXAMPLES::
+
+            sage: S.<x> = GF(19)
+            sage: f = hypergeometric([1/5, 2/5, 3/5, 1/11], [1/2, 1/7], x)
+            sage: f.is_algebraic()
+            True
+
+        ALGORITHM:
+
+        Every hypergeometric function that can be reduced modulo ``p`` is
+        algebraic modulo ``p``.
+        """
         return True
 
     def p_curvature(self):
@@ -1337,7 +1362,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         Return the matrix of the `p`-curvature of the associated differential
         operator, in the standard basis.
 
-        EXAMLES::
+        EXAMPLES::
 
             sage: S.<x> = GF(5)[]
             sage: f = hypergeometric ([1/9, 4/9, 5/9], [1/3, 1], x)
@@ -1373,6 +1398,22 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
 
     def p_curvature_corank(self):  # maybe p_curvature_rank is preferable?
         # TODO: check if it is also correct when the parameters are not balanced
+        r"""
+        Return the corant of the ``p``-curvature matrix.
+
+        EXAMPLES::
+
+            sage: S.<x> = GF(5)[]
+            sage: f = hypergeometric([1/9, 4/9, 5/9], [1/3, 1], x)
+            sage: f.p_curvature_corank()
+            2
+
+        ALGORITHM:
+
+        We use [CFV2025]_, Thm. 3.1.17 and the fact that the corank of the
+        p-curvature agrees with the number of solutions of the hypergeometric
+        differential equation.
+        """
         return self._parameters.q_interlacing_number(self._char)
 
     def dwork_relation(self):
@@ -1386,8 +1427,8 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
             sage: S.<x> = GF(3)[]
             sage: f = hypergeometric([7/8, 9/8, 11/8], [3/2, 7/4], x)
             sage: f.dwork_relation()
-            {hypergeometric((3/8, 5/8, 9/8), (1/2, 5/4), x): 1,
-             hypergeometric((1, 21/8, 25/8, 27/8), (3, 13/4, 7/2), x): 2*x^7}
+            {hypergeometric((1, 21/8, 25/8, 27/8), (3, 13/4, 7/2), x): 2*x^7,
+             hypergeometric((3/8, 5/8, 9/8), (1/2, 5/4), x): 1}
         """
         parameters = self._parameters
         if not parameters.is_balanced():
@@ -1514,7 +1555,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         EXAMPLES::
 
             sage: S.<x> = QQ[]
-            sage: f = hypergeom([1/5, 4/5], [1], x)
+            sage: f = hypergeometric([1/5, 4/5], [1], x)
             sage: g = f % 19
             sage: g.is_lucas()
             True

@@ -688,7 +688,7 @@ class HypergeometricParameters(SageObject):
             if q > bound:
                 valuation, position, _ = signature[0]
                 if drift > 2*thresold and all(signature[i][0] > valuation + thresold for i in range(1, n)):
-                    return ZZ(valuation), ZZ(position), r
+                    return QQ(valuation), ZZ(position), r
                 if growth == 0:
                     if count < order:
                         TM = TMr * TM
@@ -700,7 +700,7 @@ class HypergeometricParameters(SageObject):
                             return -infinity, None, r
                         valfinal = min(TM[0, j].lift() + signature[j][0] for j in range(n))
                     if valuation == valfinal:
-                        return ZZ(valuation), ZZ(position), r
+                        return QQ(valuation), ZZ(position), r
 
             # We update the values for the next r
             q = pq
