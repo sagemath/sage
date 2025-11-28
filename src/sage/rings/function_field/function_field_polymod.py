@@ -2461,8 +2461,6 @@ class FunctionField_integral(FunctionField_simple):
             (1, 1/x*y, 1/x^2*y^2, 1/x^3*y^3, 1/x^4*y^4)
         """
         from sage.libs.singular.function import lib, singular_function
-        from sage.matrix.constructor import matrix
-        from .hermite_form_polynomial import reversed_hermite_form
 
         k = self.constant_base_field()
         K = self.base_field()  # rational function field
