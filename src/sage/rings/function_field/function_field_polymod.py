@@ -2421,7 +2421,8 @@ class FunctionField_integral(FunctionField_simple):
     polynomial, which is integral over the maximal order of the base rational
     function field.
     """
-    def _maximal_order_basis(self):
+
+    def _maximal_order_basis(self) -> tuple[FunctionFieldElement]:
         """
         Return a basis of the maximal order of the function field.
 
@@ -2447,7 +2448,7 @@ class FunctionField_integral(FunctionField_simple):
             sage: R.<t> = PolynomialRing(K)
             sage: F.<y> = K.extension(t^4 + x^12*t^2 + x^18*t + x^21 + x^18)
             sage: F._maximal_order_basis()
-            [1, 1/x^4*y, 1/x^11*y^2 + 1/x^2, 1/x^15*y^3 + 1/x^6*y]
+            (1, 1/x^4*y, 1/x^11*y^2 + 1/x^2, 1/x^15*y^3 + 1/x^6*y)
 
         Test that computing maximal orders is reasonably fast::
 
@@ -2481,7 +2482,7 @@ class FunctionField_integral(FunctionField_simple):
 
                 singular_basis, s = integral_basis(g, 1, 'normal')
                 hom = S.hom([self.gen(), self(K.gen())])
-                return [self(hom(b) / hom(s)) for b in singular_basis]
+                return tuple(self(hom(b) / hom(s)) for b in singular_basis)
 
             from sage.env import SAGE_EXTCODE
             lib(SAGE_EXTCODE + '/singular/function_field/core.lib')
@@ -2549,8 +2550,7 @@ class FunctionField_integral(FunctionField_simple):
         _mat = matrix([[coeff.numerator() for coeff in l * v] for v in basis_V])
         reversed_hermite_form(_mat)
 
-        basis = [fr_V(v) / l for v in _mat if not v.is_zero()]
-        return basis
+        return tuple(fr_V(v) / l for v in _mat if not v.is_zero())
 
     @cached_method
     def equation_order(self):
