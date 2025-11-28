@@ -19,6 +19,7 @@ Function Fields: extension
 #                     2019      Brent Baccala
 #                     2022      Frédéric Chapoton
 #                     2022      Gonzalo Tornaría
+#                     2025      Vincent Macri <vincent.macri@ucalgary.ca>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
