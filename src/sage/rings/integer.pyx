@@ -5874,6 +5874,25 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         flag = self < 0 and proof
         return objtogen(self).qfbclassno(flag).sage()
 
+    def radical(self):
+        """
+        Return the radical of this integer, i.e., the product of its
+        prime divisors.
+
+        EXAMPLES::
+
+            sage: 0.radical()
+            0
+            sage: 10.radical()
+            10
+            sage: (-12).radical()
+            6
+        """
+        if self.is_zero():
+            return self
+
+        return self.factor().radical_value()
+
     def squarefree_part(self, long bound=-1):
         r"""
         Return the square free part of `x` (=``self``), i.e., the unique integer
