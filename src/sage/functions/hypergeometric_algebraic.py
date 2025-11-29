@@ -841,6 +841,16 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         params = self._parameters
         d = params.d
 
+        if not len(self.top()) == len(self.bottom())+1:
+            # sage: S.<x> = QQ[]
+            # sage: f = hypergeometric([1/4, 2/4, 3/4], [1/8], x)
+            # sage: f.valuation(31)
+            # 0
+            # sage: f.good_reduction_primes()
+            # Finite set of prime numbers: 3, 5, 7, 11, 13
+            raise NotImplementedError("Currently only implemented for nFn-1.")
+
+
         if not params.parenthesis_criterion(1):
             # Easy case:
             # the parenthesis criterion is not fulfilled for c=1
