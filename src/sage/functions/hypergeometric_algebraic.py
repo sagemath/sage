@@ -1337,6 +1337,55 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
     def polynomial(self):
         raise NotImplementedError
 
+    @coerce_binop
+    def is_equal_as_series(self, other):
+        r"""
+        TESTS::
+
+            sage: S.<x> = GF(13)[]
+            sage: h1 = hypergeometric([1/12, 1/6], [1/3], x)
+            sage: h2 = hypergeometric([1/12, 1/4], [1/2], x)
+            sage: h1.is_equal_as_series(h2)
+            True
+        """
+        if self == other:
+            return True
+        H = self.parent()
+        p = self._p
+        queued = [(self, other)]
+        checked = {}
+        index = 0
+        while index < len(queued):
+            left, right = queued[index]
+            index += 1
+            if (left, right) in checked or (right, left) in checked:
+                continue
+            checked[(left, right)] = True
+            lpa = left._parameters
+            rpa = right._parameters
+            criticals = [(1-pa) % p for pa in lpa.top + lpa.bottom + rpa.top + rpa.bottom]
+            criticals.sort()
+            criticals.append(p)
+            for i in range(len(criticals) - 1):
+                ei = criticals[i]
+                ej = criticals[i+1]
+                if ei == ej:
+                    continue
+                ldpa = lpa.shift(ei).dwork_image(p)
+                _, lpos, _ = ldpa.valuation_position(p)
+                rdpa = rpa.shift(ei).dwork_image(p)
+                _, rpos, _ = rdpa.valuation_position(p)
+                if lpos != rpos:
+                    return False
+                if left[ei + lpos*p] == 0 and right[ei + rpos*p] == 0:
+                    continue
+                if any(left[r + lpos*p] != right[r + rpos*p] for r in range(ei, ej)):
+                    return False
+                lsec = H(ldpa.shift(lpos))
+                rsec = H(rdpa.shift(rpos))
+                queued.append((lsec, rsec))
+        return True
+
     def is_algebraic(self):
         # I am convinced that this is true, but strictly speaking we only have
         # a statement for almost all primes in the literature.
@@ -1545,9 +1594,6 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
                 return insert_zeroes(Ore(ker), order)
 
     def is_lucas(self):
-        # Is it clear that this is correct? Why do we know that f itself
-        # satisifies the p-Lucas equation, and not just any other root
-        # of the annihilating polynomial?
         r"""
         Return whether this hypergeometric function has the ``p``-Lucas
         property.
@@ -1562,18 +1608,16 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
             sage: h = f % 17
             sage: h.is_lucas()
             False
+
+        ::
+
+            sage: S.<x> = GF(11)[]
+            sage: h = hypergeometric([1/10, 5/24], [5/12], x)
+            sage: h.is_lucas()
+            True
         """
-        p = self._char
-        if self._parameters.frobenius_order(p) > 1:
-            # TODO: check this
-            return False
-        S = self.parent().polynomial_ring()
-        K = S.fraction_field()
-        Ore = OrePolynomialRing(K, K.frobenius_endomorphism(), names='F')
-        Z = Ore(self.annihilating_ore_polynomial())
-        Ap = self.power_series(p).polynomial()
-        F = Ap * Ore.gen() - 1
-        return (Z % F).is_zero()
+        return all(P.degree() < self._p and self.is_equal_as_series(h)
+                   for h, P in self.dwork_relation().items())
 
 
 # Parent
