@@ -161,7 +161,7 @@ class HypergeometricAlgebraic(Element):
         r"""
         EXAMPLES::
 
-            sage: S.<x> = QQ[]+
+            sage: S.<x> = QQ[]
             sage: f = hypergeometric([1/3, 2/3], [1/2], x)
             sage: f._latex_()
             '\\,_{2} F_{1} \\left(\\begin{matrix} \\frac{1}{3},\\frac{2}{3}\\\\\\frac{1}{2}\\end{matrix}; x \\right)'
@@ -1392,17 +1392,15 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         r"""
         Return whether this hypergeometric function is algebraic.
 
+        This method always returns ``True`` since every hypergeometric
+        function in characteristic `p` is algebraic.
+
         EXAMPLES::
 
-            sage: S.<x> = GF(19)
+            sage: S.<x> = GF(13)[]
             sage: f = hypergeometric([1/5, 2/5, 3/5, 1/11], [1/2, 1/7], x)
             sage: f.is_algebraic()
             True
-
-        ALGORITHM:
-
-        Every hypergeometric function that can be reduced modulo ``p`` is
-        algebraic modulo ``p``.
         """
         return True
 
