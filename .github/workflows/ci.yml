@@ -3,18 +3,18 @@ name: CI Linux
 on:
   push:
     tags:
-      - '*'
+      - "*"
   pull_request:
     paths:
-      - '**.build'
-      - 'uv.lock'
-      - 'subprojects/**'
-      - '.github/workflows/ci.yml'
+      - "**.build"
+      - "uv.lock"
+      - "subprojects/**"
+      - ".github/workflows/ci.yml"
   workflow_dispatch:
     # Allow to run manually
 
 jobs:
-  build:
+  linux:
     name: Build and Test
     runs-on: ubuntu-latest
     strategy:
@@ -107,16 +107,87 @@ jobs:
         id: clear-container-name
         if: failure() || success()
         run: |
-            # Output the container name, but with ":" and "/" replaced by "-"
-            # This is needed to avoid issues with the upload-artifact action
-            CONTAINER_NAME=$(echo "${{ matrix.container }}" | tr ':/' '--')
-            echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_OUTPUT
+          # Output the container name, but with ":" and "/" replaced by "-"
+          # This is needed to avoid issues with the upload-artifact action
+          CONTAINER_NAME=$(echo "${{ matrix.container }}" | tr ':/' '--')
+          echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_OUTPUT
 
       - name: Upload log
         uses: actions/upload-artifact@v4.5.0
         if: failure() || success()
         with:
           name: ${{ steps.clear-container-name.outputs.CONTAINER_NAME }}-log
+          path: |
+            build/cp313/meson-logs/
+            build/cp313/meson-info/
+
+  mingw:
+    name: Build and Test (Mingw)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6.7.0
+
+      - name: Set up Python
+        run: |
+          uv python install
+          uv venv
+          source .venv/Scripts/activate
+          echo PATH=$PATH >> $GITHUB_ENV
+
+      - name: Install dependencies
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            base-devel
+            mingw-w64-ucrt-x86_64-toolchain
+            mingw-w64-ucrt-x86_64-ninja
+            mingw-w64-ucrt-x86_64-gmp
+            mingw-w64-ucrt-x86_64-openblas
+            mingw-w64-ucrt-x86_64-m4ri
+            mingw-w64-ucrt-x86_64-flint
+            mingw-w64-ucrt-x86_64-mpfi
+            mingw-w64-ucrt-x86_64-gsl
+            mingw-w64-ucrt-x86_64-libgd
+            mingw-w64-ucrt-x86_64-gsl
+            mingw-w64-ucrt-x86_64-libgd
+            mingw-w64-ucrt-x86_64-ntl
+            mingw-w64-ucrt-x86_64-boost
+            mingw-w64-ucrt-x86_64-nauty
+            mingw-w64-ucrt-x86_64-libhomfly
+            mingw-w64-ucrt-x86_64-symmetrica
+            mingw-w64-ucrt-x86_64-glpk
+            mingw-w64-ucrt-x86_64-gc
+          path-type: inherit
+
+      - name: Build
+        run: |
+          # Install build dependencies manually as workaround for https://github.com/astral-sh/uv/issues/1516
+          uv pip install \
+            meson-python \
+            "cysignals >=1.11.2, != 1.12.0" \
+            "cython >=3.0, != 3.0.3, < 3.1.0" \
+            "gmpy2 >=2.1.5" \
+            memory_allocator \
+            "numpy >=1.25" \
+            jinja2 \
+            setuptools
+          uv sync --frozen --inexact --no-build-isolation -v --no-editable --config-settings=builddir=builddir
+
+      - name: Test
+        run: |
+          uv run --frozen ./sage -t --all -p4 || true
+
+      - name: Upload log
+        uses: actions/upload-artifact@v4.5.0
+        if: failure() || success()
+        with:
+          name: mingw-log
           path: |
             build/cp313/meson-logs/
             build/cp313/meson-info/
