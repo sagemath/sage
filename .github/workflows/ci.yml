@@ -135,7 +135,7 @@ jobs:
         run: |
           uv python install
           uv venv
-          source .venv/Scripts/activate
+          .venv\Scripts\activate
           echo PATH=$PATH >> $GITHUB_ENV
 
       - name: Install dependencies
