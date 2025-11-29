@@ -25,8 +25,7 @@ from sage.misc.latex import latex
 from sage.misc.latex import latex_variable_name
 
 from sage.misc.misc_c import prod
-from sage.misc.functional import log
-from sage.functions.other import floor, ceil
+from sage.functions.other import floor
 from sage.functions.hypergeometric import hypergeometric
 from sage.arith.misc import gcd
 from sage.matrix.constructor import matrix
@@ -1482,9 +1481,7 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
             raise ValueError("the hypergeometric function must be a pFq with q = p-1")
         p = self._char
         H = self.parent()
-        F = H.base_ring()
         S = H.polynomial_ring()
-        coeffs = self._coeffs
         pas = parameters.top + parameters.bottom
         criticals = [(1-pa) % p for pa in pas]
         criticals.sort()
@@ -1511,13 +1508,13 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
         # minimal Ore polynomial annihilating self?
         # Probably not :-(
         r"""
-        Return an Ore polynomaial in the Frobenius morphism, that annihilates
-        this hypergeometric function.
+        Return an Ore polynomaial in the Frobenius morphism, that
+        annihilates this hypergeometric function.
 
         INPUT:
 
-        - ``var`` -- a string (default: ``Frob``), name of the varaiable
-        representing the Frobenius morphism.
+        - ``var`` -- a string (default: ``Frob``), name of the variable
+          representing the Frobenius morphism.
 
         EXAMPLES::
 
@@ -1525,11 +1522,24 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
             sage: f = hypergeometric([1/3, 2/3], [1/2], x)
             sage: f.annihilating_ore_polynomial()
             (4*x^10 + 2*x^5 + 4)*Frob^2 + (4*x^3 + 4*x^2 + 1)*Frob + x^2
-            sage: ps = f.power_series(100)
-            sage: (4*x^10 + 2*x^5 + 4)*ps^(5^2) + (4*x^3 + 4*x^2 + 1)*ps^5 + x^2*ps
-            O(x^100)
+            sage: s = f.power_series(1000)
+            sage: (4*x^10 + 2*x^5 + 4)*s^(5^2) + (4*x^3 + 4*x^2 + 1)*s^5 + x^2*s
+            O(x^1000)
 
-        ALGORITHM::
+        There is no guarantee that the returned Ore polynomial is minimal.
+        As an illustration, in the next example, the method outputs a Ore
+        polynomial of degree `2` while `f` is already solution of a Frobenius
+        equation of degree `1`::
+
+            sage: S.<x> = GF(11)[]
+            sage: f = hypergeometric([1/10, 5/24], [5/12], x)
+            sage: f.annihilating_ore_polynomial()
+            (8*x^12 + 6*x^11 + 6*x + 10)*Frob^2 + 1
+            sage: s = f.power_series(1000)
+            sage: s == (1 + 5*x)*s^11
+            True
+
+        ALGORITHM:
 
         We follow the method described in [CFV2025]_, Section 3.2.3, that
         also explain why such a polynomial exists.
