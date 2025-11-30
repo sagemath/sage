@@ -191,7 +191,7 @@ foreach name, pyx : extension_data
   elif name == 'real_double_element_gsl'
     deps += [gsl]
   elif name == 'real_mpfi'
-    deps += [mpfi]
+    deps += [mpfi, mpfr]
   elif name == 'real_mpfr'
     deps += [gmpy2, mpfr]
   elif name == 'tate_algebra_element'
