@@ -924,7 +924,7 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
 
         INPUT:
 
-        - ``include_infinity`` -- Boolean (default: ``True``)
+        - ``include_infinity`` -- a boolean (default: ``True``)
 
         EXAMPLES:
 
