@@ -18,7 +18,8 @@ AUTHOR:
 # ***************************************************************************
 
 from cpython.object cimport PyObject_RichCompare
-from libc.math cimport log, sqrt, exp, isnormal, isfinite, M_PI
+from libc.math cimport log, sqrt, exp, isnormal, isfinite
+from sage.arith.constants cimport M_PI
 cdef double sqrt2pi = sqrt(2*M_PI)
 from cysignals.signals cimport sig_on, sig_off
 
