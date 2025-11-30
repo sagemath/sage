@@ -79,7 +79,12 @@ foreach prog : nauty_progs
     )
   endif
   if nauty_check.found()
-    nauty_bins_prefix = nauty_check.full_path().replace(prog, '')
+    nauty_bins_prefix = nauty_check.full_path().replace(prog + '.EXE', '').replace(
+      prog,
+      '',
+    ).strip(
+      '\\/',
+    )
   endif
 endforeach
 conf_data.set('SAGE_NAUTY_BINS_PREFIX', nauty_bins_prefix)
