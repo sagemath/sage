@@ -414,7 +414,7 @@ class DegreeSequences:
         yield from init(self._n)
 
 cdef class _DegreeSequenceEnumerator:
-    r"""
+    """
     Internal enumerator class for degree sequences.
 
     This class manages the memory and state for enumerating all degree
@@ -439,7 +439,7 @@ cdef class _DegreeSequenceEnumerator:
     """
 
     def __cinit__(self, int n):
-        r"""
+        """
         Allocate memory for the degree sequence enumerator.
 
         This method allocates an array of `n+1` unsigned chars to store
@@ -462,7 +462,7 @@ cdef class _DegreeSequenceEnumerator:
         self.seq[0] = 1
 
     def __dealloc__(self):
-        r"""
+        """
         Deallocate the memory used by the enumerator.
 
         This method frees the memory allocated for the ``seq`` array
