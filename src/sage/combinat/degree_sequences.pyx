@@ -413,17 +413,67 @@ class DegreeSequences:
         """
         yield from init(self._n)
 
-cdef class DegreeSequenceEnumerator:
-    cdef int N
-    cdef unsigned char * seq
+cdef class _DegreeSequenceEnumerator:
+    r"""
+    Internal enumerator class for degree sequences.
+
+    This class manages the memory and state for enumerating all degree
+    sequences of a given length using the algorithm described in [RCES1994]_.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.degree_sequences import _DegreeSequenceEnumerator
+        sage: e = _DegreeSequenceEnumerator(4)
+        sage: list(e.enum(1, 0))
+        [(0, 0, 0, 0),
+         (1, 1, 0, 0),
+         (2, 1, 1, 0),
+         (3, 1, 1, 1),
+         (1, 1, 1, 1),
+         (2, 2, 1, 1),
+         (2, 2, 2, 0),
+         (3, 2, 2, 1),
+         (2, 2, 2, 2),
+         (3, 3, 2, 2),
+         (3, 3, 3, 3)]
+    """
 
     def __cinit__(self, int n):
+        r"""
+        Allocate memory for the degree sequence enumerator.
+
+        This method allocates an array of `n+1` unsigned chars to store
+        the count of vertices at each degree level. The array is
+        zero-initialized, and ``seq[0]`` is set to 1 to represent the
+        initial state with one vertex of degree 0.
+
+        INPUT:
+
+        - ``n`` -- positive integer; the number of vertices
+
+        TESTS::
+
+            sage: from sage.combinat.degree_sequences import _DegreeSequenceEnumerator
+            sage: e = _DegreeSequenceEnumerator(2)
+        """
         self.seq = NULL
         self.N = n
         self.seq = <unsigned char *>check_calloc(n + 1, sizeof(unsigned char))
         self.seq[0] = 1
 
     def __dealloc__(self):
+        r"""
+        Deallocate the memory used by the enumerator.
+
+        This method frees the memory allocated for the ``seq`` array
+        when the enumerator object is garbage collected.
+
+        TESTS::
+
+            sage: from sage.combinat.degree_sequences import _DegreeSequenceEnumerator
+            sage: e = _DegreeSequenceEnumerator(3)
+            sage: del e
+        """
         if self.seq != NULL:
             sig_free(self.seq)
             self.seq = NULL
@@ -583,8 +633,6 @@ def init(int n):
         yield (0,)
         return
 
-    cdef DegreeSequenceEnumerator enumerator = DegreeSequenceEnumerator(n)
-    try:
-        yield from enumerator.enum(1, 0)
-    finally:
-        enumerator = None
+    cdef _DegreeSequenceEnumerator enumerator = _DegreeSequenceEnumerator(n)
+
+    yield from enumerator.enum(1, 0)
