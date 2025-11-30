@@ -833,65 +833,48 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
 
         TESTS::
 
-            sage: h = hypergeometric([1/5, 2/5, 3/5], [1/2, 1/7, 1/11], x)
-            sage: h.good_reduction_primes()
+            sage: f = hypergeometric([1/5, 2/5, 3/5], [1/2, 1/7, 1/11], x)
+            sage: f.good_reduction_primes()
             Finite set of prime numbers: 2, 7, 11
+
+        ::
+
+            sage: g = hypergeometric([1/4, 1/2, 3/4], [1/8], x)
+            sage: g.good_reduction_primes()
+            Set of prime numbers congruent to 3, 5, 7 modulo 8: 3, 5, 7, 11, ...
+            sage: (73*g).good_reduction_primes()
+            Set of prime numbers congruent to 3, 5, 7 modulo 8 with 73 included: 3, 5, 7, 11, ...
         """
+        scalar = self._scalar
+        if scalar == 0:
+            return Primes()
         params = self._parameters
         d = params.d
-
-        if not len(self.top()) == len(self.bottom())+1:
-            # sage: S.<x> = QQ[]
-            # sage: f = hypergeometric([1/4, 2/4, 3/4], [1/8], x)
-            # sage: f.valuation(31)
-            # 0
-            # sage: f.good_reduction_primes()
-            # Finite set of prime numbers: 3, 5, 7, 11, 13
-            raise NotImplementedError("Currently only implemented for nFn-1.")
-
-
-        if not params.parenthesis_criterion(1):
-            # Easy case:
-            # the parenthesis criterion is not fulfilled for c=1
-            goods = {}
-
-        else:
-
-            # We check the parenthesis criterion for other c
-            # and derive congruence classes with good reduction
-            cs = [c for c in range(d) if d.gcd(c) == 1]
-            goods = {c: None for c in cs}
-            goods[1] = True
-            for c in cs:
-                if goods[c] is not None:
-                    continue
-                cc = c
-                goods[c] = True
-                while cc != 1:
-                    if goods[cc] is False or not params.parenthesis_criterion(cc):
-                        goods[c] = False
-                        break
-                    cc = (cc * c) % d
-                if goods[c]:
-                    cc = c
-                    while cc != 1:
-                        goods[cc] = True
-                        cc = (cc * c) % d
-
-        # We treat exceptional primes
         bound = params.bound
+
         exceptions = {}
         for p in Primes():
             if p > bound:
                 break
-            val = self.valuation(p)
-            if val >= 0:
-                exceptions[p] = True
-            elif val < 0 and goods.get(p % d, False):
-                exceptions[p] = False
+            val, _, _ = params.valuation_position(p)
+            exceptions[p] = (val + scalar.valuation(p) >= 0)
 
-        goods = [c for c, v in goods.items() if v]
-        return Primes(modulus=d, classes=goods, exceptions=exceptions)
+        classes = []
+        F = None
+        for c in range(bound, bound + d):
+            if d.gcd(c) > 1:
+                continue
+            val, _, _ = params.valuation_position(c)
+            if val >= 0:
+                classes.append(c % d)
+            if val is not -infinity:
+                if F is None:
+                    F = scalar.factor()
+                for p, mult in F:
+                    if p > bound and (p-c) % d == 0:
+                        exceptions[p] = (val + mult >= 0)
+
+        return Primes(modulus=d, classes=classes, exceptions=exceptions)
 
     def is_algebraic(self):
         r"""
