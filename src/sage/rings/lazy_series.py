@@ -3970,7 +3970,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
 
         try:
             sqrt_unit = unit_part.sqrt()
-            
+
             if root:
                 if v == 0:
                     return True, sqrt_unit
