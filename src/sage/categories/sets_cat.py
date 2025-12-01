@@ -1888,6 +1888,21 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
     from sage.categories.facade_sets import FacadeSets as Facade
 
     class Infinite(CategoryWithAxiom):
+        class SubcategoryMethods:
+
+            def Finite(self):
+                """
+                Incompatible axiom.
+
+                EXAMPLES::
+
+                    sage: C = NN.category()
+                    sage: C.Finite()
+                    Traceback (most recent call last):
+                    ...
+                    TypeError: incompatible axioms: finite and infinite
+                """
+                raise TypeError("incompatible axioms: finite and infinite")
 
         class ParentMethods:
 
