@@ -657,7 +657,7 @@ class FileFeature(Feature):
 
 class Executable(FileFeature):
     r"""
-    A feature describing an executable in the ``PATH``.
+    A feature describing an executable.
 
     In an installation of Sage with ``SAGE_LOCAL`` different from ``SAGE_VENV``, the
     executable is searched first in ``SAGE_VENV/bin``, then in ``SAGE_LOCAL/bin``,
@@ -680,7 +680,9 @@ class Executable(FileFeature):
         sage: Executable(name='does-not-exist', executable='does-not-exist-xxxxyxyyxyy').is_present()
         FeatureTestResult('does-not-exist', False)
     """
-    def __init__(self, name, executable, **kwds):
+    executable: Path
+
+    def __init__(self, name: str, executable: Path | str, **kwds) -> None:
         r"""
         TESTS::
 
@@ -689,9 +691,9 @@ class Executable(FileFeature):
             True
         """
         Feature.__init__(self, name, **kwds)
-        self.executable = executable
+        self.executable = Path(executable)
 
-    def _is_present(self):
+    def _is_present(self) -> FeatureTestResult:
         r"""
         Test whether the executable is on the current PATH and functional.
 
@@ -708,7 +710,7 @@ class Executable(FileFeature):
             return result
         return self.is_functional()
 
-    def is_functional(self):
+    def is_functional(self) -> FeatureTestResult:
         r"""
         Return whether an executable in the path is functional.
 
@@ -744,22 +746,31 @@ class Executable(FileFeature):
             sage.features.FeatureNotPresentError: does-not-exist is not available.
             Executable 'does-not-exist-xxxxyxyyxyy' not found on PATH.
         """
-        if SAGE_LOCAL:
-            if Path(SAGE_VENV).resolve() != Path(SAGE_LOCAL).resolve():
-                # As sage.env currently gives SAGE_LOCAL a fallback value from SAGE_VENV,
-                # SAGE_LOCAL is never unset.  So we only use it if it differs from SAGE_VENV.
-                search_path = ':'.join([os.path.join(SAGE_VENV, 'bin'),
-                                        os.path.join(SAGE_LOCAL, 'bin')])
-                path = shutil.which(self.executable, path=search_path)
-                if path is not None:
-                    return path
+        if self.executable.is_absolute() and self.executable.exists():
+            return str(self.executable.resolve())
+
+        if (
+            SAGE_LOCAL
+            and SAGE_VENV
+            and Path(SAGE_VENV).resolve() != Path(SAGE_LOCAL).resolve()
+        ):
+            # As sage.env currently gives SAGE_LOCAL a fallback value from SAGE_VENV,
+            # SAGE_LOCAL is never unset. So we only use it if it differs from SAGE_VENV.
+            search_paths = os.pathsep.join(
+                [os.path.join(SAGE_VENV, "bin"), os.path.join(SAGE_LOCAL, "bin")]
+            )
+            path = shutil.which(self.executable, path=search_paths)
+            if path is not None:
+                return path
         # Now look up in the regular PATH.
         path = shutil.which(self.executable)
         if path is not None:
             return path
-        raise FeatureNotPresentError(self,
-                                     reason="Executable {executable!r} not found on PATH.".format(executable=self.executable),
-                                     resolution=self.resolution())
+        raise FeatureNotPresentError(
+            self,
+            reason=f"Executable '{str(self.executable)}' not found on PATH.",
+            resolution=self.resolution(),
+        )
 
 
 class StaticFile(FileFeature):

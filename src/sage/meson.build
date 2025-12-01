@@ -83,7 +83,7 @@ foreach prog : nauty_progs
       prog,
       '',
     ).strip(
-      '\\/',
+      '\\',
     )
   endif
 endforeach
