@@ -383,6 +383,7 @@ __doc__ += """
 __append_to_doc(
     ["BalancedTree",
      "FibonacciTree",
+     "Caterpillar",
      "RandomLobster",
      "RandomTree",
      "RandomTreePowerlaw",
@@ -2880,6 +2881,7 @@ class GraphGenerators:
     BalancedTree = staticmethod(gen_trees.BalancedTree)
     FibonacciTree = staticmethod(gen_trees.FibonacciTree)
     nauty_gentreeg = staticmethod(gen_trees.nauty_gentreeg)
+    Caterpillar = staticmethod(gen_trees.Caterpillar)
     RandomLobster = staticmethod(gen_trees.RandomLobster)
     RandomTreePowerlaw = staticmethod(gen_trees.RandomTreePowerlaw)
     RandomTree = staticmethod(gen_trees.RandomTree)
