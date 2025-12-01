@@ -36,7 +36,6 @@ classifiers = [
   "Operating System :: MacOS :: MacOS X",
   "Operating System :: POSIX",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: Implementation :: CPython",
@@ -71,9 +70,6 @@ dependencies = [
   'scipy >=1.11',
   'sphinx >=6.2, <9',
   'sympy >=1.6, <2.0',
-  # According to https://github.com/python/typing_extensions/blob/main/CHANGELOG.md,
-  # version 4.4.0 adds another Python 3.11 typing backport
-  'typing_extensions >= 4.4.0; python_version<"3.11"',
   # TODO: Remove this once the migration to meson is complete
   'pkgconfig',
   'traitlets',
@@ -82,7 +78,7 @@ description = "Sage: Open Source Mathematics Software: Standard Python Library"
 dynamic = ["version"]
 license = { text = "GNU General Public License (GPL) v2 or later" }
 name = "sagemath"
-requires-python = ">=3.11, <3.14"
+requires-python = ">=3.12, <3.14"
 urls = { Homepage = "https://www.sagemath.org" }
 
 [project.optional-dependencies]
@@ -237,8 +233,8 @@ test = ["coverage", "pytest", "pytest-xdist"]
 [tool.ruff]
 # https://docs.astral.sh/ruff/configuration
 
-# Python 3.11 is the minimum supported version
-target-version = "py311"
+# Python 3.12 is the minimum supported version
+target-version = "py312"
 
 [tool.ruff.lint]
 ignore = [
