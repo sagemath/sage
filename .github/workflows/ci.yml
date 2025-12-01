@@ -27,8 +27,8 @@ jobs:
           - debian:forky
           - ghcr.io/void-linux/void-glibc-full
           - archlinux
-          #- ubuntu:22.04 - fails due to issue with cypari2
-          #- ubuntu:24.04 - fails due to issue with cypari2
+          #- ubuntu:22.04 - gap is outdated there (only 4.11)
+          - ubuntu:24.04
           - ubuntu:25.04
     container:
       image: ${{ matrix.container }}
@@ -46,6 +46,10 @@ jobs:
             # The archlinux container is configured to not install docs by default
             # but we need the maxima help to be in place
             sed -i '/^NoExtract/d' /etc/pacman.conf
+          fi
+          if [ "${{ matrix.container }}" = "ubuntu:22.04" ]; then
+            apt-get update
+            apt-get install -y git
           fi
 
       - name: Checkout code
