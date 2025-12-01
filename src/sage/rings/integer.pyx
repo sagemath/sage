@@ -207,6 +207,9 @@ new_gen_from_integer = None
 cdef extern from *:
     int unlikely(int) nogil  # Defined by Cython
 
+cdef extern from "Python.h":
+    void Py_SET_REFCNT(PyObject*, Py_ssize_t) nogil
+
 cdef object numpy_long_interface = {'typestr': '=i4' if sizeof(long) == 4 else '=i8'}
 cdef object numpy_int64_interface = {'typestr': '=i8'}
 cdef object numpy_object_interface = {'typestr': '|O'}
@@ -7724,7 +7727,7 @@ cdef PyObject* fast_tp_new(type t, args, kwds) except NULL:
     # Objects from the pool have reference count zero, so this
     # needs to be set in this case.
 
-    new.ob_refcnt = 1
+    Py_SET_REFCNT(<PyObject*>new, 1)
 
     return new
 
