@@ -1,11 +1,8 @@
 r"""
 Cartan types
 
-.. TODO::
-
-   Why does sphinx complain if I use sections here?
-
 Introduction
+============
 
 Loosely speaking, Dynkin diagrams (or equivalently Cartan matrices)
 are graphs which are used to classify root systems, Coxeter and Weyl
@@ -227,7 +224,8 @@ Note that backward edges have been automatically added::
     sage: g.edges(sort=True)                                                            # needs sage.graphs
     [(1, 2, 2), (1, 3, 1), (2, 1, 1), (2, 3, 1), (3, 1, 1), (3, 2, 1)]
 
-.. rubric:: Reducible Cartan types
+Reducible Cartan types
+======================
 
 Reducible Cartan types can be specified by passing a sequence
 or list of irreducible Cartan types::
@@ -246,7 +244,8 @@ or using the following short hand notation::
     sage: CartanType("A2","B2") == CartanType("A2xB2")
     True
 
-.. rubric:: Degenerate cases
+Degenerate cases
+================
 
 When possible, type `I_n` is automatically converted to the isomorphic
 crystallographic Cartan types (any reason not to do so?)::
@@ -275,7 +274,8 @@ Therefore, the Cartan types are considered as distinct::
     sage: CartanType(['D',3])
     ['D', 3]
 
-.. rubric:: Affine Cartan types
+Affine Cartan types
+===================
 
 For affine types, we use the usual conventions for affine Coxeter
 groups: each affine type is either untwisted (that is arise from the
@@ -390,7 +390,8 @@ Additionally one can set the notation option to use Kac's notation::
     E6^2
     sage: CartanType.options['notation'] = 'BC'
 
-.. rubric:: Infinite Cartan types
+Infinite Cartan types
+=====================
 
 There are minimal implementations of the Cartan types `A_{\infty}` and
 `A_{+\infty}`.  In sage `oo` is the same as `+Infinity`, so `NN` and `ZZ` are
@@ -414,7 +415,8 @@ There are also the following shorthands::
     sage: CartanType("A+oo")
     ['A', NN]
 
-.. rubric:: Abstract classes for Cartan types
+Abstract classes for Cartan types
+=================================
 
 - :class:`CartanType_abstract`
 - :class:`CartanType_crystallographic`
@@ -428,6 +430,7 @@ There are also the following shorthands::
 - :ref:`sage.combinat.root_system.type_relabel`
 
 Concrete classes for Cartan types
+=================================
 
 - :class:`CartanType_standard`
 - :class:`CartanType_standard_finite`
@@ -435,6 +438,7 @@ Concrete classes for Cartan types
 - :class:`CartanType_standard_untwisted_affine`
 
 Type specific data
+==================
 
 The data essentially consists of a description of the Dynkin/Coxeter
 diagram and, when relevant, of the natural embedding of the root
@@ -500,38 +504,39 @@ from sage.sets.family import Family
 # CartanTypeFactory. Is there a better/more standard way to do it?
 
 class CartanTypeFactory(SageObject):
+    """
+    Construct a Cartan type object.
+
+    INPUT:
+
+    - ``[letter, rank]`` -- letter is one of 'A', 'B', 'C', 'D', 'E', 'F', 'G'
+      and rank is an integer or a pair of integers
+
+    - ``[letter, rank, twist]`` -- letter is one of 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'BC'
+      and rank and twist are integers
+
+    - ``str`` -- string
+
+    - ``object`` -- a Cartan type, or an object with a Cartan type method
+
+    EXAMPLES:
+
+    We construct the Cartan type `D_4`::
+
+        sage: d4 = CartanType(['D',4])
+        sage: d4
+        ['D', 4]
+
+    or, for short::
+
+        sage: CartanType("D4")
+        ['D', 4]
+
+    .. SEEALSO:: :func:`~sage.combinat.root_system.cartan_type.CartanType`, :mod:`sage.combinat.root_system.cartan_type`
+    """
 
     def __call__(self, *args):
         """
-        Construct a Cartan type object.
-
-        INPUT:
-
-        - ``[letter, rank]`` -- letter is one of 'A', 'B', 'C', 'D', 'E', 'F', 'G'
-          and rank is an integer or a pair of integers
-
-        - ``[letter, rank, twist]`` -- letter is one of 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'BC'
-          and rank and twist are integers
-
-        - ``str`` -- string
-
-        - ``object`` -- a Cartan type, or an object with a Cartan type method
-
-        EXAMPLES:
-
-        We construct the Cartan type `D_4`::
-
-            sage: d4 = CartanType(['D',4])
-            sage: d4
-            ['D', 4]
-
-        or, for short::
-
-            sage: CartanType("D4")
-            ['D', 4]
-
-        .. SEEALSO:: :func:`~sage.combinat.root_system.cartan_type.CartanType`
-
         TESTS:
 
         Check that this is compatible with :class:`CartanTypeFolded`::
@@ -972,7 +977,9 @@ class CartanTypeFactory(SageObject):
 
 
 CartanType = CartanTypeFactory()
-CartanType.__doc__ = __doc__
+"""
+See :class:`CartanTypeFactory`.
+"""
 
 
 class CartanType_abstract:
