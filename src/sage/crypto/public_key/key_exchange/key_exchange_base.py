@@ -1,5 +1,14 @@
 r"""
-Base class for key exchange schemes.
+Key Exchange Schemes
+
+This module contains base classes for key exchange schemes. The classes defined
+in this module cannot be initialized directly. It is the responsibility of child
+classes to implement specific key exchange schemes.
+
+A key exchange protocol establishes a shared secret value between two parties,
+Alice and Bob. Either party is able to initiate the key exchange, in the sense
+that either party can compute the shared secret using only their own private key
+and the other party's public key.
 
 AUTHORS:
 
@@ -24,18 +33,13 @@ from sage.structure.sage_object import SageObject
 
 class KeyExchangeBase(SageObject, ABC):
     r"""
-    An Base class for Public Key Exchange Schemes.
+    A base class for key exchange schemes.
 
-    Implementors of this class must give implementations
-    of the following methods
-    - ``alice_secret_key(self)``
-    - ``bob_secret_key(self)``
-    - ``alice_public_key(self, alice_secret_key)``
-    - ``bob_public_key(self, bob_secret_key)``
-    - ``alice_compute_shared_secret(self, alice_secret_key, bob_public_key)``
-    - ``bob_compute_shared_secret(self, bob_secret_key, alice_public_key)``
+    Implementers of this class must implement all abstract methods
+    defined in :meth:`KeyExchangeBase`.
+
     If all `alice` methods are the same as `bob` methods,
-    then the `CommutativeKeyExchange` might be eaiser to implement.
+    then the :class:`CommutativeKeyExchangeBase` might be easier to implement.
     """
 
     @abstractmethod
@@ -179,6 +183,12 @@ class CommutativeKeyExchangeBase(KeyExchangeBase):
     A base class for key exchange schemes such as Diffie-Hellman where Alice
     and Bob perform the same computations for generating public/secret keys and
     the shared secret key.
+
+    Implementers of this class only need to implement the abstract methods
+    defined in :class:`CommutativeKeyExchangeBase` and do not need to implement
+    method defined in :class:`KeyExchangeBase`. This class is for convenience
+    to reduce code duplication when implementing key exchange schemes where
+    Alice and Bob perform the same calculations. 
     """
 
     @abstractmethod
@@ -194,6 +204,7 @@ class CommutativeKeyExchangeBase(KeyExchangeBase):
         Generate a public key for the secret key that you have chosen.
 
         INPUT:
+
             - ``secret_key``: A secret key that has been chosen beforehand
         """
         raise NotImplementedError
@@ -204,6 +215,7 @@ class CommutativeKeyExchangeBase(KeyExchangeBase):
         Generate the computed shared secret.
 
         INPUT:
+
             - ``secret_key``: A secret key that has been chosen beforehand
             - ``public_key``: A public key that has been sent to this party through
                 an insecure channel

@@ -21,7 +21,7 @@ from sage.misc.prandom import randint
 from sage.rings.finite_rings.finite_field_constructor import GF
 
 
-class FiniteFieldDH(CommutativeKeyExchangeBase):
+class FiniteFieldDiffieHellman(CommutativeKeyExchangeBase):
     def __init__(self, p, generator):
         self._field = GF(p, impl='modn')
         self.p = p
