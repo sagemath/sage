@@ -144,8 +144,10 @@
 #include <flint/hypgeom.h>
 #include <flint/long_extras.h>
 #include <flint/mag.h>
+#if __FLINT_RELEASE < __FLINT_RELEASE_NUM(3,4,0)
 #include <flint/mpfr_mat.h>
 #include <flint/mpfr_vec.h>
+#endif
 #include <flint/mpn_extras.h>
 #include <flint/mpoly.h>
 #include <flint/nf.h>

@@ -77,8 +77,9 @@ import subprocess
 import sys
 import time
 import warnings
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator, Literal
+from typing import Literal
 
 from . import build_options
 from .build_options import BuildOptions
