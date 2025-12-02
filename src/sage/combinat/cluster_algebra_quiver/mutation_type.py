@@ -33,7 +33,7 @@ from sage.combinat.combination import Combinations
 from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMutationType
 
 
-def is_mutation_finite(M, nr_of_checks=None) -> tuple[bool, None | list[int]]:
+def is_mutation_finite(M, nr_of_checks=None) -> tuple[bool, list[int] | None]:
     r"""
     Use a non-deterministic method by random mutations in various directions.
 
