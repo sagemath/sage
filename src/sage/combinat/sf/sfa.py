@@ -3601,6 +3601,9 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: s = SymmetricFunctions(T).s()
             sage: s[2](5)
             15*B[] # B[]
+
+        Fixed :issue:`41257`::
+
             sage: s[[]](tensor([p[1], s[1]]))
             p[] # s[]
 
