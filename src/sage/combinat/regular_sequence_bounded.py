@@ -392,12 +392,11 @@ def make_positive(matrices) -> list:
     def do(mat):
         if is_non_negative(mat):
             return mat
-        elif is_non_negative(-mat):
+        if is_non_negative(-mat):
             return -mat
-        else:
-            raise ValueError('There is a matrix which is neither non-negative nor non-positive.')
+        raise ValueError('There is a matrix which is neither non-negative nor non-positive.')
 
-    return list(do(mat) for mat in matrices)
+    return [do(mat) for mat in matrices]
 
 
 def regular_sequence_is_bounded(S):
@@ -521,8 +520,8 @@ def regular_sequence_is_bounded(S):
     if not has_bounded_matrix_powers(matrices):
         return False
 
-    matricesProd = list(ell * em for ell in matrices for em in matrices
-                        if ell != em)
+    matricesProd = [ell * em for ell in matrices for em in matrices
+                    if ell != em]
     if not has_bounded_matrix_powers(matricesProd):
         return False
 

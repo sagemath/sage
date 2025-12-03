@@ -54,8 +54,8 @@ cdef inline void mpz_add_si(mpz_t a, mpz_t b, long x) noexcept:
     if x >= 0:
         mpz_add_ui(a, b, x)
     else:
-        # careful: overflow when negating INT_MIN
-        mpz_sub_ui(a, b, <unsigned long>(-x))
+        # careful: overflow when negating LONG_MIN
+        mpz_sub_ui(a, b, -<unsigned long>x)
 
 cdef inline mpzi(mpz_t n):
     return mpz_get_pyintlong(n)

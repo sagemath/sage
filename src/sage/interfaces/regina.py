@@ -259,7 +259,7 @@ class Regina(ExtraTabCompletion, Interface):
             for e in AlgorithmExt:
                 d[e.name] = e
             # set up the globals
-            D = {k: v for k, v in d.items()}
+            D = dict(d)
             D[self._namespace.__name__] = self._namespace
             D[self.name()] = regina
             self._regina_globals = D

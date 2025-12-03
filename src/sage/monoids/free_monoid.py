@@ -271,7 +271,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
 
         raise TypeError("argument x (= %s) is of the wrong type" % x)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         return isinstance(x, FreeMonoidElement) and x.parent() == self
 
     def gen(self, i=0):

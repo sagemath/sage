@@ -1,5 +1,6 @@
-
-"""Utilities for interfacing with the standard library's atexit module."""
+"""
+Utilities for interfacing with the standard library's atexit module.
+"""
 
 # ****************************************************************************
 #       Copyright (C) 2017 Erik M. Bray <erik.bray@lri.fr>

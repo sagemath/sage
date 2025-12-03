@@ -33,7 +33,7 @@ class FpTElement:
     def __call__(self, *args: Any, **kwds: Any) -> 'FpTElement':
         ...
 
-    def subs(self, in_dict: dict = None, *args: Any, **kwds: Any) -> 'FpTElement':
+    def subs(self, in_dict: dict | None = None, *args: Any, **kwds: Any) -> 'FpTElement':
         ...
 
     def valuation(self, v: Any) -> int:
@@ -105,7 +105,7 @@ class FpT_iter:
     cur: FpTElement
     g: Any
 
-    def __init__(self, parent: Any, degree: int = None, start: FpTElement = None) -> None:
+    def __init__(self, parent: Any, degree: int | None = None, start: FpTElement = None) -> None:
         ...
 
     def __cinit__(self, parent: Any, *args: Any, **kwds: Any) -> None:

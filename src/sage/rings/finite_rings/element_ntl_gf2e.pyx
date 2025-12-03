@@ -144,7 +144,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         TESTS::
 
-            sage: k.<a> = GF(2^8, impl='ntl')
+            sage: k.<a> = GF(2^8, implementation="ntl")
         """
         self._parent = <FiniteField?>parent
         self._zero_element = self._new()
@@ -262,10 +262,10 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         We can coerce from PARI finite field implementations::
 
-            sage: K.<a> = GF(2^19, impl='ntl')
+            sage: K.<a> = GF(2^19, implementation="ntl")
             sage: a^20
             a^6 + a^3 + a^2 + a
-            sage: M.<c> = GF(2^19, impl='pari_ffelt')
+            sage: M.<c> = GF(2^19, implementation="pari_ffelt")
             sage: K(c^20)
             a^6 + a^3 + a^2 + a
         """
@@ -501,7 +501,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         EXAMPLES::
 
-            sage: k.<a> = GF(2^8, impl='ntl') # indirect doctest
+            sage: k.<a> = GF(2^8, implementation="ntl") # indirect doctest
         """
         if parent is None:
             return
@@ -998,7 +998,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         EXAMPLES::
 
-            sage: k.<a> = GF(2^8, impl='ntl')
+            sage: k.<a> = GF(2^8, implementation="ntl")
             sage: b = a^3 + a
             sage: b.minpoly()
             x^4 + x^3 + x^2 + x + 1

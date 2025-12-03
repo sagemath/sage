@@ -375,7 +375,7 @@ class Simplex(SageObject):
         TypeError: unhashable type: 'list'
     """
 
-    def __init__(self, X):
+    def __init__(self, X) -> None:
         """
         Define a simplex.  See :class:`Simplex` for full documentation.
 
@@ -446,7 +446,7 @@ class Simplex(SageObject):
         """
         return self.__set.issubset(other.__set)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` iff ``x`` is a vertex of this simplex.
 
@@ -693,10 +693,10 @@ class Simplex(SageObject):
             sage: s.alexander_whitney(2)
             [(1, (0, 1, 3), (3, 4))]
         """
-        return [(ZZ.one(), Simplex(self.tuple()[:dim+1]),
+        return [(ZZ.one(), Simplex(self.tuple()[:dim + 1]),
                  Simplex(self.tuple()[dim:]))]
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return ``True`` iff this simplex is the same as ``other``: that
         is, if the vertices of the two are the same, even with a
@@ -721,7 +721,7 @@ class Simplex(SageObject):
             return False
         return set(self) == set(other)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` iff this simplex is not equal to ``other``.
 
@@ -738,7 +738,7 @@ class Simplex(SageObject):
         """
         return not self == other
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         """
         Return ``True`` iff the sorted tuple for this simplex is less than
         that for ``other``.
@@ -786,7 +786,7 @@ class Simplex(SageObject):
         except TypeError:
             return sorted(map(str, self)) < sorted(map(str, other))
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Hash value for this simplex.  This computes the hash value of
         the Python frozenset of the underlying tuple, since this is
@@ -962,7 +962,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                  name_check=False,
                  is_mutable=True,
                  is_immutable=False,
-                 category=None):
+                 category=None) -> None:
         """
         Define a simplicial complex.  See ``SimplicialComplex`` for more
         documentation.
@@ -1146,7 +1146,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         # bigraded_betti_numbers(base_ring=base_ring)
         self._bbn_all_computed = set()
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Compute the hash value of ``self``.
 
@@ -1173,7 +1173,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             raise ValueError("this simplicial complex must be immutable; call set_immutable()")
         return hash(frozenset(self._facets))
 
-    def __eq__(self, right):
+    def __eq__(self, right) -> bool:
         """
         Two simplicial complexes are equal iff their vertex sets are
         equal and their sets of facets are equal.
@@ -1189,7 +1189,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         return isinstance(right, SimplicialComplex) and set(self._facets) == set(right._facets)
 
-    def __ne__(self, right):
+    def __ne__(self, right) -> bool:
         """
         Return ``True`` if ``self`` and ``right`` are not equal.
 
@@ -1256,7 +1256,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         except TypeError:
             return self.facets()[0]
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is a simplex which is contained in this complex.
 

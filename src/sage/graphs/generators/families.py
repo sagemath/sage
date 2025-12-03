@@ -3131,7 +3131,7 @@ def SierpinskiGasketGraph(n):
             resu += [(a, ab, ac), (ab, b, bc), (ac, bc, c)]
         return resu
 
-    tri_list = [list(vector(QQ, u) for u in [(0, 0), (0, 1), (1, 0)])]
+    tri_list = [[vector(QQ, u) for u in [(0, 0), (0, 1), (1, 0)]]]
     for k in range(n - 1):
         tri_list = next_step(tri_list)
     dg = Graph()
