@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Maximize available disk space
-        uses: jlumbroso/free-disk-space@main
+        uses: jlumbroso/free-disk-space@v1.3.1
         with:
           # Remove pre-installed packages like Docker, Android, .NET, etc.
           # We only keep the basic essentials (like compilers, etc.)
