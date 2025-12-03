@@ -629,9 +629,9 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
         TESTS::
 
             sage: L.<x,y> = LieAlgebra(QQ, abelian=True)
-            sage: L._coerce_map_from_(L.module())
-            <bound method ...from_vector of Abelian Lie algebra on 2 generators (x, y) over Rational Field>
-            sage: cm = L._coerce_map_from_(FreeModule(ZZ, 2))
+            sage: L.has_coerce_map_from(L.module())
+            True
+            sage: cm = L.coerce_map_from(FreeModule(ZZ, 2))
             sage: cm.domain()
             Ambient free module of rank 2 over the principal ideal domain Integer Ring
             sage: cm.codomain()
