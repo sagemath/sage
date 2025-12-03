@@ -95,7 +95,7 @@ class ChainComplexMorphism(Morphism):
     """
     An element of this class is a morphism of chain complexes.
     """
-    def __init__(self, matrices, C, D, check=True):
+    def __init__(self, matrices, C, D, check=True) -> None:
         """
         Create a morphism from a dictionary of matrices.
 
@@ -515,7 +515,7 @@ class ChainComplexMorphism(Morphism):
         """
         return self + (-x)
 
-    def __eq__(self, x):
+    def __eq__(self, x) -> bool:
         """
         Return ``True`` if and only if ``self == x``.
 
@@ -581,7 +581,7 @@ class ChainComplexMorphism(Morphism):
         m = self.to_matrix()
         return m.rank() == m.nrows()
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         """
         Return ``True`` if this map is injective.
 
@@ -604,7 +604,7 @@ class ChainComplexMorphism(Morphism):
         """
         return self.to_matrix().right_nullity() == 0
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         TESTS::
 
@@ -616,7 +616,7 @@ class ChainComplexMorphism(Morphism):
         """
         return hash(self.domain()) ^ hash(self.codomain()) ^ hash(tuple(self._matrix_dictionary.items()))
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         EXAMPLES::
 
