@@ -86,19 +86,19 @@ class FiniteField_givaro(FiniteField):
 
     Three different representations are possible::
 
-        sage: FiniteField(9, 'a', impl='givaro', repr='poly').gen()
+        sage: FiniteField(9, 'a', implementation='givaro', repr='poly').gen()
         a
-        sage: FiniteField(9, 'a', impl='givaro', repr='int').gen()
+        sage: FiniteField(9, 'a', implementation='givaro', repr='int').gen()
         3
-        sage: FiniteField(9, 'a', impl='givaro', repr='log').gen()
+        sage: FiniteField(9, 'a', implementation='givaro', repr='log').gen()
         1
 
     For prime fields, the default modulus is the polynomial `x - 1`,
     but you can ask for a different modulus::
 
-        sage: GF(1009, impl='givaro').modulus()
+        sage: GF(1009, implementation='givaro').modulus()
         x + 1008
-        sage: GF(1009, impl='givaro', modulus='conway').modulus()
+        sage: GF(1009, implementation='givaro', modulus='conway').modulus()
         x + 998
     """
     def __init__(self, q, name='a', modulus=None, repr='poly', cache=False):
@@ -179,6 +179,10 @@ class FiniteField_givaro(FiniteField):
 
             sage: GF(3^4,'a').degree()
             4
+
+        .. SEEALSO::
+
+            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.absolute_degree`
         """
         return Integer(self._cache.exponent())
 
@@ -279,7 +283,7 @@ class FiniteField_givaro(FiniteField):
         the polynomial at the field's generator::
 
             sage: R.<x> = QQ[]
-            sage: k.<a> = FiniteField(5^2, 'a', impl='givaro')
+            sage: k.<a> = FiniteField(5^2, 'a', implementation='givaro')
             sage: k(R(2/3))
             4
             sage: k(x^2)
@@ -292,7 +296,7 @@ class FiniteField_givaro(FiniteField):
             sage: k(x^25)
             a
 
-            sage: Q.<q> = FiniteField(5^3, 'q', impl='givaro')
+            sage: Q.<q> = FiniteField(5^3, 'q', implementation='givaro')
             sage: L = GF(5)
             sage: LL.<xx> = L[]
             sage: Q(xx^2 + 2*xx + 4)
@@ -327,22 +331,22 @@ class FiniteField_givaro(FiniteField):
 
         We can coerce from PARI finite field implementations::
 
-            sage: K.<a> = GF(3^10, impl='givaro')
+            sage: K.<a> = GF(3^10, implementation="givaro")
             sage: a^20
             2*a^9 + 2*a^8 + a^7 + 2*a^5 + 2*a^4 + 2*a^3 + 1
-            sage: M.<c> = GF(3^10, impl='pari_ffelt')
+            sage: M.<c> = GF(3^10, implementation="pari_ffelt")
             sage: K(c^20)
             2*a^9 + 2*a^8 + a^7 + 2*a^5 + 2*a^4 + 2*a^3 + 1
 
         GAP elements need to be finite field elements::
 
             sage: x = gap('Z(13)')
-            sage: F = FiniteField(13, impl='givaro')
+            sage: F = FiniteField(13, implementation='givaro')
             sage: F(x)
             2
             sage: F(gap('0*Z(13)'))
             0
-            sage: F = FiniteField(13^2, 'a', impl='givaro')
+            sage: F = FiniteField(13^2, 'a', implementation='givaro')
             sage: x = gap('Z(13)')
             sage: F(x)
             2
@@ -356,8 +360,8 @@ class FiniteField_givaro(FiniteField):
             sage: k(48771/1225)
             28
 
-            sage: F9 = FiniteField(9, impl='givaro', prefix='a')
-            sage: F81 = FiniteField(81, impl='givaro', prefix='a')
+            sage: F9 = FiniteField(9, implementation='givaro', prefix='a')
+            sage: F81 = FiniteField(81, implementation='givaro', prefix='a')
             sage: F81(F9.gen())
             2*a4^3 + 2*a4^2 + 1
         """
@@ -392,7 +396,7 @@ class FiniteField_givaro(FiniteField):
             Traceback (most recent call last):
             ...
             IndexError: only one generator
-            sage: F = FiniteField(31, impl='givaro')
+            sage: F = FiniteField(31, implementation='givaro')
             sage: F.gen()
             1
         """
