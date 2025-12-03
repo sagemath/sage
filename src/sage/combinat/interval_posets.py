@@ -30,7 +30,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from collections.abc import Iterator
 
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -58,6 +57,10 @@ from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.graphs.digraph import DiGraph
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 lazy_import('sage.combinat.dyck_word', 'DyckWords')
 
@@ -752,7 +755,7 @@ class TamariIntervalPoset(Element,
                 root = i
         return children
 
-    def increasing_parent(self, v) -> None | int:
+    def increasing_parent(self, v) -> int | None:
         r"""
         Return the vertex parent of ``v`` in the initial forest of ``self``.
 
@@ -888,7 +891,7 @@ class TamariIntervalPoset(Element,
                 root = i
         return children
 
-    def decreasing_parent(self, v) -> None | int:
+    def decreasing_parent(self, v) -> int | None:
         r"""
         Return the vertex parent of ``v`` in the final forest of ``self``.
 
@@ -2566,7 +2569,7 @@ class TamariIntervalPoset(Element,
                                       extract_tree(cx, cy, t_up, common))
                 for cx, cy in common]
 
-    def decomposition_to_triple(self) -> None | tuple[TIP, TIP, int]:
+    def decomposition_to_triple(self) -> tuple[TIP, TIP, int] | None:
         """
         Decompose an interval-poset into a triple (``left``, ``right``, ``r``).
 
@@ -3712,7 +3715,13 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
 
             sage: S = TamariIntervalPosets(3)
             sage: assert S is TamariIntervalPosets(3)
-            sage: for i in range(5): TestSuite(TamariIntervalPosets(i)).run()
+
+        We currently have to skip checking that elements are produced
+        uniformly at random by :meth:`random_element`. This is not
+        the case because of :issue:`40693`::
+
+            sage: for i in range(5):
+            ....:     TestSuite(TamariIntervalPosets(i)).run(skip="_test_random")
         """
         # there is a natural order on interval-posets through inclusions
         # that is why we use the FinitePosets category

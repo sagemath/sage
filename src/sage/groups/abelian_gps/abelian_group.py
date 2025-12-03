@@ -881,7 +881,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         GapPackage("polycyclic", spkg='gap_packages').require()
         return libgap.AbelianPcpGroup(self.gens_orders())
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return string that defines corresponding abelian group in GAP.
 
@@ -1179,7 +1179,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             order = g.order()
             if order is infinity:
                 order = 42  # infinite order; randomly chosen maximum
-            result *= g ** (randint(0, order))
+            result *= g ** randint(0, order-1)
         return result
 
     def _repr_(self) -> str:
@@ -1404,7 +1404,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         # The group order is prod(p^e for (p,e) in primary_factors)
         primary_factors = list(chain.from_iterable(
-                        factor(ed) for ed in self.elementary_divisors()))
+            factor(ed) for ed in self.elementary_divisors()))
         sylow_types = defaultdict(list)
         for p, e in primary_factors:
             sylow_types[p].append(e)
@@ -1741,7 +1741,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             category = Groups().Commutative().Subobjects()
         AbelianGroup_class.__init__(self, invs, names, category=category)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Test whether ``x`` is an element of this subgroup.
 
@@ -1793,7 +1793,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
                 [g.list() for g in self._gens]
             )
             return (vector(ZZ, x.list())
-                in inv_basis.stack(gens_basis).row_module())
+                    in inv_basis.stack(gens_basis).row_module())
         return False
 
     def ambient_group(self):

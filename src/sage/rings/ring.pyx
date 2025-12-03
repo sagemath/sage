@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Rings
 
@@ -108,10 +107,8 @@ This is to test a deprecation::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
 from sage.misc.superseded import deprecation
 
-from sage.structure.coerce cimport coercion_model
 from sage.structure.parent cimport Parent
 from sage.structure.category_object cimport check_default_category
 from sage.categories.rings import Rings

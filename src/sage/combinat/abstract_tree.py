@@ -187,7 +187,7 @@ class AbstractTree:
             sage: v = BinaryTree([u, u])
             sage: w = BinaryTree([v, v])
             sage: t = BinaryTree([w, w])
-            sage: t.node_number()
+            sage: t.number_of_nodes()
             7
             sage: l = [1 for i in t.pre_order_traversal_iter()]
             sage: len(l)
@@ -259,7 +259,7 @@ class AbstractTree:
             sage: v = BinaryTree([u, u])
             sage: w = BinaryTree([v, v])
             sage: t = BinaryTree([w, w])
-            sage: t.node_number()
+            sage: t.number_of_nodes()
             7
             sage: l = []
             sage: t.iterative_pre_order_traversal(lambda node: l.append(1))
@@ -376,7 +376,7 @@ class AbstractTree:
             sage: v = BinaryTree([u, u])
             sage: w = BinaryTree([v, v])
             sage: t = BinaryTree([w, w])
-            sage: t.node_number()
+            sage: t.number_of_nodes()
             7
             sage: l = []
             sage: t.pre_order_traversal(lambda node: l.append(1))
@@ -471,7 +471,7 @@ class AbstractTree:
             sage: v = BinaryTree([u, u])
             sage: w = BinaryTree([v, v])
             sage: t = BinaryTree([w, w])
-            sage: t.node_number()
+            sage: t.number_of_nodes()
             7
             sage: l = [1 for i in t.post_order_traversal_iter()]
             sage: len(l)
@@ -543,7 +543,7 @@ class AbstractTree:
             sage: v = BinaryTree([u, u])
             sage: w = BinaryTree([v, v])
             sage: t = BinaryTree([w, w])
-            sage: t.node_number()
+            sage: t.number_of_nodes()
             7
             sage: l = []
             sage: t.post_order_traversal(lambda node: l.append(1))
@@ -617,7 +617,7 @@ class AbstractTree:
             sage: v = BinaryTree([u, u])
             sage: w = BinaryTree([v, v])
             sage: t = BinaryTree([w, w])
-            sage: t.node_number()
+            sage: t.number_of_nodes()
             7
             sage: l = []
             sage: t.iterative_post_order_traversal(lambda node: l.append(1))
@@ -710,7 +710,7 @@ class AbstractTree:
             sage: v = BinaryTree([u, u])
             sage: w = BinaryTree([v, v])
             sage: t = BinaryTree([w, w])
-            sage: t.node_number()
+            sage: t.number_of_nodes()
             7
             sage: l = []
             sage: t.contour_traversal(first_action = lambda node: l.append(0))
@@ -852,7 +852,7 @@ class AbstractTree:
 
         .. SEEALSO::
 
-            :meth:`paths`, :meth:`paths_to_the_right`, :meth:`node_number_at_depth`
+            :meth:`paths`, :meth:`paths_to_the_right`, :meth:`number_of_nodes_at_depth`
 
         EXAMPLES::
 
@@ -886,7 +886,7 @@ class AbstractTree:
             for i in range(len(self)):
                 yield from self[i].paths_at_depth(depth - 1, path + [i])
 
-    def node_number_at_depth(self, depth):
+    def number_of_nodes_at_depth(self, depth):
         r"""
         Return the number of nodes at a given depth.
 
@@ -900,7 +900,8 @@ class AbstractTree:
 
         .. SEEALSO::
 
-            :meth:`node_number`, :meth:`node_number_to_the_right`, :meth:`paths_at_depth`
+            :meth:`number_of_nodes`, :meth:`number_of_nodes_to_the_right`,
+            :meth:`paths_at_depth`
 
         EXAMPLES::
 
@@ -915,7 +916,7 @@ class AbstractTree:
               o    o
                    |
                    o
-            sage: [T.node_number_at_depth(i) for i in range(6)]
+            sage: [T.number_of_nodes_at_depth(i) for i in range(6)]
             [1, 3, 4, 2, 1, 0]
 
         TESTS:
@@ -927,7 +928,7 @@ class AbstractTree:
             .
             sage: T.is_empty()
             True
-            sage: [T.node_number_at_depth(i) for i in range(3)]
+            sage: [T.number_of_nodes_at_depth(i) for i in range(3)]
             [0, 0, 0]
 
         Check that we do not hit a recursion limit::
@@ -935,7 +936,7 @@ class AbstractTree:
             sage: T = OrderedTree([])
             sage: for _ in range(9999):
             ....:     T = OrderedTree([T])
-            sage: T.node_number_at_depth(2000)
+            sage: T.number_of_nodes_at_depth(2000)
             1
         """
         if self.is_empty():
@@ -965,6 +966,8 @@ class AbstractTree:
         self.contour_traversal(fr_action, m_action, fn_action, lf_action)
         return Integer(m)
 
+    node_number_at_depth = number_of_nodes_at_depth
+
     def paths_to_the_right(self, path):
         r"""
         Return a generator of paths for all nodes at the same
@@ -979,7 +982,7 @@ class AbstractTree:
 
         .. SEEALSO::
 
-            :meth:`paths`, :meth:`paths_at_depth`, :meth:`node_number_to_the_right`
+            :meth:`paths`, :meth:`paths_at_depth`, :meth:`number_of_nodes_to_the_right`
 
         EXAMPLES::
 
@@ -1023,7 +1026,7 @@ class AbstractTree:
         for p in self[path[0]].paths_to_the_right(path[1:]):
             yield tuple([path[0]] + list(p))
 
-    def node_number_to_the_right(self, path):
+    def number_of_nodes_to_the_right(self, path):
         r"""
         Return the number of nodes at the same depth and to the right of
         the node identified by ``path``.
@@ -1033,7 +1036,8 @@ class AbstractTree:
 
         .. SEEALSO::
 
-            :meth:`node_number`, :meth:`node_number_at_depth`, :meth:`paths_to_the_right`
+            :meth:`number_of_nodes`, :meth:`number_of_nodes_at_depth`,
+            :meth:`paths_to_the_right`
 
         EXAMPLES::
 
@@ -1048,27 +1052,29 @@ class AbstractTree:
               o    o
                    |
                    o
-            sage: T.node_number_to_the_right(())
+            sage: T.number_of_nodes_to_the_right(())
             0
-            sage: T.node_number_to_the_right((0,))
+            sage: T.number_of_nodes_to_the_right((0,))
             2
-            sage: T.node_number_to_the_right((0,1))
+            sage: T.number_of_nodes_to_the_right((0,1))
             2
-            sage: T.node_number_to_the_right((0,1,0))
+            sage: T.number_of_nodes_to_the_right((0,1,0))
             1
 
             sage: T = OrderedTree([])
-            sage: T.node_number_to_the_right(())
+            sage: T.number_of_nodes_to_the_right(())
             0
         """
         depth = len(path)
         if depth == 0:
             return Integer(0)
-        result = sum(son.node_number_at_depth(depth - 1)
+        result = sum(son.number_of_nodes_at_depth(depth - 1)
                      for son in self[path[0] + 1:])
         if path[0] < len(self) and path[0] >= 0:
-            result += self[path[0]].node_number_to_the_right(path[1:])
+            result += self[path[0]].number_of_nodes_to_the_right(path[1:])
         return result
+
+    node_number_to_the_right = number_of_nodes_to_the_right
 
     def subtrees(self):
         """
@@ -1099,12 +1105,12 @@ class AbstractTree:
         TESTS::
 
             sage: t = OrderedTree([[], [[], [[], []], [[], []]], [[], []]])
-            sage: t.node_number() == len(list(t.subtrees()))
+            sage: t.number_of_nodes() == len(list(t.subtrees()))
             True
             sage: list(BinaryTree().subtrees())
             []
             sage: bt = BinaryTree([[],[[],[]]])
-            sage: bt.node_number() == len(list(bt.subtrees()))
+            sage: bt.number_of_nodes() == len(list(bt.subtrees()))
             True
         """
         return self.pre_order_traversal_iter()
@@ -1142,12 +1148,12 @@ class AbstractTree:
         TESTS::
 
             sage: t = OrderedTree([[], [[], [[], []], [[], []]], [[], []]])
-            sage: t.node_number() == len(list(t.paths()))
+            sage: t.number_of_nodes() == len(list(t.paths()))
             True
             sage: list(BinaryTree().paths())
             []
             sage: bt = BinaryTree([[],[[],[]]])
-            sage: bt.node_number() == len(list(bt.paths()))
+            sage: bt.number_of_nodes() == len(list(bt.paths()))
             True
         """
         if not self.is_empty():
@@ -1156,36 +1162,36 @@ class AbstractTree:
                 for p in t.paths():
                     yield (i,) + p
 
-    def node_number(self):
+    def number_of_nodes(self):
         """
         Return the number of nodes of ``self``.
 
         .. SEEALSO::
 
-            :meth:`node_number_at_depth`, :meth:`node_number_to_the_right`
+            :meth:`number_of_nodes_at_depth`, :meth:`number_of_nodes_to_the_right`
 
         EXAMPLES::
 
-            sage: OrderedTree().node_number()
+            sage: OrderedTree().number_of_nodes()
             1
-            sage: OrderedTree([]).node_number()
+            sage: OrderedTree([]).number_of_nodes()
             1
-            sage: OrderedTree([[],[]]).node_number()
+            sage: OrderedTree([[],[]]).number_of_nodes()
             3
-            sage: OrderedTree([[],[[]]]).node_number()
+            sage: OrderedTree([[],[[]]]).number_of_nodes()
             4
-            sage: OrderedTree([[], [[], [[], []], [[], []]], [[], []]]).node_number()
+            sage: OrderedTree([[], [[], [[], []], [[], []]], [[], []]]).number_of_nodes()
             13
 
         EXAMPLES::
 
-            sage: BinaryTree(None).node_number()
+            sage: BinaryTree(None).number_of_nodes()
             0
-            sage: BinaryTree([]).node_number()
+            sage: BinaryTree([]).number_of_nodes()
             1
-            sage: BinaryTree([[], None]).node_number()
+            sage: BinaryTree([[], None]).number_of_nodes()
             2
-            sage: BinaryTree([[None, [[], []]], None]).node_number()
+            sage: BinaryTree([[None, [[], []]], None]).number_of_nodes()
             5
 
         TESTS:
@@ -1195,17 +1201,33 @@ class AbstractTree:
             sage: T = OrderedTree([])
             sage: for _ in range(9999):
             ....:     T = OrderedTree([T])
-            sage: T.node_number()
+            sage: T.number_of_nodes()
             10000
         """
-        count = 0
+        # An attribute _node_number for storing the number of nodes
+        # This is OK as AbstractTree is immutable
+        # If the attribute is not present, we compute it
+        try:
+            return self._node_number
+        except AttributeError:
+            pass
 
-        def incr(node):
-            nonlocal count
-            count += 1
+        if self.is_empty():
+            self._node_number = Integer(0)
+            return self._node_number
 
-        self.iterative_pre_order_traversal(incr)
-        return Integer(count)
+        def count(node):
+            if not node.is_empty():
+                # Using post-order
+                # Thus _node_number is computed for all non-empty subtrees
+                node._node_number = Integer(1)
+                node._node_number += sum(e._node_number for e in node
+                                         if not e.is_empty())
+
+        self.iterative_post_order_traversal(count)
+        return self._node_number
+
+    node_number = number_of_nodes
 
     def depth(self):
         """
@@ -1518,13 +1540,14 @@ class AbstractTree:
             sage: BinaryTree().canonical_labelling()
             .
         """
-        LTR = self.parent().labelled_trees()
-        liste = []
-        deca = 1
-        for subtree in self:
-            liste += [subtree.canonical_labelling(shift + deca)]
-            deca += subtree.node_number()
-        return LTR._element_constructor_(liste, label=shift)
+        def aux(tree, LTR, curlabel):
+            mylabel = curlabel[0]
+            curlabel[0] += 1
+            newtree = LTR([aux(st, LTR, curlabel) for st in tree],
+                          label=mylabel)
+            return newtree
+
+        return aux(self, self.parent().labelled_trees(), [shift])
 
     def to_hexacode(self):
         r"""
@@ -1566,7 +1589,7 @@ class AbstractTree:
         """
         if len(self) > 15:
             raise ValueError("the width of the tree is too large")
-        if self.node_number() == 1:
+        if self.number_of_nodes() == 1:
             return "0"
         return ("%x" % len(self)) + "".join(u.to_hexacode() for u in self)
 
@@ -1594,7 +1617,7 @@ class AbstractTree:
             sage: BinaryTree().tree_factorial()
             1
         """
-        nb = self.node_number()
+        nb = self.number_of_nodes()
         if nb <= 1:
             return Integer(1)
         return nb * prod(s.tree_factorial() for s in self)
@@ -2181,6 +2204,41 @@ class AbstractClonableTree(AbstractTree):
         else:
             return ClonableArray._getitem(self, i)
 
+    def _require_mutable(self):
+        """
+        Check that ``self`` is mutable and clear the ``_node_number`` parameter.
+
+        The mutation could affect a precomputed ``_node_number``,
+        and so we clear this when this is called, which is done in
+        preparation for mutating the tree.
+
+        Values cleared:
+
+        - ``_node_number`` : number of nodes in the tree
+
+        EXAMPLES::
+
+            sage: T = OrderedTree()
+            sage: T._require_mutable()
+            Traceback (most recent call last):
+            ...
+            ValueError: object is immutable; please change a copy instead.
+
+        ::
+
+            sage: T = LabelledRootedTree([]).clone()
+            sage: T.node_number()
+            1
+            sage: T._require_mutable()
+            sage: hasattr(T, '_node_number')
+            False
+        """
+        super()._require_mutable()
+        try:
+            delattr(self, '_node_number')
+        except AttributeError:
+            pass
+
 
 class AbstractLabelledTree(AbstractTree):
     """
@@ -2359,7 +2417,7 @@ class AbstractLabelledTree(AbstractTree):
             sage: LBT(None).leaf_labels()
             []
         """
-        return [t.label() for t in self.subtrees() if t.node_number() == 1]
+        return [t.label() for t in self.subtrees() if t.number_of_nodes() == 1]
 
     def __eq__(self, other):
         """

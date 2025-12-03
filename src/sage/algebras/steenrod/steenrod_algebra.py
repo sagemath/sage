@@ -648,7 +648,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: A = SteenrodAlgebra(3,basis='adem')
-            sage: for (idx,key) in zip((1,..,10),A._basis_key_iterator()):
+            sage: for idx, key in zip((1,..,10),A._basis_key_iterator()):
             ....:     print("> %2d %-20s %s" % (idx,key,A.monomial(key)))
             >  1 ()                   1
             >  2 (1,)                 beta
@@ -767,17 +767,15 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(p=5, profile=(lambda n: 4, lambda n: 1))
             sub-Hopf algebra of mod 5 Steenrod algebra, milnor basis, profile function ([4, 4, 4, ..., 4, 4, +Infinity, +Infinity, +Infinity, ...], [1, 1, 1, ..., 1, 1, 2, 2, ...])
         """
-        def abridge_list(l):
+        def abridge_list(li):
             """
-            String rep for list ``l`` if ``l`` is short enough;
+            String rep for list ``li`` if ``li`` is short enough;
             otherwise print the first few terms and the last few
             terms, with an ellipsis in between.
             """
-            if len(l) < 8:
-                l_str = str(l)
-            else:
-                l_str = str(l[:3]).rstrip("]") + ", ..., " + str(l[-2:]).lstrip("[")
-            return l_str
+            if len(li) < 8:
+                return str(li)
+            return str(li[:3]).rstrip("]") + ", ..., " + str(li[-2:]).lstrip("[")
 
         from sage.rings.infinity import Infinity
         profile = self._profile
@@ -1345,8 +1343,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                         right_q = sorted(all_q - a)
                         sign = Permutation(convert_perm(left_q + right_q)).signature()
                         tens_q[(tuple(left_q), tuple(right_q))] = sign
-                    tens = {((q[0], l), (q[1], r)): tq
-                            for l, r in zip(left_p, right_p)
+                    tens = {((q[0], lp), (q[1], rp)): tq
+                            for lp, rp in zip(left_p, right_p)
                             for q, tq in tens_q.items()}
                     return self.tensor_square()._from_dict(tens, coerce=True)
             elif basis == 'serre-cartan':
@@ -1642,14 +1640,14 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         elif basis == 'woody' or basis == 'woodz':
             # each entry in t is a pair (m,k), corresponding to w(m,k), defined by
             # `w(m,k) = \text{Sq}^{2^m (2^{k+1}-1)}`.
-            for (m, k) in t:
+            for m, k in t:
                 ans = ans * A.Sq(2**m * (2**(k+1) - 1))
 
         # wall[_long]
         elif basis.find('wall') >= 0:
             # each entry in t is a pair (m,k), corresponding to Q^m_k, defined by
             # `Q^m_k = Sq(2^k) Sq(2^{k+1}) ... Sq(2^m)`.
-            for (m, k) in t:
+            for m, k in t:
                 exponent = 2**k
                 ans = ans * A.Sq(exponent)
                 for i in range(m-k):
@@ -1660,7 +1658,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         elif basis.find('pst') >= 0:
             if not self._generic:
                 # each entry in t is a pair (i,j), corresponding to P^i_j
-                for (i, j) in t:
+                for i, j in t:
                     ans = ans * A.pst(i, j)
             else:
                 # t = (Q, P) where Q is the tuple of Q_i's, and P is a
@@ -1668,14 +1666,14 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 # corresponding to (P^i_j)^n
                 if t[0]:
                     ans = ans * A.Q(*t[0])
-                for ((i, j), n) in t[1]:
+                for (i, j), n in t[1]:
                     ans = ans * (A.pst(i, j))**n
 
         # arnona[_long]
         elif basis.find('arnona') >= 0:
             # each entry in t is a pair (m,k), corresponding to X^m_k, defined by
             # `X^m_k = Sq(2^m) ... Sq(2^{k+1}) Sq(2^k)`
-            for (m, k) in t:
+            for m, k in t:
                 exponent = 2**k
                 X = A.Sq(exponent)
                 for i in range(m-k):
@@ -1689,7 +1687,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 # each entry in t is a pair (i,j), corresponding to
                 # c_{i,j}, the iterated commutator defined by c_{i,1}
                 # = Sq(2^i) and c_{i,j} = [c_{i,j-1}, Sq(2^{i+j-1})].
-                for (i, j) in t:
+                for i, j in t:
                     comm = A.Sq(2**i)
                     for k in range(2, j+1):
                         y = A.Sq(2**(i+k-1))
@@ -1703,7 +1701,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 # c_{i,j} = [P(p^{i+j-1}), c_{i,j-1}].
                 if t[0]:
                     ans = ans * A.Q(*t[0])
-                for ((i, j), n) in t[1]:
+                for (i, j), n in t[1]:
                     comm = A.P(p**i)
                     for k in range(2, j+1):
                         y = A.P(p**(i+k-1))
@@ -1947,7 +1945,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         if basis == 'woody' or basis == 'woodz':
             # each entry in t is a pair (m,k), corresponding to w(m,k), defined by
             # `w(m,k) = \text{Sq}^{2^m (2^{k+1}-1)}`.
-            return sum(2**m * (2**(k+1)-1) for (m, k) in t)
+            return sum(2**m * (2**(k+1)-1) for m, k in t)
 
         # wall, arnon_a
         if basis.find('wall') >= 0 or basis.find('arnona') >= 0:
@@ -1958,7 +1956,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             # Arnon A: each entry in t is a pair (m,k), corresponding
             # to X^m_k, defined by `X^m_k = Sq(2^m) ... Sq(2^{k+1})
             # Sq(2^k)`
-            return sum(2**k * (2**(m-k+1)-1) for (m, k) in t)
+            return sum(2**k * (2**(m-k+1)-1) for m, k in t)
 
         # pst, comm
         if basis.find('pst') >= 0 or basis.find('comm') >= 0:
@@ -1969,7 +1967,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 # to c_{i,j}, the iterated commutator defined by
                 # c_{i,1} = Sq(2^i) and c_{i,j} = [c_{i,j-1},
                 # Sq(2^{i+j-1})].
-                return sum(2**m * (2**k - 1) for (m, k) in t)
+                return sum(2**m * (2**k - 1) for m, k in t)
             # p odd:
             #
             # Pst: have pair (Q, P) where Q is a tuple of Q's, as in
@@ -1982,7 +1980,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             # iterated commutator defined by c_{s,1} = P(p^s) and
             # c_{s,t} = [P(p^{s+t-1}), c_{s,t-1}].
             q_deg = q_degree(t[0], prime=p)
-            p_deg = sum(2 * n * p**s * (p**t - 1) for ((s, t), n) in t[1])
+            p_deg = sum(2 * n * p**s * (p**t - 1) for (s, t), n in t[1])
             return q_deg + p_deg
 
     # coercion methods:
@@ -2131,7 +2129,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 return a.change_basis(self.basis_name())
         raise ValueError("element does not lie in this Steenrod algebra")
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if ``self`` contains `x`.
 
@@ -2236,7 +2234,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             Lazy family (Term map from basis key family of mod 7 Steenrod algebra, milnor basis
              to mod 7 Steenrod algebra, milnor basis(i))_{i in basis key family
              of mod 7 Steenrod algebra, milnor basis}
-            sage: for (idx,a) in zip((1,..,9),A7.basis()):
+            sage: for idx, a in zip((1,..,9),A7.basis()):
             ....:      print("{} {}".format(idx, a))
             1 1
             2 Q_0
@@ -3435,7 +3433,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 1
                 sage: Sq(*supp[0][1])
                 Sq(2)
-                sage: [(Sq(*x), Sq(*y)) for (x,y) in supp]
+                sage: [(Sq(*x), Sq(*y)) for x, y in supp]
                 [(1, Sq(2)), (Sq(1), Sq(1)), (Sq(2), 1)]
 
             The ``support`` of an element does not include the
@@ -3453,7 +3451,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                  (((), (1,)), ((), (1,))): 2,
                  (((), (2,)), ((), ())): 2}
                 sage: mc = b.monomial_coefficients()
-                sage: sorted([(A3.monomial(x), A3.monomial(y), mc[x,y]) for (x,y) in mc])
+                sage: sorted([(A3.monomial(x), A3.monomial(y), mc[x,y]) for x, y in mc])
                 [(1, P(2), 2), (P(1), P(1), 2), (P(2), 1, 2)]
             """
             A = self.parent()
@@ -3627,7 +3625,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 return wt
             else:  # p odd
                 wt = Infinity
-                for (mono1, mono2) in self.milnor().support():
+                for mono1, mono2 in self.milnor().support():
                     P_wt = 0
                     index = 1
                     for n in mono2:

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Categories
 
@@ -685,7 +684,7 @@ class Category(UniqueRepresentation, SageObject):
         """
         return issubclass(category.parent_class, self.parent_class)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Membership testing.
 
@@ -745,7 +744,7 @@ class Category(UniqueRepresentation, SageObject):
             return False
         return any(isinstance(cat, cls) for cat in c)
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return whether this category is abelian.
 

@@ -61,7 +61,7 @@ Below are listed all methods and classes defined in this file.
     :meth:`~sage.combinat.permutation.Permutation.runs` | Return a list of the runs in the permutation ``self``.
     :meth:`~sage.combinat.permutation.Permutation.longest_increasing_subsequence_length` | Return the length of the longest increasing subsequences of ``self``.
     :meth:`~sage.combinat.permutation.Permutation.longest_increasing_subsequences` | Return the list of the longest increasing subsequences of ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.longest_increasing_subsequences_number` | Return the number of longest increasing subsequences
+    :meth:`~sage.combinat.permutation.Permutation.number_of_longest_increasing_subsequences` | Return the number of longest increasing subsequences
     :meth:`~sage.combinat.permutation.Permutation.cycle_type` | Return the cycle type of ``self`` as a partition of ``len(self)``.
     :meth:`~sage.combinat.permutation.Permutation.foata_bijection` | Return the image of the permutation ``self`` under the Foata bijection `\phi`.
     :meth:`~sage.combinat.permutation.Permutation.foata_bijection_inverse` | Return the image of the permutation ``self`` under the inverse of the Foata bijection `\phi`.
@@ -239,12 +239,11 @@ Classes and methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from collections.abc import Iterator
 import itertools
 import operator
-from typing import Iterable
+from typing import TYPE_CHECKING
 
-from sage.arith.misc import factorial, multinomial
+from sage.arith.misc import factorial, multinomial, falling_factorial
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.finite_permutation_groups import FinitePermutationGroups
 from sage.categories.finite_weyl_groups import FiniteWeylGroups
@@ -270,6 +269,9 @@ from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
 from sage.structure.element import Element, get_coercion_model
 from sage.structure.unique_representation import UniqueRepresentation
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Iterator
 
 lazy_import('sage.combinat.rsk', ['RSK', 'RSK_inverse'])
 lazy_import('sage.combinat.tableau', 'Tableau')
@@ -2142,7 +2144,7 @@ class Permutation(CombinatorialElement):
         Return the ``i``-shift of ``self``. If an ``i``-shift of ``self``
         can't be performed, then ``self`` is returned.
 
-        An `i`-shift can be applied when `i` is not inbetween `i-1` and
+        An `i`-shift can be applied when `i` is not between `i-1` and
         `i+1`. The `i`-shift moves `i` to the other side, and leaves the
         relative positions of `i-1` and `i+1` in place. All other entries
         of the permutations are also left in place.
@@ -2439,7 +2441,7 @@ class Permutation(CombinatorialElement):
 
         return sorted([p[1:-1] for p in D.all_paths(0, n + 1)], reverse=True)
 
-    def longest_increasing_subsequences_number(self):
+    def number_of_longest_increasing_subsequences(self):
         r"""
         Return the number of increasing subsequences of maximal length
         in ``self``.
@@ -2457,13 +2459,13 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: sum(p.longest_increasing_subsequences_number()
+            sage: sum(p.number_of_longest_increasing_subsequences()
             ....:     for p in Permutations(8))
             120770
 
             sage: p = Permutations(50).random_element()
             sage: (len(p.longest_increasing_subsequences()) ==                          # needs sage.graphs
-            ....:  p.longest_increasing_subsequences_number())
+            ....:  p.number_of_longest_increasing_subsequences())
             True
         """
         n = self.size()
@@ -2491,6 +2493,8 @@ class Permutation(CombinatorialElement):
                         break
                     count[x] += count[k]
         return sum(count[x] for x in columns[-1])
+
+    longest_increasing_subsequences_number = number_of_longest_increasing_subsequences
 
     def cycle_type(self):
         r"""
@@ -6239,7 +6243,7 @@ class Permutations_nk(Permutations):
         """
         TESTS::
 
-            sage: P = Permutations(3,2)
+            sage: P = Permutations(5, 3)
             sage: TestSuite(P).run()
         """
         self.n = ZZ(n)
@@ -6316,6 +6320,8 @@ class Permutations_nk(Permutations):
 
     def cardinality(self) -> Integer:
         """
+        Return the cardinality of the set.
+
         EXAMPLES::
 
             sage: Permutations(3,0).cardinality()
@@ -6330,18 +6336,19 @@ class Permutations_nk(Permutations):
             0
         """
         if 0 <= self._k <= self.n:
-            return factorial(self.n) // factorial(self.n - self._k)
+            return falling_factorial(self.n, self._k)
         return ZZ.zero()
 
     def random_element(self):
         """
         EXAMPLES::
 
-            sage: s = Permutations(3,2).random_element()
-            sage: s in Permutations(3,2)
+            sage: s = Permutations(3, 2).random_element()
+            sage: s in Permutations(3, 2)
             True
         """
-        return sample(range(1, self.n + 1), self._k)
+        x = sample(range(1, self.n + 1), self._k)
+        return self.element_class(self, x, check=False)
 
 
 class Permutations_mset(Permutations):
@@ -6404,7 +6411,7 @@ class Permutations_mset(Permutations):
         """
         TESTS::
 
-            sage: S = Permutations(['c','a','c'])
+            sage: S = Permutations(['c','a','c','d'])
             sage: TestSuite(S).run()
         """
         self.mset = mset
@@ -6620,9 +6627,9 @@ class Permutations_mset(Permutations):
             [3, 1, 4, 1, 5, 9, 2, 6, 5]
             sage: p.rank(p.unrank(10))
             10
-            sage: p.unrank(0) == list(sorted(mset))
+            sage: p.unrank(0) == p(sorted(mset))
             True
-            sage: p.unrank(p.cardinality()-1) == list(reversed(sorted(mset)))
+            sage: p.unrank(p.cardinality()-1) == p(reversed(sorted(mset)))
             True
 
         TESTS::
@@ -6650,9 +6657,9 @@ class Permutations_mset(Permutations):
 
             sage: mset = list(range(10)) * 3
             sage: p = Permutations_mset(mset)
-            sage: p.unrank(p.rank(mset)) == mset
+            sage: p.unrank(p.rank(mset)) == p(mset)
             True
-            sage: p.unrank(p.cardinality()-1) == list(reversed(sorted(mset)))
+            sage: p.unrank(p.cardinality()-1) == p(reversed(sorted(mset)))
             True
 
         Exhaustive check of roundtrip and lexicographic order for a single
@@ -6672,7 +6679,7 @@ class Permutations_mset(Permutations):
 
             sage: ps = Permutations(4)
             sage: pm = Permutations_mset(list(range(1, 5)))
-            sage: ps.unrank(5) == pm.unrank(5)
+            sage: ps.unrank(5) == ps(pm.unrank(5))
             True
         """
         range_error = ValueError("r must be between %d and %d inclusive" % (0, self.cardinality()-1))
@@ -6735,7 +6742,7 @@ class Permutations_mset(Permutations):
         if r > 0:
             raise range_error
 
-        return p
+        return self.element_class(self, p, check=False)
 
 
 class Permutations_set(Permutations):
@@ -6862,7 +6869,8 @@ class Permutations_set(Permutations):
             sage: s.parent() is Permutations([1,2,3])
             True
         """
-        return sample(self._set, len(self._set))
+        x = sample(self._set, len(self._set))
+        return self.element_class(self, x, check=False)
 
 
 class Permutations_msetk(Permutations_mset):
@@ -6892,7 +6900,7 @@ class Permutations_msetk(Permutations_mset):
         """
         TESTS::
 
-            sage: P = Permutations([1,2,2],2)
+            sage: P = Permutations([1,2,2,3], 2)
             sage: TestSuite(P).run()                                                    # needs sage.libs.gap
         """
         Permutations_mset.__init__(self, mset)
@@ -6957,6 +6965,30 @@ class Permutations_msetk(Permutations_mset):
             yield self.element_class(self, [lmset[x] for x in ktuple],
                                      check=False)
 
+    def rank(self, x):
+        """
+        The rank of an element of ``self``.
+
+        EXAMPLES::
+
+            sage: P = Permutations([1,1,1,2,3], 3)
+            sage: P.rank(P([1,1,1]))
+            0
+        """
+        return self._rank_from_iterator(x)
+
+    def unrank(self, r):
+        """
+        The element of ``self`` with rank ``r``.
+
+        EXAMPLES::
+
+            sage: P = Permutations([1,1,1,2,3], 3)
+            sage: P.unrank(P.rank(P([1,1,2])))
+            [1, 1, 2]
+        """
+        return self._unrank_from_iterator(r)
+
 
 class Permutations_setk(Permutations_set):
     """
@@ -6984,11 +7016,25 @@ class Permutations_setk(Permutations_set):
         """
         TESTS::
 
-            sage: P = Permutations([1,2,4],2)
+            sage: P = Permutations([1,2,4,5], 2)
             sage: TestSuite(P).run()
         """
         Permutations_set.__init__(self, s)
         self._k = k
+
+    def cardinality(self) -> Integer:
+        """
+        Return the cardinality of the set.
+
+        EXAMPLES::
+
+            sage: Permutations([1,2,4,5], 2).cardinality()
+            12
+        """
+        n = len(self._set)
+        if 0 <= self._k <= n:
+            return falling_factorial(n, self._k)
+        return ZZ.zero()
 
     def __contains__(self, x):
         """
@@ -7036,7 +7082,8 @@ class Permutations_setk(Permutations_set):
             sage: s in Permutations([1,2,4], 2)
             True
         """
-        return sample(self._set, self._k)
+        x = sample(self._set, self._k)
+        return self.element_class(self, x, check=False)
 
 ##################################
 # Arrangements
@@ -9810,6 +9857,8 @@ class StandardPermutations_avoiding_132(StandardPermutations_avoiding_generic):
 
     def cardinality(self):
         """
+        Return the cardinality of the set.
+
         EXAMPLES::
 
             sage: Permutations(5, avoiding=[1, 3, 2]).cardinality()
@@ -9887,6 +9936,8 @@ class StandardPermutations_avoiding_123(StandardPermutations_avoiding_generic):
 
     def cardinality(self) -> Integer:
         """
+        Return the cardinality of the set.
+
         EXAMPLES::
 
             sage: Permutations(5, avoiding=[1, 2, 3]).cardinality()
@@ -9959,6 +10010,8 @@ class StandardPermutations_avoiding_321(StandardPermutations_avoiding_generic):
 
     def cardinality(self):
         """
+        Return the cardinality of the set.
+
         EXAMPLES::
 
             sage: Permutations(5, avoiding=[3, 2, 1]).cardinality()
@@ -9991,6 +10044,8 @@ class StandardPermutations_avoiding_231(StandardPermutations_avoiding_generic):
 
     def cardinality(self):
         """
+        Return the cardinality of the set.
+
         EXAMPLES::
 
             sage: Permutations(5, avoiding=[2, 3, 1]).cardinality()
@@ -10023,6 +10078,8 @@ class StandardPermutations_avoiding_312(StandardPermutations_avoiding_generic):
 
     def cardinality(self):
         """
+        Return the cardinality of the set.
+
         EXAMPLES::
 
             sage: Permutations(5, avoiding=[3, 1, 2]).cardinality()
@@ -10055,6 +10112,8 @@ class StandardPermutations_avoiding_213(StandardPermutations_avoiding_generic):
 
     def cardinality(self):
         """
+        Return the cardinality of the set.
+
         EXAMPLES::
 
             sage: Permutations(5, avoiding=[2, 1, 3]).cardinality()

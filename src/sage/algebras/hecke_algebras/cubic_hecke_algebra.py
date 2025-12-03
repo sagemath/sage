@@ -102,7 +102,7 @@ algebra as well::
     sage: s^2
     (c0*c1*c2*c3*c4)^2
     sage: t = CHA6.an_element() * c4; t
-    (-w)*c0*c1^-1*c4 + v*c0*c2^-1*c4 + u*c2*c1*c4 + ((-v*w+u)/w)*c4
+    -w*c0*c1^-1*c4 + v*c0*c2^-1*c4 + u*c2*c1*c4 - ((v*w-u)/w)*c4
 
 REFERENCES:
 
@@ -578,7 +578,7 @@ class CubicHeckeElement(CombinatorialFreeModule.Element):
             mtcf = [M.from_vector(cf.to_vector()) for cf in mtcf]
 
         R = M.base_ring()
-        return M.linear_combination((mtcf[i], R(val)) for i, val in vs.iteritems())
+        return M.linear_combination((mtcf[i], R(val)) for i, val in vs.items())
 
 
 class CubicHeckeAlgebra(CombinatorialFreeModule):
@@ -717,7 +717,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         True
         sage: CHA4 = algebras.CubicHecke(4)     # optional database_cubic_hecke
         sage: ele4 = CHA4(ele3); ele4           # optional database_cubic_hecke
-        c0*c1*c0^-1*c1 + u*c0^-1*c1*c0 + (-v)*c0*c1^-1 + v*c1^-1*c0 + (-u)*c0*c1*c0^-1
+        c0*c1*c0^-1*c1 + u*c0^-1*c1*c0 - v*c0*c1^-1 + v*c1^-1*c0 - u*c0*c1*c0^-1
 
     Cubic Hecke algebra over the ring of definition using different variable
     names::
@@ -1913,6 +1913,9 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
             sage: F = CHA3.base_ring().fraction_field()
             sage: par = tuple([F(p) for p in CHA3.cubic_equation_parameters()])
             sage: CHA3F = algebras.CubicHecke(3, cubic_equation_parameters=par)
+            doctest:warning
+            ...
+            UserWarning: Assuming h^3 - u*h^2 + v*h - w to have maximal Galois group!
             sage: CHA3F._braid_image_from_filecache(br)
             1/w*c0*c1*c0^-1*c1 + v/w*c1^-1*c0 - u/w*c0*c1*c0^-1
             sage: section = CHA3.filecache_section().braid_images

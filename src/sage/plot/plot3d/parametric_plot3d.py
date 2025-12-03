@@ -3,11 +3,11 @@
 Parametric plots
 """
 
-from .parametric_surface import ParametricSurface
-from .shapes2 import line3d
-from sage.arith.srange import xsrange, srange
-from sage.structure.element import Vector
+from sage.arith.srange import srange, xsrange
 from sage.misc.decorators import rename_keyword
+from sage.plot.plot3d.parametric_surface import ParametricSurface
+from sage.plot.plot3d.shapes2 import line3d
+from sage.structure.element import Vector
 
 
 @rename_keyword(alpha='opacity')

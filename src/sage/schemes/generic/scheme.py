@@ -120,7 +120,7 @@ class Scheme(Parent):
             # X is a morphism of Rings
             self._base_ring = X.codomain()
         else:
-            raise ValueError('The base must be define by a scheme, '
+            raise ValueError('The base must be defined by a scheme, '
                              'scheme morphism, or commutative ring.')
 
         from sage.categories.schemes import Schemes

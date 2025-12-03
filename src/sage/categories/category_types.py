@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Specific category classes
 
@@ -333,7 +332,7 @@ class Category_over_base(CategoryWithParameters):
 
 
 class AbelianCategory(Category):
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return ``True`` as ``self`` is an abelian category.
 
@@ -492,7 +491,7 @@ class Category_over_base_ring(Category_over_base):
             return C.base() in base_ring
         return False
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return whether ``x`` is an object of this category.
 
@@ -606,7 +605,7 @@ class Category_ideal(Category_in_ambient):
         """
         return self.ambient()
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 

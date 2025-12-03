@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Number fields
 """
@@ -69,7 +68,7 @@ class NumberFields(Category_singleton):
         """
         return [Fields().Infinite()]
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if ``x`` is a number field.
 

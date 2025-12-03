@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Examples of finite enumerated sets
 """
@@ -62,6 +61,8 @@ class Example(UniqueRepresentation, Parent):
         running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
+        running ._test_random() . . . pass
+        running ._test_rank() . . . pass
         running ._test_some_elements() . . . pass
     """
 
@@ -80,7 +81,7 @@ class Example(UniqueRepresentation, Parent):
         Parent.__init__(self, facade=IntegerRing(),
                         category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -89,7 +90,7 @@ class Example(UniqueRepresentation, Parent):
         """
         return "An example of a finite enumerated set: {1,2,3}"
 
-    def __contains__(self, o):
+    def __contains__(self, o) -> bool:
         """
         EXAMPLES::
 
@@ -181,7 +182,7 @@ class IsomorphicObjectOfFiniteEnumeratedSet(UniqueRepresentation, Parent):
         """
         return x ** 2
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Membership testing by checking whether the preimage by the
         bijection is in the ambient space.
