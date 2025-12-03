@@ -51,13 +51,13 @@ class FiniteField_pari_ffelt(FiniteField):
         requires specifying a characteristic and a modulus.  To
         construct a finite field by specifying a cardinality and an
         algorithm for finding an irreducible polynomial, use the
-        ``FiniteField`` constructor with ``impl='pari_ffelt'``.
+        ``FiniteField`` constructor with ``implementation='pari_ffelt'``.
 
     EXAMPLES:
 
     Some computations with a finite field of order 9::
 
-        sage: k = FiniteField(9, 'a', impl='pari_ffelt')
+        sage: k = FiniteField(9, 'a', implementation='pari_ffelt')
         sage: k
         Finite Field in a of size 3^2
         sage: k.is_field()
@@ -77,7 +77,7 @@ class FiniteField_pari_ffelt(FiniteField):
 
     Next we compute with a finite field of order 16::
 
-        sage: k16 = FiniteField(16, 'b', impl='pari_ffelt')
+        sage: k16 = FiniteField(16, 'b', implementation='pari_ffelt')
         sage: z = k16.gen()
         sage: z
         b
@@ -92,11 +92,11 @@ class FiniteField_pari_ffelt(FiniteField):
 
     Illustration of dumping and loading::
 
-        sage: K = FiniteField(7^10, 'b', impl='pari_ffelt')
+        sage: K = FiniteField(7^10, 'b', implementation='pari_ffelt')
         sage: loads(K.dumps()) == K
         True
 
-        sage: K = FiniteField(10007^10, 'a', impl='pari_ffelt')
+        sage: K = FiniteField(10007^10, 'a', implementation='pari_ffelt')
         sage: loads(K.dumps()) == K
         True
     """
@@ -151,7 +151,7 @@ class FiniteField_pari_ffelt(FiniteField):
 
         EXAMPLES::
 
-            sage: k.<b> = FiniteField(5^20, impl='pari_ffelt')
+            sage: k.<b> = FiniteField(5^20, implementation='pari_ffelt')
             sage: type(k)
             <class 'sage.rings.finite_rings.finite_field_pari_ffelt.FiniteField_pari_ffelt_with_category'>
             sage: k is loads(dumps(k))
@@ -183,9 +183,9 @@ class FiniteField_pari_ffelt(FiniteField):
         EXAMPLES::
 
             sage: R.<x> = PolynomialRing(GF(2))
-            sage: FiniteField(2^4, 'b', impl='pari_ffelt').gen()
+            sage: FiniteField(2^4, 'b', implementation='pari_ffelt').gen()
             b
-            sage: k = FiniteField(3^4, 'alpha', impl='pari_ffelt')
+            sage: k = FiniteField(3^4, 'alpha', implementation='pari_ffelt')
             sage: a = k.gen()
             sage: a
             alpha
@@ -202,7 +202,7 @@ class FiniteField_pari_ffelt(FiniteField):
 
         EXAMPLES::
 
-            sage: F = FiniteField(3^4, 'a', impl='pari_ffelt')
+            sage: F = FiniteField(3^4, 'a', implementation='pari_ffelt')
             sage: F.characteristic()
             3
         """
@@ -215,9 +215,13 @@ class FiniteField_pari_ffelt(FiniteField):
 
         EXAMPLES::
 
-            sage: F = FiniteField(3^20, 'a', impl='pari_ffelt')
+            sage: F = FiniteField(3^20, 'a', implementation='pari_ffelt')
             sage: F.degree()
             20
+
+        .. SEEALSO::
+
+            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.absolute_degree`
         """
         return self._degree
 
@@ -228,10 +232,9 @@ class FiniteField_pari_ffelt(FiniteField):
 
         TESTS::
 
-            sage: F = FiniteField(37^10, 'a', impl='pari_ffelt')
-            sage: x = F.random_element()                                                # needs sage.modules
-            sage: all(x**(37**k) == F(F._pari_frobenius(k).ffmap(x))                    # needs sage.modules
-            ....:     for k in range(1, 30) if k % 10 != 0)
+            sage: F = FiniteField(37^10, 'a', implementation='pari_ffelt')
+            sage: x = F.random_element()
+            sage: all(x**(37**k) == F(F._pari_frobenius(k).ffmap(x)) for k in range(1, 30) if k % 10 != 0)
             True
             sage: F(F._pari_frobenius(-1).ffmap(x))**37 == x                            # needs sage.modules
             True

@@ -48,13 +48,11 @@ from __future__ import annotations
 import functools
 import operator
 import re
-import sys
 from inspect import Parameter, Signature
 from typing import TYPE_CHECKING, Any, NewType, TypeVar
 
-from docutils.statemachine import StringList
-
 import sphinx
+from docutils.statemachine import StringList
 from sphinx.config import ENUM
 from sphinx.errors import PycodeError
 from sphinx.ext.autodoc.importer import get_class_members, import_module, import_object
@@ -73,10 +71,13 @@ from sphinx.util.inspect import (
 from sphinx.util.typing import get_type_hints, restify, stringify_annotation
 
 # ------------------------------------------------------------------
-from sage.misc.sageinspect import (sage_getdoc_original,
-                                   sage_getargspec, isclassinstance,
-                                   sage_formatargspec,
-                                   is_function_or_cython_function)
+from sage.misc.sageinspect import (
+    is_function_or_cython_function,
+    isclassinstance,
+    sage_formatargspec,
+    sage_getargspec,
+    sage_getdoc_original,
+)
 
 _getdoc = getdoc
 
@@ -942,14 +943,13 @@ class Documenter:
                             keep = membername in self.options.private_members
                     else:
                         keep = False
+                elif self.options.members is ALL and is_filtered_inherited_member(
+                    membername, obj
+                ):
+                    keep = False
                 else:
-                    if self.options.members is ALL and is_filtered_inherited_member(
-                        membername, obj
-                    ):
-                        keep = False
-                    else:
-                        # ignore undocumented members if :undoc-members: is not given
-                        keep = has_doc or self.options.undoc_members
+                    # ignore undocumented members if :undoc-members: is not given
+                    keep = has_doc or self.options.undoc_members
 
                 if isinstance(obj, ObjectMember) and obj.skipped:
                     # forcedly skipped member (ex. a module attribute not defined in __all__)
@@ -1061,7 +1061,7 @@ class Documenter:
             documenters.sort(key=lambda e: (e[0].member_order, e[0].name))
         elif order == 'bysource':
             # By default, member discovery order matches source order,
-            # as dicts are insertion-ordered from Python 3.7.
+            # as dicts are insertion-ordered.
             if self.analyzer:
                 # sort by source order, by virtue of the module analyzer
                 tagorder = self.analyzer.tagorder
@@ -1904,10 +1904,9 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             object_sig = self.object.__signature__
             if isinstance(object_sig, Signature):
                 return None, None, object_sig
-            if sys.version_info[:2] in {(3, 12), (3, 13)} and callable(object_sig):
-                # Support for enum.Enum.__signature__ in Python 3.12
-                if isinstance(object_sig_str := object_sig(), str):
-                    return None, None, inspect.signature_from_str(object_sig_str)
+            if callable(object_sig) and isinstance(object_sig_str := object_sig(), str):
+                # Support for enum.Enum.__signature__
+                return None, None, inspect.signature_from_str(object_sig_str)
 
         # Next, let's see if it has an overloaded __call__ defined
         # in its metaclass

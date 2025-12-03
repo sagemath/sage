@@ -11,9 +11,9 @@
 
 """General purpose MemoryChunk types and related utilities"""
 
-from __future__ import print_function, absolute_import
 
-from .utils import je, reindent_lines as ri
+from .utils import je
+from .utils import reindent_lines as ri
 
 
 def string_of_addr(a):
@@ -40,7 +40,7 @@ def string_of_addr(a):
     return '*%s++' % a.name
 
 
-class MemoryChunk(object):
+class MemoryChunk:
     r"""
     Memory chunks control allocation, deallocation, initialization,
     etc.  of the vectors and objects in the interpreter.  Basically,
@@ -459,7 +459,7 @@ class MemoryChunkScratch(MemoryChunkLonglivedArray):
             True
         """
 
-        super(MemoryChunkScratch, self).__init__(name, storage_type)
+        super().__init__(name, storage_type)
         self._is_stack = is_stack
 
     def is_stack(self):
