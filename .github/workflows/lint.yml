@@ -31,11 +31,13 @@ jobs:
       id: deps
       run: pip install uv
 
-    - name: Code style check with ruff-minimal
+    - name: Code style check with ruff
       if: (success() || failure()) && steps.deps.outcome == 'success'
-      run: |
-        uv run --frozen --only-group lint -- ruff check --output-format github --config .github/workflows/ruff.toml
-        uv run --frozen --only-group lint -- ruff check --output-format github --config .github/workflows/ruff.toml --preview
+      run: uv run --frozen --only-group lint -- ruff check --output-format github --config .github/workflows/ruff.toml --no-preview
+
+    - name: Code style check with ruff (preview)
+      if: (success() || failure()) && steps.deps.outcome == 'success'
+      run: uv run --frozen --only-group lint -- ruff check --output-format github --config .github/workflows/ruff.toml --preview
 
     - name: Code style check with relint
       if: (success() || failure()) && steps.deps.outcome == 'success'

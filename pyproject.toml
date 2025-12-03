@@ -251,10 +251,21 @@ exclude = [
 # disagree with them or because following them is not currently practical.
 ignore = [
   "E501", # Line too long - hard to avoid in doctests, and better handled by black.
-  "E741", # Variable names I, O, l - common in math, and not an issue for most monospace fonts
+  "E741", "E743", # Variable/function names I, O, l - common in math, and not an issue for most monospace fonts
+  "PLC2401", # Non-ASCII variables - we deliberately use Greek letters (albeit sparingly)
+
+  # The following rules are good in spirit but require some common sense, better enforced through code review.
+  "PLR09", # Rules about code complexity - better enforced through code review process.
+  "PLR1714", # Repeated equality comparison - too picky when only doing a couple comparisons.
+  "PLR2004", # Comparison to magic values - better enforced through code review process. 
+  "PLW1641", # __eq__ without __hash__ - implementations of equivalence classes may have a well-defined notion of equality without a well-defined canonical representation that can be used to compute a hash
+
   # Imports at top-level of file - we can't follow this because we intentionally defer imports for various reasons.
   # maybe once we can use PEP 810 this can be fixed.
   "PLC0415",
+  # Module level import not at top of file.
+  # ruff is not aware of our lazy_imports, we may be able to remove this ignore after adopting PEP 810
+  "E402", 
 ]
 
 select = [
