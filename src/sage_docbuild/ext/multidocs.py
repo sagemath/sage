@@ -179,7 +179,7 @@ def get_js_index(app, curdoc):
                                app.config.html_search_options, scoring=None)
     indexfile = os.path.join(app.outdir, curdoc, 'searchindex.js')
     try:
-        f = open(indexfile, 'r')
+        f = open(indexfile)
     except OSError:
         logger.info("")
         logger.warning("Unable to fetch %s " % indexfile)
