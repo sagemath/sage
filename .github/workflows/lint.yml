@@ -36,7 +36,7 @@ jobs:
       run: uv run --frozen --only-group lint -- ruff check --output-format github --config .github/workflows/ruff.toml --no-preview
 
     - name: Code style check with ruff (preview)
-      if: (success() || failure()) && steps.deps.outcome == 'success'
+      if: success()
       run: uv run --frozen --only-group lint -- ruff check --output-format github --config .github/workflows/ruff.toml --preview
 
     - name: Code style check with relint
