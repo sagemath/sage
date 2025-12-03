@@ -796,7 +796,6 @@ class GhLabelSynchronizer:
         if item is Status.positive_review:
             self.add_warning('Label *%s* cannot be added by the author of the PR.' % item.value)
             self.remove_label(item.value)
-        return
 
     def warning_about_label_addition(self, item):
         r"""
@@ -808,7 +807,6 @@ class GhLabelSynchronizer:
             self.add_warning('Label *%s* may be incorrect, since there are unresolved reviews.' % item.value)
         else:
             self.add_warning('Label *%s* does not match the state of GitHub\'s review system.' % item.value)
-        return
 
     def hint_about_label_removal(self, item):
         r"""
@@ -819,7 +817,6 @@ class GhLabelSynchronizer:
         else:
             sel_list = 'priority'
         self.add_hint('You don\'t need to remove %s labels any more. You\'d better just add the label which replaces it.' % sel_list)
-        return
 
     # -------------------------------------------------------------------------
     # methods to act on events
