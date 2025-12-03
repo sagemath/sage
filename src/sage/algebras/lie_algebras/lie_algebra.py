@@ -616,8 +616,8 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
 
     def _coerce_map_from_(self, R):
         """
-        Return ``True`` if there is a coercion from ``R`` into ``self`` and
-        ``False`` otherwise.
+        Return a coercion map from ``R`` into ``self`` if one exists,
+        or ``True`` if a generic coercion exists, or ``False`` otherwise.
 
         The things that coerce into ``self`` are:
 
@@ -625,19 +625,38 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
           map into ``self.base_ring()``.
 
         - A module which coerces into the base vector space of ``self``.
+          In this case, the coercion map is given by :meth:`from_vector`
+          (composed with the appropriate coercion on the base module).
 
         TESTS::
 
             sage: L.<x,y> = LieAlgebra(QQ, abelian=True)
             sage: L._coerce_map_from_(L.module())
+            <bound method ...from_vector of Abelian Lie algebra on 2 generators (x, y) over Rational Field>
+            sage: cm = L._coerce_map_from_(FreeModule(ZZ, 2))
+            sage: cm.domain()
+            Ambient free module of rank 2 over the principal ideal domain Integer Ring
+            sage: cm.codomain()
+            Abelian Lie algebra on 2 generators (x, y) over Rational Field
+
+        Test that a morphism can be created from generator images
+        (see :issue:`40780`)::
+
+            sage: gl = lie_algebras.gl(QQ, 2)
+            sage: phi = gl.morphism({e: e for e in gl.gens()})
+            sage: phi.domain() is gl
             True
-            sage: L._coerce_map_from_(FreeModule(ZZ, 2))
+            sage: phi.codomain() is gl
             True
         """
         if not isinstance(R, LieAlgebra):
             # Should be moved to LieAlgebrasWithBasis somehow since it is a generic coercion
             if self.module is not NotImplemented:
-                return self.module().has_coerce_map_from(R)
+                M = self.module()
+                if R is M:
+                    return self.from_vector
+                elif M.has_coerce_map_from(R):
+                    return self._coerce_map_via([M], R)
             return False
 
         # We check if it is a subalgebra of something that can coerce into ``self``
