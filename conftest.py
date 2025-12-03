@@ -271,7 +271,7 @@ def pytest_collect_file(
 
 def pytest_ignore_collect(
     collection_path: Path, path: str, config: pytest.Config
-) -> None | bool:
+) -> bool | None:
     """
     This hook is called when collecting test files, and can be used to
     prevent considering this path for collection by returning ``True``.

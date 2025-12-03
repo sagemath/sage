@@ -31,4 +31,29 @@ extend-ignore = [
   "F821",    # 2271 failures
   "F401",  # 583 failures
   "I001", # 2888 failures
-]
+
+  # The remaining failing rules were in ruff preview mode only when added to this file
+  "E231",    # missing-whitespace
+  "E226",    # missing-whitespace-around-arithmetic-operator
+  "PLW3201", # bad-dunder-method-name
+  "PLR6301", # no-self-use
+  "E241",    # multiple-spaces-after-comma
+  "E203",    # whitespace-before-punctuation
+  "E265",    # no-space-after-block-comment
+  "E201",    # whitespace-after-open-bracket
+  "E261",    # too-few-spaces-before-inline-comment
+  "PLR6104", # non-augmented-assignment
+  "E202",    # whitespace-before-close-bracket
+  "PLR6201", # literal-membership
+  "E266",    # multiple-leading-hashes-for-block-comment
+  "PLR1702", # too-many-nested-blocks
+  "E262",    # no-space-after-inline-comment
+  "PLW1514", # unspecified-encoding
+  "PLC1901", # compare-to-empty-string
+  "PLC2801", # unnecessary-dunder-call
+  "E116",    # unexpected-indentation-comment
+  "E114",    # indentation-with-invalid-multiple-comment
+  "PLW0108", # unnecessary-lambda
+  "PLC2701", # import-private-name
+  "PLE4703", # modified-iterating-set
+  ]
