@@ -10,7 +10,10 @@ import shlex
 import sys
 import textwrap
 from pathlib import Path
-from typing import Sequence
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 # So that Python can find the sage_bootstrap package
 sys.path.insert(0, str(Path(__file__).parent.parent / "build"))
@@ -394,7 +397,7 @@ def build_additional_sections(pkg: Package) -> str:
     if dependencies:
         for dep in sorted(dependencies):
             if dep:
-                if dep == 'FORCE':
+                if dep == "FORCE":
                     # Suppress FORCE
                     continue
                 elif dep.startswith("$") or dep.startswith("sage"):
@@ -416,16 +419,15 @@ def build_additional_sections(pkg: Package) -> str:
         path = Path(pkg.path) / candidate
         if path.is_file():
             version_text = path.read_text().strip()
+            version_text = [
+                line for line in version_text.splitlines() if not line.startswith("#")
+            ]
             if version_text:
                 lines.extend(
                     [
                         f"{candidate}::",
                         "",
-                        *(
-                            "    " + line
-                            for line in version_text.splitlines()
-                            if not line.startswith("#")
-                        ),
+                        *("    " + line for line in version_text),
                         "",
                     ]
                 )
