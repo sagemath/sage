@@ -1555,7 +1555,7 @@ cdef class LaurentSeries(AlgebraElement):
 
         - ``root`` -- boolean (default: ``False``); if ``True``, return a pair
           ``(True, sqrt)`` if this element is a square, and ``(False, None)``
-          otherwise.
+          otherwise
 
         EXAMPLES::
 
