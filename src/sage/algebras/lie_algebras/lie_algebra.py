@@ -625,8 +625,6 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
           map into ``self.base_ring()``.
 
         - A module which coerces into the base vector space of ``self``.
-          In this case, the coercion map is given by :meth:`from_vector`
-          (composed with the appropriate coercion on the base module).
 
         TESTS::
 
