@@ -5103,7 +5103,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: max(f.degree() for f in I.groebner_basis())
             4
 
-        We increase the number of polynomials and observe a decrease
+        We increase the number of polynomials and observe a decrease of
         the degree of regularity::
 
             sage: for i in range(2 * n):
