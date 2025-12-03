@@ -3569,6 +3569,11 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: (1+p[2]).plethysm(p[2])
             p[] + p[4]
 
+        Fixed :issue:`41257`::
+
+            sage: s[[]](tensor([p[1], s[1]]))
+            p[] # s[]
+
         Check that degree one elements are treated in the correct way::
 
             sage: R.<a1,a2,a11,b1,b21,b111> = QQ[]
@@ -3601,11 +3606,6 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: s = SymmetricFunctions(T).s()
             sage: s[2](5)
             15*B[] # B[]
-
-        Fixed :issue:`41257`::
-
-            sage: s[[]](tensor([p[1], s[1]]))
-            p[] # s[]
 
         .. TODO::
 
