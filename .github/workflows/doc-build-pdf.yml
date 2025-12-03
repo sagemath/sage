@@ -24,6 +24,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Maximize available disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          # Remove pre-installed packages like Docker, Android, .NET, etc.
+          # We only keep the basic essentials (like compilers, etc.)
+          tool-cache: true
+
       - name: Merge CI fixes from sagemath/sage
         run: |
           .github/workflows/merge-fixes.sh
