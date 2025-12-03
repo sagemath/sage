@@ -3601,6 +3601,8 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: s = SymmetricFunctions(T).s()
             sage: s[2](5)
             15*B[] # B[]
+            sage: s[[]](tensor([p[1], s[1]]))
+            p[] # s[]
 
         .. TODO::
 
@@ -3646,11 +3648,11 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         if tensorflag:
             tparents = Px._sets
             lincomb = Px.linear_combination
-            elt = lincomb((prod(lincomb((tensor([p[r].plethysm(base(la))
+            elt = lincomb((prod((lincomb((tensor([p[r].plethysm(base(la))
                                                  for base, la in zip(tparents, trm)]),
                                          _raise_variables(c, r, degree_one))
                                         for trm, c in x)
-                                for r in mu),
+                                for r in mu),tensor([base.one() for base in tparents])),
                            d)
                           for mu, d in p(self))
             return Px(elt)
