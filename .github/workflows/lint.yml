@@ -32,19 +32,20 @@ jobs:
       run: pip install uv
 
     - name: Code style check with ruff
-      if: (success() || failure()) && steps.deps.outcome == 'success'
+      if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+      id: ruff_no_preview
       run: uv run --frozen --only-group lint -- ruff check --output-format github --config .github/workflows/ruff.toml --no-preview
 
     - name: Code style check with ruff (preview)
-      if: success()
+      if: ${{ !cancelled() && steps.ruff_no_preview.outcome == 'success' }}
       run: uv run --frozen --only-group lint -- ruff check --output-format github --config .github/workflows/ruff.toml --preview
 
     - name: Code style check with relint
-      if: (success() || failure()) && steps.deps.outcome == 'success'
+      if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
       run: uv run --frozen --only-group lint -- relint -c src/.relint.yml -- src/sage/
 
     - name: Validate docstring markup as RST
-      if: (success() || failure()) && steps.deps.outcome == 'success'
+      if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
       run: uv run --frozen --only-group lint -- flake8 --select=RST src/sage/ --config src/tox.ini
     
     - name: TOML format check with taplo
