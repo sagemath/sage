@@ -37,6 +37,21 @@ class FiniteSets(CategoryWithAxiom):
         sage: C is Sets().Finite()
         True
     """
+    class SubcategoryMethods:
+
+        def Infinite(self):
+            """
+            Incompatible axiom.
+
+            EXAMPLES::
+
+                sage: P = Posets().Finite()
+                sage: P.Infinite()
+                Traceback (most recent call last):
+                ...
+                TypeError: incompatible axioms: finite and infinite
+            """
+            raise TypeError("incompatible axioms: finite and infinite")
 
     class ParentMethods:
 
