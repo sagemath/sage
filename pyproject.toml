@@ -240,9 +240,9 @@ exclude = [
   # Linting it would just get in the way of adding stricter linter rules
   # to our actual code.
   "src/doc/",
-  # This directory handles bootstrapping the build process,
-  # and allows Python versions as old as 2.6, so there is no point in linting it.
-  "build/sage_bootstrap/",
+  # This directory handles the build process,
+  # and some parts allow Python versions as old as 2.6, so we don't both linting.
+  "build/",
 ]
 
 [tool.ruff.lint]

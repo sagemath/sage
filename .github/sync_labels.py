@@ -170,7 +170,7 @@ class GhLabelSynchronizer:
 
     def reset_view(self):
         r"""
-        Reset cache of ``gh view`` results. 
+        Reset cache of ``gh view`` results.
         """
         self._labels = None
         self._author = None
@@ -942,7 +942,7 @@ class GhLabelSynchronizer:
                 info('Simulate label addition of %s for %s' % (label, self._issue))
                 self.select_label(status)
                 self.run(Action.labeled, label=status.value)
-            
+
     def remove_all_labels_of_sel_list(self, sel_list):
         r"""
         Remove all labels of given selection list.
