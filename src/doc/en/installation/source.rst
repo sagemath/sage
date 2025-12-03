@@ -172,6 +172,7 @@ To compile and install Sage in editable install, then just use:
     $ uv pip install \
         meson-python \
         "cypari2 >=2.2.1" \
+        "cysignals >=1.11.2, != 1.12.0" \
         "cython >=3.0, != 3.0.3, != 3.1.0" \
         "gmpy2 >=2.1.5" \
         memory_allocator \
