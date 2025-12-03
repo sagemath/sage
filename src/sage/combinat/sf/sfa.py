@@ -3655,7 +3655,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
                                                  for base, la in zip(tparents, trm)]),
                                          _raise_variables(c, r, degree_one))
                                         for trm, c in x)
-                                for r in mu),tensor([base.one() for base in tparents])),
+                                for r in mu), tensor([base.one() for base in tparents])),
                            d)
                           for mu, d in p(self))
             return Px(elt)
