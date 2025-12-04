@@ -31,6 +31,10 @@ jobs:
       id: deps
       run: pip install uv
 
+    - name: Print ruff version
+      if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+      run: uv run --frozen --only-group lint -- ruff --version
+
     - name: Code style check with ruff
       if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
       id: ruff_no_preview
