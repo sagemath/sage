@@ -227,7 +227,7 @@ class LieConformalAlgebraWithStructureCoefficients(
                 # convert to index_set as keys
                 s_coeff = {(d[k[0]], d[k[1]]):
                            {a: {(d[x[1]], x[2]): sck[a][x] for x in sck[a]}
-                            for a in s_coeff[k]}
+                            for a in sck}
                            for k, sck in s_coeff.items()}
 
             except KeyError:
