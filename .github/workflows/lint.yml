@@ -31,18 +31,11 @@ jobs:
       id: deps
       run: pip install uv
 
-    - name: Print ruff version
-      if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
-      run: uv run --frozen --only-group lint -- ruff --version
-
     - name: Code style check with ruff
       if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
-      id: ruff_no_preview
-      run: uv run --frozen --only-group lint -- ruff check --output-format github --config .github/workflows/ruff.toml --no-preview
-
-    - name: Code style check with ruff (preview)
-      if: ${{ !cancelled() && steps.ruff_no_preview.outcome == 'success' }}
-      run: uv run --frozen --only-group lint -- ruff check --output-format github --config .github/workflows/ruff.toml --preview
+      run: |
+        uv run --frozen --only-group lint -- ruff check --output-format github --config .github/workflows/ruff.toml --no-preview
+        uv run --frozen --only-group lint -- ruff check --output-format github --config .github/workflows/ruff.toml --preview
 
     - name: Code style check with relint
       if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
