@@ -38,7 +38,7 @@ class FractionFieldElement:
     def __call__(self, *x: Any, **kwds: Any) -> 'FractionFieldElement':
         ...
 
-    def subs(self, in_dict: dict = None, *args: Any, **kwds: Any) -> 'FractionFieldElement':
+    def subs(self, in_dict: dict | None = None, *args: Any, **kwds: Any) -> 'FractionFieldElement':
         ...
 
     def _is_atomic(self) -> bool:
