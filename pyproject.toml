@@ -78,7 +78,7 @@ description = "Sage: Open Source Mathematics Software: Standard Python Library"
 dynamic = ["version"]
 license = { text = "GNU General Public License (GPL) v2 or later" }
 name = "sagemath"
-requires-python = ">=3.12, <3.14"
+requires-python = ">=3.12, <3.15"
 urls = { Homepage = "https://www.sagemath.org" }
 
 [project.optional-dependencies]
