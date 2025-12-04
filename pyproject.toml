@@ -270,17 +270,14 @@ ignore = [
 
 select = [
   # A starting point for our ruff rules, we may want to ignore some of these later on.
-  "E", # pycodestyle errors - https://docs.astral.sh/ruff/rules/#error-e
-  "W", # pycodestyle warnings - https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
   "I", # isort - https://docs.astral.sh/ruff/rules/#isort-i
-  "PL", # pylint - https://docs.astral.sh/ruff/rules/#pylint-pl
-
-  # The remaining rules were added deliberately, and should not be ignored.
 
   # ruff-specific rules -- https://docs.astral.sh/ruff/rules/#ruff-specific-rules-ruf
   "RUF013",
   "RUF036",
+
   "TC", # flake8-type-checking - https://docs.astral.sh/ruff/rules/#flake8-type-checking-tc
+
   # pyupgrade -- https://docs.astral.sh/ruff/rules/#pyupgrade-up
   "UP004",
   "UP006",
@@ -290,6 +287,119 @@ select = [
   "UP022",
   "UP034",
   "UP035",
+
+  "W", # pycodestyle warnings - https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
+
+  # pycodestyle errors - https://docs.astral.sh/ruff/rules/#error-e
+  # Ideally we would enable (almost) all of the E rules, but too
+  # many of these rules are in preview to trust that something won't change
+  # in ruff itself and cause us headaches.
+  "E101",
+  "E401",
+  "E701",
+  "E702",
+  "E703",
+  "E711",
+  "E712",
+  "E713",
+  "E714",
+  "E721",
+  "E722",
+  "E731",
+  "E742",
+  "E902",
+
+  # pylint - https://docs.astral.sh/ruff/rules/#pylint-pl
+  # Like with the E rules, this isn't stable enough yet to enable all of PL
+
+  # pylint convention - https://docs.astral.sh/ruff/rules/#convention-plc
+  "PLC0105",
+  "PLC0131",
+  "PLC0132",
+  "PLC0205",
+  "PLC0206",
+  "PLC0208",
+  "PLC0414",
+  "PLC1802",
+  "PLC2403",
+  "PLC3002",
+
+  # pylint errors - https://docs.astral.sh/ruff/rules/#error-ple
+  "PLE0100",
+  "PLE0101",
+  "PLE0115",
+  "PLE0116",
+  "PLE0117",
+  "PLE0118",
+  "PLE0237",
+  "PLE0241",
+  "PLE0302",
+  "PLE0303",
+  "PLE0305",
+  "PLE0307",
+  "PLE0308",
+  "PLE0309",
+  "PLE0604",
+  "PLE0605",
+  "PLE0643",
+  "PLE0704",
+  "PLE1132",
+  "PLE1142",
+  "PLE1205",
+  "PLE1206",
+  "PLE1300",
+  "PLE1307",
+  "PLE1310",
+  "PLE1507",
+  "PLE1519",
+  "PLE1520",
+  "PLE1700",
+  "PLE2502",
+  "PLE2510",
+  "PLE2512",
+  "PLE2513",
+  "PLE2514",
+  "PLE2515",
+
+  # pylint refactor - https://docs.astral.sh/ruff/rules/#refactor-plr
+  "PLR0124",
+  "PLR0133",
+  "PLR0206",
+  "PLR0402",
+  "PLR1704",
+  "PLR1711",
+  "PLR1716",
+  "PLR1722",
+  "PLR1730",
+  "PLR1733",
+  "PLR1736",
+  "PLR2044",
+  "PLR5501",
+
+  # pyling warning - https://docs.astral.sh/ruff/rules/#warning-plw
+  "PLW0120",
+  "PLW0127",
+  "PLW0128",
+  "PLW0129",
+  "PLW0131",
+  "PLW0133",
+  "PLW0177",
+  "PLW0211",
+  "PLW0245",
+  "PLW0406",
+  "PLW0602",
+  "PLW0603",
+  "PLW0604",
+  "PLW0642",
+  "PLW0711",
+  "PLW1501",
+  "PLW1507",
+  "PLW1508",
+  "PLW1509",
+  "PLW1510",
+  "PLW2101",
+  "PLW2901",
+  "PLW3301",
 ]
 
 [tool.ruff.lint.per-file-ignores]
