@@ -27,12 +27,12 @@ extend-ignore = [
   "PLW0211", # 495 failures
   "PLW2901", # 474 failures
   "F821",    # 2271 failures
-  "F401",  # 583 failures
-  "I001", # 2888 failures
+  "E231",    # 49042 failures, could be autofixed but would change too many files for one PR
+  "E226",    # 29323 failures, could be autofixed but would change too many files for one PR
+  "F401",    # 583 failures
+  "I001",    # 2888 failures
 
-  # The remaining failing rules were in ruff preview mode only when added to this file
-  "E231",    # missing-whitespace
-  "E226",    # missing-whitespace-around-arithmetic-operator
+  # The remaining failing rules were in ruff preview mode only when added to this file.
   "PLW3201", # bad-dunder-method-name
   "PLR6301", # no-self-use
   "E241",    # multiple-spaces-after-comma
