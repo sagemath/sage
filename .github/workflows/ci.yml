@@ -54,10 +54,10 @@ jobs:
 
       - name: Checkout code
         # cannot use v4 yet because of https://github.com/actions/checkout/issues/1487
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6.0.1
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6.7.0
+        uses: astral-sh/setup-uv@v7.1.4
 
       # We cannot use the setup python action because it doesn't support all containers
       # https://github.com/actions/setup-python/issues/527
@@ -95,8 +95,8 @@ jobs:
           uv pip install \
             meson-python \
             "cypari2 >=2.2.1" \
-            "cysignals >=1.11.2, != 1.12.0" \
-            "cython >=3.0, != 3.0.3, < 3.1.0" \
+            "cysignals >=1.12.1" \
+            "cython >=3.1.0" \
             "gmpy2 >=2.1.5" \
             memory_allocator \
             "numpy >=1.25" \
