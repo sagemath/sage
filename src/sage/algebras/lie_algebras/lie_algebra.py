@@ -646,6 +646,9 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
             True
             sage: phi.codomain() is gl
             True
+            sage: gl(gl.an_element().to_vector().change_ring(ZZ))
+            [1 1]
+            [1 1]
         """
         if not isinstance(R, LieAlgebra):
             # Should be moved to LieAlgebrasWithBasis somehow since it is a generic coercion
