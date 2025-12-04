@@ -270,7 +270,7 @@ ignore = [
 
   # Module level import not at top of file.
   # ruff is not aware of our lazy_imports, we may be able to remove this ignore after adopting PEP 810
-  "E402", 
+  "E402",
 ]
 
 select = [
