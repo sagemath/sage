@@ -187,7 +187,7 @@ class GhLabelSynchronizer:
         """
         meth = '-X GET'
         if method:
-            meth='-X %s' % method
+            meth = '-X %s' % method
         cmd = 'gh api %s -H \"Accept: application/vnd.github+json\" %s %s' % (meth, path_args, query)
         debug('Execute command: %s' % cmd)
         if method:
@@ -248,6 +248,7 @@ class GhLabelSynchronizer:
         outtxt = str(capt.stdout)
         debug('auth status err: %s' % errtxt)
         debug('auth status out: %s' % outtxt)
+
         def read_login(txt, position_mark):
             for t in txt:
                 for p in position_mark:
@@ -413,7 +414,7 @@ class GhLabelSynchronizer:
         date_commits = list(self._commits)
         if Status.positive_review.value not in self.get_labels():
             for com in self._commits:
-                message =  com['messageHeadline']
+                message = com['messageHeadline']
                 if message.startswith('Merge') and 'develop' in message:
                     debug('Ignore merge commit %s for commit_date' % com['oid'])
                     date_commits.remove(com)

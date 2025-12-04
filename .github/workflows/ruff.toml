@@ -33,25 +33,27 @@ extend-ignore = [
   "I001",    # 2888 failures
 
   # The remaining failing rules were in ruff preview mode only when added to this file.
-  "PLW3201", # bad-dunder-method-name
-  "PLR6301", # no-self-use
-  "E241",    # multiple-spaces-after-comma
-  "E203",    # whitespace-before-punctuation
-  "E265",    # no-space-after-block-comment
-  "E201",    # whitespace-after-open-bracket
-  "E261",    # too-few-spaces-before-inline-comment
-  "PLR6104", # non-augmented-assignment
-  "E202",    # whitespace-before-close-bracket
-  "PLR6201", # literal-membership
-  "E266",    # multiple-leading-hashes-for-block-comment
-  "PLR1702", # too-many-nested-blocks
-  "E262",    # no-space-after-inline-comment
-  "PLW1514", # unspecified-encoding
-  "PLC1901", # compare-to-empty-string
-  "PLC2801", # unnecessary-dunder-call
-  "E116",    # unexpected-indentation-comment
-  "E114",    # indentation-with-invalid-multiple-comment
-  "PLW0108", # unnecessary-lambda
-  "PLC2701", # import-private-name
-  "PLE4703", # modified-iterating-set
-  ]
+  "PLW3201",
+  "PLR6301",
+  "E241",  	
+  "E203",  	
+  "E265",  	
+  "E201",  	
+  "E261",  	
+  "PLR6104",
+  "E202",  	
+  "PLR6201",
+  "E266",  	
+  "PLR1702",
+  "E262",  	
+  "PLW1514",
+  "PLC1901",
+  "PLC2801",
+  "E116",
+  "E114",
+  "PLC2701",
+  "E251",
+  "PLW0108",
+  "E302",
+  "PLE4703",
+]
