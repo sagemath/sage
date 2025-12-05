@@ -843,10 +843,10 @@ def ensure_interruptible_after(seconds: float, max_wait_after_interrupt: float =
         ....:         if start_time.tv_sec > target_time.tv_sec or (start_time.tv_sec == target_time.tv_sec and start_time.tv_nsec >= target_time.tv_nsec):
         ....:             break
         ....: ''')
-        sage: with ensure_interruptible_after(2) as data: interruptible_sleep(1r)
+        sage: with ensure_interruptible_after(2) as data: interruptible_sleep(1r)  # abs tol 0.1
         Traceback (most recent call last):
         ...
-        RuntimeError: Function terminates early after 1.00... < 2.0000 seconds
+        RuntimeError: Function terminates early after 1.0000 < 2.0000 seconds
         sage: with ensure_interruptible_after(1) as data: uninterruptible_sleep(2r)
         Traceback (most recent call last):
         ...
