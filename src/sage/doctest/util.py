@@ -846,7 +846,9 @@ def ensure_interruptible_after(seconds: float, max_wait_after_interrupt: float =
         sage: with ensure_interruptible_after(2) as data: interruptible_sleep(1r)  # abs tol 0.1
         Traceback (most recent call last):
         ...
-        RuntimeError: Function terminates early after 1.0000 < 2.0000 seconds
+        RuntimeError: Function terminates early after ... < 2.0000 seconds
+        sage: data  # abs tol 0.1
+        {'alarm_raised': False, 'elapsed': 1.0}
         sage: with ensure_interruptible_after(1) as data: uninterruptible_sleep(2r)
         Traceback (most recent call last):
         ...
