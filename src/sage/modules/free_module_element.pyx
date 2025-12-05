@@ -1994,9 +1994,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         EXAMPLES::
 
             sage: # needs sage.symbolic
-            sage: v = vector(SR, [1/2,2/5,0]); v                                        # needs sage.symbolic
+            sage: v = vector(SR, [1/2,2/5,0]); v
             (1/2, 2/5, 0)
-            sage: v.set(2, pi); v                                                       # needs sage.symbolic
+            sage: v.set(2, pi); v
             (1/2, 2/5, pi)
             sage: v.set(5, 1)
             Traceback (most recent call last):
