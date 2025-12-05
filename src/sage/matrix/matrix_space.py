@@ -62,6 +62,7 @@ lazy_import('sage.matrix.matrix_gfpn_dense', ['Matrix_gfpn_dense'],
             feature=Meataxe())
 lazy_import('sage.groups.matrix_gps.matrix_group', ['MatrixGroup_base'])
 
+_Semirings = Semirings()
 _Fields = Fields()
 
 
@@ -735,7 +736,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             sage: MS2._my_option
             False
         """
-        if base_ring not in Semirings():
+        if base_ring not in _Semirings:
             raise TypeError("base_ring (=%s) must be a ring or a semiring" % base_ring)
 
         if ncols_or_column_keys is not None:
