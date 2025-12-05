@@ -141,7 +141,11 @@ from builtins import sum as add
 from sage.categories.fields import Fields
 from sage.categories.homset import End, Hom, hom
 from sage.categories.number_fields import NumberFields
-from sage.libs.singular.function import get_printlevel, set_printlevel, singular_function
+from sage.libs.singular.function import (
+    get_printlevel,
+    set_printlevel,
+    singular_function,
+)
 from sage.libs.singular.function import lib as singular_lib
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
@@ -151,11 +155,19 @@ from sage.misc.persist import register_unpickle_override
 from sage.misc.sage_eval import sage_eval
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
-from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
+from sage.rings.polynomial.multi_polynomial_element import (
+    degree_lowest_rational_function,
+)
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import RationalField
-from sage.schemes.projective.projective_space import ProjectiveSpace, ProjectiveSpace_ring
-from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective, AlgebraicScheme_subscheme_projective_field
+from sage.schemes.projective.projective_space import (
+    ProjectiveSpace,
+    ProjectiveSpace_ring,
+)
+from sage.schemes.projective.projective_subscheme import (
+    AlgebraicScheme_subscheme_projective,
+    AlgebraicScheme_subscheme_projective_field,
+)
 
 lazy_import('sage.interfaces.singular', 'singular')
 lazy_import('sage.rings.number_field.number_field', 'NumberField')
