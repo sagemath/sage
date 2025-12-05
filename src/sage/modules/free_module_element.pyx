@@ -1918,16 +1918,28 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         raise NotImplementedError
 
-    def get(self, i):
+    def get(self, Py_ssize_t i):
         """
-        Like ``__getitem__`` but without bounds checking:
-        `i` must satisfy ``0 <= i < self.degree``.
+        Return the `i`-th entry of ``self``.
+
+        Unlike ``__getitem__``, this does not support negative indices
+        or slices.
 
         EXAMPLES::
 
             sage: vector(SR, [1/2,2/5,0]).get(0)                                        # needs sage.symbolic
             1/2
+            sage: zero_vector(3).get(3)
+            Traceback (most recent call last):
+            ...
+            IndexError: vector index out of range
+            sage: zero_vector(3).get(-1)
+            Traceback (most recent call last):
+            ...
+            IndexError: vector index out of range
         """
+        if i < 0 or i >= self._degree:
+            raise IndexError("vector index out of range")
         return self.get_unsafe(i)
 
     def __setitem__(self, i, value):
@@ -1980,11 +1992,12 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         raise NotImplementedError
 
-    def set(self, i, value):
+    def set(self, Py_ssize_t i, value):
         """
-        Like ``__setitem__`` but without type or bounds checking:
-        `i` must satisfy ``0 <= i < self.degree`` and ``value`` must be
-        an element of the coordinate ring.
+        Set the `i`-th entry of ``self`` to ``value``.
+
+        Unlike ``__setitem__``, this does not support negative indices
+        or slices.
 
         EXAMPLES::
 
@@ -1992,7 +2005,18 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             (1/2, 2/5, 0)
             sage: v.set(2, pi); v                                                       # needs sage.symbolic
             (1/2, 2/5, pi)
+            sage: v = zero_vector(3)
+            sage: v.set(3, 1)
+            Traceback (most recent call last):
+            ...
+            IndexError: vector index out of range
+            sage: v.set(-1, 1)
+            Traceback (most recent call last):
+            ...
+            IndexError: vector index out of range
         """
+        if i < 0 or i >= self._degree:
+            raise IndexError("vector index out of range")
         assert value.parent() is self.coordinate_ring()
         self.set_unsafe(i, value)
 
@@ -5307,11 +5331,6 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             0
             sage: v.get(2)                                                              # needs sage.symbolic
             2/3
-
-        For this class, 0 is returned if the access is out of bounds::
-
-            sage: v.get(10)                                                             # needs sage.symbolic
-            0
         """
         try:
             return self._entries[i]
@@ -5346,16 +5365,6 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             sage: v.set(2, SR(0))
             sage: v
             (1, pi^3, 0)
-
-        This assignment is illegal::
-
-            sage: v.set(10, pi)                                                         # needs sage.symbolic
-
-        This lack of bounds checking causes trouble later::
-
-            sage: v                                                                     # needs sage.symbolic
-            <repr(<sage.modules.free_module.FreeModule_ambient_field_with_category.element_class at 0x...>) failed:
-             IndexError: list assignment index out of range>
         """
         if value:
             self._entries[i] = value
