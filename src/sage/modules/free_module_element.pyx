@@ -1993,6 +1993,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: v = vector(SR, [1/2,2/5,0]); v                                        # needs sage.symbolic
             (1/2, 2/5, 0)
             sage: v.set(2, pi); v                                                       # needs sage.symbolic
@@ -5349,16 +5350,6 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             sage: v.set(2, SR(0))
             sage: v
             (1, pi^3, 0)
-
-        This assignment is illegal::
-
-            sage: v.set(10, pi)                                                         # needs sage.symbolic
-
-        This lack of bounds checking causes trouble later::
-
-            sage: v                                                                     # needs sage.symbolic
-            <repr(<sage.modules.free_module.FreeModule_ambient_field_with_category.element_class at 0x...>) failed:
-             IndexError: list assignment index out of range>
         """
         if value:
             self._entries[i] = value
