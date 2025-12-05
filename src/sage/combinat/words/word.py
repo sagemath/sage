@@ -521,8 +521,9 @@ class InfiniteWord_iter_with_caching(WordDatatype_iter_with_caching, InfiniteWor
         sage: try:
         ....:     dumps(w)
         ....: except TypeError as e:
-        ....:     "pickle" in str(e) and "generator" in str(e)
-        True
+        ....:     if "pickle" in str(e) and "generator" in str(e)
+        ....:         print("TypeError raised in dumps() as expected")
+        TypeError raised in dumps() as expected
     """
     pass
 
@@ -561,8 +562,9 @@ class InfiniteWord_iter(WordDatatype_iter, InfiniteWord_class):
         sage: try:
         ....:     dumps(w)
         ....: except TypeError as e:
-        ....:     "pickle" in str(e) and "generator" in str(e)
-        True
+        ....:     if "pickle" in str(e) and "generator" in str(e)
+        ....:         print("TypeError raised in dumps() as expected")
+        TypeError raised in dumps() as expected
     """
     pass
 
@@ -664,8 +666,9 @@ class Word_iter_with_caching(WordDatatype_iter_with_caching, Word_class):
         sage: try:
         ....:     dumps(w)
         ....: except TypeError as e:
-        ....:     "pickle" in str(e) and "generator" in str(e)
-        True
+        ....:     if "pickle" in str(e) and "generator" in str(e):
+        ....:         print("TypeError raised in dumps() as expected")
+        TypeError raised in dumps() as expected
     """
     pass
 
@@ -702,8 +705,9 @@ class Word_iter(WordDatatype_iter, Word_class):
         sage: try:
         ....:     dumps(w)
         ....: except TypeError as e:
-        ....:     "pickle" in str(e) and "generator" in str(e)
-        True
+        ....:     if "pickle" in str(e) and "generator" in str(e):
+        ....:         print("TypeError raised in dumps() as expected")
+        TypeError raised in dumps() as expected
     """
     pass
 
