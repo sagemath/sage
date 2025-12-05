@@ -15,9 +15,10 @@ SAGE_SPKG_CONFIGURE([python3], [
          [AC_MSG_ERROR([building Sage --without-python is not supported])])
    ac_path_PYTHON3="$with_python"
 
-   dnl If --with-python was explicitly specified, clear the cache to force re-checking
+   dnl If --with-python was explicitly specified and differs from the cached value,
+   dnl clear the cache to force re-checking.
    dnl This fixes issue #41258 where changing --with-python would use stale cached values
-   AS_IF([test x"$ac_path_PYTHON3" != x], [
+   AS_IF([test x"$ac_path_PYTHON3" != x && test x"$ac_path_PYTHON3" != x"$ac_cv_path_PYTHON3"], [
        AS_UNSET([ac_cv_path_PYTHON3])
    ])
 
