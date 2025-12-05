@@ -2417,16 +2417,53 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             True
         """
         super().__init__(A, f)
-
         ideal = self.defining_ideal()
         gs = self.ambient_space().gens()
         for i in range(self.ngens()):
             if gs[i] not in ideal:
-                self._open_affine = self.affine_patch(i)
                 self._open_affine_index = i
                 break
         else:
             raise ValueError("no projective curve defined")
+
+    @lazy_attribute
+    def _open_affine(self):
+        r"""
+        An affine patch of the curve.
+        
+        TESTS::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
+            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
+            sage: C._open_affine
+            Affine Plane Curve over Finite Field of size 7 defined by -y^2*z - 2*z^3 + 1
+        """
+        return self.affine_patch(self._open_affine_index)
+
+    def __getstate__(self):
+        r"""
+        Remove some attributes that cause issues before pickling.
+        These are easily recomputed anyway.
+
+        TESTS::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
+            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
+            sage: C._open_affine is not None
+            True
+            sage: C._map_from_function_field is not None
+            True
+            sage: loaded = loads(dumps(C))
+            sage: loaded == C
+            True
+            sage: loaded._open_affine == C._open_affine
+            True
+        """
+        state = super().__getstate__()
+        # We don't use del in case these properties haven't been accessed and cached yet
+        state.pop('_open_affine', None)
+        state.pop('_map_from_function_field', None)
+        return state
 
     def function_field(self):
         """
