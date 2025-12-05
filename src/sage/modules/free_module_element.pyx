@@ -5344,7 +5344,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             ...
             TypeError: self must be a numeric expression
 
-        ::
+        TESTS::
 
             sage: # needs sage.symbolic
             sage: v = vector([1,2/3,pi], sparse=True)
@@ -5354,6 +5354,14 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             sage: v.set(2, SR(0))
             sage: v
             (1, pi^3, 0)
+
+        This assignment is illegal::
+
+            sage: # needs sage.symbolic
+            sage: v.set(10, pi)
+            Traceback (most recent call last):
+            ...
+            IndexError: vector index out of range
         """
         if value:
             self._entries[i] = value
