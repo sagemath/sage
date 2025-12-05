@@ -2448,7 +2448,10 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
         Remove some attributes that cause issues before pickling.
         These are easily recomputed anyway.
 
-        TESTS::
+        TESTS:
+
+        Make sure that pickling and unpickling works after
+        accessing attributes. See :issue:`41265`::
 
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
