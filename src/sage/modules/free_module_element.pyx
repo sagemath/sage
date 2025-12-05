@@ -5312,10 +5312,14 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         EXAMPLES::
 
             sage: v = vector([-1,0,2/3,pi], sparse=True)                                # needs sage.symbolic
-            sage: v[1]                                                                  # needs sage.symbolic
+            sage: v.get(1)                                                              # needs sage.symbolic
             0
-            sage: v[2]                                                                  # needs sage.symbolic
+            sage: v.get(2)                                                              # needs sage.symbolic
             2/3
+            sage: v.get(10)                                                             # needs sage.symbolic
+            Traceback (most recent call last):
+            ...
+            IndexError: vector index out of range
         """
         try:
             return self._entries[i]
