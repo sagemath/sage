@@ -1,10 +1,13 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Any
 
 from sage.structure.sage_object import SageObject
 
+from sage.misc.superseded import experimental
+from sage.structure.unique_representation import UniqueRepresentation
 
-class KeyExchangeBase(SageObject, ABC):
+
+class KeyExchangeBase(SageObject, UniqueRepresentation):
     """
     An Base class for Public Key Exchange Schemes.
 
@@ -19,6 +22,13 @@ class KeyExchangeBase(SageObject, ABC):
     If all `alice` methods are the same as `bob` methods,
     then the `CommutativeKeyExchange` might be eaiser to implement.
     """
+
+    @experimental(41218)
+    def __init__(self):
+        """
+        Initialize the Key Exchange Base Object
+        """
+        pass
 
     @abstractmethod
     def alice_secret_key(self):
@@ -102,6 +112,19 @@ class KeyExchangeBase(SageObject, ABC):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def parameters(self) -> list[Any]:
+        """
+        A list of the public known parameters of the key exchange, either parameters
+        passed in to the constructor of the key exchange or computed during construction
+        of the key exchange
+
+        OUTPUT:
+
+        A list of public parameters used for the key exchange
+        """
+        raise NotImplementedError
+
     def alice_key_generate(self) -> tuple[Any, Any]:
         """
         Generate a valid (secret key, public key) pair for Alice's
@@ -163,6 +186,12 @@ class CommutativeKeyExchangeBase(KeyExchangeBase):
     the same computations for generating public/secret keys and the
     shared secret key
     """
+
+    def __init__(self):
+        """
+        Initialize the Commutative Key Exchange Base Object
+        """
+        pass
 
     @abstractmethod
     def secret_key(self) -> Any:
