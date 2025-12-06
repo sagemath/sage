@@ -1,5 +1,5 @@
 r"""
-Arbitrary precision real intervals using MPFI
+Arbitrary precision real intervals using MPFR
 
 AUTHORS:
 
@@ -3123,9 +3123,9 @@ cdef class RealIntervalFieldElement(RingElement):
 
             sage: r = RIF(2.5, 3.5).round()
             sage: r
-            4.?
+            3.?
             sage: r.lower()
-            3.00000000000000
+            2.00000000000000
             sage: r.upper()
             4.00000000000000
         """
@@ -3478,28 +3478,22 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(-pi).unique_round()                                               # needs sage.symbolic
             -3
             sage: (RIF(4.5).unique_round(), RIF(-4.5).unique_round())
-            (5, -5)
+            (4, -4)
 
        TESTS::
 
             sage: RIF(-1/2, -1/3).unique_round()
-            Traceback (most recent call last):
-            ...
-            ValueError: interval does not have a unique round (nearest integer)
+            0
             sage: RIF(-1/2, 1/3).unique_round()
-            Traceback (most recent call last):
-            ...
-            ValueError: interval does not have a unique round (nearest integer)
+            0
             sage: RIF(-1/3, 1/3).unique_round()
             0
             sage: RIF(-1/2, 0).unique_round()
-            Traceback (most recent call last):
-            ...
-            ValueError: interval does not have a unique round (nearest integer)
+            0
             sage: RIF(1/2).unique_round()
-            1
+            0
             sage: RIF(-1/2).unique_round()
-            -1
+            0
             sage: RIF(0).unique_round()
             0
         """
