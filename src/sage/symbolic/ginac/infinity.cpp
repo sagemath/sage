@@ -314,7 +314,7 @@ void infinity::set_direction(const ex & new_direction)
 		direction = _ex0;
 	else {
 		ex normalization = GiNaC::pow(GiNaC::abs(new_direction),-1);
-		direction = mul(new_direction, normalization).eval();
+		direction = mul(new_direction, normalization);
 	}
         hashvalue = hash_from_dir(direction);
 }
