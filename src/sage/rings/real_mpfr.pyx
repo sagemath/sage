@@ -3033,7 +3033,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
     def round(self):
         """
          Round ``self`` to the nearest representable integer, rounding halfway
-         cases away from zero.
+         cases to even (banker's rounding).
+
+         This matches the behavior of Python's built-in ``round()`` function
+         for floats (Python 3+), and Sage's ``Rational.round()`` with default
+         mode.
 
          .. NOTE::
 
@@ -3044,14 +3048,36 @@ cdef class RealNumber(sage.structure.element.RingElement):
              sage: RR(0.49).round()
              0
              sage: RR(0.5).round()
-             1
+             0
              sage: RR(-0.49).round()
              0
              sage: RR(-0.5).round()
-             -1
+             0
+             sage: RR(1.5).round()
+             2
+             sage: RR(2.5).round()
+             2
+             sage: RR(-1.5).round()
+             -2
+             sage: RR(-2.5).round()
+             -2
+
+         This uses round-to-even (banker's rounding) for tie cases, matching
+         Python 3 behavior and IEEE 754 default rounding::
+
+             sage: [RR(n + 0.5).round() for n in range(-5, 6)]
+             [-6, -4, -2, 0, 0, 0, 2, 4, 6, 8, 10]
+
+         Compare with ``Rational.round()``::
+
+             sage: RR(5/2).round() == QQ(5/2).round()
+             True
+             sage: RR(-7/2).round() == QQ(-7/2).round()
+             True
          """
         cdef RealNumber x = self._new()
-        mpfr_round(x.value, self.value)
+        # Use mpfr_rint with MPFR_RNDN (round to nearest, ties to even)
+        mpfr_rint(x.value, self.value, MPFR_RNDN)
         return x.integer_part()
 
     def floor(self):
