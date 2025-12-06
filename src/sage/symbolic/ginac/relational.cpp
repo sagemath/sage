@@ -400,20 +400,35 @@ relational::result relational::decide() const
 		const infinity & rh_inf = ex_to<infinity>(rh);
 		const ex df = lh_inf.get_direction() - rh_inf.get_direction();
 
-                if (!is_exactly_a<numeric>(df))
-                        return result::notimplemented;
+		// First check if the difference is zero (handles both numeric zero
+		// and symbolic expressions that simplify to zero, e.g. when comparing
+		// infinities with identical complex directions like (1+I)*oo == (2+2I)*oo)
+		if (df.is_zero()) {
+			switch (o) {
+			case equal:
+				return result::True;
+			case not_equal:
+				return result::False;
+			case less:
+			case greater:
+				return result::False;
+			case less_or_equal:
+			case greater_or_equal:
+				return result::True;
+			default:
+				throw(std::logic_error("invalid relational operator"));
+			}
+		}
+
+		// For non-zero differences, we need a numeric to proceed
+		if (!is_exactly_a<numeric>(df))
+			return result::notimplemented;
 
 		switch (o) {
 		case equal:
-                        if (ex_to<numeric>(df).is_zero())
-                                return result::True;
-                        else
-                                return result::False;
+			return result::False;
 		case not_equal:
-                        if (ex_to<numeric>(df).is_zero())
-                                return result::False;
-                        else
-                                return result::True;
+			return result::True;
 		case less:
 		case less_or_equal:
 			if (lh_inf.is_minus_infinity() and rh_inf.is_plus_infinity())
