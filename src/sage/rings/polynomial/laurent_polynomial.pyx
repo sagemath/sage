@@ -2230,7 +2230,74 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: q = (y^2-x^2) * z**-2 + z + x-y
             sage: p.divides(q), p.divides(p*q)                                          # needs sage.libs.singular
             (False, True)
+
+        TESTS:
+
+        Check that :issue:`39906` is fixed::
+
+            sage: R.<y> = LaurentPolynomialRing(Zmod(4))
+            sage: a = 2+y
+            sage: b = 2
+            sage: a.divides(a*b)
+            True
+            sage: (y^2 * (2+y)).divides(2+y)
+            True
+            sage: R(2).divides(R(2))
+            True
         """
-        p = self.polynomial_construction()[0]
-        q = other.polynomial_construction()[0]
-        return p.divides(q)
+        # Handle zero cases
+        if other.is_zero():
+            return True  # everything divides 0
+        if self.is_zero():
+            return False  # 0 only divides 0
+
+        # Handle unit case
+        try:
+            if self.is_unit():
+                return True  # units divide everything
+        except (AttributeError, NotImplementedError):
+            pass
+
+        p, n_p = self.polynomial_construction()
+        q, n_q = other.polynomial_construction()
+
+        # Special case: both are constant (monomials with degree 0 polynomial part)
+        if p.degree() == 0 and q.degree() == 0:
+            # For constants, divisibility depends only on the coefficients
+            return p[0].divides(q[0])
+
+        # When checking divisibility of Laurent polynomials, we need to account
+        # for the fact that polynomial_construction normalizes by extracting
+        # powers of the variable. If self = x^{n_p} * p and other = x^{n_q} * q,
+        # then self | other iff there exists a Laurent polynomial b = x^{n_b} * r
+        # such that self * b = other.
+        #
+        # This means x^{n_p + n_b} * p * r = x^{n_q} * q.
+        # The product p * r might have a factor x^m (where m >= 0), so we get:
+        # x^{n_p + n_b + m} * (p*r / x^m) = x^{n_q} * q
+        #
+        # So we need p | x^m * q for some m >= 0 such that the quotient is a
+        # polynomial (no negative powers).
+
+        # Try shifting q by increasing powers of x until either:
+        # 1. We find that p divides x^m * q, or
+        # 2. The degree of x^m * q exceeds what's reasonable (degree bound)
+        x = p.parent().gen()
+        deg_bound = max(p.degree(), q.degree()) + 1
+
+        for m in range(deg_bound + 1):
+            q_shifted = q * x**m
+            try:
+                if p.divides(q_shifted):
+                    return True
+            except NotImplementedError:
+                # For non-integral domains, try quo_rem and verify
+                try:
+                    quotient, remainder = q_shifted.quo_rem(p)
+                    if quotient * p == q_shifted:
+                        return True
+                except (ArithmeticError, NotImplementedError, ValueError):
+                    # quo_rem may fail for non-invertible leading coefficients
+                    pass
+
+        return False
