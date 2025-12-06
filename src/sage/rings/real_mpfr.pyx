@@ -3066,7 +3066,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
          Python 3 behavior and IEEE 754 default rounding::
 
              sage: [RR(n + 0.5).round() for n in range(-5, 6)]
-             [-6, -4, -2, 0, 0, 0, 2, 4, 6, 8, 10]
+             [-4, -4, -2, -2, 0, 0, 2, 2, 4, 4, 6]
 
          Compare with ``Rational.round()``::
 
