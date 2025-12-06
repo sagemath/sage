@@ -1989,6 +1989,11 @@ class Zp_class(UniqueFactory):
             check = True
         if label is not None and type not in ['lattice-cap','lattice-float']:
             raise ValueError("label keyword only supported for lattice precision")
+        if print_mode == 'digits-unicode':
+            print_mode = 'digits'  # Treat as digits but we'll handle unicode later
+        elif print_mode not in ['series', 'val-unit', 'terse', 'digits', 'bars']:
+            raise ValueError("invalid print_mode: %s" % print_mode)
+
         return get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_sep, print_alphabet,
                             print_max_terms, show_prec, check,
                             ['capped-rel', 'fixed-mod', 'capped-abs', 'floating-point', 'lattice-cap', 'lattice-float', 'relaxed'],
