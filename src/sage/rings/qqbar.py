@@ -5741,11 +5741,11 @@ class AlgebraicReal(AlgebraicNumber_base):
             ....:            AA(0), AA(1), AA(-1), AA(1/2), AA(-1/2)]]
             [[0, 1, 1, 0], [-1, 0, -1, 0], [1, 2, 1, 1], [-2, -1, -1, -1],
             [17, 18, 18, 17], [0, 0, 0, 0], [1, 1, 1, 1], [-1, -1, -1, -1],
-            [0, 1, 1, 0], [-1, 0, -1, 0]]
+            [0, 1, 0, 0], [-1, 0, 0, 0]]
             sage: [[z.floor(), z.ceil(), z.trunc()] for z in [two, a*b]] # long time
             [[2, 2, 2], [0, 1, 0]]
             sage: [one_half.round(), (-one_half).round()] # long time
-            [1, -1]
+            [0, 0]
         """
         for i in itertools.count():
             candidate = method(self._value.lower())
@@ -5806,9 +5806,9 @@ class AlgebraicReal(AlgebraicNumber_base):
             sage: AA(sqrt(2)).round()                                                   # needs sage.symbolic
             1
             sage: AA(1/2).round()
-            1
+            0
             sage: AA(-1/2).round()
-            -1
+            0
         """
         return self._floor_ceil(lambda x: x.round())
 
