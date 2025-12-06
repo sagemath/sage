@@ -53,7 +53,6 @@ jobs:
           fi
 
       - name: Checkout code
-        # cannot use v4 yet because of https://github.com/actions/checkout/issues/1487
         uses: actions/checkout@v6.0.1
 
       - name: Install uv
