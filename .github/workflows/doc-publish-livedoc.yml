@@ -32,7 +32,7 @@ jobs:
       CAN_DEPLOY: ${{ secrets.NETLIFY_AUTH_TOKEN != '' &&  secrets.NETLIFY_SITE_ID != '' }}
     steps:
       - name: Get information about workflow origin
-        uses: actions/github-script@v6
+        uses: actions/github-script@v8
         id: source-run-info
         with:
           script: |
