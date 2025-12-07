@@ -1,5 +1,5 @@
 r"""
-Arbitrary precision real intervals using MPFR
+Arbitrary precision real intervals using MPFI
 
 AUTHORS:
 
