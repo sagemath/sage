@@ -2233,7 +2233,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         TESTS:
 
-        Check that :issue:`39906` is fixed::
+        Check that :issue:`40372` is fixed::
 
             sage: R.<y> = LaurentPolynomialRing(Zmod(4))
             sage: a = 2+y
