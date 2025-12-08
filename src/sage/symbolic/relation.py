@@ -499,9 +499,6 @@ def check_relation_maxima(relation):
 
     from sage.interfaces.maxima_lib import test_max_equal, test_max_notequal, test_max_relation
 
-    # Use _maxima_init_() to get proper string representation with _SAGE_VAR_ prefixes
-    # This ensures assumptions are properly recognized by Maxima
-
     if relation.operator() == operator.eq:  # operator is equality
         try:
             s = test_max_equal(relation.lhs(),relation.rhs())
