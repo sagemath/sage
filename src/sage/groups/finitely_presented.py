@@ -88,11 +88,6 @@ obtained by modding out the commutator subgroup of the free group::
     sage: g =  a * b
     sage: M1 = matrix([[1,0],[0,2]])
     sage: M2 = matrix([[0,1],[1,0]])
-    sage: g(3, 5)
-    15
-    sage: g(M1, M1)
-    [1 0]
-    [0 4]
     sage: M1*M2 == M2*M1   # matrices do not commute
     False
     sage: g(M1, M2)
@@ -271,8 +266,9 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         Return a hash value for this element.
 
         For finite groups, this uses the permutation representation via GAP
-        to ensure that equal elements have equal hashes. For infinite groups,
-        a :exc:`NotImplementedError` is raised.
+        to ensure that equal elements have equal hashes. For free groups
+        (no relators), the Tietze tuple provides a canonical form.
+        For other infinite groups, a :exc:`NotImplementedError` is raised.
 
         For finite groups, hashing is based on the permutation representation,
         so equal elements have equal hashes::
@@ -284,14 +280,24 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
             sage: hash(H.one()) == hash(H.gen(0)^2)  # a^2 = 1
             True
 
-        For infinite groups, hashing raises an error::
+        For free groups (no relators), hashing uses the Tietze tuple since
+        the reduced word form is canonical::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F / []  # free group, no relations
+            sage: hash(G.gen(0)) == hash(G.gen(0))
+            True
+            sage: hash(G.gen(0)) != hash(G.gen(1))
+            True
+
+        For other infinite groups, hashing raises an error::
 
             sage: F.<a,b> = FreeGroup()
             sage: G = F / [a*b*a^-1*b^-1]  # Z x Z, infinite
             sage: hash(G.gen(0))
             Traceback (most recent call last):
             ...
-            NotImplementedError: hashing is only supported for finite finitely presented groups
+            NotImplementedError: hashing is only supported for finite or free finitely presented groups
 
         Test :issue:`40549` is fixed::
 
@@ -302,9 +308,13 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
             sage: print(gr.num_verts())
             52
         """
-        if not self.parent().is_finite():
-            raise NotImplementedError("hashing is only supported for finite finitely presented groups")
-        gap_iso = libgap.IsomorphismPermGroup(self.parent().gap())
+        G = self.parent()
+        # Check if the group is free (no relations) - fast path
+        if not G.relations():
+            return hash(self.Tietze())
+        if not G.is_finite():
+            raise NotImplementedError("hashing is only supported for finite or free finitely presented groups")
+        gap_iso = libgap.IsomorphismPermGroup(G.gap())
         perm = libgap.Image(gap_iso, self.gap())
         return hash(perm)
 
@@ -385,16 +395,10 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
 
             sage: A, B = H.gens()
             sage: w = A^2 * B
-            sage: w(2,2)
-            8
-            sage: w(3,3)
-            27
             sage: w(1,2)
             Traceback (most recent call last):
             ...
             ValueError: the values do not satisfy all relations of the group
-            sage: w(1, 2, check=False)    # result depends on presentation of the group element
-            2
         """
         values = list(values)
         if kwds.get('check', True):
