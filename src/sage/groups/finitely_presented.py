@@ -293,7 +293,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
             ...
             NotImplementedError: hashing is only supported for finite finitely presented groups
 
-        Test :issue:`40579` is fixed::
+        Test :issue:`40549` is fixed::
 
             sage: F.<x,y> = FreeGroup()
             sage: G = F / [x^4, y^13, x*y*x^-1*y^-5]
