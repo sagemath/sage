@@ -210,29 +210,58 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         sage: x^(-1)
         b*a*b^-1*a^-1
 
-    Finitely presented group elements are not hashable, since the
-    word problem for finitely presented groups is undecidable in general::
-
-        sage: hash(x)
-        Traceback (most recent call last):
-        ...
-        TypeError: unhashable type: 'FinitelyPresentedGroup_with_category.element_class'
-
-    To use group elements as dictionary keys or set members, first convert
-    the group to a permutation group::
+    For finite groups, hashing is based on the permutation representation,
+    so equal elements have equal hashes::
 
         sage: G.<a,b> = FreeGroup()
         sage: H = G / [a^2, b^3, (a*b)^5]  # alternating group A5
-        sage: P = H.as_permutation_group()
-        sage: p = P.gens()[0]
-        sage: hash(p)  # random
-        -5765863647595745966
+        sage: hash(H.gen(0)) == hash(H.gen(0)^(-1))  # a = a^(-1) since a^2 = 1
+        True
+        sage: hash(H.one()) == hash(H.gen(0)^2)  # a^2 = 1
+        True
+
+    For infinite groups, hashing raises an error::
+
+        sage: F.<a,b> = FreeGroup()
+        sage: G = F / [a*b*a^-1*b^-1]  # Z x Z, infinite
+        sage: hash(G.gen(0))
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: hashing is only supported for finite finitely presented groups
     """
 
-    # Elements are unhashable because the word problem (determining
-    # equality of two elements) is undecidable for arbitrary f.p. groups.
-    # See https://github.com/sagemath/sage/issues/40549
-    __hash__ = None
+    def __hash__(self):
+        r"""
+        Return a hash value for this element.
+
+        For finite groups, this uses the permutation representation via GAP
+        to ensure that equal elements have equal hashes. For infinite groups,
+        a :exc:`NotImplementedError` is raised.
+
+        TESTS::
+
+            sage: G.<a,b> = FreeGroup()
+            sage: H = G / [a^2, b^3, (a*b)^5]
+            sage: h1 = hash(H.gen(0))
+            sage: h2 = hash(H.gen(0)^(-1))  # a^(-1) = a since a^2 = 1
+            sage: h1 == h2
+            True
+            sage: hash(H.one()) == hash(H.gen(0)^2)  # a^2 = 1
+            True
+
+            sage: F.<x,y> = FreeGroup()
+            sage: G = F / [x*y*x^-1*y^-1]  # infinite group
+            sage: hash(G.gen(0))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: hashing is only supported for finite finitely presented groups
+        """
+        if not self.parent().is_finite():
+            raise NotImplementedError("hashing is only supported for finite finitely presented groups")
+        from sage.libs.gap.libgap import libgap
+        gap_iso = libgap.IsomorphismPermGroup(self.parent().gap())
+        perm = libgap.Image(gap_iso, self.gap())
+        return hash(perm)
 
     def __init__(self, parent, x, check=True):
         """
