@@ -243,6 +243,7 @@ src/sage/schemes/hyperelliptic_curves/__init__.py
 src/sage/schemes/berkovich/__init__.py
 src/sage/schemes/generic/__init__.py
 src/sage/schemes/projective/__init__.py
+src/sage/schemes/weighted_projective/__init__.py
 src/sage/schemes/__init__.py
 src/sage/schemes/affine/__init__.py
 src/sage/modular/hecke/__init__.py
