@@ -137,6 +137,9 @@ class pAdicPrinterDefaults(SageObject):
             sage: padic_printing.mode('digits')
             sage: repr(Qp(17)(100))
             '...5F'
+            sage: padic_printing.mode('digits-unicode')
+            sage: repr(Qp(17)(100))
+            '…0000000000000000005F'
             sage: repr(Qp(17)(1000))
             '...37E'
             sage: padic_printing.mode('bars')
