@@ -1737,6 +1737,7 @@ def max_to_sr(expr):
 
 #interface routines for evaluating maxima's `equal` and `notequal`
 
+
 max_equal = EclObject("$EQUAL")
 max_notequal = EclObject("$NOTEQUAL")
 max_is = EclObject("$IS")
