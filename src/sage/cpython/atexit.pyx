@@ -166,7 +166,6 @@ cdef extern from *:
     #if PY_VERSION_HEX >= 0x030e0000
     // Python 3.14+: atexit uses a PyList stored in state->callbacks
     // Note: In Python 3.14 the atexit_state struct changed - callbacks is now a PyObject* (PyList)
-    #include "internal/pycore_interp_structs.h"
     
     static PyObject* get_atexit_callbacks_list(PyObject *self) {
         PyInterpreterState *interp = _PyInterpreterState_GET();
