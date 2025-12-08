@@ -177,6 +177,9 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
         """
         if not isinstance(other, NumberFieldOrderIdeal_generic):
             return NotImplemented
+        # fun fact, this never triggers anyways because the coercion model
+        # doesn't find a common parent between ideals of orders and hence just
+        # says they're never equal
         if self.ring() != other.ring():
             return NotImplemented
         return richcmp(self._module, other._module, op)
@@ -256,8 +259,40 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
             191
             sage: (O.free_module() / I.free_module()).cardinality()
             191
+
+        We observe that norm is not always multiplicative::
+
+            sage: K.<t> = QuadraticField(-7)
+            sage: g, = K.ring_of_integers().ring_generators()
+            sage: O = K.order(3 * g)
+            sage: I = O.ideal([3, 3 * g])
+            sage: I.norm()
+            3
+            sage: (I^2).norm()
+            27
         """
         return self.free_module().index_in(self.ring().free_module())
+
+    def is_invertible(self):
+        r"""
+        Test whether this ideal is invertible.
+
+        An ideal `\mathfrac{a} \subseteq \mathcal{O}` is invertible if there is
+        a fractional ideal `\mathfrac{b}` such that `\mathfrac{a}\mathfrac{b} =
+        \mathcal{O}`.
+
+        EXAMPLES::
+
+            sage: K.<a> = QuadraticField(-3)
+            sage: O = K.order(a)
+            sage: O.ideal(-5 * a - 2).is_invertible()
+            True
+            sage: O.ideal(3 * a + 1).is_invertible()
+            False
+            sage: O.ideal(2 * a).is_invertible()
+            False
+        """
+        return self.is_coprime(self.ring().conductor(as_ideal=True))
 
 
 def _positive_sqrt(R, D):
