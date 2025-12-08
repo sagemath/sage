@@ -360,6 +360,7 @@ AUTHORS:
 import operator
 from itertools import product
 
+
 def check_relation_maxima(relation):
     """
     Return ``True`` if this (in)equality is definitely true. Return ``False``
