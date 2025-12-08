@@ -209,32 +209,6 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         a*b*a^-1*b^2*a*b^-3
         sage: x^(-1)
         b*a*b^-1*a^-1
-
-    For finite groups, hashing is based on the permutation representation,
-    so equal elements have equal hashes::
-
-        sage: G.<a,b> = FreeGroup()
-        sage: H = G / [a^2, b^3, (a*b)^5]  # alternating group A5
-        sage: hash(H.gen(0)) == hash(H.gen(0)^(-1))  # a = a^(-1) since a^2 = 1
-        True
-        sage: hash(H.one()) == hash(H.gen(0)^2)  # a^2 = 1
-        True
-
-    For infinite groups, hashing raises an error::
-
-        sage: F.<a,b> = FreeGroup()
-        sage: G = F / [a*b*a^-1*b^-1]  # Z x Z, infinite
-        sage: hash(G.gen(0))
-        Traceback (most recent call last):
-        ...
-        NotImplementedError: hashing is only supported for finite finitely presented groups
-
-    Test :issue:`40579` is fixed::
-        sage: F.<x,y> = FreeGroup()
-        sage: G = F / [x^4, y^13, x*y*x^-1*y^-5]
-        sage: gr = G.cayley_graph(generators=[a,b]).to_undirected()
-        sage: print(gr.num_verts())
-        52
     """
 
     def __init__(self, parent, x, check=True):
@@ -300,23 +274,32 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         to ensure that equal elements have equal hashes. For infinite groups,
         a :exc:`NotImplementedError` is raised.
 
-        TESTS::
+        For finite groups, hashing is based on the permutation representation,
+        so equal elements have equal hashes::
 
             sage: G.<a,b> = FreeGroup()
-            sage: H = G / [a^2, b^3, (a*b)^5]
-            sage: h1 = hash(H.gen(0))
-            sage: h2 = hash(H.gen(0)^(-1))  # a^(-1) = a since a^2 = 1
-            sage: h1 == h2
+            sage: H = G / [a^2, b^3, (a*b)^5]  # alternating group A5
+            sage: hash(H.gen(0)) == hash(H.gen(0)^(-1))  # a = a^(-1) since a^2 = 1
             True
             sage: hash(H.one()) == hash(H.gen(0)^2)  # a^2 = 1
             True
 
-            sage: F.<x,y> = FreeGroup()
-            sage: G = F / [x*y*x^-1*y^-1]  # infinite group
+        For infinite groups, hashing raises an error::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F / [a*b*a^-1*b^-1]  # Z x Z, infinite
             sage: hash(G.gen(0))
             Traceback (most recent call last):
             ...
             NotImplementedError: hashing is only supported for finite finitely presented groups
+
+        Test :issue:`40579` is fixed::
+
+            sage: F.<x,y> = FreeGroup()
+            sage: G = F / [x^4, y^13, x*y*x^-1*y^-5]
+            sage: gr = G.cayley_graph(generators=[a,b]).to_undirected()
+            sage: print(gr.num_verts())
+            52
         """
         if not self.parent().is_finite():
             raise NotImplementedError("hashing is only supported for finite finitely presented groups")
