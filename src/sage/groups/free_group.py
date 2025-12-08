@@ -605,14 +605,31 @@ class FreeGroupElement(ElementLibGAP):
         G = self.parent()
         if len(values) != G.ngens():
             raise ValueError('number of values has to match the number of generators')
-        replace = dict(zip(G.gens(), values))
         new_parent = coercion_model.common_parent(*[parent(v) for v in values])
+        # Use Tietze representation to determine which generator to substitute.
+        # Cannot use syllables().index() because f.p. group equality may identify
+        # different generators (e.g., if a relation says a = b).
+        tietze = self.Tietze()
+        if not tietze:
+            return new_parent.one() if hasattr(new_parent, 'one') else new_parent(1)
+        factors = []
+        i = 0
+        while i < len(tietze):
+            gen_idx = tietze[i]
+            # Count consecutive occurrences of the same generator
+            power = 0
+            while i < len(tietze) and tietze[i] == gen_idx:
+                power += 1
+                i += 1
+            # gen_idx is 1-based (positive) or -1-based (negative for inverses)
+            if gen_idx > 0:
+                factors.append((values[gen_idx - 1], power))
+            else:
+                factors.append((values[-gen_idx - 1], -power))
         try:
-            return new_parent.prod(replace[gen] ** power
-                                   for gen, power in self.syllables())
+            return new_parent.prod(val ** power for val, power in factors)
         except AttributeError:
-            return prod(new_parent(replace[gen]) ** power
-                        for gen, power in self.syllables())
+            return prod(new_parent(val) ** power for val, power in factors)
 
 
 def FreeGroup(n=None, names='x', index_set=None, abelian=False, **kwds):
