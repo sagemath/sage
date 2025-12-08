@@ -360,7 +360,6 @@ AUTHORS:
 import operator
 from itertools import product
 
-
 def check_relation_maxima(relation):
     """
     Return ``True`` if this (in)equality is definitely true. Return ``False``
@@ -497,36 +496,33 @@ def check_relation_maxima(relation):
     if isinstance(relation, bool):
         return relation
 
-    from sage.interfaces.maxima_lib import maxima
+    from sage.interfaces.maxima_lib import test_max_equal, test_max_notequal, test_max_relation
 
     # Use _maxima_init_() to get proper string representation with _SAGE_VAR_ prefixes
     # This ensures assumptions are properly recognized by Maxima
-    lhs_str = relation.lhs()._maxima_init_()
-    rhs_str = relation.rhs()._maxima_init_()
 
     if relation.operator() == operator.eq:  # operator is equality
         try:
-            s = maxima._eval_line('is (equal(%s,%s))' % (lhs_str, rhs_str))
+            s = test_max_equal(relation.lhs(),relation.rhs())
         except TypeError:
             raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
 
     elif relation.operator() == operator.ne:  # operator is not equal
         try:
-            s = maxima._eval_line('is (notequal(%s,%s))' % (lhs_str, rhs_str))
+            s = test_max_notequal(relation.lhs(),relation.rhs())
         except TypeError:
             raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
 
     else:  # operator is < or > or <= or >=, which Maxima handles fine
         try:
             # For inequalities, use the full relation string
-            relation_str = relation._maxima_init_()
-            s = maxima._eval_line('is (%s)' % relation_str)
+            s = test_max_relation(relation)
         except TypeError:
             raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
 
-    if s == 'true':
+    if s is True:
         return True
-    elif s == 'false':
+    elif s is False:
         return False  # if neither of these, s=='unknown' and we try a few other tricks
 
     if relation.operator() != operator.eq:
