@@ -237,7 +237,6 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         52
     """
 
-
     def __init__(self, parent, x, check=True):
         """
         The Python constructor.
@@ -1075,7 +1074,6 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         from sage.groups.perm_gps.permgroup import PermutationGroup
         return PermutationGroup([
             Permutation(coset_table[2*i]) for i in range(len(coset_table)//2)])
-
 
     def direct_product(self, H, reduced=False, new_names=True):
         r"""
