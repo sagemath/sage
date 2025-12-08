@@ -297,13 +297,13 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
 
             sage: F.<x,y> = FreeGroup()
             sage: G = F / [x^4, y^13, x*y*x^-1*y^-5]
+            sage: a, b = G.gens()
             sage: gr = G.cayley_graph(generators=[a,b]).to_undirected()
             sage: print(gr.num_verts())
             52
         """
         if not self.parent().is_finite():
             raise NotImplementedError("hashing is only supported for finite finitely presented groups")
-        from sage.libs.gap.libgap import libgap
         gap_iso = libgap.IsomorphismPermGroup(self.parent().gap())
         perm = libgap.Image(gap_iso, self.gap())
         return hash(perm)
