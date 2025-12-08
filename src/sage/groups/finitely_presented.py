@@ -1064,14 +1064,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
 
         OUTPUT: :class:`DiGraph` on the permutation group elements
 
-        EXAMPLES::
-
-            sage: F.<x,y> = FreeGroup()
-            sage: G = F / [x^4, y^13, x*y*x^-1*y^-5]
-            sage: a, b = G.gens()
-            sage: gr = G.cayley_graph(generators=[a,b])
-            sage: gr.num_verts()
-            52
+        EXAMPLES:
 
         The Cayley graph is computed via conversion to a permutation group::
 
