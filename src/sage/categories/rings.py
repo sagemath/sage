@@ -477,10 +477,38 @@ class Rings(CategoryWithAxiom):
                 False
                 sage: Qp(19).is_prime_field()                                               # needs sage.rings.padics
                 False
+                sage: R.<x> = PolynomialRing(QQ)
+                sage: S = R.quotient(x + 16)
+                sage: S.is_prime_field()
+                True
+                sage: S = R.quotient(x^2 - 2)
+                sage: S.is_prime_field()
+                False
+                sage: R.<x> = PolynomialRing(GF(5))
+                sage: S = R.quotient(x^2 + x + 1)
+                sage: S.is_field()
+                True
+                sage: S.is_prime_field()
+                False
+                sage: T = R.quotient(x - 2)
+                sage: T.is_prime_field()
+                True
+
+            We check that bug :issue:`40426` is fixed::
+
+                sage: K = GF(4)
+                sage: A.<x> = K[]
+                sage: L = K.extension(x+1)
+                sage: L.is_prime_field()
+                False
             """
             # the case of QQ is handled by QQ itself
+            from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
+            from sage.rings.rational_field import QQ
+            if isinstance(self, PolynomialQuotientRing_generic) and self.base_ring() is QQ:
+                return self.absolute_degree() == 1
             from sage.categories.finite_fields import FiniteFields
-            return self in FiniteFields() and self.degree() == 1
+            return self in FiniteFields() and self.absolute_degree() == 1
 
         def is_zero(self) -> bool:
             """

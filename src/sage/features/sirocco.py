@@ -37,7 +37,7 @@ class Sirocco(JoinFeature):
         """
         JoinFeature.__init__(self, "sirocco",
                              [PythonModule("sage.libs.sirocco",
-                                           spkg='sagemath_sirocco')])
+                                           spkg='sirocco')])
 
 
 def all_features():

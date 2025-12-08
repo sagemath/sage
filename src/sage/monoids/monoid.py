@@ -37,7 +37,7 @@ def is_Monoid(x) -> bool:
 
 
 class Monoid_class(Parent):
-    def __init__(self, names):
+    def __init__(self, names, category=None):
         r"""
         EXAMPLES::
 
@@ -51,8 +51,11 @@ class Monoid_class(Parent):
             sage: TestSuite(F).run()
         """
         from sage.categories.monoids import Monoids
-        category = Monoids().FinitelyGeneratedAsMagma()
-        Parent.__init__(self, base=self, names=names, category=category)
+        if category is None:
+            cat = Monoids().FinitelyGeneratedAsMagma()
+        else:
+            cat = category & Monoids().FinitelyGeneratedAsMagma()
+        Parent.__init__(self, base=self, names=names, category=cat)
 
     @cached_method
     def gens(self) -> tuple:

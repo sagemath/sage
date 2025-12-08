@@ -76,7 +76,7 @@ class UnionOfIntervals:
         Unify :class:`UnionOfIntervals` with the class ``RealSet``
         introduced by :issue:`13125`; see :issue:`16063`.
     """
-    def __init__(self, endpoints):
+    def __init__(self, endpoints) -> None:
         r"""
         An union of intervals is initialized by giving an increasing list
         of endpoints, the first of which may be `-\infty` and the last of
@@ -419,7 +419,7 @@ class UnionOfIntervals:
         """
         return left.intersection([left, right])
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if ``x`` is in the UnionOfIntervals.
 
@@ -443,7 +443,7 @@ class UnionOfIntervals:
         """
         return x in self._endpoints or bisect.bisect_left(self._endpoints, x) % 2 == 1
 
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
         Return the string representation of this UnionOfIntervals.
 
@@ -456,7 +456,7 @@ class UnionOfIntervals:
         """
         return repr(self)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation of this UnionOfIntervals.
 
@@ -766,7 +766,7 @@ class EllipticCurveCanonicalHeight:
          Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
     """
 
-    def __init__(self, E):
+    def __init__(self, E) -> None:
         r"""
         Initialize the class with an elliptic curve.
 
@@ -815,7 +815,7 @@ class EllipticCurveCanonicalHeight:
         else:
             raise ValueError("EllipticCurveCanonicalHeight class can only be created from an elliptic curve")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation.
 

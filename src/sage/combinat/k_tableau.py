@@ -2565,7 +2565,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         Tsizes = [Core(lam, self.k + 1).length() for lam in Tshapes]
         return all(Tsizes[i] == Tsizes[i+1]-1 for i in range(len(Tsizes)-1))
 
-    def is_column_strict_with_weight( self, mu ):
+    def is_column_strict_with_weight(self, mu) -> bool:
         """
         Test if ``self`` is a column strict tableau with respect to the weight ``mu``.
 
