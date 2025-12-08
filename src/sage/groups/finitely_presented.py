@@ -228,40 +228,15 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         Traceback (most recent call last):
         ...
         NotImplementedError: hashing is only supported for finite finitely presented groups
+
+    Test :issue:`40579` is fixed::
+        sage: F.<x,y> = FreeGroup()
+        sage: G = F / [x^4, y^13, x*y*x^-1*y^-5]
+        sage: gr = G.cayley_graph(generators=[a,b]).to_undirected()
+        sage: print(gr.num_verts())
+        52
     """
 
-    def __hash__(self):
-        r"""
-        Return a hash value for this element.
-
-        For finite groups, this uses the permutation representation via GAP
-        to ensure that equal elements have equal hashes. For infinite groups,
-        a :exc:`NotImplementedError` is raised.
-
-        TESTS::
-
-            sage: G.<a,b> = FreeGroup()
-            sage: H = G / [a^2, b^3, (a*b)^5]
-            sage: h1 = hash(H.gen(0))
-            sage: h2 = hash(H.gen(0)^(-1))  # a^(-1) = a since a^2 = 1
-            sage: h1 == h2
-            True
-            sage: hash(H.one()) == hash(H.gen(0)^2)  # a^2 = 1
-            True
-
-            sage: F.<x,y> = FreeGroup()
-            sage: G = F / [x*y*x^-1*y^-1]  # infinite group
-            sage: hash(G.gen(0))
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: hashing is only supported for finite finitely presented groups
-        """
-        if not self.parent().is_finite():
-            raise NotImplementedError("hashing is only supported for finite finitely presented groups")
-        from sage.libs.gap.libgap import libgap
-        gap_iso = libgap.IsomorphismPermGroup(self.parent().gap())
-        perm = libgap.Image(gap_iso, self.gap())
-        return hash(perm)
 
     def __init__(self, parent, x, check=True):
         """
@@ -316,6 +291,40 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
              ((1, 2, 3),))
         """
         return (self.parent(), (self.Tietze(),))
+
+    @cached_method
+    def __hash__(self):
+        r"""
+        Return a hash value for this element.
+
+        For finite groups, this uses the permutation representation via GAP
+        to ensure that equal elements have equal hashes. For infinite groups,
+        a :exc:`NotImplementedError` is raised.
+
+        TESTS::
+
+            sage: G.<a,b> = FreeGroup()
+            sage: H = G / [a^2, b^3, (a*b)^5]
+            sage: h1 = hash(H.gen(0))
+            sage: h2 = hash(H.gen(0)^(-1))  # a^(-1) = a since a^2 = 1
+            sage: h1 == h2
+            True
+            sage: hash(H.one()) == hash(H.gen(0)^2)  # a^2 = 1
+            True
+
+            sage: F.<x,y> = FreeGroup()
+            sage: G = F / [x*y*x^-1*y^-1]  # infinite group
+            sage: hash(G.gen(0))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: hashing is only supported for finite finitely presented groups
+        """
+        if not self.parent().is_finite():
+            raise NotImplementedError("hashing is only supported for finite finitely presented groups")
+        from sage.libs.gap.libgap import libgap
+        gap_iso = libgap.IsomorphismPermGroup(self.parent().gap())
+        perm = libgap.Image(gap_iso, self.gap())
+        return hash(perm)
 
     def _repr_(self):
         """
@@ -1067,87 +1076,6 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         return PermutationGroup([
             Permutation(coset_table[2*i]) for i in range(len(coset_table)//2)])
 
-    def cayley_graph(self, side='right', simple=False, elements=None,
-                     generators=None, connecting_set=None, limit=4096000):
-        r"""
-        Return the Cayley graph for this finite finitely presented group.
-
-        Since finitely presented group elements are not hashable (because
-        the word problem is undecidable in general), the group is first
-        converted to a permutation group, and the Cayley graph is computed
-        for that permutation group.
-
-        INPUT:
-
-        - ``side`` -- ``'left'``, ``'right'``, or ``'twosided'``:
-          the side on which the generators act (default: ``'right'``)
-        - ``simple`` -- boolean (default: ``False``); if ``True``, returns
-          a simple graph (no loops, no labels, no multiple edges)
-        - ``generators`` -- list, tuple, or family of elements of ``self``
-          (default: ``self.gens()``); these are converted to the
-          corresponding generators in the permutation group
-        - ``connecting_set`` -- alias for ``generators``; deprecated
-        - ``elements`` -- ignored for finitely presented groups
-        - ``limit`` -- integer (default: 4096000); passed to
-          :meth:`as_permutation_group`
-
-        OUTPUT: :class:`DiGraph` on the permutation group elements
-
-        EXAMPLES:
-
-        The Cayley graph is computed via conversion to a permutation group::
-
-            sage: G.<a,b> = FreeGroup()
-            sage: H = G / [a^2, b^3, (a*b)^5]  # alternating group A5
-            sage: gr = H.cayley_graph()
-            sage: gr.num_verts()
-            60
-
-        TESTS::
-
-            sage: F.<a,b> = FreeGroup()
-            sage: G = F / [a^4, b^4, a*b*a^-1*b^-1]
-            sage: gr = G.cayley_graph(simple=True)
-            sage: gr.num_verts()
-            16
-
-        Test the issue reported in :issue:`40549`::
-
-            sage: F.<x,y> = FreeGroup()
-            sage: G = F / [x^4, y^13, x*y*x^-1*y^-5]
-            sage: a, b = G.gens()
-            sage: assert(G.order() == 52)
-            sage: assert(a.order() == 4)
-            sage: assert(b.order() == 13)
-            sage: assert(a*b*a^-1 == b^5)
-            sage: gr = G.cayley_graph(generators=[a,b]).to_undirected()
-            sage: print(gr.num_verts())
-            52
-            sage: print(gr.num_edges())
-            104
-        """
-        # Convert to permutation group for hashable elements
-        P = self.as_permutation_group(limit=limit)
-
-        # Map generators from f.p. group to permutation group
-        if connecting_set is not None:
-            generators = connecting_set
-        if generators is None:
-            perm_generators = P.gens()
-        else:
-            # generators are f.p. group elements - map them to perm group gens
-            # by index since the gens correspond 1-to-1
-            fp_gens = self.gens()
-            perm_gens = P.gens()
-            perm_generators = []
-            for g in generators:
-                for i, fg in enumerate(fp_gens):
-                    if g == fg:
-                        perm_generators.append(perm_gens[i])
-                        break
-
-        return P.cayley_graph(side=side, simple=simple, elements=elements,
-                              generators=perm_generators)
 
     def direct_product(self, H, reduced=False, new_names=True):
         r"""
