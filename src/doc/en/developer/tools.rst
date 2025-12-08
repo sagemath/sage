@@ -327,10 +327,10 @@ code-style changes as this makes it harder for reviewers to evaluate the importa
 
 When working on PRs to improve our alignment with our linter rules, the ``--statistics``
 option can be passed to ``ruff`` to print out a list of all rules that are enabled in
-`pyproject.toml` but are not currently followed throughout the repository and how many
+``pyproject.toml`` but are not currently followed throughout the repository and how many
 times each rule is violated. This is useful for finding low-hanging fruit for formatting PRs.
 Developers can also use ``--select [RULE CODES]`` to override the list of rules enabled in
-`pyproject.toml` when testing additional rules to add to ``pyproject.toml``, or
+``pyproject.toml`` when testing additional rules to add to ``pyproject.toml``, or
 ``--select-extend [RULE CODES]`` to add new rules to the existing confirmation.
 See the `Ruff documentation <https://docs.astral.sh/ruff/>`_ to see all features and rules
 available.
