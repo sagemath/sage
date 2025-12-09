@@ -1,5 +1,5 @@
---- /tmp/upstream-fflas-ffpack-2.5.0-sage-2024-05-18b/macros/common.m4	2024-05-19 03:34:34.000000000 +0800
-+++ /home/zhongcx/fflas-ffpack-2.5.0/macros/common.m4	2025-12-09 23:07:57.325990450 +0800
+--- a/fflas-ffpack/macros/common.m4	2024-05-19 03:34:34.000000000 +0800
++++ b/fflas-ffpack/macros/common.m4	2025-12-09 23:07:57.325990450 +0800
 @@ -99,10 +99,151 @@
  ])dnl AX_CHECK_COMPILE_FLAGS
  
