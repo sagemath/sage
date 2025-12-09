@@ -394,7 +394,8 @@ def numerical_integral(func, a, b=None,
             _b = b
             W = <gsl_integration_workspace*> gsl_integration_workspace_alloc(n)
             sig_on()
-            gsl_integration_qag(&F,_a,_b,eps_abs,eps_rel,n,rule,W,&result,&abs_err)
+            gsl_integration_qag(&F, _a, _b, eps_abs, eps_rel,
+                                n, rule, W, &result, &abs_err)
             sig_off()
 
     elif algorithm == "qags":

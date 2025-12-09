@@ -1,0 +1,94 @@
+name: Build live documentation
+
+on:
+  push:
+    tags:
+      # Match all release tags including beta, rc
+      - '[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.rc[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: 3.12
+
+jobs:
+  livedoc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Maximize available disk space
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          # Remove pre-installed packages like Docker, Android, .NET, etc.
+          # We only keep the basic essentials (like compilers, etc.)
+          tool-cache: true
+
+      - name: Cache conda packages
+        uses: actions/cache@v4
+        with:
+          path: ~/conda_pkgs_dir
+          key:
+            ${{ runner.os }}-conda-${{ hashFiles('environment-${{ env.PYTHON_VERSION }}-linux.yml') }}
+
+      - name: Compiler cache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ runner.os }}-meson-${{ env.PYTHON_VERSION }}
+
+      - name: Setup Conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          # Disabled for now due to
+          # https://github.com/conda-incubator/setup-miniconda/issues/379
+          # miniforge-version: latest
+          use-mamba: true
+          channels: conda-forge
+          channel-priority: true
+          activate-environment: sage-dev
+          environment-file: environment-${{ env.PYTHON_VERSION }}-linux.yml
+
+      - name: Build Sage
+        shell: bash -l {0}
+        run: |
+          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+          export CC="ccache $CC"
+          export CXX="ccache $CXX"
+          pip install --no-build-isolation --config-settings=builddir=builddir . -v
+
+      - name: Build pdf doc
+        shell: bash -l {0}
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian texlive texlive_luatex free_fonts xindy)
+          meson compile -C builddir doc-pdf
+
+      - name: Build live doc
+        shell: bash -l {0}
+        run: |
+          meson compile -C builddir doc-html -j1
+        env:
+          SAGE_USE_CDNS: yes
+          SAGE_LIVE_DOC: yes
+          SAGE_JUPYTER_SERVER: "binder:sagemath/sage-binder-env/dev"
+
+      - name: Copy doc
+        id: copy
+        run: |
+          mkdir -p ./doc
+          cp -r builddir/src/doc/pdf doc/
+          cp -rL builddir/src/doc/html doc/
+          cp builddir/src/doc/index.html doc/
+          zip -r livedoc.zip doc
+
+      - name: Upload livedoc
+        uses: actions/upload-artifact@v4
+        with:
+          name: livedoc
+          path: livedoc.zip

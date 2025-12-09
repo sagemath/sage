@@ -54,15 +54,14 @@ lists of integer exponents.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.structure.category_object import normalize_names
-from sage.structure.parent import Parent
 from sage.categories.monoids import Monoids
-from .free_abelian_monoid_element import FreeAbelianMonoidElement
+from sage.misc.cachefunc import cached_method
+from sage.monoids.free_abelian_monoid_element import FreeAbelianMonoidElement
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-
+from sage.structure.category_object import normalize_names
 from sage.structure.factory import UniqueFactory
+from sage.structure.parent import Parent
 
 
 class FreeAbelianMonoidFactory(UniqueFactory):
@@ -225,7 +224,7 @@ class FreeAbelianMonoid_class(Parent):
             return x
         return self.element_class(self, x)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if `x` is an element of this abelian monoid.
 

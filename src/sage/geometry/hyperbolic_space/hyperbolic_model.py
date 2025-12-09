@@ -82,7 +82,7 @@ from sage.misc.bindable_class import BindableClass
 from sage.misc.lazy_import import lazy_import
 from sage.functions.other import imag, real
 from sage.misc.functional import sqrt
-from sage.functions.all import arccosh
+from sage.functions.hyperbolic import acosh as arccosh
 from sage.rings.cc import CC
 from sage.rings.real_double import RDF
 from sage.rings.real_mpfr import RR
@@ -109,7 +109,7 @@ from sage.geometry.hyperbolic_space.hyperbolic_coercion import (
 lazy_import('sage.modules.free_module_element', 'vector')
 
 #####################################################################
-## Abstract model
+#  Abstract model
 
 
 class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
@@ -761,7 +761,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
 
 
 #####################################################################
-## Upper half plane model
+#  Upper half plane model
 
 class HyperbolicModelUHP(HyperbolicModel):
     r"""
@@ -1091,9 +1091,9 @@ class HyperbolicModelUHP(HyperbolicModel):
             sage: B.preserves_orientation()                                             # needs scipy
             False
         """
-        a, b, c, d = [RR.random_element() for k in range(4)]
-        while abs(a*d - b*c) < EPSILON:
-            a, b, c, d = [RR.random_element() for k in range(4)]
+        a, b, c, d = (RR.random_element() for k in range(4))
+        while abs(a * d - b * c) < EPSILON:
+            a, b, c, d = (RR.random_element() for k in range(4))
         M = matrix(RDF, 2, [a, b, c, d])
         M = M / (M.det()).abs().sqrt()
         if M.det() > 0:
@@ -1132,7 +1132,7 @@ class HyperbolicModelUHP(HyperbolicModel):
         return B.inverse() * A
 
 #####################################################################
-## Poincaré disk model
+#  Poincaré disk model
 
 
 class HyperbolicModelPD(HyperbolicModel):
@@ -1261,7 +1261,7 @@ class HyperbolicModelPD(HyperbolicModel):
 
 
 #####################################################################
-## Klein disk model
+#  Klein disk model
 
 class HyperbolicModelKM(HyperbolicModel):
     r"""
@@ -1367,7 +1367,7 @@ class HyperbolicModelKM(HyperbolicModel):
         """
         if isinstance(A, HyperbolicIsometry):
             return True
-        return bool((A*LORENTZ_GRAM*A.transpose() - LORENTZ_GRAM).norm()**2 <
+        return bool((A * LORENTZ_GRAM * A.transpose() - LORENTZ_GRAM).norm()**2 <
                     EPSILON)
 
     def get_background_graphic(self, **bdry_options):
@@ -1384,7 +1384,7 @@ class HyperbolicModelKM(HyperbolicModel):
         return circle((0, 0), 1, axes=False, color='black')
 
 #####################################################################
-## Hyperboloid model
+#  Hyperboloid model
 
 
 class HyperbolicModelHM(HyperbolicModel):
@@ -1477,7 +1477,7 @@ class HyperbolicModelHM(HyperbolicModel):
         """
         if isinstance(A, HyperbolicIsometry):
             return True
-        return bool((A*LORENTZ_GRAM*A.transpose() - LORENTZ_GRAM).norm()**2 < EPSILON)
+        return bool((A * LORENTZ_GRAM * A.transpose() - LORENTZ_GRAM).norm()**2 < EPSILON)
 
     def get_background_graphic(self, **bdry_options):
         r"""

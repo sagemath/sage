@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # /// script
-# requires-python = ">=3.11"
+# requires-python = ">=3.12"
 # dependencies = [
 #     "meson",
 # ]
@@ -47,6 +47,7 @@ options = parser.parse_args()
 class AstPython(AstVisitor):
     install_sources_calls: list[MethodNode] = []
     extension_data: list[AssignmentNode] = []
+    doc_sources: list[MethodNode] = []
 
     def visit_MethodNode(self, node: MethodNode) -> None:
         if node.name.value == "install_sources":
@@ -56,6 +57,8 @@ class AstPython(AstVisitor):
     def visit_AssignmentNode(self, node: AssignmentNode) -> None:
         if node.var_name.value in ["extension_data", "extension_data_cpp"]:
             self.extension_data += [node]
+        elif node.var_name.value == "doc_sources":
+            self.doc_sources += [node]
         return super().visit_AssignmentNode(node)
 
 
@@ -79,6 +82,7 @@ def _symbol(val: str) -> SymbolNode:
 
 def update_python_sources(self: Rewriter, visitor: AstPython):
     for target in visitor.install_sources_calls:
+        ignored_files = {'cmdline.py'}
         # Generate the current source list
         src_list: list[str] = []
         for arg in arg_list_from_node(target):
@@ -87,13 +91,13 @@ def update_python_sources(self: Rewriter, visitor: AstPython):
 
         folder = Path(target.filename).parent
         python_files = sorted(
-            list(folder.glob("*.py")) + list(folder.glob('*.pxd'))
+            list(folder.glob("*.py")) + list(folder.glob('*.pxd')) + list(folder.glob('*.pyx'))
         )  # + list(folder.glob('*.pxd')) + list(folder.glob('*.h')))
 
         to_append: list[StringNode] = []
         for file in python_files:
             file_name = file.name
-            if file_name in src_list:
+            if file_name in src_list or file_name in ignored_files:
                 continue
             token = Token("string", target.filename, 0, 0, 0, None, file_name)
             to_append += [StringNode(token)]
@@ -161,6 +165,82 @@ def update_python_sources(self: Rewriter, visitor: AstPython):
             if target not in self.modified_nodes:
                 self.modified_nodes += [target]
 
+
+def update_doc_sources(self: Rewriter, visitor: AstPython):
+    doc_sources: dict[Path, list[str]] = {}
+    ignored_files = {'bootstrap', 'Makefile', 'meson.build'}
+    ignored_folders = {'__pycache__', 'sage'}
+    for target in visitor.doc_sources:
+        folder = Path(target.filename).parent
+        # Generate the current source dict
+        src_list: list[BaseNode] = []
+        if isinstance(target.value, ArrayNode):
+            src_list.extend(target.value.args.arguments)
+        doc_sources.setdefault(folder, [])
+        doc_sources[folder] += [x.value for x in src_list]
+
+    for target in visitor.doc_sources:
+        if target.var_name.value != "doc_sources":
+            continue
+        folder = Path(target.filename).parent
+        existing_sources: list[str] = doc_sources[folder]
+        # Add all files that are not in the source list
+        for file in folder.glob("*.*"):
+            file_name: str = file.name
+            if file_name in existing_sources:
+                continue
+            if file_name in ignored_files or file.suffix == ".pyc":
+                continue
+            existing_sources.append(file_name)
+            token = Token("string", target.filename, 0, 0, 0, None, file_name)
+            target.value.args.arguments.append(StringNode(token))
+            if target not in self.modified_nodes:
+                self.modified_nodes += [target]
+        # Remove all files that are no longer existing
+        for file in existing_sources:
+            if not (folder / file).exists():
+                existing_sources.remove(file)
+                token = next((x for x in target.value.args.arguments if getattr(x, "value", None) == file), None)
+                if token is not None:
+                    target.value.args.arguments.remove(token)
+                    if target not in self.modified_nodes:
+                        self.modified_nodes += [target]
+
+    # Add all missing meson files in the src/doc folder
+    doc_folder = Path(options.sourcedir) / "src" / "doc"
+    # Delete all totally empty folders as pre-processing step
+    for folder, dirs, files in doc_folder.walk(top_down = False):
+        if not dirs and not files:
+            folder.rmdir()
+
+    for folder, dirs, files  in doc_folder.walk():
+        if folder.name in ignored_folders or folder == doc_folder:
+            continue
+        files_to_add = {}
+        for file in files:
+            if file in ignored_files or file in doc_sources.get(folder, set()):
+                continue
+            files_to_add[file] = folder
+        if files_to_add or any(dir not in ignored_folders for dir in dirs):
+            # Create meson.build file
+            meson_build = Path(folder) / "meson.build"
+            if meson_build.exists():
+                continue
+            with open(meson_build, "w", encoding="utf-8") as f:
+                if files_to_add:
+                    f.write("doc_sources = [\n")
+                    for file in sorted(files_to_add):
+                        f.write(f"    '{file}',\n")
+                    f.write("]\n")
+                    f.write("\n")
+                    f.write("foreach file : doc_sources\n")
+                    f.write("    doc_src += fs.copyfile(file)\n")
+                    f.write("endforeach\n")
+                    f.write("\n")
+                for dir in dirs:
+                    if dir in ignored_folders:
+                        continue
+                    f.write(f"subdir('{dir}')\n")
 
 def apply_changes(self: Rewriter):
     assert all(
@@ -279,12 +359,14 @@ def apply_changes(self: Rewriter):
 Rewriter.apply_changes = apply_changes
 # Monkey patch the update_python_sources method until this is upstreamed
 Rewriter.process_update_python_sources = update_python_sources
+Rewriter.process_update_doc_sources = update_doc_sources
 
 rewriter = Rewriter(options.sourcedir)
 visitor = AstPython()
 rewriter.interpreter.visitors += [visitor]
 rewriter.analyze_meson()
 rewriter.process_update_python_sources(visitor)
+rewriter.process_update_doc_sources(visitor)
 rewriter.apply_changes()
 rewriter.print_info()
 
@@ -297,5 +379,6 @@ meson_format(
         output=None,
         configuration=options.sourcedir / "meson.format",
         editor_config=None,
+        source_file_path=None,
     )
 )

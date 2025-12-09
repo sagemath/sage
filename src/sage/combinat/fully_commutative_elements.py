@@ -28,8 +28,6 @@ Natalie Schoenhals for their contribution to the project and the code.
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from collections import deque
-
 from sage.categories.coxeter_groups import CoxeterGroups
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.misc.lazy_import import lazy_import
@@ -158,7 +156,9 @@ class FullyCommutativeElement(NormalizedClonableList):
             False
         """
         word = list(self)
-        from sage.combinat.root_system.braid_orbit import is_fully_commutative as is_fully_comm
+        from sage.combinat.root_system.braid_orbit import (
+            is_fully_commutative as is_fully_comm,
+        )
 
         group = self.parent().coxeter_group()
         braid_rels = group.braid_relations()
@@ -271,7 +271,7 @@ class FullyCommutativeElement(NormalizedClonableList):
         levels = h.level_sets()
         letters_at_level = [set(self[i] for i in level) for level in levels]
 
-        for (level_zero_index, members) in enumerate(levels):
+        for level_zero_index, members in enumerate(levels):
             level = level_zero_index + 1
             for i in members:
                 x = self[i]
@@ -373,12 +373,12 @@ class FullyCommutativeElement(NormalizedClonableList):
         """
         m = self.parent().coxeter_group().coxeter_matrix()
         view = list(self) if side == 'left' else self[::-1]
-        for (i, t) in enumerate(view):
+        for i, t in enumerate(view):
             if t == s and not any(m[x, t] > 2 for x in view[:i]):
                 return i
         return None
 
-    def has_descent(self, s, side='left'):
+    def has_descent(self, s, side='left') -> bool:
         r"""
         Determine if ``s`` is a descent on the appropriate side of ``self``.
 
@@ -439,7 +439,7 @@ class FullyCommutativeElement(NormalizedClonableList):
         view = list(self) if side == 'left' else self[::-1]
         m = self.parent().coxeter_group().coxeter_matrix()
         out = set()
-        for (i, t) in enumerate(view):
+        for i, t in enumerate(view):
             if not any(m[x, t] > 2 for x in view[:i]):
                 out.add(t)
         return out
@@ -742,7 +742,7 @@ class FullyCommutativeElements(UniqueRepresentation, Parent):
     Class for the set of fully commutative (FC) elements of a Coxeter system.
 
     Coxeter systems with finitely many FC elements, or *FC-finite* Coxeter
-    systems, are classfied by Stembridge in [Ste1996]_. They fall into seven
+    systems, are classified by Stembridge in [Ste1996]_. They fall into seven
     families, namely the groups of types `A_n, B_n, D_n, E_n, F_n, H_n` and
     `I_2(m)`.
 
@@ -757,9 +757,9 @@ class FullyCommutativeElements(UniqueRepresentation, Parent):
     The class of fully commutative elements in the Coxeter group constructed
     from ``data``. This will belong to the category of enumerated sets. If the
     Coxeter data corresponds to a Cartan type, the category is further refined
-    to either finite enumerated sets or infinite enumerated sets depending on i
-    whether the Coxeter group is FC-finite; the refinement is not carried out if
-    ``data`` is a Coxeter matrix not corresponding to a Cartan type.
+    to either finite enumerated sets or infinite enumerated sets depending on
+    whether the Coxeter group is FC-finite; the refinement is not carried out
+    if ``data`` is a Coxeter matrix not corresponding to a Cartan type.
 
     .. TODO::
 
@@ -1011,7 +1011,7 @@ class FullyCommutativeElements(UniqueRepresentation, Parent):
         letters = self.coxeter_group().index_set()
 
         # To make the iterator deterministic, use a dictionary rather than a
-        # set, for the keys are then ordered by default by Python 3.7+:
+        # set, for the keys are then ordered by default:
         recent_words = {empty_word: True}
         yield empty_word
         while recent_words:

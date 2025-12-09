@@ -21,26 +21,26 @@ jobs:
   test:
     name: Conda (${{ matrix.os }}, Python ${{ matrix.python }}, ${{ matrix.tests }}${{ matrix.editable && ', editable' || '' }})
     runs-on: ${{ matrix.os }}-latest
+    env:
+      SEPARATELY_TESTED_FLAKY_FILES: "src/sage/libs/singular/function.pyx src/sage/rings/polynomial/plural.pyx"
 
     strategy:
       fail-fast: false
       matrix:
         os: ['ubuntu', 'macos', 'windows']
-        python: ['3.11', '3.12']
+        python: ['3.12', '3.13']
         tests: ['all']
         editable:
           ${{ fromJson(github.event_name == 'pull_request' && '[false]' || '[false, true]') }}
         include:
+          # Test only changed files
           - os: 'ubuntu'
             python: '3.12'
             tests: 'new'
-          # one additional editable run in pull_request, this has no effect if not pull_request
+          # One additional editable run in pull_request, this has no effect if not pull_request
           - os: 'ubuntu'
-            python: 3.12
+            python: '3.12'
             editable: true
-            tests: 'all'
-          - os: windows
-            python: '3.13'
             tests: 'all'
 
     steps:
@@ -48,7 +48,7 @@ jobs:
 
       - name: Merge CI fixes from sagemath/sage
         run: |
-          .ci/merge-fixes.sh
+          .github/workflows/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -68,7 +68,7 @@ jobs:
         with:
           path: ~/conda_pkgs_dir
           key:
-            ${{ runner.os }}-conda-${{ hashFiles('environment-3.11-linux.yml') }}
+            ${{ runner.os }}-conda-${{ hashFiles('environment-3.12-linux.yml') }}
       
       - name: Setup MSVC environment
         if: runner.os == 'windows'
@@ -88,6 +88,8 @@ jobs:
 
       - name: Setup Conda environment
         uses: conda-incubator/setup-miniconda@v3
+        continue-on-error: true
+        id: conda1
         with:
           python-version: ${{ matrix.python }}
           # Disabled for now due to
@@ -98,6 +100,22 @@ jobs:
           channel-priority: true
           activate-environment: sage-dev
           environment-file: environment-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || startsWith(matrix.os, 'ubuntu') && 'linux' || 'win' }}.yml
+
+      # Sometimes the conda setup fails due to network issues.
+      # This is a workaround to retry the setup step if it fails.
+      # Workaround for https://github.com/conda-incubator/setup-miniconda/issues/129
+      - name: Setup Conda environment (2nd time)
+        uses: conda-incubator/setup-miniconda@v3
+        if: steps.conda1.outcome == 'failure'
+        with:
+          python-version: ${{ matrix.python }}
+          miniforge-version: latest
+          use-mamba: true
+          channels: conda-forge
+          channel-priority: true
+          activate-environment: sage-dev
+          environment-file: environment-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || 'linux' }}.yml
+
 
       - name: Print Conda environment
         shell: bash -l {0}
@@ -124,7 +142,7 @@ jobs:
         # this step must be after build, because meson.build creates a number of __init__.py files
         # that is needed to make tools/update-meson.py run correctly
         shell: bash -l {0}
-        if: matrix.tests == 'all'
+        if: matrix.tests == 'all' && matrix.python == '3.12'
         run: |
           python tools/update-meson.py
           if ! ./tools/test-git-no-uncommitted-changes; then
@@ -149,8 +167,22 @@ jobs:
             # Ignore errors on Windows, for now
             pytest --doctest-ignore-import-errors --doctest -rfEs -s src || true
           else
-            ./sage -t ${{ matrix.tests == 'all' && '--all' || '--new --long' }} -p4 --format github
+            pytest -rfEs -s src
+            ./sage -t ${{
+              matrix.tests == 'all' &&
+              '--all-except="$SEPARATELY_TESTED_FLAKY_FILES"' ||
+              '--new --long' }} -p4 --format github
           fi
+
+      - name: Test flaky files
+        # unknown issues with plural.pyx causes sporadic failure: https://github.com/sagemath/sage/issues/29528
+        # we rerun a few times, this step succeeds if any of the 5 runs succeed
+        if: runner.os != 'windows' && matrix.tests == 'all'
+        shell: bash -l {0}
+        run: |
+          for i in {1..5}; do
+            ./sage -t -p4 --format github $SEPARATELY_TESTED_FLAKY_FILES && break
+          done
 
       - name: Check that all modules can be imported
         shell: bash -l {0}
@@ -160,11 +192,15 @@ jobs:
           # The following command checks that all modules can be imported.
           # The output also includes a long list of modules together with the number of tests in each module.
           # This can be ignored.
-          pytest -qq --doctest --collect-only || true
+          if [[ "${{ matrix.os }}" == "windows" ]]; then
+            pytest -qq --doctest --collect-only || true
+          else
+            pytest -qq --doctest --collect-only
+          fi
 
       - name: Upload log
         uses: actions/upload-artifact@v4.5.0
         if: failure()
         with:
-          name: ${{ runner.os }}-meson-${{ matrix.python }}${{ matrix.editable && '-editable' || '' }}-log
+          name: ${{ runner.os }}-meson-${{ matrix.python }}${{ matrix.editable && '-editable' || '' }}${{ matrix.tests == 'new' && '-new' || '' }}-log
           path: builddir/meson-logs/

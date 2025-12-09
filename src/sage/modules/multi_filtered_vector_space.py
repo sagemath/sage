@@ -51,7 +51,7 @@ from sage.modules.filtered_vector_space import FilteredVectorSpace
 
 def MultiFilteredVectorSpace(arg, base_ring=None, check=True):
     """
-    Contstruct a multi-filtered vector space.
+    Construct a multi-filtered vector space.
 
     INPUT:
 

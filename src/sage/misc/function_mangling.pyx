@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 # Copyright (c) 2009, Tom Boothby <boothby@math.washington.edu>
 # All rights reserved.
 #
@@ -211,7 +210,7 @@ cdef class ArgumentFixer:
         cdef dict defaults = self._defaults
         cdef int i
         cdef dict kwargs_ = dict(kwargs)
-        for i from 0<=i<self._nargs:
+        for i in range(self._nargs):
             name = arg_names[i]
             if i >= lenargs:
                 if name in kwargs_:

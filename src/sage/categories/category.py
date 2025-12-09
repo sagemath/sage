@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Categories
 
@@ -103,24 +102,30 @@ A parent ``P`` is in a category ``C`` if ``P.category()`` is a subcategory of
 # ****************************************************************************
 
 import inspect
+from typing import Self
 from warnings import warn
+
+from sage.categories.category_cy_helper import (
+    _flatten_categories,
+    _sort_uniq,
+    category_sort_key,
+    join_as_tuple,
+)
 from sage.misc.abstract_method import abstract_method, abstract_methods_of_class
-from sage.misc.cachefunc import cached_method, cached_function
-from sage.misc.c3_controlled import _cmp_key, _cmp_key_named, C3_sorted_merge
+from sage.misc.c3_controlled import C3_sorted_merge, _cmp_key, _cmp_key_named
+from sage.misc.cachefunc import cached_function, cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.unknown import Unknown
 from sage.misc.weak_dict import WeakValueDictionary
-
+from sage.structure.dynamic_class import DynamicMetaclass, dynamic_class
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.dynamic_class import DynamicMetaclass, dynamic_class
-
-from sage.categories.category_cy_helper import category_sort_key, _sort_uniq, _flatten_categories, join_as_tuple
 
 _join_cache = WeakValueDictionary()
 
 
-HALL_OF_FAME = ['Coxeter', 'Hopf', 'Weyl', 'Lie', 'Hecke', 'Dedekind']
+HALL_OF_FAME = ['Coxeter', 'Hopf', 'Weyl', 'Lie',
+                'Hecke', 'Dedekind', 'Stone']
 
 
 class Category(UniqueRepresentation, SageObject):
@@ -679,7 +684,7 @@ class Category(UniqueRepresentation, SageObject):
         """
         return issubclass(category.parent_class, self.parent_class)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Membership testing.
 
@@ -739,7 +744,7 @@ class Category(UniqueRepresentation, SageObject):
             return False
         return any(isinstance(cat, cls) for cat in c)
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return whether this category is abelian.
 
@@ -1045,7 +1050,7 @@ class Category(UniqueRepresentation, SageObject):
     # Methods handling of full subcategories
     ##########################################################################
 
-    def additional_structure(self):
+    def additional_structure(self) -> Self:
         """
         Return whether ``self`` defines additional structure.
 
@@ -2214,7 +2219,7 @@ class Category(UniqueRepresentation, SageObject):
         else:
             raise ValueError("Cannot remove axiom {} from {}".format(axiom, self))
 
-    def _without_axioms(self, named=False):
+    def _without_axioms(self, named=False) -> Self:
         r"""
         Return the category without the axioms that have been added
         to create it.

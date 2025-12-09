@@ -1,0 +1,20 @@
+--- a/linbox/ring/ntl/ntl-lzz_px.h	2025-10-21 14:28:23.362837229 +0800
++++ b/linbox/ring/ntl/ntl-lzz_px.h	2025-10-21 14:28:35.770836212 +0800
+@@ -195,9 +195,15 @@
+       template <class E>
+ 		Element& init( Element& p, const std::vector<E>& v ) const
+ 		{
++			// Ensure coefficients are converted via the coefficient field to
++			// avoid ambiguous implicit conversions (e.g., from Givaro::Integer
++			// to long) when E is not NTL::zz_p. This fixes clang/libc++ builds.
+ 			p = 0;
+-			for( long i = 0; i < (long)v.size(); ++i )
+-				NTL::SetCoeff( p, i, v[ (size_t) i ] );
++			Coeff temp;
++			for( long i = 0; i < (long)v.size(); ++i ) {
++				_CField.init( temp, v[ (size_t) i ] );
++				NTL::SetCoeff( p, i, temp );
++			}
+ 			return p;
+ 		}
+ 

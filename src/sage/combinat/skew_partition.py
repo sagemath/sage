@@ -1,5 +1,5 @@
 r"""
-Skew Partitions
+Skew partitions
 
 A skew partition ``skp`` of size `n` is a pair of
 partitions `[p_1, p_2]` where `p_1` is a
@@ -589,7 +589,7 @@ class SkewPartition(CombinatorialElement):
         """
         return sum(self.row_lengths())
 
-    def is_connected(self):
+    def is_connected(self) -> bool:
         """
         Return ``True`` if ``self`` is a connected skew partition.
 
@@ -634,16 +634,16 @@ class SkewPartition(CombinatorialElement):
             sage: SkewPartition([[10,10],[1]]).overlap()
             9
         """
-        p,q = self
+        p, q = self
         if len(p) <= 1:
             from sage.rings.infinity import PlusInfinity
             return PlusInfinity()
         if len(q) == 0:
             return min(p)
         q = [q[0]] + list(q)
-        return min(row_lengths_aux([p,q]))
+        return min(row_lengths_aux([p, q]))
 
-    def is_overlap(self, n):
+    def is_overlap(self, n) -> bool:
         r"""
         Return ``True`` if the overlap of ``self`` is at most ``n``.
 
@@ -658,7 +658,7 @@ class SkewPartition(CombinatorialElement):
         """
         return n <= self.overlap()
 
-    def is_ribbon(self):
+    def is_ribbon(self) -> bool:
         r"""
         Return ``True`` if and only if ``self`` is a ribbon.
 
@@ -1551,10 +1551,7 @@ class SkewPartitions(UniqueRepresentation, Parent):
         if x[1] not in p:
             return False
 
-        if not p(x[0]).contains(p(x[1])):
-            return False
-
-        return True
+        return p(x[0]).contains(p(x[1]))
 
     def from_row_and_column_length(self, rowL, colL):
         """

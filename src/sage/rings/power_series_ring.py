@@ -496,7 +496,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
     """
 
     def __init__(self, base_ring, name=None, default_prec=None, sparse=False,
-                 implementation=None, category=None):
+                 implementation=None, category=None) -> None:
         """
         Initialize a power series ring.
 
@@ -518,8 +518,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         If the base ring is a polynomial ring, then the option
         ``implementation='mpoly'`` causes computations to be done with
         multivariate polynomials instead of a univariate polynomial
-        ring over the base ring.  Only use this for dense power series
-        where you won't do too much arithmetic, but the arithmetic you
+        ring over the base ring. Only use this for dense power series
+        where you will not do too much arithmetic, but the arithmetic you
         do must be fast.  You must explicitly call
         ``f.do_truncation()`` on an element for it to truncate away
         higher order terms (this is called automatically before
@@ -527,9 +527,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
 
         EXAMPLES:
 
-        This base class inherits from :class:`~sage.rings.ring.CommutativeRing`.
-        Since :issue:`11900`, it is also initialised as such, and since :issue:`14084`
-        it is actually initialised as an integral domain::
+        Since :issue:`11900`, it is in the category of commutative rings,
+        and since :issue:`14084` it is actually an integral domain::
 
             sage: R.<x> = ZZ[[]]
             sage: R.category()
@@ -1240,7 +1239,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
             prec = self.default_prec()
         return self(self.__poly_ring.random_element(prec-1, *args, **kwds), prec)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> None:
         """
         Return ``True`` if x is an element of this power series ring or
         canonically coerces to this ring.

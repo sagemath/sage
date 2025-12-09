@@ -105,7 +105,9 @@ class pAdicPrinterDefaults(SageObject):
         self._max_terse_terms = int(max_terse_terms)
         self._sep = sep
         if alphabet is None:
-            self._alphabet = ('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z')
+            txt = '0123456789'
+            txt += 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+            self._alphabet = tuple(txt)
         else:
             self._alphabet = alphabet
 
@@ -144,11 +146,11 @@ class pAdicPrinterDefaults(SageObject):
         """
         if mode is None:
             return self._mode
+
+        if mode in ['val-unit', 'series', 'terse', 'digits', 'bars']:
+            self._mode = mode
         else:
-            if mode in ['val-unit','series','terse','digits','bars']:
-                self._mode = mode
-            else:
-                raise ValueError("invalid printing mode")
+            raise ValueError("invalid printing mode")
 
     def allow_negatives(self, neg=None):
         r"""
@@ -1041,7 +1043,8 @@ cdef class pAdicPrinter_class(SageObject):
                     s += "^{%s})" % (elt.precision_absolute())
                 else:
                     s += "^%s)" % (elt.precision_absolute())
-        if s == "": s = "0"
+        if s == "":
+            return "0"
         return s
 
     cdef _repr_spec(self, pAdicGenericElement elt, bint do_latex, bint pos, int mode, bint paren, ram_name):
@@ -1170,7 +1173,7 @@ cdef class pAdicPrinter_class(SageObject):
                     else:
                         pk = Integer(1)
                         integral = True
-                    for i from 0 <= i < len(L):
+                    for i in range(len(L)):
                         if L[i] != "":
                             a = Integer(L[i])
                             if not pos and 2*a > pn:
@@ -1217,7 +1220,7 @@ cdef class pAdicPrinter_class(SageObject):
                     if self.unram_name is None:
                         raise RuntimeError("need to have specified a name for the unramified variable")
                     L, ellipsis = self._truncate_list(L, self.max_ram_terms, [])
-                    for i from 0 <= i < len(L):
+                    for i in range(len(L)):
                         unram_name = self.latex_unram_name if do_latex else self.unram_name
                         term = self._print_unram_term(L[i], do_latex, unram_name, self.max_unram_terms, 0, 0)
                         if len(term) > 0:
@@ -1390,7 +1393,7 @@ cdef class pAdicPrinter_class(SageObject):
         cdef Py_ssize_t j, newj
         cdef long exp, count = 0
         if increasing:
-            for j from 0 <= j < len(L):
+            for j in range(len(L)):
                 exp = j + expshift
                 if L[j] != 0:
                     if max_unram_terms == 0:
@@ -1477,7 +1480,7 @@ cdef class pAdicPrinter_class(SageObject):
         cdef Py_ssize_t j
         cdef long exp
         if increasing:
-            for j from 0 <= j < len(L):
+            for j in range(len(L)):
                 exp = j + expshift
                 s = self._print_term_of_poly(s, L[j], do_latex, polyname, exp)
         else:

@@ -66,7 +66,6 @@ import copy
 import re
 from io import StringIO
 
-from sage.cpython.wrapperdescr cimport wrapperdescr_fastcall
 import sage.rings.rational
 import sage.rings.integer
 import sage.rings.integer_ring
@@ -75,9 +74,7 @@ import sage.rings.fraction_field_element
 import sage.rings.infinity as infinity
 from sage.misc.latex import latex
 from sage.arith.power cimport generic_power
-from sage.arith.misc import crt
 from sage.arith.long cimport pyobject_to_long
-from sage.misc.mrange import cartesian_product_iterator
 from sage.structure.factorization import Factorization
 from sage.structure.richcmp cimport (richcmp, richcmp_item,
         rich_to_bool, rich_to_bool_sgn)
@@ -1191,6 +1188,29 @@ cdef class Polynomial(CommutativePolynomial):
         """
         return self[i]
 
+    def newton_polytope(self):
+        r"""
+        Return the Newton polytope of this polynomial.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: f = 42 + x + x^3
+            sage: P = f.newton_polytope(); P                                            # needs sage.geometry.polyhedron
+            A 1-dimensional polyhedron in ZZ^1 defined as the convex hull of 2 vertices
+
+        TESTS::
+
+            sage: R.<x> = QQ[]
+            sage: R(0).newton_polytope()                                                # needs sage.geometry.polyhedron
+            The empty polyhedron in ZZ^0
+            sage: R(1).newton_polytope()                                                # needs sage.geometry.polyhedron
+            A 0-dimensional polyhedron in ZZ^1 defined as the convex hull of 1 vertex
+        """
+        from sage.geometry.polyhedron.constructor import Polyhedron
+        return Polyhedron(vertices=[(e,) for e in self.exponents()],
+                          base_ring=ZZ)
+
     def __iter__(self):
         """
         EXAMPLES::
@@ -2240,7 +2260,7 @@ cdef class Polynomial(CommutativePolynomial):
             else:
                 # Compute the trace of T with field of order 2^k
                 # sum T^(2^i) for i in range (degree * k)
-                # We use repeated squaring to avoid redundent multiplications
+                # We use repeated squaring to avoid redundant multiplications
                 C, TT = T, T
                 for _ in range(degree * self.base_ring().degree() - 1):
                     TT = TT * TT % self
@@ -2837,11 +2857,25 @@ cdef class Polynomial(CommutativePolynomial):
             except TypeError:
                 pass
 
-        # Delegate to coercion model. The line below is basically
-        # RingElement.__truediv__(left, right), except that it also
-        # works if left is not of type RingElement.
-        return wrapperdescr_fastcall(RingElement.__truediv__,
-                left, (right,), <object>NULL)
+        # Try to coerce denominator in numerator parent...
+        if isinstance(right, Polynomial):
+            R = (<Polynomial>right)._parent
+            try:
+                x = R.coerce(left)
+                return x.__truediv__(right)
+            except TypeError:
+                pass
+
+        # ...and numerator in denominator parent
+        if isinstance(left, Polynomial):
+            R = (<Polynomial>left)._parent
+            try:
+                x = R.coerce(right)
+                return left.__truediv__(x)
+            except TypeError:
+                pass
+
+        return NotImplemented
 
     def __pow__(left, right, modulus):
         """
@@ -5995,6 +6029,8 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: K.<x,y> = QQ['x,y']
             sage: g = K.random_element()
+            sage: while not g:
+            ....:     g = K.random_element()
             sage: f.sylvester_matrix(g) == K(f).sylvester_matrix(g, x)                  # needs sage.modules
             True
 
@@ -6271,6 +6307,23 @@ cdef class Polynomial(CommutativePolynomial):
             -2/5
         """
         return self[self.degree()]
+
+    def canonical_associate(self):
+        """
+        Return a canonical associate.
+
+        EXAMPLES::
+
+            sage: R.<x>=QQ[]
+            sage: (-2*x^2+3*x+5).canonical_associate()
+            (x^2 - 3/2*x - 5/2, -2)
+            sage: R.<x>=ZZ[]
+            sage: (-2*x^2+3*x+5).canonical_associate()
+            (2*x^2 - 3*x - 5, -1)
+        """
+        lc = self.leading_coefficient()
+        _, u = lc.canonical_associate()
+        return (u.inverse_of_unit() * self, u)
 
     def lm(self):
         """
@@ -7120,6 +7173,10 @@ cdef class Polynomial(CommutativePolynomial):
         Return polynomial as a PARI object with topmost variable
         ``name``.  By default, use 'x' for the variable name.
 
+        It is not recommended to pass a user-specified value
+        as the variable name, because some names such as ``I``
+        are reserved. See :issue:`20631`, :issue:`40273`.
+
         For internal use only.
 
         EXAMPLES::
@@ -7129,6 +7186,13 @@ cdef class Polynomial(CommutativePolynomial):
             2*x^2 + x
             sage: (2*a^2 + a)._pari_with_name('y')                                      # needs sage.libs.pari
             2*y^2 + y
+
+        TESTS::
+
+            sage: (2*a^2 + a)._pari_with_name('I')                                      # needs sage.libs.pari
+            Traceback (most recent call last):
+            ...
+            cypari2.handle_error.PariError: I already exists with incompatible valence
         """
         vals = [x.__pari__() for x in self.list()]
         return pari(vals).Polrev(name)
@@ -7260,6 +7324,32 @@ cdef class Polynomial(CommutativePolynomial):
         s = '+'.join('(%s)*%s' % (self.monomial_coefficient(m)._giac_init_(),
                                   m._repr(g)) for m in self.monomials())
         return s if s else '0'
+
+    def _regina_(self, regina):
+        r"""
+        Return polynomial as a Regina object.
+
+        EXAMPLES::
+
+            sage: R.<v> = QQ[]
+            sage: p = v^3 + 3*v + 1/5
+            sage: rp = regina(p); (rp, type(rp), type(rp._inst)) # optional regina
+            (<regina.Polynomial: x^3 + 3 x + 1/5>,
+            <class 'sage.interfaces.regina.ReginaElement'>,
+            <class 'regina.engine.Polynomial'>)
+            sage: regina(p.change_ring(CC))                      # optional regina
+            Traceback (most recent call last):
+            ...
+            TypeError: only integral or rational polynomials available in Regina
+        """
+        try:
+            data = [ZZ(c) for c in self.list(copy=False)]
+        except TypeError:
+            try:
+                data = [QQ(c) for c in self.list(copy=False)]
+            except TypeError:
+                raise TypeError('only integral or rational polynomials available in Regina')
+        return regina.Polynomial(data)
 
     ######################################################################
 
@@ -8349,8 +8439,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: A = PolynomialRing(R, 'y')
             sage: y = A.gen()
             sage: f = 10*y^2 - y^3 - 9
-            sage: f.roots(multiplicities=False)                                         # needs sage.libs.pari
-            [1, 0, 3, 6]
+            sage: sorted(f.roots(multiplicities=False))                                 # needs sage.libs.pari
+            [0, 1, 3, 6]
 
         An example over the complex double field (where root finding is
         fast, thanks to NumPy)::
@@ -8843,7 +8933,6 @@ cdef class Polynomial(CommutativePolynomial):
             sage: all(r.parent() is K for r in f.roots(multiplicities=False))           # needs sage.rings.finite_rings
             True
         """
-        from sage.rings.finite_rings.finite_field_constructor import GF
         K = self._parent.base_ring()
 
         # If the base ring has a method _roots_univariate_polynomial,
@@ -9935,8 +10024,6 @@ cdef class Polynomial(CommutativePolynomial):
         t1 = t1 / c
         return t1, t0
 
-    rational_reconstruct = deprecated_function_alias(12696, rational_reconstruction)
-
     def variables(self):
         """
         Return the tuple of variables occurring in this polynomial.
@@ -10447,22 +10534,47 @@ cdef class Polynomial(CommutativePolynomial):
             sage: P.<x> = GF(2)[]
             sage: (x^3 + x^2).radical()                                                 # needs sage.rings.finite_rings
             x^2 + x
+
+        TESTS:
+
+        Check that the method is sufficiently fast::
+
+            sage: R.<x> = GF(2^13)[]
+            sage: f = R.random_element(degree=1000)
+            sage: g = f.radical()  # < 1s
+
+        Check that the method works as long as either :meth:`squarefree_decomposition`
+        or :meth:`factor` is implemented::
+
+            sage: F.<x> = FunctionField(GF(2^10))
+            sage: R.<y> = F[]
+            sage: f = (y+1/(x-1))^2 * (y+x)
+            sage: f.factor()
+            (y + x) * (y + 1/(x + 1))^2
+            sage: f.squarefree_decomposition()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: square-free decomposition not implemented for this polynomial
+            sage: f.radical()
+            y^2 + ((x^2 + x + 1)/(x + 1))*y + x/(x + 1)
         """
         P = self._parent
         R = P.base_ring()
         p = R.characteristic()
-        if p == 0 or p > self.degree():
-            if R.is_field():
-                return self // self.gcd(self.derivative())
-            else:
-                # Be careful with the content: return the
-                # radical of the content times the radical of
-                # (self/content)
-                content = self.content_ideal().gen()
-                self_1 = (self//content)
-                return (self_1 // self_1.gcd(self_1.derivative())) * content.radical()
-        else:  # The above method is not always correct (see Issue 8736)
-            return self.factor().radical_value()
+        if 0 < p <= self.degree():
+            # The method below is not always correct (see Issue 8736)
+            try:
+                return self.squarefree_decomposition().radical_value()
+            except NotImplementedError:
+                return self.factor().radical_value()
+        if R.is_field():
+            return self // self.gcd(self.derivative())
+        # Be careful with the content: return the
+        # radical of the content times the radical of
+        # (self/content)
+        content = self.content_ideal().gen()
+        self_1 = (self//content)
+        return (self_1 // self_1.gcd(self_1.derivative())) * content.radical()
 
     def content_ideal(self):
         """
@@ -10963,7 +11075,7 @@ cdef class Polynomial(CommutativePolynomial):
             i += 1
         return ans // ans.leading_coefficient()
 
-    def has_cyclotomic_factor(self):
+    def has_cyclotomic_factor(self) -> bool:
         r"""
         Return ``True`` if the given polynomial has a nontrivial cyclotomic factor.
 
@@ -13002,7 +13114,7 @@ cdef class PolynomialBaseringInjection(Morphism):
     By :issue:`9944`, there are now only very few exceptions::
 
         sage: PolynomialRing(QQ,names=[]).coerce_map_from(QQ)
-        Call morphism:
+        Coercion map:
           From: Rational Field
           To:   Multivariate Polynomial Ring in no variables over Rational Field
     """

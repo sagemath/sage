@@ -47,12 +47,12 @@ TESTS::
     sage: TestSuite(C).run()
 """
 
-#****************************************************************************
+# **************************************************************************
 #       Copyright (C) 2011 Javier López Peña <jlopez@ende.cc>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# **************************************************************************
 
 from sage.structure.parent import Parent
 from sage.misc.cachefunc import cached_method
@@ -159,7 +159,7 @@ class ConjugacyClass(Parent):
         """
         return not (self == other)
 
-    def __contains__(self, element):
+    def __contains__(self, element) -> bool:
         r"""
         Check if ``element`` belongs to the conjugacy class ``self``.
 
@@ -440,7 +440,7 @@ class ConjugacyClassGAP(ConjugacyClass):
         """
         return self._gap_().Size().sage()
 
-    def __contains__(self, g):
+    def __contains__(self, g) -> bool:
         r"""
         Containment test.
 

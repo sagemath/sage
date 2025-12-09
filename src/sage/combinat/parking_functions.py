@@ -1,5 +1,5 @@
 r"""
-Parking Functions
+Parking functions
 
 INFORMALLY (reference [Beck]_):
 
@@ -63,7 +63,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from collections.abc import Iterator
 
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
@@ -80,6 +79,10 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_with_grading import SetsWithGrading
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 def is_a(x, n=None) -> bool:
@@ -1001,7 +1004,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
 
             sage: # needs sage.modules
             sage: R = QQ['q','t'].fraction_field()
-            sage: (q,t) = R.gens()
+            sage: q, t = R.gens()
             sage: cqf = sum(t**PF.area() * PF.characteristic_quasisymmetric_function()
             ....:           for PF in ParkingFunctions(3)); cqf
             (q^3+q^2*t+q*t^2+t^3+q*t)*F[1, 1, 1] + (q^2+q*t+t^2+q+t)*F[1, 2]
@@ -1398,9 +1401,7 @@ class ParkingFunctions_all(ParkingFunctions):
             sage: x == y
             True
         """
-        if isinstance(S, ParkingFunctions_n):
-            return True
-        return False
+        return isinstance(S, ParkingFunctions_n)
 
 
 class ParkingFunctions_n(ParkingFunctions):

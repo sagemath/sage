@@ -55,7 +55,7 @@ ones.
 
 An arrangement of pseudolines can also be described as a sequence of `\binom n
 2` transpositions (permutations of two elements). In this sequence, the
-transposition `(2,3)` appears before `(8, 2)` iif `l_2` crosses `l_3` before it
+transposition `(2,3)` appears before `(8, 2)` if `l_2` crosses `l_3` before it
 crosses `l_8`. This encoding is easy to obtain by reading the wiring diagram
 from left to right (see the :meth:`show
 <sage.geometry.pseudolines.PseudolineArrangement.show>` method).

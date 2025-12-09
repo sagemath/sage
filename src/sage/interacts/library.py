@@ -35,23 +35,24 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from sage.arith.misc import factor
 from sage.arith.srange import srange
-from sage.calculus.all import symbolic_expression
+from sage.calculus.expr import symbolic_expression
 from sage.calculus.functional import derivative
 from sage.calculus.integration import numerical_integral as integral_numerical
 from sage.ext.fast_callable import fast_callable
 from sage.functions.log import exp
-from sage.misc.functional import sqrt
-from sage.functions.trig import (acos, cos, sin, tan)
+from sage.functions.trig import acos, cos, sin, tan
 from sage.misc.decorators import sage_wraps
-from sage.misc.functional import N
+from sage.misc.functional import N, sqrt
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
 from sage.misc.sage_eval import sage_eval
 from sage.misc.table import table
-from sage.misc.lazy_import import lazy_import
+
 lazy_import("sage.plot.circle", "circle")
 lazy_import("sage.plot.complex_plot", "complex_plot")
 lazy_import("sage.plot.disk", "disk")
@@ -62,7 +63,7 @@ lazy_import("sage.plot.plot", ["graphics_array", "parametric_plot", "plot"])
 lazy_import("sage.plot.point", ["point", "points"])
 lazy_import("sage.plot.polygon", "polygon2d")
 lazy_import("sage.plot.text", "text")
-from sage.repl.rich_output.pretty_print import (pretty_print, show)
+from sage.repl.rich_output.pretty_print import pretty_print, show
 from sage.rings.complex_double import CDF
 from sage.rings.integer import Integer
 from sage.symbolic.constants import pi
@@ -76,12 +77,20 @@ from sage.repl.user_globals import get_global
 
 assert get_global  # to suppress pyflakes warning
 
-from sage.repl.ipython_kernel.all_jupyter import (interact, checkbox,
-    input_box, input_grid, range_slider, selector, slider, text_control)
+from sage.repl.ipython_kernel.all_jupyter import (
+    checkbox,
+    input_box,
+    input_grid,
+    interact,
+    range_slider,
+    selector,
+    slider,
+    text_control,
+)
 
 
 def library_interact(
-    decorator_target: Callable[..., Any] = None, **widgets: Callable[..., Any]
+    decorator_target: Callable[..., Any] | None = None, **widgets: Callable[..., Any]
 ):
     r"""
     This is a decorator for using interacts in the Sage library.
@@ -1230,7 +1239,7 @@ def trapezoid_integration(
         ))
     elif output_form == 'table':
         s = [['$i$', '$x_i$', '$f(x_i)$', '$m$', r'$m\cdot f(x_i)$']]
-        for i in range(0,n+1):
+        for i in range(n+1):
             if i == 0 or i == n:
                 j = 1
             else:
@@ -1343,7 +1352,7 @@ def simpson_integration(
     if output_form == 'traditional':
         sum_formula_html = r"\frac{d}{3} \cdot \left[ f(x_0) + %s + f(x_{%s})\right]" % (
             ' + '.join(r"%s \cdot f(x_{%s})" % (i % 2 * (-2) + 4, i + 1)
-                       for i in range(0,n-1)),
+                       for i in range(n-1)),
             n
             )
 
@@ -1642,7 +1651,7 @@ def function_tool(f, g, xrange, yrange, a, action, do_plot):
     html('<center><font color="green">$g = %s$</font></center>' % latex(g))
     html('<center><font color="blue"><b>$h = %s = %s$</b></font></center>' % (lbl, latex(h)))
     if do_plot:
-        P = plot(f, xrange, color='red', thickness=2) +  \
+        P = plot(f, xrange, color='red', thickness=2) + \
             plot(g, xrange, color='green', thickness=2) + \
             plot(h, xrange, color='blue', thickness=2)
         if yrange == 'auto':
@@ -1858,8 +1867,9 @@ def polar_prime_spiral(interval, show_factors, highlight_primes, show_curves, n,
         )
 
     start, end = interval
-    from sage.ext.fast_eval import fast_float
     from math import ceil
+
+    from sage.ext.fast_eval import fast_float
     from sage.plot.colors import hue
 
     if start < 1 or end <= start:

@@ -1078,7 +1078,7 @@ class PolynomialSequence_generic(Sequence_generic):
         R_monomials_of_degree = {}
         S_monomials_of_degree = {}
         if homogeneous:
-            for poly_deg in set([poly.degree() for poly in self]):
+            for poly_deg in {poly.degree() for poly in self}:
                 deg = target_degree - poly_deg
                 R_monomials_of_degree[deg] = R.monomials_of_degree(deg)
             S_monomials_of_degree[target_degree] = S.monomials_of_degree(target_degree)
@@ -1313,7 +1313,7 @@ class PolynomialSequence_generic(Sequence_generic):
         if isinstance(right, PolynomialSequence_generic) and right.ring() == self.ring():
             return PolynomialSequence(self.ring(), self.parts() + right.parts())
 
-        elif isinstance(right, (tuple, list)) and all((x.parent() == self.ring() for x in right)):
+        elif isinstance(right, (tuple, list)) and all(x.parent() == self.ring() for x in right):
             return PolynomialSequence(self.ring(), self.parts() + (right,))
 
         elif isinstance(right, MPolynomialIdeal) and (right.ring() is self.ring() or right.ring() == self.ring()):

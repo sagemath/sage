@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Examples of finite Weyl groups
 """
@@ -173,7 +172,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
 
     class Element(ElementWrapper):
 
-        def has_right_descent(self, i):
+        def has_right_descent(self, i) -> bool:
             """
             Implement :meth:`CoxeterGroups.ElementMethods.has_right_descent`.
 
@@ -185,7 +184,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
                 True
                 sage: S._test_has_descent()
             """
-            return (self.value[i] > self.value[i+1])
+            return (self.value[i] > self.value[i + 1])
 
 
 Example = SymmetricGroup

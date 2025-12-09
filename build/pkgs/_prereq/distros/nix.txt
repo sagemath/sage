@@ -17,3 +17,7 @@ bc
 gcc
 bash
 gnupatch
+bzip2
+pkg-config
+zlib
+boost

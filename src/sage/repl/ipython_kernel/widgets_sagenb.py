@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 r"""
 Functions to construct widgets, based on the old SageNB interface.
 
@@ -39,7 +38,7 @@ from ipywidgets.widgets.interaction import _get_min_max_value
 from collections.abc import Iterable, Sequence
 from numbers import Integral, Rational, Real
 
-from sage.structure.all import parent
+from sage.structure.element import parent
 from sage.arith.srange import srange
 import sage.rings.abc
 

@@ -186,14 +186,6 @@ included in one of the following places:
   :func:`importlib.resources.as_file`. It should be imported in the
   same way as shown above.
 
-- Older code in the Sage library accesses
-  the package data in more direct ways. For example,
-  :sage_root:`src/sage/interfaces/maxima.py` uses the file
-  :sage_root:`src/sage/interfaces/maxima.lisp` at runtime, so it
-  refers to it as::
-
-    os.path.join(os.path.dirname(__file__), 'sage-maxima.lisp')
-
 - In an appropriate subdirectory of :sage_root:`src/sage/ext_data/`.
   (At runtime, it is then available in the directory indicated by
   ``SAGE_EXTCODE``).  For example, if ``file`` is placed in
@@ -1441,7 +1433,7 @@ Run ``sage -t <filename.py>`` to test all code examples in
 ``filename.py``. Similar remarks apply to ``.sage`` and ``.pyx``
 files:
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
       $ sage -t [--verbose] [--optional]  [files and directories ... ]
 

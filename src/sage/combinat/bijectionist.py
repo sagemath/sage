@@ -59,7 +59,7 @@ check this for permutations of size at most `3`::
     sage: def alpha1(p): return len(p.weak_excedences())
     sage: def alpha2(p): return len(p.fixed_points())
     sage: def beta1(p): return len(p.descents(final_descent=True)) if p else 0
-    sage: def beta2(p): return len([e for (e, f) in zip(p, p[1:]+[0]) if e == f+1])
+    sage: def beta2(p): return len([e for e, f in zip(p, p[1:]+[0]) if e == f+1])
     sage: tau = Permutation.longest_increasing_subsequence_length
     sage: def rotate_permutation(p):
     ....:     cycle = Permutation(tuple(range(1, len(p)+1)))
@@ -156,14 +156,14 @@ following code is equivalent to ``tau = findstat(397)``::
     ....:         else:
     ....:             return m+1
     sage: bij = Bijectionist(A, B, tau)
-    sage: bij.set_statistics((lambda a: a.size(), lambda b: b.node_number()-1))
+    sage: bij.set_statistics((lambda a: a.size(), lambda b: b.number_of_nodes()-1))
     sage: from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
     sage: bij.set_constant_blocks(orbit_decomposition(A, theta))
     sage: list(bij.solutions_iterator())
     []
 
-Next we demonstrate how to search for a bijection, instead An example
-identifying `s` and `S`::
+Next we demonstrate how to search for a bijection.  To do so, we identify `s`
+and `S`::
 
     sage: N = 4
     sage: A = [dyck_word for n in range(1, N) for dyck_word in DyckWords(n)]
@@ -173,7 +173,7 @@ identifying `s` and `S`::
     ....:                                          B2.to_dyck_word()).to_binary_tree()
     sage: bij = Bijectionist(A, B)
     sage: bij.set_intertwining_relations((2, concat_path, concat_tree))
-    sage: bij.set_statistics((lambda d: d.semilength(), lambda t: t.node_number()))
+    sage: bij.set_statistics((lambda d: d.semilength(), lambda t: t.number_of_nodes()))
     sage: for D in sorted(bij.minimal_subdistributions_iterator(), key=lambda x: (len(x[0][0]), x)):
     ....:     ascii_art(D)
     ( [ /\ ], [ o ] )
@@ -690,7 +690,7 @@ class Bijectionist(SageObject):
             sage: def wex(p): return len(p.weak_excedences())
             sage: def fix(p): return len(p.fixed_points())
             sage: def des(p): return len(p.descents(final_descent=True)) if p else 0
-            sage: def adj(p): return len([e for (e, f) in zip(p, p[1:]+[0]) if e == f+1])
+            sage: def adj(p): return len([e for e, f in zip(p, p[1:]+[0]) if e == f+1])
             sage: bij = Bijectionist(A, B, fix)
             sage: bij.set_statistics((wex, des), (len, len))
             sage: for solution in sorted(list(bij.solutions_iterator()), key=lambda d: tuple(sorted(d.items()))):
@@ -800,7 +800,7 @@ class Bijectionist(SageObject):
             sage: def wex(p): return len(p.weak_excedences())
             sage: def fix(p): return len(p.fixed_points())
             sage: def des(p): return len(p.descents(final_descent=True)) if p else 0
-            sage: def adj(p): return len([e for (e, f) in zip(p, p[1:]+[0]) if e == f+1])
+            sage: def adj(p): return len([e for e, f in zip(p, p[1:]+[0]) if e == f+1])
             sage: bij = Bijectionist(A, B, tau)
             sage: bij.set_statistics((len, len), (wex, des), (fix, adj))
             sage: table([[key, AB[0], AB[1]] for key, AB in bij.statistics_fibers().items()])
@@ -844,7 +844,7 @@ class Bijectionist(SageObject):
             sage: def wex(p): return len(p.weak_excedences())
             sage: def fix(p): return len(p.fixed_points())
             sage: def des(p): return len(p.descents(final_descent=True)) if p else 0
-            sage: def adj(p): return len([e for (e, f) in zip(p, p[1:]+[0]) if e == f+1])
+            sage: def adj(p): return len([e for e, f in zip(p, p[1:]+[0]) if e == f+1])
             sage: bij = Bijectionist(A, B, tau)
             sage: bij.set_statistics((wex, des), (fix, adj))
             sage: a, b = bij.statistics_table()
@@ -1553,7 +1553,7 @@ class Bijectionist(SageObject):
             sage: def alpha1(p): return len(p.weak_excedences())
             sage: def alpha2(p): return len(p.fixed_points())
             sage: def beta1(p): return len(p.descents(final_descent=True)) if p else 0
-            sage: def beta2(p): return len([e for (e, f) in zip(p, p[1:] + [0]) if e == f + 1])
+            sage: def beta2(p): return len([e for e, f in zip(p, p[1:] + [0]) if e == f + 1])
             sage: tau = Permutation.longest_increasing_subsequence_length
             sage: def rotate_permutation(p):
             ....:    cycle = Permutation(tuple(range(1, len(p) + 1)))
@@ -2762,13 +2762,9 @@ class _BijectionistMILP:
                        coeff * values[index_block_value_dict[index]]
                        for index, coeff in f.dict().items())
 
-        for lhs, rhs in constraint.equations():
-            if evaluate(lhs - rhs):
-                return False
-        for lhs, rhs in constraint.inequalities():
-            if evaluate(lhs - rhs) > 0:
-                return False
-        return True
+        if any(evaluate(lhs - rhs) for lhs, rhs in constraint.equations()):
+            return False
+        return all(evaluate(lhs - rhs) <= 0 for lhs, rhs in constraint.inequalities())
 
     def add_alpha_beta_constraints(self):
         r"""
@@ -3173,7 +3169,7 @@ Our benchmark example::
     sage: def alpha1(p): return len(p.weak_excedences())
     sage: def alpha2(p): return len(p.fixed_points())
     sage: def beta1(p): return len(p.descents(final_descent=True)) if p else 0
-    sage: def beta2(p): return len([e for (e, f) in zip(p, p[1:]+[0]) if e == f+1])
+    sage: def beta2(p): return len([e for e, f in zip(p, p[1:]+[0]) if e == f+1])
     sage: gamma = Permutation.longest_increasing_subsequence_length
     sage: def rotate_permutation(p):
     ....:    cycle = Permutation(tuple(range(1, len(p)+1)))

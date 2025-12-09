@@ -149,7 +149,7 @@ from sage.geometry.toric_lattice_element import ToricLatticeElement
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.geometry.toric_plotter', 'ToricPlotter')
 from sage.misc.latex import latex
-from sage.structure.all import parent
+from sage.structure.element import parent
 from sage.structure.richcmp import (richcmp_method, richcmp, rich_to_bool,
                                     richcmp_not_equal)
 from sage.modules.fg_pid.fgp_element import FGP_Element
@@ -483,7 +483,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             return None
         return super()._convert_map_from_(other)
 
-    def __contains__(self, point):
+    def __contains__(self, point) -> bool:
         r"""
         Check if ``point`` is an element of ``self``.
 

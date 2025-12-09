@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Diagram and Partition Algebras
+Diagram and partition algebras
 
 AUTHORS:
 
@@ -565,7 +565,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
         """
         return self.parent().order
 
-    def is_planar(self):
+    def is_planar(self) -> bool:
         r"""
         Test if the diagram ``self`` is planar.
 
@@ -1108,7 +1108,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
                 std[short_form.index(i)] = j
         return std
 
-    def is_elementary_symmetric(self):
+    def is_elementary_symmetric(self) -> bool:
         r"""
         Check if is elementary symmetric.
 
@@ -1328,9 +1328,8 @@ class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
                 return False
         if obj.base_diagram():
             tst = sorted(flatten(obj.base_diagram()))
-            if len(tst) % 2 or tst != list(range(-len(tst)//2,0)) + list(range(1,len(tst)//2+1)):
-                return False
-            return True
+            ell = len(tst)
+            return not ell % 2 and tst == list(range(-ell // 2, 0)) + list(range(1, ell // 2 + 1))
         return self.order == 0
 
     def _element_constructor_(self, d):
@@ -3543,9 +3542,9 @@ class OrbitBasis(DiagramAlgebra):
         """
         # According to Corollary 4.12 in [BH2017]_, product is zero unless the
         # stacked diagrams "exactly match" in the middle.
-        pi_1 = [frozenset([-i for i in part if i < 0]) for part in d1]
-        pi_2 = [frozenset([i for i in part if i > 0]) for part in d2]
-        if set([part for part in pi_1 if part]) != set([part for part in pi_2 if part]):
+        pi_1 = (frozenset([-i for i in part if i < 0]) for part in d1)
+        pi_2 = (frozenset([i for i in part if i > 0]) for part in d2)
+        if {part for part in pi_1 if part} != {part for part in pi_2 if part}:
             return self.zero()
 
         q = self._q
@@ -3562,10 +3561,10 @@ class OrbitBasis(DiagramAlgebra):
                             yield [x.union(y) for x, y in zip(X, sigma)] + restA + restB
 
         D, removed = d1.compose(d2, check=False)
-        only_top = set([frozenset(part) for part in d1
-                        if all(i > 0 for i in part)])
-        only_bottom = set([frozenset(part) for part in d2
-                           if all(i < 0 for i in part)])
+        only_top = {frozenset(part) for part in d1
+                    if all(i > 0 for i in part)}
+        only_bottom = {frozenset(part) for part in d2
+                       if all(i < 0 for i in part)}
         only_both = only_top.union(only_bottom)
         restD = [P for P in D if frozenset(P) not in only_both]
         term_dict = {PDs(restD + X):
@@ -4492,7 +4491,6 @@ class TemperleyLiebAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
                o o o o      o o o o       o o o o
         """
         M = x.monomial_coefficients(copy=False)
-        I = self._indices
         return self._from_dict({d.dual(): c for d, c in M.items()},
                                remove_zeros=False)
 
@@ -5577,7 +5575,7 @@ class PottsRepresentation(CombinatorialFreeModule):
 #########################################################################
 
 
-def is_planar(sp):
+def is_planar(sp) -> bool:
     r"""
     Return ``True`` if the diagram corresponding to the set partition ``sp``
     is planar; otherwise, return ``False``.

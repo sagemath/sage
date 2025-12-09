@@ -290,10 +290,8 @@ class DeltaComplex(GenericCellComplex):
             pass
         else:
             if isinstance(data, (list, tuple)):
-                dim = 0
-                for s in data:
+                for dim, s in enumerate(data):
                     new_data[dim] = s
-                    dim += 1
             elif isinstance(data, dict):
                 if all(isinstance(a, (int, Integer)) for a in data):
                     # a dictionary indexed by integers
@@ -316,10 +314,7 @@ class DeltaComplex(GenericCellComplex):
                         new_delayed = {}
                         current = {}
                         for x in old_data_by_dim[dim]:
-                            if x in data:
-                                bdry = data[x]
-                            else:
-                                bdry = True
+                            bdry = data.get(x, True)
                             if isinstance(bdry, Simplex):
                                 # case 1
                                 # value is a simplex, so x is glued to the old
@@ -353,7 +348,7 @@ class DeltaComplex(GenericCellComplex):
                                     current[x] = store_bdry(x, x.faces())
                         old_delayed = new_delayed
                         if dim > 0:
-                            old_data_by_dim[dim-1].extend(old_delayed.keys())
+                            old_data_by_dim[dim-1].extend(old_delayed)
             else:
                 raise ValueError("data is not a list, tuple, or dictionary")
         for n in new_data:
@@ -435,7 +430,7 @@ class DeltaComplex(GenericCellComplex):
         # in self which are not in the subcomplex.
         new_data = {}
         # max_dim: maximum dimension of cells being added
-        max_dim = max(data.keys())
+        max_dim = max(data)
         # cells_to_add: in each dimension, add these cells to
         # new_dict.  start with the cells given in new_data and add
         # faces of cells one dimension higher.
@@ -471,7 +466,7 @@ class DeltaComplex(GenericCellComplex):
         sub._is_subcomplex_of = {self: new_data}
         return sub
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         TESTS::
 
@@ -482,7 +477,7 @@ class DeltaComplex(GenericCellComplex):
         """
         return hash(frozenset(self._cells_dict.items()))
 
-    def __eq__(self, right):
+    def __eq__(self, right) -> bool:
         r"""
         Two `\Delta`-complexes are equal, according to this, if they have
         the same ``_cells_dict``.
@@ -499,7 +494,7 @@ class DeltaComplex(GenericCellComplex):
         """
         return self._cells_dict == right._cells_dict
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` and ``other`` are not equal.
 
@@ -556,15 +551,15 @@ class DeltaComplex(GenericCellComplex):
             return cells
         if subcomplex._is_subcomplex_of is None or self not in subcomplex._is_subcomplex_of:
             if subcomplex == self:
-                for d in range(-1, max(cells.keys())+1):
+                for d in range(-1, max(cells) + 1):
                     l = len(cells[d])
-                    cells[d] = [None]*l   # get rid of all cells
+                    cells[d] = [None] * l   # get rid of all cells
                 return cells
             else:
                 raise ValueError("this is not a subcomplex of self")
         else:
             subcomplex_cells = subcomplex._is_subcomplex_of[self]
-            for d in range(max(subcomplex_cells.keys()) + 1):
+            for d in range(max(subcomplex_cells) + 1):
                 L = list(cells[d])
                 for c in subcomplex_cells[d]:
                     L[c] = None
@@ -638,33 +633,30 @@ class DeltaComplex(GenericCellComplex):
             augmented = False
 
         differentials = {}
-        if augmented:
-            empty_simplex = 1  # number of (-1)-dimensional simplices
-        else:
-            empty_simplex = 0
+        # number of (-1)-dimensional simplices
+        empty_simplex = 1 if augmented else 0
+
         vertices = self.n_cells(0, subcomplex=subcomplex)
         old = vertices
         old_real = [x for x in old if x is not None]  # remove faces not in subcomplex
         n = len(old_real)
-        differentials[0] = matrix(base_ring, empty_simplex, n, n*empty_simplex*[1])
+        differentials[0] = matrix(base_ring, empty_simplex, n,
+                                  n * empty_simplex * [1])
         # current is list of simplices in dimension dim
         # current_real is list of simplices in dimension dim, with None filtered out
         # old is list of simplices in dimension dim-1
         # old_real is list of simplices in dimension dim-1, with None filtered out
-        for dim in range(1, self.dimension()+1):
+        for dim in range(1, self.dimension() + 1):
             current = list(self.n_cells(dim, subcomplex=subcomplex))
             current_real = [x for x in current if x is not None]
-            i = 0
             i_real = 0
             translate = {}
-            for s in old:
+            for i, s in enumerate(old):
                 if s is not None:
                     translate[i] = i_real
                     i_real += 1
-                i += 1
             mat_dict = {}
-            col = 0
-            for s in current_real:
+            for col, s in enumerate(current_real):
                 sign = 1
                 for row in s:
                     if old[row] is not None:
@@ -674,14 +666,13 @@ class DeltaComplex(GenericCellComplex):
                         else:
                             mat_dict[(actual_row, col)] = sign
                     sign *= -1
-                col += 1
             differentials[dim] = matrix(base_ring, len(old_real), len(current_real), mat_dict)
             old = current
             old_real = current_real
         if cochain:
             cochain_diffs = {}
             for dim in differentials:
-                cochain_diffs[dim-1] = differentials[dim].transpose()
+                cochain_diffs[dim - 1] = differentials[dim].transpose()
             return ChainComplex(data=cochain_diffs, degree=1,
                                 base_ring=base_ring, check=check)
         else:
@@ -975,16 +966,12 @@ class DeltaComplex(GenericCellComplex):
         # vertices: the vertices in the product are of the form (v,w)
         # for v a vertex in self, w a vertex in other
         vertices = []
-        l_idx = 0
-        for v in self.n_cells(0):
-            r_idx = 0
-            for w in other.n_cells(0):
+        for l_idx, v in enumerate(self.n_cells(0)):
+            for r_idx, w in enumerate(other.n_cells(0)):
                 # one vertex for each pair (v,w)
                 # store its indices in bdries; store its boundary in vertices
                 bdries[(0, l_idx, 0, r_idx, ((0, 0),))] = len(vertices)
                 vertices.append(())  # add new vertex (simplex with empty bdry)
-                r_idx += 1
-            l_idx += 1
         data.append(tuple(vertices))
         # dim of the product:
         maxdim = self.dimension() + other.dimension()
@@ -992,13 +979,11 @@ class DeltaComplex(GenericCellComplex):
         # of dimensions k and n, where n+k >= d and n <= d, k <= d.
         simplices = []
         new = {}
-        for d in range(1, maxdim+1):
-            for k in range(d+1):
-                for n in range(d-k, d+1):
-                    k_idx = 0
-                    for k_cell in self.n_cells(k):
-                        n_idx = 0
-                        for n_cell in other.n_cells(n):
+        for d in range(1, maxdim + 1):
+            for k in range(d + 1):
+                for n in range(d - k, d + 1):
+                    for k_idx, k_cell in enumerate(self.n_cells(k)):
+                        for n_idx, n_cell in enumerate(other.n_cells(n)):
                             # find d-dimensional faces in product of
                             # k_cell and n_cell.  to avoid repetition,
                             # only look for faces which use all
@@ -1049,8 +1034,6 @@ class DeltaComplex(GenericCellComplex):
                                                              n_face_dim, n_face_idx,
                                                              face_path)])
                                 simplices.append(tuple(bdry_list))
-                            n_idx += 1
-                        k_idx += 1
             # add d-simplices to data, store d-simplices in bdries,
             # reset simplices
             data.append(tuple(simplices))
@@ -1081,9 +1064,9 @@ class DeltaComplex(GenericCellComplex):
         # len(self.n_cells(n-1)) to it
         for n in range(dim, 0, -1):
             data[n] = list(self.n_cells(n))
-            translate = len(self.n_cells(n-1))
+            translate = len(self.n_cells(n - 1))
             for f in right.n_cells(n):
-                data[n].append(tuple([a+translate for a in f]))
+                data[n].append(tuple([a + translate for a in f]))
         data[0] = self.n_cells(0) + right.n_cells(0)
         return DeltaComplex(data)
 
@@ -1194,15 +1177,13 @@ class DeltaComplex(GenericCellComplex):
             glued = copy(renaming)
             # process_later: cells one dim lower to be added to data
             process_later = []
-            old_idx = 0
-            new_idx = len(data[n-1])
+            new_idx = len(data[n - 1])
             # build 'renaming'
-            for s in right_cells[n-1]:
+            for old_idx, s in enumerate(right_cells[n - 1]):
                 if old_idx not in renaming:
                     process_later.append(s)
                     renaming[old_idx] = new_idx
                     new_idx += 1
-                old_idx += 1
             # reindex all simplices to be processed and add them to data
             for s in process_now:
                 data[n].append(tuple([renaming[i] for i in s]))
@@ -1210,7 +1191,8 @@ class DeltaComplex(GenericCellComplex):
             renaming = {}
             process_now = process_later
             for f in glued:
-                renaming.update(dict(zip(right_cells[n-1][f], data[n-1][glued[f]])))
+                renaming.update(dict(zip(right_cells[n - 1][f],
+                                         data[n - 1][glued[f]])))
         # deal with vertices separately.  we just need to add enough
         # vertices: all the vertices from Right, minus the number
         # being glued, which should be dim+1, the number of vertices
@@ -1302,7 +1284,7 @@ class DeltaComplex(GenericCellComplex):
         cells_dict[0].append(())
         # added_cells: dict indexed by (n-1)-cells, with value the
         # corresponding new n-cell.
-        added_cells = {(): len(cells_dict[0])-1}
+        added_cells = {(): len(cells_dict[0]) - 1}
         for n in range(dim):
             new_cells = {}
             # for each n-cell in the standard simplex, add an
@@ -1316,15 +1298,15 @@ class DeltaComplex(GenericCellComplex):
                 cell = []
                 for i in simplex:
                     if n > 0:
-                        bdry = tuple(std_cells[n-1][i])
+                        bdry = tuple(std_cells[n - 1][i])
                     else:
                         bdry = ()
                     cell.append(added_cells[bdry])
                 # last face is the image of the old simplex)
                 cell.append(pi[n][simplex])
                 cell = tuple(cell)
-                cells_dict[n+1].append(cell)
-                new_cells[simplex] = len(cells_dict[n+1])-1
+                cells_dict[n + 1].append(cell)
+                new_cells[simplex] = len(cells_dict[n + 1]) - 1
             added_cells = new_cells
         return DeltaComplex(cells_dict)
 
@@ -1397,7 +1379,8 @@ class DeltaComplex(GenericCellComplex):
             faces_dict = {}
             for cell in n_cells:
                 if n > 1:
-                    faces = [tuple(simplex_cells[n-1][cell[j]]) for j in range(n+1)]
+                    faces = [tuple(simplex_cells[n - 1][cell[j]])
+                             for j in range(n + 1)]
                     one_cell = dict(zip(faces, self_cells[n][n_cells[cell]]))
                 else:
                     temp = dict(zip(cell, self_cells[n][n_cells[cell]]))
@@ -1407,7 +1390,7 @@ class DeltaComplex(GenericCellComplex):
                 for j in one_cell:
                     if j not in faces_dict:
                         faces_dict[j] = one_cell[j]
-            mapping[n-1] = faces_dict
+            mapping[n - 1] = faces_dict
         return mapping
 
     def _is_glued(self, idx=-1, dim=None):
@@ -1450,7 +1433,7 @@ class DeltaComplex(GenericCellComplex):
         i = self.dimension() - 1
         i_faces = set(simplex)
         # if there are enough i_faces, then no gluing is evident so far
-        not_glued = (len(i_faces) == binomial(dim+1, i+1))
+        not_glued = (len(i_faces) == binomial(dim + 1, i + 1))
         while not_glued and i > 0:
             # count the (i-1) cells and compare to (n+1) choose i.
             old_faces = i_faces
@@ -1458,8 +1441,8 @@ class DeltaComplex(GenericCellComplex):
             all_cells = self.n_cells(i)
             for face in old_faces:
                 i_faces.update(all_cells[face])
-            not_glued = (len(i_faces) == binomial(dim+1, i))
-            i = i-1
+            not_glued = (len(i_faces) == binomial(dim + 1, i))
+            i -= 1
         return not not_glued
 
     def face_poset(self):
@@ -1480,16 +1463,12 @@ class DeltaComplex(GenericCellComplex):
         covers = {}
         # store each n-simplex as a pair (n, idx).
         for n in range(dim, 0, -1):
-            idx = 0
-            for s in self.n_cells(n):
-                covers[(n, idx)] = list({(n-1, i) for i in s})
-                idx += 1
+            for idx, s in enumerate(self.n_cells(n)):
+                covers[(n, idx)] = [(n - 1, i) for i in set(s)]
         # deal with vertices separately: they have no covers (in the
         # dual poset).
-        idx = 0
-        for s in self.n_cells(0):
+        for idx, s in enumerate(self.n_cells(0)):
             covers[(0, idx)] = []
-            idx += 1
         return Poset(Poset(covers).hasse_diagram().reverse())
 
     # implement using the definition?  the simplices are obtained by
@@ -1674,7 +1653,8 @@ class DeltaComplexExamples:
         """
         if n == 1:
             return DeltaComplex([[()], [(0, 0)]])
-        return DeltaComplex({Simplex(n): True, Simplex(range(1, n+2)): Simplex(n)})
+        return DeltaComplex({Simplex(n): True,
+                             Simplex(range(1, n + 2)): Simplex(n)})
 
     def Torus(self):
         r"""
