@@ -274,9 +274,9 @@ ignore = [
 ]
 
 select = [
+  "F", # pyflakes -- https://docs.astral.sh/ruff/rules/#pyflakes-f
   "I", # isort - https://docs.astral.sh/ruff/rules/#isort-i
   "W", # pycodestyle warnings - https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
-  "F", # pyflakes -- https://docs.astral.sh/ruff/rules/#pyflakes-f
 
   # ruff-specific rules -- https://docs.astral.sh/ruff/rules/#ruff-specific-rules-ruf
   "RUF013",
