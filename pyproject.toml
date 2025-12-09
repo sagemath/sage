@@ -274,8 +274,9 @@ ignore = [
 ]
 
 select = [
-  # A starting point for our ruff rules, we may want to ignore some of these later on.
   "I", # isort - https://docs.astral.sh/ruff/rules/#isort-i
+  "W", # pycodestyle warnings - https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
+  "F", # pyflakes -- https://docs.astral.sh/ruff/rules/#pyflakes-f
 
   # ruff-specific rules -- https://docs.astral.sh/ruff/rules/#ruff-specific-rules-ruf
   "RUF013",
@@ -292,8 +293,6 @@ select = [
   "UP022",
   "UP034",
   "UP035",
-
-  "W", # pycodestyle warnings - https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
 
   # pycodestyle errors - https://docs.astral.sh/ruff/rules/#error-e
   # Ideally we would enable (almost) all of the E rules, but too
@@ -381,7 +380,7 @@ select = [
   "PLR2044",
   "PLR5501",
 
-  # pyling warning - https://docs.astral.sh/ruff/rules/#warning-plw
+  # pylint warning - https://docs.astral.sh/ruff/rules/#warning-plw
   "PLW0120",
   "PLW0127",
   "PLW0128",
