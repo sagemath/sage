@@ -1146,7 +1146,12 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
             raise ValueError("option 'side' must be 'left', 'right' or 'twosided'")
 
         # Get the permutation group representation
-        perm_group = self.as_permutation_group(limit=limit)
+        # Try with limit parameter first, fall back without it for subclasses
+        # that don't support it (e.g., BraidGroup, ArtinGroup)
+        try:
+            perm_group = self.as_permutation_group(limit=limit)
+        except TypeError:
+            perm_group = self.as_permutation_group()
 
         # The generators of perm_group correspond to generators of self
         perm_gens = perm_group.gens()
