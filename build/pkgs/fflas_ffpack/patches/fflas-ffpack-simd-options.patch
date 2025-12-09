@@ -1,6 +1,6 @@
 --- /tmp/upstream-fflas-ffpack-2.5.0-sage-2024-05-18b/macros/common.m4	2024-05-19 03:34:34.000000000 +0800
-+++ /home/zhongcx/fflas-ffpack-2.5.0/macros/common.m4	2025-12-09 22:37:19.078164904 +0800
-@@ -99,34 +99,182 @@
++++ /home/zhongcx/fflas-ffpack-2.5.0/macros/common.m4	2025-12-09 23:07:57.325990450 +0800
+@@ -99,10 +99,151 @@
  ])dnl AX_CHECK_COMPILE_FLAGS
  
  
@@ -144,64 +144,24 @@
 +
  dnl Append -march=native or -mcpu=native (if recognized by the compiler) to
  dnl OPTIM_FLAGS if not present in CXXFLAGS and not cross-compiling and
--dnl --without-archnative is not set
-+dnl --without-archnative is not set and no SIMD options are disabled
+ dnl --without-archnative is not set
++dnl If SIMD options are disabled, also add -mno-* flags after -march=native
  AC_DEFUN([ARCH_FLAGS],[
 +    AC_REQUIRE([SIMD_FLAGS])
 +
      AC_ARG_WITH(archnative, [AC_HELP_STRING([--without-archnative],
          [do not use -march=native or -mcpu=native (default is to use it if not already present in CXXFLAGS)])])
  
--    AX_CHECK_COMPILE_FLAG([-march=native], [
--        AS_CASE([$CXXFLAGS],
--                [*-march=*], [], # do nothing if already set in CXXFLAGS
--                [AS_IF([test "x${with_archnative}" == "xno"],
--                    [], # do nothing if option is set to no
--                    [AS_IF([test "${host}" != "${build}" -o "${host}" != "${target}"],
--                        [AC_MSG_NOTICE("For efficiency you may want to add a '-march=...' flag in CXXFLAGS")],
--                        [AC_MSG_NOTICE("Adding '-march=native' to OPTIM_FLAGS")
--                        OPTIM_FLAGS+=" -march=native"])])])
--    ], [
--        AX_CHECK_COMPILE_FLAG([-mcpu=native], [
--            AS_CASE([$CXXFLAGS],
--                    [*-cpu=*], [], # do nothing if already set in CXXFLAGS
--                    [AS_IF([test "x${with_archnative}" == "xno"],
--                        [], # do nothing if option is set to no
--                        [AS_IF([test "${host}" != "${build}" -o "${host}" != "${target}"],
--                            [AC_MSG_NOTICE("For efficiency you may want to add a '-cpu=...' flag in CXXFLAGS")],
--                            [AC_MSG_NOTICE("Adding '-mcpu=native' to OPTIM_FLAGS")
--                            OPTIM_FLAGS+=" -mcpu=native"])])])
--        ], [], [], [])
--    ], [], [])
-+    dnl If SIMD options are disabled, we should not use -march=native
-+    dnl because it would enable the instructions we want to disable
+@@ -127,6 +268,12 @@
+                             OPTIM_FLAGS+=" -mcpu=native"])])])
+         ], [], [], [])
+     ], [], [])
++
++    dnl If SIMD options are disabled, add -mno-* flags after -march=native
++    dnl This allows using native optimizations while disabling specific instruction sets
 +    AS_IF([test "x${SIMD_DISABLED}" = "xyes"],
-+          [AC_MSG_NOTICE([SIMD options are disabled, not using -march=native])
-+           dnl Add the disable flags to OPTIM_FLAGS
-+           OPTIM_FLAGS+="${SIMD_DISABLE_FLAGS}"],
-+          [dnl No SIMD disabled, proceed with -march=native logic
-+           AX_CHECK_COMPILE_FLAG([-march=native], [
-+               AS_CASE([$CXXFLAGS],
-+                       [*-march=*], [], # do nothing if already set in CXXFLAGS
-+                       [AS_IF([test "x${with_archnative}" == "xno"],
-+                           [], # do nothing if option is set to no
-+                           [AS_IF([test "${host}" != "${build}" -o "${host}" != "${target}"],
-+                               [AC_MSG_NOTICE("For efficiency you may want to add a '-march=...' flag in CXXFLAGS")],
-+                               [AC_MSG_NOTICE("Adding '-march=native' to OPTIM_FLAGS")
-+                               OPTIM_FLAGS+=" -march=native"])])])
-+           ], [
-+               AX_CHECK_COMPILE_FLAG([-mcpu=native], [
-+                   AS_CASE([$CXXFLAGS],
-+                           [*-cpu=*], [], # do nothing if already set in CXXFLAGS
-+                           [AS_IF([test "x${with_archnative}" == "xno"],
-+                               [], # do nothing if option is set to no
-+                               [AS_IF([test "${host}" != "${build}" -o "${host}" != "${target}"],
-+                                   [AC_MSG_NOTICE("For efficiency you may want to add a '-cpu=...' flag in CXXFLAGS")],
-+                                   [AC_MSG_NOTICE("Adding '-mcpu=native' to OPTIM_FLAGS")
-+                                   OPTIM_FLAGS+=" -mcpu=native"])])])
-+               ], [], [], [])
-+           ], [], [])
-+          ])
++          [AC_MSG_NOTICE([Adding SIMD disable flags to OPTIM_FLAGS])
++           OPTIM_FLAGS+="${SIMD_DISABLE_FLAGS}"])
  ])
  
  dnl Append -mfpmath=sse to OPTIM_FLAGS on i386 and i686 architecture with SSE
