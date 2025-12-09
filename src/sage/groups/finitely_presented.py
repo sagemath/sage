@@ -88,6 +88,11 @@ obtained by modding out the commutator subgroup of the free group::
     sage: g =  a * b
     sage: M1 = matrix([[1,0],[0,2]])
     sage: M2 = matrix([[0,1],[1,0]])
+    sage: g(3, 5)
+    15
+    sage: g(M1, M1)
+    [1 0]
+    [0 4]
     sage: M1*M2 == M2*M1   # matrices do not commute
     False
     sage: g(M1, M2)
@@ -260,64 +265,6 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         """
         return (self.parent(), (self.Tietze(),))
 
-    @cached_method
-    def __hash__(self):
-        r"""
-        Return a hash value for this element.
-
-        For finite groups, this uses the permutation representation via GAP
-        to ensure that equal elements have equal hashes. For free groups
-        (no relators), the Tietze tuple provides a canonical form.
-        For other infinite groups, a :exc:`NotImplementedError` is raised.
-
-        For finite groups, hashing is based on the permutation representation,
-        so equal elements have equal hashes::
-
-            sage: G.<a,b> = FreeGroup()
-            sage: H = G / [a^2, b^3, (a*b)^5]  # alternating group A5
-            sage: hash(H.gen(0)) == hash(H.gen(0)^(-1))  # a = a^(-1) since a^2 = 1
-            True
-            sage: hash(H.one()) == hash(H.gen(0)^2)  # a^2 = 1
-            True
-
-        For free groups (no relators), hashing uses the Tietze tuple since
-        the reduced word form is canonical::
-
-            sage: F.<a,b> = FreeGroup()
-            sage: G = F / []  # free group, no relations
-            sage: hash(G.gen(0)) == hash(G.gen(0))
-            True
-            sage: hash(G.gen(0)) != hash(G.gen(1))
-            True
-
-        For other infinite groups, hashing raises an error::
-
-            sage: F.<a,b> = FreeGroup()
-            sage: G = F / [a*b*a^-1*b^-1]  # Z x Z, infinite
-            sage: hash(G.gen(0))
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: hashing is only supported for finite or free finitely presented groups
-
-        Test :issue:`40549` is fixed::
-
-            sage: F.<x,y> = FreeGroup()
-            sage: G = F / [x^4, y^13, x*y*x^-1*y^-5]
-            sage: a, b = G.gens()
-            sage: gr = G.cayley_graph(generators=[a,b]).to_undirected()
-            sage: print(gr.num_verts())
-            52
-        """
-        G = self.parent()
-        # Check if the group is free (no relations) - fast path
-        if not G.relations():
-            return hash(self.Tietze())
-        if not G.is_finite():
-            raise NotImplementedError("hashing is only supported for finite or free finitely presented groups")
-        gap_iso = libgap.IsomorphismPermGroup(G.gap())
-        perm = libgap.Image(gap_iso, self.gap())
-        return hash(perm)
-
     def _repr_(self):
         """
         Return a string representation.
@@ -366,6 +313,41 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         tl = self.gap().UnderlyingElement().TietzeWordAbstractWord()
         return tuple(tl.sage())
 
+    def __hash__(self):
+        """
+        Return a hash for this group element.
+
+        .. WARNING::
+
+            The hash is based on the Tietze word representation of the
+            element, not on the actual group element. Two elements that
+            are equal in the group but have different Tietze representations
+            will have different hashes. This is because the word problem
+            for finitely presented groups is undecidable in general, so
+            it is not possible to compute a consistent hash based on the
+            actual group element. Use :meth:`cayley_graph` on the group
+            for Cayley graph computations, as it handles this properly.
+
+        EXAMPLES::
+
+            sage: G.<a,b> = FreeGroup()
+            sage: H = G / [a^2, b^3, a*b*a^-1*b^-1]
+            sage: H.inject_variables()
+            Defining a, b
+            sage: hash(a*b) == hash(H([1, 2]))
+            True
+
+        Note that equal elements may have different hashes::
+
+            sage: x = a*a
+            sage: y = H.one()
+            sage: x == y
+            True
+            sage: hash(x) == hash(y)  # hashes are based on Tietze words
+            False
+        """
+        return hash(self.Tietze())
+
     def __call__(self, *values, **kwds):
         """
         Replace the generators of the free group with ``values``.
@@ -395,10 +377,16 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
 
             sage: A, B = H.gens()
             sage: w = A^2 * B
+            sage: w(2,2)
+            8
+            sage: w(3,3)
+            27
             sage: w(1,2)
             Traceback (most recent call last):
             ...
             ValueError: the values do not satisfy all relations of the group
+            sage: w(1, 2, check=False)    # result depends on presentation of the group element
+            2
         """
         values = list(values)
         if kwds.get('check', True):
@@ -1061,6 +1049,217 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         from sage.groups.perm_gps.permgroup import PermutationGroup
         return PermutationGroup([
             Permutation(coset_table[2*i]) for i in range(len(coset_table)//2)])
+
+    def cayley_graph(self, side='right', simple=False, elements=None,
+                     generators=None, limit=4096000):
+        r"""
+        Return the Cayley graph of this finitely presented group.
+
+        Unlike the generic Cayley graph method from the category of semigroups,
+        this method properly identifies group elements that are equal but
+        represented by different words. It does this by first converting
+        the group to a permutation group representation.
+
+        INPUT:
+
+        - ``side`` -- ``'right'``, ``'left'``, or ``'twosided'``:
+          the side on which the generators act (default: ``'right'``)
+        - ``simple`` -- boolean (default: ``False``); if ``True``, returns
+          a simple graph (no loops, no labels, no multiple edges)
+        - ``generators`` -- list, tuple, or family of elements
+          of ``self`` (default: ``self.gens()``)
+        - ``elements`` -- list (or iterable) of elements of ``self``
+          (default: all elements if the group is finite)
+        - ``limit`` -- integer (default: 4096000); the maximal number
+          of cosets for the permutation group computation
+
+        OUTPUT: :class:`DiGraph`
+
+        EXAMPLES:
+
+        The Cayley graph of a cyclic group::
+
+            sage: G.<a> = FreeGroup()
+            sage: H = G / [a^6]
+            sage: cg = H.cayley_graph()
+            sage: cg.num_verts()
+            6
+            sage: cg.num_edges()
+            6
+
+        A non-abelian example - the semidirect product of `\ZZ/4\ZZ` and
+        `\ZZ/13\ZZ`::
+
+            sage: F.<x,y> = FreeGroup()
+            sage: G = F / [x^4, y^13, x*y*x^-1*y^-5]
+            sage: a, b = G.gens()
+            sage: G.order()
+            52
+            sage: cg = G.cayley_graph()
+            sage: cg.num_verts()
+            52
+
+        The dihedral group `D_4`::
+
+            sage: G.<a,b> = FreeGroup()
+            sage: H = G / [a^2, b^4, (a*b)^2]
+            sage: cg = H.cayley_graph()
+            sage: cg.num_verts()
+            8
+
+        Using specific generators::
+
+            sage: G.<a,b> = FreeGroup()
+            sage: H = G / [a^3, b^3, (a*b)^2]
+            sage: cg = H.cayley_graph(generators=[H(a)])
+            sage: cg.num_edges()
+            12
+
+        TESTS::
+
+            sage: G.<a,b> = FreeGroup()
+            sage: H = G / [a^2, b^3, a*b*a^-1*b^-1]
+            sage: cg = H.cayley_graph(side='left')
+            sage: cg.num_verts()
+            6
+            sage: cg = H.cayley_graph(side='twosided')
+            sage: cg.num_verts()
+            6
+
+        .. WARNING::
+
+            This method requires the group to be finite (or ``elements``
+            must be provided). Computing whether a finitely presented
+            group is finite is undecidable in general.
+
+        ALGORITHM:
+
+            Uses :meth:`as_permutation_group` to convert the group to a
+            permutation group, constructs the Cayley graph there, and
+            converts vertices back to elements of the finitely presented
+            group.
+        """
+        from sage.graphs.digraph import DiGraph
+        from sage.categories.groups import Groups
+
+        if side not in ["left", "right", "twosided"]:
+            raise ValueError("option 'side' must be 'left', 'right' or 'twosided'")
+
+        # Get the permutation group representation
+        perm_group = self.as_permutation_group(limit=limit)
+
+        # The generators of perm_group correspond to generators of self
+        perm_gens = perm_group.gens()
+        self_gens = self.gens()
+
+        if generators is None:
+            generators = list(self_gens)
+        else:
+            generators = [self(g) for g in generators]
+
+        # Get all elements via the permutation group
+        if elements is None:
+            perm_elements = list(perm_group)
+        else:
+            elements = [self(e) for e in elements]
+            perm_elements = []
+            for e in elements:
+                t = e.Tietze()
+                perm_e = perm_group.one()
+                for i in t:
+                    if i > 0:
+                        perm_e = perm_e * perm_gens[i-1]
+                    else:
+                        perm_e = perm_e * perm_gens[-i-1].inverse()
+                perm_elements.append(perm_e)
+
+        # Build a mapping from perm elements to fp elements by doing a BFS from the identity
+        perm_to_fp = {perm_group.one(): self.one()}
+        visited = {perm_group.one()}
+        queue = [perm_group.one()]
+
+        # Precompute generator pairs (fp element, perm element)
+        gen_pairs = []
+        for g in self_gens:
+            t = g.Tietze()
+            perm_g = perm_group.one()
+            for i in t:
+                if i > 0:
+                    perm_g = perm_g * perm_gens[i-1]
+                else:
+                    perm_g = perm_g * perm_gens[-i-1].inverse()
+            gen_pairs.append((g, perm_g))
+
+        while queue:
+            current_perm = queue.pop(0)
+            current_fp = perm_to_fp[current_perm]
+            for fp_g, perm_g in gen_pairs:
+                # Try right multiplication
+                next_perm = current_perm * perm_g
+                if next_perm not in visited:
+                    visited.add(next_perm)
+                    perm_to_fp[next_perm] = current_fp * fp_g
+                    queue.append(next_perm)
+                # Try right multiplication by inverse
+                next_perm = current_perm * perm_g.inverse()
+                if next_perm not in visited:
+                    visited.add(next_perm)
+                    perm_to_fp[next_perm] = current_fp * fp_g**(-1)
+                    queue.append(next_perm)
+
+        # Filter to only requested elements
+        perm_elements_set = set(perm_elements)
+        perm_elements = [pe for pe in perm_to_fp if pe in perm_elements_set]
+
+        # Convert generators to permutation group
+        perm_generators = {}
+        for g in generators:
+            t = g.Tietze()
+            perm_g = perm_group.one()
+            for i in t:
+                if i > 0:
+                    perm_g = perm_g * perm_gens[i-1]
+                else:
+                    perm_g = perm_g * perm_gens[-i-1].inverse()
+            perm_generators[g] = perm_g
+
+        # Build the graph
+        if simple or self in Groups():
+            result = DiGraph()
+        else:
+            result = DiGraph(multiedges=True, loops=True)
+
+        # Add vertices (using fp group elements)
+        result.add_vertices(perm_to_fp[pe] for pe in perm_elements)
+
+        left = (side == "left" or side == "twosided")
+        right = (side == "right" or side == "twosided")
+
+        for perm_x in perm_elements:
+            fp_x = perm_to_fp[perm_x]
+            for fp_g, perm_g in perm_generators.items():
+                if left:
+                    perm_target = perm_g * perm_x
+                    if perm_target in perm_to_fp:
+                        if simple:
+                            if fp_x != perm_to_fp[perm_target]:
+                                result.add_edge([fp_x, perm_to_fp[perm_target]])
+                        elif side == "twosided":
+                            result.add_edge([fp_x, perm_to_fp[perm_target], (fp_g, "left")])
+                        else:
+                            result.add_edge([fp_x, perm_to_fp[perm_target], fp_g])
+                if right:
+                    perm_target = perm_x * perm_g
+                    if perm_target in perm_to_fp:
+                        if simple:
+                            if fp_x != perm_to_fp[perm_target]:
+                                result.add_edge([fp_x, perm_to_fp[perm_target]])
+                        elif side == "twosided":
+                            result.add_edge([fp_x, perm_to_fp[perm_target], (fp_g, "right")])
+                        else:
+                            result.add_edge([fp_x, perm_to_fp[perm_target], fp_g])
+
+        return result
 
     def direct_product(self, H, reduced=False, new_names=True):
         r"""
