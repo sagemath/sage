@@ -513,7 +513,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             sage: hash(a)
             Traceback (most recent call last):
             ...
-            TypeError: ...unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'...
+            TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'
 
         However, we want to cache computations which depend on them. Therefore
         they define a ``_cache_key`` which is hashable and uniquely identifies
