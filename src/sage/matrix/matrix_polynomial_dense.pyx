@@ -2148,7 +2148,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         TESTS:
 
-        This verifies that GitHub issue 41278 is fixed::
+        This verifies that :issue:`41278` is fixed::
 
             sage: R.<x> = GF(3)[]
             sage: A = matrix(R, [[x^3 + x, 0, 0], [2*x^2, x, 0], [x, 0, x], [x^2 + 1, x^2 + 1, 0], [2*x + 2, 2*x + 2, x], [x^2 + x + 1, x^2 + 2*x + 1, 2*x^3 + 2*x^2], [0, 0, x^2 + 1], [x^2 + x, x^2 + 2*x, 2*x^3 + 2*x^2 + 2*x + 2], [2*x^4 + x^3 + 2*x^2 + 2, 2*x^4 + x^2 + 2, x^5 + 2*x^4 + x^3 + x^2 + 2*x + 1]])
