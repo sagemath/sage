@@ -102,3 +102,33 @@ class IntegerFactorization(Factorization):
             self.__x.sort(key=key)
         else:
             self.__x.sort()
+
+    def __floordiv__(self, other):
+        """
+        Return the floor division of the integer represented by ``self``
+        by ``other``.
+
+        EXAMPLES::
+
+            sage: factor(100) // factor(2)
+            2 * 5^2
+            sage: factor(100) // 3
+            3 * 11
+            sage: factor(100) // 0
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: ...
+        """
+        numer = self.value()
+
+        try:
+            if hasattr(other, 'value'):
+                denom = other.value()
+            else:
+                denom = other
+
+            quotient = numer // denom
+            return quotient.factor()
+
+        except (TypeError, ValueError, AttributeError):
+            return NotImplemented
