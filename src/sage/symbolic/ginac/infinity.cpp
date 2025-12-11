@@ -51,7 +51,7 @@ static long hash_from_dir(const ex& direction)
                 return LONG_MAX-1;
         if (direction.is_minus_one())
                 return LONG_MIN;
-        return 0L;
+        return direction.gethash();
 }
 
 //////////
