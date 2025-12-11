@@ -2515,24 +2515,7 @@ class FreeModule_generic(Module_free_ambient):
                         yield self.linear_combination_of_basis(vec)
             assert False  # should loop forever
 
-        iters = [iter(R) for _ in range(len(G))]
-        for x in iters:
-            next(x)     # put at 0
-        zero = R.zero()
-        v = [zero for _ in range(len(G))]
-        n = 0
-        z = self(0)
-        yield z
-        while n < len(G):
-            try:
-                v[n] = next(iters[n])
-                yield self.linear_combination_of_basis(v)
-                n = 0
-            except StopIteration:
-                iters[n] = iter(R)  # reset
-                next(iters[n])     # put at 0
-                v[n] = zero
-                n += 1
+        yield from super().__iter__()
 
     def cardinality(self):
         r"""

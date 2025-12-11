@@ -67,8 +67,7 @@ class PoorManMap(SageObject):
             sage: TestSuite(f).run()
             sage: TestSuite(f*g).run()
         """
-        from collections.abc import Iterable
-        if not isinstance(function, Iterable):
+        if callable(function):
             function = (function,)
         self._functions = tuple(function)
         self._domain = domain

@@ -266,14 +266,10 @@ class PolynomialRing_generic(Ring):
              and Category of infinite sets
 
             sage: category(GF(7)['x'])
-            Join of Category of euclidean domains
-             and Category of algebras with basis over
-              (finite enumerated fields and subquotients of monoids
-               and quotients of semigroups)
-            and Category of commutative algebras over
-              (finite enumerated fields and subquotients of monoids
-               and quotients of semigroups)
-            and Category of infinite sets
+            Join of Category of euclidean domains and Category of algebras with basis over
+             (finite enumerated fields and subquotients of monoids and quotients of semigroups) and
+             Category of commutative algebras over (finite enumerated fields and subquotients of monoids
+              and quotients of semigroups) and Category of infinite enumerated sets
 
         TESTS:
 
@@ -286,7 +282,9 @@ class PolynomialRing_generic(Ring):
         Check that category for zero ring::
 
             sage: PolynomialRing(Zmod(1), 'x').category()
-            Category of finite commutative rings
+            Category of finite enumerated commutative algebras with basis over
+             (finite commutative rings and subquotients of monoids and
+              quotients of semigroups and finite enumerated sets)
 
         Check ``is_finite`` inherited from category (:issue:`24432`)::
 
@@ -305,7 +303,7 @@ class PolynomialRing_generic(Ring):
         # We trust that, if category is given, it is useful and does not need to be joined
         # with the default category
         if base_ring.is_zero():
-            category = categories.rings.Rings().Commutative().Finite()
+            category = categories.rings.Rings().Commutative().Finite().Enumerated() & categories.algebras.Algebras(base_ring.category()).WithBasis()
         else:
             defaultcat = polynomial_default_category(base_ring.category(), 1)
             category = check_default_category(defaultcat, category)
@@ -1042,6 +1040,22 @@ class PolynomialRing_generic(Ring):
             pass
         h = self._cached_hash = hash((self.base_ring(),self.variable_name()))
         return h
+
+    def _an_element_(self):
+        """
+        Return an arbitrary element of this polynomial ring.
+
+        Strictly speaking this is not necessary because it is already provided by the category
+        framework, but before :issue:`39399` this returns the generator, we keep the behavior
+        because it is more convenient.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: R.an_element()  # indirect doctest
+            x
+        """
+        return self.gen()
 
     def _repr_(self):
         try:
