@@ -116,9 +116,9 @@ py.install_sources(
 )
 
 extension_data = {
-  'ecl' : files('ecl.pyx'),
-  'homfly' : files('homfly.pyx'),
-  'libecm' : files('libecm.pyx'),
+  'ecl': files('ecl.pyx'),
+  'homfly': files('homfly.pyx'),
+  'libecm': files('libecm.pyx'),
   'meataxe': files('meataxe.pyx'),
 }
 

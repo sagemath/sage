@@ -19,8 +19,8 @@ py.install_sources(
 )
 
 extension_data = {
-  'boolean_function' : files('boolean_function.pyx'),
-  'sbox' : files('sbox.pyx'),
+  'boolean_function': files('boolean_function.pyx'),
+  'sbox': files('sbox.pyx'),
 }
 
 foreach name, pyx : extension_data

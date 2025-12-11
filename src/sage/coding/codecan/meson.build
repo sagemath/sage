@@ -8,8 +8,8 @@ py.install_sources(
 )
 
 extension_data = {
-  'autgroup_can_label' : files('autgroup_can_label.pyx'),
-  'codecan' : files('codecan.pyx'),
+  'autgroup_can_label': files('autgroup_can_label.pyx'),
+  'codecan': files('codecan.pyx'),
 }
 
 foreach name, pyx : extension_data

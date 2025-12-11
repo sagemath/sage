@@ -38,11 +38,11 @@ py.install_sources(
 )
 
 extension_data = {
-  'element' : files('element.pyx'),
-  'element_polymod' : files('element_polymod.pyx'),
-  'element_rational' : files('element_rational.pyx'),
-  'hermite_form_polynomial' : files('hermite_form_polynomial.pyx'),
-  'khuri_makdisi' : files('khuri_makdisi.pyx'),
+  'element': files('element.pyx'),
+  'element_polymod': files('element_polymod.pyx'),
+  'element_rational': files('element_rational.pyx'),
+  'hermite_form_polynomial': files('hermite_form_polynomial.pyx'),
+  'khuri_makdisi': files('khuri_makdisi.pyx'),
 }
 
 foreach name, pyx : extension_data

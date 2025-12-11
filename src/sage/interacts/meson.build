@@ -11,7 +11,7 @@ py.install_sources(
   subdir: 'sage/interacts',
 )
 
-extension_data = {'library_cython' : files('library_cython.pyx')}
+extension_data = {'library_cython': files('library_cython.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

@@ -40,16 +40,16 @@ py.install_sources(
 )
 
 extension_data = {
-  'element_base' : files('element_base.pyx'),
-  'element_pari_ffelt' : files('element_pari_ffelt.pyx'),
-  'finite_field_base' : files('finite_field_base.pyx'),
-  'hom_finite_field' : files('hom_finite_field.pyx'),
-  'hom_prime_finite_field' : files('hom_prime_finite_field.pyx'),
-  'integer_mod' : files('integer_mod.pyx'),
-  'residue_field' : files('residue_field.pyx'),
-  'residue_field_givaro' : files('residue_field_givaro.pyx'),
-  'residue_field_ntl_gf2e' : files('residue_field_ntl_gf2e.pyx'),
-  'residue_field_pari_ffelt' : files('residue_field_pari_ffelt.pyx'),
+  'element_base': files('element_base.pyx'),
+  'element_pari_ffelt': files('element_pari_ffelt.pyx'),
+  'finite_field_base': files('finite_field_base.pyx'),
+  'hom_finite_field': files('hom_finite_field.pyx'),
+  'hom_prime_finite_field': files('hom_prime_finite_field.pyx'),
+  'integer_mod': files('integer_mod.pyx'),
+  'residue_field': files('residue_field.pyx'),
+  'residue_field_givaro': files('residue_field_givaro.pyx'),
+  'residue_field_ntl_gf2e': files('residue_field_ntl_gf2e.pyx'),
+  'residue_field_pari_ffelt': files('residue_field_pari_ffelt.pyx'),
 }
 
 foreach name, pyx : extension_data

@@ -33,8 +33,8 @@ py.install_sources(
 )
 
 extension_data = {
-  'function' : files('function.pyx'),
-  'ring' : files('ring.pyx'),
+  'function': files('function.pyx'),
+  'ring': files('ring.pyx'),
 }
 
 foreach name, pyx : extension_data

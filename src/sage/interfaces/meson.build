@@ -65,8 +65,8 @@ py.install_sources(
 )
 
 extension_data = {
-  'process' : files('process.pyx'),
-  'sagespawn' : files('sagespawn.pyx'),
+  'process': files('process.pyx'),
+  'sagespawn': files('sagespawn.pyx'),
 }
 
 foreach name, pyx : extension_data
