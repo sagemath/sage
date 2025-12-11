@@ -492,6 +492,19 @@ def check_relation_maxima(relation):
         True
         sage: check_relation_maxima(2 == 3)
         False
+
+    Here is an example that illustrates that ``False`` may mean inconclusive::
+
+        sage: x = SR.var('x')
+        sage: assume(x, 'integer')
+        sage: check_relation_maxima( x == 1 )
+        False
+        sage: check_relation_maxima( x != 1 )
+        False
+        sage: assume( x > 2 )
+        sage: check_relation_maxima( x != 1 )
+        True
+        sage: forget()
     """
     # Handle boolean values directly (e.g., when comparing Python integers)
     if isinstance(relation, bool):
@@ -566,8 +579,8 @@ def check_relation_maxima_neq_as_not_eq(relation):
     # For inequality (!=), check equality and return the opposite.
     # This ensures bool(x != y) == not bool(x == y) for semantic consistency.
     if relation.operator() == operator.ne:
-        eq_relation = (relation.lhs() == relation.rhs())
-        return not check_relation_maxima(eq_relation)
+        from sage.interfaces.maxima_lib import test_max_equal
+        return not test_max_equal(relation.lhs(), relation.rhs())
 
     # For all other relations, delegate to check_relation_maxima
     return check_relation_maxima(relation)
