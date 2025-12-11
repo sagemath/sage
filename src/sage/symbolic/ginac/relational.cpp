@@ -400,17 +400,22 @@ relational::result relational::decide() const
 		const infinity & rh_inf = ex_to<infinity>(rh);
 		const ex df = lh_inf.get_direction() - rh_inf.get_direction();
 
-                if (!is_exactly_a<numeric>(df))
-                        return result::notimplemented;
+		// Check if directions are equal (df is zero)
+		// Use is_zero() instead of is_exactly_a<numeric> because
+		// the difference of two equal symbolic expressions may not
+		// simplify to a numeric zero automatically
+		bool directions_equal = df.is_zero();
+		if (!directions_equal && !is_exactly_a<numeric>(df))
+			return result::notimplemented;
 
 		switch (o) {
 		case equal:
-                        if (ex_to<numeric>(df).is_zero())
+                        if (directions_equal || ex_to<numeric>(df).is_zero())
                                 return result::True;
                         else
                                 return result::False;
 		case not_equal:
-                        if (ex_to<numeric>(df).is_zero())
+                        if (directions_equal || ex_to<numeric>(df).is_zero())
                                 return result::False;
                         else
                                 return result::True;
