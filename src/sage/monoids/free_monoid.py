@@ -24,16 +24,15 @@ the optional ``names`` argument to the
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.integer import Integer
-from sage.structure.category_object import normalize_names
 from .free_monoid_element import FreeMonoidElement
-
 from .monoid import Monoid_class
 
+from sage.categories.monoids import Monoids
 from sage.combinat.words.finite_word import FiniteWord_class
-
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.structure.category_object import normalize_names
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 def is_FreeMonoid(x):
@@ -197,7 +196,8 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
         if n < 0:
             raise ValueError("n (=%s) must be nonnegative" % n)
         self.__ngens = int(n)
-        Monoid_class.__init__(self, names)
+        cat = Monoids().Infinite() if names else None
+        Monoid_class.__init__(self, names, category=cat)
 
     def _repr_(self):
         return f"Free monoid on {self.__ngens} generators {self.gens()}"
@@ -271,7 +271,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
 
         raise TypeError("argument x (= %s) is of the wrong type" % x)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         return isinstance(x, FreeMonoidElement) and x.parent() == self
 
     def gen(self, i=0):
@@ -329,6 +329,6 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
             1
         """
         if self.__ngens == 0:
-            return Integer(1)
+            return ZZ.one()
         from sage.rings.infinity import infinity
         return infinity

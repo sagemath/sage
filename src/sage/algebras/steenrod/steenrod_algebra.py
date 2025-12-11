@@ -2129,7 +2129,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 return a.change_basis(self.basis_name())
         raise ValueError("element does not lie in this Steenrod algebra")
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if ``self`` contains `x`.
 
