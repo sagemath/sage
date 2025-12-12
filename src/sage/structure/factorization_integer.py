@@ -119,9 +119,28 @@ class IntegerFactorization(Factorization):
             ...
             ZeroDivisionError: ...
         """
-        numer = self.value()
+
+        if isinstance(other, IntegerFactorization):
+            if self.unit() % other.unit() == 0:
+                self_factors = dict(self)
+                other_factors = dict(other)
+                new_factors = self_factors.copy()
+                possible = True
+
+                for p, e in other_factors.items():
+                    if new_factors.get(p, 0) < e:
+                        possible = False
+                        break
+                    new_factors[p] -= e
+                    if new_factors[p] == 0:
+                        del new_factors[p]
+
+                if possible:
+                    new_unit = self.unit() // other.unit()
+                    return IntegerFactorization(sorted(new_factors.items()), unit=new_unit)
 
         try:
+            numer = self.value()
             if hasattr(other, 'value'):
                 denom = other.value()
             else:
