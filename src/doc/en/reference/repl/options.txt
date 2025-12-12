@@ -1,0 +1,254 @@
+SageMath version 10.8.beta1, Release Date: 2025-08-27
+
+Running Sage, the most common options:
+
+  file.[sage|py|spyx] -- run given .sage, .py or .spyx file
+  -c cmd              -- evaluate cmd as sage code. For example,
+                         "sage -c 'print(factor(35))'" will
+                         print "5 * 7".
+
+Running Sage, other options:
+
+  --preparse file.sage -- preparse "file.sage", and produce
+                          the corresponding Python file
+                          "file.sage.py"
+  -q                  -- quiet; start with no banner
+  --min               -- do not populate global namespace
+                         (must be first option)
+  --nodotsage         -- run Sage without using the user's
+                         .sage directory: create and use a temporary
+                         .sage directory instead.
+  --gthread, --qthread, --q4thread, --wthread, --pylab
+                      -- pass the option through to IPython
+  --simple-prompt     -- pass the option through to IPython: use
+                         this option with sage-shell mode in emacs
+  --gdb               -- run Sage under the control of gdb
+  --lldb              -- run Sage under the control of lldb
+
+Running external programs:
+
+  --cython [...]      -- run Cython with the given arguments
+  --ecl [...], --lisp [...]  -- run Sage's copy of ECL (Embeddable
+                                Common Lisp) with the given arguments
+  --gap [...]         -- run Sage's Gap with the given arguments
+  --gap3 [...]        -- run Sage's Gap3 with the given arguments
+                         (not installed currently, run sage -i gap3)
+  --git [...]         -- run Sage's Git with the given arguments
+  --gp [...]          -- run Sage's PARI/GP calculator with the
+                         given arguments
+  --ipython [...], --ipython3 [...]
+                      -- run Sage's IPython using the default
+                         environment (not Sage), passing additional
+                         additional options to IPython
+  --jupyter [...]     -- run Sage's Jupyter with given arguments
+  --kash [...]        -- run Sage's Kash with the given arguments
+                         (not installed currently, run sage -i kash)
+  --M2 [...]          -- run Sage's Macaulay2 with the given arguments
+                         (not installed currently, run sage -i macaulay2)
+  --maxima [...]      -- run Sage's Maxima with the given arguments
+  --mwrank [...]      -- run Sage's mwrank with the given arguments
+  --pip [...]         -- invoke pip, the Python package manager
+  --polymake [...]    -- run Sage's Polymake with given arguments
+  --python [...], --python3 [...]
+                      -- run the Python 3 interpreter
+  -R [...]            -- run Sage's R with the given arguments
+  --singular [...]    -- run Sage's singular with the given arguments
+  --sqlite3 [...]     -- run Sage's sqlite3 with given arguments
+
+Running the notebook:
+
+  -n [...], --notebook=[...]
+                      -- start the notebook; valid options include
+                         'default', 'jupyter', 'jupyterlab', and 'export'.
+                         Current default is 'jupyter'.
+                         Run "sage --notebook --help" for more details.
+
+Testing files:
+
+  -t [options] <files|dir> -- test examples in .py, .pyx, .sage
+                              or .tex files.  Options:
+     --long           -- include lines with the phrase 'long time'
+     --verbose        -- print debugging output during the test
+     --all            -- test all files
+     --optional       -- also test all examples labeled "# optional"
+     --only-optional[=tags]
+                      -- if no 'tags' are specified, only run
+                         blocks of tests containing a line labeled
+                         "# optional". If a comma-separated
+                         list of tags is specified, only run block
+                         containing a line labeled "# optional tag"
+                         for any of the tags given, and in these blocks
+                         only run the lines which are unlabeled or
+                         labeled "# optional" or labeled
+                         "# optional tag" for any of the tags given.
+     --randorder[=seed] -- randomize order of tests
+     --random-seed[=seed]  -- random seed (integer) for fuzzing doctests
+     --new            -- only test files modified since last commit
+     --initial        -- only show the first failure per block
+     --debug          -- drop into PDB after an unexpected error
+     --failed         -- only test files that failed last test
+     --warn-long [timeout] -- warn if tests take too much CPU time
+     --only-errors    -- only output failures, not successes
+     --gc=GC          -- control garbage collection (ALWAYS:
+                         collect garbage before every test; NEVER:
+                         disable gc; DEFAULT: Python default)
+     --short[=secs]   -- run as many doctests as possible in about 300
+                         seconds (or the number of seconds given.) This runs
+                         the tests for each module from the top of the file
+                         and skips tests once it exceeds the budget
+                         allocated for that file.
+     --help           -- show all doctesting options
+  --tnew [...]        -- equivalent to -t --new
+  -tp <N> [...]       -- like -t above, but tests in parallel using
+                         N threads, with 0 interpreted as min(8, cpu_count())
+  --testall [options] -- equivalent to -t --all
+
+  --coverage <files>  -- give information about doctest coverage of files
+  --coverageall       -- give summary info about doctest coverage of
+                         all files in the Sage library
+  --startuptime [module] -- display how long each component of Sage takes to
+                         start up; optionally specify a module to get more
+                         details about that particular module
+  --tox [options] <files|dirs> -- general entry point for testing
+                                  and linting of the Sage library
+     -e <envlist>     -- run specific test environments; default:
+                         ROOT:,will,run,in,automatically,provisioned,tox,,host,/usr/bin/python3,is,missing,[requires,(has)]:,tox<4.14.1,(4.26.0),ROOT:,provision>,/usr/local/sagedev/src/.tox/.tox/bin/python,-m,tox,-c,/usr/local/sagedev/src,--listenvs,doctest,coverage,startuptime,pycodestyle-minimal,relint,codespell,rst,ruff-minimal
+        doctest                -- run the Sage doctester 
+                                  (same as "sage -t")
+        coverage               -- give information about doctest coverage of files 
+                                  (same as "sage --coverage[all]")
+        startuptime            -- display how long each component of Sage takes to start up 
+                                  (same as "sage --startuptime")
+        pycodestyle-minimal    -- check against Sage minimal style conventions
+        relint                 -- check whether some forbidden patterns appear
+        codespell              -- check for misspelled words in source code
+        rst                    -- validate Python docstrings markup as reStructuredText
+        ruff-minimal           -- check against Sage minimal style conventions
+        coverage.py            -- run the Sage doctester with Coverage.py
+        coverage.py-html       -- run the Sage doctester with Coverage.py, generate HTML report
+        coverage.py-xml        -- run the Sage doctester with Coverage.py, generate XML report
+        pyright                -- run the static typing checker pyright
+        pycodestyle            -- check against the Python style conventions of PEP8
+        cython-lint            -- check Cython files for code style
+        ruff                   -- check against Python style conventions
+     -p auto          -- run test environments in parallel
+     --help           -- show tox help
+  --pytest [options] <files|dirs> -- run pytest on the Sage library
+     --help           -- show pytest help
+
+Some developer utilities:
+
+  --grep [options] <string>
+                      -- regular expression search through the Sage
+                         library for "string". Any options will
+                         get passed to the "grep" command.
+  --grepdoc [options] <string>
+                      -- regular expression search through the
+                         Sage documentation for "string".
+  --search_src ...    -- same as --grep
+  --search_doc ...    -- same as --grepdoc
+  --fixdoctests file.py
+                      -- Run doctests and replace output of failing doctests
+                         with actual output.
+  --fixdistributions <files|dirs>
+                      -- Check or update '# sage_setup: distribution'
+                         directives in source files
+  --sh [...]         -- run a shell with Sage environment variables
+                        as they are set in the runtime of Sage
+  --cleaner          -- run the Sage cleaner.  This cleans up after Sage,
+                        removing temporary directories and spawned processes.
+                        (This gets run by Sage automatically, so it is usually
+                        not necessary to run it separately.)
+File conversion:
+
+  --rst2ipynb [...]   -- Generates Jupyter notebook (.ipynb) from standalone
+                         reStructuredText source.
+                         (not installed currently, run sage -i rst2ipynb)
+  --ipynb2rst [...]   -- Generates a reStructuredText source file from
+                         a Jupyter notebook (.ipynb).
+
+Valgrind memory debugging:
+
+  --cachegrind        -- run Sage using Valgrind's cachegrind tool.  The log
+                         files are named sage-cachegrind.PID can be found in
+                         $DOT_SAGE
+  --callgrind         -- run Sage using Valgrind's callgrind tool.  The log
+                         files are named sage-callgrind.PID can be found in
+                         $DOT_SAGE
+  --massif            -- run Sage using Valgrind's massif tool.  The log
+                         files are named sage-massif.PID can be found in
+                         $DOT_SAGE
+  --memcheck          -- run Sage using Valgrind's memcheck tool.  The log
+                         files are named sage-memcheck.PID can be found in
+                         $DOT_SAGE
+  --omega             -- run Sage using Valgrind's omega tool.  The log
+                         files are named sage-omega.PID can be found in
+                         $DOT_SAGE
+  --valgrind          -- this is an alias for --memcheck
+
+Getting help:
+
+  -v, --version       -- display Sage version information
+  --dumpversion       -- print brief Sage version
+  -h, -?, --help      -- print a short help message
+  --advanced          -- list all command line options
+
+Building the Sage library:
+
+  -b                  -- build Sage library -- do this if you have
+                         modified any source code files in SAGE_ROOT/src/sage/
+  -ba                 -- same as -b, but rebuild *all* Cython
+                         code.
+  -br                 -- build and run Sage
+
+  -bt [...]           -- build Sage and test; same options as -t
+  -btp <N> [...]      -- build Sage and test in parallel; same options as -tp
+  -btnew [...]        -- build Sage and test modified files, as in -t --new
+
+  -bn [...], --build-and-notebook [...]
+                      -- build the Sage library (as by running "sage -b")
+                         and then start the notebook
+
+Package handling:
+
+  --package [args]    -- call the package manager with given arguments.
+                         Run without arguments for help.
+  --experimental      -- list all experimental packages that can be installed
+  -i [opts] [pkgs]    -- install the given Sage packages.  Options:
+                           -c -- run the packages' test suites,
+                                 overriding the settings of
+                                 SAGE_CHECK and SAGE_CHECK_PACKAGES
+                           -d -- only download, do not install packages
+                           -f -- force build: install the packages even
+                                 if they are already installed
+                           -s -- do not delete the temporary build directories
+                                 after a successful build
+                           -y -- reply yes to prompts about experimental
+                                 and old-style packages; warning: there
+                                 is no guarantee that these packages will
+                                 build correctly; use at your own risk
+                           -n -- reply no to prompts about experimental
+                                 and old-style packages
+  -f [opts] [pkgs]    -- shortcut for -i -f: force build of the given Sage
+                         packages
+  -p [opts] [packages]-- install the given Sage packages, without dependency
+                         checking. Options are the same as for the -i command.
+  --optional          -- list all optional packages that can be installed
+  --standard          -- list all standard packages that can be installed
+  --installed         -- list all installed packages
+
+Making Sage distributions:
+
+  --sdist             -- build a source distribution of Sage
+
+Building the documentation:
+
+  --docbuild [lang/]<document> <html|pdf|...> -- Build the Sage documentation
+
+Other developer tools:
+
+  --root              -- print the Sage root directory
+  --git-branch        -- print the current git branch
+  --buildsh [...]     -- run a shell with Sage environment variables
+                         as they are set while building Sage and its packages
+

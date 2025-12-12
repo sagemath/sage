@@ -518,10 +518,12 @@ class InfiniteWord_iter_with_caching(WordDatatype_iter_with_caching, InfiniteWor
 
     Pickle is not supported for infinite word defined by an iterator::
 
-        sage: dumps(w)
-        Traceback (most recent call last):
-        ...
-        TypeError: can...t...pickle...generator...object...
+        sage: try:
+        ....:     dumps(w)
+        ....: except TypeError as e:
+        ....:     if "pickle" in str(e) and "generator" in str(e):
+        ....:         print("TypeError raised in dumps() as expected")
+        TypeError raised in dumps() as expected
     """
     pass
 
@@ -557,10 +559,12 @@ class InfiniteWord_iter(WordDatatype_iter, InfiniteWord_class):
 
     Pickle is not supported for infinite word defined by an iterator::
 
-        sage: dumps(w)
-        Traceback (most recent call last):
-        ...
-        TypeError: can...t...pickle...generator...object...
+        sage: try:
+        ....:     dumps(w)
+        ....: except TypeError as e:
+        ....:     if "pickle" in str(e) and "generator" in str(e):
+        ....:         print("TypeError raised in dumps() as expected")
+        TypeError raised in dumps() as expected
     """
     pass
 
@@ -659,10 +663,12 @@ class Word_iter_with_caching(WordDatatype_iter_with_caching, Word_class):
 
     Pickle is not supported for word of unknown length defined by an iterator::
 
-        sage: dumps(w)
-        Traceback (most recent call last):
-        ...
-        TypeError: can...t...pickle...generator...object...
+        sage: try:
+        ....:     dumps(w)
+        ....: except TypeError as e:
+        ....:     if "pickle" in str(e) and "generator" in str(e):
+        ....:         print("TypeError raised in dumps() as expected")
+        TypeError raised in dumps() as expected
     """
     pass
 
@@ -696,10 +702,12 @@ class Word_iter(WordDatatype_iter, Word_class):
 
     Pickle is not supported for word of unknown length defined by an iterator::
 
-        sage: dumps(w)
-        Traceback (most recent call last):
-        ...
-        TypeError: can...t...pickle...generator...object...
+        sage: try:
+        ....:     dumps(w)
+        ....: except TypeError as e:
+        ....:     if "pickle" in str(e) and "generator" in str(e):
+        ....:         print("TypeError raised in dumps() as expected")
+        TypeError raised in dumps() as expected
     """
     pass
 

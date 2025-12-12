@@ -417,7 +417,7 @@ class Polyhedron_base4(Polyhedron_base3):
             sage: Q.hasse_diagram()
             Traceback (most recent call last):
             ...
-            TypeError: mutable polyhedra are unhashable
+            TypeError: ...mutable polyhedra are unhashable...
             sage: C = Q.combinatorial_polyhedron()
             sage: D = C.hasse_diagram()
             sage: set(D.vertices(sort=False)) == set(range(20))
