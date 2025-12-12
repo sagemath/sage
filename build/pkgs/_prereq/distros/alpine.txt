@@ -23,3 +23,4 @@ bzip2
 pkgconf
 zlib-dev
 boost
+boost-dev

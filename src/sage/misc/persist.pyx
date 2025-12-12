@@ -1144,7 +1144,7 @@ def unpickle_all(target, debug=False, run_test_suite=False):
        You must only pass trusted data to this function, including tar
        archives. We use the "data" filter from PEP 706 if possible
        while extracting the archive, but even that is not a perfect
-       solution, and it is only available since Python 3.11.4.
+       solution.
 
     EXAMPLES::
 
@@ -1165,14 +1165,10 @@ def unpickle_all(target, debug=False, run_test_suite=False):
     if os.path.isfile(target) and tarfile.is_tarfile(target):
         import tempfile
         with tempfile.TemporaryDirectory() as T:
-            # Extract the tarball to a temporary directory. The "data"
-            # filter only became available in python-3.11.4. See PEP
+            # Extract the tarball to a temporary directory. See PEP
             # 706 for background.
             with tarfile.open(target) as tf:
-                if hasattr(tarfile, "data_filter"):
-                    tf.extractall(T, filter='data')
-                else:
-                    tf.extractall(T)
+                tf.extractall(T, filter='data')
 
             # Ensure that the tarball contained exactly one thing, a
             # directory.

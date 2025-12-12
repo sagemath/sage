@@ -45,7 +45,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
 
     - ``v`` -- a list or tuple of coordinates in `R`.
 
-    - ``check`` -- boolean (default: ``True``). Whether to check the input for consistency.
+    - ``check`` -- boolean (default: ``True``); Whether to check the input for consistency.
 
     EXAMPLES::
 
@@ -54,7 +54,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
         (2 : 3 : 4)
     """
 
-    def __init__(self, X, v, check=True):
+    def __init__(self, X, v, check: bool = True):
         """
         The Python constructor.
 
@@ -77,7 +77,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
             sage: P == WP(1, 3 / 2, 1, 1)
             True
         """
-        SchemeMorphism.__init__(self, X)
+        super().__init__(X)
 
         self._normalized = False
 
@@ -103,6 +103,9 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
                 raise TypeError("v (=%s) must have %s components" % (v, d))
 
             R = X.value_ring()
+            if not R.is_integral_domain():
+                raise ValueError("cannot validate point over a ring that is not an integral domain, "
+                                 "pass check=False to construct the point")
             v = Sequence(v, R)
             if len(v) == d-1:     # very common special case
                 v.append(R.one())
@@ -112,9 +115,6 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
                 raise ValueError(f"{v} does not define a valid projective "
                                  "point since all entries are zero")
 
-            # over other rings, we do not have a generic method to check
-            # whether the given coordinates is a multiple of a zero divisor
-            # so we just let it pass.
             X.extended_codomain()._check_satisfies_equations(v)
 
             self._coords = tuple(v)
@@ -125,10 +125,14 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
         else:
             self._coords = tuple(v)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "({})".format(" : ".join(map(repr, self._coords)))
 
-    def _richcmp_(self, other, op):
+    def _latex_(self) -> str:
+        from sage.misc.latex import latex
+        return r"\left({}\right)".format(" : ".join(map(latex, self._coords)))
+
+    def _richcmp_(self, other: SchemeMorphism_point, op) -> bool:
         """
         Test the weighted projective equality of two points.
 
@@ -161,20 +165,22 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
             False
             sage: P >= Q
             False
-        """
-        assert isinstance(other, SchemeMorphism_point)
 
+        In the current implementation, points over different base rings
+        are never equal (this may change later)::
+
+            sage: WP(2, 3, 4) == WeightedProjectiveSpace([3, 4, 5], ZZ)(2, 3, 4)
+            False
+        """
         space = self.codomain()
         if space is not other.codomain():
             return op == op_NE
 
-        if op in [op_EQ, op_NE]:
+        if op in (op_EQ, op_NE):
             weights = space._weights
             # (other[i] / self[i])^(1 / weight[i]) all equal
-            prod_weights = prod(weights)
             # check weights
-            bw = weights == other.codomain()._weights
-            if bw != (op == op_EQ):
+            if (weights == other.codomain()._weights) != (op == op_EQ):
                 return False
 
             # check zeros
@@ -185,6 +191,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
                 return False
 
             # check nonzeros
+            prod_weights = prod(weights)
             ratio = [(c1 / c2) ** (prod_weights // w)
                      for c1, c2, w in zip(self._coords, other._coords, weights)
                      if c1 != 0 and c2 != 0]
@@ -225,7 +232,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
         # if there is no good way to normalize return a constant value
         return hash(self.codomain())
 
-    def scale_by(self, t):
+    def scale_by(self, t) -> None:
         """
         Scale the coordinates of the point by ``t``.
 
@@ -256,7 +263,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
         self._coords = tuple([R(u * t**w) for u, w in zip(self._coords, self.codomain()._weights)])
         self._normalized = False
 
-    def normalize_coordinates(self):
+    def normalize_coordinates(self) -> None:
         """
         Normalise coordinates of this weighted projective point if possible.
 

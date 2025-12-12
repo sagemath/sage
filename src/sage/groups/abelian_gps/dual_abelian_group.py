@@ -332,7 +332,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         # TODO: deprecate
         return self.group().gens_orders()
 
-    def __contains__(self, X):
+    def __contains__(self, X) -> bool:
         """
         Implement "in".
 

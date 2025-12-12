@@ -25,10 +25,7 @@ def WeightedProjectiveSpace(weights, R=None, names=None):
         sage: WP = WeightedProjectiveSpace([1, 3, 1]); WP
         Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Integer Ring
     """
-    if (
-        isinstance(weights, (MPolynomialRing_base, PolynomialRing_generic))
-        and R is None
-    ):
+    if isinstance(weights, (MPolynomialRing_base, PolynomialRing_generic)) and R is None:
         if names is not None:
             # Check for the case that the user provided a variable name
             # That does not match what we wanted to use from R
@@ -73,6 +70,20 @@ def WeightedProjectiveSpace(weights, R=None, names=None):
 
 
 class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
+    """
+    Weighted projective space with the given ``weights`` over the ring `R`.
+
+    EXAMPLES::
+
+        sage: WeightedProjectiveSpace(Zp(5), [1, 3, 1], 'y')                        # needs sage.rings.padics
+        Weighted Projective Space of dimension 2 with weights (1, 3, 1) over 5-adic Ring with
+        capped relative precision 20
+        sage: WeightedProjectiveSpace(QQ, 5, 'y')
+        Projective Space of dimension 5 over Rational Field
+        sage: _ is ProjectiveSpace(QQ, 5, 'y')
+        True
+    """
+
     @staticmethod
     def __classcall__(cls, weights: tuple[Integer], R=ZZ, names=None):
         # __classcall_ is the "preprocessing" step for UniqueRepresentation
@@ -90,16 +101,6 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
     def __init__(self, weights: tuple[Integer], R=ZZ, names=None):
         """
         Initialization function.
-
-        EXAMPLES::
-
-            sage: WeightedProjectiveSpace(Zp(5), [1, 3, 1], 'y')                        # needs sage.rings.padics
-            Weighted Projective Space of dimension 2 with weights (1, 3, 1) over 5-adic Ring with
-            capped relative precision 20
-            sage: WeightedProjectiveSpace(QQ, 5, 'y')
-            Projective Space of dimension 5 over Rational Field
-            sage: _ is ProjectiveSpace(QQ, 5, 'y')
-            True
         """
         AmbientSpace.__init__(self, len(weights) - 1, R)
         self._weights = weights
@@ -186,7 +187,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: R.term_order()
             Weighted degree reverse lexicographic term order with weights (1, 1, 1)
         """
-        if not hasattr(self, "_coordinate_ring"):
+        if not hasattr(self, "_coordinate_ring"):  # we don't use cached_method to allow override in WeightedProjectiveSpace
             term_order = TermOrder("wdegrevlex", self.weights())
             self._coordinate_ring = PolynomialRing(
                 self.base_ring(),
@@ -239,7 +240,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         return polynomials
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of this weighted projective space.
 
@@ -254,7 +255,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             '{\\mathbf P}_{\\Bold{Z}_{5}}^{[2, 1, 3]}'
         """
         return (
-            f"{{\\mathbf P}}_{{{latex(self.base_ring())}}}^{{{list(self.weights())}}}"
+            fr"{{\mathbf P}}_{{{latex(self.base_ring())}}}^{{{list(self.weights())}}}"
         )
 
     def _morphism(self, *_, **__):
@@ -283,7 +284,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         """
         return SchemeHomset_points_weighted_projective_ring(*args, **kwds)
 
-    def point(self, v, check=True):
+    def point(self, v, check: bool = True):
         """
         Create a point on this weighted projective space.
 
@@ -347,7 +348,8 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         - ``R`` -- commutative ring or morphism
 
-        OUTPUT: weighted projective space over ``R``
+        OUTPUT: weighted projective space over ``R``.
+        If ``R`` is a morphism, return a weighted projective space over its codomain.
 
         .. NOTE::
 

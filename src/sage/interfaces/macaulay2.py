@@ -119,7 +119,7 @@ AUTHORS:
 # ****************************************************************************
 import os
 import re
-from typing import Iterator
+from collections.abc import Iterator
 
 import sage.interfaces.abc
 from sage.interfaces.expect import (

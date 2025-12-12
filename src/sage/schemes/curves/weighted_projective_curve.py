@@ -16,7 +16,22 @@ For now, only curves in weighted projective plane is supported::
     Weighted Projective Curve over Rational Field defined by y^2 - x^5*z - 3*x^2*z^4 - 2*z^6
     sage: C1 == C2
     True
+
+AUTHORS:
+
+- Gareth Ma (2025)
 """
+
+# ****************************************************************************
+#  Copyright (C) 2005 William Stein <wstein@gmail.com>
+#  Copyright (C) 2025 Gareth Ma <grhkm21@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.schemes.curves.curve import Curve_generic
 from sage.schemes.weighted_projective.weighted_projective_space import WeightedProjectiveSpace_ring
@@ -37,10 +52,9 @@ class WeightedProjectiveCurve(Curve_generic):
     def __init__(self, A, X, *kwargs):
         if not isinstance(A, WeightedProjectiveSpace_ring):
             raise TypeError(f"A(={A}) is not a weighted projective space")
-        self._weights = A._weights
         super().__init__(A, X, *kwargs)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return a string representation of the type of this curve.
 
