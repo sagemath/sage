@@ -11,7 +11,8 @@ import doctest
 import inspect
 import sys
 import warnings
-from typing import Any, Iterable, Optional, TYPE_CHECKING
+from pathlib import Path
+from typing import Any, Iterable, Optional
 
 import pytest
 from _pytest.doctest import (
@@ -30,9 +31,6 @@ from sage.doctest.forker import (
     showwarning_with_traceback,
 )
 from sage.doctest.parsing import SageDocTestParser, SageOutputChecker
-
-if TYPE_CHECKING:
-    from pathlib import Path
 
 
 def is_subpath(path: Path, parent: Path) -> bool:
@@ -269,7 +267,8 @@ def pytest_collect_file(
 
 
 def pytest_ignore_collect(
-    collection_path: Path, path: str, config: pytest.Config
+    collection_path: Path,
+    config: pytest.Config,
 ) -> None | bool:
     """
     This hook is called when collecting test files, and can be used to
