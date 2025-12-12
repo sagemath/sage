@@ -1,6 +1,21 @@
-"""
+r"""
 Rational point sets on a Jacobian of a general hyperelliptic curve
+
+AUTHORS:
+
+- Sabrina Kunzweiler, Gareth Ma, Giacomo Pope (2024): adapt to smooth model
 """
+
+# ****************************************************************************
+#       Copyright (C) 2025 Sabrina Kunzweiler, Gareth Ma, Giacomo Pope
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 from sage.misc.cachefunc import cached_method
 from sage.misc.functional import symbolic_prod as product
 from sage.misc.prandom import choice
@@ -19,28 +34,29 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
     r"""
     Set of rational points of the Jacobian.
     """
+
     def __init__(self, Y, X, **kwds):
         r"""
-            Create the Hom-set of a Jacobian.
+        Create the Hom-set of a Jacobian.
 
-            The `K`-rational points of the Jacobian `J` over `k`
-            are identified with the set of morphisms
-            `\mathrm{Spec}(K) \to J`.
+        The `K`-rational points of the Jacobian `J` over `k`
+        are identified with the set of morphisms
+        `\mathrm{Spec}(K) \to J`.
 
-            INPUT:
+        INPUT:
 
-            - ``Y`` -- domain (Spec(K) where K is the field of definition)
-            - ``X`` -- codomain (the Jacobian)
+        - ``Y`` -- domain (Spec(K) where K is the field of definition)
+        - ``X`` -- codomain (the Jacobian)
 
-            EXAMPLE::
+        EXAMPLE::
 
-                sage: from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic import HyperellipticJacobianHomset
-                sage: R.<x> = QQ[]
-                sage: H = HyperellipticCurve(2*x^4 - x^3 + 4*x^2 - x, x^3 + x)
-                sage: J = H.jacobian()
-                sage: JQ = HyperellipticJacobianHomset(Spec(QQ), J); JQ
-                Abelian group of points on Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 + (x^3 + x)*y = 2*x^4 - x^3 + 4*x^2 - x
-       """
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic import HyperellipticJacobianHomset
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurve(2*x^4 - x^3 + 4*x^2 - x, x^3 + x)
+            sage: J = H.jacobian()
+            sage: JQ = HyperellipticJacobianHomset(Spec(QQ), J); JQ
+            Abelian group of points on Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 + (x^3 + x)*y = 2*x^4 - x^3 + 4*x^2 - x
+        """
         SchemeHomset_points.__init__(self, Y, X, **kwds)
         self._morphism_element = None
 
@@ -388,9 +404,9 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         if len(args) == 2:
             P1 = args[0]
             P2 = args[1]
-            if isinstance(P1, SchemeMorphism_point_weighted_projective_ring) and isinstance(
-                P2, SchemeMorphism_point_weighted_projective_ring
-            ):
+            if isinstance(
+                P1, SchemeMorphism_point_weighted_projective_ring
+            ) and isinstance(P2, SchemeMorphism_point_weighted_projective_ring):
                 u1, v1 = self.point_to_mumford_coordinates(P1)
                 P2_inv = self.extended_curve().hyperelliptic_involution(P2)
                 u2, v2 = self.point_to_mumford_coordinates(P2_inv)
@@ -477,12 +493,12 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         g = H.genus()
 
         # Ensure D1 and D2 are semi-reduced divisors
-        assert (
-            v1.degree() < u1.degree() and v2.degree() < u2.degree()
-        ), "The degree of bi must be smaller than ai"
-        assert (
-            u1.degree() <= 2 * g + 2 and u2.degree() <= 2 * g + 2
-        ), f"The degree of ai must be smaller than 2g+2, {u1.degree()}, {u2.degree()}"
+        assert v1.degree() < u1.degree() and v2.degree() < u2.degree(), (
+            "The degree of bi must be smaller than ai"
+        )
+        assert u1.degree() <= 2 * g + 2 and u2.degree() <= 2 * g + 2, (
+            f"The degree of ai must be smaller than 2g+2, {u1.degree()}, {u2.degree()}"
+        )
 
         # Special case: duplication law
         if u1 == u2 and v1 == v2:
@@ -702,6 +718,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             return self._morphism_element(self, u1, v1, check=False)
 
         import itertools
+
         points = []
         for vv in itertools.product(*vss):
             u1, v1 = R.one(), R.zero()

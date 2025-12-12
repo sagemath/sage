@@ -1,10 +1,24 @@
-"""
+r"""
 Arithmetic on the Jacobian
 
 This module implements the group operation in the Picard group of a
 hyperelliptic curve, represented as divisors in Mumford
 representation, using Cantor's algorithm.
+
+AUTHORS:
+
+- Sabrina Kunzweiler, Gareth Ma, Giacomo Pope (2024): adapt to smooth model
 """
+
+# ****************************************************************************
+#       Copyright (C) 2025 Sabrina Kunzweiler, Gareth Ma, Giacomo Pope
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.groups.generic import order_from_multiple
 from sage.misc.cachefunc import cached_method
@@ -45,9 +59,9 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         # Ensure the divisor is valid
         if check:
             f, h = parent.curve().hyperelliptic_polynomials()
-            assert (
-                v**2 + v * h - f
-            ) % u == 0, f"u={u}, v={v} do not define a divisor on the Jacobian"
+            assert (v**2 + v * h - f) % u == 0, (
+                f"u={u}, v={v} do not define a divisor on the Jacobian"
+            )
 
             # TODO: should we automatically do reduction here if the degree of u is
             # too large?
@@ -365,19 +379,19 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
 class MumfordDivisorClassFieldRamified(MumfordDivisorClassField):
     def __init__(self, parent, u, v, check=True):
         """
-            Create an element of the Jacobian of a ramified
-            hyperelliptic curve.
+        Create an element of the Jacobian of a ramified
+        hyperelliptic curve.
 
-            TESTS::
+        TESTS::
 
-                sage: R.<x> = GF(5)[]
-                sage: H = HyperellipticCurveSmoothModel(x^7 + 3*x + 2, x^2 + 1)
-                sage: H.is_ramified()
-                True
-                sage: J = Jacobian(H)
-                sage: D = J(x^3 + x^2 + 3*x + 1, 4*x^2 + 2*x + 3)
-                sage: type(D)
-                <class 'sage.schemes.hyperelliptic_curves_smooth_model.jacobian_morphism.MumfordDivisorClassFieldRamified'>
+            sage: R.<x> = GF(5)[]
+            sage: H = HyperellipticCurveSmoothModel(x^7 + 3*x + 2, x^2 + 1)
+            sage: H.is_ramified()
+            True
+            sage: J = Jacobian(H)
+            sage: D = J(x^3 + x^2 + 3*x + 1, 4*x^2 + 2*x + 3)
+            sage: type(D)
+            <class 'sage.schemes.hyperelliptic_curves_smooth_model.jacobian_morphism.MumfordDivisorClassFieldRamified'>
         """
         if not parent.curve().is_ramified():
             raise TypeError("hyperelliptic curve must be ramified")
@@ -388,19 +402,19 @@ class MumfordDivisorClassFieldRamified(MumfordDivisorClassField):
 class MumfordDivisorClassFieldInert(MumfordDivisorClassField):
     def __init__(self, parent, u, v, check=True):
         """
-            Create an element of the Jacobian of a ramified
-            hyperelliptic curve.
+        Create an element of the Jacobian of a ramified
+        hyperelliptic curve.
 
-            TESTS::
+        TESTS::
 
-                sage: R.<x> = GF(5)[]
-                sage: H = HyperellipticCurveSmoothModel(2*x^6 + 1)
-                sage: H.is_inert()
-                True
-                sage: J = Jacobian(H)
-                sage: D = J(x^2 + x + 4, 4*x)
-                sage: type(D)
-                <class 'sage.schemes.hyperelliptic_curves_smooth_model.jacobian_morphism.MumfordDivisorClassFieldInert'>
+            sage: R.<x> = GF(5)[]
+            sage: H = HyperellipticCurveSmoothModel(2*x^6 + 1)
+            sage: H.is_inert()
+            True
+            sage: J = Jacobian(H)
+            sage: D = J(x^2 + x + 4, 4*x)
+            sage: type(D)
+            <class 'sage.schemes.hyperelliptic_curves_smooth_model.jacobian_morphism.MumfordDivisorClassFieldInert'>
         """
         if not parent.curve().is_inert():
             raise TypeError("hyperelliptic curve must be inert")
@@ -414,17 +428,17 @@ class MumfordDivisorClassFieldInert(MumfordDivisorClassField):
 
     def __repr__(self):
         """
-            Return a representation of the element.
+        Return a representation of the element.
 
-            TESTS::
+        TESTS::
 
-                sage: R.<x> = GF(5)[]
-                sage: H = HyperellipticCurveSmoothModel(2*x^6 + 1)
-                sage: H.is_inert()
-                True
-                sage: J = Jacobian(H)
-                sage: D = J(x^2 + x + 4, 4*x); D # indirect doctest
-                (x^2 + x + 4, 4*x : 0)
+            sage: R.<x> = GF(5)[]
+            sage: H = HyperellipticCurveSmoothModel(2*x^6 + 1)
+            sage: H.is_inert()
+            True
+            sage: J = Jacobian(H)
+            sage: D = J(x^2 + x + 4, 4*x); D # indirect doctest
+            (x^2 + x + 4, 4*x : 0)
         """
         return f"({self._u}, {self._v} : {self._n})"
 
@@ -432,19 +446,19 @@ class MumfordDivisorClassFieldInert(MumfordDivisorClassField):
 class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
     def __init__(self, parent, u, v, n=0, check=True):
         """
-            Create an element of the Jacobian of a split
-            hyperelliptic curve.
+        Create an element of the Jacobian of a split
+        hyperelliptic curve.
 
-            TESTS::
+        TESTS::
 
-                sage: R.<x> = GF(5)[]
-                sage: H = HyperellipticCurveSmoothModel(x^6 + 1)
-                sage: H.is_split()
-                True
-                sage: J = Jacobian(H)
-                sage: D = J(x^2 + 3, 3)
-                sage: type(D)
-                <class 'sage.schemes.hyperelliptic_curves_smooth_model.jacobian_morphism.MumfordDivisorClassFieldSplit'>
+            sage: R.<x> = GF(5)[]
+            sage: H = HyperellipticCurveSmoothModel(x^6 + 1)
+            sage: H.is_split()
+            True
+            sage: J = Jacobian(H)
+            sage: D = J(x^2 + 3, 3)
+            sage: type(D)
+            <class 'sage.schemes.hyperelliptic_curves_smooth_model.jacobian_morphism.MumfordDivisorClassFieldSplit'>
         """
         if not parent.curve().is_split():
             raise TypeError("hyperelliptic curve must be split")
@@ -459,46 +473,46 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
 
     def __repr__(self):
         """
-            Return a representation of the element.
+        Return a representation of the element.
 
-            TESTS::
+        TESTS::
 
-                sage: R.<x> = GF(5)[]
-                sage: H = HyperellipticCurveSmoothModel(x^6 + 1)
-                sage: J = Jacobian(H)
-                sage: D = J(x^2 + 3, 3); D
-                (x^2 + 3, 3 : 0)
+            sage: R.<x> = GF(5)[]
+            sage: H = HyperellipticCurveSmoothModel(x^6 + 1)
+            sage: J = Jacobian(H)
+            sage: D = J(x^2 + 3, 3); D
+            (x^2 + 3, 3 : 0)
         """
         return f"({self._u}, {self._v} : {self._n})"
 
     def is_zero(self):
         """
-            Return ``True`` if this element is zero.
+        Return ``True`` if this element is zero.
 
-            EXAMPLES:
+        EXAMPLES:
 
-            We consider a genus-3 hyperelliptic curve with two points
-            at infinity ``P_0``, ``P_1``. Elements of the Jacobian are
-            represented as ``[D - 2P_0 - P_1]``.
-            In particular the zero element has Mumford presentation
-            `(1, 0 : 2)`::
+        We consider a genus-3 hyperelliptic curve with two points
+        at infinity ``P_0``, ``P_1``. Elements of the Jacobian are
+        represented as ``[D - 2P_0 - P_1]``.
+        In particular the zero element has Mumford presentation
+        `(1, 0 : 2)`::
 
-                sage: R.<x> = QQ[]
-                sage: H = HyperellipticCurveSmoothModel(x^8  + 1)
-                sage: J = Jacobian(H)
-                sage: D = J(1,0,2); D
-                (1, 0 : 2)
-                sage: D.is_zero()
-                True
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurveSmoothModel(x^8  + 1)
+            sage: J = Jacobian(H)
+            sage: D = J(1,0,2); D
+            (1, 0 : 2)
+            sage: D.is_zero()
+            True
 
-            There are more elements that are only supported at infinity,
-            but are non-zero::
+        There are more elements that are only supported at infinity,
+        but are non-zero::
 
-                sage: [P0,P1] = H.points_at_infinity()
-                sage: D = J(P0,P1); D
-                (1, 0 : 3)
-                sage: D.is_zero()
-                False
+            sage: [P0,P1] = H.points_at_infinity()
+            sage: D = J(P0,P1); D
+            (1, 0 : 3)
+            sage: D.is_zero()
+            False
         """
         g = self._parent.curve().genus()
         return self._u.is_one() and self._v.is_zero() and self._n == (g + 1) // 2

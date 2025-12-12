@@ -7,11 +7,23 @@ Compute invariants of quintics and sextics via 'Ueberschiebung'
 
     * Cardona-Quer and additional invariants for classifying automorphism groups.
 
-AUTHOR:
+AUTHORS:
 
 - Nick Alexander
+- Sabrina Kunzweiler, Gareth Ma, Giacomo Pope (2024): adapt to smooth model
 
 """
+
+# ****************************************************************************
+#       Copyright (C) 2025 Sabrina Kunzweiler, Gareth Ma, Giacomo Pope
+#                     2008 Nick Alexander
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing

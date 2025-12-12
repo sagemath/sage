@@ -1,4 +1,4 @@
-"""
+r"""
 Hyperelliptic curves (smooth model) over a p-adic field
 
 The functions in this module were prototyped at the 2007 Arizona Winter School by
@@ -8,7 +8,23 @@ They were adapted by Sabrina Kunzweiler, Gareth Ma, Giacomo Pope (2024)
 to work for hyperelliptic curves in weighted projective space.
 
 All of the below is with respect to the Monsky Washnitzer cohomology.
+
+AUTHORS:
+
+- Robert Bradshaw, Ralf Gerkmann, Miljan Brakovevic, Kiran Kedlaya (2007): initial version
+- Sabrina Kunzweiler, Gareth Ma, Giacomo Pope (2024): adapt to smooth model
 """
+
+# ****************************************************************************
+#       Copyright (C) 2025 Sabrina Kunzweiler, Gareth Ma, Giacomo Pope
+#                     2007 Robert Bradshaw, Ralf Gerkmann, Miljan Brakovevic, Kiran Kedlaya
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.functions.log import log
 from sage.matrix.constructor import matrix
@@ -28,7 +44,6 @@ from sage.schemes.hyperelliptic_curves_smooth_model import hyperelliptic_generic
 class HyperellipticCurveSmoothModel_padic_field(
     hyperelliptic_generic.HyperellipticCurveSmoothModel_generic
 ):
-
     r"""
     Class of hyperelliptic curves (smooth model) over a `p`-adic field.
     In particular this class implements the necessary functionality to

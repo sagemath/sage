@@ -11,10 +11,14 @@ AUTHORS:
 """
 
 # ****************************************************************************
-#  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
-#                2019 Anna Somoza <anna.somoza.henares@gmail.com>
-#                2024 Sabrina Kunzweiler, Gareth Ma, Giacomo Pope
-#  Distributed under the terms of the GNU General Public License (GPL)
+#       Copyright (C) 2025 Sabrina Kunzweiler, Gareth Ma, Giacomo Pope
+#                     2019 Anna Somoza <anna.somoza.henares@gmail.com>
+#                     2006 David Kohel <kohel@maths.usyd.edu>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
@@ -51,8 +55,9 @@ TODO:
 """
 
 
-def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True,
-                                  distinguished_point=None):
+def HyperellipticCurveSmoothModel(
+    f, h=0, check_squarefree=True, distinguished_point=None
+):
     r"""
     Constructor function for creating a hyperelliptic curve with
     smooth model with polynomials `f`, `h`.
@@ -232,7 +237,9 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True,
     # Compute the genus of the curve from f, h
     genus = __genus(f, h)
     if genus == 0:
-        raise ValueError(f"arguments f = {f} and h = {h} must define a curve of genus at least one.")
+        raise ValueError(
+            f"arguments f = {f} and h = {h} must define a curve of genus at least one."
+        )
 
     # Compute the smooth model for the hyperelliptic curve
     # using a weighted projective space

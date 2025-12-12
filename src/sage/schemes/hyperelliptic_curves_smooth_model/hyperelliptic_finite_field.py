@@ -1,6 +1,22 @@
-"""
+r"""
 Hyperelliptic curves (smooth model) over a finite field
+
+AUTHORS:
+
+- David Kohel (2006): initial version
+- Sabrina Kunzweiler, Gareth Ma, Giacomo Pope (2024): adapt to smooth model
 """
+
+# ****************************************************************************
+#       Copyright (C) 2025 Sabrina Kunzweiler, Gareth Ma, Giacomo Pope
+#                     2006 David Kohel <kohel@maths.usyd.edu>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.arith.misc import binomial
 from sage.libs.pari.all import pari
@@ -1118,7 +1134,7 @@ class HyperellipticCurveSmoothModel_finite_field(
         M = self.frobenius_matrix(N=N, algorithm=algorithm).change_ring(ZZ)
 
         # get a_g, ..., a_0 in ZZ (i.e. with correct signs)
-        f = M.charpoly().list()[g: 2 * g + 1]
+        f = M.charpoly().list()[g : 2 * g + 1]
         ppow = p**N
         f = [x % ppow for x in f]
         f = [x if 2 * x < ppow else x - ppow for x in f]

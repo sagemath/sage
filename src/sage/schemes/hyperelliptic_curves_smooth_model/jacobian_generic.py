@@ -1,18 +1,23 @@
 r"""
-    Jacobian of a general hyperelliptic curve
+Jacobian of a general hyperelliptic curve
 
-    AUTHORS:
+AUTHORS:
 
-    - David Kohel (2006): initial version
-    - Sabrina Kunzweiler, Gareth Ma, Giacomo Pope (2024): adapt to smooth model
+- David Kohel (2006): initial version
+- Sabrina Kunzweiler, Gareth Ma, Giacomo Pope (2024): adapt to smooth model
 """
 
 # ****************************************************************************
-#  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
-#                2024 Sabrina Kunzweiler, Gareth Ma, Giacomo Pope
-#  Distributed under the terms of the GNU General Public License (GPL)
+#       Copyright (C) 2025 Sabrina Kunzweiler, Gareth Ma, Giacomo Pope
+#                     2006 David Kohel <kohel@maths.usyd.edu>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
 from sage.schemes.hyperelliptic_curves_smooth_model import (
