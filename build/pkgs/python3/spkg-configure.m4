@@ -15,6 +15,13 @@ SAGE_SPKG_CONFIGURE([python3], [
          [AC_MSG_ERROR([building Sage --without-python is not supported])])
    ac_path_PYTHON3="$with_python"
 
+   dnl If --with-python was explicitly specified and differs from the cached value,
+   dnl clear the cache to force re-checking.
+   dnl This fixes issue #41258 where changing --with-python would use stale cached values
+   AS_IF([test x"$ac_path_PYTHON3" != x && test x"$ac_path_PYTHON3" != x"$ac_cv_path_PYTHON3"], [
+       AS_UNSET([ac_cv_path_PYTHON3])
+   ])
+
    dnl Issue #30559:  Removed the DEPCHECK for sqlite.  We never use libsqlite3 from SPKG for anything
    dnl other than building the python3 SPKG; so our libsqlite3 cannot create shared library conflicts.
    dnl
