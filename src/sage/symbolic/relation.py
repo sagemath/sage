@@ -423,6 +423,19 @@ def check_relation_maxima(relation):
         False
         sage: forget()
 
+    Here is an example that illustrates that ``False`` may mean inconclusive::
+
+        sage: x = SR.var('x')
+        sage: assume(x, 'integer')
+        sage: check_relation_maxima( x == 1 )
+        False
+        sage: check_relation_maxima( x != 1 )
+        False
+        sage: assume( x > 2 )
+        sage: check_relation_maxima( x != 1 )
+        True
+        sage: forget()
+
     TESTS:
 
     Ensure that ``canonicalize_radical()`` and ``simplify_log`` are not
@@ -492,19 +505,6 @@ def check_relation_maxima(relation):
         True
         sage: check_relation_maxima(2 == 3)
         False
-
-    Here is an example that illustrates that ``False`` may mean inconclusive::
-
-        sage: x = SR.var('x')
-        sage: assume(x, 'integer')
-        sage: check_relation_maxima( x == 1 )
-        False
-        sage: check_relation_maxima( x != 1 )
-        False
-        sage: assume( x > 2 )
-        sage: check_relation_maxima( x != 1 )
-        True
-        sage: forget()
     """
     # Handle boolean values directly (e.g., when comparing Python integers)
     if isinstance(relation, bool):
