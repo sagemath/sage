@@ -46,6 +46,7 @@ AUTHORS:
 # ****************************************************************************
 from __future__ import annotations
 
+import atexit
 import doctest
 import errno
 import gc
@@ -63,11 +64,9 @@ import traceback
 import typing
 import warnings
 from collections import defaultdict
+from contextlib import contextmanager
 from dis import findlinestarts
 from queue import Empty
-
-import atexit
-from contextlib import contextmanager
 
 import IPython.lib.pretty
 
