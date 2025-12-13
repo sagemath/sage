@@ -183,8 +183,8 @@ def O(*x, **kwds):
             x = x.denominator()
             if isinstance(x, Polynomial) and x.is_monomial():
                 from sage.rings.infinity import infinity
-                C = x.parent().completion(infinity)
                 n = x.degree()
+                C = x.parent().completion(infinity, prec=n)
                 return C.zero().add_bigoh(n)
 
     if isinstance(x, Polynomial):
@@ -193,11 +193,11 @@ def O(*x, **kwds):
             raise NotImplementedError("completion only currently defined "
                                       "for univariate polynomials")
         if x.is_monomial():
-            C = A.completion(A.variable_name())
             n = x.degree()
+            C = A.completion(A.variable_name(), prec=n)
         if not x.is_monomial():
             p, n = x.perfect_power()
-            C = A.completion(p)
+            C = A.completion(p, prec=n)
         return C.zero().add_bigoh(n)
 
     if isinstance(x, (int, Integer, Rational)):
