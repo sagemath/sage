@@ -580,7 +580,7 @@ def check_relation_maxima_neq_as_not_eq(relation):
     # This ensures bool(x != y) == not bool(x == y) for semantic consistency.
     if relation.operator() == operator.ne:
         from sage.interfaces.maxima_lib import test_max_equal
-        return not test_max_equal(relation.lhs(), relation.rhs())
+        return test_max_equal(relation.lhs(), relation.rhs()) is not True
 
     # For all other relations, delegate to check_relation_maxima
     return check_relation_maxima(relation)
