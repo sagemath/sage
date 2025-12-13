@@ -1116,6 +1116,12 @@ REFERENCES:
         \J. Pure Appl. Algebra 223 (2019), no. 9, 4065-4088.
         :arxiv:`1805.05736`.
 
+.. [BDHG2024] Nils Bruin, Linden Disney-Hogg, and Wuqian Effie Gao,
+             *Rigorous numerical integration of algebraic functions*,
+             Journal of Software for Algebra and Geometry 14 (2024), 117-132.
+             https://msp.org/jsag/2024/14-1/p13.xhtml
+             :doi:`10.2140/jsag.2024.14.117`.
+
 .. [BM2004] John M. Boyer and Wendy J. Myrvold, *On the Cutting Edge:
             *Simplified* `O(n)` *Planarity by Edge Addition*. Journal of Graph
             Algorithms and Applications, Vol. 8, No. 3, pp. 241-273,

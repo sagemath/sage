@@ -573,8 +573,8 @@ class RiemannSurface:
     result is seemingly converging to estimate the error. The ``'rigorous'``
     method uses results from [Neu2018]_, and bounds the algebraic integrands on
     circular domains using Cauchy's form of the remainder in Taylor approximation
-    coupled to Fujiwara's bound on polynomial roots (see Bruin-DisneyHogg-Gao,
-    in preparation). Note this method of bounding on circular domains is also
+    coupled to Fujiwara's bound on polynomial roots (see [BDHG2024]_). Note this
+    method of bounding on circular domains is also
     implemented in :meth:`_compute_delta`. The net result of this bounding is
     that one can know (an upper bound on) the number of nodes required to achieve
     a certain error. This means that for any given integral, assuming that the
@@ -2074,8 +2074,8 @@ class RiemannSurface:
         Using the error bounds for Gauss-Legendre integration found in [Neu2018]_
         and a method for bounding an algebraic integrand on a circular domains
         using Cauchy's form of the remainder in Taylor approximation coupled to
-        Fujiwara's bound on polynomial roots (see Bruin-DisneyHogg-Gao, in
-        preparation), this method calculates (semi-)rigorously the integral of a
+        Fujiwara's bound on polynomial roots (see [BDHG2024]_), this method
+        calculates (semi-)rigorously the integral of a
         list of differentials along an edge of the upstairs graph.
 
         INPUT:
