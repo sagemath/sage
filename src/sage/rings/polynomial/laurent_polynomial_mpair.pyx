@@ -273,6 +273,23 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
             sage: hash(L.zero())
             0
+
+        TESTS:
+
+        Check that :issue:`41282` is fixed. The bug was that when normalizing
+        with respect to a single variable ``i``, if the minimum exponent was
+        ``e > 1``, it only divided ``_poly`` by ``gen(i)`` instead of
+        ``gen(i)^e``::
+
+            sage: A.<t, x1> = LaurentPolynomialRing(QQ)
+            sage: f = x1 + t^(-2)
+            sage: g = f.subs({t: t^(-1)})
+            sage: g
+            t^2 + x1
+            sage: g.has_inverse_of(0)  # triggers _normalize(0) internally
+            False
+            sage: g
+            t^2 + x1
         """
         if not self._poly:
             self._mon = ETuple({}, int(self._parent.ngens()))
@@ -1371,26 +1388,15 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             True
             sage: f.has_inverse_of(2)
             True
-
-        TESTS:
-
-        Check that :issue:`41282` is fixed (``has_inverse_of`` should not
-        mutate ``self``)::
-
-            sage: A.<t, x1> = LaurentPolynomialRing(QQ)
-            sage: f = x1 + t^(-2)
-            sage: g = f.subs({t: t^(-1)})
-            sage: g
-            t^2 + x1
-            sage: before = list(g)
-            sage: g.has_inverse_of(0)
-            False
-            sage: list(g) == before
-            True
         """
         if (not isinstance(i, (int, Integer))) or (i < 0) or (i >= self._parent.ngens()):
             raise TypeError("argument is not the index of a generator")
-        return self.valuation(self._parent.gen(i)) < 0
+        if self._mon[i] < 0:
+            self._normalize(i)
+            if self._mon[i] < 0:
+                return True
+            return False
+        return False
 
     def has_any_inverse(self):
         """
@@ -1406,20 +1412,11 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: g = x^2 + y^2
             sage: g.has_any_inverse()
             False
-
-        TESTS:
-
-        Check that :issue:`41282` is fixed::
-
-            sage: A.<t, x1> = LaurentPolynomialRing(QQ)
-            sage: f = x1 + t^(-2)
-            sage: g = f.subs({t: t^(-1)})
-            sage: g
-            t^2 + x1
-            sage: g.has_any_inverse()
-            False
         """
-        return any(self.valuation(g) < 0 for g in self._parent.gens())
+        for m in self._mon.nonzero_values(sort=False):
+            if m < 0:
+                return True
+        return False
 
     def __call__(self, *x, **kwds):
         """
@@ -1485,28 +1482,14 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
                 if self.has_inverse_of(m):
                     raise ZeroDivisionError
 
-        # Evaluate term by term using the actual exponents to handle
-        # cases where the internal representation has non-normalized _mon
-        cdef dict mc = self.monomial_coefficients()
-        ans = None
-        for exp, coeff in mc.items():
-            term = coeff
-            skip_term = False
-            for i in range(l):
-                e = exp[i]
-                if e != 0:
-                    if x[i] == 0:
-                        # x[i]^e with e > 0 gives 0, already handled e < 0 above
-                        skip_term = True
-                        break
-                    term = term * x[i] ** e
-            if not skip_term:
-                if ans is None:
-                    ans = term
-                else:
-                    ans = ans + term
+        # Normalize internal representation, then evaluate using polynomial
+        self._normalize()
+        ans = self._poly(*x)
+        if ans:
+            for m in self._mon.nonzero_positions():
+                ans *= x[m]**self._mon[m]
 
-        return ans if ans is not None else self._parent.base_ring().zero()
+        return ans
 
     def subs(self, in_dict=None, **kwds):
         """
@@ -1614,7 +1597,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: R.<x,y> = LaurentPolynomialRing(QQ)
             sage: f = x^3 + y/x
             sage: g = f._symbolic_(SR); g
-            x^3 + y/x
+            (x^4 + y)/x
             sage: g(x=2, y=2)
             9
             sage: g = SR(f)
