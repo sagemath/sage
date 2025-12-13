@@ -22126,11 +22126,11 @@ class GenericGraph(GenericGraph_pyx):
 
         from math import cos, pi, sin
         for i, v in enumerate(vertices):
-            theta = 2 * (i + shift) * pi / n
+            theta = angle + 2 * (i + shift) * pi / n
             # We round cos and sin to avoid results like 1.2246467991473532e-16
             # when asking for sin(pi)
-            v_x = c_x + radius * round(cos(angle + theta), 10)
-            v_y = c_y + radius * round(sin(angle + theta), 10)
+            v_x = c_x + radius * round(cos(theta), 10)
+            v_y = c_y + radius * round(sin(theta), 10)
             pos[v] = (v_x, v_y)
 
         if return_dict:
