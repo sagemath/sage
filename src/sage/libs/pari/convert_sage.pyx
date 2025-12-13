@@ -56,6 +56,18 @@ cpdef gen_to_sage(Gen z, locals=None):
     """
     Convert a PARI gen to a Sage/Python object.
 
+    .. NOTE::
+
+        It is more convenient to use `.sage() <https://cypari2.readthedocs.io/en/latest/gen.html#cypari2.gen.Gen.sage>`_
+        method on gen object::
+
+            sage: z = pari('12'); z
+            12
+            sage: a = z.sage(); a
+            12
+            sage: a.parent()
+            Integer Ring
+
     INPUT:
 
     - ``z`` -- PARI ``gen``
