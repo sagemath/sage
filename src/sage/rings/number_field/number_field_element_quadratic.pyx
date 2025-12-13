@@ -2407,7 +2407,6 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: K5.<sqrt5> = QuadraticField(5)
             sage: for _ in range(100):
             ....:    a = QQ.random_element(1000,20)
-            ....:    b = QQ.random_element(1000,20)
             ....:    assert a.round() == round(K2(a)), a
             ....:    assert a.round() == round(K3(a)), a
             ....:    assert a.round() == round(K5(a)), a
