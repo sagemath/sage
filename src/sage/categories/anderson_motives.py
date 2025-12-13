@@ -93,7 +93,7 @@ class AndersonMotives(OreModules):
         """
         self._drinfeld_category = category
         self._base_morphism = category.base_morphism()
-        self._A_field = category.base()
+        self._A_field = category.A_field()
         self._function_ring = A = category.function_ring()
         self._base_over_constants_field = category.base_over_constants_field()
         self._ore_variable_name = category._ore_variable_name
