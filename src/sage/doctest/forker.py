@@ -66,9 +66,11 @@ from collections import defaultdict
 from dis import findlinestarts
 from queue import Empty
 
+import atexit
+from contextlib import contextmanager
+
 import IPython.lib.pretty
 
-from sage.cpython.atexit import restore_atexit
 from sage.cpython.string import bytes_to_str, str_to_bytes
 from sage.doctest.parsing import (
     OriginalSource,
@@ -93,6 +95,62 @@ if typing.TYPE_CHECKING:
 # With Python 3.14, the default changed to 'forkserver' on Linux as well.
 # Sage doctesting requires 'fork' method.
 multiprocessing.set_start_method('fork', force=True)
+
+
+@contextmanager
+def _run_atexit_on_exit():
+    """
+    Context manager that runs any atexit handlers registered during the
+    context when exiting.
+
+    This is used in doctesting to ensure that atexit handlers registered
+    by doctests are run immediately after the doctests complete, rather
+    than when the entire process exits.
+
+    The implementation works by temporarily replacing atexit.register
+    with a wrapper that tracks newly registered handlers. On exit,
+    these handlers are run and unregistered.
+
+    EXAMPLES::
+
+        sage: import atexit
+        sage: from sage.doctest.forker import _run_atexit_on_exit
+        sage: handler_run = []
+        sage: def my_handler(x):
+        ....:     handler_run.append(x)
+        sage: with _run_atexit_on_exit():
+        ....:     atexit.register(my_handler, 42)
+        <function my_handler at ...>
+        sage: handler_run
+        [42]
+    """
+    new_handlers = []
+    original_register = atexit.register
+
+    def tracking_register(func, *args, **kwargs):
+        result = original_register(func, *args, **kwargs)
+        new_handlers.append((func, args, kwargs))
+        return result
+
+    atexit.register = tracking_register
+    try:
+        yield
+    finally:
+        atexit.register = original_register
+        # Run the handlers in reverse order (LIFO, as atexit does)
+        for func, args, kwargs in reversed(new_handlers):
+            try:
+                func(*args, **kwargs)
+            except Exception:  # noqa: BLE001
+                # Atexit handlers are arbitrary user code that can raise any
+                # exception type, so we must catch the broad Exception base.
+                # This mimics atexit behavior: exceptions in exit handlers are
+                # caught and printed to stderr, but don't prevent other handlers
+                # from running. We suppress them here since we're in a doctest
+                # context where such output would be disruptive.
+                pass
+            # Unregister so it doesn't run again at program exit
+            atexit.unregister(func)
 
 
 def _sorted_dict_pprinter_factory(start, end):
@@ -2652,7 +2710,7 @@ class DocTestTask:
             # multiprocessing.Process instances don't run exit
             # functions, so we run the functions added by doctests
             # when exiting this context.
-            with restore_atexit(run=True):
+            with _run_atexit_on_exit():
                 for it in range(N):
                     doctests, extras = self._run(runner, options, results)
                     runner.summarize(options.verbose)
