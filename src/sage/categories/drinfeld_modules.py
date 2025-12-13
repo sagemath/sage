@@ -79,7 +79,7 @@ class DrinfeldModules(Category_over_base_ring):
     The base field is retrieved using the method :meth:`base`::
 
         sage: C.base()
-        Finite Field in z of size 11^4 over its base
+        Finite Field in z of size 11^4
 
     Equivalently, one can use :meth:`base_morphism` to retrieve the base
     morphism::
@@ -169,13 +169,6 @@ class DrinfeldModules(Category_over_base_ring):
         Traceback (most recent call last):
         ...
         TypeError: base field must be a ring extension
-
-    Note that `C.base_morphism()` has codomain `K` while
-    the defining morphism of `C.base()` has codomain `K` viewed
-    as an `A`-field. Thus, they differ::
-
-        sage: C.base().defining_morphism() == C.base_morphism()
-        False
 
     ::
 
@@ -276,7 +269,7 @@ class DrinfeldModules(Category_over_base_ring):
         i = A.coerce_map_from(Fq)
         Fq_to_K = self._base_morphism * i
         self._base_over_constants_field = base_field.over(Fq_to_K)
-        super().__init__(base=base_field.over(base_morphism))
+        super().__init__(base=base_field)
 
     def _latex_(self):
         r"""
@@ -377,7 +370,7 @@ class DrinfeldModules(Category_over_base_ring):
             sage: C.A_field()
             Finite Field in z of size 5^12 over its base
         """
-        return self.base()
+        return self.base().over(self._base_morphism)
 
     def base_morphism(self):
         r"""
@@ -461,7 +454,7 @@ class DrinfeldModules(Category_over_base_ring):
             sage: C = phi.category()
             sage: C.constant_coefficient()
             z^3 + 7*z^2 + 6*z + 10
-            sage: C.constant_coefficient() == C.base()(T)
+            sage: C.constant_coefficient() == C.A_field()(T)
             True
         """
         return self._constant_coefficient
@@ -616,15 +609,8 @@ class DrinfeldModules(Category_over_base_ring):
 
         def base(self):
             r"""
-            Return the underlying `A`-field of this Drinfeld module,
-            viewed as an algebra over the function ring `A`.
-
-            This is an instance of the class
-            :class:`sage.rings.ring_extension.RingExtension`.
-
-            .. NOTE::
-
-                This method has the same behavior as :meth:`A_field`.
+            Return the field over which this Drinfeld module
+            is defined.
 
             EXAMPLES::
 
@@ -634,14 +620,15 @@ class DrinfeldModules(Category_over_base_ring):
                 sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
                 sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
                 sage: phi.base()
-                Finite Field in z12 of size 5^12 over its base
+                Finite Field in z12 of size 5^12
 
             The base can be infinite::
 
                 sage: sigma = DrinfeldModule(A, [T, 1])
                 sage: sigma.base()
-                Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2 over its base
+                Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2
             """
+            # should we add a deprecation?
             return self.category().base()
 
         def base_morphism(self):
@@ -758,8 +745,8 @@ class DrinfeldModules(Category_over_base_ring):
             `\gamma(T)`::
 
                 sage: C = phi.category()
-                sage: base = C.base()
-                sage: base(T) == phi.constant_coefficient()
+                sage: F = C.A_field()
+                sage: F(T) == phi.constant_coefficient()
                 True
 
             Naturally, two Drinfeld modules in the same category have the
