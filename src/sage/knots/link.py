@@ -1256,7 +1256,7 @@ class Link(SageObject):
             if not data:
                 return [(0, HomologyGroup(0, ring))]
 
-            torsion = set([k[1] for k in data])
+            torsion = {k[1] for k in data}
             invfac = {}
             for d in [k[0] for k in data]:
                 invfac[d] = []

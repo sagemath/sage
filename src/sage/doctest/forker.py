@@ -2039,7 +2039,8 @@ class DocTestDispatcher(SageObject):
                             w.copied_exitcode,
                             w.result,
                             w.output,
-                            pid=w.copied_pid)
+                            pid=w.copied_pid,
+                            process_tree_before_kill=w.process_tree_before_kill)
 
                         pending_tests -= 1
 
@@ -2272,7 +2273,8 @@ class DocTestWorker(multiprocessing.Process):
         self.messages = ""
 
         # Has this worker been killed (because of a time out)?
-        self.killed = False
+        self.killed: bool = False
+        self.process_tree_before_kill: str | None = None
 
     def run(self):
         """
@@ -2502,6 +2504,17 @@ class DocTestWorker(multiprocessing.Process):
             sage: W.is_alive()
             False
         """
+        try:
+            import subprocess
+            self.process_tree_before_kill = subprocess.run(["ps", "-ef", "--cols", "1000", "--forest"],
+                                                           stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+                                                           text=True, errors="ignore").stdout
+        except FileNotFoundError:  # ps not available? Unlikely
+            pass
+        except subprocess.CalledProcessError:
+            self.process_tree_before_kill = subprocess.run(["ps", "-efwww"],
+                                                           stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+                                                           text=True, errors="ignore").stdout
 
         if self.rmessages is not None:
             os.close(self.rmessages)

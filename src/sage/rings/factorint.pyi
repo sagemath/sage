@@ -1,11 +1,11 @@
 
-def aurifeuillian(n: int, m: int, F: int = None, check: bool = True) -> list[int]:
+def aurifeuillian(n: int, m: int, F: int | None = None, check: bool = True) -> list[int]:
     ...
 
 def factor_aurifeuillian(n: int, check: bool = True) -> list[int]:
     ...
 
-def factor_cunningham(m: int, proof: bool = None) -> int:
+def factor_cunningham(m: int, proof: bool | None = None) -> int:
     ...
 
 def factor_trial_division(m: int, limit: int = 9223372036854775807) -> int:
