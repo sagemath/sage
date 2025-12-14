@@ -2611,9 +2611,23 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         A lattice polytope is Cayley if its vertex set is contained in
         two parallel hyperplanes.
 
+        Here we assume that the polytope is full-dimensional.
+
+        ALGORITHM: This is inspired by Macaulay2 implementation.
+
         EXAMPLES::
 
             sage: P = polytopes.cube().lattice_polytope()
+            sage: P.is_cayley()
+            True
+
+            sage: P = LatticePolytope([(0,0),(1,0),(0,1),(2,2)])
+            sage: P.is_cayley()
+            False
+
+        TESTS:
+
+            sage: P = LatticePolytope([(0,),(1,)])
             sage: P.is_cayley()
             True
         """
