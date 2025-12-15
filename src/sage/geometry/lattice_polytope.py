@@ -2630,7 +2630,14 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: P = LatticePolytope([(0,),(1,)])
             sage: P.is_cayley()
             True
+            sage: P = LatticePolytope([(0,0),(2,0)])
+            sage: P.is_cayley()
+            Traceback (most recent call last):
+            ...
+            TypeError: the polytope is not full dimensional
         """
+        if not self.is_full_dimensional():
+            raise TypeError("the polytope is not full dimensional")
         verts = self.vertices()
         return any(len(set(n.dot_product(v) for v in verts)) == 2
                    for n in self.facet_normals())
