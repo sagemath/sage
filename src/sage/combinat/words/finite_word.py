@@ -6758,10 +6758,10 @@ class FiniteWord_class(Word_class):
         """
         from sage.monoids.free_monoid import FreeMonoid
         try:
-            l = list(self.parent().alphabet())
-        except AttributeError:
-            l = self.letters()
-        M = FreeMonoid(len(l), l)
+            li = list(self.parent().alphabet())
+        except (AttributeError, ValueError, NotImplementedError):
+            li = self.letters()
+        M = FreeMonoid(len(li), li)
         return M(self)
 
     def is_christoffel(self) -> bool:
