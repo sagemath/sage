@@ -217,10 +217,7 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
         if self.is_zero():
             return "0"
         p = self.parent()
-        try:
-            names = p.latex_variable_names()
-        except ValueError:
-            names = None
+        names = p.latex_variable_names()
         if names:
             terms = [("T^{{({})}}{}".format(k1, names[p._index_to_pos[k0]]), v) if k1 > 1
                      else ("T{}".format(names[p._index_to_pos[k0]]), v) if k1 == 1

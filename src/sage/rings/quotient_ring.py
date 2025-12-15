@@ -296,10 +296,8 @@ def QuotientRing(R, I, names=None, **kwds):
         raise TypeError("R must be a ring")
     is_commutative = R in _CommRings
     if names is None:
-        try:
-            names = tuple([x + 'bar' for x in R.variable_names()])
-        except ValueError:  # no names are assigned
-            pass
+        if R.variable_names():
+            names = tuple(x + 'bar' for x in R.variable_names())
     else:
         names = normalize_names(R.ngens(), names)
     if kwds.get('implementation') == 'pbori':
@@ -549,12 +547,10 @@ class QuotientRing_nc(Parent):
 
         # Is there a better generic way to distinguish between things like Z/pZ as a field and Z/pZ as a ring?
         from sage.rings.ring import Field
-        try:
-            names = self.variable_names()
-        except ValueError:
-            try:
-                names = self.cover_ring().variable_names()
-            except ValueError:
+        names = self.variable_names()
+        if not names:
+            names = self.cover_ring().variable_names()
+            if not names:
                 names = None
         if self in _CommRings:
             return QuotientFunctor(self.__I, names=names, domain=_CommRings,
