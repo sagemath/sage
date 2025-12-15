@@ -678,8 +678,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: {G: 1}[G]
             Traceback (most recent call last):
             ...
-            TypeError: This graph is mutable, and thus not hashable. Create
-            an immutable copy by `g.copy(immutable=True)`
+            TypeError: ...This graph is mutable, and thus not hashable...
             sage: G_imm = Graph(G, data_structure='static_sparse')
             sage: G_imm == G
             True
