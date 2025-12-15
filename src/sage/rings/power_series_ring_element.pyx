@@ -1575,6 +1575,10 @@ cdef class PowerSeries(AlgebraElement):
         fraction field and tests whether or not the result lies in the
         original ring.
 
+        For power series over `\ZZ/n\ZZ` where `n` is squarefree (product of
+        distinct primes), the Chinese Remainder Theorem is used to reduce to
+        the case of prime fields.
+
         EXAMPLES::
 
             sage: K.<t> = PowerSeriesRing(QQ, 't', 5)
@@ -1592,7 +1596,32 @@ cdef class PowerSeries(AlgebraElement):
             sage: f = (1+t)^100
             sage: f.is_square()
             True
+
+        Power series over `\ZZ/n\ZZ` where `n` is squarefree::
+
+            sage: R.<x> = PowerSeriesRing(Zmod(6))
+            sage: ((x + 1)^2).is_square()
+            True
+            sage: R.<x> = PowerSeriesRing(Zmod(15))
+            sage: ((x + 2)^2).is_square()
+            True
+            sage: (5 + x).is_square()
+            False
+
+        For prime power moduli, a :exc:`NotImplementedError` is raised::
+
+            sage: R.<x> = PowerSeriesRing(Zmod(8))
+            sage: ((x + 1)^2).is_square()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: is_square() not implemented for power series over Zmod(p^k) with k > 1
         """
+        import sage.rings.abc
+
+        # Zero is always a square
+        if self.is_zero():
+            return True
+
         val = self.valuation()
         if val is not infinity and val % 2 == 1:
             return False
@@ -1600,12 +1629,78 @@ cdef class PowerSeries(AlgebraElement):
             return False
         elif self.base_ring() in _Fields:
             return True
+        # Check if base ring is IntegerModRing
+        elif isinstance(self.base_ring(), sage.rings.abc.IntegerModRing):
+            return self._is_square_crt()
         else:
             try:
                 self.parent()(self.sqrt())
                 return True
             except TypeError:
                 return False
+
+    def _is_square_crt(self):
+        r"""
+        Check if this power series is a square over `\ZZ/n\ZZ` using CRT.
+
+        This method works for squarefree moduli (products of distinct primes).
+        For prime power moduli with exponent > 1, it raises NotImplementedError.
+
+        EXAMPLES::
+
+            sage: R.<x> = PowerSeriesRing(Zmod(6))
+            sage: ((x + 1)^2)._is_square_crt()
+            True
+            sage: (5 + x)._is_square_crt()
+            False
+            sage: R.<x> = PowerSeriesRing(Zmod(15))
+            sage: ((2*x + 3)^2)._is_square_crt()
+            True
+
+        The zero element is always a square::
+
+            sage: R.<x> = PowerSeriesRing(Zmod(6))
+            sage: R(0)._is_square_crt()
+            True
+
+        Elements that reduce to zero modulo some prime factor::
+
+            sage: R.<x> = PowerSeriesRing(Zmod(6))
+            sage: R(4)._is_square_crt()
+            True
+        """
+        from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+
+        base = self.base_ring()
+        n = base.order()
+
+        # Factor n
+        factorization = n.factor()
+
+        # Check if any prime power has exponent > 1
+        for p, e in factorization:
+            if e > 1:
+                raise NotImplementedError(
+                    "is_square() not implemented for power series over Zmod(p^k) with k > 1"
+                )
+
+        # n is squarefree - use CRT
+        # For each prime p, reduce mod p and check if square
+        primes = [p for p, e in factorization]
+
+        for p in primes:
+            Zp = IntegerModRing(p)
+            Rp = self.parent().change_ring(Zp)
+            # Map self to Rp
+            fp = Rp([Zp(c) for c in self.list()]).add_bigoh(self.prec())
+            # Zero is always a square
+            if fp.is_zero():
+                continue
+            # Check if square over the prime field
+            if not fp.is_square():
+                return False
+
+        return True
 
     def sqrt(self, prec=None, extend=False, all=False, name=None):
         r"""
