@@ -519,6 +519,6 @@ def sage_data_paths(name: str = '') -> set[str]:
         for path in site_data_dir("sagemath", multipath=True).split(os.pathsep) + site_data_dir(multipath=True).split(os.pathsep):
             paths.add(path)
     else:
-        paths = {path for path in SAGE_DATA_PATH.split(os.pathsep)}
+        paths = set(SAGE_DATA_PATH.split(os.pathsep))
 
     return {os.path.join(path, name) for path in paths if os.path.exists(path)}
