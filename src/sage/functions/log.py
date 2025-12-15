@@ -925,9 +925,7 @@ class Function_exp_polar(BuiltinFunction):
         OUTPUT:
 
         A complex number with modulus `\exp(a)` and argument `b`.
-
-        If `-\pi < b \leq \pi` then `\operatorname{exp\_polar}(z)=\exp(z)`.
-        For other values of `b` the function is left unevaluated.
+        `\operatorname{exp\_polar}(z)=\exp(z)`.
 
         EXAMPLES:
 
@@ -939,14 +937,6 @@ class Function_exp_polar(BuiltinFunction):
             sage: x = var('x', domain='real')                                           # needs sage.symbolic
             sage: exp_polar(-1/2*I*pi + x)                                              # needs sage.symbolic
             e^(-1/2*I*pi + x)
-
-        The function is left unevaluated when the imaginary part of the
-        input `z` does not satisfy `-\pi < \Im(z) \leq \pi`::
-
-            sage: exp_polar(2*pi*I)                                                     # needs sage.symbolic
-            exp_polar(2*I*pi)
-            sage: exp_polar(-4*pi*I)                                                    # needs sage.symbolic
-            exp_polar(-4*I*pi)
 
         This fixes :issue:`18085`::
 
@@ -971,27 +961,12 @@ class Function_exp_polar(BuiltinFunction):
         r"""
         EXAMPLES:
 
-        If the imaginary part of `z` obeys `-\pi < z \leq \pi`, then
         `\operatorname{exp\_polar}(z)` is evaluated as `\exp(z)`::
 
             sage: exp_polar(1.0 + 2.0*I)                                                # needs sage.symbolic
             -1.13120438375681 + 2.47172667200482*I
-
-        If the imaginary part of `z` is outside of that interval the
-        expression is left unevaluated::
-
-            sage: exp_polar(-5.0 + 8.0*I)                                               # needs sage.symbolic
-            exp_polar(-5.00000000000000 + 8.00000000000000*I)
-
-        An attempt to numerically evaluate such an expression raises an error::
-
-            sage: exp_polar(-5.0 + 8.0*I).n()                                           # needs sage.symbolic
-            Traceback (most recent call last):
-            ...
-            ValueError: invalid attempt to numerically evaluate exp_polar()
         """
-        if (not isinstance(z, Expression) and
-                bool(-const_pi < imag(z) <= const_pi)):
+        if not isinstance(z, Expression):
             return exp(z)
         else:
             raise ValueError("invalid attempt to numerically evaluate exp_polar()")
@@ -1015,7 +990,7 @@ class Function_exp_polar(BuiltinFunction):
         """
         try:
             im = z.imag_part()
-            if not im.variables() and (-const_pi < im <= const_pi):
+            if not im.variables():
                 return exp(z)
         except AttributeError:
             pass
