@@ -329,9 +329,9 @@ class AndersonMotive_general(OreModule):
             self._submodule_class = AndersonSubMotive
             self._quotientModule_class = AndersonQuotientMotive
         else:
-            postfix = cls.__name__[14:]
-            self._submodule_class = dynamic_class("AndersonSubMotive" + postfix, (AndersonSubMotive,), cls)
-            self._quotientModule_class = dynamic_class("AndersonQuotientMotive" + postfix, (AndersonQuotientMotive,), cls)
+            suffix = cls.__name__[14:]
+            self._submodule_class = dynamic_class("AndersonSubMotive" + suffix, (AndersonSubMotive,), cls)
+            self._quotientModule_class = dynamic_class("AndersonQuotientMotive" + suffix, (AndersonQuotientMotive,), cls)
 
     def __reduce__(self):
         r"""
@@ -555,9 +555,11 @@ class AndersonMotive_drinfeld(AndersonMotive_general):
         names = normalize_names(names, r)
 
         cls = category.cls()
-        if cls is not AndersonMotive_drinfeld:
-            postfix = cls.__name__[14:]
-            cls = dynamic_class("AndersonMotive_drinfeld" + postfix, (AndersonMotive_drinfeld,), cls)
+        if cls is AndersonMotive_general:
+            cls = AndersonMotive_drinfeld
+        else:
+            suffix = cls.__name__[14:]
+            cls = dynamic_class("AndersonMotive_drinfeld" + suffix, (AndersonMotive_drinfeld,), cls)
         return cls.__classcall__(cls, tau, category._ore_polring, denominator, names, category, phi, dual)
 
     def __init__(self, mat, ore, denominator, names, category, phi, dual) -> None:
@@ -685,7 +687,7 @@ class AndersonSubMotive(AndersonMotive_general, OreSubmodule):
             <class 'sage.rings.function_field.drinfeld_modules.anderson_motive.AndersonSubMotive_with_category'>
         """
         OreSubmodule.__init__(self, ambient, submodule, names)
-        self._initialize_attributes(ambient._general_class)
+        self._initialize_attributes()
 
     def __reduce__(self):
         r"""
@@ -735,7 +737,7 @@ class AndersonQuotientMotive(AndersonMotive_general, OreQuotientModule):
             <class 'sage.rings.function_field.drinfeld_modules.anderson_motive.AndersonQuotientMotive_with_category'>
         """
         OreQuotientModule.__init__(self, cover, submodule, names)
-        self._initialize_attributes(cover._general_class)
+        self._initialize_attributes()
 
     def __reduce__(self):
         r"""
