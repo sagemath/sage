@@ -523,6 +523,8 @@ class InfiniteWord_iter_with_caching(WordDatatype_iter_with_caching, InfiniteWor
         ....: except TypeError as e:
         ....:     if "pickle" in str(e) and "generator" in str(e):
         ....:         print("TypeError raised in dumps() as expected")
+        ....: except Exception as e:
+        ....:     print("Unexpected exception raised:", e)
         ....: else:
         ....:     print("No exception raised, unexpected")
         TypeError raised in dumps() as expected
@@ -566,7 +568,9 @@ class InfiniteWord_iter(WordDatatype_iter, InfiniteWord_class):
         ....: except TypeError as e:
         ....:     if "pickle" in str(e) and "generator" in str(e):
         ....:         print("TypeError raised in dumps() as expected")
-        ....: else:     
+        ....: except Exception as e:
+        ....:     print("Unexpected exception raised:", e)
+        ....: else:
         ....:     print("No exception raised, unexpected")
         TypeError raised in dumps() as expected
     """
@@ -672,7 +676,9 @@ class Word_iter_with_caching(WordDatatype_iter_with_caching, Word_class):
         ....: except TypeError as e:
         ....:     if "pickle" in str(e) and "generator" in str(e):
         ....:         print("TypeError raised in dumps() as expected")
-        ....: else:     
+        ....: except Exception as e:
+        ....:     print("Unexpected exception raised:", e)
+        ....: else:
         ....:     print("No exception raised, unexpected")
         TypeError raised in dumps() as expected
     """
@@ -713,7 +719,9 @@ class Word_iter(WordDatatype_iter, Word_class):
         ....: except TypeError as e:
         ....:     if "pickle" in str(e) and "generator" in str(e):
         ....:         print("TypeError raised in dumps() as expected")
-        ....: else:     
+        ....: except Exception as e:
+        ....:     print("Unexpected exception raised:", e)
+        ....: else:
         ....:     print("No exception raised, unexpected")
         TypeError raised in dumps() as expected
     """
