@@ -698,25 +698,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
                 self._improve_approximation_for_call(other._G)
                 other._improve_approximation_for_call(self._G)
                 if self._G != other._G:
-                    gcd = self._G.gcd(other._G)
-                    if not gcd.is_one():
-                        # Cached limit valuations are mutable: earlier calls
-                        # to ``_improve_approximation_for_call`` may already
-                        # have replaced ``_G`` by the factor with infinite
-                        # valuation. This can leave one instance with a proper
-                        # factor of the other's ``_G``.
-                        #
-                        # In this situation, force both instances to reduce
-                        # further by calling with the complementary factor.
-                        # (Calling with the common factor itself may be an
-                        # equivalence unit and thus not trigger any reduction.)
-                        if gcd != self._G:
-                            self._improve_approximation_for_call(self._G // gcd)
-                        if gcd != other._G:
-                            other._improve_approximation_for_call(other._G // gcd)
-                        # Recompute after possible reductions.
-                        gcd = self._G.gcd(other._G)
-                    assert gcd.is_one()
+                    assert self._G.gcd(other._G).is_one()
                     return False
 
                 # If the valuations are comparable, they must approximate the
