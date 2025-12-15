@@ -1074,7 +1074,7 @@ class Homset(Set_generic):
         """
         return self.__make_element_class__(morphism.SetMorphism)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         For two homsets, it is tested whether the domain, the codomain and
         the category coincide.
@@ -1094,7 +1094,7 @@ class Homset(Set_generic):
                 and self._codomain == other._codomain
                 and self.__category == other.__category)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check for not-equality of ``self`` and ``other``.
 
@@ -1113,7 +1113,7 @@ class Homset(Set_generic):
         """
         return not (self == other)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Test whether the parent of the argument is ``self``.
 

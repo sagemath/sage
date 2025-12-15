@@ -36,12 +36,12 @@ class Matrix_tropical_dense(Matrix_generic_dense):
     def extremum_cycle_mean(self):
         r"""
         Return the extremal (that is, minimal if the addition is max
-        and maximum is the addition is min) mean weight of this matrix
+        and maximal is the addition is min) mean weight of this matrix
         It is also the smallest/largest eigenvalue of this matrix.
 
         ALGORITHM:
 
-        We implement Karp's algorithm described in []_, Section 1.6.1.
+        We implement Karp's algorithm described in [But2010]_, Section 1.6.1.
 
         EXAMPLES::
 
@@ -62,11 +62,24 @@ class Matrix_tropical_dense(Matrix_generic_dense):
             ....:                [8, 0,  z, z]])
             sage: M.extremum_cycle_mean()
             5/3
+
+        TESTS::
+
+            sage: M = matrix(T, [])
+            sage: M.extremum_cycle_mean()
+            +infinity
+            sage: M = matrix(T, [[]])
+            sage: M.extremum_cycle_mean()
+            Traceback (most recent call last):
+            ...
+            TypeError: matrix must be square
         """
         T = self.base_ring()
         n = self.ncols()
         if self.nrows() != n:
             raise TypeError("matrix must be square")
+        if self.is_zero():
+            return T.zero()
         v = matrix(1, n, n*[T.one()])
         vs = [v]
         for _ in range(n):
@@ -74,11 +87,12 @@ class Matrix_tropical_dense(Matrix_generic_dense):
             vs.append(v)
         w = [vs[n][0,j].lift() for j in range(n)]
         if T._use_min:
-            return min(max((w[j] - vs[k][0,j].lift()) / (n-k) for k in range(n))
-                       for j in range(n) if w[j] is not infinity)
+            f, fp = max, min
         else:
-            return max(min((w[j] - vs[k][0,j].lift()) / (n-k) for k in range(n))
-                       for j in range(n) if w[j] is not infinity)
+            f, fp = min, max
+        ans = fp(f((w[j] - vs[k][0,j].lift()) / (n-k) for k in range(n))
+                 for j in range(n) if w[j] is not infinity)
+        return T(ans)
 
     def weak_transitive_closure(self):
         r"""
@@ -95,6 +109,10 @@ class Matrix_tropical_dense(Matrix_generic_dense):
 
         We implement the Floyd-Warshall algorithm described in
         [But2010]_, Algorithm 1.6.21.
+
+        .. SEEALSO::
+
+            :meth:`strong_transitive_closure`
 
         EXAMPLES::
 
@@ -128,9 +146,15 @@ class Matrix_tropical_dense(Matrix_generic_dense):
             ...
             ValueError: negative cycle exists
 
-        .. SEEALSO::
+        TESTS::
 
-            :meth:`strong_transitive_closure`
+            sage: T = TropicalSemiring(QQ, use_min=False)
+            sage: M = matrix(T, [[ 1,  2],
+            ....:                [-2, -3]])
+            sage: M.weak_transitive_closure()
+            Traceback (most recent call last):
+            ...
+            ValueError: positive cycle exists
         """
         T = self.base_ring()
         n = self.ncols()
@@ -168,6 +192,10 @@ class Matrix_tropical_dense(Matrix_generic_dense):
         We implement the Floyd-Warshall algorithm described in
         [But2010]_, Algorithm 1.6.21.
 
+        .. SEEALSO::
+
+            :meth:`weak_transitive_closure`
+
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ, use_min=False)
@@ -189,10 +217,6 @@ class Matrix_tropical_dense(Matrix_generic_dense):
             Traceback (most recent call last):
             ...
             ValueError: negative cycle exists
-
-        .. SEEALSO::
-
-            :meth:`weak_transitive_closure`
         """
         return self.parent().identity_matrix() + self.weak_transitive_closure()
 
