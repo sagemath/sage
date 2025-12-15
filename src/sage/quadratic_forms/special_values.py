@@ -150,8 +150,7 @@ def zeta__exact(n):
             from sage.symbolic.constants import pi
 
             return ZZ(-1)**(n // 2 + 1) * ZZ(2)**(n - 1) * pi**n * bernoulli(n) / factorial(n)
-        else:
-            raise TypeError("n must be a critical value (i.e. even > 0 or odd < 0)")
+        raise TypeError("n must be a critical value (i.e. even > 0 or odd < 0)")
     return infinity if n == 1 else QQ((-1, 2))
 
 
@@ -251,8 +250,7 @@ def quadratic_L_function__exact(n, d):
 
     if delta == 0:
         raise TypeError("n must be a critical value (i.e. even > 0 or odd < 0)")
-    if delta == 1:
-        raise TypeError("n must be a critical value (i.e. odd > 0 or even <= 0)")
+    raise TypeError("n must be a critical value (i.e. odd > 0 or even <= 0)")
 
 
 def quadratic_L_function__numerical(n, d, num_terms=1000):
