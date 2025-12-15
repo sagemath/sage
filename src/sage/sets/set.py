@@ -1102,9 +1102,7 @@ class Set_object_enumerated(Set_object):
             sage: Y.isdisjoint(Z)
             False
         """
-        if not isinstance(other, Set_object_enumerated):
-            raise NotImplementedError
-        return self.set().isdisjoint(other.set())
+        return self.set().isdisjoint(other)
 
     is_disjoint = isdisjoint
 
