@@ -413,7 +413,7 @@ class WordMorphism(SageObject):
                 if isinstance(domain, FiniteOrInfiniteWords):
                     domain = domain.finite_words()
                 elif not isinstance(domain, FiniteWords):
-                    raise TypeError("the codomain must be a set of finite words")
+                    raise TypeError("the domain must be a set of finite words")
                 A = domain.alphabet()
                 if len(self._morph) != A.cardinality() or not all(a in A for a in self._morph):
                     raise ValueError('invalid input; the keys of the dictionary must coincide with the domain alphabet')
@@ -1357,14 +1357,42 @@ class WordMorphism(SageObject):
             sage: (t*t).is_identity()
             True
         """
-        if self.domain() != self.codomain():
+        if not self.is_letter_permutation():
             return False
+        return all(self.image(letter)[0] == letter
+                   for letter in self.domain().alphabet())
 
+    def is_letter_permutation(self):
+        r"""
+        Return ``True`` if ``self`` is a letter permutation.
+
+        EXAMPLES::
+
+            sage: WordMorphism('a->b,b->a').is_letter_permutation()
+            True
+            sage: WordMorphism('a->b,b->ba').is_letter_permutation()
+            False
+            sage: WordMorphism({0:[1],1:[0]}).is_letter_permutation()
+            True
+            sage: WordMorphism('a->c,b->a,c->b').is_letter_permutation()
+            True
+
+        TESTS::
+
+            sage: WordMorphism('').is_letter_permutation()
+            True
+            sage: WordMorphism({0:1,1:0,2:3}).is_letter_permutation()
+            False
+            sage: WordMorphism('a->c,b->c,c->b').is_letter_permutation()
+            False
+            sage: WordMorphism('a->').is_letter_permutation()
+            False
+        """
+        if not self.is_endomorphism():
+            return False
         for letter in self.domain().alphabet():
             img = self.image(letter)
             if img.length() != 1:
-                return False
-            elif img[0] != letter:
                 return False
         return True
 
@@ -1411,7 +1439,7 @@ class WordMorphism(SageObject):
             sage: m.partition_of_domain_alphabet()
             Traceback (most recent call last):
             ...
-            TypeError: self (=a->b, b->a, c->a) is not an endomorphism
+            TypeError: self is not an involution
         """
         if not self.is_involution():
             raise TypeError("self is not an involution")
@@ -1445,19 +1473,18 @@ class WordMorphism(SageObject):
             False
             sage: WordMorphism({0:[1],1:[0]}).is_involution()
             True
+            sage: WordMorphism('a->,b->c').is_involution()
+            False
 
         TESTS::
 
             sage: WordMorphism('').is_involution()
             True
             sage: WordMorphism({0:1,1:0,2:3}).is_involution()
-            Traceback (most recent call last):
-            ...
-            TypeError: self (=0->1, 1->0, 2->3) is not an endomorphism
+            False
         """
-        if not self.is_endomorphism():
-            raise TypeError("self (=%s) is not an endomorphism" % self)
-
+        if not self.is_letter_permutation():
+            return False
         return (self * self).is_identity()
 
     def pisot_eigenvector_right(self):
