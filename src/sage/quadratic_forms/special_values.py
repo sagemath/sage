@@ -95,8 +95,8 @@ def zeta__exact(n):
     r"""
     Return the exact value of the Riemann Zeta function.
 
-    The argument must be a critical value, namely either positive even
-    or negative odd.
+    The argument `n` must be an integer which is a critical value,
+    namely either positive even or negative odd.
 
     See for example [Iwa1972]_, p13, Special value of `\zeta(2k)`
 
@@ -152,10 +152,7 @@ def zeta__exact(n):
             return ZZ(-1)**(n // 2 + 1) * ZZ(2)**(n - 1) * pi**n * bernoulli(n) / factorial(n)
         else:
             raise TypeError("n must be a critical value (i.e. even > 0 or odd < 0)")
-    if n == 1:
-        return infinity
-    if n == 0:
-        return QQ((-1, 2))
+    return infinity if n == 1 else QQ((-1, 2))
 
 
 # ---------- Dirichlet L-functions with quadratic characters ----------
@@ -206,7 +203,7 @@ def quadratic_L_function__exact(n, d):
     Return the exact value of a quadratic twist of the Riemann Zeta function
     by `\chi_d(x) = \left(\frac{d}{x}\right)`.
 
-    The input `n` must be a critical value.
+    The input `n` must be an integer which is a critical value.
 
     EXAMPLES::
 
@@ -232,30 +229,30 @@ def quadratic_L_function__exact(n, d):
     """
     if n <= 0:
         return QuadraticBernoulliNumber(1 - n, d) / (n - 1)
-    if n >= 1:
-        # Compute the kind of critical values (p10)
-        if kronecker_symbol(fundamental_discriminant(d), -1) == 1:
-            delta = 0
-        else:
-            delta = 1
 
-        # Compute the positive special values (p17)
-        if not (n - delta) % 2:
-            from sage.symbolic.constants import I, pi
+    # Compute the kind of critical values (p10)
+    if kronecker_symbol(fundamental_discriminant(d), -1) == 1:
+        delta = 0
+    else:
+        delta = 1
 
-            f = abs(fundamental_discriminant(d))
-            GS = f.sqrt() if delta == 0 else I * f.sqrt()
-            ans = (2 * pi / f)**n
-            ans *= ZZ(-1)**(1 + (n - delta) // 2)
-            ans *= GS     # Evaluate the Gauss sum here! =0
-            ans *= QQ.one() / (2 * I**delta)
-            ans *= QuadraticBernoulliNumber(n, d) / factorial(n)
-            return ans
+    # Compute the positive special values (p17)
+    if not (n - delta) % 2:
+        from sage.symbolic.constants import I, pi
 
-        if delta == 0:
-            raise TypeError("n must be a critical value (i.e. even > 0 or odd < 0)")
-        if delta == 1:
-            raise TypeError("n must be a critical value (i.e. odd > 0 or even <= 0)")
+        f = abs(fundamental_discriminant(d))
+        GS = f.sqrt() if delta == 0 else I * f.sqrt()
+        ans = (2 * pi / f)**n
+        ans *= ZZ(-1)**(1 + (n - delta) // 2)
+        ans *= GS     # Evaluate the Gauss sum here! =0
+        ans *= QQ.one() / (2 * I**delta)
+        ans *= QuadraticBernoulliNumber(n, d) / factorial(n)
+        return ans
+
+    if delta == 0:
+        raise TypeError("n must be a critical value (i.e. even > 0 or odd < 0)")
+    if delta == 1:
+        raise TypeError("n must be a critical value (i.e. odd > 0 or even <= 0)")
 
 
 def quadratic_L_function__numerical(n, d, num_terms=1000):
