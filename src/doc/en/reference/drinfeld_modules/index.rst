@@ -11,6 +11,7 @@ Drinfeld modules
 .. toctree::
    :maxdepth: 2
 
+   sage/rings/function_field/drinfeld_modules/carlitz_module
    sage/rings/function_field/drinfeld_modules/drinfeld_module
    sage/rings/function_field/drinfeld_modules/drinfeld_module_charzero
    sage/rings/function_field/drinfeld_modules/drinfeld_module_finite
@@ -32,5 +33,6 @@ Anderson motives
    :maxdepth: 2
 
    sage/rings/function_field/drinfeld_modules/anderson_motive
+   sage/rings/function_field/drinfeld_modules/anderson_motive_rational
 
 .. include:: ../footer.txt

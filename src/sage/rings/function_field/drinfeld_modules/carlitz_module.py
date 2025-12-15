@@ -1,5 +1,5 @@
 r"""
-Carlitz module
+The Carlitz module and related functions
 
 AUTHORS:
 

@@ -1,5 +1,13 @@
+r"""
+Anderson motives over $\GF{q}[T, z]$
+
+AUTHOR:
+
+- Xavier Caruso (2025-12): initial version
+"""
+
 # *****************************************************************************
-#        Copyright (C) 2024 Xavier Caruso <xavier.caruso@normalesup.org>
+#        Copyright (C) 2025 Xavier Caruso <xavier.caruso@normalesup.org>
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -63,8 +71,8 @@ class AndersonMotive_rational(AndersonMotive_general):
         self._t_name = self.base().variable_name()
         self._K_int = Kint = K.ring()
         self._AK_int = PolynomialRing(Kint, name=self._t_name)
-        self._theta_int = Kint.gen()
-        self._theta_name = Kint.variable_name()
+        self._z_int = Kint.gen()
+        self._z_name = Kint.variable_name()
 
     @lazy_attribute
     def _tau_int(self):
@@ -205,7 +213,7 @@ class AndersonMotive_rational(AndersonMotive_general):
             a = -place[0]
         else:
             a = F.gen()
-        A = self._A
+        A = self.function_ring()
         F = F.over(A.hom([a]))
 
         B = PolynomialRing(F, self._t_name)
@@ -221,7 +229,7 @@ class AndersonMotive_rational(AndersonMotive_general):
         category = AndersonMotives(F)
         return AndersonMotive_general(category, tau, self._twist)
 
-    def local_factor(self, place, x='x'):
+    def local_factor(self, place, var='X'):
         place = normalize_place(self._K_int, place, infty=False)
         _, taus = self._local_maximal_model(place)
 
@@ -232,7 +240,7 @@ class AndersonMotive_rational(AndersonMotive_general):
             a = -place[0]
         else:
             a = F.gen()
-        A = self._A
+        A = self.function_ring()
         B = PolynomialRing(F, self._t_name)
         phiB = B.hom([B.gen()], base_map = F.frobenius_endomorphism(self._deg))
         r = self.rank()
@@ -249,15 +257,17 @@ class AndersonMotive_rational(AndersonMotive_general):
             tau = tau.parent()([phiB(y) for y in tau.list()])
             T = tau * T
 
-        chi = T.charpoly(var=x).reverse() # .change_ring(A), fix this!
+        chi = T.charpoly(var=var).reverse()
         x = chi.parent().gen()
         t = B.gen()
-        return chi(x**d / place(t) ** self._twist)
+        L = chi(x**d / place(t) ** self._twist)
+        return L.change_ring(A)
 
-    def Lseries(self, place, prec, x=None, a=None, u=None, verbose=False):
+    def Lseries(self, place=Infinity, prec=20, x=None, verbose=False):
         n = self.rank()
         h = self._twist
         q = self._q
+        place = normalize_place(self._K_int, place)
 
         tme = walltime()
 
@@ -271,17 +281,12 @@ class AndersonMotive_rational(AndersonMotive_general):
             prectau = prec
 
         # Construct the completion
-        if a is None:
-            a = 'a'
-        if u is None:
-            u = 'u'
-        completion = MorphismToCompletion(self._A, place, prectau, a, u)
-        place = completion.place()
-        C = completion.codomain()
-        k = completion.residue_field()
-        t = completion(self._A.gen())   # t in C
-        Ctheta = PolynomialRing(C, self._theta_name)
-        theta = Ctheta.gen()
+        A = self.function_ring()
+        C = A.completion(place, prectau)
+        k = C.residue_field()
+        t = C(A.gen())   # t in C
+        Cz = PolynomialRing(C, self._z_name)
+        z = Cz.gen()
 
         S = PolynomialRing(C, name='x')
 
@@ -292,7 +297,7 @@ class AndersonMotive_rational(AndersonMotive_general):
         corr_num = S.one()
         corr_denom = S.one()
         for pl in self._bad_places:
-            if place is not Infinity and pl == place(self._theta):
+            if place is not Infinity and pl == place(self._z):
                 continue
             _, taus = self._local_maximal_model(pl)
             if taus is None:
@@ -344,27 +349,27 @@ class AndersonMotive_rational(AndersonMotive_general):
         hi = h
         current_prec = 1
         if place is Infinity:
-            v = Ctheta(C.gen().add_bigoh(prectau - h))
+            v = Cz(C.uniformizer().add_bigoh(prectau - h))
             rho = v ** h
             while current_prec < prectau - h:
                 hj = ceil(hi / q)
                 e = q*hj - hi
-                vt = 1 - v*theta
+                vt = 1 - v*z
                 rho *= vt ** e
                 hi = hj
                 v = v ** q
                 current_prec *= q
         else:
-            d = completion.degree()
+            d = place.degree()
             v = t.add_bigoh(prec)
             a = v[0]
             m = 0
             ev = -h
-            rho = Ctheta(1)
+            rho = Cz(1)
             while current_prec < prectau:
                 hj = ceil(hi / q)
                 e = q*hj - hi
-                rho *= (v - theta) ** e
+                rho *= (v - z) ** e
                 ev -= e * q**m
                 hi = hj
                 v = v ** q
@@ -373,21 +378,21 @@ class AndersonMotive_rational(AndersonMotive_general):
             ev %= q**d - 1
             for _ in range(d):
                 ev, e = ev.quo_rem(q)
-                rho *= (a - theta) ** (e + q - 1)
+                rho *= (a - z) ** (e + q - 1)
                 a = a ** q
 
         if verbose:
             print(" [%.5f] rho computed" % walltime(tme))
 
         # Computation of tau*
-        u = Ctheta.gen()
+        u = Cz.gen()
         B = [ ]
         vals = [ ]
         kmax = 1
         for entry in self._tau_int.list():
-            e = Ctheta.zero()
+            e = Cz.zero()
             for i in range(entry.degree() + 1):
-                e += entry[i](theta) * t**i
+                e += entry[i](z) * t**i
             e *= rho
             B.append(e)
             kmax = max(kmax, e.degree() // (q - 1))
@@ -423,10 +428,10 @@ class AndersonMotive_rational(AndersonMotive_general):
         elif isinstance(x, str):
             return L.change_variable_name(x)
         else:
-            return L(completion(x))
+            return L(C(x))
 
-    def special_value(self, place, prec, a=None, u=None, verbose=False):
-        L = self.Lseries(place, prec, a=a, u=u, verbose=verbose)
+    def special_value(self, place=Infinity, prec=20, verbose=False):
+        L = self.Lseries(place, prec, verbose=verbose)
         x = L.parent().gen()
         order = 0
         value = L(1)
