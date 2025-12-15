@@ -279,7 +279,7 @@ class UniqueFactorizationDomains(Category_singleton):
                 10
             """
             if self.is_zero():
-                raise ArithmeticError("radical of 0 is not defined")
+                return self
             try:
                 decomp = self.squarefree_decomposition()
             except AttributeError:
