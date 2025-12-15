@@ -197,6 +197,7 @@ AUTHOR:
 #                   http://www.gnu.org/licenses/
 # *****************************************************************************
 
+from sage.structure.dynamic_class import dynamic_class
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.latex import latex
 
@@ -299,11 +300,7 @@ class AndersonMotive_general(OreModule):
         denominator = Factorization([(category.divisor(), twist)])
         ore = category._ore_polring
 
-        # if (isinstance(K, FractionField_1poly_field)
-        #     and category.constant_coefficient() == K.gen()):
-        #     from sage.rings.function_field.drinfeld_modules.anderson_motive_rational import AndersonMotive_rational
-        #     cls = AndersonMotive_rational
-
+        cls = category.cls()
         return cls.__classcall__(cls, tau, ore, denominator, names, category)
 
     def __init__(self, mat, ore, denominator, names, category) -> None:
@@ -313,7 +310,7 @@ class AndersonMotive_general(OreModule):
         OreModule.__init__(self, mat, ore, denominator, names, category)
         self._initialize_attributes()
 
-    def _initialize_attributes(self):
+    def _initialize_attributes(self, cls=None):
         r"""
         Set the main attributes to this Anderson motive.
 
@@ -327,9 +324,14 @@ class AndersonMotive_general(OreModule):
             [(_, self._twist)] = self._denominator
         else:
             self._twist = 0
-        self._general_class = AndersonMotive_general
-        self._submodule_class = AndersonSubMotive
-        self._quotientModule_class = AndersonQuotientMotive
+        cls = self._general_class = self._category.cls()
+        if cls is AndersonMotive_general:
+            self._submodule_class = AndersonSubMotive
+            self._quotientModule_class = AndersonQuotientMotive
+        else:
+            postfix = cls.__name__[14:]
+            self._submodule_class = dynamic_class("AndersonSubMotive" + postfix, (AndersonSubMotive,), cls)
+            self._quotientModule_class = dynamic_class("AndersonQuotientMotive" + postfix, (AndersonQuotientMotive,), cls)
 
     def __reduce__(self):
         r"""
@@ -551,6 +553,11 @@ class AndersonMotive_drinfeld(AndersonMotive_general):
                 tau[r-1, i] = -P[i]/P[r]
             denominator = Factorization([])
         names = normalize_names(names, r)
+
+        cls = category.cls()
+        if cls is not AndersonMotive_drinfeld:
+            postfix = cls.__name__[14:]
+            cls = dynamic_class("AndersonMotive_drinfeld" + postfix, (AndersonMotive_drinfeld,), cls)
         return cls.__classcall__(cls, tau, category._ore_polring, denominator, names, category, phi, dual)
 
     def __init__(self, mat, ore, denominator, names, category, phi, dual) -> None:
@@ -678,7 +685,7 @@ class AndersonSubMotive(AndersonMotive_general, OreSubmodule):
             <class 'sage.rings.function_field.drinfeld_modules.anderson_motive.AndersonSubMotive_with_category'>
         """
         OreSubmodule.__init__(self, ambient, submodule, names)
-        self._initialize_attributes()
+        self._initialize_attributes(ambient._general_class)
 
     def __reduce__(self):
         r"""
@@ -728,7 +735,7 @@ class AndersonQuotientMotive(AndersonMotive_general, OreQuotientModule):
             <class 'sage.rings.function_field.drinfeld_modules.anderson_motive.AndersonQuotientMotive_with_category'>
         """
         OreQuotientModule.__init__(self, cover, submodule, names)
-        self._initialize_attributes()
+        self._initialize_attributes(cover._general_class)
 
     def __reduce__(self):
         r"""

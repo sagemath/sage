@@ -342,6 +342,18 @@ class AndersonMotives(OreModules):
         AKtau = self._ore_polring
         return [OreModules(AKtau.base(), AKtau)]
 
+    def cls(self):
+        from sage.rings.fraction_field import FractionField_1poly_field
+        K = self._base_combined.base_ring()
+        if (isinstance(K, FractionField_1poly_field)
+        and self._constant_coefficient == K.gen()):
+            from sage.rings.function_field.drinfeld_modules.anderson_motive_rational import AndersonMotive_rational
+            cls = AndersonMotive_rational
+        else:
+            from sage.rings.function_field.drinfeld_modules.anderson_motive import AndersonMotive_general
+            cls = AndersonMotive_general
+        return cls
+
     class ParentMethods:
 
         def function_ring(self):
