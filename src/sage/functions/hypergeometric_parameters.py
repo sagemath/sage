@@ -131,6 +131,8 @@ class HypergeometricParameters(SageObject):
             and self.top == other.top and self.bottom == other.bottom)
 
     def is_balanced(self):
+        # balanced is already in use for a different property of hypergeometric functions
+        # https://mathworld.wolfram.com/k-Balanced.html
         r"""
         Return ``True`` if there are as many top parameters as bottom
         parameters; ``False`` otherwise.
