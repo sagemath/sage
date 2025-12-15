@@ -1130,9 +1130,7 @@ class Set_object_enumerated(Set_object):
             sage: len([Z for Z in Y.subsets() if Z.issubset(X)])
             8
         """
-        if not isinstance(other, Set_object_enumerated):
-            raise NotImplementedError
-        return self.set().issubset(other.set())
+        return self.set().issubset(other)
 
     is_subset = issubset
 
@@ -1160,9 +1158,7 @@ class Set_object_enumerated(Set_object):
             sage: len([Z for Z in Y.subsets() if Z.issuperset(X)])
             4
         """
-        if not isinstance(other, Set_object_enumerated):
-            raise NotImplementedError
-        return self.set().issuperset(other.set())
+        return self.set().issuperset(other)
 
     is_superset = issuperset
 
