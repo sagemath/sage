@@ -542,7 +542,6 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             - The ``'pari'`` algorithm uses PARI's ``qfminim()`` function 
               which computes exact solutions but may be slow for large 
               dimensions.
-            
             - The ``'fplll'`` algorithm uses fpylll's SVP solver which by 
               default uses enumeration to find exact solutions. The behavior 
               can be modified by passing additional parameters through 
