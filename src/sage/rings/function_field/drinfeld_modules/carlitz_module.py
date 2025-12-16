@@ -205,4 +205,4 @@ def carlitz_zeta(A, s, prec=20):
     category = AndersonMotives(K.coerce_map_from(A))
     tau = identity_matrix(category.base(), 1)
     M = AndersonMotive_general(category, tau, twist=s)
-    return M._Lseries(Infinity, prec, 1, True, False)
+    return M._Lseries(1, Infinity, prec, True, False)
