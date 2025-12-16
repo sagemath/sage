@@ -247,7 +247,7 @@ class AndersonMotive_rational(AndersonMotive_general):
         L = chi(x**d / place(t) ** self._twist)
         return L.change_ring(A)
 
-    def _Lseries(self, place, prec, x, model, verbose):
+    def _Lseries(self, x, place, prec, model, verbose):
         n = self.rank()
         h = self._twist
         q = self._q
@@ -404,20 +404,18 @@ class AndersonMotive_rational(AndersonMotive_general):
             print(" [%.5f] L-series computed" % walltime(tme))
 
         # Format and return the final result
-        if x is None:
-            return L
-        elif isinstance(x, str):
+        if isinstance(x, str):
             return L.change_variable_name(x)
         else:
             return L(C(x))
 
-    def Lseries(self, place=Infinity, prec=20, x=None, verbose=False):
+    def Lseries(self, x='X', place=Infinity, prec=20, verbose=False):
         # TODO: handle infinite precision here
         place = normalize_place(self._K_int, place)
-        return self._Lseries(place, prec, x, True, verbose)
+        return self._Lseries(x, place, prec, True, verbose)
 
     def special_value(self, place=Infinity, prec=20, verbose=False):
-        L = self._Lseries(place, prec, None, True, verbose)
+        L = self._Lseries('x', place, prec, True, verbose)
         x = L.parent().gen()
         order = 0
         value = L(1)

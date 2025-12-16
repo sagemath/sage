@@ -664,10 +664,10 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
         # polynomial of N
         return A(N.charpoly())
 
-    def Lseries(self, place=Infinity, prec=20, x=None, verbose=False):
+    def Lseries(self, x='X', place=Infinity, prec=20, verbose=False):
         # TODO: handle infinite precision here
         place = normalize_place(self.function_ring(), place)
         if any(g.denominator() != 1 for g in self.coefficients(True)):
             raise ValueError("coefficients are not polynomials")
         M = self.anderson_motive(dual=True)
-        return M._Lseries(place, prec, x, True, verbose)
+        return M._Lseries(x, place, prec, True, verbose)
