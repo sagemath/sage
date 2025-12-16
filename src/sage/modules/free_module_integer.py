@@ -537,7 +537,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         .. NOTE::
 
-            This method attempts to find an **exact** solution to the 
+            This method attempts to find an **exact** solution to the
             Shortest Vector Problem (SVP) for both algorithms. However:
             
             - The ``'pari'`` algorithm uses PARI's ``qfminim()`` function 
