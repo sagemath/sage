@@ -553,7 +553,6 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             Unlike :meth:`approximate_closest_vector`, this method 
             prioritizes exactness over speed, which may result in long 
             computation times for high-dimensional lattices.
-        
         INPUT:
 
         - ``update_reduced_basis`` -- boolean (default: ``True``); set this
