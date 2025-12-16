@@ -20,7 +20,7 @@ REFERENCES:
 
 """
 from itertools import pairwise
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.categories.finite_lattice_posets import FiniteLatticePosets
 from sage.combinat.posets.lattices import LatticePoset
