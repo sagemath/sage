@@ -486,6 +486,15 @@ cdef class WordDatatype_char(WordDatatype):
             return FiniteWord_class.concatenate(self, other)
 
     def __rmul__(self, other):
+        r"""
+        Return the concatenation ``other * self``.
+
+        TESTS:
+
+            sage: W = Words(IntegerRange(0,255))
+            sage: [1] * W([0])
+            word: 10
+        """
         cdef WordDatatype_char w
 
         if isinstance(other, (tuple, list)):
@@ -496,7 +505,7 @@ cdef class WordDatatype_char(WordDatatype):
 
         else:
             from sage.combinat.words.finite_word import FiniteWord_class
-            return FiniteWord_class.concatenate(self, other)
+            return FiniteWord_class.concatenate(other, self)
 
     def __add__(self, other):
         r"""
