@@ -431,6 +431,25 @@ class DrinfeldModule_charzero(DrinfeldModule):
         return self._compute_goss_polynomial(n, q, poly_ring, X)
 
 
+# Drinfeld modules over Frac(A)
+
+def normalize_place(A, place, infty=True):
+    if infty and place is Infinity:
+        return place
+    if place in A.base_ring():
+        return A.gen() - place
+    elif place in A:
+        place = A(place)
+        if place.degree() == 0:
+            return A.gen() - place
+        if place.is_irreducible():
+            return place.monic()
+    if infty:
+        raise ValueError("place must be Infinity or an irreducible polynomial")
+    else:
+        raise ValueError("place must an irreducible polynomial")
+
+
 class DrinfeldModule_rational(DrinfeldModule_charzero):
     """
     A class for Drinfeld modules defined over the fraction
@@ -644,3 +663,11 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
         # The class polynomial is then the characteristic
         # polynomial of N
         return A(N.charpoly())
+
+    def Lseries(self, place=Infinity, prec=20, x=None, verbose=False):
+        # TODO: handle infinite precision here
+        place = normalize_place(self.function_ring(), place)
+        if any(g.denominator() != 1 for g in self.coefficients(True)):
+            raise ValueError("coefficients are not polynomials")
+        M = self.anderson_motive(dual=True)
+        return M._Lseries(place, prec, x, True, verbose)

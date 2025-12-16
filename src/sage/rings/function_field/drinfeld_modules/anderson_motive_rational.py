@@ -33,23 +33,7 @@ from sage.rings.laurent_series_ring import LaurentSeriesRing
 
 from sage.categories.anderson_motives import AndersonMotives
 from sage.rings.function_field.drinfeld_modules.anderson_motive import AndersonMotive_general
-
-
-def normalize_place(A, place, infty=True):
-    if infty and place is Infinity:
-        return place
-    if place in A.base_ring():
-        return A.gen() - place
-    elif place in A:
-        place = A(place)
-        if place.degree() == 0:
-            return A.gen() - place
-        if place.is_irreducible():
-            return place.monic()
-    if infty:
-        raise ValueError("place must be Infinity or an irreducible polynomial")
-    else:
-        raise ValueError("place must an irreducible polynomial")
+from sage.rings.function_field.drinfeld_modules.drinfeld_module_charzero import normalize_place
 
 
 class AndersonMotive_rational(AndersonMotive_general):
@@ -263,11 +247,10 @@ class AndersonMotive_rational(AndersonMotive_general):
         L = chi(x**d / place(t) ** self._twist)
         return L.change_ring(A)
 
-    def Lseries(self, place=Infinity, prec=20, x=None, verbose=False):
+    def _Lseries(self, place, prec, x, model, verbose):
         n = self.rank()
         h = self._twist
         q = self._q
-        place = normalize_place(self._K_int, place)
 
         tme = walltime()
 
@@ -296,54 +279,52 @@ class AndersonMotive_rational(AndersonMotive_general):
         # Correction at bad places
         corr_num = S.one()
         corr_denom = S.one()
-        for pl in self._bad_places:
-            if place is not Infinity and pl == place(self._z):
-                continue
-            _, taus = self._local_maximal_model(pl)
-            if taus is None:
-                continue
-            tau0, tau1 = taus
-            d = pl.degree()
-            A = tau0.base_ring()
-            F = A.base_ring()
-            phiA = A.hom([A.gen()], base_map = F.frobenius_endomorphism(self._deg))
-            T0 = tau0; T1 = tau1
-            for _ in range(1, d):
-                tau0 = tau0.parent()([phiA(y) for y in tau0.list()])
-                T0 = tau0 * T0
-                tau1 = tau1.parent()([phiA(y) for y in tau1.list()])
-                T1 = tau1 * T1
-            if d > 1:
-                ell = PolynomialRing(k, name='w').quo(pl)
-                Aell = A.change_ring(ell)
-                T0 = T0.change_ring(Aell)
-                T1 = T1.change_ring(Aell)
-                Cell = PowerSeriesRing(ell, name='x')
-                v = Cell([t[i] for i in range(prectau)], prec=prectau)
-            else:
-                Cell = C
-                v = t.add_bigoh(prectau)
-            T0 = matrix(n, n, [f(v).add_bigoh(prectau) for f in T0.list()])
-            T1 = matrix(n, n, [f(v).add_bigoh(prectau) for f in T1.list()])
-            scalar = pl(v) ** (-h)
-            chi0 = (scalar*T0).charpoly()
-            chi1 = (scalar*T1).charpoly()
-            if d > 1:
-                coeffs = []
-                for z in chi0.list():
-                    coeff = C([y.lift()[0] for y in z.list()], z.valuation(), z.precision_absolute())
-                    coeffs += [coeff] + (d-1)*[C.zero()]
-                chi0 = S(coeffs)
-                coeffs = []
-                for z in chi1.list():
-                    coeff = C([y.lift()[0] for y in z.list()], z.valuation(), z.precision_absolute())
-                    coeffs += [coeff] + (d-1)*[C.zero()]
-                chi1 = S(coeffs)
-            corr_num *= chi0
-            corr_denom *= chi1
-
-        if verbose:
-            print(" [%.5f] bad places handled" % walltime(tme))
+        if not model:
+            for pl in self._bad_places:
+                if place is not Infinity and pl == place(self._z):
+                    continue
+                _, taus = self._local_maximal_model(pl)
+                if taus is None:
+                    continue
+                tau0, tau1 = taus
+                d = pl.degree()
+                A = tau0.base_ring()
+                F = A.base_ring()
+                phiA = A.hom([A.gen()], base_map = F.frobenius_endomorphism(self._deg))
+                T0 = tau0; T1 = tau1
+                for _ in range(1, d):
+                    tau0 = tau0.parent()([phiA(y) for y in tau0.list()])
+                    T0 = tau0 * T0
+                    tau1 = tau1.parent()([phiA(y) for y in tau1.list()])
+                    T1 = tau1 * T1
+                if d > 1:
+                    ell = PolynomialRing(k, name='w').quo(pl)
+                    Aell = A.change_ring(ell)
+                    T0 = T0.change_ring(Aell)
+                    T1 = T1.change_ring(Aell)
+                    Cell = Aell.completion(place, prectau)
+                    v = Cell(t).add_bigoh(prectau)
+                else:
+                    Cell = C
+                    v = t.add_bigoh(prectau)
+                T0 = matrix(n, n, [f(v).add_bigoh(prectau) for f in T0.list()])
+                T1 = matrix(n, n, [f(v).add_bigoh(prectau) for f in T1.list()])
+                scalar = pl(v) ** (-h)
+                chi0 = (scalar*T0).charpoly()
+                chi1 = (scalar*T1).charpoly()
+                if d > 1:
+                    coeffs = []
+                    for z in chi0.list():
+                        coeffs += [C(z)] + (d-1)*[C.zero()]
+                    chi0 = S(coeffs)
+                    coeffs = []
+                    for z in chi1.list():
+                        coeffs += [C(z)] + (d-1)*[C.zero()]
+                    chi1 = S(coeffs)
+                corr_num *= chi0
+                corr_denom *= chi1
+            if verbose:
+                print(" [%.5f] bad places handled" % walltime(tme))
 
         # Computation of rho
         hi = h
@@ -430,8 +411,13 @@ class AndersonMotive_rational(AndersonMotive_general):
         else:
             return L(C(x))
 
+    def Lseries(self, place=Infinity, prec=20, x=None, verbose=False):
+        # TODO: handle infinite precision here
+        place = normalize_place(self._K_int, place)
+        return self._Lseries(place, prec, x, True, verbose)
+
     def special_value(self, place=Infinity, prec=20, verbose=False):
-        L = self.Lseries(place, prec, verbose=verbose)
+        L = self._Lseries(place, prec, None, True, verbose)
         x = L.parent().gen()
         order = 0
         value = L(1)
