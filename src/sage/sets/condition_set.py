@@ -394,7 +394,11 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
 
     def random_element(self):
         """
-        Return a random element in this set. Note that this might run forever.
+        Return a random element in this set.
+
+        .. WARNING::
+
+            This might run forever.
 
         EXAMPLES::
 

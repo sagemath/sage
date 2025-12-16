@@ -198,6 +198,8 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
 
     def random_element(self):
         """
+        Return a random element of ``self``.
+
         EXAMPLES::
 
             sage: NonNegativeIntegers().an_element()

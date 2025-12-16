@@ -621,8 +621,8 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
 
         EXAMPLES::
 
-            sage: Set(ZZ).random_element()  # random
-            4
+            sage: Set(ZZ).random_element() in ZZ
+            True
         """
         if self.__object is self:
             raise NotImplementedError  # some subclasses uses __object weirdly...
@@ -1532,12 +1532,16 @@ class Set_object_union(Set_object_binary):
     def random_element(self):
         """
         Return a random element in this set.
-        Note that even when the set is finite, the distribution may not be uniform.
+
+        .. NOTE::
+
+            Even when the set is finite, the distribution may not be uniform.
 
         EXAMPLES::
 
-            sage: x = (Set(ZZ) | Set(RR)).random_element(); x  # random
-            1
+            sage: x = (Set(ZZ) | Set(RR)).random_element()
+            sage: x in ZZ or x in RR
+            True
         """
         return choice([self._X, self._Y]).random_element()
 
@@ -1728,7 +1732,11 @@ class Set_object_intersection(Set_object_binary):
 
     def random_element(self):
         """
-        Return a random element in this set. Note that this might run forever.
+        Return a random element in this set.
+
+        .. WARNING::
+
+            This might run forever.
 
         EXAMPLES::
 
