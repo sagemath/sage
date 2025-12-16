@@ -198,6 +198,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.misc.lazy_list import lazy_list
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.element import Element
 from sage.structure.parent import Parent
@@ -631,7 +632,7 @@ def _data_from_iterable(iterable, mapping=False, domain=None,
             pre_data = [(elts, vals)]
 
     # pre_data is a list of all elements of the iterator accessed so
-    # far, for each of its elements and also the remainder ot the
+    # far, for each of its elements and also the remainder of the
     # iterator, each element is either a pair ``(object, value)`` or
     # a pair ``(objects, values)``
     elts, vals = pre_data[0]
@@ -730,16 +731,15 @@ def _data_from_data(data, max_values):
           [0, 0, 1, 1, 2, 2, 1, 0, 0, 0, 1, 1, 1, 2, 3])]
     """
     query = []
-    total = min(max_values, FINDSTAT_MAX_VALUES)
     iterator = iter(data)
-    while total > 0:
+    while max_values > 0:
         try:
             elts, vals = next(iterator)
         except StopIteration:
             break
-        if total >= len(elts):
+        if max_values >= len(elts):
             query.append((elts, vals))
-            total -= len(elts)
+            max_values -= len(elts)
         else:
             break # assuming that the next pair is even larger
 
@@ -1017,12 +1017,12 @@ def findstat(query=None, values=None, distribution=None, domain=None,
         sage: findstat("Permutations", lambda x: 1, depth='x')                  # optional -- internet
         Traceback (most recent call last):
         ...
-        ValueError: E021: Depth should be a nonnegative integer at most 9, but is x.
+        ValueError: E021: Depth should be a non-negative integer at most 9, but is x.
 
         sage: findstat("Permutations", lambda x: 1, depth=100)                  # optional -- internet
         Traceback (most recent call last):
         ...
-        ValueError: E021: Depth should be a nonnegative integer at most 9, but is 100.
+        ValueError: E021: Depth should be a non-negative integer at most 9, but is 100.
 
         sage: S = Permutation
         sage: findstat([(S([1,2]), 1), ([S([1,3,2]), S([1,2])], [2,3])])        # optional -- internet
@@ -1786,10 +1786,10 @@ class FindStatFunction(SageObject):
         EXAMPLES::
 
             sage: q = findstat([(d, randint(1,1000)) for d in DyckWords(4)])              # optional -- internet
-            sage: q.set_sage_code("def statistic(x):\n    return randint(1, 1000)")        # optional -- internet
+            sage: q.set_sage_code("def statistic(x):\n    return randint(1, 1000)")       # optional -- internet
             sage: print(q.sage_code())                                                    # optional -- internet
             def statistic(x):
-                return randint(1,1000)
+                return randint(1, 1000)
         """
         if value != self.sage_code():
             self._modified = True
@@ -1818,8 +1818,21 @@ class FindStatCombinatorialStatistic(SageObject):
             sage: FindStatCombinatorialStatistic()
             <sage.databases.findstat.FindStatCombinatorialStatistic object at 0x...>
         """
-        self._first_terms_cache = None
         self._first_terms_raw_cache = None
+
+    @lazy_attribute
+    def _first_terms_cache(self):
+        """
+        Return the first terms of the (compound) statistic as a
+        dictionary.
+
+        EXAMPLES::
+
+            sage: findstat(41)._first_terms_cache[PerfectMatching([(1,6),(2,5),(3,4)])]   # optional -- internet
+            3
+        """
+        # this indirectly initializes self._first_terms_raw_cache
+        return dict(self._fetch_first_terms())
 
     def first_terms(self):
         r"""
@@ -1838,10 +1851,6 @@ class FindStatCombinatorialStatistic(SageObject):
             sage: findstat(41).first_terms()[PerfectMatching([(1,6),(2,5),(3,4)])]        # optional -- internet
             3
         """
-        # initialize self._first_terms_cache and
-        # self._first_terms_raw_cache on first call
-        if self._first_terms_cache is None:
-            self._first_terms_cache = self._fetch_first_terms()
         # a shallow copy suffices - tuples are immutable
         return dict(self._first_terms_cache)
 
@@ -1944,7 +1953,7 @@ class FindStatCombinatorialStatistic(SageObject):
         domain = self.domain()
         levels_with_sizes = domain.levels_with_sizes()
         total = 0
-        for elt, val in self.first_terms().items():
+        for elt, val in self._first_terms_cache.items():
             if total == max_values:
                 break
             lvl = domain.element_level(elt)
@@ -2153,7 +2162,7 @@ class FindStatStatistic(Element,
             sage: q(graphs.PetersenGraph().copy(immutable=True))                # optional -- internet
             2
         """
-        val = self.first_terms().get(elt, None)
+        val = self._first_terms_cache.get(elt, None)
         if val is None:
             return FindStatFunction.__call__(self, elt)
         return val
@@ -2267,12 +2276,22 @@ class FindStatStatistic(Element,
             [(1, 4), (2, 3)] => 3
             sage: s.reset()                                                     # optional -- internet
         """
-        to_str = self.domain().to_string()
+        domain = self.domain()
+        from_str = domain.from_string()
+        to_str = domain.to_string()
+
+        def to_domain(elt):
+            if domain.is_element(elt):
+                return elt
+            if not isinstance(elt, str):
+                elt = str(elt)
+            return from_str(elt)
+
         new = [(to_str(obj), value) for obj, value in values]
         if sorted(new) != sorted(self.first_terms_str()):
             self._modified = True
             self._first_terms_raw_cache = new
-            self._first_terms_cache = values
+            self._first_terms_cache = {to_domain(elt): v for elt, v in values}
 
     def code(self):
         r"""
@@ -2584,6 +2603,7 @@ class FindStatStatisticQuery(FindStatStatistic):
             self._known_terms = data
         else:
             self._known_terms = known_terms
+        self._known_terms_number = 0
         self._values_of = None
         self._distribution_of = None
         self._depth = depth
@@ -2647,9 +2667,26 @@ class FindStatStatisticQuery(FindStatStatistic):
                                   function=function)
         Element.__init__(self, FindStatStatistics()) # this is not completely correct, but it works
 
+    @lazy_attribute
+    def _first_terms_cache(self):
+        """
+        Return the pairs of the known terms which contain
+        singletons, as a dictionary.
+
+        EXAMPLES::
+
+             sage: PM = PerfectMatchings
+             sage: l = [(PM(2*n), [m.number_of_nestings() for m in PM(2*n)]) for n in range(5)]
+             sage: r = findstat(l, depth=0)                                     # optional -- internet
+             sage: r._first_terms_cache                                         # optional -- internet
+             {}
+        """
+        return dict()
+
     def first_terms(self, max_values=FINDSTAT_MAX_SUBMISSION_VALUES):
         """
-        Return the pairs of the known terms which contain singletons as a dictionary.
+        Return the pairs of the known terms which contain
+        singletons, as a dictionary.
 
         EXAMPLES::
 
@@ -2660,10 +2697,14 @@ class FindStatStatisticQuery(FindStatStatistic):
              1: St000042 (quality [99, 100])
              sage: r.first_terms()                                              # optional -- internet
              {[]: 0, [(1, 2)]: 0}
+
         """
-        return dict(itertools.islice(((objs[0], vals[0])
-                                      for objs, vals in self._known_terms
-                                      if len(vals) == 1), max_values))
+        new_terms = self._known_terms[self._known_terms_number:max_values]
+        self._first_terms_cache.update((objs[0], vals[0])
+                                       for objs, vals in new_terms
+                                       if len(vals) == 1)
+        self._known_terms_number = max(max_values, self._known_terms_number)
+        return dict(self._first_terms_cache)
 
     def _first_terms_raw(self, max_values):
         """
@@ -4522,7 +4563,7 @@ _SupportedFindStatCollections = {
     _SupportedFindStatCollection(lambda x: BinaryTree(str(x)),
                                  str,
                                  BinaryTrees,
-                                 lambda x: x.node_number(),
+                                 lambda x: x.number_of_nodes(),
                                  lambda x: isinstance(x, BinaryTree)),
     "Cores":
     _SupportedFindStatCollection(lambda x: Core(*literal_eval(x)),
@@ -4575,7 +4616,7 @@ _SupportedFindStatCollections = {
     _SupportedFindStatCollection(lambda x: OrderedTree(literal_eval(x)),
                                  str,
                                  OrderedTrees,
-                                 lambda x: x.node_number(),
+                                 lambda x: x.number_of_nodes(),
                                  lambda x: isinstance(x, OrderedTree)),
     "ParkingFunctions":
     _SupportedFindStatCollection(lambda x: ParkingFunction(literal_eval(x)),

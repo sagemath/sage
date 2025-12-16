@@ -47,7 +47,7 @@ class FiniteDimensionalAlgebraIdeal(Ideal_generic):
         sage: A.ideal(A([0,1]))
         Ideal (e1) of Finite-dimensional algebra of degree 2 over Finite Field of size 3
     """
-    def __init__(self, A, gens=None, given_by_matrix=False):
+    def __init__(self, A, gens=None, given_by_matrix=False) -> bool:
         """
         EXAMPLES::
 
@@ -138,7 +138,7 @@ class FiniteDimensionalAlgebraIdeal(Ideal_generic):
         elif op == op_GE or op == op_GT:
             return other.vector_space().is_subspace(self.vector_space())
 
-    def __contains__(self, elt):
+    def __contains__(self, elt) -> bool:
         """
         EXAMPLES::
 
