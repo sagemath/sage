@@ -1575,10 +1575,6 @@ cdef class PowerSeries(AlgebraElement):
         fraction field and tests whether or not the result lies in the
         original ring.
 
-        For power series over `\ZZ/n\ZZ` where `n` is squarefree (product of
-        distinct primes), the Chinese Remainder Theorem is used to reduce to
-        the case of prime fields.
-
         EXAMPLES::
 
             sage: K.<t> = PowerSeriesRing(QQ, 't', 5)
@@ -1597,10 +1593,24 @@ cdef class PowerSeries(AlgebraElement):
             sage: f.is_square()
             True
 
-        Power series over `\ZZ/n\ZZ` where `n` is squarefree::
+        Over a ring with nilpotent elements, odd valuation is possible for squares::
+
+            sage: R.<x> = PowerSeriesRing(Zmod(4))
+            sage: (2*x).is_square()  # (2*x)^2 has odd valuation but 2^2 = 0 mod 4
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: is_square() not implemented for power series over rings with nonzero nilradical
+
+        Power series over `\Zmod{n}` where `n` is squarefree::
 
             sage: R.<x> = PowerSeriesRing(Zmod(6))
             sage: ((x + 1)^2).is_square()
+            True
+            sage: (x^2).is_square()
+            True
+            sage: R(0).is_square()
+            True
+            sage: R(4).is_square()
             True
             sage: R.<x> = PowerSeriesRing(Zmod(15))
             sage: ((x + 2)^2).is_square()
@@ -1608,13 +1618,13 @@ cdef class PowerSeries(AlgebraElement):
             sage: (5 + x).is_square()
             False
 
-        For prime power moduli, a :exc:`NotImplementedError` is raised::
+        For prime power moduli with exponent > 1, a :exc:`NotImplementedError` is raised::
 
             sage: R.<x> = PowerSeriesRing(Zmod(8))
             sage: ((x + 1)^2).is_square()
             Traceback (most recent call last):
             ...
-            NotImplementedError: is_square() not implemented for power series over Zmod(p^k) with k > 1
+            NotImplementedError: is_square() not implemented for power series over rings with nonzero nilradical
         """
         import sage.rings.abc
 
@@ -1624,12 +1634,27 @@ cdef class PowerSeries(AlgebraElement):
 
         val = self.valuation()
         if val is not infinity and val % 2 == 1:
+            # Odd valuation can only happen for a square if the leading coefficient
+            # squares to zero, i.e., the base ring has nonzero nilradical.
+            # Check if the base ring has zero nilradical.
+            try:
+                nilrad = self.base_ring().nilradical()
+                if not nilrad.is_zero():
+                    raise NotImplementedError(
+                        "is_square() not implemented for power series over rings with nonzero nilradical"
+                    )
+            except (AttributeError, NotImplementedError, ArithmeticError):
+                # If nilradical() is not available, try to check if leading coeff^2 = 0
+                if self[val]**2 == 0:
+                    raise NotImplementedError(
+                        "is_square() not implemented for power series over rings with nonzero nilradical"
+                    )
             return False
         elif not self[val].is_square():
             return False
         elif self.base_ring() in _Fields:
             return True
-        # Check if base ring is IntegerModRing
+        # Check if base ring is IntegerModRing - use CRT for squarefree moduli
         elif isinstance(self.base_ring(), sage.rings.abc.IntegerModRing):
             return self._is_square_crt()
         else:
@@ -1641,7 +1666,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def _is_square_crt(self):
         r"""
-        Check if this power series is a square over `\ZZ/n\ZZ` using CRT.
+        Check if this power series is a square over `\Zmod{n}` using CRT.
 
         This method works for squarefree moduli (products of distinct primes).
         For prime power moduli with exponent > 1, it raises NotImplementedError.
@@ -1657,19 +1682,35 @@ cdef class PowerSeries(AlgebraElement):
             sage: ((2*x + 3)^2)._is_square_crt()
             True
 
+        Elements with even valuation::
+
+            sage: R.<x> = PowerSeriesRing(Zmod(6))
+            sage: (x^2)._is_square_crt()
+            True
+            sage: (4*x^2)._is_square_crt()
+            True
+
         The zero element is always a square::
 
             sage: R.<x> = PowerSeriesRing(Zmod(6))
             sage: R(0)._is_square_crt()
             True
 
-        Elements that reduce to zero modulo some prime factor::
+        Constant elements::
 
             sage: R.<x> = PowerSeriesRing(Zmod(6))
             sage: R(4)._is_square_crt()
             True
+            sage: R(3)._is_square_crt()
+            True
+            sage: R(2)._is_square_crt()
+            False
         """
         from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+
+        # Zero is always a square
+        if self.is_zero():
+            return True
 
         base = self.base_ring()
         n = base.order()
@@ -1681,7 +1722,7 @@ cdef class PowerSeries(AlgebraElement):
         for p, e in factorization:
             if e > 1:
                 raise NotImplementedError(
-                    "is_square() not implemented for power series over Zmod(p^k) with k > 1"
+                    "is_square() not implemented for power series over rings with nonzero nilradical"
                 )
 
         # n is squarefree - use CRT
@@ -1693,9 +1734,6 @@ cdef class PowerSeries(AlgebraElement):
             Rp = self.parent().change_ring(Zp)
             # Map self to Rp
             fp = Rp([Zp(c) for c in self.list()]).add_bigoh(self.prec())
-            # Zero is always a square
-            if fp.is_zero():
-                continue
             # Check if square over the prime field
             if not fp.is_square():
                 return False
