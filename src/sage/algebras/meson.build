@@ -41,6 +41,8 @@ py.install_sources(
   'shuffle_algebra.py',
   'splitting_algebra.py',
   'tensor_algebra.py',
+  'vertex_operators.py',
+  'vertex_operators_catalog.py',
   'weyl_algebra.py',
   'yangian.py',
   'yokonuma_hecke_algebra.py',
