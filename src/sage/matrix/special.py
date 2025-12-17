@@ -2011,7 +2011,7 @@ def block_matrix(*args, **kwds):
         ...
         ValueError: an element of parent <class 'list'> was passed in,
          but only matrices, vectors and ring elements are accepted
-        sage: matrix.block([
+        sage: matrix.block([  # needs sage.libs.eclib
         ....:     [EllipticCurve('37a1').0],
         ....:     ])
         Traceback (most recent call last):

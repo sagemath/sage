@@ -44,7 +44,7 @@ option(
 option(
   'eclib',
   type: 'feature',
-  value: 'auto',
+  value: 'disabled',
   description: 'eclib interface to mwrank and elliptic curves over Q'
 )
 

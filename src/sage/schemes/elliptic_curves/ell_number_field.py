@@ -152,6 +152,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         Check that non-torsion points are remembered when extending
         the base field (see :issue:`16034`)::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve([1, 0, 1, -1751, -31352])
             sage: K.<d> = QuadraticField(5)
             sage: E.gens()
@@ -329,13 +330,14 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve([0, 0, 1, -1, 0])
             sage: E.height_pairing_matrix()
             [0.0511114082399688]
 
         For rank 0 curves, the result is a valid 0x0 matrix::
 
-            sage: EllipticCurve('11a').height_pairing_matrix()
+            sage: EllipticCurve('11a').height_pairing_matrix()  # needs sage.libs.eclib
             []
             sage: E = EllipticCurve('5077a1')
             sage: E.height_pairing_matrix([E.lift_x(x) for x in [-2,-7/4,1]], precision=100)
@@ -343,6 +345,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             [ -1.3095767070865761992624519454   2.7173593928122930896610589220   1.0998184305667292139777571432]
             [-0.63486715783715592064475542573   1.0998184305667292139777571432  0.66820516565192793503314205089]
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('389a1')
             sage: E = EllipticCurve('389a1')
             sage: P, Q = E.point([-1,1,1]), E.point([0,-1,1])
@@ -352,6 +355,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         Over a number field::
 
+            sage: # needs sage.libs.eclib
             sage: x = polygen(QQ)
             sage: K.<t> = NumberField(x^2 + 47)
             sage: EK = E.base_extend(K)
@@ -490,6 +494,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         ::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('389a1')
             sage: P,Q = E.gens()
             sage: E.regulator_of_points([P,Q])
@@ -2329,7 +2334,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 23, 'a')
             sage: E = EllipticCurve(K,[0,0,0,101,0])
-            sage: E.gens()
+            sage: E.gens()  # needs sage.libs.eclib
             ((23831509/8669448*a - 2867471/8669448 : 76507317707/18049790736*a - 424166479633/18049790736 : 1),
              (-2031032029/969232392*a + 58813561/969232392 : -15575984630401/21336681877488*a + 451041199309/21336681877488 : 1),
              (-186948623/4656964 : 549438861195/10049728312*a : 1))
@@ -2337,6 +2342,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         It can happen that no points are found if the height bounds
         used in the search are too small (see :issue:`10745`)::
 
+            sage: # needs sage.libs.eclib
             sage: K.<t> = NumberField(x^4 + x^2 - 7)
             sage: E = EllipticCurve(K, [1, 0, 5*t^2 + 16, 0, 0])
             sage: E.gens(lim1=1, lim3=1)
@@ -2348,6 +2354,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         Check that the point found has infinite order, and that it is on the curve::
 
+            sage: # needs sage.libs.eclib
             sage: P=gg[0]; P.order()  # long time
             +Infinity
             sage: E.defining_polynomial()(*P)  # long time
@@ -2355,6 +2362,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         Here is a curve of rank 2::
 
+            sage: # needs sage.libs.eclib
             sage: K.<t> = NumberField(x^2 - 17)
             sage: E = EllipticCurve(K, [-4, 0])
             sage: E.gens()
@@ -2364,6 +2372,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         Test that points of finite order are not included (see :issue:`13593`)::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve("17a3")
             sage: K.<t> = NumberField(x^2 + 3)
             sage: EK = E.base_extend(K)
@@ -3368,6 +3377,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         Some examples over `\QQ`::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve([0, 1, 1, -2, 42])
             sage: Pi = E.gens(); Pi
             [(-4 : 1 : 1), (-3 : 5 : 1), (-11/4 : 43/8 : 1), (-2 : 6 : 1)]
@@ -3417,6 +3427,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         An example to show the explicit use of the height pairing matrix::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve([0, 1, 1, -2, 42])
             sage: Pi = E.gens()
             sage: H = E.height_pairing_matrix(Pi,3)
@@ -4055,13 +4066,14 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E = EllipticCurve([1,2,3,40,50])
             sage: E.conductor()
             2123582
-            sage: E.gens()
+            sage: E.gens()  # needs sage.libs.eclib
             [(5 : 17 : 1)]
             sage: K.<i> = QuadraticField(-1)
             sage: EK = E.change_ring(K)
-            sage: EK.gens_quadratic()
+            sage: EK.gens_quadratic()  # needs sage.libs.eclib
             [(5 : 17 : 1), (-13 : 48*i + 5 : 1)]
 
+            sage: # needs sage.libs.eclib
             sage: E.change_ring(QuadraticField(3, 'a')).gens_quadratic()
             [(5 : 17 : 1), (-1 : 2*a - 1 : 1), (11/4 : 33/4*a - 23/8 : 1)]
 
@@ -4069,16 +4081,16 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E = EllipticCurve([0,0,0,197,0])
             sage: E.conductor()
             2483776
-            sage: E.gens()
+            sage: E.gens()  # needs sage.libs.eclib
             [(47995604297578081/7389879786648100 : -25038161802544048018837479/635266655830129794121000 : 1)]
             sage: K.<a> = QuadraticField(7)
-            sage: E.change_ring(K).gens_quadratic()
+            sage: E.change_ring(K).gens_quadratic()  # needs sage.libs.eclib
             [(-1209642055/59583566*a + 1639995844/29791783 : -377240626321899/1720892553212*a + 138577803462855/245841793316 : 1),
              (1/28 : 393/392*a : 1),
              (-61*a + 162 : 1098*a - 2916 : 1)]
 
             sage: E = EllipticCurve([1, a])
-            sage: E.gens_quadratic()
+            sage: E.gens_quadratic()  # needs sage.libs.eclib
             Traceback (most recent call last):
             ...
             ValueError: gens_quadratic() requires the elliptic curve to be a base change from Q
