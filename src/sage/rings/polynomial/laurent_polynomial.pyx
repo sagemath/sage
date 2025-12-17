@@ -2283,9 +2283,9 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         # 1. We find that p divides x^m * q, or
         # 2. The degree of x^m * q exceeds what's reasonable (degree bound)
         x = p.parent().gen()
-        deg_bound = max(p.degree(), q.degree()) + 1
+        deg_bound = p.degree() + 1
 
-        for m in range(deg_bound + 1):
+        for m in range(deg_bound):
             q_shifted = q * x**m
             try:
                 if p.divides(q_shifted):
