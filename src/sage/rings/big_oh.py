@@ -13,6 +13,8 @@ from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.rings.padics.factory', ['Qp', 'Zp'])
 from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.fraction_field_element import FractionFieldElement
+from sage.rings.fraction_field_FpT import FpTElement
 
 try:
     from .puiseux_series_ring_element import PuiseuxSeries
@@ -47,6 +49,16 @@ def O(*x, **kwds):
         O(x^100)
         sage: 1/(1+x+O(x^5))
         1 - x + x^2 - x^3 + x^4 + O(x^5)
+
+    Completion at other places also works::
+
+        sage: x^3 + O((x^2 + 1)^10)
+        -x + x*(x^2 + 1) + O((x^2 + 1)^10)
+        sage: x^3 + O(1/x^10)  # completion at infinity
+        x^3 + O(x^-10)
+
+    An example with several variables::
+
         sage: R.<u,v> = QQ[[]]
         sage: 1 + u + v^2 + O(u, v)^5
         1 + u + v^2 + O(u, v)^5
@@ -126,11 +138,6 @@ def O(*x, **kwds):
 
     ::
 
-        sage: R.<x> = QQ[]
-        sage: O(2*x)
-        Traceback (most recent call last):
-        ...
-        NotImplementedError: completion only currently defined for the maximal ideal (x)
         sage: R.<x> = LazyPowerSeriesRing(QQ)
         sage: O(x^5)
         O(x^5)
@@ -169,13 +176,29 @@ def O(*x, **kwds):
     if isinstance(x, power_series_ring_element.PowerSeries):
         return x.parent()(0, x.degree(), **kwds)
 
+    if isinstance(x, (FractionFieldElement, FpTElement)):
+        if x.denominator().is_one():
+            x = x.numerator()
+        elif x.numerator().is_one():
+            x = x.denominator()
+            if isinstance(x, Polynomial) and x.is_monomial():
+                from sage.rings.infinity import infinity
+                n = x.degree()
+                C = x.parent().completion(infinity, prec=n)
+                return C.zero().add_bigoh(n)
+
     if isinstance(x, Polynomial):
-        if x.parent().ngens() != 1:
+        A = x.parent()
+        if A.ngens() != 1:
             raise NotImplementedError("completion only currently defined "
                                       "for univariate polynomials")
+        if x.is_monomial():
+            n = x.degree()
+            C = A.completion(A.variable_name(), prec=n)
         if not x.is_monomial():
-            raise NotImplementedError("completion only currently defined "
-                                      "for the maximal ideal (x)")
+            p, n = x.perfect_power()
+            C = A.completion(p, prec=n)
+        return C.zero().add_bigoh(n)
 
     if isinstance(x, (int, Integer, Rational)):
         # p-adic number

@@ -1206,6 +1206,62 @@ class FractionField_1poly_field(FractionField_generic):
 
         return super()._coerce_map_from_(R)
 
+    def completion(self, p=None, prec=20, names=None):
+        r"""
+        Return the completion of this rational functions ring with
+        respect to the irreducible polynomial `p`.
+
+        INPUT:
+
+        - ``p`` (default: ``None``) -- an irreduclible polynomial or
+          ``Infiniity``; if ``None``, the generator of this polynomial
+          ring
+
+        - ``prec`` (default: 20) -- an integer or ``Infinity``; if
+          ``Infinity``, return a
+          :class:`sage.rings.lazy_series_ring.LazyPowerSeriesRing`.
+
+        - ``names`` (default: ``None``) -- a tuple of strings with the
+          previous variable names
+
+        .. SEEALSO::
+
+            :mod:`sage.rings.completion_polynomial_ring`
+
+        EXAMPLES::
+
+            sage: A.<x> = PolynomialRing(QQ)
+            sage: K = A.fraction_field()
+
+        Without any argument, this method outputs the ring of Laurent
+        series::
+
+            sage: Kx = K.completion()
+            sage: Kx
+            Laurent Series Ring in x over Rational Field
+
+        We can construct the completion at other ideals by passing in an
+        irreducible polynomial::
+
+            sage: K1 = K.completion(x - 1)
+            sage: K1
+            Completion of Fraction Field of Univariate Polynomial Ring in x over Rational Field at x - 1
+            sage: K2 = K.completion(x^2 + x + 1)
+            sage: K2
+            Completion of Fraction Field of Univariate Polynomial Ring in x over Rational Field at x^2 + x + 1
+
+        TESTS::
+
+            sage: # needs sage.combinat
+            sage: L = K.completion(x, prec=oo)
+            sage: L.backend(force=True)
+            Lazy Laurent Series Ring in u_... over Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x
+        """
+        if p is None:
+            p = self.variable_name()
+        from sage.rings.completion_polynomial_ring import CompletionPolynomialRing
+        return CompletionPolynomialRing(self, p, default_prec=prec, sparse=self.ring().is_sparse())
+
 
 class FractionFieldEmbedding(DefaultConvertMap_unique):
     r"""
