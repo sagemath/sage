@@ -119,7 +119,7 @@ class pAdicPrinterDefaults(SageObject):
         ``mode=None`` returns the current value.
 
         The allowed values for mode are: ``'val-unit'``, ``'series'``,
-        ``'terse'``, ``'digits'`` and ``'bars'``.
+        ``'terse'``, ``'digits'``, ``'digits-unicode'`` and ``'bars'``.
 
         EXAMPLES::
 
@@ -181,7 +181,7 @@ class pAdicPrinterDefaults(SageObject):
     def max_series_terms(self, max=None):
         r"""
         Controls the maximum number of terms shown when printing in
-        ``'series'``, ``'digits'`` or ``'bars'`` mode.
+        ``'series'``, ``'digits'``, ``'digits-unicode'`` or ``'bars'`` mode.
 
         ``max=None`` returns the current value.
 
@@ -280,7 +280,8 @@ class pAdicPrinterDefaults(SageObject):
     def alphabet(self, alphabet=None):
         r"""
         Controls the alphabet used to translate `p`-adic digits into
-        strings (so that no separator need be used in ``'digits'`` mode).
+        strings (so that no separator need be used in ``'digits'``
+        or ``'digits-unicode'`` mode).
 
         ``alphabet`` should be passed in as a list or tuple.
 
@@ -321,7 +322,8 @@ cdef class pAdicPrinter_class(SageObject):
           attached
 
         - ``mode`` -- the allowed values for mode are: ``'val-unit'``,
-          ``'series'``, ``'terse'``, ``'digits'`` and ``'bars'``:
+          ``'series'``, ``'terse'``, ``'digits'``, ``'digits-unicode'``
+          and ``'bars'``:
 
           - ``'val-unit'`` -- elements are displayed as a power of the
             uniformizer times a unit, which is displayed in terse mode
@@ -337,6 +339,9 @@ cdef class pAdicPrinter_class(SageObject):
           - ``'digits'`` -- used only for small primes and totally ramified
             extensions (or trivial extensions), elements are displayed as just
             a string of `p`-adic digits, encoded using the 'alphabet' parameter
+
+          - ``'digits-unicode'`` -- like ``'digits'``, but uses the unicode
+            ellipsis character to indicate omitted leading digits
 
           - ``'bars'`` -- like ``'digits'``, but uses a separator in order to
             print a more canonical representation for each digit. This change
@@ -355,7 +360,8 @@ cdef class pAdicPrinter_class(SageObject):
           generator of this extension ring or field
 
         - ``max_ram_terms`` -- controls the maximum number of terms shown when
-          printing in ``'series'``, ``'digits'`` or ``'bars'`` mode
+          printing in ``'series'``, ``'digits'``, ``'digits-unicode'`` or
+          ``'bars'`` mode
 
         - ``max_unram_terms`` -- for rings with non-prime residue fields,
           controls how many terms appear in the coefficient of each pi^n when
@@ -368,7 +374,8 @@ cdef class pAdicPrinter_class(SageObject):
         - ``sep`` -- controls the separator used in ``'bars'`` mode
 
         - ``alphabet`` -- controls the alphabet used to translate `p`-adic digits
-          into strings (so that no separator need be used in ``'digits'`` mode)
+          into strings (so that no separator need be used in ``'digits'``
+          or ``'digits-unicode'`` mode)
 
         - ``show_prec`` -- Specify how the precision is printed; it can be
           ``'none'``, ``'bigoh'`` or ``'dots'`` (the latter being not available
@@ -417,7 +424,7 @@ cdef class pAdicPrinter_class(SageObject):
         elif mode == 'bars':
             self.mode = bars
         else:
-            raise ValueError("printing mode must be one of 'val-unit', 'series', 'terse', 'digits' or 'bars'")
+            raise ValueError("printing mode must be one of 'val-unit', 'series', 'terse', 'digits', 'digits-unicode' or 'bars'")
         if ram_name is None:
             self.ram_name = ring._uniformizer_print()
         else:
