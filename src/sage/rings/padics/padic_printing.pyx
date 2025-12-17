@@ -134,14 +134,11 @@ class pAdicPrinterDefaults(SageObject):
             sage: padic_printing.mode('val-unit')
             sage: Qp(13)(130)
             13 * 10 + O(13^21)
-            sage: padic_printing.mode('digits')
-            sage: repr(Qp(17)(100))
-            '...5F'
-            sage: repr(Qp(17)(1000))
-            '...37E'
             sage: padic_printing.mode('digits-unicode')
             sage: repr(Qp(17)(100))
             '…0000000000000000005F'
+            sage: repr(Qp(17)(1000))
+            '…0000000000000000037E'
             sage: padic_printing.mode('bars')
             sage: repr(Qp(19)(1000))
             '...2|14|12'
@@ -290,9 +287,9 @@ class pAdicPrinterDefaults(SageObject):
         EXAMPLES::
 
             sage: padic_printing.alphabet("abc")
-            sage: padic_printing.mode('digits')
+            sage: padic_printing.mode('digits-unicode')
             sage: repr(Qp(3)(1234))
-            '...bcaacab'
+            '…aaaaaaaaaaaaabcaacab'
 
             sage: padic_printing.mode('series')
             sage: padic_printing.alphabet(('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'))
@@ -919,11 +916,11 @@ cdef class pAdicPrinter_class(SageObject):
             sage: print(a.str('series'))
             3*7 + 7^3 + O(7^5)
             sage: padic_printing.sep('')
-            sage: K = Qp(7, print_mode='digits')
+            sage: K = Qp(7, print_mode='digits-unicode')
             sage: repr(K(1/2))
-            '...33333333333333333334'
+            '…33333333333333333334'
             sage: repr(K(1/42))
-            '...5555555555555555555.6'
+            '…5555555555555555555.6'
             sage: padic_printing.sep('|')
             sage: repr(Qp(97, print_mode='bars')(1/13))
             '...29|82|7|44|74|59|67|14|89|52|22|37|29|82|7|44|74|59|67|15'
@@ -932,9 +929,9 @@ cdef class pAdicPrinter_class(SageObject):
 
         Check that :issue:`24843` is resolved::
 
-            sage: R = Zp(2, print_mode='digits', show_prec=True)
+            sage: R = Zp(2, print_mode='digits-unicode', show_prec=True)
             sage: repr(R(0,10))
-            '...0000000000'
+            '…0000000000'
         """
         s = ""
         if self.show_prec == "dots":
