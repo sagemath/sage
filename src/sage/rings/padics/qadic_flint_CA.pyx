@@ -119,7 +119,7 @@ cdef class qAdicCappedAbsoluteElement(CAElement):
             sage: hash(a)
             Traceback (most recent call last):
             ...
-            TypeError: ...unhashable type: 'sage.rings.padics.qadic_flint_CA.qAdicCappedAbsoluteElement'...
+            TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CA.qAdicCappedAbsoluteElement'
         """
         # Eventually, hashing will be disabled for all (non-fixed-mod) p-adic
         # elements (#11895), until then, we only to this for types which did

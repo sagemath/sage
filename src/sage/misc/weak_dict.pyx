@@ -539,7 +539,7 @@ cdef class WeakValueDictionary(dict):
             sage: D[matrix([])] = ZZ                                                    # needs sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: ...mutable matrices are unhashable...
+            TypeError: mutable matrices are unhashable
         """
         self._set_item(k, v)
 

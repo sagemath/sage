@@ -1234,7 +1234,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: hash(f)
             Traceback (most recent call last):
             ...
-            TypeError: ...unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'...
+            TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'
             sage: f._cache_key()
             (Univariate Polynomial Ring in x over 2-adic Unramified Extension Field in u defined by x^2 + x + 1,
              0,
@@ -1284,7 +1284,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: hash(t)                                                               # needs sage.rings.padics
             Traceback (most recent call last):
             ...
-            TypeError: ...unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'...
+            TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'
         """
         cdef long result = 0 # store it in a c-int and just let the overflowing additions wrap
         cdef long result_mon
