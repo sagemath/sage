@@ -967,16 +967,16 @@ class Set_object_enumerated(Set_object):
 
             sage: Set()
             {}
-            sage: repr(Set(GF(998244353))).replace("...", "LITERAL ELLIPSIS")
-            'Set of elements of Finite Field of size 998244353 = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-                10, 11, 12, 13, 14, 15, 16, 17, 18, 19, LITERAL ELLIPSIS}'
+            sage: Set(GF(998244353))
+            Set of elements of Finite Field of size 998244353 = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                10, 11, 12, 13, 14, 15, 16, 17, 18, 19, …}
         """
         try:
             if self.cardinality() > 20:
                 from itertools import islice
                 o = self.object()
                 l = list(islice(o, 0, 20))
-                s = "{" + ", ".join(map(repr, l)) + ", ...}"
+                s = "{" + ", ".join(map(repr, l)) + ", …}"
                 assert len(l) == 20, (f"incorrect cardinality {self.cardinality()} "
                                       f"reported for object type {type(self)} containing {l}")
                 if o is not self:  # safeguard infinite loop if subclass is weird
