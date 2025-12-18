@@ -8,12 +8,12 @@
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .base import StackInterpreter
-from ..instructions import (params_gen, instr_funcall_2args, instr_unary,
-                            InstrSpec)
+from ..instructions import InstrSpec, instr_funcall_2args, instr_unary, params_gen
 from ..memory import MemoryChunk
 from ..storage import ty_python
-from ..utils import je, reindent_lines as ri
+from ..utils import je
+from ..utils import reindent_lines as ri
+from .base import StackInterpreter
 
 
 class MemoryChunkPythonArguments(MemoryChunk):
@@ -108,7 +108,7 @@ class MemoryChunkPyConstant(MemoryChunk):
             sage: mc.storage_type is ty_python
             True
         """
-        super(MemoryChunkPyConstant, self).__init__(name, ty_python)
+        super().__init__(name, ty_python)
 
     def declare_class_members(self):
         r"""
@@ -228,7 +228,7 @@ class PythonInterpreter(StackInterpreter):
             py_call: *->S = '\nPyObject *py_args...CREF(py_args);\n'
         """
 
-        super(PythonInterpreter, self).__init__(ty_python)
+        super().__init__(ty_python)
         # StackInterpreter.__init__ gave us a MemoryChunkArguments.
         # Override with MemoryChunkPythonArguments.
         self.mc_args = MemoryChunkPythonArguments('args', ty_python)

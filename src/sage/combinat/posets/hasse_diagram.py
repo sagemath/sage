@@ -1822,7 +1822,7 @@ class HasseDiagram(DiGraph):
         else:
             return True
 
-    def find_nonsemidistributive_elements(self, meet_or_join) -> None | tuple:
+    def find_nonsemidistributive_elements(self, meet_or_join) -> tuple | None:
         r"""
         Check if the lattice is semidistributive or not.
 
@@ -2544,7 +2544,7 @@ class HasseDiagram(DiGraph):
             return True
         return False
 
-    def diamonds(self) -> tuple[list[tuple[int]], bool]:
+    def diamonds(self) -> tuple[list[tuple[int, int, int, int]], bool]:
         r"""
         Return the list of diamonds of ``self``.
 
