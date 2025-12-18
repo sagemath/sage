@@ -17,6 +17,7 @@ py.install_sources(
   'linear_expression.py',
   'newton_polygon.py',
   'palp_normal_form.pyx',
+  'plumbing_graph.py',
   'point_collection.pyx',
   'polyhedral_complex.py',
   'pseudolines.py',
