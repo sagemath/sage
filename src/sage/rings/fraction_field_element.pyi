@@ -1,4 +1,4 @@
-from typing import Any, Dict, Tuple, Union
+from typing import Any, Union
 
 def is_FractionFieldElement(x: Any) -> bool:
     ...
@@ -26,7 +26,7 @@ class FractionFieldElement:
     def denominator(self) -> Any:
         ...
 
-    def is_square(self, root: bool = False) -> Union[bool, Tuple[bool, Any]]:
+    def is_square(self, root: bool = False) -> Union[bool, tuple[bool, Any]]:
         ...
 
     def nth_root(self, n: int) -> 'FractionFieldElement':
@@ -38,7 +38,7 @@ class FractionFieldElement:
     def __call__(self, *x: Any, **kwds: Any) -> 'FractionFieldElement':
         ...
 
-    def subs(self, in_dict: Dict = None, *args: Any, **kwds: Any) -> 'FractionFieldElement':
+    def subs(self, in_dict: dict | None = None, *args: Any, **kwds: Any) -> 'FractionFieldElement':
         ...
 
     def _is_atomic(self) -> bool:
@@ -107,7 +107,7 @@ class FractionFieldElement:
     def _symbolic_(self, ring: Any) -> 'FractionFieldElement':
         ...
 
-    def __reduce__(self) -> Tuple:
+    def __reduce__(self) -> tuple:
         ...
 
     def _evaluate_polynomial(self, pol: Any) -> 'FractionFieldElement':
@@ -135,5 +135,5 @@ class FractionFieldElement_1poly_field(FractionFieldElement):
 def make_element(parent: Any, numerator: Any, denominator: Any) -> FractionFieldElement:
     ...
 
-def make_element_old(parent: Any, cdict: Dict) -> FractionFieldElement:
+def make_element_old(parent: Any, cdict: dict) -> FractionFieldElement:
     ...
