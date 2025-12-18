@@ -3,7 +3,7 @@ r"""
 Set of morphisms between two Drinfeld modules
 
 This module provides the class
-:class:`sage.rings.function_field.drinfeld_module.homset.DrinfeldModuleHomset`.
+:class:`sage.rings.function_field.drinfeld_modules.homset.DrinfeldModuleHomset`.
 
 AUTHORS:
 
@@ -852,7 +852,7 @@ class DrinfeldModuleHomset(Homset):
 
         We return the basis of the kernel of a matrix derived from the
         constraint that `\iota \phi_T = \psi_T \iota` for any morphism
-        `iota: \phi \to \psi`.
+        `\iota: \phi \to \psi`.
         We refer to [Mus2023]_, Section 7.3 for more details.
 
         EXAMPLES::

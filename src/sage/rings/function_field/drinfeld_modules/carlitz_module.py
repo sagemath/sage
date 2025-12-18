@@ -1,5 +1,5 @@
 r"""
-Carlitz module
+The Carlitz module and related functions
 
 AUTHORS:
 
@@ -21,6 +21,7 @@ from sage.structure.element import Element
 from sage.categories.finite_fields import FiniteFields
 
 from sage.rings.infinity import Infinity
+from sage.matrix.special import identity_matrix
 
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldModule
@@ -195,3 +196,13 @@ def carlitz_logarithm(A, prec=+Infinity, name='z'):
     """
     C = CarlitzModule(A)
     return C.logarithm(prec, name)
+
+
+def carlitz_zeta(A, s, prec=20):
+    from sage.categories.anderson_motives import AndersonMotives
+    from sage.rings.function_field.drinfeld_modules.anderson_motive import AndersonMotive_general
+    K = A.fraction_field()
+    category = AndersonMotives(K.coerce_map_from(A))
+    tau = identity_matrix(category.base(), 1)
+    M = AndersonMotive_general(category, tau, twist=s)
+    return M._Lseries(1, Infinity, prec, True, False)

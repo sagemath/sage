@@ -167,7 +167,10 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         """
         if (<RingExtension_generic>self._parent)._import_methods:
             output = self._backend(*to_backend(args), **to_backend(kwargs))
-            return from_backend(output, self._parent)
+            if args:
+                return from_backend(output, args[0].parent())
+            else:
+                return from_backend(output, self._parent)
         return TypeError("this element is not callable")
 
     def __dir__(self):

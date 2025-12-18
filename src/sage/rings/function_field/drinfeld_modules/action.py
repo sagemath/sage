@@ -3,7 +3,7 @@ r"""
 The module action induced by a Drinfeld module
 
 This module provides the class
-:class:`sage.rings.function_field.drinfeld_module.action.DrinfeldModuleAction`.
+:class:`sage.rings.function_field.drinfeld_modules.action.DrinfeldModuleAction`.
 
 AUTHORS:
 
@@ -59,7 +59,7 @@ class DrinfeldModuleAction(Action):
         sage: phi = DrinfeldModule(A, [z, 0, 0, 1])
         sage: action = phi.action()
         sage: action
-        Action on Finite Field in z of size 11^2 over its base
+        Action on Finite Field in z of size 11^2
          induced by Drinfeld module defined by T |--> τ^3 + z
 
     The action on elements is computed as follows::
@@ -174,7 +174,7 @@ class DrinfeldModuleAction(Action):
             sage: phi = DrinfeldModule(A, [z, 0, 0, 1])
             sage: action = phi.action()
             sage: action
-            Action on Finite Field in z of size 11^2 over its base induced by Drinfeld module defined by T |--> τ^3 + z
+            Action on Finite Field in z of size 11^2 induced by Drinfeld module defined by T |--> τ^3 + z
         """
         return f'Action on {self._base} induced by ' \
                f'{self._drinfeld_module}'
