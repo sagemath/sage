@@ -1,8 +1,8 @@
 SAGE_SPKG_CONFIGURE([python3], [
-   m4_pushdef([MIN_VERSION],               [3.9.0])
-   m4_pushdef([MIN_NONDEPRECATED_VERSION], [3.9.0])
-   m4_pushdef([LT_STABLE_VERSION],         [3.13.0])
-   m4_pushdef([LT_VERSION],                [3.13.0])
+   m4_pushdef([MIN_VERSION],               [3.12.0])
+   m4_pushdef([MIN_NONDEPRECATED_VERSION], [3.12.0])
+   m4_pushdef([LT_STABLE_VERSION],         [3.15.0])
+   m4_pushdef([LT_VERSION],                [3.15.0])
    AC_ARG_WITH([python],
                [AS_HELP_STRING([--with-python=PYTHON3],
                                [Python 3 executable to use for the Sage venv; default: python3])])
@@ -15,16 +15,23 @@ SAGE_SPKG_CONFIGURE([python3], [
          [AC_MSG_ERROR([building Sage --without-python is not supported])])
    ac_path_PYTHON3="$with_python"
 
+   dnl If --with-python was explicitly specified and differs from the cached value,
+   dnl clear the cache to force re-checking.
+   dnl This fixes issue #41258 where changing --with-python would use stale cached values
+   AS_IF([test x"$ac_path_PYTHON3" != x && test x"$ac_path_PYTHON3" != x"$ac_cv_path_PYTHON3"], [
+       AS_UNSET([ac_cv_path_PYTHON3])
+   ])
+
    dnl Issue #30559:  Removed the DEPCHECK for sqlite.  We never use libsqlite3 from SPKG for anything
    dnl other than building the python3 SPKG; so our libsqlite3 cannot create shared library conflicts.
    dnl
    dnl However, if we add another package (providing a shared library linked into a Python module)
    dnl that also uses libsqlite3, then we will have to put the DEPCHECK back in.
-   SAGE_SPKG_DEPCHECK([bzip2 liblzma libffi zlib], [
+   SAGE_SPKG_DEPCHECK([liblzma libffi], [
       dnl Check if we can do venv with a system python3
       dnl instead of building our own copy.
       dnl  Issue #31160: We no longer check for readline here.
-      check_modules="sqlite3, ctypes, math, hashlib, socket, zlib, ssl, ensurepip"
+      check_modules="sqlite3, ctypes, math, hashlib, socket, ssl, ensurepip, zlib"
       AC_CACHE_CHECK([for python3 >= ]MIN_VERSION[, < ]LT_VERSION[ with modules $check_modules and setuptools/distutils], [ac_cv_path_PYTHON3], [
         AS_IF([test x"$ac_path_PYTHON3" != x], [dnl checking explicitly specified $with_python
            AC_MSG_RESULT([])

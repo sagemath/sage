@@ -21,11 +21,11 @@ AUTHORS:
 include "sage/libs/linkages/padics/mpz.pxi"
 include "FP_template.pxi"
 
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 from sage.libs.pari.convert_gmp cimport new_gen_from_padic
 from sage.rings.finite_rings.integer_mod import Mod
 
-cdef extern from "transcendantal.c":
+cdef extern from "transcendental.c":
     cdef void padicexp(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, const mpz_t modulo)
     cdef void padicexp_Newton(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, unsigned long precinit, const mpz_t modulo)
 

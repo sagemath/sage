@@ -93,11 +93,7 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
 from sage.structure.unique_representation import UniqueRepresentation
 
-
-try:
-    from sage.libs.gap.element import GapElement
-except ImportError:
-    GapElement = ()
+from sage.libs.gap.element import GapElement
 
 
 ##############################################################################
@@ -801,9 +797,8 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
         self._classical_embedding = None   # if self._classical_group different from self._classical_base_group
         self._centralizing_matrix = None   # for Assion groups: element in classical base group commuting with self
         self._centralizing_element = None   # image under nat. map of the former one in the proj. classical group
-        return
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation.
 
@@ -816,8 +811,8 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
         """
         if self._cbg_type == CubicBraidGroup.type.Coxeter:
             return "Cubic Braid group on %s strands" % (self.strands())
-        else:
-            return "Assion group on %s strands of type %s" % (self.strands() ,self._cbg_type.value)
+        return "Assion group on %s strands of type %s" % (self.strands(),
+                                                          self._cbg_type.value)
 
     def index_set(self):
         r"""
@@ -910,10 +905,9 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
         """
         elem = self.an_element()
         att_grp_elem = attached_group(elem)
-        if self.is_finite() and self.strands() <= 7: # not realistic for larger number of strands
+        if self.is_finite() and self.strands() <= 7:  # not realistic for larger number of strands
             att_grp_elem_back = self(att_grp_elem)
             tester.assertEqual(att_grp_elem_back, elem)
-        return
 
     def _test_classical_group(self, **options):
         r"""
@@ -934,7 +928,6 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
         classic_grp = self.as_classical_group()
         if self.is_finite():
             self._internal_test_attached_group(classic_grp, tester)
-        return
 
     def _test_permutation_group(self, **options):
         r"""
@@ -955,7 +948,6 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
             tester = self._tester(**options)
             permgrp = self.as_permutation_group()
             self._internal_test_attached_group(permgrp, tester)
-        return
 
     def _test_matrix_group(self, **options):
         r"""
@@ -977,21 +969,18 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
         MatDEF = self.as_matrix_group()
         self._internal_test_attached_group(MatDEF, tester)
 
-        try:
-            from sage.rings.finite_rings.finite_field_constructor import GF
-        except ImportError:
-            return
+        from sage.rings.finite_rings.finite_field_constructor import GF
 
         F3 = GF(3)
         r63 = F3(2)
         F4 = GF(4)
         r64 = F4.gen()
 
-        if self._cbg_type != CubicBraidGroup.type.AssionU or self.strands() < 5: # not well defined else-wise
+        if self._cbg_type != CubicBraidGroup.type.AssionU or self.strands() < 5:  # not well defined else-wise
             matrix_grpF3 = self.as_matrix_group(root_bur=r63)
             self._internal_test_attached_group(matrix_grpF3, tester)
 
-        if self._cbg_type != CubicBraidGroup.type.AssionS or self.strands() < 5: # not well defined else-wise
+        if self._cbg_type != CubicBraidGroup.type.AssionS or self.strands() < 5:  # not well defined else-wise
             matrix_grpF4 = self.as_matrix_group(root_bur=r64)
             self._internal_test_attached_group(matrix_grpF4, tester)
 
@@ -1024,7 +1013,6 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
                 tester = self._tester(**options)
                 reflgrp = self.as_reflection_group()
                 self._internal_test_attached_group(reflgrp, tester)
-        return
 
     # -------------------------------------------------------------------------------
     # -------------------------------------------------------------------------------
@@ -1135,7 +1123,6 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
             self._centralizing_matrix = centralizing_matrix
             self._centralizing_element = centralizing_element
             self._classical_embedding = embedding
-            return
 
         # -------------------------------------------------------------------------------
         # local methods to set up the classical group (specific part)
@@ -1210,7 +1197,6 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
             transvec_matrices = [transvec2mat(v) for v in transvections]
 
             set_classical_realization(self, base_group, proj_group, centralizing_matrix, transvec_matrices)
-            return
 
         # -------------------------------------------------------------------------------
         # Case for unitary groups
@@ -1295,7 +1281,6 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
             transvec_matrices = [transvec2mat(v) for v in transvections]
 
             set_classical_realization(self, base_group, proj_group, centralizing_matrix, transvec_matrices)
-            return
 
         # ----------------------------------------------------------------
         # local functions declaration section finishes here
@@ -1346,7 +1331,6 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
             self._classical_embedding = classical_group
             if self._classical_invariant_form is None:
                 self._classical_invariant_form = classical_group.ambient().invariant_form()
-        return
 
     def _element_constructor_(self, x, **kwds):
         r"""
@@ -1463,7 +1447,7 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
     def as_matrix_group(self, root_bur=None, domain=None, characteristic=None, var='t', reduced=False):
         r"""
         Create an epimorphic image of ``self`` as a matrix group by use of
-        the burau representation.
+        the Burau representation.
 
         INPUT:
 
@@ -1566,7 +1550,8 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
             matrix_group = base_group.subgroup(gen_list)
         else:
             from sage.groups.matrix_gps.finitely_generated import MatrixGroup
-            matrix_group = MatrixGroup(gen_list, category=self.category())
+            cat = self.category() if self.is_finite() else None
+            matrix_group = MatrixGroup(gen_list, category=cat)
 
         # --------------------------------------------------------------------
         # check if there is a well defined group homomorphism to matrix_group

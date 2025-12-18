@@ -407,6 +407,53 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
 
         return x
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        """
+        Copy the (iSrc,jSrc)-th entry of ``src`` to the (iDst,jDst)-th entry
+        ``self``.
+
+        WARNING: As the name suggests, expect segfaults if iSrc,jSrc,iDst,jDst
+        are out of bounds!! This is for internal use only. This method assumes
+        ``src`` is a Matrix_cyclo_dense with the same base ring as ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_cyclo_dense
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: K.<z> = CyclotomicField(3)
+            sage: M = matrix(K,3,4,[i + z/(i+1) for i in range(12)])
+            sage: M
+            [          z   1/2*z + 1   1/3*z + 2   1/4*z + 3]
+            [  1/5*z + 4   1/6*z + 5   1/7*z + 6   1/8*z + 7]
+            [  1/9*z + 8  1/10*z + 9 1/11*z + 10 1/12*z + 11]
+            sage: M.transpose()
+            [          z   1/5*z + 4   1/9*z + 8]
+            [  1/2*z + 1   1/6*z + 5  1/10*z + 9]
+            [  1/3*z + 2   1/7*z + 6 1/11*z + 10]
+            [  1/4*z + 3   1/8*z + 7 1/12*z + 11]
+            sage: M.matrix_from_rows([0,2])
+            [          z   1/2*z + 1   1/3*z + 2   1/4*z + 3]
+            [  1/9*z + 8  1/10*z + 9 1/11*z + 10 1/12*z + 11]
+            sage: M.matrix_from_columns([1,3])
+            [  1/2*z + 1   1/4*z + 3]
+            [  1/6*z + 5   1/8*z + 7]
+            [ 1/10*z + 9 1/12*z + 11]
+            sage: M.matrix_from_rows_and_columns([1,2],[0,3])
+            [  1/5*z + 4   1/8*z + 7]
+            [  1/9*z + 8 1/12*z + 11]
+        """
+        cdef Matrix_cyclo_dense _src = src
+        cdef int a
+        for a in range(self._degree):
+            self._matrix.copy_from_unsafe(a, jDst + iDst*self._ncols, _src._matrix, a, jSrc + iSrc*_src._ncols)
+
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         r"""
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
@@ -1268,7 +1315,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             sage: Matrix(CyclotomicField(10),0).charpoly()
             1
         """
-        key = 'charpoly-%s-%s'%(algorithm,proof)
+        key = 'charpoly-%s-%s' % (algorithm, proof)
         f = self.fetch(key)
         if f is not None:
             return f.change_variable_name(var)
@@ -1383,14 +1430,14 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         p = previous_prime(MAX_MODULUS)
         prod = 1
         v = []
-        #A, denom = self._matrix._clear_denom()
+        # A, denom = self._matrix._clear_denom()
         # TODO: this might be stupidly slow
         denom = self._matrix.denominator()
         A._matrix = <Matrix_rational_dense>(denom*self._matrix)
         bound = A._charpoly_bound()
         L_last = 0
         while prod <= bound:
-            while (n >= 2  and p % n != 1) or denom % p == 0:
+            while (n >= 2 and p % n != 1) or denom % p == 0:
                 if p == 2:
                     raise RuntimeError("we ran out of primes in multimodular charpoly algorithm.")
                 p = previous_prime(p)
@@ -1611,7 +1658,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             sage: a == b  # long time (depends on previous)
             True
         """
-        key = 'echelon_form-%s'%algorithm
+        key = 'echelon_form-%s' % algorithm
         E = self.fetch(key)
         if E is not None:
             return E
@@ -1767,10 +1814,12 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
                 # on a few more primes, and try again.
 
                 num_primes += echelon_primes_increment
-                verbose("rational reconstruction failed, trying with %s primes"%num_primes, level=echelon_verbose_level)
+                verbose("rational reconstruction failed, trying with %s primes" % num_primes,
+                        level=echelon_verbose_level)
                 continue
 
-            verbose("rational reconstruction succeeded with %s primes!"%num_primes, level=echelon_verbose_level)
+            verbose("rational reconstruction succeeded with %s primes!" % num_primes,
+                    level=echelon_verbose_level)
 
             if ((res * res.denominator()).coefficient_bound() *
                 self.coefficient_bound() * self.ncols()) > prod:
@@ -1783,7 +1832,8 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
                         level=echelon_verbose_level)
                 continue
 
-            verbose("found echelon form with %s primes, whose product is %s"%(num_primes, prod), level=echelon_verbose_level)
+            verbose("found echelon form with %s primes, whose product is %s" % (num_primes, prod),
+                    level=echelon_verbose_level)
             self.cache('pivots', max_pivots)
             return res
 
@@ -1823,7 +1873,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             ...
             ValueError: echelon form mod 7 not defined
         """
-        cdef int i
+        cdef Py_ssize_t i
 
         # Initialize variables
         ls, _ = self._reductions(p)

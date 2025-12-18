@@ -190,7 +190,6 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         """
         cdef list l_in = x
         cdef unsigned long length = len(l_in)
-        cdef unsigned long modulus = nmod_poly_modulus(&self.x)
         cdef int i
         if length == 0:
             nmod_poly_zero(&self.x)
@@ -406,9 +405,9 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         n = int(n)
         value = self.base_ring()(value)
         if n >= 0:
-            nmod_poly_set_coeff_ui(&self.x, n, int(value)%nmod_poly_modulus(&self.x))
+            nmod_poly_set_coeff_ui(&self.x, n, int(value) % nmod_poly_modulus(&self.x))
         else:
-            raise IndexError("Polynomial coefficient index must be nonnegative.")
+            raise IndexError("polynomial coefficient index must be nonnegative")
 
     cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
         """
@@ -641,7 +640,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         cdef Polynomial_zmod_flint s0 = self._new()
         cdef Polynomial_zmod_flint t0 = P.one()
         cdef Polynomial_zmod_flint s1 = m
-        cdef Polynomial_zmod_flint t1 = self%m
+        cdef Polynomial_zmod_flint t1 = self % m
 
         cdef Polynomial_zmod_flint q
         cdef Polynomial_zmod_flint r0
@@ -667,12 +666,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
         # make the denominator monic
         c = t0.leading_coefficient()
-        t0 = t0.monic()
-        t1 = t1/c
-
-        return t1, t0
-
-    rational_reconstruct = deprecated_function_alias(12696, rational_reconstruction)
+        return t1 / c, t0.monic()
 
     @cached_method
     def is_irreducible(self):
@@ -811,10 +805,8 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
             sage: R.<x> = PolynomialRing(GF(65537), implementation="FLINT")
             sage: f = R.random_element(9973) * R.random_element(10007)
-            sage: alarm(0.5); f.factor()
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.5): f.factor()
 
         Test zero polynomial::
 

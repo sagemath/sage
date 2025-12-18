@@ -11,3 +11,4 @@ texlive-collection-langjapanese
 texlive-collection-langpolish
 texlive-collection-langportuguese
 texlive-collection-langspanish
+texlive-collection-langcjk

@@ -49,7 +49,7 @@ class IsogenyClass_EC(SageObject):
         model chosen may change in future.
     """
 
-    def __init__(self, E, label=None, empty=False):
+    def __init__(self, E, label=None, empty=False) -> None:
         r"""
         Over `\QQ` we use curves since minimal models exist and there
         is a canonical choice of one.
@@ -71,7 +71,7 @@ class IsogenyClass_EC(SageObject):
         if not empty:
             self._compute()
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         The number of curves in the class.
 
@@ -135,9 +135,9 @@ class IsogenyClass_EC(SageObject):
         for i, E in enumerate(self.curves):
             if C.is_isomorphic(E):
                 return i
-        raise ValueError("%s is not in isogeny class %s" % (C,self))
+        raise ValueError("%s is not in isogeny class %s" % (C, self))
 
-    def __richcmp__(self, other, op):
+    def __richcmp__(self, other, op) -> bool:
         """
         Compare ``self`` and ``other``.
 
@@ -160,7 +160,7 @@ class IsogenyClass_EC(SageObject):
                            sorted(f.a_invariants() for f in other.curves), op)
         return NotImplemented
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Hash is based on the a-invariants of the sorted list of
         minimal models.
@@ -223,15 +223,15 @@ class IsogenyClass_EC(SageObject):
             sage: C.curves
             [Elliptic Curve defined by y^2 = x^3 + (-27) over Number Field in i with defining polynomial x^2 + 1 with i = 1*I,
              Elliptic Curve defined by y^2 = x^3 + 1 over Number Field in i with defining polynomial x^2 + 1 with i = 1*I,
-             Elliptic Curve defined by y^2 + (i+1)*x*y + (i+1)*y = x^3 + i*x^2 + (-i+3)*x + 4*i over Number Field in i with defining polynomial x^2 + 1 with i = 1*I,
-             Elliptic Curve defined by y^2 + (i+1)*x*y + (i+1)*y = x^3 + i*x^2 + (-i+33)*x + (-58*i) over Number Field in i with defining polynomial x^2 + 1 with i = 1*I]
+             Elliptic Curve defined by y^2 + (i+1)*x*y = x^3 + i*x^2 + 3*x + (-i) over Number Field in i with defining polynomial x^2 + 1 with i = 1*I,
+             Elliptic Curve defined by y^2 + (i+1)*x*y = x^3 + i*x^2 + 33*x + 91*i over Number Field in i with defining polynomial x^2 + 1 with i = 1*I]
         """
         if self._label:
             return "Elliptic curve isogeny class %s" % (self._label)
         else:
             return "Isogeny class of %r" % (self.E)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         INPUT:
 
@@ -434,60 +434,71 @@ class IsogenyClass_EC(SageObject):
         elif n == 2:
             # one edge, two vertices.  We align horizontally and put
             # the lower number on the left vertex.
-            G.set_pos(pos={0:[-0.5,0],1:[0.5,0]})
+            G.set_pos(pos={0: [-0.5, 0], 1: [0.5, 0]})
         else:
             maxdegree = max(max(N))
             if n == 3:
                 # o--o--o
-                centervert = [i for i in range(3) if max(N.row(i)) < maxdegree][0]
+                centervert = next(i for i in range(3) if max(N.row(i)) < maxdegree)
                 other = [i for i in range(3) if i != centervert]
-                G.set_pos(pos={centervert:[0,0],other[0]:[-1,0],other[1]:[1,0]})
+                G.set_pos(pos={centervert: [0, 0], other[0]: [-1, 0], other[1]: [1, 0]})
             elif maxdegree == 4:
                 # o--o<8
-                centervert = [i for i in range(4) if max(N.row(i)) < maxdegree][0]
+                centervert = next(i for i in range(4) if max(N.row(i)) < maxdegree)
                 other = [i for i in range(4) if i != centervert]
-                G.set_pos(pos={centervert:[0,0],other[0]:[0,1],other[1]:[-0.8660254,-0.5],other[2]:[0.8660254,-0.5]})
+                G.set_pos(pos={centervert: [0, 0], other[0]: [0, 1],
+                               other[1]: [-0.8660254, -0.5], other[2]: [0.8660254, -0.5]})
             elif maxdegree == 27:
                 # o--o--o--o
                 centers = [i for i in range(4) if list(N.row(i)).count(3) == 2]
-                left = [j for j in range(4) if N[centers[0],j] == 3 and j not in centers][0]
-                right = [j for j in range(4) if N[centers[1],j] == 3 and j not in centers][0]
-                G.set_pos(pos={left:[-1.5,0],centers[0]:[-0.5,0],centers[1]:[0.5,0],right:[1.5,0]})
+                left = next(j for j in range(4) if N[centers[0], j] == 3 and j not in centers)
+                right = next(j for j in range(4) if N[centers[1], j] == 3 and j not in centers)
+                G.set_pos(pos={left: [-1.5, 0], centers[0]: [-0.5, 0],
+                               centers[1]: [0.5, 0], right: [1.5, 0]})
             elif n == 4:
                 # square
-                opp = [i for i in range(1,4) if not N[0,i].is_prime()][0]
-                other = [i for i in range(1,4) if i != opp]
-                G.set_pos(pos={0:[1,1],other[0]:[-1,1],opp:[-1,-1],other[1]:[1,-1]})
+                opp = next(i for i in range(1, 4) if not N[0, i].is_prime())
+                other = [i for i in range(1, 4) if i != opp]
+                G.set_pos(pos={0: [1, 1], other[0]: [-1, 1],
+                               opp: [-1, -1], other[1]: [1, -1]})
             elif maxdegree == 8:
                 # 8>o--o<8
                 centers = [i for i in range(6) if list(N.row(i)).count(2) == 3]
-                left = [j for j in range(6) if N[centers[0],j] == 2 and j not in centers]
-                right = [j for j in range(6) if N[centers[1],j] == 2 and j not in centers]
-                G.set_pos(pos={centers[0]:[-0.5,0],left[0]:[-1,0.8660254],left[1]:[-1,-0.8660254],centers[1]:[0.5,0],right[0]:[1,0.8660254],right[1]:[1,-0.8660254]})
+                left = [j for j in range(6) if N[centers[0], j] == 2 and j not in centers]
+                right = [j for j in range(6) if N[centers[1], j] == 2 and j not in centers]
+                G.set_pos(pos={centers[0]: [-0.5, 0], left[0]: [-1, 0.8660254],
+                               left[1]: [-1, -0.8660254], centers[1]: [0.5, 0],
+                               right[0]: [1, 0.8660254], right[1]: [1, -0.8660254]})
             elif maxdegree == 18:
                 # two squares joined on an edge
                 centers = [i for i in range(6) if list(N.row(i)).count(3) == 2]
-                top = [j for j in range(6) if N[centers[0],j] == 3]
-                bl = [j for j in range(6) if N[top[0],j] == 2][0]
-                br = [j for j in range(6) if N[top[1],j] == 2][0]
-                G.set_pos(pos={centers[0]:[0,0.5],centers[1]:[0,-0.5],top[0]:[-1,0.5],top[1]:[1,0.5],bl:[-1,-0.5],br:[1,-0.5]})
+                top = [j for j in range(6) if N[centers[0], j] == 3]
+                bl = next(j for j in range(6) if N[top[0], j] == 2)
+                br = next(j for j in range(6) if N[top[1], j] == 2)
+                G.set_pos(pos={centers[0]: [0, 0.5], centers[1]: [0, -0.5],
+                               top[0]: [-1, 0.5], top[1]: [1, 0.5],
+                               bl: [-1, -0.5], br: [1, -0.5]})
             elif maxdegree == 16:
                 # tree from bottom, 3 regular except for the leaves.
                 centers = [i for i in range(8) if list(N.row(i)).count(2) == 3]
-                center = [i for i in centers if len([j for j in centers if N[i,j] == 2]) == 2][0]
+                center = next(i for i in centers if len([j for j in centers if N[i, j] == 2]) == 2)
                 centers.remove(center)
-                bottom = [j for j in range(8) if N[center,j] == 2 and j not in centers][0]
-                left = [j for j in range(8) if N[centers[0],j] == 2 and j != center]
-                right = [j for j in range(8) if N[centers[1],j] == 2 and j != center]
-                G.set_pos(pos={center:[0,0],bottom:[0,-1],centers[0]:[-0.8660254,0.5],centers[1]:[0.8660254,0.5],left[0]:[-0.8660254,1.5],right[0]:[0.8660254,1.5],left[1]:[-1.7320508,0],right[1]:[1.7320508,0]})
+                bottom = next(j for j in range(8) if N[center, j] == 2 and j not in centers)
+                left = [j for j in range(8) if N[centers[0], j] == 2 and j != center]
+                right = [j for j in range(8) if N[centers[1], j] == 2 and j != center]
+                G.set_pos(pos={center: [0, 0], bottom: [0, -1], centers[0]: [-0.8660254, 0.5],
+                               centers[1]: [0.8660254, 0.5], left[0]: [-0.8660254, 1.5],
+                               right[0]: [0.8660254, 1.5], left[1]: [-1.7320508, 0], right[1]: [1.7320508, 0]})
             elif maxdegree == 12:
                 # tent
                 centers = [i for i in range(8) if list(N.row(i)).count(2) == 3]
-                left = [j for j in range(8) if N[centers[0],j] == 2]
+                left = [j for j in range(8) if N[centers[0], j] == 2]
                 right = []
                 for i in range(3):
-                    right.append([j for j in range(8) if N[centers[1],j] == 2 and N[left[i],j] == 3][0])
-                G.set_pos(pos={centers[0]:[-0.75,0],centers[1]:[0.75,0],left[0]:[-0.75,1],right[0]:[0.75,1],left[1]:[-1.25,-0.75],right[1]:[0.25,-0.75],left[2]:[-0.25,-0.25],right[2]:[1.25,-0.25]})
+                    right.append(next(j for j in range(8) if N[centers[1], j] == 2 and N[left[i], j] == 3))
+                G.set_pos(pos={centers[0]: [-0.75, 0], centers[1]: [0.75, 0], left[0]: [-0.75, 1],
+                               right[0]: [0.75, 1], left[1]: [-1.25, -0.75], right[1]: [0.25, -0.75],
+                               left[2]: [-0.25, -0.25], right[2]: [1.25, -0.25]})
         G.set_vertices(D)
         G.relabel(list(range(1, n + 1)))
         return G
@@ -582,7 +593,8 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
     """
     Isogeny classes for elliptic curves over number fields.
     """
-    def __init__(self, E, reducible_primes=None, algorithm='Billerey', minimal_models=True):
+    def __init__(self, E, reducible_primes=None,
+                 algorithm='Billerey', minimal_models=True) -> None:
         r"""
         INPUT:
 
@@ -615,8 +627,8 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
             sage: [E1.ainvs() for E1 in C]
             [(0, 0, 0, 0, -27),
              (0, 0, 0, 0, 1),
-             (i + 1, i, i + 1, -i + 3, 4*i),
-             (i + 1, i, i + 1, -i + 33, -58*i)]
+             (i + 1, i, 0, 3, -i),
+             (i + 1, i, 0, 33, 91*i)]
 
         The matrix of degrees of cyclic isogenies between curves::
 
@@ -647,13 +659,13 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
             sage: [((i,j), isogs[i][j].x_rational_map())
             ....:  for i in range(4) for j in range(4) if isogs[i][j] != 0]
             [((0, 1), (1/9*x^3 - 12)/x^2),
-             ((0, 3), (-1/2*i*x^2 + i*x - 12*i)/(x - 3)),
+             ((0, 3), (1/2*i*x^2 - 2*i*x + 15*i)/(x - 3)),
              ((1, 0), (x^3 + 4)/x^2),
-             ((1, 2), (-1/2*i*x^2 - i*x - 2*i)/(x + 1)),
-             ((2, 1), (1/2*i*x^2 - x)/(x + 3/2*i)),
-             ((2, 3), (x^3 + 4*i*x^2 - 10*x - 10*i)/(x^2 + 4*i*x - 4)),
-             ((3, 0), (1/2*i*x^2 + x + 4*i)/(x - 5/2*i)),
-             ((3, 2), (1/9*x^3 - 4/3*i*x^2 - 34/3*x + 226/9*i)/(x^2 - 8*i*x - 16))]
+             ((1, 2), (1/2*i*x^2 + i)/(x + 1)),
+             ((2, 1), (-1/2*i*x^2 - 1/2*i)/(x - 1/2*i)),
+             ((2, 3), (x^3 - 2*i*x^2 - 7*x + 4*i)/(x^2 - 2*i*x - 1)),
+             ((3, 0), (-1/2*i*x^2 + 2*x - 5/2*i)/(x + 7/2*i)),
+             ((3, 2), (1/9*x^3 + 2/3*i*x^2 - 13/3*x - 116/9*i)/(x^2 + 10*i*x - 25))]
 
             sage: K.<i> = QuadraticField(-1)
             sage: E = EllipticCurve([1+i, -i, i, 1, 0])
@@ -992,7 +1004,7 @@ class IsogenyClass_EC_Rational(IsogenyClass_EC_NumberField):
     r"""
     Isogeny classes for elliptic curves over `\QQ`.
     """
-    def __init__(self, E, algorithm='sage', label=None, empty=False):
+    def __init__(self, E, algorithm='sage', label=None, empty=False) -> None:
         r"""
         INPUT:
 
@@ -1207,7 +1219,7 @@ def isogeny_degrees_cm(E, verbose=False):
     if verbose:
         print("CM case, discriminant = %s" % d)
 
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
     from sage.sets.set import Set
     from sage.arith.misc import kronecker as kronecker_symbol
 
@@ -1395,8 +1407,9 @@ def possible_isogeny_degrees(E, algorithm='Billerey', max_l=None,
 
     Over an extension field::
 
+        sage: # long time
         sage: E3 = E.change_ring(CyclotomicField(3))
-        sage: possible_isogeny_degrees(E3)                                              # long time (5s)
+        sage: possible_isogeny_degrees(E3)
         [5]
         sage: [phi.degree() for phi in E3.isogenies_prime_degree()]
         [5, 5]

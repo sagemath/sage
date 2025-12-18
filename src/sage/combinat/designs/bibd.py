@@ -1,5 +1,5 @@
 r"""
-Balanced Incomplete Block Designs (BIBD)
+Balanced incomplete block designs (BIBD)
 
 This module gathers everything related to Balanced Incomplete Block Designs. One can build a
 BIBD (or check that it can be built) with :func:`balanced_incomplete_block_design`::
@@ -334,7 +334,7 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
                     return False
                 raise EmptySetError(f"there exists no ({v},{k},{lambd})-BIBD")
             B = B.incidence_structure()
-            if B.num_blocks() == expected_n_of_blocks:
+            if B.n_blocks() == expected_n_of_blocks:
                 if existence:
                     return True
                 else:
@@ -613,7 +613,7 @@ def BIBD_from_TD(v, k, existence=False):
 
         BIBD = TDkv._blocks
         for i in range(k):
-            BIBD.extend([[x+i*v for x in B] for B in BIBDvk])
+            BIBD.extend([x+i*v for x in B] for B in BIBDvk)
 
     # Second construction
     elif ((v-1) % k == 0 and
@@ -630,7 +630,7 @@ def BIBD_from_TD(v, k, existence=False):
         inf = v*k
         BIBD = TDkv
         for i in range(k):
-            BIBD.extend([[inf if x == v else x+i*v for x in B] for B in BIBDv1k])
+            BIBD.extend([inf if x == v else x+i*v for x in B] for B in BIBDv1k)
 
     # Third construction
     elif ((v-k) % k == 0 and
@@ -650,7 +650,8 @@ def BIBD_from_TD(v, k, existence=False):
         BIBDvpkk = [B for B in BIBDvpkk if min(B) < v]
 
         for i in range(k):
-            BIBD.extend([[(x-v)+inf if x >= v else x+i*v for x in B] for B in BIBDvpkk])
+            BIBD.extend([(x-v)+inf if x >= v else x+i*v for x in B]
+                        for B in BIBDvpkk)
 
         BIBD.append(list(range(k * v, v * k + k)))
 
@@ -1277,14 +1278,14 @@ def BIBD_5q_5_for_q_prime_power(q):
 
     d = (q-1)//4
     B = []
-    F = FiniteField(q,'x')
+    F = FiniteField(q, 'x')
     a = F.primitive_element()
-    L = {b:i for i,b in enumerate(F)}
-    for b in L:
-        B.append([i*q + L[b] for i in range(5)])
+    L = {b: i for i, b in enumerate(F)}
+    for b, Lb in L.items():
+        B.append([i*q + Lb for i in range(5)])
         for i in range(5):
             for j in range(d):
-                B.append([        i*q + L[b          ],
+                B.append([        i*q + Lb,
                           ((i+1) % 5)*q + L[ a**j+b    ],
                           ((i+1) % 5)*q + L[-a**j+b    ],
                           ((i+4) % 5)*q + L[ a**(j+d)+b],
@@ -1466,7 +1467,7 @@ class PairwiseBalancedDesign(GroupDivisibleDesign):
             (13,3,1)-Balanced Incomplete Block Design
         """
         bsizes = list(frozenset(self.block_sizes()))
-        return "Pairwise Balanced Design on {} points with sets of sizes in {}".format(self.num_points(), bsizes)
+        return "Pairwise Balanced Design on {} points with sets of sizes in {}".format(self.n_points(), bsizes)
 
 
 class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
@@ -1525,10 +1526,10 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
             sage: b=designs.balanced_incomplete_block_design(9,3); b
             (9,3,1)-Balanced Incomplete Block Design
         """
-        v = self.num_points()
+        v = self.n_points()
         k = len(self._blocks[0]) if self._blocks else 0
         l = self._lambd
-        return "({},{},{})-Balanced Incomplete Block Design".format(v,k,l)
+        return f"({v},{k},{l})-Balanced Incomplete Block Design"
 
     def arc(self, s=2, solver=None, verbose=0, *, integrality_tolerance=1e-3):
         r"""

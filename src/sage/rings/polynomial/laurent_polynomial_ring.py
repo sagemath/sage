@@ -49,33 +49,6 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.element import parent
 
 
-def is_LaurentPolynomialRing(R):
-    """
-    Return ``True`` if and only if R is a Laurent polynomial ring.
-
-    EXAMPLES::
-
-        sage: from sage.rings.polynomial.laurent_polynomial_ring import is_LaurentPolynomialRing
-        sage: P = PolynomialRing(QQ, 2, 'x')
-        sage: is_LaurentPolynomialRing(P)
-        doctest:warning...
-        DeprecationWarning: is_LaurentPolynomialRing is deprecated; use isinstance(...,
-        sage.rings.polynomial.laurent_polynomial_ring_base.LaurentPolynomialRing_generic) instead
-        See https://github.com/sagemath/sage/issues/35229 for details.
-        False
-
-        sage: R = LaurentPolynomialRing(QQ,3,'x')                                       # needs sage.modules
-        sage: is_LaurentPolynomialRing(R)                                               # needs sage.modules
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(35229,
-                "is_LaurentPolynomialRing is deprecated; use "
-                "isinstance(..., sage.rings.polynomial.laurent_polynomial_ring_base."
-                "LaurentPolynomialRing_generic) instead")
-    return isinstance(R, LaurentPolynomialRing_generic)
-
-
 _cache = {}
 
 
@@ -236,14 +209,14 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
            sage: (w0 + 2*w8 + w13)^2                                                    # needs sage.modules
            w0^2 + 4*w0*w8 + 4*w8^2 + 2*w0*w13 + 4*w8*w13 + w13^2
     """
-    from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+    from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
     from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 
     R = PolynomialRing(base_ring, *args, **kwds)
     if R in _cache:
         return _cache[R]   # put () here to re-enable weakrefs
 
-    if isinstance(R, PolynomialRing_general):
+    if isinstance(R, PolynomialRing_generic):
         # univariate case
         P = LaurentPolynomialRing_univariate(R)
     else:
@@ -780,12 +753,13 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
         P = parent(x)
         if P is self.polynomial_ring():
             from sage.rings.polynomial.polydict import ETuple
-            return self.element_class( self, x, mon=ETuple({}, int(self.ngens())) )
+            return self.element_class(self, x,
+                                      mon=ETuple({}, int(self.ngens())))
 
-        elif isinstance(x, Expression):
+        if isinstance(x, Expression):
             return x.laurent_polynomial(ring=self)
 
-        elif isinstance(x, LaurentPolynomial):
+        if isinstance(x, LaurentPolynomial):
             if self.variable_names() == P.variable_names():
                 # No special processing needed here;
                 #   handled by LaurentPolynomial_mpair.__init__
@@ -818,7 +792,7 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
 
         return self.element_class(self, x)
 
-    def __reduce__(self):
+    def __reduce__(self) -> tuple:
         """
         Used in pickling.
 

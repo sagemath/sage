@@ -130,7 +130,8 @@ class HyperplaneArrangementLibrary:
             sage: HA = hyperplane_arrangements.bigraphical(G, A)
             sage: HA.n_regions()
             63
-            sage: hyperplane_arrangements.bigraphical(G, 'generic').n_regions()
+            sage: hyperplane_arrangements.bigraphical(G, # random
+            ....:   'generic').n_regions()
             65
             sage: hyperplane_arrangements.bigraphical(G).n_regions()
             59
@@ -138,8 +139,20 @@ class HyperplaneArrangementLibrary:
         REFERENCES:
 
         - [HP2016]_
+
+        TESTS:
+
+        One of the above examples was marked "# random" because the output is
+        not always the same. However, the answer is "65" more than 99.9% of the
+        time, so we can make a doctest by running it repeatedly
+        (see :issue:`39167`). ::
+
+            sage: G = graphs.CycleGraph(4)
+            sage: any(hyperplane_arrangements.bigraphical(G,
+            ....:   'generic').n_regions() == 65 for _ in range(5))
+            True
         """
-        n = G.num_verts()
+        n = G.n_vertices()
         if A is None:  # default to G-semiorder arrangement
             A = matrix(K, n, lambda i, j: 1)
         elif A == 'generic':
@@ -342,7 +355,7 @@ class HyperplaneArrangementLibrary:
             sage: hyperplane_arrangements.G_semiorder(g)
             Arrangement of 12 hyperplanes of dimension 5 and rank 4
         """
-        n = G.num_verts()
+        n = G.n_vertices()
         H = make_parent(K, n, names)
         x = H.gens()
         hyperplanes = []
@@ -381,7 +394,7 @@ class HyperplaneArrangementLibrary:
             sage: a = hyperplane_arrangements.G_Shi(graphs.WheelGraph(4)); a
             Arrangement of 12 hyperplanes of dimension 4 and rank 3
         """
-        n = G.num_verts()
+        n = G.n_vertices()
         H = make_parent(K, n, names)
         x = H.gens()
         hyperplanes = []
@@ -432,7 +445,7 @@ class HyperplaneArrangementLibrary:
             sage: h.characteristic_polynomial()         # long time
             x^5 - 6*x^4 + 14*x^3 - 15*x^2 + 6*x
         """
-        n = G.num_verts()
+        n = G.n_vertices()
         H = make_parent(K, n, names)
         x = H.gens()
         hyperplanes = []
@@ -502,7 +515,8 @@ class HyperplaneArrangementLibrary:
         A = H(*hyperplanes)
         x = polygen(QQ, 'x')
         charpoly = x * sum([(-1)**k * stirling_number2(n, n-k) *
-                            prod([(x - 1 - j) for j in range(k, n-1)]) for k in range(0, n)])
+                            prod([(x - 1 - j) for j in range(k, n-1)])
+                            for k in range(n)])
         A.characteristic_polynomial.set_cache(charpoly)
         return A
 

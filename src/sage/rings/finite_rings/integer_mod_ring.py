@@ -67,9 +67,8 @@ import sage.misc.prandom as random
 from sage.arith.misc import factor
 from sage.arith.misc import primitive_root
 from sage.arith.misc import CRT_basis
-from sage.rings.ring import Field, CommutativeRing
+from sage.rings.ring import Field
 from sage.misc.mrange import cartesian_product_iterator
-import sage.rings.ring as ring
 import sage.rings.abc
 from sage.rings.finite_rings import integer_mod
 import sage.rings.integer as integer
@@ -77,7 +76,8 @@ import sage.rings.integer_ring as integer_ring
 import sage.rings.quotient_ring as quotient_ring
 
 try:
-    from sage.libs.pari.all import pari, PariError
+    from sage.libs.pari import pari
+    from cypari2.handle_error import PariError
 except ImportError:
     class PariError(Exception):
         pass
@@ -249,10 +249,10 @@ class IntegerModFactory(UniqueFactory):
 Zmod = Integers = IntegerModRing = IntegerModFactory("IntegerModRing")
 
 
-from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.noetherian_rings import NoetherianRings
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.category import JoinCategory
-default_category = JoinCategory((CommutativeRings(), FiniteEnumeratedSets()))
+default_category = JoinCategory((NoetherianRings(), FiniteEnumeratedSets()))
 ZZ = integer_ring.IntegerRing()
 
 
@@ -448,6 +448,11 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: R = IntegerModRing(18)
             sage: R.is_finite()
             True
+
+        TESTS::
+
+            sage: Integers(8).is_noetherian()
+            True
         """
         order = ZZ(order)
         if order <= 0:
@@ -478,7 +483,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         self._zero_element = integer_mod.IntegerMod(self, 0)
         self._one_element = integer_mod.IntegerMod(self, 1)
 
-    def _macaulay2_init_(self, macaulay2=None):
+    def _macaulay2_init_(self, macaulay2=None) -> str:
         """
         EXAMPLES::
 
@@ -498,7 +503,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         return "ZZ/{}".format(self.order())
 
-    def _axiom_init_(self):
+    def _axiom_init_(self) -> str:
         """
         Return a string representation of ``self`` in (Pan)Axiom.
 
@@ -529,17 +534,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         return integer.Integer(0)
 
-    def is_noetherian(self):
-        """
-        Check if ``self`` is a Noetherian ring.
-
-        EXAMPLES::
-
-            sage: Integers(8).is_noetherian()
-            True
-        """
-        return True
-
     def extension(self, poly, name=None, names=None, **kwds):
         """
         Return an algebraic extension of ``self``. See
@@ -560,7 +554,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         return CommutativeRing.extension(self, poly, name, names, **kwds)
 
     @cached_method
-    def is_prime_field(self):
+    def is_prime_field(self) -> bool:
         """
         Return ``True`` if the order is prime.
 
@@ -573,7 +567,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         return self.__order.is_prime()
 
-    def _precompute_table(self):
+    def _precompute_table(self) -> None:
         """
         Compute a table of elements so that elements are unique.
 
@@ -585,7 +579,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         self._pyx_order.precompute_table(self)
 
-    def list_of_elements_of_multiplicative_group(self):
+    def list_of_elements_of_multiplicative_group(self) -> list:
         """
         Return a list of all invertible elements, as python ints.
 
@@ -750,12 +744,12 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             self._factory_data[3]['category'] = Fields()
         else:
             if self.category().is_subcategory(Fields()):
-                raise ValueError("""THIS SAGE SESSION MIGHT BE SERIOUSLY COMPROMISED!
-The order {} is not prime, but this ring has been put
-into the category of fields. This may already have consequences
-in other parts of Sage. Either it was a mistake of the user,
-or a probabilistic primality test has failed.
-In the latter case, please inform the developers.""".format(self.order()))
+                raise ValueError(("THIS SAGE SESSION MIGHT BE SERIOUSLY COMPROMISED!\n"
+                    "The order {} is not prime, but this ring has been put\n"
+                    "into the category of fields. This may already have consequences\n"
+                    "in other parts of Sage. Either it was a mistake of the user,\n"
+                    "or a probabilistic primality test has failed.\n"
+                    "In the latter case, please inform the developers.").format(self.order()))
         return is_prime
 
     @cached_method
@@ -1541,14 +1535,15 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: while not all(found):
             ....:     found[R.random_element()] = True
 
-        We test ``bound``-option::
+        We test the ``bound`` option::
 
-            sage: R.random_element(2) in [R(16), R(17), R(0), R(1), R(2)]
+            sage: R.random_element(2) in [R(-2), R(-1), R(0), R(1), R(2)]
             True
         """
         if bound is not None:
-            return CommutativeRing.random_element(self, bound)
-        a = random.randint(0, self.order() - 1)
+            a = random.randint(-bound, bound)
+        else:
+            a = random.randint(0, self.order() - 1)
         return self(a)
 
     @staticmethod
@@ -1779,11 +1774,11 @@ In the latter case, please inform the developers.""".format(self.order()))
             [0, 32, 9]
             sage: (x^6 + x^5 + 9*x^4 + 20*x^3 + 3*x^2 + 18*x + 7).roots()
             [(19, 1), (20, 2), (21, 3)]
-            sage: (x^6 + x^5 + 9*x^4 + 20*x^3 + 3*x^2 + 18*x + 7).roots(multiplicities=False)
+            sage: sorted((x^6 + x^5 + 9*x^4 + 20*x^3 + 3*x^2 + 18*x + 7).roots(multiplicities=False))
             [19, 20, 21]
 
         We can find roots without multiplicities over a ring whose modulus is
-        a prime power, even a big power:
+        a prime power, even a big power::
 
             sage: R.<x> = Zmod(7^3)[]
             sage: (x^2 + x + 1).roots(multiplicities=False)
@@ -1793,14 +1788,14 @@ In the latter case, please inform the developers.""".format(self.order()))
             [1125899906842623]
 
         We can also find roots without multiplicities over a ring whose modulus
-        is a product of primes or prime powers:
+        is a product of primes or prime powers::
 
             sage: R.<x> = Zmod(60)[]
             sage: (x^2 - 1).roots(multiplicities=False)
             [29, 41, 49, 1, 59, 11, 19, 31]
 
         We may also ask for roots modulo a quotient of the ring over which the
-        polynomial is defined:
+        polynomial is defined::
 
             sage: R.<x> = Zmod(120)[]
             sage: (x^2 - 1).roots(multiplicities=False)
@@ -1814,7 +1809,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: x.roots()
             [(0, 1)]
 
-        Test polynomials with content:
+        Test polynomials with content::
 
             sage: R.<x> = Zmod(4)[]
             sage: (2*x).roots(multiplicities=False)
@@ -1822,16 +1817,16 @@ In the latter case, please inform the developers.""".format(self.order()))
 
             sage: R.<x> = Zmod(6)[]
             sage: (3*x).roots(multiplicities=False)
-            [0, 4, 2]
+            [0, 2, 4]
 
-        Test polynomial with many roots:
+        Test polynomial with many roots::
 
             sage: R.<x> = Zmod(6)[]
             sage: f = x * (x - 1) * (x - 2) * (x - 3) * (x - 4) * (x - 5)
             sage: len(f.roots(multiplicities=False))
             6
 
-        Test finding roots over large prime powers:
+        Test finding roots over large prime powers::
 
             sage: R.<x> = Zmod(2**16)[]
             sage: (x^3 + 5).roots(multiplicities=False)
@@ -1847,7 +1842,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: (x^3 + 8).roots(multiplicities=False)
             [14348905, 28697812, 43046719]
 
-        Test some larger primes:
+        Test some larger primes::
 
             sage: R.<x> = Zmod(41**4)[]
             sage: (x^2 + 2).roots(multiplicities=False)
@@ -1856,7 +1851,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: (x^2 + 3).roots(multiplicities=False)
             [3269879, 148922]
 
-        We can't find roots with multiplicities in non-fields:
+        We can't find roots with multiplicities in non-fields::
 
             sage: R.<x> = Zmod(6)[]
             sage: (x + 1).roots()
@@ -1875,7 +1870,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             NotImplementedError: root finding with multiplicities for this polynomial not implemented (try the multiplicities=False option)
 
         The zero polynomial has every residue class as a root, but we don't
-        support multiplicities even over fields (they would all be infinite).
+        support multiplicities even over fields (they would all be infinite).::
 
             sage: R.<x> = Zmod(6)[]
             sage: R.zero().roots()
@@ -1901,7 +1896,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: R.zero().roots(multiplicities=False)
             [0, 1, 2, 3, 4, 5, 6, 7]
 
-        This method doesn't support root-finding over rings that aren't Z/nZ:
+        This method doesn't support root-finding over rings that aren't Z/nZ::
 
             sage: R.<x> = Zmod(120)[]
             sage: f = x^2 - 1
@@ -1911,11 +1906,51 @@ In the latter case, please inform the developers.""".format(self.order()))
             NotImplementedError
 
         Sage allows us to coerce polynomials from one modulus to another,
-        and that makes the following defined:
+        and that makes the following defined::
 
             sage: R.<x> = Zmod(100)[]
             sage: (x^2 - 1).roots(Zmod(99), multiplicities=False) == (x^2 - 1).change_ring(Zmod(99)).roots(multiplicities=False)
             True
+
+        We can find roots of high degree polynomials in a reasonable time::
+
+            sage: set_random_seed(31337)
+            sage: p = random_prime(2^128)
+            sage: R.<x> = Zmod(p)[]
+            sage: f = R.random_element(degree=5000)
+            sage: f.roots(multiplicities=False)
+            [107295314027801680550847462044796892009, 75545907600948005385964943744536832524]
+
+        Roots of 0 or 1 degree polynomials should be computable without factoring the order::
+
+            sage: set_random_seed(31337)
+            sage: p = random_prime(2^512)
+            sage: q = random_prime(2^512)
+            sage: R.<x> = Zmod(p*q)[]
+            sage: R(1).roots(multiplicities=False)
+            []
+            sage: R(x + 1).roots(multiplicities=False)
+            [3370329767268559825901742050737977765362112301264016666995728641595783763682895579491491312949884527233896437825100351818777861111199083287936712213803662588205628332090619063390145822822539640664875016851649375480771418576780687530310519702682544247717838214152013112397973300661385457793537189792695633500]
+            sage: R(p*x + 1).roots(multiplicities=False)
+            []
+
+        Even when leading coefficient of linear polynomial is not invertible::
+
+            sage: set_random_seed(31337)
+            sage: p = random_prime(2^10)
+            sage: q = random_prime(2^512)
+            sage: R.<x> = Zmod((p**2)*q)[]
+            sage: len(R(p*x + p*q).roots(multiplicities=False))
+            857
+
+        Test all linear polynomials modulo 10::
+
+            sage: N = 10 # maybe make a for loop
+            sage: R = Zmod(N)
+            sage: for f in R["x"].polynomials(1):
+            ....:     s1 = set(f.roots(multiplicities=False))
+            ....:     s2 = set(d for d in R if f(d) == 0)
+            ....:     assert s1 == s2, f"{f}: {s1} != {s2}"
         """
 
         # This function only supports roots in an IntegerModRing
@@ -1931,16 +1966,47 @@ In the latter case, please inform the developers.""".format(self.order()))
                     " implemented (try the multiplicities=False option)"
                 )
             # Roots of non-zero polynomial over finite fields by factorization
-            return f._roots_from_factorization(f.factor(), multiplicities)
+            return f.change_ring(f.base_ring().field()).roots(multiplicities=multiplicities)
 
-        # Zero polynomial is a base case
+        # Constant and linear polynomials are base cases
         if deg < 0:
             # All residue classes are roots of the zero polynomial
             return [*map(self, range(self.cardinality()))]
+        if deg == 0:
+            return []
+        if deg == 1:
+            # assume form a*x + b
+            b, a = f.list()
+            if a.is_unit():
+                return [-b * (~a)]
+
+            al, bl = a.lift(), b.lift()
+
+            N = self.order()
+            g = N.gcd(al)
+
+            if bl % g != 0:
+                return []  # No solution
+
+            # whole eqn divided by g
+            N_by_g = N.divide_knowing_divisible_by(g)
+            a_by_g = al.divide_knowing_divisible_by(g)
+            _R = Zmod(N_by_g)
+            assert _R(a_by_g).is_unit()
+
+            # single root
+            _root = self(f.roots(_R, multiplicities=False)[0])
+            inc = self(N_by_g)
+            return [_root + k * inc for k in range(g)]
 
         # Finite fields are a base case
         if self.is_field():
-            return f._roots_from_factorization(f.factor(), False)
+            return list(
+                map(
+                    f.base_ring(),
+                    f.change_ring(f.base_ring().field()).roots(multiplicities=False),
+                )
+            )
 
         # Otherwise, find roots modulo each prime power
         fac = self.factored_order()
@@ -1973,7 +2039,7 @@ In the latter case, please inform the developers.""".format(self.order()))
     #######################################################
     # Suppose for interfaces
     #######################################################
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
         EXAMPLES::
 
@@ -1983,9 +2049,9 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: gap(R)  # indirect doctest                                            # needs sage.libs.gap
             (Integers mod 12345678900)
         """
-        return 'ZmodnZ({})'.format(self.order())
+        return f'ZmodnZ({self.order()})'
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         EXAMPLES::
 
@@ -1995,7 +2061,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: magma(R)  # indirect doctest, optional - magma
             Residue class ring of integers modulo 12345678900
         """
-        return 'Integers({})'.format(self.order())
+        return f'Integers({self.order()})'
 
     def degree(self):
         """
@@ -2030,7 +2096,7 @@ def crt(v):
         1027
     """
     if len(v) == 0:
-        return IntegerModRing(1)(1)
+        return IntegerModRing(1).one()
     x = v[0]
     for i in range(1, len(v)):
         x = x.crt(v[i])

@@ -448,11 +448,12 @@ the ``*`` operator::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from sage.structure.factory import UniqueFactory
-from sage.modules.module import Module
-from sage.structure.element import ModuleElement
+
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
+from sage.modules.module import Module
+from sage.structure.element import ModuleElement
+from sage.structure.factory import UniqueFactory
 
 
 class QuiverRepFactory(UniqueFactory):
@@ -706,8 +707,8 @@ class QuiverRepFactory(UniqueFactory):
             #
             # Note that the first space is assigned to key[3] and the first
             # vertex is 1 so the space assigned to vertex v is key[2 + v]
-            from sage.matrix.constructor import Matrix
             from sage.categories.morphism import Morphism
+            from sage.matrix.constructor import Matrix
             for x in P._sorted_edges:
                 if x in maps:
                     e = maps[x]
@@ -1071,11 +1072,7 @@ class QuiverRepElement(ModuleElement):
             return False
 
         # Return False if the elements differ at any vertex
-        for v in self._quiver:
-            if self._elems[v] != other._elems[v]:
-                return False
-
-        return True
+        return all(self._elems[v] == other._elems[v] for v in self._quiver)
 
     def __ne__(self, other):
         """
@@ -1102,11 +1099,7 @@ class QuiverRepElement(ModuleElement):
             return True
 
         # Return True if the elements differ at any vertex
-        for v in self._quiver:
-            if self._elems[v] != other._elems[v]:
-                return True
-
-        return False
+        return any(self._elems[v] != other._elems[v] for v in self._quiver)
 
     ###########################################################################
     #                                                                         #
@@ -1197,7 +1190,7 @@ class QuiverRepElement(ModuleElement):
     #                                                                         #
     ###########################################################################
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Test whether ``self`` is zero.
 
@@ -1223,11 +1216,7 @@ class QuiverRepElement(ModuleElement):
             sage: M.zero().is_zero()
             True
         """
-        for v in self._quiver:
-            if not self._elems[v].is_zero():
-                return False
-
-        return True
+        return all(self._elems[v].is_zero() for v in self._quiver)
 
     def support(self):
         """
@@ -1775,7 +1764,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         """
         return tuple(self._spaces[x].dimension() for x in self._quiver)
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Test whether the representation is zero.
 
@@ -1797,7 +1786,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         """
         return self.dimension() == 0
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         """
         Test whether the representation is simple.
 
@@ -1815,7 +1804,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         # dimension 1.
         return self.dimension() == 1
 
-    def is_semisimple(self):
+    def is_semisimple(self) -> bool:
         """
         Test whether the representation is semisimple.
 
@@ -1830,10 +1819,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         """
         # A quiver representation is semisimple if and only if the zero map is
         # assigned to each edge.
-        for x in self._semigroup._sorted_edges:
-            if not self._maps[x].is_zero():
-                return False
-        return True
+        return all(self._maps[x].is_zero() for x in self._semigroup._sorted_edges)
 
     def an_element(self):
         """
@@ -2012,11 +1998,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         gens = self.gens()
         if len(gens) != len(coordinates):
             raise ValueError("the coordinates do not match the dimension of the module")
-
-        result = self()  # this must not be self.zero(), which is cached
-        for ci, gi in zip(coordinates, gens):
-            result += ci * gi
-        return result
+        return self.sum(ci * gi for ci, gi in zip(coordinates, gens))
 
     ###########################################################################
     #                                                                         #
@@ -2469,10 +2451,11 @@ class QuiverRep_generic(WithEqualityById, Module):
                 raise ValueError("cannot direct sum modules with different base rings")
 
         # Get the dimensions of all spaces at each vertex
-        dims = dict((v, [x._spaces[v].dimension() for x in mods]) for v in self._quiver)
+        dims = {v: [x._spaces[v].dimension() for x in mods]
+                for v in self._quiver}
 
         # Create spaces of the correct dimensions
-        spaces = dict((v, self.base_ring()**sum(dims[v])) for v in self._quiver)
+        spaces = {v: self.base_ring()**sum(dims[v]) for v in self._quiver}
 
         # Take block sums of matrices to form the maps
         from sage.matrix.constructor import block_diagonal_matrix
@@ -2486,7 +2469,7 @@ class QuiverRep_generic(WithEqualityById, Module):
             return result
 
         # Create the inclusions and projections
-        from sage.matrix.constructor import block_matrix, Matrix
+        from sage.matrix.constructor import Matrix, block_matrix
         from sage.rings.integer import Integer
         iota = []
         pi = []
@@ -2754,7 +2737,7 @@ class QuiverRep_with_path_basis(QuiverRep_generic):
                 maps[e][i, j] = k.one()
 
         # Create the spaces and then the representation
-        spaces = dict((v, len(self._bases[v])) for v in Q)
+        spaces = {v: len(self._bases[v]) for v in Q}
         super().__init__(k, P, spaces, maps)
 
         # Try and create the matrices for the left edge action of edges.  If it
@@ -2765,10 +2748,10 @@ class QuiverRep_with_path_basis(QuiverRep_generic):
             action_mats[e] = {}
             for v in self._quiver:
                 # Start with the zero matrix and fill in
-                l = len(self._bases[v])
-                action_mats[e][v] = Matrix(k, l, l)
+                ell = len(self._bases[v])
+                action_mats[e][v] = Matrix(k, ell, ell)
 
-                for j in range(l):
+                for j in range(ell):
                     if e[1] == self._bases[v][j].initial_vertex():
                         try:
                             action_mats[e][v][self._bases[v].index(P([e], check=False) * self._bases[v][j]), j] = k.one()
@@ -2783,12 +2766,12 @@ class QuiverRep_with_path_basis(QuiverRep_generic):
             action_mats[e] = {}
             for v in self._quiver:
                 # Start with the zero matrix and fill in
-                l = len(self._bases[v])
-                action_mats[e][v] = Matrix(k, l, l)
+                ell = len(self._bases[v])
+                action_mats[e][v] = Matrix(k, ell, ell)
 
                 # Paths not beginning at vert are sent to zero, paths beginning
                 # at vert are fixed
-                for i in range(l):
+                for i in range(ell):
                     if self._bases[v][i].initial_vertex() == vert:
                         action_mats[e][v][i, i] = k.one()
 
@@ -2857,7 +2840,7 @@ class QuiverRep_with_path_basis(QuiverRep_generic):
                  for v in self._quiver}
         return self(elems)
 
-    def is_left_module(self):
+    def is_left_module(self) -> bool:
         """
         Test whether the basis is closed under left multiplication.
 

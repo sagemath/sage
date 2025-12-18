@@ -203,7 +203,7 @@ from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
 from sage.rings.integer_ring import ZZ
-from sage.structure.all import SageObject
+from sage.structure.sage_object import SageObject
 
 
 # We produce rather complicated LaTeX code which needs some tweaks to be
@@ -1538,7 +1538,7 @@ class InteractiveLPProblem(SageObject):
                     result += line(level.vertices(), color='black',
                                    linestyle='--')
         result.set_axes_range(xmin, xmax, ymin, ymax)
-        result.axes_labels(FP.axes_labels())    #FIXME: should be preserved!
+        result.axes_labels(FP.axes_labels())  # FIXME: should be preserved!
         return result
 
     def plot_feasible_set(self, xmin=None, xmax=None, ymin=None, ymax=None,
@@ -3933,7 +3933,7 @@ class LPDictionary(LPAbstractDictionary):
         lines.append(r"\renewcommand{\arraystretch}{1.5} %notruncate")
         if generate_real_LaTeX:
             lines[-1] += r" \setlength{\arraycolsep}{0.125em}"
-        relations = [_latex_product(-Ai,N, head=[xi, "=", bi],
+        relations = [_latex_product(-Ai, N, head=[xi, "=", bi],
                                     drop_plus=False, allow_empty=True) + r"\\"
                      for xi, bi, Ai in zip(B, b, A.rows())]
         objective = _latex_product(c, N, head=[z, "=", v],

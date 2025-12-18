@@ -13,7 +13,7 @@ from sage.structure.element import coerce_binop, parent
 from sage.structure.factorization import Factorization
 from sage.misc.derivative import multi_derivative
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.structure.richcmp cimport richcmp, rich_to_bool
 from sage.rings.infinity import minus_infinity
 
@@ -429,7 +429,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         if self.__n < 0:
             raise ValueError("Laurent polynomial with negative valuation cannot be converted to polynomial")
 
-        if isinstance(R, PolynomialRing_general):
+        if isinstance(R, PolynomialRing_generic):
             return R(self.__u) << self.__n
         elif self.__n == 0:
             return R(self.__u)
@@ -600,6 +600,29 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         s = s.replace(" 1*", " ")
         s = s.replace(" -1*", " -")
         return s[1:]
+
+    def _regina_(self, regina):
+        r"""
+        Return polynomial as a Regina object.
+
+        EXAMPLES::
+
+            sage: R.<v> = LaurentPolynomialRing(ZZ)
+            sage: p = v^(-3) + 3*v + 5
+            sage: rp = regina(p); (rp, type(rp), type(rp._inst)) # optional regina
+            (<regina.Laurent: 3 x + 5 + x^-3>,
+            <class 'sage.interfaces.regina.ReginaElement'>,
+            <class 'regina.engine.Laurent'>)
+            sage: regina(p.change_ring(CC))                      # optional regina
+            Traceback (most recent call last):
+            ...
+            TypeError: only integral Laurent polynomials available in Regina
+        """
+        from sage.rings.integer_ring import ZZ
+        try:
+            return regina.Laurent(int(self.valuation()), [ZZ(c) for c in self])
+        except TypeError:
+            raise TypeError('only integral Laurent polynomials available in Regina')
 
     def _latex_(self):
         r"""
@@ -889,6 +912,30 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             [-2, 1, 2, 3]
         """
         return [i + self.__n for i in self.__u.exponents()]
+
+    def newton_polytope(self):
+        r"""
+        Return the Newton polytope of this Laurent polynomial.
+
+        EXAMPLES::
+
+            sage: R.<x> = LaurentPolynomialRing(QQ)
+            sage: f = 1 + x + 33 * x^-3
+            sage: P = f.newton_polytope(); P                                            # needs sage.geometry.polyhedron
+            A 1-dimensional polyhedron in ZZ^1 defined as the convex hull of 2 vertices
+
+        TESTS::
+
+            sage: R.<x> = LaurentPolynomialRing(QQ)
+            sage: R(0).newton_polytope()                                                # needs sage.geometry.polyhedron
+            The empty polyhedron in ZZ^0
+            sage: R(1).newton_polytope()                                                # needs sage.geometry.polyhedron
+            A 0-dimensional polyhedron in ZZ^1 defined as the convex hull of 1 vertex
+        """
+        from sage.geometry.polyhedron.constructor import Polyhedron
+        from sage.rings.integer_ring import ZZ
+        return Polyhedron(vertices=[(e,) for e in self.exponents()],
+                          base_ring=ZZ)
 
     def __setitem__(self, n, value):
         """

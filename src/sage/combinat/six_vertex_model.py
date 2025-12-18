@@ -1,5 +1,5 @@
 r"""
-Six Vertex Model
+Six vertex model
 """
 
 from sage.structure.parent import Parent
@@ -777,7 +777,7 @@ class SquareIceModel(SixVertexModel):
                 [ 0  1 -1  1]
                 [ 0  0  1  0]
             """
-            from sage.combinat.alternating_sign_matrix import AlternatingSignMatrix #AlternatingSignMatrices
-            #ASM = AlternatingSignMatrices(self.parent()._nrows)
-            #return ASM(self.to_signed_matrix())
+            from sage.combinat.alternating_sign_matrix import AlternatingSignMatrix  # AlternatingSignMatrices
+            # ASM = AlternatingSignMatrices(self.parent()._nrows)
+            # return ASM(self.to_signed_matrix())
             return AlternatingSignMatrix(self.to_signed_matrix())

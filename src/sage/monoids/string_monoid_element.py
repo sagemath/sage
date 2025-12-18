@@ -129,7 +129,7 @@ class StringMonoidElement(FreeMonoidElement):
         EXAMPLES::
 
             sage: S = BinaryStrings()
-            sage: (x,y) = S.gens()
+            sage: x, y = S.gens()
             sage: x * y < y * x
             True
             sage: S("01") < S("10")
@@ -170,7 +170,7 @@ class StringMonoidElement(FreeMonoidElement):
         EXAMPLES::
 
             sage: S = BinaryStrings()
-            sage: (x,y) = S.gens()
+            sage: x, y = S.gens()
             sage: x*y
             01
         """
@@ -189,7 +189,7 @@ class StringMonoidElement(FreeMonoidElement):
 
         EXAMPLES::
 
-            sage: (x,y) = BinaryStrings().gens()
+            sage: x, y = BinaryStrings().gens()
             sage: x**3 * y**5 * x**7
             000111110000000
             sage: x**0
@@ -220,6 +220,7 @@ class StringMonoidElement(FreeMonoidElement):
     def __len__(self):
         """
         Return the number of products that occur in this monoid element.
+
         For example, the length of the identity is 0, and the length
         of the monoid `x_0^2x_1` is three.
 
@@ -229,7 +230,7 @@ class StringMonoidElement(FreeMonoidElement):
             sage: z = S('')
             sage: len(z)
             0
-            sage: (x,y) = S.gens()
+            sage: x, y = S.gens()
             sage: len(x**2 * y**3)
             5
         """
@@ -358,12 +359,11 @@ class StringMonoidElement(FreeMonoidElement):
                 char_dict[i] = 1
         nn = 0
         ci_num = 0
-        for i in char_dict.keys():
-            ni = char_dict[i]
+        for ni in char_dict.values():
             nn += ni
-            ci_num += ni*(ni-1)
-        ci_den = nn*(nn-1)
-        return RR(ci_num)/ci_den
+            ci_num += ni * (ni - 1)
+        ci_den = nn * (nn - 1)
+        return RR(ci_num) / ci_den
 
     def character_count(self):
         r"""

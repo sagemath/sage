@@ -12,7 +12,7 @@ from sage.misc.temporary_file import tmp_dir
 
 
 def _import_module_from_path(name, path=None):
-    """
+    r"""
     Import the module named ``name`` by searching the given path entries (or
     `sys.path` by default).
 

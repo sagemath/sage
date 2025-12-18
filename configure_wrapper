@@ -1,0 +1,13 @@
+#! /bin/sh
+
+# Note: ./configure will remove all conftest* files, including the
+# pytest conftest.py. We work around this by making a copy and
+# restoring when we are done, regardless of whether configure succeeds
+# or fails.
+
+set -e
+
+trap 'mv bak_conftest.py conftest.py; trap - EXIT; exit' EXIT INT HUP TERM
+
+cp conftest.py bak_conftest.py
+./real_configure $@

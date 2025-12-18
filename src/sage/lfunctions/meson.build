@@ -1,9 +1,11 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'dokchitser.py',
   'lcalc.py',
   'pari.py',
   'sympow.py',
+  'zero_sums.pyx',
   subdir: 'sage/lfunctions',
 )
 

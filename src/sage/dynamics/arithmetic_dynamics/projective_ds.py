@@ -95,7 +95,7 @@ from sage.rings.polynomial.flatten import FlatteningMorphism, UnflatteningMorphi
 from sage.rings.morphism import RingHomomorphism_im_gens
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
@@ -116,7 +116,7 @@ lazy_import('sage.rings.number_field.number_field_ideal', 'NumberFieldFractional
 lazy_import('sage.rings.padics.factory', 'Qp')
 lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
 
-from sage.libs.pari.all import PariError
+from cypari2.handle_error import PariError
 
 
 class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
@@ -385,7 +385,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             polys = list(morphism_or_polys)
             if len(polys) == 1:
                 raise ValueError("list/tuple must have at least 2 polynomials")
-            test = lambda x: isinstance(x, (PolynomialRing_general, MPolynomialRing_base))
+            test = lambda x: isinstance(x, (PolynomialRing_generic, MPolynomialRing_base))
             if not all(test(poly.parent()) for poly in polys):
                 try:
                     polys = [poly.lift() for poly in polys]
@@ -395,7 +395,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             # homogenize!
             f = morphism_or_polys
             aff_CR = f.parent()
-            if (not isinstance(aff_CR, PolynomialRing_general) and not isinstance(aff_CR, FractionField_generic)
+            if (not isinstance(aff_CR, (PolynomialRing_generic, FractionField_generic))
                 and not (isinstance(aff_CR, MPolynomialRing_base) and aff_CR.ngens() == 1)):
                 msg = '{} is not a single variable polynomial or rational function'
                 raise ValueError(msg.format(f))
@@ -456,7 +456,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         if R not in Fields():
             return typecall(cls, polys, domain)
         if isinstance(R, FiniteField):
-                return DynamicalSystem_projective_finite_field(polys, domain)
+            return DynamicalSystem_projective_finite_field(polys, domain)
         return DynamicalSystem_projective_field(polys, domain)
 
     def __init__(self, polys, domain):
@@ -1791,7 +1791,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: P.<x,y> = ProjectiveSpace(K,1)
             sage: f = DynamicalSystem_projective([1/3*x^2+1/a*y^2, y^2])
             sage: f.primes_of_bad_reduction()                                           # needs sage.rings.function_field
-            [Fractional ideal (a), Fractional ideal (3)]
+            [Fractional ideal (-a), Fractional ideal (3)]
 
         This is an example where ``check=False`` returns extra primes::
 
@@ -2117,9 +2117,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                                 h = max([R(emb(c).abs()) for c in poly.coefficients()])
                         else: #non-archimedean
                             if BR == QQ:
-                                h = max([R(v)**(-R(c.valuation(v)))  for c in poly.coefficients()])
+                                h = max(R(v)**(-R(c.valuation(v))) for c in poly.coefficients())
                             else:
-                                h = max([R(c.abs_non_arch(v, prec=prec)) for c in poly.coefficients()])
+                                h = max(R(c.abs_non_arch(v, prec=prec)) for c in poly.coefficients())
                         maxh = max(h, maxh)
             if maxh == 0:
                 maxh = 1  #avoid division by 0
@@ -2259,10 +2259,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
-            sage: RSA768 = 123018668453011775513049495838496272077285356959533479219732245215\
-            ....: 1726400507263657518745202199786469389956474942774063845925192557326303453731548\
-            ....: 2685079170261221429134616704292143116022212404792747377940806653514195974598569\
-            ....: 02143413
+            sage: RSA768 = Integer('123018668453011775513049495838496272077285356959533479219732245215'
+            ....: '1726400507263657518745202199786469389956474942774063845925192557326303453731548'
+            ....: '2685079170261221429134616704292143116022212404792747377940806653514195974598569'
+            ....: '02143413')
             sage: P.<x,y> = ProjectiveSpace(QQ,1)
             sage: f = DynamicalSystem_projective([RSA768*x^2 + y^2, x*y])
             sage: Q = P(RSA768,1)
@@ -2530,7 +2530,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
             sage: P.<x,y> = ProjectiveSpace(CC,1)
             sage: f = DynamicalSystem_projective([x^3 - 25*x*y^2 + 12*y^3, 12*y^3])
-            sage: f.multiplier(P(1,1), 5)
+            sage: f.multiplier(P(1,1), 5)  # abs tol 1e-14
             [0.389017489711934]
 
         ::
@@ -3533,7 +3533,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                         if hyperplane_found:
                             break
                 else:
-                    if isinstance(R, (PolynomialRing_general,
+                    if isinstance(R, (PolynomialRing_generic,
                                       MPolynomialRing_base,
                                       FractionField_generic)):
                         # for polynomial rings, we can get an infinite family of hyperplanes
@@ -4089,9 +4089,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         crit_orbit = []
         for i in crit_list:
             crit_orbit += f.orbit(i, 4)
-        if len(set(crit_orbit)) > 3:
-            return False
-        return True
+        return len(set(crit_orbit)) <= 3
 
     def critical_point_portrait(self, check=True, use_algebraic_closure=True):
         r"""
@@ -4597,7 +4595,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     for k in ZZ(n).divisors():
                         if ZZ(n/k).is_prime():
                             Sn.append(k)
-                    if isinstance(R, (PolynomialRing_general,
+                    if isinstance(R, (PolynomialRing_generic,
                                       MPolynomialRing_base)):
                         phi = FlatteningMorphism(CR)
                         flatCR = phi.codomain()
@@ -4897,7 +4895,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             if R in FiniteFields():
                 g = f.cyclegraph()
                 points = []
-                for cycle in g.all_simple_cycles():
+                for cycle in g.all_simple_cycles(algorithm="A"):
                     m = len(cycle)-1
                     if minimal:
                         if m == n:
@@ -4954,7 +4952,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                         for k in ZZ(n).divisors():
                             if ZZ(n//k).is_prime():
                                 Sn.append(k)
-                        if isinstance(R, (PolynomialRing_general,
+                        if isinstance(R, (PolynomialRing_generic,
                                           MPolynomialRing_base)):
                             phi = FlatteningMorphism(CR)
                             flatCR = phi.codomain()
@@ -4997,7 +4995,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         r"""
         Compute the ``n`` multiplier spectra of this dynamical system.
 
-        This is the set of multipliers of all peroidic points of
+        This is the set of multipliers of all periodic points of
         period ``n`` included with the appropriate multiplicity.
         User can also specify to compute the formal ``n`` multiplier spectra
         instead which includes the multipliers of all formal periodic points
@@ -5413,7 +5411,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
             \prod_{P \text{ period n}} ( w - c(P,t)),
 
-        where `c(P,t)` is the charateristic polynomial (variable `t`) of the
+        where `c(P,t)` is the characteristic polynomial (variable `t`) of the
         multiplier at `P`. Note that in dimension 1, only the coefficients
         of the constant term is returned.
 
@@ -5789,7 +5787,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     F = base_ring
                     if isinstance(base_ring, FractionField_generic):
                         if isinstance(base_ring.ring(), (MPolynomialRing_base,
-                                                         PolynomialRing_general)):
+                                                         PolynomialRing_generic)):
                             f.normalize_coordinates()
                             f_ring = f.change_ring(base_ring.ring())
                             X = f_ring.periodic_points(n, minimal=False, formal=formal, return_scheme=True)
@@ -5892,7 +5890,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         base_ring = dom.base_ring()
         if isinstance(base_ring, FractionField_generic):
             base_ring = base_ring.ring()
-        if isinstance(base_ring, (PolynomialRing_general,
+        if isinstance(base_ring, (PolynomialRing_generic,
                                   MPolynomialRing_base)):
             base_ring = base_ring.base_ring()
         elif base_ring in FunctionFields():
@@ -6751,7 +6749,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         # the function `is_postcrtically_finite` to work
         if self.base_ring() is not QQbar:
             if self.base_ring() not in NumberFields():
-                    raise NotImplementedError("Base ring must be a number field")
+                raise NotImplementedError("Base ring must be a number field")
 
         if self.domain().dimension() != 1:
             return False
@@ -6843,14 +6841,14 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
     def Lattes_to_curve(self, return_conjugation=False, check_lattes=False):
         r"""
         Finds a Short Weierstrass Model Elliptic curve of self
-        self assumed to be Lattes map and not in charateristic 2 or 3
+        self assumed to be Lattes map and not in characteristic 2 or 3
 
         INPUT:
 
         ``return_conjugation`` -- (default: ``False``) if ``True``, then
         return the conjugation that moves self to a map that comes from a
         Short Weierstrass Model Elliptic curve
-        ``check_lattes``.-.(default:.``False``) if ``True``, then  will ValueError if not Lattes
+        ``check_lattes`` -- (default: ``False``) if ``True``, then  will ValueError if not Lattes
 
         OUTPUT: a Short Weierstrass Model Elliptic curve which is isogenous to
         the Elliptic curve of 'self',
@@ -6974,13 +6972,13 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: P.<x,y>=ProjectiveSpace(QQbar, 1)
             sage: E=EllipticCurve([1, 2])
             sage: f=P.Lattes_map(E, 2)
-            sage: f.Lattes_to_curve(check_lattes=true)
+            sage: f.Lattes_to_curve(check_lattes=true)  # long time
             Elliptic Curve defined by y^2 = x^3 + x + 2 over Rational Field
 
         """
         if self.base_ring() is not QQbar:
             if self.base_ring() not in NumberFields():
-                    raise NotImplementedError("Base ring must be a number field")
+                raise NotImplementedError("Base ring must be a number field")
     #The Complex case is hard to implement and needs to be done later
         if sqrt(self.degree()) != int(sqrt(self.degree())):
             raise NotImplementedError("Map is not Lattes or is Complex Lattes")

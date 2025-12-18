@@ -71,10 +71,9 @@
 #
 # - sdh_cmake [...]
 #
-#    Runs `cmake` in the current directory with the given arguments, as well as
-#    additional arguments passed to cmake (assuming packages are using the
-#    GNUInstallDirs module) so that `CMAKE_INSTALL_PREFIX` and
-#    `CMAKE_INSTALL_LIBDIR` are set correctly.
+#    Runs `cmake` with the given arguments, as well as additional arguments
+#    (assuming packages are using the GNUInstallDirs module) so that
+#    `CMAKE_INSTALL_PREFIX` and `CMAKE_INSTALL_LIBDIR` are set correctly.
 #
 # - sdh_install [-T] SRC [SRC...] DEST
 #
@@ -396,7 +395,7 @@ sdh_actually_pip_install_wheel() {
     shift
     # Issue #32659: pip no longer reinstalls local wheels if the version is the same.
     # Because neither (1) applying patches nor (2) local changes (in the case
-    # of sage-conf, sage-setup, etc.) bump the version number, we need to
+    # of sage-setup, etc.) bump the version number, we need to
     # override this behavior.  The pip install option --force-reinstall does too
     # much -- it also reinstalls all dependencies, which we do not want.
     $sudo sage-pip-uninstall "$distname" 2>&1 | sed '/^WARNING: Skipping .* as it is not installed./d'
@@ -416,9 +415,9 @@ sdh_pip_uninstall() {
 
 sdh_cmake() {
     echo "Configuring $PKG_NAME with cmake"
-    cmake . -DCMAKE_INSTALL_PREFIX="${SAGE_INST_LOCAL}" \
-            -DCMAKE_INSTALL_LIBDIR=lib \
-            "$@"
+    cmake -DCMAKE_INSTALL_PREFIX="${SAGE_INST_LOCAL}" \
+          -DCMAKE_INSTALL_LIBDIR=lib \
+          "$@"
     if [ $? -ne 0 ]; then
         if [ -f "$(pwd)/CMakeFiles/CMakeOutput.log" ]; then
             sdh_die <<_EOF_

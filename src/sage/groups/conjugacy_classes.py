@@ -47,12 +47,12 @@ TESTS::
     sage: TestSuite(C).run()
 """
 
-#****************************************************************************
+# **************************************************************************
 #       Copyright (C) 2011 Javier López Peña <jlopez@ende.cc>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# **************************************************************************
 
 from sage.structure.parent import Parent
 from sage.misc.cachefunc import cached_method
@@ -159,7 +159,7 @@ class ConjugacyClass(Parent):
         """
         return not (self == other)
 
-    def __contains__(self, element):
+    def __contains__(self, element) -> bool:
         r"""
         Check if ``element`` belongs to the conjugacy class ``self``.
 
@@ -249,12 +249,12 @@ class ConjugacyClass(Parent):
             sage: h = H(matrix(F,2,[1,2, -1, 1]))
             sage: C = ConjugacyClass(H,h)
             sage: S = [[[3, 2], [2, 4]], [[0, 1], [2, 2]], [[3, 4], [1, 4]],\
-                  [[0, 3], [4, 2]], [[1, 2], [4, 1]], [[2, 1], [2, 0]],\
-                  [[4, 1], [4, 3]], [[4, 4], [1, 3]], [[2, 4], [3, 0]],\
-                  [[1, 4], [2, 1]], [[3, 3], [3, 4]], [[2, 3], [4, 0]],\
-                  [[0, 2], [1, 2]], [[1, 3], [1, 1]], [[4, 3], [3, 3]],\
-                  [[4, 2], [2, 3]], [[0, 4], [3, 2]], [[1, 1], [3, 1]],\
-                  [[2, 2], [1, 0]], [[3, 1], [4, 4]]]
+            ....: [[0, 3], [4, 2]], [[1, 2], [4, 1]], [[2, 1], [2, 0]],\
+            ....: [[4, 1], [4, 3]], [[4, 4], [1, 3]], [[2, 4], [3, 0]],\
+            ....: [[1, 4], [2, 1]], [[3, 3], [3, 4]], [[2, 3], [4, 0]],\
+            ....: [[0, 2], [1, 2]], [[1, 3], [1, 1]], [[4, 3], [3, 3]],\
+            ....: [[4, 2], [2, 3]], [[0, 4], [3, 2]], [[1, 1], [3, 1]],\
+            ....: [[2, 2], [1, 0]], [[3, 1], [4, 4]]]
             sage: C.set() == Set(H(x) for x in S)
             True
 
@@ -440,7 +440,7 @@ class ConjugacyClassGAP(ConjugacyClass):
         """
         return self._gap_().Size().sage()
 
-    def __contains__(self, g):
+    def __contains__(self, g) -> bool:
         r"""
         Containment test.
 

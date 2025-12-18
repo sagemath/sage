@@ -38,8 +38,7 @@ type the following::
     sage: gap(pi)
     pi
     sage: gp(pi)
-    3.141592653589793238462643383     # 32-bit
-    3.1415926535897932384626433832795028842   # 64-bit
+    3.1415926535897932384626433832795028842
     sage: pari(pi)
     3.14159265358979
     sage: kash(pi)                    # optional - kash
@@ -63,8 +62,7 @@ can be coerced into other systems or evaluated.
     sage: RealField(15)(a)           # 15 *bits* of precision
     5.316
     sage: gp(a)
-    5.316218116357029426750873360              # 32-bit
-    5.3162181163570294267508733603616328824    # 64-bit
+    5.3162181163570294267508733603616328824
     sage: print(mathematica(a))                  # optional - mathematica
      4 E
      --- + Pi
@@ -217,11 +215,10 @@ Check that :issue:`8237` is fixed::
 
 import math
 from functools import partial
-from sage.rings.infinity import (infinity, minus_infinity,
-                                 unsigned_infinity)
-from sage.structure.richcmp import richcmp_method, op_EQ, op_GE, op_LE
-from sage.symbolic.expression import register_symbol, init_pynac_I
-from sage.symbolic.expression import E
+
+from sage.rings.infinity import infinity, minus_infinity, unsigned_infinity
+from sage.structure.richcmp import op_EQ, op_GE, op_LE, richcmp_method
+from sage.symbolic.expression import E, init_pynac_I, register_symbol
 
 constants_table = {}
 constants_name_table = {}
@@ -294,7 +291,7 @@ class Constant:
             setattr(self, "_%s_" % system, partial(self._generic_interface, value))
             setattr(self, "_%s_init_" % system, partial(self._generic_interface_init, value))
 
-        from .expression import PynacConstant
+        from sage.symbolic.expression import PynacConstant
         self._pynac = PynacConstant(self._name, self._latex, self._domain)
         self._serial = self._pynac.serial()
         constants_table[self._serial] = self
@@ -882,10 +879,11 @@ class Log2(Constant):
         sage: maxima(log2).float()
         0.6931471805599453
         sage: gp(log2)
-        0.6931471805599453094172321215             # 32-bit
-        0.69314718055994530941723212145817656807   # 64-bit
+        0.69314718055994530941723212145817656807
         sage: RealField(150)(2).log()
         0.69314718055994530941723212145817656807550013
+        sage: giac(log2)  # optional - giac
+        ln(2)
     """
     def __init__(self, name='log2'):
         """
@@ -896,7 +894,7 @@ class Log2(Constant):
         """
         conversions = dict(mathematica='Log[2]', kash='Log(2)',
                            maple='log(2)', maxima='log(2)', gp='log(2)',
-                           pari='log(2)', octave='log(2)')
+                           pari='log(2)', octave='log(2)', giac='log(2)')
         Constant.__init__(self, name, conversions=conversions,
                           latex=r'\log(2)', domain='positive')
 

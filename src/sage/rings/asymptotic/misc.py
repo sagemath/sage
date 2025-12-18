@@ -34,7 +34,7 @@ from sage.structure.sage_object import SageObject
 lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
 lazy_import('sage.rings.multi_power_series_ring', 'MPowerSeriesRing_generic')
 lazy_import('sage.rings.polynomial.multi_polynomial_ring_base', 'MPolynomialRing_base')
-lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_general')
+lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_generic')
 lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing_generic')
 
 
@@ -168,7 +168,7 @@ def parent_to_repr_short(P):
             pass
         raise ValueError('Cannot abbreviate %s.' % (P,))
 
-    poly = isinstance(P, (PolynomialRing_general, MPolynomialRing_base))
+    poly = isinstance(P, (PolynomialRing_generic, MPolynomialRing_base))
     power = isinstance(P, (PowerSeriesRing_generic, MPowerSeriesRing_generic, LazyPowerSeriesRing))
 
     if poly or power:

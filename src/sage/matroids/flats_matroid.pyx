@@ -31,6 +31,7 @@ AUTHORS:
 # ****************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE
+from itertools import combinations
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.matroids.matroid cimport Matroid
 from sage.matroids.set_system cimport SetSystem
@@ -55,7 +56,7 @@ cdef class FlatsMatroid(Matroid):
 
     def __init__(self, M=None, groundset=None, flats=None):
         """
-        Initialization of the matroid. See class docstring for full
+        Initialization of the matroid. See the class docstring for full
         documentation.
 
         TESTS::
@@ -64,38 +65,44 @@ cdef class FlatsMatroid(Matroid):
             sage: M = FlatsMatroid(matroids.catalog.Fano())
             sage: TestSuite(M).run()
         """
-        self._F = {}
+        self._F = set()
+        self._k_F = {}
         self._L = None
         if M is not None:
             self._groundset = M.groundset()
             for i in range(M.rank() + 1):
+                self._k_F[i] = set()
                 for F in M.flats(i):
-                    try:
-                        self._F[i].add(F)
-                    except KeyError:
-                        self._F[i] = set()
-                        self._F[i].add(F)
+                    self._F.add(F)
+                    self._k_F[i].add(F)
         else:
             self._groundset = frozenset(groundset)
             if isinstance(flats, dict):
                 for i in sorted(flats):
+                    self._k_F[i] = set()
                     for F in flats[i]:
-                        try:
-                            self._F[i].add(frozenset(F))
-                        except KeyError:
-                            self._F[i] = set()
-                            self._F[i].add(frozenset(F))
-            else:  # store lattice of flats
-                if isinstance(flats, FiniteLatticePoset):
-                    self._L = flats
-                else:  # assume iterable of flats
-                    self._L = LatticePoset(([frozenset(F) for F in flats], lambda x, y: x < y))
+                        self._F.add(frozenset(F))
+                        self._k_F[i].add(frozenset(F))
+            elif isinstance(flats, FiniteLatticePoset):
+                self._L = flats  # store lattice of flats
                 self._matroid_rank = self._L.rank()
                 for i in range(self._matroid_rank + 1):
-                    self._F[i] = set()
+                    self._k_F[i] = set()
                 for x in self._L:
-                    self._F[self._L.rank(x)].add(x)
-        self._matroid_rank = max(self._F, default=-1)
+                    self._F.add(x)
+                    self._k_F[self._L.rank(x)].add(x)
+            else:  # assume iterable of flats
+                sorted_flats = sorted([frozenset(F) for F in flats], key=len)
+                r = [0] * len(sorted_flats)
+                for i, j in combinations(range(len(sorted_flats)), 2):
+                    if sorted_flats[i] < sorted_flats[j]:
+                        r[j] = max(r[j], r[i] + 1)
+                for i in range(r[-1] + 1):
+                    self._k_F[i] = set()
+                for i, F in enumerate(sorted_flats):
+                    self._F.add(F)
+                    self._k_F[r[i]].add(F)
+        self._matroid_rank = max(self._k_F, default=-1)
 
     cpdef frozenset groundset(self):
         """
@@ -142,8 +149,10 @@ cdef class FlatsMatroid(Matroid):
             sage: for S in powerset(M.groundset()):
             ....:     assert M.rank(S) == F.rank(S)
         """
+        cdef int i
+        cdef frozenset f
         for i in range(self._matroid_rank + 1):
-            for f in self._F[i]:
+            for f in self._k_F[i]:
                 if f >= X:
                     return i
 
@@ -186,8 +195,9 @@ cdef class FlatsMatroid(Matroid):
             ['a', 'b', 'c', 'd']
         """
         cdef int i
+        cdef frozenset f
         for i in range(self._matroid_rank + 1):
-            for f in self._F[i]:
+            for f in self._k_F[i]:
                 if f >= X:
                     return f
 
@@ -211,11 +221,7 @@ cdef class FlatsMatroid(Matroid):
             sage: M._is_closed(frozenset(['a', 'b', 'c', 'e']))
             False
         """
-        cdef int i
-        for i in self._F:
-            if X in self._F[i]:
-                return True
-        return False
+        return X in self._F
 
     cpdef _is_isomorphic(self, other, certificate=False):
         """
@@ -246,10 +252,8 @@ cdef class FlatsMatroid(Matroid):
         if certificate:
             return self._is_isomorphic(other), self._isomorphism(other)
         N = FlatsMatroid(other)
-        flats_self = [F for i in self._F for F in self._F[i]]
-        flats_other = [F for i in N._F for F in N._F[i]]
-        SS = SetSystem(self._groundset, flats_self)
-        OS = SetSystem(N._groundset, flats_other)
+        SS = SetSystem(self._groundset, self._F)
+        OS = SetSystem(N._groundset, N._F)
         return SS._isomorphism(OS) is not None
 
     # representation
@@ -264,8 +268,7 @@ cdef class FlatsMatroid(Matroid):
             sage: M = FlatsMatroid(matroids.Uniform(6, 6)); M
             Matroid of rank 6 on 6 elements with 64 flats
         """
-        flats_num = sum(1 for i in self._F for F in self._F[i])
-        return f'{Matroid._repr_(self)} with {flats_num} flats'
+        return f'{Matroid._repr_(self)} with {len(self._F)} flats'
 
     # comparison
 
@@ -279,9 +282,9 @@ cdef class FlatsMatroid(Matroid):
 
         .. WARNING::
 
-            This method is linked to __richcmp__ (in Cython) and __cmp__ or
-            __eq__/__ne__ (in Python). If you override one, you should
-            (and in Cython: MUST) override the other!
+            This method is linked to ``__richcmp__`` (in Cython) and ``__cmp__``
+            or ``__eq__``/``__ne__`` (in Python). If you override one, you
+            should (and, in Cython, \emph{must}) override the other!
 
         EXAMPLES::
 
@@ -294,8 +297,7 @@ cdef class FlatsMatroid(Matroid):
             sage: hash(M) == hash(O)
             False
         """
-        flats = frozenset([F for i in self._F for F in self._F[i]])
-        return hash(tuple([self._groundset, flats]))
+        return hash(tuple([self._groundset, frozenset(self._F)]))
 
     def __richcmp__(left, right, int op):
         r"""
@@ -400,9 +402,9 @@ cdef class FlatsMatroid(Matroid):
         d = self._relabel_map(mapping)
         E = [d[x] for x in self._groundset]
         F = {}
-        for i in self._F:
+        for i in self._k_F:
             F[i] = []
-            F[i] += [[d[y] for y in x] for x in self._F[i]]
+            F[i] += [[d[y] for y in x] for x in self._k_F[i]]
         M = FlatsMatroid(groundset=E, flats=F)
         return M
 
@@ -430,8 +432,8 @@ cdef class FlatsMatroid(Matroid):
              frozenset({1, 3}),
              frozenset({2, 3})]
         """
-        if k in self._F:
-            return SetSystem(self._groundset, self._F[k])
+        if k in self._k_F:
+            return SetSystem(self._groundset, self._k_F[k])
         return SetSystem(self._groundset)
 
     def flats_iterator(self, k):
@@ -449,8 +451,8 @@ cdef class FlatsMatroid(Matroid):
             sage: sorted([list(F) for F in M.flats_iterator(2)])
             [[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]
         """
-        if k in self._F:
-            for F in self._F[k]:
+        if k in self._k_F:
+            for F in self._k_F[k]:
                 yield F
 
     def lattice_of_flats(self):
@@ -465,8 +467,7 @@ cdef class FlatsMatroid(Matroid):
             Finite lattice containing 16 elements
         """
         if self._L is None:
-            flats = [F for i in range(self._matroid_rank + 1) for F in self._F[i]]
-            self._L = LatticePoset((flats, lambda x, y: x < y))
+            self._L = LatticePoset((self._F, lambda x, y: x < y))
         return self._L
 
     cpdef list whitney_numbers(self):
@@ -533,8 +534,8 @@ cdef class FlatsMatroid(Matroid):
         """
         cdef list W = []
         cdef int i
-        for i in self._F:
-            W.append(len(self._F[i]))
+        for i in range(self._matroid_rank + 1):
+            W.append(len(self._k_F[i]))
         return W
 
     # verification
@@ -563,26 +564,28 @@ cdef class FlatsMatroid(Matroid):
             sage: M = Matroid(flats={0: [[]], 1: [[0], [1]]})  # missing groundset
             sage: M.is_valid()
             False
-            sage: M = Matroid(flats={0: [''],
-            ....:                    1: ['0','1','2','3','4','5','6','7','8','9','a','b','c'],
-            ....:                    2: ['45','46','47','4c','56','57','5c','67','6c','7c',
-            ....:                        '048','149','24a','34b','059','15a','25b','358',
-            ....:                        '06a','16b','268','369','07b','178','279','37a',
-            ....:                        '0123c','89abc'],
-            ....:                    3: ['0123456789abc']})
-            sage: M.is_valid()
-            True
+            sage: M = Matroid(flats=[[0, 1], [0, 2], [0, 1, 2]])
+            sage: M.is_valid(certificate=True)
+            (False,
+             {'error': 'the intersection of two flats must be a flat',
+              'flat 1': frozenset({0, 1}),
+              'flat 2': frozenset({0, 2})})
+            sage: M = Matroid(flats=[[], [0, 1], [2], [0], [1], [0, 1, 2]])
+            sage: M.is_valid(certificate=True)
+            (False,
+             {'error': 'a single element extension of a k-flat must be a subset of exactly one (k + 1)-flat',
+              'flat': frozenset({2})})
             sage: from sage.matroids.flats_matroid import FlatsMatroid
             sage: FlatsMatroid(matroids.catalog.NonVamos()).is_valid()
             True
-
-        If we input a list or a lattice of flats, the method checks whether the
-        lattice of flats is geometric::
-
             sage: Matroid(flats=[[], [0], [1], [0, 1]]).is_valid()
             True
             sage: Matroid(flats=['', 'a', 'b', 'ab']).is_valid()
             True
+
+        If we compute the lattice of flats, the method checks whether the
+        lattice of flats is geometric::
+
             sage: M = Matroid(flats=['',  # missing an extension of flat ['5'] by '6'
             ....:                    '0','1','2','3','4','5','6','7','8','9','a','b','c',
             ....:                    '45','46','47','4c','57','5c','67','6c','7c',
@@ -590,44 +593,54 @@ cdef class FlatsMatroid(Matroid):
             ....:                    '06a','16b','268','369','07b','178','279','37a',
             ....:                    '0123c','89abc',
             ....:                    '0123456789abc'])
+            sage: _ = M.lattice_of_flats()
             sage: M.is_valid(certificate=True)
             (False, {'error': 'the lattice of flats is not geometric'})
             sage: Matroid(matroids.catalog.Fano().lattice_of_flats()).is_valid()
             True
 
-        Some invalid lists of flats are recognized before calling ``is_valid``,
-        upon the attempted matroid definition::
+        Some invalid lists of flats are recognized when attempting to construct
+        the lattice of flats::
 
             sage: M = Matroid(flats=[[], [0], [1]])  # missing groundset
+            sage: M.lattice_of_flats()
             Traceback (most recent call last):
             ...
             ValueError: not a join-semilattice: no top element
-            sage: Matroid(flats=[[0], [1], [0, 1]])  # missing an intersection
+            sage: M = Matroid(flats=[[0], [1], [0, 1]])  # missing an intersection
+            sage: M.lattice_of_flats()
             Traceback (most recent call last):
             ...
             ValueError: not a meet-semilattice: no bottom element
-            sage: Matroid(flats=[[], [0, 1], [2], [0], [1], [0, 1, 2]])
-            Traceback (most recent call last):
-            ...
-            ValueError: the poset is not ranked
 
         TESTS::
 
             sage: Matroid(flats={0: [], 1: [[0], [1]], 2: [[0, 1]]}).is_valid(certificate=True)  # missing an intersection
-            (False, {'error': 'flats dictionary has invalid ranks'})
+            (False,
+             {'error': 'flat of incorrect rank',
+              'flat': frozenset({1}),
+              'given rank': 1,
+              'poset rank': 0})
             sage: Matroid(flats={0: [[]], 2: [[0], [1]], 3: [[0, 1]]}).is_valid(certificate=True)  # invalid ranks
-            (False, {'error': 'flats dictionary has invalid ranks'})
+            (False,
+             {'error': 'flat of incorrect rank',
+              'flat': frozenset({1}),
+              'given rank': 2,
+              'poset rank': 1})
             sage: Matroid(flats={0: [[]], 1: [[0], [1]], 2: [[0], [0, 1]]}).is_valid(certificate=True)  # duplicates
             (False, {'error': 'flats dictionary has repeated flats'})
             sage: Matroid(flats={0: [[]], 1: [[0], [1], [0, 1]]}).is_valid(certificate=True)
             (False,
-             {'error': 'a single element extension of a flat must be a subset of exactly one flat',
-              'flat': frozenset()})
+             {'error': 'flat of incorrect rank',
+              'flat': frozenset({0, 1}),
+              'given rank': 1,
+              'poset rank': 2})
             sage: Matroid(flats={0: [[]], 1: [[0, 1], [2]], 2: [[0], [1], [0, 1, 2]]}).is_valid(certificate=True)
             (False,
-             {'error': 'the intersection of two flats must be a flat',
-              'flat 1': frozenset({0, 1}),
-              'flat 2': frozenset({1})})
+             {'error': 'flat of incorrect rank',
+              'flat': frozenset({1}),
+              'given rank': 2,
+              'poset rank': 1})
             sage: M = Matroid(flats={0: [''],  # missing an extension of flat ['5'] by '6'
             ....:                    1: ['0','1','2','3','4','5','6','7','8','9','a','b','c'],
             ....:                    2: ['45','46','47','4c','57','5c','67','6c','7c',
@@ -637,7 +650,7 @@ cdef class FlatsMatroid(Matroid):
             ....:                    3: ['0123456789abc']})
             sage: M.is_valid(certificate=True)
             (False,
-             {'error': 'a single element extension of a flat must be a subset of exactly one flat',
+             {'error': 'a single element extension of a k-flat must be a subset of exactly one (k + 1)-flat',
               'flat': frozenset({'...'})})
             sage: M = Matroid(flats=[[], [0], [1], [0], [0, 1]])  # duplicates are ignored
             sage: M.lattice_of_flats()
@@ -663,48 +676,46 @@ cdef class FlatsMatroid(Matroid):
                 return True, {}
             return self._is_closed(self._groundset) and self._L.is_geometric()
 
-        cdef int i, j, k
-        cdef frozenset F1, F2, I12
-        cdef list ranks, cover, flats_lst
+        cdef long i, j
+        cdef frozenset F1, F2
+        cdef list ranks, cover, flats_lst, sorted_flats, r
         cdef bint flag
 
-        # check flats dictionary for invalid ranks and repeated flats
-        ranks = list(self._F)
-        if ranks != list(range(len(ranks))):
-            return False if not certificate else (False, {"error": "flats dictionary has invalid ranks"})
-        flats_lst = [F for i in self._F for F in self._F[i]]
-        if len(flats_lst) != len(set(flats_lst)):
+        # check flats dictionary for repeated flats
+        flats_lst = [F for i in self._k_F for F in self._k_F[i]]
+        if len(flats_lst) != len(self._F):
             return False if not certificate else (False, {"error": "flats dictionary has repeated flats"})
 
         # the groundset must be a flat
         if not self._is_closed(self._groundset):
             return False if not certificate else (False, {"error": "the groundset must be a flat"})
 
-        # a single element extension of a flat must be a subset of exactly one flat
+        # compute ranks and check consistency with dictionary
+        sorted_flats = sorted(self._F, key=len)
+        r = [0] * len(sorted_flats)
+        for i, j in combinations(range(len(sorted_flats)), 2):
+            if sorted_flats[i] < sorted_flats[j]:
+                r[j] = max(r[j], r[i] + 1)
+        for i, F1 in enumerate(sorted_flats):
+            if r[i] not in self._k_F or F1 not in self._k_F[r[i]]:
+                for j in self._k_F:
+                    if F1 in self._k_F[j]:
+                        return False if not certificate else (False, {"error": "flat of incorrect rank", "flat": F1, "given rank": j, "poset rank": r[i]})
+
+        # a single element extension of a k-flat must be a subset of exactly one (k + 1)-flat
+        ranks = sorted(self._k_F)
         for i in ranks[:-1]:
-            for F1 in self._F[i]:
+            for F1 in self._k_F[i]:
                 cover = []
-                for F2 in self._F[i+1]:
+                for F2 in self._k_F[i + 1]:
                     if F2 >= F1:
                         cover.extend(F1 ^ F2)
                 if len(cover) != len(F1 ^ self._groundset) or set(cover) != F1 ^ self._groundset:
-                    return False if not certificate else (False, {"error": "a single element extension of a flat must be a subset of exactly one flat", "flat": F1})
+                    return False if not certificate else (False, {"error": "a single element extension of a k-flat must be a subset of exactly one (k + 1)-flat", "flat": F1})
 
         # the intersection of two flats must be a flat
-        for i in ranks:
-            for j in ranks[i:]:
-                for F1 in self._F[i]:
-                    for F2 in self._F[j]:
-                        flag = False
-                        I12 = F1 & F2
-                        for k in self._F:
-                            if k <= i:
-                                if I12 in self._F[k]:
-                                    flag = True
-                                    break
-                                if flag:
-                                    break
-                        if not flag:
-                            return False if not certificate else (False, {"error": "the intersection of two flats must be a flat", "flat 1": F1, "flat 2": F2})
+        for F1, F2 in combinations(self._F, 2):
+            if F1 & F2 not in self._F:
+                return False if not certificate else (False, {"error": "the intersection of two flats must be a flat", "flat 1": F1, "flat 2": F2})
 
         return True if not certificate else (True, {})

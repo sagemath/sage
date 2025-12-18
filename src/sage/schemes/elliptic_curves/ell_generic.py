@@ -55,8 +55,6 @@ AUTHORS:
 import math
 from sage.arith.misc import valuation
 
-import sage.rings.abc
-from sage.rings.finite_rings.integer_mod import mod
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import polygen, polygens
 from sage.rings.polynomial.polynomial_element import polynomial_is_variable
@@ -73,6 +71,7 @@ from sage.rings.rational_field import RationalField
 from sage.rings.real_mpfr import RealField
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
+from sage.structure.coerce import py_scalar_to_element
 
 # Schemes
 import sage.schemes.projective.projective_space as projective_space
@@ -125,7 +124,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         sage: -5*P
         (179051/80089 : -91814227/22665187 : 1)
     """
-    def __init__(self, K, ainvs, category=None):
+    def __init__(self, K, ainvs, category=None) -> None:
         r"""
         Construct an elliptic curve from Weierstrass `a`-coefficients.
 
@@ -175,14 +174,48 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         self.__divpolys = ({}, {}, {})
 
-        # See #1975: we deliberately set the class to
-        # EllipticCurvePoint_finite_field for finite rings, so that we
-        # can do some arithmetic on points over Z/NZ, for teaching
-        # purposes.
-        if isinstance(K, sage.rings.abc.IntegerModRing):
-            self._point = ell_point.EllipticCurvePoint_finite_field
-
     _point = ell_point.EllipticCurvePoint
+
+    def assume_base_ring_is_field(self, flag=True):
+        r"""
+        Set a flag to pretend that this elliptic curve is defined over a
+        field while doing arithmetic, which is useful in some algorithms.
+
+
+        .. WARNING::
+
+            The flag affects all points created while the flag is set. Note
+            that elliptic curves are unique parents, hence setting this flag
+            may break seemingly unrelated parts of Sage.
+
+        .. NOTE::
+
+            This method is a **hack** provided for educational purposes.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(Zmod(35), [1,1])
+            sage: P = E(-5, 9)
+            sage: 4*P
+            (23 : 26 : 1)
+            sage: 9*P
+            (10 : 11 : 5)
+            sage: E.assume_base_ring_is_field()
+            sage: P = E(-5, 9)
+            sage: 4*P
+            (23 : 26 : 1)
+            sage: 9*P
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: Inverse of 5 does not exist (characteristic = 35 = 5*7)
+        """
+        if flag:
+            if self.__base_ring.is_finite():
+                self._point = ell_point.EllipticCurvePoint_finite_field
+            else:
+                self._point = ell_point.EllipticCurvePoint_field
+        else:
+            self._point = ell_point.EllipticCurvePoint
 
     def _defining_params_(self):
         r"""
@@ -432,7 +465,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         x, y = SR.var('x, y')
         return y**2 + a[0]*x*y + a[2]*y == x**3 + a[1]*x**2 + a[3]*x + a[4]
 
-    def __contains__(self, P):
+    def __contains__(self, P) -> bool:
         """
         Return ``True`` if and only if P is a point on the elliptic curve.
 
@@ -582,7 +615,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             # infinity.
             characteristic = self.base_ring().characteristic()
             if characteristic != 0 and isinstance(args[0][0], Rational) and isinstance(args[0][1], Rational):
-                if mod(args[0][0].denominator(),characteristic) == 0 or mod(args[0][1].denominator(),characteristic) == 0:
+                if characteristic.divides(args[0][0].denominator()) or characteristic.divides(args[0][1].denominator()):
                     return self._reduce_point(args[0], characteristic)
             args = tuple(args[0])
 
@@ -890,8 +923,15 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E = EllipticCurve(F, [1,1])
             sage: {E.lift_x(t+1) for _ in range(1000)}  # but .lift_x() uses a fixed one
             {(t + 1 : 39*t^2 + 14*t + 12 : 1)}
+
+        Check python types::
+
+            sage: E = EllipticCurve('37a').short_weierstrass_model().change_ring(GF(17))
+            sage: E.lift_x(int(7), all=True)
+            [(7 : 3 : 1), (7 : 14 : 1)]
         """
         K = self.base_ring()
+        x = py_scalar_to_element(x)
         L = x.parent()
         E = self
 
@@ -914,7 +954,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         b = (a1*x + a3)
         f = ((x + a2) * x + a4) * x + a6
 
-        # If possible find the associated y coorindates in L:
+        # If possible find the associated y coordinates in L:
 
         if K.characteristic() == 2:
             R = PolynomialRing(L, 'y')
@@ -1009,7 +1049,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         """
         raise NotImplementedError("not implemented.")
 
-    def __is_over_RationalField(self):
+    def __is_over_RationalField(self) -> bool:
         r"""
         Internal function. Return true iff the base ring of this elliptic
         curve is the field of rational numbers.
@@ -1025,7 +1065,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         """
         return isinstance(self.base_ring(), RationalField)
 
-    def is_on_curve(self, x, y):
+    def is_on_curve(self, x, y) -> bool:
         r"""
         Return ``True`` if `(x,y)` is an affine point on this curve.
 
@@ -1043,6 +1083,19 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         """
         a = self.ainvs()
         return y**2 + a[0]*x*y + a[2]*y == x**3 + a[1]*x**2 + a[3]*x + a[4]
+
+    def is_exact(self):
+        """
+        Test whether elements of this elliptic curve are represented exactly.
+
+        EXAMPLES::
+
+            sage: EllipticCurve(QQ, [1, 2]).is_exact()
+            True
+            sage: EllipticCurve(RR, [1, 2]).is_exact()
+            False
+        """
+        return self.__base_ring.is_exact()
 
     def a_invariants(self):
         r"""
@@ -2339,6 +2392,10 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         - or just `f(x)` if ``x_only`` is ``True``
 
+        .. SEEALSO::
+
+            :meth:`scalar_multiplication` to get a morphism instead.
+
         .. NOTE::
 
             - The result is not cached.
@@ -2360,6 +2417,14 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: f
             ((x^4 + 2*x^2 - 24*x + 1)/(4*x^3 - 4*x + 12),
              (8*x^6*y - 40*x^4*y + 480*x^3*y - 40*x^2*y + 96*x*y - 568*y)/(64*x^6 - 128*x^4 + 384*x^3 + 64*x^2 - 384*x + 576))
+
+        We check that the rational maps agree with :meth:`scalar_multiplication`::
+
+            sage: phi = E.scalar_multiplication(2)
+            sage: phi.x_rational_map() == f[0]
+            True
+            sage: phi.rational_maps() == f
+            True
 
         Grab only the x-coordinate (less work)::
 
@@ -2419,6 +2484,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: assert(E(eval(f,P)) == 2*P)
 
         The following test shows that :issue:`6413` is fixed for elliptic curves over finite fields::
+
+            sage: # long time (:issue:`39569`)
             sage: p = 7
             sage: K.<a> = GF(p^2)
             sage: E = EllipticCurve(K, [a + 3, 5 - a])
@@ -3148,16 +3215,15 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         R = self.base_ring()
         P = PolynomialRing(R, 'v')
 
-        sols = []
-        for r in P([b, a, 0, 1]).roots(multiplicities=False):
-            for s in P([3 * r**2 + a, 0, -1]).roots(multiplicities=False):
-                sols.append((r,s))
+        sols = [(r, s)
+                for r in P([b, a, 0, 1]).roots(multiplicities=False)
+                for s in P([3 * r**2 + a, 0, -1]).roots(multiplicities=False)]
 
         if not sols:
             raise ValueError(f'{self} has no Montgomery model')
 
         # square s allows us to take B=1
-        r,s = max(sols, key=lambda t: t[1].is_square())
+        r, s = max(sols, key=lambda t: t[1].is_square())
 
         A = 3 * r / s
         B = R.one() if s.is_square() else ~s

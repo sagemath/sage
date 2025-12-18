@@ -217,12 +217,12 @@ in the Installation Guide.
       for a discussion of suitable compilers.
 
     - Build tools: GNU `make`, GNU `m4`, `perl` (including
-      `ExtUtils::MakeMaker`), `ranlib`, `git`, `tar`, `bc`.
+      `ExtUtils::MakeMaker`), `ranlib`, `git`, `tar`, `bc`, `patch`, `bzip2`, `pkgconf` (also known as `pkg-config`).
       See [build/pkgs/_prereq/SPKG.rst](build/pkgs/_prereq/SPKG.rst) for
       more details.
 
     - Python 3.4 or later, or Python 2.7, a full installation including
-      `urllib`; but ideally version 3.9.x, 3.10.x, 3.11.x, 3.12.x, which
+      `urllib`; but ideally version 3.12.x or later, which
       will avoid having to build Sage's own copy of Python 3.
       See [build/pkgs/python3/SPKG.rst](build/pkgs/python3/SPKG.rst)
       for more details.
@@ -334,12 +334,18 @@ in the Installation Guide.
 11. Optional, but highly recommended: Set some environment variables to
     customize the build.
 
-    For example, the `MAKE` environment variable controls whether to
-    run several jobs in parallel.  On a machine with 4 processors, say,
-    typing `export MAKE="make -j4"` will configure the build script to
-    perform a parallel compilation of Sage using 4 jobs. On some
-    powerful machines, you might even consider `-j16`, as building with
-    more jobs than CPU cores can speed things up further.
+    The `MAKEFLAGS` variable controls whether to run several jobs in parallel.
+    To saturate all the execution threads of your CPU, we recommend to run
+    `export MAKEFLAGS="-j$(nproc) -l$(nproc).5"` if you are on Linux, and
+    `export MAKEFLAGS="-j$(sysctl -n hw.ncpu) -l$(sysctl -n hw.ncpu).5"` if you
+    are on macOS.
+
+    Note that the compilation may nonetheless use a different number of
+    processes, e.g., for parts that are built with `ninja` which automatically
+    decides on the amount of parallelity to use. In practice, you might
+    therefore see twice as many processes during the build process than your
+    CPU has execution threads. Unless your system is low on RAM, this should
+    not affect the time the compilation takes substantially.
 
     To reduce the terminal output during the build, type `export V=0`.
     (`V` stands for "verbosity".)
@@ -405,8 +411,8 @@ in the Installation Guide.
     If there are numerous failures, there was a serious problem with your build.
 
 17. The HTML version of the [documentation](https://doc.sagemath.org/html/en/index.html)
-    is built during the compilation process of Sage and resides in the directory
-    `local/share/doc/sage/html/`. You may want to bookmark it in your browser.
+    can be built by running `make doc-html` and resides in
+    `build/sage-distro/src/doc/`. You may want to bookmark it in your browser.
 
 18. Optional: If you want to build the PDF version of the documentation,
     run `make doc-pdf` (this requires LaTeX to be installed).
@@ -421,57 +427,13 @@ in the Installation Guide.
     having to either type the full path or navigate to the Sage
     directory and type `./sage`. This can be done by running:
 
-        $ sudo ln -s $(./sage -sh -c 'ls $SAGE_ROOT/venv/bin/sage') /usr/local/bin
+        $ sudo ln -s $(pwd)/sage /usr/local/bin
 
 21. Optional: Set up SageMath as a Jupyter kernel in an existing Jupyter notebook
     or JupyterLab installation, as described in the section
     [Launching SageMath](https://doc.sagemath.org/html/en/installation/launching.html)
     in the Sage Installation Guide.
 
-Alternative Installation using PyPI
----------------
-
-For installing Sage in a Python environment from PyPI, Sage provides the
-`pip`-installable package [sagemath-standard](https://pypi.org/project/sagemath-standard/).
-
-Unless you need to install Sage into a specific existing environment, we recommend
-to create and activate a fresh virtual environment, for example `~/sage-venv/`:
-
-            $ python3 -m venv ~/sage-venv
-            $ source ~/sage-venv/bin/activate
-
-As the first installation step, install [sage_conf](https://pypi.org/project/sage-conf/),
-which builds various prerequisite packages in a subdirectory of `~/.sage/`:
-
-            (sage-venv) $ python3 -m pip install -v sage_conf
-
-After a successful installation, a wheelhouse provides various Python packages.
-You can list the wheels using the command:
-
-            (sage-venv) $ ls $(sage-config SAGE_SPKG_WHEELS)
-
-If this gives an error saying that `sage-config` is not found, check any messages
-that the `pip install` command may have printed. You may need to adjust your `PATH`,
-for example by:
-
-            $ export PATH="$(python3 -c 'import sysconfig; print(sysconfig.get_path("scripts", "posix_user"))'):$PATH"
-
-Now install the packages from the wheelhouse and the [sage_setup](https://pypi.org/project/sage-conf/)
-package, and finally install the Sage library:
-
-            (sage-venv) $ python3 -m pip install $(sage-config SAGE_SPKG_WHEELS)/*.whl sage_setup
-            (sage-venv) $ python3 -m pip install --no-build-isolation -v sagemath-standard
-
-The above instructions install the latest stable release of Sage.
-To install the latest development version instead, add the switch `--pre` to all invocations of
-`python3 -m pip install`.
-
-**NOTE:** PyPI has various other `pip`-installable packages with the word "sage" in their names.
-Some of them are maintained by the SageMath project, some are provided by SageMath users for
-various purposes, and others are entirely unrelated to SageMath. Do not use the packages
-`sage` and `sagemath`. For a curated list of packages, see the chapter
-[Packages and Features](https://doc.sagemath.org/html/en/reference/spkg/index.html) of the
-Sage Reference Manual.
 
 SageMath Docker images
 ----------------------
@@ -520,21 +482,15 @@ SAGE_ROOT                 Root directory (create by git clone)
 │   └── pkgs              Every package is a subdirectory here
 │       ├── 4ti2/
 │       …
-│       └── zlib/
+│       └── zipp/
 ├── configure             Top-level configure script
 ├── COPYING.txt           Copyright information
 ├── pkgs                  Source trees of Python distribution packages
-│   ├── sage-conf
-│   │   ├── sage_conf.py
-│   │   └── setup.py
 │   ├── sage-docbuild
 │   │   ├── sage_docbuild/
 │   │   └── setup.py
 │   ├── sage-setup
 │   │   ├── sage_setup/
-│   │   └── setup.py
-│   ├── sage-sws2rst
-│   │   ├── sage_sws2rst/
 │   │   └── setup.py
 │   └── sagemath-standard
 │       ├── bin/
@@ -551,11 +507,11 @@ SAGE_ROOT                 Root directory (create by git clone)
 │       │   ├── installed/
 │       │   │             Records of installed non-Python packages
 │       │   ├── scripts/  Scripts for uninstalling installed packages
-│       │   └── venv-python3.9  (SAGE_VENV)
+│       │   └── venv-python  (SAGE_VENV)
 │       │       │         Installation hierarchy (virtual environment)
 │       │       │         for Python packages
 │       │       ├── bin/  Executables and installed scripts
-│       │       ├── lib/python3.9/site-packages/
+│       │       ├── lib/python/site-packages/
 │       │       │         Python modules/packages are installed here
 │       │       └── var/lib/sage/
 │       │           └── wheels/
@@ -567,7 +523,7 @@ SAGE_ROOT                 Root directory (create by git clone)
 │   └── pkgs              Build logs of individual packages
 │       ├── alabaster-0.7.12.log
 │       …
-│       └── zlib-1.2.11.log
+│       └── zipp-3.19.0.log
 ├── m4                    M4 macros for generating the configure script
 │   └── *.m4
 ├── Makefile              Running "make" uses this file
@@ -581,7 +537,7 @@ SAGE_ROOT                 Root directory (create by git clone)
 ├── upstream              Source tarballs of packages
 │   ├── Babel-2.9.1.tar.gz
 │   …
-│   └── zlib-1.2.11.tar.gz
+│   └── zipp-3.19.0-py3-none-any.whl
 ├── venv -> SAGE_VENV     Convenience symlink to the virtual environment
 └── VERSION.txt
 ```
@@ -679,7 +635,7 @@ information, patches, and build scripts are in the accompanying
 part of the Sage git repository.
 
 <p align="center">
-   Copyright (C) 2005-2024 The Sage Development Team
+   Copyright (C) 2005-2025 The Sage Development Team
 </p>
 <p align="center">
    https://www.sagemath.org

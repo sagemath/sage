@@ -40,7 +40,7 @@ from sage.structure.element cimport Vector
 
 from sage.rings.finite_rings.finite_field_base cimport FiniteField
 
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 from cypari2.gen cimport Gen
 from cypari2.stack cimport clear_stack
 
@@ -144,7 +144,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         TESTS::
 
-            sage: k.<a> = GF(2^8, impl='ntl')
+            sage: k.<a> = GF(2^8, implementation="ntl")
         """
         self._parent = <FiniteField?>parent
         self._zero_element = self._new()
@@ -262,10 +262,10 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         We can coerce from PARI finite field implementations::
 
-            sage: K.<a> = GF(2^19, impl='ntl')
+            sage: K.<a> = GF(2^19, implementation="ntl")
             sage: a^20
             a^6 + a^3 + a^2 + a
-            sage: M.<c> = GF(2^19, impl='pari_ffelt')
+            sage: M.<c> = GF(2^19, implementation="pari_ffelt")
             sage: K(c^20)
             a^6 + a^3 + a^2 + a
         """
@@ -501,7 +501,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         EXAMPLES::
 
-            sage: k.<a> = GF(2^8, impl='ntl') # indirect doctest
+            sage: k.<a> = GF(2^8, implementation="ntl") # indirect doctest
         """
         if parent is None:
             return
@@ -517,7 +517,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         y._cache = self._cache
         return y
 
-    def __repr__(FiniteField_ntl_gf2eElement self):
+    def __repr__(FiniteField_ntl_gf2eElement self) -> str:
         """
         Polynomial representation of ``self``.
 
@@ -552,11 +552,11 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         for i from 1 < i <= GF2X_deg(rep):
             c = GF2X_coeff(rep, i)
             if not GF2_IsZero(c):
-                _repr.append("%s^%d"%(name,i))
+                _repr.append("%s^%d" % (name, i))
 
         return " + ".join(reversed(_repr))
 
-    def __bool__(FiniteField_ntl_gf2eElement self):
+    def __bool__(FiniteField_ntl_gf2eElement self) -> bool:
         r"""
         Return ``True`` if ``self != k(0)``.
 
@@ -998,7 +998,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         EXAMPLES::
 
-            sage: k.<a> = GF(2^8, impl='ntl')
+            sage: k.<a> = GF(2^8, implementation="ntl")
             sage: b = a^3 + a
             sage: b.minpoly()
             x^4 + x^3 + x^2 + x + 1
@@ -1131,7 +1131,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         """
         return self
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return a string that evaluates to the GAP representation of
         this element.

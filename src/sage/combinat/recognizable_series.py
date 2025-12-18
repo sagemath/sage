@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Recognizable Series
+Recognizable series
 
 Let `A` be an alphabet and `K` a semiring. Then a formal series `S`
 with coefficients in `K` and indices in the words `A^*` is called
@@ -27,30 +27,15 @@ such that the coefficient corresponding to a word `w\in A^*` equals
     In particular, minimization is called before checking if a series is
     nonzero.
 
-
-Various
-=======
-
 .. SEEALSO::
 
     :mod:`k-regular sequence <sage.combinat.regular_sequence>`,
     :mod:`sage.rings.cfinite_sequence`,
     :mod:`sage.combinat.binary_recurrence_sequences`.
 
-
 AUTHORS:
 
-- Daniel Krenn (2016, 2021)
-
-
-ACKNOWLEDGEMENT:
-
-- Daniel Krenn is supported by the
-  Austrian Science Fund (FWF): P 24644-N26.
-
-
-Classes and Methods
-===================
+- Daniel Krenn (2016, 2021): supported by the Austrian Science Fund (FWF): P 24644-N26
 """
 # ****************************************************************************
 #       Copyright (C) 2016 Daniel Krenn <dev@danielkrenn.at>
@@ -1857,8 +1842,8 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         z = self.coefficient_ring().zero()
         o = self.coefficient_ring().one()
         e = self.coefficient_ring().an_element()
-        return self(list(Matrix([[o, z], [i * o, o]])
-                         for i, _ in enumerate(self.alphabet())),
+        return self([Matrix([[o, z], [i * o, o]])
+                     for i, _ in enumerate(self.alphabet())],
                     vector([z, e]), right=vector([e, z]))
 
     def some_elements(self, **kwds):

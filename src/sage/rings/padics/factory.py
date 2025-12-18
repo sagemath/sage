@@ -17,7 +17,7 @@ TESTS::
     sage: R = QpLF(2)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
 #                               William Stein <wstein@gmail.com>
 #
@@ -26,53 +26,59 @@ TESTS::
 #  the License, or (at your option) any later version.
 #
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
+from functools import reduce
+
+from sage.categories.fields import Fields
 from sage.misc.superseded import experimental
-
-from sage.structure.factory import UniqueFactory
-from sage.rings.integer import Integer
 from sage.rings.infinity import Infinity
-from sage.structure.factorization import Factorization
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.structure.element import Element
-from .padic_base_leaves import (pAdicRingCappedRelative,
-                                pAdicRingCappedAbsolute,
-                                pAdicRingFixedMod,
-                                pAdicRingFloatingPoint,
-                                pAdicRingLattice,
-                                pAdicRingRelaxed,
-                                pAdicFieldCappedRelative,
-                                pAdicFieldFloatingPoint,
-                                pAdicFieldLattice,
-                                pAdicFieldRelaxed)
-from . import padic_printing
+from sage.rings.padics import padic_printing
+from sage.rings.padics.padic_base_leaves import (
+    pAdicFieldCappedRelative,
+    pAdicFieldFloatingPoint,
+    pAdicFieldLattice,
+    pAdicFieldRelaxed,
+    pAdicRingCappedAbsolute,
+    pAdicRingCappedRelative,
+    pAdicRingFixedMod,
+    pAdicRingFloatingPoint,
+    pAdicRingLattice,
+    pAdicRingRelaxed,
+)
 
 ######################################################
 # ext_table --
 # This dictionary controls what class is created by the extension
 # factory when it finds a given class in the ground ring of the tower.
 ######################################################
+from sage.rings.padics.padic_extension_leaves import (
+    EisensteinExtensionFieldCappedRelative,
+    EisensteinExtensionRingCappedAbsolute,
+    EisensteinExtensionRingCappedRelative,
+    EisensteinExtensionRingFixedMod,
+    UnramifiedExtensionFieldCappedRelative,
+    UnramifiedExtensionFieldFloatingPoint,
+    UnramifiedExtensionRingCappedAbsolute,
+    UnramifiedExtensionRingCappedRelative,
+    UnramifiedExtensionRingFixedMod,
+    UnramifiedExtensionRingFloatingPoint,
+)
+from sage.rings.padics.relative_extension_leaves import (
+    RelativeRamifiedExtensionFieldCappedRelative,
+    RelativeRamifiedExtensionFieldFloatingPoint,
+    RelativeRamifiedExtensionRingCappedAbsolute,
+    RelativeRamifiedExtensionRingCappedRelative,
+    RelativeRamifiedExtensionRingFixedMod,
+    RelativeRamifiedExtensionRingFloatingPoint,
+)
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.structure.element import Element
+from sage.structure.factorization import Factorization
+from sage.structure.factory import UniqueFactory
 
-from .padic_extension_leaves import (EisensteinExtensionFieldCappedRelative,
-                                     EisensteinExtensionRingFixedMod,
-                                     EisensteinExtensionRingCappedAbsolute,
-                                     EisensteinExtensionRingCappedRelative,
-                                     UnramifiedExtensionFieldCappedRelative,
-                                     UnramifiedExtensionRingCappedRelative,
-                                     UnramifiedExtensionRingCappedAbsolute,
-                                     UnramifiedExtensionRingFixedMod,
-                                     UnramifiedExtensionFieldFloatingPoint,
-                                     UnramifiedExtensionRingFloatingPoint)
-from .relative_extension_leaves import \
-        (RelativeRamifiedExtensionRingFixedMod,
-         RelativeRamifiedExtensionRingCappedAbsolute,
-         RelativeRamifiedExtensionRingCappedRelative,
-         RelativeRamifiedExtensionFieldCappedRelative,
-         RelativeRamifiedExtensionRingFloatingPoint,
-         RelativeRamifiedExtensionFieldFloatingPoint)
-from functools import reduce
 #This imports all of the classes used in the ext_table below.
 
 ext_table = {}
@@ -153,9 +159,8 @@ def _canonicalize_show_prec(type, print_mode, show_prec=None):
     if print_mode in ('series', 'terse', 'val-unit'):
         if show_prec not in ('none', 'bigoh'):
             raise ValueError("show_prec must be either a boolean, 'none' or 'bigoh' when printing mode is %s" % print_mode)
-    else:
-        if show_prec not in ('none', 'bigoh', 'dots'):
-            raise ValueError("show_prec must be either a boolean, 'none', 'bigoh' or 'dots' when printing mode is %s" % print_mode)
+    elif show_prec not in ('none', 'bigoh', 'dots'):
+        raise ValueError("show_prec must be either a boolean, 'none', 'bigoh' or 'dots' when printing mode is %s" % print_mode)
     return show_prec
 
 
@@ -236,9 +241,8 @@ def get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_se
                 halting_prec = 2 * default_prec
             halting_prec = max(default_prec, halting_prec)
             prec = (default_prec, halting_prec, secure)
-        else:
-            if prec is not None:
-                prec = Integer(prec)
+        elif prec is not None:
+            prec = Integer(prec)
     if prec is None:
         if type == 'lattice-cap':
             prec = (DEFAULT_PREC, 2*DEFAULT_PREC)
@@ -783,35 +787,45 @@ class Qp_class(UniqueFactory):
                 pass
             p, prec, type, print_mode, name, print_pos, print_sep, print_alphabet, print_max_terms, show_prec, label = key
 
+        _Fields = Fields()
+
         if type == 'capped-rel':
             if print_mode == 'terse':
                 return pAdicFieldCappedRelative(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                                                          'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name)
+                                                          'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name,
+                                                category=_Fields)
             else:
                 return pAdicFieldCappedRelative(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                                                          'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name)
+                                                          'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name,
+                                                category=_Fields)
         elif type == 'floating-point':
             if print_mode == 'terse':
                 return pAdicFieldFloatingPoint(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                                                          'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name)
+                                                         'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name,
+                                               category=_Fields)
             else:
                 return pAdicFieldFloatingPoint(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                                                         'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name)
+                                                         'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name,
+                                               category=_Fields)
         elif type == 'relaxed':
             if print_mode == 'terse':
                 return pAdicFieldRelaxed(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                                                'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name)
+                                                   'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name,
+                                         category=_Fields)
             else:
                 return pAdicFieldRelaxed(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                                                'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name)
+                                                   'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name,
+                                         category=_Fields)
         elif type[:8] == 'lattice-':
             subtype = type[8:]
             if print_mode == 'terse':
                 return pAdicFieldLattice(p, prec, subtype, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                                                            'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name, label)
+                                                            'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name, label,
+                                         category=_Fields)
             else:
                 return pAdicFieldLattice(p, prec, subtype, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                                                            'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name, label)
+                                                            'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name, label,
+                                         category=_Fields)
         else:
             raise ValueError("unexpected type")
 
@@ -1632,7 +1646,7 @@ class Zp_class(UniqueFactory):
         1 + 2*5^2 + 5^3
 
     The floating point case is similar to the fixed modulus type
-    in that elements do not trac their own precision.  However, relative
+    in that elements do not track their own precision.  However, relative
     precision is truncated with each operation rather than absolute precision.
 
     On the contrary, the lattice type tracks precision using lattices
@@ -2185,7 +2199,7 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
         2*3^2 + (2*a + 2)*3^3
 
     The floating point case is similar to the fixed modulus type
-    in that elements do not trac their own precision.  However, relative
+    in that elements do not track their own precision.  However, relative
     precision is truncated with each operation rather than absolute precision.
 
     MODULUS:
@@ -2597,7 +2611,7 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
             raise TypeError("modulus must be a polynomial")
         if names is not None and not isinstance(names, str):
             names = str(names)
-            #raise TypeError, "names must be a string"
+            # raise TypeError("names must be a string")
         q = Integer(q)
         F = q.factor()
         if len(F) != 1:
@@ -3548,10 +3562,10 @@ def krasner_check(poly, prec):
         sage: krasner_check(1,2)  # this is a stupid example.
         True
     """
-    return True #This needs to be implemented
+    return True  # This needs to be implemented
 
 
-def is_eisenstein(poly):
+def is_eisenstein(poly) -> bool:
     r"""
     Return ``True`` iff this monic polynomial is Eisenstein.
 
@@ -3576,12 +3590,10 @@ def is_eisenstein(poly):
     """
     if poly[0].valuation() != 1:
         return False
-    if reduce(lambda a, b: a or b, [(c.valuation() < 1) for c in poly.list()[1:poly.degree()]]):
-        return False
-    return True
+    return not any(c.valuation() < 1 for c in poly.list()[1:poly.degree()])
 
 
-def is_unramified(poly):
+def is_unramified(poly) -> bool:
     r"""
     Return ``True`` iff this monic polynomial is unramified.
 
@@ -3603,9 +3615,7 @@ def is_unramified(poly):
     """
     if poly[0].valuation() > 0:
         return False
-    if reduce(lambda a, b: a or b, [(c.valuation() < 0) for c in poly.list()[1:poly.degree()]]):
+    if any(c.valuation() < 0 for c in poly.list()[1:poly.degree()]):
         return False
     F = poly.parent().change_ring(poly.base_ring().residue_class_field())(poly).factor()
-    if len(F) != 1 or F[0][1] != 1:
-        return False
-    return True
+    return len(F) == 1 and F[0][1] == 1

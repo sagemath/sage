@@ -8,7 +8,7 @@ AUTHORS:
 - Tomas Kalvoda (2015-04-01): Add :meth:`exp_polar()` (:issue:`18085`)
 """
 
-from sage.misc.functional import log as log
+from sage.misc.functional import log
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ

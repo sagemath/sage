@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Monoids
 """
@@ -274,7 +273,7 @@ class Monoids(CategoryWithAxiom):
             """
             return left * ~right
 
-        def is_one(self):
+        def is_one(self) -> bool:
             r"""
             Return whether ``self`` is the one of the monoid.
 
@@ -504,6 +503,26 @@ class Monoids(CategoryWithAxiom):
 
         class ParentMethods:
 
+            def is_field(self, proof=True) -> bool:
+                r"""
+                Return ``True`` if ``self`` is a field.
+
+                For a monoid algebra `R S` this is always false unless
+                `S` is trivial and the base ring `R` is a field.
+
+                EXAMPLES::
+
+                    sage: SymmetricGroup(1).algebra(QQ).is_field()                      # needs sage.combinat sage.groups
+                    True
+                    sage: SymmetricGroup(1).algebra(ZZ).is_field()                      # needs sage.combinat sage.groups
+                    False
+                    sage: SymmetricGroup(2).algebra(QQ).is_field()                      # needs sage.combinat sage.groups
+                    False
+                """
+                if not self.base_ring().is_field(proof):
+                    return False
+                return self.basis().keys().cardinality() == 1
+
             @cached_method
             def one_basis(self):
                 """
@@ -583,7 +602,7 @@ class Monoids(CategoryWithAxiom):
 
         class ElementMethods:
 
-            def is_central(self):
+            def is_central(self) -> bool:
                 r"""
                 Return whether the element ``self`` is central.
 

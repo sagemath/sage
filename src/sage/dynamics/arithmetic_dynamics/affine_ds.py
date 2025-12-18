@@ -519,7 +519,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
             sage: R.<c> = QQ[]
             sage: Pc.<x,y> = ProjectiveSpace(R, 1)
             sage: G = DynamicalSystem_projective([(1/2*c + 1/2)*x^2 + (-2*c)*x*y + 2*c*y^2 , \
-                  (1/4*c + 1/2)*x^2 + (-c - 1)*x*y + (c + 1)*y^2])
+            ....: (1/4*c + 1/2)*x^2 + (-c - 1)*x*y + (c + 1)*y^2])
             sage: G.dehomogenize(1).dynatomic_polynomial(2)
             (1/4*c + 1/4)*x^2 + (-c - 1/2)*x + c + 1
         """
@@ -800,7 +800,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         l = identity_matrix(FractionField(self.codomain().base_ring()), N, N)
         Q = P
         J = self.jacobian()
-        for i in range(0, n):
+        for i in range(n):
             R = self(Q)
             l = J(tuple(Q)) * l  # chain rule matrix multiplication
             Q = R

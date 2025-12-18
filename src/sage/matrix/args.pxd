@@ -1,4 +1,5 @@
 from cpython.object cimport PyObject
+from cpython.ref cimport _Py_REFCNT
 from sage.structure.element cimport Element, Matrix
 from sage.structure.parent cimport Parent
 
@@ -12,7 +13,7 @@ cdef enum entries_type:
     MA_FLAG_SPARSE        = 0x20_00  # Sparse by default
 
     # types of input entries
-    MA_ENTRIES_UNKNOWN    =       0  # anything
+    MA_ENTRIES_UNKNOWN    = 0        # anything
     MA_ENTRIES_ZERO       = 0x17_01  # zero matrix
     MA_ENTRIES_SCALAR     = 0x17_02  # single scalar value
     MA_ENTRIES_SEQ_SEQ    = 0x10_03  # list of lists
@@ -64,7 +65,7 @@ cdef class MatrixArgs:
         Can we safely return self.entries without making a copy?
         A refcount of 1 means that self.entries is the only reference.
         """
-        return (<PyObject*>self.entries).ob_refcnt == 1
+        return _Py_REFCNT(<PyObject*>self.entries) == 1
 
     cdef inline bint need_to_convert(self, x) noexcept:
         """Is ``x`` not an element of ``self.base``?"""

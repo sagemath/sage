@@ -34,31 +34,26 @@ TESTS::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 
-from . import polynomial_element
 import sage.rings.rational_field
-
 from sage.arith.misc import crt
-from sage.rings.ring import Field, IntegralDomain, CommutativeRing
-
-from sage.misc.cachefunc import cached_method
-from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
-
 from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.commutative_rings import CommutativeRings
-
+from sage.misc.cachefunc import cached_method
+from sage.rings.polynomial import polynomial_element
+from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
+from sage.rings.polynomial.polynomial_quotient_ring_element import (
+    PolynomialQuotientRingElement,
+)
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
 from sage.rings.quotient_ring import QuotientRing_generic
-
+from sage.rings.ring import CommutativeRing, Field
 from sage.structure.category_object import normalize_names
 from sage.structure.coerce_maps import DefaultConvertMap_unique
 from sage.structure.factory import UniqueFactory
-
-from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
-
 from sage.structure.richcmp import richcmp
 
 
@@ -244,8 +239,8 @@ class PolynomialQuotientRingFactory(UniqueFactory):
         ring, polynomial, names = key
 
         R = ring.base_ring()
-        from sage.categories.integral_domains import IntegralDomains
         from sage.categories.fields import Fields
+        from sage.categories.integral_domains import IntegralDomains
         if R in IntegralDomains():
             try:
                 is_irreducible = polynomial.is_irreducible()
@@ -338,8 +333,16 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         sage: isinstance(Q.an_element(), Q.element_class)
         True
         sage: [s for s in dir(Q.category().element_class) if not s.startswith('_')]
-        ['cartesian_product', 'inverse', 'inverse_of_unit', 'is_idempotent',
-         'is_one', 'is_unit', 'lift', 'powers']
+        ['cartesian_product',
+         'inverse',
+         'inverse_of_unit',
+         'is_idempotent',
+         'is_one',
+         'is_square',
+         'is_unit',
+         'lift',
+         'powers',
+         'sqrt']
         sage: first_class = Q.__class__
 
     We try to find out whether `Q` is a field. Indeed it is, and thus its category,
@@ -361,12 +364,14 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
          'inverse_of_unit',
          'is_idempotent',
          'is_one',
+         'is_square',
          'is_unit',
          'lcm',
          'lift',
          'powers',
          'quo_rem',
          'radical',
+         'sqrt',
          'squarefree_part',
          'xgcd']
 
@@ -749,8 +754,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: Q = P.quo([(x^2 + 1)])
             sage: singular(Q)        # indirect doctest                                 # needs sage.libs.singular
             polynomial ring, over a field, global ordering
-            //   coefficients: QQ
-            //   number of vars : 1
+            // coefficients: QQ...
+            // number of vars : 1
             //        block   1 : ordering lp
             //                  : names    xbar
             //        block   2 : ordering C
@@ -979,6 +984,10 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: S = R.quotient(x^2005 + 1)
             sage: S.degree()
             2005
+
+        .. SEEALSO::
+
+            :meth:`PolynomialQuotientRing_field.absolute_degree`
         """
         return self.modulus().degree()
 
@@ -1035,6 +1044,11 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         """
         Return whether or not this quotient ring is a field.
 
+        INPUT:
+
+        - ``proof`` -- boolean (default: ``True``) require the
+          ``is_irreducible`` method of the modulus to be implemented
+
         EXAMPLES::
 
             sage: R.<z> = PolynomialRing(ZZ)
@@ -1046,8 +1060,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: S.is_field()
             True
 
-        If proof is ``True``, requires the ``is_irreducible`` method of the
-        modulus to be implemented::
+        If proof is ``True``, an exception is raised when the
+        ``is_irreducible`` method of the modulus is not implemented::
 
             sage: # needs sage.rings.padics
             sage: R1.<x> = Qp(2)[]
@@ -1346,13 +1360,10 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         fields = []
         isos = []
         iso_classes = []
-        i = 0
-        for f, _ in F:
-            D = K.extension(f, 'x'+str(i))
+        for i, (f, _) in enumerate(F):
+            D = K.extension(f, f'x{i}')
             fields.append(D)
-            D_abs = D.absolute_field('y'+str(i))
-            i += 1
-
+            D_abs = D.absolute_field(f'y{i}')
             seen_before = False
             j = 0
             for D_iso, _ in iso_classes:
@@ -1430,13 +1441,13 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: R.<x> = K[]
             sage: S.<xbar> = R.quotient(x^2 + 23)
             sage: S.S_class_group([])
-            [((2, -a + 1, 1/2*xbar + 1/2, -1/2*a*xbar + 1/2*a + 1), 6)]
+            [((2, a + 1, -1/2*xbar + 3/2, 1/2*a*xbar - 1/2*a + 1), 6)]
             sage: S.S_class_group([K.ideal(3, a-1)])
             []
             sage: S.S_class_group([K.ideal(2, a+1)])
             []
             sage: S.S_class_group([K.ideal(a)])
-            [((2, -a + 1, 1/2*xbar + 1/2, -1/2*a*xbar + 1/2*a + 1), 6)]
+            [((2, a + 1, -1/2*xbar + 3/2, 1/2*a*xbar - 1/2*a + 1), 6)]
 
         Now we take an example over a nontrivial base with two factors, each
         contributing to the class group::
@@ -1496,14 +1507,14 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: C = S.S_class_group([])
             sage: C[:2]
             [((1/4*xbar^2 + 31/4,
-               (-1/8*a + 1/8)*xbar^2 - 31/8*a + 31/8,
-               1/16*xbar^3 + 1/16*xbar^2 + 31/16*xbar + 31/16,
-               -1/16*a*xbar^3 + (1/16*a + 1/8)*xbar^2 - 31/16*a*xbar + 31/16*a + 31/8),
+               (1/8*a + 1/8)*xbar^2 + 31/8*a + 31/8,
+               -1/16*xbar^3 + 3/16*xbar^2 - 31/16*xbar + 93/16,
+               1/16*a*xbar^3 + (-1/16*a + 1/8)*xbar^2 + 31/16*a*xbar - 31/16*a + 31/8),
               6),
              ((-1/4*xbar^2 - 23/4,
-               (1/8*a - 1/8)*xbar^2 + 23/8*a - 23/8,
-               -1/16*xbar^3 - 1/16*xbar^2 - 23/16*xbar - 23/16,
-               1/16*a*xbar^3 + (-1/16*a - 1/8)*xbar^2 + 23/16*a*xbar - 23/16*a - 23/8),
+               (-1/8*a - 1/8)*xbar^2 - 23/8*a - 23/8,
+               1/16*xbar^3 + 1/16*xbar^2 + 23/16*xbar + 23/16,
+               -1/16*a*xbar^3 + (1/16*a - 1/8)*xbar^2 - 23/16*a*xbar + 23/16*a - 23/8),
               6)]
             sage: C[2][1]
             2
@@ -1515,11 +1526,11 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             ....:     1/16*a*xbar^3 - 1/16*a*xbar^2 + 23/16*a*xbar - 23/16*a)
             sage: gens[0] == expected_gens[0]
             True
-            sage: gens[1] in (expected_gens[1], expected_gens[1]/2 + expected_gens[0]/2)
+            sage: gens[1] in (expected_gens[1], expected_gens[1]/2 + expected_gens[0]/2, -expected_gens[1]/2 + expected_gens[0]/2)
             True
-            sage: gens[2] in (expected_gens[2], expected_gens[2] + expected_gens[0]/2)
+            sage: gens[2] in (expected_gens[2], expected_gens[2] + expected_gens[0]/2, -expected_gens[2] + expected_gens[0]/2)
             True
-            sage: gens[3] in (expected_gens[3], expected_gens[3] + expected_gens[0]/2)
+            sage: gens[3] in (expected_gens[3], expected_gens[3] + expected_gens[0]/2, -expected_gens[3] + expected_gens[0]/2)
             True
         """
         fields, isos, iso_classes = self._S_decomposition(tuple(S))
@@ -1612,7 +1623,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: R.<x> = K[]
             sage: S.<xbar> = R.quotient(x^2 + 23)
             sage: S.class_group()
-            [((2, -a + 1, 1/2*xbar + 1/2, -1/2*a*xbar + 1/2*a + 1), 6)]
+            [((2, a + 1, -1/2*xbar + 3/2, 1/2*a*xbar - 1/2*a + 1), 6)]
 
         Here is an example of a product of number fields, both of which
         contribute to the class group::
@@ -1712,19 +1723,19 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
              with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
              with modulus y^3 + 5
             sage: [u for u, o in L.S_units([]) if o is Infinity]
-            [(-1/3*a - 1)*b^2 - 4/3*a*b - 5/6*a + 7/2,
-             2/3*a*b^2 + (2/3*a - 2)*b - 5/6*a - 7/2]
+            [(-1/3*a - 1)*b^2 - 4/3*a*b - 4/3*a + 3,
+             (-1/3*a - 1)*b^2 + (2/3*a - 2)*b + 13/6*a - 1/2]
             sage: [u for u, o in L.S_units([K.ideal(1/2*a - 3/2)])
             ....:  if o is Infinity]
             [(-1/6*a - 1/2)*b^2 + (1/3*a - 1)*b + 4/3*a,
-             (-1/3*a - 1)*b^2 - 4/3*a*b - 5/6*a + 7/2,
-             2/3*a*b^2 + (2/3*a - 2)*b - 5/6*a - 7/2]
+             (-1/3*a - 1)*b^2 - 4/3*a*b - 4/3*a + 3,
+             (-1/3*a - 1)*b^2 + (2/3*a - 2)*b + 13/6*a - 1/2]
             sage: [u for u, o in L.S_units([K.ideal(2)]) if o is Infinity]
             [(1/2*a - 1/2)*b^2 + (a + 1)*b + 3,
-             (1/6*a + 1/2)*b^2 + (-1/3*a + 1)*b - 5/6*a + 1/2,
              (1/6*a + 1/2)*b^2 + (-1/3*a + 1)*b - 5/6*a - 1/2,
-             (-1/3*a - 1)*b^2 - 4/3*a*b - 5/6*a + 7/2,
-             2/3*a*b^2 + (2/3*a - 2)*b - 5/6*a - 7/2]
+             1/3*a*b^2 + (1/3*a + 1)*b - 1/6*a + 3/2,
+             (-1/3*a - 1)*b^2 - 4/3*a*b - 4/3*a + 3,
+             (-1/3*a - 1)*b^2 + (2/3*a - 2)*b + 13/6*a - 1/2]
 
         Note that all the returned values live where we expect them to::
 
@@ -1809,8 +1820,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
              with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
              with modulus y^3 + 5
             sage: [u for u, o in L.units() if o is Infinity]
-            [(-1/3*a - 1)*b^2 - 4/3*a*b - 5/6*a + 7/2,
-             2/3*a*b^2 + (2/3*a - 2)*b - 5/6*a - 7/2]
+            [(-1/3*a - 1)*b^2 - 4/3*a*b - 4/3*a + 3,
+             (-1/3*a - 1)*b^2 + (2/3*a - 2)*b + 13/6*a - 1/2]
             sage: L.<b> = K.extension(y^3 + 5)
             sage: L.unit_group()
             Unit group with structure C6 x Z x Z of
@@ -1818,8 +1829,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: L.unit_group().gens()    # abstract generators
             (u0, u1, u2)
             sage: L.unit_group().gens_values()[1:]
-            [(-1/3*a - 1)*b^2 - 4/3*a*b - 5/6*a + 7/2,
-             2/3*a*b^2 + (2/3*a - 2)*b - 5/6*a - 7/2]
+            [(-1/3*a - 1)*b^2 - 4/3*a*b - 4/3*a + 3,
+             (-1/3*a - 1)*b^2 + (2/3*a - 2)*b + 13/6*a - 1/2]
 
         Note that all the returned values live where we expect them to::
 
@@ -1877,7 +1888,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: D.selmer_generators([K.ideal(2, -a + 1),
             ....:                      K.ideal(3, a + 1),
             ....:                      K.ideal(a)], 3)
-            [2, a + 1, -a]
+            [2, a + 1, a]
         """
         fields, isos, iso_classes = self._S_decomposition(tuple(S))
         n = len(fields)
@@ -2277,7 +2288,7 @@ class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
         return richcmp(self.parent(), other.parent(), op)
 
 
-class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, IntegralDomain):
+class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, CommutativeRing):
     """
     EXAMPLES::
 
@@ -2431,6 +2442,42 @@ class PolynomialQuotientRing_field(PolynomialQuotientRing_domain, Field):
     """
     def __init__(self, ring, polynomial, name=None, category=None):
         PolynomialQuotientRing_domain.__init__(self, ring, polynomial, name, category)
+
+    def absolute_degree(self):
+        """
+        Return the degree of this quotient ring over the absolute base field.
+
+        EXAMPLES::
+
+            sage: K.<a> = GF(9)
+            sage: R.<x> = PolynomialRing(K)
+            sage: S = R.quotient(x^2 + a*x + 1)
+            sage: S.absolute_degree()
+            4
+            sage: x = polygen(QQ, 'x')
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: R.<y> = PolynomialRing(K)
+            sage: S = R.quotient(y^3 + y + 1)
+            sage: S.absolute_degree()
+            6
+            sage: R.<x> = PolynomialRing(RR)
+            sage: S = R.quotient(x^2 + 1)
+            sage: S.absolute_degree()
+            2
+            sage: K = GF(4)
+            sage: A.<x> = K[]
+            sage: L = K.extension(x+1)
+            sage: L.absolute_degree()
+            2
+
+        .. SEEALSO::
+
+            :meth:`PolynomialQuotientRing_generic.degree`
+        """
+        base_field = self.base_field()
+        if hasattr(base_field, 'absolute_degree'):
+            return base_field.absolute_degree() * self.degree()
+        return self.degree()
 
     def base_field(self):
         r"""

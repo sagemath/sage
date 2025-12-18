@@ -24,6 +24,9 @@ ctypedef mp_limb_t ulong
 ctypedef mp_limb_signed_t slong
 ctypedef mp_limb_t flint_bitcnt_t
 
+# New in flint 3.2.0-rc1
+ctypedef mp_ptr nn_ptr
+ctypedef mp_srcptr nn_srcptr
 
 cdef extern from "flint_wrap.h":
     # flint/fmpz.h
@@ -266,9 +269,19 @@ cdef extern from "flint_wrap.h":
 
 
     # flint/flint.h
-    ctypedef struct flint_rand_s:
+    ctypedef struct flint_rand_struct:
         pass
-    ctypedef flint_rand_s flint_rand_t[1]
+    ctypedef flint_rand_struct flint_rand_t[1]
+    ctypedef enum flint_err_t:
+        # flint_autogen.py does not support parsing .. enum:: yet
+        FLINT_ERROR
+        FLINT_OVERFLOW
+        FLINT_IMPINV
+        FLINT_DOMERR
+        FLINT_DIVZERO
+        FLINT_EXPOF
+        FLINT_INEXACT
+        FLINT_TEST_FAIL
 
     cdef long FLINT_BITS
     cdef long FLINT_D_BITS

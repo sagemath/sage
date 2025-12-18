@@ -9,6 +9,10 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #                          Emily A. Kirkman
 #                     2009 Michael C. Yurko <myurko@gmail.com>
 #                     2016 Rowan Schrecker <rowan.schrecker@hertford.ox.ac.uk>
+#                     2025 Juan M. Lazaro Ruiz, Steve Schluchter, and
+#                          Kristina Obrenovic Gilmour: is_projective_planar
+#                          in graph.py and associated method p2_forbidden_minors
+#                          in sage.graphs.generators.families module.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -57,7 +61,7 @@ def JohnsonGraph(n, k):
         True
     """
 
-    g = Graph(name="Johnson graph with parameters "+str(n)+","+str(k))
+    g = Graph(name=f"Johnson graph with parameters {n},{k}")
     from sage.combinat.subset import Set, Subsets
 
     S = Set(range(n))
@@ -113,7 +117,7 @@ def KneserGraph(n, k):
     if k <= 0 or k > n:
         raise ValueError("Parameter k should be a strictly positive integer inferior to n")
 
-    g = Graph(name="Kneser graph with parameters {},{}".format(n, k))
+    g = Graph(name=f"Kneser graph with parameters {n},{k}")
 
     from sage.combinat.subset import Subsets
     S = Subsets(n, k)
@@ -389,7 +393,7 @@ def EgawaGraph(p, s):
     """
     from sage.graphs.generators.basic import CompleteGraph
     from itertools import product, chain, repeat
-    g = Graph(name="Egawa Graph with parameters " + str(p) + "," + str(s), multiedges=False)
+    g = Graph(name=f"Egawa Graph with parameters {p},{s}", multiedges=False)
     X = CompleteGraph(4)
     Y = Graph('O?Wse@UgqqT_LUebWkbT_')
     g.add_vertices(product(*chain(repeat(Y, p), repeat(X, s))))
@@ -477,7 +481,7 @@ def HammingGraph(n, q, X=None):
         X = list(range(q))
     if q != len(X):
         raise ValueError("q must be the cardinality of X")
-    g = Graph(name="Hamming Graph with parameters " + str(n) + "," + str(q), multiedges=False)
+    g = Graph(name=f"Hamming Graph with parameters {n},{q}", multiedges=False)
     g.add_vertices(product(*repeat(X, n)))
     for v in g:
         for i in range(n):
@@ -489,107 +493,6 @@ def HammingGraph(n, q, X=None):
                 u = prefix + (el,) + suffix
                 g.add_edge(v, u)
     return g
-
-
-def BalancedTree(r, h):
-    r"""
-    Return the perfectly balanced tree of height `h \geq 1`,
-    whose root has degree `r \geq 2`.
-
-    The number of vertices of this graph is
-    `1 + r + r^2 + \cdots + r^h`, that is,
-    `\frac{r^{h+1} - 1}{r - 1}`. The number of edges is one
-    less than the number of vertices.
-
-    INPUT:
-
-    - ``r`` -- positive integer `\geq 2`; the degree of the root node
-
-    - ``h`` -- positive integer `\geq 1`; the height of the balanced tree
-
-    OUTPUT:
-
-    The perfectly balanced tree of height `h \geq 1` and whose root has
-    degree `r \geq 2`.
-
-    EXAMPLES:
-
-    A balanced tree whose root node has degree `r = 2`, and of height
-    `h = 1`, has order 3 and size 2::
-
-        sage: G = graphs.BalancedTree(2, 1); G
-        Balanced tree: Graph on 3 vertices
-        sage: G.order()
-        3
-        sage: G.size()
-        2
-        sage: r = 2; h = 1
-        sage: v = 1 + r
-        sage: v; v - 1
-        3
-        2
-
-    Plot a balanced tree of height 5, whose root node has degree `r = 3`::
-
-        sage: G = graphs.BalancedTree(3, 5)
-        sage: G.plot()                          # long time                             # needs sage.plot
-        Graphics object consisting of 728 graphics primitives
-
-    A tree is bipartite. If its vertex set is finite, then it is planar. ::
-
-        sage: # needs networkx
-        sage: r = randint(2, 5); h = randint(1, 7)
-        sage: T = graphs.BalancedTree(r, h)
-        sage: T.is_bipartite()
-        True
-        sage: T.is_planar()
-        True
-        sage: v = (r^(h + 1) - 1) / (r - 1)
-        sage: T.order() == v
-        True
-        sage: T.size() == v - 1
-        True
-
-    TESTS:
-
-    Normally we would only consider balanced trees whose root node
-    has degree `r \geq 2`, but the construction degenerates
-    gracefully::
-
-        sage: graphs.BalancedTree(1, 10)
-        Balanced tree: Graph on 11 vertices
-
-    Similarly, we usually want the tree must have height `h \geq 1`
-    but the algorithm also degenerates gracefully here::
-
-        sage: graphs.BalancedTree(3, 0)
-        Balanced tree: Graph on 1 vertex
-
-    The construction is the same as the one of networkx::
-
-        sage: # needs networkx
-        sage: import networkx
-        sage: r = randint(2, 4); h = randint(1, 5)
-        sage: T = graphs.BalancedTree(r, h)
-        sage: N = Graph(networkx.balanced_tree(r, h), name="Balanced tree")
-        sage: T.is_isomorphic(N)
-        True
-    """
-    # Compute the number of vertices per level of the tree
-    order = [r**l for l in range(h + 1)]
-    # Compute the first index of the vertices of a level
-    begin = [0]
-    begin.extend(begin[-1] + val for val in order)
-    # The number of vertices of the tree is the first index of level h + 1
-    T = Graph(begin[-1], name="Balanced tree")
-
-    # Add edges of the r-ary tree
-    for level in range(h):
-        start = begin[level + 1]
-        for u in range(begin[level], begin[level + 1]):
-            T.add_edges((u, v) for v in range(start, start + r))
-            start += r
-    return T
 
 
 def BarbellGraph(n1, n2):
@@ -658,9 +561,9 @@ def BarbellGraph(n1, n2):
 
         sage: n1, n2 = randint(3, 10), randint(0, 10)
         sage: g = graphs.BarbellGraph(n1, n2)
-        sage: g.num_verts() == 2 * n1 + n2
+        sage: g.n_vertices() == 2 * n1 + n2
         True
-        sage: g.num_edges() == 2 * binomial(n1, 2) + n2 + 1                             # needs sage.symbolic
+        sage: g.n_edges() == 2 * binomial(n1, 2) + n2 + 1                               # needs sage.symbolic
         True
         sage: g.is_connected()
         True
@@ -735,9 +638,9 @@ def LollipopGraph(n1, n2):
 
         sage: n1, n2 = randint(3, 10), randint(0, 10)
         sage: g = graphs.LollipopGraph(n1, n2)
-        sage: g.num_verts() == n1 + n2
+        sage: g.n_vertices() == n1 + n2
         True
-        sage: g.num_edges() == binomial(n1, 2) + n2                                     # needs sage.symbolic
+        sage: g.n_edges() == binomial(n1, 2) + n2                                       # needs sage.symbolic
         True
         sage: g.is_connected()
         True
@@ -808,9 +711,9 @@ def TadpoleGraph(n1, n2):
 
         sage: n1, n2 = randint(3, 10), randint(0, 10)
         sage: g = graphs.TadpoleGraph(n1, n2)
-        sage: g.num_verts() == n1 + n2
+        sage: g.n_vertices() == n1 + n2
         True
-        sage: g.num_edges() == n1 + n2
+        sage: g.n_edges() == n1 + n2
         True
         sage: g.girth() == n1
         True
@@ -858,10 +761,10 @@ def AztecDiamondGraph(n):
         sage: graphs.AztecDiamondGraph(2)
         Aztec Diamond graph of order 2
 
-        sage: [graphs.AztecDiamondGraph(i).num_verts() for i in range(8)]
+        sage: [graphs.AztecDiamondGraph(i).n_vertices() for i in range(8)]
         [0, 4, 12, 24, 40, 60, 84, 112]
 
-        sage: [graphs.AztecDiamondGraph(i).num_edges() for i in range(8)]
+        sage: [graphs.AztecDiamondGraph(i).n_edges() for i in range(8)]
         [0, 4, 16, 36, 64, 100, 144, 196]
 
         sage: G = graphs.AztecDiamondGraph(3)
@@ -900,9 +803,9 @@ def DipoleGraph(n):
 
         sage: n = randint(0, 10)
         sage: g = graphs.DipoleGraph(n)
-        sage: g.num_verts() == 2
+        sage: g.n_vertices() == 2
         True
-        sage: g.num_edges() == n
+        sage: g.n_edges() == n
         True
         sage: g.is_connected() == (n > 0)
         True
@@ -1161,7 +1064,7 @@ def CirculantGraph(n, adjacency):
     if not isinstance(adjacency, list):
         adjacency = [adjacency]
 
-    G = Graph(n, name="Circulant graph (" + str(adjacency) + ")")
+    G = Graph(n, name=f"Circulant graph ({adjacency})")
     G._circle_embedding(list(range(n)))
 
     for v in G:
@@ -1275,7 +1178,7 @@ def CubeGraph(n, embedding=1):
             p, pn = pn, {}
 
         # construct the graph
-        G = Graph(d, format='dict_of_lists', pos=p, name="%d-Cube" % n)
+        G = Graph(d, format='dict_of_lists', pos=p, name=f"{n}-Cube")
 
     else:
         # construct recursively the adjacency dict
@@ -1296,7 +1199,7 @@ def CubeGraph(n, embedding=1):
             d, dn = dn, {}
 
         # construct the graph
-        G = Graph(d, name="%d-Cube" % n, format='dict_of_lists')
+        G = Graph(d, name=f"{n}-Cube", format='dict_of_lists')
 
         if embedding == 2:
             # Orthogonal projection
@@ -1398,7 +1301,7 @@ def DorogovtsevGoltsevMendesGraph(n):
     """
     import networkx
     return Graph(networkx.dorogovtsev_goltsev_mendes_graph(n),
-                 name="Dorogovtsev-Goltsev-Mendes Graph, %d-th generation" % n)
+                 name=f"Dorogovtsev-Goltsev-Mendes Graph, {n}-th generation")
 
 
 def FoldedCubeGraph(n):
@@ -1608,68 +1511,6 @@ def FuzzyBallGraph(partition, q):
     return g
 
 
-def FibonacciTree(n):
-    r"""
-    Return the graph of the Fibonacci Tree `F_{i}` of order `n`.
-
-    The Fibonacci tree `F_{i}` is recursively defined as the tree
-    with a root vertex and two attached child trees `F_{i-1}` and
-    `F_{i-2}`, where `F_{1}` is just one vertex and `F_{0}` is empty.
-
-    INPUT:
-
-    - ``n`` -- the recursion depth of the Fibonacci Tree
-
-    EXAMPLES::
-
-        sage: g = graphs.FibonacciTree(3)                                               # needs sage.libs.pari
-        sage: g.is_tree()                                                               # needs sage.libs.pari
-        True
-
-    ::
-
-        sage: l1 = [ len(graphs.FibonacciTree(_)) + 1 for _ in range(6) ]               # needs sage.libs.pari
-        sage: l2 = list(fibonacci_sequence(2,8))                                        # needs sage.libs.pari
-        sage: l1 == l2                                                                  # needs sage.libs.pari
-        True
-
-    AUTHORS:
-
-    - Harald Schilly and Yann Laigle-Chapuy (2010-03-25)
-    """
-    T = Graph(name="Fibonacci-Tree-%d" % n)
-    if n == 1:
-        T.add_vertex(0)
-    if n < 2:
-        return T
-
-    from sage.combinat.combinat import fibonacci_sequence
-    F = list(fibonacci_sequence(n + 2))
-    s = 1.618 ** (n / 1.618 - 1.618)
-    pos = {}
-
-    def fib(level, node, y):
-        pos[node] = (node, y)
-        if level < 2:
-            return
-        level -= 1
-        y -= s
-        diff = F[level]
-        T.add_edge(node, node - diff)
-        if level == 1:  # only one child
-            pos[node - diff] = (node, y)
-            return
-        T.add_edge(node, node + diff)
-        fib(level, node - diff, y)
-        fib(level - 1, node + diff, y)
-
-    T.add_vertices(range(sum(F[:-1])))
-    fib(n, F[n + 1] - 1, 0)
-    T.set_pos(pos)
-
-    return T
-
-
 def GeneralizedPetersenGraph(n, k):
     r"""
     Return a generalized Petersen graph with `2n` nodes. The variables
@@ -1711,6 +1552,13 @@ def GeneralizedPetersenGraph(n, k):
         sage: g.is_bipartite()
         True
 
+    TESTS:
+
+    Check that the name of the graph is correct::
+
+        sage: graphs.GeneralizedPetersenGraph(7, 2).name()
+        'Generalized Petersen graph (n=7,k=2)'
+
     AUTHORS:
 
     - Anders Jonsson (2009-10-15)
@@ -1719,7 +1567,7 @@ def GeneralizedPetersenGraph(n, k):
         raise ValueError("n must be larger than 2")
     if k < 1 or k > (n - 1) // 2:
         raise ValueError("k must be in 1<= k <=floor((n-1)/2)")
-    G = Graph(2 * n, name="Generalized Petersen graph (n='+str(n)+',k="+str(k)+")")
+    G = Graph(2 * n, name=f"Generalized Petersen graph (n={n},k={k})")
     for i in range(n):
         G.add_edge(i, (i+1) % n)
         G.add_edge(i, i+n)
@@ -1804,7 +1652,7 @@ def IGraph(n, j, k):
     if k < 1 or k > (n - 1) // 2:
         raise ValueError("k must be in 1 <= k <= floor((n - 1) / 2)")
 
-    G = Graph(2 * n, name="I-graph (n={}, j={}, k={})".format(n, j, k))
+    G = Graph(2 * n, name=f"I-graph (n={n}, j={j}, k={k})")
     for i in range(n):
         G.add_edge(i, (i + j) % n)
         G.add_edge(i, i + n)
@@ -1832,7 +1680,7 @@ def DoubleGeneralizedPetersenGraph(n, k):
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the double generalized Petersen
-    graphs are displayed as 4 cocentric cycles, with the first n nodes drawn on
+    graphs are displayed as 4 concentric cycles, with the first n nodes drawn on
     the outer circle.  The first (0) node is drawn at the top of the
     outer-circle, moving counterclockwise after that. The second circle is drawn
     with the (n)th node at the top, then counterclockwise as well. The tird
@@ -1870,7 +1718,7 @@ def DoubleGeneralizedPetersenGraph(n, k):
     if k < 1 or k > (n - 1) // 2:
         raise ValueError("k must be in 1 <= k <= floor((n - 1) / 2)")
 
-    G = Graph(4 * n, name="Double generalized Petersen graph (n={}, k={})".format(n, k))
+    G = Graph(4 * n, name=f"Double generalized Petersen graph (n={n}, k={k})")
     for i in range(n):
         G.add_edge(i, (i + 1) % n)
         G.add_edge(i + 3 * n, (i + 1) % n + 3 * n)
@@ -1889,7 +1737,7 @@ def RoseWindowGraph(n, a, r):
     r"""
     Return a rose window graph with `2n` nodes.
 
-    The rose window graphs is a family of tetravalant graphs introduced in
+    The rose window graphs is a family of tetravalent graphs introduced in
     [Wilson2008]_. The parameters `n`, `a` and `r` are integers such that
     `n > 2`, `1 \leq a, r < n`, and `r \neq n / 2`.
 
@@ -1963,7 +1811,7 @@ def RoseWindowGraph(n, a, r):
     if r == n / 2:
         raise ValueError("r must be different than n / 2")
 
-    G = Graph(2 * n, name="rose window graph (n={}, a={}, r={})".format(n, a, r))
+    G = Graph(2 * n, name=f"Rose window graph (n={n}, a={a}, r={r})")
     for i in range(n):
         G.add_edge(i, (i + 1) % n)
         G.add_edge(i, i + n)
@@ -2071,7 +1919,7 @@ def TabacjnGraph(n, a, b, r):
     if r == n/2:
         raise ValueError("r must be different than n / 2")
 
-    G = Graph(2 * n, name="Tabačjn graph (n={}, a={}, b={}, r={})".format(n, a, b, r))
+    G = Graph(2 * n, name=f"Tabačjn graph (n={n}, a={a}, b={b}, r={r})")
     for i in range(n):
         G.add_edge(i, (i + 1) % n)
         G.add_edge(i, i + n)
@@ -2210,7 +2058,7 @@ def HyperStarGraph(n, k):
                 c[i] = one
             adj[u] = L
 
-    return Graph(adj, format='dict_of_lists', name="HS(%d,%d)" % (n, k))
+    return Graph(adj, format='dict_of_lists', name=f"HS({n},{k})")
 
 
 def LCFGraph(n, shift_list, repeats):
@@ -2450,7 +2298,7 @@ def NKStarGraph(n, k):
                 tmp_dict[vert] = None
             v[0] = tmp_bit
         d["".join(v)] = tmp_dict
-    return Graph(d, name="(%d,%d)-star" % (n, k))
+    return Graph(d, name=f"({n},{k})-star")
 
 
 def NStarGraph(n):
@@ -2498,7 +2346,7 @@ def NStarGraph(n):
                 # swap back
                 v[0], v[i] = v[i], v[0]
         d["".join(v)] = tmp_dict
-    return Graph(d, name="%d-star" % n)
+    return Graph(d, name=f"{n}-star")
 
 
 def OddGraph(n):
@@ -2579,7 +2427,7 @@ def PaleyGraph(q):
     if not mod(q, 4) == 1:
         raise ValueError("parameter q must be congruent to 1 mod 4")
     g = Graph([FiniteField(q, 'a'), lambda i, j: (i - j).is_square()],
-              loops=False, name="Paley graph with parameter {}".format(q))
+              loops=False, name=f"Paley graph with parameter {q}")
     return g
 
 
@@ -2812,7 +2660,7 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
     A slightly larger instance. ::
 
         sage: H = graphs.HanoiTowerGraph(4, 6, labels=False, positions=False)
-        sage: H.num_verts()
+        sage: H.n_vertices()
         4096
         sage: H.distance(0, 4^6-1)
         17
@@ -3135,7 +2983,7 @@ def petersen_family(generate=False):
     # for as long as we generate new graphs.
     P = PetersenGraph()
 
-    l = set([])
+    l = set()
     l_new = [P.canonical_label().graph6_string()]
 
     while l_new:
@@ -3153,6 +3001,62 @@ def petersen_family(generate=False):
                 l_new.append(YDeltaTrans(g, v).graph6_string())
 
     return [Graph(x) for x in l]
+
+
+def p2_forbidden_minors():
+    r"""
+    Return an array containing the 35 minimal forbidden excluded minors
+    of the projective plane.
+
+    We constructed the graphs given in Theorem 6.5.1 of [MT2001]_,
+    which is a result of Archdeacon and encoded them in graph6 format.
+    The order of the graphs is the same as they appear in [WA2025]_.
+
+    TESTS::
+
+        sage: len(graphs.families.p2_forbidden_minors())
+        35
+    """
+
+    p2_forbidden_minors_graph6 = [
+        'KFz_????wF?[',
+        'J~{???F@oM?',
+        'I~{?GKF@w',
+        'JFz_?AB_sE?',
+        'I~{?CME`_',
+        'H~}CKMF',
+        'G^~EMK',
+        'H^|ACME',
+        'Himp`cr',
+        'Iimp_CpKO',
+        'IFz@GCdHO',
+        'IBz__aB_o',
+        'FQ~~w',
+        'GlvJ`k',
+        'HilKH`J',
+        'GjlKJs',
+        'HhI]ECZ',
+        'HiMIKSp',
+        'HFwO]Kf',
+        'I]q?a?n@o',
+        'IHIWuFGo_',
+        'IXJWMC`Eg',
+        'GFzfF?',
+        'I]o__OF@o',
+        'G?^vf_',
+        'H?]ufBo',
+        'GlrHhs',
+        'HhIWuRB',
+        'IXCO]FGb?',
+        'Fvz~o',
+        'GlfH]{',
+        'Hl`HGvV',
+        'HhcIHmv',
+        'IhEGICRiw',
+        'JhEIDSD?ga_'
+    ]
+
+    return [Graph(graph_str) for graph_str in p2_forbidden_minors_graph6]
 
 
 def SierpinskiGasketGraph(n):
@@ -3227,7 +3131,7 @@ def SierpinskiGasketGraph(n):
             resu += [(a, ab, ac), (ab, b, bc), (ac, bc, c)]
         return resu
 
-    tri_list = [list(vector(QQ, u) for u in [(0, 0), (0, 1), (1, 0)])]
+    tri_list = [[vector(QQ, u) for u in [(0, 0), (0, 1), (1, 0)]]]
     for k in range(n - 1):
         tri_list = next_step(tri_list)
     dg = Graph()
@@ -3235,7 +3139,7 @@ def SierpinskiGasketGraph(n):
     dg.add_edges([(tuple(b), tuple(c)) for a, b, c in tri_list])
     dg.add_edges([(tuple(c), tuple(a)) for a, b, c in tri_list])
     dg.set_pos({(x, y): (x + y / 2, y * 3 / 4)
-                for (x, y) in dg})
+                for x, y in dg})
     dg.relabel()
     return dg
 
@@ -3542,7 +3446,7 @@ def WindmillGraph(k, n):
         slide = 1/sin(sector/4)
 
         pos_dict = {}
-        for i in range(0, k):
+        for i in range(k):
             x = float(cos(i*pi/(k-2)))
             y = float(sin(i*pi/(k-2))) + slide
             pos_dict[i] = (x, y)
@@ -3562,179 +3466,6 @@ def WindmillGraph(k, n):
 
     G.name("Windmill graph Wd({}, {})".format(k, n))
     return G
-
-
-def trees(vertices):
-    r"""
-    Return a generator of the distinct trees on a fixed number of vertices.
-
-    INPUT:
-
-    - ``vertices`` -- the size of the trees created
-
-    OUTPUT:
-
-    A generator which creates an exhaustive, duplicate-free listing
-    of the connected free (unlabeled) trees with ``vertices`` number
-    of vertices.  A tree is a graph with no cycles.
-
-    ALGORITHM:
-
-    Uses an algorithm that generates each new tree
-    in constant time.  See the documentation for, and implementation
-    of, the :mod:`sage.graphs.trees` module, including a citation.
-
-    EXAMPLES:
-
-    We create an iterator, then loop over its elements. ::
-
-        sage: tree_iterator = graphs.trees(7)
-        sage: for T in tree_iterator:
-        ....:     print(T.degree_sequence())
-        [2, 2, 2, 2, 2, 1, 1]
-        [3, 2, 2, 2, 1, 1, 1]
-        [3, 2, 2, 2, 1, 1, 1]
-        [4, 2, 2, 1, 1, 1, 1]
-        [3, 3, 2, 1, 1, 1, 1]
-        [3, 3, 2, 1, 1, 1, 1]
-        [4, 3, 1, 1, 1, 1, 1]
-        [3, 2, 2, 2, 1, 1, 1]
-        [4, 2, 2, 1, 1, 1, 1]
-        [5, 2, 1, 1, 1, 1, 1]
-        [6, 1, 1, 1, 1, 1, 1]
-
-    The number of trees on the first few vertex counts.
-    This is sequence A000055 in Sloane's OEIS. ::
-
-        sage: [len(list(graphs.trees(i))) for i in range(0, 15)]
-        [1, 1, 1, 1, 2, 3, 6, 11, 23, 47, 106, 235, 551, 1301, 3159]
-    """
-    from sage.graphs.trees import TreeIterator
-    return iter(TreeIterator(vertices))
-
-
-def nauty_gentreeg(options='', debug=False):
-    r"""
-    Return a generator which creates non-isomorphic trees from nauty's gentreeg
-    program.
-
-    INPUT:
-
-    - ``options`` -- string (default: ``""``); a string passed to ``gentreeg``
-      as if it was run at a system command line. At a minimum, you *must* pass
-      the number of vertices you desire. Sage expects the graphs to be in
-      nauty's "sparse6" format, do not set an option to change this default or
-      results will be unpredictable.
-
-    - ``debug`` -- boolean (default: ``False``); if ``True`` the first line of
-      ``gentreeg``'s output to standard error is captured and the first call to
-      the generator's ``next()`` function will return this line as a string. A
-      line leading with ">A" indicates a successful initiation of the program
-      with some information on the arguments, while a line beginning with ">E"
-      indicates an error with the input.
-
-    The possible options, obtained as output of ``gentreeg -help``::
-
-           n            : the number of vertices. Must be in range 1..128
-        res/mod         : only generate subset res out of subsets 0..mod-1
-          -D<int>       : an upper bound for the maximum degree
-          -Z<int>:<int> : bounds on the diameter
-          -q            : suppress auxiliary output
-
-    Options which cause ``gentreeg`` to use an output format different than the
-    sparse6 format are not listed above (-p, -l, -u) as they will confuse the
-    creation of a Sage graph. The res/mod option can be useful when using the
-    output in a routine run several times in parallel.
-
-    OUTPUT:
-
-    A generator which will produce the graphs as Sage graphs. These will be
-    simple graphs: no loops, no multiple edges, no directed edges.
-
-    .. SEEALSO::
-
-        :meth:`trees` -- another generator of trees
-
-    EXAMPLES:
-
-    The generator can be used to construct trees for testing, one at a time
-    (usually inside a loop). Or it can be used to create an entire list all at
-    once if there is sufficient memory to contain it::
-
-        sage: gen = graphs.nauty_gentreeg("4")
-        sage: next(gen)
-        Graph on 4 vertices
-        sage: next(gen)
-        Graph on 4 vertices
-        sage: next(gen)
-        Traceback (most recent call last):
-        ...
-        StopIteration
-
-    The number of trees on the first few vertex counts. This agrees with
-    :oeis:`A000055`::
-
-        sage: [len(list(graphs.nauty_gentreeg(str(i)))) for i in range(1, 15)]
-        [1, 1, 1, 2, 3, 6, 11, 23, 47, 106, 235, 551, 1301, 3159]
-
-    The ``debug`` switch can be used to examine ``gentreeg``'s reaction to the
-    input in the ``options`` string.  We illustrate success. (A failure will be
-    a string beginning with ">E".)  Passing the "-q" switch to ``gentreeg`` will
-    suppress the indicator of a successful initiation, and so the first returned
-    value might be an empty string if ``debug`` is ``True``::
-
-        sage: gen = graphs.nauty_gentreeg("4", debug=True)
-        sage: print(next(gen))
-        >A ...gentreeg ...
-        sage: gen = graphs.nauty_gentreeg("4 -q", debug=True)
-        sage: next(gen)
-        ''
-
-    TESTS:
-
-    The number `n` of vertices must be in range 1..128::
-
-        sage: list(graphs.nauty_gentreeg("0", debug=False))
-        Traceback (most recent call last):
-        ...
-        ValueError: wrong format of parameter options
-        sage: list(graphs.nauty_gentreeg("0", debug=True))
-        ['>E gentreeg: n must be in the range 1..128\n']
-        sage: list(graphs.nauty_gentreeg("200", debug=True))
-        ['>E gentreeg: n must be in the range 1..128\n']
-
-    Wrong input::
-
-        sage: list(graphs.nauty_gentreeg("3 -x", debug=False))
-        Traceback (most recent call last):
-        ...
-        ValueError: wrong format of parameter options
-        sage: list(graphs.nauty_gentreeg("3 -x", debug=True))
-        ['>E Usage: ...gentreeg [-D#] [-Z#:#] [-ulps] [-q] n... [res/mod] ...
-        sage: list(graphs.nauty_gentreeg("3", debug=True))
-        ['>A ...gentreeg ...\n', Graph on 3 vertices]
-    """
-    import shlex
-    from sage.features.nauty import NautyExecutable
-    gen_path = NautyExecutable("gentreeg").absolute_filename()
-    sp = subprocess.Popen(shlex.quote(gen_path) + " {0}".format(options), shell=True,
-                          stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                          stderr=subprocess.PIPE, close_fds=True,
-                          encoding='latin-1')
-    msg = sp.stderr.readline()
-    if debug:
-        yield msg
-    elif msg.startswith('>E'):
-        raise ValueError('wrong format of parameter options')
-    gen = sp.stdout
-    while True:
-        try:
-            s = next(gen)
-        except StopIteration:
-            # Exhausted list of graphs from nauty geng
-            return
-        G = Graph(s[:-1], format='sparse6', loops=False, multiedges=False)
-        yield G
 
 
 def RingedTree(k, vertex_labels=True):
@@ -3785,6 +3516,7 @@ def RingedTree(k, vertex_labels=True):
         raise ValueError('The number of levels must be >= 1.')
 
     # Creating the Balanced tree, which contains most edges already
+    from sage.graphs.generators.trees import BalancedTree
     g = BalancedTree(2, k - 1)
     g.name('Ringed Tree on ' + str(k) + ' levels')
 
@@ -4260,14 +3992,17 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
                 rand = randrange(0, len(temp))
                 Phi[(x, line)] = temp.pop(rand)
     elif Phi == 'fixed':
-        Phi = {(x, line): val for x in range(m) for val, line in enumerate(L_i[x])}
+        Phi = {(x, line): val for x in range(m)
+               for val, line in enumerate(L_i[x])}
     else:
         assert isinstance(Phi, dict), \
                "Phi must be a dictionary or 'random' or 'fixed'"
-        assert set(Phi.keys()) == set([(x, line) for x in range(m) for line in L_i[x]]), \
+        assert set(Phi.keys()) == {(x, line) for x in range(m)
+                                   for line in L_i[x]}, \
                'each Phi_i must have domain L_i'
         for x in range(m):
-            assert m - 2 == len(set([val for (key, val) in Phi.items() if key[0] == x])), \
+            assert m - 2 == len({val for key, val in Phi.items()
+                                 if key[0] == x}), \
                    'each phi_i must be injective'
         for val in Phi.values():
             assert val in range(m - 1), \
@@ -4282,7 +4017,7 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
     if Sigma == 'random':
         for x in range(m):
             for line in L_i[x]:
-                [i, j] = line
+                i, j = line
                 temp = phi[(j, line)][:]
                 for hyp in phi[(i, line)]:
                     rand = randrange(0, len(temp))
@@ -4292,7 +4027,7 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
     elif Sigma == 'fixed':
         for x in range(m):
             for line in L_i[x]:
-                [i, j] = line
+                i, j = line
                 temp = phi[(j, line)][:]
                 for hyp in phi[(i, line)]:
                     val = temp.pop()
@@ -4306,7 +4041,7 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
 
     # build V
     edges = []  # how many? *m^2*n^2
-    for (i, j) in L.edges(sort=True, labels=False):
+    for i, j in L.edges(sort=True, labels=False):
         for hyp in phi[(i, (i, j))]:
             for x in hyp:
                 newEdges = [((i, x), (j, y))
@@ -4400,7 +4135,7 @@ def CubeConnectedCycle(d):
     if d < 1:
         raise ValueError('the dimension d must be greater than 0')
 
-    G = Graph(name="Cube-Connected Cycle of dimension {}".format(d))
+    G = Graph(name=f"Cube-Connected Cycle of dimension {d}")
 
     if d == 1:
         G.allow_loops(True)

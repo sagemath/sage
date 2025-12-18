@@ -1,0 +1,10 @@
+[wrap-git]
+url = https://github.com/flintlib/flint.git
+revision = main
+depth = 1
+patch_directory = flint
+diff_files = flint/cmakelinux.patch
+method = cmake
+
+[provide]
+flint = flint_dep

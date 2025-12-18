@@ -1,12 +1,14 @@
 r"""
+Steinhaus-Johnson-Trotter algorithm
+
 The Steinhaus-Johnson-Trotter algorithm generates all permutations of a list in
 an order such that each permutation is obtained by transposing two adjacent
 elements from the previous permutation.
 
-Each element of the list has a direction (initialized at -1) that changes at
-each permutation and that is used to determine which elements to transpose. Thus
-in addition to the permutation itself, the direction of each element is also
-stored.
+Each element of the list has a direction (initialized at -1) that
+changes at each permutation and that is used to determine which
+elements to transpose. Thus in addition to the permutation itself, the
+direction of each element is also stored.
 
 Note that the permutations are not generated in lexicographic order.
 
@@ -32,27 +34,28 @@ class SJT(CombinatorialElement):
     A representation of a list permuted using the Steinhaus-Johnson-Trotter
     algorithm.
 
-    Each element of the list has a direction (initialized at -1) that changes at
-    each permutation and that is used to determine which elements to transpose.
-    The directions have three possible values:
+    Each element of the list has a direction (initialized at -1) that
+    changes at each permutation and that is used to determine which
+    elements to transpose.  The directions have three possible values:
 
-    - ``-1``: element tranposes to the left
+    - ``-1``: element transposes to the left
 
     - ``1``: element transposes to the right
 
     - ``0``: element does not move
 
-    Thus in addition to the permutation itself, the direction of each element is
-    also stored.
+    Thus in addition to the permutation itself, the direction of each
+    element is also stored.
 
     Note that the permutations are not generated in lexicographic order.
 
     .. WARNING::
 
-        An ``SJT`` object should always be created with identity permutation for
-        the algorithm to behave properly. If the identity permutation is not
-        provided, it expects a coherent list of directions according to the
-        provided input. This list is not checked.
+        An ``SJT`` object should always be created with identity
+        permutation for the algorithm to behave properly. If the
+        identity permutation is not provided, it expects a coherent
+        list of directions according to the provided input. This list
+        is not checked.
 
     .. TODO::
 
@@ -99,9 +102,9 @@ class SJT(CombinatorialElement):
 
         - ``l`` -- list; a list of ordered ``int``.
 
-        - ``directions`` -- list (default: ``None``); a list of directions for
-          each element in the permuted list. Used when constructing permutations
-          from a pre-defined internal state.
+        - ``directions`` -- list (default: ``None``); a list of
+          directions for each element in the permuted list. Used when
+          constructing permutations from a pre-defined internal state.
 
         EXAMPLES::
 
@@ -122,8 +125,9 @@ class SJT(CombinatorialElement):
             sage: s = SJT([1, 3, 2, 4])
             Traceback (most recent call last):
             ...
-            ValueError: no internal state directions were given for non-identity
-            starting permutation for Steinhaus-Johnson-Trotter algorithm
+            ValueError: no internal state directions were given
+            for non-identity starting permutation
+            for Steinhaus-Johnson-Trotter algorithm
             sage: s = SJT([]); s
             []
             sage: s = s.next(); s
@@ -140,8 +144,8 @@ class SJT(CombinatorialElement):
         if directions is None:
             if not all(l[i] <= l[i+1] for i in range(self._n - 1)):
                 raise ValueError("no internal state directions were given for "
-                "non-identity starting permutation for "
-                "Steinhaus-Johnson-Trotter algorithm")
+                                 "non-identity starting permutation for "
+                                 "Steinhaus-Johnson-Trotter algorithm")
             self._directions = [-1] * self._n
 
             # The first element has null direction.
@@ -195,8 +199,9 @@ class SJT(CombinatorialElement):
         if self._n == 0:
             return False
 
-        # Copying lists of permutation and directions to avoid changing internal
-        # state of the algorithm if ``next()`` is called without reassigning.
+        # Copying lists of permutation and directions to avoid
+        # changing internal state of the algorithm if ``next()`` is
+        # called without reassigning.
         perm = self._list[:]
         directions = self._directions[:]
 
@@ -208,7 +213,8 @@ class SJT(CombinatorialElement):
         # If this element has null direction, find the largest whose is
         # non-null.
         if direction == 0:
-            xi = self.__idx_largest_element_non_zero_direction(perm, directions)
+            xi = self.__idx_largest_element_non_zero_direction(perm,
+                                                               directions)
             if xi is None:
                 # We have created every permutation. Detected when all elements
                 # have null direction.
@@ -226,14 +232,15 @@ class SJT(CombinatorialElement):
         # If the transposition results in the largest element being on one edge
         # or if the following element in its direction is greater than it, then
         # then set its direction to 0
-        if new_pos == 0 or new_pos == self._n - 1 or \
-            perm[new_pos + direction] > selected_elt:
+        if (new_pos == 0 or new_pos == self._n - 1 or
+                perm[new_pos + direction] > selected_elt):
             directions[new_pos] = 0
 
-        # After each permutation, update each element's direction. If one
-        # element is greater than selected element, change its direction towards
-        # the selected element. This loops has no reason to be if selected
-        # element is n and this will be the case most of the time.
+        # After each permutation, update each element's direction. If
+        # one element is greater than selected element, change its
+        # direction towards the selected element. This loops has no
+        # reason to be if selected element is n and this will be the
+        # case most of the time.
         if selected_elt != self._n:
             for i in range(self._n):
                 if perm[i] > selected_elt:

@@ -22,8 +22,8 @@
 #include <iostream>
 #include <utility>
 
-typedef int v_index;
-typedef long e_index;
+typedef unsigned long v_index;
+typedef unsigned long e_index;
 
 // This struct is the output of the edge connectivity Boost algorithm.
 typedef struct {
@@ -84,11 +84,11 @@ private:
     // This map is a parameter/output for biconnected_components function
     typedef typename std::map<edge_descriptor, int, order_edges> edge_map;
 
-public:
     adjacency_list graph;
     std::vector<vertex_descriptor> vertices;
     vertex_to_int_map index;
 
+public:
     BoostGraph() {
     }
 
@@ -116,9 +116,10 @@ public:
         std::vector<std::pair<v_index, std::pair<v_index, double>>> to_return;
         typename boost::graph_traits<adjacency_list>::edge_iterator ei, ei_end;
         for (boost::tie(ei, ei_end) = boost::edges(graph); ei != ei_end; ++ei) {
-            to_return.push_back({index[boost::source(*ei, graph)],
-                                 {index[boost::target(*ei, graph)],
-                                  get(boost::edge_weight, graph, *ei)}});
+            v_index source = index[boost::source(*ei, graph)];
+            v_index target = index[boost::target(*ei, graph)];
+            double weight = boost::get(boost::edge_weight, graph, *ei);
+            to_return.push_back({source, {target, weight}});
         }
         return to_return;
     }
@@ -240,7 +241,7 @@ public:
          try {
              boost::dijkstra_shortest_paths(graph, vertices[s], distance_map(boost::make_iterator_property_map(distances.begin(), index))
                                             .predecessor_map(boost::make_iterator_property_map(predecessors.begin(), index)));
-         } catch (boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::negative_edge> > e) {
+         } catch (boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::negative_edge> > const&) {
              return to_return;
          }
 

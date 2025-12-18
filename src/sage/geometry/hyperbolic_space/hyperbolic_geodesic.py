@@ -80,28 +80,28 @@ the same::
 #                  https://www.gnu.org/licenses/
 # **********************************************************************
 
+from sage.functions.hyperbolic import sinh, cosh, arcsinh
+from sage.functions.log import exp
+from sage.functions.other import real, imag
+from sage.functions.trig import arccos
+from sage.geometry.hyperbolic_space.hyperbolic_constants import EPSILON
+from sage.matrix.constructor import matrix
+from sage.misc.functional import sqrt
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
+from sage.modules.free_module_element import vector
+from sage.rings.cc import CC
+from sage.rings.infinity import infinity
+from sage.rings.real_mpfr import RR
 from sage.structure.sage_object import SageObject
 from sage.symbolic.constants import I
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.rings.infinity import infinity
-from sage.rings.cc import CC
-from sage.rings.real_mpfr import RR
-from sage.misc.lazy_import import lazy_import
+from sage.symbolic.constants import pi
+from sage.symbolic.ring import SR
+
 lazy_import("sage.plot.arc", "arc")
 lazy_import("sage.plot.line", "line")
 lazy_import("sage.plot.arc", "arc")
 lazy_import("sage.plot.bezier_path", "bezier_path")
-from sage.symbolic.constants import pi
-from sage.modules.free_module_element import vector
-from sage.matrix.constructor import matrix
-from sage.functions.other import real, imag
-from sage.misc.functional import sqrt
-from sage.functions.trig import arccos
-from sage.functions.log import exp
-from sage.functions.hyperbolic import sinh, cosh, arcsinh
-from sage.symbolic.ring import SR
-from sage.geometry.hyperbolic_space.hyperbolic_constants import EPSILON
-
 lazy_import('sage.geometry.hyperbolic_space.hyperbolic_isometry',
             'moebius_transform')
 
@@ -539,7 +539,7 @@ class HyperbolicGeodesic(SageObject):
     def is_parallel(self, other):
         r"""
         Return ``True`` if the two given hyperbolic geodesics are either
-        ultra parallel or asymptotically parallel and``False`` otherwise.
+        ultra parallel or asymptotically parallel and ``False`` otherwise.
 
         INPUT:
 
@@ -1073,7 +1073,6 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             [ 1  0]
             [ 0 -1]
         """
-
         x, y = (real(k.coordinates()) for k in self.ideal_endpoints())
         if x == infinity:
             M = matrix([[1, -2*y], [0, -1]])
@@ -1212,12 +1211,22 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: UHP.get_geodesic(1 + I, 2 + 4*I).ideal_endpoints()
             [Boundary point in UHP -sqrt(65) + 9,
              Boundary point in UHP sqrt(65) + 9]
-        """
 
+        TESTS:
+
+        Check that :issue:`32362` is fixed::
+
+            sage: PD = HyperbolicPlane().PD()
+            sage: z0 = CC(-0.0571909584179366 + 0.666666666666667*I)
+            sage: z1 = CC(-1)
+            sage: pts = PD.get_geodesic(z0, z1).ideal_endpoints()
+            sage: pts[1]
+            Boundary point in PD I
+        """
         start = self._start.coordinates()
         end = self._end.coordinates()
-        [x1, x2] = [real(k) for k in [start, end]]
-        [y1, y2] = [imag(k) for k in [start, end]]
+        x1, x2 = real(start), real(end)
+        y1, y2 = imag(start), imag(end)
         M = self._model
         # infinity is the first endpoint, so the other ideal endpoint
         # is just the real part of the second coordinate
@@ -1227,7 +1236,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
         if CC(end).is_infinity():
             return [M.get_point(x1), M.get_point(end)]
         # We could also have a vertical line with two interior points
-        if x1 == x2:
+        if abs(x1 - x2) < EPSILON:
             return [M.get_point(x1), M.get_point(infinity)]
         # Otherwise, we have a semicircular arc in the UHP
         c = ((x1+x2)*(x2-x1) + (y1+y2)*(y2-y1)) / (2*(x2-x1))
@@ -1854,9 +1863,9 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: g = HyperbolicPlane().UHP().get_geodesic(1, 1 + I)
             sage: h = HyperbolicPlane().UHP().get_geodesic(-sqrt(2), sqrt(2))
             sage: g.angle(h)
-            arccos(1/2*sqrt(2))
+            1/4*pi
             sage: h.angle(g)
-            arccos(1/2*sqrt(2))
+            1/4*pi
 
         Angle is unoriented, as opposed to oriented. ::
 
@@ -2046,8 +2055,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             Full MatrixSpace of 2 by 2 dense matrices over Complex Field
             with 53 bits of precision
         """
-
-        [s, e] = [k.coordinates() for k in self.complete().endpoints()]
+        s, e = (k.coordinates() for k in self.complete().endpoints())
         B = HyperbolicGeodesicUHP._get_B(p)
         # outmat below will be returned after we normalize the determinant.
         outmat = B * HyperbolicGeodesicUHP._crossratio_matrix(s, p, e)
@@ -2351,12 +2359,14 @@ class HyperbolicGeodesicHM(HyperbolicGeodesic):
         # This means that cosh(x)*v1 + sinh(x)*v2 is unit timelike.
         hyperbola = tuple(cosh(x)*v1 + sinh(x)*v2)
         endtime = arcsinh(v2_ldot_u2)
-        # mimic the function _parametric_plot3d_curve using a bezier3d instead of a line3d
-        # this is required in order to be able to plot hyperbolic polygons whithin the plot library
+        # mimic the function _parametric_plot3d_curve using a bezier3d
+        # instead of a line3d
+        # this is required in order to be able to plot hyperbolic
+        # polygons within the plot library
         g, ranges = setup_for_eval_on_grid(hyperbola, [(x, 0, endtime)], points)
         f_x, f_y, f_z = g
-        points = [(f_x(u), f_y(u), f_z(u)) for u in xsrange(*ranges[0], include_endpoint=True)]
-        return points
+        return [(f_x(u), f_y(u), f_z(u))
+                for u in xsrange(*ranges[0], include_endpoint=True)]
 
     def plot(self, show_hyperboloid=True, **graphics_options):
         r"""

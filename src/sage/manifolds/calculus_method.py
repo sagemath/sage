@@ -172,6 +172,7 @@ class CalculusMethod(SageObject):
     associated with each calculus method and :meth:`set_simplify_function` for
     introducing a new simplification algorithm.
     """
+
     _default = 'SR'  # default calculus method
     _methods = ('SR', 'sympy')  # implemented methods
     _tranf = {'SR': _Sympy_to_SR, 'sympy': _SR_to_Sympy}  # translators
@@ -308,9 +309,7 @@ class CalculusMethod(SageObject):
             return expression.is_trivial_zero()
         elif method == 'sympy':
             # we have to test SymPy's is_zero because it could be 'NoneType'
-            if expression.is_zero:
-                return True
-            return False
+            return bool(expression.is_zero)
 
     def set(self, method):
         r"""
@@ -337,8 +336,7 @@ class CalculusMethod(SageObject):
             NotImplementedError: method lala not implemented
         """
         if method not in self._methods:
-            raise NotImplementedError("method {} not ".format(method) +
-                                      "implemented")
+            raise NotImplementedError("method {} not ".format(method) + "implemented")
         self._current = method
 
     def current(self):

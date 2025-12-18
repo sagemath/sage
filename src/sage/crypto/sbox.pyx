@@ -252,7 +252,7 @@ cdef class SBox(SageObject):
             raise NotImplemented
 
         cdef SBox other = <SBox> rhs
-        return (self._S_list == other._S_list) and (self._big_endian == self._big_endian)
+        return (self._S_list == other._S_list) and (self._big_endian == other._big_endian)
 
     def __ne__(self, other):
         """
@@ -1646,7 +1646,7 @@ cdef class SBox(SageObject):
                     ret.append((j, i, c))
         return ret
 
-    def has_linear_structure(self):
+    def has_linear_structure(self) -> bool:
         """
         Return ``True`` if there exists a nonzero component function of this
         S-Box that has a linear structure.

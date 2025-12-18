@@ -11,7 +11,7 @@ EXAMPLES::
     sage: G = [from_A(z) for z in I.gens()]; G
     [7, -2*b*a - 1]
     sage: K.fractional_ideal(G)
-    Fractional ideal ((1/2*b + 2)*a - 1/2*b + 2)
+    Fractional ideal ((-1/2*b + 2)*a - 1/2*b - 2)
     sage: K.fractional_ideal(G).absolute_norm().factor()
     7^2
 
@@ -59,7 +59,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         Number Field in a0 with defining polynomial x^2 + 1 over its base field
         sage: i = K.ideal([a0+1]); i # random
         Fractional ideal (-a1*a0)
-        sage: (g, ) = i.gens_reduced(); g # random
+        sage: (g,) = i.gens_reduced(); g # random
         -a1*a0
         sage: (g / (a0 + 1)).is_integral()
         True
@@ -68,7 +68,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
     TESTS:
 
-    One test fails, because ideals aren't fully integrated into the
+    One test fails, because ideals are not fully integrated into the
     categories framework yet::
 
         sage: TestSuite(i).run()
@@ -189,7 +189,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: J.absolute_norm()
             2
             sage: J.ideal_below()
-            Fractional ideal (b)
+            Fractional ideal (-b)
             sage: J.ideal_below().norm()
             2
         """
@@ -277,7 +277,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: L.<b> = K.extension(5*x^2 + 1)
             sage: P = L.primes_above(2)[0]
             sage: P.gens_reduced()
-            (2, -15*a*b + 3*a + 1)
+            (2, -15*a*b - 3*a + 1)
         """
         try:
             # Compute the single generator, if it exists
@@ -548,14 +548,12 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = QQ.extension([x^2 + 11, x^2 - 5])
             sage: K.factor(5)
-            (Fractional ideal (5, (-1/4*b - 1/4)*a + 1/4*b - 3/4))^2
-             * (Fractional ideal (5, (-1/4*b - 1/4)*a + 1/4*b - 7/4))^2
+            (Fractional ideal (5, (1/4*b - 1/4)*a + 1/4*b + 3/4))^2 * (Fractional ideal (5, (1/4*b - 1/4)*a + 1/4*b + 7/4))^2
             sage: K.ideal(5).factor()
-            (Fractional ideal (5, (-1/4*b - 1/4)*a + 1/4*b - 3/4))^2
-             * (Fractional ideal (5, (-1/4*b - 1/4)*a + 1/4*b - 7/4))^2
+            (Fractional ideal (5, (1/4*b - 1/4)*a + 1/4*b + 3/4))^2 * (Fractional ideal (5, (1/4*b - 1/4)*a + 1/4*b + 7/4))^2
             sage: K.ideal(5).prime_factors()
-            [Fractional ideal (5, (-1/4*b - 1/4)*a + 1/4*b - 3/4),
-             Fractional ideal (5, (-1/4*b - 1/4)*a + 1/4*b - 7/4)]
+            [Fractional ideal (5, (1/4*b - 1/4)*a + 1/4*b + 3/4),
+             Fractional ideal (5, (1/4*b - 1/4)*a + 1/4*b + 7/4)]
 
             sage: PQ.<X> = QQ[]
             sage: F.<a, b> = NumberFieldTower([X^2 - 2, X^2 - 3])

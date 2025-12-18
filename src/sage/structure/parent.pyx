@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Base class for parent objects
 
@@ -124,7 +123,7 @@ from sage.structure.category_object import CategoryObject
 from sage.structure.coerce cimport coercion_model
 from sage.structure.coerce cimport parent_is_integers
 from sage.structure.coerce_exceptions import CoercionException
-from sage.structure.coerce_maps cimport (NamedConvertMap, DefaultConvertMap,
+from sage.structure.coerce_maps cimport (NamedConvertMap,
                            DefaultConvertMap_unique, CallableConvertMap)
 from sage.structure.element cimport parent
 
@@ -880,7 +879,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         """
         if self._element_constructor is None:
             raise NotImplementedError(f"cannot construct elements of {self}")
-        cdef Py_ssize_t i
         cdef R = parent(x)
         cdef bint no_extra_args = (not args and not kwds)
         if R is self and no_extra_args:
@@ -1657,6 +1655,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         assert not (self._coercions_used and D in self._coerce_from_hash and
                     self._coerce_from_hash.get(D) is not None), "coercion from {} to {} already registered or discovered".format(D, self)
+        assert not (self._coercions_used and D in self._convert_from_hash), "conversion from %s to %s already registered or discovered" % (D, self)
+
         mor._is_coercion = True
         self._coerce_from_list.append(mor)
         self._registered_domains.append(D)
@@ -1938,8 +1938,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         If a ``convert_method_name`` is provided, it creates a
         ``NamedConvertMap``, otherwise it creates a
-        ``DefaultConvertMap`` or ``DefaultConvertMap_unique``
-        depending on whether or not init_no_parent is set.
+        ``DefaultConvertMap_unique``.
 
         EXAMPLES::
 
@@ -1968,11 +1967,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             f = self.convert_method_map(S, m)
             if f is not None:
                 return f
-        if self._element_init_pass_parent:
-            # deprecation(26879)
-            return DefaultConvertMap(S, self, category=category)
-        else:
-            return DefaultConvertMap_unique(S, self, category=category)
+        return DefaultConvertMap_unique(S, self, category=category)
 
     def _convert_method_map(self, S, method_name=None):
         """
@@ -2273,7 +2268,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         2. If ``self._coerce_map_from_(S)`` is not exactly one of
 
-           - DefaultConvertMap
            - DefaultConvertMap_unique
            - NamedConvertMap
 
@@ -2386,7 +2380,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             best_mor = None
         elif user_provided_mor is True:
             best_mor = self._generic_coerce_map(S)
-            if not isinstance(best_mor, DefaultConvertMap):
+            if not isinstance(best_mor, DefaultConvertMap_unique):
                 return best_mor
             # Continue searching for better maps.  If there is something
             # better in the list, return that instead.  This is so, for
@@ -2409,7 +2403,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         # setting this to 1 will make it return the first path found.
 
         cdef int mor_found = 0
-        cdef Parent R, D
+        cdef Parent D
         # Recurse.  Note that if S is the domain of one of the maps in self._coerce_from_list,
         # we will have stuck the map into _coerce_map_hash and thus returned it already.
         for mor in self._coerce_from_list:
@@ -2599,17 +2593,19 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: # needs sage.schemes
             sage: E = EllipticCurve([1,0])
             sage: coercion_model.get_action(E, ZZ, operator.mul)
-            Right Integer Multiplication by Integer Ring
-             on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
+            Right action by Integer Ring on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
             sage: coercion_model.get_action(ZZ, E, operator.mul)
-            Left Integer Multiplication by Integer Ring
-             on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
+            Left action by Integer Ring on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
             sage: coercion_model.get_action(E, int, operator.mul)
-            Right Integer Multiplication by Set of Python objects of class 'int'
-             on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
+            Right action by Integer Ring on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
+            with precomposition on right by Native morphism:
+              From: Set of Python objects of class 'int'
+              To:   Integer Ring
             sage: coercion_model.get_action(int, E, operator.mul)
-            Left Integer Multiplication by Set of Python objects of class 'int'
-             on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
+            Left action by Integer Ring on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
+            with precomposition on left by Native morphism:
+              From: Set of Python objects of class 'int'
+              To:   Integer Ring
 
         ::
 
@@ -2861,17 +2857,17 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
     cpdef bint is_exact(self) except -2:
         """
-        Test whether the ring is exact.
+        Test whether elements of this parent are represented exactly.
 
         .. NOTE::
 
             This defaults to true, so even if it does return ``True``
-            you have no guarantee (unless the ring has properly
+            you have no guarantee (unless the parent has properly
             overloaded this).
 
         OUTPUT:
 
-        Return ``True`` if elements of this ring are represented exactly, i.e.,
+        Return ``True`` if elements of this parent are represented exactly, i.e.,
         there is no precision loss when doing arithmetic.
 
         EXAMPLES::
@@ -3042,8 +3038,7 @@ cdef class EltPair:
             sage: K.<a> = Qq(9)                                                         # needs sage.rings.padics
             sage: E = EllipticCurve_from_j(0).base_extend(K)                            # needs sage.rings.padics
             sage: E.get_action(ZZ)                                                      # needs sage.rings.padics
-            Right Integer Multiplication
-             by Integer Ring
+            Right action by Integer Ring
              on Elliptic Curve defined by y^2 + (1+O(3^20))*y = x^3
               over 3-adic Unramified Extension Field in a
                defined by x^2 + 2*x + 2

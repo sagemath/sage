@@ -45,6 +45,9 @@ from libc.string cimport memcpy
 from cpython.object cimport *
 from cpython.float cimport *
 
+cdef extern from "Python.h":
+    void Py_SET_REFCNT(PyObject*, Py_ssize_t) nogil
+
 from sage.ext.stdsage cimport PY_NEW
 from sage.cpython.python_debug cimport if_Py_TRACE_REFS_then_PyObject_INIT
 
@@ -132,7 +135,8 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
             sage: TestSuite(R).run()
         """
         from sage.categories.fields import Fields
-        Field.__init__(self, self, category=Fields().Infinite().Metric().Complete())
+        Field.__init__(self, self,
+                       category=Fields().Infinite().Metric().Complete())
         self._populate_coercion_lists_(init_no_parent=True,
                                        convert_method_name='_real_double_')
 
@@ -1954,7 +1958,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: r.algebraic_dependency(5)                                             # needs sage.libs.pari
             x^2 - 2
         """
-        return sage.arith.misc.algdep(self, n)
+        return sage.arith.misc.algebraic_dependency(self, n)
 
     algdep = algebraic_dependency
 
@@ -2156,7 +2160,7 @@ cdef PyObject* fast_tp_new(type t, args, kwds) noexcept:
     # Objects from the pool have reference count zero, so this
     # needs to be set in this case.
 
-    new.ob_refcnt = 1
+    Py_SET_REFCNT(<PyObject*>new, 1)
 
     return new
 

@@ -21,7 +21,6 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.structure.element import Element
 from sage.combinat.free_module import CombinatorialFreeModule, CombinatorialFreeModule_Tensor
-from sage.modules.with_basis.subquotient import SubmoduleWithBasis
 from sage.categories.modules import Modules
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
@@ -945,7 +944,7 @@ class Representation_abstract:
                 sage: G = groups.misc.WeylGroup(['B',2], prefix='s')
                 sage: R = G.regular_representation()
                 sage: s1,s2 = G.gens()
-                sage: x = R.an_element(); x
+                sage: x = 2*R(s2*s1*s2) + R(s1*s2) + 3*R(s2) + R(G[0]); x
                 2*s2*s1*s2 + s1*s2 + 3*s2 + 1
                 sage: 2 * x
                 4*s2*s1*s2 + 2*s1*s2 + 6*s2 + 2
@@ -957,7 +956,7 @@ class Representation_abstract:
                 sage: G = groups.misc.WeylGroup(['B',2], prefix='s')
                 sage: R = G.regular_representation(side='right')
                 sage: s1,s2 = G.gens()
-                sage: x = R.an_element(); x
+                sage: x = 2*R(s2*s1*s2) + R(s1*s2) + 3*R(s2) + R(G[0]); x
                 2*s2*s1*s2 + s1*s2 + 3*s2 + 1
                 sage: x * s1
                 2*s2*s1*s2*s1 + s1*s2*s1 + 3*s2*s1 + s1
@@ -970,7 +969,7 @@ class Representation_abstract:
                 Integer Ring
                 sage: A = G.algebra(ZZ)
                 sage: s1,s2 = A.algebra_generators()
-                sage: x = R.an_element(); x
+                sage: x = 2*R(s2*s1*s2) + R(s1*s2) + 3*R(s2) + R(G[0]); x
                 2*s2*s1*s2 + s1*s2 + 3*s2 + 1
                 sage: s1 * x
                 2*s2*s1*s2*s1 + 3*s1*s2 + s1 + s2
@@ -1895,7 +1894,7 @@ class Representation_Symmetric(Representation_abstract, CombinatorialFreeModule)
         R = rep.base_ring()
         dim = rep.dimension()
         if degree not in ZZ or degree < 0:
-            raise ValueError(f"the degree must be a nonnegative integer")
+            raise ValueError("the degree must be a nonnegative integer")
         self._symalg = PolynomialRing(R, 'e', dim)
         self._basis_order = list(rep.basis().keys())
         G = self._symalg.gens()
@@ -2879,7 +2878,6 @@ class SchurFunctorRepresentation(Subrepresentation):
         from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         from sage.categories.tensor import tensor
-        from sage.matrix.matrix_space import MatrixSpace
 
         R = V.base_ring()
         self._shape = shape

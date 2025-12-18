@@ -25,12 +25,12 @@ from . import submodule
 from sage.modules.free_module import FreeModule, FreeModule_generic
 from sage.rings.integer import Integer
 
-import sage.arith.all as arith
+import sage.arith.misc as arith
 
 import sage.matrix.matrix_space as matrix_space
 from sage.matrix.constructor import matrix
 
-from sage.modular.arithgroup.all import Gamma0  # for Sturm bound
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0  # for Sturm bound
 
 
 def is_AmbientHeckeModule(x) -> bool:
@@ -345,14 +345,8 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
             sage: D = ModularSymbols(10,4).cuspidal_submodule().decomposition()
             sage: D
-            [
-             Modular Symbols subspace of dimension 2 of
-              Modular Symbols space of dimension 10 for
-               Gamma_0(10) of weight 4 with sign 0 over Rational Field,
-             Modular Symbols subspace of dimension 4 of
-              Modular Symbols space of dimension 10 for
-               Gamma_0(10) of weight 4 with sign 0 over Rational Field
-            ]
+            [Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 10 for Gamma_0(10) of weight 4 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 10 for Gamma_0(10) of weight 4 with sign 0 over Rational Field]
             sage: D[1].degeneracy_map(5)
             Hecke module morphism defined by the matrix
             [   0    0   -1    1]
@@ -664,7 +658,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         AmbientHeckeModule.new_submodule(self, p)
         return self.__is_new[p]
 
-    def is_old(self, p=None):
+    def is_old(self, p=None) -> bool:
         r"""
         Return ``True`` if this module is entirely old.
 
@@ -683,7 +677,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         self.old_submodule(p)
         return self.__is_old[p]
 
-    def is_submodule(self, V):
+    def is_submodule(self, V) -> bool:
         """
         Return ``True`` if and only if ``self`` is a submodule of ``V``.
 

@@ -180,7 +180,7 @@ class QSystem(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, base_ring, basis,
                                          prefix='Q', category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -200,7 +200,7 @@ class QSystem(CombinatorialFreeModule):
             res += "Twisted "
         return "{}Q-system of type {} over {}".format(res, self._cartan_type, self.base_ring())
 
-    def _repr_term(self, t):
+    def _repr_term(self, t) -> str:
         """
         Return a string representation of the basis element indexed by ``t``.
 
@@ -221,7 +221,7 @@ class QSystem(CombinatorialFreeModule):
             return ret
         return '*'.join(repr_gen(x) for x in t._sorted_items())
 
-    def _latex_term(self, t):
+    def _latex_term(self, t) -> str:
         r"""
         Return a `\LaTeX` representation of the basis element indexed
         by ``t``.
@@ -382,7 +382,7 @@ class QSystem(CombinatorialFreeModule):
         d = {a: self.Q(a, 1) for a in I}
         return Family(I, d.__getitem__)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 

@@ -8,7 +8,8 @@ from sage.structure.element cimport Element
 from sage.rings.infinity import infinity
 
 try:
-    from sage.libs.pari.all import pari_gen, PariError
+    from cypari2.handle_error import PariError
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
     PariError = ()

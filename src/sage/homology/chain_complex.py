@@ -54,13 +54,11 @@ from sage.structure.element import ModuleElement, Vector, coercion_model
 from sage.misc.cachefunc import cached_method
 
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
 from sage.matrix.matrix0 import Matrix
 from sage.matrix.constructor import matrix
 from sage.misc.latex import latex
-from sage.misc.superseded import deprecation
 from sage.rings.fast_arith import prime_range
 from sage.homology.homology_group import HomologyGroup
 from sage.misc.persist import register_unpickle_override
@@ -319,7 +317,7 @@ def ChainComplex(data=None, base_ring=None, grading_group=None,
 
 class Chain_class(ModuleElement):
 
-    def __init__(self, parent, vectors, check=True):
+    def __init__(self, parent, vectors, check=True) -> None:
         r"""
         A Chain in a Chain Complex.
 
@@ -372,7 +370,7 @@ class Chain_class(ModuleElement):
         except KeyError:
             return self.parent().free_module(degree).zero()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -512,7 +510,7 @@ class Chain_class(ModuleElement):
             concatenated += UnicodeArt([' ... ']) + r
         return concatenated
 
-    def is_cycle(self):
+    def is_cycle(self) -> bool:
         """
         Return whether the chain is a cycle.
 
@@ -533,7 +531,7 @@ class Chain_class(ModuleElement):
                 return False
         return True
 
-    def is_boundary(self):
+    def is_boundary(self) -> bool:
         """
         Return whether the chain is a boundary.
 
@@ -609,7 +607,7 @@ class Chain_class(ModuleElement):
         parent = self.parent()
         return parent.element_class(parent, vectors)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return ``True`` if this chain is equal to ``other``.
 
@@ -626,7 +624,7 @@ class Chain_class(ModuleElement):
             return False
         return self._vec == other._vec
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` if this chain is not equal to ``other``.
 
@@ -668,7 +666,8 @@ class ChainComplex_class(Parent):
         sage: D
         Chain complex with at most 2 nonzero terms over Integer Ring
     """
-    def __init__(self, grading_group, degree_of_differential, base_ring, differentials):
+    def __init__(self, grading_group, degree_of_differential, base_ring,
+                 differentials) -> None:
         """
         Initialize ``self``.
 
@@ -692,7 +691,8 @@ class ChainComplex_class(Parent):
         if any(dim+degree_of_differential not in differentials and d.nrows() != 0
                for dim, d in differentials.items()):
             raise ValueError('invalid differentials')
-        if any(dim-degree_of_differential not in differentials and d.ncols() != 0
+        if any(dim - degree_of_differential not in differentials
+               and d.ncols() != 0
                for dim, d in differentials.items()):
             raise ValueError('invalid differentials')
         self._grading_group = grading_group
@@ -1061,7 +1061,7 @@ class ChainComplex_class(Parent):
             rank = self.free_module_rank(degree)
         return FreeModule(self.base_ring(), rank)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         The hash is formed by combining the hashes of.
 
@@ -1080,7 +1080,7 @@ class ChainComplex_class(Parent):
                 ^ hash(tuple(self.differential().items()))
                 ^ hash(self.degree_of_differential()))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return ``True`` iff this chain complex is the same as other: that
         is, if the base rings and the matrices of the two are the
@@ -1111,7 +1111,7 @@ class ChainComplex_class(Parent):
                 equal = equal and mat.ncols() == 0 and mat.nrows() == 0
         return equal
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` iff this chain complex is not the same as other.
 
@@ -1363,7 +1363,7 @@ class ChainComplex_class(Parent):
         (N, P, Q) = d_in_induced.smith_form()
         all_divs = [0]*N.nrows()
         non_triv = 0
-        for i in range(0, N.nrows()):
+        for i in range(N.nrows()):
             if i >= N.ncols():
                 break
             all_divs[i] = N[i][i]
@@ -1488,10 +1488,7 @@ class ChainComplex_class(Parent):
                     temp_diff[i] = mod_p_betti.get(i, 0) - torsion_free[i]
                 for i in temp_diff:
                     if temp_diff[i] > 0:
-                        if i+D in diff_dict:
-                            lower = diff_dict[i+D]
-                        else:
-                            lower = 0
+                        lower = diff_dict.get(i + D, 0)
                         current = temp_diff[i]
                         if current > lower:
                             diff_dict[i] = current - lower
@@ -1612,7 +1609,7 @@ class ChainComplex_class(Parent):
         return ChainComplex({k-shift: sgn * self._diff[k] for k in self._diff},
                             degree_of_differential=deg)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -1627,7 +1624,7 @@ class ChainComplex_class(Parent):
             s = 'Trivial chain complex'
         else:
             s = 'Chain complex with at most {0} nonzero terms'.format(len(diffs)-1)
-        s += ' over {0}'.format(self.base_ring())
+        s += f' over {self.base_ring()}'
         return s
 
     def _ascii_art_(self):

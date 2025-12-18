@@ -100,7 +100,7 @@ from sage.rings.number_field.totallyreal_data import ZZx, lagrange_degree_3, int
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.number_field.totallyreal import weed_fields, odlyzko_bound_totallyreal, enumerate_totallyreal_fields_prim
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
@@ -292,7 +292,7 @@ class tr_data_rel:
             # No starting input, all polynomials will be found; initialize to zero.
             self.a = [0]*m + [1]
             self.amaxvals = [[]]*m
-            anm1s = [[i] for i in range(0,m//2+1)]
+            anm1s = [[i] for i in range(m//2+1)]
             for i in range(1,self.d):
                 for j in range(len(anm1s)):
                     anm1s[j] = [anm1s[j] + [i] for i in range(m)]
@@ -392,7 +392,7 @@ class tr_data_rel:
         if k == -1:
             if len(self.amaxvals[0]) > 0 and self.amaxvals[0]:
                 self.a[0] = self.amaxvals[0].pop()
-                for i in range(0,m):
+                for i in range(m):
                     f_out[i] = self.a[i]
                 return
             else:
@@ -430,7 +430,7 @@ class tr_data_rel:
                     print(k, ":", end="")
                     for i in range(self.m + 1):
                         print(self.a[i], end="")
-                    print("")
+                    print()
 
                 if k == m - 2:
                     # We only know the value of a[n-1], the trace.
@@ -650,9 +650,9 @@ def enumerate_totallyreal_fields_rel(F, m, B, a=[], verbose=0,
 
     ::
 
-        a[d]*x^n + ... + a[0]*x^(n-d)
+        a[k]*x^m + ... + a[0]*x^(m-k)
 
-    if ``length(a) = d+1``, so in particular always ``a[d] = 1``.
+    if ``length(a) = k+1``, so in particular always ``a[k] = 1``.
 
     .. NOTE::
 
@@ -796,7 +796,7 @@ def enumerate_totallyreal_fields_rel(F, m, B, a=[], verbose=0,
                 counts[1] += 1
                 if nf.polisirreducible():
                     counts[2] += 1
-                    [zk,d] = nf.nfbasis_d()
+                    zk, d = nf.nfbasis_d()
 
                     if d <= B:
                         if verbose:

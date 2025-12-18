@@ -1,8 +1,8 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Tiling Solver
+Tiling solver
 
-Tiling a n-dimensional polyomino with n-dimensional polyominoes.
+Tiling a `n`-dimensional polyomino with n-dimensional polyominoes.
 
 This module defines two classes:
 
@@ -312,36 +312,36 @@ def ncube_isometry_group(n, orientation_preserving=True):
     EXAMPLES::
 
         sage: from sage.combinat.tiling import ncube_isometry_group
-        sage: ncube_isometry_group(2)
+        sage: sorted(ncube_isometry_group(2))
         [
-        [1 0]  [ 0  1]  [-1  0]  [ 0 -1]
-        [0 1], [-1  0], [ 0 -1], [ 1  0]
+        [-1  0]  [ 0 -1]  [ 0  1]  [1 0]
+        [ 0 -1], [ 1  0], [-1  0], [0 1]
         ]
-        sage: ncube_isometry_group(2, orientation_preserving=False)
+        sage: sorted(ncube_isometry_group(2, orientation_preserving=False))
         [
-        [1 0]  [ 0 -1]  [ 1  0]  [ 0  1]  [0 1]  [-1  0]  [ 0 -1]  [-1  0]
-        [0 1], [-1  0], [ 0 -1], [-1  0], [1 0], [ 0 -1], [ 1  0], [ 0  1]
+        [-1  0]  [-1  0]  [ 0 -1]  [ 0 -1]  [ 0  1]  [0 1]  [ 1  0]  [1 0]
+        [ 0 -1], [ 0  1], [-1  0], [ 1  0], [-1  0], [1 0], [ 0 -1], [0 1]
         ]
 
     There are 24 orientation preserving isometries of the 3-cube::
 
-        sage: ncube_isometry_group(3)
+        sage: sorted(ncube_isometry_group(3))
         [
-        [1 0 0]  [ 1  0  0]  [ 1  0  0]  [ 0  1  0]  [0 1 0]  [ 0  0  1]
-        [0 1 0]  [ 0  0  1]  [ 0  0 -1]  [-1  0  0]  [0 0 1]  [ 0 -1  0]
-        [0 0 1], [ 0 -1  0], [ 0  1  0], [ 0  0  1], [1 0 0], [ 1  0  0],
+        [-1  0  0]  [-1  0  0]  [-1  0  0]  [-1  0  0]  [ 0 -1  0]  [ 0 -1  0]
+        [ 0 -1  0]  [ 0  0 -1]  [ 0  0  1]  [ 0  1  0]  [-1  0  0]  [ 0  0 -1]
+        [ 0  0  1], [ 0 -1  0], [ 0  1  0], [ 0  0 -1], [ 0  0 -1], [ 1  0  0],
         <BLANKLINE>
-        [-1  0  0]  [ 0 -1  0]  [-1  0  0]  [-1  0  0]  [ 0 -1  0]  [ 0  0 -1]
-        [ 0 -1  0]  [ 0  0 -1]  [ 0  0 -1]  [ 0  1  0]  [ 0  0  1]  [ 1  0  0]
-        [ 0  0  1], [ 1  0  0], [ 0 -1  0], [ 0  0 -1], [-1  0  0], [ 0 -1  0],
+        [ 0 -1  0]  [ 0 -1  0]  [ 0  0 -1]  [ 0  0 -1]  [ 0  0 -1]  [ 0  0 -1]
+        [ 0  0  1]  [ 1  0  0]  [-1  0  0]  [ 0 -1  0]  [ 0  1  0]  [ 1  0  0]
+        [-1  0  0], [ 0  0  1], [ 0  1  0], [-1  0  0], [ 1  0  0], [ 0 -1  0],
         <BLANKLINE>
-        [ 0  1  0]  [ 0  0  1]  [0 0 1]  [ 0 -1  0]  [ 0  0 -1]  [-1  0  0]
-        [ 1  0  0]  [ 0  1  0]  [1 0 0]  [ 1  0  0]  [ 0  1  0]  [ 0  0  1]
-        [ 0  0 -1], [-1  0  0], [0 1 0], [ 0  0  1], [ 1  0  0], [ 0  1  0],
+        [ 0  0  1]  [ 0  0  1]  [ 0  0  1]  [0 0 1]  [ 0  1  0]  [ 0  1  0]
+        [-1  0  0]  [ 0 -1  0]  [ 0  1  0]  [1 0 0]  [-1  0  0]  [ 0  0 -1]
+        [ 0 -1  0], [ 1  0  0], [-1  0  0], [0 1 0], [ 0  0  1], [-1  0  0],
         <BLANKLINE>
-        [ 0 -1  0]  [ 0  0 -1]  [ 0  0  1]  [ 1  0  0]  [ 0  0 -1]  [ 0  1  0]
-        [-1  0  0]  [-1  0  0]  [-1  0  0]  [ 0 -1  0]  [ 0 -1  0]  [ 0  0 -1]
-        [ 0  0 -1], [ 0  1  0], [ 0 -1  0], [ 0  0 -1], [-1  0  0], [-1  0  0]
+        [0 1 0]  [ 0  1  0]  [ 1  0  0]  [ 1  0  0]  [ 1  0  0]  [1 0 0]
+        [0 0 1]  [ 1  0  0]  [ 0 -1  0]  [ 0  0 -1]  [ 0  0  1]  [0 1 0]
+        [1 0 0], [ 0  0 -1], [ 0  0 -1], [ 0  1  0], [ 0 -1  0], [0 0 1]
         ]
 
     TESTS::
@@ -1066,9 +1066,8 @@ class Polyomino(SageObject):
         minxyz, maxxyz = vector(minxyz), vector(maxxyz)
         size = maxxyz - minxyz
         boxminxyz, boxmaxxyz = box.bounding_box()
-        ranges = [range(a, b-c+1) for (a,b,c) in zip(boxminxyz,
-                                                   boxmaxxyz,
-                                                   size)]
+        ranges = [range(a, b - c + 1)
+                  for a, b, c in zip(boxminxyz, boxmaxxyz, size)]
         cano = self.canonical()
         for v in itertools.product(*ranges):
             translated = cano + v
@@ -1120,9 +1119,8 @@ class Polyomino(SageObject):
         minxyz, maxxyz = vector(minxyz), vector(maxxyz)
         size = maxxyz - minxyz
         boxminxyz, boxmaxxyz = box.bounding_box()
-        ranges = [range(a-c, b+1) for (a,b,c) in zip(boxminxyz,
-                                                   boxmaxxyz,
-                                                   size)]
+        ranges = [range(a - c, b + 1)
+                  for a, b, c in zip(boxminxyz, boxmaxxyz, size)]
         S = set()
         cano = self.canonical()
         for v in itertools.product(*ranges):
@@ -1133,7 +1131,7 @@ class Polyomino(SageObject):
         return S
 
     def isometric_copies(self, box, orientation_preserving=True,
-            mod_box_isometries=False):
+                         mod_box_isometries=False):
         r"""
         Return the translated and isometric images of ``self`` that lies in the box.
 
@@ -1452,6 +1450,7 @@ class Polyomino(SageObject):
 
         ::
 
+            sage: # long time
             sage: solution = H.self_surrounding(8, remove_incomplete_copies=False)
             sage: G = sum([p.show2d() for p in solution], Graphics())                   # needs sage.plot
         """
@@ -1604,7 +1603,7 @@ class TilingSolver(SageObject):
         self._reusable = reusable
         self._outside = outside
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation.
 
@@ -1627,7 +1626,7 @@ class TilingSolver(SageObject):
         s += "Reusing pieces allowed: %s" % self._reusable
         return s
 
-    def is_suitable(self):
+    def is_suitable(self) -> bool:
         r"""
         Return whether the volume of the box is equal to sum of the volume
         of the polyominoes and the number of rows sent to the DLX solver is

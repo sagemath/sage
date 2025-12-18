@@ -21,7 +21,7 @@ for string theory in physics, as they serve as ambient spaces for mirror pairs
 of Calabi-Yau manifolds via constructions due to Victor V. Batyrev
 [Bat1994]_ and Lev A. Borisov [Bor1993]_.
 
-From the combinatorial point of view "crepant" requirement is much more simple
+From the combinatorial point of view, the "crepant" requirement is much more simple
 and natural to work with than "coherent." For this reason, the code in this
 module will allow work with arbitrary crepant subdivisions without checking
 whether they are coherent or not. We refer to corresponding toric varieties as
@@ -59,7 +59,7 @@ manifold::
       a0*z0^3 + a9*z0^2*z1 + a7*z0*z1^2 + a1*z1^3 + a8*z0^2*z2 + a6*z0*z1*z2
       + a4*z1^2*z2 + a5*z0*z2^2 + a3*z1*z2^2 + a2*z2^3
 
-In many cases it is sufficient to work with the "simplified polynomial
+In many cases, it is sufficient to work with the "simplified polynomial
 moduli space" of anticanonical hypersurfaces::
 
     sage: P2.anticanonical_hypersurface(monomial_points='simplified')
@@ -129,7 +129,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 
 from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.fraction_field import FractionField_generic
 
 from sage.schemes.toric.toric_subscheme import AlgebraicScheme_subscheme_toric
@@ -502,16 +502,16 @@ def CPRFanoToricVariety(Delta=None,
         raise ValueError("Delta_polar must be reflexive!")
     # Check/normalize coordinate_points and construct fan rays
     if coordinate_points is None:
-        coordinate_points = list(range(Delta_polar.nvertices()))
+        coordinate_points = list(range(Delta_polar.n_vertices()))
         if charts is not None:
             for chart in charts:
                 for point in chart:
                     if point not in coordinate_points:
                         coordinate_points.append(point)
     elif coordinate_points == "vertices":
-        coordinate_points = list(range(Delta_polar.nvertices()))
+        coordinate_points = list(range(Delta_polar.n_vertices()))
     elif coordinate_points == "all":
-        coordinate_points = list(range(Delta_polar.npoints()))
+        coordinate_points = list(range(Delta_polar.n_points()))
         coordinate_points.remove(Delta_polar.origin())
     elif coordinate_points == "all but facets":
         coordinate_points = Delta_polar.skeleton_points(Delta_polar.dim() - 2)
@@ -524,10 +524,10 @@ def CPRFanoToricVariety(Delta=None,
             raise ValueError(
                 "no repetitions are allowed for coordinate points!\nGot: %s"
                 % coordinate_points)
-        if not cp_set.issuperset(list(range(Delta_polar.nvertices()))):
+        if not cp_set.issuperset(list(range(Delta_polar.n_vertices()))):
             raise ValueError("all %d vertices of Delta_polar must be used "
                 "for coordinates!\nGot: %s"
-                % (Delta_polar.nvertices(), coordinate_points))
+                % (Delta_polar.n_vertices(), coordinate_points))
         if Delta_polar.origin() in cp_set:
             raise ValueError("the origin (point #%d) cannot be used for a "
                 "coordinate!\nGot: %s"
@@ -710,7 +710,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
 
         INPUT:
 
-        - ``monomial points`` -- list of integers or a string. A list will be
+        - ``monomial_points`` -- list of integers or a string. A list will be
           interpreted as indices of points of `\Delta` which should be used
           for monomials of this hypersurface. A string must be one of the
           following descriptions of points of `\Delta`:
@@ -1304,7 +1304,7 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
             sage: F = GF(5^2, "a")                                                      # needs sage.rings.finite_rings
             sage: X = P1xP1.change_ring(F)                                              # needs sage.rings.finite_rings
             sage: X.anticanonical_hypersurface(monomial_points='all',                   # needs sage.rings.finite_rings
-            ....:                   coefficients=[1]*X.Delta().npoints())
+            ....:                   coefficients=[1]*X.Delta().n_points())
             Closed subscheme of 2-d CPR-Fano toric variety
              covered by 4 affine patches defined by:
               s^2*x^2 + s*t*x^2 + t^2*x^2 + s^2*x*y + s*t*x*y
@@ -1318,11 +1318,11 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
         Delta_polar = Delta.polar()
         # Monomial points normalization
         if monomial_points == "vertices":
-            monomial_points = list(range(Delta.nvertices()))
+            monomial_points = list(range(Delta.n_vertices()))
         elif monomial_points == "all":
-            monomial_points = list(range(Delta.npoints()))
+            monomial_points = list(range(Delta.n_points()))
         elif monomial_points == "vertices+origin":
-            monomial_points = list(range(Delta.nvertices()))
+            monomial_points = list(range(Delta.n_vertices()))
             monomial_points.append(Delta.origin())
         elif monomial_points == "simplified" or monomial_points is None:
             monomial_points = Delta.skeleton_points(Delta.dim() - 2)
@@ -1431,7 +1431,7 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
             raise ValueError("polytopes 'Delta' of the nef-partition and the "
                              "CPR-Fano toric variety must be the same!")
         self._nef_partition = nef_partition
-        k = nef_partition.nparts()
+        k = nef_partition.n_parts()
         # Pre-normalize all parameters
         if isinstance(monomial_points, str):
             monomial_points = [monomial_points] * k
@@ -1448,13 +1448,13 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
             Delta_i = nef_partition.Delta(i)
             # Monomial points normalization
             if monomial_points[i] == "vertices":
-                monomial_points[i] = list(range(Delta_i.nvertices()))
+                monomial_points[i] = list(range(Delta_i.n_vertices()))
             elif monomial_points[i] == "all":
-                monomial_points[i] = list(range(Delta_i.npoints()))
+                monomial_points[i] = list(range(Delta_i.n_points()))
             elif monomial_points[i] == "vertices+origin":
-                monomial_points[i] = list(range(Delta_i.nvertices()))
+                monomial_points[i] = list(range(Delta_i.n_vertices()))
                 if (Delta_i.origin() is not None
-                    and Delta_i.origin() >= Delta_i.nvertices()):
+                    and Delta_i.origin() >= Delta_i.n_vertices()):
                     monomial_points[i].append(Delta_i.origin())
             elif isinstance(monomial_points[i], str):
                 raise ValueError("'%s' is an unsupported description of "
@@ -1583,7 +1583,7 @@ def add_variables(field, variables):
     if isinstance(field, FractionField_generic):
         # Q(a) ---> Q(a, b) rather than Q(a)(b)
         R = field.ring()
-        if isinstance(R, (PolynomialRing_general, MPolynomialRing_base)):
+        if isinstance(R, (PolynomialRing_generic, MPolynomialRing_base)):
             new_variables = list(R.variable_names())
             for v in variables:
                 if v not in new_variables:

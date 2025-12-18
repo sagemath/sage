@@ -1,9 +1,11 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'constructor.py',
   'cubegroup.py',
   'permgroup.py',
   'permgroup_element.pxd',
+  'permgroup_element.pyx',
   'permgroup_morphism.py',
   'permgroup_named.py',
   'permutation_groups_catalog.py',

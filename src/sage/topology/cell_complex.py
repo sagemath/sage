@@ -544,7 +544,7 @@ class GenericCellComplex(SageObject):
              [0,0] x [0,1] x [0,1] - [0,1] x [0,0] x [0,1] + [0,1] x [0,1] x [0,0]
              - [0,1] x [0,1] x [1,1] + [0,1] x [1,1] x [0,1] - [1,1] x [0,1] x [0,1])]
 
-        Similarly for simpicial sets::
+        Similarly for simplicial sets::
 
             sage: S = simplicial_sets.Sphere(2)
             sage: S.homology(generators=True)                                           # needs sage.modules
@@ -721,7 +721,7 @@ class GenericCellComplex(SageObject):
         else:
             return dic
 
-    def is_acyclic(self, base_ring=ZZ):
+    def is_acyclic(self, base_ring=ZZ) -> bool:
         """
         Return ``True`` if the reduced homology with coefficients in
         ``base_ring`` of this cell complex is zero.
@@ -1104,7 +1104,7 @@ class GenericCellComplex(SageObject):
         """
         raise NotImplementedError
 
-    def is_connected(self):
+    def is_connected(self) -> bool:
         """
         Return ``True`` if this cell complex is connected.
 

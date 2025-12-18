@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-PBW Data
+PBW data
 
 This contains helper classes and functions which encode PBW data
 in finite type.
@@ -22,7 +22,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-#from sage.misc.lazy_attribute import lazy_attribute
+# from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.root_system import RootSystem
@@ -86,10 +86,11 @@ class PBWDatum():
                 self.long_word == other_PBWDatum.long_word and
                 self.lusztig_datum == other_PBWDatum.lusztig_datum)
 
-    def is_equivalent_to(self, other_pbw_datum):
+    def is_equivalent_to(self, other_pbw_datum) -> bool:
         r"""
         Return whether ``self`` is equivalent to ``other_pbw_datum``.
-        modulo the tropical Plücker relations.
+
+        Here equivalent means modulo the tropical Plücker relations.
 
         EXAMPLES::
 

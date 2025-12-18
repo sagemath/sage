@@ -1414,7 +1414,7 @@ class HyperplaneArrangementElement(Element):
         charpoly = self.characteristic_polynomial()
         return (-1)**self.rank() * charpoly(1)
 
-    def has_good_reduction(self, p):
+    def has_good_reduction(self, p) -> bool:
         r"""
         Return whether the hyperplane arrangement has good reduction mod `p`.
 
@@ -1454,7 +1454,7 @@ class HyperplaneArrangementElement(Element):
         q = a.intersection_poset()
         return p.is_isomorphic(q)
 
-    def is_linear(self):
+    def is_linear(self) -> bool:
         r"""
         Test whether all hyperplanes pass through the origin.
 
@@ -1478,7 +1478,7 @@ class HyperplaneArrangementElement(Element):
         """
         return all(hyperplane.b() == 0 for hyperplane in self)
 
-    def is_essential(self):
+    def is_essential(self) -> bool:
         r"""
         Test whether the hyperplane arrangement is essential.
 
@@ -1612,7 +1612,7 @@ class HyperplaneArrangementElement(Element):
         return self.is_central(certificate=True)[1]
 
     @cached_method
-    def is_simplicial(self):
+    def is_simplicial(self) -> bool:
         r"""
         Test whether the arrangement is simplicial.
 
@@ -2199,7 +2199,7 @@ class HyperplaneArrangementElement(Element):
         while R:
             # Transfer the "next step" to the "current step"
             curTest = list(nextTest)
-            nextTest = set([])
+            nextTest = set()
             # we want to test each region that we haven't hit yet
             for r in R:
                 # Since it's graded, it suffices to look at the regions of the previous rank
@@ -3016,7 +3016,7 @@ class HyperplaneArrangementElement(Element):
                 return self.whitney_data()[1][0, k]
         raise ValueError('argument out of range')
 
-    def is_separating_hyperplane(self, region1, region2, hyperplane):
+    def is_separating_hyperplane(self, region1, region2, hyperplane) -> bool:
         r"""
         Test whether the ``hyperplane`` separates the given regions.
 
@@ -3320,7 +3320,7 @@ class HyperplaneArrangementElement(Element):
                 return i
         return self.n_hyperplanes()
 
-    def is_formal(self):
+    def is_formal(self) -> bool:
         """
         Return if ``self`` is formal.
 
@@ -3410,7 +3410,7 @@ class HyperplaneArrangementElement(Element):
         return construct_free_chain(self)
 
     @cached_method(key=lambda self, a: None)
-    def is_free(self, algorithm='singular'):
+    def is_free(self, algorithm='singular') -> bool:
         r"""
         Return if ``self`` is free.
 

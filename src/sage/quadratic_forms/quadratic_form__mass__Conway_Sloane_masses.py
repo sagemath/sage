@@ -126,7 +126,7 @@ def is_even(self, allow_rescaling_flag=True) -> bool:
     return self.parity(allow_rescaling_flag) == "even"
 
 
-def is_odd(self, allow_rescaling_flag=True):
+def is_odd(self, allow_rescaling_flag=True) -> bool:
     r"""
     Return true iff after rescaling by some appropriate factor, the
     form represents some odd integers.  For more details, see :meth:`parity`.
@@ -656,7 +656,6 @@ def conway_mass(self):
 #        ans *= zeta(RR(j))
 #
 #    # Extra L-factor for even dimensional forms  -- DO THIS!!!
-#    raise NotImplementedError, "This routine is not finished yet... =("
+#    raise NotImplementedError("This routine is not finished yet")
 #
-#    # Return the answer
 #    return ans

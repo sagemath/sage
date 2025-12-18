@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 r"""
 Sage Input Formatting
 
@@ -446,7 +445,7 @@ class SageInputBuilder:
         # However, we don't want to assume that hashing x is always
         # efficient, so we only try the lookup if some value of the same
         # type as x has been cached.
-        from sage.structure.all import parent
+        from sage.structure.element import parent
 
         if type(x) in self._cached_types:
             v = self._cache.get((parent(x), x))
@@ -649,7 +648,7 @@ class SageInputBuilder:
             GF_101 = GF(101)
             GF_101(42) + GF_101(43)
         """
-        from sage.structure.all import parent
+        from sage.structure.element import parent
 
         self._cached_types.add(type(x))
         self._cache[(parent(x), x)] = sie
@@ -1405,10 +1404,10 @@ class SageInputExpression:
             sage: sie(4)
             {call: {atomic:3}({atomic:4})}
         """
-        args = [self._sie_builder(_) for _ in args]
-        for k in kwargs:
-            kwargs[k] = self._sie_builder(kwargs[k])
-        return SIE_call(self._sie_builder, self, args, kwargs)
+        new_args = [self._sie_builder(arg) for arg in args]
+        new_kwargs = {key: self._sie_builder(val)
+                      for key, val in kwargs.items()}
+        return SIE_call(self._sie_builder, self, new_args, new_kwargs)
 
     def __getitem__(self, key):
         r"""

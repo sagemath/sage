@@ -13,11 +13,18 @@ Parallel iterator built using the ``fork()`` system call
 # ****************************************************************************
 
 
+import sys
+import traceback
 from shutil import rmtree
-from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
+
+if sys.platform != 'win32':
+    from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
 
 from sage.interfaces.process import ContainChildren
 from sage.misc.timing import walltime
+
+from sage.misc.randstate import set_random_seed
+from sage.misc.prandom import getrandbits
 
 
 class WorkerData:
@@ -68,6 +75,8 @@ class p_iter_fork:
       about what the iterator does (e.g., killing subprocesses)
     - ``reset_interfaces`` -- boolean (default: ``True``); whether to reset all
       pexpect interfaces
+    - ``reseed_rng`` -- boolean (default: ``False``); whether or not to reseed
+      the rng in the subprocesses
 
     EXAMPLES::
 
@@ -80,7 +89,7 @@ class p_iter_fork:
         sage: X.verbose
         False
     """
-    def __init__(self, ncpus, timeout=0, verbose=False, reset_interfaces=True):
+    def __init__(self, ncpus, timeout=0, verbose=False, reset_interfaces=True, reseed_rng=False):
         """
         Create a ``fork()``-based parallel iterator.
 
@@ -103,6 +112,8 @@ class p_iter_fork:
         self.timeout = float(timeout)  # require a float
         self.verbose = verbose
         self.reset_interfaces = reset_interfaces
+        self.reseed_rng = reseed_rng
+        self.worker_seed = None
 
     def __call__(self, f, inputs):
         """
@@ -147,9 +158,59 @@ class p_iter_fork:
             sage: del unpickle_override[('sage.rings.polynomial.polynomial_rational_flint', 'Polynomial_rational_flint')]
             sage: list(Polygen([QQ,QQ]))
             [(((Rational Field,), {}), x), (((Rational Field,), {}), x)]
+
+        When the function raises an exception, the exception is re-raised in the parent process with the same type.
+        The traceback is gone, but we print a textual version::
+
+            sage: def fff(x): return ggg(x)
+            sage: def ggg(x): return hhh(x)
+            sage: def hhh(x): return 1/x
+            sage: try: list(F(fff, [([0],{}), ([1],{})]))
+            ....: except: import traceback; traceback.print_exc()
+            RuntimeError: forked subprocess raised:
+            Traceback (most recent call last):
+            ...in ggg...
+            ZeroDivisionError: rational division by zero
+            The above exception was the direct cause of the following exception:
+            ...
+            ZeroDivisionError: rational division by zero
+
+        When the erroneous invocation is not the first one, because of parallelism,
+        the exception might be raised on the first or second ``next()`` function call.
+        Both of the following behaviors are possible::
+
+            sage: # not tested
+            sage: it = F(fff, [([1],{}), ([0],{})])
+            sage: next(it)
+            (([1], {}), 1)
+            sage: next(it)
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: rational division by zero
+
+            sage: # not tested
+            sage: it = F(fff, [([1],{}), ([0],{})])
+            sage: next(it)
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: rational division by zero
+
+        Other corner cases::
+
+            sage: class UnpicklableException(Exception): __reduce__ = None
+            sage: def fff(x): raise UnpicklableException()
+            sage: list(F(fff, [([0],{}), ([1],{})]))
+            Traceback (most recent call last):
+            ...
+            RuntimeError: cannot pickle exception object
+
+            sage: class UnpicklableValue: __reduce__ = None
+            sage: def fff(x): return UnpicklableValue()
+            sage: list(F(fff, [([0],{}), ([1],{})]))
+            Traceback (most recent call last):
+            ...
+            RuntimeError: cannot pickle return value
         """
-        n = self.ncpus
-        v = list(inputs)
         import os
         import sys
         import signal
@@ -158,12 +219,19 @@ class p_iter_fork:
         dir = tmp_dir()
         timeout = self.timeout
 
+        n = self.ncpus
+        inputs = list(inputs)
+        if self.reseed_rng:
+            seeds = [getrandbits(512) for _ in range(len(inputs))]
+            vs = list(zip(inputs, seeds))
+        else:
+            vs = list(zip(inputs, [None]*len(inputs)))
         workers = {}
         try:
-            while v or workers:
+            while vs or workers:
                 # Spawn up to n subprocesses
-                while v and len(workers) < n:
-                    v0 = v.pop(0)  # Input value for the next subprocess
+                while vs and len(workers) < n:
+                    v0, seed0 = vs.pop(0)  # Input value and seed for the next subprocess
                     with ContainChildren():
                         pid = os.fork()
                         # The way fork works is that pid returns the
@@ -171,8 +239,9 @@ class p_iter_fork:
                         # process and returns 0 for the subprocess.
                         if not pid:
                             # This is the subprocess.
+                            if self.reseed_rng:
+                                self.worker_seed = seed0
                             self._subprocess(f, dir, *v0)
-
                     workers[pid] = WorkerData(v0)
 
                 if len(workers) > 0:
@@ -206,13 +275,13 @@ class p_iter_fork:
                             with open(sobj, "rb") as file:
                                 data = file.read()
                         except OSError:
-                            answer = "NO DATA" + W.failure
+                            should_raise, answer = False, "NO DATA" + W.failure
                         else:
                             os.unlink(sobj)
                             try:
-                                answer = loads(data, compress=False)
+                                should_raise, answer = loads(data, compress=False)
                             except Exception as E:
-                                answer = "INVALID DATA {}".format(E)
+                                should_raise, answer = False, "INVALID DATA {}".format(E)
 
                         out = os.path.join(dir, '%s.out' % pid)
                         try:
@@ -221,6 +290,10 @@ class p_iter_fork:
                             os.unlink(out)
                         except OSError:
                             pass
+
+                        if should_raise:
+                            exc, tb_str = answer
+                            raise exc from RuntimeError(f"forked subprocess raised:\n{tb_str}")
 
                         yield (W.input, answer)
         finally:
@@ -304,9 +377,22 @@ class p_iter_fork:
             else:
                 invalidate_all()
 
+        # Reseed rng, if requested.
+        if self.reseed_rng:
+            set_random_seed(self.worker_seed)
+
         # Now evaluate the function f.
-        value = f(*args, **kwds)
+        try:
+            value = False, f(*args, **kwds)
+        except BaseException as e:
+            value = True, (e, traceback.format_exc())
 
         # And save the result to disk.
         sobj = os.path.join(dir, '%s.sobj' % os.getpid())
-        save(value, sobj, compress=False)
+        try:
+            save(value, sobj, compress=False)
+        except BaseException as e:
+            if value[0]:
+                save((True, (RuntimeError('cannot pickle exception object'), traceback.format_exc())), sobj, compress=False)
+            else:
+                save((True, (RuntimeError('cannot pickle return value'), traceback.format_exc())), sobj, compress=False)

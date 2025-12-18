@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'abelian.py',
   'affine_lie_algebra.py',
   'all.py',
@@ -12,6 +13,7 @@ py.install_sources(
   'heisenberg.py',
   'lie_algebra.py',
   'lie_algebra_element.pxd',
+  'lie_algebra_element.pyx',
   'morphism.py',
   'nilpotent_lie_algebra.py',
   'onsager.py',

@@ -260,16 +260,16 @@ def is_valid_profile(profile, truncation_type, p=2, generic=None):
         pro = list(profile) + [truncation_type]*len(profile)
         r = 0
         for pro_r in pro:
-            r += 1 # index of pro_r
+            r += 1  # index of pro_r
             if pro_r < Infinity:
-                for i in range(1,r):
+                for i in range(1, r):
                     if pro_r < min(pro[r-i-1] - i, pro[i-1]):
                         return False
     else:
         # p odd:
         e = list(profile[0]) + [truncation_type]*len(profile[0])
         k = list(profile[1])
-        if not set(k).issubset({1,2}):
+        if not set(k).issubset({1, 2}):
             return False
         if truncation_type > 0:
             k = k + [2]
@@ -279,14 +279,14 @@ def is_valid_profile(profile, truncation_type, p=2, generic=None):
             e = e + [truncation_type] * (len(k) - len(e))
         r = 0
         for e_r in e:
-            r += 1 # index of e_r
+            r += 1  # index of e_r
             if e_r < Infinity:
-                for i in range(1,r):
+                for i in range(1, r):
                     if e_r < min(e[r-i-1] - i, e[i-1]):
                         return False
         r = -1
         for k_r in k:
-            r += 1 # index of k_r
+            r += 1  # index of k_r
             if k_r == 1:
                 for j in range(r):
                     i = r-j
@@ -413,7 +413,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
         sage: normalize_profile(lambda n: 3, precision=4, truncation_type=0)
         Traceback (most recent call last):
         ...
-        ValueError: Invalid profile
+        ValueError: invalid profile
         sage: normalize_profile(lambda n: 3, precision=4, truncation_type = Infinity)
         ((3, 3, 3), +Infinity)
 
@@ -457,7 +457,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
         sage: normalize_profile([[0,0,0], [1,2,3,2,1]], p=11)
         Traceback (most recent call last):
         ...
-        ValueError: Invalid profile
+        ValueError: invalid profile
     """
     from sage.rings.infinity import Infinity
     if truncation_type == 'zero':
@@ -500,14 +500,14 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
         if is_valid_profile(new_profile, truncation_type, p):
             return new_profile, truncation_type
         else:
-            raise ValueError("Invalid profile")
-    else: # p odd
+            raise ValueError("invalid profile")
+    else:  # p odd
         if profile is None or profile == Infinity:
             # no specified profile or infinite profile: return profile
             # for the entire Steenrod algebra
             new_profile = ((), ())
             truncation_type = Infinity
-        else: # profile should be a list or tuple of length 2
+        else:  # profile should be a list or tuple of length 2
             assert isinstance(profile, (list, tuple)) and len(profile) == 2, \
                 "Invalid form for profile"
             e = profile[0]
@@ -560,14 +560,14 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
         if is_valid_profile(new_profile, truncation_type, p, generic=True):
             return new_profile, truncation_type
         else:
-            raise ValueError("Invalid profile")
+            raise ValueError("invalid profile")
 
 ######################################################
 # string representations for elements
 
 
 def milnor_mono_to_string(mono, latex=False, generic=False):
-    """
+    r"""
     String representation of element of the Milnor basis.
 
     This is used by the _repr_ and _latex_ methods.
@@ -697,30 +697,30 @@ def serre_cartan_mono_to_string(mono, latex=False, generic=False):
             P = "P"
     if len(mono) == 0 or mono == (0,):
         return "1"
+
+    if not generic:
+        string = ""
+        for n in mono:
+            string = string + sq + "^{" + str(n) + "} "
     else:
-        if not generic:
-            string = ""
-            for n in mono:
-                string = string + sq + "^{" + str(n) + "} "
-        else:
-            string = ""
-            index = 0
-            for n in mono:
-                from sage.misc.functional import is_even
-                if is_even(index):
-                    if n == 1:
-                        if latex:
-                            string = string + "\\beta "
-                        else:
-                            string = string + "beta "
-                else:
-                    string = string + P + "^{" + str(n) + "} "
-                index += 1
-        return string.strip(" ")
+        string = ""
+        index = 0
+        for n in mono:
+            from sage.misc.functional import is_even
+            if is_even(index):
+                if n == 1:
+                    if latex:
+                        string = string + "\\beta "
+                    else:
+                        string = string + "beta "
+            else:
+                string = string + P + "^{" + str(n) + "} "
+            index += 1
+    return string.strip(" ")
 
 
 def wood_mono_to_string(mono, latex=False):
-    """
+    r"""
     String representation of element of Wood's Y and Z bases.
 
     This is used by the _repr_ and _latex_ methods.
@@ -756,12 +756,10 @@ def wood_mono_to_string(mono, latex=False):
         sq = "Sq"
     if len(mono) == 0:
         return "1"
-    else:
-        string = ""
-        for (s,t) in mono:
-            string = string + sq + "^{" + \
-                str(2**s * (2**(t+1)-1)) + "} "
-        return string.strip(" ")
+    string = ""
+    for s, t in mono:
+        string = string + sq + "^{" + str(2**s * (2**(t+1)-1)) + "} "
+    return string.strip(" ")
 
 
 def wall_mono_to_string(mono, latex=False):
@@ -797,16 +795,14 @@ def wall_mono_to_string(mono, latex=False):
     """
     if len(mono) == 0:
         return "1"
-    else:
-        string = ""
-        for (m,k) in mono:
-            string = string + "Q^{" + str(m) + "}_{" \
-                + str(k) + "} "
-        return string.strip(" ")
+    string = ""
+    for m, k in mono:
+        string = string + "Q^{" + str(m) + "}_{" + str(k) + "} "
+    return string.strip(" ")
 
 
 def wall_long_mono_to_string(mono, latex=False):
-    """
+    r"""
     Alternate string representation of element of Wall's basis.
 
     This is used by the _repr_ and _latex_ methods.
@@ -842,12 +838,11 @@ def wall_long_mono_to_string(mono, latex=False):
         sq = "Sq"
     if len(mono) == 0:
         return "1"
-    else:
-        string = ""
-        for (m,k) in mono:
-            for i in range(k,m+1):
-                string = string + sq + "^{" + str(2**i) + "} "
-        return string.strip(" ")
+    string = ""
+    for m, k in mono:
+        for i in range(k, m + 1):
+            string = string + sq + "^{" + str(2**i) + "} "
+    return string.strip(" ")
 
 
 def arnonA_mono_to_string(mono, latex=False, p=2):
@@ -882,16 +877,14 @@ def arnonA_mono_to_string(mono, latex=False, p=2):
     """
     if len(mono) == 0:
         return "1"
-    else:
-        string = ""
-        for (m,k) in mono:
-            string = string + "X^{" + str(m) + "}_{" \
-                + str(k) + "} "
-        return string.strip(" ")
+    string = ""
+    for m, k in mono:
+        string = string + "X^{" + str(m) + "}_{" + str(k) + "} "
+    return string.strip(" ")
 
 
 def arnonA_long_mono_to_string(mono, latex=False, p=2):
-    """
+    r"""
     Alternate string representation of element of Arnon's A basis.
 
     This is used by the _repr_ and _latex_ methods.
@@ -927,12 +920,11 @@ def arnonA_long_mono_to_string(mono, latex=False, p=2):
         sq = "Sq"
     if len(mono) == 0:
         return "1"
-    else:
-        string = ""
-        for (m,k) in mono:
-            for i in range(m,k-1,-1):
-                string = string + sq + "^{" + str(2**i) + "} "
-        return string.strip(" ")
+    string = ""
+    for m, k in mono:
+        for i in range(m, k - 1, -1):
+            string = string + sq + "^{" + str(2**i) + "} "
+    return string.strip(" ")
 
 
 def pst_mono_to_string(mono, latex=False, generic=False):
@@ -975,27 +967,27 @@ def pst_mono_to_string(mono, latex=False, generic=False):
     """
     if len(mono) == 0:
         return "1"
+
+    string = ""
+    if not generic:
+        for s, t in mono:
+            string = string + "P^{" + str(s) + "}_{" \
+                + str(t) + "} "
     else:
-        string = ""
-        if not generic:
-            for (s,t) in mono:
+        for e in mono[0]:
+            string = string + "Q_{" + str(e) + "} "
+        for (s, t), n in mono[1]:
+            if n == 1:
                 string = string + "P^{" + str(s) + "}_{" \
                     + str(t) + "} "
-        else:
-            for e in mono[0]:
-                string = string + "Q_{" + str(e) + "} "
-            for ((s,t), n) in mono[1]:
-                if n == 1:
-                    string = string + "P^{" + str(s) + "}_{" \
-                        + str(t) + "} "
+            else:
+                if latex:
+                    pow = "{%s}" % n
                 else:
-                    if latex:
-                        pow = "{%s}" % n
-                    else:
-                        pow = str(n)
-                    string = string + "(P^{" + str(s) + "}_{" \
-                        + str(t) + "})^" + pow + " "
-        return string.strip(" ")
+                    pow = str(n)
+                string = string + "(P^{" + str(s) + "}_{" \
+                    + str(t) + "})^" + pow + " "
+    return string.strip(" ")
 
 
 def comm_mono_to_string(mono, latex=False, generic=False):
@@ -1038,26 +1030,26 @@ def comm_mono_to_string(mono, latex=False, generic=False):
     """
     if len(mono) == 0:
         return "1"
+
+    string = ""
+    if not generic:
+        for s, t in mono:
+            string = string + "c_{" + str(s) + "," \
+                + str(t) + "} "
     else:
-        string = ""
-        if not generic:
-            for (s,t) in mono:
-                string = string + "c_{" + str(s) + "," \
-                    + str(t) + "} "
-        else:
-            for e in mono[0]:
-                string = string + "Q_{" + str(e) + "} "
-            for ((s,t), n) in mono[1]:
-                string = string + "c_{" + str(s) + "," \
-                    + str(t) + "}"
-                if n > 1:
-                    if latex:
-                        pow = "^{%s}" % n
-                    else:
-                        pow = "^%s" % n
-                    string = string + pow
-                string = string + " "
-        return string.strip(" ")
+        for e in mono[0]:
+            string = string + "Q_{" + str(e) + "} "
+        for (s, t), n in mono[1]:
+            string = string + "c_{" + str(s) + "," \
+                + str(t) + "}"
+            if n > 1:
+                if latex:
+                    pow = "^{%s}" % n
+                else:
+                    pow = "^%s" % n
+                string = string + pow
+            string = string + " "
+    return string.strip(" ")
 
 
 def comm_long_mono_to_string(mono, p, latex=False, generic=False):
@@ -1101,34 +1093,34 @@ def comm_long_mono_to_string(mono, p, latex=False, generic=False):
     """
     if len(mono) == 0:
         return "1"
+
+    string = ""
+    if not generic:
+        for s, t in mono:
+            if s + t > 4:
+                comma = ","
+            else:
+                comma = ""
+            string = string + "s_{"
+            for i in range(t):
+                string = string + str(2**(s+i)) + comma
+            string = string.strip(",") + "} "
     else:
-        string = ""
-        if not generic:
-            for (s,t) in mono:
-                if s + t > 4:
-                    comma = ","
+        for e in mono[0]:
+            string = string + "Q_{" + str(e) + "} "
+        for (s, t), n in mono[1]:
+            string = string + "s_{"
+            for i in range(t):
+                string = string + str(p**(s+i)) + ","
+            string = string.strip(",") + "}"
+            if n > 1:
+                if latex:
+                    pow = "^{%s}" % n
                 else:
-                    comma = ""
-                string = string + "s_{"
-                for i in range(t):
-                    string = string + str(2**(s+i)) + comma
-                string = string.strip(",") + "} "
-        else:
-            for e in mono[0]:
-                string = string + "Q_{" + str(e) + "} "
-            for ((s,t), n) in mono[1]:
-                string = string + "s_{"
-                for i in range(t):
-                    string = string + str(p**(s+i)) + ","
-                string = string.strip(",") + "}"
-                if n > 1:
-                    if latex:
-                        pow = "^{%s}" % n
-                    else:
-                        pow = "^%s" % n
-                    string = string + pow
-                string = string + " "
-        return string.strip(" ")
+                    pow = "^%s" % n
+                string = string + pow
+            string = string + " "
+    return string.strip(" ")
 
 # miscellany:
 
@@ -1162,5 +1154,5 @@ def convert_perm(m):
         sage: sage.algebras.steenrod.steenrod_algebra_misc.convert_perm((5,0,6,3))
         [3, 1, 4, 2]
     """
-    m2 = sorted(m)
-    return [list(m2).index(x)+1 for x in m]
+    d = {x: i for i, x in enumerate(sorted(m), start=1)}
+    return [d[x] for x in m]

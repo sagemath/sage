@@ -769,7 +769,7 @@ class UnitCircleGroup(AbstractArgumentGroup):
                 raise ValueError('{} is not in {}'.format(data, self))
 
         elif not isinstance(data, int) or data != 0:
-            raise ValueError('input is ambigous: '
+            raise ValueError('input is ambiguous: '
                              '{} as well as exponent={} '
                              'specified'.format(data, exponent))
 
@@ -1006,7 +1006,7 @@ class RootsOfUnityGroup(UnitCircleGroup):
             Rational Field
         """
         from sage.rings.rational_field import QQ
-        return super().__init__(base=QQ, category=category)
+        super().__init__(base=QQ, category=category)
 
     def _repr_(self):
         r"""
@@ -1626,7 +1626,7 @@ class SignGroup(AbstractArgumentGroup):
             sage: S.base()  # indirect doctest
             <class 'int'>
         """
-        return super().__init__(base=int, category=category)
+        super().__init__(base=int, category=category)
 
     def _repr_(self):
         r"""
@@ -1818,7 +1818,7 @@ class ArgumentGroupFactory(UniqueFactory):
                  domain is not None,
                  exponents is not None)):
             raise ValueError(
-                'input ambigous: ' +
+                'input ambiguous: ' +
                 ', '.join('{}={}'.format(s, v) for s, v in
                           [('data', data), ('specification', specification),
                            ('domain', domain), ('exponents', exponents)]

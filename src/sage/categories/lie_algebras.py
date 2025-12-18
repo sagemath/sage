@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Lie Algebras
 
@@ -555,7 +554,7 @@ class LieAlgebras(Category_over_base_ring):
                 0
             """
 
-        def is_abelian(self):
+        def is_abelian(self) -> bool:
             r"""
             Return ``True`` if this Lie algebra is abelian.
 
@@ -589,10 +588,11 @@ class LieAlgebras(Category_over_base_ring):
             zero = self.zero()
             return all(x._bracket_(y) == zero for x in G for y in G)
 
-        def is_commutative(self):
+        def is_commutative(self) -> bool:
             """
-            Return if ``self`` is commutative. This is equivalent to ``self``
-            being abelian.
+            Return if ``self`` is commutative.
+
+            This is equivalent to ``self`` being abelian.
 
             EXAMPLES::
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Factorizations
 
@@ -143,17 +142,17 @@ Factorizations can involve fairly abstract mathematical objects::
     sage: K.<a> = NumberField(x^2 + 3); K
     Number Field in a with defining polynomial x^2 + 3
     sage: f = K.factor(15); f
-    (Fractional ideal (1/2*a + 3/2))^2 * (Fractional ideal (5))
+    (Fractional ideal (-a))^2 * (Fractional ideal (5))
     sage: f.universe()
     Monoid of ideals of Number Field in a with defining polynomial x^2 + 3
     sage: f.unit()
     Fractional ideal (1)
     sage: g = K.factor(9); g
-    (Fractional ideal (1/2*a + 3/2))^4
+    (Fractional ideal (-a))^4
     sage: f.lcm(g)
-    (Fractional ideal (1/2*a + 3/2))^4 * (Fractional ideal (5))
+    (Fractional ideal (-a))^4 * (Fractional ideal (5))
     sage: f.gcd(g)
-    (Fractional ideal (1/2*a + 3/2))^2
+    (Fractional ideal (-a))^2
     sage: f.is_integral()
     True
 
@@ -439,6 +438,19 @@ class Factorization(SageObject):
             return richcmp_not_equal(lx, rx, op)
 
         return richcmp(self.__x, other.__x, op)
+
+    def __hash__(self):
+        r"""
+        Return a hash of this factorization.
+
+        EXAMPLES::
+
+            sage: F = factor(2025); F
+            3^4 * 5^2
+            sage: hash(F)  # random
+            -3439993427179649882
+        """
+        return hash((self.__unit, tuple(self.__x)))
 
     def __copy__(self):
         r"""
@@ -918,7 +930,7 @@ class Factorization(SageObject):
             sage: pari(g)                                                               # needs sage.libs.pari
             [x - 1, 1; x + 1, 1; x^4 - x^3 + x^2 - x + 1, 1; x^4 + x^3 + x^2 + x + 1, 1]
         """
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         from itertools import chain
 
         n = len(self)
@@ -1244,6 +1256,7 @@ class Factorization(SageObject):
 
     subs = __call__
 
+    @cached_method
     def value(self):
         """
         Return the product of the factors in the factorization, multiplied out.
@@ -1420,3 +1433,24 @@ class Factorization(SageObject):
             raise ValueError("all exponents in the factorization must be positive")
         from sage.misc.misc_c import prod
         return prod([p for p, _ in self.__x])
+
+    def is_complete_factorization(self):
+        """
+        Return whether this factorization is a complete rather than
+        a partial factorization, i.e., whether all the bases
+        are irreducible.
+
+        EXAMPLES::
+
+            sage: F = 143.factor(limit=9); F
+            143
+            sage: F.is_complete_factorization()
+            False
+            sage: F = 143.factor(limit=12); F
+            11 * 13
+            sage: F.is_complete_factorization()
+            True
+            sage: factor(-2006).is_complete_factorization()
+            True
+        """
+        return all(p.is_irreducible() or p.is_unit() for p, _ in self.__x)

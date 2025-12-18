@@ -1,9 +1,9 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Feature for testing the presence of ``info``, from GNU Info
 """
 
 from . import Executable
+
 
 class Info(Executable):
     r"""
@@ -25,6 +25,7 @@ class Info(Executable):
         """
         Executable.__init__(self, 'info', executable='info',
                             spkg='info', type='standard')
+
 
 def all_features():
     return [Info()]

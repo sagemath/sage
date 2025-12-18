@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Quotient fields
 """
@@ -100,7 +99,7 @@ class QuotientFields(Category_singleton):
                 sage: R = ZZ.extension(x^2 + 1, names='i')
                 sage: i = R.1
                 sage: gcd(5, 3 + 4*i)
-                -i - 2
+                2*i - 1
                 sage: P.<t> = R[]
                 sage: gcd(t, i)
                 Traceback (most recent call last):

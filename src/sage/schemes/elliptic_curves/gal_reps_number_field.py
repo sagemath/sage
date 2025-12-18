@@ -571,21 +571,15 @@ def Frobenius_filter(E, L, patience=100):
                 for P in K.primes_above(p):
                     if E.has_good_reduction(P):
                         yield P
-    numP = 0
-    for P in primes_iter():
+
+    for numP, P in enumerate(primes_iter()):
         if not L or numP == patience:  # stop if no primes are left, or patience is exhausted
             break
 
-        numP += 1
-
         # Discard any l for which the Frobenius polynomial at P is
         # irreducible modulo l
-
         disc = E.reduction(P).frobenius_polynomial().discriminant()
-
-        L = [l for l in L if legendre_symbol(disc,l) != -1]
-
-        #print("After using {} primes P, {}  primes l remain".format(numP,len(L)))
+        L = [l for l in L if legendre_symbol(disc, l) != -1]
 
     if include_2:
         L = [2] + L
@@ -800,17 +794,17 @@ def deg_one_primes_iter(K, principal_only=False):
         [Fractional ideal (2, a + 1),
          Fractional ideal (3, a + 1),
          Fractional ideal (3, a + 2),
-         Fractional ideal (a),
+         Fractional ideal (-a),
          Fractional ideal (7, a + 3),
          Fractional ideal (7, a + 4)]
         sage: it = deg_one_primes_iter(K, True)
         sage: [next(it) for _ in range(6)]
-        [Fractional ideal (a),
-         Fractional ideal (-2*a + 3),
-         Fractional ideal (2*a + 3),
+        [Fractional ideal (-a),
+         Fractional ideal (2*a - 3),
+         Fractional ideal (-2*a - 3),
          Fractional ideal (a + 6),
          Fractional ideal (a - 6),
-         Fractional ideal (-3*a + 4)]
+         Fractional ideal (3*a - 4)]
     """
     # imaginary quadratic fields have no principal primes of norm < disc / 4
     start = K.discriminant().abs() // 4 if principal_only and K.signature() == (0,1) else 2

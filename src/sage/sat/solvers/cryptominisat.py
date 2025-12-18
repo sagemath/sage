@@ -19,10 +19,9 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .satsolver import SatSolver
-
-from sage.misc.lazy_import import lazy_import
 from sage.features.sat import Pycryptosat
+from sage.misc.lazy_import import lazy_import
+from sage.sat.solvers.satsolver import SatSolver
 
 lazy_import('pycryptosat', ['Solver'], feature=Pycryptosat())
 
@@ -137,7 +136,7 @@ class CryptoMiniSat(SatSolver):
             raise ValueError("0 should not appear in the clause: {}".format(lits))
         # cryptominisat does not handle Sage integers
         lits = tuple(int(i) for i in lits)
-        self._nvars = max(self._nvars, max(abs(i) for i in lits))
+        self._nvars = max(self._nvars, *(abs(i) for i in lits))
         self._solver.add_clause(lits)
         self._clauses.append((lits, False, None))
 
@@ -162,7 +161,7 @@ class CryptoMiniSat(SatSolver):
             raise ValueError("0 should not appear in the clause: {}".format(lits))
         # cryptominisat does not handle Sage integers
         lits = tuple(int(i) for i in lits)
-        self._nvars = max(self._nvars, max(abs(i) for i in lits))
+        self._nvars = max(self._nvars, *(abs(i) for i in lits))
         self._solver.add_xor_clause(lits, rhs)
         self._clauses.append((lits, True, rhs))
 

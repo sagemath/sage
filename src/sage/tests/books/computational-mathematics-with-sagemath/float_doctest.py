@@ -222,7 +222,7 @@ Sage example in ./float.tex, line 1194::
 
   sage: c = sumcomp(y0,delta0,RDF(0.0),n,a)
   sage: print("exact - compensated summation: %.5f" \
-              % RDF(s-RR(c).exact_rational()))
+  ....:       % RDF(s-RR(c).exact_rational()))
   exact - compensated summation: -0.00042
 
 Sage example in ./float.tex, line 1242::

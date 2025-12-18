@@ -99,7 +99,7 @@ cdef class ntl_mat_GF2():
             sig_on()
             for i from 0 <= i < _nrows:
                 for j from 0 <= j < _ncols:
-                    GF2_conv_long(_elem, int(v[i,j])%2)
+                    GF2_conv_long(_elem, int(v[i, j]) % 2)
                     mat_GF2_setitem(&self.x, i, j, &_elem)
             sig_off()
             return
@@ -315,10 +315,10 @@ cdef class ntl_mat_GF2():
 
         if isinstance(ij, tuple) and len(ij) == 2:
             i, j = ij
-        elif self.x.NumCols()==1 and (isinstance(ij, Integer) or isinstance(ij, int)):
+        elif self.x.NumCols() == 1 and isinstance(ij, (Integer, int)):
             i = ij
             j = 0
-        elif self.x.NumRows()==1 and (isinstance(ij, Integer) or isinstance(ij, int)):
+        elif self.x.NumRows() == 1 and isinstance(ij, (Integer, int)):
             i = 0
             j = ij
         else:
@@ -342,10 +342,10 @@ cdef class ntl_mat_GF2():
         cdef int i, j
         if isinstance(ij, tuple) and len(ij) == 2:
             i, j = ij
-        elif self.x.NumCols() == 1 and (isinstance(ij, Integer) or isinstance(ij, int)):
+        elif self.x.NumCols() == 1 and isinstance(ij, (Integer, int)):
             i = ij
             j = 0
-        elif self.x.NumRows() == 1 and (isinstance(ij, Integer) or isinstance(ij, int)):
+        elif self.x.NumRows() == 1 and isinstance(ij, (Integer, int)):
             i = 0
             j = ij
         else:
@@ -506,9 +506,9 @@ cdef class ntl_mat_GF2():
         EXAMPLES::
 
             sage: l = [0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, \
-                       0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, \
-                       1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, \
-                       0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0]
+            ....:      0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, \
+            ....:      1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, \
+            ....:      0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0]
             sage: A = ntl.mat_GF2(8,8,l)
             sage: E = ~A*A
             sage: E.IsIdent()

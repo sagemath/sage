@@ -47,7 +47,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         sage: isinstance(f, collections.abc.Collection)  # known bug - will be fixed by removing __contains__
         False
     """
-    def __init__(self, M, x):
+    def __init__(self, M, x) -> None:
         """
         Create a combinatorial module element.
 
@@ -84,7 +84,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         """
         return iter(self._monomial_coefficients.items())
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return whether or not a combinatorial object ``x`` indexing a basis
         element is in the support of ``self``.
@@ -113,7 +113,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         deprecation(34509, "using 'index in vector' is deprecated; use 'index in vector.support()' instead")
         return x in self.support()
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash value for ``self``.
 
@@ -298,13 +298,14 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         v = list(self._monomial_coefficients.items())
         try:
             v.sort(key=lambda monomial_coeff:
-                        print_options['sorting_key'](monomial_coeff[0]),
+                   print_options['sorting_key'](monomial_coeff[0]),
                    reverse=print_options['sorting_reverse'])
-        except Exception: # Sorting the output is a plus, but if we can't, no big deal
+        except Exception:
+            # Sorting the output is a plus, but if we cannot, no big deal
             pass
         return v
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -576,7 +577,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             3 B_{ba} + 2 B_{cb} + B_{ac}
         """
         return repr_lincomb(self._sorted_items_for_printing(),
-                            scalar_mult       = self._parent._print_options['scalar_mult'],
+                            scalar_mult = self._parent._print_options['scalar_mult'],
                             latex_scalar_mult = self._parent._print_options['latex_scalar_mult'],
                             repr_monomial = self._parent._latex_term,
                             is_latex=True, strip_one=True)
@@ -770,7 +771,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: a[[2,1]]
             Traceback (most recent call last):
             ...
-            TypeError: unhashable type: 'list'
+            TypeError: ...unhashable type: 'list'...
         """
         res = self._monomial_coefficients.get(m)
         if res is None:
@@ -858,7 +859,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         zero = free_module.base_ring().zero()
         if sparse:
             if order is None:
-                order = {k: i for i,k in enumerate(self._parent.get_order())}
+                order = {k: i for i, k in enumerate(self._parent.get_order())}
             return free_module.element_class(free_module,
                                              {order[k]: c for k, c in d.items()},
                                              coerce=True, copy=False)
@@ -937,7 +938,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         if isinstance(scalar, Element) and parent(scalar) is not self.base_ring():
             # Temporary needed by coercion (see Polynomial/FractionField tests).
             if self.base_ring().has_coerce_map_from(parent(scalar)):
-                scalar = self.base_ring()( scalar )
+                scalar = self.base_ring()(scalar)
             else:
                 return None
 
@@ -1019,6 +1020,16 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         x_inv = B(x) ** -1
         return type(self)(F, scal(x_inv, D))
+
+    def _magma_init_(self, magma):
+        r"""
+        Convert ``self`` to Magma.
+        """
+        # Get a reference to Magma version of parent.
+        R = magma(self.parent()).name()
+        # use dict {key: coefficient}.
+        return '+'.join(f"({c._magma_init_(magma)})*{R}.{m._magma_init_(magma)}"
+                        for m, c in self.monomial_coefficients().items())
 
 
 def _unpickle_element(C, d):
