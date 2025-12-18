@@ -19,12 +19,12 @@ The underlying set of `H_n` consists of some words in the alphabet
 from collections.abc import Iterator
 
 from sage.categories.finite_lattice_posets import FiniteLatticePosets
-from sage.combinat.posets.lattices import LatticePoset
+from sage.combinat.posets.lattices import FiniteLatticePoset, LatticePoset
 from sage.graphs.digraph import DiGraph
 from sage.topology.simplicial_complex import SimplicialComplex
 
 
-def hochschild_lattice(n) -> LatticePoset:
+def hochschild_lattice(n) -> FiniteLatticePoset:
     r"""
     Return the Hochschild lattice `H_n`.
 

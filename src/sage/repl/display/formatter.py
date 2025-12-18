@@ -62,7 +62,6 @@ This other facility uses a simple
 from io import StringIO
 
 from IPython.core.formatters import DisplayFormatter, PlainTextFormatter
-from IPython.utils.py3compat import unicode_to_str
 from IPython.core.display import DisplayObject
 
 from ipywidgets import Widget
@@ -311,7 +310,7 @@ class SagePlainTextFormatter(PlainTextFormatter):
             print('---- calling ipython formatter ----')
         stream = StringIO()
         printer = SagePrettyPrinter(
-            stream, self.max_width, unicode_to_str(self.newline))
+            stream, self.max_width, self.newline)
         printer.pretty(obj)
         printer.flush()
         return stream.getvalue()
