@@ -1,4 +1,4 @@
-from typing import Any, Tuple
+from typing import Any
 
 def number_field_base(x: Any) -> bool:
     ...
@@ -19,7 +19,7 @@ class NumberFieldBase:
     def is_absolute(self) -> bool:
         ...
 
-    def signature(self) -> Tuple[int, int]:
+    def signature(self) -> tuple[int, int]:
         ...
 
     def degree(self) -> int:

@@ -85,14 +85,12 @@ AUTHORS:
 
 - Lorenz Panny (2024)
 """
-
-from sage.structure.richcmp import op_EQ
 from sage.misc.cachefunc import cached_method
 from sage.structure.sequence import Sequence
 
 from sage.rings.integer_ring import ZZ
 
-from sage.schemes.elliptic_curves.hom import EllipticCurveHom, compare_via_evaluation
+from sage.schemes.elliptic_curves.hom import EllipticCurveHom
 
 
 class EllipticCurveHom_fractional(EllipticCurveHom):
@@ -116,7 +114,7 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
           is not divisible by 3
     """
 
-    def __init__(self, phi, d, *, check=True):
+    def __init__(self, phi, d, *, check=True) -> None:
         r"""
         Construct a (symbolic) quotient of an isogeny divided by an integer.
 
@@ -145,7 +143,7 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
                 raise ValueError(f'{phi} is not divisible by {d}')
 
             E = phi.domain()
-            for l,e in d.factor():
+            for l, e in d.factor():
                 F = E.division_field(l**e)
                 EE = E.change_ring(F)
 
@@ -229,29 +227,30 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
         if not P:
             return self._codomain.base_extend(k).zero()
 
-        #TODO this should really be a "divide point by possibly extending the base field" method
+        # TODO this should really be a "divide point by possibly
+        # extending the base field" method
         F = k
         n = P.order()
         m = self._d.prime_to_m_part(n)
         P *= m.inverse_mod(n)
-        for q,e in (self._d//m).factor():
+        for q, e in (self._d//m).factor():
             for _ in range(e):
                 f = P.division_points(q, poly_only=True)
                 try:
-                    x = f.any_root(assume_squarefree=True)
+                    f.any_root(assume_squarefree=True)
                 except ValueError:
                     g = f.factor()[0][0]
                     F = F.extension(g.degree())
-                    x = g.any_root(ring=F)
+                    g.any_root(ring=F)
                 P = P.change_ring(F).division_points(q)[0]
 
         Q = self._phi._eval(P).change_ring(k)
 
         return self._codomain.base_extend(k)(*Q)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
-        Return a textual description of this fractional elliptic-curve morphism.
+        Return a description of this fractional elliptic-curve morphism.
 
         EXAMPLES::
 
@@ -270,8 +269,8 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
               Denominator: 2
         """
         return f'Fractional elliptic-curve morphism of degree {self._degree}:' \
-                f'\n  Numerator:   {self._phi}' \
-                f'\n  Denominator: {self._d}'
+            f'\n  Numerator:   {self._phi}' \
+            f'\n  Denominator: {self._d}'
 
     @cached_method
     def to_isogeny_chain(self):
@@ -300,7 +299,7 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
 
         ker = []
         insep = 0
-        for l,e in self._phi.degree().factor():
+        for l, e in self._phi.degree().factor():
             F = E.division_field(l**e)
             EE = E.change_ring(F)
 
@@ -323,9 +322,9 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
             else:
                 RS = _torsion_gens(self._codomain, self._codomain.change_ring(F), l, e)
 
-            mat = self._phi.matrix_on_subgroup((P,Q), RS)
+            mat = self._phi.matrix_on_subgroup((P, Q), RS)
             for row in filter(bool, self._d.p_primary_part(l) * mat.left_kernel_matrix()):
-                K = sum(ZZ(c)*T for c,T in zip(row, (P,Q)))
+                K = sum(ZZ(c)*T for c, T in zip(row, (P, Q)))
                 K.set_order(multiple=l**e)
                 assert self._eval(K) == 0
                 ker.append(K)
@@ -336,11 +335,11 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
         while ker:
             if not (P := ker.pop()):
                 continue
-            (l,e), = P.order().factor()
+            (l, e), = P.order().factor()
             K = l**(e-1)*P
             if e > 1:
                 ker.append(P)
-            poly = E.kernel_polynomial_from_point(K, algorithm='basic')  #FIXME algorithm='basic' is a workaround for #34907
+            poly = E.kernel_polynomial_from_point(K, algorithm='basic')  # FIXME algorithm='basic' is a workaround for #34907
             step = E.isogeny(poly)
             chain = step * chain
             ker = [step._eval(T) for T in ker]
@@ -507,7 +506,7 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
             sage: ((1 + pi) / 2).scaling_factor()
             210
         """
-        #FIXME this can crash when p | d
+        # FIXME this can crash when p | d
         return self._phi.scaling_factor() / self._d
 
     def inseparable_degree(self):

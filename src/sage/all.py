@@ -90,10 +90,6 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
 warnings.filterwarnings('default', category=DeprecationWarning,
                         message=r'[\s\S]*See https?://trac\.sagemath\.org/[0-9]* for details.')
 
-# Ignore Python 3.9 deprecation warnings
-warnings.filterwarnings('ignore', category=DeprecationWarning,
-                        module='ast')
-
 # Ignore packaging 20.5 deprecation warnings
 warnings.filterwarnings('ignore', category=DeprecationWarning,
                         module='(.*[.]_vendor[.])?packaging')
@@ -113,11 +109,6 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
 warnings.filterwarnings('ignore', category=DeprecationWarning,
                         message='The distutils(.sysconfig module| package) is deprecated',
                         module='Cython|distutils|numpy|sage.env|sage.features')
-
-# triggered by cython 0.29.32
-warnings.filterwarnings('ignore', category=DeprecationWarning,
-                        message="'cgi' is deprecated and slated for removal in Python 3.13",
-                        module='Cython')
 
 # triggered by pyparsing 2.4.7
 warnings.filterwarnings('ignore', category=DeprecationWarning,
@@ -151,11 +142,6 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
 warnings.filterwarnings('ignore', category=DeprecationWarning,
                         message=r"This process.* is multi-threaded, "
                                 r"use of .*\(\) may lead to deadlocks in the child.")
-
-# pickling of itertools is deprecated in Python 3.12
-warnings.filterwarnings('ignore', category=DeprecationWarning,
-                        message=r"Pickle, copy, and deepcopy support will be "
-                                r"removed from itertools in Python 3.14.")
 
 # rpy2>=3.6 emits warnings for R modifying LD_LIBRARY_PATH
 warnings.filterwarnings('ignore', category=UserWarning,
