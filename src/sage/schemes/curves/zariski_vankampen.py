@@ -1924,7 +1924,5 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
     n = g1.ngens()
     rels = [rel.Tietze() for rel in g1.relations()]
     g1 = FreeGroup(n) / rels
-    # Deduplicate by Tietze words to avoid hashing fp group elements
-    dic1 = {i: [g1(t) for t in dict.fromkeys(el.Tietze() for el in dic1[i])]
-            for i in dic1}
+    dic1 = {i: list({g1(el.Tietze()) for el in dic1[i]}) for i in dic1}
     return (g1, dic1)

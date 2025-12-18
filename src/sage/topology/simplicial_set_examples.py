@@ -820,24 +820,18 @@ def PresentationComplex(G):
     EXAMPLES::
 
         sage: # needs sage.groups
-        sage: G = SymmetricGroup(3).as_finitely_presented_group(); G
-        Finitely presented group < a, b | b^2, a^3, (a*b)^2 >
-        sage: S = simplicial_sets.PresentationComplex(G); S
-        Simplicial set with 11 non-degenerate simplices
-        sage: S.fundamental_group()
-        Finitely presented group < e0, e2 | e0^2, e2^3, (e2*e0)^2 >
-
         sage: G = SymmetricGroup(2).as_finitely_presented_group(); G
         Finitely presented group < a | a^2 >
         sage: S = simplicial_sets.PresentationComplex(G); S
-        Simplicial set with 4 non-degenerate simplices
+        Simplicial set with 5 non-degenerate simplices
         sage: S.face_data()
         {Delta^0: None,
-        a^-1: (Delta^0, Delta^0),
-        Ta: (a^-1, s_0 Delta^0, a^-1),
-        a^2: (a^-1, s_0 Delta^0, a^-1)}
+         a: (Delta^0, Delta^0),
+         a^-1: (Delta^0, Delta^0),
+         Ta: (a, s_0 Delta^0, a^-1),
+         a^2: (a, s_0 Delta^0, a)}
         sage: S.fundamental_group()
-        Finitely presented group < e | e^2 >
+        Finitely presented group < e0 | e0^2 >
     """
     O = AbstractSimplex(0)
     SO = O.apply_degeneracies(0)
