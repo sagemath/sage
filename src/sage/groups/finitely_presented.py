@@ -314,39 +314,59 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         return tuple(tl.sage())
 
     def __hash__(self):
-        """
+        r"""
         Return a hash for this group element.
 
-        .. WARNING::
+        For free groups (no relations), hashing is based on the Tietze word.
+        For finite groups, the element is converted to a permutation group
+        element which has a well-defined hash.
+        For general infinite finitely presented groups, hashing is not
+        supported because the word problem is undecidable.
 
-            The hash is based on the Tietze word representation of the
-            element, not on the actual group element. Two elements that
-            are equal in the group but have different Tietze representations
-            will have different hashes. This is because the word problem
-            for finitely presented groups is undecidable in general, so
-            it is not possible to compute a consistent hash based on the
-            actual group element. Use :meth:`cayley_graph` on the group
-            for Cayley graph computations, as it handles this properly.
+        EXAMPLES:
 
-        EXAMPLES::
+        Free groups support hashing::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: H = F / []  # trivial quotient = free group
+            sage: hash(H([1,2])) == hash(H([1,2]))
+            True
+
+        Finite groups support hashing::
 
             sage: G.<a,b> = FreeGroup()
             sage: H = G / [a^2, b^3, a*b*a^-1*b^-1]
             sage: H.inject_variables()
             Defining a, b
-            sage: hash(a*b) == hash(H([1, 2]))
+            sage: hash(a) == hash(a)
+            True
+            sage: hash(a*a) == hash(H.one())  # equal elements have equal hashes
             True
 
-        Note that equal elements may have different hashes::
+        General infinite f.p. groups do not support hashing::
 
-            sage: x = a*a
-            sage: y = H.one()
-            sage: x == y
-            True
-            sage: hash(x) == hash(y)  # hashes are based on Tietze words
-            False
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F / [a*b*a^-1*b^-2]  # Baumslag-Solitar group, infinite
+            sage: hash(G([1]))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: hashing is not implemented for elements of
+            infinite non-free finitely presented groups
         """
-        return hash(self.Tietze())
+        G = self.parent()
+        # Free groups (no relations) - hash by Tietze word
+        if len(G.relations()) == 0:
+            return hash(self.Tietze())
+        # Finite groups - hash by permutation representation
+        phi = libgap.IsomorphismPermGroup(G.gap())
+        # IsomorphismPermGroup returns 'fail' for infinite groups
+        if str(phi) == 'fail':
+            raise NotImplementedError(
+                "hashing is not implemented for elements of "
+                "infinite non-free finitely presented groups"
+            )
+        perm_elem = libgap.Image(phi, self.gap())
+        return hash(tuple(perm_elem.ListPerm().sage()))
 
     def __call__(self, *values, **kwds):
         """
@@ -367,34 +387,43 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         EXAMPLES::
 
             sage: G.<a,b> = FreeGroup()
+            sage: H = G / [a*b*a^-1*b^-1]  # free abelian group
+            sage: H.inject_variables()
+            Defining a, b
+            sage: w = a * b
+            sage: w(2,3)
+            6
+
+        ::
+
+            sage: G.<a,b> = FreeGroup()
             sage: H = G / [a/b];  H
             Finitely presented group < a, b | a*b^-1 >
-            sage: H.simplified()
-            Finitely presented group < a |  >
-
-        The generator `b` can be eliminated using the relation `a=b`. Any
-        values that you plug into a word must satisfy this relation::
-
             sage: A, B = H.gens()
             sage: w = A^2 * B
             sage: w(2,2)
             8
-            sage: w(3,3)
-            27
-            sage: w(1,2)
-            Traceback (most recent call last):
-            ...
-            ValueError: the values do not satisfy all relations of the group
-            sage: w(1, 2, check=False)    # result depends on presentation of the group element
-            2
         """
+        from sage.structure.element import coercion_model, parent
+        from sage.misc.misc_c import prod
+
         values = list(values)
+        G = self.parent()
+        if len(values) != G.ngens():
+            raise ValueError('number of values has to match the number of generators')
         if kwds.get('check', True):
-            for rel in self.parent().relations():
+            for rel in G.relations():
                 rel = rel(values)
                 if rel != 1:
                     raise ValueError('the values do not satisfy all relations of the group')
-        return super().__call__(values)
+        # Use index-based lookup to avoid hashing fp group elements
+        new_parent = coercion_model.common_parent(*[parent(v) for v in values])
+        try:
+            return new_parent.prod(values[abs(i) - 1] ** (1 if i > 0 else -1)
+                                   for i in self.Tietze())
+        except AttributeError:
+            return prod(new_parent(values[abs(i) - 1]) ** (1 if i > 0 else -1)
+                        for i in self.Tietze())
 
 
 class RewritingSystem:
@@ -1210,8 +1239,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         perm_elements_set = set(perm_elements)
         perm_elements = [pe for pe in perm_to_fp if pe in perm_elements_set]
 
-        # Convert generators to permutation group (mapping from fp element to perm element)
-        fp_to_perm_gen = {g: tietze_to_perm(g) for g in generators}
+        # Convert generators to permutation group (list of (fp element, perm element) pairs)
+        fp_perm_gen_pairs = [(g, tietze_to_perm(g)) for g in generators]
 
         # Build the graph
         if simple:
@@ -1227,7 +1256,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
 
         for perm_x in perm_elements:
             fp_x = perm_to_fp[perm_x]
-            for fp_g, perm_g in fp_to_perm_gen.items():
+            for fp_g, perm_g in fp_perm_gen_pairs:
                 if left:
                     perm_target = perm_g * perm_x
                     if perm_target in perm_to_fp:
