@@ -452,6 +452,12 @@ REFERENCES:
              Part III: :arxiv:`1805.12339`,
              2018.
 
+.. [BSPRS2014] David Bremner, Mathieu Dutour Sikirić, Dmitrii V.
+               Pasechnik, Thomas Rehn and Achill Schürmann.
+               *Computing symmetry groups of polyhedra*.
+               LMS Journal of Computation and Mathematics. 17(1):565-581,
+               2014. :doi:`10.1112/S1461157014000400`.
+
 .. [Ba1994] Kaushik Basu. *The Traveler's Dilemma: Paradoxes of
             Rationality in Game Theory*. The American Economic Review
             (1994): 391-395.
