@@ -58,7 +58,7 @@ instead one can use tuples::
     sage: F = CombinatorialFreeModule(ZZ, ([1],[2],[3])); F.an_element()
     Traceback (most recent call last):
     ...
-    TypeError: unhashable type: 'list'
+    TypeError: ...unhashable type: 'list'...
 
     sage: F = CombinatorialFreeModule(ZZ, ((1,), (2,), (3,))); F.an_element()
     2*B[(1,)] + 2*B[(2,)] + 3*B[(3,)]
