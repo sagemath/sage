@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 r"""
 Display Manager
 
@@ -774,7 +773,7 @@ class DisplayManager(SageObject):
         """
         return self._supported_output
 
-    def displayhook(self, obj: Any) -> None | Any:
+    def displayhook(self, obj: Any) -> Any | None:
         """
         Implementation of the displayhook.
 

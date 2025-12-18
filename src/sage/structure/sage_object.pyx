@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Abstract base class for Sage objects
 """
@@ -665,11 +664,12 @@ cdef class SageObject:
         TESTS::
 
             sage: class Bla(SageObject): pass
-            sage: Bla()._test_pickling()
-            Traceback (most recent call last):
-            ...
-            PicklingError: Can't pickle <class '__main__.Bla'>: attribute
-            lookup ... failed
+            sage: from _pickle import PicklingError
+            sage: try:
+            ....:     Bla()._test_pickling()
+            ....: except PicklingError as e:
+            ....:     print("PicklingError caught")
+            PicklingError caught
 
         TODO: for a stronger test, this could send the object to a
         remote Sage session, and get it back.
@@ -877,18 +877,16 @@ cdef class SageObject:
 
     def _maxima_(self, G=None):
         if G is None:
-            import sage.interfaces.maxima
-            G = sage.interfaces.maxima.maxima
+            from sage.interfaces.maxima_lib import maxima
+            G = maxima
         return self._interface_(G)
 
     def _maxima_init_(self):
-        import sage.interfaces.maxima
-        I = sage.interfaces.maxima.maxima
-        return self._interface_init_(I)
+        from sage.interfaces.maxima_lib import maxima
+        return self._interface_init_(maxima)
 
     def _maxima_lib_(self, G=None):
-        from sage.interfaces.maxima_lib import maxima_lib
-        return self._interface_(maxima_lib)
+        return self._maxima_(G)
 
     def _maxima_lib_init_(self):
         return self._maxima_init_()

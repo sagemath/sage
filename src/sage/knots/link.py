@@ -1256,7 +1256,7 @@ class Link(SageObject):
             if not data:
                 return [(0, HomologyGroup(0, ring))]
 
-            torsion = set([k[1] for k in data])
+            torsion = {k[1] for k in data}
             invfac = {}
             for d in [k[0] for k in data]:
                 invfac[d] = []
@@ -1522,7 +1522,7 @@ class Link(SageObject):
             elif i[1] == -1:
                 cross_number[i[0]] = -i[2]
         edges_graph = DiGraph(edges)
-        d = edges_graph.all_simple_cycles()
+        d = edges_graph.all_simple_cycles(algorithm="A")
         code = []
         for i in d:
             l = [cross_number[j] for j in i]

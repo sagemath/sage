@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 # distutils: libraries = gmp
 
 from sage.libs.gmp.types cimport *
@@ -6,7 +5,7 @@ from libc.stdio cimport FILE
 
 from libc.stdint cimport intmax_t, uintmax_t
 
-cdef extern from "gmp.h":
+cdef extern from "gmp.h" nogil:
 
     ### Integer Functions ###
 

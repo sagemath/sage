@@ -2035,7 +2035,7 @@ class TransitiveGroupsAll(DisjointUnionEnumeratedSets):
     # We override the __call__ as the elements are not instances of Element
     __call__ = DisjointUnionEnumeratedSets._element_constructor_facade
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -2044,7 +2044,7 @@ class TransitiveGroupsAll(DisjointUnionEnumeratedSets):
         """
         return "Transitive Groups"
 
-    def __contains__(self, G):
+    def __contains__(self, G) -> bool:
         r"""
         EXAMPLES::
 
@@ -2111,7 +2111,7 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
         """
         return "Transitive Groups of degree %s" % (self._degree,)
 
-    def __contains__(self, G):
+    def __contains__(self, G) -> bool:
         r"""
         EXAMPLES::
 
@@ -2285,7 +2285,7 @@ class PrimitiveGroup(PermutationGroup_unique):
         sage: PrimitiveGroup(2^12,1)
         Traceback (most recent call last):
         ...
-        GAPError: Error, Primitive groups of degree 4096 are not known!
+        GAPError: Error...
     """
 
     def __init__(self, d, n):
@@ -2375,10 +2375,10 @@ def PrimitiveGroups(d=None):
 
     The database is currently limited::
 
-         sage: PrimitiveGroups(2^12).cardinality()
+         sage: PrimitiveGroups(2^13).cardinality()
          Traceback (most recent call last):
          ...
-         GAPError: Error, Primitive groups of degree 4096 are not known!
+         GAPError: Error...
 
     .. TODO::
 
@@ -2445,7 +2445,7 @@ class PrimitiveGroupsAll(DisjointUnionEnumeratedSets):
         """
         return "Primitive Groups"
 
-    def __contains__(self, G):
+    def __contains__(self, G) -> bool:
         r"""
         Test whether `G` is in ``self``.
 
@@ -2518,7 +2518,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
         """
         return "Primitive Groups of degree %s" % (self._degree)
 
-    def __contains__(self, G):
+    def __contains__(self, G) -> bool:
         r"""
         Test whether `G` is in ``self``.
 
@@ -2606,10 +2606,10 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
 
             sage: PrimitiveGroups(2500).cardinality()
             34
-            sage: PrimitiveGroups(2^12).cardinality()
+            sage: PrimitiveGroups(2^13).cardinality()
             Traceback (most recent call last):
             ...
-            GAPError: Error, Primitive groups of degree 4096 are not known!
+            GAPError: Error...
         """
         if self._degree <= 1:
             # gap.NrPrimitiveGroups(0) fails, so Sage needs to handle this
@@ -3517,13 +3517,15 @@ class SmallPermutationGroup(PermutationGroup_generic):
         Group of order 12 and GAP Id 4 as a permutation group
         sage: G.gens()
         ((4,5), (1,2), (3,4,5))
-        sage: G.character_table()  # needs sage.rings.number_field
+        sage: Gct = G.character_table(); Gct  # random, needs sage.rings.number_field
         [ 1  1  1  1  1  1]
         [ 1 -1  1 -1  1 -1]
         [ 1 -1  1  1 -1  1]
         [ 1  1  1 -1 -1 -1]
         [ 2  0 -1 -2  0  1]
         [ 2  0 -1  2  0 -1]
+        sage: sorted(Gct, key=str)  # needs sage.rings.number_field
+        [(1, -1, 1, -1, 1, -1), (1, -1, 1, 1, -1, 1), (1, 1, 1, -1, -1, -1), (1, 1, 1, 1, 1, 1), (2, 0, -1, -2, 0, 1), (2, 0, -1, 2, 0, -1)]
         sage: def numgps(n): return ZZ(libgap.NumberSmallGroups(n))
         sage: # verify at most five n and k, randomly, to save time
         sage: from random import sample

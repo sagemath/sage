@@ -120,7 +120,7 @@ cdef class FiniteField(Field):
             False
             sage: F == FiniteField(3^2, 'd')
             False
-            sage: F == FiniteField(3^2, 'c', impl='pari_ffelt')
+            sage: F == FiniteField(3^2, 'c', implementation='pari_ffelt')
             False
         """
         if self is other:
@@ -198,6 +198,12 @@ cdef class FiniteField(Field):
         """
         Return string that initializes the GAP version of
         this finite field.
+
+        Note that for non-prime finite fields, the result is likely **unintended**,
+        it always use GAP's default-constructed finite field,
+        which means the ``DefiningPolynomial`` of the GAP field is often not the same as the
+        ``.modulus()`` of the Sage field. They are isomorphic, but the isomorphism may be
+        difficult to compute.
 
         EXAMPLES::
 
@@ -305,14 +311,14 @@ cdef class FiniteField(Field):
 
         EXAMPLES::
 
-            sage: k.<a> = FiniteField(9, impl='pari')
+            sage: k.<a> = FiniteField(9, implementation="pari")
             sage: list(k)
             [0, 1, 2, a, a + 1, a + 2, 2*a, 2*a + 1, 2*a + 2]
 
         Partial iteration of a very large finite field::
 
             sage: p = next_prime(2^64)
-            sage: k.<a> = FiniteField(p^2, impl='pari')
+            sage: k.<a> = FiniteField(p^2, implementation="pari")
             sage: it = iter(k); it
             <...generator object at ...>
             sage: [next(it) for i in range(10)]
@@ -324,11 +330,11 @@ cdef class FiniteField(Field):
 
             sage: L = []
             sage: from sage.rings.finite_rings.finite_field_base import FiniteField
-            sage: print(list(FiniteField.__iter__(GF(8, impl='givaro', names='z'))))    # needs sage.libs.linbox
+            sage: print(list(FiniteField.__iter__(GF(8, implementation='givaro', names='z'))))    # needs sage.libs.linbox
             [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
-            sage: print(list(FiniteField.__iter__(GF(8, impl='pari', names='z'))))
+            sage: print(list(FiniteField.__iter__(GF(8, implementation='pari', names='z'))))
             [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
-            sage: print(list(FiniteField.__iter__(GF(8, impl='ntl', names='z'))))       # needs sage.libs.ntl
+            sage: print(list(FiniteField.__iter__(GF(8, implementation='ntl', names='z'))))       # needs sage.libs.ntl
             [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
         """
         cdef Py_ssize_t n = self.degree()
@@ -392,6 +398,41 @@ cdef class FiniteField(Field):
 
         if lim == <unsigned long>(-1):
             raise NotImplementedError("iterating over all elements of a large finite field is not supported")
+
+    def absolute_degree(self):
+        """
+        Return the degree of ``self`` over its prime field. That is, if
+        ``self`` has cardinality `p^n`, return `n`.
+
+        EXAMPLES::
+
+            sage: K = GF(7^4)
+            sage: K.absolute_degree()
+            4
+
+        .. WARNING::
+
+            Depending on how they are constructed, some finite fields in Sage
+            can return `1` for the method ``degree``, even though their
+            cardinality is not prime.
+
+            ::
+
+                sage: K = GF(5^3)
+                sage: A.<x> = K[]
+                sage: L = K.extension(x+2)
+                sage: L.is_field()
+                True
+                sage: L.cardinality()
+                125
+                sage: L.degree()
+                1
+                sage: L.is_prime_field()
+                False
+                sage: L.absolute_degree()
+                3
+        """
+        return self.degree()
 
     def from_integer(self, n, reverse=False):
         r"""
@@ -473,7 +514,8 @@ cdef class FiniteField(Field):
             sage: k.hom([c]) # indirect doctest
             Traceback (most recent call last):
             ...
-            TypeError: images do not define a valid homomorphism
+            ValueError: relations do not all (canonically) map to 0
+            under map determined by images of generators
 
             sage: k.hom([c^(73*73+1)])
             Ring morphism:
@@ -484,7 +526,7 @@ cdef class FiniteField(Field):
             sage: k.hom([b])
             Traceback (most recent call last):
             ...
-            TypeError: images do not define a valid homomorphism
+            ValueError: No embedding of Finite Field in a of size 73^2 into Finite Field in b of size 73^3
         """
         #if self.characteristic() != codomain.characteristic():
         #    raise ValueError("no map from %s to %s" % (self, codomain))
@@ -825,7 +867,7 @@ cdef class FiniteField(Field):
 
     def is_prime_field(self):
         """
-        Return ``True`` if ``self`` is a prime field, i.e., has degree 1.
+        Return ``True`` if ``self`` is a prime field, i.e., has absolute degree 1.
 
         EXAMPLES::
 
@@ -834,7 +876,7 @@ cdef class FiniteField(Field):
             sage: GF(3, 'a').is_prime_field()
             True
         """
-        return self.degree() == 1
+        return self.absolute_degree() == 1
 
     def modulus(self):
         r"""
@@ -895,7 +937,7 @@ cdef class FiniteField(Field):
 
         The given modulus is always made monic::
 
-            sage: k.<a> = GF(7^2, modulus=2*x^2 - 3, impl='pari_ffelt')
+            sage: k.<a> = GF(7^2, modulus=2*x^2-3, implementation="pari_ffelt")
             sage: k.modulus()
             x^2 + 2
 
@@ -903,21 +945,21 @@ cdef class FiniteField(Field):
 
         We test the various finite field implementations::
 
-            sage: GF(2, impl='modn').modulus()
+            sage: GF(2, implementation="modn").modulus()
             x + 1
-            sage: GF(2, impl='givaro').modulus()                                        # needs sage.libs.linbox
+            sage: GF(2, implementation="givaro").modulus()
             x + 1
-            sage: GF(2, impl='ntl').modulus()                                           # needs sage.libs.ntl
+            sage: GF(2, implementation="ntl").modulus()
             x + 1
-            sage: GF(2, impl='modn', modulus=x).modulus()
+            sage: GF(2, implementation="modn", modulus=x).modulus()
             x
-            sage: GF(2, impl='givaro', modulus=x).modulus()                             # needs sage.libs.linbox
+            sage: GF(2, implementation="givaro", modulus=x).modulus()
             x
-            sage: GF(2, impl='ntl', modulus=x).modulus()                                # needs sage.libs.ntl
+            sage: GF(2, implementation="ntl", modulus=x).modulus()
             x
-            sage: GF(13^2, 'a', impl='givaro', modulus=x^2 + 2).modulus()               # needs sage.libs.linbox
+            sage: GF(13^2, 'a', implementation="givaro", modulus=x^2+2).modulus()
             x^2 + 2
-            sage: GF(13^2, 'a', impl='pari_ffelt', modulus=x^2 + 2).modulus()           # needs sage.libs.pari
+            sage: GF(13^2, 'a', implementation="pari_ffelt", modulus=x^2+2).modulus()
             x^2 + 2
         """
         # Normally, this is set by the constructor of the implementation
@@ -957,18 +999,18 @@ cdef class FiniteField(Field):
             sage: k.polynomial()
             a^2 + 2*a + 2
 
-            sage: F = FiniteField(9, 'a', impl='pari_ffelt')
+            sage: F = FiniteField(9, 'a', implementation='pari_ffelt')
             sage: F.polynomial()
             a^2 + 2*a + 2
 
-            sage: F = FiniteField(7^20, 'a', impl='pari_ffelt')
+            sage: F = FiniteField(7^20, 'a', implementation='pari_ffelt')
             sage: f = F.polynomial(); f
             a^20 + a^12 + 6*a^11 + 2*a^10 + 5*a^9 + 2*a^8 + 3*a^7 + a^6 + 3*a^5 + 3*a^3 + a + 3
             sage: f(F.gen())
             0
 
             sage: # needs sage.libs.ntl
-            sage: k.<a> = GF(2^20, impl='ntl')
+            sage: k.<a> = GF(2^20, implementation='ntl')
             sage: k.polynomial()
             a^20 + a^10 + a^9 + a^7 + a^6 + a^5 + a^4 + a + 1
             sage: k.polynomial('FOO')
@@ -1309,14 +1351,14 @@ cdef class FiniteField(Field):
 
         The implementation is taken into account, by :issue:`15223`::
 
-            sage: k = FiniteField(9, 'a', impl='pari_ffelt')
+            sage: k = FiniteField(9, 'a', implementation='pari_ffelt')
             sage: F, R = k.construction()
             sage: F(R) is k
             True
         """
         from sage.categories.pushout import AlgebraicExtensionFunctor
         try:
-            kwds = {'impl': self._factory_data[2][3]}
+            kwds = {'implementation': self._factory_data[2][3]}
         except (AttributeError, IndexError, TypeError):
             kwds = {}
         if self.degree() == 1:
@@ -1419,6 +1461,21 @@ cdef class FiniteField(Field):
             sage: a,b = (randrange(1,10) for _ in 'ab')
             sage: K.<u> = GF((p,a))
             sage: L.<v> = K.extension(b)
+            sage: L(u).minpoly() == u.minpoly()
+            True
+
+        Check the test above when `a=b=1`, see :issue:`40926`.
+        While in general it doesn't make much sense to talk about the generator
+        of a prime finite field (:meth:`gen` returns 1), generic code may find
+        it convenient to always specify the variable name when it is not known
+        in advance whether the exponent is 1.
+
+        The reason why one may want to specify ``name`` is :issue:`38376`.
+
+        ::
+
+            sage: K.<u> = GF((random_prime(10^100), 1))
+            sage: L.<v> = K.extension(1)
             sage: L(u).minpoly() == u.minpoly()
             True
         """
@@ -2218,30 +2275,3 @@ def unpickle_FiniteField_prm(_type, order, variable_name, kwargs):
 
 register_unpickle_override(
     'sage.rings.ring', 'unpickle_FiniteField_prm', unpickle_FiniteField_prm)
-
-
-def is_FiniteField(R):
-    r"""
-    Return whether the implementation of ``R`` has the interface provided by
-    the standard finite field implementation.
-
-    This function is deprecated.
-
-    EXAMPLES::
-
-        sage: from sage.rings.finite_rings.finite_field_base import is_FiniteField
-        sage: is_FiniteField(GF(9,'a'))
-        doctest:...: DeprecationWarning: the function is_FiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) instead
-        See https://github.com/sagemath/sage/issues/32664 for details.
-        True
-        sage: is_FiniteField(GF(next_prime(10^10)))
-        True
-
-    Note that the integers modulo n are not backed by the finite field type::
-
-        sage: is_FiniteField(Integers(7))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32664, "the function is_FiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) instead")
-    return isinstance(R, FiniteField)

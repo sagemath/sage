@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Sets
 """
@@ -1038,7 +1037,7 @@ class Sets(Category_singleton):
             return parent(element) == self
 
         @abstract_method
-        def __contains__(self, x):
+        def __contains__(self, x) -> bool:
             """
             Test whether the set ``self`` contains the object ``x``.
 
@@ -1889,6 +1888,21 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
     from sage.categories.facade_sets import FacadeSets as Facade
 
     class Infinite(CategoryWithAxiom):
+        class SubcategoryMethods:
+
+            def Finite(self):
+                """
+                Incompatible axiom.
+
+                EXAMPLES::
+
+                    sage: C = NN.category()
+                    sage: C.Finite()
+                    Traceback (most recent call last):
+                    ...
+                    TypeError: incompatible axioms: finite and infinite
+                """
+                raise TypeError("incompatible axioms: finite and infinite")
 
         class ParentMethods:
 
@@ -3117,7 +3131,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 return self.a_realization().an_element()
 
             # TODO: maybe this could be taken care of by Sets.Facade()?
-            def __contains__(self, x):
+            def __contains__(self, x) -> bool:
                 r"""
                 Test whether ``x`` is in ``self``, that is if it is an
                 element of some realization of ``self``.
