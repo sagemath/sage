@@ -2492,16 +2492,17 @@ def strongly_regular_from_two_intersection_set(M):
     M = [list(p) for p in M]
 
     # For every point in F_q^{k+1} not on the hyperplane of M
-    for u in [tuple(x) for x in product(K,repeat=k)]:
+    for x in product(K, repeat=k):
+        u = tuple(x)
         # For every v point of M
         for v in M:
             # u is adjacent with all vertices on a uv line.
             g.add_edges([[u, tuple([u[i] + qq*v[i] for i in range(k)])]
                          for qq in K if not qq == K.zero()])
     g.relabel()
-    e = QQ((1,k))
+    e = QQ((1, k))
     qq = g.n_vertices()**e
-    g.name('two-intersection set in PG('+str(k)+','+str(qq)+')')
+    g.name(f'two-intersection set in PG({k},{qq})')
     return g
 
 

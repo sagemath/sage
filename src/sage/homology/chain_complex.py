@@ -316,7 +316,7 @@ def ChainComplex(data=None, base_ring=None, grading_group=None,
 
 class Chain_class(ModuleElement):
 
-    def __init__(self, parent, vectors, check=True):
+    def __init__(self, parent, vectors, check=True) -> None:
         r"""
         A Chain in a Chain Complex.
 
@@ -369,7 +369,7 @@ class Chain_class(ModuleElement):
         except KeyError:
             return self.parent().free_module(degree).zero()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -509,7 +509,7 @@ class Chain_class(ModuleElement):
             concatenated += UnicodeArt([' ... ']) + r
         return concatenated
 
-    def is_cycle(self):
+    def is_cycle(self) -> bool:
         """
         Return whether the chain is a cycle.
 
@@ -530,7 +530,7 @@ class Chain_class(ModuleElement):
                 return False
         return True
 
-    def is_boundary(self):
+    def is_boundary(self) -> bool:
         """
         Return whether the chain is a boundary.
 
@@ -606,7 +606,7 @@ class Chain_class(ModuleElement):
         parent = self.parent()
         return parent.element_class(parent, vectors)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return ``True`` if this chain is equal to ``other``.
 
@@ -623,7 +623,7 @@ class Chain_class(ModuleElement):
             return False
         return self._vec == other._vec
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` if this chain is not equal to ``other``.
 
@@ -665,7 +665,8 @@ class ChainComplex_class(Parent):
         sage: D
         Chain complex with at most 2 nonzero terms over Integer Ring
     """
-    def __init__(self, grading_group, degree_of_differential, base_ring, differentials):
+    def __init__(self, grading_group, degree_of_differential, base_ring,
+                 differentials) -> None:
         """
         Initialize ``self``.
 
@@ -689,7 +690,8 @@ class ChainComplex_class(Parent):
         if any(dim+degree_of_differential not in differentials and d.nrows() != 0
                for dim, d in differentials.items()):
             raise ValueError('invalid differentials')
-        if any(dim-degree_of_differential not in differentials and d.ncols() != 0
+        if any(dim - degree_of_differential not in differentials
+               and d.ncols() != 0
                for dim, d in differentials.items()):
             raise ValueError('invalid differentials')
         self._grading_group = grading_group
@@ -1058,7 +1060,7 @@ class ChainComplex_class(Parent):
             rank = self.free_module_rank(degree)
         return FreeModule(self.base_ring(), rank)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         The hash is formed by combining the hashes of.
 
@@ -1077,7 +1079,7 @@ class ChainComplex_class(Parent):
                 ^ hash(tuple(self.differential().items()))
                 ^ hash(self.degree_of_differential()))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return ``True`` iff this chain complex is the same as other: that
         is, if the base rings and the matrices of the two are the
@@ -1108,7 +1110,7 @@ class ChainComplex_class(Parent):
                 equal = equal and mat.ncols() == 0 and mat.nrows() == 0
         return equal
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` iff this chain complex is not the same as other.
 
@@ -1605,7 +1607,7 @@ class ChainComplex_class(Parent):
         return ChainComplex({k-shift: sgn * self._diff[k] for k in self._diff},
                             degree_of_differential=deg)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -1620,7 +1622,7 @@ class ChainComplex_class(Parent):
             s = 'Trivial chain complex'
         else:
             s = 'Chain complex with at most {0} nonzero terms'.format(len(diffs)-1)
-        s += ' over {0}'.format(self.base_ring())
+        s += f' over {self.base_ring()}'
         return s
 
     def _ascii_art_(self):
