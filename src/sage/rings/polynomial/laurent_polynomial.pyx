@@ -2218,11 +2218,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             False
             sage: R(0).divides(R(0))
             True
-            sage: R.<x> = LaurentPolynomialRing(Zmod(6))
-            sage: p = 4*x + 3*x^-1
-            sage: q = 5*x^2 + x + 2*x^-2
-            sage: p.divides(q)
-            False
 
             sage: R.<x,y> = GF(2)[]
             sage: S.<z> = LaurentPolynomialRing(R)
@@ -2237,14 +2232,14 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
             sage: R.<y> = LaurentPolynomialRing(Zmod(4))
             sage: a = 2+y
-            sage: b = 2
-            sage: a.divides(a*b)
-            True
-            sage: (y^2 * (2+y)).divides(2+y)
-            True
-            sage: R(2).divides(R(2))
-            True
+            sage: a.divides(a)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: divisibility test not implemented for Laurent polynomials over non-integral domains
         """
+        if not self.base_ring().is_integral_domain():
+            raise NotImplementedError("divisibility test not implemented for Laurent polynomials over non-integral domains")
+
         # Handle zero cases
         if other.is_zero():
             return True  # everything divides 0
@@ -2287,17 +2282,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         for m in range(deg_bound):
             q_shifted = q * x**m
-            try:
-                if p.divides(q_shifted):
-                    return True
-            except NotImplementedError:
-                # For non-integral domains, try quo_rem and verify
-                try:
-                    quotient, remainder = q_shifted.quo_rem(p)
-                    if quotient * p == q_shifted:
-                        return True
-                except (ArithmeticError, NotImplementedError, ValueError):
-                    # quo_rem may fail for non-invertible leading coefficients
-                    pass
+            if p.divides(q_shifted):
+                return True
 
         return False
