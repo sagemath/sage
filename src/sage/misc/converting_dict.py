@@ -281,7 +281,7 @@ class KeyConvertingDict(dict):
             sage: d = KeyConvertingDict(int)
             sage: d["3"] = 4
             sage: d["1"] = 2
-            sage: repr(d)    # dictionaries are insertion ordered since Python 3.6
+            sage: repr(d)    # dictionaries are insertion ordered
             '{3: 4, 1: 2}'
             sage: d          # indirect doctest
             {1: 2, 3: 4}

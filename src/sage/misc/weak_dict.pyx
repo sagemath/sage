@@ -465,7 +465,7 @@ cdef class WeakValueDictionary(dict):
             sage: D.setdefault(matrix([]), ZZ)                                          # needs sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: mutable matrices are unhashable
+            TypeError: ...mutable matrices are unhashable...
         """
         cdef PyObject* wr = PyDict_GetItemWithError(self, k)
         if wr != NULL:
@@ -585,7 +585,7 @@ cdef class WeakValueDictionary(dict):
             sage: D.pop(matrix([]))                                                     # needs sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: mutable matrices are unhashable
+            TypeError: ...mutable matrices are unhashable...
         """
         cdef PyObject* wr = PyDict_GetItemWithError(self, k)
         if wr == NULL:
@@ -662,7 +662,7 @@ cdef class WeakValueDictionary(dict):
             sage: D.get(matrix([]))                                                     # needs sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: mutable matrices are unhashable
+            TypeError: ...mutable matrices are unhashable...
         """
         cdef PyObject * wr = PyDict_GetItemWithError(self, k)
         if wr == NULL:
@@ -701,7 +701,7 @@ cdef class WeakValueDictionary(dict):
             sage: D[matrix([])]                                                         # needs sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: mutable matrices are unhashable
+            TypeError: ...mutable matrices are unhashable...
         """
         cdef PyObject* wr = PyDict_GetItemWithError(self, k)
         if wr == NULL:
@@ -744,7 +744,7 @@ cdef class WeakValueDictionary(dict):
             sage: matrix([]) in D                                                       # needs sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: mutable matrices are unhashable
+            TypeError: ...mutable matrices are unhashable...
         """
         cdef PyObject* wr = PyDict_GetItemWithError(self, k)
         return (wr != NULL) and (PyWeakref_GetObject(wr) != Py_None)

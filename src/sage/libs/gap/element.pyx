@@ -16,7 +16,7 @@ elements. For general information about GAP, you should read the
 # ****************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
-from cpython.mem cimport PyMem_Malloc, PyMem_Free
+from libc.stdlib cimport free
 
 from sage.libs.gap.gap_includes cimport *
 from sage.libs.gap.libgap import libgap
@@ -25,6 +25,7 @@ from sage.libs.gap.util import GAPError, gap_sig_on, gap_sig_off
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.pylong cimport mpz_get_pylong, mpz_set_pylong
 from sage.cpython.string cimport str_to_bytes, char_to_str
+from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
@@ -213,135 +214,79 @@ cdef Obj make_gap_record(sage_dict) except NULL:
         GAP_Leave()
 
 
-cdef Obj make_gap_integer(sage_int) except NULL:
+cdef extern from *:
+    long __BYTE_ORDER__, __ORDER_LITTLE_ENDIAN__
+
+
+cdef Obj make_gap_integer_from_mpz(mpz_srcptr z) except NULL:
     """
-    Convert Sage integer or Python integer into Gap integer
+    Internal helper to convert ``mpz`` integer into ``Gap`` integer.
+    """
+    cdef size_t num_gmp_limbs = mpz_size(z)
+    cdef void* temp
+    cdef size_t num_gap_words
+    if sizeof(mp_limb_t) == sizeof(UInt) or (
+            __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ and sizeof(mp_limb_t) * num_gmp_limbs % sizeof(UInt) == 0):
+        # use GMP internal to avoid memory allocation
+        num_gap_words = num_gmp_limbs * sizeof(mp_limb_t) / sizeof(UInt) if sizeof(mp_limb_t) != sizeof(UInt) else num_gmp_limbs
+        try:
+            GAP_Enter()
+            return GAP_MakeObjInt(<const UInt*>z._mp_d, -num_gap_words if mpz_sgn(z) < 0 else num_gap_words)
+        finally:
+            GAP_Leave()
+    else:
+        temp = mpz_export(NULL, &num_gap_words, -1, sizeof(UInt), 0, 0, z)  # because of sage.ext.memory, this uses sage_sig_malloc
+        try:
+            GAP_Enter()
+            return GAP_MakeObjInt(<const UInt*>temp, -num_gap_words if mpz_sgn(z) < 0 else num_gap_words)
+        finally:
+            GAP_Leave()
+            free(temp)
+
+
+def make_GapElement_Integer_from_sage_integer(parent, Integer x):
+    """
+    Internal helper to convert Sage :class:`~sage.rings.integer.Integer` into GapElement objects.
+    Not to be used directly, use ``libgap(x)`` instead.
+
+    TESTS::
+
+        sage: for x in [0, 1, 2**31, 2**32, 2**63, 2**64, 2**128]:
+        ....:     for y in [x, -x, x-1]:
+        ....:         assert str(libgap(y)) == str(y), y
+
+    Check that the following is fast (i.e. no conversion to decimal is performed)::
+
+        sage: ignore = libgap(1<<500000000)
+    """
+    return make_GapElement_Integer(parent, make_gap_integer_from_mpz(x.value))
+
+
+cdef Obj make_gap_integer(x) except NULL:
+    """
+    Convert Python integer into Gap integer. Not to be used directly, use ``libgap(x)`` instead.
 
     INPUT:
 
-    - ``sage_int`` -- Sage integer or Python int
+    - ``x`` -- Python ``int`` object
 
     OUTPUT: the integer as a GAP ``Obj``
 
-    TESTS:
+    TESTS::
 
-    Test with Sage integers::
+        sage: for x in [0, 1, 2**31, 2**32, 2**63, 2**64, 2**128]:
+        ....:     for y in [x, -x, x-1]:
+        ....:         assert str(libgap(int(y))) == str(y), y
 
-        sage: libgap(0)   # indirect doctest
-        0
-        sage: libgap(1)
-        1
-        sage: libgap(-1)
-        -1
-        sage: libgap(2**31)
-        2147483648
-        sage: libgap(-2**63)
-        -9223372036854775808
-        sage: libgap(2**64)
-        18446744073709551616
-        sage: libgap(-(2**256))
-        -115792089237316195423570985008687907853269984665640564039457584007913129639936
+    Check that the following is fast (i.e. no conversion to decimal is performed)::
 
-    Test with Python int (not Sage Integer)::
-
-        sage: libgap(int(0))
-        0
-        sage: libgap(int(1))
-        1
-        sage: libgap(int(-1))
-        -1
-        sage: libgap(int(10**30))
-        1000000000000000000000000000000
-        sage: libgap(-int(10**30))
-        -1000000000000000000000000000000
-        sage: libgap(int(2**100))
-        1267650600228229401496703205376
-
-    Test round-trip conversion::
-
-        sage: n = int(123456789012345678901234567890)
-        sage: gap_n = libgap(n)
-        sage: gap_n.sage() == n
-        True
-
-        sage: n = factorial(100)
-        sage: gap_n = libgap(n)
-        sage: gap_n.sage() == n
-        True
+        sage: ignore = libgap(int(1<<500000000))
     """
     cdef mpz_t temp
-    cdef Obj result
-    cdef Int size
-    cdef Int sign
-    cdef UInt* limbs = NULL
-    cdef size_t limb_count
-    cdef size_t i
-    
-    # We need to handle this carefully to avoid accessing GMP internals
     mpz_init(temp)
     try:
-        # Convert Python int to GMP mpz_t
-        mpz_set_pylong(temp, sage_int)
-        
-        # Handle zero specially (mpz_size returns 0 for zero)
-        size = mpz_size(temp)
-        if size == 0:
-            return GAP_NewObjIntFromInt(0)
-        
-        # Get the sign: mpz_sgn returns -1, 0, or 1
-        sign = <Int>mpz_sgn(temp)
-        
-        # Allocate limb buffer for export
-        # sizeof(mp_limb_t) may differ from sizeof(UInt), so we need to handle this
-        if sizeof(mp_limb_t) == sizeof(UInt):
-            # Direct case: limb sizes match, we can use mpz_export directly
-            # into a UInt buffer
-            limbs = <UInt*>PyMem_Malloc(size * sizeof(UInt))
-            if limbs == NULL:
-                raise MemoryError("Failed to allocate limb buffer")
-            
-            # Export limbs: order=-1 (least significant first, native GMP/GAP order),
-            # size=sizeof(UInt), endian=0 (native), nails=0 (use full limbs)
-            mpz_export(limbs, &limb_count, -1, sizeof(UInt), 0, 0, temp)
-            
-            # GAP_MakeObjInt expects signed size (negative for negative numbers)
-            if sign < 0:
-                size = -<Int>limb_count
-            else:
-                size = <Int>limb_count
-            
-            try:
-                GAP_Enter()
-                result = GAP_MakeObjInt(<const UInt*>limbs, size)
-            finally:
-                GAP_Leave()
-                PyMem_Free(limbs)
-            
-            return result
-        else:
-            # Fallback case: limb sizes don't match
-            # We need to copy limb-by-limb using mpz_getlimbn
-            # This is slower but portable
-            limbs = <UInt*>PyMem_Malloc(size * sizeof(UInt))
-            if limbs == NULL:
-                raise MemoryError("Failed to allocate limb buffer")
-            
-            # Copy each limb individually
-            for i in range(size):
-                limbs[i] = <UInt>mpz_getlimbn(temp, i)
-            
-            # GAP_MakeObjInt expects signed size
-            if sign < 0:
-                size = -size
-            
-            try:
-                GAP_Enter()
-                result = GAP_MakeObjInt(<const UInt*>limbs, size)
-            finally:
-                GAP_Leave()
-                PyMem_Free(limbs)
-            
-            return result
+        mpz_set_pylong(temp, x)
+        return make_gap_integer_from_mpz(temp)
     finally:
         mpz_clear(temp)
 
