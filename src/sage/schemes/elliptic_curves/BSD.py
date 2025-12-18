@@ -191,7 +191,7 @@ def native_two_isogeny_descent_work(E, two_tor_rk) -> tuple:
     if not all(n.is_power_of(2) for n in result_two_descent):
         raise RuntimeError("not a power of 2 in two-descent")
 
-    e1, e2, e1p, e2p = [n.valuation(2) for n in result_two_descent]
+    e1, e2, e1p, e2p = (n.valuation(2) for n in result_two_descent)
     rank_lower_bd = e1 + e1p - 2
     rank_upper_bd = e2 + e2p - 2
     sha_upper_bd = e2 + e2p - e1 - e1p

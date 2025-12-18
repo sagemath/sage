@@ -1,6 +1,7 @@
-from typing import Callable, Dict, List, Type, Union
+from collections.abc import Callable
+from typing import Union
 
-def abstract_method(f: Callable = None, optional: bool = False) -> Callable:
+def abstract_method(f: Callable | None = None, optional: bool = False) -> Callable:
     ...
 
 class AbstractMethod:
@@ -13,11 +14,11 @@ class AbstractMethod:
     def _sage_src_lines_(self) -> Union[str, int]:
         ...
 
-    def __get__(self, instance: object, cls: Type) -> Union[Callable, NotImplementedError]:
+    def __get__(self, instance: object, cls: type) -> Union[Callable, NotImplementedError]:
         ...
 
     def is_optional(self) -> bool:
         ...
 
-def abstract_methods_of_class(cls: Type) -> Dict[str, List[str]]:
+def abstract_methods_of_class(cls: type) -> dict[str, list[str]]:
     ...

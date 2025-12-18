@@ -2035,7 +2035,7 @@ class TransitiveGroupsAll(DisjointUnionEnumeratedSets):
     # We override the __call__ as the elements are not instances of Element
     __call__ = DisjointUnionEnumeratedSets._element_constructor_facade
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -2044,7 +2044,7 @@ class TransitiveGroupsAll(DisjointUnionEnumeratedSets):
         """
         return "Transitive Groups"
 
-    def __contains__(self, G):
+    def __contains__(self, G) -> bool:
         r"""
         EXAMPLES::
 
@@ -2111,7 +2111,7 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
         """
         return "Transitive Groups of degree %s" % (self._degree,)
 
-    def __contains__(self, G):
+    def __contains__(self, G) -> bool:
         r"""
         EXAMPLES::
 
@@ -2445,7 +2445,7 @@ class PrimitiveGroupsAll(DisjointUnionEnumeratedSets):
         """
         return "Primitive Groups"
 
-    def __contains__(self, G):
+    def __contains__(self, G) -> bool:
         r"""
         Test whether `G` is in ``self``.
 
@@ -2518,7 +2518,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
         """
         return "Primitive Groups of degree %s" % (self._degree)
 
-    def __contains__(self, G):
+    def __contains__(self, G) -> bool:
         r"""
         Test whether `G` is in ``self``.
 

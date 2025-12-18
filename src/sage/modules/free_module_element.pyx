@@ -1085,7 +1085,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         Create the multiplication table of `GF(4)` using GP::
 
             sage: # needs sage.libs.pari
-            sage: k.<a> = GF(4, impl='pari_ffelt')
+            sage: k.<a> = GF(4, implementation="pari_ffelt")
             sage: v = gp(vector(list(k)))
             sage: v
             [0, 1, a, a + 1]
