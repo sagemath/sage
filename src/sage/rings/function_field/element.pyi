@@ -1,4 +1,5 @@
 from typing import Any
+
 from sage.structure.element import FieldElement
 
 class FunctionFieldElement(FieldElement):
@@ -17,7 +18,7 @@ class FunctionFieldElement(FieldElement):
     def _latex_(self) -> str:
         ...
 
-    def subs(self, in_dict: dict = None, **kwds: Any) -> 'FunctionFieldElement':
+    def subs(self, in_dict: dict | None = None, **kwds: Any) -> 'FunctionFieldElement':
         ...
 
     def matrix(self, base: Any = None) -> Any:

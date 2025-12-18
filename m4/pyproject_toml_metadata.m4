@@ -13,7 +13,7 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
-requires-python = ">=3.9, <3.15"
+requires-python = ">=3.12, <3.15"
 
 [project.urls]
 download = "https://doc.sagemath.org/html/en/installation/index.html"

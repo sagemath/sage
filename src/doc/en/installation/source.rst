@@ -173,10 +173,10 @@ To compile and install Sage in editable install, then just use:
         meson-python \
         "cypari2 >=2.2.1" \
         "cython >=3.0, != 3.0.3, != 3.1.0" \
-        "cython >=3.0, != 3.0.3" \
         "gmpy2 >=2.1.5" \
         memory_allocator \
         "numpy >=1.25" \
+        "ninja >=1.8.2" \
         jinja2 \
         setuptools
     $ uv sync --frozen --inexact --no-build-isolation
@@ -261,7 +261,7 @@ you don't want to build the HTML documentation, you might use
 
 If pip is used as above with ``--editable``, ``builddir`` is set to be
 ``build/cp[Python major version][Python minor version]``, such as
-``build/cp311``.
+``build/cp312``.
 
 To compile the project, run the following command:
 
