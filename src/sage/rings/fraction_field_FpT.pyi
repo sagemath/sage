@@ -1,4 +1,4 @@
-from typing import Any, Dict, Tuple, Union
+from typing import Any
 
 def is_FpTElement(x: Any) -> bool:
     ...
@@ -33,7 +33,7 @@ class FpTElement:
     def __call__(self, *args: Any, **kwds: Any) -> 'FpTElement':
         ...
 
-    def subs(self, in_dict: Dict = None, *args: Any, **kwds: Any) -> 'FpTElement':
+    def subs(self, in_dict: dict | None = None, *args: Any, **kwds: Any) -> 'FpTElement':
         ...
 
     def valuation(self, v: Any) -> int:
@@ -105,7 +105,7 @@ class FpT_iter:
     cur: FpTElement
     g: Any
 
-    def __init__(self, parent: Any, degree: int = None, start: FpTElement = None) -> None:
+    def __init__(self, parent: Any, degree: int | None = None, start: FpTElement = None) -> None:
         ...
 
     def __cinit__(self, parent: Any, *args: Any, **kwds: Any) -> None:
@@ -126,16 +126,16 @@ class Polyring_FpT_coerce:
     def __init__(self, R: Any) -> None:
         ...
 
-    def _extra_slots(self) -> Dict:
+    def _extra_slots(self) -> dict:
         ...
 
-    def _update_slots(self, _slots: Dict) -> None:
+    def _update_slots(self, _slots: dict) -> None:
         ...
 
     def _call_(self, _x: Any) -> FpTElement:
         ...
 
-    def _call_with_args(self, _x: Any, args: Tuple = (), kwds: Dict = {}) -> FpTElement:
+    def _call_with_args(self, _x: Any, args: tuple = (), kwds: dict = {}) -> FpTElement:
         ...
 
     def section(self) -> 'FpT_Polyring_section':
@@ -147,10 +147,10 @@ class FpT_Polyring_section:
     def __init__(self, f: Polyring_FpT_coerce) -> None:
         ...
 
-    def _extra_slots(self) -> Dict:
+    def _extra_slots(self) -> dict:
         ...
 
-    def _update_slots(self, _slots: Dict) -> None:
+    def _update_slots(self, _slots: dict) -> None:
         ...
 
     def _call_(self, _x: Any) -> Any:
@@ -162,16 +162,16 @@ class Fp_FpT_coerce:
     def __init__(self, R: Any) -> None:
         ...
 
-    def _extra_slots(self) -> Dict:
+    def _extra_slots(self) -> dict:
         ...
 
-    def _update_slots(self, _slots: Dict) -> None:
+    def _update_slots(self, _slots: dict) -> None:
         ...
 
     def _call_(self, _x: Any) -> FpTElement:
         ...
 
-    def _call_with_args(self, _x: Any, args: Tuple = (), kwds: Dict = {}) -> FpTElement:
+    def _call_with_args(self, _x: Any, args: tuple = (), kwds: dict = {}) -> FpTElement:
         ...
 
     def section(self) -> 'FpT_Fp_section':
@@ -183,10 +183,10 @@ class FpT_Fp_section:
     def __init__(self, f: Fp_FpT_coerce) -> None:
         ...
 
-    def _extra_slots(self) -> Dict:
+    def _extra_slots(self) -> dict:
         ...
 
-    def _update_slots(self, _slots: Dict) -> None:
+    def _update_slots(self, _slots: dict) -> None:
         ...
 
     def _call_(self, _x: Any) -> Any:
@@ -198,16 +198,16 @@ class ZZ_FpT_coerce:
     def __init__(self, R: Any) -> None:
         ...
 
-    def _extra_slots(self) -> Dict:
+    def _extra_slots(self) -> dict:
         ...
 
-    def _update_slots(self, _slots: Dict) -> None:
+    def _update_slots(self, _slots: dict) -> None:
         ...
 
     def _call_(self, _x: Any) -> FpTElement:
         ...
 
-    def _call_with_args(self, _x: Any, args: Tuple = (), kwds: Dict = {}) -> FpTElement:
+    def _call_with_args(self, _x: Any, args: tuple = (), kwds: dict = {}) -> FpTElement:
         ...
 
     def section(self) -> Any:

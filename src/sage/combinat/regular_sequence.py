@@ -1100,10 +1100,10 @@ class RegularSequence(RecognizableSeries):
             Z = zero_matrix(C[0].dimensions()[0])
 
             def blocks(r):
-                upper = list([C[s], D[s], Z]
-                             for s in reversed(srange(max(0, r-2), r+1)))
-                lower = list([Z, C[s], D[s]]
-                             for s in reversed(srange(k-3+len(upper), k)))
+                upper = [[C[s], D[s], Z]
+                         for s in reversed(srange(max(0, r-2), r+1))]
+                lower = [[Z, C[s], D[s]]
+                         for s in reversed(srange(k-3+len(upper), k))]
                 return upper + lower
 
             return {r: Matrix.block(blocks(r)) for r in P.alphabet()}
