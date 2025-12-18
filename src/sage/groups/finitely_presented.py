@@ -1051,7 +1051,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
             Permutation(coset_table[2*i]) for i in range(len(coset_table)//2)])
 
     def cayley_graph(self, side='right', simple=False, elements=None,
-                     generators=None, limit=4096000):
+                     generators=None, connecting_set=None, limit=4096000):
         r"""
         Return the Cayley graph of this finitely presented group.
 
@@ -1068,6 +1068,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
           a simple graph (no loops, no labels, no multiple edges)
         - ``generators`` -- list, tuple, or family of elements
           of ``self`` (default: ``self.gens()``)
+        - ``connecting_set`` -- alias for ``generators``; deprecated
         - ``elements`` -- list (or iterable) of elements of ``self``
           (default: all elements if the group is finite)
         - ``limit`` -- integer (default: 4096000); the maximal number
@@ -1139,11 +1140,16 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
             converts vertices back to elements of the finitely presented
             group.
         """
+        from collections import deque
         from sage.graphs.digraph import DiGraph
-        from sage.categories.groups import Groups
 
         if side not in ["left", "right", "twosided"]:
             raise ValueError("option 'side' must be 'left', 'right' or 'twosided'")
+
+        # Handle connecting_set parameter (alias for generators)
+        if connecting_set is not None:
+            if generators is None:
+                generators = connecting_set
 
         # Get the permutation group representation
         perm_group = self.as_permutation_group(limit=limit)
@@ -1151,6 +1157,17 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         # The generators of perm_group correspond to generators of self
         perm_gens = perm_group.gens()
         self_gens = self.gens()
+
+        # Helper function to convert Tietze representation to permutation element
+        def tietze_to_perm(elem):
+            t = elem.Tietze()
+            perm_e = perm_group.one()
+            for i in t:
+                if i > 0:
+                    perm_e = perm_e * perm_gens[i-1]
+                else:
+                    perm_e = perm_e * perm_gens[-i-1].inverse()
+            return perm_e
 
         if generators is None:
             generators = list(self_gens)
@@ -1162,36 +1179,18 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
             perm_elements = list(perm_group)
         else:
             elements = [self(e) for e in elements]
-            perm_elements = []
-            for e in elements:
-                t = e.Tietze()
-                perm_e = perm_group.one()
-                for i in t:
-                    if i > 0:
-                        perm_e = perm_e * perm_gens[i-1]
-                    else:
-                        perm_e = perm_e * perm_gens[-i-1].inverse()
-                perm_elements.append(perm_e)
+            perm_elements = [tietze_to_perm(e) for e in elements]
 
         # Build a mapping from perm elements to fp elements by doing a BFS from the identity
         perm_to_fp = {perm_group.one(): self.one()}
         visited = {perm_group.one()}
-        queue = [perm_group.one()]
+        queue = deque([perm_group.one()])
 
         # Precompute generator pairs (fp element, perm element)
-        gen_pairs = []
-        for g in self_gens:
-            t = g.Tietze()
-            perm_g = perm_group.one()
-            for i in t:
-                if i > 0:
-                    perm_g = perm_g * perm_gens[i-1]
-                else:
-                    perm_g = perm_g * perm_gens[-i-1].inverse()
-            gen_pairs.append((g, perm_g))
+        gen_pairs = [(g, tietze_to_perm(g)) for g in self_gens]
 
         while queue:
-            current_perm = queue.pop(0)
+            current_perm = queue.popleft()
             current_fp = perm_to_fp[current_perm]
             for fp_g, perm_g in gen_pairs:
                 # Try right multiplication
@@ -1211,20 +1210,11 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         perm_elements_set = set(perm_elements)
         perm_elements = [pe for pe in perm_to_fp if pe in perm_elements_set]
 
-        # Convert generators to permutation group
-        perm_generators = {}
-        for g in generators:
-            t = g.Tietze()
-            perm_g = perm_group.one()
-            for i in t:
-                if i > 0:
-                    perm_g = perm_g * perm_gens[i-1]
-                else:
-                    perm_g = perm_g * perm_gens[-i-1].inverse()
-            perm_generators[g] = perm_g
+        # Convert generators to permutation group (mapping from fp element to perm element)
+        fp_to_perm_gen = {g: tietze_to_perm(g) for g in generators}
 
         # Build the graph
-        if simple or self in Groups():
+        if simple:
             result = DiGraph()
         else:
             result = DiGraph(multiedges=True, loops=True)
@@ -1237,7 +1227,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
 
         for perm_x in perm_elements:
             fp_x = perm_to_fp[perm_x]
-            for fp_g, perm_g in perm_generators.items():
+            for fp_g, perm_g in fp_to_perm_gen.items():
                 if left:
                     perm_target = perm_g * perm_x
                     if perm_target in perm_to_fp:
