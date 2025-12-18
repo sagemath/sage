@@ -488,6 +488,52 @@ def PolynomialRing(base_ring, *args, **kwds):
         ...
         NotImplementedError: polynomials over Real Field with 53 bits of precision are not supported in Singular
 
+    Polynomial rings over double-precision real and complex fields are supported
+    by the ``'singular'`` implementation::
+
+        sage: R.<x> = PolynomialRing(RDF, implementation='singular')                    # needs sage.libs.singular
+        sage: x^2 + 1
+        x^2 + (1.000e + 00)
+
+        sage: S.<x> = PolynomialRing(CDF, implementation='singular')                    # needs sage.libs.singular
+        sage: x^2 + 1
+        x^2 + 1
+
+    The ring printing via libSingular matches the output of the Singular
+    interface::
+
+        sage: from sage.libs.singular.function import singular_function               # needs sage.libs.singular
+        sage: R.<x> = PolynomialRing(RDF, implementation="singular")                  # needs sage.libs.singular
+        sage: C.<x> = PolynomialRing(CDF, implementation="singular")                  # needs sage.libs.singular
+        sage: print(singular_function("print")(R))                                    # needs sage.libs.singular
+        polynomial ring, over a field, global ordering
+        // coefficients: Float() considered as a field
+        // number of vars : 1
+        //        block   1 : ordering dp
+        //                  : names    x
+        //        block   2 : ordering C
+        sage: print(singular_function("print")(C))                                    # needs sage.libs.singular
+        polynomial ring, over a field, global ordering
+        // coefficients: real[I](complex:15 digits, additional 0 digits)/(I^2+1) considered as a field
+        // number of vars : 1
+        //        block   1 : ordering dp
+        //                  : names    x
+        //        block   2 : ordering C
+        sage: print(singular(R))                                                      # needs sage.libs.singular
+        polynomial ring, over a field, global ordering
+        // coefficients: Float() considered as a field
+        // number of vars : 1
+        //        block   1 : ordering dp
+        //                  : names    x
+        //        block   2 : ordering C
+        sage: print(singular(C))                                                      # needs sage.libs.singular
+        polynomial ring, over a field, global ordering
+        // coefficients: real[I](complex:15 digits, additional 0 digits)/(I^2+1) considered as a field
+        // number of vars : 1
+        //        block   1 : ordering dp
+        //                  : names    x
+        //        block   2 : ordering C
+
     The following corner case used to result in a warning message from
     ``libSingular``, and the generators of the resulting polynomial
     ring were not zero::

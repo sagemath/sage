@@ -40,15 +40,36 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_field
 from sage.rings.fraction_field import FractionField_generic
 
+from sage.rings.real_double cimport RealDoubleElement
+from sage.rings.complex_double cimport ComplexDoubleElement
+import sage.rings.abc
+
 from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
 from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
 from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
 from sage.libs.gmp.all cimport *
 
+cdef extern from "coeffs/mpr_complex.h":
+    cdef cppclass gmp_float:
+        gmp_float(double v)
+        double to_double "operator double"() const
+
+    cdef cppclass gmp_complex:
+        gmp_complex(double re, double im)
+        gmp_float real() const
+        gmp_float imag() const
+
+    char *floatToStr(const gmp_float & r, const unsigned int oprec)
+    char *complexToStr(gmp_complex & c, const unsigned int oprec, const n_Procs_s* src)
+
 from sage.cpython.string import FS_ENCODING
 from sage.cpython.string cimport str_to_bytes, char_to_str, bytes_to_str
 
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular
+
+ctypedef union _nf_real:
+    double f
+    number* n
 
 ctypedef struct fraction "fractionObject":
     poly *numerator
@@ -1599,6 +1620,10 @@ cdef object si2sa(number *n, ring *_ring, object base):
 
     An element of ``base``
     """
+    cdef gmp_float* f
+    cdef gmp_complex* c
+    cdef _nf_real u
+    cdef char* s
     if isinstance(base, FiniteField_prime_modn) and _ring.cf.type == n_Zp:
         return base(_ring.cf.cfInt(n, _ring.cf))
 
@@ -1629,6 +1654,18 @@ cdef object si2sa(number *n, ring *_ring, object base):
     elif isinstance(base, IntegerModRing_generic):
         return si2sa_ZZmod(n, _ring, base)
 
+    elif isinstance(base, sage.rings.abc.RealDoubleField) and _ring.cf.type == n_R:
+        u.n = n
+        return base(u.f)
+
+    elif isinstance(base, sage.rings.abc.RealDoubleField) and _ring.cf.type == n_long_R:
+        f = <gmp_float*>n
+        return base(f[0].to_double())
+
+    elif isinstance(base, sage.rings.abc.ComplexDoubleField) and _ring.cf.type == n_long_C:
+        c = <gmp_complex*>n
+        return base(c[0].real().to_double(), c[0].imag().to_double())
+
     else:
         raise ValueError("cannot convert from SINGULAR number")
 
@@ -1648,6 +1685,10 @@ cdef number *sa2si(Element elem, ring * _ring) noexcept:
     a (pointer to) a singular number
     """
     cdef int i = 0
+    cdef _nf_real u
+    cdef ComplexDoubleElement z
+    cdef RealDoubleElement re
+    cdef RealDoubleElement im
 
     if isinstance(elem._parent, FiniteField_prime_modn) and _ring.cf.type == n_Zp:
         return n_Init(int(elem),_ring.cf)
@@ -1671,6 +1712,16 @@ cdef number *sa2si(Element elem, ring * _ring) noexcept:
         return sa2si_NF(elem, _ring)
     elif isinstance(elem._parent, IntegerModRing_generic):
         return sa2si_ZZmod(elem, _ring)
+    elif isinstance(elem._parent, sage.rings.abc.RealDoubleField) and _ring.cf.type == n_R:
+        u.f = (<RealDoubleElement>elem)._value
+        return u.n
+    elif isinstance(elem._parent, sage.rings.abc.RealDoubleField) and _ring.cf.type == n_long_R:
+        return <number*><void*>new gmp_float((<RealDoubleElement>elem)._value)
+    elif isinstance(elem._parent, sage.rings.abc.ComplexDoubleField) and _ring.cf.type == n_long_C:
+        z = <ComplexDoubleElement>elem
+        re = <RealDoubleElement>z.real()
+        im = <RealDoubleElement>z.imag()
+        return <number*><void*>new gmp_complex(re._value, im._value)
     elif isinstance(elem._parent, FractionField_generic) and isinstance(elem._parent.base(), (MPolynomialRing_libsingular, PolynomialRing_field)):
         if isinstance(elem._parent.base().base_ring(), RationalField):
             return sa2si_transext_QQ(elem, _ring)
