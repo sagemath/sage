@@ -220,9 +220,11 @@ class OreModuleElement(FreeModuleElement_generic_dense):
         M = self.parent()
         y = M._pseudohom(self)
         if M._denominator is not None:
-            den = M._denominator.value()
-            coords = [num/den for num in y.list()]
-            if not integral:
+            base = M.base_ring()
+            scalar = M._denominator.value().inverse()
+            scalar = base.fraction_field()(scalar)
+            coords = [scalar*c for c in y.list()]
+            if not integral and scalar not in base:
                 M = M.over_fraction_field()
             y = M(coords)
         return y

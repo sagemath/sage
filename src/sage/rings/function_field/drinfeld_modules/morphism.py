@@ -3,7 +3,7 @@ r"""
 Drinfeld module morphisms
 
 This module provides the class
-:class:`sage.rings.function_fields.drinfeld_module.morphism.DrinfeldModuleMorphism`.
+:class:`sage.rings.function_field.drinfeld_modules.morphism.DrinfeldModuleMorphism`.
 
 AUTHORS:
 - Antoine Leudière (2022-04)
@@ -606,7 +606,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             ...
             ValueError: the two morphisms must have the same domain
 
-        SEEALSO::
+        .. SEEALSO::
 
             :meth:`left_lcm`
         """
@@ -654,7 +654,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             ...
             ValueError: the two morphisms must have the same domain
 
-        SEEALSO::
+        .. SEEALSO::
 
             :meth:`right_gcd`
         """
@@ -930,3 +930,62 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             Y^3 + (T + 1)*Y^2 + (2*T + 3)*Y + 2*T^3 + T + 1
         """
         return self.characteristic_polynomial(var)
+
+    def anderson_motive(self, names_domain=None, names_codomain=None):
+        r"""
+        Return the morphism giving the action of this morphism on
+        the Anderson motives.
+
+        INPUT:
+
+        - ``names_domain`` -- a string of a list of strings (default:
+          ``None``), the names of the vector of the canonical basis
+          of the Anderson motive of the domain of this isogeny; if
+          ``None``, elements are represented as row vectors
+
+        - ``names_codomain`` -- a string of a list of strings (default:
+          ``None``), the same with the codomain
+
+        EXAMPLES::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [z, 0, 1, z])
+            sage: tau = phi.ore_variable()
+            sage: u = phi.hom(tau + 1)
+            sage: f = u.anderson_motive()
+            sage: f
+            Morphism:
+              From: Anderson motive of Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*τ^3 + (3*z^2 + 2*z + 2)*τ^2 + (2*z^2 + 3*z + 4)*τ + z
+              To:   Anderson motive of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+            sage: f.matrix()
+            [                1                 1                 0]
+            [                0                 1                 1]
+            [(3*z^2 + 4)*T + 4                 0         2*z^2 + 2]
+
+        We underline that this construction is contravariant: the domain
+        of `f` is the Anderson motive of the codomain of `u` and vice versa::
+
+            sage: psi = u.codomain()
+            sage: f.domain() is psi.anderson_motive()
+            True
+            sage: f.codomain() is phi.anderson_motive()
+            True
+
+        An example with given names::
+
+            sage: f = u.anderson_motive(names_domain='a', names_codomain='b')
+            sage: f
+            Morphism:
+              From: Anderson motive <b0, b1, b2> of Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*τ^3 + (3*z^2 + 2*z + 2)*τ^2 + (2*z^2 + 3*z + 4)*τ + z
+              To:   Anderson motive <a0, a1, a2> of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+
+        .. SEEALSO::
+
+            :mod:`sage.rings.function_field.drinfeld_modules.anderson_motive`
+        """
+        M = self.domain().anderson_motive(names=names_domain)
+        N = self.codomain().anderson_motive(names=names_codomain)
+        H = N.Hom(M)
+        return H(self)

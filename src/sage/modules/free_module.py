@@ -1076,9 +1076,18 @@ class Module_free_ambient(Module):
             sage: F = FreeModule(SR, 2)                                                 # needs sage.symbolic
             sage: tuple(F.some_elements())                                              # needs sage.symbolic
             ((1, 0), (some_variable, some_variable))
+
+        TESTS::
+
+            sage: F = FreeModule(QQ, 0)
+            sage: tuple(F.some_elements())
+            ((),)
         """
         yield self.an_element()
-        yield self.base().an_element() * sum(self.gens())
+        gens = self.gens()
+        if not gens:
+            return
+        yield self.base().an_element() * sum(gens)
         some_elements_base = iter(self.base().some_elements())
         n = self.degree()
         while True:
@@ -2481,7 +2490,7 @@ class FreeModule_generic(Module_free_ambient):
         """
         G = self.gens()
         if not G:
-            yield self(0)
+            yield self.zero()
             return
 
         R = self.base_ring()
