@@ -2757,47 +2757,6 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         """
         raise ValueError("the group is infinite")
 
-    def cayley_graph(self, side='right', simple=False, elements=None,
-                     generators=None, connecting_set=None):
-        r"""
-        Return the Cayley graph of ``self``.
-
-        Since braid groups are infinite, this method requires ``elements``
-        to be specified. It uses the generic semigroup Cayley graph
-        implementation.
-
-        INPUT:
-
-        - ``side`` -- ``'left'``, ``'right'``, or ``'twosided'``:
-          the side on which the generators act (default: ``'right'``)
-        - ``simple`` -- boolean (default: ``False``); if ``True``, returns
-          a simple graph (no loops, no labels, no multiple edges)
-        - ``generators`` -- list, tuple, or family of elements
-          of ``self`` (default: ``self.gens()``)
-        - ``connecting_set`` -- alias for ``generators``; deprecated
-        - ``elements`` -- list (or iterable) of elements of ``self``
-          (required for infinite groups)
-
-        OUTPUT: :class:`DiGraph`
-
-        EXAMPLES::
-
-            sage: def ball(group, radius):
-            ....:     ret = set()
-            ....:     ret.add(group.one())
-            ....:     for length in range(1, radius):
-            ....:         for w in Words(alphabet=group.gens(), length=length):
-            ....:              ret.add(prod(w))
-            ....:     return ret
-            sage: B = BraidGroup(4)
-            sage: GB = B.cayley_graph(elements=ball(B, 4), generators=B.gens()); GB     # needs sage.combinat sage.graphs
-            Digraph on 31 vertices
-        """
-        from sage.categories.semigroups import Semigroups
-        return Semigroups().ParentMethods.cayley_graph(
-            self, side=side, simple=simple, elements=elements,
-            generators=generators, connecting_set=connecting_set)
-
     def strands(self):
         """
         Return the number of strands.
