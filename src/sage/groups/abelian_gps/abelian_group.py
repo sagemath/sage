@@ -1741,7 +1741,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             category = Groups().Commutative().Subobjects()
         AbelianGroup_class.__init__(self, invs, names, category=category)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Test whether ``x`` is an element of this subgroup.
 

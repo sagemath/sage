@@ -646,36 +646,36 @@ class DiGraphGenerators:
         from sage.features.nauty import NautyExecutable
         gentourng_path = NautyExecutable("gentourng").absolute_filename()
 
-        sp = subprocess.Popen(shlex.quote(gentourng_path) + " {0}".format(nauty_input),
+        with subprocess.Popen(shlex.quote(gentourng_path) + " {0}".format(nauty_input),
                               shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE, close_fds=True)
+                              stderr=subprocess.PIPE, close_fds=True) as sp:
 
-        if debug:
-            yield sp.stderr.readline()
+            if debug:
+                yield sp.stderr.readline()
 
-        def edges(s):
-            i = 0
-            j = 1
-            for b in s[:-1]:
-                yield (i, j) if b == '0' else (j, i)
+            def edges(s):
+                i = 0
+                j = 1
+                for b in s[:-1]:
+                    yield (i, j) if b == '0' else (j, i)
 
-                if j == n - 1:
-                    i += 1
-                    j = i + 1
-                else:
-                    j += 1
+                    if j == n - 1:
+                        i += 1
+                        j = i + 1
+                    else:
+                        j += 1
 
-        gen = sp.stdout
-        while True:
-            try:
-                s = bytes_to_str(next(gen))
-            except StopIteration:
-                # Exhausted list of graphs from nauty geng
-                return
+            gen = sp.stdout
+            while True:
+                try:
+                    s = bytes_to_str(next(gen))
+                except StopIteration:
+                    # Exhausted list of graphs from nauty geng
+                    return
 
-            yield DiGraph([range(n), edges(s)], format='vertices_and_edges',
-                          immutable=immutable)
+                yield DiGraph([range(n), edges(s)], format='vertices_and_edges',
+                              immutable=immutable)
 
     def nauty_directg(self, graphs, options='', debug=False, immutable=False):
         r"""
@@ -780,29 +780,29 @@ class DiGraphGenerators:
         from sage.features.nauty import NautyExecutable
         directg_path = NautyExecutable("directg").absolute_filename()
 
-        sub = subprocess.Popen(shlex.quote(directg_path) + ' {0}'.format(options),
+        with subprocess.Popen(shlex.quote(directg_path) + ' {0}'.format(options),
                                shell=True,
                                stdout=subprocess.PIPE,
                                stdin=subprocess.PIPE,
                                stderr=subprocess.STDOUT,
-                               encoding='latin-1')
-        out, err = sub.communicate(input=input)
+                               encoding='latin-1') as sub:
+            out, err = sub.communicate(input=input)
 
-        if debug:
-            if err:
-                print(err)
+            if debug:
+                if err:
+                    print(err)
 
-            if out:
-                print(out)
+                if out:
+                    print(out)
 
-        for line in out.split('\n'):
-            # directg return graphs in the digraph6 format.
-            # digraph6 is very similar with the dig6 format used in sage :
-            # digraph6_string = '&' +  dig6_string
-            # digraph6 specifications:
-            # http://users.cecs.anu.edu.au/~bdm/data/formats.txt
-            if line and line[0] == '&':
-                yield DiGraph(line[1:], format='dig6', immutable=immutable)
+            for line in out.split('\n'):
+                # directg return graphs in the digraph6 format.
+                # digraph6 is very similar with the dig6 format used in sage :
+                # digraph6_string = '&' +  dig6_string
+                # digraph6 specifications:
+                # http://users.cecs.anu.edu.au/~bdm/data/formats.txt
+                if line and line[0] == '&':
+                    yield DiGraph(line[1:], format='dig6', immutable=immutable)
 
     def nauty_posetg(self, options='', debug=False, immutable=False):
         r"""
@@ -845,23 +845,23 @@ class DiGraphGenerators:
         import shlex
         from sage.features.nauty import NautyExecutable
         geng_path = NautyExecutable("genposetg").absolute_filename()
-        sp = subprocess.Popen(shlex.quote(geng_path) + f" {options}", shell=True,
+        with subprocess.Popen(shlex.quote(geng_path) + f" {options}", shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE, close_fds=True,
-                              encoding='latin-1')
-        msg = sp.stderr.readline()
-        if debug:
-            yield msg
-        elif msg.startswith('>E'):
-            raise ValueError('wrong format of parameter option')
-        gen = sp.stdout
-        while True:
-            try:
-                s = next(gen)
-            except StopIteration:
-                # Exhausted list of graphs from nauty genposetg
-                return
-            yield DiGraph(s[1:-1], format='dig6', immutable=immutable)
+                              encoding='latin-1') as sp:
+            msg = sp.stderr.readline()
+            if debug:
+                yield msg
+            elif msg.startswith('>E'):
+                raise ValueError('wrong format of parameter option')
+            gen = sp.stdout
+            while True:
+                try:
+                    s = next(gen)
+                except StopIteration:
+                    # Exhausted list of graphs from nauty genposetg
+                    return
+                yield DiGraph(s[1:-1], format='dig6', immutable=immutable)
 
     def Complete(self, n, loops=False, immutable=False):
         r"""
