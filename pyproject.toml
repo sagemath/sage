@@ -5,9 +5,8 @@ requires = [
   'cypari2 >=2.2.1; sys_platform != "win32"',
   'meson-python',
   # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
-  'cysignals >=1.11.2, != 1.12.0',
-  # Exclude 3.0.3 because of https://github.com/cython/cython/issues/5748
-  'cython >=3.0, != 3.0.3',
+  'cysignals >=1.12.1',
+  'cython >=3.1.0',
   'gmpy2 >=2.1.5',
   'jinja2',
   'memory_allocator',
@@ -38,6 +37,7 @@ classifiers = [
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: Implementation :: CPython",
   "Topic :: Scientific/Engineering :: Mathematics",
 ]
@@ -46,8 +46,8 @@ dependencies = [
   'cypari2 >=2.2.1; sys_platform != "win32"',
   'six >=1.15.0',
   # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
-  'cysignals >=1.11.2, != 1.12.0',
-  'cython >=3.0, != 3.0.3',
+  'cysignals >=1.12.1',
+  'cython >=3.1.0',
   'fpylll >=0.5.9; sys_platform != "win32"',
   'gmpy2 >=2.1.5',
   'ipykernel >=5.2.1',
@@ -78,7 +78,7 @@ description = "Sage: Open Source Mathematics Software: Standard Python Library"
 dynamic = ["version"]
 license = { text = "GNU General Public License (GPL) v2 or later" }
 name = "sagemath"
-requires-python = ">=3.12, <3.14"
+requires-python = ">=3.12, <3.15"
 urls = { Homepage = "https://www.sagemath.org" }
 
 [project.optional-dependencies]

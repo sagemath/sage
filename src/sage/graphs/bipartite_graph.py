@@ -608,7 +608,7 @@ class BipartiteGraph(Graph):
             sage: B.__hash__()
             Traceback (most recent call last):
             ...
-            TypeError: unhashable type: 'dict'
+            TypeError: ...unhashable type: 'dict'...
         """
         if self.is_immutable():
             # Determine whether to hash edge labels

@@ -302,7 +302,7 @@ Note that vertex labels themselves cannot be mutable items::
     sage: G = Graph({ 0 : { M : None } })                                               # needs sage.modules
     Traceback (most recent call last):
     ...
-    TypeError: mutable matrices are unhashable
+    TypeError: ...mutable matrices are unhashable...
 
 However, if one wants to define a dictionary, with the same keys and arbitrary
 objects for entries, one can make that association::
@@ -391,8 +391,7 @@ Graphs are mutable, and thus unusable as dictionary keys, unless
     sage: {G:1}[G]
     Traceback (most recent call last):
     ...
-    TypeError: This graph is mutable, and thus not hashable.
-    Create an immutable copy by `g.copy(immutable=True)`
+    TypeError: ...This graph is mutable, and thus not hashable...
     sage: G_immutable = Graph(G, immutable=True)
     sage: G_immutable == G
     True
@@ -868,8 +867,7 @@ class Graph(GenericGraph):
           sage: {G:1}[G]
           Traceback (most recent call last):
           ...
-          TypeError: This graph is mutable, and thus not hashable.
-          Create an immutable copy by `g.copy(immutable=True)`
+          TypeError: ...This graph is mutable, and thus not hashable...
 
     When providing the optional arguments ``data_structure="static_sparse"`` or
     ``immutable=True`` (both mean the same), then an immutable graph results::
