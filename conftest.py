@@ -11,7 +11,7 @@ import doctest
 import inspect
 import sys
 import warnings
-from typing import Any, Iterable, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Iterable, Optional
 
 import pytest
 from _pytest.doctest import (
@@ -113,7 +113,7 @@ class SageDoctestModule(DoctestModule):
                 )
             except ImportError as exception:
                 if self.config.getvalue("doctest_ignore_import_errors"):
-                    pytest.skip("unable to import module %r" % self.path)
+                    pytest.skip(f"unable to import module {self.path}: {exception}")
                 else:
                     if isinstance(exception, ModuleNotFoundError):
                         # Ignore some missing features/modules for now
@@ -125,6 +125,7 @@ class SageDoctestModule(DoctestModule):
                             "sagemath_giac",
                         ):
                             pytest.skip(
+                                f"unable to import module {self.path} due to missing feature {exception.name}"
                                 f"unable to import module {self.path} due to missing feature {exception.name}"
                             )
                     raise
@@ -179,21 +180,31 @@ def pytest_collect_file(
 
     See `pytest documentation <https://docs.pytest.org/en/latest/reference/reference.html#std-hook-pytest_collect_file>`_.
     """
-    if (
-        file_path.parent.name == "combinat"
-        or file_path.parent.parent.name == "combinat"
-    ):
+    if file_path.parent.name in {
+        "combinat",
+        "algebras",
+        "calculus",
+    } or file_path.parent.parent.name in {"combinat", "algebras", "calculus"}:
         # Crashes CI for some reason
         return IgnoreCollector.from_parent(parent)
     if file_path.suffix == ".pyx":
-        # We don't allow pytests to be defined in Cython files.
-        # Normally, Cython files are filtered out already by pytest and we only
-        # hit this here if someone explicitly runs `pytest some_file.pyx`.
-        return IgnoreCollector.from_parent(parent)
+        if parent.config.option.doctest:
+            if file_path.name == "atexit.pyx" and file_path.parent.name == "cpython":
+                # Fails with "Fatal Python error"
+                return IgnoreCollector.from_parent(parent)
+            return SageDoctestModule.from_parent(parent, path=file_path)
+        else:
+            # We don't allow pytests to be defined in Cython files.
+            # Normally, Cython files are filtered out already by pytest and we only
+            # hit this here if someone explicitly runs `pytest some_file.pyx`.
+            return IgnoreCollector.from_parent(parent)
     elif file_path.suffix == ".py":
         if parent.config.option.doctest:
-            if file_path.name == "__main__.py" or file_path.name == "setup.py":
+            if file_path.name in {"__main__.py", "setup.py"}:
                 # We don't allow tests to be defined in __main__.py/setup.py files (because their import will fail).
+                return IgnoreCollector.from_parent(parent)
+            if file_path.name == "all.py":
+                # all.py do not contain tests and may fail when imported twice / in the wrong order
                 return IgnoreCollector.from_parent(parent)
             if (
                 (
@@ -227,9 +238,24 @@ def pytest_collect_file(
                 return IgnoreCollector.from_parent(parent)
 
             if (
+                file_path.name == "macaulay2.py"
+                and file_path.parent.name == "interfaces"
+            ):
+                # TODO: Fix these (messes with the output stream)
+                return IgnoreCollector.from_parent(parent)
+
+            if (
                 file_path.name in ("forker.py", "reporting.py")
             ) and file_path.parent.name == "doctest":
                 # Fails with many errors due to different testing framework
+                return IgnoreCollector.from_parent(parent)
+
+            if (
+                file_path.name in ("build_options.py", "builders.py")
+                and file_path.parent.name == "sage_docbuild"
+            ):
+                # Fails to import with Meson
+                # TODO: Can be removed after https://github.com/sagemath/sage/pull/39973
                 return IgnoreCollector.from_parent(parent)
 
             if (
@@ -301,6 +327,41 @@ def pytest_addoption(parser):
         help="Run doctests in all .py modules",
         dest="doctest",
     )
+
+
+def pytest_ignore_collect(collection_path: Path):
+    if (
+        collection_path.parent.name == "manifolds"
+        or collection_path.parent.parent.name == "manifolds"
+        or collection_path.parent.name == "matrix"
+    ):
+        # Fails with "Fatal Python error" (only when run in serial with other tests)
+        return True
+    if collection_path.parent.name == "ipython_kernel":
+        # Messes with the output stream
+        return True
+    if collection_path.name == "projective_curve.py":
+        # Hangs
+        return True
+    if collection_path.name in {
+        "functional.py",
+        "free_module_element.pyx",
+        "sageinspect.py",
+        "constructor.py",
+        "free_module.py",
+        "vector_space_morphism.py",
+        "vector_symbolic_dense.py",
+        "vector_symbolic_sparse.py",
+        "decorate.py",
+        "free_monoid_element.py",
+        "context_managers.py",
+        "complex_plot.pyx"
+    }:
+        # Fails with "Fatal Python error"
+        return True
+    if collection_path.name == "verbose.py":
+        # Messes with the output stream
+        return True
 
 
 # Monkey patch exception printing to replace the full qualified name of the exception by its short name
@@ -390,8 +451,8 @@ def tmpfile():
     * https://github.com/pytest-dev/pytest/issues/13669
 
     """
-    from tempfile import NamedTemporaryFile
     from os import unlink
+    from tempfile import NamedTemporaryFile
     t = NamedTemporaryFile(delete=False)
     yield t
     unlink(t.name)

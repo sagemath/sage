@@ -190,10 +190,14 @@ cdef class ntl_mat_GF2E():
             sage: ctx = ntl.GF2EContext([1,1,0,1,1,0,0,0,1])
             sage: ntl.GF2XHexOutput(1)
             sage: ntl.mat_GF2E(ctx, 2,2,range(4)).__repr__()
-            '[[0x0 0x1]\n[0x0 0x1]\n]'
+            [[0x0 0x1]
+            [0x0 0x1]
+            ]
             sage: ntl.GF2XHexOutput(0)
             sage: ntl.mat_GF2E(ctx, 2,2,range(4)).__repr__()
-            '[[[] [1]]\n[[] [1]]\n]'
+            [[[] [1]]
+            [[] [1]]
+            ]
         """
         self.c.restore_c()
         return ccrepr(self.x)
