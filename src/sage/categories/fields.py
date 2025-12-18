@@ -61,7 +61,7 @@ class Fields(CategoryWithAxiom):
         """
         return [EuclideanDomains(), NoetherianRings()]
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 

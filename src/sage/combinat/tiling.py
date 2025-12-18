@@ -1603,7 +1603,7 @@ class TilingSolver(SageObject):
         self._reusable = reusable
         self._outside = outside
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation.
 
@@ -1626,7 +1626,7 @@ class TilingSolver(SageObject):
         s += "Reusing pieces allowed: %s" % self._reusable
         return s
 
-    def is_suitable(self):
+    def is_suitable(self) -> bool:
         r"""
         Return whether the volume of the box is equal to sum of the volume
         of the polyominoes and the number of rows sent to the DLX solver is

@@ -156,7 +156,7 @@ following code is equivalent to ``tau = findstat(397)``::
     ....:         else:
     ....:             return m+1
     sage: bij = Bijectionist(A, B, tau)
-    sage: bij.set_statistics((lambda a: a.size(), lambda b: b.node_number()-1))
+    sage: bij.set_statistics((lambda a: a.size(), lambda b: b.number_of_nodes()-1))
     sage: from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
     sage: bij.set_constant_blocks(orbit_decomposition(A, theta))
     sage: list(bij.solutions_iterator())
@@ -173,7 +173,7 @@ and `S`::
     ....:                                          B2.to_dyck_word()).to_binary_tree()
     sage: bij = Bijectionist(A, B)
     sage: bij.set_intertwining_relations((2, concat_path, concat_tree))
-    sage: bij.set_statistics((lambda d: d.semilength(), lambda t: t.node_number()))
+    sage: bij.set_statistics((lambda d: d.semilength(), lambda t: t.number_of_nodes()))
     sage: for D in sorted(bij.minimal_subdistributions_iterator(), key=lambda x: (len(x[0][0]), x)):
     ....:     ascii_art(D)
     ( [ /\ ], [ o ] )
