@@ -220,7 +220,6 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
         # ---------------------------------------------------------------
         # checking input parameters
         # ---------------------------------------------------------------
-
         base_ring = monic_polynomial.base_ring()
         if not monic_polynomial.is_monic():
             raise ValueError("given polynomial must be monic")
@@ -270,8 +269,24 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             # assuming this has been checked mathematically before
             self._set_modulus_irreducible_ = True
             if warning:
-                warn(f'Assuming {monic_polynomial} to have maximal Galois group!')
-                warning = False  # one warning must be enough
+                def_pol = monic_polynomial
+                if isinstance(base_ring, SplittingAlgebra):
+                    # Here we are inside a recursion. Using the splitting field
+                    # over the fractional field of the scalar base ring we may
+                    # find a reason to avoid the warning.
+                    def_pol = base_ring.defining_polynomial()
+                    F = base_ring.scalar_base_ring().fraction_field()
+                    def_pol_f = def_pol.change_ring(F)
+                    try:
+                        E = def_pol_f.splitting_field('Ex')
+                        if E.degree() == def_pol_f.degree().factorial():
+                            # Galois group is maximal
+                            warning = False
+                    except NotImplementedError:
+                        pass
+                if warning:
+                    warn(f'Assuming {def_pol} to have maximal Galois group!')
+                    warning = False  # one warning must be enough
 
         verbose("P %s defined:" % (P))
 
@@ -281,7 +296,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             # -----------------------------------------------------------
             base_ring_step = SplittingAlgebra(monic_polynomial,
                                               tuple(root_names),
-                                              iterate=False, warning=False)
+                                              iterate=False, warning=warning)
             first_root = base_ring_step.gen()
 
             verbose("base_ring_step %s defined:" % (base_ring_step))
@@ -300,7 +315,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             verbose("Invoking recursion with: %s" % (q,))
 
             SplittingAlgebra.__init__(self, q, root_names_reduces,
-                                      warning=False)
+                                      warning=warning)
 
             splitting_roots = base_ring_step._splitting_roots + self._splitting_roots
             coefficients_list = base_ring_step._coefficients_list + self._coefficients_list
@@ -420,7 +435,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             sage: from sage.algebras.splitting_algebra import SplittingAlgebra
             sage: L.<u, v> = PolynomialRing(ZZ)
             sage: t = polygen(L)
-            sage: Spl.<S, T> = SplittingAlgebra(t^3 - (u^2-v)*t^2 + (v+u)*t - 1)
+            sage: Spl.<S, T> = SplittingAlgebra(t^3 - (u^2-v)*t^2 + (v+u)*t - 1, warning=False)
             sage: Spl._repr_()
             'Splitting Algebra of x^3 + (-u^2 + v)*x^2 + (u + v)*x - 1
              with roots [S, T, -T - S + u^2 - v]
@@ -449,6 +464,9 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             sage: L.<u, v> = PolynomialRing(ZZ)
             sage: t = polygen(L)
             sage: S.<X, Y> = SplittingAlgebra(t^3 - (u^2-v)*t^2 + (v+u)*t - 1)  # indirect doctest
+            doctest:warning
+            ...
+            UserWarning: Assuming x^3 + (-u^2 + v)*x^2 + (u + v)*x - 1 to have maximal Galois group!
             sage: X.parent()
             Splitting Algebra of x^3 + (-u^2 + v)*x^2 + (u + v)*x - 1
              with roots [X, Y, -Y - X + u^2 - v]
@@ -470,7 +488,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
 
             sage: from sage.algebras.splitting_algebra import SplittingAlgebra
             sage: L.<u, v, w> = LaurentPolynomialRing(ZZ); x = polygen(L)
-            sage: S.<X, Y> = SplittingAlgebra(x^3 - u*x^2 + v*x - w)
+            sage: S.<X, Y> = SplittingAlgebra(x^3 - u*x^2 + v*x - w, warning=False)
             sage: S(u + v)
             u + v
             sage: S(X*Y + X)
@@ -495,6 +513,9 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             sage: from sage.algebras.splitting_algebra import SplittingAlgebra
             sage: L.<u, v, w> = LaurentPolynomialRing(ZZ); x = polygen(L)
             sage: S = SplittingAlgebra(x^3 - u*x^2 + v*x - w, ('X', 'Y'))
+            doctest:warning
+            ...
+            UserWarning: Assuming x^3 - u*x^2 + v*x - w to have maximal Galois group!
             sage: P.<x, y, z> = PolynomialRing(ZZ)
             sage: F = FractionField(P)
             sage: im_gens = [F(g) for g in [y, x, x + y + z, x*y+x*z+y*z, x*y*z]]
@@ -702,7 +723,7 @@ def solve_with_extension(monic_polynomial, root_names=None, var='x',
         sage: _[0][0].parent()
         Universal Cyclotomic Field
     """
-    def create_roots(monic_polynomial, warning=True):
+    def create_roots(monic_polynomial, warning=warning):
         r"""
         This internal function creates all roots of a polynomial in an
         appropriate extension ring assuming that none of the roots is

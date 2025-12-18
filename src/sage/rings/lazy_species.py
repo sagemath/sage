@@ -1173,7 +1173,7 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
 
         def flat(g):
             # function needed to work around python's scoping rules
-            return itertools.chain.from_iterable((coeff(g, j) for j in itertools.count()))
+            return itertools.chain.from_iterable(coeff(g, j) for j in itertools.count())
 
         args_flat1 = [lazy_list(flat(g)) for g in args]
 
