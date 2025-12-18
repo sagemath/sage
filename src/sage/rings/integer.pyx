@@ -205,7 +205,11 @@ new_gen_from_integer = None
 
 
 cdef extern from *:
+    int likely(int) nogil
     int unlikely(int) nogil  # Defined by Cython
+
+cdef extern from "Python.h":
+    void Py_SET_REFCNT(PyObject*, Py_ssize_t) nogil
 
 cdef object numpy_long_interface = {'typestr': '=i4' if sizeof(long) == 4 else '=i8'}
 cdef object numpy_int64_interface = {'typestr': '=i8'}
@@ -430,11 +434,41 @@ cdef inline Integer move_integer_from_mpz(mpz_t x):
       ``x`` will not be cleared;
 
     - if ``sig_on()`` does not throw, :func:`move_integer_from_mpz` will call ``mpz_clear(x)``.
+
+    Note that this is in fact slightly slower than ::
+
+        cdef Integer x = <Integer>PY_NEW(Integer)
+        mpz_SOMETHING_MUTATE_X(x.value, ...)
+        return x
+
+    because with ``move_integer_from_mpz``, one need to allocate a new ``mpz_t``, even if
+    the ``x`` returned by ``PY_NEW`` already have an allocated buffer (see :func:`fast_tp_new`).
+    Only use this when interruptibility is required.
     """
     cdef Integer y = <Integer>PY_NEW(Integer)
     mpz_swap(y.value, x)
     mpz_clear(x)
     return y
+
+
+cdef Integer integer_add_python_int(Integer left, right):
+    """
+    Internal helper method. Return ``left + right``, where ``right`` must be an ``int``.
+    """
+    cdef Integer x
+    cdef int overflow
+    cdef long tmp
+    x = <Integer>PY_NEW(Integer)
+    tmp = PyLong_AsLongAndOverflow(right, &overflow)
+    if overflow == 0:
+        if tmp >= 0:
+            mpz_add_ui(x.value, left.value, tmp)
+        else:
+            mpz_sub_ui(x.value, left.value, -<unsigned long>tmp)
+    else:
+        mpz_set_pylong(x.value, right)
+        mpz_add(x.value, left.value, x.value)
+    return x
 
 
 cdef class Integer(sage.structure.element.EuclideanDomainElement):
@@ -1822,16 +1856,19 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: 1 + (-2/3)
             1/3
         """
+        # because of c_api_binop_methods, either left or right is Integer
         cdef Integer x
         cdef Rational y
-        if type(left) is type(right):
-            x = <Integer>PY_NEW(Integer)
-            mpz_add(x.value, (<Integer>left).value, (<Integer>right).value)
-            return x
+        if likely(type(left) is type(right)):
+            return (<Integer> left)._add_(right)
         elif type(right) is Rational:
             y = <Rational>PY_NEW(Rational)
             mpq_add_z(y.value, (<Rational>right).value, (<Integer>left).value)
             return y
+        elif type(right) is int:
+            return integer_add_python_int(<Integer>left, right)
+        elif type(left) is int:
+            return integer_add_python_int(<Integer>right, left)
 
         return coercion_model.bin_op(left, right, operator.add)
 
@@ -6362,6 +6399,19 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         return str(self)
 
+    def _libgap_(self):
+        """
+        Convert this integer to ``libgap``. Not to be used directly, use ``libgap(x)``.
+
+        EXAMPLES::
+
+            sage: libgap(1)
+            1
+        """
+        from sage.libs.gap.element import make_GapElement_Integer_from_sage_integer  # avoid compile-time dependency
+        from sage.libs.gap.libgap import libgap
+        return make_GapElement_Integer_from_sage_integer(libgap, self)
+
     @property
     def __array_interface__(self):
         """
@@ -7724,7 +7774,7 @@ cdef PyObject* fast_tp_new(type t, args, kwds) except NULL:
     # Objects from the pool have reference count zero, so this
     # needs to be set in this case.
 
-    new.ob_refcnt = 1
+    Py_SET_REFCNT(<PyObject*>new, 1)
 
     return new
 

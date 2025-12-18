@@ -74,6 +74,7 @@ from sage.combinat.debruijn_sequence import DeBruijnSequences
 
 from sage.combinat.schubert_polynomial import SchubertPolynomialRing
 lazy_import('sage.combinat.key_polynomial', 'KeyPolynomialBasis', as_='KeyPolynomials')
+lazy_import('sage.combinat.key_polynomial', 'AtomPolynomialBasis', as_='AtomPolynomials')
 from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra, HeckeAlgebraSymmetricGroupT
 from sage.combinat.symmetric_group_representations import SymmetricGroupRepresentation, SymmetricGroupRepresentations
 from sage.combinat.yang_baxter_graph import YangBaxterGraph
