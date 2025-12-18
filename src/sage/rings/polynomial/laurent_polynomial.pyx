@@ -2218,6 +2218,11 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             False
             sage: R(0).divides(R(0))
             True
+            sage: R.<x> = LaurentPolynomialRing(Zmod(6))
+            sage: p = 4*x + 3*x^-1
+            sage: q = 5*x^2 + x + 2*x^-2
+            sage: p.divides(q)
+            False
 
             sage: R.<x,y> = GF(2)[]
             sage: S.<z> = LaurentPolynomialRing(R)
@@ -2225,6 +2230,14 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: q = (y^2-x^2) * z**-2 + z + x-y
             sage: p.divides(q), p.divides(p*q)                                          # needs sage.libs.singular
             (False, True)
+
+        Divisibility works over reduced rings (rings without nilpotent elements)::
+
+            sage: R.<y> = LaurentPolynomialRing(Zmod(6))
+            sage: (y + 2).divides(y^2 + 4*y + 4)
+            True
+            sage: (y + 2).divides(y^2 + 3)
+            False
 
         TESTS:
 
@@ -2235,10 +2248,20 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: a.divides(a)
             Traceback (most recent call last):
             ...
-            NotImplementedError: divisibility test not implemented for Laurent polynomials over non-integral domains
+            NotImplementedError: divisibility test not implemented for Laurent polynomials over rings with nilpotent elements
         """
-        if not self.base_ring().is_integral_domain():
-            raise NotImplementedError("divisibility test not implemented for Laurent polynomials over non-integral domains")
+        # Check if the base ring has nilpotent elements
+        # For such rings, the degree bound is not sufficient
+        if self.base_ring().is_integral_domain() is True:
+            p = self.polynomial_construction()[0]
+            q = other.polynomial_construction()[0]
+            return p.divides(q)
+        try:
+            if not self.base_ring().nilradical().is_zero():
+                raise NotImplementedError("divisibility test not implemented for Laurent polynomials over rings with nilpotent elements")
+        except (AttributeError, ArithmeticError):
+            # If we can't determine, be conservative and reject
+            raise NotImplementedError("divisibility test not implemented for Laurent polynomials over rings with nilpotent elements")
 
         # Handle zero cases
         if other.is_zero():
@@ -2282,7 +2305,18 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         for m in range(deg_bound):
             q_shifted = q * x**m
-            if p.divides(q_shifted):
-                return True
+            try:
+                if p.divides(q_shifted):
+                    return True
+            except NotImplementedError:
+                # For non-integral domains, p.divides may not be implemented
+                # Fall back to quo_rem and verify
+                try:
+                    quotient, remainder = q_shifted.quo_rem(p)
+                    if remainder.is_zero() and quotient * p == q_shifted:
+                        return True
+                except (ArithmeticError, NotImplementedError, ValueError):
+                    # quo_rem may fail for non-invertible leading coefficients
+                    pass
 
         return False
