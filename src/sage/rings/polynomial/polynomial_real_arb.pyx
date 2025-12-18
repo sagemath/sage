@@ -25,6 +25,7 @@ from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.flint.arb cimport *
 from sage.libs.flint.fmpz cimport *
+from sage.libs.flint.arb_poly_macros cimport arb_poly_get_coeff_ptr
 from sage.rings.integer cimport Integer, smallInteger
 from sage.rings.real_arb cimport RealBall
 from sage.structure.element cimport Element
@@ -46,11 +47,11 @@ cdef class Polynomial_real_arb(Polynomial):
         sage: type(x)
         <class 'sage.rings.polynomial.polynomial_real_arb.Polynomial_real_arb'>
 
-        sage: Pol(), Pol(1), Pol([0,1,2]), Pol({1: pi, 3: i})                           # needs sage.symbolic
+        sage: Pol(), Pol(1), Pol([0,1,2]), Pol({1: pi, 3: e})                          # needs sage.symbolic  # abs tol 1e-15
         (0,
          1.000000000000000,
          2.000000000000000*x^2 + x,
-         I*x^3 + ([3.141592653589793 +/- ...e-16])*x)
+         [2.718281828459045 +/- 5.41e-16]*x^3 + [3.141592653589793 +/- 3.39e-16]*x)
 
         sage: Pol("x - 2/3")
         x + [-0.666666666666667 +/- ...e-16]
@@ -58,7 +59,7 @@ cdef class Polynomial_real_arb(Polynomial):
         x
 
         sage: all(Pol.has_coerce_map_from(P) for P in
-        ....:     (QQ['x'], QuadraticField(-1), RealBallField(100)))
+        ....:     (QQ['x'], QuadraticField(2), RealBallField(100)))
         True
         sage: any(Pol.has_coerce_map_from(P) for P in
         ....:     (QQ['y'], RR, CC, RDF, CDF, RIF, CIF, RealBallField(20)))
@@ -119,13 +120,15 @@ cdef class Polynomial_real_arb(Polynomial):
             sage: Polynomial_real_arb(Pol, (1,))
             1.000000000000000
             sage: Polynomial_real_arb(Pol, (RBF(i), 1))                              # needs sage.symbolic
-            x + I
+            Traceback (most recent call last):
+            ...
+            ValueError: nonzero imaginary part
             sage: Polynomial_real_arb(Pol, polygen(QQ,'y')+2)
             x + 2.000000000000000
             sage: Polynomial_real_arb(Pol, QQ['x'](0))
             0
-            sage: Polynomial_real_arb(Pol, {10: pi})                                 # needs sage.symbolic
-            ([3.141592653589793 +/- ...e-16])*x^10
+            sage: Polynomial_real_arb(Pol, {10: pi})                                 # needs sage.symbolic  # abs tol 1e-15
+            [3.141592653589793 +/- 3.39e-16]*x^10
             sage: Polynomial_real_arb(Pol, pi)                                       # needs sage.symbolic
             [3.141592653589793 +/- ...e-16]
         """
@@ -220,8 +223,8 @@ cdef class Polynomial_real_arb(Polynomial):
             sage: Pol.<x> = RBF[]
             sage: (x^2 + 1).degree()
             2
-            sage: pol = (x/3 + 1) - x/3; pol
-            ([+/- ...e-16])*x + 1.000000000000000
+            sage: pol = (x/3 + 1) - x/3; pol                                          # abs tol 1e-15
+            [+/- 1.12e-16]*x + 1.000000000000000
             sage: pol.degree()
             1
             sage: Pol([1, 0, 0, 0]).degree()
@@ -276,8 +279,8 @@ cdef class Polynomial_real_arb(Polynomial):
         EXAMPLES::
 
             sage: Pol.<x> = RBF[]
-            sage: (x + 1) + (x/3 - 2)
-            ([1.333333333333333 +/- ...e-16])*x - 1.000000000000000
+            sage: (x + 1) + (x/3 - 2)                                                 # abs tol 1e-15
+            [1.333333333333333 +/- 5.37e-16]*x - 1.000000000000000
         """
         cdef Polynomial_real_arb res = self._new()
         sig_on()
@@ -296,8 +299,8 @@ cdef class Polynomial_real_arb(Polynomial):
         EXAMPLES::
 
             sage: Pol.<x> = RBF[]
-            sage: -(x/3 - 2)
-            ([-0.3333333333333333 +/- ...e-17])*x + 2.000000000000000
+            sage: -(x/3 - 2)                                                         # abs tol 1e-15
+            [-0.3333333333333333 +/- 7.04e-17]*x + 2.000000000000000
         """
         cdef Polynomial_real_arb res = self._new()
         sig_on()
@@ -312,8 +315,8 @@ cdef class Polynomial_real_arb(Polynomial):
         EXAMPLES::
 
             sage: Pol.<x> = RBF[]
-            sage: (x + 1) - (x/3 - 2)
-            ([0.666666666666667 +/- ...e-16])*x + 3.000000000000000
+            sage: (x + 1) - (x/3 - 2)                                                 # abs tol 1e-15
+            [0.666666666666667 +/- 5.37e-16]*x + 3.000000000000000
         """
         cdef Polynomial_real_arb res = self._new()
         sig_on()
@@ -332,9 +335,8 @@ cdef class Polynomial_real_arb(Polynomial):
         EXAMPLES::
 
             sage: Pol.<x> = RBF[]
-            sage: (x + 1)*(x/3 - 2)
-            ([0.3333333333333333 +/- ...e-17])*x^2
-            + ([-1.666666666666667 +/- ...e-16])*x - 2.000000000000000
+            sage: (x + 1)*(x/3 - 2)                                                   # abs tol 1e-15
+            [0.3333333333333333 +/- 7.04e-17]*x^2 + [-1.666666666666667 +/- 7.59e-16]*x - 2.000000000000000
         """
         cdef Polynomial_real_arb res = self._new()
         sig_on()
@@ -353,8 +355,8 @@ cdef class Polynomial_real_arb(Polynomial):
             sage: Pol.<x> = RBF[]
             sage: (x + 1)._lmul_(RBF(3))
             3.000000000000000*x + 3.000000000000000
-            sage: (1 + x)*(1/3)
-            ([0.3333333333333333 +/- ...e-17])*x + [0.3333333333333333 +/- ...e-17]
+            sage: (1 + x)*(1/3)                                                       # abs tol 1e-15
+            [0.3333333333333333 +/- 7.04e-17]*x + [0.3333333333333333 +/- 7.04e-17]
             sage: (1 + x)*GF(2)(1)
             Traceback (most recent call last):
             ...
@@ -373,8 +375,8 @@ cdef class Polynomial_real_arb(Polynomial):
             sage: Pol.<x> = RBF[]
             sage: (x + 1)._rmul_(RBF(3))
             3.000000000000000*x + 3.000000000000000
-            sage: (1/3)*(1 + x)
-            ([0.3333333333333333 +/- ...e-17])*x + [0.3333333333333333 +/- ...e-17]
+            sage: (1/3)*(1 + x)                                                       # abs tol 1e-15
+            [0.3333333333333333 +/- 7.04e-17]*x + [0.3333333333333333 +/- 7.04e-17]
         """
         return self._lmul_(a)
 
@@ -391,11 +393,9 @@ cdef class Polynomial_real_arb(Polynomial):
 
             sage: Pol.<x> = RBF[]
 
-            sage: (x^3/7 - RBF(i)).quo_rem(x + RBF(pi))                                 # needs sage.symbolic
-            (([0.1428571428571428 +/- ...e-17])*x^2
-               + ([-0.448798950512828 +/- ...e-16])*x
-               + [1.409943485869908 +/- ...e-16],
-             [-4.42946809718569 +/- ...e-15] - I)
+            sage: (x^3/7 - 2).quo_rem(x + 3)                                           # abs tol 1e-14
+            ([0.1428571428571428 +/- 7.70e-17]*x^2 + [-0.428571428571429 +/- 5.36e-16]*x + [1.285714285714286 +/- 8.85e-16],
+             [-5.85714285714286 +/- 4.66e-15])
 
             sage: Pol(0).quo_rem(x + 1)
             (0, 0)
@@ -405,13 +405,12 @@ cdef class Polynomial_real_arb(Polynomial):
             ...
             ZeroDivisionError: ('cannot divide by this polynomial', 0)
 
-            sage: div = (x^2/3 + x + 1) - x^2/3; div
-            ([+/- ...e-16])*x^2 + x + 1.000000000000000
+            sage: div = (x^2/3 + x + 1) - x^2/3; div                                  # abs tol 1e-15
+            [+/- 1.12e-16]*x^2 + x + 1.000000000000000
             sage: (x + 1).quo_rem(div)
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: ('cannot divide by this polynomial',
-            ([+/- ...e-16])*x^2 + x + 1.000000000000000)
+            ZeroDivisionError: ('cannot divide by this polynomial', [+/- 1.12e-16]*x^2 + x + 1.000000000000000)
         """
         cdef Polynomial_real_arb div = <Polynomial_real_arb> divisor
         cdef Polynomial_real_arb quo = self._new()
@@ -568,12 +567,12 @@ cdef class Polynomial_real_arb(Polynomial):
         EXAMPLES::
 
             sage: Pol.<x> = RBF[]
-            sage: (1 - x/3).inverse_series_trunc(3)
-            ([0.1111111111111111 +/- ...e-17])*x^2 + ([0.3333333333333333 +/- ...e-17])*x + 1.000000000000000
+            sage: (1 - x/3).inverse_series_trunc(3)                                   # abs tol 1e-15
+            [0.1111111111111111 +/- 5.99e-17]*x^2 + [0.3333333333333333 +/- 7.04e-17]*x + 1.000000000000000
             sage: x.inverse_series_trunc(1)
             nan
             sage: Pol(0).inverse_series_trunc(2)
-            (nan + nan*I)*x + nan + nan*I
+            nan*x + nan
 
         TESTS::
 
@@ -632,25 +631,16 @@ cdef class Polynomial_real_arb(Polynomial):
         EXAMPLES::
 
             sage: Pol.<x> = RBF[]
-            sage: (1 + x/3)._log_series(3)
-            ([-0.0555555555555555 +/- ...e-17])*x^2 + ([0.3333333333333333 +/- ...e-17])*x
-            sage: (-1 + x)._log_series(3)
-            -0.5000000000000000*x^2 - x + [3.141592653589793 +/- ...e-16]*I
-
-        An example where the constant term crosses the branch cut of the
-        logarithm::
-
-            sage: pol = RBF(-1, RBF(0, rad=.01)) + x; pol
-            x - 1.000000000000000 + [+/- 0.0101]*I
-            sage: pol._log_series(2)
-            ([-1.000 +/- ...e-4] + [+/- 0.0101]*I)*x + [+/- ...e-5] + [+/- 3.15]*I
+            sage: (1 + x/3)._log_series(3)                                            # abs tol 1e-15
+            [-0.0555555555555555 +/- 7.10e-17]*x^2 + [0.3333333333333333 +/- 7.04e-17]*x
 
         Some cases where the result is not defined::
-
+            sage: (-1 + x)._log_series(3)  # the result's constant term is pi*I, not real
+            nan*x^2 + nan*x + nan
             sage: x._log_series(1)
-            nan + nan*I
+            nan
             sage: Pol(0)._log_series(1)
-            nan + nan*I
+            nan
         """
         cdef Polynomial_real_arb res = self._new()
         if n < 0:
@@ -670,11 +660,8 @@ cdef class Polynomial_real_arb(Polynomial):
             sage: Pol.<x> = RBF[]
             sage: x._exp_series(3)
             0.5000000000000000*x^2 + x + 1.000000000000000
-            sage: (1 + x/3)._log_series(3)._exp_series(3)
-            ([+/- ...e-17])*x^2 + ([0.3333333333333333 +/- ...e-17])*x + 1.000000000000000
-            sage: (RBF(0, pi) + x)._exp_series(4)                                       # needs sage.symbolic
-            ([-0.166...] + [+/- ...]*I)*x^3 + ([-0.500...] + [+/- ...]*I)*x^2
-            + ([-1.000...] + [+/- ...]*I)*x + [-1.000...] + [+/- ...]*I
+            sage: (1 + x/3)._log_series(3)._exp_series(3)                              # abs tol 1e-15
+            [+/- 4.79e-17]*x^2 + [0.3333333333333333 +/- 7.04e-17]*x + 1.000000000000000
         """
         cdef Polynomial_real_arb res = self._new()
         if n < 0:
@@ -694,12 +681,8 @@ cdef class Polynomial_real_arb(Polynomial):
             sage: Pol.<x> = RBF[]
             sage: (1 + x)._sqrt_series(3)
             -0.1250000000000000*x^2 + 0.5000000000000000*x + 1.000000000000000
-            sage: pol = RBF(-1, RBF(0, rad=.01)) + x; pol
-            x - 1.000000000000000 + [+/- 0.0101]*I
-            sage: pol._sqrt_series(2)
-            ([+/- ...e-3] + [+/- 0.501]*I)*x + [+/- ...e-3] + [+/- 1.01]*I
             sage: x._sqrt_series(2)
-            (nan + nan*I)*x
+            nan*x
         """
         cdef Polynomial_real_arb res = self._new()
         if n < 0:
@@ -717,8 +700,8 @@ cdef class Polynomial_real_arb(Polynomial):
         EXAMPLES::
 
             sage: Pol.<x> = RBF[]
-            sage: (1 + x)._gamma_series(3)
-            ([0.98905599532797...])*x^2 + ([-0.57721566490153...])*x + 1.000000000000000
+            sage: (1 + x)._gamma_series(3)                                            # abs tol 1e-12
+            [0.989055995327973 +/- 6.12e-16]*x^2 + [-0.577215664901533 +/- 3.58e-16]*x + 1.000000000000000
         """
         cdef Polynomial_real_arb res = self._new()
         if n < 0:
@@ -736,8 +719,8 @@ cdef class Polynomial_real_arb(Polynomial):
         EXAMPLES::
 
             sage: Pol.<x> = RBF[]
-            sage: (1000 + x)._lgamma_series(3)
-            ([0.00050025008333331...])*x^2 + ([6.9072551956488...])*x + [5905.2204232091...]
+            sage: (1000 + x)._lgamma_series(3)                                        # abs tol 1e-15
+            [0.000500250083333317 +/- 4.84e-19]*x^2 + [6.90725519564881 +/- 2.90e-15]*x + [5905.220423209181 +/- 2.49e-13]
         """
         cdef Polynomial_real_arb res = self._new()
         if n < 0:
@@ -755,8 +738,8 @@ cdef class Polynomial_real_arb(Polynomial):
         EXAMPLES::
 
             sage: Pol.<x> = RBF[]
-            sage: (-1 + x)._rgamma_series(4)
-            ([1.23309373642178...])*x^3 + ([0.422784335098467...])*x^2 - x
+            sage: (-1 + x)._rgamma_series(4)                                          # abs tol 1e-15
+            [1.233093736421787 +/- 5.71e-16]*x^3 + [0.4227843350984671 +/- 9.09e-17]*x^2 - x
         """
         cdef Polynomial_real_arb res = self._new()
         if n < 0:
@@ -774,27 +757,23 @@ cdef class Polynomial_real_arb(Polynomial):
         EXAMPLES::
 
             sage: Pol.<x> = RBF[]
-            sage: (1 + x)._lambert_w_series(3)
-            ([-0.10727032...])*x^2 + ([0.36189625...])*x + [0.56714329...]
-            sage: (RBF(1, 1) + x)._lambert_w_series(2)
-            ([0.26651990...] + [-0.15238505...]*I)*x + [0.65696606...] + [0.32545033...]*I
-            sage: (1 + x)._lambert_w_series(2, branch=3)
-            ([1.00625557...] + [0.05775573...]*I)*x + [-2.85358175...] + [17.1135355...]*I
-            sage: (1 + x)._lambert_w_series(2, branch=-3)
-            ([1.00625557...] + [-0.05775573...]*I)*x + [-2.85358175...] + [-17.1135355...]*I
-            sage: (1 + x)._lambert_w_series(2, branch=2^100)
-            ([1.00000000...] + [1.25551112...]*I)*x + [-71.1525951...] + [7.96488362...]*I
+            sage: (1 + x)._lambert_w_series(3)  # abs tol 1e-14
+            [-0.107270323141072 +/- 7.79e-16]*x^2 + [0.361896256634889 +/- 2.99e-16]*x + [0.567143290409784 +/- 2.72e-16]
+            sage: (-1/4 + x)._lambert_w_series(2, branch=-1)  # abs tol 1e-14
+            [-7.46833129610253 +/- 3.12e-15]*x + [-2.153292364110349 +/- 8.59e-16]
         """
-        cdef fmpz_t _branch
-        fmpz_init(_branch)
-        fmpz_set_mpz(_branch, (<Integer> Integer(branch)).value)
+        if branch == 0:
+            flags = 0
+        elif branch == -1:
+            flags = 1
+        else:
+            raise ValueError("for other branches, use polynomials over CBF")
         cdef Polynomial_real_arb res = self._new()
         if n < 0:
             n = 0
         sig_on()
-        arb_poly_lambertw_series(res._poly, self._poly, _branch, 0, n, prec(self))
+        arb_poly_lambertw_series(res._poly, self._poly, flags, n, prec(self))
         sig_off()
-        fmpz_clear(_branch)
         return res
 
     def _zeta_series(self, long n, a=1, deflate=False):
@@ -810,12 +789,10 @@ cdef class Polynomial_real_arb(Polynomial):
         EXAMPLES::
 
             sage: Pol.<x> = RBF[]
-            sage: (RBF(1/2, 1) + x)._zeta_series(2)
-            ([0.55898247...] + [-0.64880821...]*I)*x + [0.14393642...] + [-0.72209974...]*I
-            sage: (1/2 + x^2)._zeta_series(3, a=1/3)
-            ([-2.13199508...])*x^2 + [-0.11808332...]
-            sage: (1 + x)._zeta_series(2, deflate=True)
-            ([0.07281584...])*x + [0.57721566...]
+            sage: (1/2 + x^2)._zeta_series(3, a=1/3)                                  # abs tol 1e-15
+            [-2.13199508553675 +/- 2.90e-15]*x^2 + [-0.118083327934222 +/- 5.54e-16]
+            sage: (1 + x)._zeta_series(2, deflate=True)                               # abs tol 1e-15
+            [0.0728158454836767 +/- 2.97e-17]*x + [0.5772156649015329 +/- 4.09e-17]
         """
         if n < 0:
             n = 0
@@ -839,8 +816,8 @@ cdef class Polynomial_real_arb(Polynomial):
             -3.000000000000000*x^3 - x^2 + x
             sage: pol.compose_trunc(1 + x, 4)
             x^3 + x^2
-            sage: pol.compose_trunc(2 + x/3, 2)
-            ([1.666666666666667 +/- ...e-16])*x + 2.000000000000000
+            sage: pol.compose_trunc(2 + x/3, 2)                                       # abs tol 1e-15
+            [1.666666666666667 +/- 9.81e-16]*x + 2.000000000000000
             sage: pol.compose_trunc(2 + x/3, 0)
             0
             sage: pol.compose_trunc(2 + x/3, -1)
@@ -887,8 +864,8 @@ cdef class Polynomial_real_arb(Polynomial):
             sage: (2*x).revert_series(5)
             0.5000000000000000*x
 
-            sage: (x + x^3/6 + x^5/120).revert_series(6)
-            ([0.075000000000000 +/- ...e-17])*x^5 + ([-0.166666666666667 +/- ...e-16])*x^3 + x
+            sage: (x + x^3/6 + x^5/120).revert_series(6)                              # abs tol 1e-15
+            [0.075000000000000 +/- 9.96e-17]*x^5 + [-0.166666666666667 +/- 4.45e-16]*x^3 + x
 
             sage: (1 + x).revert_series(6)
             Traceback (most recent call last):
