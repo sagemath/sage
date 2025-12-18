@@ -450,8 +450,8 @@ def ReflexivePolytopes(dim):
     if _rp[dim] is None:
         db = DatabaseReflexivePolytopes()
         rp = read_all_polytopes(
-                os.path.join(os.path.dirname(db.absolute_filename()),
-                             f'reflexive_polytopes_{dim}d'))
+            os.path.join(os.path.dirname(db.absolute_filename()),
+                         f'reflexive_polytopes_{dim}d'))
         for n, p in enumerate(rp):
             # Data files have normal form of reflexive polytopes
             p.normal_form.set_cache(p._vertices)
@@ -760,7 +760,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         # Absolute value helps to keep normals "inner"
         self._dual_embedding_scale = abs(basis.det())
         dualbasis = matrix(ZZ, self._dual_embedding_scale * basis.inverse())
-        self._dual_embedding_matrix = dualbasis.submatrix(0,0,M.ncols())
+        self._dual_embedding_matrix = dualbasis.submatrix(0, 0, M.ncols())
 
     def _compute_facets(self):
         r"""
@@ -4008,7 +4008,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             raise NotImplementedError("skeleton view is implemented only in 3-d space")
         if normal is None:
             normal = [ZZ.random_element(20),ZZ.random_element(20),ZZ.random_element(20)]
-        normal = matrix(QQ,3,1,list(normal))
+        normal = matrix(QQ, 3, 1, list(normal))
         projectionm = normal.kernel().basis_matrix()
         positions = dict(enumerate([list(c) for c in (projectionm*self.points()).columns(copy=False)]))
         self.skeleton().show(pos=positions)
@@ -4311,7 +4311,7 @@ class NefPartition(SageObject, Hashable):
         """
         if check and not Delta_polar.is_reflexive():
             raise ValueError("nef-partitions can be constructed for reflexive "
-                             "polytopes ony!")
+                             "polytopes only!")
         self._vertex_to_part = tuple(int(el) for el in data)
         self._nparts = max(self._vertex_to_part) + 1
         self._Delta_polar = Delta_polar
@@ -5646,7 +5646,7 @@ def positive_integer_relations(points):
     # Use the new relation to remove negative entries in non-pivot columns
     for i in range(n_nonpivots):
         for j in range(n):
-            coef = relations[j,nonpivots[i]]
+            coef = relations[j, nonpivots[i]]
             if coef < 0:
                 relations.add_multiple_of_row(j, n + i, -coef)
     # Get a new basis

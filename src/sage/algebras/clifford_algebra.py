@@ -51,7 +51,7 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
     A facade parent for the indices of Clifford algebra.
     Users should not create instances of this class directly.
     """
-    def __init__(self, Qdim, degree=None):
+    def __init__(self, Qdim, degree=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -271,7 +271,7 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
                 yield FrozenBitset(C)
             k += 1
 
-    def __contains__(self, elt):
+    def __contains__(self, elt) -> bool:
         r"""
         Check containment of ``elt`` in ``self``.
 
@@ -503,7 +503,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
                 raise ValueError("the number of variables does not match the number of generators")
         return super().__classcall__(cls, Q, names)
 
-    def __init__(self, Q, names, category=None):
+    def __init__(self, Q, names, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -1463,7 +1463,7 @@ class ExteriorAlgebra(CliffordAlgebra):
                 raise ValueError("the number of variables does not match the number of generators")
         return super().__classcall__(cls, R, names)
 
-    def __init__(self, R, names):
+    def __init__(self, R, names) -> None:
         """
         Initialize ``self``.
 
@@ -2124,7 +2124,7 @@ class ExteriorAlgebraDifferential(ModuleMorphismByLinearity,
         from sage.sets.family import Family
         return super().__classcall__(cls, E, Family(d))
 
-    def __init__(self, E, s_coeff):
+    def __init__(self, E, s_coeff) -> None:
         """
         Initialize ``self``.
 
@@ -2538,7 +2538,7 @@ class ExteriorAlgebraCoboundary(ExteriorAlgebraDifferential):
 
     - :wikipedia:`Exterior_algebra#Differential_geometry`
     """
-    def __init__(self, E, s_coeff):
+    def __init__(self, E, s_coeff) -> None:
         """
         Initialize ``self``.
 
@@ -2733,7 +2733,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
         sage: xbar * ybar
         0
     """
-    def __init__(self, ring, gens, coerce=True, side='twosided'):
+    def __init__(self, ring, gens, coerce=True, side='twosided') -> None:
         """
         Initialize ``self``.
 
@@ -2815,7 +2815,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
         """
         return not self.reduce(f)
 
-    def __richcmp__(self, other, op):
+    def __richcmp__(self, other, op) -> bool:
         """
         Compare ``self`` and ``other``.
 

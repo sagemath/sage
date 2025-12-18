@@ -1247,7 +1247,7 @@ class FiniteWord_class(Word_class):
         elif algorithm == 'naive':
             return ZZ(len(self.factor_set(n, algorithm='naive')))
         else:
-            raise ValueError(f'Unknown algorithm (={algorithm})')
+            raise ValueError(f'unknown algorithm (={algorithm})')
 
     def factor_iterator(self, n=None):
         r"""
@@ -1423,7 +1423,7 @@ class FiniteWord_class(Word_class):
                     S.add(self[i:i+n])
                 return Set(S)
         else:
-            raise ValueError(f'Unknown algorithm (={algorithm})')
+            raise ValueError(f'unknown algorithm (={algorithm})')
 
     def topological_entropy(self, n):
         r"""
@@ -1474,7 +1474,7 @@ class FiniteWord_class(Word_class):
             sage: w.topological_entropy(3)
             Traceback (most recent call last):
             ...
-            TypeError: The word must be defined over a finite alphabet
+            TypeError: the word must be defined over a finite alphabet
 
         The following is ok::
 
@@ -1485,7 +1485,7 @@ class FiniteWord_class(Word_class):
         """
         d = self.parent().alphabet().cardinality()
         if d is Infinity:
-            raise TypeError("The word must be defined over a finite alphabet")
+            raise TypeError("the word must be defined over a finite alphabet")
         if n == 0:
             return 1
         pn = self.number_of_factors(n)
@@ -4370,7 +4370,7 @@ class FiniteWord_class(Word_class):
             sage: Word('123').number_of_factor_occurrences(Word())
             Traceback (most recent call last):
             ...
-            NotImplementedError: The factor must be non empty
+            NotImplementedError: the factor must be non empty
         """
         return sum(1 for _ in self.factor_occurrences_iterator(other))
 
@@ -4899,14 +4899,14 @@ class FiniteWord_class(Word_class):
             {{-4, -2, 0, 2, 4}, {-5, -3, -1, 1, 3, 5}}
         """
         if not isinstance(delay, (int, Integer)):
-            raise TypeError("delay (=%s) must be an integer" % delay)
+            raise TypeError(f"delay (={delay}) must be an integer")
         elif delay < 0:
             return other.overlap_partition(self, -delay, p)
 
         from sage.sets.disjoint_set import DisjointSet_class
         if p is None:
             if self.parent().alphabet().cardinality() is Infinity:
-                raise ValueError("The alphabet of the parent must be finite")
+                raise ValueError("the alphabet of the parent must be finite")
             from sage.sets.disjoint_set import DisjointSet
             p = DisjointSet(self.parent().alphabet())
         elif not isinstance(p, DisjointSet_class):
@@ -6398,18 +6398,18 @@ class FiniteWord_class(Word_class):
             sage: w.standard_factorization()
             Traceback (most recent call last):
             ...
-            ValueError: Standard factorization not defined on words of
+            ValueError: standard factorization not defined on words of
             length less than 2
             sage: w = Word('a')
             sage: w.standard_factorization()
             Traceback (most recent call last):
             ...
-            ValueError: Standard factorization not defined on words of
+            ValueError: standard factorization not defined on words of
             length less than 2
         """
         selflen = self.length()
         if selflen < 2:
-            raise ValueError("Standard factorization not defined on"
+            raise ValueError("standard factorization not defined on"
                              " words of length less than 2")
         for l in range(1, selflen):
             suff = self[l:]
@@ -6542,11 +6542,11 @@ class FiniteWord_class(Word_class):
             sage: Word(range(100)).colored_vector(cmap='jolies')                        # needs sage.plot
             Traceback (most recent call last):
             ...
-            RuntimeError: Color map jolies not known
+            RuntimeError: color map jolies not known
             sage: Word(range(100)).colored_vector(cmap='__doc__')                       # needs sage.plot
             Traceback (most recent call last):
             ...
-            RuntimeError: Color map __doc__ not known
+            RuntimeError: color map __doc__ not known
         """
         # Recognize the color map
         import matplotlib.cm as cm
@@ -6562,7 +6562,7 @@ class FiniteWord_class(Word_class):
                                       if isinstance(val, C))
             import sage.misc.verbose
             sage.misc.verbose.verbose("The possible color maps include: %s" % possibilities, level=0)
-            raise RuntimeError("Color map %s not known" % cmap)
+            raise RuntimeError(f"color map {cmap} not known")
 
         # Drawing the colored vector...
         from sage.plot.line import line
