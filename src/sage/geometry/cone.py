@@ -6539,6 +6539,46 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             return {self}
         return { Cone(self.rays(c)) for c in G.connected_components() }
 
+    def is_reducible(self):
+        r"""
+        Return whether or not this cone is reducible.
+
+        A pointed convex cone is reducible if some other cone appears
+        in its :meth:`irreducible_factors`.
+
+        .. SEEALSO::
+
+            :meth:`irreducible_factors`
+
+        EXAMPLES:
+
+        The nonnegative orthant is always reducible in dimension two or
+        more::
+
+            sage: cones.nonnegative_orthant(1).is_reducible()
+            False
+            sage: cones.nonnegative_orthant(2).is_reducible()
+            True
+            sage: cones.nonnegative_orthant(3).is_reducible()
+            True
+
+        TESTS:
+
+        Reducibility is preserved under linear isomorphisms::
+
+            sage: # long time
+            sage: K = random_cone(strictly_convex=True,
+            ....:                 max_ambient_dim=6)
+            sage: n = K.ambient_dim()
+            sage: q = QQ._random_nonzero_element()
+            sage: A = q*matrix.random(QQ, n, algorithm='unimodular')
+            sage: AK = Cone([ r*A for r in K.rays() ], lattice=K.lattice())
+            sage: K.is_reducible() == AK.is_reducible()
+            True
+
+        """
+        return len(self.irreducible_factors()) > 1
+
 
 def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
                 min_rays=0, max_rays=None, strictly_convex=None, solid=None):
