@@ -421,7 +421,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
             Traceback (most recent call last):
             ...
             ValueError: the values do not satisfy all relations of the group
-            sage: w(1, 2, check=False)
+            sage: w(1, 2, check=False)   # result depends on presentation of the group element
             2
         """
         from sage.structure.element import coercion_model, parent
