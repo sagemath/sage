@@ -131,6 +131,7 @@ import shlex
 
 from sage.arith.misc import GCD as gcd
 from sage.categories.monoids import Monoids
+from sage.categories.sets_with_grading import SetsWithGrading
 from sage.features import PythonModule
 from sage.features.palp import PalpExecutable
 from sage.features.databases import DatabaseReflexivePolytopes
@@ -1735,6 +1736,8 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         """
         nv = self.n_vertices()
         return self._PPL().affine_dimension() if nv > 3 else nv - 1
+
+    grade = dim  # for the category SetsWithGrading
 
     def distances(self, point=None):
         r"""
@@ -5922,9 +5925,11 @@ class LatticePolytopes(UniqueRepresentation, Parent):
             sage: S = lattice_polytope.LatticePolytopes(); S
             Set of all Lattice Polytopes
             sage: S.category()
-            Category of infinite monoids
+            Join of Category of monoids and Category of sets with grading
+            and Category of infinite sets
         """
-        Parent.__init__(self, category=Monoids().Infinite())
+        cat = Monoids().Infinite() & SetsWithGrading()
+        Parent.__init__(self, category=cat)
 
     def _repr_(self) -> str:
         r"""
