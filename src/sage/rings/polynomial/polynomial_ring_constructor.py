@@ -900,6 +900,9 @@ def _multi_variate(base_ring, names, sparse=None, order='degrevlex', implementat
     # yield the same implementation. We need this for caching.
     implementation_names = set([implementation])
 
+    if implementation is None and isinstance(base_ring, (sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField)):
+        implementation = "generic"  # singular has some issues with RDF/CDF, do not make singular the default
+
     if implementation is None or implementation == "singular":
         try:
             from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
