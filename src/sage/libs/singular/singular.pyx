@@ -49,27 +49,10 @@ from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
 from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
 from sage.libs.gmp.all cimport *
 
-cdef extern from "coeffs/mpr_complex.h":
-    cdef cppclass gmp_float:
-        gmp_float(double v)
-        double to_double "operator double"() const
-
-    cdef cppclass gmp_complex:
-        gmp_complex(double re, double im)
-        gmp_float real() const
-        gmp_float imag() const
-
-    char *floatToStr(const gmp_float & r, const unsigned int oprec)
-    char *complexToStr(gmp_complex & c, const unsigned int oprec, const n_Procs_s* src)
-
 from sage.cpython.string import FS_ENCODING
 from sage.cpython.string cimport str_to_bytes, char_to_str, bytes_to_str
 
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular
-
-ctypedef union _nf_real:
-    double f
-    number* n
 
 ctypedef struct fraction "fractionObject":
     poly *numerator
@@ -1622,7 +1605,6 @@ cdef object si2sa(number *n, ring *_ring, object base):
     """
     cdef gmp_float* f
     cdef gmp_complex* c
-    cdef _nf_real u
     cdef char* s
     if isinstance(base, FiniteField_prime_modn) and _ring.cf.type == n_Zp:
         return base(_ring.cf.cfInt(n, _ring.cf))
@@ -1655,8 +1637,7 @@ cdef object si2sa(number *n, ring *_ring, object base):
         return si2sa_ZZmod(n, _ring, base)
 
     elif isinstance(base, sage.rings.abc.RealDoubleField) and _ring.cf.type == n_R:
-        u.n = n
-        return base(u.f)
+        return base(nrFloat(n))
 
     elif isinstance(base, sage.rings.abc.RealDoubleField) and _ring.cf.type == n_long_R:
         f = <gmp_float*>n
@@ -1685,7 +1666,6 @@ cdef number *sa2si(Element elem, ring * _ring) noexcept:
     a (pointer to) a singular number
     """
     cdef int i = 0
-    cdef _nf_real u
     cdef ComplexDoubleElement z
     cdef RealDoubleElement re
     cdef RealDoubleElement im
@@ -1713,8 +1693,7 @@ cdef number *sa2si(Element elem, ring * _ring) noexcept:
     elif isinstance(elem._parent, IntegerModRing_generic):
         return sa2si_ZZmod(elem, _ring)
     elif isinstance(elem._parent, sage.rings.abc.RealDoubleField) and _ring.cf.type == n_R:
-        u.f = (<RealDoubleElement>elem)._value
-        return u.n
+        return sage_nrInit((<RealDoubleElement>elem)._value)
     elif isinstance(elem._parent, sage.rings.abc.RealDoubleField) and _ring.cf.type == n_long_R:
         return <number*><void*>new gmp_float((<RealDoubleElement>elem)._value)
     elif isinstance(elem._parent, sage.rings.abc.ComplexDoubleField) and _ring.cf.type == n_long_C:

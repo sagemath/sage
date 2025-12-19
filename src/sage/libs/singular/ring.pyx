@@ -30,13 +30,6 @@ from sage.libs.singular.decl cimport n_unknown, n_R, n_algExt, n_transExt, n_lon
 from sage.libs.singular.decl cimport n_coeffType
 from sage.libs.singular.decl cimport rDefault, GFInfo, ZnmInfo, nInitChar, AlgExtInfo, TransExtInfo
 
-cdef extern from "coeffs/coeffs.h":
-    ctypedef struct LongComplexInfo:
-        short float_len
-        short float_len2
-        const char* par_name
-
-
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring cimport IntegerRing_class
 import sage.rings.abc
