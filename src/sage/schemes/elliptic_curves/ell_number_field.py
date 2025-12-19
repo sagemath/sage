@@ -2281,6 +2281,21 @@ class EllipticCurve_number_field(EllipticCurve_field):
         else:
             raise ValueError('There is insufficient data to determine the rank - 2-descent gave lower bound %s and upper bound %s' % (lower, upper))
 
+    def analytic_rank(self):
+        r"""
+        Return an integer that is *probably* the analytic rank of this
+        elliptic curve.
+
+        EXAMPLES::
+
+            sage: K.<s> = QuadraticField(229)
+            sage: EllipticCurve("389a1").change_ring(K).analytic_rank()  # long time
+            3
+            sage: len(EllipticCurve("389a1").change_ring(K).gens())  # long time
+            3
+        """
+        return ZZ(self.integral_model().pari_curve().lfuncreate().lfunorderzero())
+
     def gens(self, **kwds):
         r"""
         Return some points of infinite order on this elliptic curve.
