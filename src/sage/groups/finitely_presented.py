@@ -408,9 +408,6 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         The generator `b` can be eliminated using the relation `a=b`. Any
         values that you plug into a word must satisfy this relation::
 
-            sage: G.<a,b> = FreeGroup()
-            sage: H = G / [a/b];  H
-            Finitely presented group < a, b | a*b^-1 >
             sage: A, B = H.gens()
             sage: w = A^2 * B
             sage: w(2,2)
