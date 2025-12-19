@@ -47,7 +47,7 @@ numpy=None
 
 cdef class Matrix_complex_double_dense(Matrix_double_dense):
     """
-    Class that implements matrices over the real double field. These
+    Class that implements matrices over the complex double field. These
     are supposed to be fast matrix operations using C doubles. Most
     operations are implemented using numpy which will call the
     underlying BLAS on the system.
