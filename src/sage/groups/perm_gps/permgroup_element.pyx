@@ -2072,7 +2072,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         def convert_back(string):
             L = copy.copy(string)
-            for i, w_i in enumerate(words):
+            for i, w_i in reversed(list(enumerate(words))):
                 L = L.replace("x" + str(i + 1), str(w_i))
             return L
 
