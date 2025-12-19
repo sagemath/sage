@@ -1671,8 +1671,14 @@ cdef class Polynomial(CommutativePolynomial):
         P = a.parent()
         if P.is_exact() and can_convert_to_singular(P):
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            R = PolynomialRing(P.base_ring(), P.variable_names(), implementation="singular")
-            return P(R(a).inverse_mod(R.ideal(m)))
+            try:
+                R = PolynomialRing(P.base_ring(), P.variable_names(), implementation="singular")
+            except NotImplementedError:
+                # singular(PolynomialRing(Frac(ZZ["u", "v", "w"]), "x")) works, but
+                # PolynomialRing(Frac(ZZ["u", "v", "w"]), "x", implementation="singular") fails
+                pass
+            else:
+                return P(R(a).inverse_mod(R.ideal(m)))
         from sage.rings.ideal import Ideal_generic
         if isinstance(m, Ideal_generic):
             v = m.gens_reduced()
@@ -11642,10 +11648,14 @@ cdef class Polynomial(CommutativePolynomial):
         if not self.base_ring().is_integral_domain():
             from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
             P = self.parent()
-            if can_convert_to_singular(P):
+            if P.is_exact() and can_convert_to_singular(P):
                 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-                R = PolynomialRing(P.base_ring(), P.variable_names(), implementation="singular")
-                return bool(R(self).divides(R(p)))
+                try:
+                    R = PolynomialRing(P.base_ring(), P.variable_names(), implementation="singular")
+                except NotImplementedError:
+                    pass
+                else:
+                    return bool(R(self).divides(R(p)))
             raise NotImplementedError("divisibility test only implemented for polynomials over an integral domain unless Singular can be used")
 
         try:
