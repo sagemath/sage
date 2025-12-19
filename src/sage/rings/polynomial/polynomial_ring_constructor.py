@@ -499,7 +499,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: x^2 + 1
         x^2 + 1
 
-    The ring printing via libSingular matches the output of the Singular
+    The ring printing via libsingular matches the output of the Singular
     interface::
 
         sage: from sage.libs.singular.function import singular_function               # needs sage.libs.singular
