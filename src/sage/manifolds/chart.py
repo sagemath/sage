@@ -3761,7 +3761,7 @@ class CoordChange(SageObject):
             sage: spher_to_cart.set_inverse(sqrt(x^2+y^2), atan2(y,x))
             Check of the inverse coordinate transformation:
               r == r  *passed*
-              ph == arctan2(r*sin(ph), r*cos(ph))  **failed**
+              ph == -2*pi*ceil(-1/2*(pi - ph)/pi) + ph  **failed**
               x == x  *passed*
               y == y  *passed*
             NB: a failed report can reflect a mere lack of simplification.
@@ -3799,7 +3799,7 @@ class CoordChange(SageObject):
             sage: spher_to_cart.set_inverse(sqrt(x^3+y^2), atan2(y,x))
             Check of the inverse coordinate transformation:
               r == r*sqrt(abs(r*cos(ph)^3 + sin(ph)^2))  **failed**
-              ph == arctan2(r*sin(ph), r*cos(ph))  **failed**
+              ph == -2*pi*ceil(-1/2*(pi - ph)/pi) + ph  **failed**
               x == sqrt(x^3 + y^2)*x/sqrt(x^2 + y^2)  **failed**
               y == sqrt(x^3 + y^2)*y/sqrt(x^2 + y^2)  **failed**
             NB: a failed report can reflect a mere lack of simplification.

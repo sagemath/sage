@@ -1008,8 +1008,8 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: f = log(sin(x))*sin(x)^2
         sage: g = integrate(f, x) ; g
         1/4*I*x^2
+        - 1/2*I*x*arctan2(-sin(x), -cos(x) + 1)
         - 1/2*I*x*arctan2(sin(x), cos(x) + 1)
-        + 1/2*I*x*arctan2(sin(x), -cos(x) + 1)
         - 1/4*x*log(cos(x)^2 + sin(x)^2 + 2*cos(x) + 1)
         - 1/4*x*log(cos(x)^2 + sin(x)^2 - 2*cos(x) + 1)
         + 1/4*(2*x - sin(2*x))*log(sin(x))
