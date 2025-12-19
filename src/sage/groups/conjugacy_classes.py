@@ -159,7 +159,7 @@ class ConjugacyClass(Parent):
         """
         return not (self == other)
 
-    def __contains__(self, element):
+    def __contains__(self, element) -> bool:
         r"""
         Check if ``element`` belongs to the conjugacy class ``self``.
 
@@ -440,7 +440,7 @@ class ConjugacyClassGAP(ConjugacyClass):
         """
         return self._gap_().Size().sage()
 
-    def __contains__(self, g):
+    def __contains__(self, g) -> bool:
         r"""
         Containment test.
 
