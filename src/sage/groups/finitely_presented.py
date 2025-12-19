@@ -400,14 +400,13 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         EXAMPLES::
 
             sage: G.<a,b> = FreeGroup()
-            sage: H = G / [a*b*a^-1*b^-1]  # free abelian group
-            sage: H.inject_variables()
-            Defining a, b
-            sage: w = a * b
-            sage: w(2,3)
-            6
+            sage: H = G / [a/b];  H
+            Finitely presented group < a, b | a*b^-1 >
+            sage: H.simplified()
+            Finitely presented group < a |  >
 
-        ::
+        The generator `b` can be eliminated using the relation `a=b`. Any
+        values that you plug into a word must satisfy this relation::
 
             sage: G.<a,b> = FreeGroup()
             sage: H = G / [a/b];  H
@@ -416,6 +415,14 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
             sage: w = A^2 * B
             sage: w(2,2)
             8
+            sage: w(3,3)
+            27
+            sage: w(1,2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the values do not satisfy all relations of the group
+            sage: w(1, 2, check=False)
+            2
         """
         from sage.structure.element import coercion_model, parent
         from sage.misc.misc_c import prod
