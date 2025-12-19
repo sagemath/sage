@@ -564,6 +564,11 @@ REFERENCES:
                  "PHOTON-BeetleAuthenticated Encryption and Hash Family"
                  https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/PHOTON-Beetle-spec.pdf
 
+.. [BF1976] George Phillip Barker and James Foran.
+            *Self-Dual Cones in Euclidean Spaces*.
+            Linear Algebra and its Applications, 13(1-2):147-155, 1976.
+            :doi:`10.1016/0024-3795(76)90053-7`.
+
 .. [BH1965] \L. D. Baumert, M. Hall Jr.
             *A new construction for Hadamard matrices*.
             Bulletin of the American Mathematical Society 71(1):169-170, 1965.

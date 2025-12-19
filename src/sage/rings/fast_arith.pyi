@@ -1,5 +1,5 @@
 
-def prime_range(start: int, stop: int = None, algorithm: str = None, py_ints: bool = False) -> list[int]:
+def prime_range(start: int, stop: int | None = None, algorithm: str | None = None, py_ints: bool = False) -> list[int]:
     ...
 
 class arith_int:

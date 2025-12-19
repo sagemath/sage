@@ -59,7 +59,7 @@ class Algebras(CategoryWithAxiom_over_base_ring):
     _base_category_class_and_axiom = (AssociativeAlgebras, 'Unital')
 
     # For backward compatibility?
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Membership testing.
 

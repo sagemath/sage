@@ -20,7 +20,7 @@ FFLAS_FFPACK_CONFIGURE="$SAGE_CONFIGURE_FFLAS_FFPACK $FFLAS_FFPACK_CONFIGURE"
 
 # If SAGE_FAT_BINARY is set, disable all processor-specific optimizations
 if [ "$SAGE_FAT_BINARY" = yes ]; then
-    FFLAS_FFPACK_CONFIGURE="--disable-sse --disable-sse2 --disable-sse3 --disable-ssse3 --disable-sse41 --disable-sse42 --disable-fma --disable-fma4 --disable-avx --disable-avx2 --disable-avx512f --disable-avx512dq --disable-avx512vl $FFLAS_FFPACK_CONFIGURE"
+    FFLAS_FFPACK_CONFIGURE="--without-archnative $FFLAS_FFPACK_CONFIGURE"
 fi
 
 # Need to use 'bash' for configure, see

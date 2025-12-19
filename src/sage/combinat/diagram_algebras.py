@@ -357,7 +357,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
             sage: pd2 = da.AbstractPartitionDiagram(pd, [[[1,2],[-1,-2]]]) # indirect doctest
             Traceback (most recent call last):
             ...
-            TypeError: unhashable type: 'list'
+            TypeError: ...unhashable type: 'list'...
         """
         if self._base_diagram:
             tst = frozenset(e for B in self._base_diagram for e in B)

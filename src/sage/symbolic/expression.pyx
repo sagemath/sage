@@ -13531,7 +13531,7 @@ cpdef _repr_Expression(x):
         sage: SR._repr_element_(x+2)
         'x + 2'
     """
-    return ccrepr((<Expression>x)._gobj)
+    return ccrepr((<Expression?>x)._gobj)
 
 
 cpdef _latex_Expression(x):
@@ -13545,7 +13545,7 @@ cpdef _latex_Expression(x):
         sage: latex(var('theta') + 2)
         \theta + 2
     """
-    return char_to_str(GEx_to_str_latex(&(<Expression>x)._gobj))
+    return char_to_str(GEx_to_str_latex(&(<Expression?>x)._gobj))
 
 
 def solve_diophantine(f, *args, **kwds):
