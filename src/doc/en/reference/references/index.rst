@@ -3802,6 +3802,12 @@ REFERENCES:
                Spectral sets and functions on Euclidean Jordan algebras.
                University of Maryland, Baltimore County, Ph.D. thesis, 2017.
 
+.. [JG2018] Juyoung Jeong and M. Seetharama Gowda.
+            *Permutation invariant proper polyhedral cones and their
+            Lyapunov rank*.
+            Journal of Mathematical Analysis and Applications
+            463(1):377-385, 2018. :doi:`10.1016/j.jmaa.2018.03.024`.
+
 .. [JK1981] Gordon James, Adalbert Kerber,
             *The Representation Theory of the Symmetric Group*,
             Encyclopedia of Mathematics and its Applications, vol. 16,
