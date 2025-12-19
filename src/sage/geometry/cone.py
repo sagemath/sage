@@ -6566,6 +6566,20 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: cones.nonnegative_orthant(3).is_reducible()
             True
 
+        Theorem 4.1 in [JG2018]_ says that the Lyapunov rank of a
+        permutation-invariant cone is either ``n`` or ``1``, depending
+        on whether or not it is reducible. Corollary 5.2.4 of
+        [Jeong2017]_ then implies that the ``(p,n)`` rearrangement
+        cone is reducible if and only if ``p`` is either ``1`` or
+        ``n-1``. We exclude the possibility of ``p == n`` since that
+        returns a (not pointed) half-space::
+
+            sage: n = ZZ.random_element(10) + 2
+            sage: p = ZZ.random_element(1, n)
+            sage: K = cones.rearrangement(p, n)
+            sage: K.is_reducible() == (p in [1, n-1])
+            True
+
         TESTS:
 
         Reducibility is preserved under linear isomorphisms::
