@@ -656,8 +656,8 @@ def compile_and_load(code, **kwds):
     r"""
     INPUT:
 
-    - ``code`` -- string containing code that could be in a .pyx file
-      that is attached or put in a %cython block in the notebook
+    - ``code`` -- string containing code that could be in a ``.pyx`` file
+      that is attached or put in a ``%%cython`` block
 
     See the function :func:`sage.misc.cython.cython` for documentation
     for the other inputs.
