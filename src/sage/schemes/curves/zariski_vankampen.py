@@ -41,10 +41,9 @@ EXAMPLES::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-import itertools
-
 from copy import copy
 from itertools import combinations
+from typing import Any
 
 from sage.combinat.permutation import Permutation
 from sage.functions.generalized import sign
@@ -71,7 +70,7 @@ from sage.schemes.curves.constructor import Curve
 
 lazy_import('sage.libs.braiding', ['leftnormalform', 'rightnormalform'])
 
-roots_interval_cache = {}
+roots_interval_cache: dict[tuple, Any] = {}
 
 
 def braid_from_piecewise(strands):
@@ -109,8 +108,8 @@ def braid_from_piecewise(strands):
                 yauxi = val[indices[j]][2]
                 aaux = val[indices[j] - 1][0]
                 baux = val[indices[j]][0]
-                interpolar = xauxr + (yauxr - xauxr)*(i - aaux) / (baux - aaux)
-                interpolai = xauxi + (yauxi - xauxi)*(i - aaux) / (baux - aaux)
+                interpolar = xauxr + (yauxr - xauxr) * (i - aaux) / (baux - aaux)
+                interpolai = xauxi + (yauxi - xauxi) * (i - aaux) / (baux - aaux)
                 totalpoints[j].append([interpolar, interpolai])
             else:
                 totalpoints[j].append([val[indices[j]][1],
@@ -219,9 +218,10 @@ def discrim(pols) -> tuple:
 
 
 @cached_function
-def corrected_voronoi_diagram(points):
+def corrected_voronoi_diagram(points) -> VoronoiDiagram:
     r"""
     Compute a Voronoi diagram of a set of points with rational coordinates.
+
     The given points are granted to lie one in each bounded region.
 
     INPUT:
@@ -276,7 +276,7 @@ def corrected_voronoi_diagram(points):
     return V
 
 
-def orient_circuit(circuit, convex=False, precision=53, verbose=False):
+def orient_circuit(circuit, convex=False, precision=53, verbose=False) -> tuple:
     r"""
     Reverse a circuit if it goes clockwise; otherwise leave it unchanged.
 
@@ -331,7 +331,7 @@ def orient_circuit(circuit, convex=False, precision=53, verbose=False):
         sage: cir_oriented == orient_circuit(cir, convex=True)
         True
         sage: P0=[(1,1/2),(0,1),(1,1)]; P1=[(0,3/2),(-1,0)]
-        sage: Q=Polyhedron(P0).vertices()
+        sage: Q = Polyhedron(P0).vertices()
         sage: Q = [Q[2], Q[0], Q[1]] + [_ for _ in reversed(Polyhedron(P1).vertices())]
         sage: Q
         [A vertex at (1, 1/2), A vertex at (0, 1), A vertex at (1, 1),
@@ -369,7 +369,7 @@ def orient_circuit(circuit, convex=False, precision=53, verbose=False):
             print(prec)
 
 
-def voronoi_cells(V, vertical_lines=frozenset()):
+def voronoi_cells(V, vertical_lines=frozenset()) -> tuple:
     r"""
     Compute the graph, the boundary graph, a base point, a positive orientation
     of the boundary graph, and the dual graph of a corrected Voronoi diagram.
@@ -480,7 +480,7 @@ def voronoi_cells(V, vertical_lines=frozenset()):
     return (G, E, p, EC, DG, vertical_regions)
 
 
-def followstrand(f, factors, x0, x1, y0a, prec=53) -> list:
+def followstrand(f, factors, x0, x1, y0a, prec=53) -> list[tuple]:
     r"""
     Return a piecewise linear approximation of the homotopy continuation
     of the root ``y0a`` from ``x0`` to ``x1``.
@@ -564,18 +564,18 @@ def followstrand(f, factors, x0, x1, y0a, prec=53) -> list:
                 ci = c.imag()
                 coefsfactors += list(cr.endpoints())
                 coefsfactors += list(ci.endpoints())
-    from sage.libs.sirocco import (contpath, contpath_mp, contpath_comps, contpath_mp_comps)
+    from sage.libs.sirocco import (contpath, contpath_mp,
+                                   contpath_comps, contpath_mp_comps)
     try:
         if prec == 53:
             if factors:
                 points = contpath_comps(deg, coefs, yr, yi, degsfactors, coefsfactors)
             else:
                 points = contpath(deg, coefs, yr, yi)
+        elif factors:
+            points = contpath_mp_comps(deg, coefs, yr, yi, prec, degsfactors, coefsfactors)
         else:
-            if factors:
-                points = contpath_mp_comps(deg, coefs, yr, yi, prec, degsfactors, coefsfactors)
-            else:
-                points = contpath_mp(deg, coefs, yr, yi, prec)
+            points = contpath_mp(deg, coefs, yr, yi, prec)
         return points
     except Exception:
         return followstrand(f, factors, x0, x1, y0a, 2 * prec)
@@ -613,7 +613,7 @@ def newton(f, x0, i0):
     return x0 - f(x0) / f.derivative()(i0)
 
 
-def fieldI(field):
+def fieldI(field: NumberField) -> NumberField:
     r"""
     Return the (either double or trivial) extension of a number field which contains ``I``.
 
@@ -675,7 +675,7 @@ def fieldI(field):
 
 
 @parallel
-def roots_interval(f, x0):
+def roots_interval(f, x0) -> dict:
     """
     Find disjoint intervals that isolate the roots of a polynomial for a fixed
     value of the first variable.
@@ -747,7 +747,7 @@ def roots_interval(f, x0):
     return result
 
 
-def roots_interval_cached(f, x0):
+def roots_interval_cached(f, x0) -> dict:
     r"""
     Cached version of :func:`roots_interval`.
 
@@ -777,7 +777,7 @@ def roots_interval_cached(f, x0):
         return result
 
 
-def populate_roots_interval_cache(inputs):
+def populate_roots_interval_cache(inputs) -> None:
     r"""
     Call :func:`roots_interval` to the inputs that have not been
     computed previously, and cache them.
@@ -889,7 +889,7 @@ def braid_in_segment(glist, x0, x1, precision={}):
             CIFp = ComplexIntervalField(precision1[f])
             intervals[f] = [r.interval(CIFp) for r in y0sf]
             if not any(a.overlaps(b) for a, b in
-                       itertools.combinations(intervals[f], 2)):
+                       combinations(intervals[f], 2)):
                 break
             precision1[f] *= 2
     strands = []
@@ -934,7 +934,8 @@ def braid_in_segment(glist, x0, x1, precision={}):
     return initialbraid * centralbraid * finalbraid
 
 
-def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions={}) -> list:
+def geometric_basis(G, E, EC0, p, dual_graph,
+                    vertical_regions={}) -> tuple[list, dict]:
     r"""
     Return a geometric basis, based on a vertex.
 
@@ -1122,7 +1123,7 @@ def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions={}) -> list:
     return (resul, vd)
 
 
-def vertical_lines_in_braidmon(pols) -> list:
+def vertical_lines_in_braidmon(pols) -> list[int]:
     r"""
     Return the vertical lines in ``pols``, unless
     one of the other components has a vertical asymptote.
@@ -1164,7 +1165,7 @@ def vertical_lines_in_braidmon(pols) -> list:
     return res
 
 
-def strand_components(f, pols, p1):
+def strand_components(f, pols, p1) -> tuple[list, dict]:
     r"""
     Compute only the assignment from strands to elements of ``flist``.
 
@@ -1210,7 +1211,7 @@ def strand_components(f, pols, p1):
     return (roots_base, strands)
 
 
-def braid_monodromy(f, arrangement=(), vertical=False):
+def braid_monodromy(f, arrangement=(), vertical=False) -> tuple:
     r"""
     Compute the braid monodromy of a projection of the curve defined by
     a polynomial.
@@ -1308,22 +1309,19 @@ def braid_monodromy(f, arrangement=(), vertical=False):
             arrangement_h = tuple(f1.subs({x: x + y}) for f1 in arrangement_h)
             arrangement1 = arrangement_h
             glist = tuple(f1.subs({x: x + y}) for f1 in glist)
-    if d > 0:
-        disc = discrim(glist)
-    else:
-        disc = []
+    disc = discrim(glist) if d > 0 else []
     vertical_braid = {}
     transversal = {}
-    vl = []
+    vl_list = []
     for f0 in arrangement_v:
         pt = [j for j, t in enumerate(disc) if f0.subs({x: t}) == 0]
         if pt:
             vertical_braid[f0] = (pt[0], arrangement1.index(f0))
-            vl.append(pt[0])
+            vl_list.append(pt[0])
         else:
             transversal[f0] = arrangement1.index(f0)
-    vl.sort()
-    vl = frozenset(vl)
+    vl_list.sort()
+    vl = frozenset(vl_list)
     if not disc:
         vertical_braids = {i: transversal[f0]
                            for i, f0 in enumerate(transversal)}
@@ -1354,13 +1352,13 @@ def braid_monodromy(f, arrangement=(), vertical=False):
         k = arrangement1.index(arrangement_h[i])
         strands1[j] = k
     geombasis, vd = geometric_basis(G, E, EC, p, DG, vertical_regions=VR)
-    segs = set()
+    segs_set = set()
     for p in geombasis:
-        for s in zip(p[:-1], p[1:]):
-            if (s[1], s[0]) not in segs:
-                segs.add((s[0], s[1]))
+        for s0, s1 in zip(p[:-1], p[1:]):
+            if (s1, s0) not in segs_set:
+                segs_set.add((s0, s1))
     I0 = QQbar.gen()
-    segs = [(a[0] + I0 * a[1], b[0] + I0 * b[1]) for a, b in segs]
+    segs = [(a[0] + I0 * a[1], b[0] + I0 * b[1]) for a, b in segs_set]
     vertices = list(set(flatten(segs)))
     tocacheverts = tuple([(g, v) for v in vertices])
     populate_roots_interval_cache(tocacheverts)
@@ -1403,7 +1401,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
     return (result, strands1, vertical_braids, d)
 
 
-def conjugate_positive_form(braid):
+def conjugate_positive_form(braid) -> list[list]:
     r"""
     For a ``braid`` which is conjugate to a product of *disjoint* positive
     braids a list of such decompositions is given.
@@ -1485,13 +1483,14 @@ def conjugate_positive_form_p(braid):
     return conjugate_positive_form(braid)
 
 
-def braid2rels(L):
+def braid2rels(L) -> list:
     r"""
     Return a minimal set of relations of the group
     ``F / [(b * F([j])) / F([j]) for j in (1..d)]`` where ``F = FreeGroup(d)``
-    and ``b`` is a conjugate of a positive braid . One starts from the
-    non-trivial relations determined by the positive braid and transform
-    them in relations determined by ``b``.
+    and ``b`` is a conjugate of a positive braid.
+
+    One starts from the non-trivial relations determined by the
+    positive braid and transform them in relations determined by ``b``.
 
     INPUT:
 
@@ -1813,7 +1812,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
     OUTPUT:
 
     - A list of braids. The braids correspond to paths based in the same point;
-      each of this paths is the conjugated of a loop around one of the points
+      each of these paths is the conjugated of a loop around one of the points
       in the discriminant of the projection of ``f``.
 
     - A dictionary attaching to ``j`` a tuple a list of elements
@@ -1880,7 +1879,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
         R = f.parent()
     else:
         R = PolynomialRing(QQ, ('x', 'y'))
-        f = R(1)
+        f = R.one()
     x, y = R.gens()
     flist1 = tuple(flist)
     if vertical and vertical_lines_in_braidmon(flist1):

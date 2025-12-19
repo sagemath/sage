@@ -2,6 +2,10 @@ if not get_option('build-docs')
   subdir_done()
 endif
 
+warning(
+  'Documentation building enabled, generating targets may be slow. To disable this, pass -Dbuild-docs=false.',
+)
+
 sphinx_check = py_module.find_installation(required: false, modules: ['sphinx'])
 if not sphinx_check.found()
   warning(

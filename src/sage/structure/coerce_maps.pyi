@@ -1,4 +1,5 @@
-from typing import Any, Optional, Callable
+from collections.abc import Callable
+from typing import Any, Optional
 
 class DefaultConvertMap:
     def __init__(self, domain: Any, codomain: Any, category: Optional[Any] = None) -> None: ...

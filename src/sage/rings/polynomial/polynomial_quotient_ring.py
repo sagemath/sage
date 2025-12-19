@@ -984,6 +984,10 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: S = R.quotient(x^2005 + 1)
             sage: S.degree()
             2005
+
+        .. SEEALSO::
+
+            :meth:`PolynomialQuotientRing_field.absolute_degree`
         """
         return self.modulus().degree()
 
@@ -1040,6 +1044,11 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         """
         Return whether or not this quotient ring is a field.
 
+        INPUT:
+
+        - ``proof`` -- boolean (default: ``True``) require the
+          ``is_irreducible`` method of the modulus to be implemented
+
         EXAMPLES::
 
             sage: R.<z> = PolynomialRing(ZZ)
@@ -1051,8 +1060,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: S.is_field()
             True
 
-        If proof is ``True``, requires the ``is_irreducible`` method of the
-        modulus to be implemented::
+        If proof is ``True``, an exception is raised when the
+        ``is_irreducible`` method of the modulus is not implemented::
 
             sage: # needs sage.rings.padics
             sage: R1.<x> = Qp(2)[]
@@ -2433,6 +2442,42 @@ class PolynomialQuotientRing_field(PolynomialQuotientRing_domain, Field):
     """
     def __init__(self, ring, polynomial, name=None, category=None):
         PolynomialQuotientRing_domain.__init__(self, ring, polynomial, name, category)
+
+    def absolute_degree(self):
+        """
+        Return the degree of this quotient ring over the absolute base field.
+
+        EXAMPLES::
+
+            sage: K.<a> = GF(9)
+            sage: R.<x> = PolynomialRing(K)
+            sage: S = R.quotient(x^2 + a*x + 1)
+            sage: S.absolute_degree()
+            4
+            sage: x = polygen(QQ, 'x')
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: R.<y> = PolynomialRing(K)
+            sage: S = R.quotient(y^3 + y + 1)
+            sage: S.absolute_degree()
+            6
+            sage: R.<x> = PolynomialRing(RR)
+            sage: S = R.quotient(x^2 + 1)
+            sage: S.absolute_degree()
+            2
+            sage: K = GF(4)
+            sage: A.<x> = K[]
+            sage: L = K.extension(x+1)
+            sage: L.absolute_degree()
+            2
+
+        .. SEEALSO::
+
+            :meth:`PolynomialQuotientRing_generic.degree`
+        """
+        base_field = self.base_field()
+        if hasattr(base_field, 'absolute_degree'):
+            return base_field.absolute_degree() * self.degree()
+        return self.degree()
 
     def base_field(self):
         r"""
