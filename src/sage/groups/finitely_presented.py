@@ -355,7 +355,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
 
         TESTS:
 
-        TEST :issue:`40549` is solved::
+        Check that :issue:`40549` is fixed::
 
             sage: F.<x,y> = FreeGroup()
             sage: G = F / [x^4, y^13, x*y*x^-1*y^-5]
