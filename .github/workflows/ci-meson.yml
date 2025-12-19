@@ -130,16 +130,14 @@ jobs:
             export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
             export CC="ccache $CC"
             export CXX="ccache $CXX"
+            export CFLAGS+=" -Werror=discarded-qualifiers"
+            export CXXFLAGS+=" -Werror=discarded-qualifiers"
+            echo "CFLAGS=$CFLAGS"
+            echo "CXXFLAGS=$CXXFLAGS"
           else
             export LIB="$LIB;$CONDA_PREFIX\\Library\\lib"
             export INCLUDE="$INCLUDE;$CONDA_PREFIX\\Library\\include"
           fi
-
-          export CFLAGS+=" -Werror=discarded-qualifiers"
-          export CXXFLAGS+=" -Werror=discarded-qualifiers"
-
-          echo "CFLAGS=$CFLAGS"
-          echo "CXXFLAGS=$CXXFLAGS"
 
           # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda
           pip install --no-build-isolation --no-deps --config-settings=builddir=builddir ${{ matrix.editable && '--editable' || '' }} . -v
