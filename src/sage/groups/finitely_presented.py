@@ -343,7 +343,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
             sage: hash(a*a) == hash(H.one())  # equal elements have equal hashes
             True
 
-        General infinite f.p. groups do not support hashing::
+        General infinite finitely presented groups do not support hashing::
 
             sage: F.<a,b> = FreeGroup()
             sage: G = F / [a*b*a^-1*b^-2]  # Baumslag-Solitar group, infinite
