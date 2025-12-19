@@ -1670,7 +1670,7 @@ class SphericalBesselJ(BuiltinFunction):
         sage: spherical_bessel_J(4, x).simplify()
         -((45/x^2 - 105/x^4 - 1)*sin(x) + 5*(21/x^2 - 2)*cos(x)/x)/x
         sage: integrate(spherical_bessel_J(1,x)^2,(x,0,oo))
-        0
+        1/6*pi
         sage: latex(spherical_bessel_J(4, x))
         j_{4}\left(x\right)
 
@@ -1769,7 +1769,7 @@ class SphericalBesselY(BuiltinFunction):
         sage: integrate(spherical_bessel_Y(0, x), x)
         -1/2*Ei(I*x) - 1/2*Ei(-I*x)
         sage: integrate(spherical_bessel_Y(1,x)^2,(x,0,oo))
-        0
+        -1/6*pi
         sage: latex(spherical_bessel_Y(0, x))
         y_{0}\left(x\right)
 
