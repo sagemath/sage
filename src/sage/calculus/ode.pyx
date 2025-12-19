@@ -452,7 +452,7 @@ class ode_solver():
             raise MemoryError("error allocating memory")
         result = []
         v = [0] * dim
-        cdef gsl_odeiv_step_type * T
+        cdef const gsl_odeiv_step_type * T
 
         for i in range(dim):  # copy initial conditions into C array
             y[i] = self.y_0[i]
