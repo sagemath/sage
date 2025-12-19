@@ -242,8 +242,8 @@ In case of symmetries, only non-redundant components are stored::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from collections.abc import Iterator
 from operator import itemgetter
-from typing import Iterator
 
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
@@ -836,9 +836,9 @@ class Components(SageObject):
                 for i in range(si, nsi)]
         if self._nid == 2:
             # 2-dim case: convert to matrix for a nicer output
+            from sage.categories.rings import Rings
             from sage.matrix.constructor import matrix
             from sage.structure.element import parent
-            from sage.categories.rings import Rings
             if parent(resu[0][0]) in Rings():
                 return matrix(resu)
         return resu
@@ -5456,10 +5456,10 @@ class CompFullyAntiSym(CompWithSym):
             raise TypeError("{} is not a fully antisymmetric ".format(other) +
                             "set of components")
         if other._frame != self._frame:
-            raise ValueError("The {} are not defined on the ".format(other) +
+            raise ValueError("the {} are not defined on the ".format(other) +
                              "same frame as the {}".format(self))
         if other._nid < self._nid:
-            raise ValueError("The {} have less indices than ".format(other) +
+            raise ValueError("the {} have less indices than ".format(other) +
                              "the {}".format(self))
         # Number of indices of the result:
         res_nid = other._nid - self._nid

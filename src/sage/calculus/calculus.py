@@ -430,7 +430,8 @@ from sage.arith.misc import algebraic_dependency
 from sage.rings.complex_arb import ComplexBallField
 from sage.rings.complex_interval_field import ComplexIntervalField_class
 from sage.rings.complex_mpfr import ComplexField_class
-from sage.interfaces.maxima_lib import maxima
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.interfaces.maxima_lib","maxima")
 from sage.misc.latex import latex
 from sage.misc.parser import LookupNameMaker, Parser
 from sage.rings.cc import CC
