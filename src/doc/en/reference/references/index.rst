@@ -1437,6 +1437,9 @@ REFERENCES:
               An Algorithmic Approach, Algorithms and Computation in Mathematics,
               Volume 20, Springer (2007)
 
+.. [But2010] Peter Butkovič, *Max-linear systems. Theory and algorithms.*
+             Springer Monographs in Mathematics. London: Springer. xvii, 272 p. (2010). 
+
 .. [Buell89] Duncan A. Buell.
              *Binary Quadratic Forms: Classical Theory and Modern Computations.*
              Springer, 1989.
