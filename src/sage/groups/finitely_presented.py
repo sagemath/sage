@@ -379,7 +379,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
                 "infinite non-free finitely presented groups"
             )
         perm_elem = libgap.Image(phi, self.gap())
-        return hash(tuple(perm_elem.ListPerm().sage()))
+        return hash(perm_elem)
 
     def __call__(self, *values, **kwds):
         """
