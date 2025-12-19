@@ -570,7 +570,7 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
     cdef gsl_monte_plain_state* state_plain = NULL
     cdef gsl_monte_miser_state* state_miser = NULL
     cdef gsl_monte_vegas_state* state_vegas = NULL
-    cdef gsl_rng_type *type_rng
+    cdef const gsl_rng_type *type_rng
     cdef gsl_rng *_rng
     cdef size_t dim
     cdef double *_xl

@@ -27,7 +27,7 @@ from sage.libs.gmp.all cimport *
 from cypari2.paridecl cimport *
 from cypari2.stack cimport new_gen
 
-cdef Gen new_gen_from_mpz_t(mpz_t value):
+cdef Gen new_gen_from_mpz_t(mpz_srcptr value):
     """
     Create a new PARI Gen of type ``t_INT`` from a given
     GMP integer ``value``.
@@ -53,9 +53,9 @@ cdef Gen new_gen_from_mpz_t(mpz_t value):
     return new_gen(_new_GEN_from_mpz_t(value))
 
 
-cdef inline GEN _new_GEN_from_mpz_t(mpz_t value) noexcept:
+cdef inline GEN _new_GEN_from_mpz_t(mpz_srcptr value) noexcept:
     r"""
-    Create a new PARI ``t_INT`` from a ``mpz_t``.
+    Create a new PARI ``t_INT`` from a ``mpz_srcptr``.
 
     For internal use only; this directly uses the PARI stack.
     One should call ``sig_on()`` before and ``sig_off()`` after.
@@ -121,7 +121,7 @@ cdef inline GEN _new_GEN_from_mpq_t(mpq_t value) noexcept:
 
 
 cdef Gen new_gen_from_padic(long ordp, long relprec,
-                            mpz_t prime, mpz_t p_pow, mpz_t unit):
+                            mpz_srcptr prime, mpz_srcptr p_pow, mpz_srcptr unit):
     """
     Create a new PARI Gen of type ``t_PADIC`` from the given input data
     as GMP integers.
