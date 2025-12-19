@@ -103,7 +103,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
         Parent.__init__(self, category=FiniteCoxeterGroups())
         self.n = n
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -114,7 +114,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
         """
         return "The %s-th dihedral group of order %s" % (self.n, 2 * self.n)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Check if the element ``x`` is in the mathematical parent ``self``.
 

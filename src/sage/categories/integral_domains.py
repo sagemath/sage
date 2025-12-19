@@ -62,7 +62,7 @@ class IntegralDomains(CategoryWithAxiom):
     """
     _base_category_class_and_axiom = (Domains, "Commutative")
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 

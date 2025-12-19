@@ -483,7 +483,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             return None
         return super()._convert_map_from_(other)
 
-    def __contains__(self, point):
+    def __contains__(self, point) -> bool:
         r"""
         Check if ``point`` is an element of ``self``.
 

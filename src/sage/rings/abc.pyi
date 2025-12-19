@@ -1,6 +1,7 @@
-from typing import Union, Callable
+from collections.abc import Callable
+from typing import Union
 
-def abc(f: Callable = None, optional: bool = False) -> Callable:
+def abc(f: Callable | None = None, optional: bool = False) -> Callable:
     ...
 
 class ABC:
