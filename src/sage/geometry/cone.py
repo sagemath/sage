@@ -6403,6 +6403,10 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         - [HausGul2002]_
         - [BSPRS2014]_
 
+        .. SEEALSO::
+
+            :meth:`is_reducible`
+
         EXAMPLES:
 
         The nonnegative orthant is a direct sum of its extreme rays::
