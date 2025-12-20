@@ -67,8 +67,8 @@ class OperationTable(SageObject):
 
     - ``closed`` -- (default: ``True``) Only has an effect if the ``elements``
       argument is passed and indicates whether the ``elements`` are closed under
-      ``operation``. When set to False the operation table is generated even if
-      the result of the operation is not in the list ``elements``, otherwise a
+      ``operation``. When set to ``False`` the operation table is generated even if
+      the result of the operation is not in the list ``elements``, otherwise
       ``ValueError`` is raised.
 
     OUTPUT:
@@ -333,10 +333,33 @@ class OperationTable(SageObject):
         a| a b
         b| b a
 
+    When the argument ``elements`` is given, by default they are assumed to be closed under ``operation``.
+    In case they are not closed, the argument ``closed=False`` can be used to tell that it is not a problem
+    if the result of the operation is not among ``elements`` as long as it can be coerced into ``S``. ::
+
+        sage: # needs sage.groups
+        sage: elts.append(L[1])
+        sage: elts
+        [(), (1,3)(2,4), (1,2,3,4)]
+        sage: OperationTable(H, operator.mul, elements=elts)
+        Traceback (most recent call last):
+        ...
+        ValueError: (1,3)(2,4)*(1,2,3,4)=(1,4,3,2), and so the set is not closed. You may try "closed=False".
+        sage: OperationTable(H, operator.mul, names='elements', elements=elts, closed=False)
+                *          () (1,3)(2,4)  (1,2,3,4)
+                  +---------------------------------
+                ()|         () (1,3)(2,4)  (1,2,3,4)
+        (1,3)(2,4)| (1,3)(2,4)         ()  (1,4,3,2)
+         (1,2,3,4)|  (1,2,3,4)  (1,4,3,2) (1,3)(2,4)
+
+    When ``closed=False`` is passed together with ``elements`` that are not closed under ``operation``, new
+    names are introduced for the elements not contained in ``elements``, but they will only appear in the
+    table as results, i.e. they will not be appended to the list of operands.
+
     Here are a couple of improper uses::
 
         sage: # needs sage.groups
-        sage: elts.append(5)
+        sage: elts[2] = 5
         sage: OperationTable(H, operator.mul, elements=elts)
         Traceback (most recent call last):
         ...
@@ -346,27 +369,6 @@ class OperationTable(SageObject):
         Traceback (most recent call last):
         ...
         TypeError: unable to coerce (1,3,2,4) into Cyclic group of order 4 as a permutation group
-
-    When the argument ``elements`` is given by default they are assumed to be closed under ``operation``.
-    In case they are not closed the argument ``closed=False`` can be used to tell that it is not a problem
-    if the result of the operation is not among ``elements`` as long as it can be coerced into ``S``. ::
-
-        sage: # needs sage.groups
-        sage: elts[2] = '(1,2,3,4)'
-        sage: OperationTable(H, operator.mul, elements=elts)
-        Traceback (most recent call last):
-        ...
-        ValueError: (1,3)(2,4)*(1,2,3,4)=(1,4,3,2), and so the set is not closed. Maybe try closed=False?
-        sage: OperationTable(H, operator.mul, names='elements', elements=elts, closed=False)
-                *          () (1,3)(2,4)  (1,2,3,4)
-                  +---------------------------------
-                ()|         () (1,3)(2,4)  (1,2,3,4)
-        (1,3)(2,4)| (1,3)(2,4)         ()  (1,4,3,2)
-         (1,2,3,4)|  (1,2,3,4)  (1,4,3,2) (1,3)(2,4)
-
-    When ``closed=False`` is passed together with ``elements`` that are not closed under ``operation`` then
-    new names are introduced for the elements not contained in ``elements``, but they will only appear in the
-    table as results, i.e. they will not be appended to the list of operands.
 
     Unusable functions should be recognized as such::
 
@@ -513,7 +515,7 @@ class OperationTable(SageObject):
                             except Exception:
                                 raise TypeError('unable to coerce %s into %s' % (result, S))
                         else:
-                            raise ValueError('%s%s%s=%s, and so the set is not closed. Maybe try closed=False?' % (
+                            raise ValueError('%s%s%s=%s, and so the set is not closed. You may try "closed=False".' % (
                                 g, self._ascii_symbol, h, result))
 
                 row.append(r)
@@ -523,7 +525,6 @@ class OperationTable(SageObject):
 
         # Map elements to strings
         self._width, self._names, self._names_ext, self._name_dict = self._name_maker(names)
-
 
     def _name_maker(self, names):
         r"""
@@ -712,7 +713,6 @@ class OperationTable(SageObject):
         r = self._table[row][col]
         return self._elts[r] if r < self._n else self._elts_ext[r - self._n]
 
-
     def __eq__(self, other):
         r"""
         Return the comparison between two tables.
@@ -738,7 +738,8 @@ class OperationTable(SageObject):
             sage: P == P, P == Q, P == R, P == S
             (True, True, False, False)
         """
-        return (self._elts == other._elts) and (self._elts_ext == other._elts_ext) and (self._operation == other._operation)
+        return ((self._elts == other._elts) and (self._elts_ext == other._elts_ext) and
+                (self._operation == other._operation))
 
     def __ne__(self, other):
         """
