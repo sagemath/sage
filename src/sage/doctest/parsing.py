@@ -59,7 +59,7 @@ ansi_escape_sequence: Pattern[str] = re.compile(
 )
 
 special_optional_regex_raw = (
-    "py2|long time|not implemented|not tested|optional|needs|known bug"
+    "py2|long time|not implemented|not tested|optional|needs|known bug|flaky"
 )
 tag_with_explanation_regex_raw = r"((?:!?\w|[.])*)\s*(?:\((?P<cmd_explanation>.*?)\))?"
 optional_regex: Pattern[str] = re.compile(
@@ -104,6 +104,7 @@ def parse_optional_tags(
     - ``'not tested'``
     - ``'known bug'`` (possible values are ``None``, ``linux`` and ``macos``)
     - ``'py2'``
+    - ``'flaky'``
     - ``'optional -- FEATURE...'`` or ``'needs FEATURE...'`` --
       the dictionary will just have the key ``'FEATURE'``
 
@@ -173,6 +174,17 @@ def parse_optional_tags(
         sage: parse_optional_tags("sage: #this is not #needs scipy\n....: import scipy",
         ....:                     return_string_sans_tags=True)
         ({'scipy': None}, 'sage: #this is not \n....: import scipy', False)
+
+    TESTS::
+
+        sage: parse_optional_tags("# flaky")
+        {'flaky': None}
+
+    Remember to update the documentation above whenever the following changes::
+
+        sage: from sage.doctest.parsing import special_optional_regex
+        sage: special_optional_regex.pattern
+        'py2|long time|not implemented|not tested|optional|needs|known bug|flaky'
     """
     safe, literals, _ = strip_string_literals(string)
     split = safe.split('\n', 1)
@@ -267,6 +279,11 @@ def parse_file_optional_tags(lines) -> dict[str, str | None]:
         sage: with open(filename, "r") as f:
         ....:     parse_file_optional_tags(enumerate(f))
         {'xyz': None}
+        sage: with open(filename, "w") as f:
+        ....:     _ = f.write("# sage.doctest: flaky")
+        sage: with open(filename, "r") as f:
+        ....:     parse_file_optional_tags(enumerate(f))
+        {'flaky': None}
     """
     tags: dict[str, str | None] = {}
     for line_count, line in lines:
@@ -997,6 +1014,14 @@ class SageDocTestParser(doctest.DocTestParser):
             'C.minimum_distance(algorithm="guava")  # optional - guava\n'
             sage: dte.want
             '...\n24\n'
+
+        Test putting flaky tag in a single test::
+
+            sage: example5 = 'sage: 1 # flaky\n1'
+            sage: parsed5 = DTP.parse(example5)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: 'flaky' tag is only implemented for whole file, not for single test
         """
         # Regular expressions
         find_sage_prompt = re.compile(r"^(\s*)sage: ", re.M)
@@ -1070,6 +1095,8 @@ class SageDocTestParser(doctest.DocTestParser):
         for item in res:
             if isinstance(item, doctest.Example):
                 optional_tags_with_values, _, is_persistent = parse_optional_tags(item.source, return_string_sans_tags=True)
+                if "flaky" in optional_tags_with_values:
+                    raise NotImplementedError("'flaky' tag is only implemented for whole file, not for single test")
                 optional_tags = set(optional_tags_with_values)
                 if is_persistent:
                     check_and_clear_tag_counts()
@@ -1093,6 +1120,11 @@ class SageDocTestParser(doctest.DocTestParser):
                     if (('not implemented' in optional_tags) or
                             ('not tested' in optional_tags)):
                         continue
+
+                    if 'flaky' in optional_tags:
+                        # since a single test cannot have the 'flaky' tag,
+                        # this must come from file_optional_tags
+                        optional_tags.remove('flaky')
 
                     if 'long time' in optional_tags:
                         if self.long:
