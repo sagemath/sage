@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Abstract base class for Sage objects
 """
@@ -665,11 +664,12 @@ cdef class SageObject:
         TESTS::
 
             sage: class Bla(SageObject): pass
-            sage: Bla()._test_pickling()
-            Traceback (most recent call last):
-            ...
-            PicklingError: Can't pickle <class '__main__.Bla'>: attribute
-            lookup ... failed
+            sage: from _pickle import PicklingError
+            sage: try:
+            ....:     Bla()._test_pickling()
+            ....: except PicklingError as e:
+            ....:     print("PicklingError caught")
+            PicklingError caught
 
         TODO: for a stronger test, this could send the object to a
         remote Sage session, and get it back.
@@ -741,17 +741,84 @@ cdef class SageObject:
         return True
 
     def _gap_(self, G=None):
+        """
+        Return a Gap object.
+
+        Unlike :meth:`_libgap_`, this method returns an instance of
+        :class:`sage.interfaces.gap.GapElement`, which wraps an object
+        in the GAP interpreter spawned as a subprocess of Sage.
+
+        Typically you should not need to call this method directly,
+        instead just call :mod:`~sage.interfaces.gap`
+        on the object. See example below.
+
+        EXAMPLES::
+
+            sage: a = gap(2/3); a
+            2/3
+            sage: type(a)
+            <class 'sage.interfaces.gap.GapElement'>
+
+            sage: a = (2/3)._gap_(); a
+            2/3
+            sage: type(a)
+            <class 'sage.interfaces.gap.GapElement'>
+        """
         if G is None:
             import sage.interfaces.gap
             G = sage.interfaces.gap.gap
         return self._interface_(G)
 
     def _gap_init_(self):
+        """
+        Return a string that provides a representation of ``self`` in GAP.
+
+        This method is indirectly used by :meth:`_libgap_` and :meth:`_gap_`
+        by essentially passing their output to
+        :meth:`libgap.eval <sage.libs.gap.libgap.Gap.eval>`
+        and :mod:`~sage.interfaces.gap` respectively,
+        unless the subclass overrides them with more efficient variants.
+
+        EXAMPLES::
+
+            sage: (2/3)._gap_init_()
+            '2/3'
+            sage: Zmod(4)._gap_init_()
+            'ZmodnZ(4)'
+        """
         import sage.interfaces.gap
         I = sage.interfaces.gap.gap
         return self._interface_init_(I)
 
     def _libgap_(self):
+        """
+        Return a libgap object.
+
+        Unlike :meth:`_gap_`, this method returns an instance of
+        :class:`sage.libs.gap.libgap.GapElement`, which wraps an object
+        in libgap embedded in Sage. As explained in
+        :mod:`sage.libs.gap.libgap`, this is much faster.
+
+        Typically you should not need to call this method directly,
+        instead use :mod:`~sage.libs.gap.libgap`. See example below.
+
+        By default, this method makes use of :meth:`_gap_init_`.
+        Subclasses could override this method to provide a more efficient
+        implementation.
+
+        EXAMPLES::
+
+            sage: a = libgap(2/3); a
+            2/3
+            sage: type(a)
+            <class 'sage.libs.gap.element.GapElement_Rational'>
+
+        TESTS::
+
+            sage: from sage.libs.gap.element import GapElement
+            sage: isinstance(a, GapElement)
+            True
+        """
         from sage.libs.gap.libgap import libgap
         return libgap.eval(self)
 
@@ -810,18 +877,16 @@ cdef class SageObject:
 
     def _maxima_(self, G=None):
         if G is None:
-            import sage.interfaces.maxima
-            G = sage.interfaces.maxima.maxima
+            from sage.interfaces.maxima_lib import maxima
+            G = maxima
         return self._interface_(G)
 
     def _maxima_init_(self):
-        import sage.interfaces.maxima
-        I = sage.interfaces.maxima.maxima
-        return self._interface_init_(I)
+        from sage.interfaces.maxima_lib import maxima
+        return self._interface_init_(maxima)
 
     def _maxima_lib_(self, G=None):
-        from sage.interfaces.maxima_lib import maxima_lib
-        return self._interface_(maxima_lib)
+        return self._maxima_(G)
 
     def _maxima_lib_init_(self):
         return self._maxima_init_()

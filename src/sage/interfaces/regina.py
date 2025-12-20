@@ -259,7 +259,7 @@ class Regina(ExtraTabCompletion, Interface):
             for e in AlgorithmExt:
                 d[e.name] = e
             # set up the globals
-            D = {k: v for k, v in d.items()}
+            D = dict(d)
             D[self._namespace.__name__] = self._namespace
             D[self.name()] = regina
             self._regina_globals = D
@@ -338,7 +338,7 @@ optional Sage package Regina installed.
         """
         self._lazy_init()
         globs = self._regina_globals
-        if type(value) != str:
+        if not isinstance(value, str):
             globs[var] = value
             return
         try:
@@ -428,7 +428,7 @@ optional Sage package Regina installed.
         def convert_arg(arg):
             if isinstance(arg, InterfaceElement) and arg.parent() is self:
                 return arg._inst
-            elif type(arg) in (list, tuple):
+            elif isinstance(arg, (list, tuple)):
                 return type(arg)([convert_arg(i) for i in arg])
             elif hasattr(arg, '_regina_'):
                 reg = arg._regina_(self)
@@ -832,9 +832,9 @@ class ReginaElement(ExtraTabCompletion, InterfaceElement):
         if operation in ('+', '*'):
             if is_native(sinst) and is_native(oinst):
                 if operation == '*':
-                    return P(sinst*oinst)
+                    return P(sinst * oinst)
                 else:
-                    return P(sinst+oinst)
+                    return P(sinst + oinst)
             if type(sinst) == type(oinst):
                 if hasattr(self, 'addTermsLast'):
                     new = self.__deepcopy__()
@@ -860,7 +860,7 @@ class ReginaElement(ExtraTabCompletion, InterfaceElement):
                 return (~self)**(-exp)
         if operation == '1/':
             if is_native(sinst):
-                return P(1/sinst)
+                return P(1 / sinst)
             if hasattr(self, 'inverse'):
                 return self.inverse()
         return super()._operation(operation, other=other)
@@ -919,7 +919,6 @@ class ReginaElement(ExtraTabCompletion, InterfaceElement):
             """
             if locals:
                 lc.update(locals)
-            from sage.repl.preparse import implicit_mul
             from sage.misc.sage_eval import sage_eval
             s = self.detail().split('\n')[0]
             s = s.replace(' ', '')

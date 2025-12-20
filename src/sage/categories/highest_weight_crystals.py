@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Highest Weight Crystals
@@ -114,7 +113,7 @@ class HighestWeightCrystals(Category_singleton):
     class ParentMethods:
 
         @cached_method
-        def highest_weight_vectors(self):
+        def highest_weight_vectors(self) -> tuple:
             r"""
             Return the highest weight vectors of ``self``.
 
@@ -674,7 +673,7 @@ class HighestWeightCrystals(Category_singleton):
             Implement operations on tensor products of crystals.
             """
             @cached_method
-            def highest_weight_vectors(self):
+            def highest_weight_vectors(self) -> tuple:
                 r"""
                 Return the highest weight vectors of ``self``.
 

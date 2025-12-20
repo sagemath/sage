@@ -143,6 +143,10 @@ REFERENCES:
             quasiperiodicities in strings*,
             Theoret. Comput. Sci. 119 (1993) 247--265.
 
+.. [AE2006] Federico Ardila, Laura Escobar, *The harmonic polytope*,
+            Selecta Math. Vol. 27 (2021)
+            :doi:`10.1007/s00029-021-00687-6`, :arxiv:`2006.03078`
+
 .. [AG1988] George E. Andrews, F. G. Garvan,
             *Dyson's crank of a partition*.
             Bull. Amer. Math. Soc. (N.S.) Volume 18, Number 2 (1988),
@@ -559,6 +563,11 @@ REFERENCES:
 .. [BCDGNPY2019] \Z. Bao, A. Chakraborti, N. Datta, J. Guo, M. Nandi, T. Peyrin, K. Yasuda.
                  "PHOTON-BeetleAuthenticated Encryption and Hash Family"
                  https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/PHOTON-Beetle-spec.pdf
+
+.. [BF1976] George Phillip Barker and James Foran.
+            *Self-Dual Cones in Euclidean Spaces*.
+            Linear Algebra and its Applications, 13(1-2):147-155, 1976.
+            :doi:`10.1016/0024-3795(76)90053-7`.
 
 .. [BH1965] \L. D. Baumert, M. Hall Jr.
             *A new construction for Hadamard matrices*.
@@ -2419,6 +2428,13 @@ REFERENCES:
              https://web.archive.org/web/20100622092138/http://www.math.lsa.umich.edu/~idolga/McKaybook.pdf
 
 .. [dotspec] http://www.graphviz.org/doc/info/lang.html
+
+.. [DP2011] \B. Deconinck and M. S. Patterson, *Computing with plane algebraic
+            curves and Riemann surfaces: The algorithms of the Maple package
+            "Algcurves"*, In: A. Bobenko and C. Klein (eds) Computational 
+            approach to Riemann surfaces. Lecture Notes in Mathematics 2013. 
+            Springer, Berlin, Heidelberg. (2011).
+            :doi:`10.1007/978-3-642-17413-1_2`
 
 .. [DPS2017] Kevin Dilks, Oliver Pechenik, and Jessica Striker,
              *Resonance in orbits of plane partitions and increasing
@@ -4387,6 +4403,9 @@ REFERENCES:
 .. [Labelle2008] \G. Labelle. *New combinatorial computational methods
                  arising from pseudo-singletons.* DMTCS Proceedings 1, 2008.
 
+.. [Lad2021] S. Ladkani. *Refined Coxeter polynomials*, Proceedings ICRA 2020,
+             EMS Publishing House. :arxiv:`2110.15329`
+
 .. [Lak2010] Dan Laksov. *Splitting algebras and Gysin homomorphisms*.
              Journal of Commutative Algebra, Volume 2, Number 3, Fall 2010
 
@@ -4412,6 +4431,11 @@ REFERENCES:
 .. [Lau2011] Alan G.B. Lauder, *Computations with classical and p-adic
              modular forms*, LMS J. of Comput. Math. 14 (2011),
              214-231.
+
+.. [Law2011] Shirley Law and Nathan Reading,
+             *The Hopf algebra of diagonal rectangulations*,
+             \J. Comb. Theory, Ser. A 119, No. 3, 788-824 (2012).
+             :doi:`10.1016/j.jcta.2011.09.006`
 
 .. [Laz1992] Daniel Lazard, *Solving Zero-dimensional Algebraic
              Systems*, in Journal of Symbolic Computation (1992)

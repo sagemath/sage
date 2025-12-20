@@ -302,7 +302,7 @@ Note that vertex labels themselves cannot be mutable items::
     sage: G = Graph({ 0 : { M : None } })                                               # needs sage.modules
     Traceback (most recent call last):
     ...
-    TypeError: mutable matrices are unhashable
+    TypeError: ...mutable matrices are unhashable...
 
 However, if one wants to define a dictionary, with the same keys and arbitrary
 objects for entries, one can make that association::
@@ -391,8 +391,7 @@ Graphs are mutable, and thus unusable as dictionary keys, unless
     sage: {G:1}[G]
     Traceback (most recent call last):
     ...
-    TypeError: This graph is mutable, and thus not hashable.
-    Create an immutable copy by `g.copy(immutable=True)`
+    TypeError: ...This graph is mutable, and thus not hashable...
     sage: G_immutable = Graph(G, immutable=True)
     sage: G_immutable == G
     True
@@ -428,6 +427,7 @@ from sage.graphs.views import EdgesView
 from sage.parallel.decorate import parallel
 from sage.misc.lazy_import import lazy_import, LazyImport
 from sage.features.mcqd import Mcqd
+from sage.misc.cachefunc import cached_method
 
 lazy_import('sage.graphs.mcqd', ['mcqd'],
             feature=Mcqd())
@@ -867,8 +867,7 @@ class Graph(GenericGraph):
           sage: {G:1}[G]
           Traceback (most recent call last):
           ...
-          TypeError: This graph is mutable, and thus not hashable.
-          Create an immutable copy by `g.copy(immutable=True)`
+          TypeError: ...This graph is mutable, and thus not hashable...
 
     When providing the optional arguments ``data_structure="static_sparse"`` or
     ``immutable=True`` (both mean the same), then an immutable graph results::
@@ -968,9 +967,9 @@ class Graph(GenericGraph):
         Loops are not counted as multiedges (see :issue:`11693`) and edges are
         not counted twice ::
 
-            sage: Graph({1:[1]}).num_edges()
+            sage: Graph({1:[1]}).n_edges()
             1
-            sage: Graph({1:[2,2]}).num_edges()
+            sage: Graph({1:[2,2]}).n_edges()
             2
 
         An empty list or dictionary defines a simple graph
@@ -1755,46 +1754,6 @@ class Graph(GenericGraph):
         return len(self.faces()) == sum(1 for b in B if len(b) > 2) + 1
 
     @doc_index("Graph properties")
-    def is_biconnected(self):
-        """
-        Test if the graph is biconnected.
-
-        A biconnected graph is a connected graph on two or more vertices that is
-        not broken into disconnected pieces by deleting any single vertex.
-
-        .. SEEALSO::
-
-            - :meth:`~sage.graphs.generic_graph.GenericGraph.is_connected`
-            - :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cut_vertices`
-            - :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cuts_tree`
-            - :wikipedia:`Biconnected_graph`
-
-        EXAMPLES::
-
-            sage: G = graphs.PetersenGraph()
-            sage: G.is_biconnected()
-            True
-            sage: G.add_path([0,'a','b'])
-            sage: G.is_biconnected()
-            False
-            sage: G.add_edge('b', 1)
-            sage: G.is_biconnected()
-            True
-
-        TESTS::
-
-            sage: Graph().is_biconnected()
-            False
-            sage: Graph(1).is_biconnected()
-            False
-            sage: graphs.CompleteGraph(2).is_biconnected()
-            True
-        """
-        if self.order() < 2 or not self.is_connected():
-            return False
-        return not self.blocks_and_cut_vertices()[1]
-
-    @doc_index("Graph properties")
     def is_block_graph(self):
         r"""
         Return whether this graph is a block graph.
@@ -2228,9 +2187,9 @@ class Graph(GenericGraph):
             True
         """
         # # A possible optimized version. But the gain in speed is very little.
-        # return bool(self._backend.num_verts() & 1) and (  # odd order n
-        #     2 * self._backend.num_edges(self._directed) > #2m > \Delta(G)*(n-1)
-        #     max(self.degree()) * (self._backend.num_verts() - 1))
+        # return bool(self._backend.n_vertices() & 1) and (  # odd order n
+        #     2 * self._backend.n_edges(self._directed) > #2m > \Delta(G)*(n-1)
+        #     max(self.degree()) * (self._backend.n_vertices() - 1))
         # unoptimized version
         return (self.order() % 2 == 1) and (
             2 * self.size() > max(self.degree()) * (self.order() - 1))
@@ -2976,7 +2935,7 @@ class Graph(GenericGraph):
           (:meth:`~sage.graphs.bipartite_graph.BipartiteGraph.reduced_adjacency_matrix`)
           of a bipartite graph has no cycle submatrix if and only if the graph is
           chordal bipartite, where cycle submatrix is 0-1 `n \times n` matrix `n \geq 3`
-          with exactly two 1's in each row and column and no proper submatrix satsify
+          with exactly two 1's in each row and column and no proper submatrix satisfy
           this property.
 
         * A doubly lexical ordering
@@ -3088,7 +3047,7 @@ class Graph(GenericGraph):
                     pewveo.extend(certif)
                 return True, pewveo
             return all(gg.is_chordal_bipartite() for gg in
-                        self.connected_components_subgraphs())
+                       self.connected_components_subgraphs())
 
         left = [v for v, c in bipartite_certificate.items() if c == 0]
         right = [v for v, c in bipartite_certificate.items() if c == 1]
@@ -3756,8 +3715,8 @@ class Graph(GenericGraph):
             # edges in stack to current subgraph.
             if not stack:
                 return p.monomial(_Partitions(sorted(
-                            [s for v, s in sizes.items() if dsf[v] is None],
-                            reverse=True)))
+                    [s for v, s in sizes.items() if dsf[v] is None],
+                    reverse=True)))
             ret = p.zero()
             e = stack.pop()
             u = find(dsf, e[0])
@@ -3965,119 +3924,6 @@ class Graph(GenericGraph):
             pa = pi.to_partition()
             ret += prod(fact[i] for i in pa.to_exp()) * m[pa] * (1+t)**mono(pi)
         return ret
-
-    @doc_index("Algorithmically hard stuff")
-    def has_homomorphism_to(self, H, core=False, solver=None, verbose=0,
-                            *, integrality_tolerance=1e-3):
-        r"""
-        Check whether there is a homomorphism between two graphs.
-
-        A homomorphism from a graph `G` to a graph `H` is a function
-        `\phi:V(G)\mapsto V(H)` such that for any edge `uv \in E(G)` the pair
-        `\phi(u)\phi(v)` is an edge of `H`.
-
-        Saying that a graph can be `k`-colored is equivalent to saying that it
-        has a homomorphism to `K_k`, the complete graph on `k` elements.
-
-        For more information, see the :wikipedia:`Graph_homomorphism`.
-
-        INPUT:
-
-        - ``H`` -- the graph to which ``self`` should be sent
-
-        - ``core`` -- boolean (default: ``False``; whether to minimize the size
-          of the mapping's image (see note below). This is set to ``False`` by
-          default.
-
-        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
-          Linear Programming (MILP) solver to be used. If set to ``None``, the
-          default one is used. For more information on MILP solvers and which
-          default solver is used, see the method :meth:`solve
-          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
-          :class:`MixedIntegerLinearProgram
-          <sage.numerical.mip.MixedIntegerLinearProgram>`.
-
-        - ``verbose`` -- integer (default: 0); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
-
-        - ``integrality_tolerance`` -- float; parameter for use with MILP
-          solvers over an inexact base ring; see
-          :meth:`MixedIntegerLinearProgram.get_values`.
-
-        .. NOTE::
-
-           One can compute the core of a graph (with respect to homomorphism)
-           with this method ::
-
-               sage: g = graphs.CycleGraph(10)
-               sage: mapping = g.has_homomorphism_to(g, core=True)                      # needs sage.numerical.mip
-               sage: print("The size of the core is {}".format(len(set(mapping.values()))))         # needs sage.numerical.mip
-               The size of the core is 2
-
-        OUTPUT:
-
-        This method returns ``False`` when the homomorphism does not exist, and
-        returns the homomorphism otherwise as a dictionary associating a vertex
-        of `H` to a vertex of `G`.
-
-        EXAMPLES:
-
-        Is Petersen's graph 3-colorable::
-
-            sage: P = graphs.PetersenGraph()
-            sage: P.has_homomorphism_to(graphs.CompleteGraph(3)) is not False           # needs sage.numerical.mip
-            True
-
-        An odd cycle admits a homomorphism to a smaller odd cycle, but not to an
-        even cycle::
-
-            sage: g = graphs.CycleGraph(9)
-            sage: g.has_homomorphism_to(graphs.CycleGraph(5)) is not False              # needs sage.numerical.mip
-            True
-            sage: g.has_homomorphism_to(graphs.CycleGraph(7)) is not False              # needs sage.numerical.mip
-            True
-            sage: g.has_homomorphism_to(graphs.CycleGraph(4)) is not False              # needs sage.numerical.mip
-            False
-        """
-        self._scream_if_not_simple()
-        from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
-        p = MixedIntegerLinearProgram(solver=solver, maximization=False)
-        b = p.new_variable(binary=True)
-
-        # Each vertex has an image
-        for ug in self:
-            p.add_constraint(p.sum(b[ug, uh] for uh in H) == 1)
-
-        nonedges = H.complement().edges(sort=False, labels=False)
-        for ug, vg in self.edges(sort=False, labels=False):
-            # Two adjacent vertices cannot be mapped to the same element
-            for uh in H:
-                p.add_constraint(b[ug, uh] + b[vg, uh] <= 1)
-
-            # Two adjacent vertices cannot be mapped to no adjacent vertices
-            for uh, vh in nonedges:
-                p.add_constraint(b[ug, uh] + b[vg, vh] <= 1)
-                p.add_constraint(b[ug, vh] + b[vg, uh] <= 1)
-
-        # Minimize the mapping's size
-        if core:
-
-            # the value of m is one if the corresponding vertex of h is used.
-            m = p.new_variable(nonnegative=True)
-            for uh in H:
-                for ug in self:
-                    p.add_constraint(b[ug, uh] <= m[uh])
-
-            p.set_objective(p.sum(m[vh] for vh in H))
-
-        try:
-            p.solve(log=verbose)
-        except MIPSolverException:
-            return False
-
-        b = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
-        mapping = dict(x[0] for x in b.items() if x[1])
-        return mapping
 
     @doc_index("Clique-related methods")
     def fractional_clique_number(self, solver='PPL', verbose=0,
@@ -4943,7 +4789,7 @@ class Graph(GenericGraph):
                                                     weight_function=weight_function,
                                                     check_weight=check_weight)
 
-            if len(length) != self.num_verts():
+            if len(length) != self.n_vertices():
                 ecc[u] = Infinity
             else:
                 ecc[u] = max(length.values())
@@ -5363,7 +5209,7 @@ class Graph(GenericGraph):
 
             sage: G = graphs.OddGraph(4)
             sage: d = G.diameter()
-            sage: n = G.num_verts()
+            sage: n = G.n_vertices()
             sage: H = G.distance_graph(list(range(d+1)))
             sage: H.is_isomorphic(graphs.CompleteGraph(n))
             False
@@ -5418,10 +5264,10 @@ class Graph(GenericGraph):
         Empty input, or unachievable distances silently yield empty graphs::
 
             sage: G = graphs.CompleteGraph(5)
-            sage: G.distance_graph([]).num_edges()
+            sage: G.distance_graph([]).n_edges()
             0
             sage: G = graphs.CompleteGraph(5)
-            sage: G.distance_graph(23).num_edges()
+            sage: G.distance_graph(23).n_edges()
             0
 
         It is an error to provide a distance that is not an integer type::
@@ -7732,7 +7578,7 @@ class Graph(GenericGraph):
                   PARALLEL[5[], 6[], 7[]]]
         """
         from sage.graphs.graph_decompositions.modular_decomposition import \
-                modular_decomposition
+            modular_decomposition
 
         D = modular_decomposition(self, algorithm=algorithm)
 
@@ -8033,7 +7879,7 @@ class Graph(GenericGraph):
             True
         """
         from sage.graphs.graph_decompositions.modular_decomposition import \
-                modular_decomposition
+            modular_decomposition
 
         if self.order() <= 1:
             return True
@@ -9164,7 +9010,7 @@ class Graph(GenericGraph):
             [(0, 2), (1, 3)]
         """
         self._scream_if_not_simple()
-        if self.num_verts() < 2:
+        if self.n_vertices() < 2:
             raise ValueError('this method is defined for graphs with at least 2 vertices')
         verts = list(self)
         M = self.common_neighbors_matrix(vertices=verts, nonedgesonly=nonedgesonly)
@@ -9172,8 +9018,8 @@ class Graph(GenericGraph):
         coefficients = M.coefficients()
         if coefficients:
             maximum = max(coefficients)
-            for v in range(self.num_verts()):
-                for w in range(v + 1, self.num_verts()):
+            for v in range(self.n_vertices()):
+                for w in range(v + 1, self.n_vertices()):
                     if M[v, w] == maximum:
                         output.append((verts[v], verts[w]))
         return output
@@ -9541,6 +9387,7 @@ class Graph(GenericGraph):
         G.name("%sBipartite Double of %s" % (prefix, self.name()))
         return G
 
+    @cached_method
     @doc_index("Graph properties")
     def is_projective_planar(self, return_map=False):
         r"""
@@ -9565,10 +9412,10 @@ class Graph(GenericGraph):
 
         EXAMPLES:
 
-        The Peterson graph is a known projective planar graph::
+        The Petersen graph is a known projective planar graph::
 
             sage: P = graphs.PetersenGraph()
-            sage: P.is_projective_planar()  # long time
+            sage: P.is_projective_planar()
             True
 
         `K_{4,4}` has a projective plane crossing number of 2. One of the
@@ -9591,14 +9438,14 @@ class Graph(GenericGraph):
         """
 
         from sage.graphs.generators.families import p2_forbidden_minors
-        num_verts_G = self.num_verts()
-        num_edges_G = self.num_edges()
+        num_verts_G = self.n_vertices()
+        num_edges_G = self.n_edges()
 
         for forbidden_minor in p2_forbidden_minors():
             # Can't be a minor if it has more vertices or edges than G
 
-            if (forbidden_minor.num_verts() > num_verts_G
-                    or forbidden_minor.num_edges() > num_edges_G):
+            if (forbidden_minor.n_vertices() > num_verts_G
+                    or forbidden_minor.n_edges() > num_edges_G):
                 continue
 
             try:
@@ -9731,6 +9578,6 @@ _additional_categories = {
     "is_matching_covered"       : "Matching",
     "matching"                  : "Matching",
     "perfect_matchings"         : "Matching"
-    }
+}
 
 __doc__ = __doc__.replace("{INDEX_OF_METHODS}", gen_thematic_rest_table_index(Graph, _additional_categories))

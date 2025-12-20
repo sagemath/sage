@@ -1,7 +1,8 @@
-tdlib = disabler()
 if cc.has_header('treedec/combinations.hpp', required: get_option('tdlib'))
   # tdlib is a header-only library
   tdlib = declare_dependency()
+else
+  tdlib = disabler()
 endif
 # Cannot be found via pkg-config
 rw = cc.find_library('rw', required: get_option('rankwidth'), disabler: true)
@@ -9,12 +10,23 @@ rw = cc.find_library('rw', required: get_option('rankwidth'), disabler: true)
 py.install_sources(
   '__init__.py',
   'all.py',
+  'bandwidth.pyx',
+  'clique_separators.pyx',
+  'cutwidth.pyx',
   'fast_digraph.pxd',
+  'fast_digraph.pyx',
+  'graph_products.pyx',
   'modular_decomposition.pxd',
+  'modular_decomposition.pyx',
   'rankwidth.pxd',
+  'rankwidth.pyx',
   'slice_decomposition.pxd',
+  'slice_decomposition.pyx',
+  'tdlib.pyx',
   'tree_decomposition.pxd',
+  'tree_decomposition.pyx',
   'vertex_separation.pxd',
+  'vertex_separation.pyx',
   subdir: 'sage/graphs/graph_decompositions',
 )
 

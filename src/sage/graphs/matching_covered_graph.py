@@ -388,7 +388,7 @@ class MatchingCoveredGraph(Graph):
 
         sage: G = graphs.CycleGraph(4)
         sage: G += graphs.CycleGraph(6)
-        sage: G.connected_components_number()
+        sage: G.number_of_connected_components()
         2
         sage: H = MatchingCoveredGraph(G)
         Traceback (most recent call last):
@@ -1456,7 +1456,7 @@ class MatchingCoveredGraph(Graph):
                 M.add_edges(self.get_matching())
 
                 # Check if M is a perfect matching of the resulting graph
-                if (G.order() != 2*M.size()):
+                if (G.order() != 2 * M.size()):
                     M = None
 
                 self.__init__(data=G, matching=M)
@@ -1974,7 +1974,7 @@ class MatchingCoveredGraph(Graph):
             # must be a valid perfect matching of the resulting graph obtained
             # after the removal of the vertices
 
-            if (G.order() != 2*M.size()):
+            if (G.order() != 2 * M.size()):
                 M = None
 
             self.__init__(data=G, matching=M)
@@ -2043,7 +2043,7 @@ class MatchingCoveredGraph(Graph):
 
         And in order to find the vertices that do not lie in the maximal
         barrier containing the provided vertex in linear time we take
-        inspiration of the `M` alternating tree seach method [LR2004]_.
+        inspiration of the `M` alternating tree search method [LR2004]_.
 
         INPUT:
 
@@ -2387,8 +2387,8 @@ class MatchingCoveredGraph(Graph):
         .. NOTE::
 
             This method overwrites the
-            :meth:`~sage.graphs.graph.Graph.is_biconnected` method
-            in order to return ``True`` as matching covered graphs are
+            :meth:`~sage.graphs.generic_graph.GenericGraph.is_biconnected`
+            method in order to return ``True`` as matching covered graphs are
             biconnected.
 
         EXAMPLES:
@@ -2825,8 +2825,8 @@ class MatchingCoveredGraph(Graph):
 
                 # Compute the nontrivial tight cut C := ∂(Y)
                 C = [(x, y, w) if x in X else (y, x, w)
-                    for x, y, w in self.edge_iterator(sort_vertices=True)
-                    if (x in X) ^ (y in X)]
+                     for x, y, w in self.edge_iterator(sort_vertices=True)
+                     if (x in X) ^ (y in X)]
 
                 # Obtain the barrier Z
                 Z = None

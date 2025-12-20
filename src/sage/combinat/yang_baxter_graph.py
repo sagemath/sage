@@ -292,7 +292,7 @@ class YangBaxterGraph_generic(SageObject):
             sage: Y.__len__()
             16
         """
-        return self._digraph.num_verts()
+        return self._digraph.n_vertices()
 
     def __copy__(self):
         r"""

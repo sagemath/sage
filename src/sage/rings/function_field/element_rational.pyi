@@ -1,8 +1,5 @@
-from typing import Any, List
-from sage.structure.richcmp import richcmp, richcmp_not_equal
-from sage.structure.element import FieldElement
+from typing import Any
 from sage.rings.function_field.element import FunctionFieldElement
-
 
 class FunctionFieldElement_rational(FunctionFieldElement):
     def __init__(self, parent: Any, x: Any, reduce: bool = True) -> None:
@@ -14,7 +11,7 @@ class FunctionFieldElement_rational(FunctionFieldElement):
     def element(self) -> Any:
         ...
 
-    def list(self) -> List:
+    def list(self) -> list:
         ...
 
     def _repr_(self) -> str:

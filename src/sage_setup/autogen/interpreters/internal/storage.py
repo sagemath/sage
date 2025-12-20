@@ -11,12 +11,12 @@
 
 """Implements different data storage types."""
 
-from __future__ import print_function, absolute_import
 
-from .utils import je, reindent_lines as ri
+from .utils import je
+from .utils import reindent_lines as ri
 
 
-class StorageType(object):
+class StorageType:
     r"""
     A StorageType specifies the C types used to deal with values of a
     given type.
@@ -510,7 +510,7 @@ class StorageTypePython(StorageTypeAssignable):
             sage: ty_python.type
             'PyObject*'
         """
-        super(StorageTypePython, self).__init__('PyObject*')
+        super().__init__('PyObject*')
 
     def python_refcounted(self):
         r"""
@@ -686,7 +686,7 @@ class StorageTypeAutoReference(StorageType):
             sage: ty_mpfr.ref_type
             'mpfr_ptr'
         """
-        super(StorageTypeAutoReference, self).__init__()
+        super().__init__()
         self.decl_type = decl_ty
         self.ref_type = ref_ty
 
@@ -798,7 +798,7 @@ class StorageTypeMPFR(StorageTypeAutoReference):
             'cdef RealNumber rn_the_second\n'
         """
 
-        super(StorageTypeMPFR, self).__init__('mpfr_t', 'mpfr_ptr')
+        super().__init__('mpfr_t', 'mpfr_ptr')
         self.id = id
         self.class_member_declarations = "cdef RealField_class domain%s\n" % self.id
         self.class_member_initializations = \
