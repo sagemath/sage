@@ -3142,6 +3142,12 @@ REFERENCES:
              fundamental domains for the subgroups of the modular
              group*, preprint :arxiv:`0901.1340`
 
+.. [GowdaTrott2014] Muddappa Seetharama Gowda and David Trott. On the
+                    irreducibility, Lyapunov rank, and automorphisms
+                    of special Bishop–Phelps cones. Journal of
+                    Mathematical Analysis and Applications,
+                    419(1):172-184, 2014.
+
 .. [GP2012] Eddy Godelle and Luis Paris.
             *Basic questions on Artin-Tits groups*. A. Björner et al. (eds)
             Configuration spaces, CRM series. (2012) pp. 299--311.
@@ -3279,6 +3285,12 @@ REFERENCES:
 .. [Gut2001] Carsten Gutwenger and Petra Mutzel. *A Linear Time Implementation
              of SPQR-Trees*, International Symposium on Graph Drawing,
              (2001) 77-90
+
+.. [GulTunc1998] Osman Güler and Levent Tunçel.
+                 Characterization of the barrier parameter of
+                 homogenous convex cones.
+                 Mathematical Programming, 81(1):55-76, 1998,
+                 :doi:`10.1007/BF01584844`.
 
 .. [GW1999] Frederick M. Goodman and Hans Wenzl. *Crystal bases of quantum
             affine algebras and affine Kazhdan-Lusztig polyonmials*.
@@ -6444,6 +6456,12 @@ REFERENCES:
              Federal Institute of Technology -- ETH, 2000.
 
 .. [Sto2011] \A. Storjohann, Email Communication. 30 May 2011.
+
+.. [StoerWitz1970] Josef Stoer and Christoph Witzgall.
+                   Convexity and Optimization in Finite Dimensions I, vol.
+                   163 of Grundlehren der mathematischen Wissenschaften.
+                   Springer-Verlag, New York, 1970. ISBN 9783642462184,
+                   :doi:`10.1007/978-3-642-46216-0`.
 
 .. [Str1969] Volker Strassen. *Gaussian elimination is not
              optimal*. Numerische Mathematik, 13:354-356, 1969.
