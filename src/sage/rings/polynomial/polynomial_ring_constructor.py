@@ -491,42 +491,41 @@ def PolynomialRing(base_ring, *args, **kwds):
     Polynomial rings over double-precision real and complex fields are supported
     by the ``'singular'`` implementation::
 
-        sage: R.<x> = PolynomialRing(RDF, implementation='singular')                    # needs sage.libs.singular
+        sage: # needs sage.libs.singular
+        sage: R.<x> = PolynomialRing(RDF, implementation='singular')
         sage: x^2 + 1
         x^2 + (1.000e + 00)
-
-        sage: S.<x> = PolynomialRing(CDF, implementation='singular')                    # needs sage.libs.singular
+        sage: C.<x> = PolynomialRing(CDF, implementation='singular')
         sage: x^2 + 1
         x^2 + 1
 
     The ring printing via libsingular matches the output of the Singular
     interface::
 
-        sage: from sage.libs.singular.function import singular_function               # needs sage.libs.singular
-        sage: R.<x> = PolynomialRing(RDF, implementation="singular")                  # needs sage.libs.singular
-        sage: C.<x> = PolynomialRing(CDF, implementation="singular")                  # needs sage.libs.singular
-        sage: print(singular_function("print")(R))                                    # needs sage.libs.singular
+        sage: # needs sage.libs.singular
+        sage: from sage.libs.singular.function import singular_function
+        sage: print(singular_function("print")(R))
         polynomial ring, over a field, global ordering
         // coefficients: Float() considered as a field
         // number of vars : 1
         //        block   1 : ordering dp
         //                  : names    x
         //        block   2 : ordering C
-        sage: print(singular_function("print")(C))                                    # needs sage.libs.singular
+        sage: print(singular_function("print")(C))
         polynomial ring, over a field, global ordering
         // coefficients: real[I](complex:15 digits, additional 0 digits)/(I^2+1) considered as a field
         // number of vars : 1
         //        block   1 : ordering dp
         //                  : names    x
         //        block   2 : ordering C
-        sage: print(singular(R))                                                      # needs sage.libs.singular
+        sage: print(singular(R))
         polynomial ring, over a field, global ordering
         // coefficients: Float() considered as a field
         // number of vars : 1
         //        block   1 : ordering dp
         //                  : names    x
         //        block   2 : ordering C
-        sage: print(singular(C))                                                      # needs sage.libs.singular
+        sage: print(singular(C))
         polynomial ring, over a field, global ordering
         // coefficients: real[I](complex:15 digits, additional 0 digits)/(I^2+1) considered as a field
         // number of vars : 1
