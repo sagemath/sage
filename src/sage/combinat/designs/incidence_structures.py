@@ -43,12 +43,13 @@ from __future__ import annotations
 from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
+from sage.structure.sage_object import SageObject
 from sage.sets.set import Set
 
 lazy_import('sage.libs.gap.libgap', 'libgap')
 
 
-class IncidenceStructure:
+class IncidenceStructure(SageObject):
     r"""
     A base class for incidence structures (i.e. hypergraphs, i.e. set systems)
 
@@ -1067,14 +1068,25 @@ class IncidenceStructure:
         B = self._blocks
         return all(B[i] != B[i + 1] for i in range(len(B) - 1))
 
-    def _gap_(self):
+    def _gap_init_(self):
         """
         Return the GAP string describing the design.
 
         EXAMPLES::
 
+            sage: # optional - gap_package_design
             sage: BD = IncidenceStructure(7,[[0,1,2],[0,3,4],[0,5,6],[1,3,5],[1,4,6],[2,3,6],[2,4,5]])
-            sage: BD._gap_()
+            sage: gap.load_package("design")
+            sage: gap(BD)
+            rec(
+              blocks := [ [ 1, 2, 3 ], [ 1, 4, 5 ], [ 1, 6, 7 ], [ 2, 4, 6 ],
+                  [ 2, 5, 7 ], [ 3, 4, 7 ], [ 3, 5, 6 ] ],
+              isBlockDesign := true,
+              v := 7 )
+
+        TESTS::
+
+            sage: BD._gap_init_()  # optional - gap_package_design
             'BlockDesign(7,[[1, 2, 3], [1, 4, 5], [1, 6, 7], [2, 4, 6], [2, 5, 7], [3, 4, 7], [3, 5, 6]])'
         """
         v = self.n_points()

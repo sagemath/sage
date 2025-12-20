@@ -198,7 +198,7 @@ class QuaGroupModuleElement(Element):
         """
         return self._libgap
 
-    _libgap_ = _gap_ = gap
+    _libgap_ = gap
 
     def _add_(self, other):
         r"""
@@ -432,7 +432,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
         """
         return self._libgap
 
-    _libgap_ = _gap_ = gap
+    _libgap_ = gap
 
     def cartan_type(self):
         """
@@ -1602,7 +1602,7 @@ class QuantumGroupModule(Parent, UniqueRepresentation):
         """
         return self._libgap
 
-    _libgap_ = _gap_ = gap
+    _libgap_ = gap
 
     def _element_constructor_(self, elt):
         """
