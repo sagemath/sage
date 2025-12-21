@@ -289,7 +289,7 @@ def LatticePolytope(data, compute_vertices=True, n=0, lattice=None):
         compute_vertices = False
     if (isinstance(data, PointCollection) and
             (lattice is None or lattice is data.module())):
-        return LatticePolytopeClass(parent, data, compute_vertices)
+        return parent.element_class(parent, data, compute_vertices)
     if isinstance(data, str):
         with open(data) as f:
             skip_palp_matrix(f, n)
@@ -322,7 +322,7 @@ def LatticePolytope(data, compute_vertices=True, n=0, lattice=None):
     for p in data:
         p.set_immutable()
     data = PointCollection(data, lattice)
-    return LatticePolytopeClass(parent, data, compute_vertices)
+    return parent.element_class(parent, data, compute_vertices)
 
 
 copyreg_constructor(LatticePolytope)   # "safe for unpickling"
@@ -1998,7 +1998,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
             def LPFace(vertices, facets):
                 if not facets:
                     return self
-                return LatticePolytopeClass(parent, ambient=self,
+                return parent.element_class(parent, ambient=self,
                                             ambient_vertex_indices=vertices,
                                             ambient_facet_indices=facets)
 
@@ -3807,7 +3807,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         """
         if self.is_reflexive():
             return self._polar
-        raise ValueError("The given polytope is not reflexive!\n"
+        raise ValueError("the given polytope is not reflexive:\n"
                          f"Polytope: {self}")
 
     def _mul_(self, other):
