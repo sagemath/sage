@@ -1299,7 +1299,7 @@ class FSMState(SageObject):
         sage: A.determinisation()
         Traceback (most recent call last):
         ...
-        TypeError: unhashable type: 'list'
+        TypeError: ...unhashable type: 'list'...
         sage: A.state(0).color = ()
         sage: A.determinisation()
         Automaton with 1 state
@@ -6554,7 +6554,7 @@ class FiniteStateMachine(SageObject):
             sage: Transducer(transition, input_alphabet=[0], initial_states=[0])
             Traceback (most recent call last):
             ...
-            TypeError: mutable vectors are unhashable
+            TypeError: ...mutable vectors are unhashable...
         """
         if self.input_alphabet is None:
             raise ValueError("No input alphabet is given. "
@@ -10951,7 +10951,7 @@ class Automaton(FiniteStateMachine):
             sage: A.determinisation()
             Traceback (most recent call last):
             ...
-            TypeError: unhashable type: 'list'
+            TypeError: ...unhashable type: 'list'...
             sage: A.state(0).color = ()
             sage: A.determinisation()
             Automaton with 1 state

@@ -75,7 +75,8 @@ import os
 import shutil
 
 from sage.calculus.functional import diff
-from sage.interfaces.maxima_lib import maxima
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.interfaces.maxima_lib","maxima")
 from sage.misc.functional import N
 from sage.rings.real_mpfr import RealField
 from sage.structure.element import Expression
