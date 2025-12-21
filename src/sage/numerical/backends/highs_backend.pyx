@@ -1916,13 +1916,24 @@ cdef class HiGHSBackend(GenericBackend):
         """
         cdef bytes filename_bytes
         cdef HighsInt status
-        
-        filename_bytes = str(filename).encode('utf-8')
-        
+
+        import os
+        cdef str filenamestr = str(filename)
+        cdef object _root
+        cdef str ext
+
+        _root, ext = os.path.splitext(filenamestr)
+        if ext.lower() != '.lp':
+            filenamestr = filenamestr + '.lp'
+
+        filename_bytes = os.fsencode(filenamestr)
+
+        sig_on()
         status = Highs_writeModel(self.highs, filename_bytes)
+        sig_off()
         
-        if status != kHighsStatusOk:
-            raise MIPSolverException(f"HiGHS: Failed to write LP file {filename}")
+        if status != kHighsStatusOk and status != kHighsStatusWarning:
+            raise MIPSolverException(f"HiGHS: Failed to write LP file {filenamestr} (status {status})")
     
     cpdef write_mps(self, filename, int modern):
         """
@@ -1935,8 +1946,8 @@ cdef class HiGHSBackend(GenericBackend):
 
         .. NOTE::
 
-            HiGHS may not support writing MPS files directly. If writing fails,
-            consider using write_lp() instead, or use another solver for MPS output.
+            HiGHS determines the output format from the filename extension.
+            The ``modern`` flag is accepted for API compatibility but ignored.
 
         EXAMPLES::
 
@@ -1946,29 +1957,29 @@ cdef class HiGHSBackend(GenericBackend):
             1
             sage: p.add_linear_constraint([(0, 1), (1, 1)], None, 2.0)
             sage: import tempfile                                     
-            sage: with tempfile.NamedTemporaryFile(suffix='.mps') as f:  # doctest: +SKIP
+            sage: with tempfile.NamedTemporaryFile(suffix='.mps') as f:
             ....:     p.write_mps(f.name, 1)
         """
         cdef bytes filename_bytes
         cdef HighsInt status
-        
-        filename_bytes = str(filename).encode('utf-8')
-        
+
+        import os
+        cdef str filenamestr = str(filename)
+        cdef object _root
+        cdef str ext
+
+        _root, ext = os.path.splitext(filenamestr)
+        if ext.lower() != '.mps':
+            filenamestr = filenamestr + '.mps'
+
+        filename_bytes = os.fsencode(filenamestr)
+
+        sig_on()
         status = Highs_writeModel(self.highs, filename_bytes)
+        sig_off()
         
-        if status != kHighsStatusOk:
-            # HiGHS may not support MPS write. Try converting filename to .lp temporarily
-            import os
-            base, ext = os.path.splitext(filename)
-            if ext.lower() == '.mps':
-                # Try writing as LP first, then convert if needed
-                # For now, just inform the user
-                raise MIPSolverException(
-                    f"HiGHS: Failed to write MPS file {filename}. "
-                    "HiGHS may not support writing MPS files directly. "
-                    "Consider using write_lp() instead."
-                )
-            raise MIPSolverException(f"HiGHS: Failed to write MPS file {filename}")
+        if status != kHighsStatusOk and status != kHighsStatusWarning:
+            raise MIPSolverException(f"HiGHS: Failed to write MPS file {filenamestr} (status {status})")
     
     cpdef remove_constraint(self, int i):
         """
