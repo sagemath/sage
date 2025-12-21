@@ -167,6 +167,10 @@ jobs:
             mingw-w64-ucrt-x86_64-symmetrica
             mingw-w64-ucrt-x86_64-glpk
             mingw-w64-ucrt-x86_64-gc
+            mingw-w64-ucrt-x86_64-bliss
+            mingw-w64-ucrt-x86_64-cliquer
+            mingw-w64-ucrt-x86_64-planarity
+            mingw-w64-ucrt-x86_64-rankwidth
           path-type: inherit
 
       - name: Build
