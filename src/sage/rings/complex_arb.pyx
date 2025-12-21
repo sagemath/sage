@@ -173,7 +173,8 @@ from sage.libs.flint.arf cimport arf_init, arf_get_d, arf_get_mpfr, arf_clear, a
 from sage.libs.flint.mag cimport (mag_init, mag_clear, mag_set_d,
         MAG_BITS, mag_zero, mag_set_ui_2exp_si,
         mag_mul_2exp_si)
-from sage.libs.flint.fmpz cimport fmpz_t, fmpz_init, fmpz_get_mpz, fmpz_set_mpz, fmpz_clear
+from sage.libs.flint.fmpz cimport (fmpz_t, fmpz_init, fmpz_get_mpz, fmpz_init_set_readonly,
+        fmpz_clear_readonly, fmpz_clear)
 from sage.libs.flint.fmpq cimport fmpq_t, fmpq_init, fmpq_set_mpq, fmpq_clear
 from sage.libs.gmp.mpz cimport mpz_fits_slong_p, mpz_get_si
 from sage.libs.gsl.complex cimport gsl_complex_rect
@@ -1298,8 +1299,8 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             0.5000000000000000 + [49.773832477672...]*I]
         """
         cdef fmpz_t _start
-        fmpz_init(_start)
-        fmpz_set_mpz(_start, (<Integer> Integer(start)).value)
+        cdef Integer _start_Integer = <Integer> (start if isinstance(start, Integer) else Integer(start))
+        fmpz_init_set_readonly(_start, _start_Integer.value)
 
         cdef long _count = count
         if _count < 1:
@@ -1320,7 +1321,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             res.append(b)
 
         _acb_vec_clear(ar, _count)
-        fmpz_clear(_start)
+        fmpz_clear_readonly(_start)
 
         return res
 
@@ -1487,10 +1488,9 @@ cdef class ComplexBall(RingElement):
             arb_set(acb_realref(self.value), (<RealBall> x).value)
         elif isinstance(x, sage.rings.integer.Integer):
             if _do_sig(prec(self)): sig_on()
-            fmpz_init(tmpz)
-            fmpz_set_mpz(tmpz, (<sage.rings.integer.Integer> x).value)
+            fmpz_init_set_readonly(tmpz, (<sage.rings.integer.Integer> x).value)
             arb_set_fmpz(acb_realref(self.value), tmpz)
-            fmpz_clear(tmpz)
+            fmpz_clear_readonly(tmpz)
             if _do_sig(prec(self)): sig_off()
         elif isinstance(x, sage.rings.rational.Rational):
             if _do_sig(prec(self)): sig_on()
@@ -1514,10 +1514,9 @@ cdef class ComplexBall(RingElement):
             arb_set(acb_imagref(self.value), (<RealBall> y).value)
         elif isinstance(y, sage.rings.integer.Integer):
             if _do_sig(prec(self)): sig_on()
-            fmpz_init(tmpz)
-            fmpz_set_mpz(tmpz, (<sage.rings.integer.Integer> y).value)
+            fmpz_init_set_readonly(tmpz, (<sage.rings.integer.Integer> y).value)
             arb_set_fmpz(acb_imagref(self.value), tmpz)
-            fmpz_clear(tmpz)
+            fmpz_clear_readonly(tmpz)
             if _do_sig(prec(self)): sig_off()
         elif isinstance(y, sage.rings.rational.Rational):
             if _do_sig(prec(self)): sig_on()
@@ -2575,10 +2574,9 @@ cdef class ComplexBall(RingElement):
             if isinstance(other, ComplexBall):
                 res = acb_contains(self.value, (<ComplexBall> other).value)
             elif isinstance(other, Integer):
-                fmpz_init(tmpz)
-                fmpz_set_mpz(tmpz, (<Integer> other).value)
+                fmpz_init_set_readonly(tmpz, (<Integer> other).value)
                 res = acb_contains_fmpz(self.value, tmpz)
-                fmpz_clear(tmpz)
+                fmpz_clear_readonly(tmpz)
             elif isinstance(other, sage.rings.rational.Rational):
                 fmpq_init(tmpq)
                 fmpq_set_mpq(tmpq, (<sage.rings.rational.Rational> other).value)
@@ -2793,10 +2791,9 @@ cdef class ComplexBall(RingElement):
             acb_mul_2exp_si(res.value, self.value, PyLong_AsLong(shift))
         elif isinstance(shift, Integer):
             sig_on()
-            fmpz_init(tmpz)
-            fmpz_set_mpz(tmpz, (<Integer> shift).value)
+            fmpz_init_set_readonly(tmpz, (<Integer> shift).value)
             acb_mul_2exp_fmpz(res.value, self.value, tmpz)
-            fmpz_clear(tmpz)
+            fmpz_clear_readonly(tmpz)
             sig_off()
         else:
             raise TypeError("shift should be an integer")
@@ -2936,10 +2933,9 @@ cdef class ComplexBall(RingElement):
             if _do_sig(prec(self)): sig_off()
         elif isinstance(expo, Integer):
             if _do_sig(prec(self)): sig_on()
-            fmpz_init(tmpz)
-            fmpz_set_mpz(tmpz, (<Integer> expo).value)
+            fmpz_init_set_readonly(tmpz, (<Integer> expo).value)
             acb_pow_fmpz(res.value, self.value, tmpz, prec(self))
-            fmpz_clear(tmpz)
+            fmpz_clear_readonly(tmpz)
             if _do_sig(prec(self)): sig_off()
         elif isinstance(expo, RealBall):
             if (analytic and not arb_is_int((<RealBall> expo).value)
@@ -3754,13 +3750,13 @@ cdef class ComplexBall(RingElement):
             [-70.806021532123...] + [7.9648836259913...]*I
         """
         cdef fmpz_t _branch
-        fmpz_init(_branch)
-        fmpz_set_mpz(_branch, (<Integer> Integer(branch)).value)
+        cdef Integer _branch_Integer = <Integer> (branch if isinstance(branch, Integer) else Integer(branch))
+        fmpz_init_set_readonly(_branch, _branch_Integer.value)
         cdef ComplexBall res = self._new()
         sig_on()
         acb_lambertw(res.value, self.value, _branch, 0, prec(self))
         sig_off()
-        fmpz_clear(_branch)
+        fmpz_clear_readonly(_branch)
         return res
 
     def polylog(self, s):
