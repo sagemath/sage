@@ -2,7 +2,7 @@
 """
 Elementary symmetric functions
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
 #                     2012 Anne Schilling <anne@math.ucdavis.edu>
@@ -16,8 +16,8 @@ Elementary symmetric functions
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  httsp://www.gnu.org/licenses/
+# ***************************************************************************
 from sage.arith.misc import binomial, factorial
 from sage.combinat.partition import Partition
 from sage.combinat.sf import classical, multiplicative

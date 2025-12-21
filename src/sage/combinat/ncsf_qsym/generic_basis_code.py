@@ -11,7 +11,7 @@ AUTHORS:
 - Franco Saliola
 - Chris Berg
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010 Jason Bandlow <jbandlow@gmail.com>,
 #                     2012 Franco Saliola <saliola@gmail.com>,
 #
@@ -24,8 +24,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+#  ***************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.realizations import Category_realization_of_parent
