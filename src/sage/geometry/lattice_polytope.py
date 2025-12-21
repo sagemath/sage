@@ -3802,7 +3802,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
             sage: p.polar()
             Traceback (most recent call last):
             ...
-            ValueError: The given polytope is not reflexive!
+            ValueError: the given polytope is not reflexive:
             Polytope: 3-d lattice polytope in 3-d lattice M
         """
         if self.is_reflexive():
