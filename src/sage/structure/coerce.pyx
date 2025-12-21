@@ -100,6 +100,95 @@ import traceback
 from fractions import Fraction
 cdef type FractionType = <type>Fraction
 
+cpdef _py_scalar_parent_mpmath13(py_type):
+    r"""
+    Version of py_scalar_parent() suitable for use with mpmath-1.3.x.
+    The main py_scalar_parent() will invoke this one if needed.
+
+    EXAMPLES::
+
+        sage: # needs mpmath13
+        sage: from sage.structure.coerce import _py_scalar_parent_mpmath13
+        sage: _py_scalar_parent_mpmath13(int)
+        Integer Ring
+        sage: _py_scalar_parent_mpmath13(float)
+        Real Double Field
+        sage: _py_scalar_parent_mpmath13(complex)                                                 # needs sage.rings.complex_double
+        Complex Double Field
+        sage: _py_scalar_parent_mpmath13(bool)
+        Integer Ring
+        sage: _py_scalar_parent_mpmath13(dict),
+        (None,)
+
+        sage: # needs mpmath13
+        sage: import fractions
+        sage: _py_scalar_parent_mpmath13(fractions.Fraction)
+        Rational Field
+
+        sage: # needs numpy mpmath13
+        sage: import numpy
+        sage: _py_scalar_parent_mpmath13(numpy.int16)
+        Integer Ring
+        sage: _py_scalar_parent_mpmath13(numpy.int32)
+        Integer Ring
+        sage: _py_scalar_parent_mpmath13(numpy.uint64)
+        Integer Ring
+        sage: _py_scalar_parent_mpmath13(numpy.double)
+        Real Double Field
+
+        sage: # needs mpmath13
+        sage: import gmpy2
+        sage: _py_scalar_parent_mpmath13(gmpy2.mpz)
+        Integer Ring
+        sage: _py_scalar_parent_mpmath13(gmpy2.mpq)
+        Rational Field
+        sage: _py_scalar_parent_mpmath13(gmpy2.mpfr)
+        Real Double Field
+        sage: _py_scalar_parent_mpmath13(gmpy2.mpc)                                               # needs sage.rings.complex_double
+        Complex Double Field
+
+    """
+    if issubclass(py_type, int):
+        import sage.rings.integer_ring
+        return sage.rings.integer_ring.ZZ
+    if py_type is FractionType:
+        import sage.rings.rational_field
+        return sage.rings.rational_field.QQ
+    elif issubclass(py_type, float):
+        import sage.rings.real_double
+        return sage.rings.real_double.RDF
+    elif issubclass(py_type, complex):
+        import sage.rings.complex_double
+        return sage.rings.complex_double.CDF
+    elif is_numpy_type(py_type):
+        import numpy
+        if issubclass(py_type, numpy.integer):
+            import sage.rings.integer_ring
+            return sage.rings.integer_ring.ZZ
+        elif issubclass(py_type, numpy.floating):
+            import sage.rings.real_double
+            return sage.rings.real_double.RDF
+        elif issubclass(py_type, numpy.complexfloating):
+            import sage.rings.complex_double
+            return sage.rings.complex_double.CDF
+        else:
+            return None
+    elif issubclass(py_type, gmpy2.mpz):
+        import sage.rings.integer_ring
+        return sage.rings.integer_ring.ZZ
+    elif issubclass(py_type, gmpy2.mpq):
+        import sage.rings.rational_field
+        return sage.rings.rational_field.QQ
+    elif issubclass(py_type, gmpy2.mpfr):
+        import sage.rings.real_double
+        return sage.rings.real_double.RDF
+    elif issubclass(py_type, gmpy2.mpc):
+        import sage.rings.complex_double
+        return sage.rings.complex_double.CDF
+    else:
+        return None
+
+
 cpdef py_scalar_parent(py_type):
     """
     Return the Sage equivalent of the given python type, if one exists.
@@ -143,46 +232,66 @@ cpdef py_scalar_parent(py_type):
         Real Double Field
         sage: py_scalar_parent(gmpy2.mpc)                                               # needs sage.rings.complex_double
         Complex Double Field
+
+        sage: # needs mpmath
+        sage: import mpmath
+        sage: py_scalar_parent(mpmath.mpf)
+        Real Double Field
+        sage: py_scalar_parent(mpmath.mpc)                                              # needs sage.rings.complex_double
+        Complex Double Field
     """
+    import mpmath
+    if not mpmath.__version__.startswith("1.4"):
+        # Support mpmath-1.3 for a while by copy/pasting the old
+        # version of the function.
+        return _py_scalar_parent_mpmath13(py_type)
+
     if issubclass(py_type, int):
         import sage.rings.integer_ring
         return sage.rings.integer_ring.ZZ
     if py_type is FractionType:
         import sage.rings.rational_field
         return sage.rings.rational_field.QQ
-    elif issubclass(py_type, float):
+    if issubclass(py_type, float):
         import sage.rings.real_double
         return sage.rings.real_double.RDF
-    elif issubclass(py_type, complex):
+    if issubclass(py_type, complex):
         import sage.rings.complex_double
         return sage.rings.complex_double.CDF
-    elif is_numpy_type(py_type):
+    if is_numpy_type(py_type):
         import numpy
         if issubclass(py_type, numpy.integer):
             import sage.rings.integer_ring
             return sage.rings.integer_ring.ZZ
-        elif issubclass(py_type, numpy.floating):
+        if issubclass(py_type, numpy.floating):
             import sage.rings.real_double
             return sage.rings.real_double.RDF
-        elif issubclass(py_type, numpy.complexfloating):
+        if issubclass(py_type, numpy.complexfloating):
             import sage.rings.complex_double
             return sage.rings.complex_double.CDF
-        else:
-            return None
-    elif issubclass(py_type, gmpy2.mpz):
+        return None
+    if issubclass(py_type, gmpy2.mpz):
         import sage.rings.integer_ring
         return sage.rings.integer_ring.ZZ
-    elif issubclass(py_type, gmpy2.mpq):
+    if issubclass(py_type, gmpy2.mpq):
         import sage.rings.rational_field
         return sage.rings.rational_field.QQ
-    elif issubclass(py_type, gmpy2.mpfr):
+    if issubclass(py_type, gmpy2.mpfr):
         import sage.rings.real_double
         return sage.rings.real_double.RDF
-    elif issubclass(py_type, gmpy2.mpc):
+    if issubclass(py_type, gmpy2.mpc):
         import sage.rings.complex_double
         return sage.rings.complex_double.CDF
-    else:
+    if is_mpmath_type(py_type):
+        import mpmath
+        if issubclass(py_type, mpmath.mpf):
+            from sage.rings.real_double import RDF
+            return RDF
+        if issubclass(py_type, mpmath.mpc):
+            from sage.rings.complex_double import CDF
+            return CDF
         return None
+    return None
 
 cpdef py_scalar_to_element(x):
     """
@@ -468,10 +577,11 @@ cpdef bint is_numpy_type(t) noexcept:
         return True
     return False
 
+
 cpdef bint is_mpmath_type(t) noexcept:
     r"""
-    Check whether the type ``t`` is a type whose name starts with either
-    ``mpmath.`` or ``sage.libs.mpmath.``.
+    Check whether the type ``t`` is a type whose name starts with
+    "mpmath."  or "sage.libs.mpmath"
 
     EXAMPLES::
 
@@ -487,8 +597,11 @@ cpdef bint is_mpmath_type(t) noexcept:
         sage: is_mpmath_type(type(mpmath.mpf(2)))
         True
     """
-    return isinstance(t, type) and \
-           strncmp((<PyTypeObject*>t).tp_name, "sage.libs.mpmath.", 17) == 0
+    return isinstance(t, type) and (
+        t.__module__.startswith("mpmath.")
+        or
+        t.__module__.startswith("sage.libs.mpmath")
+    )
 
 
 cdef class CoercionModel:

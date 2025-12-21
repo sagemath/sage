@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.mpmath13
 """
 mpmath floating-point numbers
 

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.mpmath13
 """
 Faster versions of some key functions in mpmath.libmp
 """

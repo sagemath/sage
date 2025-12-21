@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.mpmath13
 """
 This module provides the core implementation of multiprecision
 floating-point arithmetic. Operations are done in-place.
