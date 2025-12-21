@@ -2071,6 +2071,32 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             False
             sage: f1.divides(3)
             False
+
+        Zero is divisible by everything, and only zero is divisible by zero::
+
+            sage: R.<x,y> = LaurentPolynomialRing(ZZ)
+            sage: x.divides(R(0))
+            True
+            sage: R(0).divides(x)
+            False
+            sage: R(0).divides(R(0))
+            True
+
+        Monomials divide when the exponents allow::
+
+            sage: (x*y^-1).divides(x^2*y^-2)
+            True
+            sage: (x^2).divides(x)
+            True
+
+        TESTS:
+
+        Multivariate Laurent polynomial rings require an integral domain base ring::
+
+            sage: R.<x,y> = LaurentPolynomialRing(Zmod(4))
+            Traceback (most recent call last):
+            ...
+            ValueError: base ring must be an integral domain
         """
         p = self.monomial_reduction()[0]
         q = other.monomial_reduction()[0]
