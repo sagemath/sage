@@ -131,7 +131,6 @@ import shlex
 
 from sage.arith.misc import GCD as gcd
 from sage.categories.monoids import Monoids
-from sage.categories.sets_with_grading import SetsWithGrading
 from sage.features import PythonModule
 from sage.features.palp import PalpExecutable
 from sage.features.databases import DatabaseReflexivePolytopes
@@ -284,12 +283,13 @@ def LatticePolytope(data, compute_vertices=True, n=0, lattice=None):
         sage: p.faces()                                                                 # needs sage.graphs
         ((-1-d lattice polytope in 3-d lattice M,),)
     """
+    parent = LatticePolytopes()
     if isinstance(data, LatticePolytopeClass):
         data = data._vertices
         compute_vertices = False
     if (isinstance(data, PointCollection) and
             (lattice is None or lattice is data.module())):
-        return LatticePolytopeClass(data, compute_vertices)
+        return LatticePolytopeClass(parent, data, compute_vertices)
     if isinstance(data, str):
         with open(data) as f:
             skip_palp_matrix(f, n)
@@ -322,7 +322,7 @@ def LatticePolytope(data, compute_vertices=True, n=0, lattice=None):
     for p in data:
         p.set_immutable()
     data = PointCollection(data, lattice)
-    return LatticePolytopeClass(data, compute_vertices)
+    return LatticePolytopeClass(parent, data, compute_vertices)
 
 
 copyreg_constructor(LatticePolytope)   # "safe for unpickling"
@@ -509,7 +509,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         Every polytope has an ambient structure. If it was not specified, it is
         this polytope itself.
     """
-    def __init__(self, points=None, compute_vertices=None,
+    def __init__(self, parent, points=None, compute_vertices=None,
                  ambient=None, ambient_vertex_indices=None,
                  ambient_facet_indices=None) -> None:
         r"""
@@ -521,7 +521,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
 
             sage: P = LatticePolytope([(1,2,3), (4,5,6)]); P # indirect test
             1-d lattice polytope in 3-d lattice M
-            sage: TestSuite(_).run()
+            sage: TestSuite(P).run()
 
             sage: P.parent()
             Set of all Lattice Polytopes
@@ -547,7 +547,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
             self._ambient_vertex_indices = tuple(ambient_vertex_indices)
             self._ambient_facet_indices = tuple(ambient_facet_indices)
             self._vertices = ambient.vertices(self._ambient_vertex_indices)
-        parent = LatticePolytopes()
         Element.__init__(self, parent)
 
     def _sage_input_(self, sib, coerced):
@@ -1269,7 +1268,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         partitions.set_immutable()
         self._nef_partitions = partitions
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1299,7 +1298,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
             parts.extend(["face of", str(self.ambient())])
         return " ".join(parts)
 
-    def _sort_faces(self, faces):
+    def _sort_faces(self, faces) -> tuple:
         r"""
         Return sorted (if necessary) ``faces`` as a tuple.
 
@@ -1458,7 +1457,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         """
         new_vertices = self.vertices() * a
         if b in QQ:
-            b = vector(QQ, [b]*new_vertices.ncols())
+            b = vector(QQ, [b] * new_vertices.ncols())
         else:
             b = vector(QQ, b)
         new_vertices = [c + b for c in new_vertices]
@@ -1532,7 +1531,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         return self._ambient_facet_indices
 
     @cached_method
-    def ambient_point_indices(self):
+    def ambient_point_indices(self) -> tuple:
         r"""
         Return indices of points of the ambient polytope contained in this one.
 
@@ -1557,7 +1556,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         return tuple(point_to_index[p] for p in self.points())
 
     @cached_method
-    def ambient_ordered_point_indices(self):
+    def ambient_ordered_point_indices(self) -> tuple:
         r"""
         Return indices of points of the ambient polytope contained in this one.
 
@@ -1736,8 +1735,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         """
         nv = self.n_vertices()
         return self._PPL().affine_dimension() if nv > 3 else nv - 1
-
-    grade = dim  # for the category SetsWithGrading
 
     def distances(self, point=None):
         r"""
@@ -1990,6 +1987,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
             sage: p.face_lattice().top() is p
             True
         """
+        parent = self.parent()
         if self._ambient is self:
             # We need to compute face lattice on our own.
             vertex_to_facets = [row.nonzero_positions()
@@ -2000,7 +1998,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
             def LPFace(vertices, facets):
                 if not facets:
                     return self
-                return LatticePolytopeClass(ambient=self,
+                return LatticePolytopeClass(parent, ambient=self,
                                             ambient_vertex_indices=vertices,
                                             ambient_facet_indices=facets)
 
@@ -2024,7 +2022,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
                     face_index = face_to_index[face]
                     for new_face in face.facet_of():
                         if not allowed_indices.issuperset(
-                                        new_face._ambient_vertex_indices):
+                                new_face._ambient_vertex_indices):
                             continue
                         if new_face in ndfaces:
                             new_face_index = face_to_index[new_face]
@@ -2126,7 +2124,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         """
         if dim is not None and codim is not None:
             raise ValueError(
-                    "dimension and codimension cannot be specified together!")
+                "dimension and codimension cannot be specified together!")
         dim = self.dim() - codim if codim is not None else dim
         if "_faces" not in self.__dict__:
             self._faces = tuple(map(self._sort_faces,
@@ -2417,7 +2415,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         for Hindex, normal in enumerate(self.facet_normals()):
             facet_constant = self.facet_constant(Hindex)
             for Vindex, vertex in enumerate(self.vertices()):
-                if normal*vertex + facet_constant == 0:
+                if normal * vertex + facet_constant == 0:
                     incidence_matrix[Vindex, Hindex] = 1
 
         incidence_matrix.set_immutable()
@@ -3534,7 +3532,8 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         if show_facets:
             if dim == 2:
                 pplot += IndexFaceSet([self.traverse_boundary()],
-                        vertices, opacity=facet_opacity, rgbcolor=facet_color)
+                                      vertices, opacity=facet_opacity,
+                                      rgbcolor=facet_color)
             elif dim == 3:
                 if facet_colors is None:
                     facet_colors = [facet_color] * self.n_facets()
@@ -3549,7 +3548,8 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
                 for e in self.edges():
                     start, end = e.ambient_vertex_indices()
                     pplot += line3d([vertices[start], vertices[end]],
-                            thickness=edge_thickness, rgbcolor=edge_color)
+                                    thickness=edge_thickness,
+                                    rgbcolor=edge_color)
         if show_vertices:
             pplot += point3d(vertices, size=vertex_size, rgbcolor=vertex_color)
         if show_vindices is None:
@@ -4069,11 +4069,12 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         V = self.vertices()
         nv = self.n_vertices()
         PM = matrix(ZZ, [n * V + vector(ZZ, [c] * nv)
-            for n, c in zip(self.facet_normals(), self.facet_constants())])
+                         for n, c in zip(self.facet_normals(),
+                                         self.facet_constants())])
         PM.set_immutable()
         return PM
 
-    def vertices(self, *args, **kwds):
+    def vertices(self, *args, **kwds) -> PointCollection:
         r"""
         Return vertices of ``self``.
 
@@ -5925,11 +5926,9 @@ class LatticePolytopes(UniqueRepresentation, Parent):
             sage: S = lattice_polytope.LatticePolytopes(); S
             Set of all Lattice Polytopes
             sage: S.category()
-            Join of Category of monoids and Category of sets with grading
-            and Category of infinite sets
+            Category of infinite monoids
         """
-        cat = Monoids().Infinite() & SetsWithGrading()
-        Parent.__init__(self, category=cat)
+        Parent.__init__(self, category=Monoids().Infinite())
 
     def _repr_(self) -> str:
         r"""
@@ -5954,16 +5953,6 @@ class LatticePolytopes(UniqueRepresentation, Parent):
             0-d reflexive polytope in 0-d lattice M
         """
         return LatticePolytope([0], lattice=ToricLattice(0).dual())
-
-    def _element_constructor_(self, *data, **args):
-        r"""
-        EXAMPLES::
-
-            sage: o = lattice_polytope.cross_polytope(3)
-            sage: lattice_polytope.LatticePolytopes()(o)
-            3-d reflexive polytope in 3-d lattice M
-        """
-        return self.element_class(self, *data, **args)
 
     def _an_element_(self):
         """
