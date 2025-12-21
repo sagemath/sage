@@ -79,6 +79,44 @@ braiding = dependency(
   required: false,
   disabler: true,
 )
+
+# HiGHS optimization solver (used by sage.numerical.backends.highs_backend)
+#
+# Prefer pkg-config (highs.pc should provide -I$includedir/highs so relative
+# includes like "lp_data/..." work). Some downstream distributions ship a
+# broken highs.pc (e.g. pointing to /usr/debian/tmp), so we validate the
+# pkg-config variables and fall back to probing common install locations.
+highs = disabler()
+highs_pc = dependency('highs', required: false, method: 'pkg-config', disabler: true)
+if highs_pc.found()
+  highs = highs_pc
+
+  highs_includedir = highs_pc.get_variable(pkgconfig: 'includedir', default_value: '')
+  highs_libdir = highs_pc.get_variable(pkgconfig: 'libdir', default_value: '')
+
+  if highs_includedir == '' or not fs.is_dir(highs_includedir) or highs_libdir == '' or not fs.is_dir(highs_libdir)
+    highs_header_dir = ''
+    foreach include_base : ['/usr/include', '/usr/local/include', get_option('prefix') / 'include']
+      candidate = include_base / 'highs'
+      if fs.is_dir(candidate)
+        highs_header_dir = candidate
+        break
+      endif
+    endforeach
+
+    highs_lib = cc.find_library('highs', required: false, disabler: true)
+    if highs_lib.found() and highs_header_dir != ''
+      highs = declare_dependency(
+        dependencies: [highs_lib],
+        compile_args: ['-I' + highs_header_dir],
+      )
+    elif highs_lib.found()
+      highs = highs_lib
+    else
+      highs = disabler()
+    endif
+  endif
+endif
 gc = dependency(
   ['bdw-gc-threaded', 'bdw-gc'],
   version: '>=7.6.4',
@@ -179,6 +217,7 @@ install_subdir('giac', install_dir: sage_install_dir / 'libs')
 subdir('glpk')
 subdir('gmp')
 subdir('gsl')
+subdir('highs')
 subdir('lcalc')
 subdir('linbox')
 install_subdir('linkages', install_dir: sage_install_dir / 'libs')

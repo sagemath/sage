@@ -135,6 +135,7 @@ host-requires = [
   "pkg:generic/glpk",
   "pkg:generic/gmp",
   "pkg:generic/gsl",
+  "pkg:generic/highs",
   "pkg:generic/iml",
   "pkg:generic/lcalc",
   "pkg:generic/libbraiding",
