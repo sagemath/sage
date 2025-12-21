@@ -2224,6 +2224,8 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             False
             sage: R(0).divides(R(0))
             True
+            sage: (x^2).divides(x)
+            True
 
             sage: R.<x,y> = GF(2)[]
             sage: S.<z> = LaurentPolynomialRing(R)
