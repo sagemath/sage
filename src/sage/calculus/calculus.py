@@ -2412,6 +2412,97 @@ def _is_function(v):
     return isinstance(v, (Function, FunctionType))
 
 
+def _parse_maxima_conj(s):
+    r"""
+    Parse maxima conjugates of a maxima string
+    within an inequality expression.
+
+    Private helper function, this
+    only takes as input preparsed ``Maxima`` strings.
+
+    INPUT:
+
+    - ``s`` -- a string that has been preparsed from ``Maxima``
+
+    TESTS:
+
+    Check if real and imaginary parts are fixed::
+
+        sage: x = var('x')
+        sage: maxima("realpart(3 < _SAGE_VAR_x) + %i*imagpart(3 < _SAGE_VAR_x)").sage()
+        (3*I + 3) < (I + 1)*x
+        sage: maxima("realpart(3+_SAGE_VAR_x > 2) + %i*imagpart(_SAGE_VAR_x-3 < _SAGE_VAR_x)").sage()
+        [2 < I*x - 3*I, x + 3 < I*x]
+        sage: maxima("realpart(4+_SAGE_VAR_x < 6) + %i*imagpart(_SAGE_VAR_x - 2 > 8)").sage()
+        [(8*I) < I*x - 2*I, x + 4 < 6]
+        sage: maxima('realpart(_SAGE_VAR_x > -((13*sqrt(455))/(18*sqrt(113146))))+imagpart(%i*(_SAGE_VAR_x > -((13*sqrt(455))/(18*sqrt(113146)))))').sage()
+        x > -13/2036628*sqrt(113146)*sqrt(455)
+    """
+    if "realpart" in s:
+        # realpart always comes first therefore is OK to rfind bracket before I
+        realpart = s[s.find("realpart("):s[:s.find("%i")].rfind(")")]
+        realpart = realpart.replace("realpart(","")
+        if "imagpart" in s:
+            # remove bracket
+            i_start = s.find("%i")
+            i_end = s.rfind(")")+1
+            imagpart = s[i_start:i_end]
+            # get only imag
+            imagpart = imagpart.replace("imagpart(", "(")
+            # inequalities can have an imaginary part to them so we expand them out
+            inq = re.search("[<>]", imagpart)
+            if inq is not None:
+                inq = inq.start()
+                imagpart = imagpart[:inq] + ")" + imagpart[inq:]
+                imagpart = imagpart.replace(">", "> %i*(").replace("<", "< %i*(")
+                imag_split = re.search("[<>]", imagpart)
+                real_split = re.search("[<>]", realpart)
+                arr = []
+                if real_split and imag_split is not None:
+                    real_split_i = real_split.start()
+                    imag_split_i = imag_split.start()
+                    # ineqs the same
+                    if imag_split.group(0) == real_split.group(0):
+                        arr = [imagpart[:imag_split_i], "+",
+                                realpart[:real_split_i], real_split.group(0),
+                                realpart[real_split_i+1:],
+                            "+", imagpart[imag_split_i+1:]]
+
+                        # if imag parts not the same as real part
+                        imag_expr = imagpart[imag_split_i+1:].replace("%i*(","")[:-1].replace(" ","")
+                        real_expr = realpart[real_split_i+1:].replace(" ","")
+                        # if has variables then imag and real is diff arr is same
+                        # if not can cancel and same remove imag part so take off imag part
+                        if not("_SAGE_VAR_" in imag_expr or "_SAGE_VAR_" in real_expr) and imag_expr == real_expr:
+                                arr = arr[:-2]
+                    else:
+                       # then real split is > imag <
+                        arr = [realpart[real_split_i+1:], "<",
+                               imagpart[:imag_split_i], ",",
+                               realpart[:real_split_i], "<",
+                               imagpart[imag_split_i+1:]
+                        ]
+                        if imag_split.group(0) == '>':
+                            # then real_split is < and imag >
+                            # swap last element with first
+                            arr = [*arr[-1], *arr[1:-1], *arr[0]]
+                        # make arr list of sols
+                        arr = ["[", *arr, "]"]
+                elif real_split is None:
+                    arr = [s[:i_start], imagpart, s[i_end:]]
+                else:
+                    arr = [s[:i_start], "+", imagpart, "+", s[i_end:]]
+                s = ''.join(arr)
+            else:
+                s = s[:i_start] + imagpart
+        else:
+            # add bracket back on
+            s = realpart + ")"
+    # strip spaces helps with parsing
+    s = s.replace(" ", "")
+    return s
+
+
 def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
     r"""
     Given a string representation of a Maxima expression, parse it and
@@ -2522,6 +2613,9 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
     # literal -- but string literals should *never* ever be part of a
     # symbolic expression.
     s = s.replace("'", "")
+
+    # remove realpart and imagpart replace with sequence
+    s = _parse_maxima_conj(s)
 
     delayed_functions = maxima_qp.findall(s)
     if delayed_functions:
