@@ -2243,8 +2243,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             ...
             NotImplementedError: divisibility test not implemented for Laurent polynomials over non-integral domains
         """
-        # Check if the base ring has nilpotent elements
-        # For such rings, the degree bound is not sufficient
         if self.base_ring().is_integral_domain() is True:
             p = self.polynomial_construction()[0]
             q = other.polynomial_construction()[0]
