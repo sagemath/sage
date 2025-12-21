@@ -2205,6 +2205,12 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         r"""
         Return ``True`` if ``self`` divides ``other``.
 
+        .. NOTE::
+
+            This method is only implemented for Laurent polynomials over
+            integral domains. For rings with zero divisors, a
+            :exc:`NotImplementedError` is raised.
+
         EXAMPLES::
 
             sage: R.<x> = LaurentPolynomialRing(ZZ)
@@ -2218,11 +2224,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             False
             sage: R(0).divides(R(0))
             True
-            sage: R.<x> = LaurentPolynomialRing(Zmod(6))
-            sage: p = 4*x + 3*x^-1
-            sage: q = 5*x^2 + x + 2*x^-2
-            sage: p.divides(q)
-            False
 
             sage: R.<x,y> = GF(2)[]
             sage: S.<z> = LaurentPolynomialRing(R)
@@ -2230,14 +2231,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: q = (y^2-x^2) * z**-2 + z + x-y
             sage: p.divides(q), p.divides(p*q)                                          # needs sage.libs.singular
             (False, True)
-
-        Divisibility works over reduced rings (rings without nilpotent elements)::
-
-            sage: R.<y> = LaurentPolynomialRing(Zmod(6))
-            sage: (y + 2).divides(y^2 + 4*y + 4)
-            True
-            sage: (y + 2).divides(y^2 + 3)
-            False
 
         TESTS:
 
@@ -2248,7 +2241,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: a.divides(a)
             Traceback (most recent call last):
             ...
-            NotImplementedError: divisibility test not implemented for Laurent polynomials over rings with nilpotent elements
+            NotImplementedError: divisibility test not implemented for Laurent polynomials over non-integral domains
         """
         # Check if the base ring has nilpotent elements
         # For such rings, the degree bound is not sufficient
@@ -2256,67 +2249,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             p = self.polynomial_construction()[0]
             q = other.polynomial_construction()[0]
             return p.divides(q)
-        try:
-            if not self.base_ring().nilradical().is_zero():
-                raise NotImplementedError("divisibility test not implemented for Laurent polynomials over rings with nilpotent elements")
-        except (AttributeError, ArithmeticError):
-            # If we can't determine, be conservative and reject
-            raise NotImplementedError("divisibility test not implemented for Laurent polynomials over rings with nilpotent elements")
-
-        # Handle zero cases
-        if other.is_zero():
-            return True  # everything divides 0
-        if self.is_zero():
-            return False  # 0 only divides 0
-
-        # Handle unit case
-        try:
-            if self.is_unit():
-                return True  # units divide everything
-        except (AttributeError, NotImplementedError):
-            pass
-
-        p, n_p = self.polynomial_construction()
-        q, n_q = other.polynomial_construction()
-
-        # Special case: both are constant (monomials with degree 0 polynomial part)
-        if p.degree() == 0 and q.degree() == 0:
-            # For constants, divisibility depends only on the coefficients
-            return p[0].divides(q[0])
-
-        # When checking divisibility of Laurent polynomials, we need to account
-        # for the fact that polynomial_construction normalizes by extracting
-        # powers of the variable. If self = x^{n_p} * p and other = x^{n_q} * q,
-        # then self | other iff there exists a Laurent polynomial b = x^{n_b} * r
-        # such that self * b = other.
-        #
-        # This means x^{n_p + n_b} * p * r = x^{n_q} * q.
-        # The product p * r might have a factor x^m (where m >= 0), so we get:
-        # x^{n_p + n_b + m} * (p*r / x^m) = x^{n_q} * q
-        #
-        # So we need p | x^m * q for some m >= 0 such that the quotient is a
-        # polynomial (no negative powers).
-
-        # Try shifting q by increasing powers of x until either:
-        # 1. We find that p divides x^m * q, or
-        # 2. The degree of x^m * q exceeds what's reasonable (degree bound)
-        x = p.parent().gen()
-        deg_bound = p.degree() + 1
-
-        for m in range(deg_bound):
-            q_shifted = q * x**m
-            try:
-                if p.divides(q_shifted):
-                    return True
-            except NotImplementedError:
-                # For non-integral domains, p.divides may not be implemented
-                # Fall back to quo_rem and verify
-                try:
-                    quotient, remainder = q_shifted.quo_rem(p)
-                    if remainder.is_zero() and quotient * p == q_shifted:
-                        return True
-                except (ArithmeticError, NotImplementedError, ValueError):
-                    # quo_rem may fail for non-invertible leading coefficients
-                    pass
-
-        return False
+        else:
+            raise NotImplementedError("divisibility test not implemented for Laurent"
+                                      " polynomials over non-integral domains")

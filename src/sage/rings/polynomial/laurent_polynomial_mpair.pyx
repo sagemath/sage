@@ -2098,8 +2098,6 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             ...
             ValueError: base ring must be an integral domain
         """
-        # Note: Multivariate Laurent polynomial rings already reject non-integral
-        # domain base rings at construction time, but we keep this check for safety.
         p = self.monomial_reduction()[0]
         q = other.monomial_reduction()[0]
         return p.divides(q)
