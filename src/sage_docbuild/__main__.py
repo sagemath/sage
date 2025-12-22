@@ -34,8 +34,6 @@ Standard options::
   -j, --mathjax, --jsmath
                         ignored for backwards compatibility
   --no-plot             do not include graphics auto-generated using the '.. plot' markup
-  --no-preparsed-examples
-                        do not show preparsed versions of EXAMPLES blocks
   --include-tests-blocks
                         include TESTS blocks in the reference manual
   --no-pdf-links        do not include PDF links in DOCUMENT 'website';
@@ -297,9 +295,6 @@ def setup_parser():
     standard.add_argument("--no-plot", dest="no_plot",
                           action="store_true",
                           help="do not include graphics auto-generated using the '.. plot' markup")
-    standard.add_argument("--no-preparsed-examples", dest="no_preparsed_examples",
-                          action="store_true",
-                          help="do not show preparsed versions of EXAMPLES blocks")
     standard.add_argument("--include-tests-blocks", dest="skip_tests", default=True,
                           action="store_false",
                           help="include TESTS blocks in the reference manual")
@@ -513,8 +508,6 @@ error messages. To be certain that these are real errors, run
         build_options.ALLSPHINXOPTS += "-n "
     if args.no_plot:
         os.environ['SAGE_SKIP_PLOT_DIRECTIVE'] = 'yes'
-    if args.no_preparsed_examples:
-        os.environ['SAGE_PREPARSED_DOC'] = 'no'
     if args.live_doc:
         os.environ['SAGE_LIVE_DOC'] = 'yes'
     if args.skip_tests:

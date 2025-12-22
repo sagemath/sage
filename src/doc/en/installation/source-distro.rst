@@ -993,10 +993,6 @@ Environment variables controlling the documentation build
   - add ``--no-plot`` to this variable to avoid building the graphics coming from
     the ``.. PLOT`` directive within the documentation,
 
-  - add ``--no-preparsed-examples`` to only show the original Sage code of
-    "EXAMPLES" blocks, suppressing the tab with the preparsed, plain Python
-    version, or
-
   - add ``--include-tests-blocks`` to include all "TESTS" blocks in the reference
     manual.
 
