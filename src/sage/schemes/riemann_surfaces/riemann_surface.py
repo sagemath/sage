@@ -4021,7 +4021,7 @@ def poincare_form(M, transformation=False):
     we proceed otherwise we factor out a matrix on the left to make the GCD 1.
     We then proceed with the reduction algorithm.
 
-    If ``transformation`` is True, we also return the transformation matrices
+    If ``transformation`` is ``True``, we also return the transformation matrices
     ``S`` and ``T`` such that ``S * N * T`` is equal to ``M``.
 
     INPUT:
@@ -4033,8 +4033,8 @@ def poincare_form(M, transformation=False):
     OUTPUT:
 
     - ``N`` -- the Poincare normal form of M
-    - ``S`` -- the transformation matrix such that ``S * N * T == M`` (if ``transformation`` is True)
-    - ``T`` -- the transformation matrix such that ``S * N * T == M`` (if ``transformation`` is True)
+    - ``S`` -- the transformation matrix such that ``S * N * T == M`` (if ``transformation`` is ``True``)
+    - ``T`` -- the transformation matrix such that ``S * N * T == M`` (if ``transformation`` is ``True``)
 
     EXAMPLES::
 

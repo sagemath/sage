@@ -17,7 +17,7 @@ def skew_form(M, transformation=False):
     Given an integer skew-symmetric matrix `M`, compute a unimodular 
     matrix `S` such that `S^T M S` is block diagonal with `2x2` blocks 
     `(0, d_i; -d_i, 0)` where `d_i` are positive integers with 
-    `d_i | d_{i+1}`. If ``transformation`` is True, also return ``S``.
+    `d_i | d_{i+1}`. If ``transformation`` is ``True``, also return ``S``.
 
     INPUT:
     
@@ -30,7 +30,7 @@ def skew_form(M, transformation=False):
 
     - ``M'`` -- integer ``n x n`` matrix in skew Smith normal form
     - ``S``  -- integer ``n x n`` unimodular matrix with ``S^T M S = M'``
-      (if ``transformation`` is True)
+      (if ``transformation`` is ``True``)
 
     ALGORITHM:
 
