@@ -353,12 +353,6 @@ def differential_basis_baker(f):
         that we can do the computation over any exact base ring
         (the alternative Singular based method requires rationals).
 
-        This approach is advantageous for curves meeting these criteria (e.g.,
-        many hyperelliptic curves) because it is computationally inexpensive,
-        can be performed over any exact base ring (unlike some Singular-based
-        methods requiring rationals), and avoids potential issues with external
-        library routines.
-
     TESTS::
 
         sage: from sage.schemes.riemann_surfaces.riemann_surface import differential_basis_baker
