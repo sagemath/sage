@@ -79,6 +79,9 @@ jobs:
         env:
           SAGE_DOCBUILD_OPTS: "--include-tests-blocks"
 
+      - name: Check for missing character error messages
+        run: sh .github/workflows/check-latex-build.sh
+
       - name: Copy doc
         id: copy
         run: |
