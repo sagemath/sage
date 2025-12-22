@@ -44,6 +44,7 @@ cdef enum print_modes:
     val_unit
     digits
     bars
+    digits_unicode
 
 
 def pAdicPrinter(ring, options={}):
@@ -138,6 +139,9 @@ class pAdicPrinterDefaults(SageObject):
             '...5F'
             sage: repr(Qp(17)(1000))
             '...37E'
+            sage: padic_printing.mode('digits-unicode')
+            sage: repr(Qp(17)(100))
+            '…0000000000000000005F'
             sage: padic_printing.mode('bars')
             sage: repr(Qp(19)(1000))
             '...2|14|12'
@@ -147,7 +151,7 @@ class pAdicPrinterDefaults(SageObject):
         if mode is None:
             return self._mode
 
-        if mode in ['val-unit', 'series', 'terse', 'digits', 'bars']:
+        if mode in ['val-unit', 'series', 'terse', 'digits', 'bars', 'digits-unicode']:
             self._mode = mode
         else:
             raise ValueError("invalid printing mode")
@@ -401,11 +405,14 @@ cdef class pAdicPrinter_class(SageObject):
             self.mode = series
         elif mode == 'terse':
             self.mode = terse
-        elif mode == 'digits':
+        elif mode in {'digits', 'digits-unicode'}:
             if len(self.alphabet) < self.prime_pow.prime or (not self.base and ring.absolute_f() != 1):
                 raise ValueError("digits printing mode only usable for totally ramified extensions with p at most the length of the alphabet (default 62).  Try using print_mode = 'bars' instead.")
             else:
-                self.mode = digits
+                if mode == 'digits-unicode':
+                    self.mode = digits_unicode
+                else:
+                    self.mode = digits
                 self.pos = True
         elif mode == 'bars':
             self.mode = bars
@@ -546,7 +553,7 @@ cdef class pAdicPrinter_class(SageObject):
             if lx != rx:
                 return richcmp_not_equal(lx, rx, op)
 
-        if self.mode != digits:
+        if self.mode != digits and self.mode != digits_unicode:
             lx = self.ram_name
             rx = other.ram_name
             if lx != rx:
@@ -558,13 +565,13 @@ cdef class pAdicPrinter_class(SageObject):
             if lx != rx:
                 return richcmp_not_equal(lx, rx, op)
 
-        if self.mode == digits:
+        if self.mode == digits or self.mode == digits_unicode:
             lx = self.alphabet[:p]
             rx = other.alphabet[:q]
             if lx != rx:
                 return richcmp_not_equal(lx, rx, op)
 
-        if self.mode == series or self.mode == digits or self.mode == bars:
+        if self.mode == series or self.mode == digits or self.mode == digits_unicode or self.mode == bars:
             lx = self.max_ram_terms
             rx = other.max_ram_terms
             if lx != rx:
@@ -781,6 +788,8 @@ cdef class pAdicPrinter_class(SageObject):
             return 'terse'
         elif self.mode == digits:
             return 'digits'
+        elif self.mode == digits_unicode:
+            return 'digits-unicode'
         elif self.mode == bars:
             return 'bars'
 
@@ -869,7 +878,7 @@ cdef class pAdicPrinter_class(SageObject):
         elif mode == 'bars':
             _mode = bars
         else:
-            raise ValueError("printing mode must be one of 'val-unit', 'series', 'terse', 'bars', or 'digits'")
+            raise ValueError("printing mode must be one of 'val-unit', 'series', 'terse', 'bars', 'digits' or 'digits-unicode'")
         if pos is None:
             _pos = self.pos
         else:
@@ -929,7 +938,7 @@ cdef class pAdicPrinter_class(SageObject):
             return "0"
         elif elt._is_inexact_zero():
             prec = elt.precision_absolute()
-            if mode == digits and self.show_prec == "dots":
+            if (mode == digits or mode == digits_unicode) and self.show_prec == "dots":
                 if prec > 0:
                     s = (self.alphabet[0] * prec)
                 else:
@@ -960,7 +969,7 @@ cdef class pAdicPrinter_class(SageObject):
                     s = "%s * %s" % (ram_name, self._repr_spec(elt.unit_part(), do_latex, pos, terse, 1, ram_name))
                 else:
                     s = "%s^%s * %s" % (ram_name, elt.valuation(), self._repr_spec(elt.unit_part(), do_latex, pos, terse, 1, ram_name))
-        elif mode == digits:
+        elif mode == digits or mode == digits_unicode:
             n = elt.valuation()
             if self.base:
                 L = self.base_p_list(elt, True)
@@ -1030,7 +1039,10 @@ cdef class pAdicPrinter_class(SageObject):
             s = self._repr_spec(elt, do_latex, pos, mode, 0, ram_name)
 
         if self.show_prec == "dots":
-            s = "..." + s
+            if mode == digits_unicode:
+                s = u"\u2026" + s
+            else:
+                s = "..." + s
         if self.show_prec == "bigoh":
             if s == "":
                 s = "O(%s" % ram_name

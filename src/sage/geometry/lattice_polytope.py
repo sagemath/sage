@@ -2034,12 +2034,12 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             from sage.graphs.digraph import DiGraph
             L = DiGraph()
             empty = self._ambient.face_lattice().bottom()
-            L.add_vertex(0) # In case it is the only one
+            L.add_vertex(0)  # In case it is the only one
             dfaces = [empty]
             faces = [empty]
             face_to_index = {empty:0}
             next_index = 1
-            next_d = 0 # Dimension of faces to be considered next.
+            next_d = 0  # Dimension of faces to be considered next.
             while next_d < self.dim():
                 ndfaces = []
                 for face in dfaces:
@@ -2602,7 +2602,45 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             False
         """
         return self.dim() == self.lattice_dim() and \
-                all(c == 1 for c in self.facet_constants())
+            all(c == 1 for c in self.facet_constants())
+
+    def is_cayley(self) -> bool:
+        """
+        Return whether ``self`` is a Cayley polytope.
+
+        A lattice polytope is Cayley if its vertex set is contained in
+        two parallel hyperplanes.
+
+        Here we assume that the polytope is full-dimensional.
+
+        ALGORITHM: This is inspired by Macaulay2 implementation.
+
+        EXAMPLES::
+
+            sage: P = polytopes.cube().lattice_polytope()
+            sage: P.is_cayley()
+            True
+
+            sage: P = LatticePolytope([(0,0),(1,0),(0,1),(2,2)])
+            sage: P.is_cayley()
+            False
+
+        TESTS:
+
+            sage: P = LatticePolytope([(0,),(1,)])
+            sage: P.is_cayley()
+            True
+            sage: P = LatticePolytope([(0,0),(2,0)])
+            sage: P.is_cayley()
+            Traceback (most recent call last):
+            ...
+            TypeError: the polytope is not full dimensional
+        """
+        if not self.is_full_dimensional():
+            raise TypeError("the polytope is not full dimensional")
+        verts = self.vertices()
+        return any(len(set(n.dot_product(v) for v in verts)) == 2
+                   for n in self.facet_normals())
 
     def lattice(self):
         r"""
@@ -3207,7 +3245,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         PM_max = PM.permutation_normal_form()
         perm = PM.is_permutation_of(PM_max, check=True)[1]
         permutations = PM.automorphisms_of_rows_and_columns()
-        permutations = {k:[(perm[0])*p[0], (perm[1])*p[1]]
+        permutations = {k: [(perm[0])*p[0], (perm[1])*p[1]]
                         for k, p in enumerate(permutations)}
         out = _palp_canonical_order(self.vertices(), PM_max, permutations)
         if permutation:
@@ -3437,15 +3475,15 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         return SetOfAllLatticePolytopes
 
     def plot3d(self,
-            show_facets=True, facet_opacity=0.5, facet_color=(0,1,0),
-            facet_colors=None,
-            show_edges=True, edge_thickness=3, edge_color=(0.5,0.5,0.5),
-            show_vertices=True, vertex_size=10, vertex_color=(1,0,0),
-            show_points=True, point_size=10, point_color=(0,0,1),
-            show_vindices=None, vindex_color=(0,0,0),
-            vlabels=None,
-            show_pindices=None, pindex_color=(0,0,0),
-            index_shift=1.1):
+               show_facets=True, facet_opacity=0.5, facet_color=(0, 1, 0),
+               facet_colors=None,
+               show_edges=True, edge_thickness=3, edge_color=(0.5, 0.5, 0.5),
+               show_vertices=True, vertex_size=10, vertex_color=(1, 0, 0),
+               show_points=True, point_size=10, point_color=(0, 0, 1),
+               show_vindices=None, vindex_color=(0, 0, 0),
+               vlabels=None,
+               show_pindices=None, pindex_color=(0, 0, 0),
+               index_shift=1.1):
         r"""
         Return a 3d-plot of this polytope.
 
@@ -5564,10 +5602,7 @@ def minkowski_sum(points1, points2):
     """
     points1 = [vector(p) for p in points1]
     points2 = [vector(p) for p in points2]
-    points = []
-    for p1 in points1:
-        for p2 in points2:
-            points.append(p1+p2)
+    points = [p1 + p2 for p1 in points1 for p2 in points2]
     return convex_hull(points)
 
 
@@ -5738,14 +5773,14 @@ def read_palp_matrix(data, permutation=False):
         [1 3 5]
         [2 4 6]
     """
-    if isinstance(data,str):
+    if isinstance(data, str):
         f = StringIO(data)
         mat = read_palp_matrix(f, permutation=permutation)
         f.close()
         return mat
     # If data is not a string, try to treat it as a file.
     first_line = data.readline()
-    if first_line == "":
+    if not first_line:
         return matrix()
     first_line = first_line.split()
     m = int(first_line[0])
@@ -5753,7 +5788,7 @@ def read_palp_matrix(data, permutation=False):
     seq = []
     for i in range(m):
         seq.extend(int(el) for el in data.readline().split())
-    mat = matrix(ZZ,m,n,seq)
+    mat = matrix(ZZ, m, n, seq)
     if m > n:
         mat = mat.transpose()
     # In some cases there may be additional information to extract
@@ -5905,16 +5940,16 @@ def write_palp_matrix(m, ofile=None, comment='', format=None):
     if isinstance(m, PointCollection):
         m = m.column_matrix()
     if format is None:
-        n = max(len(str(m[i,j]))
+        n = max(len(str(m[i, j]))
                 for i in range(m.nrows()) for j in range(m.ncols()))
         format = "%" + str(n) + "d"
-    s = "%d %d %s\n" % (m.nrows(),m.ncols(),comment)
+    s = "%d %d %s\n" % (m.nrows(), m.ncols(), comment)
     if ofile is None:
         print(s, end=" ")
     else:
         ofile.write(s)
     for i in range(m.nrows()):
-        s = " ".join(format % m[i,j] for j in range(m.ncols()))+"\n"
+        s = " ".join(format % m[i, j] for j in range(m.ncols())) + "\n"
         if ofile is None:
             print(s, end=" ")
         else:

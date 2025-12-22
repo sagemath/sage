@@ -3381,11 +3381,12 @@ class Graphics(WithEqualityById, SageObject):
                 if latex_implementations[0] == "pdflatex":
                     # use pdflatex and set font encoding as per
                     # matplotlib documentation:
-                    # https://matplotlib.org/users/pgf.html#pgf-tutorial
+                    # https://matplotlib.org/stable/users/explain/text/pgf.html
+                    # Note that pgf.preamble should be a string now, not a list
                     pgf_options = {"pgf.texsystem": "pdflatex",
-                                   "pgf.preamble": [
+                                   "pgf.preamble": "\n".join([
                                        r"\usepackage[utf8x]{inputenc}",
-                                       r"\usepackage[T1]{fontenc}"]}
+                                       r"\usepackage[T1]{fontenc}"])}
                 else:
                     pgf_options = {
                         "pgf.texsystem": latex_implementations[0],

@@ -70,7 +70,7 @@ cdef extern from "gsl/gsl_rng.h":
   cdef gsl_rng_type *gsl_rng_default
   unsigned long int gsl_rng_default_seed
 
-  gsl_rng *gsl_rng_alloc ( gsl_rng_type * T)
+  gsl_rng *gsl_rng_alloc ( const gsl_rng_type * T)
   int gsl_rng_memcpy (gsl_rng * dest, gsl_rng * src)
   gsl_rng *gsl_rng_clone ( gsl_rng * r)
 

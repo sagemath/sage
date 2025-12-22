@@ -184,7 +184,7 @@ class JacobianPoint(JacobianPoint_base):
             sage: G = J.group()
             sage: pl = C([3,2,1]).place()
             sage: p = G.point(pl - b)
-            sage: TestSuite(p).run(skip=['_test_category','_test_pickling'])
+            sage: TestSuite(p).run()
         """
         super().__init__(parent)
         w.set_immutable()
@@ -867,7 +867,7 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
             sage: h = C.function(y/x).divisor_of_poles()
             sage: J = C.jacobian(model='km_large', base_div=h)
             sage: G = J.group()
-            sage: TestSuite(G).run(skip=['_test_elements', '_test_pickling'])
+            sage: TestSuite(G).run()
         """
         super().__init__(parent, function_field, base_div)
 
@@ -988,7 +988,7 @@ class Jacobian(UniqueRepresentation, Jacobian_base):
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: J = C.jacobian(model='km_large')
-            sage: TestSuite(J).run(skip=['_test_elements', '_test_pickling'])
+            sage: TestSuite(J).run()
 
         ::
 
