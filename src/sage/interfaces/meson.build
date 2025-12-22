@@ -2,6 +2,7 @@ py.install_sources(
   '__init__.py',
   'abc.py',
   'all.py',
+  'asir.py',
   'axiom.py',
   'ecm.py',
   'expect.py',

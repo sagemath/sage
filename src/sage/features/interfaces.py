@@ -90,6 +90,23 @@ class InterfaceFeature(Feature):
                                      reason=f"Interface {interface} is not functional: {exception}")
 
 
+class Asir(InterfaceFeature):
+    r"""
+    A :class:`~sage.features.Feature` describing whether :class:`sage.interfaces.asir.Asir`
+    is present and functional.
+
+    EXAMPLES::
+
+        sage: from sage.features.interfaces import Asir
+        sage: Asir().is_present()  # not tested
+        FeatureTestResult('asir', False)
+    """
+
+    @staticmethod
+    def __classcall__(cls):
+        return InterfaceFeature.__classcall__(cls, 'asir', 'sage.interfaces.asir')
+
+
 class Mathics(InterfaceFeature):
     r"""
     A :class:`~sage.features.Feature` describing whether :class:`sage.interfaces.mathics.Mathics`
@@ -270,7 +287,8 @@ def all_features():
 
         sage: from sage.features.interfaces import all_features
         sage: list(all_features())
-        [Feature('magma'),
+        [Feature('asir'),
+         Feature('magma'),
          Feature('matlab'),
          Feature('mathematica'),
          Feature('mathics'),
@@ -280,7 +298,8 @@ def all_features():
          Feature('regina'),
          Feature('scilab')]
     """
-    return [Magma(),
+    return [Asir(),
+            Magma(),
             Matlab(),
             Mathematica(),
             Mathics(),
