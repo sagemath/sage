@@ -30,9 +30,9 @@ from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.partition import Partition
 
 
-def find_min(vect):
+def find_min(vect) -> list[int]:
     """
-    Return a string of ``0``'s with one ``1`` at the location where the list
+    Return a list of ``0``'s with one ``1`` at the location where the list
     ``vect`` has its last entry which is not equal to ``0``.
 
     INPUT:
@@ -51,12 +51,17 @@ def find_min(vect):
         [0, 1]
         sage: find_min([2, 1, 0])
         [0, 1, 0]
+
+    TESTS::
+
+        sage: find_min([])
+        []
         sage: find_min([0,0])
         [0, 0]
     """
     i = len(vect)
     min = [0] * i
-    while vect[i - 1] == 0 and i > 0:
+    while i > 0 and vect[i - 1] == 0:
         i -= 1
     if i:
         min[i - 1] = 1
