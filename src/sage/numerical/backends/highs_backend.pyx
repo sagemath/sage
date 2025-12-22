@@ -167,16 +167,11 @@ cdef class HiGHSBackend(GenericBackend):
         cdef HighsInt status
         cdef HighsInt col_idx
         
-        # Determine variable type
-        if integer and continuous:
-            raise ValueError("Variable cannot be both continuous and integer")
-        elif integer and binary:
-            raise ValueError("Variable cannot be both binary and integer")
-        elif continuous and binary:
-            raise ValueError("Variable cannot be both binary and continuous")
-        elif continuous and integer and binary:
-            raise ValueError("Variable cannot be binary, continuous, and integer simultaneously")
-        elif binary:
+        # Determine variable type - only one of binary, continuous, integer can be True
+        if sum([binary, continuous, integer]) > 1:
+            raise ValueError("only one of binary, continuous, and integer can be True")
+        
+        if binary:
             var_type = kHighsVarTypeInteger
             lb = 0.0
             ub = 1.0
@@ -360,7 +355,7 @@ cdef class HiGHSBackend(GenericBackend):
 
         INPUT:
 
-        - ``sense`` -- +1 for maximization; -1 for minimization
+        - ``sense`` -- +1 for maximization; any other integer for minimization
 
         EXAMPLES::
 
@@ -1213,7 +1208,7 @@ cdef class HiGHSBackend(GenericBackend):
             sage: p.solve() # rel tol 100
             2.0
             sage: backend = p.get_backend()
-            sage: backend.best_known_objective_bound()
+            sage: backend.best_known_objective_bound()  # abs tol 1e-6
             48.0
         """
         cdef double mip_dual_bound
