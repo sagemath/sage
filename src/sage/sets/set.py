@@ -35,21 +35,18 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import sage.rings.infinity
+from sage.categories.enumerated_sets import EnumeratedSets
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.sets_cat import Sets
+from sage.misc.cachefunc import cached_method
+from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.misc.latex import latex
 from sage.misc.prandom import choice
-from sage.misc.cachefunc import cached_method
-
 from sage.structure.category_object import CategoryObject
 from sage.structure.element import Element
 from sage.structure.parent import Parent, Set_generic
-from sage.structure.richcmp import richcmp_method, richcmp, rich_to_bool
-from sage.misc.classcall_metaclass import ClasscallMetaclass
-
-from sage.categories.sets_cat import Sets
-from sage.categories.enumerated_sets import EnumeratedSets
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-
-import sage.rings.infinity
+from sage.structure.richcmp import rich_to_bool, richcmp, richcmp_method
 
 
 def has_finite_length(obj) -> bool:
@@ -1111,6 +1108,30 @@ class Set_object_enumerated(Set_object):
             return rich_to_bool(op, 0)
         return rich_to_bool(op, -1)
 
+    def isdisjoint(self, other):
+        """
+        Return whether ``self`` and ``other`` are disjoint.
+
+        INPUT:
+
+        - ``other`` -- a finite Set
+
+        EXAMPLES::
+
+            sage: X = Set([1,2,3])
+            sage: Y = Set([2,4,6])
+            sage: Z = Set([4,5,6])
+            sage: X.isdisjoint(Y)
+            False
+            sage: X.isdisjoint(Z)
+            True
+            sage: Y.isdisjoint(Z)
+            False
+        """
+        return self.set().isdisjoint(other)
+
+    is_disjoint = isdisjoint
+
     def issubset(self, other):
         r"""
         Return whether ``self`` is a subset of ``other``.
@@ -1135,9 +1156,9 @@ class Set_object_enumerated(Set_object):
             sage: len([Z for Z in Y.subsets() if Z.issubset(X)])
             8
         """
-        if not isinstance(other, Set_object_enumerated):
-            raise NotImplementedError
-        return self.set().issubset(other.set())
+        return self.set().issubset(other)
+
+    is_subset = issubset
 
     def issuperset(self, other):
         r"""
@@ -1163,9 +1184,9 @@ class Set_object_enumerated(Set_object):
             sage: len([Z for Z in Y.subsets() if Z.issuperset(X)])
             4
         """
-        if not isinstance(other, Set_object_enumerated):
-            raise NotImplementedError
-        return self.set().issuperset(other.set())
+        return self.set().issuperset(other)
+
+    is_superset = issuperset
 
     def union(self, other):
         """
