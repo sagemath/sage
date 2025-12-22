@@ -178,7 +178,7 @@ class TernaryLogic(UniqueRepresentation, Parent):
         """
         return "An example of a semiring: the ternary-logic semiring"
 
-    def summation(self, x, y):
+    def summation(self, x, y) -> Ternary:
         r"""
         Return the sum of ``x`` and ``y`` in the semiring as per
         :meth:`Semirings.ParentMethods.summation`.
@@ -193,7 +193,7 @@ class TernaryLogic(UniqueRepresentation, Parent):
         assert y in self
         return self(_ADD[x._n][y._n])
 
-    def one(self):
+    def one(self) -> Ternary:
         """
         Return the unit of ``self``.
 
@@ -205,7 +205,7 @@ class TernaryLogic(UniqueRepresentation, Parent):
         """
         return self(1)
 
-    def product(self, x, y):
+    def product(self, x, y) -> Ternary:
         r"""
         Return the product of ``x`` and ``y`` in the semiring as per
         :meth:`Semirings.ParentMethods.product`.
@@ -220,7 +220,7 @@ class TernaryLogic(UniqueRepresentation, Parent):
         assert y in self
         return self(_PROD[x._n][y._n])
 
-    def an_element(self):
+    def an_element(self) -> Ternary:
         r"""
         Return an element of the semiring.
 
@@ -231,7 +231,7 @@ class TernaryLogic(UniqueRepresentation, Parent):
         """
         return self(2)
 
-    def some_elements(self) -> list:
+    def some_elements(self) -> list[Ternary]:
         r"""
         Return a list of some elements of the semiring.
 

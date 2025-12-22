@@ -105,7 +105,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
         """
         return self(tuple(range(self.n)))
 
-    def index_set(self) -> list:
+    def index_set(self) -> list[int]:
         """
         Implement :meth:`CoxeterGroups.ParentMethods.index_set`.
 
