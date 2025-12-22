@@ -547,10 +547,15 @@ cdef class CircuitsMatroid(Matroid):
             sage: M = CircuitsMatroid(matroids.CompleteGraphic(6))
             sage: len(M.nonbases())
             1707
+            sage: M = CircuitsMatroid(matroids.Uniform(5, 5))
+            sage: M.dependent_sets(3)  # self._k_C is empty
+            SetSystem of 0 sets over 5 elements
         """
         cdef int i
         cdef set D_k = set()
         cdef frozenset S
+        if not self._k_C:
+            return SetSystem(self._groundset)
         for i in range(min(self._k_C), k + 1):
             if i in self._k_C:
                 for S in self._k_C[i]:

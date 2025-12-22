@@ -1711,7 +1711,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: D.add_vertex([])
             Traceback (most recent call last):
             ...
-            TypeError: unhashable type: 'list'
+            TypeError: ...unhashable type: 'list'...
 
         ::
 
@@ -1720,7 +1720,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: S.add_vertex([])
             Traceback (most recent call last):
             ...
-            TypeError: unhashable type: 'list'
+            TypeError: ...unhashable type: 'list'...
         """
         retval = None
         if name is None:
