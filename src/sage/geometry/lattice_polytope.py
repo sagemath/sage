@@ -120,24 +120,26 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
+
+import os
+import shlex
 from collections.abc import Hashable
 from copyreg import constructor as copyreg_constructor
 from functools import reduce
 from io import IOBase, StringIO
-from subprocess import Popen, PIPE
-from warnings import warn
-import os
-import shlex
+from subprocess import PIPE, Popen
+from typing import TYPE_CHECKING
 
+import sage.geometry.abc
 from sage.arith.misc import GCD as gcd
 from sage.features import PythonModule
-from sage.features.palp import PalpExecutable
 from sage.features.databases import DatabaseReflexivePolytopes
+from sage.features.palp import PalpExecutable
 from sage.geometry.cone import _ambient_space_point, integral_length
-from sage.geometry.point_collection import (PointCollection,
-                                            read_palp_point_collection)
-from sage.geometry.toric_lattice import ToricLattice, ToricLattice_generic
 from sage.geometry.convex_set import ConvexSet_compact
+from sage.geometry.point_collection import PointCollection, read_palp_point_collection
+from sage.geometry.toric_lattice import ToricLattice, ToricLattice_generic
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
@@ -149,11 +151,9 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.sets.set import Set_generic
 from sage.structure.element import Matrix
-from sage.structure.richcmp import richcmp_method, richcmp
+from sage.structure.richcmp import richcmp, richcmp_method
 from sage.structure.sage_object import SageObject
 from sage.structure.sequence import Sequence
-import sage.geometry.abc
-
 
 lazy_import("sage.combinat.posets.posets", 'FinitePoset')
 lazy_import("sage.geometry.hasse_diagram", 'lattice_from_incidences')
@@ -166,6 +166,9 @@ lazy_import('ppl', ['C_Polyhedron', 'Generator_System', 'Linear_Expression'],
             feature=PythonModule("ppl", spkg='pplpy', type='standard'))
 lazy_import('ppl', 'point', as_='PPL_point',
             feature=PythonModule("ppl", spkg='pplpy', type='standard'))
+
+if TYPE_CHECKING:
+    from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 
 class SetOfAllLatticePolytopesClass(Set_generic):
@@ -570,7 +573,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             self._ambient_facet_indices = tuple(ambient_facet_indices)
             self._vertices = ambient.vertices(self._ambient_vertex_indices)
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         """
         Return Sage command to reconstruct ``self``.
 
@@ -4509,7 +4512,7 @@ class NefPartition(SageObject, Hashable):
             pass
         return result
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool) -> SageInputExpression:
         """
         Return Sage command to reconstruct ``self``.
 

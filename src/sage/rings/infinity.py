@@ -214,8 +214,10 @@ We check that :issue:`17990` is fixed::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 
 from sys import maxsize
+from typing import TYPE_CHECKING
 
 import sage.rings.abc
 
@@ -230,6 +232,8 @@ from sage.structure.richcmp import rich_to_bool, richcmp
 
 lazy_import('sage.rings.integer', 'Integer')
 
+if TYPE_CHECKING:
+    from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 _obj = {}
 
@@ -542,7 +546,7 @@ class AnInfinity:
         else:
             return abs(self)
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         """
         Produce an expression which will reproduce this value when evaluated.
 

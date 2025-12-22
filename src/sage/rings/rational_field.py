@@ -52,17 +52,23 @@ AUTHORS:
 
 - Anna Haensch (2018-03): Added function ``quadratic_defect()``
 """
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
 
 ZZ = None
 
-import sage.rings.number_field.number_field_base as number_field_base
 from sage.misc.fast_methods import Singleton
 from sage.misc.superseded import deprecated_function_alias
+from sage.rings.number_field import number_field_base
 from sage.structure.parent import Parent
 from sage.structure.sequence import Sequence
+
+if TYPE_CHECKING:
+    from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 
 class RationalField(Singleton, number_field_base.NumberField):
@@ -690,13 +696,12 @@ class RationalField(Singleton, number_field_base.NumberField):
                 from sage.rings.qqbar import QQbar as domain
             else:
                 from sage.rings.qqbar import AA as domain
+        elif all_complex:
+            from sage.rings.complex_mpfr import ComplexField
+            domain = ComplexField(prec)
         else:
-            if all_complex:
-                from sage.rings.complex_mpfr import ComplexField
-                domain = ComplexField(prec)
-            else:
-                from sage.rings.real_mpfr import RealField
-                domain = RealField(prec)
+            from sage.rings.real_mpfr import RealField
+            domain = RealField(prec)
         return [self.hom([domain(1)])]
 
     def complex_embedding(self, prec=53):
@@ -1583,12 +1588,13 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: QQ._sympy_()                                                          # needs sympy
             Rationals
         """
-        from sage.interfaces.sympy import sympy_init
         from sympy import Rationals
+
+        from sage.interfaces.sympy import sympy_init
         sympy_init()
         return Rationals
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 

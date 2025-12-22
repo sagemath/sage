@@ -65,8 +65,10 @@ from sage.structure.richcmp cimport rich_to_bool
 
 from sage.misc.misc_c import prod
 from sage.misc.randstate cimport randstate, current_randstate, SAGE_RAND_MAX
+from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 from sage.rings.integer cimport Integer
+
 
 arith = None
 cdef void late_import() noexcept:
@@ -1525,7 +1527,7 @@ cdef class IntegerRing_class(CommutativeRing):
         sympy_init()
         return Integers
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when
         evaluated.

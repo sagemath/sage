@@ -579,9 +579,11 @@ AUTHOR:
 - Carl Witty (2007-01-27): initial version
 - Carl Witty (2007-10-29): massive rewrite to support complex as well as real numbers
 """
+from __future__ import annotations
 
 import itertools
 import operator
+from typing import TYPE_CHECKING
 
 import sage.rings.abc
 import sage.rings.number_field.number_field_base
@@ -628,6 +630,9 @@ from sage.structure.richcmp import (
     richcmp_not_equal,
 )
 from sage.structure.sage_object import SageObject
+
+if TYPE_CHECKING:
+    from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 
 class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
@@ -1200,7 +1205,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
         """
         return "\\mathbf{A}"
 
-    def _sage_input_(self, sib, coerce):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 
@@ -1686,7 +1691,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
         """
         return "\\overline{\\QQ}"
 
-    def _sage_input_(self, sib, coerce):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 
@@ -3870,7 +3875,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
                     return latex(radical)
         return repr(self).replace('*I', r' \sqrt{-1}')
 
-    def _sage_input_(self, sib, coerce):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 
@@ -3918,7 +3923,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             {call: {getattr: {atomic:QQbar}.polynomial_root}({call: {getattr: {atomic:AA}.common_polynomial}({binop:- {binop:** {gen:x {constr_parent: {subscr: {atomic:QQbar}[{atomic:'x'}]} with gens: ('x',)}} {atomic:2}} {atomic:7}})}, {call: {atomic:CIF}({call: {atomic:RIF}({call: {atomic:RR}({atomic:2.6457513110645903})}, {call: {atomic:RR}({atomic:2.6457513110645907})})}, {call: {atomic:RIF}({call: {atomic:RR}({atomic:0})})})})}
         """
         (v, complicated) = \
-            self._descr.handle_sage_input(sib, coerce, self.parent() is QQbar)
+            self._descr.handle_sage_input(sib, coerced, self.parent() is QQbar)
         if complicated or True:
             sib.id_cache(self, v, 'v')
         return v
@@ -6614,7 +6619,7 @@ class ANRational(ANDescr):
         """
         return repr(self._value)
 
-    def handle_sage_input(self, sib, coerce, is_qqbar):
+    def handle_sage_input(self, sib: SageInputBuilder, coerce: CoercionMode, is_qqbar):
         r"""
         Produce an expression which will reproduce this value when evaluated,
         and an indication of whether this value is worth sharing (always
@@ -6933,7 +6938,7 @@ class AlgebraicPolynomialTracker(SageObject):
         """
         return (AlgebraicPolynomialTracker, (self._poly, ))
 
-    def _sage_input_(self, sib, coerce):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 
@@ -7181,7 +7186,7 @@ class ANRoot(ANDescr):
         """
         return 'Root %s of %s' % (self._interval, self._poly)
 
-    def handle_sage_input(self, sib, coerce, is_qqbar):
+    def handle_sage_input(self, sib: SageInputBuilder, coerce: CoercionMode, is_qqbar):
         r"""
         Produce an expression which will reproduce this value when evaluated,
         and an indication of whether this value is worth sharing (always ``True``
@@ -7858,7 +7863,7 @@ class ANExtensionElement(ANDescr):
                                                  sgen,
                                                  self._generator._interval_fast(53))
 
-    def handle_sage_input(self, sib, coerce, is_qqbar):
+    def handle_sage_input(self, sib: SageInputBuilder, coerce: CoercionMode, is_qqbar):
         r"""
         Produce an expression which will reproduce this value when evaluated,
         and an indication of whether this value is worth sharing (always ``True``
@@ -8309,7 +8314,7 @@ class ANUnaryExpr(ANDescr):
         """
         return (ANUnaryExpr, (self._arg, self._op))
 
-    def handle_sage_input(self, sib, coerce, is_qqbar):
+    def handle_sage_input(self, sib: SageInputBuilder, coerce: CoercionMode, is_qqbar):
         r"""
         Produce an expression which will reproduce this value when evaluated,
         and an indication of whether this value is worth sharing (always
@@ -8567,7 +8572,7 @@ class ANBinaryExpr(ANDescr):
         """
         return (ANBinaryExpr, (self._left, self._right, self._op))
 
-    def handle_sage_input(self, sib, coerce, is_qqbar):
+    def handle_sage_input(self, sib: SageInputBuilder, coerce: CoercionMode, is_qqbar):
         r"""
         Produce an expression which will reproduce this value when evaluated,
         and an indication of whether this value is worth sharing (always

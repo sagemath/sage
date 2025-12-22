@@ -137,9 +137,10 @@ Check that :issue:`5562` has been fixed::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from __future__ import annotations
 
 import sys
+from typing import TYPE_CHECKING
 
 from sage.misc.superseded import deprecation
 from sage.structure.element import Element
@@ -179,6 +180,9 @@ from sage.rings.power_series_ring_element import PowerSeries
 _CommutativeRings = categories.commutative_rings.CommutativeRings()
 
 import sage.interfaces.abc
+
+if TYPE_CHECKING:
+    from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 
 def is_PolynomialRing(x):
@@ -968,7 +972,7 @@ class PolynomialRing_generic(Ring):
         base_ring = self.base_ring()._gap_init_()
         return 'PolynomialRing(%s, ["%s"])' % (base_ring, self.variable_name())
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when
         evaluated.

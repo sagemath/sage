@@ -152,23 +152,25 @@ old pickles to work).
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
+from __future__ import annotations
 
-
+import bz2 as comp_other
 import pickletools
 import re
 import sys
 import types
-
 import zlib as comp
-import bz2 as comp_other
-
 from pickletools import genops
 
-from sage.misc.sage_input import SageInputBuilder, SageInputExpression
+from sage.misc.persist import (
+    SageUnpickler,
+    dumps,
+    register_unpickle_override,
+    unpickle_global,
+    unpickle_override,
+)
 from sage.misc.sage_eval import sage_eval
-from sage.misc.persist import (unpickle_override, unpickle_global, dumps,
-                               register_unpickle_override, SageUnpickler)
-
+from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 # Python 3 does not have a "ClassType". Instead, we ensure that
 # isinstance(foo, ClassType) will always return False.
@@ -358,7 +360,7 @@ class PickleObject:
         self.expression = expression
         self.immutable = False
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Extracts the expression from a PickleObject, and sets the immutable
         flag.
@@ -424,8 +426,14 @@ class PickleExplainer:
     symbolically and constructs :class:`SageInputExpression` objects instead of
     directly constructing values.
     """
-    def __init__(self, sib, in_current_sage=False, default_assumptions=False,
-                 pedantic=False):
+
+    def __init__(
+        self,
+        sib: SageInputBuilder,
+        in_current_sage=False,
+        default_assumptions=False,
+        pedantic=False,
+    ):
         r"""
         Initialize a PickleExplainer interpreter for the pickle virtual machine.
 
@@ -845,14 +853,13 @@ class PickleExplainer:
                 else:
                     for s in slice:
                         self.sib.command(lst, self.sib.name('list').append(lst, self.sib(s)))
+            elif self.pedantic:
+                app = self.sib(lst).append
+                for s in slice:
+                    self.sib.command(lst, app(self.sib(s)))
             else:
-                if self.pedantic:
-                    app = self.sib(lst).append
-                    for s in slice:
-                        self.sib.command(lst, app(self.sib(s)))
-                else:
-                    for s in slice:
-                        self.sib.command(lst, self.sib(lst).append(self.sib(s)))
+                for s in slice:
+                    self.sib.command(lst, self.sib(lst).append(self.sib(s)))
         else:
             self.sib.command(lst, self.sib.name('unpickle_appends')(self.sib(lst), slice_exp))
         self.push(lst)
@@ -2509,7 +2516,7 @@ def unpickle_extension(code):
         <class 'sage.misc.explain_pickle.EmptyNewstyleClass'>
         sage: remove_extension('sage.misc.explain_pickle', 'EmptyNewstyleClass', 42)
     """
-    from copyreg import _inverted_registry, _extension_cache
+    from copyreg import _extension_cache, _inverted_registry
     # copied from .get_extension() in pickle.py
     nil = []
     obj = _extension_cache.get(code, nil)

@@ -201,20 +201,28 @@ REFERENCES:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 
-from collections.abc import Hashable, Iterable, Container
+from collections.abc import Container, Hashable, Iterable
 from copy import copy
+from typing import TYPE_CHECKING
 from warnings import warn
 
 from sage.misc.lazy_import import lazy_import
+
 lazy_import('sage.combinat.posets.posets', 'FinitePoset')
-from sage.arith.misc import GCD as gcd
 from sage.arith.functions import lcm
+from sage.arith.misc import GCD as gcd
 from sage.geometry.point_collection import PointCollection
 from sage.geometry.polyhedron.constructor import Polyhedron
+
 lazy_import('sage.geometry.hasse_diagram', 'lattice_from_incidences')
-from sage.geometry.toric_lattice import (ToricLattice, ToricLattice_generic,
-                                         ToricLattice_quotient)
+from sage.geometry.toric_lattice import (
+    ToricLattice,
+    ToricLattice_generic,
+    ToricLattice_quotient,
+)
+
 lazy_import('sage.geometry.toric_plotter', ['ToricPlotter', 'label_list'])
 from sage.geometry.relative_interior import RelativeInterior
 from sage.matrix.constructor import matrix
@@ -223,23 +231,27 @@ from sage.matrix.special import column_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
 from sage.misc.latex import latex
-from sage.modules.free_module import span, VectorSpace
+from sage.modules.free_module import VectorSpace, span
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.structure.sage_object import SageObject
 from sage.structure.element import parent
-from sage.structure.richcmp import richcmp_method, richcmp
-lazy_import('sage.geometry.integral_points', 'parallelotope_points')
-from sage.geometry.convex_set import ConvexSet_closed
-import sage.geometry.abc
+from sage.structure.richcmp import richcmp, richcmp_method
+from sage.structure.sage_object import SageObject
 
+lazy_import('sage.geometry.integral_points', 'parallelotope_points')
+import sage.geometry.abc
 from sage.features import PythonModule
+from sage.geometry.convex_set import ConvexSet_closed
+
 lazy_import('ppl', ['C_Polyhedron', 'Generator_System', 'Constraint_System',
                     'Linear_Expression', 'Poly_Con_Relation'],
                     feature=PythonModule("ppl", spkg='pplpy', type='standard'))
 lazy_import('ppl', ['ray', 'point'], as_=['PPL_ray', 'PPL_point'],
                     feature=PythonModule("ppl", spkg='pplpy', type='standard'))
+
+if TYPE_CHECKING:
+    from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 
 def is_Cone(x):
@@ -1510,7 +1522,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         if PPL is not None:
             self._PPL_C_Polyhedron = PPL
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         """
         Return Sage command to reconstruct ``self``.
 
@@ -4328,8 +4340,9 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         # recursively
         N = self.lattice()
         if not self.is_simplicial():
-            from sage.geometry.triangulation.point_configuration \
-                    import PointConfiguration
+            from sage.geometry.triangulation.point_configuration import (
+                PointConfiguration,
+            )
             origin = self.n_rays() # last one in pc
             pc = PointConfiguration(tuple(self.rays()) + (N(0),), star=origin)
             triangulation = pc.triangulate()
@@ -6772,12 +6785,11 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
                     msg = 'max_rays must be at least min_ambient_dim for '
                     msg += 'a solid cone.'
                     raise ValueError(msg)
-        else:
-            # Repeat the checks above when a lattice is given.
-            if max_rays is not None and max_rays < lattice.dimension():
-                msg = "max_rays must be at least {0} for a solid cone "
-                msg += "in this lattice."
-                raise ValueError(msg.format(lattice.dimension()))
+        # Repeat the checks above when a lattice is given.
+        elif max_rays is not None and max_rays < lattice.dimension():
+            msg = "max_rays must be at least {0} for a solid cone "
+            msg += "in this lattice."
+            raise ValueError(msg.format(lattice.dimension()))
 
     # Sanity checks for non-solid cones.
     if solid is not None and not solid:
@@ -6852,9 +6864,8 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
             if (max_ambient_dim is not None and
                     K.lattice_dim() > max_ambient_dim):
                 return False
-        else:
-            if K.lattice() is not lattice:
-                return False
+        elif K.lattice() is not lattice:
+            return False
         return all([K.n_rays() >= min_rays,
                     max_rays is None or K.n_rays() <= max_rays,
                     solid is None or K.is_solid() == solid,
@@ -6945,17 +6956,16 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
                         rays[i][0] = pm * (ray[0].abs() + 1)
 
                     K = Cone(rays, lattice=L)
-            else:
-                # The user requested that the cone be NOT strictly
-                # convex. So it should contain some line...
-                if K.is_strictly_convex():
-                    # ...but it doesn't. If K has at least two rays,
-                    # we can just make the second one a multiple of
-                    # the first -- then K will contain a line. If K
-                    # has fewer than two rays, we punt.
-                    if len(rays) >= 2:
-                        rays[1] = -rays[0]
-                        K = Cone(rays, lattice=L)
+            # The user requested that the cone be NOT strictly
+            # convex. So it should contain some line...
+            elif K.is_strictly_convex():
+                # ...but it doesn't. If K has at least two rays,
+                # we can just make the second one a multiple of
+                # the first -- then K will contain a line. If K
+                # has fewer than two rays, we punt.
+                if len(rays) >= 2:
+                    rays[1] = -rays[0]
+                    K = Cone(rays, lattice=L)
 
         if is_valid(K):
             # Loop if we don't have a valid cone.

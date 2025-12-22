@@ -33,6 +33,7 @@ import re
 import weakref
 
 import sage.misc.misc
+from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 from sage.libs.mpfr cimport *
 
@@ -645,7 +646,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         """
         return "\\Bold{C}"
 
-    def _sage_input_(self, sib, coerce):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 
@@ -1071,7 +1072,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         else:
             return numpy_object_interface
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 
