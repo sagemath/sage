@@ -252,6 +252,39 @@ def lfun_character(chi):
     return pari.lfuncreate([G, v])
 
 
+def lfun_hecke(chi):
+    """
+    Create the `L`-function of a primitive Hecke character.
+
+    If the given character is not primitive, it is replaced by its
+    associated primitive character.
+
+    OUTPUT: one :pari:`lfun` object
+
+    EXAMPLES::
+
+        sage: from sage.lfunctions.pari import lfun_hecke, LFunction
+        sage: F.<a> = NumberField(x^3 - 3*x -1)
+        sage: H = HeckeCharacterGroup(F.modulus(3, [0,1,2]))
+        sage: chi = H.gen(0).primitive_character()
+        sage: L = LFunction(lfun_hecke(chi))
+        sage: L(3)
+        0.997913119676857
+
+        sage: F.<a> = NumberField(x^2 - 5)
+        sage: mf = F.modulus(F.ideal(4), [0, 1])
+        sage: H = HeckeCharacterGroup(mf)
+        sage: chi = H.gens()[1]
+        sage: L = LFunction(lfun_hecke(chi))
+        sage: [L(-n) for n in range(3)]  # abs tol 1e-10
+        [1.00000000000000, 0.000000000000000, 15.0000000000000]
+    """
+    if not chi.is_primitive():
+        chi = chi.primitive_character()
+    Gv = chi._pari_init_()
+    return pari.lfuncreate(Gv)
+
+
 def lfun_hgm(motif, t):
     """
     Create the `L`-function of an hypergeometric motive.
