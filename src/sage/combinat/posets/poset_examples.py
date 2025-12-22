@@ -52,6 +52,7 @@ The infinite set of all posets can be used to find minimal examples::
     :meth:`~Posets.RandomPoset` | Return a random poset on `n` elements.
     :meth:`~Posets.RibbonPoset` | Return a ribbon on `n` elements with descents at `descents`.
     :meth:`~Posets.RestrictedIntegerPartitions` | Return the poset of integer partitions of `n`, ordered by restricted refinement.
+    :meth:`~Posets.Sashes` | Return the lattice of sashes of `n`.
     :meth:`~Posets.SetPartitions` | Return the poset of set partitions of the set `\{1,\dots,n\}`.
     :meth:`~Posets.ShardPoset` | Return the shard intersection order.
     :meth:`~Posets.ShufflePoset` | Return the Shuffle lattice for `(m,n)`.
@@ -102,7 +103,7 @@ from sage.misc.classcall_metaclass import ClasscallMetaclass
 import sage.categories.posets
 from sage.combinat.permutation import Permutations, Permutation, to_standard
 from sage.combinat.posets.posets import Poset, FinitePoset, FinitePosets_n
-from sage.combinat.posets import bubble_shuffle, hochschild_lattice
+from sage.combinat.posets import bubble_shuffle, hochschild_lattice, sashes
 from sage.combinat.posets.d_complete import DCompletePoset
 from sage.combinat.posets.mobile import MobilePoset as Mobile
 from sage.combinat.posets.lattices import (LatticePoset, MeetSemilattice,
@@ -289,6 +290,8 @@ class Posets(metaclass=ClasscallMetaclass):
     ShufflePoset = staticmethod(bubble_shuffle.ShufflePoset)
 
     HochschildLattice = staticmethod(hochschild_lattice.hochschild_lattice)
+
+    Sashes = staticmethod(sashes.lattice_of_sashes)
 
     @staticmethod
     def ChainPoset(n, facade=None):
