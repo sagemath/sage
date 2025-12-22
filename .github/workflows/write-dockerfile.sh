@@ -277,7 +277,6 @@ FROM with-system-packages AS bootstrapped
 RUN rm -rf /new /sage/.git
 $ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap conftest.py configure_wrapper configure.ac sage .homebrew-build-env tox.ini .gitignore pyproject.toml meson.build meson.options /new/
 $ADD config/config.rpath /new/config/config.rpath
-$ADD src/doc/bootstrap /new/src/doc/bootstrap
 $ADD src/meson.build /new/src/
 $ADD src/bin /new/src/bin
 $ADD m4 /new/m4
@@ -288,8 +287,8 @@ $ADD tools /new/tools
 $ADD .github/workflows /.github/workflows
 RUN if [ -d /sage ]; then \\
         echo "### Incremental build from \$(cat /sage/VERSION.txt)" && \\
-        printf '/src/*\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/VERSION.txt\n' >> /sage/.gitignore && \\
-        printf '/src/*\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/VERSION.txt\n' >> /new/.gitignore && \\
+        printf '/src/*\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/VERSION.txt\n' >> /sage/.gitignore && \\
+        printf '/src/*\n\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/VERSION.txt\n' >> /new/.gitignore && \\
         if ! (cd /new && /.github/workflows/retrofit-worktree.sh worktree-image /sage); then \\
             echo "retrofit-worktree.sh failed, falling back to replacing /sage"; \\
             for a in local logs; do \\
