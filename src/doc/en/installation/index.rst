@@ -22,10 +22,10 @@ obtaining the source code and building SageMath.
 
     .. code-block:: console
 
-      $ conda create -n sage sage python=3.11
+      $ conda create -n sage sage python=3.13
 
     This will create a new conda environment named ``sage``
-    containing SageMath and Python 3.11.
+    containing SageMath and Python 3.13.
     You can then activate this environment with the command
     ``conda activate sage`` and start SageMath by typing ``sage``.
     
@@ -120,6 +120,18 @@ obtaining the source code and building SageMath.
 
       $ curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
       $ bash Miniforge3-$(uname)-$(uname -m).sh
+
+    At the end of the installer run, you should see a message about adding certain commands in `~/.bashrc`.
+    Now, either run the following command, or restart your WSL terminal.
+
+    .. code-block:: console
+
+      $ source ~/.bashrc
+
+    You will see a different prompt in your terminal now, having `base` in it. Now, run
+
+    .. code-block:: console
+
       $ conda create -n sage sage python=3.12
 
     (If there are any installation failures, please report them to
