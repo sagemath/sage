@@ -169,7 +169,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         """
         return self.get_point(x, is_boundary, **graphics_options)
 
-    def name(self):  # Abstract
+    def name(self) -> str:  # Abstract
         """
         Return the name of this model.
 
@@ -181,7 +181,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         """
         return self._name
 
-    def short_name(self):
+    def short_name(self) -> str:
         """
         Return the short name of this model.
 
@@ -193,7 +193,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         """
         return self._short_name
 
-    def is_bounded(self):
+    def is_bounded(self) -> bool:
         """
         Return ``True`` if ``self`` is a bounded model.
 
@@ -210,7 +210,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         """
         return self._bounded
 
-    def is_conformal(self):
+    def is_conformal(self) -> bool:
         """
         Return ``True`` if ``self`` is a conformal model.
 
@@ -222,7 +222,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         """
         return self._conformal
 
-    def is_isometry_group_projective(self):
+    def is_isometry_group_projective(self) -> bool:
         """
         Return ``True`` if the isometry group of ``self`` is projective.
 
