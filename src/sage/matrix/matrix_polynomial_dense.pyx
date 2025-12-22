@@ -2145,6 +2145,17 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             :meth:`reduced_form` ,
             :meth:`popov_form` ,
             :meth:`hermite_form` .
+
+        TESTS:
+
+        This verifies that :issue:`41278` is fixed::
+
+            sage: R.<x> = GF(3)[]
+            sage: A = matrix(R, [[x^3 + x, 0, 0], [2*x^2, x, 0], [x, 0, x], [x^2 + 1, x^2 + 1, 0], [2*x + 2, 2*x + 2, x], [x^2 + x + 1, x^2 + 2*x + 1, 2*x^3 + 2*x^2], [0, 0, x^2 + 1], [x^2 + x, x^2 + 2*x, 2*x^3 + 2*x^2 + 2*x + 2], [2*x^4 + x^3 + 2*x^2 + 2, 2*x^4 + x^2 + 2, x^5 + 2*x^4 + x^3 + x^2 + 2*x + 1]])
+            sage: A.weak_popov_form(ordered=True, include_zero_vectors=False)
+            [x + 2     2     2]
+            [    0   2*x     1]
+            [    x     0     x]
         """
         # if column-wise, call the algorithm on transpose
         if not row_wise:
@@ -2153,21 +2164,23 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                         True,
                         ordered,
                         include_zero_vectors)
-            return (W[0].T,W[1].T) if transformation else W.T
+            return (W[0].T, W[1].T) if transformation else W.T
+
         # --> now, below, we are working row-wise
         # row dimension:
         m = self.nrows()
         # make shift nonnegative, required by main call _weak_popov_form
-        self._check_shift_dimension(shifts,row_wise=True)
+        self._check_shift_dimension(shifts, row_wise=True)
         if shifts is None:
             nonnegative_shifts = None
         else:
             min_shifts = min(shifts)
-            nonnegative_shifts = [s-min_shifts for s in shifts]
+            nonnegative_shifts = [s - min_shifts for s in shifts]
         # call main procedure to compute weak Popov and transformation
         M = self.__copy__()
         U = M._weak_popov_form(transformation=transformation,
-                shifts=nonnegative_shifts)
+                               shifts=nonnegative_shifts)
+
         # move zero rows to the bottom of the matrix
         from sage.combinat.permutation import Permutation
         zero_rows = []
@@ -2181,29 +2194,37 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         M.permute_rows(Permutation(nonzero_rows + zero_rows))
         if transformation:
             U.permute_rows(Permutation(nonzero_rows + zero_rows))
-        # order other rows by increasing leading positions
-        if ordered:
-            lpos = M.leading_positions(nonnegative_shifts,row_wise=True)
-            # find permutation that sorts leading_positions in increasing order
-            # --> force max value to zero rows so that they remain bottom rows
-            if include_zero_vectors: # otherwise, zero rows already removed
-                for i in range(m):
-                    if lpos[i] == -1:
-                        lpos[i] = m
-            sorted_lpos = sorted([(lpos[i],i+1) for i in range(m)])
-            row_permutation = Permutation([elt[1] for elt in sorted_lpos])
-            # apply permutation to weak Popov form and the transformation
-            M.permute_rows(row_permutation)
-            if transformation:
-                U.permute_rows(row_permutation)
-        # remove zero rows if asked to
+
+        # remove zero rows, if asked to (the corresponding rows of U are kept)
+        nnzr = m - len(zero_rows)  # number of nonzero rows
         if not include_zero_vectors:
-            M = M.delete_rows(range(m-len(zero_rows),m))
+            M = M.delete_rows(range(nnzr, m))
+
+        # order rows by increasing leading positions, if asked to
+        if ordered:
+            lpos = M[:nnzr, :].leading_positions(nonnegative_shifts)
+            if include_zero_vectors:
+                # --> insert max value for zero rows so that they remain at the bottom
+                lpos.extend(m for i in range(m - nnzr))
+            # apply permutation to weak Popov form
+            sorted_lpos = sorted([(lpos[i], i+1) for i in range(len(lpos))])
+            row_permutation = Permutation([elt[1] for elt in sorted_lpos])
+            M.permute_rows(row_permutation)
+            # apply permutation to the transformation
+            if transformation:
+                if not include_zero_vectors:
+                    # --> extend with virtual zero rows in M so that the
+                    # corresponding rows of U remain at the bottom
+                    lpos.extend(m for i in range(m - nnzr))
+                    sorted_lpos = sorted([(lpos[i], i+1) for i in range(len(lpos))])
+                    row_permutation = Permutation([elt[1] for elt in sorted_lpos])
+                U.permute_rows(row_permutation)
+
         # set immutable and return
         M.set_immutable()
         if transformation:
             U.set_immutable()
-        return (M,U) if transformation else M
+        return (M, U) if transformation else M
 
     def _weak_popov_form(self, transformation=False, shifts=None):
         """

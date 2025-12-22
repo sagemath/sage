@@ -100,19 +100,18 @@ TESTS::
 
 import sage.rings.abc
 
-from sage.misc.lazy_import import lazy_import
+from sage.arith.functions import lcm
+from sage.misc.misc_c import prod
 from sage.modular.abvar.torsion_point import TorsionPoint
-from sage.modules.module import Module
 from sage.modules.free_module import FreeModule_generic
-from sage.structure.gens_py import abelian_iterator
-from sage.structure.sequence import Sequence
-from sage.structure.richcmp import richcmp_method, richcmp
+from sage.modules.module import Module
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.functions import lcm
-from sage.misc.misc_c import prod
 from sage.structure.element import coercion_model
+from sage.structure.gens_py import abelian_iterator
+from sage.structure.richcmp import richcmp_method, richcmp
+from sage.structure.sequence import Sequence
 
 
 @richcmp_method
