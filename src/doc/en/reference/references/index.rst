@@ -4966,6 +4966,9 @@ REFERENCES:
              Notes in Computer Science, volume 5856, pp 272-278,
              Springer, Berlin (2009).
 
+.. [Mar1992] \H. H. Martens, "A footnote to the Poincaré complete reducibility theorem",
+             Publicacions Matemàtiques 36 (1992), no. 1, 111-129.
+
 .. [Mar1997] \C.-M. Marle, *The Schouten-Nijenhuis bracket and interior
              products*, Journal of Geometry and Physics **23**, 350
              (1997); :doi:`10.1016/S0393-0440(97)80009-5`
@@ -5348,6 +5351,9 @@ REFERENCES:
              Applications*,
              Ph.D. Thesis, Carl von Ossietzky Universität Oldenburg
              http://oops.uni-oldenburg.de/3607.
+
+.. [New1972] \M. Newman, Integral Matrices, Academic Press, 
+             New York and London (1972).
 
 .. [New2003] Newman, M.E.J. *The Structure and function of complex
              networks*, SIAM Review vol. 45, no. 2 (2003), pp. 167-256.
