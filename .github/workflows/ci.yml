@@ -1,4 +1,4 @@
-name: CI Linux
+name: CI
 
 on:
   push:
@@ -14,7 +14,7 @@ on:
     # Allow to run manually
 
 jobs:
-  build:
+  linux:
     name: Build and Test
     runs-on: ubuntu-latest
     strategy:
@@ -124,3 +124,66 @@ jobs:
           path: |
             build/cp313/meson-logs/
             build/cp313/meson-info/
+
+  macos:
+    name: Build and Test (macos-${{ matrix.version }})
+    runs-on: macos-${{ matrix.version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - '13'
+          - '14'
+          - '15'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6.3.1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12' 
+
+      - name: Install dependencies
+        run: |
+          eval $(build/bin/sage-print-system-package-command homebrew update)
+          eval $(build/bin/sage-print-system-package-command homebrew --yes --ignore-missing install $(build/bin/sage-get-system-packages homebrew $(uv run --no-project build/bin/sage-package list :standard:)))
+
+      - name: Build
+        run: |
+          source ./.homebrew-build-env
+          uv venv
+          # Install build dependencies manually as workaround for https://github.com/astral-sh/uv/issues/1516
+          uv pip install \
+            meson-python \
+            "cypari2 >=2.2.1" \
+            "cysignals >=1.11.2, != 1.12.0" \
+            "cython >=3.0, != 3.0.3, < 3.1.0" \
+            "gmpy2 ~=2.1.b999" \
+            memory_allocator \
+            "numpy >=1.25" \
+            jinja2 \
+            setuptools
+          uv sync --frozen --inexact --no-build-isolation -v
+        env:
+            # macos-13 is x86_64, while macos-14 and macos-15 are arm64
+            # https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories
+            _PYTHON_HOST_PLATFORM: macosx-${{ matrix.version }}-${{ matrix.version == '13' && 'x86_64' || 'arm64' }}
+            ARCHFLAGS: ${{ matrix.version == '13' && '-arch x86_64' || '-arch arm64' }}
+
+      - name: Test
+        run: |
+          uv run --frozen ./sage -t --all -p4 || true
+
+      - name: Upload log
+        uses: actions/upload-artifact@v4.5.0
+        if: failure() || success()
+        with:
+          name: macos-${{ matrix.version }}-log
+          path: |
+            build/cp312/meson-logs/
+            build/cp312/meson-info/
