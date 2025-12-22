@@ -596,57 +596,37 @@ cdef class HiGHSBackend(GenericBackend):
     
     cpdef objective_coefficient(self, int variable, coeff=None):
         """
-        Add ``number`` new variables.
-
-        This amounts to adding new columns to the matrix. By default,
-        the variables are both positive, real and their coefficient in
-        the objective function is 0.0.
+        Set or get the coefficient of a variable in the objective function.
 
         INPUT:
 
-        - ``n`` -- the number of new variables (must be > 0)
+        - ``variable`` -- integer; the variable's id
 
-        - ``lower_bound`` -- the lower bound of the variable (default: 0)
-
-        - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
-
-        - ``binary`` -- ``True`` if the variable is binary (default: ``False``)
-
-        - ``continuous`` -- ``True`` if the variable is binary (default: ``True``)
-
-        - ``integer`` -- ``True`` if the variable is binary (default: ``False``)
-
-        - ``obj`` -- coefficient of all variables in the objective function (default: 0.0)
-
-        - ``names`` -- list of names (default: ``None``)
-
-        OUTPUT: the index of the variable created last
+        - ``coeff`` -- double; its coefficient or ``None`` for
+          reading (default: ``None``)
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "HiGHS")
-            sage: p.ncols()                       
+            sage: p.add_variable()
             0
-            sage: p.add_variables(5)              
-            4
-            sage: p.ncols()                       
-            5
-            sage: p.add_variables(2, lower_bound=-2.0, integer=True, obj=42.0, names=['a','b'])
-            6
+            sage: p.objective_coefficient(0)
+            0.0
+            sage: p.objective_coefficient(0, 2)
+            sage: p.objective_coefficient(0)
+            2.0
 
         TESTS:
 
-        Check that arguments are used::
+        We sanity check the input that will be passed to HiGHS::
 
-            sage: p.col_bounds(5)  # tol 1e-8   
-            (-2.0, None)
-            sage: p.is_variable_integer(5)       
-            True
-            sage: p.col_name(5)                  
-            'a'
-            sage: p.objective_coefficient(5)     
-            42.0
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: p = get_solver(solver='HiGHS')
+            sage: p.objective_coefficient(2)
+            Traceback (most recent call last):
+            ...
+            ValueError: invalid variable index 2
         """
         cdef HighsInt status
         cdef double cost
