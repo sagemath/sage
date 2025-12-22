@@ -40,6 +40,7 @@ from sage.misc.verbose import verbose
 from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_domain
 from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
+from sage.structure.category_object import normalize_names
 
 
 # -------------------------------------------------------------------------
@@ -220,12 +221,12 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
         # ---------------------------------------------------------------
         # checking input parameters
         # ---------------------------------------------------------------
-        base_ring = monic_polynomial.base_ring()
+
         if not monic_polynomial.is_monic():
             raise ValueError("given polynomial must be monic")
         deg = monic_polynomial.degree()
 
-        from sage.structure.category_object import normalize_names
+        base_ring = monic_polynomial.base_ring()
         self._root_names = normalize_names(deg - 1, names)
         root_names = list(self._root_names)
         verbose("Create splitting algebra to base ring %s and polynomial %s (%s %s)"
@@ -389,7 +390,6 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             invert_items = list(self._invertible_elements.items())
             for k, v in invert_items:
                 self._invertible_elements.update({v: k})
-        return
 
     ########################################################################
     # ----------------------------------------------------------------------
