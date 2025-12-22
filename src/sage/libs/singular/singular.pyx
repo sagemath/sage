@@ -1746,10 +1746,7 @@ cdef int overflow_check(unsigned long e, ring *_ring) except -1:
 
         sage: P.<x,y> = QQ[]
         sage: y^(2^30)
-        Traceback (most recent call last):             # 32-bit
-        ...                                            # 32-bit
-        OverflowError: exponent overflow (1073741824)  # 32-bit
-        y^1073741824  # 64-bit
+        y^1073741824
         sage: y^2^32
         Traceback (most recent call last):
         ...

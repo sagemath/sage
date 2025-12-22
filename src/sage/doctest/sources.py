@@ -27,19 +27,20 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import os
-import sys
-import re
-import random
 import doctest
+import os
+import random
+import re
+
 from sage.cpython.string import bytes_to_str
-from sage.repl.load import load
+from sage.env import SAGE_LIB, SAGE_SRC
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.package_dir import is_package_or_sage_namespace_package_dir
+from sage.repl.load import load
+from sage.structure.dynamic_class import dynamic_class
+
 from .parsing import SageDocTestParser
 from .util import NestedName
-from sage.structure.dynamic_class import dynamic_class
-from sage.env import SAGE_SRC, SAGE_LIB
 
 # Python file parsing
 triple_quotes = re.compile(r"\s*[rRuU]*((''')|(\"\"\"))")
@@ -58,8 +59,6 @@ double_colon = re.compile(r"^(\s*).*::\s*$")
 code_block = re.compile(r"^(\s*)[.][.]\s*code-block\s*::.*$")
 
 whitespace = re.compile(r"\s*")
-bitness_marker = re.compile('#.*(32|64)-bit')
-bitness_value = '64' if sys.maxsize > (1 << 32) else '32'  # cf. sage.features.bitness
 
 # For neutralizing doctests
 find_prompt = re.compile(r"^(\s*)(>>>|sage:)(.*)")
@@ -336,19 +335,6 @@ class DocTestSource:
                     self._process_doc(doctests, doc, namespace, start)
                     unparsed_doc = False
                 else:
-                    bitness = bitness_marker.search(line)
-                    if bitness:
-                        if bitness.groups()[0] != bitness_value:
-                            self.line_shift += 1
-                            continue
-                        else:
-                            line = line[:bitness.start()] + "\n"
-                    if self.line_shift and (m := sagestart.match(line)):
-                        # We insert empty doctest lines to make up for the removed lines
-                        indent_and_prompt = m.group(1)
-                        doc.extend([indent_and_prompt + "# inserted to compensate for removed conditional doctest output\n"]
-                                   * self.line_shift)
-                        self.line_shift = 0
                     doc.append(line)
                     unparsed_doc = True
             if not in_docstring and (not just_finished or self.start_finish_can_overlap):
@@ -772,19 +758,6 @@ class FileDocTestSource(DocTestSource):
             'doctests[Integer(20)].examples[Integer(8)].source\n'
 
         TESTS:
-
-        We check that we correctly process results that depend on 32
-        vs 64 bit architecture::
-
-            sage: import sys
-            sage: bitness = '64' if sys.maxsize > (1 << 32) else '32'
-            sage: sys.maxsize == 2^63 - 1
-            False # 32-bit
-            True  # 64-bit
-            sage: ex = doctests[20].examples[11]
-            sage: ((bitness == '64' and ex.want == 'True  \n')
-            ....:  or (bitness == '32' and ex.want == 'False \n'))
-            True
 
         We check that lines starting with a # aren't doctested::
 

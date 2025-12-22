@@ -113,8 +113,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         TypeError: mutable matrices are unhashable
         sage: A.set_immutable()
         sage: hash(A)
-        6694819972852100501  # 64-bit
-        1829383573           # 32-bit
+        6694819972852100501
         sage: A = matrix(CDF, 3, range(1,10))
         sage: hash(A)
         Traceback (most recent call last):
@@ -122,8 +121,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         TypeError: mutable matrices are unhashable
         sage: A.set_immutable()
         sage: hash(A)
-        6694819972852100501  # 64-bit
-        1829383573           # 32-bit
+        6694819972852100501
     """
 
     def LU_valid(self):

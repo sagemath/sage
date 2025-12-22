@@ -473,8 +473,7 @@ cdef class RealIntervalAbsoluteElement(FieldElement):
             sage: hash(R(1/4)) == hash(1/4)
             True
             sage: hash(R(pi))
-            891658780           # 32-bit
-            532995478001132060  # 64-bit
+            532995478001132060
         """
         return hash(self.midpoint())
 

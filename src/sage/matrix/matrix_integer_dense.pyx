@@ -201,8 +201,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         TypeError: mutable matrices are unhashable
         sage: a.set_immutable()
         sage: hash(a)
-        1846857684291126914  # 64-bit
-        1591707266           # 32-bit
+        1846857684291126914
     """
     def __cinit__(self):
         """
