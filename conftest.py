@@ -11,7 +11,7 @@ import doctest
 import inspect
 import sys
 import warnings
-from typing import Any, Iterable, Optional, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 import pytest
 from _pytest.doctest import (
@@ -32,6 +32,7 @@ from sage.doctest.forker import (
 from sage.doctest.parsing import SageDocTestParser, SageOutputChecker
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
     from pathlib import Path
 
 
@@ -270,7 +271,7 @@ def pytest_collect_file(
 
 def pytest_ignore_collect(
     collection_path: Path, path: str, config: pytest.Config
-) -> None | bool:
+) -> bool | None:
     """
     This hook is called when collecting test files, and can be used to
     prevent considering this path for collection by returning ``True``.
