@@ -6,7 +6,7 @@ py.install_sources(
   subdir: 'sage/rings/polynomial/weil',
 )
 
-extension_data = {'weil_polynomials' : files('weil_polynomials.pyx')}
+extension_data = {'weil_polynomials': files('weil_polynomials.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

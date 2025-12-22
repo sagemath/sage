@@ -25,12 +25,12 @@ py.install_sources(
 )
 
 extension_data = {
-  'binary_search' : files('binary_search.pyx'),
-  'bitset' : files('bitset.pyx'),
-  'bitset_base' : files('bitset_base.pyx'),
-  'blas_dict' : files('blas_dict.pyx'),
-  'bounded_integer_sequences' : files('bounded_integer_sequences.pyx'),
-  'list_of_pairs' : files('list_of_pairs.pyx'),
+  'binary_search': files('binary_search.pyx'),
+  'bitset': files('bitset.pyx'),
+  'bitset_base': files('bitset_base.pyx'),
+  'blas_dict': files('blas_dict.pyx'),
+  'bounded_integer_sequences': files('bounded_integer_sequences.pyx'),
+  'list_of_pairs': files('list_of_pairs.pyx'),
 }
 
 foreach name, pyx : extension_data
@@ -49,7 +49,7 @@ foreach name, pyx : extension_data
   )
 endforeach
 
-extension_data_cpp = {'pairing_heap' : files('pairing_heap.pyx')}
+extension_data_cpp = {'pairing_heap': files('pairing_heap.pyx')}
 
 foreach name, pyx : extension_data_cpp
   py.extension_module(

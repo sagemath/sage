@@ -22,12 +22,12 @@ py.install_sources(
 )
 
 extension_data = {
-  'integration' : files('integration.pyx'),
-  'interpolation' : files('interpolation.pyx'),
-  'interpolators' : files('interpolators.pyx'),
-  'ode' : files('ode.pyx'),
-  'riemann' : files('riemann.pyx'),
-  'var' : files('var.pyx'),
+  'integration': files('integration.pyx'),
+  'interpolation': files('interpolation.pyx'),
+  'interpolators': files('interpolators.pyx'),
+  'ode': files('ode.pyx'),
+  'riemann': files('riemann.pyx'),
+  'var': files('var.pyx'),
 }
 
 foreach name, pyx : extension_data

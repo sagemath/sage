@@ -44,10 +44,10 @@ py.install_sources(
 )
 
 extension_data = {
-  'letters' : files('letters.pyx'),
-  'pbw_datum' : files('pbw_datum.pyx'),
-  'spins' : files('spins.pyx'),
-  'tensor_product_element' : files('tensor_product_element.pyx'),
+  'letters': files('letters.pyx'),
+  'pbw_datum': files('pbw_datum.pyx'),
+  'spins': files('spins.pyx'),
+  'tensor_product_element': files('tensor_product_element.pyx'),
 }
 
 foreach name, pyx : extension_data

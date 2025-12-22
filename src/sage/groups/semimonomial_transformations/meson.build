@@ -8,7 +8,7 @@ py.install_sources(
 )
 
 extension_data = {
-  'semimonomial_transformation' : files('semimonomial_transformation.pyx'),
+  'semimonomial_transformation': files('semimonomial_transformation.pyx'),
 }
 
 foreach name, pyx : extension_data

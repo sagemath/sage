@@ -38,17 +38,17 @@ py.install_sources(
 )
 
 extension_data = {
-  'cvxopt_backend' : files('cvxopt_backend.pyx'),
-  'cvxopt_sdp_backend' : files('cvxopt_sdp_backend.pyx'),
-  'cvxpy_backend' : files('cvxpy_backend.pyx'),
-  'generic_backend' : files('generic_backend.pyx'),
-  'generic_sdp_backend' : files('generic_sdp_backend.pyx'),
-  'glpk_backend' : files('glpk_backend.pyx'),
-  'glpk_exact_backend' : files('glpk_exact_backend.pyx'),
-  'glpk_graph_backend' : files('glpk_graph_backend.pyx'),
-  'interactivelp_backend' : files('interactivelp_backend.pyx'),
-  'matrix_sdp_backend' : files('matrix_sdp_backend.pyx'),
-  'ppl_backend' : files('ppl_backend.pyx'),
+  'cvxopt_backend': files('cvxopt_backend.pyx'),
+  'cvxopt_sdp_backend': files('cvxopt_sdp_backend.pyx'),
+  'cvxpy_backend': files('cvxpy_backend.pyx'),
+  'generic_backend': files('generic_backend.pyx'),
+  'generic_sdp_backend': files('generic_sdp_backend.pyx'),
+  'glpk_backend': files('glpk_backend.pyx'),
+  'glpk_exact_backend': files('glpk_exact_backend.pyx'),
+  'glpk_graph_backend': files('glpk_graph_backend.pyx'),
+  'interactivelp_backend': files('interactivelp_backend.pyx'),
+  'matrix_sdp_backend': files('matrix_sdp_backend.pyx'),
+  'ppl_backend': files('ppl_backend.pyx'),
 }
 
 foreach name, pyx : extension_data

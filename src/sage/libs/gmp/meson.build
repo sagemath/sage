@@ -15,7 +15,7 @@ py.install_sources(
   subdir: 'sage/libs/gmp',
 )
 
-extension_data = {'pylong' : files('pylong.pyx')}
+extension_data = {'pylong': files('pylong.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

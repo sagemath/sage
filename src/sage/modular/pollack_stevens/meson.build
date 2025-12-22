@@ -13,7 +13,7 @@ py.install_sources(
   subdir: 'sage/modular/pollack_stevens',
 )
 
-extension_data = {'dist' : files('dist.pyx')}
+extension_data = {'dist': files('dist.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(
