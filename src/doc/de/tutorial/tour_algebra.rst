@@ -172,7 +172,7 @@ berechnet:
     sage: t = var("t")
     sage: f = t^2*exp(t) - sin(t)
     sage: f.laplace(t,s)
-    -1/(s^2 + 1) + 2/(s - 1)^3
+    2/(s^3 - 3*s^2 + 3*s - 1) - 1/(s^2 + 1)
 
 Hier ist ein komplizierteres Beispiel. Die Verschiebung des
 Gleichgewichts einer verkoppelten Feder, die an der linken Wand

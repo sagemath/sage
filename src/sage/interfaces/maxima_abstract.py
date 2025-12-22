@@ -866,11 +866,11 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             sage: maxima.de_solve('diff(y,x,2) + 3*x = y', ['x','y'], [1,1,1])
             y = 3*x-2*%e^(x-1)
             sage: maxima.de_solve('diff(y,x,2) + 3*x = y', ['x','y'])
-            y = %k1*%e^x+%k2*%e^-x+3*x
+            y = 3*x+%e^-x*%k2+%e^x*%k1
             sage: maxima.de_solve('diff(y,x) + 3*x = y', ['x','y'])
-            y = (%c-3*(...-x...-1)*%e^-x)*%e^x
+            y = %e^x*(%c-3*%e^-x*(-x-1))
             sage: maxima.de_solve('diff(y,x) + 3*x = y', ['x','y'],[1,1])
-            y = -...%e^-1*(5*%e^x-3*%e*x-3*%e)...
+            y = %e^-1*(3*%e*x-5*%e^x+3*%e)
         """
         if not isinstance(vars, str):
             str_vars = '%s, %s' % (vars[1], vars[0])
@@ -910,20 +910,20 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima.clear('x'); maxima.clear('f')
             sage: maxima.de_solve_laplace("diff(f(x),x,2) = 2*diff(f(x),x)-f(x)", ["x","f"], [0,1,2])
-            f(x) = x*%e^x+%e^x
+            f(x) = %e^x*x+%e^x
 
         ::
 
             sage: maxima.clear('x'); maxima.clear('f')
             sage: f = maxima.de_solve_laplace("diff(f(x),x,2) = 2*diff(f(x),x)-f(x)", ["x","f"])
             sage: f
-            f(x) = x*%e^x*('at('diff(f(x),x,1),x = 0))-f(0)*x*%e^x+f(0)*%e^x
+            f(x) = %e^x*x*('at('diff(f(x),x,1),x = 0))-%e^x*f(0)*x+%e^x*f(0)
             sage: print(f)
-                                               !
-                                   x  d        !                  x          x
-                        f(x) = x %e  (-- (f(x))!     ) - f(0) x %e  + f(0) %e
-                                      dx       !
-                                               !x = 0
+                                                                      │
+                                                        x    d        │           x            x
+                                               f(x) = %e  x (── (f(x))│     ) - %e  f(0) x + %e  f(0)
+                                                             dx       │
+                                                                      │x = 0
 
         .. NOTE::
 
@@ -1136,10 +1136,10 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: f = maxima('1/(x-1)^3'); f
             1/(x-1)^3
             sage: print(f)
-                                                  1
-                                               --------
-                                                      3
-                                               (x - 1)
+                                                     1
+                                                  ────────
+                                                         3
+                                                  (x - 1)
         """
         return self.display2d(onscreen=False)
 
@@ -1798,9 +1798,9 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: y,d = var('y,d')
             sage: f = function('f')
             sage: latex(maxima(derivative(f(x*y), x)))
-            \left(\left.{{{\it \partial}}\over{{\it \partial}\,  {\it \_symbol}_{0}}}\,f\left(  {\it \_symbol}_{0}\right)\right|_{  {\it \_symbol}_{0}={\it x}\,  {\it y}}\right)\,{\it y}
+            \left(\left.{{{\it \partial}}\over{{\it \partial}\,  {\it \_symbol}_{0}}}\,f\left({\it \_symbol}_{0}  \right)\right|_{{\it \_symbol}_{0}={\it x}\,  {\it y}}\right)\,{\it y}
             sage: latex(maxima(derivative(f(x,y,d), d,x,x,y)))
-            {{{\it \partial}^4}\over{{\it \partial}\,{\it d}\,  {\it \partial}\,{\it x}^2\,{\it \partial}\,  {\it y}}}\,f\left({\it x} ,  {\it y} , {\it d}\right)
+            {{{\it \partial}^4}\over{{\it \partial}\,{\it d}\,  {\it \partial}\,{\it x}^2\,{\it \partial}\,{\it y}  }}\,f\left({\it x} , {\it y} , {\it d}  \right)
             sage: latex(maxima(d/(d-2)))
             {{{\it d}}\over{{\it d}-2}}
         """
@@ -1929,9 +1929,9 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: f.partial_fraction_decomposition('x')
             1/(2*(x-1))-1/(2*(x+1))
             sage: print(f.partial_fraction_decomposition('x'))
-                                 1           1
-                             --------- - ---------
-                             2 (x - 1)   2 (x + 1)
+                                     1           1
+                                 ───────── - ─────────
+                                 2 (x - 1)   2 (x + 1)
         """
         return self.partfrac(var)
 

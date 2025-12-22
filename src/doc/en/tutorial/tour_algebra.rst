@@ -182,7 +182,7 @@ You can compute Laplace transforms also; the Laplace transform of
     sage: t = var("t")
     sage: f = t^2*exp(t) - sin(t)
     sage: f.laplace(t,s)
-    -1/(s^2 + 1) + 2/(s - 1)^3
+    2/(s^3 - 3*s^2 + 3*s - 1) - 1/(s^2 + 1)
 
 Here is a more involved example. The displacement from equilibrium
 (respectively) for a coupled spring attached to a wall on the left

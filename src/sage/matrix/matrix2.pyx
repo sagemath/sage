@@ -16669,8 +16669,8 @@ cdef class Matrix(Matrix1):
             sage: # needs sage.symbolic
             sage: a = matrix([[1,2], [3,4]])
             sage: a.exp()
-            [-1/22*((sqrt(33) - 11)*e^sqrt(33) - sqrt(33) - 11)*e^(-1/2*sqrt(33) + 5/2)              2/33*(sqrt(33)*e^sqrt(33) - sqrt(33))*e^(-1/2*sqrt(33) + 5/2)]
-            [             1/11*(sqrt(33)*e^sqrt(33) - sqrt(33))*e^(-1/2*sqrt(33) + 5/2)  1/22*((sqrt(33) + 11)*e^sqrt(33) - sqrt(33) + 11)*e^(-1/2*sqrt(33) + 5/2)]
+            [ 1/22*((sqrt(33) + 11)*e^2 - (sqrt(33) - 11)*e^(sqrt(33) + 2))*e^(-1/2*sqrt(33) + 1/2)               -2/33*(sqrt(33)*e^2 - sqrt(33)*e^(sqrt(33) + 2))*e^(-1/2*sqrt(33) + 1/2)]
+            [              -1/11*(sqrt(33)*e^2 - sqrt(33)*e^(sqrt(33) + 2))*e^(-1/2*sqrt(33) + 1/2) -1/22*((sqrt(33) - 11)*e^2 - (sqrt(33) + 11)*e^(sqrt(33) + 2))*e^(-1/2*sqrt(33) + 1/2)]
 
             sage: type(a.exp())                                                         # needs sage.symbolic
             <class 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>

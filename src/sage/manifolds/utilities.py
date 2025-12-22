@@ -225,10 +225,10 @@ class SimplifyAbsTrig(ExpressionTreeWalker):
         sage: a = abs(cos(x)) + abs(sin(x))
 
     The method :meth:`~sage.symbolic.expression.Expression.simplify_full()`
-    is ineffective on such an expression::
+    works on such an expression::
 
         sage: a.simplify_full()
-        abs(cos(x)) + abs(sin(x))
+        -cos(x) + sin(x)
 
     We construct a :class:`SimplifyAbsTrig` object ``s`` from the symbolic
     expression ``a``::
@@ -436,9 +436,9 @@ def simplify_abs_trig(expr):
 
         sage: s = abs(sin(x)) + abs(sin(y)) + abs(sin(3*z))
         sage: s.simplify_trig()
-        abs(4*cos(-z)^2 - 1)*abs(sin(-z)) + abs(sin(x)) + abs(sin(y))
+        -4*sin(-z)^3 + abs(sin(x)) + sin(y) + 3*sin(-z)
         sage: s.simplify_full()
-        abs(4*cos(-z)^2 - 1)*abs(sin(-z)) + abs(sin(x)) + abs(sin(y))
+        -4*sin(-z)^3 + abs(sin(x)) + sin(y) + 3*sin(-z)
 
     despite the following assumptions hold::
 
@@ -571,10 +571,10 @@ def simplify_chain_real(expr):
         sage: s = abs(sin(pi*x))
         sage: simplify_chain_real(s)  # correct output since x in (0,1)
         sin(pi*x)
-        sage: s.simplify_real()  # unsimplified output
-        abs(sin(pi*x))
-        sage: s.simplify_full()  # unsimplified output
-        abs(sin(pi*x))
+        sage: s.simplify_real()  # simplified output with maxima>=5.48
+        sin(pi*x)
+        sage: s.simplify_full()  # simplified output with maxima>=5.48
+        sin(pi*x)
 
     ::
 
