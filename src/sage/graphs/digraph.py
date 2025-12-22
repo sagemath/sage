@@ -493,8 +493,7 @@ class DiGraph(GenericGraph):
         sage: {G_imm:1}[G]
         Traceback (most recent call last):
         ...
-        TypeError: This graph is mutable, and thus not hashable. Create an
-        immutable copy by `g.copy(immutable=True)`
+        TypeError: ...This graph is mutable, and thus not hashable. Create an immutable copy by `g.copy(immutable=True)`...
 
     The error message states that one can also create immutable graphs by
     specifying the ``immutable`` optional argument (not only by
@@ -593,7 +592,7 @@ class DiGraph(GenericGraph):
             sage: {g:1}[g]
             Traceback (most recent call last):
             ...
-            TypeError: This graph is mutable, and thus not hashable. Create an immutable copy by `g.copy(immutable=True)`
+            TypeError: ...This graph is mutable, and thus not hashable. Create an immutable copy by `g.copy(immutable=True)`...
             sage: copy(g) is g
             False
             sage: {g.copy(immutable=True):1}[g.copy(immutable=True)]

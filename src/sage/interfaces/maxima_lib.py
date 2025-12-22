@@ -1640,7 +1640,8 @@ def sr_to_max(expr):
         elif (op in special_sage_to_max):
             return EclObject(special_sage_to_max[op](*[sr_to_max(o) for o in expr.operands()]))
         elif op == tuple:
-            return EclObject(([mlist], list(sr_to_max(op) for op in expr.operands())))
+            return EclObject(([mlist],
+                              [sr_to_max(op) for op in expr.operands()]))
         elif op not in sage_op_dict:
             # Maxima does some simplifications automatically by default
             # so calling maxima(expr) can change the structure of expr
@@ -1733,3 +1734,13 @@ def max_to_sr(expr):
         if isinstance(e, float):
             return sage.rings.real_double.RealDoubleElement(e)
         return e
+
+#interface routines for evaluating maxima's `equal` and `notequal`
+
+
+max_equal = EclObject("$EQUAL")
+max_notequal = EclObject("$NOTEQUAL")
+max_is = EclObject("$IS")
+test_max_equal = lambda A,B: maxima_eval([[max_is],[[max_equal],sr_to_max(A),sr_to_max(B)]]).python()
+test_max_notequal = lambda A,B: maxima_eval([[max_is],[[max_notequal],sr_to_max(A),sr_to_max(B)]]).python()
+test_max_relation = lambda R: maxima_eval([[max_is],sr_to_max(R)]).python()

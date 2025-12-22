@@ -143,7 +143,7 @@ cpdef DisjointSet(arg):
         sage: DisjointSet([{}, {}])
         Traceback (most recent call last):
         ...
-        TypeError: unhashable type: 'dict'
+        TypeError: ...unhashable type: 'dict'...
     """
     if isinstance(arg, (Integer, int)):
         if arg < 0:

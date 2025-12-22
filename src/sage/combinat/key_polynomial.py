@@ -42,7 +42,6 @@ from sage.combinat.permutation import Permutation
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing, InfinitePolynomialRing_sparse
-from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -50,7 +49,7 @@ from sage.structure.element import parent
 
 
 #####################################################################
-## Helper functions
+#  Helper functions
 
 
 def sorting_word(alpha):
@@ -98,7 +97,7 @@ def sorting_word(alpha):
 
 
 #####################################################################
-## Divided difference operators
+#  Divided difference operators
 
 
 def divided_difference(f, i):
@@ -248,7 +247,7 @@ def isobaric_divided_difference_bar(f, w):
 
 
 #####################################################################
-## Main classes
+#  Main classes
 
 
 class OperatorPolynomial(CombinatorialFreeModule.Element):

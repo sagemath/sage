@@ -145,7 +145,7 @@ class ArithmeticSubgroup(Group):
             return x
         raise TypeError("matrix %s is not an element of %s" % (x, self))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Test if x is an element of this group.
 
@@ -200,7 +200,7 @@ class ArithmeticSubgroup(Group):
         """
         raise NotImplementedError("Please implement _contains_sl2 for %s" % self.__class__)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return a hash of ``self``.
 
