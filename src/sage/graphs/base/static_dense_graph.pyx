@@ -612,7 +612,7 @@ def connected_full_subgraphs(G, edges_only=False, labels=False,
         raise ValueError("the input (di)graph is not connected")
 
     for d in G.degree():
-        if d >= 8 * sizeof(unsigned long) - 1:
+        if d >= 8 * sizeof(mp_limb_t) - 1:
             raise ValueError("the degree of the graph is too large for this method")
 
     cdef Py_ssize_t n = G.order()
@@ -640,7 +640,7 @@ def connected_full_subgraphs(G, edges_only=False, labels=False,
 
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int * order = <int *> mem.calloc(n, sizeof(int))
-    cdef mp_bitcnt_t * n_cpt = <mp_bitcnt_t *> mem.calloc(n, sizeof(mp_bitcnt_t))
+    cdef mp_limb_t * n_cpt = <mp_limb_t *> mem.calloc(n, sizeof(mp_limb_t))
 
     # We use several bitsets to store the current boundary and active neighbors.
     # We also need another bitset that we create at the same time
@@ -659,10 +659,10 @@ def connected_full_subgraphs(G, edges_only=False, labels=False,
     bitset_complement(active, active)
     bitset_discard(active, 0)
     bitset_copy(neighborhoods.rows[0], DG.rows[0])
-    n_cpt[0] = 1 << bitset_len(DG.rows[0])
+    n_cpt[0] = (<mp_limb_t>1) << bitset_len(DG.rows[0])
 
     cdef long u, v, j
-    cdef mp_bitcnt_t c
+    cdef mp_limb_t c
     cdef Py_ssize_t num_edges = 0
     cdef list E = []
     cdef list edges
@@ -734,7 +734,10 @@ def connected_full_subgraphs(G, edges_only=False, labels=False,
         # prepare neighborhood of u
         bitset_and(neighborhoods.rows[i], active, DG.rows[u])
         j = bitset_len(neighborhoods.rows[i])
-        n_cpt[i] = bool(j) << j  # 0 if not j else 2^j
+        if j:
+            n_cpt[i] = (<mp_limb_t>1) << j  # 2^j possible neighborhoods
+        else:
+            n_cpt[i] = 0
 
     sig_on()
     binary_matrix_free(boundaries)

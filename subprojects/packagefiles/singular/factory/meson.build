@@ -12,6 +12,7 @@ has_iostream_h = cpp.has_header('iostream.h')
 conf.set('NOSTREAMIO', not has_iostream_h)#, 'strstream.h', 'fstream.h', 'iostream', 'string', 'fstream', 'ctype.h'))
 conf.set('HAVE_IOSTREAM_H', has_iostream_h)
 conf.set('FACTORYVERSION', meson.project_version())
+conf.set('SIZEOF_LONG', cpp.sizeof('long'))
 factory_configuration = '@0@ in @1@'.format(meson.project_version(), meson.project_source_root())
 conf.set_quoted('FACTORYCONFIGURATION', factory_configuration)
 
