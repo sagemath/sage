@@ -28,11 +28,13 @@ from sphinx.transforms import SphinxTransform
 from sphinx.util.docutils import SphinxDirective
 
 import sage.version
-from sage.env import MATHJAX_DIR, PPLPY_DOCS, SAGE_DOC, SAGE_DOC_SRC
+from sage.env import PPLPY_DOCS, SAGE_DOC, SAGE_DOC_SRC
 from sage.features.sphinx import JupyterSphinx
 from sage.misc.latex_macros import sage_mathjax_macros
 from sage.misc.sagedoc import extlinks as extlinks  # noqa: PLC0414
 from sage.misc.sagedoc_conf import *  # Load configuration shared with sage.misc.sphinxify
+
+from .config import MATHJAX_PATH
 
 # ---------------------
 # General configuration
@@ -551,7 +553,7 @@ mathjax3_config = {
 if os.environ.get('SAGE_USE_CDNS', 'no') == 'yes':
     mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
 else:
-    mathjax_path = os.path.join(MATHJAX_DIR, 'tex-chtml.js')
+    mathjax_path = MATHJAX_PATH
 
 # A list of glob-style patterns that should be excluded when looking for source
 # files. They are matched against the source file names relative to the
