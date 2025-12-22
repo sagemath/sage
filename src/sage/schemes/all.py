@@ -47,3 +47,5 @@ from sage.schemes.weighted_projective.all import *
 from sage.schemes.cyclic_covers.all import *
 
 from sage.schemes.berkovich.all import *
+
+from .chow.all import *
