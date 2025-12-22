@@ -218,7 +218,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
     """
     Element = QuasiModularFormsElement
 
-    def __init__(self, group=1, base_ring=QQ, name='E2'):
+    def __init__(self, group=1, base_ring=QQ, name='E2') -> None:
         r"""
         INPUT:
 
@@ -334,7 +334,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         """
         raise NotImplementedError("spaces of quasimodular forms of fixed weight not yet implemented")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -372,7 +372,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
                 return True
         return self.base_ring().has_coerce_map_from(M)
 
-    def _element_constructor_(self, datum):
+    def _element_constructor_(self, datum) -> QuasiModularFormsElement:
         r"""
         The call method of ``self``.
 
@@ -438,7 +438,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
             datum = self.__polynomial_subring.coerce(datum)
         return self.element_class(self, datum)
 
-    def weight_2_eisenstein_series(self):
+    def weight_2_eisenstein_series(self) -> QuasiModularFormsElement:
         r"""
         Return the weight 2 Eisenstein series.
 
@@ -452,7 +452,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         """
         return self(self.__polynomial_subring.gen())
 
-    def gens(self) -> tuple:
+    def gens(self) -> tuple[QuasiModularFormsElement, ...]:
         r"""
         Return a tuple of generators of the quasimodular forms ring.
 
@@ -490,7 +490,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
     generators = gens  # alias
 
-    def ngens(self):
+    def ngens(self) -> int:
         r"""
         Return the number of generators of the given graded quasimodular forms
         ring.
@@ -502,7 +502,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         """
         return len(self.gens())
 
-    def gen(self, n):
+    def gen(self, n) -> QuasiModularFormsElement:
         r"""
         Return the `n`-th generator of the quasimodular forms ring.
 
@@ -531,7 +531,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         """
         return self.gens()[n]
 
-    def zero(self):
+    def zero(self) -> QuasiModularFormsElement:
         r"""
         Return the zero element of this ring.
 
@@ -545,7 +545,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         """
         return self.element_class(self, self.__polynomial_subring.zero())
 
-    def one(self):
+    def one(self) -> QuasiModularFormsElement:
         r"""
         Return the one element of this ring.
 
@@ -559,7 +559,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         """
         return self.element_class(self, self.__polynomial_subring.one())
 
-    def some_elements(self):
+    def some_elements(self) -> tuple[QuasiModularFormsElement, ...]:
         r"""
         Return a list of generators of ``self``.
 
@@ -675,7 +675,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         """
         gens = self.__modular_forms_subring.gen_forms()
         weights = [f.weight() for f in gens]
-        gens = iter(gens)
+        it_gens = iter(gens)
         if names is None:
             if self.group() == Gamma0(1):
                 names = ["E2", "E4", "E6"]
@@ -688,11 +688,11 @@ class QuasiModularForms(Parent, UniqueRepresentation):
                     #     F, G, H, I, J, K, FF, FG, FH,..., FFF, FFG,...
                     # the letters E and S are reserved for basis elements of the
                     # Eisenstein subspaces and cuspidal subspaces respectively.
-                    iter_names = (product(letters, repeat=r)
+                    pre_iter_names = (product(letters, repeat=r)
                                   for r in range(1, len(same_weights)//len(letters) + 2))
-                    iter_names = chain(*iter_names)
+                    iter_names = chain(*pre_iter_names)
                     for k in same_weights:
-                        form = next(gens)
+                        form = next(it_gens)
                         Mk = self.__modular_forms_subring.modular_forms_of_weight(k)
                         if form.is_eisenstein():
                             Ek_basis = Mk.eisenstein_subspace().basis()
@@ -717,7 +717,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         return PolynomialRing(self.base_ring(), len(weights), names,
                               order=TermOrder('wdeglex', weights))
 
-    def from_polynomial(self, polynomial):
+    def from_polynomial(self, polynomial) -> QuasiModularFormsElement:
         r"""
         Convert the given polynomial `P(x,\ldots, y)` to the graded quasiform
         `P(g_0, \ldots, g_n)` where the `g_i` are the generators given
@@ -727,7 +727,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
         - ``polynomial`` -- a multivariate polynomial
 
-        OUTPUT: the graded quasimodular forms `P(g_0, \ldots, g_n)`
+        OUTPUT: the graded quasimodular form `P(g_0, \ldots, g_n)`
 
         EXAMPLES::
 
@@ -779,7 +779,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         gens_dict = {poly_parent.gen(i): self.gen(i) for i in range(nb_var)}
         return self(polynomial.subs(gens_dict))
 
-    def basis_of_weight(self, weight):
+    def basis_of_weight(self, weight) -> list[QuasiModularFormsElement]:
         r"""
         Return a basis of elements generating the subspace of the given
         weight.
@@ -788,7 +788,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
         - ``weight`` -- integer; the weight of the subspace
 
-        OUTPUT: list of quasimodular forms of the given weight
+        OUTPUT: tuple of quasimodular forms of the given weight
 
         EXAMPLES::
 
@@ -811,7 +811,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
              1 - 24*q - 18*q^2 - 1320*q^3 - 5784*q^4 - 10080*q^5 + O(q^6),
              q - 21*q^2 - 135*q^3 - 515*q^4 - 1392*q^5 + O(q^6)]
         """
-        basis = []
+        basis: list[QuasiModularFormsElement] = []
         E2 = self.weight_2_eisenstein_series()
         M = self.__modular_forms_subring
         E2_pow = self.one()
