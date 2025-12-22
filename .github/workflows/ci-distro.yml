@@ -1,6 +1,6 @@
 name: CI (Distro)
 
-## This GitHub Actions workflow builds and tests sage with selected environments,
+## This GitHub Actions workflow builds and tests sage-the-distro on various platforms
 ## whenever a tag is pushed or a pull request changes relevant build files.
 ##
 ## It builds and checks some sage spkgs as defined in TARGETS.
@@ -41,7 +41,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  minimal:
+  linux-minimal:
     if: ${{ success() || failure() }}
     uses: ./.github/workflows/docker.yml
     with:
@@ -58,7 +58,7 @@ jobs:
           ["minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
 
-  standard:
+  linux:
     uses: ./.github/workflows/docker.yml
     with:
       free_disk_space: true
@@ -70,3 +70,40 @@ jobs:
       tox_packages_factors: >-
           ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+
+  macos:
+    name: Build and Test (macos-${{ matrix.version }})
+    runs-on: macos-${{ matrix.version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - '14'
+          - '15'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          eval $(build/bin/sage-print-system-package-command homebrew update)
+          eval $(build/bin/sage-print-system-package-command homebrew --yes --ignore-missing install $(build/bin/sage-get-system-packages homebrew _bootstrap _prereq $(build/bin/sage-package list :standard:)))
+
+      - name: Build
+        run: |
+          source ./.homebrew-build-env
+          ./bootstrap
+          ./configure --enable-download-from-upstream-url
+          make build V=0
+        env:
+          MAKE: 'make -j6'
+
+      - name: Test
+        run: |
+          source ./.homebrew-build-env # Needed so that runtime cython can find the dependencies
+          ./sage -t --all -p4
