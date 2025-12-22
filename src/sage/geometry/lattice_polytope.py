@@ -2580,6 +2580,44 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         return self.dim() == self.lattice_dim() and \
             all(c == 1 for c in self.facet_constants())
 
+    def is_cayley(self) -> bool:
+        """
+        Return whether ``self`` is a Cayley polytope.
+
+        A lattice polytope is Cayley if its vertex set is contained in
+        two parallel hyperplanes.
+
+        Here we assume that the polytope is full-dimensional.
+
+        ALGORITHM: This is inspired by Macaulay2 implementation.
+
+        EXAMPLES::
+
+            sage: P = polytopes.cube().lattice_polytope()
+            sage: P.is_cayley()
+            True
+
+            sage: P = LatticePolytope([(0,0),(1,0),(0,1),(2,2)])
+            sage: P.is_cayley()
+            False
+
+        TESTS:
+
+            sage: P = LatticePolytope([(0,),(1,)])
+            sage: P.is_cayley()
+            True
+            sage: P = LatticePolytope([(0,0),(2,0)])
+            sage: P.is_cayley()
+            Traceback (most recent call last):
+            ...
+            TypeError: the polytope is not full dimensional
+        """
+        if not self.is_full_dimensional():
+            raise TypeError("the polytope is not full dimensional")
+        verts = self.vertices()
+        return any(len(set(n.dot_product(v) for v in verts)) == 2
+                   for n in self.facet_normals())
+
     def lattice(self):
         r"""
         Return the ambient lattice of ``self``.
@@ -5548,10 +5586,7 @@ def minkowski_sum(points1, points2):
     """
     points1 = [vector(p) for p in points1]
     points2 = [vector(p) for p in points2]
-    points = []
-    for p1 in points1:
-        for p2 in points2:
-            points.append(p1+p2)
+    points = [p1 + p2 for p1 in points1 for p2 in points2]
     return convex_hull(points)
 
 
@@ -5729,7 +5764,7 @@ def read_palp_matrix(data, permutation=False):
         return mat
     # If data is not a string, try to treat it as a file.
     first_line = data.readline()
-    if first_line == "":
+    if not first_line:
         return matrix()
     first_line = first_line.split()
     m = int(first_line[0])
@@ -5898,7 +5933,7 @@ def write_palp_matrix(m, ofile=None, comment='', format=None):
     else:
         ofile.write(s)
     for i in range(m.nrows()):
-        s = " ".join(format % m[i, j] for j in range(m.ncols()))+"\n"
+        s = " ".join(format % m[i, j] for j in range(m.ncols())) + "\n"
         if ofile is None:
             print(s, end=" ")
         else:

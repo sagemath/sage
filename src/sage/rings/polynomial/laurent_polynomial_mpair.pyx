@@ -259,7 +259,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         INPUT:
 
-        - ``i`` -- integer
+        - ``i`` -- integer (optional); if given, normalize only with
+          respect to variable ``i``
 
         EXAMPLES::
 
@@ -272,6 +273,23 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
             sage: hash(L.zero())
             0
+
+        TESTS:
+
+        Check that :issue:`41282` is fixed. The bug was that when normalizing
+        with respect to a single variable ``i``, if the minimum exponent was
+        ``e > 1``, it only divided ``_poly`` by ``gen(i)`` instead of
+        ``gen(i)^e``::
+
+            sage: A.<t, x1> = LaurentPolynomialRing(QQ)
+            sage: f = x1 + t^(-2)
+            sage: g = f.subs({t: t^(-1)})
+            sage: g
+            t^2 + x1
+            sage: g.has_inverse_of(0)  # triggers _normalize(0) internally
+            False
+            sage: g
+            t^2 + x1
         """
         if not self._poly:
             self._mon = ETuple({}, int(self._parent.ngens()))
@@ -284,6 +302,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         cdef dict D = <dict > self._poly.monomial_coefficients()
 
         cdef ETuple e
+        cdef long e_i
         if i is None:
             e = None
             for k in D:
@@ -295,13 +314,13 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
                 self._poly = <ModuleElement > (self._poly // self._poly._parent({e: 1}))
                 self._mon = self._mon.eadd(e)
         else:
-            e = None
+            e_i = -1
             for k in D:
-                if e is None or k[i] < e:
-                    e = <ETuple > k[i]
-            if e > 0:
-                self._poly = <ModuleElement > (self._poly // self._poly._parent.gen(i))
-                self._mon = self._mon.eadd_p(e, i)
+                if e_i == -1 or k[i] < e_i:
+                    e_i = k[i]
+            if e_i > 0:
+                self._poly = <ModuleElement > (self._poly // self._poly._parent.gen(i) ** e_i)
+                self._mon = self._mon.eadd_p(e_i, i)
 
     cdef _compute_polydict(self):
         """
@@ -1428,6 +1447,16 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             TypeError: number of arguments does not match the number of generators in parent
             sage: f( (1,1,1) )
             6
+
+        Check that :issue:`41282` is fixed::
+
+            sage: A.<t, x1> = LaurentPolynomialRing(QQ)
+            sage: f = x1 + t^(-2)
+            sage: g = f.subs({t: t^(-1)})
+            sage: g
+            t^2 + x1
+            sage: g(0, x1)
+            x1
         """
         if kwds:
             f = self.subs(**kwds)
@@ -1453,6 +1482,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
                 if self.has_inverse_of(m):
                     raise ZeroDivisionError
 
+        # Normalize internal representation, then evaluate using polynomial
+        self._normalize()
         ans = self._poly(*x)
         if ans:
             for m in self._mon.nonzero_positions():
@@ -1512,6 +1543,20 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
             sage: f.subs({1: 2}, x=1)
             3*z + 5
+
+        Check that :issue:`41282` is fixed (``subs`` should not mutate
+        ``self`` and should return correct values)::
+
+            sage: A.<t, x1> = LaurentPolynomialRing(QQ)
+            sage: f = x1 + t^(-2)
+            sage: g = f.subs({t: t^(-1)})
+            sage: g
+            t^2 + x1
+            sage: before = list(g)
+            sage: g.subs({t: 0})
+            x1
+            sage: list(g) == before
+            True
         """
         cdef list variables = list(self._parent.gens())
         cdef Py_ssize_t i
@@ -2071,6 +2116,32 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             False
             sage: f1.divides(3)
             False
+
+        Zero is divisible by everything, and only zero is divisible by zero::
+
+            sage: R.<x,y> = LaurentPolynomialRing(ZZ)
+            sage: x.divides(R(0))
+            True
+            sage: R(0).divides(x)
+            False
+            sage: R(0).divides(R(0))
+            True
+
+        Monomials divide when the exponents allow::
+
+            sage: (x*y^-1).divides(x^2*y^-2)
+            True
+            sage: (x^2).divides(x)
+            True
+
+        TESTS:
+
+        Multivariate Laurent polynomial rings require an integral domain base ring::
+
+            sage: R.<x,y> = LaurentPolynomialRing(Zmod(4))
+            Traceback (most recent call last):
+            ...
+            ValueError: base ring must be an integral domain
         """
         p = self.monomial_reduction()[0]
         q = other.monomial_reduction()[0]
