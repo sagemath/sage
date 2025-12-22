@@ -5481,13 +5481,14 @@ cdef class Polynomial(CommutativePolynomial):
         return (q*Q,q*R)
 
     @coerce_binop
-    def gcd(self, other):
+    def gcd(self, other, algorithm='pari'):
         """
         Return a greatest common divisor of this polynomial and ``other``.
 
         INPUT:
 
         - ``other`` -- a polynomial in the same ring as this polynomial
+        - ``algorithm='pari'`` -- the algorithm used for computing gcd of two polynomials, should be 'pari' or 'generic'
 
         OUTPUT:
 
@@ -5498,9 +5499,15 @@ cdef class Polynomial(CommutativePolynomial):
         .. NOTE::
 
             The actual algorithm for computing greatest common divisors depends
-            on the base ring underlying the polynomial ring. If the base ring
-            defines a method :meth:`_gcd_univariate_polynomial`, then this method
-            will be called (see examples below).
+            on the base ring underlying the polynomial ring. If the algorithm is
+            set to default 'pari', it will try the PARI implementation. Otherwise
+            algorithm should be set to 'generic' and in this case, if will be checked
+            if the base ring defines a method :meth:`_gcd_univariate_polynomial`,
+            then this method will be called (see examples below). Algorithm 'pari' has
+            half-gcd algorithm implemented in some cases, which is significantly faster
+            for high degree polynomials. Generally without half-gcd algorithm, it is
+            infeasible to calculate gcd/xgcd of two degree 50000 polynomials in a minute
+            but TEST shows it is doable with algorithm 'pari'.
 
         EXAMPLES::
 
@@ -5557,6 +5564,14 @@ cdef class Polynomial(CommutativePolynomial):
             sage: Pol = QQ['x','y']['x']
             sage: Pol.one().gcd(1)
             1
+
+            sage: P.<x> = PolynomialRing(Zmod(4294967311 * 4294967357), implementation='NTL')
+            sage: degree = 50000
+            sage: g_deg = 10000
+            sage: g = P.random_element(g_deg).monic()
+            sage: a, b = P.random_element(degree), P.random_element(degree)
+            sage: (a * g).gcd(b * g) == g
+            True
         """
         cdef Polynomial _other = <Polynomial> other
         if _other.is_one():
@@ -5568,6 +5583,18 @@ cdef class Polynomial(CommutativePolynomial):
         if tgt.ngens() > 1 and tgt._has_singular:
             g = flatten(self).gcd(flatten(other))
             return flatten.section()(g)
+
+        if algorithm not in ("pari", "generic"):
+            raise ValueError(f"unknown implementation {algorithm!r} for gcd function over {self.parent()}")
+        if algorithm == 'pari':
+            P = self.parent()
+            g = self._pari_with_name().gcd(other._pari_with_name())
+            g = P(g)
+            c = g.leading_coefficient()
+            if c != P(0):
+                g /= c
+            return g
+
         try:
             doit = self._parent._base._gcd_univariate_polynomial
         except AttributeError:
@@ -9760,13 +9787,14 @@ cdef class Polynomial(CommutativePolynomial):
         return self._parent.variable_name()
 
     @coerce_binop
-    def xgcd(self, other):
+    def xgcd(self, other, algorithm='pari'):
         r"""
         Return an extended gcd of this polynomial and ``other``.
 
         INPUT:
 
         - ``other`` -- a polynomial in the same ring as this polynomial
+        - ``algorithm='pari'`` -- the algorithm used for computing xgcd of two polynomials, should be 'pari' or 'generic'
 
         OUTPUT:
 
@@ -9776,10 +9804,16 @@ cdef class Polynomial(CommutativePolynomial):
 
         .. NOTE::
 
-            The actual algorithm for computing the extended gcd depends on the
-            base ring underlying the polynomial ring. If the base ring defines
-            a method :meth:`_xgcd_univariate_polynomial`, then this method will be
-            called (see examples below).
+            The actual algorithm for computing greatest common divisors depends
+            on the base ring underlying the polynomial ring. If the algorithm is
+            set to default 'pari', it will try the PARI implementation. Otherwise
+            algorithm should be set to 'generic' and in this case, if will be checked
+            if the base ring defines a method :meth:`_xgcd_univariate_polynomial`,
+            then this method will be called (see examples below). Algorithm 'pari' has
+            half-gcd algorithm implemented in some cases, which is significantly faster
+            for high degree polynomials. Generally without half-gcd algorithm, it is
+            infeasible to calculate gcd/xgcd of two degree 50000 polynomials in a minute
+            but TEST shows it is doable with algorithm 'pari'.
 
         EXAMPLES::
 
@@ -9814,7 +9848,32 @@ cdef class Polynomial(CommutativePolynomial):
             sage: h1.xgcd(h2)
             (x*y, 1, 0)
             sage: del R._xgcd_univariate_polynomial
+
+        TESTS::
+
+            sage: P.<x> = PolynomialRing(Zmod(4294967311 * 4294967357), implementation='NTL')
+            sage: degree = 50000
+            sage: g_deg = 10000
+            sage: g = P.random_element(g_deg).monic()
+            sage: a, b = P.random_element(degree), P.random_element(degree)
+            sage: r, s, t = a.xgcd(b)
+            sage: (r == a.gcd(b)) and (r == s * a + t * b)
+            True
         """
+        if algorithm not in ("pari", "generic"):
+            raise ValueError(f"unknown implementation {algorithm!r} for xgcd function over {self.parent()}")
+        if algorithm == 'pari':
+            P = self.parent()
+            s, t, r = self._pari_with_name().gcdext(other._pari_with_name())
+            s = P(s)
+            t = P(t)
+            r = P(r)
+            c = r.leading_coefficient()
+            if c != P(0):
+                s /= c
+                t /= c
+                r /= c
+            return r, s, t
         if hasattr(self.base_ring(), '_xgcd_univariate_polynomial'):
             return self.base_ring()._xgcd_univariate_polynomial(self, other)
         raise NotImplementedError("%s does not provide an xgcd implementation for univariate polynomials" % self.base_ring())
