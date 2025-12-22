@@ -231,28 +231,25 @@ cdef initialize():
     cdef char* argv[16]
     argv[0] = "sage"
     argv[1] = "-A"
-    argv[2] = "-l"
-    s = str_to_bytes(sage.env.GAP_ROOT_PATHS, FS_ENCODING, "surrogateescape")
-    argv[3] = s
 
-    argv[4] = "-m"
-    argv[5] = "64m"
+    argv[2] = "-m"
+    argv[3] = "64m"
 
-    argv[6] = "-q"    # no prompt!
-    argv[7] = "-E"   # don't use readline as this will interfere with Python
-    argv[8] = "--nointeract"  # Implies -T
-    argv[9] = "-x"    # set the "screen" width so that GAP is less likely to
-    argv[10] = "4096"  # insert newlines when printing objects
+    argv[4] = "-q"    # no prompt!
+    argv[5] = "-E"   # don't use readline as this will interfere with Python
+    argv[6] = "--nointeract"  # Implies -T
+    argv[7] = "-x"    # set the "screen" width so that GAP is less likely to
+    argv[8] = "4096"  # insert newlines when printing objects
                       # 4096 unfortunately is the hard-coded max, but should
                       # be long enough for most cases
-    cdef int argc = 11   # argv[argc] must be NULL
+    cdef int argc = 9   # argv[argc] must be NULL
     gap_mem = sage.env.SAGE_GAP_MEMORY
     if gap_mem is not None:
         argc += 2
-        argv[11] = "-s"
+        argv[9] = "-s"
         s1 = str_to_bytes(gap_mem, FS_ENCODING, "surrogateescape")
-        argv[12] = s1
-        argv[5] = s1
+        argv[10] = s1
+        argv[3] = s1
 
     from sage.libs.gap.saved_workspace import workspace
     workspace, workspace_is_up_to_date = workspace()

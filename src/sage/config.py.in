@@ -12,11 +12,6 @@ VERSION = "@PACKAGE_VERSION@"
 SAGE_LOCAL = "@prefix@"
 SAGE_ROOT = "@SAGE_ROOT@"
 
-# The semicolon-separated list of GAP root paths. This is the list of
-# locations that are searched for GAP packages. This is passed directly
-# to GAP via the -l flag.
-GAP_ROOT_PATHS = "@GAP_ROOT_PATHS@".replace("${prefix}", SAGE_LOCAL)
-
 # The path to the standalone maxima executable.
 MAXIMA = "@SAGE_MAXIMA@".replace("${prefix}", SAGE_LOCAL)
 
@@ -147,3 +142,16 @@ def get_include_dirs() -> list[Path]:
         # because some headers are generated in the build directory.
         dirs.extend([root / "src" for root in editable_root])
     return [dir for dir in dirs if dir.is_dir()]
+
+
+def get_gap_root() -> Path:
+    """
+    Return the GAP root path.
+
+    EXAMPLES::
+
+        sage: from sage.config import get_gap_root
+        sage: get_gap_root() # random
+        '/path/to/local/lib/gap'
+    """
+    return Path("@GAP_ROOT_PATH@")
