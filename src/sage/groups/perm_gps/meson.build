@@ -13,7 +13,7 @@ py.install_sources(
   subdir: 'sage/groups/perm_gps',
 )
 
-extension_data = {'permgroup_element' : files('permgroup_element.pyx')}
+extension_data = {'permgroup_element': files('permgroup_element.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

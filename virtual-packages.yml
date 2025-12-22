@@ -1,0 +1,11 @@
+subdirs:
+  osx-64:
+    packages:
+      __unix: "0"
+      __archspec: "1 x86_64"
+      __osx: "13.3"
+  osx-arm64:
+    packages:
+      __unix: "0"
+      __archspec: "1 arm64"
+      __osx: "13.3"

@@ -7,7 +7,7 @@ py.install_sources(
 )
 
 extension_data = {
-  'probability_distribution' : files('probability_distribution.pyx'),
+  'probability_distribution': files('probability_distribution.pyx'),
 }
 
 foreach name, pyx : extension_data

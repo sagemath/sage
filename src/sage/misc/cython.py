@@ -50,16 +50,12 @@ def _standard_libs_libdirs_incdirs_aliases():
          {...})
     """
     aliases = cython_aliases()
-    standard_libs = [
-        'mpfr', 'gmp', 'gmpxx', 'pari', 'm',
-        'ec', 'gsl',
-    ] + aliases["CBLAS_LIBRARIES"] + [
-        'ntl']
+    standard_libs = ["mpfr", "gmp", "gmpxx", "pari", "m", "ec", "gsl", "ntl"]
     standard_libdirs = []
     if SAGE_LOCAL:
         standard_libdirs.append(os.path.join(SAGE_LOCAL, "lib"))
-    standard_libdirs.extend(aliases["CBLAS_LIBDIR"] + aliases["NTL_LIBDIR"])
-    standard_incdirs = [dir.as_posix() for dir in get_include_dirs()] + aliases["CBLAS_INCDIR"] + aliases["NTL_INCDIR"]
+    standard_libdirs.extend(aliases["NTL_LIBDIR"])
+    standard_incdirs = [dir.as_posix() for dir in get_include_dirs()] + aliases["NTL_INCDIR"]
     return standard_libs, standard_libdirs, standard_incdirs, aliases
 
 ################################################################

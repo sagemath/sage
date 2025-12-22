@@ -59,9 +59,9 @@ py.install_sources(
 )
 
 extension_data = {
-  'descent_two_isogeny' : files('descent_two_isogeny.pyx'),
-  'mod_sym_num' : files('mod_sym_num.pyx'),
-  'period_lattice_region' : files('period_lattice_region.pyx'),
+  'descent_two_isogeny': files('descent_two_isogeny.pyx'),
+  'mod_sym_num': files('mod_sym_num.pyx'),
+  'period_lattice_region': files('period_lattice_region.pyx'),
 }
 
 foreach name, pyx : extension_data

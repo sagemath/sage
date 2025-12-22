@@ -29,13 +29,13 @@ py.install_sources(
 )
 
 extension_data = {
-  'designs_pyx' : files('designs_pyx.pyx'),
-  'evenly_distributed_sets' : files('evenly_distributed_sets.pyx'),
-  'gen_quadrangles_with_spread' : files('gen_quadrangles_with_spread.pyx'),
-  'orthogonal_arrays_find_recursive' : files(
+  'designs_pyx': files('designs_pyx.pyx'),
+  'evenly_distributed_sets': files('evenly_distributed_sets.pyx'),
+  'gen_quadrangles_with_spread': files('gen_quadrangles_with_spread.pyx'),
+  'orthogonal_arrays_find_recursive': files(
     'orthogonal_arrays_find_recursive.pyx',
   ),
-  'subhypergraph_search' : files('subhypergraph_search.pyx'),
+  'subhypergraph_search': files('subhypergraph_search.pyx'),
 }
 
 foreach name, pyx : extension_data

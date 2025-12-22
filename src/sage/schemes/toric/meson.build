@@ -18,7 +18,7 @@ py.install_sources(
   subdir: 'sage/schemes/toric',
 )
 
-extension_data = {'divisor_class' : files('divisor_class.pyx')}
+extension_data = {'divisor_class': files('divisor_class.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

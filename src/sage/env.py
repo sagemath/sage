@@ -324,17 +324,8 @@ def sage_include_directories(use_sources=False):
     return dirs
 
 
-def get_cblas_pc_module_name() -> str:
-    """
-    Return the name of the BLAS libraries to be used.
-    """
-    import pkgconfig
-    cblas_pc_modules = CBLAS_PC_MODULES.split(':')
-    return next(blas_lib for blas_lib in cblas_pc_modules if pkgconfig.exists(blas_lib))
-
-
 default_required_modules = ('fflas-ffpack', 'givaro', 'gsl', 'linbox', 'Singular',
-                            'libpng', 'gdlib', 'm4ri', 'zlib', 'cblas', 'ecl')
+                            'libpng', 'gdlib', 'm4ri', 'zlib', 'ecl')
 
 
 default_optional_modules = ('lapack',)
@@ -359,7 +350,7 @@ def cython_aliases(required_modules=None, optional_modules=None):
         sage: cython_aliases()
         {...}
         sage: sorted(cython_aliases().keys())
-        ['CBLAS_CFLAGS',
+        ['ECL_CFLAGS',
          ...,
          'ZLIB_LIBRARIES']
         sage: cython_aliases(required_modules=('module-that-is-assumed-to-not-exist'))
@@ -406,8 +397,6 @@ def cython_aliases(required_modules=None, optional_modules=None):
     for lib, required in itertools.chain(((lib, True) for lib in required_modules),
                                          ((lib, False) for lib in optional_modules)):
         var = lib.upper().replace("-", "") + "_"
-        if lib == 'cblas':
-            lib = get_cblas_pc_module_name()
         if lib == 'zlib':
             aliases[var + "CFLAGS"] = ""
             try:

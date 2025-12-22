@@ -20,8 +20,8 @@ py.install_sources(
 )
 
 extension_data = {
-  'distance_regular' : files('distance_regular.pyx'),
-  'trees' : files('trees.pyx'),
+  'distance_regular': files('distance_regular.pyx'),
+  'trees': files('trees.pyx'),
 }
 
 foreach name, pyx : extension_data

@@ -27,7 +27,7 @@ py.install_sources(
   subdir: 'sage/combinat/rigged_configurations',
 )
 
-extension_data = {'rigged_partition' : files('rigged_partition.pyx')}
+extension_data = {'rigged_partition': files('rigged_partition.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

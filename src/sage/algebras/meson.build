@@ -48,9 +48,9 @@ py.install_sources(
 )
 
 extension_data = {
-  'clifford_algebra_element' : files('clifford_algebra_element.pyx'),
-  'exterior_algebra_groebner' : files('exterior_algebra_groebner.pyx'),
-  'octonion_algebra' : files('octonion_algebra.pyx'),
+  'clifford_algebra_element': files('clifford_algebra_element.pyx'),
+  'exterior_algebra_groebner': files('exterior_algebra_groebner.pyx'),
+  'octonion_algebra': files('octonion_algebra.pyx'),
 }
 
 foreach name, pyx : extension_data

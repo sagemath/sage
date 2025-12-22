@@ -28,12 +28,12 @@ py.install_sources(
 )
 
 extension_data = {
-  'base' : files('base.pyx'),
-  'implicit_surface' : files('implicit_surface.pyx'),
-  'index_face_set' : files('index_face_set.pyx'),
-  'shapes' : files('shapes.pyx'),
-  'transform' : files('transform.pyx'),
-  'parametric_surface' : files('parametric_surface.pyx'),
+  'base': files('base.pyx'),
+  'implicit_surface': files('implicit_surface.pyx'),
+  'index_face_set': files('index_face_set.pyx'),
+  'shapes': files('shapes.pyx'),
+  'transform': files('transform.pyx'),
+  'parametric_surface': files('parametric_surface.pyx'),
 }
 
 foreach name, pyx : extension_data

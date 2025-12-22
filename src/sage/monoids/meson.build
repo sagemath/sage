@@ -18,7 +18,7 @@ py.install_sources(
 )
 
 extension_data = {
-  'free_abelian_monoid_element' : files('free_abelian_monoid_element.pyx'),
+  'free_abelian_monoid_element': files('free_abelian_monoid_element.pyx'),
 }
 
 foreach name, pyx : extension_data
