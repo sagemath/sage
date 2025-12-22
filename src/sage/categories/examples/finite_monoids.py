@@ -1,12 +1,12 @@
 """
 Examples of finite monoids
 """
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
@@ -66,7 +66,7 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
         running ._test_some_elements() . . . pass
     """
 
-    def __init__(self, n=12):
+    def __init__(self, n=12) -> None:
         r"""
         EXAMPLES::
 
@@ -80,7 +80,7 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
         self.n = n
         Parent.__init__(self, category=Monoids().Finite().FinitelyGenerated())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -92,9 +92,9 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
 
     def semigroup_generators(self):
         r"""
-
-        Returns a set of generators for ``self``, as per
+        Return a set of generators for ``self``, as per
         :meth:`Semigroups.ParentMethods.semigroup_generators`.
+
         Currently this returns all integers mod `n`, which is of
         course far from optimal!
 

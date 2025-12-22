@@ -1,12 +1,12 @@
 """
 Examples of commutative additive monoids
 """
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
@@ -35,7 +35,7 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
 
     with product rule given by `a \times b = a` for all `a, b`::
 
-        sage: (a,b,c,d) = S.additive_semigroup_generators()
+        sage: a, b, c, d = S.additive_semigroup_generators()
 
     We conclude by running systematic tests on this commutative monoid::
 
@@ -66,7 +66,7 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
         running ._test_zero() . . . pass
     """
 
-    def __init__(self, alphabet=('a','b','c','d')):
+    def __init__(self, alphabet=('a', 'b', 'c', 'd')) -> None:
         r"""
         The free commutative monoid.
 
@@ -86,7 +86,7 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
         self.alphabet = alphabet
         Parent.__init__(self, category=CommutativeAdditiveMonoids())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
