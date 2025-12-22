@@ -51,7 +51,7 @@ def find_min(vect):
         [0, 1]
         sage: find_min([2, 1, 0])
         [0, 1, 0]
-        sage: find_min([0 0])
+        sage: find_min([0,0])
         [0, 0]
     """
     i = len(vect)
