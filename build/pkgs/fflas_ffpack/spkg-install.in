@@ -1,3 +1,4 @@
+export LINBOX_BLAS='-framework Accelerate'
 cd src
 
 if [ "$LINBOX_BLAS" != "" ]; then
