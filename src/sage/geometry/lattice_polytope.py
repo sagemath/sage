@@ -5941,6 +5941,7 @@ class LatticePolytopes(UniqueRepresentation, Parent):
         """
         return "Set of all Lattice Polytopes"
 
+    @cached_method
     def one(self):
         """
         Return the unit of the monoid.
