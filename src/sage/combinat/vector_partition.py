@@ -20,7 +20,7 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.structure.parent import Parent
@@ -30,9 +30,9 @@ from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.partition import Partition
 
 
-def find_min(vect):
+def find_min(vect) -> list[int]:
     """
-    Return a string of ``0``'s with one ``1`` at the location where the list
+    Return a list of ``0``'s with one ``1`` at the location where the list
     ``vect`` has its last entry which is not equal to ``0``.
 
     INPUT:
@@ -51,13 +51,20 @@ def find_min(vect):
         [0, 1]
         sage: find_min([2, 1, 0])
         [0, 1, 0]
+
+    TESTS::
+
+        sage: find_min([])
+        []
+        sage: find_min([0,0])
+        [0, 0]
     """
     i = len(vect)
-    while vect[i-1] == 0 and i > 0:
-        i = i-1
-    min = [0]*len(vect)
-    if i > 0:
-        min[i-1] = 1
+    min = [0] * i
+    while i > 0 and vect[i - 1] == 0:
+        i -= 1
+    if i:
+        min[i - 1] = 1
     return min
 
 
@@ -90,17 +97,18 @@ def IntegerVectorsIterator(vect, min=None):
     vect = list(vect)
     if not vect:
         yield []
-    else:
-        if min is None:
-            min = [0] * len(vect)
-        if vect < min:
-            return
-        else:
-            for vec in IntegerVectorsIterator(vect[1:], min=min[1:]):
-                yield [min[0]] + vec
-            for j in range(min[0] + 1, vect[0] + 1):
-                for vec in IntegerVectorsIterator(vect[1:]):
-                    yield [j] + vec
+        return
+
+    if min is None:
+        min = [0] * len(vect)
+    if vect < min:
+        return
+
+    for vec in IntegerVectorsIterator(vect[1:], min=min[1:]):
+        yield [min[0]] + vec
+    for j in range(min[0] + 1, vect[0] + 1):
+        for vec in IntegerVectorsIterator(vect[1:]):
+            yield [j] + vec
 
 
 class VectorPartition(CombinatorialElement):
@@ -128,7 +136,7 @@ class VectorPartition(CombinatorialElement):
         P = VectorPartitions(vec)
         return P(vecpar)
 
-    def __init__(self, parent, vecpar):
+    def __init__(self, parent, vecpar) -> None:
         """
         Initialize ``self``.
 
@@ -139,7 +147,7 @@ class VectorPartition(CombinatorialElement):
         """
         CombinatorialElement.__init__(self, parent, sorted(vecpar))
 
-    def sum(self):
+    def sum(self) -> list:
         """
         Return the sum vector as a list.
 
@@ -259,17 +267,20 @@ class VectorPartitions(UniqueRepresentation, Parent):
             min = find_min(vec)  # tuple([0 for v in vec[:-1]]+[1])
         if parts is None:
             parts = list(IntegerVectorsIterator(vec, min=min))
-        if [0]*len(vec) in parts:
-            parts.remove([0]*len(vec))
+        full_zero = [0] * len(vec)
+        if full_zero in parts:
+            parts.remove(full_zero)
         if min in parts:
             min_index = parts.index(min)
             parts = parts[min_index:]
         parts = list(parts)
         for part_index in range(len(parts)):
             parts[part_index] = tuple(parts[part_index])
-        return super().__classcall__(cls, tuple(vec), tuple(min), tuple(parts), distinct, is_repeatable)
+        return super().__classcall__(cls, tuple(vec), tuple(min), tuple(parts),
+                                     distinct, is_repeatable)
 
-    def __init__(self, vec, min=None, parts=None, distinct=False, is_repeatable=None):
+    def __init__(self, vec, min=None, parts=None, distinct=False,
+                 is_repeatable=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -312,25 +323,26 @@ class VectorPartitions(UniqueRepresentation, Parent):
             9
         """
         if all(coord == 0 for coord in self._vec):
-            yield self.element_class(self, []) # the zero vector has only the empty partition
+            yield self.element_class(self, [])  # the zero vector has only the empty partition
         else:
-            for part in self._parts: # choose the first part
+            for part in self._parts:  # choose the first part
                 if tuple(part) == self._vec:
                     yield self.element_class(self, [list(part)])
                 elif any(part[i] > self._vec[i] for i in range(len(self._vec))):
                     pass
-                else:# recursively find all possibilities for the rest of the vector partition
-                    new_vec = tuple(self._vec[i]-part[i] for i in range(len(self._vec)))
+                else:  # recursively find all possibilities for the rest of the vector partition
+                    new_vec = tuple(self._vec[i] - part[i]
+                                    for i in range(len(self._vec)))
                     i = self._parts.index(part)
                     if self._is_repeatable is None:
                         if self._distinct:
-                            new_parts = self._parts[i+1:]
+                            new_parts = self._parts[i + 1:]
                         else:
                             new_parts = self._parts[i:]
                     else:
                         if self._is_repeatable(part):
                             new_parts = self._parts[i:]
                         else:
-                            new_parts = self._parts[i+1:]
+                            new_parts = self._parts[i + 1:]
                     for vecpar in VectorPartitions(new_vec, min=self._min, parts=new_parts, distinct=self._distinct, is_repeatable=self._is_repeatable):
                         yield self.element_class(self, [list(part)] + list(vecpar))

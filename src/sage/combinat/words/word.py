@@ -18,7 +18,7 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ***************************************************************************
 from sage.misc.lazy_import import lazy_import
 from sage.combinat.words.word_char import WordDatatype_char
@@ -29,10 +29,10 @@ from .word_datatypes import (WordDatatype_str,
                              WordDatatype_list,
                              WordDatatype_tuple)
 from .word_infinite_datatypes import (
-                            WordDatatype_iter_with_caching,
-                            WordDatatype_iter,
-                            WordDatatype_callable_with_caching,
-                            WordDatatype_callable)
+    WordDatatype_iter_with_caching,
+    WordDatatype_iter,
+    WordDatatype_callable_with_caching,
+    WordDatatype_callable)
 from .morphic import WordDatatype_morphic
 
 lazy_import('sage.monoids.free_monoid_element', 'FreeMonoidElement')
@@ -41,7 +41,8 @@ lazy_import('sage.monoids.free_monoid_element', 'FreeMonoidElement')
 # Word_class to Word and imbedding Word as its __call__ method.
 
 
-def Word(data=None, alphabet=None, length=None, datatype=None, caching=True, RSK_data=None):
+def Word(data=None, alphabet=None, length=None, datatype=None,
+         caching=True, RSK_data=None):
     r"""
     Construct a word.
 

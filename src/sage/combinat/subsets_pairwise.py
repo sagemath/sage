@@ -1,12 +1,12 @@
 r"""
 Subsets whose elements satisfy a predicate pairwise
 """
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.sets.set import Set_object_enumerated
