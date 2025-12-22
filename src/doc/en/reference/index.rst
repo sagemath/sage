@@ -178,6 +178,12 @@ Indices and Tables
 * :ref:`modindex`
 * :ref:`search`
 
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   sage
+
 ..
   comment: the following math environment forces Sphinx to load MathJax
   in the index.rst pages. Do not delete it!

@@ -14,6 +14,8 @@ if not sphinx_check.found()
   subdir_done()
 endif
 
+legacy_docs = get_option('legacy-docs')
+
 doc_src = []
 subdir('el')
 subdir('ca')
@@ -42,121 +44,152 @@ doc_bootstrap = custom_target(
   depends: doc_src,
 )
 
-references = run_command(
-  py,
-  [
-    src / 'build-docs.py',
-    '--no-prune-empty-dirs',
-    '--all-documents',
-    'reference',
-    '--source',
-    meson.current_source_dir(),
-  ],
-  check: true,
-).stdout().strip()
+if legacy_docs
+  references = run_command(
+    py,
+    [
+      src / 'build-docs.py',
+      '--no-prune-empty-dirs',
+      '--all-documents',
+      'reference',
+      '--source',
+      meson.current_source_dir(),
+    ],
+    check: true,
+  ).stdout().strip()
 
-reference_inventory = []
-reference_html = []
-reference_pdf = []
-bibliography = []
-foreach type : ['inventory', 'html', 'pdf']
-  foreach ref : references.splitlines()
-    if '/' in ref
-      short_ref = ref.split('/')[1]
-    else
-      short_ref = ref
-    endif
-    deps = []
-    deps += doc_bootstrap
-    if short_ref == 'repl'
-      deps += doc_src_repl
-    endif
-    if type == 'html' or type == 'pdf'
-      deps += reference_inventory
-    endif
-    if short_ref != 'references'
-      deps += bibliography
-    endif
-    if short_ref == 'reference_top'
-      deps += reference_inventory
-      if type == 'html'
-        deps += reference_html
-      elif type == 'pdf'
-        deps += reference_pdf
+  reference_inventory = []
+  reference_html = []
+  reference_pdf = []
+  bibliography = []
+  foreach type : ['inventory', 'html', 'pdf']
+    foreach ref : references.splitlines()
+      if '/' in ref
+        short_ref = ref.split('/')[1]
+      else
+        short_ref = ref
       endif
-    endif
-    target = custom_target(
-      'doc-' + type + '-reference-' + short_ref,
-      output: [type + short_ref],
-      command: [
-        py,
-        src / 'build-docs.py',
-        '--no-prune-empty-dirs',
-        '--no-pdf-links',
-        ref,
-        type,
-        '-o',
-        '@OUTDIR@',
-        '--source',
-        meson.current_build_dir(),
-      ],
-      depends: deps,
-    )
-    if short_ref == 'references'
-      bibliography += target
-    endif
-    if type == 'inventory'
-      reference_inventory += target
-    elif type == 'html'
-      reference_html += target
-    elif type == 'pdf'
-      reference_pdf += target
-    endif
+      deps = []
+      deps += doc_bootstrap
+      if short_ref == 'repl'
+        deps += doc_src_repl
+      endif
+      if type == 'html' or type == 'pdf'
+        deps += reference_inventory
+      endif
+      if short_ref != 'references'
+        deps += bibliography
+      endif
+      if short_ref == 'reference_top'
+        deps += reference_inventory
+        if type == 'html'
+          deps += reference_html
+        elif type == 'pdf'
+          deps += reference_pdf
+        endif
+      endif
+      target = custom_target(
+        'doc-' + type + '-reference-' + short_ref,
+        output: [type + short_ref],
+        command: [
+          py,
+          src / 'build-docs.py',
+          '--no-prune-empty-dirs',
+          '--no-pdf-links',
+          ref,
+          type,
+          '-o',
+          '@OUTDIR@',
+          '--source',
+          meson.current_build_dir(),
+        ],
+        depends: deps,
+      )
+      if short_ref == 'references'
+        bibliography += target
+      endif
+      if type == 'inventory'
+        reference_inventory += target
+      elif type == 'html'
+        reference_html += target
+      elif type == 'pdf'
+        reference_pdf += target
+      endif
+    endforeach
   endforeach
-endforeach
 
-other_documents = run_command(
-  py,
-  [
-    src / 'build-docs.py',
-    '--no-prune-empty-dirs',
-    '--all-documents',
-    'all',
-    '--source',
-    meson.current_source_dir(),
-  ],
-  check: true,
-).stdout().strip()
-other_documents_html = []
-other_documents_pdf = []
-foreach type : ['html', 'pdf']
-  foreach doc : other_documents.splitlines()
-    short_doc = doc.replace('/', '-')
-    target = custom_target(
-      'doc-' + type + '-other-' + short_doc,
-      output: [type + short_doc],
-      command: [
-        py,
-        src / 'build-docs.py',
-        '--no-prune-empty-dirs',
-        '--no-pdf-links',
-        doc,
-        type,
-        '-o',
-        '@OUTDIR@',
-        '--source',
-        meson.current_build_dir(),
-      ],
-      depends: reference_inventory,
-    )
-    if type == 'html'
-      other_documents_html += target
-    elif type == 'pdf'
-      other_documents_pdf += target
-    endif
+  other_documents = run_command(
+    py,
+    [
+      src / 'build-docs.py',
+      '--no-prune-empty-dirs',
+      '--all-documents',
+      'all',
+      '--source',
+      meson.current_source_dir(),
+    ],
+    check: true,
+  ).stdout().strip()
+  other_documents_html = []
+  other_documents_pdf = []
+  foreach type : ['html', 'pdf']
+    foreach doc : other_documents.splitlines()
+      short_doc = doc.replace('/', '-')
+      target = custom_target(
+        'doc-' + type + '-other-' + short_doc,
+        output: [type + short_doc],
+        command: [
+          py,
+          src / 'build-docs.py',
+          '--no-prune-empty-dirs',
+          '--no-pdf-links',
+          doc,
+          type,
+          '-o',
+          '@OUTDIR@',
+          '--source',
+          meson.current_build_dir(),
+        ],
+        depends: reference_inventory,
+      )
+      if type == 'html'
+        other_documents_html += target
+      elif type == 'pdf'
+        other_documents_pdf += target
+      endif
+    endforeach
   endforeach
-endforeach
 
-# Custom target for building the complete documentation
-alias_target('doc-html', [reference_html, other_documents_html])
-alias_target('doc-pdf', [reference_pdf, other_documents_pdf])
+  # Custom target for building the complete documentation
+  alias_target('doc-html', [reference_html, other_documents_html])
+  alias_target('doc-pdf', [reference_pdf, other_documents_pdf])
+else
+  source_dir = join_paths(meson.current_build_dir(), 'en')
+  output_dir = join_paths(meson.current_build_dir(), 'html', 'en')
+  sphinx_build_cmd = '''
+import pathlib
+import sys
+from sphinx.cmd.build import build_main
+
+src, outdir, stamp = sys.argv[1:4]
+pathlib.Path(outdir).mkdir(parents=True, exist_ok=True)
+result = build_main(['-b', 'html', src, outdir])
+if result != 0:
+    sys.exit(result)
+pathlib.Path(stamp).touch()
+'''
+  doc_html = custom_target(
+    'doc-html',
+    output: ['doc-html.stamp'],
+    input: doc_src,
+    command: [
+      py,
+      '-c',
+      sphinx_build_cmd,
+      source_dir,
+      output_dir,
+      '@OUTPUT@',
+    ],
+    depends: doc_bootstrap,
+  )
+endif

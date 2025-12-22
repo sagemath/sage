@@ -17,6 +17,13 @@ option(
   description: 'Build the HTML / PDF documentation'
 )
 
+option(
+  'legacy-docs',
+  type: 'boolean',
+  value: false,
+  description: 'Use the legacy doc build pipeline (build-docs.py)'
+)
+
 #
 # Features
 #
