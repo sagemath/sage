@@ -73,7 +73,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
         sage: TestSuite(S).run()
     """
 
-    def __init__(self, n=4):
+    def __init__(self, n=4) -> None:
         """
         EXAMPLES::
 
@@ -84,14 +84,14 @@ class SymmetricGroup(UniqueRepresentation, Parent):
         Parent.__init__(self, category=FiniteWeylGroups().Irreducible())
         self.n = n
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
             sage: FiniteWeylGroups().example()
             The symmetric group on {0, ..., 3}
         """
-        return "The symmetric group on {0, ..., %s}" % (self.n-1)
+        return "The symmetric group on {0, ..., %s}" % (self.n - 1)
 
     @cached_method
     def one(self):
@@ -105,7 +105,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
         """
         return self(tuple(range(self.n)))
 
-    def index_set(self):
+    def index_set(self) -> list:
         """
         Implement :meth:`CoxeterGroups.ParentMethods.index_set`.
 
@@ -139,8 +139,8 @@ class SymmetricGroup(UniqueRepresentation, Parent):
             ['A', 3] relabelled by {1: 0, 2: 1, 3: 2}
         """
         from sage.combinat.root_system.cartan_type import CartanType
-        C = CartanType(['A',self.n-1])
-        C = C.relabel(lambda i:i-1)
+        C = CartanType(['A', self.n - 1])
+        C = C.relabel(lambda i: i - 1)
         return C
 
     def product(self, x, y):
@@ -157,7 +157,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
         assert y in self
         return self(tuple(x.value[i] for i in y.value))
 
-    def degrees(self):
+    def degrees(self) -> tuple:
         """
         Return the degrees of ``self``.
 
@@ -184,7 +184,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
                 True
                 sage: S._test_has_descent()
             """
-            return (self.value[i] > self.value[i + 1])
+            return self.value[i] > self.value[i + 1]
 
 
 Example = SymmetricGroup

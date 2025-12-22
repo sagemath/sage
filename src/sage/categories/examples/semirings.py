@@ -39,7 +39,7 @@ class Ternary(Element):
 
     The same semantic works for graphs instead of sets.
     """
-    def __init__(self, parent, n):
+    def __init__(self, parent, n) -> None:
         """
         Initialize one element.
 
@@ -57,7 +57,7 @@ class Ternary(Element):
         self._n = n
         Element.__init__(self, parent)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation.
 
@@ -70,7 +70,7 @@ class Ternary(Element):
         """
         return ["0", "1", "many"][self._n]
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Test for equality.
 
@@ -87,7 +87,7 @@ class Ternary(Element):
             return False
         return self._n == other._n
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for non-equality.
 
@@ -156,7 +156,7 @@ class TernaryLogic(UniqueRepresentation, Parent):
         running ._test_some_elements() . . . pass
         running ._test_zero() . . . pass
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The ternary-logic semiring.
 
@@ -167,7 +167,7 @@ class TernaryLogic(UniqueRepresentation, Parent):
         """
         Parent.__init__(self, category=Semirings())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation.
 
@@ -231,7 +231,7 @@ class TernaryLogic(UniqueRepresentation, Parent):
         """
         return self(2)
 
-    def some_elements(self):
+    def some_elements(self) -> list:
         r"""
         Return a list of some elements of the semiring.
 

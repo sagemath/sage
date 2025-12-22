@@ -85,7 +85,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
          ((2, 1), (2,), 1)]
     """
 
-    def __init__(self, n=5):
+    def __init__(self, n=5) -> None:
         r"""
         Construct the `n`-th DihedralGroup of order `2 n`.
 
@@ -144,7 +144,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
         """
         return self(())
 
-    def index_set(self):
+    def index_set(self) -> tuple:
         r"""
         Implement :meth:`CoxeterGroups.ParentMethods.index_set`.
 
@@ -156,7 +156,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
         """
         return (1, 2)
 
-    def degrees(self):
+    def degrees(self) -> tuple:
         """
         Return the degrees of ``self``.
 
@@ -214,10 +214,9 @@ class DihedralGroup(UniqueRepresentation, Parent):
             reduced_word = self.value
             if len(reduced_word) == self.parent().n:
                 return not positive
-            elif len(reduced_word) == 0:
+            if len(reduced_word) == 0:
                 return positive
-            else:
-                return (i == reduced_word[0 if side == "left" else -1]) == (not positive)
+            return (i == reduced_word[0 if side == "left" else -1]) == (not positive)
 
         def apply_simple_reflection_right(self, i):
             r"""
