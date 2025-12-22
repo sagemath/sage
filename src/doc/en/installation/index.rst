@@ -22,10 +22,10 @@ obtaining the source code and building SageMath.
 
     .. code-block:: console
 
-      $ conda create -n sage sage python=3.11
+      $ conda create -n sage sage python=3.13
 
     This will create a new conda environment named ``sage``
-    containing SageMath and Python 3.11.
+    containing SageMath and Python 3.13.
     You can then activate this environment with the command
     ``conda activate sage`` and start SageMath by typing ``sage``.
     
