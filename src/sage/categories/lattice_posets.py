@@ -90,6 +90,17 @@ class LatticePosets(Category):
             """
 
     class SubcategoryMethods:
+        def ChainGraded(self):
+            r"""
+            A lattice is graded if all maximal chains have the same length.
+
+            EXAMPLES::
+
+                sage: P = posets.DivisorLattice(24)
+                sage: P in FiniteLatticePosets().ChainGraded()
+                True
+            """
+            return self._with_axiom("ChainGraded")
 
         def Stone(self):
             r"""
@@ -114,6 +125,8 @@ class LatticePosets(Category):
 
             From duality in lattices, it follows that then also join
             distributes over meet.
+
+            A distributive lattice is always graded.
 
             See :wikipedia:`Distributive lattice`.
 
@@ -247,6 +260,18 @@ class LatticePosets(Category):
             """
             return [LatticePosets().Extremal()]
 
+        class SubcategoryMethods:
+            def ChainGraded(self):
+                r"""
+                A trim and graded lattice is distributive.
+
+                EXAMPLES::
+
+                    sage: FiniteLatticePosets().Trim().ChainGraded()
+                    Category of finite distributive lattice posets
+                """
+                return self._with_axiom("Distributive")
+
         class ParentMethods:
             def is_trim(self):
                 """
@@ -350,7 +375,8 @@ class LatticePosets(Category):
                  Category of distributive lattice posets]
             """
             return [LatticePosets().Trim(),
-                    LatticePosets().CongruenceUniform()]
+                    LatticePosets().CongruenceUniform(),
+                    LatticePosets().ChainGraded()]
 
         class ParentMethods:
             def is_distributive(self):
@@ -401,6 +427,31 @@ class LatticePosets(Category):
                 EXAMPLES::
 
                     sage: posets.DivisorLattice(12).is_stone()
+                    True
+                """
+                return True
+
+    class ChainGraded(CategoryWithAxiom):
+        """
+        The category of graded lattices.
+
+        EXAMPLES::
+
+            sage: cat = FiniteLatticePosets().ChainGraded(); cat
+            Category of finite chain graded lattice posets
+
+            sage: cat.super_categories()
+            [Category of finite lattice posets,
+             Category of chain graded lattice posets]
+        """
+        class ParentMethods:
+            def is_graded(self) -> bool:
+                """
+                Return whether ``self`` is a graded lattice.
+
+                EXAMPLES::
+
+                    sage: posets.DivisorLattice(12).is_graded()
                     True
                 """
                 return True
