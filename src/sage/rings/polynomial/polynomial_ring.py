@@ -2687,10 +2687,14 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
           - ``'random'`` or ``None``:
             try random polynomials until an irreducible one is found
 
+          - ``'uniform_random'``:
+            try random polynomials sampled from all monic n-degree
+            polynomials until an irreducible one is found.
+
           - ``'first_lexicographic'``: try polynomials in
             lexicographic order until an irreducible one is found
 
-        OUTPUT: a monic irreducible polynomial of degree `n` in ``self``
+        OUTPUT: A monic irreducible polynomial of degree `n` in the given finite ring ``self``.
 
         EXAMPLES::
 
@@ -2707,6 +2711,28 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
             sage: R.irreducible_element(17, algorithm='first_lexicographic')
             x^17 + a*x + 4*a + 3
 
+        TESTS::
+
+            sage: import collections
+            sage: from sage.stats.statistical_tests import sigmas_from_uniform
+            sage: R = GF(2**3, 'a')['x']; samples = 10000
+
+        This test verifies that the "uniform_random" generates expected distributions::
+
+            sage: sample_counts = collections.Counter(R.irreducible_element(3, algorithm="uniform_random") for _ in range(samples))
+            sage: abs(sigmas_from_uniform(sample_counts.values())) < 5 # physics thinks 5 sigma is worth investigating.
+            True
+
+        This test verifies that the "random" generates extremely unlikely distributions::
+
+            sage: sample_counts = collections.Counter(R.irreducible_element(3, algorithm="random") for _ in range(samples))
+            sage: abs(sigmas_from_uniform(sample_counts.values())) > 800 # More than 800 sigmas is NOT random
+            True
+
+        .. TODO::
+
+            Deprecate the ``random`` approach that isn't uniformly random over the irreducible elements.
+            
         AUTHORS:
 
         - Peter Bruin (June 2013)
@@ -2726,6 +2752,14 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
         elif algorithm == "first_lexicographic":
             for g in self.polynomials(max_degree=n-1):
                 f = self.gen()**n + g
+                if f.is_irreducible():
+                    return f 
+        elif algorithm == "uniform_random":
+            R = self.base_ring()
+            while True:
+                g = [R.random_element() for i in range(n)]
+                g.append(1)
+                f = self(g)
                 if f.is_irreducible():
                     return f
         else:
