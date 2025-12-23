@@ -849,6 +849,10 @@ REFERENCES:
             Cambridge Univ Press, 2001.
             :doi:`10.1017/S0963548301004813`.
 
+.. [Box2022] Josha Box.
+             Elliptic curves over totally real quartic fields not containing `\sqrt{5}` are modular.
+             Trans. Amer. Math. Soc. 375 (2022), 3129-3172.
+
 .. [BF2005] \R.L. Burden and J.D. Faires. *Numerical Analysis*.
             8th edition, Thomson Brooks/Cole, 2005.
 
@@ -1334,6 +1338,10 @@ REFERENCES:
 .. [Bre1997] \T. Breuer "Integral bases for subfields of cyclotomic
              fields" AAECC 8, 279--289 (1997).
 
+.. [Breuil2001] Breuil, Christophe, Brian Conrad, Fred Diamond, and Richard Taylor.
+                *On the modularity of elliptic curves over Q: wild 3-adic exercises*.
+                Journal of the American Mathematical Society 14, no. 4 (2001): 843-940.
+
 .. [Bre2000] Enno Brehm, *3-Orientations and Schnyder 3-Tree-Decompositions*,
              2000.
              https://page.math.tu-berlin.de/~felsner/Diplomarbeiten/brehm.ps.gz
@@ -1513,6 +1521,10 @@ REFERENCES:
 
 .. [Can1990] \J. Canny. *Generalised characteristic polynomials*.
              \J. Symbolic Comput. Vol. 9, No. 3, 1990, 241--250.
+
+.. [CarNew2023] Ana Caraiani and James Newton.
+                *On the modularity of elliptic curves over imaginary quadratic fields.*
+                :arxiv:`2301.10509`
 
 .. [Car1972] \R. W. Carter. *Simple groups of Lie type*, volume 28 of
              Pure and Applied Mathematics. John Wiley and Sons, 1972.
@@ -2009,6 +2021,11 @@ REFERENCES:
             *Counting smaller elements in the tamari and m-tamari lattices*.
             Journal of Combinatorial Theory, Series A. (2015). :arxiv:`1311.3922`.
 
+.. [Chen1996] Imin Chen.
+              *The Jacobian of Modular Curves Associated to Cartan Subgroups*.
+              Oxford DPhil thesis (1996).
+              https://ora.ouls.ox.ac.uk/objects/uuid:46babaa0-c498-4211-a4ad-8dbabb8f05d9
+
 .. [CP2016] \N. Cohen, D. Pasechnik,
             *Implementing Brouwer's database of strongly regular graphs*,
             Designs, Codes, and Cryptography, 2016
@@ -2252,6 +2269,10 @@ REFERENCES:
                     Charles Colbourn, Jeffrey Dinitz
                     Chapman & Hall/CRC
                     2012
+
+.. [DNS2020] Maarten Derickx, Filip Najman, Samir Siksek
+              *Elliptic curves over totally real cubic fields are modular.*
+              Algebra and Number Theory. (2020) 14 no.7, pp. 1791--1800.
 
 .. [DerZak1980] Nachum Dershowitz and Schmuel Zaks,
                 *Enumerations of ordered trees*,
@@ -2841,6 +2862,10 @@ REFERENCES:
 .. [Fra2011] Cameron Franc, *Nearly rigid analytic modular forms
              and their values at CM points*,
              Ph.D. thesis, McGill University, 2011.
+
+.. [FLHS2015] Nuno Freitas, Bao Le Hung, and S. Siksek.
+              *Elliptic curves over Real Quadratic Fields are Modular.*
+              Invent. math. (2015) 201, pp. 159--206.
 
 .. [FRT1990] Faddeev, Reshetikhin and Takhtajan.
              *Quantization of Lie Groups and Lie Algebras*.
@@ -6715,6 +6740,10 @@ REFERENCES:
              height on elliptic curves over number fields, Math. Comp. 79
              (2010), pages 2431-2449.
 
+.. [Thorne2016] Jack Thorne.
+                *Automorphy of some residually dihedral Galois representations.*
+                Mathematische Annalen 364 (2016), No. 1--2, pp. 589--648.
+
 .. [Tho2011] Anders Thorup. *ON THE INVARIANTS OF THE SPLITTING ALGEBRA*,
              2011, :arxiv:`1105.4478`
 
@@ -6989,6 +7018,10 @@ REFERENCES:
 
 .. [Wie2000] \B. Wieland. *A large dihedral symmetry of the set of
              alternating sign matrices*. Electron. J. Combin. 7 (2000).
+
+.. [Wiles1995] Andrew Wiles.
+               *Modular elliptic curves and Fermat's last theorem*.
+               Annals of mathematics, 141(3), 443-551.
 
 .. [Wilson2008] Steve Wilson. *Rose Window Graphs*. Ars Mathematica
                 Contemporanea 1(1):7-19, 2008.
