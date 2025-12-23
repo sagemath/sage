@@ -24,6 +24,7 @@ AUTHORS:
 from sage.misc.functional import log
 from sage.misc.latex import tuple_function
 from sage.modules.free_module_element import vector
+from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
 from sage.rings.padics.factory import QqFP, Zp
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
@@ -146,7 +147,7 @@ class WittVector(CommutativeRingElement):
             (1, -1/4, -81/832, -12887559/359956480)
         """
         if not self[0].is_unit():
-            raise ZeroDivisionError(f"inverse of {self} does not exist")
+            raise ArithmeticError(f"inverse of {self} does not exist")
         P = self.parent()
 
         if self == P.one():
@@ -182,11 +183,11 @@ class WittVector(CommutativeRingElement):
                 inv_vec[i] = (-poly.constant_coefficient()
                               / poly.monomial_coefficient(x))
             except ZeroDivisionError:
-                raise ZeroDivisionError(f"inverse of {self} does not exist")
+                raise ArithmeticError(f"inverse of {self} does not exist")
             try:
                 inv_vec[i] = P.coefficient_ring()(inv_vec[i])
             except ValueError:
-                raise ZeroDivisionError(f"inverse of {self} does not exist")
+                raise ArithmeticError(f"inverse of {self} does not exist")
 
         return P(inv_vec)
 
@@ -362,6 +363,31 @@ class WittVector(CommutativeRingElement):
             return vector(self._coordinates)
         return vector(R, self._coordinates)
 
+    def additive_order(self):
+        """
+        Return the additive order of ``self``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(Integers(10), p=2, prec=4)
+            sage: w = W([1, 3, 0, 7])
+            sage: w.additive_order()
+            80
+            sage: W = WittVectorRing(ZZ, p=13, prec=3)
+            sage: w = W([0, 7, -3])
+            sage: w.additive_order()
+            +Infinity
+        """
+        order = Integer(1)
+        w = self
+        for i in range(self.parent().precision()):
+            elem_ord = w[i].additive_order()
+            if elem_ord is PlusInfinity():
+                return elem_ord
+            order *= elem_ord
+            w *= elem_ord
+        return order
+
     def coordinates(self):
         """
         Return the underlying tuple of the truncated Witt vector.
@@ -374,6 +400,27 @@ class WittVector(CommutativeRingElement):
             (1, 2, 3)
         """
         return self._coordinates
+
+    def is_unit(self):
+        """
+        Return ``True`` if ``self`` has a multiplicative inverse.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(11), prec=4)
+            sage: w = W([1,2,10,0])
+            sage: w.is_unit()
+            True
+            sage: W = WittVectorRing(ZZ, p=7, prec=3)
+            sage: w = W([2,-2,11])
+            sage: w.is_unit()
+            False
+        """
+        try:
+            ~self
+        except ArithmeticError:
+            return False
+        return True
 
 
 class WittVector_phantom(WittVector):
