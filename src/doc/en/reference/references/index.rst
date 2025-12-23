@@ -1447,6 +1447,9 @@ REFERENCES:
               An Algorithmic Approach, Algorithms and Computation in Mathematics,
               Volume 20, Springer (2007)
 
+.. [But2010] Peter Butkovič, *Max-linear systems. Theory and algorithms.*
+             Springer Monographs in Mathematics. London: Springer. xvii, 272 p. (2010). 
+
 .. [Buell89] Duncan A. Buell.
              *Binary Quadratic Forms: Classical Theory and Modern Computations.*
              Springer, 1989.
@@ -1665,6 +1668,10 @@ REFERENCES:
              IV. The quotient groups of the lower central series, Ann. of Math.
              68 (1958) 81--95.
 
+.. [CFV2025] Xavier Caruso, Florian Fürnsinn, Daniel Vargas-Montoya,
+           *Galois groups of reductions modulo p of D-finite series*,
+           :arxiv:`2504.09429`, 2025.
+
 .. [CFZ2000] \J. Cassaigne, S. Ferenczi, L.Q. Zamboni, *Imbalances in
              Arnoux-Rauzy sequences*, Ann. Inst. Fourier (Grenoble)
              50 (2000) 1265--1276.
@@ -1738,6 +1745,9 @@ REFERENCES:
 
 .. [ChenDB] Eric Chen, Online database of two-weight codes,
             http://moodle.tec.hkr.se/~chen/research/2-weight-codes/search.php
+
+.. [Chr1986] Gilles Christol, *Fonctions hypergéométriques bornées*.
+             Groupe de travail d’analyse ultramétrique 14 (1986-87), exp. no 8, p. 1-16
 
 .. [CHK2001] Keith D. Cooper, Timothy J. Harvey and Ken Kennedy. *A
              Simple, Fast Dominance Algorithm*, Software practice and
@@ -2895,6 +2905,11 @@ REFERENCES:
 .. [FY2004] Eva Maria Feichtner and Sergey Yuzvinsky. *Chow rings of
             toric varieties defined by atomic lattices*. Inventiones
             Mathematicae. **155** (2004), no. 3, pp. 515-536.
+
+.. [FY2024] Florian Fürnsinn, Sergey Yurkevich. 
+            *Algebraicity of hypergeometric functions with arbitrary parameters*,
+            Bulletin of the London Mathematical Society. **56** (2024),
+            pp. 2824-2846. :doi:`10.1112/blms.13103`, :arxiv:`2308.12855` (2023).
 
 .. [FZ2001] \S. Fomin and A. Zelevinsky. *Cluster algebras I. Foundations*,
             \J. Amer. Math. Soc. **15** (2002), no. 2, pp. 497-529.
