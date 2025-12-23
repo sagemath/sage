@@ -1155,6 +1155,13 @@ def log(*args, **kwds):
         0
         sage: log(e, base=0)
         0
+
+    Check if :issue:`40883` is fixed::
+
+        sage: log(int(4294967300), 2)                                                   # needs sage.symbolic
+        log(4294967300)/log(2)
+        sage: float(log(int(4294967300), 2))                                            # needs sage.symbolic
+        32.00000000134...
     """
     base = kwds.pop('base', None)
     if base is not None:
