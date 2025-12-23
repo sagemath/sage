@@ -2854,7 +2854,7 @@ static void fill_small_powers()
 
 bool numeric::is_small_power(std::pair<int,int>& p) const
 {
-        int i;
+        long i;
         switch (t) {
         case LONG:
                 if (v._long < 2)
