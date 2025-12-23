@@ -2,6 +2,8 @@ pari-devel
 # spkg-configure checks for gp, gphelp.  Access to the documentation is crucial
 # for the cypari2 build.  #29342: By default configuration in /etc/dnf/dnf.conf,
 # installation of documentation may be suppressed; we override this.
+# "dnf --setopt=tsflags= install pari-gp" is a way to force docs installation,
+# see https://bugzilla.redhat.com/show_bug.cgi?id=2419686
 pari-gp
 # spkg-configure checks for data
 pari-galdata
