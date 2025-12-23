@@ -87,16 +87,30 @@ braiding = dependency(
 # broken highs.pc (e.g. pointing to /usr/debian/tmp), so we validate the
 # pkg-config variables and fall back to probing common install locations.
 highs = disabler()
-highs_pc = dependency('highs', required: false, method: 'pkg-config', disabler: true)
+highs_pc = dependency(
+  'highs',
+  required: false,
+  method: 'pkg-config',
+  disabler: true,
+)
 if highs_pc.found()
   highs = highs_pc
 
-  highs_includedir = highs_pc.get_variable(pkgconfig: 'includedir', default_value: '')
+  highs_includedir = highs_pc.get_variable(
+    pkgconfig: 'includedir',
+    default_value: '',
+  )
   highs_libdir = highs_pc.get_variable(pkgconfig: 'libdir', default_value: '')
 
-  if highs_includedir == '' or not fs.is_dir(highs_includedir) or highs_libdir == '' or not fs.is_dir(highs_libdir)
+  if highs_includedir == '' or not fs.is_dir(highs_includedir) or highs_libdir == '' or not fs.is_dir(
+    highs_libdir,
+  )
     highs_header_dir = ''
-    foreach include_base : ['/usr/include', '/usr/local/include', get_option('prefix') / 'include']
+    foreach include_base : [
+      '/usr/include',
+      '/usr/local/include',
+      get_option('prefix') / 'include',
+    ]
       candidate = include_base / 'highs'
       if fs.is_dir(candidate)
         highs_header_dir = candidate
