@@ -1,3 +1,3 @@
-from sage.libs.gmp.types cimport mpz_t, mpq_t
+from sage.libs.gmp.types cimport mpz_srcptr, mpq_t
 
-cdef int mpq_rational_reconstruction(mpq_t answer, mpz_t a, mpz_t m) except -1
+cdef int mpq_rational_reconstruction(mpq_t answer, mpz_srcptr a, mpz_srcptr m) except -1
