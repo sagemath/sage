@@ -26,6 +26,7 @@ from math import prod
 
 from collections.abc import Iterator
 
+from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.fields import Fields
@@ -34,7 +35,7 @@ from sage.combinat.tuple import Tuples
 from sage.misc.latex import latex
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.morphism import RingHomomorphism
+from sage.rings.morphism import RingHomomorphism, RingMap
 from sage.rings.padics.factory import Zp
 from sage.rings.padics.witt_vector import (
     WittVector_finotti,
@@ -180,6 +181,41 @@ class WittVectorRing(Parent, UniqueRepresentation):
         sage: WittVectorRing(Qp(7), prec=30, p=5)
         Ring of truncated 5-typical Witt vectors of length 30 over
         7-adic Field with capped relative precision 20
+
+    ::
+
+        sage: p = 5
+        sage: W = WittVectorRing(ZZ, prec=3, p=p)
+        sage: W
+        Ring of truncated 5-typical Witt vectors of length 3 over Integer Ring
+        sage: V = W.verschiebung(extend=True)
+        sage: WW = V.codomain()
+        sage: WW
+        Ring of truncated 5-typical Witt vectors of length 4 over Integer Ring
+        sage: F = WW.frobenius_morphism()
+        sage: w = W.random_element(x=-100, y=100)
+        sage: w  # random
+        (-13, 20, -33)
+        sage: p*w == F(V(w))
+        True
+
+    ::
+
+        sage: p = 7
+        sage: W = WittVectorRing(GF(p)['x,y'], prec=5)
+        sage: W
+        Ring of truncated 7-typical Witt vectors of length 5 over Multivariate
+        Polynomial Ring in x, y over Finite Field of size 7
+        sage: V = W.verschiebung()
+        sage: F = W.frobenius_morphism()
+        sage: w = W.random_element()
+        sage: w  # random
+        (-3*x^2 + 2*y^2 - 3*y + 2, -2*x*y - y^2 - y - 2, -x^2 + y^2,
+        x^2 + 2*y^2 + 3*x + y, 2*x^2 - 3*x*y + y^2 + y + 1)
+        sage: p*w == F(V(w))
+        True
+        sage: p*w == V(F(w))
+        True
 
     TESTS::
 
@@ -1019,6 +1055,30 @@ class WittVectorRing(Parent, UniqueRepresentation):
             raise TypeError(f"{x} not in {self._coefficient_ring}")
         return self((x,) + tuple(0 for _ in range(self._prec-1)))
 
+    def verschiebung(self, extend=False):
+        """
+        Return the Verschiebung map of this ring of Witt vectors.
+
+        - ``extend`` -- boolean (default: ``False``); whether the codomain of
+          the map has precision `1` more than ``self``.
+
+        INPUT:
+
+        EXAMPLES::
+
+            sage: R.<x,y> = PolynomialRing(QQ)
+            sage: W = WittVectorRing(R, p=5, prec=2)
+            sage: w = W([x, y])
+            sage: V = W.verschiebung()
+            sage: V(w)
+            (0, x)
+
+        TESTS::
+
+            sage: TestSuite(V).run(skip="_test_category")
+        """
+        return WittVectorVerschiebung(self, extend=extend)
+
 
 class WittVectorRing_finotti(WittVectorRing):
     """
@@ -1557,4 +1617,170 @@ class WittVectorFrobeniusMorphism(RingHomomorphism):
         if self.domain() is self.codomain():
             return f"Frobenius endomorphism on the {self.domain()}"
         return f"Frobenius homomorphism from the {self.domain()} to the "\
+               f"{self.codomain()}"
+
+
+class WittVectorVerschiebung(RingMap):
+    """
+    A class implementing Veschiebung maps on Witt vector rings.
+
+    .. WARNING::
+
+        This class should not be called directly, use
+        :meth:`WittVectorRing.verschiebung` instead.
+
+    EXAMPLES::
+
+        sage: R.<x,y,z> = PolynomialRing(ZZ)
+        sage: W = WittVectorRing(R, p=3, prec=3)
+        sage: w = W([x, y, z])
+        sage: V = W.verschiebung()
+        sage: V(w)
+        (0, x, y)
+
+    TESTS::
+
+        sage: TestSuite(V).run(skip="_test_category")
+    """
+    def __init__(self, domain, extend=False):
+        """
+        INPUT:
+
+        - ``domain`` -- the ring of Witt vectors whose Verschiebung map we are
+          computing.
+
+        - ``extend`` -- boolean (default: ``False``); whether the codomain of
+          the Verschiebung map is a ring of Witt vectors whose lengths are `1`
+          more than the ones in the domain.
+
+        EXAMPLES::
+
+            sage: R.<x,y,z,t> = PolynomialRing(GF(5))
+            sage: W = WittVectorRing(R, prec=4)
+            sage: w = W([x, y, z, t])
+            sage: V = W.verschiebung()
+            sage: V(w)
+            (0, x, y, z)
+            sage: V = W.verschiebung(extend=True)
+            sage: V(w)
+            (0, x, y, z, t)
+
+        TESTS::
+
+            sage: R.<x,y> = PolynomialRing(GF(5))
+            sage: W = WittVectorRing(R, prec=2)
+            sage: V = W.verschiebung()
+            sage: TestSuite(V).run(skip="_test_category")
+            sage: V = W.verschiebung(extend=True)
+            sage: TestSuite(V).run(skip="_test_category")
+        """
+        if extend:
+            self._call_ = self._call_extend
+            prec = domain.precision()
+
+            if isinstance(domain, WittVectorRing_finotti):
+                algorithm = "finotti"
+            elif isinstance(domain, WittVectorRing_phantom):
+                algorithm = "phantom"
+            elif isinstance(domain, WittVectorRing_pinvertible):
+                algorithm = "p_invertible"
+            elif isinstance(domain, WittVectorRing_standard):
+                algorithm = "standard"
+
+            codomain = WittVectorRing(domain.coefficient_ring(), prec=prec+1,
+                                      p=domain.prime(), algorithm=algorithm)
+
+        else:
+            self._call_ = self._call_no_extend
+            codomain = domain
+
+        super().__init__(domain.Hom(codomain, CommutativeAdditiveGroups()))
+
+    def _call_extend(self, x):
+        """
+        Evaluate ``self`` at ``x`` for the extended Verschiebung.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(ZZ, p=11, prec=2)
+            sage: w = W([1, 100])
+            sage: V_ZZ = W.verschiebung(extend=True)
+            sage: V_ZZ(w)
+            (0, 1, 100)
+
+            sage: R.<x,y> = PolynomialRing(GF(5))
+            sage: W = WittVectorRing(R, prec=3, algorithm="phantom")
+            sage: w = W([x, x + y, x*y + y])
+            sage: V_GF = W.verschiebung(extend=True)
+            sage: V_GF(w)
+            (0, x, x + y, x*y + y)
+
+        TESTS::
+
+            sage: TestSuite(V_ZZ).run(skip="_test_category")
+            sage: TestSuite(V_GF).run(skip="_test_category")
+
+        """
+        Wcod = self.codomain()
+        R = Wcod.coefficient_ring()
+        return Wcod((R.zero(),) + x.coordinates())
+
+    def _call_no_extend(self, x):
+        """
+        Evaluate ``self`` at ``x`` when the domain is the codomain.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(7), prec=4, algorithm="finotti")
+            sage: w = W([1, 2, 3, 4])
+            sage: V_GF = W.verschiebung()
+            sage: V_GF(w)
+            (0, 1, 2, 3)
+
+            sage: R.<x,y> = PolynomialRing(GF(5))
+            sage: W = WittVectorRing(R, prec=3, algorithm="phantom")
+            sage: w = W([x, x + y, x*y + y])
+            sage: V_poly = W.verschiebung()
+            sage: V_poly(w)
+            (0, x, x + y)
+
+        TESTS::
+
+            sage: TestSuite(V_GF).run(skip="_test_category")
+            sage: TestSuite(V_poly).run(skip="_test_category")
+        """
+        W = self.domain()
+        R = W.coefficient_ring()
+        return W((R.zero(),) + x.coordinates())
+
+    def _latex_(self):
+        r"""
+        Return a `\LaTeX` representation of ``self``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(PolynomialRing(GF(3),'t'))
+            sage: latex(W.verschiebung())
+            V
+        """
+        return "V"
+
+    def _repr_(self):
+        """
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(11), prec=5)
+            sage: W.verschiebung()
+            Verschiebung map on the Ring of truncated 11-typical Witt vectors
+            of length 5 over Finite Field of size 11
+            sage: W.verschiebung(extend=True)
+            Verschiebung map from the Ring of truncated 11-typical Witt vectors
+            of length 5 over Finite Field of size 11 to the Ring of truncated
+            11-typical Witt vectors of length 6 over Finite Field of size 11
+        """
+        if self.domain() is self.codomain():
+            return f"Verschiebung map on the {self.domain()}"
+        return f"Verschiebung map from the {self.domain()} to the "\
                f"{self.codomain()}"
