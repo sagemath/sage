@@ -1469,6 +1469,26 @@ class HypergeometricAlgebraic_GFp(HypergeometricAlgebraic):
             {hypergeometric((1, 21/8, 25/8, 27/8), (3, 13/4, 7/2), x): 2*x^7,
              hypergeometric((3/8, 5/8, 9/8), (1/2, 5/4), x): 1}
         """
+        #sage: S.<x> = GF(3)[]
+        # sage: f = hypergeometric([3^4/5, 3/5],[1/2], x)
+        # sage: f.dwork_relation()
+        # ---------------------------------------------------------------------------
+        # TypeError                                 Traceback (most recent call last)
+        # Cell In[58], line 1
+        # ----> 1 f.dwork_relation()
+
+        # File ~/sage/src/sage/functions/hypergeometric_algebraic.py:1490, in HypergeometricAlgebraic_GFp.dwork_relation(self)
+        # 1488 params = parameters.shift(ci).dwork_image(p)
+        # 1489 _, s, _ = params.valuation_position(p)
+        # -> 1490 ci += s*p
+        # 1491 cj += s*p
+        # 1492 h = H(params.shift(s), check=False)
+
+        # File sage/rings/integer.pyx:2069, in sage.rings.integer.Integer.__mul__()
+
+        # File sage/structure/coerce.pyx:1287, in sage.structure.coerce.CoercionModel.bin_op()
+
+        # TypeError: unsupported operand parent(s) for *: '<class 'NoneType'>' and 'Integer Ring'
         parameters = self._parameters
         if not parameters.is_balanced():
             raise ValueError("the hypergeometric function must be a pFq with q = p-1")
