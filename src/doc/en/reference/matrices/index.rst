@@ -100,5 +100,6 @@ objects like operation tables (e.g. the multiplication table of a group).
    sage/matrix/compute_J_ideal
 
    sage/matrix/benchmark
+   sage/matrix/joint_spectral_radius
 
 .. include:: ../footer.txt
