@@ -6,12 +6,13 @@ Implementation of the class :class:`WittVector` of truncated Witt vectors.
 AUTHORS:
 
 - Jacob Dennerlein (2022-11-28): initial version
-- Rubén Muñoz-\-Bertrand (2025-02-13): major refactoring and clean-up
+- Rubén Muñoz-\-Bertrand (2025-02-13, 2025-12-23): major refactoring and
+  new features
 """
 
 # ****************************************************************************
 #       Copyright (C) 2025 Rubén Muñoz--Bertrand
-#                          <ruben.munoz--bertrand@univ-fcomte.fr>
+#                          <ruben.munoz-bertrand@inria.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,6 +25,7 @@ AUTHORS:
 from sage.misc.functional import log
 from sage.misc.latex import tuple_function
 from sage.modules.free_module_element import vector
+from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
 from sage.rings.padics.factory import QqFP, Zp
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
@@ -47,6 +49,8 @@ class WittVector(CommutativeRingElement):
         sage: w = W([1,2,3,4]) * W([4,5,0,0])
         sage: w
         (4, 1, 3, 4)
+
+    TESTS::
 
         sage: TestSuite(w).run()
     """
@@ -146,12 +150,12 @@ class WittVector(CommutativeRingElement):
             (1, -1/4, -81/832, -12887559/359956480)
         """
         if not self[0].is_unit():
-            raise ZeroDivisionError(f"inverse of {self} does not exist")
+            raise ArithmeticError(f"inverse of {self} does not exist")
         P = self.parent()
 
         if self == P.one():
             return self
-        if self._prec == 1:
+        if self._prec.is_one():
             return P((self[0]**-1,))
 
         if P.coefficient_ring().characteristic() == P.prime():
@@ -182,11 +186,11 @@ class WittVector(CommutativeRingElement):
                 inv_vec[i] = (-poly.constant_coefficient()
                               / poly.monomial_coefficient(x))
             except ZeroDivisionError:
-                raise ZeroDivisionError(f"inverse of {self} does not exist")
+                raise ArithmeticError(f"inverse of {self} does not exist")
             try:
                 inv_vec[i] = P.coefficient_ring()(inv_vec[i])
             except ValueError:
-                raise ZeroDivisionError(f"inverse of {self} does not exist")
+                raise ArithmeticError(f"inverse of {self} does not exist")
 
         return P(inv_vec)
 
@@ -362,6 +366,31 @@ class WittVector(CommutativeRingElement):
             return vector(self._coordinates)
         return vector(R, self._coordinates)
 
+    def additive_order(self):
+        """
+        Return the additive order of ``self``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(Integers(10), p=2, prec=4)
+            sage: w = W([1, 3, 0, 7])
+            sage: w.additive_order()
+            80
+            sage: W = WittVectorRing(ZZ, p=13, prec=3)
+            sage: w = W([0, 7, -3])
+            sage: w.additive_order()
+            +Infinity
+        """
+        order = Integer(1)
+        w = self
+        for i in range(self.parent().precision()):
+            elem_ord = w[i].additive_order()
+            if elem_ord is PlusInfinity():
+                return elem_ord
+            order *= elem_ord
+            w *= elem_ord
+        return order
+
     def coordinates(self):
         """
         Return the underlying tuple of the truncated Witt vector.
@@ -374,6 +403,27 @@ class WittVector(CommutativeRingElement):
             (1, 2, 3)
         """
         return self._coordinates
+
+    def is_unit(self):
+        """
+        Return ``True`` if ``self`` has a multiplicative inverse.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(11), prec=4)
+            sage: w = W([1,2,10,0])
+            sage: w.is_unit()
+            True
+            sage: W = WittVectorRing(ZZ, p=7, prec=3)
+            sage: w = W([2,-2,11])
+            sage: w.is_unit()
+            False
+        """
+        try:
+            ~self
+        except ArithmeticError:
+            return False
+        return True
 
 
 class WittVector_phantom(WittVector):
@@ -402,6 +452,11 @@ class WittVector_phantom(WittVector):
         (7, 7, 7, 7, 7)
         sage: u[1]
         1
+
+    TESTS::
+
+        sage: w = W.random_element()
+        sage: TestSuite(w).run()
     """
     def __init__(self, parent, vec=None, phantom=None):
         """
@@ -691,6 +746,11 @@ class WittVector_finotti(WittVector):
         sage: W = WittVectorRing(GF(7), prec=4, algorithm='finotti')
         sage: 49*W.one()
         (0, 0, 1, 0)
+
+    TESTS::
+
+        sage: w = W.random_element()
+        sage: TestSuite(w).run()
     """
     def _add_(self, other):
         """
@@ -698,9 +758,10 @@ class WittVector_finotti(WittVector):
 
         EXAMPLES::
 
-            sage: W = WittVectorRing(PolynomialRing(GF(7), 'x'), prec=2, algorithm='finotti')
-            sage: t = W([x+3,x+2])
-            sage: u = W([6,x])
+            sage: R.<x> = PolynomialRing(GF(7))
+            sage: W = WittVectorRing(R, prec=2, algorithm='finotti')
+            sage: t = W([x + 3, x + 2])
+            sage: u = W([6, x])
             sage: t + u
             (x + 2, x^6 + x^5 + 4*x^4 + 3*x^3 + 3*x^2 + 2*x + 2)
         """
@@ -727,9 +788,10 @@ class WittVector_finotti(WittVector):
 
         EXAMPLES::
 
-            sage: W = WittVectorRing(PolynomialRing(GF(5), 'x'), prec=3, algorithm='finotti')
-            sage: t = W([1,2,3])
-            sage: u = W([x,x^2,x^3])
+            sage: R.<x> = PolynomialRing(GF(5))
+            sage: W = WittVectorRing(R, prec=3, algorithm='finotti')
+            sage: t = W([1, 2, 3])
+            sage: u = W([x, x^2, x^3])
             sage: t * u
             (x, 2*x^5 + x^2, 3*x^25 + 4*x^22 + 4*x^19 + 2*x^16 + 3*x^13 + 2*x^10 + x^3)
         """
@@ -767,9 +829,13 @@ class WittVector_pinvertible(WittVector):
     EXAMPLES::
 
         sage: W = WittVectorRing(QQ, p=3, prec=3)
-        sage: t = W.random_element()
-        sage: t-t
+        sage: w = W.random_element()
+        sage: w - w
         (0, 0, 0)
+
+    TESTS::
+
+        sage: TestSuite(w).run()
     """
     def _add_(self, other):
         """
@@ -845,8 +911,13 @@ class WittVector_standard(WittVector):
     EXAMPLES::
 
         sage: W = WittVectorRing(GF(5), prec=3, algorithm='standard')
-        sage: 5*W.one()
+        sage: 5 * W.one()
         (0, 1, 0)
+
+    TESTS::
+
+        sage: w = W.random_element()
+        sage: TestSuite(w).run()
     """
     def _add_(self, other):
         """
