@@ -932,7 +932,7 @@ class WittVectorRing(Parent, UniqueRepresentation):
 
     def precision(self):
         """
-        Return the length of the truncated Witt vectors in ``length``.
+        Return the length of the truncated Witt vectors in ``self``.
 
         EXAMPLES::
 
