@@ -234,7 +234,7 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
             return f
 
         # Work in an arbitrary field K of order p**n.
-        K = FiniteField(p**n, names='a')
+        K = FiniteField(p**n, name='a')
 
         # TODO: something like the following
         # gcds = [n.gcd(d) for d in self.nodes.keys()]

@@ -681,6 +681,10 @@ class FiniteFieldFactory(UniqueFactory):
             # at this point, order = p**n
             # note that we haven't tested p for primality
 
+            if name is not None and not isinstance(name, str):
+                from sage.misc.superseded import deprecation
+                deprecation(40948, "name should be a str, if you want to pass a tuple use names instead")
+
             if n == 1:
                 if implementation is None:
                     implementation = 'modn'
