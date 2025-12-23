@@ -195,21 +195,31 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             sage: x + 3*y in I
             True
 
-        This also works in the univariate case::
-
-            sage: P.<x> = LaurentPolynomialRing(QQ)
-            sage: I = P.ideal([x^2 + 3*x])
-            sage: 1 + 3*x^-1 in I
+            sage: # Test with zero divisors (Fixes #41318)
+            sage: R.<x> = LaurentPolynomialRing(Zmod(4))
+            sage: I = R.ideal([2*x])
+            sage: 2 in I
             True
         """
-        if not f or f in self.gens():
+        if not f:
             return True
-        f = self.ring()(f)
-        if isinstance(self.ring(), LaurentPolynomialRing_univariate):
-            g = f.__reduce__()[1][1]
-        else:
-            g = f.__reduce__()[1][0]
-        return (g in self.polynomial_ideal())
+        if f in self.gens():
+            return True
+
+        P = self.ring()
+        try:
+            f = P(f)
+        except (TypeError, ValueError):
+            return False
+
+        S, relations = P._poly_cover_ring()
+
+        ideal_gens_lift = [g._lift_to_poly_cover(S) for g in self.gens()]
+
+        item_lift = f._lift_to_poly_cover(S)
+
+        big_ideal = S.ideal(ideal_gens_lift + relations)
+        return item_lift in big_ideal
 
     def gens_reduced(self) -> tuple:
         """
