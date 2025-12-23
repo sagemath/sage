@@ -2411,9 +2411,12 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             ....:    assert a.round() == round(K2(a)), a
             ....:    assert a.round() == round(K3(a)), a
             ....:    assert a.round() == round(K5(a)), a
-            ....:    assert round(a+b*sqrt(2.)) == round(a+b*sqrt2), (a, b)
-            ....:    assert round(a+b*sqrt(3.)) == round(a+b*sqrt3), (a, b)
-            ....:    assert round(a+b*sqrt(5.)) == round(a+b*sqrt5), (a, b)
+            ....:    #outside of rounding half integers, rounding between quadratic numbers are
+            ....:    #floats should agree (assuming enough precision is available)
+            ....:    if b != 0 or a + 1/2 not in ZZ:
+            ....:        assert round(a+b*sqrt(2.)) == round(a+b*sqrt2), (a, b)
+            ....:        assert round(a+b*sqrt(3.)) == round(a+b*sqrt3), (a, b)
+            ....:        assert round(a+b*sqrt(5.)) == round(a+b*sqrt5), (a, b)
         """
         n = self.floor()
         test = 2 * (self - n)
@@ -2951,6 +2954,24 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
             scale = lin / beta
             const = const - scale * alpha
             return const.denominator().lcm(scale.denominator())
+
+    def canonical_associate(self):
+        """
+        Return a canonical associate.
+
+        Only implemented here because order elements inherit from field elements,
+        but the canonical associate implemented there does not apply here.
+
+        EXAMPLES::
+
+            sage: x = polygen(ZZ, 'x')
+            sage: K = NumberField(x^2 - 27, 'a')
+            sage: OK = K.ring_of_integers()
+            sage: (OK.1).canonical_associate()
+            NotImplemented
+        """
+        return NotImplemented
+
 
 cdef class Z_to_quadratic_field_element(Morphism):
     """
