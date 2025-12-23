@@ -21,6 +21,8 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
+
 from itertools import product
 from math import prod
 
@@ -28,9 +30,9 @@ from collections.abc import Iterator
 
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from sage.categories.commutative_rings import CommutativeRings
-from sage.categories.integral_domains import IntegralDomains
 from sage.categories.fields import Fields
 from sage.categories.homset import Hom
+from sage.categories.integral_domains import IntegralDomains
 from sage.combinat.tuple import Tuples
 from sage.misc.latex import latex
 from sage.rings.integer import Integer

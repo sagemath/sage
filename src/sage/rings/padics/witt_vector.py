@@ -154,7 +154,7 @@ class WittVector(CommutativeRingElement):
 
         if self == P.one():
             return self
-        if self._prec == 1:
+        if self._prec.is_one():
             return P((self[0]**-1,))
 
         if P.coefficient_ring().characteristic() == P.prime():
