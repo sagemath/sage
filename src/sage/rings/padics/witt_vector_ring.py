@@ -7,13 +7,13 @@ Witt vectors.
 AUTHORS:
 
 - Jacob Dennerlein (2022-11-28): initial version
-- Rubén Muñoz-\-Bertrand (2025-02-13): major refactoring and clean-up
-
+- Rubén Muñoz-\-Bertrand (2025-02-13, 2025-12-23): major refactoring and
+  new features
 """
 
 # ****************************************************************************
 #       Copyright (C) 2025 Rubén Muñoz--Bertrand
-#                          <ruben.munoz--bertrand@univ-fcomte.fr>
+#                          <ruben.munoz-bertrand@inria.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
