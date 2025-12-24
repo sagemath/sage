@@ -81,57 +81,20 @@ braiding = dependency(
 )
 
 # HiGHS optimization solver (used by sage.numerical.backends.highs_backend)
-#
-# Prefer pkg-config (highs.pc should provide -I$includedir/highs so relative
-# includes like "lp_data/..." work). Some downstream distributions ship a
-# broken highs.pc (e.g. pointing to /usr/debian/tmp), so we validate the
-# pkg-config variables and fall back to finding the library directly.
-highs = disabler()
-highs_pc = dependency(
-  'highs',
-  required: false,
-  method: 'pkg-config',
-  disabler: true,
-)
-if highs_pc.found()
-  highs_includedir = highs_pc.get_variable(
+# The HiGHS headers rely on relative includes within the "highs" include tree,
+# so we need to add -I$includedir/highs to the compile args.
+highs_dep = dependency('highs', required: false, disabler: true)
+if highs_dep.found()
+  highs_includedir = highs_dep.get_variable(
     pkgconfig: 'includedir',
-    default_value: '',
+    default_value: get_option('prefix') / 'include',
   )
-  highs_libdir = highs_pc.get_variable(pkgconfig: 'libdir', default_value: '')
-
-  # Validate that the include directory exists and contains required headers
-  highs_header_valid = (
-    highs_includedir != '' and
-    fs.is_dir(highs_includedir) and
-    fs.is_file(highs_includedir / 'lp_data' / 'HighsCallbackStruct.h')
+  highs = declare_dependency(
+    dependencies: [highs_dep],
+    compile_args: ['-I' + highs_includedir / 'highs'],
   )
-  highs_lib_valid = highs_libdir != '' and fs.is_dir(highs_libdir)
-
-  if highs_header_valid and highs_lib_valid
-    highs = highs_pc
-  else
-    # pkg-config paths are invalid, fall back to finding the library directly
-    highs_lib = cc.find_library('highs', required: false, disabler: true)
-    if highs_lib.found()
-      # Use the prefix from pkg-config or Sage's prefix to find headers
-      highs_prefix = highs_pc.get_variable(
-        pkgconfig: 'prefix',
-        default_value: get_option('prefix'),
-      )
-      highs_header_dir = highs_prefix / 'include' / 'highs'
-      if fs.is_dir(highs_header_dir) and fs.is_file(
-        highs_header_dir / 'lp_data' / 'HighsCallbackStruct.h',
-      )
-        highs = declare_dependency(
-          dependencies: [highs_lib],
-          compile_args: ['-I' + highs_header_dir],
-        )
-      else
-        highs = highs_lib
-      endif
-    endif
-  endif
+else
+  highs = disabler()
 endif
 gc = dependency(
   ['bdw-gc-threaded', 'bdw-gc'],
