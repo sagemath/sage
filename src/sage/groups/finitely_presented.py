@@ -313,6 +313,74 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         tl = self.gap().UnderlyingElement().TietzeWordAbstractWord()
         return tuple(tl.sage())
 
+    def __hash__(self):
+        r"""
+        Return a hash for this group element.
+
+        For free groups (no relations), hashing is based on the Tietze word.
+        For finite groups, the element is converted to a permutation group
+        element which has a well-defined hash.
+        For general infinite finitely presented groups, hashing is not
+        supported because the word problem is undecidable.
+
+        EXAMPLES:
+
+        Free groups support hashing::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: H = F / []  # trivial quotient = free group
+            sage: hash(H([1,2])) == hash(H([1,2]))
+            True
+
+        Finite groups support hashing::
+
+            sage: G.<a,b> = FreeGroup()
+            sage: H = G / [a^2, b^3, a*b*a^-1*b^-1]
+            sage: H.inject_variables()
+            Defining a, b
+            sage: hash(a) == hash(a)
+            True
+            sage: hash(a*a) == hash(H.one())  # equal elements have equal hashes
+            True
+
+        General infinite finitely presented groups do not support hashing::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F / [a*b*a^-1*b^-2]  # Baumslag-Solitar group, infinite
+            sage: hash(G([1]))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: hashing is not implemented for elements of
+            infinite non-free finitely presented groups
+
+        TESTS:
+
+        Check that :issue:`40549` is fixed::
+
+            sage: F.<x,y> = FreeGroup()
+            sage: G = F / [x^4, y^13, x*y*x^-1*y^-5]
+            sage: a, b = G.gens()
+            sage: G.order()
+            52
+            sage: cg = G.cayley_graph()
+            sage: cg.num_verts()
+            52
+        """
+        G = self.parent()
+        # Free groups (no relations) - hash by Tietze word
+        if len(G.relations()) == 0:
+            return hash(self.Tietze())
+        # Finite groups - hash by permutation representation
+        phi = libgap.IsomorphismPermGroup(G.gap())
+        # IsomorphismPermGroup returns 'fail' for infinite groups
+        if str(phi) == 'fail':
+            raise NotImplementedError(
+                "hashing is not implemented for elements of "
+                "infinite non-free finitely presented groups"
+            )
+        perm_elem = libgap.Image(phi, self.gap())
+        return hash(perm_elem)
+
     def __call__(self, *values, **kwds):
         """
         Replace the generators of the free group with ``values``.
@@ -350,16 +418,29 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
             Traceback (most recent call last):
             ...
             ValueError: the values do not satisfy all relations of the group
-            sage: w(1, 2, check=False)    # result depends on presentation of the group element
+            sage: w(1, 2, check=False)   # result depends on presentation of the group element
             2
         """
+        from sage.structure.element import coercion_model, parent
+        from sage.misc.misc_c import prod
+
         values = list(values)
+        G = self.parent()
+        if len(values) != G.ngens():
+            raise ValueError('number of values has to match the number of generators')
         if kwds.get('check', True):
-            for rel in self.parent().relations():
+            for rel in G.relations():
                 rel = rel(values)
                 if rel != 1:
                     raise ValueError('the values do not satisfy all relations of the group')
-        return super().__call__(values)
+        # Use index-based lookup to avoid hashing fp group elements
+        new_parent = coercion_model.common_parent(*[parent(v) for v in values])
+        try:
+            return new_parent.prod(values[abs(i) - 1] ** (1 if i > 0 else -1)
+                                   for i in self.Tietze())
+        except AttributeError:
+            return prod(new_parent(values[abs(i) - 1]) ** (1 if i > 0 else -1)
+                        for i in self.Tietze())
 
 
 class RewritingSystem:
