@@ -17,7 +17,7 @@ License
 Upstream Contact
 ----------------
 
-https://github.com/ivmai/libatomic_ops/
+https://github.com/bdwgc/libatomic_ops/
 
 
 Special Update/Build Instructions

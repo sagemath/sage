@@ -139,9 +139,14 @@ AUTHORS:
 from builtins import sum as add
 
 from sage.categories.fields import Fields
-from sage.categories.homset import hom, Hom, End
+from sage.categories.homset import End, Hom, hom
 from sage.categories.number_fields import NumberFields
-from sage.libs.singular.function import singular_function, lib as singular_lib, get_printlevel, set_printlevel
+from sage.libs.singular.function import (
+    get_printlevel,
+    set_printlevel,
+    singular_function,
+)
+from sage.libs.singular.function import lib as singular_lib
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -150,27 +155,34 @@ from sage.misc.persist import register_unpickle_override
 from sage.misc.sage_eval import sage_eval
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
-from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
+from sage.rings.polynomial.multi_polynomial_element import (
+    degree_lowest_rational_function,
+)
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import RationalField
-from sage.schemes.projective.projective_space import ProjectiveSpace, ProjectiveSpace_ring
-from sage.schemes.projective.projective_subscheme import (AlgebraicScheme_subscheme_projective,
-                                                          AlgebraicScheme_subscheme_projective_field)
+from sage.schemes.projective.projective_space import (
+    ProjectiveSpace,
+    ProjectiveSpace_ring,
+)
+from sage.schemes.projective.projective_subscheme import (
+    AlgebraicScheme_subscheme_projective,
+    AlgebraicScheme_subscheme_projective_field,
+)
 
 lazy_import('sage.interfaces.singular', 'singular')
 lazy_import('sage.rings.number_field.number_field', 'NumberField')
 
-from .curve import Curve_generic
-
-from .point import (ProjectiveCurvePoint_field,
-                    ProjectivePlaneCurvePoint_field,
-                    ProjectivePlaneCurvePoint_finite_field,
-                    IntegralProjectiveCurvePoint,
-                    IntegralProjectiveCurvePoint_finite_field,
-                    IntegralProjectivePlaneCurvePoint,
-                    IntegralProjectivePlaneCurvePoint_finite_field)
-
 from .closed_point import IntegralProjectiveCurveClosedPoint
+from .curve import Curve_generic
+from .point import (
+    IntegralProjectiveCurvePoint,
+    IntegralProjectiveCurvePoint_finite_field,
+    IntegralProjectivePlaneCurvePoint,
+    IntegralProjectivePlaneCurvePoint_finite_field,
+    ProjectiveCurvePoint_field,
+    ProjectivePlaneCurvePoint_field,
+    ProjectivePlaneCurvePoint_finite_field,
+)
 
 
 class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
@@ -1449,7 +1461,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                       + (1/16*a + 1/16)*x*y*z^2 + (3/16*a + 3/16)*y^2*z^2
                       + (-3/16*a - 1/4)*y*z^3 + (1/16*a + 3/32)*z^4)
         """
-        from sage.rings.qqbar import number_field_elements_from_algebraics, QQbar
+        from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
 
         def extension(self):
             # helper function for extending the base field
@@ -1459,13 +1471,12 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             K = number_field_elements_from_algebraics(L)[0]
             if isinstance(K, RationalField):
                 return F.embeddings(F)[0]
+            elif isinstance(F, RationalField):
+                return F.embeddings(K)[0]
             else:
-                if isinstance(F, RationalField):
-                    return F.embeddings(K)[0]
-                else:
-                    # make sure the defining polynomial variable names are the same for K, N
-                    N = NumberField(K.defining_polynomial().parent()(F.defining_polynomial()), str(K.gen()))
-                    return N.composite_fields(K, both_maps=True)[0][1]*F.embeddings(N)[0]
+                # make sure the defining polynomial variable names are the same for K, N
+                N = NumberField(K.defining_polynomial().parent()(F.defining_polynomial()), str(K.gen()))
+                return N.composite_fields(K, both_maps=True)[0][1]*F.embeddings(N)[0]
         if self.base_ring() not in NumberFields():
             raise NotImplementedError("the base ring of this curve must be a number field")
         if not self.is_irreducible():
@@ -2374,8 +2385,12 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
             sage: P in C
             True
         """
-        from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_finite_field
-        from sage.schemes.hyperelliptic_curves.hyperelliptic_finite_field import HyperellipticCurve_finite_field
+        from sage.schemes.elliptic_curves.ell_finite_field import (
+            EllipticCurve_finite_field,
+        )
+        from sage.schemes.hyperelliptic_curves.hyperelliptic_finite_field import (
+            HyperellipticCurve_finite_field,
+        )
         if not isinstance(self, (EllipticCurve_finite_field, HyperellipticCurve_finite_field)):
             raise NotImplementedError("only implemented for elliptic and hyperelliptic curves over finite fields")
 
@@ -2417,16 +2432,56 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             True
         """
         super().__init__(A, f)
-
         ideal = self.defining_ideal()
         gs = self.ambient_space().gens()
         for i in range(self.ngens()):
             if gs[i] not in ideal:
-                self._open_affine = self.affine_patch(i)
                 self._open_affine_index = i
                 break
         else:
             raise ValueError("no projective curve defined")
+
+    @lazy_attribute
+    def _open_affine(self):
+        r"""
+        An affine patch of the curve.
+
+        TESTS::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
+            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
+            sage: C._open_affine
+            Affine Plane Curve over Finite Field of size 7 defined by -y^2*z - 2*z^3 + 1
+        """
+        return self.affine_patch(self._open_affine_index)
+
+    def __getstate__(self):
+        r"""
+        Remove some attributes that cause issues before pickling.
+        These are easily recomputed anyway.
+
+        TESTS:
+
+        Make sure that pickling and unpickling works after
+        accessing attributes. See :issue:`41265`::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
+            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
+            sage: C._open_affine is not None
+            True
+            sage: C._map_from_function_field is not None
+            True
+            sage: loaded = loads(dumps(C))
+            sage: loaded == C
+            True
+            sage: loaded._open_affine == C._open_affine
+            True
+        """
+        state = super().__getstate__()
+        # We don't use del in case these properties haven't been accessed and cached yet
+        state.pop('_open_affine', None)
+        state.pop('_map_from_function_field', None)
+        return state
 
     def function_field(self):
         """
