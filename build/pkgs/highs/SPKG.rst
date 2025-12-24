@@ -27,7 +27,7 @@ Upstream Contact
 
 - https://github.com/ERGO-Code/HiGHS
 - https://www.highs.dev
-- Email: highsopt@gmail.com
+- Email: hello@highs.dev
 
 Dependencies
 ------------
