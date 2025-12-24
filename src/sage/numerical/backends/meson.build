@@ -55,17 +55,13 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
-  backend_deps = [py_dep, cysignals, glpk, gmp]
-  if name == 'highs_backend'
-    backend_deps += [highs]
-  endif
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/numerical/backends',
     install: true,
     include_directories: [inc_cpython, inc_rings],
-    dependencies: backend_deps,
+    dependencies: [py_dep, cysignals, glpk, gmp, highs],
   )
 endforeach
 

@@ -115,9 +115,14 @@ if highs_pc.found()
     highs_lib = cc.find_library('highs', required: false, disabler: true)
     if highs_lib.found()
       # Use the prefix from pkg-config or Sage's prefix to find headers
-      highs_prefix = highs_pc.get_variable(pkgconfig: 'prefix', default_value: get_option('prefix'))
+      highs_prefix = highs_pc.get_variable(
+        pkgconfig: 'prefix',
+        default_value: get_option('prefix'),
+      )
       highs_header_dir = highs_prefix / 'include' / 'highs'
-      if fs.is_dir(highs_header_dir) and fs.is_file(highs_header_dir / 'lp_data' / 'HighsCallbackStruct.h')
+      if fs.is_dir(highs_header_dir) and fs.is_file(
+        highs_header_dir / 'lp_data' / 'HighsCallbackStruct.h',
+      )
         highs = declare_dependency(
           dependencies: [highs_lib],
           compile_args: ['-I' + highs_header_dir],
