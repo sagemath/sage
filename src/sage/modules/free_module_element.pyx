@@ -4676,13 +4676,12 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cpdef get_unsafe(self, Py_ssize_t i):
+    cdef get_unsafe(self, Py_ssize_t i):
         """
         EXAMPLES::
 
-            sage: # needs sage.symbolic
-            sage: v = vector(RR, [-1,0,2/3,pi])
-            sage: v.get_unsafe(3)                                                              
+            sage: v = vector(RR, [-1,0,2/3,pi])                                         # needs sage.symbolic
+            sage: v.get(3)                                                              # needs sage.symbolic
             3.14159265358979
 
         ::
@@ -4714,15 +4713,13 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cpdef int set_unsafe(self, Py_ssize_t i, value) except -1:
+    cdef int set_unsafe(self, Py_ssize_t i, value) except -1:
         """
         EXAMPLES::
 
-            sage: # needs sage.symbolic
-            sage: v = vector(RR, [-1, 0, 2/3, pi])                                     
-            sage: v.set_unsafe(3, RR(1))
-            0                                                       
-            sage: v                                                                     
+            sage: v = vector(RR, [-1, 0, 2/3, pi])                                      # needs sage.symbolic
+            sage: v.set(3, RR(1))                                                       # needs sage.symbolic
+            sage: v                                                                     # needs sage.symbolic
             (-1.00000000000000, 0.000000000000000, 0.666666666666667, 1.00000000000000)
         """
         self._entries[i] = value
@@ -5310,17 +5307,16 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             raise IndexError("vector index out of range")
         return self.get_unsafe(n)
 
-    cpdef get_unsafe(self, Py_ssize_t i):
+    cdef get_unsafe(self, Py_ssize_t i):
         """
         EXAMPLES::
 
-            sage: # needs sage.symbolic
-            sage: v = vector([-1,0,2/3,pi], sparse=True)
-            sage: v.get_unsafe(1)
+            sage: v = vector([-1,0,2/3,pi], sparse=True)                                # needs sage.symbolic
+            sage: v.get(1)                                                              # needs sage.symbolic
             0
-            sage: v.get_unsafe(2)
+            sage: v.get(2)                                                              # needs sage.symbolic
             2/3
-            sage: v.get(10)
+            sage: v.get(10)                                                             # needs sage.symbolic
             Traceback (most recent call last):
             ...
             IndexError: vector index out of range
@@ -5330,7 +5326,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         except KeyError:
             return self.coordinate_ring().zero()
 
-    cpdef int set_unsafe(self, Py_ssize_t i, value) except -1:
+    cdef int set_unsafe(self, Py_ssize_t i, value) except -1:
         """
         EXAMPLES::
 
@@ -5352,12 +5348,10 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
 
             sage: # needs sage.symbolic
             sage: v = vector([1,2/3,pi], sparse=True)
-            sage: v.set_unsafe(1, pi^3)
-            0
+            sage: v.set(1, pi^3)
             sage: v
             (1, pi^3, pi)
-            sage: v.set_unsafe(2, SR(0))
-            0
+            sage: v.set(2, SR(0))
             sage: v
             (1, pi^3, 0)
 
