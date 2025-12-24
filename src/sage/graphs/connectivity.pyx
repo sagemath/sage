@@ -1456,7 +1456,19 @@ def minimal_separators(G, forbidden_vertices=None):
         sage: all(G.is_vertex_cut(sep) for sep in G.minimal_separators())
         True
 
-    TESTS::
+    Example of [BPS2010]_::
+
+        sage: G = Graph({'a': ['b', 'k'], 'b': ['c'], 'c': ['d', 'j', 'k'],
+        ....:            'd': ['e', 'f', 'j', 'k'], 'e': ['g'],
+        ....:            'f': ['g', 'j', 'k'], 'g': ['j', 'k'], 'h': ['i', 'j'],
+        ....:            'i': ['k'], 'j': ['k']})
+        sage: sorted(sorted(sep) for sep in G.minimal_separators())
+        [['a', 'c'], ['b', 'k'], ['c', 'k'], ['d', 'j', 'k'],
+         ['h', 'k'], ['i', 'j'], ['j', 'k']]
+
+    TESTS:
+
+    Simple cases::
 
         sage: list(Graph().minimal_separators())
         []
@@ -1469,6 +1481,11 @@ def minimal_separators(G, forbidden_vertices=None):
         Traceback (most recent call last):
         ...
         ValueError: the input must be an undirected graph
+
+    A disconected graph without cut vertices::
+        sage: G = graphs.CycleGraph(4) + graphs.PathGraph(2) + Graph(1)
+        sage: sorted(sorted(sep) for sep in G.minimal_separators())
+        [[0, 2], [1, 3]]
     """
     from sage.graphs.graph import Graph
     if not isinstance(G, Graph):
@@ -1480,36 +1497,74 @@ def minimal_separators(G, forbidden_vertices=None):
 
     if G.order() < 3:
         return
-    if not G.is_connected():
-        for cc in G.connected_components(sort=False):
-            if len(cc) > 2:
-                yield from minimal_separators(G.subgraph(cc))
-        return
 
-    # Initialization - identify separators needing further inspection
-    cdef list to_explore = []
-    for v in G:
-        # iterate over the connected components of G \ N[v]
-        for comp in G.connected_components(sort=False, forbidden_vertices=G.neighbor_iterator(v, closed=True)):
-            # The vertex boundary of comp in G is a separator
-            nh = G.vertex_boundary(comp)
-            if nh:
-                to_explore.append(frozenset(nh))
+    # Decompose the graph into biconnected components
+    blocks, cuts = G.blocks_and_cut_vertices()
+    if len(blocks) > 1:
+        # Cut vertices are minimal separators
+        if cuts:
+            yield from (set([c]) for c in cuts)
+        # Biconnected components to explore
+        BCC = (G.subgraph(bcc) for bcc in blocks if len(bcc) > 3)
+    else:
+        BCC = [G]
 
-    # Generation of all minimal separators
-    cdef set separators = set()
-    while to_explore:
-        sep = to_explore.pop()
-        if sep in separators:
-            continue
-        yield set(sep)
-        separators.add(sep)
-        for v in sep:
-            # iterate over the connected components of G \ sep \ N(v)
-            for comp in G.connected_components(sort=False, forbidden_vertices=sep.union(G.neighbor_iterator(v))):
-                nh = G.vertex_boundary(comp)
+    # Decompose the biconnected components into triconnected components
+    TCC = []
+    from itertools import combinations
+    for g in BCC:
+        for t, h in g.spqr_tree():
+            if t == 'P':
+                # h is a separator of order 2
+                yield set(h)
+            elif t == 'S':
+                # h is a cycle. The edges of its complement are separators.
+                # The complement of a 3-cycle has no edge.
+                if h.order() > 3:
+                    yield from (set(e) for e in combinations(h, 2) if not h.has_edge(e))
+            elif h.order() > 4:
+                # h is a 3-connected component (t == 'R') of order at least 5.
+                # A 3-connected component of order 4 is a clique.
+                TCC.append(h.to_simple(immutable=True))
+
+    # Decompose the triconnected components by clique minimal separators
+    atoms = []
+    for g in TCC:
+        A, cliques = g.atoms_and_clique_separators()
+        if cliques:
+            # A clique separator may be repeated in cliques
+            cliques = set(frozenset(clique) for clique in cliques)
+            yield from (set(clique) for clique in cliques)
+            atoms.extend(g.subgraph(atom) for atom in A)
+        else:
+            atoms.append(g)
+
+    # Find the minimal separators of each atom
+    for g in atoms:
+        # Initialization - identify separators needing further inspection
+        to_explore = []
+        for v in g:
+            # iterate over the connected components of G \ N[v]
+            for comp in g.connected_components(sort=False, forbidden_vertices=list(g.neighbor_iterator(v, closed=True))):
+                # The vertex boundary of comp in G is a separator
+                nh = g.vertex_boundary(comp)
                 if nh:
                     to_explore.append(frozenset(nh))
+
+        # Generation of all minimal separators
+        separators = set()
+        while to_explore:
+            sep = to_explore.pop()
+            if sep in separators:
+                continue
+            yield set(sep)
+            separators.add(sep)
+            for v in sep:
+                # iterate over the connected components of G \ sep \ N(v)
+                for comp in g.connected_components(sort=False, forbidden_vertices=sep.union(g.neighbor_iterator(v))):
+                    nh = g.vertex_boundary(comp)
+                    if nh:
+                        to_explore.append(frozenset(nh))
 
 
 def edge_connectivity(G,
