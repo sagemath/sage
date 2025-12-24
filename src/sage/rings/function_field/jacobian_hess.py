@@ -130,7 +130,7 @@ class JacobianPoint(JacobianPoint_base):
             sage: G = C.jacobian(model='hess', base_div=b).group()
             sage: pl = C([1,8,1]).place()
             sage: p = G.point(pl - b)
-            sage: TestSuite(p).run(skip=['_test_category','_test_pickling'])
+            sage: TestSuite(p).run()
         """
         super().__init__(parent)
         self._data = (dS, ds)
@@ -570,7 +570,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             sage: b = C([0,1,0]).place()
             sage: J = C.jacobian(model='hess', base_div=b)
             sage: G = J.group()
-            sage: TestSuite(G).run(skip=['_test_elements', '_test_pickling'])
+            sage: TestSuite(G).run()
         """
         super().__init__(parent, function_field, base_div)
 
@@ -876,7 +876,7 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
             sage: b = C([0,1,0]).place()
             sage: J = C.jacobian(model='hess', base_div=b)
             sage: G = J.group()
-            sage: TestSuite(G).run(skip=['_test_elements','_test_pickling'])
+            sage: TestSuite(G).run()
         """
         super().__init__(parent, function_field, base_div)
 
@@ -1023,7 +1023,7 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: b = C([0,1,0]).place()
             sage: J = C.jacobian(model='hess', base_div=b)
-            sage: TestSuite(J).run(skip=['_test_elements','_test_pickling'])
+            sage: TestSuite(J).run()
         """
         super().__init__(function_field, base_div, **kwds)
 
