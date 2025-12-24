@@ -1589,7 +1589,7 @@ cdef class LaurentSeries(AlgebraElement):
             return True
 
         v = self.valuation()
-        unit = self.valuation_zero_part().power_series()
+        unit = self.valuation_zero_part()
 
         if v % 2 != 0:
             if root:
