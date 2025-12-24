@@ -1,6 +1,6 @@
 dnl Standard metadata of SageMath distribution packages
 dnl
-license = GNU General Public License (GPL) v2 or later
+license = "GPL-2.0-or-later"
 author = The Sage Developers
 author_email = sage-support@googlegroups.com
 url = https://www.sagemath.org
