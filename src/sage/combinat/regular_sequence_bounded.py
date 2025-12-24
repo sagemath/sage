@@ -160,7 +160,7 @@ def construct_phi(matrices):
     raise RuntimeError('Phi too large.')
 
 
-def is_integer_valued(matrices):
+def is_integer_valued(matrices) -> bool:
     r"""
     Return whether every matrix in ``matrices`` is integer-valued.
 
@@ -203,7 +203,7 @@ def is_integer_valued(matrices):
     return all(mat in M for mat in matrices)
 
 
-def is_non_negative(matrices):
+def is_non_negative(matrices) -> bool:
     r"""
     Return whether every matrix in ``matrices`` is non-negative.
 
@@ -234,10 +234,10 @@ def is_non_negative(matrices):
         sage: is_non_negative(matrices)
         True
     """
-    return all(min(mat.list()) >= 0 for mat in matrices)
+    return all(v >= 0 for mat in matrices for v in mat.list())
 
 
-def is_bounded_via_mandel_simon_algorithm(matrices):
+def is_bounded_via_mandel_simon_algorithm(matrices) -> bool:
     r"""
     Return whether the semigroup generated whether the semigroup of all
     possible products of ``matrices`` is finite/bounded.
@@ -287,10 +287,10 @@ def is_bounded_via_mandel_simon_algorithm(matrices):
         sage: is_bounded_via_mandel_simon_algorithm(N)
         Traceback (most recent call last):
         ...
-        ValueError: Not all matrices are integer-valued.
+        ValueError: not all matrices are integer-valued
     """
     if not is_integer_valued(matrices):
-        raise ValueError('Not all matrices are integer-valued.')
+        raise ValueError('not all matrices are integer-valued')
 
     phi = construct_phi(matrices)
     return not any(multiply_reduce(M, M) == M and not M**2 == M**3
