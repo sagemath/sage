@@ -9,7 +9,6 @@ classifiers =
     Development Status :: 6 - Mature
     Intended Audience :: Education
     Intended Audience :: Science/Research
-    License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)
     Operating System :: POSIX
     Operating System :: MacOS :: MacOS X
     Programming Language :: Python :: 3 :: Only
