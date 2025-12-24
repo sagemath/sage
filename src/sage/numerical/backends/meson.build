@@ -23,6 +23,8 @@ py.install_sources(
   'glpk_exact_backend_test.py',
   'glpk_graph_backend.pxd',
   'glpk_graph_backend.pyx',
+  'highs_backend.pxd',
+  'highs_backend.pyx',
   'interactivelp_backend.pxd',
   'interactivelp_backend.pyx',
   'interactivelp_backend_test.py',
@@ -46,6 +48,7 @@ extension_data = {
   'glpk_backend' : files('glpk_backend.pyx'),
   'glpk_exact_backend' : files('glpk_exact_backend.pyx'),
   'glpk_graph_backend' : files('glpk_graph_backend.pyx'),
+  'highs_backend' : files('highs_backend.pyx'),
   'interactivelp_backend' : files('interactivelp_backend.pyx'),
   'matrix_sdp_backend' : files('matrix_sdp_backend.pyx'),
   'ppl_backend' : files('ppl_backend.pyx'),
@@ -58,7 +61,7 @@ foreach name, pyx : extension_data
     subdir: 'sage/numerical/backends',
     install: true,
     include_directories: [inc_cpython, inc_rings],
-    dependencies: [py_dep, cysignals, glpk, gmp],
+    dependencies: [py_dep, cysignals, glpk, gmp, highs],
   )
 endforeach
 
@@ -75,4 +78,3 @@ foreach name, pyx : extension_data_cpp
     dependencies: [py_dep, cysignals, gmp],
   )
 endforeach
-

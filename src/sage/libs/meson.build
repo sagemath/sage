@@ -79,6 +79,23 @@ braiding = dependency(
   required: false,
   disabler: true,
 )
+
+# HiGHS optimization solver (used by sage.numerical.backends.highs_backend)
+# The HiGHS headers rely on relative includes within the "highs" include tree,
+# so we need to add -I$includedir/highs to the compile args.
+highs_dep = dependency('highs', required: false, disabler: true)
+if highs_dep.found()
+  highs_includedir = highs_dep.get_variable(
+    pkgconfig: 'includedir',
+    default_value: get_option('prefix') / 'include',
+  )
+  highs = declare_dependency(
+    dependencies: [highs_dep],
+    compile_args: ['-I' + highs_includedir / 'highs'],
+  )
+else
+  highs = disabler()
+endif
 gc = dependency(
   ['bdw-gc-threaded', 'bdw-gc'],
   version: '>=7.6.4',
@@ -179,6 +196,7 @@ install_subdir('giac', install_dir: sage_install_dir / 'libs')
 subdir('glpk')
 subdir('gmp')
 subdir('gsl')
+subdir('highs')
 subdir('lcalc')
 subdir('linbox')
 install_subdir('linkages', install_dir: sage_install_dir / 'libs')
