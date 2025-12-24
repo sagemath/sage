@@ -1598,10 +1598,9 @@ cdef class LaurentSeries(AlgebraElement):
 
         # Delegate the check to the power series ring
         if root:
-            # We explicitly ask for the root from the power series
-            is_sq, sqrt_unit = unit.is_square(root=True)
-            if not is_sq:
+            if not unit.is_square():
                 return False, None
+            sqrt_unit = unit.sqrt()
             result = self.parent().gen()**(v // 2) * sqrt_unit
             return True, result
         else:
