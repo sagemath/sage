@@ -1573,7 +1573,7 @@ cdef class LaurentSeries(AlgebraElement):
             sage: (2*t^-4).is_square()
             False
 
-        rings with zero divisors::
+        check for rings with zero divisors::
 
             sage: R.<t> = LaurentSeriesRing(Zmod(8))
             sage: (t^2).is_square()
@@ -1588,7 +1588,8 @@ cdef class LaurentSeries(AlgebraElement):
                 return True, self
             return True
 
-        v, unit = self.valuation_zero_part()
+        v = self.valuation()
+        unit = self.valuation_zero_part().power_series()
 
         if v % 2 != 0:
             if root:
