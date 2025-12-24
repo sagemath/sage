@@ -5842,16 +5842,24 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         - ``self`` -- integer congruent to `0` or `1` mod `4` which is
           not a square
 
-        - ``proof`` -- boolean (default: ``True``); if ``False``, then
-          for negative discriminants a faster algorithm is used by
-          the PARI library which is known to give incorrect results
-          when the class group has many cyclic factors.  However, the
-          results are correct for discriminants `D` with `|D|\le 2\cdot10^{10}`.
+        - ``proof`` -- boolean (default: ``True``); if ``True``, then
+          PARI's :pari:`quadclassunit` function is used, which gives
+          reliable results (assuming GRH). If ``False``, then PARI's
+          :pari:`qfbclassno` function is used, which is faster but may
+          give incorrect results when the class group has many cyclic
+          factors (see PARI documentation).
 
         OUTPUT:
 
         (integer) the class number of the quadratic order with this
         discriminant.
+
+        .. WARNING::
+
+           PARI's documentation for ``qfbclassno`` explicitly states:
+           "This function may give incorrect results when the class group
+           has many cyclic factors." For proven results, use the default
+           ``proof=True`` which calls :pari:`quadclassunit` instead.
 
         .. NOTE::
 
@@ -5878,6 +5886,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             (109, 1),
             (113, 1),
             (117, 1)]
+            sage: (-163).class_number(proof=False)                                      # needs sage.libs.pari
+            1
 
         TESTS:
 
@@ -5908,8 +5918,16 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         global objtogen
         if objtogen is None:
             from cypari2.gen import objtogen
-        flag = self < 0 and proof
-        return objtogen(self).qfbclassno(flag).sage()
+        if proof:
+            # Use quadclassunit for guaranteed correctness (assuming GRH).
+            # PARI documentation warns that qfbclassno "may give incorrect results
+            # when the class group has many cyclic factors", so we avoid it here.
+            return objtogen(self).quadclassunit()[0].sage()
+        else:
+            # Use qfbclassno for speed. WARNING: PARI documentation states this
+            # "may give incorrect results when the class group has many cyclic factors."
+            # Only use when the user explicitly sets proof=False.
+            return objtogen(self).qfbclassno().sage()
 
     def squarefree_part(self, long bound=-1):
         r"""

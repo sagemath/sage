@@ -97,9 +97,27 @@ from sage.structure.parent import Parent
 from sage.structure.sequence import Sequence
 
 
-def quadratic_order_class_number(disc):
+def quadratic_order_class_number(disc, proof=None):
     r"""
     Return the class number of the quadratic order of given discriminant.
+
+    INPUT:
+
+    - ``disc`` -- an integer; the discriminant of the quadratic order
+
+    - ``proof`` -- boolean (default: ``None``, meaning use the global
+      proof setting for number fields); if ``True``, use PARI's
+      :pari:`quadclassunit` which is reliable (assuming GRH); if ``False``,
+      use :pari:`qfbclassno` which is faster but may return incorrect
+      results for large discriminants when the class group has many
+      cyclic factors.
+
+    .. WARNING::
+
+        PARI's documentation for ``qfbclassno`` explicitly states:
+        "This function may give incorrect results when the class group
+        has many cyclic factors." For proven results, use ``proof=True``
+        which calls :pari:`quadclassunit` instead.
 
     EXAMPLES::
 
@@ -108,14 +126,50 @@ def quadratic_order_class_number(disc):
         9
         sage: quadratic_order_class_number(60)
         2
+        sage: quadratic_order_class_number(-419, proof=False)
+        9
+
+    TESTS:
+
+    Verify that the correct PARI function is called based on the ``proof`` flag.
+    When ``proof=True``, :pari:`quadclassunit` must be used::
+
+        sage: from sage.rings.number_field.order import quadratic_order_class_number
+        sage: from unittest.mock import patch, MagicMock
+        sage: mock_result = MagicMock()
+        sage: mock_result.__getitem__ = MagicMock(return_value=9)
+        sage: with patch.object(pari, 'quadclassunit', return_value=mock_result) as mock_qcu:
+        ....:     with patch.object(pari, 'qfbclassno') as mock_qfb:
+        ....:         _ = quadratic_order_class_number(-419, proof=True)
+        ....:         assert mock_qcu.called, "quadclassunit should be called when proof=True"
+        ....:         assert not mock_qfb.called, "qfbclassno should NOT be called when proof=True"
+
+    When ``proof=False``, :pari:`qfbclassno` is used for speed::
+
+        sage: with patch.object(pari, 'quadclassunit') as mock_qcu:
+        ....:     with patch.object(pari, 'qfbclassno', return_value=9) as mock_qfb:
+        ....:         _ = quadratic_order_class_number(-419, proof=False)
+        ....:         assert mock_qfb.called, "qfbclassno should be called when proof=False"
+        ....:         assert not mock_qcu.called, "quadclassunit should NOT be called when proof=False"
 
     ALGORITHM: Either :pari:`qfbclassno` or :pari:`quadclassunit`,
-    depending on the size of the discriminant.
+    depending on the ``proof`` flag. When ``proof=True`` (the default),
+    :pari:`quadclassunit` is used for correctness. When ``proof=False``,
+    :pari:`qfbclassno` is used for speed, but may return incorrect results
+    for large discriminants (see PARI documentation for ``qfbclassno``).
     """
-    # cutoffs from PARI documentation
-    if disc < -10**25 or disc > 10**10:
+    from sage.structure.proof.proof import get_flag
+    proof = get_flag(proof, 'number_field')
+
+    if proof:
+        # Use quadclassunit for guaranteed correctness (assuming GRH).
+        # PARI documentation warns that qfbclassno "may give incorrect results
+        # when the class group has many cyclic factors", so we avoid it here.
         h = pari.quadclassunit(disc)[0]
     else:
+        # Use qfbclassno for speed. WARNING: PARI documentation states this
+        # "may give incorrect results when the class group has many cyclic factors."
+        # Only use when the user explicitly sets proof=False.
         h = pari.qfbclassno(disc)
     return ZZ(h)
 
@@ -1210,7 +1264,7 @@ class Order(Parent, sage.rings.abc.Order):
             K = self.number_field()
             if K.degree() != 2:
                 raise NotImplementedError("computation of class numbers of non-maximal orders not in quadratic fields is not implemented")
-            return quadratic_order_class_number(self.discriminant())
+            return quadratic_order_class_number(self.discriminant(), proof=proof)
         return self.number_field().class_number(proof=proof)
 
     def class_group(self, proof=None, names='c'):

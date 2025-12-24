@@ -253,10 +253,16 @@ class BQFClassGroup(Parent, UniqueRepresentation):
         """
         return self._disc
 
-    @cached_method
-    def order(self):
+    def order(self, proof=None):
         r"""
         Return the order of this form class group (the *class number*).
+
+        INPUT:
+
+        - ``proof`` -- boolean (default: ``None``, meaning use the global
+          proof setting for number fields); if ``True``, use a reliable
+          algorithm; if ``False``, use a faster algorithm that may give
+          incorrect results for large discriminants.
 
         ALGORITHM: :func:`sage.rings.number_field.order.quadratic_order_class_number`.
 
@@ -276,15 +282,32 @@ class BQFClassGroup(Parent, UniqueRepresentation):
             88
             sage: BQFClassGroup(-99999).order()
             224
+            sage: BQFClassGroup(-999).order(proof=False)
+            24
         """
         # Beware: If this code is ever generalized to positive
         # discriminants, care must be taken to use the correct
         # notion of class number. We may need the *narrow* class
         # number here; see PARI's documentation for qfbclassno().
         from sage.rings.number_field.order import quadratic_order_class_number
-        return quadratic_order_class_number(self._disc)
+        return quadratic_order_class_number(self._disc, proof=proof)
 
-    cardinality = order
+    def cardinality(self, proof=None):
+        r"""
+        Return the cardinality of this form class group (the *class number*).
+
+        This is an alias for :meth:`order`.
+
+        INPUT:
+
+        - ``proof`` -- boolean (default: ``None``); see :meth:`order`
+
+        EXAMPLES::
+
+            sage: BQFClassGroup(-163).cardinality()
+            1
+        """
+        return self.order(proof=proof)
 
     @cached_method
     def abelian_group(self):
