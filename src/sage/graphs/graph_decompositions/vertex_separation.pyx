@@ -364,7 +364,7 @@ def lower_bound(G):
 # Method for turning an ordering to a path decomposition and back #
 ###################################################################
 
-def linear_ordering_to_path_decomposition(G, L):
+def linear_ordering_to_path_decomposition(G, L, immutable=None):
     """
     Return the path decomposition encoded in the ordering L.
 
@@ -373,6 +373,10 @@ def linear_ordering_to_path_decomposition(G, L):
     - ``G`` -- a Graph
 
     - ``L`` -- a linear ordering for G
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graph. ``immutable=None`` (default) means that the
+      graph and its path decomposition will behave the same way.
 
     OUTPUT: a path graph whose vertices are the bags of the path decomposition
 
@@ -428,12 +432,27 @@ def linear_ordering_to_path_decomposition(G, L):
         Traceback (most recent call last):
         ...
         ValueError: the input linear vertex ordering L is not valid for G
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: G = Graph(1)
+        sage: linear_ordering_to_path_decomposition(G, [0]).is_immutable()
+        False
+        sage: linear_ordering_to_path_decomposition(G, [0], immutable=True).is_immutable()
+        True
+        sage: G = Graph(1, immutable=True)
+        sage: linear_ordering_to_path_decomposition(G, [0]).is_immutable()
+        True
+        sage: linear_ordering_to_path_decomposition(G, [0], immutable=False).is_immutable()
+        False
     """
     from sage.graphs.graph import Graph
     if not isinstance(G, Graph):
         raise ValueError("the first parameter must be a Graph")
+    if immutable is None:
+        immutable = G.is_immutable()
     if not G:
-        return Graph()
+        return Graph(immutable=immutable)
     if not is_valid_ordering(G, L):
         raise ValueError("the input linear vertex ordering L is not valid for G")
 
@@ -457,21 +476,24 @@ def linear_ordering_to_path_decomposition(G, L):
 
     # We now build a graph whose vertices are bags
     from sage.sets.set import Set
-    H = Graph()
-    H.add_path([Set(bag) for bag in bags])
-    return H
+    bags = [Set(bag) for bag in bags]
+    return Graph([bags, zip(bags, bags[1:])], format='vertices_and_edges',
+                 immutable=immutable)
 
 
 ##################################################################
 # Front end methods for path decomposition and vertex separation #
 ##################################################################
 
-def pathwidth(self, k=None, certificate=False, algorithm='BAB', verbose=False,
-              max_prefix_length=20, max_prefix_number=10**6, *, solver=None):
+def pathwidth(G, k=None, certificate=False, algorithm='BAB', verbose=False,
+              max_prefix_length=20, max_prefix_number=10**6,
+              immutable=None, *, solver=None):
     r"""
-    Compute the pathwidth of ``self`` (and provides a decomposition).
+    Compute the pathwidth of ``G`` (and provides a decomposition).
 
     INPUT:
+
+    - ``G`` -- a graph
 
     - ``k`` -- integer (default: ``None``); the width to be considered. When
       ``k`` is an integer, the method checks that the graph has pathwidth
@@ -505,6 +527,10 @@ def pathwidth(self, k=None, certificate=False, algorithm='BAB', verbose=False,
     - ``max_prefix_number`` -- integer (default: 10**6); upper bound on the
       number of stored prefixes used to prevent using too much memory. This
       parameter is used only when ``algorithm=="BAB"``.
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graph. ``immutable=None`` (default) means that the
+      graph and its path decomposition will behave the same way.
 
     - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
@@ -573,23 +599,43 @@ def pathwidth(self, k=None, certificate=False, algorithm='BAB', verbose=False,
         sage: g = graphs.PetersenGraph()
         sage: g.pathwidth(solver='SCIP')  # optional - pyscipopt
         5
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: G = graphs.PathGraph(2)
+        sage: G.pathwidth(certificate=True)[1].is_immutable()
+        False
+        sage: G.pathwidth(certificate=True, immutable=True)[1].is_immutable()
+        True
+        sage: G = G.copy(immutable=True)
+        sage: G.pathwidth(certificate=True)[1].is_immutable()
+        True
+        sage: G.pathwidth(certificate=True, immutable=False)[1].is_immutable()
+        False
     """
     from sage.graphs.graph import Graph
-    if not isinstance(self, Graph):
+    if not isinstance(G, Graph):
         raise ValueError("the parameter must be a Graph")
 
-    pw, L = vertex_separation(self, algorithm=algorithm, verbose=verbose,
+    if immutable is None:
+        immutable = G.is_immutable()
+
+    pw, L = vertex_separation(G, algorithm=algorithm, verbose=verbose,
                               cut_off=k, upper_bound=None if k is None else (k+1),
                               max_prefix_length=max_prefix_length,
                               max_prefix_number=max_prefix_number,
                               solver=solver)
 
     if k is None:
-        return (pw, linear_ordering_to_path_decomposition(self, L)) if certificate else pw
+        if certificate:
+            return pw, linear_ordering_to_path_decomposition(G, L, immutable=immutable)
+        return pw
     if pw < 0:
         # no solution found
-        return (False, Graph()) if certificate else False
-    return (pw <= k, linear_ordering_to_path_decomposition(self, L)) if certificate else pw <= k
+        return (False, Graph(immutable=immutable)) if certificate else False
+    if certificate:
+        return pw <= k, linear_ordering_to_path_decomposition(G, L, immutable=immutable)
+    return pw <= k
 
 
 def path_decomposition(G, algorithm='BAB', cut_off=None, upper_bound=None, verbose=False,

@@ -112,7 +112,7 @@ cdef list id_to_vertices
 cdef dict vertices_to_id
 
 
-def rank_decomposition(G, verbose=False):
+def rank_decomposition(G, verbose=False, immutable=None):
     r"""
     Compute an optimal rank-decomposition of the given graph.
 
@@ -124,6 +124,10 @@ def rank_decomposition(G, verbose=False):
 
     - ``verbose`` -- boolean (default: ``False``); whether to display progress
       information while computing the decomposition
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graph. ``immutable=None`` (default) means that
+      the graph and its decomposition tree will behave the same way.
 
     OUTPUT:
 
@@ -151,8 +155,23 @@ def rank_decomposition(G, verbose=False):
         sage: g = Graph()
         sage: rank_decomposition(g)
         (0, Graph on 0 vertices)
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: G = Graph()
+        sage: rank_decomposition(G)[1].is_immutable()
+        False
+        sage: rank_decomposition(G, immutable=True)[1].is_immutable()
+        True
+        sage: G = Graph(immutable=True)
+        sage: rank_decomposition(G)[1].is_immutable()
+        True
+        sage: rank_decomposition(G, immutable=False)[1].is_immutable()
+        False
     """
     cdef int n = G.order()
+    if immutable is None:
+        immutable = G.is_immutable()
 
     if n >= 32:
         raise RuntimeError("the rank decomposition cannot be computed "
@@ -160,7 +179,7 @@ def rank_decomposition(G, verbose=False):
 
     elif not n:
         from sage.graphs.graph import Graph
-        return (0, Graph())
+        return (0, Graph(immutable=immutable))
 
     cdef int i
 
@@ -196,6 +215,8 @@ def rank_decomposition(G, verbose=False):
     # Free the memory
     destroy_rw()
 
+    if immutable:
+        g = g.copy(immutable=True)
     return (rank_width, g)
 
 
