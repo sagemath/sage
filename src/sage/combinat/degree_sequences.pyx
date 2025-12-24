@@ -437,6 +437,8 @@ cdef class _DegreeSequenceEnumerator:
          (3, 3, 2, 2),
          (3, 3, 3, 3)]
     """
+    cdef int N
+    cdef unsigned char * seq
 
     def __cinit__(self, int n):
         """
@@ -519,9 +521,9 @@ cdef class _DegreeSequenceEnumerator:
             yield self.build_current_seq()
             return
 
-        #############################################
+        ####################################
         # Creating vertices of degree M #
-        #############################################
+        ####################################
 
         # If 0 is the current maximum degree, we can always extend the degree
         # sequence with another 0
@@ -544,9 +546,9 @@ cdef class _DegreeSequenceEnumerator:
             seq[M] -= M + 1
             seq[M - 1] += M
 
-        ###############################################
+        ######################################
         # Creating vertices of degree > M #
-        ###############################################
+        ######################################
 
         for current_box in range(M, 0, -1):
 

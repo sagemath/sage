@@ -30,7 +30,6 @@ py.install_sources(
   'cyclic_sieving_phenomenon.py',
   'debruijn_sequence.pyx',
   'decorated_permutation.py',
-  'degree_sequences.pxd',
   'degree_sequences.pyx',
   'derangements.py',
   'descent_algebra.py',
