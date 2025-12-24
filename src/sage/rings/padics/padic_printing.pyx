@@ -134,6 +134,11 @@ class pAdicPrinterDefaults(SageObject):
             sage: padic_printing.mode('val-unit')
             sage: Qp(13)(130)
             13 * 10 + O(13^21)
+            sage: padic_printing.mode('digits')
+            sage: repr(Qp(17)(100))
+            '...0000000000000000005F'
+            sage: repr(Qp(17)(1000))
+            '...0000000000000000037E'
             sage: padic_printing.mode('digits-unicode')
             sage: repr(Qp(17)(100))
             '…0000000000000000005F'
