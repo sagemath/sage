@@ -423,6 +423,19 @@ def check_relation_maxima(relation):
         False
         sage: forget()
 
+    Here is an example that illustrates that ``False`` may mean inconclusive::
+
+        sage: x = SR.var('x')
+        sage: assume(x, 'integer')
+        sage: check_relation_maxima( x == 1 )
+        False
+        sage: check_relation_maxima( x != 1 )
+        False
+        sage: assume( x > 2 )
+        sage: check_relation_maxima( x != 1 )
+        True
+        sage: forget()
+
     TESTS:
 
     Ensure that ``canonicalize_radical()`` and ``simplify_log`` are not
@@ -485,38 +498,42 @@ def check_relation_maxima(relation):
         [k == 1/2*I*sqrt(3) - 1/2, k == -1/2*I*sqrt(3) - 1/2]
         sage: assumptions()
         [k is noninteger]
-    """
-    m = relation._maxima_()
 
-    # Handle some basic cases first
-    if repr(m) in ['0=0']:
-        return True
-    elif repr(m) in ['0#0', '1#1']:
-        return False
+    Check that boolean values are handled correctly::
+
+        sage: check_relation_maxima(2 == 2)
+        True
+        sage: check_relation_maxima(2 == 3)
+        False
+    """
+    # Handle boolean values directly (e.g., when comparing Python integers)
+    if isinstance(relation, bool):
+        return relation
+
+    from sage.interfaces.maxima_lib import test_max_equal, test_max_notequal, test_max_relation
 
     if relation.operator() == operator.eq:  # operator is equality
         try:
-            s = m.parent()._eval_line('is (equal(%s,%s))' % (repr(m.lhs()),
-                                                             repr(m.rhs())))
+            s = test_max_equal(relation.lhs(),relation.rhs())
         except TypeError:
             raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
 
     elif relation.operator() == operator.ne:  # operator is not equal
         try:
-            s = m.parent()._eval_line('is (notequal(%s,%s))' % (repr(m.lhs()),
-                                                                repr(m.rhs())))
+            s = test_max_notequal(relation.lhs(),relation.rhs())
         except TypeError:
             raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
 
     else:  # operator is < or > or <= or >=, which Maxima handles fine
         try:
-            s = m.parent()._eval_line('is (%s)' % repr(m))
+            # For inequalities, use the full relation string
+            s = test_max_relation(relation)
         except TypeError:
             raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
 
-    if s == 'true':
+    if s is True:
         return True
-    elif s == 'false':
+    elif s is False:
         return False  # if neither of these, s=='unknown' and we try a few other tricks
 
     if relation.operator() != operator.eq:
@@ -526,26 +543,47 @@ def check_relation_maxima(relation):
     if difference.is_trivial_zero():
         return True
 
-    # Try to apply some simplifications to see if left - right == 0.
-    #
-    # TODO: If simplify_log() is ever removed from simplify_full(), we
-    # can replace all of these individual simplifications with a
-    # single call to simplify_full(). That would work in cases where
-    # two simplifications are needed consecutively; the current
-    # approach does not.
-    #
-    simp_list = [difference.simplify_factorial(),
-                 difference.simplify_rational(),
-                 difference.simplify_rectform(),
-                 difference.simplify_trig()]
-    for f in simp_list:
-        try:
-            if f().is_trivial_zero():
-                return True
-                break
-        except Exception:
-            pass
+    # Try simplify_full() to see if left - right == 0.
+    # Note: simplify_full() does not include simplify_log(), which is
+    # unsafe for complex variables, so this is safe to call here.
+    try:
+        if difference.simplify_full().is_trivial_zero():
+            return True
+    except Exception:
+        pass
     return False
+
+
+def check_relation_maxima_neq_as_not_eq(relation):
+    """
+    A variant of :func:`check_relation_maxima` that treats `x != y`
+    as `not (x == y)` for consistency with Python's boolean semantics.
+
+    For inequality relations (!=), this function checks the corresponding
+    equality and returns its logical negation, ensuring that
+    ``bool(x != y) == not bool(x == y)``.
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.relation import check_relation_maxima_neq_as_not_eq
+        sage: x = var('x')
+        sage: check_relation_maxima_neq_as_not_eq(x != x)
+        False
+        sage: check_relation_maxima_neq_as_not_eq(x == x)
+        True
+        sage: check_relation_maxima_neq_as_not_eq(x != 1)
+        True
+        sage: check_relation_maxima_neq_as_not_eq(x == 1)
+        False
+    """
+    # For inequality (!=), check equality and return the opposite.
+    # This ensures bool(x != y) == not bool(x == y) for semantic consistency.
+    if relation.operator() == operator.ne:
+        from sage.interfaces.maxima_lib import test_max_equal
+        return test_max_equal(relation.lhs(), relation.rhs()) is not True
+
+    # For all other relations, delegate to check_relation_maxima
+    return check_relation_maxima(relation)
 
 
 def string_to_list_of_solutions(s):

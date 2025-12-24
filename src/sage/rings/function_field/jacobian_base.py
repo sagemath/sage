@@ -297,7 +297,7 @@ class JacobianGroup_base(Parent):
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: J = C.jacobian(model='hess')
             sage: G = J.group()
-            sage: TestSuite(G).run(skip=['_test_elements', '_test_pickling'])
+            sage: TestSuite(G).run()
         """
         super().__init__(base=IntegerRing(), category=CommutativeAdditiveGroups())
 
