@@ -6,3 +6,5 @@ lazy_import("sage.rings.function_field.drinfeld_modules.drinfeld_module", "Drinf
 lazy_import("sage.rings.function_field.drinfeld_modules.carlitz_module", "CarlitzModule")
 lazy_import("sage.rings.function_field.drinfeld_modules.carlitz_module", "carlitz_exponential")
 lazy_import("sage.rings.function_field.drinfeld_modules.carlitz_module", "carlitz_logarithm")
+lazy_import("sage.rings.function_field.drinfeld_modules.carlitz_module", "carlitz_factorial")
+lazy_import("sage.rings.function_field.drinfeld_modules.carlitz_module", "carlitz_bernoulli")
