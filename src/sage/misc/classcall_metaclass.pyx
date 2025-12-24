@@ -438,7 +438,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
             sage: 1 in Bar
             Traceback (most recent call last):
             ...
-            TypeError: argument of type 'type' is not iterable
+            TypeError: argument of type 'type' is not... iterable
         """
         if cls.classcontains:
             return cls.classcontains(cls, x)

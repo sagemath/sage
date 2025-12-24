@@ -127,7 +127,7 @@ def variety(ideal, ring, *, proof=True):
         sage: p = 536870909
         sage: R.<x, y> = PolynomialRing(GF(p), 2, order='lex')
         sage: I = Ideal([ x*y - 1, (x-2)^2 + (y-1)^2 - 1])
-        sage: sorted(variety(I, GF(p^2), proof=False), key=str) # optional - msolve
+        sage: sorted(variety(I, GF(p^2), proof=False), key=lambda d: str(sorted(d.items()))) # optional - msolve
         [{x: 1, y: 1},
          {x: 254228855*z2 + 114981228, y: 232449571*z2 + 402714189},
          {x: 267525699, y: 473946006},
@@ -139,11 +139,11 @@ def variety(ideal, ring, *, proof=True):
         sage: R.<x, y> = PolynomialRing(GF(p), 2, order='lex')
         sage: I = Ideal([ x*y - 1, (x-2)^2 + (y-1)^2 - 1])
 
-        sage: sorted(I.variety(algorithm='msolve', proof=False), key=str) # optional - msolve
+        sage: sorted(I.variety(algorithm='msolve', proof=False), key=lambda d: str(sorted(d.items()))) # optional - msolve
         [{x: 1, y: 1}, {x: 267525699, y: 473946006}]
 
         sage: K.<a> = GF(p^2)
-        sage: sorted(I.variety(K, algorithm='msolve', proof=False), key=str) # optional - msolve
+        sage: sorted(I.variety(K, algorithm='msolve', proof=False), key=lambda d: str(sorted(d.items()))) # optional - msolve
         [{x: 1, y: 1},
          {x: 118750849*a + 194048031, y: 510295713*a + 18174854},
          {x: 267525699, y: 473946006},
@@ -188,7 +188,7 @@ def variety(ideal, ring, *, proof=True):
         sage: Ideal(x^2 + y^2 - 1, x - y).variety(RBF, algorithm='msolve', proof=False) # optional - msolve
         [{x: [-0.707106781186547 +/- 6.29e-16], y: [-0.707106781186547 +/- 6.29e-16]},
          {x: [0.707106781186547 +/- 6.29e-16], y: [0.707106781186547 +/- 6.29e-16]}]
-        sage: sorted(Ideal(x^2 - 1, y^2 - 1).variety(QQ, algorithm='msolve', proof=False), key=str) # optional - msolve
+        sage: sorted(Ideal(x^2 - 1, y^2 - 1).variety(QQ, algorithm='msolve', proof=False), key=lambda d: str(sorted(d.items()))) # optional - msolve
         [{x: -1, y: -1}, {x: -1, y: 1}, {x: 1, y: -1}, {x: 1, y: 1}]
         sage: Ideal(x^2-1, y^2-2).variety(CC, algorithm='msolve', proof=False) # optional - msolve
         [{x: 1.00000000000000, y: 1.41421356237310},
