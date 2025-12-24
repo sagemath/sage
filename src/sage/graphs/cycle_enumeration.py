@@ -206,7 +206,7 @@ def _all_cycles_iterator_vertex(self, vertex, starting_vertices=None, simple=Fal
             if weight_function(e) < 0:
                 raise ValueError("negative weight is not allowed")
 
-    from heapq import heapify, heappop, heappush
+    from heapq import heappop, heappush
     heap_queue = [(0, [vertex])]
     if max_length is None:
         from sage.rings.infinity import Infinity
