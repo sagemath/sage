@@ -5855,7 +5855,7 @@ class FreeModule_ambient(FreeModule_generic):
             w = []
             for n in range(self.rank()):
                 v = ZERO.__copy__()
-                v.set(n, one)
+                v[n] = one
                 w.append(v)
             self.__basis = basis_seq(self, w)
             return self.__basis

@@ -1924,15 +1924,27 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         This is equivalent to ``self[i]``.
 
+        .. SEEALSO:: :meth:`__getitem__`
+
+        .. DEPRECATED::
+
+            Use ``self[i]`` instead.
+
         EXAMPLES::
 
             sage: vector(SR, [1/2,2/5,0]).get(0)                                        # needs sage.symbolic
+            doctest:warning...
+            DeprecationWarning: The method get is deprecated; use self[i] instead.
+            See https://github.com/sagemath/sage/issues/41249 for details.
             1/2
             sage: zero_vector(3).get(5)
             Traceback (most recent call last):
             ...
             IndexError: vector index out of range
         """
+        from sage.misc.superseded import deprecation_cython
+        deprecation_cython(41249,
+                           "The method get is deprecated; use self[i] instead.")
         return self[i]
 
     def __setitem__(self, i, value):
@@ -1991,18 +2003,30 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         This is equivalent to ``self[i] = value``.
 
+        .. SEEALSO:: :meth:`__setitem__`
+
+        .. DEPRECATED::
+
+            Use ``self[i] = value`` instead.
+
         EXAMPLES::
 
             sage: # needs sage.symbolic
             sage: v = vector(SR, [1/2,2/5,0]); v
             (1/2, 2/5, 0)
             sage: v.set(2, pi); v
+            doctest:warning...
+            DeprecationWarning: The method set is deprecated; use self[i] = value instead.
+            See https://github.com/sagemath/sage/issues/41249 for details.
             (1/2, 2/5, pi)
             sage: v.set(5, 1)
             Traceback (most recent call last):
             ...
             IndexError: vector index out of range
         """
+        from sage.misc.superseded import deprecation_cython
+        deprecation_cython(41249,
+                           "The method set is deprecated; use self[i] = value instead.")
         self[i] = value
 
     def __invert__(self):
@@ -4683,6 +4707,9 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             sage: # needs sage.symbolic
             sage: v = vector(RR, [-1,0,2/3,pi])
             sage: v.get(3)
+            doctest:warning...
+            DeprecationWarning: The method get is deprecated; use self[i] instead.
+            See https://github.com/sagemath/sage/issues/41249 for details.
             3.14159265358979
 
         ::
@@ -4721,6 +4748,9 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             sage: # needs sage.symbolic
             sage: v = vector(RR, [-1, 0, 2/3, pi])
             sage: v.set(3, RR(1))
+            doctest:warning...
+            DeprecationWarning: The method set is deprecated; use self[i] = value instead.
+            See https://github.com/sagemath/sage/issues/41249 for details.
             sage: v
             (-1.00000000000000, 0.000000000000000, 0.666666666666667, 1.00000000000000)
         """
@@ -5316,6 +5346,9 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             sage: # needs sage.symbolic
             sage: v = vector([-1,0,2/3,pi], sparse=True)
             sage: v.get(1)
+            doctest:warning...
+            DeprecationWarning: The method get is deprecated; use self[i] instead.
+            See https://github.com/sagemath/sage/issues/41249 for details.
             0
             sage: v.get(2)
             2/3
@@ -5352,6 +5385,9 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             sage: # needs sage.symbolic
             sage: v = vector([1,2/3,pi], sparse=True)
             sage: v.set(1, pi^3)
+            doctest:warning...
+            DeprecationWarning: The method set is deprecated; use self[i] = value instead.
+            See https://github.com/sagemath/sage/issues/41249 for details.
             sage: v
             (1, pi^3, pi)
             sage: v.set(2, SR(0))
