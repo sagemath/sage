@@ -6470,6 +6470,14 @@ class AlgebraicNumberPowQQAction(Action):
         - ``x`` -- an algebraic number
 
         - ``e`` -- a rational number
+
+        TESTS:
+
+        Check that :issue:`40733` is fixed::
+
+            sage: n = 19
+            sage: A = matrix(QQbar, [[1/(i+j+1) for i in range(n)] for j in range(n)])
+            sage: ignore = A.QR()  # ensure there's no error
         """
         if not x:
             return x
@@ -6509,57 +6517,43 @@ class AlgebraicNumberPowQQAction(Action):
             return AlgebraicReal(ANRoot(poly, RIF(result_min, result_max)))
 
         # Result lies in QQbar
-
-        # Determine whether arg(x) equals pi.
         argument_is_pi = False
-        for prec in short_prec_seq():
-            if prec is None:
-                # We know that x.real() < 0, since x._value
-                # crosses the negative real line and x._value
-                # is known to be nonzero.
-                isgn = x.imag().sign()
-                val = x._value
-                argument = val.argument()
-                if isgn == 0:
-                    argument = argument.parent().pi()
-                    argument_is_pi = True
-                elif isgn > 0:
-                    if argument < 0:
-                        argument = argument + 2 * argument.parent().pi()
-                else:
-                    if argument > 0:
-                        argument = argument - 2 * argument.parent().pi()
-            else:
-                val = x._interval_fast(prec)
-                if isinstance(val, RealIntervalFieldElement) or not val.crosses_log_branch_cut():
-                    argument = val.argument()
-                    if val.imag().is_zero() and val.real() < 0:
-                        argument_is_pi = True
-                    break
-
-        target_abs = abs(val) ** e
-        target_arg = argument * e
-
-        for prec in tail_prec_seq():
-            if target_abs.relative_diameter() < RR_1_10 and (target_arg * d).absolute_diameter() < RR_1_10:
-                break
-
+        for prec in prec_seq():
             val = x._interval_fast(prec)
-
-            target_abs = abs(val) ** e
-            argument = val.argument()
-            if argument_is_pi:
-                argument = argument.parent().pi()
-            target_arg = argument * e
+            abs_val = abs(val)
+            if abs_val.relative_diameter() < RR_1_10:
+                target_abs = abs_val ** e
+                if target_abs.relative_diameter() < RR_1_10:
+                    # val definitely doesn't contain zero, it's safe to take argument
+                    argument = val.argument()
+                    if isinstance(val, RealIntervalFieldElement):
+                        argument_is_pi = val < 0
+                    elif val.imag().is_zero():
+                        assert val.imag().is_exact()
+                        argument_is_pi = val.real() < 0
+                    elif val.crosses_log_branch_cut():
+                        # use exact computation to potentially adjust argument
+                        isgn = x.imag().sign()
+                        if isgn == 0:
+                            argument_is_pi = True
+                        else:
+                            if isgn > 0:
+                                if argument < 0:
+                                    argument += 2 * argument.parent().pi()
+                            else:
+                                if argument > 0:
+                                    argument -= 2 * argument.parent().pi()
+                    if argument_is_pi:
+                        argument = argument.parent().pi()
+                    target_arg = argument * e
+                    if (target_arg * d).absolute_diameter() < RR_1_10:
+                        break
 
         pow_n = x**n
         poly = QQbarPoly.gen()**d - pow_n
 
         prec = target_abs.prec()
-        if argument_is_pi and d == 2:
-            target_real = 0
-        else:
-            target_real = target_arg.cos() * target_abs
+        target_real = 0 if argument_is_pi and d == 2 else target_arg.cos() * target_abs
         target = ComplexIntervalField(prec)(target_real,
                                             target_arg.sin() * target_abs)
 
