@@ -73,7 +73,7 @@ cdef inline int sig_off_then_raise() except *:
     and the ``sig_off()``.
     """
     sig_off()
-    rethrow_current_exception()
+    rethrow_current_exception()  # equivalently, `delegate_to_exception_handlers()` after https://github.com/cython/cython/pull/7390
 
 
 cdef extern from "pynac_wrap.h":
