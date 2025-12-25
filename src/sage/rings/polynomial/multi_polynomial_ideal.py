@@ -2617,7 +2617,7 @@ class MPolynomialIdeal_singular_repr(
             sage: I = Ideal([x^2 - 1, y^2 - 1])                                         # needs sage.rings.finite_rings
             sage: sorted(I.variety(algorithm='msolve',          # optional - msolve, needs sage.rings.finite_rings
             ....:                  proof=False),
-            ....:        key=str)
+            ....:        key=lambda d: str(sorted(d.items()))
             [{y: 1, x: 1},
              {y: 1, x: 536870908},
              {y: 536870908, x: 1},
@@ -5103,7 +5103,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: max(f.degree() for f in I.groebner_basis())
             4
 
-        We increase the number of polynomials and observe a decrease
+        We increase the number of polynomials and observe a decrease of
         the degree of regularity::
 
             sage: for i in range(2 * n):
