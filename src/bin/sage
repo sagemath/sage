@@ -206,7 +206,10 @@ build_sage() {
 # should be run outside of the Sage shell.
 case "$1" in
     -i|-f|-p)
-        # In Conda environments, it should not compile packages from source
+        echo "\"sage -i\" is obsolete, and might not work." >&2
+        echo "Please use \"./configure --with-<package name>\" followed by \"make\" to update/install Sage's spkg," >&2
+        echo "and \"./sage --pip install <package name>\" to install external packages." >&2
+
         if [ -n "$CONDA_PREFIX" ]; then
             echo "Error: 'sage $1' is not supported in Conda environments." >&2
             echo "Please use 'conda install' to install packages." >&2
