@@ -282,6 +282,7 @@ We use the lexicographic ordering::
 
 from copy import copy
 from itertools import accumulate
+from random import randint
 
 from sage.arith.misc import binomial, factorial, gcd, multinomial
 from sage.structure.global_options import GlobalOptions
@@ -5844,6 +5845,9 @@ class Partitions(UniqueRepresentation, Parent):
     - ``min_part=k`` specifies that all parts of the
       partitions are at least `k`.
 
+    - ``max_sum=k`` specifies the max sum partitions
+      can have is `k` when getting all partitions.
+
     - ``inner=p`` specifies that the partitions must contain the
       partition `p`.
 
@@ -5954,6 +5958,17 @@ class Partitions(UniqueRepresentation, Parent):
 
         sage: Partitions(10, min_part=2, length=3).list()
         [[6, 2, 2], [5, 3, 2], [4, 4, 2], [4, 3, 3]]
+        
+    If ``max_sum=k`` is passed then all partitions of `0` up to `k`
+    are returned::
+
+        sage: P = Partitions(max_sum=3)
+        sage: P.category()
+        Category of finite enumerated sets
+        sage: P.cardinality()
+        7
+        sage: P.list()
+        [[], [1], [2], [1, 1], [3], [2, 1], [1, 1, 1]]
 
     Some examples using the ``regular`` keyword::
 
@@ -6138,6 +6153,19 @@ class Partitions(UniqueRepresentation, Parent):
 
         sage: Partitions(40, max_length=10).cardinality()
         16928
+
+    Check that :issue:`39922` is fixed::
+
+        sage: Partitions(outer=Partition([2,1,1])).list()
+        [[], [1], [2], [1, 1], [2, 1], [1, 1, 1], [2, 1, 1]]
+
+        sage: Partitions(outer=[3,2,2]).cardinality()
+        16
+
+        sage: Partitions(outer=[oo, 2, 2]).cardinality()
+        +Infinity
+
+
     """
     @staticmethod
     def __classcall_private__(cls, n=None, **kwargs):
@@ -6290,6 +6318,9 @@ class Partitions(UniqueRepresentation, Parent):
             if not kwargs:
                 return Partitions_all()
 
+            if 'outer' in kwargs and 'max_sum' not in kwargs:
+                kwargs['max_sum'] = sum(kwargs['outer'])
+
             if len(kwargs) == 1:
                 if 'max_part' in kwargs:
                     return Partitions_all_bounded(kwargs['max_part'])
@@ -6308,8 +6339,6 @@ class Partitions(UniqueRepresentation, Parent):
                 elif 'max_part' in kwargs and 'max_length' in kwargs:
                     return PartitionsInBox(kwargs['max_length'], kwargs['max_part'])
 
-            # IntegerListsLex does not deal well with infinite sets,
-            # so we use a class inheriting from Partitions
             return Partitions_all_constrained(**kwargs)
 
         raise ValueError("n must be an integer or be equal to one of "
@@ -6841,9 +6870,12 @@ class Partitions_all_constrained(Partitions):
             sage: [pi for n in range(10) for pi in Partitions(n, max_part=4, max_slope=-3)]
             [[], [1], [2], [3], [4], [4, 1]]
         """
+
         self._constraints = kwargs
         self._max_sum = infinity
-        if 'outer' in kwargs and kwargs['outer'] and kwargs['outer'][0] is not infinity:
+        if 'max_sum' in kwargs:
+            self._max_sum = kwargs['max_sum']
+        elif 'outer' in kwargs and kwargs['outer'] and kwargs['outer'][0] is not infinity:
             self._max_sum = kwargs['outer'][0] * len(kwargs['outer'])
         else:
             if 'length' in kwargs:
@@ -6922,6 +6954,12 @@ class Partitions_all_constrained(Partitions):
             for p in Partitions(n, **self._constraints):
                 yield self.element_class(self, p)
             n += 1
+    
+    def cardinality(self):
+        if self._max_sum == infinity:
+            return infinity
+        return sum(Partitions(n, **self._constraints).cardinality()
+                   for n in range(self._max_sum+1))
 
 
 class Partitions_all_bounded(Partitions):
@@ -6989,7 +7027,7 @@ class Partitions_all_bounded(Partitions):
             for p in Partitions(n, max_part=self.k):
                 yield self.element_class(self, p)
             n += 1
-
+    
 
 class Partitions_n(Partitions):
     """
