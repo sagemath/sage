@@ -1566,52 +1566,55 @@ cdef class LaurentSeries(AlgebraElement):
             False
             sage: (4/x^2 + 4/x + 1).is_square(root=True)
             (True, 2*x^-1 + 1)
+
             sage: R.<t> = LaurentSeriesRing(ZZ)
             sage: (t^-4).is_square()
             True
             sage: (2*t^-4).is_square()
             False
+
+        check for rings with zero divisors::
+
+            sage: R.<t> = LaurentSeriesRing(Zmod(8))
+            sage: (t^2).is_square()
+            True
+            sage: (4*t^2).is_square()  # 4 is square of 2
+            True
+            sage: (2*t^2).is_square()  # 2 is not a square mod 8
+            False
+            sage: (4 + t).is_square()  # 4 is sq, but 4+t is not
+            False
         """
-        # Case 1: Handle Zero
         if self.is_zero():
             if root:
                 return True, self
             return True
 
-        # Case 2: Valuation must be even
         v = self.valuation()
-        if v % 2:
+        if v % 2 != 0:
             if root:
                 return False, None
             return False
 
-        # Case 3: The unit part must be a square
-        unit_part = (self >> v).power_series()
-        
-        # We use a try-except block to handle inconsistent API in base rings
+        unit = self.valuation_zero_part()
+
         try:
-            # Check is_square without keyword args first (safest)
-            is_sq = unit_part.is_square()
-        except (TypeError, ValueError, ArithmeticError, NotImplementedError):
+            sqrt_unit = unit.sqrt()
+        except (ValueError, ArithmeticError, ZeroDivisionError):
             if root:
                 return False, None
             return False
-
-        if not root:
-            return is_sq
-
-        if is_sq:
-            # If we need the root, calculate it
-            # We try .sqrt() which is standard across most elements
-            try:
-                sqrt_unit = unit_part.sqrt()
-            except (ValueError, ArithmeticError):
-                return False, None
-                
+        if not unit[0].is_unit():
+            if sqrt_unit**2 != unit:
+                if root:
+                    return False, None
+                return False
+        if root:
             # Reconstruct: t^(v/2) * sqrt(unit)
-            return True, self.parent()(sqrt_unit) << (v // 2)
+            result = self.parent().gen()**(v // 2) * sqrt_unit
+            return True, result
         else:
-            return False, None
+            return True
 
     def derivative(self, *args):
         """
