@@ -1228,6 +1228,13 @@ class ChainComplex_class(Parent):
              1: [(C2, Chain(1:(0, 1, -1))), (Z, Chain(1:(0, 1, 0)))],
              2: []}
 
+        Check that zero homology groups are printed consistently for
+        dimensions not given when defining the chain complex (see
+        :issue:40469)::
+
+            sage: C_k.homology(3, generators=True)
+            []
+
         From a torus using a field::
 
             sage: T = simplicial_complexes.Torus()                                      # needs sage.graphs
@@ -1274,11 +1281,10 @@ class ChainComplex_class(Parent):
             True
         """
         if deg not in self.nonzero_degrees():
-            zero_homology = HomologyGroup(0, base_ring)
             if generators:
-                return (zero_homology, vector(base_ring, []))
+                return []
             else:
-                return zero_homology
+                return HomologyGroup(0, base_ring)
         if verbose:
             print('Computing homology of the chain complex in dimension %s...' % deg)
 
@@ -1299,15 +1305,22 @@ class ChainComplex_class(Parent):
 
         if d_in.is_zero():
             if generators:  # Include the generators of the nullspace
-                return [(HomologyGroup(1, base_ring), self({deg: gen}))
-                        for gen in d_out.right_kernel().basis()]
+                kernel_basis = d_out.right_kernel().basis()
+                if kernel_basis:
+                    return [(HomologyGroup(1, base_ring), self({deg: gen}))
+                            for gen in d_out.right_kernel().basis()]
+                else:
+                    return []
             else:
                 return HomologyGroup(d_out_nullity, base_ring)
 
         if generators:
             orders, gens = self._homology_generators_snf(d_in, d_out, d_out_rank)
-            answer = [(HomologyGroup(1, base_ring, [order]), self({deg: gen}))
-                      for order, gen in zip(orders, gens)]
+            if orders:
+                answer = [(HomologyGroup(1, base_ring, [order]), self({deg: gen}))
+                          for order, gen in zip(orders, gens)]
+            else:
+                answer = []
         else:
             if base_ring.is_field():
                 d_in_rank = self.rank(deg-differential, ring=base_ring)
@@ -1350,6 +1363,14 @@ class ChainComplex_class(Parent):
             Z x C3
             sage: C._homology_generators_snf(C.differential(0), C.differential(1), 0)
             ([3, 0], [(1, 0), (0, 1)])
+
+        Check that :issue:`40469` is fixed::
+
+            sage: coeff = [1, -1, 2]
+            sage: for c in coeff:
+            ....:     differentials = {1: matrix(QQ, 1, 1, [[c]])}
+            ....:     C = ChainComplex(differentials, degree=-1)
+            ....:     assert(bool(C.homology(0, generators=True)) is False)
         """
         # Find the kernel of the out-going differential.
         K = d_out.right_kernel().matrix().transpose().change_ring(d_out.base_ring())
@@ -1361,15 +1382,15 @@ class ChainComplex_class(Parent):
 
         # Find the SNF of the induced matrix and appropriate generators
         (N, P, Q) = d_in_induced.smith_form()
-        all_divs = [0]*N.nrows()
+        all_divs = [self.base_ring().zero()]*N.nrows()
         non_triv = 0
-        for i in range(N.nrows()):
+        for i in range(0, N.nrows()):
             if i >= N.ncols():
                 break
             all_divs[i] = N[i][i]
-            if N[i][i] == 1:
+            if N[i][i].is_unit():
                 non_triv = non_triv + 1
-        divisors = [x for x in all_divs if x != 1]
+        divisors = [x for x in all_divs if not x.is_unit()]
         gens = (K * P.inverse().submatrix(col=non_triv)).columns()
         return divisors, gens
 
