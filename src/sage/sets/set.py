@@ -294,10 +294,23 @@ class Set_base:
 
             sage: X = Set(GF(9,'b')).difference(Set(GF(27,'b'))); X                     # needs sage.rings.finite_rings
             {0, 1, 2, b, b + 1, b + 2, 2*b, 2*b + 1, 2*b + 2}
+
+        TESTS:
+
+        Check that some trivial simplifications are performed::
+
+            sage: Set(QQ) - Set([])
+            Set of elements of Rational Field
+            sage: Set(ZZ) - (Set(ZZ) - Set([0, 1/2, 1]))
+            Set-theoretic intersection of Set of elements of Integer Ring and {0, 1, 1/2}
         """
         if isinstance(X, (Set_generic, Set_base)):
             if self is X:
                 return Set([])
+            if X.is_empty():
+                return self
+            if isinstance(X, Set_object_difference) and X._X == self:
+                return self.intersection(X._Y)
             return Set_object_difference(self, X)
         raise TypeError("X (=%s) must be a Set" % X)
 
@@ -601,6 +614,19 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             except (AttributeError, NotImplementedError):
                 pass
         return self._an_element_from_iterator()
+
+    def random_element(self):
+        """
+        Return a random element of ``self``.
+
+        EXAMPLES::
+
+            sage: Set(ZZ).random_element() in ZZ
+            True
+        """
+        if self.__object is self:
+            raise NotImplementedError  # some subclasses uses __object weirdly...
+        return self.__object.random_element()
 
     def __contains__(self, x):
         """
@@ -1529,6 +1555,22 @@ class Set_object_union(Set_object_binary):
         """
         return self._X.cardinality() + self._Y.cardinality()
 
+    def random_element(self):
+        """
+        Return a random element in this set.
+
+        .. NOTE::
+
+            Even when the set is finite, the distribution may not be uniform.
+
+        EXAMPLES::
+
+            sage: x = (Set(ZZ) | Set(RR)).random_element()
+            sage: x in ZZ or x in RR
+            True
+        """
+        return choice([self._X, self._Y]).random_element()
+
     @cached_method
     def _sympy_(self):
         """
@@ -1608,7 +1650,8 @@ class Set_object_intersection(Set_object_binary):
             25
             sage: X.category()
             Category of finite enumerated sets
-            sage: TestSuite(X).run()
+            sage: TestSuite(X).run(skip=["_test_random"])
+            sage: for seed in range(1, 100): X._test_random(seed)
 
             sage: X = Set(Primes(), category=Sets()).intersection(Set(IntegerRange(200)))
             sage: X.cardinality()
@@ -1712,6 +1755,35 @@ class Set_object_intersection(Set_object_binary):
         for x in X:
             if x in Y:
                 yield x
+
+    def random_element(self):
+        """
+        Return a random element in this set.
+
+        .. WARNING::
+
+            This might run forever.
+
+        EXAMPLES::
+
+            sage: (Set([1, 2]) & Set([2, 3])).random_element()
+            2
+            sage: (Set(NN) & ConditionSet(Set(ZZ), lambda x: x <= 0)).random_element()
+            0
+        """
+        try:
+            y_is_finite = self._Y.is_finite()
+        except (AttributeError, NotImplementedError):
+            y_is_finite = None
+        if y_is_finite:  # if Y.random_element() is uniform, this is also uniform
+            while True:
+                y = self._Y.random_element()
+                if y in self._X:
+                    return y
+        while True:
+            x = self._X.random_element()
+            if x in self._Y:
+                return x
 
     def __contains__(self, x):
         """
@@ -1939,6 +2011,23 @@ class Set_object_difference(Set_object_binary):
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         return Complement(self._X._sympy_(), self._Y._sympy_())
+
+    def random_element(self):
+        """
+        Return a random element in this set. Note that this might run forever.
+
+        EXAMPLES::
+
+            sage: x = (Set(ZZ) - Set([0])).random_element(); x  # random
+            1
+            sage: assert x != 0, x
+            sage: x = (Set(ZZ) - (Set(ZZ) - Set([1]))).random_element(); x  # random
+        """
+        Y = self._Y
+        while True:
+            x = self._X.random_element()
+            if x not in Y:
+                return x
 
 
 class Set_object_symmetric_difference(Set_object_binary):
