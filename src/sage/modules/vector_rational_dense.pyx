@@ -224,6 +224,9 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
             sage: v = vector(QQ, [1/2,2/5,0]); v
             (1/2, 2/5, 0)
             sage: v.set(2, -15/17); v
+            doctest:warning...
+            DeprecationWarning: The method set is deprecated; use self[i] = value instead.
+            See https://github.com/sagemath/sage/issues/41249 for details.
             (1/2, 2/5, -15/17)
         """
         mpq_set(self._entries[i], (<Rational>value).value)
