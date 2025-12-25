@@ -60,4 +60,4 @@ The ``sage`` script can be used to invoke several subcommands, including:
 
 * ``sage --python``: Runs the Python interpreter included with Sage.
 
-* ``sage -i <package>``: Installs a Sage package.
+* ``sage -i <package>``: Installs a Sage package. This is only supported for source builds (not available in Conda environments).
