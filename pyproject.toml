@@ -31,7 +31,6 @@ classifiers = [
   "Development Status :: 6 - Mature",
   "Intended Audience :: Education",
   "Intended Audience :: Science/Research",
-  "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
   "Operating System :: MacOS :: MacOS X",
   "Operating System :: POSIX",
   "Programming Language :: Python :: 3 :: Only",
@@ -76,7 +75,7 @@ dependencies = [
 ]
 description = "Sage: Open Source Mathematics Software: Standard Python Library"
 dynamic = ["version"]
-license = { text = "GNU General Public License (GPL) v2 or later" }
+license = "GPL-2.0-or-later"
 name = "sagemath"
 requires-python = ">=3.12, <3.15"
 urls = { Homepage = "https://www.sagemath.org" }
