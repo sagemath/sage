@@ -9706,10 +9706,8 @@ cdef class Expression(Expression_abc):
         cdef Expression nexp = self.coerce_in(k)
         cdef GEx x
         sig_on()
-        try:
-            x = g_hold2_wrapper(g_binomial, self._gobj, nexp._gobj, hold)
-        finally:
-            sig_off()
+        x = g_hold2_wrapper_sig(g_binomial, self._gobj, nexp._gobj, hold)
+        sig_off()
         return new_Expression_from_GEx(self._parent, x)
 
     def Order(self, bint hold=False):
