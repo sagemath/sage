@@ -206,6 +206,13 @@ build_sage() {
 # should be run outside of the Sage shell.
 case "$1" in
     -i|-f|-p)
+        # In Conda environments, it should not compile packages from source
+        if [ -n "$CONDA_PREFIX" ]; then
+            echo "Error: 'sage $1' is not supported in Conda environments." >&2
+            echo "Please use 'conda install' to install packages." >&2
+            exit 1
+        fi
+
         # Delegate further option handling to the non-installed sage-site script.
         # (These options become unavailable if the directory $SAGE_ROOT is removed.)
         if [ -d "$SAGE_ROOT" ]; then
