@@ -1597,17 +1597,14 @@ cdef class LaurentSeries(AlgebraElement):
             return False
 
         unit = self.valuation_zero_part()
-        if not unit.is_square():
-            if root:
-                return False, None
-            return False
+
         try:
             sqrt_unit = unit.sqrt()
-        except (ValueError, ArithmeticError):
+        except (ValueError, ArithmeticError, ZeroDivisionError):
             if root:
                 return False, None
             return False
-        if not unit.constant_coefficient().is_unit():
+        if not unit[0].is_unit():
             if sqrt_unit**2 != unit:
                 if root:
                     return False, None
