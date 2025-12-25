@@ -1582,6 +1582,8 @@ cdef class LaurentSeries(AlgebraElement):
             True
             sage: (2*t^2).is_square()  # 2 is not a square mod 8
             False
+            sage: (4 + t).is_square()  # 4 is sq, but 4+t is not
+            False
         """
         if self.is_zero():
             if root:
@@ -1589,22 +1591,33 @@ cdef class LaurentSeries(AlgebraElement):
             return True
 
         v = self.valuation()
-        unit = self.valuation_zero_part()
-
         if v % 2 != 0:
             if root:
                 return False, None
             return False
 
-        # Delegate the check to the power series ring
-        if root:
-            if not unit.is_square():
+        unit = self.valuation_zero_part()
+        if not unit.is_square():
+            if root:
                 return False, None
+            return False
+        try:
             sqrt_unit = unit.sqrt()
+        except (ValueError, ArithmeticError):
+            if root:
+                return False, None
+            return False
+        if not unit.constant_coefficient().is_unit():
+            if sqrt_unit**2 != unit:
+                if root:
+                    return False, None
+                return False
+        if root:
+            # Reconstruct: t^(v/2) * sqrt(unit)
             result = self.parent().gen()**(v // 2) * sqrt_unit
             return True, result
         else:
-            return unit.is_square()
+            return True
 
     def derivative(self, *args):
         """
