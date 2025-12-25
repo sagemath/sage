@@ -130,6 +130,10 @@ REFERENCES:
                 and T. Yalcin, *Block ciphers - focus on the linear layer
                 (feat. PRIDE)*; in CRYPTO, (2014), pp. 57-76.
 
+.. [ADMNT2025] Ilani Axelrod-Freed, Colin Defant, Hanna Mularczyk,
+               Son Nguyen and Katherine Tung, *Chute Move Posets are
+               Lattices*. :arXiv:`2507.13214`
+
 .. [ABBS2013] \J.-C Aval, A. Boussicault, M. Bouvel, M. Silimbani,
               *Combinatorics of non-ambiguous trees*,
               :arxiv:`1305.3716`
@@ -497,6 +501,10 @@ REFERENCES:
              :arxiv:`1110.4275`,
              :doi:`10.1007/s13366-011-0084-0`.
 
+.. [BB1993] Nantel Bergeron and Sara Billey, *RC-graphs and Schubert
+            polynomials*. Experiment. Math. **2** (1993), no. 4,
+            257-269.
+
 .. [BB1997] Mladen Bestvina and Noel Brady. *Morse theory and
             finiteness properties of groups*. Invent. Math. **129**
             (1997). No. 3,
@@ -598,6 +606,10 @@ REFERENCES:
                 *The number of intervals in the m-Tamari lattices*.
                 Electronic Journal of Combinatorics 18(2), 2011.
                 :doi:`10.37236/2027`
+
+.. [BMM2025] Sara Billey, Connor McCausland and Clare Minnerath, *A
+             Proof of Rubey's Lattice Conjecture*.
+             :arXiv:`2507.18852`.
 
 .. [BPPSST2017] Banik, Pandey, Peyrin, Sasaki, Sim, and Todo,
                 GIFT : A Small Present Towards Reaching the Limit of Lightweight
@@ -2441,8 +2453,8 @@ REFERENCES:
 
 .. [DP2011] \B. Deconinck and M. S. Patterson, *Computing with plane algebraic
             curves and Riemann surfaces: The algorithms of the Maple package
-            "Algcurves"*, In: A. Bobenko and C. Klein (eds) Computational 
-            approach to Riemann surfaces. Lecture Notes in Mathematics 2013. 
+            "Algcurves"*, In: A. Bobenko and C. Klein (eds) Computational
+            approach to Riemann surfaces. Lecture Notes in Mathematics 2013.
             Springer, Berlin, Heidelberg. (2011).
             :doi:`10.1007/978-3-642-17413-1_2`
 
@@ -2599,7 +2611,7 @@ REFERENCES:
 
 .. [Eh2013] Ehrhardt, Wolfgang. *The AMath and DAMath Special
             Functions: Reference Manual and Implementation Notes*,
-            Version 1.3. 2013. 
+            Version 1.3. 2013.
             https://web.archive.org/web/20131210061646/http://www.wolfgang-ehrhardt.de/specialfunctions.pdf.
 
 .. [EL2002] Ekedahl, Torsten & Laksov, Dan. (2002). *Splitting algebras, Symmetric functions and
@@ -5276,7 +5288,7 @@ REFERENCES:
              Inventiones Mathematicae **84**, (1986), 1-48.
 
 .. [MT2001] B. Mojar and C. Thomassen. *Graphs on Surfaces*.
-             Johns Hopkins University Press, (2001).  ISBN 9780801866890. 
+             Johns Hopkins University Press, (2001).  ISBN 9780801866890.
 
 .. [Mu1997] Murty, M. Ram. *Congruences between modular forms*. In "Analytic
             Number Theory" (ed. Y. Motohashi), London Math. Soc. Lecture Notes
@@ -5289,7 +5301,7 @@ REFERENCES:
 .. [Mur1983] \G. E. Murphy. *The idempotents of the symmetric group
              and Nakayama's conjecture*. J. Algebra **81** (1983). 258-265.
 
-.. [Mus2023] Yossef Musleh. *Algorithms for Drinfeld Modules*. 
+.. [Mus2023] Yossef Musleh. *Algorithms for Drinfeld Modules*.
              PhD thesis, University of Waterloo, 2023.
 
 .. [Muth2019] Robert Muth. *Super RSK correspondence with symmetry*.
@@ -5963,6 +5975,11 @@ REFERENCES:
 .. [Rub1991] \K. Rubin. The "main conjectures" of Iwasawa theory for
              imaginary quadratic fields. Invent. Math. 103 (1991),
              no. 1, 25--68.
+
+.. [Rub2011] Martin Rubey, *Maximal 0–1-fillings of moon polyominoes
+             with restricted chain lengths and RC-graphs*. Adv. in
+             Appl. Math. **48** (2012), no. 2,
+             290-305. :arXiv:`1009.3919`
 
 .. [RS2010] RUBIN, K., & SILVERBERG, A. (2010). CHOOSING THE CORRECT ELLIPTIC
             CURVE IN THE CM METHOD. Mathematics of Computation, 79(269),
