@@ -590,6 +590,24 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
         and so cannot be integrated in 1 dimensions. Please add more items in
         upper and lower limits
 
+    Ensure :issue:`30379` is fixed for monte_carlo_integral (c_monte_carlo_ff)::
+
+        sage: g(x, y) = gamma_inc(2, 11/5) * x * y
+        sage: for algo in ['plain', 'miser', 'vegas']:  # abs tol 0.1
+        ....:     monte_carlo_integral(g, [0,0], [2,2], 10000, algorithm=algo)
+        (1.418, 0.01)
+        (1.418, 0.01)
+        (1.418, 0.01)
+
+    Ensure :issue:`30379` is fixed for monte_carlo_integral (c_monte_carlo_f)::
+
+        sage: def f(x, y): return gamma_inc(2, 11/5) * x * y
+        sage: for algo in ['plain', 'miser', 'vegas']:  # abs tol 0.1
+        ....:     monte_carlo_integral(f, [0,0], [2,2], 10000, algorithm=algo)
+        (1.418, 0.01)
+        (1.418, 0.01)
+        (1.418, 0.01)
+
     AUTHORS:
 
     - Vincent Delecroix
