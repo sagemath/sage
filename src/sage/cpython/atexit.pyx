@@ -164,16 +164,21 @@ cdef extern from *:
     } atexit_callback_struct;
     
     #if PY_VERSION_HEX >= 0x030e0000
-    // Python 3.14+: atexit uses a PyList
+    // Python 3.14+: atexit uses a PyList stored in state->callbacks
+    // Note: In Python 3.14 the atexit_state struct changed - callbacks is now a PyObject* (PyList)
+    
     static PyObject* get_atexit_callbacks_list(PyObject *self) {
         PyInterpreterState *interp = _PyInterpreterState_GET();
-        struct atexit_state state = interp->atexit;
-        return state.callbacks;
+        // Access the callbacks list directly from the interpreter state
+        // We return a new reference because Cython expects an owned reference
+        PyObject *callbacks = interp->atexit.callbacks;
+        Py_XINCREF(callbacks);
+        return callbacks;
     }
     
     // Dummy function for Python 3.14+ (never called)
     static atexit_callback_struct** get_atexit_callbacks_array(PyObject *self) {
-        PyErr_SetString(PyExc_RuntimeError, "Python >= 3.14 has no atexit array");
+        PyErr_SetString(PyExc_RuntimeError, "Python >= 3.14 has no atexit arrays");
         return NULL;
     }
     #else
@@ -187,7 +192,7 @@ cdef extern from *:
     
     // Dummy function for Python < 3.14 (never called)
     static PyObject* get_atexit_callbacks_list(PyObject *self) {
-        PyErr_SetString(PyExc_RuntimeError, "Python < 3.14 has no atexit list");
+        PyErr_SetString(PyExc_RuntimeError, "Python < 3.14 has no atexit lists");
         return NULL;
     }
     #endif
