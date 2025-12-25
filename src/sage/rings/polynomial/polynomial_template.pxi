@@ -353,6 +353,17 @@ cdef class Polynomial_template(Polynomial):
             sage: f.gcd(x^2)
             x
 
+        Over a field, the gcd of a non-zero polynomial with zero is monic::
+
+            sage: R.<x> = GF(5)[]
+            sage: p = 2*x^3 - 3*x + 1
+            sage: p.gcd(0)
+            x^3 + x + 3
+            sage: R(0).gcd(p)
+            x^3 + x + 3
+            sage: p.gcd(0) == p.monic()
+            True
+
         TESTS:
 
         Ensure non-invertible elements does not crash Sage (:issue:`37317`)::
@@ -372,10 +383,25 @@ cdef class Polynomial_template(Polynomial):
             Traceback (most recent call last):
             ...
             RuntimeError: FLINT gcd calculation failed
+
+        Over a non-field, gcd with zero returns the polynomial unchanged::
+
+            sage: R.<x> = Zmod(6)[]
+            sage: p = 2*x + 1
+            sage: p.gcd(0)
+            2*x + 1
         """
         if celement_is_zero(&self.x, (<Polynomial_template>self)._cparent):
+            if celement_is_zero(&other.x, (<Polynomial_template>self)._cparent):
+                return other  # gcd(0, 0) = 0
+            # gcd(0, other) = monic(other) over a field
+            if (<Polynomial_template>self)._parent._base.is_field():
+                return other.monic()
             return other
         if celement_is_zero(&other.x, (<Polynomial_template>self)._cparent):
+            # gcd(self, 0) = monic(self) over a field
+            if (<Polynomial_template>self)._parent._base.is_field():
+                return self.monic()
             return self
         if celement_equal(&self.x, &other.x, (<Polynomial_template>self)._cparent):
             # note: gcd(g, g) "canonicalizes" the generator i.e. make polynomials monic
