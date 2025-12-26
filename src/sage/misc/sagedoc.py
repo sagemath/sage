@@ -44,6 +44,7 @@ import re
 import shutil
 import sys
 import pydoc
+import sage.typeset.unicode_characters as uc
 from sage.misc.temporary_file import tmp_dir
 from sage.misc.viewer import browser
 from sage.misc import sageinspect
@@ -95,7 +96,24 @@ math_substitutes = [
     (r'\\rvert', '|'),
     (r'\\mid', '|'),
     (r' \\circ', ' o'),
-    (r'\\circ', ' o')
+    (r'\\circ', ' o'),
+    (r'\\{', '{'),
+    (r'\\}', '}'),
+    (r'\\!', ''),
+    (r'\\,', ''),
+    (r'\\;', '\u205F'),
+    (r'\\dim', 'dim'),
+    (r'\\in', '\u2208'),
+    (r'\\phi', '\u03C6'),
+    (r'\\Lambda', '\u039B'),
+    (r'\\NN', '\U0001D40D'),
+    (r'\\QQ', '\U0001D410'),
+    (r'\\RR', '\U0001D411'),
+    (r'\\ZZ', '\U0001D419'),
+    (r'\\otimes', uc.unicode_otimes),
+    (r'\\wedge', uc.unicode_wedge),
+    (r'\\bigwedge', uc.unicode_bigwedge),
+    (r'\\mathbf{k}', '\U0001D424'),
 ]
 nonmath_substitutes = [
     ('\\_', '_'),
