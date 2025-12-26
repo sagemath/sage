@@ -1038,6 +1038,10 @@ REFERENCES:
 .. [BL1995] \W. Bosma, H.W. Lenstra: *Complete Systems of Two Addition Laws for
             Elliptic Curves*. Journal of Number Theory, volume 53, issue 2,
             pages 229-240. 1995.
+            
+.. [BLSWZ1999] Anders Björner, Michel Las Vergnas, Bernd Sturmfels, Neil White
+               and Günter Ziegler, *Oriented Matroids*; Cambridge University
+               press, (1999).
 
 .. [BHMPW20a] Tom Braden, June Huh, Jacob P. Matherne, Nicholas Proudfoot,
              and Botong Wang, *A semi-small decomposition of the Chow
