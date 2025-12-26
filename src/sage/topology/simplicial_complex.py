@@ -4296,7 +4296,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             True
 
             sage: P = simplicial_complexes.RealProjectivePlane()
-            sage: P.automorphism_group().is_isomorphic(AlternatingGroup(5))             # needs sage.groups
+            sage: P.automorphism_group().is_isomorphic(AlternatingGroup(5))             # needs sage.groups  # optional - internet
             True
 
             sage: Z = SimplicialComplex([['1','2'],['2','3','a']])
