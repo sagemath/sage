@@ -2735,7 +2735,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
                     if i.upper_closed():
                         t = 'RealSet.closed'
                     else:
-                        t = 'RealSet.clolower_closedsed_open'
+                        t = 'RealSet.closed_open'
                 else:
                     if i.upper_closed():
                         t = 'RealSet.open_closed'
