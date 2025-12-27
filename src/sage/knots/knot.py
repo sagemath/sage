@@ -17,7 +17,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from enum import Enum
 from sage.knots.link import Link
 from sage.knots.knot_table import small_knots_table
 from sage.knots.gauss_code import (recover_orientations, dowker_to_gauss,
@@ -27,7 +27,20 @@ from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.misc.fast_methods import Singleton
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.cachefunc import cached_method
 from sage.categories.monoids import Monoids
+
+
+class SymmetryType(Enum):
+    r"""
+    Specify the symmetry type of a knot. See also :meth:`symmetry_type`
+    and :meth:`~sage.knots.knotinfo.symmetry_type`.
+    """
+    chiral = 'chiral'
+    reversible = 'reversible'
+    pos_amphicheiral = 'positive amphicheiral'
+    neg_amphicheiral = 'negative amphicheiral'
+    ful_amphicheiral = 'fully amphicheiral'
 
 # We need Link to be first in the MRO in order to use its equality, hash, etc.
 
@@ -479,6 +492,84 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
         return type(self)(nogc)
 
     _mul_ = connected_sum
+
+    @cached_method
+    def symmetry_type(self):
+        r"""
+        Return the symmetry type of ``self`` according to :meth:`~sage.knots.knotinfo.symmetry_type`.
+
+        OUTPUT: an element of enum :class:`SymmetryType`
+
+        .. NOTE::
+
+           This method uses the SnapPy ``is_isometric_to`` method of manifolds.
+           It therefore needs the optional package ``snappy``. For more
+           information on this see
+           `here <https://snappy.computop.org/manifold.html#snappy.Manifold.is_isometric_to>`__.
+
+        EXAMPLES::
+
+            sage: K = Knots().from_table(6,3)
+            sage: s = K.symmetry_type(); s            # optional - snappy
+            <SymmetryType.ful_amphicheiral: 'fully amphicheiral'>
+            sage: s == KnotInfo.K6_3.symmetry_type()  # optional - snappy
+            True
+        """
+        sK = self.snappy_link()
+        eK = sK.exterior()
+        try:
+            iso = eK.is_isometric_to(eK, return_isometries=True)
+        except RuntimeError:
+            raise NotImplementedError('the symmetry type cannot be calculated for %s' % self)
+        s = []
+        for i in iso:
+            for M in i.cusp_maps():
+                M.set_immutable()
+                s.append(M)
+        S = set(s)
+        if len(S) == 1:
+            return SymmetryType.chiral
+        elif len(S) == 4:
+            return SymmetryType.ful_amphicheiral
+        elif len(S) != 2:
+            return None
+
+        if [-1, -1] in [m.diagonal() for m in S]:
+            return SymmetryType.reversible
+        elif [-1, 1] in [m.diagonal() for m in S]:
+            return SymmetryType.pos_amphicheiral
+        else:
+            return SymmetryType.neg_amphicheiral
+
+    def deconnect_sum(self):
+        r"""
+        Return a list of (not neccessarily prime) knots such that ``self``
+        is isotopic to their connected sum.
+
+        .. NOTE::
+
+           This method is taken from the SnapPy method ``deconnect_sum``
+           and therefore needs the optional package ``snappy``. More
+           information on the usage of the method can be found
+           `here <https://snappy.computop.org/spherogram.html#spherogram.Link.deconnect_sum>`__.
+
+        OUTPUT: a list of instances of class :class:`Knot`
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(4)
+            sage: K = Knot(B((1, 2, 2, 2, -1, 2, 2, 2, -3, -3, -3)))
+            sage: d = K.deconnect_sum(); d        # optional - snappy
+            [Knot represented by 3 crossings, Knot represented by 8 crossings]
+            sage: K2 = d[1].simplify()            # optional - snappy
+            sage: d2 = K2.deconnect_sum(); d2     # optional - snappy
+            [Knot represented by 3 crossings, Knot represented by 3 crossings]
+            sage: K.get_knotinfo()
+            KnotInfo['K3_1']^2*KnotInfo['K3_1m']
+        """
+        Ks = self.snappy_link()
+        from sage.knots.link import sort
+        return sorted([k.sage_link() for k in Ks.deconnect_sum()], key=sort)
 
 
 class Knots(Singleton, Parent):

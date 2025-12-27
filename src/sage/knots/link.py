@@ -77,6 +77,39 @@ lazy_import('sage.numerical.mip', 'MixedIntegerLinearProgram')
 lazy_import("sage.symbolic.ring", "SR")
 
 
+def sort(link):
+    r"""
+    Return a tuple of integers to order links in display lists.
+    This can used in the sorted function with the ``key``
+    option to ensure consistent doctest results.
+
+    EXAMPLES::
+
+        sage: l = [Knots().from_table(i + 3, 1) for i in range(4)]
+        sage: from sage.knots.link import sort
+        sage: sorted(l, key=sort, reverse=True)
+        [Knot represented by 7 crossings,
+         Knot represented by 5 crossings,
+         Knot represented by 4 crossings,
+         Knot represented by 3 crossings]
+        sage: l = [Knots().from_table(8, i+1) for i in range(21)]
+        sage: ls = sorted(l, key=sort)
+        sage: perm = [l.index(K) for K in ls]
+        sage: perm
+        [20, 19, 1, 6, 9, 15, 4, 8, 16, 17, 18, 11, 14, 7, 10, 13, 5, 3, 12, 0, 2]
+    """
+    co = link.number_of_components()
+    cr = len(link.pd_code())
+    b = link.braid()
+    st = b.strands()
+    t = b.Tietze()
+    tl = len(t)
+    ts = sum(t)
+    from sage.misc.misc_c import prod
+    tp = prod(t)
+    return tuple([co, cr, st, tl, ts, tp])
+
+
 class Link(SageObject):
     r"""
     A link.
@@ -341,6 +374,8 @@ class Link(SageObject):
             sage: K = Knot(code); K.alexander_polynomial()
             t^-1 - 1 + t
         """
+        from sage.features.snappy import SnapPy
+        self._snappy = SnapPy()
         self._pd_code = None
         self._oriented_gauss_code = None
         self._braid = None
@@ -415,6 +450,38 @@ class Link(SageObject):
         red = {i: segments.index(i) + 1 for i in segments}
         pd_red = [[red[i] for i in cr] for cr in pd]
         return L.fromPD(pd_red)
+
+    @cached_method
+    def snappy_link(self, use_braid=False):
+        r"""
+        Return ``self`` as in instance of the SnapPy link class.
+        This method requires the optional package SnapPy to be present.
+
+        INPUT:
+
+        - ``use_braid`` -- boolean (default ``False``). If set ``True`` the
+          SnapPy link is constructed from the braid representation of ``self``.
+          Otherwise the ``PD`` code is used.
+
+        EXAMPLES::
+
+            sage: # optional snappy
+            sage: K = Knot([[[1,-2,3,-1,2,-3]],[1,1,1]])
+            sage: Ksp = K.snappy_link(); Ksp.PD_code()
+            [(3, 1, 4, 0), (1, 5, 2, 4), (5, 3, 0, 2)]
+            sage: K.is_isotopic(Link(Ksp))
+            True
+            sage: Ksb = K.snappy_link(use_braid=True); Ksb.PD_code()
+            [(1, 5, 2, 4), (5, 3, 0, 2), (3, 1, 4, 0)]
+            sage: K.is_isotopic(Link(Ksb))
+            True
+        """
+        self._snappy.require()
+        from snappy import Link as SnapPyLink
+        if use_braid:
+            return SnapPyLink(self.braid())
+        else:
+            return SnapPyLink(self.pd_code())
 
     def arcs(self, presentation='pd'):
         r"""
@@ -2882,8 +2949,9 @@ class Link(SageObject):
 
           * ``'jonesrep'`` -- use the Jones representation of the braid
             representation
-
           * ``'statesum'`` -- recursively computes the Kauffman bracket
+          * ``'homfly'`` -- use :meth:`homfly_polynomial`
+          * ``'snappy'`` -- use the optional package SnapPy
 
         OUTPUT:
 
@@ -2960,7 +3028,7 @@ class Link(SageObject):
             sage: bool(K11n42.jones_polynomial() == K11n34.jones_polynomial())          # needs sage.symbolic
             True
 
-        The two algorithms for computation give the same result when the
+        The four algorithms for computation give the same result when the
         trace closure of the braid representation is the link itself::
 
             sage: # needs sage.symbolic
@@ -2970,6 +3038,24 @@ class Link(SageObject):
             sage: statesum = L.jones_polynomial(algorithm='statesum')
             sage: bool(jonesrep == statesum)
             True
+            sage: homfly = L.jones_polynomial(algorithm='homfly')
+            sage: bool(jonesrep == homfly)
+            True
+            sage: snappy = L.jones_polynomial(algorithm='snappy')  # optional snappy, needs sage.symbolic
+            ...
+            sage: bool(jonesrep == snappy)                         # optional snappy, needs sage.symbolic
+            True
+            sage: jonesrep = L.jones_polynomial(skein_normalization=True, algorithm='jonesrep')
+            sage: statesum = L.jones_polynomial(skein_normalization=True, algorithm='statesum')
+            sage: bool(jonesrep == statesum)
+            True
+            sage: homfly = L.jones_polynomial(skein_normalization=True, algorithm='homfly')
+            sage: bool(jonesrep == homfly)
+            True
+            sage: snappy = L.jones_polynomial(skein_normalization=True, algorithm='snappy')  # optional snappy, needs sage.symbolic
+            sage: bool(jonesrep == snappy)                                                   # optional snappy, needs sage.symbolic
+            True
+
 
         When we have thrown away unknots so that the trace closure of the
         braid is not necessarily the link itself, this is only true up to a
@@ -3005,6 +3091,15 @@ class Link(SageObject):
             sage: L.jones_polynomial()
             1
         """
+        if not variab:
+            if skein_normalization:
+                R = LaurentPolynomialRing(ZZ, 'A')
+            else:
+                R = LaurentPolynomialRing(ZZ, 't')
+        else:
+            R = variab.parent()
+
+        gen = R.gen()
         if algorithm == 'statesum':
             poly = self._bracket()
             t = poly.parent().gens()[0]
@@ -3012,30 +3107,34 @@ class Link(SageObject):
             jones = poly * (-t)**(-3 * writhe)
             # Switch to the variable A to have the result agree with the output
             # of the jonesrep algorithm
-            A = LaurentPolynomialRing(ZZ, 'A').gen()
-            jones = jones(A**-1)
-
-            if skein_normalization:
-                if variab is None:
-                    return jones
-                else:
-                    return jones(variab)
-            else:
-                if variab is None:
-                    variab = 't'
-                # We force the result to be in the symbolic ring because of the expand
-                return jones(SR(variab)**(ZZ.one() / ZZ(4))).expand()
+            jones = jones.subs({t: gen**-1})
         elif algorithm == 'jonesrep':
             braid = self.braid()
             # Special case for the trivial knot with no crossings
             if not braid.Tietze():
-                if skein_normalization:
-                    return LaurentPolynomialRing(ZZ, 'A').one()
-                else:
-                    return SR.one()
-            return braid.jones_polynomial(variab, skein_normalization)
+                jones = R.one()
+            else:
+                jones = braid.jones_polynomial(variab=variab, skein_normalization=True)
+        elif algorithm == 'homfly':
+            h = self.homfly_polynomial(normalization='az')
+            a, z = h.parent().gens()
+            g = gen
+            if self.number_of_components() > 1:
+                g = R.fraction_field()(gen)
+            jones = R(h.subs({a: ~g**4, z: g**2 - ~g**2}))
+        elif algorithm == 'snappy':
+            jones = self.snappy_link().jones_polynomial()
+            t, = jones.parent().gens()
+            jones = jones.subs({t: gen**ZZ(2)})
+        else:
+            raise ValueError("bad value of algorithm")
 
-        raise ValueError("bad value of algorithm")
+        if skein_normalization:
+            return jones
+
+        # We force the result to be in the symbolic ring because of the expand
+        gen_sym = SR(gen)**(ZZ(1)/ZZ(4))
+        return jones(gen_sym).expand()
 
     @cached_method
     def _bracket(self):
@@ -3680,6 +3779,13 @@ class Link(SageObject):
           returned by :meth:`colorings`
 
         The usual keywords for plots can be used here too.
+
+        .. NOTE::
+
+            an alternative plot can be optained by the
+            `SnapPy method view <https://snappy.computop.org/spherogram.html#spherogram.Link.view>__`.
+            If the optional package ``snappy`` has been installed this can be
+            obtained by ``L.snappy_link().view()`` for a link ``L``.
 
         EXAMPLES:
 
@@ -4536,7 +4642,7 @@ class Link(SageObject):
         Clarifying ther Perko series against `SnapPy
         <https://snappy.math.uic.edu/index.html>`__::
 
-            sage: import snappy                    # optional - snappy
+            sage: import snappy                    # optional snappy
             ...
 
             sage: # optional - database_knotinfo snappy
@@ -4927,21 +5033,88 @@ class Link(SageObject):
 
         raise NotImplementedError('comparison not possible!')
 
-    def simplify(self, exhaustive=True, height=1, threads=1):
+    @cached_method
+    def find_hyperbolic_shapes(self, verbose=False, bits_prec=None, holonomy=False):
+        r"""
+        Return a list of complex intervals (elements in :class:`ComplexIntervalField`) certified to contain
+        the true shapes for the hyperbolic manifold of the exterior of ``self``.
+
+        INPUT:
+
+          - ``verbose`` -- boolean (default ``False``) to turn on verbosity
+          - ``bits_prec`` -- integer (default ``None``) set the precision of
+            :class:`ComplexIntervalField`
+          - ``holonomy`` -- boolean (default ``False``) to get a holonomy
+            representation associated to the verified hyperbolic structure
+
+
+        .. NOTE::
+
+            This method is taken from the SnapPy method ``verify_hyperbolicity``
+            and therefore needs the optional package ``snappy``. More
+            information on the usage of the method can be found
+            `here <https://snappy.computop.org/manifold.html#snappy.Manifold.verify_hyperbolicity>`__.
+
+        OUTPUT: a list of elements of :class:`~sage.rings.complex_interval.ComplexIntervalField`
+
+        EXAMMPLES::
+
+            sage: K = Knots().from_table(10,24)
+            sage: type(K.find_hyperbolic_shapes()[0])         # optional snappy
+            <class 'sage.rings.complex_interval.ComplexIntervalFieldElement'>
+        """
+        sL = self.snappy_link()
+        eL = sL.exterior()
+        return eL.verify_hyperbolicity(verbose=verbose, bits_prec=bits_prec, holonomy=holonomy)[1]
+
+    def verify_hyperbolicity(self, verbose=False, bits_prec=None):
+        r"""
+        Try to verify that ``self`` is hyperbolic. If this is successful return ``True`` and
+        else ``False``. Note, that ``False`` does not necessarily mean that ``self`` is not
+        hyperbolic.
+
+        INPUT:
+
+          - ``verbose`` -- boolean (default ``False``) to turn on verbosity
+          - ``bits_prec`` -- integer (default ``None``) set the precision of :class:`ComplexIntervalField`
+
+        .. NOTE::
+
+            This method is taken from the SnapPy method ``verify_hyperbolicity``
+            and therefore needs the optional package ``snappy``. More
+            information on the usage of the method can be found
+            `here <https://snappy.computop.org/manifold.html#snappy.Manifold.verify_hyperbolicity>`__.
+
+        OUTPUT: a boolean
+
+        EXAMMPLES::
+
+            sage: K = Knots().from_table(10,24)
+            sage: K.verify_hyperbolicity()           # optional snappy
+            True
+        """
+        return self.find_hyperbolic_shapes(verbose=verbose, bits_prec=bits_prec) is not None
+
+    def simplify(self, mode='basic', type_III_limit=100, exhaustive=True, height=1, threads=1):
         r"""
         Return an isotopic Link with less crossings or ``None`` if the
         calculation was not successful.
 
-        .. NOTE::
-
-            This method is taken from the Regina methods ``simplifyExhaustive``
-            (for knots) and ``intelligentSimplify`` (for multi-component links
-            or if the option ``exhaustive=False`` is set) and therefore needs
-            the optional package ``regina``. More information on the usage of
-            the method can be found
-            `here <https://regina-normal.github.io/engine-docs/classregina_1_1Link.html#a60fe044c436e5e1a8861de2ccb106e1c>`__.
-
         INPUT:
+
+        - ``mode`` -- string (default ``basic``) to choose between different
+          strategies. These are
+
+          - ``basic`` -- do Reidemeister I and II moves until none are possible
+          - ``level`` -- do random Reidemeister III moves in addition to
+            ``basic`` but at most ``type_III_limit`` consecutive times.
+          - ``pickup`` -- also minimizes the number of crossings of strands
+            which cross entirely above (or below) the diagram by finding the
+            path crossing over the diagram with the least number of
+            overcrossings (or undercrossings)
+          - ``global`` -- combines ``level`` and ``pickup``
+
+        - type_III_limit -- integer (default 100) see ``mode level``
 
         - ``exhaustive`` -- boolean (default ``True``) if set to
           ``False`` a faster but less successful algorithm is
@@ -4958,6 +5131,20 @@ class Link(SageObject):
           routine will run single-threaded; this
           does not apply if `exhaustive=False``
 
+        .. NOTE::
+
+            This method is taken from the SnapPy method ``simplify``
+            and therefore needs the optional package ``snappy``. More
+            information on the usage of the method can be found
+            `here <https://snappy.computop.org/spherogram.html#spherogram.Link.simplify>`__.
+
+            This method is taken from the Regina methods ``simplifyExhaustive``
+            (for knots) and ``intelligentSimplify`` (for multi-component links
+            or if the option ``exhaustive=False`` is set) and therefore needs
+            the optional package ``regina``. More information on the usage of
+            the method can be found
+            `here <https://regina-normal.github.io/engine-docs/classregina_1_1Link.html#a60fe044c436e5e1a8861de2ccb106e1c>`__.
+
         OUTPUT: an instance of class :class:`Link` or ``None``
 
         EXAMMPLES::
@@ -4965,6 +5152,14 @@ class Link(SageObject):
             sage: B = BraidGroup(4)
             sage: U = Link(B((-1, 2, 3, -2, 1, 3))); U
             Link with 2 components represented by 6 crossings
+            sage: U.simplify()                       # optional snappy
+            Link with 1 component represented by 0 crossings
+            sage: L = Link(B((-1, -2, -1, 3, -2, 3))); L
+            Link with 2 components represented by 6 crossings
+            sage: L.simplify() is None               # optional snappy
+            True
+            sage: M = L.simplify(mode='level'); M    # optional snappy
+            Link with 2 components represented by 5 crossings
             sage: U.simplify()                       # optional regina
             Link with 1 component represented by 0 crossings
             sage: K = Knots().from_table(10, 24)
@@ -4973,6 +5168,10 @@ class Link(SageObject):
             sage: K2.simplify()                      # optional regina
             Knot represented by 11 crossings
         """
+        sL = self.snappy_link()
+        res = sL.simplify(mode=mode, type_III_limit=type_III_limit)
+        if res:
+            return sL.sage_link()
         from sage.interfaces.regina import regina
         rL = regina(self)
         if self.is_knot() and exhaustive:
