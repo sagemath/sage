@@ -2629,6 +2629,11 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         return next(overlap_generator, None) is None
     
     def simplest_rational(self):
+        """
+        Return the simplest rational in this interval. Given rationals
+        `a / b` and `c / d` (both in lowest terms), the former is simpler if
+        `b<d` or if `b = d` and `|a| < |c|`.
+        """
 
         if self.is_empty():
             raise ValueError("Empty set has no simplest rational.")
