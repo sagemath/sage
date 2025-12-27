@@ -1,7 +1,7 @@
 SAGE_SPKG_CONFIGURE([primecount], [
-    m4_pushdef([SAGE_PRIMECOUNT_MINVER],[7.1])
-    m4_pushdef([SAGE_PRIMECOUNT_MAJOR],[7])
-    m4_pushdef([SAGE_PRIMECOUNT_MINOR],[1])
+    m4_pushdef([SAGE_PRIMECOUNT_MINVER],[8.0])
+    m4_pushdef([SAGE_PRIMECOUNT_MAJOR],[8])
+    m4_pushdef([SAGE_PRIMECOUNT_MINOR],[0])
     SAGE_SPKG_DEPCHECK([primesieve], [
       dnl Checking for primecount with pkg-config
       PKG_CHECK_MODULES([PRIMECOUNT], [primecount >= SAGE_PRIMECOUNT_MINVER], [ ], [

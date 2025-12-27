@@ -4,4 +4,4 @@ if [ "$UNAME" = "Darwin" ]; then
 fi
 
 cd src
-sdh_pip_install .
+sdh_pip_install --no-build-isolation . --config-setting=setup-args="--wrap-mode=nodownload" 
