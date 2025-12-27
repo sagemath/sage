@@ -428,6 +428,17 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
 
     Element = LaurentPolynomial_univariate
 
+    def _poly_cover_ring(self):
+        if hasattr(self, '_cached_poly_cover'):
+            return self._cached_poly_cover
+        base = self.base_ring()
+        name = self.variable_name()
+        S = PolynomialRing(base, (name, f"inv_{name}"))
+        x, ix = S.gens()
+        relations = [x * ix - 1]
+        self._cached_poly_cover = (S, relations)
+        return self._cached_poly_cover
+
     def _repr_(self):
         """
         TESTS::
@@ -582,6 +593,19 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
         self._indices = FreeModule(IntegerRing(), R.ngens())
 
     Element = LazyImport('sage.rings.polynomial.laurent_polynomial_mpair', 'LaurentPolynomial_mpair')
+
+    def _poly_cover_ring(self):
+        if hasattr(self, '_cached_poly_cover'):
+            return self._cached_poly_cover
+        base = self.base_ring()
+        names = self.variable_names()
+        inv_names = tuple(f"inv_{n}" for n in names)
+        S = PolynomialRing(base, names + inv_names)
+        gens = S.gens()
+        n = len(names)
+        relations = [gens[i] * gens[i + n] - 1 for i in range(n)]
+        self._cached_poly_cover = (S, relations)
+        return self._cached_poly_cover
 
     def _repr_(self):
         """

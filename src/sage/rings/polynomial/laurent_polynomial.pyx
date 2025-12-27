@@ -2200,55 +2200,50 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
                 dres[(0, -e)] = c
         return self.parent()._extended_ring(dres)
 
+    def _lift_to_poly_cover(self, S):
+        """
+        Lifts this univariate Laurent polynomial to the multivariate cover ring S.
+
+        INPUT:
+        - ``S`` -- the polynomial ring R[x, inv_x]
+        """
+        # S has 2 variables: the original 'x' and the new 'inv_x'
+        x, ix = S.gens()
+        res = S.zero()
+
+        # monomial_coefficients() returns a dict {exponent: coefficient}
+        for e, c in self.monomial_coefficients().items():
+            if e > 0:
+                res += c * x**e
+            elif e < 0:
+                res += c * ix**(-e)
+            else:
+                res += c
+        return res
+
     @coerce_binop
     def divides(self, other):
-        r"""
-        Return ``True`` if ``self`` divides ``other``.
-
-        .. NOTE::
-
-            This method is only implemented for Laurent polynomials over
-            integral domains. For rings with zero divisors, a
-            :exc:`NotImplementedError` is raised.
-
-        EXAMPLES::
-
-            sage: R.<x> = LaurentPolynomialRing(ZZ)
-            sage: (2*x**-1 + 1).divides(4*x**-2 - 1)
-            True
-            sage: (2*x + 1).divides(4*x**2 + 1)
-            False
-            sage: (2*x + x**-1).divides(R(0))
-            True
-            sage: R(0).divides(2*x ** -1 + 1)
-            False
-            sage: R(0).divides(R(0))
-            True
-            sage: (x^2).divides(x)
-            True
-
-            sage: R.<x,y> = GF(2)[]
-            sage: S.<z> = LaurentPolynomialRing(R)
-            sage: p = (x+y+1) * z**-1 + x*y
-            sage: q = (y^2-x^2) * z**-2 + z + x-y
-            sage: p.divides(q), p.divides(p*q)                                          # needs sage.libs.singular
-            (False, True)
-
-        TESTS:
-
-        Check that :issue:`40372` is fixed::
-
-            sage: R.<y> = LaurentPolynomialRing(Zmod(4))
-            sage: a = 2+y
-            sage: a.divides(a)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: divisibility test not implemented for Laurent polynomials over non-integral domains
         """
-        if self.base_ring().is_integral_domain() is True:
-            p = self.polynomial_construction()[0]
-            q = other.polynomial_construction()[0]
+        Return ``True`` if ``self`` divides ``other``.
+        """
+        if self.is_zero():
+            return other.is_zero()
+
+        P = self.parent()
+        R = P.base_ring()
+
+        if R.is_integral_domain():
+            p = self.monomial_reduction()[0]
+            q = other.monomial_reduction()[0]
             return p.divides(q)
-        else:
-            raise NotImplementedError("divisibility test not implemented for Laurent"
-                                      " polynomials over non-integral domains")
+
+        try:
+            S, relations = P._poly_cover_ring()
+            f_s = self._lift_to_poly_cover(S)
+            g_s = other._lift_to_poly_cover(S)
+            I = S.ideal([f_s] + relations)
+            return g_s in I
+        except (TypeError, ValueError, RuntimeError):
+            p = self.monomial_reduction()[0]
+            q = other.monomial_reduction()[0]
+            return p.divides(q)

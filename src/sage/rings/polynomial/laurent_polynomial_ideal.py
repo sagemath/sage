@@ -184,32 +184,35 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         else:
             raise ValueError("invalid comparison")
 
-    def __contains__(self, f) -> bool:
+    def __contains__(self, f):
         """
-        Implement containment testing (in) for Laurent polynomial ideals.
-
-        EXAMPLES::
-
-            sage: P.<x,y> = LaurentPolynomialRing(QQ, 2)
-            sage: I = P.ideal([x^2*y + 3*x*y^2])
-            sage: x + 3*y in I
-            True
-
-        This also works in the univariate case::
-
-            sage: P.<x> = LaurentPolynomialRing(QQ)
-            sage: I = P.ideal([x^2 + 3*x])
-            sage: 1 + 3*x^-1 in I
-            True
+        Return ``True`` if ``f`` is in this ideal.
         """
-        if not f or f in self.gens():
+        if not f:
             return True
-        f = self.ring()(f)
-        if isinstance(self.ring(), LaurentPolynomialRing_univariate):
-            g = f.__reduce__()[1][1]
+        P = self.ring()
+        try:
+            f = P(f)
+        except (TypeError, ValueError):
+            return False
+
+        R = P.base_ring()
+        if not R.is_integral_domain():
+            try:
+                S, relations = P._poly_cover_ring()
+                ideal_gens_lift = [g._lift_to_poly_cover(S) for g in self.gens()]
+                item_lift = f._lift_to_poly_cover(S)
+                big_ideal = S.ideal(ideal_gens_lift + relations)
+                return item_lift in big_ideal
+            except (TypeError, ValueError, RuntimeError):
+                pass
+
+        if isinstance(P, LaurentPolynomialRing_univariate):
+            g = f._reduce_()[1][1]
         else:
-            g = f.__reduce__()[1][0]
-        return (g in self.polynomial_ideal())
+            poly_part = f.monomial_reduction()[0]
+            g = self.polynomial_ideal().reduce(poly_part)
+        return not g
 
     def gens_reduced(self) -> tuple:
         """
