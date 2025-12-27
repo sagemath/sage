@@ -2628,6 +2628,74 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         overlap_generator = RealSet._scan_to_intervals(scan, lambda i: i > 1)
         return next(overlap_generator, None) is None
 
+    def simplest_rational(self):
+        """
+        Return the simplest rational in this interval. Given rationals
+        `a / b` and `c / d` (both in lowest terms), the former is simpler if
+        `b<d` or if `b = d` and `|a| < |c|`.
+
+        OUTPUT: :class:`Rational`
+
+        TESTS::
+
+            sage: RealSet((1,2)).simplest_rational()
+            3/2
+            sage: s=RealSet((0, 1));  s
+            1
+            sage: s.simplest_rational()
+            0
+            sage: s=RealSet.point(1/2);  s
+            1
+            sage: s.simplest_rational()
+            1/2
+            sage: s=RealSet(x == pi);  s
+            1
+            sage: s.simplest_rational()
+            165707065/52746197
+            sage: s=RealSet(1.5 <= x)
+            2
+            sage: s.simplest_rational()
+            2
+            sage: s=RealSet.real_line();  s
+            (-oo, +oo)
+            sage: s.simplest_rational()
+            0
+            sage: s=RealSet.point(1/2)+RealSet.point(-1/2);  s
+            {-1/2} ∪ {1/2}
+            sage: s.simplest_rational()
+            1/2
+        """
+
+        if self.is_empty():
+            raise ValueError("Empty set has no simplest rational.")
+
+        from sage.rings.real_mpfi import RealIntervalField
+        from sage.rings.rational_field import QQ
+
+        RIF = RealIntervalField()
+        candidates = []
+
+        for interval in self:
+            lower, upper = interval.lower(), interval.upper()
+            # handle one bound as infinity as RIF simplest_rational gives ValueError
+            if interval.contains(0):
+                return QQ(0)
+            if lower == minus_infinity:
+                lower = upper - 2 # to contain at least 1 integer
+            elif upper == infinity:
+                upper = lower + 2 # to contain at least 1 integer
+
+            rs_field = RIF(lower, upper)
+            lo_open = not interval.lower_closed()
+            hi_open = not interval.upper_closed()
+            simplest_rat = rs_field.simplest_rational(low_open=lo_open, high_open=hi_open)
+
+            candidates.append(simplest_rat)
+
+        # sort in ascending order of simplicity definition
+        # positive value preferred over negative
+        return min(candidates, key=lambda x: (x.denominator(), x.abs(), -x))
+
     def _sage_input_(self, sib, coerced):
         """
         Produce an expression which will reproduce this value when evaluated.
