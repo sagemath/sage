@@ -2627,6 +2627,24 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         scan = merge(*[RealSet(real_set)._scan() for real_set in real_set_collection])
         overlap_generator = RealSet._scan_to_intervals(scan, lambda i: i > 1)
         return next(overlap_generator, None) is None
+    
+    def simplest_rational(self):
+
+        from sage.rings.real_mpfi import RealIntervalField
+
+        RIF = RealIntervalField()
+        candidates = []
+
+        for interval in self:
+            rs_field = RIF(interval.lower(), interval.upper())
+
+            simplest_rat = rs_field.simplest_rational(low_open=not interval.lower_closed(),
+                                                      high_open=not interval.upper_closed())
+
+            candidates.append(simplest_rat)
+
+        candidates.sort(key=lambda x: (x.denominator(), x.abs(), x))
+        return candidates[0]
 
     def _sage_input_(self, sib, coerced):
         """
