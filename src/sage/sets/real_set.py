@@ -2648,8 +2648,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
 
         # sort in ascending order of simplicity definition
         # positive value prefered over negative
-        candidates.sort(key=lambda x: (x.denominator(), x.abs(), -x))
-        return candidates[0]
+        return min(candidates, key=lambda x: (x.denominator(), x.abs(), -x))
 
     def _sage_input_(self, sib, coerced):
         """
