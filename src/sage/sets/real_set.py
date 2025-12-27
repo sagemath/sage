@@ -2631,7 +2631,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
     def simplest_rational(self):
 
         if self.is_empty():
-            raise ValueError("Empty set has no simplest rational")
+            raise ValueError("Empty set has no simplest rational.")
 
         from sage.rings.real_mpfi import RealIntervalField
 
