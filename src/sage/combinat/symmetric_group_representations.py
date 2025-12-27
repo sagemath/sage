@@ -34,7 +34,8 @@ from sage.misc.functional import sqrt
 from sage.combinat.partition import Partition, Partitions
 from sage.combinat.permutation import Permutation, Permutations, from_cycles
 from sage.combinat.tableau import StandardTableaux, Tableau
-from sage.matrix.constructor import matrix
+from sage.combinat.combination import Combinations
+from sage.matrix.constructor import matrix, block_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.rings.integer_ring import ZZ
@@ -1815,3 +1816,447 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
             if not f.is_homogeneous():
                 raise ValueError("element is not homogeneous")
             return f.degree()
+
+# #### Induced/Restricted Representation ################################################
+
+
+def induced_representation_matrix(g, sub_rep, coset_reps):
+    r"""
+    Returns the matrix for the induced representation of g.
+
+    The induced representation Ind_H^G(ρ) of a representation ρ of subgroup H
+    to group G acts on the space of functions from G/H to the representation space.
+
+    The formula is: [Ind(g)]_{i,j} = ρ(r_i * g * r_j^{-1}) if r_i * g * r_j^{-1} ∈ H, 0 otherwise
+
+    where r_i, r_j are coset representatives and ρ is the subgroup representation.
+
+    INPUT:
+
+    - ``g`` -- Permutation, Element of the symmetric group S_n
+
+    - ``sub_rep`` -- Function that takes a permutation and returns its representation matrix
+        for the subgroup representation
+
+    - ``coset_reps`` -- Representatives of the left cosets G/H
+
+    """
+    n = len(coset_reps)
+    d = sub_rep(Permutation([1])).nrows()  # dimension of sub-representation
+
+    # Build block matrix
+    blocks = [[None for _ in range(n)] for _ in range(n)]
+    zero_block = matrix(ZZ, d, d, 0)
+
+    for i, r_i in enumerate(coset_reps):
+        for j, r_j in enumerate(coset_reps):
+            # Compute r_i * g * r_j^{-1}
+            perm = r_i * g * r_j.inverse()
+
+            # Check if this permutation is in the subgroup
+            # For this implementation, we'll compute the matrix
+            # If it's not in H, sub_rep should handle it or we check explicitly
+            try:
+                blocks[i][j] = sub_rep(perm)
+            except (ValueError, TypeError, IndexError, KeyError):
+                # ValueError: permutation not in expected form for subgroup
+                # TypeError: representation not defined for this permutation
+                # IndexError: permutation indices out of range for subgroup
+                # KeyError: if using cached lookups that fail
+                blocks[i][j] = zero_block
+
+    return block_matrix(blocks)
+
+
+class InducedRepresentation(SymmetricGroupRepresentation_generic_class):
+    r"""
+    Class for computing induced representations from Young subgroups.
+
+    Given a representation of S_k (acting on first k elements), compute its induction to S_n.
+    """
+
+    def __init__(self, n, k, sub_representation):
+        """
+        Initialize induced representation from S_k to S_n.
+
+        INPUT::
+
+        - ``n`` -- int, Size of the full symmetric group
+
+        - ``k`` -- int, Size of the subgroup (k <= n)
+
+        - ``sub_representation`` -- function or SymmetricGroupRepresentation of S_k
+
+        EXAMPLES::
+
+            sage: def trivial_rep_s2(perm):
+                return matrix(ZZ, 1, 1, [1])
+            sage: ind_rep_triv_2_3 = InducedRepresentation(3, 2, trivial_rep_s2)
+            sage: ind_rep_triv_2_3.dimension()
+            3
+            sage: sym_repn_3 = SymmetricGroupRepresentation([2,1])
+            sage: ind_rep_specht21_3_4 = InducedRepresentation(4,3,sym_repn_3)
+            sage: ind_rep_specht21_3_4.dimension()
+            8
+        """
+        self.n = n
+        self.k = k
+        self.sub_rep = sub_representation
+
+        # Get coset representatives for S_n / S_k
+        # S_k acts on {1, ..., k}, so cosets correspond to ways to choose
+        # which k elements are acted upon
+        self.coset_reps = self._compute_coset_representatives()
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: sym_repn_21 = SymmetricGroupRepresentation([2,1])
+            sage: InducedRepresentation(4,3,sym_repn_21)
+            Induced representation of symmetric group of representation associated to partition [2,1] from S_3 to S_4
+        """
+        return f"Induced representation of symmetric group of representation associated to partition {self.sub_rep._partition} from S_{self.k} to S_{self.n}"
+
+    def _compute_coset_representatives(self):
+        r"""
+        Compute representatives of left cosets S_n / S_k.
+
+        We use permutations that map {1,...,k} to different k-subsets.
+        """
+
+        reps = []
+        for subset in Combinations(range(1, self.n + 1), self.k):
+            # Create a permutation that maps {1,...,k} to subset
+            perm_list = list(range(1, self.n + 1))
+
+            # Put elements of subset in first k positions
+            for i, elem in enumerate(subset):
+                # Find where elem is and swap it to position i
+                idx = perm_list.index(elem)
+                perm_list[i], perm_list[idx] = perm_list[idx], perm_list[i]
+
+            reps.append(Permutation(perm_list))
+
+        return reps
+
+    def __call__(self, g):
+        r"""
+        Returns the induced representation matrix for element g.
+
+        INPUT:
+
+        - ``g`` -- Permutation or list, Element of S_n
+
+        """
+        if not isinstance(g, Permutation):
+            g = Permutation(g)
+
+        n_cosets = len(self.coset_reps)
+
+        if callable(self.sub_rep):
+            d = self.sub_rep(Permutation(range(1, self.k + 1))).nrows()
+        else:
+            d = self.sub_rep(Permutation(range(1, self.k + 1))).nrows()
+
+        # Build the induced representation matrix as a block matrix
+        blocks = [[matrix(ZZ, d, d, 0) for _ in range(n_cosets)] for _ in range(n_cosets)]
+
+        for i, r_i in enumerate(self.coset_reps):
+            for j, r_j in enumerate(self.coset_reps):
+                # Compute h = r_i * g * r_j^{-1}
+                h = r_i * g * r_j.inverse()
+
+                # Check if h stabilizes {1,...,k} (i.e., h is in S_k × S_{n-k})
+                h_list = list(h)
+                first_k = sorted(h_list[:self.k])
+
+                if first_k == list(range(1, self.k + 1)):
+                    # h acts on first k elements like an element of S_k
+                    # Extract the S_k part
+                    h_k = Permutation(h_list[:self.k])
+                    blocks[i][j] = self._get_sub_rep_matrix(h_k)
+
+        return block_matrix(blocks)
+
+    def _get_sub_rep_matrix(self, perm):
+        r"""Helper to get representation matrix from sub_rep."""
+        if callable(self.sub_rep):
+            return self.sub_rep(perm)
+        else:
+            return self.sub_rep(perm)
+
+    def dimension(self):
+        r"""Return the dimension of the induced representation.
+
+        The dimension of Ind_H^G(V) should be [G:H] * dim(V) where [G:H] is the index of H in G.
+
+        For S_k ⊂ S_n, the index is C(n,k) = n!/(k!(n-k)!).
+
+        TESTS::
+
+            sage: from sage.combinat.combination import Combinations
+            sage: rep_S2 = SymmetricGroupRepresentation([2])
+            sage: ind_rep = InducedRepresentation(3, 2, rep_S2)
+            sage: index = len(list(Combinations(3, 2)))
+            sage: dim_S2 = rep_S2(Permutation(range(1, 2+1))).nrows()
+            sage: expected_dim = index * dim_S2
+            sage: actual_dim = ind_rep.dimension()
+            sage: actual_dim == expected_dim
+            True
+
+            sage: from sage.combinat.combination import Combinations
+            sage: rep_S3 = SymmetricGroupRepresentation([2,1])
+            sage: ind_rep = InducedRepresentation(4, 3, rep_S3)
+            sage: index = len(list(Combinations(4, 3)))
+            sage: dim_S3 = rep_S3(Permutation(range(1, 3+1))).nrows()
+            sage: expected_dim = index * dim_S3
+            sage: actual_dim = ind_rep.dimension()
+            sage: actual_dim == expected_dim
+            True
+        """
+
+        n_cosets = len(list(Combinations(self.n, self.k)))
+
+        if callable(self.sub_rep):
+            d_sub = self.sub_rep(Permutation(range(1, self.k + 1))).nrows()
+        else:
+            d_sub = self.sub_rep(Permutation(range(1, self.k + 1))).nrows()
+
+        return n_cosets * d_sub
+
+
+class RestrictedRepresentation(SymmetricGroupRepresentation_generic_class):
+    r"""
+    Class for computing restricted representations to Young subgroups.
+
+    Given a representation of S_n, compute its restriction to S_k (acting on first k elements).
+    """
+
+    def __init__(self, n, k, representation):
+        """
+        Initialize restricted representation from S_n to S_k.
+
+        INPUT::
+
+        - ``n`` -- int, Size of the full symmetric group
+
+        - ``k`` -- int, Size of the subgroup (k <= n)
+
+        - ``representation`` -- function or SymmetricGroupRepresentation of S_n
+
+        EXAMPLES::
+
+            sage: sym_repn_4 = SymmetricGroupRepresentation([2,2])
+            sage: res_rep_4_3 = RestrictedRepresentation(4, 3, sym_repn_4)
+            sage: res_rep_4_3.dimension()
+            2
+            sage: sym_repn_3 = SymmetricGroupRepresentation([3])
+            sage: res_rep_3_2 = RestrictedRepresentation(3, 2, sym_repn_3)
+            sage: res_rep_3_2.dimension()
+            1
+        """
+        if k > n:
+            raise ValueError(f"Subgroup size k={k} cannot be larger than group size n={n}")
+
+        self.n = n
+        self.k = k
+        self.representation = representation
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: sym_repn_4 = SymmetricGroupRepresentation([2,2])
+            sage: RestrictedRepresentation(4, 3, sym_repn_4)
+            Restricted representation of symmetric group of representation associated to partition [2, 2] from S_4 to S_3
+        """
+        if hasattr(self.representation, '_partition'):
+            return "Restricted representation of symmetric group of representation associated to partition {} from S_{} to S_{}".format(
+                self.representation._partition, self.n, self.k)
+        else:
+            return f"Restricted representation from S_{self.n,} to S_{self.k}"
+
+    def __call__(self, g):
+        r"""
+        Returns the restricted representation matrix for element g in S_k.
+
+        The restriction simply evaluates the larger representation on an element
+        of S_k, viewed as an element of S_n that fixes {k+1, ..., n}.
+
+        INPUT:
+
+        - ``g`` -- Permutation or list, Element of S_k
+
+        EXAMPLES::
+
+            sage: sym_repn_4 = SymmetricGroupRepresentation([2,2])
+            sage: res_rep_4_3 = RestrictedRepresentation(4, 3, sym_repn_4)
+            sage: res_rep_4_3([2,1,3])
+            [ 1  0]
+            [ 0 -1]
+        """
+        if not isinstance(g, Permutation):
+            g = Permutation(g)
+
+        # Check that g is indeed in S_k
+        if len(g) > self.k:
+            raise ValueError(f"Permutation {g} has length {len(g)} > k={self.k}")
+
+        # Embed g into S_n by extending it to fix elements {k+1, ..., n}
+        g_list = list(g)
+
+        # Pad with identity on remaining elements
+        g_extended = g_list + list(range(len(g_list) + 1, self.n + 1))
+        g_in_Sn = Permutation(g_extended)
+
+        # Evaluate the representation on the extended permutation
+        if callable(self.representation):
+            return self.representation(g_in_Sn)
+        else:
+            return self.representation(g_in_Sn)
+
+    def dimension(self):
+        r"""
+        Return the dimension of the restricted representation.
+
+        The dimension is the same as the dimension of the original representation.
+
+        EXAMPLES::
+
+            sage: sym_repn_4 = SymmetricGroupRepresentation([2,2])
+            sage: res_rep_4_3 = RestrictedRepresentation(4, 3, sym_repn_4)
+            sage: res_rep_4_3.dimension()
+            2
+        """
+        # Get dimension by evaluating on identity
+        identity_in_Sk = Permutation(range(1, self.k + 1))
+        return self(identity_in_Sk).nrows()
+
+
+# ##### Verification functions for induction/restriction ######################
+
+def character_inner_product(chi1, chi2, group):
+    r"""
+    Compute the inner product of two characters over a group.
+
+    For finite groups, this is:
+
+    .. MATH::
+
+        \langle\chi_1, \chi_2\rangle = \frac{1}{|G|} \sum_{g \in G} \chi_1(g) \overline{\chi_2(g)}
+
+    For real-valued characters (which symmetric group characters are),
+    this simplifies to:
+
+    .. MATH::
+
+        \langle\chi_1, \chi_2\rangle = \frac{1}{|G|} \sum_{g \in G} \chi_1(g) \chi_2(g)
+
+    INPUT:
+
+    - ``chi1`` -- function that takes a permutation and returns a scalar (character value)
+
+    - ``chi2`` -- function that takes a permutation and returns a scalar (character value)
+
+    - ``group`` -- iterable of group elements
+
+    OUTPUT:
+
+    The inner product as a rational number
+
+    EXAMPLES::
+
+        sage: def triv_char(g): return 1
+        sage: def sign_char(g): return g.sign()
+        sage: character_inner_product(triv_char, sign_char, Permutations(3))
+        0
+        sage: character_inner_product(triv_char, triv_char, Permutations(3))
+        1
+    """
+    group_list = list(group)
+    n = len(group_list)
+    total = sum(chi1(g) * chi2(g) for g in group_list)
+    return QQ(total) / QQ(n)
+
+
+def verify_frobenius_reciprocity(n, k, rep_H, rep_G, verbose=False):
+    r"""
+    Verify Frobenius reciprocity for symmetric group representations.
+
+    Tests the formula:
+
+    .. MATH::
+
+        \langle\mathrm{Ind}_H^G(\chi_H), \chi_G\rangle_G = \langle\chi_H, \mathrm{Res}_G^H(\chi_G)\rangle_H
+
+    where `\chi_H` is the character of ``rep_H`` and `\chi_G` is the character of ``rep_G``.
+
+    INPUT:
+
+    - ``n`` -- size of full symmetric group `S_n`
+
+    - ``k`` -- size of subgroup `S_k`
+
+    - ``rep_H`` -- representation of `S_k`
+
+    - ``rep_G`` -- representation of `S_n`
+
+    - ``verbose`` -- (default: ``False``) whether to print detailed information
+
+    OUTPUT:
+
+    ``True`` if Frobenius reciprocity holds (up to numerical precision), ``False`` otherwise
+
+    EXAMPLES::
+
+        sage: rep_S2 = SymmetricGroupRepresentation([2])
+        sage: rep_S3 = SymmetricGroupRepresentation([2,1])
+        sage: verify_frobenius_reciprocity(3, 2, rep_S2, rep_S3)
+        True
+
+        sage: rep_S2_sign = SymmetricGroupRepresentation([1,1])
+        sage: rep_S3_triv = SymmetricGroupRepresentation([3])
+        sage: verify_frobenius_reciprocity(3, 2, rep_S2_sign, rep_S3_triv)
+        True
+    """
+    # Create induced and restricted representations
+    ind_rep = InducedRepresentation(n, k, rep_H)
+    res_rep = RestrictedRepresentation(n, k, rep_G)
+
+    # Define characters as trace functions
+    def chi_H(g):
+        return rep_H(g).trace()
+
+    def chi_G(g):
+        return rep_G(g).trace()
+
+    def chi_ind(g):
+        return ind_rep(g).trace()
+
+    def chi_res(g):
+        return res_rep(g).trace()
+
+    # Compute inner products
+    # Left side: ⟨Ind(χ_H), χ_G⟩_G
+    G = Permutations(n)
+    left_side = character_inner_product(chi_ind, chi_G, G)
+
+    # Right side: ⟨χ_H, Res(χ_G)⟩_H
+    H = Permutations(k)
+    right_side = character_inner_product(chi_H, chi_res, H)
+
+    if verbose:
+        print(f"Verifying Frobenius reciprocity for S_{k} ⊂ S_{n}")
+        print(f"Representation of S_{k}: {rep_H}")
+        print(f"Representation of S_{n}: {rep_G}")
+        print(f"\nLeft side  ⟨Ind(χ), ψ⟩_G = {left_side}")
+        print(f"Right side ⟨χ, Res(ψ)⟩_H = {right_side}")
+        print(f"\nDifference: {abs(left_side - right_side)}")
+
+    # Check equality (allowing for small numerical errors)
+    return abs(left_side - right_side) < 1e-10
