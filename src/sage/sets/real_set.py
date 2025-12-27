@@ -2630,6 +2630,9 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
     
     def simplest_rational(self):
 
+        if self.is_empty():
+            raise ValueError("Empty set has no simplest rational")
+
         from sage.rings.real_mpfi import RealIntervalField
 
         RIF = RealIntervalField()
@@ -2637,13 +2640,15 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
 
         for interval in self:
             rs_field = RIF(interval.lower(), interval.upper())
-
-            simplest_rat = rs_field.simplest_rational(low_open=not interval.lower_closed(),
-                                                      high_open=not interval.upper_closed())
+            lo_open = not interval.lower_closed()
+            hi_open = not interval.upper_closed()
+            simplest_rat = rs_field.simplest_rational(low_open=lo_open, high_open=hi_open)
 
             candidates.append(simplest_rat)
 
-        candidates.sort(key=lambda x: (x.denominator(), x.abs(), x))
+        # sort in ascending order of simplicity definition
+        # positive value prefered over negative
+        candidates.sort(key=lambda x: (x.denominator(), x.abs(), -x))
         return candidates[0]
 
     def _sage_input_(self, sib, coerced):
