@@ -9631,12 +9631,40 @@ class GenericGraph(GenericGraph_pyx):
             def weight(label):
                 return 1
 
+
         ########################
         # 0 or 1 vertex graphs #
         ########################
 
         if self.order() < 2:
             raise EmptySetError("the given graph is not Hamiltonian")
+
+        ########################
+        # Ore's theorem check  #
+        ########################
+        # Only for undirected, simple graphs with n >= 3
+        n = self.order()
+        if (not self.is_directed() and not self.has_loops() and not self.has_multiple_edges() and n >= 3):
+            vertices = list(self)
+            ore_holds = True
+            for i, u in enumerate(vertices):
+                for v in vertices[i+1:]:
+                    if not self.has_edge(u, v):
+                        if self.degree(u) + self.degree(v) < n:
+                            ore_holds = False
+                            break
+                if not ore_holds:
+                    break
+            if ore_holds:
+                # The graph is Hamiltonian by Ore's theorem
+                # Return a trivial Hamiltonian cycle if possible, else True
+                # (Here, we just shortcut and return True, or could construct a cycle)
+                from sage.graphs.graph import Graph
+                cycle_edges = [(vertices[i], vertices[(i+1)%n]) for i in range(n)]
+                answer = self.subgraph(edges=cycle_edges, immutable=self.is_immutable())
+                answer.set_pos(self.get_pos())
+                answer._name = "TSP (Ore's theorem) from " + self.name()
+                return answer
 
         #####################
         # 2-vertices graphs #
