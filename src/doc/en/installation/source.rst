@@ -208,6 +208,15 @@ Remarks
   run in parallel based on the number of CPU available. This can be adjusted
   by passing ``--config-settings=compile-args=-jN`` to ``pip install``.
 
+  If you don't need to build the documentation, pass
+  ``--config-settings=setup-args=-Dbuild-docs=false`` to ``pip install``
+  to speed up the target generation step.
+
+  The parameter ``setup-args`` etc. are documented in
+  `<https://mesonbuild.com/meson-python/how-to-guides/config-settings.html>`_.
+  ``setup-args`` are passed to ``meson``, effect ``compile-args``
+  are passed to ``ninja``.
+
   ``--verbose`` can be passed to ``pip install``, then the meson commands
   internally used by pip will be printed out.
 

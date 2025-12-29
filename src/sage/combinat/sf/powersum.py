@@ -2,7 +2,7 @@
 """
 Power sum symmetric functions
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
 #                     2012 Anne Schilling <anne at math.ucdavis.edu>
@@ -16,8 +16,8 @@ Power sum symmetric functions
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from sage.arith.misc import divisors
 from sage.combinat.partition import Partition
 from sage.misc.misc_c import prod
