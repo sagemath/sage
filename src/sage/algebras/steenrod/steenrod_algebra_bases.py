@@ -361,13 +361,13 @@ def steenrod_algebra_basis(n, basis='milnor', p=2, **kwds):
         return serre_cartan_basis(n, p, **kwds)
     # Atomic bases, p odd:
     elif generic and (basis_name.find('pst') >= 0
-                    or basis_name.find('comm') >= 0):
+                      or basis_name.find('comm') >= 0):
         return atomic_basis_odd(n, basis_name, p, **kwds)
     # Atomic bases, p=2
     elif not generic and (basis_name == 'woody' or basis_name == 'woodz'
-                     or basis_name == 'wall' or basis_name == 'arnona'
-                     or basis_name.find('pst') >= 0
-                     or basis_name.find('comm') >= 0):
+                          or basis_name == 'wall' or basis_name == 'arnona'
+                          or basis_name.find('pst') >= 0
+                          or basis_name.find('comm') >= 0):
         return atomic_basis(n, basis_name, **kwds)
     # Arnon 'C' basis
     elif not generic and basis == 'arnonc':
@@ -726,7 +726,7 @@ def serre_cartan_basis(n, p=2, bound=1, **kwds):
                 for vec in serre_cartan_basis(n - last, bound=2 * last):
                     new = vec + (last,)
                     result.append(new)
-        else: # p odd
+        else:  # p odd
             if n % (2 * (p-1)) == 0 and n//(2 * (p-1)) >= bound:
                 result = [(0, int(n//(2 * (p-1))), 0)]
             elif n == 1:
@@ -739,7 +739,7 @@ def serre_cartan_basis(n, p=2, bound=1, **kwds):
                 if n - 2*(p-1)*last > 0:
                     for vec in serre_cartan_basis(n - 2*(p-1)*last,
                                                   p, p*last, generic=generic):
-                        result.append(vec + (last,0))
+                        result.append(vec + (last, 0))
             # case 2: append P^{last} beta
             if bound == 1:
                 bound = 0
@@ -849,7 +849,7 @@ def atomic_basis(n, basis, **kwds):
             m = 0
             deg = 2**m * (2**(k+1) - 1)
             while deg <= n:
-                dict[deg] = (m,k)
+                dict[deg] = (m, k)
                 if m > 0:
                     m = m - 1
                     k = k + 1
@@ -862,7 +862,7 @@ def atomic_basis(n, basis, **kwds):
             m = 0
             deg = 2**k * (2**(m-k+1) - 1)
             while deg <= n:
-                dict[deg] = (m,k)
+                dict[deg] = (m, k)
                 if k == 0:
                     m = m + 1
                     k = m
@@ -875,9 +875,9 @@ def atomic_basis(n, basis, **kwds):
             deg = 2**s * (2**t - 1)
             while deg <= n:
                 if basis.find('pst') >= 0:
-                    dict[deg] = (s,t)
+                    dict[deg] = (s, t)
                 else:  # comm
-                    dict[deg] = (s,t)
+                    dict[deg] = (s, t)
                 if s == 0:
                     s = t
                     t = 1
@@ -889,18 +889,18 @@ def atomic_basis(n, basis, **kwds):
 
     def sorting_pair(s, t, basis):   # pair used for sorting the basis
         if basis.find('wood') >= 0 and basis.find('z') >= 0:
-            return (-s-t,-s)
+            return (-s-t, -s)
         elif basis.find('wood') >= 0 or basis.find('wall') >= 0 or \
                 basis.find('arnon') >= 0:
-            return (-s,-t)
+            return (-s, -t)
         elif basis.find('rlex') >= 0:
-            return (t,s)
+            return (t, s)
         elif basis.find('llex') >= 0:
-            return (s,t)
+            return (s, t)
         elif basis.find('deg') >= 0:
-            return (s+t,t)
+            return (s+t, t)
         elif basis.find('revz') >= 0:
-            return (s+t,s)
+            return (s+t, s)
 
     from sage.rings.infinity import Infinity
     profile = kwds.get("profile", None)
@@ -926,7 +926,7 @@ def atomic_basis(n, basis, **kwds):
             okay = True
             if basis.find('pst') >= 0:
                 if profile is not None and len(profile) > 0:
-                    for (s,t) in big_list:
+                    for s, t in big_list:
                         if ((len(profile) > t-1 and profile[t-1] <= s)
                             or (len(profile) <= t-1 and trunc < Infinity)):
                             okay = False
@@ -1087,7 +1087,7 @@ def atomic_basis_odd(n, basis, p, **kwds):
                                 okay = False
                                 break
 
-                        for ((s, t), _) in p_mono:
+                        for (s, t), _ in p_mono:
                             if ((len(profile[0]) > t-1 and profile[0][t-1] <= s)
                                 or (len(profile[0]) <= t-1 and trunc < Infinity)):
                                 okay = False
@@ -1135,7 +1135,7 @@ def steenrod_basis_error_check(dim, p, **kwds):
     generic = kwds.get('generic', p != 2)
 
     if not generic:
-        bases = ('adem','woody', 'woodz', 'wall', 'arnona', 'arnonc',
+        bases = ('adem', 'woody', 'woodz', 'wall', 'arnona', 'arnonc',
                  'pst_rlex', 'pst_llex', 'pst_deg', 'pst_revz',
                  'comm_rlex', 'comm_llex', 'comm_deg', 'comm_revz')
     else:
@@ -1146,11 +1146,13 @@ def steenrod_basis_error_check(dim, p, **kwds):
     for i in range(dim):
         if i % 5 == 0:
             verbose("up to dimension %s" % i)
-        milnor_dim = len(steenrod_algebra_basis.f(i,'milnor',p=p,generic=generic))
+        milnor_dim = len(steenrod_algebra_basis.f(i, 'milnor', p=p,
+                                                  generic=generic))
         for B in bases:
-            if milnor_dim != len(steenrod_algebra_basis.f(i,B,p,generic=generic)):
+            if milnor_dim != len(steenrod_algebra_basis.f(i, B, p,
+                                                          generic=generic)):
                 print("problem with milnor/{} in dimension {}".format(B, i))
-            mat = convert_to_milnor_matrix.f(i,B,p,generic=generic)
+            mat = convert_to_milnor_matrix.f(i, B, p, generic=generic)
             if mat.nrows() != 0 and not mat.is_invertible():
                 print("%s invertibility problem in dim %s at p=%s" % (B, i, p))
 
@@ -1158,17 +1160,21 @@ def steenrod_basis_error_check(dim, p, **kwds):
 
     bases = ('pst_rlex', 'pst_llex', 'pst_deg', 'pst_revz')
     if not generic:
-        profiles = [(4,3,2,1), (2,2,3,1,1), (0,0,0,2)]
+        profiles = [(4, 3, 2, 1), (2, 2, 3, 1, 1), (0, 0, 0, 2)]
     else:
-        profiles = [((3,2,1), ()), ((), (2,1,2)), ((3,2,1), (2,2,2,2))]
+        profiles = [((3, 2, 1), ()), ((), (2, 1, 2)), ((3, 2, 1), (2, 2, 2, 2))]
 
     for i in range(dim):
         if i % 5 == 0:
             verbose("up to dimension %s" % i)
         for pro in profiles:
-            milnor_dim = len(steenrod_algebra_basis.f(i,'milnor',p=p,profile=pro,generic=generic))
+            milnor_dim = len(steenrod_algebra_basis.f(i, 'milnor', p=p,
+                                                      profile=pro,
+                                                      generic=generic))
             for B in bases:
-                if milnor_dim != len(steenrod_algebra_basis.f(i,B,p,profile=pro,generic=generic)):
+                if milnor_dim != len(steenrod_algebra_basis.f(i, B, p,
+                                                              profile=pro,
+                                                              generic=generic)):
                     print("problem with milnor/%s in dimension %s with profile %s" % (B, i, pro))
 
     verbose("done checking with profiles")

@@ -17,11 +17,11 @@
 
 
 class MagmaExpr(str):
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self)
 
 
-def magma_free_eval(code, strip=True, columns=0):
+def magma_free_eval(code: str, strip=True, columns=0):
     """
     Use the free online MAGMA calculator to evaluate the given
     input code and return the answer as a string.
@@ -30,6 +30,7 @@ def magma_free_eval(code, strip=True, columns=0):
 
         The code must evaluate in at most 120 seconds
         and there is a limitation on the amount of RAM.
+        Otherwise, some :exc:`TimeoutError` will be raised.
 
     EXAMPLES::
 
@@ -54,21 +55,18 @@ def magma_free_eval(code, strip=True, columns=0):
     results = response.read()
     conn.close()
 
+    if b"Timeout" in results:
+        raise TimeoutError('timeout from the server')
+
     xmlDoc = parseString(results)
-    res = []
+    res: list[str] = []
     resultsNodeList = xmlDoc.getElementsByTagName('results')
-    if len(resultsNodeList) > 0:
+    if resultsNodeList:
         resultsNode = resultsNodeList[0]
         lines = resultsNode.getElementsByTagName('line')
         for line in lines:
-            for textNode in line.childNodes:
-                res.append(textNode.data)
-    res = "\n".join(res)
-
-    class MagmaExpr(str):
-        def __repr__(self):
-            return str(self)
-    return MagmaExpr(res)
+            res.extend(textNode.data for textNode in line.childNodes)
+    return MagmaExpr("\n".join(res))
 
 
 class MagmaFree:

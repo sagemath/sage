@@ -417,6 +417,26 @@ cdef class FreeAlgebra_letterplace(Parent):
         return self._commutative_ring.term_order()
 
     def generator_degrees(self):
+        r"""
+        Return the degrees of the algebra's generators.
+
+        For a letterplace free algebra, this is always a tuple of ones,
+        one for each variable/generator.
+
+        OUTPUT:
+
+        A tuple of non-negative integers.
+
+        EXAMPLES::
+
+            sage: A = FreeAlgebra(QQ, 3, 'x', implementation='letterplace')
+            sage: A.generator_degrees()
+            (1, 1, 1)
+
+            sage: B = FreeAlgebra(ZZ, 'a,b', implementation='letterplace')
+            sage: B.generator_degrees()
+            (1, 1)
+        """
         return self._degrees
 
     # Some basic properties of this ring
@@ -478,7 +498,7 @@ cdef class FreeAlgebra_letterplace(Parent):
 
         EXAMPLES:
 
-        In order to avoid we get a free algebras from the cache that
+        To avoid getting a free algebra from the cache that
         was created in another doctest and has a different degree
         bound, we choose a base ring that does not appear in other tests::
 
@@ -817,7 +837,7 @@ cdef class FreeAlgebra_letterplace(Parent):
         cdef dict out = {}
         self.set_degbound(l // self._ngens)
         cdef Py_ssize_t n = self._current_ring.ngens()
-        for e, c in D.iteritems():
+        for e, c in D.items():
             out[tuple(e) + (0,) * (n - l)] = c
         return FreeAlgebraElement_letterplace(self, self._current_ring(out),
                                               check=check)
@@ -891,6 +911,13 @@ cdef class FreeAlgebra_letterplace_libsingular():
 
     def __cinit__(self, MPolynomialRing_libsingular commutative_ring,
                   int degbound):
+        """
+        Cython initializer.
+
+        TESTS::
+
+            sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
+        """
         from sage.libs.singular.function import singular_function
         freeAlgebra = singular_function("freeAlgebra")
         cdef RingWrap rw = freeAlgebra(commutative_ring, degbound)
@@ -901,6 +928,15 @@ cdef class FreeAlgebra_letterplace_libsingular():
         self._commutative_ring = commutative_ring
 
     def __init__(self, commutative_ring, degbound):
+        """
+        Initialize the Python object.
+
+        TESTS::
+
+            sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
+            sage: F.ngens()
+            3
+        """
         self._ngens = commutative_ring.ngens() * degbound
 
     def __dealloc__(self):

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Lattice posets
 """
@@ -91,6 +90,7 @@ class LatticePosets(Category):
             """
 
     class SubcategoryMethods:
+
         def Stone(self):
             r"""
             A Stone lattice `(L, \vee, \wedge)` is a pseudo-complemented

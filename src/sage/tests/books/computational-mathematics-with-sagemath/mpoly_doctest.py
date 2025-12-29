@@ -434,7 +434,8 @@ Sage example in ./mpoly.tex, line 2243::
 Sage example in ./mpoly.tex, line 2298::
 
   sage: R.<x,y> = PolynomialRing(QQ, order='lex')
-  sage: (g, h) = (x-y, x-y^2);  p = x*y - x
+  sage: p = x*y - x
+  sage: g, h = x-y, x-y^2
   sage: p.reduce([g, h])  # two reductions by h
   y^3 - y^2
   sage: p.reduce([h, g])  # two reductions by g

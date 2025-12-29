@@ -113,7 +113,7 @@ cdef class Group(Parent):
                 raise ValueError("%s is not a subcategory of %s" % (category, Groups()))
         Parent.__init__(self, base=base, category=category)
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Test whether this group is abelian.
 
@@ -128,7 +128,7 @@ cdef class Group(Parent):
         """
         raise NotImplementedError
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         r"""
         Test whether this group is commutative.
 
@@ -266,7 +266,7 @@ cdef class AbelianGroup(Group):
     """
     Generic abelian group.
     """
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return ``True``.
 

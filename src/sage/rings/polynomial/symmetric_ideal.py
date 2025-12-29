@@ -649,7 +649,7 @@ class SymmetricIdeal(Ideal_generic):
         from sage.rings.polynomial.symmetric_reduction import SymmetricReductionStrategy
         RStrat = SymmetricReductionStrategy(self.ring(), OUT.gens(),
                                             tailreduce=tailreduce)
-        while newOUT != OUT:
+        while newOUT.gens() != OUT.gens():
             OUT = newOUT
             PermutedGens = list(OUT.gens())
             if report is not None:

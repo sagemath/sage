@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Fast and safe weak value dictionary
 
@@ -466,7 +465,7 @@ cdef class WeakValueDictionary(dict):
             sage: D.setdefault(matrix([]), ZZ)                                          # needs sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: mutable matrices are unhashable
+            TypeError: ...mutable matrices are unhashable...
         """
         cdef PyObject* wr = PyDict_GetItemWithError(self, k)
         if wr != NULL:
@@ -586,7 +585,7 @@ cdef class WeakValueDictionary(dict):
             sage: D.pop(matrix([]))                                                     # needs sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: mutable matrices are unhashable
+            TypeError: ...mutable matrices are unhashable...
         """
         cdef PyObject* wr = PyDict_GetItemWithError(self, k)
         if wr == NULL:
@@ -663,7 +662,7 @@ cdef class WeakValueDictionary(dict):
             sage: D.get(matrix([]))                                                     # needs sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: mutable matrices are unhashable
+            TypeError: ...mutable matrices are unhashable...
         """
         cdef PyObject * wr = PyDict_GetItemWithError(self, k)
         if wr == NULL:
@@ -702,7 +701,7 @@ cdef class WeakValueDictionary(dict):
             sage: D[matrix([])]                                                         # needs sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: mutable matrices are unhashable
+            TypeError: ...mutable matrices are unhashable...
         """
         cdef PyObject* wr = PyDict_GetItemWithError(self, k)
         if wr == NULL:
@@ -745,7 +744,7 @@ cdef class WeakValueDictionary(dict):
             sage: matrix([]) in D                                                       # needs sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: mutable matrices are unhashable
+            TypeError: ...mutable matrices are unhashable...
         """
         cdef PyObject* wr = PyDict_GetItemWithError(self, k)
         return (wr != NULL) and (PyWeakref_GetObject(wr) != Py_None)
@@ -812,24 +811,6 @@ cdef class WeakValueDictionary(dict):
             [0, 1, 2, 3, 5, 6, 7, 8, 9]
         """
         return list(iter(self))
-
-    def itervalues(self):
-        """
-        Deprecated.
-
-        EXAMPLES::
-
-            sage: import sage.misc.weak_dict
-            sage: class Vals(): pass
-            sage: L = [Vals() for _ in range(10)]
-            sage: D = sage.misc.weak_dict.WeakValueDictionary(enumerate(L))
-            sage: T = list(D.itervalues())
-            doctest:warning...:
-            DeprecationWarning: use values instead
-            See https://github.com/sagemath/sage/issues/34488 for details.
-        """
-        deprecation(34488, "use values instead")
-        return self.values()
 
     def values(self):
         """
@@ -917,22 +898,6 @@ cdef class WeakValueDictionary(dict):
             [<0>, <1>, <3>, <4>, <6>, <7>, <8>, <9>]
         """
         return list(self.values())
-
-    def iteritems(self):
-        """
-        EXAMPLES::
-
-            sage: import sage.misc.weak_dict
-            sage: class Vals(): pass
-            sage: L = [Vals() for _ in range(10)]
-            sage: D = sage.misc.weak_dict.WeakValueDictionary(enumerate(L))
-            sage: T = list(D.iteritems())
-            doctest:warning...:
-            DeprecationWarning: use items instead
-            See https://github.com/sagemath/sage/issues/34488 for details.
-        """
-        deprecation(34488, "use items instead")
-        return self.items()
 
     def items(self):
         """

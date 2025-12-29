@@ -1250,8 +1250,8 @@ def spectral_radius(G, prec=1e-10):
 
     cdef double e_min, e_max
 
-    if G.num_verts() == 1:
-        e_min = e_max = G.num_edges()
+    if G.n_vertices() == 1:
+        e_min = e_max = G.n_edges()
         return (e_min, e_max)
 
     is_bipartite, colors = G.is_bipartite(certificate=True)

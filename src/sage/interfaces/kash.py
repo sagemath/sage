@@ -781,34 +781,10 @@ class KashElement(ExpectElement):
 
 
 class KashDocumentation(list):
-    def __repr__(self):
+    def __repr__(self) -> str:
         if len(self) == 0:
             return "No matches."
         return '\n'.join(self)
-
-
-def is_KashElement(x):
-    """
-    Return ``True`` if ``x`` is of type :class:`KashElement`.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.kash import is_KashElement
-        sage: is_KashElement(2)
-        doctest:...: DeprecationWarning: the function is_KashElement is deprecated; use isinstance(x, sage.interfaces.abc.KashElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: is_KashElement(kash(2))  # optional - kash
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_KashElement is deprecated; use isinstance(x, sage.interfaces.abc.KashElement) instead")
-
-    return isinstance(x, KashElement)
-
-######
-
-######
 
 
 kash = Kash()
@@ -821,7 +797,8 @@ def reduce_load_Kash():
 def kash_console():
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():
-        raise RuntimeError('Can use the console only in the terminal. Try %%kash magics instead.')
+        raise RuntimeError('Can use the console only in the terminal. '
+                           'Try %%kash magics instead.')
     os.system("kash3 ")
 
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of ``sirocco``
 """
@@ -38,7 +37,7 @@ class Sirocco(JoinFeature):
         """
         JoinFeature.__init__(self, "sirocco",
                              [PythonModule("sage.libs.sirocco",
-                                           spkg='sagemath_sirocco')])
+                                           spkg='sirocco')])
 
 
 def all_features():

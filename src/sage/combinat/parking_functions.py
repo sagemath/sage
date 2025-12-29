@@ -1004,7 +1004,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
 
             sage: # needs sage.modules
             sage: R = QQ['q','t'].fraction_field()
-            sage: (q,t) = R.gens()
+            sage: q, t = R.gens()
             sage: cqf = sum(t**PF.area() * PF.characteristic_quasisymmetric_function()
             ....:           for PF in ParkingFunctions(3)); cqf
             (q^3+q^2*t+q*t^2+t^3+q*t)*F[1, 1, 1] + (q^2+q*t+t^2+q+t)*F[1, 2]

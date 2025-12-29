@@ -54,10 +54,10 @@ class StringMonoid_class(FreeMonoid):
         FreeMonoid.__init__(self, n)
         self._alphabet = alphabet
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         return isinstance(x, StringMonoidElement) and x.parent() == self
 
-    def alphabet(self):
+    def alphabet(self) -> tuple:
         return tuple(self._alphabet)
 
     def one(self):

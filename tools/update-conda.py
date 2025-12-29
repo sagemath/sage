@@ -3,10 +3,10 @@
 
 import argparse
 import subprocess
+import tomllib
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-import toml as tomllib
 from grayskull.config import Configuration
 from grayskull.strategy.py_base import merge_setup_toml_metadata
 from grayskull.strategy.py_toml import get_all_toml_info
@@ -146,7 +146,8 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
 
 def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[str]:
     grayskull_config = Configuration("sagemath")
-    pyproject = tomllib.load(pyproject_toml)
+    with open(pyproject_toml, "rb") as f:
+        pyproject = tomllib.load(f)
     pyproject_metadata = merge_setup_toml_metadata(
         {}, get_all_toml_info(pyproject_toml)
     )
@@ -172,6 +173,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         .replace("pkg:generic/sagemath-graphs", "sagemath-db-graphs")
         .replace("pkg:generic/sagemath-polytopes-db", "sagemath-db-polytopes")
         .replace("pkg:generic/tachyon", "tachyon")
+        .replace("brial", "libbrial") # on Conda, 'brial' refers to the Python package
         for req in all_requirements
     }
     # Exclude requirements not available on conda (for a given platform)
@@ -192,7 +194,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         exclude_packages |= {
             "4ti2",
             "bc",
-            "brial",
+            "libbrial",
             "bliss",
             "cddlib",
             "cliquer",
@@ -266,7 +268,11 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         normalize_requirements_list(list(all_requirements), grayskull_config)
     )
     # Specify concrete package for some virtual packages
-    all_requirements.add("blas=2.*=openblas")
+    if platform in ("osx-64", "osx-arm64"):
+        all_requirements.add("libblas=*=*_newaccelerate")
+    else:
+        all_requirements.add("openblas")
+        all_requirements.add("libblas=*=*_openblas")
     all_requirements.add("fortran-compiler")
     if platform == "win-64":
         all_requirements.add("vs2022_win-64")
@@ -274,10 +280,8 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         # all_requirements.add("gcc_win-64 >= 14.2.0")
         # all_requirements.add("gxx_win-64")
     else:
-        # Not possible to use GCC 14 until https://github.com/conda-forge/fflas-ffpack-feedstock/pull/21 is merged
-        # Thus add version constraint to avoid conda picking GCC 14
-        all_requirements.add("c-compiler <= 1.10")
-        all_requirements.add("cxx-compiler <= 1.10")
+        all_requirements.add("c-compiler")
+        all_requirements.add("cxx-compiler")
 
     # Add additional dependencies based on platform
     if platform == "win-64":
@@ -322,6 +326,5 @@ def get_optional_dependencies(pyproject: dict) -> list[str]:
         optional_dependencies.extend(dependencies)
     # print(f"Optional dependencies: {optional_dependencies}")  # Uncommented for debugging
     return optional_dependencies
-
 
 update_conda(options.sourcedir, options.systems)

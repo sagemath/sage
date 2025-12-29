@@ -3,9 +3,9 @@ doc_sources = [
   'conf.py',
   'index.rst',
   'launching.rst',
-  'meson.rst',
   'source.rst',
   'troubles.rst',
+  'source-distro.rst',
 ]
 
 foreach file : doc_sources

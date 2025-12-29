@@ -342,7 +342,7 @@ cdef class EdgesView:
 
     def __init__(self, G, vertices=None, vertices2=None, labels=True,
                  ignore_direction=False,
-                 sort=False, key=None, sort_vertices=True):
+                 sort=False, key=None, sort_vertices=True) -> None:
         """
         Construction of this :class:`EdgesView`.
 
@@ -385,7 +385,7 @@ cdef class EdgesView:
         self._sort_edges_key = key
         self._sort_vertices = sort_vertices
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of edges in ``self``.
 
@@ -414,7 +414,7 @@ cdef class EdgesView:
             return self._graph.size()
         return sum(1 for _ in self)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -499,7 +499,7 @@ cdef class EdgesView:
         else:
             yield from self._iter_unsorted()
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Check whether ``self`` is not empty.
 
@@ -517,7 +517,7 @@ cdef class EdgesView:
             return True
         return False
 
-    def __eq__(self, right):
+    def __eq__(self, right) -> bool:
         """
         Check whether ``self`` and ``right`` are equal.
 
@@ -587,7 +587,7 @@ cdef class EdgesView:
         # Check that the same edges are reported in the same order
         return all(es == eo for es, eo in zip(self, other))
 
-    def __contains__(self, e):
+    def __contains__(self, e) -> bool:
         """
         Check whether edge ``e`` is part of ``self``.
 

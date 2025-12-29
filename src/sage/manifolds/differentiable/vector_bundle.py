@@ -31,7 +31,6 @@ AUTHORS:
 
 from sage.categories.vector_bundles import VectorBundles
 from sage.manifolds.vector_bundle import TopologicalVectorBundle
-from sage.misc.superseded import deprecated_function_alias
 from sage.rings.cc import CC
 from sage.rings.infinity import infinity
 from sage.rings.rational_field import QQ
@@ -88,7 +87,7 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
         True
     """
     def __init__(self, rank, name, base_space, field='real', latex_name=None,
-                 category=None, unique_tag=None):
+                 category=None, unique_tag=None) -> None:
         r"""
         Construct a differentiable vector bundle.
 
@@ -118,7 +117,7 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
                                          category=category)
         self._diff_degree = diff_degree  # Override diff degree
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -274,8 +273,6 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
         R = self.characteristic_cohomology_class_ring(base_ring)
         return R(*args, **kwargs)
 
-    characteristic_class = deprecated_function_alias(29581, characteristic_cohomology_class)
-
     def diff_degree(self):
         r"""
         Return the vector bundle's degree of differentiability.
@@ -430,7 +427,7 @@ class TensorBundle(DifferentiableVectorBundle):
         sage: R_tensor_module is PhiTM.section_module()
         True
     """
-    def __init__(self, base_space, k, l, dest_map=None):
+    def __init__(self, base_space, k, l, dest_map=None) -> None:
         r"""
         Construct a tensor bundle.
 
@@ -493,7 +490,7 @@ class TensorBundle(DifferentiableVectorBundle):
         """
         self._def_frame = None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 

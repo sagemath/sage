@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # /// script
-# requires-python = ">=3.11"
+# requires-python = ">=3.12"
 # dependencies = [
 #     "pygithub",
 #     "tqdm",
@@ -54,15 +54,27 @@ def main():
     parser.add_argument(
         "--token", help="GitHub API token", default=os.getenv('GITHUB_TOKEN'), type=str
     )
+    parser.add_argument(
+        "--verbose", help="increase verbosity", action="store_true"
+    )
     options = parser.parse_args()
 
     deprecations = search_deprecations(options.sourcedir)
+    if options.verbose:
+        for filepath, pr_number in deprecations:
+            print(
+                f"File: {filepath} ; PR: https://github.com/sagemath/sage/pull/{pr_number}"
+            )
 
     one_year_ago = datetime.now(timezone.utc) - timedelta(days=365 + 90)
     old_deprecations: set[tuple[str, int, datetime]] = set()
     for filepath, pr_number in tqdm.tqdm(deprecations):
         closed_date = get_pr_closed_date(options.token, pr_number)
         if closed_date and closed_date < one_year_ago:
+            if options.verbose:
+                print(
+                    f"File: {filepath} ; PR: https://github.com/sagemath/sage/pull/{pr_number} ; Closed Date: {closed_date:%Y-%m-%d}"
+                )
             old_deprecations.add((filepath, pr_number, closed_date))
 
     if old_deprecations:

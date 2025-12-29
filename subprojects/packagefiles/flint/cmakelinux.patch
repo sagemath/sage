@@ -1,0 +1,15 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8d959fb..5dcbf6e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -12,10 +12,6 @@
+ 
+ cmake_minimum_required(VERSION 3.22)
+ 
+-if(NOT WIN32)
+-    message(FATAL_ERROR "Detected system is not Windows.  Please use the Autotools configuration along with the Makefile instead as it is more up-to-date.  Read INSTALL.md.")
+-endif()
+-
+ include(CheckCCompilerFlag)
+ include(CheckCSourceRuns)
+ include(CheckIPOSupported)
