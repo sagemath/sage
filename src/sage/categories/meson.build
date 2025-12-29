@@ -210,13 +210,13 @@ py.install_sources(
 )
 
 extension_data = {
-  'action' : files('action.pyx'),
-  'category_cy_helper' : files('category_cy_helper.pyx'),
-  'category_singleton' : files('category_singleton.pyx'),
-  'coercion_methods' : files('coercion_methods.pyx'),
-  'functor' : files('functor.pyx'),
-  'map' : files('map.pyx'),
-  'morphism' : files('morphism.pyx'),
+  'action': files('action.pyx'),
+  'category_cy_helper': files('category_cy_helper.pyx'),
+  'category_singleton': files('category_singleton.pyx'),
+  'coercion_methods': files('coercion_methods.pyx'),
+  'functor': files('functor.pyx'),
+  'map': files('map.pyx'),
+  'morphism': files('morphism.pyx'),
 }
 
 foreach name, pyx : extension_data

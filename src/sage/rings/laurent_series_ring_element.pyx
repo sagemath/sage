@@ -1547,6 +1547,72 @@ cdef class LaurentSeries(AlgebraElement):
             P = self._parent.change_ring(rev.parent().base_ring())
             return P(rev)
 
+    def is_square(self, root=False):
+        r"""
+        Return whether this Laurent series is a square.
+
+        INPUT:
+
+        - ``root`` -- boolean (default: ``False``); if ``True``, return a pair
+          ``(True, sqrt)`` if this element is a square, and ``(False, None)``
+          otherwise
+
+        EXAMPLES::
+
+            sage: R.<x> = LaurentSeriesRing(QQ)
+            sage: (x^2).is_square()
+            True
+            sage: (x^3).is_square()
+            False
+            sage: (4/x^2 + 4/x + 1).is_square(root=True)
+            (True, 2*x^-1 + 1)
+            sage: R.<t> = LaurentSeriesRing(ZZ)
+            sage: (t^-4).is_square()
+            True
+            sage: (2*t^-4).is_square()
+            False
+        """
+        # Case 1: Handle Zero
+        if self.is_zero():
+            if root:
+                return True, self
+            return True
+
+        # Case 2: Valuation must be even
+        v = self.valuation()
+        if v % 2:
+            if root:
+                return False, None
+            return False
+
+        # Case 3: The unit part must be a square
+        unit_part = (self >> v).power_series()
+        
+        # We use a try-except block to handle inconsistent API in base rings
+        try:
+            # Check is_square without keyword args first (safest)
+            is_sq = unit_part.is_square()
+        except (TypeError, ValueError, ArithmeticError, NotImplementedError):
+            if root:
+                return False, None
+            return False
+
+        if not root:
+            return is_sq
+
+        if is_sq:
+            # If we need the root, calculate it
+            # We try .sqrt() which is standard across most elements
+            try:
+                sqrt_unit = unit_part.sqrt()
+            except (ValueError, ArithmeticError):
+                return False, None
+                
+            # Reconstruct: t^(v/2) * sqrt(unit)
+            return True, self.parent()(sqrt_unit) << (v // 2)
+        else:
+            return False, None
+
     def derivative(self, *args):
         """
         The formal derivative of this Laurent series, with respect to

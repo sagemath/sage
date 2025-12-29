@@ -924,12 +924,11 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
             x_as_Integer = ZZ.coerce(x)
             try:
                 if _do_sig(self._prec): sig_on()
-                fmpz_init(tmpz)
-                fmpz_set_mpz(tmpz, x_as_Integer.value)
+                fmpz_init_set_readonly(tmpz, x_as_Integer.value)
                 arb_gamma_fmpz(res.value, tmpz, self._prec)
                 if _do_sig(self._prec): sig_off()
             finally:
-                fmpz_clear(tmpz)
+                fmpz_clear_readonly(tmpz)
             return res
         except TypeError:
             pass
@@ -1046,12 +1045,11 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
         cdef Integer n_as_Integer = ZZ.coerce(n)
         try:
             if _do_sig(self._prec): sig_on()
-            fmpz_init(tmpz)
-            fmpz_set_mpz(tmpz, n_as_Integer.value)
+            fmpz_init_set_readonly(tmpz, n_as_Integer.value)
             arb_fib_fmpz(res.value, tmpz, self._prec)
             if _do_sig(self._prec): sig_off()
         finally:
-            fmpz_clear(tmpz)
+            fmpz_clear_readonly(tmpz)
         return res
 
     def bell_number(self, n):
@@ -1082,12 +1080,11 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
             raise ValueError("expected a nonnegative index")
         try:
             if _do_sig(self._prec): sig_on()
-            fmpz_init(tmpz)
-            fmpz_set_mpz(tmpz, n_as_Integer.value)
+            fmpz_init_set_readonly(tmpz, n_as_Integer.value)
             arb_bell_fmpz(res.value, tmpz, self._prec)
             if _do_sig(self._prec): sig_off()
         finally:
-            fmpz_clear(tmpz)
+            fmpz_clear_readonly(tmpz)
         return res
 
     def double_factorial(self, n):
@@ -1389,10 +1386,9 @@ cdef class RealBall(RingElement):
             arb_set_si(self.value, PyLong_AsLong(mid)) # no rounding!
         elif isinstance(mid, Integer):
             if _do_sig(prec(self)): sig_on()
-            fmpz_init(tmpz)
-            fmpz_set_mpz(tmpz, (<Integer> mid).value)
+            fmpz_init_set_readonly(tmpz, (<Integer> mid).value)
             arb_set_fmpz(self.value, tmpz) # no rounding!
-            fmpz_clear(tmpz)
+            fmpz_clear_readonly(tmpz)
             if _do_sig(prec(self)): sig_off()
         elif isinstance(mid, Rational):
             if _do_sig(prec(self)): sig_on()
@@ -1474,10 +1470,10 @@ cdef class RealBall(RingElement):
             elif isinstance(rad, Rational):
                 arf_init(tmpr)
                 arf_set_mpz(tmpr, (<Integer> rad.numerator()).value)
-                fmpz_init(tmpz)
-                fmpz_set_mpz(tmpz, (<Integer> rad.denominator()).value)
+                rad_den = rad.denominator()
+                fmpz_init_set_readonly(tmpz, (<Integer> rad_den).value)
                 arf_div_fmpz(tmpr, tmpr, tmpz, prec(self), ARF_RND_UP)
-                fmpz_clear(tmpz)
+                fmpz_clear_readonly(tmpz)
                 arf_get_mag(tmpm, tmpr)
                 arf_clear(tmpr)
             elif isinstance(rad, float):
@@ -2607,10 +2603,9 @@ cdef class RealBall(RingElement):
             elif is_small_python_int(other):
                 res = arb_contains_si(self.value, PyLong_AsLong(other))
             elif isinstance(other, Integer):
-                fmpz_init(tmpz)
-                fmpz_set_mpz(tmpz, (<Integer> other).value)
+                fmpz_init_set_readonly(tmpz, (<Integer> other).value)
                 res = arb_contains_fmpz(self.value, tmpz)
-                fmpz_clear(tmpz)
+                fmpz_clear_readonly(tmpz)
             elif isinstance(other, Rational):
                 fmpq_init(tmpq)
                 fmpq_set_mpq(tmpq, (<Rational> other).value)
@@ -2899,10 +2894,9 @@ cdef class RealBall(RingElement):
             if _do_sig(prec(self)): sig_off()
         elif isinstance(expo, Integer):
             if _do_sig(prec(self)): sig_on()
-            fmpz_init(tmpz)
-            fmpz_set_mpz(tmpz, (<Integer> expo).value)
+            fmpz_init_set_readonly(tmpz, (<Integer> expo).value)
             arb_pow_fmpz(res.value, self.value, tmpz, prec(self))
-            fmpz_clear(tmpz)
+            fmpz_clear_readonly(tmpz)
             if _do_sig(prec(self)): sig_off()
         elif isinstance(expo, RealBall):
             if _do_sig(prec(self)): sig_on()
@@ -3065,10 +3059,9 @@ cdef class RealBall(RingElement):
             arb_mul_2exp_si(res.value, self.value, PyLong_AsLong(shift))
         elif isinstance(shift, Integer):
             sig_on()
-            fmpz_init(tmpz)
-            fmpz_set_mpz(tmpz, (<Integer> shift).value)
+            fmpz_init_set_readonly(tmpz, (<Integer> shift).value)
             arb_mul_2exp_fmpz(res.value, self.value, tmpz)
-            fmpz_clear(tmpz)
+            fmpz_clear_readonly(tmpz)
             sig_off()
         else:
             raise TypeError("shift should be an integer")

@@ -495,6 +495,11 @@ cdef class Rational(sage.structure.element.FieldElement):
         1267650600228229401496703205376/515377520732011331036461129765621272702107522001
         sage: QQ((-2r^100r, -3r^100r))
         1267650600228229401496703205376/515377520732011331036461129765621272702107522001
+
+    Conversion from real number::
+
+        sage: QQ(RR(2^100))
+        1267650600228229401496703205376
     """
     def __cinit__(self):
         r"""
@@ -602,7 +607,10 @@ cdef class Rational(sage.structure.element.FieldElement):
                 mpq_set_si(self.value, 0, 1)
                 return
             if not base:
-                set_from_Rational(self, x.simplest_rational())
+                if x.is_integer():
+                    set_from_Rational(self, x.exact_rational())
+                else:
+                    set_from_Rational(self, x.simplest_rational())
             else:
                 # Truncate in base 10 to match repr(x).
                 # See https://github.com/sagemath/sage/issues/21124

@@ -682,7 +682,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         return self.polyhedron().ambient_vector_space(base_field=base_field)
 
-    def is_relatively_open(self):
+    def is_relatively_open(self) -> bool:
         r"""
         Return whether ``self`` is relatively open.
 
@@ -699,7 +699,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         return self.as_polyhedron().is_relatively_open()
 
-    def is_compact(self):
+    def is_compact(self) -> bool:
         r"""
         Return whether ``self`` is compact.
 
