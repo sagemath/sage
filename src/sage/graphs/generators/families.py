@@ -22,10 +22,10 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 # ****************************************************************************
 
 from copy import copy
-from math import sin, cos, pi
-from sage.graphs.graph import Graph
 from itertools import combinations
-import subprocess
+from math import sin, cos, pi
+
+from sage.graphs.graph import Graph
 
 
 def JohnsonGraph(n, k):

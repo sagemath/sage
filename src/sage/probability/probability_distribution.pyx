@@ -217,7 +217,7 @@ cdef class SphericalDistribution(ProbabilityDistribution):
     """
 
     cdef gsl_rng *r
-    cdef gsl_rng_type *T
+    cdef const gsl_rng_type *T
     cdef long int seed
     cdef Py_ssize_t dimension
     cdef double* vec
@@ -571,7 +571,7 @@ cdef class RealDistribution(ProbabilityDistribution):
         sage: len(set(Xs)) > 2^^32
         True
     """
-    cdef gsl_rng_type *T
+    cdef const gsl_rng_type *T
     cdef gsl_rng *r
     cdef int distribution_type
     cdef double* parameters
@@ -1097,7 +1097,7 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
         ...
         ValueError: The distribution probabilities must be nonnegative
     """
-    cdef gsl_rng_type * T
+    cdef const gsl_rng_type * T
     cdef gsl_rng * r
     cdef gsl_ran_discrete_t *dist
     cdef long seed
