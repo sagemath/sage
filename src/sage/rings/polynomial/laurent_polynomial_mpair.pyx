@@ -2100,47 +2100,81 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
     def _lift_to_poly_cover(self, S):
         """
-        Lifts this multivariate Laurent polynomial to the multivariate cover ring S.
+        Lift to a polynomial cover ring by clearing denominators
         """
-        n = self.parent().ngens()
-        gens = S.gens()
-        res = S.zero()
-
-        # monomial_coefficients() returns {ETuple: coefficient}
-        for expo, coeff in self.monomial_coefficients().items():
-            term = S(coeff)
-            for i in range(n):
-                e = expo[i]
-                if e > 0:
-                    term *= gens[i]**e
-                elif e < 0:
-                    term *= gens[i + n]**(-e)
-            res += term
-        return res
+        p_part, m_inv = self.monomial_reduction()
+        powers = m_inv.exponents()[0]
+        max_p = max(powers) if powers else 0
+        T = S.gens()[-1]
+        xs = S.gens()[:-1]
+        lifted_p = S(p_part)
+        from sage.misc.misc_c import prod
+        multiplier = T**max_p
+        for i, p in enumerate(powers):
+            needed_power = max_p - p
+            if needed_power > 0:
+                multiplier *= xs[i]**needed_power
+        return lifted_p * multiplier
 
     @coerce_binop
     def divides(self, other):
         """
         Check if ``self`` divides ``other``.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = LaurentPolynomialRing(QQ)
+            sage: f1 = x^-2*y^3 - 9 - 1/14*x^-1*y - 1/3*x^-1
+            sage: h = 3*x^-1 - 3*x^-2*y - 1/2*x^-3*y^2 - x^-3*y + x^-3
+            sage: f2 = f1 * h
+            sage: f3 = f2 + x * y
+            sage: f1.divides(f2)
+            True
+            sage: f1.divides(f3)
+            False
+            sage: f1.divides(3)
+            False
+
+        Zero is divisible by everything, and only zero is divisible by zero::
+
+            sage: R.<x,y> = LaurentPolynomialRing(ZZ)
+            sage: x.divides(R(0))
+            True
+            sage: R(0).divides(x)
+            False
+            sage: R(0).divides(R(0))
+            True
+
+        Monomials divide when the exponents allow::
+
+            sage: (x*y^-1).divides(x^2*y^-2)
+            True
+            sage: (x^2).divides(x)
+            True
+
+        TESTS:
+
+        Multivariate rings over non-integral domains work using a cover ring lift::
+
+            sage: R.<x,y> = LaurentPolynomialRing(Zmod(4), 2)
+            sage: f = 2*x + 2*y
+            sage: g = 2*x^2 + 2*y^2
+            sage: f.divides(g)
+            True
+            sage: h = x + y + 2
+            sage: f.divides(h)
+            False
         """
         if self.is_zero():
             return other.is_zero()
-
-        P = self.parent()
-        R = P.base_ring()
-
+        R = self.parent().base_ring()
         if R.is_integral_domain():
             p = self.monomial_reduction()[0]
             q = other.monomial_reduction()[0]
             return p.divides(q)
-
-        try:
-            S, relations = P._poly_cover_ring()
-            f_s = self._lift_to_poly_cover(S)
-            g_s = other._lift_to_poly_cover(S)
-            I = S.ideal([f_s] + relations)
-            return g_s in I
-        except (TypeError, ValueError, RuntimeError):
-            p = self.monomial_reduction()[0]
-            q = other.monomial_reduction()[0]
-            return p.divides(q)
+        P = self.parent()
+        S, relations = P._poly_cover_ring()
+        f_s = self._lift_to_poly_cover(S)
+        g_s = other._lift_to_poly_cover(S)
+        I = S.ideal([f_s] + relations)
+        return g_s in I

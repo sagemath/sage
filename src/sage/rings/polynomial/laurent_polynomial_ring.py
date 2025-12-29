@@ -47,7 +47,7 @@ from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial, LaurentP
 from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.element import parent
-
+from sage.misc.misc_c import prod
 
 _cache = {}
 
@@ -429,15 +429,13 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
     Element = LaurentPolynomial_univariate
 
     def _poly_cover_ring(self):
-        if hasattr(self, '_cached_poly_cover'):
-            return self._cached_poly_cover
-        base = self.base_ring()
-        name = self.variable_name()
-        S = PolynomialRing(base, (name, f"inv_{name}"))
-        x, ix = S.gens()
-        relations = [x * ix - 1]
-        self._cached_poly_cover = (S, relations)
-        return self._cached_poly_cover
+        """
+        Return the polynomial cover ring with a single variable T.
+        """
+        new_names = (self.variable_name(), 'T')
+        S = self.base_ring()[new_names]
+        x, T = S.gens()
+        return S, [x * T - 1]
 
     def _repr_(self):
         """
@@ -585,8 +583,6 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
         """
         if R.ngens() <= 0:
             raise ValueError("n must be positive")
-        if not R.base_ring().is_integral_domain():
-            raise ValueError("base ring must be an integral domain")
         LaurentPolynomialRing_generic.__init__(self, R)
         from sage.modules.free_module import FreeModule
         from sage.rings.integer_ring import IntegerRing
@@ -595,17 +591,16 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
     Element = LazyImport('sage.rings.polynomial.laurent_polynomial_mpair', 'LaurentPolynomial_mpair')
 
     def _poly_cover_ring(self):
-        if hasattr(self, '_cached_poly_cover'):
-            return self._cached_poly_cover
-        base = self.base_ring()
-        names = self.variable_names()
-        inv_names = tuple(f"inv_{n}" for n in names)
-        S = PolynomialRing(base, names + inv_names)
-        gens = S.gens()
-        n = len(names)
-        relations = [gens[i] * gens[i + n] - 1 for i in range(n)]
-        self._cached_poly_cover = (S, relations)
-        return self._cached_poly_cover
+        """
+        Return the polynomial cover ring with a single variable T.
+        """
+        base_names = self.variable_names()
+        new_names = base_names + ('T',)
+        S = self.base_ring()[new_names]
+        xs = S.gens()[:-1]
+        T = S.gens()[-1]
+        relation = T * prod(xs) - 1
+        return S, [relation]
 
     def _repr_(self):
         """

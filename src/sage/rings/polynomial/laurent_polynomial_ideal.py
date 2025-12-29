@@ -184,35 +184,41 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         else:
             raise ValueError("invalid comparison")
 
-    def __contains__(self, f):
+    def __contains__(self, f) -> bool:
         """
-        Return ``True`` if ``f`` is in this ideal.
+        Implement containment testing (in) for Laurent polynomial ideals.
+
+        EXAMPLES::
+
+            sage: P.<x,y> = LaurentPolynomialRing(QQ, 2)
+            sage: I = P.ideal([x^2*y + 3*x*y^2])
+            sage: x + 3*y in I
+            True
+
+        This also works in the univariate case::
+
+            sage: P.<x> = LaurentPolynomialRing(QQ)
+            sage: I = P.ideal([x^2 + 3*x])
+            sage: 1 + 3*x^-1 in I
+            True
+
+        Verify membership in rings with zero-divisors using a polynomial cover ring lift::
+
+                sage: R.<x,y> = LaurentPolynomialRing(Zmod(9), 2)
+                sage: I = R.ideal([3*x, 3*y])
+                sage: 6*x + 6*y^-1 in I
+                True
+                sage: x + y in I
+                False
         """
-        if not f:
-            return True
-        P = self.ring()
-        try:
-            f = P(f)
-        except (TypeError, ValueError):
-            return False
-
-        R = P.base_ring()
-        if not R.is_integral_domain():
-            try:
-                S, relations = P._poly_cover_ring()
-                ideal_gens_lift = [g._lift_to_poly_cover(S) for g in self.gens()]
-                item_lift = f._lift_to_poly_cover(S)
-                big_ideal = S.ideal(ideal_gens_lift + relations)
-                return item_lift in big_ideal
-            except (TypeError, ValueError, RuntimeError):
-                pass
-
-        if isinstance(P, LaurentPolynomialRing_univariate):
-            g = f._reduce_()[1][1]
-        else:
-            poly_part = f.monomial_reduction()[0]
-            g = self.polynomial_ideal().reduce(poly_part)
-        return not g
+        R = self.ring()
+        if not R.base_ring().is_integral_domain():
+            S, relations = R._poly_cover_ring()
+            I_S = S.ideal(list(self.gens()) + relations)
+            return f._lift_to_poly_cover(S) in I_S
+        f = R(f)
+        p_part, _ = f.monomial_reduction()
+        return p_part in self.polynomial_ideal()
 
     def gens_reduced(self) -> tuple:
         """

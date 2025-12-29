@@ -4,70 +4,70 @@
 from sage.libs.gsl.types cimport *
 
 cdef extern from "gsl/gsl_rng.h":
-  cdef gsl_rng_type *gsl_rng_borosh13
-  cdef gsl_rng_type *gsl_rng_coveyou
-  cdef gsl_rng_type *gsl_rng_cmrg
-  cdef gsl_rng_type *gsl_rng_fishman18
-  cdef gsl_rng_type *gsl_rng_fishman20
-  cdef gsl_rng_type *gsl_rng_fishman2x
-  cdef gsl_rng_type *gsl_rng_gfsr4
-  cdef gsl_rng_type *gsl_rng_knuthran
-  cdef gsl_rng_type *gsl_rng_knuthran2
-  cdef gsl_rng_type *gsl_rng_lecuyer21
-  cdef gsl_rng_type *gsl_rng_minstd
-  cdef gsl_rng_type *gsl_rng_mrg
-  cdef gsl_rng_type *gsl_rng_mt19937
-  cdef gsl_rng_type *gsl_rng_mt19937_1999
-  cdef gsl_rng_type *gsl_rng_mt19937_1998
-  cdef gsl_rng_type *gsl_rng_r250
-  cdef gsl_rng_type *gsl_rng_ran0
-  cdef gsl_rng_type *gsl_rng_ran1
-  cdef gsl_rng_type *gsl_rng_ran2
-  cdef gsl_rng_type *gsl_rng_ran3
-  cdef gsl_rng_type *gsl_rng_rand
-  cdef gsl_rng_type *gsl_rng_rand48
-  cdef gsl_rng_type *gsl_rng_random128_bsd
-  cdef gsl_rng_type *gsl_rng_random128_glibc2
-  cdef gsl_rng_type *gsl_rng_random128_libc5
-  cdef gsl_rng_type *gsl_rng_random256_bsd
-  cdef gsl_rng_type *gsl_rng_random256_glibc2
-  cdef gsl_rng_type *gsl_rng_random256_libc5
-  cdef gsl_rng_type *gsl_rng_random32_bsd
-  cdef gsl_rng_type *gsl_rng_random32_glibc2
-  cdef gsl_rng_type *gsl_rng_random32_libc5
-  cdef gsl_rng_type *gsl_rng_random64_bsd
-  cdef gsl_rng_type *gsl_rng_random64_glibc2
-  cdef gsl_rng_type *gsl_rng_random64_libc5
-  cdef gsl_rng_type *gsl_rng_random8_bsd
-  cdef gsl_rng_type *gsl_rng_random8_glibc2
-  cdef gsl_rng_type *gsl_rng_random8_libc5
-  cdef gsl_rng_type *gsl_rng_random_bsd
-  cdef gsl_rng_type *gsl_rng_random_glibc2
-  cdef gsl_rng_type *gsl_rng_random_libc5
-  cdef gsl_rng_type *gsl_rng_randu
-  cdef gsl_rng_type *gsl_rng_ranf
-  cdef gsl_rng_type *gsl_rng_ranlux
-  cdef gsl_rng_type *gsl_rng_ranlux389
-  cdef gsl_rng_type *gsl_rng_ranlxd1
-  cdef gsl_rng_type *gsl_rng_ranlxd2
-  cdef gsl_rng_type *gsl_rng_ranlxs0
-  cdef gsl_rng_type *gsl_rng_ranlxs1
-  cdef gsl_rng_type *gsl_rng_ranlxs2
-  cdef gsl_rng_type *gsl_rng_ranmar
-  cdef gsl_rng_type *gsl_rng_slatec
-  cdef gsl_rng_type *gsl_rng_taus
-  cdef gsl_rng_type *gsl_rng_taus2
-  cdef gsl_rng_type *gsl_rng_taus113
-  cdef gsl_rng_type *gsl_rng_transputer
-  cdef gsl_rng_type *gsl_rng_tt800
-  cdef gsl_rng_type *gsl_rng_uni
-  cdef gsl_rng_type *gsl_rng_uni32
-  cdef gsl_rng_type *gsl_rng_vax
-  cdef gsl_rng_type *gsl_rng_waterman14
-  cdef gsl_rng_type *gsl_rng_zuf
+  cdef const gsl_rng_type *gsl_rng_borosh13
+  cdef const gsl_rng_type *gsl_rng_coveyou
+  cdef const gsl_rng_type *gsl_rng_cmrg
+  cdef const gsl_rng_type *gsl_rng_fishman18
+  cdef const gsl_rng_type *gsl_rng_fishman20
+  cdef const gsl_rng_type *gsl_rng_fishman2x
+  cdef const gsl_rng_type *gsl_rng_gfsr4
+  cdef const gsl_rng_type *gsl_rng_knuthran
+  cdef const gsl_rng_type *gsl_rng_knuthran2
+  cdef const gsl_rng_type *gsl_rng_lecuyer21
+  cdef const gsl_rng_type *gsl_rng_minstd
+  cdef const gsl_rng_type *gsl_rng_mrg
+  cdef const gsl_rng_type *gsl_rng_mt19937
+  cdef const gsl_rng_type *gsl_rng_mt19937_1999
+  cdef const gsl_rng_type *gsl_rng_mt19937_1998
+  cdef const gsl_rng_type *gsl_rng_r250
+  cdef const gsl_rng_type *gsl_rng_ran0
+  cdef const gsl_rng_type *gsl_rng_ran1
+  cdef const gsl_rng_type *gsl_rng_ran2
+  cdef const gsl_rng_type *gsl_rng_ran3
+  cdef const gsl_rng_type *gsl_rng_rand
+  cdef const gsl_rng_type *gsl_rng_rand48
+  cdef const gsl_rng_type *gsl_rng_random128_bsd
+  cdef const gsl_rng_type *gsl_rng_random128_glibc2
+  cdef const gsl_rng_type *gsl_rng_random128_libc5
+  cdef const gsl_rng_type *gsl_rng_random256_bsd
+  cdef const gsl_rng_type *gsl_rng_random256_glibc2
+  cdef const gsl_rng_type *gsl_rng_random256_libc5
+  cdef const gsl_rng_type *gsl_rng_random32_bsd
+  cdef const gsl_rng_type *gsl_rng_random32_glibc2
+  cdef const gsl_rng_type *gsl_rng_random32_libc5
+  cdef const gsl_rng_type *gsl_rng_random64_bsd
+  cdef const gsl_rng_type *gsl_rng_random64_glibc2
+  cdef const gsl_rng_type *gsl_rng_random64_libc5
+  cdef const gsl_rng_type *gsl_rng_random8_bsd
+  cdef const gsl_rng_type *gsl_rng_random8_glibc2
+  cdef const gsl_rng_type *gsl_rng_random8_libc5
+  cdef const gsl_rng_type *gsl_rng_random_bsd
+  cdef const gsl_rng_type *gsl_rng_random_glibc2
+  cdef const gsl_rng_type *gsl_rng_random_libc5
+  cdef const gsl_rng_type *gsl_rng_randu
+  cdef const gsl_rng_type *gsl_rng_ranf
+  cdef const gsl_rng_type *gsl_rng_ranlux
+  cdef const gsl_rng_type *gsl_rng_ranlux389
+  cdef const gsl_rng_type *gsl_rng_ranlxd1
+  cdef const gsl_rng_type *gsl_rng_ranlxd2
+  cdef const gsl_rng_type *gsl_rng_ranlxs0
+  cdef const gsl_rng_type *gsl_rng_ranlxs1
+  cdef const gsl_rng_type *gsl_rng_ranlxs2
+  cdef const gsl_rng_type *gsl_rng_ranmar
+  cdef const gsl_rng_type *gsl_rng_slatec
+  cdef const gsl_rng_type *gsl_rng_taus
+  cdef const gsl_rng_type *gsl_rng_taus2
+  cdef const gsl_rng_type *gsl_rng_taus113
+  cdef const gsl_rng_type *gsl_rng_transputer
+  cdef const gsl_rng_type *gsl_rng_tt800
+  cdef const gsl_rng_type *gsl_rng_uni
+  cdef const gsl_rng_type *gsl_rng_uni32
+  cdef const gsl_rng_type *gsl_rng_vax
+  cdef const gsl_rng_type *gsl_rng_waterman14
+  cdef const gsl_rng_type *gsl_rng_zuf
 
 
-  cdef gsl_rng_type *gsl_rng_default
+  cdef const gsl_rng_type *gsl_rng_default
   unsigned long int gsl_rng_default_seed
 
   gsl_rng *gsl_rng_alloc ( const gsl_rng_type * T)
@@ -89,7 +89,7 @@ cdef extern from "gsl/gsl_rng.h":
 
   void gsl_rng_print_state ( gsl_rng * r)
 
-  gsl_rng_type * gsl_rng_env_setup ()
+  const gsl_rng_type * gsl_rng_env_setup ()
 
   unsigned long int gsl_rng_get ( gsl_rng * r)
   double gsl_rng_uniform ( gsl_rng * r)

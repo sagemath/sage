@@ -145,17 +145,17 @@ py.install_sources(
 )
 
 extension_data = {
-  'combinat_cython' : files('combinat_cython.pyx'),
-  'debruijn_sequence' : files('debruijn_sequence.pyx'),
-  'degree_sequences' : files('degree_sequences.pyx'),
-  'enumeration_mod_permgroup' : files('enumeration_mod_permgroup.pyx'),
-  'expnums' : files('expnums.pyx'),
-  'fast_vector_partitions' : files('fast_vector_partitions.pyx'),
-  'partitions' : files('partitions.pyx'),
-  'permutation_cython' : files('permutation_cython.pyx'),
-  'q_bernoulli' : files('q_bernoulli.pyx'),
-  'set_partition_iterator' : files('set_partition_iterator.pyx'),
-  'subword_complex_c' : files('subword_complex_c.pyx'),
+  'combinat_cython': files('combinat_cython.pyx'),
+  'debruijn_sequence': files('debruijn_sequence.pyx'),
+  'degree_sequences': files('degree_sequences.pyx'),
+  'enumeration_mod_permgroup': files('enumeration_mod_permgroup.pyx'),
+  'expnums': files('expnums.pyx'),
+  'fast_vector_partitions': files('fast_vector_partitions.pyx'),
+  'partitions': files('partitions.pyx'),
+  'permutation_cython': files('permutation_cython.pyx'),
+  'q_bernoulli': files('q_bernoulli.pyx'),
+  'set_partition_iterator': files('set_partition_iterator.pyx'),
+  'subword_complex_c': files('subword_complex_c.pyx'),
 }
 
 foreach name, pyx : extension_data
