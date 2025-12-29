@@ -9,7 +9,7 @@ py.install_sources(
   subdir: 'sage/rings/semirings',
 )
 
-extension_data = {'tropical_semiring' : files('tropical_semiring.pyx')}
+extension_data = {'tropical_semiring': files('tropical_semiring.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(
