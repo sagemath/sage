@@ -2775,9 +2775,7 @@ def radical(n, *args, **kwds):
         sage: radical(2 * 3^2 * 5^5)
         30
         sage: radical(0)
-        Traceback (most recent call last):
-        ...
-        ArithmeticError: radical of 0 is not defined
+        0
         sage: K.<i> = QuadraticField(-1)                                                # needs sage.rings.number_field
         sage: radical(K(2))                                                             # needs sage.rings.number_field
         i - 1

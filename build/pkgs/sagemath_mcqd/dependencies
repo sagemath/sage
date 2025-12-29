@@ -1,1 +1,0 @@
- mcqd memory_allocator cysignals | $(PYTHON_TOOLCHAIN) cython pkgconfig $(PYTHON)
