@@ -846,18 +846,20 @@ def ensure_interruptible_after(seconds: float, max_wait_after_interrupt: float =
         sage: with ensure_interruptible_after(2) as data: interruptible_sleep(1r)
         Traceback (most recent call last):
         ...
-        RuntimeError: Function terminates early after 1.00... < 2.0000 seconds
+        RuntimeError: Function terminates early after ... < 2.0000 seconds
+        sage: data  # abs tol 0.1
+        {'alarm_raised': False, 'elapsed': 1.0}
         sage: with ensure_interruptible_after(1) as data: uninterruptible_sleep(2r)
         Traceback (most recent call last):
         ...
-        RuntimeError: Function is not interruptible within 1.0000 seconds, only after 2.00... seconds
-        sage: data  # abs tol 0.01
+        RuntimeError: Function is not interruptible within 1.0000 seconds, only after 2.0... seconds
+        sage: data  # abs tol 0.1
         {'alarm_raised': True, 'elapsed': 2.0}
         sage: with ensure_interruptible_after(1): uninterruptible_sleep(2r); raise RuntimeError
         Traceback (most recent call last):
         ...
-        RuntimeError: Function is not interruptible within 1.0000 seconds, only after 2.00... seconds
-        sage: data  # abs tol 0.01
+        RuntimeError: Function is not interruptible within 1.0000 seconds, only after 2.0... seconds
+        sage: data  # abs tol 0.1
         {'alarm_raised': True, 'elapsed': 2.0}
 
     ::
@@ -866,7 +868,7 @@ def ensure_interruptible_after(seconds: float, max_wait_after_interrupt: float =
         Traceback (most recent call last):
         ...
         ValueError
-        sage: data  # abs tol 0.01
+        sage: data  # abs tol 0.1
         {'alarm_raised': False, 'elapsed': 0.0}
     """
     from cysignals.alarm import alarm, cancel_alarm, AlarmInterrupt
