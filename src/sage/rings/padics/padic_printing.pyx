@@ -44,6 +44,7 @@ cdef enum print_modes:
     val_unit
     digits
     bars
+    digits_unicode
 
 
 def pAdicPrinter(ring, options={}):
@@ -118,7 +119,7 @@ class pAdicPrinterDefaults(SageObject):
         ``mode=None`` returns the current value.
 
         The allowed values for mode are: ``'val-unit'``, ``'series'``,
-        ``'terse'``, ``'digits'`` and ``'bars'``.
+        ``'terse'``, ``'digits'``, ``'digits-unicode'`` and ``'bars'``.
 
         EXAMPLES::
 
@@ -135,9 +136,14 @@ class pAdicPrinterDefaults(SageObject):
             13 * 10 + O(13^21)
             sage: padic_printing.mode('digits')
             sage: repr(Qp(17)(100))
-            '...5F'
+            '...0000000000000000005F'
             sage: repr(Qp(17)(1000))
-            '...37E'
+            '...0000000000000000037E'
+            sage: padic_printing.mode('digits-unicode')
+            sage: repr(Qp(17)(100))
+            '…0000000000000000005F'
+            sage: repr(Qp(17)(1000))
+            '…0000000000000000037E'
             sage: padic_printing.mode('bars')
             sage: repr(Qp(19)(1000))
             '...2|14|12'
@@ -147,7 +153,7 @@ class pAdicPrinterDefaults(SageObject):
         if mode is None:
             return self._mode
 
-        if mode in ['val-unit', 'series', 'terse', 'digits', 'bars']:
+        if mode in ['val-unit', 'series', 'terse', 'digits', 'bars', 'digits-unicode']:
             self._mode = mode
         else:
             raise ValueError("invalid printing mode")
@@ -177,7 +183,7 @@ class pAdicPrinterDefaults(SageObject):
     def max_series_terms(self, max=None):
         r"""
         Controls the maximum number of terms shown when printing in
-        ``'series'``, ``'digits'`` or ``'bars'`` mode.
+        ``'series'``, ``'digits'``, ``'digits-unicode'`` or ``'bars'`` mode.
 
         ``max=None`` returns the current value.
 
@@ -276,7 +282,8 @@ class pAdicPrinterDefaults(SageObject):
     def alphabet(self, alphabet=None):
         r"""
         Controls the alphabet used to translate `p`-adic digits into
-        strings (so that no separator need be used in ``'digits'`` mode).
+        strings (so that no separator need be used in ``'digits'``
+        or ``'digits-unicode'`` mode).
 
         ``alphabet`` should be passed in as a list or tuple.
 
@@ -285,9 +292,9 @@ class pAdicPrinterDefaults(SageObject):
         EXAMPLES::
 
             sage: padic_printing.alphabet("abc")
-            sage: padic_printing.mode('digits')
+            sage: padic_printing.mode('digits-unicode')
             sage: repr(Qp(3)(1234))
-            '...bcaacab'
+            '…aaaaaaaaaaaaabcaacab'
 
             sage: padic_printing.mode('series')
             sage: padic_printing.alphabet(('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'))
@@ -317,7 +324,8 @@ cdef class pAdicPrinter_class(SageObject):
           attached
 
         - ``mode`` -- the allowed values for mode are: ``'val-unit'``,
-          ``'series'``, ``'terse'``, ``'digits'`` and ``'bars'``:
+          ``'series'``, ``'terse'``, ``'digits'``, ``'digits-unicode'``
+          and ``'bars'``:
 
           - ``'val-unit'`` -- elements are displayed as a power of the
             uniformizer times a unit, which is displayed in terse mode
@@ -333,6 +341,9 @@ cdef class pAdicPrinter_class(SageObject):
           - ``'digits'`` -- used only for small primes and totally ramified
             extensions (or trivial extensions), elements are displayed as just
             a string of `p`-adic digits, encoded using the 'alphabet' parameter
+
+          - ``'digits-unicode'`` -- like ``'digits'``, but uses the unicode
+            ellipsis character to indicate omitted leading digits
 
           - ``'bars'`` -- like ``'digits'``, but uses a separator in order to
             print a more canonical representation for each digit. This change
@@ -351,7 +362,8 @@ cdef class pAdicPrinter_class(SageObject):
           generator of this extension ring or field
 
         - ``max_ram_terms`` -- controls the maximum number of terms shown when
-          printing in ``'series'``, ``'digits'`` or ``'bars'`` mode
+          printing in ``'series'``, ``'digits'``, ``'digits-unicode'`` or
+          ``'bars'`` mode
 
         - ``max_unram_terms`` -- for rings with non-prime residue fields,
           controls how many terms appear in the coefficient of each pi^n when
@@ -364,7 +376,8 @@ cdef class pAdicPrinter_class(SageObject):
         - ``sep`` -- controls the separator used in ``'bars'`` mode
 
         - ``alphabet`` -- controls the alphabet used to translate `p`-adic digits
-          into strings (so that no separator need be used in ``'digits'`` mode)
+          into strings (so that no separator need be used in ``'digits'``
+          or ``'digits-unicode'`` mode)
 
         - ``show_prec`` -- Specify how the precision is printed; it can be
           ``'none'``, ``'bigoh'`` or ``'dots'`` (the latter being not available
@@ -401,16 +414,19 @@ cdef class pAdicPrinter_class(SageObject):
             self.mode = series
         elif mode == 'terse':
             self.mode = terse
-        elif mode == 'digits':
+        elif mode in {'digits', 'digits-unicode'}:
             if len(self.alphabet) < self.prime_pow.prime or (not self.base and ring.absolute_f() != 1):
                 raise ValueError("digits printing mode only usable for totally ramified extensions with p at most the length of the alphabet (default 62).  Try using print_mode = 'bars' instead.")
             else:
-                self.mode = digits
+                if mode == 'digits-unicode':
+                    self.mode = digits_unicode
+                else:
+                    self.mode = digits
                 self.pos = True
         elif mode == 'bars':
             self.mode = bars
         else:
-            raise ValueError("printing mode must be one of 'val-unit', 'series', 'terse', 'digits' or 'bars'")
+            raise ValueError("printing mode must be one of 'val-unit', 'series', 'terse', 'digits', 'digits-unicode' or 'bars'")
         if ram_name is None:
             self.ram_name = ring._uniformizer_print()
         else:
@@ -546,7 +562,7 @@ cdef class pAdicPrinter_class(SageObject):
             if lx != rx:
                 return richcmp_not_equal(lx, rx, op)
 
-        if self.mode != digits:
+        if self.mode != digits and self.mode != digits_unicode:
             lx = self.ram_name
             rx = other.ram_name
             if lx != rx:
@@ -558,13 +574,13 @@ cdef class pAdicPrinter_class(SageObject):
             if lx != rx:
                 return richcmp_not_equal(lx, rx, op)
 
-        if self.mode == digits:
+        if self.mode == digits or self.mode == digits_unicode:
             lx = self.alphabet[:p]
             rx = other.alphabet[:q]
             if lx != rx:
                 return richcmp_not_equal(lx, rx, op)
 
-        if self.mode == series or self.mode == digits or self.mode == bars:
+        if self.mode == series or self.mode == digits or self.mode == digits_unicode or self.mode == bars:
             lx = self.max_ram_terms
             rx = other.max_ram_terms
             if lx != rx:
@@ -781,6 +797,8 @@ cdef class pAdicPrinter_class(SageObject):
             return 'terse'
         elif self.mode == digits:
             return 'digits'
+        elif self.mode == digits_unicode:
+            return 'digits-unicode'
         elif self.mode == bars:
             return 'bars'
 
@@ -869,7 +887,7 @@ cdef class pAdicPrinter_class(SageObject):
         elif mode == 'bars':
             _mode = bars
         else:
-            raise ValueError("printing mode must be one of 'val-unit', 'series', 'terse', 'bars', or 'digits'")
+            raise ValueError("printing mode must be one of 'val-unit', 'series', 'terse', 'bars', 'digits' or 'digits-unicode'")
         if pos is None:
             _pos = self.pos
         else:
@@ -903,11 +921,11 @@ cdef class pAdicPrinter_class(SageObject):
             sage: print(a.str('series'))
             3*7 + 7^3 + O(7^5)
             sage: padic_printing.sep('')
-            sage: K = Qp(7, print_mode='digits')
+            sage: K = Qp(7, print_mode='digits-unicode')
             sage: repr(K(1/2))
-            '...33333333333333333334'
+            '…33333333333333333334'
             sage: repr(K(1/42))
-            '...5555555555555555555.6'
+            '…5555555555555555555.6'
             sage: padic_printing.sep('|')
             sage: repr(Qp(97, print_mode='bars')(1/13))
             '...29|82|7|44|74|59|67|14|89|52|22|37|29|82|7|44|74|59|67|15'
@@ -916,9 +934,9 @@ cdef class pAdicPrinter_class(SageObject):
 
         Check that :issue:`24843` is resolved::
 
-            sage: R = Zp(2, print_mode='digits', show_prec=True)
+            sage: R = Zp(2, print_mode='digits-unicode', show_prec=True)
             sage: repr(R(0,10))
-            '...0000000000'
+            '…0000000000'
         """
         s = ""
         if self.show_prec == "dots":
@@ -929,7 +947,7 @@ cdef class pAdicPrinter_class(SageObject):
             return "0"
         elif elt._is_inexact_zero():
             prec = elt.precision_absolute()
-            if mode == digits and self.show_prec == "dots":
+            if (mode == digits or mode == digits_unicode) and self.show_prec == "dots":
                 if prec > 0:
                     s = (self.alphabet[0] * prec)
                 else:
@@ -960,7 +978,7 @@ cdef class pAdicPrinter_class(SageObject):
                     s = "%s * %s" % (ram_name, self._repr_spec(elt.unit_part(), do_latex, pos, terse, 1, ram_name))
                 else:
                     s = "%s^%s * %s" % (ram_name, elt.valuation(), self._repr_spec(elt.unit_part(), do_latex, pos, terse, 1, ram_name))
-        elif mode == digits:
+        elif mode == digits or mode == digits_unicode:
             n = elt.valuation()
             if self.base:
                 L = self.base_p_list(elt, True)
@@ -1030,7 +1048,10 @@ cdef class pAdicPrinter_class(SageObject):
             s = self._repr_spec(elt, do_latex, pos, mode, 0, ram_name)
 
         if self.show_prec == "dots":
-            s = "..." + s
+            if mode == digits_unicode:
+                s = u"\u2026" + s
+            else:
+                s = "..." + s
         if self.show_prec == "bigoh":
             if s == "":
                 s = "O(%s" % ram_name

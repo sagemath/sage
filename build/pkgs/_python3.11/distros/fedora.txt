@@ -1,3 +1,0 @@
-python3.11
-python3.11-devel
-python3.11-setuptools
