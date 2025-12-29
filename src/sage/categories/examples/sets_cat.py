@@ -115,9 +115,9 @@ class PrimeNumbers(UniqueRepresentation, Parent):
             sage: x.parent()
             Integer Ring
         """
-        return self(47) # if speed is needed, call: self.element_class(47)
+        return self(47)  # if speed is needed, call: self.element_class(47)
 
-    def __contains__(self, p):
+    def __contains__(self, p) -> bool:
         """
         TESTS::
 
@@ -393,7 +393,7 @@ class PrimeNumbers_Inherits(PrimeNumbers_Abstract):
         super().__init__()
         self._populate_coercion_lists_(embedding=IntegerRing())
 
-    def __contains__(self, p):
+    def __contains__(self, p) -> bool:
         """
         TESTS::
 
@@ -502,7 +502,7 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
         self.mor = Hom(self, IntegerRing())(lambda z: z.value)
         self._populate_coercion_lists_(embedding=self.mor)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -511,7 +511,7 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
         """
         return "Set of prime numbers (wrapper implementation)"
 
-    def __contains__(self, p):
+    def __contains__(self, p) -> bool:
         """
         TESTS::
 
@@ -665,7 +665,7 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
         """
         Parent.__init__(self, facade=IntegerRing(), category=Sets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -674,7 +674,7 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
         """
         return "Set of prime numbers (facade implementation)"
 
-    def __contains__(self, p):
+    def __contains__(self, p) -> bool:
         """
         TESTS::
 

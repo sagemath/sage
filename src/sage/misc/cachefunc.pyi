@@ -1,4 +1,5 @@
-from typing import Any, Callable, Dict, Tuple
+from collections.abc import Callable
+from typing import Any
 
 def dict_key(o: Any) -> Any:
     ...
@@ -6,10 +7,16 @@ def dict_key(o: Any) -> Any:
 def cache_key(o: Any) -> Any:
     ...
 
+def cached_method(f, name: str | None = None, key=None, do_pickle: bool = False) -> CachedMethod:
+    ...
+
+def cached_function(f, name: str | None = None, key=None, do_pickle: bool = False) -> CachedFunction:
+    ...
+
 class CachedFunction:
     def __init__(self, f: Callable, classmethod: bool = False,
                  name: str | None = None, key: Callable | None = None,
-                 do_pickle: bool | None = None) -> None:
+                 do_pickle: bool = False) -> None:
         ...
 
     def __call__(self, *args: Any, **kwds: Any) -> Any:
@@ -39,13 +46,13 @@ class CachedFunction:
 class CachedMethod:
     def __init__(self, f: Callable, name: str | None = None,
                  key: Callable | None = None,
-                 do_pickle: bool | None = None) -> None:
+                 do_pickle: bool = False) -> None:
         ...
 
     def __call__(self, inst: Any, *args: Any, **kwds: Any) -> Any:
         ...
 
-    def _get_instance_cache(self, inst: Any) -> Dict:
+    def _get_instance_cache(self, inst: Any) -> dict:
         ...
 
     def __get__(self, inst: Any, cls: Any) -> Any:
@@ -57,10 +64,10 @@ class CacheDict(dict):
 class CachedInParentMethod(CachedMethod):
     def __init__(self, f: Callable, name: str | None = None,
                  key: Callable | None = None,
-                 do_pickle: bool | None = None) -> None:
+                 do_pickle: bool = False) -> None:
         ...
 
-    def _get_instance_cache(self, inst: Any) -> Dict:
+    def _get_instance_cache(self, inst: Any) -> dict:
         ...
 
     def __get__(self, inst: Any, cls: Any) -> Any:
@@ -68,9 +75,9 @@ class CachedInParentMethod(CachedMethod):
 
 class CachedMethodCaller(CachedFunction):
     def __init__(self, cachedmethod: CachedMethod, inst: Any,
-                 cache: Dict | None = None, name: str | None = None,
+                 cache: dict | None = None, name: str | None = None,
                  key: Callable | None = None,
-                 do_pickle: bool | None = None) -> None:
+                 do_pickle: bool = False) -> None:
         ...
 
     def _instance_call(self, *args: Any, **kwds: Any) -> Any:
@@ -91,7 +98,7 @@ class CachedMethodCaller(CachedFunction):
 class CachedMethodCallerNoArgs(CachedFunction):
     def __init__(self, inst: Any, f: Callable, cache: Any = None,
                  name: str | None = None,
-                 do_pickle: bool | None = None) -> None:
+                 do_pickle: bool = False) -> None:
         ...
 
     def _instance_call(self) -> Any:
@@ -113,5 +120,5 @@ class CachedMethodCallerNoArgs(CachedFunction):
         ...
 
 class GloballyCachedMethodCaller(CachedMethodCaller):
-    def get_key_args_kwds(self, args: Tuple, kwds: Dict) -> Any:
+    def get_key_args_kwds(self, args: tuple, kwds: dict) -> Any:
         ...

@@ -269,7 +269,7 @@ def pytest_collect_file(
 
 
 def pytest_ignore_collect(
-    collection_path: Path, path: str, config: pytest.Config
+    collection_path: Path, config: pytest.Config
 ) -> None | bool:
     """
     This hook is called when collecting test files, and can be used to

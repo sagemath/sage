@@ -182,7 +182,7 @@ class GenericCombinatorialSpecies(SageObject):
         """
         return not (self == other)
 
-    def __getstate__(self):
+    def _getstate_(self):
         r"""
         This is used during the pickling process and returns a dictionary
         of the data needed to create this object during the unpickling
@@ -194,7 +194,7 @@ class GenericCombinatorialSpecies(SageObject):
         EXAMPLES::
 
             sage: C = species.CharacteristicSpecies(5)
-            sage: args, kwds = C.__getstate__()
+            sage: args, kwds = C._getstate_()
             sage: args
             {0: 5}
             sage: sorted(kwds.items())
@@ -206,10 +206,10 @@ class GenericCombinatorialSpecies(SageObject):
         except AttributeError:
             return ({}, kwds)
 
-    def __setstate__(self, state):
+    def _setstate_(self, state):
         """
         This is used during unpickling to recreate this object from the
-        data provided by the ``__getstate__`` method.
+        data provided by the ``_getstate_`` method.
 
         TESTS::
 
@@ -217,7 +217,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: C4 = species.CharacteristicSpecies(4)
             sage: C2
             Characteristic species of order 2
-            sage: C2.__setstate__(C4.__getstate__()); C2
+            sage: C2._setstate_(C4._getstate_()); C2
             Characteristic species of order 4
         """
         args_dict, kwds = state
@@ -235,7 +235,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: C.weighted(t)
             Cyclic permutation species with weight=t
         """
-        args_dict, kwds = self.__getstate__()
+        args_dict, kwds = self._getstate_()
         kwds.update({'weight': weight})
         return self.__class__(*[args_dict[i] for i in range(len(args_dict))], **kwds)
 

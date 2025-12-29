@@ -3287,7 +3287,6 @@ cdef class Expression(Expression_abc):
         ::
 
             sage: assert(not x == 1)
-            sage: assert(not x != 1)
             sage: forget()
             sage: assume(x>y)
             sage: assert(not x==y)
@@ -3374,6 +3373,21 @@ cdef class Expression(Expression_abc):
             sage: expr = reduce(lambda u, v: 1/u -v, [1/pi] + list(continued_fraction(pi)[:20]))
             sage: expr.is_zero()
             False
+
+        Check that :issue:`41125` is fixed::
+
+            sage: y = SR.var("y")
+            sage: bool(y != 0)
+            True
+            sage: y = SR.var("y", domain="real")
+            sage: bool(y != 0)
+            True
+            sage: z = SR.var("z", domain="complex")
+            sage: bool(z != 0)
+            True
+            sage: z = SR.var("z", domain="integer")
+            sage: bool(z != 0)
+            True
         """
         if self.is_relational():
             # constants are wrappers around Sage objects, compare directly
@@ -3388,17 +3402,8 @@ cdef class Expression(Expression_abc):
                 return pynac_result == relational_true
 
             if pynac_result == relational_true:
-                if self.operator() == operator.ne:
-                    # this hack is necessary to catch the case where the
-                    # operator is != but is False because of assumptions made
-                    m = self._maxima_()
-                    s = m.parent()._eval_line('is (notequal(%s,%s))' % (repr(m.lhs()),repr(m.rhs())))
-                    if s == 'false':
-                        return False
-                    else:
-                        return True
-                else:
-                    return True
+                #In fact, it will return notimplemented for the unequal cases unknown to be true
+                return True
 
             # If assumptions are involved, falsification is more complicated...
             need_assumptions = False
@@ -3434,9 +3439,9 @@ cdef class Expression(Expression_abc):
             # associated with different semantics, different
             # precision, etc., that can lead to subtle bugs.  Also, a
             # lot of basic Sage objects can't be put into maxima.
-            from sage.symbolic.relation import check_relation_maxima
+            from sage.symbolic.relation import check_relation_maxima_neq_as_not_eq
             if self.variables():
-                return check_relation_maxima(self)
+                return check_relation_maxima_neq_as_not_eq(self)
             else:
                 return False
 
@@ -9701,10 +9706,8 @@ cdef class Expression(Expression_abc):
         cdef Expression nexp = self.coerce_in(k)
         cdef GEx x
         sig_on()
-        try:
-            x = g_hold2_wrapper(g_binomial, self._gobj, nexp._gobj, hold)
-        finally:
-            sig_off()
+        x = g_hold2_wrapper_sig(g_binomial, self._gobj, nexp._gobj, hold)
+        sig_off()
         return new_Expression_from_GEx(self._parent, x)
 
     def Order(self, bint hold=False):
@@ -13531,7 +13534,7 @@ cpdef _repr_Expression(x):
         sage: SR._repr_element_(x+2)
         'x + 2'
     """
-    return ccrepr((<Expression>x)._gobj)
+    return ccrepr((<Expression?>x)._gobj)
 
 
 cpdef _latex_Expression(x):
@@ -13545,7 +13548,7 @@ cpdef _latex_Expression(x):
         sage: latex(var('theta') + 2)
         \theta + 2
     """
-    return char_to_str(GEx_to_str_latex(&(<Expression>x)._gobj))
+    return char_to_str(GEx_to_str_latex(&(<Expression?>x)._gobj))
 
 
 def solve_diophantine(f, *args, **kwds):

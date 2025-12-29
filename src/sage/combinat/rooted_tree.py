@@ -300,7 +300,7 @@ class RootedTree(AbstractClonableTree, NormalizedClonableList,
         # ensure unique representation
         self.set_immutable()
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         r"""
         Return if ``self`` is the empty tree.
 
@@ -657,7 +657,7 @@ class RootedTrees_size(RootedTrees):
             sage: S([[],[]]) in S
             True
         """
-        return isinstance(x, self.element_class) and x.node_number() == self._n
+        return isinstance(x, self.element_class) and x.number_of_nodes() == self._n
 
     def _an_element_(self):
         """
@@ -720,7 +720,7 @@ class RootedTrees_size(RootedTrees):
             ...
             ValueError: wrong number of nodes
         """
-        if el.node_number() != self._n:
+        if el.number_of_nodes() != self._n:
             raise ValueError("wrong number of nodes")
 
     def cardinality(self):
@@ -779,7 +779,7 @@ class RootedTrees_size(RootedTrees):
             []
         """
         res = self.element_class(self._parent_for, *args, **keywords)
-        if res.node_number() != self._n:
+        if res.number_of_nodes() != self._n:
             raise ValueError("wrong number of nodes")
         return res
 

@@ -109,7 +109,6 @@ compatibility.
 # that will have to be changed.
 #####################################################################
 
-from __future__ import absolute_import, print_function
 
 import os
 from os.path import getmtime
