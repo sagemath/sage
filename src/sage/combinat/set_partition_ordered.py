@@ -453,7 +453,7 @@ class OrderedSetPartition(ClonableArray,
         return FiniteEnumeratedSet([par(sum((list(i) for i in C), []))
                                     for C in product(*[OrderedSetPartitions(X) for X in self])])
 
-    def is_finer(self, co2):
+    def is_finer(self, co2) -> bool:
         """
         Return ``True`` if the ordered set partition ``self`` is finer
         than the ordered set partition ``co2``; otherwise, return ``False``.
@@ -672,7 +672,7 @@ class OrderedSetPartition(ClonableArray,
         return FiniteEnumeratedSet([par(sum((list(P) for P in C), []))
                                     for C in product(*[[buo(X, comp) for comp in Compositions(len(X))] for X in self])])
 
-    def is_strongly_finer(self, co2):
+    def is_strongly_finer(self, co2) -> bool:
         r"""
         Return ``True`` if the ordered set partition ``self`` is strongly
         finer than the ordered set partition ``co2``; otherwise, return

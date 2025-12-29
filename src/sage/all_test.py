@@ -13,8 +13,7 @@ def test_import_sage_all_in_fresh_interpreter():
 
     proc = subprocess.run(
         [sys.executable, "-c", "import sage.all"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        capture_output=True,
         env=env,
         text=True, check=False,
     )

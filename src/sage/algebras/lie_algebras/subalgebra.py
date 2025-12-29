@@ -260,7 +260,8 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         return super().__classcall__(cls, ambient, gens, ideal_of,
                                      order, category)
 
-    def __init__(self, ambient, gens, ideal_of, order=None, category=None):
+    def __init__(self, ambient, gens, ideal_of,
+                 order=None, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -302,7 +303,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         f = SetMorphism(H, self.lift)
         ambient.register_coercion(f)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if ``x`` is an element of ``self``.
 
@@ -338,7 +339,8 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         If `x` is a pair `(a, b)`, return the Lie bracket `[a, b]`.
         Otherwise try to return the `x`-th element of ``self``.
 
-        This replicates the convenience syntax for Lie brackets of Lie algebras.
+        This replicates the convenience syntax for Lie brackets
+        of Lie algebras.
 
         EXAMPLES::
 

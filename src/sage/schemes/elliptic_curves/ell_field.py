@@ -2594,7 +2594,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 curve_max = 0
 
             r = [0] * len(Es)  # adjacency matrix row
-            for C in [I.codomain() for I in E.isogenies_prime_degree(l)]:
+            for I in E.isogenies_prime_degree(l):
+                C = I.codomain()
                 j = next((k for k, F in enumerate(Es) if C.is_isomorphic(F)),
                          -1)  # index of curve isomorphic to codomain of isogeny
                 if j >= 0:

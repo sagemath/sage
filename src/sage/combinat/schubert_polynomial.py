@@ -76,7 +76,6 @@ We can also check the properties listed in :wikipedia:`Schubert_polynomial`::
 
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.combinat.key_polynomial import KeyPolynomial
 from sage.combinat.permutation import Permutations, Permutation
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
@@ -86,6 +85,7 @@ from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
+lazy_import('sage.combinat.key_polynomial', 'OperatorPolynomial')
 lazy_import('sage.libs.symmetrica', 'all', as_='symmetrica')
 
 
@@ -458,6 +458,15 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
             sage: for _ in range(50):
             ....:     P = next(it)
             ....:     assert X(k(X(P))) == X(P), P
+
+        Check the round trip from atom polynomials::
+
+            sage: a = AtomPolynomials(ZZ)
+            sage: X = SchubertPolynomialRing(ZZ)
+            sage: it = iter(Permutations())
+            sage: for _ in range(50):
+            ....:     P = next(it)
+            ....:     assert X(a(X(P))) == X(P), P
         """
         if isinstance(x, list):
             # checking the input to avoid symmetrica crashing Sage, see trac 12924
@@ -476,7 +485,7 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
             S = PolynomialRing(R.base_ring(),
                                names=list(map(repr, reversed(R.gens()))))
             return symmetrica.t_POLYNOM_SCHUBERT(S(x.polynomial()))
-        elif isinstance(x, KeyPolynomial):
+        elif isinstance(x, OperatorPolynomial):
             return self(x.expand())
         else:
             raise TypeError

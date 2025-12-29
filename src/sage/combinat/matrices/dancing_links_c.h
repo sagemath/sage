@@ -10,7 +10,7 @@
 //
 //  The full text of the GPL is available at:
 //
-//                  http://www.gnu.org/licenses/
+//                  https://www.gnu.org/licenses/
 //*****************************************************************************
 
 // This file contains a C++ port of Knuth's C implementation of the Dancing

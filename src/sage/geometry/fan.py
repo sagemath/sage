@@ -1327,7 +1327,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         else:
             return NotImplemented
 
-    def __contains__(self, cone):
+    def __contains__(self, cone) -> bool:
         r"""
         Check if ``cone`` is equivalent to a cone of the fan.
 

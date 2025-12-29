@@ -46,7 +46,7 @@ class CommutativeAlgebras(CategoryWithAxiom_over_base_ring):
      - coproduct ( = tensor product over base ring)
     """
 
-    def __contains__(self, A):
+    def __contains__(self, A) -> bool:
         """
         EXAMPLES::
 
