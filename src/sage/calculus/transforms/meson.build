@@ -9,7 +9,7 @@ py.install_sources(
   subdir: 'sage/calculus/transforms',
 )
 
-extension_data = {'dwt' : files('dwt.pyx'), 'fft' : files('fft.pyx')}
+extension_data = {'dwt': files('dwt.pyx'), 'fft': files('fft.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

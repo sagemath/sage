@@ -19,12 +19,12 @@ py.install_sources(
 )
 
 extension_data = {
-  'functions' : files('functions.pyx'),
-  'multi_modular' : files('multi_modular.pyx'),
-  'numerical_approx' : files('numerical_approx.pyx'),
-  'power' : files('power.pyx'),
-  'rational_reconstruction' : files('rational_reconstruction.pyx'),
-  'srange' : files('srange.pyx'),
+  'functions': files('functions.pyx'),
+  'multi_modular': files('multi_modular.pyx'),
+  'numerical_approx': files('numerical_approx.pyx'),
+  'power': files('power.pyx'),
+  'rational_reconstruction': files('rational_reconstruction.pyx'),
+  'srange': files('srange.pyx'),
 }
 
 foreach name, pyx : extension_data
