@@ -22,7 +22,7 @@ from sage.groups.libgap_wrapper import ElementLibGAP
 
 
 class GroupMixinLibGAP:
-    def __contains__(self, elt):
+    def __contains__(self, elt) -> bool:
         r"""
         TESTS::
 

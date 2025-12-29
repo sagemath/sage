@@ -100,7 +100,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
 
         sage: TestSuite(H).run() # long time
     """
-    def __init__(self, domain):
+    def __init__(self, domain) -> None:
         r"""
         TESTS::
 
@@ -187,7 +187,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
         """
         return "Discrete pseudo-valuations on %r" % (self.domain(),)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return whether ``x`` is a valuation in this space.
 

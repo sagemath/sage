@@ -19,7 +19,7 @@ py.install_sources(
   subdir: 'sage/libs/arb',
 )
 
-extension_data = {'arith' : files('arith.pyx')}
+extension_data = {'arith': files('arith.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

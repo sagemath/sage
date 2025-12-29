@@ -34,7 +34,7 @@ py.install_sources(
   subdir: 'sage/plot',
 )
 
-extension_data = {'complex_plot' : files('complex_plot.pyx')}
+extension_data = {'complex_plot': files('complex_plot.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

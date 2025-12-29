@@ -66,7 +66,7 @@ class FiniteFields(CategoryWithAxiom):
         """
         return [EnumeratedSets().Finite()]
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 

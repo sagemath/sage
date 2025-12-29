@@ -1,9 +1,9 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Key polynomials
+Key and Atom Polynomials
 
 Key polynomials (also known as type A Demazure characters) are defined by
-applying the divided difference operator `\pi_\sigma`, where `\sigma` is
+applying the divided difference operator `\pi_{\sigma}`, where `\sigma` is
 a permutation, to a monomial corresponding to an integer partition
 `\mu \vdash n`.
 
@@ -14,13 +14,18 @@ a permutation, to a monomial corresponding to an integer partition
     - :meth:`sage.combinat.root_system.weyl_characters.WeylCharacterRing.demazure_character`
     - :meth:`sage.categories.classical_crystals.ClassicalCrystals.ParentMethods.demazure_character`
 
+Atom polynomials (also known as Demazure atoms) are defined analogously by
+using a deformed divided difference operator `\bar{\pi}_i = \pi_i - 1`.
+
 AUTHORS:
 
 - Trevor K. Karn (2022-08-17): initial version
+- Travis Scrimshaw (2025-10-10): expanded to atoms
 """
 
 # ****************************************************************************
 #       Copyright (C) 2022 Trevor K. Karn <karnx018 (at) umn.edu>
+#                     2025 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,24 +48,215 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.element import parent
 
 
-class KeyPolynomial(CombinatorialFreeModule.Element):
+#####################################################################
+#  Helper functions
+
+
+def sorting_word(alpha):
     r"""
-    A key polynomial.
+    Get a reduced word for the permutation which sorts ``alpha``
+    into a partition.
 
-    Key polynomials are polynomials that form a basis for a polynomial ring
-    and are indexed by weak compositions.
-
-    Elements should be created by first creating the basis
-    :class:`KeyPolynomialBasis` and passing a list representing the indexing
-    composition.
+    The result is a list ``l = [i0, i1, i2, ...]`` where each ``ij``
+    is a positive integer such that it applies the simple
+    transposition `(i_j, i_j+1)`. The transpositions are applied
+    starting with ``i0``, then ``i1`` is applied, followed by ``i2``,
+    and so on. See :meth:`sage.combinat.permutation.Permutation.reduced_words`
+    for the convention used.
 
     EXAMPLES::
 
+        sage: IV = IntegerVectors()
+        sage: from sage.combinat.key_polynomial import sorting_word
+        sage: list(sorting_word(IV([2,3,2]))[0])
+        [1]
+        sage: sorting_word(IV([2,3,2]))[1]
+        [3, 2, 2]
+        sage: list(sorting_word(IV([5,6,7]))[0])
+        [1, 2, 1]
+        sage: list(sorting_word(IV([0,3,2]))[0])
+        [2, 1]
+        sage: list(sorting_word(IV([0,3,0,2]))[0])
+        [2, 3, 1]
+        sage: list(sorting_word(IV([3,2,1]))[0])
+        []
+        sage: list(sorting_word(IV([2,3,3]))[0])
+        [2, 1]
+    """
+    w = []
+    L = list(alpha)
+    n = len(L)
+
+    # bubble sort to get the shortest sorting word
+    for i in range(n-1):
+        for j in range(n-i-1):
+            if L[j] < L[j + 1]:
+                w.append(j+1)
+                L[j], L[j + 1] = L[j + 1], L[j]
+    return reversed(w), L
+
+
+#####################################################################
+#  Divided difference operators
+
+
+def divided_difference(f, i):
+    r"""
+    Apply the ``i``-th divided difference operator to the polynomial ``f``.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.key_polynomial import divided_difference
         sage: k = KeyPolynomials(QQ)
-        sage: f = k([4,3,2,1]) + k([1,2,3,4]); f
-        k[1, 2, 3, 4] + k[4, 3, 2, 1]
-        sage: f in k
-        True
+        sage: z = k.poly_gens()
+        sage: f = z[1]*z[2]^3 + z[1]*z[2]*z[3]
+        sage: divided_difference(f, 3)
+        z_3^2*z_1 + z_3*z_2*z_1 + z_2^2*z_1
+
+        sage: k = KeyPolynomials(QQ, 4)
+        sage: z = k.poly_gens()
+        sage: f = z[1]*z[2]^3 + z[1]*z[2]*z[3]
+        sage: divided_difference(f, 3)
+        z_1*z_2^2 + z_1*z_2*z_3 + z_1*z_3^2
+
+        sage: k = KeyPolynomials(QQ)
+        sage: R = k.polynomial_ring(); R
+        Infinite polynomial ring in z over Rational Field
+        sage: z = R.gen()
+        sage: divided_difference(z[1]*z[2]^3, 2)
+        -z_2^2*z_1 - z_2*z_1^2
+        sage: divided_difference(z[1]*z[2]*z[3], 3)
+        0
+        sage: divided_difference(z[1]*z[2]*z[3], 4)
+        z_2*z_1
+        sage: divided_difference(z[1]*z[2]*z[4], 4)
+        -z_2*z_1
+
+        sage: k = KeyPolynomials(QQ, 5)
+        sage: z = k.polynomial_ring().gens()
+        sage: divided_difference(z[1]*z[2]^3, 2)
+        -z_1^2*z_2 - z_1*z_2^2
+        sage: divided_difference(z[1]*z[2]*z[3], 3)
+        0
+        sage: divided_difference(z[1]*z[2]*z[3], 4)
+        z_1*z_2
+        sage: divided_difference(z[1]*z[2]*z[4], 4)
+        -z_1*z_2
+    """
+    P = parent(f)
+    if isinstance(P, InfinitePolynomialRing_sparse):
+        z = P.gen()
+    else:
+        z = P.gens()
+
+    si_f = f.subs({z[i]: z[i-1], z[i-1]: z[i]})
+    return (si_f - f) // (z[i] - z[i-1])
+
+
+def isobaric_divided_difference(f, w):
+    r"""
+    Apply the isobaric divided difference operator `\pi_w` to the
+    polynomial `f`.
+
+    ``w`` may be either a single index or a list of
+    indices of simple transpositions.
+
+    .. WARNING::
+
+        The simple transpositions should be applied from left to right.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.key_polynomial import isobaric_divided_difference as idd
+        sage: R.<z> = InfinitePolynomialRing(GF(3))
+        sage: idd(z[1]^4*z[2]^2*z[4], 4)
+        0
+
+        sage: idd(z[1]^4*z[2]^2*z[3]*z[4], 3)
+        z_4*z_3^2*z_2*z_1^4 + z_4*z_3*z_2^2*z_1^4
+
+        sage: idd(z[1]^4*z[2]^2*z[3]*z[4], [3, 4])
+        z_4^2*z_3*z_2*z_1^4 + z_4*z_3^2*z_2*z_1^4 + z_4*z_3*z_2^2*z_1^4
+
+        sage: idd(z[1]^4*z[2]^2*z[3]*z[4], [4, 3])
+        z_4*z_3^2*z_2*z_1^4 + z_4*z_3*z_2^2*z_1^4
+
+        sage: idd(z[1]^2*z[2], [3, 2])
+        z_3*z_2^2 + z_3*z_2*z_1 + z_3*z_1^2 + z_2^2*z_1 + z_2*z_1^2
+    """
+    P = parent(f)
+    if isinstance(P, InfinitePolynomialRing_sparse):
+        z = P.gen()
+    else:
+        z = P.gens()
+
+    if not hasattr(w, "__iter__"):  # this allows us to pass i instead of a word
+        w = [w]
+    for i in w:
+        fp = z[i-1] * f
+        si_fp = fp.subs({z[i]: z[i-1], z[i-1]: z[i]})
+        f = (si_fp - fp) // (z[i] - z[i-1])
+    return f
+
+
+def isobaric_divided_difference_bar(f, w):
+    r"""
+    Apply the isobaric divided difference operator `\bar{\pi}_w` to the
+    polynomial `f`.
+
+    This map is defined by `\bar{\pi}_i := \pi_i - 1`.
+
+    ``w`` may be either a single index or a list of
+    indices of simple transpositions.
+
+    .. WARNING::
+
+        The simple transpositions should be applied from left to right.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.key_polynomial import isobaric_divided_difference_bar as iddb
+        sage: R.<z> = InfinitePolynomialRing(GF(3))
+        sage: iddb(z[1]^4*z[2]^2*z[4], 4)
+        -z_4*z_2^2*z_1^4
+
+        sage: iddb(z[1]^4*z[2]^2*z[3]*z[4], 3)
+        z_4*z_3^2*z_2*z_1^4
+
+        sage: iddb(z[1]^4*z[2]^2*z[3]*z[4], [3, 4])
+        z_4^2*z_3*z_2*z_1^4
+
+        sage: iddb(z[1]^4*z[2]^2*z[3]*z[4], [4, 3])
+        0
+
+        sage: iddb(z[1]^2*z[2], [3, 2])
+        z_3*z_2^2 + z_3*z_2*z_1
+    """
+    P = parent(f)
+    if isinstance(P, InfinitePolynomialRing_sparse):
+        z = P.gen()
+    else:
+        z = P.gens()
+
+    if not hasattr(w, "__iter__"):  # this allows us to pass i instead of a word
+        w = [w]
+    for i in w:
+        sif = f.subs({z[i]: z[i-1], z[i-1]: z[i]})
+        f = z[i] * (f - sif) // (z[i-1] - z[i])
+    return f
+
+
+#####################################################################
+#  Main classes
+
+
+class OperatorPolynomial(CombinatorialFreeModule.Element):
+    r"""
+    Abstract base class for a polynomial defined recursively by
+    divided difference type operators.
+
+    Parents should implement the divided difference operator as
+    a ``staticmethod`` ``_operator``.
     """
     def _mul_(self, other):
         r"""
@@ -108,12 +304,86 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
             # create the monomial to apply
             monom = R.prod(z[i] ** mi for i, mi in enumerate(mu) if mi)
 
-            out += c * isobaric_divided_difference(monom, w)
+            out += c * P._operator(monom, w)
 
         return out
 
     to_polynomial = expand
 
+    def divided_difference(self, w):
+        r"""
+        Apply the divided difference operator `\partial_w` to ``self``.
+
+        The convention is to apply from left to right so if
+        ``w = [w1, w2, ..., wm]`` then we apply
+        `\partial_{w_2 \cdots w_m} \circ \partial_{w_1}`
+
+        EXAMPLES::
+
+            sage: k = KeyPolynomials(QQ)
+            sage: k([3,2,1]).divided_difference(2)
+            k[3, 1, 1]
+            sage: k([3,2,1]).divided_difference([2,3])
+            k[3, 1]
+
+            sage: k = KeyPolynomials(QQ, 4)
+            sage: k([3,2,1,0]).divided_difference(2)
+            k[3, 1, 1, 0]
+        """
+        if not isinstance(w, Collection):
+            w = [w]
+        f = self.expand()
+        for wi in w:
+            f = divided_difference(f, wi)
+        return self.parent().from_polynomial(f)
+
+    def isobaric_divided_difference(self, w):
+        r"""
+        Apply the isobaric divided difference operator `\pi_w` to ``self``.
+
+        The convention is to apply from left to right so if
+        ``w = [w1, w2, ..., wm]`` then we apply
+        `\pi_{w_2 \cdots w_m} \circ \pi_{w_1}`
+
+        EXAMPLES::
+
+            sage: a = AtomPolynomials(QQ)
+            sage: a([3,2,1]).isobaric_divided_difference(2)
+            a[3, 1, 2] + a[3, 2, 1]
+            sage: a([3,2,1]).isobaric_divided_difference([2, 3])
+            a[3, 1, 0, 2] + a[3, 1, 2] + a[3, 2, 0, 1] + a[3, 2, 1]
+
+            sage: a = AtomPolynomials(QQ, 4)
+            sage: a([3,2,1,0]).divided_difference(2)
+            a[3, 1, 1, 0]
+        """
+        if not isinstance(w, Collection):
+            w = [w]
+        f = self.expand()
+        for wi in w:
+            f = divided_difference(f, wi)
+        return self.parent().from_polynomial(f)
+
+
+class KeyPolynomial(OperatorPolynomial):
+    r"""
+    A key polynomial.
+
+    Key polynomials are polynomials that form a basis for a polynomial ring
+    and are indexed by weak compositions.
+
+    Elements should be created by first creating the basis
+    :class:`KeyPolynomialBasis` and passing a list representing the indexing
+    composition.
+
+    EXAMPLES::
+
+        sage: k = KeyPolynomials(QQ)
+        sage: f = k([4,3,2,1]) + k([1,2,3,4]); f
+        k[1, 2, 3, 4] + k[4, 3, 2, 1]
+        sage: f in k
+        True
+    """
     def pi(self, w):
         r"""
         Apply the operator `\pi_w` to ``self``.
@@ -209,45 +479,538 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
             else:
                 ret._monomial_coefficients[m] = c
             if not ret._monomial_coefficients[m]:
-                del ret._monomial_coefficients
+                del ret._monomial_coefficients[m]
         return ret
 
     isobaric_divided_difference = pi
 
-    def divided_difference(self, w):
+    def pibar(self, w):
         r"""
-        Apply the divided difference operator `\partial_w` to ``self``.
-
-        The convention is to apply from left to right so if
-        ``w = [w1, w2, ..., wm]`` then we apply
-        `\partial_{w_2 \cdots w_m} \circ \partial_{w_1}`
+        Apply the operator `\bar{\pi}_w` to ``self``.
 
         EXAMPLES::
 
             sage: k = KeyPolynomials(QQ)
-            sage: k([3,2,1]).divided_difference(2)
-            k[3, 1, 1]
-            sage: k([3,2,1]).divided_difference([2,3])
-            k[3, 1]
+            sage: k[2,3,1].pibar(2)
+            k[2, 1, 3] - k[2, 3, 1]
+            sage: k[2,3,1].pibar([2,3])
+            k[2, 1, 0, 3] - k[2, 1, 3] - k[2, 3, 0, 1] + k[2, 3, 1]
+            sage: k[2,3,1].pibar([2,2]) == -k[2,3,1].pibar(2)
+            True
 
+        TESTS:
+
+        We check that this is consistent with the definition via the
+        isobaric divided difference operators::
+
+            sage: from sage.combinat.key_polynomial import isobaric_divided_difference_bar as iddb
             sage: k = KeyPolynomials(QQ, 4)
-            sage: k([3,2,1,0]).divided_difference(2)
-            k[3, 1, 1, 0]
+            sage: S4 = Permutations(4)
+            sage: f = k[4,2,2,0]
+            sage: all(iddb(f.expand(), w.reduced_word()) == f.pibar(w).expand() for w in S4)
+            True
+
+            sage: f = k([4,2,0,1]) - 3 * k([2,0,1,2])
+            sage: all(iddb(f.expand(), w.reduced_word()) == f.pibar(w).expand() for w in S4)
+            True
         """
+        if isinstance(w, Permutation):
+            w = w.reduced_word()
         if not isinstance(w, Collection):
             w = [w]
-        f = self.expand()
-        for wi in w:
-            f = divided_difference(f, wi)
-        return self.parent().from_polynomial(f)
+
+        if not w or not self:
+            return self
+
+        ret = self
+        for i in w:
+            ret = ret.pi([i]) - ret
+            if not ret:
+                return ret
+        return ret
 
 
-class KeyPolynomialBasis(CombinatorialFreeModule):
+class AtomPolynomial(OperatorPolynomial):
+    r"""
+    An atom polynomial.
+
+    Atom polynomials are polynomials that form a basis for a polynomial
+    ring and are indexed by weak compositions.
+
+    Elements should be created by first creating the basis
+    :class:`AtomPolynomialBasis` and passing a list representing
+    the indexing composition.
+
+    EXAMPLES::
+
+        sage: a = AtomPolynomials(QQ)
+        sage: f = a([4,3,2,1]) + a([1,2,3,4]); f
+        a[1, 2, 3, 4] + a[4, 3, 2, 1]
+        sage: f in a
+        True
+    """
+    def pibar(self, w):
+        r"""
+        Apply the operator `\bar{\pi}_w` to ``self``.
+
+        ``w`` may be either a ``Permutation`` or a list of indices of simple
+        transpositions (1-based).
+
+        The convention is to apply from left to right so if
+        ``w = [w1, w2, ..., wm]`` then we apply
+        `\bar{\pi}_{w_2 \cdots w_m} \circ \bar{\pi}_{w_1}`.
+
+        EXAMPLES::
+
+            sage: a = AtomPolynomials(QQ)
+            sage: a([3,2,1]).pibar(2)
+            a[3, 1, 2]
+            sage: a([3,2,1]).pibar([2,1])
+            a[1, 3, 2]
+            sage: a([3,2,1]).pibar(Permutation([3,2,1]))
+            a[1, 2, 3]
+            sage: f = a([3,2,1]) + a([3,2,1,1])
+            sage: f.pibar(2)
+            a[3, 1, 2] + a[3, 1, 2, 1]
+            sage: a.one().pibar(1)
+            0
+
+            sage: a([3,2,1,0]).pibar(2).pibar(2)
+            -a[3, 1, 2]
+            sage: (-a([3,2,1,0]) + 4*a([3,1,2,0])).pibar(2)
+            -5*a[3, 1, 2]
+
+            sage: a = AtomPolynomials(QQ, 4)
+            sage: a([3,2,1,0]).pibar(2)
+            a[3, 1, 2, 0]
+            sage: a([3,2,1,0]).pibar([2,1])
+            a[1, 3, 2, 0]
+            sage: a([3,2,1,0]).pibar(Permutation([3,2,1,4]))
+            a[1, 2, 3, 0]
+            sage: f = a([3,2,1,0]) + a([3,2,1,1])
+            sage: f.pibar(2)
+            a[3, 1, 2, 0] + a[3, 1, 2, 1]
+            sage: a.one().pibar(1)
+            0
+
+        TESTS:
+
+        We check that this is consistent with the definition via the
+        defining isobaric divided difference operators::
+
+            sage: from sage.combinat.key_polynomial import isobaric_divided_difference_bar as iddb
+            sage: a = AtomPolynomials(QQ, 4)
+            sage: S4 = Permutations(4)
+            sage: f = a([4,2,2,0])
+            sage: all(iddb(f.expand(), w.reduced_word()) == f.pibar(w).expand() for w in S4)
+            True
+
+            sage: f = a([4,2,0,1]) - 3 * a([2,0,1,2])
+            sage: all(iddb(f.expand(), w.reduced_word()) == f.pibar(w).expand() for w in S4)
+            True
+        """
+        P = self.parent()
+        if isinstance(w, Permutation):
+            w = w.reduced_word()
+        if not isinstance(w, Collection):
+            w = [w]
+
+        if not w or not self:
+            return self
+
+        N = max(w) + 1
+
+        if P._k is not None and N > P._k:
+            raise ValueError(f"pi_{N-1} does not exist for this polynomial ring")
+
+        ret = P.element_class(P, {})
+        for m, c in self._monomial_coefficients.items():
+            m = list(m)
+            n = len(m)
+            sign = 1
+            for i in w:
+                if i == n:
+                    m += [0]
+                    n += 1
+                if i > n or m[i-1] == m[i]:
+                    m = None
+                    break
+                if m[i-1] < m[i]:
+                    sign = -sign
+                    continue
+                m[i-1], m[i] = m[i], m[i-1]
+            if m is None:
+                continue
+            m = P._indices(m)
+            if P._k is None:
+                m = m.trim()
+            if m in ret._monomial_coefficients:
+                ret._monomial_coefficients[m] += c * sign
+            else:
+                ret._monomial_coefficients[m] = c * sign
+            if not ret._monomial_coefficients[m]:
+                del ret._monomial_coefficients[m]
+        return ret
+
+    def pi(self, w):
+        r"""
+        Return the action of the isobaric divided difference operator `\pi_w`
+        on ``self``.
+
+        EXAMPLES::
+
+            sage: a = AtomPolynomials(QQ)
+            sage: a[2,3,1].pi(2)
+            a[2, 1, 3] + a[2, 3, 1]
+            sage: a[2,3,1].pi([2,3])
+            a[2, 1, 0, 3] + a[2, 1, 3] + a[2, 3, 0, 1] + a[2, 3, 1]
+            sage: a[2,3,1].pi([2,2]) == a[2,3,1].pi(2)
+            True
+
+        TESTS:
+
+        We check that this is consistent with the definition via the
+        isobaric divided difference operators::
+
+            sage: from sage.combinat.key_polynomial import isobaric_divided_difference as idd
+            sage: a = AtomPolynomials(QQ, 4)
+            sage: S4 = Permutations(4)
+            sage: f = a[4,2,2,0]
+            sage: all(idd(f.expand(), w.reduced_word()) == f.pi(w).expand() for w in S4)
+            True
+
+            sage: f = a([4,2,0,1]) - 3 * a([2,0,1,2])
+            sage: all(idd(f.expand(), w.reduced_word()) == f.pi(w).expand() for w in S4)
+            True
+        """
+        if isinstance(w, Permutation):
+            w = w.reduced_word()
+        if not isinstance(w, Collection):
+            w = [w]
+
+        if not w or not self:
+            return self
+
+        ret = self
+        for i in w:
+            ret = ret.pibar([i]) + ret
+            if not ret:
+                return ret
+        return ret
+
+    isobaric_divided_difference = pi
+
+
+class OperatorPolynomialBasis(CombinatorialFreeModule):
+    r"""
+    A basis for a polynomial ring defined recursively by divided difference
+    type operators such that the result is a triangular change of basis with
+    the natural monomial basis.
+    """
+    @staticmethod
+    def __classcall__(cls, R=None, k=None, poly_ring=None, poly_coeffs=False):
+        r"""
+        Normalize input.
+
+        EXAMPLES::
+
+            sage: KeyPolynomials(InfinitePolynomialRing(QQ, ['x', 'y']))
+            Traceback (most recent call last):
+            ...
+            ValueError: polynomial ring has too many generators
+
+            sage: KeyPolynomials(QQ['t0','t1','t2','t3'])
+            Key polynomial basis over Rational Field
+
+            sage: KeyPolynomials(QQ['t'])
+            Key polynomial basis over Rational Field
+
+            sage: KeyPolynomials(InfinitePolynomialRing(QQ['t'], 'z'))
+            Key polynomial basis over Univariate Polynomial Ring in t over Rational Field
+
+            sage: KeyPolynomials(QQ)
+            Key polynomial basis over Rational Field
+
+            sage: KeyPolynomials(QQ, 3)
+            Key polynomial basis over Rational Field
+        """
+        poly_type = (PolynomialRing_commutative,
+                     MPolynomialRing_base,
+                     InfinitePolynomialRing_sparse)
+
+        if isinstance(R, poly_type):
+            # if a polynomial ring is provided, we need to determine
+            # if it is meant to be self.polynomial_ring() or self.base_ring()
+            if isinstance(R, poly_type[0:2]):
+                k = R.ngens()
+            if isinstance(R, InfinitePolynomialRing_sparse) and R.ngens() > 1:
+                raise ValueError("polynomial ring has too many generators")
+            if isinstance(R.base_ring(), poly_type[0:2]):
+                # if R is of the form K[t_1, ..., t_n][z_*]
+                # or K[t_1, ..., t_n][z_1, ..., z_k]
+                return super().__classcall__(cls, k=k, poly_ring=R)
+            if poly_coeffs:
+                # if R is a polynomial ring, but its base ring is not
+                # and poly_coeffs is true, then we should interpret
+                # R as the base ring
+                return super().__classcall__(cls, R=R)
+            return super().__classcall__(cls, k=k, poly_ring=R)
+        else:
+            # if R is not a polynomial ring, we know it is self.base_ring()
+            return super().__classcall__(cls, R=R, k=k)
+
+    def __init__(self, R=None, k=None, poly_ring=None):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: R = GF(3)['t'].fraction_field()
+            sage: k = KeyPolynomials(QQ)
+            sage: TestSuite(k).run()
+            sage: k = KeyPolynomials(R)
+            sage: TestSuite(k).run()
+
+            sage: k = KeyPolynomials(QQ, 4)
+            sage: TestSuite(k).run()
+            sage: k = KeyPolynomials(R, 4)
+            sage: TestSuite(k).run()
+        """
+        self._k = k
+
+        if self._k is not None:
+            def build_index(m):
+                return self._indices(m)
+        else:
+            def build_index(m):
+                mc = m.monomial_coefficients()
+                v = [0 for _ in range(max(mc, default=-1) + 1)]
+                for i, e in mc.items():
+                    v[i] = e
+                return self._indices(v)
+
+        self._build_index = build_index
+
+        if R is not None:
+            if poly_ring:
+                raise ValueError("specify only one of base_ring or poly_ring (not both)")
+            if k:
+                self._polynomial_ring = PolynomialRing(R, 'z_', k)
+            else:
+                self._polynomial_ring = InfinitePolynomialRing(R, 'z')
+        if poly_ring is not None:
+            if R is not None:
+                raise ValueError("specify only one of base_ring or poly_ring (not both)")
+            R = poly_ring.base_ring()
+            self._polynomial_ring = poly_ring
+
+        CombinatorialFreeModule.__init__(self, R, IntegerVectors(k=k),
+                                         category=GradedAlgebrasWithBasis(R),
+                                         prefix=self._prefix, bracket=False)
+
+    def _coerce_map_from_(self, R):
+        r"""
+        Return the coercion map from ``R`` if it exists.
+
+        EXAMPLES::
+
+            sage: k = KeyPolynomials(QQ)
+            sage: m1 = k([3, 2, 4, 0]); m1
+            k[3, 2, 4]
+            sage: m2 = k(Composition([3, 2, 4])); m2
+            k[3, 2, 4]
+            sage: m1 == m2
+            True
+
+            sage: R = k.polynomial_ring()
+            sage: z = R.gen()
+            sage: z[0] * k([4, 3, 3, 2])
+            k[5, 3, 3, 2]
+
+            sage: X = SchubertPolynomialRing(QQ)
+            sage: k(X([4, 3, 2, 1]))
+            k[3, 2, 1]
+        """
+        P = self._polynomial_ring
+        if R is P:
+            return self.from_polynomial
+
+        phi = P.coerce_map_from(R)
+        if phi is not None:
+            return self.coerce_map_from(P) * phi
+        return None
+
+    def _monomial(self, x):
+        r"""
+        EXAMPLES::
+
+            sage: k = KeyPolynomials(QQ)
+            sage: k._monomial(k._indices([1, 3, 2, 0, 2]))
+            k[1, 3, 2, 0, 2]
+            sage: k([3, 2, 3, 4, 0])
+            k[3, 2, 3, 4]
+            sage: k = KeyPolynomials(QQ, 5)
+            sage: k([3, 2, 3, 4, 0])
+            k[3, 2, 3, 4, 0]
+        """
+        if self._k:
+            return self._from_dict({x: self.base_ring().one()}, remove_zeros=False)
+        return self._from_dict({x.trim(): self.base_ring().one()}, remove_zeros=False)
+
+    def __getitem__(self, c):
+        """
+        This method implements the abuses of notations ``k[2,1]``,
+        ``k[[2,1]]``, etc.
+
+        INPUT:
+
+        - ``c`` -- anything that can represent an index of a basis element
+
+        EXAMPLES::
+
+            sage: k = KeyPolynomials(QQ)
+            sage: k[3]
+            k[3]
+            sage: k[3, 0, 2]
+            k[3, 0, 2]
+            sage: k[3, 1, 2, 0, 0]
+            k[3, 1, 2]
+
+            sage: k = KeyPolynomials(QQ, 4)
+            sage: k[3, 0, 1, 0]
+            k[3, 0, 1, 0]
+            sage: k[3]
+            Traceback (most recent call last):
+            ...
+            ValueError: [3] doesn't satisfy correct constraints
+        """
+        C = self._indices
+        if not isinstance(c, C.element_class):
+            if c in ZZ:
+                c = C([c])
+            else:
+                c = C(c)
+        return self._monomial(c)
+
+    @cached_method
+    def one_basis(self):
+        r"""
+        Return the basis element indexing the identity.
+
+        EXAMPLES::
+
+            sage: k = KeyPolynomials(QQ)
+            sage: k.one_basis()
+            []
+
+            sage: k = KeyPolynomials(QQ, 4)
+            sage: k.one_basis()
+            [0, 0, 0, 0]
+        """
+        if self._k:
+            return self._indices([0] * self._k)
+        return self._indices([])
+
+    def degree_on_basis(self, alpha):
+        """
+        Return the degree of the basis element indexed by ``alpha``.
+
+        EXAMPLES::
+
+            sage: k = KeyPolynomials(QQ)
+            sage: k.degree_on_basis([2,1,0,2])
+            5
+
+            sage: k = KeyPolynomials(QQ, 5)
+            sage: k.degree_on_basis([2,1,0,2,0])
+            5
+        """
+        return ZZ(sum(alpha))
+
+    def polynomial_ring(self):
+        r"""
+        Return the polynomial ring associated to ``self``.
+
+        EXAMPLES::
+
+            sage: k = KeyPolynomials(QQ)
+            sage: k.polynomial_ring()
+            Infinite polynomial ring in z over Rational Field
+
+            sage: k = KeyPolynomials(QQ, 4)
+            sage: k.polynomial_ring()
+            Multivariate Polynomial Ring in z_0, z_1, z_2, z_3 over Rational Field
+        """
+        return self._polynomial_ring
+
+    def poly_gens(self):
+        r"""
+        Return the polynomial generators for the polynomial ring
+        associated to ``self``.
+
+        EXAMPLES::
+
+            sage: k = KeyPolynomials(QQ)
+            sage: k.poly_gens()
+            z_*
+
+            sage: k = KeyPolynomials(QQ, 4)
+            sage: k.poly_gens()
+            (z_0, z_1, z_2, z_3)
+        """
+        if self._k:
+            return self._polynomial_ring.gens()
+        return self._polynomial_ring.gen()
+
+    def from_polynomial(self, f):
+        r"""
+        Expand a polynomial in terms of ``self``.
+
+        EXAMPLES::
+
+            sage: k = KeyPolynomials(QQ)
+            sage: z = k.poly_gens(); z
+            z_*
+            sage: p = z[0]^4*z[1]^2*z[2]*z[3] + z[0]^4*z[1]*z[2]^2*z[3]
+            sage: k.from_polynomial(p)
+            k[4, 1, 2, 1]
+
+            sage: all(k(c) == k.from_polynomial(k(c).expand()) for c in IntegerVectors(n=5, k=4))
+            True
+
+            sage: T = crystals.Tableaux(['A', 4], shape=[4,2,1,1])
+            sage: k.from_polynomial(T.demazure_character([2]))
+            k[4, 1, 2, 1]
+        """
+        if f not in self._polynomial_ring:
+            try:  # to accept elements of SymbolicRing
+                from sage.calculus.var import var
+                f = f.substitute([d == var(f'z_{i}')
+                                  for i, d in enumerate(f.variables())])
+                f = self._polynomial_ring(f)
+            except AttributeError:
+                raise ValueError(f"f must be an element of {self._polynomial_ring}")
+
+        out = self.zero()
+        while f:
+            M = f.monomials()[0]
+            c = f.monomial_coefficient(M)
+
+            new_term = self._from_dict({self._build_index(*M.exponents()): c})
+
+            temp = new_term.expand()
+            f -= temp
+            out += new_term
+
+        return out
+
+
+class KeyPolynomialBasis(OperatorPolynomialBasis):
     r"""
     The key polynomial basis for a polynomial ring.
 
     For a full definition, see
-    `SymmetricFunctions.com <https://www.symmetricfunctions.com/key.htm>`_.
+    `SymmetricFunctions.com <https://www.symmetricfunctions.com/key.htm>`__.
     Key polynomials are indexed by weak compositions with no trailing zeros,
     and `\sigma` is the permutation of shortest length which sorts the
     indexing composition into a partition.
@@ -373,109 +1136,9 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
         (q^2+q+1)*k[0, 2, 2, 0, 3, 2]
     """
     Element = KeyPolynomial
-
-    @staticmethod
-    def __classcall_private__(cls, R=None, k=None, poly_ring=None, poly_coeffs=False):
-        r"""
-        Normalize input.
-
-        EXAMPLES::
-
-            sage: KeyPolynomials(InfinitePolynomialRing(QQ, ['x', 'y']))
-            Traceback (most recent call last):
-            ...
-            ValueError: polynomial ring has too many generators
-
-            sage: KeyPolynomials(QQ['t0','t1','t2','t3'])
-            Key polynomial basis over Rational Field
-
-            sage: KeyPolynomials(QQ['t'])
-            Key polynomial basis over Rational Field
-
-            sage: KeyPolynomials(InfinitePolynomialRing(QQ['t'], 'z'))
-            Key polynomial basis over Univariate Polynomial Ring in t over Rational Field
-
-            sage: KeyPolynomials(QQ)
-            Key polynomial basis over Rational Field
-
-            sage: KeyPolynomials(QQ, 3)
-            Key polynomial basis over Rational Field
-        """
-        poly_type = (PolynomialRing_commutative,
-                     MPolynomialRing_base,
-                     InfinitePolynomialRing_sparse)
-
-        if isinstance(R, poly_type):
-            # if a polynomial ring is provided, we need to determine
-            # if it is meant to be self.polynomial_ring() or self.base_ring()
-            if isinstance(R, poly_type[0:2]):
-                k = R.ngens()
-            if isinstance(R, InfinitePolynomialRing_sparse) and R.ngens() > 1:
-                raise ValueError("polynomial ring has too many generators")
-            if isinstance(R.base_ring(), poly_type[0:2]):
-                # if R is of the form K[t_1, ..., t_n][z_*]
-                # or K[t_1, ..., t_n][z_1, ..., z_k]
-                return cls.__classcall__(cls, k=k, poly_ring=R)
-            if poly_coeffs:
-                # if R is a polynomial ring, but its base ring is not
-                # and poly_coeffs is true, then we should interpret
-                # R as the base ring
-                return cls.__classcall__(cls, R=R)
-            return cls.__classcall__(cls, k=k, poly_ring=R)
-        else:
-            # if R is not a polynomial ring, we know it is self.base_ring()
-            return cls.__classcall__(cls, R=R, k=k)
-
-    def __init__(self, R=None, k=None, poly_ring=None):
-        r"""
-        Initialize ``self``.
-
-        EXAMPLES::
-
-            sage: R = GF(3)['t'].fraction_field()
-            sage: k = KeyPolynomials(QQ)
-            sage: TestSuite(k).run()
-            sage: k = KeyPolynomials(R)
-            sage: TestSuite(k).run()
-
-            sage: k = KeyPolynomials(QQ, 4)
-            sage: TestSuite(k).run()
-            sage: k = KeyPolynomials(R, 4)
-            sage: TestSuite(k).run()
-        """
-        self._k = k
-
-        if self._k is not None:
-            def build_index(m):
-                return self._indices(m)
-        else:
-            def build_index(m):
-                mc = m.monomial_coefficients()
-                v = [0 for _ in range(max(mc, default=-1) + 1)]
-                for i, e in mc.items():
-                    v[i] = e
-                return self._indices(v)
-
-        self._build_index = build_index
-
-        if R is not None:
-            if poly_ring:
-                raise ValueError("specify only one of base_ring or poly_ring (not both)")
-            if k:
-                self._polynomial_ring = PolynomialRing(R, 'z_', k)
-            else:
-                self._polynomial_ring = InfinitePolynomialRing(R, 'z')
-        if poly_ring is not None:
-            if R is not None:
-                raise ValueError("specify only one of base_ring or poly_ring (not both)")
-            R = poly_ring.base_ring()
-            self._polynomial_ring = poly_ring
-
-        self._name = "Key polynomial basis"
-
-        CombinatorialFreeModule.__init__(self, R, IntegerVectors(k=k),
-                                         category=GradedAlgebrasWithBasis(R),
-                                         prefix='k', bracket=False)
+    _name = "Key polynomial basis"
+    _prefix = 'k'
+    _operator = staticmethod(isobaric_divided_difference)
 
     def _coerce_map_from_(self, R):
         r"""
@@ -513,171 +1176,9 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
             return self.coerce_map_from(P) * phi
         return None
 
-    def _monomial(self, x):
-        r"""
-        EXAMPLES::
-
-            sage: k = KeyPolynomials(QQ)
-            sage: k([3, 2, 3, 4, 0])
-            k[3, 2, 3, 4]
-            sage: k = KeyPolynomials(QQ, 5)
-            sage: k([3, 2, 3, 4, 0])
-            k[3, 2, 3, 4, 0]
-        """
-        if self._k:
-            return self._from_dict({x: self.base_ring().one()}, remove_zeros=False)
-        return self._from_dict({x.trim(): self.base_ring().one()}, remove_zeros=False)
-
-    def __getitem__(self, c):
-        """
-        This method implements the abuses of notations ``k[2,1]``,
-        ``k[[2,1]]``, etc.
-
-        INPUT:
-
-        - ``c`` -- anything that can represent an index of a basis element
-
-        EXAMPLES::
-
-            sage: k = KeyPolynomials(QQ)
-            sage: k[3]
-            k[3]
-            sage: k[3, 0, 2]
-            k[3, 0, 2]
-            sage: k[3, 1, 2, 0, 0]
-            k[3, 1, 2]
-
-            sage: k = KeyPolynomials(QQ, 4)
-            sage: k[3, 0, 1, 0]
-            k[3, 0, 1, 0]
-            sage: k[3]
-            Traceback (most recent call last):
-            ...
-            ValueError: [3] doesn't satisfy correct constraints
-        """
-        C = self._indices
-        if not isinstance(c, C.element_class):
-            if c in ZZ:
-                c = C([c])
-            else:
-                c = C(c)
-        return self._monomial(c)
-
-    @cached_method
-    def one_basis(self):
-        r"""
-        Return the basis element indexing the identity.
-
-        EXAMPLES::
-
-            sage: k = KeyPolynomials(QQ)
-            sage: k.one_basis()
-            []
-
-            sage: k = KeyPolynomials(QQ, 4)
-            sage: k.one_basis()
-            [0, 0, 0, 0]
-        """
-        if self._k:
-            return self._indices([0] * self._k)
-        return self._indices([])
-
-    def degree_on_basis(self, alpha):
-        """
-        Return the degree of the basis element indexed by ``alpha``.
-
-        EXAMPLES::
-
-            sage: k = KeyPolynomials(QQ)
-            sage: k.degree_on_basis([2,1,0,2])
-            5
-
-            sage: k = KeyPolynomials(QQ, 5)
-            sage: k.degree_on_basis([2,1,0,2,0])
-            5
-        """
-        return ZZ(sum(alpha))
-
-    def polynomial_ring(self):
-        r"""
-        Return the polynomial ring associated to ``self``.
-
-        EXAMPLES::
-
-            sage: k = KeyPolynomials(QQ)
-            sage: k.polynomial_ring()
-            Infinite polynomial ring in z over Rational Field
-
-            sage: k = KeyPolynomials(QQ, 4)
-            sage: k.polynomial_ring()
-            Multivariate Polynomial Ring in z_0, z_1, z_2, z_3 over Rational Field
-        """
-        return self._polynomial_ring
-
-    def poly_gens(self):
-        r"""
-        Return the polynomial generators for the polynomial ring
-        associated to ``self``.
-
-        EXAMPLES::
-
-            sage: k = KeyPolynomials(QQ)
-            sage: k.poly_gens()
-            z_*
-
-            sage: k = KeyPolynomials(QQ, 4)
-            sage: k.poly_gens()
-            (z_0, z_1, z_2, z_3)
-        """
-        if self._k:
-            return self._polynomial_ring.gens()
-        return self._polynomial_ring.gen()
-
-    def from_polynomial(self, f):
-        r"""
-        Expand a polynomial in terms of the key basis.
-
-        EXAMPLES::
-
-            sage: k = KeyPolynomials(QQ)
-            sage: z = k.poly_gens(); z
-            z_*
-            sage: p = z[0]^4*z[1]^2*z[2]*z[3] + z[0]^4*z[1]*z[2]^2*z[3]
-            sage: k.from_polynomial(p)
-            k[4, 1, 2, 1]
-
-            sage: all(k(c) == k.from_polynomial(k(c).expand()) for c in IntegerVectors(n=5, k=4))
-            True
-
-            sage: T = crystals.Tableaux(['A', 4], shape=[4,2,1,1])
-            sage: k.from_polynomial(T.demazure_character([2]))
-            k[4, 1, 2, 1]
-        """
-        if f not in self._polynomial_ring:
-            try:  # to accept elements of SymbolicRing
-                from sage.calculus.var import var
-                f = f.substitute([d == var(f'z_{i}')
-                                  for i, d in enumerate(f.variables())])
-                f = self._polynomial_ring(f)
-            except AttributeError:
-                raise ValueError(f"f must be an element of {self._polynomial_ring}")
-
-        out = self.zero()
-
-        while f:
-            M = f.monomials()[0]
-            c = f.monomial_coefficient(M)
-
-            new_term = self._from_dict({self._build_index(*M.exponents()): c})
-
-            f -= new_term.expand()
-            out += new_term
-
-        return out
-
     def from_schubert_polynomial(self, x):
         r"""
-        Expand a Schubert polynomial in the key basis.
+        Expand a Schubert polynomial in ``self``.
 
         EXAMPLES::
 
@@ -745,144 +1246,186 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
         return out
 
 
-def divided_difference(f, i):
+class AtomPolynomialBasis(OperatorPolynomialBasis):
     r"""
-    Apply the ``i``-th divided difference operator to the polynomial ``f``.
+    The atom polynomial basis for a polynomial ring.
 
-    EXAMPLES::
+    For a full definition, see
+    `SymmetricFunctions.com <https://www.symmetricfunctions.com/key.htm#atom>`__.
+    Atom polynomials are indexed by weak compositions `\alpha` with no
+    trailing zeros. A basis element is given by
 
-        sage: from sage.combinat.key_polynomial import divided_difference
-        sage: k = KeyPolynomials(QQ)
-        sage: z = k.poly_gens()
-        sage: f = z[1]*z[2]^3 + z[1]*z[2]*z[3]
-        sage: divided_difference(f, 3)
-        z_3^2*z_1 + z_3*z_2*z_1 + z_2^2*z_1
+    .. MATH::
 
-        sage: k = KeyPolynomials(QQ, 4)
-        sage: z = k.poly_gens()
-        sage: f = z[1]*z[2]^3 + z[1]*z[2]*z[3]
-        sage: divided_difference(f, 3)
-        z_1*z_2^2 + z_1*z_2*z_3 + z_1*z_3^2
+        a_{\alpha} = \bar{\pi}_{\sigma} x^{\mu},
 
-        sage: k = KeyPolynomials(QQ)
-        sage: R = k.polynomial_ring(); R
+    where `\sigma` is the permutation of shortest length which sorts the
+    `\alpha` into a partition `\mu`.
+
+    EXAMPLES:
+
+    Atom polynomials are a basis, indexed by (weak) compositions,
+    for polynomial rings::
+
+        sage: a = AtomPolynomials(QQ)
+        sage: a([3,0,1,2])
+        a[3, 0, 1, 2]
+        sage: a([3,0,1,2])/2
+        1/2*a[3, 0, 1, 2]
+        sage: R = a.polynomial_ring(); R
         Infinite polynomial ring in z over Rational Field
+
+        sage: A = AtomPolynomials(GF(5)); A
+        Atom polynomial basis over Finite Field of size 5
+        sage: 2*A([3,0,1,2])
+        2*a[3, 0, 1, 2]
+        sage: 5*(A([3,0,1,2]) + A([3,1,1]))
+        0
+
+    We can expand them in the standard monomial basis::
+
+        sage: a([2,1,3,2]).expand()
+        z_3^2*z_2^3*z_1*z_0^2 + z_3^2*z_2^2*z_1^2*z_0^2
+
+        sage: a[0,2,2].expand()
+        z_2^2*z_1^2 + z_2^2*z_1*z_0 + z_2*z_1^2*z_0
+
+    If we have a polynomial, we can express it in the atom basis::
+
         sage: z = R.gen()
-        sage: divided_difference(z[1]*z[2]^3, 2)
-        -z_2^2*z_1 - z_2*z_1^2
-        sage: divided_difference(z[1]*z[2]*z[3], 3)
-        0
-        sage: divided_difference(z[1]*z[2]*z[3], 4)
-        z_2*z_1
-        sage: divided_difference(z[1]*z[2]*z[4], 4)
-        -z_2*z_1
+        sage: a.from_polynomial(z[2]^2*z[1]*z[0])
+        a[1, 1, 2]
+        sage: a.from_polynomial(z[2]^3*z[1]^2*z[0])
+        a[1, 2, 3]
 
-        sage: k = KeyPolynomials(QQ, 5)
-        sage: z = k.polynomial_ring().gens()
-        sage: divided_difference(z[1]*z[2]^3, 2)
-        -z_1^2*z_2 - z_1*z_2^2
-        sage: divided_difference(z[1]*z[2]*z[3], 3)
-        0
-        sage: divided_difference(z[1]*z[2]*z[3], 4)
-        z_1*z_2
-        sage: divided_difference(z[1]*z[2]*z[4], 4)
-        -z_1*z_2
+        sage: f = (z[3]^2*z[2]*z[0]^3 + z[3]^2*z[1]*z[0]^3 + z[3]*z[2]^2*z[0]^3
+        ....:      + 2*z[3]*z[2]*z[1]*z[0]^3 + z[3]*z[1]^2*z[0]^3
+        ....:      + z[2]^2*z[1]*z[0]^3 + z[2]*z[1]^2*z[0]^3)
+        sage: a.from_polynomial(f)
+        a[3, 0, 1, 2] + a[3, 0, 2, 1] + a[3, 1, 0, 2] + a[3, 1, 2]
+         + a[3, 2, 0, 1] + a[3, 2, 1]
+
+    Since the ring of atom polynomials may be regarded as a different
+    choice of basis for a polynomial ring, it forms an algebra, so
+    we have multiplication::
+
+        sage: a[10,5,2] * a[1,1,1]
+        a[11, 6, 3]
+
+    We can also multiply by polynomials in the monomial basis::
+
+        sage: a([10,9,1]) * z[0]
+        a[11, 9, 1]
+        sage: z[0] * a([10,9,1])
+        a[11, 9, 1]
+        sage: a([10,9,1]) * (z[0] + z[3])
+        a[10, 9, 1, 1] + a[11, 9, 1]
     """
-    P = parent(f)
-    if isinstance(P, InfinitePolynomialRing_sparse):
-        z = P.gen()
-    else:
-        z = P.gens()
+    Element = AtomPolynomial
+    _name = "Atom polynomial basis"
+    _prefix = 'a'
+    _operator = staticmethod(isobaric_divided_difference_bar)
 
-    si_f = f.subs({z[i]: z[i-1], z[i-1]: z[i]})
-    return (si_f - f) // (z[i] - z[i-1])
+    def from_key_polynomial(self, x):
+        r"""
+        Expand a key polynomial in ``self``.
 
+        EXAMPLES::
 
-def isobaric_divided_difference(f, w):
-    r"""
-    Apply the isobaric divided difference operator `\pi_w` to the
-    polynomial `f`.
+            sage: a = AtomPolynomials(ZZ)
+            sage: k = KeyPolynomials(ZZ)
+            sage: f = k[1,2,3]
+            sage: a.from_key_polynomial(f)
+            a[1, 2, 3] + a[1, 3, 2] + a[2, 1, 3] + a[2, 3, 1] + a[3, 1, 2] + a[3, 2, 1]
+            sage: a.from_key_polynomial(2)
+            2*a[]
+            sage: a(f)
+            a[1, 2, 3] + a[1, 3, 2] + a[2, 1, 3] + a[2, 3, 1] + a[3, 1, 2] + a[3, 2, 1]
 
-    ``w`` may be either a single index or a list of
-    indices of simple transpositions.
+            sage: a = AtomPolynomials(GF(7), 4)
+            sage: a.from_key_polynomial(f)
+            a[1, 2, 3, 0] + a[1, 3, 2, 0] + a[2, 1, 3, 0]
+             + a[2, 3, 1, 0] + a[3, 1, 2, 0] + a[3, 2, 1, 0]
 
-    .. WARNING::
+        TESTS::
 
-        The simple transpositions should be applied from left to right.
+            sage: a = AtomPolynomials(ZZ)
+            sage: a.from_key_polynomial(a([3,2]))
+            Traceback (most recent call last):
+            ...
+            ValueError: not a key polynomial
 
-    EXAMPLES::
+            sage: a = AtomPolynomials(ZZ)
+            sage: k = KeyPolynomials(ZZ)
+            sage: it = iter(a.basis().keys())
+            sage: for _ in range(50):
+            ....:     C = next(it)
+            ....:     assert a.from_key_polynomial(k.from_polynomial(a[C].expand())) == a[C], C
 
-        sage: from sage.combinat.key_polynomial import isobaric_divided_difference as idd
-        sage: R.<z> = InfinitePolynomialRing(GF(3))
-        sage: idd(z[1]^4*z[2]^2*z[4], 4)
-        0
+            sage: a = AtomPolynomials(ZZ, 4)
+            sage: k = KeyPolynomials(ZZ, 4)
+            sage: it = iter(a.basis().keys())
+            sage: for _ in range(50):
+            ....:     C = next(it)
+            ....:     assert a.from_key_polynomial(k.from_polynomial(a[C].expand())) == a[C], C
+        """
+        if x in self.base_ring():
+            return self(x)
 
-        sage: idd(z[1]^4*z[2]^2*z[3]*z[4], 3)
-        z_4*z_3^2*z_2*z_1^4 + z_4*z_3*z_2^2*z_1^4
+        if not isinstance(x, KeyPolynomial):
+            raise ValueError('not a key polynomial')
 
-        sage: idd(z[1]^4*z[2]^2*z[3]*z[4], [3, 4])
-        z_4^2*z_3*z_2*z_1^4 + z_4*z_3^2*z_2*z_1^4 + z_4*z_3*z_2^2*z_1^4
+        from sage.combinat.permutation import Permutations
 
-        sage: idd(z[1]^4*z[2]^2*z[3]*z[4], [4, 3])
-        z_4*z_3^2*z_2*z_1^4 + z_4*z_3*z_2^2*z_1^4
+        def on_basis(m):
+            w, mu = sorting_word(m)
+            if self._k and len(mu) < self._k:
+                mu += [0] * (self._k - len(mu))
+            dom = self[mu]
+            w = list(w)
+            if not w:
+                return dom
+            sigma = Permutations(max(w)+1).from_reduced_word(w)
+            return self.sum(dom.pibar(wp.reduced_word()) for wp in sigma.bruhat_smaller())
 
-        sage: idd(z[1]^2*z[2], [3, 2])
-        z_3*z_2^2 + z_3*z_2*z_1 + z_3*z_1^2 + z_2^2*z_1 + z_2*z_1^2
-    """
-    P = parent(f)
-    if isinstance(P, InfinitePolynomialRing_sparse):
-        z = P.gen()
-    else:
-        z = P.gens()
+        return self.linear_combination((on_basis(m), c) for m, c in x)
 
-    if not hasattr(w, "__iter__"):  # this allows us to pass i instead of a word
-        w = [w]
-    for i in w:
-        fp = z[i-1] * f
-        si_fp = fp.subs({z[i]: z[i-1], z[i-1]: z[i]})
-        f = (si_fp - fp) // (z[i] - z[i-1])
-    return f
+    def _coerce_map_from_(self, R):
+        r"""
+        Return the coercion map from ``R`` if it exists.
 
+        EXAMPLES::
 
-def sorting_word(alpha):
-    r"""
-    Get a reduced word for the permutation which sorts ``alpha``
-    into a partition.
+            sage: a = AtomPolynomials(QQ)
+            sage: m1 = a([3, 2, 4, 0]); m1
+            a[3, 2, 4]
+            sage: m2 = a(Composition([3, 2, 4])); m2
+            a[3, 2, 4]
+            sage: m1 == m2
+            True
 
-    The result is a list ``l = [i0, i1, i2, ...]`` where each ``ij``
-    is a positive integer such that it applies the simple
-    transposition `(i_j, i_j+1)`. The transpositions are applied
-    starting with ``i0``, then ``i1`` is applied, followed by ``i2``,
-    and so on. See :meth:`sage.combinat.permutation.Permutation.reduced_words`
-    for the convention used.
+            sage: R = a.polynomial_ring()
+            sage: z = R.gen()
+            sage: z[0] * a([4, 3, 3, 2])
+            a[5, 3, 3, 2]
 
-    EXAMPLES::
+            sage: X = SchubertPolynomialRing(QQ)
+            sage: a(X([4, 3, 2, 1]))
+            a[3, 2, 1]
+        """
+        P = self._polynomial_ring
+        if R is P:
+            return self.from_polynomial
 
-        sage: IV = IntegerVectors()
-        sage: from sage.combinat.key_polynomial import sorting_word
-        sage: list(sorting_word(IV([2,3,2]))[0])
-        [1]
-        sage: sorting_word(IV([2,3,2]))[1]
-        [3, 2, 2]
-        sage: list(sorting_word(IV([5,6,7]))[0])
-        [1, 2, 1]
-        sage: list(sorting_word(IV([0,3,2]))[0])
-        [2, 1]
-        sage: list(sorting_word(IV([0,3,0,2]))[0])
-        [2, 3, 1]
-        sage: list(sorting_word(IV([3,2,1]))[0])
-        []
-        sage: list(sorting_word(IV([2,3,3]))[0])
-        [2, 1]
-    """
-    w = []
-    L = list(alpha)
-    n = len(L)
+        if isinstance(R, KeyPolynomialBasis):
+            return self.from_key_polynomial
 
-    # bubble sort to get the shortest sorting word
-    for i in range(n-1):
-        for j in range(n-i-1):
-            if L[j] < L[j + 1]:
-                w.append(j+1)
-                L[j], L[j + 1] = L[j + 1], L[j]
-    return reversed(w), L
+        from sage.combinat.schubert_polynomial import SchubertPolynomialRing_xbasis
+        if isinstance(R, SchubertPolynomialRing_xbasis):
+            K = KeyPolynomialBasis(self.base_ring(), self._k, self._polynomial_ring)
+            return self._coerce_map_via([K], R)
+
+        phi = P.coerce_map_from(R)
+        if phi is not None:
+            return self.coerce_map_from(P) * phi
+        return None
