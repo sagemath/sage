@@ -1,15 +1,8 @@
 #include "Python.h"
 #include <stdbool.h>
 
-#if PY_VERSION_HEX >= 0x030C00A5
-// For Python 3.12 compatibility
 #define ob_digit(o)  (((PyLongObject*)o)->long_value.ob_digit)
-#else
-#define ob_digit(o)  (((PyLongObject*)o)->ob_digit)
-#endif
 
-#if PY_VERSION_HEX >= 0x030C00A7
-// For Python 3.12 compatibility
 // taken from cpython:Include/internal/pycore_long.h @ 3.12
 
 /* Long value tag bits:
@@ -57,39 +50,3 @@ _PyLong_SetSignAndDigitCount(PyLongObject *op, int sign, Py_ssize_t size)
     assert(sign != 0 || size == 0);
     op->long_value.lv_tag = TAG_FROM_SIGN_AND_SIZE(sign, (size_t)size);
 }
-
-#else
-// fallback for < 3.12
-
-static inline bool
-_PyLong_IsZero(const PyLongObject *op)
-{
-    return Py_SIZE(op) == 0;
-}
-
-static inline bool
-_PyLong_IsNegative(const PyLongObject *op)
-{
-    return Py_SIZE(op) < 0;
-}
-
-static inline bool
-_PyLong_IsPositive(const PyLongObject *op)
-{
-    return Py_SIZE(op) > 0;
-}
-
-static inline Py_ssize_t
-_PyLong_DigitCount(const PyLongObject *op)
-{
-    Py_ssize_t size = Py_SIZE(op);
-    return size < 0 ? -size : size;
-}
-
-static inline void
-_PyLong_SetSignAndDigitCount(PyLongObject *op, int sign, Py_ssize_t size)
-{
-    Py_SET_SIZE(op, sign < 0 ? -size : size);
-}
-
-#endif

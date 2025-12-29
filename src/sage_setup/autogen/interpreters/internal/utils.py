@@ -11,14 +11,12 @@
 
 """Miscellaneous utility routines used for the interpreter generator."""
 
-from __future__ import print_function, absolute_import
 
 import os
 import textwrap
 
 from jinja2 import Environment
 from jinja2.runtime import StrictUndefined
-
 
 # We share a single jinja2 environment among all templating in this
 # file.  We use trim_blocks=True (which means that we ignore white

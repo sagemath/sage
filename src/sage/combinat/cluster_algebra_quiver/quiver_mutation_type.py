@@ -885,7 +885,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
         # return CartanMatrix(cmat)
         return cmat
 
-    def is_irreducible(self):
+    def is_irreducible(self) -> bool:
         """
         Return ``True`` if ``self`` is irreducible.
 
@@ -897,7 +897,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
         """
         return self._info['irreducible']
 
-    def is_mutation_finite(self):
+    def is_mutation_finite(self) -> bool:
         """
         Return ``True`` if ``self`` is of finite mutation type.
 
@@ -912,7 +912,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
         """
         return self._info['mutation_finite']
 
-    def is_simply_laced(self):
+    def is_simply_laced(self) -> bool:
         """
         Return ``True`` if ``self`` is simply laced.
 
@@ -935,7 +935,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
         """
         return self._info['simply_laced']
 
-    def is_skew_symmetric(self):
+    def is_skew_symmetric(self) -> bool:
         """
         Return ``True`` if the B-matrix of ``self`` is skew-symmetric.
 
@@ -955,7 +955,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
         """
         return self._info['skew_symmetric']
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return ``True`` if ``self`` is of finite type.
 
@@ -974,7 +974,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
         """
         return self._info['finite']
 
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         Return ``True`` if ``self`` is of affine type.
 
@@ -990,10 +990,9 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
         """
         if self.is_irreducible():
             return self._info['affine']
-        else:
-            return False
+        return False
 
-    def is_elliptic(self):
+    def is_elliptic(self) -> bool:
         """
         Return ``True`` if ``self`` is of elliptic type.
 
@@ -1012,7 +1011,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
         else:
             return False
 
-    def properties(self):
+    def properties(self) -> None:
         """
         Print a scheme of all properties of ``self``.
 

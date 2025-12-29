@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Finite Dimensional Lie Algebras With Basis
 
@@ -1506,7 +1505,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             """
             return self.upper_central_series()[-1]
 
-        def is_abelian(self):
+        def is_abelian(self) -> bool:
             """
             Return if ``self`` is an abelian Lie algebra.
 
@@ -1788,7 +1787,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                                 vec = elt.to_vector()
                             else:
                                 vec = Lmod.coordinate_vector(elt.to_vector())
-                            for key, coeff in vec.iteritems():
+                            for key, coeff in vec.items():
                                 if not coeff:
                                     continue
                                 s, A = sgn(key, Z)

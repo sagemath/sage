@@ -3569,6 +3569,11 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: (1+p[2]).plethysm(p[2])
             p[] + p[4]
 
+        Fixed :issue:`41257`::
+
+            sage: s[[]](tensor([p[1], s[1]]))
+            p[] # s[]
+
         Check that degree one elements are treated in the correct way::
 
             sage: R.<a1,a2,a11,b1,b21,b111> = QQ[]
@@ -3646,11 +3651,11 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         if tensorflag:
             tparents = Px._sets
             lincomb = Px.linear_combination
-            elt = lincomb((prod(lincomb((tensor([p[r].plethysm(base(la))
+            elt = lincomb((prod((lincomb((tensor([p[r].plethysm(base(la))
                                                  for base, la in zip(tparents, trm)]),
                                          _raise_variables(c, r, degree_one))
                                         for trm, c in x)
-                                for r in mu),
+                                for r in mu), tensor([base.one() for base in tparents])),
                            d)
                           for mu, d in p(self))
             return Px(elt)
@@ -5158,7 +5163,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             -q^3 + 2*q^2 - 2*q + 1
             sage: a.scalar_qt(a,5,7) # q=5 and t=7
             490/1539
-            sage: (x,y) = var('x,y')                                                    # needs sage.symbolic
+            sage: x, y = var('x,y')                                                    # needs sage.symbolic
             sage: a.scalar_qt(a, q=x, t=y)                                              # needs sage.symbolic
             1/3*(x^3 - 1)/(y^3 - 1) + 2/3*(x - 1)^3/(y - 1)^3
             sage: Rn = QQ['q','t','y','z'].fraction_field()

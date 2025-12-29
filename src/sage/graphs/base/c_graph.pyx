@@ -1418,7 +1418,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         else:
             self._loops = False
 
-    def num_edges(self, directed):
+    def n_edges(self, directed):
         """
         Return the number of edges in ``self``.
 
@@ -1434,13 +1434,13 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         .. SEEALSO::
 
-            - :meth:`num_verts`
+            - :meth:`n_vertices`
               -- return the order of this graph.
 
         EXAMPLES::
 
             sage: G = Graph(graphs.PetersenGraph())
-            sage: G._backend.num_edges(False)
+            sage: G._backend.n_edges(False)
             15
 
         TESTS:
@@ -1485,23 +1485,23 @@ cdef class CGraphBackend(GenericGraphBackend):
             2
             sage: from sage.graphs.base.sparse_graph import SparseGraphBackend
             sage: S = SparseGraphBackend(7)
-            sage: S.num_edges(False)
+            sage: S.n_edges(False)
             0
             sage: S.loops(True)
             sage: S.add_edge(1, 1, None, directed=False)
-            sage: S.num_edges(False)
+            sage: S.n_edges(False)
             1
             sage: S.multiple_edges(True)
             sage: S.add_edge(1, 1, None, directed=False)
-            sage: S.num_edges(False)
+            sage: S.n_edges(False)
             2
             sage: from sage.graphs.base.dense_graph import DenseGraphBackend
             sage: D = DenseGraphBackend(7)
-            sage: D.num_edges(False)
+            sage: D.n_edges(False)
             0
             sage: D.loops(True)
             sage: D.add_edge(1, 1, None, directed=False)
-            sage: D.num_edges(False)
+            sage: D.n_edges(False)
             1
         """
         if directed:
@@ -1521,7 +1521,9 @@ cdef class CGraphBackend(GenericGraphBackend):
             i = (i - k) // 2
             return i + k
 
-    def num_verts(self):
+    num_edges = n_edges
+
+    def n_vertices(self):
         """
         Return the number of vertices in ``self``.
 
@@ -1529,16 +1531,18 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         .. SEEALSO::
 
-            - :meth:`num_edges`
+            - :meth:`n_edges`
               -- return the number of (directed) edges in this graph.
 
         EXAMPLES::
 
             sage: G = Graph(graphs.PetersenGraph())
-            sage: G._backend.num_verts()
+            sage: G._backend.n_vertices()
             10
         """
         return self.cg().num_verts
+
+    num_verts = n_vertices
 
     cdef bint _delete_edge_before_adding(self) noexcept:
         """
@@ -1707,7 +1711,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: D.add_vertex([])
             Traceback (most recent call last):
             ...
-            TypeError: unhashable type: 'list'
+            TypeError: ...unhashable type: 'list'...
 
         ::
 
@@ -1716,7 +1720,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: S.add_vertex([])
             Traceback (most recent call last):
             ...
-            TypeError: unhashable type: 'list'
+            TypeError: ...unhashable type: 'list'...
         """
         retval = None
         if name is None:

@@ -8,7 +8,11 @@ for l in bzip2 texinfo polymake; do
     fi
 done
 export PATH
-PKG_CONFIG_PATH="$HOMEBREW/lib/pkgconfig:$PKG_CONFIG_PATH"
+if [ -z "$PKG_CONFIG_PATH" ]; then
+    PKG_CONFIG_PATH="$HOMEBREW/lib/pkgconfig"
+else
+    PKG_CONFIG_PATH="$HOMEBREW/lib/pkgconfig:$PKG_CONFIG_PATH"
+fi
 # libpng.pc depends on zlib.pc
 for l in openblas openssl readline sqlite zlib; do
     if [ -d "$HOMEBREW/opt/$l/lib/pkgconfig" ]; then

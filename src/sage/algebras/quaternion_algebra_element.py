@@ -4,9 +4,11 @@
 # Backward compatible unpickle functions
 #######################################################################
 
-from .quatalg.quaternion_algebra_element import (QuaternionAlgebraElement_generic,
-                                                QuaternionAlgebraElement_rational_field,
-                                                QuaternionAlgebraElement_number_field)
+from sage.algebras.quatalg.quaternion_algebra_element import (
+    QuaternionAlgebraElement_generic,
+    QuaternionAlgebraElement_number_field,
+    QuaternionAlgebraElement_rational_field,
+)
 
 
 def unpickle_QuaternionAlgebraElement_generic_v0(*args):

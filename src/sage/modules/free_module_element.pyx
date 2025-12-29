@@ -116,6 +116,7 @@ cimport cython
 from cpython.slice cimport PySlice_GetIndicesEx
 
 from sage.categories.rings import Rings
+from sage.misc.superseded import deprecated_function_alias
 from sage.structure.sequence import Sequence
 from sage.structure.element cimport Element, Vector
 from sage.structure.element import canonical_coercion
@@ -693,7 +694,7 @@ def prepare(v, R, degree=None):
     if isinstance(v, dict):
         # convert to a list
         X = [0]*degree
-        for key, value in v.iteritems():
+        for key, value in v.items():
             X[key] = value
         v = X
     # convert to a Sequence over common ring
@@ -1084,7 +1085,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         Create the multiplication table of `GF(4)` using GP::
 
             sage: # needs sage.libs.pari
-            sage: k.<a> = GF(4, impl='pari_ffelt')
+            sage: k.<a> = GF(4, implementation="pari_ffelt")
             sage: v = gp(vector(list(k)))
             sage: v
             [0, 1, a, a + 1]
@@ -1711,18 +1712,11 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             <...generator object at ...>
             sage: list(v.items())                                                       # needs sage.symbolic
             [(0, 1), (1, 2/3), (2, pi)]
-
-        TESTS:
-
-        Using iteritems as an alias::
-
-            sage: list(v.iteritems())                                                   # needs sage.symbolic
-            [(0, 1), (1, 2/3), (2, pi)]
         """
         cdef dict d = self.dict(copy=False)
-        yield from d.iteritems()
+        yield from d.items()
 
-    iteritems = items
+    iteritems = deprecated_function_alias(40960, items)
 
     def __abs__(self):
         """
@@ -3305,10 +3299,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         V = self.parent()
         R = self.base_ring()
         if self.is_sparse():
-            # this could be a dictionary comprehension in Python 3
-            entries = {}
-            for index, entry in self.iteritems():
-                entries[index] = entry.conjugate()
+            entries = {index: entry.conjugate()
+                       for index, entry in self.items()}
         else:
             entries = [entry.conjugate() for entry in self]
         return V(vector(R, self._degree, entries))
@@ -5021,7 +5013,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
                 e = entries_dict
                 entries_dict = {}
                 try:
-                    for k, x in (<dict> e).iteritems():
+                    for k, x in (<dict> e).items():
                         x = coefficient_ring(x)
                         if x:
                             entries_dict[k] = x
@@ -5042,7 +5034,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             (2, 4/3, 2*pi)
         """
         cdef dict v = dict((<FreeModuleElement_generic_sparse>right)._entries)
-        for i, a in left._entries.iteritems():
+        for i, a in left._entries.items():
             if i in v:
                 sum = (<Element>a)._add_(<Element> v[i])
                 if sum:
@@ -5062,7 +5054,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             (0, 0, 0)
         """
         cdef dict v = dict(left._entries)   # dict to make a copy
-        for i, a in (<FreeModuleElement_generic_sparse>right)._entries.iteritems():
+        for i, a in (<FreeModuleElement_generic_sparse>right)._entries.items():
             if i in v:
                 diff = (<Element> v[i])._sub_(<Element>a)
                 if diff:
@@ -5083,7 +5075,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         """
         cdef dict v = {}
         if right:
-            for i, a in self._entries.iteritems():
+            for i, a in self._entries.items():
                 prod = (<Element>a)._mul_(right)
                 if prod:
                     v[i] = prod
@@ -5099,7 +5091,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         """
         cdef dict v = {}
         if left:
-            for i, a in self._entries.iteritems():
+            for i, a in self._entries.items():
                 prod = left._mul_(a)
                 if prod:
                     v[i] = prod
@@ -5152,7 +5144,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         z = left.base_ring().zero()
         if left.base_ring() is not right.base_ring():
             z *= right.base_ring().zero()
-        for i, a in left._entries.iteritems():
+        for i, a in left._entries.items():
             if i in e:
                 z += a * e[i]
         return z
@@ -5168,7 +5160,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         # Component wise vector * vector multiplication.
         cdef dict e = (<FreeModuleElement_generic_sparse>right)._entries
         cdef dict v = {}
-        for i, a in left._entries.iteritems():
+        for i, a in left._entries.items():
             if i in e:
                 prod = (<Element>a)._mul_(<Element> e[i])
                 if prod:
@@ -5199,8 +5191,8 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             sage: a < b
             True
         """
-        a = sorted((<FreeModuleElement_generic_sparse>left)._entries.iteritems())
-        b = sorted((<FreeModuleElement_generic_sparse>right)._entries.iteritems())
+        a = sorted((<FreeModuleElement_generic_sparse>left)._entries.items())
+        b = sorted((<FreeModuleElement_generic_sparse>right)._entries.items())
 
         return richcmp([(-x, y) for x, y in a], [(-x, y) for x, y in b], op)
 
@@ -5220,12 +5212,12 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
 
         Using iteritems as an alias::
 
-            sage: list(v.iteritems())                                                   # needs sage.symbolic
+            sage: list(v.items())                                                   # needs sage.symbolic
             [(0, 1), (1, 2/3), (2, pi)]
         """
-        return iter(self._entries.iteritems())
+        return iter(self._entries.items())
 
-    iteritems = items
+    iteritems = deprecated_function_alias(40960, items)
 
     def __reduce__(self):
         """
@@ -5291,7 +5283,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             # Loop over the old dict and convert old index n to new
             # index k in slice
             newentries = {}
-            for n, x in self._entries.iteritems():
+            for n, x in self._entries.items():
                 if min <= n <= max and n % step == mod:
                     k = (n - start) // step
                     newentries[k] = x
@@ -5388,7 +5380,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             d = d.denominator()
         except AttributeError:
             return d
-        for y in self._entries.itervalues():
+        for y in self._entries.values():
             d = d.lcm(y.denominator())
         return d
 
@@ -5447,7 +5439,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         """
         z = self._parent.coordinate_ring().zero()
         cdef list v = [z] * self._degree
-        for i, a in self._entries.iteritems():
+        for i, a in self._entries.items():
             v[i] = a
         return v
 
@@ -5516,4 +5508,4 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         if prec is None:
             prec = digits_to_bits(digits)
         return vector({k: v.numerical_approx(prec, algorithm=algorithm)
-                       for k, v in self._entries.iteritems()}, sparse=True)
+                       for k, v in self._entries.items()}, sparse=True)

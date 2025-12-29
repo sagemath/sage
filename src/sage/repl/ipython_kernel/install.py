@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Installing the SageMath Jupyter Kernel and Extensions
 
@@ -258,15 +257,23 @@ class SageKernelSpec:
         try:
             spec = get_kernel_spec(ident)
         except NoSuchKernel:
-            warnings.warn(f'no kernel named {ident} is accessible; '
+            warnings.warn(f'No kernel named {ident} is accessible; '
                           'check your Jupyter configuration '
-                          '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html)')
+                          '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html).')
         else:
+            import sys
+            import shutil
             from pathlib import Path
-            if Path(spec.argv[0]).resolve() != Path(os.path.join(SAGE_VENV, 'bin', 'sage')).resolve():
-                warnings.warn(f'the kernel named {ident} does not seem to correspond to this '
+            kernel_executable = shutil.which(spec.argv[0])
+            if not kernel_executable:
+                warnings.warn(f'The kernel named {ident} does not seem to be runnable; '
+                              'check your Jupyter configuration '
+                              '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html).')
+                return
+            if Path(kernel_executable).resolve() != Path(sys.executable).resolve():
+                warnings.warn(f'The kernel named {ident} does not seem to correspond to this '
                               'installation of SageMath; check your Jupyter configuration '
-                              '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html)')
+                              '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html).')
 
 
 def have_prerequisites(debug=True) -> bool:

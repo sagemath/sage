@@ -350,7 +350,7 @@ class MPowerSeries(PowerSeries):
             sage: B(z)
             Traceback (most recent call last):
             ...
-            TypeError: Cannot coerce input to polynomial ring.
+            TypeError: cannot coerce input to polynomial ring
 
             sage: D.<s> = PowerSeriesRing(QQ)
             sage: s.parent() is D
@@ -366,19 +366,21 @@ class MPowerSeries(PowerSeries):
         self._PowerSeries__is_gen = is_gen
 
         try:
-            prec = min(prec, x.prec()) # use precision of input, if defined
+            prec = min(prec, x.prec())  # use precision of input, if defined
         except AttributeError:
             pass
 
         # set the correct background value, depending on what type of input x is
         try:
-            xparent = x.parent() # 'int' types have no parent
+            xparent = x.parent()  # 'int' types have no parent
         except AttributeError:
             xparent = None
 
         # test whether x coerces to background univariate
         # power series ring of parent
-        if isinstance(xparent, (PowerSeriesRing_generic, MPowerSeriesRing_generic, LazyPowerSeriesRing)):
+        if isinstance(xparent, (PowerSeriesRing_generic,
+                                MPowerSeriesRing_generic,
+                                LazyPowerSeriesRing)):
             # x is either a multivariate or univariate power series
             #
             # test whether x coerces directly to designated parent
@@ -1290,7 +1292,7 @@ class MPowerSeries(PowerSeries):
         EXAMPLES::
 
             sage: H = QQ[['x,y']]
-            sage: (x,y) = H.gens()
+            sage: x, y = H.gens()
             sage: h = -y^2 - x*y^3 - 6/5*y^6 - x^7 + 2*x^5*y^2 + H.O(10)
             sage: h
             -y^2 - x*y^3 - 6/5*y^6 - x^7 + 2*x^5*y^2 + O(x, y)^10

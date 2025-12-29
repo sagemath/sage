@@ -396,7 +396,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         cdef list v = self.fetch('list')
         if v is None:
             v = [self._zero]*(self._nrows * self._ncols)
-            for (i,j), x in self._entries.iteritems():
+            for (i,j), x in self._entries.items():
                 v[i*self._ncols + j] = x
             self.cache('list', v)
         return v
@@ -498,7 +498,7 @@ def Matrix_sparse_from_rows(X):
     R = X[0].base_ring()
     ncols = X[0].degree()
     for i from 0 <= i < len(X):
-        for j, x in X[i].iteritems():
-            entries[(i,j)] = x
+        for j, x in X[i].items():
+            entries[(i, j)] = x
     M = matrix_space.MatrixSpace(R, len(X), ncols, sparse=True)
     return M(entries, coerce=False, copy=False)

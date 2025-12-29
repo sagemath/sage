@@ -739,7 +739,7 @@ class KlyachkoBundle_class(SageObject):
 
         return richcmp(self._filt, other._filt, op)
 
-    def is_isomorphic(self, other):
+    def is_isomorphic(self, other) -> bool:
         """
         Test whether two bundles are isomorphic.
 

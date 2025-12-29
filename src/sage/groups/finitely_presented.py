@@ -1616,7 +1616,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         """
         Return the Alexander matrix of the group.
 
-        This matrix is given by the fox derivatives of the relations
+        This matrix is given by the Fox derivatives of the relations
         with respect to the generators.
 
         - ``im_gens`` -- (optional) the images of the generators

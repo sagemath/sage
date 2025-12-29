@@ -19,13 +19,8 @@ on:
     paths:
       - '.github/workflows/ci-distro.yml'
       - 'build/pkgs/**'
+      - 'build/make/**'
       - 'configure.ac'
-      - '!build/pkgs/sage_conf/**'
-      - '!build/pkgs/sage_docbuild/**'
-      - '!build/pkgs/sage_setup/**'
-      - '!build/pkgs/sage_sws2rst/**'
-      - '!build/pkgs/sagelib/**'
-      - '!build/pkgs/sagemath_*/**'
   push:
     tags:
       - '*'
@@ -35,7 +30,7 @@ on:
 env:
   TARGETS_PRE: all-sage-local
   TARGETS: build
-  TARGETS_OPTIONAL: ptest
+  TARGETS_OPTIONAL: ptestlong
 
 permissions:
   packages: write
@@ -56,7 +51,7 @@ jobs:
       # FIXME: duplicated from env.TARGETS
       targets_pre: all-sage-local
       targets: build
-      targets_optional: ptest
+      targets_optional: ptestlong
       tox_system_factors: >-
           ["ubuntu-jammy"]
       tox_packages_factors: >-
@@ -71,7 +66,7 @@ jobs:
       docker_targets: "with-system-packages configured with-targets-pre with-targets with-targets-optional"
       targets_pre: all-sage-local
       targets: build
-      targets_optional: ptest
+      targets_optional: ptestlong
       tox_packages_factors: >-
           ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/

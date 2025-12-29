@@ -237,7 +237,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         vecs = [[(d * c).numerator() for c in v] for v in vecs]
         return self._ideal_from_vectors_and_denominator(vecs, d, check=False)
 
-    def _ideal_from_vectors_and_denominator(self, vecs, d=1, check=True):
+    def _ideal_from_vectors_and_denominator(self, vecs, d=1, check: bool = True):
         """
         Return an ideal generated as a module by vectors divided by ``d`` over
         the polynomial ring underlying the rational function field.

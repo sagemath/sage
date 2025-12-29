@@ -1842,8 +1842,8 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         z = self.coefficient_ring().zero()
         o = self.coefficient_ring().one()
         e = self.coefficient_ring().an_element()
-        return self(list(Matrix([[o, z], [i * o, o]])
-                         for i, _ in enumerate(self.alphabet())),
+        return self([Matrix([[o, z], [i * o, o]])
+                     for i, _ in enumerate(self.alphabet())],
                     vector([z, e]), right=vector([e, z]))
 
     def some_elements(self, **kwds):

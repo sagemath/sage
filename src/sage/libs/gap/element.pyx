@@ -16,14 +16,16 @@ elements. For general information about GAP, you should read the
 # ****************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
+from libc.stdlib cimport free
 
 from sage.libs.gap.gap_includes cimport *
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.util cimport *
 from sage.libs.gap.util import GAPError, gap_sig_on, gap_sig_off
 from sage.libs.gmp.mpz cimport *
-from sage.libs.gmp.pylong cimport mpz_get_pylong
+from sage.libs.gmp.pylong cimport mpz_get_pylong, mpz_set_pylong
 from sage.cpython.string cimport str_to_bytes, char_to_str
+from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
@@ -193,11 +195,12 @@ cdef Obj make_gap_record(sage_dict) except NULL:
         sage: libgap({'a': 1, 'b':123})   # indirect doctest
         rec( a := 1, b := 123 )
     """
-    data = [ (str(key), libgap(value)) for key, value in sage_dict.iteritems() ]
-
+    cdef list data
     cdef Obj rec
     cdef GapElement val
     cdef UInt rnam
+
+    data = [(str(key), libgap(value)) for key, value in sage_dict.items()]
 
     try:
         GAP_Enter()
@@ -211,22 +214,81 @@ cdef Obj make_gap_record(sage_dict) except NULL:
         GAP_Leave()
 
 
-cdef Obj make_gap_integer(sage_int) except NULL:
+cdef extern from *:
+    long __BYTE_ORDER__, __ORDER_LITTLE_ENDIAN__
+
+
+cdef Obj make_gap_integer_from_mpz(mpz_srcptr z) except NULL:
     """
-    Convert Sage integer into Gap integer
+    Internal helper to convert ``mpz`` integer into ``Gap`` integer.
+    """
+    cdef size_t num_gmp_limbs = mpz_size(z)
+    cdef void* temp
+    cdef size_t num_gap_words
+    if sizeof(mp_limb_t) == sizeof(UInt) or (
+            __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ and sizeof(mp_limb_t) * num_gmp_limbs % sizeof(UInt) == 0):
+        # use GMP internal to avoid memory allocation
+        num_gap_words = num_gmp_limbs * sizeof(mp_limb_t) / sizeof(UInt) if sizeof(mp_limb_t) != sizeof(UInt) else num_gmp_limbs
+        try:
+            GAP_Enter()
+            return GAP_MakeObjInt(<const UInt*>z._mp_d, -num_gap_words if mpz_sgn(z) < 0 else num_gap_words)
+        finally:
+            GAP_Leave()
+    else:
+        temp = mpz_export(NULL, &num_gap_words, -1, sizeof(UInt), 0, 0, z)  # because of sage.ext.memory, this uses sage_sig_malloc
+        try:
+            GAP_Enter()
+            return GAP_MakeObjInt(<const UInt*>temp, -num_gap_words if mpz_sgn(z) < 0 else num_gap_words)
+        finally:
+            GAP_Leave()
+            free(temp)
+
+
+def make_GapElement_Integer_from_sage_integer(parent, Integer x):
+    """
+    Internal helper to convert Sage :class:`~sage.rings.integer.Integer` into GapElement objects.
+    Not to be used directly, use ``libgap(x)`` instead.
+
+    TESTS::
+
+        sage: for x in [0, 1, 2**31, 2**32, 2**63, 2**64, 2**128]:
+        ....:     for y in [x, -x, x-1]:
+        ....:         assert str(libgap(y)) == str(y), y
+
+    Check that the following is fast (i.e. no conversion to decimal is performed)::
+
+        sage: ignore = libgap(1<<500000000)
+    """
+    return make_GapElement_Integer(parent, make_gap_integer_from_mpz(x.value))
+
+
+cdef Obj make_gap_integer(x) except NULL:
+    """
+    Convert Python integer into Gap integer. Not to be used directly, use ``libgap(x)`` instead.
 
     INPUT:
 
-    - ``sage_int`` -- Sage integer
+    - ``x`` -- Python ``int`` object
 
     OUTPUT: the integer as a GAP ``Obj``
 
     TESTS::
 
-        sage: libgap(1)   # indirect doctest
-        1
+        sage: for x in [0, 1, 2**31, 2**32, 2**63, 2**64, 2**128]:
+        ....:     for y in [x, -x, x-1]:
+        ....:         assert str(libgap(int(y))) == str(y), y
+
+    Check that the following is fast (i.e. no conversion to decimal is performed)::
+
+        sage: ignore = libgap(int(1<<500000000))
     """
-    return GAP_NewObjIntFromInt(<int>sage_int)
+    cdef mpz_t temp
+    mpz_init(temp)
+    try:
+        mpz_set_pylong(temp, x)
+        return make_gap_integer_from_mpz(temp)
+    finally:
+        mpz_clear(temp)
 
 
 cdef Obj make_gap_string(sage_string) except NULL:
@@ -2167,7 +2229,9 @@ cdef class GapElement_Ring(GapElement):
         """
         Construct the Sage integers.
 
-        EXAMPLES::
+        This method is not meant to be called directly, use :meth:`sage` instead.
+
+        TESTS::
 
             sage: libgap.eval('Integers').ring_integer()
             Integer Ring
@@ -2178,7 +2242,9 @@ cdef class GapElement_Ring(GapElement):
         """
         Construct the Sage rationals.
 
-        EXAMPLES::
+        This method is not meant to be called directly, use :meth:`sage` instead.
+
+        TESTS::
 
             sage: libgap.eval('Rationals').ring_rational()
             Rational Field
@@ -2189,7 +2255,9 @@ cdef class GapElement_Ring(GapElement):
         """
         Construct a Sage integer mod ring.
 
-        EXAMPLES::
+        This method is not meant to be called directly, use :meth:`sage` instead.
+
+        TESTS::
 
             sage: libgap.eval('ZmodnZ(15)').ring_integer_mod()
             Ring of integers modulo 15
@@ -2199,9 +2267,21 @@ cdef class GapElement_Ring(GapElement):
 
     def ring_finite_field(self, var='a'):
         """
-        Construct an integer ring.
+        Construct a finite field.
 
-        EXAMPLES::
+        This method is not meant to be called directly, use :meth:`sage` instead.
+
+        Note that for non-prime finite fields, this method is likely **unintended**,
+        it always use the default-constructed finite field with ``var`` provided,
+        which means the ``DefiningPolynomial`` of the GAP field is often not the same as the
+        ``.modulus()`` of the Sage field. They are isomorphic, but the isomorphism may be
+        difficult to compute.
+
+        INPUT:
+
+        - ``var`` -- string (default: 'a'); name of the generator of the finite field
+
+        TESTS::
 
             sage: libgap.GF(3,2).ring_finite_field(var='A')
             Finite Field in A of size 3^2
@@ -2212,9 +2292,11 @@ cdef class GapElement_Ring(GapElement):
 
     def ring_cyclotomic(self):
         """
-        Construct an integer ring.
+        Construct a cyclotomic field.
 
-        EXAMPLES::
+        This method is not meant to be called directly, use :meth:`sage` instead.
+
+        TESTS::
 
             sage: libgap.CyclotomicField(6).ring_cyclotomic()
             Cyclotomic Field of order 3 and degree 2
@@ -2227,7 +2309,9 @@ cdef class GapElement_Ring(GapElement):
         """
         Construct a polynomial ring.
 
-        EXAMPLES::
+        This method is not meant to be called directly, use :meth:`sage` instead.
+
+        TESTS::
 
             sage: B = libgap(QQ['x'])
             sage: B.ring_polynomial()

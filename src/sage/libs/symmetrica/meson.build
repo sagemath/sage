@@ -15,7 +15,7 @@ py.install_sources(
   subdir: 'sage/libs/symmetrica',
 )
 
-extension_data = {'symmetrica' : files('symmetrica.pyx')}
+extension_data = {'symmetrica': files('symmetrica.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(
