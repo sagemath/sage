@@ -153,7 +153,7 @@ case $system:$command in
         fi
         ;;
     @(fedora*|redhat*|centos*):install)
-        [ "$YES" = yes ] && options="$options -y"
+        [ "$YES" = yes ] && options="$options -y --allowerasing"
         if [ "$IGNORE_MISSING" = yes ]; then
             if dnf install --help 2>&1 | grep -q -- --skip-unavailable; then
                 options="$options --skip-unavailable"

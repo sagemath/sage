@@ -300,6 +300,16 @@ REFERENCES:
 .. [Ap1997] \T. Apostol, Modular functions and Dirichlet series in
             number theory, Springer, 1997 (2nd ed), section 3.7--3.9.
 
+.. [AP2010] Federico Ardila and Alexander Postnikov.
+            *Combinatorics and geometry of power ideals*.
+            Trans. Amer. Math. Soc. **362** no. 8 (2010), pp. 4357-4384.
+            :arxiv:`0809.2143`.
+
+.. [AP2015] Federico Ardila and Alexander Postnikov. *Correction to
+            "Combinatorics and geometry of power ideals": Two counterexamples
+            for power ideals of hyperplane arrangements*. Trans. Amer. Math.
+            Soc. **367** (2015). :doi:`10.1090/S0002-9947-2015-06071-1`.
+
 .. [AP2024] William Atherton, Dmitrii V. Pasechnik, *Decline and Fall of the
             ICALP 2008 Modular Decomposition algorithm*, 2024.
             :arxiv:`2404.14049`.
@@ -563,6 +573,11 @@ REFERENCES:
 .. [BCDGNPY2019] \Z. Bao, A. Chakraborti, N. Datta, J. Guo, M. Nandi, T. Peyrin, K. Yasuda.
                  "PHOTON-BeetleAuthenticated Encryption and Hash Family"
                  https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/PHOTON-Beetle-spec.pdf
+
+.. [BF1976] George Phillip Barker and James Foran.
+            *Self-Dual Cones in Euclidean Spaces*.
+            Linear Algebra and its Applications, 13(1-2):147-155, 1976.
+            :doi:`10.1016/0024-3795(76)90053-7`.
 
 .. [BH1965] \L. D. Baumert, M. Hall Jr.
             *A new construction for Hadamard matrices*.
@@ -3569,6 +3584,10 @@ REFERENCES:
 
 .. [HR2005]  Tom Halverson and Arun Ram. *Partition algebras*.
              Euro. J. Combin. **26** (2005) 869--921.
+
+.. [HR2011]  Olga Holtz and Amos Ron. *Zonotopal algebra*.
+             Adv. Math. **227**, no. 2, (2011) 847--894.
+             doi:`10.1016/j.aim.2011.02.012`, :arxiv:`0708.2632`.
 
 .. [HR2016]  Clemens Heuberger and Roswitha Rissner, *Computing
              `J`-Ideals of a Matrix Over a Principal Ideal Domain*,

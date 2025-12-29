@@ -86,10 +86,11 @@ class PBWDatum():
                 self.long_word == other_PBWDatum.long_word and
                 self.lusztig_datum == other_PBWDatum.lusztig_datum)
 
-    def is_equivalent_to(self, other_pbw_datum):
+    def is_equivalent_to(self, other_pbw_datum) -> bool:
         r"""
         Return whether ``self`` is equivalent to ``other_pbw_datum``.
-        modulo the tropical Plücker relations.
+
+        Here equivalent means modulo the tropical Plücker relations.
 
         EXAMPLES::
 
