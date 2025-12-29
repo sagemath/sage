@@ -27,11 +27,11 @@ py.install_sources(
 )
 
 extension_data = {
-  'apply' : files('apply.pyx'),
-  'heilbronn' : files('heilbronn.pyx'),
-  'manin_symbol' : files('manin_symbol.pyx'),
-  'p1list' : files('p1list.pyx'),
-  'relation_matrix_pyx' : files('relation_matrix_pyx.pyx'),
+  'apply': files('apply.pyx'),
+  'heilbronn': files('heilbronn.pyx'),
+  'manin_symbol': files('manin_symbol.pyx'),
+  'p1list': files('p1list.pyx'),
+  'relation_matrix_pyx': files('relation_matrix_pyx.pyx'),
 }
 
 foreach name, pyx : extension_data

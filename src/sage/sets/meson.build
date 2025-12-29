@@ -29,11 +29,11 @@ py.install_sources(
 )
 
 extension_data = {
-  'disjoint_set' : files('disjoint_set.pyx'),
-  'family' : files('family.pyx'),
-  'finite_set_map_cy' : files('finite_set_map_cy.pyx'),
-  'pythonclass' : files('pythonclass.pyx'),
-  'recursively_enumerated_set' : files('recursively_enumerated_set.pyx'),
+  'disjoint_set': files('disjoint_set.pyx'),
+  'family': files('family.pyx'),
+  'finite_set_map_cy': files('finite_set_map_cy.pyx'),
+  'pythonclass': files('pythonclass.pyx'),
+  'recursively_enumerated_set': files('recursively_enumerated_set.pyx'),
 }
 
 foreach name, pyx : extension_data

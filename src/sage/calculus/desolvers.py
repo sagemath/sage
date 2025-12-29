@@ -75,7 +75,8 @@ import os
 import shutil
 
 from sage.calculus.functional import diff
-from sage.interfaces.maxima_lib import maxima
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.interfaces.maxima_lib","maxima")
 from sage.misc.functional import N
 from sage.rings.real_mpfr import RealField
 from sage.structure.element import Expression
@@ -1620,7 +1621,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
             assert len(des) == 1
             dvar = dvars[0]
             de = des[0]
-            func = fast_float(de, dvar, ivar)
+            func = lambda y, t: fast_float(de, dvar, ivar)(y.item(), t)
             if not compute_jac:
                 Dfun = None
             else:

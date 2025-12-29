@@ -274,6 +274,102 @@ def FibonacciTree(n):
     return T
 
 
+def Caterpillar(spine):
+    r"""
+    Return the caterpillar tree with given spine sequence.
+
+    A caterpillar tree consists of leaves attached to a path (the "spine").
+
+    INPUT:
+
+    - ``spine`` -- list of nonnegative integers in the form
+       `[a_1, a_2, \dots, a_n]`, where `a_i` is the number of leaves adjacent
+       to the `i`-th vertex on the spine (except for the first and last vertex,
+       which have `a_1 + 1` and `a_n + 1` leaf-neighbors, respectively)
+
+    OUTPUT:
+
+    A caterpillar tree of diameter `n+1` on `n + 2 + \sum_{i=1}^n a_i` vertices,
+    `n` of which are not leaves.
+
+    PLOTTING: Upon construction, the position dictionary is filled to override
+    the spring-layout algorithm if the returned graph does not have too many
+    vertices. The spine vertices are positioned on a straight line together
+    with two leaves at its ends. Every edge in the drawing has unit length.
+
+    EXAMPLES:
+
+    Caterpillars with all-zero spine sequence are paths::
+
+        sage: graphs.Caterpillar([]).is_isomorphic(graphs.PathGraph(2))
+        True
+        sage: graphs.Caterpillar([0]).is_isomorphic(graphs.PathGraph(3))
+        True
+        sage: graphs.Caterpillar([0, 0]).is_isomorphic(graphs.PathGraph(4))
+        True
+
+    Caterpillars with singleton spine are stars::
+
+        sage: graphs.Caterpillar([1]).is_isomorphic(graphs.StarGraph(3))
+        True
+        sage: graphs.Caterpillar([2]).is_isomorphic(graphs.StarGraph(4))
+        True
+        sage: graphs.Caterpillar([3]).is_isomorphic(graphs.StarGraph(5))
+        True
+
+    Distinct spine sequences can yield isomorphic caterpillars::
+
+        sage: graphs.Caterpillar([1,1,2]).is_isomorphic(graphs.Caterpillar([2,1,1]))
+        True
+
+    TESTS:
+
+    Generated graphs have diameter ``len(spine) + 1``::
+
+        sage: graphs.Caterpillar([7]).diameter()
+        2
+        sage: graphs.Caterpillar([2,2,2,2]).diameter()
+        5
+        sage: graphs.Caterpillar([0,1,1,0]).diameter()
+        5
+    """
+    spine = list(spine)
+    cdef int spine_len = len(spine)
+    cdef int n_vertices = spine_len + 2 + sum(spine)
+    T = Graph(n_vertices, name=f"Caterpillar({','.join(map(str, spine))})")
+
+    # add spine
+    for i in range(spine_len - 1):
+        T._backend.add_edge(i, i + 1, None, False)
+
+    # add a leaf at both ends of the spine
+    T._backend.add_edge(spine_len + 1, 0, None, False)
+    if spine:
+        T._backend.add_edge(spine_len - 1, spine_len, None, False)
+
+    # add leaves
+    cdef int v = spine_len + 2
+    for i, d in enumerate(spine):
+        for j in range(d):
+            T._backend.add_edge(i, v + j, None, False)
+        v += d
+
+    # add embedding
+    cdef int max_leaves = max(spine, default=0)
+    if (spine_len < 10 and max_leaves < 3) or (spine_len < 6 and max_leaves < 7):
+        T._pos = {spine_len + 1: (-1, 0), spine_len: (spine_len, 0)}
+        radius = 0.3
+        v = spine_len + 2
+        for x, d in enumerate(spine):
+            T._pos[x] = (x, 0)
+            mid = v + d // 2
+            T._line_embedding(range(v, mid), first=(x - radius, 1), last=(x + radius, 1))
+            T._line_embedding(range(mid, v + d), first=(x - radius, -1), last=(x + radius, -1))
+            v += d
+
+    return T
+
+
 def RandomLobster(n, p, q, seed=None):
     r"""
     Return a random lobster.
@@ -559,9 +655,9 @@ cdef class TreeIterator:
         sig_free(self.l)
         sig_free(self.current_level_sequence)
 
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
-        Return a string representaiton of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -893,21 +989,21 @@ def nauty_gentreeg(options='', debug=False):
     import subprocess
     from sage.features.nauty import NautyExecutable
     gen_path = NautyExecutable("gentreeg").absolute_filename()
-    sp = subprocess.Popen(shlex.quote(gen_path) + " {0}".format(options), shell=True,
+    with subprocess.Popen(shlex.quote(gen_path) + " {0}".format(options), shell=True,
                           stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                           stderr=subprocess.PIPE, close_fds=True,
-                          encoding='latin-1')
-    msg = sp.stderr.readline()
-    if debug:
-        yield msg
-    elif msg.startswith('>E'):
-        raise ValueError('wrong format of parameter options')
-    gen = sp.stdout
-    while True:
-        try:
-            s = next(gen)
-        except StopIteration:
-            # Exhausted list of graphs from nauty geng
-            return
-        G = Graph(s[:-1], format='sparse6', loops=False, multiedges=False)
-        yield G
+                          encoding='latin-1') as sp:
+        msg = sp.stderr.readline()
+        if debug:
+            yield msg
+        elif msg.startswith('>E'):
+            raise ValueError('wrong format of parameter options')
+        gen = sp.stdout
+        while True:
+            try:
+                s = next(gen)
+            except StopIteration:
+                # Exhausted list of graphs from nauty geng
+                return
+            G = Graph(s[:-1], format='sparse6', loops=False, multiedges=False)
+            yield G

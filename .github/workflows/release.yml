@@ -1,0 +1,276 @@
+name: Release distributions and wheels
+
+on:
+  push:
+    tags:
+      # Match all release tags including beta, rc
+      - '[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.rc[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
+  pull_request:
+    paths:
+      - '.github/workflows/dist.yml'
+  workflow_dispatch:
+    # Allow to run manually
+
+jobs:
+
+  release_dist:
+
+    # This job first checks whether "configure --enable-download-from-upstream-url"
+    # (the default since #32390) is needed.
+    #
+    # In this way, we check that all necessary package tarballs
+    # have already been uploaded to the Sage server at the time
+    # of pushing a release tag.
+    #
+    # It also uses "bootstrap -D", thus checking that the "configure"
+    # tarball has been uploaded to the Sage server at the time
+    # of pushing a release tag.
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install bootstrap prerequisites
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap _prereq)
+      - name: make dist (--disable-download-from-upstream-url)
+        id: make_dist
+        run: |
+          ./bootstrap -D && ./configure --disable-download-from-upstream-url && make dist
+        env:
+          MAKE: make -j8
+      - name: make download (--disable-download-from-upstream-url)
+        id: make_download
+        run: |
+          make -k download DOWNLOAD_PACKAGES=":all: --no-file huge"
+        env:
+          MAKE: make -j8
+      - name: Reconfigure with --enable-download-from-upstream-url
+        if: (success() || failure()) && (steps.make_dist.outcome != 'success' || steps.make_download.outcome != 'success')
+        run: |
+          ./configure
+      - name: make dist (--enable-download-from-upstream-url)
+        if: (success() || failure()) && steps.make_dist.outcome != 'success'
+        run: |
+          make dist
+        env:
+          MAKE: make -j8
+      - name: make download (--enable-download-from-upstream-url)
+        if: (success() || failure()) && steps.make_download.outcome != 'success'
+        run: |
+          make -k download DOWNLOAD_PACKAGES=":all: --no-file huge --allow-upstream"
+        env:
+          MAKE: make -j8
+      - name: Remove what cannot be distributed
+        if: success() || failure()
+        run: |
+          rm -f upstream/*do-not-distribute*
+      - uses: actions/upload-artifact@v4
+        if: success() || failure()
+        with:
+          path: |
+            dist/*.tar.gz
+            upstream
+          name: release_dist
+
+  sdists:
+
+    runs-on: ubuntu-latest
+    env:
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' && github.event_name != 'pull_request' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: 3.12
+          miniforge-version: latest
+          use-mamba: true
+          channels: conda-forge
+          channel-priority: true
+          activate-environment: sage-dev
+          environment-file: environment-3.12-linux.yml
+
+      - name: Create source distribution
+        shell: bash -l {0}
+        run: |
+          conda install --yes python-build
+          python -m build --sdist --no-isolation --outdir dist .
+          ls -l dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          path: "dist/*.tar.gz"
+          name: dist
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
+          skip-existing: true
+          verbose: true
+        if: env.CAN_DEPLOY == 'true'
+
+  release:
+    needs: [release_dist, sdists]
+    runs-on: ubuntu-latest
+    if: github.ref_type == 'tag'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v6
+        with:
+          name: release_dist
+
+      - uses: actions/download-artifact@v6
+        with:
+          name: dist
+          path: dist
+
+      - name: Create release notes
+        env:
+          GITHUB_PAT: ${{ secrets.RELEASE_CREATION_TOKEN }}
+        run: |
+          latest_release_tag=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases \
+          | jq -r 'sort_by(.created_at) | last(.[]).tag_name')
+          release_notes=$(curl -s \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_PAT" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository }}/releases/generate-notes \
+            -d "{
+              \"tag_name\": \"${{ github.ref_name }}\",
+              \"previous_tag_name\": \"$latest_release_tag\"
+            }" | jq -r '.body')
+          echo "$release_notes" > release_notes
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*
+            upstream/*
+          token: ${{ secrets.RELEASE_CREATION_TOKEN }}
+          body_path: release_notes
+          prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
+
+  build_wheels:
+    # Temporarily disabled due to build errors
+    if: false
+    name: wheels ${{ matrix.build }}*_${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+    needs: sdists
+    strategy:
+      fail-fast: false
+      matrix:
+        os:      [ubuntu-latest]
+        arch:    [x86_64, i686, aarch64]
+        build:   [manylinux, musllinux]
+        include:
+          - os: macos-13
+            arch: x86_64
+            build: macosx
+          - os: macos-14
+            arch: arm64
+            build: macosx
+    env:
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
+      # SPKGs to install as system packages
+      SPKGS: _bootstrap _prereq
+      # Non-Python packages to install as spkgs
+      TARGETS_PRE: gmp mpfr mpc bliss coxeter3 mcqd meataxe sirocco tdlib
+      CIBW_BUILD: "*${{ matrix.build }}*"
+      # Disable building PyPy wheels on all platforms
+      CIBW_SKIP: "pp*"
+      #
+      CIBW_ARCHS: ${{ matrix.arch }}
+      # https://cibuildwheel.readthedocs.io/en/stable/options/#requires-python
+      CIBW_PROJECT_REQUIRES_PYTHON: ">=3.12, <3.13"
+      # Environment during wheel build
+      CIBW_ENVIRONMENT: "PATH=$(pwd)/prefix/bin:$PATH CPATH=$(pwd)/prefix/include:$CPATH LIBRARY_PATH=$(pwd)/prefix/lib:$LIBRARY_PATH LD_LIBRARY_PATH=$(pwd)/prefix/lib:$LD_LIBRARY_PATH PKG_CONFIG_PATH=$(pwd)/prefix/share/pkgconfig:$PKG_CONFIG_PATH ACLOCAL_PATH=/usr/share/aclocal PIP_CONSTRAINT=$(pwd)/constraints.txt PIP_FIND_LINKS=file://$(pwd)/wheelhouse SAGE_NUM_THREADS=6"
+      # Use 'build', not 'pip wheel'
+      CIBW_BUILD_FRONTEND: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        if: runner.os == 'Linux' && matrix.arch != 'x86_64' && matrix.arch != 'i686'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: all
+
+      - uses: actions/download-artifact@v6
+        with:
+          name: dist
+          path: dist
+
+      - uses: actions/setup-python@v5
+        # As of 2024-02-03, the macOS M1 runners do not have preinstalled python or pipx.
+        # Installing pipx follows the approach of https://github.com/pypa/cibuildwheel/pull/1743
+        id: python
+        with:
+          python-version: "3.12 - 3.13"
+          update-environment: false
+
+      - name: Bootstrap
+        run: |
+          export PATH=$(pwd)/build/bin:$PATH
+          eval $(sage-print-system-package-command auto --sudo --yes --no-install-recommends --spkg install _bootstrap _prereq)
+          ./bootstrap
+
+      - name: Unpack and prepare
+        # We build the wheels from the sdists so that MANIFEST filtering becomes effective.
+        # But we must run cibuildwheel with the unpacked source directory, not a tarball,
+        # so that SAGE_ROOT is copied into the build containers.
+        #
+        # In the CIBW_BEFORE_ALL phase, we install libraries using the Sage distribution.
+        # https://cibuildwheel.readthedocs.io/en/stable/options/#before-all
+        # For Linux, this is repeated for each of the packages that we build wheels for
+        # because CIBW starts with a fresh container on each invocation.
+        # Therefore we cache it in a directory mounted from the host: /host
+        # https://cibuildwheel.pypa.io/en/stable/faq/#linux-builds-in-containers
+        #
+        # omit sagemath-{meataxe,sirocco} for now -- needs sagemath-modules
+        run: |
+          "${{ steps.python.outputs.python-path }}" -m pip install cibuildwheel==3.0.1
+          export PATH=build/bin:$PATH
+          echo CIBW_BEFORE_ALL="( $(sage-print-system-package-command debian --yes --no-install-recommends install $(sage-get-system-packages debian $SPKGS)) || $(sage-print-system-package-command fedora --yes --no-install-recommends install $(sage-get-system-packages fedora $SPKGS | sed s/pkg-config/pkgconfig/)) || ( $(sage-print-system-package-command homebrew --yes --no-install-recommends install $(sage-get-system-packages homebrew $SPKGS)) || $(sage-print-system-package-command alpine --yes --no-install-recommends install $(sage-get-system-packages alpine $SPKGS)) || echo error ignored) ) && if cp /host/sage-\$AUDITWHEEL_PLAT/config.status . 2>/dev/null; then chmod +x config.status; fi && if [ -x ./config.status ]; then ./config.status; else ./configure --enable-build-as-root ${{ startsWith(matrix.os, 'ubuntu') && '--prefix=/host/sage-\$AUDITWHEEL_PLAT' || '' }} && cp config.status prefix/; fi && MAKE=\"make -j6\" make V=0 $TARGETS_PRE && echo \"sage_setup @ file://\$(pwd)/pkgs/sage-setup\") > constraints.txt" >> "$GITHUB_ENV"
+          mkdir -p unpacked
+          for sdist in dist/$pkg*.tar.gz; do
+              (cd unpacked && tar xfz - ) < $sdist
+          done
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}-${{ matrix.build }}-${{ matrix.arch }}-wheels
+          path: ./wheelhouse/*.whl
+
+  upload_wheels:
+    # This needs to be a separate job because pypa/gh-action-pypi-publish cannot run on macOS
+    needs: build_wheels
+    runs-on: ubuntu-latest
+    env:
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' && github.event_name != 'pull_request' }}
+    steps:
+
+      - uses: actions/download-artifact@v6
+        with:
+          pattern: "*-*-*-wheels"
+          path: wheelhouse
+          merge-multiple: true
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
+          packages-dir: wheelhouse/
+          skip-existing: true
+          verbose: true
+        if: env.CAN_DEPLOY == 'true'

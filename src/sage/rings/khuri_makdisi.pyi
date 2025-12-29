@@ -1,9 +1,7 @@
-from typing import Any, List, Tuple, Union
+from typing import Any
 from sage.matrix.matrix import Matrix
-from sage.modules.free_module_element import FreeModuleElement
-from sage.rings.integer import Integer
 
-def listcat(l: List[List[Any]]) -> List[Any]:
+def listcat(l: list[list[Any]]) -> list[Any]:
     ...
 
 class KhuriMakdisi_base:

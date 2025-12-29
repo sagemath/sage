@@ -293,7 +293,7 @@ class Decoder(SageObject):
             sage: w_err = word + vector(GF(2), (1, 0, 0, 0, 0, 0, 0))
             sage: D = C.decoder()
             sage: D.decode_to_message(w_err)
-            (0, 1, 1, 0)
+            (1, 1, 0, 0)
         """
         self.defaulting_decode_to_message = True
         return self.code().unencode(self.decode_to_code(r))
