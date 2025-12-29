@@ -33,8 +33,8 @@ py.install_sources(
 )
 
 extension_data = {
-  'group' : files('group.pyx'),
-  'libgap_wrapper' : files('libgap_wrapper.pyx'),
+  'group': files('group.pyx'),
+  'libgap_wrapper': files('libgap_wrapper.pyx'),
 }
 
 foreach name, pyx : extension_data

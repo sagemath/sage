@@ -9,7 +9,7 @@ py.install_sources(
   subdir: 'sage/combinat/integer_lists',
 )
 
-extension_data = {'base' : files('base.pyx'), 'invlex' : files('invlex.pyx')}
+extension_data = {'base': files('base.pyx'), 'invlex': files('invlex.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(
