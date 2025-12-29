@@ -452,7 +452,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         new_parent = self.parent().change_ring(base_ring, backend)
         return new_parent([vertices, rays, lines], None)
 
-    def is_mutable(self):
+    def is_mutable(self) -> bool:
         r"""
         Return ``True`` if the polyhedron is mutable, i.e. it can be modified in place.
 
@@ -464,7 +464,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         """
         return False
 
-    def is_immutable(self):
+    def is_immutable(self) -> bool:
         r"""
         Return ``True`` if the polyhedron is immutable, i.e. it cannot be modified in place.
 
@@ -548,10 +548,11 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         return len(self.vertices())
 
     @cached_method
-    def n_rays(self):
+    def n_rays(self) -> int:
         """
-        Return the number of rays. The representation will
-        always be minimal.
+        Return the number of rays.
+
+        The representation will always be minimal.
 
         EXAMPLES::
 
@@ -562,10 +563,11 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         return len(self.rays())
 
     @cached_method
-    def n_lines(self):
+    def n_lines(self) -> int:
         """
-        Return the number of lines. The representation will
-        always be minimal.
+        Return the number of lines.
+
+        The representation will always be minimal.
 
         EXAMPLES::
 
@@ -575,7 +577,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         """
         return len(self.lines())
 
-    def is_compact(self):
+    def is_compact(self) -> bool:
         """
         Test for boundedness of the polytope.
 
@@ -588,7 +590,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             sage: p.is_compact()
             False
         """
-        return self.n_rays() == 0 and self.n_lines() == 0
+        return self.n_rays() == 0 == self.n_lines()
 
     def Hrepresentation(self, index=None):
         """

@@ -32,8 +32,8 @@ py.install_sources(
 )
 
 extension_data = {
-  'eis_series_cython' : files('eis_series_cython.pyx'),
-  'l_series_gross_zagier_coeffs' : files('l_series_gross_zagier_coeffs.pyx'),
+  'eis_series_cython': files('eis_series_cython.pyx'),
+  'l_series_gross_zagier_coeffs': files('l_series_gross_zagier_coeffs.pyx'),
 }
 
 foreach name, pyx : extension_data
