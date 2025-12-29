@@ -1556,7 +1556,7 @@ class TopologicalManifold(ManifoldSubset):
 
         They can be recovered by the operator ``[:]`` applied to the chart::
 
-            sage: (x, y) = X[:]
+            sage: x, y = X[:]
             sage: y
             y
             sage: type(y)

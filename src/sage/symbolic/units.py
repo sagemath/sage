@@ -86,15 +86,13 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ###############################################################################
 
-# standard Python libraries
 import re
 
-# Sage library
-from .ring import SR
-from .expression import Expression
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
 from sage.rings.rational_field import QQ
+from sage.symbolic.expression import Expression
+from sage.symbolic.ring import SR
 
 ###############################################################################
 # Unit conversions dictionary.

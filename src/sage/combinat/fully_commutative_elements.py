@@ -28,8 +28,6 @@ Natalie Schoenhals for their contribution to the project and the code.
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from collections import deque
-
 from sage.categories.coxeter_groups import CoxeterGroups
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.misc.lazy_import import lazy_import
@@ -158,7 +156,9 @@ class FullyCommutativeElement(NormalizedClonableList):
             False
         """
         word = list(self)
-        from sage.combinat.root_system.braid_orbit import is_fully_commutative as is_fully_comm
+        from sage.combinat.root_system.braid_orbit import (
+            is_fully_commutative as is_fully_comm,
+        )
 
         group = self.parent().coxeter_group()
         braid_rels = group.braid_relations()
@@ -1011,7 +1011,7 @@ class FullyCommutativeElements(UniqueRepresentation, Parent):
         letters = self.coxeter_group().index_set()
 
         # To make the iterator deterministic, use a dictionary rather than a
-        # set, for the keys are then ordered by default by Python 3.7+:
+        # set, for the keys are then ordered by default:
         recent_words = {empty_word: True}
         yield empty_word
         while recent_words:

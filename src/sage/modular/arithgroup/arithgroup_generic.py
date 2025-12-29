@@ -14,20 +14,21 @@ Arithmetic subgroups, finite index subgroups of `\SL_2(\ZZ)`
 #
 ################################################################################
 
-from sage.groups.group import Group
-from sage.categories.groups import Groups
-from sage.rings.integer_ring import ZZ
-from sage.arith.functions import lcm
-from sage.misc.cachefunc import cached_method
 from copy import copy  # for making copies of lists of cusps
-from sage.modular.modsym.p1list import lift_to_sl2z
-from sage.modular.cusps import Cusp
 
+from sage.arith.functions import lcm
+from sage.categories.groups import Groups
+from sage.groups.group import Group
+from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
-lazy_import('sage.modular.arithgroup.congroup_sl2z', 'SL2Z')
-from sage.structure.element import parent
+from sage.modular.cusps import Cusp
+from sage.modular.modsym.p1list import lift_to_sl2z
+from sage.rings.integer_ring import ZZ
 
-from .arithgroup_element import ArithmeticSubgroupElement, M2Z as Mat2Z
+lazy_import('sage.modular.arithgroup.congroup_sl2z', 'SL2Z')
+from sage.modular.arithgroup.arithgroup_element import M2Z as Mat2Z
+from sage.modular.arithgroup.arithgroup_element import ArithmeticSubgroupElement
+from sage.structure.element import parent
 
 
 def is_ArithmeticSubgroup(x) -> bool:
@@ -144,7 +145,7 @@ class ArithmeticSubgroup(Group):
             return x
         raise TypeError("matrix %s is not an element of %s" % (x, self))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Test if x is an element of this group.
 
@@ -199,7 +200,7 @@ class ArithmeticSubgroup(Group):
         """
         raise NotImplementedError("Please implement _contains_sl2 for %s" % self.__class__)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return a hash of ``self``.
 
@@ -505,7 +506,7 @@ class ArithmeticSubgroup(Group):
         # Cheap trick: if self is a subgroup of something with no elliptic points,
         # then self has no elliptic points either.
 
-        from .all import Gamma0, CongruenceSubgroupBase
+        from .all import CongruenceSubgroupBase, Gamma0
         if isinstance(self, CongruenceSubgroupBase):
             if self.is_subgroup(Gamma0(self.level())) and Gamma0(self.level()).nu3() == 0:
                 return 0
@@ -1210,23 +1211,21 @@ class ArithmeticSubgroup(Group):
             else:
                 return (k-1) * (self.genus() - 1) + (k // ZZ(4))*self.nu2() + (k // ZZ(3))*self.nu3() + (k // ZZ(2) - 1)*self.ncusps()
 
+        # k odd
+
+        elif self.is_even():
+            return ZZ.zero()
+
         else:
-            # k odd
+            e_reg = self.nregcusps()
+            e_irr = self.nirregcusps()
 
-            if self.is_even():
+            if k > 1:
+                return (k-1)*(self.genus()-1) + (k // ZZ(3)) * self.nu3() + (k-2)/ZZ(2) * e_reg + (k-1)/ZZ(2) * e_irr
+            elif e_reg > 2*self.genus() - 2:
                 return ZZ.zero()
-
             else:
-                e_reg = self.nregcusps()
-                e_irr = self.nirregcusps()
-
-                if k > 1:
-                    return (k-1)*(self.genus()-1) + (k // ZZ(3)) * self.nu3() + (k-2)/ZZ(2) * e_reg + (k-1)/ZZ(2) * e_irr
-                else:
-                    if e_reg > 2*self.genus() - 2:
-                        return ZZ.zero()
-                    else:
-                        raise NotImplementedError("Computation of dimensions of weight 1 cusp forms spaces not implemented in general")
+                raise NotImplementedError("Computation of dimensions of weight 1 cusp forms spaces not implemented in general")
 
     def dimension_eis(self, k=2):
         r"""
@@ -1303,10 +1302,14 @@ class ArithmeticSubgroup(Group):
             s3_edges[ii] = i
             r_edges[ii] = s2_edges[i]
         if self.is_even():
-            from sage.modular.arithgroup.arithgroup_perm import EvenArithmeticSubgroup_Permutation
+            from sage.modular.arithgroup.arithgroup_perm import (
+                EvenArithmeticSubgroup_Permutation,
+            )
             g = EvenArithmeticSubgroup_Permutation(S2=s2_edges,S3=s3_edges,L=l_edges,R=r_edges)
         else:
-            from sage.modular.arithgroup.arithgroup_perm import OddArithmeticSubgroup_Permutation
+            from sage.modular.arithgroup.arithgroup_perm import (
+                OddArithmeticSubgroup_Permutation,
+            )
             g = OddArithmeticSubgroup_Permutation(S2=s2_edges,S3=s3_edges,L=l_edges,R=r_edges)
         g.relabel()
         return g

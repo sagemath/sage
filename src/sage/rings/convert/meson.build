@@ -2,10 +2,11 @@ py.install_sources(
   '__init__.py',
   'all.py',
   'mpfi.pxd',
+  'mpfi.pyx',
   subdir: 'sage/rings/convert',
 )
 
-extension_data = {'mpfi' : files('mpfi.pyx')}
+extension_data = {'mpfi': files('mpfi.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

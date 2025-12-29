@@ -19,12 +19,11 @@ AUTHORS:
 ################################################################################
 
 from sage.arith.misc import gcd
+from sage.modular.arithgroup.arithgroup_element import ArithmeticSubgroupElement
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_class
 from sage.modular.cusps import Cusp
 from sage.modular.modsym.p1list import lift_to_sl2z
 from sage.rings.integer_ring import ZZ
-
-from .congroup_gamma0 import Gamma0_class
-from .arithgroup_element import ArithmeticSubgroupElement
 
 
 def is_SL2Z(x):

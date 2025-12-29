@@ -493,8 +493,7 @@ class DiGraph(GenericGraph):
         sage: {G_imm:1}[G]
         Traceback (most recent call last):
         ...
-        TypeError: This graph is mutable, and thus not hashable. Create an
-        immutable copy by `g.copy(immutable=True)`
+        TypeError: ...This graph is mutable, and thus not hashable. Create an immutable copy by `g.copy(immutable=True)`...
 
     The error message states that one can also create immutable graphs by
     specifying the ``immutable`` optional argument (not only by
@@ -593,7 +592,7 @@ class DiGraph(GenericGraph):
             sage: {g:1}[g]
             Traceback (most recent call last):
             ...
-            TypeError: This graph is mutable, and thus not hashable. Create an immutable copy by `g.copy(immutable=True)`
+            TypeError: ...This graph is mutable, and thus not hashable. Create an immutable copy by `g.copy(immutable=True)`...
             sage: copy(g) is g
             False
             sage: {g.copy(immutable=True):1}[g.copy(immutable=True)]
@@ -1494,7 +1493,7 @@ class DiGraph(GenericGraph):
 
         .. SEEALSO::
 
-            :meth:`num_verts` for the value at `(x, y) = (1, 1)`
+            :meth:`n_vertices` for the value at `(x, y) = (1, 1)`
 
         EXAMPLES::
 
@@ -1611,7 +1610,7 @@ class DiGraph(GenericGraph):
         `vu` is in the returned feedback arc set::
 
            sage: g = graphs.RandomGNP(5,.3)
-           sage: while not g.num_edges():
+           sage: while not g.n_edges():
            ....:     g = graphs.RandomGNP(5,.3)
            sage: dg = DiGraph(g)
            sage: feedback = dg.feedback_edge_set()                                      # needs sage.numerical.mip
@@ -2389,7 +2388,7 @@ class DiGraph(GenericGraph):
                                                     weight_function=weight_function,
                                                     check_weight=False)
 
-            if len(length) != self.num_verts():
+            if len(length) != self.n_vertices():
                 ecc[u] = Infinity
             else:
                 ecc[u] = max(length.values())
@@ -3478,7 +3477,7 @@ class DiGraph(GenericGraph):
             * :meth:`~sage.graphs.GenericGraph.odd_girth` -- return the odd
               girth of the graph
         """
-        n = self.num_verts()
+        n = self.n_vertices()
         best = n + 1
         seen = set()
         for w in self:
@@ -3568,7 +3567,7 @@ class DiGraph(GenericGraph):
               -- iterator over in-branchings rooted at given vertex.
             - :meth:`~sage.graphs.graph.Graph.spanning_trees`
               -- returns all spanning trees.
-            - :meth:`~sage.graphs.generic_graph.GenericGraph.spanning_trees_count`
+            - :meth:`~sage.graphs.generic_graph.GenericGraph.number_of_spanning_trees`
               -- counts the number of spanning trees.
 
         ALGORITHM:
@@ -3784,7 +3783,7 @@ class DiGraph(GenericGraph):
               -- iterator over out-branchings rooted at given vertex.
             - :meth:`~sage.graphs.graph.Graph.spanning_trees`
               -- returns all spanning trees.
-            - :meth:`~sage.graphs.generic_graph.GenericGraph.spanning_trees_count`
+            - :meth:`~sage.graphs.generic_graph.GenericGraph.number_of_spanning_trees`
               -- counts the number of spanning trees.
 
         ALGORITHM:

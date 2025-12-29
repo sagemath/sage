@@ -1907,11 +1907,11 @@ class Polyhedron_base5(Polyhedron_base4):
                 new_lines = ()
 
             if self.is_compact() and self.n_vertices() and self.n_inequalities():
-                homogeneous_basis = matrix(R, ( [1] + list(v) for v in self.an_affine_basis() )).transpose()
+                homogeneous_basis = matrix(R, ([1] + list(v) for v in self.an_affine_basis())).transpose()
 
                 # To convert first to a list and then to a matrix seems to be necessary to obtain a meaningful error,
                 # in case the number of columns doesn't match the dimension.
-                new_homogeneous_basis = matrix(list( [1] + list(linear_transf*vector(R, v)) for v in self.an_affine_basis()) ).transpose()
+                new_homogeneous_basis = matrix([[1] + list(linear_transf*vector(R, v)) for v in self.an_affine_basis()]).transpose()
 
                 if self.dim() + 1 == new_homogeneous_basis.rank():
                     # The transformation is injective on the polytope.

@@ -2164,14 +2164,14 @@ def xkcd(n=""):
         # default to last comic
         url = "https://xkcd.com/info.0.json"
     else:
-        url = "https://xkcd.com/{}/info.0.json".format(n)
+        url = f"https://xkcd.com/{n}/info.0.json"
 
     try:
         with contextlib.closing(urlopen(url, context=default_context())) as f:
             data = f.read()
     except HTTPError as error:
         if error.getcode() == 400:  # this error occurs when asking for a non valid comic number
-            raise RuntimeError("could not obtain comic data from {}".format(url))
+            raise RuntimeError(f"could not obtain comic data from {url}")
     except URLError:
         pass
 
@@ -2183,8 +2183,8 @@ def xkcd(n=""):
         img = data['img']
         alt = data['alt']
         title = data['safe_title']
-        link = "http://xkcd.com/{}".format(data['num'])
-        return html('<h1>{}</h1><img src="{}" title="{}">'.format(title, img, alt)
+        link = f"http://xkcd.com/{data['num']}"
+        return html(f'<h1>{title}</h1><img src="{img}" title="{alt}">'
                     + '<div>Source: <a href="{0}" target="_blank">{0}</a></div>'.format(link))
 
     # TODO: raise this error in such a way that it's not clear that
@@ -2775,9 +2775,7 @@ def radical(n, *args, **kwds):
         sage: radical(2 * 3^2 * 5^5)
         30
         sage: radical(0)
-        Traceback (most recent call last):
-        ...
-        ArithmeticError: radical of 0 is not defined
+        0
         sage: K.<i> = QuadraticField(-1)                                                # needs sage.rings.number_field
         sage: radical(K(2))                                                             # needs sage.rings.number_field
         i - 1
@@ -3685,7 +3683,7 @@ def CRT_basis(moduli, *, require_coprime_moduli=True):
 
     A polynomial example::
 
-        sage: x=polygen(QQ)
+        sage: x = polygen(QQ)
         sage: mods = [x,x^2+1,2*x-3]
         sage: b = CRT_basis(mods)
         sage: b
@@ -3723,8 +3721,7 @@ def CRT_basis(moduli, *, require_coprime_moduli=True):
         partial_prod_table = [1]
         for i in range(1, n):
             partial_prod_table.append((1 - e[-i]) * partial_prod_table[-1])
-        for i in range(n):
-            cs.append(e[i] * partial_prod_table[-i - 1])
+        cs.extend(e[i] * partial_prod_table[-i - 1] for i in range(n))
         # also return a boolean flag to report that the moduli are not coprime
         return [cs, False]
 
@@ -4038,7 +4035,7 @@ def binomial(x, m, **kwds):
             pass
         else:
             if c > 0 and any(c.gcd(k) > 1 for k in range(2, m + 1)):
-                raise ZeroDivisionError("factorial({}) not invertible in {}".format(m, P))
+                raise ZeroDivisionError(f"factorial({m}) not invertible in {P}")
         return P(x.binomial(m, **kwds))
 
     # case 3: rational, real numbers, complex numbers -> use pari
@@ -4119,7 +4116,7 @@ def multinomial(*ks):
     return c
 
 
-def binomial_coefficients(n):
+def binomial_coefficients(n) -> dict:
     r"""
     Return a dictionary containing pairs
     `\{(k_1,k_2) : C_{k,n}\}` where `C_{k_n}` are
@@ -4619,7 +4616,7 @@ def quadratic_residues(n):
         [0, 1, 3, 4, 5, 9]
     """
     n = abs(int(n))
-    return sorted(set(ZZ((a * a) % n) for a in range(n // 2 + 1)))
+    return sorted({ZZ((a * a) % n) for a in range(n // 2 + 1)})
 
 
 class Moebius:
@@ -5076,14 +5073,14 @@ def hilbert_conductor(a, b):
     - Gonzalo Tornaria (2009-03-02)
     """
     a, b = ZZ(a), ZZ(b)
-    return ZZ.prod(p for p in set([2]).union(prime_divisors(a),
-                                             prime_divisors(b))
+    return ZZ.prod(p for p in {2}.union(a.prime_divisors(),
+                                        b.prime_divisors())
                    if hilbert_symbol(a, b, p) == -1)
 
 
 def hilbert_conductor_inverse(d):
     r"""
-    Finds a pair of integers `(a,b)` such that ``hilbert_conductor(a,b) == d``.
+    Find a pair of integers `(a,b)` such that ``hilbert_conductor(a,b) == d``.
 
     The quaternion algebra `(a,b)` over `\QQ` will then have (reduced)
     discriminant `d`.
@@ -5123,7 +5120,7 @@ def hilbert_conductor_inverse(d):
         sage: for i in range(100):                                                      # needs sage.libs.pari
         ....:     d = ZZ.random_element(2**32).squarefree_part()
         ....:     if hilbert_conductor(*hilbert_conductor_inverse(d)) != d:
-        ....:         print("hilbert_conductor_inverse failed for d = {}".format(d))
+        ....:         print(f"hilbert_conductor_inverse failed for d = {d}")
 
     Tests with numpy and gmpy2 numbers::
 
@@ -5891,15 +5888,15 @@ def sum_of_k_squares(k, n):
                 x, r = n.sqrtrem()
                 if not r:
                     return (x,)
-            raise ValueError("%s is not a sum of 1 square" % n)
+            raise ValueError(f"{n} is not a sum of 1 square")
         if k == 0:
             if n == 0:
-                return tuple()
-            raise ValueError("%s is not a sum of 0 squares" % n)
-        raise ValueError("k = %s must be nonnegative" % k)
+                return ()
+            raise ValueError(f"{n} is not a sum of 0 squares")
+        raise ValueError(f"k = {k} must be nonnegative")
 
     if n < 0:
-        raise ValueError("%s is not a sum of %s squares" % (n, k))
+        raise ValueError(f"{n} is not a sum of {k} squares")
 
     # Recursively subtract the largest square
     t: list[int] = []

@@ -158,11 +158,6 @@ usage() {
 
 # Determine SAGE_ROOT, SAGE_LOCAL, and SAGE_VENV.
 unset SAGE_VENV
-if [ -x "${SELF}-config" ]; then
-    # optional sage-config console script, installed by sage_conf
-    export SAGE_ROOT=$("${SELF}-config" SAGE_ROOT)
-    export SAGE_LOCAL=$("${SELF}-config" SAGE_LOCAL)
-fi
 if [ -f "${SELF}-src-env-config" ]; then
     # Not installed script, present only in src/bin/
     . "${SELF}-src-env-config" >&2
@@ -487,9 +482,6 @@ usage_advanced() {
         echo "  --fixdoctests file.py"
         echo "                      -- Run doctests and replace output of failing doctests"
         echo "                         with actual output."
-        echo "  --fixdistributions <files|dirs>"
-        echo "                      -- Check or update '# sage_setup: distribution'"
-        echo "                         directives in source files"
     fi
     echo "  --sh [...]         -- run a shell with Sage environment variables"
     echo "                        as they are set in the runtime of Sage"

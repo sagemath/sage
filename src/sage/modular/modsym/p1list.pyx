@@ -1120,7 +1120,7 @@ cdef class P1List():
         EXAMPLES::
 
             sage: L = P1List(120)
-            sage: (u,v) = (555555555,7777)
+            sage: u, v = 555555555, 7777
             sage: uu,vv = L.normalize(555555555,7777)
             sage: (uu,vv)
             (15, 13)
@@ -1149,11 +1149,11 @@ cdef class P1List():
         EXAMPLES::
 
             sage: L = P1List(120)
-            sage: (u,v) = (555555555,7777)
+            sage: u, v = 555555555, 7777
             sage: uu,vv,ss = L.normalize_with_scalar(555555555,7777)
-            sage: (uu,vv)
+            sage: uu, vv
             (15, 13)
-            sage: ((ss*uu-u)%L.N(), (ss*vv-v)%L.N())
+            sage: (ss*uu-u)%L.N(), (ss*vv-v)%L.N()
             (0, 0)
             sage: (uu*v-vv*u) % L.N() == 0
             True

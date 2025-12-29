@@ -141,15 +141,19 @@ The source directory of a distribution package, such as
   The manifest should be kept in sync with the directives of the form
   ``# sage_setup: distribution = sagemath-polyhedra`` at the top of
   source files.  Sage provides a tool ``sage --fixdistributions``
-  that assists with this task. For example::
+  that assists with this task. For example
 
-    $ ./sage --fixdistributions --set sagemath-polyhedra \
-         src/sage/geometry/polyhedron/base*.py
+  .. code-block:: console
 
-  adds or updates the directives in the specified files; and::
+      $ ./sage --fixdistributions --set sagemath-polyhedra \
+          src/sage/geometry/polyhedron/base*.py
 
-    $ ./sage --fixdistributions --add sagemath-polyhedra \
-         src/sage/geometry/polyhedron
+  adds or updates the directives in the specified files; and
+
+  .. code-block:: console
+
+      $ ./sage --fixdistributions --add sagemath-polyhedra \
+          src/sage/geometry/polyhedron
 
   adds the directive to all files in the given directory that do not
   include a directive yet.
@@ -158,13 +162,17 @@ The source directory of a distribution package, such as
   ``make pypi-wheels``) or at least an sdist has been built (for
   example, by the command ``make sagemath_polyhedra-sdist``), the
   distribution directives in all files in the source distribution
-  can be updated using the switch ``--from--egg-info``::
+  can be updated using the switch ``--from--egg-info``
 
-    $ ./sage --fixdistributions --set sagemath-polyhedra --from-egg-info
+  .. code-block:: console
 
-  To take care of all distributions, use::
+       $ ./sage --fixdistributions --set sagemath-polyhedra --from-egg-info
 
-    $ ./sage --fixdistributions --set all --from-egg-info
+  To take care of all distributions, use
+
+  .. code-block:: console
+
+       $ ./sage --fixdistributions --set all --from-egg-info
 
 - `pyproject.toml <https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/>`_,
   `setup.cfg <https://setuptools.pypa.io/en/latest/userguide/declarative_config.html>`_,
@@ -415,14 +423,16 @@ case it will be up to the user to install the distribution enabling
 this optional functionality.
 
 As an example, let us consider designing a distribution that centers
-around the package :mod:`sage.coding`. First, let's see if it uses symbolics::
+around the package :mod:`sage.coding`. First, let's see if it uses symbolics
 
-  (9.5.beta6) $ git grep -E 'sage[.](symbolic|functions|calculus)' src/sage/coding
-  src/sage/coding/code_bounds.py:        from sage.functions.other import ceil
-  ...
-  src/sage/coding/grs_code.py:from sage.symbolic.ring import SR
-  ...
-  src/sage/coding/guruswami_sudan/utils.py:from sage.functions.other import floor
+.. code-block:: console
+
+    $ git grep -E 'sage[.](symbolic|functions|calculus)' src/sage/coding
+    src/sage/coding/code_bounds.py:        from sage.functions.other import ceil
+    ...
+    src/sage/coding/grs_code.py:from sage.symbolic.ring import SR
+    ...
+    src/sage/coding/guruswami_sudan/utils.py:from sage.functions.other import floor
 
 Apparently it does not in a very substantial way:
 
@@ -529,10 +539,6 @@ Solid arrows indicate ``install_requires``, i.e., a declared runtime dependency.
 Dashed arrows indicate ``extras_require``, i.e., a declared optional runtime dependency.
 Not shown in the diagram are build dependencies and optional dependencies for testing.
 
-- `sage_conf <https://pypi.org/project/sage-conf/>`_ is a configuration
-  module. It provides the configuration variable settings determined by the
-  ``configure`` script.
-
 - `sagemath-environment <https://pypi.org/project/sagemath-environment/>`_
   provides the connection to the system and software environment. It includes
   :mod:`sage.env`, :mod:`sage.features`, :mod:`sage.misc.package_dir`, etc.
@@ -617,39 +623,39 @@ distribution to be tested (and its Python dependencies).
 Let's try it out first with the entire Sage library, represented by
 the distribution **sagemath-standard**.  Note that after Sage has been
 built normally, a set of wheels for most installed Python distribution
-packages is available in ``SAGE_VENV/var/lib/sage/wheels/``::
+packages is available in ``SAGE_VENV/var/lib/sage/wheels/``
 
-  $ ls venv/var/lib/sage/wheels
-  Babel-2.9.1-py2.py3-none-any.whl
-  Cython-0.29.24-cp39-cp39-macosx_11_0_x86_64.whl
-  Jinja2-2.11.2-py2.py3-none-any.whl
-  ...
-  scipy-1.7.2-cp39-cp39-macosx_11_0_x86_64.whl
-  setuptools-58.2.0-py3-none-any.whl
-  ...
-  wheel-0.37.0-py2.py3-none-any.whl
-  widgetsnbextension-3.5.1-py2.py3-none-any.whl
-  zipp-3.5.0-py3-none-any.whl
+.. code-block:: console
+
+    $ ls venv/var/lib/sage/wheels
+    Babel-2.9.1-py2.py3-none-any.whl
+    Cython-0.29.24-cp39-cp39-macosx_11_0_x86_64.whl
+    Jinja2-2.11.2-py2.py3-none-any.whl
+    ...
+    scipy-1.7.2-cp39-cp39-macosx_11_0_x86_64.whl
+    setuptools-58.2.0-py3-none-any.whl
+    ...
+    wheel-0.37.0-py2.py3-none-any.whl
+    widgetsnbextension-3.5.1-py2.py3-none-any.whl
+    zipp-3.5.0-py3-none-any.whl
 
 However, in a build of Sage with the default configuration
 ``configure --enable-editable``, there will be no wheels for the
 distributions ``sage_*`` and ``sagemath-*``.
 
-To create these wheels, use the command ``make wheels``::
+To create these wheels, use the command ``make wheels``
 
-  $ make wheels
-  ...
-  $ ls venv/var/lib/sage/wheels/sage*
-  ...
-  sage_conf-10.0b2-py3-none-any.whl
-  ...
+.. code-block:: console
+
+    $ make wheels
+    ...
+    $ ls venv/var/lib/sage/wheels/sage*
+    ...
+    sage_conf-10.0b2-py3-none-any.whl
+    ...
 
 (You can also use ``./configure --enable-wheels`` to ensure that
 these wheels are always available and up to date.)
-
-Note in particular the wheel for **sage-conf**, which provides
-configuration variable settings and the connection to the non-Python
-packages installed in ``SAGE_LOCAL``.
 
 We can now set up a separate virtual environment, in which we install
 these wheels and our distribution to be tested.  This is where
@@ -660,21 +666,27 @@ disposable virtual environments for testing.  Every distribution in
 
 Following the comments in the file
 :sage_root:`pkgs/sagemath-standard/tox.ini`, we can try the following
-command::
+command
 
-  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-standard && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython-sagewheels-nopypi)'
+.. code-block:: console
+
+    $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-standard && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython-sagewheels-nopypi)'
 
 This command does not make any changes to the normal installation of
 Sage. The virtual environment is created in a subdirectory of
 :file:`SAGE_ROOT/pkgs/sagemath-standard/.tox/`. After the command
 finishes, we can start the separate installation of the Sage library
-in its virtual environment::
+in its virtual environment
 
-  $ pkgs/sagemath-standard/.tox/sagepython-sagewheels-nopypi/bin/sage
+.. code-block:: console
 
-We can also run parts of the testsuite::
+    $ pkgs/sagemath-standard/.tox/sagepython-sagewheels-nopypi/bin/sage
 
-  $ pkgs/sagemath-standard/.tox/sagepython-sagewheels-nopypi/bin/sage -tp 4 src/sage/graphs/
+We can also run parts of the testsuite
+
+.. code-block:: console
+
+    $ pkgs/sagemath-standard/.tox/sagepython-sagewheels-nopypi/bin/sage -tp 4 src/sage/graphs/
 
 The whole ``.tox`` directory can be safely deleted at any time.
 
@@ -685,17 +697,21 @@ everything that is currently in the standard Sage library, i.e.,
 without depending on optional packages, but without the packages
 :mod:`sage.symbolic`, :mod:`sage.calculus`, etc.
 
-Again we can run the test with ``tox`` in a separate virtual environment::
+Again we can run the test with ``tox`` in a separate virtual environment
 
-  $ ./bootstrap && make wheels && ./sage -sh -c '(cd pkgs/sagemath-standard-no-symbolics && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython-sagewheels-nopypi-norequirements)'
+.. code-block:: console
+
+    $ ./bootstrap && make wheels && ./sage -sh -c '(cd pkgs/sagemath-standard-no-symbolics && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython-sagewheels-nopypi-norequirements)'
 
 Some small distributions, for example the ones providing the two
 lowest levels, `sagemath-objects <https://pypi.org/project/sagemath-objects/>`_
 and `sagemath-categories <https://pypi.org/project/sagemath-categories/>`_
 (from :issue:`29865`), can be installed and tested
-without relying on the wheels from the Sage build::
+without relying on the wheels from the Sage build
 
-  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-objects && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython)'
+.. code-block:: console
+
+    $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-objects && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython)'
 
 This command finds the declared build-time and run-time dependencies
 on PyPI, either as source tarballs or as prebuilt wheels, and builds

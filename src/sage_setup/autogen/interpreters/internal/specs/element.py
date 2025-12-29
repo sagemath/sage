@@ -9,13 +9,11 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function, absolute_import
 
-from .base import StackInterpreter
-from .python import (MemoryChunkPyConstant, MemoryChunkPythonArguments,
-                     PythonInterpreter)
 from ..storage import ty_python
 from ..utils import reindent_lines as ri
+from .base import StackInterpreter
+from .python import MemoryChunkPyConstant, MemoryChunkPythonArguments, PythonInterpreter
 
 
 class MemoryChunkElementArguments(MemoryChunkPythonArguments):
@@ -97,7 +95,7 @@ class ElementInterpreter(PythonInterpreter):
             py_call: *->S = '\nPyObject *py_args...CREF(py_args);\n'
         """
 
-        super(ElementInterpreter, self).__init__()
+        super().__init__()
         # PythonInterpreter.__init__ gave us a MemoryChunkPythonArguments.
         # Override with MemoryChunkElementArguments.
         self.mc_args = MemoryChunkElementArguments('args', ty_python)

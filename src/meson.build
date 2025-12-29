@@ -87,6 +87,32 @@ except Exception:
 endif
 # Cannot be found via pkg-config
 pari = cc.find_library('pari', required: not is_windows, disabler: true)
+if pari.found() and not meson.is_cross_build()
+  # Verify PARI version
+  pari_version_code = '''
+  #include <stdio.h>
+  #include <pari/pari.h>
+  int main(void) {
+    pari_init(1000000, 2);
+    GEN v = pari_version(), M = gel(v,1), m = gel(v,2), p = gel(v,3);
+    printf("%ld.%ld.%ld", itos(M), itos(m), itos(p));
+    pari_close();
+    return 0;
+  }
+  '''
+  pari_version = cc.run(
+    pari_version_code,
+    args: ['-v'],
+    name: 'pari version',
+    dependencies: [pari],
+    required: true,
+  ).stdout().strip()
+  if pari_version.version_compare('<=2.17.0')
+    message('PARI version > 2.17.0 required, found ' + pari_version)
+    pari = disabler()
+  endif
+endif
+
 
 mpfr = dependency('mpfr')
 
@@ -152,7 +178,7 @@ if not m4rie.found()
   # For some reason, m4rie is not found via pkg-config on some systems (eg Conda)
   m4rie = cc.find_library('m4rie', required: not is_windows, disabler: true)
 endif
-mtx = dependency('mtx', required: false)
+mtx = dependency('libmtx', required: false)
 if not mtx.found()
   # fallback for older versions without pkg-config
   mtx = cc.find_library(
@@ -225,7 +251,7 @@ boost = dependency(
   'boost',
   version: '>=1.83.0',
   required: false,
-  modules: ['graph', 'tuple'],
+  modules: ['graph'],
 )
 if boost.found()
   # Need at least v1.83.0 (https://github.com/boostorg/functional/commit/6a573e4b8333ee63ee62ce95558c3667348db233)
@@ -236,7 +262,7 @@ else
     'boost',
     version: '>=1.66.0',
     required: false,
-    modules: ['graph', 'tuple'],
+    modules: ['graph'],
   )
 endif
 

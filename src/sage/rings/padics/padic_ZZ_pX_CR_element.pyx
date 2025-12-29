@@ -346,10 +346,8 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 x = Rational(x)
             elif x.type() == 't_POLMOD' or x.type == 't_POL':
                 # This code doesn't check to see if the primes are the same.
-                L = []
                 x = x.lift().lift()
-                for i from 0 <= i <= x.poldegree():
-                    L.append(Integer(x.polcoef(i)))
+                L = [Integer(x.polcoef(i)) for i in range(x.poldegree() + 1)]
                 x = L
             else:
                 raise TypeError("unsupported coercion from pari: only p-adics, integers, rationals, polynomials and pol_mods allowed")
@@ -1974,7 +1972,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 raise NotImplementedError("negative valuation exponents not yet supported")
             # checks to see if the residue of self.unit is in the prime field.
             if self.prime_pow.e == 1:
-                for i from 1 <= i <= ZZ_pX_deg(self.unit):
+                for i in range(ZZ_pX_deg(self.unit) + 1):
                     if not ZZ_divide_test(ZZ_p_rep(ZZ_pX_coeff(self.unit, i)), self.prime_pow.pow_ZZ_tmp(1)[0]):
                         raise ValueError("in order to raise to a p-adic exponent, base must reduce to an element of F_p mod the uniformizer")
             # compute the "level"

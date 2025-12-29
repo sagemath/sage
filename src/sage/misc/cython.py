@@ -27,7 +27,8 @@ import sys
 import webbrowser
 from pathlib import Path
 
-from sage.env import SAGE_LOCAL, SAGE_SRC, cython_aliases, sage_include_directories
+from sage.config import get_include_dirs
+from sage.env import SAGE_LOCAL, cython_aliases
 from sage.misc.cachefunc import cached_function
 from sage.misc.sage_ostools import redirection, restore_cwd
 from sage.misc.temporary_file import spyx_tmp, tmp_filename
@@ -49,16 +50,12 @@ def _standard_libs_libdirs_incdirs_aliases():
          {...})
     """
     aliases = cython_aliases()
-    standard_libs = [
-        'mpfr', 'gmp', 'gmpxx', 'pari', 'm',
-        'ec', 'gsl',
-    ] + aliases["CBLAS_LIBRARIES"] + [
-        'ntl']
+    standard_libs = ["mpfr", "gmp", "gmpxx", "pari", "m", "ec", "gsl", "ntl"]
     standard_libdirs = []
     if SAGE_LOCAL:
         standard_libdirs.append(os.path.join(SAGE_LOCAL, "lib"))
-    standard_libdirs.extend(aliases["CBLAS_LIBDIR"] + aliases["NTL_LIBDIR"])
-    standard_incdirs = sage_include_directories(use_sources=True) + [SAGE_SRC] + aliases["CBLAS_INCDIR"] + aliases["NTL_INCDIR"]
+    standard_libdirs.extend(aliases["NTL_LIBDIR"])
+    standard_incdirs = [dir.as_posix() for dir in get_include_dirs()] + aliases["NTL_INCDIR"]
     return standard_libs, standard_libdirs, standard_incdirs, aliases
 
 ################################################################
@@ -655,8 +652,8 @@ def compile_and_load(code, **kwds):
     r"""
     INPUT:
 
-    - ``code`` -- string containing code that could be in a .pyx file
-      that is attached or put in a %cython block in the notebook
+    - ``code`` -- string containing code that could be in a ``.pyx`` file
+      that is attached or put in a ``%%cython`` block
 
     See the function :func:`sage.misc.cython.cython` for documentation
     for the other inputs.

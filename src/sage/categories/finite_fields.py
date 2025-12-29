@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Finite fields
 """
@@ -16,7 +15,6 @@ Finite fields
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.rings.integer import Integer
-from sage.rings.integer_ring import ZZ
 from sage.misc.cachefunc import cached_method
 
 
@@ -68,7 +66,7 @@ class FiniteFields(CategoryWithAxiom):
         """
         return [EnumeratedSets().Finite()]
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -332,7 +330,7 @@ class FiniteFields(CategoryWithAxiom):
             if not self.is_square():
                 raise ValueError("element is not a square")
             g = self.parent().quadratic_nonresidue()
-            even_exp, odd_order = (q - ZZ.one()).val_unit(2)
+            even_exp, odd_order = (q - Integer(1)).val_unit(2)
             e = 0
             for i in range(2, even_exp+1):
                 tmp = self * (pow(g, -e))

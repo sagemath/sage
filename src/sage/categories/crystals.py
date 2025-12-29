@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.graphs sage.combinat
 r"""
 Crystals
@@ -152,7 +151,7 @@ class Crystals(Category_singleton):
 
     class MorphismMethods:
         @cached_method
-        def is_isomorphism(self):
+        def is_isomorphism(self) -> bool:
             """
             Check if ``self`` is a crystal isomorphism.
 
@@ -171,14 +170,14 @@ class Crystals(Category_singleton):
 
             index_set = self._cartan_type.index_set()
             G = self.domain().digraph(index_set=index_set)
-            if self.codomain().cardinality() != G.num_verts():
+            if self.codomain().cardinality() != G.n_vertices():
                 return False
             H = self.codomain().digraph(index_set=index_set)
             return G.is_isomorphic(H, edge_labels=True)
 
         # TODO: This could be moved to sets
         @cached_method
-        def is_embedding(self):
+        def is_embedding(self) -> bool:
             """
             Check if ``self`` is an injective crystal morphism.
 
@@ -213,7 +212,7 @@ class Crystals(Category_singleton):
             return True
 
         @cached_method
-        def is_strict(self):
+        def is_strict(self) -> bool:
             """
             Check if ``self`` is a strict crystal morphism.
 
@@ -1250,7 +1249,7 @@ class Crystals(Category_singleton):
         __add__ = direct_sum
 
         @abstract_method(optional=True)
-        def connected_components_generators(self):
+        def connected_components_generators(self) -> tuple:
             """
             Return a tuple of generators for each of the connected components
             of ``self``.
@@ -1301,7 +1300,7 @@ class Crystals(Category_singleton):
             """
             return len(self.connected_components_generators())
 
-        def is_connected(self):
+        def is_connected(self) -> bool:
             """
             Return ``True`` if ``self`` is a connected crystal.
 
@@ -1528,7 +1527,7 @@ class Crystals(Category_singleton):
                     b = b.e(i)
             return b
 
-        def is_highest_weight(self, index_set=None):
+        def is_highest_weight(self, index_set=None) -> bool:
             r"""
             Return ``True`` if ``self`` is a highest weight.
 
@@ -1550,9 +1549,10 @@ class Crystals(Category_singleton):
                 index_set = self.index_set()
             return all(self.e(i) is None for i in index_set)
 
-        def is_lowest_weight(self, index_set=None):
+        def is_lowest_weight(self, index_set=None) -> bool:
             r"""
             Return ``True`` if ``self`` is a lowest weight.
+
             Specifying the option ``index_set`` to be a subset `I` of the
             index set of the underlying crystal, finds all lowest
             weight vectors for arrows in `I`.

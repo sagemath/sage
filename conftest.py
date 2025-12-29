@@ -11,8 +11,7 @@ import doctest
 import inspect
 import sys
 import warnings
-from pathlib import Path
-from typing import Any, Iterable, Optional
+from typing import Any, Iterable, Optional, TYPE_CHECKING
 
 import pytest
 from _pytest.doctest import (
@@ -31,6 +30,20 @@ from sage.doctest.forker import (
     showwarning_with_traceback,
 )
 from sage.doctest.parsing import SageDocTestParser, SageOutputChecker
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+
+def is_subpath(path: Path, parent: Path) -> bool:
+    # Check if the path is in a subdirectory, or a subsubdirectory, ... of the parent
+    path = path.resolve()
+    parent = parent.resolve()
+    try:
+        path.relative_to(parent)
+        return True
+    except ValueError:
+        return False
 
 
 class SageDoctestModule(DoctestModule):
@@ -109,9 +122,10 @@ class SageDoctestModule(DoctestModule):
                             "valgrind",
                             "rpy2",
                             "sage.libs.coxeter3.coxeter",
+                            "sagemath_giac",
                         ):
                             pytest.skip(
-                                f"unable to import module { self.path } due to missing feature { exception.name }"
+                                f"unable to import module {self.path} due to missing feature {exception.name}"
                             )
                     raise
         # Uses internal doctest module parsing mechanism.
@@ -133,12 +147,12 @@ class SageDoctestModule(DoctestModule):
                     )
         except FeatureNotPresentError as exception:
             pytest.skip(
-                f"unable to import module { self.path } due to missing feature { exception.feature.name }"
+                f"unable to import module {self.path} due to missing feature {exception.feature.name}"
             )
         except ModuleNotFoundError as exception:
             # TODO: Remove this once all optional things are using Features
             pytest.skip(
-                f"unable to import module { self.path } due to missing module { exception.name }"
+                f"unable to import module {self.path} due to missing module {exception.name}"
             )
 
 
@@ -252,6 +266,28 @@ def pytest_collect_file(
                 return IgnoreCollector.from_parent(parent)
 
             return SageDoctestModule.from_parent(parent, path=file_path)
+
+
+def pytest_ignore_collect(
+    collection_path: Path, config: pytest.Config
+) -> None | bool:
+    """
+    This hook is called when collecting test files, and can be used to
+    prevent considering this path for collection by returning ``True``.
+
+    See `pytest documentation <https://docs.pytest.org/en/latest/reference/reference.html#pytest.hookspec.pytest_ignore_collect>`_.
+    """
+    root = config.rootpath
+    if (
+        is_subpath(collection_path, root / "src" / "sage_docbuild")
+        or is_subpath(collection_path, root / "src" / "sage_setup")
+        or collection_path == root / "src" / "build-docs.py"
+    ):
+        # Fails to import with Meson
+        return True
+    if collection_path.name == "all.py":
+        # all.py do not contain tests and may fail when imported twice / in the wrong order
+        return True
 
 
 def pytest_addoption(parser):

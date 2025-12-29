@@ -84,8 +84,8 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
             if G_in.has_loops():
                 loops = 1
             if n == -1:
-                n = G_in.num_verts()
-            elif n != G_in.num_verts():
+                n = G_in.n_vertices()
+            elif n != G_in.n_vertices():
                 return False
             if G_in.vertices(sort=True) != list(range(n)):
                 G_in = copy(G_in)
@@ -362,18 +362,18 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     Certain border cases need to be tested as well::
 
         sage: G = Graph('Fll^G')
-        sage: a,b,c = st(G, [range(G.num_verts())], order=True); b
+        sage: a,b,c = st(G, [range(G.n_vertices())], order=True); b
         Graph on 7 vertices
         sage: c
         48
         sage: G = Graph(21)
-        sage: st(G, [range(G.num_verts())], order=True)[2] == factorial(21)
+        sage: st(G, [range(G.n_vertices())], order=True)[2] == factorial(21)
         True
 
         sage: G = Graph('^????????????????????{??N??@w??FaGa?PCO@CP?AGa?_QO?Q@G?CcA??cc????Bo????{????F_')
         sage: perm = {3:15, 15:3}
         sage: H = G.relabel(perm, inplace=False)
-        sage: st(G, [range(G.num_verts())])[1] == st(H, [range(H.num_verts())])[1]
+        sage: st(G, [range(G.n_vertices())])[1] == st(H, [range(H.n_vertices())])[1]
         True
 
         sage: st(Graph(':Dkw'), [range(5)], lab=False, dig=True)
@@ -390,7 +390,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     from copy import copy
     if isinstance(G_in, GenericGraph):
         loops = G_in.has_loops()
-        n = G_in.num_verts()
+        n = G_in.n_vertices()
         if G_in.vertices(sort=False) != list(range(n)):
             G_in = copy(G_in)
             to = G_in.relabel(return_map=True)
@@ -1054,7 +1054,7 @@ def get_orbits(list gens, int n):
     OP_dealloc(OP)
     sig_free(perm_ints)
 
-    return list(orbit_dict.itervalues())
+    return list(orbit_dict.values())
 
 
 # Canonical augmentation
@@ -1594,7 +1594,7 @@ def generate_dense_graphs_vert_addition(int n, base_G=None,
                 return Integer(1)
             return Integer(2)
 
-    cdef int start_deg = 1 if base_G is None else base_G.num_verts()
+    cdef int start_deg = 1 if base_G is None else base_G.n_vertices()
     graph_iterator = allocate_dg_vert_gen(start_deg, n+1-start_deg)
     if graph_iterator is NULL:
         raise MemoryError

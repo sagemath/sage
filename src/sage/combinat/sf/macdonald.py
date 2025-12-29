@@ -33,7 +33,7 @@ REFERENCES:
    Journal of Algebra and Computation, Volume 23, Issue 4, (2013), pp. 833-852.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -45,8 +45,8 @@ REFERENCES:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 import functools
 
@@ -1291,7 +1291,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
             sage: s = Sym.s()
             sage: H(s[1,1])
             -(1/(q*t-1))*McdH[1, 1] + (t/(q*t-1))*McdH[2]
-            sage: (q,t) = Sym.base_ring().gens()
+            sage: q, t = Sym.base_ring().gens()
             sage: H(q*s[1, 1, 1] + (q*t+1)*s[2, 1] + t*s[3])
             McdH[2, 1]
             sage: H2 = Sym.macdonald(t=0).H()
@@ -1379,7 +1379,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
             sage: m = Sym.m()
             sage: H(m[1,1])
             -(1/(q*t-1))*McdH[1, 1] + (t/(q*t-1))*McdH[2]
-            sage: (q,t) = Sym.base_ring().gens()
+            sage: q, t = Sym.base_ring().gens()
             sage: H((2*q*t+q+t+2)*m[1, 1, 1] + (q*t+t+1)*m[2, 1] + t*m[3])
             McdH[2, 1]
 
@@ -1601,7 +1601,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
             sage: m = Sym.m()
             sage: Ht(m[1,1])
             (1/(-q+t))*McdHt[1, 1] - (1/(-q+t))*McdHt[2]
-            sage: (q,t) = Sym.base_ring().gens()
+            sage: q, t = Sym.base_ring().gens()
             sage: Ht((q*t+2*q+2*t+1)*m[1, 1, 1] + (q+t+1)*m[2, 1] + m[3])
             McdHt[2, 1]
 
@@ -1834,7 +1834,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
                 sage: a._creation_by_determinant_helper(2,[1])
                 (q^3*t-q^2*t-q+1)*McdS[2, 1] + (q^3-q^2*t-q+t)*McdS[3]
             """
-            (q,t) = QQqt.gens()
+            q, t = QQqt.gens()
             from sage.combinat.sf.sf import SymmetricFunctions
             S = SymmetricFunctions(QQqt).macdonald().S()
 

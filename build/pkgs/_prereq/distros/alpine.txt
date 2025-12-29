@@ -20,6 +20,7 @@ ca-certificates
 coreutils
 patch
 bzip2
-patch
 pkgconf
 zlib-dev
+boost
+boost-dev

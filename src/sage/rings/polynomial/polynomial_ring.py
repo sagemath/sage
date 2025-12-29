@@ -938,13 +938,9 @@ class PolynomialRing_generic(Ring):
         s = 'PolynomialRing(%s)' % (Bref)
         return magma._with_names(s, self.variable_names())
 
-    def _gap_init_(self, gap=None):
+    def _gap_init_(self) -> str:
         """
         String for representing this polynomial ring in GAP.
-
-        INPUT:
-
-        - ``gap`` -- (optional GAP instance) used for representing the base ring
 
         EXAMPLES::
 
@@ -969,10 +965,7 @@ class PolynomialRing_generic(Ring):
             sage: gap(S) is gap(S)                                                      # needs sage.libs.gap
             True
         """
-        if gap is not None:
-            base_ring = gap(self.base_ring()).name()
-        else:
-            base_ring = self.base_ring()._gap_init_()
+        base_ring = self.base_ring()._gap_init_()
         return 'PolynomialRing(%s, ["%s"])' % (base_ring, self.variable_name())
 
     def _sage_input_(self, sib, coerced):

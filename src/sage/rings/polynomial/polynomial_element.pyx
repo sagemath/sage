@@ -1188,6 +1188,29 @@ cdef class Polynomial(CommutativePolynomial):
         """
         return self[i]
 
+    def newton_polytope(self):
+        r"""
+        Return the Newton polytope of this polynomial.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: f = 42 + x + x^3
+            sage: P = f.newton_polytope(); P                                            # needs sage.geometry.polyhedron
+            A 1-dimensional polyhedron in ZZ^1 defined as the convex hull of 2 vertices
+
+        TESTS::
+
+            sage: R.<x> = QQ[]
+            sage: R(0).newton_polytope()                                                # needs sage.geometry.polyhedron
+            The empty polyhedron in ZZ^0
+            sage: R(1).newton_polytope()                                                # needs sage.geometry.polyhedron
+            A 0-dimensional polyhedron in ZZ^1 defined as the convex hull of 1 vertex
+        """
+        from sage.geometry.polyhedron.constructor import Polyhedron
+        return Polyhedron(vertices=[(e,) for e in self.exponents()],
+                          base_ring=ZZ)
+
     def __iter__(self):
         """
         EXAMPLES::
@@ -2237,7 +2260,7 @@ cdef class Polynomial(CommutativePolynomial):
             else:
                 # Compute the trace of T with field of order 2^k
                 # sum T^(2^i) for i in range (degree * k)
-                # We use repeated squaring to avoid redundent multiplications
+                # We use repeated squaring to avoid redundant multiplications
                 C, TT = T, T
                 for _ in range(degree * self.base_ring().degree() - 1):
                     TT = TT * TT % self
@@ -10001,8 +10024,6 @@ cdef class Polynomial(CommutativePolynomial):
         t1 = t1 / c
         return t1, t0
 
-    rational_reconstruct = deprecated_function_alias(12696, rational_reconstruction)
-
     def variables(self):
         """
         Return the tuple of variables occurring in this polynomial.
@@ -10513,22 +10534,47 @@ cdef class Polynomial(CommutativePolynomial):
             sage: P.<x> = GF(2)[]
             sage: (x^3 + x^2).radical()                                                 # needs sage.rings.finite_rings
             x^2 + x
+
+        TESTS:
+
+        Check that the method is sufficiently fast::
+
+            sage: R.<x> = GF(2^13)[]
+            sage: f = R.random_element(degree=1000)
+            sage: g = f.radical()  # < 1s
+
+        Check that the method works as long as either :meth:`squarefree_decomposition`
+        or :meth:`factor` is implemented::
+
+            sage: F.<x> = FunctionField(GF(2^10))
+            sage: R.<y> = F[]
+            sage: f = (y+1/(x-1))^2 * (y+x)
+            sage: f.factor()
+            (y + x) * (y + 1/(x + 1))^2
+            sage: f.squarefree_decomposition()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: square-free decomposition not implemented for this polynomial
+            sage: f.radical()
+            y^2 + ((x^2 + x + 1)/(x + 1))*y + x/(x + 1)
         """
         P = self._parent
         R = P.base_ring()
         p = R.characteristic()
-        if p == 0 or p > self.degree():
-            if R.is_field():
-                return self // self.gcd(self.derivative())
-            else:
-                # Be careful with the content: return the
-                # radical of the content times the radical of
-                # (self/content)
-                content = self.content_ideal().gen()
-                self_1 = (self//content)
-                return (self_1 // self_1.gcd(self_1.derivative())) * content.radical()
-        else:  # The above method is not always correct (see Issue 8736)
-            return self.factor().radical_value()
+        if 0 < p <= self.degree():
+            # The method below is not always correct (see Issue 8736)
+            try:
+                return self.squarefree_decomposition().radical_value()
+            except NotImplementedError:
+                return self.factor().radical_value()
+        if R.is_field():
+            return self // self.gcd(self.derivative())
+        # Be careful with the content: return the
+        # radical of the content times the radical of
+        # (self/content)
+        content = self.content_ideal().gen()
+        self_1 = (self//content)
+        return (self_1 // self_1.gcd(self_1.derivative())) * content.radical()
 
     def content_ideal(self):
         """

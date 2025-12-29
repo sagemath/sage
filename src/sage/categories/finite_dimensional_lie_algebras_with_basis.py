@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Finite Dimensional Lie Algebras With Basis
 
@@ -1075,7 +1074,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 [x, y]
             """
             from sage.algebras.lie_algebras.subalgebra import LieSubalgebra_finite_dimensional_with_basis
-            from sage.structure.element import parent, Element
+            from sage.structure.element import Element
             if len(gens) == 1 and not isinstance(gens[0], Element):
                 gens = gens[0]
             category = kwds.pop('category', None)
@@ -1506,7 +1505,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             """
             return self.upper_central_series()[-1]
 
-        def is_abelian(self):
+        def is_abelian(self) -> bool:
             """
             Return if ``self`` is an abelian Lie algebra.
 
@@ -1788,7 +1787,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                                 vec = elt.to_vector()
                             else:
                                 vec = Lmod.coordinate_vector(elt.to_vector())
-                            for key, coeff in vec.iteritems():
+                            for key, coeff in vec.items():
                                 if not coeff:
                                     continue
                                 s, A = sgn(key, Z)
@@ -2720,17 +2719,17 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 P = X.parent()
                 X = self.ambient()(X)  # make sure it is in the ambient space
                 for Y in self.basis():
-                    Y = self.lift(Y)
-                    k, c = Y.leading_item(key=self._order)
+                    lY = self.lift(Y)
+                    k, c = lY.leading_item(key=self._order)
                     if not X[k]:  # scalar will be 0
                         continue
 
                     if is_field:
-                        X -= (X[k] / c) * Y
+                        X -= (X[k] / c) * lY
                     else:
                         try:
                             q, _ = X[k].quo_rem(c)
-                            X -= q * Y
+                            X -= q * lY
                         except AttributeError:
                             break
 

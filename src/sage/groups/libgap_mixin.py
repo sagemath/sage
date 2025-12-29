@@ -22,7 +22,7 @@ from sage.groups.libgap_wrapper import ElementLibGAP
 
 
 class GroupMixinLibGAP:
-    def __contains__(self, elt):
+    def __contains__(self, elt) -> bool:
         r"""
         TESTS::
 
@@ -53,7 +53,7 @@ class GroupMixinLibGAP:
                 return False
             return elt == elt2
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         r"""
         Return whether the group is Abelian.
 
@@ -75,7 +75,7 @@ class GroupMixinLibGAP:
         """
         return self.gap().IsAbelian().sage()
 
-    def is_nilpotent(self):
+    def is_nilpotent(self) -> bool:
         r"""
         Return whether this group is nilpotent.
 
@@ -89,7 +89,7 @@ class GroupMixinLibGAP:
         """
         return self.gap().IsNilpotentGroup().sage()
 
-    def is_solvable(self):
+    def is_solvable(self) -> bool:
         r"""
         Return whether this group is solvable.
 
@@ -103,7 +103,7 @@ class GroupMixinLibGAP:
         """
         return self.gap().IsSolvableGroup().sage()
 
-    def is_supersolvable(self):
+    def is_supersolvable(self) -> bool:
         r"""
         Return whether this group is supersolvable.
 
@@ -117,7 +117,7 @@ class GroupMixinLibGAP:
         """
         return self.gap().IsSupersolvableGroup().sage()
 
-    def is_polycyclic(self):
+    def is_polycyclic(self) -> bool:
         r"""
         Return whether this group is polycyclic.
 
@@ -131,7 +131,7 @@ class GroupMixinLibGAP:
         """
         return self.gap().IsPolycyclicGroup().sage()
 
-    def is_perfect(self):
+    def is_perfect(self) -> bool:
         r"""
         Return whether this group is perfect.
 
@@ -148,7 +148,7 @@ class GroupMixinLibGAP:
         """
         return self.gap().IsPerfectGroup().sage()
 
-    def is_p_group(self):
+    def is_p_group(self) -> bool:
         r"""
         Return whether this group is a p-group.
 
@@ -162,7 +162,7 @@ class GroupMixinLibGAP:
         """
         return self.gap().IsPGroup().sage()
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Return whether this group is simple.
 
@@ -179,7 +179,7 @@ class GroupMixinLibGAP:
         """
         return self.gap().IsSimpleGroup().sage()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Test whether the matrix group is finite.
 
@@ -737,14 +737,18 @@ class GroupMixinLibGAP:
 
         EXAMPLES::
 
-            sage: MatrixGroup(SymmetricGroup(2)).character_table()                      # needs sage.rings.number_field
+            sage: ct = MatrixGroup(SymmetricGroup(2)).character_table(); ct             # random, needs sage.rings.number_field
             [ 1 -1]
             [ 1  1]
-            sage: MatrixGroup(SymmetricGroup(3)).character_table()                      # needs sage.rings.number_field
+            sage: sorted(ct, key=str)                                                   # needs sage.rings.number_field
+            [(1, -1), (1, 1)]
+            sage: ct = MatrixGroup(SymmetricGroup(3)).character_table(); ct             # random, needs sage.rings.number_field
             [ 1  1 -1]
             [ 2 -1  0]
             [ 1  1  1]
-            sage: MatrixGroup(SymmetricGroup(5)).character_table()  # long time
+            sage: sorted(ct, key=str)                                                   # needs sage.rings.number_field
+            [(1, 1, -1), (1, 1, 1), (2, -1, 0)]
+            sage: ct = MatrixGroup(SymmetricGroup(5)).character_table(); ct             # random, long time
             [ 1 -1 -1  1 -1  1  1]
             [ 4  0  1 -1 -2  1  0]
             [ 5  1 -1  0 -1 -1  1]
@@ -752,6 +756,10 @@ class GroupMixinLibGAP:
             [ 5 -1  1  0  1 -1  1]
             [ 4  0 -1 -1  2  1  0]
             [ 1  1  1  1  1  1  1]
+            sage: sorted(ct, key=str)                                                   # long time
+            [(1, -1, -1, 1, -1, 1, 1), (1, 1, 1, 1, 1, 1, 1),
+             (4, 0, -1, -1, 2, 1, 0), (4, 0, 1, -1, -2, 1, 0),
+             (5, -1, 1, 0, 1, -1, 1), (5, 1, -1, 0, -1, -1, 1), (6, 0, 0, 1, 0, 0, -2)]
         """
         # code from function in permgroup.py, but modified for
         # how gap handles these groups.

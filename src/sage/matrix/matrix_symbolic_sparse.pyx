@@ -167,6 +167,7 @@ from sage.structure.factorization import Factorization
 
 from sage.matrix.matrix_generic_sparse cimport Matrix_generic_sparse
 from sage.matrix.constructor import matrix
+from sage.misc.flatten import flatten
 
 cdef maxima
 
@@ -709,12 +710,20 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             sage: matrix([[a, b], [c, d]], sparse=True).jordan_form(subdivide=False)
             [1/2*a + 1/2*d - 1/2*sqrt(a^2 + 4*b*c - 2*a*d + d^2)                                                   0]
             [                                                  0 1/2*a + 1/2*d + 1/2*sqrt(a^2 + 4*b*c - 2*a*d + d^2)]
+        
+        Check that :issue:`40803` is fixed::
+
+            sage: matrix([[a, 0], [0, a]], sparse=True).jordan_form()
+            [a|0]
+            [-+-]
+            [0|a]
         """
         A = self._maxima_lib_()
         jordan_info = A.jordan()
         J = matrix(jordan_info.dispJordan()._sage_(), sparse=True)
         if subdivide:
-            v = [x[1] for x in jordan_info]
+            # Repeated eigen values indices are part of the same list
+            v = flatten([x[1:] for x in jordan_info])
             w = [sum(v[0:i]) for i in range(1, len(v))]
             J.subdivide(w, w)
         if transformation:
@@ -976,7 +985,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
 
         if args:
             if len(args) == 1 and isinstance(args[0], dict):
-                kwargs = {repr(x): vx for x, vx in args[0].iteritems()}
+                kwargs = {repr(x): vx for x, vx in args[0].items()}
             else:
                 raise ValueError('use named arguments, like EXPR(x=..., y=...)')
 

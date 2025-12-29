@@ -16,7 +16,6 @@ Hasse diagrams of posets
 from __future__ import annotations
 
 from collections import deque
-from typing import Iterator
 
 from sage.arith.misc import binomial
 from sage.combinat.posets.hasse_cython import IncreasingChains
@@ -26,6 +25,10 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
 from sage.misc.rest_index_of_methods import gen_rest_table_index
 from sage.rings.integer_ring import ZZ
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 lazy_import('sage.combinat.posets.hasse_cython_flint',
             ['moebius_matrix_fast', 'coxeter_matrix_fast',
@@ -538,7 +541,7 @@ class HasseDiagram(DiGraph):
         """
         if self.cardinality() == 0:
             return True
-        return (self.num_edges() + 1 == self.num_verts() and  # tree
+        return (self.n_edges() + 1 == self.n_vertices() and  # tree
                 all(d <= 1 for d in self.out_degree()) and
                 all(d <= 1 for d in self.in_degree()))
 
@@ -586,7 +589,7 @@ class HasseDiagram(DiGraph):
             False
         """
         H = self.reverse(immutable=False)
-        H.relabel(perm=list(range(H.num_verts() - 1, -1, -1)), inplace=True)
+        H.relabel(perm=list(range(H.n_vertices() - 1, -1, -1)), inplace=True)
         return HasseDiagram(H)
 
     def _precompute_intervals(self) -> None:
@@ -939,7 +942,7 @@ class HasseDiagram(DiGraph):
             sage: H = L.hasse_diagram()
             sage: H.size()
             80
-            sage: H.size() == H.num_edges()
+            sage: H.size() == H.n_edges()
             True
         """
         return self.order()
@@ -1819,7 +1822,7 @@ class HasseDiagram(DiGraph):
         else:
             return True
 
-    def find_nonsemidistributive_elements(self, meet_or_join) -> None | tuple:
+    def find_nonsemidistributive_elements(self, meet_or_join) -> tuple | None:
         r"""
         Check if the lattice is semidistributive or not.
 
@@ -2541,7 +2544,7 @@ class HasseDiagram(DiGraph):
             return True
         return False
 
-    def diamonds(self) -> tuple[list[tuple[int]], bool]:
+    def diamonds(self) -> tuple[list[tuple[int, int, int, int]], bool]:
         r"""
         Return the list of diamonds of ``self``.
 

@@ -6,21 +6,19 @@ AUTHORS:
 
 - Reimundo Heluani (2019-08-09): Initial implementation.
 """
-
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2019 Reimundo Heluani <heluani@potuz.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from sage.misc.cachefunc import cached_method
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from sage.categories.lie_conformal_algebras import LieConformalAlgebras
 from .freely_generated_lie_conformal_algebra import \
-                                            FreelyGeneratedLieConformalAlgebra
+    FreelyGeneratedLieConformalAlgebra
+from sage.misc.cachefunc import cached_method
 
 
 class FinitelyFreelyGeneratedLCA(FreelyGeneratedLieConformalAlgebra):
@@ -33,7 +31,7 @@ class FinitelyFreelyGeneratedLCA(FreelyGeneratedLieConformalAlgebra):
     """
     def __init__(self, R, index_set=None, central_elements=None, category=None,
                  element_class=None, prefix=None, names=None, latex_names=None,
-                 **kwds):
+                 **kwds) -> None:
         """
         Initialize ``self``.
 
@@ -53,7 +51,8 @@ class FinitelyFreelyGeneratedLCA(FreelyGeneratedLieConformalAlgebra):
             raise TypeError("index_set must be a finite set")
 
         super().__init__(R,
-                         index_set=index_set, central_elements=central_elements,
+                         index_set=index_set,
+                         central_elements=central_elements,
                          category=category, element_class=element_class,
                          prefix=prefix, **kwds)
         self._ngens = len(self._generators)
@@ -88,7 +87,7 @@ class FinitelyFreelyGeneratedLCA(FreelyGeneratedLieConformalAlgebra):
         """
         return self.sum(self.gens())
 
-    def ngens(self):
+    def ngens(self) -> int:
         """
         The number of generators of this Lie conformal algebra.
 
@@ -102,7 +101,7 @@ class FinitelyFreelyGeneratedLCA(FreelyGeneratedLieConformalAlgebra):
         return self._ngens
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         The generators for this Lie conformal algebra.
 
@@ -126,13 +125,14 @@ class FinitelyFreelyGeneratedLCA(FreelyGeneratedLieConformalAlgebra):
         return self.lie_conformal_algebra_generators()
 
     @cached_method
-    def central_elements(self):
+    def central_elements(self) -> tuple:
         """
         The central elements of this Lie conformal algebra.
 
         EXAMPLES::
 
-            sage: R = lie_conformal_algebras.NeveuSchwarz(QQ); R.central_elements()
+            sage: R = lie_conformal_algebras.NeveuSchwarz(QQ)
+            sage: R.central_elements()
             (C,)
         """
         return tuple(FreelyGeneratedLieConformalAlgebra.central_elements(self))

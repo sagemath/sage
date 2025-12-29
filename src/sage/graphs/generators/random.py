@@ -2170,8 +2170,8 @@ def RandomTriangulation(n, set_position=False, k=3, seed=None):
     graph.add_edges(edges)
     graph.set_embedding(embedding)
     graph.relabel({0: -2, 1: -1})
-    assert graph.num_edges() == 3*n - 3 - k
-    assert graph.num_verts() == n
+    assert graph.n_edges() == 3*n - 3 - k
+    assert graph.n_vertices() == n
     if set_position:
         graph.layout(layout='planar', save_pos=True)
     return graph
@@ -2237,8 +2237,8 @@ def blossoming_contour(t, shift=0, seed=None):
     t1, t2 = t
     leaf_xb = ('xb',)
     leaf_x = ('x',)
-    n1 = t1.node_number()
-    n = t.node_number()
+    n1 = t1.number_of_nodes()
+    n = t.number_of_nodes()
 
     # adding buds on edges in t1
     if not t1:

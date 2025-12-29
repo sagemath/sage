@@ -99,12 +99,12 @@ jobs:
     env:
       IS_PRERELEASE: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           name: package_tarballs
           path: tarballs
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           name: dist
           path: dist
@@ -163,14 +163,14 @@ jobs:
       # SPKGs to install as system packages
       SPKGS: _bootstrap _prereq
       # Non-Python packages to install as spkgs
-      TARGETS_PRE: gmp mpfr mpc bliss coxeter3 mcqd meataxe sirocco boost_cropped tdlib
+      TARGETS_PRE: gmp mpfr mpc bliss coxeter3 mcqd meataxe sirocco tdlib
       CIBW_BUILD: "*${{ matrix.build }}*"
       # Disable building PyPy wheels on all platforms
       CIBW_SKIP: "pp*"
       #
       CIBW_ARCHS: ${{ matrix.arch }}
       # https://cibuildwheel.readthedocs.io/en/stable/options/#requires-python
-      CIBW_PROJECT_REQUIRES_PYTHON: ">=3.11, <3.13"
+      CIBW_PROJECT_REQUIRES_PYTHON: ">=3.12, <3.13"
       # Environment during wheel build
       CIBW_ENVIRONMENT: "PATH=$(pwd)/prefix/bin:$PATH CPATH=$(pwd)/prefix/include:$CPATH LIBRARY_PATH=$(pwd)/prefix/lib:$LIBRARY_PATH LD_LIBRARY_PATH=$(pwd)/prefix/lib:$LD_LIBRARY_PATH PKG_CONFIG_PATH=$(pwd)/prefix/share/pkgconfig:$PKG_CONFIG_PATH ACLOCAL_PATH=/usr/share/aclocal PIP_CONSTRAINT=$(pwd)/constraints.txt PIP_FIND_LINKS=file://$(pwd)/wheelhouse SAGE_NUM_THREADS=6"
       # Use 'build', not 'pip wheel'
@@ -184,7 +184,7 @@ jobs:
         with:
           platforms: all
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           name: dist
           path: dist
@@ -194,7 +194,7 @@ jobs:
         # Installing pipx follows the approach of https://github.com/pypa/cibuildwheel/pull/1743
         id: python
         with:
-          python-version: "3.11 - 3.13"
+          python-version: "3.12 - 3.13"
           update-environment: false
 
       - name: Bootstrap
@@ -219,30 +219,11 @@ jobs:
         run: |
           "${{ steps.python.outputs.python-path }}" -m pip install cibuildwheel==3.0.1
           export PATH=build/bin:$PATH
-          echo CIBW_BEFORE_ALL="( $(sage-print-system-package-command debian --yes --no-install-recommends install $(sage-get-system-packages debian $SPKGS)) || $(sage-print-system-package-command fedora --yes --no-install-recommends install $(sage-get-system-packages fedora $SPKGS | sed s/pkg-config/pkgconfig/)) || ( $(sage-print-system-package-command homebrew --yes --no-install-recommends install $(sage-get-system-packages homebrew $SPKGS)) || $(sage-print-system-package-command alpine --yes --no-install-recommends install $(sage-get-system-packages alpine $SPKGS)) || echo error ignored) ) && if cp /host/sage-\$AUDITWHEEL_PLAT/config.status . 2>/dev/null; then chmod +x config.status; fi && if [ -x ./config.status ]; then ./config.status; else ./configure --enable-build-as-root ${{ startsWith(matrix.os, 'ubuntu') && '--prefix=/host/sage-\$AUDITWHEEL_PLAT' || '' }} && cp config.status prefix/; fi && MAKE=\"make -j6\" make V=0 $TARGETS_PRE && (echo \"sage_conf @ file://\$(pwd)/pkgs/sage-conf\" && echo \"sage_setup @ file://\$(pwd)/pkgs/sage-setup\") > constraints.txt" >> "$GITHUB_ENV"
+          echo CIBW_BEFORE_ALL="( $(sage-print-system-package-command debian --yes --no-install-recommends install $(sage-get-system-packages debian $SPKGS)) || $(sage-print-system-package-command fedora --yes --no-install-recommends install $(sage-get-system-packages fedora $SPKGS | sed s/pkg-config/pkgconfig/)) || ( $(sage-print-system-package-command homebrew --yes --no-install-recommends install $(sage-get-system-packages homebrew $SPKGS)) || $(sage-print-system-package-command alpine --yes --no-install-recommends install $(sage-get-system-packages alpine $SPKGS)) || echo error ignored) ) && if cp /host/sage-\$AUDITWHEEL_PLAT/config.status . 2>/dev/null; then chmod +x config.status; fi && if [ -x ./config.status ]; then ./config.status; else ./configure --enable-build-as-root ${{ startsWith(matrix.os, 'ubuntu') && '--prefix=/host/sage-\$AUDITWHEEL_PLAT' || '' }} && cp config.status prefix/; fi && MAKE=\"make -j6\" make V=0 $TARGETS_PRE && echo \"sage_setup @ file://\$(pwd)/pkgs/sage-setup\") > constraints.txt" >> "$GITHUB_ENV"
           mkdir -p unpacked
           for sdist in dist/$pkg*.tar.gz; do
               (cd unpacked && tar xfz - ) < $sdist
           done
-
-      - name: sagemath-bliss
-        run: |
-          "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*bliss*
-
-      - name: sagemath-coxeter3
-        run: |
-          "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*coxeter3*
-
-      - name: sagemath-mcqd
-        run: |
-          "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*mcqd*
-
-      - name: sagemath-tdlib
-        run: |
-          case "${{ matrix.arch }}" in
-              i686) ;;  # broken - boost-related
-              *) "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*tdlib*
-          esac
 
       - uses: actions/upload-artifact@v4
         with:
@@ -257,7 +238,7 @@ jobs:
       CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' && github.event_name != 'pull_request' }}
     steps:
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           pattern: "*-*-*-wheels"
           path: wheelhouse

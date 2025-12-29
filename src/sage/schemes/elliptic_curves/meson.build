@@ -7,6 +7,7 @@ py.install_sources(
   'cardinality.py',
   'cm.py',
   'constructor.py',
+  'descent_two_isogeny.pyx',
   'ec_database.py',
   'ell_curve_isogeny.py',
   'ell_egros.py',
@@ -44,10 +45,12 @@ py.install_sources(
   'lseries_ell.py',
   'mod5family.py',
   'mod_poly.py',
+  'mod_sym_num.pyx',
   'modular_parametrization.py',
   'padic_lseries.py',
   'padics.py',
   'period_lattice.py',
+  'period_lattice_region.pyx',
   'saturation.py',
   'sha_tate.py',
   'weierstrass_morphism.py',
@@ -56,9 +59,9 @@ py.install_sources(
 )
 
 extension_data = {
-  'descent_two_isogeny' : files('descent_two_isogeny.pyx'),
-  'mod_sym_num' : files('mod_sym_num.pyx'),
-  'period_lattice_region' : files('period_lattice_region.pyx'),
+  'descent_two_isogeny': files('descent_two_isogeny.pyx'),
+  'mod_sym_num': files('mod_sym_num.pyx'),
+  'period_lattice_region': files('period_lattice_region.pyx'),
 }
 
 foreach name, pyx : extension_data

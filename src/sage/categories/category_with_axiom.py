@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Axioms
 
@@ -1679,6 +1678,7 @@ all_axioms += ("Flying", "Blue",
                "Differentiable", "Smooth", "Analytic", "AlmostComplex",
                "FinitelyGeneratedAsMagma",
                "WellGenerated",
+               "Bounded",
                "Facade", "Finite", "Infinite", "Enumerated",
                "Complete",
                "Nilpotent",

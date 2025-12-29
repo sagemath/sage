@@ -10,10 +10,12 @@ py.install_sources(
   'complexity_measures.py',
   'constants.py',
   'expression.pxd',
+  'expression.pyx',
   'expression_conversion_algebraic.py',
   'expression_conversion_sympy.py',
   'expression_conversions.py',
   'function.pxd',
+  'function.pyx',
   'function_factory.py',
   'maxima_wrapper.py',
   'operators.py',
@@ -21,6 +23,7 @@ py.install_sources(
   'random_tests.py',
   'relation.py',
   'ring.pxd',
+  'ring.pyx',
   'subring.py',
   'symbols.py',
   'symengine.py',
@@ -30,8 +33,8 @@ py.install_sources(
 )
 
 extension_data = {
-  'function' : files('function.pyx'),
-  'ring' : files('ring.pyx'),
+  'function': files('function.pyx'),
+  'ring': files('ring.pyx'),
 }
 
 foreach name, pyx : extension_data

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 r"""
 Sage's IPython Modifications
 
@@ -560,6 +559,7 @@ class InterfaceShellTransformer(PrefilterTransformer):
 
             sage: # needs sage.symbolic
             sage: from sage.repl.interpreter import interface_shell_embed, InterfaceShellTransformer
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: shell = interface_shell_embed(maxima)
             sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,
             ....:     prefilter_manager=shell.prefilter_manager)
@@ -568,8 +568,8 @@ class InterfaceShellTransformer(PrefilterTransformer):
             '2 + sage0 '
             sage: maxima.eval('sage0')
             '3'
-            sage: ift.preparse_imports_from_sage('2 + maxima(a)') # maxima calls set_seed on startup which is why 'sage0' will becomes 'sage4' and not just 'sage1'
-            '2 +  sage4 '
+            sage: ift.preparse_imports_from_sage('2 + maxima(a)')
+            '2 +  sage1 '
             sage: ift.preparse_imports_from_sage('2 + gap(a)')
             '2 + gap(a)'
 

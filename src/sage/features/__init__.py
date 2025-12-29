@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Testing for features of the environment at runtime
 
@@ -72,7 +71,7 @@ import shutil
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
-from sage.env import SAGE_LOCAL, SAGE_SHARE, SAGE_VENV
+from sage.env import SAGE_LOCAL, SAGE_VENV, sage_data_paths
 
 
 class TrivialClasscallMetaClass(type):
@@ -798,7 +797,7 @@ class StaticFile(FileFeature):
         Feature.__init__(self, name, type=type, **kwds)
         self.filename = filename
         if search_path is None:
-            self.search_path = [SAGE_SHARE]
+            self.search_path = list(sage_data_paths())
         elif isinstance(search_path, str):
             self.search_path = [search_path]
         else:
