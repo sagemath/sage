@@ -11,7 +11,7 @@ py.install_sources(
 )
 
 extension_data = {
-  'discrete_gaussian_integer' : files(
+  'discrete_gaussian_integer': files(
     'dgs_bern.c',
     'dgs_gauss_dp.c',
     'dgs_gauss_mp.c',

@@ -9,12 +9,12 @@ AUTHORS:
 
 - Franco Saliola
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2012 Franco Saliola <saliola@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
