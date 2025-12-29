@@ -17,8 +17,8 @@ py.install_sources(
 )
 
 extension_data = {
-  'arithgroup_element' : files('arithgroup_element.pyx'),
-  'congroup' : files('congroup.pyx'),
+  'arithgroup_element': files('arithgroup_element.pyx'),
+  'congroup': files('congroup.pyx'),
 }
 
 foreach name, pyx : extension_data

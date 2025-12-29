@@ -6,7 +6,7 @@ py.install_sources(
   subdir: 'sage/rings/convert',
 )
 
-extension_data = {'mpfi' : files('mpfi.pyx')}
+extension_data = {'mpfi': files('mpfi.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

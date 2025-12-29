@@ -26,6 +26,55 @@ from libcpp.vector cimport vector
 from libcpp.pair cimport pair
 from libcpp.string cimport string as stdstring
 from sage.libs.gmp.types cimport mpz_t, mpq_t, mpz_ptr, mpq_ptr
+from cysignals.signals cimport sig_on, sig_off
+
+
+cdef extern from *:
+    """
+    inline void rethrow_current_exception() { throw; }
+    """
+    void rethrow_current_exception() except+
+
+
+cdef inline int sig_off_then_raise() except *:
+    """
+    A custom exception handler, defined to fix https://github.com/sagemath/sage/issues/40978,
+    as suggested in https://github.com/cython/cython/issues/7189.
+
+    This is used as follows. In the definition below, there will be some functions with the
+    ``_sig`` suffix, such as::
+
+        GEx g_hold2_wrapper "HOLD2" (GEx (GEx, GEx) except+, GEx ex, GEx ex,
+                bint) except +
+        GEx g_hold2_wrapper_sig "HOLD2" (GEx (GEx, GEx) except+, GEx ex, GEx ex,
+                bint) except +sig_off_then_raise
+
+    The declarations are identical, except that the latter has ``+sig_off_then_raise``.
+    The effect is that in the second version, if a C++ exception is raised, ``sig_off()``
+    will be called first.
+
+    As such, the second version **must** be used as follows::
+
+        sig_on()
+        g_hold2_wrapper_sig(...)
+        sig_off()
+
+    This is almost equivalent to the following::
+
+        sig_on()
+        try:
+            g_hold2_wrapper(...)
+        finally:
+            sig_off()
+
+    but the non-``_sig`` version requires Python API for the ``try...finally``,
+    which means there is a potential for the garbage collector to run,
+    leading to arbitrary Python code being executed between the ``sig_on()``
+    and the ``sig_off()``.
+    """
+    sig_off()
+    rethrow_current_exception()  # equivalently, `delegate_to_exception_handlers()` after https://github.com/cython/cython/pull/7390
+
 
 cdef extern from "pynac_wrap.h":
     void ginac_pyinit_Integer(object)
@@ -311,6 +360,8 @@ cdef extern from "pynac_wrap.h":
             bint) except +
     GEx g_hold2_wrapper "HOLD2" (GEx (GEx, GEx) except+, GEx ex, GEx ex,
             bint) except +
+    GEx g_hold2_wrapper_sig "HOLD2" (GEx (GEx, GEx) except+, GEx ex, GEx ex,
+            bint) except +sig_off_then_raise
     void g_set_state "GiNaC::set_state" (stdstring & s, bint b) except +
 
     GSymbol ginac_symbol "GiNaC::symbol" (char* s, char* t, unsigned d) except +
