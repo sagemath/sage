@@ -2205,6 +2205,12 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         r"""
         Return ``True`` if ``self`` divides ``other``.
 
+        .. NOTE::
+
+            This method is only implemented for Laurent polynomials over
+            integral domains. For rings with zero divisors, a
+            :exc:`NotImplementedError` is raised.
+
         EXAMPLES::
 
             sage: R.<x> = LaurentPolynomialRing(ZZ)
@@ -2218,11 +2224,8 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             False
             sage: R(0).divides(R(0))
             True
-            sage: R.<x> = LaurentPolynomialRing(Zmod(6))
-            sage: p = 4*x + 3*x^-1
-            sage: q = 5*x^2 + x + 2*x^-2
-            sage: p.divides(q)
-            False
+            sage: (x^2).divides(x)
+            True
 
             sage: R.<x,y> = GF(2)[]
             sage: S.<z> = LaurentPolynomialRing(R)
@@ -2230,7 +2233,22 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: q = (y^2-x^2) * z**-2 + z + x-y
             sage: p.divides(q), p.divides(p*q)                                          # needs sage.libs.singular
             (False, True)
+
+        TESTS:
+
+        Check that :issue:`40372` is fixed::
+
+            sage: R.<y> = LaurentPolynomialRing(Zmod(4))
+            sage: a = 2+y
+            sage: a.divides(a)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: divisibility test not implemented for Laurent polynomials over non-integral domains
         """
-        p = self.polynomial_construction()[0]
-        q = other.polynomial_construction()[0]
-        return p.divides(q)
+        if self.base_ring().is_integral_domain() is True:
+            p = self.polynomial_construction()[0]
+            q = other.polynomial_construction()[0]
+            return p.divides(q)
+        else:
+            raise NotImplementedError("divisibility test not implemented for Laurent"
+                                      " polynomials over non-integral domains")

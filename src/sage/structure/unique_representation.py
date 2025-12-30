@@ -72,7 +72,7 @@ must be hashable, i.e., must be valid as dictionary keys::
     sage: C([1,2])
     Traceback (most recent call last):
     ...
-    TypeError: unhashable type: 'list'
+    TypeError: ...unhashable type: 'list'...
 
 In addition, equivalent ways of providing the arguments are *not*
 automatically normalised when forming the cache key, and hence different but
@@ -816,7 +816,7 @@ class CachedRepresentation(WithPicklingByInitArgs):
         sage: MyClass(value = [1,2,3])
         Traceback (most recent call last):
         ...
-        TypeError: unhashable type: 'list'
+        TypeError: ...unhashable type: 'list'...
 
     .. rubric:: Argument preprocessing
 

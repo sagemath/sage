@@ -771,7 +771,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: a[[2,1]]
             Traceback (most recent call last):
             ...
-            TypeError: unhashable type: 'list'
+            TypeError: ...unhashable type: 'list'...
         """
         res = self._monomial_coefficients.get(m)
         if res is None:

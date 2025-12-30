@@ -11,7 +11,7 @@ py.install_sources(
   subdir: 'sage/modules/with_basis',
 )
 
-extension_data = {'indexed_element' : files('indexed_element.pyx')}
+extension_data = {'indexed_element': files('indexed_element.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(
