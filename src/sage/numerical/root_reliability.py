@@ -1,31 +1,28 @@
-"""
-Residual-based reliability checks for numerical roots.
+from sage.numerical.reliability_base import NumericalReliabilityChecker
 
-EXAMPLES::
 
-    sage: from sage.numerical.root_reliability import residual_check
-    sage: f = lambda x: x^2 - 2
-    sage: r = sqrt(2).n()
-    sage: residual_check(f, r)
-    True
-"""
-
-def residual_check(f, root, tol=1e-10):
+class RootReliabilityChecker(NumericalReliabilityChecker):
     """
-    Check if a numerical root is reliable by residual size.
-
-    INPUT:
-
-    - ``f`` -- callable
-    - ``root`` -- numeric value
-    - ``tol`` -- tolerance (default: 1e-10)
-
-    OUTPUT:
-
-    - ``True`` or ``False``
+    Reliability checker for numerical roots.
     """
-    try:
-        return abs(f(root)) <= tol
-    except Exception:
-        return False
+
+    def __init__(self, function):
+        self.function = function
+
+    def compute_residual(self, value):
+        return self.function(value)
+
+
+def check_root(function, root, tolerance=1e-12):
+    """
+    Check numerical reliability of a computed root.
+
+    EXAMPLE::
+
+        sage: f = lambda x: x^2 - 2
+        sage: r = sqrt(2).n()
+        sage: check_root(f, r)
+    """
+    checker = RootReliabilityChecker(function)
+    return checker.check(root, tolerance=tolerance)
 
