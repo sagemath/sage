@@ -1734,3 +1734,13 @@ def max_to_sr(expr):
         if isinstance(e, float):
             return sage.rings.real_double.RealDoubleElement(e)
         return e
+
+#interface routines for evaluating maxima's `equal` and `notequal`
+
+
+max_equal = EclObject("$EQUAL")
+max_notequal = EclObject("$NOTEQUAL")
+max_is = EclObject("$IS")
+test_max_equal = lambda A,B: maxima_eval([[max_is],[[max_equal],sr_to_max(A),sr_to_max(B)]]).python()
+test_max_notequal = lambda A,B: maxima_eval([[max_is],[[max_notequal],sr_to_max(A),sr_to_max(B)]]).python()
+test_max_relation = lambda R: maxima_eval([[max_is],sr_to_max(R)]).python()

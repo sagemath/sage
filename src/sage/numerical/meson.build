@@ -19,11 +19,11 @@ py.install_sources(
 )
 
 extension_data = {
-  'gauss_legendre' : files('gauss_legendre.pyx'),
-  'linear_functions' : files('linear_functions.pyx'),
-  'linear_tensor_element' : files('linear_tensor_element.pyx'),
-  'mip' : files('mip.pyx'),
-  'sdp' : files('sdp.pyx'),
+  'gauss_legendre': files('gauss_legendre.pyx'),
+  'linear_functions': files('linear_functions.pyx'),
+  'linear_tensor_element': files('linear_tensor_element.pyx'),
+  'mip': files('mip.pyx'),
+  'sdp': files('sdp.pyx'),
 }
 
 foreach name, pyx : extension_data
