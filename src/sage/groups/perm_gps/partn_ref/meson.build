@@ -25,18 +25,18 @@ py.install_sources(
 )
 
 extension_data = {
-  'automorphism_group_canonical_label' : files(
+  'automorphism_group_canonical_label': files(
     'automorphism_group_canonical_label.pyx',
   ),
-  'canonical_augmentation' : files('canonical_augmentation.pyx'),
-  'data_structures' : files('data_structures.pyx'),
-  'double_coset' : files('double_coset.pyx'),
-  'refinement_binary' : files('refinement_binary.pyx'),
-  'refinement_graphs' : files('refinement_graphs.pyx'),
-  'refinement_lists' : files('refinement_lists.pyx'),
-  'refinement_matrices' : files('refinement_matrices.pyx'),
-  'refinement_python' : files('refinement_python.pyx'),
-  'refinement_sets' : files('refinement_sets.pyx'),
+  'canonical_augmentation': files('canonical_augmentation.pyx'),
+  'data_structures': files('data_structures.pyx'),
+  'double_coset': files('double_coset.pyx'),
+  'refinement_binary': files('refinement_binary.pyx'),
+  'refinement_graphs': files('refinement_graphs.pyx'),
+  'refinement_lists': files('refinement_lists.pyx'),
+  'refinement_matrices': files('refinement_matrices.pyx'),
+  'refinement_python': files('refinement_python.pyx'),
+  'refinement_sets': files('refinement_sets.pyx'),
 }
 
 foreach name, pyx : extension_data
