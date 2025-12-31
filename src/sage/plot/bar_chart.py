@@ -120,7 +120,7 @@ class BarChart(GraphicPrimitive):
         import numpy
         ind = numpy.array(self.ind, dtype=float)
         datalist = numpy.array(self.datalist, dtype=float)
-        subplot.bar(ind, datalist, color=color, width=width, label=options['legend_label'])
+        subplot.bar(ind, datalist, color=color, width=width, label=options['legend_label'], zorder=options.get('zorder'))
 
 
 @rename_keyword(color='rgbcolor')
