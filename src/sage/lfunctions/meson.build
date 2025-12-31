@@ -9,7 +9,7 @@ py.install_sources(
   subdir: 'sage/lfunctions',
 )
 
-extension_data = {'zero_sums' : files('zero_sums.pyx')}
+extension_data = {'zero_sums': files('zero_sums.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(
