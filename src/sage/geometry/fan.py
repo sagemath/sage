@@ -242,21 +242,27 @@ from warnings import warn
 
 import sage.geometry.abc
 from sage.misc.lazy_import import lazy_import
+from sage.structure.richcmp import richcmp, richcmp_method
+
 lazy_import('sage.combinat.combination', 'Combinations')
 lazy_import('sage.combinat.posets.posets', 'FinitePoset')
-from sage.geometry.cone import (_ambient_space_point,
-                                Cone,
-                                ConvexRationalPolyhedralCone,
-                                IntegralRayCollection,
-                                normalize_rays)
+from sage.geometry.cone import (
+    Cone,
+    ConvexRationalPolyhedralCone,
+    IntegralRayCollection,
+    _ambient_space_point,
+    normalize_rays,
+)
+
 lazy_import('sage.geometry.hasse_diagram', 'lattice_from_incidences')
 from sage.geometry.point_collection import PointCollection
 from sage.geometry.toric_lattice import ToricLattice, ToricLattice_generic
+
 lazy_import('sage.geometry.toric_plotter', 'ToricPlotter')
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
-from sage.misc.timing import walltime
 from sage.misc.misc_c import prod
+from sage.misc.timing import walltime
 from sage.modules.free_module import span
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
