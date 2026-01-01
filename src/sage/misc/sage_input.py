@@ -173,10 +173,13 @@ AUTHORS:
 # ****************************************************************************
 from __future__ import annotations
 
-from typing import Any, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
 from sage.misc.lazy_import import lazy_import
 from sage.structure.element import parent
+
+if TYPE_CHECKING:
+    from sage.rings.integer import Integer
 
 lazy_import('sage.rings.real_mpfi', 'RealIntervalFieldElement')
 lazy_import('sage.rings.complex_interval', 'ComplexIntervalFieldElement')
@@ -352,7 +355,7 @@ class SageInputBuilder:
         self._next_local: int = 1
         self._locals: dict[str, Any] = {}
 
-    def __call__(self, x: Any, coerced: CoercionMode = False) -> SageInputExpression:
+    def __call__(self, x: Any, coerced: CoercionMode | Integer = False) -> SageInputExpression:
         r"""
         Try to convert an arbitrary value ``x`` into a
         :class:`SageInputExpression` (an SIE).
