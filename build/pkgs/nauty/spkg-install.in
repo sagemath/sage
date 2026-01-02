@@ -6,7 +6,7 @@ if [ "$SAGE_FAT_BINARY" = "yes" ]; then
    NAUTY_CONFIGURE+="--enable-generic --disable-popcnt"
 fi
 
-sdh_configure --prefix="$SAGE_LOCAL" --includedir="$SAGE_LOCAL/include/nauty" $NAUTY_CONFIGURE
+sdh_configure --prefix="$SAGE_LOCAL" --includedir="$SAGE_LOCAL/include/nauty" $NAUTY_CONFIGURE --enable-tls --disable-static --enable-threads=posix
 sdh_make all TLSlibs
 sdh_make_install
 sdh_make_install TLSinstall
