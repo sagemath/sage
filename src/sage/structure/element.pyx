@@ -890,8 +890,9 @@ cdef class Element(SageObject):
             prec = digits_to_bits(digits)
         return numerical_approx_generic(self, prec)
 
-    def n(self, prec=None, digits=None, algorithm=None):
-        """
+        def n(self, prec=None, digits=None, algorithm=None, **kwds):
+
+                """
         Alias for :meth:`numerical_approx`.
 
         EXAMPLES::
