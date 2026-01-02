@@ -1622,7 +1622,8 @@ cdef class ComplexBall(RingElement):
             0.3333333333333333? + 0.3333333333333333?*I
         """
         cdef ComplexIntervalFieldElement res = parent.zero()
-        res = res._new() # FIXME after modernizing CIF
+        res = res._new()  # FIXME: revisit once CIF modernization is complete
+
         acb_to_ComplexIntervalFieldElement(res, self.value)
         return res
 
