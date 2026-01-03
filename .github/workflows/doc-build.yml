@@ -24,6 +24,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Maximize available disk space
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          # Remove pre-installed packages like Docker, Android, .NET, etc.
+          # We only keep the basic essentials (like compilers, etc.)
+          tool-cache: true
+
       - name: Merge CI fixes from sagemath/sage
         run: |
           .github/workflows/merge-fixes.sh
@@ -80,7 +87,7 @@ jobs:
 
       - name: Download old doc
         if: github.event_name == 'pull_request'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: doc-develop
           github-token: ${{ secrets.GITHUB_TOKEN }}

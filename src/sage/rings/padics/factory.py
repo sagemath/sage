@@ -283,9 +283,9 @@ def get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_se
         print_max_terms = padic_printing._printer_defaults.max_series_terms()
 
     # We eliminate irrelevant print options (e.g. print_pos if p = 2)
-    if p == 2 or print_mode == 'digits':
+    if p == 2 or print_mode in {'digits', 'digits-unicode'}:
         print_pos = True # we want this hard-coded so that we don't get duplicate parents if the keys differ.
-    if print_mode == 'digits':
+    if print_mode in {'digits', 'digits-unicode'}:
         print_ram_name = None
         print_alphabet = print_alphabet[:p]
     else:
