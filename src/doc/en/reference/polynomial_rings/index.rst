@@ -75,11 +75,9 @@ Tropical Polynomials
 Boolean Polynomials
 -------------------
 
-.. ONLY:: feature_sage_rings_polynomial_pbori
+.. toctree::
+   :maxdepth: 1
 
-   .. toctree::
-      :maxdepth: 1
-
-      sage/rings/polynomial/pbori/pbori
+   sage/rings/polynomial/pbori/pbori
 
 .. include:: ../footer.txt

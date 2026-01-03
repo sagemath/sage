@@ -766,7 +766,7 @@ class MultiGraphics(WithEqualityById, SageObject):
             (0.2, 0.3, 0.4, 0.1)
             sage: import numpy  # to ensure numpy 2.0 compatibility
             sage: if int(numpy.version.short_version[0]) > 1:
-            ....:     numpy.set_printoptions(legacy="1.25")
+            ....:     _ = numpy.set_printoptions(legacy="1.25")
             sage: ax1.get_position().bounds  # tol 1.0e-13
             (0.2, 0.3, 0.4000000000000001, 0.10000000000000003)
         """
@@ -1269,7 +1269,7 @@ class GraphicsArray(MultiGraphics):
             sage: G = graphics_array([g1, g2])
             sage: import numpy  # to ensure numpy 2.0 compatibility
             sage: if int(numpy.version.short_version[0]) > 1:
-            ....:     numpy.set_printoptions(legacy="1.25")
+            ....:     _ = numpy.set_printoptions(legacy="1.25")
             sage: G.position(0)  # tol 5.0e-3
             (0.025045451349937315,
              0.03415488992713045,

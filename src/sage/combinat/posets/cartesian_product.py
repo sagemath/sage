@@ -1,5 +1,5 @@
 """
-Cartesian products of Posets
+Cartesian products of posets
 
 AUTHORS:
 

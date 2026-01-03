@@ -309,9 +309,7 @@ class CalculusMethod(SageObject):
             return expression.is_trivial_zero()
         elif method == 'sympy':
             # we have to test SymPy's is_zero because it could be 'NoneType'
-            if expression.is_zero:
-                return True
-            return False
+            return bool(expression.is_zero)
 
     def set(self, method):
         r"""

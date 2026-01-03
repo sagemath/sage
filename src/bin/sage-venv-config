@@ -10,12 +10,6 @@
 #
 VERSION = 'unknown'
 
-try:
-    from sage_conf import *
-except ImportError:
-    pass
-
-from sys import prefix as SAGE_VENV
 
 try:
     from sage.version import version as VERSION
@@ -24,7 +18,7 @@ except ImportError:
 
 def _main():
     from argparse import ArgumentParser
-    from sys import exit, stdout
+    from sys import stdout
     parser = ArgumentParser()
     parser.add_argument('--version', help="show version", action="version",
                        version='%(prog)s ' + VERSION)

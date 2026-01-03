@@ -65,7 +65,7 @@ Sage example in ./premierspas.tex, line 952::
 Sage example in ./premierspas.tex, line 967::
 
   sage: arccos(sin(pi/3))
-  arccos(1/2*sqrt(3))
+  1/6*pi
   sage: sqrt(2)
   sqrt(2)
   sage: exp(I*pi/7)

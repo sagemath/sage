@@ -4,9 +4,13 @@ py.install_sources(
   'all.py',
   'constructor.py',
   'homspace.pxd',
+  'homspace.pyx',
   'interface.py',
   'mat.pxd',
+  'mat.pyx',
+  'mwrank.pyx',
   'newforms.pxd',
+  'newforms.pyx',
   subdir: 'sage/libs/eclib',
 )
 
@@ -25,7 +29,7 @@ foreach name, pyx : extension_data_cpp
     install: true,
     override_options: ['cython_language=cpp'],
     include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_rings],
-    dependencies: [py_dep, cysignals, ec, flint, gmp],
+    dependencies: [py_dep, cysignals, ec, ecl, flint, gmp],
   )
 endforeach
 

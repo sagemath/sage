@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Sets
 """
@@ -36,9 +35,9 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import, LazyImport
 from sage.misc.lazy_format import LazyFormat
+# Do not use sage.categories.all here to avoid initialization loop
 from sage.categories.category import Category
 from sage.categories.category_singleton import Category_singleton
-# Do not use sage.categories.all here to avoid initialization loop
 from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
 from sage.categories.subquotients import SubquotientsCategory
 from sage.categories.quotients import QuotientsCategory
@@ -1038,7 +1037,7 @@ class Sets(Category_singleton):
             return parent(element) == self
 
         @abstract_method
-        def __contains__(self, x):
+        def __contains__(self, x) -> bool:
             """
             Test whether the set ``self`` contains the object ``x``.
 
@@ -1889,6 +1888,21 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
     from sage.categories.facade_sets import FacadeSets as Facade
 
     class Infinite(CategoryWithAxiom):
+        class SubcategoryMethods:
+
+            def Finite(self):
+                """
+                Incompatible axiom.
+
+                EXAMPLES::
+
+                    sage: C = NN.category()
+                    sage: C.Finite()
+                    Traceback (most recent call last):
+                    ...
+                    TypeError: incompatible axioms: finite and infinite
+                """
+                raise TypeError("incompatible axioms: finite and infinite")
 
         class ParentMethods:
 
@@ -2373,8 +2387,32 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     False
                     sage: cartesian_product([S1,S2,S1]).is_empty()
                     True
+
+                Even when some parent did not implement ``is_empty``,
+                as long as one element is nonempty, the result can be determined::
+
+                    sage: C = ConditionSet(QQ, lambda x: x > 0)
+                    sage: C.is_empty()
+                    Traceback (most recent call last):
+                    ...
+                    AttributeError...
+                    sage: cartesian_product([C,[]]).is_empty()
+                    True
+                    sage: cartesian_product([C,C]).is_empty()
+                    Traceback (most recent call last):
+                    ...
+                    NotImplementedError...
                 """
-                return any(c.is_empty() for c in self.cartesian_factors())
+                last_exception = None
+                for c in self.cartesian_factors():
+                    try:
+                        if c.is_empty():
+                            return True
+                    except (AttributeError, NotImplementedError) as e:
+                        last_exception = e
+                if last_exception is not None:
+                    raise NotImplementedError from last_exception
+                return False
 
             def is_finite(self):
                 r"""
@@ -2391,18 +2429,70 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     False
                     sage: cartesian_product([ZZ, Set(), ZZ]).is_finite()
                     True
+
+                TESTS:
+
+                This should still work even if some parent does not implement
+                ``is_finite``::
+
+                    sage: known_infinite_set = ZZ
+                    sage: unknown_infinite_set = Set([1]) + ConditionSet(QQ, lambda x: x > 0)
+                    sage: unknown_infinite_set.is_empty()
+                    False
+                    sage: unknown_infinite_set.is_finite()
+                    Traceback (most recent call last):
+                    ...
+                    AttributeError...
+                    sage: cartesian_product([unknown_infinite_set, known_infinite_set]).is_finite()
+                    False
+                    sage: unknown_empty_set = ConditionSet(QQ, lambda x: False)
+                    sage: cartesian_product([known_infinite_set, unknown_empty_set]).is_finite()
+                    Traceback (most recent call last):
+                    ...
+                    NotImplementedError...
+                    sage: cartesian_product([unknown_infinite_set, Set([])]).is_finite()
+                    True
+                    sage: cartesian_product([Set([1, 2, 3]), Set([4, 5])]).is_finite()
+                    True
+                    sage: cartesian_product([unknown_infinite_set, unknown_infinite_set]).is_finite()
+                    Traceback (most recent call last):
+                    ...
+                    NotImplementedError...
+
+                Coverage test when one factor has emptiness unknown but result is finite::
+
+                    sage: s = ConditionSet(RR, lambda x: x^2 == 2, category=Sets().Finite())
+                    sage: s.is_finite()
+                    True
+                    sage: s.is_empty()
+                    Traceback (most recent call last):
+                    ...
+                    AttributeError...
+                    sage: cartesian_product([s, Set([1, 2, 3])]).is_finite()
+                    True
                 """
-                f = self.cartesian_factors()
                 try:
                     # Note: some parent might not implement "is_empty". So we
                     # carefully isolate this test.
-                    test = any(c.is_empty() for c in f)
+                    if self.is_empty():
+                        return True
                 except (AttributeError, NotImplementedError):
-                    pass
-                else:
-                    if test:
-                        return test
-                return all(c.is_finite() for c in f)
+                    # it is unknown whether some set may be empty
+                    if all(c.is_finite() for c in self.cartesian_factors()):
+                        return True
+                    raise NotImplementedError
+
+                # in this case, all sets are definitely nonempty
+                last_exception = None
+                for c in self.cartesian_factors():
+                    try:
+                        if not c.is_finite():
+                            return False
+                    except (AttributeError, NotImplementedError) as e:
+                        last_exception = e
+                if last_exception is not None:
+                    raise NotImplementedError from last_exception
+                return True
 
             def cardinality(self):
                 r"""
@@ -2472,11 +2562,11 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: c2 = C.random_element(4,7)
                     sage: c2                   # random
                     (6, 5, 6, 4, 5, 6, 6, 4, 5, 5)
-                    sage: all(4 <= i < 7 for i in c2)
+                    sage: all(4 <= i <= 7 for i in c2)
                     True
                 """
                 return self._cartesian_product_of_elements(
-                        c.random_element(*args) for c in self.cartesian_factors())
+                    c.random_element(*args) for c in self.cartesian_factors())
 
             @abstract_method
             def _sets_keys(self):
@@ -3041,7 +3131,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 return self.a_realization().an_element()
 
             # TODO: maybe this could be taken care of by Sets.Facade()?
-            def __contains__(self, x):
+            def __contains__(self, x) -> bool:
                 r"""
                 Test whether ``x`` is in ``self``, that is if it is an
                 element of some realization of ``self``.

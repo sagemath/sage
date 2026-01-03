@@ -38,13 +38,10 @@ documentation for the \sage interface rather than for QEPCAD.  As
 such, it does not cover several issues that are very important to use
 QEPCAD efficiently, such as variable ordering, the efficient use of
 the alternate quantifiers and ``_root_`` expressions, the
-``measure-zero-error`` command, etc.  For more information on
-QEPCAD, see the online documentation at
-\url{http://www.cs.usna.edu/~qepcad/B/QEPCAD.html} and Chris Brown's
-tutorial handout and slides from
-\url{http://www.cs.usna.edu/~wcbrown/research/ISSAC04/Tutorial.html}.
-(Several of the examples in this documentation came from these
-sources.)
+``measure-zero-error`` command, etc.  For more information on QEPCAD,
+see the `online documentation <https://www.usna.edu/Users/cs/wcbrown/qepcad/B/QEPCAD.html>`_
+and Chris Brown's `tutorial handout <https://www.usna.edu/Users/cs/wcbrown/research/ISSAC04/Tutorial.html>`_.
+(Several of the examples in this documentation came from these sources.)
 
 The examples below require that the optional qepcad package is installed.
 
@@ -596,6 +593,7 @@ AUTHORS:
 
 - Carl Witty (2008-03): initial version
 - Thierry Monteil (2015-07) repackaging + noncommutative doctests.
+
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Carl Witty <Carl.Witty@gmail.com>
@@ -830,9 +828,9 @@ class Qepcad:
 
             sage: (x, y, z) = var('x, y, z')
             sage: conds = [-z < 0, -y + z < 0, x^2 + x*y + 2*x*z + 2*y*z - x < 0, \
-                           x^2 + x*y + 3*x*z + 2*y*z + 2*z^2 - x - z < 0, \
-                           -2*x + 1 < 0, -x*y - x*z - 2*y*z - 2*z^2 + z < 0, \
-                           x + 3*y + 3*z - 1 < 0]
+            ....:          x^2 + x*y + 3*x*z + 2*y*z + 2*z^2 - x - z < 0, \
+            ....:          -2*x + 1 < 0, -x*y - x*z - 2*y*z - 2*z^2 + z < 0, \
+            ....:          x + 3*y + 3*z - 1 < 0]
             sage: qepcad(conds, memcells=3000000) # optional - qepcad
             2 x - 1 > 0 /\ z > 0 /\ z - y < 0 /\ 3 z + 3 y + x - 1 < 0
         """

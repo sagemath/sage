@@ -19,23 +19,28 @@ AUTHORS:
 - David Loeffler
 - Jared Weinstein
 """
+from typing import Self
 
-from sage.structure.sage_object import SageObject
+from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
+from sage.misc.flatten import flatten
+from sage.misc.lazy_import import lazy_import
+from sage.misc.verbose import verbose
+from sage.modular.modform.element import Newform
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.misc.abstract_method import abstract_method
-from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_import import lazy_import
-from sage.misc.verbose import verbose
-from sage.misc.flatten import flatten
-from sage.modular.modform.element import Newform
+from sage.structure.sage_object import SageObject
 from sage.structure.sequence import Sequence
 
-lazy_import('sage.rings.qqbar', 'QQbar')
-
+from .smoothchar import (
+    SmoothCharacterGroupQp,
+    SmoothCharacterGroupRamifiedQuadratic,
+    SmoothCharacterGroupUnramifiedQuadratic,
+)
 from .type_space import TypeSpace
-from .smoothchar import SmoothCharacterGroupQp, SmoothCharacterGroupUnramifiedQuadratic, SmoothCharacterGroupRamifiedQuadratic
+
+lazy_import('sage.rings.qqbar', 'QQbar')
 
 
 def LocalComponent(f, p, twist_factor=None):
@@ -87,9 +92,9 @@ def LocalComponent(f, p, twist_factor=None):
     """
     p = ZZ(p)
     if not p.is_prime():
-        raise ValueError( "p must be prime" )
+        raise ValueError("p must be prime")
     if not isinstance(f, Newform):
-        raise TypeError( "f (=%s of type %s) should be a Newform object" % (f, type(f)) )
+        raise TypeError("f (=%s of type %s) should be a Newform object" % (f, type(f)))
 
     r = f.level().valuation(p)
     if twist_factor is None:
@@ -320,7 +325,7 @@ class PrimitiveLocalComponent(LocalComponentBase):
     Base class for primitive (twist-minimal) local components.
     """
 
-    def is_primitive(self):
+    def is_primitive(self) -> bool:
         r"""
         Return ``True`` if this local component is primitive (has minimal level
         among its character twists).
@@ -332,7 +337,7 @@ class PrimitiveLocalComponent(LocalComponentBase):
         """
         return True
 
-    def minimal_twist(self):
+    def minimal_twist(self) -> Self:
         r"""
         Return a twist of this local component which has the minimal possible
         conductor.
@@ -434,11 +439,12 @@ class UnramifiedPrincipalSeries(PrincipalSeries):
             X^2 + 2/17*X + 1/17
         """
         p = self.prime()
-        return PolynomialRing(self.coefficient_field(), 'X')([
-                self.central_character()(p)*p,
-                -self.newform()[p] * p**((self.twist_factor() - self.newform().weight() + 2)/2),
-                1
-              ])
+        ring = PolynomialRing(self.coefficient_field(), 'X')
+        return ring([
+            self.central_character()(p) * p,
+            -self.newform()[p] * p**((self.twist_factor() - self.newform().weight() + 2) / 2),
+            1
+        ])
 
     def characters(self):
         r"""
@@ -562,7 +568,7 @@ class PrimitiveSpecial(PrimitiveLocalComponent):
             True
         """
 
-        return [SmoothCharacterGroupQp(self.prime(), self.coefficient_field()).character(0, [self.newform()[self.prime()] * self.prime() ** ((self.twist_factor() - self.newform().weight() + 2)/2)])]
+        return [SmoothCharacterGroupQp(self.prime(), self.coefficient_field()).character(0, [self.newform()[self.prime()] * self.prime() ** ((self.twist_factor() - self.newform().weight() + 2) / 2)])]
 
     def check_tempered(self):
         r"""
@@ -727,14 +733,15 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
             # which is dual to the cohomological one that defines the local component.
 
             X = polygen(self.coefficient_field())
-            theta_poly = X**2 - (-1)**n*tr*X + self.central_character()(g.norm())
+            theta_poly = X**2 - (-1)**n * tr * X + self.central_character()(g.norm())
             verbose("theta_poly for %s is %s" % (g, theta_poly), level=1)
             if theta_poly.is_irreducible():
                 F = self.coefficient_field().extension(theta_poly, "d")
                 G = G.base_extend(F)
 
             # roots with repetitions allowed
-            gvals = flatten([[y[0]]*y[1] for y in theta_poly.roots(G.base_ring())])
+            gvals = flatten([[y[0]] * y[1]
+                             for y in theta_poly.roots(G.base_ring())])
 
             if len(gs) == 1:
                 # This is always the case if p != 2
@@ -752,15 +759,16 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
 
                 tr = (~T.rho(g0.matrix().list())).trace()
                 X = polygen(G.base_ring())
-                theta0_poly = X**2 - (-1)**n*tr*X + self.central_character()(g0.norm())
+                theta0_poly = X**2 - (-1)**n * tr * X + self.central_character()(g0.norm())
                 verbose("theta_poly for %s is %s" % (g0, theta_poly), level=1)
                 if theta0_poly.is_irreducible():
                     F = theta0_poly.base_ring().extension(theta_poly, "e")
                     G = G.base_extend(F)
-                g0vals = flatten([[y[0]]*y[1] for y in theta0_poly.roots(G.base_ring())])
+                g0vals = flatten([[y[0]] * y[1]
+                                  for y in theta0_poly.roots(G.base_ring())])
 
-                pairA = [ [g0vals[0], gvals[0]], [g0vals[1], gvals[1]] ]
-                pairB = [ [g0vals[0], gvals[1]], [g0vals[1], gvals[0]] ]
+                pairA = [[g0vals[0], gvals[0]], [g0vals[1], gvals[1]]]
+                pairB = [[g0vals[0], gvals[1]], [g0vals[1], gvals[0]]]
 
                 A_fail = 0
                 B_fail = 0
@@ -800,8 +808,7 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
                             verbose("  chisB FAILED", level=1)
                             B_fail = 1
                             break
-                        else:
-                            verbose("  Trace identity check works for both", level=1)
+                        verbose("  Trace identity check works for both", level=1)
 
                 if B_fail and not A_fail:
                     chi1, chi2 = chisA
@@ -812,7 +819,7 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
 
             # Consistency checks
             assert chi1.restrict_to_Qp() == chi2.restrict_to_Qp() == self.central_character()
-            assert chi1*chi2 == chi1.parent().compose_with_norm(self.central_character())
+            assert chi1 * chi2 == chi1.parent().compose_with_norm(self.central_character())
 
             return Sequence([chi1, chi2], check=False, cr=True)
 
@@ -836,7 +843,7 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
 
             if all(x == 0 for x in t0 + t1):
                 # Can't happen?
-                raise NotImplementedError( "Can't identify ramified quadratic extension -- all traces zero" )
+                raise NotImplementedError("Can't identify ramified quadratic extension -- all traces zero")
             elif all(x == 0 for x in t1):
                 G, qs, ts = G0, q0, t0
             elif all(x == 0 for x in t0):
@@ -846,12 +853,12 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
                 # space has to be isomorphic to its twist by the (ramified
                 # quadratic) character corresponding to the quadratic
                 # extension.
-                raise RuntimeError( "Can't get here!" )
+                raise RuntimeError("Can't get here!")
 
             q = qs[0]
             t = ts[0]
             k = self.newform().weight()
-            t *= p**ZZ( (k - 2 + self.twist_factor() ) / 2)
+            t *= p**ZZ((k - 2 + self.twist_factor()) / 2)
 
             X = polygen(self.coefficient_field())
             theta_poly = X**2 - X * t + self.central_character()(q.norm())
@@ -859,7 +866,7 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
             if theta_poly.is_irreducible():
                 F = self.coefficient_field().extension(theta_poly, "d")
                 G = G.base_extend(F)
-            c1q, c2q = flatten([[x]*e for x,e in theta_poly.roots(G.base_ring())])
+            c1q, c2q = flatten([[x] * e for x, e in theta_poly.roots(G.base_ring())])
 
             if len(qs) == 1:
                 chi1, chi2 = (G.extend_character(n, self.central_character(), [x]) for x in [c1q, c2q])
@@ -868,7 +875,7 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
                 assert p == 3
                 q = qs[1]
                 t = ts[1]
-                t *= p**ZZ( (k - 2 + self.twist_factor() ) / 2)
+                t *= p**ZZ((k - 2 + self.twist_factor()) / 2)
 
                 X = polygen(G.base_ring())
                 theta_poly = X**2 - X * t + self.central_character()(q.norm())
@@ -876,7 +883,7 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
                 if theta_poly.is_irreducible():
                     F = G.base_ring().extension(theta_poly, "e")
                     G = G.base_extend(F)
-                c1q2, c2q2 = flatten([[x]*e for x,e in theta_poly.roots(G.base_ring())])
+                c1q2, c2q2 = flatten([[x] * e for x, e in theta_poly.roots(G.base_ring())])
 
                 pairA = [[c1q, c1q2], [c2q, c2q2]]
                 pairB = [[c1q, c2q2], [c2q, c1q2]]
@@ -900,9 +907,9 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
                 for u in G.ideal(n).invertible_residues():
                     if A_fail or B_fail:
                         break
-                    x = q*u
+                    x = q * u
                     verbose("testing x = %s" % x, level=1)
-                    ti = (~T.rho(x.matrix().list())).trace() * p**ZZ((k-2+self.twist_factor())/2)
+                    ti = (~T.rho(x.matrix().list())).trace() * p**ZZ((k - 2 + self.twist_factor()) / 2)
                     verbose("trace of matrix is %s" % ti, level=1)
                     if chisA[0](x) + chisA[1](x) != ti:
                         A_fail = 1
@@ -918,7 +925,7 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
 
             # Consistency checks
             assert chi1.restrict_to_Qp() == chi2.restrict_to_Qp() == self.central_character()
-            assert chi1*chi2 == chi1.parent().compose_with_norm(self.central_character())
+            assert chi1 * chi2 == chi1.parent().compose_with_norm(self.central_character())
 
             return Sequence([chi1, chi2], check=False, cr=True)
 
@@ -964,7 +971,7 @@ class ImprimitiveLocalComponent(LocalComponentBase):
         self._min_twist = min_twist
         self._chi = chi
 
-    def is_primitive(self):
+    def is_primitive(self) -> bool:
         r"""
         Return ``True`` if this local component is primitive (has minimal level
         among its character twists).
@@ -1045,7 +1052,7 @@ class ImprimitiveLocalComponent(LocalComponentBase):
             Gchi = G.compose_with_norm(Hchi)
         else:
             Gchi = G.from_dirichlet(~chi)
-        return Sequence([c*Gchi for c in minchars], cr=True, universe=G)
+        return Sequence([c * Gchi for c in minchars], cr=True, universe=G)
 
     def check_tempered(self):
         r"""

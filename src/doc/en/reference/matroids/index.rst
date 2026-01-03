@@ -74,6 +74,7 @@ Internals
    sage/matroids/lean_matrix
    sage/matroids/matroids_plot_helpers
    sage/matroids/set_system
+   sage/matroids/union_matroid
    sage/matroids/unpickling
 
 .. include:: ../footer.txt

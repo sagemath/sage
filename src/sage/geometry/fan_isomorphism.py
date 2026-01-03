@@ -1,16 +1,14 @@
 """
 Find isomorphisms between fans
 """
-
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.rings.integer_ring import ZZ
 from sage.matrix.constructor import column_matrix, matrix
 from sage.geometry.cone import Cone
@@ -46,13 +44,11 @@ def fan_isomorphic_necessary_conditions(fan1, fan2):
         return False
     if fan1.dim() != fan2.dim():
         return False
-    if fan1.nrays() != fan2.nrays():
+    if fan1.n_rays() != fan2.n_rays():
         return False
-    if fan1.ngenerating_cones() != fan2.ngenerating_cones():
+    if fan1.n_generating_cones() != fan2.n_generating_cones():
         return False
-    if fan1.is_complete() != fan2.is_complete():
-        return False
-    return True
+    return fan1.is_complete() == fan2.is_complete()
 
 
 def fan_isomorphism_generator(fan1, fan2):
@@ -352,7 +348,7 @@ def fan_2d_echelon_forms(fan):
         sage: parent(list(_)[0])
         Full MatrixSpace of 2 by 0 dense matrices over Integer Ring
     """
-    if fan.nrays() == 0:
+    if fan.n_rays() == 0:
         return frozenset([fan_2d_echelon_form(fan)])
     rays = list(fan_2d_cyclically_ordered_rays(fan))
     echelon_forms = []

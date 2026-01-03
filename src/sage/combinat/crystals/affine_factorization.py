@@ -438,7 +438,8 @@ def affine_factorizations(w, l, weight=None):
             else:
                 return []
         else:
-            return [[u]+p for (u,v) in w.left_pieri_factorizations() for p in affine_factorizations(v,l-1) ]
+            return [[u] + p for u, v in w.left_pieri_factorizations()
+                    for p in affine_factorizations(v, l - 1)]
     else:
         if l != len(weight):
             return []
@@ -448,11 +449,11 @@ def affine_factorizations(w, l, weight=None):
             else:
                 return []
         else:
-            return [[u]+p for (u,v) in w.left_pieri_factorizations(max_length=weight[0]) if u.length() == weight[0]
-                    for p in affine_factorizations(v,l-1,weight[1:]) ]
+            return [[u] + p for u, v in w.left_pieri_factorizations(max_length=weight[0]) if u.length() == weight[0]
+                    for p in affine_factorizations(v, l - 1, weight[1:])]
 
 #####################################################################
-## Crystal isomorphisms
+#  Crystal isomorphisms
 
 
 class FactorizationToTableaux(CrystalMorphism):

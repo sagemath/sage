@@ -543,6 +543,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
         A subdivision with many faces, not all of which are triangles::
 
+            sage: # long time (:issue:`39569`)
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y> = PolynomialRing(T)
             sage: p3 = (R(8) + R(4)*x + R(2)*y + R(1)*x^2 + x*y + R(1)*y^2
@@ -578,6 +579,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
         Dual subdivision of a tropical surface::
 
+            sage: # long time (:issue:`39569`)
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y,z> = PolynomialRing(T)
             sage: p1 = x + y + z + x^2 + R(1)
@@ -653,16 +655,28 @@ class TropicalMPolynomial(MPolynomial_polydict):
         r"""
         Return a string representation of ``self``.
 
+        Note that ``x`` equals ``0*x``, which is different from
+        ``1*x``.  Therefore, we represent monomials always together
+        with their coefficients, to avoid confusion.
+
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y> = PolynomialRing(T)
             sage: x + R(-1)*y + R(-3)
             0*x + (-1)*y + (-3)
+
         """
         if not self.monomial_coefficients():
             return str(self.parent().base().zero())
-        s = super()._repr_()
+        try:
+            key = self.parent().term_order().sortkey
+        except AttributeError:
+            key = None
+        atomic = self.parent().base_ring()._repr_option('element_is_atomic')
+        s = self.element().poly_repr(self.parent().variable_names(),
+                                     atomic_coefficients=atomic,
+                                     sortkey=key)
         if self.monomials()[-1].is_constant():
             if self.monomial_coefficient(self.parent()(0)) < 0:
                 s = s.replace(" - ", " + -")

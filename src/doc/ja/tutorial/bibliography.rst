@@ -21,7 +21,7 @@ Bibliography
     2004.
 
 ..  [Py] The Python language http://www.python.org/
-    Reference Manual http://docs.python.org/ref/ref.html.
+    Reference Manual https://docs.python.org/3/reference/index.html.
     日本Pythonユーザ会のサイト http://www.python.jp/ で日本語版ドキュメントが公開されている．感謝．
 
 ..  [PyB] The Python Beginner's Guide,

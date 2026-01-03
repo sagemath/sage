@@ -7,15 +7,15 @@ py.install_sources(
   'finitely_generated.py',
   'finitely_generated_gap.py',
   'group_element.pxd',
+  'group_element.pyx',
   'group_element_gap.pxd',
+  'group_element_gap.pyx',
   'heisenberg.py',
-  'homset.py',
   'isometries.py',
   'linear.py',
   'linear_gap.py',
   'matrix_group.py',
   'matrix_group_gap.py',
-  'morphism.py',
   'named_group.py',
   'named_group_gap.py',
   'orthogonal.py',
@@ -29,8 +29,8 @@ py.install_sources(
 )
 
 extension_data = {
-  'group_element' : files('group_element.pyx'),
-  'group_element_gap' : files('group_element_gap.pyx'),
+  'group_element': files('group_element.pyx'),
+  'group_element_gap': files('group_element_gap.pyx'),
 }
 
 foreach name, pyx : extension_data

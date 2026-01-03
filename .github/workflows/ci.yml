@@ -1,0 +1,126 @@
+name: CI Linux
+
+on:
+  push:
+    tags:
+      - '*'
+  pull_request:
+    paths:
+      - '**.build'
+      - 'uv.lock'
+      - 'subprojects/**'
+      - '.github/workflows/ci.yml'
+  workflow_dispatch:
+    # Allow to run manually
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        container:
+          - fedora:41
+          - fedora:42
+          - fedora:43
+          - debian:forky
+          - ghcr.io/void-linux/void-glibc-full
+          - archlinux
+          #- ubuntu:22.04 - gap is outdated there (only 4.11)
+          - ubuntu:24.04
+          - ubuntu:25.04
+    container:
+      image: ${{ matrix.container }}
+
+    steps:
+      - name: Prepare container
+        run: |
+          if [ "${{ matrix.container }}" = "ghcr.io/void-linux/void-glibc-full" ]; then
+            xbps-install -Syu xbps
+            xbps-install -yu
+            # node-based actions require libstdc++.so.6
+            xbps-install -Sy libstdc++ bash git
+          fi
+          if [ "${{ matrix.container }}" = "archlinux" ]; then
+            # The archlinux container is configured to not install docs by default
+            # but we need the maxima help to be in place
+            sed -i '/^NoExtract/d' /etc/pacman.conf
+          fi
+          if [ "${{ matrix.container }}" = "ubuntu:22.04" ]; then
+            apt-get update
+            apt-get install -y git
+          fi
+
+      - name: Checkout code
+        uses: actions/checkout@v6.0.1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7.1.4
+
+      # We cannot use the setup python action because it doesn't support all containers
+      # https://github.com/actions/setup-python/issues/527
+      - name: Set up Python
+        run: |
+          uv python install
+          if [ "${{ matrix.container }}" = "ghcr.io/void-linux/void-glibc-full" ] || [ "${{ matrix.container }}" = "archlinux" ]; then
+            uv venv --system-site-packages
+          else
+            uv venv
+          fi
+          . .venv/bin/activate
+          echo PATH=$PATH >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          SYSTEM=$(build/bin/sage-guess-package-system)
+          if [ "$SYSTEM" = "fedora" ]; then
+              dnf install -y git
+
+              # Need to use --setopt=tsflags="" to avoid errors with gphelp
+              dnf install -y pari-gp --setopt=tsflags=""
+
+              # Mitigate upstream packaging bug: https://bugzilla.redhat.com/show_bug.cgi?id=2332429
+              # by swapping the incorrectly installed OpenCL-ICD-Loader for the expected ocl-icd
+              dnf -y swap --repo='fedora' OpenCL-ICD-Loader ocl-icd
+          fi
+
+          eval $(build/bin/sage-print-system-package-command $SYSTEM update)
+          eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install $(build/bin/sage-get-system-packages $SYSTEM $(uv run --no-project build/bin/sage-package list :standard:)))
+
+      - name: Build
+        run: |
+          # Install build dependencies manually as workaround for https://github.com/astral-sh/uv/issues/1516
+          uv pip install \
+            meson-python \
+            "cypari2 >=2.2.1" \
+            "cysignals >=1.12.1" \
+            "cython >=3.1.0" \
+            "gmpy2 >=2.1.5" \
+            memory_allocator \
+            "numpy >=1.25" \
+            jinja2 \
+            setuptools
+          uv sync --frozen --inexact --no-build-isolation -v
+
+      - name: Test
+        run: |
+          uv run --frozen ./sage -t --all -p4 || true
+
+      - name: Clear container name
+        id: clear-container-name
+        if: failure() || success()
+        run: |
+            # Output the container name, but with ":" and "/" replaced by "-"
+            # This is needed to avoid issues with the upload-artifact action
+            CONTAINER_NAME=$(echo "${{ matrix.container }}" | tr ':/' '--')
+            echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_OUTPUT
+
+      - name: Upload log
+        uses: actions/upload-artifact@v4.5.0
+        if: failure() || success()
+        with:
+          name: ${{ steps.clear-container-name.outputs.CONTAINER_NAME }}-log
+          path: |
+            build/cp313/meson-logs/
+            build/cp313/meson-info/

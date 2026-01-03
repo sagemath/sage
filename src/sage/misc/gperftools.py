@@ -18,7 +18,7 @@ EXAMPLES::
 
 REFERENCE:
 
-Uses the `Google performance analysis tools
+This uses the `Google performance analysis tools
 <https://github.com/gperftools/gperftools>`_. Note that they are not
 included in Sage, you have to install them yourself on your system.
 
@@ -35,13 +35,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sys
 import ctypes
+import sys
 import time
-from sage.structure.sage_object import SageObject
+
 from sage.misc.cachefunc import cached_method
-from sage.misc.compat import find_library
-from sage.cpython.string import bytes_to_str
+from sage.structure.sage_object import SageObject
 
 
 libc = None
@@ -50,7 +49,7 @@ libprofiler = None
 
 class Profiler(SageObject):
 
-    def __init__(self, filename=None):
+    def __init__(self, filename=None) -> None:
         """
         Interface to the gperftools profiler.
 
@@ -71,7 +70,7 @@ class Profiler(SageObject):
         else:
             self._filename = filename
 
-    def filename(self):
+    def filename(self) -> str:
         """
         Return the file name.
 
@@ -86,7 +85,7 @@ class Profiler(SageObject):
         """
         return self._filename
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation.
 
@@ -98,7 +97,7 @@ class Profiler(SageObject):
             sage: Profiler()
             Profiler logging to .../tmp....perf
         """
-        return 'Profiler logging to {0}'.format(self.filename())
+        return f'Profiler logging to {self.filename()}'
 
     def _libprofiler(self):
         """
@@ -167,7 +166,7 @@ class Profiler(SageObject):
                  'less than 100ms', RuntimeWarning)
 
     @cached_method
-    def _pprof(self):
+    def _pprof(self) -> str:
         """
         Return the name of the ``pprof`` binary.
 
@@ -190,10 +189,10 @@ class Profiler(SageObject):
         from subprocess import check_output, CalledProcessError, STDOUT
         for name in potential_names:
             try:
-                version = check_output([name, '--version'], stderr=STDOUT)
+                bytes_version = check_output([name, '--version'], stderr=STDOUT)
             except (CalledProcessError, OSError):
                 continue
-            version = bytes_to_str(version)
+            version = bytes_version.decode()
             if 'gperftools' not in version:
                 from warnings import warn
                 warn('the "{0}" utility does not appear to be the gperftools profiler'
@@ -202,7 +201,7 @@ class Profiler(SageObject):
             return name
         raise OSError('unable to run pprof, please install gperftools')
 
-    def _executable(self):
+    def _executable(self) -> str:
         """
         Return the name of the Sage Python interpreter.
 
@@ -341,7 +340,7 @@ def crun(s, evaluator):
     prof.top()
 
 
-def run_100ms():
+def run_100ms() -> None:
     """
     Used for doctesting.
 

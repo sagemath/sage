@@ -119,6 +119,7 @@ Chow cycles can be of mixed degrees::
 # ****************************************************************************
 from __future__ import annotations
 
+from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
 from sage.misc.fast_methods import WithEqualityById
 from sage.modules.fg_pid.fgp_module import FGP_Module_class
@@ -226,6 +227,7 @@ class ChowCycle(FGP_Element):
         s += ')'
         return s
 
+    @cached_method
     def degree(self) -> int:
         r"""
         Return the degree of the Chow cycle.
@@ -245,9 +247,6 @@ class ChowCycle(FGP_Element):
             sage: [ a.degree() for a in A.gens() ]
             [2, 1, 0]
         """
-        if '_dim' in self.__dict__:
-            return self._dim
-
         ambient_dim = self.parent()._variety.dimension()
         cone_dim = None
         for i, cone in enumerate(self.parent()._cones):
@@ -255,8 +254,7 @@ class ChowCycle(FGP_Element):
                 if cone_dim not in [None, cone.dim()]:
                     raise ValueError('Chow cycle is not of definite degree')
                 cone_dim = cone.dim()
-        self._dim = ambient_dim - cone_dim
-        return self._dim
+        return ambient_dim - cone_dim
 
     def project_to_degree(self, degree):
         r"""
@@ -817,6 +815,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
         x[self._cones.index(cone)] = 1
         return self._V(x)
 
+    @cached_method
     def degree(self, k=None):
         r"""
         Return the degree-`k` Chow group.
@@ -911,15 +910,8 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
         """
         if k is not None:
             return self.degree()[k]
-
-        try:
-            return self._degree
-        except AttributeError:
-            pass
-
-        self._degree = tuple(ChowGroup_degree_class(self, d)
-                             for d in range(self._variety.dimension() + 1))
-        return self._degree
+        return tuple(ChowGroup_degree_class(self, d)
+                     for d in range(self._variety.dimension() + 1))
 
     def coordinate_vector(self, chow_cycle, degree=None, reduce=True):
         r"""
@@ -958,7 +950,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
         a = chow_cycle.project_to_degree(degree)
         return self.degree(degree).module().coordinate_vector(a, reduce=reduce)
 
-    def gens(self, degree=None):
+    def gens(self, degree=None) -> tuple:
         r"""
         Return the generators of the Chow group.
 
@@ -1177,7 +1169,7 @@ class ChowGroup_degree_class(SageObject):
         """
         return self._gens[i]
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of the Chow group of fixed degree.
 

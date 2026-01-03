@@ -7,22 +7,22 @@ AUTHOR:
 - William Stein, 2010-03
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from cpython.object cimport PyObject_RichCompare
 from libc.math cimport log, sqrt, exp, isnormal, isfinite, M_PI
 cdef double sqrt2pi = sqrt(2*M_PI)
 from cysignals.signals cimport sig_on, sig_off
 
-from sage.misc.flatten  import flatten
+from sage.misc.flatten import flatten
 from sage.structure.element import Matrix
 
 from sage.stats.time_series cimport TimeSeries
@@ -330,10 +330,10 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             sage: hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]], [(1,.5), (-1,3)], [.1,.9]).__repr__()
             'Gaussian Hidden Markov Model with 2 States\nTransition matrix:\n[0.1 0.9]\n[0.5 0.5]\nEmission parameters:\n[(1.0, 0.5), (-1.0, 3.0)]\nInitial probabilities: [0.1000, 0.9000]'
         """
-        s = "Gaussian Hidden Markov Model with %s States"%self.N
-        s += '\nTransition matrix:\n%s'%self.transition_matrix()
-        s += '\nEmission parameters:\n%s'%self.emission_parameters()
-        s += '\nInitial probabilities: %s'%self.initial_probabilities()
+        s = "Gaussian Hidden Markov Model with %s States" % self.N
+        s += '\nTransition matrix:\n%s' % self.transition_matrix()
+        s += '\nEmission parameters:\n%s' % self.emission_parameters()
+        s += '\nInitial probabilities: %s' % self.initial_probabilities()
         return s
 
     def generate_sequence(self, Py_ssize_t length, starting_state=None):
@@ -421,7 +421,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         else:
             q = starting_state
             if q < 0 or q>= self.N:
-                raise ValueError("starting state must be between 0 and %s"%(self.N-1))
+                raise ValueError("starting state must be between 0 and %s" % (self.N-1))
 
         states._values[0] = q
         obs._values[0] = self.random_sample(q, rstate)
@@ -1143,10 +1143,10 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
             sage: hmm.GaussianMixtureHiddenMarkovModel([[.9,.1],[.4,.6]], [[(.4,(0,1)), (.6,(1,0.1))],[(1,(0,1))]], [.7,.3]).__repr__()
             'Gaussian Mixture Hidden Markov Model with 2 States\nTransition matrix:\n[0.9 0.1]\n[0.4 0.6]\nEmission parameters:\n[0.4*N(0.0,1.0) + 0.6*N(1.0,0.1), 1.0*N(0.0,1.0)]\nInitial probabilities: [0.7000, 0.3000]'
         """
-        s = "Gaussian Mixture Hidden Markov Model with %s States"%self.N
-        s += '\nTransition matrix:\n%s'%self.transition_matrix()
-        s += '\nEmission parameters:\n%s'%self.emission_parameters()
-        s += '\nInitial probabilities: %s'%self.initial_probabilities()
+        s = "Gaussian Mixture Hidden Markov Model with %s States" % self.N
+        s += '\nTransition matrix:\n%s' % self.transition_matrix()
+        s += '\nEmission parameters:\n%s' % self.emission_parameters()
+        s += '\nInitial probabilities: %s' % self.initial_probabilities()
         return s
 
     def __reduce__(self):

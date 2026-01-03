@@ -118,6 +118,51 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         mpz_vector_get_entry(x.value, &self._matrix[i], j)
         return x
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        """
+        Copy position iSrc,jSrc of ``src`` to position iDst,jDst of ``self``.
+
+        The object ``src`` must be of type ``Matrix_integer_sparse`` and have
+        the same base ring as ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_integer_sparse
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: m = matrix(ZZ,3,4,[i if is_prime(i) else 0 for i in range(12)],sparse=True)
+            sage: m
+            [ 0  0  2  3]
+            [ 0  5  0  7]
+            [ 0  0  0 11]
+            sage: m.transpose()
+            [ 0  0  0]
+            [ 0  5  0]
+            [ 2  0  0]
+            [ 3  7 11]
+            sage: m.matrix_from_rows([0,2])
+            [ 0  0  2  3]
+            [ 0  0  0 11]
+            sage: m.matrix_from_columns([1,3])
+            [ 0  3]
+            [ 5  7]
+            [ 0 11]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [ 0  7]
+            [ 0 11]
+        """
+        cdef Integer x
+        x = Integer()
+        cdef Matrix_integer_sparse _src = <Matrix_integer_sparse> src
+        mpz_vector_get_entry(x.value, &_src._matrix[iSrc], jSrc)
+        mpz_vector_set_entry(&self._matrix[iDst], jDst, x.value)
+
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
@@ -673,7 +718,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             r = Matrix_sparse.rank(self)
             self.cache("rank", r)
         else:
-            raise ValueError("no algorithm '%s'"%algorithm)
+            raise ValueError("no algorithm '%s'" % algorithm)
 
         return r
 
@@ -856,16 +901,19 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         cdef linbox.DensePolynomial_integer * p = new linbox.DensePolynomial_integer(givZZ, <size_t> self._nrows)
         cdef Polynomial_integer_dense_flint g = (<Polynomial_integer_dense_flint> R.gen())._new()
 
-        sig_on()
-        linbox.charpoly(p[0], M[0])
-        sig_off()
+        while True:  # linbox is unreliable, see :issue:`37068`
+            sig_on()
+            linbox.charpoly(p[0], M[0])
+            sig_off()
 
-        cdef size_t i
-        fmpz_poly_fit_length(g._poly, p.size())
-        for i in range(p.size()):
-            tmp = p[0][i].get_mpz_const()
-            fmpz_poly_set_coeff_mpz(g._poly, i, tmp)
-        _fmpz_poly_set_length(g._poly, p.size())
+            fmpz_poly_fit_length(g._poly, p.size())
+            for i in range(p.size()):
+                tmp = p[0][i].get_mpz_const()
+                fmpz_poly_set_coeff_mpz(g._poly, i, tmp)
+            _fmpz_poly_set_length(g._poly, p.size())
+
+            if g.lc() == 1 and g.degree() == self._nrows:
+                break
 
         del M
         del p
@@ -955,18 +1003,21 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         cdef linbox.SparseMatrix_integer * M = new_linbox_matrix_integer_sparse(givZZ, self)
         cdef linbox.DensePolynomial_integer * p = new linbox.DensePolynomial_integer(givZZ, <size_t> self._nrows)
         cdef Polynomial_integer_dense_flint g = (<Polynomial_integer_dense_flint> R.gen())._new()
-
-        sig_on()
-        linbox.minpoly(p[0], M[0])
-        sig_off()
-
-        cdef size_t i
         cdef mpz_t tmp
-        fmpz_poly_fit_length(g._poly, p.size())
-        for i in range(p.size()):
-            tmp = p[0][i].get_mpz_const()
-            fmpz_poly_set_coeff_mpz(g._poly, i, tmp)
-        _fmpz_poly_set_length(g._poly, p.size())
+
+        while True:  # linbox is unreliable, see :issue:`37068`
+            sig_on()
+            linbox.minpoly(p[0], M[0])
+            sig_off()
+
+            fmpz_poly_fit_length(g._poly, p.size())
+            for i in range(p.size()):
+                tmp = p[0][i].get_mpz_const()
+                fmpz_poly_set_coeff_mpz(g._poly, i, tmp)
+            _fmpz_poly_set_length(g._poly, p.size())
+
+            if g.lc() == 1:
+                break
 
         del M
         del p

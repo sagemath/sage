@@ -3,14 +3,16 @@ py.install_sources(
   'all.py',
   'basic_stats.py',
   'intlist.pxd',
+  'intlist.pyx',
   'r.py',
   'time_series.pxd',
+  'time_series.pyx',
   subdir: 'sage/stats',
 )
 
 extension_data = {
-  'intlist' : files('intlist.pyx'),
-  'time_series' : files('time_series.pyx'),
+  'intlist': files('intlist.pyx'),
+  'time_series': files('time_series.pyx'),
 }
 
 foreach name, pyx : extension_data
@@ -19,8 +21,8 @@ foreach name, pyx : extension_data
     sources: pyx,
     subdir: 'sage/stats',
     install: true,
-    include_directories: [inc_cpython, inc_numpy],
-    dependencies: [py_dep, cysignals, gmp],
+    include_directories: [inc_cpython],
+    dependencies: [py_dep, cysignals, gmp, numpy],
   )
 endforeach
 

@@ -52,7 +52,8 @@ AUTHOR:
 import sage.categories.morphism
 import sage.categories.homset
 from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
-from sage.structure.all import Sequence, parent
+from sage.structure.sequence import Sequence
+from sage.structure.element import parent
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
 
 
@@ -1068,7 +1069,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         else:
             return self._matrix.right_nullity()
 
-    def is_bijective(self):
+    def is_bijective(self) -> bool:
         r"""
         Tell whether ``self`` is bijective.
 
@@ -1112,9 +1113,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         """
         return self.is_injective() and self.is_surjective()
 
-    def is_identity(self):
+    def is_identity(self) -> bool:
         r"""
-        Determines if this morphism is an identity function or not.
+        Determine if this morphism is an identity function or not.
 
         EXAMPLES:
 
@@ -1186,9 +1187,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         #   so we test equality on a basis, which is sufficient
         return all(self(u) == u for u in self.domain().basis())
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
-        Determines if this morphism is a zero function or not.
+        Determine if this morphism is a zero function or not.
 
         EXAMPLES:
 
@@ -1228,9 +1229,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         #   disqualifies the morphism as having totally zero outputs
         return self._matrix.is_zero()
 
-    def is_equal_function(self, other):
+    def is_equal_function(self, other) -> bool:
         r"""
-        Determines if two morphisms are equal functions.
+        Determine if two morphisms are equal functions.
 
         INPUT:
 
@@ -1646,7 +1647,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
             return self._matrix
         return self._matrix.transpose()
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         """
         Tell whether ``self`` is injective.
 
@@ -1671,7 +1672,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
             ker = self._matrix.right_kernel()
         return ker.dimension() == 0
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         r"""
         Tell whether ``self`` is surjective.
 

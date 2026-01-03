@@ -17,7 +17,8 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.misc.verbose import verbose
 from sage.structure.sequence import Sequence
-from sage.modular.arithgroup.all import Gamma0, GammaH
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
+from sage.modular.arithgroup.congroup_gammaH import GammaH_constructor as GammaH
 from sage.modular.arithgroup.arithgroup_generic import ArithmeticSubgroup
 
 
@@ -53,10 +54,10 @@ def modular_ratio_space(chi):
     I = V
     d = I.rank()
 
-    t = verbose("Calculating Eisenstein forms in weight 1...",level=1)
+    t = verbose("Calculating Eisenstein forms in weight 1...", level=1)
     B0 = EisensteinForms(~chi, 1).q_echelon_basis(prec=R)
     B = [b + B0[0] for b in B0]
-    verbose("Done (dimension %s)" % len(B),level=1,t=t)
+    verbose("Done (dimension %s)" % len(B), level=1, t=t)
 
     t = verbose("Calculating in weight 2...", level=1)
     C = CuspForms(Gamma0(N), 2).q_echelon_basis(prec=R)
@@ -64,7 +65,7 @@ def modular_ratio_space(chi):
 
     t = verbose("Computing candidate space", level=1)
     for b in B:
-        quots = (c/b for c in C)
+        quots = (c / b for c in C)
         W = V.span(V(x.padded_list(R)) for x in quots)
         I = I.intersection(W)
         if I.rank() < d:
@@ -141,7 +142,7 @@ def hecke_stable_subspace(chi, aux_prime=ZZ(2)):
     verbose("Auxiliary prime: %s" % l, level=1)
 
     # Compute working precision
-    R = l*Gamma0(N).sturm_bound(l + 2)
+    R = l * Gamma0(N).sturm_bound(l + 2)
 
     t = verbose("Computing modular ratio space", level=1)
     mrs = modular_ratio_space(chi)
@@ -186,8 +187,7 @@ def hecke_stable_subspace(chi, aux_prime=ZZ(2)):
     if D.dimension() != 0:
         raise ArithmeticError("Got non-cuspidal form!")
     verbose("Done", t=t, level=1)
-    qexps = Sequence(A(x.list()).add_bigoh(R) for x in J.gens())
-    return qexps
+    return Sequence(A(x.list()).add_bigoh(R) for x in J.gens())
 
 
 @cached_function

@@ -1,4 +1,5 @@
 from cpython.object cimport PyObject
+from cpython.ref cimport _Py_REFCNT
 from sage.structure.element cimport Element, Matrix
 from sage.structure.parent cimport Parent
 
@@ -64,7 +65,7 @@ cdef class MatrixArgs:
         Can we safely return self.entries without making a copy?
         A refcount of 1 means that self.entries is the only reference.
         """
-        return (<PyObject*>self.entries).ob_refcnt == 1
+        return _Py_REFCNT(<PyObject*>self.entries) == 1
 
     cdef inline bint need_to_convert(self, x) noexcept:
         """Is ``x`` not an element of ``self.base``?"""

@@ -213,24 +213,24 @@ cdef dc_work_space *allocate_dc_work_space(int n) noexcept:
         return NULL
 
     work_space.degree = n
-    int_array = <int *> sig_malloc((n*n + # for perm_stack
+    int_array = <int *> sig_malloc((n*n +  # for perm_stack
                                      5*n   # for int_array
                                     )*sizeof(int))
     work_space.group1 = SC_new(n)
     work_space.group2 = SC_new(n)
-    work_space.current_ps = PS_new(n,0)
-    work_space.first_ps   = PS_new(n,0)
+    work_space.current_ps = PS_new(n, 0)
+    work_space.first_ps = PS_new(n, 0)
     work_space.bitset_array = <bitset_t *> sig_calloc((n + 2*len_of_fp_and_mcr + 1), sizeof(bitset_t))
     work_space.orbits_of_subgroup = OP_new(n)
     work_space.perm_stack = NULL
 
-    if int_array                        is NULL or \
-       work_space.group1                is NULL or \
-       work_space.group2                is NULL or \
-       work_space.current_ps            is NULL or \
-       work_space.first_ps              is NULL or \
-       work_space.bitset_array          is NULL or \
-       work_space.orbits_of_subgroup    is NULL:
+    if int_array is NULL or \
+       work_space.group1 is NULL or \
+       work_space.group2 is NULL or \
+       work_space.current_ps is NULL or \
+       work_space.first_ps is NULL or \
+       work_space.bitset_array is NULL or \
+       work_space.orbits_of_subgroup is NULL:
         sig_free(int_array)
         deallocate_dc_work_space(work_space)
         return NULL

@@ -165,13 +165,16 @@ call individually::
     sage: e = pari([0,0,0,-82,0]).ellinit()
     sage: eta1 = e.elleta(precision=50)[0]
     sage: eta1.sage()
-    3.6054636014326520859158205642077267748 # 64-bit
-    3.605463601432652085915820564           # 32-bit
+    3.6054636014326520859158205642077267748
     sage: eta1 = e.elleta(precision=150)[0]
     sage: eta1.sage()
     3.605463601432652085915820564207726774810268996598024745444380641429820491740 # 64-bit
-    3.60546360143265208591582056420772677481026899659802474544                    # 32-bit
+    3.605463601432652085915820564207726774810268996598024745444380641430          # 32-bit
 """
+
+from cypari2 import Pari
+
+from sage.ext.memory import init_memory_functions
 
 
 def _get_pari_instance():
@@ -181,14 +184,12 @@ def _get_pari_instance():
         sage: pari  # indirect doctest
         Interface to the PARI C library
     """
-    from cypari2 import Pari
     stack_initial = 1024 * 1024
     stack_max = 1024 * stack_initial
     P = Pari(stack_initial, stack_max)
 
     # pari_init_opts() overrides MPIR's memory allocation functions,
     # so we need to reset them.
-    from sage.ext.memory import init_memory_functions
     init_memory_functions()
 
     # PARI sets debugmem=1 by default but we do not want those warning

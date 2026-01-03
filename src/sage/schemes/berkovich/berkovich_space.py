@@ -201,7 +201,7 @@ class Berkovich_Cp(Berkovich):
             sage: ideal = A.prime_above(5)
             sage: B = Berkovich_Cp_Projective(A, ideal)
             sage: B.ideal()
-            Fractional ideal (-a - 2)
+            Fractional ideal (2*a - 1)
 
         ::
 

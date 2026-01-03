@@ -187,8 +187,7 @@ We find the `x` such that `e^x - 3x = 0`.
 Note that this agrees with what the PARI interpreter gp produces::
 
     sage: gp('solve(x=1,2,exp(x)-3*x)')
-    1.512134551657842473896739678              # 32-bit
-    1.5121345516578424738967396780720387046    # 64-bit
+    1.5121345516578424738967396780720387046
 
 Next we find the minimum of a polynomial using the two different
 ways of accessing Mathematica::

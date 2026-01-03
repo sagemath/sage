@@ -89,7 +89,6 @@ cdef extern from "ecl/ecl.h":
     # Type predicates returning a C boolean
 
     bint bint_floatp "floatp" (cl_object x)
-    bint bint_numberp "ecl_numberp" (cl_object x)
     bint bint_eql "ecl_eql"(cl_object x, cl_object y)
     bint bint_equal "ecl_equal"(cl_object x, cl_object y)
     bint bint_equalp "ecl_equalp"(cl_object x, cl_object y)

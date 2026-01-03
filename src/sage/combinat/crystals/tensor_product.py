@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-Tensor Products of Crystals
+Tensor products of crystals
 
 Main entry points:
 
@@ -9,11 +9,11 @@ Main entry points:
 
 AUTHORS:
 
-- Anne Schilling, Nicolas Thiery (2007): Initial version
-- Ben Salisbury, Travis Scrimshaw (2013): Refactored tensor products to handle
+- Anne Schilling, Nicolas Thiery (2007): initial version
+- Ben Salisbury, Travis Scrimshaw (2013): refactored tensor products to handle
   non-regular crystals and created new subclass to take advantage of
   the regularity
-- Travis Scrimshaw (2020): Added queer crystal
+- Travis Scrimshaw (2020): added queer crystal
 """
 #*****************************************************************************
 #       Copyright (C) 2007 Anne Schilling <anne at math.ucdavis.edu>
@@ -965,8 +965,9 @@ class CrystalOfTableaux(CrystalOfWords):
                 raise ValueError("shapes should all be partitions")
             S = CrystalOfSpins(cartan_type)
         B = CrystalOfTableaux(cartan_type, shapes=shapes)
-        T = TensorProductOfCrystals(S, B, generators=[[S.module_generators[0],x] for x in B.module_generators])
-        T.rename("The crystal of tableaux of type %s and shape(s) %s" % (cartan_type, list(list(shape) for shape in spin_shapes)))
+        T = TensorProductOfCrystals(S, B, generators=[[S.module_generators[0], x] for x in B.module_generators])
+        T.rename("The crystal of tableaux of type %s and shape(s) %s" %
+                 (cartan_type, [list(shape) for shape in spin_shapes]))
         T.shapes = spin_shapes
         return T
 
@@ -987,13 +988,14 @@ class CrystalOfTableaux(CrystalOfWords):
             sage: T = crystals.Tableaux(['A',3], shape = [2,2])
             sage: TestSuite(T).run()
         """
-#        super().__init__(category = FiniteEnumeratedSets())
+        # super().__init__(category = FiniteEnumeratedSets())
         Parent.__init__(self, category=ClassicalCrystals())
         self.letters = CrystalOfLetters(cartan_type)
         self.shapes = shapes
-        self.module_generators = tuple(self.module_generator(la) for la in shapes)
+        self.module_generators = tuple(self.module_generator(la)
+                                       for la in shapes)
         self.rename("The crystal of tableaux of type %s and shape(s) %s"
-                    % (cartan_type, list(list(shape) for shape in shapes)))
+                    % (cartan_type, [list(shape) for shape in shapes]))
 
     def cartan_type(self):
         """

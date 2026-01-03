@@ -28,7 +28,6 @@ from sage.cpython.string import bytes_to_str
 import os
 import re
 import subprocess
-import sys
 from pathlib import Path
 
 
@@ -102,10 +101,7 @@ class JmolData(SageObject):
         if not JmolDataJar().is_present():
             return False
 
-        if not self.is_jvm_available():
-            return False
-
-        return True
+        return self.is_jvm_available()
 
     def export_image(self,
                      targetfile,

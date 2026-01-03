@@ -658,7 +658,7 @@ class BaseIsomorphism1D(Morphism):
                 Multivariate Polynomial Ring in x, y over Rational Field
           To:   Multivariate Polynomial Ring in x, y over Rational Field
     """
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         EXAMPLES::
 
@@ -669,7 +669,7 @@ class BaseIsomorphism1D(Morphism):
         """
         return "Isomorphism"
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         r"""
         EXAMPLES::
 
@@ -680,7 +680,7 @@ class BaseIsomorphism1D(Morphism):
         """
         return True
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         r"""
         EXAMPLES::
 

@@ -29,6 +29,7 @@ py.install_sources(
   'monoids.py',
   'posets.py',
   'semigroups.py',
+  'semigroups_cython.pyx',
   'semirings.py',
   'sets_cat.py',
   'sets_with_grading.py',
@@ -36,7 +37,7 @@ py.install_sources(
   subdir: 'sage/categories/examples',
 )
 
-extension_data = {'semigroups_cython' : files('semigroups_cython.pyx')}
+extension_data = {'semigroups_cython': files('semigroups_cython.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

@@ -69,7 +69,7 @@ class QmodnZ(Parent, UniqueRepresentation):
     """
     Element = QmodnZ_Element
 
-    def __init__(self, n=1):
+    def __init__(self, n=1) -> None:
         r"""
         Initialization.
 
@@ -90,7 +90,7 @@ class QmodnZ(Parent, UniqueRepresentation):
         Parent.__init__(self, base=ZZ, category=category)
         self._populate_coercion_lists_(coerce_list=[QQ])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Display the group.
 
@@ -156,7 +156,7 @@ class QmodnZ(Parent, UniqueRepresentation):
         """
         return self.element_class(self, QQ(x))
 
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an element, for use in coercion system.
 
@@ -167,7 +167,7 @@ class QmodnZ(Parent, UniqueRepresentation):
         """
         return self(0)
 
-    def some_elements(self):
+    def some_elements(self) -> list:
         """
         Return some elements, for use in testing.
 

@@ -1173,7 +1173,7 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
     """
     import matplotlib as mpl
     import numpy as np
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
     from sage.ext.fast_callable import fast_callable
     from sage.rings.complex_double import CDF

@@ -17,11 +17,11 @@ Terminology in this module:
 - Coatoms -- the faces from which all others are constructed in the face
   iterator. This will be facets or Vrep.  In non-dual mode, faces are
   constructed as intersections of the facets. In dual mode, the are constructed
-  theoretically as joins of vertices.  The coatoms are repsented as incidences
+  theoretically as joins of vertices.  The coatoms are represented as incidences
   with the atoms they contain.
 
 - Atoms -- facets or Vrep depending on application of algorithm.  Atoms are
-  repsented as incidences of coatoms they are contained in.
+  represented as incidences of coatoms they are contained in.
 
 - Vrepresentation -- represents a face by a list of Vrep it contains
 

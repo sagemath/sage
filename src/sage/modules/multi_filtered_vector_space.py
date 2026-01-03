@@ -51,7 +51,7 @@ from sage.modules.filtered_vector_space import FilteredVectorSpace
 
 def MultiFilteredVectorSpace(arg, base_ring=None, check=True):
     """
-    Contstruct a multi-filtered vector space.
+    Construct a multi-filtered vector space.
 
     INPUT:
 
@@ -209,7 +209,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         return VectorSpace(self.base_ring(), self.dimension())
 
     @cached_method
-    def is_constant(self):
+    def is_constant(self) -> bool:
         """
         Return whether the multi-filtration is constant.
 
@@ -229,7 +229,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         """
         return all(F.is_constant() for F in self._filt.values())
 
-    def is_exhaustive(self):
+    def is_exhaustive(self) -> bool:
         r"""
         Return whether the multi-filtration is exhaustive.
 
@@ -249,7 +249,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         """
         return all(F.is_exhaustive() for F in self._filt.values())
 
-    def is_separating(self):
+    def is_separating(self) -> bool:
         r"""
         Return whether the multi-filtration is separating.
 

@@ -348,7 +348,7 @@ from itertools import combinations, product
 from sage.matrix.constructor import matrix
 from sage.misc.lazy_import import LazyImport
 from sage.misc.prandom import shuffle
-from sage.misc.superseded import deprecation, deprecated_function_alias
+from sage.misc.superseded import deprecated_function_alias
 from sage.rings.integer_ring import ZZ
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.structure.sage_object cimport SageObject
@@ -637,12 +637,19 @@ cdef class Matroid(SageObject):
             True
             sage: all(M.is_dependent(X.union([y])) for y in M.groundset() if y not in X)
             True
+
+        TESTS::
+
+            sage: M = matroids.catalog.R10()
+            sage: M1M = M.direct_sum(M)
+            sage: Matroid(M1M, regular=True)  # indirect doctest
+            Regular matroid of rank 10 on 20 elements with 26244 bases
         """
         cdef list res = []
         cdef int r = 0
         for e in X:
             res.append(e)
-            if self._rank(res) > r:
+            if self._rank(frozenset(res)) > r:
                 r += 1
             else:
                 res.pop()
@@ -894,7 +901,7 @@ cdef class Matroid(SageObject):
             True
         """
         cdef set XX = set(X)
-        cdef set res = set([])
+        cdef set res = set()
         cdef int r = self._rank(frozenset(X))
         for e in Y:
             XX.add(e)
@@ -1155,8 +1162,8 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.catalog.Vamos()
-            sage: N = M._minor(contractions=set(['a']), deletions=set([]))
-            sage: N._minor(contractions=set([]), deletions=set(['b', 'c']))
+            sage: N = M._minor(contractions=set(['a']), deletions=set())
+            sage: N._minor(contractions=set(), deletions=set(['b', 'c']))
             M / {'a'} \ {'b', 'c'}, where M is Vamos:
             Matroid of rank 4 on 8 elements with circuit-closures
             {3: {{'a', 'b', 'c', 'd'}, {'a', 'b', 'e', 'f'},
@@ -2603,7 +2610,7 @@ cdef class Matroid(SageObject):
             sage: [sorted(X) for X in CC[3]]
             [['a', 'b', 'c', 'd', 'e', 'f', 'g']]
         """
-        CC = [set([]) for r in range(self.rank() + 1)]
+        CC = [set() for r in range(self.rank() + 1)]
         for C in self.circuits_iterator():
             CC[len(C) - 1].add(self.closure(C))
         return {r: CC[r] for r in range(self.rank() + 1) if CC[r]}
@@ -2634,7 +2641,7 @@ cdef class Matroid(SageObject):
             ...
             KeyError: 3
         """
-        CC = [set([]) for r in range(self.rank() + 1)]
+        CC = [set() for r in range(self.rank() + 1)]
         for C in self.nonspanning_circuits_iterator():
             CC[len(C) - 1].add(self.closure(C))
         return {r: CC[r] for r in range(self.rank() + 1) if CC[r]}
@@ -2694,8 +2701,6 @@ cdef class Matroid(SageObject):
             X = frozenset(Xt)
             if not self._is_independent(X):
                 yield X
-
-    dependent_r_sets = deprecated_function_alias(38057, dependent_sets)
 
     cpdef SetSystem dependent_sets(self, long k):
         r"""
@@ -4219,9 +4224,6 @@ cdef class Matroid(SageObject):
         one. It can be shown that the resulting matroid does not depend on the
         order of the deletions.
 
-        DEPRECATED: Sage supports the shortcut notation ``M \ X`` for
-        ``M.delete(X)``.
-
         INPUT:
 
         - ``X`` -- either a single element of the groundset, or a collection
@@ -4269,23 +4271,6 @@ cdef class Matroid(SageObject):
             ['a', 'b', 'c']
         """
         return self.minor(deletions=X)
-
-    cpdef _backslash_(self, X):
-        r"""
-        Shorthand for ``self.delete(X)``.
-
-        Deprecated.
-
-        EXAMPLES::
-
-            sage: M = matroids.CompleteGraphic(4)                                       # needs sage.graphs
-            sage: M.delete(1) == M \ 1  # indirect doctest                              # needs sage.graphs
-            doctest:...: DeprecationWarning: the backslash operator has been deprecated; use M.delete(X) instead
-            See https://github.com/sagemath/sage/issues/36394 for details.
-            True
-        """
-        deprecation(36394, 'the backslash operator has been deprecated; use M.delete(X) instead')
-        return self.delete(X)
 
     cpdef dual(self):
         r"""
@@ -4944,7 +4929,7 @@ cdef class Matroid(SageObject):
         """
         E = set(self.groundset())
         E.difference_update(self._closure(frozenset()))  # groundset minus loops
-        res = set([])
+        res = set()
 
         while E:
             e = E.pop()
@@ -4980,7 +4965,7 @@ cdef class Matroid(SageObject):
         """
         E = set(self.groundset())
         E.difference_update(self._coclosure(frozenset()))  # groundset minus coloops
-        res = set([])
+        res = set()
 
         while E:
             e = E.pop()
@@ -5412,7 +5397,7 @@ cdef class Matroid(SageObject):
                     for R1 in map(set, combinations(R, r2)):
                         R2 = R - R1
                         # F is the set of elements cannot be in the extension of Q1
-                        F = set([])
+                        F = set()
                         U = E - R
                         # if Q1|R1 is full
                         if m-len(Q1)-len(R1) == 0:
@@ -5925,14 +5910,14 @@ cdef class Matroid(SageObject):
             ....:                                  [0,0,0,0,1,1,1,1,0,0,1,1],
             ....:                                  [0,0,0,0,0,0,0,0,1,1,1,1]])
             sage: M._shifting_all(M.basis(),
-            ....:                 set([0,1]), set([0,1]), set([]), set([]), 3)
+            ....:                 set([0,1]), set([0,1]), set(), set(), 3)
             (False, None)
             sage: M = Matroid(field=GF(2), reduced_matrix=[[1,0,1,1,1],
             ....:                                          [1,1,1,1,0],
             ....:                                          [0,1,1,1,0],
             ....:                                          [0,0,0,1,1]])
             sage: M._shifting_all(M.basis(),
-            ....:                 set([0,1]), set([5,8]), set([]), set([]), 3)[0]
+            ....:                 set([0,1]), set([5,8]), set(), set(), 3)[0]
             True
         """
         Y = self.groundset()-X
@@ -5986,14 +5971,14 @@ cdef class Matroid(SageObject):
             ....:                                  [0,0,0,0,1,1,1,1,0,0,1,1],
             ....:                                  [0,0,0,0,0,0,0,0,1,1,1,1]])
             sage: M._shifting(M.basis(),
-            ....:             set([0,1]), set([0,1]), set([]), set([]), 3)
+            ....:             set([0,1]), set([0,1]), set(), set(), 3)
             (False, None)
             sage: M = Matroid(field=GF(2), reduced_matrix=[[1,0,1,1,1],
             ....:                                          [1,1,1,1,0],
             ....:                                          [0,1,1,1,0],
             ....:                                          [0,0,0,1,1]])
             sage: M._shifting(M.basis(),
-            ....:             set([0,1]), set([5,8]), set([]), set([4]), 3)[0]
+            ....:             set([0,1]), set([5,8]), set(), set([4]), 3)[0]
             True
         """
 
@@ -6182,7 +6167,7 @@ cdef class Matroid(SageObject):
         if not G.is_connected():
             return False
         # Step 4: Apply algorithm recursively
-        for B, M in Y_components.iteritems():
+        for B, M in Y_components.items():
             N = M.simplify()
             new_basis = basis & (B | Y)
             # the set of fundamental cocircuit that might be separating for N
@@ -6210,35 +6195,56 @@ cdef class Matroid(SageObject):
             sage: M = matroids.Theta(4)
             sage: M.is_paving()
             False
+
+        REFERENCES:
+
+        [Oxl2011]_, p. 24.
         """
         if self.rank() >= 2:
-            for X in combinations(self.groundset(), self.rank() - 1):
-                if not self._is_independent(frozenset(X)):
-                    return False
+            for _ in self.dependent_sets_iterator(self.rank() - 1):
+                return False
         return True
 
     cpdef bint is_sparse_paving(self) noexcept:
         """
         Return if ``self`` is sparse-paving.
 
-        A matroid is sparse-paving if the symmetric difference of every pair
-        of circuits is greater than 2.
+        A matroid is sparse-paving if it is paving and its dual is paving.
 
         OUTPUT: boolean
+
+        ALGORITHM:
+
+        First, check that the matroid is paving. Then, verify that the
+        symmetric difference of every pair of distinct `r`-circuits is greater
+        than 2.
 
         EXAMPLES::
 
             sage: M = matroids.catalog.Vamos()
             sage: M.is_sparse_paving()
+            True
+            sage: M = matroids.catalog.N1()
+            sage: M.is_sparse_paving()
             False
-            sage: M = matroids.catalog.Fano()
+
+        REFERENCES:
+
+        The definition of sparse-paving matroids can be found in [MNWW2011]_.
+        The algorithm uses an alternative characterization from [Jer2006]_.
+
+        TESTS::
+
+            sage: M = matroids.Uniform(4, 50)  # fast because we don't check M.dual().is_paving()
             sage: M.is_sparse_paving()
             True
+            sage: for M in matroids.AllMatroids(8):  # optional - matroid_database
+            ....:    assert M.is_sparse_paving() == (M.is_paving() and M.dual().is_paving())
         """
         if not self.is_paving():
             return False
         from itertools import combinations
-        for (C1, C2) in combinations(self.circuits_iterator(), 2):
+        for (C1, C2) in combinations(self.nonbases_iterator(), 2):
             if len(C1 ^ C2) <= 2:
                 return False
         return True
@@ -6933,7 +6939,7 @@ cdef class Matroid(SageObject):
                 raise ValueError("nonnegative weights were expected.")
             wt = sorted(wt, reverse=True)
             Y = [e for (w, e) in wt]
-        res = set([])
+        res = set()
         r = 0
         for e in Y:
             res.add(e)
@@ -7673,7 +7679,7 @@ cdef class Matroid(SageObject):
             dist += 1
             X3 = X2.intersection(w)
 
-        for x, y in layers.iteritems():
+        for x, y in layers.items():
             for z in y:
                 d[z] = x
         if not X3:                 # if no path from X1 to X2, then no augmenting set exists
@@ -7912,8 +7918,8 @@ cdef class Matroid(SageObject):
         a = x
         b = y
         R = ZZ['x, y']
-        x, y = R._first_ngens(2)
-        T = R(0)
+        x, y = R.gens()
+        T = R.zero()
         for B in self.bases_iterator():
             T += x ** len(self._internal(B)) * y ** len(self._external(B))
         if a is not None and b is not None:
@@ -8048,18 +8054,18 @@ cdef class Matroid(SageObject):
         - ``augmented`` -- boolean (default: ``False``); when ``True``, this
           is the augmented Chow ring and if ``False``, this is the
           non-augmented Chow ring
-        - ``presentation`` -- string; if ``augmented=True``, then this
-          must be one of the following (ignored if ``augmented=False``):
+        - ``presentation`` -- string; one of the following:
 
           * ``"fy"`` - the Feitchner-Yuzvinsky presentation
           * ``"atom-free"`` - the atom-free presentation
+          * ``"simplicial"`` - the simplicial presentation
 
         EXAMPLES::
 
             sage: M = matroids.Wheel(2)
-            sage: A = M.chow_ring(R=ZZ, augmented=False); A
+            sage: A = M.chow_ring(R=ZZ, augmented=False, presentation='fy'); A
             Chow ring of Wheel(2): Regular matroid of rank 2 on 4 elements with
-            5 bases over Integer Ring
+            5 bases in Feitchner-Yuzvinsky presentation over Integer Ring
             sage: A.defining_ideal()._gens_constructor(A.defining_ideal().ring())
             [A0*A1, A0*A23, A1*A23, A0 + A0123, A1 + A0123, A23 + A0123]
             sage: A23 = A.gen(0)
@@ -8069,9 +8075,9 @@ cdef class Matroid(SageObject):
         We construct a more interesting example using the Fano matroid::
 
             sage: M = matroids.catalog.Fano()
-            sage: A = M.chow_ring(QQ); A
-            Chow ring of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
-            over Rational Field
+            sage: A = M.chow_ring(QQ, False, 'fy'); A
+            Chow ring of Fano: Binary matroid of rank 3 on 7 elements,
+            type (3, 0) in Feitchner-Yuzvinsky presentation over Rational Field
 
         Next we get the non-trivial generators and do some computations::
 

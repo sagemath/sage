@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Examples of parents endowed with multiple realizations
@@ -197,7 +196,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
         F_to_Out   .register_as_coercion()
         (~F_to_Out).register_as_coercion()
 
-    _shorthands = ["F", "In", "Out"]
+    _shorthands = ("F", "In", "Out")
 
     def a_realization(self):
         r"""

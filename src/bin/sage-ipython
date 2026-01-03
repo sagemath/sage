@@ -1,4 +1,4 @@
-#!/usr/bin/env sage-python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Sage IPython startup script.
@@ -7,6 +7,7 @@ Sage IPython startup script.
 # Display startup banner. Do this before anything else to give the user
 # early feedback that Sage is starting.
 from sage.misc.banner import banner
+
 banner()
 
 from sage.repl.interpreter import SageTerminalApp

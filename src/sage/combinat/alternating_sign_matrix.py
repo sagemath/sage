@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Alternating Sign Matrices
+Alternating sign matrices
 
 AUTHORS:
 
@@ -292,7 +292,7 @@ class AlternatingSignMatrix(Element,
         li.reverse()
         return AlternatingSignMatrix(li)
 
-    def inversion_number(self):
+    def number_of_inversions(self):
         r"""
         Return the inversion number of ``self``.
 
@@ -306,26 +306,29 @@ class AlternatingSignMatrix(Element,
         EXAMPLES::
 
             sage: A = AlternatingSignMatrices(3)
-            sage: A([[1, 0, 0],[0, 1, 0],[0, 0, 1]]).inversion_number()
+            sage: A([[1, 0, 0],[0, 1, 0],[0, 0, 1]]).number_of_inversions()
             0
             sage: asm = A([[0, 0, 1],[1, 0, 0],[0, 1, 0]])
-            sage: asm.inversion_number()
+            sage: asm.number_of_inversions()
             2
             sage: asm = A([[0, 1, 0],[1, -1, 1],[0, 1, 0]])
-            sage: asm.inversion_number()
+            sage: asm.number_of_inversions()
             2
             sage: P = Permutations(5)
-            sage: all(p.number_of_inversions()==AlternatingSignMatrix(p.to_matrix()).inversion_number() for p in P)
+            sage: A = AlternatingSignMatrix
+            sage: all(p.number_of_inversions() == A(p.to_matrix()).number_of_inversions() for p in P)
             True
         """
         inversion_num = 0
         asm_matrix = self.to_matrix()
         nonzero_cells = asm_matrix.nonzero_positions()
-        for (i, j) in nonzero_cells:
-            for (k, l) in nonzero_cells:
+        for i, j in nonzero_cells:
+            for k, l in nonzero_cells:
                 if i > k and j < l:
                     inversion_num += asm_matrix[i][j] * asm_matrix[k][l]
         return inversion_num
+
+    inversion_number = number_of_inversions
 
     @combinatorial_map(name='rotate clockwise')
     def rotate_cw(self):
@@ -870,7 +873,7 @@ class AlternatingSignMatrix(Element,
 
         raise ValueError("unknown algorithm '%s'" % algorithm)
 
-    def number_negative_ones(self):
+    def number_of_negative_ones(self):
         """
         Return the number of entries in ``self`` equal to -1.
 
@@ -878,16 +881,18 @@ class AlternatingSignMatrix(Element,
 
             sage: A = AlternatingSignMatrices(3)
             sage: asm = A([[0,1,0],[1,0,0],[0,0,1]])
-            sage: asm.number_negative_ones()
+            sage: asm.number_of_negative_ones()
             0
             sage: asm = A([[0,1,0],[1,-1,1],[0,1,0]])
-            sage: asm.number_negative_ones()
+            sage: asm.number_of_negative_ones()
             1
         """
         a = self._matrix
         return ZZ((len(a.nonzero_positions()) - a.nrows()) // 2)
 
-    def is_permutation(self):
+    number_negative_ones = number_of_negative_ones
+
+    def is_permutation(self) -> bool:
         """
         Return ``True`` if ``self`` is a permutation matrix
         and ``False`` otherwise.
@@ -902,7 +907,7 @@ class AlternatingSignMatrix(Element,
             sage: asm.is_permutation()
             False
         """
-        return self.number_negative_ones() == 0
+        return self.number_of_negative_ones() == 0
 
     def to_permutation(self):
         """
@@ -926,7 +931,7 @@ class AlternatingSignMatrix(Element,
         if not self.is_permutation():
             raise ValueError('not a permutation matrix')
         asm_matrix = self.to_matrix()
-        return Permutation([j + 1 for (i, j) in asm_matrix.nonzero_positions()])
+        return Permutation([j + 1 for _, j in asm_matrix.nonzero_positions()])
 
     @combinatorial_map(name='to semistandard tableau')
     def to_semistandard_tableau(self):
@@ -1241,7 +1246,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
             [ 0  0  0  1  0  0  0]
             [ 0  1  0  0  0  0  0]
             sage: a = AlternatingSignMatrices(5).random_element()
-            sage: bool(a.number_negative_ones()) or a.is_permutation()
+            sage: bool(a.number_of_negative_ones()) or a.is_permutation()
             True
 
         This is done using a modified version of Propp and Wilson's "coupling
@@ -1471,7 +1476,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         m.set_immutable()
         return self.element_class(self, m)
 
-    def _lattice_initializer(self):
+    def _lattice_initializer(self) -> tuple:
         r"""
         Return a 2-tuple to use in argument of ``LatticePoset``.
 
@@ -1492,7 +1497,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         """
         mts, rels = MonotoneTriangles(self._n)._lattice_initializer()
         bij = {t: self.from_monotone_triangle(t) for t in mts}
-        return (bij.values(), [(bij[a], bij[b]) for (a, b) in rels])
+        return (bij.values(), [(bij[a], bij[b]) for a, b in rels])
 
     def cover_relations(self):
         r"""
@@ -1502,7 +1507,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: A = AlternatingSignMatrices(3)
-            sage: for (a,b) in A.cover_relations():
+            sage: for a, b in A.cover_relations():
             ....:   eval('a, b')
             (
             [1 0 0]  [0 1 0]
@@ -1734,7 +1739,7 @@ class MonotoneTriangles(GelfandTsetlinPatternsTopRow):
         EXAMPLES::
 
             sage: M = MonotoneTriangles(3)
-            sage: for (a,b) in M.cover_relations():
+            sage: for a, b in M.cover_relations():
             ....:   eval('a, b')
             ([[3, 2, 1], [2, 1], [1]], [[3, 2, 1], [2, 1], [2]])
             ([[3, 2, 1], [2, 1], [1]], [[3, 2, 1], [3, 1], [1]])
@@ -1779,7 +1784,7 @@ def _is_a_cover(mt0, mt1):
         False
     """
     diffs = 0
-    for (a, b) in zip(flatten(mt0), flatten(mt1)):
+    for a, b in zip(flatten(mt0), flatten(mt1)):
         if a != b:
             if a + 1 == b:
                 diffs += 1

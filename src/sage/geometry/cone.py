@@ -227,7 +227,8 @@ from sage.modules.free_module import span, VectorSpace
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.structure.all import SageObject, parent
+from sage.structure.sage_object import SageObject
+from sage.structure.element import parent
 from sage.structure.richcmp import richcmp_method, richcmp
 lazy_import('sage.geometry.integral_points', 'parallelotope_points')
 from sage.geometry.convex_set import ConvexSet_closed
@@ -1060,7 +1061,7 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
 
     ambient_dim = lattice_dim
 
-    def nrays(self):
+    def n_rays(self) -> int:
         r"""
         Return the number of rays of ``self``.
 
@@ -1069,10 +1070,20 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
         EXAMPLES::
 
             sage: c = Cone([(1,0), (0,1)])
+            sage: c.n_rays()
+            2
+
+        TESTS:
+
+        The old method name is kept as an alias::
+
+            sage: c = Cone([(1,0), (0,1)])
             sage: c.nrays()
             2
         """
         return len(self._rays)
+
+    nrays = n_rays
 
     def plot(self, **options):
         r"""
@@ -1490,7 +1501,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         if ambient is None:
             superinit(rays, lattice)
             self._ambient = self
-            self._ambient_ray_indices = tuple(range(self.nrays()))
+            self._ambient_ray_indices = tuple(range(self.n_rays()))
         else:
             self._ambient = ambient
             self._ambient_ray_indices = tuple(ambient_ray_indices)
@@ -1549,7 +1560,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             self._PPL_C_Polyhedron = C_Polyhedron(gs)
         return self._PPL_C_Polyhedron
 
-    def __contains__(self, point):
+    def __contains__(self, point) -> bool:
         r"""
         Check if ``point`` is contained in ``self``.
 
@@ -1588,7 +1599,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             False
         """
         state = copy(self.__dict__)
-        state.pop("_PPL_C_Polyhedron", None) # PPL is not picklable.
+        state.pop("_PPL_C_Polyhedron", None)  # PPL is not picklable.
 
         # TODO: do we want to keep the face lattice in the pickle?
         # Currently there is an unpickling loop if do:
@@ -1600,7 +1611,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         state.pop("_face_lattice", None)
         return state
 
-    def _contains(self, point, region='whole cone'):
+    def _contains(self, point, region='whole cone') -> bool:
         r"""
         Check if ``point`` is contained in ``self``.
 
@@ -1682,6 +1693,13 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             raise ValueError("%s is an unknown region of the cone!" % region)
         if region == "interior" and self.dim() < self.lattice_dim():
             return False
+        if self.is_trivial():
+            # We always have whole cone = relative interior = {0} for
+            # the trivial cone, and in addition we have interior = {0}
+            # when the ambient space is trivial (the preceding "if"
+            # ensures this).
+            return point.is_zero()
+
         need_strict = region.endswith("interior")
         M = self.dual_lattice()
         for c in self._PPL_cone().minimized_constraints():
@@ -2020,7 +2038,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         """
         faces = tuple(faces)
         if len(faces) > 1: # Otherwise there is nothing to sort
-            if faces[0].nrays() == 1:
+            if faces[0].n_rays() == 1:
                 faces = tuple(sorted(faces,
                                      key=lambda f: f._ambient_ray_indices))
             elif faces[0].dim() == self.dim() - 1 and \
@@ -2942,7 +2960,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             Integer Ring
         """
         normals = self.facet_normals()
-        incidence_matrix = matrix(ZZ, self.nrays(),
+        incidence_matrix = matrix(ZZ, self.n_rays(),
                                   len(normals), 0)
 
         for Hindex, normal in enumerate(self.facet_normals()):
@@ -3232,7 +3250,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         raise NotImplementedError("isomorphism check for not strictly convex "
                                   "cones is not implemented")
 
-    def is_simplicial(self):
+    def is_simplicial(self) -> bool:
         r"""
         Check if ``self`` is simplicial.
 
@@ -3251,10 +3269,10 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: cone2.is_simplicial()
             False
         """
-        return self.nrays() == self.dim()
+        return self.n_rays() == self.dim()
 
     @cached_method
-    def is_smooth(self):
+    def is_smooth(self) -> bool:
         r"""
         Check if ``self`` is smooth.
 
@@ -3286,7 +3304,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         """
         if not self.is_simplicial():
             return False
-        return self.rays().matrix().elementary_divisors() == [1] * self.nrays()
+        return self.rays().matrix().elementary_divisors() == [1] * self.n_rays()
 
     def is_empty(self):
         """
@@ -3302,7 +3320,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         """
         return False
 
-    def is_trivial(self):
+    def is_trivial(self) -> bool:
         """
         Check if the cone has no rays.
 
@@ -3313,14 +3331,14 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: c0 = cones.trivial(3)
             sage: c0.is_trivial()
             True
-            sage: c0.nrays()
+            sage: c0.n_rays()
             0
         """
-        return self.nrays() == 0
+        return self.n_rays() == 0
 
     is_compact = is_trivial
 
-    def is_strictly_convex(self):
+    def is_strictly_convex(self) -> bool:
         r"""
         Check if ``self`` is strictly convex.
 
@@ -3430,7 +3448,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         deg = self.lattice().degree()
         tp = ToricPlotter(options, deg, self.rays())
         # Modify ray labels to match the ambient cone or fan.
-        tp.ray_label = label_list(tp.ray_label, self.nrays(), deg <= 2,
+        tp.ray_label = label_list(tp.ray_label, self.n_rays(), deg <= 2,
                                    self.ambient_ray_indices())
         result = tp.plot_lattice() + tp.plot_generators()
         # To deal with non-strictly convex cones we separate rays and labels.
@@ -3675,7 +3693,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         the original::
 
             sage: K = random_cone(max_ambient_dim=6)
-            sage: K.solid_restriction().nrays() == K.nrays()
+            sage: K.solid_restriction().n_rays() == K.n_rays()
             True
 
         The solid restriction of a cone has the same lineality as the
@@ -4312,7 +4330,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         if not self.is_simplicial():
             from sage.geometry.triangulation.point_configuration \
                     import PointConfiguration
-            origin = self.nrays() # last one in pc
+            origin = self.n_rays() # last one in pc
             pc = PointConfiguration(tuple(self.rays()) + (N(0),), star=origin)
             triangulation = pc.triangulate()
             subcones = ( Cone(( self.ray(i) for i in simplex if i != origin ),
@@ -4352,7 +4370,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         - a
           :class:`~sage.geometry.point_collection.PointCollection`. The
-          rays of ``self`` are the first ``self.nrays()`` entries.
+          rays of ``self`` are the first ``self.n_rays()`` entries.
 
         EXAMPLES:
 
@@ -4369,7 +4387,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             N(1, 1)
             in 2-d lattice N
 
-        Two more complicated example from GAP/toric::
+        A more complicated example from GAP/toric::
 
             sage: Cone([[1,0], [3,4]]).dual().Hilbert_basis()
             M(0,  1),
@@ -4378,38 +4396,51 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             M(2, -1),
             M(3, -2)
             in 2-d lattice M
-            sage: cone = Cone([[1,2,3,4], [0,1,0,7], [3,1,0,2], [0,0,1,0]]).dual()
-            sage: cone.Hilbert_basis()           # long time
-            M(10,  -7,  0,  1),
-            M(-5,  21,  0, -3),
-            M( 0,  -2,  0,  1),
-            M(15, -63, 25,  9),
-            M( 2,  -3,  0,  1),
-            M( 1,  -4,  1,  1),
-            M( 4,  -4,  0,  1),
-            M(-1,   3,  0,  0),
-            M( 1,  -5,  2,  1),
-            M( 3,  -5,  1,  1),
-            M( 6,  -5,  0,  1),
-            M( 3, -13,  5,  2),
-            M( 2,  -6,  2,  1),
-            M( 5,  -6,  1,  1),
-            M( 8,  -6,  0,  1),
-            M( 0,   1,  0,  0),
-            M(-2,   8,  0, -1),
-            M(10, -42, 17,  6),
-            M( 7, -28, 11,  4),
-            M( 5, -21,  9,  3),
-            M( 6, -21,  8,  3),
-            M( 5, -14,  5,  2),
-            M( 2,  -7,  3,  1),
-            M( 4,  -7,  2,  1),
-            M( 7,  -7,  1,  1),
-            M( 0,   0,  1,  0),
-            M( 1,   0,  0,  0),
-            M(-1,   7,  0, -1),
-            M(-3,  14,  0, -2)
-            in 4-d lattice M
+
+        Examples verified independently using [Normaliz]_::
+
+            sage: cones.rearrangement(3,4).Hilbert_basis()
+            N(-2,  1,  1,  1),
+            N( 1,  1,  1, -2),
+            N( 1,  1, -2,  1),
+            N( 1, -2,  1,  1),
+            N( 1,  0,  0,  0),
+            N(-1,  1,  1,  0),
+            N(-1,  1,  0,  1),
+            N( 0, -1,  1,  1),
+            N( 1,  0, -1,  1),
+            N( 1,  0,  1, -1),
+            N(-1,  0,  1,  1),
+            N( 0,  1, -1,  1),
+            N( 1, -1,  0,  1),
+            N( 0,  1,  1, -1),
+            N( 1, -1,  1,  0),
+            N( 0,  1,  0,  0),
+            N( 1,  1,  0, -1),
+            N( 1,  1, -1,  0),
+            N( 0,  0,  1,  0),
+            N( 0,  0,  0,  1)
+            in 4-d lattice N
+
+            sage: # long time
+            sage: K = Cone([(1,0,1), (-1,0,1), (0,1,1), (0,-1,1)])
+            sage: K.Hilbert_basis()
+            N( 1,  0, 1),
+            N(-1,  0, 1),
+            N( 0,  1, 1),
+            N( 0, -1, 1),
+            N( 0,  0, 1)
+            in 3-d lattice N
+
+            sage: # long time
+            sage: K = Cone([(1,0,1,0), (-1,0,1,0), (0,1,1,0), (0,-1,1,0)])
+            sage: K.Hilbert_basis()
+            N( 1,  0, 1, 0),
+            N(-1,  0, 1, 0),
+            N( 0,  1, 1, 0),
+            N( 0, -1, 1, 0),
+            N( 0,  0, 1, 0)
+            in 4-d lattice N
 
         Not a strictly convex cone::
 
@@ -4436,40 +4467,40 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         The primal Normaliz algorithm, see [Normaliz]_.
         """
-        if self.is_strictly_convex():
 
-            def not_in_linear_subspace(x):
-                return True
-        else:
-            linear_subspace = self.linear_subspace()
+        # Used in lieu of our linear_subspace() for containment
+        # testing when this cone is strictly convex. None of the
+        # points we test can be zero, so checking the empty tuple is
+        # equivalent to checking a trivial subspace, and the empty
+        # tuple is faster.
+        L = ()
 
-            def not_in_linear_subspace(x):
-                # "x in linear_subspace" does not work, due to absence
-                # of coercion maps as of Github issue #10513.
-                try:
-                    linear_subspace(x)
-                    return False
-                except (TypeError, ValueError):
-                    return True
+        if not self.is_strictly_convex():
+            # Our linear_subspace(), but as a cone, so that
+            # containment testing using "in" works properly.
+            L = Cone((c*r for c in (1, -1) for r in self.lines()),
+                     self.lattice(),
+                     check=False)
 
         irreducible = list(self.rays())  # these are irreducible for sure
-        gens = list(self.semigroup_generators())
-        for x in irreducible:
-            try:
-                gens.remove(x)
-            except ValueError:
-                pass
+        irr_modified = False  # have we appended to "irreducible"?
+        gens = [x for x in self.semigroup_generators()
+                if x not in irreducible]
 
+        from itertools import chain
         while gens:
             x = gens.pop()
-            if any(not_in_linear_subspace(y) and x-y in self
-                   for y in irreducible+gens):
-                continue
-            irreducible.append(x)
-        if len(irreducible) == self.nrays():
-            return self.rays()
-        else:
+            if all((y in L) or (x-y not in self)
+                   for y in chain(irreducible, gens)):
+                irreducible.append(x)
+                irr_modified = True
+
+        if irr_modified:
             return PointCollection(irreducible, self.lattice())
+
+        # Avoid the PointCollection overhead if nothing was
+        # added to the irreducible list beyond self.rays().
+        return self.rays()
 
     def Hilbert_coefficients(self, point, solver=None, verbose=0,
                              *, integrality_tolerance=1e-3):
@@ -6452,7 +6483,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
     Likewise for the number of rays when ``min_rays == max_rays``::
 
         sage: K = random_cone(min_rays=3, max_rays=3)
-        sage: K.nrays()
+        sage: K.n_rays()
         3
 
     If we specify a lattice, then the returned cone will live in it::
@@ -6483,7 +6514,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         ....:                 strictly_convex=False, solid=True)
         sage: 4 <= K.lattice_dim() and K.lattice_dim() <= 7
         True
-        sage: 2 <= K.nrays() and K.nrays() <= 10
+        sage: 2 <= K.n_rays() and K.n_rays() <= 10
         True
         sage: K.is_strictly_convex()
         False
@@ -6505,7 +6536,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         ....:                 min_rays=3, max_rays=4)
         sage: 5 <= K.lattice_dim() and K.lattice_dim() <= 8
         True
-        sage: 3 <= K.nrays() and K.nrays() <= 4
+        sage: 3 <= K.n_rays() and K.n_rays() <= 4
         True
 
     Ensure that an exception is raised when either lower bound is greater
@@ -6575,27 +6606,21 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         generators. Please decrease min_rays.
 
     Ensure that we can obtain a cone in three dimensions with a large
-    number (in particular, more than 2*dim) rays. The ``max_rays`` is
-    not strictly necessary, but it minimizes the number of times that
-    we will loop with an absurd, unattainable, number of rays::
+    number (in particular, more than 2*dim) rays. Note that at least
+    dimension three is required for seven rays; we should throw out
+    cones in zero/one/two dimensions until we get lucky. We set the
+    random seed manually to ensure that the test completes in a
+    reasonable amount of time::
 
-        sage: K = random_cone(min_ambient_dim=3, # long time
-        ....:                 max_ambient_dim=3,
-        ....:                 min_rays=7,
-        ....:                 max_rays=9)
-        sage: K.nrays() >= 7                     # long time
-        True
-        sage: K.lattice_dim()                    # long time
-        3
-
-    We need three dimensions to obtain five rays; we should throw out
-    cones in zero/one/two dimensions until we get lucky::
-
-        sage: K = random_cone(max_ambient_dim=3, min_rays=5)
-        sage: K.nrays() >= 5
+        sage: # long time
+        sage: _initial_seed = initial_seed()
+        sage: set_random_seed(8)
+        sage: K = random_cone(max_ambient_dim=3, min_rays=7)
+        sage: K.n_rays() >= 7
         True
         sage: K.lattice_dim()
         3
+        sage: set_random_seed(_initial_seed)
 
     It is an error to request a non-strictly-convex trivial cone::
 
@@ -6830,8 +6855,8 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         else:
             if K.lattice() is not lattice:
                 return False
-        return all([K.nrays() >= min_rays,
-                    max_rays is None or K.nrays() <= max_rays,
+        return all([K.n_rays() >= min_rays,
+                    max_rays is None or K.n_rays() <= max_rays,
                     solid is None or K.is_solid() == solid,
                     strictly_convex is None or
                     K.is_strictly_convex() == strictly_convex])
@@ -6895,7 +6920,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         # mangle what we have, we just start over if we get a cone
         # that won't work.
         #
-        while r > K.nrays() and not K.is_full_space():
+        while r > K.n_rays() and not K.is_full_space():
             rays.append(L.random_element())
             K = Cone(rays, lattice=L)
             rays = list(K.rays()) # Avoid re-normalizing next time around
@@ -6910,7 +6935,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
                     # cone strictly convex. Whether or not those
                     # coordinates become positive/negative is chosen
                     # randomly.
-                    from random import choice
+                    from sage.misc.prandom import choice
                     pm = choice([-1,1])
 
                     # rays has immutable elements

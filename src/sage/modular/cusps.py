@@ -26,6 +26,7 @@ EXAMPLES::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from typing import Any
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import Singleton
@@ -41,7 +42,8 @@ from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
 
 try:
-    from sage.libs.pari.all import pari, pari_gen
+    from sage.libs.pari import pari
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
 
@@ -316,7 +318,7 @@ class Cusp(Element):
             o = right._rational_()
         return richcmp(s, o, op)
 
-    def is_infinity(self):
+    def is_infinity(self) -> bool:
         """
         Return ``True`` if this is the cusp infinity.
 
@@ -464,7 +466,8 @@ class Cusp(Element):
         """
         return Cusp(-self.__a, self.__b)
 
-    def is_gamma0_equiv(self, other, N, transformation=None):
+    def is_gamma0_equiv(self, other, N,
+                        transformation=None) -> bool | tuple[bool, Any]:
         r"""
         Return whether ``self`` and ``other`` are equivalent modulo the action of
         `\Gamma_0(N)` via linear fractional transformations.
@@ -645,7 +648,7 @@ class Cusp(Element):
                 A = A % (u2 * v1 * M)
             return (True, A)
 
-    def is_gamma1_equiv(self, other, N):
+    def is_gamma1_equiv(self, other, N) -> tuple[bool, int]:
         r"""
         Return whether ``self`` and ``other`` are equivalent modulo the action of
         `\Gamma_1(N)` via linear fractional transformations.
@@ -700,7 +703,7 @@ class Cusp(Element):
             return True, -1
         return False, 0
 
-    def is_gamma_h_equiv(self, other, G):
+    def is_gamma_h_equiv(self, other, G) -> tuple[bool, int]:
         r"""
         Return a pair ``(b, t)``, where ``b`` is ``True`` or ``False`` as
         ``self`` and ``other`` are equivalent under the action of `G`, and `t`
@@ -769,7 +772,7 @@ class Cusp(Element):
             sage: G.dimension_cusp_forms(2)
             0
         """
-        from sage.modular.arithgroup.all import GammaH_class
+        from sage.modular.arithgroup.congroup_gammaH import GammaH_class
         if not isinstance(other, Cusp):
             other = Cusp(other)
         if not isinstance(G, GammaH_class):
@@ -1094,9 +1097,7 @@ class Cusps_class(Singleton, Parent):
     def _coerce_map_from_(self, R):
         if QQ.has_coerce_map_from(R):
             return True
-        if R is InfinityRing:
-            return True
-        return False
+        return R is InfinityRing
 
     def _element_constructor_(self, x):
         return Cusp(x)

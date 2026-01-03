@@ -114,9 +114,9 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
             sage: RF13 = K.residue_field(pp)
             sage: RF13.hom([GF(13)(1)])
             Ring morphism:
-             From: Residue field of Fractional ideal (-w - 18)
-             To:   Finite Field of size 13
-             Defn: 1 |--> 1
+              From: Residue field of Fractional ideal (w + 18)
+              To:   Finite Field of size 13
+              Defn: 1 |--> 1
 
         Check that :issue:`19573` is resolved::
 
@@ -300,6 +300,30 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
             self.__gen = self.one()
         return self.__gen
 
+    def gens(self) -> tuple:
+        r"""
+        Return a tuple containing the generator of ``self``.
+
+        .. WARNING::
+
+            The generator is not guaranteed to be a generator for the
+            multiplicative group.  To obtain the latter, use
+            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteFields.multiplicative_generator()`
+            or use the ``modulus="primitive"`` option when constructing
+            the field.
+
+        EXAMPLES::
+
+            sage: k = GF(1009, modulus='primitive')
+            sage: k.gens()
+            (11,)
+
+            sage: k = GF(1009)
+            sage: k.gens()
+            (1,)
+        """
+        return (self.gen(),)
+
     def __iter__(self):
         """
         Return an iterator over ``self``.
@@ -338,6 +362,10 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
 
             sage: FiniteField(3).degree()
             1
+
+        .. SEEALSO::
+
+            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.absolute_degree`
         """
         return Integer(1)
 

@@ -91,8 +91,8 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
     cdef Py_ssize_t y = euler_phi(2*n)//2
     if F is None:
         from sage.rings.polynomial.cyclotomic import cyclotomic_value
-        if n%2:
-            if n%4 == 3:
+        if n % 2:
+            if n % 4 == 3:
                 s = -1
             else:
                 s = 1
@@ -196,7 +196,7 @@ cpdef factor_aurifeuillian(n, check=True):
             F = aurifeuillian(a, m, check=False)
             rem = prod(F)
             if check and not rem.divides(n):
-                raise RuntimeError("rem=%s, F=%s, n=%s, m=%s"%(rem, F, n, m))
+                raise RuntimeError(f"rem={rem}, F={F}, n={n}, m={m}")
             rem = n // rem
             if rem != 1:
                 return [rem] + F
@@ -207,9 +207,10 @@ cpdef factor_aurifeuillian(n, check=True):
 def factor_cunningham(m, proof=None):
     r"""
     Return factorization of ``self`` obtained using trial division
-    for all primes in the so called Cunningham table. This is
-    efficient if ``self`` has some factors of type `b^n+1` or `b^n-1`,
-    with `b` in `\{2,3,5,6,7,10,11,12\}`.
+    for all primes in the so called Cunningham table.
+
+    This is efficient if ``self`` has some factors of type `b^n+1` or
+    `b^n-1`, with `b` in `\{2,3,5,6,7,10,11,12\}`.
 
     You need to install an optional package to use this method,
     this can be done with the following command line:

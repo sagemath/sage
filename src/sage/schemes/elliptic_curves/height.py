@@ -76,7 +76,7 @@ class UnionOfIntervals:
         Unify :class:`UnionOfIntervals` with the class ``RealSet``
         introduced by :issue:`13125`; see :issue:`16063`.
     """
-    def __init__(self, endpoints):
+    def __init__(self, endpoints) -> None:
         r"""
         An union of intervals is initialized by giving an increasing list
         of endpoints, the first of which may be `-\infty` and the last of
@@ -419,7 +419,7 @@ class UnionOfIntervals:
         """
         return left.intersection([left, right])
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if ``x`` is in the UnionOfIntervals.
 
@@ -443,7 +443,7 @@ class UnionOfIntervals:
         """
         return x in self._endpoints or bisect.bisect_left(self._endpoints, x) % 2 == 1
 
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
         Return the string representation of this UnionOfIntervals.
 
@@ -456,7 +456,7 @@ class UnionOfIntervals:
         """
         return repr(self)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation of this UnionOfIntervals.
 
@@ -627,14 +627,15 @@ def min_on_disk(f, tol, max_iter=10000):
 
             fs = f(s)
 
-            if fs.upper() < min_max: # we definitely beat the record
+            if fs.upper() < min_max:  # we definitely beat the record
                 min_max = fs.upper()
                 unneeded = bisect.bisect(L, (-min_max,))
                 if unneeded > 100:   # discard the worse entries (if there are many)
                     L = L[unneeded:]
 
-            if fs.lower() < min_max: # we may beat the record, cannot yet tell: insert this region
-                                     # into the list at the appropriate place to maintain sorting
+            if fs.lower() < min_max:
+                # we may beat the record, cannot yet tell: insert this region
+                # into the list at the appropriate place to maintain sorting
                 bisect.insort(L, (-fs.lower(), fs.relative_diameter(), s, s_in_disk))
 
     # If we get here, then even after max_iter iterations the tolerance has not been reached.
@@ -765,7 +766,7 @@ class EllipticCurveCanonicalHeight:
          Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
     """
 
-    def __init__(self, E):
+    def __init__(self, E) -> None:
         r"""
         Initialize the class with an elliptic curve.
 
@@ -814,7 +815,7 @@ class EllipticCurveCanonicalHeight:
         else:
             raise ValueError("EllipticCurveCanonicalHeight class can only be created from an elliptic curve")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation.
 
@@ -1755,9 +1756,7 @@ class EllipticCurveCanonicalHeight:
                     start, end = z00, z11
                 else:
                     start, end = z01, z10
-                if wp(start) > B and wp(end) > B:
-                    return True
-                return False
+                return wp(start) > B and wp(end) > B
 
             # This step here is the bottleneck.
             while not T.verify(check_line):

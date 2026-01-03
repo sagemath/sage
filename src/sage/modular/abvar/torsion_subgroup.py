@@ -26,7 +26,7 @@ works out nicely::
     sage: T.divisor_of_order()
     15
     sage: T.gens()
-    [[(1/15, 3/5, 2/5, 14/15)]]
+    ([(1/15, 3/5, 2/5, 14/15)],)
     sage: T.invariants()
     [15]
     sage: d = J.decomposition(); d
@@ -90,7 +90,8 @@ TESTS::
 from sage.arith.misc import divisors, gcd
 from sage.misc.misc_c import prod
 from sage.modular.abvar.torsion_point import TorsionPoint
-from sage.modular.arithgroup.all import Gamma0_class, Gamma1_class
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_class
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_class
 from sage.modular.dirichlet import DirichletGroup
 from sage.modules.module import Module
 from sage.rings.fast_arith import prime_range

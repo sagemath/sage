@@ -1,0 +1,72 @@
+name: CI (Distro)
+
+## This GitHub Actions workflow builds and tests sage with selected environments,
+## whenever a tag is pushed or a pull request changes relevant build files.
+##
+## It builds and checks some sage spkgs as defined in TARGETS.
+##
+## A job succeeds if there is no error.
+##
+## The build is run with "make V=0", so the build logs of individual packages are suppressed.
+##
+## At the end, all package build logs that contain an error are printed out.
+##
+## After all jobs have finished (or are canceled) and a short delay,
+## tar files of all logs are made available as "build artifacts".
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/ci-distro.yml'
+      - 'build/pkgs/**'
+      - 'build/make/**'
+      - 'configure.ac'
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+    # Allow to run manually
+
+env:
+  TARGETS_PRE: all-sage-local
+  TARGETS: build
+  TARGETS_OPTIONAL: ptestlong
+
+permissions:
+  packages: write
+
+concurrency:
+  # Cancel previous runs of this workflow for the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  minimal:
+    if: ${{ success() || failure() }}
+    uses: ./.github/workflows/docker.yml
+    with:
+      # Build from scratch
+      free_disk_space: true
+      docker_targets: "with-system-packages configured with-targets-pre with-targets with-targets-optional"
+      # FIXME: duplicated from env.TARGETS
+      targets_pre: all-sage-local
+      targets: build
+      targets_optional: ptestlong
+      tox_system_factors: >-
+          ["ubuntu-jammy"]
+      tox_packages_factors: >-
+          ["minimal"]
+      docker_push_repository: ghcr.io/${{ github.repository }}/
+
+  standard:
+    uses: ./.github/workflows/docker.yml
+    with:
+      free_disk_space: true
+      # Build from scratch
+      docker_targets: "with-system-packages configured with-targets-pre with-targets with-targets-optional"
+      targets_pre: all-sage-local
+      targets: build
+      targets_optional: ptestlong
+      tox_packages_factors: >-
+          ["standard"]
+      docker_push_repository: ghcr.io/${{ github.repository }}/

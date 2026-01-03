@@ -98,7 +98,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
         """
         raise NotImplementedError('q-expansion basis not implemented for "%s"' % self)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -109,7 +109,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
         """
         return "Cuspidal subspace of dimension %s of %s" % (self.dimension(), self.ambient_module())
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         """
         Return ``True`` since spaces of cusp forms are cuspidal.
 
@@ -540,7 +540,7 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
             else:
                 for i in range(d):
                     for j in range(d):
-                        H[e*i:e*(i+1), e*j:e*(j+1)] = M[i,j].matrix().transpose()
+                        H[e*i: e*(i+1), e*j: e*(j+1)] = M[i, j].matrix().transpose()
             A = A.block_sum(H)
         t = self._transformation_matrix()
         return t * A * ~t

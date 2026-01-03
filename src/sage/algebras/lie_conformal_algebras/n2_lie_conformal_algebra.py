@@ -80,7 +80,7 @@ class N2LieConformalAlgebra(GradedLieConformalAlgebra):
         TESTS::
 
             sage: V = lie_conformal_algebras.N2(QQ)
-            sage: TestSuite(V).run()
+            sage: TestSuite(V).run()  # long time (:issue:`39569`)
         """
         n2dict = {('L', 'L'): {0: {('L', 1): 1},
                                1: {('L', 0): 2},
@@ -104,7 +104,7 @@ class N2LieConformalAlgebra(GradedLieConformalAlgebra):
                                            central_elements=('C',),
                                            weights=weights, parity=parity)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The name of this Lie conformal algebra.
 

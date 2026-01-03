@@ -760,14 +760,13 @@ cdef class QuiverPath(MonoidElement):
         out._end = self._start
         sig_check()
         biseq_init(out._path, self._path.length, self._path.itembitsize)
-        cdef mp_size_t l = self._path.length - 1
+        cdef mp_size_t ell = self._path.length - 1
         for i in range(self._path.length):
             sig_check()
-            biseq_inititem(out._path, i, biseq_getitem(self._path, l-i))
+            biseq_inititem(out._path, i, biseq_getitem(self._path, ell - i))
         return out
 
 
-@cython.binding(True)
 def NewQuiverPath(Q, start, end, biseq_data):
     """
     Return a new quiver path for given defining data.

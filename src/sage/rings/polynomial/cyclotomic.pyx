@@ -36,7 +36,7 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.element cimport parent
 
 try:
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
 except ImportError:
     pass
 

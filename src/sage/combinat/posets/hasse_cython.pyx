@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Some fast computations for finite posets
 """
@@ -116,7 +115,7 @@ class IncreasingChains(RecursivelyEnumeratedSet_forest):
             return True
         if self._conversion is not None:
             tup = [self._from_poset[elt] for elt in tup]
-        if any(not(0 <= i < self._n) for i in tup):
+        if not all(0 <= i < self._n for i in tup):
             return False
         y = tup[0]
         for k in range(1, len(tup)):

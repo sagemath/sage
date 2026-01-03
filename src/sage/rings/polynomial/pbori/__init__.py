@@ -1,4 +1,7 @@
-"""The PolyBoRi package implements a framework for computations with Polynomials in Boolean Ring.
+"""
+PolyBoRi package: Polynomials in Boolean Ring
+
+The PolyBoRi package implements a framework for computations with Polynomials in Boolean Ring.
 
 The core of PolyBoRi is a C++ library, which provides high-level data types for Boolean polynomials and monomials,
 exponent vectors, as well as for the underlying polynomial rings and subsets of the powerset of the Boolean variables.
@@ -29,7 +32,6 @@ M. Brickenstein, A. Dreyer, PolyBoRi:
 Electronic Proceedings of the MEGA 2007 - Effective Methods in Algebraic Geometry, Strobl, Austria, June 2007.
 http://www.ricam.oeaw.ac.at/mega2007/electronic/electronic.html
 """
-from sage.misc.lazy_import import lazy_import
 from .PyPolyBoRi import Ring, Polynomial, Monomial, Variable
 
 # Get all-inclusive groebner routine

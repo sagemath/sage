@@ -166,7 +166,7 @@ cdef class LeanMatrix:
         cdef long i, j
         cdef LeanMatrix A = type(self)(self.nrows(), self.ncols() + self.nrows())
         for i in range(self.nrows()):
-            A.set_unsafe(i, i, self.base_ring()(1))
+            A.set_unsafe(i, i, self.base_ring().one())
             for j in range(self.ncols()):
                 A.set_unsafe(i, self.nrows() + j, self.get_unsafe(i, j))
         return A
@@ -208,9 +208,9 @@ cdef class LeanMatrix:
             sage: A.base_ring()
             Traceback (most recent call last):
             ...
-            NotImplementedError: subclasses need to implement this.
+            NotImplementedError: subclasses need to implement this
         """
-        raise NotImplementedError("subclasses need to implement this.")
+        raise NotImplementedError("subclasses need to implement this")
 
     cpdef characteristic(self):
         """
@@ -357,7 +357,7 @@ cdef class LeanMatrix:
         and compatible dimensions.
         """
         cdef LeanMatrix A = type(self)(self.nrows(), other.ncols())
-        cdef i, j, k
+        cdef long i, j, k
         for i in range(self.nrows()):
             for j in range(other.ncols()):
                 for k in range(self.ncols()):
@@ -487,9 +487,9 @@ cdef class LeanMatrix:
             sage: A == loads(dumps(A))  # indirect doctest
             Traceback (most recent call last):
             ...
-            NotImplementedError: subclasses need to implement this.
+            NotImplementedError: subclasses need to implement this
         """
-        raise NotImplementedError("subclasses need to implement this.")
+        raise NotImplementedError("subclasses need to implement this")
 
     cdef shifting_all(self, P_rows, P_cols, Q_rows, Q_cols, int m):
         r"""
@@ -696,8 +696,8 @@ cdef class GenericMatrix(LeanMatrix):
         # Default:
         if self._base_ring is None:
             self._base_ring = ZZ
-        self._zero = self._base_ring(0)
-        self._one = self._base_ring(1)
+        self._zero = self._base_ring.zero()
+        self._one = self._base_ring.one()
         self._entries = [self._zero] * nrows * ncols
         if M is not None:
             if isinstance(M, GenericMatrix):
@@ -995,8 +995,8 @@ cdef class BinaryMatrix(LeanMatrix):
         global GF2, GF2_zero, GF2_one, GF2_not_defined
         if GF2_not_defined:
             GF2 = GF(2)
-            GF2_zero = GF2(0)
-            GF2_one = GF2(1)
+            GF2_zero = GF2.zero()
+            GF2_one = GF2.one()
             GF2_not_defined = False
         if M is not None:
             if isinstance(M, BinaryMatrix):
@@ -1433,7 +1433,7 @@ cdef class BinaryMatrix(LeanMatrix):
         if s_eq.nrows() != o_eq.nrows():
             return False
         if s_eq.nrows() == s_eq.ncols():  # s_eq and o_eq partition into singletons
-            morph = [0 for i in range(self._nrows)]
+            morph = [0 for _ in range(self._nrows)]
             for i in range(self._nrows):
                 morph[bitset_first(s_eq._M[i])] = bitset_first(o_eq._M[i])
             for i in range(self._nrows):
@@ -1580,8 +1580,8 @@ cdef class TernaryMatrix(LeanMatrix):
         global GF3, GF3_zero, GF3_one, GF3_minus_one, GF3_not_defined
         if GF3_not_defined:
             GF3 = GF(3)
-            GF3_zero = GF3(0)
-            GF3_one = GF3(1)
+            GF3_zero = GF3.zero()
+            GF3_one = GF3.one()
             GF3_minus_one = GF3(2)
             GF3_not_defined = False
 
@@ -2170,8 +2170,8 @@ cdef class QuaternaryMatrix(LeanMatrix):
         if M is not None:
             if isinstance(M, QuaternaryMatrix):
                 self._gf4 = (<QuaternaryMatrix>M)._gf4
-                self._zero = self._gf4(0)
-                self._one = self._gf4(1)
+                self._zero = self._gf4.zero()
+                self._one = self._gf4.one()
                 self._x_zero = self._gf4.gens()[0]
                 self._x_one = self._x_zero + self._one
                 for i in range((<QuaternaryMatrix>M)._nrows):
@@ -2179,8 +2179,8 @@ cdef class QuaternaryMatrix(LeanMatrix):
                     bitset_copy(self._M1[i], (<QuaternaryMatrix>M)._M1[i])
             elif isinstance(M, LeanMatrix):
                 self._gf4 = (<LeanMatrix>M).base_ring()
-                self._zero = self._gf4(0)
-                self._one = self._gf4(1)
+                self._zero = self._gf4.zero()
+                self._one = self._gf4.one()
                 self._x_zero = self._gf4.gens()[0]
                 self._x_one = self._x_zero + self._one
                 for i in range(M.nrows()):
@@ -2188,19 +2188,19 @@ cdef class QuaternaryMatrix(LeanMatrix):
                         self.set(i, j, (<LeanMatrix>M).get_unsafe(i, j))
             elif isinstance(M, Matrix):
                 self._gf4 = (<Matrix>M).base_ring()
-                self._zero = self._gf4(0)
-                self._one = self._gf4(1)
+                self._zero = self._gf4.zero()
+                self._one = self._gf4.one()
                 self._x_zero = self._gf4.gens()[0]
                 self._x_one = self._x_zero + self._one
                 for i in range(M.nrows()):
                     for j in range(M.ncols()):
                         self.set(i, j, (<Matrix>M).get_unsafe(i, j))
             else:
-                raise TypeError("unrecognized input type.")
+                raise TypeError("unrecognized input type")
         else:
             self._gf4 = ring
-            self._zero = self._gf4(0)
-            self._one = self._gf4(1)
+            self._zero = self._gf4.zero()
+            self._one = self._gf4.one()
             self._x_zero = self._gf4.gens()[0]
             self._x_one = self._x_zero + self._one
 

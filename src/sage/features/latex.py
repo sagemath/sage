@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of ``latex`` and equivalent programs
 """
@@ -242,7 +241,7 @@ class TeXFile(StaticFile):
             sage: feature.absolute_filename()  # optional - latex
             '.../latex/base/article.cls'
         """
-        from subprocess import run, CalledProcessError, PIPE
+        from subprocess import run, CalledProcessError
         try:
             proc = run(['kpsewhich', self.filename],
                        capture_output=True, text=True, check=True)

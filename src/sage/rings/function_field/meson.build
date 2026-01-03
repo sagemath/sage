@@ -8,16 +8,22 @@ py.install_sources(
   'differential.py',
   'divisor.py',
   'element.pxd',
+  'element.pyx',
+  'element_polymod.pyx',
+  'element_rational.pyx',
   'extensions.py',
   'function_field.py',
   'function_field_polymod.py',
   'function_field_rational.py',
+  'function_field_test.py',
+  'hermite_form_polynomial.pyx',
   'ideal.py',
   'ideal_polymod.py',
   'ideal_rational.py',
   'jacobian_base.py',
   'jacobian_hess.py',
   'jacobian_khuri_makdisi.py',
+  'khuri_makdisi.pyx',
   'maps.py',
   'order.py',
   'order_basis.py',
@@ -32,11 +38,11 @@ py.install_sources(
 )
 
 extension_data = {
-  'element' : files('element.pyx'),
-  'element_polymod' : files('element_polymod.pyx'),
-  'element_rational' : files('element_rational.pyx'),
-  'hermite_form_polynomial' : files('hermite_form_polynomial.pyx'),
-  'khuri_makdisi' : files('khuri_makdisi.pyx'),
+  'element': files('element.pyx'),
+  'element_polymod': files('element_polymod.pyx'),
+  'element_rational': files('element_rational.pyx'),
+  'hermite_form_polynomial': files('hermite_form_polynomial.pyx'),
+  'khuri_makdisi': files('khuri_makdisi.pyx'),
 }
 
 foreach name, pyx : extension_data

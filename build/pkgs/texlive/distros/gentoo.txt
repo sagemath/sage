@@ -14,3 +14,4 @@ dev-texlive/texlive-langspanish
 dev-texlive/texlive-latexextra
 dev-texlive/texlive-latexrecommended
 dev-texlive/texlive-mathscience
+dev-texlive/texlive-langchinese

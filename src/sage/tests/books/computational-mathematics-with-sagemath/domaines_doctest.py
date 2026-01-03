@@ -144,7 +144,7 @@ Sage example in ./domaines.tex, line 543::
 Sage example in ./domaines.tex, line 568::
 
   sage: cartesian_product([QQ, QQ])
-  The Cartesian product of (Rational Field, Rational Field)
+  The Cartesian product of 2 copies of Rational Field
 
 Sage example in ./domaines.tex, line 574::
 
@@ -339,7 +339,7 @@ Sage example in ./domaines.tex, line 1422::
 Sage example in ./domaines.tex, line 1428::
 
   sage: SR.category()
-  Category of fields
+  Category of commutative rings
 
 Sage example in ./domaines.tex, line 1482::
 

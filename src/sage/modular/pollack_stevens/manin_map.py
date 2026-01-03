@@ -43,12 +43,15 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.continued_fraction import convergents
-from .sigma0 import Sigma0
-from .fund_domain import t00, t10, t01, t11, M2Z
+from typing import Self
+
 from sage.matrix.matrix_space import MatrixSpace
+from sage.rings.continued_fraction import convergents
 from sage.rings.integer_ring import ZZ
 from sage.structure.element import coercion_model
+
+from .fund_domain import M2Z, t00, t01, t10, t11
+from .sigma0 import Sigma0
 
 
 def unimod_matrices_to_infty(r, s):
@@ -315,13 +318,13 @@ class ManinMap:
             sage: from sage.modular.pollack_stevens.fund_domain import ManinRelations
             sage: S = Symk(0,QQ)
             sage: MR = ManinRelations(37); MR.gens()
-            [
+            (
             [1 0]  [ 0 -1]  [-1 -1]  [-1 -2]  [-2 -3]  [-3 -1]  [-1 -4]  [-4 -3]
             [0 1], [ 1  4], [ 4  3], [ 3  5], [ 5  7], [ 7  2], [ 2  7], [ 7  5],
             <BLANKLINE>
             [-2 -3]
             [ 3  4]
-            ]
+            )
 
             sage: data  = {M2Z([-2,-3,5,7]): S(0), M2Z([1,0,0,1]): S(0), M2Z([-1,-2,3,5]): S(0), M2Z([-1,-4,2,7]): S(1), M2Z([0,-1,1,4]): S(1), M2Z([-3,-1,7,2]): S(-1), M2Z([-2,-3,3,4]): S(0), M2Z([-4,-3,7,5]): S(0), M2Z([-1,-1,4,3]): S(0)}
             sage: D = OverconvergentDistributions(2, 37, 40)
@@ -354,13 +357,13 @@ class ManinMap:
             sage: from sage.modular.pollack_stevens.fund_domain import ManinRelations
             sage: S = Symk(0,QQ)
             sage: MR = ManinRelations(37); MR.gens()
-            [
+            (
             [1 0]  [ 0 -1]  [-1 -1]  [-1 -2]  [-2 -3]  [-3 -1]  [-1 -4]  [-4 -3]
             [0 1], [ 1  4], [ 4  3], [ 3  5], [ 5  7], [ 7  2], [ 2  7], [ 7  5],
             <BLANKLINE>
             [-2 -3]
             [ 3  4]
-            ]
+            )
 
             sage: data  = {M2Z([-2,-3,5,7]): S(0), M2Z([1,0,0,1]): S(0), M2Z([-1,-2,3,5]): S(0), M2Z([-1,-4,2,7]): S(1), M2Z([0,-1,1,4]): S(1), M2Z([-3,-1,7,2]): S(-1), M2Z([-2,-3,3,4]): S(0), M2Z([-4,-3,7,5]): S(0), M2Z([-1,-1,4,3]): S(0)}
             sage: f = ManinMap(S,MR,data)
@@ -690,7 +693,7 @@ class ManinMap:
             D[ky] = self(gamma * ky) * gamma
         return self.__class__(self._codomain, self._manin, D, check=False)
 
-    def normalize(self):
+    def normalize(self) -> Self:
         r"""
         Normalize every value of ``self`` -- e.g., reduce each value's
         `j`-th moment modulo `p^{N-j}`.
@@ -846,5 +849,4 @@ class ManinMap:
             # construction functor in order to scale by something
             # outside the base ring.
             D[g] = W(self._eval_sl2(g) - (self(pmat * g) * pmat).scale(scalar))
-        ans = self.__class__(W, manin, D, check=False)
-        return ans
+        return self.__class__(W, manin, D, check=False)

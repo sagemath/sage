@@ -14,7 +14,7 @@ from sage.misc.cachefunc import cached_function
 
 
 @cached_function
-def have_dot2tex():
+def have_dot2tex() -> bool:
     """
     Return whether ``dot2tex`` >= 2.8.7 and graphviz are installed
     and functional.

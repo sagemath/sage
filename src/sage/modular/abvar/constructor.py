@@ -5,17 +5,18 @@ AUTHORS:
 
 - William Stein (2007-03)
 """
-###########################################################################
+# #########################################################################
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>               #
 #  Distributed under the terms of the GNU General Public License (GPL)    #
-#                  http://www.gnu.org/licenses/                           #
-###########################################################################
+#                  https://www.gnu.org/licenses/                           #
+# #########################################################################
 
 import weakref
 
 from sage.rings.integer import Integer
 
-from sage.modular.arithgroup.all import CongruenceSubgroupBase, Gamma0
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
+from sage.modular.arithgroup.congroup_generic import CongruenceSubgroupBase
 from sage.modular.modsym.space import ModularSymbolsSpace
 from .abvar_newform import ModularAbelianVariety_newform
 import sage.modular.modform.element
@@ -93,7 +94,7 @@ def J0(N):
     try:
         return _get(key)
     except ValueError:
-        from sage.modular.arithgroup.all import Gamma0
+        from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
         J = Gamma0(N).modular_abelian_variety()
         return _saved(key, J)
 
@@ -112,7 +113,7 @@ def J1(N):
     try:
         return _get(key)
     except ValueError:
-        from sage.modular.arithgroup.all import Gamma1
+        from sage.modular.arithgroup.congroup_gamma1 import Gamma1_constructor as Gamma1
         return _saved(key, Gamma1(N).modular_abelian_variety())
 
 
@@ -126,11 +127,11 @@ def JH(N, H):
         sage: JH(389,[16])
         Abelian variety JH(389,[16]) of dimension 64
     """
-    key = 'JH(%s,%s)' % (N,H)
+    key = 'JH(%s,%s)' % (N, H)
     try:
         return _get(key)
     except ValueError:
-        from sage.modular.arithgroup.all import GammaH
+        from sage.modular.arithgroup.congroup_gammaH import GammaH_constructor as GammaH
         return _saved(key, GammaH(N, H).modular_abelian_variety())
 
 
@@ -179,7 +180,7 @@ def AbelianVariety(X):
     if isinstance(X, ModularSymbolsSpace):
         return abvar.ModularAbelianVariety_modsym(X)
 
-    if isinstance(X, (tuple,list)) and all(isinstance(G, CongruenceSubgroupBase) for G in X):
+    if isinstance(X, (tuple, list)) and all(isinstance(G, CongruenceSubgroupBase) for G in X):
         return abvar.ModularAbelianVariety(X)
 
     raise TypeError("X must be an integer, string, newform, modsym space, congruence subgroup or tuple of congruence subgroups")

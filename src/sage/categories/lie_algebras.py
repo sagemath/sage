@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Lie Algebras
 
@@ -555,7 +554,7 @@ class LieAlgebras(Category_over_base_ring):
                 0
             """
 
-        def is_abelian(self):
+        def is_abelian(self) -> bool:
             r"""
             Return ``True`` if this Lie algebra is abelian.
 

@@ -27,7 +27,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from cysignals.signals cimport sig_on, sig_off
+from cysignals.signals cimport sig_on, sig_off, sig_block, sig_unblock
 from memory_allocator cimport MemoryAllocator
 
 from sage.rings.real_double import RDF
@@ -50,6 +50,7 @@ cdef class compiled_integrand:
         return 0
 
 cdef double c_f(double t, void *params) noexcept:
+    sig_block()
     cdef double value
     cdef PyFunctionWrapper wrapper
     wrapper = <PyFunctionWrapper> params
@@ -58,22 +59,22 @@ cdef double c_f(double t, void *params) noexcept:
             value = wrapper.the_function(t, wrapper.the_parameters)
         else:
             value = wrapper.the_function(t)
-    except Exception as msg:
+    except Exception as e:
         try:
-            if str(msg).strip():
-                print(msg)
+            if str(e).strip():
+                print(e)
             else:
                 print(f"Unable to evaluate function at {t}")
         except Exception:
             pass
-        return 0
-
+        value = 0
+    sig_unblock()
     return value
 
 
 def numerical_integral(func, a, b=None,
                        algorithm='qag',
-                       max_points=87, params=[], eps_abs=1e-6,
+                       max_points=87, params=None, eps_abs=1e-6,
                        eps_rel=1e-6, rule=6):
     r"""
     Return the numerical integral of the function on the interval
@@ -121,12 +122,12 @@ def numerical_integral(func, a, b=None,
 
     EXAMPLES:
 
-    To integrate the function `x^2` from 0 to 1, we do ::
+    To integrate the function `x^2` from 0 to 1, we do::
 
         sage: numerical_integral(x^2, 0, 1, max_points=100)
         (0.3333333333333333, 3.700743415417188e-15)
 
-    To integrate the function `\sin(x)^3 + \sin(x)` we do ::
+    To integrate the function `\sin(x)^3 + \sin(x)` we do::
 
         sage: numerical_integral(sin(x)^3 + sin(x),  0, pi)
         (3.333333333333333, 3.700743415417188e-14)
@@ -177,18 +178,18 @@ def numerical_integral(func, a, b=None,
     +Infinity or -Infinity in the interval argument. For example::
 
         sage: f = exp(-x)
-        sage: numerical_integral(f, 0, +Infinity)  # random output
+        sage: numerical_integral(f, 0, +Infinity)  # abs tol 1e-6
         (0.99999999999957279, 1.8429811298996553e-07)
 
     Note the coercion to the real field RR, which prevents underflow::
 
         sage: f = exp(-x**2)
-        sage: numerical_integral(f, -Infinity, +Infinity)  # random output
+        sage: numerical_integral(f, -Infinity, +Infinity)  # abs tol 1e-6
         (1.7724538509060035, 3.4295192165889879e-08)
 
     One can integrate any real-valued callable function::
 
-        sage: numerical_integral(lambda x: abs(zeta(x)), [1.1,1.5])  # random output
+        sage: numerical_integral(lambda x: abs(zeta(x)), [1.1,1.5])  # abs tol 1e-6
         (1.8488570602160455, 2.052643677492633e-14)
 
     We can also numerically integrate symbolic expressions using either this
@@ -264,11 +265,36 @@ def numerical_integral(func, a, b=None,
         sage: h(x) = x
         sage: numerical_integral(h,0,1)[0] # abs tol 1e-8
         0.5
+
+    Ensure :issue:`30379` is fixed::
+
+        sage: g(x) = gamma_inc(2,11/5) * x
+        sage: numerical_integral(g(x), 2, 5)  # abs tol 1e-10
+        (3.722986120974418, 4.1333449118656977e-14)
+
+    Check interruptibility::
+
+        sage: from sage.doctest.util import ensure_interruptible_after
+        sage: def f(x):
+        ....:     sleep(0.01r)
+        ....:     return x
+        sage: with ensure_interruptible_after(0.3): numerical_integral(f, 0, 1)
+
+    Unfortunately the current implementation means if a single function call
+    takes a long time then it will take a while to be interrupted,
+    but cysignals does not yet support such sophisticated nested exception::
+
+        sage: def f(x):
+        ....:     sleep(1r)
+        ....:     return x
+        sage: with ensure_interruptible_after(0.5): numerical_integral(f, 0, 1)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: Function is not interruptible within 0.5000 seconds, only after 1.0... seconds
+
     """
     cdef double abs_err  # step size
     cdef double result
-    cdef int i
-    cdef int j
     cdef double _a, _b
     cdef PyFunctionWrapper wrapper  # struct to pass information into GSL C function
 
@@ -287,6 +313,9 @@ def numerical_integral(func, a, b=None,
     cdef gsl_function F
     cdef gsl_integration_workspace* W
     W = NULL
+
+    if params is None:
+        params = []
 
     if True:
         from sage.rings.infinity import Infinity
@@ -393,7 +422,8 @@ def numerical_integral(func, a, b=None,
             _b = b
             W = <gsl_integration_workspace*> gsl_integration_workspace_alloc(n)
             sig_on()
-            gsl_integration_qag(&F,_a,_b,eps_abs,eps_rel,n,rule,W,&result,&abs_err)
+            gsl_integration_qag(&F, _a, _b, eps_abs, eps_rel,
+                                n, rule, W, &result, &abs_err)
             sig_off()
 
     elif algorithm == "qags":
@@ -568,7 +598,7 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
     cdef gsl_monte_plain_state* state_plain = NULL
     cdef gsl_monte_miser_state* state_miser = NULL
     cdef gsl_monte_vegas_state* state_vegas = NULL
-    cdef gsl_rng_type *type_rng
+    cdef const gsl_rng_type *type_rng
     cdef gsl_rng *_rng
     cdef size_t dim
     cdef double *_xl
@@ -619,7 +649,7 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
         if len(vars) < target_dim:
             raise ValueError(("The function to be integrated depends on "
                               "{} variables {}, and so cannot be "
-                                 "integrated in {} dimensions. Please fix "
+                              "integrated in {} dimensions. Please fix "
                               "additional variables with the 'params' "
                               "argument").format(len(vars), tuple(vars),
                                                  target_dim))
@@ -628,7 +658,7 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
                               "{} variables {}, and so cannot be "
                               "integrated in {} dimensions. Please add "
                               "more items in upper and lower limits"
-                             ).format(len(vars), tuple(vars), target_dim))
+                              ).format(len(vars), tuple(vars), target_dim))
 
         from sage.structure.element import Expression
         if isinstance(func, Expression):

@@ -3381,11 +3381,12 @@ class Graphics(WithEqualityById, SageObject):
                 if latex_implementations[0] == "pdflatex":
                     # use pdflatex and set font encoding as per
                     # matplotlib documentation:
-                    # https://matplotlib.org/users/pgf.html#pgf-tutorial
+                    # https://matplotlib.org/stable/users/explain/text/pgf.html
+                    # Note that pgf.preamble should be a string now, not a list
                     pgf_options = {"pgf.texsystem": "pdflatex",
-                                   "pgf.preamble": [
+                                   "pgf.preamble": "\n".join([
                                        r"\usepackage[utf8x]{inputenc}",
-                                       r"\usepackage[T1]{fontenc}"]}
+                                       r"\usepackage[T1]{fontenc}"])}
                 else:
                     pgf_options = {
                         "pgf.texsystem": latex_implementations[0],
@@ -3552,28 +3553,3 @@ class Graphics(WithEqualityById, SageObject):
         elif 'fontsize' not in graphics._extra_kwds:
             graphics._extra_kwds['fontsize'] = 6
         return MultiGraphics([(self, pos0), (graphics, pos)])
-
-
-# Deprecation notice for GraphicsArray import
-def GraphicsArray(*args, **kwargs):
-    r"""
-    This is deprecated (see :issue:`28675`).
-    Use :class:`sage.plot.multigraphics.GraphicsArray` instead.
-
-    TESTS::
-
-        sage: from sage.plot.graphics import GraphicsArray
-        sage: c = circle((0,0), 1)
-        sage: G = GraphicsArray([c, c])
-        doctest:...: DeprecationWarning: GraphicsArray must be imported from
-        sage.plot.multigraphics and no longer from sage.plot.graphics.
-        See https://github.com/sagemath/sage/issues/28675 for details.
-        sage: G
-        Graphics Array of size 1 x 2
-    """
-    from .multigraphics import GraphicsArray as NewGraphicsArray
-    from sage.misc.superseded import deprecation
-    deprecation(28675, "GraphicsArray must be imported from "
-                "sage.plot.multigraphics and no longer from "
-                "sage.plot.graphics.")
-    return NewGraphicsArray(*args, **kwargs)

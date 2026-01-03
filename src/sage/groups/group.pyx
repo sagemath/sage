@@ -55,17 +55,17 @@ cdef class Group(Parent):
         sage: from sage.groups.group import Group
         sage: G = Group()
         sage: TestSuite(G).run(skip = ["_test_an_element",\
-                                       "_test_associativity",\
-                                       "_test_elements",\
-                                       "_test_elements_eq_reflexive",\
-                                       "_test_elements_eq_symmetric",\
-                                       "_test_elements_eq_transitive",\
-                                       "_test_elements_neq",\
-                                       "_test_inverse",\
-                                       "_test_one",\
-                                       "_test_pickling",\
-                                       "_test_prod",\
-                                       "_test_some_elements"])
+        ....:                          "_test_associativity",\
+        ....:                          "_test_elements",\
+        ....:                          "_test_elements_eq_reflexive",\
+        ....:                          "_test_elements_eq_symmetric",\
+        ....:                          "_test_elements_eq_transitive",\
+        ....:                          "_test_elements_neq",\
+        ....:                          "_test_inverse",\
+        ....:                          "_test_one",\
+        ....:                          "_test_pickling",\
+        ....:                          "_test_prod",\
+        ....:                          "_test_some_elements"])
 
     Generic groups have very little functionality::
 
@@ -113,7 +113,7 @@ cdef class Group(Parent):
                 raise ValueError("%s is not a subcategory of %s" % (category, Groups()))
         Parent.__init__(self, base=base, category=category)
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Test whether this group is abelian.
 
@@ -128,7 +128,7 @@ cdef class Group(Parent):
         """
         raise NotImplementedError
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         r"""
         Test whether this group is commutative.
 
@@ -266,9 +266,9 @@ cdef class AbelianGroup(Group):
     """
     Generic abelian group.
     """
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
-        Return True.
+        Return ``True``.
 
         EXAMPLES::
 

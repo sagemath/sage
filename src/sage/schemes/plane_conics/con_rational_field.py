@@ -350,7 +350,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             sage: # needs sage.libs.pari
             sage: R.<x,y,z> = QQ[]
             sage: C = Curve(7*x^2 + 2*y*z + z^2)
-            sage: (p, i) = C.parametrization(morphism=False); (p, i)
+            sage: p, i = C.parametrization(morphism=False); (p, i)
             ([-2*x*y, x^2 + 7*y^2, -2*x^2], [-1/2*x, 1/7*y + 1/14*z])
             sage: C.defining_polynomial()(p)
             0
@@ -386,7 +386,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
                 point = self.rational_point()
             point = Sequence(point)
             Q = PolynomialRing(QQ, 'x,y')
-            [x, y] = Q.gens()
+            x, y = Q.gens()
             gens = self.ambient_space().gens()
             M = self.symmetric_matrix()
             M *= lcm([t.denominator() for t in M.list()])

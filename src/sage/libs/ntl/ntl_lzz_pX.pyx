@@ -124,9 +124,9 @@ cdef class ntl_zz_pX():
             elif isinstance(a, Integer):
                 zz_pX_SetCoeff_long(self.x, i, mpz_fdiv_ui((<Integer>a).value, self.c.p))
             elif isinstance(a, int):
-                ## we're lucky that python int is no larger than long
+                # we're lucky that python int is no larger than long
                 temp = a
-                zz_pX_SetCoeff_long(self.x, i, temp%self.c.p)
+                zz_pX_SetCoeff_long(self.x, i, temp % self.c.p)
             else:
                 a = Integer(a)
                 zz_pX_SetCoeff_long(self.x, i, mpz_fdiv_ui((<Integer>a).value, self.c.p))

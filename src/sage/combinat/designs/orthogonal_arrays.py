@@ -1723,7 +1723,8 @@ def OA_n_times_2_pow_c_from_matrix(k, c, G, A, Y, check=True):
         for i in range(len(B)):
             for j in range(i):
                 g_to_col_indices = {g: [] for g in G}
-                Hij = set([(Y[i] - Y[j]) * v for v in H])
+                YY = Y[i] - Y[j]
+                Hij = {YY * v for v in H}
                 for s in range(2 * G_card):
                     g_to_col_indices[B[i][s] - B[j][s]].append(s)
                 for s1, s2 in g_to_col_indices.values():
