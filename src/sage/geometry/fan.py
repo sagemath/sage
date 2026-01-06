@@ -2504,7 +2504,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         dc_pc = pc.deformation_cone(translated_cone_indices, backend)
         lift = dc_pc.an_element()
         ieqs = [(lift_i,) + v for (lift_i, v) in zip(lift, v_pc)]
-        poly = Polyhedron(ieqs=ieqs, backend)
+        poly = Polyhedron(ieqs=ieqs, backend=backend)
         return self.is_equivalent(poly.normal_fan())
 
     def generating_cone(self, n):
