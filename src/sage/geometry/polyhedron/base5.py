@@ -674,7 +674,7 @@ class Polyhedron_base5(Polyhedron_base4):
         - ``backend`` -- (optional) the backend to be used for polyhedral
           computations;
 
-        OUTPUT: a polyhedron. 
+        OUTPUT: a polyhedron.
 
         EXAMPLES:
 
