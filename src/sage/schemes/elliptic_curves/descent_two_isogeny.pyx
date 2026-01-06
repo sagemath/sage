@@ -1220,7 +1220,7 @@ def two_descent_by_two_isogeny(E,
         sage: E.sha().an()
         4
         sage: from sage.doctest.util import ensure_interruptible_after
-        sage: with ensure_interruptible_after(0.5): two_descent_by_two_isogeny(E, global_limit_large=10^8)
+        sage: with ensure_interruptible_after(1.0): two_descent_by_two_isogeny(E, global_limit_large=10^8)
     """
     cdef Integer a1, a2, a3, a4, a6, s2, s4, s6
     cdef Integer c, d, x0
