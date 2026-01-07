@@ -163,8 +163,8 @@ de :math:`t^2e^t -\sin(t)` se calcula como sigue:
     sage: s = var("s")
     sage: t = var("t")
     sage: f = t^2*exp(t) - sin(t)
-    sage: f.laplace(t,s)
-    2/(s^3 - 3*s^2 + 3*s - 1) - 1/(s^2 + 1)
+    sage: f.laplace(t,s).simplify_rational()
+    -(s^3 - 5*s^2 + 3*s - 3)/(s^5 - 3*s^4 + 4*s^3 - 4*s^2 + 3*s - 1)
 
 Veamos un ejemplo más complicado. El desplazamiento desde el punto de equilibrio
 de dos resortes acoplados, sujetos a una pared a la izquierda

@@ -229,31 +229,6 @@ InnerProductSpace = QuadraticSpace
 #
 # #############################################################################
 
-def is_FreeQuadraticModule(M):
-    """
-    Return ``True`` if `M` is a free quadratic module.
-
-    EXAMPLES::
-
-        sage: from sage.modules.free_quadratic_module import is_FreeQuadraticModule
-        sage: U = FreeModule(QQ,3)
-        sage: is_FreeQuadraticModule(U)
-        doctest:warning...
-        DeprecationWarning: the function is_FreeQuadraticModule is deprecated;
-        use 'isinstance(..., FreeQuadraticModule_generic)' instead
-        See https://github.com/sagemath/sage/issues/37924 for details.
-        False
-        sage: V = FreeModule(QQ,3,inner_product_matrix=diagonal_matrix([1,1,1]))
-        sage: is_FreeQuadraticModule(V)
-        True
-        sage: W = FreeModule(QQ,3,inner_product_matrix=diagonal_matrix([2,3,3]))
-        sage: is_FreeQuadraticModule(W)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37924, "the function is_FreeQuadraticModule is deprecated; use 'isinstance(..., FreeQuadraticModule_generic)' instead")
-    return isinstance(M, FreeQuadraticModule_generic)
-
 
 class FreeQuadraticModule_generic(free_module.FreeModule_generic):
     """

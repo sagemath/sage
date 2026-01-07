@@ -70,6 +70,8 @@ py.install_sources(
   'polynomial_quotient_ring_element.py',
   'polynomial_rational_flint.pxd',
   'polynomial_rational_flint.pyx',
+  'polynomial_real_arb.pxd',
+  'polynomial_real_arb.pyx',
   'polynomial_real_mpfr_dense.pyx',
   'polynomial_ring.py',
   'polynomial_ring_constructor.py',
@@ -102,33 +104,36 @@ py.install_sources(
 )
 
 extension_data = {
-  'commutative_polynomial' : files('commutative_polynomial.pyx'),
-  'cyclotomic' : files('cyclotomic.pyx'),
-  'evaluation_flint' : files('evaluation_flint.pyx'),
-  'hilbert' : files('hilbert.pyx'),
-  'laurent_polynomial' : files('laurent_polynomial.pyx'),
-  'laurent_polynomial_mpair' : files('laurent_polynomial_mpair.pyx'),
-  'multi_polynomial' : files('multi_polynomial.pyx'),
-  'multi_polynomial_ring_base' : files('multi_polynomial_ring_base.pyx'),
-  'ore_polynomial_element' : files('ore_polynomial_element.pyx'),
-  'polydict' : files('polydict.pyx'),
-  'polynomial_compiled' : files('polynomial_compiled.pyx'),
-  'polynomial_complex_arb' : files('polynomial_complex_arb.pyx'),
-  'polynomial_element' : files('polynomial_element.pyx'),
-  'polynomial_number_field' : files('polynomial_number_field.pyx'),
-  'polynomial_real_mpfr_dense' : files('polynomial_real_mpfr_dense.pyx'),
-  'polynomial_ring_homomorphism' : files('polynomial_ring_homomorphism.pyx'),
-  'real_roots' : files('real_roots.pyx'),
-  'refine_root' : files('refine_root.pyx'),
-  'skew_polynomial_element' : files('skew_polynomial_element.pyx'),
-  'skew_polynomial_finite_field' : files('skew_polynomial_finite_field.pyx'),
-  'skew_polynomial_finite_order' : files('skew_polynomial_finite_order.pyx'),
-  'symmetric_reduction' : files('symmetric_reduction.pyx'),
+  'commutative_polynomial': files('commutative_polynomial.pyx'),
+  'cyclotomic': files('cyclotomic.pyx'),
+  'evaluation_flint': files('evaluation_flint.pyx'),
+  'hilbert': files('hilbert.pyx'),
+  'laurent_polynomial': files('laurent_polynomial.pyx'),
+  'laurent_polynomial_mpair': files('laurent_polynomial_mpair.pyx'),
+  'multi_polynomial': files('multi_polynomial.pyx'),
+  'multi_polynomial_ring_base': files('multi_polynomial_ring_base.pyx'),
+  'ore_polynomial_element': files('ore_polynomial_element.pyx'),
+  'polydict': files('polydict.pyx'),
+  'polynomial_compiled': files('polynomial_compiled.pyx'),
+  'polynomial_complex_arb': files('polynomial_complex_arb.pyx'),
+  'polynomial_element': files('polynomial_element.pyx'),
+  'polynomial_number_field': files('polynomial_number_field.pyx'),
+  'polynomial_real_arb': files('polynomial_real_arb.pyx'),
+  'polynomial_real_mpfr_dense': files('polynomial_real_mpfr_dense.pyx'),
+  'polynomial_ring_homomorphism': files('polynomial_ring_homomorphism.pyx'),
+  'real_roots': files('real_roots.pyx'),
+  'refine_root': files('refine_root.pyx'),
+  'skew_polynomial_element': files('skew_polynomial_element.pyx'),
+  'skew_polynomial_finite_field': files('skew_polynomial_finite_field.pyx'),
+  'skew_polynomial_finite_order': files('skew_polynomial_finite_order.pyx'),
+  'symmetric_reduction': files('symmetric_reduction.pyx'),
 }
 
 foreach name, pyx : extension_data
   deps = [py_dep, cysignals, gmp, numpy]
   if name == 'evaluation_flint'
+    deps += [flint, mpfi]
+  elif name == 'polynomial_real_arb'
     deps += [flint, mpfi]
   elif name == 'polynomial_complex_arb'
     deps += [flint, mpfi]

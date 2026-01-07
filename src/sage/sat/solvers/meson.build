@@ -9,7 +9,7 @@ py.install_sources(
   subdir: 'sage/sat/solvers',
 )
 
-extension_data = {'satsolver' : files('satsolver.pyx')}
+extension_data = {'satsolver': files('satsolver.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

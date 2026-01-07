@@ -151,13 +151,11 @@ SAGE_DATE = var("SAGE_DATE", version.date)
 SAGE_VERSION_BANNER = var("SAGE_VERSION_BANNER", version.banner)
 
 # virtual environment where sagelib is installed
-SAGE_VENV = var("SAGE_VENV", os.path.abspath(sys.prefix))
 SAGE_LIB = var("SAGE_LIB", os.path.dirname(os.path.dirname(__file__)))
 SAGE_EXTCODE = var("SAGE_EXTCODE", join(SAGE_LIB, "sage", "ext_data"))
-SAGE_VENV_SPKG_INST = var("SAGE_VENV_SPKG_INST", join(SAGE_VENV, "var", "lib", "sage", "installed"))
 
 # prefix hierarchy where non-Python packages are installed
-SAGE_LOCAL = var("SAGE_LOCAL", SAGE_VENV)
+SAGE_LOCAL = var("SAGE_LOCAL")
 SAGE_SHARE = var("SAGE_SHARE", join(SAGE_LOCAL, "share"))
 SAGE_DOC = var("SAGE_DOC", join(SAGE_SHARE, "doc", "sage"))
 SAGE_LOCAL_SPKG_INST = var("SAGE_LOCAL_SPKG_INST", join(SAGE_LOCAL, "var", "lib", "sage", "installed"))
@@ -324,17 +322,8 @@ def sage_include_directories(use_sources=False):
     return dirs
 
 
-def get_cblas_pc_module_name() -> str:
-    """
-    Return the name of the BLAS libraries to be used.
-    """
-    import pkgconfig
-    cblas_pc_modules = CBLAS_PC_MODULES.split(':')
-    return next(blas_lib for blas_lib in cblas_pc_modules if pkgconfig.exists(blas_lib))
-
-
 default_required_modules = ('fflas-ffpack', 'givaro', 'gsl', 'linbox', 'Singular',
-                            'libpng', 'gdlib', 'm4ri', 'zlib', 'cblas', 'ecl')
+                            'libpng', 'gdlib', 'm4ri', 'zlib', 'ecl')
 
 
 default_optional_modules = ('lapack',)
@@ -359,7 +348,7 @@ def cython_aliases(required_modules=None, optional_modules=None):
         sage: cython_aliases()
         {...}
         sage: sorted(cython_aliases().keys())
-        ['CBLAS_CFLAGS',
+        ['ECL_CFLAGS',
          ...,
          'ZLIB_LIBRARIES']
         sage: cython_aliases(required_modules=('module-that-is-assumed-to-not-exist'))
@@ -406,8 +395,6 @@ def cython_aliases(required_modules=None, optional_modules=None):
     for lib, required in itertools.chain(((lib, True) for lib in required_modules),
                                          ((lib, False) for lib in optional_modules)):
         var = lib.upper().replace("-", "") + "_"
-        if lib == 'cblas':
-            lib = get_cblas_pc_module_name()
         if lib == 'zlib':
             aliases[var + "CFLAGS"] = ""
             try:

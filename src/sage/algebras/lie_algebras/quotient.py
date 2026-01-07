@@ -48,11 +48,11 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         sage: I = L.ideal(X_122)
         sage: E = L.quotient(I); E
         Lie algebra quotient L/I of dimension 4 over Rational Field where
-        L: Free Nilpotent Lie algebra on 5 generators (X_1, X_2, X_12, X_112, X_122) over Rational Field
+        L: Free Nilpotent Lie algebra of rank 2 and step 3 over Rational Field
         I: Ideal (X_122)
         sage: E.category()
         Join of Category of finite dimensional nilpotent Lie algebras with basis
-        over Rational Field and Category of subquotients of sets
+         over Rational Field and Category of subquotients of sets
         sage: E.basis().list()
         [X_1, X_2, X_12, X_112]
         sage: E.inject_variables()
@@ -68,7 +68,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
 
         sage: E2 = L.quotient(X_122); E2
         Lie algebra quotient L/I of dimension 4 over Rational Field where
-        L: Free Nilpotent Lie algebra on 5 generators (X_1, X_2, X_12, X_112, X_122) over Rational Field
+        L: Free Nilpotent Lie algebra of rank 2 and step 3 over Rational Field
         I: Ideal (X_122)
         sage: E is E2
         True
@@ -372,7 +372,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
             sage: el = Q.lift(Q(y)); el
             -x
             sage: el.parent()
-            Free Nilpotent Lie algebra on 3 generators (x, y, z) over Rational Field
+            Free Nilpotent Lie algebra of rank 2 and step 2 over Rational Field
         """
         L = self.ambient()
         B = L.basis()
