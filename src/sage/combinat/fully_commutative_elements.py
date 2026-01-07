@@ -712,9 +712,9 @@ class FullyCommutativeElement(NormalizedClonableList):
 
         # Perform the coset decomposition on the specified side:
         if side == 'left':
-            (string, remaining) = self.coset_decomposition(J, side=side)
+            string, remaining = self.coset_decomposition(J, side=side)
         elif side == 'right':
-            (remaining, string) = self.coset_decomposition(J, side=side)
+            remaining, string = self.coset_decomposition(J, side=side)
 
         cur_string = list(string)
 

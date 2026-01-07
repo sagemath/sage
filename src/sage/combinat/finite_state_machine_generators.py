@@ -1884,21 +1884,21 @@ class TransducerGenerators:
 
             A tuple ``((new_carry, new_level), output)``.
             """
-            (c, j) = (carry, level)
+            c, j = (carry, level)
             output = []
             while True:
                 transition = recursion_transition(
                     c, j, force_nonnegative_target)
                 if transition is None:
                     break
-                (c, j) = transition[0]
+                c, j = transition[0]
                 output += transition[1]
 
             return ((c, j), output)
 
         def transition_function(states2, input):
-            (state_carry, state_level) = states2
-            ((carry, level), output) = recursion_transitions(
+            state_carry, state_level = states2
+            (carry, level), output = recursion_transitions(
                 state_carry, state_level, False)
             # no more recursion transition is possible,
             # so this is now a storing transition
@@ -1906,9 +1906,9 @@ class TransducerGenerators:
             level += 1
             # We now may proceed along recursion transitions
             # as long as the carries stay nonnegative.
-            ((carry, level), new_output) = recursion_transitions(
+            carrylevel, new_output = recursion_transitions(
                 carry, level, True)
-            return ((carry, level), output + new_output)
+            return (carrylevel, output + new_output)
 
         T = Transducer(transition_function,
                        initial_states=[(0, 0)],

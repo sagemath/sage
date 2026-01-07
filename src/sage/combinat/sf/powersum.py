@@ -21,7 +21,6 @@ Power sum symmetric functions
 from sage.arith.misc import divisors
 from sage.combinat.partition import Partition
 from sage.misc.misc_c import prod
-from sage.misc.superseded import deprecated_function_alias
 from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
@@ -495,10 +494,6 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             dct = {lam.stretch(n): coeff
                    for lam, coeff in self.monomial_coefficients().items()}
             return self.parent()._from_dict(dct)
-
-        frobenius = deprecated_function_alias(36396, adams_operator)
-
-        adams_operation = deprecated_function_alias(36396, adams_operator)
 
         def verschiebung(self, n):
             r"""

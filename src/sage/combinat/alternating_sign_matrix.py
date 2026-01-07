@@ -41,6 +41,7 @@ from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.structure.richcmp import richcmp
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.finite_lattice_posets import FiniteLatticePosets
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import zero_vector
@@ -60,8 +61,8 @@ lazy_import('sage.combinat.posets.lattices', 'LatticePoset')
 
 def _inplace_height_function_gyration(hf):
     k = hf.nrows() - 1
-    for i in range(1,k):
-        for j in range(1,k):
+    for i in range(1, k):
+        for j in range(1, k):
             if (i+j) % 2 == 0 \
                     and hf[i-1,j] == hf[i+1,j] == hf[i,j+1] == hf[i,j-1]:
                 if hf[i,j] < hf[i+1,j]:
@@ -803,11 +804,11 @@ class AlternatingSignMatrix(Element,
             N = len(output)
             for c in range(N):
                 d = copy.copy(output[c])
-                output[c][sign[b][0],sign[b][1]] = -output[c][sign[b][0], sign[b][1]]+1
-                d[sign[b][0],sign[b][1]] = -d[sign[b][0], sign[b][1]]-3
+                output[c][sign[b][0], sign[b][1]] = -output[c][sign[b][0], sign[b][1]]+1
+                d[sign[b][0], sign[b][1]] = -d[sign[b][0], sign[b][1]]-3
                 output.append(d)
         for k in range(len(output)):
-            output[k] = M.from_height_function((output[k]-matrix.ones(n,n))/2)
+            output[k] = M.from_height_function((output[k]-matrix.ones(n, n))/2)
         return output
 
     @combinatorial_map(name='to Dyck word')
@@ -1048,10 +1049,10 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         sage: L
         Finite lattice containing 7 elements
         sage: L.category()
-        Category of facade finite enumerated lattice posets
+        Category of facade finite enumerated distributive lattices
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         Initialize ``self``.
 
@@ -1064,7 +1065,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         self._matrix_space = MatrixSpace(ZZ, n)
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1089,7 +1090,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         """
         return self._matrix_space._repr_option(key)
 
-    def __contains__(self, asm):
+    def __contains__(self, asm) -> bool:
         """
         Check if ``asm`` is in ``self``.
 
@@ -1564,8 +1565,9 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
             sage: L
             Finite lattice containing 7 elements
         """
+        cat = FiniteLatticePosets().Distributive()
         return LatticePoset(self._lattice_initializer(), cover_relations=True,
-                            check=False)
+                            check=False, category=cat)
 
     @cached_method
     def gyration_orbits(self):
