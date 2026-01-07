@@ -21,15 +21,15 @@ AUTHORS:
 - Reimundo Heluani (2019-08-09): Initial implementation.
 """
 
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2019 Reimundo Heluani <heluani@potuz.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.rings.integer import Integer
 from sage.algebras.lie_algebras.lie_algebra import LieAlgebra
@@ -81,7 +81,7 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
     The Affine Lie conformal algebra associated with the finite
     dimensional simple Lie algebra of Cartan type ``ct``.
     """
-    def __init__(self, R, ct, names=None, prefix=None, bracket=None):
+    def __init__(self, R, ct, names=None, prefix=None, bracket=None) -> None:
         """
         Initialize ``self``.
 
@@ -90,7 +90,7 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
             sage: V = lie_conformal_algebras.Affine(QQ,'A1')
             sage: TestSuite(V).run()
         """
-        if type(ct) is str:
+        if isinstance(ct, str):
             from sage.combinat.root_system.cartan_type import CartanType
             try:
                 ct = CartanType(ct)
@@ -98,7 +98,7 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
                 raise ValueError("ct must be a valid Cartan Type")
         if not (ct.is_finite() and ct.is_irreducible):
             raise ValueError("only affine algebras of simple finite dimensional"
-                "Lie algebras are implemented")
+                             "Lie algebras are implemented")
         hv = Integer(ct.dual_coxeter_number())
         g = LieAlgebra(R, cartan_type=ct)
         B = g.basis()
@@ -108,8 +108,8 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
             for k2 in S:
                 if S.rank(k2) <= S.rank(k1):
                     myb = B[k1].bracket(B[k2]).monomial_coefficients()
-                    myf = R(2).inverse_of_unit()*R(hv).inverse_of_unit()\
-                          * g.killing_form(B[k1], B[k2])
+                    myf = R(2).inverse_of_unit() * R(hv).inverse_of_unit()\
+                        * g.killing_form(B[k1], B[k2])
                     if myb or myf:
                         gdict[(k1, k2)] = {}
                         if myb:
@@ -124,9 +124,11 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
             prefix = 'B'
 
         GradedLieConformalAlgebra.__init__(self,
-            R, gdict, index_set=S,
-            central_elements=('K',), weights=weights,
-            names=names, prefix=prefix, bracket=bracket)
+                                           R, gdict, index_set=S,
+                                           central_elements=('K',),
+                                           weights=weights,
+                                           names=names, prefix=prefix,
+                                           bracket=bracket)
 
     def cartan_type(self):
         """
@@ -152,4 +154,4 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
             The affine Lie conformal algebra of type ['A', 1] over Rational Field
         """
         return "The affine Lie conformal algebra of type {} over {}".format(
-                                                    self._ct, self.base_ring())
+            self._ct, self.base_ring())

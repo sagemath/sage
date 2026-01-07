@@ -22,15 +22,15 @@ AUTHORS:
 - Reimundo Heluani (2019-08-09): Initial implementation.
 """
 
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2019 Reimundo Heluani <heluani@potuz.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.matrix.special import identity_matrix
 from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
@@ -110,17 +110,19 @@ class FreeBosonsLieConformalAlgebra(GradedLieConformalAlgebra):
             sage: TestSuite(V).run()
         """
         from sage.matrix.matrix_space import MatrixSpace
-        if (gram_matrix is not None):
+        if gram_matrix is not None:
             if ngens is None:
                 ngens = gram_matrix.dimensions()[0]
             try:
                 assert (gram_matrix in MatrixSpace(R, ngens, ngens))
             except AssertionError:
                 raise ValueError("the gram_matrix should be a symmetric " +
-                    "{0} x {0} matrix, got {1}".format(ngens, gram_matrix))
+                                 "{0} x {0} matrix, got {1}".format(ngens,
+                                                                    gram_matrix))
             if not gram_matrix.is_symmetric():
                 raise ValueError("the gram_matrix should be a symmetric " +
-                    "{0} x {0} matrix, got {1}".format(ngens, gram_matrix))
+                                 "{0} x {0} matrix, got {1}".format(ngens,
+                                                                    gram_matrix))
         else:
             if ngens is None:
                 ngens = 1
