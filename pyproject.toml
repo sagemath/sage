@@ -244,7 +244,7 @@ test-command = "python -m sage.doctest --installed"
 test-groups = ["test"]
 test-sources = ["pyproject.toml"]
 [tool.cibuildwheel.config-settings]
---setup-args = "-DSAGE_LOCAL=$SAGE_LOCAL"
+setup-args = "-DSAGE_LOCAL=/project/local"
 
 [tool.ruff]
 # https://docs.astral.sh/ruff/configuration
