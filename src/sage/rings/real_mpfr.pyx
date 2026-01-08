@@ -1341,7 +1341,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
 
 cdef class RealLiteral(RealNumber)
 
-cdef class RealNumber(sage.structure.element.RingElement):
+cdef class RealNumber(sage.structure.element.FieldElement):
     """
     A floating point approximation to a real number using any specified
     precision. Answers derived from calculations with such

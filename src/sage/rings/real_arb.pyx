@@ -216,7 +216,7 @@ from sage.libs.mpfi cimport *
 from sage.libs.mpfr cimport *
 from sage.libs.mpfr cimport MPFR_RNDN, MPFR_RNDU, MPFR_RNDD, MPFR_RNDZ
 
-from sage.structure.element cimport Element, RingElement
+from sage.structure.element cimport Element, FieldElement
 from sage.rings.ring cimport Field
 import sage.rings.abc
 from sage.rings.integer cimport Integer
@@ -1184,7 +1184,7 @@ def create_RealBall(parent, serialized):
         return res
 
 
-cdef class RealBall(RingElement):
+cdef class RealBall(FieldElement):
     """
     Hold one ``arb_t``.
 

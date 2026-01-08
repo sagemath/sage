@@ -3,7 +3,7 @@ from typing import Any
 from sage.libs.flint.acb import acb_t
 from sage.rings.complex_interval import ComplexIntervalFieldElement
 from sage.rings.real_arb import RealBall
-from sage.structure.element import RingElement
+from sage.structure.element import FieldElement
 from sage.rings.ring import Field
 
 def ComplexIntervalFieldElement_to_acb(target: acb_t, source: ComplexIntervalFieldElement) -> None:
@@ -12,7 +12,7 @@ def ComplexIntervalFieldElement_to_acb(target: acb_t, source: ComplexIntervalFie
 def acb_to_ComplexIntervalFieldElement(target: ComplexIntervalFieldElement, source: acb_t) -> int:
     ...
 
-class ComplexBall(RingElement):
+class ComplexBall(FieldElement):
     value: acb_t
 
     def _new(self) -> 'ComplexBall':

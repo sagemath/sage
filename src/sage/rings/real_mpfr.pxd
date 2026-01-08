@@ -3,7 +3,7 @@ from sage.libs.mpfr.types cimport mpfr_rnd_t, mpfr_t, mpfr_prec_t
 cimport sage.rings.abc
 cimport sage.structure.element
 
-cdef class RealNumber(sage.structure.element.RingElement)  # forward decl
+cdef class RealNumber(sage.structure.element.FieldElement)  # forward decl
 
 cdef class RealField_class(sage.rings.abc.RealField):
     cdef mpfr_prec_t _prec
@@ -14,7 +14,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
         """Return a new real number with parent ``self``."""
         return <RealNumber>(RealNumber.__new__(RealNumber, self))
 
-cdef class RealNumber(sage.structure.element.RingElement):
+cdef class RealNumber(sage.structure.element.FieldElement):
     cdef mpfr_t value
     cdef inline RealNumber _new(self):
         """Return a new real number with same parent as ``self``."""

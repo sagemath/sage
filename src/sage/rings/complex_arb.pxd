@@ -1,7 +1,7 @@
 from sage.libs.flint.acb cimport acb_t
 from sage.rings.complex_interval cimport ComplexIntervalFieldElement
 from sage.rings.real_arb cimport RealBall
-from sage.structure.element cimport RingElement
+from sage.structure.element cimport FieldElement
 from sage.rings.ring cimport Field
 
 cdef void ComplexIntervalFieldElement_to_acb(
@@ -12,7 +12,7 @@ cdef int acb_to_ComplexIntervalFieldElement(
     ComplexIntervalFieldElement target,
     const acb_t source) except -1
 
-cdef class ComplexBall(RingElement):
+cdef class ComplexBall(FieldElement):
     cdef acb_t value
     cdef ComplexBall _new(self)
     cpdef _add_(self, other)

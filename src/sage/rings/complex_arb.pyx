@@ -189,7 +189,7 @@ from sage.rings.real_arb import RealBallField
 from sage.rings.real_mpfi cimport RealIntervalField_class
 from sage.rings.real_mpfr cimport RealField_class, RealField, RealNumber
 from sage.rings.ring import Field
-from sage.structure.element cimport Element
+from sage.structure.element cimport Element, FieldElement
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.arith.long cimport is_small_python_int
 
@@ -1368,7 +1368,7 @@ cdef bint arb_gt_neg_one(arb_t b) noexcept:
 cdef inline real_ball_field(ComplexBall ball):
     return ball._parent._base
 
-cdef class ComplexBall(RingElement):
+cdef class ComplexBall(FieldElement):
     """
     Hold one ``acb_t`` of the `FLINT library <https://flintlib.org>`_.
 

@@ -288,7 +288,7 @@ from sage.libs.mpfi cimport *
 from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
 
 cimport sage.structure.element
-from sage.structure.element cimport RingElement, Element
+from sage.structure.element cimport FieldElement, Element
 from sage.structure.element cimport have_same_parent
 from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport richcmp
@@ -1188,7 +1188,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
 #     RealIntervalFieldElement -- element of Real Interval Field
 #
 # ****************************************************************************
-cdef class RealIntervalFieldElement(RingElement):
+cdef class RealIntervalFieldElement(FieldElement):
     """
     A real number interval.
     """
@@ -4437,10 +4437,10 @@ cdef class RealIntervalFieldElement(RingElement):
         if isinstance(exponent, (int, Integer)):
             q, r = divmod (exponent, 2)
             if r == 0:  # x^(2q) = (x^q)^2
-                xq = RingElement.__pow__(self, q)
+                xq = FieldElement.__pow__(self, q)
                 return xq.abs().square()
             else:
-                return RingElement.__pow__(self, exponent)
+                return FieldElement.__pow__(self, exponent)
         return (self.log() * exponent).exp()
 
     def log(self, base='e'):
