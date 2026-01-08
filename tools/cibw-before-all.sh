@@ -7,6 +7,11 @@ set -e
 
 export PATH=$(pwd)/build/bin:$PATH
 SYSTEM=$(sage-guess-package-system)
+
+if [ "$SYSTEM" = "homebrew" ]; then
+    source .homebrew-build-env
+fi
+
 eval $(build/bin/sage-print-system-package-command $SYSTEM "$@" update)
 eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --no-install-recommends --spkg install _bootstrap _prereq)
 ./bootstrap
