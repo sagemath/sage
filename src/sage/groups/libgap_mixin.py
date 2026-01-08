@@ -22,7 +22,7 @@ from sage.groups.libgap_wrapper import ElementLibGAP
 
 
 class GroupMixinLibGAP:
-    def __contains__(self, elt):
+    def __contains__(self, elt) -> bool:
         r"""
         TESTS::
 
@@ -721,7 +721,7 @@ class GroupMixinLibGAP:
         """
         if not self.is_finite():
             raise NotImplementedError("only implemented for finite groups")
-        values = [1] * self._gap_().NrConjugacyClasses().sage()
+        values = [1] * self._libgap_().NrConjugacyClasses().sage()
         return self.character(values)
 
     def character_table(self):
@@ -763,7 +763,7 @@ class GroupMixinLibGAP:
         """
         # code from function in permgroup.py, but modified for
         # how gap handles these groups.
-        G = self._gap_()
+        G = self._libgap_()
         cl = self.conjugacy_classes()
         from sage.rings.integer import Integer
         n = Integer(len(cl))

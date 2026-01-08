@@ -755,7 +755,7 @@ class TamariIntervalPoset(Element,
                 root = i
         return children
 
-    def increasing_parent(self, v) -> None | int:
+    def increasing_parent(self, v) -> int | None:
         r"""
         Return the vertex parent of ``v`` in the initial forest of ``self``.
 
@@ -891,7 +891,7 @@ class TamariIntervalPoset(Element,
                 root = i
         return children
 
-    def decreasing_parent(self, v) -> None | int:
+    def decreasing_parent(self, v) -> int | None:
         r"""
         Return the vertex parent of ``v`` in the final forest of ``self``.
 
@@ -2569,7 +2569,7 @@ class TamariIntervalPoset(Element,
                                       extract_tree(cx, cy, t_up, common))
                 for cx, cy in common]
 
-    def decomposition_to_triple(self) -> None | tuple[TIP, TIP, int]:
+    def decomposition_to_triple(self) -> tuple[TIP, TIP, int] | None:
         """
         Decompose an interval-poset into a triple (``left``, ``right``, ``r``).
 

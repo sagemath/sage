@@ -580,12 +580,12 @@ cdef class Cache_givaro(Cache_base):
             sage: k._cache._element_repr(a^20)
             '2*a^3 + 2*a^2 + 2'
 
-            sage: k = FiniteField(3^4,'a', impl='givaro', repr='int')
+            sage: k = FiniteField(3^4,'a', implementation='givaro', repr='int')
             sage: a = k.gen()
             sage: k._cache._element_repr(a^20)
             '74'
 
-            sage: k = FiniteField(3^4,'a', impl='givaro', repr='log')
+            sage: k = FiniteField(3^4,'a', implementation='givaro', repr='log')
             sage: a = k.gen()
             sage: k._cache._element_repr(a^20)
             '20'

@@ -22,10 +22,10 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 # ****************************************************************************
 
 from copy import copy
-from math import sin, cos, pi
-from sage.graphs.graph import Graph
 from itertools import combinations
-import subprocess
+from math import sin, cos, pi
+
+from sage.graphs.graph import Graph
 
 
 def JohnsonGraph(n, k):
@@ -3131,7 +3131,7 @@ def SierpinskiGasketGraph(n):
             resu += [(a, ab, ac), (ab, b, bc), (ac, bc, c)]
         return resu
 
-    tri_list = [list(vector(QQ, u) for u in [(0, 0), (0, 1), (1, 0)])]
+    tri_list = [[vector(QQ, u) for u in [(0, 0), (0, 1), (1, 0)]]]
     for k in range(n - 1):
         tri_list = next_step(tri_list)
     dg = Graph()

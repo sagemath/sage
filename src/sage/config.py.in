@@ -1,4 +1,3 @@
-# @configure_input@
 from pathlib import Path
 
 import sage
@@ -10,7 +9,6 @@ VERSION = "@PACKAGE_VERSION@"
 # These variables come first so that other substituted variable values can refer
 # to it.
 SAGE_LOCAL = "@prefix@"
-SAGE_ROOT = "@SAGE_ROOT@"
 
 # The semicolon-separated list of GAP root paths. This is the list of
 # locations that are searched for GAP packages. This is passed directly
@@ -66,12 +64,6 @@ THREEJS_DIR = SAGE_LOCAL + "/share/threejs-sage"
 # OpenMP flags, if available.
 OPENMP_CFLAGS = "@OPENMP_CFLAGS@"
 OPENMP_CXXFLAGS = "@OPENMP_CXXFLAGS@"
-
-# Installation location of wheels. This is determined at configuration time
-# and does not depend on the installation location of sage-conf.
-SAGE_SPKG_WHEELS = (
-    "@SAGE_VENV@".replace("${SAGE_LOCAL}", SAGE_LOCAL) + "/var/lib/sage/wheels"
-)
 
 
 def is_editable_install() -> bool:

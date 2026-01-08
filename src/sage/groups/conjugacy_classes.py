@@ -159,7 +159,7 @@ class ConjugacyClass(Parent):
         """
         return not (self == other)
 
-    def __contains__(self, element):
+    def __contains__(self, element) -> bool:
         r"""
         Check if ``element`` belongs to the conjugacy class ``self``.
 
@@ -440,7 +440,7 @@ class ConjugacyClassGAP(ConjugacyClass):
         """
         return self._gap_().Size().sage()
 
-    def __contains__(self, g):
+    def __contains__(self, g) -> bool:
         r"""
         Containment test.
 
@@ -491,7 +491,7 @@ class ConjugacyClassGAP(ConjugacyClass):
         if not finite:
             raise NotImplementedError("only implemented for finite groups")
 
-        return G._gap_().IsConjugate(g0._gap_(), g._gap_()).sage()
+        return G._libgap_().IsConjugate(g0._libgap_(), g._libgap_()).sage()
 
     @cached_method
     def set(self):

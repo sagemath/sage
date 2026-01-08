@@ -1,4 +1,5 @@
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 class Mutability:
     def __init__(self, is_immutable: bool = False) -> None: ...

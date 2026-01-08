@@ -9,13 +9,13 @@ Examples of finite Coxeter groups
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from sage.misc.cachefunc import cached_method
-from sage.structure.parent import Parent
-from sage.structure.element_wrapper import ElementWrapper
 from sage.categories.finite_coxeter_groups import FiniteCoxeterGroups
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.misc.functional import is_odd, is_even
 from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
+from sage.misc.cachefunc import cached_method
+from sage.rings.integer import Integer
+from sage.structure.element_wrapper import ElementWrapper
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class DihedralGroup(UniqueRepresentation, Parent):
@@ -85,7 +85,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
          ((2, 1), (2,), 1)]
     """
 
-    def __init__(self, n=5):
+    def __init__(self, n=5) -> None:
         r"""
         Construct the `n`-th DihedralGroup of order `2 n`.
 
@@ -103,7 +103,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
         Parent.__init__(self, category=FiniteCoxeterGroups())
         self.n = n
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -114,7 +114,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
         """
         return "The %s-th dihedral group of order %s" % (self.n, 2 * self.n)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Check if the element ``x`` is in the mathematical parent ``self``.
 
@@ -144,7 +144,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
         """
         return self(())
 
-    def index_set(self):
+    def index_set(self) -> tuple[int, int]:
         r"""
         Implement :meth:`CoxeterGroups.ParentMethods.index_set`.
 
@@ -156,7 +156,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
         """
         return (1, 2)
 
-    def degrees(self):
+    def degrees(self) -> tuple[Integer, Integer]:
         """
         Return the degrees of ``self``.
 
@@ -165,8 +165,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
             sage: FiniteCoxeterGroups().example(6).degrees()
             (2, 6)
         """
-        from sage.rings.integer_ring import ZZ
-        return (ZZ(2), ZZ(self.n))
+        return (Integer(2), Integer(self.n))
 
     def coxeter_matrix(self):
         """
@@ -214,10 +213,9 @@ class DihedralGroup(UniqueRepresentation, Parent):
             reduced_word = self.value
             if len(reduced_word) == self.parent().n:
                 return not positive
-            elif len(reduced_word) == 0:
+            if len(reduced_word) == 0:
                 return positive
-            else:
-                return (i == reduced_word[0 if side == "left" else -1]) == (not positive)
+            return (i == reduced_word[0 if side == "left" else -1]) == (not positive)
 
         def apply_simple_reflection_right(self, i):
             r"""
@@ -235,17 +233,17 @@ class DihedralGroup(UniqueRepresentation, Parent):
             reduced_word = copy(self.value)
             n = self.parent().n
             if len(reduced_word) == n:
-                if (i == 1 and is_odd(n)) or (i == 2 and is_even(n)):
+                if (i == 1 and n % 2) or (i == 2 and not n % 2):
                     return self.parent()(reduced_word[:-1])
-                else:
-                    return self.parent()(reduced_word[1:])
-            elif (len(reduced_word) == n - 1 and (not self.has_descent(i))) and (reduced_word[0] == 2):
+                return self.parent()(reduced_word[1:])
+
+            if (len(reduced_word) == n - 1 and (not self.has_descent(i))) and (reduced_word[0] == 2):
                 return self.parent()((1,) + reduced_word)
-            else:
-                if self.has_descent(i):
-                    return self.parent()(reduced_word[:-1])
-                else:
-                    return self.parent()(reduced_word + (i,))
+
+            if self.has_descent(i):
+                return self.parent()(reduced_word[:-1])
+
+            return self.parent()(reduced_word + (i,))
 
 
 Example = DihedralGroup

@@ -103,7 +103,7 @@ jobs:
           python -m build --sdist --no-isolation --outdir dist .
           ls -l dist
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           path: "dist/*.tar.gz"
           name: dist
@@ -123,11 +123,11 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           name: release_dist
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           name: dist
           path: dist
@@ -181,7 +181,7 @@ jobs:
         uses: pypa/cibuildwheel@v3.1
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: release-wheels-${{ matrix.os }}
           path: wheelhouse/*.whl
@@ -196,7 +196,7 @@ jobs:
       attestations: write
       contents: read
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           pattern: release-*
           path: dist

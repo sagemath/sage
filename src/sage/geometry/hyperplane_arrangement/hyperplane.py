@@ -249,7 +249,7 @@ class Hyperplane(LinearExpression):
                 max_value = values[i]
         return max_pos
 
-    def __contains__(self, q):
+    def __contains__(self, q) -> bool:
         r"""
         Test whether the point ``q`` is in the hyperplane.
 

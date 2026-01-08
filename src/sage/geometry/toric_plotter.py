@@ -833,9 +833,9 @@ def label_list(label, n, math_mode, index_set=None):
         index_set = range(n)
     if math_mode:
         label = label.strip("$")
-        return list("$%s_{%d}$" % (label, i) for i in index_set)
+        return ["$%s_{%d}$" % (label, i) for i in index_set]
     else:
-        return list("%s_%d" % (label, i) for i in index_set)
+        return ["%s_%d" % (label, i) for i in index_set]
 
 
 def options(option=None, **kwds):

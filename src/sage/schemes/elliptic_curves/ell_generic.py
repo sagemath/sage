@@ -124,7 +124,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         sage: -5*P
         (179051/80089 : -91814227/22665187 : 1)
     """
-    def __init__(self, K, ainvs, category=None):
+    def __init__(self, K, ainvs, category=None) -> None:
         r"""
         Construct an elliptic curve from Weierstrass `a`-coefficients.
 
@@ -465,7 +465,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         x, y = SR.var('x, y')
         return y**2 + a[0]*x*y + a[2]*y == x**3 + a[1]*x**2 + a[3]*x + a[4]
 
-    def __contains__(self, P):
+    def __contains__(self, P) -> bool:
         """
         Return ``True`` if and only if P is a point on the elliptic curve.
 
@@ -1049,7 +1049,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         """
         raise NotImplementedError("not implemented.")
 
-    def __is_over_RationalField(self):
+    def __is_over_RationalField(self) -> bool:
         r"""
         Internal function. Return true iff the base ring of this elliptic
         curve is the field of rational numbers.
@@ -1065,7 +1065,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         """
         return isinstance(self.base_ring(), RationalField)
 
-    def is_on_curve(self, x, y):
+    def is_on_curve(self, x, y) -> bool:
         r"""
         Return ``True`` if `(x,y)` is an affine point on this curve.
 
