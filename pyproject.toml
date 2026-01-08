@@ -245,6 +245,7 @@ test-groups = ["test"]
 test-sources = ["pyproject.toml"]
 [tool.cibuildwheel.environment]
 CPATH = "/project/local/include:$CPATH"
+LD_LIBRARY_PATH = "/project/local/lib:$LD_LIBRARY_PATH"
 LIBRARY_PATH = "/project/local/lib:$LIBRARY_PATH"
 PKG_CONFIG_PATH = "/project/local/lib/pkgconfig:$PKG_CONFIG_PATH"
 
