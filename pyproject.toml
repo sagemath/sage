@@ -215,6 +215,7 @@ extra = [
 
 [dependency-groups]
 dev = [
+  "cibuildwheel",
   "conda-lock",
   "grayskull",
   "meson",
@@ -233,6 +234,21 @@ docs = [
 ]
 lint = ["flake8-rst-docstrings", "pycodestyle", "relint", "ruff"]
 test = ["coverage", "pytest", "pytest-xdist"]
+
+[tool.cibuildwheel]
+before-all = "bash -x {package}/tools/cibw-before-all.sh"
+build-frontend = "build[uv]"
+build-verbosity = 1
+environment-pass = [
+  "CI",
+  "GITHUB_ACTIONS"
+]
+skip = ["*-win32"]
+test-command = "python -m sage.doctest --installed"
+test-groups = ["test"]
+test-sources = ["pyproject.toml"]
+[tool.cibuildwheel.config-settings]
+--setup-args="-DSAGE_LOCAL=$SAGE_LOCAL"
 
 [tool.ruff]
 # https://docs.astral.sh/ruff/configuration
