@@ -1126,6 +1126,26 @@ class Rings(CategoryWithAxiom):
             elif coerce:
                 gens = [self(g) for g in gens]
 
+            # Parent classes may define eagerly_reduce_gens_by_gcd = False to opt out of this
+            # either because gcd() is expensive, checking whether self is PID is expensive,
+            # or because ideal_class constructor already have a more efficient gcd()
+            if getattr(self, 'eagerly_reduce_ideal_gens_by_gcd', True):
+                from sage.categories.principal_ideal_domains import PrincipalIdealDomains
+                if self in PrincipalIdealDomains():
+                    # Use GCD algorithm to obtain a principal ideal
+                    g = gens[0]
+                    if len(gens) == 1:
+                        try:
+                            # note: we set g = gcd(g, g) to "canonicalize" the generator:
+                            # make polynomials monic, etc.
+                            g = g.gcd(g)
+                        except (AttributeError, NotImplementedError, IndexError):
+                            pass
+                    else:
+                        for h in gens[1:]:
+                            g = g.gcd(h)
+                    gens = [g]
+
             if ideal_class is None:
                 ideal_class = self._ideal_class_(len(gens))
             if len(gens) == 1 and isinstance(gens[0], (list, tuple)):
