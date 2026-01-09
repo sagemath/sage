@@ -1000,7 +1000,7 @@ class Rings(CategoryWithAxiom):
             from sage.rings.integer import Integer
             tester.assertIsInstance(characteristic, Integer)
 
-        def ideal(self, *args, **kwds):
+        def ideal(self, *args, coerce=True, ideal_class=None, **kwds):
             """
             Create an ideal of this ring.
 
@@ -1096,15 +1096,9 @@ class Rings(CategoryWithAxiom):
                 sage: type(ZZ.ideal((), ideal_class=CustomIdealClass))
                 <class '...CustomIdealClass'>
             """
-            if 'coerce' in kwds:
-                coerce = kwds['coerce']
-                del kwds['coerce']
-            else:
-                coerce = True
-
             from sage.rings.ideal import Ideal_generic
             if not args:
-                gens = [self(0)]
+                gens = []
             else:
                 gens = args
                 while isinstance(gens, (list, tuple, GeneratorType)) and len(gens) == 1:
@@ -1132,29 +1126,11 @@ class Rings(CategoryWithAxiom):
             elif coerce:
                 gens = [self(g) for g in gens]
 
-            from sage.categories.principal_ideal_domains import PrincipalIdealDomains
-            if self in PrincipalIdealDomains():
-                # Use GCD algorithm to obtain a principal ideal
-                g = gens[0]
-                if len(gens) == 1:
-                    try:
-                        # note: we set g = gcd(g, g) to "canonicalize" the generator:
-                        # make polynomials monic, etc.
-                        g = g.gcd(g)
-                    except (AttributeError, NotImplementedError, IndexError):
-                        pass
-                else:
-                    for h in gens[1:]:
-                        g = g.gcd(h)
-                gens = [g]
-            if 'ideal_class' in kwds:
-                C = kwds['ideal_class']
-                del kwds['ideal_class']
-            else:
-                C = self._ideal_class_(len(gens))
+            if ideal_class is None:
+                ideal_class = self._ideal_class_(len(gens))
             if len(gens) == 1 and isinstance(gens[0], (list, tuple)):
                 gens = gens[0]
-            return C(self, gens, **kwds)
+            return ideal_class(self, gens, **kwds)
 
         # Quotient rings
         def quotient(self, I, names=None, **kwds):
