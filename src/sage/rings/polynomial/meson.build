@@ -70,6 +70,8 @@ py.install_sources(
   'polynomial_quotient_ring_element.py',
   'polynomial_rational_flint.pxd',
   'polynomial_rational_flint.pyx',
+  'polynomial_real_arb.pxd',
+  'polynomial_real_arb.pyx',
   'polynomial_real_mpfr_dense.pyx',
   'polynomial_ring.py',
   'polynomial_ring_constructor.py',
@@ -116,6 +118,7 @@ extension_data = {
   'polynomial_complex_arb': files('polynomial_complex_arb.pyx'),
   'polynomial_element': files('polynomial_element.pyx'),
   'polynomial_number_field': files('polynomial_number_field.pyx'),
+  'polynomial_real_arb': files('polynomial_real_arb.pyx'),
   'polynomial_real_mpfr_dense': files('polynomial_real_mpfr_dense.pyx'),
   'polynomial_ring_homomorphism': files('polynomial_ring_homomorphism.pyx'),
   'real_roots': files('real_roots.pyx'),
@@ -129,6 +132,8 @@ extension_data = {
 foreach name, pyx : extension_data
   deps = [py_dep, cysignals, gmp, numpy]
   if name == 'evaluation_flint'
+    deps += [flint, mpfi]
+  elif name == 'polynomial_real_arb'
     deps += [flint, mpfi]
   elif name == 'polynomial_complex_arb'
     deps += [flint, mpfi]

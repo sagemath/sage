@@ -1089,7 +1089,7 @@ class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
         h, l = len(T), len(T[0])
 
         if (c+1 == l or T[r][c+1] is None or T[r][c+1] >= ind_plus_one):
-            (tp_r, tp_c) = (r, c)
+            tp_r, tp_c = (r, c)
             while True:
                 if tp_r+1 == h or T[tp_r+1][tp_c] is None or T[tp_r+1][tp_c] > ind_plus_one:
                     break
@@ -1263,7 +1263,7 @@ class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
             r, c = c, r
 
         if (c == 0 or T[r][c-1] is None or T[r][c-1] <= ind_e):
-            (tp_r, tp_c) = (r, c)
+            tp_r, tp_c = (r, c)
             while True:
                 if tp_r == 0 or T[tp_r-1][tp_c] is None or T[tp_r-1][tp_c] < ind_e:
                     break

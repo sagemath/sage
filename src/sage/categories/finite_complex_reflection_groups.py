@@ -16,6 +16,7 @@ from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.coxeter_groups import CoxeterGroups
+from sage.categories.finite_lattice_posets import FiniteLatticePosets
 
 
 class FiniteComplexReflectionGroups(CategoryWithAxiom):
@@ -865,7 +866,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     14
 
                     sage: W = CoxeterGroup(['A', 2])                                    # needs sage.combinat sage.groups
-                    sage: for (w, l) in W.absolute_order_ideal(return_lengths=True):    # needs sage.combinat sage.groups
+                    sage: for w, l in W.absolute_order_ideal(return_lengths=True):    # needs sage.combinat sage.groups
                     ....:     print(w.reduced_word(), l)
                     [1, 2] 2
                     [1, 2, 1] 1
@@ -966,7 +967,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     L = [(pi, pi.reflection_length()) for pi in L]
                 rels = []
                 ref_lens = dict(L)
-                for (pi, l) in L:
+                for pi, l in L:
                     for t in R:
                         tau = pi * t
                         if tau in ref_lens and l + 1 == ref_lens[tau]:
@@ -974,7 +975,8 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                 P = Poset(([], rels), cover_relations=True, facade=True)
                 if P.is_lattice():
-                    P = LatticePoset(P)
+                    P = LatticePoset(P,
+                                     category=FiniteLatticePosets().ChainGraded())
                 return P
 
             def generalized_noncrossing_partitions(self, m, c=None, positive=False):

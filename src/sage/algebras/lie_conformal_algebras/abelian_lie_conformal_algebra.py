@@ -11,15 +11,15 @@ AUTHORS:
 - Reimundo Heluani (2020-06-15): Initial implementation.
 """
 
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2019 Reimundo Heluani <heluani@potuz.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
 from sage.structure.indexed_generators import standardize_names_index_set
@@ -76,7 +76,7 @@ class AbelianLieConformalAlgebra(GradedLieConformalAlgebra):
         case.
     """
     def __init__(self, R, ngens=1, weights=None,
-                 parity=None, names=None, index_set=None):
+                 parity=None, names=None, index_set=None) -> None:
         """
         Initialize ``self``.
 
@@ -85,7 +85,7 @@ class AbelianLieConformalAlgebra(GradedLieConformalAlgebra):
             sage: V = lie_conformal_algebras.Abelian(QQ)
             sage: TestSuite(V).run()
         """
-        if (names is None) and (index_set is None):
+        if names is None and index_set is None:
             names = 'a'
             self._latex_names = tuple(r'a_{%d}' % i for i in range(ngens))
 
@@ -109,4 +109,4 @@ class AbelianLieConformalAlgebra(GradedLieConformalAlgebra):
             The Abelian Lie conformal algebra with generators (a,) over Rational Field
         """
         return "The Abelian Lie conformal algebra with generators {} over {}"\
-                .format(self.gens(), self.base_ring())
+            .format(self.gens(), self.base_ring())

@@ -75,8 +75,8 @@ EXAMPLES::
     sage: B.is_latin_square()
     False
 
-    sage: (a, b, c, G) = alternating_group_bitrade_generators(1)
-    sage: (T1, T2) = bitrade_from_group(a, b, c, G)
+    sage: a, b, c, G = alternating_group_bitrade_generators(1)
+    sage: T1, T2 = bitrade_from_group(a, b, c, G)
     sage: T1
     [ 0 -1  3  1]
     [-1  1  0  2]
@@ -560,8 +560,8 @@ class LatinSquare:
         EXAMPLES::
 
             sage: from sage.combinat.matrices.latin import *
-            sage: (a, b, c, G) = alternating_group_bitrade_generators(1)
-            sage: (T1, T2) = bitrade_from_group(a, b, c, G)
+            sage: a, b, c, G = alternating_group_bitrade_generators(1)
+            sage: T1, T2 = bitrade_from_group(a, b, c, G)
             sage: D = T1.filled_cells_map()
             sage: {i: v for i,v in D.items() if i in ZZ}
             {1: (0, 0),
@@ -1251,7 +1251,7 @@ class LatinSquare:
             for y in x:
                 if len(dlx_rows[y]) == 1:
                     continue  # dummy row
-                (r, c, e) = cmap[tuple(dlx_rows[y])]
+                r, c, e = cmap[tuple(dlx_rows[y])]
                 Q[r, c] = e
 
             yield Q
@@ -1300,12 +1300,12 @@ def genus(T1, T2):
     EXAMPLES::
 
         sage: from sage.combinat.matrices.latin import *
-        sage: (a, b, c, G) = alternating_group_bitrade_generators(1)
-        sage: (T1, T2) = bitrade_from_group(a, b, c, G)
+        sage: a, b, c, G = alternating_group_bitrade_generators(1)
+        sage: T1, T2 = bitrade_from_group(a, b, c, G)
         sage: genus(T1, T2)
         1
-        sage: (a, b, c, G) = pq_group_bitrade_generators(3, 7)
-        sage: (T1, T2) = bitrade_from_group(a, b, c, G)
+        sage: a, b, c, G = pq_group_bitrade_generators(3, 7)
+        sage: T1, T2 = bitrade_from_group(a, b, c, G)
         sage: genus(T1, T2)
         3
     """
@@ -1330,8 +1330,8 @@ def tau123(T1, T2):
     EXAMPLES::
 
         sage: from sage.combinat.matrices.latin import *
-        sage: (a, b, c, G) = pq_group_bitrade_generators(3, 7)
-        sage: (T1, T2) = bitrade_from_group(a, b, c, G)
+        sage: a, b, c, G = pq_group_bitrade_generators(3, 7)
+        sage: T1, T2 = bitrade_from_group(a, b, c, G)
         sage: T1
         [ 0  1  3 -1 -1 -1 -1]
         [ 1  2  4 -1 -1 -1 -1]
@@ -1348,7 +1348,7 @@ def tau123(T1, T2):
         [ 5  0  4 -1 -1 -1 -1]
         [ 6  1  5 -1 -1 -1 -1]
         [ 0  2  6 -1 -1 -1 -1]
-        sage: (cells_map, t1, t2, t3) = tau123(T1, T2)
+        sage: cells_map, t1, t2, t3 = tau123(T1, T2)
         sage: D = cells_map
         sage: {i: v for i,v in D.items() if i in ZZ}
         {1: (0, 0),
@@ -1541,8 +1541,8 @@ def cells_map_as_square(cells_map, n):
     EXAMPLES::
 
         sage: from sage.combinat.matrices.latin import *
-        sage: (a, b, c, G) = alternating_group_bitrade_generators(1)
-        sage: (T1, T2) = bitrade_from_group(a, b, c, G)
+        sage: a, b, c, G = alternating_group_bitrade_generators(1)
+        sage: T1, T2 = bitrade_from_group(a, b, c, G)
         sage: T1
         [ 0 -1  3  1]
         [-1  1  0  2]
@@ -1714,7 +1714,7 @@ def tau1(T1, T2, cells_map):
         sage: T2 = T1.apply_isotopism(x, y, z)
         sage: is_bitrade(T1, T2)
         True
-        sage: (cells_map, t1, t2, t3) = tau123(T1, T2)
+        sage: cells_map, t1, t2, t3 = tau123(T1, T2)
         sage: t1 = tau1(T1, T2, cells_map)
         sage: t1
         [2, 3, 4, 5, 1, 7, 8, 9, 10, 6, 12, 13, 14, 15, 11, 17, 18, 19, 20, 16, 22, 23, 24, 25, 21]
@@ -1734,8 +1734,8 @@ def tau1(T1, T2, cells_map):
             if e < 0:
                 continue
 
-            (r2, c2, e2) = beta2((r, c, e), T1, T2)
-            (r3, c3, e3) = beta3((r2, c2, e2), T2, T1)
+            r2, c2, e2 = beta2((r, c, e), T1, T2)
+            r3, c3, e3 = beta3((r2, c2, e2), T2, T1)
 
             x[cells_map[(r, c)]] = cells_map[(r3, c3)]
 
@@ -1768,7 +1768,7 @@ def tau2(T1, T2, cells_map):
         sage: T2 = T1.apply_isotopism(x, y, z)
         sage: is_bitrade(T1, T2)
         True
-        sage: (cells_map, t1, t2, t3) = tau123(T1, T2)
+        sage: cells_map, t1, t2, t3 = tau123(T1, T2)
         sage: t2 = tau2(T1, T2, cells_map)
         sage: t2
         [21, 22, 23, 24, 25, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
@@ -1788,8 +1788,8 @@ def tau2(T1, T2, cells_map):
             if e < 0:
                 continue
 
-            (r2, c2, e2) = beta3((r, c, e), T1, T2)
-            (r3, c3, e3) = beta1((r2, c2, e2), T2, T1)
+            r2, c2, e2 = beta3((r, c, e), T1, T2)
+            r3, c3, e3 = beta1((r2, c2, e2), T2, T1)
 
             x[cells_map[(r, c)]] = cells_map[(r3, c3)]
 
@@ -1822,7 +1822,7 @@ def tau3(T1, T2, cells_map):
         sage: T2 = T1.apply_isotopism(x, y, z)
         sage: is_bitrade(T1, T2)
         True
-        sage: (cells_map, t1, t2, t3) = tau123(T1, T2)
+        sage: cells_map, t1, t2, t3 = tau123(T1, T2)
         sage: t3 = tau3(T1, T2, cells_map)
         sage: t3
         [10, 6, 7, 8, 9, 15, 11, 12, 13, 14, 20, 16, 17, 18, 19, 25, 21, 22, 23, 24, 5, 1, 2, 3, 4]
@@ -1842,8 +1842,8 @@ def tau3(T1, T2, cells_map):
             if e < 0:
                 continue
 
-            (r2, c2, e2) = beta1((r, c, e), T1, T2)
-            (r3, c3, e3) = beta2((r2, c2, e2), T2, T1)
+            r2, c2, e2 = beta1((r, c, e), T1, T2)
+            r3, c3, e3 = beta2((r2, c2, e2), T2, T1)
 
             x[cells_map[(r, c)]] = cells_map[(r3, c3)]
 
@@ -2340,7 +2340,7 @@ def alternating_group_bitrade_generators(m):
 
     ::
 
-        sage: (T1, T2) = bitrade_from_group(a, b, c, G)
+        sage: T1, T2 = bitrade_from_group(a, b, c, G)
         sage: T1
         [ 0 -1  3  1]
         [-1  1  0  2]
@@ -2513,7 +2513,7 @@ def is_primary_bitrade(a, b, c, G):
     EXAMPLES::
 
         sage: from sage.combinat.matrices.latin import *
-        sage: (a, b, c, G) = p3_group_bitrade_generators(5)
+        sage: a, b, c, G = p3_group_bitrade_generators(5)
         sage: is_primary_bitrade(a, b, c, G)
         True
     """
@@ -2611,7 +2611,7 @@ def bitrade_from_group(a, b, c, G):
 
         sage: from sage.combinat.matrices.latin import *
         sage: a, b, c, G = alternating_group_bitrade_generators(1)
-        sage: (T1, T2) = bitrade_from_group(a, b, c, G)
+        sage: T1, T2 = bitrade_from_group(a, b, c, G)
         sage: T1
         [ 0 -1  3  1]
         [-1  1  0  2]
@@ -2836,7 +2836,7 @@ def dlxcpp_find_completions(P, nr_to_find=None):
         Q = deepcopy(P)
 
         for x in soln:
-            (r, c, e) = cmap[tuple(dlx_rows[x])]
+            r, c, e = cmap[tuple(dlx_rows[x])]
 
             if Q[r, c] >= 0:
                 assert Q[r, c] == e

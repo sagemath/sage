@@ -2567,7 +2567,7 @@ class RightQuantumWord:
         """
         def eps_monom(q_tuple):
             r"""
-            Evaluate the map `\mathcal{E}_N` for a single mononial.
+            Evaluate the map `\mathcal{E}_N` for a single monomial.
             """
             q = self.q
             ret_q = q**sum((N - 1 - q_tuple[3*i + 2])*q_tuple[3*i + 1]
