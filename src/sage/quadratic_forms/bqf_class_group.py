@@ -253,6 +253,7 @@ class BQFClassGroup(Parent, UniqueRepresentation):
         """
         return self._disc
 
+    @cached_method
     def order(self, proof=None):
         r"""
         Return the order of this form class group (the *class number*).
@@ -292,22 +293,7 @@ class BQFClassGroup(Parent, UniqueRepresentation):
         from sage.rings.number_field.order import quadratic_order_class_number
         return quadratic_order_class_number(self._disc, proof=proof)
 
-    def cardinality(self, proof=None):
-        r"""
-        Return the cardinality of this form class group (the *class number*).
-
-        This is an alias for :meth:`order`.
-
-        INPUT:
-
-        - ``proof`` -- boolean (default: ``None``); see :meth:`order`
-
-        EXAMPLES::
-
-            sage: BQFClassGroup(-163).cardinality()
-            1
-        """
-        return self.order(proof=proof)
+    cardinality = order
 
     @cached_method
     def abelian_group(self):

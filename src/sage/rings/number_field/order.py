@@ -97,7 +97,7 @@ from sage.structure.parent import Parent
 from sage.structure.sequence import Sequence
 
 
-def quadratic_order_class_number(disc, proof=None):
+def quadratic_order_class_number(disc, *, proof=None):
     r"""
     Return the class number of the quadratic order of given discriminant.
 
@@ -161,15 +161,12 @@ def quadratic_order_class_number(disc, proof=None):
     from sage.structure.proof.proof import get_flag
     proof = get_flag(proof, 'number_field')
 
+    # Use quadclassunit when proof=True for guaranteed correctness (assuming GRH).
+    # Use qfbclassno when proof=False for speed, but note that PARI's documentation
+    # warns it "may give incorrect results when the class group has many cyclic factors."
     if proof:
-        # Use quadclassunit for guaranteed correctness (assuming GRH).
-        # PARI documentation warns that qfbclassno "may give incorrect results
-        # when the class group has many cyclic factors", so we avoid it here.
         h = pari.quadclassunit(disc)[0]
     else:
-        # Use qfbclassno for speed. WARNING: PARI documentation states this
-        # "may give incorrect results when the class group has many cyclic factors."
-        # Only use when the user explicitly sets proof=False.
         h = pari.qfbclassno(disc)
     return ZZ(h)
 

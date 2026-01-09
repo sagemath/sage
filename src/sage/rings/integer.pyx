@@ -5918,15 +5918,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         global objtogen
         if objtogen is None:
             from cypari2.gen import objtogen
+        # Use quadclassunit when proof=True for guaranteed correctness (assuming GRH).
+        # Use qfbclassno when proof=False for speed, but note that PARI's documentation
+        # warns it "may give incorrect results when the class group has many cyclic factors."
         if proof:
-            # Use quadclassunit for guaranteed correctness (assuming GRH).
-            # PARI documentation warns that qfbclassno "may give incorrect results
-            # when the class group has many cyclic factors", so we avoid it here.
             return objtogen(self).quadclassunit()[0].sage()
         else:
-            # Use qfbclassno for speed. WARNING: PARI documentation states this
-            # "may give incorrect results when the class group has many cyclic factors."
-            # Only use when the user explicitly sets proof=False.
             return objtogen(self).qfbclassno().sage()
 
     def squarefree_part(self, long bound=-1):
