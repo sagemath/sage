@@ -52,7 +52,14 @@ from sage.doctest.parsing import (
 from sage.doctest.reporting import DocTestReporter
 from sage.doctest.sources import DictAsObject, FileDocTestSource, get_basename
 from sage.doctest.util import Timer, count_noun, dict_difference
-from sage.env import DOT_SAGE, SAGE_EXTCODE, SAGE_LIB, SAGE_SRC
+from sage.env import (
+    DOT_SAGE,
+    SAGE_EXTCODE,
+    SAGE_LIB,
+    SAGE_LOCAL,
+    SAGE_ROOT_GIT,
+    SAGE_SRC,
+)
 from sage.misc import randstate
 from sage.structure.sage_object import SageObject
 
@@ -1524,7 +1531,6 @@ class DocTestController(SageObject):
             return self.run_val_gdb()
         else:
             self.create_run_id()
-            from sage.env import SAGE_LOCAL, SAGE_ROOT_GIT, SAGE_VENV
             # SAGE_ROOT_GIT can be None on distributions which typically
             # only have the SAGE_LOCAL install tree but not SAGE_ROOT
             if (SAGE_ROOT_GIT is not None) and os.path.isdir(SAGE_ROOT_GIT):
@@ -1550,7 +1556,7 @@ class DocTestController(SageObject):
                 except subprocess.CalledProcessError:
                     pass
 
-            self.log(f"Running with {SAGE_LOCAL=} and {SAGE_VENV=}")
+            self.log(f"Running with {SAGE_LOCAL=}")
 
             self.log("Using --optional=" + self._optional_tags_string())
             available_software._allow_external = self.options.optional is True or 'external' in self.options.optional

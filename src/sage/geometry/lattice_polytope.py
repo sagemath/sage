@@ -437,38 +437,6 @@ def ReflexivePolytopes(dim):
     return _rp[dim]
 
 
-def is_LatticePolytope(x):
-    r"""
-    Check if ``x`` is a lattice polytope.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT:
-
-    - ``True`` if ``x`` is a :class:`lattice polytope <LatticePolytopeClass>`,
-      ``False`` otherwise.
-
-    EXAMPLES::
-
-        sage: from sage.geometry.lattice_polytope import is_LatticePolytope
-        sage: is_LatticePolytope(1)
-        doctest:warning...
-        DeprecationWarning: is_LatticePolytope is deprecated, use isinstance instead
-        See https://github.com/sagemath/sage/issues/34307 for details.
-        False
-        sage: p = LatticePolytope([(1,0), (0,1), (-1,-1)])
-        sage: p                                                                         # needs palp
-        2-d reflexive polytope #0 in 2-d lattice M
-        sage: is_LatticePolytope(p)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34307, "is_LatticePolytope is deprecated, use isinstance instead")
-    return isinstance(x, LatticePolytopeClass)
-
-
 @richcmp_method
 class LatticePolytopeClass(Element, ConvexSet_compact,
                            sage.geometry.abc.LatticePolytope):
@@ -4149,39 +4117,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         """
         if args or kwds:
             return self._vertices(*args, **kwds)
-        else:
-            return self._vertices
-
-
-def is_NefPartition(x):
-    r"""
-    Check if ``x`` is a nef-partition.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT:
-
-    - ``True`` if ``x`` is a :class:`nef-partition <NefPartition>` and
-      ``False`` otherwise.
-
-    EXAMPLES::
-
-        sage: from sage.geometry.lattice_polytope import NefPartition
-        sage: isinstance(1, NefPartition)
-        False
-        sage: o = lattice_polytope.cross_polytope(3)
-        sage: np = o.nef_partitions()[0]; np                                            # needs palp
-        Nef-partition {0, 1, 3} ⊔ {2, 4, 5}
-        sage: isinstance(np, NefPartition)                                              # needs palp
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38126,
-                "The function is_NefPartition is deprecated; "
-                "use 'isinstance(..., NefPartition)' instead.")
-    return isinstance(x, NefPartition)
+        return self._vertices
 
 
 class NefPartition(SageObject, Hashable):

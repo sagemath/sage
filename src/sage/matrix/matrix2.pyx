@@ -2472,7 +2472,7 @@ cdef class Matrix(Matrix1):
 
     def quantum_determinant(self, q=None):
         r"""
-        Return the quantum deteminant of ``self``.
+        Return the quantum determinant of ``self``.
 
         The quantum determinant of a matrix `M = (m_{ij})_{i,j=1}^n`
         is defined by
