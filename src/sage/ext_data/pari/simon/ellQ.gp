@@ -1967,7 +1967,7 @@ if( DEBUGLEVEL_ell >= 1,
 );
 
 \\
-\\ Working with the isogeneous curve
+\\ Working with the isogenous curve
 \\
 
   apinit = -2*ell.a2; bpinit = ell.a2^2-4*ell.a4;

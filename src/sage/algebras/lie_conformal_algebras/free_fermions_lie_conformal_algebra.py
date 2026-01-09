@@ -23,15 +23,15 @@ AUTHORS:
 
 - Reimundo Heluani (2020-06-03): Initial implementation.
 """
-#******************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2020 Reimundo Heluani <heluani@potuz.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
 
@@ -101,10 +101,12 @@ class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
                 assert (gram_matrix in MatrixSpace(R, ngens, ngens))
             except AssertionError:
                 raise ValueError("the Gram_matrix should be a symmetric " +
-                    "{0} x {0} matrix, got {1}".format(ngens, gram_matrix))
+                                 "{0} x {0} matrix, got {1}".format(ngens,
+                                                                    gram_matrix))
             if not gram_matrix.is_symmetric():
                 raise ValueError("the Gram_matrix should be a symmetric " +
-                    "{0} x {0} matrix, got {1}".format(ngens, gram_matrix))
+                                 "{0} x {0} matrix, got {1}".format(ngens,
+                                                                    gram_matrix))
         else:
             if ngens is None:
                 ngens = 1
