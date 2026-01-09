@@ -1505,16 +1505,16 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         `L`-series at `s = 1` is returned. This only works for
         ``algorithm=='pari'``::
 
-            sage: EllipticCurve([0,-1,1,-10,-20]).analytic_rank(leading_coefficient=True)
-            (0, 0.25384186085591068...)
-            sage: EllipticCurve([0,0,1,-1,0]).analytic_rank(leading_coefficient=True)
-            (1, 0.30599977383405230...)
-            sage: EllipticCurve([0,1,1,-2,0]).analytic_rank(leading_coefficient=True)
-            (2, 1.518633000576853...)
-            sage: EllipticCurve([0,0,1,-7,6]).analytic_rank(leading_coefficient=True)
-            (3, 10.39109940071580...)
-            sage: EllipticCurve([0,0,1,-7,36]).analytic_rank(leading_coefficient=True)
-            (4, 196.170903794579...)
+            sage: EllipticCurve([0,-1,1,-10,-20]).analytic_rank(leading_coefficient=True)  # rel tol 1e-15
+            (0, 0.25384186085591068)
+            sage: EllipticCurve([0,0,1,-1,0]).analytic_rank(leading_coefficient=True)  # rel tol 1e-15
+            (1, 0.30599977383405230)
+            sage: EllipticCurve([0,1,1,-2,0]).analytic_rank(leading_coefficient=True)  # rel tol 1e-15
+            (2, 1.518633000576853)
+            sage: EllipticCurve([0,0,1,-7,6]).analytic_rank(leading_coefficient=True)  # rel tol 1e-15
+            (3, 10.39109940071580)
+            sage: EllipticCurve([0,0,1,-7,36]).analytic_rank(leading_coefficient=True)  # rel tol 1e-15
+            (4, 196.170903794579)
 
         TESTS:
 
