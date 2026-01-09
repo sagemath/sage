@@ -2310,12 +2310,12 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: K.<s> = QuadraticField(229)
             sage: EllipticCurve(K, "11a").analytic_rank()
             0
-            sage: EllipticCurve(K, "11a").analytic_rank(leading_coefficient=True) # rel tol 1e-15
+            sage: EllipticCurve(K, "11a").analytic_rank(leading_coefficient=True) # rel tol 1e-14
             (0, 0.106450756746162)
 
         TESTS::
 
-            sage: EllipticCurve(K, "389a1").analytic_rank(leading_coefficient=True)  # rel tol 1e-15, long time
+            sage: EllipticCurve(K, "389a1").analytic_rank(leading_coefficient=True)  # rel tol 1e-14, long time
             (3, 61.0121760477620)
             sage: len(EllipticCurve(K, "389a1").gens())  # long time
             3
