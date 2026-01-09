@@ -97,8 +97,59 @@ class PyPiVersion(object):
     def license(self):
         """
         Return the package license
+
+        If the license field contains overly long text (the full license text),
+        try to extract a short license identifier from the classifiers instead.
         """
-        return self.json['info']['license']
+        license_text = self.json['info']['license']
+        license_expression = self.json['info'].get('license_expression')
+
+        # If there's a license expression (PEP 639), prefer that
+        if license_expression:
+            return license_expression
+
+        # If the license text is short enough, use it directly
+        if license_text and len(license_text) <= 100:
+            return license_text
+
+        # Try to extract license from classifiers
+        classifiers = self.json['info'].get('classifiers', [])
+        license_classifiers = []
+        for classifier in classifiers:
+            if classifier.startswith('License :: '):
+                # Extract just the license name from the classifier
+                # e.g., "License :: OSI Approved :: BSD License" -> "BSD License"
+                parts = classifier.split(' :: ')
+                if len(parts) >= 3:
+                    license_classifiers.append(parts[-1])
+                elif len(parts) == 2:
+                    license_classifiers.append(parts[-1])
+
+        if license_classifiers:
+            return ', '.join(license_classifiers)
+
+        # If we have a long license text but no classifiers, try to extract
+        # a short identifier from the first line or truncate
+        if license_text:
+            first_line = license_text.split('\n')[0].strip()
+            # Check if first line looks like a license name (short and descriptive)
+            if len(first_line) <= 100:
+                return first_line
+            # Otherwise, check for common license patterns in the text
+            license_patterns = [
+                ('BSD 3-Clause', ['BSD 3-Clause', 'BSD-3-Clause', 'three conditions']),
+                ('BSD 2-Clause', ['BSD 2-Clause', 'BSD-2-Clause', 'two conditions', 'Simplified BSD']),
+                ('MIT', ['MIT License', 'Permission is hereby granted, free of charge']),
+                ('Apache 2.0', ['Apache License', 'Version 2.0']),
+                ('GPL', ['GNU General Public License']),
+                ('LGPL', ['GNU Lesser General Public License']),
+            ]
+            for short_name, patterns in license_patterns:
+                if all(p in license_text for p in patterns[:1]) or \
+                   (len(patterns) > 1 and patterns[1] in license_text):
+                    return short_name
+
+        return license_text
 
     @property
     def summary(self):
