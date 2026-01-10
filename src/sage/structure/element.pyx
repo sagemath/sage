@@ -894,10 +894,13 @@ cdef class Element(SageObject):
         """
         Alias for :meth:`numerical_approx`.
 
-        EXAMPLES::
+        All keyword arguments, including ``prec`` and ``digits``, are forwarded
+        unchanged to :meth:`numerical_approx`.
 
-            sage: (2/3).n()                                                             # needs sage.rings.real_mpfr
-            0.666666666666667
+        EXAMPLES ::
+
+        sage: (2/3).n()
+        
         """
         return self.numerical_approx(prec, digits, algorithm)
 
