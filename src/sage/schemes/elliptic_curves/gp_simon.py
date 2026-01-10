@@ -109,7 +109,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
             K_pari = pari.bnfinit(K.polynomial(), 1)
         known_points = [P.change_ring(to_K) for P in known_points]
     else:
-        deprecation(38461, "please use the 2-descent algorithm over QQ inside pari")
+        deprecation(38461, "This method is deprecated; use the 2-descent algorithm over QQ in PARI instead.")
         from_K = lambda x: x
 
     # The block below mimics the defaults in Simon's scripts.
