@@ -1132,19 +1132,18 @@ class Rings(CategoryWithAxiom):
             if getattr(self, 'eagerly_reduce_ideal_gens_by_gcd', True):
                 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
                 if self in PrincipalIdealDomains():
+                    from sage.arith.misc import gcd
                     # Use GCD algorithm to obtain a principal ideal
-                    g = gens[0]
                     if len(gens) == 1:
                         try:
                             # note: we set g = gcd(g, g) to "canonicalize" the generator:
                             # make polynomials monic, etc.
-                            g = g.gcd(g)
+                            g = gens[0]
+                            gens = g.gcd(g),
                         except (AttributeError, NotImplementedError, IndexError):
                             pass
                     else:
-                        for h in gens[1:]:
-                            g = g.gcd(h)
-                    gens = [g]
+                        gens = gcd(gens),
 
             if ideal_class is None:
                 ideal_class = self._ideal_class_(len(gens))
