@@ -939,7 +939,7 @@ def krull_dimension(x):
         sage: U.krull_dimension()
         4
     """
-    deprecation(39311, "please use the krull_dimension method")
+    deprecation(39311, "This method is deprecated; use ``krull_dimension()`` instead.")
     return x.krull_dimension()
 
 
