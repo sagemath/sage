@@ -1728,6 +1728,8 @@ def _latex_file_(objects, title='SAGE', debug=False,
                         r'{!}{\usebox{\pgffigure}}' + '\n')
                 if is_preview:
                     s += '\\begin{page}\n' + rbox + '\\end{page}\n'
+                else:
+                    s += rbox
             elif '\\begin{verbatim}' not in L:
                 s += '%s%s%s' % (math_left, L, math_right)
             else:
