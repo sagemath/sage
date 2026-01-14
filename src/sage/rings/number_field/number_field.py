@@ -1315,7 +1315,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
     """
     def __init__(self, polynomial, name, latex_name,
                  check=True, embedding=None, category=None,
-                 assume_disc_small=False, maximize_at_primes=None, structure=None):
+                 assume_disc_small=False, maximize_at_primes=None,
+                 structure=None) -> None:
         """
         Create a number field.
 
@@ -4512,10 +4513,12 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         Kbnf = self.pari_bnf(proof=proof)
         return Kbnf.rnfisnorminit(L.pari_relative_polynomial())
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
-        Implements :meth:`sage.structure.sage_object.SageObject._gap_init_` for number fields
-        to make ``gap(K)`` work. Not to be used directly.
+        Implements :meth:`sage.structure.sage_object.SageObject._gap_init_`
+        for number fields to make ``gap(K)`` work.
+
+        Not to be used directly.
 
         EXAMPLES::
 
@@ -4565,6 +4568,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         because the current implementation of :meth:`_gap_init_` doesn't work with libgap,
         and it is cleaner to implement this using ``libgap`` object manipulations
         instead of ``libgap.eval(self._gap_init_())``.
+
         Not to be used directly, use ``libgap(K)`` instead.
 
         EXAMPLES::
@@ -11038,7 +11042,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         s = 'CyclotomicField(%s)' % self.__n
         return magma._with_names(s, self.variable_names())
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
         Return a string that provides a representation of ``self`` in GAP.
 
@@ -11071,7 +11075,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             zeta3
             -zeta3 - 1
         """
-        return 'CyclotomicField(%s)' % self.__n
+        return f'CyclotomicField({self.__n})'
 
     def _libgap_(self):
         """
