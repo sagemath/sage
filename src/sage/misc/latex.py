@@ -48,7 +48,7 @@ COMMON_HEADER = r'''\usepackage{amsmath}
 
 LATEX_HEADER = (r'''\documentclass{article}
 ''' + COMMON_HEADER +
-                r'''\oddsidemargin 0.0in
+r'''\oddsidemargin 0.0in
 \evensidemargin 0.0in
 \textwidth 6.45in
 \topmargin 0.0in
@@ -59,7 +59,7 @@ LATEX_HEADER = (r'''\documentclass{article}
 
 SLIDE_HEADER = (r'''\documentclass[a0,8pt]{beamer}
 ''' + COMMON_HEADER +
-                r'''\textwidth=1.1\textwidth
+r'''\textwidth=1.1\textwidth
 \textheight=2\textheight
 ''')
 
