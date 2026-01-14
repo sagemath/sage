@@ -48,7 +48,7 @@ COMMON_HEADER = r'''\usepackage{amsmath}
 
 LATEX_HEADER = (r'''\documentclass{article}
 ''' + COMMON_HEADER +
-r'''\oddsidemargin 0.0in
+                r'''\oddsidemargin 0.0in
 \evensidemargin 0.0in
 \textwidth 6.45in
 \topmargin 0.0in
@@ -59,7 +59,7 @@ r'''\oddsidemargin 0.0in
 
 SLIDE_HEADER = (r'''\documentclass[a0,8pt]{beamer}
 ''' + COMMON_HEADER +
-r'''\textwidth=1.1\textwidth
+                r'''\textwidth=1.1\textwidth
 \textheight=2\textheight
 ''')
 
@@ -368,6 +368,7 @@ class LatexExpr(str):
         sage: str(latex(x^20 + 1))                                                      # needs sage.symbolic
         'x^{20} + 1'
     """
+
     def __add__(self, other):
         r"""
         Add a LatexExpr and another LatexExpr (or a string).
@@ -549,6 +550,7 @@ class _Latex_prefs_object(SageObject):
     """
     An object that holds LaTeX global preferences.
     """
+
     def __init__(self, bb=False, delimiters=["(", ")"],
                  matrix_column_alignment='r'):
         """
@@ -636,7 +638,7 @@ def latex_extra_preamble():
     from sage.misc.latex_macros import sage_latex_macros
     return "\n".join([_Latex_prefs._option['preamble'],
                      "\n".join(sage_latex_macros()),
-                     _Latex_prefs._option['macros']])
+                      _Latex_prefs._option['macros']])
 
 
 def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_in_background=False):
@@ -786,8 +788,8 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
     density = int(1.4 * density / 1.3)
     from sage.features.imagemagick import Magick
     magick = [Magick().executable, '-density',
-               '{0}x{0}'.format(density), '-trim', filename + '.' + suffix,
-               filename + '.png']
+              '{0}x{0}'.format(density), '-trim', filename + '.' + suffix,
+              filename + '.png']
 
     # it is possible to get through the following commands
     # without running a program, so in that case we force error
@@ -889,6 +891,7 @@ class LatexCall:
         sage: type(LatexCall()(ZZ))
         <class 'sage.misc.latex.LatexExpr'>
     """
+
     def __call__(self, x, combine_all=False):
         r"""
         Return a :class:`LatexExpr` built out of the argument ``x``.
@@ -969,6 +972,7 @@ class Latex(LatexCall):
         sage: LatexExpr(r"y \neq") + latex(x^20 + 1)                                    # needs sage.symbolic
         y \neq x^{20} + 1
     """
+
     def __init__(self, debug=False, slide=False, density=150, engine=None):
         """
         Initialize the latex builder.
@@ -1705,13 +1709,25 @@ def _latex_file_(objects, title='SAGE', debug=False,
         for i in range(len(objects)):
             x = objects[i]
             L = latex(x)
-            if '\\begin{pgfpicture}' in L:
+            if '\\begin{pgfpicture}' in L or '\\begin{tikzpicture}' in L:
+                # detection of the use of "preview" package
+                is_preview = ('\\usepackage[tightpage,active]{preview}'
+                              in extra_preamble)
                 # Resize the pgf figure to the text width if larger.
-                s += r'\begingroup\makeatletter\@ifundefined{pgffigure}{\newsavebox{\pgffigure}}{}\makeatother\endgroup'
+                s += (r'\begingroup\makeatletter'
+                      r'\@ifundefined{pgffigure}{\newsavebox{\pgffigure}}{}'
+                      r'\makeatother'
+                      r'\endgroup')
                 s += r'\begin{lrbox}{\pgffigure}' + '\n'
                 s += '%s' % L
                 s += r'\end{lrbox}'
-                s += r'\resizebox{\ifdim\width>\textwidth\textwidth\else\width\fi}{!}{\usebox{\pgffigure}}' + '\n'
+                rbox = (r'\resizebox{'
+                        r'\ifdim\width>\textwidth\textwidth'
+                        r'\else\width'
+                        r'\fi}'
+                        r'{!}{\usebox{\pgffigure}}' + '\n')
+                if is_preview:
+                    s += '\\begin{page}\n' + rbox + '\\end{page}\n'
             elif '\\begin{verbatim}' not in L:
                 s += '%s%s%s' % (math_left, L, math_right)
             else:
@@ -1737,8 +1753,8 @@ def _latex_file_(objects, title='SAGE', debug=False,
 
 
 def view(objects, title='Sage', debug=False, sep='', tiny=False,
-        engine=None, viewer=None, tightpage=True, margin=None,
-        mode='inline', combine_all=False, **kwds):
+         engine=None, viewer=None, tightpage=True, margin=None,
+         mode='inline', combine_all=False, **kwds):
     r"""nodetex
     Compute a latex representation of each object in objects, compile,
     and display typeset. If used from the command line, this requires
@@ -1889,11 +1905,17 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     else:
         latex_options = {}
 
-    s = _latex_file_(objects, title=title, sep=sep, tiny=tiny, debug=debug, **latex_options)
+    s = _latex_file_(objects, title=title, sep=sep,
+                     tiny=tiny, debug=debug, **latex_options)
     if engine is None:
         engine = _Latex_prefs._option["engine"]
         if engine is None:
             engine = _default_engine()
+
+    # lualatex fails to produce correct result for the latex package "preview"
+    # force use of pdflatex if the current engine is lualatex
+    if tightpage and engine == "lualatex":
+        engine = "pdflatex"
 
     if viewer == "pdf" and engine == "latex":
         engine = "pdflatex"
