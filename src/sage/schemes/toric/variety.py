@@ -336,47 +336,6 @@ _Fields = Fields()
 DEFAULT_PREFIX = "z"
 
 
-def is_ToricVariety(x):
-    r"""
-    Check if ``x`` is a toric variety.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT:
-
-    - ``True`` if ``x`` is a :class:`toric variety <ToricVariety_field>` and
-      ``False`` otherwise.
-
-    .. NOTE::
-
-        While projective spaces are toric varieties mathematically, they are
-        not toric varieties in Sage due to efficiency considerations, so this
-        function will return ``False``.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.toric.variety import is_ToricVariety
-        sage: is_ToricVariety(1)
-        doctest:warning...
-        DeprecationWarning: The function is_ToricVariety is deprecated; use 'isinstance(..., ToricVariety_field)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        False
-        sage: fan = FaceFan(lattice_polytope.cross_polytope(2))
-        sage: P = ToricVariety(fan)
-        sage: P
-        2-d toric variety covered by 4 affine patches
-        sage: is_ToricVariety(P)
-        True
-        sage: is_ToricVariety(ProjectiveSpace(2))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_ToricVariety is deprecated; use 'isinstance(..., ToricVariety_field)' instead.")
-    return isinstance(x, ToricVariety_field)
-
-
 def ToricVariety(fan,
                  coordinate_names=None,
                  names=None,
@@ -3257,44 +3216,6 @@ class CohomologyRing(QuotientRing_generic, UniqueRepresentation):
         return CohomologyClass(self, self._polynomial_ring.gen(i))
 
 
-# *****************************************************************
-def is_CohomologyClass(x):
-    r"""
-    Check whether ``x`` is a cohomology class of a toric variety.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT:
-
-    ``True`` or ``False`` depending on whether ``x`` is an instance of
-    :class:`CohomologyClass`
-
-    EXAMPLES::
-
-        sage: P2 = toric_varieties.P2()
-        sage: HH = P2.cohomology_ring()
-        sage: from sage.schemes.toric.variety import is_CohomologyClass
-        sage: is_CohomologyClass( HH.one() )                                            # needs sage.libs.singular
-        doctest:warning...
-        DeprecationWarning: The function is_CohomologyClass is deprecated;
-        use 'isinstance(..., CohomologyClass)' instead.
-        See https://github.com/sagemath/sage/issues/38277 for details.
-        True
-        sage: is_CohomologyClass( HH(P2.fan(1)[0]) )                                    # needs sage.libs.singular
-        True
-        sage: is_CohomologyClass('z')
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38277,
-                "The function is_CohomologyClass is deprecated; "
-                "use 'isinstance(..., CohomologyClass)' instead.")
-    return isinstance(x, CohomologyClass)
-
-
-# *****************************************************************
 class CohomologyClass(QuotientRingElement):
     r"""
     An element of the :class:`CohomologyRing`.

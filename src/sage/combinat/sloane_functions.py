@@ -316,7 +316,7 @@ class SloaneSequence(SageObject):
             return self(n)
 
         LENGTH = 100000
-        (start, stop, step) = n.indices(2 * LENGTH)
+        start, stop, step = n.indices(2 * LENGTH)
         if abs(stop - start) > LENGTH:
             raise IndexError("slice (=%s) too long" % n)
         return [self(i) for i in range(start, stop, step) if i >= self.offset]

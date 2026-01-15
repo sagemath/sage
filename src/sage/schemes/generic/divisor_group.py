@@ -58,33 +58,6 @@ def DivisorGroup(scheme, base_ring=None):
     return DG
 
 
-def is_DivisorGroup(x):
-    r"""
-    Return whether ``x`` is a :class:`DivisorGroup_generic`.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: from sage.schemes.generic.divisor_group import is_DivisorGroup, DivisorGroup
-        sage: Div = DivisorGroup(Spec(ZZ), base_ring=QQ)
-        sage: is_DivisorGroup(Div)
-        doctest:warning...
-        DeprecationWarning: The function is_DivisorGroup is deprecated; use 'isinstance(..., DivisorGroup_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-        sage: is_DivisorGroup('not a divisor')
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_DivisorGroup is deprecated; use 'isinstance(..., DivisorGroup_generic)' instead.")
-    return isinstance(x, DivisorGroup_generic)
-
-
 class DivisorGroup_generic(FormalSums):
     r"""
     The divisor group on a variety.
@@ -104,7 +77,7 @@ class DivisorGroup_generic(FormalSums):
         # Must not call super().__classcall__()!
         return UniqueRepresentation.__classcall__(cls, scheme, base_ring)
 
-    def __init__(self, scheme, base_ring):
+    def __init__(self, scheme, base_ring) -> None:
         r"""
         Construct a :class:`DivisorGroup_generic`.
 

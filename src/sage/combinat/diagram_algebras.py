@@ -501,7 +501,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
             sage: pd([[1,2],[-1,-2]]).compose(pd([[1,2],[-1,-2]]))
             ({{-2, -1}, {1, 2}}, 1)
         """
-        (composite_diagram, loops_removed) = set_partition_composition(self._base_diagram, other._base_diagram)
+        composite_diagram, loops_removed = set_partition_composition(self._base_diagram, other._base_diagram)
         return (self.__class__(self.parent(), composite_diagram, check=check), loops_removed)
 
     def propagating_number(self):
@@ -998,7 +998,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
             sage: bd([[1,4],[6,7], [-2,-6],[-5,-7], [2,-4],[3,-1],[5,-3]])._repr_compact()
             '[14.67/26.57;312]'
         """
-        (top, bot, thru) = self.involution_permutation_triple()
+        top, bot, thru = self.involution_permutation_triple()
         bot.reverse()
         s1 = ".".join("".join(str(b) for b in block) for block in top)
         s2 = ".".join("".join(str(abs(k)) for k in sorted(block, reverse=True))
@@ -1127,10 +1127,10 @@ class BrauerDiagram(AbstractPartitionDiagram):
             sage: elm2.is_elementary_symmetric()
             False
         """
-        (D1,D2,pi) = self.involution_permutation_triple()
+        D1, D2, pi = self.involution_permutation_triple()
         D1 = sorted(sorted(abs(y) for y in x) for x in D1)
         D2 = sorted(sorted(abs(y) for y in x) for x in D2)
-        return D1 == D2 and pi == list(range(1,len(pi)+1))
+        return D1 == D2 and pi == list(range(1, len(pi) + 1))
 
 
 class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
@@ -1615,7 +1615,7 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
             raise NotImplementedError("only implemented for integer order,"
                                       " not for order %s" % (self.order))
         try:
-            (D1,D2,pi) = tuple(D1_D2_pi)
+            D1, D2, pi = tuple(D1_D2_pi)
         except ValueError:
             raise ValueError("argument %s not in correct form; must be a tuple (D1, D2, pi)" % D1_D2_pi)
         D1 = [[abs(x) for x in b] for b in D1 if len(b) == 2] # not needed if argument correctly passed at outset.
@@ -2203,7 +2203,7 @@ class DiagramBasis(DiagramAlgebra):
             d1 = self._indices(d1)
         if not self._indices.is_parent_of(d2):
             d2 = self._indices(d2)
-        (composite_diagram, loops_removed) = d1.compose(d2, check=False)
+        composite_diagram, loops_removed = d1.compose(d2, check=False)
         return self.term(composite_diagram, self._q**loops_removed)
 
 
