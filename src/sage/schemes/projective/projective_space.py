@@ -134,31 +134,6 @@ _Rings = Rings()
 _CommRings = _Rings.Commutative()
 
 
-def is_ProjectiveSpace(x):
-    r"""
-    Return ``True`` if ``x`` is a projective space.
-
-    In other words, if ``x`` is an ambient space `\mathbb{P}^n_R`,
-    where `R` is a ring and `n\geq 0` is an integer.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.projective.projective_space import is_ProjectiveSpace
-        sage: is_ProjectiveSpace(ProjectiveSpace(5, names='x'))
-        doctest:warning...
-        DeprecationWarning: The function is_ProjectiveSpace is deprecated; use 'isinstance(..., ProjectiveSpace_ring)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-        sage: is_ProjectiveSpace(ProjectiveSpace(5, GF(9, 'alpha'), names='x'))         # needs sage.rings.finite_rings
-        True
-        sage: is_ProjectiveSpace(Spec(ZZ))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_ProjectiveSpace is deprecated; use 'isinstance(..., ProjectiveSpace_ring)' instead.")
-    return isinstance(x, ProjectiveSpace_ring)
-
-
 def ProjectiveSpace(n, R=None, names=None):
     r"""
     Return projective space of dimension ``n`` over the ring ``R``.

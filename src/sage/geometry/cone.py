@@ -254,35 +254,6 @@ if TYPE_CHECKING:
     from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 
-def is_Cone(x):
-    r"""
-    Check if ``x`` is a cone.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: ``True`` if ``x`` is a cone and ``False`` otherwise
-
-    EXAMPLES::
-
-        sage: from sage.geometry.cone import is_Cone
-        sage: is_Cone(1)
-        doctest:warning...
-        DeprecationWarning: is_Cone is deprecated, use isinstance instead
-        See https://github.com/sagemath/sage/issues/34307 for details.
-        False
-        sage: quadrant = Cone([(1,0), (0,1)])
-        sage: quadrant
-        2-d cone in 2-d lattice N
-        sage: is_Cone(quadrant)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34307, "is_Cone is deprecated, use isinstance instead")
-    return isinstance(x, ConvexRationalPolyhedralCone)
-
-
 def Cone(rays, lattice=None, check=True, normalize=True):
     r"""
     Construct a (not necessarily strictly) convex rational polyhedral cone.
