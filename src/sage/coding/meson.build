@@ -42,9 +42,9 @@ py.install_sources(
 )
 
 extension_data = {
-  'ag_code_decoders' : files('ag_code_decoders.pyx'),
-  'binary_code' : files('binary_code.pyx'),
-  'kasami_codes' : files('kasami_codes.pyx'),
+  'ag_code_decoders': files('ag_code_decoders.pyx'),
+  'binary_code': files('binary_code.pyx'),
+  'kasami_codes': files('kasami_codes.pyx'),
 }
 
 foreach name, pyx : extension_data

@@ -11,8 +11,8 @@ py.install_sources(
 )
 
 extension_data = {
-  'intlist' : files('intlist.pyx'),
-  'time_series' : files('time_series.pyx'),
+  'intlist': files('intlist.pyx'),
+  'time_series': files('time_series.pyx'),
 }
 
 foreach name, pyx : extension_data

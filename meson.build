@@ -4,7 +4,7 @@ project(
   version: files('VERSION.txt'),
   license: 'GPL v3',
   default_options: ['c_std=c17', 'cpp_std=c++17', 'python.install_env=auto'],
-  meson_version: '>=1.2',
+  meson_version: '>=1.5',
 )
 
 # Python module
@@ -195,6 +195,7 @@ file_paths = [
   'src/sage/graphs/generators/__init__.py',
   'src/sage/graphs/__init__.py',
   'src/sage/graphs/base/__init__.py',
+  'src/sage/graphs/tests/__init__.py',
   'src/sage/databases/__init__.py',
   'src/sage/stats/hmm/__init__.py',
   'src/sage/stats/__init__.py',

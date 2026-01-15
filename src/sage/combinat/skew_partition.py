@@ -127,7 +127,7 @@ AUTHORS:
 - Travis Scrimshaw (2013-02-11): Factored out ``CombinatorialClass``
 - Trevor K. Karn (2022-08-03): Add ``outside_corners``
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -139,8 +139,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.structure.global_options import GlobalOptions
 from sage.structure.parent import Parent
@@ -589,7 +589,7 @@ class SkewPartition(CombinatorialElement):
         """
         return sum(self.row_lengths())
 
-    def is_connected(self):
+    def is_connected(self) -> bool:
         """
         Return ``True`` if ``self`` is a connected skew partition.
 
@@ -634,16 +634,16 @@ class SkewPartition(CombinatorialElement):
             sage: SkewPartition([[10,10],[1]]).overlap()
             9
         """
-        p,q = self
+        p, q = self
         if len(p) <= 1:
             from sage.rings.infinity import PlusInfinity
             return PlusInfinity()
         if len(q) == 0:
             return min(p)
         q = [q[0]] + list(q)
-        return min(row_lengths_aux([p,q]))
+        return min(row_lengths_aux([p, q]))
 
-    def is_overlap(self, n):
+    def is_overlap(self, n) -> bool:
         r"""
         Return ``True`` if the overlap of ``self`` is at most ``n``.
 
@@ -658,7 +658,7 @@ class SkewPartition(CombinatorialElement):
         """
         return n <= self.overlap()
 
-    def is_ribbon(self):
+    def is_ribbon(self) -> bool:
         r"""
         Return ``True`` if and only if ``self`` is a ribbon.
 

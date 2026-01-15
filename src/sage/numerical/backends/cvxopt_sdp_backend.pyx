@@ -138,15 +138,15 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
                     G_temp.insert(j,[float(0) for t in range(self.matrices_dim[row_index]**2)])
             G_matrix += [c_matrix(G_temp)]
             debug_g += [(G_temp)]
-        #raise Exception("G_matrix " + str(debug_g) + "\nh_matrix: " + str(debug_h) + "\nc_matrix: " + str(debug_c))
+        # raise Exception("G_matrix " + str(debug_g) + "\nh_matrix: " + str(debug_h) + "\nc_matrix: " + str(debug_c))
 
-        #solvers comes from the cvxopt library
-        for k,v in self.param.iteritems():
+        # solvers comes from the cvxopt library
+        for k, v in self.param.items():
             solvers.options[k] = v
 
         self.answer = solvers.sdp(c,Gs=G_matrix,hs=h_matrix)
 
-        #possible outcomes
+        # possible outcomes
         if self.answer['status'] == 'optimized':
             pass
         elif self.answer['status'] == 'primal infeasible':

@@ -1123,7 +1123,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: S.<x,y> = TateAlgebra(Qp(5), log_radii=(1,0))
             sage: f = 5*x
             sage: f.add_bigoh(1)
-            (5 + O(5^2))*x + O(5 * <x/5, y>)
+            (5 + O(5^2))*x + O(5 * <5*x, y>)
         """
         self._is_normalized = True
         if self._prec is Infinity:
@@ -1169,6 +1169,15 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
 
             sage: A(x + 2*x^2 + x^3, prec=5)
             ...00001*x^3 + ...00001*x + ...00010*x^2 + O(2^5 * <x, y>)
+
+        TESTS::
+
+            sage: S.<x> = TateAlgebra(R, log_radii=[-1])
+            sage: S(x, 5)
+            ...0001*x + O(2^5 * <x/2>)
+            sage: S.<x> = TateAlgebra(R, log_radii=[1])
+            sage: S(x, 5)
+            ...000001*x + O(2^5 * <2*x>)
         """
         vars = self._parent.variable_names()
         s = ""
@@ -1191,14 +1200,14 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             for i in range(len(vars)):
                 if lr[i] == 0:
                     sv.append(vars[i])
-                elif lr[i] == -1:
-                    sv.append("%s*%s" % (su, vars[i]))
                 elif lr[i] == 1:
+                    sv.append("%s*%s" % (su, vars[i]))
+                elif lr[i] == -1:
                     sv.append("%s/%s" % (vars[i], su))
-                elif lr[i] < 0:
-                    sv.append("%s^%s*%s" % (su, -lr[i], vars[i]))
+                elif lr[i] > 0:
+                    sv.append("%s^%s*%s" % (su, lr[i], vars[i]))
                 else:
-                    sv.append("%s/%s^%s" % (vars[i], su, lr[i]))
+                    sv.append("%s/%s^%s" % (vars[i], su, -lr[i]))
             sv = ", ".join(sv)
             if self._prec == 0:
                 s += "O(<%s>)" % sv
@@ -2534,8 +2543,8 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         However `\log(1+x)` converges on a smaller disk::
 
             sage: f.restriction(-1).log()
-            ...000000001*x + ...0000000.1*x^3 + ...111111*x^2 + ...
-             + O(3^10 * <3*x, 3*y>)
+            ...000000001*x + ...0000000.1*x^3 + ...11111111*x^2 + ...
+             + O(3^10 * <x/3, y/3>)
 
         TESTS::
 
@@ -2692,8 +2701,8 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         However `\exp(x)` converges on a smaller disk::
 
             sage: f.restriction(-1).exp()
-            ...0000000001 + ...000000001*x + ...1111111.2*x^3 + ...111112*x^2
-             + ... + O(3^10 * <3*x, 3*y>)
+            ...0000000001 + ...000000001*x + ...1111111.2*x^3 + ...11111112*x^2
+             + ... + O(3^10 * <x/3, y/3>)
 
         TESTS::
 

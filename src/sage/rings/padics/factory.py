@@ -28,52 +28,57 @@ TESTS::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.superseded import experimental
+from functools import reduce
 
 from sage.categories.fields import Fields
-from sage.structure.factory import UniqueFactory
-from sage.rings.integer import Integer
+from sage.misc.superseded import experimental
 from sage.rings.infinity import Infinity
-from sage.structure.factorization import Factorization
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.structure.element import Element
-from .padic_base_leaves import (pAdicRingCappedRelative,
-                                pAdicRingCappedAbsolute,
-                                pAdicRingFixedMod,
-                                pAdicRingFloatingPoint,
-                                pAdicRingLattice,
-                                pAdicRingRelaxed,
-                                pAdicFieldCappedRelative,
-                                pAdicFieldFloatingPoint,
-                                pAdicFieldLattice,
-                                pAdicFieldRelaxed)
-from . import padic_printing
+from sage.rings.padics import padic_printing
+from sage.rings.padics.padic_base_leaves import (
+    pAdicFieldCappedRelative,
+    pAdicFieldFloatingPoint,
+    pAdicFieldLattice,
+    pAdicFieldRelaxed,
+    pAdicRingCappedAbsolute,
+    pAdicRingCappedRelative,
+    pAdicRingFixedMod,
+    pAdicRingFloatingPoint,
+    pAdicRingLattice,
+    pAdicRingRelaxed,
+)
 
 ######################################################
 # ext_table --
 # This dictionary controls what class is created by the extension
 # factory when it finds a given class in the ground ring of the tower.
 ######################################################
+from sage.rings.padics.padic_extension_leaves import (
+    EisensteinExtensionFieldCappedRelative,
+    EisensteinExtensionRingCappedAbsolute,
+    EisensteinExtensionRingCappedRelative,
+    EisensteinExtensionRingFixedMod,
+    UnramifiedExtensionFieldCappedRelative,
+    UnramifiedExtensionFieldFloatingPoint,
+    UnramifiedExtensionRingCappedAbsolute,
+    UnramifiedExtensionRingCappedRelative,
+    UnramifiedExtensionRingFixedMod,
+    UnramifiedExtensionRingFloatingPoint,
+)
+from sage.rings.padics.relative_extension_leaves import (
+    RelativeRamifiedExtensionFieldCappedRelative,
+    RelativeRamifiedExtensionFieldFloatingPoint,
+    RelativeRamifiedExtensionRingCappedAbsolute,
+    RelativeRamifiedExtensionRingCappedRelative,
+    RelativeRamifiedExtensionRingFixedMod,
+    RelativeRamifiedExtensionRingFloatingPoint,
+)
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.structure.element import Element
+from sage.structure.factorization import Factorization
+from sage.structure.factory import UniqueFactory
 
-from .padic_extension_leaves import (EisensteinExtensionFieldCappedRelative,
-                                     EisensteinExtensionRingFixedMod,
-                                     EisensteinExtensionRingCappedAbsolute,
-                                     EisensteinExtensionRingCappedRelative,
-                                     UnramifiedExtensionFieldCappedRelative,
-                                     UnramifiedExtensionRingCappedRelative,
-                                     UnramifiedExtensionRingCappedAbsolute,
-                                     UnramifiedExtensionRingFixedMod,
-                                     UnramifiedExtensionFieldFloatingPoint,
-                                     UnramifiedExtensionRingFloatingPoint)
-from .relative_extension_leaves import \
-        (RelativeRamifiedExtensionRingFixedMod,
-         RelativeRamifiedExtensionRingCappedAbsolute,
-         RelativeRamifiedExtensionRingCappedRelative,
-         RelativeRamifiedExtensionFieldCappedRelative,
-         RelativeRamifiedExtensionRingFloatingPoint,
-         RelativeRamifiedExtensionFieldFloatingPoint)
-from functools import reduce
 #This imports all of the classes used in the ext_table below.
 
 ext_table = {}
@@ -154,9 +159,8 @@ def _canonicalize_show_prec(type, print_mode, show_prec=None):
     if print_mode in ('series', 'terse', 'val-unit'):
         if show_prec not in ('none', 'bigoh'):
             raise ValueError("show_prec must be either a boolean, 'none' or 'bigoh' when printing mode is %s" % print_mode)
-    else:
-        if show_prec not in ('none', 'bigoh', 'dots'):
-            raise ValueError("show_prec must be either a boolean, 'none', 'bigoh' or 'dots' when printing mode is %s" % print_mode)
+    elif show_prec not in ('none', 'bigoh', 'dots'):
+        raise ValueError("show_prec must be either a boolean, 'none', 'bigoh' or 'dots' when printing mode is %s" % print_mode)
     return show_prec
 
 
@@ -237,9 +241,8 @@ def get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_se
                 halting_prec = 2 * default_prec
             halting_prec = max(default_prec, halting_prec)
             prec = (default_prec, halting_prec, secure)
-        else:
-            if prec is not None:
-                prec = Integer(prec)
+        elif prec is not None:
+            prec = Integer(prec)
     if prec is None:
         if type == 'lattice-cap':
             prec = (DEFAULT_PREC, 2*DEFAULT_PREC)
@@ -280,9 +283,9 @@ def get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_se
         print_max_terms = padic_printing._printer_defaults.max_series_terms()
 
     # We eliminate irrelevant print options (e.g. print_pos if p = 2)
-    if p == 2 or print_mode == 'digits':
+    if p == 2 or print_mode in {'digits', 'digits-unicode'}:
         print_pos = True # we want this hard-coded so that we don't get duplicate parents if the keys differ.
-    if print_mode == 'digits':
+    if print_mode in {'digits', 'digits-unicode'}:
         print_ram_name = None
         print_alphabet = print_alphabet[:p]
     else:

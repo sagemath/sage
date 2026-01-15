@@ -98,18 +98,18 @@ AUTHORS:
 # ****************************************************************************
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Literal
-from sage.structure.richcmp import richcmp, richcmp_method
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.topological_spaces import TopologicalSpaces
-from sage.categories.sets_cat import EmptySetError
-from sage.sets.set import Set_base, Set_boolean_operators, Set_add_sub_operators
-from sage.rings.integer_ring import ZZ
-from sage.rings.real_lazy import LazyFieldElement, RLF
-from sage.rings.infinity import infinity, minus_infinity
-from sage.misc.superseded import deprecated_function_alias
 from heapq import merge
+from typing import TYPE_CHECKING, Literal
+
+from sage.categories.sets_cat import EmptySetError
+from sage.categories.topological_spaces import TopologicalSpaces
+from sage.rings.infinity import infinity, minus_infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_lazy import RLF, LazyFieldElement
+from sage.sets.set import Set_add_sub_operators, Set_base, Set_boolean_operators
+from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp, richcmp_method
+from sage.structure.unique_representation import UniqueRepresentation
 
 if TYPE_CHECKING:
     from sage.misc.sage_input import SageInputBuilder, SageInputExpression
@@ -462,6 +462,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
             Interval.open(0, oo)
         """
         from sympy import Interval
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         return Interval(self.lower(), self.upper(),
@@ -1215,7 +1216,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
             elif isinstance(arg, RealSet):
                 intervals.extend(arg._intervals)
             elif isinstance(arg, Expression) and arg.is_relational():
-                from operator import eq, ne, lt, gt, le, ge
+                from operator import eq, ge, gt, le, lt, ne
 
                 def rel_to_interval(op, val):
                     """
@@ -1264,7 +1265,9 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
                 else:
                     raise ValueError(str(arg) + ' does not determine real interval')
             else:
-                from sage.manifolds.differentiable.examples.real_line import OpenInterval
+                from sage.manifolds.differentiable.examples.real_line import (
+                    OpenInterval,
+                )
                 from sage.manifolds.subsets.closure import ManifoldSubsetClosure
                 if isinstance(arg, OpenInterval):
                     lower, upper = RealSet._prep(arg.lower_bound(), arg.upper_bound())
@@ -2359,8 +2362,6 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         """
         return RealSet(*other).intersection(self) == self
 
-    is_included_in = deprecated_function_alias(31927, is_subset)
-
     def _an_element_(self):
         """
         Return a point of the set.
@@ -2606,8 +2607,6 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         other = RealSet(*other)
         return self.are_pairwise_disjoint(self, other)
 
-    is_disjoint_from = deprecated_function_alias(31927, is_disjoint)
-
     @staticmethod
     def are_pairwise_disjoint(*real_set_collection):
         """
@@ -2678,11 +2677,10 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
                         t = 'RealSet.closed'
                     else:
                         t = 'RealSet.closed_open'
+                elif i.upper_closed():
+                    t = 'RealSet.open_closed'
                 else:
-                    if i.upper_closed():
-                        t = 'RealSet.open_closed'
-                    else:
-                        t = 'RealSet.open'
+                    t = 'RealSet.open'
                 return sib.name(t)(sib(lower), sib(upper))
 
         if self.is_empty():
@@ -2752,6 +2750,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
             False
         """
         from sympy import Reals, Union
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         if self.is_universe():

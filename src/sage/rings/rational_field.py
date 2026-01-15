@@ -981,7 +981,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return Integer(1)
 
-    def is_absolute(self):
+    def is_absolute(self) -> bool:
         r"""
         `\QQ` is an absolute extension of `\QQ`.
 
@@ -992,7 +992,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return True
 
-    def is_prime_field(self):
+    def is_prime_field(self) -> bool:
         r"""
         Return ``True`` since `\QQ` is a prime field.
 
@@ -1334,16 +1334,10 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         gens = list(S)
         ords = [ZZ(m)] * len(S)
-        if m % 2 == 0:
+        if not m % 2:
             gens = [ZZ(-1)] + gens
             ords = [ZZ(2)] + ords
-        if orders:
-            return gens, ords
-        else:
-            return gens
-
-    # For backwards compatibility:
-    selmer_group = deprecated_function_alias(31345, selmer_generators)
+        return (gens, ords) if orders else gens
 
     def selmer_group_iterator(self, S, m, proof=True):
         r"""
@@ -1519,7 +1513,7 @@ class RationalField(Singleton, number_field_base.NumberField):
     #################################
     #  Coercions to interfaces
     #################################
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return the GAP representation of `\QQ`.
 
@@ -1530,7 +1524,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return 'Rationals'
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         r"""
         Return the magma representation of `\QQ`.
 
@@ -1548,7 +1542,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return 'RationalField()'
 
-    def _macaulay2_init_(self, macaulay2=None):
+    def _macaulay2_init_(self, macaulay2=None) -> str:
         r"""
         Return the macaulay2 representation of `\QQ`.
 
@@ -1559,7 +1553,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return "QQ"
 
-    def _axiom_init_(self):
+    def _axiom_init_(self) -> str:
         r"""
         Return the axiom/fricas representation of `\QQ`.
 
@@ -1574,7 +1568,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     _fricas_init_ = _axiom_init_
 
-    def _polymake_init_(self):
+    def _polymake_init_(self) -> str:
         r"""
         Return the polymake representation of `\QQ`.
 

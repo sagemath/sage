@@ -74,7 +74,7 @@ class RepresentationType(Enum):
         sage: chmr.RepresentationType.RegularLeft.is_regular()
         True
     """
-    def is_split(self):
+    def is_split(self) -> bool:
         r"""
         Return ``True`` if this representation type is absolutely split,
         ``False`` else-wise.
@@ -88,7 +88,7 @@ class RepresentationType(Enum):
         """
         return self.value['split']
 
-    def is_regular(self):
+    def is_regular(self) -> bool:
         r"""
         Return ``True`` if this representation type is regular, ``False``
         else-wise.

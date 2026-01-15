@@ -216,7 +216,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             desc += 'A ' + repr(self.affine_dimension()) + '-dimensional lattice polytope'
         desc += ' in ZZ^' + repr(self.space_dimension())
 
-        if self.n_vertices() > 0:
+        if self.n_vertices():
             desc += ' with '
             desc += repr(self.n_vertices())
             if self.n_vertices() == 1:
@@ -225,7 +225,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
                 desc += ' vertices'
         return desc
 
-    def is_bounded(self):
+    def is_bounded(self) -> bool:
         """
         Return whether the lattice polytope is compact.
 
@@ -255,7 +255,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         return len(self.minimized_generators())
 
     @cached_method
-    def is_simplex(self):
+    def is_simplex(self) -> bool:
         r"""
         Return whether the polyhedron is a simplex.
 
@@ -270,7 +270,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             sage: LatticePolytope_PPL((0,0,0), (1,0,0), (0,1,0)).is_simplex()
             True
         """
-        return self.affine_dimension()+1 == self.n_vertices()
+        return self.affine_dimension() + 1 == self.n_vertices()
 
     @cached_method
     def bounding_box(self):
@@ -525,7 +525,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         return tuple(result)
 
     @cached_method
-    def is_full_dimensional(self):
+    def is_full_dimensional(self) -> bool:
         """
         Return whether the lattice polytope is full dimensional.
 
@@ -542,7 +542,6 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             sage: q.is_full_dimensional()
             True
         """
-
         return self.affine_dimension() == self.space_dimension()
 
     def fibration_generator(self, dim):
@@ -576,7 +575,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         # "points" are the potential vertices of the fiber. They are
         # in the $codim$-skeleton of the polytope, which is contained
         # in the points that saturate at least $dim$ equations.
-        points = [ p for p in self._integral_points_saturating() if len(p[1]) >= dim ]
+        points = [p for p in self._integral_points_saturating() if len(p[1]) >= dim]
         points = sorted(points, key=lambda x:len(x[1]))
 
         # iterate over point combinations subject to all points being on one facet.

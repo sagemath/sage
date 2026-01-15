@@ -848,7 +848,7 @@ class Patch(SageObject):
         else:
             return Patch(self._faces.difference(other))
 
-    def dimension(self) -> None | int:
+    def dimension(self) -> int | None:
         r"""
         Return the dimension of the vectors of the faces of ``self``.
 

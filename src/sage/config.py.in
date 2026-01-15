@@ -11,7 +11,6 @@ VERSION = "@PACKAGE_VERSION@"
 # to it.
 SAGE_LOCAL = "@prefix@"
 SAGE_ROOT = "@SAGE_ROOT@"
-SAGE_SHARE = "@SAGE_SHARE@"
 
 # The semicolon-separated list of GAP root paths. This is the list of
 # locations that are searched for GAP packages. This is passed directly
@@ -35,6 +34,7 @@ NTL_LIBDIR = "@NTL_LIBDIR@"
 # Path to the ecl-config script
 ECL_CONFIG = "@SAGE_ECL_CONFIG@".replace("${prefix}", SAGE_LOCAL)
 
+# Path to the nauty binaries; of the form "/path/to/" or "/path/to/nauty-" 
 SAGE_NAUTY_BINS_PREFIX = "@SAGE_NAUTY_BINS_PREFIX@"
 
 SAGE_ECMBIN = "@SAGE_ECMBIN@"
@@ -103,7 +103,7 @@ def get_editable_root() -> tuple[Path, Path] | None:
     EXAMPLES::
 
         sage: from sage.config import get_editable_root
-        sage: get_editable_root()
+        sage: get_editable_root() # random
         (WindowsPath('<path_to_sage>/sage'), WindowsPath('<path_to_sage>/sage/build/cp312'))
     """
     if (

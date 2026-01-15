@@ -23,7 +23,7 @@ uv pip install \
     "cypari2 >=2.2.1" \
     "cysignals >=1.11.2, != 1.12.0" \
     "cython >=3.0, != 3.0.3, < 3.1.0" \
-    "gmpy2 ~=2.1.b999" \
+    "gmpy2 >=2.1.5" \
     memory_allocator \
     "numpy >=1.25" \
     jinja2 \

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Vector Spaces
 """
@@ -184,7 +183,7 @@ class VectorSpaces(Category_module):
 
         _call_ = ModulesWithBasis.__dict__["_call_"]
 
-        def is_abelian(self):
+        def is_abelian(self) -> bool:
             """
             Return whether this category is abelian.
 

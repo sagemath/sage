@@ -683,9 +683,10 @@ def simplicial_data_from_kenzo_output(filename) -> dict:
         else:
             simplex_string = data[start:end].strip()
 
-            for s in [_.strip() for _ in simplex_string.split('Simplex : ')]:
+            for ns in simplex_string.split('Simplex : '):
+                s = ns.strip()
                 if s:
-                    name, face_str = (_.strip() for _ in s.split('Faces : '))
+                    name, face_str = (nf.strip() for nf in s.split('Faces : '))
                     face_str = face_str.strip('()')
                     face_str = face_str.split('<AbSm ')
                     faces = []

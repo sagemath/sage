@@ -312,11 +312,11 @@ def WordPaths(alphabet, steps=None):
         sage: WordPaths(range(5))
         Traceback (most recent call last):
         ...
-        TypeError: Unable to make a class WordPaths from {0, 1, 2, 3, 4}
+        TypeError: unable to make a class WordPaths from {0, 1, 2, 3, 4}
         sage: WordPaths('abAB', steps='square_gridd')
         Traceback (most recent call last):
         ...
-        TypeError: Unknown type of steps : square_gridd
+        TypeError: unknown type of steps : square_gridd
     """
     # Construction of the alphabet
     alphabet = build_alphabet(alphabet)
@@ -330,26 +330,25 @@ def WordPaths(alphabet, steps=None):
         elif alphabet.cardinality() == 6:
             steps = 'hexagonal_grid'
         else:
-            raise TypeError("Unable to make a class WordPaths from %s" % alphabet)
+            raise TypeError("unable to make a class WordPaths from %s" % alphabet)
 
     # Return the class of WordPaths according to the given type of paths
     if isinstance(steps, str):
         if steps in ('square_grid', 'square'):
             return WordPaths_square_grid(alphabet=alphabet)
-        elif steps in ('triangle_grid', 'triangle'):
+        if steps in ('triangle_grid', 'triangle'):
             return WordPaths_triangle_grid(alphabet=alphabet)
-        elif steps in ('hexagonal_grid', 'hexagon'):
+        if steps in ('hexagonal_grid', 'hexagon'):
             return WordPaths_hexagonal_grid(alphabet=alphabet)
-        elif steps in ('cube_grid', 'cube'):
+        if steps in ('cube_grid', 'cube'):
             return WordPaths_cube_grid(alphabet=alphabet)
-        elif steps in ('north_east', 'ne', 'NE'):
+        if steps in ('north_east', 'ne', 'NE'):
             return WordPaths_north_east(alphabet=alphabet)
-        elif steps == 'dyck':
+        if steps == 'dyck':
             return WordPaths_dyck(alphabet=alphabet)
-        else:
-            raise TypeError("Unknown type of steps : %s" % steps)
-    else:
-        return WordPaths_all(alphabet=alphabet, steps=steps)
+        raise TypeError(f"unknown type of steps : {steps}")
+
+    return WordPaths_all(alphabet=alphabet, steps=steps)
 
 
 #######################################################################

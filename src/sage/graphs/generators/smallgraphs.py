@@ -3285,7 +3285,7 @@ def HoffmanSingletonGraph():
         5
         sage: HS.diameter()
         2
-        sage: HS.num_verts()
+        sage: HS.n_vertices()
         50
 
     Note that you get a different layout each time you create the graph.  ::
@@ -4189,6 +4189,7 @@ def PetersenGraph():
     from sage.graphs.generators.families import GeneralizedPetersenGraph
     P = GeneralizedPetersenGraph(5, 2)
     P.name("Petersen graph")
+    P.is_projective_planar.set_cache(True)
     return P
 
 

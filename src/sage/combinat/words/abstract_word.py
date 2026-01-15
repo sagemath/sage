@@ -1617,9 +1617,9 @@ class Word_class(SageObject):
             [0, 2, 8]
         """
         if fact.is_empty():
-            raise NotImplementedError("The factor must be non empty")
+            raise NotImplementedError("the factor must be non empty")
         if not fact.is_finite():
-            raise ValueError("The factor must be finite")
+            raise ValueError("the factor must be finite")
         p = self.first_occurrence(fact, start=0)
         while p is not None:
             yield p

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Finite lattice posets
 """
@@ -10,6 +9,8 @@ Finite lattice posets
 # *****************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
+from sage.categories.lattice_posets import LatticePosets
+from sage.misc.cachefunc import cached_method
 
 
 class FiniteLatticePosets(CategoryWithAxiom):
@@ -22,7 +23,9 @@ class FiniteLatticePosets(CategoryWithAxiom):
         sage: FiniteLatticePosets()
         Category of finite lattice posets
         sage: FiniteLatticePosets().super_categories()
-        [Category of lattice posets, Category of finite posets]
+        [Category of lattice posets,
+         Category of finite posets,
+         Category of bounded posets]
         sage: FiniteLatticePosets().example()
         NotImplemented
 
@@ -38,6 +41,19 @@ class FiniteLatticePosets(CategoryWithAxiom):
         True
         sage: TestSuite(C).run()
     """
+    @cached_method
+    def extra_super_categories(self):
+        r"""
+        Implement the fact that a finite lattice is a bounded poset.
+
+        EXAMPLES::
+
+            sage: FiniteLatticePosets().super_categories()
+            [Category of lattice posets,
+             Category of finite posets,
+             Category of bounded posets]
+        """
+        return [LatticePosets().Bounded()]
 
     class ParentMethods:
 

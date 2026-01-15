@@ -23,7 +23,6 @@ AUTHORS:
 from copy import copy
 from pathlib import Path
 import pickle
-from typing import Any
 from collections.abc import Iterator
 
 
@@ -34,10 +33,11 @@ from sage.combinat.combination import Combinations
 from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMutationType
 
 
-def is_mutation_finite(M, nr_of_checks=None) -> tuple[bool, Any]:
+def is_mutation_finite(M, nr_of_checks=None) -> tuple[bool, list[int] | None]:
     r"""
-    Use a non-deterministic method by random mutations in various
-    directions. Can result in a wrong answer.
+    Use a non-deterministic method by random mutations in various directions.
+
+    This can result in a wrong answer.
 
     .. WARNING::
 
@@ -50,7 +50,8 @@ def is_mutation_finite(M, nr_of_checks=None) -> tuple[bool, Any]:
 
     ALGORITHM:
 
-    A quiver is mutation infinite if and only if every edge label (a, -b) satisfy a*b > 4.
+    A quiver is mutation infinite if and only if every edge label (a, -b)
+    satisfy a*b > 4.
     Thus, we apply random mutations in random directions
 
     EXAMPLES::
@@ -342,11 +343,17 @@ def _connected_mutation_type(dg):
     n = dg.order()
     edges = dg.edges(sort=True)
     vertices = list(dg)
-    # initializing lists of the edges with labels (2, -1) or (1, -2); (4, -1) or (1, -4); or (2, -2), respectively
+    # initializing lists of the edges with labels (2, -1) or (1, -2);
+    # (4, -1) or (1, -4); or (2, -2), respectively
     exc_labels = []
     exc_labels41 = []
     double_edges = []
     # letter = None
+
+    # some short-circuits for rank 2
+    if n == 2 and len(edges) == 1:
+        a, b = sorted(dg.edge_labels()[0])
+        return QuiverMutationType('R2', (-a, b))
 
     # replacing higher labels by multiple edges.  Multiple edges and acyclic is a sign that quiver is infinite mutation type with the exception of A_tilde where there might be one multiple edge with multiplicity 2.  Multiple edges is at least a sign that the quiver is of 'undetermined finite mutation type'.
     dg.allow_multiple_edges(True)
@@ -1250,30 +1257,30 @@ def load_data(n: int, user=True) -> dict:
     We test data from the ``database_mutation_class`` optional package::
 
         sage: load_data(2, user=False)      # optional - database_mutation_class
-        {('G', 2): [('AO', (((0, 1), (1, -3)), )), ('AO', (((0, 1), (3, -1)), ))]}
+        {('G', 2): [('AO', (((0, 1), (1, -3)),)), ('AO', (((0, 1), (3, -1)),))]}
         sage: D = load_data(3, user=False)  # optional - database_mutation_class
         sage: sorted(D.items())             # optional - database_mutation_class
         [(('G', 2, -1),
-          [('BH?', (((1, 2), (1, -3)), )),
-           ('BGO', (((2, 1), (3, -1)), )),
-           ('BW?', (((0, 1), (3, -1)), )),
-           ('BP?', (((0, 1), (1, -3)), )),
+          [('BH?', (((1, 2), (1, -3)),)),
+           ('BGO', (((2, 1), (3, -1)),)),
+           ('BW?', (((0, 1), (3, -1)),)),
+           ('BP?', (((0, 1), (1, -3)),)),
            ('BP_', (((0, 1), (1, -3)), ((2, 0), (3, -1)))),
            ('BP_', (((0, 1), (3, -1)), ((1, 2), (1, -3)), ((2, 0), (2, -2))))]),
          (('G', 2, 1),
-          [('BH?', (((1, 2), (3, -1)), )),
-           ('BGO', (((2, 1), (1, -3)), )),
-           ('BW?', (((0, 1), (1, -3)), )),
-           ('BP?', (((0, 1), (3, -1)), )),
+          [('BH?', (((1, 2), (3, -1)),)),
+           ('BGO', (((2, 1), (1, -3)),)),
+           ('BW?', (((0, 1), (1, -3)),)),
+           ('BP?', (((0, 1), (3, -1)),)),
            ('BKO', (((1, 0), (3, -1)), ((2, 1), (1, -3)))),
            ('BP_', (((0, 1), (2, -2)), ((1, 2), (1, -3)), ((2, 0), (3, -1))))])]
     """
-    from sage.env import DOT_SAGE, SAGE_SHARE
+    from sage.env import DOT_SAGE, sage_data_paths
 
     # we check
     # - if the data is stored by the user, and if this is not the case
     # - if the data is stored by the optional package install
-    paths = [Path(SAGE_SHARE)]
+    paths = [Path(path) for path in sage_data_paths()]
     if user:
         paths.append(Path(DOT_SAGE))
     data = {}

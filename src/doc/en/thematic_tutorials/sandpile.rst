@@ -4365,7 +4365,7 @@ EXAMPLES::
     {0: 2, 1: 3, 2: 1, 3: 2}
     sage: n(mean([D.simulate_threshold().deg() for _ in range(10)]))  # random
     7.10000000000000
-    sage: n(s.stationary_density()*s.num_verts())
+    sage: n(s.stationary_density()*s.n_vertices())
     6.93750000000000
 
 .. NOTE::

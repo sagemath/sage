@@ -44,53 +44,50 @@ Pickling test::
 # ****************************************************************************
 from operator import itemgetter
 
-from sage.arith.misc import (hilbert_conductor_inverse,
-                             hilbert_symbol,
-                             gcd,
-                             kronecker as kronecker_symbol,
-                             prime_divisors,
-                             valuation)
-from sage.rings.real_mpfr import RR
-from sage.rings.integer import Integer
-from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.rings.ideal import Ideal_fractional
-from sage.rings.rational_field import RationalField, QQ
-from sage.rings.infinity import infinity
-from sage.rings.number_field.number_field_base import NumberField
-from sage.rings.qqbar import AA
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.polynomial_ring import polygen
-from sage.rings.power_series_ring import PowerSeriesRing
-from sage.structure.category_object import normalize_names
-from sage.structure.parent import Parent
-from sage.matrix.matrix_space import MatrixSpace
+from sage.algebras.quatalg import quaternion_algebra_cython
+from sage.algebras.quatalg.quaternion_algebra_element import (
+    QuaternionAlgebraElement_abstract,
+    QuaternionAlgebraElement_generic,
+    QuaternionAlgebraElement_number_field,
+    QuaternionAlgebraElement_rational_field,
+)
+from sage.arith.misc import (
+    gcd,
+    hilbert_conductor_inverse,
+    hilbert_symbol,
+    prime_divisors,
+    valuation,
+)
+from sage.arith.misc import kronecker as kronecker_symbol
+from sage.categories.algebras import Algebras
+from sage.categories.number_fields import NumberFields
+from sage.combinat.words.word import Word
 from sage.matrix.constructor import diagonal_matrix, matrix
-from sage.structure.sequence import Sequence
-from sage.structure.element import RingElement
-from sage.structure.factory import UniqueFactory
+from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.cachefunc import cached_method
+from sage.misc.functional import is_odd
+from sage.modular.modsym.p1list import P1List
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
 from sage.quadratic_forms.quadratic_form import QuadraticForm
-
-
-from .quaternion_algebra_element import (
-    QuaternionAlgebraElement_abstract,
-    QuaternionAlgebraElement_generic,
-    QuaternionAlgebraElement_rational_field,
-    QuaternionAlgebraElement_number_field)
-from . import quaternion_algebra_cython
-
-from sage.modular.modsym.p1list import P1List
-
-from sage.misc.cachefunc import cached_method
-from sage.misc.functional import is_odd
-
-from sage.categories.algebras import Algebras
-from sage.categories.number_fields import NumberFields
-
+from sage.rings.finite_rings.finite_field_constructor import GF
+from sage.rings.ideal import Ideal_fractional
+from sage.rings.infinity import infinity
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field_base import NumberField
+from sage.rings.polynomial.polynomial_ring import polygen
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.qqbar import AA
+from sage.rings.rational_field import QQ, RationalField
+from sage.rings.real_mpfr import RR
+from sage.structure.category_object import normalize_names
+from sage.structure.element import RingElement
+from sage.structure.factory import UniqueFactory
+from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp_method
-from sage.combinat.words.word import Word
+from sage.structure.sequence import Sequence
 
 ########################################################
 # Constructor
@@ -826,7 +823,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         sage: QuaternionAlgebra(QQ, -7, -21)  # indirect doctest
         Quaternion Algebra (-7, -21) with base ring Rational Field
     """
-    def __init__(self, base_ring, a, b, names='i,j,k'):
+    def __init__(self, base_ring, a, b, names='i,j,k') -> None:
         """
         Create the quaternion algebra with `i^2 = a`, `j^2 = b`, and
         `ij = -ji = k`.
@@ -993,7 +990,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             ....:           (-511, 608), (493, 880), (105, -709), (-213, 530),
             ....:           (97, 745)]
             sage: all(QuaternionAlgebra(a, b).maximal_order().is_maximal()
-            ....:     for (a, b) in invars)
+            ....:     for a, b in invars)
             True
         """
         if self.base_ring() != QQ:
@@ -1074,7 +1071,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
                 e_n = []
                 x_rows = A.solve_left(matrix([V(vec.coefficient_tuple())
-                                              for (vec, val) in f]),
+                                              for vec, val in f]),
                                       check=False).rows()
                 denoms = [x.denominator() for x in x_rows]
                 for i in range(4):
@@ -1202,7 +1199,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         fact = M1.factor()
         B = O.basis()
 
-        for (p, r) in fact:
+        for p, r in fact:
             a = int(-p) // 2
             for v in GF(p)**4:
                 x = sum([int(v[i] + a) * B[i] for i in range(4)])
@@ -1237,7 +1234,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         """
         return self._a, self._b
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Compare ``self`` and ``other``.
 
@@ -1253,7 +1250,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         return (self.base_ring() == other.base_ring() and
                 (self._a, self._b) == (other._a, other._b))
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Compare ``self`` and ``other``.
 
@@ -1266,7 +1263,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         """
         return not self.__eq__(other)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Compute the hash of ``self``.
 
@@ -1988,7 +1985,7 @@ class QuaternionOrder(Parent):
         sage: type(QuaternionAlgebra(-1,-7).maximal_order())
         <class 'sage.algebras.quatalg.quaternion_algebra.QuaternionOrder_with_category'>
     """
-    def __init__(self, A, basis, check=True):
+    def __init__(self, A, basis, check=True) -> None:
         """
         INPUT:
 
@@ -2189,7 +2186,7 @@ class QuaternionOrder(Parent):
         """
         return self.__basis[n]
 
-    def __richcmp__(self, other, op):
+    def __richcmp__(self, other, op) -> bool:
         """
         Compare this quaternion order to ``other``.
 
@@ -2237,12 +2234,12 @@ class QuaternionOrder(Parent):
             sage: R >= R
             True
         """
-        from sage.structure.richcmp import richcmp, op_NE
+        from sage.structure.richcmp import op_NE, richcmp
         if not isinstance(other, QuaternionOrder):
             return op == op_NE
         return richcmp(self.unit_ideal(), other.unit_ideal(), op)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Compute the hash of ``self``.
 
@@ -3016,7 +3013,8 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
     - ``check`` -- boolean (default: ``True``); if ``False``, do no type
       checking.
     """
-    def __init__(self, Q, basis, left_order=None, right_order=None, check=True):
+    def __init__(self, Q, basis, left_order=None,
+                 right_order=None, check=True) -> None:
         """
         EXAMPLES::
 
@@ -3270,7 +3268,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             self.__right_order = self._compute_order(side='right')
         return self.__right_order
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return string representation of this quaternion fractional ideal.
 
@@ -3364,7 +3362,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         """
         return self.free_module().__richcmp__(right.free_module(), op)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of ``self``.
 
@@ -4168,7 +4166,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         # find an element of minimal norm in self; see [Piz1980]_, Corollary 1.20.
         return True, self.minimal_element()
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return whether ``x`` is in ``self``.
 
@@ -4587,10 +4585,9 @@ def normalize_basis_at_p(e, p, B=QuaternionAlgebraElement_abstract.pair):
         sage: e = [A(1), k, j, 1/2 + 1/2*i + 1/2*j + 1/2*k]
         sage: e_norm = normalize_basis_at_p(e, 2)
         sage: V = QQ**4
-        sage: V.span([V(x.coefficient_tuple()) for (x,_) in e_norm]).dimension()
+        sage: V.span([V(x.coefficient_tuple()) for x, _ in e_norm]).dimension()
         4
     """
-
     N = len(e)
     if N == 0:
         return []

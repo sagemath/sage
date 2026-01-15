@@ -124,7 +124,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         True
     """
 
-    def __init__(self, gen, category):
+    def __init__(self, gen, category) -> None:
         """
         Initialize ``self``.
 
@@ -201,15 +201,15 @@ class DrinfeldModule_finite(DrinfeldModule):
         drin_coeffs = self.coefficients(sparse=False)
         poly_K = PolynomialRing(K, name=str(A.gen()))
         matrix_poly_K = MatrixSpace(poly_K, r, r)
-        mu_coeffs = ((poly_K.gen() - drin_coeffs[0])**(n+1)) \
+        mu_coeffs = ((poly_K.gen() - drin_coeffs[0])**(n + 1)) \
                     .coefficients(sparse=False)
 
         def companion(order):
             # + [1] is required to satisfy formatting for companion matrix
-            M = matrix_poly_K(companion_matrix([(drin_coeffs[i]/drin_coeffs[r])
-                               .frobenius(qdeg*order)
+            M = matrix_poly_K(companion_matrix([(drin_coeffs[i] / drin_coeffs[r])
+                               .frobenius(qdeg * order)
                                for i in range(r)] + [1], format='top'))
-            M[0, r-1] += poly_K.gen() / drin_coeffs[r].frobenius(qdeg*order)
+            M[0, r - 1] += poly_K.gen() / drin_coeffs[r].frobenius(qdeg * order)
             return M
 
         companion_initial = prod([companion(i) for i in range(nrem, 0, -1)])
@@ -218,12 +218,12 @@ class DrinfeldModule_finite(DrinfeldModule):
         reduced_companions = []
         for k in range(nquo - 1, 0, -1):
             M = Matrix(poly_K, r, r)
-            modulus = poly_K([c.frobenius(qdeg*(-k*nstar % n))
+            modulus = poly_K([c.frobenius(qdeg * (-k * nstar % n))
                                                 for c in mu_coeffs])
             for i, row in enumerate(companion_step):
                 for j, entry in enumerate(row):
                     reduction = entry % modulus
-                    M[i, j] = poly_K([c.frobenius(qdeg*(k*nstar))
+                    M[i, j] = poly_K([c.frobenius(qdeg * (k * nstar))
                                      for c in reduction
                                               .coefficients(sparse=False)])
             reduced_companions.append(M)
@@ -491,9 +491,9 @@ class DrinfeldModule_finite(DrinfeldModule):
         n = self._base_degree_over_constants
         r = self.rank()
         lc = chi[0][r]
-        coeffs = [A([K(chi[i][j]/lc).in_base()
-                     for i in range((r-j)*n // r + 1)])
-                  for j in range(r+1)]
+        coeffs = [A([K(chi[i][j] / lc).in_base()
+                     for i in range((r - j) * n // r + 1)])
+                  for j in range(r + 1)]
         return PolynomialRing(A, name='X')(coeffs)
 
     def _frobenius_charpoly_crystalline(self):
@@ -613,10 +613,10 @@ class DrinfeldModule_finite(DrinfeldModule):
         # linear system. The system is prepared such that the solution
         # vector has the form [a_0, a_1, ... a_{r-1}]^T with each a_i
         # corresponding to a block of length (n*(r - i))//r + 1
-        shifts = [(n*(r - i))//r + 1 for i in range(r)]
-        rows, cols = n*r + 1, sum(shifts)
+        shifts = [(n * (r - i)) // r + 1 for i in range(r)]
+        rows, cols = n * r + 1, sum(shifts)
         block_shifts = [0]
-        for i in range(r-1):
+        for i in range(r - 1):
             block_shifts.append(block_shifts[-1] + shifts[i])
         # Compute the images \phi_T^i for i = 0 .. n.
         gen_powers = [self(A.gen()**i).coefficients(sparse=False)
@@ -626,7 +626,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         for j in range(r):
             for k in range(shifts[j]):
                 for i in range(len(gen_powers[k])):
-                    sys[i + n*j, block_shifts[j] + k] = gen_powers[k][i]
+                    sys[i + n * j, block_shifts[j] + k] = gen_powers[k][i]
         if sys.right_nullity() != 0:
             raise NotImplementedError("'gekeler' algorithm failed")
         sol = list(sys.solve_right(vec))
@@ -752,9 +752,9 @@ class DrinfeldModule_finite(DrinfeldModule):
         r = self.rank()
         p = self.characteristic()
         norm = K(self.coefficients()[-1]).norm()
-        self._frobenius_norm = (-1) ** (n*r - n - r) \
+        self._frobenius_norm = (-1) ** (n * r - n - r) \
                                * norm**(-1) \
-                               * p ** (n//p.degree())
+                               * p ** (n // p.degree())
         return self._frobenius_norm
 
     def frobenius_trace(self, algorithm=None):
@@ -998,16 +998,16 @@ class DrinfeldModule_finite(DrinfeldModule):
         # Write the system and solve it
         k = deg // r
         A = self._function_ring
-        mat_rows = [[E.zero() for _ in range(k+1)] for _ in range(k+1)]
+        mat_rows = [[E.zero() for _ in range(k + 1)] for _ in range(k + 1)]
         mat_rows[0][0] = E.one()
         phiT = self.gen()
         phiTi = self.ore_polring().one()
-        for i in range(1, k+1):
+        for i in range(1, k + 1):
             phiTi *= phiT
-            for j in range(i+1):
-                mat_rows[j][i] = phiTi[r*j]
+            for j in range(i + 1):
+                mat_rows[j][i] = phiTi[r * j]
         mat = Matrix(mat_rows)
-        vec = vector([ore_pol[r*j] for j in range(k+1)])
+        vec = vector([ore_pol[r * j] for j in range(k + 1)])
         coeffs_K = list(mat.inverse() * vec)
         # Cast the coefficients to Fq
         try:

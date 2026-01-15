@@ -292,7 +292,7 @@ class AlternatingSignMatrix(Element,
         li.reverse()
         return AlternatingSignMatrix(li)
 
-    def inversion_number(self):
+    def number_of_inversions(self):
         r"""
         Return the inversion number of ``self``.
 
@@ -306,16 +306,17 @@ class AlternatingSignMatrix(Element,
         EXAMPLES::
 
             sage: A = AlternatingSignMatrices(3)
-            sage: A([[1, 0, 0],[0, 1, 0],[0, 0, 1]]).inversion_number()
+            sage: A([[1, 0, 0],[0, 1, 0],[0, 0, 1]]).number_of_inversions()
             0
             sage: asm = A([[0, 0, 1],[1, 0, 0],[0, 1, 0]])
-            sage: asm.inversion_number()
+            sage: asm.number_of_inversions()
             2
             sage: asm = A([[0, 1, 0],[1, -1, 1],[0, 1, 0]])
-            sage: asm.inversion_number()
+            sage: asm.number_of_inversions()
             2
             sage: P = Permutations(5)
-            sage: all(p.number_of_inversions()==AlternatingSignMatrix(p.to_matrix()).inversion_number() for p in P)
+            sage: A = AlternatingSignMatrix
+            sage: all(p.number_of_inversions() == A(p.to_matrix()).number_of_inversions() for p in P)
             True
         """
         inversion_num = 0
@@ -326,6 +327,8 @@ class AlternatingSignMatrix(Element,
                 if i > k and j < l:
                     inversion_num += asm_matrix[i][j] * asm_matrix[k][l]
         return inversion_num
+
+    inversion_number = number_of_inversions
 
     @combinatorial_map(name='rotate clockwise')
     def rotate_cw(self):
@@ -870,7 +873,7 @@ class AlternatingSignMatrix(Element,
 
         raise ValueError("unknown algorithm '%s'" % algorithm)
 
-    def number_negative_ones(self):
+    def number_of_negative_ones(self):
         """
         Return the number of entries in ``self`` equal to -1.
 
@@ -878,16 +881,18 @@ class AlternatingSignMatrix(Element,
 
             sage: A = AlternatingSignMatrices(3)
             sage: asm = A([[0,1,0],[1,0,0],[0,0,1]])
-            sage: asm.number_negative_ones()
+            sage: asm.number_of_negative_ones()
             0
             sage: asm = A([[0,1,0],[1,-1,1],[0,1,0]])
-            sage: asm.number_negative_ones()
+            sage: asm.number_of_negative_ones()
             1
         """
         a = self._matrix
         return ZZ((len(a.nonzero_positions()) - a.nrows()) // 2)
 
-    def is_permutation(self):
+    number_negative_ones = number_of_negative_ones
+
+    def is_permutation(self) -> bool:
         """
         Return ``True`` if ``self`` is a permutation matrix
         and ``False`` otherwise.
@@ -902,7 +907,7 @@ class AlternatingSignMatrix(Element,
             sage: asm.is_permutation()
             False
         """
-        return self.number_negative_ones() == 0
+        return self.number_of_negative_ones() == 0
 
     def to_permutation(self):
         """
@@ -1241,7 +1246,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
             [ 0  0  0  1  0  0  0]
             [ 0  1  0  0  0  0  0]
             sage: a = AlternatingSignMatrices(5).random_element()
-            sage: bool(a.number_negative_ones()) or a.is_permutation()
+            sage: bool(a.number_of_negative_ones()) or a.is_permutation()
             True
 
         This is done using a modified version of Propp and Wilson's "coupling

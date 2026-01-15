@@ -475,7 +475,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: v = {A:1}
             Traceback (most recent call last):
             ...
-            TypeError: mutable matrices are unhashable
+            TypeError: ...mutable matrices are unhashable...
 
         If we make A immutable it suddenly is hashable.
 
@@ -497,7 +497,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         self._is_immutable = True
 
-    def is_immutable(self):
+    def is_immutable(self) -> bool:
         """
         Return ``True`` if this matrix is immutable.
 
@@ -515,7 +515,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         return self._is_immutable
 
-    def is_mutable(self):
+    def is_mutable(self) -> bool:
         """
         Return ``True`` if this matrix is mutable.
 
@@ -4136,7 +4136,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     # Predicates
     ###################################################
 
-    def is_symmetric(self):
+    def is_symmetric(self) -> bool:
         """
         Return ``True`` if this is a symmetric matrix.
 
@@ -4316,7 +4316,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         self.cache(key, True)
         return True
 
-    def is_hermitian(self):
+    def is_hermitian(self) -> bool:
         r"""
         Return ``True`` if the matrix is equal to its conjugate-transpose.
 
@@ -4393,7 +4393,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         return self._is_hermitian(skew=False, tolerance=0)
 
-    def is_skew_hermitian(self):
+    def is_skew_hermitian(self) -> bool:
         r"""
         Return ``True`` if the matrix is equal to the negative of its
         conjugate transpose.
@@ -4452,7 +4452,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         return self._is_hermitian(skew=True, tolerance=0)
 
-    def is_skew_symmetric(self):
+    def is_skew_symmetric(self) -> bool:
         """
         Return ``True`` if ``self`` is a skew-symmetric matrix.
 
@@ -4500,7 +4500,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                     return False
         return True
 
-    def is_alternating(self):
+    def is_alternating(self) -> bool:
         """
         Return ``True`` if ``self`` is an alternating matrix.
 
@@ -4656,7 +4656,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             raise ValueError("The matrix is not a square matrix")
         return self._check_symmetrizability(return_diag=return_diag, skew=True, positive=positive)
 
-    def is_dense(self):
+    def is_dense(self) -> bool:
         """
         Return ``True`` if this is a dense matrix.
 
@@ -4672,7 +4672,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         return self.is_dense_c()
 
-    def is_sparse(self):
+    def is_sparse(self) -> bool:
         """
         Return ``True`` if this is a sparse matrix.
 
@@ -4688,10 +4688,11 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         return self.is_sparse_c()
 
-    def is_square(self):
+    def is_square(self) -> bool:
         """
-        Return ``True`` precisely if this matrix is square, i.e., has the same
-        number of rows and columns.
+        Return ``True`` precisely if this matrix is square.
+
+        This means that it has the same number of rows and columns.
 
         EXAMPLES::
 
@@ -4702,7 +4703,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         return self._nrows == self._ncols
 
-    def is_invertible(self):
+    def is_invertible(self) -> bool:
         r"""
         Return ``True`` if this matrix is invertible.
 
@@ -4754,7 +4755,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
     is_unit = is_invertible
 
-    def is_singular(self):
+    def is_singular(self) -> bool:
         r"""
         Return ``True`` if ``self`` is singular.
 

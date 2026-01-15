@@ -287,7 +287,8 @@ rpy2_feature = PythonModule('rpy2', spkg='rpy2', type='standard')
 
 lazy_import("rpy2", "robjects", feature=rpy2_feature)
 lazy_import("rpy2.robjects", "packages", "rpy2_packages", feature=rpy2_feature)
-lazy_import("rpy2.robjects.conversion", ["localconverter", "Converter"], feature=rpy2_feature)
+lazy_import("rpy2.robjects.conversion", ["localconverter", "Converter"],
+            feature=rpy2_feature)
 
 # for help page fetching
 lazy_import("rpy2.robjects.help", "Package", feature=rpy2_feature)
@@ -378,8 +379,8 @@ def _setup_r_to_sage_converter():
     """
     from rpy2.rinterface import FloatSexpVector, ListSexpVector, SexpVector
 
-    # convert rpy2's representation of r objects to the one sage expects (as defined by the old
-    # expect interface)
+    # convert rpy2's representation of r objects to the one sage
+    # expects (as defined by the old expect interface)
     cv = Converter('r to sage converter')
 
     # support rpy version 2 and 3
@@ -2002,32 +2003,6 @@ class RFunction(InterfaceFunction):
             [1] 3
         """
         return self._parent.function_call(self._name, args=list(args), kwds=kwds)
-
-
-def is_RElement(x):
-    """
-    Return ``True`` if x is an element in an R interface.
-
-    INPUT:
-
-    - ``x`` -- object
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.r import is_RElement
-        sage: is_RElement(2)
-        doctest:...: DeprecationWarning: the function is_RElement is deprecated; use isinstance(x, sage.interfaces.abc.RElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: is_RElement(r(2))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_RElement is deprecated; use isinstance(x, sage.interfaces.abc.RElement) instead")
-
-    return isinstance(x, RElement)
 
 
 # An instance of R

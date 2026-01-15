@@ -13,7 +13,8 @@ AUTHORS:
 - William Stein (2006-03-01): got rid of infinite loop on startup if
   client system missing
 
-- Felix Lawrence (2009-08-21): edited ._sage_() to support lists and float exponents in foreign notation.
+- Felix Lawrence (2009-08-21): edited ._sage_() to support lists
+  and float exponents in foreign notation.
 
 - Simon King (2010-09-25): Expect._local_tmpfile() depends on
   Expect.pid() and is cached; Expect.quit() clears that cache,
@@ -41,14 +42,13 @@ AUTHORS:
 
 import operator
 
-from sage.structure.sage_object import SageObject
-from sage.structure.parent_base import ParentWithBase
-from sage.structure.element import Element, parent
-from sage.structure.richcmp import rich_to_bool
-
 import sage.misc.sage_eval
 from sage.misc.fast_methods import WithEqualityById
 from sage.misc.instancedoc import instancedoc
+from sage.structure.element import Element, parent
+from sage.structure.parent_base import ParentWithBase
+from sage.structure.richcmp import rich_to_bool
+from sage.structure.sage_object import SageObject
 
 
 class AsciiArtString(str):
@@ -73,15 +73,9 @@ class Interface(WithEqualityById, ParentWithBase):
 
         EXAMPLES::
 
-            sage: Maxima() == maxima
-            False
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima == maxima
             True
-
-            sage: Maxima() != maxima
-            True
-            sage: maxima != maxima
-            False
         """
         self.__name = name
         self.__coerce_name = '_' + name.lower() + '_'
@@ -277,6 +271,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
             sage: giac(True)  # needs giac
             true
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima(True)
             true
         """
@@ -607,6 +602,7 @@ class Interface(WithEqualityById, ParentWithBase):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima.quad_qags(x, x, 0, 1, epsrel=1e-4)
             [0.5,5.5511151231257...e-15,21,0]
             sage: maxima.function_call('quad_qags', [x, x, 0, 1], {'epsrel':'1e-4'})
@@ -625,6 +621,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima._function_call_string('diff', ['f(x)', 'x'], [])
             'diff(f(x),x)'
         """
@@ -714,24 +711,6 @@ class InterfaceFunctionElement(SageObject):
         return M.help(self._name)
 
 
-def is_InterfaceElement(x):
-    """
-    Return ``True`` if ``x`` is of type :class:`InterfaceElement`.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.interface import is_InterfaceElement
-        sage: is_InterfaceElement(2)
-        doctest:...: DeprecationWarning: the function is_InterfaceElement is deprecated; use isinstance(x, sage.interfaces.abc.InterfaceElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_InterfaceElement is deprecated; use isinstance(x, sage.interfaces.abc.InterfaceElement) instead")
-
-    return isinstance(x, InterfaceElement)
-
-
 @instancedoc
 class InterfaceElement(Element):
     """
@@ -791,7 +770,7 @@ class InterfaceElement(Element):
         return len(self.sage())
 
     def __reduce__(self):
-        """
+        r"""
         The default linearisation is to return ``self``'s parent,
         which will then get the items returned by :meth:`_reduce`
         as arguments to reconstruct the element.
@@ -837,15 +816,17 @@ class InterfaceElement(Element):
             [1] "abc"
             sage: loads(dumps(r([1,2,3])))                                        # optional - rpy2
             [1] 1 2 3
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: loads(dumps(maxima([1,2,3])))
             [1,2,3]
 
         Unfortunately, strings in maxima can't be pickled yet::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: loads(dumps(maxima('"abc"')))
             Traceback (most recent call last):
             ...
-            TypeError: unable to make sense of Maxima expression '"abc"' in Sage
+            TypeError: unable to make sense of Maxima expression '\"abc\"' in Sage
         """
         return self.parent(), (self._reduce(),)
 
@@ -1210,6 +1191,7 @@ class InterfaceElement(Element):
             sage: M = matrix(QQ,2,range(4))     # optional - maple
             sage: maple(M)                      # optional - maple
             Matrix(2, 2, [[0,1],[2,3]])
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima('sqrt(2) + 1/3')
             sqrt(2)+1/3
             sage: mupad.package('"MuPAD-Combinat"')  # optional - mupad-Combinat
@@ -1239,6 +1221,7 @@ class InterfaceElement(Element):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: a = maxima(str(2^1000))
             sage: a.get_using_file()
             '10715086071862673209484250490600018105614048117055336074437503883703510511249361224931983788156958581275946729175531468251871452856923140435984577574698574803934567774824230985421074605062371141877954182153046474983581941267398767559165543946077062914571196477686542167660429831652624386837205668069376'
@@ -1256,6 +1239,7 @@ class InterfaceElement(Element):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: m = maxima('2')
             sage: m.hasattr('integral')
             True
@@ -1298,6 +1282,7 @@ class InterfaceElement(Element):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: int(maxima('1'))
             1
             sage: type(_)
@@ -1330,6 +1315,7 @@ class InterfaceElement(Element):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: bool(maxima(0))
             False
             sage: bool(maxima(1))
@@ -1352,6 +1338,7 @@ class InterfaceElement(Element):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: m = maxima('1/2')
             sage: m.__float__()
             0.5
@@ -1364,6 +1351,7 @@ class InterfaceElement(Element):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: m = maxima('1')
             sage: m._integer_()
             1
@@ -1379,6 +1367,7 @@ class InterfaceElement(Element):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: m = maxima('1/2')
             sage: m._rational_()
             1/2
@@ -1478,6 +1467,7 @@ class InterfaceElement(Element):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: f = maxima.cos(x)
             sage: g = maxima.sin(x)
             sage: f + g
@@ -1518,6 +1508,7 @@ class InterfaceElement(Element):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: f = maxima.cos(x)
             sage: g = maxima.sin(x)
             sage: f - g
@@ -1553,6 +1544,7 @@ class InterfaceElement(Element):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: f = maxima('sin(x)')
             sage: -f
             -sin(x)
@@ -1566,6 +1558,7 @@ class InterfaceElement(Element):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: f = maxima.cos(x)
             sage: g = maxima.sin(x)
             sage: f*g
@@ -1599,6 +1592,7 @@ class InterfaceElement(Element):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: f = maxima.cos(x)
             sage: g = maxima.sin(x)
             sage: f/g
@@ -1632,6 +1626,7 @@ class InterfaceElement(Element):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: f = maxima('sin(x)')
             sage: ~f
             1/sin(x)
@@ -1656,6 +1651,7 @@ class InterfaceElement(Element):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: a = maxima('2')
             sage: a^(3/4)
             2^(3/4)
