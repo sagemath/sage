@@ -5832,7 +5832,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     else:
                         im = list(R.gens())[:j] + (N-j)*[0] + [R.gen(i) for i in range(N, R.ngens())]
                     phi = Ra.hom(R.gens()[0:len(Ra.gens())])
-                    # create polymomial that evaluates to the characteristic polynomial
+                    # create polynomial that evaluates to the characteristic polynomial
                     M = t*matrix.identity(R, N)
                     g = (M-jacobian([phi(F.numerator())/phi(F.denominator()) for F in fa], var)).det()
                     # create the terms of the sigma invariants prod(w-lambda)

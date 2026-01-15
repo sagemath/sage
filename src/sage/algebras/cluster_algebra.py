@@ -2628,7 +2628,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         g_vector = tuple(g_vector)
         F = self.theta_basis_F_polynomial(g_vector).subs(self._yhat)
         g_mon = prod(self.ambient().gen(i) ** g_vector[i] for i in range(self.rank()))
-        # we only return the monomal g_mon times the evaluated F-polynomial because this is how
+        # we only return the monomial g_mon times the evaluated F-polynomial because this is how
         # theta basis elements behave.
         return self.retract(g_mon * F)
 
