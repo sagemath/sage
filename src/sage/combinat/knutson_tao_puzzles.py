@@ -1147,11 +1147,10 @@ class PuzzleFilling:
             sage: P.north_west_label_of_kink()
             '1'
         """
-        (i, j) = self.kink_coordinates()
+        i, j = self.kink_coordinates()
         if i == 1:
             return self._nw_labels[j - 1]
-        else:
-            return self._squares[i - 1, j]['south_east']
+        return self._squares[i - 1, j]['south_east']
 
     def north_east_label_of_kink(self):
         r"""
@@ -1164,13 +1163,12 @@ class PuzzleFilling:
             sage: P.north_east_label_of_kink()
             '0'
         """
-        (i, j) = self.kink_coordinates()
+        i, j = self.kink_coordinates()
         if j == self._n:
             return self._ne_labels[i - 1]
-        else:
-            return self._squares[i, j + 1]['south_west']
+        return self._squares[i, j + 1]['south_west']
 
-    def is_completed(self):
+    def is_completed(self) -> bool:
         r"""
         Whether partial puzzle is complete (completely filled) or not.
 
@@ -1190,7 +1188,7 @@ class PuzzleFilling:
         i, _ = self.kink_coordinates()
         return i == self._n + 1
 
-    def south_labels(self):
+    def south_labels(self) -> tuple:
         r"""
         Return south labels for completed puzzle.
 

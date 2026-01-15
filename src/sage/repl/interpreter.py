@@ -679,7 +679,7 @@ def interface_shell_embed(interface):
         sage: shell = interface_shell_embed(gap)                                        # needs sage.libs.gap
         sage: shell.run_cell('List( [1..10], IsPrime )')                                # needs sage.libs.gap
         [ false, true, true, false, true, false, true, false, false, false ]
-        <ExecutionResult object at ..., execution_count=None error_before_exec=None error_in_exec=None ...result=[ false, true, true, false, true, false, true, false, false, false ]>
+        <ExecutionResult object at ..., execution_count=... error_before_exec=None error_in_exec=None ...result=[ false, true, true, false, true, false, true, false, false, false ]>
     """
     cfg = sage_ipython_config.copy()
     ipshell = InteractiveShellEmbed(config=cfg,

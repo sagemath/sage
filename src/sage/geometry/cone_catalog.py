@@ -785,7 +785,7 @@ def schur(ambient_dim=None, lattice=None):
         True
 
     The Schur cone induces the majorization preordering on the
-    downard-monotone cone, as in Iusem and Seeger's [IS2005]_ Example
+    downward-monotone cone, as in Iusem and Seeger's [IS2005]_ Example
     7.3 or Niezgoda's [Niez1998]_ Example 2.2::
 
         sage: ambient_dim = ZZ.random_element(10)
