@@ -939,6 +939,19 @@ cdef class Matrix(Matrix1):
                     return (K ** self.ncols())(ret)
             raise TypeError("base ring must be an integral domain or a ring of integers mod n")
 
+        pid = False
+        try:
+            pid = P.is_pid()
+        except Exception:
+            pid = False
+        if (
+            P.base_ring() is ZZ
+            and hasattr(P, "basis")
+            and not pid
+            and not extend
+        ):
+            return self._solve_right_finite_z(B)
+
         C = B.column() if b_is_vec else B
 
         if P not in _Fields and not extend:
