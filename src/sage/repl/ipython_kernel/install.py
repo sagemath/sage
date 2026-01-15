@@ -20,7 +20,6 @@ import warnings
 from sage.env import (
     SAGE_DOC,
     SAGE_EXTCODE,
-    SAGE_VENV,
     SAGE_VERSION,
 )
 
@@ -261,8 +260,8 @@ class SageKernelSpec:
                           'check your Jupyter configuration '
                           '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html).')
         else:
-            import sys
             import shutil
+            import sys
             from pathlib import Path
             kernel_executable = shutil.which(spec.argv[0])
             if not kernel_executable:

@@ -263,36 +263,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 
-def is_Fan(x) -> bool:
-    r"""
-    Check if ``x`` is a Fan.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: ``True`` if ``x`` is a fan and ``False`` otherwise
-
-    EXAMPLES::
-
-        sage: from sage.geometry.fan import is_Fan
-        sage: is_Fan(1)
-        doctest:warning...
-        DeprecationWarning: The function is_Fan is deprecated; use 'isinstance(..., RationalPolyhedralFan)' instead.
-        See https://github.com/sagemath/sage/issues/38126 for details.
-        False
-        sage: fan = toric_varieties.P2().fan(); fan                                     # needs palp
-        Rational polyhedral fan in 2-d lattice N
-        sage: is_Fan(fan)                                                               # needs palp
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38126,
-                "The function is_Fan is deprecated; "
-                "use 'isinstance(..., RationalPolyhedralFan)' instead.")
-    return isinstance(x, RationalPolyhedralFan)
-
-
 def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
         is_complete=None, virtual_rays=None, discard_faces=False,
         allow_arrangement=False):

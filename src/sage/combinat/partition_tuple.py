@@ -1176,9 +1176,9 @@ class PartitionTuple(CombinatorialElement):
             - :meth:`top_garnir_tableau`
         """
         try:
-            (comp, row,col) = cell
+            comp, row, col = cell
         except ValueError:
-            (comp, row,col) = cell[0]
+            comp, row, col = cell[0]
 
         if comp >= len(self) or row+1 >= len(self[comp]) or col >= self[comp][row+1]:
             raise ValueError('(comp, row+1, col) must be inside the diagram')
@@ -1245,7 +1245,7 @@ class PartitionTuple(CombinatorialElement):
 
             - :meth:`~sage.combinat.partition.Partition_tuple.garnir_tableau`
         """
-        (comp,row,col) = cell
+        comp, row, col = cell
         if comp >= len(self) or row+1 >= len(self[comp]) or col >= self[comp][row+1]:
             raise ValueError('(comp, row+1, col) must be inside the diagram')
 
