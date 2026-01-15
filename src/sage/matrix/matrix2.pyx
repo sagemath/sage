@@ -969,7 +969,7 @@ cdef class Matrix(Matrix1):
                 X = self._solve_right_general(C, check=check)
 
         return X.column(0) if b_is_vec else X
-    
+
     def _solve_right_finite_z(self, B):
         from sage.matrix.constructor import matrix
         from sage.rings.integer_ring import ZZ
@@ -1016,7 +1016,6 @@ cdef class Matrix(Matrix1):
             sol_cols.append(coeff_mat * basis_vec)
 
         return matrix(sol_cols).transpose()
-        
 
     def _solve_right_nonsingular_square(self, B, check_rank=True):
         r"""
