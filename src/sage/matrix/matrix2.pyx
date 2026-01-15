@@ -969,6 +969,54 @@ cdef class Matrix(Matrix1):
                 X = self._solve_right_general(C, check=check)
 
         return X.column(0) if b_is_vec else X
+    
+    def _solve_right_finite_z(self, B):
+        from sage.matrix.constructor import matrix
+        from sage.rings.integer_ring import ZZ
+        from sage.modules.free_module_element import vector
+
+        R = self.base_ring()
+        d = R.degree()
+        nrows = self.nrows()
+        ncols = self.ncols()
+        rhsCols = B.ncols()
+
+        basis = R.basis()
+        basis_vec = vector(R, basis)
+
+        mult_mat = [b.matrix().transpose() for b in basis]
+
+        Aint = matrix(ZZ, nrows * d, ncols * d)
+
+        for i in range(nrows):
+            row_start = i*d
+            for j in range(ncols):
+                col_start = j*d
+                coeffs = self[i, j].vector()
+                block = sum(coeffs[k] * mult_mat[k] for k in range(d))
+                Aint[row_start:row_start+d, col_start:col_start+d] = block
+
+        Bint = matrix(ZZ, nrows * d, rhsCols)
+
+        for i in range(nrows):
+            for j in range(rhsCols):
+                coeffs = B[i, j].vector()
+                Bint[i*d:(i+1)*d, j] = coeffs
+
+        try:
+            Xint = Aint.solve_right(Bint)
+        except ValueError:
+            raise ValueError("matrix equation has no solutions")
+
+        sol_cols = []
+
+        for j in range(Xint.ncols()):
+            col = Xint.column(j)
+            coeff_mat = matrix(ZZ, ncols, d, col)
+            sol_cols.append(coeff_mat * basis_vec)
+
+        return matrix(sol_cols).transpose()
+        
 
     def _solve_right_nonsingular_square(self, B, check_rank=True):
         r"""
