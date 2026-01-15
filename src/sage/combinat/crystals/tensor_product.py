@@ -965,8 +965,9 @@ class CrystalOfTableaux(CrystalOfWords):
                 raise ValueError("shapes should all be partitions")
             S = CrystalOfSpins(cartan_type)
         B = CrystalOfTableaux(cartan_type, shapes=shapes)
-        T = TensorProductOfCrystals(S, B, generators=[[S.module_generators[0],x] for x in B.module_generators])
-        T.rename("The crystal of tableaux of type %s and shape(s) %s" % (cartan_type, list(list(shape) for shape in spin_shapes)))
+        T = TensorProductOfCrystals(S, B, generators=[[S.module_generators[0], x] for x in B.module_generators])
+        T.rename("The crystal of tableaux of type %s and shape(s) %s" %
+                 (cartan_type, [list(shape) for shape in spin_shapes]))
         T.shapes = spin_shapes
         return T
 
@@ -987,13 +988,14 @@ class CrystalOfTableaux(CrystalOfWords):
             sage: T = crystals.Tableaux(['A',3], shape = [2,2])
             sage: TestSuite(T).run()
         """
-#        super().__init__(category = FiniteEnumeratedSets())
+        # super().__init__(category = FiniteEnumeratedSets())
         Parent.__init__(self, category=ClassicalCrystals())
         self.letters = CrystalOfLetters(cartan_type)
         self.shapes = shapes
-        self.module_generators = tuple(self.module_generator(la) for la in shapes)
+        self.module_generators = tuple(self.module_generator(la)
+                                       for la in shapes)
         self.rename("The crystal of tableaux of type %s and shape(s) %s"
-                    % (cartan_type, list(list(shape) for shape in shapes)))
+                    % (cartan_type, [list(shape) for shape in shapes]))
 
     def cartan_type(self):
         """

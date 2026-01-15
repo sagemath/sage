@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 "IntegerFactorization objects"
 
 from sage.structure.factorization import Factorization
@@ -103,3 +102,52 @@ class IntegerFactorization(Factorization):
             self.__x.sort(key=key)
         else:
             self.__x.sort()
+
+    def __floordiv__(self, other):
+        """
+        Return the floor division of the integer represented by ``self``
+        by ``other``.
+
+        EXAMPLES::
+
+            sage: factor(100) // factor(2)
+            2 * 5^2
+            sage: factor(100) // 3
+            3 * 11
+            sage: factor(100) // 0
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: ...
+        """
+
+        if isinstance(other, IntegerFactorization):
+            if self.unit() % other.unit() == 0:
+                self_factors = dict(self)
+                other_factors = dict(other)
+                new_factors = self_factors.copy()
+                possible = True
+
+                for p, e in other_factors.items():
+                    if new_factors.get(p, 0) < e:
+                        possible = False
+                        break
+                    new_factors[p] -= e
+                    if new_factors[p] == 0:
+                        del new_factors[p]
+
+                if possible:
+                    new_unit = self.unit() // other.unit()
+                    return IntegerFactorization(sorted(new_factors.items()), unit=new_unit)
+
+        try:
+            numer = self.value()
+            if hasattr(other, 'value'):
+                denom = other.value()
+            else:
+                denom = other
+
+            quotient = numer // denom
+            return quotient.factor()
+
+        except (TypeError, ValueError, AttributeError):
+            return NotImplemented

@@ -1617,9 +1617,9 @@ class Word_class(SageObject):
             [0, 2, 8]
         """
         if fact.is_empty():
-            raise NotImplementedError("The factor must be non empty")
+            raise NotImplementedError("the factor must be non empty")
         if not fact.is_finite():
-            raise ValueError("The factor must be finite")
+            raise ValueError("the factor must be finite")
         p = self.first_occurrence(fact, start=0)
         while p is not None:
             yield p
@@ -1628,7 +1628,7 @@ class Word_class(SageObject):
     def return_words_iterator(self, fact):
         r"""
         Return an iterator over all the return words of fact in self
-        (without unicity).
+        (without uniqueness).
 
         INPUT:
 
@@ -1674,7 +1674,7 @@ class Word_class(SageObject):
     def complete_return_words_iterator(self, fact):
         r"""
         Return an iterator over all the complete return words of fact in
-        ``self`` (without unicity).
+        ``self`` (without uniqueness).
 
         A complete return words `u` of a factor `v`  is a factor starting
         by the given factor `v` and ending just after the next occurrence

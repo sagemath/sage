@@ -73,7 +73,7 @@ class LLT_class(UniqueRepresentation):
     We require that the parameter `t` must be in the base ring::
 
         sage: Symxt = SymmetricFunctions(QQ['x','t'].fraction_field())
-        sage: (x,t) = Symxt.base_ring().gens()
+        sage: x, t = Symxt.base_ring().gens()
         sage: LLT3x = Symxt.llt(3,t=x)
         sage: LLT3 = Symxt.llt(3)
         sage: HS3x = LLT3x.hspin()

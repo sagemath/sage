@@ -71,18 +71,15 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ##########################################################################
 
-import shutil
 import os
+import shutil
 
-from sage.interfaces.maxima import Maxima
+from sage.calculus.functional import diff
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.interfaces.maxima_lib","maxima")
 from sage.misc.functional import N
 from sage.rings.real_mpfr import RealField
 from sage.structure.element import Expression
-
-from .functional import diff
-
-
-maxima = Maxima()
 
 
 def fricas_desolve(de, dvar, ics, ivar):
@@ -156,8 +153,8 @@ def fricas_desolve_system(des, dvars, ics, ivar):
         [x(t) == cos(t)^2 + sin(t)^2 + 2*sin(t), y(t) == -2*cos(t) + 1]
     """
     from sage.interfaces.fricas import fricas
-    from sage.symbolic.ring import SR
     from sage.symbolic.relation import solve
+    from sage.symbolic.ring import SR
     ops = [dvar.operator() for dvar in dvars]
     y = fricas(des).solve(ops, ivar).sage()
     basis = y["basis"]
@@ -1364,9 +1361,9 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
             return plot_slope_field(de, (ivar, XMIN, XMAX), (dvar, YMIN, YMAX)) + R
 
     if not (isinstance(dvar, Expression) and dvar.is_symbol()):
-        from sage.symbolic.ring import SR
         from sage.calculus.functional import diff
         from sage.symbolic.relation import solve
+        from sage.symbolic.ring import SR
         if isinstance(de, Expression) and de.is_relational():
             de = de.lhs() - de.rhs()
         # consider to add warning if the solution is not unique
@@ -1614,8 +1611,9 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
     """
 
     from scipy.integrate import odeint
-    from sage.ext.fast_eval import fast_float
+
     from sage.calculus.functions import jacobian
+    from sage.ext.fast_eval import fast_float
 
     def desolve_odeint_inner(ivar):
         # one-dimensional systems:
@@ -1623,7 +1621,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
             assert len(des) == 1
             dvar = dvars[0]
             de = des[0]
-            func = fast_float(de, dvar, ivar)
+            func = lambda y, t: fast_float(de, dvar, ivar)(y.item(), t)
             if not compute_jac:
                 Dfun = None
             else:
@@ -1838,9 +1836,9 @@ def desolve_tides_mpfr(f, ics, initial, final, delta, tolrel=1e-16, tolabs=1e-16
     import subprocess
     if subprocess.call('command -v gcc', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
         raise RuntimeError('Unable to run because gcc cannot be found')
-    from sage.interfaces.tides import genfiles_mpfr
-    from sage.functions.other import ceil
     from sage.functions.log import log
+    from sage.functions.other import ceil
+    from sage.interfaces.tides import genfiles_mpfr
     from sage.misc.temporary_file import tmp_dir
     tempdir = tmp_dir()
     intfile = os.path.join(tempdir, 'integrator.c')

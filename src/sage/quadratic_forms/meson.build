@@ -36,9 +36,9 @@ py.install_sources(
 )
 
 extension_data = {
-  'count_local_2' : files('count_local_2.pyx'),
-  'quadratic_form__evaluate' : files('quadratic_form__evaluate.pyx'),
-  'ternary' : files('ternary.pyx'),
+  'count_local_2': files('count_local_2.pyx'),
+  'quadratic_form__evaluate': files('quadratic_form__evaluate.pyx'),
+  'ternary': files('ternary.pyx'),
 }
 
 foreach name, pyx : extension_data

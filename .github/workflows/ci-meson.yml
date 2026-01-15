@@ -28,21 +28,19 @@ jobs:
       fail-fast: false
       matrix:
         os: ['ubuntu', 'macos', 'windows']
-        python: ['3.11', '3.12']
+        python: ['3.12', '3.13']
         tests: ['all']
         editable:
           ${{ fromJson(github.event_name == 'pull_request' && '[false]' || '[false, true]') }}
         include:
+          # Test only changed files
           - os: 'ubuntu'
             python: '3.12'
             tests: 'new'
-          # one additional editable run in pull_request, this has no effect if not pull_request
+          # One additional editable run in pull_request, this has no effect if not pull_request
           - os: 'ubuntu'
             python: '3.12'
             editable: true
-            tests: 'all'
-          - os: windows
-            python: '3.13'
             tests: 'all'
 
     steps:
@@ -70,7 +68,7 @@ jobs:
         with:
           path: ~/conda_pkgs_dir
           key:
-            ${{ runner.os }}-conda-${{ hashFiles('environment-3.11-linux.yml') }}
+            ${{ runner.os }}-conda-${{ hashFiles('environment-3.12-linux.yml') }}
       
       - name: Setup MSVC environment
         if: runner.os == 'windows'

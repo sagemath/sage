@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of ``coxeter3``
 """
@@ -38,7 +37,7 @@ class Coxeter3(JoinFeature):
         """
         JoinFeature.__init__(self, "coxeter3",
                              [PythonModule("sage.libs.coxeter3.coxeter",
-                                           spkg='sagemath_coxeter3')])
+                                           spkg='coxeter3')])
 
 
 def all_features():

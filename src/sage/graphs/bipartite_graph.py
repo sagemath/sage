@@ -460,7 +460,7 @@ class BipartiteGraph(Graph):
                 # Some error checking.
                     if left & right:
                         raise ValueError("the parts are not disjoint")
-                    if len(left) + len(right) != self.num_verts():
+                    if len(left) + len(right) != self.n_vertices():
                         raise ValueError("not all vertices appear in partition")
 
                     if check:
@@ -523,7 +523,7 @@ class BipartiteGraph(Graph):
                 # Some error checking.
                 if left & right:
                     raise ValueError("the parts are not disjoint")
-                if len(left) + len(right) != self.num_verts():
+                if len(left) + len(right) != self.n_vertices():
                     raise ValueError("not all vertices appear in partition")
 
             if isinstance(data, (networkx_MultiGraph, networkx_Graph)):
@@ -608,7 +608,7 @@ class BipartiteGraph(Graph):
             sage: B.__hash__()
             Traceback (most recent call last):
             ...
-            TypeError: unhashable type: 'dict'
+            TypeError: ...unhashable type: 'dict'...
         """
         if self.is_immutable():
             # Determine whether to hash edge labels

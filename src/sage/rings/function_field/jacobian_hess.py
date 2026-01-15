@@ -118,7 +118,7 @@ class JacobianPoint(JacobianPoint_base):
         sage: -(dS.divisor() + ds.divisor()) == pl
         True
     """
-    def __init__(self, parent, dS, ds):
+    def __init__(self, parent, dS, ds) -> None:
         """
         Initialize.
 
@@ -130,12 +130,12 @@ class JacobianPoint(JacobianPoint_base):
             sage: G = C.jacobian(model='hess', base_div=b).group()
             sage: pl = C([1,8,1]).place()
             sage: p = G.point(pl - b)
-            sage: TestSuite(p).run(skip=['_test_category','_test_pickling'])
+            sage: TestSuite(p).run()
         """
         super().__init__(parent)
         self._data = (dS, ds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -152,7 +152,7 @@ class JacobianPoint(JacobianPoint_base):
         divisor = (~dS).divisor() + (~ds).divisor()
         return f'[{divisor}]'
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of ``self``.
 
@@ -445,7 +445,7 @@ class JacobianGroupEmbedding(Map):
           To:   Group of rational points of Jacobian
            over Finite Field in z3 of size 17^3 (Hess model)
     """
-    def __init__(self, base_group, extension_group):
+    def __init__(self, base_group, extension_group) -> None:
         """
         Initialize.
 
@@ -484,7 +484,7 @@ class JacobianGroupEmbedding(Map):
 
         Map.__init__(self, Hom(base_group, extension_group, CommutativeAdditiveGroups()))
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         Return string representation of ``self``.
 
@@ -559,7 +559,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
     Element = JacobianPoint
     _embedding_map_class = JacobianGroupEmbedding
 
-    def __init__(self, parent, function_field, base_div):
+    def __init__(self, parent, function_field, base_div) -> None:
         """
         Initialize.
 
@@ -570,7 +570,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             sage: b = C([0,1,0]).place()
             sage: J = C.jacobian(model='hess', base_div=b)
             sage: G = J.group()
-            sage: TestSuite(G).run(skip=['_test_elements', '_test_pickling'])
+            sage: TestSuite(G).run()
         """
         super().__init__(parent, function_field, base_div)
 
@@ -585,7 +585,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
         self._base_place = None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -865,7 +865,7 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
     """
     Element = JacobianPoint_finite_field
 
-    def __init__(self, parent, function_field, base_div):
+    def __init__(self, parent, function_field, base_div) -> None:
         """
         Initialize.
 
@@ -876,7 +876,7 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
             sage: b = C([0,1,0]).place()
             sage: J = C.jacobian(model='hess', base_div=b)
             sage: G = J.group()
-            sage: TestSuite(G).run(skip=['_test_elements','_test_pickling'])
+            sage: TestSuite(G).run()
         """
         super().__init__(parent, function_field, base_div)
 
@@ -1012,7 +1012,7 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
         Jacobian of Projective Plane Curve over Finite Field of size 17
          defined by x^3 - y^2*z + 5*z^3 (Hess model)
     """
-    def __init__(self, function_field, base_div, **kwds):
+    def __init__(self, function_field, base_div, **kwds) -> None:
         """
         Initialize.
 
@@ -1023,7 +1023,7 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: b = C([0,1,0]).place()
             sage: J = C.jacobian(model='hess', base_div=b)
-            sage: TestSuite(J).run(skip=['_test_elements','_test_pickling'])
+            sage: TestSuite(J).run()
         """
         super().__init__(function_field, base_div, **kwds)
 
@@ -1032,7 +1032,7 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
         else:
             self._group_class = JacobianGroup
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 

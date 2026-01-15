@@ -1,4 +1,4 @@
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Optional, Union
 
 from sage.rings.ring import CommutativeRing
 from sage.rings.integer import Integer
@@ -11,7 +11,7 @@ class IntegerRing_class(CommutativeRing):
     def __init__(self) -> None:
         ...
 
-    def __reduce__(self) -> Tuple:
+    def __reduce__(self) -> tuple:
         ...
 
     def __hash__(self) -> int:
@@ -29,7 +29,7 @@ class IntegerRing_class(CommutativeRing):
     def __getitem__(self, x: Any) -> Any:
         ...
 
-    def range(self, start: Any, end: Optional[Any] = None, step: Optional[Any] = None) -> List[Integer]:
+    def range(self, start: Any, end: Optional[Any] = None, step: Optional[Any] = None) -> list[Integer]:
         ...
 
     def __iter__(self) -> Any:
@@ -44,7 +44,7 @@ class IntegerRing_class(CommutativeRing):
     def _randomize_mpz(self, value: mpz_t, x: Optional[Any], y: Optional[Any], distribution: Optional[str]) -> int:
         ...
 
-    def _is_valid_homomorphism_(self, codomain: Any, im_gens: List[Any], base_map: Optional[Any] = None) -> bool:
+    def _is_valid_homomorphism_(self, codomain: Any, im_gens: list[Any], base_map: Optional[Any] = None) -> bool:
         ...
 
     def _repr_option(self, key: str) -> Any:
@@ -65,7 +65,7 @@ class IntegerRing_class(CommutativeRing):
     def residue_field(self, prime: Any, check: bool = True, names: Optional[Any] = None) -> Any:
         ...
 
-    def gens(self) -> Tuple[Integer]:
+    def gens(self) -> tuple[Integer]:
         ...
 
     def gen(self, n: int = 0) -> Integer:
@@ -98,7 +98,7 @@ class IntegerRing_class(CommutativeRing):
     def parameter(self) -> Integer:
         ...
 
-    def _roots_univariate_polynomial(self, p: Any, ring: Optional[Any] = None, multiplicities: bool = True, algorithm: Optional[str] = None) -> List[Union[Tuple[Integer, int], Integer]]:
+    def _roots_univariate_polynomial(self, p: Any, ring: Optional[Any] = None, multiplicities: bool = True, algorithm: Optional[str] = None) -> list[Union[tuple[Integer, int], Integer]]:
         ...
 
     def _gap_init_(self) -> str:
@@ -134,5 +134,5 @@ Z = ZZ
 def IntegerRing() -> IntegerRing_class:
     ...
 
-def crt_basis(X: List[Integer], xgcd: Optional[Any] = None) -> List[Integer]:
+def crt_basis(X: list[Integer], xgcd: Optional[Any] = None) -> list[Integer]:
     ...

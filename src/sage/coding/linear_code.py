@@ -80,17 +80,17 @@ A ``LinearCode`` is instantiated by providing a generator matrix::
     sage: G = MS([[1,1,1,0,0,0,0], [1,0,0,1,1,0,0], [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
     sage: C = LinearCode(G)
     sage: C.basis()
-    [(1, 1, 1, 0, 0, 0, 0),
-     (1, 0, 0, 1, 1, 0, 0),
-     (0, 1, 0, 1, 0, 1, 0),
-     (1, 1, 0, 1, 0, 0, 1)]
+    [(1, 0, 0, 0, 0, 1, 1),
+     (0, 1, 0, 0, 1, 0, 1),
+     (0, 0, 1, 0, 1, 1, 0),
+     (0, 0, 0, 1, 1, 1, 1)]
     sage: c = C.basis()[1]
     sage: c in C
     True
     sage: c.nonzero_positions()
-    [0, 3, 4]
+    [1, 4, 6]
     sage: c.support()
-    [0, 3, 4]
+    [1, 4, 6]
     sage: c.parent()
     Vector space of dimension 7 over Finite Field of size 2
 
@@ -231,7 +231,6 @@ from sage.rings.rational_field import QQ
 
 lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
 lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
-lazy_import('sage.interfaces.gap', 'gap')
 
 
 # *****************************************************************************
@@ -1440,7 +1439,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0], [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: C._minimum_weight_codeword()                                          # needs sage.libs.gap
-            (0, 1, 0, 1, 0, 1, 0)
+            (0, 0, 1, 0, 1, 1, 0)
 
         TESTS:
 
@@ -2303,39 +2302,56 @@ class LinearCode(AbstractLinearCode):
             sage: C = LinearCode(VS); C
             [3, 1] linear code over GF(2)
 
-        Forbid the zero vector space (see :issue:`17452` and :issue:`6486`)::
+        Constructing a zero code is allowed::
 
             sage: G = matrix(GF(2), [[0,0,0]])
             sage: C = LinearCode(G)
-            Traceback (most recent call last):
-            ...
-            ValueError: this linear code contains no nonzero vector
+            sage: C
+            [3, 0] linear code over GF(2)
+            sage: C.dimension()
+            0
+            sage: C_dual = C.dual_code()
+            sage: C_dual
+            [3, 3] linear code over GF(2)
+            sage: C_dual.dimension() == C_dual.length()
+            True
+            sage: C.encode(C.encoder().message_space().zero_vector())
+            (0, 0, 0)
+            sage: C.decode_to_code(vector(GF(2), [1,0,1]))
+            (0, 0, 0)
         """
 
-        base_ring = generator.base_ring()
+        from sage.matrix.constructor import matrix
+
+        if isinstance(generator, AbstractLinearCode):
+            generator = generator.generator_matrix()
+
+        if hasattr(generator, 'basis'):
+            if generator.dimension() == 0:
+                G = matrix(generator.base_ring(), 0, generator.ambient_space().dimension())
+            else:
+                G = matrix(generator.basis())
+        else:
+            G = generator
+
+        base_ring = G.base_ring()
         if not base_ring.is_field():
             raise ValueError("'generator' must be defined on a field (not a ring)")
 
-        try:
-            basis = None
-            if hasattr(generator, "nrows"):  # generator matrix case
-                if generator.rank() < generator.nrows():
-                    basis = generator.row_space().basis()
-            else:
-                basis = generator.basis()  # vector space etc. case
-            if basis is not None:
-                from sage.matrix.constructor import matrix
-                generator = matrix(base_ring, basis)
-                if generator.nrows() == 0:
-                    raise ValueError("this linear code contains no nonzero vector")
-        except AttributeError:
-            # Assume input is an AbstractLinearCode, extract its generator matrix
-            generator = generator.generator_matrix()
+        if G.is_zero() or G.nrows() == 0:
+            super().__init__(base_ring, G.ncols(), "GeneratorMatrix", "Syndrome")
+            self._dimension = 0
+            self._generator_matrix = matrix(base_ring, 0, self.length())
+            self._minimum_distance = d
+            return
 
-        super().__init__(base_ring, generator.ncols(),
+        G_echelon = G.echelon_form()
+        generator_matrix = G_echelon.matrix_from_rows([i for i, r in enumerate(G_echelon) if not r.is_zero()])
+
+        super().__init__(base_ring, generator_matrix.ncols(),
                          "GeneratorMatrix", "Syndrome")
-        self._generator_matrix = generator
-        self._dimension = generator.rank()
+        self._generator_matrix = generator_matrix
+        self._dimension = self._generator_matrix.rank()
         self._minimum_distance = d
 
     def __hash__(self) -> int:
@@ -2376,6 +2392,59 @@ class LinearCode(AbstractLinearCode):
         return "[%s, %s]\\textnormal{ Linear code over }%s"\
             % (self.length(), self.dimension(), self.base_ring()._latex_())
 
+    def intersection(self, other):
+        """
+        Return the intersection of this linear code with another.
+
+        The intersection of two linear codes C1 and C2 is the set of all
+        codewords that are in both C1 and C2. It is also a linear code.
+
+        This is computed using the identity:
+        C1 ∩ C2 = (C1_dual + C2_dual)_dual
+
+        INPUT:
+        - ``other`` -- a linear code.
+
+        OUTPUT:
+        - a linear code, the intersection of self and other.
+
+        EXAMPLES::
+
+            sage: F = GF(2)
+            sage: G1 = matrix(F, [[1,1,0,0], [0,0,1,1]])
+            sage: C1 = LinearCode(G1)
+            sage: G2 = matrix(F, [[1,0,1,0], [0,1,0,1]])
+            sage: C2 = LinearCode(G2)
+            sage: C_int = C1.intersection(C2)
+            sage: C_int
+            [4, 1] linear code over GF(2)
+            sage: c = vector(F, (1,1,1,1))
+            sage: c in C_int
+            True
+
+        Test intersection with the zero code::
+
+                sage: C_zero = LinearCode(matrix(F, [[0,0,0,0]]))
+                sage: C1.intersection(C_zero)
+                [4, 0] linear code over GF(2)
+        """
+        if not isinstance(other, AbstractLinearCode):
+            raise TypeError("Intersection is only defined between linear codes.")
+        if self.base_field() != other.base_field():
+            raise TypeError("Codes must be over the same base field.")
+        if self.length() != other.length():
+            raise ValueError("Codes must have the same length.")
+
+        C1_dual = self.dual_code()
+        C2_dual = other.dual_code()
+
+        G1d = C1_dual.generator_matrix()
+        G2d = C2_dual.generator_matrix()
+        G_sum = G1d.stack(G2d)
+        sum_of_duals = LinearCode(G_sum)
+
+        return sum_of_duals.dual_code()
+
     def generator_matrix(self, encoder_name=None, **kwargs):
         r"""
         Return a generator matrix of ``self``.
@@ -2384,18 +2453,18 @@ class LinearCode(AbstractLinearCode):
 
         - ``encoder_name`` -- (default: ``None``) name of the encoder which will be
           used to compute the generator matrix. ``self._generator_matrix``
-          will be returned if default value is kept.
+          will be returned if the default value is kept.
 
-        - ``kwargs`` -- all additional arguments are forwarded to the construction of the
-          encoder that is used
+        - ``kwargs`` -- all additional arguments are forwarded to the construction
+          of the encoder that is used.
 
         EXAMPLES::
 
             sage: G = matrix(GF(3),2,[1,-1,1,-1,1,1])
             sage: code = LinearCode(G)
             sage: code.generator_matrix()
-            [1 2 1]
-            [2 1 1]
+            [1 2 0]
+            [0 0 1]
         """
         if encoder_name is None or encoder_name == 'GeneratorMatrix':
             g = self._generator_matrix
@@ -2486,10 +2555,10 @@ class LinearCodeGeneratorMatrixEncoder(Encoder):
             sage: C = LinearCode(G)
             sage: E = codes.encoders.LinearCodeGeneratorMatrixEncoder(C)
             sage: E.generator_matrix()
-            [1 1 1 0 0 0 0]
-            [1 0 0 1 1 0 0]
-            [0 1 0 1 0 1 0]
-            [1 1 0 1 0 0 1]
+            [1 0 0 0 0 1 1]
+            [0 1 0 0 1 0 1]
+            [0 0 1 0 1 1 0]
+            [0 0 0 1 1 1 1]
         """
         g = self.code().generator_matrix()
         g.set_immutable()

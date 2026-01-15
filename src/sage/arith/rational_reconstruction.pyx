@@ -28,7 +28,7 @@ from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.mpq cimport *
 
 
-cdef int mpq_rational_reconstruction(mpq_t answer, mpz_t a, mpz_t m) except -1:
+cdef int mpq_rational_reconstruction(mpq_t answer, mpz_srcptr a, mpz_srcptr m) except -1:
     """
     Set ``answer`` to a rational number which is `a` modulo `m` and
     such that the numerator and denominator of the result is bounded by

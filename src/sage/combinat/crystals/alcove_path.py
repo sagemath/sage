@@ -484,7 +484,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
         """
         return iter(self.value)
 
-    def is_admissible(self):
+    def is_admissible(self) -> bool:
         r"""
         Diagnostic test to check if ``self`` is a valid element of the crystal.
 

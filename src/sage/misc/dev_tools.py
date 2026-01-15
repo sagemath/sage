@@ -165,11 +165,10 @@ def load_submodules(module=None, exclude_pattern=None):
     The second argument allows to exclude a pattern::
 
         sage: sage.misc.dev_tools.load_submodules(sage.geometry, "database$|lattice")
-        load sage.geometry.cone... succeeded
-        load sage.geometry.cone_catalog... succeeded
+        load sage.geometry...
+        ...
         load sage.geometry.fan_isomorphism... succeeded
         ...
-        load sage.geometry.riemannian_manifolds.surface3d_generators... succeeded
 
         sage: sage.misc.dev_tools.load_submodules(sage.geometry)
         load sage.geometry.polyhedron.lattice_euclidean_group_element... succeeded
@@ -275,8 +274,12 @@ def find_objects_from_name(name, module_name=None, include_lazy_imports=False):
     """
     from sage.misc.lazy_import import LazyImport
 
+    # Create a copy to avoid errors if the sys.modules dict changes
+    # while we are iterating over it.
+    mods = sys.modules.copy()
+
     obj = []
-    for smodule_name, smodule in sys.modules.items():
+    for smodule_name, smodule in mods.items():
         if module_name and not smodule_name.startswith(module_name):
             continue
         if hasattr(smodule, '__dict__') and name in smodule.__dict__:

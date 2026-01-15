@@ -49,7 +49,7 @@ class IsogenyClass_EC(SageObject):
         model chosen may change in future.
     """
 
-    def __init__(self, E, label=None, empty=False):
+    def __init__(self, E, label=None, empty=False) -> None:
         r"""
         Over `\QQ` we use curves since minimal models exist and there
         is a canonical choice of one.
@@ -71,7 +71,7 @@ class IsogenyClass_EC(SageObject):
         if not empty:
             self._compute()
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         The number of curves in the class.
 
@@ -135,9 +135,9 @@ class IsogenyClass_EC(SageObject):
         for i, E in enumerate(self.curves):
             if C.is_isomorphic(E):
                 return i
-        raise ValueError("%s is not in isogeny class %s" % (C,self))
+        raise ValueError("%s is not in isogeny class %s" % (C, self))
 
-    def __richcmp__(self, other, op):
+    def __richcmp__(self, other, op) -> bool:
         """
         Compare ``self`` and ``other``.
 
@@ -160,7 +160,7 @@ class IsogenyClass_EC(SageObject):
                            sorted(f.a_invariants() for f in other.curves), op)
         return NotImplemented
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Hash is based on the a-invariants of the sorted list of
         minimal models.
@@ -231,7 +231,7 @@ class IsogenyClass_EC(SageObject):
         else:
             return "Isogeny class of %r" % (self.E)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         INPUT:
 
@@ -593,7 +593,8 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
     """
     Isogeny classes for elliptic curves over number fields.
     """
-    def __init__(self, E, reducible_primes=None, algorithm='Billerey', minimal_models=True):
+    def __init__(self, E, reducible_primes=None,
+                 algorithm='Billerey', minimal_models=True) -> None:
         r"""
         INPUT:
 
@@ -1003,7 +1004,7 @@ class IsogenyClass_EC_Rational(IsogenyClass_EC_NumberField):
     r"""
     Isogeny classes for elliptic curves over `\QQ`.
     """
-    def __init__(self, E, algorithm='sage', label=None, empty=False):
+    def __init__(self, E, algorithm='sage', label=None, empty=False) -> None:
         r"""
         INPUT:
 
@@ -1406,8 +1407,9 @@ def possible_isogeny_degrees(E, algorithm='Billerey', max_l=None,
 
     Over an extension field::
 
+        sage: # long time
         sage: E3 = E.change_ring(CyclotomicField(3))
-        sage: possible_isogeny_degrees(E3)                                              # long time (5s)
+        sage: possible_isogeny_degrees(E3)
         [5]
         sage: [phi.degree() for phi in E3.isogenies_prime_degree()]
         [5, 5]

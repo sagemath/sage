@@ -494,7 +494,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
              1: [x3], 2: [x4], 3: [x1], 4: [x2], 5: [x0]}
             sage: A4.<t1, t2, t3, t4> = OrderedHyperplaneArrangements(QQ)
             sage: H = A4(hyperplane_arrangements.braid(4))
-            sage: H.projective_meridians()
+            sage: H.projective_meridians()  # long time
             {0: [x2^-1*x0^-1*x4^-1*x3^-1*x1^-1], 1: [x3],
              2: [x4], 3: [x0], 4: [x2], 5: [x1]}
 

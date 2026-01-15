@@ -107,6 +107,7 @@ from sage.sets.set import Set_base, Set_boolean_operators, Set_add_sub_operators
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp, richcmp_method
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.symbolic.ring import SR
 
 
 @richcmp_method
@@ -365,12 +366,12 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         if self.is_point():
             return '{' + str(self.lower()) + '}'
         s = '[' if self._lower_closed else '('
-        if self.lower() is minus_infinity:
+        if self.lower() == SR(minus_infinity):
             s += '-oo'
         else:
             s += str(self.lower())
         s += ', '
-        if self.upper() is infinity:
+        if self.upper() == SR(infinity):
             s += '+oo'
         else:
             s += str(self.upper())
@@ -1216,10 +1217,6 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
                     Internal helper function.
                     """
                     oo = infinity
-                    try:
-                        val = val.pyobject()
-                    except AttributeError:
-                        pass
                     val = RLF(val)
                     if op == eq:
                         s = [InternalRealInterval(val, True, val, True)]
@@ -2627,6 +2624,89 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         scan = merge(*[RealSet(real_set)._scan() for real_set in real_set_collection])
         overlap_generator = RealSet._scan_to_intervals(scan, lambda i: i > 1)
         return next(overlap_generator, None) is None
+
+    def simplest_rational(self):
+        """
+        Return the simplest rational in this interval. Given rationals
+        `a / b` and `c / d` (both in lowest terms), the former is simpler if
+        `b<d` or if `b = d` and `|a| < |c|`.
+
+        OUTPUT: :class:`Rational`
+
+        EXAMPLES::
+
+            sage: s=RealSet((1, 2));  s
+            (1, 2)
+            sage: s.simplest_rational()
+            3/2
+            sage: s=RealSet.point(1/2);  s
+            {1/2}
+            sage: s.simplest_rational()
+            1/2
+            sage: s=RealSet(1.5 <= x);  s   # needs sage.symbolic
+            [1.50000000000000, +oo)
+            sage: s.simplest_rational()
+            2
+            sage: s=RealSet.real_line();  s
+            (-oo, +oo)
+            sage: s.simplest_rational()
+            0
+            sage: s=RealSet.point(1/2) + RealSet.point(-1/2);  s
+            {-1/2} ∪ {1/2}
+            sage: s.simplest_rational()
+            1/2
+            sage: s=RealSet(x == pi);  s    # needs sage.symbolic
+            {pi}
+            sage: s.simplest_rational()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError:
+            sage: s=RealSet((0, 1));  s
+            (0, 1)
+            sage: s.simplest_rational()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError:
+            sage: s=RealSet();  s
+            {}
+            sage: s.simplest_rational()
+            Traceback (most recent call last):
+            ...
+            EmptySetError:
+        """
+
+        if self.is_empty():
+            raise EmptySetError
+
+        from sage.rings.real_mpfi import RealIntervalField
+        from sage.rings.rational_field import QQ
+
+        RIF = RealIntervalField()
+        candidates = []
+
+        for interval in self:
+            lower, upper = interval.lower(), interval.upper()
+            # handle one bound as infinity as RIF simplest_rational gives ValueError
+            if interval.contains(0):
+                return QQ(0)
+            if lower == minus_infinity:
+                lower = upper - 2 # to contain at least 1 integer
+            elif upper == infinity:
+                upper = lower + 2 # to contain at least 1 integer
+
+            rs_field = RIF(lower, upper)
+            lo_open = not interval.lower_closed()
+            hi_open = not interval.upper_closed()
+            simplest_rat = rs_field.simplest_rational(low_open=lo_open, high_open=hi_open)
+
+            if not interval.contains(simplest_rat):
+                raise NotImplementedError
+
+            candidates.append(simplest_rat)
+
+        # sort in ascending order of simplicity definition
+        # positive value preferred over negative
+        return min(candidates, key=lambda x: (x.denominator(), x.abs(), -x))
 
     def _sage_input_(self, sib, coerced):
         """

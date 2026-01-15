@@ -2617,7 +2617,7 @@ class MPolynomialIdeal_singular_repr(
             sage: I = Ideal([x^2 - 1, y^2 - 1])                                         # needs sage.rings.finite_rings
             sage: sorted(I.variety(algorithm='msolve',          # optional - msolve, needs sage.rings.finite_rings
             ....:                  proof=False),
-            ....:        key=str)
+            ....:        key=lambda d: str(sorted(d.items())))
             [{y: 1, x: 1},
              {y: 1, x: 536870908},
              {y: 536870908, x: 1},
@@ -2760,7 +2760,35 @@ class MPolynomialIdeal_singular_repr(
             sage: I = Ideal([ x*y - 1, (x-2)^2 + (y-1)^2 - 1])
             sage: len(I.variety())
             4
-        """
+
+        We can compute the variety of an Ideal over a Multivariate Polynomial Ring over a finite field with characteristic `> 2^{29}`, which Singular doesn't support. ::
+
+            sage: p = 626526183415513590854084217045148362725470879166437124330209
+            sage: F = GF(p)
+            sage: R.<x,y,z> = F[]
+            sage: I = Ideal([x^2 - 5*y + z, x*21 + y - z, 20*x + 20*y - 15*z + 20])
+            sage: I.variety()
+            [{z: 475236874226935968499387140880743357810239093941490264140142,
+            y: 303497730986201757454241700121162099180641015844366285478588,
+            x: 366193016391757014347340764061969600539773744194969974791622},
+            {z: 151289309188577622354697076164405004915231785224946860207259,
+            y: 323028452429311833399842516923986263544829863322070838864298,
+            x: 260333167023756576506743452983178762185697134971467149538802}]
+
+        We can compute the variety of an Ideal over a Multivariate Polynomial Ring over a finite field with characteristic `> 2^{29}`, which Singular doesn't support. ::
+
+            sage: set_random_seed(1338)
+            sage: p = random_prime(2**128)
+            sage: F = GF(p)
+            sage: R.<x,y> = F[]
+            sage: pols = R.random_element(2), R.random_element(2)
+            sage: I = Ideal(pols)
+            sage: I.variety()
+            [{y: 34191056801670425306813798231492473135,
+              x: 81420596822501885717789433703045952013},
+             {y: 3395018777162596028775438528622086168,
+              x: 45870466766175542261798731841601367018}]
+"""
 
         def _variety(T, V, v=None):
             """
@@ -2802,10 +2830,14 @@ class MPolynomialIdeal_singular_repr(
         P = self.ring()
         if ring is not None:
             P = P.change_ring(ring)
+        T = None
         try:
-            TI = self.triangular_decomposition('singular:triangLfak')
+            TI = self.triangular_decomposition('singular:triangLfak' if P.characteristic() < 2**29 else 'singular:triangL')
             T = [list(each.gens()) for each in TI]
         except TypeError:  # conversion to Singular not supported
+            pass
+
+        if T is None:
             if self.ring().term_order().is_global():
                 verbose("Warning: falling back to very slow toy implementation.", level=0, caller_name='variety')
                 T = toy_variety.triangular_factorization(self.groebner_basis())
@@ -2996,6 +3028,18 @@ class MPolynomialIdeal_singular_repr(
             (t^11 + t^8 - t^6 - t^5 - t^4 - t^3 - t^2 - t - 1)/(t^2 - 1)
             sage: K.hilbert_series(grading=[2,1])                                       # needs sage.libs.flint
             (2*t^7 - t^6 - t^4 - t^2 - 1)/(t - 1)
+
+        This also works for
+        :class:`~sage.rings.polynomial.plural.NCPolynomialRing_plural`::
+
+            sage: M = matroids.CompleteGraphic(4)
+            sage: OS = M.orlik_solomon_algebra(QQ)
+            sage: A = OS.as_gca()
+            sage: I = A.defining_ideal()
+            sage: HS = I.hilbert_series(); HS
+            6*t^3 + 11*t^2 + 6*t + 1
+            sage: HS.factor()
+            (t + 1) * (2*t + 1) * (3*t + 1)
 
         TESTS::
 
@@ -3581,6 +3625,34 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
         return self.ring().ideal( self.__call_singular('std'), side=self.side())
 #        return self.__call_singular('std')
 
+    def groebner_basis(self):
+        r"""
+        Compute a Gröbner basis of the ideal.
+
+        The Gröbner basis is two-sided if and only if the ideal is two-sided.
+
+        OUTPUT:
+
+        :func:`~sage.rings.polynomial.multi_polynomial_sequence.PolynomialSequence`
+
+        ALGORITHM:
+
+        Uses the :meth:`std` method.
+
+        EXAMPLES::
+
+            sage: # needs sage.combinat sage.modules
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
+            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
+            sage: H.inject_variables()
+            Defining x, y, z
+            sage: I = H.ideal([y^2, x^2, z^2 - H.one()], coerce=False)
+            sage: I.groebner_basis()
+            [z^2 - 1, y*z - y, x*z + x, y^2, 2*x*y - z - 1, x^2]
+        """
+        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+        return PolynomialSequence(self.std())
+
     def elimination_ideal(self, variables):
         r"""
         Return the elimination ideal of this ideal with respect to the
@@ -3817,6 +3889,27 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
         if self.side() == 'twosided':
             warn("The resulting resolution is one-sided (left)!")
         return self.__call_singular('res', length)
+
+    def is_homogeneous(self) -> bool:
+        r"""
+        Return ``True`` if this ideal is spanned by homogeneous
+        polynomials, i.e., if it is a homogeneous ideal.
+
+        EXAMPLES::
+
+            sage: # needs sage.combinat sage.modules
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
+            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
+            sage: H.inject_variables()
+            Defining x, y, z
+            sage: I = H.ideal([y^2, x^2, z^2 - H.one()], coerce=False)
+            sage: I.is_homogeneous()
+            False
+            sage: J = H.ideal([y^2, x^2, z^2 - x*y], coerce=False)
+            sage: J.is_homogeneous()
+            True
+        """
+        return all(f.is_homogeneous() for f in self.gens())
 
 
 @richcmp_method
@@ -5084,7 +5177,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: max(f.degree() for f in I.groebner_basis())
             4
 
-        We increase the number of polynomials and observe a decrease
+        We increase the number of polynomials and observe a decrease of
         the degree of regularity::
 
             sage: for i in range(2 * n):

@@ -170,7 +170,7 @@ AUTHORS:
 #   * pNext and pIter don't need currRing
 #   * p_Normalize apparently needs currRing
 
-from warnings import warn
+from libc.limits cimport INT_MAX
 
 from cpython.object cimport Py_NE
 from cysignals.memory cimport sig_malloc, sig_free
@@ -661,6 +661,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         Coercion from boolean polynomials, also by index::
 
+            sage: # needs sage.rings.polynomial.pbori
             sage: B.<x,y,z> = BooleanPolynomialRing(3)
             sage: P.<x,y,z> = QQ[]
             sage: P(B.gen(0))
@@ -2261,8 +2262,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: (x^2^32) * x^2^32
             Traceback (most recent call last):
             ...
-            OverflowError: Python int too large to convert to C unsigned long  # 32-bit
-            OverflowError: exponent overflow (...)  # 64-bit
+            OverflowError: exponent overflow (...)
         """
         # all currently implemented rings are commutative
         cdef poly *_p
@@ -2386,8 +2386,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: (x+y^2^32)^10
             Traceback (most recent call last):
             ....
-            OverflowError: Python int too large to convert to C unsigned long  # 32-bit
-            OverflowError: exponent overflow (...)  # 64-bit
+            OverflowError: exponent overflow (...)
 
         Test fractional powers (:issue:`22329`)::
 
@@ -2425,6 +2424,78 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             Traceback (most recent call last):
             ...
             NotImplementedError: pow() with a modulus is not implemented for this ring
+
+        Check handling of large exponents (:issue:`40442`).
+        The internal representation of a Singular polynomial supports each exponent
+        up to roughly ``2^(bitness//n_var)`` where ``bitness`` is the number of bits in a word,
+        typically either 32 or 64, and ``n_var`` is the number of variables,
+        typically between 1 and 4.
+        However, the ``pPower`` Singular function requires the exponent to fit in an ``int``.
+        As such, the case of univariate and bivariate polynomial ring on 64-bit machine,
+        where the maximum allowed exponent is larger than ``INT_MAX`` is of main interest::
+
+            sage: P.<x> = PolynomialRing(ZZ, implementation="singular")
+            sage: x^(2^31-1)
+            x^2147483647
+
+            sage: # needs !32_bit
+            sage: P.<x> = PolynomialRing(ZZ, implementation="singular")
+            sage: x^(2^31)
+            x^2147483648
+            sage: x^(2^32-1)
+            x^4294967295
+            sage: x^(2^32)
+            x^4294967296
+            sage: x^(2^63-1)
+            x^9223372036854775807
+            sage: x^(2^63)
+            Traceback (most recent call last):
+            ...
+            OverflowError: exponent overflow (9223372036854775808)
+            sage: x^(2^64-1)
+            Traceback (most recent call last):
+            ...
+            OverflowError: exponent overflow (18446744056529682436)
+            sage: x^(2^64)
+            Traceback (most recent call last):
+            ...
+            OverflowError: exponent overflow (18446744056529682436)
+            sage: P(1)^(2^64)
+            1
+
+            sage: # needs !32_bit
+            sage: P.<x,y> = ZZ[]
+            sage: y^(2^32-1)
+            y^4294967295
+            sage: y^(2^32)
+            Traceback (most recent call last):
+            ...
+            OverflowError: exponent overflow (4294967296)
+            sage: P(1)^(2^32)
+            1
+
+        The following isn't affected by :issue:`40442`, but we test for it anyway::
+
+            sage: P.<x,y,z,t> = ZZ[]
+            sage: y^(2^16-1)
+            y^65535
+            sage: y^(2^16)
+            Traceback (most recent call last):
+            ...
+            OverflowError: exponent overflow (65536)
+
+        The following behaviors are known bugs (Singular complains even though
+        the exponentiation result is perfectly representable), and may be changed any time::
+
+            sage: # needs 32_bit
+            sage: P.<x,y> = ZZ[]
+            sage: P(1)^(2^32)  # known bug
+            ...UserWarning: error in Singular ignored: exponent 2147483647 is too large, max. is 65535...
+
+            sage: # needs !32_bit
+            sage: P.<x,y,z,t> = ZZ[]
+            sage: P(1)^(2^16)  # known bug
+            ...UserWarning: error in Singular ignored: exponent 65536 is too large, max. is 65535...
         """
         if mod is not None:
             raise NotImplementedError(
@@ -2451,6 +2522,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             return self._parent._one_element / (self**(-exp))
         elif exp == 0:
             return self._parent._one_element
+        elif exp > INT_MAX:
+            return (self ** INT_MAX) ** (exp // INT_MAX) * self ** (exp % INT_MAX)
 
         cdef ring *_ring = self._parent_ring
         cdef poly *_p
@@ -4588,6 +4661,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                 sig_off()
             finally:
                 if check_error():
+                    if len(self.variables()) == 1:
+                        return Factorization([(self._parent(p), e) for p, e in self.univariate_polynomial().factor()])
                     raise NotImplementedError("Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
 
             ivv = iv.ivGetVec()
@@ -4609,6 +4684,38 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         find ``s_1,...,s_r`` such that ``g = s_1 f_1 + ... + s_r f_r``.
 
         A :exc:`ValueError` exception is raised if ``g (== self)`` does not belong to ``I``.
+
+        .. WARNING::
+
+            This method is unreliable when the base ring is inexact::
+
+                sage: R.<x> = PolynomialRing(RDF, implementation="singular")
+                sage: g = 5*x^3 + x - 7; m = x^4 - 12*x + 13; R(1).lift((g, m))
+                Traceback (most recent call last):
+                ...
+                ValueError: polynomial is not in the ideal
+                sage: g.inverse_mod(m)
+                Traceback (most recent call last):
+                ...
+                ArithmeticError: element is non-invertible
+                sage: inverse_mod(g, m)
+                Traceback (most recent call last):
+                ...
+                ArithmeticError: element is non-invertible
+
+            While the generic implementation is fine::
+
+                sage: R.<x> = PolynomialRing(RDF)
+                sage: g = 5*x^3 + x - 7; m = x^4 - 12*x + 13; inverse_mod(g, m)  # abs tol 1e-14
+                -0.03196361250430942*x^3 - 0.03832697590106863*x^2 - 0.046305090023464945*x + 0.3464796877258926
+                sage: g.inverse_mod(m)  # abs tol 1e-14
+                -0.03196361250430942*x^3 - 0.03832697590106863*x^2 - 0.046305090023464945*x + 0.3464796877258926
+
+            But this is because of Singular:
+
+            .. code-block:: bash
+
+                Singular -q -c 'ring r = real,(x),lp; poly f = 5*x3 + x - 7; poly g = x4 - 12*x + 13; ideal M = f,g; ideal G = std(M); ideal SM = f; matrix T = lift(G,SM); T; quit;'
 
         INPUT:
 
@@ -4671,6 +4778,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         Ensure interrupt does not make the internal state inconsistent::
 
+            sage: # long time
             sage: R.<x,y> = QQ[]
             sage: n = 17  # chosen so that the computation takes > 1 second but not excessively long.
             ....: # when Singular improves the algorithm or hardware gets faster, increase n.
@@ -4725,9 +4833,10 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             finally:
                 s = check_error()
             if s:
+                msg = "polynomial is not in the ideal"
                 if s != ('2nd module does not lie in the first',):
-                    warn(f'unexpected error from singular: {s}')
-                raise ValueError("polynomial is not in the ideal")
+                    msg += f'; unexpected error from singular: {s}'
+                raise ValueError(msg)
 
             l = [new_MP(parent, pTakeOutComp(&res.m[i], 1))
                  for i in range(IDELEMS(res)) for _ in range(IDELEMS(_I))]

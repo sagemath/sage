@@ -70,37 +70,10 @@ from sage.categories.groups import Groups
 from sage.structure.category_object import normalize_names
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.groups.abelian_gps.dual_abelian_group_element import (
-    DualAbelianGroupElement, is_DualAbelianGroupElement)
+    DualAbelianGroupElement)
 from sage.misc.mrange import mrange
 from sage.misc.cachefunc import cached_method
 from sage.groups.group import AbelianGroup as AbelianGroupBase
-
-
-def is_DualAbelianGroup(x):
-    """
-    Return ``True`` if `x` is the dual group of an abelian group.
-
-    EXAMPLES::
-
-        sage: from sage.groups.abelian_gps.dual_abelian_group import is_DualAbelianGroup
-        sage: F = AbelianGroup(5,[3,5,7,8,9], names=list("abcde"))
-        sage: Fd = F.dual_group()
-        sage: is_DualAbelianGroup(Fd)
-        doctest:warning...
-        DeprecationWarning: the function is_DualAbelianGroup is deprecated;
-        use 'isinstance(..., DualAbelianGroup_class)' instead
-        See https://github.com/sagemath/sage/issues/37898 for details.
-        True
-        sage: F = AbelianGroup(3,[1,2,3], names='a')
-        sage: Fd = F.dual_group()
-        sage: Fd.gens()
-        (1, X1, X2)
-        sage: F.gens()
-        (1, a1, a2)
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37898, "the function is_DualAbelianGroup is deprecated; use 'isinstance(..., DualAbelianGroup_class)' instead")
-    return isinstance(x, DualAbelianGroup_class)
 
 
 class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
@@ -121,7 +94,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
     """
     Element = DualAbelianGroupElement
 
-    def __init__(self, G, names, base_ring):
+    def __init__(self, G, names, base_ring) -> None:
         """
         The Python constructor.
 
@@ -332,7 +305,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         # TODO: deprecate
         return self.group().gens_orders()
 
-    def __contains__(self, X):
+    def __contains__(self, X) -> bool:
         """
         Implement "in".
 

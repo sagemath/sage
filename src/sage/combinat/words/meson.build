@@ -23,8 +23,8 @@ py.install_sources(
 )
 
 extension_data = {
-  'word_char' : files('word_char.pyx'),
-  'word_datatypes' : files('word_datatypes.pyx'),
+  'word_char': files('word_char.pyx'),
+  'word_datatypes': files('word_datatypes.pyx'),
 }
 
 foreach name, pyx : extension_data

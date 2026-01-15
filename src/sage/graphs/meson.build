@@ -74,6 +74,7 @@ py.install_sources(
   'matchpoly.pyx',
   'mcqd.pxd',
   'mcqd.pyx',
+  'morphisms.py',
   'orientations.py',
   'partial_cube.py',
   'path_enumeration.pyx',
@@ -91,28 +92,29 @@ py.install_sources(
   subdir: 'sage/graphs',
 )
 
+
 extension_data = {
-  'asteroidal_triples' : files('asteroidal_triples.pyx'),
-  'centrality' : files('centrality.pyx'),
-  'chrompoly' : files('chrompoly.pyx'),
-  'cliquer' : files('cliquer.pyx'),
-  'comparability' : files('comparability.pyx'),
-  'connectivity' : files('connectivity.pyx'),
-  'convexity_properties' : files('convexity_properties.pyx'),
-  'distances_all_pairs' : files('distances_all_pairs.pyx'),
-  'generic_graph_pyx' : files('generic_graph_pyx.pyx'),
-  'genus' : files('genus.pyx'),
-  'graph_generators_pyx' : files('graph_generators_pyx.pyx'),
-  'hyperbolicity' : files('hyperbolicity.pyx'),
-  'independent_sets' : files('independent_sets.pyx'),
-  'isoperimetric_inequalities' : files('isoperimetric_inequalities.pyx'),
-  'line_graph' : files('line_graph.pyx'),
-  'matchpoly' : files('matchpoly.pyx'),
-  'planarity' : files('planarity.pyx'),
-  'spanning_tree' : files('spanning_tree.pyx'),
-  'strongly_regular_db' : files('strongly_regular_db.pyx'),
-  'views' : files('views.pyx'),
-  'weakly_chordal' : files('weakly_chordal.pyx'),
+  'asteroidal_triples': files('asteroidal_triples.pyx'),
+  'centrality': files('centrality.pyx'),
+  'chrompoly': files('chrompoly.pyx'),
+  'cliquer': files('cliquer.pyx'),
+  'comparability': files('comparability.pyx'),
+  'connectivity': files('connectivity.pyx'),
+  'convexity_properties': files('convexity_properties.pyx'),
+  'distances_all_pairs': files('distances_all_pairs.pyx'),
+  'generic_graph_pyx': files('generic_graph_pyx.pyx'),
+  'genus': files('genus.pyx'),
+  'graph_generators_pyx': files('graph_generators_pyx.pyx'),
+  'hyperbolicity': files('hyperbolicity.pyx'),
+  'independent_sets': files('independent_sets.pyx'),
+  'isoperimetric_inequalities': files('isoperimetric_inequalities.pyx'),
+  'line_graph': files('line_graph.pyx'),
+  'matchpoly': files('matchpoly.pyx'),
+  'planarity': files('planarity.pyx'),
+  'spanning_tree': files('spanning_tree.pyx'),
+  'strongly_regular_db': files('strongly_regular_db.pyx'),
+  'views': files('views.pyx'),
+  'weakly_chordal': files('weakly_chordal.pyx'),
 }
 
 foreach name, pyx : extension_data
@@ -178,3 +180,4 @@ py.extension_module(
 subdir('base')
 subdir('generators')
 subdir('graph_decompositions')
+subdir('tests')
