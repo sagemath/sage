@@ -2220,6 +2220,12 @@ class PolynomialRing_field(PolynomialRing_integral_domain):
                     return PolynomialRealDense
                 except ImportError:
                     pass
+            elif isinstance(base_ring, sage.rings.abc.RealBallField):
+                try:
+                    from sage.rings.polynomial.polynomial_real_arb import Polynomial_real_arb
+                    return Polynomial_real_arb
+                except ImportError:
+                    pass
             elif isinstance(base_ring, sage.rings.abc.ComplexBallField):
                 try:
                     from sage.rings.polynomial.polynomial_complex_arb import Polynomial_complex_arb

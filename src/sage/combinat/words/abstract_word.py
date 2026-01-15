@@ -1628,7 +1628,7 @@ class Word_class(SageObject):
     def return_words_iterator(self, fact):
         r"""
         Return an iterator over all the return words of fact in self
-        (without unicity).
+        (without uniqueness).
 
         INPUT:
 
@@ -1674,7 +1674,7 @@ class Word_class(SageObject):
     def complete_return_words_iterator(self, fact):
         r"""
         Return an iterator over all the complete return words of fact in
-        ``self`` (without unicity).
+        ``self`` (without uniqueness).
 
         A complete return words `u` of a factor `v`  is a factor starting
         by the given factor `v` and ending just after the next occurrence

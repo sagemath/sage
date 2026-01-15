@@ -251,28 +251,29 @@ def difference_matrix(g, k, lmbda=1, existence=False, check=True):
         return i-1
 
     # From the database
-    elif (g,lmbda) in DM_constructions and DM_constructions[g,lmbda][0] >= k:
+    elif (g, lmbda) in DM_constructions and DM_constructions[g, lmbda][0] >= k:
         if existence:
             return True
-        _,f = DM_constructions[g,lmbda]
+        _, f = DM_constructions[g, lmbda]
         G, M = f()
         M = [R[:k] for R in M]
 
     # Product construction
-    elif find_product_decomposition(g,k,lmbda):
+    elif find_product_decomposition(g, k, lmbda):
         if existence:
             return True
-        (g1,lmbda1),(g2,lmbda2) = find_product_decomposition(g,k,lmbda)
-        G1,M1 = difference_matrix(g1,k,lmbda1)
-        G2,M2 = difference_matrix(g2,k,lmbda2)
-        G,M = difference_matrix_product(k,M1,G1,lmbda1,M2,G2,lmbda2,check=False)
+        (g1, lmbda1), (g2, lmbda2) = find_product_decomposition(g, k, lmbda)
+        G1, M1 = difference_matrix(g1, k, lmbda1)
+        G2, M2 = difference_matrix(g2, k, lmbda2)
+        G, M = difference_matrix_product(k, M1, G1, lmbda1,
+                                         M2, G2, lmbda2, check=False)
 
     else:
         if existence:
             return Unknown
         raise NotImplementedError("I don't know how to build a ({},{},{})-Difference Matrix!".format(g,k,lmbda))
 
-    if check and not is_difference_matrix(M,G,k,lmbda,1):
-        raise RuntimeError("Sage built something which is not a ({},{},{})-DM!".format(g,k,lmbda))
+    if check and not is_difference_matrix(M, G, k, lmbda, 1):
+        raise RuntimeError("Sage built something which is not a ({},{},{})-DM!".format(g, k, lmbda))
 
-    return G,M
+    return G, M

@@ -7,15 +7,15 @@ AUTHORS:
 - Reimundo Heluani (2019-08-09): Initial implementation
 """
 
-#******************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2019 Reimundo Heluani <heluani@potuz.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from .lie_conformal_algebra_with_basis import LieConformalAlgebraWithBasis
 from sage.sets.non_negative_integers import NonNegativeIntegers
@@ -39,7 +39,7 @@ class FreelyGeneratedLieConformalAlgebra(LieConformalAlgebraWithBasis):
         some central generators `C_i` such that `TC_i = 0`.
     """
     def __init__(self, R, index_set=None, central_elements=None, category=None,
-                 element_class=None, prefix=None, **kwds):
+                 element_class=None, prefix=None, **kwds) -> None:
         """
         Initialize ``self``.
 
@@ -51,8 +51,8 @@ class FreelyGeneratedLieConformalAlgebra(LieConformalAlgebraWithBasis):
         self._generators = Family(index_set)
         E = cartesian_product([index_set, NonNegativeIntegers()])
         if central_elements is not None:
-            self._generators = DisjointUnionEnumeratedSets([index_set,
-                                                    Family(central_elements)])
+            self._generators = DisjointUnionEnumeratedSets(
+                [index_set, Family(central_elements)])
             E = DisjointUnionEnumeratedSets((cartesian_product([
                 Family(central_elements), {Integer(0)}]), E))
 
@@ -88,7 +88,7 @@ class FreelyGeneratedLieConformalAlgebra(LieConformalAlgebraWithBasis):
             return tuple(F)
         return F
 
-    def central_elements(self):
+    def central_elements(self) -> Family:
         """
         The central generators of this Lie conformal algebra.
 
