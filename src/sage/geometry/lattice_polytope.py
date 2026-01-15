@@ -3717,37 +3717,76 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
             sage: p.points()
             M(1)
             in 1-d lattice M
+
+        Regression test:  ensure this method does not cache an incorrect answer
+        when an exception is raised.  This 6-dimensional polytope exceeds PALP's
+        internal limits and should raise RuntimeError, not returning wrong results
+        (:issue:`41400`)::
+
+            sage: V = [(-1, -1, 0, 0, 0, 0),
+            ....:      (-1, 0, 0, 0, 0, 0),
+            ....:      (-1, -1, -1, 0, 0, 0),
+            ....:      (-1, -1, -1, -1, 0, 0),
+            ....:      (-1, -1, -1, 0, -1, 0),
+            ....:      (-1, -1, -1, -1, -1, 0),
+            ....:      (-1, -1, -1, -1, -1, -1),
+            ....:      (-1, -1, -1, 0, -1, -1),
+            ....:      (0, 0, 0, 1, 0, 0),
+            ....:      (0, 1, 0, 0, 0, 0),
+            ....:      (1, 0, 0, 0, 0, 0),
+            ....:      (0, 0, 1, 0, 0, 0),
+            ....:      (0, 0, 0, 0, 1, 0),
+            ....:      (0, 0, 0, 0, 0, 1)]
+            sage: Q = LatticePolytope(V)
+            sage: Q.points()  # needs palp
+            Traceback (most recent call last):
+            ...
+            RuntimeError: Error executing ...
+            Output:
+            ...Transpose_PM failed...
+            sage: Q.points()  # needs palp
+            Traceback (most recent call last):
+            ...
+            RuntimeError: Error executing ...
+            Output:
+            ...Transpose_PM failed...
         """
-        if not hasattr(self, "_points"):
-            M = self.lattice()
-            nv = self.n_vertices()
-            self._points = points = self._vertices
-            if self.dim() == 1:
-                v = points[1] - points[0]
-                l_gcd = gcd(v)
-                if l_gcd > 1:
-                    v = M(v.base_extend(QQ) / l_gcd)
+        if hasattr(self, "_points"):
+            if args or kwds:
+                return self._points(*args, **kwds)
+            else:
+                return self._points
+        M = self.lattice()
+        nv = self.n_vertices()
+        points = self._vertices
+        if self.dim() == 1:
+            v = points[1] - points[0]
+            l_gcd = gcd(v)
+            if l_gcd > 1:
+                v = M(v.base_extend(QQ) / l_gcd)
+                points = list(points)
+                current = points[0]
+                for i in range(l_gcd - 1):
+                    current += v
+                    current.set_immutable()
+                    points.append(current)
+        if self.dim() > 1:
+            result = self.poly_x("p", reduce_dimension=True)
+            if self.dim() == self.lattice_dim():
+                points = read_palp_point_collection(StringIO(result), M)
+            else:
+                m = self._embed(read_palp_matrix(result))
+                if m.ncols() > nv:
                     points = list(points)
-                    current = points[0]
-                    for i in range(l_gcd - 1):
-                        current += v
+                    for j in range(nv, m.ncols()):
+                        current = M.element_class(
+                            M, [m[i, j] for i in range(M.rank())])
                         current.set_immutable()
                         points.append(current)
-            if self.dim() > 1:
-                result = self.poly_x("p", reduce_dimension=True)
-                if self.dim() == self.lattice_dim():
-                    points = read_palp_point_collection(StringIO(result), M)
-                else:
-                    m = self._embed(read_palp_matrix(result))
-                    if m.ncols() > nv:
-                        points = list(points)
-                        for j in range(nv, m.ncols()):
-                            current = M.element_class(
-                                M, [m[i, j] for i in range(M.rank())])
-                            current.set_immutable()
-                            points.append(current)
-            if len(points) > nv:
-                self._points = PointCollection(points, M)
+        if len(points) > nv:
+            self._points = PointCollection(points, M)
+        else:
+            self._points = points
         if args or kwds:
             return self._points(*args, **kwds)
         else:

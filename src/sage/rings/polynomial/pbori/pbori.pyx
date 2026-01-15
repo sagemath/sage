@@ -2136,15 +2136,6 @@ class BooleanMonomialMonoid(UniqueRepresentation, Monoid_class):
         if other is None:
             return self._one_element
 
-        #  We must not call this explicitly in an element constructor.
-        #  It used to be ok, when there was a custom __call__
-        #        try:
-        #            return self._coerce_(other)
-        #        except ValueError:
-        #            pass
-        #        except TypeError:
-        #            pass
-
         try:
             return self._coerce_impl(other)
         except (ValueError, TypeError):

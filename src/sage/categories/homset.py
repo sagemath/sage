@@ -607,7 +607,7 @@ class Homset(Set_generic):
         sage: loads(dumps(H)) == H
         True
     """
-    def __init__(self, X, Y, category=None, base=None, check=True):
+    def __init__(self, X, Y, category=None, base=None, check=True) -> None:
         r"""
         TESTS::
 
@@ -1285,52 +1285,3 @@ class HomsetWithBase(Homset):
         if base is None:
             base = X.base_ring()
         Homset.__init__(self, X, Y, check=check, category=category, base=base)
-
-
-def is_Homset(x):
-    """
-    Return ``True`` if ``x`` is a set of homomorphisms in a category.
-
-    EXAMPLES::
-
-        sage: from sage.categories.homset import is_Homset
-        sage: P.<t> = ZZ[]
-        sage: f = P.hom([1/2*t])
-        sage: is_Homset(f)
-        doctest:warning...
-        DeprecationWarning: the function is_Homset is deprecated;
-        use 'isinstance(..., Homset)' instead
-        See https://github.com/sagemath/sage/issues/37922 for details.
-        False
-        sage: is_Homset(f.category())
-        False
-        sage: is_Homset(f.parent())
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37922, "the function is_Homset is deprecated; use 'isinstance(..., Homset)' instead")
-    return isinstance(x, Homset)
-
-
-def is_Endset(x):
-    """
-    Return ``True`` if ``x`` is a set of endomorphisms in a category.
-
-    EXAMPLES::
-
-        sage: from sage.categories.homset import is_Endset
-        sage: P.<t> = ZZ[]
-        sage: f = P.hom([1/2*t])
-        sage: is_Endset(f.parent())
-        doctest:warning...
-        DeprecationWarning: the function is_Endset is deprecated;
-        use 'isinstance(..., Homset) and ....is_endomorphism_set()' instead
-        See https://github.com/sagemath/sage/issues/37922 for details.
-        False
-        sage: g = P.hom([2*t])
-        sage: is_Endset(g.parent())
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37922, "the function is_Endset is deprecated; use 'isinstance(..., Homset) and ....is_endomorphism_set()' instead")
-    return isinstance(x, Homset) and x.is_endomorphism_set()

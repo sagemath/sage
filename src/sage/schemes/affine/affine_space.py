@@ -38,28 +38,6 @@ from sage.misc.persist import register_unpickle_override
 _Fields = Fields()
 
 
-def is_AffineSpace(x) -> bool:
-    r"""
-    Return ``True`` if ``x`` is an affine space.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.affine.affine_space import is_AffineSpace
-        sage: is_AffineSpace(AffineSpace(5, names='x'))
-        doctest:warning...
-        DeprecationWarning: The function is_AffineSpace is deprecated; use 'isinstance(..., AffineSpace_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-        sage: is_AffineSpace(AffineSpace(5, GF(9, 'alpha'), names='x'))                 # needs sage.rings.finite_rings
-        True
-        sage: is_AffineSpace(Spec(ZZ))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_AffineSpace is deprecated; use 'isinstance(..., AffineSpace_generic)' instead.")
-    return isinstance(x, AffineSpace_generic)
-
-
 def AffineSpace(n, R=None, names=None, ambient_projective_space=None,
                 default_embedding_index=None):
     r"""
