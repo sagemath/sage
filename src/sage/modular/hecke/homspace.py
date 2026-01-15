@@ -23,33 +23,12 @@ from .morphism import HeckeModuleMorphism_matrix
 from .module import HeckeModule_generic
 
 
-def is_HeckeModuleHomspace(x):
-    r"""
-    Return ``True`` if x is a space of homomorphisms in the category of Hecke modules.
-
-    EXAMPLES::
-
-        sage: M = ModularForms(Gamma0(7), 4)
-        sage: sage.modular.hecke.homspace.is_HeckeModuleHomspace(Hom(M, M))
-        doctest:warning...
-        DeprecationWarning: the function is_HeckeModuleHomspace is deprecated;
-        use 'isinstance(..., HeckeModuleHomspace)' instead
-        See https://github.com/sagemath/sage/issues/37895 for details.
-        True
-        sage: sage.modular.hecke.homspace.is_HeckeModuleHomspace(Hom(M, QQ))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37895, "the function is_HeckeModuleHomspace is deprecated; use 'isinstance(..., HeckeModuleHomspace)' instead")
-    return isinstance(x, HeckeModuleHomspace)
-
-
 class HeckeModuleHomspace(HomsetWithBase):
     r"""
     A space of homomorphisms between two objects in the category of Hecke
     modules over a given base ring.
     """
-    def __init__(self, X, Y, category=None):
+    def __init__(self, X, Y, category=None) -> None:
         r"""
         Create the space of homomorphisms between X and Y, which must have the
         same base ring.

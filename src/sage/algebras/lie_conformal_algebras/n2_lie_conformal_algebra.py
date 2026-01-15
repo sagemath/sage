@@ -73,7 +73,7 @@ class N2LieConformalAlgebra(GradedLieConformalAlgebra):
         sage: G.bracket(G)
         {0: 2*L, 2: 2/3*C}
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 

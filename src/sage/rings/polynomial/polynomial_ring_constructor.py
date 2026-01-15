@@ -488,6 +488,51 @@ def PolynomialRing(base_ring, *args, **kwds):
         ...
         NotImplementedError: polynomials over Real Field with 53 bits of precision are not supported in Singular
 
+    Polynomial rings over double-precision real and complex fields are supported
+    by the ``'singular'`` implementation::
+
+        sage: # needs sage.libs.singular
+        sage: R.<x> = PolynomialRing(RDF, implementation='singular')
+        sage: x^2 + 1
+        x^2 + (1.000e + 00)
+        sage: C.<x> = PolynomialRing(CDF, implementation='singular')
+        sage: x^2 + 1
+        x^2 + 1
+
+    The ring printing via libsingular matches the output of the Singular
+    interface::
+
+        sage: # needs sage.libs.singular
+        sage: from sage.libs.singular.function import singular_function
+        sage: print(singular_function("print")(R))
+        polynomial ring, over a field, global ordering
+        // coefficients: Float() considered as a field
+        // number of vars : 1
+        //        block   1 : ordering dp
+        //                  : names    x
+        //        block   2 : ordering C
+        sage: print(singular_function("print")(C))
+        polynomial ring, over a field, global ordering
+        // coefficients: real[I](complex:15 digits, additional 0 digits)/(I^2+1) considered as a field
+        // number of vars : 1
+        //        block   1 : ordering dp
+        //                  : names    x
+        //        block   2 : ordering C
+        sage: print(singular(R))
+        polynomial ring, over a field, global ordering
+        // coefficients: Float() considered as a field
+        // number of vars : 1
+        //        block   1 : ordering dp
+        //                  : names    x
+        //        block   2 : ordering C
+        sage: print(singular(C))
+        polynomial ring, over a field, global ordering
+        // coefficients: real[I](complex:15 digits, additional 0 digits)/(I^2+1) considered as a field
+        // number of vars : 1
+        //        block   1 : ordering dp
+        //                  : names    x
+        //        block   2 : ordering C
+
     The following corner case used to result in a warning message from
     ``libSingular``, and the generators of the resulting polynomial
     ring were not zero::
@@ -775,10 +820,9 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
     # Specialized implementations
     specialized = None
     if isinstance(base_ring, sage.rings.abc.IntegerModRing):
-        n = base_ring.order()
-        if n.is_prime():
+        if base_ring.is_field():
             specialized = polynomial_ring.PolynomialRing_dense_mod_p
-        elif n > 1:  # Specialized code breaks for n == 1
+        elif base_ring.order() > 1:  # Specialized code breaks for ord(K) == 1
             specialized = polynomial_ring.PolynomialRing_dense_mod_n
     elif isinstance(base_ring, FiniteField):
         specialized = polynomial_ring.PolynomialRing_dense_finite_field
@@ -853,6 +897,9 @@ def _multi_variate(base_ring, names, sparse=None, order='degrevlex', implementat
     # Multiple arguments for the "implementation" keyword which actually
     # yield the same implementation. We need this for caching.
     implementation_names = set([implementation])
+
+    if implementation is None and isinstance(base_ring, (sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField)):
+        implementation = "generic"  # singular has some issues with RDF/CDF, do not make singular the default
 
     if implementation is None or implementation == "singular":
         try:

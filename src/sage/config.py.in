@@ -1,4 +1,3 @@
-# @configure_input@
 from pathlib import Path
 
 import sage
@@ -10,7 +9,6 @@ VERSION = "@PACKAGE_VERSION@"
 # These variables come first so that other substituted variable values can refer
 # to it.
 SAGE_LOCAL = "@prefix@"
-SAGE_ROOT = "@SAGE_ROOT@"
 
 # The semicolon-separated list of GAP root paths. This is the list of
 # locations that are searched for GAP packages. This is passed directly
@@ -23,7 +21,7 @@ MAXIMA = "@SAGE_MAXIMA@".replace("${prefix}", SAGE_LOCAL)
 # Set this to the empty string if your ECL can load maxima without
 # further prodding.
 MAXIMA_FAS = "@SAGE_MAXIMA_FAS@".replace("${prefix}", SAGE_LOCAL)
-MAXIMA_SHARE = "@SAGE_MAXIMA_SHARE@".replace("${prefix}", SAGE_LOCAL)
+MAXIMA_PREFIX = "@SAGE_MAXIMA_PREFIX@".replace("${prefix}", SAGE_LOCAL)
 
 # Delete this line if your ECL can load Kenzo without further prodding.
 KENZO_FAS = "@SAGE_KENZO_FAS@".replace("${prefix}", SAGE_LOCAL)
@@ -50,11 +48,6 @@ FOURTITWO_PPI = "@FOURTITWO_PPI@"
 FOURTITWO_CIRCUITS = "@FOURTITWO_CIRCUITS@"
 FOURTITWO_GROEBNER = "@FOURTITWO_GROEBNER@"
 
-# Colon-separated list of pkg-config modules to search for cblas functionality.
-# We hard-code it here as cblas because configure (build/pkgs/openblas/spkg-configure.m4)
-# always provides cblas.pc, if necessary by creating a facade pc file for a system BLAS.
-CBLAS_PC_MODULES = "cblas"
-
 # for sage_setup.setenv
 SAGE_ARCHFLAGS = "@SAGE_ARCHFLAGS@"
 SAGE_PKG_CONFIG_PATH = "@SAGE_PKG_CONFIG_PATH@".replace("$SAGE_LOCAL", SAGE_LOCAL)
@@ -66,12 +59,6 @@ THREEJS_DIR = SAGE_LOCAL + "/share/threejs-sage"
 # OpenMP flags, if available.
 OPENMP_CFLAGS = "@OPENMP_CFLAGS@"
 OPENMP_CXXFLAGS = "@OPENMP_CXXFLAGS@"
-
-# Installation location of wheels. This is determined at configuration time
-# and does not depend on the installation location of sage-conf.
-SAGE_SPKG_WHEELS = (
-    "@SAGE_VENV@".replace("${SAGE_LOCAL}", SAGE_LOCAL) + "/var/lib/sage/wheels"
-)
 
 
 def is_editable_install() -> bool:
