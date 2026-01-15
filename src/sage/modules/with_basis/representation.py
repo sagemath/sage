@@ -2515,7 +2515,7 @@ class SignRepresentationCoxeterGroup(SignRepresentation_abstract):
         sage: V = G.sign_representation()
         sage: TestSuite(V).run()
 
-        sage: # optional - gap3
+        sage: # optional - coxeter3
         sage: W = CoxeterGroup(['B', 3], implementation="coxeter3")
         sage: S = W.sign_representation()
         sage: TestSuite(S).run()
@@ -2536,7 +2536,7 @@ class SignRepresentationCoxeterGroup(SignRepresentation_abstract):
             sage: V._default_sign(elem)
             1
 
-            sage: # optional - gap3
+            sage: # optional - coxeter3
             sage: W = CoxeterGroup(['B', 3], implementation="coxeter3")
             sage: S = W.sign_representation()
             sage: elem = W.an_element()

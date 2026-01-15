@@ -42,6 +42,7 @@ The following constructions are available
     :meth:`~sage.geometry.polyhedron.library.Polytopes.omnitruncated_six_hundred_cell`
     :meth:`~sage.geometry.polyhedron.library.Polytopes.one_hundred_twenty_cell`
     :meth:`~sage.geometry.polyhedron.library.Polytopes.parallelotope`
+    :meth:`~sage.geometry.polyhedron.library.Polytopes.pellytope`
     :meth:`~sage.geometry.polyhedron.library.Polytopes.pentakis_dodecahedron`
     :meth:`~sage.geometry.polyhedron.library.Polytopes.permutahedron`
     :meth:`~sage.geometry.polyhedron.library.Polytopes.generalized_permutahedron`
@@ -92,6 +93,7 @@ lazy_import('sage.groups.perm_gps.permgroup_named', 'AlternatingGroup')
 lazy_import('sage.graphs.digraph', 'DiGraph')
 lazy_import('sage.graphs.graph', 'Graph')
 lazy_import('sage.combinat.root_system.associahedron', 'Associahedron')
+lazy_import('sage.combinat.posets.sashes', 'pellytope')
 
 
 def zero_sum_projection(d, base_ring=None):
@@ -3548,6 +3550,7 @@ class Polytopes:
         flow_polytope = staticmethod(DiGraph.flow_polytope)
         edge_polytope = staticmethod(Graph.edge_polytope)
         symmetric_edge_polytope = staticmethod(Graph.symmetric_edge_polytope)
+        pellytope = staticmethod(pellytope)
     except ImportError:
         pass
 

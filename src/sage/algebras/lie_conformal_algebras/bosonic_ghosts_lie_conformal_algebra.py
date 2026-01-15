@@ -19,15 +19,15 @@ AUTHORS:
 - Reimundo Heluani (2020-06-15): Initial implementation.
 """
 
-#******************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2019 Reimundo Heluani <heluani@potuz.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.matrix.special import identity_matrix
 from sage.structure.indexed_generators import standardize_names_index_set
@@ -79,7 +79,7 @@ class BosonicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
         Category of H-graded finitely generated Lie conformal algebras with basis over Algebraic Real Field
     """
 
-    def __init__(self, R, ngens=2, names=None, index_set=None):
+    def __init__(self, R, ngens=2, names=None, index_set=None) -> None:
         """
         Initialize ``self``.
 
@@ -104,8 +104,8 @@ class BosonicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
                                 laxnames(half, r'\gamma')) + ('K',)
 
         names, index_set = standardize_names_index_set(names=names,
-                                                      index_set=index_set,
-                                                      ngens=ngens)
+                                                       index_set=index_set,
+                                                       ngens=ngens)
         A = identity_matrix(R, half)
         from sage.matrix.special import block_matrix
         gram_matrix = block_matrix([[R.zero(), A], [-A, R.zero()]])
