@@ -44,7 +44,6 @@ py.install_sources(
   'process.pyx',
   'psage.py',
   'qepcad.py',
-  'qsieve.py',
   'quit.py',
   'r.py',
   'read_data.py',

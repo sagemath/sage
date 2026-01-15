@@ -35,38 +35,6 @@ from sage.structure.category_object import normalize_names
 from sage.structure.unique_representation import UniqueRepresentation
 
 
-def is_FreeMonoid(x):
-    """
-    Return ``True`` if `x` is a free monoid.
-
-    EXAMPLES::
-
-        sage: from sage.monoids.free_monoid import is_FreeMonoid
-        sage: is_FreeMonoid(5)
-        doctest:warning...
-        DeprecationWarning: the function is_FreeMonoid is deprecated;
-        use 'isinstance(..., (FreeMonoid, IndexedFreeMonoid))' instead
-        See https://github.com/sagemath/sage/issues/37897 for details.
-        False
-        sage: is_FreeMonoid(FreeMonoid(7,'a'))
-        True
-        sage: is_FreeMonoid(FreeAbelianMonoid(7,'a'))
-        False
-        sage: is_FreeMonoid(FreeAbelianMonoid(0,''))
-        False
-        sage: is_FreeMonoid(FreeMonoid(index_set=ZZ))
-        True
-        sage: is_FreeMonoid(FreeAbelianMonoid(index_set=ZZ))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37897, "the function is_FreeMonoid is deprecated; use 'isinstance(..., (FreeMonoid, IndexedFreeMonoid))' instead")
-    if isinstance(x, FreeMonoid):
-        return True
-    from sage.monoids.indexed_free_monoid import IndexedFreeMonoid
-    return isinstance(x, IndexedFreeMonoid)
-
-
 class FreeMonoid(Monoid_class, UniqueRepresentation):
     r"""
     Return a free monoid on `n` generators or with the generators

@@ -637,7 +637,7 @@ class LieAlgebras(Category_over_base_ring):
             Return the element `\log(\exp(X)\exp(Y))`.
 
             The BCH formula is an expression for `\log(\exp(X)\exp(Y))`
-            as a sum of Lie brackets of ``X ` and ``Y`` with rational
+            as a sum of Lie brackets of ``X`` and ``Y`` with rational
             coefficients. It is only defined if the base ring of
             ``self`` has a coercion from the rationals.
 
@@ -674,7 +674,7 @@ class LieAlgebras(Category_over_base_ring):
                 Traceback (most recent call last):
                 ...
                 ValueError: the Lie algebra is not known to be nilpotent,
-                so you must specify the precision
+                 so you must specify the precision
                 sage: L.bch(X, Y, 4)                                                    # needs sage.combinat sage.modules
                 X + 1/12*[X, [X, Y]] + 1/24*[X, [[X, Y], Y]]
                 + 1/2*[X, Y] + 1/12*[[X, Y], Y] + Y
@@ -687,6 +687,23 @@ class LieAlgebras(Category_over_base_ring):
                 ...
                 TypeError: the BCH formula is not well defined
                 since Integer Ring has no coercion from Rational Field
+
+            We use the free nilpotent Lie algebra to approximate the BCH
+            formula in the nilpotent completion of the free Lie algebra,
+            where the BCH formula can be treated as a formal group law
+            (we thank Greg Kuperberg for this example)::
+
+                sage: L = LieAlgebra(QQ, 2, step=4)
+                sage: L.options.display = "brackets"
+                sage: a, b = L.basis(1)
+                sage: L.bch(a, b)
+                X_1 + X_2 + 1/2*[X_1, X_2] + 1/12*[X_1, [X_1, X_2]]
+                 + 1/12*[[X_1, X_2], X_2] + 1/24*[X_1, [[X_1, X_2], X_2]]
+                sage: L.bch(L.bch(L.bch(a, b), -a), -b)  # the commutator
+                [X_1, X_2] + 1/2*[X_1, [X_1, X_2]] - 1/2*[[X_1, X_2], X_2]
+                 + 1/6*[X_1, [X_1, [X_1, X_2]]] - 1/4*[X_1, [[X_1, X_2], X_2]]
+                 + 1/6*[[[X_1, X_2], X_2], X_2]
+                sage: L.options._reset()  # reset the printing options
             """
             if self not in LieAlgebras.Nilpotent and prec is None:
                 raise ValueError("the Lie algebra is not known to be nilpotent,"
@@ -1004,7 +1021,7 @@ class LieAlgebras(Category_over_base_ring):
                 sage: h = X.exp(); h
                 exp(X)
                 sage: g.parent()
-                Lie group G of Free Nilpotent Lie algebra on 3 generators (X, Y, Z)
+                Lie group G of Free Nilpotent Lie algebra of rank 2 and step 2
                  over Rational Field
                 sage: g.parent() is h.parent()
                 True
@@ -1016,7 +1033,7 @@ class LieAlgebras(Category_over_base_ring):
                 sage: k = Z.exp(lie_group=H); k
                 exp(Z)
                 sage: k.parent()
-                Lie group H of Free Nilpotent Lie algebra on 3 generators (X, Y, Z)
+                Lie group H of Free Nilpotent Lie algebra of rank 2 and step 2
                  over Rational Field
                 sage: g.parent() == k.parent()
                 False

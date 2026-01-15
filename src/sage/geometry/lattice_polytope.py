@@ -437,38 +437,6 @@ def ReflexivePolytopes(dim):
     return _rp[dim]
 
 
-def is_LatticePolytope(x):
-    r"""
-    Check if ``x`` is a lattice polytope.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT:
-
-    - ``True`` if ``x`` is a :class:`lattice polytope <LatticePolytopeClass>`,
-      ``False`` otherwise.
-
-    EXAMPLES::
-
-        sage: from sage.geometry.lattice_polytope import is_LatticePolytope
-        sage: is_LatticePolytope(1)
-        doctest:warning...
-        DeprecationWarning: is_LatticePolytope is deprecated, use isinstance instead
-        See https://github.com/sagemath/sage/issues/34307 for details.
-        False
-        sage: p = LatticePolytope([(1,0), (0,1), (-1,-1)])
-        sage: p                                                                         # needs palp
-        2-d reflexive polytope #0 in 2-d lattice M
-        sage: is_LatticePolytope(p)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34307, "is_LatticePolytope is deprecated, use isinstance instead")
-    return isinstance(x, LatticePolytopeClass)
-
-
 @richcmp_method
 class LatticePolytopeClass(Element, ConvexSet_compact,
                            sage.geometry.abc.LatticePolytope):
@@ -3749,37 +3717,76 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
             sage: p.points()
             M(1)
             in 1-d lattice M
+
+        Regression test:  ensure this method does not cache an incorrect answer
+        when an exception is raised.  This 6-dimensional polytope exceeds PALP's
+        internal limits and should raise RuntimeError, not returning wrong results
+        (:issue:`41400`)::
+
+            sage: V = [(-1, -1, 0, 0, 0, 0),
+            ....:      (-1, 0, 0, 0, 0, 0),
+            ....:      (-1, -1, -1, 0, 0, 0),
+            ....:      (-1, -1, -1, -1, 0, 0),
+            ....:      (-1, -1, -1, 0, -1, 0),
+            ....:      (-1, -1, -1, -1, -1, 0),
+            ....:      (-1, -1, -1, -1, -1, -1),
+            ....:      (-1, -1, -1, 0, -1, -1),
+            ....:      (0, 0, 0, 1, 0, 0),
+            ....:      (0, 1, 0, 0, 0, 0),
+            ....:      (1, 0, 0, 0, 0, 0),
+            ....:      (0, 0, 1, 0, 0, 0),
+            ....:      (0, 0, 0, 0, 1, 0),
+            ....:      (0, 0, 0, 0, 0, 1)]
+            sage: Q = LatticePolytope(V)
+            sage: Q.points()  # needs palp
+            Traceback (most recent call last):
+            ...
+            RuntimeError: Error executing ...
+            Output:
+            ...Transpose_PM failed...
+            sage: Q.points()  # needs palp
+            Traceback (most recent call last):
+            ...
+            RuntimeError: Error executing ...
+            Output:
+            ...Transpose_PM failed...
         """
-        if not hasattr(self, "_points"):
-            M = self.lattice()
-            nv = self.n_vertices()
-            self._points = points = self._vertices
-            if self.dim() == 1:
-                v = points[1] - points[0]
-                l_gcd = gcd(v)
-                if l_gcd > 1:
-                    v = M(v.base_extend(QQ) / l_gcd)
+        if hasattr(self, "_points"):
+            if args or kwds:
+                return self._points(*args, **kwds)
+            else:
+                return self._points
+        M = self.lattice()
+        nv = self.n_vertices()
+        points = self._vertices
+        if self.dim() == 1:
+            v = points[1] - points[0]
+            l_gcd = gcd(v)
+            if l_gcd > 1:
+                v = M(v.base_extend(QQ) / l_gcd)
+                points = list(points)
+                current = points[0]
+                for i in range(l_gcd - 1):
+                    current += v
+                    current.set_immutable()
+                    points.append(current)
+        if self.dim() > 1:
+            result = self.poly_x("p", reduce_dimension=True)
+            if self.dim() == self.lattice_dim():
+                points = read_palp_point_collection(StringIO(result), M)
+            else:
+                m = self._embed(read_palp_matrix(result))
+                if m.ncols() > nv:
                     points = list(points)
-                    current = points[0]
-                    for i in range(l_gcd - 1):
-                        current += v
+                    for j in range(nv, m.ncols()):
+                        current = M.element_class(
+                            M, [m[i, j] for i in range(M.rank())])
                         current.set_immutable()
                         points.append(current)
-            if self.dim() > 1:
-                result = self.poly_x("p", reduce_dimension=True)
-                if self.dim() == self.lattice_dim():
-                    points = read_palp_point_collection(StringIO(result), M)
-                else:
-                    m = self._embed(read_palp_matrix(result))
-                    if m.ncols() > nv:
-                        points = list(points)
-                        for j in range(nv, m.ncols()):
-                            current = M.element_class(
-                                M, [m[i, j] for i in range(M.rank())])
-                            current.set_immutable()
-                            points.append(current)
-            if len(points) > nv:
-                self._points = PointCollection(points, M)
+        if len(points) > nv:
+            self._points = PointCollection(points, M)
+        else:
+            self._points = points
         if args or kwds:
             return self._points(*args, **kwds)
         else:
@@ -4149,39 +4156,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         """
         if args or kwds:
             return self._vertices(*args, **kwds)
-        else:
-            return self._vertices
-
-
-def is_NefPartition(x):
-    r"""
-    Check if ``x`` is a nef-partition.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT:
-
-    - ``True`` if ``x`` is a :class:`nef-partition <NefPartition>` and
-      ``False`` otherwise.
-
-    EXAMPLES::
-
-        sage: from sage.geometry.lattice_polytope import NefPartition
-        sage: isinstance(1, NefPartition)
-        False
-        sage: o = lattice_polytope.cross_polytope(3)
-        sage: np = o.nef_partitions()[0]; np                                            # needs palp
-        Nef-partition {0, 1, 3} ⊔ {2, 4, 5}
-        sage: isinstance(np, NefPartition)                                              # needs palp
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38126,
-                "The function is_NefPartition is deprecated; "
-                "use 'isinstance(..., NefPartition)' instead.")
-    return isinstance(x, NefPartition)
+        return self._vertices
 
 
 class NefPartition(SageObject, Hashable):

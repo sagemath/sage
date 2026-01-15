@@ -110,7 +110,6 @@ as this base class still provides a few more methods than a general parent::
      '__len__',
      '__rxor__',
      '__xor__',
-     '_coerce_',
      '_coerce_c',
      '_coerce_impl',
      '_default_category',

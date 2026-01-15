@@ -191,7 +191,7 @@ class MutablePosetShell(SageObject):
 
         :class:`MutablePoset`
     """
-    def __init__(self, poset, element):
+    def __init__(self, poset, element) -> None:
         r"""
         See :class:`MutablePosetShell` for details.
 
@@ -350,7 +350,7 @@ class MutablePosetShell(SageObject):
             return self._predecessors_
         return self._successors_
 
-    def is_special(self):
+    def is_special(self) -> bool:
         r"""
         Return whether this shell contains either the null-element, i.e., the
         element smaller than any possible other element or the
@@ -376,7 +376,7 @@ class MutablePosetShell(SageObject):
         """
         return self.element is None
 
-    def is_null(self):
+    def is_null(self) -> bool:
         r"""
         Return whether this shell contains the null-element, i.e., the element
         smaller than any possible other element.
@@ -401,7 +401,7 @@ class MutablePosetShell(SageObject):
         """
         return self.element is None and not self.predecessors()
 
-    def is_oo(self):
+    def is_oo(self) -> bool:
         r"""
         Return whether this shell contains the infinity-element, i.e., the element
         larger than any possible other element.
@@ -426,7 +426,7 @@ class MutablePosetShell(SageObject):
         """
         return self.element is None and not self.successors()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of this shell.
 
@@ -459,7 +459,7 @@ class MutablePosetShell(SageObject):
         else:
             return repr(self.element)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return the hash of this shell.
 
@@ -478,7 +478,7 @@ class MutablePosetShell(SageObject):
         """
         return hash(self.key)
 
-    def le(self, other, reverse=False):
+    def le(self, other, reverse=False) -> bool:
         r"""
         Return whether this shell is less than or equal to ``other``.
 
@@ -573,7 +573,7 @@ class MutablePosetShell(SageObject):
 
     __le__ = le
 
-    def eq(self, other):
+    def eq(self, other) -> bool:
         r"""
         Return whether this shell is equal to ``other``.
 
@@ -906,7 +906,7 @@ class MutablePosetShell(SageObject):
             S = sorted(S, key=key)
         for shell in S:
             yield from shell._iter_depth_first_visit_(marked, reverse,
-                                                    key, condition)
+                                                      key, condition)
 
     def iter_depth_first(self, reverse=False, key=None, condition=None):
         r"""
@@ -1024,7 +1024,7 @@ class MutablePosetShell(SageObject):
             S = sorted(S, key=key)
         for shell in S:
             yield from shell._iter_topological_visit_(marked, reverse,
-                                                    key, condition)
+                                                      key, condition)
         yield self
 
     def iter_topological(self, reverse=False, key=None, condition=None):
@@ -1216,32 +1216,6 @@ class MutablePosetShell(SageObject):
 # *****************************************************************************
 
 
-def is_MutablePoset(P):
-    r"""
-    Test whether ``P`` inherits from :class:`MutablePoset`.
-
-    .. SEEALSO::
-
-        :class:`MutablePoset`
-
-    TESTS::
-
-        sage: from sage.data_structures.mutable_poset import MutablePoset as MP
-        sage: from sage.data_structures.mutable_poset import is_MutablePoset
-        sage: P = MP()
-        sage: is_MutablePoset(P)
-        doctest:warning...
-        DeprecationWarning: The function is_MutablePoset is deprecated; use 'isinstance(..., MutablePoset)' instead.
-        See https://github.com/sagemath/sage/issues/38125 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38125,
-                "The function is_MutablePoset is deprecated; "
-                "use 'isinstance(..., MutablePoset)' instead.")
-    return isinstance(P, MutablePoset)
-
-
 class MutablePoset(SageObject):
     r"""
     A data structure that models a mutable poset (partially ordered
@@ -1326,7 +1300,7 @@ class MutablePoset(SageObject):
 
         :class:`MutablePosetShell`.
     """
-    def __init__(self, data=None, key=None, merge=None, can_merge=None):
+    def __init__(self, data=None, key=None, merge=None, can_merge=None) -> None:
         r"""
         See :class:`MutablePoset` for details.
 
@@ -1383,7 +1357,7 @@ class MutablePoset(SageObject):
                 self.union_update(it)
         super().__init__()
 
-    def clear(self):
+    def clear(self) -> None:
         r"""
         Remove all elements from this poset.
 
@@ -1417,7 +1391,7 @@ class MutablePoset(SageObject):
         self._oo_.predecessors().add(self._null_)
         self._shells_ = {}
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         Return the number of elements contained in this poset.
 
@@ -1917,7 +1891,7 @@ class MutablePoset(SageObject):
         for shell in self.shells_topological(**kwargs):
             yield shell.key
 
-    def repr(self, include_special=False, reverse=False):
+    def repr(self, include_special=False, reverse=False) -> str:
         r"""
         Return a representation of the poset.
 
@@ -1948,7 +1922,7 @@ class MutablePoset(SageObject):
         s += ')'
         return s
 
-    def repr_full(self, reverse=False):
+    def repr_full(self, reverse=False) -> str:
         r"""
         Return a representation with ordering details of the poset.
 
@@ -1995,7 +1969,7 @@ class MutablePoset(SageObject):
 
     _repr_ = repr
 
-    def contains(self, key):
+    def contains(self, key) -> bool:
         r"""
         Test whether ``key`` is encapsulated by one of the poset's elements.
 
@@ -2856,7 +2830,7 @@ class MutablePoset(SageObject):
         self.difference_update(other)
         self.union_update(T)
 
-    def is_disjoint(self, other):
+    def is_disjoint(self, other) -> bool:
         r"""
         Return whether another poset is disjoint to this poset.
 
@@ -2865,7 +2839,7 @@ class MutablePoset(SageObject):
         - ``other`` -- a poset or an iterable; in the latter case the
           iterated objects are seen as elements of a poset
 
-        OUTPUT: nothing
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -2901,7 +2875,7 @@ class MutablePoset(SageObject):
     Alias of :meth:`is_disjoint`.
     """
 
-    def is_subset(self, other):
+    def is_subset(self, other) -> bool:
         r"""
         Return whether another poset contains this poset, i.e., whether this poset
         is a subset of the other poset.
@@ -2911,7 +2885,7 @@ class MutablePoset(SageObject):
         - ``other`` -- a poset or an iterable; in the latter case the
           iterated objects are seen as elements of a poset
 
-        OUTPUT: nothing
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -2951,7 +2925,7 @@ class MutablePoset(SageObject):
     Alias of :meth:`is_subset`.
     """
 
-    def is_superset(self, other):
+    def is_superset(self, other) -> bool:
         r"""
         Return whether this poset contains another poset, i.e., whether this poset
         is a superset of the other poset.
@@ -2961,7 +2935,7 @@ class MutablePoset(SageObject):
         - ``other`` -- a poset or an iterable; in the latter case the
           iterated objects are seen as elements of a poset
 
-        OUTPUT: nothing
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -3306,6 +3280,3 @@ class MutablePoset(SageObject):
             :meth:`map`.
         """
         return self.copy(mapping=function)
-
-
-# *****************************************************************************

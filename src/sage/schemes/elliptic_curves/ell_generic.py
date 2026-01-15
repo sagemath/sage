@@ -88,27 +88,6 @@ sqrt = math.sqrt
 exp = math.exp
 
 
-def is_EllipticCurve(x):
-    r"""
-    Utility function to test if ``x`` is an instance of an Elliptic Curve class.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
-        sage: E = EllipticCurve([1,2,3/4,7,19])
-        sage: is_EllipticCurve(E)
-        doctest:warning...
-        DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-        sage: is_EllipticCurve(0)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
-    return isinstance(x, EllipticCurve_generic)
-
-
 class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
     r"""
     Elliptic curve over a generic base ring.
