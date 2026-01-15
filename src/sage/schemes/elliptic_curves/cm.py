@@ -670,7 +670,7 @@ def largest_disc_with_class_number(h):
         of discriminant `D`, so this function gives the number of such
         orders of each class number `h\le100`.  It is easy to extend
         this to larger class number conditional on the GRH, but much
-        harder to obyain unconditional results.
+        harder to obtain unconditional results.
 
     INPUT:
 

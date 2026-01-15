@@ -6,18 +6,15 @@ extensive group theory, combinatorics, etc.
 
 The GAP interface will only work if GAP is installed on your
 computer; this should be the case, since GAP is included with Sage.
-The interface offers three pieces of functionality:
+The interface offers two pieces of functionality:
 
 
 #. ``gap_console()`` -- a function that dumps you into
    an interactive command-line GAP session.
 
-#. ``gap(expr)`` -- evaluation of arbitrary GAP
-   expressions, with the result returned as a string.
-
-#. ``gap.new(expr)`` -- creation of a Sage object that
+#. ``gap(expr)`` -- creation of a Sage object that
    wraps a GAP object. This provides a Pythonic interface to GAP. For
-   example, if ``f=gap.new(10)``, then
+   example, if ``f=gap(10)``, then
    ``f.Factors()`` returns the prime factorization of
    `10` computed using GAP.
 
