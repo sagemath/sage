@@ -91,15 +91,15 @@ from sage.combinat.partition import Partitions, _Partitions
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.sf.sf import SymmetricFunctions
 from sage.combinat.ncsf_qsym.generic_basis_code import BasesOfQSymOrNCSF
-from sage.combinat.ncsf_qsym.combinatorics import (number_of_fCT, number_of_SSRCT,
-                   compositions_order, coeff_pi, coeff_lp, coeff_sp, coeff_ell)
+from sage.combinat.ncsf_qsym.combinatorics import (
+    number_of_fCT, number_of_SSRCT,
+    compositions_order, coeff_pi, coeff_lp, coeff_sp, coeff_ell)
 from sage.combinat.ncsf_qsym.ncsf import NonCommutativeSymmetricFunctions
 from sage.combinat.words.word import Word
 from sage.combinat.tableau import StandardTableaux
 from sage.misc.bindable_class import BindableClass
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
-from sage.misc.superseded import deprecated_function_alias
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -1154,8 +1154,6 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                        for (I, coeff) in M(self)}
                 result_in_M_basis = M._from_dict(dct)
                 return parent(result_in_M_basis)
-
-            frobenius = deprecated_function_alias(36396, adams_operator)
 
             def star_involution(self):
                 r"""
