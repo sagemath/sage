@@ -1,12 +1,12 @@
 """
 Examples of commutative additive semigroups
 """
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
@@ -37,7 +37,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
 
     with product rule given by `a \times b = a` for all `a, b`::
 
-        sage: (a,b,c,d) = S.additive_semigroup_generators()
+        sage: a, b, c, d = S.additive_semigroup_generators()
 
     We conclude by running systematic tests on this commutative monoid::
 
@@ -66,7 +66,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
         running ._test_some_elements() . . . pass
     """
 
-    def __init__(self, alphabet=('a','b','c','d')):
+    def __init__(self, alphabet=('a', 'b', 'c', 'd')) -> None:
         r"""
         The free commutative monoid.
 
@@ -86,7 +86,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
         self.alphabet = alphabet
         Parent.__init__(self, category=CommutativeAdditiveSemigroups())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -104,7 +104,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: F = CommutativeAdditiveSemigroups().example()
-            sage: (a,b,c,d) = F.additive_semigroup_generators()
+            sage: a, b, c, d = F.additive_semigroup_generators()
             sage: F.summation(a,b)
             a + b
             sage: (a+b) + (a+c)
@@ -125,7 +125,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
             sage: F.additive_semigroup_generators()
             Family (a, b, c, d)
         """
-        return Family( [self(((a,1),)) for a in self.alphabet] )
+        return Family([self(((a, 1),)) for a in self.alphabet])
         # FIXME: use this once the keys argument of FiniteFamily will be honoured
         # for the specifying the order of the elements in the family
         # return Family(self.alphabet, lambda a: self(((a,1),)))
@@ -140,10 +140,10 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
             sage: F.an_element()
             a + 2*b + 3*c + 4*d
         """
-        return self((a, (ord(a)-96)) for a in self.alphabet)
+        return self((a, ord(a) - 96) for a in self.alphabet)
 
     class Element(ElementWrapper):
-        def __init__(self, parent, iterable):
+        def __init__(self, parent, iterable) -> None:
             """
             EXAMPLES::
 
