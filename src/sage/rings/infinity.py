@@ -970,35 +970,6 @@ unsigned_infinity = UnsignedInfinityRing.gen(0)
 less_than_infinity = UnsignedInfinityRing.less_than_infinity()
 
 
-def is_Infinite(x) -> bool:
-    """
-    This is a type check for infinity elements.
-
-    EXAMPLES::
-
-        sage: sage.rings.infinity.is_Infinite(oo)
-        doctest:warning...
-        DeprecationWarning: The function is_Infinite is deprecated;
-        use 'isinstance(..., InfinityElement)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-        sage: sage.rings.infinity.is_Infinite(-oo)
-        True
-        sage: sage.rings.infinity.is_Infinite(unsigned_infinity)
-        True
-        sage: sage.rings.infinity.is_Infinite(3)
-        False
-        sage: sage.rings.infinity.is_Infinite(RR(infinity))
-        False
-        sage: sage.rings.infinity.is_Infinite(ZZ)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_Infinite is deprecated; use 'isinstance(..., InfinityElement)' instead.")
-
-    return isinstance(x, InfinityElement)
-
-
 class SignError(ArithmeticError):
     """
     Sign error exception.
@@ -1007,7 +978,7 @@ class SignError(ArithmeticError):
 
 
 class InfinityRing_class(Singleton, CommutativeRing):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
