@@ -515,7 +515,7 @@ from random import randrange
 
 import pexpect
 
-from sage.env import MAXIMA
+from sage.env import MAXIMA, MAXIMA_PREFIX
 from sage.interfaces.expect import Expect, ExpectElement, gc_disabled
 from sage.interfaces.maxima_abstract import (
     MaximaAbstract,
@@ -587,11 +587,16 @@ class Maxima(MaximaAbstract, Expect):
         # See trac # 6818.
         init_code.append('nolabels : true')
 
+        env = {}
+        if MAXIMA_PREFIX:
+            env['MAXIMA_PREFIX'] = MAXIMA_PREFIX
+
         MaximaAbstract.__init__(self, "maxima")
         Expect.__init__(self,
                         name='maxima',
                         prompt=r'\(\%i[0-9]+\) ',
                         command='{0} -p {1}'.format(MAXIMA, shlex.quote(STARTUP)),
+                        env=env,
                         script_subdirectory=script_subdirectory,
                         restart_on_ctrlc=False,
                         verbose_start=False,

@@ -430,7 +430,7 @@ def BruckRyserChowla_check(v, k, lambd):
     g = 1 if v % 4 == 1 else -1
     C = Conic(QQ, [1, lambd - k, -g * lambd])
 
-    (flag, sol) = C.has_rational_point(point=True)
+    flag, sol = C.has_rational_point(point=True)
 
     return flag
 

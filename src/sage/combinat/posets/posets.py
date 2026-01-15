@@ -8551,11 +8551,11 @@ class FinitePoset(UniqueRepresentation, Parent):
             p, v = next(chron)
             if v > vold:
                 size += p
-                if part > 0:
+                if part:
                     ps.append(part)
             elif p > pold:
                 part += 1
-            (pold, vold) = (p, v)
+            pold, vold = (p, v)
         ps.reverse()
         return Partition(ps)
 

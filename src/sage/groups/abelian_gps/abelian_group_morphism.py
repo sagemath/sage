@@ -24,25 +24,17 @@ from sage.categories.morphism import Morphism
 from sage.misc.misc_c import prod
 
 
-def is_AbelianGroupMorphism(f):
-    from sage.misc.superseded import deprecation
-    deprecation(38103,
-                "The function is_AbelianGroupMorphism is deprecated; "
-                "use 'isinstance(..., AbelianGroupMorphism)' instead.")
-    return isinstance(f, AbelianGroupMorphism)
-
-
 class AbelianGroupMap(Morphism):
     """
     A set-theoretic map between AbelianGroups.
     """
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         """
         The Python constructor.
         """
         Morphism.__init__(self, parent)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         return "AbelianGroup"
 
 
