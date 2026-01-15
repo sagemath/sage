@@ -2,6 +2,20 @@
 all.py -- much of sage is imported into this module, so you don't
           have to import everything individually.
 
+WARNING:
+
+Do not import from this module into other modules. Instead, import
+from the orginal location. The tool `import_statements` helps in
+figuring out where that location is. For instance::
+
+    sage: import_statements("TensorAlgebra")
+    from sage.algebras.tensor_algebra import TensorAlgebra
+
+tells you that `TensorAlgebra` should be imported from
+`sage.algebras.tensor_algebra`. While the binding is available in `sage.all`
+as a `LazyImport`, you should not use that because it can lead to unexpected
+results.
+
 TESTS:
 
 This is to test :issue:`10570`. If the number of stackframes at startup

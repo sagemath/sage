@@ -17,7 +17,7 @@ py.install_sources(
   subdir: 'sage/modular',
 )
 
-extension_data = {'hypergeometric_misc' : files('hypergeometric_misc.pyx')}
+extension_data = {'hypergeometric_misc': files('hypergeometric_misc.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

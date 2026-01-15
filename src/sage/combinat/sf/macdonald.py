@@ -33,7 +33,7 @@ REFERENCES:
    Journal of Algebra and Computation, Volume 23, Issue 4, (2013), pp. 833-852.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -45,8 +45,8 @@ REFERENCES:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 import functools
 
@@ -272,7 +272,7 @@ class Macdonald(UniqueRepresentation):
         ::
 
             sage: Sym = SymmetricFunctions(QQ['x','y','z'].fraction_field())
-            sage: (x,y,z) = Sym.base_ring().gens()
+            sage: x, y, z = Sym.base_ring().gens()
             sage: Macxy = Sym.macdonald(q=x,t=y)
             sage: Macyz = Sym.macdonald(q=y,t=z)
             sage: Maczx = Sym.macdonald(q=z,t=x)
@@ -1769,14 +1769,13 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
             (q*t - t^2 - q + t)/(-q^3 + q^2 + q - 1)
         """
         # Convert to the power sum
-        (q, t) = QQqt.gens()
+        q, t = QQqt.gens()
         p = self._sym.p()
         s = self._s
         p_x = p(s(part))
         f = lambda m, c: (m, c * prod([(1 - t**k) / (1 - q**k) for k in m]))
         res = s(p_x.map_item(f))
-        f = res.coefficient
-        return f
+        return res.coefficient
 
     def _s_cache(self, n):
         r"""

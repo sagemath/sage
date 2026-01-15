@@ -61,32 +61,6 @@ import sage.categories.homset
 from .simplicial_complex_morphism import SimplicialComplexMorphism
 
 
-def is_SimplicialComplexHomset(x) -> bool:
-    """
-    Return ``True`` if and only if ``x`` is a simplicial complex homspace.
-
-    EXAMPLES::
-
-        sage: S = SimplicialComplex(is_mutable=False)
-        sage: T = SimplicialComplex(is_mutable=False)
-        sage: H = Hom(S, T)
-        sage: H
-        Set of Morphisms from Simplicial complex with vertex set () and facets {()}
-         to Simplicial complex with vertex set () and facets {()}
-         in Category of finite simplicial complexes
-        sage: from sage.topology.simplicial_complex_homset import is_SimplicialComplexHomset
-        sage: is_SimplicialComplexHomset(H)
-        doctest:warning...
-        DeprecationWarning: the function is_SimplicialComplexHomset is deprecated;
-        use 'isinstance(..., SimplicialComplexHomset)' instead
-        See https://github.com/sagemath/sage/issues/37922 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37922, "the function is_SimplicialComplexHomset is deprecated; use 'isinstance(..., SimplicialComplexHomset)' instead")
-    return isinstance(x, SimplicialComplexHomset)
-
-
 class SimplicialComplexHomset(sage.categories.homset.Homset):
     def __call__(self, f):
         """

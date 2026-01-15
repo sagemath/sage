@@ -459,28 +459,8 @@ QuaternionAlgebra = QuaternionAlgebraFactory("QuaternionAlgebra")
 ########################################################
 
 
-def is_QuaternionAlgebra(A):
-    """
-    Return ``True`` if ``A`` is of the QuaternionAlgebra data type.
-
-    EXAMPLES::
-
-        sage: sage.algebras.quatalg.quaternion_algebra.is_QuaternionAlgebra(QuaternionAlgebra(QQ,-1,-1))
-        doctest:warning...
-        DeprecationWarning: the function is_QuaternionAlgebra is deprecated;
-        use 'isinstance(..., QuaternionAlgebra_abstract)' instead
-        See https://github.com/sagemath/sage/issues/37896 for details.
-        True
-        sage: sage.algebras.quatalg.quaternion_algebra.is_QuaternionAlgebra(ZZ)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37896, "the function is_QuaternionAlgebra is deprecated; use 'isinstance(..., QuaternionAlgebra_abstract)' instead")
-    return isinstance(A, QuaternionAlgebra_abstract)
-
-
 class QuaternionAlgebra_abstract(Parent):
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -489,7 +469,7 @@ class QuaternionAlgebra_abstract(Parent):
         """
         return "Quaternion Algebra with base ring %s" % self.base_ring()
 
-    def ngens(self):
+    def ngens(self) -> int:
         """
         Return the number of generators of the quaternion algebra as a K-vector
         space, not including 1.
@@ -4260,7 +4240,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             Traceback (most recent call last):
             ...
             NotImplementedError: general algorithm not implemented
-            (The given basis vectors must be linearly independent.)
+             (the given basis vectors must be linearly independent)
         """
         R = self.right_order()
         Q = self.quaternion_algebra()

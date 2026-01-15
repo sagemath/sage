@@ -21,14 +21,14 @@ py.install_sources(
 )
 
 extension_data = {
-  'convert_flint' : files('convert_flint.pyx'),
-  'convert_gmp' : files('convert_gmp.pyx'),
-  'convert_sage' : files('convert_sage.pyx'),
-  'convert_sage_complex_double' : files('convert_sage_complex_double.pyx'),
-  'convert_sage_matrix' : files('convert_sage_matrix.pyx'),
-  'convert_sage_real_double' : files('convert_sage_real_double.pyx'),
-  'convert_sage_real_mpfr' : files('convert_sage_real_mpfr.pyx'),
-  'misc' : files('misc.pyx'),
+  'convert_flint': files('convert_flint.pyx'),
+  'convert_gmp': files('convert_gmp.pyx'),
+  'convert_sage': files('convert_sage.pyx'),
+  'convert_sage_complex_double': files('convert_sage_complex_double.pyx'),
+  'convert_sage_matrix': files('convert_sage_matrix.pyx'),
+  'convert_sage_real_double': files('convert_sage_real_double.pyx'),
+  'convert_sage_real_mpfr': files('convert_sage_real_mpfr.pyx'),
+  'misc': files('misc.pyx'),
 }
 
 foreach name, pyx : extension_data
@@ -38,7 +38,7 @@ foreach name, pyx : extension_data
     subdir: 'sage/libs/pari',
     install: true,
     include_directories: [inc_cpython, inc_ext, inc_flint, inc_gsl, inc_rings],
-    dependencies: [py_dep, cypari2, cysignals, flint, gmp, gsl, mpfr, pari],
+    dependencies: [py_dep, cypari2, cysignals, flint, gmp, gsl, mpfr],
   )
 endforeach
 

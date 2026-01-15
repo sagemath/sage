@@ -10,7 +10,7 @@ py.install_sources(
 )
 
 extension_data = {
-  'finite_dimensional_algebra_element' : files(
+  'finite_dimensional_algebra_element': files(
     'finite_dimensional_algebra_element.pyx',
   ),
 }
