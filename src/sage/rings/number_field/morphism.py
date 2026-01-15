@@ -3,6 +3,10 @@ Morphisms between number fields
 
 This module provides classes to represent ring homomorphisms between number
 fields (i.e. field embeddings).
+
+.. SEEALSO ::
+
+    :mod:`sage.rings.number_field.number_field_morphisms`
 """
 
 # ***************************************************************************

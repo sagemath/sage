@@ -8,6 +8,8 @@ Elements of Laurent polynomial rings
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+cimport cython
+
 from sage.categories.map cimport Map
 from sage.structure.element import coerce_binop, parent
 from sage.structure.factorization import Factorization
@@ -368,6 +370,26 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         self.__u = f
         self.__n = n
         self._normalize()
+
+    def _sage_input_(self, sib, coerced):
+        """
+        TESTS::
+
+            sage: R.<q> = LaurentPolynomialRing(QQ)
+            sage: sage_input(q^2+1)
+            LaurentPolynomialRing(QQ, 'q')([QQ(1), QQ(0), QQ(1)])
+            sage: sage_input(q+1/q)
+            si = LaurentPolynomialRing(QQ, 'q')
+            si([QQ(1), QQ(0), QQ(1)])*si.gen()^(-1)
+            sage: sage_input(q^2)
+            si = LaurentPolynomialRing(QQ, 'q')
+            si([QQ(1)])*si.gen()^2
+        """
+        R = sib(self.parent())
+        if self.__n:
+            return R([*self.__u]) * R.gen() ** sib.int(self.__n)
+        else:
+            return R([*self.__u])
 
     def __reduce__(self):
         """
@@ -1668,12 +1690,14 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         return richcmp(x, y, op)
 
+    @cython.cdivision(False)
     def valuation(self, p=None):
         """
         Return the valuation of ``self``.
 
-        The valuation of a Laurent polynomial `t^n u` is `n` plus the
-        valuation of `u`.
+        If the argument `p` is not passed or equal to the generator `t`,
+        the valuation of a Laurent polynomial `t^n u` is `n`,
+        where `u` is a (normal) polynomial in `t` with nonzero constant term.
 
         EXAMPLES::
 
@@ -1684,8 +1708,34 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             -1
             sage: g.valuation()
             0
+
+        When the argument `p` is a prime different from `t`, the valuation of `t^n u`
+        at `p` is simply the valuation of `u` at `p`.::
+
+            sage: R.<x> = LaurentPolynomialRing(QQ)
+            sage: (x^10 * (x + 1)^2).valuation(x + 1)
+            2
+
+        Otherwise, the resulting function is not necessarily a valuation as discussed in
+        :meth:`Polynomial.valuation <sage.rings.polynomial.polynomial_element.Polynomial.valuation>`,
+        but we try to give a reasonable answer nonetheless.
+        The following behavior is not guaranteed to be stable.::
+
+            sage: (x^10).valuation(x^3)
+            3
+            sage: (x^-10).valuation(x^3)
+            -4
+            sage: ((x + 1)^9 * (x + 2)).valuation((x + 1)^2)
+            4
         """
-        return self.__n + self.__u.valuation(p)
+        if p is None or p is self._parent.gen():
+            return self.__n
+        cdef LaurentPolynomial_univariate p_ = self._parent(p)
+        if p_.__n > 0 and p_.__u.is_one():
+            return self.__n // p_.__n
+        if p_.__n == 0:
+            return self.__u.valuation(p_.__u)
+        raise NotImplementedError
 
     def truncate(self, n):
         """

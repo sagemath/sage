@@ -4,6 +4,10 @@ Embeddings into ambient fields
 
 This module provides classes to handle embeddings of number fields into ambient
 fields (generally `\RR` or `\CC`).
+
+.. SEEALSO ::
+
+    :mod:`sage.rings.number_field.morphism`
 """
 # ****************************************************************************
 #      Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
@@ -156,6 +160,22 @@ cdef class NumberFieldEmbedding(Morphism):
         """
         return self._gen_image
 
+    def _sage_input_(self, sib, coerced):
+        """
+        TESTS::
+
+            sage: R.<x> = QQ[]
+            sage: sage_input(QQ[I].coerce_embedding(), verify=True)
+            # Verified
+            ...
+            sage: sage_input(QQ[(-1)^(1/3)].coerce_embedding(), verify=True)
+            # Verified
+            ...
+        """
+        K = self.domain()
+        if K.coerce_embedding() == self:
+            return sib(K).coerce_embedding()
+        raise NotImplementedError
 
 cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
     r"""
