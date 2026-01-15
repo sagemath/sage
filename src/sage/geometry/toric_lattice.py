@@ -774,7 +774,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             sage: Ns.span_of_basis([(1,2,0), (2,4,0)])
             Traceback (most recent call last):
             ...
-            ValueError: The given basis vectors must be linearly independent.
+            ValueError: the given basis vectors must be linearly independent
         """
         A = self.ambient_module()
         if base_ring is ZZ and all(g in A for g in basis):
