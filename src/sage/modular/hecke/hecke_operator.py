@@ -26,55 +26,11 @@ from . import algebra
 from . import morphism
 
 
-def is_HeckeOperator(x):
-    r"""
-    Return ``True`` if x is of type HeckeOperator.
-
-    EXAMPLES::
-
-        sage: from sage.modular.hecke.hecke_operator import is_HeckeOperator
-        sage: M = ModularSymbols(Gamma0(7), 4)
-        sage: is_HeckeOperator(M.T(3))
-        doctest:warning...
-        DeprecationWarning: the function is_HeckeOperator is deprecated;
-        use 'isinstance(..., HeckeOperator)' instead
-        See https://github.com/sagemath/sage/issues/37895 for details.
-        True
-        sage: is_HeckeOperator(M.T(3) + M.T(5))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37895, "the function is_HeckeOperator is deprecated; use 'isinstance(..., HeckeOperator)' instead")
-    return isinstance(x, HeckeOperator)
-
-
-def is_HeckeAlgebraElement(x):
-    r"""
-    Return ``True`` if x is of type HeckeAlgebraElement.
-
-    EXAMPLES::
-
-        sage: from sage.modular.hecke.hecke_operator import is_HeckeAlgebraElement
-        sage: M = ModularSymbols(Gamma0(7), 4)
-        sage: is_HeckeAlgebraElement(M.T(3))
-        doctest:warning...
-        DeprecationWarning: the function is_HeckeAlgebraElement is deprecated;
-        use 'isinstance(..., HeckeAlgebraElement)' instead
-        See https://github.com/sagemath/sage/issues/37895 for details.
-        True
-        sage: is_HeckeAlgebraElement(M.T(3) + M.T(5))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37895, "the function is_HeckeAlgebraElement is deprecated; use 'isinstance(..., HeckeAlgebraElement)' instead")
-    return isinstance(x, HeckeAlgebraElement)
-
-
 class HeckeAlgebraElement(AlgebraElement):
     r"""
     Base class for elements of Hecke algebras.
     """
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         r"""
         Create an element of a Hecke algebra.
 

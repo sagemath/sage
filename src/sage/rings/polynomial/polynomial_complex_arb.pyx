@@ -177,7 +177,7 @@ cdef class Polynomial_complex_arb(Polynomial):
                     acb_poly_set_coeff_acb(self._poly, i, ball.value)
             elif isinstance(x, dict):
                 dct = <dict> x
-                if len(dct) == 0:
+                if not dct:
                     acb_poly_zero(self._poly)
                 else:
                     length = max(int(i) for i in dct) + 1

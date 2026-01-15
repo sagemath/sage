@@ -1569,7 +1569,7 @@ def is_relative_difference_set(R, G, H, params, verbose=False):
 
     INPUT:
 
-    - ``R`` -- list; the relative diffeence set of length `k`
+    - ``R`` -- list; the relative difference set of length `k`
     - ``G`` -- an additive abelian group of order `mn`
     - ``H`` -- list; a submodule of ``G`` of order `n`
     - ``params`` -- tuple in the form `(m, n, k, d)`
@@ -3268,9 +3268,10 @@ def complementary_difference_setsIII(n, check=True):
     r"""
     Construct complementary difference sets in a group of order `n = 2m + 1`, where `4m + 3` is a prime power.
 
-    Consider a finite field `G` of order `n` and let `\rho` be a primite element
-    of this group. Now let `Q` be the set of nonzero quadratic residues in `G`,
-    and let `A = \{ a | \rho^{2a} - 1 \in Q\}`, `B' = \{ b | -(\rho^{2b} + 1) \in Q\}`.
+    Consider a finite field `G` of order `n` and let `\rho` be a
+    primitive element of this group. Now let `Q` be the set of nonzero
+    quadratic residues in `G`, and let
+    `A = \{ a | \rho^{2a} - 1 \in Q\}`, `B' = \{ b | -(\rho^{2b} + 1) \in Q\}`.
     Then `A` and `B = Q \setminus B'` are complementary difference sets over the ring
     of integers modulo `n`. For more details, see [Sz1969]_.
 

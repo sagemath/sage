@@ -33,7 +33,6 @@ py.install_sources(
   'matroids_catalog.py',
   'matroids_plot_helpers.py',
   'minor_matroid.py',
-  'named_matroids.py',
   'rank_matroid.py',
   'set_system.pxd',
   'set_system.pyx',
