@@ -310,7 +310,8 @@ class Timer:
                                             ZombieProcess)
                         try:
                             cputime += sum(Process(S.pid()).cpu_times()[0:2])
-                        except (ValueError, NoSuchProcess, ZombieProcess):
+                        except (OSError, ValueError, NoSuchProcess, ZombieProcess):
+                            # OSError: too many open files
                             # ValueError: invalid (e.g. negative) PID
                             # NoSuchProcess: it's gone
                             # ZombieProcess: PID refers to a zombie
