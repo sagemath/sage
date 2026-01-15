@@ -163,78 +163,6 @@ from sage.rings.rational_field import QQ
 from sage.structure.factory import UniqueFactory
 
 
-def is_ToricLattice(x):
-    r"""
-    Check if ``x`` is a toric lattice.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: ``True`` if ``x`` is a toric lattice and ``False`` otherwise
-
-    EXAMPLES::
-
-        sage: from sage.geometry.toric_lattice import (
-        ....:   is_ToricLattice)
-        sage: is_ToricLattice(1)
-        doctest:warning...
-        DeprecationWarning: The function is_ToricLattice is deprecated;
-        use 'isinstance(..., ToricLattice_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38126 for details.
-        False
-        sage: N = ToricLattice(3)
-        sage: N
-        3-d lattice N
-        sage: is_ToricLattice(N)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38126,
-                "The function is_ToricLattice is deprecated; "
-                "use 'isinstance(..., ToricLattice_generic)' instead.")
-    return isinstance(x, ToricLattice_generic)
-
-
-def is_ToricLatticeQuotient(x):
-    r"""
-    Check if ``x`` is a toric lattice quotient.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: ``True`` if ``x`` is a toric lattice quotient and ``False`` otherwise
-
-    EXAMPLES::
-
-        sage: from sage.geometry.toric_lattice import (
-        ....:   is_ToricLatticeQuotient)
-        sage: is_ToricLatticeQuotient(1)
-        doctest:warning...
-        DeprecationWarning: The function is_ToricLatticeQuotient is deprecated;
-        use 'isinstance(..., ToricLattice_quotient)' instead.
-        See https://github.com/sagemath/sage/issues/38126 for details.
-        False
-        sage: N = ToricLattice(3)
-        sage: N
-        3-d lattice N
-        sage: is_ToricLatticeQuotient(N)
-        False
-        sage: Q = N / N.submodule([(1,2,3), (3,2,1)])
-        sage: Q
-        Quotient with torsion of 3-d lattice N
-        by Sublattice <N(1, 2, 3), N(0, 4, 8)>
-        sage: is_ToricLatticeQuotient(Q)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38126,
-                "The function is_ToricLatticeQuotient is deprecated; "
-                "use 'isinstance(..., ToricLattice_quotient)' instead.")
-    return isinstance(x, ToricLattice_quotient)
-
-
 class ToricLatticeFactory(UniqueFactory):
     r"""
     Create a lattice for toric geometry objects.
@@ -846,7 +774,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             sage: Ns.span_of_basis([(1,2,0), (2,4,0)])
             Traceback (most recent call last):
             ...
-            ValueError: The given basis vectors must be linearly independent.
+            ValueError: the given basis vectors must be linearly independent
         """
         A = self.ambient_module()
         if base_ring is ZZ and all(g in A for g in basis):

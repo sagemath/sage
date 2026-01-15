@@ -33,31 +33,6 @@ from sage.matrix.constructor import matrix
 from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0  # for Sturm bound
 
 
-def is_AmbientHeckeModule(x) -> bool:
-    r"""
-    Return ``True`` if ``x`` is of type ``AmbientHeckeModule``.
-
-    EXAMPLES::
-
-        sage: from sage.modular.hecke.ambient_module import is_AmbientHeckeModule
-        sage: is_AmbientHeckeModule(ModularSymbols(6))
-        doctest:warning...
-        DeprecationWarning: the function is_AmbientHeckeModule is deprecated;
-        use 'isinstance(..., AmbientHeckeModule)' instead
-        See https://github.com/sagemath/sage/issues/37895 for details.
-        True
-        sage: is_AmbientHeckeModule(ModularSymbols(6).cuspidal_subspace())
-        False
-        sage: is_AmbientHeckeModule(ModularForms(11))
-        True
-        sage: is_AmbientHeckeModule(BrandtModule(2, 3))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37895, "the function is_AmbientHeckeModule is deprecated; use 'isinstance(..., AmbientHeckeModule)' instead")
-    return isinstance(x, AmbientHeckeModule)
-
-
 class AmbientHeckeModule(module.HeckeModule_free_module):
     """
     An ambient Hecke module, i.e. a Hecke module that is isomorphic as a module

@@ -33,7 +33,7 @@ class Lseries_ell(SageObject):
     """
     An elliptic curve `L`-series.
     """
-    def __init__(self, E):
+    def __init__(self, E) -> None:
         r"""
         Create an elliptic curve `L`-series.
 
@@ -85,7 +85,7 @@ class Lseries_ell(SageObject):
         D = self.dokchitser(prec)
         return D.taylor_series(a, series_prec, var)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return string representation of this `L`-series.
 
@@ -117,12 +117,9 @@ class Lseries_ell(SageObject):
 
         - ``max_asymp_coeffs`` -- integer (default: 40)
 
-        - ``algorithm`` -- string; ``'gp'`` (default), ``'pari'``, or ``'magma'``
+        - ``algorithm`` -- string; ``'pari'`` (default), or ``'magma'``
 
-        If algorithm is ``'gp'``, this returns an interface to Tim
-        Dokchitser's program for computing with the `L`-functions.
-
-        If algorithm is "pari", this returns instead an interface to Pari's
+        The default algorithm is "pari", which returns an interface to Pari's
         own general implementation of `L`-functions.
 
         .. NOTE::
@@ -141,22 +138,21 @@ class Lseries_ell(SageObject):
             sage: L.Evaluate(2)                                         # optional - magma
             0.38157540826071121129371040958008663667709753398892116
 
-        If the curve has too large a conductor, it is not possible to
-        compute with the `L`-series using this command.  Instead a
-        :exc:`RuntimeError` is raised::
+        If the curve has too large a conductor, one can still define
+        the `L`-series but some computations may not work::
 
             sage: e = EllipticCurve([1,1,0,-63900,-1964465932632])
-            sage: L = e.lseries().dokchitser(15, algorithm='gp')
-            Traceback (most recent call last):
-            ...
-            RuntimeError: unable to create L-series, due to precision or other limits in PARI
+            sage: L = e.lseries().dokchitser(15)
+            sage: L(2)
+            0.8309
 
-        Using the "pari" algorithm::
+        TESTS::
 
             sage: E = EllipticCurve('37a')
-            sage: L = E.lseries().dokchitser(algorithm='pari')
-            sage: L(2)
-            0.381575408260711
+            sage: L = E.lseries().dokchitser(algorithm="zweistein")
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm must be "pari" or "magma"
         """
         if algorithm is None:
             algorithm = 'pari'
@@ -171,31 +167,7 @@ class Lseries_ell(SageObject):
             L.rename('PARI L-function associated to %s' % self.__E)
             return L
 
-        if algorithm == 'gp':
-            from sage.lfunctions.dokchitser import Dokchitser
-            key = (prec, max_imaginary_part, max_asymp_coeffs)
-            try:
-                return self.__dokchitser[key]
-            except KeyError:
-                pass
-            except AttributeError:
-                self.__dokchitser = {}
-            L = Dokchitser(conductor=self.__E.conductor(),
-                           gammaV=[0, 1],
-                           weight=2,
-                           eps=self.__E.root_number(),
-                           poles=[],
-                           prec=prec)
-            s = 'e = ellinit(%s);' % list(self.__E.minimal_model().a_invariants())
-            s += 'a(k) = ellak(e, k);'
-            L.init_coeffs('a(k)', 1, pari_precode=s,
-                          max_imaginary_part=max_imaginary_part,
-                          max_asymp_coeffs=max_asymp_coeffs)
-            L.rename('Dokchitser L-function associated to %s' % self.__E)
-            self.__dokchitser[key] = L
-            return L
-
-        raise ValueError('algorithm must be "gp", "pari" or "magma"')
+        raise ValueError('algorithm must be "pari" or "magma"')
 
     def sympow(self, n, prec):
         r"""
@@ -747,8 +719,8 @@ class Lseries_ell(SageObject):
 
     def __call__(self, s):
         r"""
-        Return the value of the `L`-series of the elliptic curve E at s, where s
-        must be a real number.
+        Return the value of the `L`-series of the elliptic curve E at s,
+        where s must be a real number.
 
         .. NOTE::
 
