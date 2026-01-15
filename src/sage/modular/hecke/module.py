@@ -30,29 +30,6 @@ from . import element
 from . import hecke_operator
 
 
-def is_HeckeModule(x):
-    r"""
-    Return ``True`` if ``x`` is a Hecke module.
-
-    EXAMPLES::
-
-        sage: from sage.modular.hecke.module import is_HeckeModule
-        sage: is_HeckeModule(ModularForms(Gamma0(7), 4))
-        doctest:warning...
-        DeprecationWarning: the function is_HeckeModule is deprecated;
-        use 'isinstance(..., HeckeModule_generic)' instead
-        See https://github.com/sagemath/sage/issues/37895 for details.
-        True
-        sage: is_HeckeModule(QQ^3)
-        False
-        sage: is_HeckeModule(J0(37).homology())
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37895, "the function is_HeckeModule is deprecated; use 'isinstance(..., HeckeModule_generic)' instead")
-    return isinstance(x, HeckeModule_generic)
-
-
 class HeckeModule_generic(Module):
     r"""
     A very general base class for Hecke modules.
@@ -71,7 +48,7 @@ class HeckeModule_generic(Module):
 
     Element = element.HeckeModuleElement
 
-    def __init__(self, base_ring, level, category=None):
+    def __init__(self, base_ring, level, category=None) -> None:
         r"""
         Create a Hecke module. Not intended to be called directly.
 

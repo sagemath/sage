@@ -58,39 +58,6 @@ from sage.categories.homset import Hom
 from sage.categories.chain_complexes import ChainComplexes
 
 
-def is_ChainComplexMorphism(x):
-    """
-    Return ``True`` if and only if ``x`` is a chain complex morphism.
-
-    EXAMPLES::
-
-        sage: # needs sage.graphs
-        sage: from sage.homology.chain_complex_morphism import is_ChainComplexMorphism
-        sage: S = simplicial_complexes.Sphere(14)
-        sage: H = Hom(S,S)
-        sage: i = H.identity()                  # long time (8s on sage.math, 2011)
-        sage: S = simplicial_complexes.Sphere(6)
-        sage: H = Hom(S,S)
-        sage: i = H.identity()
-        sage: x = i.associated_chain_complex_morphism()
-        sage: x # indirect doctest
-        Chain complex morphism:
-          From: Chain complex with at most 7 nonzero terms over Integer Ring
-          To: Chain complex with at most 7 nonzero terms over Integer Ring
-        sage: is_ChainComplexMorphism(x)
-        doctest:warning...
-        DeprecationWarning: The function is_ChainComplexMorphism is deprecated;
-        use 'isinstance(..., ChainComplexMorphism)' instead.
-        See https://github.com/sagemath/sage/issues/38103 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38103,
-                "The function is_ChainComplexMorphism is deprecated; "
-                "use 'isinstance(..., ChainComplexMorphism)' instead.")
-    return isinstance(x, ChainComplexMorphism)
-
-
 class ChainComplexMorphism(Morphism):
     """
     An element of this class is a morphism of chain complexes.

@@ -1669,13 +1669,13 @@ cdef class Polynomial(CommutativePolynomial):
         """
         from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
         P = a.parent()
-        if can_convert_to_singular(P):
+        if P.is_exact() and can_convert_to_singular(P):
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             try:
                 R = PolynomialRing(P.base_ring(), P.variable_names(), implementation="singular")
             except NotImplementedError:
-                # PolynomialRing over RDF/CDF etc. are still not implemented in libsingular
-                # (in particular singular_ring_new) even though they are implemented in _do_singular_init_
+                # singular(PolynomialRing(Frac(ZZ["u", "v", "w"]), "x")) works, but
+                # PolynomialRing(Frac(ZZ["u", "v", "w"]), "x", implementation="singular") fails
                 pass
             else:
                 return P(R(a).inverse_mod(R.ideal(m)))
@@ -11588,6 +11588,12 @@ cdef class Polynomial(CommutativePolynomial):
             sage: q.divides(p * q)
             True
             sage: R.<x> = Zmod(6)[]
+            sage: f = x - 2
+            sage: g = 3
+            sage: R.ideal(f*g) <= R.ideal(f)
+            True
+            sage: f.divides(f*g)
+            True
             sage: p = 4*x + 3
             sage: q = 5*x**2 + x + 2
             sage: q.divides(p)
@@ -11620,9 +11626,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: p = 4*x + 3
             sage: q = 2*x**2 + x + 2
             sage: p.divides(q)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: divisibility test only implemented for polynomials over an integral domain unless obvious non divisibility of leading terms
+            False
         """
         if p.is_zero():
             return True          # everything divides 0
@@ -11642,7 +11646,17 @@ cdef class Polynomial(CommutativePolynomial):
             return False
 
         if not self.base_ring().is_integral_domain():
-            raise NotImplementedError("divisibility test only implemented for polynomials over an integral domain unless obvious non divisibility of leading terms")
+            from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
+            P = self.parent()
+            if P.is_exact() and can_convert_to_singular(P):
+                from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                try:
+                    R = PolynomialRing(P.base_ring(), P.variable_names(), implementation="singular")
+                except NotImplementedError:
+                    pass
+                else:
+                    return bool(R(self).divides(R(p)))
+            raise NotImplementedError("divisibility test only implemented for polynomials over an integral domain unless Singular can be used")
 
         try:
             return (p % self).is_zero()      # if quo_rem is defined
