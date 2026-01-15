@@ -67,6 +67,6 @@ foreach name, pyx : extension_data
     subdir: 'sage/ext/interpreters',
     install: true,
     include_directories: [inc_cpython, inc_ext, inc_rings, inc_src],
-    dependencies: [py_dep, cypari2, cysignals, gmp, gsl, mpc, mpfr, pari],
+    dependencies: [py_dep, cypari2, cysignals, gmp, gsl, mpc, mpfr],
   )
 endforeach

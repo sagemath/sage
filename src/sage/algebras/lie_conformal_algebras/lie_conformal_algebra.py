@@ -163,15 +163,15 @@ AUTHORS:
 """
 
 
-#******************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2019 Reimundo Heluani <heluani@potuz.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.sets.family import Family
@@ -335,18 +335,19 @@ class LieConformalAlgebra(UniqueRepresentation, Parent):
             graded = kwds.pop("graded", False)
             if weights is not None or graded:
                 from .graded_lie_conformal_algebra import \
-                                                    GradedLieConformalAlgebra
-                return GradedLieConformalAlgebra(R, Family(arg0),
+                    GradedLieConformalAlgebra
+                return GradedLieConformalAlgebra(
+                    R, Family(arg0),
                     index_set=index_set, central_elements=central_elements,
                     category=category, prefix=prefix, names=names,
                     latex_names=latex_names, parity=parity, weights=weights,
                     **kwds)
             else:
                 from .lie_conformal_algebra_with_structure_coefs import \
-                        LieConformalAlgebraWithStructureCoefficients
-                return LieConformalAlgebraWithStructureCoefficients(R,
-                       Family(arg0), index_set=index_set,
-                       central_elements=central_elements, category=category,
-                       prefix=prefix, names=names, latex_names=latex_names,
-                       parity=parity, **kwds)
+                    LieConformalAlgebraWithStructureCoefficients
+                return LieConformalAlgebraWithStructureCoefficients(
+                    R, Family(arg0),
+                    index_set=index_set, central_elements=central_elements,
+                    category=category, prefix=prefix, names=names,
+                    latex_names=latex_names, parity=parity, **kwds)
         raise NotImplementedError("not implemented")

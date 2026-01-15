@@ -39,6 +39,8 @@ cdef class GapElement(RingElement):
     # the pointer to the GAP object (memory managed by GASMAN)
     cdef Obj value
 
+    cdef bint _check_contains(self, Element other) except -2
+
     # comparison
     cdef bint _compare_by_id
     cdef bint _compare_equal(self, Element other) except -2

@@ -3,11 +3,11 @@
 Free algebra quotient elements
 
 AUTHORS:
-    - William Stein (2011-11-19): improved doctest coverage to 100%
-    - David Kohel (2005-09): initial version
-"""
 
-#*****************************************************************************
+- William Stein (2011-11-19): improved doctest coverage to 100%
+- David Kohel (2005-09): initial version
+"""
+# ***************************************************************************
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -19,9 +19,8 @@ AUTHORS:
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from sage.misc.repr import repr_lincomb
 from sage.structure.element import RingElement, AlgebraElement
 from sage.structure.parent_gens import localvars
@@ -32,34 +31,8 @@ from sage.monoids.free_monoid_element import FreeMonoidElement
 from sage.algebras.free_algebra_element import FreeAlgebraElement
 
 
-def is_FreeAlgebraQuotientElement(x):
-    """
-    EXAMPLES::
-
-        sage: H, (i,j,k) = sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)
-        sage: sage.algebras.free_algebra_quotient_element.is_FreeAlgebraQuotientElement(i)
-        doctest:warning...
-        DeprecationWarning: The function is_FreeAlgebraQuotientElement is deprecated;
-        use 'isinstance(..., FreeAlgebraQuotientElement)' instead.
-        See https://github.com/sagemath/sage/issues/38184 for details.
-        True
-
-    Of course this is testing the data type::
-
-        sage: sage.algebras.free_algebra_quotient_element.is_FreeAlgebraQuotientElement(1)
-        False
-        sage: sage.algebras.free_algebra_quotient_element.is_FreeAlgebraQuotientElement(H(1))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38184,
-                "The function is_FreeAlgebraQuotientElement is deprecated; "
-                "use 'isinstance(..., FreeAlgebraQuotientElement)' instead.")
-    return isinstance(x, FreeAlgebraQuotientElement)
-
-
 class FreeAlgebraQuotientElement(AlgebraElement):
-    def __init__(self, A, x):
+    def __init__(self, A, x) -> None:
         """
         Create the element x of the FreeAlgebraQuotient A.
 
